@@ -402,11 +402,11 @@ public class TomServer implements TomPluginOptions
 		    }
     }
   
-	if( environment.hasError() )
-	    {
-		environment.printErrorMessage();
-		return 1;
-	    }
+// 	if( environment.hasError() )
+// 	    {
+// 		environment.printErrorMessage();
+// 		return 1;
+// 	    }
 
 	String[] inputFiles = optionManagement(argumentList);
   
