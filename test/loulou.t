@@ -6,9 +6,9 @@
 
 %typeterm Nat {
   implement { int }
-  get_fun_sym(i)      { (i==0)?ZERO:SUC }
+  get_fun_sym(i)      { (void*)((i==0)?ZERO:SUC) }
   cmp_fun_sym(t1,t2)  { (t1 == t2) }
-  get_subterm(i, n)   { (i-1) }
+  get_subterm(i, n)   { (void*)(i-1) }
 }
 
 %op Nat zero {

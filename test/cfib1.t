@@ -30,20 +30,20 @@ struct term *suc(struct term *x) {
 
 %typeterm term {
   implement { struct term* }
-  get_fun_sym(t)      { t->fs }
+  get_fun_sym(t)      { (void*)t->fs }
   cmp_fun_sym(t1,t2)  { t1 == t2 }
   get_subterm(t, n)   { t->subt[n] }
 }
 
 %op term zero {
-  fsym { ZERO }
+  fsym { (void*)ZERO }
 }
   
 %op term suc(term) {
-  fsym { SUC }
+  fsym { (void*)SUC }
 }
 
-%op term plus(a:term,b:term) {
+%op term plus(term,term) {
   fsym { PLUS }
 }
 
