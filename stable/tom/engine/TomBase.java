@@ -76,6 +76,10 @@ public class TomBase {
     return type.equals("int");
   }
 
+  protected boolean isStringType(String type) {
+    return type.equals("String");
+  }
+
   protected boolean isBoolType(String type) {
     return type.equals("bool");
   }
@@ -227,9 +231,9 @@ public class TomBase {
  
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         return tomSymbol.getTypesToType().getCodomain();
-       } }}matchlab_match4_pattern2: {  TomType type = null;  Option option = null;  TomName name = null; if(tom_is_fun_sym_Variable(tom_match4_1)) {  Option tom_match4_1_1 = null;  TomName tom_match4_1_2 = null;  TomType tom_match4_1_3 = null; tom_match4_1_1 = ( Option) tom_get_slot_Variable_option(tom_match4_1); tom_match4_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match4_1); tom_match4_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match4_1); option = ( Option) tom_match4_1_1; name = ( TomName) tom_match4_1_2; type = ( TomType) tom_match4_1_3;
+       } }}matchlab_match4_pattern2: {  Option option = null;  TomName name = null;  TomType type = null; if(tom_is_fun_sym_Variable(tom_match4_1)) {  Option tom_match4_1_1 = null;  TomName tom_match4_1_2 = null;  TomType tom_match4_1_3 = null; tom_match4_1_1 = ( Option) tom_get_slot_Variable_option(tom_match4_1); tom_match4_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match4_1); tom_match4_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match4_1); option = ( Option) tom_match4_1_1; name = ( TomName) tom_match4_1_2; type = ( TomType) tom_match4_1_3;
 
-  return type;  }}matchlab_match4_pattern3: {  Option option = null;  TomType type = null;  TomName name = null; if(tom_is_fun_sym_VariableStar(tom_match4_1)) {  Option tom_match4_1_1 = null;  TomName tom_match4_1_2 = null;  TomType tom_match4_1_3 = null; tom_match4_1_1 = ( Option) tom_get_slot_VariableStar_option(tom_match4_1); tom_match4_1_2 = ( TomName) tom_get_slot_VariableStar_astName(tom_match4_1); tom_match4_1_3 = ( TomType) tom_get_slot_VariableStar_astType(tom_match4_1); option = ( Option) tom_match4_1_1; name = ( TomName) tom_match4_1_2; type = ( TomType) tom_match4_1_3;
+  return type;  }}matchlab_match4_pattern3: {  TomType type = null;  Option option = null;  TomName name = null; if(tom_is_fun_sym_VariableStar(tom_match4_1)) {  Option tom_match4_1_1 = null;  TomName tom_match4_1_2 = null;  TomType tom_match4_1_3 = null; tom_match4_1_1 = ( Option) tom_get_slot_VariableStar_option(tom_match4_1); tom_match4_1_2 = ( TomName) tom_get_slot_VariableStar_astName(tom_match4_1); tom_match4_1_3 = ( TomType) tom_get_slot_VariableStar_astType(tom_match4_1); option = ( Option) tom_match4_1_1; name = ( TomName) tom_match4_1_2; type = ( TomType) tom_match4_1_3;
 
   return type;  }}matchlab_match4_pattern4: {  Option option = null;  TomType type = null; if(tom_is_fun_sym_UnamedVariable(tom_match4_1)) {  Option tom_match4_1_1 = null;  TomType tom_match4_1_2 = null; tom_match4_1_1 = ( Option) tom_get_slot_UnamedVariable_option(tom_match4_1); tom_match4_1_2 = ( TomType) tom_get_slot_UnamedVariable_astType(tom_match4_1); option = ( Option) tom_match4_1_1; type = ( TomType) tom_match4_1_2;
 
@@ -335,6 +339,13 @@ public class TomBase {
     return isIntType(getTomType(getSymbolCodomain(subject)));
   }
 
+  protected boolean isStringOperator(TomSymbol subject) {
+    if(subject==null) {
+      return false;
+    }
+    return isStringType(getTomType(getSymbolCodomain(subject)));
+  }
+
   protected TomList tomListMap(TomList subject, Replace1 replace) {
     TomList res = subject;
     try {
@@ -383,7 +394,7 @@ public class TomBase {
                   collection.add(annotedVariable);
                 }
                 return false;
-               } }}matchlab_match10_pattern4: {  OptionList optionList = null;  TomList subterms = null; if(tom_is_fun_sym_Appl(tom_match10_1)) {  Option tom_match10_1_1 = null;  TomName tom_match10_1_2 = null;  TomList tom_match10_1_3 = null; tom_match10_1_1 = ( Option) tom_get_slot_Appl_option(tom_match10_1); tom_match10_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match10_1); tom_match10_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match10_1); if(tom_is_fun_sym_Option(tom_match10_1_1)) {  OptionList tom_match10_1_1_1 = null; tom_match10_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1); optionList = ( OptionList) tom_match10_1_1_1; subterms = ( TomList) tom_match10_1_3;
+               } }}matchlab_match10_pattern4: {  TomList subterms = null;  OptionList optionList = null; if(tom_is_fun_sym_Appl(tom_match10_1)) {  Option tom_match10_1_1 = null;  TomName tom_match10_1_2 = null;  TomList tom_match10_1_3 = null; tom_match10_1_1 = ( Option) tom_get_slot_Appl_option(tom_match10_1); tom_match10_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match10_1); tom_match10_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match10_1); if(tom_is_fun_sym_Option(tom_match10_1_1)) {  OptionList tom_match10_1_1_1 = null; tom_match10_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1); optionList = ( OptionList) tom_match10_1_1_1; subterms = ( TomList) tom_match10_1_3;
 
 
  
@@ -437,7 +448,7 @@ public class TomBase {
                   set.add(annotedVariable);
                 }
                 return false;
-               } }}matchlab_match11_pattern4: {  OptionList optionList = null;  TomList subterms = null; if(tom_is_fun_sym_Appl(tom_match11_1)) {  Option tom_match11_1_1 = null;  TomName tom_match11_1_2 = null;  TomList tom_match11_1_3 = null; tom_match11_1_1 = ( Option) tom_get_slot_Appl_option(tom_match11_1); tom_match11_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match11_1); tom_match11_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match11_1); if(tom_is_fun_sym_Option(tom_match11_1_1)) {  OptionList tom_match11_1_1_1 = null; tom_match11_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match11_1_1); optionList = ( OptionList) tom_match11_1_1_1; subterms = ( TomList) tom_match11_1_3;
+               } }}matchlab_match11_pattern4: {  TomList subterms = null;  OptionList optionList = null; if(tom_is_fun_sym_Appl(tom_match11_1)) {  Option tom_match11_1_1 = null;  TomName tom_match11_1_2 = null;  TomList tom_match11_1_3 = null; tom_match11_1_1 = ( Option) tom_get_slot_Appl_option(tom_match11_1); tom_match11_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match11_1); tom_match11_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match11_1); if(tom_is_fun_sym_Option(tom_match11_1_1)) {  OptionList tom_match11_1_1_1 = null; tom_match11_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match11_1_1); optionList = ( OptionList) tom_match11_1_1_1; subterms = ( TomList) tom_match11_1_3;
 
 
  
@@ -464,7 +475,7 @@ public class TomBase {
       //%variable
     while(!subjectList.isEmpty()) {
       Option subject = subjectList.getHead();
-       {  Option tom_match12_1 = null; tom_match12_1 = ( Option) subject;matchlab_match12_pattern1: {  TomType type = null;  TomTerm var = null;  TomName name = null;  Option option = null; if(tom_is_fun_sym_TomTermToOption(tom_match12_1)) {  TomTerm tom_match12_1_1 = null; tom_match12_1_1 = ( TomTerm) tom_get_slot_TomTermToOption_astTerm(tom_match12_1); if(tom_is_fun_sym_Variable(tom_match12_1_1)) {  Option tom_match12_1_1_1 = null;  TomName tom_match12_1_1_2 = null;  TomType tom_match12_1_1_3 = null; tom_match12_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match12_1_1); tom_match12_1_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match12_1_1); tom_match12_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match12_1_1); var = ( TomTerm) tom_match12_1_1; option = ( Option) tom_match12_1_1_1; name = ( TomName) tom_match12_1_1_2; type = ( TomType) tom_match12_1_1_3;
+       {  Option tom_match12_1 = null; tom_match12_1 = ( Option) subject;matchlab_match12_pattern1: {  TomTerm var = null;  Option option = null;  TomType type = null;  TomName name = null; if(tom_is_fun_sym_TomTermToOption(tom_match12_1)) {  TomTerm tom_match12_1_1 = null; tom_match12_1_1 = ( TomTerm) tom_get_slot_TomTermToOption_astTerm(tom_match12_1); if(tom_is_fun_sym_Variable(tom_match12_1_1)) {  Option tom_match12_1_1_1 = null;  TomName tom_match12_1_1_2 = null;  TomType tom_match12_1_1_3 = null; tom_match12_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match12_1_1); tom_match12_1_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match12_1_1); tom_match12_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match12_1_1); var = ( TomTerm) tom_match12_1_1; option = ( Option) tom_match12_1_1_1; name = ( TomName) tom_match12_1_1_2; type = ( TomType) tom_match12_1_1_3;
  
           return var;
          } }}matchlab_match12_pattern2: {
@@ -559,7 +570,7 @@ public class TomBase {
     if(subject==null) {
       return false;
     }
-     {  TomSymbol tom_match18_1 = null; tom_match18_1 = ( TomSymbol) subject;matchlab_match18_pattern1: {  OptionList optionList = null;  TargetLanguage tlCode1 = null;  String name1 = null;  TomType type1 = null;  TomTypeList typeList = null; if(tom_is_fun_sym_Symbol(tom_match18_1)) {  TomName tom_match18_1_1 = null;  TomType tom_match18_1_2 = null;  SlotList tom_match18_1_3 = null;  Option tom_match18_1_4 = null;  TargetLanguage tom_match18_1_5 = null; tom_match18_1_1 = ( TomName) tom_get_slot_Symbol_astName(tom_match18_1); tom_match18_1_2 = ( TomType) tom_get_slot_Symbol_typesToType(tom_match18_1); tom_match18_1_3 = ( SlotList) tom_get_slot_Symbol_slotList(tom_match18_1); tom_match18_1_4 = ( Option) tom_get_slot_Symbol_option(tom_match18_1); tom_match18_1_5 = ( TargetLanguage) tom_get_slot_Symbol_tlCode(tom_match18_1); if(tom_is_fun_sym_Name(tom_match18_1_1)) {  String tom_match18_1_1_1 = null; tom_match18_1_1_1 = ( String) tom_get_slot_Name_string(tom_match18_1_1); name1 = ( String) tom_match18_1_1_1; if(tom_is_fun_sym_TypesToType(tom_match18_1_2)) {  TomTypeList tom_match18_1_2_1 = null;  TomType tom_match18_1_2_2 = null; tom_match18_1_2_1 = ( TomTypeList) tom_get_slot_TypesToType_domain(tom_match18_1_2); tom_match18_1_2_2 = ( TomType) tom_get_slot_TypesToType_codomain(tom_match18_1_2); typeList = ( TomTypeList) tom_match18_1_2_1; type1 = ( TomType) tom_match18_1_2_2; if(tom_is_fun_sym_Option(tom_match18_1_4)) {  OptionList tom_match18_1_4_1 = null; tom_match18_1_4_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match18_1_4); optionList = ( OptionList) tom_match18_1_4_1; tlCode1 = ( TargetLanguage) tom_match18_1_5;
+     {  TomSymbol tom_match18_1 = null; tom_match18_1 = ( TomSymbol) subject;matchlab_match18_pattern1: {  TargetLanguage tlCode1 = null;  TomType type1 = null;  OptionList optionList = null;  TomTypeList typeList = null;  String name1 = null; if(tom_is_fun_sym_Symbol(tom_match18_1)) {  TomName tom_match18_1_1 = null;  TomType tom_match18_1_2 = null;  SlotList tom_match18_1_3 = null;  Option tom_match18_1_4 = null;  TargetLanguage tom_match18_1_5 = null; tom_match18_1_1 = ( TomName) tom_get_slot_Symbol_astName(tom_match18_1); tom_match18_1_2 = ( TomType) tom_get_slot_Symbol_typesToType(tom_match18_1); tom_match18_1_3 = ( SlotList) tom_get_slot_Symbol_slotList(tom_match18_1); tom_match18_1_4 = ( Option) tom_get_slot_Symbol_option(tom_match18_1); tom_match18_1_5 = ( TargetLanguage) tom_get_slot_Symbol_tlCode(tom_match18_1); if(tom_is_fun_sym_Name(tom_match18_1_1)) {  String tom_match18_1_1_1 = null; tom_match18_1_1_1 = ( String) tom_get_slot_Name_string(tom_match18_1_1); name1 = ( String) tom_match18_1_1_1; if(tom_is_fun_sym_TypesToType(tom_match18_1_2)) {  TomTypeList tom_match18_1_2_1 = null;  TomType tom_match18_1_2_2 = null; tom_match18_1_2_1 = ( TomTypeList) tom_get_slot_TypesToType_domain(tom_match18_1_2); tom_match18_1_2_2 = ( TomType) tom_get_slot_TypesToType_codomain(tom_match18_1_2); typeList = ( TomTypeList) tom_match18_1_2_1; type1 = ( TomType) tom_match18_1_2_2; if(tom_is_fun_sym_Option(tom_match18_1_4)) {  OptionList tom_match18_1_4_1 = null; tom_match18_1_4_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match18_1_4); optionList = ( OptionList) tom_match18_1_4_1; tlCode1 = ( TargetLanguage) tom_match18_1_5;
  
         while(!optionList.isEmpty()) {
           Option opt = optionList.getHead();
