@@ -13,7 +13,7 @@
   <property name="nowarnings" value="false"/>
   <property name="optimize" value="off"/>
   <property name="pretty" value="off"/>
-  <property name="visitable" value="off"/>
+  <property name="visitable" value="on"/>
   <property name="stamp" value="off"/>
   <property name="mutraveler" value="jjtraveler"/>
 
@@ -149,14 +149,14 @@
     </path>
     
     <!-- tasks for building -->
-    <taskdef name="adt" 
+    <taskdef name="adt"
              classname="jtom.tools.ant.ApigenTask"
              classpathref="tom.classpath"/>
-    <taskdef name="tom" 
+    <taskdef name="tom"
              classname="jtom.tools.ant.TomTask"
              classpathref="tom.classpath"/>
-    <taskdef name="vas" 
-             classname="vas.ant.VasTask" 
+    <taskdef name="vas"
+						 classname="vas.ant.VasTask" 
              classpathref="tom.classpath"/>
     <taskdef name="tomantlr" 
              classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
@@ -171,11 +171,26 @@
              destdir="${examples.gen}"         
              nowarn="${nowarnings}"
              optimize="${optimize}"
+						 pretty="${pretty}"
              options="-I ${tom.home}/share/jtom">
           <include name="@{example}/**/*.t"/>
         </tom>
       </sequential>
   </macrodef>
+
+	<macrodef name="adtcompile">
+		<attribute name="example"/>
+		<attribute name="factory"/>
+		<sequential>
+			<adt srcdir="${examples.dir}"
+					 factory="@{factory}" 
+					 package="@{example}" 
+					 visitable="${visitable}"
+					 destdir="${examples.gen}">
+				<include name="@{example}/**/*.adt"/>
+			</adt>
+		</sequential>
+	</macrodef>
 
   </target>
   
@@ -195,12 +210,8 @@
 
   <target name="addressbook" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="data" 
-         package="${addressbook}" 
-         destdir="${examples.gen}">
-      <include name="${addressbook}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${addressbook}"
+								factory="data"/>
     <!-- build tom -->
     <tomcompile example="${addressbook}"/>
     <!-- build java source -->
@@ -215,12 +226,8 @@
 
   <target name="apireach" depends="init"> 
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="reach" 
-         package="${apireach}" 
-         destdir="${examples.gen}">
-      <include name="${apireach}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${apireach}"
+								factory="reach"/>
     <!-- build tom -->
     <tomcompile example="${apireach}"/>
     <!-- build java source -->
@@ -247,12 +254,8 @@
 
   <target name="boulderdash" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="boulder" 
-         package="${boulderdash}" 
-         destdir="${examples.gen}">
-      <include name="${boulderdash}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${boulderdash}"
+								factory="boulder"/>
     <!-- build tom -->
     <tomcompile example="${boulderdash}"/>
     <!-- build java source -->
@@ -274,12 +277,8 @@
 
   <target name="builtin" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="term" 
-         package="${builtin}" 
-         destdir="${examples.gen}">
-      <include name="${builtin}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${builtin}"
+								factory="term"/>
     <!-- build tom -->
     <tomcompile example="${builtin}"/>
     <!-- build java source -->
@@ -427,12 +426,8 @@
 
   <target name="gtree" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="term" 
-         package="${gtree}" 
-         destdir="${examples.gen}">
-      <include name="${gtree}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${gtree}"
+								factory="term"/>
     <!-- build tom -->
     <tomcompile example="${gtree}"/>
     <!-- build java source -->
@@ -469,12 +464,8 @@
 
   <target name="minirho" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="term" 
-         package="${minirho}" 
-         destdir="${examples.gen}">
-      <include name="${minirho}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${minirho}"
+								factory="term"/>
     <!-- build tom -->
     <tomcompile example="${minirho}"/>
     <!-- build java source -->
@@ -487,12 +478,8 @@
   
   <target name="nspk" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="term" 
-         package="${nspk}" 
-         destdir="${examples.gen}">
-      <include name="${nspk}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${nspk}"
+								factory="term"/>
     <!-- build tom -->
     <tomcompile example="${nspk}"/>
     <!-- build java source -->
@@ -521,12 +508,8 @@
 
   <target name="peano" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="peano" 
-         package="${peano}" 
-         destdir="${examples.gen}">
-      <include name="${peano}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${peano}"
+								factory="${peano}"/>
     <!-- build tom -->
     <tomcompile example="${peano}"/>
     <!-- build java source -->
@@ -540,12 +523,8 @@
 
   <target name="pnspk" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="term" 
-         package="${pnspk}" 
-         destdir="${examples.gen}">
-      <include name="${pnspk}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${pnspk}"
+								factory="term"/>
     <!-- build tom -->
     <tomcompile example="${pnspk}"/>
     <!-- build java source -->
@@ -559,13 +538,8 @@
   
   <target name="poly" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="expression" 
-         package="${poly}" 
-         visitable="true"
-         destdir="${examples.gen}">
-      <include name="${poly}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${poly}"
+								factory="expression"/>
     <!-- build tom -->
     <tomcompile example="${poly}"/>
     <!-- build java source -->
@@ -605,13 +579,8 @@
 
   <target name="propp" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}" 
-         factory="seq" 
-         visitable="true" 
-         package="${propp}" 
-         destdir="${examples.gen}">
-      <include name="${propp}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${propp}"
+								factory="seq"/>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${propp}"/>
     <tomantlr target="${propp.dir}/SeqParser.g"
@@ -639,12 +608,8 @@
 
   <target name="rbtree" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}" 
-         factory="tree" 
-         package="${rbtree}" 
-         destdir="${examples.gen}">
-      <include name="${rbtree}/**/*.adt"/>
-    </adt>
+		<adtcompile example="${rbtree}"
+								factory="tree"/>
     <!-- build tom -->
     <tomcompile example="${rbtree}"/>
     <!-- build java source -->
@@ -657,12 +622,8 @@
 
   <target name="set" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="jgset" 
-         package="${set}" 
-         destdir="${examples.gen}">
-      <include name="${set}/**/*.adt"/>
-  </adt>
+		<adtcompile example="${set}"
+								factory="jgset"/>
     <!-- build tom -->
     <tomcompile example="${set}"/>
     <!-- build java source -->
@@ -675,13 +636,8 @@
 
   <target name="strategy" depends="init">
     <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="term" 
-         visitable="true"
-         package="${strategy}" 
-         destdir="${examples.gen}">
-      <include name="${strategy}/**/*.adt"/>
-  </adt>
+		<adtcompile example="${strategy}"
+								factory="term"/>
     <!-- build tom -->
     <tomcompile example="${strategy}"/>
     <!-- build java source -->
