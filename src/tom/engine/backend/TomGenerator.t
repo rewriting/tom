@@ -636,7 +636,7 @@ public class TomGenerator extends TomBase {
         if (Flags.debugMode) {
           out.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
           generateExpression(out,deep,exp);
-          out.writeln("\",");
+          out.write("\",");
           generateExpression(out,deep,exp);
           out.writeln(");");
         }
