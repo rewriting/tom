@@ -24,3 +24,6 @@ EmptyP |- A && (A |=> C) |=> B;
 
 (( (A |=> (B && C)) && ((B && C) |=> A)) && ((B |=> ^(C)) && (^(C) |=> B)) &&  A) |- EmptyP;
 # vrai
+
+B /\ C:(B /\ C) => A:~(C => B):A |- EmptyP:B;
+# vrai 213 pages de preuve

@@ -13,9 +13,9 @@ public class Propp {
 	private TermFactory factory;
 	private GenericTraversal traversal;
 
-	// ------------------------------------------------------------  
+	// ------------------------------------------------------------
 	%include { adt/propp/term.tom }
-	// ------------------------------------------------------------  
+	// ------------------------------------------------------------
 
 	public Propp() {
 		this(new TermFactory(new PureFactory()));
@@ -47,19 +47,21 @@ public class Propp {
 		// Process Traces
 
 		System.out.println("Build Proof Term");
-		ListProof proofTerm = buildProofTerm(initSeq,rules_appl);
-		System.out.println("Proof term = " + proofTerm);
+		ListProof proofTerm = buildProofTerm(initSeq);
+		//System.out.println("Proof term = " + proofTerm);
+		System.out.println("Build LaTeX, check validity");
 		Collection tex_proofs = new HashSet();
+		boolean validity = true;
 		%match(ListProof proofTerm) {
 			concProof(_*,p,_*) -> {
 				tex_proofs.add(proofToTex(p));
-				System.out.println("Is input proved ? " + isValid(p));
+				if (!isValid(p)) { validity = false; }
 			}
 		}
+		System.out.println("Is input proved ? " + validity);
 
-		System.out.println("Build LaTeX");
 		write_proof_latex(tex_proofs,"proof.tex");
-		System.out.println("Latex : " + tex_proofs);
+		//System.out.println("Latex : " + tex_proofs);
 		System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
 
 	}
@@ -67,7 +69,6 @@ public class Propp {
 
 	//{{{ public Sequent makeQuery(String input)
 	public Sequent makeQuery(String input) {
-
 		Sequent query = factory.SequentFromString(input);
 		return query;
 	}
@@ -109,7 +110,7 @@ public class Propp {
 		int i = 0;
 		while(!c1.isEmpty()) {
 			Collection c2 = new HashSet();
-			System.out.println(c1);
+			//System.out.println(c1);
 			Iterator it = c1.iterator();
 			while(it.hasNext()) {
 				OneStep((Sequent)it.next(),c2);
@@ -261,29 +262,54 @@ public class Propp {
 	}
 	//}}}
 
-	//{{{ public ListProof buildProofTerm(Sequent goal, Collection trace) {
-	public ListProof buildProofTerm(Sequent goal, Collection trace) {
+	Map proofterm_pool = new HashMap();
+	//{{{ public ListProof buildProofTerm(Sequent goal) {
+	public ListProof buildProofTerm(Sequent goal) {
 		ListProof tmpsol = `concProof();
-		Iterator iter = trace.iterator();
+		if (proofterm_pool.containsKey(goal)) {
+			return (ListProof)proofterm_pool.get(goal);
+		}
+		Iterator iter = rules_appl.iterator();
 		while (iter.hasNext()) {
 			Trace item = (Trace)iter.next();
 			//{{{ %match(Trace item)
 			%match(Trace item) {
+
+				rappl(r,s,concSequent()) -> {
+					if (s == goal) {
+						tmpsol = `concProof(rule(r,s,concProof()),tmpsol*);
+					}
+				}
+
 				rappl(r,s,concSequent(p)) -> {
 					if (s == goal) {
-						ListProof proof_p = buildProofTerm(p,trace);
+						ListProof proof_p = buildProofTerm(p);
+						while(!proof_p.isEmpty()) {
+							tmpsol = `concProof(rule(r,goal,concProof(proof_p.getHead())),tmpsol*);
+							proof_p = proof_p.getTail();
+						}
+						/*// the matching version uses too much memory !!!
 						%match(ListProof proof_p) {
 							concProof(_*,elem,_*) -> {
 								tmpsol = `concProof(rule(r,goal,concProof(elem)),tmpsol*);
 							}
 						}
+						*/
 					}
 				}
 
 				rappl(r,s,concSequent(p,pp)) -> {
 					if (s == goal) {
-						ListProof proof_p = buildProofTerm(p,trace);
-						ListProof proof_pp = buildProofTerm(pp,trace);
+						ListProof proof_p = buildProofTerm(p);
+						ListProof proof_pp = buildProofTerm(pp);
+						while(!proof_p.isEmpty()) {
+							while(!proof_pp.isEmpty()) {
+								tmpsol = `concProof(rule(r,goal,concProof(proof_p.getHead(),proof_pp.getHead())),tmpsol*);
+								proof_pp = proof_pp.getTail();
+							}
+							proof_p = proof_p.getTail();
+						}
+						/*// the matching version uses too much memory !!!
 						%match(ListProof proof_p) {
 							concProof(_*,elem,_*) -> {
 								%match(ListProof proof_pp) {
@@ -293,12 +319,7 @@ public class Propp {
 								}
 							}
 						}
-					}
-				}
-
-				rappl(r,s,concSequent()) -> {
-					if (s == goal) {
-						tmpsol = `concProof(rule(r,s,concProof()),tmpsol*);
+						*/
 					}
 				}
 
@@ -306,6 +327,7 @@ public class Propp {
 			//}}}
 		}
 
+		proofterm_pool.put(goal,tmpsol);
 		return tmpsol;
 	}
 	//}}}
@@ -423,6 +445,7 @@ public class Propp {
 	}
 	//}}}
 
+	//{{{ public class MyBoolean
 	public class MyBoolean {
 		private boolean value;
 		public MyBoolean(boolean initValue) {
@@ -435,6 +458,7 @@ public class Propp {
 			return value;
 		}
 	}
+	//}}}
 
 	//{{{ public void write_proof_latex(Collection tex_p,String file)
 	public void write_proof_latex(Collection tex_p,String file) {
