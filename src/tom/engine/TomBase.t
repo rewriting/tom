@@ -479,16 +479,11 @@ public class TomBase {
     return null;
   }
   
-  protected int getSlotIndex(SlotList slotList, String slotName) {
+  protected int getSlotIndex(SlotList slotList, TomName slotName) {
     //%variable
-    if(slotList.isEmptySlotList()) {
-      System.out.println("getSlotIndex: strange");
-      return -1;
-    }
-
     int index = 0;
     while(!slotList.isEmptySlotList()) {
-      String name = slotList.getHeadSlotList().getSlotName().getString();
+      TomName name = slotList.getHeadSlotList().getSlotName();
         // System.out.println("index = " + index + " name = " + name);
       if(slotName.equals(name)) {
         return index; 
@@ -496,7 +491,6 @@ public class TomBase {
       slotList = slotList.getTailSlotList();
       index++;
     }
-    System.out.println("Warning: slot '" + slotName + "' not found");
     return -1;
   }
 
@@ -518,7 +512,7 @@ public class TomBase {
   }
   protected void messageError(String line, String msg) throws CheckErrorException {
     if(!Flags.doVerify) return;
-    String s = "Error occured at line: " + line + "\n-- " + msg; 
+    String s = "\n"+msg+"\n-- Error occured at line: " + line + "\n"; 
     throw new CheckErrorException(s);
   }
 

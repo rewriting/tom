@@ -37,7 +37,7 @@ api:
 	mv adt/TomSignature.t adt/Tom.signature
 
 # we use the last installed compiler to compile the current compiler
-TOMFLAGS = --import $(top_srcdir)/src/jtom/adt
+TOMFLAGS = --noWarning --import $(top_srcdir)/src/jtom/adt
 TOM = ${prefix}/bin/jtom
 
 %.java : %.t

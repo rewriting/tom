@@ -110,7 +110,7 @@
 
   [TomTerm,MakeTerm,MakeTerm(<kid1(TomTerm)>) ],
 
-  [TomTerm,BackQuoteTerm,BackQuoteTerm(<term(TomTerm)>) ],
+  [TomTerm,BackQuoteTerm,BackQuoteTerm(<term(TomTerm)>,<option(Option)>) ],
 
   [TomTerm,LocalVariable ,LocalVariable ],
 

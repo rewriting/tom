@@ -511,11 +511,13 @@ public class TomParser implements TomParserConstants {
 
   final public void BackQuoteTerm(ArrayList list) throws ParseException, TomException {
   TomTerm term;
+  Option orgTrack;
     jj_consume_token(BACKQUOTE_TERM);
       list.add(makeTL(savePosAndExtract()));
+      orgTrack = ast().makeOriginTracking("Backquote",getLine());
     term = Term();
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTomTerm_BackQuoteTerm(term));
+    list.add(tsf().makeTomTerm_BackQuoteTerm(term, orgTrack));
   }
 
   final public void LocalVariableConstruct(ArrayList list) throws ParseException, TomException {
@@ -588,7 +590,7 @@ public class TomParser implements TomParserConstants {
   Option orgTrack;
     jj_consume_token(RULE);
       list.add(makeTL(savePosAndExtract()));
-      orgTrack = ast().makeOriginTracking("Rule",getLine());;
+      orgTrack = ast().makeOriginTracking("Rule",getLine());
     jj_consume_token(TOM_LBRACE);
     label_7:
     while (true) {
@@ -732,9 +734,19 @@ public class TomParser implements TomParserConstants {
           if(decl == null) {
             decl = emptyDeclaration;
           }
+          else {
+            mapNameDecl.remove(name1);
+          }
           pair = tsf().makePairNameDecl_Slot(name1,decl);
         }
         slotList = tsf().makeSlotList_ConsSlotList(pair,slotList);
+      }
+        // Test if there are still declaration in mapNameDecl
+      if ( !mapNameDecl.isEmpty()) {
+        if(!Flags.noWarning) {
+          System.out.println("*** Warning *** Some GetSlot declaration are incompatible with operator signature declared line: "+getLine());
+          System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet());
+        }
       }
 
       astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
@@ -1547,26 +1559,18 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_STAR)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_5() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_COLON)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_4() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_STAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1595,8 +1599,16 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_5() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   public TomParserTokenManager token_source;
-  ASCII_UCodeESC_CharStream jj_input_stream;
+  JavaCharStream jj_input_stream;
   public Token token, jj_nt;
   private int jj_ntk;
   private Token jj_scanpos, jj_lastpos;
@@ -1613,7 +1625,7 @@ public class TomParser implements TomParserConstants {
   private int jj_gc = 0;
 
   public TomParser(java.io.InputStream stream) {
-    jj_input_stream = new ASCII_UCodeESC_CharStream(stream, 1, 1);
+    jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
@@ -1633,7 +1645,7 @@ public class TomParser implements TomParserConstants {
   }
 
   public TomParser(java.io.Reader stream) {
-    jj_input_stream = new ASCII_UCodeESC_CharStream(stream, 1, 1);
+    jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;

@@ -616,16 +616,18 @@ TomTerm DotTerm() throws TomException: /* in TOM mode */
 void BackQuoteTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   TomTerm term;
+  Option orgTrack;
 }
 {
   <BACKQUOTE_TERM> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
+      orgTrack = ast().makeOriginTracking("Backquote",getLine());
     }
   term = Term()
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTomTerm_BackQuoteTerm(term));
+    list.add(tsf().makeTomTerm_BackQuoteTerm(term, orgTrack));
   }
 }
 
@@ -713,7 +715,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   <RULE> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
-      orgTrack = ast().makeOriginTracking("Rule",getLine());;
+      orgTrack = ast().makeOriginTracking("Rule",getLine());
     }
   <TOM_LBRACE> 
   (
@@ -814,9 +816,19 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
           if(decl == null) {
             decl = emptyDeclaration;
           }
+          else {
+            mapNameDecl.remove(name1);
+          }
           pair = tsf().makePairNameDecl_Slot(name1,decl);
         }
         slotList = tsf().makeSlotList_ConsSlotList(pair,slotList);
+      }
+        // Test if there are still declaration in mapNameDecl
+      if ( !mapNameDecl.isEmpty()) {
+        if(!Flags.noWarning) {
+          System.out.println("*** Warning *** Some GetSlot declaration are incompatible with operator signature declared line: "+getLine());
+          System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet());
+        }
       }
       
       astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);

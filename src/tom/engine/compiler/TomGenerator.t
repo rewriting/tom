@@ -956,7 +956,7 @@ public class TomGenerator extends TomBase {
       }
  
       GetSlotDecl[astName=Name(tomName),
-                  slotName=Name(slotName),
+                  slotName=slotName,
                   term=Variable(option1,Name(name1), Type(TomType(type1),tlType@TLType[])),
                   tlCode=tlCode@TL[]] -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
@@ -977,7 +977,7 @@ public class TomGenerator extends TomBase {
 	      argType = getTLType(getUniversalType());
 	  }
         generateTargetLanguage(out,deep, genDecl(getTLType(returnType),
-                                   "tom_get_slot", opname  + "_" + slotName,
+                                   "tom_get_slot", opname  + "_" + slotName.getString(),
                                    new String[] { argType, name1 },
                                    tlCode));
         return;
