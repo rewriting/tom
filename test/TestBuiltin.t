@@ -16,6 +16,8 @@ public class TestBuiltin {
     test.test4();
     test.test5();
     test.test6();
+    test.test7();
+    test.test8();
   }
 
   public void setUp() {
@@ -24,10 +26,11 @@ public class TestBuiltin {
     fail = factory.parse("fail");
   }
 
-  %typeint
-  %typestring
-  %typedouble
-  
+  %include { int.tom }  
+  %include { double.tom }  
+  %include { string.tom }  
+  %include { char.tom }  
+
   %typeterm E {
     implement { ATerm }
     get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
@@ -40,6 +43,12 @@ public class TestBuiltin {
     fsym { factory.makeAFun("string", 1, false) }
     get_slot(stringSlot,t) { getString(t) }
     make(t) { makeString(t)  }
+  }
+
+  %op E char(charSlot:char) {
+    fsym { factory.makeAFun("char", 1, false) }
+    get_slot(charSlot,t) { getChar(t) }
+    make(t) { makeChar(t)  }
   }
 
   %op E int(intSlot:int) {
@@ -57,6 +66,11 @@ public class TestBuiltin {
   public ATerm makeString(String t) {
     return factory.makeAppl(factory.makeAFun("string", 1, false),
                             factory.makeAppl(factory.makeAFun(t, 0, true)));
+  }
+
+  public ATerm makeChar(char t) {
+    return factory.makeAppl(factory.makeAFun("char", 1, false),
+                            factory.makeInt((int)t));
   }
 
   public ATerm makeInt(int t) {
@@ -79,6 +93,12 @@ public class TestBuiltin {
     ATermInt subterm = (ATermInt) ((ATermAppl)t).getArgument(0);
     int value = subterm.getInt();
     return value;
+  }
+
+  public char getChar(ATerm t) {
+    ATermInt subterm = (ATermInt) ((ATermAppl)t).getArgument(0);
+    int value = subterm.getInt();
+    return (char)value;
   }
 
   public double getDouble(ATerm t) {
@@ -124,6 +144,22 @@ public class TestBuiltin {
     }
   }
 
+  public char matchChar(char t) {
+    %match(char t) {
+      'a' -> { return 'a'; }
+      'b' -> { return 'b'; }
+      _ -> { return '-'; }
+    }
+  }
+
+  public char matchCharE(ATerm t) {
+    %match(E t) {
+      char('a') -> { return 'a'; }
+      char('b') -> { return 'b'; }
+      _ -> { return '-'; }
+    }
+  }
+
   public double matchDouble(double t) {
     %match(double t) {
         1.23 -> { return 1.23; }
@@ -164,6 +200,13 @@ public class TestBuiltin {
     assertTrue(1.23 == matchDoubleE(`double(1.23)));
   }
 
+  public void test7() {
+    assertTrue('a' == matchChar('a'));
+  }
+
+  public void test8() {
+    assertTrue('b' == matchCharE(`char('b')));
+  }
   static void  assertTrue(boolean condition) {
     if(!condition) {
       throw new RuntimeException("assertion failed.");
