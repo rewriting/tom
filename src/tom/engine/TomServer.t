@@ -16,13 +16,11 @@ import java.io.*;
 import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;
 import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.*;
 import jtom.adt.options.types.*;
 
 import jtom.exception.*;
 
-import jtom.runtime.*;
 import jtom.runtime.xml.*;
 
 import jtom.tools.*;
@@ -230,9 +228,9 @@ public class TomServer implements TomPluginOptions
     {
 	String xmlConfigurationFile = whichConfigFile(argumentList);
 
- 	if( xmlConfigurationFile == null ) // method whichConfigFile encountered an error
-	    return 1;
- 	    
+ 	if( xmlConfigurationFile == null ) {// method whichConfigFile encountered an error
+			return 1;
+ 	    }
 	Vector classPaths = parseConfigFile(xmlConfigurationFile);
 
 	if( classPaths == null ) // method parseConfigFile encountered an error
@@ -290,20 +288,22 @@ public class TomServer implements TomPluginOptions
 	for(int i = 0; i < inputFiles.length; i++)
 	    {
 		environment.updateEnvironment(inputFiles[i]);
-		
+			System.out.println(inputFiles[i]);
 		ATerm term = `FileName(inputFiles[i]);
 		
 		// runs the modules
 		it = instances.iterator();
 		it.next(); // skips the server
+		TomPlugin plugin;
 		while(it.hasNext())
 		    {
-			TomPlugin plugin = (TomPlugin)it.next();
+			plugin = (TomPlugin)it.next();
 			plugin.setInput(term);
 			plugin.run();
 			term = plugin.getOutput();
 			
 			if( environment.hasError() )
+					environment.printAlertMessage(plugin.getClass().toString());
 			    return 1;
 		    }
 	    }
