@@ -33,7 +33,6 @@ import jtom.exception.TomRuntimeException;
 
 public class TomCamlGenerator extends TomImperativeGenerator {
 
-  protected String modifier = "";
   public TomCamlGenerator(OutputCode output) {
     super(output);
   }
