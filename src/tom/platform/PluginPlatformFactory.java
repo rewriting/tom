@@ -39,19 +39,26 @@ import tom.platform.*;
 public class PluginPlatformFactory {
 
   /** PluginPlatformFactory message ressource file name */
-  private final static String MESSAGERESOURCE = "tom.platform.PluginPlatformResources";
+  private final static String MESSAGE_RESOURCE = "tom.platform.PluginPlatformResources";
 
     /** Log radical string*/
-  public final static String LOGGERRADICAL = "tom.platform";
+  public final static String LOG_RADICAL = "tom.platform";
 
   /** The root logger */
-  private static Logger logger = Logger.getLogger(LOGGERRADICAL, MESSAGERESOURCE);
+  private static Logger logger = Logger.getLogger(LOG_RADICAL, MESSAGE_RESOURCE);
   
   /** the singleton instance*/
   private static PluginPlatformFactory instance = new PluginPlatformFactory();
 
   /** protection again instanciation */
-  private PluginPlatformFactory() {}
+  private PluginPlatformFactory() {
+    logger.setUseParentHandlers(false);
+    Handler consoleHandler = new ConsoleHandler();
+    consoleHandler.setLevel(Level.ALL);
+    // by default, print everything that the logger sends
+    consoleHandler.setFormatter(new BasicFormatter());
+    PluginPlatformFactory.logger.addHandler(consoleHandler);
+  }
   
   /** the singleton accessor*/
   public static PluginPlatformFactory getInstance() {

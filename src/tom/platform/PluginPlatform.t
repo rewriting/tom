@@ -65,9 +65,6 @@ public class PluginPlatform {
   /** The option manager */
   private OptionManager optionManager;
 	
-  /** The PluginPlatform logger */
-  private Logger logger;
-
   /** The status handler */
   private StatusHandler statusHandler;
 
@@ -77,14 +74,14 @@ public class PluginPlatform {
    * Class Pluginplatform constructor
    */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
+    statusHandler = new StatusHandler();
+    Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
+    
     pluginsList = confManager.getPluginsList();
     optionManager = confManager.getOptionManager();
-    statusHandler = new StatusHandler();
-    logger = Logger.getLogger(getClass().getName());
     inputToCompileList = optionManager.getInputToCompileList();
-    Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
   }
-
+  
   /**
    * The main method which runs the PluginPlatform.
    * 
@@ -99,18 +96,19 @@ public class PluginPlatform {
     for(int i = 0; i < inputToCompileList.size(); i++) {
       // for each input
       Object arg = inputToCompileList.get(i);
-      logger.log(Level.FINER, "NowCompiling", arg);
+      System.out.println("Compiling: "+arg);
+      getLogger().log(Level.FINER, "NowCompiling", arg);
       // runs the modules
       Iterator it = pluginsList.iterator();
       while(it.hasNext()) {
         Plugin plugin = (Plugin)it.next();
         plugin.setArg(arg);
         plugin.run();
-        arg = plugin.getArg();
         if(statusHandler.hasError()) {
-          logger.log(Level.SEVERE, "ProcessingError", arg);
+          getLogger().log(Level.SEVERE, "ProcessingError", arg);
           break;
         }
+        arg = plugin.getArg();
       }
     }
     
@@ -119,10 +117,10 @@ public class PluginPlatform {
 
     if(statusHandler.hasError()) {
       // this is the highest possible level > will be printed no matter what 
-      logger.log(Level.OFF, "TaskErrorMessage", new Object[]{new Integer(nbOfErrors), new Integer(nbOfWarnings)});
+      getLogger().log(Level.SEVERE, "TaskErrorMessage", new Object[]{new Integer(nbOfErrors), new Integer(nbOfWarnings)});
       return 1;
     } else if( statusHandler.hasWarning() ) {
-      logger.log(Level.OFF, "TaskWarningMessage", new Integer(nbOfWarnings));
+      getLogger().log(Level.INFO, "TaskWarningMessage", new Integer(nbOfWarnings));
       return 0;
     }
     return 0;
@@ -134,4 +132,9 @@ public class PluginPlatform {
    */
   public StatusHandler getStatusHandler() { return statusHandler; }
 
+  /** logger accessor in case of logging needs*/
+  private Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
+  }
+  
 } // class PluginPlatform

@@ -11,7 +11,6 @@ header{
   
   import java.lang.reflect.*;
   import java.io.*;
-  import java.text.*;
   import java.util.*;
   import java.util.logging.*;
 
@@ -233,14 +232,14 @@ options{
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
 		if(fileName.equals("")) {
-			String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"), new Object[]{new Integer(getLine()), currentFile});
+			String msg = TomMessage.getMessage("EmptyIncludedFile", new Object[]{new Integer(getLine()), currentFile});
       throw new TomIncludeException(msg);
 		}
     try {
       file = new File(fileName);
       if(file.isAbsolute()) {
         if (!file.exists()) {
-          String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine())});
+          String msg = TomMessage.getMessage("IncludedFileNotFound", new Object[]{fileName, new Integer(getLine())});
           throw new TomIncludeException(msg);
         }
       } else {
@@ -258,17 +257,14 @@ options{
             found = file.exists();
           }
           if(!found) {
-            String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
+            String msg = TomMessage.getMessage("IncludedFileNotFound", new Object[]{fileName, new Integer(getLine()), currentFile});
             throw new TomIncludeException(msg);
           }
         }
       }
       fileAbsoluteName = file.getAbsolutePath();
       if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
-        String msg = MessageFormat.format(
-                                          TomMessage.getString("IncludedFileCycle"), 
-                                          new Object[]{fileName, new Integer(getLine()), currentFile}
-                                          );
+        String msg = TomMessage.getMessage("IncludedFileCycle", new Object[]{fileName, new Integer(getLine()), currentFile});
         throw new TomIncludeException(msg);
       }
             
@@ -286,8 +282,6 @@ options{
                      );
         }
         return;
-        // 		    		String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
-        //         throw new TomIncludeException(msg);
       }
             
       parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet, getOptionManager());
@@ -298,18 +292,14 @@ options{
       if(e instanceof TomIncludeException) {
         throw (TomIncludeException)e;
       }
-      String msg = MessageFormat.format(
-                                        TomMessage.getString("ErrorWhileIncludindFile"), 
-                                        new Object[]{
-                                          e.getClass(), 
-                                          fileAbsoluteName, 
-                                          currentFile, 
-                                          new Integer(getLine()), 
-                                          e.getMessage()
-                                        }
-                                        );
-
-      throw new TomException(msg);
+      String msg = TomMessage.getMessage("ErrorWhileIncludindFile",
+                                         new Object[]{e.getClass(),
+                                                      fileAbsoluteName,
+                                                      currentFile,
+                                                      new Integer(getLine()),
+                                                      e.getMessage()
+                                         });
+    throw new TomException(msg);
     }
   }
 
@@ -499,14 +489,14 @@ signature [LinkedList list] throws TomException
     }
     
     catch (ClassNotFoundException e) {
-      throw new TomException(TomMessage.getString("VasClassNotFound"));
+      throw new TomException(TomMessage.getMessage("VasClassNotFound"));
     } catch (InvocationTargetException e) {
       System.out.println("vas problem " +e);
       System.out.println("vas problen cause " +e.getCause());
       System.out.println("vas problen target exception " +e.getTargetException());
-      throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
+      throw new TomException(TomMessage.getMessage("VasInvocationIssue", new Object[]{e.getMessage()}));
     } catch (Exception e) {
-      throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
+      throw new TomException(TomMessage.getMessage("VasInvocationIssue", new Object[]{e.getMessage()}));
     }
     
     // Check for errors
@@ -535,9 +525,9 @@ signature [LinkedList list] throws TomException
         throw new TomException("See next messages for details...");
       }
     } catch (ClassNotFoundException e) {
-      throw new TomException(TomMessage.getString("VasClassNotFound"));
+      throw new TomException(TomMessage.getMessage("VasClassNotFound"));
     } catch (Exception e) {
-      throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
+      throw new TomException(TomMessage.getMessage("VasInvocationIssue" , new Object[]{e.getMessage()}));
     }
     
     // Simulate the inclusion of generated Tom file
@@ -547,8 +537,8 @@ signature [LinkedList list] throws TomException
     try {
       fileName = file.getCanonicalPath();
     } catch (IOException e) {
-      throw new TomIncludeException(MessageFormat.format(TomMessage.getString("IOExceptionWithGeneratedTomFile"),
-                                                         new Object[]{fileName, currentFile, e.getMessage()}));
+      throw new TomIncludeException(TomMessage.getMessage("IOExceptionWithGeneratedTomFile",
+                                                          new Object[]{fileName, currentFile, e.getMessage()}));
     } 
     includeFile(fileName, list);
     

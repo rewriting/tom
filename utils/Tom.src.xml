@@ -101,7 +101,7 @@
 			  		   description="Generate debug primitives"
 			  		   value="false"/>
       <boolean name="memory" altName=""
-			  			 description="Add memory management while debugging (not correct with list matching)"
+			  			 description="Add memory management while debugging"
 			  			 value="false"/>
       <boolean name="eclipse" altName=""
 			  			 description="Sets Eclipse mode"

@@ -291,7 +291,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * Displays an help message indicating how to use the compiler.
    */
   private void displayHelp() {
-    String beginning = "usage :"
+    String beginning = "\nTom usage :"
 	    + "\n\ttom [options] input[.t] [... input[.t]]"
 	    + "\noptions :";
     StringBuffer buffer = new StringBuffer(beginning);
@@ -321,7 +321,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * Displays the current version of the TOM compiler.
    */
   public void displayVersion() {
-    System.out.println("jtom " + Tom.VERSION + "\n\n"
+    System.out.println("\njtom " + Tom.VERSION + "\n\n"
                        + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n");
   }
   
@@ -380,11 +380,11 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if( argument.equals("help") || argument.equals("h") ) {
             displayHelp();
-            return null;//System.exit(0);
+            return null;
           }
           if( argument.equals("version") || argument.equals("V") ) {
             displayVersion();
-            return null;//System.exit(0);
+            return null;
           }
           if( argument.equals("X") ) {
             // if we're here, the PluginPlatform has already handled the "-X" option
@@ -451,12 +451,12 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     setOptionValue("import",imports.toString());
     
     if(fileList.isEmpty()) {
-      displayVersion();
-      displayHelp();
       getLogger().log(Level.SEVERE, "NoFileToCompile");
+      displayHelp();
       return null;
     } else if(fileList.size() > 1 && outputEncountered) {
       getLogger().log(Level.SEVERE, "OutputWithMultipleCompilation");
+      displayHelp();
       return null;
     }
     
@@ -467,5 +467,5 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }
-
+  
 } // class TomOptionManager.t

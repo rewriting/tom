@@ -28,7 +28,7 @@ package jtom.tools;
 import java.util.logging.*;
 
 public class TomBasicFormatter extends Formatter {
-
+  
   public String format(LogRecord record) {
     Level level = record.getLevel();
     String levelString;
@@ -36,15 +36,11 @@ public class TomBasicFormatter extends Formatter {
     if(level.equals(Level.SEVERE)) { 
       // SEVERE logs are labelled as errors
       levelString = "ERROR:";
-    } else if(level.equals(Level.INFO) || level.equals(Level.OFF)) { 
-      // INFO logs are verbose messages : no label
-      // OFF logs are used to print messages no matter what : no label
-      levelString = "";
-     } else {
-       // use the Level's name: for WARNING,CONFIG,FINE,FINER,FINEST... 
-       levelString = level.toString() + ":";
-     }
-    return levelString+formatMessage(record) + "\n";
+    } else {
+      // use the Level's name: for WARNING,CONFIG,FINE,FINER,FINEST... 
+      levelString = level.toString()+ ":";
+    }
+    return levelString+formatMessage(record)+"\n";
   }
 
-}
+} // class TomBasicFormatter

@@ -57,6 +57,7 @@ public class TomStarter extends TomGenericPlugin {
     TomEnvironment env = TomEnvironment.getInstance();
     env.initializeFromOptionManager(getOptionManager());
     env.prepareForInputFile(fileName);
+    argToRelay = env.getInputFile().toString();
   }
 
   public Object getArg() {

@@ -40,13 +40,18 @@ public class Tom {
   public final static String VERSION = "2.1 source - Under development";
   
   /** Log radical string*/
-  public final static String LOGGERRADICAL = "jtom";
+  public final static String LOG_RADICAL = "jtom";
   
   /** Tom message ressource file name string*/
-  private final static String MESSAGERESOURCE = "jtom.TomMessageResources";
-    
+  private final static String MESSAGE_RESOURCE = "jtom.TomMessageResources";
+  
+  /** "java.util.logging.config.file" */
+  private final static String LOGGING_PROPERTY_FILE =
+    "java.util.logging.config.file";
+
   /** The root logger */
-  private static Logger logger = Logger.getLogger(LOGGERRADICAL, MESSAGERESOURCE);
+  private static Logger logger = Logger.getLogger(Tom.LOG_RADICAL,
+                                                  Tom.MESSAGE_RESOURCE);
   
   /** the console handler that level can be changed dynamically */
   private static Handler consoleHandler = null;
@@ -56,16 +61,17 @@ public class Tom {
   }
   
   public static int exec(String[] commandLine) {
-    System.out.println("Tom Compiler "+Tom.VERSION+" 2000-2004 tom.loria.fr");
+    System.out.println("Tom Compiler "+Tom.VERSION+" 2000-2004 tom.loria.fr\n");
     try {
       initializeLogging();
     } catch(Exception e) {
-      System.err.println("Error during the initialization of Tom: " + e.getMessage());
+      System.err.println(TomMessage.getMessage("LoggingInitializationFailure",
+                                               new Object[]{e.getMessage()}));
       e.printStackTrace();
       return 1;
     }
-    
-    PluginPlatform platform = PluginPlatformFactory.getInstance().create(commandLine, Tom.LOGGERRADICAL); 
+    PluginPlatform platform =
+      PluginPlatformFactory.getInstance().create(commandLine, Tom.LOG_RADICAL); 
     if(platform == null) {
       return 1;
     }
@@ -98,12 +104,10 @@ public class Tom {
     }
   }
  
-  private static void initializeLogging() throws IOException,
-                                                 InstantiationException,
-                                                 ClassNotFoundException,
-                                                 IllegalAccessException {
-    String loggingConfigFile =
-      System.getProperty("java.util.logging.config.file");
+  private static void initializeLogging()
+    throws IOException, InstantiationException, ClassNotFoundException,
+           IllegalAccessException {
+    String loggingConfigFile=System.getProperty(LOGGING_PROPERTY_FILE);
     if (loggingConfigFile == null) { // default > no custom file is used
       // create a configuration equivalent to normalLog.properties file
       initTomRootLogger(false);
@@ -114,7 +118,7 @@ public class Tom {
       consoleHandler.setFormatter(new TomBasicFormatter());
       logger.addHandler(consoleHandler);
     } else { // custom configuration file for LogManager is used
-      //LogManager.getLogManager().readConfiguration();
+      LogManager.getLogManager().readConfiguration();
       initTomRootLogger(true);
       refreshTopLoggerHandlers();
     }
@@ -126,7 +130,6 @@ public class Tom {
    * especially for multiple invication in the same VM
    */
   private static void initTomRootLogger(boolean useParentHandler) {
-    //logger = Logger.getLogger(Tom.LOGGERRADICAL, Tom.MESSAGERESOURCE);
     logger.setUseParentHandlers(useParentHandler);
     Handler[] handlers = logger.getHandlers();
     for(int i = 0; i < handlers.length; i++) {
@@ -137,10 +140,9 @@ public class Tom {
     */
   }
   
-  private static void refreshTopLoggerHandlers() throws InstantiationException,
-                                                        ClassNotFoundException,
-                                                        IllegalAccessException
-  {
+  private static void refreshTopLoggerHandlers()
+    throws InstantiationException, ClassNotFoundException,
+           IllegalAccessException {
     Handler[] handlers = Logger.getLogger("").getHandlers();
     for(int i = 0; i < handlers.length; i++) {
       /*
@@ -164,7 +166,6 @@ public class Tom {
       } else if( handlers[i] instanceof StreamHandler ) {
         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.StreamHandler.formatter")).newInstance());
       }
-      //System.out.println("Handler "+handlers[i]+" has formatter "+handlers[i].getFormatter());    
     }
   }
 

@@ -172,19 +172,19 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
       int nbOfWarnings = statusHandler.nbOfWarnings() - warningsAtStart;
 
       if( nbOfErrors > 0 ) {
-        getLogger().log( Level.OFF, "TaskErrorMessage",
+        getLogger().log( Level.SEVERE, "TaskErrorMessage",
                     new Object[]{ pluginName, 
                                   new Integer(nbOfErrors), 
                                   new Integer(nbOfWarnings) } );
       } else if( nbOfWarnings > 0 ) {
-        getLogger().log( Level.OFF, "TaskWarningMessage",
+        getLogger().log( Level.INFO, "TaskWarningMessage",
                     new Object[]{ pluginName, new Integer(nbOfWarnings) } );
       }
     }
   }
 
   private void findStatusHandler() {
-    Handler[] handlers = Logger.getLogger(Tom.LOGGERRADICAL).getHandlers();
+    Handler[] handlers = Logger.getLogger(Tom.LOG_RADICAL).getHandlers();
     for(int i=0;i<handlers.length;i++) {
       if(handlers[i] instanceof StatusHandler) {
         statusHandler = (StatusHandler)handlers[i];

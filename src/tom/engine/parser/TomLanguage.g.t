@@ -1221,11 +1221,9 @@ operator returns [Declaration result] throws TomException
 
                     if (!stringSlotName.equals("")) {
                         if(slotNameList.indexOf(astName) != -1) {
-                            String detailedMsg = MessageFormat.format(TomMessage.getString("RepeatedSlotName"), new Object[]{stringSlotName});
-                            String msg = MessageFormat.format(
-                                TomMessage.getString("MainErrorMessage"), 
-                                new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg}
-                            );
+                            String detailedMsg = TomMessage.getMessage("RepeatedSlotName", new Object[]{stringSlotName});
+                            String msg = TomMessage.getMessage("MainErrorMessage", 
+                                                               new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg});
                             throw new TomException(msg);
                         }
                     }
@@ -1252,13 +1250,12 @@ operator returns [Declaration result] throws TomException
                     mapNameDecl.put(sName,attribute);
                 }
                 else {
-		    logger.log( Level.WARNING,
-				"WarningTwoSameSlotDecl",
-				new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
-					     "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} );
+                  logger.log( Level.WARNING, "WarningTwoSameSlotDecl",
+                              new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
+                                           "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} );
                 }
             }
-
+        
         |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(attribute); }
         )*
