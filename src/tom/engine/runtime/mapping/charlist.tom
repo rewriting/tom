@@ -2,24 +2,15 @@
   implement           { String }
   get_fun_sym(t)      { t }
   cmp_fun_sym(s1,s2)  { (s1.equals(s2)) }
-/*  get_subterm(t, n)   { null } */
   equals(t1,t2)       { (t1.equals(t2)) }
-  get_head(s)         { s.charAt(0) }
+  get_head(s)         { new Character(s.charAt(0)) }
   get_tail(s)         { s.substring(1) }
-  is_empty(s)         { s.length() }
+  is_empty(s)         { (s.length()==0) }
 }
 
-/*
-%typeterm Char {
-  implement           { char }
-  get_fun_sym(t)      { t }
-  cmp_fun_sym(s1,s2)  { (s1.equals(s2)) }
-  get_subterm(t, n)   { null }
-  equals(t1,t2)       { (t1.equals(t2)) }
-}
-*/
+%include {char.tom}
 
-%oplist String concChar(char*) {
+%oplist String concChar(Char*) {
   fsym             { null }
   is_fsym(t)       { (t!= null) && (t instanceof String) }
   make_empty()     { "" }
