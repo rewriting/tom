@@ -10,7 +10,7 @@
 
 %include {char.tom}
 
-%oplist String concChar(Char*) {
+%oplist String concCharacter(Character*) {
   fsym             { null }
   is_fsym(t)       { (t!= null) && (t instanceof String) }
   make_empty()     { "" }
