@@ -245,6 +245,12 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      AddOne(exp) -> {
+        buildAddOne(deep, `exp);
+        return;
+      }
+
+
       GetSize(exp) -> {
         buildExpGetSize(deep, getTermType(`exp), `exp);
         return;
@@ -380,11 +386,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       WhileDo(exp,succes) -> {
         `buildWhileDo(deep, exp, succes);
-        return;
-      }
-
-      Increment(var@Variable[]) -> {
-        `buildIncrement(deep, var);
         return;
       }
 
@@ -694,7 +695,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException;
-  protected abstract void buildIncrement(int deep, TomTerm var) throws IOException;
+  protected abstract void buildAddOne(int deep, TomTerm var) throws IOException;
   protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName) throws IOException ;
   protected abstract void buildGetFunctionSymbolDecl(int deep, String type, String name,

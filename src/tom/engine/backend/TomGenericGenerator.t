@@ -228,13 +228,10 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
     output.write(")");
   }
 
-  protected void buildIncrement(int deep, TomTerm var) throws IOException {
+  protected void buildAddOne(int deep, TomTerm var) throws IOException {
     generate(deep,var);
-    output.write(" = ");
-    generate(deep,var);
-    output.writeln(" + 1;");
+    output.write(" + 1");
   }
-
 
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
 TomType tlType, TargetLanguage tlCode) throws IOException {

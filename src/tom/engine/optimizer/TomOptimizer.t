@@ -264,6 +264,8 @@ public class TomOptimizer extends TomTask {
     final List list = new ArrayList();
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
+
+            //System.out.println("isAssigned(" + variableName + "): " + t);
           if(t instanceof Instruction) {
             %match(Instruction t) { 
               Assign[variable=(Variable|VariableStar)[astName=name]] -> {
@@ -276,13 +278,6 @@ public class TomOptimizer extends TomTask {
               LetAssign[variable=(Variable|VariableStar)[astName=name]] -> {
                 if(variableName == name) {
                   list.add(t);
-                  return false;
-                }
-              }
-
-              Increment((Variable|VariableStar)[astName=name])  -> {
-                if(variableName == name) {
-                  list.add(name);
                   return false;
                 }
               }
@@ -304,11 +299,17 @@ public class TomOptimizer extends TomTask {
     HashSet c = new HashSet();
     collectRefVariable(c,exp);
     Iterator it = c.iterator();
+
+      //System.out.println("exp  = " + exp);
+      //System.out.println("body = " + body);
     while(res && it.hasNext()) {
       TomName name = (TomName) it.next();
         //List list = computeOccurences(name,body);
         //res = res && (list.size()==0);
+        //System.out.println("Ref variable: " + name);
       res = res && !isAssigned(name,body);
+        //System.out.println(" assign = " + !res);
+
     }
     return res; 
   }

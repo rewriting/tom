@@ -407,7 +407,7 @@ public class TomKernelCompiler extends TomBase {
                *   subjectList = end_i;
                * } while( !IS_EMPTY_TomList(end_i) )
                */
-            Instruction assign1 = `genIsEmptyList(variableEndAST,Nop(),tailExp);
+            Instruction assign1 = `genIsEmptyList(Ref(variableEndAST),Nop(),tailExp);
             Instruction assign2 = `Assign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)));
             loop = `DoWhile(UnamedBlock(concInstruction(let,assign1,assign2)),Not(IsEmptyList(Ref(variableEndAST))));
           } else {
@@ -585,8 +585,7 @@ public class TomKernelCompiler extends TomBase {
                                              Ref(variableEndAST));
 
           Instruction let = buildLet(var, source, subAction);
-          Instruction increment = `Increment(variableEndAST);
-          Instruction assign = `Assign(p.subjectListIndex,TomTermToExpression(variableEndAST));
+          Instruction increment = `Assign(variableEndAST,AddOne(Ref(variableEndAST)));
           Instruction loop;
           if(containOnlyVariableStar(termTail)) {
             /*
@@ -598,11 +597,13 @@ public class TomKernelCompiler extends TomBase {
              *   subjectIndex = end_i;
              * } while( !IS_EMPTY_TomList(subjectList) )
              */
+            Instruction assign = `Assign(p.subjectListIndex,TomTermToExpression(Ref(variableEndAST)));
+            
             loop = `DoWhile(UnamedBlock(concInstruction(let,increment,assign)),
                             Not(IsEmptyArray(Ref(p.subjectListName), Ref(p.subjectListIndex))));
           } else {
             /*
-             * while( !IS_EMPTY_TomList(subjectList) ) {
+             * while( !IS_EMPTY_TomList(end_isubjectList) ) {
              *   * SUBSTITUTION: E_i
              *   TomList E_i = GET_SLICE_TomList(subjectList,begin_i,end_i);
              *   ...
@@ -610,18 +611,18 @@ public class TomKernelCompiler extends TomBase {
              *   subjectIndex = end_i;
              * } 
              */
-            loop = `WhileDo(Not(IsEmptyArray(Ref(p.subjectListName), Ref(p.subjectListIndex))),
-                            UnamedBlock(concInstruction(let,increment,assign)));
+            Instruction letAssign = `LetAssign(p.subjectListIndex,TomTermToExpression(Ref(variableEndAST)),UnamedBlock(concInstruction(let,increment)));
+            loop = `WhileDo(Not(IsEmptyArray(Ref(p.subjectListName), Ref(variableEndAST))),
+                            letAssign);
             
           }
-          Instruction letBegin = `Let(variableBeginAST,
-                                      //TomTermToExpression(Ref(p.subjectListIndex)),
-                                      TomTermToExpression(variableEndAST),
-                                      loop);
           Instruction letEnd = `LetRef(variableEndAST,
                                        TomTermToExpression(Ref(p.subjectListIndex)),
-                                       letBegin);
-          return letEnd;
+                                       loop);
+          Instruction letBegin = `Let(variableBeginAST,
+                                      TomTermToExpression(Ref(p.subjectListIndex)),
+                                      letEnd);
+          return letBegin;
         }
       }
 
@@ -662,7 +663,7 @@ public class TomKernelCompiler extends TomBase {
        *   ...
        * }
        */
-    Instruction body = `UnamedBlock(concInstruction(Increment(subjectListIndex),subAction));
+    Instruction body = `LetAssign(subjectListIndex,AddOne(Ref(subjectListIndex)),subAction);
     Expression source = `GetElement(termType,subjectListName,subjectListIndex);
     Instruction let = buildLet(var, source, body);
     if(notEmptyList) {
