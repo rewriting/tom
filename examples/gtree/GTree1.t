@@ -20,7 +20,7 @@ public class GTree1 {
   }
 
   public void run(int n) {
-    Tree query = `supT(node(nil,3,nil),ackT(node(nil,2,nil)));
+    Tree query = `supT(node(nil,3,nil),ackT(node(nil,5,nil)));
     long startChrono = System.currentTimeMillis();
     Tree res         = eval(query);
     long stopChrono  = System.currentTimeMillis();
@@ -33,15 +33,15 @@ public class GTree1 {
     %match(Tree tree) {
       supT(ackT(t1),ackT(t2)) -> { return `eval(ackT(eval(supT(t1,t2)))); }
 
-      supT(nil,x) -> { return x; }
-      supT(x,nil) -> { return x; }
+      supT(nil(),x) -> { return x; }
+      supT(x,nil()) -> { return x; }
 
       supT(node(l1,root1,r1),node(l2,root2,r2)) -> {
         int max = (root1>root2)?root1:root2;
         return `node(eval(supT(l1,l2)),max,eval(supT(r1,r2)));
       }
 
-      ackT(x@nil) -> { return x; }
+      ackT(x@nil()) -> { return x; }
       ackT(node(l1,root1,r1)) -> {
         return `node(eval(ackT(l1)),ack(2,root1),eval(ackT(r1)));
       }

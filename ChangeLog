@@ -1,3 +1,15 @@
+2003-11-18    <pem@bach>
+
+	* compilation of symbol disjunctions
+	  - plain term
+	  - xml term
+	* disjunctions are restricted to symbols with identical signatures
+
+2003-11-16    <pem@bach>
+
+	* src/jtom/parser/TomParser.jj: 
+	  added disjunction of HeadSymbol
+
 2003-11-07    <pem@bach>
 
 	* bootinstall
