@@ -26,7 +26,10 @@
 
 package jtom.verifier;
 
+import aterm.*;
+import java.util.*;
 import jtom.tools.*;
+import jtom.runtime.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.TomMessage;
 
@@ -52,12 +55,16 @@ public class TomVerifierExtract extends TomTask {
         // I may use my own datatype
       TomTerm extractTerm = `emptyTerm();
         // here the extraction stuff
-      
-      
-      if(verbose) {
+      Collection matchSet = collectMatch(environment().getTerm());
+			// System.out.println("Extracted : " + matchSet);
+
+			Collection purified = purify(matchSet);
+			System.out.println("Purified : " + purified);
+			
+			if(verbose) {
         System.out.println("TOM Verifier first extraction phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
-        // put extrated data in a file
+			// put extrated data in a file
       Tools.generateOutput(
 			getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.verifExtractionSuffix, 
         extractTerm);
@@ -69,5 +76,55 @@ public class TomVerifierExtract extends TomTask {
       return;
     }
   }
-  
+
+  private Collect2 collect_match = new Collect2() {
+			public boolean apply(ATerm subject, Object astore) {
+				Collection store = (Collection)astore;
+				if (subject instanceof Instruction) {
+					%match(Instruction subject) {
+            CompiledPattern(pattern, automata)  -> {
+							store.add(subject);
+						}
+
+						// default rule
+						_ -> {
+							return true;
+						}
+					}//end match
+				} else { 
+					return true;
+				}
+			}//end apply
+		}; //end new
+
+	public Collection collectMatch(TomTerm subject) {
+		Collection result = new HashSet();
+		traversal().genericCollect(subject,collect_match,result);
+		//collect_matching.apply(subject, result);
+		return result;
+	}
+
+	public Collection purify(Collection subject) {
+		Collection purified = new HashSet();
+		Iterator it = subject.iterator();
+		while (it.hasNext()) {
+			Instruction cp = (Instruction)it.next();
+			%match(Instruction cp) {
+				CompiledPattern(patternList, automata)  -> {
+					%match(TomList patternList) {
+						(_*,pattern,_*) -> {
+							Instruction ilcode = extractCorrespondingIL(pattern, automata);
+							purified.add(`CompiledPattern(concTomTerm(pattern),ilcode));
+						}
+					}
+				}
+			}
+		}
+		return purified;
+	}
+
+	public Instruction extractCorrespondingIL(TomTerm pattern, Instruction automata) {
+		return automata;
+	}
+
 }
