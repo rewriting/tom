@@ -10,7 +10,11 @@
 	<property name="examples.dist" location="dist"/>
 
 	<!-- Examples to build and distribute -->
-	<property name="adressbook.dir" location="${examples.dir}/AddressBook" />
+	<property name="addressbook" value="AddressBook"/>
+	<property name="addressbook.dir" location="${examples.dir}/${addressbook}" />
+
+	<property name="boulderdash" value="BoulderDash"/>
+	<property name="boulderdash.dir" location="${examples.dir}/${boulderdash}" />
 
 	<!-- Define classpath for building stable and source	-->
 	<path id="tom.classpath">
@@ -52,34 +56,66 @@
 
 	<target name="addressbook">
 		<!-- build adt -->
-		<adt file="${adressbook.dir}/data.adt" 
+		<adt file="${addressbook.dir}/data.adt" 
 				 factory="data" 
 				 package="adt.address" 
-				 destdir="${adressbook.dir}"/>
+				 destdir="${addressbook.dir}"/>
 		<!-- build tom -->
-		<tom srcdir="${adressbook.dir}" 
-				 destdir="${adressbook.dir}" 
+		<tom srcdir="${addressbook.dir}" 
+				 destdir="${addressbook.dir}" 
 				 options="-I ${env.TOM_HOME}/share/jtom">
 			<include name="**/*.t"/>
 		</tom>
 		<!-- build java source -->
-		<javac srcdir="${adressbook.dir}" destdir="${adressbook.dir}">
+		<javac srcdir="${addressbook.dir}" destdir="${addressbook.dir}">
+			<classpath refid="tom.classpath"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
+
+	<target name="boulderdash">
+		<!-- build adt -->
+		<adt file="${boulderdash.dir}/boulder.adt" 
+				 factory="boulder" 
+				 package="adt.boulder" 
+				 destdir="${boulderdash.dir}"/>
+		<!-- build tom -->
+		<tom srcdir="${boulderdash.dir}" 
+				 destdir="${boulderdash.dir}" 
+				 options="-I ${env.TOM_HOME}/share/jtom">
+			<include name="**/*.t"/>
+		</tom>
+		<!-- build java source -->
+		<javac srcdir="${boulderdash.dir}" destdir="${boulderdash.dir}">
 			<classpath refid="tom.classpath"/>
 			<include name="**/*.java"/>
 		</javac>
 	</target>
 	
+	
 	<target name="build.examples" 
 					description="Builds the examples (at least some)"
-					depends="addressbook">
+					depends="addressbook, boulderdash">
 	</target>
 	
 	<target name="dist.examples" description="Prepare a
 		distribution of examples" depends="prepare.examples">
 		<tar tarfile="${examples.dist}/jtom-examples.tar">
 			<tarfileset dir="${examples.dir}">
-				<include name="AddressBook/*.t"/>
-				<include name="AddressBook/*.adt"/>
+				<include name="${addressbook}/*.t"/>
+				<include name="${addressbook}/*.adt"/>
+
+				<include name="${boulderdash}/*.t"/>
+				<include name="${boulderdash}/*.adt"/>
+				<include name="${boulderdash}/*.java"/>
+				<not>
+					<present targetdir="${examples.dir}">
+						<mapper type="glob" 
+										from="${boulderdash}/*.java" 
+										to="${boulderdash}/*.t"/>
+					</present>
+				</not>
+
 			</tarfileset>
 		</tar>
 		<gzip zipfile="${examples.dist}/jtom-examples.tar.gz" src="${examples.dist}/jtom-examples.tar"/>
