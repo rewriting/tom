@@ -118,11 +118,11 @@ public class TomExpander extends TomBase implements TomTask {
                 return t;
               }
 
-              RecordAppl(option,Name(tomName),args) -> {
+              RecordAppl(option,(Name(tomName)),args) -> {
                 return expandRecordAppl(option,tomName,args);
               }
 
-              XMLAppl(optionList, Name(tomName), list1, list2) -> {
+              XMLAppl(optionList, (Name(tomName)), list1, list2) -> {
                 return expandXMLAppl(optionList, tomName, list1, list2);
               }
               
@@ -173,7 +173,7 @@ public class TomExpander extends TomBase implements TomTask {
       slotList = slotList.getTail();
     }
     
-    return `Appl(option,Name(tomName),subtermList);
+    return `Appl(option,concTomName(Name(tomName)),subtermList);
   }
 
   protected TomTerm expandBackQuoteAppl(TomTerm t) {
@@ -214,14 +214,14 @@ public class TomExpander extends TomBase implements TomTask {
       concTomTerm() -> { return attrList; }
       concTomTerm(X1*,e1,X2*,e2,X3*) -> {
         %match(TomTerm e1, TomTerm e2) {
-          Appl[args=manyTomList(Appl[astName=Name(name1)],_)],
-          Appl[args=manyTomList(Appl[astName=Name(name2)],_)] -> {
+          Appl[args=manyTomList(Appl[nameList=(Name(name1))],_)],
+          Appl[args=manyTomList(Appl[nameList=(Name(name2))],_)] -> {
             if(name1.compareTo(name2) >= 0) {
               return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
             }
           }
-          BackQuoteAppl[args=manyTomList(Appl[astName=Name(name1)],_)],
-          BackQuoteAppl[args=manyTomList(Appl[astName=Name(name2)],_)] -> {
+          BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name1))],_)],
+          BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name2))],_)] -> {
             if(name1.compareTo(name2) >= 0) {
               return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
             }
@@ -291,10 +291,10 @@ public class TomExpander extends TomBase implements TomTask {
     tomName = tomFactory.encodeXMLString(symbolTable(),tomName);
     
     TomList newArgs = `concTomTerm(
-      Appl(convertOriginTracking(tomName,optionList),Name(tomName),empty()),
-      Appl(convertOriginTracking("CONC_TNODE",optionList),Name(Constants.CONC_TNODE), newAttrList),
-      Appl(convertOriginTracking("CONC_TNODE",optionList),Name(Constants.CONC_TNODE), newChildList));
-    TomTerm result = `Appl(optionList,Name(Constants.ELEMENT_NODE),newArgs);
+      Appl(convertOriginTracking(tomName,optionList),concTomName(Name(tomName)),empty()),
+      Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList),
+      Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList));
+    TomTerm result = `Appl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs);
       //System.out.println("expand:\n" + result);
     return result;
    
@@ -505,8 +505,8 @@ public class TomExpander extends TomBase implements TomTask {
         return `RuleSet(newRuleList,orgTrack);
       }
         
-      Tom(varList), MatchingCondition[lhs=lhs@Appl[astName=Name(lhsName)],
-                                      rhs=rhs@Appl[astName=Name(rhsName)]] -> {
+      Tom(varList), MatchingCondition[lhs=lhs@Appl[nameList=(Name(lhsName))],
+                                      rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
         TomSymbol lhsSymbol = getSymbol(lhsName);
         TomSymbol rhsSymbol = getSymbol(rhsName);
         TomType type;
@@ -526,8 +526,8 @@ public class TomExpander extends TomBase implements TomTask {
         return `MatchingCondition(newLhs,newRhs);
       }
       
-      Tom(varList), EqualityCondition[lhs=lhs@Appl[astName=Name(lhsName)],
-                                      rhs=rhs@Appl[astName=Name(rhsName)]] -> {
+      Tom(varList), EqualityCondition[lhs=lhs@Appl[nameList=(Name(lhsName))],
+                                      rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
         TomSymbol lhsSymbol = getSymbol(lhsName);
         TomSymbol rhsSymbol = getSymbol(rhsName);
         TomType type;
@@ -564,7 +564,7 @@ public class TomExpander extends TomBase implements TomTask {
       
     %match(TomTerm contextSubject, TomRule subject) {
 
-      context, RewriteRule(Term(lhs@Appl(optionList,Name(tomName),l)),
+      context, RewriteRule(Term(lhs@Appl(optionList,(Name(tomName)),_)),
                            Term(rhs),
                            condList,
                            option) -> { 

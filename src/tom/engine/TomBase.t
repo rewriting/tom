@@ -257,7 +257,8 @@ public class TomBase {
   protected TomType getTermType(TomTerm t){
       //%variable
     %match(TomTerm t) {
-      Appl(option, Name(tomName),subterms) -> {
+    	// TODO: Need an index for Appl
+      Appl(option, (Name(tomName)),subterms) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         return tomSymbol.getTypesToType().getCodomain();
       }

@@ -72,7 +72,7 @@ abstract class TomChecker extends TomBase implements TomTask {
   private int nullInteger = -1;
   private List errorMessage = new ArrayList();
 	private ArrayList alreadyStudiedSymbol =  new ArrayList();
-	private ArrayList alreadyStudiedType =  new ArrayList();  
+	private ArrayList alreadyStudiedType =  new ArrayList(); 
   private final static int APPL = 0;
 	private final static int RECORD_APPL = 1;
 	private final static int XML_APPL = 2;
@@ -130,13 +130,13 @@ abstract class TomChecker extends TomBase implements TomTask {
 							backquote@BackQuoteAppl[] -> { 
 								permissiveVerify(backquote); return false; 
 							}
-              Appl(options,Name(name),args) -> { 
+              Appl(options,(Name(name)),args) -> { 
               	verifyApplStructure(options, name, args); return true; 
               }
-              RecordAppl(options,Name(name),args) ->{
+              RecordAppl(options,(Name(name)),args) ->{
                 verifyRecordStructure(options, name, args); return true;
               }
-							XMLAppl(options,Name(name), list1, list2) ->{
+							XMLAppl(options,(Name(name)), list1, list2) ->{
 								verifyXMLApplStructure(options, name, list1, list2); return true;
 							}
               _ -> { return true; }
@@ -443,11 +443,10 @@ abstract class TomChecker extends TomBase implements TomTask {
 				typeMatchArgs.add(type);				
 			}
 		}	
-		int nbExpectedArgs = typeMatchArgs.size();
 		// Then control each pattern vs the match definition
 		%match(TomList patternList) {
 			concTomTerm(_*, PatternAction[termList=TermList(terms)], _*) -> {
-				verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
+				verifyMatchPattern(terms, typeMatchArgs);
 			}
 		}
   }
@@ -455,15 +454,16 @@ abstract class TomChecker extends TomBase implements TomTask {
     // For each Pattern we count and collect type information
     // but also we test that terms are well formed
     // No top variable star are allowed
-  private void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs, int nbExpectedArgs) {
+  private void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs ) {
     ArrayList foundTypeMatch = new ArrayList();
     int line = nullInteger;
     int nbFoundArgs = 0;
+		int nbExpectedArgs = typeMatchArgs.size();
     
 		%match(TomList termList) {
 			concTomTerm(_*, term, _*) -> {
 				line = findOriginTrackingLine(term.getOption());
-                                ensureOriginTrackingLine(line);
+        ensureOriginTrackingLine(line);
 				nbFoundArgs++;
 				if(nbFoundArgs > nbExpectedArgs) {
 					messageMatchErrorNumberArgument(nbExpectedArgs, nbFoundArgs, line);
@@ -536,8 +536,8 @@ abstract class TomChecker extends TomBase implements TomTask {
 		OptionList options = null;
 
 		%match(TomTerm lhs) {
-			Appl[option=optionList, astName=Name(name)] |
-			RecordAppl[option=optionList, astName=Name(name)] -> {
+			Appl[option=optionList, nameList=(Name(name))] |
+			RecordAppl[option=optionList, nameList=(Name(name))] -> {
 				checkSyntax(lhs);
 					/* lhs outermost symbol shall have a corresponding make */
 				TomSymbol symb = getSymbol(name);
@@ -623,7 +623,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 	private void verifyRhsRuleStructure(TomTerm ruleRhs, TomType lhsType) {
 		matchBlock: {
 			%match(TomTerm ruleRhs) {
-				appl@Appl(options,Name(name),args) -> {
+				appl@Appl(options,(Name(name)),args) -> {
 					permissiveVerify(appl);
 					TomType rhsType = getSymbolCodomain(getSymbol(name));
 					if(rhsType != null) {
@@ -642,8 +642,8 @@ abstract class TomChecker extends TomBase implements TomTask {
 					messageRuleErrorRhsImpossibleVarStar(option, name);
 					break matchBlock;
 				}
-				RecordAppl(option, Name(tomName), _) -> {
-					messageRuleErrorRhsImpossibleRecord(option, tomName);
+				RecordAppl[option=option, nameList=(Name(name))] -> {
+					messageRuleErrorRhsImpossibleRecord(option, name);
 					break matchBlock;
 				}
 				XMLAppl[option=optionList] -> {
@@ -897,11 +897,11 @@ abstract class TomChecker extends TomBase implements TomTask {
 								 permissiveVerifyApplStructure(options, name, args);
 								 return true;
 							 }
-							 Appl(options,Name(name),args) -> {
+							 Appl(options,(Name(name)),args) -> {
 								 permissiveVerifyApplStructure(options, name, args);
 								 return true;
 							 }
-							 RecordAppl[option=options, astName=Name(name)] ->{
+							 RecordAppl[option=options, nameList=(Name(name))] ->{
 								 messageRuleErrorRhsImpossibleRecord(options, name);
 								 return true;
 							 }
@@ -1058,10 +1058,10 @@ abstract class TomChecker extends TomBase implements TomTask {
 				Term(Variable[astName=Name(name)]) -> {
 					String methodName = "";
 					%match(TomTerm lhs) {
-						Term(Appl[astName=Name(name1)]) -> {
+						Term(Appl[nameList=(Name(name1))]) -> {
 							methodName = name1;
 						}
-						Term(RecordAppl[astName=Name(name1)]) -> {
+						Term(RecordAppl[nameList=(Name(name1))]) -> {
 							methodName = name1;
 						}
 					}
@@ -1170,14 +1170,14 @@ abstract class TomChecker extends TomBase implements TomTask {
     int termClass, decLine;
     matchblock:{
       %match(TomTerm term) {
-        Appl[option=options, astName=Name(name)] -> {
+        Appl[option=options, nameList=(Name(name))] -> {
           termClass = APPL;
           decLine = findOriginTrackingLine(options);
           type = extractType(getSymbol(name));     
           termName = name;
           break matchblock;
         }
-        RecordAppl[option=options,astName=Name(name)] ->{
+        RecordAppl[option=options,nameList=(Name(name))] ->{
           termClass = RECORD_APPL;
           decLine = findOriginTrackingLine(options);
           type = extractType(getSymbol(name));     

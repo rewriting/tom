@@ -127,7 +127,7 @@ public class TomCompiler extends TomBase implements TomTask {
       }
       
       RuleSet(ruleList@manyTomRuleList(
-                RewriteRule[lhs=Term(Appl[astName=Name(tomName)])],tail), orgTrack) -> {
+                RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],tail), orgTrack) -> {
         if(debugMode) {
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
         }
@@ -414,7 +414,7 @@ public class TomCompiler extends TomBase implements TomTask {
         return renamedTerm;
       }
       
-      Appl[option=optionList, astName=name, args=args] -> {
+      Appl[option=optionList, nameList=(name), args=args] -> {
         TomList newArgs = empty();
         while(!args.isEmpty()) {
           TomTerm elt = args.getHead();
@@ -423,7 +423,7 @@ public class TomCompiler extends TomBase implements TomTask {
           args = args.getTail();
         }
         OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-        renamedTerm = `Appl(newOptionList,name,newArgs);
+        renamedTerm = `Appl(newOptionList,concTomName(name),newArgs);
         return renamedTerm;
       }
     }
@@ -489,7 +489,7 @@ public class TomCompiler extends TomBase implements TomTask {
                                   ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(TomTerm subject) {
-      Appl[option=option, astName=name@Name(tomName), args=args] -> {
+      Appl[option=option, nameList=(name@Name(tomName)), args=args] -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         
         TomList newArgs = empty();
@@ -498,7 +498,7 @@ public class TomCompiler extends TomBase implements TomTask {
             TomTerm elt = args.getHead();
             TomTerm newElt = elt;
             %match(TomTerm elt) {
-              appl@Appl[astName=Name(tomName2)] -> {
+              appl@Appl[nameList=(Name(tomName2))] -> {
                   //System.out.println("Abstract: " + appl);
                 TomSymbol tomSymbol2 = symbolTable().getSymbol(tomName2);
                 TomType type2 = tomSymbol2.getTypesToType().getCodomain();
@@ -523,7 +523,7 @@ public class TomCompiler extends TomBase implements TomTask {
         } else {
           newArgs = abstractPatternList(args,abstractedPattern,introducedVariable);
         }
-        abstractedTerm = `Appl(option,name,newArgs);
+        abstractedTerm = `Appl(option,concTomName(name),newArgs);
       }
     } // end match
     return abstractedTerm;

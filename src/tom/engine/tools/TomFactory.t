@@ -65,7 +65,7 @@ public class TomFactory extends TomBase {
        * Appl(...,Name("\"string\""),...)
        */
     %match(TomTerm term) {
-      Appl[astName=Name(name)] -> {
+      Appl[nameList=(Name(name))] -> {
         String tomName = encodeXMLString(symbolTable,name);
         term = term.setAstName(`Name(tomName));
           //System.out.println("encodeXMLAppl = " + term);
@@ -82,14 +82,14 @@ public class TomFactory extends TomBase {
        */
       //System.out.println("metaEncode: " + term);
     %match(TomTerm term) {
-      Appl[astName=Name(tomName)] -> {
+      Appl[nameList=(Name(tomName))] -> {
           //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbol(tomName);
         if(tomSymbol != null) {
           if(isStringOperator(tomSymbol)) {
             Option info = ast().makeOriginTracking(Constants.TEXT_NODE,"-1","??");
             term = `Appl( ast().makeOption(info),
-                          Name(Constants.TEXT_NODE),concTomTerm(term));
+                          concTomName(Name(Constants.TEXT_NODE)),concTomTerm(term));
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
@@ -102,7 +102,7 @@ public class TomFactory extends TomBase {
     if(childs.size() == 1) {
       TomTerm term = (TomTerm) childs.getFirst();
       %match(TomTerm term) {
-        Appl[astName=Name(""),args=args] -> {
+        Appl[nameList=(Name("")),args=args] -> {
           return true;
         }
       }
@@ -113,7 +113,7 @@ public class TomFactory extends TomBase {
   public LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
     %match(TomTerm term) {
-      Appl[astName=Name(""),args=args] -> {
+      Appl[nameList=(Name("")),args=args] -> {
         while(!args.isEmpty()) {
           list.add(metaEncodeXMLAppl(symbolTable,args.getHead()));
           args = args.getTail();

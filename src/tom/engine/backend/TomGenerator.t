@@ -33,22 +33,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import jtom.TomBase;
-import jtom.adt.Declaration;
-import jtom.adt.Expression;
-import jtom.adt.Instruction;
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.Position;
-import jtom.adt.SlotList;
-import jtom.adt.TargetLanguage;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomNumber;
-import jtom.adt.TomNumberList;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomType;
-import jtom.adt.TomTypeList;
+import jtom.adt.*;
+
 import jtom.tools.TomTask;
 import jtom.tools.OutputCode;
 import jtom.tools.SingleLineOutputCode;
@@ -511,7 +497,7 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
-      EqualFunctionSymbol(var@Variable[astType=type1],Appl(option,Name(tomName),l)) -> {
+      EqualFunctionSymbol(var@Variable[astType=type1],Appl(option,(Name(tomName)),l)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomName termNameAST = tomSymbol.getAstName();
         OptionList termOptionList = tomSymbol.getOption();

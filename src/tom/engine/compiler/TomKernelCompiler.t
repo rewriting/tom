@@ -95,7 +95,7 @@ public class TomKernelCompiler extends TomBase {
         return var;
       }
 
-      MakeTerm(Appl(optionList,name@Name(tomName),termArgs)) -> {
+      MakeTerm(Appl(optionList,(name@Name(tomName)),termArgs)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomList newTermArgs = tomListMap(termArgs,replace_preProcessing_makeTerm);
 
@@ -410,7 +410,7 @@ public class TomKernelCompiler extends TomBase {
           break matchBlock; 
         }
 
-        Appl(optionList,Name(tomName),termArgs) -> {
+        Appl(optionList,(Name(tomName)),termArgs) -> {
           TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
           TomName termNameAST = tomSymbol.getAstName();
           TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();

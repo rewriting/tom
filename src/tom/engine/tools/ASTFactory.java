@@ -246,7 +246,7 @@ public class ASTFactory {
      */
   public void updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
     if(term.isAppl() || term.isRecordAppl()) {
-      String key = term.getAstName().getString();
+      String key = term.getNameList().getHead().getString();
       TomSymbol symbol = symbolTable.getSymbol(key);
       if (symbol != null) {
         OptionList optionList = symbol.getOption();
@@ -314,9 +314,12 @@ public class ASTFactory {
             Option info = makeOriginTracking(Constants.TEXT_NODE,"-1","??");
             TomList list = tsf().makeTomList();
             list = tsf().makeTomList(term,list);
+						NameList nameList = tsf().makeNameList();
+						nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.TEXT_NODE));
             term = tsf().makeTomTerm_Appl(
               makeOption(info),
-              tsf().makeTomName_Name(Constants.TEXT_NODE),list);
+							nameList,
+							list);
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
