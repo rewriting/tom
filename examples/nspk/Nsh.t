@@ -401,7 +401,7 @@ public class Nsh {
                   }
                 }
               }
-            }
+            } 
 
               //---------------------------
               // intruder sends mnessages starting from the 

@@ -1,13 +1,12 @@
 import aterm.pure.*;
 import aterm.*;
-import java.util.*;
-import adt.*;
+import adt.builtin.*;
 
 public class ApiString {
 
   private TermFactory factory;
   
-  %include { adt/term.tom }
+  %include { adt/builtin/term.tom }
 
   public ApiString(TermFactory factory) {
     this.factory = factory;
