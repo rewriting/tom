@@ -38,12 +38,12 @@ public interface Plugin extends OptionOwner {
    *
    * @param arg the input argument
    */
-  public RuntimeAlert setArgs(Object[] arg);
+  public void setArgs(Object[] arg);
   
   /**
    * Runs the plugin.
    */
-  public RuntimeAlert run();
+  public void run();
   
   /**
    * Retrieves the output of the plugin.

@@ -25,8 +25,11 @@
 
 package jtom.tools;
 
-import java.io.*;
-import tom.platform.*;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+
+import tom.platform.OptionManager;
 
 public class OutputCode {
   protected Writer file;

@@ -25,16 +25,26 @@
 
 package jtom;
 
-import java.util.*;
-import java.util.logging.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import aterm.*;
-import aterm.pure.*;
-
-import tom.platform.*;
-
-import tom.platform.adt.platformoption.*;
-import tom.platform.adt.platformoption.types.*;
+import tom.platform.ConfigurationManager;
+import tom.platform.OptionManager;
+import tom.platform.OptionOwner;
+import tom.platform.adt.platformoption.PlatformOptionFactory;
+import tom.platform.adt.platformoption.types.PlatformBoolean;
+import tom.platform.adt.platformoption.types.PlatformOption;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+import tom.platform.adt.platformoption.types.PlatformValue;
+import aterm.ATerm;
+import aterm.ATermAppl;
+import aterm.ATermList;
+import aterm.pure.SingletonFactory;
 
 public class TomOptionManager implements OptionManager, OptionOwner {
 

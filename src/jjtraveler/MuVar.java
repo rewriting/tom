@@ -1,6 +1,6 @@
 package jjtraveler;
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.reflective.AbstractVisitableVisitor;
+import jjtraveler.reflective.VisitableVisitor;
 
 /**
  * <code>MuVar(v)</code> always raises a VisitFailure exception. 

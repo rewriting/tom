@@ -25,19 +25,36 @@
 
 package jtom.compiler;
 
-import java.util.*;
-import java.util.logging.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
 
-import aterm.*;
-
-import jtom.tools.*;
+import jtom.adt.tomsignature.types.Constraint;
+import jtom.adt.tomsignature.types.ConstraintList;
+import jtom.adt.tomsignature.types.Expression;
+import jtom.adt.tomsignature.types.Instruction;
+import jtom.adt.tomsignature.types.InstructionList;
+import jtom.adt.tomsignature.types.Option;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.TargetLanguage;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomName;
+import jtom.adt.tomsignature.types.TomNumberList;
+import jtom.adt.tomsignature.types.TomRule;
+import jtom.adt.tomsignature.types.TomRuleList;
+import jtom.adt.tomsignature.types.TomSymbol;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
+import jtom.adt.tomsignature.types.TomTypeList;
 import jtom.exception.TomRuntimeException;
-import jtom.adt.tomsignature.types.*;
-
+import jtom.tools.TomFactory;
+import jtom.tools.TomGenericPlugin;
+import jtom.tools.Tools;
 import tom.library.traversal.Replace1;
-import tom.platform.adt.platformoption.types.*;
 import tom.platform.OptionParser;
-import tom.platform.RuntimeAlert;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+import aterm.ATerm;
 
 /**
  * The TomCompiler plugin.
@@ -64,11 +81,8 @@ public class TomCompiler extends TomGenericPlugin {
     this.tomFactory = new TomFactory();
   }
   
-  public RuntimeAlert run() {
-    RuntimeAlert result = new RuntimeAlert();
+  public void run() {
     TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(getStreamManager().getSymbolTable());
-    //int errorsAtStart = getStatusHandler().nbOfErrors();
-    //int warningsAtStart = getStatusHandler().nbOfWarnings();
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     TomTerm compiledTerm = null;
@@ -81,19 +95,15 @@ public class TomCompiler extends TomGenericPlugin {
       // verbose
       getLogger().log( Level.INFO, "TomCompilationPhase",
                        new Integer((int)(System.currentTimeMillis()-startChrono)) );      
-
       setWorkingTerm(compiledTerm);
-      //printAlertMessage(errorsAtStart, warningsAtStart);
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, "ExceptionMessage",
                        new Object[]{getStreamManager().getInputFile().getName(), "TomCompiler", e.getMessage()} );
       e.printStackTrace();
-      return result;
     }
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
     }
-    return result;
   }
   
   public PlatformOptionList getDeclaredOptionList() {

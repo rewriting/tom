@@ -151,9 +151,8 @@ public class PluginFactory implements Plugin {
   /**
    * From Plugin interface
    */
-  public RuntimeAlert setArgs(Object arg[]) {
+  public void setArgs(Object arg[]) {
     argToRelay = arg;
-    return new RuntimeAlert();
   }
 
   /**
@@ -166,8 +165,7 @@ public class PluginFactory implements Plugin {
   /**
    * From Plugin interface
    */
-  public RuntimeAlert run() {
-    RuntimeAlert result = new RuntimeAlert();
+  public void run() {
     Plugin activatedPlugin = null;
     Iterator it = flagOwners.keySet().iterator();
     while(it.hasNext()) {
@@ -177,15 +175,13 @@ public class PluginFactory implements Plugin {
       }
     }
     try{
-      result.concat(activatedPlugin.setArgs(argToRelay));
-      result.concat(activatedPlugin.run());
+      activatedPlugin.setArgs(argToRelay);
+      activatedPlugin.run();
       argToRelay = activatedPlugin.getArgs();
     } catch(NullPointerException npe) {
       System.out.println("Error : No plugin was activated.");
       // TODO: when error management has changed, change this
-      //result.addError();
     }
-    return result;
   }
   
   /**

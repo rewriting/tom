@@ -30,10 +30,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
+import jtom.adt.tomsignature.TomSignatureFactory;
+import jtom.adt.tomsignature.types.SymbolList;
+import jtom.adt.tomsignature.types.TomEntry;
+import jtom.adt.tomsignature.types.TomEntryList;
+import jtom.adt.tomsignature.types.TomSymbol;
+import jtom.adt.tomsignature.types.TomSymbolTable;
+import jtom.adt.tomsignature.types.TomType;
 import jtom.exception.TomRuntimeException;
-import tom.platform.*;
+import tom.platform.OptionManager;
 
 public class SymbolTable {
   private final static String TYPE_INT       = "int";

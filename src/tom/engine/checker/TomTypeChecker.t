@@ -1,15 +1,53 @@
+/*
+ *   
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (C) 2000-2004 INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Julien Guyon
+ *
+ **/
+
 package jtom.checker;
 
-import java.util.logging.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.logging.Level;
 
-import aterm.*;
-import jtom.*;
-import jtom.adt.tomsignature.types.*;
-import tom.platform.adt.platformoption.types.*;
-import tom.platform.*;
-
+import jtom.TomMessage;
+import jtom.adt.tomsignature.types.Instruction;
+import jtom.adt.tomsignature.types.InstructionList;
+import jtom.adt.tomsignature.types.Option;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomName;
+import jtom.adt.tomsignature.types.TomRule;
+import jtom.adt.tomsignature.types.TomRuleList;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
 import tom.library.traversal.Collect1;
+import tom.platform.OptionParser;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+import aterm.ATerm;
 
 /**
  * The TomTypeChecker plugin.
@@ -33,12 +71,9 @@ public class TomTypeChecker extends TomChecker {
     super("TomTypeChecker");
   }
   
-  public RuntimeAlert run() {
-    RuntimeAlert result = new RuntimeAlert();
+  public void run() {
     if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
-      //int errorsAtStart = getStatusHandler().nbOfErrors();
-      //int warningsAtStart = getStatusHandler().nbOfWarnings();
       long startChrono = System.currentTimeMillis();
       try {
         // clean up internals
@@ -48,18 +83,15 @@ public class TomTypeChecker extends TomChecker {
         // verbose
         getLogger().log( Level.INFO, "TomTypeCheckingPhase",
                          new Integer((int)(System.currentTimeMillis()-startChrono)) );
-        //printAlertMessage(errorsAtStart, warningsAtStart);
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, "ExceptionMessage",
                          new Object[]{getClass().getName(), getStreamManager().getInputFile().getName(),e.getMessage()} );
         e.printStackTrace();
-        // result.addError();
       }
     } else {
       // type checker desactivated    
       getLogger().log(Level.INFO, "TypeCheckerInactivated");
     }
-    return result;
   }
   
   private boolean isActivated() {

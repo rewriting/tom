@@ -1,6 +1,6 @@
 package jjtraveler;
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.reflective.AbstractVisitableVisitor;
+import jjtraveler.reflective.VisitableVisitor;
 
 /**
  * <code>x.accept(Sequence(v1,v2)) = x.accept(v1) ; x.accept(v2)</code>

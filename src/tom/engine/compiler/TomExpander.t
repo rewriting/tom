@@ -25,18 +25,29 @@
 
 package jtom.compiler;
 
-import java.util.logging.*;
+import java.util.logging.Level;
 
-import jtom.adt.tomsignature.types.*;
-import tom.platform.adt.platformoption.types.*;
+import jtom.adt.tomsignature.types.ConstraintList;
+import jtom.adt.tomsignature.types.Declaration;
+import jtom.adt.tomsignature.types.NameList;
+import jtom.adt.tomsignature.types.Option;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.SlotList;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomName;
+import jtom.adt.tomsignature.types.TomSymbol;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
+import jtom.adt.tomsignature.types.TomTypeList;
+import jtom.exception.TomRuntimeException;
+import jtom.tools.TomFactory;
+import jtom.tools.TomGenericPlugin;
+import jtom.tools.Tools;
+import jtom.xml.Constants;
 import tom.library.traversal.Replace1;
 import tom.platform.OptionParser;
-import tom.platform.RuntimeAlert;
-
-import aterm.*;
-import jtom.tools.*;
-import jtom.xml.Constants;
-import jtom.exception.TomRuntimeException;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+import aterm.ATerm;
 
 /**
  * The TomExpander plugin.
@@ -65,10 +76,7 @@ public class TomExpander extends TomGenericPlugin {
     tomFactory = new TomFactory();
   }
 
-  public RuntimeAlert run() {
-    RuntimeAlert result = new RuntimeAlert();
-    //int errorsAtStart = getStatusHandler().nbOfErrors();
-    //int warningsAtStart = getStatusHandler().nbOfWarnings();
+  public void run() {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     TomTerm expandedTerm = null;
@@ -86,12 +94,11 @@ public class TomExpander extends TomGenericPlugin {
       // verbose
       getLogger().log(Level.INFO, "TomExpandingPhase",
                       new Integer((int)(System.currentTimeMillis()-startChrono)));
-      //printAlertMessage(errorsAtStart, warningsAtStart);
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, "ExceptionMessage",
                        new Object[]{getClass().getName(), getStreamManager().getInputFile().getName(), e.getMessage()} );
       e.printStackTrace();
-      return result;
+      return;
     }
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
@@ -99,7 +106,6 @@ public class TomExpander extends TomGenericPlugin {
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
                            + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
     }
-    return result;
   }
   
   /**

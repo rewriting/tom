@@ -27,12 +27,16 @@
 package jtom.checker;
 
 import java.text.MessageFormat;
-import java.util.logging.*;
+import java.util.logging.Level;
 
-import jtom.tools.*;
-import jtom.adt.tomsignature.types.*;
-import jtom.exception.*;
 import jtom.TomMessage;
+import jtom.adt.tomsignature.types.Option;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.TomSymbol;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
+import jtom.exception.TomRuntimeException;
+import jtom.tools.TomGenericPlugin;
 import tom.platform.PlatformLogRecord;
 
 

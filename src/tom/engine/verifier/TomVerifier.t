@@ -25,17 +25,20 @@
 
 package jtom.verifier;
 
-import jtom.tools.*;
-import jtom.adt.tomsignature.types.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.logging.Level;
 
-import aterm.*;
-import java.util.*;
-import java.util.logging.*;
-
-import tom.library.traversal.*;
-import tom.platform.adt.platformoption.types.*;
+import jtom.adt.tomsignature.types.Expression;
+import jtom.adt.tomsignature.types.Instruction;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.tools.TomGenericPlugin;
+import tom.library.traversal.Collect2;
+import tom.library.traversal.Replace1;
 import tom.platform.OptionParser;
-import tom.platform.RuntimeAlert;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+import aterm.ATerm;
 
 /**
  * The TomVerifier plugin.
@@ -53,38 +56,30 @@ public class TomVerifier extends TomGenericPlugin {
     verif = new Verifier();
   }
 
-  public RuntimeAlert run() {
-    RuntimeAlert result = new RuntimeAlert();
+  public void run() {
     if(isActivated()) {
-      //int errorsAtStart = getStatusHandler().nbOfErrors();
-      //int warningsAtStart = getStatusHandler().nbOfWarnings();
       long startChrono = System.currentTimeMillis();
       try {
         // here the extraction stuff
         Collection matchSet = collectMatch((TomTerm)getWorkingTerm());
-        
         Collection purified = purify(matchSet);
-        // System.out.println("Purified : " + purified);
-        
+        // System.out.println("Purified : " + purified);        
         Collection derivations = getDerivations(purified);
         // verbose
         getLogger().log(Level.INFO, "TomVerificationPhase",
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
         
-        //printAlertMessage(errorsAtStart, warningsAtStart);
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, "ExceptionMessage",
                          new Object[]{getClass().getName(),
                                       getStreamManager().getInputFile().getName(),
                                       e.getMessage()} );
         e.printStackTrace();
-        //result.addError();
       }
     } else {	    
       // Not active plugin
       getLogger().log(Level.INFO, "VerifierInactivated");
     }
-    return result;
   }
   
   public PlatformOptionList getDeclaredOptionList() {

@@ -1,6 +1,6 @@
 package jjtraveler;
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.reflective.AbstractVisitableVisitor;
+import jjtraveler.reflective.VisitableVisitor;
 
 /**
  * <code>Choice(v1,v2) = v1</code>    if v1 succeeds

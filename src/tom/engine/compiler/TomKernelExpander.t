@@ -26,15 +26,26 @@
 package jtom.compiler;
   
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Iterator;
 
-import jtom.tools.*;
 import jtom.TomBase;
-import jtom.adt.tomsignature.types.*;
-import tom.library.traversal.Replace2;
-import aterm.*;
+import jtom.adt.tomsignature.types.ConstraintList;
+import jtom.adt.tomsignature.types.Instruction;
+import jtom.adt.tomsignature.types.InstructionList;
+import jtom.adt.tomsignature.types.Option;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.TargetLanguage;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomName;
+import jtom.adt.tomsignature.types.TomRule;
+import jtom.adt.tomsignature.types.TomSymbol;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
 import jtom.exception.TomRuntimeException;
+import jtom.tools.SymbolTable;
+import tom.library.traversal.Replace2;
+import aterm.ATerm;
 
 public class TomKernelExpander extends TomBase {
 

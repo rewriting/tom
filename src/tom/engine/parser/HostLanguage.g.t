@@ -1,4 +1,4 @@
-/*
+header{/*
  * 
  * TOM - To One Matching Compiler
  * 
@@ -23,31 +23,30 @@
  *
  **/
   
-header{
-  package jtom.parser;
-  
-  import jtom.*;
-  import jtom.exception.*;
-  import jtom.tools.*;
-  import jtom.adt.tomsignature.*;
-  import jtom.adt.tomsignature.types.*;
-  
-  import tom.platform.*;
+package jtom.parser;
 
-  import vas.Vas;
-
-  import java.io.*;
-  import java.util.*;
-  import java.util.logging.*;
-
-  import aterm.*;
-  
-  import antlr.*;
 }
 
+{
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.logging.*;
+import java.io.*;
 
-
-
+import jtom.Tom;
+import jtom.TomStreamManager;
+import jtom.TomEnvironment;
+import jtom.TomMessage;
+import jtom.exception.*;
+import jtom.adt.tomsignature.TomSignatureFactory;
+import jtom.adt.tomsignature.types.*;
+import jtom.tools.SymbolTable;
+import aterm.*;
+import antlr.TokenStreamSelector;
+import tom.platform.OptionManager;
+import vas.Vas;
+}
 class HostParser extends Parser;
 
 options{
@@ -430,10 +429,8 @@ signature [LinkedList list] throws TomException
     if(vasCallResult == null) {
     	throw new TomException(TomMessage.getMessage("VasFailure"));
     }
-    for(int i=0;i<vasCallResult.length;i++) 
-    	System.out.println("Vas res"+vasCallResult[i]);
+    
     generatedADTName = (String)vasCallResult[0];
-    System.out.println("Vas has generated "+generatedADTName);
     // Check for errors
     //TODO
     if(generatedADTName == null) {
@@ -698,7 +695,9 @@ targetLanguage [LinkedList list] returns [TargetLanguage result] throws TomExcep
 
 // here begins the lexer
 
-
+{
+  import antlr.*;
+}
 class HostLexer extends Lexer;
 options {
 	k=6; // the default lookahead

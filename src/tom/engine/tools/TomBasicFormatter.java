@@ -25,7 +25,9 @@
 
 package jtom.tools;
 
-import java.util.logging.*;
+import java.util.logging.Formatter;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 public class TomBasicFormatter extends Formatter {
   

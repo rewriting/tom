@@ -1,4 +1,4 @@
-/*
+header{/*
  * 
  * TOM - To One Matching Compiler
  * 
@@ -23,33 +23,53 @@
  *
  **/
 
-header{
-  /*
-   * this file contains the lexer and parser for
-   * tom constructs
-   */
 
-    package jtom.parser;
+/*
+ * this file contains the lexer and parser for
+ * tom constructs
+ */
 
-    import java.util.*;
-    import java.util.logging.*;
-    import java.text.*;
+package jtom.parser;
 
-    import aterm.*;
-    import aterm.pure.*;
-    
-    import jtom.*;
-    import jtom.adt.tomsignature.*;
-    import jtom.adt.tomsignature.types.*;
-    import jtom.exception.*;
-    import jtom.tools.*;
-    import jtom.xml.Constants;
-
-    import tom.platform.*;
-
-    import antlr.*;
 }
+{
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import jtom.TomBase;
+import jtom.TomMessage;
+import jtom.adt.tomsignature.TomSignatureFactory;
+import jtom.adt.tomsignature.types.Constraint;
+import jtom.adt.tomsignature.types.ConstraintList;
+import jtom.adt.tomsignature.types.Declaration;
+import jtom.adt.tomsignature.types.Instruction;
+import jtom.adt.tomsignature.types.InstructionList;
+import jtom.adt.tomsignature.types.NameList;
+import jtom.adt.tomsignature.types.Option;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.PairNameDecl;
+import jtom.adt.tomsignature.types.SlotList;
+import jtom.adt.tomsignature.types.TargetLanguage;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomName;
+import jtom.adt.tomsignature.types.TomRuleList;
+import jtom.adt.tomsignature.types.TomStructureTable;
+import jtom.adt.tomsignature.types.TomSymbol;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
+import jtom.adt.tomsignature.types.TomTypeList;
+import jtom.exception.TomException;
+import jtom.tools.SymbolTable;
+import jtom.tools.TomFactory;
+import jtom.xml.Constants;
+import tom.platform.OptionManager;
+import aterm.*;
+import antlr.TokenStreamSelector;
+}
 class TomParser extends Parser;
 
 options{

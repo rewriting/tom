@@ -27,10 +27,18 @@ package jtom.backend;
 
 import java.io.IOException;
 
-import jtom.adt.tomsignature.types.*;
-import jtom.tools.*;
+import jtom.adt.tomsignature.types.Expression;
+import jtom.adt.tomsignature.types.Instruction;
+import jtom.adt.tomsignature.types.InstructionList;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.TargetLanguage;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomNumberList;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
 import jtom.exception.TomRuntimeException;
-
+import jtom.tools.OutputCode;
+import jtom.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 public class TomCamlGenerator extends TomImperativeGenerator {

@@ -25,11 +25,17 @@
 
 package jtom;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
-import jtom.tools.*;
-import tom.platform.*;
+import jtom.tools.SymbolTable;
+import tom.platform.OptionManager;
 
 public class TomStreamManager {
 

@@ -68,9 +68,6 @@ public class PluginPlatform {
 
   /** List of generated object cleared before each run */
   private List lastGeneratedObjects;
-
-  /** List of generated alert cleared before each run */
-  private RuntimeAlert lastRunAlert;
   
   /** Class Pluginplatform constructor */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
@@ -95,7 +92,6 @@ public class PluginPlatform {
   public int run() {
     // intialize run instances
     lastGeneratedObjects = new ArrayList();
-    lastRunAlert = new RuntimeAlert();
     // for each input we call the sequence of plug-ins
     for(int i=0; i < inputToCompileList.size(); i++) {
       Object input = inputToCompileList.get(i);
@@ -108,14 +104,13 @@ public class PluginPlatform {
       Iterator it = pluginsList.iterator();
       while(it.hasNext()) {
         Plugin plugin = (Plugin)it.next();
-        lastRunAlert = plugin.setArgs(pluginArg);
+        plugin.setArgs(pluginArg);
         if(statusHandler.hasError()) {
           getLogger().log(Level.SEVERE, "SettingArgError");
           success = false;
           break;
         }
-        RuntimeAlert runAlert = plugin.run();
-        lastRunAlert.concat(runAlert);
+        plugin.run();
         if(statusHandler.hasError()) {
           success = false;
           getLogger().log(Level.SEVERE, "ProcessingError",
@@ -161,11 +156,6 @@ public class PluginPlatform {
   /** return the list of last generated objects */
   public List getLastGeneratedObjects() {
     return lastGeneratedObjects;
-  }
-
-  /** return the alerts generated during last run */
-  public RuntimeAlert getLastRunAlert() {
-    return lastRunAlert;
   }
   
   public RuntimeAlert getAlertForInput(String filePath) {

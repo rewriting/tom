@@ -25,15 +25,23 @@
 
 package jtom.compiler;
 
-import jtom.tools.*;
-  
 import jtom.TomBase;
+import jtom.adt.tomsignature.types.ConstraintList;
+import jtom.adt.tomsignature.types.Expression;
+import jtom.adt.tomsignature.types.Instruction;
+import jtom.adt.tomsignature.types.InstructionList;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomName;
+import jtom.adt.tomsignature.types.TomNumberList;
+import jtom.adt.tomsignature.types.TomSymbol;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
+import jtom.adt.tomsignature.types.TomTypeList;
 import jtom.exception.TomRuntimeException;
-import jtom.adt.tomsignature.types.*;
-
+import jtom.tools.SymbolTable;
 import tom.library.traversal.Replace1;
-
-import aterm.*;
+import aterm.ATerm;
 
 public class TomKernelCompiler extends TomBase {
 

@@ -27,10 +27,9 @@ package jtom.backend;
 
 import java.io.IOException;
 
-
-import jtom.adt.tomsignature.types.*;
-import jtom.tools.*;
-
+import jtom.adt.tomsignature.types.InstructionList;
+import jtom.tools.OutputCode;
+import jtom.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 public class TomJavaGenerator extends TomImperativeGenerator {

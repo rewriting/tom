@@ -1,6 +1,6 @@
 package jjtraveler;
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.reflective.AbstractVisitableVisitor;
+import jjtraveler.reflective.VisitableVisitor;
 
 public class IfThenElse extends AbstractVisitableVisitor {
 	

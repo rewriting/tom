@@ -1,18 +1,56 @@
+/*
+ *   
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (C) 2000-2004 INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Julien Guyon
+ *
+ **/
+
 package jtom.checker;
 
-import java.util.logging.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Level;
 
-import aterm.*;
-import jtom.*;
-import jtom.exception.*;
-import jtom.adt.tomsignature.types.*;
-import tom.platform.adt.platformoption.types.*;
-import tom.platform.*;
-
-import tom.library.traversal.Collect1;
+import jtom.TomMessage;
+import jtom.adt.tomsignature.types.Declaration;
+import jtom.adt.tomsignature.types.Instruction;
+import jtom.adt.tomsignature.types.NameList;
+import jtom.adt.tomsignature.types.Option;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.SlotList;
+import jtom.adt.tomsignature.types.SymbolList;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomName;
+import jtom.adt.tomsignature.types.TomRuleList;
+import jtom.adt.tomsignature.types.TomSymbol;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
+import jtom.adt.tomsignature.types.TomTypeList;
+import jtom.exception.TomRuntimeException;
 import jtom.xml.Constants;
-
+import tom.library.traversal.Collect1;
+import tom.platform.OptionParser;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
+import aterm.ATerm;
 
 /**
  * The TomSyntaxChecker plugin.
@@ -100,12 +138,9 @@ public class TomSyntaxChecker extends TomChecker {
     alreadyStudiedRule    = new ArrayList();
     }
   
-  public RuntimeAlert run() {
-    RuntimeAlert result = new RuntimeAlert();
+  public void run() {
     if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
-      //int errorsAtStart = getStatusHandler().nbOfErrors();
-      //int warningsAtStart = getStatusHandler().nbOfWarnings();
       long startChrono = System.currentTimeMillis();
       try {
         // clean up internals
@@ -115,20 +150,17 @@ public class TomSyntaxChecker extends TomChecker {
         // verbose
         getLogger().log(Level.INFO, "TomSyntaxCheckingPhase",
                         new Integer((int)(System.currentTimeMillis()-startChrono)));      
-        //printAlertMessage(errorsAtStart, warningsAtStart);
       } catch (Exception e) {
         getLogger().log(Level.SEVERE, "ExceptionMessage",
                         new Object[]{getClass().getName(),
                                      getStreamManager().getInputFile().getName(),
                                      e.getMessage() });
         e.printStackTrace();
-        //result.addError();
       }
     } else {
       // syntax checker desactivated
       getLogger().log(Level.INFO, "SyntaxCheckerInactivated");
     }
-    return result;
   }
   
   private boolean isActivated() {

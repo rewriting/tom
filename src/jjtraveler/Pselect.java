@@ -1,7 +1,8 @@
 package jjtraveler;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.reflective.AbstractVisitableVisitor;
 import java.util.Random;
+
+import jjtraveler.reflective.AbstractVisitableVisitor;
+import jjtraveler.reflective.VisitableVisitor;
 
 /**
  * <code>Pselect(p,q,v1,v2) = v1</code> with probability p/q

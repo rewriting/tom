@@ -25,14 +25,18 @@
 
 package jtom.backend;
 
-import java.io.*;
-import java.util.logging.*;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.logging.Level;
 
-import jtom.adt.tomsignature.types.*;
-import tom.platform.adt.platformoption.types.*;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.tools.OutputCode;
+import jtom.tools.TomGenericPlugin;
 import tom.platform.OptionParser;
-import tom.platform.RuntimeAlert;
-import jtom.tools.*;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 
 /**
@@ -62,17 +66,13 @@ public class TomBackend extends TomGenericPlugin {
   /**
    *
    */
-  public RuntimeAlert run() {
-    RuntimeAlert result = new RuntimeAlert();
+  public void run() {
     if(isActivated() == true) {
       TomAbstractGenerator generator = null;
       Writer writer;
-      //int errorsAtStart = getStatusHandler().nbOfErrors();
-      //int warningsAtStart = getStatusHandler().nbOfWarnings();
       long startChrono = System.currentTimeMillis();
       try {
         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile())));
-        
         OutputCode output = new OutputCode(writer, defaultDeep, getOptionManager());
         if(getOptionBooleanValue("jCode")) {
           generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
@@ -83,23 +83,20 @@ public class TomBackend extends TomGenericPlugin {
         } else if(getOptionBooleanValue("camlCode")) {
           generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
         }
-        
         generator.generate(defaultDeep, (TomTerm)getWorkingTerm());
-        
+        // verbose
         getLogger().log(Level.INFO, "TomGenerationPhase",
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
-        
         writer.close();
-        //printAlertMessage(errorsAtStart, warningsAtStart);
       } catch (IOException e) {
         getLogger().log( Level.SEVERE, "BackendIOException",
                          new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
-        // return result.addError();
+        return;
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, "ExceptionMessage",
                          new Object[]{getStreamManager().getInputFile().getName(), "TomBackend", e.getMessage()} );
         e.printStackTrace();
-        return result;
+        return;
       }
       // set the generated File Name
       generatedFileName = getStreamManager().getOutputFile().getAbsolutePath();
@@ -107,7 +104,6 @@ public class TomBackend extends TomGenericPlugin {
       // backend is desactivated
       getLogger().log(Level.INFO,"BackendInactivated");
     }
-    return result;
   }
   
   /**

@@ -1,4 +1,4 @@
-/*
+header{/*
  * 
  * TOM - To One Matching Compiler
  * 
@@ -22,24 +22,22 @@
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
-header{
-  package jtom.parser;
+
+package jtom.parser;
   
-  import jtom.*;
-  import jtom.adt.tomsignature.*;
-  import jtom.adt.tomsignature.types.*;
-  import jtom.xml.*;
-  
-  import tom.platform.*;
-  
-  import aterm.*;
-  import aterm.pure.*;
-  
-  import antlr.*;
-  
-  import java.util.*;
 }
 
+{
+import java.util.LinkedList;
+
+import jtom.TomBase;
+import jtom.TomEnvironment;
+import jtom.adt.tomsignature.TomSignatureFactory;
+import jtom.adt.tomsignature.types.*;
+import jtom.xml.Constants;
+import antlr.TokenStreamSelector;
+import aterm.*;
+}
 class BackQuoteParser extends Parser;
 
 options{

@@ -1,4 +1,4 @@
-/*
+header{/*
  * 
  * TOM - To One Matching Compiler
  * 
@@ -23,11 +23,17 @@
  *
  **/
 
-header{
 package jtom.parser;
-import java.io.*;
+
 }
 
+{
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+}
 class TomJavaParser extends Parser;
 
 options { 
