@@ -16,8 +16,8 @@ The simplest way to install TOM is:
 
   3. Configure the current package:
 	 `./configure --prefix=<INSTALLDIR>\
-                      --with-shared-objects=<INSTALLDIR>/share/shared-objects-1.0.jar\
-                      --with-aterm-java=<INSTALLDIR>/share/aterm-1.0.jar'
+                      --with-shared-objects=<INSTALLDIR>/share/shared-objects-1.1.jar\
+                      --with-aterm-java=<INSTALLDIR>/share/aterm-1.1.jar'
 
   4. Type `make' to compile the package.
 
