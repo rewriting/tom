@@ -831,7 +831,7 @@
   <target name="structure" depends="init">
     <!-- build adt -->		
 		<vas file="${examples.dir}/${structure}/Struct.vas"
-			   options="-X ${vasconfigfile}"
+			   config="${vasconfigfile}"
 				 package="${structure}" 
 				 destdir="${examples.gen}">
 		</vas> 
