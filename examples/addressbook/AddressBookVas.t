@@ -48,7 +48,7 @@ public class AddressBookVas {
       sorts Date Person PersonList
 
     abstract syntax
-      date( day:Int, month:Int, year:Int ) -> Date
+      date( year:Int, month:Int, day:Int ) -> Date
       person(firstname:String,lastname:String, birthdate:Date) -> Person
       concPerson( Person* ) -> PersonList
       bob -> Person
@@ -73,10 +73,10 @@ public class AddressBookVas {
     Date today = `date(2003,3,27);
     happyBirthday(book,today);
   }
- 
+
   public void happyBirthday(PersonList book, Date date) {
     %match(PersonList book, Date date) {
-      concPerson(_*, person(firstname, _, date(year,month,day)), _*),
+      concPerson(_*, person(firstname, _, date(_, month,day)), _*),
         date(_,month,day)   -> {
         System.out.println("Happy birthday " + `firstname);
       }
