@@ -122,7 +122,7 @@ public class TomExpander extends TomBase implements TomTask {
                 return expandRecordAppl(option,tomName,args);
               }
 
-              XMLAppl(Option(optionList), Name(tomName), list1, list2) -> {
+              XMLAppl(optionList, Name(tomName), list1, list2) -> {
                 return expandXMLAppl(optionList, tomName, list1, list2);
               }
               
@@ -139,7 +139,7 @@ public class TomExpander extends TomBase implements TomTask {
     return (TomTerm) replace.apply(subject); 
   }
 
-  protected TomTerm expandRecordAppl(Option option, String tomName, TomList args) {
+  protected TomTerm expandRecordAppl(OptionList option, String tomName, TomList args) {
     TomSymbol tomSymbol = getSymbol(tomName);
     SlotList slotList = tomSymbol.getSlotList();
     TomList subtermList = empty();
@@ -181,7 +181,7 @@ public class TomExpander extends TomBase implements TomTask {
         public ATerm apply(ATerm t) {
           if(t instanceof TomTerm) {
             %match(TomTerm t) {
-              BackQuoteAppl[option=Option(optionList),astName=name@Name(tomName),args=l] -> {
+              BackQuoteAppl[option=optionList,astName=name@Name(tomName),args=l] -> {
                 TomSymbol tomSymbol = getSymbol(tomName);
                 TomList args  = (TomList) traversal().genericTraversal(l,this);
                 
@@ -232,11 +232,11 @@ public class TomExpander extends TomBase implements TomTask {
     return attrList;
   }
 
-  private Option convertOriginTracking(String name,OptionList optionList) {
+  private OptionList convertOriginTracking(String name,OptionList optionList) {
     Option originTracking = findOriginTracking(optionList);
     %match(Option originTracking) {
       OriginTracking[line=line, fileName=fileName] -> {
-        return `Option(concOption(OriginTracking(Name(name),line,fileName)));
+        return `concOption(OriginTracking(Name(name),line,fileName));
       }
     }
     System.out.println("Warning: no OriginTracking information");
@@ -294,7 +294,7 @@ public class TomExpander extends TomBase implements TomTask {
       Appl(convertOriginTracking(tomName,optionList),Name(tomName),empty()),
       Appl(convertOriginTracking("CONC_TNODE",optionList),Name(Constants.CONC_TNODE), newAttrList),
       Appl(convertOriginTracking("CONC_TNODE",optionList),Name(Constants.CONC_TNODE), newChildList));
-    TomTerm result = `Appl(Option(optionList),Name(Constants.ELEMENT_NODE),newArgs);
+    TomTerm result = `Appl(optionList,Name(Constants.ELEMENT_NODE),newArgs);
       //System.out.println("expand:\n" + result);
     return result;
    
@@ -564,7 +564,7 @@ public class TomExpander extends TomBase implements TomTask {
       
     %match(TomTerm contextSubject, TomRule subject) {
 
-      context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
+      context, RewriteRule(Term(lhs@Appl(optionList,Name(tomName),l)),
                            Term(rhs),
                            condList,
                            option) -> { 

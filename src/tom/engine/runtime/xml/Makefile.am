@@ -36,7 +36,7 @@ adt/TNode.tom: TNode.adt
 	mv adt/TNodeMakeRules adt/TNodeMakeRules.am
 
 TOMFLAGS = --noWarning 
-TOM = ${prefix}/bin/jtom.src
+TOM = ${prefix}/bin/jtom
 
 %.java : %.t
 	$(TOM) $(TOMFLAGS) $*

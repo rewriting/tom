@@ -107,7 +107,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
   private TomTerm buildTermFromStack(Stack stackList, Stack stackName) {
     String name = (String) stackName.pop();
     TomList args = (TomList) stackList.pop();
-    Option option;
+    OptionList option;
     
     if(isEmptyComposite(args)) {
       option = ast().makeOption(`Constructor(Name(name)));
@@ -210,7 +210,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
           }
           
           IDENT(name), _ -> {
-            Option option = ast().makeOption();
+            OptionList option = ast().makeOption();
             addToLastComposite(stackList, `BackQuoteAppl(option,Name(name),concTomTerm()));
               //concTomTerm(Composite(concTomTerm()))));
             break matchBlock;

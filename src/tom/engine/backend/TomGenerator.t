@@ -272,7 +272,7 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
       
-      CompiledMatch(matchDeclarationList, namedBlockList, Option(list)) -> {
+      CompiledMatch(matchDeclarationList, namedBlockList, list) -> {
         boolean generated = hasGeneratedMatch(list);
         boolean defaultPattern = hasDefaultCase(list);
         Option orgTrack = null;
@@ -514,7 +514,7 @@ public class TomGenerator extends TomBase implements TomTask {
       EqualFunctionSymbol(var@Variable[astType=type1],Appl(option,Name(tomName),l)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomName termNameAST = tomSymbol.getAstName();
-        OptionList termOptionList = tomSymbol.getOption().getOptionList();
+        OptionList termOptionList = tomSymbol.getOption();
         
         Declaration isFsymDecl = getIsFsymDecl(termOptionList);
         if(isFsymDecl != null) {
@@ -666,7 +666,7 @@ public class TomGenerator extends TomBase implements TomTask {
     
     %match(Instruction subject) {
 
-      Assign(var@Variable(Option(list),name1,
+      Assign(var@Variable(list,name1,
                           Type(tomType@TomType(type),tlType@TLType[])),exp) -> {
         out.indent(deep);
         generate(out,deep,var);
@@ -789,7 +789,7 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
-      Assign(var@VariableStar(Option(list),name1,
+      Assign(var@VariableStar(list,name1,
                               Type(TomType(type),tlType@TLType[])),exp) -> {
         out.indent(deep);
         generate(out,deep,var);
@@ -928,7 +928,7 @@ public class TomGenerator extends TomBase implements TomTask {
       }
       SymbolDecl(Name(tomName)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        OptionList optionList = tomSymbol.getOption().getOptionList();
+        OptionList optionList = tomSymbol.getOption();
         SlotList slotList = tomSymbol.getSlotList();
         TomTypeList l = getSymbolDomain(tomSymbol);
         TomType type1 = getSymbolCodomain(tomSymbol);
@@ -995,7 +995,7 @@ public class TomGenerator extends TomBase implements TomTask {
       
       ArraySymbolDecl(Name(tomName)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        OptionList optionList = tomSymbol.getOption().getOptionList();
+        OptionList optionList = tomSymbol.getOption();
         SlotList slotList = tomSymbol.getSlotList();        
         TomTypeList l = getSymbolDomain(tomSymbol);
         TomType type1 = getSymbolCodomain(tomSymbol);
@@ -1041,7 +1041,7 @@ public class TomGenerator extends TomBase implements TomTask {
 
       ListSymbolDecl(Name(tomName)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        OptionList optionList = tomSymbol.getOption().getOptionList();
+        OptionList optionList = tomSymbol.getOption();
         SlotList slotList = tomSymbol.getSlotList();
         TomTypeList l = getSymbolDomain(tomSymbol);
         TomType type1 = getSymbolCodomain(tomSymbol);

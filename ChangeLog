@@ -2,6 +2,11 @@
 
 	* bootinstall
 	* bumped to 1.5gamma
+	* Option constructor removed from ADT
+
+2003-11-05    <pem@bach>
+
+        * XML syntax corresponds to implicit notation
 
 2003-11-02    <pem@bach>
 

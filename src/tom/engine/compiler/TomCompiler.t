@@ -100,7 +100,7 @@ public class TomCompiler extends TomBase implements TomTask {
      * rename non-linear patterns
      */
 
-  private Option option() {
+  private OptionList option() {
     return ast().makeOption();
   }
 
@@ -186,7 +186,7 @@ public class TomCompiler extends TomBase implements TomTask {
         ArrayList optionList = new ArrayList();
         optionList.add(orgTrack);
           //optionList.add(tsf().makeOption_GeneratedMatch());
-        Option generatedOptions = ast().makeOption(ast().makeOptionList(optionList));
+        OptionList generatedOptions = ast().makeOptionList(optionList);
         TomTerm matchAST = `Match(SubjectList(matchArgumentsList),
                                   PatternList(patternActionList),
                                   generatedOptions);
@@ -213,7 +213,7 @@ public class TomCompiler extends TomBase implements TomTask {
         return `PatternAction(tl,preProcessing(tom), option);
       }
       
-      Match(SubjectList(l1),PatternList(l2), matchOption@Option(matchOptionList))  -> {
+      Match(SubjectList(l1),PatternList(l2), matchOptionList)  -> {
         Option orgTrack = findOriginTracking(matchOptionList);
         if(debugMode) {
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
@@ -258,13 +258,13 @@ public class TomCompiler extends TomBase implements TomTask {
                     /* generate a new match construct */
 
                   TomTerm generatedPatternAction =
-                    `PatternAction(TermList(ast().makeList(abstractedPattern)),Tom(newActionList), Option(concOption()));        
+                    `PatternAction(TermList(ast().makeList(abstractedPattern)),Tom(newActionList), concOption());        
                     /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
                   OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
                   TomTerm generatedMatch =
                     `Match(SubjectList(ast().makeList(introducedVariable)),
                            PatternList(cons(generatedPatternAction,empty())),
-                           Option(generatedMatchOptionList));
+                           generatedMatchOptionList);
                     /*System.out.println("Generate new Match"+generatedMatch); */
                   generatedMatch = preProcessing(generatedMatch);
                   newPatternAction =
@@ -291,7 +291,7 @@ public class TomCompiler extends TomBase implements TomTask {
 
         TomTerm newMatch = `Match(SubjectList(l1),
                                   PatternList(newPatternList),
-                                  matchOption);
+                                  matchOptionList);
         return newMatch;
       }
       
@@ -363,17 +363,17 @@ public class TomCompiler extends TomBase implements TomTask {
     TomTerm renamedTerm = subject;
     
     %match(TomTerm subject) {
-      UnamedVariable[option=Option(optionList),astType=type] -> {
+      UnamedVariable[option=optionList,astType=type] -> {
         OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-        return `UnamedVariable(Option(newOptionList),type);
+        return `UnamedVariable(newOptionList,type);
       }
       
-      UnamedVariableStar[option=Option(optionList),astType=type] -> {
+      UnamedVariableStar[option=optionList,astType=type] -> {
         OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-        return `UnamedVariableStar(Option(newOptionList),type);
+        return `UnamedVariableStar(newOptionList,type);
       }
 
-      Variable[option=Option(optionList),astName=name,astType=type] -> {
+      Variable[option=optionList,astName=name,astType=type] -> {
         Integer multiplicity = (Integer) multiplicityMap.get(name);
         int mult = multiplicity.intValue();
         if(mult > 1) {
@@ -384,7 +384,7 @@ public class TomCompiler extends TomBase implements TomTask {
           path = (TomNumberList) path.append(`RenamedVar(name));
           path = (TomNumberList) path.append(makeNumber(mult));
           OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-          renamedTerm = `Variable(Option(newOptionList),PositionName(path),type);
+          renamedTerm = `Variable(newOptionList,PositionName(path),type);
             //System.out.println("renamedTerm = " + renamedTerm);
 
           Expression newEquality = `EqualTerm(subject,renamedTerm);
@@ -393,7 +393,7 @@ public class TomCompiler extends TomBase implements TomTask {
         return renamedTerm;
       }
 
-      VariableStar[option=Option(optionList),astName=name,astType=type] -> {
+      VariableStar[option=optionList,astName=name,astType=type] -> {
         Integer multiplicity = (Integer)multiplicityMap.get(name);
         int mult = multiplicity.intValue();
         if(mult > 1) {
@@ -404,7 +404,7 @@ public class TomCompiler extends TomBase implements TomTask {
           path = (TomNumberList) path.append(`RenamedVar(name));
           path = appendNumber(mult,path);
           OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-          renamedTerm = `VariableStar(Option(newOptionList),PositionName(path),type);
+          renamedTerm = `VariableStar(newOptionList,PositionName(path),type);
 
             //System.out.println("renamedTerm = " + renamedTerm);
 
@@ -414,7 +414,7 @@ public class TomCompiler extends TomBase implements TomTask {
         return renamedTerm;
       }
       
-      Appl[option=Option(optionList), astName=name, args=args] -> {
+      Appl[option=optionList, astName=name, args=args] -> {
         TomList newArgs = empty();
         while(!args.isEmpty()) {
           TomTerm elt = args.getHead();
@@ -423,7 +423,7 @@ public class TomCompiler extends TomBase implements TomTask {
           args = args.getTail();
         }
         OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-        renamedTerm = `Appl(Option(newOptionList),name,newArgs);
+        renamedTerm = `Appl(newOptionList,name,newArgs);
         return renamedTerm;
       }
     }

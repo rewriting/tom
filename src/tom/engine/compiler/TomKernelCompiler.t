@@ -64,7 +64,7 @@ public class TomKernelCompiler extends TomBase {
 
   private int matchNumber = 0;
 
-  private Option option() {
+  private OptionList option() {
     return ast().makeOption();
   }
 
@@ -95,7 +95,7 @@ public class TomKernelCompiler extends TomBase {
         return var;
       }
 
-      MakeTerm(Appl(Option(optionList),name@Name(tomName),termArgs)) -> {
+      MakeTerm(Appl(optionList,name@Name(tomName),termArgs)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomList newTermArgs = tomListMap(termArgs,replace_preProcessing_makeTerm);
 
@@ -152,7 +152,7 @@ public class TomKernelCompiler extends TomBase {
         return `TomInclude(tomListMap(l,replace_compileMatching));
       }
       
-      Match(SubjectList(l1),PatternList(l2), matchOption@Option(optionList))  -> {
+      Match(SubjectList(l1),PatternList(l2), optionList)  -> {
         boolean generatedMatch = false;
         String currentDebugKey = "noDebug";
         if(debugMode) {
@@ -227,7 +227,7 @@ public class TomKernelCompiler extends TomBase {
         while(!l2.isEmpty()) {
           actionNumber++;
           TomTerm pa = l2.getHead();
-          defaultPA = hasDefaultCase(pa.getOption().getOptionList());
+          defaultPA = hasDefaultCase(pa.getOption());
           patternList = pa.getTermList().getTomList();
           if (debugMode && defaultPA) {
               // replace success by leaving structure
@@ -272,7 +272,7 @@ public class TomKernelCompiler extends TomBase {
           declarationInstructionList = concat(patternsDeclarationList,instructionList);
           OptionList automataOptionList = `concOption(Debug(Name(currentDebugKey)));
 
-          TomName label = getLabel(pa.getOption().getOptionList());
+          TomName label = getLabel(pa.getOption());
           if(label != null) {
             automataOptionList = `manyOptionList(Label(label),automataOptionList);
           }
@@ -280,7 +280,7 @@ public class TomKernelCompiler extends TomBase {
             automataOptionList = `manyOptionList(DefaultCase(),automataOptionList);
           }
           
-          TomTerm automata = `Automata(Option(automataOptionList),numberList,declarationInstructionList);
+          TomTerm automata = `Automata(automataOptionList,numberList,declarationInstructionList);
             //System.out.println("automata = " + automata);
           
           automataList = append(automata,automataList);
@@ -292,7 +292,7 @@ public class TomKernelCompiler extends TomBase {
            */
 
         TomList astAutomataList = automataListCompileMatchingList(automataList, generatedMatch);
-        return `CompiledMatch(matchDeclarationList,astAutomataList, matchOption);
+        return `CompiledMatch(matchDeclarationList,astAutomataList, optionList);
       }
 
         // default rule
@@ -310,7 +310,7 @@ public class TomKernelCompiler extends TomBase {
         //conc()      -> { return empty(); }
         //conc(Automata(numberList,instList),l*)  -> {
       emptyTomList()      -> { return empty(); }
-      manyTomList(Automata(Option(optionList),numberList,instList),l)  -> {
+      manyTomList(Automata(optionList,numberList,instList),l)  -> {
         TomList newList = automataListCompileMatchingList(l, generatedMatch);
         if(supportedGoto) {
           if(!generatedMatch && debugMode) {
@@ -400,8 +400,8 @@ public class TomKernelCompiler extends TomBase {
       //%variable
     matchBlock: {
       %match(TomTerm term) {
-        var@Variable(Option(optionList), _, termType) |
-        var@UnamedVariable(Option(optionList), termType) -> {
+        var@Variable(optionList, _, termType) |
+        var@UnamedVariable(optionList, termType) -> {
           Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType));
           result = addAnnotedAssignement(optionList, source, var, result);
           if(gsa) {
@@ -410,12 +410,12 @@ public class TomKernelCompiler extends TomBase {
           break matchBlock; 
         }
 
-        Appl(Option(optionList),Name(tomName),termArgs) -> {
+        Appl(optionList,Name(tomName),termArgs) -> {
           TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
           TomName termNameAST = tomSymbol.getAstName();
           TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
           TomType termType = tomSymbol.getTypesToType().getCodomain();
-          OptionList termOptionList = tomSymbol.getOption().getOptionList();
+          OptionList termOptionList = tomSymbol.getOption();
           
           TomTerm annotedVariable = getAnnotedVariable(optionList);
 
@@ -582,8 +582,8 @@ public class TomKernelCompiler extends TomBase {
           }
         }
         
-        manyTomList(var@Variable(Option(optionList),_, termType),termTail) |
-        manyTomList(var@UnamedVariable(Option(optionList), termType),termTail) -> {
+        manyTomList(var@Variable(optionList,_, termType),termTail) |
+        manyTomList(var@UnamedVariable(optionList, termType),termTail) -> {
             /*
              * generate:
              * ---------
@@ -620,8 +620,8 @@ public class TomKernelCompiler extends TomBase {
           break matchBlock;
         }
         
-        manyTomList(var@VariableStar(Option(optionList),_, termType),termTail) |
-        manyTomList(var@UnamedVariableStar(Option(optionList), termType),termTail) -> {
+        manyTomList(var@VariableStar(optionList,_, termType),termTail) |
+        manyTomList(var@UnamedVariableStar(optionList, termType),termTail) -> {
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -750,8 +750,8 @@ public class TomKernelCompiler extends TomBase {
     matchBlock: {
       %match(TomList termList) {
         
-        manyTomList(var@Variable(Option(optionList),_, termType),termTail) |
-        manyTomList(var@UnamedVariable(Option(optionList), termType),termTail) -> {
+        manyTomList(var@Variable(optionList,_, termType),termTail) |
+        manyTomList(var@UnamedVariable(optionList, termType),termTail) -> {
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -807,8 +807,8 @@ public class TomKernelCompiler extends TomBase {
           }
         }
         
-        manyTomList(var@VariableStar(Option(optionList),_, termType),termTail) |
-        manyTomList(var@UnamedVariableStar(Option(optionList), termType),termTail) -> {
+        manyTomList(var@VariableStar(optionList,_, termType),termTail) |
+        manyTomList(var@UnamedVariableStar(optionList, termType),termTail) -> {
           if(termTail.isEmpty()) {
               /*
                * generate:

@@ -230,7 +230,7 @@ public class Propp {
 					//}}}
 
 					//{{{ keep
-					PROOF -> {
+					PROOF() -> {
 						match = true;
 						c.add(`PROOF());
 					}

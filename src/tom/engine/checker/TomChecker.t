@@ -119,7 +119,7 @@ abstract class TomChecker extends TomBase implements TomTask {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
 							DeclarationToTomTerm(declaration) -> { verifyDeclaration(declaration); return false; }
-              Match(SubjectList(matchArgsList), PatternList(patternActionList), Option(list)) -> {  
+              Match(SubjectList(matchArgsList), PatternList(patternActionList), list) -> {  
                 currentTomStructureOrgTrack = findOriginTracking(list);
                 verifyMatch(matchArgsList, patternActionList); return true;
               }
@@ -130,13 +130,13 @@ abstract class TomChecker extends TomBase implements TomTask {
 							backquote@BackQuoteAppl[] -> { 
 								permissiveVerify(backquote); return false; 
 							}
-              Appl(Option(options),Name(name),args) -> { 
+              Appl(options,Name(name),args) -> { 
               	verifyApplStructure(options, name, args); return true; 
               }
-              RecordAppl(Option(options),Name(name),args) ->{
+              RecordAppl(options,Name(name),args) ->{
                 verifyRecordStructure(options, name, args); return true;
               }
-							XMLAppl(Option(options),Name(name), list1, list2) ->{
+							XMLAppl(options,Name(name), list1, list2) ->{
 								verifyXMLApplStructure(options, name, list1, list2); return true;
 							}
               _ -> { return true; }
@@ -267,7 +267,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 		/** SYMBOL DECLARATION CONCERNS */
 	private void verifySymbol(String symbolType, TomSymbol tomSymbol){
 		int nbArgs=0;
-		OptionList optionList = tomSymbol.getOption().getOptionList();
+		OptionList optionList = tomSymbol.getOption();
 			// We save first the origin tracking of the symbol declaration
 		currentTomStructureOrgTrack = findOriginTracking(optionList);
 		TomTypeList l = getSymbolDomain(tomSymbol);
@@ -382,7 +382,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 		while(!argsList.isEmpty()) {
 			TomTerm termVar = argsList.getHead();
 			%match(TomTerm termVar) {
-				Variable[option=Option(listOption), astName=Name(name)] -> {
+				Variable[option=listOption, astName=Name(name)] -> {
 					if(listVar.contains(name)) {
 						messageTwoSameNameVariableError("make", name, orgTrack, symbType);
 					} else {
@@ -462,7 +462,7 @@ abstract class TomChecker extends TomBase implements TomTask {
     
 		%match(TomList termList) {
 			concTomTerm(_*, term, _*) -> {
-				line = findOriginTrackingLine(term.getOption().getOptionList());
+				line = findOriginTrackingLine(term.getOption());
                                 ensureOriginTrackingLine(line);
 				nbFoundArgs++;
 				if(nbFoundArgs > nbExpectedArgs) {
@@ -536,8 +536,8 @@ abstract class TomChecker extends TomBase implements TomTask {
 		OptionList options = null;
 
 		%match(TomTerm lhs) {
-			Appl[option=Option(optionList), astName=Name(name)] |
-			RecordAppl[option=Option(optionList), astName=Name(name)] -> {
+			Appl[option=optionList, astName=Name(name)] |
+			RecordAppl[option=optionList, astName=Name(name)] -> {
 				checkSyntax(lhs);
 					/* lhs outermost symbol shall have a corresponding make */
 				TomSymbol symb = getSymbol(name);
@@ -545,25 +545,25 @@ abstract class TomChecker extends TomBase implements TomTask {
 					messageRuleErrorUnknownSymbol(name);
 					return methodName;
 				}
-				if ( !findMakeDeclOrDefSymbol(getSymbol(name).getOption().getOptionList())) {
+				if ( !findMakeDeclOrDefSymbol(getSymbol(name).getOption())) {
 					messageNoMakeForSymbol(name, optionList);
 				}
 				options = optionList;
 				methodName = name;
 			}
 			
-			VariableStar[option=Option(optionList), astName=Name(name1)] -> {
+			VariableStar[option=optionList, astName=Name(name1)] -> {
 				int line = findOriginTrackingLine(name1,optionList);    
 				messageRuleErrorVariableStar(name1, line);
 				return ruleName;
 			}
 
-			UnamedVariableStar[option=Option(optionList)] |
-			Placeholder[option=Option(optionList)] -> { 
+			UnamedVariableStar[option=optionList] |
+			Placeholder[option=optionList] -> { 
 				messageRuleErrorLhsImpossiblePlaceHolder(optionList);
 				return ruleName;
 			}
-			XMLAppl[option=Option(optionList)] -> {
+			XMLAppl[option=optionList] -> {
 				messageRuleErrorLhsImpossibleXML(optionList);
 				return ruleName;
 			}
@@ -623,7 +623,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 	private void verifyRhsRuleStructure(TomTerm ruleRhs, TomType lhsType) {
 		matchBlock: {
 			%match(TomTerm ruleRhs) {
-				appl@Appl(Option(options),Name(name),args) -> {
+				appl@Appl(options,Name(name),args) -> {
 					permissiveVerify(appl);
 					TomType rhsType = getSymbolCodomain(getSymbol(name));
 					if(rhsType != null) {
@@ -633,20 +633,20 @@ abstract class TomChecker extends TomBase implements TomTask {
 					}
 					break matchBlock;
 				}
-				UnamedVariableStar[option=Option(option)] |
-				Placeholder[option=Option(option)] -> {
+				UnamedVariableStar[option=option] |
+				Placeholder[option=option] -> {
 					messageRuleErrorRhsImpossiblePlaceholder(option);
 					break matchBlock;
 				}
-				VariableStar[option=Option(option), astName=Name(name)] -> {
+				VariableStar[option=option, astName=Name(name)] -> {
 					messageRuleErrorRhsImpossibleVarStar(option, name);
 					break matchBlock;
 				}
-				RecordAppl(Option(option), Name(tomName), _) -> {
+				RecordAppl(option, Name(tomName), _) -> {
 					messageRuleErrorRhsImpossibleRecord(option, tomName);
 					break matchBlock;
 				}
-				XMLAppl[option=Option(optionList)] -> {
+				XMLAppl[option=optionList] -> {
 					messageRuleErrorRhsImpossibleXML(optionList);
 					break matchBlock;
 				}
@@ -751,7 +751,7 @@ abstract class TomChecker extends TomBase implements TomTask {
     int line = nullInteger;
     String s = "";
     %match( TomTerm pairSlotName ) {
-      PairSlotAppl[slotName=Name(name),appl=Appl[option=Option(list)]] -> {
+      PairSlotAppl[slotName=Name(name),appl=Appl[option=list]] -> {
         line = findOriginTrackingLine(list);
         ensureOriginTrackingLine(line);
         s += "Slot Name '" + name + "' is not correct: See method '"+methodName+ "' -  Line : "+line;
@@ -763,7 +763,7 @@ abstract class TomChecker extends TomBase implements TomTask {
   
   private void messageSlotRepeatedError(TomTerm pairSlotName, String methodName) {
     %match( TomTerm pairSlotName ) {
-      PairSlotAppl(Name(name), Appl[option=Option(list)]) -> {
+      PairSlotAppl(Name(name), Appl[option=list]) -> {
         int line = findOriginTrackingLine(list);
         ensureOriginTrackingLine(line);
         String s = "Same slot names can not be used several times: See method '"+methodName+ "' -  Line : "+line;
@@ -839,7 +839,7 @@ abstract class TomChecker extends TomBase implements TomTask {
               messageVariableStarInNonListOperator(nbFoundArgs, termDesc.name ,name, line);
             }
             foundType.add(termDesc.type);
-            foundOptionList.add(term.getOption().getOptionList());
+            foundOptionList.add(term.getOption());
           }
         }
         if (!listOrArray) {
@@ -893,19 +893,19 @@ abstract class TomChecker extends TomBase implements TomTask {
 				 public boolean apply(ATerm term) {
 					 if(term instanceof TomTerm) {
 						 %match(TomTerm term) {
-							 BackQuoteAppl(Option(options),Name(name),args) -> {
+							 BackQuoteAppl(options,Name(name),args) -> {
 								 permissiveVerifyApplStructure(options, name, args);
 								 return true;
 							 }
-							 Appl(Option(options),Name(name),args) -> {
+							 Appl(options,Name(name),args) -> {
 								 permissiveVerifyApplStructure(options, name, args);
 								 return true;
 							 }
-							 RecordAppl[option=Option(options), astName=Name(name)] ->{
+							 RecordAppl[option=options, astName=Name(name)] ->{
 								 messageRuleErrorRhsImpossibleRecord(options, name);
 								 return true;
 							 }
-							 Placeholder(Option(orgTrack)) -> {
+							 Placeholder(orgTrack) -> {
 								 messageRuleErrorRhsImpossiblePlaceholder(orgTrack);
 							 }
 							 _ -> { return true; }
@@ -936,7 +936,7 @@ abstract class TomChecker extends TomBase implements TomTask {
         }
           // We ensure that the symbol has a Make declaration if not list nor array
         if (!isListOperator(symbol) &&  !isArrayOperator(symbol)) {
-          if ( !findMakeDeclOrDefSymbol(symbol.getOption().getOptionList()) ) {
+          if ( !findMakeDeclOrDefSymbol(symbol.getOption()) ) {
             messageNoMakeForSymbol(name, optionList);
           }
         }
@@ -989,7 +989,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 			public boolean apply(ATerm term) {
 				if(term instanceof TomTerm) {
 					%match(TomTerm term) {
-						Match(_, PatternList(list), Option(oplist)) -> {  
+						Match(_, PatternList(list), oplist) -> {  
 							currentTomStructureOrgTrack = findOriginTracking(oplist);
 							verifyMatchVariable(list);
 							return false;
@@ -1027,7 +1027,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 			TomTerm lhs = rewriteRule.getLhs();
 			TomTerm rhs = rewriteRule.getRhs();
 			TomList condList = rewriteRule.getCondList();
-			Option orgTrack = findOriginTracking(rewriteRule.getOption().getOptionList());
+			Option orgTrack = findOriginTracking(rewriteRule.getOption());
  	     
 			ArrayList variableLhs = new ArrayList();
 			collectVariable(variableLhs, lhs);
@@ -1096,7 +1096,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 				TomType type = var.getAstType();
 				TomType type2 = variable.getAstType();
 				if(!(type==type2)) {
-					messageErrorIncoherentVariable(name.getString(), type.getTomType().getString(), type2.getTomType().getString(), variable.getOption().getOptionList()); 
+					messageErrorIncoherentVariable(name.getString(), type.getTomType().getString(), type2.getTomType().getString(), variable.getOption()); 
 				}
 			} else {
 				multiplicityMap.put(name, variable);
@@ -1170,42 +1170,42 @@ abstract class TomChecker extends TomBase implements TomTask {
     int termClass, decLine;
     matchblock:{
       %match(TomTerm term) {
-        Appl[option=Option(options), astName=Name(name)] -> {
+        Appl[option=options, astName=Name(name)] -> {
           termClass = APPL;
           decLine = findOriginTrackingLine(options);
           type = extractType(getSymbol(name));     
           termName = name;
           break matchblock;
         }
-        RecordAppl[option=Option(options),astName=Name(name)] ->{
+        RecordAppl[option=options,astName=Name(name)] ->{
           termClass = RECORD_APPL;
           decLine = findOriginTrackingLine(options);
           type = extractType(getSymbol(name));     
           termName = name;
           break matchblock;
         }
-        XMLAppl[option=Option(options)] -> {
+        XMLAppl[option=options] -> {
           termClass = XML_APPL;
           decLine = findOriginTrackingLine(options);
           type = extractType(getSymbol(Constants.ELEMENT_NODE));
           termName = Constants.ELEMENT_NODE;
           break matchblock;
         }
-        Placeholder[option=Option(options)] -> {
+        Placeholder[option=options] -> {
           termClass = PLACE_HOLDER;
           decLine = findOriginTrackingLine(options);
           type = null;     
           termName = "*";
           break matchblock;
         }
-        VariableStar[option=Option(options), astName=Name(name)] -> { 
+        VariableStar[option=options, astName=Name(name)] -> { 
           termClass = VARIABLE_STAR;
           decLine = findOriginTrackingLine(options);
           type = null;     
           termName = name+"*";
           break matchblock;
         }
-        UnamedVariableStar[option=Option(options)] -> {
+        UnamedVariableStar[option=options] -> {
           termClass = UNAMED_VARIABLE_STAR;
           decLine = findOriginTrackingLine(options);
           type = null;     

@@ -106,7 +106,7 @@ public class TomBase {
     return tsf().makeTomNumber_Number(n);
   }
   
-  protected Option emptyOption() {
+  protected OptionList emptyOption() {
     return ast().makeOption();
   }
 
@@ -315,7 +315,7 @@ public class TomBase {
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol[option=Option(optionList)] -> {
+      Symbol[option=optionList] -> {
         while(!optionList.isEmpty()) {
           Option opt = optionList.getHead();
           %match(Option opt) {
@@ -340,7 +340,7 @@ public class TomBase {
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol[option=Option(optionList)] -> {
+      Symbol[option=optionList] -> {
         while(!optionList.isEmpty()) {
           Option opt = optionList.getHead();
           %match(Option opt) {
@@ -394,8 +394,8 @@ public class TomBase {
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;
             %match(TomTerm t) { 
-              Variable[option=Option(optionList)] |
-              VariableStar[option=Option(optionList)] -> {
+              Variable[option=optionList] |
+              VariableStar[option=optionList] -> {
                 collection.add(t);
                 annotedVariable = getAnnotedVariable(optionList);
                 if(annotedVariable!=null) {
@@ -404,8 +404,8 @@ public class TomBase {
                 return false;
               }
               
-              UnamedVariable[option=Option(optionList)] |
-              UnamedVariableStar[option=Option(optionList)] -> {
+              UnamedVariable[option=optionList] |
+              UnamedVariableStar[option=optionList] -> {
                 annotedVariable = getAnnotedVariable(optionList);
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
@@ -414,7 +414,7 @@ public class TomBase {
               }
               
                 // to collect annoted nodes but avoid collect variables in optionSymbol
-              Appl[option=Option(optionList), args=subterms] -> {
+              Appl[option=optionList, args=subterms] -> {
                 collectVariable(collection,`Tom(subterms));
                 annotedVariable = getAnnotedVariable(optionList);
                 if(annotedVariable!=null) {
@@ -436,11 +436,11 @@ public class TomBase {
 
   protected boolean isAnnotedVariable(TomTerm t) {
     %match(TomTerm t) {
-      Appl[option=Option(optionList)] |
-      Variable[option=Option(optionList)] |
-      VariableStar[option=Option(optionList)] |
-      UnamedVariable[option=Option(optionList)] |
-      UnamedVariableStar[option=Option(optionList)] -> {
+      Appl[option=optionList] |
+      Variable[option=optionList] |
+      VariableStar[option=optionList] |
+      UnamedVariable[option=optionList] |
+      UnamedVariableStar[option=optionList] -> {
         return getAnnotedVariable(optionList)!=null;
       }
     }
@@ -551,7 +551,7 @@ public class TomBase {
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol[option=Option(optionList)] -> {
+      Symbol[option=optionList] -> {
         return hasDefinedSymbol(optionList);
       }
     }
@@ -561,7 +561,7 @@ public class TomBase {
     // findOriginTracking(_) return the option containing OriginTracking information
   protected Option findOriginTracking(OptionList optionList) {
     if(optionList.isEmpty()) {
-      return ast().makeOption();
+      return `noOption();
     }
     while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();

@@ -77,10 +77,10 @@ public class TomKernelExpander extends TomBase {
           //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
         
         %match(TomTerm contextSubject, TomTerm subject) {
-          TomTypeToTomTerm(type@Type(tomType,glType)) , appl@Appl(Option(optionList),name@Name(strName),l) -> {
+          TomTypeToTomTerm(type@Type(tomType,glType)) , appl@Appl(optionList,name@Name(strName),l) -> {
               //debugPrintln("expandVariable.1: Type(" + tomType + "," + glType + ")");
             Option orgTrack = findOriginTracking(optionList);
-            Option option = `Option(replaceAnnotedName(optionList,type,orgTrack));
+            OptionList option = `replaceAnnotedName(optionList,type,orgTrack);
               // create a constant or a variable
 
               //TomSymbol tomSymbol = getSymbol(strName);
@@ -99,10 +99,10 @@ public class TomKernelExpander extends TomBase {
             }
           }
           
-          Variable(option1,name1,type1) , appl@Appl(Option(optionList),name@Name(strName),l) -> {
+          Variable(option1,name1,type1) , appl@Appl(optionList,name@Name(strName),l) -> {
               //debugPrintln("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
             Option orgTrack = findOriginTracking(optionList);
-            Option option = `Option(replaceAnnotedName(optionList,type1,orgTrack));
+            OptionList option = `replaceAnnotedName(optionList,type1,orgTrack);
               // under a match construct
               // create a constant or a variable
               //TomSymbol tomSymbol = getSymbol(strName);
@@ -121,21 +121,21 @@ public class TomKernelExpander extends TomBase {
             }
           } 
 
-          TomTypeToTomTerm(type@Type(tomType,glType)) ,p@Placeholder(Option(optionList)) -> {
+          TomTypeToTomTerm(type@Type(tomType,glType)) ,p@Placeholder(optionList) -> {
             Option orgTrack = findOriginTracking(optionList);
-            Option option = `Option(replaceAnnotedName(optionList,type,orgTrack));
+            OptionList option = `replaceAnnotedName(optionList,type,orgTrack);
               // create an unamed variable
             return `UnamedVariable(option,type);
           } 
               
-          Variable(option1,name1,type1) , p@Placeholder(Option(optionList)) -> {
+          Variable(option1,name1,type1) , p@Placeholder(optionList) -> {
             Option orgTrack = findOriginTracking(optionList);
-            Option option = `Option(replaceAnnotedName(optionList,type1,orgTrack));
+            OptionList option = `replaceAnnotedName(optionList,type1,orgTrack);
               // create an unamed variable
             return `UnamedVariable(option,type1);
           } 
 
-          context, appl@Appl(Option(optionList),name@Name(tomName),l) -> {
+          context, appl@Appl(optionList,name@Name(tomName),l) -> {
               //debugPrintln("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
               // create a  symbol
             TomSymbol tomSymbol = getSymbol(tomName);
@@ -143,7 +143,7 @@ public class TomKernelExpander extends TomBase {
               TomList subterm = expandVariableList(tomSymbol, l);
                 //System.out.println("***** expandVariable.6: expandVariableList = " + subterm);
               Option orgTrack = findOriginTracking(optionList);
-              Option option = `Option(replaceAnnotedName(optionList,getSymbolCodomain(tomSymbol),orgTrack));
+              OptionList option = `replaceAnnotedName(optionList,getSymbolCodomain(tomSymbol),orgTrack);
               return `Appl(option,name,subterm);
             } else {
               System.out.println("context = " + context);
@@ -161,7 +161,7 @@ public class TomKernelExpander extends TomBase {
               //debugPrintln("expandVariable.8: TLVar(" + strName + "," + tomType + ")");
               // create a variable: its type is ensured by checker
             TomType localType = getType(tomType);
-            Option option = ast().makeOption();
+            OptionList option = ast().makeOption();
             return `Variable(option,Name(strName),localType);
           }
               
@@ -229,17 +229,17 @@ public class TomKernelExpander extends TomBase {
 
             matchBlock: {
               %match(TomTerm subterm) {
-                VariableStar(Option(optionList),name,_) -> {
+                VariableStar(optionList,name,_) -> {
                   Option orgTrack = findOriginTracking(optionList);
-                  Option option = `Option(replaceAnnotedName(optionList,codomainType,orgTrack));
+                  OptionList option = `replaceAnnotedName(optionList,codomainType,orgTrack);
                   list.add(`VariableStar(option,name,codomainType));
                     //System.out.println("*** break: " + subterm);
                   break matchBlock;
                 }
                 
-                UnamedVariableStar(Option(optionList),_) -> {
+                UnamedVariableStar(optionList,_) -> {
                   Option orgTrack = findOriginTracking(optionList);
-                  Option option = `Option(replaceAnnotedName(optionList,codomainType,orgTrack));
+                  OptionList option = `replaceAnnotedName(optionList,codomainType,orgTrack);
                   list.add(`UnamedVariableStar(option,codomainType));
                   break matchBlock;
                 }
@@ -345,7 +345,7 @@ public class TomKernelExpander extends TomBase {
         while(!list.isEmpty()) {
           TomTerm pa = list.getHead();
           if( isDefaultPattern(pa.getTermList().getTomList()) ) {
-            Option newPatternActionOption =  `Option(manyOptionList(DefaultCase(),pa.getOption().getOptionList()));
+            OptionList newPatternActionOption =  `manyOptionList(DefaultCase(),pa.getOption());
             newPatternList = cons(`PatternAction(pa.getTermList(), pa.getTom(), newPatternActionOption), newPatternList);
             needModification = true;
             if(!list.getTail().isEmpty()) {
@@ -360,7 +360,7 @@ public class TomKernelExpander extends TomBase {
         }
         if(needModification) {
           newPatternList = reverse(newPatternList);
-          Option newMatchOption =`Option(manyOptionList(DefaultCase(),option.getOptionList()));
+          OptionList newMatchOption =`manyOptionList(DefaultCase(),option);
           return `Match(subjectList, PatternList(newPatternList), newMatchOption);
         } else {
           return match;

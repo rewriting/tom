@@ -25,7 +25,7 @@ bootinstall :
 	done
 
 api:
-	adt-to-java -v -i set.adt -j -p jtom.runtime.set.jgtreeset -o jgtreeset -m 'aterm.*'
+	adt-to-java -v -i set.adt -n set -j -p jtom.runtime.set.jgtreeset -o jgtreeset -m 'aterm.*'
 
 # we use the last installed compiler to compile the current compiler
 TOMFLAGS = --noWarning
