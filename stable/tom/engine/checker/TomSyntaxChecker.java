@@ -2,7 +2,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
+    Copyright (C) 2000-2004 INRIA
 			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,10 @@ public class TomSyntaxChecker extends TomChecker {
   public TomSyntaxChecker(TomEnvironment env) {
   	super("Tom SyntaxChecker", env);
   }
-	
+  
+  /**
+   * The process function do the work in the Task template process
+   */
   public void process() {
     try {
 			long startChrono = 0;

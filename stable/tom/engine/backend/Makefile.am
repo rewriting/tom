@@ -9,7 +9,7 @@ TNODEADT_STABLE=$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
 javadir         = ${prefix}/classes/jtom/backend
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(TSADT_STABLE):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
-JAVASOURCES     = TomAbstractGenerator.java TomBackend.java TomCGenerator.java TomCamlGenerator.java TomEiffelGenerator.java TomImperativeGenerator.java TomJavaGenerator.java
+JAVASOURCES     = TomAbstractGenerator.java TomGenericGenerator.java TomBackend.java TomCGenerator.java TomCamlGenerator.java TomEiffelGenerator.java TomImperativeGenerator.java TomJavaGenerator.java
 java_JAVA       = $(JAVASOURCES)
 EXTRA_DIST      = $(JAVASOURCES)
 

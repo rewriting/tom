@@ -35,7 +35,7 @@ public final class TomCheckerMessage {
 	
 	public static String RepeatedMatchArgumentName = "Repeated variable `{0}` in `match` declaration";
 	public static String BadMatchNumberArgument = "Bad number of arguments: {0,number,integer} argument(s) required by match signature but {1,number,integer} found";
-	public static String IncorrectVariableStar = "Single list variable `{0}` is not allowed on top of `match` pattern";
+	public static String IncorrectVariableStarInMatch = "Single list variable `{0}` is not allowed on top of `match` pattern";
 	public static String WrongMatchArgumentTypeInPattern = "Wrong type for slot {0,number,integer}:Type `{1}` required but Type `{2}` found";
 
 	public static String UnknownSymbol = "Unknown symbol `{0}`";

@@ -5,7 +5,7 @@
 #javadir         = ${prefix}/classes/jtom/runtime/mapping/c
 #JAVAROOT        = ${top_builddir}/stable/
 
-MAPPING 	= aterm.tom int.tom string.tom
+MAPPING 	= aterm.tom int.tom string.tom double.tom char.tom
 EXTRA_DIST 	= ${MAPPING}
 #CLEANFILES 	= 
 

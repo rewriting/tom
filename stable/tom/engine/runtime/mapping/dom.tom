@@ -68,9 +68,8 @@ public static java.util.ArrayList tom_mapping_newTNodeList() {
 	return new java.util.ArrayList();
 }
 
-
-%typeint
-%typestring
+%include { int.tom }
+%include { string.tom }
 
 %typeterm TNode { 
 	implement {org.w3c.dom.Node}	

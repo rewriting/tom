@@ -14,14 +14,6 @@
   equals(t1,t2) {(t1 == t2)}
 }
 
-%typeterm double{
-  implement { double}
-  get_fun_sym(t) {t}
-  cmp_fun_sym(s1,s2) { (s1 == s2)}
-  get_subterm(t,n) {null}
-  equals(t1,t2) {(t1 == t2)}
-}
-
 %typeterm ATerm{
   implement { aterm.ATerm}
   get_fun_sym(t) {((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null)}

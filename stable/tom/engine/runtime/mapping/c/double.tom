@@ -1,5 +1,5 @@
-%typeterm int {
-  implement           { int }
+%typeterm double {
+  implement           { double }
   get_fun_sym(t)      { t }
   cmp_fun_sym(s1,s2)  { (s1==s2) }
   get_subterm(t, n)   { 0 }

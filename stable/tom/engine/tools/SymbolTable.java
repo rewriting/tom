@@ -2,7 +2,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
+    Copyright (C) 2000-2004 INRIA
 			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
@@ -32,8 +32,16 @@ import java.util.Set;
 
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
+import jtom.exception.TomRuntimeException;
 
 public class SymbolTable {
+  private final static String TYPE_INT       = "int";
+  private final static String TYPE_CHAR      = "char";
+  private final static String TYPE_DOUBLE    = "double";
+  private final static String TYPE_STRING    = "String";
+  private final static String TYPE_BOOL      = "bool";
+  private final static String TYPE_UNIVERSAL = "universal";
+
   private boolean cCode = false, jCode = true, eCode =false, camlCode = false;
   private Map mapSymbolName = new HashMap();
   private Map mapTypeName = new HashMap();
@@ -41,36 +49,40 @@ public class SymbolTable {
   public SymbolTable(ASTFactory astFactory, boolean cCode, boolean jCode, boolean eCode, boolean camlCode) {
     this.astFactory = astFactory;
     this.cCode = cCode;
-	  this.jCode = jCode;
-	  this.eCode = eCode;
-		this.camlCode = camlCode;
+    this.jCode = jCode;
+    this.eCode = eCode;
+    this.camlCode = camlCode;
     init();
   }
   private void init() {
     if(cCode) {
-      putType("bool", ast().makeType("bool","int"));
-      putType("int", ast().makeType("int","int"));
-      putType("double", ast().makeType("double","double"));
-      putType("String", ast().makeType("String","char*"));
-      putType("universal", ast().makeType("universal","void*"));
+      putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
+      putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"int"));
+      putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
+      putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
+      putType(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"));
+      putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"));
     } else if(jCode) {
-      putType("bool", ast().makeType("bool","boolean"));
-      putType("int", ast().makeType("int","int"));
-      putType("double", ast().makeType("double","double"));
-      putType("String", ast().makeType("String","String"));
-      putType("universal", ast().makeType("universal","Object"));
+      putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
+      putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"boolean"));
+      putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
+      putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
+      putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
+      putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"));
     } else if(eCode) {
-      putType("bool", ast().makeType("bool","BOOLEAN"));
-      putType("int", ast().makeType("int","INTEGER"));
-      putType("double", ast().makeType("double","DOUBLE"));
-      putType("String", ast().makeType("String","STRING"));
-      putType("universal", ast().makeType("universal","ANY"));
-    } else if(camlCode) { // this is really bad, will need to be corrected
-      putType("bool", ast().makeType("bool","bool"));
-      putType("int", ast().makeType("int","int"));
-      putType("double", ast().makeType("double","double"));
-      putType("String", ast().makeType("String","String"));
-      putType("universal", ast().makeType("universal","None"));
+      putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"CHARACTER"));
+      putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"BOOLEAN"));
+      putType(TYPE_INT, ast().makeType(TYPE_INT,"INTEGER"));
+      putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"DOUBLE"));
+      putType(TYPE_STRING, ast().makeType(TYPE_STRING,"STRING"));
+      putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"ANY"));
+    } else if(camlCode) { // this is really bad, will need to be improved
+      putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
+      putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"bool"));
+      putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
+      putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
+      putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
+      putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"None"));
     }
   }
 
@@ -120,6 +132,71 @@ public class SymbolTable {
     return res;
   }
 
+  public TomType getIntType() {
+    return getType(TYPE_INT);
+  }
+
+  public TomType getCharType() {
+    return getType(TYPE_CHAR);
+  }
+
+  public TomType getDoubleType() {
+    return getType(TYPE_DOUBLE);
+  }
+
+  public TomType getBoolType() {
+    return getType(TYPE_BOOL);
+  }
+  
+  public TomType getStringType() {
+    return getType(TYPE_STRING);
+  }
+
+  public TomType getUniversalType() {
+    return getType(TYPE_UNIVERSAL);
+  }
+
+  public boolean isIntType(String type) {
+    return type.equals(TYPE_INT);
+  }
+
+  public boolean isCharType(String type) {
+    return type.equals(TYPE_CHAR);
+  }
+
+  public boolean isStringType(String type) {
+    return type.equals(TYPE_STRING);
+  }
+
+  public boolean isBoolType(String type) {
+    return type.equals(TYPE_BOOL);
+  }
+
+  public boolean isDoubleType(String type) {
+    return type.equals(TYPE_DOUBLE);
+  }
+
+  public boolean isBuiltinType(String type) {
+    return isIntType(type) || isCharType(type) ||
+      isStringType(type) || isBoolType(type) || isDoubleType(type);
+  }
+ 
+  public TomType getBuiltinType(String type) {
+    if(isIntType(type)) {
+      return getIntType();
+    } else if(isCharType(type)) {
+      return getCharType();
+    } else if(isStringType(type)) {
+      return getStringType();
+    } else if(isBoolType(type)) {
+      return getBoolType();
+    } else if(isDoubleType(type)) {
+      return getDoubleType();
+    } 
+    System.out.println("Not a builtin type: " + type);
+    throw new TomRuntimeException(new Throwable("getBuiltinType error on term: " + type));
+  }
+  
   public Iterator keySymbolIterator() {
     Set keys = mapSymbolName.keySet();
     Iterator it = keys.iterator();
