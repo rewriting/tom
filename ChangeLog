@@ -2,6 +2,16 @@
 	* start debugger development (jtom.debug.TomDebugger)
 	* Introduce SharedSet API (jtom.runtime.set.SharedSet)
 
+2003-05-08    <pem@bach>
+
+	* src/jtom/parser/TomParser.jj: 
+	  allow is_fsym for list and array operators
+
+2003-05-07    <pem@bach>
+
+	* src/jtom/backend/TomGenerator.t: 
+	  improved tom_insert_list: no longer use reverse
+
 2003-05-06    <pem@bach>
 
         * generate unique AbsVar to allow abstraction in nested match
