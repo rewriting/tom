@@ -1,7 +1,7 @@
 package
 identification
          name=jtom
-      version=1.0
+      version=1.1
      location=http://elan.loria.fr/Soft/
          info=http://elan.loria.fr/Toolkit
   description='TOM is a term rewriting tool designed for industrial
@@ -14,5 +14,5 @@ identification
 configuration interface
 
 requires
-  aterm-java 1.0
-  shared-objects 1.0
+  aterm-java 1.1
+  shared-objects 1.1
