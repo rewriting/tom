@@ -110,6 +110,9 @@
   <property name="strategy" value="strategy"/>
   <property name="strategy.dir" location="${examples.dir}/${strategy}" />
 
+  <property name="structure" value="structure"/>
+  <property name="structure.dir" location="${examples.dir}/${structure}" />
+
   <property name="tutorial" value="tutorial"/>
   <property name="tutorial.dir" location="${examples.dir}/${tutorial}" />
 
@@ -821,6 +824,32 @@
     </javac>
   </target>
 
+  <target name="structure" depends="init">
+    <!-- build adt -->
+    <adt srcdir="${examples.dir}"
+         factory="term" 
+				 visitable="true"
+         package="${structure}" 
+         destdir="${examples.gen}">
+			<include name="${structure}/**/*.adt"/>
+	</adt>			 
+    <!-- build tom -->
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         options="-I ${tom.home}/share/jtom">
+      <include name="${structure}/**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
+      <classpath refid="tom.classpath"/>
+      <include name="${structure}/**/*.java"/>
+    </javac>
+  </target>
+
   <target name="tutorial" depends="init">
     <!-- build tom -->
     <tom config="${tomconfigfile}"
@@ -915,16 +944,10 @@
             depends="addressbook, apireach, appletxml, boulderdash, builtin,
 						caml, cell, dom, expression, gtree, list, 
 						nspk, p3p, peano, pnspk, poly, pqueens,
-            prodrule, propp, rbtree, set, tutorial, vas, xml">
+            prodrule, propp, rbtree, set, strategy, structure, 
+						tutorial, vas, xml">
       </target>
-<!--
-      <target name="examples" 
-              description="Builds the examples (at least some)"
-              depends="xml, vas, tutorial, set, rbtree, propp, prodrule,
-              addressbook, caml, apireach, boulderdash, builtin, dom,
-              expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens">
-      </target>
--->
+
 			<target name="dist.examples" 
 							description="Prepare a distribution of examples" 
 							depends="prepare.examples">
@@ -1034,6 +1057,14 @@
             <include name="${set}/README"/>
             <include name="${set}/*.t"/>
             <include name="${set}/*.adt"/>
+
+            <include name="${strategy}/README"/>
+            <include name="${strategy}/*.t"/>
+            <include name="${strategy}/*.adt"/>
+
+            <include name="${structure}/README"/>
+            <include name="${structure}/*.t"/>
+            <include name="${structure}/*.adt"/>
 
             <include name="${tutorial}/README"/>
             <include name="${tutorial}/*.t"/>
