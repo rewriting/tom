@@ -11,6 +11,7 @@ extends TomTerm
     return pattern;
   }
   private static int index_term = 0;
+  private static int index_option = 1;
 
   public shared.SharedObject duplicate() {
     TomTerm_BackQuoteTerm clone = new TomTerm_BackQuoteTerm();
@@ -23,7 +24,7 @@ extends TomTerm
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("BackQuoteTerm(<term>)");
+    pattern = getStaticFactory().parse("BackQuoteTerm(<term>,<term>)");
   }
 
 
@@ -32,7 +33,7 @@ extends TomTerm
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_BackQuoteTerm(TomTerm.fromTerm( (aterm.ATerm) children.get(0)));
+      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_BackQuoteTerm(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), Option.fromTerm( (aterm.ATerm) children.get(1)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -51,6 +52,11 @@ extends TomTerm
     return true;
   }
 
+  public boolean hasOption()
+  {
+    return true;
+  }
+
 
   public TomTerm getTerm()
   {
@@ -62,11 +68,26 @@ extends TomTerm
     return (TomTerm) super.setArgument(_term, index_term);
   }
 
+  public Option getOption()
+  {
+    return (Option) this.getArgument(index_option) ;
+  }
+
+  public TomTerm setOption(Option _option)
+  {
+    return (TomTerm) super.setArgument(_option, index_option);
+  }
+
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
         if (! (arg instanceof TomTerm)) { 
           throw new RuntimeException("Argument 0 of a TomTerm_BackQuoteTerm should have type TomTerm");
+        }
+        break;
+      case 1:
+        if (! (arg instanceof Option)) { 
+          throw new RuntimeException("Argument 1 of a TomTerm_BackQuoteTerm should have type Option");
         }
         break;
       default: throw new RuntimeException("TomTerm_BackQuoteTerm does not have an argument at " + i );
@@ -78,6 +99,7 @@ extends TomTerm
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
     int b = 0x9e3779b9;
+    a += (getArgument(1).hashCode() << 8);
     a += (getArgument(0).hashCode() << 0);
 
     a -= b; a -= c; a ^= (c >> 13);

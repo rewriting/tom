@@ -213,62 +213,17 @@ public class ASTFactory {
   }
   
     /*
-     * update the symbolTable wrt. to the typeTable
-     */
-  public void updateSymbol(SymbolTable symbolTable) {
-    Iterator it = symbolTable.keySymbolIterator();
-    while(it.hasNext()) {
-      Object key = it.next();
-      TomSymbol symbol = symbolTable.getSymbol((String)key);
-
-      TomName name     = symbol.getAstName();
-      TomList typeList = symbol.getTypesToType().getList();
-      TomType type     = symbol.getTypesToType().getCodomain();
-      SlotList slotList = symbol.getSlotList();
-      Option  options  = symbol.getOption();
-      TargetLanguage tlcode   = symbol.getTlCode();
-
-      if(name==null || typeList==null || type==null || options==null || tlcode==null) {
-        System.out.println("ASTFactory: null value");
-        System.exit(1);
-      }
-
-      TomType newType = symbolTable.getType(type.getString());
-      ArrayList newTypeList = new ArrayList();
-      while (!typeList.isEmpty()) {
-        TomType typeAlone = typeList.getHead().getAstType();
-        TomType tmpType = symbolTable.getType(typeAlone.getString());
-        TomTerm tmpTerm = tsf().makeTomTerm_TomTypeToTomTerm(tmpType);
-        newTypeList.add(tmpTerm);
-        typeList = typeList.getTail() ;
-      }
-
-      TomType typesToType = tsf().makeTomType_TypesToType(makeList(newTypeList), newType);
-      TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,typesToType,slotList,options,tlcode);
-      symbolTable.putSymbol((String)key,newSymbol);
-    }
-  }
-
-    /*
      * update the root of lhs: it becomes a defined symbol
      */
   public void updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
       //List result = term.match("Appl(Option(<term>),Name(<term>),<term>)");
     if(term.isAppl() || term.isRecordAppl()) {
-      String key         = term.getAstName().getString();
-      TomSymbol symbol   = symbolTable.getSymbol(key);
+      String key = term.getAstName().getString();
+      TomSymbol symbol = symbolTable.getSymbol(key);
       if (symbol != null) {
-        TomName name       = symbol.getAstName();
-        TomType type       = symbol.getTypesToType();
         OptionList optionList = symbol.getOption().getOptionList();
-        TargetLanguage tlcode     = symbol.getTlCode();
-        SlotList slotList = symbol.getSlotList();
         optionList = append(tsf().makeOption_DefinedSymbol(),optionList);
-        TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,type,slotList, makeOption(optionList),tlcode);
-        symbolTable.putSymbol(key,newSymbol);
-      }
-      else {
-        System.out.println("updateDefinedSymbol called on not yet defined symbol: "+key);
+        symbolTable.putSymbol(key,symbol.setOption(makeOption(optionList)));
       }
     }
   }
@@ -282,6 +237,7 @@ public class ASTFactory {
     } else
       return code;
   }
+
   public TomName makeName(String slotName) {
     if(slotName.length()>0)
       return tsf().makeTomName_Name(slotName);

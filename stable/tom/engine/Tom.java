@@ -211,7 +211,6 @@ public class Tom {
         TomVerifier  tomVerifier = new TomVerifier(environment);
         startChrono();
         tomVerifier.verify(parsedTerm);
-        tomParser.updateSymbol();
         stopChrono();
         if(Flags.verbose) System.out.println("TOM verification phase " + getChrono());
 
@@ -243,26 +242,26 @@ public class Tom {
         }
 
       } catch (FileNotFoundException e) {
-        System.out.println("Tom Parser:  File " + inputFileName + " not found.");
+        System.out.println("\nTom Parser:  File " + inputFileName + " not found.");
         System.out.println("No file generated.");
         return;
       } catch(ParseException e1) {
         System.out.println(e1);
-        System.out.println("Tom Parser:  Encountered errors during parsing.");
+        System.out.println("\nTom Parser:  Encountered errors during parsing.");
         System.out.println("No file generated.");
         return;
       } catch(CheckErrorException e2) {
         System.out.println(e2);
-        System.out.println("Tom Verifier:  Encountered errors during verification phase.");
+        System.out.println("\nTom Verifier:  Encountered errors during verification phase.");
         System.out.println("No file generated.");
         return;
       } catch(TomException e3) {
         System.out.println(e3);
-        System.out.println("Tom:  Encountered errors during compilation.");
+        System.out.println("\nTom:  Encountered errors during compilation.");
         System.out.println("No file generated.");
         return;
       } catch(IOException e4) {
-        System.out.println("No file generated.");
+        System.out.println("\nNo file generated.");
         throw new InternalError("read error");
       }
     }

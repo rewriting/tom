@@ -640,12 +640,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasArgs()
+  public boolean hasOption()
   {
     return false;
   }
 
-  public boolean hasOption()
+  public boolean hasArgs()
   {
     return false;
   }
@@ -866,16 +866,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Term");
   }
 
-  public TomList getArgs()
-  {
-     throw new RuntimeException("This TomTerm has no Args");
-  }
-
-  public TomTerm setArgs(TomList _args)
-  {
-     throw new RuntimeException("This TomTerm has no Args");
-  }
-
   public Option getOption()
   {
      throw new RuntimeException("This TomTerm has no Option");
@@ -884,6 +874,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setOption(Option _option)
   {
      throw new RuntimeException("This TomTerm has no Option");
+  }
+
+  public TomList getArgs()
+  {
+     throw new RuntimeException("This TomTerm has no Args");
+  }
+
+  public TomTerm setArgs(TomList _args)
+  {
+     throw new RuntimeException("This TomTerm has no Args");
   }
 
   public TomName getSlotName()

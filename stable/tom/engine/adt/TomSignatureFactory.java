@@ -591,7 +591,7 @@ public class TomSignatureFactory extends PureFactory
     protoTomTerm_MakeTerm = new TomTerm_MakeTerm();
 
     TomTerm_BackQuoteTerm.initializePattern();
-    funTomTerm_BackQuoteTerm = makeAFun("TomTerm_BackQuoteTerm", 1, false);
+    funTomTerm_BackQuoteTerm = makeAFun("TomTerm_BackQuoteTerm", 2, false);
     protoTomTerm_BackQuoteTerm = new TomTerm_BackQuoteTerm();
 
     TomTerm_LocalVariable.initializePattern();
@@ -1717,8 +1717,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm makeTomTerm_BackQuoteTerm(TomTerm _term) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_term};
+  public TomTerm makeTomTerm_BackQuoteTerm(TomTerm _term, Option _option) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_term, _option};
     return makeTomTerm_BackQuoteTerm( funTomTerm_BackQuoteTerm, args, empty);
   }
 
