@@ -61,4 +61,3 @@ if $cygwin; then
 fi
 
 exec "$JAVACMD" $TOM_OPTS -classpath "$LOCALCLASSPATH" -Dtom.home="${TOM_SRC_HOME}" jtom.TomServer -X $TOM_CONFIG_FILE $TOM_ARGS -I "$TOM_INC" "$@"
-
