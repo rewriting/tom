@@ -65,11 +65,26 @@ public class LatexOutput {
 
 		String result = "\\documentclass{article}\n";
 		result += "\\usepackage{proof}\n";
-		result += "\\usepackage{xspace}";
-		result += "\\usepackage{amssymb}";
+		result += "\\usepackage{xspace}\n";
+		result += "\\usepackage{amssymb}\n";
 		result += "\\input{include.tex}\n\n";
 		result += "\\begin{document}\n";
-		result += build_latex_from_tree(tree);
+
+		// Use a TreeMap to have the conditions sorted
+		Map conditions = new TreeMap();
+		result += build_latex_from_tree(tree, conditions);
+
+		result += "\n \\[\n";
+		result += "\\begin{array}{ll}\n";
+		Iterator it = conditions.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			result += ((String) entry.getKey()) + ": & ";
+			result += ((String) entry.getValue()) + "\\\\\n";
+		}
+		result += "\\end{array}\n";
+		result += "\\]\n";
+
 		result += "\n\\end{document}";
 
 		return result;
@@ -102,14 +117,17 @@ public class LatexOutput {
 			}
 		};
 
-	public String build_latex_from_tree(DerivTree tree) {
+	public String build_latex_from_tree(DerivTree tree, Map conditions) {
 		String result = "";
 		%match(DerivTree tree) {
 			derivrule(name,post,pre,condition) -> {
+				String cond = build_latex_from_Seq(condition);
+				String condname = "\\fbox{" + (conditions.size()+1) + "}";
+				conditions.put(condname,cond);
 				result = "\n\\infer["	
-					+ build_latex_from_Seq(condition) + "]\n{"
+					+ condname + "]\n{"
 					+ build_latex_from_deriv(post) + "}\n{" 
-					+ build_latex_from_tree(pre) + "}\n";
+					+ build_latex_from_tree(pre,conditions) + "}\n";
 			}
 		}
 		return result;
@@ -119,9 +137,9 @@ public class LatexOutput {
 		String result = "";
 		%match(Deriv deriv) {
 			ebs(lhs,rhs) -> {
-				result = build_latex_from_env(lhs)
+				result = "{"+build_latex_from_env(lhs)+"}"
 					+ " \\evaltobs "
-					+ build_latex_from_env(rhs);
+					+ "{"+build_latex_from_env(rhs)+"}";
 			}
 		}
 		return result;
@@ -131,7 +149,7 @@ public class LatexOutput {
 		String result = "";
 		%match(Environment env) {
 			env(subslist,instr) -> {
-				result = "\\env{"+build_latex_from_subslist(subslist)+" }{ "+build_latex_from_Instr(instr)+"}";
+				result = "\\tup{"+build_latex_from_subslist(subslist)+" }{ "+build_latex_from_Instr(instr)+"}";
 			}
 		}
 		return result;
@@ -140,13 +158,16 @@ public class LatexOutput {
 	String build_latex_from_subslist(SubstitutionList subslist) {
 		String result = "";
 		%match(SubstitutionList subslist) {
-			concSubstitution(h,t*) -> {
-				%match(Substitution h) {
+			concSubstitution() -> { 
+				return "\\env_{0}";
+			}
+			concSubstitution(h*,t) -> {
+				%match(Substitution t) {
 					undefsubs() -> { 
-						result = "\\textit{empty}"+build_latex_from_subslist(`t); 
+						result = "\\textit{empty}"+build_latex_from_subslist(`h); 
 					}
 					is(variable,term) -> {
-						result = "\\subs{"+build_latex_from_var(variable)+"}{"+build_latex_from_term(term) + "}"+build_latex_from_subslist(`t);
+						result = build_latex_from_subslist(`h)+"\\subs{"+build_latex_from_var(variable)+"}{"+build_latex_from_term(term) + "}";
 					}
 				}
 			}
