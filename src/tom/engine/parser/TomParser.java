@@ -31,6 +31,7 @@ import java.util.*;
 import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
+import jtom.xml.Constants;
 import java.lang.reflect.Constructor;
 import java.lang.Throwable;
 
@@ -790,10 +791,10 @@ public class TomParser implements TomTask, TomParserConstants {
       ;
     }
       if(list.size() > 1) {
-        optionList.add(ast().makeOriginTracking(Tools.ATTRIBUTE_NODE,getLine(), currentFile));
+        optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
         option = ast().makeOption(ast().makeOptionList(optionList));
         {if (true) return tsf().makeTomTerm_Appl(option,
-                                      tsf().makeTomName_Name(Tools.ATTRIBUTE_NODE),
+                                      tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE),
                                       ast().makeList(list));}
       } else {
         {if (true) return term;}
@@ -920,10 +921,10 @@ public class TomParser implements TomTask, TomParserConstants {
       arg1 = Term();
       if(ast().isStringSymbol(symbolTable,arg1)) {
         list.add(arg1);
-        optionList.add(ast().makeOriginTracking(Tools.TEXT_NODE,getLine(), currentFile));
+        optionList.add(ast().makeOriginTracking(Constants.TEXT_NODE,getLine(), currentFile));
         option = ast().makeOption(ast().makeOptionList(optionList));
         {if (true) return tsf().makeTomTerm_Appl(option,
-                                      tsf().makeTomName_Name(Tools.TEXT_NODE),
+                                      tsf().makeTomName_Name(Constants.TEXT_NODE),
                                       ast().makeList(list));}
       }
 
@@ -934,7 +935,7 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_consume_token(TOM_LPAREN);
       arg1 = TermStringIdentifier();
       jj_consume_token(TOM_RPAREN);
-      keyword = Tools.TEXT_NODE;
+      keyword = Constants.TEXT_NODE;
       list.add(arg1);
       break;
     case XML_COMMENT:
@@ -942,7 +943,7 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_consume_token(TOM_LPAREN);
       arg1 = TermStringIdentifier();
       jj_consume_token(TOM_RPAREN);
-      keyword = Tools.COMMENT_NODE;
+      keyword = Constants.COMMENT_NODE;
       list.add(arg1);
       break;
     case XML_PROC:
@@ -952,7 +953,7 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_consume_token(TOM_COMMA);
       arg2 = TermStringIdentifier();
       jj_consume_token(TOM_RPAREN);
-        keyword = Tools.PROCESSING_INSTRUCTION_NODE;
+        keyword = Constants.PROCESSING_INSTRUCTION_NODE;
         list.add(arg1);
         list.add(arg2);
       break;

@@ -36,6 +36,7 @@ import java.util.*;
 import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
+import jtom.xml.Constants;
 import java.lang.reflect.Constructor;
 import java.lang.Throwable;
 
@@ -891,10 +892,10 @@ TomTerm XMLAttribute() throws TomException:
     } ]
     {
       if(list.size() > 1) {
-        optionList.add(ast().makeOriginTracking(Tools.ATTRIBUTE_NODE,getLine(), currentFile));
+        optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
         option = ast().makeOption(ast().makeOptionList(optionList));
         return tsf().makeTomTerm_Appl(option,
-                                      tsf().makeTomName_Name(Tools.ATTRIBUTE_NODE),
+                                      tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE),
                                       ast().makeList(list));
       } else {
         return term;
@@ -971,10 +972,10 @@ TomTerm XMLChild() throws TomException:
     {
       if(ast().isStringSymbol(symbolTable,arg1)) {
         list.add(arg1);
-        optionList.add(ast().makeOriginTracking(Tools.TEXT_NODE,getLine(), currentFile));
+        optionList.add(ast().makeOriginTracking(Constants.TEXT_NODE,getLine(), currentFile));
         option = ast().makeOption(ast().makeOptionList(optionList));
         return tsf().makeTomTerm_Appl(option,
-                                      tsf().makeTomName_Name(Tools.TEXT_NODE),
+                                      tsf().makeTomName_Name(Constants.TEXT_NODE),
                                       ast().makeList(list));
       }
       
@@ -983,13 +984,13 @@ TomTerm XMLChild() throws TomException:
   | // #TEXT(...)
     <XML_TEXT> <TOM_LPAREN> arg1 = TermStringIdentifier() <TOM_RPAREN>
     {
-      keyword = Tools.TEXT_NODE;
+      keyword = Constants.TEXT_NODE;
       list.add(arg1);
     }
   | // #COMMENT(...)
     <XML_COMMENT> <TOM_LPAREN> arg1 = TermStringIdentifier() <TOM_RPAREN>
     {
-      keyword = Tools.COMMENT_NODE;
+      keyword = Constants.COMMENT_NODE;
       list.add(arg1);
     }
   | // #PROCESSING-INSTRUCTION(... , ...)
@@ -997,7 +998,7 @@ TomTerm XMLChild() throws TomException:
     arg1=TermStringIdentifier() <TOM_COMMA> arg2=TermStringIdentifier()
     <TOM_RPAREN>
       {
-        keyword = Tools.PROCESSING_INSTRUCTION_NODE;
+        keyword = Constants.PROCESSING_INSTRUCTION_NODE;
         list.add(arg1);
         list.add(arg2);
       }

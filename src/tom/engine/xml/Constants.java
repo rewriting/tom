@@ -24,23 +24,17 @@
 
 */
 
-package jtom.tools;
+package jtom.xml;
 
 import java.io.*;
 import aterm.*;
 
-public class Tools {
-  public static void generateOutput(String outputFileName, ATerm ast) {
-    try {
-      OutputStream output = new FileOutputStream(outputFileName);
-      Writer writer = new BufferedWriter(new OutputStreamWriter(output));
-      writer.write(ast.toString());
-      writer.flush();
-      writer.close();
-    } catch(IOException e) {
-      System.out.println("write error");
-      e.printStackTrace();
-    }
-  }
+public class Constants {
+  public final static String TEXT_NODE = "TextNode";
+  public final static String COMMENT_NODE = "CommentNode";
+  public final static String PROCESSING_INSTRUCTION_NODE = "ProcessingInstructionNode";
+  public final static String ATTRIBUTE_NODE = "AttributeNode";
+  public final static String CONC_TNODE = "concNodeTerm";
+  public final static String ELEMENT_NODE = "ElementNode";
 
 }

@@ -35,6 +35,7 @@ import aterm.ATerm;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.Tools;
+import jtom.xml.Constants;
 
 public class TomExpander extends TomBase implements TomTask {
   private TomTask nextTask;
@@ -234,9 +235,9 @@ public class TomExpander extends TomBase implements TomTask {
 
     TomList newArgs = `concTomTerm(
       Appl(Option(options),Name(tomName),empty()),
-      Appl(emptyOption,Name(Tools.CONC_TNODE), newAttrList),
-      Appl(emptyOption,Name(Tools.CONC_TNODE), newChildList));
-    TomTerm result = `Appl(Option(options),Name(Tools.ELEMENT_NODE),newArgs);
+      Appl(emptyOption,Name(Constants.CONC_TNODE), newAttrList),
+      Appl(emptyOption,Name(Constants.CONC_TNODE), newChildList));
+    TomTerm result = `Appl(Option(options),Name(Constants.ELEMENT_NODE),newArgs);
                            
     System.out.println(result);
     return result;
