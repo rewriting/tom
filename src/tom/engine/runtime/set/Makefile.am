@@ -41,3 +41,15 @@ SharedMultiSet.java : SharedMultiSet.t
 
 %.tom.c : %.t
 	$(TOM) --cCode $(TOMFLAGS) $*
+
+SharedSet.t: jgtreeset/set.tom
+	@touch SharedSet.t
+
+SharedMultiSet.t: jgtreeset/set.tom
+	@touch SharedMultiSet.t
+
+ATermSet.t: jgtreeset/set.tom
+	@touch ATermSet.t
+
+jgtreeset/set.tom: set.adt
+	${ADTTOJAVA} -v -i set.adt -j -p jtom.runtime.set.jgtreeset --output jgtreeset
