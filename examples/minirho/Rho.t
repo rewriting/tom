@@ -38,7 +38,7 @@ public class Rho {
 				 appC(L@concConstraint(match(X@var(x),A)), B) -> 
 					 {return `appSt(L,B);}
 				 appC((L1*,F@match(X@var(x),A),L2*),B) -> {
-					 return `appC(concConstraint(L1,L2),appSt(concConstraint(F),B));
+					 return `appC(concConstraint(L1*,L2*),appSt(concConstraint(F),B));
 				 }
 				 _ -> {return pgme;}
 
