@@ -42,15 +42,14 @@ public class AdtParser {
   }
   
   private void test() {
-    //parse("[constructor(Nat,zero,zero),constructor(Nat,suc,suc(<pred(Nat)>))]","Peano");
-    //parse("[modulentry(name(\"Peano\"),[name(\"truc\"),name(\"bidule\")],[type(\"Nat\"),type(\"chose\")],[constructor(Nat,zero,zero),constructor(Nat,suc,suc(<pred(Nat)>))])]");
-    parse("["+
-          "constructor(Date,date,date(<year(int)>,<month(int)>,<day(int)>)),"+
-          "constructor(Date,date2,date2(<year(int)>,<month(int)>,<day(int)>)),"+
-          "constructor(Person,person,person(<firstname(str)>,<lastname(str)>,<birthdate(Date)>)),"+
-          "named-list(\"concPerson\", PersonList, Person)"+
-          //"list(PersonList, Person)"+
-          "]", "AddresseBook");
+    String adt = "["+"\n"+
+      "constructor(Date,date,date(<year(int)>,<month(int)>,<day(int)>)),"+"\n"+
+      "constructor(Date,date2,date2(<year(int)>,<month(int)>,<day(int)>)),"+"\n"+
+      "constructor(Person,person,person(<firstname(str)>,<lastname(str)>,<birthdate(Date)>)),"+"\n"+
+      "named-list(\"concPerson\", PersonList, Person)"+"\n"+
+      "]";
+    System.out.println(adt);
+    parse(adt,"AddresseBook");
   }
 
   public void parse(String input) {
@@ -69,14 +68,19 @@ public class AdtParser {
     }
   }
 
-  public void modularAdtToVas(String input) {
+  public void prettyPrint(VasModule module) {
+    VasPrettyPrinter printer = new VasPrettyPrinter(VasFactory.getInstance(SingletonFactory.getInstance()));
+    printer.print(module);
+  }
+
+  public void  modularAdtToVas(String input) {
     ProductionList prodList = `concProduction();
     ImportList importList = `concImportedVasModule();
     VasTypeList sortList = `concVasType();
     AdtModules modules = adtFactory.AdtModulesFromString(input);
     %match(AdtModules modules) {
       concAdtModule(_*,module,_*) -> {
-        System.out.println(buildModule(`module, prodList, importList, sortList));
+        prettyPrint(`buildModule(module, prodList, importList, sortList));
       }
     }
   }
@@ -119,7 +123,7 @@ public class AdtParser {
         return `Production(opname,
                            concField(StaredField(VasType(elemCodomainString))),
                            VasType(codomainString));
-     }
+      }
       _ -> {
         // TODO EXCEPTION
       }
