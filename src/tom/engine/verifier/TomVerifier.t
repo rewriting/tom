@@ -49,6 +49,7 @@ public class TomVerifier extends TomGenericPlugin {
 
   protected Verifier verif;
   protected LatexOutput output;
+  protected ZenonOutput zenon;
   protected StatOutput stats;
 
   public TomVerifier() {
@@ -59,6 +60,7 @@ public class TomVerifier extends TomGenericPlugin {
   void init () {
     verif = new Verifier();
     output = new LatexOutput(this);
+    zenon = new ZenonOutput(verif);
     stats = new StatOutput(this);
   }
 
@@ -79,8 +81,12 @@ public class TomVerifier extends TomGenericPlugin {
         // System.out.println("Derivations : " + derivations);
 
         // the latex output stuff
-        String latex = output.build_latex(derivations);
-        System.out.println(latex);
+//         String latex = output.build_latex(derivations);
+//         System.out.println(latex);
+
+        // the zenon output stuff
+        String zen = zenon.build_zenon(derivations);
+        System.out.println(zen);
 
         // the stats output stuff
 //          String statistics = stats.build_stats(derivations);

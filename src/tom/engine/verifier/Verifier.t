@@ -171,6 +171,9 @@ public class Verifier extends TomBase {
 			CompiledPattern(patterns,instr) -> {
 				return build_InstrFromAutomata(`instr);
 			}
+      AbstractBlock(concInstruction(CheckStamp[],instr)) -> {
+          return build_InstrFromAutomata(`instr);
+      }
 			Nop() -> {
 				// tom uses nop in the iffalse part of ITE
 				return `refuse();
@@ -484,8 +487,8 @@ public class Verifier extends TomBase {
 							return (Term)subject;
 						}
 					}
-				}
-				/* Default case : Traversal */
+				} 
+        /* Default case : Traversal */
 				return traversal().genericTraversal(subject,this,arg1);
 			} // end apply
 		};
@@ -522,6 +525,87 @@ public class Verifier extends TomBase {
 		}
 	}
 
+  public String pattern_to_string(ATerm patternList, Map map) {
+    return pattern_to_string((PatternList) patternList, map);
+  }
+
+  public String pattern_to_string(PatternList patternList, Map map) {
+    String result = "";
+    Pattern h = null;
+    PatternList tail = patternList;
+    if(!tail.isEmpty()) {
+      h = tail.getHead();
+      tail = tail.getTail();
+      result = pattern_to_string(h,map);
+    }
+
+    while(!tail.isEmpty()) {
+      h = tail.getHead();
+      result = "," + pattern_to_string(h,map);
+      tail = tail.getTail();
+    }
+    return result;
+  }
+
+  public String pattern_to_string(Pattern pattern, Map map) {
+    String result = "";
+    %match(Pattern pattern) {
+      Pattern(tomList) -> {
+          return pattern_to_string(tomList, map);
+      }
+    }
+    return result;
+  }
+    public String pattern_to_string(TomList tomList, Map map) {
+    String result = "";
+    TomTerm h = null;
+    TomList tail = tomList;
+    if(!tail.isEmpty()) {
+      h = tail.getHead();
+      tail = tail.getTail();
+      result = pattern_to_string(h,map);
+    }
+
+    while(!tail.isEmpty()) {
+      h = tail.getHead();
+      result = "," + pattern_to_string(h,map);
+      tail = tail.getTail();
+    }
+    return result;
+  }
+  
+  public String pattern_to_string(TomTerm tomTerm, Map map) {
+    %match(TomTerm tomTerm) {
+      Appl(_,concTomName(Name(name),_*),childrens,_) -> {
+        if (childrens.isEmpty()) {
+          return name;
+        } else {
+          name = name + "(";
+          TomTerm head = childrens.getHead();
+          name += pattern_to_string(head,map);
+          TomList tail = childrens.getTail();
+          while(!tail.isEmpty()) {
+            head = tail.getHead();
+            name += "," + pattern_to_string(head,map);
+            tail = tail.getTail();
+          }
+          name += ")";
+          return name;
+        }
+      }
+      Variable(_,Name(name),_,_) -> {
+        if (map.containsKey(`var(name))) {
+          System.out.println("In map: "+ map.containsKey(`var(name)));
+          return (String) map.get(`var(name));
+        } else {
+          return name;
+        }
+      }
+      UnamedVariable[] -> {
+        return "\\_";
+      }
+    }
+    return "StrangePattern" + tomTerm;
+  }
+
 }
-
-
