@@ -74,9 +74,10 @@ public class Tom {
     String fileName        = "";
     String inputSuffix     = ".t";
     String outputSuffix    = ".java";
-    String compiledSuffix  = ".tfix.compiled";
     String parsedSuffix    = ".tfix.parsed";
     String expandedSuffix  = ".tfix.expanded";
+    String compiledSuffix  = ".tfix.compiled";
+    String optimizedSuffix  = ".tfix.optimized";
     String parsedTableSuffix = ".tfix.parsed.table";
     String expandedTableSuffix = ".tfix.expanded.table";
 
@@ -298,14 +299,6 @@ public class Tom {
           symbolTable.regenerateFromTerm(symbTable);
         }
 
-        if (Flags.doOptimization) {
-          TomOptimizer tomOptimizer = new TomOptimizer(environment);
-          startChrono();
-          expandedTerm = tomOptimizer.optimize(expandedTerm);
-          stopChrono();
-          if(Flags.verbose) System.out.println("TOM optimization phase " + getChrono());
-        }
-
         TomCompiler tomCompiler = new TomCompiler(environment);
         startChrono();
         TomTerm simpleCheckedTerm = tomCompiler.pass2_1(expandedTerm);
@@ -318,6 +311,15 @@ public class Tom {
         if(Flags.verbose) System.out.println("TOM compilation phase " + getChrono());
         if(Flags.intermediate) generateOutput(fileName + compiledSuffix,compiledTerm);
 
+        if (Flags.doOptimization) {
+          TomOptimizer tomOptimizer = new TomOptimizer(environment);
+          startChrono();
+          compiledTerm = tomOptimizer.optimize(compiledTerm);
+          stopChrono();
+          if(Flags.verbose) System.out.println("TOM optimization phase " + getChrono());
+          if(Flags.intermediate) generateOutput(fileName + optimizedSuffix,compiledTerm);   
+        }
+        
 	TomGenerator tomGenerator = new TomGenerator(environment);
         startChrono();
         int defaultDeep = 2;
