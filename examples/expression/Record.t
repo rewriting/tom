@@ -47,14 +47,14 @@ public class Record {
 
     // ------------------------------------------------------------
   
-  %op BinaryOperator BinaryOperator(first:Exp, second:Exp) {
+  %op Exp BinaryOperator(first:Exp, second:Exp) {
     fsym {}
     is_fsym(t) { t instanceof BinaryOperator }
     get_slot(first,t) { ((BinaryOperator)t).first }
     get_slot(second,t) { ((BinaryOperator)t).second }
   }
 
-  %op UnaryOperator UnaryOperator(first:Exp) {
+  %op Exp UnaryOperator(first:Exp) {
     fsym { }
     is_fsym(t) { t instanceof UnaryOperator }
     get_slot(first,t) { ((UnaryOperator)t).first }
@@ -195,14 +195,14 @@ public class Record {
 
   public Exp traversalSimplify(Exp t) {
     %match(Exp t) {
-      s@UnaryOperator[first=e1] -> {
-        s.first  = traversalSimplify(e1);
+      UnaryOperator[first=e1] -> {
+        ((UnaryOperator)t).first  = traversalSimplify(e1);
         return simplify(t);
       }
       
-      s@BinaryOperator[first=e1, second=e2] -> {
-        s.first  = traversalSimplify(e1);
-        s.second = traversalSimplify(e2);
+      BinaryOperator[first=e1, second=e2] -> {
+        ((BinaryOperator)t).first  = traversalSimplify(e1);
+        ((BinaryOperator)t).second = traversalSimplify(e2);
         return simplify(t);
       }
     }
