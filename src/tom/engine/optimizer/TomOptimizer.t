@@ -96,8 +96,7 @@ public class TomOptimizer extends TomGenericPlugin {
             }
           }
         } else if(subject instanceof Instruction) {
-          boolean verbose = ((Boolean)getPluginPlatform().getOptionValue("verbose")).booleanValue();
-          %match(Instruction subject) {
+	    %match(Instruction subject) {
               /*
                * TODO
                * LetRef x where x is used 0 or 1 ==> eliminate
@@ -112,37 +111,34 @@ public class TomOptimizer extends TomGenericPlugin {
 				 "UnusedVariable",
 				 new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
 					      `extractRealName(tomName)} );
+		getLogger().log( Level.INFO,
+				 "Remove",
+				 new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
-// 		environment().messageWarning(
-//                                              TomMessage.getString("UnusedVariable"),
-//                                              new Object[]{`extractRealName(tomName)},
-//                                              orgTrack.getFileName().getString(),
-//                                              orgTrack.getLine());
-
-                if(verbose) {
-                  System.out.println(mult + " -> remove:     " + `extractRealName(tomName));
-                }
                 return optimizeInstruction(`body);
 
               } else if(mult == 1) {
                 if(expConstantInBody(`exp,`body)) {
-                  if(verbose) {
-                    System.out.println(mult + " -> inline:     " + `extractRealName(tomName));
-                  }
+
+		    getLogger().log( Level.INFO,
+				     "Inline",
+				     new Object[]{ new Integer(mult), `extractRealName(tomName) });
+
                   return optimizeInstruction(inlineInstruction(`var,`exp,`body));
                 } else {
-                  if(verbose) {
-                    System.out.println(mult + " -> no inline:  " + `extractRealName(tomName));
+		    getLogger().log( Level.INFO,
+				     "NoInline",
+				     new Object[]{ new Integer(mult), `extractRealName(tomName) });
+
                       //System.out.println("exp  = " + exp);
                       //System.out.println("body = " + body);
-                  }
                 }
 
               } else {
                   /* do nothing: traversal */
-                if(verbose) {
-                  System.out.println(mult + " -> do nothing: " + `extractRealName(tomName));
-                }
+		  getLogger().log( Level.INFO,
+				   "DoNothing",
+				   new Object[]{ new Integer(mult), `extractRealName(tomName) });
               }
             }
             
@@ -157,32 +153,27 @@ public class TomOptimizer extends TomGenericPlugin {
 				 "UnusedVariable",
 				 new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
 					      `extractRealName(tomName)} );
-
-//                 environment().messageWarning(
-//                                              TomMessage.getString("UnusedVariable"),
-//                                              new Object[]{`extractRealName(tomName)},
-//                                              orgTrack.getFileName().getString(),
-//                                              orgTrack.getLine());
-                if(verbose) {
-                  System.out.println(mult + " -> remove:     " + `extractRealName(tomName));
-                }
+		getLogger().log( Level.INFO,
+				 "Remove",
+				 new Object[]{ new Integer(mult), `extractRealName(tomName) });
+                
                 return optimizeInstruction(`body); 
               } else if(mult == 1) {
                 if(expConstantInBody(`exp,`body)) {
-                  if(verbose) {
-                    System.out.println(mult + " -> inline:     " + `extractRealName(tomName));
-                  }
+		  getLogger().log( Level.INFO,
+				   "Inline",
+				   new Object[]{ new Integer(mult), `extractRealName(tomName) });
                   return optimizeInstruction(inlineInstruction(`var,`exp,`body));
                 } else {
-                  if(verbose) {
-                    System.out.println(mult + " -> no inline:  " + `extractRealName(tomName));
-                  }
+		  getLogger().log( Level.INFO,
+				   "NoInline",
+				   new Object[]{ new Integer(mult), `extractRealName(tomName) });
                 }
               } else {
                   /* do nothing: traversal */
-                if(verbose) {
-                  System.out.println(mult + " -> do nothing: " + `extractRealName(tomName));
-                }
+		  getLogger().log( Level.INFO,
+				   "DoNothing",
+				   new Object[]{ new Integer(mult), `extractRealName(tomName) });
               }
             }
 

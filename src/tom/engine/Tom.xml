@@ -139,12 +139,6 @@
     valueB="false" />
 
   <OptionBoolean
-    name="Wall"
-    altName=""
-    description="Print all warnings"
-    valueB="false" />
-
-  <OptionBoolean
     name="noWarning"
     altName=""
     description="Do not print warning"
