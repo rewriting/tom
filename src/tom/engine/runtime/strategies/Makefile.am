@@ -1,19 +1,21 @@
 #
 #    TOM - To One Matching Compiler
 #
-SUBDIRS		= set 
-javadir         = ${prefix}/classes/jtom/runtime
+
+javadir         = ${prefix}/classes/jtom/runtime/strategies
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
-stabledir 	= $(top_srcdir)/stable/jtom/runtime
-BOOTSOURCES	= GenericTraversal.java\
-		  CollectReach.java\
-		  Collect.java Collect1.java Collect2.java Collect3.java Collect4.java\
-		  Replace.java Replace1.java Replace2.java Replace3.java
+stabledir 	= $(top_srcdir)/stable/jtom/runtime/strategies
+
+BOOTSOURCES	= Strat.java StratList.java RunnerGroup.java\
+		  All.java Pick.java One.java First.java\
+		  Seq.java Rule.java\
+		  EvalGetAll.java EvalGetOne.java
 
 java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES)
 JAVAROOT        = ${top_builddir}/src/
+
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)
