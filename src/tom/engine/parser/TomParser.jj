@@ -931,7 +931,7 @@ TomTerm AnnotedTerm() throws TomException: /* in TOM mode */
 NameList XMLNameList(LinkedList optionList) throws TomException:
 {
   Token name;
-  NameList nameList = tsf().makeNameList();
+  NameList nameList;
 }
 {
   (
@@ -939,7 +939,7 @@ NameList XMLNameList(LinkedList optionList) throws TomException:
     {
       text += name.image;
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
-      nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
     }
    |
     <TOM_LPAREN>
@@ -947,7 +947,7 @@ NameList XMLNameList(LinkedList optionList) throws TomException:
     {
       text += name.image;
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
-      nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
     }
     ( <TOM_ALTERNATIVE> name=<TOM_IDENTIFIER>
       {
@@ -1069,7 +1069,7 @@ TomTerm TermStringIdentifier() throws TomException:
   LinkedList optionList = new LinkedList();
   OptionList option;
   Token name;
-  NameList nameList = tsf().makeNameList();
+  NameList nameList;
 }
 {
   ( name = <TOM_IDENTIFIER> | name = <TOM_STRING> { string = true; } )
@@ -1077,8 +1077,10 @@ TomTerm TermStringIdentifier() throws TomException:
       text += name.image;
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
-      if(string) { ast().makeStringSymbol(symbolTable,name.image,optionList); }
-	  nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+      if(string) {
+        ast().makeStringSymbol(symbolTable,name.image,optionList);
+      }
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
       return tsf().makeTomTerm_Appl(
         option,
         nameList,
@@ -1145,7 +1147,7 @@ TomTerm XMLAttribute() throws TomException:
   String name;
   OptionList option;
   LinkedList optionList = new LinkedList();
-  NameList nameList = tsf().makeNameList();
+  NameList nameList;
 }
 {
     // _* | X*
@@ -1157,7 +1159,7 @@ TomTerm XMLAttribute() throws TomException:
     id = <TOM_IDENTIFIER> <TOM_EQUAL> {text+="=";} term=AnnotedTerm()
       {
         name = tomFactory.encodeXMLString(symbolTable,id.image);
-        nameList = (NameList)nameList.append(tsf().makeTomName_Name(name));
+        nameList = tsf().makeNameList(tsf().makeTomName_Name(name));
         termName = tsf().makeTomTerm_Appl(ast().makeOption(),nameList,tsf().makeTomList());
       }
   | // [foo@]_ = Term
@@ -1177,7 +1179,8 @@ TomTerm XMLAttribute() throws TomException:
       list.add(tomFactory.metaEncodeXMLAppl(symbolTable,term));
       optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
-      nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE));
+      
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE));
       return tsf().makeTomTerm_Appl(option,
                                     nameList,
                                     ast().makeList(list));

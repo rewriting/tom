@@ -90,15 +90,16 @@ public class Tom {
 	}
 
 	public Tom(String args[]) {
-		tomSignatureFactory = new TomSignatureFactory(new PureFactory());
-		taskInput = new TomTaskInput(tomSignatureFactory.makeTomErrorList());
-		modifyTaskInputFromArgs(args);
-		if (taskInput.isHelp() || taskInput.isVersion()) {
-			// no need to do further work
-			return;
-		}
-		initializeStructure();
-		createTaskChainFromInput();
+          PureFactory pureFactory = new PureFactory();
+          tomSignatureFactory = new TomSignatureFactory(pureFactory);
+          taskInput = new TomTaskInput(tomSignatureFactory.makeTomErrorList());
+          modifyTaskInputFromArgs(args);
+          if (taskInput.isHelp() || taskInput.isVersion()) {
+              // no need to do further work
+            return;
+          }
+          initializeStructure();
+          createTaskChainFromInput();
 	}
 
 	public Tom(TomTaskInput input) {

@@ -225,7 +225,7 @@ public class TomKernelExpander extends TomBase {
           TomType domainType = typeList.getHead();
           while(!subjectList.isEmpty()) {
             TomTerm subterm = subjectList.getHead();
-
+              //System.out.println("subterm:\n" + subterm);
             matchBlock: {
               %match(TomTerm subterm) {
                 VariableStar(optionList,name,_) -> {

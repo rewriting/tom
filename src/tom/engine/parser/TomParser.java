@@ -941,20 +941,20 @@ public class TomParser implements TomTask, TomParserConstants {
 
   final public NameList XMLNameList(LinkedList optionList) throws ParseException, TomException {
   Token name;
-  NameList nameList = tsf().makeNameList();
+  NameList nameList;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_IDENTIFIER:
       name = jj_consume_token(TOM_IDENTIFIER);
       text += name.image;
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
-      nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
       break;
     case TOM_LPAREN:
       jj_consume_token(TOM_LPAREN);
       name = jj_consume_token(TOM_IDENTIFIER);
       text += name.image;
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
-      nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
       label_12:
       while (true) {
         jj_consume_token(TOM_ALTERNATIVE);
@@ -1093,7 +1093,7 @@ public class TomParser implements TomTask, TomParserConstants {
   LinkedList optionList = new LinkedList();
   OptionList option;
   Token name;
-  NameList nameList = tsf().makeNameList();
+  NameList nameList;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_IDENTIFIER:
       name = jj_consume_token(TOM_IDENTIFIER);
@@ -1110,8 +1110,10 @@ public class TomParser implements TomTask, TomParserConstants {
       text += name.image;
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
-      if(string) { ast().makeStringSymbol(symbolTable,name.image,optionList); }
-          nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+      if(string) {
+        ast().makeStringSymbol(symbolTable,name.image,optionList);
+      }
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
       {if (true) return tsf().makeTomTerm_Appl(
         option,
         nameList,
@@ -1234,7 +1236,7 @@ public class TomParser implements TomTask, TomParserConstants {
   String name;
   OptionList option;
   LinkedList optionList = new LinkedList();
-  NameList nameList = tsf().makeNameList();
+  NameList nameList;
     if (jj_2_9(2)) {
       term = UnamedVariableStarOrVariableStar(optionList);
                                                         {if (true) return term;}
@@ -1248,7 +1250,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                        text+="=";
           term = AnnotedTerm();
         name = tomFactory.encodeXMLString(symbolTable,id.image);
-        nameList = (NameList)nameList.append(tsf().makeTomName_Name(name));
+        nameList = tsf().makeNameList(tsf().makeTomName_Name(name));
         termName = tsf().makeTomTerm_Appl(ast().makeOption(),nameList,tsf().makeTomList());
         } else {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1282,7 +1284,8 @@ public class TomParser implements TomTask, TomParserConstants {
       list.add(tomFactory.metaEncodeXMLAppl(symbolTable,term));
       optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
-      nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE));
+
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE));
       {if (true) return tsf().makeTomTerm_Appl(option,
                                     nameList,
                                     ast().makeList(list));}
@@ -2574,12 +2577,6 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_11() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3_3() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2629,8 +2626,20 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_10() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3_4() {
     if (jj_3R_29()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_8() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_EQUAL)) return true;
     return false;
   }
 
@@ -2663,18 +2672,6 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_EQUAL)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_10() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_37() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2697,6 +2694,11 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_9() {
+    if (jj_3R_29()) return true;
+    return false;
+  }
+
   final private boolean jj_3R_38() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2705,8 +2707,9 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_9() {
-    if (jj_3R_29()) return true;
+  final private boolean jj_3_12() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2724,9 +2727,8 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_12() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
+  final private boolean jj_3_7() {
+    if (jj_3R_31()) return true;
     return false;
   }
 
@@ -2734,11 +2736,6 @@ public class TomParser implements TomTask, TomParserConstants {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_3R_37()) return true;
     if (jj_scan_token(TOM_ALTERNATIVE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_7() {
-    if (jj_3R_31()) return true;
     return false;
   }
 
@@ -2789,6 +2786,12 @@ public class TomParser implements TomTask, TomParserConstants {
 
   final private boolean jj_3R_45() {
     if (jj_scan_token(XML_START)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_11() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 

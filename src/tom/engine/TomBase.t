@@ -46,7 +46,7 @@ public class TomBase {
 
   public TomBase(TomEnvironment tomEnvironment) {
     this.tomEnvironment = tomEnvironment;
-    this.empty = tsf().makeTomList();
+    this.empty = tomEnvironment.getTomSignatureFactory().makeTomList();
     this.traversal = new GenericTraversal();
   }
 
