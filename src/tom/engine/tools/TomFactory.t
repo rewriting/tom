@@ -90,7 +90,8 @@ public class TomFactory extends TomBase {
           if(isStringOperator(tomSymbol)) {
             Option info = ast().makeOriginTracking(Constants.TEXT_NODE,-1,"??");
             term = `Appl( ast().makeOption(info),
-                          concTomName(Name(Constants.TEXT_NODE)),concTomTerm(term));
+                          concTomName(Name(Constants.TEXT_NODE)),concTomTerm(term),
+                          tsf().makeConstraintList());
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }

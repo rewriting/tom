@@ -244,7 +244,7 @@ public class TomKernelCompiler extends TomBase {
         return buildLet(var, source, subAction);
       }
       
-      manyTomList(currentTerm@Appl(optionList,nameList@(Name(tomName),_*),termArgs),termTail) -> {
+      manyTomList(currentTerm@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs],termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
@@ -405,7 +405,7 @@ public class TomKernelCompiler extends TomBase {
         }
       }
 
-      manyTomList(term@Appl(optionList,nameList@(Name(tomName),_*),termArgs),termTail)  -> {
+      manyTomList(term@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs],termTail)  -> {
         /*
          * generate:
          * ---------
@@ -542,7 +542,7 @@ public class TomKernelCompiler extends TomBase {
       }
 
 
-      manyTomList(term@Appl(optionList,nameList@(Name(tomName),_*),termArgs),termTail)  -> {
+      manyTomList(term@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs],termTail)  -> {
         /*
          * generate:
          * ---------
@@ -617,10 +617,10 @@ public class TomKernelCompiler extends TomBase {
   private Expression expandDisjunction(Expression exp) {
     Expression cond = `FalseTL();
     %match(Expression exp) {
-      EqualFunctionSymbol(termType,exp1,Appl(option,nameList,l)) -> {
+      EqualFunctionSymbol(termType,exp1,Appl[option=option,nameList=nameList,args=l]) -> {
         while(!nameList.isEmpty()) {
           TomName name = nameList.getHead();
-          Expression check = `EqualFunctionSymbol(termType,exp1,Appl(option,concTomName(name),l));
+          Expression check = `EqualFunctionSymbol(termType,exp1,Appl(option,concTomName(name),l,concConstraint()));
           cond = `Or(check,cond);
           nameList = nameList.getTail();
         }

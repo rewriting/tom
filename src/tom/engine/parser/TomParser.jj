@@ -794,14 +794,14 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
         if(implicit) {
           return tsf().makeTomTerm_RecordAppl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
         } else {
-          return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
+          return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),tsf().makeConstraintList());
         }
       }
     | implicit = ExplicitTermList(list)
       {
         nameList = tsf().makeNameList(tsf().makeTomName_Name(""));
         optionList.add(ast().makeOriginTracking("",getLine(), currentFile));
-        return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
+        return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),tsf().makeConstraintList());
       }
     )
       
@@ -1108,7 +1108,8 @@ TomTerm TermStringIdentifier(LinkedList options) throws TomException:
       return tsf().makeTomTerm_Appl(
         option,
         nameList,
-        tsf().makeTomList());
+        tsf().makeTomList(),
+				tsf().makeConstraintList());
     }
 }
 
@@ -1195,7 +1196,7 @@ TomTerm XMLAttribute() throws TomException:
       {
         name = tomFactory.encodeXMLString(symbolTable(),id.image);
         nameList = tsf().makeNameList(tsf().makeTomName_Name(name));
-        termName = tsf().makeTomTerm_Appl(ast().makeOption(),nameList,tsf().makeTomList());
+        termName = tsf().makeTomTerm_Appl(ast().makeOption(),nameList,tsf().makeTomList(),tsf().makeConstraintList());
       }
   | // [anno1@]_ = [anno2@](String|Identifier)
     [ 

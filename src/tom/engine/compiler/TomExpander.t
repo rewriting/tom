@@ -167,7 +167,7 @@ public class TomExpander extends TomTask {
       slotList = slotList.getTail();
     }
     
-    return `Appl(option,nameList,subtermList);
+    return `Appl(option,nameList,subtermList,concConstraint());
   }
 
   protected TomTerm expandBackQuoteAppl(TomTerm t) {
@@ -333,13 +333,13 @@ public class TomExpander extends TomTask {
     if(newNameList.isEmpty()){
       xmlHead = `Placeholder(emptyOption());
     } else { 
-      xmlHead = `Appl(convertOriginTracking(newNameList.getHead().getString(),optionList),newNameList,empty());
+      xmlHead = `Appl(convertOriginTracking(newNameList.getHead().getString(),optionList),newNameList,empty(),concConstraint());
     }
 
     TomList newArgs = `concTomTerm(
       PairSlotAppl(Name(Constants.SLOT_NAME),xmlHead),
-      PairSlotAppl(Name(Constants.SLOT_ATTRLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList)),
-      PairSlotAppl(Name(Constants.SLOT_CHILDLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList)));
+      PairSlotAppl(Name(Constants.SLOT_ATTRLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList,concConstraint())),
+      PairSlotAppl(Name(Constants.SLOT_CHILDLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList,concConstraint())));
     
     TomTerm result = `expandTomSyntax(RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs));
 
@@ -544,7 +544,7 @@ public class TomExpander extends TomTask {
 
         if(subject instanceof TomRule) {
           %match(TomTerm contextSubject, TomRule subject) {
-            context, RewriteRule(Term(lhs@Appl(optionList,(Name(tomName)),_)),
+            context, RewriteRule(Term(lhs@Appl[option=optionList,nameList=(Name(tomName))]),
                                  Term(rhs),
                                  condList,
                                  option) -> { 

@@ -448,7 +448,7 @@ public class TomCompiler extends TomTask {
           args = args.getTail();
         }
         OptionList newOptionList = renameVariableInOptionList(`optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        renamedTerm = `Appl(newOptionList,nameList,newArgs);
+        renamedTerm = `Appl(newOptionList,nameList,newArgs,concConstraint());
         return renamedTerm;
       }
     }
@@ -544,7 +544,7 @@ public class TomCompiler extends TomTask {
         } else {
           newArgs = abstractPatternList(args,abstractedPattern,introducedVariable);
         }
-        abstractedTerm = `Appl(option,nameList,newArgs);
+        abstractedTerm = `Appl(option,nameList,newArgs,concConstraint());
       }
     } // end match
     return abstractedTerm;

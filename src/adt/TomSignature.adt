@@ -74,7 +74,7 @@ constructor(TomName,Name,Name(<string(str)>)),
 constructor(TomName,PositionName,PositionName(<numberList(TomNumberList)>)),
 constructor(TomName,EmptyName,EmptyName),
 
-constructor(TomTerm,Appl,Appl(<option(OptionList)>,<nameList(NameList)>,<args(TomList)>)),
+constructor(TomTerm,Appl,Appl(<option(OptionList)>,<nameList(NameList)>,<args(TomList)>,<constraints(ConstraintList)>)),
 constructor(TomTerm,XMLAppl,XMLAppl(<option(OptionList)>,<nameList(NameList)>,<attrList(TomList)>,<childList(TomList)>)),
 constructor(TomTerm,VariableStar,VariableStar(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>,<constraints(ConstraintList)>)),
 constructor(TomTerm,Placeholder,Placeholder(<option(OptionList)>)),
@@ -165,6 +165,7 @@ constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>)),
 constructor(TomError,Error,Error(<message(str)>,<file(str)>,<line(int)>,<level(int)>)),
 
 constructor(Constraint,Equal,Equal(<kid(TomTerm)>)),
+constructor(Constraint,AssignTo,AssignTo(<var(TomTerm)>)),
 
 list(TomList,TomTerm),
 list(TomNumberList,TomNumber),

@@ -804,7 +804,7 @@ abstract public class TomChecker extends TomTask {
     Option orgTrack;
     matchblock:{
       %match(TomTerm term) {
-       	Appl(options, (Name("")), args) -> {
+       	Appl[option=options, nameList=(Name("")), args=args] -> {
           decLine = findOriginTrackingLine(`options);
           termClass = UNAMED_APPL;
             // there shall be only one list symbol with expectedType as Codomain
@@ -823,7 +823,7 @@ abstract public class TomChecker extends TomTask {
           }
        	}
         
-        Appl(options, nameList, arguments) -> {
+        Appl[option=options, nameList=nameList, args=arguments] -> {
           TomList args = `arguments;
           decLine = findOriginTrackingLine(`options);
           termClass = APPL;
