@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.18 2003/06/06 13:05:27 moreau Exp $
+# $Id: configure.in,v 1.19 2003/06/24 07:02:43 guyon Exp $
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(jtom,1.3beta)
@@ -7,7 +7,7 @@ AC_PREREQ(2.13)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.18 2003/06/06 13:05:27 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.19 2003/06/24 07:02:43 guyon Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -39,9 +39,12 @@ AC_SUBST(JAVA_ATERM)
 AC_OUTPUT( \
 	Makefile \
 	README \
-	src/Makefile \
 	config/Makefile \
 	utils/Makefile \
+	share/Makefile \
+	test/Makefile \
+	doc/Makefile \
+	src/Makefile \
 	src/jtom/Makefile \
 	src/jtom/adt/Makefile \
 	src/jtom/tools/Makefile \
@@ -69,10 +72,6 @@ AC_OUTPUT( \
 	stable/jtom/buttons/Makefile \
 	stable/jtom/exception/Makefile \
 	stable/jtom/debug/Makefile \
-	share/Makefile \
-	test/Makefile \
-	doc/Makefile \
-	utils/Makefile \
 	tutorial/Makefile \
 	tutorial/integer/Makefile \
 	tutorial/integer/1_simple/Makefile \
