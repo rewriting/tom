@@ -78,7 +78,7 @@ public class TomParser implements TomTask, TomParserConstants {
       includedFiles.add(fileName);
     } else {
       System.out.println("Re-entering included file forms a cycle. Breaking the parsing...");
-        //System.exit(1);        
+        return;
     }
   }
 
@@ -103,13 +103,16 @@ public class TomParser implements TomTask, TomParserConstants {
                         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
                 }
         if(intermediate) {
-            //Tom.generateOutput(input.inputFileName + input.parsedSuffix, parsedTerm);
-            //Tom.generateOutput(input.inputFileName + input.parsedTableSuffix, symbolTable.toTerm());
+            Tom.generateOutput(input.inputFileName + input.parsedSuffix, parsedTerm);
+            Tom.generateOutput(input.inputFileName + input.parsedTableSuffix, symbolTable.toTerm());
         }
                 // Update taskInput
                 input.setTerm(parsedTerm);
+        } catch (TomException e) {
+          return;
         } catch (Exception e) {
           e.printStackTrace();
+          return;
         }
         if(nextTask != null) {
       nextTask.process(input);
@@ -1116,11 +1119,10 @@ public class TomParser implements TomTask, TomParserConstants {
         //includeList = includeList.getTail();
         //}
     } catch (FileNotFoundException e1) {
-      System.out.println("Included file " + fileName.image + " not found at line "+getLine());
-      //e1.printStackTrace();
-        //System.exit(1);
+      {if (true) throw new TomException("Included file " + fileName.image + " not found at line "+getLine());}
     }  catch (java.io.IOException e2) {
       e2.printStackTrace();
+      {if (true) return;}
     }
   }
 
@@ -2063,8 +2065,8 @@ public class TomParser implements TomTask, TomParserConstants {
           jj_consume_token(TOM_LPAREN);
           nameArg = jj_consume_token(TOM_IDENTIFIER);
          if( !(nbTypes > 0) ) {
-           System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occured at line "+getLine()+"\n Parsing aborted");
-             //System.exit(1);
+         System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+           {if (true) throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");}
          }
          type = (TomType)types.elementAt(index++);
          name = tsf().makeTomName_Name(nameArg.image);
@@ -2084,8 +2086,8 @@ public class TomParser implements TomTask, TomParserConstants {
             jj_consume_token(TOM_COMMA);
             nameArg = jj_consume_token(TOM_IDENTIFIER);
           if( index >= nbTypes ) {
-            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-              //System.exit(1);
+            System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+            {if (true) throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");}
           }
           type = (TomType)types.elementAt(index++);
           name = tsf().makeTomName_Name(nameArg.image);
@@ -2107,8 +2109,8 @@ public class TomParser implements TomTask, TomParserConstants {
       ;
     }
          if (index<nbTypes) {
-           System.out.println(" Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-             //System.exit(1);
+           System.out.println("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+           {if (true) throw new TomException("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");}
          }
     tlCode = GoalLanguageBlock(blockList);
      {if (true) return ast().makeMakeDecl(opname,returnType,args,tlCode, orgTrack);}
@@ -2263,12 +2265,6 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
-  final private boolean jj_3_7() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3_1() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_LBRACKET)) return true;
@@ -2286,15 +2282,15 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
   final private boolean jj_3_6() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_8() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2316,6 +2312,12 @@ public class TomParser implements TomTask, TomParserConstants {
   final private boolean jj_3_3() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_AT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 

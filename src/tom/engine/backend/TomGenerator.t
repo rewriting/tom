@@ -102,6 +102,7 @@ public class TomGenerator extends TomBase implements TomTask {
       }
     } catch (Exception e) {
       e.printStackTrace();
+      return;
     }
     if(nextTask != null) {
       nextTask.process(input);

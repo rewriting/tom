@@ -71,12 +71,13 @@ public class TomExpander extends TomBase implements TomTask {
 		System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  }
       if(intermediate) {
-          //Tom.generateOutput(input.inputFileName + input.expandedSuffix, expandedTerm);
-          //Tom.generateOutput(input.inputFileName + input.expandedTableSuffix, symbolTable().toTerm());
+          Tom.generateOutput(input.inputFileName + input.expandedSuffix, expandedTerm);
+          Tom.generateOutput(input.inputFileName + input.expandedTableSuffix, symbolTable().toTerm());
 	  }
       input.setTerm(expandedTerm);
     } catch (Exception e) {
       e.printStackTrace();
+      return;
     }
     if(nextTask != null) {
       nextTask.process(input);

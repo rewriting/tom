@@ -84,7 +84,7 @@ public class TomParser implements TomTask {
       includedFiles.add(fileName);
     } else {
       System.out.println("Re-entering included file forms a cycle. Breaking the parsing...");
-        //System.exit(1);        
+        return;        
     }
   }
 
@@ -109,13 +109,16 @@ public class TomParser implements TomTask {
   			System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
   		}
         if(intermediate) {
-            //Tom.generateOutput(input.inputFileName + input.parsedSuffix, parsedTerm);
-            //Tom.generateOutput(input.inputFileName + input.parsedTableSuffix, symbolTable.toTerm());
+            Tom.generateOutput(input.inputFileName + input.parsedSuffix, parsedTerm);
+            Tom.generateOutput(input.inputFileName + input.parsedTableSuffix, symbolTable.toTerm());
         }
   		// Update taskInput
   		input.setTerm(parsedTerm);
+  	} catch (TomException e) {
+  	  return;
   	} catch (Exception e) {
   	  e.printStackTrace();
+  	  return;
   	}
   	if(nextTask != null) {
       nextTask.process(input);
@@ -1177,11 +1180,10 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
         //includeList = includeList.getTail();
         //}
     } catch (FileNotFoundException e1) {
-      System.out.println("Included file " + fileName.image + " not found at line "+getLine());
-      //e1.printStackTrace();
-	//System.exit(1);
+      throw new TomException("Included file " + fileName.image + " not found at line "+getLine());
     }  catch (java.io.IOException e2) {
       e2.printStackTrace();
+      return;
     }
    }
 }
@@ -1934,8 +1936,8 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
       nameArg = <TOM_IDENTIFIER>
        {
          if( !(nbTypes > 0) ) {
-           System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occured at line "+getLine()+"\n Parsing aborted");
-             //System.exit(1);
+         System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+           throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
          }
          type = (TomType)types.elementAt(index++);
          name = tsf().makeTomName_Name(nameArg.image);  
@@ -1946,8 +1948,8 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
      ( <TOM_COMMA> nameArg = <TOM_IDENTIFIER>
         {
           if( index >= nbTypes ) {
-            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-              //System.exit(1);
+            System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+            throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
           }
           type = (TomType)types.elementAt(index++);
           name = tsf().makeTomName_Name(nameArg.image); 
@@ -1959,8 +1961,8 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
       <TOM_RPAREN> ) ]
        {
          if (index<nbTypes) {
-           System.out.println(" Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-             //System.exit(1);
+           System.out.println("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+           throw new TomException("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
          }
        }
   tlCode = GoalLanguageBlock(blockList)

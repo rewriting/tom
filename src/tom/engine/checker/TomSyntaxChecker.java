@@ -52,7 +52,17 @@ public class TomSyntaxChecker extends TomChecker {
 	  }
     } catch (Exception e) {
 		e.printStackTrace();
+		return;
     }
+	int nbError = getNumberFoundError();
+	if(nbError > 0 ) {
+	  for(int i=0 ; i<nbError ; i++) {
+		System.out.println(getMessage(i));
+	  }
+	  String msg = "Tom Checker:  Encountered " + nbError + " errors during verification phase.\nNo file generated.";
+	  System.out.println(msg);
+	  return;
+	}
     if(nextTask != null) {
       nextTask.process(input);
     }
