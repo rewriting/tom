@@ -515,5 +515,11 @@ public class TomTaskInput {
   public File getUserOutputFile() {
     return userOutputFile;
   }
- 
+  
+  public String getRawFileName() {
+  	String inputFileName = getInputFile().getName();
+    String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
+    return res;
+  }
+
 } // class TomTaskInput

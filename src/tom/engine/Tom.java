@@ -413,10 +413,8 @@ public class Tom {
     if(getInput().isHelp() || getInput().isVersion()) {
         // no need to do further work
     } else if(tom.inputFileList.isEmpty()) {
-      //System.out.println(TomMessage.getString("NoFileToCompile"));
       environment().messageError(TomMessage.getString("NoFileToCompile"), "Tom", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     } else if(tom.inputFileList.size()>1 && getInput().getUserOutputFile() != null) {
-      //System.out.println(TomMessage.getString("OutputWithMultipleCompilation"));
       environment().messageError(TomMessage.getString("OutputWithMultipleCompilation"), "Tom", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     }
 

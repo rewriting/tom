@@ -1394,8 +1394,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 				vasParams.add("--destdir");
 				vasParams.add(destDir);
 				packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
-        String inputFileName = getInput().getInputFile().getName();
-        String inputFileNameWithoutExtension = inputFileName.substring(0, inputFileName.length() - getInput().getInputSuffix().length()).toLowerCase();
+        String inputFileNameWithoutExtension = getInput().getRawFileName().toLowerCase();
         String subPackageName = "";
         if(packageName.equals("")) {
           subPackageName = inputFileNameWithoutExtension;
