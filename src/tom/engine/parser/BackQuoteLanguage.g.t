@@ -217,22 +217,7 @@ options{
         }
     }
 
-    /*
-    private TomList buildAttributeList(LinkedList list){
-        TomList result = `emptyTomList();
-        TomList tmp = `emptyTomList();
-        for(int i = 0; i < list.size(); i++){
-            if(i< 2){
-                tmp = (TomList) tmp.append((TomTerm) list.get(i));
-            }
-            else{
-                result = (TomList) result.append((TomTerm) list.get(i));
-            }
-        }
-        result = `concTomTerm(result*,tmp*);
-        return result;
-    }
-*/
+    // sorts attributes of xml term with lexicographical order
     private TomList sortAttributeList(TomList list){
         %match(TomList list) {
             concTomTerm() -> { return list; }
@@ -250,16 +235,18 @@ options{
         return list;
     }
     
+    // built a sorted TomList from a LinkedList
     private TomList buildAttributeList(LinkedList list){
         TomList result = buildList(list);
         return sortAttributeList(result);
     }
     
-  
+    // add double quotes around a string
     private String encodeName(String name) {
         return "\"" + name + "\"";
     }
 
+/*    
     private int addTermToList(TomList list, LinkedList target, int i){
         int result = i;
         while(! list.isEmpty()){
@@ -290,7 +277,7 @@ options{
         }
     }
 
-
+*/
 }
 
 
