@@ -36,6 +36,12 @@
     make(first,then) { new tom.library.strategy.mutraveler.Choice((VisitableVisitor)first,(VisitableVisitor)then) }
   }
 
+  %op VisitableVisitor ChoiceOnId(VisitableVisitor, VisitableVisitor) {
+    fsym {}
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.ChoiceOnId) }
+    make(first,then) { new tom.library.strategy.mutraveler.ChoiceOnId((VisitableVisitor)first,(VisitableVisitor)then) }
+  }
+
   %op VisitableVisitor All(VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.All) }
