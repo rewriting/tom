@@ -16,6 +16,12 @@
 	<property name="boulderdash" value="BoulderDash"/>
 	<property name="boulderdash.dir" location="${examples.dir}/${boulderdash}" />
 
+	<property name="builtin" value="Builtin"/>
+	<property name="builtin.dir" location="${examples.dir}/${builtin}" />
+
+	<property name="dom" value="Dom"/>
+	<property name="dom.dir" location="${examples.dir}/${dom}" />
+
 	<!-- Define classpath for building stable and source	-->
 	<path id="tom.classpath">
 		<fileset dir="${env.TOM_HOME}/lib">
@@ -91,11 +97,43 @@
 			<include name="**/*.java"/>
 		</javac>
 	</target>
+
+	<target name="builtin">
+		<!-- build adt -->
+		<adt file="${builtin.dir}/term.adt" 
+				 factory="term" 
+				 package="adt.builtin" 
+				 destdir="${builtin.dir}"/>
+		<!-- build tom -->
+		<tom srcdir="${builtin.dir}" 
+				 destdir="${builtin.dir}" 
+				 options="-I ${env.TOM_HOME}/share/jtom">
+			<include name="**/*.t"/>
+		</tom>
+		<!-- build java source -->
+		<javac srcdir="${builtin.dir}" destdir="${builtin.dir}">
+			<classpath refid="tom.classpath"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
 	
+	<target name="dom">
+		<!-- build tom -->
+		<tom srcdir="${dom.dir}" 
+				 destdir="${dom.dir}" 
+				 options="-I ${env.TOM_HOME}/share/jtom">
+			<include name="**/*.t"/>
+		</tom>
+		<!-- build java source -->
+		<javac srcdir="${dom.dir}" destdir="${dom.dir}">
+			<classpath refid="tom.classpath"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
 	
 	<target name="build.examples" 
 					description="Builds the examples (at least some)"
-					depends="addressbook, boulderdash">
+					depends="addressbook, boulderdash, builtin, dom">
 	</target>
 	
 	<target name="dist.examples" description="Prepare a
@@ -108,17 +146,24 @@
 				<include name="${boulderdash}/*.t"/>
 				<include name="${boulderdash}/*.adt"/>
 				<include name="${boulderdash}/*.java"/>
+
+				<include name="${builtin}/*.t"/>
+				<include name="${builtin}/*.adt"/>
+
+				<include name="${dom}/*.t"/>
+				<include name="${dom}/*.adt"/>
+
 				<not>
 					<present targetdir="${examples.dir}">
 						<mapper type="glob" 
-										from="${boulderdash}/*.java" 
-										to="${boulderdash}/*.t"/>
+										from="**/*.java" 
+										to="**/*.t"/>
 					</present>
 				</not>
-
 			</tarfileset>
 		</tar>
-		<gzip zipfile="${examples.dist}/jtom-examples.tar.gz" src="${examples.dist}/jtom-examples.tar"/>
+		<gzip zipfile="${examples.dist}/jtom-examples.tar.gz" 
+					src="${examples.dist}/jtom-examples.tar"/>
 		<delete file="${examples.dist}/jtom-examples.tar"/>
 	</target>
 
