@@ -10,7 +10,7 @@ public class Birds2 {
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();
-  private TNodeFactory getTNodeFactory() {
+  private Factory getTNodeFactory() {
       return xtools.getTNodeFactory();
   }
 

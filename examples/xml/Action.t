@@ -1,6 +1,6 @@
 import jtom.runtime.xml.*;
-import jtom.runtime.xml.adt.tnode.*;
-import jtom.runtime.xml.adt.tnode.types.*;
+import jtom.adt.tnode.*;
+import jtom.adt.tnode.types.*;
 import aterm.*;
 import jtom.runtime.*;
 
