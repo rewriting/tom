@@ -11,7 +11,7 @@ BUTTONSDIR = buttons
 javadir         = ${prefix}/classes/jtom
 
 stabledir 	= $(top_srcdir)/stable/jtom
-BOOTSOURCES	= Tom.java TomBase.java  TomDemo.java
+BOOTSOURCES	= Tom.java TomBase.java  TomDemo.java TomEnvironment.java
 java_JAVA       = $(BOOTSOURCES)
 
 JAVAROOT        = ${top_builddir}/src/
