@@ -16,7 +16,9 @@
   <property name="build.sysclasspath" value="ignore" />
 
   <!-- current version of TOM -->
-  <property name="version" value="2.1"/>
+  <property name="stable.version" value="2.2rc1"/>
+  <tstamp/>
+  <property name="src.version"    value="${DSTAMP}"/>
   
   <!-- some used directory location -->
   <property name="test"           location="test"/>
@@ -332,6 +334,11 @@
     <antcall target="buildparser"/>
     <!--<property name="unixpath" refid="src.classpath" />
          <echo>classpath = ${unixpath}</echo>-->
+    <copy file="${src.src}/jtom/Tom.java.in" 
+          tofile="${src.gen}/jtom/Tom.java"/>
+    <replace dir="${src.gen}" token="@TOM_VERSION@" value="${src.version} (src)">
+      <include name="jtom/Tom.java"/>
+    </replace>
     <javac destdir="${src.build}" 
            debug="${javacDebugInfo}" 
            verbose="${javacVerbose}"
@@ -345,7 +352,13 @@
   </target>
   
   <target name="build.stable" depends="stable"/>
-  <target name="stable" description="compile the TOM stable sources" depends="prepare.stable">
+  <target name="stable" description="compile the TOM stable sources"
+          depends="prepare.stable">
+    <copy file="${stable.src}/jtom/Tom.java.in" 
+          tofile="${stable.src}/jtom/Tom.java"/>
+    <replace dir="${stable.src}" token="@TOM_VERSION@" value="${stable.version}">
+      <include name="jtom/Tom.java"/>
+    </replace>
     <!-- Compile the java code from ${stable} into ${build} -->
     <javac srcdir="${stable.src}" 
            destdir="${stable.build}" 
@@ -451,15 +464,15 @@
     </copy>
 
     <!-- prepare tar file -->
-    <tar tarfile="${dist}/jtom-${version}.tar.gz" compression="gzip">
-      <tarfileset dir="${stable.dist}" prefix="jtom-${version}" mode="755">
+    <tar tarfile="${dist}/jtom-${stable.version}.tar.gz" compression="gzip">
+      <tarfileset dir="${stable.dist}" prefix="jtom-${stable.version}" mode="755">
         <include name="bin/*"/>
         <exclude name="bin/*.bat"/>
       </tarfileset>
-      <tarfileset dir="${stable.dist}" prefix="jtom-${version}">
+      <tarfileset dir="${stable.dist}" prefix="jtom-${stable.version}">
         <include name="bin/*.bat"/>
       </tarfileset>
-      <tarfileset dir="${stable.dist}" prefix="jtom-${version}">
+      <tarfileset dir="${stable.dist}" prefix="jtom-${stable.version}">
         <include name="**"/>
         <exclude name="bin/*"/>
       </tarfileset>
@@ -469,7 +482,6 @@
   <target name="dist.src" 
           description="Prepare a distribution ready source package" 
           depends="clean.dist.src, src, prepare.dist.src">
-    <tstamp/>
     <antcall target="dist.common">
       <param name="dest" value="${src.dist}"/>
     </antcall>
@@ -500,38 +512,38 @@
     </copy>
 
     <!-- tom library -->
-    <jar jarfile="${src.dist.lib}/TomSignature-${DSTAMP}.jar">
+    <jar jarfile="${src.dist.lib}/TomSignature-${src.version}.jar">
       <fileset dir="${src.build}" includes="jtom/adt/tomsignature/**/*.class"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/Set-${DSTAMP}.jar">
+    <jar jarfile="${src.dist.lib}/Set-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/TNode-${DSTAMP}.jar">
+    <jar jarfile="${src.dist.lib}/TNode-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/PlatformOption-${DSTAMP}.jar">
+    <jar jarfile="${src.dist.lib}/PlatformOption-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/PlatformAlert-${DSTAMP}.jar">
+    <jar jarfile="${src.dist.lib}/PlatformAlert-${src.version}.jar">
       <fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/mutraveler-${DSTAMP}.jar">
+    <jar jarfile="${src.dist.lib}/mutraveler-${src.version}.jar">
       <fileset dir="${src.build}" 
                includes="tom/library/strategy/mutraveler/**/*.class"/>
     </jar>
 
-    <jar jarfile="${src.dist.lib}/tom-library-${DSTAMP}.jar">
+    <jar jarfile="${src.dist.lib}/tom-library-${src.version}.jar">
       <fileset dir="${src.build}" 
                includes="tom/library/**/*.class"
                excludes="tom/library/**/adt/**/*.class"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/plugin-platform-${DSTAMP}.jar">
+    <jar jarfile="${src.dist.lib}/plugin-platform-${src.version}.jar">
       <fileset dir="${src.build}" 
                includes="tom/platform/**/*.class"
                excludes="tom/platform/**/adt/**/*.class"/>
       <fileset dir="${src.src}" includes="tom/platform/**/*.properties"/>
     </jar>
-    <jar jarfile="${src.dist.lib}/jtom-${DSTAMP}.jar">
+    <jar jarfile="${src.dist.lib}/jtom-${src.version}.jar">
       <fileset dir="${src.build}" 
                includes="jtom/**/*.class"
                excludes="jtom/adt/**/*.class"/>
@@ -557,16 +569,16 @@
     </copy>
 
     <!-- prepare tar file -->
-    <tar tarfile="${dist}/jtom-${DSTAMP}.tar.gz" compression="gzip">
-      <tarfileset dir="${src.dist}" prefix="jtom-${version}" mode="755">
+    <tar tarfile="${dist}/jtom-${src.version}.tar.gz" compression="gzip">
+      <tarfileset dir="${src.dist}" prefix="jtom-${src.version}" mode="755">
         <include name="bin/*"/>
         <exclude name="bin/*.bat"/>
         <exclude name="bin/tom.src"/>
       </tarfileset>
-      <tarfileset dir="${src.dist}" prefix="jtom-${version}">
+      <tarfileset dir="${src.dist}" prefix="jtom-${src.version}">
         <include name="bin/*.bat"/>
       </tarfileset>
-      <tarfileset dir="${src.dist}" prefix="jtom-${version}">
+      <tarfileset dir="${src.dist}" prefix="jtom-${src.version}">
         <include name="**"/>
         <exclude name="bin/*"/>
       </tarfileset>
@@ -581,9 +593,12 @@
 
   <target name="clean.stable" description="Purges the generated stable files">
     <delete dir="${stable.build}"/>
+    <delete file="${stable.src}/jtom/Tom.java"/>
   </target>
   
-  <target name="clean.src" description="Purges the generated devel files" depends="clean.bootstrap">
+  <target name="clean.src" 
+          description="Purges the generated devel files" 
+          depends="clean.bootstrap">
     <delete dir="${src.gen}"/>
     <delete dir="${src.build}"/>
     <delete>
