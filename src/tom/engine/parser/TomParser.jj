@@ -1094,6 +1094,9 @@ TargetLanguage KeywordImplement() throws TomException:
   <TOM_IMPLEMENT>
   tlCode = GoalLanguageBlock(blockList)
    {
+     System.out.println("Avant\n" +tlCode);
+     tlCode = ast().reworkTLCode(tlCode);
+     System.out.println("Apres\n"+tlCode);
      return tlCode;
        //return tsf().makeTomTerm_Implement(tlCode);
    }

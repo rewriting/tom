@@ -186,13 +186,13 @@ public class TomGenerator extends TomBase {
       
       NamedBlock(blockName,instList) -> {
         if(Flags.cCode) {
-          out.write("{");
+          out.writeln("{");
           generateList(out,deep+1,instList);
-          out.write("}" + blockName +  ":;");
+          out.writeln("}" + blockName +  ":;");
         } else if(Flags.jCode) {
-          out.write(blockName + ": {");
+          out.writeln(blockName + ": {");
           generateList(out,deep+1,instList);
-          out.write("}");
+          out.writeln("}");
         } else if(Flags.eCode) {
           System.out.println("NamedBlock: Eiffel code not yet implemented");
             //System.exit(1);
@@ -204,13 +204,13 @@ public class TomGenerator extends TomBase {
       IfThenElse(exp,succesList,Empty()) -> {
         statistics().numberIfThenElseTranformed++;
         if(Flags.cCode || Flags.jCode) {
-          out.write(deep,"if("); generateExpression(out,deep,exp); out.write(") {");
+          out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
           generateList(out,deep+1,succesList);
-          out.write(deep,"}");
+          out.writeln(deep,"}");
         } else if(Flags.eCode) {
-          out.write(deep,"if "); generateExpression(out,deep,exp); out.write(" then ");
+          out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
           generateList(out,deep+1,succesList);
-          out.write(deep,"end;");
+          out.writeln(deep,"end;");
         }
         return;
       }
@@ -218,25 +218,25 @@ public class TomGenerator extends TomBase {
       IfThenElse(exp,succesList,failureList) -> {
         statistics().numberIfThenElseTranformed++;
         if(Flags.cCode || Flags.jCode) {
-          out.write(deep,"if("); generateExpression(out,deep,exp); out.write(") {");
+          out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
           generateList(out,deep+1,succesList);
-          out.write(deep,"} else {");
+          out.writeln(deep,"} else {");
           generateList(out,deep+1,failureList);
-          out.write(deep,"}");
+          out.writeln(deep,"}");
         } else if(Flags.eCode) {
-          out.write(deep,"if "); generateExpression(out,deep,exp); out.write(" then ");
+          out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
           generateList(out,deep+1,succesList);
-          out.write(deep," else ");
+          out.writeln(deep," else ");
           generateList(out,deep+1,failureList);
-          out.write(deep,"end;");
+          out.writeln(deep,"end;");
         }
         return;
       }
 
       DoWhile(succesList,exp) -> {
-        out.write(deep,"do {");
+        out.writeln(deep,"do {");
         generateList(out,deep+1,succesList);
-        out.write(deep,"} while("); generateExpression(out,deep,exp); out.write(");");
+        out.write(deep,"} while("); generateExpression(out,deep,exp); out.writeln(");");
         return;
       }
 
@@ -279,9 +279,9 @@ public class TomGenerator extends TomBase {
         }
         
         if(Flags.jCode && !isBoolType(type) && !isIntType(type)) {
-          out.write(" = null;");
+          out.writeln(" = null;");
         } else {
-          out.write(";");
+          out.writeln(";");
         }
         return;
       }
@@ -295,7 +295,7 @@ public class TomGenerator extends TomBase {
           generate(out,deep,var);
           out.write(deep,": " + tlType);
         }
-        out.write(";");
+        out.writeln(";");
         return;
       }
 
@@ -320,7 +320,7 @@ public class TomGenerator extends TomBase {
           }
         }
         generateExpression(out,deep,exp);
-        out.write(";");
+        out.writeln(";");
         return;
       }
 
@@ -334,7 +334,7 @@ public class TomGenerator extends TomBase {
           out.write(" := ");
         }
         generateExpression(out,deep,exp);
-        out.write(";");
+        out.writeln(";");
         return;
       }
 
@@ -342,7 +342,7 @@ public class TomGenerator extends TomBase {
         generate(out,deep,var);
         out.write(" = ");
         generate(out,deep,var);
-        out.write(" + 1;");
+        out.writeln(" + 1;");
         return;
       }
 
@@ -357,9 +357,9 @@ public class TomGenerator extends TomBase {
 
       ExitAction(numberList) -> {
         if(Flags.cCode) {
-          out.write(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
+          out.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
         } else if(Flags.jCode) {
-          out.write(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
+          out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
         } else if(Flags.eCode) {
           System.out.println("ExitAction: Eiffel code not yet implemented");
             //System.exit(1);
@@ -371,20 +371,20 @@ public class TomGenerator extends TomBase {
         if(Flags.cCode || Flags.jCode) {
           out.write(deep,"return ");
           generate(out,deep,exp);
-          out.write(deep,";");
+          out.writeln(deep,";");
         } else if(Flags.eCode) {
-          out.write(deep,"if Result = Void then");
+          out.writeln(deep,"if Result = Void then");
           out.write(deep+1,"Result := ");
           generate(out,deep+1,exp);
-          out.write(deep+1,";");
-          out.write(deep,"end;");
+          out.writeln(deep+1,";");
+          out.writeln(deep,"end;");
         }
         return;
       }
 
-      OpenBlock  -> { out.write(deep,"{"); return; }
-      CloseBlock -> { out.write(deep,"}"); return; }
-      EndLocalVariable -> { out.write(deep,"do"); return; }
+      OpenBlock  -> { out.writeln(deep,"{"); return; }
+      CloseBlock -> { out.writeln(deep,"}"); return; }
+      EndLocalVariable -> { out.writeln(deep,"do"); return; }
       
       MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
@@ -426,20 +426,20 @@ public class TomGenerator extends TomBase {
           }
         }
         if(Flags.cCode || Flags.jCode) {
-          out.write(deep,") {");
+          out.writeln(deep,") {");
         } else if(Flags.eCode) {
-          out.write(deep,"): " + glType + " is");
-          out.write(deep,"local ");
+          out.writeln(deep,"): " + glType + " is");
+          out.writeln(deep,"local ");
         }
-          //out.write(deep,"return null;");
+          //out.writeln(deep,"return null;");
         return;
       }
 
       MakeFunctionEnd -> {
         if(Flags.cCode || Flags.jCode) {
-          out.write(deep,"}");
+          out.writeln(deep,"}");
         } else if(Flags.eCode) {
-          out.write(deep,"end;");
+          out.writeln(deep,"end;");
         }
         return;
       }

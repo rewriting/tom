@@ -30,9 +30,11 @@ import java.io.*;
 public final class OutputCode {
   private Writer file;
   private int lineCounter = 0;
+  private boolean synchroTL = false;
   
-  public OutputCode(Writer file) {
+  public OutputCode(Writer file, boolean synchro) {
     this.file = file;
+    synchroTL = synchro;
   }
 
   public OutputCode() {
@@ -89,16 +91,18 @@ public final class OutputCode {
 
   public void writeln(String s) throws IOException {
     write(s);
-    writeln();
+    if(!synchroTL)
+      writeln();
   }
 
   public void writeln(int deep,String s) throws IOException {
     write(deep,s);
-    writeln();
+    if(!synchroTL)
+      writeln();
   }
 
   public void write(int deep,String s, int line, int length) throws IOException {
-    if(lineCounter > line) {
+    if(lineCounter > line && synchroTL) {
       System.out.println("Synchronization issue:"+s);
     }
     

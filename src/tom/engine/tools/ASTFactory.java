@@ -292,4 +292,15 @@ public class ASTFactory {
     }
   }
 
+  public TargetLanguage reworkTLCode(TargetLanguage code) {
+    String tlCode = code.getCode();
+    System.out.println("X"+tlCode+"X");
+    String tlCode2 = tlCode.replace('\n', ' ');
+      //tlCode = tlCode.replace('\t', ' ');
+    System.out.println("X"+tlCode2+"X");
+      //code.setCode(tlCode2);
+    
+    if(tlCode2.indexOf("\n") != -1) System.out.println("Issue");
+    return tsf().makeTargetLanguage_TL(tlCode2, code.getStart(), code.getEnd());
+  }
 }
