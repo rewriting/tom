@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# launch javac and translates java file references to the corresponding .tom
+# one : take care to only translate names for tom source
+for i in $*; do
+	#	echo $i
+	if test -f `basename -- $i .java`.t; then
+		export stuff=" -e s/`basename -- $i .java`\.java/`basename -- $i .java`\.t/ $stuff"
+	fi
+done
+
+javac $* 2>&1 | sed $stuff
+exit ${PIPESTATUS[0]}
