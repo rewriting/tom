@@ -15,7 +15,7 @@
 	<!-- set local properties for this build -->
 	<property file="local.properties"/>
 	<property name="build.sysclasspath" value="ignore" />
-	
+	<property name="nowarnings" value="false" />	
 	<!-- current version of TOM -->
 	<property name="version" value="2.0rc3"/>
 	
@@ -82,7 +82,7 @@
 
   <!-- for bootstrap -->
   <property name="bootstrap.dir" location="${src.src}/bootstrap" />
-	<!-- Property for Javac compilation
+	<!-- Properties for Javac compilation
 			 <property name="javacFailOnError" value="false"/>
 			 <property name="javacSource" value="1.3"/>
 			 <property name="javacTarget" value="1.2"/>
@@ -241,7 +241,8 @@
 		<echo>classpath = ${unixpath}</echo>-->
 		<javac destdir="${src.build}" 
 					 debug="${javacDebugInfo}" 
-					 verbose="${javacVerbose}">
+					 verbose="${javacVerbose}"
+					 nowarn="${nowarnings}">
 			<src path="${src.src}"/>
 			<src path="${src.gen}"/>
 			<classpath refid="src.classpath"/>
@@ -255,7 +256,8 @@
 		<javac srcdir="${stable.src}" 
 					 destdir="${stable.build}" 
 					 debug="${javacDebugInfo}"
-					 verbose="${javacVerbose}">
+					 verbose="${javacVerbose}"
+					 nowarn="${nowarnings}">
 			<classpath refid="stable.classpath"/>
 		</javac>
 	</target>  
@@ -504,7 +506,8 @@
 		<javac srcdir="${test.gen}" 
 					 destdir="${test.build}" 
 					 debug="${javacDebugInfo}" 
-					 verbose="${javacVerbose}">
+					 verbose="${javacVerbose}"
+					 nowarn="${nowarnings}">
 					 <classpath refid="src.classpath"/>
 					 <exclude name="**/error/**"/>
 		</javac>
@@ -526,7 +529,8 @@
 		<javac srcdir="${test.gen}" 
 					 destdir="${test.build}" 
 					 debug="${javacDebugInfo}"
-					 verbose="${javacVerbose}">
+					 verbose="${javacVerbose}"
+					 nowarn="${nowarnings}">
 			<classpath refid="tom.classpath"/>
 			<exclude name="**/error/**"/>
 		</javac>

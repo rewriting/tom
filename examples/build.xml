@@ -7,6 +7,7 @@
 	<!-- current version of TOM -->
 	<property name="version" value="2.0rc3"/>
 
+	<property name="nowarnings" value="false"/>
 	<property name="optimize" value="off"/>
 
   <property environment="env" />
@@ -150,7 +151,9 @@
 				 <include name="${addressbook}/**/*.t"/>
     </tom>
     <!-- build java source -->
-		<javac srcdir="${examples.gen}" destdir="${examples.build}">
+		<javac srcdir="${examples.gen}" 
+           destdir="${examples.build}" 
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
 			<include name="${addressbook}/**/*.java"/>
     </javac>
@@ -170,7 +173,8 @@
       <include name="${apireach}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
 			<classpath refid="tom.classpath"/>
 			<include name="${apireach}/**/*.java"/>
 		</javac>
@@ -190,7 +194,8 @@
       <include name="${boulderdash}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac destdir="${examples.build}">
+    <javac destdir="${examples.build}"
+           nowarn="${nowarnings}">
 			<src path="${examples.dir}"/>
 			<src path="${examples.gen}"/>
       <classpath refid="tom.classpath"/>
@@ -219,7 +224,8 @@
       <include name="${builtin}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac destdir="${examples.build}">
+    <javac destdir="${examples.build}"
+           nowarn="${nowarnings}">
 			<src path="${examples.dir}"/>
 			<src path="${examples.gen}"/>
       <classpath refid="tom.classpath"/>
@@ -236,7 +242,8 @@
 				 <include name="${cell}/**/*.t"/>
     </tom>
     <!-- build java source -->
-		<javac destdir="${examples.build}">
+		<javac destdir="${examples.build}"
+           nowarn="${nowarnings}">
 			<src path="${examples.dir}"/>
 			<src path="${examples.gen}"/>
       <classpath refid="tom.classpath"/>
@@ -259,7 +266,8 @@
       <include name="${dom}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.dir}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${dom}/**/*.java"/>
     </javac>
@@ -286,7 +294,8 @@
       <include name="${expression}/**/RecordStrict.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.dir}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${expression}/**/*.java"/>
     </javac>
@@ -306,7 +315,8 @@
       <include name="${gtree}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.dir}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${gtree}/**/*.java"/>
     </javac>
@@ -321,7 +331,8 @@
       <include name="${list}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${list}/**/*.java"/>
     </javac>
@@ -336,7 +347,8 @@
       <include name="${lsystem}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.dir}">
+    <javac srcdir="${examples.gen}" destdir="${examples.dir}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${lsystem}/**/*.java"/>
     </javac>
@@ -356,7 +368,8 @@
       <include name="${nspk}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${nspk}/**/*.java"/>
     </javac>
@@ -376,7 +389,8 @@
       <include name="${peano}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${peano}/**/*.java"/>
     </javac>
@@ -396,7 +410,8 @@
       <include name="${pnspk}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${pnspk}/**/*.java"/>
     </javac>
@@ -416,7 +431,8 @@
       <include name="${poly}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${poly}/**/*.java"/>
     </javac>
@@ -431,7 +447,8 @@
       <include name="${pqueens}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${pqueens}/**/*.java"/>
     </javac>
@@ -446,7 +463,8 @@
       <include name="${prodrule}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${prodrule}/**/*.java"/>
     </javac>
@@ -471,7 +489,8 @@
       <include name="${propp}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
 			<classpath>
 				<path refid="tom.classpath"/>
 			</classpath>
@@ -500,7 +519,8 @@
       <include name="${rbtree}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${rbtree}/**/*.java"/>
     </javac>
@@ -520,7 +540,8 @@
       <include name="${set}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${set}/**/*.java"/>
     </javac>
@@ -535,7 +556,8 @@
       <include name="${vas}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${vas}/**/*.java"/>
     </javac>
@@ -550,7 +572,8 @@
       <include name="${xml}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${xml}/**/*.java"/>
     </javac>
