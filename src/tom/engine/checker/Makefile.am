@@ -12,7 +12,7 @@ java_JAVA       = $(BOOTSOURCES)
 
 JAVAROOT        = ${top_builddir}/src/
 
-CLEANFILES 	= TomChecker.java Tom.signature
+CLEANFILES 	= TomChecker.java
 EXTRA_DIST 	= $(BOOTSOURCES) TomChecker.t
 
 BUILT_SOURCES   = TomChecker.java

@@ -23,7 +23,7 @@
 
 */
 
-package jtom.compiler;
+package jtom.backend;
   
 import java.util.*;
 import java.io.*;

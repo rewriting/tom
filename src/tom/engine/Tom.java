@@ -35,7 +35,7 @@ import jtom.tools.*;
 import jtom.compiler.*;
 import jtom.checker.*;
 import jtom.parser.*;
-import jtom.verifier.*;
+import jtom.backend.*;
 import jtom.exception.*;
 import jtom.adt.*;
 
@@ -208,26 +208,26 @@ public class Tom {
           generateOutput(fileName + parsedTableSuffix,symbolTable.toTerm());
         }
         
-        TomVerifier  tomVerifier = new TomVerifier(environment);
+        TomChecker  tomChecker = new TomChecker(environment);
         startChrono();
-        tomVerifier.verify(parsedTerm);
+        tomChecker.checkSyntax(parsedTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM verification phase " + getChrono());
+        if(Flags.verbose) System.out.println("TOM syntax checking phase " + getChrono());
 
         
-	TomChecker tomChecker = new TomChecker(environment);
+	TomExpander tomExpander = new TomExpander(environment);
         startChrono();
-        expandedTerm = tomChecker.expand(parsedTerm);
+        expandedTerm = tomExpander.expandSyntax(parsedTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM expansion phase " + getChrono());
+        if(Flags.verbose) System.out.println("TOM syntax expansion phase " + getChrono());
         if(Flags.intermediate) {
           generateOutput(fileName + expandedSuffix,expandedTerm);
         }
      
         startChrono();
         TomTerm context = null;
-        tomChecker.updateSymbolPass1();
-        checkedTerm  = tomChecker.pass1(context, expandedTerm);
+        tomExpander.updateSymbol();
+        checkedTerm  = tomExpander.pass1(context, expandedTerm);
         stopChrono();
         if(Flags.verbose) System.out.println("TOM checking phase " + getChrono());
         if(Flags.intermediate) {
@@ -252,7 +252,7 @@ public class Tom {
         return;
       } catch(CheckErrorException e2) {
         System.out.println(e2);
-        System.out.println("\nTom Verifier:  Encountered errors during verification phase.");
+        System.out.println("\nTom Checker:  Encountered errors during verification phase.");
         System.out.println("No file generated.");
         return;
       } catch(TomException e3) {

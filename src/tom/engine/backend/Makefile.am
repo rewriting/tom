@@ -2,31 +2,29 @@
 #    TOM - To One Matching Compiler
 #
 
-javadir         = ${prefix}/classes/jtom/verifier
+javadir         = ${prefix}/classes/jtom/backend
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
-stabledir 	= $(top_srcdir)/stable/jtom/verifier
-BOOTSOURCES	= TomVerifier.java
+stabledir 	= $(top_srcdir)/stable/jtom/backend
+BOOTSOURCES	= TomGenerator.java
 java_JAVA       = $(BOOTSOURCES)
 
 JAVAROOT        = ${top_builddir}/src/
 
+CLEANFILES 	= TomGenerator.java 
+EXTRA_DIST 	= $(BOOTSOURCES) TomCompiler.t TomGenerator.t
 
-CLEANFILES 	= TomVerifier.java Tom.signature 
-EXTRA_DIST 	= $(BOOTSOURCES) TomVerifier.t
+BUILT_SOURCES   = TomGenerator.java
 
-BUILT_SOURCES   = TomVerifier.java
-
-bootinstall :
+bootinstall:
 	$(mkinstalldirs) $(stabledir)
 	cp -f $(BOOTSOURCES) $(stabledir)
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-
 # we use the last installed compiler to compile the current compiler
-TOMFLAGS = noWarning --noDeclaration --import $(top_srcdir)/src/jtom/adt
+TOMFLAGS = --noWarning --noDeclaration --import $(top_srcdir)/src/jtom/adt
 TOM = ${prefix}/bin/jtom
 
 %.java : %.t

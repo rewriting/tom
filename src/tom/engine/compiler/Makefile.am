@@ -6,15 +6,15 @@ javadir         = ${prefix}/classes/jtom/compiler
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/compiler
-BOOTSOURCES	= TomCompiler.java TomGenerator.java
+BOOTSOURCES	= TomCompiler.java TomExpander.java
 java_JAVA       = $(BOOTSOURCES)
 
 JAVAROOT        = ${top_builddir}/src/
 
-CLEANFILES 	= TomCompiler.java TomGenerator.java Tom.signature 
-EXTRA_DIST 	= $(BOOTSOURCES) TomCompiler.t TomGenerator.t
+CLEANFILES 	= TomCompiler.java TomExpander.java
+EXTRA_DIST 	= $(BOOTSOURCES) TomCompiler.t TomExpander.t
 
-BUILT_SOURCES   = TomCompiler.java TomGenerator.java
+BUILT_SOURCES   = TomCompiler.java TomExpander.java
 
 bootinstall:
 	$(mkinstalldirs) $(stabledir)

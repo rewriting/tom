@@ -33,7 +33,7 @@ import aterm.pure.*;
 
 import jtom.tools.*;
 import jtom.exception.*;
-import jtom.verifier.*;
+import jtom.checker.*;
 import jtom.adt.*;
 
 public class TomBase {
