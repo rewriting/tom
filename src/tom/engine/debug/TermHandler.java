@@ -25,5 +25,12 @@
 package jtom.debug;
 
 public abstract class TermHandler {
+  String name = "no name";
   abstract public void testTerm(Object t);
+  public String getHandlerName() {
+    return name;
+  }
+  public void setHandlerName(String name) {
+    this.name = name;
+  }
 }

@@ -760,7 +760,7 @@ public class TomParser implements TomParserConstants {
       environment.getStatistics().numberRuleRulesRecognized++;
       ArrayList optionList = new ArrayList();
       optionList.add(orgTrack);
-      optionList.add(tsf().makeOption_TomNameToOption(orgText));
+      optionList.add(tsf().makeOption_OriginalText(orgText));
       for(int i=0 ; i<listOfLhs.size() ; i++) {
         TomTerm term = (TomTerm) listOfLhs.get(i);
         ruleList.add(tsf().makeTomTerm_RewriteRule(

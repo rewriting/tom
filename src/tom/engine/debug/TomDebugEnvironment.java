@@ -41,7 +41,7 @@ public class TomDebugEnvironment {
   private Map substitutions;
   private int step = 0;
   private String lastPatternResult = FAILURE;
-  private String totalMatchResult = FAILURE;
+  private String globalMatchResult = FAILURE;
   private boolean failureLookup = false;
   private boolean resultLookup = false;
   private boolean nextLookup = false;
@@ -80,14 +80,14 @@ public class TomDebugEnvironment {
     Substitution s;
     while(it.hasNext()) {
       s = (Substitution)it.next();
-      System.out.println(s.name+":\t"+s.object);
+      System.out.println("\t"+s.name+":\t"+s.object);
     }
   }
 
   public void enteringPattern() {
     incrementStep();
     nextLookup = false;
-    if(failureLookup) {return;}
+    if(failureLookup || resultLookup) {return;}
     if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {      
       System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation (declared line "+debugStructure.patternLine[getStep()-1]+" in "+debugStructure.fileName+")");
       lastPatternResult = FAILURE;
@@ -99,8 +99,11 @@ public class TomDebugEnvironment {
   public void enteringDefaultPattern() {
     incrementStep();
     nextLookup = false;
+    if(resultLookup) {
+      return;
+    }
     if(failureLookup) {
-      totalMatchResult = SUCCESS;
+      globalMatchResult = SUCCESS;
       return;
     }
     if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {      
@@ -129,8 +132,7 @@ public class TomDebugEnvironment {
   }
 
   public void linearizationFail() {
-    if(failureLookup) {return;}
-    if(nextLookup) {return;}
+    if(failureLookup || nextLookup || resultLookup ) {return;}
     if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {
       lastPatternResult = FAILURE;
       System.out.println("\t\tPattern fails because of linearization issue");
@@ -139,10 +141,10 @@ public class TomDebugEnvironment {
   
   public void patternSuccess() {
     if(failureLookup) {
-      totalMatchResult = SUCCESS;
+      globalMatchResult = SUCCESS;
       return;
     }
-    if(nextLookup) {return;}
+    if(nextLookup || resultLookup) {return;}
     if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {
       lastPatternResult = SUCCESS;
       System.out.println("\t\tPattern number "+getStep()+" succeeds");
@@ -151,6 +153,7 @@ public class TomDebugEnvironment {
   }
   
   public void leavingPattern() {
+    resultLookup = false;
     if(failureLookup) {return;}
     if(nextLookup) {return;}
     if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {
@@ -161,10 +164,10 @@ public class TomDebugEnvironment {
   
   public int leaving() {
     int result = -1;// FAILURE
+    if(globalMatchResult == SUCCESS) {
+      result = 0;
+    }
     if(failureLookup) {
-      if(totalMatchResult == SUCCESS) {
-        result = 0;
-      }
       if(result == -1) {
          System.out.println(debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line+" completely fails with subject(s)");
          try {
@@ -180,10 +183,6 @@ public class TomDebugEnvironment {
       return result;
     }
     System.out.println("\tLeaving "+debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line);
-
-    if(lastPatternResult == SUCCESS) {
-      result = 0;
-    }
     return result;
   }
   
@@ -206,8 +205,8 @@ public class TomDebugEnvironment {
       System.out.println("\nFollowing commands are allowed:");
       System.out.println("\t?\t\t:Show this help");
       System.out.println("\tnext      | n\t:Jump to next pattern evaluation");
-      System.out.println("\tgetResult | r\t:Jump to pattern evaluation result");
-      System.out.println("\tnextFail  | f\t:Jump to pattern evaluation result");
+      System.out.println("\tgetResult | r\t:Jump to pattern evaluation result\n\t\t\t(only if failure or no `return` call in RHS)");
+      System.out.println("\tnextFail  | f\t:Abort current structure analyse");
       System.out.println("\tsubject   | s\t:Show the current subject list");
       System.out.println("\tpattern   | p\t:Show the current pattern list");
       System.out.println("\tsubst     | S\t:Show the realized substitution(s)");
@@ -222,6 +221,7 @@ public class TomDebugEnvironment {
       return;
     } else if (str.equals("nextFail") || str.equals("f")) {
       failureLookup = true;
+      return;
     } else if (str.equals("subject") || str.equals("s")) {
       showSubjects();
     } else if (str.equals("pattern") || str.equals("p")) {
