@@ -170,6 +170,7 @@
 	</target>
 
 	<target name="buildsrc" description="compile the TOM development sources" depends="preparesrc">
+		<tstamp/>
 		<antcall target="buildtom"/>
 		<antcall target="buildparser"/>
 		<!--<property name="unixpath" refid="src.classpath" />
@@ -224,6 +225,9 @@
 		</delete>
 	</target>
 
+	<target name="cleanall" description="Cleans everything in the project" depends="cleanstable, cleansrc, cleantest">
+	</target>	
+		
 	<target name="inittest">
 		<!-- For this to work, you must add lib/junit.jar to your classpath--> 
 		<taskdef name="myjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
