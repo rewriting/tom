@@ -34,19 +34,17 @@ import aterm.pure.PureFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class Rewrite2 {
-  private Factory factory;
-  private TravelerFactory travelerFactory;
+  private termFactory factory;
 
-  public Rewrite2(Factory factory) {
+  public Rewrite2(termFactory factory) {
     this.factory = factory;
   }
 
-  public Factory getTermFactory() {
+  public termFactory getTermFactory() {
     return factory;
   }
 
@@ -59,7 +57,7 @@ public class Rewrite2 {
   }
 
   public final static void main(String[] args) {
-    Rewrite2 test = new Rewrite2(Factory.getInstance(new PureFactory()));
+    Rewrite2 test = new Rewrite2(termFactory.getInstance(new PureFactory()));
     test.run();
   }
 
@@ -83,7 +81,7 @@ public class Rewrite2 {
 
   }
   
-  class RewriteSystem extends strategy.term.VisitableFwd {
+  class RewriteSystem extends strategy.term.termVisitableFwd {
     public RewriteSystem() {
       super(new tom.library.strategy.mutraveler.Fail());
     }

@@ -35,14 +35,15 @@ import strategy.term.*;
 import strategy.term.types.*;
 
 import tom.library.strategy.mutraveler.TravelerFactory;
+
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
-public class Rewrite1 {
+public class Rewrite3 {
   private termFactory factory;
   private TravelerFactory travelerFactory;
 
-  public Rewrite1(termFactory factory, TravelerFactory travelerFactory) {
+  public Rewrite3(termFactory factory, TravelerFactory travelerFactory) {
     this.factory = factory;
     this.travelerFactory = travelerFactory;
   }
@@ -53,35 +54,37 @@ public class Rewrite1 {
 
   %include { term/term.tom }
   %include { string.tom }
-  
+  %include { mutraveler.tom }
+
+  public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
+    return tom.library.strategy.mutraveler.MuVar.mu(var,v);
+  }
+
   public final static void main(String[] args) {
-    Rewrite1 test = new Rewrite1(termFactory.getInstance(new PureFactory()), 
-                                 new TravelerFactory());
+    Rewrite3 test = new Rewrite3(termFactory.getInstance(new PureFactory()),new TravelerFactory());
     test.run();
   }
 
   public void run() {
-    //Term subject = `g(d,d);
-    Term subject = `f(g(g(a,b),g(a,a)));
+    //Term subject = `g(c,c);
+    Term subject = `f(g(g(a,b),g(c,c)));
 
-    VisitableVisitor rule = new RewriteSystem();
-    VisitableVisitor onceBottomUp = travelerFactory.OnceBottomUp(rule);
-    VisitableVisitor bottomUp = travelerFactory.BottomUp(travelerFactory.Try(rule));
-    VisitableVisitor innermost = travelerFactory.Innermost(rule);
-    VisitableVisitor innermostSlow = `travelerFactory.Repeat(travelerFactory.OnceBottomUp(rule));
-
-    try {
-      System.out.println("subject       = " + subject);
-      System.out.println("onceBottomUp  = " + onceBottomUp.visit(subject));
-      System.out.println("bottomUp      = " + bottomUp.visit(subject));
-      System.out.println("innermost     = " + innermost.visit(subject));
-      System.out.println("innermostSlow = " + innermostSlow.visit(subject));
-    } catch (VisitFailure e) {
-      System.out.println("reduction failed on: " + subject);
-    }
+    System.out.println("subject = " + subject);
+    System.out.println("occurs  = " + occurs(subject));
 
   }
   
+  private boolean occurs(Term subject) {
+    VisitableVisitor rule = new RewriteSystem();
+    VisitableVisitor onceBottomUp = travelerFactory.OnceBottomUp(rule);
+    try {
+      onceBottomUp.visit(subject);
+      return true;
+    } catch(VisitFailure e) {
+      return false;
+    }
+  }
+
   class RewriteSystem extends strategy.term.termVisitableFwd {
     public RewriteSystem() {
       super(new tom.library.strategy.mutraveler.Fail());
@@ -89,9 +92,7 @@ public class Rewrite1 {
     
     public Term visit_Term(Term arg) throws VisitFailure { 
       %match(Term arg) {
-        a() -> { return `b(); }
-        b() -> { return `c(); }
-        g(c(),c()) -> { return `c(); }
+        t@g(c(),c()) -> { return `t; }
       }
       throw new VisitFailure();
     }

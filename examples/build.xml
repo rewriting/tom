@@ -493,6 +493,7 @@
   <target name="strategy" depends="init">
     <adtcompile example="${strategy}"
                 factory="term"/>
+    <vascompile example="${strategy}"/>
     <tomcompile example="${strategy}"/>
     <javacompile example="${strategy}"/>
   </target>

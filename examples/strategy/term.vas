@@ -1,0 +1,12 @@
+module term
+imports 
+public
+  sorts Term
+      
+abstract syntax
+  a -> Term
+  b -> Term
+  c -> Term
+  d -> Term
+  f(arg1:Term) -> Term
+  g(arg1:Term, arg2:Term) -> Term

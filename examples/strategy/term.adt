@@ -1,9 +1,0 @@
-[
-constructor(Term,a,a),
-constructor(Term,b,b),
-constructor(Term,c,c),
-constructor(Term,d,d),
-constructor(Term,f,f(<arg1(Term)>)),
-constructor(Term,g,g(<arg1(Term)>,<arg2(Term)>))
-]
-
