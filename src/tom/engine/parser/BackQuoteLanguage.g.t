@@ -19,26 +19,34 @@ header{
 class BackQuoteParser extends Parser;
 
 options{
+    // antlr does not catch exceptions automaticaly
     defaultErrorHandler = false;
+    // default lookahead
     k=1;
 }
 
 {
     %include{TomSignature.tom}
     
+    // the lexer for backquote language
     BackQuoteLexer bqlexer = null;
 
+    // the parser for tom language
     TomParser tomparser = null;
 
+    // the cuurent file's name
     String currentFile(){
         return tomparser.currentFile();
     }
 
+    //constructor
     public BackQuoteParser(ParserSharedInputState state, TomParser tomparser){
         this(state);
         this.tomparser = tomparser;
         bqlexer = (BackQuoteLexer) selector().getStream("bqlexer");
     }
+
+    // --- methods for tom environment ---
 
     private final TomSignatureFactory getTomSignatureFactory(){
         return tsf();
@@ -55,33 +63,32 @@ options{
     private TomSignatureFactory tsf(){
         return environment().getTomSignatureFactory();
     }
+    // --- ---
 
+    // add token t to the buffer containing the target code
     private void addTargetCode(Token t){
         tomparser.addTargetCode(t);
     }
 
+    // returns the selector
     private TokenStreamSelector selector(){
         return tomparser.selector();
     }
-
-    private boolean addTarget = false;
-
-    private TomList makeCompositeList(LinkedList list){
-        TomTerm term = null;
-        TomList compositeList = `emptyTomList();
-        Iterator it = list.iterator();
-        
-        while(it.hasNext()){
-            term = (TomTerm) it.next();
-            compositeList = (TomList) compositeList.append(term);
+    
+    // build a TomList from a LinkedList
+    private TomList buildList(LinkedList list){
+        TomList result = `emptyTomList();
+        for(int i = 0; i < list.size(); i++){
+            result = (TomList) result.append((TomTerm) list.get(i));
         }
-        
-        return compositeList;
+        return result;
     }
 
+    // build a TomTerm when encountered 'id', 'id()', or 'id(...)'
     private TomTerm buildBQAppl(Token id, LinkedList blockList, boolean isConstructor){
+        // case 'id(...)' -> generate a composite
         if(blockList.size() > 0){
-            TomList list = makeCompositeList(blockList);
+            TomList list = buildList(blockList);//makeCompositeList(blockList);
             return `Composite(
                 concTomTerm(
                     BackQuoteAppl(
@@ -98,6 +105,7 @@ options{
                 )
             );
         }
+        // case 'id()' -> it is a constructor
         else if(isConstructor){
             return `BackQuoteAppl(
                 concOption( 
@@ -112,6 +120,7 @@ options{
                 emptyTomList()
             );
         }
+        // case 'id' -> just a backQuoteAppl
         else {
             return `BackQuoteAppl(
                 concOption( 
@@ -128,6 +137,7 @@ options{
         
     }
 
+    // we encountered a method call : 'id(..).method
     private TomTerm buildMethodCall(TomTerm term, TomTerm method){
         %match(TomTerm term){
             Composite(termList) -> {
@@ -151,9 +161,10 @@ options{
         }
     }
  
-
-
+    // add a term in the list of term
+    // newComposite==true when we read a ',' before the term
     private void addTerm(LinkedList list, TomTerm term, boolean newComposite){
+        // if the list is empty put an empty composite in it
         if(list.size() == 0){
             list.add(`Composite(emptyTomList()));
         }
@@ -180,6 +191,7 @@ options{
         }
     }
 
+    // concat a TomTerm to a TomList
     private TomList concat(TomList list, TomTerm term){
         %match(TomTerm term){
             Composite(l) -> {
@@ -191,6 +203,7 @@ options{
         }
     }
 
+    // add a composite to a list
     private void addComposite(LinkedList list, TomTerm term){
         %match(TomTerm term){
             Composite[] -> {
@@ -204,6 +217,7 @@ options{
         }
     }
 
+    /*
     private TomList buildAttributeList(LinkedList list){
         TomList result = `emptyTomList();
         TomList tmp = `emptyTomList();
@@ -218,14 +232,29 @@ options{
         result = `concTomTerm(result*,tmp*);
         return result;
     }
-
-    private TomList buildList(LinkedList list){
-        TomList result = `emptyTomList();
-        for(int i = 0; i < list.size(); i++){
-            result = (TomList) result.append((TomTerm) list.get(i));
+*/
+    private TomList sortAttributeList(TomList list){
+        %match(TomList list) {
+            concTomTerm() -> { return list; }
+            concTomTerm(X1*,e1,X2*,e2,X3*) -> {
+                %match(TomTerm e1, TomTerm e2) {
+                    BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name1)],_)],
+                    BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name2)],_)] -> {
+                        if(`name1.compareTo(`name2) > 0) {
+                            return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+                        }
+                    }
+                }
+            }
         }
-        return result;
+        return list;
     }
+    
+    private TomList buildAttributeList(LinkedList list){
+        TomList result = buildList(list);
+        return sortAttributeList(result);
+    }
+    
   
     private String encodeName(String name) {
         return "\"" + name + "\"";
@@ -548,7 +577,7 @@ basicTerm [TomList context] returns [TomTerm result]
                 termList[blockList,context] 
             )? BQ_RPAREN
             {
-                TomList compositeList = makeCompositeList(blockList);
+                TomList compositeList = buildList(blockList);//makeCompositeList(blockList);
                 result = `Composite(
                     concTomTerm(
                         TargetLanguageToTomTerm(ITL("(")),
