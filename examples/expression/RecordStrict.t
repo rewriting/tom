@@ -1,36 +1,12 @@
 import java.util.*;
 
-public class Record {
+public class RecordStrict {
 
   %typeint
   %typestring
-
+  
   %typeterm Exp {
     implement { Exp }
-    get_fun_sym(t) {null}
-    cmp_fun_sym(s1,s2) { false}
-    get_subterm(t,n) {null}
-    equals(t1,t2) {t1.equals(t2)}
-  }
-
-  %typeterm BinaryOperator {
-    implement { BinaryOperator }
-    get_fun_sym(t) {null}
-    cmp_fun_sym(s1,s2) { false}
-    get_subterm(t,n) {null}
-    equals(t1,t2) {t1.equals(t2)}
-  }
-
-  %typeterm UnaryOperator {
-    implement { UnaryOperator }
-    get_fun_sym(t) {null}
-    cmp_fun_sym(s1,s2) { false}
-    get_subterm(t,n) {null}
-    equals(t1,t2) {t1.equals(t2)}
-  }
-
-  %typeterm CstExp {
-    implement { CstExp }
     get_fun_sym(t) {null}
     cmp_fun_sym(s1,s2) { false}
     get_subterm(t,n) {null}
@@ -52,34 +28,39 @@ public class Record {
     get_slot(first,t) { ((UnaryOperator)t).first }
   }
 
-  %op BinaryOperator Plus(first:Exp, second:Exp) {
+  %op Exp Plus(first:Exp, second:Exp) {
     fsym { }
     is_fsym(t) { t instanceof Plus }
     get_slot(first,t) { ((Plus)t).first }
     get_slot(second,t) { ((Plus)t).second }
   }
 
-  %op BinaryOperator Mult(first:Exp, second:Exp) {
+  %op Exp Mult(first:Exp, second:Exp) {
     fsym { }
     is_fsym(t) { t instanceof Mult }
     get_slot(first,t) { ((Mult)t).first }
     get_slot(second,t) { ((Mult)t).second }
   }
 
-  %op UnaryOperator Uminus(first:Exp) {
+  %op Exp Uminus(first:Exp) {
     fsym { } 
     is_fsym(t) { t instanceof Uminus }
     get_slot(first,t) { ((Uminus)t).first }
   }
 
-  %op CstExp StringExp(value:string) {
+  %op Exp CstExp {
+    fsym { } 
+    is_fsym(t) { t instanceof CstExp }
+  }
+
+  %op Exp StringExp(value:string) {
     fsym { } 
     is_fsym(t) { t instanceof StringExp }
     get_slot(value,t) { ((StringExp)t).value }
   }
 
 
-  %op CstExp IntExp(value:int) {
+  %op Exp IntExp(value:int) {
     fsym { } 
     is_fsym(t) { t instanceof IntExp }
     get_slot(value,t) { ((IntExp)t).value }
@@ -88,7 +69,7 @@ public class Record {
     // ------------------------------------------------------------
   
   public final static void main(String[] args) {
-    Record test = new Record();
+    RecordStrict test = new RecordStrict();
     test.test1();
     test.test2();
     test.test3();
@@ -153,16 +134,18 @@ public class Record {
 
   public String prettyPrint(Exp t) {
     String op = t.getOperator();
-    %match(Exp t) {
-      IntExp[]  -> { return op; }
-      StringExp[]  -> { return op; }
-      
-      UnaryOperator[first=e1] -> {
-        return op + "(" + prettyPrint(e1) + ")";
-      }
 
-      BinaryOperator[first=e1,second=e2] -> {
-        return op + "(" + prettyPrint(e1) + "," + prettyPrint(e2) + ")";
+    if(t instanceof CstExp) {
+      return op;
+    } else {
+      %match(Exp t) {
+        UnaryOperator[first=e1] -> {
+          return op + "(" + prettyPrint(e1) + ")";
+        }
+        
+        BinaryOperator[first=e1,second=e2] -> {
+          return op + "(" + prettyPrint(e1) + "," + prettyPrint(e2) + ")";
+        }
       }
     }
     return "error";
@@ -171,8 +154,7 @@ public class Record {
   public String prettyPrintInv(Exp t) {
     String op = t.getOperator();
     %match(Exp t) {
-      IntExp[]  -> { return op; }
-      StringExp[]  -> { return op; }
+      CstExp() -> { return op; }
       
       UnaryOperator[first=e1] -> {
         return prettyPrintInv(e1) + " " + op;
@@ -231,8 +213,8 @@ public class Record {
   
   public boolean myEquals(Exp t1, Exp t2) {
     %match(Exp t1, Exp t2) {
-      
       IntExp[value=e1], IntExp[value=e2]       -> { return e1==e2; }
+      
       StringExp[value=e1], StringExp[value=e2] -> { return e1.equals(e2); }
       
       UnaryOperator[first=e1], UnaryOperator[first=f1] -> {
@@ -242,7 +224,7 @@ public class Record {
       BinaryOperator[first=e1, second=e2], BinaryOperator[first=f1, second=f2] -> {
         return t1.getOperator().equals(t2.getOperator()) && myEquals(e1,f1) && myEquals(e2,f2);
       }
-
+      
     }
     return false;
   }
