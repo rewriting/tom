@@ -40,13 +40,6 @@
 	<property name="aircubebundle" value="aircube-bundle.jar"/>
 
 	<path id="external.classpath">
-		<!--
-			<pathelement location="${atermjar}"/>
-			<pathelement location="${sharedobjectjar}"/>
-			<pathelement location="${jjtravelerjar}"/>
-			<pathelement location="${apigenjar}"/>
-			<pathelement location="${vastoadtjar}"/>
-		-->
 	</path>
 
 	<!-- for stable -->
@@ -292,8 +285,11 @@
 			<src path="${src.src}"/>
 			<src path="${src.gen}"/>
 			<classpath refid="src.classpath"/>
+			<include name="**/*.java"/>
+			<!--
 			<include name="tom/**/*.java"/>
 			<include name="jtom/**/*.java"/>
+			-->
 		</javac>
 	</target>
 	
@@ -330,7 +326,7 @@
 		<!-- external libs -->
 		<copy todir="${dest}/lib" file="${aterm.lib}"/>
 		<copy todir="${dest}/lib" file="${sharedobject.lib}"/>
-		<copy todir="${dest}/lib" file="${jjtraveler.lib}"/>
+		<!-- <copy todir="${dest}/lib" file="${jjtraveler.lib}"/> -->
 		<copy todir="${dest}/lib" file="${apigen.lib}"/>
 		<copy todir="${dest}/lib" file="${vastoadt.lib}"/>
 		<copy todir="${dest}/lib" file="${concurrent.lib}"/>
@@ -361,6 +357,10 @@
 		</chmod>
 
 		<!-- tom library -->
+		<jar jarfile="${stable.lib}/mutraveler.jar">
+			<fileset dir="${stable.build}" 
+							 includes="jjtraveler/**/*.class"/>
+		</jar>
 		<jar jarfile="${stable.lib}/tom-library.jar">
 			<fileset dir="${stable.build}" includes="tom/library/**/*.class"/>
 		</jar>
@@ -451,6 +451,11 @@
 		</jar>
 		<jar jarfile="${src.lib}/PlatformOption-${DSTAMP}.jar">
 			<fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
+		</jar>
+
+		<jar jarfile="${src.lib}/mutraveler-${DSTAMP}.jar">
+			<fileset dir="${src.build}" 
+							 includes="jjtraveler/**/*.class"/>
 		</jar>
 
 		<jar jarfile="${src.lib}/tom-library-${DSTAMP}.jar">
@@ -919,8 +924,11 @@
 			<src path="${src.src}"/>
 			<src path="${destination}/gen"/>
 			<classpath refid="src.classpath"/>
+			<include name="**/*.java"/>
+			<!--
 			<include name="tom/**/*.java"/>
 			<include name="jtom/**/*.java"/>
+			-->
 		</javac>
 	</target>
 
@@ -968,7 +976,7 @@
 	<target name="bundle.src" depends="dist.src">
 		<mkdir dir="${bundle.dir}"/>
 		<unjar src="${sharedobject.lib}" dest="${bundle.dir}"/>
-		<unjar src="${jjtraveler.lib}" dest="${bundle.dir}"/>
+		<!-- <unjar src="${jjtraveler.lib}" dest="${bundle.dir}"/> -->
 		<unjar src="${aterm.lib}" dest="${bundle.dir}"/>
 		<unjar src="${apigen.lib}" dest="${bundle.dir}"/>
 		<unjar src="${vastoadt.lib}" dest="${bundle.dir}"/>
@@ -985,7 +993,7 @@
 	<target name="bundle.stable" depends="dist.stable">
 		<mkdir dir="${bundle.dir}"/>
 		<unjar src="${sharedobject.lib}" dest="${bundle.dir}"/>
-		<unjar src="${jjtraveler.lib}" dest="${bundle.dir}"/>
+		<!-- <unjar src="${jjtraveler.lib}" dest="${bundle.dir}"/> -->
 		<unjar src="${aterm.lib}" dest="${bundle.dir}"/>
 		<unjar src="${apigen.lib}" dest="${bundle.dir}"/>
 		<unjar src="${vastoadt.lib}" dest="${bundle.dir}"/>
