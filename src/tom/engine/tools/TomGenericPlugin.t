@@ -47,8 +47,7 @@ import tom.platform.adt.platformoption.types.*;
  * @author Gr&eacute;gory ANDRIEN
  */
 public abstract class TomGenericPlugin extends TomBase implements Plugin {
-
-  %include{ adt/TomSignature.tom }
+  
   %include{ adt/PlatformOption.tom }
 
   /** The name of the plugin. */
@@ -60,6 +59,9 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   /** The plugin's logger. */
   private Logger logger;
 
+  /** the status handler */
+  private StatusHandler statusHandler;
+
   /**
    * An accessor method, so that the plugin can see its logger.
    *
@@ -69,15 +71,29 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     return logger;
   }
 
+  /**
+   * An accessor method, so that the plugin can see the unique Status Handler.
+   *
+   * @return the common to all Tom plugins statusHandler
+   */
+  protected StatusHandler getStatusHandler() {
+    if(statusHandler == null) {
+      findStatusHandler();
+    }
+    return statusHandler;
+  }
+
   /** Constructor method. */
   public TomGenericPlugin(String name) {
     pluginName = name;
     logger = Logger.getLogger(getClass().getName());
   }
 
+  
   /**
-   * Puts the input Object into the variable "term", after casting it as a TomTerm.
-   * If the cast operation fails, an error will be raised.
+   * From Plugin interface 
+   * Puts the input Object into the variable "term", after casting it as a
+   * TomTerm. If the cast operation fails, an error will be raised.
    *
    * @param term the input Object
    */
@@ -85,13 +101,19 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     if (arg instanceof TomTerm) {
       term = (TomTerm)arg;
     } else {
-      logger.log(Level.SEVERE,
-		 "TomTermExpected",
-		 pluginName);
+      logger.log(Level.SEVERE, "TomTermExpected", pluginName);
     }
   }
 
   /**
+   * From Plugin interface 
+   * The run() method is not implemented in TomGenericPlugin.
+   * The plugin should implement its own run() method itself.
+   */
+  public abstract void run();
+
+  /**
+   * From Plugin interface 
    * Returns the Object "term" (which is really a TomTerm).
    *
    * @return the Object "term"
@@ -99,34 +121,34 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   public Object getArg() {
     return term;
   }
-
+  
   /**
-   * The run() method is not implemented in TomGenericPlugin.
-   * The plugin should implement its own run() method itself.
-   */
-  public abstract void run();
-
-  /**
-   * Returns an empty PlatformOptionList. By default, the plugin is considered to declare no options.
+   * From OptionOwner interface 
+   * Returns an empty PlatformOptionList. By default, the plugin is considered
+   * to declare no options.
    *
    * @return an empty PlatformOptionList
    */
-  public PlatformOptionList declaredOptions() {
+  public PlatformOptionList getDeclaredOptionList() {
     return `emptyPlatformOptionList;
   }
-
+  
   /**
-   * Returns an empty PlatformOptionList. By default, the plugin is considered to have no prerequisites.
+   * From OptionOwner interface 
+   * Returns an empty PlatformOptionList. By default, the plugin is considered
+   * to have no prerequisites.
    *
    * @return an empty PlatformOptionList
    */
-  public PlatformOptionList requiredOptions() {
+  public PlatformOptionList getRequiredOptionList() {
     return `emptyPlatformOptionList();
   }
-
+  
   /**
+   * From OptionOwner interface 
    * Sets the specified option to the specified value.
-   * By default, no further work is done. Sometimes though, a plugin might need to do more work
+   * By default, no further work is done. Sometimes though, a plugin might need
+   * to do more work
    * (for instance if altering the value entails a change in another).
    *
    * @param optionName the option's name
@@ -138,21 +160,28 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
 
   public void printAlertMessage(int errorsAtStart, int warningsAtStart) {
     if(!environment().isEclipseMode()) {
-      StatusHandler status = getPluginPlatform().getStatusHandler();
-
-      int nbOfErrors   = status.nbOfErrors()   - errorsAtStart;
-      int nbOfWarnings = status.nbOfWarnings() - warningsAtStart;
+      
+      int nbOfErrors   = statusHandler.nbOfErrors()   - errorsAtStart;
+      int nbOfWarnings = statusHandler.nbOfWarnings() - warningsAtStart;
 
       if( nbOfErrors > 0 ) {
-	logger.log( Level.OFF,
-		    "TaskErrorMessage",
-		    new Object[]{ pluginName, 
-				  new Integer(nbOfErrors), 
-				  new Integer(nbOfWarnings) } );
+        logger.log( Level.OFF, "TaskErrorMessage",
+                    new Object[]{ pluginName, 
+                                  new Integer(nbOfErrors), 
+                                  new Integer(nbOfWarnings) } );
       } else if( nbOfWarnings > 0 ) {
-	logger.log( Level.OFF,
-		    "TaskWarningMessage",
-		    new Object[]{ pluginName, new Integer(nbOfWarnings) } );
+        logger.log( Level.OFF, "TaskWarningMessage",
+                    new Object[]{ pluginName, new Integer(nbOfWarnings) } );
+      }
+    }
+  }
+
+  private void findStatusHandler() {
+    Handler[] handlers = Logger.getLogger(Tom.LOGGERRADICAL).getHandlers();
+    for(int i=0;i<handlers.length;i++) {
+      if(handlers[i] instanceof StatusHandler) {
+        statusHandler = (StatusHandler)handlers[i];
+        break;
       }
     }
   }

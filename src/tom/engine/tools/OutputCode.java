@@ -27,6 +27,7 @@ package jtom.tools;
 
 import java.io.*;
 import tom.platform.*;
+import jtom.*;
 
 public class OutputCode {
   protected Writer file;
@@ -39,8 +40,8 @@ public class OutputCode {
     this.defaultDeep = defaultDeep;
   }
 
-  private PluginPlatform getPluginPlatform() {
-    return PluginPlatform.getInstance();
+  private OptionManager getOptionManager() {
+    return TomOptionManager.getInstance();
   }
 
   public OutputCode() {
@@ -97,7 +98,7 @@ public class OutputCode {
   }
   
   public void writeln() throws IOException {
-    if(((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue()) {
+    if(((Boolean)getOptionManager().getOptionValue("pretty")).booleanValue()) {
       file.write('\n');
     }
   }
@@ -113,16 +114,16 @@ public class OutputCode {
   }
   
   public void write(String s, int line, int length) throws IOException {
-    if(singleLine>0 && !((Boolean)getPluginPlatform().getOptionValue("cCode")).booleanValue()) {
+    if(singleLine>0 && !((Boolean)getOptionManager().getOptionValue("cCode")).booleanValue()) {
       s = s.replace('\n', ' ');
       s = s.replace('\r', ' ');
       s = s.replace('\t', ' ');
       write(s);
       return;
     }
-    if (!((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue()) {
+    if (!((Boolean)getOptionManager().getOptionValue("pretty")).booleanValue()) {
       if(lineCounter > line) {
-        if(((Boolean)getPluginPlatform().getOptionValue("cCode")).booleanValue()) {
+        if(((Boolean)getOptionManager().getOptionValue("cCode")).booleanValue()) {
           String s1 = "\n#line "+line+"\n";
             // writeln(deep,s);
           s = s1+s;
@@ -171,7 +172,7 @@ public class OutputCode {
   
   public void indent(int deep) {
     try {
-      if(((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue()) {
+      if(((Boolean)getOptionManager().getOptionValue("pretty")).booleanValue()) {
         for(int i=0 ; i<deep ; i++) {
           file.write(' ');
           file.write(' ');

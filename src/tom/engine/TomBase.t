@@ -78,16 +78,16 @@ public class TomBase {
     }
   }
 
-  public PluginPlatform getPluginPlatform() {
-    return PluginPlatform.getInstance();
+  public OptionManager getOptionManager() {
+    return TomOptionManager.getInstance();
   }
 
   public void setOptionValue(String name, Object value) {
-    getPluginPlatform().setOptionValue(name, value);
+    getOptionManager().setOptionValue(name, value);
   }
 
   protected Object getOptionValue(String name) {
-    return getPluginPlatform().getOptionValue(name);
+    return getOptionManager().getOptionValue(name);
   }
 
   /**

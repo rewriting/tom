@@ -28,8 +28,8 @@ public class TomBackend extends TomGenericPlugin {
   public void run() {
     if(isActivated() == true) {
       try {
-	int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+	int errorsAtStart = getStatusHandler().nbOfErrors();
+	int warningsAtStart = getStatusHandler().nbOfWarnings();
 
 	long startChrono = System.currentTimeMillis();
 				
@@ -69,7 +69,7 @@ public class TomBackend extends TomGenericPlugin {
     }
   }
 
-  public PlatformOptionList declaredOptions() {
+  public PlatformOptionList getDeclaredOptionList() {
     String noOutput = "<OptionBoolean name=\"noOutput\" altName=\"\" description=\"Do not generate code\" value=\"false\"/>";
     String jCode = "<OptionBoolean name=\"jCode\" altName=\"j\" description=\"Generate Java code\" value=\"true\"/>";
     String cCode = "<OptionBoolean name=\"cCode\" altName=\"c\" description=\"Generate C code\" value=\"false\"/>";

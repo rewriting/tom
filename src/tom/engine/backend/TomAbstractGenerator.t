@@ -46,8 +46,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 // ------------------------------------------------------------
 
     /*
-     * Generate the goal language
-     */
+     * Generate the goal language     */
  
   protected void generate(int deep, TomTerm subject)throws IOException {
     %match(TomTerm subject) {

@@ -51,11 +51,7 @@ options{
     private final TomSignatureFactory getTomSignatureFactory(){
         return tsf();
     }
-    
-    public PluginPlatform getPluginPlatform(){
-        return PluginPlatform.getInstance();
-    }
-    
+        
     private TomEnvironment environment() {
         return TomEnvironment.getInstance();
     }

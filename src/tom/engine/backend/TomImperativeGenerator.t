@@ -203,7 +203,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write("=");
     generateExpression(deep,exp);
     output.writeln(";");
-    if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue() && !list.isEmpty()) {
+    if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue() && !list.isEmpty()) {
       output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
       generate(deep,var);
       output.write("\", ");
@@ -293,7 +293,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   
   protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
     String args[];
-    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getOptionManager().getOptionValue("lazyType")).booleanValue()) {
       args = new String[] { getTLCode(tlType1), name1,
                             getTLCode(tlType2), name2 };
     } else {
@@ -308,7 +308,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   protected TargetLanguage genDeclMake(String opname, TomType returnType, 
                                        TomList argList, TargetLanguage tlCode) {
     String s = "";
-    if(((Boolean)getPluginPlatform().getOptionValue("noDeclaration")).booleanValue()) {
+    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) {
       return `ITL("");
     }
       
@@ -334,7 +334,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       }
     }
     s += ") { ";
-    if (((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()) {
+    if (((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
       s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
       s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
       s += "return  debugVar;\n}";
@@ -347,7 +347,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
     //%variable
     String s = "";
-    if(((Boolean)getPluginPlatform().getOptionValue("noDeclaration")).booleanValue()) {
+    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) {
       return `ITL("");
     }
 
@@ -356,7 +356,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     String tlEltType = getTLType(eltType);
 
     String utype = glType;
-    if(((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
+    if(((Boolean)getOptionManager().getOptionValue("lazyType")).booleanValue()) {
       utype = getTLType(getUniversalType());
     }
     
@@ -393,12 +393,12 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    return ast().reworkTLCode(`ITL(s), ((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue());
+    return ast().reworkTLCode(`ITL(s), ((Boolean)getOptionManager().getOptionValue("pretty")).booleanValue());
   }
 
   protected TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
     String s = "";
-    if(((Boolean)getPluginPlatform().getOptionValue("noDeclaration")).booleanValue()) {
+    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) {
       return `ITL("");
     }
 
@@ -406,7 +406,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     String glType = getTLType(listType);
     String tlEltType = getTLType(eltType);
     String utype = glType;
-    if(((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
+    if(((Boolean)getOptionManager().getOptionValue("lazyType")).booleanValue()) {
       utype =  getTLType(getUniversalType());
     }
     
@@ -448,7 +448,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
 
     //If necessary we remove \n code depending on pretty option
-    return ast().reworkTLCode(`ITL(s), ((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue());
+    return ast().reworkTLCode(`ITL(s), ((Boolean)getOptionManager().getOptionValue("pretty")).booleanValue());
   }
 
   protected TargetLanguage genDecl(String returnType,
@@ -457,7 +457,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
                                    String args[],
                                    TargetLanguage tlCode) {
     String s = "";
-    if(((Boolean)getPluginPlatform().getOptionValue("noDeclaration")).booleanValue()) {
+    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) {
       return `ITL("");
     }
     s = modifier + returnType + " " + declName + "_" + suffix + "(";

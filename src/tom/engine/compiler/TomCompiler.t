@@ -33,8 +33,8 @@ public class TomCompiler extends TomGenericPlugin {
 
   public void run() {
     try {
-      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+      int errorsAtStart = getStatusHandler().nbOfErrors();
+      int warningsAtStart = getStatusHandler().nbOfWarnings();
 
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
@@ -62,7 +62,7 @@ public class TomCompiler extends TomGenericPlugin {
     }
   }
   
-  public PlatformOptionList declaredOptions() {
+  public PlatformOptionList getDeclaredOptionList() {
     String compile = "name=\"compile\" altName=\"\" description=\"Compiler (activated by default)\" value=\"true\"";
     return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + compile + "/> </options>");
   }
@@ -111,7 +111,7 @@ public class TomCompiler extends TomGenericPlugin {
             Match(SubjectList(l1),PatternList(l2), matchOptionList)  -> {
               TomList patternList = `l2;
               Option orgTrack = findOriginTracking(`matchOptionList);
-              if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()) {
+              if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
                 debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
               }
               TomList newPatternList = empty();
@@ -181,7 +181,7 @@ public class TomCompiler extends TomGenericPlugin {
 
             RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
               TomRuleList ruleList = `rl;
-              if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()) {
+              if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
                 debugKey = `orgTrack.getFileName().getString() + `orgTrack.getLine();
               }
               TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
@@ -213,7 +213,7 @@ public class TomCompiler extends TomGenericPlugin {
                               option) -> {
                     TomTerm newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
                     Instruction rhsInst = `IfThenElse(TrueTL(),Return(newRhs),Nop());
-                    if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()) {
+                    if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
                       TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
                       rhsInst = `UnamedBlock(concInstruction(TargetLanguageToInstruction(tl), rhsInst));
                     }
@@ -244,7 +244,7 @@ public class TomCompiler extends TomGenericPlugin {
                 //}
 
               InstructionList l;
-              if(((Boolean)getPluginPlatform().getOptionValue("eCode")).booleanValue()) {
+              if(((Boolean)getOptionManager().getOptionValue("eCode")).booleanValue()) {
                 l = `concInstruction(
                                      makeFunctionBeginAST,
                                      LocalVariable(),

@@ -28,23 +28,24 @@ package jtom.tools;
 import java.util.logging.*;
 
 public class TomLogFileFormatter extends Formatter {
-
+  
   public String format(LogRecord record) {
     String level = record.getLevel().toString();
     String loggerName = record.getLoggerName();
-
+    
     return loggerName + " (" + level + ")\n\t" + formatMessage(record) + "\n\n";
   }
-
+  
   public String getHead(Handler h) {
     return "--------------------------------------------------\n"
-	 + "                   TOM log file\n"
-	 + "--------------------------------------------------\n\n\n";
+      + "                   TOM log file\n"
+      + "--------------------------------------------------\n\n\n";
   }
-
+  
   public String getTail(Handler h) {
     return "\n--------------------------------------------------\n"
-	   + "                 End of log file\n"
-	   + "--------------------------------------------------\n";
+      + "                 End of log file\n"
+      + "--------------------------------------------------\n";
   }
+
 }

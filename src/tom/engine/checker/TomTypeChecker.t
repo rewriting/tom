@@ -23,8 +23,8 @@ public class TomTypeChecker extends TomChecker {
     if(isActivated()) {
       try {
 	strictType = !getOptionBooleanValue("lazyType");
-	int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+	int errorsAtStart = getStatusHandler().nbOfErrors();
+	int warningsAtStart = getStatusHandler().nbOfWarnings();
 
         long startChrono = System.currentTimeMillis();
         checkTypeInference( (TomTerm)getArg() );

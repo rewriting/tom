@@ -14,7 +14,7 @@ public class TomSyntaxChecker extends TomChecker {
 
   %include { adt/TomSignature.tom }
   %include { adt/PlatformOption.tom }
-
+  
   public TomSyntaxChecker() {
     super("TomSyntaxChecker");
   }
@@ -22,32 +22,28 @@ public class TomSyntaxChecker extends TomChecker {
   public void run() {
     if(isActivated()) {	
       try {	
-	strictType = !getOptionBooleanValue("lazyType");
-	int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
-
-        long startChrono = System.currentTimeMillis();
-
-        reinit();
-        checkSyntax( (TomTerm)getArg() );
-
-	getLogger().log( Level.INFO,
-			 "TomSyntaxCheckingPhase",
-			 new Integer((int)(System.currentTimeMillis()-startChrono)) );      
-
-        printAlertMessage(errorsAtStart, warningsAtStart);
+        strictType = !getOptionBooleanValue("lazyType");
+        int errorsAtStart = getStatusHandler().nbOfErrors();
+        int warningsAtStart = getStatusHandler().nbOfWarnings();
         
+        long startChrono = System.currentTimeMillis();
+        
+        reinit();
+        checkSyntax((TomTerm)getArg());
+        
+        getLogger().log(Level.INFO, "TomSyntaxCheckingPhase",
+                         new Integer((int)(System.currentTimeMillis()-startChrono)));      
+        printAlertMessage(errorsAtStart, warningsAtStart);
       } catch (Exception e) {
-	getLogger().log( Level.SEVERE,
-			 "ExceptionMessage",
-			 new Object[]{environment().getInputFile().getName(),"TomSyntaxChecker",e.getMessage()} );
+        getLogger().log( Level.SEVERE, "ExceptionMessage",
+                         new Object[]{environment().getInputFile().getName(),"TomSyntaxChecker",e.getMessage()} );
         e.printStackTrace();
       }
     } else { // syntax checker desactivated
-	getLogger().log( Level.INFO, "The syntax checker is not activated and thus WILL NOT RUN.");
+      getLogger().log(Level.INFO, "The syntax checker is not activated and thus WILL NOT RUN.");
     }
   }
-
+  
   private boolean isActivated() {
     return !getOptionBooleanValue("noCheck");
   }

@@ -33,8 +33,8 @@ public class TomExpander extends TomGenericPlugin {
 
   public void run() {
     try {
-      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+      int errorsAtStart = getStatusHandler().nbOfErrors();
+      int warningsAtStart = getStatusHandler().nbOfWarnings();
 
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
@@ -71,7 +71,7 @@ public class TomExpander extends TomGenericPlugin {
     }
   }
 
-  public PlatformOptionList declaredOptions() {
+  public PlatformOptionList getDeclaredOptionList() {
     String expand = "name=\"expand\" altName=\"\" description=\"Expander (activated by default)\" value=\"true\"";
     return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + expand + "/> </options>");
   }

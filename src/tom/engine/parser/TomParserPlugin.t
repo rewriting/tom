@@ -42,169 +42,149 @@ import tom.platform.adt.platformoption.types.*;
 import jtom.exception.*;
 
 public class TomParserPlugin extends TomGenericPlugin {
-
-    %include { adt/TomSignature.tom }
-    %include { adt/PlatformOption.tom }
+  
+  %include { adt/TomSignature.tom }
+  %include { adt/PlatformOption.tom }
+  
+  public static final String PARSED_SUFFIX = ".tfix.parsed";
+  public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
+  public static final String DEBUG_TABLE_SUFFIX = ".tfix.debug.table";
+  public static final String DECLARED_OPTIONS = "<options><OptionBoolean name='parse' altName='' description='Parser (activated by default)' value='true'/> </options>";
+  
+  private String currentFile;
+  
+  private HostParser parser = null;
+  
+  public TomParserPlugin(){
+    super("TomParserPlugin");
+  }
+  
+  public PlatformOptionList getDeclaredOptionList() {
+    return TomOptionManager.xmlToOptionList(TomParserPlugin.DECLARED_OPTIONS);
+  }
+  
+  protected static HostParser newParser(String fileName) throws FileNotFoundException,IOException{
+    HashSet includedFiles = new HashSet();
+    HashSet alreadyParsedFiles = new HashSet();
     
-    public static final String PARSED_SUFFIX = ".tfix.parsed"; // was previously in TomTaskInput
-    public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table"; // was previously in TomTaskInput
-    public static final String DEBUG_TABLE_SUFFIX = ".tfix.debug.table"; // was previously in TomTaskInput
-
-    private String currentFile;
+    return newParser(fileName,includedFiles,alreadyParsedFiles);
+  }
+  
+  //create new parsers
+  protected static HostParser newParser(String fileName,HashSet includedFiles,HashSet alreadyParsedFiles) 
+    throws FileNotFoundException,IOException {
     
-    private HostParser parser = null;
+    // The input Stream
+    DataInputStream input = new DataInputStream(new FileInputStream(new File(fileName)));
     
-    public TomParserPlugin(){
-      super("TomParserPlugin");
-    }
-
-    public PlatformOptionList declaredOptions() {
-      String parse = "name=\"parse\" altName=\"\" description=\"Parser (activated by default)\" value=\"true\"";
-      return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + parse + "/> </options>");
-    }
-
-    private void p(String s){
-	System.out.println(s);
-    }
-
+    // a selector to choose the lexer to use
+    TokenStreamSelector selector = new TokenStreamSelector();
     
-    protected static HostParser newParser(String fileName) throws FileNotFoundException,IOException{
-	//	try{
-	HashSet includedFiles = new HashSet();
-	HashSet alreadyParsedFiles = new HashSet();
-	
-	return newParser(fileName,includedFiles,alreadyParsedFiles);
-    }
-
-    //create new parsers
-    protected static HostParser newParser(String fileName,HashSet includedFiles,HashSet alreadyParsedFiles) 
-	throws FileNotFoundException,IOException {
-	
-	// The input Stream
-	DataInputStream input = new DataInputStream(new FileInputStream(new File(fileName)));
-	    
-	// a selector to choose the lexer to use
-	TokenStreamSelector selector = new TokenStreamSelector();
-	
-	// create a lexer for target mode
-	HostLexer targetlexer = new HostLexer(input);
-	// create a lexer for tom mode
-	TomLexer tomlexer = new TomLexer(targetlexer.getInputState());
-	// create a lexer for backquote mode
-	BackQuoteLexer bqlexer = new BackQuoteLexer(targetlexer.getInputState());
-	
-	// notify selector about various lexers
-	selector.addInputStream(targetlexer,"targetlexer");
-	selector.addInputStream(tomlexer, "tomlexer");
-	selector.addInputStream(bqlexer, "bqlexer");
-	selector.select("targetlexer");
-	
-	// create the parser for target mode
-	// also create tom parser and backquote parser
-	return new HostParser(selector,fileName,includedFiles,alreadyParsedFiles);
-    }
+    // create a lexer for target mode
+    HostLexer targetlexer = new HostLexer(input);
+    // create a lexer for tom mode
+    TomLexer tomlexer = new TomLexer(targetlexer.getInputState());
+    // create a lexer for backquote mode
+    BackQuoteLexer bqlexer = new BackQuoteLexer(targetlexer.getInputState());
     
+    // notify selector about various lexers
+    selector.addInputStream(targetlexer,"targetlexer");
+    selector.addInputStream(tomlexer, "tomlexer");
+    selector.addInputStream(bqlexer, "bqlexer");
+    selector.select("targetlexer");
+    
+    // create the parser for target mode
+    // also create tom parser and backquote parser
+    return new HostParser(selector,fileName,includedFiles,alreadyParsedFiles);
+  }
+  
   public void run() {
     try {
-	
-      p("-- NEW PARSER --");
-      p("-- file "+currentFile+" --");
-
-      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
-
+      int errorsAtStart = getStatusHandler().nbOfErrors();
+      int warningsAtStart = getStatusHandler().nbOfWarnings();
+      
       long startChrono = System.currentTimeMillis();
 	    
-      boolean intermediate = ((Boolean)getPluginPlatform().getOptionValue("intermediate")).booleanValue();
-      boolean java         = ((Boolean)getPluginPlatform().getOptionValue("jCode")).booleanValue();
-      boolean debug        = ((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue();
+      boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
+      boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
+      boolean debug        = ((Boolean)getOptionManager().getOptionValue("debug")).booleanValue();
 	    
-      if(java){
-	  TomJavaParser javaParser = TomJavaParser.createParser(currentFile);
-	  String packageName = javaParser.javaPackageDeclaration();
-	  // Update taskInput
-	  environment().setPackagePath(packageName);
-	  environment().updateOutputFile();
+      if(java) {
+        TomJavaParser javaParser = TomJavaParser.createParser(currentFile);
+        String packageName = javaParser.javaPackageDeclaration();
+        // Update taskInput
+        environment().setPackagePath(packageName);
+        environment().updateOutputFile();
       }
       else{
-	  environment().setPackagePath("");
+        environment().setPackagePath("");
       }
-      //createParser();
       parser = newParser(currentFile);
       
-      super.setArg( parser.input() );
+      super.setArg(parser.input());
       
-      getLogger().log( Level.INFO,
-		       "TomParsingPhase",
-		       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
-
-      if(environment().isEclipseMode()){
-	  String outputFileName = environment().getInputFile().getParent()+ File.separator + "."
-	      + environment().getRawFileName()+ PARSED_TABLE_SUFFIX;
-	  
-	  Tools.generateOutput(outputFileName, symbolTable().toTerm());
+      getLogger().log(Level.INFO, "TomParsingPhase",
+                      new Integer((int)(System.currentTimeMillis()-startChrono)) );      
+      
+      if(environment().isEclipseMode()) {
+        String outputFileName = environment().getInputFile().getParent()+ File.separator + "."
+          + environment().getRawFileName()+ PARSED_TABLE_SUFFIX;
+        
+        Tools.generateOutput(outputFileName, symbolTable().toTerm());
       }
       
-      if(intermediate){
-	  System.out.println("intermediate");
-	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-			       + PARSED_SUFFIX, (ATerm)getArg());
-	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-			       + PARSED_TABLE_SUFFIX, symbolTable().toTerm());
+      if(intermediate) {
+        System.out.println("intermediate");
+        Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
+                             + PARSED_SUFFIX, (ATerm)getArg());
+        Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
+                             + PARSED_TABLE_SUFFIX, symbolTable().toTerm());
       }
       
-      if(debug)
-	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-			       + DEBUG_TABLE_SUFFIX, parser.getStructTable());
-      
+      if(debug) {
+        Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
+                             + DEBUG_TABLE_SUFFIX, parser.getStructTable());
+      }
       printAlertMessage(errorsAtStart, warningsAtStart);
     }
     catch (TokenStreamException e){
-	e.printStackTrace();
-	getLogger().log( Level.SEVERE,
-			 "TokenStreamException",
-			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+      e.printStackTrace();
+      getLogger().log( Level.SEVERE, "TokenStreamException",
+                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
     }
     catch (RecognitionException e){
-	e.printStackTrace();
-	getLogger().log( Level.SEVERE,
-			 "RecognitionException",
-			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+      e.printStackTrace();
+      getLogger().log( Level.SEVERE, "RecognitionException",
+                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
     } catch (TomIncludeException e) {
-	getLogger().log( Level.SEVERE,
-			 "SimpleMessage",
-			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+      getLogger().log( Level.SEVERE, "SimpleMessage",
+                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
     } catch (TomException e) {
-	getLogger().log( Level.SEVERE,
-			 "SimpleMessage",
-			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+      getLogger().log( Level.SEVERE, "SimpleMessage",
+                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
     } catch (FileNotFoundException e) {
-	getLogger().log( Level.SEVERE,
-			 "FileNotFound",
-			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), currentFile} ); 
+      getLogger().log( Level.SEVERE, "FileNotFound",
+                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), currentFile} ); 
     } catch (Exception e) {
-	e.printStackTrace();
-	getLogger().log( Level.SEVERE,
-			 "UnhandledException", 
-			 new Object[]{currentFile, e.getMessage()} );
+      e.printStackTrace();
+      getLogger().log( Level.SEVERE, "UnhandledException", 
+                       new Object[]{currentFile, e.getMessage()} );
     }
   }
-
-    private int getLineFromTomParser() {
-	if(parser == null) {
+  
+  private int getLineFromTomParser() {
+    if(parser == null) {
 	    return TomMessage.DEFAULT_ERROR_LINE_NUMBER;
-	} 
-	return parser.getLine();
-    }
-
-    public void setArg(Object arg){
-	if (arg instanceof String) {
+    } 
+    return parser.getLine();
+  }
+  
+  public void setArg(Object arg){
+    if (arg instanceof String) {
 	    currentFile = (String)arg;  
-	} else {
-	    getLogger().log(Level.SEVERE,
-			    "TomParserPlugin: A String was expected.");
-	}
+    } else {
+	    getLogger().log(Level.SEVERE, "TomParserPlugin: A String was expected.");
     }
-
-    
+  }
+  
 }

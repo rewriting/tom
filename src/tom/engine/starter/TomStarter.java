@@ -44,25 +44,23 @@ public class TomStarter extends TomGenericPlugin {
 
   public void setArg(Object arg) {
     argToRelay = arg;
-
     if (arg instanceof String) {
       fileName = (String)arg;  
     } else {
-      getLogger().log(Level.SEVERE,
-		      "TomStarter: A String was expected.");
+      getLogger().log(Level.SEVERE,"TomStarter: A String was expected.");
     }
-  }
-
-  public Object getArg() {
-    return argToRelay;
   }
 
   public void run() {
     // We need here to create the environment : 
     // We need to be sure we don't have side effects with the environment singleton
     TomEnvironment env = TomEnvironment.create();
-    env.initInputFromArgs();
-    env.updateEnvironment(fileName);
+    env.initializeFromPlatformOptions();
+    env.prepareForInputFile(fileName);
+  }
+
+  public Object getArg() {
+    return argToRelay;
   }
 
 }

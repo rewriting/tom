@@ -56,8 +56,8 @@ public class TomVerifier extends TomGenericPlugin {
   public void run() {
     if(isActivated()) {
       try {
-	int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+	int errorsAtStart = getStatusHandler().nbOfErrors();
+	int warningsAtStart = getStatusHandler().nbOfWarnings();
 
 	long startChrono = System.currentTimeMillis();
 
@@ -89,7 +89,7 @@ public class TomVerifier extends TomGenericPlugin {
     }
   }
 
-  public PlatformOptionList declaredOptions() {
+  public PlatformOptionList getDeclaredOptionList() {
     String verify = "name=\"verify\" altName=\"\" description=\"Verify correctness of match compilation\" value=\"false\"";
     return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + verify + "/> </options>");
   }

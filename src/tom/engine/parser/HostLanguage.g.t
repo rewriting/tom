@@ -91,10 +91,6 @@ options{
         return currentFile;
     }
     
-    public PluginPlatform getPluginPlatform(){
-        return PluginPlatform.getInstance();
-    }
-
     private final TomSignatureFactory getTomSignatureFactory(){
         return tsf();
     }

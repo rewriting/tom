@@ -29,8 +29,8 @@ public class TomOptimizer extends TomGenericPlugin {
   public void run() {
     if(isActivated()) {
       try {
-        int errorsAtStart   = getPluginPlatform().getStatusHandler().nbOfErrors();
-        int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+        int errorsAtStart   = getStatusHandler().nbOfErrors();
+        int warningsAtStart = getStatusHandler().nbOfWarnings();
         long startChrono = System.currentTimeMillis();
 						
         TomTerm renamedTerm   = renameVariable( (TomTerm)getArg(), new HashSet() );
@@ -64,7 +64,7 @@ public class TomOptimizer extends TomGenericPlugin {
     }
   }
 
-  public PlatformOptionList declaredOptions() {
+  public PlatformOptionList getDeclaredOptionList() {
     String optimize = "name=\"optimize\" altName=\"O\" description=\"Optimized generated code\" value=\"false\"";
     return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + optimize + "/> </options>");
   }
