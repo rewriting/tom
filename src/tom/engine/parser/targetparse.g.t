@@ -318,7 +318,7 @@ blockList [LinkedList list] throws TomException
     ;
 
 // the %rule construct
-ruleConstruct [LinkedList list]
+ruleConstruct [LinkedList list] throws TomException
 {
     TargetLanguage code = null;
 }

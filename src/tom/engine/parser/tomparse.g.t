@@ -19,6 +19,8 @@ header{
     import jtom.exception.*;
     import jtom.tools.*;
 
+    import jtom.xml.Constants;
+
     import tom.platform.*;
 
     import antlr.*;
@@ -43,6 +45,7 @@ options{
     // the default-mode parser
     private NewTargetParser targetparser;
     protected NewBQParser bqparser;
+    private NewTomLexer tomlexer;
 
     private Logger logger;
 
@@ -52,13 +55,17 @@ options{
 
     private TomList debuggedStructureList = null;
 
+    private TomFactory tomFactory;
+
     public NewTomParser(ParserSharedInputState state, NewTargetParser target){
         this(state);
         this.targetparser = target;
         this.debuggedStructureList = `emptyTomList();
         this.bqparser = new NewBQParser(state,this);
+        this.tomFactory = new TomFactory();
+        this.tomlexer = (NewTomLexer) selector().getStream("tomlexer");
 
-	logger = Logger.getLogger(getClass().getName());
+        logger = Logger.getLogger(getClass().getName());
     }
 
 
@@ -105,7 +112,10 @@ options{
     }
 */
 
-
+    private int getLine(){
+        return tomlexer.getLine();
+    }
+    
     public void pushLine(int line){
         targetparser.pushLine(line);
     }
@@ -298,7 +308,7 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
         )
     ;
 
-matchPattern [LinkedList list] returns [Option result]
+matchPattern [LinkedList list] returns [Option result] throws TomException
 {
     result = null;
     TomTerm term = null;
@@ -319,7 +329,7 @@ matchPattern [LinkedList list] returns [Option result]
 
 
 // The %rule construct
-ruleConstruct [Option orgTrack] returns [Instruction result]
+ruleConstruct [Option orgTrack] returns [Instruction result] throws TomException
 {
     result = null;
     TomRuleList ruleList = `emptyTomRuleList();
@@ -393,7 +403,7 @@ ruleConstruct [Option orgTrack] returns [Instruction result]
 
 
 // terms for %match and %rule
-annotedTerm returns [TomTerm result]
+annotedTerm returns [TomTerm result] throws TomException
 {
     result = null;
     TomName annotedName = null;
@@ -414,7 +424,7 @@ annotedTerm returns [TomTerm result]
         )
     ;
 
-plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
+plainTerm [TomName astAnnotedName, int line] returns [TomTerm result] throws TomException
 {
     result = null;
     LinkedList constraintList = new LinkedList();
@@ -433,8 +443,10 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
         constraintList.add(annotedName);
 }
     :  
-    (   // xml is missing
-            // var* or _*
+        (   // xml term
+            result = xmlTerm[optionList, constraintList]
+
+        |   // var* or _*
             (variableStar[null,null]) => result = variableStar[optionList,constraintList] 
 
         |   // _
@@ -515,7 +527,435 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
         )
     ;
 
-args [LinkedList list, LinkedList optionList] returns [boolean result]
+
+
+xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm result] throws TomException
+{
+  result = null;
+  TomTerm arg1, arg2;
+  LinkedList pairSlotList = new LinkedList();
+  LinkedList attributeList = new LinkedList();
+  LinkedList childs = new LinkedList();
+  String keyword = "";
+  boolean implicit;
+  NameList nameList, closingNameList;
+  OptionList option = null;
+  ConstraintList constraint;
+}
+    :
+        (
+            // < NODE attributes [ /> | > childs </NODE> ]
+            XML_START {text.append("<");}
+            nameList = xmlNameList[optionList, true]
+            implicit = xmlAttributeList[attributeList]
+            {
+                if(implicit) { optionList.add(`ImplicitXMLAttribut()); }
+            }
+            (   // case: /> 
+                XML_CLOSE_SINGLETON
+                {
+                    text.append("\\>");
+                    option =  ast().makeOptionList(optionList);
+                }
+            |   // case: > childs  </NODE>
+                XML_CLOSE  {text.append(">");}
+                implicit = xmlChilds[childs]
+
+                XML_START_ENDING {text.append("</"); }
+                closingNameList = xmlNameList[optionList, false]
+                t:XML_CLOSE  {text.append(">");}
+                {
+                    if(!nameList.equals(closingNameList)) {
+                        String found="", expected ="";
+                        while(!nameList.isEmpty()) {
+                            expected += "|"+nameList.getHead().getString();
+                            nameList = nameList.getTail();
+                        }
+                        while(!closingNameList.isEmpty()) {
+                            found += "|"+closingNameList.getHead().getString();
+                            closingNameList = closingNameList.getTail();
+                        }
+                        //throw new TomException("Error on closing XML pattern: expecting '"+ expected.substring(1) +"' but got '"+found.substring(1)+ "' at line "+getLine());
+                        // return null;
+                        // TODO find the orgTrack of the match
+                        logger.log( Level.SEVERE,
+                            "MalformedXMLTerm",
+                            new Object[]{currentFile(), new Integer(getLine()), 
+                                "match", new Integer(getLine()),
+                                expected.substring(1), found.substring(1)} );
+                    }
+                    if(implicit) {
+                        // Special case when XMLChilds() is reduced to a singleton
+                        // when XMLChilds() is reduced to a singleton
+                        // Appl(...,Name(""),args)
+                        if(tomFactory.isExplicitTermList(childs)) {
+                            childs = tomFactory.metaEncodeExplicitTermList(symbolTable(), (TomTerm)childs.getFirst());
+                        } else {
+                            optionList.add(`ImplicitXMLChild());
+                        }
+                    }
+                    option = ast().makeOptionList(optionList);    
+                }
+            ) // end choice
+            {
+                result = `XMLAppl(
+                    option,
+                    nameList,
+                    ast().makeList(attributeList),
+                    ast().makeList(childs),
+                    ast().makeConstraintList(constraintList));
+            }
+
+        | // #TEXT(...)
+            XML_TEXT LPAREN arg1 = annotedTerm RPAREN
+            {
+                keyword = Constants.TEXT_NODE;
+                pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
+
+                optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile())));
+                option = ast().makeOptionList(optionList);
+                constraint = ast().makeConstraintList(constraintList);
+                nameList = `concTomName(Name(keyword));
+                result = `RecordAppl(option,
+                    nameList,
+                    ast().makeList(pairSlotList),
+                    constraint);
+            }
+        | // #COMMENT(...)
+            XML_COMMENT LPAREN arg1 = termStringIdentifier[null] RPAREN
+            {
+                keyword = Constants.COMMENT_NODE;
+                pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
+
+                optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile())));
+                option = ast().makeOptionList(optionList);
+                constraint = ast().makeConstraintList(constraintList);
+                nameList = `concTomName(Name(keyword));
+                result = `RecordAppl(option,
+                    nameList,
+                    ast().makeList(pairSlotList),
+                    constraint);
+            }
+        | // #PROCESSING-INSTRUCTION(... , ...)
+            XML_PROC LPAREN
+            arg1 = termStringIdentifier[null] COMMA arg2 = termStringIdentifier[null]
+            RPAREN
+            {
+                keyword = Constants.PROCESSING_INSTRUCTION_NODE;
+                pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_TARGET),arg1));
+                pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg2));
+
+                optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile())));
+                option = ast().makeOptionList(optionList);
+                constraint = ast().makeConstraintList(constraintList);
+                nameList = `concTomName(Name(keyword));
+                result = `RecordAppl(option,
+                    nameList,
+                    ast().makeList(pairSlotList),
+                    constraint);
+            }
+        )
+    ;
+
+
+xmlAttributeList [LinkedList list] returns [boolean result] throws TomException
+{
+    result = false;
+    TomTerm term;
+}
+    :
+        (
+            LBRACKET {text.append("[");}
+            (
+                term = xmlAttribute {list.add(term);}
+                (
+                    COMMA {text.append("(");}
+                    term = xmlAttribute {list.add(term);}
+                )*  
+            )?
+            RBRACKET
+            {
+                text.append("]");
+                result = true;
+            }
+        |
+            LPAREN {text.append("(");}
+            (
+                term = xmlAttribute {list.add(term);}
+                (
+                    COMMA {text.append(",");}
+                    term = xmlAttribute {list.add(term);}
+                )*  
+            )?
+            RPAREN
+            {
+                text.append(")");
+                result = false;
+            }
+        |
+            (
+               {LA(1) != XML_CLOSE}? term = xmlAttribute {list.add(term);}
+            )*
+            {result = true;}
+        )
+    ;
+
+xmlAttribute returns [TomTerm result] throws TomException
+{
+    result = null;
+    LinkedList list = new LinkedList();
+    TomTerm term = null;
+    TomTerm termName = null;
+    String name;
+    OptionList option = null;
+    ConstraintList constraint;
+    LinkedList optionList = new LinkedList();
+    LinkedList constraintList = new LinkedList();
+    LinkedList optionListAnno2 = new LinkedList();
+    NameList nameList;
+}
+    :
+        (
+            // _* | X*
+            {LA(2) == STAR}?
+            result = variableStar[optionList,constraintList]
+            //(variableStar[null,null]) => result = variableStar[optionList,constraintList]
+        |   // name = [anno2@](_|String|Identifier)
+            {LA(2) == EQUAL}?
+            id:ALL_ID EQUAL {text.append(id.getText()+"=");}
+            (
+                {LA(2) == AT}?
+                anno2:ALL_ID AT
+                {
+                    text.append(anno2.getText()+"@");
+                    optionListAnno2.add(`Name(anno2.getText()));
+                }
+            )?
+            term = unamedVariableOrTermStringIdentifier[optionListAnno2]
+            {
+                name = tomFactory.encodeXMLString(symbolTable(),id.getText());
+                nameList = `concTomName(Name(name));
+                termName = `Appl(ast().makeOption(),nameList,concTomTerm(),concConstraint());
+             }
+
+        | // [anno1@]_ = [anno2@](_|String|Identifier)
+            (
+                anno1:ALL_ID AT
+                {
+                    text.append(anno1.getText()+"@");
+                    optionList.add(`Name(anno1.getText()));
+                }
+            )?
+            termName = placeHolder[optionList,constraintList]
+            e:EQUAL {text.append("=");}
+            (
+                {LA(2) == AT}?
+                anno3:ALL_ID AT
+                {
+                    text.append(anno3.getText()+"@");
+                    optionListAnno2.add(`Name(anno3.getText()));
+                }
+            )?
+            term = unamedVariableOrTermStringIdentifier[optionListAnno2]
+        )
+        {
+            list.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
+            // we add the specif value : _
+            list.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
+            //list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
+            // no longer necessary ot metaEncode Strings in attributes
+            list.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
+            optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile())));
+            option = ast().makeOptionList(optionList);            
+            constraint = ast().makeConstraintList(constraintList);
+      
+            nameList = `concTomName(Name(Constants.ATTRIBUTE_NODE));
+            result = `RecordAppl(option,
+                nameList,
+                ast().makeList(list),
+                constraint);
+        }
+    ;
+
+// This corresponds to the implicit notation
+xmlTermList [LinkedList list] returns [boolean result] throws TomException
+{
+    result = false;
+    TomTerm term;
+}
+    :
+        (
+            term = annotedTerm {list.add(term);}
+        )*
+        {result = true;}
+    ;
+
+xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [NameList result] throws TomException
+{
+    result = `emptyNameList();
+    StringBuffer XMLName = new StringBuffer("");
+    int decLine = 0;
+}
+    :
+        (
+            name:ALL_ID
+            {
+                text.append(name.getText());
+                XMLName.append(name.getText());
+                decLine = name.getLine();
+                result = `concTomName(Name(name.getText()));
+            }
+        |   name2:UNDERSCORE
+            {
+                text.append(name2.getText());
+                XMLName.append(name2.getText());
+                decLine = name2.getLine();
+                result = `concTomName(Name(name2.getText()));
+            }
+        |   LPAREN name3:ALL_ID
+            {
+                text.append(name3.getText());
+                XMLName.append(name3.getText());
+                decLine = name3.getLine();
+                result = `concTomName(Name(name3.getText()));
+            }
+            (
+                ALTERNATIVE name4:ALL_ID
+                {
+                    text.append("|"+name4.getText());
+                    XMLName.append("|"+name4.getText());
+                    result = (NameList)result.append(`Name(name4.getText()));
+                }
+            )*
+            RPAREN
+        )
+        {
+            if(needOrgTrack) {
+                optionList.add(`OriginTracking(Name(XMLName.toString()),
+                        decLine,
+                        Name(currentFile())));
+            }
+        }
+    ;
+
+termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomException
+{
+  result = null;
+  LinkedList optionList = (options==null)?new LinkedList():options;
+  OptionList option = null;
+  NameList nameList = null;
+}
+    :
+        
+        (
+            nameID:ALL_ID
+            {
+                text.append(nameID.getText());
+                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),Name(currentFile())));
+                option = ast().makeOptionList(optionList);
+                nameList = `concTomName(Name(nameID.getText()));
+            }
+        |
+            nameString:STRING
+            {
+                text.append(nameString.getText());
+                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),Name(currentFile())));
+                option = ast().makeOptionList(optionList);
+                ast().makeStringSymbol(symbolTable(),nameString.getText(),optionList);
+                nameList = `concTomName(Name(nameString.getText()));
+            }
+        )
+        {
+            result = `Appl(option,nameList,concTomTerm(),concConstraint());
+        }
+    ;
+
+
+unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm result] throws TomException
+{
+  result = null;
+  LinkedList optionList = (options==null)?new LinkedList():options;
+  OptionList option = null;
+  NameList nameList = null;
+}
+    :
+        (
+            nameUnderscore:UNDERSCORE
+            {
+                text.append(nameUnderscore.getText());
+                optionList.add(`OriginTracking(Name(nameUnderscore.getText()),nameUnderscore.getLine(),Name(currentFile())));
+                option = ast().makeOptionList(optionList);
+                result = `UnamedVariable(option,TomTypeAlone("unknown type"),concConstraint());
+            }
+        |
+            nameID:ALL_ID
+            {
+                text.append(nameID.getText());
+                optionList.add(`OriginTracking(Name(nameID.getText()),nameID.getLine(),Name(currentFile())));
+                option = ast().makeOptionList(optionList);
+                nameList = `concTomName(Name(nameID.getText()));
+                result = `Appl(option,nameList,concTomTerm(),concConstraint());
+            }
+        |
+            nameString:STRING 
+            {
+                text.append(nameString.getText());
+                optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),Name(currentFile())));
+                option = ast().makeOptionList(optionList);
+                ast().makeStringSymbol(symbolTable(),nameString.getText(),optionList);
+                nameList = `concTomName(Name(nameString.getText()));
+                result = `Appl(option,nameList,concTomTerm(),concConstraint());
+            }
+        )
+    ;
+
+// return true for implicit mode
+implicitTermList [LinkedList list] returns [boolean result] throws TomException
+{
+    result = false;
+    TomTerm term;
+}
+    :
+        (
+            LBRACKET
+            { text.append("["); }
+            (
+                term = annotedTerm { list.add(term); }
+                (
+                    TOM_COMMA { text.append(","); }
+                    term = annotedTerm { list.add(term); }
+                )*
+            )?
+            RBRACKET
+            {
+                text.append("]");
+                result=true;
+            }
+        )
+    ;
+
+
+xmlChilds [LinkedList list] returns [boolean result] throws TomException
+{
+  result = false;
+  LinkedList childs = new LinkedList();
+  Iterator it;
+}
+    :
+        (
+            (implicitTermList[null]) => result = implicitTermList[childs]
+        |   result = xmlTermList[childs]
+        )
+        {
+            it = childs.iterator();
+            while(it.hasNext()) {
+                list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),(TomTerm)it.next()));
+            }
+        }
+    ;
+
+
+args [LinkedList list, LinkedList optionList] returns [boolean result] throws TomException
 {
     result = false;
 }
@@ -551,7 +991,7 @@ args [LinkedList list, LinkedList optionList] returns [boolean result]
         )
     ;
 
-termList [LinkedList list]
+termList [LinkedList list] throws TomException
 {
     TomTerm term = null;
 }
@@ -561,7 +1001,7 @@ termList [LinkedList list]
         )
     ;
 
-pairList [LinkedList list]
+pairList [LinkedList list] throws TomException
 {
     TomTerm term = null;
 }
@@ -1644,215 +2084,6 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
         }
     ;
 
-/*
-
-
-// here begins the xml part
-
-xmlTerm 
-{
-    NameList nameList = null, closingNameList = null;
-    TomTerm arg1 = null, arg2 = null;
-
-    LinkedList childs = new LinkedList();
-    boolean implicit;
-}
-    :
-        START nameList = xmlNameList[optionList,true] xmlAttributeList
-        (
-            CLOSE_SINGLETON
-        |   CLOSE implicit = xmlChilds[childs] START_ENDING closingNameList = xmlNameList[optionList,false] CLOSE
-        )
-    |   TEXT LPAREN annotedTerm RPAREN
-    |   COMMENT LPAREN arg1 = termStringIdentifier[null] RPAREN 
-    |   PROC LPAREN arg1 = termStringIdentifier[null] COMMA arg2 = termStringIdentifier[null] RPAREN
-    ;
-
-xmlNameList [LinkedList optionList, boolean needOrgTrack] returns [NameList result] 
-{
-    result = null;
-    String xmlName = null;
-    int decLine;
-}
-    :
-        (
-            i:ALL_ID 
-            {
-                text.append(i.getText());
-                xmlName = i.getText();
-                decLine = i.getLine();
-                result = `concTomName(Name(i.getText()));
-            }
-        |   u:UNDERSCORE 
-            {
-                text.append(u.getText());
-                xmlName = u.getText();
-                decLine = u.getLine();
-                result = `concTomName(Name(u.getText()));
-            }
-        |   LPAREN i1:ALL_ID 
-            {
-                text.append(i1.getText());
-                xmlName = i1.getText();
-                decLine = i1.getLine();
-                result = `concTomName(Name(i1.getText()));
-            }
-            ( 
-                ALTERNATIVE i2:ALL_ID  
-                {
-                    text.append('|');
-                    text.append(i1.getText());
-                    xmlName += "|" + i1.getText();
-                    result = (NameList) result.append(`Name(i1.getText()));
-                }
-            )+ RPAREN
-        )
-        {
-            if(needOrgTrack) {
-                optionList.add(`OriginTracking(Name(XMLName),decLine,Name( currentFile)));
-            }
-        }
-    ;
-
-xmlAttributeList
-    :
-        LBRACKET ( xmlAttribute ( COMMA xmlAttribute )* )? RBRACKET
-    |   LPAREN ( xmlAttribute ( COMMA xmlAttribute )* )? RPAREN
-    |   xmlAttribute
-    ;
-
-xmlAttribute
-{
-    TomTerm term;
-
-    LinkedList optionList = new LinkedList();
-    LinkedList constraintList = new LinkedList();
-    LinkedList optionListAnno2 = new LinkedList();
-}
-    :
-        {LA(2) == STAR}? result = variableStar[optionList,constraintList] 
-    |   ( 
-            {LA(2) == EQUAL}? ALL_ID EQUAL ( {LA(2) == AT}? ALL_ID AT )? 
-            term = unamedVariableOrTermStringIdentifier[optionListAnno2]
-        |   ( ALL_ID AT )? placeHolder[null,null] EQUAL 
-            ( {LA(2) == AT}? ALL_ID AT )? term = unamedVariableOrTermStringIdentifier[optionListAnno2]
-        )   
-    ;
-
-unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm result]
-{
-    result = null;
-    Token name = null;
-}
-    :
-        (
-            u:UNDERSCORE {name = u;}
-        |   i:ALL_ID {name = i;}
-        |   s:STRING {name = s;}
-        )
-        {
-            text.append(name.getText());
-            LinkedList optionList = (options==null)?new LinkedList():options;
-            optionList.add(
-                `OriginTracking(
-                    Name(name.getText()),
-                    name.getLine(),
-                    Name(currentFile())
-                )
-            );
-            
-            OptionList option = ast().makeOptionList(optionList);
-            
-            if(name.getType() == UNDERSCORE) {
-                result =  `UnamedVariable(option,TomTypeAlone("unknown type"),concConstraint());
-            } 
-            else {
-                if(name.getType() == STRING) {
-                    ast().makeStringSymbol(symbolTable(),name.getText(),optionList);
-                }   
-                nameList = `concTomName(Name(name.getText()));
-                result =  `Appl(
-                    option,
-                    nameList,
-                    concTomTerm(),
-                    concConstraint()
-                );
-            }
-        }
-    ;
-
-xmlChilds [LinkedList list] returns [boolean result]
-{
-    LinkedList childs = new LinkedList();
-    boolean implicit;
-}
-    :
-        ( 
-            implicit = implicitTermList[childs]
-        |   implicit = xmlTermList[childs]
-        )
-        {
-            it = childs.iterator();
-            while(it.hasNext()) {
-                list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),(TomTerm)it.next()));
-            }
-            return implicit;
-    }
-    ;
-
-implicitTermList
-    :
-        BRACKET ( annotedTerm ( COMMA annotedTerm )* )? RBRACKET
-    ;
-
-xmlTermList [LinkedList list] returns [boolean result]
-{
-    TomTerm term = null;
-}
-    :
-        ( term = annotedTerm {list.add(term);} )*
-        {result = true;}
-    ;
-
-termStringIdentifier [LinkedList options] returns [TomTerm result]
-{
-    result = null;
-    Token name = null;
-}
-    :
-        (
-            i:ALL_ID {name = i;}
-        |   s:STRING {name = s;}
-        )
-        {
-            text.append(name.getText());
-            
-            LinkedList optionList = (options==null)?new LinkedList():options;
-            optionList.add(
-                `OriginTracking(
-                    Name(name.getText()),
-                    name.getLine(),
-                    Name(currentFile())
-                )
-            );
-            
-            OptionList option = ast().makeOptionList(optionList);
-            
-            if(name.getType == STRING) {
-                ast().makeStringSymbol(symbolTable(),name.getText(),optionList);
-            }
-            
-            nameList = `concTomName(Name(name.getText()));
-            result = `Appl(
-                option,
-                nameList,
-                concTomTerm(),
-                concConstraint()
-            );
-        }
-    ;
-
-*/
 
 
 class NewTomLexer extends Lexer;
@@ -1903,15 +2134,16 @@ STAR        :   '*' ;
 UNDERSCORE  :   '_' ; 
 BACKQUOTE   :   "`" ;
 
-// for xml
-START   :   '<' ; 
-START_ENDING    :   "</"    ;
-CLOSE   :   '>' ;
-CLOSE_SINGLETON :   "/>"    ;
-DOUBLE_QUOTE    :   '\"'    ;
-TEXT    :   "#TEXT" ;
-COMMENT :   "#COMMENT"  ;
-PROC    :   "#PROCESSING-INSTRUCTION"   ;
+//XML Tokens
+
+XML_START   :   '<';
+XML_CLOSE   :   '>' ;
+DOUBLE_QUOTE:   '\"';
+XML_TEXT    :   "#TEXT";
+XML_COMMENT :   "#COMMENT";
+XML_PROC    :   "#PROCESSING-INSTRUCTION";
+XML_START_ENDING    : "</" ;
+XML_CLOSE_SINGLETON : "/>" ;
 
 // tokens to skip : white spaces
 WS	:	(	' '
@@ -2065,7 +2297,11 @@ options{testLiterals = true;}
 
 protected ID_MINUS
     :
-        ID MINUS ('a'..'z' | 'A'..'Z') ( ID_MINUS )*
+        ID MINUS ('a'..'z' | 'A'..'Z') 
+        ( 
+            MINUS ('a'..'z' | 'A'..'Z') 
+        |   ID
+        )*
     ;
 
 NUM_INT
