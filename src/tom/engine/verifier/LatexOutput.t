@@ -60,12 +60,13 @@ public class LatexOutput {
 	}
 
 	public String build_latex(Collection derivationSet) {
-		String result = "\\documentclass{article}\n";
-		result += "\\usepackage{proof}\n";
-		result += "\\usepackage{xspace}\n";
-		result += "\\usepackage{amssymb}\n";
-		result += "\\input{include.tex}\n\n";
-		result += "\\begin{document}\n";
+		String result = "\n";
+// 		String result = "\\documentclass{article}\n";
+// 		result += "\\usepackage{proof}\n";
+// 		result += "\\usepackage{xspace}\n";
+// 		result += "\\usepackage{amssymb}\n";
+// 		result += "\\input{include.tex}\n\n";
+// 		result += "\\begin{document}\n";
 		
 		Iterator it = derivationSet.iterator();
 		while(it.hasNext()) {
@@ -73,7 +74,7 @@ public class LatexOutput {
 			result += build_latex(tree);	
 			result += "\n \\newpage\n";
 		}
-		result += "\n\\end{document}";
+// 		result += "\n\\end{document}";
 		return result;
 	}
 
