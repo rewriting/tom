@@ -6,19 +6,19 @@ package xquery.lib.data.type;
 public class XQueryDecimal extends XQueryAnyAtomicType 
 {
    
-   /**
-    * @roseuid 411FB2530300
-    */
-   public XQueryDecimal() 
-   {
-    
-   }
-   
-   /**
-    * @roseuid 4110B8030214
-    */
-   public void Decimal() 
-   {
-    
-   }
+  /**
+   * @roseuid 411FB2530300
+   */
+  public XQueryDecimal() 
+  {
+	
+  }
+  
+  /**
+   * @roseuid 4110B8030214
+   */
+  public void Decimal() 
+  {
+	
+  }
 }

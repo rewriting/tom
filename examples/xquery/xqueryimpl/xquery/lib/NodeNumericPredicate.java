@@ -12,7 +12,7 @@ import xquery.util.DomTree02;
 public class NodeNumericPredicate extends NodePredicate 
 {
    
-  protected int value; 
+  protected int internalValue; 
   
   /**
    * @roseuid 4110FBD60026
@@ -23,15 +23,30 @@ public class NodeNumericPredicate extends NodePredicate
 	this.value = value;
   }
    
-  /**
-   * @param next
-   * @roseuid 4110F8FE0337
-   */
-  public NodeNumericPredicate(NodePredicate next) 
+  public NodeNumericPredicate(Expression expr)
   {
-    super(next);
+	super(expr);
+	this.value=0; 
   }
-   
+
+  protected int evaluate() throws XQueryGeneralException
+  {
+	if (value==0) {// not evaluated
+	  Sequence value = getExpression.evaluate(); 
+	  Item item= Item.convertSequenceToItem(value);
+	
+	  XQueryAnyAtomicType atomic=new XQueryAnyAtomicType(); 
+	  
+	  if (item.isAtom()) {
+		if (item.getAtom().istyped()) {
+		  value=item.getAtom().getDecimalValue(); 
+		}
+	  }
+	  
+	  XQueryInteger integer=XQueryInteger.qualify(item);
+	  this.value=integer.
+	}
+  }
   
   /**
    * @param node

@@ -17,31 +17,53 @@ public class XQueryAnyAtomicType
 	//	this.type = ANY_ATOMIC;
   }
 
-  public boolean checkValueType(String str) 
+  public boolean qualify(String str) 
   {
 	return true; 
   }
 
-  public boolean checkType(Node node) 
+  public boolean qualify(Node node) 
   {
 	return true; 
   }
 
-  public boolean checkType(Item item) 
+  public boolean qualify(Item item) 
   {
 	if (item.isNode()) {
-	  return checkType(item.getNode());
+	  return qualify(item.getNode());
 	}
 	else {  // is a atom;
-	  Atom atom = item.getAtom(); 
-	  XQueryAnyAtomicType type = atom.getType();
-	  
-	  if (type.getClass().isInstance(atom)) {
-		return true; 
-	  }
-	  else {
-		return false;
-	  }
+	  return qualify(item.getAtom());
+	}
+  }
+
+  public XQueryAnyAtomicType createInstance()
+  {
+	return new XQueryAnyAtomicType(); 
+  }
+
+
+  public boolean qualify(Atom atom) 
+  {
+	Atom atom = item.getAtom(); 
+	XQueryAnyAtomicType type = atom.getType();
+	
+	if (type.getClass().isInstance(atom)) {
+	  return true; 
+	}
+	else {
+	  return false;
+	}
+  }
+
+  public static boolean qualify(XQueryAnyAtomicType type)
+  {
+	XQueryAnyAtomicType thistype=createInstance();
+	if (type.getClass().isInstance(thistype)) {
+	  return true; 
+	}
+	else {
+	  return false; 
 	}
   }
   

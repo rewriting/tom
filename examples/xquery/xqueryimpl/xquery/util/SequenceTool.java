@@ -83,4 +83,39 @@ public class SequenceTool {
   {
 	return ; 
   }
+
+
+  public Sequence removeDuplicated(Sequence seq)
+  {
+	Sequence result = new Sequence(); 
+	Object objs[]=seq.toArray(); 
+	int ints[]=new int[objs.length];
+
+	for(int i=0; i<objs.length; i++) {
+	  ints[i]=0;
+	}
+
+	for (int i=0; i<objs.length; i++) {
+	  Object obj1=objs[i];
+	  for (int j=i+1; j<objs.length; j++) {
+		Object obj2=objs[j];
+
+		if (obj2==obj1) {
+		  ints[j]=1;
+		}
+	  } // for nested
+	} // for
+	
+	for(int i=0; i<objs.length; i++) {
+	  if (ints[i]==1) {
+		// nothing tod o
+	  }
+	  else {
+		result.add(objs[i]);
+	  }
+	}
+	
+	return result;
+  }
+
 }

@@ -120,9 +120,10 @@ public class Item extends Sequence
   }
 
   public static Item convertSequenceToItem(Sequence s)
+	throws XQueryGeneralException
   {
 	if (s.size()!=1) {
-	  return null; 
+	  throw new XQueryTypeException("Error when convert Sequence to Item. Sequence's element count > 1");
 	}
 	
 	Object o = s.elementAt(0);
@@ -136,7 +137,7 @@ public class Item extends Sequence
 	  return new Item((Node)o);
 	}
 	else {
-	  return null;
+	  throw new XQueryTypeException("Error when convert Sequence to Item. Sequence's first element isn't Node, Atom or Item");
 	}
   }
 

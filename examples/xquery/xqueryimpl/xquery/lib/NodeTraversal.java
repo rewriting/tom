@@ -1,4 +1,4 @@
-package xquery.util; 
+package xquery.lib; 
 
 import org.w3c.dom.*;
 import xquery.util.DomTree02;

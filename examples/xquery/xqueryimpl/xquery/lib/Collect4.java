@@ -34,7 +34,7 @@
  *
  **/
 
-package xquery.util;
+package xquery.lib;
 
 
 import org.w3c.dom.*;

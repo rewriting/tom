@@ -76,7 +76,13 @@ public class Atom
    */
   public int getDecimalValue() throws XQueryTypeException 
   {
-    return 0;
+    try {
+	  int val = Integer.parseInt(value); 
+	  
+	}
+	catch (NumberFormatException e) {
+	  
+	}
   }
    
   /**
@@ -106,7 +112,7 @@ public class Atom
    */
   public void setValue(String value) throws XQueryTypeException 
   {
-    
+	
   }
    
   /**
@@ -143,5 +149,18 @@ public class Atom
   public boolean getBooleanValue() throws XQueryTypeException 
   {
 	return true;
+  }
+
+
+  public boolean typed() 
+  {
+	XQueryAnyAtomicType atomtype=new XQueryAnyAtomicType(); 
+
+	if (type.qualify(atomtype)) {
+	  return false; 
+	}
+	else {
+	  return true;
+	}
   }
 }

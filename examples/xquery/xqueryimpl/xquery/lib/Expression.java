@@ -73,7 +73,6 @@ public class Expression extends AbstractExpression{
   
 
   public Sequence evaluate(Sequence initialValue) throws XQueryGeneralException
-
   {
 	// verify child expressions
 	if (!verifyContent()) {

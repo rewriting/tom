@@ -8,11 +8,6 @@ import org.w3c.dom.*;
 
 import java.util.*;
 
-import xquery.util.NodeTraversal;
-import xquery.util.Collect1;
-import xquery.util.Collect2;
-import xquery.util.Collect3;
-import xquery.util.Collect4;
 
 import xquery.lib.data.Sequence;
 import xquery.lib.data.Item;
