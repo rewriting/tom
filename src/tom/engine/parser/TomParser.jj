@@ -164,7 +164,7 @@ public class TomParser implements TomTask {
   public TomSignatureFactory tsf() {
     return environment.getTomSignatureFactory();
   }
-  
+
   public ASTFactory ast() {
     return environment.getASTFactory();
   }
@@ -861,7 +861,7 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
       term = tomBackQuoteParser.buildBackQuoteTerm(tokenList);
       list.add(term);
     }
-}
+ }
 
 
 void MatchXMLConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
@@ -880,7 +880,12 @@ void MatchXMLConstruct(LinkedList list) throws TomException: /* in DEFAULT mode 
       String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
     }
 
-  <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
+  <TOM_LPAREN> name = <TOM_IDENTIFIER> 
+
+
+
+  [ <TOM_STAR> { optionList.add(tsf().makeOption_Label(tsf().makeTomName_Name("list")));}]
+  <TOM_RPAREN>
    {
      docName = name.image;
    }
@@ -1159,20 +1164,21 @@ XMLTerm XMLVariable(TomName astAnnotedName) throws TomException:
   }
 }
 
-void BackQuoteXML(LinkedList list) throws TomException: /* in DEFAULT mode */
+
+void BackQuoteXML(LinkedList list) throws TomException: // in DEFAULT mode
 {
   XMLTerm term;
   Option orgTrack;
 }
 {
-  <BACKQUOTE_XML> /* switch to TOM mode */
+  <BACKQUOTE_XML> // switch to TOM mode
     {
       list.add(makeTL(savePosAndExtract()));
       orgTrack = ast().makeOriginTracking("BackquoteXML",getLine(), currentFile);
     }
   term = XMLTerm()
   {
-    switchToDefaultMode(); /* switch to DEFAULT mode */
+    switchToDefaultMode(); // switch to DEFAULT mode
     list.add(tsf().makeTomTerm_BackQuoteXML(term, orgTrack));
   }
 }
