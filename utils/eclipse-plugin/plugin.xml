@@ -65,7 +65,8 @@
 			id="fr.loria.eclipse.jtom.TomPropertyPage"
 			name="Tom Property"
 			objectClass="org.eclipse.core.resources.IFile"
-			class="fr.loria.eclipse.jtom.TomFilePropertyPage">
+			class="fr.loria.eclipse.jtom.TomFilePropertyPage"
+			nameFilter="*.t">
 		</page>
 	</extension>
 	
@@ -75,7 +76,8 @@
 			id="fr.loria.eclipse.jtom.ADTPropertyPage"
 			name="ApiGen Property"
 			objectClass="org.eclipse.core.resources.IFile"
-			class="fr.loria.eclipse.jtom.ADTFilePropertyPage">
+			class="fr.loria.eclipse.jtom.ADTFilePropertyPage"
+			nameFilter="*.adt">
 		</page>
 	</extension>
   	<!-- Tom editor-->
