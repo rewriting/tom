@@ -24,15 +24,15 @@ import java.awt.*;
 import java.util.*;
 import aterm.*;
 
-import lsruntime.adt.*;
+import lsruntime.adt.lsystems.types.*;
+import lsruntime.adt.lsystems.*;
 
 public class LsystemsDraw  extends JComponent {
 
-  %include { ../adt/lsystems.tom }
-  %include { ../extras.tom }
+  %include { ../../lsystems.tom }
   
-  private LsystemsFactory factory;
-  public LsystemsFactory getLsystemsFactory() {
+  private Factory factory;
+  public Factory getLsystemsFactory() {
     return factory;
   }
   
@@ -49,7 +49,7 @@ public class LsystemsDraw  extends JComponent {
   
   private boolean activeDraw;
   
-  public LsystemsDraw(LsystemsFactory factory,double angle, int longueur, NodeList root ) {
+  public LsystemsDraw(Factory factory,double angle, int longueur, NodeList root ) {
     super();
     this.factory = factory;
     this.angle = angle;

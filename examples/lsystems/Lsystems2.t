@@ -20,12 +20,12 @@
  
 import aterm.*;
 import lsruntime.*; 
-import lsruntime.adt.*;
+import lsruntime.adt.lsystems.*;
+import lsruntime.adt.lsystems.types.*;
 
 public class Lsystems2 implements LsystemsInterface {
   
-  %include { lsruntime/adt/lsystems.tom }
-  %include { lsruntime/extras.tom }
+  %include { lsystems.tom }
   
   public Lsystems2(String[] args,LsystemsRuntime runtime) {
     this.runtime = runtime;
@@ -41,7 +41,7 @@ public class Lsystems2 implements LsystemsInterface {
   }
   
   private LsystemsRuntime runtime;
-  public LsystemsFactory getLsystemsFactory() {
+  public Factory getLsystemsFactory() {
     return runtime.getLsystemsFactory();
   }
  

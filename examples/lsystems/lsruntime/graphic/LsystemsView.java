@@ -3,7 +3,8 @@ package lsruntime.graphic;
 import javax.swing.*;
 import java.awt.*;
 
-import lsruntime.adt.*;
+import lsruntime.adt.lsystems.*;
+import lsruntime.adt.lsystems.types.*;
 
 public class LsystemsView extends JFrame {
   
@@ -12,12 +13,12 @@ public class LsystemsView extends JFrame {
   private LsystemsDraw myDraw;
   private JScrollPane js;
   
-  public LsystemsView(LsystemsFactory factory, double angle, int longueur, NodeList root ) {
+  public LsystemsView(Factory factory, double angle, int longueur, NodeList root ) {
     super(titre);
     myDraw = new LsystemsDraw(factory,angle,longueur,root);
   }
   
-  public LsystemsView(LsystemsFactory factory, double angle, NodeList root ) {
+  public LsystemsView(Factory factory, double angle, NodeList root ) {
     super(titre);
     myDraw = new LsystemsDraw(factory,angle,10,root);
   }

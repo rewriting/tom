@@ -3,7 +3,7 @@
 #
 
 javadir         = ${prefix}/classes/jtom/debug
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/debug
 BOOTSOURCES	= TomDebugger.java TomDebugEnvironment.java TermHandler.java TomDebugStructure.java

@@ -20,12 +20,12 @@
 
 import aterm.*;
 import lsruntime.*;
-import lsruntime.adt.*;
+import lsruntime.adt.lsystems.*;
+import lsruntime.adt.lsystems.types.*;
 
 public class Lsystems1 implements LsystemsInterface {
   
-  %include { lsruntime/adt/lsystems.tom }
-  %include { lsruntime/extras.tom }
+  %include { lsystems.tom }
   
   public Lsystems1(String[] args,LsystemsRuntime runtime) {
     this.runtime = runtime;
@@ -41,7 +41,7 @@ public class Lsystems1 implements LsystemsInterface {
   }
   
   private LsystemsRuntime runtime;
-  public LsystemsFactory getLsystemsFactory() {
+  public Factory getLsystemsFactory() {
     return runtime.getLsystemsFactory();
   }
  
@@ -55,15 +55,15 @@ public class Lsystems1 implements LsystemsInterface {
   
   public void run() {
     runtime.run(matchls,n,delta,longueur);
-    if (verbose) System.out.println(getLsystemsFactory().getPureFactory());
+    //if (verbose) System.out.println(getLsystemsFactory().getPureFactory());
   }
   
   
 // ------------------------------------------------------------
   
-  private int n = 10;
-  private int delta = 45;
-  private int longueur = 3;
+  private int n = 1;
+  private int delta = 30;
+  private int longueur = 2;
   
   public MatchLsystems matchls = new MatchLsystems() {
     

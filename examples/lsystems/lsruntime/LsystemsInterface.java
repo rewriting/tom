@@ -19,7 +19,7 @@
  */
 package lsruntime;
 
-import lsruntime.adt.LsystemsFactory;
+import lsruntime.adt.lsystems.Factory;
 
 public interface LsystemsInterface {
   
@@ -27,7 +27,7 @@ public interface LsystemsInterface {
    *
    * @return the actual ATerm-like factory
    */
-  LsystemsFactory getLsystemsFactory();
+  Factory getLsystemsFactory();
   
   void run();
 }

@@ -2,15 +2,13 @@
 #    TOM - To One Matching Compiler
 #
 
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
-
 javadir         = ${prefix}/classes/jtom
 
 stabledir 	= $(top_srcdir)/stable/adt
 
 JAVAROOT        = ${top_builddir}/src/
 
-EXTRA_DIST 	= TomSignature.adt TNode.adt Set.adt
+EXTRA_DIST 	= TomSignature.adt TNode.adt Set.adt TomSignature.tom TNode.tom Set.tom
 CLEANFILES 	= ${JARFILE_TS} ${JARFILE_TNODE} ${JARFILE_SET} TomSignature.tom TNode.tom Set.tom
 
 JARFILE_TS      = TomSignature-$(VERSION).jar

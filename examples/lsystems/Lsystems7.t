@@ -21,12 +21,11 @@
 import aterm.*;
 import aterm.pure.*;
 import lsruntime.*;
-import lsruntime.adt.*;
-
+import lsruntime.adt.lsystems.*;
+import lsruntime.adt.lsystems.types.*;
 public class Lsystems7 implements LsystemsInterface {
   
-  %include { lsruntime/adt/lsystems.tom }
-  %include { lsruntime/extras.tom }
+  %include { lsystems.tom }
   
   public Lsystems7(String[] args,LsystemsRuntime runtime) {
     this.runtime = runtime;
@@ -42,14 +41,14 @@ public class Lsystems7 implements LsystemsInterface {
   }
   
   private LsystemsRuntime runtime;
-  public LsystemsFactory getLsystemsFactory() {
+  public Factory getLsystemsFactory() {
     return runtime.getLsystemsFactory();
   }
  
   public boolean verbose;
   
   public final static void main(String[] args) {
-    Lsystems7 test = new Lsystems7(args,new LsystemsRuntime(args,new LsystemsFactory(new PureFactory())));
+    Lsystems7 test = new Lsystems7(args,new LsystemsRuntime(args,new Factory(new PureFactory())));
     test.run();
   }
   

@@ -3,6 +3,7 @@ import java.util.*;
 import aterm.*;
 import aterm.pure.*;
 import adt.set.*;
+import adt.set.types.*;
 
 import jtom.runtime.GenericTraversal;
 import jtom.runtime.Replace1;
@@ -10,7 +11,7 @@ import java.io.*;
 
 public class Set1 {
     // Jean Goubault version 
-  private SetFactory factory;
+  private Factory factory;
   private Comparator comparator;
   private GenericTraversal traversal;
   private int depth;
@@ -50,13 +51,13 @@ public class Set1 {
     1 << 31
   };
   
-  %include { adt/set/set.tom }
+  %include { Set.tom }
   
-  public Set1(SetFactory factory) {
+  public Set1(Factory factory) {
     this(factory, 31);
   }
   
-  public Set1(SetFactory factory, int depth) {
+  public Set1(Factory factory, int depth) {
     this.factory = factory;
     this.comparator = new MyComparator();
     this.traversal = new GenericTraversal();
@@ -64,7 +65,7 @@ public class Set1 {
       this.depth = depth;
     } else {this.depth = 32;}
   }
-  public SetFactory getSetFactory() {
+  public Factory getSetFactory() {
     return factory;
   }
 
@@ -364,7 +365,7 @@ public class Set1 {
   }
   
   public final static void main(String[] args) {
-    SetFactory fact = new SetFactory(new PureFactory());
+    Factory fact = new Factory(new PureFactory());
     Set1 test;
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     int input = 0;

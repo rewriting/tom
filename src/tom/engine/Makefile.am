@@ -4,7 +4,9 @@
 
 SUBDIRS         = runtime tools exception parser checker compiler backend debug xml
 
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+TSADT_SRC	= ${srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar:${srcdir}/stable/adt/TomSignature-${VERSION}.jar
+
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TSADT_SRC):$$CLASSPATH
 
 javadir         = ${prefix}/classes/jtom
 

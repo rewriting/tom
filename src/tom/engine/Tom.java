@@ -359,7 +359,7 @@ public class Tom {
 						System.out.println(s);
 						System.out.println("No file generated.");
 						if (taskInput.isEclipseMode()) {
-							addError(s, "", 0, 0);
+							addError(s, "", 1, 0);
 						}
 						return;
 					}

@@ -19,7 +19,8 @@
  */
 package lsruntime;
 
-import lsruntime.adt.*;
+import lsruntime.adt.lsystems.*;
+import lsruntime.adt.lsystems.types.*;
 import lsruntime.graphic.LsystemsView;
 import aterm.*;
 import aterm.pure.*;
@@ -33,10 +34,10 @@ import java.util.*;
 public class LsystemsRuntime {
   
   public LsystemsRuntime(String[] args) {
-    this(args,new LsystemsFactory(new PureFactory()));
+    this(args,new Factory(new PureFactory()));
   }
   
-  public LsystemsRuntime(String[] args,LsystemsFactory factory) {
+  public LsystemsRuntime(String[] args, Factory factory) {
     this.factory = factory;
     ran = new Random();
     
@@ -55,8 +56,8 @@ public class LsystemsRuntime {
 
   }
   
-  public LsystemsFactory factory;
-  public LsystemsFactory getLsystemsFactory() {
+  public Factory factory;
+  public Factory getLsystemsFactory() {
     return factory;
   }
   
@@ -68,8 +69,7 @@ public class LsystemsRuntime {
   public boolean verbose;
   private NodeList root;
   
-  %include { adt/lsystems.tom }
-  %include { extras.tom }
+  %include { ../lsystems.tom }
   
   public void run(MatchLsystems mls,int nbr_it, int angle) {
     run(mls,nbr_it,angle,10);

@@ -2,8 +2,10 @@
 #    TOM - To One Matching Compiler
 #
 
+TSADT_SRC	= ${srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar:${srcdir}/stable/adt/TomSignature-${VERSION}.jar
+
 javadir         = ${prefix}/classes/jtom/tools
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TSADT_SRC):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/tools
 BOOTSOURCES	= Tools.java OutputCode.java SingleLineOutputCode.java\

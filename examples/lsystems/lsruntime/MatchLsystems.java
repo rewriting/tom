@@ -1,7 +1,7 @@
 package lsruntime;
 
-import lsruntime.adt.Node;
-import lsruntime.adt.NodeList;
+import lsruntime.adt.lsystems.types.Node;
+import lsruntime.adt.lsystems.types.NodeList;
 
 public interface MatchLsystems {
   

@@ -1,6 +1,7 @@
 import aterm.pure.*;
 import lsruntime.*;
-import lsruntime.adt.*;
+import lsruntime.adt.lsystems.*;
+import lsruntime.adt.lsystems.types.*;
 
 import java.lang.reflect.*;
 import java.awt.*;
@@ -10,7 +11,7 @@ import javax.swing.*;
 public class RunExamples {
 
   public RunExamples(String[] args) {
-    runtime = new LsystemsRuntime(args,new LsystemsFactory(new PureFactory()));
+    runtime = new LsystemsRuntime(args,new Factory(new PureFactory()));
     this.args = args;
   }
   

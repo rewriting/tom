@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.46 2003/12/05 14:58:38 moreau Exp $
+# $Id: configure.in,v 1.47 2003/12/09 15:15:04 guyon Exp $
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(jtom,1.5gamma)
@@ -7,7 +7,7 @@ AC_PREREQ(2.13)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.46 2003/12/05 14:58:38 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.47 2003/12/09 15:15:04 guyon Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -21,7 +21,7 @@ JAVAC=javac
 AC_CHECK_CLASSPATH
 AC_PROG_JAVAC
 AC_PROG_JAVA
-AC_CHECK_JUNIT
+dnl AC_CHECK_JUNIT
 
 AC_SUBST(CLASSPATH)
 
@@ -37,20 +37,11 @@ JAVA_ATERM=\`${ATERM_JAVA}/bin/aterm-java-config\`
 AC_SUBST(JAVA_ATERM)
 
 dnl Require apigen
-AC_PACKAGE_REQUIRE(apigen, adt-to-java,
+AC_PACKAGE_REQUIRE(apigen, adt-to-tom,
    [  --with-apigen=DIR   apigen in DIR])
 
-ADTTOJAVA=${APIGEN}/bin/adt-to-java
 ADTTOTOM=${APIGEN}/bin/adt-to-tom
-AC_SUBST(ADTTOJAVA)
 AC_SUBST(ADTTOTOM)
-
-TOMSIGNATURE=${srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar
-SETADT=${srcdir}/src/adt/Set-${VERSION}.jar:${prefix}/share/Set-${VERSION}.jar
-TNODEADT=${srcdir}/src/adt/TNode-${VERSION}.jar:${prefix}/share/TNode-${VERSION}.jar
-AC_SUBST(TOMSIGNATURE)
-AC_SUBST(SETADT)
-AC_SUBST(TNODEADT)
 
 AC_OUTPUT( \
 	Makefile \
