@@ -67,8 +67,8 @@ public class TomTaskParser extends TomTask {
         Tools.generateOutput(fileName, symbolTable().toTerm());
       }
       if(getInput().isIntermediate()) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedSuffix, parsedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.parsedSuffix, parsedTerm);
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
       }
         
       if(getInput().isDebugMode()) {
