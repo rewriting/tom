@@ -32,20 +32,20 @@ import jtom.adt.*;
 import jtom.runtime.Replace1;
 import jtom.runtime.Replace2;
 import aterm.ATerm;
-import jtom.tools.TomTask;
-import jtom.tools.TomTaskInput;
-import jtom.tools.Tools;
+import jtom.tools.*;
 import jtom.xml.Constants;
 import jtom.exception.TomRuntimeException;
 
 public class TomExpander extends TomBase implements TomTask {
   private TomTask nextTask;
   TomKernelExpander tomKernelExpander;
+  TomFactory tomFactory;
   
   public TomExpander(jtom.TomEnvironment environment,
                      TomKernelExpander tomKernelExpander) {
     super(environment);
     this.tomKernelExpander = tomKernelExpander;
+    this.tomFactory = new TomFactory(environment);
   }
 
 // ------------------------------------------------------------
@@ -60,7 +60,7 @@ public class TomExpander extends TomBase implements TomTask {
 	  long startChrono = 0;
 	  boolean verbose = input.isVerbose(), intermediate = input.isIntermediate(), debugMode = input.isDebugMode();
 	  if(verbose) {
-		startChrono = System.currentTimeMillis();
+            startChrono = System.currentTimeMillis();
 	  }
 	  TomTerm syntaxExpandedTerm = expandTomSyntax(input.getTerm());
       tomKernelExpander.updateSymbolTable();
@@ -104,8 +104,18 @@ public class TomExpander extends TomBase implements TomTask {
         public ATerm apply(ATerm subject) {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
+              DoubleBackQuote(backQuoteTerm) -> {
+                TomTerm t = expandTomSyntax(backQuoteTerm);
+                  //System.out.println("t1 = " + t);
+                t = expandBackQuoteXMLAppl(t);
+                  //System.out.println("t2 = " + t);
+                return t;
+              }
+              
               backQuoteTerm@BackQuoteAppl[] -> {
-                return expandBackQuoteAppl(backQuoteTerm);
+                TomTerm t = expandBackQuoteAppl(backQuoteTerm);
+                  //System.out.println("t = " + t);
+                return t;
               }
 
               RecordAppl(option,Name(tomName),args) -> {
@@ -157,7 +167,7 @@ public class TomExpander extends TomBase implements TomTask {
       }
       
       if(newSubterm == null) {
-        newSubterm = `Placeholder(ast().makeOption());
+        newSubterm = `Placeholder(emptyOption());
       }
       subtermList = append(newSubterm,subtermList);
       slotList = slotList.getTail();
@@ -190,8 +200,6 @@ public class TomExpander extends TomBase implements TomTask {
                 }
               }
             } // end match 
-          } else {
-            return traversal().genericTraversal(t,this);
           }
           return traversal().genericTraversal(t,this);
         } // end apply
@@ -202,15 +210,21 @@ public class TomExpander extends TomBase implements TomTask {
   private TomList sortAttributeList(TomList attrList) {
     %match(TomList attrList) {
       concTomTerm() -> { return attrList; }
-      concTomTerm(X1*,
-                e1@Appl[args=manyTomList(Appl[astName=Name(name1)],_)],
-                X2*,
-                e2@Appl[args=manyTomList(Appl[astName=Name(name2)],_)],
-                X3*) -> {
-        if(name1.compareTo(name2) >= 0) {
-            //System.out.println("swap: " + name1 + " <--> " + name2);
-          return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-        }                
+      concTomTerm(X1*,e1,X2*,e2,X3*) -> {
+        %match(TomTerm e1, TomTerm e2) {
+          Appl[args=manyTomList(Appl[astName=Name(name1)],_)],
+          Appl[args=manyTomList(Appl[astName=Name(name2)],_)] -> {
+            if(name1.compareTo(name2) >= 0) {
+              return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+            }
+          }
+          BackQuoteAppl[args=manyTomList(Appl[astName=Name(name1)],_)],
+          BackQuoteAppl[args=manyTomList(Appl[astName=Name(name2)],_)] -> {
+            if(name1.compareTo(name2) >= 0) {
+              return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+            }
+          }
+        }
       }
     }
     return attrList;
@@ -224,7 +238,7 @@ public class TomExpander extends TomBase implements TomTask {
     TomList newAttrList  = `emptyTomList();
     TomList newChildList = `emptyTomList();
 
-    TomTerm star = ast().makeUnamedVariableStar(ast().makeOption(),"unknown type");
+    TomTerm star = ast().makeUnamedVariableStar(emptyOption(),"unknown type");
     if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
     if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 
@@ -258,16 +272,15 @@ public class TomExpander extends TomBase implements TomTask {
     }
     newChildList = (TomList) newChildList.reverse();
 
-    Option emptyOption = ast().makeOption();
       /*
        * encode the name and put it into the table of symbols
        */
-    tomName = ast().encodeXMLString(symbolTable(),tomName);
+    tomName = tomFactory.encodeXMLString(symbolTable(),tomName);
     
     TomList newArgs = `concTomTerm(
-      Appl(emptyOption,Name(tomName),empty()),
-      Appl(emptyOption,Name(Constants.CONC_TNODE), newAttrList),
-      Appl(emptyOption,Name(Constants.CONC_TNODE), newChildList));
+      Appl(emptyOption(),Name(tomName),empty()),
+      Appl(emptyOption(),Name(Constants.CONC_TNODE), newAttrList),
+      Appl(emptyOption(),Name(Constants.CONC_TNODE), newChildList));
     TomTerm result = `Appl(Option(optionList),Name(Constants.ELEMENT_NODE),newArgs);
       //System.out.println("expand:\n" + result);
     return result;
@@ -287,6 +300,157 @@ public class TomExpander extends TomBase implements TomTask {
         return expandVariable(contextSubject, (TomTerm)t);
       }
     };
+
+  protected TomTerm expandBackQuoteXMLAppl(TomTerm subject) {
+    Replace1 replaceSymbol = new Replace1() {
+        public ATerm apply(ATerm t) {
+          if(t instanceof TomTerm) {
+            %match(TomTerm t) {
+              Composite(list) -> {
+                list = parseBackQuoteXMLAppl(list);
+                list = (TomList) traversal().genericTraversal(list,this);
+                return `Composite(list);
+              }
+            } // end match 
+          } 
+          return traversal().genericTraversal(t,this);
+        } // end apply
+      }; // end replaceSymbol
+    return (TomTerm) replaceSymbol.apply(subject);
+  }
+
+  private TomList parseBackQuoteXMLAppl(TomList list) {
+    %match(TomList list) {
+      concTomTerm(
+        TargetLanguageToTomTerm(ITL("#TEXT")),
+        TargetLanguageToTomTerm(ITL("(")),
+        value*,
+        TargetLanguageToTomTerm(ITL(")")),
+        tail*
+        ) -> {
+        TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.TEXT_NODE),concTomTerm(Composite(value*)));
+        TomList newTail = parseBackQuoteXMLAppl(tail);
+        return `concTomTerm(newBackQuoteAppl,newTail*);
+      }
+
+     label2:concTomTerm(
+        TargetLanguageToTomTerm(ITL("<")),
+        BuildVariable[astName=name],
+        Attributes*,
+        TargetLanguageToTomTerm(ITL(">")),
+        Body*,
+        TargetLanguageToTomTerm(ITL("</")),
+        BuildVariable[astName=name],
+        TargetLanguageToTomTerm(ITL(">")),
+        tail*
+        ) -> {
+        if(containClosingBracket(Attributes)) {
+          break label2;
+        }
+
+          //System.out.println("Attributes = " + Attributes);
+          //System.out.println("Body = " + Body);
+        
+        TomTerm newName = `BackQuoteAppl(emptyOption(),encodeName(name),empty());
+        TomTerm newAttribute = metaEncodeTNodeList(aggregateXMLAttribute(Attributes));
+        TomTerm newBody = metaEncodeTNodeList(aggregateXMLBody(Body));
+        TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.ELEMENT_NODE),concTomTerm(newName,newAttribute,newBody));
+          //System.out.println("newBackQuoteAppl1 = " + newBackQuoteAppl);
+        newBackQuoteAppl = expandTomSyntax(newBackQuoteAppl);
+          //System.out.println("newBackQuoteAppl2 = " + newBackQuoteAppl);
+          //TomList newTail = aggregateXMLBody(tail);
+        TomList newTail = parseBackQuoteXMLAppl(tail);
+        return `concTomTerm(newBackQuoteAppl,newTail*);
+      }
+      
+      label3:concTomTerm(
+        TargetLanguageToTomTerm(ITL("<")),
+        BuildVariable[astName=name],
+        Attributes*,
+        TargetLanguageToTomTerm(ITL("/>")),
+        tail*
+        ) -> {
+        if(containClosingBracket(Attributes)) {
+          break label3;
+        }
+          //System.out.println("SingleNode(" + name +")");
+          //System.out.println("Attributes = " + Attributes);
+
+        TomTerm newName = `BackQuoteAppl(emptyOption(),encodeName(name),empty());
+        TomTerm newAttribute = metaEncodeTNodeList(aggregateXMLAttribute(Attributes));
+        TomTerm newBody = metaEncodeTNodeList(`concTomTerm());
+        TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.ELEMENT_NODE),concTomTerm(newName,newAttribute,newBody));
+          //System.out.println("newBackQuoteAppl1 = " + newBackQuoteAppl);
+        newBackQuoteAppl = expandTomSyntax(newBackQuoteAppl);
+          //System.out.println("newBackQuoteAppl2 = " + newBackQuoteAppl);
+          //TomList newTail = aggregateXMLBody(tail);
+        TomList newTail = parseBackQuoteXMLAppl(tail);
+        return `concTomTerm(newBackQuoteAppl,newTail*);
+
+      }
+
+      concTomTerm() -> {
+        return `concTomTerm();
+      }
+
+      concTomTerm(head,tail*) -> {
+        TomList newTail = parseBackQuoteXMLAppl(tail);
+        return `concTomTerm(head,newTail*);
+      }
+
+      
+    }
+    return list;
+  }
+
+  private boolean containClosingBracket(TomList list) {
+    %match(TomList list) {
+      concTomTerm(_*,TargetLanguageToTomTerm(ITL(">")),_*) -> {
+        return true;
+      }
+      concTomTerm(_*,TargetLanguageToTomTerm(ITL("/>")),_*) -> {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  private TomTerm metaEncodeTNodeList(TomList list) {
+    return `BackQuoteAppl(emptyOption(),Name(Constants.CONC_TNODE),list);
+  }
+  
+  private TomList aggregateXMLBody(TomList subjectList) {
+    TomTerm composite = expandBackQuoteXMLAppl(`Composite(subjectList));
+      //System.out.println("composite = " + composite);
+    return composite.getArgs();
+  }
+
+  private TomName encodeName(TomName name) {
+    return `Name("\"" + name.getString() + "\"");
+  }
+  
+  private TomList aggregateXMLAttribute(TomList subjectList) {
+    TomList list = `concTomTerm();
+    %match(TomList subjectList) {
+      concTomTerm(
+        X1*,
+        BuildVariable(name),TargetLanguageToTomTerm(ITL("=")),value,
+        X2*) -> {
+        TomTerm newValue = `BackQuoteAppl(emptyOption(),Name(Constants.TEXT_NODE),concTomTerm(value));
+        TomList args = `concTomTerm(
+          BackQuoteAppl(emptyOption(),encodeName(name),concTomTerm()),
+          BackQuoteAppl(emptyOption(),Name("\"true\""),concTomTerm()),
+          newValue);
+        TomTerm attributeNode = `BackQuoteAppl(emptyOption(),
+                                               Name(Constants.ATTRIBUTE_NODE),
+                                               args);
+        list = `manyTomList(attributeNode,list);
+      }
+    }
+    list = (TomList) sortAttributeList(list).reverse();
+    return list;
+  }
+
   
   public TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
 

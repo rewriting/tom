@@ -23,16 +23,16 @@ JAVAROOT        = ${top_builddir}/src/
 
 JAVACC          = @JAVACC@
 
-CLEANFILES 	= TomBackQuoteParser.java
+CLEANFILES 	= TomBackQuoteParser.java 
 #$(generated_java)
 
 $(generated_java): TomParser.jj
 	$(JAVACC) $<
 	@touch Token.java ParseException.java TokenMgrError.java
 
-EXTRA_DIST 	= $(BOOTSOURCES) $(generated_java) TomParser.jj TomBackQuoteParser.t
+EXTRA_DIST 	= $(BOOTSOURCES) $(generated_java) TomParser.jj TomBackQuoteParser.t 
 
-BUILT_SOURCES   = TomBackQuoteParser.java
+BUILT_SOURCES   = TomBackQuoteParser.java 
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)

@@ -106,6 +106,10 @@ public class TomBase {
     return tsf().makeTomNumber_Number(n);
   }
   
+  protected Option emptyOption() {
+    return ast().makeOption();
+  }
+
   protected TomList empty() {
     return empty;
   }
