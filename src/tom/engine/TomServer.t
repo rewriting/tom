@@ -48,12 +48,17 @@ public class TomServer implements TomPluginOptions {
   private List services;
 
   /**
-   * A Map allowing to match options and plugins
+   * A Map allowing to match option names and plugins
    */
   private Map optionOwners;
 
   /**
-   * A Map allowing to match options and values
+   * A Map allowing to match option names and their types
+   */
+  private Map optionTypes;
+
+  /**
+   * A Map allowing to match option names and their values
    */
   private Map optionValues;
 	
@@ -156,6 +161,7 @@ public class TomServer implements TomPluginOptions {
 	instance.instances = new Vector();
         instance.services = new Vector();
 	instance.optionOwners = new HashMap();
+	instance.optionTypes = new HashMap();
 	instance.optionValues = new HashMap();
 
         instance.tNodeFactory = new TNodeFactory(new PureFactory());
@@ -181,6 +187,7 @@ public class TomServer implements TomPluginOptions {
     instance.instances = new Vector();
     instance.services = new Vector();
     instance.optionOwners = new HashMap();
+    instance.optionTypes = new HashMap();
     instance.optionValues = new HashMap();
     SymbolTable symbolTable = new SymbolTable(instance.astFactory);
     instance.environment = new TomEnvironment(symbolTable);
@@ -319,22 +326,31 @@ public class TomServer implements TomPluginOptions {
 	      OptionBoolean[name=n, altName=an] 
 		  -> {
 		  optionOwners.put(n, plugin);
-		  if( an.length() > 0 )
+		  optionTypes.put(n,"boolean");
+		  if( an.length() > 0 ) {
 		      optionOwners.put(an, plugin);
+		      optionTypes.put(an,"boolean");
+		  }
 	      }
 
 	      OptionInteger[name=n, altName=an] 
 		  -> {
 		  optionOwners.put(n, plugin);
-		  if( an.length() > 0 )
+		  optionTypes.put(n,"integer");
+		  if( an.length() > 0 ) {
 		      optionOwners.put(an, plugin);
+		      optionTypes.put(an,"integer");
+		  }
 	      }
 
 	      OptionString[name=n, altName=an] 
 		  -> {
 		  optionOwners.put(n, plugin);
-		  if( an.length() > 0 )
+		  optionTypes.put(n,"string");
+		  if( an.length() > 0 ) {
 		      optionOwners.put(an, plugin);
+		      optionTypes.put(an,"string");
+		  }
 	      }
 	  }
 		  
@@ -591,6 +607,26 @@ public class TomServer implements TomPluginOptions {
 	    }
     //System.out.println("Option named " +optionName+ " not found");
     return null;
+  }
+
+  /**
+   *
+   *
+   * @param optionName
+   * @return
+   */
+  public TomPluginOptions getOptionsOwner(String optionName) {
+    return (TomPluginOptions)optionOwners.get(optionName);
+  }
+
+  /**
+   *
+   *
+   * @param optionName
+   * @return
+   */
+  public String getOptionsType(String optionName) {
+    return (String)optionTypes.get(optionName);
   }
 
   /**
@@ -1013,9 +1049,11 @@ public class TomServer implements TomPluginOptions {
                     else destdirEncountered = true;
                   }
 
-                List about = aboutThisOption(s);
+		String type = getOptionsType(s);
+		TomPluginOptions plugin = getOptionsOwner(s);
+                //List about = aboutThisOption(s);
 
-                if(about == null) // option not found
+                if(type == null || plugin == null) // option not found
                   {
                     environment.messageError(TomMessage.getString("InvalidOption"), 
                                              new Object[]{argumentList[i]},
@@ -1024,10 +1062,7 @@ public class TomServer implements TomPluginOptions {
                     return (String[])inputFiles.toArray(new String[]{});
                   }
                 else
-                  {
-                    String type = (String)about.get(0);
-                    TomPluginOptions plugin = (TomPluginOptions)about.get(1);
-					
+                  {                    				
                     if (type.equals("boolean"))
                       {
                         plugin.setOption(s, "true");
