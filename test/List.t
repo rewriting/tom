@@ -44,6 +44,10 @@ public class List {
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
   
+  %rule {
+    double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
+    double3(conc(X*)) -> conc(X*)
+  } 
   %op L double3(L) {
     fsym { factory.makeAFun("double3", 1, false) }
     make(l) { double3(l) }
@@ -117,11 +121,6 @@ public class List {
       
       _ -> { return l; }
     }
-  }
-
-  %rule {
-    double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
-    double3(conc(X*)) -> conc(X*)
   }
 
   public void testList1() {

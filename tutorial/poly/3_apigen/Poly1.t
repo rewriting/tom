@@ -13,7 +13,7 @@ public class Poly1 {
     return factory;
   }
 
-  %include { expression.t }
+    %include { expression.t }
 
   public Expression differentiate(Expression e, Expression v) {
     %match(Expression e, Expression v) {
@@ -32,7 +32,7 @@ public class Poly1 {
     }
     return `zero();
   }
-    
+     
     // simplification
   public Expression simplify(Expression t) {
     Expression res = t;

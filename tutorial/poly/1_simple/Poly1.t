@@ -20,7 +20,9 @@ public class Poly1 {
   }    
     // Everything is an Aterm:
   %typeterm term {
-    implement { ATerm }
+    implement {
+      ATerm
+        }
     get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
     cmp_fun_sym(t1,t2)  { t1 == t2 }
     get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
@@ -101,4 +103,3 @@ public class Poly1 {
     test.run();
   }
 }
-

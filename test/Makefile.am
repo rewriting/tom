@@ -46,6 +46,7 @@ BUILT_SOURCES   = $(check_JAVA)\
 
 # we use the last compiled compiler to compile the testsuite
 TOMFLAGS = --noVerify
+#TOMFLAGS = 
 TOMSTABLE = ${top_builddir}/utils/jtom.stable
 TOMSRC = ${top_builddir}/utils/jtom.src
 TOMTEST = $(TOMSRC)
