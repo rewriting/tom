@@ -2,6 +2,7 @@ import jtom.runtime.xml.*;
 import jtom.runtime.xml.adt.*;
 import aterm.*;
 import jtom.runtime.*;
+import java.util.*;
 
 public class Xml {
   
@@ -30,14 +31,22 @@ public class Xml {
       //t = ``xml(<A> <B/> </A>);
       //t = ``xml(<A at1="foo" at2=x at3=dd("text")/>);
 
+    LinkedList elements = new LinkedList();
+    LinkedList reverseElements = new LinkedList();
     t = ``xml(<IntegerList/>);
     for(int i =1 ; i<5 ; i++) {
       t = ``addInteger(t,i);
+      elements.addLast("" + i);
+      reverseElements.addFirst("" + i);
     }
-
     System.out.println("t = " + t);
     System.out.println("checkSorted = " + checkSortedInteger(t));
     System.out.println("swapElements = " + swapElements(t));
+    System.out.println("extractElements = " + extractElements(t));
+
+    assertTrue(checkSortedInteger(t));
+    assertTrue(extractElements(t).equals(elements));
+    assertTrue(extractElements(swapElements(t)).equals(reverseElements));
     
   }
 
@@ -45,8 +54,7 @@ public class Xml {
     %match(TNode list) {
       <IntegerList _*>(integers*)</IntegerList> -> {
         String s = ""+n;
-        return ``xml(<IntegerList> integers*
-                                   <Integer>#TEXT(s)</Integer>
+        return ``xml(<IntegerList> integers* <Integer>#TEXT(s)</Integer>
                      </IntegerList>);
       }
     }
@@ -55,7 +63,7 @@ public class Xml {
 
   boolean checkSortedInteger(TNode list) {
     %match(TNode list) {
-      <IntegerList _*>[<Integer []>#TEXT(s1)</Integer>,
+      <IntegerList []>[<Integer []>#TEXT(s1)</Integer>,
                        <Integer []>#TEXT(s2)</Integer>]</IntegerList> -> {
         if(s1.compareTo(s2) > 0) { return false; }
       }
@@ -65,7 +73,7 @@ public class Xml {
 
   TNode swapElements(TNode list) {
     %match(TNode list) {
-      <IntegerList attr@_*>X1*
+      <IntegerList attr*>X1*
                          n1@<Integer []>#TEXT(s1)</Integer>
                          n2@<Integer []>#TEXT(s2)</Integer>
                          X2*</IntegerList> -> {
@@ -77,6 +85,14 @@ public class Xml {
     return list;    
   }
 
+  LinkedList extractElements(TNode list) {
+    LinkedList res = new LinkedList();
+    %match(TNode list) {
+      <IntegerList> [<Integer>#TEXT(s1)</Integer>] </IntegerList> -> { res.add(s1); }
+    }
+    return res;
+  }
+  
   static void  assertTrue(boolean condition) {
     if(!condition) {
       throw new RuntimeException("assertion failed.");

@@ -198,8 +198,30 @@ public class TomBase {
   }
 
   protected TomSymbol getSymbol(String tomName) {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-    return tomSymbol;
+    return symbolTable().getSymbol(tomName);
+  }
+
+  protected TomSymbol getSymbol(TomType tomType) {
+    SymbolList list = symbolTable().getSymbol(tomType);
+    SymbolList filteredList = `emptySymbolList();
+    while(!list.isEmpty()) {
+      TomSymbol head = list.getHead();
+      if(isArrayOperator(head) || isListOperator(head)) {
+        filteredList = `manySymbolList(head,filteredList);
+      }
+      list = list.getTail();
+    }
+        
+    if(filteredList.isEmpty()) {
+        // TODO
+      System.out.println("getSymbol: symbol not found: " + tomType);
+    } else if(!filteredList.getTail().isEmpty()) {
+        // TODO
+      System.out.println("getSymbol: ambiguities: " + filteredList);
+    } else {
+      return filteredList.getHead();
+    }
+    return null;
   }
   
   protected TomType getSymbolCodomain(TomSymbol symbol) {

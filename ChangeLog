@@ -1,3 +1,9 @@
+2003-11-02    <pem@bach>
+
+	* restricted double-backquote parser and expander
+	* implicit and explicit XML lists are allowed
+	* unamed lists are allowed
+
 2003-10-20    <pem@bach>
 
 	* src/jtom/compiler/TomExpander.t: 

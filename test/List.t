@@ -65,11 +65,11 @@ public class List {
   }
 
   public ATermList sort1(ATermList l) {
-        %match(L l) {
+    %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
         String xname = ((ATermAppl)x).getName();
         String yname = ((ATermAppl)y).getName();
-
+        
         if(xname.compareTo(yname) > 0) {
           return sort1(
             X1
@@ -116,7 +116,7 @@ public class List {
 
   public ATermList double2(ATermList l) {
     %match(L l) {
-      conc(X1*,x,X2*,x,X3*) -> {
+      (X1*,x,X2*,x,X3*) -> {
         return `double2(conc(X1*,X2*,x,X3*));
       }
       

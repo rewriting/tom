@@ -75,4 +75,4 @@ ${JARFILE}: ${JARVERSIONFILE}
 
 ${JARVERSIONFILE}:
 	 jar cf ${JARVERSIONFILE} \
-	`cd ${top_builddir}/src/ && find . -name '*.class'`
+	`cd ${top_builddir}/src/jtom && find . -name '*.class'`

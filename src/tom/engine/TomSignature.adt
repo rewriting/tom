@@ -157,6 +157,7 @@ list(OptionList,Option),
 list(InstructionList,Instruction),
 list(SlotList,PairNameDecl),
 list(TomEntryList, TomEntry),
-list(TomErrorList, TomError)
+list(TomErrorList, TomError),
+list(SymbolList, TomSymbol)
 
 ]

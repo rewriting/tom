@@ -175,7 +175,8 @@ OptionList.java OptionListImpl.java\
 InstructionList.java InstructionListImpl.java\
 SlotList.java SlotListImpl.java\
 TomEntryList.java TomEntryListImpl.java\
-TomErrorList.java TomErrorListImpl.java
+TomErrorList.java TomErrorListImpl.java\
+SymbolList.java SymbolListImpl.java
 
 TomSignatureAPI=\
 TomSignatureFactory.java TomSignatureConstructor.java\

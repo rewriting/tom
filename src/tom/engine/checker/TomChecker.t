@@ -35,18 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import jtom.TomBase;
-import jtom.adt.Declaration;
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.SlotList;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomRule;
-import jtom.adt.TomRuleList;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomType;
-import jtom.adt.TomTypeList;
+import jtom.adt.*;
 import jtom.runtime.Collect1;
 import jtom.tools.TomTask;
 import aterm.ATerm;
@@ -786,54 +775,60 @@ abstract class TomChecker extends TomBase implements TomTask {
 
     /** APPL CONCERNS */
   private void verifyApplStructure(OptionList optionList, String name, TomList argsList) {
+    if(name.equals("")) {
+        // unamed list
+      System.out.println("verifyApplStructure: Unamed List");
+      return;
+    }
+    
     TomSymbol symbol = getSymbol(name);
     if(symbol==null) {
-			if (hasConstructor(optionList) || !argsList.isEmpty()) {
-					//we dont know the symbol but it is called as a constructor or has children
-	      messageSymbolError(name, optionList);
-			}
+      if(hasConstructor(optionList) || !argsList.isEmpty()) {
+          //we dont know the symbol but it is called as a constructor or has children
+        messageSymbolError(name, optionList);
+      }
     } else {
-			TomTypeList domain = getSymbolDomain(symbol);
-			int nbExpectedArgs = domain.getLength();
-			boolean listOrArray =  (isListOperator(symbol) ||  isArrayOperator(symbol));
+      TomTypeList domain = getSymbolDomain(symbol);
+      int nbExpectedArgs = domain.getLength();
+      boolean listOrArray =  (isListOperator(symbol) ||  isArrayOperator(symbol));
 			
-  		if(argsList.isEmpty()) {
-  			if(nbExpectedArgs>0 && !listOrArray) {
-					  //we know the symbol it is not a list operator 
-					int line = findOriginTrackingLine(name,optionList);
-					messageNumberArgumentsError(nbExpectedArgs, 0, name, line);
-  			} else if (!hasConstructor(optionList)) {
-  				  //we know the symbol but it is not called has a constructor and argsList is empty
-  				  // it is not a string or int or double
-  				String codomain = getTomType(getSymbolCodomain(symbol));
-  				if( !codomain.equals("String") && !codomain.equals("double") &&
-  					!codomain.equals("int")) {
-						int line = findOriginTrackingLine(name,optionList);
-						messageVariableWithConstructorNameError(name, line);
-  				}
-  			}
-  		} else {
+      if(argsList.isEmpty()) {
+        if(nbExpectedArgs>0 && !listOrArray) {
+            //we know the symbol it is not a list operator 
+          int line = findOriginTrackingLine(name,optionList);
+          messageNumberArgumentsError(nbExpectedArgs, 0, name, line);
+        } else if (!hasConstructor(optionList)) {
+            //we know the symbol but it is not called has a constructor and argsList is empty
+            // it is not a string or int or double
+          String codomain = getTomType(getSymbolCodomain(symbol));
+          if( !codomain.equals("String") && !codomain.equals("double") &&
+              !codomain.equals("int")) {
+            int line = findOriginTrackingLine(name,optionList);
+            messageVariableWithConstructorNameError(name, line);
+          }
+        }
+      } else {
           // in case of oparray or oplist, the number of arguments is not tested
           // and no _* nor var * are allowed in the other case
         
         int nbFoundArgs = 0;
         ArrayList foundType = new ArrayList();
         ArrayList foundOptionList = new ArrayList();
-        //Map optionMap  = new HashMap();
+          //Map optionMap  = new HashMap();
           // we shall now test the type of each args
-				%match(TomList argsList) {
-					concTomTerm(_*, term, _*) -> {
-						nbFoundArgs++;
-						TermDescription termDesc = analyseTomTerm(term);
-  						// Var* and _* are not allowed in non list symbol
-						if(!listOrArray &&(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR)) {
-							int line = findOriginTrackingLine(optionList);
-							messageVariableStarInNonListOperator(nbFoundArgs, termDesc.name ,name, line);
-						}
-						foundType.add(termDesc.type);
-						foundOptionList.add(term.getOption().getOptionList());
-					}
-				}
+        %match(TomList argsList) {
+          concTomTerm(_*, term, _*) -> {
+            nbFoundArgs++;
+            TermDescription termDesc = analyseTomTerm(term);
+              // Var* and _* are not allowed in non list symbol
+            if(!listOrArray &&(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR)) {
+              int line = findOriginTrackingLine(optionList);
+              messageVariableStarInNonListOperator(nbFoundArgs, termDesc.name ,name, line);
+            }
+            foundType.add(termDesc.type);
+            foundOptionList.add(term.getOption().getOptionList());
+          }
+        }
         if (!listOrArray) {
             // We test the number of args vs its definition
           if (nbExpectedArgs != nbFoundArgs) {
@@ -842,16 +837,16 @@ abstract class TomChecker extends TomBase implements TomTask {
             return;
           }        
             // and the types
-					nbFoundArgs = 0;
+          nbFoundArgs = 0;
           %match(TomTypeList domain) {
-          	concTomType(_*, type, _*) -> {
-							String s = getTomType(type);
-							if ( (foundType.get(nbFoundArgs) != s) && (foundType.get(nbFoundArgs) != null)) {
-								int line = findOriginTrackingLine((OptionList)foundOptionList.get(nbFoundArgs));
-								messageApplErrorTypeArgument(name, nbFoundArgs+1, s, (String) foundType.get(nbFoundArgs), line); 
-							}
-							nbFoundArgs++;
-          	}
+            concTomType(_*, type, _*) -> {
+              String s = getTomType(type);
+              if ( (foundType.get(nbFoundArgs) != s) && (foundType.get(nbFoundArgs) != null)) {
+                int line = findOriginTrackingLine((OptionList)foundOptionList.get(nbFoundArgs));
+                messageApplErrorTypeArgument(name, nbFoundArgs+1, s, (String) foundType.get(nbFoundArgs), line); 
+              }
+              nbFoundArgs++;
+            }
           }
         } else {
             // We worry only about returned types that should always be the same

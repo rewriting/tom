@@ -52,13 +52,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.TomList;
-import jtom.adt.TomRuleList;
-import jtom.adt.TomSignatureFactory;
-import jtom.adt.TomStructureTable;
-import jtom.adt.TomTerm;
+import jtom.adt.*;
 
 import aterm.pure.PureFactory;
 

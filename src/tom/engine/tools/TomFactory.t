@@ -29,11 +29,11 @@ import jtom.*;
 import java.util.*;
 import jtom.adt.*;
 import jtom.xml.*;
-import aterm.ATerm;
+import aterm.*;
 
 public class TomFactory extends TomBase {
 
-  // ------------------------------------------------------------
+// ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
@@ -96,6 +96,25 @@ public class TomFactory extends TomBase {
       }
     }
     return term;
+  }
+
+  public LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
+    LinkedList list = new LinkedList();
+    %match(TomTerm term) {
+      Appl[astName=Name(""),args=args] -> {
+        while(!args.isEmpty()) {
+          list.add(metaEncodeXMLAppl(symbolTable,args.getHead()));
+          args = args.getTail();
+        }
+        return list;
+      }
+
+      _ -> {
+          //System.out.println("metaEncodeExplicitTermList: strange case: " + term);
+        list.add(term);
+        return list;
+      }
+    }
   }
   
 }

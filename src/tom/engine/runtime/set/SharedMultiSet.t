@@ -95,9 +95,6 @@ public class SharedMultiSet extends ATermSet {
     return getSetFactory().makeJGTreeSet_Pair(trm, i);
   }
   
-  private JGTreeSet makePair(ATerm trm, Integer i) {
-    return getSetFactory().makeJGTreeSet_Pair(trm, i.intValue());
-  }
     // Low interface
   
   protected int size(JGTreeSet t) {

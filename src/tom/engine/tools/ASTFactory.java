@@ -30,7 +30,8 @@ import jtom.adt.*;
 import jtom.xml.*;
 import aterm.ATerm;
 
-public class ASTFactory  {
+public class ASTFactory {
+
   private TomSignatureFactory tomSignatureFactory;
   
   public ASTFactory(TomSignatureFactory tomSignatureFactory) {
@@ -276,7 +277,6 @@ public class ASTFactory  {
       return tsf().makeTomName_EmptyName();
   }
 
-    /*
   public String encodeXMLString(SymbolTable symbolTable, String name) {
     name = "\"" + name + "\"";
     makeStringSymbol(symbolTable,name, new LinkedList());
@@ -284,6 +284,11 @@ public class ASTFactory  {
   }
 
   public TomTerm encodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
+      /*
+       * encode a String into a quoted-string
+       * Appl(...,Name("string"),...) becomes
+       * Appl(...,Name("\"string\""),...)
+       */
     if(term.isAppl()) {
       TomName astName = term.getAstName();
       if(astName.isName()) {
@@ -296,6 +301,11 @@ public class ASTFactory  {
   }
 
   public TomTerm metaEncodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
+      /*
+       * meta-encode a String into a TextNode
+       * Appl(...,Name("\"string\""),...) becomes
+       * Appl(...,Name("TextNode"),[Appl(...,Name("\"string\""),...)],...)
+       */
     if(term.isAppl()) {
       TomName astName = term.getAstName();
       if(astName.isName()) {
@@ -318,6 +328,6 @@ public class ASTFactory  {
     }
     return term;
   }
-    */
+
   
 }

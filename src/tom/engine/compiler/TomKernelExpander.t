@@ -82,7 +82,15 @@ public class TomKernelExpander extends TomBase {
             Option orgTrack = findOriginTracking(optionList);
             Option option = `Option(replaceAnnotedName(optionList,type,orgTrack));
               // create a constant or a variable
-            TomSymbol tomSymbol = getSymbol(strName);
+
+              //TomSymbol tomSymbol = getSymbol(strName);
+            TomSymbol tomSymbol;
+            if(strName.equals("")) {
+              tomSymbol = getSymbol(type);
+              name = tomSymbol.getAstName();
+            } else {
+              tomSymbol = getSymbol(strName);
+            }
             if(tomSymbol != null) {
               return `Appl(option,name,emptyTomList());
             } else {
@@ -90,16 +98,24 @@ public class TomKernelExpander extends TomBase {
             }
           }
           
-          Variable(option1,name1,type1) , appl@Appl(Option(optionList),name@Name(strName),emptyTomList()) -> {
+          Variable(option1,name1,type1) , appl@Appl(Option(optionList),name@Name(strName),l) -> {
               //debugPrintln("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
             Option orgTrack = findOriginTracking(optionList);
             Option option = `Option(replaceAnnotedName(optionList,type1,orgTrack));
               // under a match construct
               // create a constant or a variable
-            TomSymbol tomSymbol = getSymbol(strName);
-            if(tomSymbol != null) {
-              return `Appl(option,name,emptyTomList());
+              //TomSymbol tomSymbol = getSymbol(strName);
+            TomSymbol tomSymbol;
+            if(strName.equals("")) {
+              tomSymbol = getSymbol(type1);
+              name = tomSymbol.getAstName();
             } else {
+              tomSymbol = getSymbol(strName);
+            }
+            if(tomSymbol != null) {
+              TomList subterm = expandVariableList(tomSymbol, l);
+              return `Appl(option,name,subterm);
+            } else if(l.isEmpty()) {
               return `Variable(option,name,type1);
             }
           } 
@@ -117,7 +133,7 @@ public class TomKernelExpander extends TomBase {
               // create an unamed variable
             return `UnamedVariable(option,type1);
           } 
-              
+
           context, appl@Appl(Option(optionList),name@Name(tomName),l) -> {
               //debugPrintln("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
               // create a  symbol
@@ -128,6 +144,9 @@ public class TomKernelExpander extends TomBase {
               Option orgTrack = findOriginTracking(optionList);
               Option option = `Option(replaceAnnotedName(optionList,getSymbolCodomain(tomSymbol),orgTrack));
               return `Appl(option,name,subterm);
+            } else {
+              System.out.println("context = " + context);
+              System.out.println("tomName = '" + tomName + "'");
             }
           }
 

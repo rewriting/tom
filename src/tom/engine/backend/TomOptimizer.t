@@ -26,13 +26,7 @@ Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
   package jtom.backend;
   
 import jtom.TomBase;
-import jtom.adt.Expression;
-import jtom.adt.Instruction;
-import jtom.adt.Option;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomNumberList;
-import jtom.adt.TomTerm;
+import jtom.adt.*;
 import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
