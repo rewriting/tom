@@ -84,82 +84,54 @@ options{
         return result;
     }
 
-    // build a TomTerm when encountered 'id', 'id()', or 'id(...)'
-    private TomTerm buildBQAppl(Token id, LinkedList blockList, boolean isConstructor){
-        // case 'id(...)' -> generate a composite
-        if(blockList.size() > 0){
-            TomList list = buildList(blockList);//makeCompositeList(blockList);
-            return `Composite(
-                concTomTerm(
-                    BackQuoteAppl(
-                        concOption( 
-                            OriginTracking(
-                                Name(id.getText()), 
-                                id.getLine(), 
-                                Name(currentFile())
-                            )
-                        ),
-                        Name(id.getText()),
-                        list
-                    )
-                )
-            );
-        }
-        // case 'id()' -> it is a constructor
-        else if(isConstructor){
-            return `BackQuoteAppl(
-                concOption( 
-                    Constructor(concTomName(Name(id.getText()))),
-                    OriginTracking(
-                        Name(id.getText()), 
-                        id.getLine(), 
-                        Name(currentFile())
-                    ) 
-                ),
-                Name(id.getText()),
-                emptyTomList()
-            );
-        }
-        // case 'id' -> just a backQuoteAppl
-        else {
-            return `BackQuoteAppl(
-                concOption( 
-                    OriginTracking(
-                        Name(id.getText()), 
-                        id.getLine(), 
-                        Name(currentFile())
-                    )
-                ),
-                Name(id.getText()),
-                emptyTomList()
-            );
+    private TomList makeCompositeList(LinkedList list){
+        TomTerm term = null;
+        TomList compositeList = `emptyTomList();
+        Iterator it = list.iterator();
+        
+        while(it.hasNext()){
+            term = (TomTerm) it.next();
+            compositeList = (TomList) compositeList.append(term);
         }
         
+        return compositeList;
     }
 
-    // we encountered a method call : 'id(..).method
-    private TomTerm buildMethodCall(TomTerm term, TomTerm method){
-        %match(TomTerm term){
-            Composite(termList) -> {
-                return `Composite(
-                    concTomTerm(
-                        termList*,
-                        TargetLanguageToTomTerm(ITL(".")),
-                        method
-                    )
-                );
-            }
-            _ -> {
-                return `Composite(
-                    concTomTerm(
-                        term,
-                        TargetLanguageToTomTerm(ITL(".")),
-                        method
-                    )
-                );
-            }
+    private TomTerm buildBqAppl(Token id,LinkedList blockList,TomTerm term,boolean composite){
+        TomTerm result = null;
+        TomList list = makeCompositeList(blockList);
+        TomList target = `emptyTomList();
+        OptionList option = `concOption(
+            OriginTracking(
+                Name(id.getText()), 
+                id.getLine(), 
+                Name(currentFile())
+            )
+        );
+
+        if(term != null){
+            target = `concTomTerm(
+                TargetLanguageToTomTerm(ITL(".")),
+                term
+            );
         }
-    }
+
+        if (composite){
+            option = `concOption(
+                Constructor(concTomName(Name(id.getText()))),
+                option*);
+        }
+
+        return `Composite(
+            concTomTerm(
+                BackQuoteAppl(
+                    option,
+                    Name(id.getText()),
+                    list
+                ),
+                target*)
+        );
+        }
  
     // add a term in the list of term
     // newComposite==true when we read a ',' before the term
@@ -580,7 +552,7 @@ basicTerm [TomList context] returns [TomTerm result]
 bqTerm [TomList context] returns [TomTerm result]
 {
     result = null;
-    TomTerm term1 = null, term2 = null;
+    TomTerm term = null;
     TomList xmlTermList = `emptyTomList();
 
     Token t = null;
@@ -619,19 +591,10 @@ bqTerm [TomList context] returns [TomTerm result]
                     termList[blockList,context] 
                 )? BQ_RPAREN 
             )?
-            {
-                result = buildBQAppl(id,blockList,arguments);
-            }
-
-            ( 
-                (BQ_DOT bqTerm[null] ) => BQ_DOT term2 = bqTerm[context] 
-                {
-                    result = buildMethodCall(result,term2);
-                }
-            )?
-           /* {   
+            ( (BQ_DOT term = bqTerm[null] ) => BQ_DOT term = bqTerm[context] )?
+            {   
                 result = buildBqAppl(id,blockList,term,arguments);
-            }*/
+            }
         )
     |    
         (xmlTerm[null]) => result = xmlTerm[context]
@@ -679,7 +642,7 @@ firstTerm returns [TomTerm result]
                     {LA(1) == BQ_LPAREN}? BQ_LPAREN 
                     ws ( termList[blockList,list] )? BQ_RPAREN 
                     {   
-                        result = buildBQAppl(id1,blockList,true);
+                        result = buildBqAppl(id1,blockList,term,true);
                     }
                 |   t = targetCode
                     {
@@ -702,6 +665,7 @@ firstTerm returns [TomTerm result]
             
         )
     ;
+
 
 beginBackquote returns [TomTerm result]
 {
