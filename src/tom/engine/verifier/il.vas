@@ -1,0 +1,51 @@
+module il
+imports
+	
+public sorts 
+	Symbol Representation Variable Term Expr Instr 
+	Substitution SubstitutionList Environment
+	Seq TermList ExprList AbsTerm
+	Deriv DerivTree
+
+abstract syntax
+	fsymbol(name:String)                                     -> Symbol
+	
+	var(name:String)                                         -> Variable
+
+	tau(abst:AbsTerm)                                        -> Term
+	absvar(varname:String)                                   -> AbsTerm
+	st(symbol:Symbol,abst:AbsTerm,index:Int)                 -> AbsTerm
+	sl(symbol:Symbol,abst:AbsTerm,name:String)               -> AbsTerm
+	vtot(var:Variable)                                       -> Term
+	repr(term:String)                                        -> Term
+	subterm(symbol:Symbol,t:Term,index:Int)                  -> Term
+	slot(symbol:Symbol,t:Term,name:String)                   -> Term
+
+	true                                                     -> Expr
+	false                                                    -> Expr
+	isfsym(t:Term,symbol:Symbol)                             -> Expr
+	eq(lt:Term,rt:Term)                                      -> Expr
+	tisfsym(t:Term,symbol:Symbol)                            -> Expr
+	teq(lt:Term,rt:Term)                                     -> Expr
+
+	accept(positive:term,negative:term)                      -> Instr
+	refuse                                                   -> Instr
+	ITE(e:Expr,ift:Instr,iff:Instr)                          -> Instr
+	ILLet(var:Variable,t:Term,body:Instr)                    -> Instr
+
+	undefsubs                                                -> Substitution
+	is(var:Variable,term:Term)                               -> Substitution
+	subs(Substitution *)                                     -> SubstitutionList
+	env(subs:SubstitutionList,i:Instr)                       -> Environment
+
+	ebs(lhs:Environment,rhs:Environment)                     -> Deriv
+	endderiv                                                 -> DerivTree
+	derivrule(name:String,post:Deriv,pre:DerivTree,cond:Seq) -> DerivTree
+
+	seq                                                      -> Seq
+	appSubsT(subs:SubstitutionList,t:Term)                   -> Term
+	appSubsE(subs:SubstitutionList,e:Expr)                   -> Expr
+	dedterm(terms:TermList)                                  -> Seq
+	concTerm(Term *)                                         -> TermList
+	dedexpr(exprs:ExprList)                                  -> Seq
+	concExpr(Expr *)                                         -> ExprList

@@ -72,7 +72,7 @@ public class TomVerifier extends TomGenericPlugin {
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
         
       } catch (Exception e) {
-        getLogger().log( Level.SEVERE, "ExceptionMessage",
+        getLogger().log(Level.SEVERE, "ExceptionMessage",
                          new Object[]{getClass().getName(),
                                       getStreamManager().getInputFile().getName(),
                                       e.getMessage()} );

@@ -160,6 +160,9 @@
 		<taskdef name="adt" 
 						 classname="jtom.tools.ant.ApigenTask" 
 						 classpathref="tom.classpath"/>
+		<taskdef name="vas" 
+						 classname="vas.ant.VasTask" 
+						 classpathref="tom.classpath"/>
 		<taskdef name="tom" 
 						 classname="jtom.tools.ant.TomTask">
 			<classpath refid="tom.classpath"/>
@@ -283,6 +286,14 @@
 			<fileset dir="${src.gen}/tom/platform/adt" includes="*.tom"/>
 			<fileset dir="${src.gen}/jtom/adt" includes="*.tom"/>
 		</copy>
+
+		<!-- adt for the verifier -->
+		<vas file="${src.src}/jtom/verifier/il.vas"
+			   options="-X ${stable.lib}/Vas.xml"
+				 package="jtom.verifier" 
+				 destdir="${src.gen}">
+		</vas>
+
 	</target>
 
 	<target name="build.src" depends="src"/>
@@ -970,6 +981,7 @@
 				<include name="**/*.java"/>
 				<include name="**/*.properties"/>
 				<include name="lib/*.jar"/>
+				<include name="lib/*.xml"/>
 				<exclude name="**/adt/**/*.java"/>
 				<exclude name="**/bootstrap/**/*"/>
 				<exclude name="**/gen/**/*"/>
