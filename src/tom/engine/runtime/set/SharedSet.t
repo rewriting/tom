@@ -40,17 +40,9 @@ import jtom.runtime.Collect1;
 public class SharedSet extends ATermSet {
   %include { set.t }
   
-  public SharedSet(int logSize) {
+  public SharedSet(PureFactory pureFactory) {
     if (factory==null) {
-      factory = new SetFactory(logSize);
-    }
-    emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
-    this.tree = makeEmptySet();
-  }
-
-  public SharedSet() {
-    if (factory==null) {
-      factory = new SetFactory();
+      factory = new SetFactory(pureFactory);
     }
     emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
     this.tree = makeEmptySet();

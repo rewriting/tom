@@ -1107,7 +1107,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_TypeTermDecl makeDeclaration_TypeTermDecl(TomName _astName, TomList _keywordList, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _keywordList, _orgTrack};
-    return makeDeclaration_TypeTermDecl( funDeclaration_TypeTermDecl, args, empty);
+    return makeDeclaration_TypeTermDecl( funDeclaration_TypeTermDecl, args, getEmpty());
   }
 
   public Declaration Declaration_TypeTermDeclFromTerm(aterm.ATerm trm)
@@ -1139,7 +1139,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_TypeListDecl makeDeclaration_TypeListDecl(TomName _astName, TomList _keywordList, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _keywordList, _orgTrack};
-    return makeDeclaration_TypeListDecl( funDeclaration_TypeListDecl, args, empty);
+    return makeDeclaration_TypeListDecl( funDeclaration_TypeListDecl, args, getEmpty());
   }
 
   public Declaration Declaration_TypeListDeclFromTerm(aterm.ATerm trm)
@@ -1171,7 +1171,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_TypeArrayDecl makeDeclaration_TypeArrayDecl(TomName _astName, TomList _keywordList, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _keywordList, _orgTrack};
-    return makeDeclaration_TypeArrayDecl( funDeclaration_TypeArrayDecl, args, empty);
+    return makeDeclaration_TypeArrayDecl( funDeclaration_TypeArrayDecl, args, getEmpty());
   }
 
   public Declaration Declaration_TypeArrayDeclFromTerm(aterm.ATerm trm)
@@ -1203,7 +1203,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_GetFunctionSymbolDecl makeDeclaration_GetFunctionSymbolDecl(TomTerm _termArg, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termArg, _tlCode, _orgTrack};
-    return makeDeclaration_GetFunctionSymbolDecl( funDeclaration_GetFunctionSymbolDecl, args, empty);
+    return makeDeclaration_GetFunctionSymbolDecl( funDeclaration_GetFunctionSymbolDecl, args, getEmpty());
   }
 
   public Declaration Declaration_GetFunctionSymbolDeclFromTerm(aterm.ATerm trm)
@@ -1235,7 +1235,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_GetSubtermDecl makeDeclaration_GetSubtermDecl(TomTerm _termArg, TomTerm _variable, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termArg, _variable, _tlCode, _orgTrack};
-    return makeDeclaration_GetSubtermDecl( funDeclaration_GetSubtermDecl, args, empty);
+    return makeDeclaration_GetSubtermDecl( funDeclaration_GetSubtermDecl, args, getEmpty());
   }
 
   public Declaration Declaration_GetSubtermDeclFromTerm(aterm.ATerm trm)
@@ -1268,7 +1268,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_IsFsymDecl makeDeclaration_IsFsymDecl(TomName _astName, TomTerm _variable, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _variable, _tlCode, _orgTrack};
-    return makeDeclaration_IsFsymDecl( funDeclaration_IsFsymDecl, args, empty);
+    return makeDeclaration_IsFsymDecl( funDeclaration_IsFsymDecl, args, getEmpty());
   }
 
   public Declaration Declaration_IsFsymDeclFromTerm(aterm.ATerm trm)
@@ -1301,7 +1301,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_GetSlotDecl makeDeclaration_GetSlotDecl(TomName _astName, TomName _slotName, TomTerm _variable, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _slotName, _variable, _tlCode, _orgTrack};
-    return makeDeclaration_GetSlotDecl( funDeclaration_GetSlotDecl, args, empty);
+    return makeDeclaration_GetSlotDecl( funDeclaration_GetSlotDecl, args, getEmpty());
   }
 
   public Declaration Declaration_GetSlotDeclFromTerm(aterm.ATerm trm)
@@ -1335,7 +1335,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_CompareFunctionSymbolDecl makeDeclaration_CompareFunctionSymbolDecl(TomTerm _symbolArg1, TomTerm _symbolArg2, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_symbolArg1, _symbolArg2, _tlCode, _orgTrack};
-    return makeDeclaration_CompareFunctionSymbolDecl( funDeclaration_CompareFunctionSymbolDecl, args, empty);
+    return makeDeclaration_CompareFunctionSymbolDecl( funDeclaration_CompareFunctionSymbolDecl, args, getEmpty());
   }
 
   public Declaration Declaration_CompareFunctionSymbolDeclFromTerm(aterm.ATerm trm)
@@ -1368,7 +1368,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_TermsEqualDecl makeDeclaration_TermsEqualDecl(TomTerm _termArg1, TomTerm _termArg2, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termArg1, _termArg2, _tlCode, _orgTrack};
-    return makeDeclaration_TermsEqualDecl( funDeclaration_TermsEqualDecl, args, empty);
+    return makeDeclaration_TermsEqualDecl( funDeclaration_TermsEqualDecl, args, getEmpty());
   }
 
   public Declaration Declaration_TermsEqualDeclFromTerm(aterm.ATerm trm)
@@ -1401,7 +1401,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_GetHeadDecl makeDeclaration_GetHeadDecl(TomTerm _var, TargetLanguage _tlcode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode, _orgTrack};
-    return makeDeclaration_GetHeadDecl( funDeclaration_GetHeadDecl, args, empty);
+    return makeDeclaration_GetHeadDecl( funDeclaration_GetHeadDecl, args, getEmpty());
   }
 
   public Declaration Declaration_GetHeadDeclFromTerm(aterm.ATerm trm)
@@ -1433,7 +1433,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_GetTailDecl makeDeclaration_GetTailDecl(TomTerm _var, TargetLanguage _tlcode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode, _orgTrack};
-    return makeDeclaration_GetTailDecl( funDeclaration_GetTailDecl, args, empty);
+    return makeDeclaration_GetTailDecl( funDeclaration_GetTailDecl, args, getEmpty());
   }
 
   public Declaration Declaration_GetTailDeclFromTerm(aterm.ATerm trm)
@@ -1465,7 +1465,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_IsEmptyDecl makeDeclaration_IsEmptyDecl(TomTerm _var, TargetLanguage _tlcode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode, _orgTrack};
-    return makeDeclaration_IsEmptyDecl( funDeclaration_IsEmptyDecl, args, empty);
+    return makeDeclaration_IsEmptyDecl( funDeclaration_IsEmptyDecl, args, getEmpty());
   }
 
   public Declaration Declaration_IsEmptyDeclFromTerm(aterm.ATerm trm)
@@ -1497,7 +1497,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_MakeEmptyList makeDeclaration_MakeEmptyList(TomName _astName, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _tlCode, _orgTrack};
-    return makeDeclaration_MakeEmptyList( funDeclaration_MakeEmptyList, args, empty);
+    return makeDeclaration_MakeEmptyList( funDeclaration_MakeEmptyList, args, getEmpty());
   }
 
   public Declaration Declaration_MakeEmptyListFromTerm(aterm.ATerm trm)
@@ -1529,7 +1529,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_MakeAddList makeDeclaration_MakeAddList(TomName _astName, TomTerm _varElt, TomTerm _varList, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode, _orgTrack};
-    return makeDeclaration_MakeAddList( funDeclaration_MakeAddList, args, empty);
+    return makeDeclaration_MakeAddList( funDeclaration_MakeAddList, args, getEmpty());
   }
 
   public Declaration Declaration_MakeAddListFromTerm(aterm.ATerm trm)
@@ -1563,7 +1563,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_GetElementDecl makeDeclaration_GetElementDecl(TomTerm _kid1, TomTerm _kid2, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2, _tlCode, _orgTrack};
-    return makeDeclaration_GetElementDecl( funDeclaration_GetElementDecl, args, empty);
+    return makeDeclaration_GetElementDecl( funDeclaration_GetElementDecl, args, getEmpty());
   }
 
   public Declaration Declaration_GetElementDeclFromTerm(aterm.ATerm trm)
@@ -1596,7 +1596,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_GetSizeDecl makeDeclaration_GetSizeDecl(TomTerm _kid1, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _tlCode, _orgTrack};
-    return makeDeclaration_GetSizeDecl( funDeclaration_GetSizeDecl, args, empty);
+    return makeDeclaration_GetSizeDecl( funDeclaration_GetSizeDecl, args, getEmpty());
   }
 
   public Declaration Declaration_GetSizeDeclFromTerm(aterm.ATerm trm)
@@ -1628,7 +1628,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_MakeEmptyArray makeDeclaration_MakeEmptyArray(TomName _astName, TomTerm _varSize, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varSize, _tlCode, _orgTrack};
-    return makeDeclaration_MakeEmptyArray( funDeclaration_MakeEmptyArray, args, empty);
+    return makeDeclaration_MakeEmptyArray( funDeclaration_MakeEmptyArray, args, getEmpty());
   }
 
   public Declaration Declaration_MakeEmptyArrayFromTerm(aterm.ATerm trm)
@@ -1661,7 +1661,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_MakeAddArray makeDeclaration_MakeAddArray(TomName _astName, TomTerm _varElt, TomTerm _varList, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode, _orgTrack};
-    return makeDeclaration_MakeAddArray( funDeclaration_MakeAddArray, args, empty);
+    return makeDeclaration_MakeAddArray( funDeclaration_MakeAddArray, args, getEmpty());
   }
 
   public Declaration Declaration_MakeAddArrayFromTerm(aterm.ATerm trm)
@@ -1695,7 +1695,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_MakeDecl makeDeclaration_MakeDecl(TomName _astName, TomType _astType, TomList _args, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _astType, _args, _tlCode, _orgTrack};
-    return makeDeclaration_MakeDecl( funDeclaration_MakeDecl, args, empty);
+    return makeDeclaration_MakeDecl( funDeclaration_MakeDecl, args, getEmpty());
   }
 
   public Declaration Declaration_MakeDeclFromTerm(aterm.ATerm trm)
@@ -1729,7 +1729,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_SymbolDecl makeDeclaration_SymbolDecl(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeDeclaration_SymbolDecl( funDeclaration_SymbolDecl, args, empty);
+    return makeDeclaration_SymbolDecl( funDeclaration_SymbolDecl, args, getEmpty());
   }
 
   public Declaration Declaration_SymbolDeclFromTerm(aterm.ATerm trm)
@@ -1759,7 +1759,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_ListSymbolDecl makeDeclaration_ListSymbolDecl(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeDeclaration_ListSymbolDecl( funDeclaration_ListSymbolDecl, args, empty);
+    return makeDeclaration_ListSymbolDecl( funDeclaration_ListSymbolDecl, args, getEmpty());
   }
 
   public Declaration Declaration_ListSymbolDeclFromTerm(aterm.ATerm trm)
@@ -1789,7 +1789,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_ArraySymbolDecl makeDeclaration_ArraySymbolDecl(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeDeclaration_ArraySymbolDecl( funDeclaration_ArraySymbolDecl, args, empty);
+    return makeDeclaration_ArraySymbolDecl( funDeclaration_ArraySymbolDecl, args, getEmpty());
   }
 
   public Declaration Declaration_ArraySymbolDeclFromTerm(aterm.ATerm trm)
@@ -1819,7 +1819,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Declaration_EmptyDeclaration makeDeclaration_EmptyDeclaration() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeDeclaration_EmptyDeclaration( funDeclaration_EmptyDeclaration, args, empty);
+    return makeDeclaration_EmptyDeclaration( funDeclaration_EmptyDeclaration, args, getEmpty());
   }
 
   public Declaration Declaration_EmptyDeclarationFromTerm(aterm.ATerm trm)
@@ -1848,7 +1848,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_DeclarationToOption makeOption_DeclarationToOption(Declaration _astDeclaration) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astDeclaration};
-    return makeOption_DeclarationToOption( funOption_DeclarationToOption, args, empty);
+    return makeOption_DeclarationToOption( funOption_DeclarationToOption, args, getEmpty());
   }
 
   public Option Option_DeclarationToOptionFromTerm(aterm.ATerm trm)
@@ -1878,7 +1878,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_TomNameToOption makeOption_TomNameToOption(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeOption_TomNameToOption( funOption_TomNameToOption, args, empty);
+    return makeOption_TomNameToOption( funOption_TomNameToOption, args, getEmpty());
   }
 
   public Option Option_TomNameToOptionFromTerm(aterm.ATerm trm)
@@ -1908,7 +1908,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_TomTermToOption makeOption_TomTermToOption(TomTerm _astTerm) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astTerm};
-    return makeOption_TomTermToOption( funOption_TomTermToOption, args, empty);
+    return makeOption_TomTermToOption( funOption_TomTermToOption, args, getEmpty());
   }
 
   public Option Option_TomTermToOptionFromTerm(aterm.ATerm trm)
@@ -1938,7 +1938,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_Option makeOption_Option(OptionList _optionList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_optionList};
-    return makeOption_Option( funOption_Option, args, empty);
+    return makeOption_Option( funOption_Option, args, getEmpty());
   }
 
   public Option Option_OptionFromTerm(aterm.ATerm trm)
@@ -1968,7 +1968,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_DefinedSymbol makeOption_DefinedSymbol() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeOption_DefinedSymbol( funOption_DefinedSymbol, args, empty);
+    return makeOption_DefinedSymbol( funOption_DefinedSymbol, args, getEmpty());
   }
 
   public Option Option_DefinedSymbolFromTerm(aterm.ATerm trm)
@@ -1997,7 +1997,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_GeneratedMatch makeOption_GeneratedMatch() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeOption_GeneratedMatch( funOption_GeneratedMatch, args, empty);
+    return makeOption_GeneratedMatch( funOption_GeneratedMatch, args, getEmpty());
   }
 
   public Option Option_GeneratedMatchFromTerm(aterm.ATerm trm)
@@ -2026,7 +2026,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_WithDefaultProduction makeOption_WithDefaultProduction() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeOption_WithDefaultProduction( funOption_WithDefaultProduction, args, empty);
+    return makeOption_WithDefaultProduction( funOption_WithDefaultProduction, args, getEmpty());
   }
 
   public Option Option_WithDefaultProductionFromTerm(aterm.ATerm trm)
@@ -2055,7 +2055,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_OriginTracking makeOption_OriginTracking(TomName _astName, int _line, TomName _fileName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, makeInt(_line), _fileName};
-    return makeOption_OriginTracking( funOption_OriginTracking, args, empty);
+    return makeOption_OriginTracking( funOption_OriginTracking, args, getEmpty());
   }
 
   public Option Option_OriginTrackingFromTerm(aterm.ATerm trm)
@@ -2087,7 +2087,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_Constructor makeOption_Constructor(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeOption_Constructor( funOption_Constructor, args, empty);
+    return makeOption_Constructor( funOption_Constructor, args, getEmpty());
   }
 
   public Option Option_ConstructorFromTerm(aterm.ATerm trm)
@@ -2117,7 +2117,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_OriginalText makeOption_OriginalText(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeOption_OriginalText( funOption_OriginalText, args, empty);
+    return makeOption_OriginalText( funOption_OriginalText, args, getEmpty());
   }
 
   public Option Option_OriginalTextFromTerm(aterm.ATerm trm)
@@ -2147,7 +2147,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Option_XMLPosition makeOption_XMLPosition(String _place) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_place, 0, true))};
-    return makeOption_XMLPosition( funOption_XMLPosition, args, empty);
+    return makeOption_XMLPosition( funOption_XMLPosition, args, getEmpty());
   }
 
   public Option Option_XMLPositionFromTerm(aterm.ATerm trm)
@@ -2177,7 +2177,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_TomTermToExpression makeExpression_TomTermToExpression(TomTerm _astTerm) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astTerm};
-    return makeExpression_TomTermToExpression( funExpression_TomTermToExpression, args, empty);
+    return makeExpression_TomTermToExpression( funExpression_TomTermToExpression, args, getEmpty());
   }
 
   public Expression Expression_TomTermToExpressionFromTerm(aterm.ATerm trm)
@@ -2207,7 +2207,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_Not makeExpression_Not(Expression _arg) {
     aterm.ATerm[] args = new aterm.ATerm[] {_arg};
-    return makeExpression_Not( funExpression_Not, args, empty);
+    return makeExpression_Not( funExpression_Not, args, getEmpty());
   }
 
   public Expression Expression_NotFromTerm(aterm.ATerm trm)
@@ -2237,7 +2237,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_And makeExpression_And(Expression _arg1, Expression _arg2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_arg1, _arg2};
-    return makeExpression_And( funExpression_And, args, empty);
+    return makeExpression_And( funExpression_And, args, getEmpty());
   }
 
   public Expression Expression_AndFromTerm(aterm.ATerm trm)
@@ -2268,7 +2268,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_TrueTL makeExpression_TrueTL() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeExpression_TrueTL( funExpression_TrueTL, args, empty);
+    return makeExpression_TrueTL( funExpression_TrueTL, args, getEmpty());
   }
 
   public Expression Expression_TrueTLFromTerm(aterm.ATerm trm)
@@ -2297,7 +2297,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_FalseTL makeExpression_FalseTL() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeExpression_FalseTL( funExpression_FalseTL, args, empty);
+    return makeExpression_FalseTL( funExpression_FalseTL, args, getEmpty());
   }
 
   public Expression Expression_FalseTLFromTerm(aterm.ATerm trm)
@@ -2326,7 +2326,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_IsEmptyList makeExpression_IsEmptyList(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeExpression_IsEmptyList( funExpression_IsEmptyList, args, empty);
+    return makeExpression_IsEmptyList( funExpression_IsEmptyList, args, getEmpty());
   }
 
   public Expression Expression_IsEmptyListFromTerm(aterm.ATerm trm)
@@ -2356,7 +2356,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_IsEmptyArray makeExpression_IsEmptyArray(TomTerm _kid1, TomTerm _kid2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2};
-    return makeExpression_IsEmptyArray( funExpression_IsEmptyArray, args, empty);
+    return makeExpression_IsEmptyArray( funExpression_IsEmptyArray, args, getEmpty());
   }
 
   public Expression Expression_IsEmptyArrayFromTerm(aterm.ATerm trm)
@@ -2387,7 +2387,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_EqualFunctionSymbol makeExpression_EqualFunctionSymbol(TomTerm _kid1, TomTerm _kid2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2};
-    return makeExpression_EqualFunctionSymbol( funExpression_EqualFunctionSymbol, args, empty);
+    return makeExpression_EqualFunctionSymbol( funExpression_EqualFunctionSymbol, args, getEmpty());
   }
 
   public Expression Expression_EqualFunctionSymbolFromTerm(aterm.ATerm trm)
@@ -2418,7 +2418,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_EqualTerm makeExpression_EqualTerm(TomTerm _kid1, TomTerm _kid2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2};
-    return makeExpression_EqualTerm( funExpression_EqualTerm, args, empty);
+    return makeExpression_EqualTerm( funExpression_EqualTerm, args, getEmpty());
   }
 
   public Expression Expression_EqualTermFromTerm(aterm.ATerm trm)
@@ -2449,7 +2449,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_GetSubterm makeExpression_GetSubterm(TomTerm _variable, TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_variable, _number};
-    return makeExpression_GetSubterm( funExpression_GetSubterm, args, empty);
+    return makeExpression_GetSubterm( funExpression_GetSubterm, args, getEmpty());
   }
 
   public Expression Expression_GetSubtermFromTerm(aterm.ATerm trm)
@@ -2480,7 +2480,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_IsFsym makeExpression_IsFsym(TomName _astName, TomTerm _variable) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _variable};
-    return makeExpression_IsFsym( funExpression_IsFsym, args, empty);
+    return makeExpression_IsFsym( funExpression_IsFsym, args, getEmpty());
   }
 
   public Expression Expression_IsFsymFromTerm(aterm.ATerm trm)
@@ -2511,7 +2511,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_GetSlot makeExpression_GetSlot(TomName _astName, String _slotNameString, TomTerm _variable) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, makeAppl(makeAFun(_slotNameString, 0, true)), _variable};
-    return makeExpression_GetSlot( funExpression_GetSlot, args, empty);
+    return makeExpression_GetSlot( funExpression_GetSlot, args, getEmpty());
   }
 
   public Expression Expression_GetSlotFromTerm(aterm.ATerm trm)
@@ -2543,7 +2543,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_GetHead makeExpression_GetHead(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeExpression_GetHead( funExpression_GetHead, args, empty);
+    return makeExpression_GetHead( funExpression_GetHead, args, getEmpty());
   }
 
   public Expression Expression_GetHeadFromTerm(aterm.ATerm trm)
@@ -2573,7 +2573,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_GetTail makeExpression_GetTail(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeExpression_GetTail( funExpression_GetTail, args, empty);
+    return makeExpression_GetTail( funExpression_GetTail, args, getEmpty());
   }
 
   public Expression Expression_GetTailFromTerm(aterm.ATerm trm)
@@ -2603,7 +2603,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_GetSize makeExpression_GetSize(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeExpression_GetSize( funExpression_GetSize, args, empty);
+    return makeExpression_GetSize( funExpression_GetSize, args, getEmpty());
   }
 
   public Expression Expression_GetSizeFromTerm(aterm.ATerm trm)
@@ -2633,7 +2633,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_GetElement makeExpression_GetElement(TomTerm _kid1, TomTerm _kid2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2};
-    return makeExpression_GetElement( funExpression_GetElement, args, empty);
+    return makeExpression_GetElement( funExpression_GetElement, args, getEmpty());
   }
 
   public Expression Expression_GetElementFromTerm(aterm.ATerm trm)
@@ -2664,7 +2664,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_GetSliceList makeExpression_GetSliceList(TomName _astName, TomTerm _variableBeginAST, TomTerm _variableEndAST) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _variableBeginAST, _variableEndAST};
-    return makeExpression_GetSliceList( funExpression_GetSliceList, args, empty);
+    return makeExpression_GetSliceList( funExpression_GetSliceList, args, getEmpty());
   }
 
   public Expression Expression_GetSliceListFromTerm(aterm.ATerm trm)
@@ -2696,7 +2696,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Expression_GetSliceArray makeExpression_GetSliceArray(TomName _astName, TomTerm _subjectListName, TomTerm _variableBeginAST, TomTerm _variableEndAST) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _subjectListName, _variableBeginAST, _variableEndAST};
-    return makeExpression_GetSliceArray( funExpression_GetSliceArray, args, empty);
+    return makeExpression_GetSliceArray( funExpression_GetSliceArray, args, getEmpty());
   }
 
   public Expression Expression_GetSliceArrayFromTerm(aterm.ATerm trm)
@@ -2729,7 +2729,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TargetLanguage_TL makeTargetLanguage_TL(String _code, Position _start, Position _end) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_code, 0, true)), _start, _end};
-    return makeTargetLanguage_TL( funTargetLanguage_TL, args, empty);
+    return makeTargetLanguage_TL( funTargetLanguage_TL, args, getEmpty());
   }
 
   public TargetLanguage TargetLanguage_TLFromTerm(aterm.ATerm trm)
@@ -2761,7 +2761,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TargetLanguage_ITL makeTargetLanguage_ITL(String _code) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_code, 0, true))};
-    return makeTargetLanguage_ITL( funTargetLanguage_ITL, args, empty);
+    return makeTargetLanguage_ITL( funTargetLanguage_ITL, args, getEmpty());
   }
 
   public TargetLanguage TargetLanguage_ITLFromTerm(aterm.ATerm trm)
@@ -2791,7 +2791,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Position_Position makePosition_Position(int _line, int _column) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeInt(_line), makeInt(_column)};
-    return makePosition_Position( funPosition_Position, args, empty);
+    return makePosition_Position( funPosition_Position, args, getEmpty());
   }
 
   public Position Position_PositionFromTerm(aterm.ATerm trm)
@@ -2822,7 +2822,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomType_Type makeTomType_Type(TomType _tomType, TomType _tlType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomType, _tlType};
-    return makeTomType_Type( funTomType_Type, args, empty);
+    return makeTomType_Type( funTomType_Type, args, getEmpty());
   }
 
   public TomType TomType_TypeFromTerm(aterm.ATerm trm)
@@ -2853,7 +2853,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomType_TypesToType makeTomType_TypesToType(TomTypeList _domain, TomType _codomain) {
     aterm.ATerm[] args = new aterm.ATerm[] {_domain, _codomain};
-    return makeTomType_TypesToType( funTomType_TypesToType, args, empty);
+    return makeTomType_TypesToType( funTomType_TypesToType, args, getEmpty());
   }
 
   public TomType TomType_TypesToTypeFromTerm(aterm.ATerm trm)
@@ -2884,7 +2884,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomType_TomType makeTomType_TomType(String _string) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_string, 0, true))};
-    return makeTomType_TomType( funTomType_TomType, args, empty);
+    return makeTomType_TomType( funTomType_TomType, args, getEmpty());
   }
 
   public TomType TomType_TomTypeFromTerm(aterm.ATerm trm)
@@ -2914,7 +2914,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomType_TomTypeAlone makeTomType_TomTypeAlone(String _string) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_string, 0, true))};
-    return makeTomType_TomTypeAlone( funTomType_TomTypeAlone, args, empty);
+    return makeTomType_TomTypeAlone( funTomType_TomTypeAlone, args, getEmpty());
   }
 
   public TomType TomType_TomTypeAloneFromTerm(aterm.ATerm trm)
@@ -2944,7 +2944,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomType_TLType makeTomType_TLType(TargetLanguage _tl) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tl};
-    return makeTomType_TLType( funTomType_TLType, args, empty);
+    return makeTomType_TLType( funTomType_TLType, args, getEmpty());
   }
 
   public TomType TomType_TLTypeFromTerm(aterm.ATerm trm)
@@ -2974,7 +2974,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomType_EmptyType makeTomType_EmptyType() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomType_EmptyType( funTomType_EmptyType, args, empty);
+    return makeTomType_EmptyType( funTomType_EmptyType, args, getEmpty());
   }
 
   public TomType TomType_EmptyTypeFromTerm(aterm.ATerm trm)
@@ -3003,7 +3003,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomName_Name makeTomName_Name(String _string) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_string, 0, true))};
-    return makeTomName_Name( funTomName_Name, args, empty);
+    return makeTomName_Name( funTomName_Name, args, getEmpty());
   }
 
   public TomName TomName_NameFromTerm(aterm.ATerm trm)
@@ -3033,7 +3033,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomName_PositionName makeTomName_PositionName(TomNumberList _numberList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_numberList};
-    return makeTomName_PositionName( funTomName_PositionName, args, empty);
+    return makeTomName_PositionName( funTomName_PositionName, args, getEmpty());
   }
 
   public TomName TomName_PositionNameFromTerm(aterm.ATerm trm)
@@ -3063,7 +3063,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomName_EmptyName makeTomName_EmptyName() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomName_EmptyName( funTomName_EmptyName, args, empty);
+    return makeTomName_EmptyName( funTomName_EmptyName, args, getEmpty());
   }
 
   public TomName TomName_EmptyNameFromTerm(aterm.ATerm trm)
@@ -3092,7 +3092,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_TargetLanguageToTomTerm makeTomTerm_TargetLanguageToTomTerm(TargetLanguage _tl) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tl};
-    return makeTomTerm_TargetLanguageToTomTerm( funTomTerm_TargetLanguageToTomTerm, args, empty);
+    return makeTomTerm_TargetLanguageToTomTerm( funTomTerm_TargetLanguageToTomTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_TargetLanguageToTomTermFromTerm(aterm.ATerm trm)
@@ -3122,7 +3122,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_TomTypeToTomTerm makeTomTerm_TomTypeToTomTerm(TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astType};
-    return makeTomTerm_TomTypeToTomTerm( funTomTerm_TomTypeToTomTerm, args, empty);
+    return makeTomTerm_TomTypeToTomTerm( funTomTerm_TomTypeToTomTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_TomTypeToTomTermFromTerm(aterm.ATerm trm)
@@ -3152,7 +3152,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_TomNameToTomTerm makeTomTerm_TomNameToTomTerm(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeTomTerm_TomNameToTomTerm( funTomTerm_TomNameToTomTerm, args, empty);
+    return makeTomTerm_TomNameToTomTerm( funTomTerm_TomNameToTomTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_TomNameToTomTermFromTerm(aterm.ATerm trm)
@@ -3182,7 +3182,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_TomSymbolToTomTerm makeTomTerm_TomSymbolToTomTerm(TomSymbol _astSymbol) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astSymbol};
-    return makeTomTerm_TomSymbolToTomTerm( funTomTerm_TomSymbolToTomTerm, args, empty);
+    return makeTomTerm_TomSymbolToTomTerm( funTomTerm_TomSymbolToTomTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_TomSymbolToTomTermFromTerm(aterm.ATerm trm)
@@ -3212,7 +3212,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_DeclarationToTomTerm makeTomTerm_DeclarationToTomTerm(Declaration _astDeclaration) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astDeclaration};
-    return makeTomTerm_DeclarationToTomTerm( funTomTerm_DeclarationToTomTerm, args, empty);
+    return makeTomTerm_DeclarationToTomTerm( funTomTerm_DeclarationToTomTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_DeclarationToTomTermFromTerm(aterm.ATerm trm)
@@ -3242,7 +3242,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_OptionToTomTerm makeTomTerm_OptionToTomTerm(Option _astOption) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astOption};
-    return makeTomTerm_OptionToTomTerm( funTomTerm_OptionToTomTerm, args, empty);
+    return makeTomTerm_OptionToTomTerm( funTomTerm_OptionToTomTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_OptionToTomTermFromTerm(aterm.ATerm trm)
@@ -3272,7 +3272,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_ExpressionToTomTerm makeTomTerm_ExpressionToTomTerm(Expression _astExpression) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astExpression};
-    return makeTomTerm_ExpressionToTomTerm( funTomTerm_ExpressionToTomTerm, args, empty);
+    return makeTomTerm_ExpressionToTomTerm( funTomTerm_ExpressionToTomTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_ExpressionToTomTermFromTerm(aterm.ATerm trm)
@@ -3302,7 +3302,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_InstructionToTomTerm makeTomTerm_InstructionToTomTerm(Instruction _astInstruction) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astInstruction};
-    return makeTomTerm_InstructionToTomTerm( funTomTerm_InstructionToTomTerm, args, empty);
+    return makeTomTerm_InstructionToTomTerm( funTomTerm_InstructionToTomTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_InstructionToTomTermFromTerm(aterm.ATerm trm)
@@ -3332,7 +3332,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_Tom makeTomTerm_Tom(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_Tom( funTomTerm_Tom, args, empty);
+    return makeTomTerm_Tom( funTomTerm_Tom, args, getEmpty());
   }
 
   public TomTerm TomTerm_TomFromTerm(aterm.ATerm trm)
@@ -3362,7 +3362,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_TomInclude makeTomTerm_TomInclude(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_TomInclude( funTomTerm_TomInclude, args, empty);
+    return makeTomTerm_TomInclude( funTomTerm_TomInclude, args, getEmpty());
   }
 
   public TomTerm TomTerm_TomIncludeFromTerm(aterm.ATerm trm)
@@ -3392,7 +3392,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_MakeTerm makeTomTerm_MakeTerm(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeTomTerm_MakeTerm( funTomTerm_MakeTerm, args, empty);
+    return makeTomTerm_MakeTerm( funTomTerm_MakeTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_MakeTermFromTerm(aterm.ATerm trm)
@@ -3422,7 +3422,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_FunctionCall makeTomTerm_FunctionCall(TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args};
-    return makeTomTerm_FunctionCall( funTomTerm_FunctionCall, args, empty);
+    return makeTomTerm_FunctionCall( funTomTerm_FunctionCall, args, getEmpty());
   }
 
   public TomTerm TomTerm_FunctionCallFromTerm(aterm.ATerm trm)
@@ -3453,7 +3453,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_MakeFunctionBegin makeTomTerm_MakeFunctionBegin(TomName _astName, TomTerm _subjectListAST) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _subjectListAST};
-    return makeTomTerm_MakeFunctionBegin( funTomTerm_MakeFunctionBegin, args, empty);
+    return makeTomTerm_MakeFunctionBegin( funTomTerm_MakeFunctionBegin, args, getEmpty());
   }
 
   public TomTerm TomTerm_MakeFunctionBeginFromTerm(aterm.ATerm trm)
@@ -3484,7 +3484,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_MakeFunctionEnd makeTomTerm_MakeFunctionEnd() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomTerm_MakeFunctionEnd( funTomTerm_MakeFunctionEnd, args, empty);
+    return makeTomTerm_MakeFunctionEnd( funTomTerm_MakeFunctionEnd, args, getEmpty());
   }
 
   public TomTerm TomTerm_MakeFunctionEndFromTerm(aterm.ATerm trm)
@@ -3513,7 +3513,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_Appl makeTomTerm_Appl(Option _option, TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _args};
-    return makeTomTerm_Appl( funTomTerm_Appl, args, empty);
+    return makeTomTerm_Appl( funTomTerm_Appl, args, getEmpty());
   }
 
   public TomTerm TomTerm_ApplFromTerm(aterm.ATerm trm)
@@ -3545,7 +3545,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_BackQuoteAppl makeTomTerm_BackQuoteAppl(Option _option, TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _args};
-    return makeTomTerm_BackQuoteAppl( funTomTerm_BackQuoteAppl, args, empty);
+    return makeTomTerm_BackQuoteAppl( funTomTerm_BackQuoteAppl, args, getEmpty());
   }
 
   public TomTerm TomTerm_BackQuoteApplFromTerm(aterm.ATerm trm)
@@ -3577,7 +3577,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_Composite makeTomTerm_Composite(TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_args};
-    return makeTomTerm_Composite( funTomTerm_Composite, args, empty);
+    return makeTomTerm_Composite( funTomTerm_Composite, args, getEmpty());
   }
 
   public TomTerm TomTerm_CompositeFromTerm(aterm.ATerm trm)
@@ -3607,7 +3607,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_RecordAppl makeTomTerm_RecordAppl(Option _option, TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _args};
-    return makeTomTerm_RecordAppl( funTomTerm_RecordAppl, args, empty);
+    return makeTomTerm_RecordAppl( funTomTerm_RecordAppl, args, getEmpty());
   }
 
   public TomTerm TomTerm_RecordApplFromTerm(aterm.ATerm trm)
@@ -3639,7 +3639,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_PairSlotAppl makeTomTerm_PairSlotAppl(TomName _slotName, TomTerm _appl) {
     aterm.ATerm[] args = new aterm.ATerm[] {_slotName, _appl};
-    return makeTomTerm_PairSlotAppl( funTomTerm_PairSlotAppl, args, empty);
+    return makeTomTerm_PairSlotAppl( funTomTerm_PairSlotAppl, args, getEmpty());
   }
 
   public TomTerm TomTerm_PairSlotApplFromTerm(aterm.ATerm trm)
@@ -3670,7 +3670,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_Match makeTomTerm_Match(TomTerm _subjectList, TomTerm _patternList, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_subjectList, _patternList, _option};
-    return makeTomTerm_Match( funTomTerm_Match, args, empty);
+    return makeTomTerm_Match( funTomTerm_Match, args, getEmpty());
   }
 
   public TomTerm TomTerm_MatchFromTerm(aterm.ATerm trm)
@@ -3702,7 +3702,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_MatchingCondition makeTomTerm_MatchingCondition(TomTerm _lhs, TomTerm _rhs) {
     aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs};
-    return makeTomTerm_MatchingCondition( funTomTerm_MatchingCondition, args, empty);
+    return makeTomTerm_MatchingCondition( funTomTerm_MatchingCondition, args, getEmpty());
   }
 
   public TomTerm TomTerm_MatchingConditionFromTerm(aterm.ATerm trm)
@@ -3733,7 +3733,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_EqualityCondition makeTomTerm_EqualityCondition(TomTerm _lhs, TomTerm _rhs) {
     aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs};
-    return makeTomTerm_EqualityCondition( funTomTerm_EqualityCondition, args, empty);
+    return makeTomTerm_EqualityCondition( funTomTerm_EqualityCondition, args, getEmpty());
   }
 
   public TomTerm TomTerm_EqualityConditionFromTerm(aterm.ATerm trm)
@@ -3764,7 +3764,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_RuleSet makeTomTerm_RuleSet(TomRuleList _ruleList, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_ruleList, _orgTrack};
-    return makeTomTerm_RuleSet( funTomTerm_RuleSet, args, empty);
+    return makeTomTerm_RuleSet( funTomTerm_RuleSet, args, getEmpty());
   }
 
   public TomTerm TomTerm_RuleSetFromTerm(aterm.ATerm trm)
@@ -3795,7 +3795,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_SubjectList makeTomTerm_SubjectList(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_SubjectList( funTomTerm_SubjectList, args, empty);
+    return makeTomTerm_SubjectList( funTomTerm_SubjectList, args, getEmpty());
   }
 
   public TomTerm TomTerm_SubjectListFromTerm(aterm.ATerm trm)
@@ -3825,7 +3825,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_PatternList makeTomTerm_PatternList(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_PatternList( funTomTerm_PatternList, args, empty);
+    return makeTomTerm_PatternList( funTomTerm_PatternList, args, getEmpty());
   }
 
   public TomTerm TomTerm_PatternListFromTerm(aterm.ATerm trm)
@@ -3855,7 +3855,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_TermList makeTomTerm_TermList(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_TermList( funTomTerm_TermList, args, empty);
+    return makeTomTerm_TermList( funTomTerm_TermList, args, getEmpty());
   }
 
   public TomTerm TomTerm_TermListFromTerm(aterm.ATerm trm)
@@ -3885,7 +3885,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_Term makeTomTerm_Term(TomTerm _tomTerm) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomTerm};
-    return makeTomTerm_Term( funTomTerm_Term, args, empty);
+    return makeTomTerm_Term( funTomTerm_Term, args, getEmpty());
   }
 
   public TomTerm TomTerm_TermFromTerm(aterm.ATerm trm)
@@ -3915,7 +3915,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_PatternAction makeTomTerm_PatternAction(TomTerm _termList, TomTerm _tom, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termList, _tom, _option};
-    return makeTomTerm_PatternAction( funTomTerm_PatternAction, args, empty);
+    return makeTomTerm_PatternAction( funTomTerm_PatternAction, args, getEmpty());
   }
 
   public TomTerm TomTerm_PatternActionFromTerm(aterm.ATerm trm)
@@ -3947,7 +3947,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_DefaultPatternAction makeTomTerm_DefaultPatternAction(TomTerm _termList, TomTerm _tom, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termList, _tom, _option};
-    return makeTomTerm_DefaultPatternAction( funTomTerm_DefaultPatternAction, args, empty);
+    return makeTomTerm_DefaultPatternAction( funTomTerm_DefaultPatternAction, args, getEmpty());
   }
 
   public TomTerm TomTerm_DefaultPatternActionFromTerm(aterm.ATerm trm)
@@ -3979,7 +3979,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_TLVar makeTomTerm_TLVar(String _strName, TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_strName, 0, true)), _astType};
-    return makeTomTerm_TLVar( funTomTerm_TLVar, args, empty);
+    return makeTomTerm_TLVar( funTomTerm_TLVar, args, getEmpty());
   }
 
   public TomTerm TomTerm_TLVarFromTerm(aterm.ATerm trm)
@@ -4010,7 +4010,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_Declaration makeTomTerm_Declaration(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeTomTerm_Declaration( funTomTerm_Declaration, args, empty);
+    return makeTomTerm_Declaration( funTomTerm_Declaration, args, getEmpty());
   }
 
   public TomTerm TomTerm_DeclarationFromTerm(aterm.ATerm trm)
@@ -4040,7 +4040,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_Variable makeTomTerm_Variable(Option _option, TomName _astName, TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _astType};
-    return makeTomTerm_Variable( funTomTerm_Variable, args, empty);
+    return makeTomTerm_Variable( funTomTerm_Variable, args, getEmpty());
   }
 
   public TomTerm TomTerm_VariableFromTerm(aterm.ATerm trm)
@@ -4072,7 +4072,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_VariableStar makeTomTerm_VariableStar(Option _option, TomName _astName, TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _astType};
-    return makeTomTerm_VariableStar( funTomTerm_VariableStar, args, empty);
+    return makeTomTerm_VariableStar( funTomTerm_VariableStar, args, getEmpty());
   }
 
   public TomTerm TomTerm_VariableStarFromTerm(aterm.ATerm trm)
@@ -4104,7 +4104,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_Placeholder makeTomTerm_Placeholder(Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option};
-    return makeTomTerm_Placeholder( funTomTerm_Placeholder, args, empty);
+    return makeTomTerm_Placeholder( funTomTerm_Placeholder, args, getEmpty());
   }
 
   public TomTerm TomTerm_PlaceholderFromTerm(aterm.ATerm trm)
@@ -4134,7 +4134,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_UnamedVariable makeTomTerm_UnamedVariable(Option _option, TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astType};
-    return makeTomTerm_UnamedVariable( funTomTerm_UnamedVariable, args, empty);
+    return makeTomTerm_UnamedVariable( funTomTerm_UnamedVariable, args, getEmpty());
   }
 
   public TomTerm TomTerm_UnamedVariableFromTerm(aterm.ATerm trm)
@@ -4165,7 +4165,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_LocalVariable makeTomTerm_LocalVariable() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomTerm_LocalVariable( funTomTerm_LocalVariable, args, empty);
+    return makeTomTerm_LocalVariable( funTomTerm_LocalVariable, args, getEmpty());
   }
 
   public TomTerm TomTerm_LocalVariableFromTerm(aterm.ATerm trm)
@@ -4194,7 +4194,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_EndLocalVariable makeTomTerm_EndLocalVariable() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomTerm_EndLocalVariable( funTomTerm_EndLocalVariable, args, empty);
+    return makeTomTerm_EndLocalVariable( funTomTerm_EndLocalVariable, args, getEmpty());
   }
 
   public TomTerm TomTerm_EndLocalVariableFromTerm(aterm.ATerm trm)
@@ -4223,7 +4223,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_BuildVariable makeTomTerm_BuildVariable(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeTomTerm_BuildVariable( funTomTerm_BuildVariable, args, empty);
+    return makeTomTerm_BuildVariable( funTomTerm_BuildVariable, args, getEmpty());
   }
 
   public TomTerm TomTerm_BuildVariableFromTerm(aterm.ATerm trm)
@@ -4253,7 +4253,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_BuildTerm makeTomTerm_BuildTerm(TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args};
-    return makeTomTerm_BuildTerm( funTomTerm_BuildTerm, args, empty);
+    return makeTomTerm_BuildTerm( funTomTerm_BuildTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_BuildTermFromTerm(aterm.ATerm trm)
@@ -4284,7 +4284,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_BuildList makeTomTerm_BuildList(TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args};
-    return makeTomTerm_BuildList( funTomTerm_BuildList, args, empty);
+    return makeTomTerm_BuildList( funTomTerm_BuildList, args, getEmpty());
   }
 
   public TomTerm TomTerm_BuildListFromTerm(aterm.ATerm trm)
@@ -4315,7 +4315,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_BuildArray makeTomTerm_BuildArray(TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args};
-    return makeTomTerm_BuildArray( funTomTerm_BuildArray, args, empty);
+    return makeTomTerm_BuildArray( funTomTerm_BuildArray, args, getEmpty());
   }
 
   public TomTerm TomTerm_BuildArrayFromTerm(aterm.ATerm trm)
@@ -4346,7 +4346,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_CompiledMatch makeTomTerm_CompiledMatch(TomList _decls, TomList _automataList, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_decls, _automataList, _option};
-    return makeTomTerm_CompiledMatch( funTomTerm_CompiledMatch, args, empty);
+    return makeTomTerm_CompiledMatch( funTomTerm_CompiledMatch, args, getEmpty());
   }
 
   public TomTerm TomTerm_CompiledMatchFromTerm(aterm.ATerm trm)
@@ -4378,7 +4378,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_CompiledPattern makeTomTerm_CompiledPattern(TomList _instList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_instList};
-    return makeTomTerm_CompiledPattern( funTomTerm_CompiledPattern, args, empty);
+    return makeTomTerm_CompiledPattern( funTomTerm_CompiledPattern, args, getEmpty());
   }
 
   public TomTerm TomTerm_CompiledPatternFromTerm(aterm.ATerm trm)
@@ -4408,7 +4408,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_AssignedVariable makeTomTerm_AssignedVariable(String _varName, Expression _source, int _nbUse, Expression _usedInDoWhile, Expression _removable) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_varName, 0, true)), _source, makeInt(_nbUse), _usedInDoWhile, _removable};
-    return makeTomTerm_AssignedVariable( funTomTerm_AssignedVariable, args, empty);
+    return makeTomTerm_AssignedVariable( funTomTerm_AssignedVariable, args, getEmpty());
   }
 
   public TomTerm TomTerm_AssignedVariableFromTerm(aterm.ATerm trm)
@@ -4442,7 +4442,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_Automata makeTomTerm_Automata(TomNumberList _numberList, TomList _instList, TomName _debugName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_numberList, _instList, _debugName};
-    return makeTomTerm_Automata( funTomTerm_Automata, args, empty);
+    return makeTomTerm_Automata( funTomTerm_Automata, args, getEmpty());
   }
 
   public TomTerm TomTerm_AutomataFromTerm(aterm.ATerm trm)
@@ -4474,7 +4474,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_DefaultAutomata makeTomTerm_DefaultAutomata(TomNumberList _numberList, TomList _instList, TomName _debugName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_numberList, _instList, _debugName};
-    return makeTomTerm_DefaultAutomata( funTomTerm_DefaultAutomata, args, empty);
+    return makeTomTerm_DefaultAutomata( funTomTerm_DefaultAutomata, args, getEmpty());
   }
 
   public TomTerm TomTerm_DefaultAutomataFromTerm(aterm.ATerm trm)
@@ -4506,7 +4506,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_MatchXML makeTomTerm_MatchXML(String _docName, TomTerm _patternList, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_docName, 0, true)), _patternList, _option};
-    return makeTomTerm_MatchXML( funTomTerm_MatchXML, args, empty);
+    return makeTomTerm_MatchXML( funTomTerm_MatchXML, args, getEmpty());
   }
 
   public TomTerm TomTerm_MatchXMLFromTerm(aterm.ATerm trm)
@@ -4538,7 +4538,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_BackQuoteXML makeTomTerm_BackQuoteXML(XMLTerm _xmlTerm, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_xmlTerm, _option};
-    return makeTomTerm_BackQuoteXML( funTomTerm_BackQuoteXML, args, empty);
+    return makeTomTerm_BackQuoteXML( funTomTerm_BackQuoteXML, args, getEmpty());
   }
 
   public TomTerm TomTerm_BackQuoteXMLFromTerm(aterm.ATerm trm)
@@ -4569,7 +4569,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomTerm_XMLTermToTomTerm makeTomTerm_XMLTermToTomTerm(XMLTerm _xmlTerm) {
     aterm.ATerm[] args = new aterm.ATerm[] {_xmlTerm};
-    return makeTomTerm_XMLTermToTomTerm( funTomTerm_XMLTermToTomTerm, args, empty);
+    return makeTomTerm_XMLTermToTomTerm( funTomTerm_XMLTermToTomTerm, args, getEmpty());
   }
 
   public TomTerm TomTerm_XMLTermToTomTermFromTerm(aterm.ATerm trm)
@@ -4599,7 +4599,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_MatchNumber makeTomNumber_MatchNumber(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_MatchNumber( funTomNumber_MatchNumber, args, empty);
+    return makeTomNumber_MatchNumber( funTomNumber_MatchNumber, args, getEmpty());
   }
 
   public TomNumber TomNumber_MatchNumberFromTerm(aterm.ATerm trm)
@@ -4629,7 +4629,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_PatternNumber makeTomNumber_PatternNumber(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_PatternNumber( funTomNumber_PatternNumber, args, empty);
+    return makeTomNumber_PatternNumber( funTomNumber_PatternNumber, args, getEmpty());
   }
 
   public TomNumber TomNumber_PatternNumberFromTerm(aterm.ATerm trm)
@@ -4659,7 +4659,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_ListNumber makeTomNumber_ListNumber(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_ListNumber( funTomNumber_ListNumber, args, empty);
+    return makeTomNumber_ListNumber( funTomNumber_ListNumber, args, getEmpty());
   }
 
   public TomNumber TomNumber_ListNumberFromTerm(aterm.ATerm trm)
@@ -4689,7 +4689,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_IndexNumber makeTomNumber_IndexNumber(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_IndexNumber( funTomNumber_IndexNumber, args, empty);
+    return makeTomNumber_IndexNumber( funTomNumber_IndexNumber, args, getEmpty());
   }
 
   public TomNumber TomNumber_IndexNumberFromTerm(aterm.ATerm trm)
@@ -4719,7 +4719,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_Begin makeTomNumber_Begin(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_Begin( funTomNumber_Begin, args, empty);
+    return makeTomNumber_Begin( funTomNumber_Begin, args, getEmpty());
   }
 
   public TomNumber TomNumber_BeginFromTerm(aterm.ATerm trm)
@@ -4749,7 +4749,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_End makeTomNumber_End(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_End( funTomNumber_End, args, empty);
+    return makeTomNumber_End( funTomNumber_End, args, getEmpty());
   }
 
   public TomNumber TomNumber_EndFromTerm(aterm.ATerm trm)
@@ -4779,7 +4779,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_Number makeTomNumber_Number(int _integer) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeInt(_integer)};
-    return makeTomNumber_Number( funTomNumber_Number, args, empty);
+    return makeTomNumber_Number( funTomNumber_Number, args, getEmpty());
   }
 
   public TomNumber TomNumber_NumberFromTerm(aterm.ATerm trm)
@@ -4809,7 +4809,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_AbsVar makeTomNumber_AbsVar(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_AbsVar( funTomNumber_AbsVar, args, empty);
+    return makeTomNumber_AbsVar( funTomNumber_AbsVar, args, getEmpty());
   }
 
   public TomNumber TomNumber_AbsVarFromTerm(aterm.ATerm trm)
@@ -4839,7 +4839,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_RenamedVar makeTomNumber_RenamedVar(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeTomNumber_RenamedVar( funTomNumber_RenamedVar, args, empty);
+    return makeTomNumber_RenamedVar( funTomNumber_RenamedVar, args, getEmpty());
   }
 
   public TomNumber TomNumber_RenamedVarFromTerm(aterm.ATerm trm)
@@ -4869,7 +4869,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomNumber_RuleVar makeTomNumber_RuleVar() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomNumber_RuleVar( funTomNumber_RuleVar, args, empty);
+    return makeTomNumber_RuleVar( funTomNumber_RuleVar, args, getEmpty());
   }
 
   public TomNumber TomNumber_RuleVarFromTerm(aterm.ATerm trm)
@@ -4898,7 +4898,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomRule_RewriteRule makeTomRule_RewriteRule(TomTerm _lhs, TomTerm _rhs, TomList _condList, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs, _condList, _option};
-    return makeTomRule_RewriteRule( funTomRule_RewriteRule, args, empty);
+    return makeTomRule_RewriteRule( funTomRule_RewriteRule, args, getEmpty());
   }
 
   public TomRule TomRule_RewriteRuleFromTerm(aterm.ATerm trm)
@@ -4931,7 +4931,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_IfThenElse makeInstruction_IfThenElse(Expression _condition, TomList _succesList, TomList _failureList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_condition, _succesList, _failureList};
-    return makeInstruction_IfThenElse( funInstruction_IfThenElse, args, empty);
+    return makeInstruction_IfThenElse( funInstruction_IfThenElse, args, getEmpty());
   }
 
   public Instruction Instruction_IfThenElseFromTerm(aterm.ATerm trm)
@@ -4963,7 +4963,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_DoWhile makeInstruction_DoWhile(TomList _instList, Expression _condition) {
     aterm.ATerm[] args = new aterm.ATerm[] {_instList, _condition};
-    return makeInstruction_DoWhile( funInstruction_DoWhile, args, empty);
+    return makeInstruction_DoWhile( funInstruction_DoWhile, args, getEmpty());
   }
 
   public Instruction Instruction_DoWhileFromTerm(aterm.ATerm trm)
@@ -4994,7 +4994,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_Assign makeInstruction_Assign(TomTerm _kid1, Expression _source) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _source};
-    return makeInstruction_Assign( funInstruction_Assign, args, empty);
+    return makeInstruction_Assign( funInstruction_Assign, args, getEmpty());
   }
 
   public Instruction Instruction_AssignFromTerm(aterm.ATerm trm)
@@ -5025,7 +5025,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_AssignMatchSubject makeInstruction_AssignMatchSubject(TomTerm _kid1, Expression _source) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _source};
-    return makeInstruction_AssignMatchSubject( funInstruction_AssignMatchSubject, args, empty);
+    return makeInstruction_AssignMatchSubject( funInstruction_AssignMatchSubject, args, getEmpty());
   }
 
   public Instruction Instruction_AssignMatchSubjectFromTerm(aterm.ATerm trm)
@@ -5056,7 +5056,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_Increment makeInstruction_Increment(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeInstruction_Increment( funInstruction_Increment, args, empty);
+    return makeInstruction_Increment( funInstruction_Increment, args, getEmpty());
   }
 
   public Instruction Instruction_IncrementFromTerm(aterm.ATerm trm)
@@ -5086,7 +5086,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_Action makeInstruction_Action(TomList _instList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_instList};
-    return makeInstruction_Action( funInstruction_Action, args, empty);
+    return makeInstruction_Action( funInstruction_Action, args, getEmpty());
   }
 
   public Instruction Instruction_ActionFromTerm(aterm.ATerm trm)
@@ -5116,7 +5116,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_ExitAction makeInstruction_ExitAction(TomNumberList _numberList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_numberList};
-    return makeInstruction_ExitAction( funInstruction_ExitAction, args, empty);
+    return makeInstruction_ExitAction( funInstruction_ExitAction, args, getEmpty());
   }
 
   public Instruction Instruction_ExitActionFromTerm(aterm.ATerm trm)
@@ -5146,7 +5146,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_Return makeInstruction_Return(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeInstruction_Return( funInstruction_Return, args, empty);
+    return makeInstruction_Return( funInstruction_Return, args, getEmpty());
   }
 
   public Instruction Instruction_ReturnFromTerm(aterm.ATerm trm)
@@ -5176,7 +5176,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_OpenBlock makeInstruction_OpenBlock() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeInstruction_OpenBlock( funInstruction_OpenBlock, args, empty);
+    return makeInstruction_OpenBlock( funInstruction_OpenBlock, args, getEmpty());
   }
 
   public Instruction Instruction_OpenBlockFromTerm(aterm.ATerm trm)
@@ -5205,7 +5205,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_CloseBlock makeInstruction_CloseBlock() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeInstruction_CloseBlock( funInstruction_CloseBlock, args, empty);
+    return makeInstruction_CloseBlock( funInstruction_CloseBlock, args, getEmpty());
   }
 
   public Instruction Instruction_CloseBlockFromTerm(aterm.ATerm trm)
@@ -5234,7 +5234,7 @@ public class TomSignatureFactory extends PureFactory
 
   public Instruction_NamedBlock makeInstruction_NamedBlock(String _blockName, TomList _instList) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_blockName, 0, true)), _instList};
-    return makeInstruction_NamedBlock( funInstruction_NamedBlock, args, empty);
+    return makeInstruction_NamedBlock( funInstruction_NamedBlock, args, getEmpty());
   }
 
   public Instruction Instruction_NamedBlockFromTerm(aterm.ATerm trm)
@@ -5265,7 +5265,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomSymbol_Symbol makeTomSymbol_Symbol(TomName _astName, TomType _typesToType, SlotList _slotList, Option _option, TargetLanguage _tlCode) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _typesToType, _slotList, _option, _tlCode};
-    return makeTomSymbol_Symbol( funTomSymbol_Symbol, args, empty);
+    return makeTomSymbol_Symbol( funTomSymbol_Symbol, args, getEmpty());
   }
 
   public TomSymbol TomSymbol_SymbolFromTerm(aterm.ATerm trm)
@@ -5299,7 +5299,7 @@ public class TomSignatureFactory extends PureFactory
 
   public PairNameDecl_Slot makePairNameDecl_Slot(TomName _slotName, Declaration _slotDecl) {
     aterm.ATerm[] args = new aterm.ATerm[] {_slotName, _slotDecl};
-    return makePairNameDecl_Slot( funPairNameDecl_Slot, args, empty);
+    return makePairNameDecl_Slot( funPairNameDecl_Slot, args, getEmpty());
   }
 
   public PairNameDecl PairNameDecl_SlotFromTerm(aterm.ATerm trm)
@@ -5330,7 +5330,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomSymbolTable_Table makeTomSymbolTable_Table(TomEntryList _entryList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_entryList};
-    return makeTomSymbolTable_Table( funTomSymbolTable_Table, args, empty);
+    return makeTomSymbolTable_Table( funTomSymbolTable_Table, args, getEmpty());
   }
 
   public TomSymbolTable TomSymbolTable_TableFromTerm(aterm.ATerm trm)
@@ -5360,7 +5360,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomEntry_Entry makeTomEntry_Entry(String _strName, TomSymbol _astSymbol) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_strName, 0, true)), _astSymbol};
-    return makeTomEntry_Entry( funTomEntry_Entry, args, empty);
+    return makeTomEntry_Entry( funTomEntry_Entry, args, getEmpty());
   }
 
   public TomEntry TomEntry_EntryFromTerm(aterm.ATerm trm)
@@ -5391,7 +5391,7 @@ public class TomSignatureFactory extends PureFactory
 
   public TomStructureTable_StructTable makeTomStructureTable_StructTable(TomList _structList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_structList};
-    return makeTomStructureTable_StructTable( funTomStructureTable_StructTable, args, empty);
+    return makeTomStructureTable_StructTable( funTomStructureTable_StructTable, args, getEmpty());
   }
 
   public TomStructureTable TomStructureTable_StructTableFromTerm(aterm.ATerm trm)
@@ -5421,7 +5421,7 @@ public class TomSignatureFactory extends PureFactory
 
   public XMLTerm_Element makeXMLTerm_Element(TomName _astName, TomList _args, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args, _option};
-    return makeXMLTerm_Element( funXMLTerm_Element, args, empty);
+    return makeXMLTerm_Element( funXMLTerm_Element, args, getEmpty());
   }
 
   public XMLTerm XMLTerm_ElementFromTerm(aterm.ATerm trm)
@@ -5453,7 +5453,7 @@ public class TomSignatureFactory extends PureFactory
 
   public XMLTerm_Attribute makeXMLTerm_Attribute(TomName _astName, TomList _args, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args, _option};
-    return makeXMLTerm_Attribute( funXMLTerm_Attribute, args, empty);
+    return makeXMLTerm_Attribute( funXMLTerm_Attribute, args, getEmpty());
   }
 
   public XMLTerm XMLTerm_AttributeFromTerm(aterm.ATerm trm)
@@ -5485,7 +5485,7 @@ public class TomSignatureFactory extends PureFactory
 
   public XMLTerm_ReservedWord makeXMLTerm_ReservedWord(TomName _astName, TomList _args, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args, _option};
-    return makeXMLTerm_ReservedWord( funXMLTerm_ReservedWord, args, empty);
+    return makeXMLTerm_ReservedWord( funXMLTerm_ReservedWord, args, getEmpty());
   }
 
   public XMLTerm XMLTerm_ReservedWordFromTerm(aterm.ATerm trm)
@@ -5517,7 +5517,7 @@ public class TomSignatureFactory extends PureFactory
 
   public XMLTerm_XMLPlaceholder makeXMLTerm_XMLPlaceholder(Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option};
-    return makeXMLTerm_XMLPlaceholder( funXMLTerm_XMLPlaceholder, args, empty);
+    return makeXMLTerm_XMLPlaceholder( funXMLTerm_XMLPlaceholder, args, getEmpty());
   }
 
   public XMLTerm XMLTerm_XMLPlaceholderFromTerm(aterm.ATerm trm)
@@ -5547,7 +5547,7 @@ public class TomSignatureFactory extends PureFactory
 
   public XMLTerm_XMLVariable makeXMLTerm_XMLVariable(TomName _astName, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _option};
-    return makeXMLTerm_XMLVariable( funXMLTerm_XMLVariable, args, empty);
+    return makeXMLTerm_XMLVariable( funXMLTerm_XMLVariable, args, getEmpty());
   }
 
   public XMLTerm XMLTerm_XMLVariableFromTerm(aterm.ATerm trm)
@@ -5576,7 +5576,7 @@ public class TomSignatureFactory extends PureFactory
     return (TomList) makeTomList(elem, emptyTomList);
   }
   public TomList makeTomList(TomTerm head, TomList tail) {
-    return (TomList) makeTomList((aterm.ATerm) head, (aterm.ATermList) tail, empty);
+    return (TomList) makeTomList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
   }
   protected TomList makeTomList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomList) {
@@ -5591,7 +5591,7 @@ public class TomSignatureFactory extends PureFactory
     return (TomNumberList) makeTomNumberList(elem, emptyTomNumberList);
   }
   public TomNumberList makeTomNumberList(TomNumber head, TomNumberList tail) {
-    return (TomNumberList) makeTomNumberList((aterm.ATerm) head, (aterm.ATermList) tail, empty);
+    return (TomNumberList) makeTomNumberList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
   }
   protected TomNumberList makeTomNumberList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomNumberList) {
@@ -5606,7 +5606,7 @@ public class TomSignatureFactory extends PureFactory
     return (TomRuleList) makeTomRuleList(elem, emptyTomRuleList);
   }
   public TomRuleList makeTomRuleList(TomRule head, TomRuleList tail) {
-    return (TomRuleList) makeTomRuleList((aterm.ATerm) head, (aterm.ATermList) tail, empty);
+    return (TomRuleList) makeTomRuleList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
   }
   protected TomRuleList makeTomRuleList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomRuleList) {
@@ -5621,7 +5621,7 @@ public class TomSignatureFactory extends PureFactory
     return (TomTypeList) makeTomTypeList(elem, emptyTomTypeList);
   }
   public TomTypeList makeTomTypeList(TomType head, TomTypeList tail) {
-    return (TomTypeList) makeTomTypeList((aterm.ATerm) head, (aterm.ATermList) tail, empty);
+    return (TomTypeList) makeTomTypeList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
   }
   protected TomTypeList makeTomTypeList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomTypeList) {
@@ -5636,7 +5636,7 @@ public class TomSignatureFactory extends PureFactory
     return (OptionList) makeOptionList(elem, emptyOptionList);
   }
   public OptionList makeOptionList(Option head, OptionList tail) {
-    return (OptionList) makeOptionList((aterm.ATerm) head, (aterm.ATermList) tail, empty);
+    return (OptionList) makeOptionList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
   }
   protected OptionList makeOptionList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoOptionList) {
@@ -5651,7 +5651,7 @@ public class TomSignatureFactory extends PureFactory
     return (SlotList) makeSlotList(elem, emptySlotList);
   }
   public SlotList makeSlotList(PairNameDecl head, SlotList tail) {
-    return (SlotList) makeSlotList((aterm.ATerm) head, (aterm.ATermList) tail, empty);
+    return (SlotList) makeSlotList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
   }
   protected SlotList makeSlotList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoSlotList) {
@@ -5666,7 +5666,7 @@ public class TomSignatureFactory extends PureFactory
     return (TomEntryList) makeTomEntryList(elem, emptyTomEntryList);
   }
   public TomEntryList makeTomEntryList(TomEntry head, TomEntryList tail) {
-    return (TomEntryList) makeTomEntryList((aterm.ATerm) head, (aterm.ATermList) tail, empty);
+    return (TomEntryList) makeTomEntryList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
   }
   protected TomEntryList makeTomEntryList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomEntryList) {
