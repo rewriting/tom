@@ -33,6 +33,7 @@ import jtom.*;
 import jtom.adt.tomsignature.types.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.platform.OptionParser;
+import tom.platform.RuntimeAlert;
 import jtom.tools.*;
 
 
@@ -63,13 +64,13 @@ public class TomBackend extends TomGenericPlugin {
   /**
    *
    */
-  public void run() {
+  public RuntimeAlert run() {
+    RuntimeAlert result = new RuntimeAlert();
     if(isActivated() == true) {
       TomAbstractGenerator generator = null;
       Writer writer;
-      int errorsAtStart = getStatusHandler().nbOfErrors();
-      int warningsAtStart = getStatusHandler().nbOfWarnings();
-      
+      //int errorsAtStart = getStatusHandler().nbOfErrors();
+      //int warningsAtStart = getStatusHandler().nbOfWarnings();
       long startChrono = System.currentTimeMillis();
       try {
         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile())));
@@ -91,15 +92,16 @@ public class TomBackend extends TomGenericPlugin {
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
         
         writer.close();
-        printAlertMessage(errorsAtStart, warningsAtStart);
+        //printAlertMessage(errorsAtStart, warningsAtStart);
       } catch (IOException e) {
         getLogger().log( Level.SEVERE, "BackendIOException",
                          new Object[]{getStreamManager().getOutputFile().getName(), e.getMessage()} );
+        // return result.addError();
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, "ExceptionMessage",
                          new Object[]{getStreamManager().getInputFile().getName(), "TomBackend", e.getMessage()} );
         e.printStackTrace();
-        return;
+        return result;
       }
       // set the generated File Name
       generatedFileName = getStreamManager().getOutputFile().getAbsolutePath();
@@ -107,6 +109,7 @@ public class TomBackend extends TomGenericPlugin {
       // backend is desactivated
       getLogger().log(Level.INFO,"BackendInactivated");
     }
+    return result;
   }
   
   /**

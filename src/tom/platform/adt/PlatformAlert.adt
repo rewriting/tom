@@ -1,0 +1,8 @@
+[
+  modulentry(Name("PlatformAlert"),[],[Type("AlertList"),Type("Alert")],
+  [
+    constructor(Alert,Error,Error(<message(str)>,<file(str)>,<line(int)>)),
+    constructor(Alert,Warning,Warning(<message(str)>,<file(str)>,<line(int)>)),
+    list(AlertList, Alert)
+  ])
+]

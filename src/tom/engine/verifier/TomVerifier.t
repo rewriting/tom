@@ -37,7 +37,7 @@ import tom.library.traversal.*;
 import tom.platform.adt.platformoption.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.platform.OptionParser;
-
+import tom.platform.RuntimeAlert;
 
 /**
  * The TomVerifier plugin.
@@ -55,10 +55,11 @@ public class TomVerifier extends TomGenericPlugin {
     verif = new Verifier();
   }
 
-  public void run() {
+  public RuntimeAlert run() {
+    RuntimeAlert result = new RuntimeAlert();
     if(isActivated()) {
-      int errorsAtStart = getStatusHandler().nbOfErrors();
-      int warningsAtStart = getStatusHandler().nbOfWarnings();
+      //int errorsAtStart = getStatusHandler().nbOfErrors();
+      //int warningsAtStart = getStatusHandler().nbOfWarnings();
       long startChrono = System.currentTimeMillis();
       try {
         // here the extraction stuff
@@ -79,11 +80,13 @@ public class TomVerifier extends TomGenericPlugin {
                                       getStreamManager().getInputFile().getName(),
                                       e.getMessage()} );
         e.printStackTrace();
+        //result.addError();
       }
     } else {	    
       // Not active plugin
       getLogger().log(Level.INFO, "VerifierInactivated");
     }
+    return result;
   }
   
   public PlatformOptionList getDeclaredOptionList() {

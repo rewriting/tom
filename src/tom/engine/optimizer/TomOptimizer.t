@@ -12,6 +12,7 @@ import java.util.logging.*;
 import tom.library.traversal.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.platform.OptionParser;
+import tom.platform.RuntimeAlert;
 
 /**
  * The TomOptimizer plugin.
@@ -31,10 +32,11 @@ public class TomOptimizer extends TomGenericPlugin {
     super("TomOptimizer");
   }
   
-  public void run() {
+  public RuntimeAlert run() {
+    RuntimeAlert result = new RuntimeAlert();
     if(isActivated()) {
-      int errorsAtStart   = getStatusHandler().nbOfErrors();
-      int warningsAtStart = getStatusHandler().nbOfWarnings();
+      //int errorsAtStart   = getStatusHandler().nbOfErrors();
+      //int warningsAtStart = getStatusHandler().nbOfWarnings();
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
@@ -50,7 +52,7 @@ public class TomOptimizer extends TomGenericPlugin {
                          new Object[]{"TomOptimizer", getStreamManager().getInputFile().getName(), e.getMessage()} );
         
         e.printStackTrace();
-        return;
+        return result;
       }
       if(intermediate) {
         Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
@@ -60,6 +62,7 @@ public class TomOptimizer extends TomGenericPlugin {
       // not active plugin
       getLogger().log(Level.INFO, "The optimizer is not activated and thus WILL NOT RUN.");
     }
+    return result;
   }
 
   public PlatformOptionList getDeclaredOptionList() {

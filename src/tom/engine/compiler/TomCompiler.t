@@ -38,6 +38,7 @@ import jtom.adt.tomsignature.types.*;
 import tom.library.traversal.Replace1;
 import tom.platform.adt.platformoption.types.*;
 import tom.platform.OptionParser;
+import tom.platform.RuntimeAlert;
 
 /**
  * The TomCompiler plugin.
@@ -64,10 +65,11 @@ public class TomCompiler extends TomGenericPlugin {
     this.tomFactory = new TomFactory();
   }
   
-  public void run() {
+  public RuntimeAlert run() {
+    RuntimeAlert result = new RuntimeAlert();
     TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(getStreamManager().getSymbolTable());
-    int errorsAtStart = getStatusHandler().nbOfErrors();
-    int warningsAtStart = getStatusHandler().nbOfWarnings();
+    //int errorsAtStart = getStatusHandler().nbOfErrors();
+    //int warningsAtStart = getStatusHandler().nbOfWarnings();
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     TomTerm compiledTerm = null;
@@ -87,11 +89,12 @@ public class TomCompiler extends TomGenericPlugin {
       getLogger().log( Level.SEVERE, "ExceptionMessage",
                        new Object[]{getStreamManager().getInputFile().getName(), "TomCompiler", e.getMessage()} );
       e.printStackTrace();
-      return;
+      return result;
     }
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
     }
+    return result;
   }
   
   public PlatformOptionList getDeclaredOptionList() {

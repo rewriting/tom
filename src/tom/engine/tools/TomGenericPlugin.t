@@ -98,13 +98,16 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    *
    * @param term the input Object
    */
-  public void setArgs(Object[] arg) {
+  public RuntimeAlert setArgs(Object[] arg) {
+    RuntimeAlert errs = new RuntimeAlert();
     if (arg[0] instanceof TomTerm && arg[1] instanceof TomStreamManager) {
       term = (TomTerm)arg[0];
       streamManager = (TomStreamManager)arg[1];
     } else {
       getLogger().log(Level.SEVERE, "InvalidPluginArgument", new Object[]{"[TomTerm, TomStreamManager]", getArgumentArrayString(arg)});
+      //errs.addError();
     }
+    return errs;
   }
 
   public void setWorkingTerm(Object arg) {
@@ -120,7 +123,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * The run() method is not implemented in TomGenericPlugin.
    * The plugin should implement its own run() method itself.
    */
-  public abstract void run();
+  public abstract RuntimeAlert run();
 
   /**
    * From Plugin interface 
@@ -213,7 +216,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     setOptionValue(optionName, optionValue);
   }
 
-  public void printAlertMessage(int errorsAtStart, int warningsAtStart) {
+  /*public void printAlertMessage(int errorsAtStart, int warningsAtStart) {
     if(!getOptionBooleanValue("eclipse")) {
       
       int nbOfErrors   = statusHandler.nbOfErrors()   - errorsAtStart;
@@ -229,7 +232,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
                     new Object[]{pluginName, new Integer(nbOfWarnings)});
       }
     }
-  }
+    }*/
 
   private void findStatusHandler() {
     Handler[] handlers = Logger.getLogger(Tom.LOG_RADICAL).getHandlers();

@@ -32,6 +32,7 @@ import jtom.adt.tomsignature.types.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.library.traversal.Replace1;
 import tom.platform.OptionParser;
+import tom.platform.RuntimeAlert;
 
 import aterm.*;
 import jtom.tools.*;
@@ -65,9 +66,10 @@ public class TomExpander extends TomGenericPlugin {
     tomFactory = new TomFactory();
   }
 
-  public void run() {
-    int errorsAtStart = getStatusHandler().nbOfErrors();
-    int warningsAtStart = getStatusHandler().nbOfWarnings();
+  public RuntimeAlert run() {
+    RuntimeAlert result = new RuntimeAlert();
+    //int errorsAtStart = getStatusHandler().nbOfErrors();
+    //int warningsAtStart = getStatusHandler().nbOfWarnings();
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
     TomTerm expandedTerm = null;
@@ -79,18 +81,18 @@ public class TomExpander extends TomGenericPlugin {
       
       TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
       TomTerm stringExpandedTerm   = expandString(variableExpandedTerm);
-      expandedTerm         = updateCodomain(stringExpandedTerm);
+      expandedTerm = updateCodomain(stringExpandedTerm);
       
       setWorkingTerm(expandedTerm);
       // verbose
-      getLogger().log( Level.INFO, "TomExpandingPhase",
-                       new Integer((int)(System.currentTimeMillis()-startChrono)) );
+      getLogger().log(Level.INFO, "TomExpandingPhase",
+                      new Integer((int)(System.currentTimeMillis()-startChrono)));
       //printAlertMessage(errorsAtStart, warningsAtStart);
     } catch (Exception e) {
       getLogger().log( Level.SEVERE, "ExceptionMessage",
                        new Object[]{getClass().getName(), getStreamManager().getInputFile().getName(), e.getMessage()} );
       e.printStackTrace();
-      return;
+      return result;
     }
     if(intermediate) {
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
@@ -98,6 +100,7 @@ public class TomExpander extends TomGenericPlugin {
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
                            + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
     }
+    return result;
   }
   
   /**

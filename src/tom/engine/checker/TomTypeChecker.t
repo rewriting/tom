@@ -31,11 +31,12 @@ public class TomTypeChecker extends TomChecker {
     super("TomTypeChecker");
   }
   
-  public void run() {
+  public RuntimeAlert run() {
+    RuntimeAlert result = new RuntimeAlert();
     if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
-      int errorsAtStart = getStatusHandler().nbOfErrors();
-      int warningsAtStart = getStatusHandler().nbOfWarnings();
+      //int errorsAtStart = getStatusHandler().nbOfErrors();
+      //int warningsAtStart = getStatusHandler().nbOfWarnings();
       long startChrono = System.currentTimeMillis();
       try {
         checkTypeInference( (TomTerm)getWorkingTerm() );
@@ -47,11 +48,13 @@ public class TomTypeChecker extends TomChecker {
         getLogger().log( Level.SEVERE, "ExceptionMessage",
                          new Object[]{getClass().getName(), getStreamManager().getInputFile().getName(),e.getMessage()} );
         e.printStackTrace();
+        // result.addError();
       }
     } else {
       // type checker desactivated    
       getLogger().log(Level.INFO, "TypeCheckerInactivated");
     }
+    return result;
   }
   
   private boolean isActivated() {

@@ -47,7 +47,7 @@ import tom.library.xml.*;
  */
 public class PluginPlatform {
 
-  /** Used to analyse xml configuration file*/
+  /** Used to analyse xml configuration file */
   %include{ adt/TNode.tom }
 
   /**
@@ -70,14 +70,13 @@ public class PluginPlatform {
   /** List of input arg */
   private List inputToCompileList;
 
-  /** List of generated object
-   * cleared before each run
-   */
-  private List generatedObjects;
+  /** List of generated object cleared before each run */
+  private List lastGeneratedObjects;
+
+  /** List of generated object cleared before each run */
+  private RuntimeAlert lastRunAlert;
   
-  /**
-   * Class Pluginplatform constructor
-   */
+  /** Class Pluginplatform constructor */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
     statusHandler = new StatusHandler();
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
@@ -98,39 +97,45 @@ public class PluginPlatform {
    * </ul>
    */
   public int run() {
-    generatedObjects = new ArrayList();
-    for(int i = 0; i < inputToCompileList.size(); i++) {
-      // for each input
+    // intialize run instances
+    lastGeneratedObjects = new ArrayList();
+    //lastRunAlert = new RuntimeAlert();
+    // for each input we call the sequence of plug-ins
+    for(int i=0; i < inputToCompileList.size(); i++) {
       Object input = inputToCompileList.get(i);
-      Object[] arg = new Object[]{input};
+      Object[] pluginArg = new Object[]{input};
       Object initArgument = input;
       boolean success = true;
       statusHandler.clear();
       getLogger().log(Level.FINER, "NowCompiling", input);
-      // runs the modules
+      // runs the plugins
       Iterator it = pluginsList.iterator();
       while(it.hasNext()) {
         Plugin plugin = (Plugin)it.next();
-        plugin.setArgs(arg);
+        lastRunAlert = plugin.setArgs(pluginArg);
         if(statusHandler.hasError()) {
           getLogger().log(Level.SEVERE, "SettingArgError");
           success = false;
           break;
         }
-        plugin.run();
+        RuntimeAlert runAlert = plugin.run();
+        lastRunAlert.concat(runAlert);
         if(statusHandler.hasError()) {
           success = false;
           getLogger().log(Level.SEVERE, "ProcessingError",
                           new Object[]{plugin.getClass().getName(), initArgument});
           break;
         }
-        arg = plugin.getArgs();
+        pluginArg = plugin.getArgs();
       }
       if(success) {
-        generatedObjects.add(arg[0]);
-      } else {
-        break;
-      }
+        // save the first element of last plugin getArg response
+        // this shall correspond to a generated file name
+        lastGeneratedObjects.add(pluginArg[0]);
+      } 
+      //else { 
+      //break;
+      //}
     }
     
     int nbOfErrors   = statusHandler.nbOfErrors();
@@ -157,9 +162,16 @@ public class PluginPlatform {
     return statusHandler;
   }
 
-  public List getGeneratedObjects() {
-    return generatedObjects;
+  /** return the list of last generated objects */
+  public List getLastGeneratedObjects() {
+    return lastGeneratedObjects;
   }
+
+  /** return the alerts generated during last run */
+  public RuntimeAlert getLastRunAlert() {
+    return lastRunAlert;
+  }
+
   /** logger accessor in case of logging needs*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());

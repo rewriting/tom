@@ -31,7 +31,6 @@ package tom.platform;
  * methods to run the compilation. The processing follow the template:
  * "feed" the plugin (set), run it, retrieve the processed term(get)
  *
- * @author Gr&eacute;gory ANDRIEN
  */
 public interface Plugin extends OptionOwner {
   /**
@@ -39,12 +38,12 @@ public interface Plugin extends OptionOwner {
    *
    * @param arg the input argument
    */
-  public void setArgs(Object[] arg);
+  public RuntimeAlert setArgs(Object[] arg);
   
   /**
    * Runs the plugin.
    */
-  public void run();
+  public RuntimeAlert run();
   
   /**
    * Retrieves the output of the plugin.

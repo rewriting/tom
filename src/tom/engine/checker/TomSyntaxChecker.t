@@ -32,11 +32,12 @@ public class TomSyntaxChecker extends TomChecker {
   }
 
 
-  public void run() {
-    if(isActivated()) {	
+  public RuntimeAlert run() {
+    RuntimeAlert result = new RuntimeAlert();
+    if(isActivated()) {
       strictType = !getOptionBooleanValue("lazyType");
-      int errorsAtStart = getStatusHandler().nbOfErrors();
-      int warningsAtStart = getStatusHandler().nbOfWarnings();
+      //int errorsAtStart = getStatusHandler().nbOfErrors();
+      //int warningsAtStart = getStatusHandler().nbOfWarnings();
       long startChrono = System.currentTimeMillis();
       try {
         // clean up internals
@@ -53,11 +54,13 @@ public class TomSyntaxChecker extends TomChecker {
                                      getStreamManager().getInputFile().getName(),
                                      e.getMessage() });
         e.printStackTrace();
+        //result.addError();
       }
     } else {
       // syntax checker desactivated
       getLogger().log(Level.INFO, "SyntaxCheckerInactivated");
     }
+    return result;
   }
   
   private boolean isActivated() {
