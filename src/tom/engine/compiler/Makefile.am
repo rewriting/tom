@@ -12,10 +12,11 @@ java_JAVA       = $(BOOTSOURCES)
 
 JAVAROOT        = ${top_builddir}/src/
 
-CLEANFILES 	= TomCompiler.java TomExpander.java
+CLEANFILES 	= TomCompiler.java TomExpander.java \
+		  TomKernelCompiler.java TomKernelExpander.java
 EXTRA_DIST 	= $(BOOTSOURCES) TomCompiler.t TomExpander.t
 
-BUILT_SOURCES   = TomCompiler.java TomExpander.java
+BUILT_SOURCES   = TomCompiler.java TomExpander.java TomKernelCompiler.java TomKernelExpander.java
 
 bootinstall:
 	$(mkinstalldirs) $(stabledir)
