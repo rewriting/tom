@@ -10,6 +10,7 @@
   <property name="examples.dist" location="dist"/>
 
   <!-- where the examples a build: javac destDir -->
+  <property name="examples.gen" location="."/>
   <property name="examples.build" location="."/>
 
   <!-- Examples to build and distribute -->
@@ -143,16 +144,16 @@
     <adt file="${addressbook.dir}/data.adt" 
          factory="data" 
          package="AddressBook" 
-         destdir="${examples.build}"/>
+         destdir="${examples.gen}"/>
     <!-- build tom -->
     <tom srcdir="${addressbook.dir}" 
-         destdir="${examples.build}" 
+         destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
       <include name="**/*.t"/>
 			<exclude name="**/AddressBookVas.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${addressbook.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac>

@@ -39,6 +39,7 @@
 	<property name="src.src"      location="src"/>
 	<property name="src.adt"      location="${src.src}/adt"/>
 	<property name="src.mapping"  location="${src.src}/jtom/runtime/mapping"/>
+	<property name="src.gen"      location="${src.src}"/>  	
 	<property name="src.build"    location="${src.src}/build"/>  	
 	<property name="src.dist"     location="${src.src}/dist"/>
 
@@ -143,12 +144,12 @@
 
 	<!-- compile tom files in src.src with tom.stable -->
 	<target name="buildtom" depends="initTaskDef, buildadt">
-		<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${src.mapping} --noDeclaration">
+		<tom srcdir="${src.src}" destdir="${src.gen}" options="-I ${src.mapping} --noDeclaration">
 			<exclude name="**/TomBase.t"/>
 			<exclude name="**/TomBackQuoteParser.t"/>
 			<exclude name="**/runtime/**/*.t"/>	
 		</tom>
-		<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${src.mapping}">
+		<tom srcdir="${src.src}" destdir="${src.gen}" options="-I ${src.mapping}">
 			<include name="**/runtime/**/*.t"/>	
 			<include name="**/TomBase.t"/>
 			<include name="**/TomBackQuoteParser.t"/>	
@@ -157,23 +158,23 @@
 
 	<!-- builds the parser using javacc -->
 	<target name="buildparser">
-		<javacc 
-		 target="${src.src}/jtom/parser/TomParser.jj"
-		 javacchome="${javaccdir}" /> 
+		<javacc target="${src.src}/jtom/parser/TomParser.jj"
+						outputdirectory="${src.gen}/jtom/parser"
+						javacchome="${javaccdir}" /> 
 	</target>
 
 	<target name="check.newer.adt">
 		<condition property="newer.adt">
 			<or>
-				<not><available file="${src.src}/jtom/adt/TomSignature.tom"/></not>
-				<not><available file="${src.src}/jtom/adt/TNode.tom"/></not>
-				<not><available file="${src.src}/jtom/adt/Set.tom"/></not>
+				<not><available file="${src.gen}/jtom/adt/TomSignature.tom"/></not>
+				<not><available file="${src.gen}/jtom/adt/TNode.tom"/></not>
+				<not><available file="${src.gen}/jtom/adt/Set.tom"/></not>
 				<uptodate targetfile="${src.src}/jtom/adt/TomSignature.adt" 
-									srcfile="${src.src}/jtom/adt/TomSignature.tom"/>
-				<uptodate targetfile="${src.adt}/TNode.adt" 
-									srcfile="${src.src}/jtom/adt/TNode.tom"/>
-				<uptodate targetfile="${src.adt}/Set.adt" 
-									srcfile="${src.src}/jtom/adt/Set.tom"/>
+									srcfile="${src.gen}/jtom/adt/TomSignature.tom"/>
+				<uptodate targetfile="${src.src}/jtom/adt/TNode.adt" 
+									srcfile="${src.gen}/jtom/adt/TNode.tom"/>
+				<uptodate targetfile="${src.src}/jtom/adt/Set.adt" 
+									srcfile="${src.gen}/jtom/adt/Set.tom"/>
 			</or>
 		</condition>
 	</target>
@@ -183,17 +184,17 @@
 		<adt file="${src.adt}/TomSignature.adt" 
 				 factory="TomSignature" 
 				 package="jtom.adt" 
-				 destdir="${src.src}"/>
+				 destdir="${src.gen}"/>
 		<adt file="${src.adt}/TNode.adt" 
 				 factory="TNode" 
 				 package="jtom.adt" 
-				 destdir="${src.src}"/>
+				 destdir="${src.gen}"/>
 		<adt file="${src.adt}/Set.adt" 
 				 factory="Set" 
 				 package="jtom.adt" 
-				 destdir="${src.src}"/>
+				 destdir="${src.gen}"/>
 		<copy todir="${src.mapping}">
-			<fileset dir="${src.src}/jtom/adt" includes="*.tom">
+			<fileset dir="${src.gen}/jtom/adt" includes="*.tom">
 				<exclude name="TomSignature.tom"/>
 			</fileset>
 		</copy>
@@ -205,6 +206,8 @@
 		<!--<property name="unixpath" refid="src.classpath" />
 		<echo>classpath = ${unixpath}</echo>-->
 		<javac srcdir="${src.src}" destdir="${src.build}" verbose="${javacVerbose}">
+			<src path="${src.src}"/>
+			<src path="${src.gen}"/>
 			<classpath refid="src.classpath"/>
 		</javac>
 	</target>
