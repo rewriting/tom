@@ -42,8 +42,9 @@ public final class SingleLineOutputCode extends OutputCode {
   }
   
   public void write(int deep,String s, int line, int length) throws IOException {
-    String s2 = s.replace('\n', ' ');
-    s2 = s2.replace('\t', ' ');
-    writeln(s2);
+    s = s.replace('\n', ' ');
+    s = s.replace('\r', ' ');
+    s = s.replace('\t', ' ');
+    writeln(s);
   }
 }
