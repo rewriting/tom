@@ -55,7 +55,8 @@ public class TomParser extends TomTask {
   private TomBuffer tomBuffer;
   private TomBackQuoteParser tomBackQuoteParser;
   private TomFactory tomFactory;
-  private HashSet includedFiles;
+  private HashSet includedFileSet;
+  private HashSet alreadyParsedFileSet;
   private String currentFile = "";
   private LinkedList debuggedStructureList;
   private String text="";
@@ -63,12 +64,13 @@ public class TomParser extends TomTask {
   public TomParser(TomBuffer input,
                    int includeOffSet, 
                    String fileName) {
-    this(input, includeOffSet, fileName, new HashSet());
+    this(input, includeOffSet, fileName, new HashSet(), new HashSet());
   }
   
   private TomParser(TomBuffer input,
                     int includeOffSet, 
                     String fileName,
+                    HashSet includedSet,
                     HashSet alreadyParsedFiles) {
     super("Tom Parser");
     jj_input_stream = new JavaCharStream(input, 1, 1);
@@ -86,16 +88,9 @@ public class TomParser extends TomTask {
     this.debuggedStructureList = new LinkedList();
     this.tomBackQuoteParser = new TomBackQuoteParser();
     this.tomFactory = new TomFactory();
-    includedFiles = alreadyParsedFiles;
-  }
-  
-  private void testIncludedFiles(String fileName) throws TomIncludeException {
-    if(!includedFiles.contains(fileName)) {
-      includedFiles.add(fileName);
-    } else {
-      String msg = "Re-entering included file '"+fileName+"' in '"+currentFile+"' forms a cycle. Breaking the parsing...";
-      throw new TomIncludeException(new Throwable(msg));
-    }
+    includedFileSet = new HashSet(includedSet);
+    testIncludedFile(fileName, includedFileSet);
+    alreadyParsedFileSet = alreadyParsedFiles;
   }
   
   public void initProcess() {
@@ -113,7 +108,7 @@ public class TomParser extends TomTask {
         InputStream input = new FileInputStream(file);
         input.read(inputBuffer);
 
-        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),0, currentFile, new HashSet());
+        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),0, currentFile);
         tomParser.token_source.SwitchTo(JAVA);
         String packageName = tomParser.JavaPackageDeclaration();
         // Update taskInput
@@ -224,33 +219,70 @@ public class TomParser extends TomTask {
     list.add(makeTL(code));
   }
   
-  private String extractApiName(String[] par) {
-    String res = null;
+	private static boolean testIncludedFile(String fileName, HashSet fileSet) {
+		// !(true) if the set did not already contain the specified element.
+		return !fileSet.add(fileName);
+	}
+	
+	private void includeFile(String fileName, LinkedList list) throws TomException, TomIncludeException {
+	  TomTerm astTom;
+  	InputStream input;
+  	byte inputBuffer[];
+  	TomParser tomParser;
+		File file;
+		String fileAbsoluteName = "";
+		fileName = fileName.trim();
+    fileName = fileName.replace('/',File.separatorChar);
+    fileName = fileName.replace('\\',File.separatorChar);
     try {
-      for(int i=0;i<par.length;i++) {
-        if(par[i].equals("--name") || par[i].equals("-n")) {
-          return par[++i];
+      file = new File(fileName);
+      if(file.isAbsolute()) {
+        if (!file.exists()) {
+	      	String msg = "Included file '" + fileName + "' not found at line "+getLine()+" in file '"+currentFile+"'";
+  	      throw new TomIncludeException(msg);
+  	    }
+      } else {
+	      boolean found = false;
+        for(int i=0 ; !found && i<getInput().getImportList().size() ; i++) {
+          file = new File((File)getInput().getImportList().get(i),fileName).getCanonicalFile();
+          //System.out.println("look for: " + file.getPath());
+          found = file.exists();
+        }
+        if(!found) {
+        	String msg = "Included file '" + fileName + "' not found at line "+getLine()+" in file '"+currentFile+"'";
+          throw new TomIncludeException(msg);
         }
       }
-      return res;
-    } catch (ArrayIndexOutOfBoundsException e) {
-      return null;
-    }
-  }
-  
-  private String extractPackageName(String[] par) {
-    String res = null;
-    try {
-      for(int i=0;i<par.length;i++) {
-        if(par[i].equals("--package") || par[i].equals("-p")) {
-          return par[++i];
-        }
+      fileAbsoluteName = file.getAbsolutePath();
+      if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
+        String msg = "Included file '" + fileAbsoluteName + "' found at line "+getLine()+" in file '"+currentFile+"' forms a cycle";
+        throw new TomIncludeException(msg);
       }
-      return res;
-    } catch (ArrayIndexOutOfBoundsException e) {
-      return null;
+      if(TomParser.testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {  	
+      	String msg = "Included file '" + fileAbsoluteName + "' found at line "+getLine()+" in file '"+currentFile+"' has already been parsed";
+        throw new TomIncludeException(msg);
+      }
+        // to get the length of the file
+      inputBuffer = new byte[(int)file.length()+1];
+      input       = new FileInputStream(file);
+      input.read(inputBuffer);
+        
+      tomParser   = new TomParser(new TomBuffer(inputBuffer),0, fileAbsoluteName, includedFileSet, alreadyParsedFileSet);
+      astTom = tomParser.startParsing();     
+      astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
+      list.add(astTom);
+    } catch (TokenMgrError e) {
+      String msg = "TokenMgrError occurs in file '" + fileAbsoluteName + "' included in file '"+currentFile+"' at line "+getLine()+" " + e.getMessage();
+      throw new TomException(msg);
+    } catch (ParseException e) {
+      String msg = "ParseException occurs in file '" + fileAbsoluteName + "' included in file '"+currentFile+"' at line "+getLine()+" " + e.getMessage();
+      throw new TomIncludeException(msg);
+    }  catch (IOException e) {
+      String msg = "IOException occurs in parsing file '" + fileAbsoluteName + "' included in file '"+currentFile+"' at line "+getLine()+" " + e.getMessage();
+      throw new TomException(msg);
     }
-  }
+	}
+
 }
 
 PARSER_END(TomParser)
@@ -1392,12 +1424,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
 	TargetLanguage vasTL;
 	String vasCode, fileName = "", apiName = null, packageName ="";
-	Token arguments;
-  TomTerm astTom;
-  InputStream input;
   File file;
-  byte inputBuffer[];
-  TomParser tomParser;
   LinkedList blockList = new LinkedList();
 }
 {
@@ -1409,7 +1436,8 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       vasCode = vasTL.getCode().trim();
-                
+
+        // Generated ADT from VAS Code
       Object generatedADTName = null;
       try{
         Method getInstanceMethod = null, initMethod = null, runMethod = null;
@@ -1442,6 +1470,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         e.printStackTrace();
       }
 
+        // Generated API and Tom File from generated ADT file
       try{
         if(getInput().isJCode() && generatedADTName != null) {
           Method mainMethod = null;
@@ -1473,40 +1502,23 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         e.printStackTrace();
       }
 
-      try {
-        String dir = getInput().getDestDir().getPath();
-        if (packageName != null) {
-          dir = dir + File.separatorChar + packageName;
-        }
-          //if (apiName != null) {
-          //dir = dir + File.separatorChar + apiName;
-          //}
-        String adtFileName = new File((String)generatedADTName).getName();
-        file = new File(dir, adtFileName.substring(0, adtFileName.length()-".adt".length())+".tom");
-        fileName = file.getCanonicalPath();
-        if(file.exists()) {
-            // to get the length of the file
-          inputBuffer = new byte[(int)file.length()+1];
-          input       = new FileInputStream(file);
-          input.read(inputBuffer);
-          
-          tomParser   = new TomParser(new TomBuffer(inputBuffer),0, fileName, includedFiles);
-          tomParser.testIncludedFiles(fileName);
-          astTom = tomParser.startParsing();
-          astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
-          list.add(astTom);
-        } else {
-          System.out.println(fileName+" does not exist");
-        }
-        
-        
-      } catch (TokenMgrError error) {
-        String msg = "TokenMgrError in file '" + fileName + "' generated from file '"+currentFile+"'"+ error.getMessage();
-        throw new TomException(msg);
-      } catch (java.io.IOException e2) {
-        String msg = "IOException occurs reading " + fileName + " at line "+getLine();
-        throw new TomException(msg);
+				// Simulate the inclusion of generated Tom file
+      String dir = getInput().getDestDir().getPath();
+      if (packageName != null) {
+        dir = dir + File.separatorChar + packageName;
       }
+        //if (apiName != null) {
+        //dir = dir + File.separatorChar + apiName;
+        //}
+      String adtFileName = new File((String)generatedADTName).getName();
+      file = new File(dir, adtFileName.substring(0, adtFileName.length()-".adt".length())+".tom");
+      try {
+        fileName = file.getCanonicalPath();
+	    } catch (IOException e) {
+	    	String msg = "Included file '" + fileName + "' not found at line "+getLine()+" in file '"+currentFile+"' caused an IOException";
+        throw new TomIncludeException(msg);
+	    } 
+	    includeFile(fileName, list);
     }
   
 }
@@ -1524,11 +1536,6 @@ void LocalVariableConstruct(LinkedList list) throws TomException: /* in DEFAULT 
 
 void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException : /* in DEFAULT mode */
 {
-  String fileName;
-  TomTerm astTom;
-  InputStream input;
-  byte inputBuffer[];
-  TomParser tomParser;
   LinkedList blockList = new LinkedList();
   TargetLanguage tlCode;
 }
@@ -1540,40 +1547,7 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
   tlCode = GoalLanguageBlock(blockList)
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      fileName = tlCode.getCode().trim();
-      fileName = fileName.replace('/',File.separatorChar);
-      fileName = fileName.replace('\\',File.separatorChar);
-      try {
-        File file = null;
-        boolean found = false;
-        for(int i=0 ; !found && i<getInput().getImportList().size() ; i++) {
-          file = new File((File)getInput().getImportList().get(i),fileName).getCanonicalFile();
-          //System.out.println("look for: " + file.getPath());
-          found = file.exists();
-        }
-        
-        //System.out.println("file found = " + found);
-        
-        // to get the length of the file
-        inputBuffer = new byte[(int)file.length()+1];
-        input       = new FileInputStream(file);
-        input.read(inputBuffer);
-        
-        tomParser   = new TomParser(new TomBuffer(inputBuffer),0, fileName, includedFiles);
-        tomParser.testIncludedFiles(fileName);
-        astTom = tomParser.startParsing();
-        astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
-        list.add(astTom);
-      } catch (TokenMgrError error) {
-        String msg = "TokenMgrError in file '" + fileName + "' included from file '"+currentFile+"'"+ error.getMessage();
-        throw new TomException(msg);
-      } catch (FileNotFoundException e1) {
-        String msg = "Included file '" + fileName + "' not found at line "+getLine()+" from file '"+currentFile+"'";
-        throw new TomIncludeException(msg);
-      }  catch (java.io.IOException e2) {
-        String msg = "IOException occurs reading " + fileName + " at line "+getLine();
-        throw new TomException(msg);
-      }
+      includeFile(tlCode.getCode(), list);
     }
 }
 

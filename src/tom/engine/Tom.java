@@ -332,15 +332,9 @@ public class Tom {
         inputBuffer = new byte[(int) file.length() + 1];
         input.read(inputBuffer);
       } catch (FileNotFoundException e) {
-        /*String s = FileNotFound"File `" + fileName + "` not found.";
-        System.out.println(s);
-        System.out.println("No file generated.");*/
         addError(TomCheckerMessage.FileNotFound, new Object[]{fileName}, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
         return null;
       } catch (IOException e4) {
-        String s = "IO Exception reading file `" + fileName + "`";
-        System.out.println(s);
-        System.out.println("No file generated.");
         addError(TomCheckerMessage.IOException, new Object[]{fileName}, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
         return null;
       }
@@ -450,7 +444,9 @@ public class Tom {
   public void run(String inputFileName) {
     reinit(inputFileName);
     TomTask initialTask = createTaskChainFromInput();
-    initialTask.startProcess();
+    if (initialTask != null) {
+    	initialTask.startProcess();
+    }
   }
 
   public static void main(String args[]) {
