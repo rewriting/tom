@@ -30,7 +30,7 @@ public class Tree1 {
 
   public boolean member(Tree t, ATerm x) {
     %match(Tree t) {
-      emptyTree -> { return false; }
+      emptyTree() -> { return false; }
       node(_,a,y,b) -> {
         int cmp = comparator.compare(x,y);
         if(cmp < 0) {
@@ -47,7 +47,7 @@ public class Tree1 {
 
   public int card(Tree t) {
     %match(Tree t) {
-      emptyTree -> { return 0; }
+      emptyTree() -> { return 0; }
       node(color,a,y,b) -> { return 1 + card(a) + card(b); }
     }
     return 0;
@@ -59,8 +59,8 @@ public class Tree1 {
 
   private Tree ins(Tree t, ATerm x) {
     %match(Tree t) {
-      emptyTree -> {
-        return `node(R,t,x,t);
+      emptyTree() -> {
+        return `node(R(),t,x,t);
       }
 
       node(color,a,y,b) -> {
@@ -79,11 +79,11 @@ public class Tree1 {
 
   public Tree balance(Color color, Tree lhs, ATerm elt, Tree rhs) {
     %match(Color color, Tree lhs, ATerm elt, Tree rhs) {
-      B, node(R,node(R,a,x,b),y,c), z, d |
-      B, node(R,a,x,node(R,b,y,c)), z, d |
-      B, a, x, node(R,node(R,b,y,c),z,d) |
-      B, a, x, node(R,b,y,node(R,c,z,d)) -> {
-        return `node(R,node(B,a,x,b),y,node(B,c,z,d));
+      B(), node(R(),node(R(),a,x,b),y,c), z, d |
+      B(), node(R(),a,x,node(R(),b,y,c)), z, d |
+      B(), a, x, node(R(),node(R(),b,y,c),z,d) |
+      B(), a, x, node(R(),b,y,node(R(),c,z,d)) -> {
+        return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d));
       }
     }
       // no balancing necessary
@@ -93,19 +93,19 @@ public class Tree1 {
   public Tree balance2(Color color, Tree lhs, ATerm elt, Tree rhs) {
     %match(Color color, Tree lhs, ATerm elt, Tree rhs) {
         // color flip
-      B, node(R,a@node(R,_,_,_),x,b), y, node(R,c,z,d) |
-      B, node(R,a,x,b@node(R,_,_,_)), y, node(R,c,z,d) |
-      B, node(R,a,x,b), y, node(R,c@node(R,_,_,_),z,d) |
-      B, node(R,a,x,b), y, node(R,c,z,d@node(R,_,_,_)) -> {
-        return `node(R,node(B,a,x,b),y,node(B,c,z,d));
+      B(), node(R(),a@node(R(),_,_,_),x,b), y, node(R(),c,z,d) |
+      B(), node(R(),a,x,b@node(R(),_,_,_)), y, node(R(),c,z,d) |
+      B(), node(R(),a,x,b), y, node(R(),c@node(R(),_,_,_),z,d) |
+      B(), node(R(),a,x,b), y, node(R(),c,z,d@node(R(),_,_,_)) -> {
+        return `node(R(),node(B(),a,x,b),y,node(B(),c,z,d));
       }
         // single rotations
-      B, node(R,a@node(R,_,_,_),x,b), y, c -> { return `node(B,a,x,node(R,b,y,c)); }
-      B, a, x, node(R,b,y,c@node(R,_,_,_)) -> { return `node(B,node(R,a,x,b),y,c); }
+      B(), node(R(),a@node(R(),_,_,_),x,b), y, c -> { return `node(B(),a,x,node(R(),b,y,c)); }
+      B(), a, x, node(R(),b,y,c@node(R(),_,_,_)) -> { return `node(B(),node(R(),a,x,b),y,c); }
         // double rotations
-      B, node(R,a,x,node(R,b,y,c)), z, d |
-      B, a, x, node(R,node(R,b,y,c),z,d) -> {
-        return `node(B,node(R,a,x,b),y,node(R,c,z,d));
+      B(), node(R(),a,x,node(R(),b,y,c)), z, d |
+      B(), a, x, node(R(),node(R(),b,y,c),z,d) -> {
+        return `node(B(),node(R(),a,x,b),y,node(R(),c,z,d));
       }
     }
       // no balancing necessary

@@ -22,11 +22,8 @@ import javax.swing.Timer;
 import java.net.URL;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import adt.boulder.boulder.*;
-import adt.boulder.boulder.types.*;
-import aterm.*;
 import aterm.pure.*;
 
 // BOULDERDASH 2D APPLI BUT ALSO APPLET

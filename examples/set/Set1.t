@@ -92,7 +92,7 @@ public class Set1 {
   
   public int card(JGSet t) {
     %match(JGSet t) {
-      emptySet    -> { return 0; }
+      emptySet()    -> { return 0; }
       singleton(x) -> { return 1; }
       branch(l, r) -> {return card(l) + card(r);}
     }
@@ -109,7 +109,7 @@ public class Set1 {
     // getHead return the first left inner element found
   public ATerm getHead(JGSet t) {
     %match(JGSet t) {
-      emptySet -> {
+      emptySet() -> {
         return null;
       }
       singleton(x) -> {return x;}
@@ -153,11 +153,11 @@ public class Set1 {
     Replace1 replace = new Replace1() {
         public ATerm apply(ATerm t) {
           %match(JGSet t) {
-            emptySet -> {return t;}
+            emptySet() -> {return t;}
             singleton(x) -> {return t;}
-            branch(emptySet, s@singleton(x)) -> {return s;}
-            branch(s@singleton(x), emptySet) -> {return s;}
-            branch(e@emptySet, emptySet) -> {return e;}
+            branch(emptySet(), s@singleton(x)) -> {return s;}
+            branch(s@singleton(x), emptySet()) -> {return s;}
+            branch(e@emptySet(), emptySet()) -> {return e;}
             branch(l1, l2) -> {return `branch(reworkJGSet(l1), reworkJGSet(l2));}
             _ -> { return traversal.genericTraversal(t,this); }
           }
@@ -173,11 +173,11 @@ public class Set1 {
   
   private JGSet union(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptySet, x -> {
+      emptySet(), x -> {
         return m2;
       }
 
-      x, emptySet -> {
+      x, emptySet() -> {
         return m1;
       }
 
@@ -199,8 +199,8 @@ public class Set1 {
   
   private JGSet intersection(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptySet, x |
-        x, emptySet -> { 
+      emptySet(), x |
+        x, emptySet() -> { 
         return `emptySet();
       }
       
@@ -223,8 +223,8 @@ public class Set1 {
   
   public JGSet restriction(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptySet, x |
-      x, emptySet -> { 
+      emptySet(), x |
+      x, emptySet() -> { 
         return `emptySet();
       }
       
@@ -250,7 +250,7 @@ public class Set1 {
   
   private JGSet remove(ATerm elt, JGSet t, int level) {
     %match(JGSet t) {
-      emptySet      -> {return t;}
+      emptySet()     -> {return t;}
 
       singleton(x)   -> {
         if (x == elt) {return `emptySet();}
@@ -267,8 +267,8 @@ public class Set1 {
           r1 = remove(elt, r, level+1);
         }
         %match(JGSet l1, JGSet r1) {
-          emptySet, singleton(x) -> {return r1;}
-          singleton(x), emptySet -> {return l1;}
+          emptySet(), singleton(x) -> {return r1;}
+          singleton(x), emptySet() -> {return l1;}
           _, _ -> {return `branch(l1, r1);}
         }
       }
@@ -278,7 +278,7 @@ public class Set1 {
 
   private boolean member(ATerm elt, JGSet t, int level) {
     %match(JGSet t) {
-      emptySet -> {return false;}
+      emptySet() -> {return false;}
       
       singleton(x) -> {
         if(x == elt) return true;
@@ -301,7 +301,7 @@ public class Set1 {
   private JGSet override(ATerm elt, JGSet t, int level) {
     int lev = level+1;
     %match(JGSet t) {
-      emptySet      -> {return `singleton(elt);}
+      emptySet()      -> {return `singleton(elt);}
 
       singleton(x)   -> {
         if(x == elt) {  return `singleton(elt);}
@@ -338,7 +338,7 @@ public class Set1 {
   private JGSet underride(ATerm elt, JGSet t, int level) {
     int lev = level+1;
     %match(JGSet t) {
-      emptySet      -> {return `singleton(elt);}
+      emptySet()     -> {return `singleton(elt);}
 
       singleton(x)   -> {
         if(x == elt) {  return t;}
