@@ -54,11 +54,9 @@ public class Verifier extends TomBase {
 		abstract syntax
 			fsymbol(name:String)                    -> Symbol
 			
-			//repr(term:String)                     -> Representation
-
 			var(name:String)                        -> Variable
 
-			vtot(var:Variable)                       -> Term
+			vtot(var:Variable)                      -> Term
 			repr(term:String)                       -> Term
 			subterm(symbol:Symbol,t:Term,index:Int) -> Term
 			slot(symbol:Symbol,t:Term,name:String)  -> Term
@@ -73,15 +71,24 @@ public class Verifier extends TomBase {
 			ITE(e:Expr,ift:Instr,iff:Instr)         -> Instr
 			ILLet(var:Variable,t:Term,body:Instr)   -> Instr
 
+			undefsubs                               -> Substitution
 			is(var:Variable,term:Term)              -> Substitution
 			subs(Substitution *)                    -> SubstitutionList
 			env(subs:SubstitutionList,i:Instr)      -> Environment
 
 			ebs(lhs:Environment,rhs:Environment)    -> Deriv
-			iftrue(post:Deriv,pre:Deriv,cond:Seq)   -> DerivTree
+			endderiv                                -> DerivTree
+			derivrule(name:String,post:Deriv,pre:DerivTree,cond:Seq) -> DerivTree
 
 			// to be completed
 			seq()                                   -> Seq
+			tau(term:String)                        -> Term
+			appSubsT(subs:SubstitutionList,t:Term)  -> Term
+			appSubsE(subs:SubstitutionList,e:Expr)  -> Expr
+			dedterm(terms:TermList)                 -> Seq
+			concTerm(Term *)                        -> TermList
+			dedexpr(exprs:ExprList)                 -> Seq
+			concExpr(Expr *)                        -> ExprList
 	}
 
 	protected jtom.verifier.verifier.il.Factory factory;
@@ -193,15 +200,90 @@ public class Verifier extends TomBase {
 
 	public DerivTree build_tree(Instruction automata) {
 		DerivTree tree = null;
+		System.out.println("Build derivation tree for: " + automata);
 
-		Environment startfrom = `env(concSubstitution(),
+		Environment startingenv = `env(concSubstitution(),
 																 build_InstrFromAutomata(automata));
 
-		System.out.println("Build derivation tree for: " + automata);
-		System.out.println("The environment: " + startfrom);
+		Deriv startingderiv = `ebs(startingenv,env(concSubstitution(undefsubs()),accept));
 
+		System.out.println("The derivation: " + startingderiv);
+
+		tree = apply_rules(startingderiv);
+
+		System.out.println("The tree: " + tree);
 		return tree;
 	}
+	
+	protected Seq build_dedterm(Term sp) {
+		// TODO : implement the \mapequiv relation
+		return `dedterm(concTerm(sp,tau("TODO")));
+	}
+	
+	protected Seq build_dedexpr(Expr sp) {
+		// TODO : implement the \mapequiv relation
+		return `dedexpr(concExpr(sp,true));
+	}
+
+	protected DerivTree apply_rules(Deriv post) {
+		%match(Deriv post) {
+			// let rule
+			ebs(env(e,ILLet(x,u,i)),env(concSubstitution(undefsubs()),ip)) -> {
+				// build condition
+				Seq cond = build_dedterm(`appSubsT(e,u));
+				// find "t"
+				Term t = null;
+				%match(Seq cond) {
+					dedterm(concTerm(_*,r)) -> { t = `r; }
+					_ -> { if (t == null) { 
+							System.out.println("build_dedterm has a problem with " + cond);
+						}
+					}
+				}
+				Deriv up = `ebs(
+					env(concSubstitution(e*,is(x,t)),i),
+					env(concSubstitution(undefsubs()),ip)
+					);
+				DerivTree pre = apply_rules(up);
+				return `derivrule("let",post,pre,cond);
+				}
+			// iftrue/iffalse rule
+			ebs(env(e,ITE(exp,ift,iff)),env(concSubstitution(undefsubs()),ip)) -> {
+				// build condition
+				Seq cond = build_dedexpr(`appSubsE(e,exp));
+				// true or false ?
+				Expr res = null;
+				%match(Seq cond) {
+					dedexpr(concExpr(_*,x)) -> { res = `x; }
+					_ -> { if (res == null) { 
+							System.out.println("build_dedexpr has a problem with " + cond);
+						}
+					}
+				}
+				Deriv up = null;
+				String rulename = "fail";
+				if (res == `true()) {
+					up = `ebs(env(e,ift),env(concSubstitution(undefsubs()),ip));
+					rulename = "iftrue";
+				} else if (res == `false()) {
+					up = `ebs(env(e,iff),env(concSubstitution(undefsubs()),ip));
+					rulename = "iffalse";
+				}	else {
+					System.out.println("How to conclude with: "+ res);
+				}
+				DerivTree pre = apply_rules(up);
+				return `derivrule(rulename,post,pre,cond);
+			}
+			// axiom !
+			ebs(env(e,accept()),env(concSubstitution(undefsubs()),accept())) -> {
+				return `derivrule("axiom",post,endderiv(),seq());
+			}
+			_ -> { 
+				System.out.println("Ratai ! " + post);
+				return `derivrule("problem",post,endderiv(),seq());
+			}
+		}
+		}
 
 }
 
