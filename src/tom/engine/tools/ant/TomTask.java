@@ -51,8 +51,10 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <li>verbose</li>
  * <li>failonerror</li>
  * <li>stamp</li>
+ * <li>wall</li>
  * </ul>
- * Of these arguments, the <b>sourcedir</b> and <b>destdir</b> are required.
+ * Of these arguments, the <b>config</b> and <b>sourcedir</b> are
+ * required. Either <b>destdir</b> or <b>outputfile</b> have to be set.
  * <p>
  * When this task executes, it will recursively scan the sourcedir and
  * destdir looking for Java source files to compile. This task makes its
@@ -75,14 +77,14 @@ public class TomTask extends MatchingTask {
   private boolean verbose = false;
   private boolean stamp = false;
   private Path extdirs;
-  private boolean nowarn = false;
+  private boolean warnall = false;
   private boolean optimize = false;
   private boolean pretty = false;
   
 
-  protected boolean failOnError = true;
-  protected boolean listFiles = false;
-  protected File[] compileList = new File[0];
+  private boolean failOnError = true;
+  private boolean listFiles = false;
+  private File[] compileList = new File[0];
 
   private File tmpDir;
 
@@ -99,6 +101,10 @@ public class TomTask extends MatchingTask {
     return configFile;
   }
 
+  /**
+   * Set the log file
+   * @param logPropertiesFile the destination file
+   */
   public void setLogfile(String logPropertiesFile) {
     System.out.println("LOG FILE : " + logPropertiesFile);
     this.logPropertiesFile = logPropertiesFile;
@@ -108,6 +114,10 @@ public class TomTask extends MatchingTask {
     return logPropertiesFile;
   }
 
+  /**
+   * Set command line option to pass to Tom
+   * @param options the command line options to use
+   */
   public void setOptions(String options) {
     this.options = options;
   }
@@ -186,9 +196,9 @@ public class TomTask extends MatchingTask {
   }
 
   /**
-   * Gets the destination directory into which the Tom source files
+   * Gets the destination file into which the Tom source file
    * should be compiled.
-   * @return the destination directory
+   * @return the destination file
    */
   public File getOutputFile() {
     return outputFile;
@@ -330,10 +340,18 @@ public class TomTask extends MatchingTask {
     this.verbose = verbose;
   }
 
+  /**
+   * If true, asks the compiler to generate matching code for abstract
+   * data-type.
+   * @param stamp if true, asks the compiler to generate code with stamps
+   */
   public void setStamp(boolean stamp) {
     this.stamp = stamp;
   }
 
+  public boolean getStamp() {
+    return stamp;
+  }
 
   /**
    * Gets the verbose flag.
@@ -343,9 +361,6 @@ public class TomTask extends MatchingTask {
     return verbose;
   }
 
-  public boolean getStamp() {
-    return stamp;
-  }
 	/**
 	 * If true, compiles with optimization enabled.
 	 * @param optimize if true compile with optimization enabled
@@ -370,19 +385,19 @@ public class TomTask extends MatchingTask {
 		return pretty;
 	}
 	/**
-	 * If true, enables the -nowarn option.
-	 * @param flag if true, enable the -nowarn option
+	 * If true, enables the --wall option.
+	 * @param flag if true, enable the --wall option
 	 */
-  public void setNowarn(boolean flag) {
-    this.nowarn = flag;
+  public void setWall(boolean flag) {
+    this.warnall = flag;
   }
 
   /**
-   * Should the -nowarn option be used.
-   * @return true if the -nowarn option should be used
+   * Should the --wall option be used.
+   * @return true if the --wall option should be used
    */
-  public boolean getNowarn() {
-    return nowarn;
+  public boolean getWall() {
+    return warnall;
   }
 
   /**
@@ -545,8 +560,8 @@ public class TomTask extends MatchingTask {
       if(stamp == true) {
         cmd_line = cmd_line.trim() + " --stamp";
       }
-      if(nowarn == true) {
-        cmd_line = cmd_line.trim() + " --noWarning";
+      if(warnall == true) {
+        cmd_line = cmd_line.trim() + " --wall";
       }
       for (int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();

@@ -38,7 +38,8 @@ import tom.library.xml.*;
 
 
 /**
- * Helper class to parse OptionOwner options following this DTD
+ * Helper class to parse OptionOwner options.
+ * The options have to comply with the following this DTD
  *
  * <PRE><CODE>
  * < !ELEMENT options (boolean*,integer*,string*) >

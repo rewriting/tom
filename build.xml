@@ -1051,7 +1051,8 @@
   <target name="doc.stable" description="Build javadoc for stable">
     <mkdir dir="${stable.doc}"/>    
     <javadoc destdir="${stable.doc}"
-             windowtitle="TOM documentation">
+             windowtitle="TOM documentation"
+						 breakiterator="yes">
       <classpath refid="stable.classpath"/>
       <fileset dir="${stable.src}">
         <include name="tom/**/*.java"/>
@@ -1065,7 +1066,8 @@
 					depends="build.src">
     <mkdir dir="${src.doc}"/>   
     <javadoc destdir="${src.doc}"
-             windowtitle="TOM documentation">
+             windowtitle="TOM documentation"
+						 breakiterator="yes">
       <classpath refid="src.classpath"/>
       <fileset dir="${src.src}">
         <include name="tom/**/*.java"/>

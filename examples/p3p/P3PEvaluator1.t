@@ -50,7 +50,7 @@ public class P3PEvaluator1 {
 
   private void run(String polfile,String clientfile){
     xtools = new XmlTools();
-    TNode pol = (TNode)xtools.convertXMLToATerm(polfile);
+    TNode pol = (TNode)xtools.convertXMLToATerm(polfile,false);
     TNode client = (TNode)xtools.convertXMLToATerm(clientfile);
     boolean res = compareDataGroup(getDataGroup(pol.getDocElem()),getDataGroup(client.getDocElem()));
     System.out.println("res = " + res);
