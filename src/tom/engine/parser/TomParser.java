@@ -26,6 +26,7 @@
 
 package jtom.parser;
 
+import jtom.TomBase;
 import java.io.*;
 import java.util.*;
 import jtom.adt.*;
@@ -363,6 +364,9 @@ public class TomParser implements TomTask, TomParserConstants {
       case TOM_DOUBLE:
       case TOM_STRING:
       case XML_START:
+      case XML_TEXT:
+      case XML_COMMENT:
+      case XML_PROC:
         ;
         break;
       default:
@@ -510,9 +514,7 @@ public class TomParser implements TomTask, TomParserConstants {
 
   final public TomTerm PlainTerm(TomName astAnnotedName) throws ParseException, TomException {
   LinkedList list = new LinkedList();
-  LinkedList list2 = new LinkedList();
-  boolean implicit;
-  Token name, slotName, close;
+  Token name, slotName;
   TomTerm term;
   Option option = null;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
@@ -522,52 +524,14 @@ public class TomParser implements TomTask, TomParserConstants {
   if(annotedName!=null) { optionList.add(annotedName); }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case XML_START:
-      jj_consume_token(XML_START);
-      name = jj_consume_token(TOM_IDENTIFIER);
-          text +="<"+name.image;
-          optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
-      implicit = XMLAttributes(list);
-       if(implicit) {
-         optionList.add(tsf().makeOption_ImplicitXMLAttribut());
-       }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case XML_CLOSE_SINGLETON:
-        jj_consume_token(XML_CLOSE_SINGLETON);
-           text += "\\>";
-           option = ast().makeOption(ast().makeOptionList(optionList));
-        break;
-      case XML_CLOSE:
-        jj_consume_token(XML_CLOSE);
-                     text+=">";
-        implicit = XMLChilds(list2);
-        jj_consume_token(XML_START_ENDING);
-        close = jj_consume_token(TOM_IDENTIFIER);
-        jj_consume_token(XML_CLOSE);
-           text += "</"+ close.image +">";
-           if(!name.image.equals(close.image)) {
-             {if (true) throw new TomException(new Throwable("Error on closing node"));}
-             {if (true) return null;}
-           }
-           if(implicit) {
-             optionList.add(tsf().makeOption_ImplicitXMLChild());
-           }
-           option = ast().makeOption(ast().makeOptionList(optionList));
-        break;
-      default:
-        jj_la1[7] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-           term =  tsf().makeTomTerm_XMLAppl(
-             option,
-             tsf().makeTomName_Name(name.image),
-             ast().makeList(list),
-             ast().makeList(list2));
-           System.out.println("XML Term: "+name.image+"===>"+term+"\n");
-           {if (true) return term;}
+    case XML_TEXT:
+    case XML_COMMENT:
+    case XML_PROC:
+      term = XMLChild();
+                        {if (true) return term;}
       break;
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[12] = jj_gen;
       if (jj_2_2(2)) {
         name = jj_consume_token(TOM_IDENTIFIER);
         jj_consume_token(TOM_LBRACKET);
@@ -587,7 +551,7 @@ public class TomParser implements TomTask, TomParserConstants {
               ;
               break;
             default:
-              jj_la1[8] = jj_gen;
+              jj_la1[7] = jj_gen;
               break label_6;
             }
             jj_consume_token(TOM_COMMA);
@@ -600,7 +564,7 @@ public class TomParser implements TomTask, TomParserConstants {
           }
           break;
         default:
-          jj_la1[9] = jj_gen;
+          jj_la1[8] = jj_gen;
           ;
         }
         jj_consume_token(TOM_RBRACKET);
@@ -642,6 +606,9 @@ public class TomParser implements TomTask, TomParserConstants {
             case TOM_DOUBLE:
             case TOM_STRING:
             case XML_START:
+            case XML_TEXT:
+            case XML_COMMENT:
+            case XML_PROC:
               term = Term();
                                     list.add(term);
               label_7:
@@ -651,7 +618,7 @@ public class TomParser implements TomTask, TomParserConstants {
                   ;
                   break;
                 default:
-                  jj_la1[10] = jj_gen;
+                  jj_la1[9] = jj_gen;
                   break label_7;
                 }
                 jj_consume_token(TOM_COMMA);
@@ -661,7 +628,7 @@ public class TomParser implements TomTask, TomParserConstants {
               }
               break;
             default:
-              jj_la1[11] = jj_gen;
+              jj_la1[10] = jj_gen;
               ;
             }
             jj_consume_token(TOM_RPAREN);
@@ -672,7 +639,7 @@ public class TomParser implements TomTask, TomParserConstants {
         }
             break;
           default:
-            jj_la1[12] = jj_gen;
+            jj_la1[11] = jj_gen;
             ;
           }
       option = ast().makeOption(ast().makeOptionList(optionList));
@@ -728,7 +695,7 @@ public class TomParser implements TomTask, TomParserConstants {
         tsf().makeTomList());}
           break;
         default:
-          jj_la1[14] = jj_gen;
+          jj_la1[13] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -756,12 +723,15 @@ public class TomParser implements TomTask, TomParserConstants {
       case TOM_DOUBLE:
       case TOM_STRING:
       case XML_START:
+      case XML_TEXT:
+      case XML_COMMENT:
+      case XML_PROC:
         // PlainTerm()
             term = PlainTerm(astAnnotedName);
         {if (true) return term;}
         break;
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[14] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -784,10 +754,10 @@ public class TomParser implements TomTask, TomParserConstants {
       term = Term();
         // we add the specif value : _
       list.add(tsf().makeTomTerm_Placeholder(ast().makeOption()));
-      list.add(term);
+      list.add(tomBackQuoteParser.encodeXMLAppl(term));
       break;
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[15] = jj_gen;
       ;
     }
       if(list.size() > 1) {
@@ -803,8 +773,6 @@ public class TomParser implements TomTask, TomParserConstants {
   }
 
   final public boolean XMLAttributes(LinkedList list) throws ParseException, TomException {
- // variable declaration
-  TomTerm leftTerm, rightTerm;
   TomTerm attribute;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_LBRACKET:
@@ -817,6 +785,9 @@ public class TomParser implements TomTask, TomParserConstants {
       case TOM_DOUBLE:
       case TOM_STRING:
       case XML_START:
+      case XML_TEXT:
+      case XML_COMMENT:
+      case XML_PROC:
         attribute = XMLAttribute();
                                    list.add(attribute);
         label_8:
@@ -826,7 +797,7 @@ public class TomParser implements TomTask, TomParserConstants {
             ;
             break;
           default:
-            jj_la1[17] = jj_gen;
+            jj_la1[16] = jj_gen;
             break label_8;
           }
           jj_consume_token(TOM_COMMA);
@@ -836,16 +807,15 @@ public class TomParser implements TomTask, TomParserConstants {
         }
         break;
       default:
-        jj_la1[18] = jj_gen;
+        jj_la1[17] = jj_gen;
         ;
       }
       jj_consume_token(TOM_RBRACKET);
     text +="]";
-    System.out.println("ExplicitMode for attribute");
-    {if (true) return false;}
+     {if (true) return false;}
       break;
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[19] = jj_gen;
       label_9:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -855,21 +825,19 @@ public class TomParser implements TomTask, TomParserConstants {
         case TOM_DOUBLE:
         case TOM_STRING:
         case XML_START:
+        case XML_TEXT:
+        case XML_COMMENT:
+        case XML_PROC:
           ;
           break;
         default:
-          jj_la1[19] = jj_gen;
+          jj_la1[18] = jj_gen;
           break label_9;
         }
-        leftTerm = Term();
-        jj_consume_token(TOM_EQUAL);
-                                text+="=";
-        rightTerm = Term();
-        System.out.println(leftTerm +"  =  "+rightTerm);
-        list.add(tsf().makeTomTerm_XMLAttribute(leftTerm, rightTerm));
+        attribute = XMLAttribute();
+                                 list.add(attribute);
       }
-    System.out.println("ImplicitMode for attribute");
-    {if (true) return true;}
+     {if (true) return true;}
     }
     throw new Error("Missing return statement in function");
   }
@@ -888,7 +856,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                                     string = true;
       break;
     default:
-      jj_la1[21] = jj_gen;
+      jj_la1[20] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -904,31 +872,67 @@ public class TomParser implements TomTask, TomParserConstants {
     throw new Error("Missing return statement in function");
   }
 
+  final public TomTerm XMLTerm() throws ParseException, TomException {
+  TomTerm term;
+    term = Term();
+                  {if (true) return term;}
+    throw new Error("Missing return statement in function");
+  }
+
   final public TomTerm XMLChild() throws ParseException, TomException {
+  Token name,close;
+  TomTerm term;
   TomTerm arg1;
   TomTerm arg2;
   LinkedList list = new LinkedList();
-  LinkedList optionList = new LinkedList();
+  LinkedList childs = new LinkedList();
+ LinkedList optionList = new LinkedList();
   String keyword = "";
   Option option;
+  boolean implicit;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case TOM_UNDERSCORE:
-    case TOM_INTEGER:
-    case TOM_IDENTIFIER:
-    case TOM_DOUBLE:
-    case TOM_STRING:
     case XML_START:
-      arg1 = Term();
-      if(ast().isStringSymbol(symbolTable,arg1)) {
-        list.add(arg1);
-        optionList.add(ast().makeOriginTracking(Constants.TEXT_NODE,getLine(), currentFile));
-        option = ast().makeOption(ast().makeOptionList(optionList));
-        {if (true) return tsf().makeTomTerm_Appl(option,
-                                      tsf().makeTomName_Name(Constants.TEXT_NODE),
-                                      ast().makeList(list));}
+      jj_consume_token(XML_START);
+      name = jj_consume_token(TOM_IDENTIFIER);
+          text +="<"+name.image;
+          optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      implicit = XMLAttributes(list);
+       if(implicit) { optionList.add(tsf().makeOption_ImplicitXMLAttribut()); }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case XML_CLOSE_SINGLETON:
+        jj_consume_token(XML_CLOSE_SINGLETON);
+           text += "\\>";
+           option = ast().makeOption(ast().makeOptionList(optionList));
+        break;
+      case XML_CLOSE:
+        jj_consume_token(XML_CLOSE);
+                   text+=">";
+        implicit = XMLChilds(childs);
+        jj_consume_token(XML_START_ENDING);
+        close = jj_consume_token(TOM_IDENTIFIER);
+        jj_consume_token(XML_CLOSE);
+          text += "</"+ close.image +">";
+          if(!name.image.equals(close.image)) {
+            {if (true) throw new TomException(new Throwable("Error on closing node"));}
+            {if (true) return null;}
+          }
+          if(implicit) {
+            optionList.add(tsf().makeOption_ImplicitXMLChild());
+          }
+          option = ast().makeOption(ast().makeOptionList(optionList));
+        break;
+      default:
+        jj_la1[21] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-
-      {if (true) return arg1;}
+          //ast().makeStringSymbol(symbolTable,name.image,optionList);
+          term =  tsf().makeTomTerm_XMLAppl(
+            option,
+            tsf().makeTomName_Name(name.image),
+            ast().makeList(list),
+            ast().makeList(childs));
+          {if (true) return term;}
       break;
     case XML_TEXT:
       jj_consume_token(XML_TEXT);
@@ -962,7 +966,6 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-      System.out.println(text);
       optionList.add(ast().makeOriginTracking(keyword,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
       {if (true) return tsf().makeTomTerm_Appl(option,
@@ -992,8 +995,8 @@ public class TomParser implements TomTask, TomParserConstants {
       case XML_TEXT:
       case XML_COMMENT:
       case XML_PROC:
-        term = XMLChild();
-                          list.add(term);
+        term = XMLTerm();
+                         list.add(tomBackQuoteParser.encodeXMLAppl(term));
         label_10:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1006,8 +1009,8 @@ public class TomParser implements TomTask, TomParserConstants {
           }
           jj_consume_token(TOM_COMMA);
                      text += " , ";
-          term = XMLChild();
-                                                         list.add(term);
+          term = XMLTerm();
+                           list.add(tomBackQuoteParser.encodeXMLAppl(term));
         }
         break;
       default:
@@ -1016,7 +1019,6 @@ public class TomParser implements TomTask, TomParserConstants {
       }
       jj_consume_token(TOM_RBRACKET);
     text +="]";
-    System.out.println("ExplicitMode for childs");
     {if (true) return false;}
       break;
     default:
@@ -1039,10 +1041,9 @@ public class TomParser implements TomTask, TomParserConstants {
           jj_la1[25] = jj_gen;
           break label_11;
         }
-        term = XMLChild();
-                         list.add(term);
+        term = XMLTerm();
+                        list.add(tomBackQuoteParser.encodeXMLAppl(term));
       }
-     System.out.println("ImplicitMode for childs");
      {if (true) return true;}
     }
     throw new Error("Missing return statement in function");
@@ -1157,6 +1158,9 @@ public class TomParser implements TomTask, TomParserConstants {
       case TOM_DOUBLE:
       case TOM_STRING:
       case XML_START:
+      case XML_TEXT:
+      case XML_COMMENT:
+      case XML_PROC:
         ;
         break;
       default:
@@ -2275,6 +2279,30 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
+  final private boolean jj_3_4() {
+    if (jj_scan_token(TOM_UNDERSCORE)) return true;
+    if (jj_scan_token(TOM_STAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3_5() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_AT)) return true;
@@ -2296,30 +2324,6 @@ public class TomParser implements TomTask, TomParserConstants {
   final private boolean jj_3_8() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_UNDERSCORE)) return true;
-    if (jj_scan_token(TOM_STAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_7() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
@@ -2347,13 +2351,13 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_la1_0 = new int[] {0x4001fff6,0x4001fff6,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x1,0x1,0x40000000,0x40000,0x40000,0x80000,0x80000,0x0,0x80000,0x0,0x80000,0x40000000,0x1000000,0x0,0x40000000,0x40000000,0x200000,0x80000,0x40000000,0x40000000,0x4000000,0x0,0x40000000,0x80000,0x40000000,0x40000000,0x4000000,0x40000000,0x40000,0x40000,0x0,0x0,0x0,0x80000,0x1000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x1000000,0x1000000,0x1000000,};
+      jj_la1_1 = new int[] {0x1,0x1,0x40000000,0x40000,0x40000,0x80000,0x80000,0x80000,0x0,0x80000,0x40000000,0x1000000,0x0,0x40000000,0x40000000,0x200000,0x80000,0x40000000,0x40000000,0x4000000,0x0,0x0,0x0,0x80000,0x40000000,0x40000000,0x4000000,0x40000000,0x40000,0x40000,0x0,0x0,0x0,0x80000,0x1000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x1000000,0x1000000,0x1000000,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0xa3800000,0x0,0x0,0x0,0x0,0x0,0x0,0x1000000,0x0,0xa3800000,0x0,0x80000000,0x23800000,0xa3800000,0x0,0x0,0xa3800000,0xa3800000,0x0,0x21000000,0xa3800000,0x0,0xa3800000,0xa3800000,0x0,0xa3800000,0x0,0x0,0x30,0x30,0x30,0x0,0x0,0x3040,0x3040,0x2180,0x2180,0x2280,0x2280,0x0,0x3c000,0x3c000,0x1fc000,0x1fc000,0x63c000,0x63c000,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0xa3800000,0x0,0x0,0x0,0x0,0x0,0x1000000,0x0,0xa3800000,0x0,0x80000000,0x23800000,0xa3800000,0x0,0x0,0xa3800000,0xa3800000,0x0,0x21000000,0x0,0x80000000,0x0,0xa3800000,0xa3800000,0x0,0xa3800000,0x0,0x0,0x30,0x30,0x30,0x0,0x0,0x3040,0x3040,0x2180,0x2180,0x2280,0x2280,0x0,0x3c000,0x3c000,0x1fc000,0x1fc000,0x63c000,0x63c000,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_3() {
-      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x6,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x70,0x0,0x70,0x70,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_3 = new int[] {0x0,0x0,0x70,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x70,0x0,0x70,0x0,0x70,0x0,0x0,0x70,0x70,0x0,0x0,0x6,0x70,0x0,0x70,0x70,0x0,0x70,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[8];
   private boolean jj_rescan = false;
