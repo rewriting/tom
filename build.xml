@@ -33,6 +33,10 @@
 	<property name="jjtraveler.lib" value="${lib}/jjtraveler.jar"/>
 	<property name="apigen.lib" value="${lib}/apigen.jar"/>
 	<property name="vastoadt.lib" value="${lib}/vas-to-adt.jar"/>
+	
+	<!-- Aircube bundle -->
+	<property name="bundle.dir" value="bundle"/>
+	<property name="aircubebundle" value="aircube-bundle.jar"/>
 
 	<path id="external.classpath">
 		<!--
@@ -757,6 +761,22 @@
 		</copy>
 
 	</target>
-
+	
+	<target name="bundle" depends="dist.src">
+	  	<mkdir dir="${bundle.dir}"/>
+		<unjar src="${sharedobject.lib}" dest="${bundle.dir}"/>
+		<unjar src="${jjtraveler.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${aterm.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${apigen.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${vastoadt.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${concurrent.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${src.lib}/TNode-${DSTAMP}.jar" dest="${bundle.dir}"/>
+		<unjar src="${src.lib}/TomSignature-${DSTAMP}.jar" dest="${bundle.dir}"/>
+		<unjar src="${src.lib}/jtom-${DSTAMP}.jar" dest="${bundle.dir}"/>
+		<unjar src="${src.lib}/Set-${DSTAMP}.jar" dest="${bundle.dir}"/>
+			
+		<jar destfile="${aircubebundle}" basedir="${bundle.dir}"></jar>
+		<delete dir="${bundle.dir}"/>
+	</target>
 </project>
 
