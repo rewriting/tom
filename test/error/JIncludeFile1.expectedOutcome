@@ -1,1 +1,3 @@
 java.lang.Throwable: Re-entering included file `JIncludeFile1.t` in `JIncludeFile1.t` forms a cycle. Breaking the parsing...
+Tom Parser:  Encountered 1 errors and 0 warnings.
+No file generated.

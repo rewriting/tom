@@ -81,10 +81,8 @@ public class Lsystems7 implements LsystemsInterface {
         // F(x,t) : t>0 -> F(x,t-1)
         F(x,t) -> {
           if (t == 0.0) {
-          	double xh = x*h;
-						double xq = x*q;
-          	double xpa =x*pa;
-            return `concNode(F(xpa,2.0),Left,F(xh,1.0),Right,Right,F(xh,1.0),Left,F(xq,0.0));
+
+            return `concNode(F(x*pa,2.0),Left,F(x*h,1.0),Right,Right,F(x*h,1.0),Left,F(x*q,0.0));
           } else {
             return `concNode(F(x,t-1));
           }

@@ -254,7 +254,7 @@ public class ASTFactory {
     /*
      * update the root of lhs: it becomes a defined symbol
      */
-  public void updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
+  public TomSymbol updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
     if(term.isAppl() || term.isRecordAppl()) {
       String key = term.getNameList().getHead().getString();
       TomSymbol symbol = symbolTable.getSymbol(key);
@@ -262,8 +262,10 @@ public class ASTFactory {
         OptionList optionList = symbol.getOption();
         optionList = (OptionList) optionList.append(tsf().makeOption_DefinedSymbol());
         symbolTable.putSymbol(key,symbol.setOption(optionList));
+        return symbol;
       }
     }
+    return null;
   }
 
   public TargetLanguage reworkTLCode(TargetLanguage code, boolean pretty) {

@@ -1,11 +1,1 @@
-
-Some GetSlot declaration are incompatible with operator signature
-*** This concerns following slotname:[Name("type1")] 
--- Error occured at line: 16
-
-Warning: Repeated slot 's0' in operator declaration
--- Error occured at line 18
-
-Warning: GetSlot declaration 'get_slot(type,...)' is repeated in operator declaration
--- Error occured at line: 30
-Tchotchou
+Tom Parser:  Encountered 3 warnings.

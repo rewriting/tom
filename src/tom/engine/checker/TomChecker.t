@@ -28,7 +28,7 @@ package jtom.checker;
 
 import aterm.*;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.LinkedList;
 
 import jtom.TomEnvironment;
@@ -37,6 +37,7 @@ import jtom.tools.TomTask;
 import jtom.runtime.Collect1;
 import jtom.xml.Constants;
 import jtom.exception.*;
+import jtom.runtime.set.SharedSet;
 
 abstract public class TomChecker extends TomTask {
 	
@@ -46,21 +47,32 @@ abstract public class TomChecker extends TomTask {
 	
 	class TermDescription {
 		int termClass, decLine;
-		String name, type;
-		public TermDescription(int termClass, String name, int decLine, String type) {
+		String name ="";
+		TomType tomType = null;
+		public TermDescription(int termClass, String name, int decLine, TomType tomType) {
 			this.termClass = termClass;
 			this.decLine = decLine;
 			this.name = name;
-			this.type = type;
+			this.tomType = tomType;
+		}
+		public String type() {
+			if(tomType != null && !tomType.isEmptyType()) {
+				return tomType.getString();
+			} else {
+				return null;
+			}
 		}
 	}
 	
 	private final static int APPL = 0;
-	private final static int RECORD_APPL = 1;
-	private final static int XML_APPL = 2;
-	private final static int VARIABLE_STAR = 3;
-	private final static int UNAMED_VARIABLE_STAR = 4;
-	private final static int PLACE_HOLDER = 5;
+	private final static int APPL_DISJUNCTION = 1;
+	private final static int RECORD_APPL = 2;
+	private final static int RECORD_APPL_DISJUNCTION = 3;
+	private final static int XML_APPL = 4;
+	private final static int VARIABLE_STAR = 5;
+	private final static int UNAMED_VARIABLE_STAR = 6;
+	private final static int PLACE_HOLDER = 7;
+	
 	
 	private final static String OPERATOR = "Operator";
 	private final static String CONSTRUCTOR = "%op";
@@ -113,23 +125,13 @@ abstract public class TomChecker extends TomTask {
 						DeclarationToTomTerm(declaration) -> { verifyDeclaration(declaration); return false; }
 						
 						Match(SubjectList(matchArgsList), PatternList(patternActionList), list) -> {  
-							verifyMatch(matchArgsList, patternActionList, list); return false;
-						}/*
+							verifyMatch(matchArgsList, patternActionList, list); return true;
+						}
 						RuleSet(list, orgTrack) -> {
-							currentTomStructureOrgTrack = orgTrack;
-							verifyRule(list); return false;
+							verifyRule(list, orgTrack); return false;
 						}
-						backquote@BackQuoteAppl[] -> { 
+						/*backquote@BackQuoteAppl[] -> { 
 							permissiveVerify(backquote); return false; 
-						}
-						Appl(options,Name(name),args) -> { 
-							verifyApplStructure(options, name, args); return true; 
-						}
-						RecordAppl(options,Name(name),args) ->{
-							verifyRecordStructure(options, name, args); return true;
-						}
-						XMLAppl(options,Name(name), list1, list2) ->{
-							verifyXMLApplStructure(options, name, list1, list2); return true;
 						}*/
 						_ -> { return true; }
 					}
@@ -143,8 +145,138 @@ abstract public class TomChecker extends TomTask {
 		traversal().genericCollect(parsedTerm, collectAndVerify);   
 	} //checkSyntax
 
+	/** Main type checking entry point: We check all interesting Tom Structure */
 	protected void checkTypeInference(TomTerm expandedTerm) {
-	
+		Collect1 collectAndVerify = new Collect1() {  
+			public boolean apply(ATerm term) {
+				if(term instanceof TomTerm) {
+					%match(TomTerm term) {
+						Match(_, PatternList(list), oplist) -> {  
+							currentTomStructureOrgTrack = findOriginTracking(oplist);
+							verifyMatchVariable(list);
+							return false;
+						}
+						RuleSet(list, orgTrack) -> {
+							currentTomStructureOrgTrack = orgTrack;
+							verifyRuleVariable(list);
+							return false;
+						}
+						_ -> { return true; }
+					}
+				} else {
+					return true;
+				}
+			}// end apply
+		}; // end new
+		traversal().genericCollect(expandedTerm, collectAndVerify);
+	}
+  
+	private void verifyMatchVariable(TomList patternList) {
+		while(!patternList.isEmpty()) {
+			TomTerm pa = patternList.getHead();
+			TomTerm patterns = pa.getTermList();
+				// collect variables
+			ArrayList variableList = new ArrayList();
+			collectVariable(variableList, patterns);      
+			verifyVariableType(variableList);
+			patternList = patternList.getTail();
+		}
+	}
+  
+	private void verifyRuleVariable(TomRuleList list) {
+		while(!list.isEmpty()) {
+			TomRule rewriteRule = list.getHead();
+			TomTerm lhs = rewriteRule.getLhs();
+			TomTerm rhs = rewriteRule.getRhs();
+			TomList condList = rewriteRule.getCondList();
+			Option orgTrack = findOriginTracking(rewriteRule.getOption());
+ 	     
+			ArrayList variableLhs = new ArrayList();
+			collectVariable(variableLhs, lhs);
+			//System.out.println("lhs: "+variableLhs);
+			HashSet lhsSet = verifyVariableType(variableLhs);
+ 	     
+			ArrayList variableRhs = new ArrayList();
+			collectVariable(variableRhs, rhs);
+			//System.out.println("rhs: "+variableRhs);
+			HashSet rhsSet = verifyVariableType(variableRhs);
+ 	     
+			ArrayList variableCond = new ArrayList();
+			collectVariable(variableCond, `Tom(condList));
+			HashSet condSet = verifyVariableType(variableCond);
+ 	     
+			lhsSet.addAll(condSet);
+			if(!condSet.isEmpty()) {
+				System.out.println("Warning: improve verifyRuleVariable for matchingCondition");
+			}
+ 	     
+			if( !lhsSet.containsAll(rhsSet) ) {
+				Iterator it = lhsSet.iterator();
+				while(it.hasNext()) {
+					rhsSet.remove(it.next());
+				}
+				messageError(orgTrack.getLine(),
+															TomCheckerMessage.UnknownVariable ,
+															new Object[]{rhsSet.toString()},
+															TomCheckerMessage.TOM_ERROR);
+			}
+				// case of rhs is a single variable
+			%match (TomTerm rhs) {
+				Term(Variable[astName=Name(name)]) -> {
+					String methodName = "";
+					%match(TomTerm lhs) {
+						Term(Appl[nameList=(Name(name1))]) -> {
+							methodName = name1;
+						}
+						Term(RecordAppl[nameList=(Name(name1))]) -> {
+							methodName = name1;
+						}
+					}
+					TomType typeRhs = getSymbolCodomain(getSymbol(methodName));
+					Iterator it = variableLhs.iterator();
+					while(it.hasNext()) {
+						TomTerm term = (TomTerm)it.next();
+						if(term.getAstName().getString() == name) {
+							TomType typeLhs = term.getAstType();
+							if(typeLhs != typeRhs) {
+								messageError(orgTrack.getLine(),
+																			TomCheckerMessage.BadVariableType ,
+																			new Object[]{name, typeRhs.getTomType().getString(), typeLhs.getTomType().getString()},
+																			TomCheckerMessage.TOM_ERROR);
+							}
+						}
+					}
+				}
+			}
+			list = list.getTail();
+		}
+	}
+  
+	private HashSet verifyVariableType(ArrayList list) {
+			// compute multiplicities
+		HashSet set = new HashSet();
+		HashMap map = new HashMap();
+		Iterator it = list.iterator();
+		while(it.hasNext()) {
+			TomTerm variable = (TomTerm)it.next();
+			TomName name = variable.getAstName();
+   	   
+			if(set.contains(name)) {
+				TomTerm var = (TomTerm)map.get(name);
+				TomType type = var.getAstType();
+				TomType type2 = variable.getAstType();
+				if(!(type==type2)) {
+					messageError(findOriginTrackingLine(variable.getOption()),
+																TomCheckerMessage.IncoherentVariable ,
+																new Object[]{name.getString(), type.getTomType().getString(), type2.getTomType().getString()},
+																TomCheckerMessage.TOM_ERROR);
+				}
+			} else {
+				map.put(name, variable);
+				set.add(name);
+			}
+		}
+	return set;
 	}
 	
 	/**
@@ -463,7 +595,6 @@ abstract public class TomChecker extends TomTask {
 				} else {
 					messageError(currentTomStructureOrgTrack.getLine(), TomCheckerMessage.RepeatedMatchArgumentName, new Object[]{name}, 1);
 				}
-						
 			}	
 		}	
 			// Then control each pattern vs the match definition
@@ -480,63 +611,184 @@ abstract public class TomChecker extends TomTask {
 	private void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs ) {
 		ArrayList foundTypeMatch = new ArrayList();
 		int line = -1;
-		int nbFoundArgs = 0;
+		int nbFoundArgs = termList.getLength();
 		int nbExpectedArgs = typeMatchArgs.size();
-    
+
+		if(nbFoundArgs != nbExpectedArgs) {
+			messageError(findOriginTrackingLine(termList.getHead().getOption()),
+														TomCheckerMessage.BadMatchNumberArgument,
+														new Object[]{new Integer(nbExpectedArgs), new Integer(nbFoundArgs)},
+														TomCheckerMessage.TOM_ERROR);
+			return ;
+		}
+		int counter = 0;
 		%match(TomList termList) {
 			concTomTerm(_*, term, _*) -> { // for each Term
-				nbFoundArgs++;
-				if(nbFoundArgs > nbExpectedArgs) {
-					// breaking analyses
-					messageError(line, TomCheckerMessage.BadMatchNumberArgument, new Object[]{new Integer(nbExpectedArgs), new Integer(nbFoundArgs)}, TomCheckerMessage.TOM_ERROR);
-					return;
-				}
-				
-				TermDescription termDesc = analyseTerm(term, (TomType)typeMatchArgs.get(nbFoundArgs-1), false, true);
+			 TermDescription termDesc = analyseTerm(term, (TomType)typeMatchArgs.get(counter), false, true, false);
 				line = termDesc.decLine;
 
 				// Var* and _* are not allowed as top leftmost symbol
 				if(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR) {
-					messageError(line, TomCheckerMessage.MatchVariableStar, new Object[]{termDesc.name}, TomCheckerMessage.TOM_ERROR);
+					messageError(line, TomCheckerMessage.IncorrectVariableStar, new Object[]{termDesc.name}, TomCheckerMessage.TOM_ERROR);
 				}
 				// ensure type coherence if strictType
 				if(strictType) {
-					if(termDesc.type != null && !termDesc.type.equals(((TomType)typeMatchArgs.get(nbFoundArgs-1)).getString()) ) {
-						//System.out.println(termDesc.type+"!="+((TomType)typeMatchArgs.get(nbFoundArgs-1)).getString());
-						messageError(line, TomCheckerMessage.WrongMatchArgumentTypeInPattern, new Object[]{new Integer(nbFoundArgs), (String)typeMatchArgs.get(nbFoundArgs-1), termDesc.type }, TomCheckerMessage.TOM_ERROR);
+					if(termDesc.type() != null && 
+							!termDesc.type().equals(((TomType)typeMatchArgs.get(counter)).getString()) ) {
+						//System.out.println(termDesc.type()+"!="+((TomType)typeMatchArgs.get(counter)).getString());
+						messageError(line, TomCheckerMessage.WrongMatchArgumentTypeInPattern, new Object[]{new Integer(counter), (String)typeMatchArgs.get(counter), termDesc.type() }, TomCheckerMessage.TOM_ERROR);
 					}
 				}
+				counter++;
 			}
 		}
-		if(nbFoundArgs < nbExpectedArgs) {
-			messageError(line, TomCheckerMessage.BadMatchNumberArgument, new Object[]{new Integer(nbExpectedArgs), new Integer(nbFoundArgs)}, TomCheckerMessage.TOM_ERROR);
+	}
+
+
+	/** 
+	 * RULE VERIFICATION CONCERNS 
+	 */
+	private void verifyRule(TomRuleList ruleList, Option orgTrack) {
+		int ruleNumber = 0;
+		currentTomStructureOrgTrack = orgTrack;
+		String headSymbolName = "Unknown return type";
+		%match(TomRuleList ruleList) {	// for each rewrite rule
+		  b1: concTomRule(_*, RewriteRule(Term(lhs),Term(rhs),condList,option),_*) -> {
+				headSymbolName = verifyLhsRuleAndConstructorEgality(lhs, headSymbolName, ruleNumber);
+				if( headSymbolName == null ) { return; }
+				verifyRhsRuleStructure(rhs, headSymbolName);
+				ruleNumber++;
+			}
+		}
+	}
+  
+	private String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  headSymbolName, int ruleNumber) {
+		String currentHeadSymbolName;
+		TomType lhsType  = null;
+		TomSymbol symbol = null;
+		// We support only Appl and RecordAppl
+		int termClass = getClass(lhs);
+		if(  termClass != APPL && termClass != RECORD_APPL) {
+			String termName;
+			if (termClass == XML_APPL) { 
+				termName = "XML construct "+getName(lhs);
+			} else if (termClass ==  APPL_DISJUNCTION || termClass == RECORD_APPL_DISJUNCTION) {
+				termName = "Disjunction";
+			} else {
+				termName = getName(lhs);
+			}	
+			messageError(findOriginTrackingLine(lhs.getOption()), 
+														TomCheckerMessage.IncorrectRuleLHSClass, new Object[]{termName}, 
+														TomCheckerMessage.TOM_ERROR);
+			return null;
+		}
+		
+		currentHeadSymbolName = getName(lhs);
+		if(ruleNumber == 0) {
+				// update the root of lhs: it becomes a defined symbol
+			symbol = ast().updateDefinedSymbol(symbolTable(),lhs);
+			if( symbol == null ) {
+				messageError(findOriginTrackingLine(lhs.getOption()),
+															TomCheckerMessage.UnknownSymbol, 
+															new Object[]{currentHeadSymbolName}, TomCheckerMessage.TOM_ERROR);
+					// We can not continue anymore
+				return null;
+			}
+			  //ensure we are able to construct this symbol
+			if ( !findMakeDecl(symbol.getOption())) {
+				messageError(findOriginTrackingLine(lhs.getOption()),
+															TomCheckerMessage.NoRuleMakeDecl, 
+															new Object[]{currentHeadSymbolName}, TomCheckerMessage.TOM_ERROR);
+			}	
+		} else {
+				// Test constructor equality
+			String newName = getName(lhs);
+			if (!headSymbolName.equals(currentHeadSymbolName)) {
+				messageError(findOriginTrackingLine(lhs.getOption()),
+															TomCheckerMessage.DifferentRuleConstructor, 
+															new Object[]{headSymbolName, currentHeadSymbolName}, TomCheckerMessage.TOM_ERROR); 
+			}
+		}
+		symbol = getSymbol(currentHeadSymbolName);
+		lhsType = getSymbolCodomain(symbol);
+		  // analyse the term
+		analyseTerm(lhs, lhsType, isListOperator(symbol)||isArrayOperator(symbol), true, false);
+		return currentHeadSymbolName;
+	}
+
+	private boolean findMakeDecl(OptionList list) {
+		%match(OptionList list) {
+			(_*, DeclarationToOption(MakeDecl[]), _*) -> {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+
+		//Rhs shall have no underscore, be a var* nor _*, nor a RecordAppl
+	private void verifyRhsRuleStructure(TomTerm rhs, String lhsHeadSymbolName) {
+		int termClass = getClass(rhs); //TermDescription termDesc = analyseTerm(lhs);
+		if(  termClass != APPL) {
+			String termName;
+			if (termClass == XML_APPL) { 
+				termName = "XML construct "+getName(rhs);
+			} else if (termClass ==  APPL_DISJUNCTION || termClass == RECORD_APPL_DISJUNCTION) {
+				termName = "Disjunction";
+			} else if (termClass == RECORD_APPL) {
+				termName = getName(rhs)+"[...]";
+			} else {
+				termName = getName(rhs);
+			}	
+			messageError(findOriginTrackingLine(rhs.getOption()), 
+														TomCheckerMessage.IncorrectRuleRHSClass, new Object[]{termName}, 
+														TomCheckerMessage.TOM_ERROR);
+			return;
+		}
+		
+		TomSymbol symbol = getSymbol(lhsHeadSymbolName);
+		TomType lhsType = getSymbolCodomain(symbol);
+		TermDescription termDesc = analyseTerm(rhs, lhsType, isListOperator(symbol)||isArrayOperator(symbol), true, true);
+		TomType rhsType = termDesc.tomType;
+		if(rhsType != null) {
+			if(rhsType != lhsType) {
+				String rhsTypeName;
+				if(rhsType.isEmptyType()) {rhsTypeName = "Not Type Found";} else {rhsTypeName = rhsType.getString();}
+				messageError(findOriginTrackingLine(rhs.getOption()), 
+																		TomCheckerMessage.IncorrectRuleRHSType, new Object[]{rhsTypeName, lhsType.getString()}, 
+																		TomCheckerMessage.TOM_ERROR);
+			}
 		}
 	}
 
   // Analyse a term given an expected type and reenter recursively on childs
-	public TermDescription analyseTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel) {
-		String termName = "emptyName" , type = null;
+	public TermDescription analyseTerm(TomTerm term, TomType expectedType, boolean listSymbol, boolean topLevel, boolean permissive) {
+		String termName = "emptyName";
+		TomType type = null;
 		int termClass, decLine;
 		Option orgTrack;
 		matchblock:{
 			%match(TomTerm term) {
        	Appl(options, nameList@(Name("")), args) -> {
 					decLine = findOriginTrackingLine(options);
-					termClass = APPL;
+					termClass = APPL_DISJUNCTION;
 										
           TomSymbol symbol = ensureValideUnamedList(expectedType, decLine);
           if(symbol == null) {
 						break matchblock;
           }
             //there is only one symbol and its type is the expected one
-          type = expectedType.getString(); // extractType(symbol);
+          type = expectedType; // extractType(symbol);
           termName = symbol.getAstName().getString();
           
           while(!args.isEmpty()) {
           	// whatever the arity is, we continue recursively and there is only one element in the Domain
-						analyseTerm(args.getHead(), symbol.getTypesToType().getDomain().getHead(), true, false);
+						analyseTerm(args.getHead(), symbol.getTypesToType().getDomain().getHead(), true, false, permissive);
 						args = args.getTail();
           }
+					if(permissive) {
+						System.out.println("UnamedList but permissive");
+					}
           break matchblock;
         }
         
@@ -544,19 +796,19 @@ abstract public class TomChecker extends TomTask {
 					decLine = findOriginTrackingLine(options);
 					termClass = APPL;
 					
-					String name = ensureValidDisjunction(nameList, expectedType, decLine,hasConstructor(options), args.isEmpty());
+					String name = ensureValidDisjunction(nameList, expectedType, decLine,hasConstructor(options), args.isEmpty(), permissive);
 					if(name == null) {
 						break matchblock;
 					}
 						// Type is OK
-					type = expectedType.getString(); //extractType(getSymbol(name));     
+					type = expectedType;//extractType(getSymbol(name));     
 					termName = name;
 					TomSymbol symbol = getSymbol(name);
 					boolean listOp = (isListOperator(symbol) || isArrayOperator(symbol));
 					if (listOp) {
 						while(!args.isEmpty()) {
 							// whatever the arity is, we continue recursively and there is only one element in the Domain
-							analyseTerm(args.getHead(), symbol.getTypesToType().getDomain().getHead(), listOp, false);
+							analyseTerm(args.getHead(), symbol.getTypesToType().getDomain().getHead(), listOp, false, permissive);
 							args = args.getTail();
 						}
 					} else {
@@ -571,7 +823,7 @@ abstract public class TomChecker extends TomTask {
 						}
 						while(!args.isEmpty()) {
 							// TODO: for each arg: repeat analyse with associated expected type and control arity
-							analyseTerm(args.getHead(), types.getHead(), listOp, false);
+							analyseTerm(args.getHead(), types.getHead(), listOp, false, permissive);
 							args = args.getTail();
 							types = types.getTail();
 						}
@@ -579,7 +831,12 @@ abstract public class TomChecker extends TomTask {
 					break matchblock;
 				}
 				
-				RecordAppl(options,nameList, pairSlotAppls) ->{
+				rec@RecordAppl(options,nameList, pairSlotAppls) ->{
+					if(permissive) {
+						messageError(findOriginTrackingLine(options), TomCheckerMessage.IncorrectRuleRHSClass, 
+												new Object[]{getName(rec)+"[...]"}, TomCheckerMessage.TOM_ERROR);
+						}
+						
 					decLine = findOriginTrackingLine(options);
 					termClass = RECORD_APPL;
 
@@ -596,7 +853,7 @@ abstract public class TomChecker extends TomTask {
 						}
 					}
 
-					type = extractType(getSymbol(name2));     
+					type = getSymbolCodomain(getSymbol(name2));     
 					termName = name2;
 					break matchblock;
 				}
@@ -606,7 +863,7 @@ abstract public class TomChecker extends TomTask {
 					// ensureValidDisjunction(nameList); ??????????
 					termClass = XML_APPL;
 					decLine = findOriginTrackingLine(options);
-					type = extractType(getSymbol(Constants.ELEMENT_NODE));
+					type = getSymbolCodomain(getSymbol(Constants.ELEMENT_NODE));
 					termName = Constants.ELEMENT_NODE;
 					break matchblock;
 				}
@@ -615,7 +872,11 @@ abstract public class TomChecker extends TomTask {
 					termClass = PLACE_HOLDER;
 					decLine = findOriginTrackingLine(options);
 					type = null;     
-					termName = "*";
+					termName = "_";
+					if(permissive) {
+						messageError(decLine, TomCheckerMessage.IncorrectRuleRHSClass, 
+																	new Object[]{termName}, TomCheckerMessage.TOM_ERROR);
+					}
 					break matchblock;
 				}
 				
@@ -640,9 +901,117 @@ abstract public class TomChecker extends TomTask {
 						messageError(decLine, TomCheckerMessage.InvalidVariableStarArgument, 
 																	new Object[]{termName}, TomCheckerMessage.TOM_ERROR);
 					}
+					if(permissive) {
+						messageError(decLine, TomCheckerMessage.IncorrectRuleRHSClass, 
+											new Object[]{termName}, TomCheckerMessage.TOM_ERROR);
+					}
 					break matchblock;
 				}
 				
+				_ -> {
+					System.out.println("Strange term in pattern "+term);
+					throw new TomRuntimeException(new Throwable("Strange Term "+term));
+				}
+			}
+		}
+		return new TermDescription(termClass, termName, decLine, type);	
+	}
+	
+	public int getClass(TomTerm term) {
+		%match(TomTerm term) {
+			Appl[nameList=(Name(name))]													->{ return APPL;}
+			Appl[nameList=(Name(name), _*)]													->{ return APPL_DISJUNCTION;}
+			RecordAppl[nameList=(Name(name))]							->{ return RECORD_APPL;}
+			RecordAppl[nameList=(Name(name), _*)]							->{ return RECORD_APPL_DISJUNCTION;}
+			XMLAppl[]									->{ return XML_APPL;}
+			Placeholder[] 							->{ return PLACE_HOLDER;}
+			VariableStar[]							->{ return VARIABLE_STAR;}
+			UnamedVariableStar[] ->{ return UNAMED_VARIABLE_STAR;}
+			_																->{throw new TomRuntimeException("Invalid Term");}
+		}
+	}
+	
+	public String getName(TomTerm term) {
+		String dijunctionName = "";
+		%match(TomTerm term) {
+			Appl[nameList=(Name(name))] ->{ return name;}
+			Appl[nameList=nameList] ->{
+				String head;
+				dijunctionName = nameList.getHead().getString();
+				while(!nameList.isEmpty()) {
+					head = nameList.getHead().getString();
+					dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
+					nameList = nameList.getTail();
+				}
+				return dijunctionName;
+			}
+			RecordAppl[nameList=(Name(name))]							->{ return name;}
+			RecordAppl[nameList=nameList]									->{
+				String head;
+				dijunctionName = nameList.getHead().getString();
+				while(!nameList.isEmpty()) {
+					head = nameList.getHead().getString();
+					dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
+					nameList = nameList.getTail();
+				}
+				return dijunctionName;
+			}
+			XMLAppl[nameList=(Name(name), _*)] ->{ return name;}
+			Placeholder[] 							->{ return "_";}
+			VariableStar[astName=Name(name)]							->{ return name+"*";}
+			UnamedVariableStar[] ->{ return "_*";}
+			_																->{throw new TomRuntimeException("Invalid Term");}
+		}
+	}
+	
+	public TermDescription analyseTerm(TomTerm term) {
+		String termName;
+		TomType type;
+		int termClass, decLine;
+		matchblock:{
+			%match(TomTerm term) {
+				Appl[option=options, nameList=(Name(name))] -> {
+					termClass = APPL;
+					decLine = findOriginTrackingLine(options);
+					type = getSymbolCodomain(getSymbol(name));     
+					termName = name;
+					break matchblock;
+				}
+				RecordAppl[option=options,nameList=(Name(name))] ->{
+					termClass = RECORD_APPL;
+					decLine = findOriginTrackingLine(options);
+					type = getSymbolCodomain(getSymbol(name));     
+					termName = name;
+					break matchblock;
+				}
+				XMLAppl[option=options] -> {
+					termClass = XML_APPL;
+					decLine = findOriginTrackingLine(options);
+					type = getSymbolCodomain(getSymbol(Constants.ELEMENT_NODE));
+					termName = Constants.ELEMENT_NODE;
+					break matchblock;
+				}
+				Placeholder[option=options] -> {
+					termClass = PLACE_HOLDER;
+					decLine = findOriginTrackingLine(options);
+					type = null;     
+					termName = "*";
+					break matchblock;
+				}
+				VariableStar[option=options, astName=Name(name)] -> { 
+					termClass = VARIABLE_STAR;
+					decLine = findOriginTrackingLine(options);
+					type = null;     
+					termName = name+"*";
+					break matchblock;
+				}
+				UnamedVariableStar[option=options] -> {
+					termClass = UNAMED_VARIABLE_STAR;
+					decLine = findOriginTrackingLine(options);
+					type = null;     
+					termName = "_*";
+					break matchblock;
+				}
 				_ -> {
 					System.out.println("Strange term in pattern "+term);
 					throw new TomRuntimeException(new Throwable("Strange Term "+term));
@@ -687,7 +1056,7 @@ abstract public class TomChecker extends TomTask {
 	}
 	
 	private String ensureValidDisjunction(NameList nameList, TomType expectedType, int decLine,
-																													boolean constructor, boolean emptyChilds) {
+																													boolean constructor, boolean emptyChilds, boolean permissive) {
 		String res = "";
 		TomType currentType = null;
 		
@@ -695,12 +1064,16 @@ abstract public class TomChecker extends TomTask {
 			res = nameList.getHead().getString();
 			TomSymbol symbol =  getSymbol(res);
 			if (symbol == null ) {
-				if(constructor || !emptyChilds) {
-					messageError(decLine, TomCheckerMessage.UnknownSymbol, new Object[]{res}, TomCheckerMessage.TOM_ERROR);
+				if((constructor || !emptyChilds)) {
+					if(!permissive) {
+						messageError(decLine, TomCheckerMessage.UnknownSymbol, new Object[]{res}, TomCheckerMessage.TOM_ERROR);
+					} else {
+						messageError(decLine, TomCheckerMessage.UnknownPermissiveSymbol, new Object[]{res}, TomCheckerMessage.TOM_WARNING);
+					}
 				}
 				return null;
 			} else {			
-				if(emptyChilds && !constructor) {
+				if(emptyChilds && !constructor ) {
 				 		//			we know the symbol but it is not called has a constructor and argsList is empty
 				  	// it is not a string or int or double
 					String codomain = getTomType(getSymbolCodomain(symbol));
@@ -720,6 +1093,10 @@ abstract public class TomChecker extends TomTask {
 				}
 			}
 			return res;
+		}
+		
+		if(permissive) {
+			messageError(decLine, TomCheckerMessage.ImpossiblePermissiveAndDisjunction, new Object[]{}, TomCheckerMessage.TOM_ERROR);			
 		}
 		
 		boolean first = true; // the first symbol give the expected 

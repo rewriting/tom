@@ -97,9 +97,9 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
             %match(TomTerm subject) {
               DoubleBackQuote(backQuoteTerm) -> {
                 TomTerm t = expandTomSyntax(backQuoteTerm);
-                  System.out.println("t1 = " + t);
+                  //System.out.println("t1 = " + t);
                 t = expandBackQuoteXMLAppl(t);
-                  System.out.println("t2 = " + t);
+                  //System.out.println("t2 = " + t);
                 return t;
               }
               
@@ -128,7 +128,6 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
       }; // end new
 
     return (TomTerm) replace.apply(subject);
-    return subject;
   }
 
   protected TomTerm expandRecordAppl(OptionList option, NameList nameList, TomList args) {

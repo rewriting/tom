@@ -39,10 +39,10 @@ public class Xml {
       elements.addLast("" + i);
       reverseElements.addFirst("" + i);
     }
-    System.out.println("t = " + t);
-    System.out.println("checkSorted = " + checkSortedInteger(t));
-    System.out.println("swapElements = " + swapElements(t));
-    System.out.println("extractElements = " + extractElements(t));
+      //System.out.println("t = " + t);
+      //System.out.println("checkSorted = " + checkSortedInteger(t));
+      //System.out.println("swapElements = " + swapElements(t));
+      //System.out.println("extractElements = " + extractElements(t));
 
     assertTrue(checkSortedInteger(t));
     assertTrue(extractElements(t).equals(elements));

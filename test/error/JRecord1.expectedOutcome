@@ -1,7 +1,14 @@
+-- Error occured line: 41 in structure `Match` declared line: 32 in file: JRecord1.t
+---> Unknown symbol `opp`
 
-Slot Name 'term' is not correct: See method 'op' -  Line : 17
-Possible slot names are : [type]
--- Error occured at line: 17 in file: JRecord1.t
+-- Error occured line: 37 in structure `Match` declared line: 32 in file: JRecord1.t
+---> Same slot names can not be used several times in symbol `op`: Repeated slot Name : `slot1`
 
-Tom Checker:  Encountered 1 errors during verification phase.
+-- Error occured line: 35 in structure `Match` declared line: 32 in file: JRecord1.t
+---> [] are not allowed on lists or arrays, see `concList1`
+
+-- Error occured line: 33 in structure `Match` declared line: 32 in file: JRecord1.t
+---> Slot Name `badslot` is not correct for symbol `op`. Possible slot names are : [slot1, slot2]
+
+Tom SyntaxChecker:  Encountered 4 errors and 0 warnings.
 No file generated.

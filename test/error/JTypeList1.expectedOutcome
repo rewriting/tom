@@ -1,6 +1,26 @@
+-- Error occured line: 81 in structure `structure %typelist type9` declared line: 75 in file: JTypeList1.t
+---> Repeated macro-function `get_head`
 
-Missing macro-function(s) [get_fun_sym] in '%typelist type1'
--- Error occured at line: 1 in file: JTypeList1.t
+-- Error occured line: 69 in structure `%typelist type8` declared line: 65 in file: JTypeList1.t
+---> Arguments must be linear in macro-function `equals`: Variable `l1` is repeated
 
-Tom Checker:  Encountered 1 errors during verification phase.
+-- Error occured line: 58 in structure `%typelist type7` declared line: 55 in file: JTypeList1.t
+---> Arguments must be linear in macro-function `cmp_fun_sym`: Variable `t1` is repeated
+
+-- Error occured line: 37 in structure `%typelist type5` declared line: 37 in file: JTypeList1.t
+---> Missing macro-function(s) [ is_empty ]
+
+-- Error occured line: 28 in structure `%typelist type4` declared line: 28 in file: JTypeList1.t
+---> Missing macro-function(s) [ get_tail ]
+
+-- Error occured line: 19 in structure `%typelist type3` declared line: 19 in file: JTypeList1.t
+---> Missing macro-function(s) [ get_head ]
+
+-- Error occured line: 10 in structure `%typelist type2` declared line: 10 in file: JTypeList1.t
+---> Missing macro-function(s) [ cmp_fun_sym ]
+
+-- Error occured line: 1 in structure `%typelist type1` declared line: 1 in file: JTypeList1.t
+---> Missing macro-function(s) [ get_fun_sym ]
+
+Tom SyntaxChecker:  Encountered 8 errors and 0 warnings.
 No file generated.

@@ -82,15 +82,18 @@ public abstract class TomTask extends TomBase {
 					if (/*!input.isNoWarning() || */input.isWarningAll() && !input.isEclipseMode()) {
 						System.out.println(error.getMessage());
 					}
-				} else if (error.getLevel() == 0) {
+				} else if (error.getLevel() == 0 && !input.isEclipseMode()) {
 					System.out.println(error.getMessage());
 					res = false;
 					nbError++;
 				}
 				errors= errors.getTail();
 			}
-			if (nbError>0) {
+			if (nbError>0 && !input.isEclipseMode()) {
 				String msg = name+":  Encountered " + nbError + " errors and "+ nbWarning+" warnings.\nNo file generated.";
+				System.out.println(msg);
+			} else if (nbWarning>0 && !input.isEclipseMode() && !input.isNoWarning()) {
+				String msg = name+":  Encountered "+ nbWarning+" warnings.";
 				System.out.println(msg);
 			}
 		}
@@ -100,7 +103,7 @@ public abstract class TomTask extends TomBase {
 	public void finishProcess() {
 			//	Start next task
 		if(nextTask != null) {
-			//input.setErrors(tsf().makeTomErrorList());
+			input.setErrors(tsf().makeTomErrorList());
 			nextTask.startProcess(input);
 		} /*else { System.out.println("No more tasks"); }*/
 	}
