@@ -197,7 +197,7 @@ public class Lsystems3 implements LsystemsInterface {
   public Ignore extign = new Ignore() {
     public boolean apply(ATerm t) {
       %match(Node t) {
-        Right | Left | F | SubList -> { return true; }
+        Right | Left | F | SubList[] -> { return true; }
       }
       return false;
     }

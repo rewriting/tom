@@ -2,8 +2,6 @@ import aterm.pure.*;
 import lsruntime.*;
 import lsruntime.adt.*;
 
-import java.util.*;
-import java.lang.*;
 import java.lang.reflect.*;
 import java.awt.*;
 import java.awt.event.*;

@@ -24,7 +24,6 @@ import lsruntime.graphic.LsystemsView;
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import java.lang.*;
 
 /**
  * Classe commune

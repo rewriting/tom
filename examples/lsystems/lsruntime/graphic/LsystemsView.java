@@ -1,12 +1,7 @@
 package lsruntime.graphic;
 
-import java.io.*;
 import javax.swing.*;
-import javax.swing.tree.*;
 import java.awt.*;
-import java.awt.geom.*;
-import java.awt.event.*;
-import aterm.*;
 
 import lsruntime.adt.*;
 

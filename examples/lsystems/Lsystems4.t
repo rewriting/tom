@@ -84,7 +84,8 @@ public class Lsystems4 implements LsystemsInterface {
         // A(x,y) : y >= 3 -> B(x) A(x/y,0)
         A(x,y) -> {
           if ( y < 3) {
-            return `concNode(A(x*2,x+y));
+          	double var =x*2;
+            return `concNode(A(var,x+y));
           } else {
             double t = x / y;
             return `concNode(B(x),A(t,0.0));

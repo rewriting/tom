@@ -1,7 +1,6 @@
 package lsruntime.graphic;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 public class Point3D extends Point2D.Double {
   

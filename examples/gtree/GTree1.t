@@ -32,7 +32,6 @@ public class GTree1 {
   public Tree eval(Tree tree) {
     %match(Tree tree) {
       supT(ackT(t1),ackT(t2)) -> { return `eval(ackT(eval(supT(t1,t2)))); }
-
       supT(nil(),x) -> { return x; }
       supT(x,nil()) -> { return x; }
 

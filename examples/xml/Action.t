@@ -30,10 +30,8 @@ public class Action {
     t = t.getDocElem();
     %match(TNode t) {
       <Actions><Action>
-           //<Comp Label="busy" Type=#TEXT(type) Index=i/>
          comp@<Comp Label="busy" Type=#TEXT(type) Index=i />
          </Action></Actions>
-         
          -> {
            System.out.println("Action 1 Localisee ! " + type + "  " + i);
            System.out.println("Comp: " + comp);

@@ -1,7 +1,6 @@
 import jtom.runtime.xml.*;
 import jtom.runtime.xml.adt.*;
 import aterm.*;
-import jtom.runtime.*;
 
 public class PersonSort {
    
@@ -41,7 +40,7 @@ public class PersonSort {
     %match(TNode t1, TNode t2) {
       <Person Age=#TEXT(a1)><FirstName>#TEXT(n1)</FirstName></Person>,
       <Person Age=#TEXT(a2)><FirstName>#TEXT(n2)</FirstName></Person>
-      -> { return a1.compareTo(a2); }
+      -> { return n1.compareTo(n2); }
     }
     return 0;
   }
