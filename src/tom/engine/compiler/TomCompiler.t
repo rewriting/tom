@@ -596,10 +596,9 @@ public class TomCompiler extends TomGenericPlugin {
             var@(Variable|VariableStar)[constraints=constraintList] -> {
               //System.out.println("var = " + var);
               //System.out.println("set1 = " + variableSet);
-              variableSet.remove(var);
               //System.out.println("set2 = " + variableSet);
 
-              if(variableSet.isEmpty()) {
+              if(variableSet.remove(var)&&variableSet.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
                 return var.setConstraints(newConstraintList);
               }
