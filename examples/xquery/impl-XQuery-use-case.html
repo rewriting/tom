@@ -1,0 +1,886 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>implementation of XQuery use case</title>
+</head>
+<body>
+<big><big><big>Implementation of XQuery Use Case<br>
+<br>
+</big></big></big>
+<h1>1 Use Case "XMP": Experiences and Exemplars</h1>
+<p>This use case contains several example queries that illustrate
+requirements gathered from the database and document communities.</p>
+<div class="div3">
+<h2>1.1 Data</h2>
+<a href="UC1/bib.dtd">bib.dtd</a>, <a href="UC1/bib.xml">bib.xml</a><br>
+<a href="UC1/books.dtd">books.dtd</a>, <a href="UC1/books.xml">books.xml</a><br>
+<a href="UC1/reviews.dtd">review.dtd</a>, <a href="UC1/reviews.xml">review.xml</a><br>
+<a href="UC1/prices.dtd">prices.dtd</a>, <a href="UC1/prices.xml">prices.xml</a><br>
+<h2>1.2 Queries</h2>
+<h3>1.2.1 Q1<br>
+</h3>
+<p>List books published by Addison-Wesley after 1991, including their
+year and title.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;bib&gt;<br> {<br>  for $b in doc("http://bstore1.example.com/bib.xml")/bib/book<br>  where $b/publisher = "Addison-Wesley" and $b/@year &gt; 1991<br>  return<br>    &lt;book year="{ $b/@year }"&gt;<br>     { $b/title }<br>    &lt;/book&gt;<br> }<br>&lt;/bib&gt; <br><br></pre>
+<p><a style="font-weight: bold;" href="xquery-results.html">Result
+expected</a><br style="font-weight: bold;">
+<a style="font-weight: bold;" href="UC1/UC1.t">Implementation in TOM</a><br>
+<br>
+<span style="font-weight: bold;">NOTE: no problem. easy for
+implementation<br>
+</span></p>
+<pre style="font-weight: bold;">%match ....  &lt;bib&gt;&lt;book&gt;&lt;/book&gt;&lt;/bib&gt;  -&gt;</pre>
+<pre></pre>
+</div>
+</div>
+<h3>1.2.2 Q2<br>
+</h3>
+<p>Create a flat list of all the title-author pairs, with each pair
+enclosed in a "result" element.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;results&gt;<br>  {<br>    for $b in doc("http://bstore1.example.com/bib.xml")/bib/book,<br>        $t in $b/title,<br>        $a in $b/author<br>    return<br>        &lt;result&gt;<br>            { $t }    <br>            { $a }<br>        &lt;/result&gt;<br>  }<br>&lt;/results&gt;<br></pre>
+</div>
+</div>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+<p style="font-weight: bold;"><a href="UC1/UC1_2.t">Implementation in
+TOM</a></p>
+<h5><span style="font-weight: bold;">NOTE: no problem. easy for
+implementation</span> </h5>
+<h3>1.2.3 Q3<br>
+</h3>
+<p>For each book in the bibliography, list the title and authors,
+grouped inside a "result" element.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;results&gt;<br>{<br>    for $b in doc("http://bstore1.example.com/bib.xml")/bib/book<br>    return<br>        &lt;result&gt;<br>            { $b/title }<br>            { $b/author  }<br>        &lt;/result&gt;<br>}<br>&lt;/results&gt; <br></pre>
+</div>
+</div>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+<p style="font-weight: bold;"><a href="UC1/UC1_3.t">Implementation in
+TOM</a></p>
+<h5><span style="font-weight: bold;">NOTE: no problem. easy for
+implementation</span></h5>
+<h3>1.2.4 Q4<br>
+</h3>
+<p>For each author in the bibliography, list the author's name and the
+titles of all books by that author, grouped inside a "result" element.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;results&gt;<br>  {<br>    let $a := doc("http://bstore1.example.com/bib/bib.xml")//author<br>    for $last in <span
+ style="color: rgb(255, 0, 0); font-weight: bold;">distinct-values</span>($a/last),<br>        $first in <span
+ style="color: rgb(255, 0, 0); font-weight: bold;">distinct-values</span>($a[last=$last]/first)<br>    order by $last, $first<br>    return<br>        &lt;result&gt;<br>            &lt;author&gt;<br>               &lt;last&gt;{ $last }&lt;/last&gt;<br>               &lt;first&gt;{ $first }&lt;/first&gt;<br>            &lt;/author&gt;<br>            {<br>                for $b in doc("http://bstore1.example.com/bib.xml")/bib/book<br>                where some $ba in $b/author <br>                      satisfies ($ba/last = $last and $ba/first=$first)<br>                return $b/title<br>            }<br>        &lt;/result&gt;<br>  }<br>&lt;/results&gt; <br></pre>
+</div>
+</div>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+<a style="font-weight: bold;" href="UC1/UC1_4.t">Implementation in TOM</a><br>
+<br>
+<p style="font-weight: bold;"><span style="text-decoration: underline;">NOTE:</span>
+<span style="color: rgb(255, 0, 0);">DIFFICULT and COST TIME</span>.&nbsp;
+First get a list of authors, and in 2nd loop we must find all books
+written by each author. </p>
+<p><span style="font-weight: bold;">I'm using a Vector to store list of
+authors. </span><br>
+</p>
+<h3>1.2.5 Q5</h3>
+<p>For each book found at both bstore1.example.com and
+bstore2.example.com, list the title of the book and its price from each
+source.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;books-with-prices&gt;<br>  {<br>    for $b in doc("http://bstore1.example.com/bib.xml")//book,<br>        $a in doc("http://bstore2.example.com/reviews.xml")//entry<br>    where $b/title = $a/title<br>    return<br>        &lt;book-with-prices&gt;<br>            { $b/title }<br>            &lt;price-bstore2&gt;{ $a/price/text() }&lt;/price-bstore2&gt;<br>            &lt;price-bstore1&gt;{ $b/price/text() }&lt;/price-bstore1&gt;<br>        &lt;/book-with-prices&gt;<br>  }<br>&lt;/books-with-prices&gt;<br></pre>
+</div>
+</div>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+<a href="UC1/UC1_5.t"><span style="font-weight: bold;">Implementation
+in TOM</span></a><br>
+<br>
+<p style="text-decoration: underline; font-weight: bold;">NOTE: NO
+problem<br>
+</p>
+<h5> </h5>
+<h3>1.2.5 Q6</h3>
+<p>For each book that has at least one author, list the title and first
+two authors, and an empty "et-al" element if the book has additional
+authors.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;bib&gt;<br>  {<br>    for $b in doc("http://bstore1.example.com/bib.xml")//book<br>    where count($b/author) &gt; 0<br>    return<br>        &lt;book&gt;<br>            { $b/title }<br>            {<br>                for $a in $b/author[position()&lt;=2]  <br>                return $a<br>            }<br>            {<br>                if (count($b/author) &gt; 2)<br>                 then &lt;et-al/&gt;<br>                 else ()<br>            }<br>        &lt;/book&gt;<br>  }<br>&lt;/bib&gt;<br></pre>
+</div>
+</div>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+<a href="UC1/UC1_6.t"><span style="font-weight: bold;">Implementation
+in TOM</span></a><br>
+<br>
+<p style="font-weight: bold;">NOTE: NO PROBLEM. Must only use a counter
+for count the number of authors of each book</p>
+<h5> </h5>
+<h3>1.2.5 Q7</h3>
+List the titles and years of all books published by Addison-Wesley
+after 1991, in alphabetic order.
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;bib&gt;<br>  {<br>    for $b in doc("http://bstore1.example.com/bib.xml")<span
+ style="color: rgb(0, 0, 0);">//</span>book<br>    where $b/publisher = "Addison-Wesley" and $b/@year &gt; 1991<br>    order by $b/title<br>    return<br>        &lt;book&gt;<br>            { $b/@year }<br>            { $b/title }<br>        &lt;/book&gt;<br>  }<br>&lt;/bib&gt; <br></pre>
+</div>
+</div>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+<a href="UC1/UC1_7.t"><span style="font-weight: bold;">Implementation
+in TOM</span></a><br>
+<br>
+<p><span style="font-weight: bold;">NOTE: EASY</span><br>
+</p>
+<h3>1.2.5 Q8</h3>
+<p>Find books in which the name of some element ends with the string
+"or" and the same element contains the string "Suciu" somewhere in its
+content. For each such book, return the title and the qualifying
+element.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>for $b in doc("http://bstore1.example.com/bib.xml")//book<br>let $e := $b/*[contains(string(.), "Suciu") <br>               and <span
+ style="color: rgb(255, 0, 0); font-weight: bold;">ends-with(local-name(.), "or")</span>]<br>where exists($e)<br>return<br>    &lt;book&gt;<br>        { $b/title }<br>        { $e }<br>    &lt;/book&gt; <br></pre>
+</div>
+</div>
+<p>In the above solution, string(), local-name() and ends-with() are
+functions defined in the Functions and Operators document.</p>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+Implementation in TOM <span style="font-weight: bold;">(no
+implementation)</span><br>
+<br>
+<p style="font-weight: bold;">NOTE: <span
+ style="color: rgb(255, 0, 0);">Very difficult.</span>&nbsp;&nbsp; I
+think it's not avaiable in TOM. (We must have available to find a Node
+with name end with "OR")<br>
+</p>
+<h5> </h5>
+<h3>1.2.5 Q9</h3>
+<p>In the document "books.xml", find all section or chapter titles that
+contain the word "XML", regardless of the level of nesting.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;results&gt;<br>  {<br>    for $t in doc("books.xml")<span
+ style="color: rgb(255, 0, 0); font-weight: bold;">//</span>(chapter | section)/title<br>    where contains($t/text(), "XML")<br>    return $t<br>  }<br>&lt;/results&gt; <br></pre>
+</div>
+</div>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+<a href="UC1/UC1_9.t"><span style="font-weight: bold;">Implementation
+in TOM</span></a><br>
+<br>
+<p><span style="font-weight: bold;">NOTE: Look at the '<span
+ style="color: rgb(255, 0, 0);">//</span>" in the first line, it is a
+very strong operator of XQUERY (also the lack of TOM). This operator
+permit us to find all sub-NODEs in a NODE.&nbsp; <br>
+IN TOM, we must use a recursif function. <br>
+</span></p>
+<p style="font-weight: bold;">"(chapter | section)" &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; this notation of XQUERY can be solved by using two
+conditional branches of %math</p>
+<h5> </h5>
+<h3>1.2.5 Q10</h3>
+<p>In the document "prices.xml", find the minimum price for each book,
+in the form of a "minprice" element with the book title as its title
+attribute.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;results&gt;<br>  {<br>    let $doc := doc("prices.xml")<br>    for $t in distinct-values($doc//book/title)<br>    let $p := $doc//book[title = $t]/price<br>    return<br>      &lt;minprice title="{ $t }"&gt;<br>        &lt;price&gt;{ min($p) }&lt;/price&gt;<br>      &lt;/minprice&gt;<br>  }<br>&lt;/results&gt; <br></pre>
+</div>
+</div>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+<p style="font-weight: bold;"><a href="UC1/UC1_10.t">Implementation in
+TOM</a></p>
+<h5>NOTE: NO PROBLEM<br>
+</h5>
+<h3>1.2.5 Q11</h3>
+<p>For each book with an author, return the book with its title and
+authors. For each book with an editor, return a reference with the book
+title and the editor's affiliation.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;bib&gt;<br>{<br>        for $b in doc("http://bstore1.example.com/bib.xml")//book[author]<br>        return<br>            &lt;book&gt;<br>                { $b/title }<br>                { $b/author }<br>            &lt;/book&gt;<br>}<br>{<br>        for $b in doc("http://bstore1.example.com/bib.xml")//book[editor]<br>        return<br>          &lt;reference&gt;<br>            { $b/title }<br>            {$b/editor/affiliation}<br>          &lt;/reference&gt;<br>}<br>&lt;/bib&gt;  <br></pre>
+</div>
+</div>
+<h5><a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a></h5>
+<p style="font-weight: bold;"><a href="UC1/UC1_11.t">Implementation in
+TOM</a></p>
+<h5>NOTE: NO PROBLEM<br>
+</h5>
+<h3>1.2.5 Q12</h3>
+<p>Find pairs of books that have different titles but the same set of
+authors (possibly in a different order).</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;bib&gt;<br>{<br>    for $book1 in doc("http://bstore1.example.com/bib.xml")//book,<br>        $book2 in doc("http://bstore1.example.com/bib.xml")//book<br>    let $aut1 := for $a in $book1/author <br>                 order by $a/last, $a/first<br>                 return $a<br>    let $aut2 := for $a in $book2/author <br>                 order by $a/last, $a/first<br>                 return $a<br>    where $book1 &lt;&lt; $book2<br>    and not($book1/title = $book2/title)<br>    and <span
+ style="font-weight: bold; color: rgb(255, 0, 0);">deep-equal</span>($aut1, $aut2) <br>    return<br>        &lt;book-pair&gt;<br>            { $book1/title }<br>            { $book2/title }<br>        &lt;/book-pair&gt;<br>}<br>&lt;/bib&gt;&nbsp;<br></pre>
+</div>
+</div>
+</div>
+The above solution uses a function, deep-equal(), which compares
+sequences. Two sequences are equal if all items in corresponding
+positions in the two sequences are equal - if the sequences are node
+sequences, the values of the nodes are used for comparison.<br>
+<br>
+<a href="file:///users/protheo/phan/doc/xquery/xquery-results.html">Result
+expected</a><br>
+Implementation in TOM (<span style="font-weight: bold;">NO
+IMPLEMENTATION)&nbsp; We can, but it's long<br>
+<br>
+</span><span style="font-weight: bold;">NOTE: <span
+ style="color: rgb(255, 0, 0);">VERY DIFFICULT</span>:&nbsp; I dont
+know how to compare two TNode (deep-equal in XQUERY)<br>
+<br>
+<br>
+</span>
+<h3><br>
+</h3>
+<h3><br>
+</h3>
+<h1>1.2 Use Case "TREE": Queries that preserve hierarchy</h1>
+<p>Some XML document-types have a very flexible structure in which text
+is mixed with elements and many elements are optional. These
+document-types show a wide variation in structure from one document to
+another. In documents of these types, the ways in which elements are
+ordered and nested are usually quite important.</p>
+<div class="div3">
+<h4><a id="tree-description" name="tree-description"></a>1.2.1
+Description</h4>
+<p>An XML query language should have the ability to extract elements
+from documents while preserving their original hierarchy. This Use Case
+illustrates this requirement by means of a flexible document type named
+Book.</p>
+</div>
+<div class="div3">
+<h4><a id="tree-dtd" name="tree-dtd"></a>1.2.2 Document Type Definition
+(DTD)</h4>
+<p>This use case is based on an input document named "book.xml". The
+DTD for this schema is found in a file called "book.dtd":</p>
+<div class="exampleInner">
+<pre>  &lt;!ELEMENT book (title, author+, section+)&gt;<br>  &lt;!ELEMENT title (#PCDATA)&gt;<br>  &lt;!ELEMENT author (#PCDATA)&gt;<br>  &lt;!ELEMENT section (title, (p | figure | section)* )&gt;<br>  &lt;!ATTLIST section<br>      id         ID    #IMPLIED<br>      difficulty CDATA #IMPLIED&gt;<br>  &lt;!ELEMENT p (#PCDATA)&gt;<br>  &lt;!ELEMENT figure (title, image)&gt;<br>  &lt;!ATTLIST figure<br>       width   CDATA   #REQUIRED<br>       height  CDATA   #REQUIRED &gt;<br>  &lt;!ELEMENT image EMPTY&gt;<br>  &lt;!ATTLIST image<br>       source  CDATA   #REQUIRED &gt;  <br></pre>
+</div>
+</div>
+<div class="div3">
+<h4><a id="tree-data" name="tree-data"></a>1.2.3 Sample Data</h4>
+<p>The queries in this use case are based on the following sample data.</p>
+<div class="exampleInner">
+<pre>&lt;?xml version="1.0"?&gt;<br>&lt;!DOCTYPE book SYSTEM "book.dtd"&gt;<br>&lt;book&gt;<br>  &lt;title&gt;Data on the Web&lt;/title&gt;<br>  &lt;author&gt;Serge Abiteboul&lt;/author&gt;<br>  &lt;author&gt;Peter Buneman&lt;/author&gt;<br>  &lt;author&gt;Dan Suciu&lt;/author&gt;<br>  &lt;section id="intro" difficulty="easy" &gt;<br>    &lt;title&gt;Introduction&lt;/title&gt;<br>    &lt;p&gt;Text ... &lt;/p&gt;<br>    &lt;section&gt;<br>      &lt;title&gt;Audience&lt;/title&gt;<br>      &lt;p&gt;Text ... &lt;/p&gt;<br>    &lt;/section&gt;<br>    &lt;section&gt;<br>      &lt;title&gt;Web Data and the Two Cultures&lt;/title&gt;<br>      &lt;p&gt;Text ... &lt;/p&gt;<br>      &lt;figure height="400" width="400"&gt;<br>        &lt;title&gt;Traditional client/server architecture&lt;/title&gt;<br>        &lt;image source="csarch.gif"/&gt;<br>      &lt;/figure&gt;<br>      &lt;p&gt;Text ... &lt;/p&gt;<br>    &lt;/section&gt;<br>  &lt;/section&gt;<br>  &lt;section id="syntax" difficulty="medium" &gt;<br>    &lt;title&gt;A Syntax For Data&lt;/title&gt;<br>    &lt;p&gt;Text ... &lt;/p&gt;<br>    &lt;figure height="200" width="500"&gt;<br>      &lt;title&gt;Graph representations of structures&lt;/title&gt;<br>      &lt;image source="graphs.gif"/&gt;<br>    &lt;/figure&gt;<br>    &lt;p&gt;Text ... &lt;/p&gt;<br>    &lt;section&gt;<br>      &lt;title&gt;Base Types&lt;/title&gt;<br>      &lt;p&gt;Text ... &lt;/p&gt;<br>    &lt;/section&gt;<br>    &lt;section&gt;<br>      &lt;title&gt;Representing Relational Databases&lt;/title&gt;<br>      &lt;p&gt;Text ... &lt;/p&gt;<br>      &lt;figure height="250" width="400"&gt;<br>        &lt;title&gt;Examples of Relations&lt;/title&gt;<br>        &lt;image source="relations.gif"/&gt;<br>      &lt;/figure&gt;<br>    &lt;/section&gt;<br>    &lt;section&gt;<br>      &lt;title&gt;Representing Object Databases&lt;/title&gt;<br>      &lt;p&gt;Text ... &lt;/p&gt;<br>    &lt;/section&gt;       <br>  &lt;/section&gt;<br>&lt;/book&gt; <br></pre>
+</div>
+</div>
+<div class="div3">
+<h4><a id="tree-queries-results" name="tree-queries-results"></a>1.2.4
+Queries and Results</h4>
+<div class="div4">
+<h5><a id="tree-queries-results-q1" name="tree-queries-results-q1"></a>1.2.4.1
+Q1</h5>
+<p>Prepare a (nested) table of contents for Book1, listing all the
+sections and their titles. Preserve the original attributes of each
+&lt;section&gt; element, if any.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>declare function local:toc($book-or-section as element()) as element()*<br>{<br>    for $section in $book-or-section/section<br>    return<br>      &lt;section&gt;<br>         { $section/@* , $section/title , local:toc($section) }                 <br>      &lt;/section&gt;<br>};<br><br>&lt;toc&gt;<br>   {<br>     for $s in doc("book.xml")/book return local:toc($s)<br>   }<br>&lt;/toc&gt; <br></pre>
+</div>
+</div>
+<p><em>Expected Result:<br>
+</em></p>
+<p style="color: rgb(255, 0, 0);"><span style="font-weight: bold;">NOTE:
+HOW can we represent all attribute of an element in TOM. In an element
+with attribute list FIXED, it's easy, but if the attribute list NOT
+FIXED, it's difficult. <br>
+</span></p>
+<p style="color: rgb(255, 0, 0);"><span style="font-weight: bold;"><span
+ style="color: rgb(0, 0, 0);">other QUESTION:&nbsp; ESCAPE from %match
+clause without using return keyword. <br>
+<br>
+</span></span></p>
+</div>
+<div class="div4">
+<h5><a id="tree-queries-results-q2" name="tree-queries-results-q2"></a>1.2.4.2
+Q2</h5>
+<p>Prepare a (flat) figure list for Book1, listing all the figures and
+their titles. Preserve the original attributes of each &lt;figure&gt;
+element, if any.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;figlist&gt;<br>  {<br>    for $f in doc("book.xml")//figure<br>    return<br>        &lt;figure&gt;<br>            { $f/@* }<br>            { $f/title }<br>        &lt;/figure&gt;<br>  }<br>&lt;/figlist&gt; <br></pre>
+</div>
+</div>
+<p><em>Expected Result:<br>
+</em></p>
+</div>
+<div class="div4">
+<h5>NOTE:&nbsp; LIKE query 1, <span style="font-weight: bold;">HOW can
+we represent all attribute of
+an element in TOM. In an element with attribute list FIXED, it's easy,
+but if the attribute list NOT FIXED, it's difficult. </span></h5>
+<h5><a id="tree-queries-results-q3" name="tree-queries-results-q3"></a>1.2.4.3
+Q3</h5>
+<p>How many sections are in Book1, and how many figures?</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;section_count&gt;{ count(doc("book.xml")<span
+ style="font-weight: bold; color: rgb(255, 0, 0);">//</span>section) }&lt;/section_count&gt;, <br>&lt;figure_count&gt;{ count(doc("book.xml")<span
+ style="font-weight: bold; color: rgb(255, 0, 0);">//</span>figure) }&lt;/figure_count&gt; <br></pre>
+</div>
+</div>
+<p><em>Expected Result:</em></p>
+</div>
+<div class="div4">
+<h5><a id="tree-queries-results-q4" name="tree-queries-results-q4"></a>1.2.4.4
+Q4</h5>
+<p>How many top-level sections are in Book1?</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;top_section_count&gt;<br> { <br>   count(doc("book.xml")/book/section) <br> }<br>&lt;/top_section_count&gt;<br></pre>
+</div>
+</div>
+<p><em>Expected Result:</em></p>
+</div>
+<div class="div4">
+<h5>NOTE: NO PROBLEM</h5>
+<br>
+<h5><a id="tree-queries-results-q5" name="tree-queries-results-q5"></a>1.2.4.5
+Q5</h5>
+<p>Make a flat list of the section elements in Book1. In place of its
+original attributes, each section element should have two attributes,
+containing the title of the section and the number of figures
+immediately contained in the section.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;section_list&gt;<br>  {<br>    for $s in doc("book.xml")<span
+ style="font-weight: bold; color: rgb(255, 0, 0);">//</span>section<br>    let $f := $s/figure<br>    return<br>        &lt;section title="{ $s/title/text() }" figcount="{ count($f) }"/&gt;<br>  }<br>&lt;/section_list&gt; <br></pre>
+</div>
+</div>
+<p><em>Expected Result:</em></p>
+</div>
+<div class="div4">
+<h5><a id="tree-queries-results-q6" name="tree-queries-results-q6"></a>1.2.4.6
+Q6</h5>
+<p>Make a nested list of the section elements in Book1, preserving
+their original attributes and hierarchy. Inside each section element,
+include the title of the section and an element that includes the
+number of figures immediately contained in the section.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>declare function local:section-summary($book-or-section as element())<br>  as element()*<br>{<br>  for $section in $book-or-section<br>  return<br>    &lt;section&gt;<br>       { $section/@* }<br>       { $section/title }       <br>       &lt;figcount&gt;         <br>         { count($section/figure) }<br>       &lt;/figcount&gt;                <br>       { local:section-summary($section/section) }                      <br>    &lt;/section&gt;<br>};<br><br>&lt;toc&gt;<br>  {<br>    for $s in doc("book.xml")/book/section<br>    return local:section-summary($s)<br>  }<br>&lt;/toc&gt; <br></pre>
+</div>
+</div>
+<table border="1" summary="Editorial note">
+  <tbody>
+    <tr>
+      <td width="50%" valign="top" align="left"> <b>Editorial note</b></td>
+      <td width="50%" valign="top" align="right"> &nbsp;</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" colspan="2">This solution was
+provided by Michael Wenger, a student at the University of
+W&uuml;rzburg.</td>
+    </tr>
+  </tbody>
+</table>
+<p><em>Expected Result:</em></p>
+</div>
+</div>
+<span style="font-weight: bold;"></span>
+<h5>NOTE:&nbsp; LIKE query 1, <span style="font-weight: bold;">HOW can
+we represent all attribute of
+an element in TOM. In an element with attribute list FIXED, it's easy,
+but if the attribute list NOT FIXED, it's difficult.</span></h5>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<h1>1.3 Use Case "SEQ" - Queries based on Sequence</h1>
+<p>This use case illustrates queries based on the sequence in which
+elements appear in a document.</p>
+<div class="div3">
+<h4><a id="seq-description" name="seq-description"></a>1.3.1 Description</h4>
+<p>Although sequence is not significant in most traditional database
+systems or object systems, it can be quite significant in structured
+documents. This use case presents a series of queries based on a
+medical report.</p>
+</div>
+<div class="div3">
+<h4><a id="seq-dtd" name="seq-dtd"></a>1.3.2 Document Type Definition
+(DTD)</h4>
+<p>This use case is based on a medical report using the HL7 Patient
+Record Architecture. We simplify the DTD in this example, using only
+what is needed to understand the queries.</p>
+<div class="exampleInner">
+<pre>&lt;!DOCTYPE report [<br>  &lt;!ELEMENT report (section*)&gt;<br>  &lt;!ELEMENT section (section.title, section.content)&gt;<br>  &lt;!ELEMENT section.title  (#PCDATA )&gt;<br>  &lt;!ELEMENT section.content  (#PCDATA | anesthesia | prep <br>                            | incision | action | observation )*&gt;<br>  &lt;!ELEMENT anesthesia (#PCDATA)&gt;<br>  &lt;!ELEMENT prep <span
+ style="font-weight: bold; color: rgb(255, 0, 0);">( (#PCDATA | action)* )</span>&gt;    &lt;== error: must be<span
+ style="font-weight: bold; color: rgb(255, 0, 0);"> ( (#PCDATA | action)* )</span> <br>  &lt;!ELEMENT incision <span
+ style="font-weight: bold; color: rgb(255, 0, 0);">( (#PCDATA | geography | instrument)* )</span>&gt;   &lt;== error: must be <span
+ style="font-weight: bold;"><span style="color: rgb(255, 0, 0);">(#PCDATA | geography | instrument)*</span> </span><br>  &lt;!ELEMENT action ( (#PCDATA | instrument )* )&gt;<br>  &lt;!ELEMENT observation (#PCDATA)&gt;<br>  &lt;!ELEMENT geography (#PCDATA)&gt;<br>  &lt;!ELEMENT instrument (#PCDATA)&gt;<br>]&gt; <br></pre>
+</div>
+</div>
+<div class="div3">
+<h4><a id="seq-data" name="seq-data"></a>1.3.3 Sample Data</h4>
+<p>The queries in this use case are based on the following sample data.</p>
+<div class="exampleInner">
+<pre>&lt;report&gt;<br>  &lt;section&gt;<br>    &lt;section.title&gt;Procedure&lt;/section.title&gt;<br>     &lt;section.content&gt;<br>      The patient was taken to the operating room where she was placed<br>      in supine position and<br>      &lt;anesthesia&gt;induced under general anesthesia.&lt;/anesthesia&gt;<br>      &lt;prep&gt; <br>        &lt;action&gt;A Foley catheter was placed to decompress the bladder&lt;/action&gt;<br>        and the abdomen was then prepped and draped in sterile fashion.<br>      &lt;/prep&gt;  <br>      &lt;incision&gt;<br>        A curvilinear incision was made<br>        &lt;geography&gt;in the midline immediately infraumbilical&lt;/geography&gt;<br>        and the subcutaneous tissue was divided<br>        &lt;instrument&gt;using electrocautery.&lt;/instrument&gt;<br>      &lt;/incision&gt;<br>      The fascia was identified and<br>      &lt;action&gt;#2 0 Maxon stay sutures were placed on each side of the midline.<br>      &lt;/action&gt;<br>      &lt;incision&gt;<br>        The fascia was divided using<br>        &lt;instrument&gt;electrocautery&lt;/instrument&gt;<br>        and the peritoneum was entered.<br>      &lt;/incision&gt;<br>      &lt;observation&gt;The small bowel was identified.&lt;/observation&gt;<br>      and<br>      &lt;action&gt;<br>        the<br>        &lt;instrument&gt;Hasson trocar&lt;/instrument&gt;<br>        was placed under direct visualization.<br>      &lt;/action&gt;<br>      &lt;action&gt;<br>        The<br>        &lt;instrument&gt;trocar&lt;/instrument&gt;<br>        was secured to the fascia using the stay sutures.<br>      &lt;/action&gt;<br>     &lt;/section.content&gt;<br>  &lt;/section&gt;<br>&lt;/report&gt;<br></pre>
+</div>
+</div>
+<div class="div3">
+<h4><a id="seq-queries-results" name="seq-queries-results"></a>1.3.4
+Queries and Results</h4>
+<div class="div4">
+<h5><a id="seq-queries-results-q1" name="seq-queries-results-q1"></a>1.3.4.1
+Q1</h5>
+<p>In the Procedure section of Report1, what Instruments were used in
+the second Incision?</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>for $s in doc("report1.xml")//section[section.title = "Procedure"]<br>return ($s//incision)<span
+ style="font-weight: bold; color: rgb(255, 0, 0);">[2]</span>/instrument<br></pre>
+</div>
+</div>
+<p><em>Expected Result:</em></p>
+</div>
+<div class="div4">
+<p><span style="font-weight: bold;">NOTE: XQuery use the notation </span><span
+ style="color: rgb(255, 0, 0); font-weight: bold;">incision[2]/instrument</span><span
+ style="font-weight: bold;"> to represente the <span
+ style="color: rgb(255, 0, 0);">instrument Node number&nbsp; 2 in a
+incision Node</span>.&nbsp;&nbsp; (must be implemented manually in TOM)</span><br>
+</p>
+<br>
+<h5><a id="seq-queries-results-q2" name="seq-queries-results-q2"></a>1.3.4.2
+Q2</h5>
+<p>In the Procedure section of Report1, what are the first two
+Instruments to be used?</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>for $s in doc("report1.xml")//section[section.title = "Procedure"]<br>return ($s//instrument)<span
+ style="color: rgb(255, 0, 0); font-weight: bold;">[position()&lt;=2]</span><br></pre>
+</div>
+</div>
+<p><em>Expected Result:</em></p>
+</div>
+<div class="div4">
+<p><span style="color: rgb(255, 0, 0); font-weight: bold;">NOTE:&nbsp;
+How to prevente TOM from continuing find matching pattern when some
+conditions were satisfied</span><br>
+</p>
+<br>
+<h5><a id="seq-queries-results-q3" name="seq-queries-results-q3"></a>1.3.4.3
+Q3</h5>
+<p>In Report1, what Instruments were used in the first two Actions
+after the second Incision?</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>let $i2 := (doc("report1.xml")//incision)[2]<br>for $a in (doc("report1.xml")//action)[. &gt;&gt; $i2][position()&lt;=2]<br>return $a//instrument <br></pre>
+</div>
+</div>
+<p><em>Expected Result:</em></p>
+</div>
+<div class="div4">
+<h5><a id="seq-queries-results-q4" name="seq-queries-results-q4"></a>1.3.4.4
+Q4</h5>
+<p>In Report1, find "Procedure" sections where no Anesthesia element
+occurs before the first Incision</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>for $p in doc("report1.xml")//section[section.title = "Procedure"]<br>where not(some $a in $p//anesthesia satisfies<br>        $a &lt;&lt; ($p//incision)[1] )<br>return $p <br></pre>
+</div>
+</div>
+<p><em>Expected Result:</em></p>
+<div class="exampleInner"> </div>
+<p>(No sections satisfy Q4, thankfully.)</p>
+</div>
+<div class="div4">
+<h5><a id="seq-queries-results-q5" name="seq-queries-results-q5"></a>1.3.4.5
+Q5</h5>
+<p>In Report1, what happened between the first Incision and the second
+Incision?</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>declare function local:precedes($a as node(), $b as node()) as xs:boolean <br>{<br>    $a &lt;&lt; $b<br>      and<br>    empty($a//node() intersect $b)<br>};<br><br><br>declare function local:follows($a as node(), $b as node()) as xs:boolean <br>{<br>    $a &gt;&gt; $b<br>      and<br>    empty($b//node() intersect $a)<br>};<br><br>&lt;critical_sequence&gt;<br> {<br>  let $proc := doc("report1.xml")//section[section.title="Procedure"][1]<br>  for $n in $proc//node()<br>  where local:follows($n, ($proc//incision)[1])<br>    and local:precedes($n, ($proc//incision)[2])<br>  return $n<br> }<br>&lt;/critical_sequence&gt; <br></pre>
+</div>
+</div>
+<p>Here is another solution that is perhaps more efficient and less
+readable:</p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;critical_sequence&gt;<br> {<br>  let $proc := doc("report1.xml")//section[section.title="Procedure"][1],<br>      $i1 :=  ($proc//incision)[1],<br>      $i2 :=  ($proc//incision)[2]<br>  for $n in $proc//node() except $i1//node()<br>  where $n &gt;&gt; $i1 and $n &lt;&lt; $i2<br>  return $n <br> }<br>&lt;/critical_sequence&gt; <br></pre>
+</div>
+</div>
+<p><em>Expected Result:</em></p>
+In the above output, the contents of the critical sequence element
+include a text node, an action element, and the text node containing
+the content of the action element. But the serialization we are using
+already shows all descendants of a given node. If $c is bound to a
+sequence of nodes, the following expression eliminates members of the
+sequence that are descendants of another node already found in the
+sequence:
+<div class="xquery">
+<div class="exampleInner">
+<pre>$c except $c//node()<br></pre>
+</div>
+</div>
+<p>In the following solution, the between() function takes a sequence
+of nodes, a starting node, and an ending node, and returns the nodes
+between them:</p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>declare function local:between($seq as node()*, $start as node(), $end as node())<br> as item()*<br>{<br>  let $nodes :=<br>    for $n in $seq except $start//node()<br>    where $n &gt;&gt; $start and $n &lt;&lt; $end<br>    return $n<br>  return $nodes except $nodes//node()<br>};<br><br>&lt;critical_sequence&gt;<br> {<br>  let $proc := doc("report1.xml")//section[section.title="Procedure"][1],<br>      $first :=  ($proc//incision)[1],<br>      $second:=  ($proc//incision)[2]<br>  return local:between($proc//node(), $first, $second)<br> }<br>&lt;/critical_sequence&gt;<br><br>            <br></pre>
+</div>
+</div>
+<p>Here is the output from the above query:</p>
+<br>
+</div>
+</div>
+<br>
+<br>
+<h1><br>
+</h1>
+<h1>1.4 Use Case "R" - Access to Relational Data</h1>
+<p>One important use of an XML query language will be to access data
+stored in relational databases. This use case describes one possible
+way in which this access might be accomplished.</p>
+<div class="div3">
+<h4><a id="rdb-description" name="rdb-description"></a>1.4.1 Description</h4>
+<p>A relational database system might present a view in which each
+table (relation) takes the form of an XML document. One way to
+represent a database table as an XML document is to allow the document
+element to represent the table itself, and each row (tuple) inside the
+table to be represented by a nested element. Inside the tuple-elements,
+each column is in turn represented by a nested element. Columns that
+allow null values are represented by optional elements, and a missing
+element denotes a null value.</p>
+<p>As an example, consider a relational database used by an online
+auction. The auction maintains a USERS table containing information on
+registered users, each identified by a unique userid, who can either
+offer items for sale or bid on items. An ITEMS table lists items
+currently or recently for sale, with the userid of the user who offered
+each item. A BIDS table contains all bids on record, keyed by the
+userid of the bidder and the item number of the item to which the bid
+applies.</p>
+<p>The three tables used by the online auction are below, with their
+column-names indicated in parentheses.</p>
+<div class="exampleInner">
+<pre>USERS ( USERID, NAME, RATING )<br><br>ITEMS ( ITEMNO, DESCRIPTION, OFFERED_BY, START_DATE, END_DATE, RESERVE_PRICE )<br><br>BIDS ( USERID, ITEMNO, BID, BID_DATE )<br></pre>
+</div>
+</div>
+<div class="div3">
+<h4><a id="rdb-dtd" name="rdb-dtd"></a>1.4.2 Document Type Definition
+(DTD)</h4>
+<p>This use case is based on three separate input documents named
+users.xml, items.xml, and bids.xml. Each of the documents represents
+one of the tables in the relational database described above, using the
+following DTDs:</p>
+<div class="exampleInner">
+<pre>&lt;!DOCTYPE users [<br>  &lt;!ELEMENT users   (user_tuple*)&gt;<br>  &lt;!ELEMENT user_tuple (userid, name, rating?)&gt;<br>  &lt;!ELEMENT userid  (#PCDATA)&gt;<br>  &lt;!ELEMENT name    (#PCDATA)&gt;<br>  &lt;!ELEMENT rating  (#PCDATA)&gt;<br>]&gt;<br><br>&lt;!DOCTYPE items [<br>  &lt;!ELEMENT items       (item_tuple*)&gt;<br>  &lt;!ELEMENT item_tuple  (itemno, description, offered_by, <br>                              start_date?, end_date?, reserve_price? )&gt;<br>  &lt;!ELEMENT itemno      (#PCDATA)&gt;<br>  &lt;!ELEMENT description (#PCDATA)&gt;<br>  &lt;!ELEMENT offered_by  (#PCDATA)&gt;<br>  &lt;!ELEMENT start_date  (#PCDATA)&gt;<br>  &lt;!ELEMENT end_date    (#PCDATA)&gt;<br>  &lt;!ELEMENT reserve_price (#PCDATA)&gt;<br>]&gt;<br><br>&lt;!DOCTYPE bids [<br>  &lt;!ELEMENT bids      (bid_tuple*)&gt;<br>  &lt;!ELEMENT bid_tuple (userid, itemno, bid, bid_date)&gt;<br>  &lt;!ELEMENT userid    (#PCDATA)&gt;<br>  &lt;!ELEMENT itemno    (#PCDATA)&gt;<br>  &lt;!ELEMENT bid       (#PCDATA)&gt;<br>  &lt;!ELEMENT bid_date  (#PCDATA)&gt;<br>]&gt;<br></pre>
+</div>
+</div>
+<div class="div3">
+<h4><a id="rdb-data" name="rdb-data"></a>1.4.3 Sample Data</h4>
+<p>Here is an abbreviated set of data showing the XML format of the
+instances:</p>
+<div class="exampleInner">
+<pre>&lt;items&gt;<br>  &lt;item_tuple&gt;<br>    &lt;itemno&gt;1001&lt;/itemno&gt;<br>    &lt;description&gt;Red Bicycle&lt;/description&gt;<br>    &lt;offered_by&gt;U01&lt;/offered_by&gt;<br>    &lt;start_date&gt;1999-01-05&lt;/start_date&gt;<br>    &lt;end_date&gt;1999-01-20&lt;/end_date&gt;<br>    &lt;reserve_price&gt;40&lt;/reserve_price&gt;<br>  &lt;/item_tuple&gt;<br>  &lt;!-- !!! Snip !!! --&gt;<br><br>&lt;users&gt;<br>  &lt;user_tuple&gt;<br>    &lt;userid&gt;U01&lt;/userid&gt;<br>    &lt;name&gt;Tom Jones&lt;/name&gt;<br>    &lt;rating&gt;B&lt;/rating&gt;<br>  &lt;/user_tuple&gt;<br>  &lt;!-- !!! Snip !!! --&gt;<br><br>&lt;bids&gt;<br>  &lt;bid_tuple&gt; <br>    &lt;userid&gt;U02&lt;/userid&gt; <br>    &lt;itemno&gt;1001&lt;/itemno&gt; <br>    &lt;bid&gt;35&lt;/bid&gt; <br>    &lt;bid_date&gt;1999-01-07&lt;/bid_date&gt; <br>    &lt;/bid_tuple&gt; <br>  &lt;bid_tuple&gt; <br>  &lt;!-- !!! Snip !!! --&gt;<br></pre>
+</div>
+<p>The entire data set is represented by the following table:</p>
+<table border="1" summary="Users Table">
+  <caption> USERS </caption> <thead> <tr>
+    <td rowspan="1" colspan="1">USERID</td>
+    <td rowspan="1" colspan="1">NAME</td>
+    <td rowspan="1" colspan="1">RATING</td>
+  </tr>
+  </thead> <tbody>
+    <tr>
+      <td rowspan="1" colspan="1">U01</td>
+      <td rowspan="1" colspan="1">Tom Jones</td>
+      <td rowspan="1" colspan="1">B</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U02</td>
+      <td rowspan="1" colspan="1">Mary Doe</td>
+      <td rowspan="1" colspan="1">A</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U03</td>
+      <td rowspan="1" colspan="1">Dee Linquent</td>
+      <td rowspan="1" colspan="1">D</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U04</td>
+      <td rowspan="1" colspan="1">Roger Smith</td>
+      <td rowspan="1" colspan="1">C</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U05</td>
+      <td rowspan="1" colspan="1">Jack Sprat</td>
+      <td rowspan="1" colspan="1">B</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U06</td>
+      <td rowspan="1" colspan="1">Rip Van Winkle</td>
+      <td rowspan="1" colspan="1">B</td>
+    </tr>
+  </tbody>
+</table>
+<table border="1" summary="Items Table">
+  <caption> ITEMS </caption> <thead> <tr>
+    <td rowspan="1" colspan="1">ITEMNO</td>
+    <td rowspan="1" colspan="1">DESCRIPTION</td>
+    <td rowspan="1" colspan="1">OFFERED_BY</td>
+    <td rowspan="1" colspan="1">START_DATE</td>
+    <td rowspan="1" colspan="1">END_DATE</td>
+    <td rowspan="1" colspan="1">RESERVE_PRICE</td>
+  </tr>
+  </thead> <tbody>
+    <tr>
+      <td rowspan="1" colspan="1">1001</td>
+      <td rowspan="1" colspan="1">Red Bicycle</td>
+      <td rowspan="1" colspan="1">U01</td>
+      <td rowspan="1" colspan="1">1999-01-05</td>
+      <td rowspan="1" colspan="1">1999-01-20</td>
+      <td rowspan="1" colspan="1">40</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">1002</td>
+      <td rowspan="1" colspan="1">Motorcycle</td>
+      <td rowspan="1" colspan="1">U02</td>
+      <td rowspan="1" colspan="1">1999-02-11</td>
+      <td rowspan="1" colspan="1">1999-03-15</td>
+      <td rowspan="1" colspan="1">500</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">1003</td>
+      <td rowspan="1" colspan="1">Old Bicycle</td>
+      <td rowspan="1" colspan="1">U02</td>
+      <td rowspan="1" colspan="1">1999-01-10</td>
+      <td rowspan="1" colspan="1">1999-02-20</td>
+      <td rowspan="1" colspan="1">25</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">1004</td>
+      <td rowspan="1" colspan="1">Tricycle</td>
+      <td rowspan="1" colspan="1">U01</td>
+      <td rowspan="1" colspan="1">1999-02-25</td>
+      <td rowspan="1" colspan="1">1999-03-08</td>
+      <td rowspan="1" colspan="1">15</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">1005</td>
+      <td rowspan="1" colspan="1">Tennis Racket</td>
+      <td rowspan="1" colspan="1">U03</td>
+      <td rowspan="1" colspan="1">1999-03-19</td>
+      <td rowspan="1" colspan="1">1999-04-30</td>
+      <td rowspan="1" colspan="1">20</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">1006</td>
+      <td rowspan="1" colspan="1">Helicopter</td>
+      <td rowspan="1" colspan="1">U03</td>
+      <td rowspan="1" colspan="1">1999-05-05</td>
+      <td rowspan="1" colspan="1">1999-05-25</td>
+      <td rowspan="1" colspan="1">50000</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">1007</td>
+      <td rowspan="1" colspan="1">Racing Bicycle</td>
+      <td rowspan="1" colspan="1">U04</td>
+      <td rowspan="1" colspan="1">1999-01-20</td>
+      <td rowspan="1" colspan="1">1999-02-20</td>
+      <td rowspan="1" colspan="1">200</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">1008</td>
+      <td rowspan="1" colspan="1">Broken Bicycle</td>
+      <td rowspan="1" colspan="1">U01</td>
+      <td rowspan="1" colspan="1">1999-02-05</td>
+      <td rowspan="1" colspan="1">1999-03-06</td>
+      <td rowspan="1" colspan="1">25</td>
+    </tr>
+  </tbody>
+</table>
+<table border="1" summary="Bids Table">
+  <caption> BIDS </caption> <thead> <tr>
+    <td rowspan="1" colspan="1">USERID</td>
+    <td rowspan="1" colspan="1">ITEMNO</td>
+    <td rowspan="1" colspan="1">BID</td>
+    <td rowspan="1" colspan="1">BID_DATE</td>
+  </tr>
+  </thead> <tbody>
+    <tr>
+      <td rowspan="1" colspan="1">U02</td>
+      <td rowspan="1" colspan="1">1001</td>
+      <td rowspan="1" colspan="1">35</td>
+      <td rowspan="1" colspan="1">1999-01-07</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U04</td>
+      <td rowspan="1" colspan="1">1001</td>
+      <td rowspan="1" colspan="1">40</td>
+      <td rowspan="1" colspan="1">1999-01-08</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U02</td>
+      <td rowspan="1" colspan="1">1001</td>
+      <td rowspan="1" colspan="1">45</td>
+      <td rowspan="1" colspan="1">1999-01-11</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U04</td>
+      <td rowspan="1" colspan="1">1001</td>
+      <td rowspan="1" colspan="1">50</td>
+      <td rowspan="1" colspan="1">1999-01-13</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U02</td>
+      <td rowspan="1" colspan="1">1001</td>
+      <td rowspan="1" colspan="1">55</td>
+      <td rowspan="1" colspan="1">1999-01-15</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U01</td>
+      <td rowspan="1" colspan="1">1002</td>
+      <td rowspan="1" colspan="1">400</td>
+      <td rowspan="1" colspan="1">1999-02-14</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U02</td>
+      <td rowspan="1" colspan="1">1002</td>
+      <td rowspan="1" colspan="1">600</td>
+      <td rowspan="1" colspan="1">1999-02-16</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U03</td>
+      <td rowspan="1" colspan="1">1002</td>
+      <td rowspan="1" colspan="1">800</td>
+      <td rowspan="1" colspan="1">1999-02-17</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U04</td>
+      <td rowspan="1" colspan="1">1002</td>
+      <td rowspan="1" colspan="1">1000</td>
+      <td rowspan="1" colspan="1">1999-02-25</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U02</td>
+      <td rowspan="1" colspan="1">1002</td>
+      <td rowspan="1" colspan="1">1200</td>
+      <td rowspan="1" colspan="1">1999-03-02</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U04</td>
+      <td rowspan="1" colspan="1">1003</td>
+      <td rowspan="1" colspan="1">15</td>
+      <td rowspan="1" colspan="1">1999-01-22</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U05</td>
+      <td rowspan="1" colspan="1">1003</td>
+      <td rowspan="1" colspan="1">20</td>
+      <td rowspan="1" colspan="1">1999-02-03</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U01</td>
+      <td rowspan="1" colspan="1">1004</td>
+      <td rowspan="1" colspan="1">40</td>
+      <td rowspan="1" colspan="1">1999-03-05</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U03</td>
+      <td rowspan="1" colspan="1">1007</td>
+      <td rowspan="1" colspan="1">175</td>
+      <td rowspan="1" colspan="1">1999-01-25</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U05</td>
+      <td rowspan="1" colspan="1">1007</td>
+      <td rowspan="1" colspan="1">200</td>
+      <td rowspan="1" colspan="1">1999-02-08</td>
+    </tr>
+    <tr>
+      <td rowspan="1" colspan="1">U04</td>
+      <td rowspan="1" colspan="1">1007</td>
+      <td rowspan="1" colspan="1">225</td>
+      <td rowspan="1" colspan="1">1999-02-12</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="div3">
+<h4><a id="rdb-queries-results" name="rdb-queries-results"></a>1.4.4
+Queries and Results</h4>
+<div class="div4">
+<h5><a id="rdb-queries-results-q1" name="rdb-queries-results-q1"></a>1.4.4.1
+Q1</h5>
+<p>List the item number and description of all bicycles that currently
+have an auction in progress, ordered by item number.</p>
+<p><em>Solution in XQuery:</em></p>
+<div class="xquery">
+<div class="exampleInner">
+<pre>&lt;result&gt;<br>  {<br>    for $i in doc("items.xml")//item_tuple<br>    where $i/start_date &lt;= current-date()<br>      and $i/end_date &gt;= current-date() <br>      and contains($i/description, "Bicycle")<br>    order by $i/itemno<br>    return<br>        &lt;item_tuple&gt;<br>            { $i/itemno }<br>            { $i/description }<br>        &lt;/item_tuple&gt;<br>  }<br>&lt;/result&gt;<br></pre>
+</div>
+</div>
+<div class="note">
+<p class="prefix"><b>Note:</b></p>
+<p style="color: rgb(255, 0, 0);">This solution assumes that the
+current date is 1999-01-31.</p>
+</div>
+<p><em>Expected Result:</em></p>
+</div>
+</div>
+<span style="font-weight: bold;"><span style="color: rgb(255, 0, 0);">NOTE:
+Date parsing problem: cannot use a %match like this: </span><br>
+<br>
+</span>
+<pre>%match (String a)&nbsp; {</pre>
+<pre>&nbsp;&nbsp;&nbsp; (year, '<span
+ style="color: rgb(255, 0, 0); font-weight: bold;">anystring</span>' , month, '<span
+ style="color: rgb(255, 0, 0); font-weight: bold;">anystring</span>', day)&nbsp; -&gt; {</pre>
+<pre>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;////  ..... </pre>
+<pre>&nbsp;&nbsp;&nbsp; }</pre>
+<pre>}<br><br><br>in condition that : <span
+ style="color: rgb(255, 0, 0); font-weight: bold;">anystring</span> contain <span
+ style="font-weight: bold; color: rgb(255, 0, 0);">' ' (space)</span>  or  <span
+ style="color: rgb(255, 0, 0); font-weight: bold;">'-'</span> or <span
+ style="font-weight: bold; color: rgb(255, 0, 0);">'/'<span
+ style="color: rgb(0, 0, 0);">. I thinks in most of case we use '_' and '/' for representing date and time. <br><br><br><br><br></span></span></pre>
+<pre><span style="font-weight: bold;"></span></pre>
+</body>
+</html>
