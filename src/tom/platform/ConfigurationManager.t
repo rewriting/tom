@@ -87,7 +87,7 @@ public class ConfigurationManager {
   /**
    * Basic Constructor
    * @return a configurationManager that needs to be initialized
-  */
+   */
   public ConfigurationManager(String xmlConfigurationFileName) {
     this.xmlConfigurationFileName = xmlConfigurationFileName;
     this.pluginsList = new ArrayList();
@@ -207,7 +207,7 @@ public class ConfigurationManager {
    */
   private int createOptionManager(TNode node) {
     %match(TNode node) {
-      <platform>opt@<optionmanager class=omclass></optionmanager></platform> -> {
+      <platform><optionmanager class=omclass>opt@<options></options></optionmanager></platform> -> {
         globalOptions = OptionParser.xmlNodeToOptionList(`opt);
         try {
           Object omInstance = Class.forName(omclass).newInstance();

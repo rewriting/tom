@@ -12,9 +12,11 @@
     description CDATA #IMPLIED
     class CDATA #REQUIRED>
 
-  <!ELEMENT optionmanager (boolean*,integer*,string*)>
+  <!ELEMENT optionmanager (options)>
 	<!ATTLIST optionmanager
     class CDATA #REQUIRED>
+
+	<!ELEMENT options (boolean*,integer*,string*)>
 
   <!ELEMENT boolean EMPTY>
   <!ATTLIST boolean
@@ -64,57 +66,59 @@
   </plugins>
 
   <optionmanager class="jtom.TomOptionManager">
-    <boolean name="help" altName="h"
-						 description="Print this help"
-						 value="false"/>
-		<boolean name="version" altName="V"
-						 description="Print version"
-						 value="false"/>
-		<boolean name="verbose" altName="v"
-						 description="Set verbose mode on"
-						 value="false"/>
-    <boolean name="intermediate" altName="i"
-					   description="Generate intermediate files"
-					   value="false"/>
-    <boolean name="noDeclaration" altName="D"
-					 description="Do not generate code for declarations"
-					 value="false"/>
-    <boolean name="noCheck" altName="f"
-					 description="Do not check correctness"
-					 value="false"/>
-    <boolean name="noWarning" altName=""
-					 description="Do not print warning"
-					 value="false"/>
-    <boolean name="lazyType" altName="l"
-					 description="Use universal type"
-					 value="false"/>
-    <boolean name="pretty" altName="p"
-						 description="Generate readable code"
-						 value="false"/>
-    <boolean name="static" altName=""
-					  description="Generate static functions"
-					  value="false"/>
-    <boolean name="debug" altName=""
-					   description="Generate debug primitives"
-					   value="false"/>
-    <boolean name="memory" altName=""
-						 description="Add memory management while debugging (not correct with list matching)"
-						 value="false"/>
-    <boolean name="eclipse" altName=""
-						 description="Sets Eclipse mode"
-						 value="false"/>
-    <string name="import"	altName="I"
-						description="Path for %include"
-						value=""
-						attrName="path"/>
-    <string name="output"	altName="o"
-						description="Set output file name"
-						value=""
+		<options>
+      <boolean name="help" altName="h"
+			   			 description="Print this help"
+						   value="false"/>
+		  <boolean name="version" altName="V"
+			  			 description="Print version"
+				  		 value="false"/>
+		  <boolean name="verbose" altName="v"
+		  				 description="Set verbose mode on"
+			  			 value="false"/>
+      <boolean name="intermediate" altName="i"
+			  		   description="Generate intermediate files"
+			  		   value="false"/>
+      <boolean name="noDeclaration" altName="D"
+			  		 description="Do not generate code for declarations"
+			  		 value="false"/>
+      <boolean name="noCheck" altName="f"
+		  			 description="Do not check correctness"
+			  		 value="false"/>
+      <boolean name="noWarning" altName=""
+			  		 description="Do not print warning"
+			  		 value="false"/>
+      <boolean name="lazyType" altName="l"
+			  		 description="Use universal type"
+			  		 value="false"/>
+      <boolean name="pretty" altName="p"
+			  			 description="Generate readable code"
+			  			 value="false"/>
+      <boolean name="static" altName=""
+			  		  description="Generate static functions"
+			  		  value="false"/>
+      <boolean name="debug" altName=""
+			  		   description="Generate debug primitives"
+			  		   value="false"/>
+      <boolean name="memory" altName=""
+			  			 description="Add memory management while debugging (not correct with list matching)"
+			  			 value="false"/>
+      <boolean name="eclipse" altName=""
+			  			 description="Sets Eclipse mode"
+				  		 value="false"/>
+      <string name="import"	altName="I"
+			   			description="Path for %include"
+					  	value=""
+						  attrName="path"/>
+      <string name="output"	altName="o"
+			  			description="Set output file name"
+				  		value=""
 						attrName="file"/>
-    <string name="destdir" altName="d"
-						description="Specify where to place generated files"
-						value="."
-						attrName="dir"/>
+      <string name="destdir" altName="d"
+			  			description="Specify where to place generated files"
+				  		value="."
+					  	attrName="dir"/>
+		</options>
   </optionmanager>
 
 </platform>
