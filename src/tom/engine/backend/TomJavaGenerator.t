@@ -49,22 +49,22 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-	protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {
-		output.write(deep,getTLCode(tlType) + " ");
-		generate(deep,var);
+  protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {
+    output.write(deep,getTLCode(tlType) + " ");
+    generate(deep,var);
     
-		if(!isBoolType(type) &&
-			 !isIntType(type) &&
-			 !isDoubleType(type)) {
-			output.writeln(" = null;");
-		} else {
-			output.writeln(";");
-		}
-	}
+    if(!isBoolType(type) &&
+       !isIntType(type) &&
+       !isDoubleType(type)) {
+      output.writeln(" = null;");
+    } else {
+      output.writeln(";");
+    }
+  }
 
   protected void buildExpTrue(int deep) throws IOException {
-		output.write(" true ");
-	}
+    output.write(" true ");
+  }
   
   protected void buildExpFalse(int deep) throws IOException {
 		output.write(" false ");

@@ -218,7 +218,9 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
 
     output.indent(deep);
     output.writeln("{");
-    buildDeclaration(deep,var,type,tlType);
+
+    //buildDeclaration(deep,var,type,tlType);
+    output.write(deep,getTLCode(tlType) + " ");
     generate(deep,var);
     output.write(" = (" + getTLCode(tlType) + ") ");
     generateExpression(deep,exp);

@@ -356,13 +356,13 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Assign(UnamedVariable[],exp) |  
-        Assign(UnamedVariableStar[],exp) -> {
+      Assign(UnamedVariable[],exp) | Assign(UnamedVariableStar[],exp) -> {
         return;
       }
 
       Let((UnamedVariable|UnamedVariableStar)[],exp,body) -> {
         generateInstruction(deep,body);
+        return;
       }
 
       Let(var@Variable(list,name1,Type(tomType@ASTTomType(type),tlType@TLType[])),exp,body) -> {

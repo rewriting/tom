@@ -48,11 +48,11 @@ public class TomCGenerator extends TomImperativeGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-	protected void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException {
-		output.write(deep,getTLCode(tlType) + " ");
-		generate(deep,var);
-		output.writeln(";");
-	}
+  protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {
+    output.write(deep,getTLCode(tlType) + " ");
+    generate(deep,var);
+    output.writeln(";");
+  }
 	
   protected void buildExpTrue(int deep) throws IOException {
 		output.write(" 1 ");

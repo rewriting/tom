@@ -153,19 +153,17 @@ public class TomKernelCompiler extends TomBase {
                 
                 TomList patternList, actionList;
                 TomList automataList = empty();
-                ArrayList list;
                 TomNumberList rootpath = tsf().makeTomNumberList();
                 matchNumber++;
                 rootpath = (TomNumberList) rootpath.append(`MatchNumber(makeNumber(matchNumber)));
                 
-                /*
-                 * collect and declare TOM variables (from patterns)
-                 * declare and assign intern variable (_1 = t1,..., _n=tn)
-                 * for each pattern action (<term> -> <action>)
-                 * build a matching automata
-                 */
+                  /*
+                   * collect and declare TOM variables (from patterns)
+                   * declare and assign intern variable (_1 = t1,..., _n=tn)
+                   * for each pattern action (<term> -> <action>)
+                   * build a matching automata
+                   */
                 int actionNumber = 0;
-                boolean firstCall=true;
                 boolean defaultPA =false;
                 while(!l2.isEmpty()) {
                   actionNumber++;
@@ -191,28 +189,16 @@ public class TomKernelCompiler extends TomBase {
                   
                     // compile nested match constructs
                   actionList = tomListMap(actionList,this);
-                    //System.out.println("patternList      = " + patternList);
+                    //System.out.println("patternList   = " + patternList);
                     //System.out.println("actionNumber  = " + actionNumber);
                     //System.out.println("action        = " + actionList);
-                  TomList patternsDeclarationList = empty();
-                  Collection variableCollection = new HashSet();
-                  collectVariable(variableCollection,`Tom(patternList));
-                  
-                  Iterator it = variableCollection.iterator();
-                  while(it.hasNext()) {
-                    TomTerm tmpsubject = (TomTerm)it.next();
-                    patternsDeclarationList = append(`Declaration(tmpsubject),patternsDeclarationList);
-                      //System.out.println("*** " + patternsDeclarationList);
-                  }
-                  
-                  
+
                   TomNumberList numberList = (TomNumberList) rootpath.append(`PatternNumber(makeNumber(actionNumber)));
-                  
-                  TomList instructionList;
-                  instructionList = genMatchingAutomataFromPatternList(patternList,rootpath,1,actionList,true);
-                    //firstCall = false;
-                  TomList declarationInstructionList; 
-                  declarationInstructionList = concat(patternsDeclarationList,instructionList);
+
+                    /*
+                     * given a list of pattern: we build a matching automaton
+                     */
+                  TomList instructionList = genMatchingAutomataFromPatternList(patternList,rootpath,1,actionList);
                   OptionList automataOptionList = `concOption(Debug(Name(currentDebugKey)));
                   
                   TomName label = getLabel(pa.getOption());
@@ -223,7 +209,7 @@ public class TomKernelCompiler extends TomBase {
                     automataOptionList = `manyOptionList(DefaultCase(),automataOptionList);
                   }
                   
-                  TomTerm automata = `Automata(automataOptionList,numberList,declarationInstructionList);
+                  TomTerm automata = `Automata(automataOptionList,numberList,instructionList);
                     //System.out.println("automata = " + automata);
                   
                   automataList = append(automata,automataList);
@@ -235,9 +221,8 @@ public class TomKernelCompiler extends TomBase {
                    */
                 
                 TomList astAutomataList1 = automataListCompileMatchingList(automataList, generatedMatch);
-                TomList astAutomataList2 = collectVariableFromSubject(l1,rootpath,astAutomataList1);
+                TomList astAutomataList2 = `concTomTerm(InstructionToTomTerm(collectVariableFromSubjectList(l1,1,rootpath,UnamedBlock(astAutomataList1))));
 
-                //TomList astAutomataList2 = `concTomTerm(InstructionToTomTerm(collectVariableFromSubject2(l1,1,rootpath,UnamedBlock(astAutomataList1))));
                 return `CompiledMatch(astAutomataList2, optionList);
               }
               
@@ -247,86 +232,37 @@ public class TomKernelCompiler extends TomBase {
               }
             } // end match
           } else { // not instance of TomTerm
-             return traversal().genericTraversal(subject,this);
+            return traversal().genericTraversal(subject,this);
           }
         } // end apply
       }; // end new
     
-     return (TomTerm) replace_compileMatching.apply(subject);
+    return (TomTerm) replace_compileMatching.apply(subject);
   }
 
-
-  private TomList collectVariableFromSubject(TomList subjectList, TomNumberList path, TomList body) {
     /*
-     * create a list of declaration
      * collect match variables (from match(t1,...,tn))
+     * create a list of declaration/assignement: v1=t1 ... vn=tn in body
      */
-    TomList matchDeclarationList = empty();
-    TomList matchAssignementList = empty();
-    int index = 1;
-    
-    while(!subjectList.isEmpty()) {
-      TomTerm tlVariable = subjectList.getHead();
-      matchBlock: {
-        %match(TomTerm tlVariable) { 
-          Variable(option,_,variableType) -> {
-            TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType);
-            matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
-            if (false) { // && !generatedMatch) {
-              matchAssignementList = appendInstruction(`AssignMatchSubject(variable,TomTermToExpression(tlVariable)),matchAssignementList);
-            } else {
-              matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
-            }
-            break matchBlock;
-          }
-          
-          (BuildTerm|BuildList|FunctionCall)(Name(tomName),_) -> {
-            TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-            TomType tomType = getSymbolCodomain(tomSymbol);
-            TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType);
-            matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
-            matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
-            break matchBlock;
-          }
-          
-          _ -> {
-            System.out.println("compileMatching: strange term: " + tlVariable);
-            break matchBlock;
-          }
-        }
-      } // end matchBlock
-      index++;
-      subjectList = subjectList.getTail();
-    }
-    
-    matchDeclarationList = concat(matchDeclarationList,matchAssignementList);
-    return concat(matchDeclarationList, body);
-  }
-
-  private Instruction collectVariableFromSubject2(TomList subjectList, int index, TomNumberList path, Instruction body) {
-    /*
-     * create a list of declaration
-     * collect match variables (from match(t1,...,tn))
-     */
-    
+  private Instruction collectVariableFromSubjectList(TomList subjectList, int index, TomNumberList path, Instruction body) {
     %match(TomList subjectList) { 
-      concTomTerm() -> { return `Nop(); }
-      concTomTerm(tlVariable@Variable(option,_,variableType),tail*) -> {
-        body = collectVariableFromSubject2(tail,index+1,path,body);
+      concTomTerm() -> { return body; }
+      concTomTerm(subjectVar@Variable(option,_,variableType),tail*) -> {
+        body = collectVariableFromSubjectList(tail,index+1,path,body);
         TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType);
-        return `Let(variable,TomTermToExpression(tlVariable),body);
+        return `Let(variable,TomTermToExpression(subjectVar),body);
       }
 
-      concTomTerm(tlVariable@(BuildTerm|BuildList|FunctionCall)(Name(tomName),_),tail*) -> {
-        body = collectVariableFromSubject2(tail,index+1,path,body);
+      concTomTerm(subjectVar@(BuildTerm|BuildList|FunctionCall)(Name(tomName),_),tail*) -> {
+        body = collectVariableFromSubjectList(tail,index+1,path,body);
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomType tomType = getSymbolCodomain(tomSymbol);
         TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType);
-        return `Let(variable,TomTermToExpression(tlVariable),body);
+        return `Let(variable,TomTermToExpression(subjectVar),body);
       }
 
-      concTomTerm(tlVariable,tail*) -> {
-        System.out.println("compileMatching: strange term: " + tlVariable);
+      concTomTerm(subjectVar,tail*) -> {
+        System.out.println("collectVariableFromSubjectList: strange term: " + subjectVar);
       }
 
     }
@@ -359,9 +295,9 @@ public class TomKernelCompiler extends TomBase {
           Instruction namedBlock = `NamedBlock(getBlockName(numberList), instList);
           TomName label = getLabel(optionList);
           if(label != null) {
-            /*
-             * we add the specified pattern-label
-             */
+              /*
+               * we add the specified pattern-label
+               */
             namedBlock = `NamedBlock(label.getString(),cons(InstructionToTomTerm(namedBlock),empty()));
           }
           TomList list = cons(`InstructionToTomTerm(namedBlock),empty());
@@ -405,42 +341,35 @@ public class TomKernelCompiler extends TomBase {
   TomList genMatchingAutomataFromPatternList(TomList termList,
                                              TomNumberList path,
                                              int indexTerm,
-                                             TomList actionList,
-                                             boolean gsa) {
-    TomList result = empty();
+                                             TomList actionList) {
       //%variable
     if(termList.isEmpty()) {
-      if(gsa) {
-          // insert the semantic action
-        Instruction action = `Action(actionList);
-        result = appendInstruction(action,result);
-      }
+        // insert the semantic action
+      Instruction action = `Action(actionList);
+      return appendInstruction(action,empty());
     } else {
       TomTerm head = termList.getHead();
       TomList tail = termList.getTail();
-      TomList newSubActionList = genMatchingAutomataFromPatternList(tail,path,indexTerm+1,actionList,gsa);
+      TomList newSubActionList = genMatchingAutomataFromPatternList(tail,path,indexTerm+1,actionList);
       TomNumberList newPath    = appendNumber(indexTerm,path);
-      TomList newActionList    = genMatchingAutomataFromPattern(head,newPath,newSubActionList,gsa);
-      result                   = concat(result,newActionList);
+      TomList newActionList    = genMatchingAutomataFromPattern(head,newPath,newSubActionList);
+      return newActionList;
     }
-    return result;
   }
 
   TomList genMatchingAutomataFromPattern(TomTerm term,
                                          TomNumberList path,
-                                         TomList actionList,
-                                         boolean gsa) {
-    TomList result = empty();
+                                         TomList actionList) {
+    TomList result;
       //%variable
     matchBlock: {
       %match(TomTerm term) {
         var@Variable(optionList, _, termType) |
         var@UnamedVariable(optionList, termType) -> {
           Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType));
-          result = addAnnotedAssignement(optionList, source, var, result);
-          if(gsa) {
-            result = appendInstruction(`Action(actionList),result);
-          }
+          Instruction body = `Action(actionList);
+          result = appendInstruction(buildAnnotedLet(optionList, source, var, body),empty());
+
           break matchBlock; 
         }
 
@@ -463,73 +392,34 @@ public class TomKernelCompiler extends TomBase {
 
           TomList automataList  = null;
           TomList succesList    = empty();
-          
+
+          Instruction automataInstruction;
           if(isListOperator(tomSymbol)) {
             int tmpIndexSubterm = 1;
             automataList = genListMatchingAutomata(tomSymbol,
                                                    termArgs,path,actionList,
-                                                   gsa,subjectVariableAST, tmpIndexSubterm);
+                                                   subjectVariableAST, tmpIndexSubterm);
+            automataInstruction = `UnamedBlock(automataList);
           } else if(isArrayOperator(tomSymbol)) {
             int tmpIndexSubterm = 1;
             automataList = genArrayMatchingAutomata(tomSymbol,
                                                     termArgs,path,actionList,
-                                                    gsa,subjectVariableAST, subjectVariableAST,
+                                                    subjectVariableAST, subjectVariableAST,
                                                     tmpIndexSubterm);
+            automataInstruction = `UnamedBlock(automataList);
           } else {
-            automataList = genMatchingAutomataFromPatternList(termArgs,path,1,actionList,gsa);
-          
-            TomList termArgList = termArgs;
-            while(!termTypeList.isEmpty()) {
-              TomType subtermType    = termTypeList.getHead();
-              TomTerm subtermArg     = termArgList.getHead();
-
-              if(subtermArg == null) {
-                System.out.println("term         = " + term);
-                System.out.println("termTypeList = " + termTypeList);
-                System.out.println("termArgList  = " + termArgList);
-              }
-              
-              if(subtermArg.isUnamedVariable() && !isAnnotedVariable(subtermArg)) {
-                  /* This is an optimisation */
-                  /* Do not assign the subterm: skip the subterm */
-              } else {
-                TomNumberList newPath  = appendNumber(indexSubterm+1,path);
-                TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType);
-                TomTerm declaration    = `Declaration(newVariableAST);
-                declarationList        = append(declaration,declarationList);
-                
-                Expression getSubtermAST;
-                TomName slotName = getSlotName(tomSymbol, indexSubterm);
-                if(slotName == null) {
-                  getSubtermAST = `GetSubterm(subjectVariableAST,makeNumber(indexSubterm));
-                } else {
-                  getSubtermAST = `GetSlot(termNameAST,slotName.getString(),subjectVariableAST);
-                }
-                
-                Instruction assignement = `Assign(newVariableAST,getSubtermAST);
-                assignementList = appendInstruction(assignement,assignementList);
-              }
-              indexSubterm++;
-              termTypeList = termTypeList.getTail();
-              termArgList = termArgList.getTail();
-            }
-            
-            succesList = concat(succesList,declarationList);
-            succesList = concat(succesList,assignementList);
+            automataList = genMatchingAutomataFromPatternList(termArgs,path,1,actionList);
+            automataInstruction = `collectSubtermFromSubjectList(termArgs,termTypeList,tomSymbol,subjectVariableAST,indexSubterm,path,UnamedBlock(automataList)); 
           }
           
-            // generate an assignement for annoted variables
           if(annotedVariable != null) {
-            Instruction assignement = `Assign(annotedVariable,TomTermToExpression(subjectVariableAST));
-            annotedAssignementList = appendInstruction(assignement,annotedAssignementList);
+            automataInstruction = `Let(annotedVariable,TomTermToExpression(subjectVariableAST),automataInstruction);
           }
-          
-          succesList = concat(succesList,annotedAssignementList);
-          succesList = concat(succesList,automataList);
-          
+          succesList = append(`InstructionToTomTerm(automataInstruction),succesList);
+
           Expression cond = `expandDisjunction(EqualFunctionSymbol(subjectVariableAST,term));
           Instruction test = `IfThenElse(cond, succesList, empty());
-          result = appendInstruction(test,result);
+          result = appendInstruction(test,empty());
           
           break matchBlock;
         }
@@ -543,6 +433,44 @@ public class TomKernelCompiler extends TomBase {
 
       //System.out.println("*** result = " + result);
     return result;
+  }
+
+    /*
+     * given a list of subject t1,...,tn
+     * declare/assign internal matching variables: match_path_i = ti
+     */
+  private Instruction collectSubtermFromSubjectList(TomList termArgList, TomTypeList termTypeList,
+                                                TomSymbol tomSymbol,TomTerm subjectVariableAST, 
+                                                int indexSubterm, TomNumberList path, Instruction body) {
+    TomName termNameAST = tomSymbol.getAstName();
+    %match(TomList termArgList) { 
+      concTomTerm() -> { return body; }
+      
+      concTomTerm(subtermArg,tail*) -> {
+        body = collectSubtermFromSubjectList(tail,termTypeList.getTail(),
+                                             tomSymbol,subjectVariableAST,
+                                             indexSubterm+1,path,body);
+        if(subtermArg.isUnamedVariable() && !isAnnotedVariable(subtermArg)) {
+            // This is an optimisation 
+            // Do not assign the subterm: skip the subterm 
+          return body;
+        } else {
+          TomType subtermType    = termTypeList.getHead();
+          Expression getSubtermAST;
+          TomName slotName = getSlotName(tomSymbol, indexSubterm);
+          if(slotName == null) {
+            getSubtermAST = `GetSubterm(subjectVariableAST,makeNumber(indexSubterm));
+          } else {
+            getSubtermAST = `GetSlot(termNameAST,slotName.getString(),subjectVariableAST);
+          }
+          TomNumberList newPath  = appendNumber(indexSubterm+1,path);
+          TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType);
+          return `Let(newVariableAST,getSubtermAST,collectSubtermFromSubjectList(tail,termTypeList.getTail(),tomSymbol,subjectVariableAST,indexSubterm+1,path,body));
+        }
+      }
+
+    }
+    return `Nop();
   }
 
   private Expression expandDisjunction(Expression exp) {
@@ -560,6 +488,18 @@ public class TomKernelCompiler extends TomBase {
     }
     return cond;
   }
+
+  private Instruction buildAnnotedLet(OptionList optionList,
+                                      Expression source,
+                                      TomTerm dest,
+                                      Instruction body) {
+    TomTerm annotedVariable = getAnnotedVariable(optionList);
+    if(annotedVariable != null) {
+      body = `Let(annotedVariable,source,body);
+    }
+    return `Let(dest,source,body);
+  }
+
   
   private TomList addAnnotedAssignement(OptionList optionList,
                                         Expression source,
@@ -572,12 +512,15 @@ public class TomKernelCompiler extends TomBase {
     result = appendInstruction(`Assign(dest,source),result);
     return result;
   }
-  
+
+    /*
+     * the first call is performed with indexTerm=1 (indexTerm>1 in the others)
+     * 
+     */
   TomList genListMatchingAutomata(TomSymbol symbol,
                                   TomList termList,
                                   TomNumberList oldPath,
                                   TomList actionList,
-                                  boolean generateSemanticAction,
                                   TomTerm subjectListName,
                                   int indexTerm) {
     TomTerm term;
@@ -595,7 +538,6 @@ public class TomKernelCompiler extends TomBase {
       }
       result = append(`Declaration(variableListAST),result);
       result = appendInstruction(`Assign(variableListAST,TomTermToExpression(subjectListName)),result);
-
       subjectListName = variableListAST;
     } 
     
@@ -605,7 +547,7 @@ public class TomKernelCompiler extends TomBase {
     } else {
       subList = genListMatchingAutomata(symbol,
                                         termList.getTail(), oldPath, actionList,
-                                        generateSemanticAction,variableListAST,indexTerm+1);
+                                        variableListAST,indexTerm+1);
     }
       //System.out.println("\ntermList = " + termList);
       //System.out.println("*** genListMatchingAutomata"); 
@@ -622,9 +564,7 @@ public class TomKernelCompiler extends TomBase {
           if(indexTerm > 1) {
             break matchBlock;
           } else {
-            if(generateSemanticAction) {
-              subList = appendInstruction(`Action( actionList),subList);
-            }
+            subList = appendInstruction(`Action(actionList),subList);
             Expression cond = `IsEmptyList(subjectListName);
             Instruction test = `IfThenElse(cond, subList, empty());
             result = appendInstruction(test,result);
@@ -654,11 +594,9 @@ public class TomKernelCompiler extends TomBase {
                *     ...
                *   }
                */
-            if(generateSemanticAction) {
-              subList = appendInstruction(`Action(actionList),subList);
-            }
+            subList = appendInstruction(`Action(actionList),subList);
             Instruction test = `IfThenElse(IsEmptyList(subjectListName),
-                                              subList, empty());
+                                           subList, empty());
             succesList = appendInstruction(test,assignementList);
           } else {
             succesList = concat(assignementList,subList);
@@ -679,9 +617,7 @@ public class TomKernelCompiler extends TomBase {
                * E_n = subjectList;
                * ...
                */
-            if(generateSemanticAction) {
-              subList = appendInstruction(`Action( actionList),subList);
-            }
+            subList = appendInstruction(`Action(actionList),subList);
             Expression source = `TomTermToExpression(subjectListName);
             result = addAnnotedAssignement(optionList, source, var, result);
             result = concat(result,subList);
@@ -745,7 +681,6 @@ public class TomKernelCompiler extends TomBase {
                                    TomList termList,
                                    TomNumberList oldPath,
                                    TomList actionList,
-                                   boolean generateSemanticAction,
                                    TomTerm subjectListName,
                                    TomTerm subjectListIndex,
                                    int indexTerm) {
@@ -792,7 +727,6 @@ public class TomKernelCompiler extends TomBase {
     
     TomList subList = genArrayMatchingAutomata(symbol,
                                                termList.getTail(), oldPath, actionList,
-                                               generateSemanticAction,
                                                variableListAST,variableIndexAST,indexTerm+1);
       //System.out.println("\ntermList = " + termList);
       //System.out.println("*** genArrayMatchingAutomata");
@@ -818,9 +752,7 @@ public class TomKernelCompiler extends TomBase {
             assignementList = addAnnotedAssignement(optionList, source, var, assignementList);
             assignementList = appendInstruction(`Increment(subjectListIndex),assignementList);
             
-            if(generateSemanticAction) {
               subList = appendInstruction(`Action(actionList),subList);
-            }
             
             Expression cond = `IsEmptyArray( subjectListName,subjectListIndex);
             Instruction test = `IfThenElse(cond, subList, empty());
@@ -865,9 +797,7 @@ public class TomKernelCompiler extends TomBase {
                * E_n = GET_SLICE_L(subjectList,subjectIndex,GET_SIZE_L(subjectList));
                * ...
                */
-            if(generateSemanticAction) {
               subList = appendInstruction(`Action( actionList),subList);
-            }
             
             Expression source = `GetSliceArray(
               symbol.getAstName(),subjectListName,
@@ -905,8 +835,8 @@ public class TomKernelCompiler extends TomBase {
             assignementList = appendInstruction(`Assign(variableEndAST,TomTermToExpression(subjectListIndex)),assignementList);
             
             Expression source = `GetSliceArray(symbol.getAstName(),
-                                              subjectListName,variableBeginAST,
-                                              variableEndAST);
+                                               subjectListName,variableBeginAST,
+                                               variableEndAST);
             TomList doList = empty();
             doList = addAnnotedAssignement(optionList, source, var, doList);
             doList = concat(doList,subList);
@@ -934,7 +864,7 @@ public class TomKernelCompiler extends TomBase {
         
         _ -> {
           System.out.println("GenArrayMatchingAutomata strange termList: " + termList);
-		  throw new TomRuntimeException(new Throwable("GenArrayMatchingAutomata strange termList: " + termList));
+          throw new TomRuntimeException(new Throwable("GenArrayMatchingAutomata strange termList: " + termList));
         }
       }
     } // end matchBlock
@@ -1049,7 +979,7 @@ public class TomKernelCompiler extends TomBase {
     }
   }
 
-    private TomList traversalCollectDeclarationList(ArrayList list,TomList subject) {
+  private TomList traversalCollectDeclarationList(ArrayList list,TomList subject) {
       //%variable
     if(subject.isEmpty()) {
       return subject;
