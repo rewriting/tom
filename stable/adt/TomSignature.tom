@@ -474,6 +474,13 @@
   make(t0) { getTomSignatureFactory().makeExpression_GetTail(t0)}
 }
 
+%op Expression AddOne(variable:TomTerm) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isAddOne()}
+  get_slot(variable,t) { t.getVariable()}
+  make(t0) { getTomSignatureFactory().makeExpression_AddOne(t0)}
+}
+
 %op Expression GetSize(variable:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isGetSize()}
@@ -902,20 +909,55 @@
   make(t0, t1) { getTomSignatureFactory().makeTomTerm_BuildTerm(t0, t1)}
 }
 
-%op TomTerm BuildList(astName:TomName, args:TomList) {
+%op TomTerm BuildEmptyList(astName:TomName) {
   fsym {}
-  is_fsym(t) { (t!= null) && t.isBuildList()}
+  is_fsym(t) { (t!= null) && t.isBuildEmptyList()}
   get_slot(astName,t) { t.getAstName()}
-  get_slot(args,t) { t.getArgs()}
-  make(t0, t1) { getTomSignatureFactory().makeTomTerm_BuildList(t0, t1)}
+  make(t0) { getTomSignatureFactory().makeTomTerm_BuildEmptyList(t0)}
 }
 
-%op TomTerm BuildArray(astName:TomName, args:TomList) {
+%op TomTerm BuildConsList(astName:TomName, headTerm:TomTerm, tailTerm:TomTerm) {
   fsym {}
-  is_fsym(t) { (t!= null) && t.isBuildArray()}
+  is_fsym(t) { (t!= null) && t.isBuildConsList()}
   get_slot(astName,t) { t.getAstName()}
-  get_slot(args,t) { t.getArgs()}
-  make(t0, t1) { getTomSignatureFactory().makeTomTerm_BuildArray(t0, t1)}
+  get_slot(headTerm,t) { t.getHeadTerm()}
+  get_slot(tailTerm,t) { t.getTailTerm()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_BuildConsList(t0, t1, t2)}
+}
+
+%op TomTerm BuildAppendList(astName:TomName, headTerm:TomTerm, tailTerm:TomTerm) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isBuildAppendList()}
+  get_slot(astName,t) { t.getAstName()}
+  get_slot(headTerm,t) { t.getHeadTerm()}
+  get_slot(tailTerm,t) { t.getTailTerm()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_BuildAppendList(t0, t1, t2)}
+}
+
+%op TomTerm BuildEmptyArray(astName:TomName, size:int) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isBuildEmptyArray()}
+  get_slot(astName,t) { t.getAstName()}
+  get_slot(size,t) { t.getSize()}
+  make(t0, t1) { getTomSignatureFactory().makeTomTerm_BuildEmptyArray(t0, t1)}
+}
+
+%op TomTerm BuildConsArray(astName:TomName, headTerm:TomTerm, tailTerm:TomTerm) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isBuildConsArray()}
+  get_slot(astName,t) { t.getAstName()}
+  get_slot(headTerm,t) { t.getHeadTerm()}
+  get_slot(tailTerm,t) { t.getTailTerm()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_BuildConsArray(t0, t1, t2)}
+}
+
+%op TomTerm BuildAppendArray(astName:TomName, headTerm:TomTerm, tailTerm:TomTerm) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isBuildAppendArray()}
+  get_slot(astName,t) { t.getAstName()}
+  get_slot(headTerm,t) { t.getHeadTerm()}
+  get_slot(tailTerm,t) { t.getTailTerm()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_BuildAppendArray(t0, t1, t2)}
 }
 
 %op TomTerm TomInclude(tomList:TomList) {
@@ -1069,6 +1111,14 @@
   make(t0, t1) { getTomSignatureFactory().makeInstruction_DoWhile(t0, t1)}
 }
 
+%op Instruction WhileDo(condition:Expression, doInst:Instruction) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isWhileDo()}
+  get_slot(condition,t) { t.getCondition()}
+  get_slot(doInst,t) { t.getDoInst()}
+  make(t0, t1) { getTomSignatureFactory().makeInstruction_WhileDo(t0, t1)}
+}
+
 %op Instruction Assign(variable:TomTerm, source:Expression) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isAssign()}
@@ -1095,19 +1145,21 @@
   make(t0, t1, t2) { getTomSignatureFactory().makeInstruction_LetRef(t0, t1, t2)}
 }
 
+%op Instruction LetAssign(variable:TomTerm, source:Expression, astInstruction:Instruction) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isLetAssign()}
+  get_slot(variable,t) { t.getVariable()}
+  get_slot(source,t) { t.getSource()}
+  get_slot(astInstruction,t) { t.getAstInstruction()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeInstruction_LetAssign(t0, t1, t2)}
+}
+
 %op Instruction AssignMatchSubject(kid1:TomTerm, source:Expression) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isAssignMatchSubject()}
   get_slot(kid1,t) { t.getKid1()}
   get_slot(source,t) { t.getSource()}
   make(t0, t1) { getTomSignatureFactory().makeInstruction_AssignMatchSubject(t0, t1)}
-}
-
-%op Instruction Increment(kid1:TomTerm) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isIncrement()}
-  get_slot(kid1,t) { t.getKid1()}
-  make(t0) { getTomSignatureFactory().makeInstruction_Increment(t0)}
 }
 
 %op Instruction Action(instTomList:TomList) {

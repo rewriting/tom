@@ -102,9 +102,9 @@ public class TestList extends TestCase {
 	public void testMatch1() {
 		TestData td = TESTS1[this.testNumber];
 		assertSame(
-			"TestMatch1 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
-			match1(factory.parse(td.question)), 
-			factory.parse(td.answer));
+               "TestMatch1 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
+               match1(factory.parse(td.question)), 
+               factory.parse(td.answer));
 	}
 
 	private static final TestData[] TESTS1 = new TestData[] {
@@ -144,9 +144,9 @@ public class TestList extends TestCase {
 	public void testMatch2() {
 		TestData td = TESTS2[this.testNumber];
 		assertSame(
-			"TestMatch2 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
-			match2(factory.parse(td.question)), 
-			factory.parse(td.answer));
+               "TestMatch2 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
+               match2(factory.parse(td.question)), 
+               factory.parse(td.answer));
 	}
 
 	private static final TestData[] TESTS2 = new TestData[] {
@@ -177,15 +177,15 @@ public class TestList extends TestCase {
 	public void testMatch3() {
 		TestData td = TESTS3[this.testNumber];
 		assertSame(
-			"TestMatch3 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
-			match3(factory.parse(td.question)), 
-			factory.parse(td.answer));
+               "TestMatch3 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
+               match3(factory.parse(td.question)), 
+               factory.parse(td.answer));
 	}
 
 	private static final TestData[] TESTS3 = new TestData[] {
-		new TestData("l([f(a)])"                     , "pattern1"),
+    new TestData("l([f(a)])"                     , "pattern1"),
 		new TestData("l([f(a),f(b),f(a),f(c)])"      , "pattern2"),
-		new TestData("l([g(f(a)),f(b),g(f(a)),f(c)])", "pattern3"),
+    new TestData("l([g(f(a)),f(b),g(f(a)),f(c)])", "pattern3"),
 	};                                                            
 
   public ATerm match3(ATerm t) {

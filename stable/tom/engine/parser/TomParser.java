@@ -57,12 +57,12 @@ public class TomParser extends TomTask implements TomParserConstants {
 
 
   public TomParser(TomBuffer input, TomEnvironment environment, File importList[], int includeOffSet,
-                                                        String fileName)  {
-          this(input, environment, importList, includeOffSet, fileName, new HashSet());
+                   String fileName)  {
+    this(input, environment, importList, includeOffSet, fileName, new HashSet());
   }
 
   private TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet,
-                                                        String fileName, HashSet alreadyParsedFiles) {
+                    String fileName, HashSet alreadyParsedFiles) {
     super("Tom Parser", environment);
     jj_input_stream = new JavaCharStream(input, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
@@ -117,29 +117,31 @@ public class TomParser extends TomTask implements TomParserConstants {
                         String fileName = currentPath+File.separatorChar+ "."+getInput().getRawFileName() + TomTaskInput.parsedTableSuffix;
                         Tools.generateOutput(fileName, symbolTable().toTerm());
                 }
-        if(intermediate) {
-            Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
-            Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
-        }
+      if(intermediate) {
+        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
+        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
+      }
 
-        if(getInput().isDebugMode()) {
-                        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.debugTableSuffix, getStructTable());
-                }
+      if(getInput().isDebugMode()) {
+        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.debugTableSuffix, getStructTable());
+      }
 
                 // Update taskInput
                 getInput().setTerm(parsedTerm);
-    } catch (TokenMgrError error) {
-      addError(error.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
+
+    } catch (TokenMgrError e) {
+          String msg = "Parsing exception catched in file '"+currentFile+"'\n" + e.getMessage();
+      addError(msg, currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
         } catch (TomIncludeException e) {
           addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
         } catch (TomException e) {
           addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
-        } catch (ParseException e) {
-          String msg = "Parsing exception catched in file '"+currentFile+"'\n"+e.getMessage();
-          addError(e.getMessage(), currentFile, getLine(), TomCheckerMessage.TOM_ERROR);
+    } catch (ParseException e) {
+          String msg = "Parsing exception catched in file '"+currentFile+"'\n" + e.getMessage();
+      addError(msg, currentFile, getLine(), TomCheckerMessage.TOM_ERROR);
         } catch (Exception e) {
           String msg = "Unhandled exception occurs during parsing: "+e.getMessage();
-          e.printStackTrace();
+      e.printStackTrace();
           addError(msg, currentFile, 0, TomCheckerMessage.TOM_ERROR);
         }
   }
@@ -2780,11 +2782,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     finally { jj_save(12, xla); }
   }
 
-  final private boolean jj_3R_47() {
-    if (jj_scan_token(TOM_UNDERSCORE)) return true;
-    return false;
-  }
-
   final private boolean jj_3_6() {
     if (jj_3R_31()) return true;
     return false;
@@ -3060,6 +3057,11 @@ public class TomParser extends TomTask implements TomParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_40()) jj_scanpos = xsp;
     if (jj_scan_token(TOM_RBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_47() {
+    if (jj_scan_token(TOM_UNDERSCORE)) return true;
     return false;
   }
 
