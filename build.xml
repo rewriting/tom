@@ -507,7 +507,7 @@
 			<fileset dir="${src.build}" 
 							 includes="jtom/adt/tomsignature/**/*.class"/>
 		</jar>
-		<copy todir="${stable.mapping}">
+		<copy todir="${stable.mapping}" overwrite="true">
 			<fileset dir="${src.mapping}" includes="**/*.tom"/>
 		</copy>
 

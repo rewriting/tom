@@ -381,7 +381,7 @@ public class TomTaskInput {
 	}
 
 	public void setPackagePath(String packagePath) {
-		this.packagePath = packagePath.replace('.',File.pathSeparatorChar);
+		this.packagePath = packagePath.replace('.',File.separatorChar);
 	}
 	
 	public String getPackagePath() {
