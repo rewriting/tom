@@ -1,0 +1,443 @@
+module nsh
+import
+ global
+    bool int    
+    list[message] list[Agent] list[Nonce] list[int]
+    cmp[AgentId]
+;end
+
+//---------------------------------------------------------------//
+
+sort
+  AgentId SWC Nonce Key Address message
+  Agent intruder
+  network 
+  listAgent listNonce
+  state
+;end
+
+//---------------------------------------------------------------//
+
+operators
+ global
+   A   : AgentId;
+   B   : AgentId; 
+   a   : AgentId;
+   b   : AgentId; 
+   c   : AgentId;
+   e   : AgentId;
+   d   : AgentId; 
+   II  : AgentId;
+   dai   : AgentId;  //dummy AgentId
+ 
+   AuthVerif 		: bool 	alias    false:;//true:; // 
+
+   SLEEP  : SWC;
+   WAIT   : SWC;
+   COMMIT : SWC;
+
+   K(@)   : (AgentId) Key;
+
+   N(@,@) : (AgentId AgentId) Nonce;
+   DN     :  Nonce;  // Dummy Nonce
+
+   A(@)   : (AgentId) Address;
+   DA     :  Address;  // Dummy Address
+
+   @ + @ + @  : ( AgentId SWC Nonce ) Agent; 
+   //(@ + @ + @)  : ( AgentId SWC Nonce ) Agent alias @ + @ + @:; 
+
+   @'-''-''>'@':'@'['@','@','@']' : 
+	(AgentId AgentId Key Nonce Nonce Address) message;
+
+   @  : (message) network;
+   @ & @  : (network  network) network (AC);
+   nill :network;
+
+   @ # @ # @ : ( AgentId listNonce network ) intruder; 
+
+   @ <> @ <> @ <> @  : 
+	( listAgent listAgent intruder network ) state;
+   ATTACK  : state;
+   ERROR   : state;
+
+   @  : (Nonce) listNonce;
+   @ | @ : ( listNonce listNonce) listNonce (AC);
+   nl : listNonce;
+
+   @ : (Agent) listAgent;
+   @ * @ : ( listAgent  listAgent ) listAgent (AC);
+   nnl  : listAgent;
+
+   existAgent(@,@)  : (Agent listAgent) bool;
+   existMess(@,@)   : (message network) bool;
+   sizeMess(@)   : (network) int;
+   MaxMessagesInNetwork : int;
+
+   elemIA(@)   : (listAgent) Agent ;
+
+   COMMIT	:  message;
+   INTERCEPT(@)	: (message) message;
+   DECRYPT(@)	: (list[Nonce]) message;
+
+end
+
+//---------------------------------------------------------------//
+
+stratop
+ global 
+   com        : < state -> state > 		bs;
+   attStrat   : < state -> state > 		bs;
+   extAgent   : < Agent -> Agent >  		bs;
+end
+ 
+//---------------------------------------------------------------//
+
+rules for state
+	
+         x,x1,y,y1,z,w,w1,v,v1,t,k,r,xadd : AgentId;
+         n1,n2,n3,n4 : AgentId;
+         resp,init,dn,dn1 : Nonce;
+	 S : state;
+         I  : intruder;
+         E,E1,D,D1  : listAgent;
+         l,l1,l2,ln  : listNonce;
+         ls,ls1,ll,ll1 : network;
+         std, std1 : SWC;
+         act  : Agent;
+	 mes,dm : message;
+global
+
+//--------------------------------------------------------------------
+// 3 (A --> B)
+
+// sender creates message
+// sender waits a message from y(or I) with the nonce N(x,y)(or N(x,I))
+
+[initiator_1]
+x+SLEEP+resp * E  <> y+std+init * D <> I <> ls => 
+x+WAIT+N(x,y) * E <> y+std+init * D <> I <> x-->y:K(y)[N(x,y),DN,A(x)] & ls 
+	if sizeMess(ls) < MaxMessagesInNetwork
+end
+
+[initiator_1]
+x+SLEEP+resp * E  <> D <> w#l#ll <> ls  => 
+x+WAIT+N(x,w) * E <> D <> w#l#ll <> x-->w:K(w)[N(x,w),DN,A(x)] & ls 
+	if sizeMess(ls) < MaxMessagesInNetwork
+end
+
+
+//--------------------------------------------------------------------
+// 3/6 (--> B --> A)
+
+// receiver checks if 
+//  - y is the dest
+//  - message encrypted with K(y)
+//  - message type is MNA
+// receiver sends
+//  - to n2 (identifier of sender; normally N(n1,n3)==N(n2,n4))
+//  - received nonce (N(n1,n3)) and its nonce (N(y,n1))
+// receiver waits a message from n1 with the nonce N(y,n1)
+
+[responder_1]
+E <> y+SLEEP+init * D  <> w#l#ll <> w-->y:K(y)[N(n1,n3),N(n2,n4),A(z)] & ls  => 
+E <> y+WAIT+N(y,z) * D <> w#l#ll <> y-->z:K(z)[N(n1,n3),N(y,z),A(y)] & ls 
+
+end
+
+//--------------------------------------------------------------------
+// 6/7 (--> A --> B)
+
+// sender checks if 
+//  - x is the dest
+//  - message encrypted with K(x)
+//  - message type is MNNA
+//  - nonce is N(x,v) --> if not: ERROR
+//  ?? (possibly checks address : A(v) ) ??
+
+// sender sends a message 
+//   - to the the initial receiver (stored in N(x,v)->v)
+//   - with the received nonce
+
+[initiator_2]
+x+WAIT+N(x,v) * E   <> D <> w#l#ll <> w-->x:K(x)[N(n1,n3),N(n2,n4),A(z)] & ls  =>
+x+COMMIT+N(x,v) * E <> D <> w#l#ll <> x-->v:K(v)[N(n2,n4),DN,DA] & ls 
+		if x==n1 and v==n3
+		if not(AuthVerif) or v==z //---- Lowe's correction ----//
+end
+
+[initiator_2]
+x+WAIT+N(x,v) * E <> D <> I <> w-->x:K(x)[N(n1,n3),N(n2,n4),A(z)] & ls  =>
+ERROR
+		if x!=n1 or v!=n3
+		if not(AuthVerif) or v!=z //---- Lowe's correction ----//
+end
+
+//--------------------------------------------------------------------
+// 7 (B --> A)
+
+// receiver checks if 
+//  - y is the dest
+//  - message encrypted with K(y)
+//  - message type is MN
+//  - nonce is N(y,x) --> if not: ERROR
+
+// receiver sends
+//  - to n2 (identifier of sender; normally N(n1,n3)==N(n2,n4))
+//  - received nonce (N(n1,n3)) and its nonce (N(y,n1))
+// receiver waits a message from n1 with the nonce N(y,n1)
+
+[responder_2] 
+E <> y+WAIT+N(y,x) * D   <> w#l#ll <> w-->y:K(y)[N(n1,n3),N(n2,n4),A(v)] & ls =>
+E <> y+COMMIT+N(y,x) * D <> w#l#ll <> ls 
+		if x==n3 and y==n1
+end
+
+[responder_2] 
+E <> y+WAIT+N(y,x) * D <> w#l#ll <> w-->y:K(y)[N(n1,n3),N(n2,n4),A(v)] & ls  =>
+ERROR
+		if y!=n1 or x!=n3
+end
+
+//--------------------------------------------------------------------
+// intruder intercepts message
+
+//--------------------------------------------------------------------
+// intruder intercepts message encrypted with its key
+// we may replace N(n1,n3) with a variable Nonce:n13
+// 		  N(n2,n4) with a variable Nonce:n24
+// 		  A(v) with a variable Address:add
+
+[intruder_1]
+E <> D <> w#l#ll <> z-->x:K(w)[N(n1,n3),N(n2,n4),A(v)] & ls  =>
+E <> D <> w#N(n1,n3) | N(n2,n4) | l#ll <> ls 
+	if w!=z	 // not its messages
+end
+
+//--------------------------------------------------------------
+// learn messages
+// intruder should check if has not already intercepted it
+// (with nonamed rules --> we might get infinite loops ???)
+// (with insUnic)
+
+[intruder_2] 
+E <> D <> w#l#ll <> z-->x:K(y)[N(n1,n3),N(n2,n4),A(v)] & ls  =>
+E <> D <> w#l#z-->x:K(y)[N(n1,n3),N(n2,n4),A(v)] & ll <> ls 
+	if w!=z  // not its messages
+	if w!=y	 // not encrypted with its key 
+end
+
+//--------------------------------------------------------------
+// intruder sends (random) stored messages to
+//		  (random) agents from E and D
+// !! allow dupplicates in the network (in the list version)
+[intruder_3]
+E <> D <> w#l# x-->y:K(z)[N(n1,n3),N(n2,n4),A(v)] & ll <> ls  =>
+E <> D <> w#l# x-->y:K(z)[N(n1,n3),N(n2,n4),A(v)] & ll <> w-->t:K(z)[N(n1,n3),N(n2,n4),A(v)] & ls 
+	if sizeMess(ls) < MaxMessagesInNetwork
+	where (Agent)t+std+dn :=(extAgent) elemIA(D * E)
+	if not(existMess(w-->t:K(z)[N(n1,n3),N(n2,n4),A(v)],ls))
+end
+
+//--------------------------------------------------------------
+// intruder sends mnessages starting from the 
+//		(random) nonces it knows with --> resp, init
+//		  (random) destination   --> y
+//		  (random) message type  --> 3 rules
+//		  (random) nonce1 --> resp
+//		  (random) nonce2 --> init
+//		  (random) address --> A(xadd)
+// !! allow dupplicates in the network (in the list version)
+
+[intruder_4]
+E <> D <> w # resp | l # ll <> ls  =>
+E <> D <> w # resp | l # ll <> w-->y:K(y)[resp,resp,A(xadd)] & ls 
+	if sizeMess(ls) < MaxMessagesInNetwork
+	where (Agent)y+std+dn :=(extAgent) elemIA(D * E)
+	where (Agent)xadd+std1+dn1 :=(extAgent) elemIA(D * E) //---- Lowe's correction
+	if not(existMess(w-->y:K(y)[resp,resp,A(xadd)],ls))
+end
+
+[intruder_4]
+E <> D <> w # resp | init | l # ll <> ls =>
+E <> D <> w # resp | init | l # ll <> w-->y:K(y)[resp,init,A(xadd)] & ls 
+	if sizeMess(ls) < MaxMessagesInNetwork
+	where (Agent)y+std+dn :=(extAgent) elemIA(D * E)
+	where (Agent)xadd+std1+dn1 :=(extAgent) elemIA(D * E) //---- Lowe's correction
+	if not(existMess(w-->y:K(y)[resp,init,A(xadd)],ls))
+end
+
+
+//--------------------------------------------------------------------
+// the ATTACK
+
+//--------------------------------------------------------------------
+// attack on the receiver
+
+[attack_1]
+x+COMMIT+N(x,y) * E <> D <> w#l#ll <> ls  => 
+ATTACK
+	if y!=w
+	if not(existAgent(y+WAIT+N(y,x),D)) and
+	   not(existAgent(y+COMMIT+N(y,x),D))  
+end
+
+
+//--------------------------------------------------------------------
+// attack on the sender
+
+[attack_2]
+E <> y+COMMIT+N(y,x) * D <> w#l#ll <> ls => 
+ATTACK
+	if x!=w
+	if not(existAgent(x+COMMIT+N(x,y),E))
+end
+
+//--------------------------------------------------------------
+
+[attackFound]
+ATTACK => ATTACK
+end
+
+//--------------------------------------------------------------
+end
+
+
+//--------------------------------------------------------------
+// generate dummies
+
+rules for Nonce
+global
+	[] DN => N(dai,dai)		 end 
+end
+
+rules for Address
+global
+	[] DA => A(dai)			 end 
+end
+
+//--------------------------------------------------------------
+// eliminate duplicates
+// delete elements
+//  *** We must have always nl in listNonce *** 
+
+rules for listNonce
+         m : Nonce; 
+         l : listNonce; 
+global
+	[] m | m  => m 		 	end
+	[] N(dai,dai) | l => l		 	end
+end
+
+//--------------------------------------------------------------
+// eliminate doubletons in the network
+// ***** DO WE LOSE MESSAGES ????  *****
+ 
+//rules for network
+//	 //m : message;
+//	 m,ll : network;
+//global
+//	[] m & m & ll => m & ll      end
+//end
+
+//--------------------------------------------------------------
+rules for bool
+     x,y : Agent;
+     l : listAgent ;
+     m,n : message;
+     ll : network;
+global					//end
+    [] existAgent(x,nnl)   => false		end
+    [] existAgent(x,x * l)  => true		end
+    [] existAgent(x,y * l)  => existAgent(x,l)   
+		 // if y!=x
+					end 
+
+    [] existMess(m,nill)   => false		end
+    [] existMess(m,m & ll)  => true		end
+    [] existMess(m,n & ll)  => existMess(m,ll)   
+		 // if y!=x
+					end 
+end
+
+//--------------------------------------------------------------
+rules for int
+     x,y : Agent;
+     l : listAgent ;
+     m,n : message;
+     ll : network;
+global		
+    [] sizeMess(nill)   => 0		end
+    [] sizeMess(m & ll)  =>  1+ sizeMess(ll)		end 
+
+    [] MaxMessagesInNetwork => 1   end
+end
+
+//--------------------------------------------------------------
+// Extract Rules
+
+rules for Agent
+        m : Agent;
+	l : listAgent; 
+global
+	[extRuleAgent] elemIA(m * l) => m		 end
+end
+
+//--------------------------------------------------------------
+// Extract Rules
+
+strategies for Agent
+implicit 
+    [] extAgent => dk(extRuleAgent) end
+end
+
+//--------------------------------------------------------------
+
+strategies for state 
+implicit 
+    []com => 
+		repeat*(
+		        dk(
+                           attack_1,
+                           attack_2,
+
+                           intruder_1,
+                           intruder_2,
+                           intruder_3,
+                           intruder_4,
+
+                           initiator_1,  // In -> Net
+                           responder_1,  // Net -> Rec -> Net
+                           initiator_2,  // Net -> In -> Net
+                           responder_2   // Net -> Rec 
+			)
+		) end
+
+    []attStrat => 
+	dc one(
+		repeat*(
+		        dk(
+                           attack_1,
+                           attack_2,
+
+                           intruder_1,
+                           intruder_2,
+                           intruder_3,
+                           intruder_4,
+
+                           initiator_1,
+                           responder_1,
+                           initiator_2,
+                           responder_2
+			)
+		);
+		attackFound
+	)
+	end
+
+end
+
+//--------------------------------------------------------------
+
+end
+
