@@ -184,29 +184,44 @@
     </taskdef>
   </target>
 
-  <!-- compile tom files in src.src with tom.stable -->
-  <target name="buildtom" depends="initTaskDef, buildadt">
+  <!-- 
+  make the tomcomp task call tom or tomsrc depending on withsource
+  property
+  -->
+  <target name="-withstable" unless="withsource">
+    <presetdef name="tomcomp">
+      <tom config="${stable.configfile}"/>
+    </presetdef>
+  </target> 
+  
+  <target name="-withsrc" if="withsource">
+    <presetdef name="tomcomp">
+      <tomsrc config="${src.configfile}"/>
+    </presetdef>
+  </target> 
+  
+  <target name="buildtom.common" 
+          if="gen.destination" 
+          depends="-withstable,-withsrc">
+    
     <!--  compile in static mode -->
-    <tom config="${stable.configfile}"
-         srcdir="${src.src}" 
-         destdir="${src.gen}" 
+    <tomcomp srcdir="${src.src}" 
+         destdir="${gen.destination}" 
          options="--static -I ${src.mapping}">
       <include name="**/OptionParser.t"/>
-    </tom>
+    </tomcomp>
     <!--  compile in protected mode -->
-    <tom config="${stable.configfile}"
-         srcdir="${src.src}" 
-         destdir="${src.gen}" 
+    <tomcomp srcdir="${src.src}" 
+         destdir="${gen.destination}" 
          options="--protected -I ${src.mapping}">
       <include name="**/TomBase.t"/>
       <include name="**/verifier/*.t"/>
       <exclude name="**/TomVerifier.t"/>
-    </tom>
+    </tomcomp>
 
     <!--  compile in standard mode -->
-    <tom config="${stable.configfile}"
-         srcdir="${src.src}" 
-         destdir="${src.gen}" 
+    <tomcomp srcdir="${src.src}" 
+         destdir="${gen.destination}" 
          options="-I ${src.mapping}">
       <exclude name="**/TomBase.t"/>
       <exclude name="**/OptionParser.t"/>
@@ -215,45 +230,49 @@
       <include name="jtom/*.t"/> 
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
-    </tom>
+    </tomcomp>
     <!--  compile without declaration -->
-    <tom config="${stable.configfile}"
-         srcdir="${src.src}" 
-         destdir="${src.gen}" 
+    <tomcomp srcdir="${src.src}" 
+         destdir="${gen.destination}" 
          options="-I ${src.mapping} --noDeclaration">
       <exclude name="jtom/*.t"/>
       <exclude name="jtom/parser/*.g.t"/>
 
       <include name="jtom/**/*.t"/> 
-    </tom>
+    </tomcomp>
     <!-- Specific stuff for parser generation -->
-    <tom config="${stable.configfile}"
-         srcdir="${src.src}"
-         outputfile="${src.gen}/jtom/parser/TomLanguage.g"
+    <tomcomp srcdir="${src.src}"
+         outputfile="${gen.destination}/jtom/parser/TomLanguage.g"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/TomLanguage.g.t"/>  
-    </tom>
-    <tom config="${stable.configfile}"
-         srcdir="${src.src}"
-         outputfile="${src.gen}/jtom/parser/HostLanguage.g"
+    </tomcomp>
+    <tomcomp srcdir="${src.src}"
+         outputfile="${gen.destination}/jtom/parser/HostLanguage.g"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/HostLanguage.g.t"/>  
-    </tom>
-    <tom config="${stable.configfile}"
-         srcdir="${src.src}"
-         outputfile="${src.gen}/jtom/parser/BackQuoteLanguage.g"
+    </tomcomp>
+    <tomcomp srcdir="${src.src}"
+         outputfile="${gen.destination}/jtom/parser/BackQuoteLanguage.g"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/BackQuoteLanguage.g.t"/>  
-    </tom>
+    </tomcomp>
 
     <!--  rename *.g.java file
-    <move todir="${src.gen}/jtom/parser" includeemptydirs="false">
-      <fileset dir="${src.gen}/jtom/parser">
+    <move todir="${gen.destination}/jtom/parser" includeemptydirs="false">
+      <fileset dir="${gen.destination}/jtom/parser">
         <include name="**/*.g.java"/>
       </fileset>
       <mapper type="glob" from="*.g.java" to="*.g"/>
     </move> -->
 
+  </target> 
+  
+  <!-- compile tom files in src.src with tom.stable -->
+  <target name="buildtom" depends="initTaskDef, buildadt">
+
+    <antcall target="buildtom.common">
+      <param name="gen.destination" value="${src.gen}"/>
+    </antcall>
   </target>
 
   <!-- builds the parser using antlr -->
@@ -953,64 +972,10 @@
     </copy>
 
     <!-- build tom -->
-
-    <!--  compile in static mode -->
-    <tomsrc config="${src.configfile}"
-         srcdir="${src.src}" 
-         destdir="${destination}/gen" 
-         options="--static -I ${src.mapping}">
-      <include name="**/OptionParser.t"/>
-    </tomsrc>
-
-    <!--  compile in protected mode -->
-    <tomsrc config="${src.configfile}"
-         srcdir="${src.src}" 
-         destdir="${destination}/gen" 
-         options="--protected -I ${src.mapping}">
-      <include name="**/TomBase.t"/>
-      <include name="**/verifier/*.t"/>
-      <exclude name="**/TomVerifier.t"/>
-    </tomsrc>
-
-    <!--  compile in standard mode -->
-    <tomsrc config="${src.configfile}"
-            srcdir="${src.src}" 
-            destdir="${destination}/gen" 
-            options="-I ${src.mapping}">
-      <exclude name="**/TomBase.t"/>
-      <exclude name="**/OptionParser.t"/>
-      <exclude name="jtom/parser/*.g.t"/>
-
-      <include name="jtom/*.t"/> 
-      <include name="tom/library/**/*.t"/> 
-      <include name="tom/platform/**/*.t"/> 
-    </tomsrc>
-
-    <!--  compile without declaration -->
-    <tomsrc config="${src.configfile}"
-            srcdir="${src.src}" 
-            destdir="${destination}/gen" 
-            options="-I ${src.mapping} --noDeclaration">
-      <exclude name="jtom/*.t"/>
-      <exclude name="jtom/parser/*.g.t"/>
-
-      <include name="jtom/**/*.t"/> 
-    </tomsrc>
-
-    <!--  compile parsers in a specific directory -->
-    <mkdir dir="${destination}/gen/jtom/parser"/>
-    <tomsrc config="${src.configfile}"
-         srcdir="${src.src}"
-         destdir="${destination}/gen/jtom/parser"
-         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-      <include name="**/*.g.t"/>  
-    </tomsrc>
-    <move todir="${destination}/gen/jtom/parser" includeemptydirs="false">
-      <fileset dir="${destination}/gen/jtom/parser">
-        <include name="**/*.g.java"/>
-      </fileset>
-      <mapper type="glob" from="*.g.java" to="*.g"/>
-    </move>
+    <antcall target="buildtom.common">
+      <param name="gen.destination" value="${destination}"/>
+      <param name="withsource" value="yes"/>
+    </antcall>
 
     <!-- builds parser -->
     <mkdir dir="${destination}/gen/jtom/parser"/>
