@@ -34,7 +34,6 @@ import java.io.IOException;
 
 import jtom.TomMessage;
 import jtom.tools.*;
-import jtom.TomEnvironment;
 
 public class TomBackend extends TomTask {
   

@@ -29,9 +29,7 @@ import java.io.IOException;
 
 
 import jtom.adt.tomsignature.types.*;
-import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
-import jtom.TomEnvironment;
 
 public class TomJavaGenerator extends TomImperativeGenerator {
    

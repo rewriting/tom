@@ -63,16 +63,16 @@ public class TomTaskParser extends TomTask {
         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(getInput().isEclipseMode()) {
-        String fileName = getInput().getInputFileNameWithoutSuffix() + getInput().parsedTableSuffix;
+        String fileName = getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix;
         Tools.generateOutput(fileName, symbolTable().toTerm());
       }
       if(getInput().isIntermediate()) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().parsedSuffix, parsedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().parsedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedSuffix, parsedTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
       }
         
       if(getInput().isDebugMode()) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().debugTableSuffix, parser.getStructTable());  
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.debugTableSuffix, parser.getStructTable());  
       }
         
       // Update environment

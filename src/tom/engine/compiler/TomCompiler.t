@@ -36,7 +36,6 @@ import jtom.tools.*;
 import jtom.TomMessage;
 import aterm.*;
 import jtom.exception.TomRuntimeException;
-import jtom.TomEnvironment;
 
 public class TomCompiler extends TomTask {
   TomKernelCompiler tomKernelCompiler;
@@ -70,7 +69,7 @@ public class TomCompiler extends TomTask {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().compiledSuffix, compiledTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.compiledSuffix, compiledTerm);
       }
       environment().setTerm(compiledTerm);
       

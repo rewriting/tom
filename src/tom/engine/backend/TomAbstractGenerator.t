@@ -29,10 +29,8 @@ import java.io.IOException;
 
 import jtom.adt.tomsignature.types.*;
 import jtom.TomBase;
-import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
 import jtom.exception.TomRuntimeException;
-import jtom.TomEnvironment;
  
 public abstract class TomAbstractGenerator extends TomBase {
   

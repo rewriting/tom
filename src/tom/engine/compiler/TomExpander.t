@@ -31,7 +31,6 @@ import aterm.*;
 import jtom.tools.*;
 import jtom.xml.Constants;
 import jtom.exception.TomRuntimeException;
-import jtom.TomEnvironment;
 import jtom.TomMessage;
 
 public class TomExpander extends TomTask {
@@ -70,8 +69,8 @@ public class TomExpander extends TomTask {
         System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().expandedSuffix, expandedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().expandedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedSuffix, expandedTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
       }
       environment().setTerm(expandedTerm);
       

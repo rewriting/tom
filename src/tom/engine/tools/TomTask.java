@@ -25,11 +25,7 @@
 
 package jtom.tools;
 
-import java.text.MessageFormat;
-
 import jtom.*;
-import jtom.adt.tomsignature.types.*;
-import jtom.TomMessage;
 
 public abstract class TomTask extends TomBase {
   

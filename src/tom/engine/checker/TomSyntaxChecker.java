@@ -26,9 +26,7 @@
 
 package jtom.checker;
 
-import jtom.TomEnvironment;
 import jtom.TomMessage;
-import jtom.tools.TomTaskInput;
 
 public class TomSyntaxChecker extends TomChecker {
 
