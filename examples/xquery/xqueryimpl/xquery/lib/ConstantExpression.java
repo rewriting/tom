@@ -42,20 +42,22 @@ public class ConstantExpression extends AbstractExpression{
 	}
 
 	if (!(childs[0] instanceof Sequence) 
-		|| !(childs[0] instanceof Node) 
-		|| !(childs[0] instanceof Item)){
+		&& !(childs[0] instanceof Node) 
+		&& !(childs[0] instanceof Item)){
 	  return false; 
 	}
 	else {
 	  return true; 
-	}
-	  
+	}	  
   }
 
   public Sequence evaluate() 
 	throws XQueryGeneralException
   {
+	System.out.println("ConstantExpression: evaluate()");
+	
 	if (!verifyContent()) {
+	  System.out.println("ConstantExpression: evaluate: return NULL");
 	  return null;
 	}
 

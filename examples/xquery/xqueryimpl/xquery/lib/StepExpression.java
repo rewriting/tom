@@ -80,6 +80,15 @@ public class StepExpression extends AbstractExpression {
 	this.nodeTest=nodeTest;
   }
 
+  public StepExpression(PathOperator pathOperator, PathAxe pathAxe, NodeTester nodeTest) 
+  {
+	super(); 
+
+	this.pathOperator = pathOperator; 
+	this.pathAxe = pathAxe;
+	this.nodeTest=nodeTest;
+  }
+
 
   public StepExpression(Object childExprs[]) 
   {
@@ -104,9 +113,9 @@ public class StepExpression extends AbstractExpression {
 	}
 
 	// 1st must be sequence 
-	else if (!(getChild(0) instanceof Sequence)) {
-	  return false; 
-	}
+// 	else if (!(getChild(0) instanceof Sequence)) {
+// 	  return false; 
+// 	}
 	 
 	else if ((pathOperator ==null)
 		|| (pathAxe==null)
@@ -149,16 +158,18 @@ public class StepExpression extends AbstractExpression {
   public Sequence evaluate(Sequence initValue) 
 	throws XQueryGeneralException
   {
+
 	// verify child expressions
 	if (!verifyContent()) {
 	  return null;
 	}
-
 	
 	Sequence result = new Sequence(); 
-	result.addAll(initValue);
+	result.add(initValue);
 	
 	Object secondChild = getChild(0); 
+
+	
 	int childIndex = 0; 
 
 	if (secondChild instanceof AbstractExpression) { // union

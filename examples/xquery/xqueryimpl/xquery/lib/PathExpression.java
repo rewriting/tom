@@ -101,9 +101,11 @@ public class PathExpression extends AbstractExpression{
 	int childIndex = 0; 
 	if (secondChild instanceof AbstractExpression) { // union
 	  result.add(((AbstractExpression)secondChild).evaluate()); 
-	  childIndex = 1; 
+	  childIndex ++; 
 	}
-
+	
+	result = doFilter(result, childIndex);
+	
 	return result;
   }
   
@@ -112,11 +114,19 @@ public class PathExpression extends AbstractExpression{
 	throws XQueryGeneralException
   {
 	// filter; by expression
-	Sequence result = input; 
+	Sequence result = new Sequence(); 
+	result.add(input);
+
 	for (int i=childIndex; i< getArity(); i++) {
 	  AbstractExpression expr=(AbstractExpression)getChild(childIndex); 
 	  // assign initial value
-	  result=expr.evaluate(result);
+	  Sequence s = expr.evaluate(result);
+	  if (s==null) {
+		return null; 
+	  }
+	  else {
+		result.add(s); 
+	  }
 	}
 	
 	return result;

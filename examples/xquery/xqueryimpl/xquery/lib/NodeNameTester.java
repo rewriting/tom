@@ -22,7 +22,7 @@ public class NodeNameTester extends NodeTester
    */
   public NodeNameTester() 
   {
-    
+	super(); 
   }
    
   /**
@@ -31,7 +31,14 @@ public class NodeNameTester extends NodeTester
    */
   public NodeNameTester(String name) 
   {
-    
+	super(); 
+	System.out.println("sao the nhi chang chay gi ca");
+	
+	this.name=new String(name);
+	System.out.println("name");
+	
+	System.out.println(name);
+	
   }
    
   /**
@@ -40,7 +47,7 @@ public class NodeNameTester extends NodeTester
    */
   protected String getName() 
   {
-    return null;
+    return name;
   }
    
   /**
@@ -50,7 +57,12 @@ public class NodeNameTester extends NodeTester
    */
   public boolean doTest(Item item) 
   {
-    return true;
+    if (item.isNode()) {
+	  return doTest(item.getNode());
+	}
+	else {
+	  return false;
+	}
   }
    
   /**
@@ -60,7 +72,14 @@ public class NodeNameTester extends NodeTester
    */
   public boolean doTest(Node node) 
   {
-    return true;
+	System.out.println(name);
+	
+    if (node instanceof Element && node.getNodeName().compareTo(name)==0) {
+	  return true; 
+	}
+	else {
+	  return false;
+	}
   }
    
   /**
@@ -69,6 +88,6 @@ public class NodeNameTester extends NodeTester
    */
   public void setName(String name) 
   {
-    
+	this.name=name;
   }
 }

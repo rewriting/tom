@@ -93,9 +93,16 @@ public class Expression extends AbstractExpression{
 		  || (achild instanceof Item)) {
 		s.add(achild); 
 	  }
+
 	  else if (achild instanceof AbstractExpression) {
 		AbstractExpression expr=(AbstractExpression)achild; 
-		s.add(expr.evaluate()); 
+		Sequence result = expr.evaluate(s);
+		if (result==null) {
+		  return null; 
+		}
+		else {
+		  s.add(result); 
+		}
 	  }
 
 	  else if (achild instanceof Node) {
