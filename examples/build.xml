@@ -37,6 +37,9 @@
   <property name="addressbook" value="addressbook"/>
   <property name="addressbook.dir" location="${examples.dir}/${addressbook}" />
 
+  <property name="adt" value="adt"/>
+  <property name="adt.dir" location="${examples.dir}/${adt}" />
+
   <property name="apireach" value="apireach"/>
   <property name="apireach.dir" location="${examples.dir}/${apireach}" />
 
@@ -237,10 +240,15 @@
   </target>
 
   <target name="addressbook" depends="init">
-    <adtcompile example="${addressbook}"
-                factory="data"/>
+    <adtcompile example="${addressbook}" factory="data"/>
     <tomcompile example="${addressbook}"/>
     <javacompile example="${addressbook}"/>
+  </target>
+
+  <target name="adt" depends="init">
+    <vascompile example="${adt}"/>
+    <tomcompile example="${adt}"/>
+    <javacompile example="${adt}"/>
   </target>
 
   <target name="apireach" depends="init"> 
