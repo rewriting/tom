@@ -277,9 +277,9 @@ public class TomEnvironment
 	localDestDir = getServer().getOptionStringValue("destdir");
 	setDestDir(localDestDir);
             
-	String userOutputFile = getServer().getOptionStringValue("output");
-	if ( userOutputFile.length() > 0 ) {
-	    setUserOutputFile( userOutputFile );
+	String commandLineUserOutputFile = getServer().getOptionStringValue("output");
+	if ( commandLineUserOutputFile.length() > 0 ) {
+	    setUserOutputFile( commandLineUserOutputFile );
 	}
     }
 

@@ -46,24 +46,22 @@ public class TomExpander extends TomGenericPlugin {
 
       setTerm(expandedTerm);
 
-      if(verbose)
-	System.out.println("TOM expanding phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-		
-      if(intermediate)
-	  {
+      if(verbose) {
+        System.out.println("TOM expanding phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+      }
+      
+      if(intermediate) {
 	      Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
-				   + EXPANDED_SUFFIX, expandedTerm);
+                             + EXPANDED_SUFFIX, expandedTerm);
 	      Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
-				   + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
-	  }
-    }
-    catch (Exception e) 
-	{
+                             + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
+      }
+    } catch (Exception e) {
 	    environment().messageError("Exception occurs in TomExpander: "
-				       +e.getMessage(), environment().getInputFile().getName(),
-				       TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+                                 +e.getMessage(), environment().getInputFile().getName(),
+                                 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	    e.printStackTrace();
-	}
+    }
   }
 
   public TomOptionList declaredOptions() {

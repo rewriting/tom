@@ -54,7 +54,7 @@ public class TomServer {
   /**
    *
    */
-  private static Logger logger;
+  private Logger logger;
 
   /**
    *
@@ -244,25 +244,24 @@ public class TomServer {
     // creates an instance of each plugin
     Iterator it = classPaths.iterator();
     while(it.hasNext()) {
-      Object instance;
       String path = (String)it.next();
       try { 
-        instance = Class.forName(path).newInstance();
-        if(instance instanceof TomPlugin) {
-          instances.add(instance);
+        Object pluginInstance = Class.forName(path).newInstance();
+        if(pluginInstance instanceof TomPlugin) {
+          instances.add(pluginInstance);
         } else {
-	  logger.log(Level.SEVERE,
-		     "ClassNotAPlugin",
-		     path);
+          logger.log(Level.SEVERE,
+                     "ClassNotAPlugin",
+                     path);
         }
       } catch(ClassNotFoundException cnfe) { 
-	logger.log(Level.WARNING,
-		   "ClassNotFound",
-		   path);
+        logger.log(Level.WARNING,
+                   "ClassNotFound",
+                   path);
       } catch(Exception e) { 
-	logger.log(Level.SEVERE,
-		   "InstantiationError",
-		   path);
+        logger.log(Level.SEVERE,
+                   "InstantiationError",
+                   path);
       }
     }
     
@@ -275,10 +274,9 @@ public class TomServer {
      }
 
     for(int i = 0; i < inputFiles.length; i++) {
-
       logger.log(Level.FINER,
-		 "NowCompiling",
-		 inputFiles[i]);
+                 "NowCompiling",
+                 inputFiles[i]);
 
       ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
       

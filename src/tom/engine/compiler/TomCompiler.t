@@ -40,24 +40,25 @@ public class TomCompiler extends TomGenericPlugin {
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       
-      if(verbose)
-	System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      if(verbose) {
+        System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      }
 
-      if(intermediate)
-	Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
-
+      if(intermediate) {
+        Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
+      }
       setTerm(compiledTerm);
 
       environment().printAlertMessage("TomCompiler");
       if(!environment().isEclipseMode()) {
-	  // remove all warning (in command line only)
-	  environment().clearWarnings();
+        // remove all warning (in command line only)
+        environment().clearWarnings();
       }
     }
     catch (Exception e) {
       environment().messageError("Exception occurs in TomCompiler: "+e.getMessage(), 
-				 environment().getInputFile().getName(), 
-				 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+                                 environment().getInputFile().getName(), 
+                                 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
     }
   }

@@ -25,12 +25,12 @@ public class TomMainParser extends TomGenericPlugin {
     public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table"; // was previously in TomTaskInput
     public static final String DEBUG_TABLE_SUFFIX = ".tfix.debug.table"; // was previously in TomTaskInput
 
-    protected static String currentFile;
+    private String currentFile;
     
     private NewTargetParser parser = null;
     
     public TomMainParser(){
-	super("TomMainParser");
+      super("TomMainParser");
     }
 
     public TomOptionList declaredOptions() {

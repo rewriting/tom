@@ -20,39 +20,30 @@ public class TomTypeChecker extends TomChecker {
   public void run() {
     if(isActivated()) {
       try {
-	  long startChrono = System.currentTimeMillis();
-	  boolean verbose = getServer().getOptionBooleanValue("verbose");
+        long startChrono = System.currentTimeMillis();
+        checkTypeInference( (TomTerm)getTerm() );
 			
-	  checkTypeInference( (TomTerm)getTerm() );
-			
-	  if(verbose)
-	      System.out.println("TOM type checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+        if(verbose) {
+          System.out.println("TOM type checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+        }
+        environment().printAlertMessage("TomTypeChecker");
 	  
-	  environment().printAlertMessage("TomTypeChecker");
-	  
-	  if(!environment().isEclipseMode())
-	      {
-		  // remove all warning (in command line only)
-		  environment().clearWarnings();
-	      }
+        if(!environment().isEclipseMode()) {
+          // remove all warning (in command line only)
+          environment().clearWarnings();
+        }
+      } catch (Exception e) {
+        environment().messageError("Exception occurs in TomTypeChecker: "+e.getMessage(), 
+                                   environment().getInputFile().getName(), 
+                                   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+        e.printStackTrace();
       }
-      catch (Exception e) 
-	  {
-	      environment().messageError("Exception occurs in TomTypeChecker: "+e.getMessage(), 
-					 environment().getInputFile().getName(), 
-					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-	      e.printStackTrace();
-	  }
-    }
-    else // type checker desactivated
-	{
-	    boolean verbose = getServer().getOptionBooleanValue("verbose");
-	    
-	    if(verbose)
-		{
+    } else { // type checker desactivated
+	
+      if(verbose) {
 		    System.out.println("The type checker is not activated and thus WILL NOT RUN.");
-		}
-	}
+      }
+    }
   }
 
   private boolean isActivated() {
