@@ -1,0 +1,20 @@
+since version 1.0:
+        - non-linear patterns supported
+	- builtin-integers supported
+	- tutorial
+
+version 1.0: 
+	- new stable version based on ApiGen
+	- efficiency bottleneck found
+	- import option added: path extension for includes
+	- noDeclaration flags added: do not generate declarations
+
+version 0.7: 
+	- bootstrap with ApiGen (6 types)
+
+version 0.6: 
+	- use a cache to improve the generator
+	- backquote mechanism introduced
+
+version 0.5: 
+	- front-end improved by adding a type checker.

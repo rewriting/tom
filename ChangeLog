@@ -1,0 +1,294 @@
+2002-12-21    <pem@bach>
+
+	* src/jtom/compiler/TomGenerator.t: 
+	  - make_add: arguments swapped!
+	  - backquote support for typelist
+	  - backquote support for typearray (not yet finished)
+
+2002-12-16    <pem@bach>
+
+	* tests compiled in strictType mode (except Record)
+
+2002-12-16  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+        * bootinstall
+	* configure.in: added tutorial to the distribution
+	                removed examples from the distribution
+
+2002-12-15    <pem@bach>
+
+	* add support for builtin-integer:
+	  - %typeint should be used to define the "int" type
+	  - digits can be used in patterns
+	   
+	* src/jtom/compiler/TomGenerator.t: 
+	  - typing improved in list-matching (with strictType)
+
+2002-12-08    <pem@bach>
+	
+	* annoted variables: ':' replaced by '@'
+	* non-linear pattern used in TomChecker
+	* test suite revisited
+	* %make removed
+	* MakeTerm improved: function calls are allowed
+	* bootinstall
+	
+2002-12-05    <pem@bach>
+
+	* src/jtom/compiler/TomCompiler.t: 
+	  - extension to non-linear annoted variables
+
+2002-12-01    <pem@bach>
+
+	* src/jtom/compiler/TomCompiler.t:
+	  - non-linear patterns are now supported
+
+2002-11-30    <pem@bach>
+	* new types (Declaration, Option and Expression)
+	* --strictType by default
+
+2002-11-23    <pem@bach>
+	* dead code removed 
+
+2002-11-21    <pem@bach>
+	* version 1.0beta
+	* new stable version based on ApiGen
+
+	* src/jtom/Tom.java: 
+	  - symbol table can now be represented by a term
+	  - noDeclaration flags added: do not generate declarations
+	  - import option added: path extension for includes
+
+	* src/jtom/checker/TomChecker.t: efficiency bottleneck found
+	  - this was the debugPrintln statement
+	* bootstrap with --strictType activated
+	
+2002-11-20  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/checker/TomChecker.t: shortcuts added in pass1
+
+2002-11-20  Jurgen Vinju  <vinju@loria.fr>
+
+	* replaced Cons(<head>,<tail>) by [<head>,<tail>] for TomList
+	  in TomSignature.adt
+
+2002-11-20  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* replace Symbol by Name everywhere
+
+2002-11-19  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* version 0.7: bootstrap with ApiGen (6 types)
+	
+2002-10-29    <pem@bach>
+	* version 0.6
+
+	* src/jtom/TomBase.t: use a cache to compute numberListToIdentifier
+
+	* src/jtom/checker/TomChecker.t: use backQuoteTerm
+	
+	* src/jtom/parser/TomParser.jj:  use cstFactory
+
+	* src/jtom/tools/ASTFactory.java: use cstFactory
+	
+
+2002-10-29  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/checker/TomChecker.t: DotTerm allowed in BackQuoteTerm
+	                                 (very nice!)
+	* src/jtom/parser/TomParser.jj (TOKEN): DotTerm added
+
+2002-10-27    <pem@bach>
+
+	* src/jtom/compiler/TomCompiler.t: fix a bug in list matching
+
+	* src/jtom/Tom.java: 
+	  - based on aterm.* (and no longer on jaterm.*)
+
+	* src/jtom/checker/TomChecker.t: 
+	  - new implementation of "expand", based on generic traversal
+	  - introduction of "backQuotedTerm"
+
+	* src/jtom/TomBase.t: new generic methods:
+	  - map, maptree and traversal
+
+2002-09-23 <vinju@lagarde>
+	* added jtom wrapper script in new utils directory
+
+2002-09-15    <pem@bach>
+
+	* src/jtom/verifier/TomVerifier.t: errors are managed by exceptions
+
+	* src/jtom/Tom.signature: fsym are built only once
+
+2002-08-21  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/verifier/TomVerifier.t: integration of the TOM Verifier
+
+2002-06-17  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: fix a bug in pass2_1: MakeTerm
+ 	  are expanded in PatternAction
+
+2002-01-24  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: 
+	  - complete re-implementation of the syntactic matching
+
+2002-01-22  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: 
+	  - extension to full list matching
+	  - allow list matching with empty pattern
+
+2002-01-21  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: pass2 splited into:
+	  - pass2_1: simplification of checkedTerm
+	  - pass2_2: compilation into Automata
+
+2001-10-31  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/compiler/TomGenerator.t: parenthesis added in genDecl (#define)
+
+2001-08-24  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/compiler/TomGenerator.t: first Eiffel program
+  	  automatically compiled
+
+2001-07-19  Pierre-Etienne Moreau  <moreau@loria.fr>
+        * New package: jtom.tools
+	
+	* src/jtom/tools/Flags.java: 
+	- new 'supportedGoto' flag
+
+	* src/jtom/Tom.java: 
+	- new '-eCode' option for the Eiffel back-end
+
+	* src/jtom/compiler/TomCompiler.t: 
+	- we can now generate a program without any goto/break (useful for
+	  Eiffel for example)
+	- jtom can be boostrapped without goto
+
+2001-06-15  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/Tom.java: new options
+	- intermediate: generate intermediate files
+	- doCompile: read a checked AST and generate the target language
+
+2001-06-01  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* test/Makefile.am: more tests
+
+2001-05-31  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/parser/TomParser.jj:
+	- new syntax: %rule { l_1 -> r_1 ... l_n -> r_n }
+
+	* src/jtom/compiler/TomCompiler.t: 
+	- compilation of ruleset
+
+2001-05-11  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: 
+	- type depends on TypeList instead of ArgList (more flexible)
+	- get_slot added
+
+	* src/jtom/parser/TomParser.jj: 
+	- get_slot(name,t) added
+
+2001-05-07  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/parser/TomParser.jj: old syntax removed
+	- new parser for terms
+	- record syntax added: 
+	    - typeterm term pair(first:term, second:term)
+	    - pair[first=term]
+	- new syntax for aliases: x@term instead of x:term
+	- cmp_fun_sym(t1,t2) added
+
+	* src/jtom/checker/TomChecker.t: 
+	- records are available (done by expansion)
+	- expansion phase added before the type inference phase
+
+	* src/jtom/compiler/TomCompiler.t: 
+	- simplified using somes records
+
+2001-04-12  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: 
+	- prettyPrint has been removed
+	- generic traversal (collectVariable)
+	- improved compilation scheme: pass2() is no longer called in generate()
+	
+	* src/jtom/parser/TomParser.jj: %include { name.t } is now available
+
+2001-03-26  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: compilation of list-matching
+	(typearray representation)
+
+2001-03-21  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: 
+	- AnnotedAppl have been removed for more flexibility
+	- Appl are now annoted with an Option([...])
+
+2001-03-20  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/checker/TomChecker.t: parse and check list-pattern
+
+2001-03-07  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+
+	* src/jtom/compiler/TomCompiler.t: generation of access and building functions
+	- GET_HEAD, GET_TAIL, IS_EMPTY, MAKE_EMPTY, MAKE_ADD
+	- the parsing of list-pattern is not yet implemented
+
+2001-03-02  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/parser/TomParser.jj: new syntax for type and symbol declaration
+	- %typeterm  (implement, get_fun_sym(t), get_subterm(t,n), equals(t1,t2))
+	- %typelist  (implement, ..., get_element(l,n), get_size(l))
+	- %typearray (implement, ..., get_head(l), get_tail(l), is_empty(l))
+	- %op        (fsym, make(t1,...,tn))
+	- %oplist    (fsym, make_empty(), make_add(l,e))
+	- %oparray   (fsym, make_empty(size), make_add(l,e,index))
+	
+2001-02-21  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: nested %match are allowed
+
+	* src/jtom/parser/TomParser.jj: possibility to give a name to a node
+	- foo(x,subterm:g(y)) -> { ... subterm ... }
+	  this avoids to re-create the term g(y)
+	- intern variables _1, _1_1, _1_2, etc. are no longer necessary
+	  (and can non longer be used)
+
+2001-02-20  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* test/Jfib1Test.java: JUnit is now used
+
+2001-02-15  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: 
+	- Bug fixed (--cCode):
+	- Declaration are made before Assignement 
+	- Placeholder variables are now compiled
+	- Variables are now local to each pattern
+	- Semantic actions are included in the automaton (i.e. intern
+	  variables _1, _1_1, _1_2, etc. can used in semantic actions)
+
+2001-02-14  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/Tom.java: first bootstrap
+
+2001-02-06  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* src/jtom/parser/TomParser.jj: first integration of the new (javacc) parser
+
+	* configure.in: use acinclude.m4 and check for java, javac and javacc
+
+2001-01-25  Pierre-Etienne Moreau  <moreau@loria.fr>
+
+	* Setup of TOM under automake

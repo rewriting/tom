@@ -1,0 +1,1645 @@
+\documentclass[a4paper]{article}
+\usepackage{fullpage}
+
+\usepackage{verbatim}
+%\usepackage{program}
+
+\newcommand{\TOM}{\textsf{TOM}}
+\newcommand{\JTOM}{\textsf{JTOM}}
+\newcommand{\C}{\textsf{C}}
+\newcommand{\Cplusplus}{\textsf{C++}}
+\newcommand{\Java}{\textsf{Java}}
+\newcommand{\Eiffel}{\textsf{Eiffel}}
+
+\newenvironment{grammar}%
+{\endgraf\verbatim}%
+{\endverbatim}
+
+% \newenvironment{program}%
+% {\endgraf\verbatim}%
+% {\endverbatim}
+
+\def\programboxed#1{\begingroup
+  \def\verbatim@processline{%
+    {\setbox0=\hbox{\the\verbatim@line}%
+      \hsize=\wd0
+      \the\verbatim@line\par}}%
+  \setbox0=\vbox{\parskip=0pt\topsep=0pt\partopsep=0pt
+    \verbatiminput{#1}}%
+  \begin{center}\fbox{\box0}\end{center}%
+  \endgroup}
+
+\makeatletter
+
+% \newenvironment{verbatimlisting}[1]%
+%  {\def\verbatim@startline{\input{#1}%
+%     \def\verbatim@startline{\verbatim@line{}}%
+%     \verbatim@startline}%
+%   \verbatim}{\endverbatim}
+
+\newwrite\verbatim@out
+
+\newenvironment{verbatimwrite}[1]%
+ {\@bsphack
+  \immediate\openout \verbatim@out #1
+  \let\do\@makeother\dospecials\catcode`\^^M\active
+  \def\verbatim@processline{%
+    \immediate\write\verbatim@out{\the\verbatim@line}}%
+  \verbatim@start}%
+ {\immediate\closeout\verbatim@out\@esphack}
+
+\makeatother
+
+
+\title{\TOM\ User Manual}
+\author{Pierre-Etienne Moreau \and Christophe Ringeissen}
+\date{}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This manual describes the functionality provided by \TOM. 
+This tool is a Pattern Matching Preprocessor that can be used to
+intregrate term rewriting facilities in an imperative language such as
+\C\ and \Java.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Using \TOM}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This section explains the basics of using \TOM. 
+
+\subsection{Installing \TOM}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In order to run \TOM, you need a Java Development Kit (JDK)
+%\TOM\ is written in \JTOM\ (\TOM\ $+$ \Java), 
+
+\subsection{Programming in \TOM}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\TOM\ is a multi-languages Pattern Matching Preprocesor. It currently
+supports a least two languages (called ``target languages''): \C\ and \Java.
+A \TOM\ program can be seen a \Java\ program (resp. a \C\ program)
+that contains some \TOM\ constructs. As consequence, any \Java\ or \C\
+program is a valid \TOM\ program. 
+
+\TOM\ provides several constructs for specifying algebraic data types
+and associated pattern matching operations, and produces as output the
+same code with all such constructs translated into the target language.
+As an example, we consider the algebraic specification of Naturals,
+using the Peano axiomatisation:
+% and will we show how to make this
+% specification executable using \TOM: 
+
+$$
+Nat = 0 \mid suc(Nat) \mid plus(Nat,Nat)
+$$
+with the two following rewrite rules:
+$$
+\begin{array}{lcl}
+  plus(x,0)      & \rightarrow & x\\
+  plus(x,suc(y)) & \rightarrow & suc(plus(x,y))
+\end{array}
+$$
+(where $x$ and $y$ are variables of sort~$Nat$)
+
+\medskip
+Suppose that we want to write a \C\ program that makes this
+specification executable. 
+Using \TOM, the program could look like:
+
+\begin{verbatimwrite}{program.txt}
+  %typeterm Nat
+  %op Nat zero
+  %op Nat suc(Nat)
+  %op Nat plus(Nat,Nat)
+
+  %rule {
+     plus(x,0)      -> x
+     plus(x,suc(y)) -> suc(plus(x,y))
+  }
+
+  int main() {
+    ...
+    result = plus( suc(suc(zero)) , suc(zero) )
+    ...
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+
+In fact, this previous part of program is not complete. As we can
+notice, we need to provide a term data structure to represent the
+objects we want to rewrite.
+To achieve this goal, we can either use and external term library such
+as the ATerm library, either we have to explicitly describe how a term
+is represented in memory.
+In \C\, this can be done as follow:
+\begin{verbatimwrite}{program.txt}
+  struct term {
+    int symbol;
+    int arity;
+    struct term **subterm;
+  };
+
+  #define ZERO 0
+  #define SUC 1
+  #define PLUS 2
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+Then, we can provide some function to build a term:
+
+\begin{verbatimwrite}{program.txt}
+  struct term symbol_zero = {ZERO, 0, NULL};
+  struct term *zero = &symbol_zero;
+
+  struct term *suc(struct term *x) {
+    struct term *res;
+    res = malloc(sizeof(struct term));
+    res->symbol = SUC;
+    res->arity = 1;
+    res->subterm = (struct term **) malloc(1 * sizeof(struct term *));
+    res->subterm[0] = x;
+    return(res);
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+Using this term representation, the \C\ expressions 
+\texttt{suc(suc(suc(zero)))} and \texttt{suc(suc(zero))} build the
+naturals~3 and~2.
+But, we still have to ``explain'' to \TOM\ how to access to our term
+representation: for each data type defined in \TOM, we have to specify
+how this data type is implemented, how to access to the function
+symbol, how to access to a subterm, and how to compare two function symbols.
+Then, for each constructor of this data type, we also have to specify
+how the constructor is represented in memory, and how to build such a constructor.
+This can be done in the following way:
+
+\begin{verbatimwrite}{program.txt}
+  %typeterm Nat {
+    implement { struct term* }
+    get_fun_sym(t)      { t->symbol }
+    cmp_fun_sym(s1,s2)  { s1 == s2 }
+    get_subterm(t, n)   { t->subterm[n] }
+  }
+  %op term zero {
+    fsym { ZERO }
+    make { zero } 
+  }
+  %op term suc(term) {
+    fsym    { SUC }
+    make(t) { suc(t) }
+  }
+  %op term plus(term,term) {
+    fsym { PLUS }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+Given the previous specification, \TOM\ will generate a \C\ function
+\texttt{struct term *plus(struct term *t1, struct term *t2)} that
+implements the corresponding rewrite system. In this example, $plus$ is
+a defined symbol: this explains why we do not have to specify how to
+build such a symbol.
+
+Instead of using the \texttt{\%rule} construct, another alternative
+could have consisted in using the \texttt{\%match} construct. 
+This more primite construct may remind the \texttt{switch-case}
+\C~instruction. It can be used as follow:
+
+\begin{verbatimwrite}{program.txt}
+  struct term *plus(struct term *t1, struct term *t2) {
+    %match(term t1, term t2) {
+      x,zero   -> { return x; }
+      x,suc(y) -> { return suc(plus(x,y)); }
+    }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+The \texttt{plus} function is now explicitly defined by the user, and
+the \texttt{\%match} construct is now replaced by several \C\
+instructions (and not a function definition). Another difference,
+wrt. the \texttt{\%rule} construct, is related to the right-hand side
+of each rule: 
+\begin{itemize}
+\item when using \texttt{\%rule}, the right-hand side is a
+  term built on the algebraic data type
+\item when using \texttt{\%match}, the right-hand side is a list of
+  target language instructions. In the second rule of our example, we
+  explicitly call the \C\ functions \texttt{plus} and \texttt{suc} and
+  we return the resulting term, but we can imagine a program that
+  performs input/output or side effects that cannot be easilly
+  expressed in a pure algebraic specification formalism. 
+\end{itemize}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The language}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{\TOM\ syntax}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A \TOM\ program is a target language program (namely \C\ or \Java)
+embedded with some new preprocessor constructs such as
+\texttt{\%typeterm}, \texttt{\%op}, \texttt{\%rule} and
+\texttt{\%match}.
+\TOM\ is a multi-languages preprocessor, so, its syntax depends from 
+the target language syntax. But for simplicity, we will only present
+the syntax of its constructs and explain how they can be integrated
+into the target language.
+Basically, a \TOM\ program is list of blocks, where each block is
+either a \TOM\ construct, either a sequence of characters.
+The idea is that that after transformation, the sequence of characters
+merged with the compiled \TOM\ constructs should be a valid target
+language program.
+So we have:
+
+\begin{grammar}
+Tom: 
+     BlockList
+
+BlockList:
+     (
+       MatchConstruct
+     | RuleConstruct
+     | MakeConstruct
+     | IncludeConstruct
+     | Operator
+     | OperatorList
+     | OperatorArray
+     | TypeTerm
+     | TypeList
+     | TypeArray
+     | '{' BlockList '}'
+     | <OTHER>
+     )*
+\end{grammar}
+
+\begin{itemize}
+\item a \texttt{MatchConstruct} is translated into a list of
+  instructions. This constructs may appear anywhere a list of
+  instructions is valid in the target language.
+
+\item a \texttt{RuleConstruct} is translated into a function
+  definition. This constructs may appear anywhere function declaration
+  is valid in the target language. 
+
+\item a \texttt{MakeConstruct} is translated into a list of
+  instructions.
+
+\item a \texttt{IncludeConstruct} is replaced by the content of the
+  file referenced by the construct.
+
+\item \texttt{Operator}, \texttt{OperatorList} and
+  \texttt{OperatorArray} are replaced by some functions definitions.
+ 
+\item \texttt{TypeTerm}, \texttt{TypeList} and \texttt{TypeArray} are
+  also replaced by some functions definitions.
+\end{itemize}
+
+
+A \texttt{\%match} construct contains two parts:
+\begin{itemize}
+\item a list of target language variables. These variables should
+  contains the object on which patterns are matched
+
+\item a list of rules: a pattern and a semantic action (written in the
+  target language)
+\end{itemize}
+The construct is defined as follow:
+
+\begin{grammar}
+MatchConstruct:
+        '%match' '(' MatchArguments ')' '{'
+                ( PatternAction )* 
+        '}'
+        
+MatchArguments:
+        MatchArgument ( ',' MatchArgument )*
+
+MatchArgument:
+        Type Name
+
+Type:
+        <IDENTIFIER>
+
+Name: 
+        <IDENTIFIER>
+
+PatternAction:
+        MatchPatterns '->' '{' BlockList '}'    
+
+MatchPatterns:
+        Term ( ',' Term )*
+\end{grammar}
+
+A term as the following syntax:
+\begin{grammar}
+Term:
+        [AnnotedName '@' ] PlainTerm
+
+PlainTerm:
+          SymbolName '[' SlotName '=' Term ( ',' SlotName '=' Term )* ']'
+        | Name '*'
+        | SymbolName '(' Term ( ',' Term )* ')'
+        | '_'
+
+SlotName:
+        <IDENTIFIER>
+
+SymbolName: 
+        <IDENTIFIER>
+\end{grammar}
+
+In \TOM, we can also define a set of rewrite rules. All the
+left-handsides should begin with the same root symbol:
+\begin{grammar}
+RuleConstruct:
+        '%rule' '{'
+                ( Term '->' Term )*
+        '}'
+
+MakeConstruct:
+        '%make' '{' Term '}'
+\end{grammar}
+
+\begin{grammar}
+IncludeConstruct:
+        '%include' '{' <IDENTIFIER> '.' <IDENTIFIER> '}'
+
+Operator:
+        '%op' Type Name 
+        [ '(' [ SlotName ':" ] Type ( ',' [ SlotName ':" ] Type )* ')' ]
+        '{'
+                KeywordFsym ( KeywordMake | KeywordGetSlot )*
+        '}'
+
+OperatorList:
+        '%oplist' Type Name '(' Type '*' ')' '{'
+                KeywordFsym ( KeywordMakeEmptyList | KeywordMakeAddList )*
+        '}'
+
+OperatorArray:
+        '%oparray' Type Name '(' Type '*' ')' '{'
+                KeywordFsym ( KeywordMakeEmptyArray | KeywordMakeAddArray )*
+        '}'
+\end{grammar}
+
+\begin{grammar}
+TypeTerm:
+        '%type' Type '{'
+                KeywordImplement
+                ( 
+                  KeywordGetFunSym 
+                | KeywordGetSubterm 
+                | KeywordCmpFunSym 
+                | KeywordEquals 
+                )*
+        '}'
+
+TypeList:
+        '%typelist' Type '{'
+                KeywordImplement
+                ( 
+                  KeywordGetFunSym 
+                | KeywordGetSubterm 
+                | KeywordCmpFunSym 
+                | KeywordEquals 
+                | KeywordGetHead
+                | KeywordGetTail
+                | KeywordIsEmpty
+                )*
+        '}'
+
+TypeArray:
+        '%typearray' Type '{'
+                KeywordImplement
+                ( 
+                  KeywordGetFunSym 
+                | KeywordGetSubterm 
+                | KeywordCmpFunSym 
+                | KeywordEquals 
+                | KeywordGetElement
+                | KeywordGetSize
+                )*
+        '}'
+\end{grammar}
+
+\begin{grammar}
+GoalLanguageBlock:
+        '{' BlockList '}'
+
+KeywordImplement:
+        'implement' GoalLanguageBlock
+
+KeywordGetFunSym:
+        'get_fun_sym' '(' Name ')' GoalLanguageBlock
+
+KeywordGetSubterm
+        'get_subterm' '(' Name ',' Name ')' GoalLanguageBlock
+
+KeywordCmpFunSym
+        'cmp_fun_sym' '(' Name ',' Name ')' GoalLanguageBlock
+
+KeywordEquals
+        'equals' '(' Name ',' Name ')' GoalLanguageBlock
+
+KeywordGetHead
+        'get_head' '(' Name ')' GoalLanguageBlock
+
+KeywordGetTail
+        'get_tail' '(' Name ')' GoalLanguageBlock
+
+KeywordIsEmpty
+        'is_empty' '(' Name ')' GoalLanguageBlock
+
+KeywordGetElement
+        'get_element' '(' Name ',' Name ')' GoalLanguageBlock
+
+KeywordGetSize
+        'get_size' '(' Name ')' GoalLanguageBlock
+
+KeywordFsym
+        'fsym' GoalLanguageBlock
+
+KeywordGetSlot
+        'get_slot' '(' Name ',' Name ')' GoalLanguageBlock
+
+KeywordMake
+        'make' '(' Name ( ',' Name )* ')' GoalLanguageBlock
+
+KeywordMakeEmptyList
+        'make_empty' [ '(' ')' ] GoalLanguageBlock
+
+KeywordMakeAddList
+        'make_add' '(' Name ',' Name ')' GoalLanguageBlock
+
+KeywordMakeEmptyArray
+        'make_empty' '(' Name ')' GoalLanguageBlock
+
+KeywordMakeAddArray
+        'make_add' '(' Name ',' Name ',' Name ')' GoalLanguageBlock
+\end{grammar}
+
+
+
+\subsection{\TOM\ semantic}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Type definition}
+
+\noindent
+When defining a new type with the \texttt{\%typeterm} constructs,
+several access functions have to be defined:
+\begin{itemize}
+\item the \texttt{implement} construct describes how the new type is 
+  implemented. The target language part written between braces
+  (\texttt{'\{'} and \texttt{'\}'}) is never parsed. It is used by
+  the compiler to declare some functions and variables.
+
+\item the \texttt{get\_fun\_sym(t)} construct corresponds to a
+  function (parametrised by a term variable) that should return the
+  root symbol of a given term (the term referenced by the term
+  variable \texttt{t} in this example). 
+
+\item the \texttt{cmp\_fun\_sym(s1,s2)} construct corresponds to a
+  predicate (parametrised by two symbol variables).
+  This predicate should return \texttt{true} if the symbols are
+  ``equal''. The \texttt{true} value should correspond to the 
+  builtin \texttt{true} value of the considered target language.
+  (\texttt{true} in \Java, and something different from \texttt{0} in
+  \C\ for example). 
+
+\item the \texttt{get\_subterm(t,n)} construct corresponds to a
+  function (parametrised by a term variable and an integer).
+  This function should return the \texttt{n-th} subterm of the
+  term~\texttt{t}. This never called with and integer paramter that
+  does not correspond to the arity of the root symbol of the
+  considered term (i.e. we alway have $0 \leq n < arity$).
+
+\item the \texttt{equals(t1,t2)} construct corresponds to a
+  predicate (parametrised by two term variables).
+  This predicate should return \texttt{true} if the terms are
+  ``equal''. The \texttt{true} value should correspond to the 
+  builtin \texttt{true} value of the considered target language.
+  This last optional predicate is only used to compile non-linear 
+  left-handsides. It is not needed, if the specification does not
+  contain such patterns.
+\end{itemize}
+
+
+\noindent
+When defining a new type with the \texttt{\%typelist} construct,
+several other access functions have to be defined:
+\begin{itemize}
+\item the \texttt{get\_head(l)} function is parametrised by a list
+  variable and should return the first element of the considered list.
+
+\item the \texttt{get\_tail(l)} function is parametrised by a list
+  variable and should return the tail of the considered list.
+
+\item the \texttt{is\_empty(l)} constructs corresponds to a
+  predicate parametrised by a list variable.
+  This predicate should return \texttt{true} if the considered list
+  contains no element.
+\end{itemize}
+
+\noindent
+When defining a new type with the \texttt{\%typearray} construct,
+the two different access functions have to be defined:
+\begin{itemize}
+\item the \texttt{get\_element(l,n)} construct is parametrised by a list
+  variable and an integer. This should correspond to a function that
+  return the \texttt{n-th} element of the considered list~\texttt{l}.
+
+\item the \texttt{get\_size(l)} constructs corresponds to a function
+  that returns the size of the considered list.
+  By convention, an empty list contains \texttt{0} element.
+\end{itemize}
+
+\subsubsection{Operator definition}
+
+\noindent
+When defining a new symbol with the \texttt{\%op} construct, the user
+should specify how the symbol is implemented. This is done by the
+\texttt{fsym} construct.
+The expression between braces should correspond (modulo the
+\texttt{cmp\_fun\_sym} predicate) to the expression returned by the
+function \texttt{get\_fun\_sym} applied to a term rooted by the
+considered symbol.  
+When defining a symbol, is it also possible to specify a
+\texttt{make} construct. This function is parametrised by several 
+term variables (i.e. that should correspond to the arity of the
+symbol). A call to this \texttt{make} function should return a term
+rooted by the considered symbol, where each subterm correspond to the
+terms given in arguments to the function.
+
+\noindent
+As mentioned in the syntax definition, it is also possible to name
+each field of a constructor symbol by using the
+\texttt{Type f(name1:Type, name2:Type2)} syntax.  
+Adopting this programming style has two main advantages:
+\begin{itemize}
+\item when writing a pattern, this allows you write \texttt{f[name2=a]}
+  instead of \texttt{f(\_,a)}. One benefit is that you can modify the
+  signature (adding a field for example) without necessary having to
+  modify every pattern that occurs in the program.
+
+\item you may also specialize the \texttt{get\_subterm} access
+function for a given constructor. This can be done with the
+\texttt{get\_slot} construct.
+\end{itemize}
+
+\smallskip\noindent
+When defining a new symbol with the \texttt{\%oplist} construct,
+the user has to specify how the symbol is implemented. 
+The user has also to specify how a list can be built (this is no
+longer optional as in the \texttt{\%op} construct):
+\begin{itemize}
+\item the \texttt{make\_empty()} construct should return an empty
+  list.
+
+\item the \texttt{make\_add(l,e)} construct corresponds to a function
+  parametrised by a list variable and a term variable. This function
+  should return a new list~\texttt{l'} where the element~\texttt{e}
+  has been inserted at the head of the list~\texttt{l}
+  (i.e. \texttt{equals(get\_head(l'),e)} and
+  \texttt{equals(get\_tail(l'),l)} should be \texttt{true}).
+\end{itemize}
+
+\noindent
+When defining a new symbol with the \texttt{\%oparray} construct,
+the user has to specify how the symbol is implemented. 
+The user has also to specify how a list can be built (this is no 
+longer optional as in the \texttt{\%op} construct):
+\begin{itemize}
+\item the \texttt{make\_empty(n)} construct should return a list of
+  size~\texttt{n}.  
+
+\item the \texttt{make\_add(l,e,n)} construct corresponds to a
+  function parametrised by a list variable, a term variable and an
+  integer. This function should return a list~\texttt{l'} such that
+  the element~\texttt{e} is at the \texttt{n-th} position.
+\end{itemize}
+
+\subsubsection{Match definition}
+
+In order to match patterns against a list of subjects, \TOM\ provides
+the \texttt{\%match} construct.
+This constructs contains two parts:
+\begin{itemize}
+\item a list of \texttt{MatchArgument}: this is a list of (target
+  language) variables that reference the terms to be matched.
+\item a list of \texttt{PatternAction}: this is a list of pairs
+  (pattern,action), where an action is a set of target language
+  instructions.  
+\end{itemize}
+
+The \texttt{\%match} construct is evaluated in the following way:
+\begin{itemize}
+\item given a list of ground terms (referenced by the list of target
+  language variables), the execution control is transfered to the
+  first \texttt{PatternAction} whose patterns match the list of ground
+  terms.
+\item given a \texttt{PatternAction}, the list of free variables is
+  instantiated and the associated semantic action is executed.
+  If the execution control is transfered outside the
+  \texttt{\%match} instruction (by a \texttt{goto}, \texttt{break} or
+  \texttt{return} for example), the matching process is finished.
+  Otherwise, it is continued as follows:
+  \begin{itemize}
+  \item if the considered matching theory may return several matches
+    (list-matching for instance), for each match, the list of free
+    variables is instantiated and the associated semantic action is
+    executed.
+  \item when all matches have been computed (there is at most one match
+    in the syntactic theory), the execution control is transfered to
+    the next \texttt{PatternAction} whose patterns match the list of
+    ground terms. 
+  \end{itemize}
+
+\item when there is no more \texttt{PatternAction} whose patterns
+  match the list of ground terms, the \texttt{\%match} instruction is
+  finished, and the execution control is transfered to the next
+  instruction. 
+\end{itemize}
+
+\noindent
+\textbf{Note:} the behaviour is not determined if a semantic action
+modifies a target language variable which is an argument of a
+\texttt{\%match} instruction under evaluation.
+
+\subsubsection{Rule definition}
+
+The \texttt{\%rule} construct is composed of a list of rewrite rules
+(the left-hand side is a term and the right-hand side is a term).
+All these rules should begin with the same root symbol. The \TOM\
+compiler should generate a function (with one argument) whose name
+correspond to the name of this unique root symbol.
+Given a ground term, applying this function returns the instanciated
+right-hand side of the first rule whose pattern matches the considered 
+subject.
+When no rule can be applied (i.e. no pattern matches the subject),
+the given ground term, rooted by the root symbol of the rewrite system
+is returned.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The system}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The current version of \TOM\footnote{available at
+  \texttt{http://www.loria.fr/ELAN/Toolkit}} is written in
+\Java+\TOM\ itself. 
+It reads the program to be compiled and builds an abstract syntax tree
+(AST) to represent the program.
+The compiler is made up of stages, each of which can be seen as a
+process that transforms the AST into a new one. After the last transformation,
+the AST reprents a program closed to an imperative program.
+The last stage of the compiler is a generation phase that transform
+the AST into a concrete program written in \C\ or \Java, depending 
+on the chosen target language.
+
+%\subsection{How \TOM\ is implemented}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{The front-end}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The front-end is the part of the system that reads the input program
+and builds the associated abstract syntax tree.
+This parts contains three components:
+\begin{itemize}
+\item a parser: this stage reads a concrete program written in the
+  target language embedded with some \TOM\ constructs, and build a
+  first AST.
+\item an expander: this stage performs some very simple
+  transformations such as macro expansion.
+\item a type checker: this stage add some type information to the AST
+  (all untyped vaiables become a typed variable for example).
+\end{itemize}
+
+Because \TOM\ is language independant, parsing a \TOM\ program is not
+so easy. A solution could consists in implementing a specialized
+parser for each supported target language (one for \C+\TOM, and
+another one for \Java+\TOM), but for simplicity, and to keep the \TOM\
+system as simple as possible, we decided to implement a common parser,
+slightly specialised for each considered target language. 
+When considering \C\ and \Java, we noticed that it is only needed to
+know how to recognize a string, a comment and a block to be able to
+make the difference between a target language construct and a \TOM
+construct.
+
+The main idea consists in synchronising the parser on several
+characters such as `\texttt{\%}',`\texttt{"}', `\texttt{\{}' and
+`\texttt{\}}'. For this purpose we decided to use \textsf{Javacc} and
+the lexical-mode facilities. Basically, the parser can be in two
+differents modes: \texttt{TomConstruct} mode and
+\texttt{TargetLanguage} mode.
+When being in the \texttt{TargetLanguage} mode, the parser reads
+everything unless a \TOM\ construct (beginning with a `\texttt{\%}'
+character) is recognized. Of course, this construct should not be in a
+target language string or comment. This explain why it is needed to be
+able to recognized such target language constructs.
+Once a \TOM\ construct is recognized, the parser is switched to the
+\texttt{TomConstruct} mode, and the considered construct can be
+easilly parsed. 
+We should notice that a \TOM\ construct can also contains a target
+language part (always between `\texttt{\{}' and `\texttt{\}}').
+When parsing such a part, the parser first reads a `\texttt{\{}', and
+then is looking for a corresponding `\texttt{\}}': for each
+encountered~`\texttt{\}}', it has to know if the read expression is
+well parenthesed or not. This explains why it is needed to be able to
+recognize and count the target language open and close block
+commands. 
+
+\subsection{The compiler}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The compiler receives as input an AST that merely corresponds to the 
+input \TOM\ program (this is roughly a list of interleaved target
+language constructs and \TOM\ constructs).
+The goal of the compiler consists in transforming this AST into a
+``simpler one'': an AST that can be easilly translated into an
+imperative program (a \C\ or a \Java\ program for example).
+
+The kernel of the compiler contains a procedure that transforms a set
+of patterns into a automaton that implements a matching algorithm
+corresponding to the considered set of patterns. 
+This automaton is then compiled into abstract instructions of the
+form: \texttt{IfThenElse}, \texttt{Assign}, \texttt{ExitAction}, 
+\texttt{ExecuteAction}, etc. 
+With such an approach, the most complex part of the compilation process
+is completly independ from the chosen target language, and can easily
+be reused.
+
+
+\subsection{The back-end}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The back-end takes the last form of AST as input and generates a
+concrete program written in the target language. This stage consists
+in translating abstract instructions (like \texttt{IfThenElse}) into
+concrete instructions (like \texttt{if(cond) \{ instList \}}) in \C\
+or \Java.  
+With such an approach, allows us to easily add a new back-end for any 
+new supported target language.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Some examples}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{A very simple example: Fibonacci}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This program is written in Java and use the \texttt{ATerm} library to
+implement the term data structure.
+The following example is an implementation fo the Fibonacci function,
+using rewrite rules and Peano integers.
+
+\noindent
+The first part of the program contains some function and constant
+definitions. We define:
+\begin{itemize}
+\item four \Java\ function symbols: \texttt{fzero, fsuc, fplus} and 
+  \texttt{ffib}
+\item a constant term: \texttt{tzero}
+\item two \Java\ functions: \texttt{run} and \texttt{main}
+\end{itemize}
+
+\begin{verbatimwrite}{program.txt}
+import jaterm.api.*;
+import jaterm.shared.*;
+import java.util.*;
+
+public class Rule1 {
+
+  private ATermFactory factory;
+  
+  private AFun fzero, fsuc, fplus,ffib;
+  public ATermAppl tzero;
+
+  public Rule1(ATermFactory factory) {
+    this.factory = factory;
+    fzero = factory.makeAFun("zero", 0, false);
+    fsuc  = factory.makeAFun("suc" , 1, false);
+    fplus = factory.makeAFun("plus", 2, false);
+    ffib  = factory.makeAFun("fib" , 1, false);
+    tzero = factory.makeAppl(fzero);
+  }
+
+  public void run(int n) {
+    ATerm N = tzero;
+    for(int i=0 ; i<n ; i++) {
+      N = factory.makeAppl(fsuc,N);
+    }
+    ATerm res = null;
+    for(int i=0 ; i<loop; i++) {
+      res = fib(N);
+    }
+    System.out.println("result = " + res);
+  }
+
+  public final static void main(String[] args) {
+    Rule1 test = new Rule1(new PureFactory(16));
+    test.run(10);
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\noindent
+The second part of the program defines the algebraic datatype
+definition and specifies how terms are implemented. 
+We define:
+\begin{itemize}
+\item the type \texttt{term}, which is implement by the \texttt{ATerm}
+  \Java\ datatype 
+\item four \TOM\ functions symbol: \texttt{zero, suc, plus} and 
+  \texttt{fib} 
+\end{itemize}
+
+\begin{verbatimwrite}{program.txt}
+  %typeterm term {
+    implement { ATerm }
+    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
+    cmp_fun_sym(t1,t2)  { t1 == t2 }
+    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
+    equals(t1, t2)      { (t1.equals(t2)) }
+  }
+
+  %op term zero {
+    fsym { fzero }
+    make { factory.makeAppl(fzero) }
+  }
+  
+  %op term suc(term) {
+    fsym { fsuc }
+    make(t) { factory.makeAppl(fsuc,t) }
+  }
+  
+  %op term plus(term,term) {
+    fsym { fplus }
+    make(t1,t2) { factory.makeAppl(fplus,t1,t2) }
+  }
+  
+  %op term fib(term) {
+    fsym { ffib }
+    make(t) { factory.makeAppl(ffib,t) }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\noindent
+The last part of the program specifies two rewrite systems using the
+\texttt{\%rule} construct:
+\begin{verbatimwrite}{program.txt}
+  %rule {
+    plus(x,zero)   -> x
+    plus(x,suc(y)) -> suc(plus(x,y))
+  }
+
+  %rule {
+    fib(zero) -> suc(zero)
+    fib(suc(zero)) -> suc(zero)
+    fib(suc(suc(x))) -> plus(fib(x),fib(suc(x)))
+  }
+}
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\subsection{A funny example: Addition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In this example written in \C, we want to define the integer addition.
+On one side we use the Peano axiomatization to specifies the addition
+function. On the other side, we use \C\ builtin integer \texttt{int}
+to implement the algebraic datatype.
+
+\noindent
+In the first part of the program, we define the mapping between the
+algebraci datatype and its implementation:
+\begin{itemize}
+\item the type \texttt{Nat} is implemented by the \texttt{int} \C\
+  type 
+\item the root symbol of a \texttt{Nat} is a successor \texttt{suc} is
+  this natural is not zero
+\item the subterm of a natural is a natural that corresponds
+  to its predecessor (i.e. \texttt{n-1})
+\end{itemize}
+
+
+\begin{verbatimwrite}{program.txt}
+#include<stdio.h>
+
+#define ZERO  0
+#define SUC   1
+
+%typeterm Nat {
+  implement { int }
+  get_fun_sym(i)      { ((i==0)?ZERO:SUC) }
+  cmp_fun_sym(t1,t2)  { (t1 == t2) }
+  get_subterm(i, n)   { (i-1) }
+}
+%op Nat zero {
+  fsym { ZERO }
+}
+%op Nat suc(Nat) {
+  fsym { SUC }
+}
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\noindent
+The second part of this program defines:
+\begin{itemize}
+\item the \texttt{suc} function, that returns the successor of a given integer
+\item the \texttt{plus} function, specified over the algebraic datatype
+\item the \texttt{main} function
+\end{itemize}
+The user should note that the computation is done by pattern matching,
+but the involved terms are always represented (in memory) by a builtin
+\texttt{int}.
+
+
+\begin{verbatimwrite}{program.txt}
+int suc(int t) {
+  return t+1;
+}
+
+int plus(int t1, int t2) {
+  %match(Nat t1, Nat t2) {
+    x,zero   -> { return x; }
+    x,suc(y) -> { return suc(plus(x,y)); }
+  }
+}
+
+void main() {
+  printf("res = %d\n", plus(10,10) );
+}
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\subsection{A list matching example: Sorting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The following example illustrate how list matching can be used to
+implement a sort algorithm in a concise way.
+For simplicity, we only present parts of the program that are related
+to \TOM.
+
+\noindent
+In the first part, we define a type~\texttt{L}, using the
+\texttt{\%typelist} construct. This datatype is implemented by an
+\texttt{ATermList} (defined in the ATerm library).
+By convention, the root symbol of any term of sort~\texttt{L} is the
+\texttt{conc} function symbol. In the last part of the
+\texttt{\%typelist} construct, we explain to \TOM\ how to acces to the
+head, the tail and how to know if a list (of sort~\texttt{L}) is
+empty.
+
+\begin{verbatimwrite}{program.txt}
+  %typelist L {
+    implement { ATermList }
+    get_fun_sym(t) { ((t instanceof ATermList)?
+                       factory.makeAFun("conc", 1, false):null) }
+    cmp_fun_sym(t1,t2) { t1 == t2 }
+    equals(l1,l2)  { l1.equals(l2) }
+    get_head(l)    { ((ATermList)l).getFirst() }
+    get_tail(l)    { ((ATermList)l).getNext() }
+    is_empty(l)    { ((ATermList)l).isEmpty() }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\noindent
+Then, we specify how the \texttt{conc} function symbol is
+implemented. In addition to the classical \texttt{\%type} construct,
+we have to specify how to build an empty list, and how to insert an 
+element to a list.
+
+\begin{verbatimwrite}{program.txt}
+  %oplist L conc( E* ) {
+    fsym { factory.makeAFun("conc", 1, false) }
+    make_empty()  { factory.makeList() }
+    make_add(l,e) { ((ATermList)l).insert((ATerm)e) }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\noindent
+In this second part, we define the sort of the elements:~\texttt{E},
+and we define three constants: \texttt{a}, \texttt{b} and \texttt{c}
+
+\begin{verbatimwrite}{program.txt}
+  %typeterm E {
+    implement { ATerm }
+    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
+    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
+    equals(t1, t2)      { (t1.equals(t2)) }
+  }
+
+  %op E a { fsym { factory.makeAFun("a", 0, false) } }
+  %op E b { fsym { factory.makeAFun("b", 0, false) } }
+  %op E c { fsym { factory.makeAFun("c", 0, false) } }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\noindent
+In the last part of the program, we specify the sorting algorithm,
+using only one rule.
+The notation \texttt{conc(X1*,x,X2*,y,X3*)} means that:
+\begin{itemize}
+\item the subject should have the \texttt{conc} symbol as the root
+  symbol
+
+\item the variables \texttt{X1*}, \texttt{X2*} and \texttt{X3*} can be
+  instantiated by the empty list (the '\texttt{*}' after a variable
+  name means that it is a list variable the sort of the root
+  symbol:~\texttt{L} in this example) 
+
+\item the variable \texttt{x} and \texttt{y} are as usual and has to
+  be instantiate by a term of sort~\texttt{E}, the sort of subterms of
+  \texttt{conc} 
+\end{itemize}
+The introduced variables may of course be used in the semantic action
+part:
+\begin{itemize}
+\item first, we collect the name of the elements referenced by
+  \texttt{x} and \texttt{y}.
+
+\item the name are compared accoring to the \Java\ string
+  lexicographic order (note that it should have been possible to
+  implement our lexicographic order if needed).
+
+\item if the condition is not satisfied (i.e. \texttt{x} is not
+  greater than \texttt{y}), we do nothing. This means that another
+  substitution is asked. If there is no more available subtitution,
+  the list is sorted.
+
+\item if the condition is satified, we have found an \texttt{x}
+  greater than a \texttt{y}: we have to swap their value and run the
+  sorting algorithm again.
+\end{itemize}
+
+\begin{verbatimwrite}{program.txt}  
+  public ATermList sort1(ATermList l) {
+    %match(L l) {
+      conc(X1*,x,X2*,y,X3*) -> {
+        String xname = ((ATermAppl)x).getName();
+        String yname = ((ATermAppl)y).getName();
+        if(xname.compareTo(yname) > 0) {
+          return sort1( X1.append(y).concat(X2).append(x).concat(X3) );
+        }
+      }
+      _ -> { return l; }
+    }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\subsection{A more complex example: Object simplification}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The goal of this example is to show how \TOM\ can be used to implement
+a simplification function that directly works on objects (and not on
+classical terms). 
+To illustrate this purpose, we consider a simple hierarchy of classes
+that represents symbolic expressions such as constants, unary operators
+and binary operators:
+
+\begin{verbatimwrite}{program.txt}
+import java.util.*;
+public class Record4 {
+  abstract class Exp {
+    public abstract String getOperator();
+  }
+  
+  class CstExp extends Exp {
+    public Object value;
+    public CstExp(Object value) {
+      this.value = value;
+    }
+    public String getOperator() {
+      return "" + value;
+    }
+  }
+
+  class IntExp extends CstExp {
+    public IntExp(int value) {
+      super(new Integer(value));
+    }
+  }
+  
+  class StringExp extends CstExp {
+    public StringExp(String value) {
+      super(value);
+    }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+
+\begin{verbatimwrite}{program.txt}  
+  class UnaryOperator extends Exp {
+    public Exp first;
+    public UnaryOperator(Exp first) {
+      this.first = first;
+    } 
+    public String getOperator() { return ""; }
+  }
+
+  class BinaryOperator extends Exp {
+    public Exp first;
+    public Exp second;
+    public BinaryOperator(Exp first, Exp second) {
+      this.first = first;
+      this.second = second;
+    }
+    public String getOperator() { return ""; }
+  }
+
+  class Plus extends BinaryOperator {
+    public Plus(Exp first, Exp second) {
+      super(first,second);
+    }
+    public String getOperator() { return "Plus"; }
+  }
+
+  class Mult extends BinaryOperator {
+    public Mult(Exp first, Exp second) {
+      super(first,second);
+    }
+    public String getOperator() { return "Mult"; }
+  }
+  
+  class Uminus extends UnaryOperator {
+    public Uminus(Exp first) {
+      super(first);
+    }
+    public String getOperator() { return "Uminus"; }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\noindent
+In the second part of the program, we define the mapping between the
+object model and the algebraic datatype framework.
+\Java\ objects of sort \texttt{Object} are mapped to the \TOM\ type
+\texttt{TomObject}, \Java\ objects of sort \texttt{Exp} are
+mapped to \texttt{TomExp}, and \Java\ objects of sort \texttt{Integer} are
+mapped to \texttt{TomInteger}.
+In the two first cases, the root symbol of terms of such a type
+corresponds to the dynamic type of the corresponding \Java\ object
+(the root symbol of a \texttt{TomExp} term is the dynamic type of the
+object of sort \texttt{Exp}). 
+Comparing two function symbol in the algebraic framework,
+corresponds to check if a given dynamic type is assignable from
+another one.
+
+\begin{verbatimwrite}{program.txt}
+  %typeterm TomObject {
+    implement           { Object }
+    get_fun_sym(t)      { t.getClass() }
+    cmp_fun_sym(subjectFunSym,patternFunSym)  {
+      ((Class)patternFunSym).isAssignableFrom(((Class)subjectFunSym))
+    }
+  }
+
+  %typeterm TomExp {
+    implement           { Exp }
+    get_fun_sym(t)      { t.getClass() }
+    cmp_fun_sym(subjectFunSym,patternFunSym)  {
+      ((Class)patternFunSym).isAssignableFrom(((Class)subjectFunSym))
+    }
+  }
+
+  private final static Integer ZERO = new Integer(0);
+  private final static Integer SUC  = new Integer(1);
+  %typeterm TomInteger {
+    implement { Integer }
+    get_fun_sym(i)      { (((Integer)i).intValue()==0)?ZERO:SUC }
+    cmp_fun_sym(i1,i2)  { i1 == i2 }
+    get_subterm(i, n)   { new Integer(((Integer)i).intValue()-1) }
+  }
+
+
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\noindent
+The second part of the program defines an algebraic function symbols
+for each class defined in the object model. We also define the mapping
+between instance variables and subterms of such function symbols (this
+is done by the \texttt{get\_slot} \TOM\ construct.
+
+\begin{verbatimwrite}{program.txt}
+  %op TomExp BinaryOperator(first:TomExp, second:TomExp) {
+    fsym { (new BinaryOperator(null,null)).getClass() }
+    get_slot(first,t) { ((BinaryOperator)t).first }
+    get_slot(second,t) { ((BinaryOperator)t).second }
+  }
+
+  %op TomExp UnaryOperator(first:TomExp) {
+    fsym { (new UnaryOperator(null)).getClass() }
+    get_slot(first,t) { ((UnaryOperator)t).first }
+  }
+
+  %op TomExp Plus(first:TomExp, second:TomExp) {
+    fsym { (new Plus(null,null)).getClass() }
+    get_slot(first,t) { ((Plus)t).first }
+    get_slot(second,t) { ((Plus)t).second }
+  }
+
+  %op TomExp Mult(first:TomExp, second:TomExp) {
+    fsym { (new Mult(null,null)).getClass() }
+    get_slot(first,t) { ((Mult)t).first }
+    get_slot(second,t) { ((Mult)t).second }
+  }
+
+  %op TomExp Uminus(first:TomExp) {
+    fsym { (new Uminus(null)).getClass() }
+    get_slot(first,t) { ((Uminus)t).first }
+  }
+
+  %op TomExp CstExp(value:TomObject) {
+    fsym { (new CstExp(null)).getClass() }
+    get_slot(value,t) { ((CstExp)t).value }
+  }
+
+  %op TomExp IntExp(value:TomInteger) {
+    fsym { (new IntExp(0)).getClass() }
+    get_slot(value,t) { ((IntExp)t).value }
+  }
+
+  %op TomInteger zero {
+    fsym { ZERO }
+  }
+
+  %op TomInteger suc(TomInteger) {
+    fsym { SUC }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+
+\noindent
+In the third part of the program, we specify how to simplify an
+expression of sort \texttt{Exp}.
+In order to do this, we have to define a traversal function
+(texttt{traversalSimplify}) that goes through a term and recursivly
+applies the \texttt{simplify} function. 
+This is easilly done by pattern matching:
+
+\begin{verbatimwrite}{program.txt}  
+  ...
+  public Exp buildExp() {
+    return new Mult(new Plus(new StringExp("a"), new IntExp(0)), new IntExp(1));
+  }
+
+  public Exp traversalSimplify(Exp t) {
+    %match(TomExp t) {
+      UnaryOperator[first=e1] -> {
+        ((UnaryOperator)t).first  = traversalSimplify(e1);
+        return simplify(t);
+      }
+      
+      BinaryOperator[first=e1, second=e2] -> {
+        ((BinaryOperator)t).first  = traversalSimplify(e1);
+        ((BinaryOperator)t).second = traversalSimplify(e2);
+        return simplify(t);
+      }
+    }
+    return t;
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\noindent
+Before presenting the \texttt{simplify} function, the reader should
+note that the pattern matching is done modulo the dynamic type of
+objects. This means that the pattern \texttt{BinaryOperator[first=e1,
+  second=e2]} can effectively match a term rooted by a \texttt{Plus}
+symbol for example. This is true because the class
+\texttt{BinaryOperator} is assignable from the class \texttt{Plus}.
+
+\noindent
+The \texttt{simplify} function describes the simplification rules:
+\begin{itemize}
+\item the addition of two \texttt{IntExp} can be simplified a
+  \texttt{IntExp} whose value is the sum of the two previous values.
+\item the addition of an expression with the neutral element
+  \texttt{zero} can be simplified into the first expression
+\item ...
+\end{itemize}
+And last, we have to define the \texttt{myEqual} functions to check if
+two expression are equals.
+
+
+\begin{verbatimwrite}{program.txt}
+  public Exp simplify(Exp t) {
+    %match(TomExp t) {
+      Plus[first=IntExp(v1), second=IntExp(v2)] -> {
+        return new IntExp(v1.intValue() + v2.intValue());
+      }
+
+      Plus[first=e1, second=IntExp(zero)] -> { return e1; }
+      Plus[second=e1, first=IntExp(zero)] -> { return e1; }
+
+      Plus[first=e1, second=Uminus(e2)] -> {
+        if(myEquals(e1,e2)) {
+          return new IntExp(0);
+        } else {
+          return t;
+        }
+      }
+
+      Mult[first=IntExp(v1), second=IntExp(v2)] -> {
+        return new IntExp(v1.intValue() * v2.intValue());
+      }
+      
+      Mult[first=e1, second=IntExp(suc(zero))] -> { return e1; }
+      Mult[second=e1, first=IntExp(suc(zero))] -> { return e1; }
+    }
+    return t;
+  }
+
+  public boolean myEquals(Exp t1, Exp t2) {
+    %match(TomExp t1, TomExp t2) {
+      
+      CstExp(e1), CstExp(e2)       -> { return e1.equals(e2); }
+      
+      UnaryOperator[first=e1], UnaryOperator[first=f1] -> {
+        return t1.getOperator().equals(t2.getOperator()) && myEquals(e1,f1);
+      }
+      
+      BinaryOperator[first=e1, second=e2], BinaryOperator[first=f1, second=f2] -> {
+        return t1.getOperator().equals(t2.getOperator()) &&
+               myEquals(e1,f1) && myEquals(e2,f2);
+      }
+
+    }
+    return false;
+  }
+}
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+\newpage
+\section{\TOM: A programming language}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+As mentioned previously, \TOM\ should not be seen as a programming
+language. It is rather an ``assembly language'' for implementing
+rule-based programming languages. 
+However, \TOM\ has been designed to be simple and clear enough
+to be used by a human. It is also sufficiently flexible and powerful
+to support the development of several extensions.
+It may be ambitious to pretend that the conception of \TOM\ reminds
+the conception of \TeX, but here is the analogy:
+\begin{itemize}
+\item \TeX\ is simple enough to write a book: the {\TeX}book is
+  written in \TeX.
+  Similarly, \TOM\ is simple enough to write a compiler: the \TOM\
+  compiler is written in \Java+\TOM.
+\item \TeX\ is powelful enough to implement \LaTeX. 
+  Similarly, \TOM\ should be able to support the development of
+  several extensions such as specialized of \TOM\ for \Java\ or \Eiffel.
+\end{itemize}
+
+The current version of \TOM\ only supports \C\ and \Java\ as target
+language, but we are currently working on a new back-end for the
+\Eiffel\ language.
+
+Because \TOM\ ought to support several languages, its syntax may
+not necessary be well integrated in the target language. The use of
+braces `\texttt{\{}' is not familiar to \Eiffel\ programmers for instance.
+For these reasons, we also consider to develop specific language
+extensions such as a specialized version of \TOM\ for \Java\ or \Eiffel\
+for example. 
+For a given target language, we only have to develop a parser extended
+with the \TOM\ constructs.
+The main advantage of this approach is that \TOM\ still remains the
+main underlying compiler: the compilation algorithms are written only
+once, and the term data-structure can be easily modified according to
+the developped application (only the generic API has to be modified).
+
+In this section we present the capabilities and the advantages
+offered by \TOM\ wtr. to other similar approaches.
+
+\subsection{Algebraic specification}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+When using a classical imperative programming language, the need of
+a formal algebraic specification may appear in at least two
+situations: 
+\begin{itemize}
+\item when transforming a complex tree based data structure
+\item when describing a complex transformation process
+\end{itemize}
+
+The first case often occurs when performing program transformations or
+document manipulations, such as XML transformations for instance.
+A compiler is a good example of application that performs program
+transformation: compiling a program is nothing else than transforming
+an abstract syntax tree in another one.   
+In general, the abstract syntax tree of a program is a complex tree
+based data structure that contains several kinds of nodes.
+For these situations, the expressiveness of pattern matching is
+interesting to shortly specify the transformation process.
+
+The second case may occur when performing complex symbolic simplification
+for example. 
+In theory, any sufficiently poweful programming language can be used
+to express a complex symbolic transformation. But in practice, 
+the probability of introducing a mistake is usually inversally
+proportional to the expressiveness of the used language.
+The main advantage of using an algebraic specification language to
+express such algorithms is that we can automatically check some
+properties.
+Specifying by rewrite rules rougthly consists in describing the
+algorithm by cases. By using a sufficient completeness definition
+checker for example, it becomes possible to detect if a case has been
+forgotten for example. 
+We may also use some more elaborated provers, such as the Knuth-Bendix completion, to
+prove the termination and the confluence of the rewrite system for
+example.
+
+The \TOM\ compiler contains a sufficient completeness definition
+checker that only inspects the left-hand side of each rewrite rule.
+When compiling a \texttt{\%match} or a \texttt{\%rule} construct, this
+static analysis tool detects if the case-definition is not complete:
+if there exists a ground term such that no pattern can match it.
+The static analysis tool can also detect if a pattern is
+redondant: in \TOM, rules are applied with priority according to the
+textual order. So, if a pattern is followed by one of its instances,
+the latter instance can never be matched. 
+Consider the following rewrite system:
+\begin{verbatim}
+  %rule {
+    f(g(x)) -> x
+    f(g(a)) -> b
+  }
+\end{verbatim}
+
+The \TOM\ checker can detect two incompleteness:
+\begin{itemize}
+\item the second rule can never be applied because any term matched by
+  the second rule is also matched by the first one
+\item the function definition is not exhaustive since there is at least
+  one term that cannot by matched by the system (the term $f(a)$ for
+  instance). 
+\end{itemize}
+
+% \begin{itemize}
+% \item expressiveness
+% \item verification
+% \end{itemize}
+
+\subsection{List matching}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\subsection{Object rewriting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In the object-oriented paradigm, classes are containers that control
+the access to some data. 
+An application is a set of tasks that naturally manipulate this data.
+The classical design of an application consists in extending 
+the container classes with methods corresponding to the tasks to
+achieve, but that is only feasible if the number of tasks is very few.
+When the number of tasks increases, the classes quickly become less
+focused on their real tasks and more and more tailored for that
+special application. This means it becomes harder to use them  in
+other applications.  
+
+When the task involves traversing a tree, a parse tree consisting of
+various kinds of nodes for example, the problem becomes even
+worse. Not only is it bad for the node classes, as they must know
+about all operations that can be done  on the tree, it is also bad for
+the tasks as their code is scattered all over the program. 
+
+The purpose of the Visitor Pattern is to encapsulate an operation that
+we want to perform on the elements of a data structure. In this
+way, we can change the operation being performed on a structure
+without the need of changing the classes of the elements that we are
+operating on. Using a Visitor pattern allows us to decouple the
+classes for the data structure and the algorithms used upon them.
+
+To implement this pattern, each node in the data structure ``accepts''
+a Visitor, which sends a message to the Visitor which includes the
+node's class. The visitor will then execute its algorithm for that
+element. This process is known as ``double dispatching''. The node makes
+a call to the Visitor, passing itself in, and the Visitor executes its
+algorithm on the node. In double dispatching, the call made depends
+upon the type of the Visitor and of the Host (data structure node),
+not just of one component. 
+
+One key advantage of using the Visitor Pattern is that adding new
+operations to perform upon the data structure is very easy. 
+We only have to create a new Visitor and define the operation there.
+This is the result of the very distinct separation of variant and
+invariant behavior in the Visitor pattern.   
+The invariant behaviors are represented by the data structure elements
+and the abstract Visitor. The variant behaviors are encapsulated in
+the concrete Visitors. 
+
+In one sense, specifying by rewrite rules is very closed to the
+object-oriented paradigm and the Visitor design pattern:  
+\begin{itemize}
+\item the data-structure is defined by a set of sorts and constructors 
+  instead of a set of classes and instance variables
+\item the operations are described by rewrite rules instead of
+  Visitors: we can change the operation being performed on a structure
+  without the need of changing the signature.
+\end{itemize}
+
+One particularity of rewriting is the presence of pattern matching:
+this allows to deeply inspect an object in a concise way.
+When writting a compiler for example, it is nice to perform static
+analysis to partially evaluate constant expressions at compile time.
+A partial evaluator is a set of simplification rules of the form:
+``the addition of two constant integers can be simplified into their
+sum'', ``the addition of the constant zero to an expression can be
+simplified into the expression'', \textit{etc.} 
+
+Implementing such a procedure in an object-oriented paradigm is not so
+straightforward. Suppose that we have the following hierarchy of classes
+\texttt{Expression}, \texttt{BinaryExpression},
+\texttt{PlusExpression}, \texttt{ConstantExpression},
+\texttt{IntegerExpression}, \textit{etc.} 
+Given an instance of \texttt{PlusExpression}, to implement the first
+rule we need to use dynamic typing or a double dispatching to check
+that the two subtems are instances of \texttt{IntegerExpression}. 
+
+Given a adequate mapping from objets to terms, the two previously
+rewrite rules can be easilly encoded in \TOM:
+\begin{verbatim}
+  %rule {
+    PlusExpression(ConstantExpression(IntegerExpression(x)),
+                   ConstantExpression(IntegerExpression(y)))
+    -> ConstantExpression(IntegerExpression(x+y))
+
+    PlusExpression(ConstantExpression(IntegerExpression(zero)),exp) -> exp
+    PlusExpression(ConstantExpression(exp,IntegerExpression(zero))) -> exp
+  }
+\end{verbatim}
+
+
+% \begin{itemize}
+% \item comparison with the visitor pattern
+% \end{itemize}
+
+
+\subsection{Comparison with similar approaches}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Several systems have been developed in order to integrate pattern
+matching and transformation facilities into imperative languages. 
+Let us mention for instance \textsf{Rigal}~\cite{AugustonMi1990a,Rigal},
+\textsf{R++}~\cite{CrawfordDLMP-AAAI96,Rpp}, 
+\textsf{App}~\cite{App}, \textsf{Prop}~\cite{Prop} and
+\textsf{Pizza}~\cite{}. 
+
+Each of these systems has its own specificity. 
+\textsf{Rigal} is presented as
+a compiler construction language based on advanced pattern matching.
+\textsf{R++} and \textsf{App} are pre-processors for \Cplusplus: the first
+one adds production rule constructs to \Cplusplus, whereas the second one
+extends \Cplusplus\ with a match construct. \textsf{Prop} is a multi-paradigm
+extension of \Cplusplus, including pattern matching constructs.
+Finally, \textsf{Pizza} is a \Java\ extension that supports 
+parametric polymorphism, first-class functions, class cases and
+pattern matching. 
+All these approaches are interesting and propose some very powerful
+constructs, but in a certain sense, they are too powerful and less
+generic than \TOM. 
+In the spirit, \textsf{Prop} and \textsf{Pizza} are very closed to
+\TOM: they add pattern matching facilities to a classical imperative
+language, but the approach is not similar.
+\textsf{Prop} and \textsf{Pizza} are not preprocessors: they really
+extend \Cplusplus\ and \Java\ with some new pattern matching
+constructions. In one sense, the integration is better and more
+transparent, on the other side, the term data structure cannot be
+parametrized by the user: the pattern matching process can only act on 
+internal data-structures.  
+Consequently, these systems cannot be used to add pattern matching
+facilities in an existing project written for example in \C,
+\Cplusplus\ or \Java. This may be a drawback because it is not easy a
+user to use rule-based programming style if the first thing to do
+consists in translating the existing main data-structures.
+
+
+% \begin{itemize}
+% \item Prop++
+% \item App
+% \item Pizza
+% \end{itemize}
+
+\end{document}

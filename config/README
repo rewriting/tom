@@ -1,0 +1,5 @@
+This directory contains M4 macro files defining configuration macros used in
+the top-level configure.in script.
+
+From these files the ../aclocal.m4 file is created by aclocal during
+execution of the reconf script.

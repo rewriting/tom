@@ -1,0 +1,18 @@
+package
+identification
+         name=jtom
+      version=1.0
+     location=http://elan.loria.fr/Soft/
+         info=http://elan.loria.fr/Toolkit
+  description='TOM is a term rewriting tool designed for industrial
+  use. The tool do not impose a fixed term representation, rather it
+  accepts implementation of terms (or term like data types) of yet
+  existing applications and it permits to define and execute rewriting
+  rules upon those types.' 
+     keywords=term rewriting, pattern matching, compilation
+
+configuration interface
+
+requires
+  aterm-java 1.0
+  shared-objects 1.0

@@ -1,0 +1,261 @@
+PHASE 1
+-------
+  /*
+   * On defini l'API d'un type avec une notation coherente
+   */
+
+%typeterm Term {
+  implement { ATerm }
+  get_fun_sym(t)   { ((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null) }
+  get_subterm(t,n) { (((ATermAppl)t).getArgument(n)) }
+  equals(t1,t2)    { t1.isEqual(t2) } 
+}
+
+%op Term plus(Term t1, Term t2) {
+  fsym { "plus" }
+  make { makeAppl("plus",t1,t2) }
+}
+
+%op Term state(Term context, Term value) {
+  fsym { "state" }
+  make { makeAppl("state",context,value) }
+}
+
+  /*
+   * Les patterns peuvent utiliser des champs nommes pour permettre
+   * une extension plus facile des constructeurs
+   */
+
+%match(term t) {
+  state(value=a,...)   -> { ... }
+  t:state(value=a) -> { return t.setSubterm(1,b) }
+}
+
+%rule state(value=a) -> state(value=b)
+
+
+List matching:
+--------------
+
+  /*
+   * Java et LinkedList
+   */
+
+%typelist L {
+  implement { LinkedList }
+  get_fun_sym(t) { ((t instanceof LinkedList)?"cons":null) }
+  equals(l1,l2)  { l1.equals(l2) }
+  get_head(l)    { l.getFirst() }
+  get_tail(l)    { subList(1,l.size()) }
+  is_empty(l)    { l.isEmpty() }
+}
+
+%oplist L cons( E* ) {
+  fsym { "cons" }
+  make_empty()  { new LinkedList() }
+  make_add(l,e) { l.addFirst(e) }
+}
+
+------------------------------------------------------------
+
+  /*
+   * Java et ArrayList
+   */
+
+%typelist L {
+  implement { ArrayList }
+  get_fun_sym(t) { ((t instanceof ArrayList)?"cons":null) }
+  equals(l1,l2)    { l1.equals(l2) } 
+  get_element(l,n) { l.get(n) }
+  get_size(l)      { l.size() }
+}
+
+%oplist L cons( E* ) {
+  fsym { "cons" }
+  make_empty(n)    { new ArrayList(n) }
+  make_add(l,e,n)  { l.set(n,e) }
+}
+
+------------------------------------------------------------
+
+  /*
+   * Java et tableau
+   */
+
+%type L {
+  implement { Element[] }
+  equals(l1,l2)    { l1.equals(l2) } 
+  get_element(l,n) { l[n] }
+  get_size(l)      { l.size() }
+}
+
+%oplist L cons( E* ) {
+  fsym { "cons" }
+  make_empty(n)    { new Element[n] }
+  make_add(l,e,n)  { l[n]=e }
+}
+
+------------------------------------------------------------
+
+  /*
+   * C et tableau/malloc
+   */
+
+typedef struct e {
+  int size;
+  int *array;
+}
+
+struct e* create_e(n) {
+  struct e *res = malloc(sizeof(struct e));
+  res->size=n;
+  res->array=malloc(n*sizeof(int));
+  return res;
+}
+
+%type L {
+  implement { struct e* }
+  equals(l1,l2)    { memcmp(l1,l2, MIN(l1->size,l2->size)) } 
+}
+
+%oplist L cons( E* ) {
+  get_element(l,n) { l->array[n] }
+  get_size(l)      { l->size }
+
+  make_empty(n)    { create_e(n) }
+  make_add(l,e,n)  { l->array[n]=e }
+}
+
+------------------------------------------------------------
+
+  /*
+   * C et GNU tableau
+   */
+
+%type L {
+  implement { e[] }
+  equals(l1,l2)    { ??? }
+}
+
+%oplist L cons( E* ) {
+  get_element(l,n) { l[n] }
+  get_size(l)      { ??? }
+
+  make_empty(n)    { ??? }
+  make_add(l,e,n)  { l[n]=e }
+}
+
+
+
+------------------------------------------------------------
+Associative matching:
+---------------------
+
+%type L {
+  implement { List }
+  get_fun_sym(l)   { ((((List)l).isEmpty())?
+                      aterm().makeAFun("nil", 0,false):
+                      aterm().makeAFun("cons", 2, false)) }
+  get_subterm(l,n) { (((List) l).get(n)) }
+  equals(l1,l2)    { l1.equals(l2) } 
+}
+
+%op L nil {
+  fsym { makeAFun("nil", 0, false) }
+  make { new List() }
+}
+
+%op L cons(Term t, L l) {
+  fsym { makeAFun("cons", 2, false) }
+  make { l.add(t) }
+}
+  
+%theory A1(cons,nil)
+
+%match(L l) {
+  cons(E1*, x, E2*, y, E3*) -> { ... }
+}
+
+
+
+PHASE 2
+-------
+  /*
+   * On peut creer des synonymes d'un type
+   * ou l'etendre en redefinissant certaines fonctions
+   */
+
+%type TermBis extends Term {
+}
+
+%type List extends Term {
+  abstract { ATermList }
+
+  get_fun_sym(l) {
+    ((((ATermList)l).isEmpty())?
+     aterm().makeAFun("empty", 0, false):
+     aterm().makeAFun("cons", 2, false))
+      }
+  
+  get_subterm(l,n) {
+    ((n==0)?
+     ((ATermList)l).getFirst():
+     (ATerm)(((ATermList)l).getNext()))
+      }
+}
+
+%sym List empty {
+  code { makeAFun("empty", 0, false) }
+  make { makeAppl("empty") }
+}
+
+%sym List cons(Term t, List l) {
+  code { makeAFun("cons", 2, false) }
+  make { makeAppl("cons",t,l) }
+}
+
+PHASE 3
+-------
+  /*
+   * On introduit une notion de type parametre permettant
+   * de factoriser la representation ou la creation
+   * des termes de ce type
+   */
+
+%type Constant(Symbol) extends Term {
+  code { makeAFun(Symbol, 0, false) }
+  make { makeAppl(Symbol) }
+}
+
+%sym Constant zero {
+}
+
+%theory AC(plus)
+
+
+
+
+
+NOTE
+----
+
+Codage systematique des operateurs de la forme
+
+       Op(Option(<List>),...)
+
+exemple :
+	Appl(Option([]), Symbol(...), [...])
+
+	Appl(Option([Annoted(...)]), Symbol(...), [...])
+
+Par list-matching on exprime lesregles generale de la facon suivante :
+
+	Appl(option(_),
+             Symbol(...), [...]) -> {...}
+
+Ces regles s'appliquent pour toutes les specialisation de Appl
+
+Pour definir un regle particuliere a une specialisation on utilise le list-matching 
+
+	Appl(option(E1*, Annoted(...), E2*),
+	     Symbol(...), [...]) -> {...}

@@ -1,0 +1,4 @@
+[ 
+  [ Nat, zero, zero ] , 
+  [ Nat, suc, suc(<pred(Nat)>) ]
+]

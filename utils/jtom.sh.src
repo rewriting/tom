@@ -1,0 +1,6 @@
+#! /bin/sh
+
+CLASSPATH=__CLASSES__:__JAVA_ATERM__:__SHARED_OBJECTS__:${CLASSPATH}
+
+java -cp $CLASSPATH jtom.Tom $*
+

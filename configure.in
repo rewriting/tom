@@ -1,0 +1,88 @@
+# $Id: configure.in,v 1.1 2003/01/08 09:56:51 moreau Exp $
+
+AC_INIT(configure.in)
+AM_INIT_AUTOMAKE(jtom-cvs,1.1)
+AC_PREREQ(2.13)
+
+dnl Let aclocal use macros in ./config directory
+ACLOCAL="${ACLOCAL} -I ./config"
+
+AC_REVISION($Id: configure.in,v 1.1 2003/01/08 09:56:51 moreau Exp $)
+
+AC_SUBST(JAVA_SUBDIRS)
+
+dnl Checks for programs
+AC_PROG_CC
+dnl AC_PROG_RANLIB
+dnl AC_PROG_INSTALL
+
+AC_JAVA_OPTIONS
+JAVAC=javac
+AC_CHECK_CLASSPATH
+AC_PROG_JAVAC
+AC_PROG_JAVA
+AC_CHECK_JUNIT
+
+AC_SUBST(CLASSPATH)
+
+AC_CHECK_PROG(JAVACC,javacc,javacc,true)
+
+dnl Checks for library functions
+
+dnl Require Shared-Object library
+AC_PACKAGE_REQUIRE(shared-objects, shared-objects-config,
+   [  --with-shared-objects=DIR Shared-Objects-library is in DIR])
+SHARED_OBJECTS="${SHARED_OBJECTS}/share/shared-objects-1.1beta.jar"
+AC_SUBST(SHARED_OBJECTS)
+
+dnl Require ATerm Java library
+AC_PACKAGE_REQUIRE(aterm-java, aterm-java-config,
+   [  --with-aterm-java=DIR   ATerm-javalibrary is in DIR])
+dnl ATERM_JAVA is not allowed in Makefile.am's
+JAVA_ATERM="${ATERM_JAVA}/share/aterm-1.1beta.jar"
+AC_SUBST(JAVA_ATERM)
+
+AC_OUTPUT( \
+	Makefile \
+	README \
+	src/Makefile \
+	config/Makefile \
+	utils/Makefile \
+	src/jtom/Makefile \
+	src/jtom/adt/Makefile \
+	src/jtom/tools/Makefile \
+	src/jtom/checker/Makefile \
+	src/jtom/compiler/Makefile \
+	src/jtom/parser/Makefile \
+	src/jtom/verifier/Makefile \
+	src/jtom/buttons/Makefile \
+	src/jtom/exception/Makefile \
+	stable/Makefile \
+	stable/jtom/Makefile \
+	stable/jtom/adt/Makefile \
+	stable/jtom/tools/Makefile \
+	stable/jtom/checker/Makefile \
+	stable/jtom/compiler/Makefile \
+	stable/jtom/parser/Makefile \
+	stable/jtom/verifier/Makefile \
+	stable/jtom/buttons/Makefile \
+	stable/jtom/exception/Makefile \
+	share/Makefile \
+	test/Makefile \
+	doc/Makefile \
+	utils/Makefile \
+	tutorial/Makefile \
+	tutorial/integer/Makefile \
+	tutorial/integer/1_simple/Makefile \
+	tutorial/integer/2_advanced/Makefile \
+	tutorial/peano/Makefile \
+	tutorial/peano/1_simple/Makefile \
+	tutorial/peano/2_advanced/Makefile \
+	tutorial/peano/3_apigen/Makefile \
+	tutorial/poly/Makefile \
+	tutorial/poly/1_simple/Makefile \
+	tutorial/poly/2_advanced/Makefile \
+	tutorial/poly/3_apigen/Makefile \
+	tutorial/list/Makefile \
+	tutorial/list/1_simple/Makefile \
+)

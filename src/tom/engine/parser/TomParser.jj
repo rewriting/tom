@@ -1,0 +1,1449 @@
+options {
+  JAVA_UNICODE_ESCAPE = true;
+    //DEBUG_PARSER = true;
+  STATIC = false;
+}
+
+PARSER_BEGIN(TomParser) 
+/*
+  
+    TOM - To One Matching Compiler
+
+    Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)
+			     Nancy, France.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+
+    Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+
+*/
+
+package jtom.parser;
+
+import java.io.*;
+import java.util.*;
+
+import aterm.*;
+import aterm.pure.*;
+
+import jtom.*;
+import jtom.tools.*;
+
+import jtom.verifier.*;
+import jtom.exception.*;
+import jtom.adt.*;
+
+public class TomParser {
+
+  private int oldPos=0;
+  private int nbArg=0;
+  private String nameMethod;
+  private TomBuffer tomBuffer;
+  private TomVerifier tomVerifier;
+  private SymbolTable symbolTable;
+  private jtom.TomEnvironment environment;
+  private File importList[];
+
+  public TomParser(TomBuffer input, jtom.TomEnvironment environment, TomVerifier tomVerifier, File importList[]) {
+    this(input);
+    this.tomBuffer = input;
+    this.symbolTable = environment.getSymbolTable();
+    this.tomVerifier = tomVerifier;	
+    this.environment = environment;
+    this.importList = importList;
+  }
+	
+  public jtom.TomEnvironment environment() { 
+    return environment;
+  }
+
+  public TomSignatureFactory tsf() {
+    return environment.getTomSignatureFactory();
+  }
+  
+  public ASTFactory ast() {
+    return environment.getASTFactory();
+  }
+ 
+  public TomVerifier verifier() {
+    return tomVerifier;
+  }
+  
+  private String getLine() {
+    return  java.lang.String.valueOf(token.beginLine);
+  }
+
+  private int getPos() {
+    return jj_input_stream.getBeginOffset();
+  }
+
+  private String savePosAndExtract() {
+    environment.getStatistics().numberStrangerBlocsRecognized++;
+    return savePosAndExtract(0);
+  }
+  
+  private String savePosAndExtract(int offset) {
+    String string;
+    string = tomBuffer.extractBuffer(oldPos,getPos() + offset);
+    oldPos = getPos() + offset;
+    return string;
+  }
+
+  public void updateSymbol() {
+    ast().updateSymbol(symbolTable);
+  }
+
+  private TomSymbol getSymbol(String name) {
+    return symbolTable.getSymbol(name);
+  }
+
+  private void putSymbol(String name, TomSymbol symbol) {
+    symbolTable.putSymbol(name,symbol);
+  }
+
+  private TomType getType(String name) {
+    return symbolTable.getType(name);
+  }
+
+  private void putType(String name, TomType type) {
+    symbolTable.putType(name,type);
+  }
+
+  private void switchToTomMode() {
+    token_source.SwitchTo(TOM);
+  }
+
+  private void switchToDefaultMode() {
+    token_source.SwitchTo(DEFAULT);
+  }
+
+}
+
+PARSER_END(TomParser)
+
+
+/**********************************************
+ * THE TOM TOKEN SPECIFICATION STARTS HERE *
+ **********************************************/
+
+/************************************************************
+ * DEFAULT MODE
+ ************************************************************/
+  
+TOKEN :
+{
+    < MATCH:               "%match" > : TOM
+  | < RULE:                "%rule" > : TOM
+  | < MAKE_TERM:           "%make" > : TOM
+  | < BACKQUOTE_TERM:      "`" > : TOM
+  | < VARIABLE:            "%variable" > : TOM
+  | < TYPE:                "%type" > : TOM
+  | < TYPETERM:            "%typeterm" > : TOM
+  | < TYPEINT:             "%typeint" > : TOM
+  | < TYPELIST:            "%typelist" > : TOM
+  | < TYPEARRAY:           "%typearray" > : TOM
+  | < INCLUDE:             "%include" > : TOM
+  | < OPERATOR:            "%op" > : TOM
+  | < OPERATOR_LIST:       "%oplist" > : TOM
+  | < OPERATOR_ARRAY:      "%oparray" > : TOM
+}
+
+/*
+ * The remainder of the tokens are exactly (except for the removal of tokens
+ * containing ">>" and "<<") as in the Java grammar and must be diff equivalent
+ * (again with the exceptions above) to it.
+ */
+
+/* WHITE SPACE */
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+| "--" : IN_SINGLE_LINE_COMMENT
+| <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+| "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+SPECIAL_TOKEN :
+{
+ < STRING_LITERAL:
+      "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+}
+
+/* SEPARATORS */
+
+TOKEN :
+{
+  < LBRACE: "{" >
+| < RBRACE: "}" >
+| < OTHER: ~[] >
+}
+
+
+
+/************************************************************
+ * TOM MODE
+ ************************************************************/
+
+
+/* TOM WHITE SPACE */
+<TOM>
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+/* TOM COMMENTS */
+<TOM>
+MORE :
+{
+  "//" : TOM_IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]> { input_stream.backup(1); } : TOM_IN_FORMAL_COMMENT
+|
+  "/*" : TOM_IN_MULTI_LINE_COMMENT
+}
+
+<TOM_IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <TOM_SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : TOM
+}
+
+<TOM_IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <TOM_FORMAL_COMMENT: "*/" > : TOM
+}
+
+<TOM_IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <TOM_MULTI_LINE_COMMENT: "*/" > : TOM
+}
+
+<TOM_IN_SINGLE_LINE_COMMENT,TOM_IN_FORMAL_COMMENT,TOM_IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+
+/* TOM IDENTIFIERS */
+<TOM>
+TOKEN :
+{
+  < TOM_ARROW:       "->" >
+| < TOM_DOUBLE_ARROW:"=>" >
+| < TOM_COMMA:       "," >
+| < TOM_COLON:       ":" >
+| < TOM_EQUAL:       "=" >
+| < TOM_AT:          "@" >
+| < TOM_DOT:         "." >
+| < TOM_LPAREN:      "(" >
+| < TOM_RPAREN:      ")" >
+| < TOM_LBRACKET:    "[" >
+| < TOM_RBRACKET:    "]" >
+| < TOM_LBRACE:      "{" >
+| < TOM_RBRACE:      "}" >
+| < TOM_UNDERSCORE:  "_" >
+| < TOM_MINUS:       "-" >
+| < TOM_STAR:        "*" >
+| < TOM_MAKE:        "make" >
+| < TOM_MAKE_EMPTY:  "make_empty" >
+| < TOM_MAKE_ADD:    "make_add" >
+| < TOM_IMPLEMENT:   "implement" >
+| < TOM_FSYM:        "fsym" >
+| < TOM_GET_SLOT:    "get_slot" >
+| < TOM_IS_FSYM:     "is_fsym" >
+| < TOM_GET_SUBTERM: "get_subterm" >
+| < TOM_GET_FUN_SYM: "get_fun_sym" >
+| < TOM_CMP_FUN_SYM: "cmp_fun_sym" >
+| < TOM_EQUALS:      "equals" >
+| < TOM_GET_HEAD:    "get_head" >
+| < TOM_GET_TAIL:    "get_tail" >
+| < TOM_IS_EMPTY:    "is_empty" >
+| < TOM_GET_ELEMENT: "get_element" >
+| < TOM_GET_SIZE:    "get_size" >
+| < TOM_INTEGER: <TOM_DIGIT> (<TOM_DIGIT>)* >
+| < TOM_IDENTIFIER: <TOM_LETTER> (<TOM_LETTER>|<TOM_DIGIT>|<TOM_DOT>|<TOM_UNDERSCORE>|<TOM_MINUS>)* >
+| < #TOM_LETTER:
+      [
+       "\u0024",
+       "\u0041"-"\u005a",
+       "\u005f",
+       "\u0061"-"\u007a",
+       "\u00c0"-"\u00d6",
+       "\u00d8"-"\u00f6",
+       "\u00f8"-"\u00ff",
+       "\u0100"-"\u1fff",
+       "\u3040"-"\u318f",
+       "\u3300"-"\u337f",
+       "\u3400"-"\u3d2d",
+       "\u4e00"-"\u9fff",
+       "\uf900"-"\ufaff"
+      ]
+  >
+| < #TOM_DIGIT:
+      [
+       "\u0030"-"\u0039",
+       "\u0660"-"\u0669",
+       "\u06f0"-"\u06f9",
+       "\u0966"-"\u096f",
+       "\u09e6"-"\u09ef",
+       "\u0a66"-"\u0a6f",
+       "\u0ae6"-"\u0aef",
+       "\u0b66"-"\u0b6f",
+       "\u0be7"-"\u0bef",
+       "\u0c66"-"\u0c6f",
+       "\u0ce6"-"\u0cef",
+       "\u0d66"-"\u0d6f",
+       "\u0e50"-"\u0e59",
+       "\u0ed0"-"\u0ed9",
+       "\u1040"-"\u1049"
+      ]
+  >
+}
+
+
+/************************************************
+ * THE TOM GRAMMAR SPECIFICATION STARTS HERE *
+ ************************************************/
+
+TomTerm startParsing() throws TomException : /* in DEFAULT mode */
+{
+  String upToEOF; 
+  TomTerm parseTree = null;
+  ArrayList blockList = new ArrayList();
+}
+{
+  BlockList(blockList)
+    {
+      verifier().testTypeOperator();
+      upToEOF = tomBuffer.extractBuffer(oldPos,getPos());
+      blockList.add(tsf().makeTargetLanguage_TL(upToEOF));
+      parseTree = tsf().makeTomTerm_Tom(ast().makeList(blockList));
+    }
+  <EOF>
+    {
+      return parseTree;
+    } 
+}
+
+void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
+{}
+{
+  (
+      MatchConstruct(blockList)          { environment.getStatistics().numberTomBlocsRecognized++; }
+    | RuleConstruct(blockList)           { environment.getStatistics().numberTomBlocsRecognized++; }
+    | BackQuoteTerm(blockList)           { environment.getStatistics().numberTomBlocsRecognized++; }
+    | IncludeConstruct(blockList)        { environment.getStatistics().numberTomBlocsRecognized++; }
+    | LocalVariableConstruct(blockList)  { environment.getStatistics().numberTomBlocsRecognized++; }
+    | Operator(blockList)                { environment.getStatistics().numberTomBlocsRecognized++; }
+    | OperatorList(blockList)            { environment.getStatistics().numberTomBlocsRecognized++; }
+    | OperatorArray(blockList)           { environment.getStatistics().numberTomBlocsRecognized++; }
+    | TypeTerm(blockList)                { environment.getStatistics().numberTomBlocsRecognized++; }
+    | TypeInt(blockList)                 { environment.getStatistics().numberTomBlocsRecognized++; }
+    | TypeList(blockList)                { environment.getStatistics().numberTomBlocsRecognized++; }
+    | TypeArray(blockList)               { environment.getStatistics().numberTomBlocsRecognized++; }
+    | <LBRACE> BlockList(blockList) <RBRACE>
+    | <OTHER>
+  )*
+}
+
+void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  environment.getStatistics().numberMatchBlocsRecognized++;
+  ArrayList matchArgumentsList = new ArrayList();
+  ArrayList patternActionList = new ArrayList();
+}
+{
+  <MATCH> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    }
+
+  <TOM_LPAREN> MatchArguments(matchArgumentsList) <TOM_RPAREN>
+
+  <TOM_LBRACE> ( PatternAction(patternActionList) )* <TOM_RBRACE> /* we are in TOM mode */
+    {
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      oldPos = getPos() + token.image.length();
+      Option info = ast().makeOriginTracking("Match",getLine());
+      Option option = ast().makeOption(info);
+      list.add(tsf().makeTomTerm_Match(
+                 option,
+                 tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
+                 tsf().makeTomTerm_PatternList( ast().makeList(patternActionList))));
+    }
+}
+
+void PatternAction(ArrayList list) throws TomException: /* in TOM mode */
+{
+  environment.getStatistics().numberMatchRulesRecognized++;
+  ArrayList matchPatternsList = new ArrayList();
+  ArrayList blockList = new ArrayList();
+  String string;
+  TargetLanguage tlCode;
+}
+{
+  MatchPatterns(matchPatternsList)
+  <TOM_ARROW>
+    tlCode = GoalLanguageBlock(blockList)
+  {
+    blockList.add(tlCode);
+    list.add(tsf().makeTomTerm_PatternAction(
+               tsf().makeTomTerm_TermList(ast().makeList(matchPatternsList)),
+               tsf().makeTomTerm_Tom(ast().makeList(blockList))));
+  }
+}
+
+void MatchArguments(ArrayList list) throws TomException: /* in TOM mode */
+{}
+{
+  MatchArgument(list) ( <TOM_COMMA> MatchArgument(list) )*
+}
+
+void MatchArgument(ArrayList list) throws TomException: /* in TOM mode */
+{
+  Token type,name;
+}
+{
+  type=<TOM_IDENTIFIER> name=<TOM_IDENTIFIER>
+  {  	list.add(tsf().makeTomTerm_GLVar(
+                   name.image,
+                   tsf().makeTomType_TomTypeAlone(type.image)));
+  }
+}
+
+void MatchPatterns(ArrayList list) throws TomException: /* in TOM mode */
+{
+  TomTerm term;
+}
+{
+  term=Term() { list.add(term); }
+    ( <TOM_COMMA> term=Term() { list.add(term); } )*
+}
+
+
+
+TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
+{
+  ArrayList list = new ArrayList();
+  Token name, slotName;
+  TomTerm term;
+  Option option = null;
+  Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
+  ArrayList optionList = new ArrayList();
+}
+{
+    // f[left=a,...]
+    LOOKAHEAD(2)
+    name = <TOM_IDENTIFIER> <TOM_LBRACKET>
+    [ slotName = <TOM_IDENTIFIER> <TOM_EQUAL> term = Term()
+      { list.add(tsf().makeTomTerm_Pair(tsf().makeTomTerm_SlotName(slotName.image),term)); }
+      ( <TOM_COMMA>
+        slotName = <TOM_IDENTIFIER> <TOM_EQUAL>  term = Term()
+        { list.add(tsf().makeTomTerm_Pair(tsf().makeTomTerm_SlotName(slotName.image),term)); }
+      )*
+    ]
+    <TOM_RBRACKET>
+    {
+      if(annotedName!=null) { optionList.add(annotedName); }
+      optionList.add(ast().makeOriginTracking(name.image,getLine()));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      return tsf().makeTomTerm_RecordAppl(
+        option,
+        tsf().makeTomName_Name(name.image),
+        ast().makeList(list));
+    }
+  | // X*
+    LOOKAHEAD(2)
+    name = <TOM_IDENTIFIER> <TOM_STAR>
+    {
+      if(annotedName!=null) { optionList.add(annotedName); }
+      optionList.add(ast().makeOriginTracking(name.image,getLine()));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      return ast().makeVariableStar(option,name.image,"unknown type");
+    }
+  | // f(a,...)
+    name = <TOM_IDENTIFIER>
+    [ <TOM_LPAREN>
+      [
+      term = DotTerm()               { list.add(term); }
+      ( <TOM_COMMA> term = DotTerm() { list.add(term); } )*
+      ]
+      <TOM_RPAREN>
+      {
+        if(list.isEmpty()) {
+ 	  // check if it is a constant
+          optionList.add(ast().makeLRParen(name.image));
+        }	
+      }
+    ]
+    {
+      if(annotedName!=null) { optionList.add(annotedName); }
+      optionList.add(ast().makeOriginTracking(name.image,getLine()));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      return tsf().makeTomTerm_Appl(
+        option,
+        tsf().makeTomName_Name(name.image),
+        ast().makeList(list));
+    }
+  | // _
+    <TOM_UNDERSCORE>
+    {
+      if(annotedName!=null) { optionList.add(annotedName); }
+      optionList.add(ast().makeOriginTracking("_",getLine()));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      return tsf().makeTomTerm_Placeholder(option);
+    }
+  | // integer
+    name = <TOM_INTEGER>
+    {
+      if(annotedName!=null) { optionList.add(annotedName); }
+      optionList.add(ast().makeOriginTracking(name.image,getLine()));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+
+      ast().makeIntegerSymbol(symbolTable,name.image,optionList);
+      
+      return tsf().makeTomTerm_Appl(
+        option,
+        tsf().makeTomName_Name(name.image),
+        ast().makeList(list));
+    }
+}
+
+TomTerm Term() throws TomException: /* in TOM mode */
+{
+  Token annotedName = null;
+  TomTerm term;
+  TomName astAnnotedName = null;
+}
+{
+    // foo@PlainTerm()
+    LOOKAHEAD(2) 
+    annotedName = <TOM_IDENTIFIER> <TOM_AT>
+    { astAnnotedName = tsf().makeTomName_Name(annotedName.image); }
+    term = PlainTerm(astAnnotedName)
+    {
+      return term;
+    }
+  | // PlainTerm()
+    term = PlainTerm(astAnnotedName) 
+      {
+        return term;
+      }
+}
+
+TomTerm DotTerm() throws TomException: /* in TOM mode */
+{
+  TomTerm term = null;
+  TomTerm dotterm = null;
+}
+{
+  term = Term() [ <TOM_DOT> dotterm = Term()  ]
+    {
+      if(dotterm != null) {
+        return tsf().makeTomTerm_DotTerm(term,dotterm);
+      } else {
+        return term;
+      }
+    }
+}
+
+void BackQuoteTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  TomTerm term;
+}
+{
+  <BACKQUOTE_TERM> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    }
+  term = Term()
+  {
+    switchToDefaultMode(); /* switch to DEFAULT mode */
+    oldPos = getPos() + token.image.length();
+    list.add(tsf().makeTomTerm_BackQuoteTerm(term));
+  }
+}
+
+
+void LocalVariableConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
+{}
+{
+  <VARIABLE> /* switch to TOM mode */
+  {
+    switchToDefaultMode(); /* switch to DEFAULT mode */
+    list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    oldPos = getPos() + token.image.length();
+    list.add(tsf().makeTomTerm_LocalVariable());
+  }
+}
+
+void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode */
+{
+  Token fileName;
+  TomTerm astTom;
+  InputStream input;
+  File file;
+  byte inputBuffer[];
+  TomParser tomParser;
+}
+{
+  <INCLUDE> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    }
+  <TOM_LBRACE> fileName = <TOM_IDENTIFIER> <TOM_RBRACE>
+  {
+    switchToDefaultMode(); /* switch to DEFAULT mode */
+    oldPos = getPos() + token.image.length();
+    try {
+
+
+        /*
+    File path = new File("jtom\\adt");
+    System.out.println("path = " + path);
+    File abspath = path.getAbsoluteFile();
+    System.out.println("abspath = " + abspath);
+
+    File newfile = new File(path,"TomSignature.t");
+    System.out.println("newfile = " + newfile);
+    System.out.println("exist = " + newfile.exists());
+
+        */
+
+      file = new File(fileName.image);
+      if(!file.exists()) {
+        boolean found = false;
+        for(int i=0 ; !found && i<importList.length ; i++) {
+          file = new File(importList[i],fileName.image);
+          found = file.exists();
+        }
+      }
+        //System.out.println("file = " + file);
+
+        // to get the length of the file
+      inputBuffer = new byte[(int)file.length()+1];
+      input       = new FileInputStream(file);
+      input.read(inputBuffer);
+      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),verifier(),importList);
+      astTom = tomParser.startParsing();
+        //System.out.println("astTom = " + astTom);
+      list.add(astTom);
+    } catch (FileNotFoundException e1) {
+      System.out.println("File " + fileName.image + " not found.");
+      //e1.printStackTrace();
+	System.exit(1);
+    }  catch (java.io.IOException e2) {
+      e2.printStackTrace();
+    }
+   }
+}
+
+void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  environment.getStatistics().numberRuleBlocsRecognized++;
+  TomTerm lhs, rhs;
+  ArrayList ruleList = new ArrayList();
+  int ruleNumber=0;
+  ArrayList nameTypeInRule = new ArrayList();
+}
+{
+  <RULE> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    }
+  <TOM_LBRACE> 
+  (
+    lhs = Term() <TOM_ARROW> rhs = Term()
+    {
+      environment.getStatistics().numberRuleRulesRecognized++;
+      ruleList.add(tsf().makeTomTerm_RewriteRule(
+                     tsf().makeTomTerm_Term(lhs),
+                     tsf().makeTomTerm_Term(rhs)));
+        // update the root of lhs: it becomes a defined symbol
+      if(ruleNumber==0) {
+        verifier().testRuleSymbolInSymbolTable(lhs);
+        ast().updateDefinedSymbol(symbolTable,lhs);
+      }
+      nameTypeInRule = verifier().testRuleTypeAndConstructorEgality(lhs, nameTypeInRule, ruleNumber);
+      verifier().testNoUnderscore(rhs,true);
+      verifier().testRuleTypeEgality(rhs, nameTypeInRule, lhs);
+      ruleNumber++;
+    }
+  )*
+    <TOM_RBRACE>
+  {
+    switchToDefaultMode(); /* switch to DEFAULT mode */
+    oldPos = getPos() + token.image.length();
+    list.add(tsf().makeTomTerm_RuleSet(ast().makeList(ruleList)));
+    verifier().testMakeDefine(ruleList);
+  }
+}
+
+/*
+ * Operator Declaration
+ *
+ * in DEFAULT mode
+ */
+
+void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
+{
+  Token type, name, typeArg, slotName;
+  ArrayList blockList = new ArrayList();
+  ArrayList types = new ArrayList();
+  ArrayList options = new ArrayList();
+  ArrayList slotList = new ArrayList();
+  TomName astName;
+  TomSymbol astSymbol;
+  String stringSlotName;
+  TargetLanguage tlFsym;
+  Declaration attribute;
+  nbArg = 0;
+}
+{
+  <OPERATOR> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    }
+  
+  type = <TOM_IDENTIFIER>
+  name = <TOM_IDENTIFIER>
+    [ <TOM_LPAREN>
+
+      { stringSlotName = ""; }
+      [ LOOKAHEAD(2)
+        slotName = <TOM_IDENTIFIER> <TOM_COLON>
+        { stringSlotName = slotName.image; }
+      ]
+      { slotList.add(tsf().makeTomTerm_SlotName(stringSlotName)); }
+      
+      typeArg = <TOM_IDENTIFIER>
+      {   
+	  nbArg = nbArg + 1; 
+	  verifier().addTypeOperator(typeArg.image,getLine(),name.image);
+	  types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+      }
+      ( <TOM_COMMA>
+        { stringSlotName = ""; }
+        [ LOOKAHEAD(2)
+          slotName = <TOM_IDENTIFIER> <TOM_COLON>
+          { stringSlotName = slotName.image; }
+        ]
+        { slotList.add(tsf().makeTomTerm_SlotName(stringSlotName)); }
+        typeArg = <TOM_IDENTIFIER>
+        { nbArg = nbArg + 1;
+          verifier().addTypeOperator(typeArg.image,getLine(),name.image);
+          types.add(tsf().makeTomType_TomTypeAlone(typeArg.image)); } )*
+      <TOM_RPAREN> ]
+
+  <TOM_LBRACE>
+    tlFsym = KeywordFsym()
+    {
+      nameMethod = name.image;				
+      if(!slotList.isEmpty()) {
+        options.add(ast().makeSlotList(slotList));
+      }
+      astName   = tsf().makeTomName_Name(name.image);
+    }
+    ( 
+      attribute = KeywordMake(name.image,tsf().makeTomType_TomTypeAlone(type.image),types)  { options.add(attribute); }
+    | attribute = KeywordGetSlot(astName, type.image)  { options.add(attribute); }
+    | attribute = KeywordIsFsym(astName, type.image)  { options.add(attribute); }
+    )*
+  <TOM_RBRACE>
+    {
+      verifier().testOperator(ast().makeOptionList(options));
+      nameMethod = name.image;
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      oldPos = getPos() + token.image.length();
+      verifier().addTypeOperator(type.image,getLine(),name.image);
+      options.add(ast().makeOriginTracking(name.image,getLine()));
+      verifier().testOperatorYetDefined(name.image);
+      astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
+      list.add(tsf().makeDeclaration_SymbolDecl(astName));
+      putSymbol(name.image,astSymbol);
+    }
+}
+
+void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  Token type, name, typeArg;
+  ArrayList blockList = new ArrayList();
+  ArrayList types = new ArrayList();
+  ArrayList options = new ArrayList();
+  TomSymbol astSymbol;
+  TomName astName;
+  TargetLanguage tlFsym;
+  Declaration attribute;  
+}
+{
+  <OPERATOR_LIST> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    }
+  type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
+         <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
+         {
+           verifier().addTypeOperator(typeArg.image,getLine(),name.image);
+           types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+         }
+  <TOM_LBRACE>
+    tlFsym = KeywordFsym()
+    ( 
+      attribute = KeywordMakeEmptyList(name.image)                             { options.add(attribute); }
+    | attribute = KeywordMakeAddList(name.image, type.image, typeArg.image)    { options.add(attribute); }
+    )*
+  <TOM_RBRACE>
+    {
+      verifier().testOperatorList(ast().makeOptionList(options));
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      oldPos = getPos() + token.image.length();
+      verifier().addTypeOperator(type.image,getLine(),name.image);
+      options.add(ast().makeOriginTracking(name.image,getLine())); 	
+      verifier().testOperatorYetDefined(name.image);
+      astName   = tsf().makeTomName_Name(name.image);
+      astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
+      list.add(tsf().makeDeclaration_SymbolDecl(astName));
+      putSymbol(name.image,astSymbol);
+    }
+}
+
+void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  Token type, name, typeArg;
+  ArrayList blockList = new ArrayList();
+  ArrayList types = new ArrayList();
+  ArrayList options = new ArrayList();
+  TomName astName;
+  TomSymbol astSymbol;
+  TargetLanguage tlFsym;
+  Declaration attribute;
+}
+{
+  <OPERATOR_ARRAY> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    }
+  type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
+         <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
+         { 
+           verifier().addTypeOperator(typeArg.image,getLine(),name.image);
+ 	   types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+         }
+  <TOM_LBRACE>
+    tlFsym = KeywordFsym()
+    ( 
+      attribute = KeywordMakeEmptyArray(name.image, type.image)              { options.add(attribute); }
+    | attribute = KeywordMakeAddArray(name.image, type.image, typeArg.image) { options.add(attribute); }
+    )*
+  <TOM_RBRACE>
+    {
+      verifier().testOperatorArray(ast().makeOptionList(options));
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      oldPos = getPos() + token.image.length();
+      verifier().addTypeOperator(type.image,getLine(),name.image);
+      options.add(ast().makeOriginTracking(name.image,getLine())); 
+      verifier().testOperatorYetDefined(name.image);
+      astName   = tsf().makeTomName_Name(name.image);
+      astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
+      list.add(tsf().makeDeclaration_SymbolDecl(astName));
+      putSymbol(name.image,astSymbol);
+    }
+}
+
+/*
+ * Type Declaration
+ *
+ * in DEFAULT mode
+ */
+
+void TypeTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  Token type;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage implement;
+  Declaration attribute;
+  TomType astType;
+}
+{
+  (
+    <TYPETERM> /* switch to TOM mode */
+    { list.add(tsf().makeTargetLanguage_TL(savePosAndExtract())); }
+  | 
+    <TYPE> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      System.out.println("Warning: %type is obsolete");
+    }
+  )  
+  type=<TOM_IDENTIFIER>
+  <TOM_LBRACE>
+    implement = KeywordImplement()
+    ( 
+      attribute = KeywordGetFunSym(type.image)  { blockList.add(attribute); }
+    | attribute = KeywordGetSubterm(type.image) { blockList.add(attribute); }
+    | attribute = KeywordCmpFunSym(type.image)  { blockList.add(attribute); }
+    | attribute = KeywordEquals(type.image)     { blockList.add(attribute); }
+    )*
+  <TOM_RBRACE>
+    {
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      oldPos = getPos() + token.image.length();
+      
+      astType = ast().makeType(type.image,implement);
+      putType(type.image,astType);
+      list.addAll(blockList);
+      verifier().testTypeTerm(ast().makeOptionList(blockList));
+    }
+}
+
+void TypeInt(ArrayList list) throws TomException: /* in DEFAULT mode */
+{}
+{
+  <TYPEINT> /* switch to TOM mode */
+    {
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      oldPos = getPos() + token.image.length();
+      ast().makeIntegerDecl(list);
+    }
+}
+
+void TypeList(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  Token type;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage implement;
+  Declaration attribute;
+  TomType astType;
+}
+{
+  <TYPELIST> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    }
+  
+  type=<TOM_IDENTIFIER>
+  <TOM_LBRACE>
+    implement = KeywordImplement()
+    ( 
+      attribute = KeywordGetFunSym(type.image)  { blockList.add(attribute); }
+    | attribute = KeywordGetSubterm(type.image) { blockList.add(attribute); }
+    | attribute = KeywordCmpFunSym(type.image)  { blockList.add(attribute); }
+    | attribute = KeywordEquals(type.image)     { blockList.add(attribute); }
+    | attribute = KeywordGetHead(type.image)    { blockList.add(attribute); }
+    | attribute = KeywordGetTail(type.image)    { blockList.add(attribute); }
+    | attribute = KeywordIsEmpty(type.image)    { blockList.add(attribute); }
+    )*
+  <TOM_RBRACE>
+    {
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      oldPos = getPos() + token.image.length();
+      
+      astType = ast().makeType(type.image,implement);
+      putType(type.image,astType);
+      list.addAll(blockList);
+      verifier().testTypeList(ast().makeOptionList(blockList));
+    }
+}
+
+void TypeArray(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  Token type;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage implement;
+  Declaration attribute;
+  TomType astType;
+}
+{
+  <TYPEARRAY> /* switch to TOM mode */
+    {
+      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+    }
+  
+  type=<TOM_IDENTIFIER>
+  <TOM_LBRACE>
+    implement = KeywordImplement()
+    ( 
+      attribute = KeywordGetFunSym(type.image)  { blockList.add(attribute); }
+    | attribute = KeywordGetSubterm(type.image) { blockList.add(attribute); }
+    | attribute = KeywordCmpFunSym(type.image)  { blockList.add(attribute); }
+    | attribute = KeywordEquals(type.image)     { blockList.add(attribute); }
+    | attribute = KeywordGetElement(type.image) { blockList.add(attribute); }
+    | attribute = KeywordGetSize(type.image)    { blockList.add(attribute); }
+    )*
+  <TOM_RBRACE>
+    {
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      oldPos = getPos() + token.image.length();
+      
+      astType = ast().makeType(type.image,implement);
+      putType(type.image,astType);
+      list.addAll(blockList);
+      verifier().testTypeArray(ast().makeOptionList(blockList));
+    }
+}
+
+/*
+ * in TOM mode
+ */
+
+TargetLanguage GoalLanguageBlock(ArrayList blockList) throws TomException:
+{
+}
+{
+  <TOM_LBRACE> /* we are in TOM mode */
+    {
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      oldPos = getPos() + token.image.length();
+    }
+  BlockList(blockList)
+    <RBRACE> /* we are in DEFAULT mode */
+    {
+      switchToTomMode(); /* switch to TOM mode */
+      return tsf().makeTargetLanguage_TL(savePosAndExtract());
+    }
+}
+
+//------------------------------------------------------------
+
+TargetLanguage KeywordImplement() throws TomException:
+{
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_IMPLEMENT>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     return tlCode;
+       //return tsf().makeTomTerm_Implement(tlCode);
+   }
+}
+
+Declaration KeywordGetFunSym(String typeString) throws TomException:
+{
+  Token name;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_GET_FUN_SYM> <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option option = ast().makeOption(info);
+     return tsf().makeDeclaration_GetFunctionSymbolDecl(
+                           ast().makeVariable(option,name.image,typeString),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordGetSubterm(String typeString) throws TomException:
+{
+  Token name1, name2;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_GET_SUBTERM> <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info1 = ast().makeOriginTracking(name1.image,getLine());
+     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option option1 = ast().makeOption(info1);
+     Option option2 = ast().makeOption(info2);
+     return tsf().makeDeclaration_GetSubtermDecl(
+                           ast().makeVariable(option1,name1.image,typeString),
+                           ast().makeVariable(option2,name2.image,"int"),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordCmpFunSym(String typeString) throws TomException:
+{
+  Token name1, name2;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_CMP_FUN_SYM> <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info1 = ast().makeOriginTracking(name1.image,getLine());
+     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option option1 = ast().makeOption(info1);
+     Option option2 = ast().makeOption(info2);
+     return tsf().makeDeclaration_CompareFunctionSymbolDecl(
+                           ast().makeVariable(option1,name1.image,typeString),
+                           ast().makeVariable(option2,name2.image,typeString),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordEquals(String typeString) throws TomException:
+{
+  Token name1, name2;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_EQUALS> <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info1 = ast().makeOriginTracking(name1.image,getLine());
+     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option option1 = ast().makeOption(info1);
+     Option option2 = ast().makeOption(info2);
+     return tsf().makeDeclaration_TermsEqualDecl(
+                           ast().makeVariable(option1,name1.image,typeString),
+                           ast().makeVariable(option2,name2.image,typeString),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordGetHead(String typeString) throws TomException:
+{
+  Token name;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_GET_HEAD> <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option option = ast().makeOption(info);
+     return tsf().makeDeclaration_GetHeadDecl(
+                           ast().makeVariable(option,name.image,typeString),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordGetTail(String typeString) throws TomException:
+{
+  Token name;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_GET_TAIL> <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option option = ast().makeOption(info);
+     return tsf().makeDeclaration_GetTailDecl(
+                           ast().makeVariable(option,name.image,typeString),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordIsEmpty(String typeString) throws TomException:
+{
+  Token name;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_IS_EMPTY> <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option option = ast().makeOption(info);
+     return tsf().makeDeclaration_IsEmptyDecl(
+                           ast().makeVariable(option,name.image,typeString),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordGetElement(String typeString) throws TomException:
+{
+  Token name1, name2;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_GET_ELEMENT> <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info1 = ast().makeOriginTracking(name1.image,getLine());
+     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option option1 = ast().makeOption(info1);
+     Option option2 = ast().makeOption(info2);
+     return tsf().makeDeclaration_GetElementDecl(
+                           ast().makeVariable(option1,name1.image,typeString),
+                           ast().makeVariable(option2,name2.image,"int"),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordGetSize(String typeString) throws TomException:
+{
+  Token name;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_GET_SIZE> <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option option = ast().makeOption(info);
+     return tsf().makeDeclaration_GetSizeDecl(
+                           ast().makeVariable(option,name.image,typeString),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+TargetLanguage KeywordFsym() throws TomException:
+{
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_FSYM>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     return tlCode;
+   }
+}
+
+Declaration KeywordIsFsym(TomName astName, String typeString) throws TomException:
+{
+  Token name;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_IS_FSYM> <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option option = ast().makeOption(info);
+     return tsf().makeDeclaration_IsFsymDecl(
+			   astName,
+                           ast().makeVariable(option,name.image,typeString),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+
+Declaration KeywordGetSlot(TomName astName, String typeString) throws TomException:
+{
+  Token name, slotName;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_GET_SLOT> <TOM_LPAREN> slotName = <TOM_IDENTIFIER>
+     <TOM_COMMA> name = <TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+       Option info = ast().makeOriginTracking(name.image,getLine());
+       Option option = ast().makeOption(info);
+       return tsf().makeDeclaration_GetSlotDecl(
+         astName,
+         tsf().makeTomTerm_SlotName(slotName.image),
+         ast().makeVariable(option,name.image,typeString),
+         tsf().makeTomTerm_TLCode(tlCode)
+         );
+   }
+}
+
+Declaration KeywordMake(String opname, TomType returnType, ArrayList types) throws TomException:
+{
+  Token typeArg;
+  Token nameArg;
+  ArrayList args = new ArrayList();
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+  int index = 0;
+  TomType type;
+  TomName name;
+  int nbArg2 = 0;
+}
+{
+  <TOM_MAKE>
+     [ ( LOOKAHEAD(2) 
+        <TOM_LPAREN> <TOM_RPAREN>
+       |
+        <TOM_LPAREN>
+      nameArg = <TOM_IDENTIFIER>
+       {
+	 nbArg2 = nbArg2 + 1;
+	 verifier().testArg(nbArg, nbArg2, false, nameMethod, getLine());
+         type = (TomType)types.get(index++);
+         name = tsf().makeTomName_Name(nameArg.image);  
+         Option info1 = ast().makeOriginTracking(nameArg.image,getLine());
+         Option option1 = ast().makeOption(info1);
+         args.add(tsf().makeTomTerm_Variable(option1,name, type));
+       }
+      ( <TOM_COMMA> nameArg = <TOM_IDENTIFIER>
+        {
+	  nbArg2 = nbArg2 + 1;
+	  verifier().testArg(nbArg, nbArg2, false, nameMethod, getLine());
+          type = (TomType)types.get(index++);
+          name = tsf().makeTomName_Name(nameArg.image); 
+          Option info2 = ast().makeOriginTracking(nameArg.image,getLine());
+          Option option2 = ast().makeOption(info2);
+          args.add(tsf().makeTomTerm_Variable(option2,name, type));
+        }
+      )*
+      <TOM_RPAREN> ) ]
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     verifier().testArg(nbArg, nbArg2, true, nameMethod, getLine());
+     return ast().makeMakeDecl(opname,returnType,args,tlCode);
+   }
+}
+
+Declaration KeywordMakeEmptyList(String name) throws TomException:
+{
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_MAKE_EMPTY> [<TOM_LPAREN> <TOM_RPAREN>]
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     return tsf().makeDeclaration_MakeEmptyList(
+                           tsf().makeTomName_Name(name),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordMakeAddList(String name, String listType, String elementType) throws TomException:
+{
+  Token listName, elementName;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_MAKE_ADD> <TOM_LPAREN> listName=<TOM_IDENTIFIER> <TOM_COMMA>
+                              elementName=<TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option listInfo = ast().makeOriginTracking(listName.image,getLine());
+     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine());
+     Option listOption = ast().makeOption(listInfo);
+     Option elementOption = ast().makeOption(elementInfo);
+     return tsf().makeDeclaration_MakeAddList(
+       tsf().makeTomName_Name(name),
+       ast().makeVariable(listOption,listName.image,listType),
+       ast().makeVariable(elementOption,elementName.image,elementType),
+       tsf().makeTomTerm_TLCode(tlCode)
+       );
+   }
+}
+
+Declaration KeywordMakeEmptyArray(String name, String listType) throws TomException:
+{
+  Token listName;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_MAKE_EMPTY> <TOM_LPAREN> listName=<TOM_IDENTIFIER> <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option listInfo = ast().makeOriginTracking(listName.image,getLine());
+     Option listOption = ast().makeOption(listInfo);
+     return tsf().makeDeclaration_MakeEmptyArray(
+                           tsf().makeTomName_Name(name),
+                           ast().makeVariable(listOption,listName.image,listType),
+                           tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
+Declaration KeywordMakeAddArray(String name, String listType, String elementType) throws TomException:
+{
+  Token listName, elementName, positionName;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+}
+{
+  <TOM_MAKE_ADD> <TOM_LPAREN> listName=<TOM_IDENTIFIER>    <TOM_COMMA>
+                              elementName=<TOM_IDENTIFIER> <TOM_COMMA>
+                              positionName=<TOM_IDENTIFIER>
+                 <TOM_RPAREN>
+  tlCode = GoalLanguageBlock(blockList)
+   {
+     Option listInfo = ast().makeOriginTracking(listName.image,getLine());
+     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine());
+     Option positionInfo = ast().makeOriginTracking(positionName.image,getLine());
+     Option listOption = ast().makeOption(listInfo);
+     Option elementOption = ast().makeOption(elementInfo);
+     Option positionOption = ast().makeOption(positionInfo);
+     return tsf().makeDeclaration_MakeAddArray(
+       tsf().makeTomName_Name(name),
+       ast().makeVariable(listOption,listName.image,listType),
+       ast().makeVariable(elementOption,elementName.image,elementType),
+       ast().makeVariable(positionOption,positionName.image,"int"),
+       tsf().makeTomTerm_TLCode(tlCode));
+   }
+}
+
