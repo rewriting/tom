@@ -193,10 +193,6 @@ public class TomParser implements TomTask, TomParserConstants {
     symbolTable.putSymbol(name,symbol);
   }
 
-  private TomType getType(String name) {
-    return symbolTable.getType(name);
-  }
-
   private void putType(String name, TomType type) {
     symbolTable.putType(name,type);
   }
@@ -2521,6 +2517,28 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(11, xla); }
   }
 
+  final private boolean jj_3_3() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_2()) jj_scanpos = xsp;
+    if (jj_3R_27()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_27() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_33()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_9() {
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
   final private boolean jj_3_1() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
@@ -2741,28 +2759,6 @@ public class TomParser implements TomTask, TomParserConstants {
   final private boolean jj_3R_29() {
     if (jj_3R_26()) return true;
     if (jj_3R_34()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_9() {
-    if (jj_3R_28()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_2()) jj_scanpos = xsp;
-    if (jj_3R_27()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_27() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_33()) jj_scanpos = xsp;
-    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 

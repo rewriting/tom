@@ -198,10 +198,6 @@ public class TomParser implements TomTask {
     symbolTable.putSymbol(name,symbol);
   }
 
-  private TomType getType(String name) {
-    return symbolTable.getType(name);
-  }
-
   private void putType(String name, TomType type) {
     symbolTable.putType(name,type);
   }
