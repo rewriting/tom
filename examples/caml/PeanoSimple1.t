@@ -1,4 +1,6 @@
+
 open Peanotype ;;
+exception Erreur of string ;;
 
 %typeterm term {
   implement { mlpeano }
@@ -19,7 +21,7 @@ open Peanotype ;;
 
 
 let rec plus (t1,t2)= 
-  let res = None in (
+  let res = ref None in (
   %match (term t1 , term t2 ) {
     x,zero    -> {res := Some x}
     x, suc(y) -> {res := Some (`suc(plus(x,y)))}
@@ -32,3 +34,20 @@ let rec plus (t1,t2)=
   )
 ;;
       
+let rec make_peano = function
+    0 -> Zero
+  | n -> Suc (make_peano (n-1))
+
+let run (n) =
+  let n'  = make_peano (n) in
+  let res = plus (n',n') in
+    print_string ( "plus(" ^ (string_of_int n) ^ "," ^ (string_of_int n) ^
+		   ") = " ^ (string_of_peano res)  ^ "\n" );;
+
+let main () =
+
+print_string "Bonjour :-) \n";
+  run (10)
+;;
+
+main();;

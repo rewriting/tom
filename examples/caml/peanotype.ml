@@ -15,7 +15,7 @@ let get_sub n = function
     Zero  -> raise Erreur
   | Suc s -> if n = 0 then s else raise Erreur ;;
 
-let suc n = Suc n ;;
+let tom_make_suc n = Suc n ;;
 
 let rec string_of_peano = function
     Zero -> "Zero"
