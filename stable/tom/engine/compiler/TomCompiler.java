@@ -36,7 +36,6 @@ import jtom.tools.*;
 import jtom.TomMessage;
 import aterm.*;
 import jtom.exception.TomRuntimeException;
-import jtom.TomEnvironment;
 
 public class TomCompiler extends TomTask {
   TomKernelCompiler tomKernelCompiler;
@@ -70,7 +69,7 @@ public class TomCompiler extends TomTask {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().compiledSuffix, compiledTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.compiledSuffix, compiledTerm);
       }
       environment().setTerm(compiledTerm);
       
@@ -90,9 +89,9 @@ public class TomCompiler extends TomTask {
 
     /* 
      * preProcessing:
-     * replaces MakeTerm by BuildList, BuildArray or BuildTerm
+     * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
      *
-     * transforms RuleSet into Function + Match + MakeTerm
+     * transforms RuleSet into Function + Match + BuildReducedTerm
      * abstract list-matching patterns
      * rename non-linear patterns
      */
@@ -101,10 +100,10 @@ public class TomCompiler extends TomTask {
       public ATerm apply(ATerm subject) {
         String debugKey = "";
         if(subject instanceof TomTerm) {
-           { jtom.adt.tomsignature.types.TomTerm tom_match1_1=(( jtom.adt.tomsignature.types.TomTerm)subject);{ if(tom_is_fun_sym_MakeTerm(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match1_1_1=tom_get_slot_MakeTerm_kid1(tom_match1_1); if(tom_is_fun_sym_VariableStar(tom_match1_1_1) || tom_is_fun_sym_Variable(tom_match1_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match1_1_1; 
+           { jtom.adt.tomsignature.types.TomTerm tom_match1_1=(( jtom.adt.tomsignature.types.TomTerm)subject);{ if(tom_is_fun_sym_BuildReducedTerm(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match1_1_1=tom_get_slot_BuildReducedTerm_kid1(tom_match1_1); if(tom_is_fun_sym_VariableStar(tom_match1_1_1) || tom_is_fun_sym_Variable(tom_match1_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match1_1_1; 
 
               return var ;
-            } }} } if(tom_is_fun_sym_MakeTerm(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match1_1_1=tom_get_slot_MakeTerm_kid1(tom_match1_1); if(tom_is_fun_sym_Appl(tom_match1_1_1) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match1_1_1_2=tom_get_slot_Appl_nameList(tom_match1_1_1); { jtom.adt.tomsignature.types.TomList tom_match1_1_1_3=tom_get_slot_Appl_args(tom_match1_1_1); if(tom_is_fun_sym_concTomName(tom_match1_1_1_2) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match1_1_1_2_list1=tom_match1_1_1_2; if(!(tom_is_empty_NameList(tom_match1_1_1_2_list1))) { { jtom.adt.tomsignature.types.TomName tom_match1_1_1_2_1=tom_get_head_NameList(tom_match1_1_1_2_list1);tom_match1_1_1_2_list1=tom_get_tail_NameList(tom_match1_1_1_2_list1); if(tom_is_fun_sym_Name(tom_match1_1_1_2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName name=tom_match1_1_1_2_1; { String  tom_match1_1_1_2_1_1=tom_get_slot_Name_string(tom_match1_1_1_2_1); { String  tomName=tom_match1_1_1_2_1_1; if(tom_is_empty_NameList(tom_match1_1_1_2_list1)) { { jtom.adt.tomsignature.types.TomList termArgs=tom_match1_1_1_3; 
+            } }} } if(tom_is_fun_sym_BuildReducedTerm(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match1_1_1=tom_get_slot_BuildReducedTerm_kid1(tom_match1_1); if(tom_is_fun_sym_Appl(tom_match1_1_1) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match1_1_1_2=tom_get_slot_Appl_nameList(tom_match1_1_1); { jtom.adt.tomsignature.types.TomList tom_match1_1_1_3=tom_get_slot_Appl_args(tom_match1_1_1); if(tom_is_fun_sym_concTomName(tom_match1_1_1_2) ||  false ) { { jtom.adt.tomsignature.types.NameList tom_match1_1_1_2_list1=tom_match1_1_1_2; if(!(tom_is_empty_NameList(tom_match1_1_1_2_list1))) { { jtom.adt.tomsignature.types.TomName tom_match1_1_1_2_1=tom_get_head_NameList(tom_match1_1_1_2_list1);tom_match1_1_1_2_list1=tom_get_tail_NameList(tom_match1_1_1_2_list1); if(tom_is_fun_sym_Name(tom_match1_1_1_2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName name=tom_match1_1_1_2_1; { String  tom_match1_1_1_2_1_1=tom_get_slot_Name_string(tom_match1_1_1_2_1); { String  tomName=tom_match1_1_1_2_1_1; if(tom_is_empty_NameList(tom_match1_1_1_2_list1)) { { jtom.adt.tomsignature.types.TomList termArgs=tom_match1_1_1_3; 
 
 
               TomSymbol tomSymbol = symbolTable().getSymbol(tomName );
@@ -228,8 +227,7 @@ public class TomCompiler extends TomTask {
 
 
 
-                  
-                    TomTerm newRhs = preProcessing(tom_make_MakeTerm(rhsTerm) );
+                    TomTerm newRhs = preProcessing(tom_make_BuildReducedTerm(rhsTerm) );
                     Instruction rhsInst = tom_make_Return(newRhs) ;
                     if(getInput().isDebugMode()) {
                       TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
@@ -311,7 +309,7 @@ public class TomCompiler extends TomTask {
 
   Replace1 replace_preProcessing_makeTerm = new Replace1() {
       public ATerm apply(ATerm t) {
-        return preProcessing(tom_make_MakeTerm((TomTerm)t) );
+        return preProcessing(tom_make_BuildReducedTerm((TomTerm)t) );
       }
     }; 
 
@@ -336,7 +334,7 @@ public class TomCompiler extends TomTask {
         TomType subjectType = getTermType(pattern );
         TomNumberList path = tsf().makeTomNumberList();
         path = (TomNumberList) path.append(tom_make_RuleVar() );
-        TomTerm newSubject = preProcessing(tom_make_MakeTerm(subject) );
+        TomTerm newSubject = preProcessing(tom_make_BuildReducedTerm(subject) );
         TomTerm introducedVariable = newSubject;
         TomTerm generatedPatternAction =
           tom_make_PatternAction(tom_make_TermList(cons(pattern,empty())),newAction,option()) ;        
@@ -352,8 +350,8 @@ public class TomCompiler extends TomTask {
 
         Instruction newAction = buildCondition(tail,action) ;
 
-        TomTerm newLhs = preProcessing(tom_make_MakeTerm(lhs) );
-        TomTerm newRhs = preProcessing(tom_make_MakeTerm(rhs) );
+        TomTerm newLhs = preProcessing(tom_make_BuildReducedTerm(lhs) );
+        TomTerm newRhs = preProcessing(tom_make_BuildReducedTerm(rhs) );
         Expression equality = tom_make_EqualTerm(newLhs,newRhs) ;
         Instruction generatedTest = tom_make_IfThenElse(equality,newAction,tom_make_Nop()) ;
         return generatedTest;
@@ -514,3 +512,4 @@ public class TomCompiler extends TomTask {
   }
   
 } //class TomCompiler
+

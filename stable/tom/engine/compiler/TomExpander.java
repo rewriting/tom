@@ -31,7 +31,6 @@ import aterm.*;
 import jtom.tools.*;
 import jtom.xml.Constants;
 import jtom.exception.TomRuntimeException;
-import jtom.TomEnvironment;
 import jtom.TomMessage;
 
 public class TomExpander extends TomTask {
@@ -70,8 +69,8 @@ public class TomExpander extends TomTask {
         System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().expandedSuffix, expandedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().expandedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedSuffix, expandedTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
       }
       environment().setTerm(expandedTerm);
       
@@ -88,7 +87,7 @@ public class TomExpander extends TomTask {
  
   /*
    * The 'expandTomSyntax' phase replaces:
-   * -each 'RecordAppl' by its expanded term form:
+   * - each 'RecordAppl' by its expanded term form:
    *   (unused slots a replaced by placeholders)
    * - each BackQuoteTerm by its compiled form
    */
@@ -320,6 +319,8 @@ pairList = pairList.getTail();}}}}
                     return tomFactory.buildArray(name ,args);
                   } else if(isStringOperator(tomSymbol)) {
                     return tom_make_BuildVariable(name) ;
+                  } else if(isDefinedSymbol(tomSymbol)) {
+                    return tom_make_FunctionCall(name,args) ;
                   } else {
                     return tom_make_BuildTerm(name,args) ;
                   }

@@ -35,7 +35,6 @@ import org.apache.tools.ant.taskdefs.*;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.apache.tools.ant.util.GlobPatternMapper;
-import org.apache.tools.ant.util.JavaEnvUtils;
 import org.apache.tools.ant.util.SourceFileScanner;
 
 /**
@@ -44,6 +43,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <ul>
  * <li>sourcedir
  * <li>destdir
+ * <li>outputfile
  * <li>optimize
  * <li>debug
  * <li>verbose
@@ -64,6 +64,7 @@ public class TomTask extends MatchingTask {
   private String options;
   private Path src;
   private File destDir;
+  private File outputFile;
   private Path compileClasspath;
   private Path compileSourcepath;
   private boolean depend = false;
@@ -143,6 +144,24 @@ public class TomTask extends MatchingTask {
      */
   public File getDestdir() {
     return destDir;
+  }
+
+    /**
+     * Set the destination directory into which the Tom source
+     * files should be compiled.
+     * @param destDir the destination directory
+     */
+  public void setOutputFile(File outputFile) {
+    this.outputFile = outputFile;
+  }
+
+    /**
+     * Gets the destination directory into which the Tom source files
+     * should be compiled.
+     * @return the destination directory
+     */
+  public File getOutputFile() {
+    return outputFile;
   }
 
     /**
@@ -352,21 +371,40 @@ public class TomTask extends MatchingTask {
      * @param files    An array of filenames
      */
   protected void scanDir(File srcDir, File destDir, String[] files) {
-    GlobPatternMapper m = new GlobPatternMapper();
-    m.setFrom("*.t");
-    m.setTo("*.java");
-    SourceFileScanner sfs = new SourceFileScanner(this);
-    File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
-        
-    if (newFiles.length > 0) {
-      File[] newCompileList
-        = new File[compileList.length + newFiles.length];
-      System.arraycopy(compileList, 0, newCompileList, 0,
-                       compileList.length);
-      System.arraycopy(newFiles, 0, newCompileList,
-                       compileList.length, newFiles.length);
-      compileList = newCompileList;
-    }
+		if ((outputFile != null) && (files.length == 1)) {
+			GlobPatternMapper m = new GlobPatternMapper();
+			m.setFrom(files[0]);
+			m.setTo(outputFile.getPath());
+			SourceFileScanner sfs = new SourceFileScanner(this);
+			File[] newFiles = sfs.restrictAsFiles(files, srcDir, null, m);
+			
+			if (newFiles.length > 0) {
+				File[] newCompileList
+					= new File[compileList.length + newFiles.length];
+				System.arraycopy(compileList, 0, newCompileList, 0,
+												 compileList.length);
+				System.arraycopy(newFiles, 0, newCompileList,
+												 compileList.length, newFiles.length);
+				compileList = newCompileList;
+			}
+		}
+		else {
+			GlobPatternMapper m = new GlobPatternMapper();
+			m.setFrom("*.t");
+			m.setTo("*.java");
+			SourceFileScanner sfs = new SourceFileScanner(this);
+			File[] newFiles = sfs.restrictAsFiles(files, srcDir, destDir, m);
+			
+			if (newFiles.length > 0) {
+				File[] newCompileList
+					= new File[compileList.length + newFiles.length];
+				System.arraycopy(compileList, 0, newCompileList, 0,
+												 compileList.length);
+				System.arraycopy(newFiles, 0, newCompileList,
+												 compileList.length, newFiles.length);
+				compileList = newCompileList;
+			}
+		}
   }
 
     /**
@@ -423,6 +461,9 @@ public class TomTask extends MatchingTask {
         }
         if (destDir != null) {
           cmd_line = cmd_line.trim() + " -d " + destDir;
+        }
+        if (outputFile != null) {
+          cmd_line = cmd_line.trim() + " -o " + outputFile;
         }
         cmd_line = cmd_line.trim() + " -I " + file.getParent();
         cmd_line = cmd_line.trim() + " " + filename;

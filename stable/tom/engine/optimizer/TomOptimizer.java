@@ -29,7 +29,6 @@ import aterm.*;
 
 import java.util.*;
 
-import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
 import jtom.tools.*;
 import jtom.TomMessage;
@@ -217,7 +216,7 @@ public class TomOptimizer extends TomTask {
               if(variableName == name ) {
                 return tom_make_ExpressionToTomTerm(expression) ;
               }
-            }} } if(tom_is_fun_sym_BuildVariable(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match4_1_1=tom_get_slot_BuildVariable_astName(tom_match4_1); { jtom.adt.tomsignature.types.TomName name=tom_match4_1_1;                if(variableName == name ) {                 return tom_make_ExpressionToTomTerm(expression) ;               }             }} }}} 
+            }} } if(tom_is_fun_sym_BuildVariable(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match4_1_1=tom_get_slot_BuildVariable_astName(tom_match4_1); { jtom.adt.tomsignature.types.TomName name=tom_match4_1_1;                 if(variableName == name ) {                  return tom_make_ExpressionToTomTerm(expression) ;                }              }} }}} 
  // end match
         } // end instanceof TomTerm
 
@@ -246,7 +245,7 @@ public class TomOptimizer extends TomTask {
                   list.add(t);
                   return false;
                 }
-              }} } if(tom_is_fun_sym_BuildVariable(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match5_1_1=tom_get_slot_BuildVariable_astName(tom_match5_1); { jtom.adt.tomsignature.types.TomName name=tom_match5_1_1;                  if(variableName == name ) {                   list.add(t);                   return false;                 }               }} } 
+              }} } if(tom_is_fun_sym_BuildVariable(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match5_1_1=tom_get_slot_BuildVariable_astName(tom_match5_1); { jtom.adt.tomsignature.types.TomName name=tom_match5_1_1;                   if(variableName == name ) {                    list.add(t);                    return false;                  }                }} } 
 
  return true; }} 
 
@@ -347,7 +346,7 @@ public class TomOptimizer extends TomTask {
               if(context.contains(astName )) {
                 return var .setAstName(tom_make_Name(ast().makeTomVariableName(name)) );
               }
-            }}} }}}}} } if(tom_is_fun_sym_BuildVariable(tom_match8_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match8_1; { jtom.adt.tomsignature.types.TomName tom_match8_1_1=tom_get_slot_BuildVariable_astName(tom_match8_1); if(tom_is_fun_sym_Name(tom_match8_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomName astName=tom_match8_1_1; { String  tom_match8_1_1_1=tom_get_slot_Name_string(tom_match8_1_1); { String  name=tom_match8_1_1_1;                if(context.contains(astName )) {                 return var .setAstName(tom_make_Name(ast().makeTomVariableName(name)) );               }             }}} }}} }}} 
+            }}} }}}}} } if(tom_is_fun_sym_BuildVariable(tom_match8_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match8_1; { jtom.adt.tomsignature.types.TomName tom_match8_1_1=tom_get_slot_BuildVariable_astName(tom_match8_1); if(tom_is_fun_sym_Name(tom_match8_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomName astName=tom_match8_1_1; { String  tom_match8_1_1_1=tom_get_slot_Name_string(tom_match8_1_1); { String  name=tom_match8_1_1_1;                 if(context.contains(astName )) {                  return var .setAstName(tom_make_Name(ast().makeTomVariableName(name)) );                }              }}} }}} }}} 
 
         } else if(subject instanceof Expression) {
         } else if(subject instanceof Instruction) {

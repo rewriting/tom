@@ -25,7 +25,6 @@
 
 package jtom;
 
-import java.text.MessageFormat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -48,7 +47,6 @@ import aterm.ATerm;
 import aterm.pure.PureFactory;
 
 public class Tom {
-
     /*
      * Singleton pattern
      */
@@ -81,12 +79,8 @@ public class Tom {
      */
   List inputFileList;
   
-  Factory tsf() {
-    return Tom.getInstance().environment().getTomSignatureFactory();
-  }
-  
   private static String version =
-    "\njtom 2.0rc2\n"
+    "\njtom 2.0rc3\n"
     + "\n"
     + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n";
   
@@ -131,10 +125,15 @@ public class Tom {
   private static TomTaskInput getInput() {
     return TomTaskInput.getInstance();
   }
-  private TomEnvironment environment() {
-    return TomEnvironment.getInstance();
+  
+  private static TomEnvironment environment() {
+  	return TomEnvironment.getInstance();
   }
 
+  private static Factory tsf() {
+    return TomEnvironment.getInstance().getTomSignatureFactory();
+  }
+  
   private void init(String args[]) {
     environment().init();
     getInput().init();
@@ -166,12 +165,12 @@ public class Tom {
           if (args[i].equals("--version") || args[i].equals("-V")) {
             version();
             getInput().setVersion(true);
-            addError(version, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_WARNING);
+            environment().addError(version, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_WARNING);
             return localInputFileList;
           } else if(args[i].equals("--help") || args[i].equals("-h")) {
             usage();
             getInput().setHelp(true);
-            addError(usage, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_WARNING);
+            environment().addError(usage, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_WARNING);
             return localInputFileList;
           } else if(args[i].equals("--import") || args[i].equals("-I")) {
             localUserImportList.add(new File(args[++i]).getAbsoluteFile());
@@ -238,14 +237,14 @@ public class Tom {
               //System.out.println("localDestDir = " + localDestDir);
           } else if (args[i].equals("--output") || args[i].equals("-o")) {
             if(getInput().getUserOutputFile()!= null) {
-              addError(TomMessage.getString("OutputTwice"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+              environment().addError(TomMessage.getString("OutputTwice"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
               return localInputFileList;
             }
             getInput().setUserOutputFile(args[++i]);
           } else {
             String s = "'" + args[i] + "' is not a valid option";
             System.out.println(s);
-            addError(TomMessage.getString("InvalidOption"), new Object[]{args[i]},"", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+            environment().addError(TomMessage.getString("InvalidOption"), new Object[]{args[i]},"", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
             getInput().setHelp(true);
             usage();
             return localInputFileList;
@@ -256,15 +255,14 @@ public class Tom {
         // For the moment debug is only available for Java as target language
       getInput().setDebugMode(getInput().isJCode() && getInput().isDebugMode());
 
+      
         /*
          * compute destDir:
          */
-
-
       if(localDestDir==null || localDestDir.length()==0) {
-        localDestDir = ".";
+      	localDestDir=".";
       } else if(getInput().getUserOutputFile() != null) {
-        addError(TomMessage.getString("InvalidOutputDestdir"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+        environment().addError(TomMessage.getString("InvalidOutputDestdir"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
         return localInputFileList;
       }
 
@@ -276,7 +274,7 @@ public class Tom {
 
 
     } catch (ArrayIndexOutOfBoundsException e) {
-      addError(TomMessage.getString("IncompleteOption"), new Object[]{args[--i]}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      environment().addError(TomMessage.getString("IncompleteOption"), new Object[]{args[--i]}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
       getInput().setHelp(true);
       usage();
       return localInputFileList;
@@ -365,10 +363,10 @@ public class Tom {
           TomSymbolTable symbTable = tsf().TomSymbolTableFromTerm(fromFileSymblTable);
           environment().getSymbolTable().regenerateFromTerm(symbTable);
         } catch (FileNotFoundException e) {
-          addError(TomMessage.getString("FileNotFound"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+          environment().addError(TomMessage.getString("FileNotFound"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
           return null;
         } catch (IOException e4) {
-          addError(TomMessage.getString("IOException"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+          environment().addError(TomMessage.getString("IOException"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
           return null;
         }
           // This is the initial task
@@ -406,16 +404,6 @@ public class Tom {
     return initialTask;
   }
 
-  private void addError(String msg, String file, int line, int level) {
-    TomError err = tsf().makeTomError_Error(msg, file, line, level);
-    environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
-  }
-
-  private void addError(String msg, Object[] args, String file, int line, int level) {
-    TomError err = tsf().makeTomError_Error(MessageFormat.format(msg, args), file, line, level);
-    environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
-  }
-  
   public void run(String inputFileName) {
     reinit(inputFileName);
     TomTask initialTask = createTaskChainFromInput();
@@ -434,40 +422,43 @@ public class Tom {
     
     if(getInput().isHelp() || getInput().isVersion()) {
         // no need to do further work
-      return 0;
-    } else if(tom.inputFileList.isEmpty()) {
-      System.out.println("No file to compile");
-      usage();
-      tom.addError(TomMessage.getString("NoFileToCompile"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
       return 1;
+    } else if(tom.inputFileList.isEmpty()) {
+        System.out.println("No file to compile");
+        usage();
+        environment().addError(TomMessage.getString("NoFileToCompile"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+        return 1;
     } else if(tom.inputFileList.size()>1 && getInput().getUserOutputFile() != null) {
       System.out.println("Cannot specify --output with multiple compilations");
       usage();
-      tom.addError(TomMessage.getString("OutputWithMultipleCompilation"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      environment().addError(TomMessage.getString("OutputWithMultipleCompilation"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
       return 1;
     }
 
-    if(!tom.environment().checkNoErrors("Tom.Main", getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning()))
+    if(!Tom.environment().checkNoErrors("Tom.Main", getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning()))
       return 1;
     
     for(Iterator it = tom.inputFileList.iterator() ; it.hasNext() ; ) {
       String inputFileName = (String)it.next();
       tom.run(inputFileName);
+      if (!Tom.environment().checkNoErrors("Tom.Main", 
+            getInput().isEclipseMode(), 
+            getInput().isWarningAll(), 
+            getInput().isNoWarning())) {
+        return 1;
+      }
     }
     
-    if (!tom.environment().checkNoErrors("Tom.Main", 
+    if (!Tom.environment().checkNoErrors("Tom.Main", 
           getInput().isEclipseMode(), 
           getInput().isWarningAll(), 
           getInput().isNoWarning())) {
       return 1;
-    } 
-    else {
+    } else {
       return 0;
     }
   }
-  
-  public TomErrorList getErrors() {
-    return environment().getErrors();
-  }
 
+
+  
 } // class Tom

@@ -177,8 +177,9 @@
 	<!-- compile tom files in src.src with tom.stable -->
 	<target name="buildtom" depends="initTaskDef, buildadt">
 
-		<tom srcdir="${src.src}" 
-				 options="-I ${stable.mapping} -I ${src.gen}/jtom/adt -o ${src.gen}/jtom/parser/TomParser.jj">
+		<tom srcdir="${src.src}"
+				 outputfile="${src.gen}/jtom/parser/TomParser.jj"
+				 options="-I ${stable.mapping} -I ${src.gen}/jtom/adt">
 			<include name="**/TomParser.t"/>	
 		</tom>
 
