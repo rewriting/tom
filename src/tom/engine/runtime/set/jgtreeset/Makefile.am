@@ -15,6 +15,8 @@ java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES) SetMakeRules set.tom
 JAVAROOT        = ${top_builddir}/src/
 
+CLEANFILES 	= $(BOOTSOURCES) set.tom
+
 bootinstall :
 	$(mkinstalldirs) $(stabledir)
 	cp -f SetMakeRules $(BOOTSOURCES) $(stabledir)

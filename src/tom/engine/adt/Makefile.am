@@ -20,13 +20,7 @@ JAVAROOT        = ${top_builddir}/src/
 adtdir          = $(datadir)/jtom/
 adt_DATA        = TomSignature.tom
 
-#TomSignatureMakeRules.am: TomSignatureMakeRules
-#	cp TomSignatureMakeRules TomSignatureMakeRules.am
-
-#TomSignature.tom: ../TomSignature.adt
-#	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt 
-#	mv TomSignatureMakeRules TomSignatureMakeRules.am
-
+CLEANFILES 	= $(BOOTSOURCES) TomSignature.tom
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)
