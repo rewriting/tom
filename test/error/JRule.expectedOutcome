@@ -1,74 +1,77 @@
--- Error occured line: 89 in structure `Rule` declared line: 84 in file: `JRule.t`
+-- Error occured line: 107 in structure `Rule` declared line: 107 in file: `JRule.t`
+---> Rule `op4` is repeated
+
+-- Error occured line: 101 in structure `Rule` declared line: 96 in file: `JRule.t`
 ---> `_`: Impossible in rule right hand side
 
--- Error occured line: 89 in structure `Rule` declared line: 84 in file: `JRule.t`
----> `op1[...]`: Impossible in rule right hand side
+-- Error occured line: 101 in structure `Rule` declared line: 96 in file: `JRule.t`
+---> `op2[...]`: Impossible in rule right hand side
 
--- Error occured line: 89 in structure `Rule` declared line: 84 in file: `JRule.t`
+-- Error occured line: 101 in structure `Rule` declared line: 96 in file: `JRule.t`
 ---> `_`: Impossible in rule right hand side
 
--- Error occured line: 85 in structure `Rule` declared line: 84 in file: `JRule.t`
+-- Error occured line: 97 in structure `Rule` declared line: 96 in file: `JRule.t`
 ---> `_`: Impossible in rule right hand side
 
--- Error occured line: 85 in structure `Rule` declared line: 84 in file: `JRule.t`
----> Bad number of arguments for symbol `op1`: 2 argument(s) required but 1 found
+-- Error occured line: 97 in structure `Rule` declared line: 96 in file: `JRule.t`
+---> Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found
 
--- Error occured line: 85 in structure `Rule` declared line: 84 in file: `JRule.t`
+-- Error occured line: 97 in structure `Rule` declared line: 96 in file: `JRule.t`
 ---> `_`: Impossible in rule right hand side
 
--- Error occured line: 82 in structure `Rule` declared line: 76 in file: `JRule.t`
+-- Error occured line: 94 in structure `Rule` declared line: 88 in file: `JRule.t`
 ---> `Disjunction`: Impossible in rule right hand side
 
--- Error occured line: 81 in structure `Rule` declared line: 76 in file: `JRule.t`
+-- Error occured line: 93 in structure `Rule` declared line: 88 in file: `JRule.t`
 ---> `XML construct a`: Impossible in rule right hand side
 
--- Error occured line: 80 in structure `Rule` declared line: 76 in file: `JRule.t`
+-- Error occured line: 92 in structure `Rule` declared line: 88 in file: `JRule.t`
 ---> `X*`: Impossible in rule right hand side
 
--- Error occured line: 79 in structure `Rule` declared line: 76 in file: `JRule.t`
+-- Error occured line: 91 in structure `Rule` declared line: 88 in file: `JRule.t`
 ---> `_*`: Impossible in rule right hand side
 
--- Error occured line: 78 in structure `Rule` declared line: 76 in file: `JRule.t`
+-- Error occured line: 90 in structure `Rule` declared line: 88 in file: `JRule.t`
 ---> `_`: Impossible in rule right hand side
 
--- Error occured line: 77 in structure `Rule` declared line: 76 in file: `JRule.t`
----> The symbol `op2` has type `type1` but type `type2` was required
+-- Error occured line: 89 in structure `Rule` declared line: 88 in file: `JRule.t`
+---> The symbol `op5` has type `type2` but type `type1` was required
 
--- Error occured line: 73 in structure `Rule` declared line: 70 in file: `JRule.t`
----> The symbol `op3` has type `type2` but type `type1` was required
+-- Error occured line: 85 in structure `Rule` declared line: 82 in file: `JRule.t`
+---> The symbol `op4` has type `type1` but type `type2` was required
 
--- Warning occured line: 73 in structure `Rule` declared line: 70 in file: `JRule.t`
----> Warning: Ambiguous symbol name. Is`op3` a variable or a constructor? Prefer `op3`() if it is a constructor
+-- Warning occured line: 85 in structure `Rule` declared line: 82 in file: `JRule.t`
+---> Warning: Ambiguous symbol name. Is`op4` a variable or a constructor? Prefer `op4`() if it is a constructor
 
--- Error occured line: 72 in structure `Rule` declared line: 70 in file: `JRule.t`
----> Bad number of arguments for symbol `op1`: 2 argument(s) required but 0 found
+-- Error occured line: 84 in structure `Rule` declared line: 82 in file: `JRule.t`
+---> The symbol `op1` has type `type1` but type `type2` was required
 
--- Error occured line: 67 in structure `Rule` declared line: 65 in file: `JRule.t`
+-- Error occured line: 79 in structure `Rule` declared line: 77 in file: `JRule.t`
 ---> Rule head symbol name `op1` expected, but `op2` found
 
--- Warning occured line: 66 in structure `Rule` declared line: 65 in file: `JRule.t`
+-- Warning occured line: 78 in structure `Rule` declared line: 77 in file: `JRule.t`
 ---> Unknown symbol `f`: Cant do further analyses
 
--- Error occured line: 62 in structure `Rule` declared line: 61 in file: `JRule.t`
+-- Error occured line: 74 in structure `Rule` declared line: 73 in file: `JRule.t`
 ---> Rule head symbol `op2` has no `make` method: It is necessary to define one!!
 
--- Error occured line: 58 in structure `Rule` declared line: 57 in file: `JRule.t`
+-- Error occured line: 70 in structure `Rule` declared line: 69 in file: `JRule.t`
 ---> `Disjunction`: Impossible in rule left hand side
 
--- Error occured line: 54 in structure `Rule` declared line: 53 in file: `JRule.t`
+-- Error occured line: 66 in structure `Rule` declared line: 65 in file: `JRule.t`
 ---> `Disjunction`: Impossible in rule left hand side
 
--- Error occured line: 50 in structure `Rule` declared line: 49 in file: `JRule.t`
+-- Error occured line: 62 in structure `Rule` declared line: 61 in file: `JRule.t`
 ---> `XML construct a`: Impossible in rule left hand side
 
--- Error occured line: 46 in structure `Rule` declared line: 45 in file: `JRule.t`
+-- Error occured line: 58 in structure `Rule` declared line: 57 in file: `JRule.t`
 ---> `_*`: Impossible in rule left hand side
 
--- Error occured line: 42 in structure `Rule` declared line: 41 in file: `JRule.t`
+-- Error occured line: 54 in structure `Rule` declared line: 53 in file: `JRule.t`
 ---> `X*`: Impossible in rule left hand side
 
--- Error occured line: 38 in structure `Rule` declared line: 37 in file: `JRule.t`
+-- Error occured line: 50 in structure `Rule` declared line: 49 in file: `JRule.t`
 ---> `_`: Impossible in rule left hand side
 
-Tom SyntaxChecker:  Encountered 22 errors and 2 warnings.
+Tom SyntaxChecker:  Encountered 23 errors and 2 warnings.
 No file generated.
