@@ -162,7 +162,7 @@ public class TomKernelCompiler extends TomBase {
         body = collectVariableFromSubjectList(tail,index+1,path,body);
         TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType,concConstraint());
         // the UnamedBlock encapsulation is needed for Caml
-        return `Let(variable,TomTermToExpression(subjectVar),UnamedBlock(concInstruction(body)));
+        return `Let(variable,Cast(variableType,TomTermToExpression(subjectVar)),UnamedBlock(concInstruction(body)));
       }
 
       manyTomList(subjectVar@(BuildTerm|BuildList|FunctionCall)(Name(tomName),_),tail) -> {
@@ -241,7 +241,7 @@ public class TomKernelCompiler extends TomBase {
       manyTomList(var@UnamedVariable(optionList, termType),termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
         Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType, concConstraint()));
-        return buildAnnotedLet(optionList, source, var, subAction);
+        return buildLet(var, source, subAction);
       }
       
       manyTomList(currentTerm@Appl(optionList,nameList@(Name(tomName),_*),termArgs),termTail) -> {
@@ -260,7 +260,7 @@ public class TomKernelCompiler extends TomBase {
            */
           int indexSubterm = 1;
           TomNumberList newPath = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
-          TomTerm newSubjectVariableAST =  `Variable(option(),PositionName(newPath),termType,concConstraint());
+          TomTerm newSubjectVariableAST =  `VariableStar(option(),PositionName(newPath),termType,concConstraint());
           Instruction automata = genListMatchingAutomata(new MatchingParameter(
                                                            tomSymbol,path,subAction,
                                                            newSubjectVariableAST,
@@ -273,7 +273,7 @@ public class TomKernelCompiler extends TomBase {
           int indexSubterm = 1;
           TomNumberList newPathList = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
           TomNumberList newPathIndex = (TomNumberList) path.append(`IndexNumber(makeNumber(indexSubterm)));
-          TomTerm newVariableListAST = `Variable(option(),PositionName(newPathList),termType,concConstraint());
+          TomTerm newVariableListAST = `VariableStar(option(),PositionName(newPathList),termType,concConstraint());
           TomTerm newVariableIndexAST = `Variable(option(),PositionName(newPathIndex),symbolTable().getIntType(),concConstraint());
           Instruction automata = genArrayMatchingAutomata(new MatchingParameter(
                                                             tomSymbol,path,subAction,
@@ -346,7 +346,7 @@ public class TomKernelCompiler extends TomBase {
      
         Instruction body = `UnamedBlock(concInstruction(Assign(p.subjectListName,GetTail(Ref(p.subjectListName))),subAction));
         Expression source = `GetHead(termType,Ref(p.subjectListName));
-        Instruction let = buildAnnotedLet(optionList, source, var, body);
+        Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyList(Ref(p.subjectListName))),
                                        let, Nop());
         return test;
@@ -362,7 +362,7 @@ public class TomKernelCompiler extends TomBase {
            * ...
            */
           Expression source = `TomTermToExpression(Ref(p.subjectListName));
-          Instruction let = buildAnnotedLet(optionList, source, var, p.action);
+          Instruction let = buildLet(var, source, p.action);
           return  let;
         } else {
           /*
@@ -386,7 +386,7 @@ public class TomKernelCompiler extends TomBase {
           TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),termType,concConstraint());
 
           Expression source = `GetSliceList(p.symbol.getAstName(),variableBeginAST,Ref(variableEndAST));
-          Instruction let = buildAnnotedLet(optionList, source, var, subAction);
+          Instruction let = buildLet(var, source, subAction);
 
           Instruction test1 = `IfThenElse(Not(IsEmptyList(Ref(variableEndAST))),
                                           Assign(variableEndAST,GetTail(Ref(variableEndAST))),
@@ -426,8 +426,6 @@ public class TomKernelCompiler extends TomBase {
 
         Instruction body = `UnamedBlock(concInstruction(Assign(p.subjectListName,GetTail(Ref(p.subjectListName))),subAction));
         Expression source = `GetHead(termType,Ref(p.subjectListName));
-        //Instruction let = buildAnnotedLet(optionList, source, var, body);
-        //Instruction let = `Let(var, source, body);
         Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyList(Ref(p.subjectListName))),
                                        let, Nop());
@@ -480,7 +478,7 @@ public class TomKernelCompiler extends TomBase {
 
         Instruction body = `UnamedBlock(concInstruction(Increment(p.subjectListIndex),subAction));
         Expression source = `GetElement(termType,p.subjectListName,p.subjectListIndex);
-        Instruction let = buildAnnotedLet(optionList, source, var, body);
+        Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyArray(Ref(p.subjectListName),Ref(p.subjectListIndex))),
                                        let, Nop());
         return test;
@@ -500,7 +498,7 @@ public class TomKernelCompiler extends TomBase {
                                              Ref(p.subjectListIndex),
                                              ExpressionToTomTerm(GetSize(p.subjectListName))
                                              );
-          Instruction let = buildAnnotedLet(optionList, source, var, p.action);
+          Instruction let = buildLet(var, source, p.action);
           return let;
         } else {
             /*
@@ -528,7 +526,7 @@ public class TomKernelCompiler extends TomBase {
                                              variableBeginAST,
                                              Ref(variableEndAST));
 
-          Instruction let = buildAnnotedLet(optionList, source, var, subAction);
+          Instruction let = buildLet(var, source, subAction);
           Instruction increment = `Increment(variableEndAST);
           Instruction assign = `Assign(p.subjectListIndex,TomTermToExpression(variableEndAST));
           Instruction doWhile = `DoWhile(UnamedBlock(concInstruction(let,increment,assign)),
@@ -565,8 +563,6 @@ public class TomKernelCompiler extends TomBase {
 
         Instruction body = `UnamedBlock(concInstruction(Increment(p.subjectListIndex),subAction));
         Expression source = `GetElement(termType,p.subjectListName,p.subjectListIndex);
-        //Instruction let = buildAnnotedLet(optionList, source, var, body);
-        //Instruction let = `Let(var, source, body);
         Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyArray(Ref(p.subjectListName),Ref(p.subjectListIndex))),
                                        let, Nop());
@@ -606,7 +602,7 @@ public class TomKernelCompiler extends TomBase {
           if(slotName == null) {
             getSubtermAST = `GetSubterm(subtermType,subjectVariableAST,makeNumber(indexSubterm));
           } else {
-            getSubtermAST = `GetSlot(termNameAST,slotName.getString(),subjectVariableAST);
+            getSubtermAST = `GetSlot(subtermType,termNameAST,slotName.getString(),subjectVariableAST);
           }
           TomNumberList newPath  = appendNumber(indexSubterm+1,path);
           TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concConstraint());
@@ -636,29 +632,16 @@ public class TomKernelCompiler extends TomBase {
 	private Instruction buildLet(TomTerm dest,
                                Expression source,
                                Instruction body) {
-		return buildAnnotedLet(`concOption(),source,dest,body);
-}
-
-
-  private Instruction buildAnnotedLet(OptionList optionList,
-                                      Expression source,
-                                      TomTerm dest,
-                                      Instruction body) {
-    TomTerm annotedVariable = getAnnotedVariable(optionList);
+    TomTerm annotedVariable = getAnnotedVariable(dest.getOption());
     if(annotedVariable != null) {
       body = buildLet(annotedVariable,source,body);
     }
 		// Take care of constraints
 		%match(TomTerm dest) {
-			(Variable|VariableStar)[constraints=conslist] -> {
+			var@(Variable|VariableStar)[constraints=conslist] -> {
 				body = buildConstraint(conslist,dest,body);
-			}
-			Variable[option=option1,astName=name1,astType=type1] -> {
-				dest = `Variable(option1,name1,type1,concConstraint());
-			}
-			VariableStar[option=option1,astName=name1,astType=type1] -> {
-				dest = `VariableStar(option1,name1,type1,concConstraint());
-			}
+				dest = var.setConstraints(`concConstraint());
+      }
 		}
 		return `Let(dest,source,body);
   }

@@ -14,6 +14,14 @@
   equals(t1,t2) {(t1 == t2)}
 }
 
+%typeterm double{
+  implement { double}
+  get_fun_sym(t) {t}
+  cmp_fun_sym(s1,s2) { (s1 == s2)}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {(t1 == t2)}
+}
+
 %typeterm ATerm{
   implement { aterm.ATerm}
   get_fun_sym(t) {((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null)}
@@ -419,12 +427,13 @@
   make(t0, t1) { getTomSignatureFactory().makeExpression_IsEmptyArray(t0, t1)}
 }
 
-%op Expression EqualFunctionSymbol(kid1:TomTerm, kid2:TomTerm) {
+%op Expression EqualFunctionSymbol(astType:TomType, exp1:TomTerm, exp2:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isEqualFunctionSymbol()}
-  get_slot(kid1,t) { t.getKid1()}
-  get_slot(kid2,t) { t.getKid2()}
-  make(t0, t1) { getTomSignatureFactory().makeExpression_EqualFunctionSymbol(t0, t1)}
+  get_slot(astType,t) { t.getAstType()}
+  get_slot(exp1,t) { t.getExp1()}
+  get_slot(exp2,t) { t.getExp2()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeExpression_EqualFunctionSymbol(t0, t1, t2)}
 }
 
 %op Expression EqualTerm(kid1:TomTerm, kid2:TomTerm) {
@@ -435,12 +444,21 @@
   make(t0, t1) { getTomSignatureFactory().makeExpression_EqualTerm(t0, t1)}
 }
 
-%op Expression GetSubterm(variable:TomTerm, number:TomNumber) {
+%op Expression Cast(astType:TomType, source:Expression) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isCast()}
+  get_slot(astType,t) { t.getAstType()}
+  get_slot(source,t) { t.getSource()}
+  make(t0, t1) { getTomSignatureFactory().makeExpression_Cast(t0, t1)}
+}
+
+%op Expression GetSubterm(codomain:TomType, variable:TomTerm, number:TomNumber) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isGetSubterm()}
+  get_slot(codomain,t) { t.getCodomain()}
   get_slot(variable,t) { t.getVariable()}
   get_slot(number,t) { t.getNumber()}
-  make(t0, t1) { getTomSignatureFactory().makeExpression_GetSubterm(t0, t1)}
+  make(t0, t1, t2) { getTomSignatureFactory().makeExpression_GetSubterm(t0, t1, t2)}
 }
 
 %op Expression IsFsym(astName:TomName, variable:TomTerm) {
@@ -451,42 +469,45 @@
   make(t0, t1) { getTomSignatureFactory().makeExpression_IsFsym(t0, t1)}
 }
 
-%op Expression GetSlot(astName:TomName, slotNameString:String, variable:TomTerm) {
+%op Expression GetSlot(codomain:TomType, astName:TomName, slotNameString:String, variable:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isGetSlot()}
+  get_slot(codomain,t) { t.getCodomain()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(slotNameString,t) { t.getSlotNameString()}
   get_slot(variable,t) { t.getVariable()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeExpression_GetSlot(t0, t1, t2)}
+  make(t0, t1, t2, t3) { getTomSignatureFactory().makeExpression_GetSlot(t0, t1, t2, t3)}
 }
 
-%op Expression GetHead(variable:TomTerm) {
+%op Expression GetHead(codomain:TomType, variable:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isGetHead()}
+  get_slot(codomain,t) { t.getCodomain()}
   get_slot(variable,t) { t.getVariable()}
-  make(t0) { getTomSignatureFactory().makeExpression_GetHead(t0)}
+  make(t0, t1) { getTomSignatureFactory().makeExpression_GetHead(t0, t1)}
 }
 
-%op Expression GetTail(kid1:TomTerm) {
+%op Expression GetTail(variable:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isGetTail()}
-  get_slot(kid1,t) { t.getKid1()}
+  get_slot(variable,t) { t.getVariable()}
   make(t0) { getTomSignatureFactory().makeExpression_GetTail(t0)}
 }
 
-%op Expression GetSize(kid1:TomTerm) {
+%op Expression GetSize(variable:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isGetSize()}
-  get_slot(kid1,t) { t.getKid1()}
+  get_slot(variable,t) { t.getVariable()}
   make(t0) { getTomSignatureFactory().makeExpression_GetSize(t0)}
 }
 
-%op Expression GetElement(kid1:TomTerm, kid2:TomTerm) {
+%op Expression GetElement(codomain:TomType, kid1:TomTerm, kid2:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isGetElement()}
+  get_slot(codomain,t) { t.getCodomain()}
   get_slot(kid1,t) { t.getKid1()}
   get_slot(kid2,t) { t.getKid2()}
-  make(t0, t1) { getTomSignatureFactory().makeExpression_GetElement(t0, t1)}
+  make(t0, t1, t2) { getTomSignatureFactory().makeExpression_GetElement(t0, t1, t2)}
 }
 
 %op Expression GetSliceList(astName:TomName, variableBeginAST:TomTerm, variableEndAST:TomTerm) {
@@ -661,13 +682,14 @@
   make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_XMLAppl(t0, t1, t2, t3)}
 }
 
-%op TomTerm VariableStar(option:OptionList, astName:TomName, astType:TomType) {
+%op TomTerm VariableStar(option:OptionList, astName:TomName, astType:TomType, constraints:ConstraintList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isVariableStar()}
   get_slot(option,t) { t.getOption()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(astType,t) { t.getAstType()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_VariableStar(t0, t1, t2)}
+  get_slot(constraints,t) { t.getConstraints()}
+  make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_VariableStar(t0, t1, t2, t3)}
 }
 
 %op TomTerm Placeholder(option:OptionList) {
@@ -847,13 +869,14 @@
   make(t0, t1) { getTomSignatureFactory().makeTomTerm_TLVar(t0, t1)}
 }
 
-%op TomTerm Variable(option:OptionList, astName:TomName, astType:TomType) {
+%op TomTerm Variable(option:OptionList, astName:TomName, astType:TomType, constraints:ConstraintList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isVariable()}
   get_slot(option,t) { t.getOption()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(astType,t) { t.getAstType()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_Variable(t0, t1, t2)}
+  get_slot(constraints,t) { t.getConstraints()}
+  make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_Variable(t0, t1, t2, t3)}
 }
 
 %op TomTerm Ref(tomTerm:TomTerm) {
@@ -1321,6 +1344,21 @@
   make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomError_Error(t0, t1, t2, t3)}
 }
 
+%typeterm Constraint{
+  implement { Constraint}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%op Constraint Equal(kid:TomTerm) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isEqual()}
+  get_slot(kid,t) { t.getKid()}
+  make(t0) { getTomSignatureFactory().makeConstraint_Equal(t0)}
+}
+
 %typelist TomList{
   implement { TomList}
   get_fun_sym(t) {null}
@@ -1628,4 +1666,32 @@
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
   make(e,l) {getTomSignatureFactory().makeNameList(e,l)}
+}
+%typelist ConstraintList{
+  implement { ConstraintList}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
+}
+
+%oplist ConstraintList concConstraint(Constraint*) {
+  fsym { null }
+  is_fsym(t) {(t!= null) && t.isSortConstraintList()}
+  make_empty() {getTomSignatureFactory().makeConstraintList()}
+  make_insert(e,l) {getTomSignatureFactory().makeConstraintList(e,l)}
+}
+%op ConstraintList emptyConstraintList{
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isEmpty()}
+  make() {getTomSignatureFactory().makeConstraintList()}
+}
+%op ConstraintList manyConstraintList(head:Constraint, tail:ConstraintList) {
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isMany()}
+  get_slot(head,t) { t.getHead()}
+  get_slot(tail,t) { t.getTail()}
+  make(e,l) {getTomSignatureFactory().makeConstraintList(e,l)}
 }

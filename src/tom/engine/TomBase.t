@@ -243,13 +243,17 @@ public class TomBase {
       Variable[astType=type] |
       VariableStar[astType=type] |
       UnamedVariable[astType=type] |
-      UnamedVariableStar[astType=type]
+      UnamedVariableStar[astType=type] 
         -> { return type; }
 
-      ExpressionToTomTerm(GetSubterm[variable=term]) |
+      ExpressionToTomTerm(term) |
       Ref(term)
         -> { return getTermType(term); }
       
+      TargetLanguageToTomTerm(TL[]) |
+      TargetLanguageToTomTerm(ITL[]) 
+        -> { return `EmptyType(); }
+
       _ -> {
         System.out.println("getTermType error on term: " + t);
         throw new TomRuntimeException(new Throwable("getTermType error on term: " + t));
@@ -257,6 +261,27 @@ public class TomBase {
     }
   }
 
+  protected TomType getTermType(Expression t){
+    %match(Expression t) {
+      GetSubterm[codomain=type] |
+      GetHead[codomain=type] |
+      GetSlot[codomain=type] |
+      GetElement[codomain=type]
+        -> { return type; }
+
+      TomTermToExpression(term) |
+      GetTail[variable=term] |
+      GetSliceList[variableBeginAST=term] |
+      GetSliceArray[subjectListName=term]
+        -> { return getTermType(term); }
+
+      _ -> {
+        System.out.println("getTermType error on term: " + t);
+        throw new TomRuntimeException(new Throwable("getTermType error on term: " + t));
+      }
+    }
+  }
+  
   private HashMap numberListToIdentifierMap = new HashMap();
 
   private String elementToIdentifier(TomNumber subject) {

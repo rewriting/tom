@@ -3,7 +3,7 @@
     TOM - To One Matching Compiler
 
     Copyright (C) 2000-2004 INRIA
-			    Nancy, France.
+			            Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ import jtom.adt.tomsignature.types.*;
 import jtom.backend.*;
 import jtom.checker.*;
 import jtom.compiler.*;
+import jtom.optimizer.*;
 import jtom.parser.*;
 import jtom.tools.*;
 import jtom.verifier.*;
@@ -56,7 +57,7 @@ public class Tom {
   private static String version =
     "\njtom 2.0beta\n"
     + "\n"
-    + "Copyright (C) 2000-2003 INRIA, Nancy, France.\n";
+    + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n";
 
   private static String usage =
     "Tom usage:"
@@ -231,7 +232,7 @@ public class Tom {
         }
     	} // end processing arguments
     } catch (ArrayIndexOutOfBoundsException e) {
-    	String s = "'" + args[--i] + "' is supposed to have something after";
+    	String s = "'" + args[--i] + "'option is supposed to have something after";
       System.out.println(s);
       addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
       taskInput.setHelp(true);
@@ -305,6 +306,8 @@ public class Tom {
           input = new FileInputStream(fileName);
             // to get the length of the file
           File file = new File(fileName);
+          String rawFile = file.getName();
+          taskInput.setRawFileName(rawFile.substring(0, rawFile.length() - (taskInput.getInputSuffix().length())) );
           inputBuffer = new byte[(int) file.length() + 1];
           input.read(inputBuffer);
         } catch (FileNotFoundException e) {
@@ -417,11 +420,9 @@ public class Tom {
         TomTask generator;
         generator = new TomBackend(environment);
         if (taskInput.isDoOptimization()) {
-          /*
           TomOptimizer optimizer = new TomOptimizer(environment);
           compiler.addTask(optimizer);
           optimizer.addTask(generator);
-          */
         } else {
           compiler.addTask(generator);
         }

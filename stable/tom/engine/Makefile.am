@@ -3,7 +3,7 @@
 #
 
 
-SUBDIRS = tools exception parser checker compiler backend runtime debug xml verifier
+SUBDIRS = tools exception parser checker compiler optimizer backend runtime debug xml verifier
 
 javadir         = ${prefix}/classes/jtom
 

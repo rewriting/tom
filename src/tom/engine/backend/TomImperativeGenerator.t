@@ -77,12 +77,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       matchBlock: {
         %match(TomTerm elt) {
           VariableStar[] |
-          ExpressionToTomTerm(GetSliceList[]) |
-          Ref(Variable[]) |
+          Ref(VariableStar[]) |
           Composite(concTomTerm(VariableStar[])) |  
-          Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
-          Composite(concTomTerm(Variable[])) |
-          Composite(concTomTerm(Ref(Variable[]))) 
+          Composite(concTomTerm(Ref(VariableStar[]))) |  
+          ExpressionToTomTerm(GetSliceList[]) |
+          Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) 
             -> {
             output.write("tom_insert_list_" + name + "(");
             generate(deep,elt);
@@ -119,12 +118,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 			matchBlock: {
 				%match(TomTerm elt) {
           VariableStar[] |
-          ExpressionToTomTerm(GetSliceArray[]) |
-          Ref(Variable[]) |
+          Ref(VariableStar[]) |
           Composite(concTomTerm(VariableStar[])) |  
-          Composite(concTomTerm(ExpressionToTomTerm(GetSliceArray[]))) |
-          Composite(concTomTerm(Variable[])) |
-          Composite(concTomTerm(Ref(Variable[]))) 
+          Composite(concTomTerm(Ref(VariableStar[]))) |  
+          ExpressionToTomTerm(GetSliceArray[]) |
+          Composite(concTomTerm(ExpressionToTomTerm(GetSliceArray[]))) 
                                       -> {
 						output.write("tom_append_array_" + name + "(");
 						generate(deep,elt);
@@ -209,47 +207,45 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   protected void buildExpCast(int deep, TomType tlType, Expression exp) throws IOException {
-    output.write("((" + getTLCode(tlType) + ")");
-    generateExpression(deep,exp);
-    output.write(")");
+      /*
+        TomType expType = getTermType(exp);
+        if(expType.hasTlType() && expType.getTlType() == tlType) {
+        generateExpression(deep,exp);
+        } else {
+        output.write("((" + getTLCode(tlType) + ")");
+        generateExpression(deep,exp);
+        output.write(")");
+        }
+      */
+      output.write("((" + getTLCode(tlType) + ")");
+      generateExpression(deep,exp);
+      output.write(")");
   }
   
-  protected void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, 
+  protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
     output.write(deep,"{" + getTLCode(tlType) + " ");
-    generate(deep,var);
-    output.write(deep,"=");
-    generateExpression(deep,exp);
-    output.writeln(";");
-
-    if(debugMode && !list.isEmpty()) {
-      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
-      generate(deep,var);
-      output.write("\", ");
-      generate(deep,var); // generateExpression(out,deep,exp);
-      output.writeln(");");
-    }
+    buildAssignVar(deep,var,optionList,exp);
     generateInstruction(deep,body);
     output.writeln("}");
   }
 
-  protected void buildLetRef(int deep, TomTerm var, OptionList list,
-                             String type, TomType tlType, 
+  protected void buildLetRef(int deep, TomTerm var, OptionList optionList, TomType tlType, 
                              Expression exp, Instruction body) throws IOException {
-    buildLet(deep,var,list,type,tlType,exp,body);
+    buildLet(deep,var,optionList,tlType,exp,body);
   }
 
-  protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
-    output.indent(deep);
+  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException {
+      //output.indent(deep);
     generate(deep,var);
-    output.write(" = (" + getTLCode(tlType) + ") ");
+    output.write("=");
     generateExpression(deep,exp);
     output.writeln(";");
     if(debugMode && !list.isEmpty()) {
       output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
       generate(deep,var);
       output.write("\", ");
-      generate(deep,var); // generateExpression(out,deep,exp);
+      generateExpression(deep,exp);
       output.writeln(");");
     }
   }
@@ -294,6 +290,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
   protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException {
     output.write("((" + getTLType(codomain) + ")tom_get_head_" + getTomType(domain) + "(");
+      //output.write("tom_get_head_" + getTomType(domain) + "(");
     generate(deep,var);
     output.write("))");
   }
@@ -302,7 +299,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     TomType type = `TypesToType(concTomType(domain),codomain);
     String s = (String)getSubtermMap.get(type);
     if(s == null) {
-      s = "((" + getTLType(codomain) + ")tom_get_subterm_" + getTomType(domain) + "(";
+        s = "((" + getTLType(codomain) + ")tom_get_subterm_" + getTomType(domain) + "(";
+          //s = "tom_get_subterm_" + getTomType(domain) + "(";
       getSubtermMap.put(type,s);
     }
     output.write(s);

@@ -99,8 +99,7 @@ public class TomOptimizer extends TomTask {
         } else if(subject instanceof Instruction) {
           %match(Instruction subject) {
             
-            Let(var@Variable[astName=name],exp,body) |
-            Let(var@VariableStar[astName=name],exp,body) -> {
+            Let(var@(Variable|VariableStar)[astName=name],exp,body) -> {
               List list  = computeOccurences(name,body);
               int mult = list.size();
 
@@ -163,8 +162,7 @@ public class TomOptimizer extends TomTask {
         Expression expression = (Expression) arg2;
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) { 
-            Variable[astName=name] |
-            VariableStar[astName=name] |
+            (Variable|VariableStar)[astName=name] |
             BuildVariable[astName=name] -> {
               if(variableName == name) {
                 return `ExpressionToTomTerm(expression);
@@ -192,8 +190,7 @@ public class TomOptimizer extends TomTask {
         public boolean apply(ATerm t) {
           if(t instanceof TomTerm) {
             %match(TomTerm t) { 
-              Variable[astName=name] |
-              VariableStar[astName=name] |
+              (Variable|VariableStar)[astName=name] |
               BuildVariable[astName=name] -> {
                 if(variableName == name) {
                   list.add(t);
@@ -232,7 +229,7 @@ public class TomOptimizer extends TomTask {
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;
             %match(TomTerm t) { 
-              Ref(Variable[astName=name])  -> {
+              Ref((Variable|VariableStar)[astName=name])  -> {
                 collection.add(name);
                 return false;
               }

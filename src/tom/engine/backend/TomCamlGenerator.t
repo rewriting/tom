@@ -78,8 +78,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generateExpression(deep,exp);
   }
 
-  protected void buildLet(int deep, TomTerm var, OptionList list,
-                          String type, TomType tlType, 
+  protected void buildLet(int deep, TomTerm var, OptionList optionList,
+                          TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
 
     output.indent(deep);
@@ -91,10 +91,9 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generateInstruction(deep,body);
   }
 
-  protected void buildLetRef(int deep, TomTerm var, OptionList list,
-                          String type, TomType tlType, 
-                          Expression exp, Instruction body) throws IOException {
-
+  protected void buildLetRef(int deep, TomTerm var, OptionList optionList,
+                             TomType tlType, 
+                             Expression exp, Instruction body) throws IOException {
     output.indent(deep);
     output.write("let ");
     generate(deep,var);
@@ -104,7 +103,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generateInstruction(deep,body);
   }
 
-	protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
+	protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException {
 		output.indent(deep);
 		generate(deep,var);
 		output.write(" := ");

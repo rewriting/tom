@@ -80,10 +80,10 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 	protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
 	protected abstract void buildExpTrue(int deep) throws IOException;
 	protected abstract void buildExpFalse(int deep) throws IOException;
-	protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException ;
+	protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException ;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp) throws IOException;
-	protected abstract void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp, Instruction body) throws IOException ;
-	protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp, Instruction body) throws IOException ;
+	protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
+	protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
 	protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException ;
 	protected abstract void buildUnamedBlock(int deep, InstructionList instList) throws IOException ;
 	protected abstract void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException ;
@@ -136,17 +136,17 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
     output.write(" || ");
     generateExpression(deep,exp2);
   }
-  protected void buildExpEmptyList(int deep, TomType type1, TomTerm var) throws IOException {
-    output.write("tom_is_empty_" + getTomType(type1) + "(");
-    generate(deep,var);
+  protected void buildExpEmptyList(int deep, TomType type, TomTerm expList) throws IOException {
+    output.write("tom_is_empty_" + getTomType(type) + "(");
+    generate(deep,expList);
     output.write(")");
   }
 
-  protected void buildExpEmptyArray(int deep, TomType type1, TomTerm varIndex, TomTerm varArray) throws IOException {
-    generate(deep,varIndex);
+  protected void buildExpEmptyArray(int deep, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException {
+    generate(deep,expIndex);
     output.write(" >= ");
-    output.write("tom_get_size_" + getTomType(type1) + "(");
-    generate(deep,varArray);
+    output.write("tom_get_size_" + getTomType(type) + "(");
+    generate(deep,expArray);
     output.write(")");
   }
 

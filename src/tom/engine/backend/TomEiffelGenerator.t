@@ -115,28 +115,24 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		output.write(" false ");
   }
 
-  protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
+  protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
-    if(symbolTable().isBoolType(type) || symbolTable().isIntType(type) || symbolTable().isDoubleType(type)) {
-      output.write(" := ");
-    } else {
       //out.write(" ?= ");
-      String assignSign = " := ";
-      %match(Expression exp) {
-        GetSubterm[] -> {
-          assignSign = " ?= ";
-        }
+    String assignSign = " := ";
+    %match(Expression exp) {
+      GetSubterm[] -> {
+        assignSign = " ?= ";
       }
-      output.write(assignSign);
     }
+      output.write(assignSign);
     generateExpression(deep,exp);
     output.writeln(";");
     if(debugMode && !list.isEmpty()) {
       output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
       generate(deep,var);
       output.write("\", ");
-      generate(deep,var); // generateExpression(out,deep,exp);
+      generateExpression(deep,exp);
       output.writeln(");");
     }
   }
@@ -145,14 +141,14 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     generateExpression(deep,exp);
   }
 
-  protected void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, 
+  protected void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
     System.out.println("buildLet code not yet implemented");
     throw new TomRuntimeException(new Throwable("buildLet: Eiffel code not yet implemented"));
   }
 
-  protected void buildLetRef(int deep, TomTerm var, OptionList list,
-                             String type, TomType tlType, 
+  protected void buildLetRef(int deep, TomTerm var, OptionList optionList,
+                             TomType tlType, 
                              Expression exp, Instruction body) throws IOException {
     System.out.println("buildLetRef code not yet implemented");
     throw new TomRuntimeException(new Throwable("buildLetRef: Eiffel code not yet implemented"));
