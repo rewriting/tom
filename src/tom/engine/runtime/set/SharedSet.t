@@ -40,9 +40,19 @@ import jtom.runtime.Collect1;
 public class SharedSet extends ATermSet {
   %include { set.t }
   
-  public SharedSet(PureFactory fact) {
-    factory = new SetFactory(fact);
-   	emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
+  public SharedSet(int logSize) {
+    if (factory==null) {
+      factory = new SetFactory(logSize);
+    }
+    emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
+    this.tree = makeEmptySet();
+  }
+
+  public SharedSet() {
+    if (factory==null) {
+      factory = new SetFactory();
+    }
+    emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
     this.tree = makeEmptySet();
   }
   
@@ -285,7 +295,7 @@ public class SharedSet extends ATermSet {
     return false;
   }
 
-  protected JGTreeSet override(ATerm elt, Integer multiplicity, JGTreeSet t, int level) {
+  protected JGTreeSet override(ATerm elt, int multiplicity, JGTreeSet t, int level) {
     return override(elt, t, level);
   }
   

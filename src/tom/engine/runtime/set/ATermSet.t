@@ -32,12 +32,12 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+
 import jtom.runtime.Collect1;
 import jtom.runtime.GenericTraversal;
 import jtom.runtime.set.jgtreeset.JGTreeSet;
 import jtom.runtime.set.jgtreeset.SetFactory;
-import aterm.ATerm;
-import aterm.ATermAppl;
+import aterm.*;
 
 public abstract class ATermSet implements Collection {
 
@@ -51,7 +51,6 @@ public abstract class ATermSet implements Collection {
   protected int modCount = 0;
   protected static GenericTraversal traversal = new GenericTraversal();
 
-  static private Integer one = new Integer(1);
   static protected JGTreeSet emptyTree;
   static protected SetFactory factory = null;
   static protected int collisions = 0;
@@ -165,7 +164,7 @@ public abstract class ATermSet implements Collection {
   
   private boolean addATerm(ATerm elt) {
     JGTreeSet before = tree;
-    tree = override(elt, one, tree, 0);
+    tree = override(elt, 1, tree, 0);
     modCount++;
     return tree == before;
   }
@@ -229,7 +228,7 @@ public abstract class ATermSet implements Collection {
     return contains(elt, t, 0);
   }
   protected JGTreeSet add(ATerm elt, JGTreeSet t) {
-    return override(elt, new Integer(1), t, 0);
+    return override(elt, 1, t, 0);
   }
   
   protected JGTreeSet remove(ATerm elt, JGTreeSet t) {
@@ -296,7 +295,7 @@ public abstract class ATermSet implements Collection {
 
   protected abstract boolean contains(ATerm elt, JGTreeSet t, int level);
     
-  protected abstract JGTreeSet override(ATerm elt, Integer multiplicity, JGTreeSet t, int level);
+  protected abstract JGTreeSet override(ATerm elt, int multiplicity, JGTreeSet t, int level);
   
   protected abstract JGTreeSet underride(ATerm elt, JGTreeSet t, int level);
 

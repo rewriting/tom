@@ -40,8 +40,18 @@ import jtom.runtime.Collect1;
 public class SharedMultiSet extends ATermSet {
   %include { set.t }
   
-  public SharedMultiSet(PureFactory fact) {
-    factory = new SetFactory(fact);
+    public SharedMultiSet(int logSize) {
+    if (factory==null) {
+      factory = new SetFactory(logSize);
+    }
+    emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
+    this.tree = makeEmptySet();
+  }
+
+  public SharedMultiSet() {
+    if (factory==null) {
+      factory = new SetFactory();
+    }
     emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
     this.tree = makeEmptySet();
   }
@@ -89,11 +99,11 @@ public class SharedMultiSet extends ATermSet {
   }
   
   private JGTreeSet makePair(ATerm trm, int i) {
-    return getSetFactory().makeJGTreeSet_Pair(trm, new Integer(i));
+    return getSetFactory().makeJGTreeSet_Pair(trm, i);
   }
   
   private JGTreeSet makePair(ATerm trm, Integer i) {
-    return getSetFactory().makeJGTreeSet_Pair(trm, i);
+    return getSetFactory().makeJGTreeSet_Pair(trm, i.intValue());
   }
     // Low interface
   
@@ -114,7 +124,7 @@ public class SharedMultiSet extends ATermSet {
     %match(JGTreeSet t) {
       emptySet    -> { return 0; }
       pair[multiplicity=m] -> {
-        return m.intValue();
+        return m;
       }
       branch(l, r) -> {return multiplicitySize(l) + multiplicitySize(r);}
     }
@@ -311,7 +321,7 @@ public class SharedMultiSet extends ATermSet {
     return false;
   }
   
-  protected JGTreeSet override(ATerm elt, Integer multiplicity, JGTreeSet t, int level) {
+  protected JGTreeSet override(ATerm elt, int multiplicity, JGTreeSet t, int level) {
     int lev = level+1;
     %match(JGTreeSet t) {
       emptySet      -> {
@@ -319,7 +329,7 @@ public class SharedMultiSet extends ATermSet {
       }
 
       pair[value=x, multiplicity=mult]   -> {
-        if(x == elt) {  return makePair(elt, mult.intValue()+multiplicity.intValue());}
+        if(x == elt) {  return makePair(elt, mult+multiplicity);}
         else if( level >= depth ) {
           System.out.println("Collision!!!!!!!!");
           collisions++;
