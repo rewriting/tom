@@ -152,20 +152,15 @@ public class TomBase {
   %include { Tom.signature }
 // ------------------------------------------------------------
 
-  protected void debugPrintln(String s) {
-    if(debug) {
-      System.out.println(s);
-    }
-  }
-  
   protected String getTomType(TomType type) {
     %match(TomType type) {
       TomType(s) -> {return s;}
       TomTypeAlone(s) -> {return s;}
       Type(TomType(s),_) -> {return s;}
       EmptyType() -> {return null;}
-      _ -> {System.out.println("getTomType error on term: " + type);
-      System.exit(1);
+      _ -> {
+        System.out.println("getTomType error on term: " + type);
+        System.exit(1);
       }
     }
     return null;

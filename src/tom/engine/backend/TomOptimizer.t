@@ -151,7 +151,7 @@ public class TomOptimizer extends TomBase {
 		if (l1.getHead().isRenamedVar()) {
 		  AssignedVariable av = 
 		    new AssignedVariable(blockName+":tom"+numberListToIdentifier(l1),
-					 null,-1);
+					 `TomTermToExpression(Tom(empty())),-1);
 		  if (!list.contains(av)) {
 		    list.add(av);
 		    numberVarFound++;
@@ -290,7 +290,7 @@ public class TomOptimizer extends TomBase {
 		  if (av.name.equals(name1)) {
 		    if (av.numberOfUse==0) { // var is unused : no need to be declared
 		      //optimDebug("Removing declaration of "+name1);
-		      return `InstructionToTomTerm(Action(empty()));
+		      return `Tom(empty());
 		    } else {
 		      return t;
 		    }
@@ -338,29 +338,29 @@ public class TomOptimizer extends TomBase {
 		System.exit(1);
 		return null;
 	      }
-	      /*Variable[astName=PositionName(l1)] -> {
+	      Variable[astName=PositionName(l1)] -> {
 		Iterator iter = varList.iterator();
-		String name1 = ":tom"+numberListToIdentifier(l1);
-		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
+		String name1 = ":tom"+numberListToIdentifier(l1); 
+		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname 
 		  name1 = blockName+name1;
-		while (iter.hasNext()) {
-		  AssignedVariable av = (AssignedVariable) iter.next();
-		  if (av.name.equals(name1)) {
+		while (iter.hasNext()) { 
+		  AssignedVariable av = (AssignedVariable) iter.next(); 
+		  if (av.name.equals(name1)) { 
 		    if (av.numberOfUse==1) {
-		      return `ExpressionToTomTerm(av.source);
+		      return `ExpressionToTomTerm(av.source); 
 		    } else if (av.numberOfUse==0) {
-		      System.err.println("By construction, the variable should be used at least one time...");
+		      System.err.println("By construction, the variable should be used at least one time..."); 
 		      System.exit(1);
-		      return null;
+		      return null; 
 		    } else {
-		      return t;
-		    }
-		  }
+		      return t; 
+		    } 
+		  } 
 		}	
 		System.err.println("The variable wasn't added to the list when collecting...");
 		System.exit(1);
 		return null;
-		}*/
+		}
 	      CompiledMatch[] -> {
 		return replaceCompiledMatch((TomTerm) t, varList);
 	      }

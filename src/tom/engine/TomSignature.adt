@@ -128,7 +128,7 @@
   [TomTerm,Match,Match(<option(Option)>,<subjectList(TomTerm)>,<patternList(TomTerm)>) ],
   [TomTerm,MatchingCondition,MatchingCondition(<lhs(TomTerm)>,<rhs(TomTerm)>) ],
   [TomTerm,EqualityCondition,EqualityCondition(<lhs(TomTerm)>,<rhs(TomTerm)>) ],
-  [TomTerm,RuleSet,RuleSet(<option(Option)>, <list(TomList)>) ],
+  [TomTerm,RuleSet,RuleSetT(<option(Option)>, <list(TomList)>) ],
   [TomTerm,RewriteRule,
 	RewriteRule(<lhs(TomTerm)>, <rhs(TomTerm)>, <condList(TomList)>, <orgTrack(Option)>) ],
   [TomTerm,SubjectList,SubjectList(<list(TomList)>) ],
@@ -155,6 +155,7 @@
   [TomTerm,BuildArray,BuildArray(<astName(TomName)>,<args(TomList)>) ],
   [TomTerm,BuildBuiltin,BuildBuiltin(<astName(TomName)>) ],
   [TomTerm,CompiledMatch,CompiledMatch(<decls(TomList)>,<automataList(TomList)>) ],
+  [TomTerm,CompiledPattern,CompiledPattern(<instList(TomList)>) ],
 
   [TomTerm,Automata,Automata(<numberList(TomList)>,<instList(TomList)>) ],
 

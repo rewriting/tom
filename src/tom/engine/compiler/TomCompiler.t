@@ -639,7 +639,9 @@ public class TomCompiler extends TomBase {
         TomList newList = automataListCompileMatchingList(l);
         
         if(Flags.supportedGoto) {
-          return cons(`InstructionToTomTerm(NamedBlock(getBlockName(numberList), instList)), newList);
+          TomTerm compiledPattern = `CompiledPattern(cons(InstructionToTomTerm(NamedBlock(getBlockName(numberList), instList)),empty()));
+          
+          return cons(compiledPattern, newList);
         } else {
           TomList result = empty();
           TomTerm variableAST = getBlockVariable(numberList);
@@ -652,7 +654,7 @@ public class TomCompiler extends TomBase {
           if(Flags.supportedBlock) { // Test
             result = appendInstruction(`CloseBlock(),result);
           }
-          result = concat(result,newList);
+          result = cons(`CompiledPattern(result),newList);
           return result;
         }
       }

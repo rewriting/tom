@@ -197,6 +197,11 @@ public class TomGenerator extends TomBase {
         return;
       }
 
+      CompiledPattern(instList) -> {
+        generateList(out,deep,instList);
+        return;
+      }
+
       Variable(option1,PositionName(l1),type1) -> {
           //System.out.println("Variable(option1,PositionName(l1),type1)");
           //System.out.println("subject = " + subject);
