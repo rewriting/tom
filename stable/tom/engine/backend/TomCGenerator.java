@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -34,10 +34,10 @@ import jtom.TomEnvironment;
 public class TomCGenerator extends TomImperativeGenerator {
   
   public TomCGenerator(OutputCode output) {
-		super(output);
-		if(getInput().isStaticFunction()) {
-			this.modifier += "static " ;
-		}
+    super(output);
+    if(getInput().isStaticFunction()) {
+      this.modifier += "static " ;
+    }
   }
 
 // ------------------------------------------------------------
@@ -45,21 +45,21 @@ public class TomCGenerator extends TomImperativeGenerator {
 // ------------------------------------------------------------
 
   protected void buildExpTrue(int deep) throws IOException {
-		output.write(" 1 ");
+    output.write(" 1 ");
   }
   
   protected void buildExpFalse(int deep) throws IOException {
-		output.write(" 0 ");
+    output.write(" 0 ");
   }
 
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
-		output.writeln("{");
-		generateInstructionList(deep+1,instList);
-		output.writeln("}" + blockName +  ":;");
+    output.writeln("{");
+    generateInstructionList(deep+1,instList);
+    output.writeln("}" + blockName +  ":;");
   }
 
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
-		output.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
+    output.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
   }
 
   protected void buildSymbolDecl(int deep, String tomName) throws IOException {
@@ -118,9 +118,9 @@ public class TomCGenerator extends TomImperativeGenerator {
       output.writeln();
     } 
 
-		// inspect the optionList
+    // inspect the optionList
     generateOptionList(deep, optionList);
-		// inspect the slotlist
+    // inspect the slotlist
     generateSlotList(deep, slotList);
   }
 
@@ -133,34 +133,34 @@ public class TomCGenerator extends TomImperativeGenerator {
     TomType type1 = getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
     
-		// TODO: build an abstract declaration
-		int argno=1;
-		output.indent(deep);
-		if(!l.isEmpty()) {
-			output.write(getTLType(type1));
-			output.writeSpace();
-			output.write(name1);
-			if(!l.isEmpty()) {
-				output.writeOpenBrace();
-				while (!l.isEmpty()) {
-					output.write(getTLType(l.getHead()));
-					output.writeUnderscore();
-					output.write(argno);
-					argno++;
-					l = l.getTail() ;
-					if(!l.isEmpty()) {
-						output.writeComa();
-					}
-				}
-				output.writeCloseBrace();
-				output.writeSemiColon();
-			}
-		}
-		output.writeln();
+    // TODO: build an abstract declaration
+    int argno=1;
+    output.indent(deep);
+    if(!l.isEmpty()) {
+      output.write(getTLType(type1));
+      output.writeSpace();
+      output.write(name1);
+      if(!l.isEmpty()) {
+        output.writeOpenBrace();
+        while (!l.isEmpty()) {
+          output.write(getTLType(l.getHead()));
+          output.writeUnderscore();
+          output.write(argno);
+          argno++;
+          l = l.getTail() ;
+          if(!l.isEmpty()) {
+            output.writeComa();
+          }
+        }
+        output.writeCloseBrace();
+        output.writeSemiColon();
+      }
+    }
+    output.writeln();
     
-		// inspect the optionList
+    // inspect the optionList
     generateOptionList(deep, optionList);
-		// inspect the slotlist
+    // inspect the slotlist
     generateSlotList(deep, slotList);
   }
 
@@ -172,34 +172,34 @@ public class TomCGenerator extends TomImperativeGenerator {
     TomTypeList l = getSymbolDomain(tomSymbol);
     TomType type1 = getSymbolCodomain(tomSymbol);
     String name1 = tomSymbol.getAstName().getString();
-		// TODO: build an abstract declaration
-		int argno=1;
-		output.indent(deep);
-		if(!l.isEmpty()) {
-			output.write(getTLType(type1));
-			output.writeSpace();
-			output.write(name1);
-			if(!l.isEmpty()) {
-				output.writeOpenBrace();
-				while (!l.isEmpty()) {
-					output.write(getTLType(l.getHead()));
-					output.writeUnderscore();
-					output.write(argno);
-					argno++;
-					l = l.getTail() ;
-					if(!l.isEmpty()) {
-						output.writeComa();
-					}
-				}
-				output.writeCloseBrace();
-				output.writeSemiColon();
-			}
-		}
-		output.writeln();
+    // TODO: build an abstract declaration
+    int argno=1;
+    output.indent(deep);
+    if(!l.isEmpty()) {
+      output.write(getTLType(type1));
+      output.writeSpace();
+      output.write(name1);
+      if(!l.isEmpty()) {
+        output.writeOpenBrace();
+        while (!l.isEmpty()) {
+          output.write(getTLType(l.getHead()));
+          output.writeUnderscore();
+          output.write(argno);
+          argno++;
+          l = l.getTail() ;
+          if(!l.isEmpty()) {
+            output.writeComa();
+          }
+        }
+        output.writeCloseBrace();
+        output.writeSemiColon();
+      }
+    }
+    output.writeln();
     
-		// inspect the optionList
+    // inspect the optionList
     generateOptionList(deep, optionList);
-		// inspect the slotlist
+    // inspect the slotlist
     generateSlotList(deep, slotList);
   }
 

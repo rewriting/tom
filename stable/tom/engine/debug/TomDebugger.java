@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  * Julien Guyon
  *
  **/
@@ -107,15 +107,15 @@ public class TomDebugger {
       } catch (FileNotFoundException e) {
         e.printStackTrace();
         System.out.println("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found.");
-		    throw new TomRuntimeException(new Throwable("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found."));
+        throw new TomRuntimeException(new Throwable("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found."));
       } catch (Exception e) {
         e.printStackTrace();
         System.out.println("Exception during reading "+baseFileName[i]+debugTableSuffix);
-				try {
-  				input.close();
-				} catch(IOException e2) {
-  				throw new RuntimeException("in.close() failed");
-				}
+        try {
+          input.close();
+        } catch(IOException e2) {
+          throw new RuntimeException("in.close() failed");
+        }
       }
     }
   }
@@ -924,7 +924,7 @@ public class TomDebugger {
       TomTerm struct = list.getHead();
       System.out.println("Warning: analyseStructure has to be re-implemented");
       if (false /*struct.isMatch()*/) {
-      	/*
+        /*
           // The only present option in the list is the orgTack
         Option orgTrack = struct.getOption().getHead();
         String fileName = orgTrack.getFileName().getString();
@@ -952,7 +952,7 @@ public class TomDebugger {
         int line = struct.getOrgTrack().getLine();
         String key = fileName+line;
         System.out.println(struct);
-				TomRuleList paList = struct.getRuleList();
+        TomRuleList paList = struct.getRuleList();
         int nbPatterns =  paList.getLength();
         int nbSubjects = struct.getTomList().getHead().getLhs().getTomTerm().getArgs().getLength();
         String[] patternText = new String[nbPatterns];
@@ -971,7 +971,7 @@ public class TomDebugger {
         */
       } else {
         System.out.println("Corrupt debug term");
-		    throw new TomRuntimeException(new Throwable("Corrupt debug term"));
+        throw new TomRuntimeException(new Throwable("Corrupt debug term"));
       } 
       list = list.getTail();
     }

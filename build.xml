@@ -669,7 +669,6 @@
 									file2="${src.src}/bootcheck/version2"/>
 		</condition>
 		<delete dir="${src.src}/bootcheck"/>
-    <delete dir="${bootstrap.dir}"/>
 	</target>
 	
   <target name="performbootstrap" depends="stable, clean.src">

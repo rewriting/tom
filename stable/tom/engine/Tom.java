@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -439,15 +439,15 @@ public class Tom {
     reinit(inputFileName);
     TomTask initialTask = createTaskChainFromInput();
     if (initialTask != null) {
-    	initialTask.startProcess();
+      initialTask.startProcess();
     }
   }
 
   public static void main(String args[]) {
-		exec(args);
-	}
+    exec(args);
+  }
 
-	public static int exec(String args[]) {
+  public static int exec(String args[]) {
     Tom tom = Tom.getInstance();
     tom.init(args);
     
@@ -473,11 +473,11 @@ public class Tom {
       String inputFileName = (String)it.next();
       tom.run(inputFileName);
     }
-		
+    
     if (!tom.environment().checkNoErrors("Tom.Main", 
-					getInput().isEclipseMode(), 
-					getInput().isWarningAll(), 
-					getInput().isNoWarning())) {
+          getInput().isEclipseMode(), 
+          getInput().isWarningAll(), 
+          getInput().isNoWarning())) {
       return 1;
     } 
     else {

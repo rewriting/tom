@@ -20,7 +20,7 @@
 }
 
 %typeterm TNode{
-  implement { TNode}
+  implement { jtom.adt.tnode.types.TNode}
   get_fun_sym(t) {null}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
@@ -120,7 +120,7 @@
 }
 
 %typelist TNodeList{
-  implement { TNodeList}
+  implement { jtom.adt.tnode.types.TNodeList}
   get_fun_sym(t) {null}
   cmp_fun_sym(s1,s2) { false}
   equals(t1,t2) {t1.equals(t2)}

@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  * Julien Guyon
  *
  **/
@@ -33,7 +33,7 @@ import jtom.tools.TomTaskInput;
 public class TomSyntaxChecker extends TomChecker {
 
   public TomSyntaxChecker() {
-  	super("Tom SyntaxChecker");
+    super("Tom SyntaxChecker");
   }
   
   /**
@@ -41,21 +41,21 @@ public class TomSyntaxChecker extends TomChecker {
    */
   public void process() {
     try {
-			long startChrono = 0;
-			if(verbose) {
-				startChrono = System.currentTimeMillis();
-			}
-			checkSyntax(environment().getTerm());
-			
-	  	if(verbose) {
-		  	System.out.println("TOM syntax Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-	  	}
+      long startChrono = 0;
+      if(verbose) {
+        startChrono = System.currentTimeMillis();
+      }
+      checkSyntax(environment().getTerm());
+      
+      if(verbose) {
+        System.out.println("TOM syntax Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      }
     } catch (Exception e) {
-			addError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-			e.printStackTrace();
-			return;
+      addError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      e.printStackTrace();
+      return;
     }
-		
+    
   }
 
 } // Class TomSyntaxChecker

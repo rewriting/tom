@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.HashSet;
 
 public class TestAddressBook extends TestCase {
-  private AddressBook test;
+  private AddressBook1 test;
   private HashSet book;
   private Factory factory;
 
@@ -22,7 +22,7 @@ public class TestAddressBook extends TestCase {
 
   public void setUp() {
     factory = new Factory(new PureFactory());
-    test = new AddressBook(factory);
+    test = new AddressBook1(factory);
     book = new HashSet();
     test.generatePerson(book);
   }

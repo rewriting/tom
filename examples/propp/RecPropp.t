@@ -8,7 +8,7 @@ import Propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
-public class RecPropp extends Propp {
+public class RecPropp extends Propp1 {
 
 	private Factory factory;
 

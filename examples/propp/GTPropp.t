@@ -10,7 +10,7 @@ import Propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
-public class GTPropp extends Propp {
+public class GTPropp extends Propp1 {
 
 	private Factory factory;
 	private GenericTraversal traversal;

@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -121,7 +121,7 @@ public class ASTFactory {
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       Constraint term;
-			term = (Constraint)elt;
+      term = (Constraint)elt;
       list = tsf().makeConstraintList(term,list);
     }
     return list;
@@ -201,13 +201,13 @@ public class ASTFactory {
     return list;
   }
 
-	public Constraint makeAssignTo(TomName name,int line, String fileName) {
-		return tsf().makeConstraint_AssignTo(tsf().makeTomTerm_Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
-					name,
-					tsf().makeTomType_TomTypeAlone("unknown type"),
-					tsf().makeConstraintList()));
-	}
-	
+  public Constraint makeAssignTo(TomName name,int line, String fileName) {
+    return tsf().makeConstraint_AssignTo(tsf().makeTomTerm_Variable(makeOption(makeOriginTracking(name.getString(), line , fileName)),
+          name,
+          tsf().makeTomType_TomTypeAlone("unknown type"),
+          tsf().makeConstraintList()));
+  }
+  
   public OptionList makeOption(Option arg, Option info) {
     OptionList list = tsf().makeOptionList();
     if(arg!= null) {
@@ -217,7 +217,7 @@ public class ASTFactory {
     return list;
   }
 
-	public Option makeOriginTracking(String name, int line , String fileName) {
+  public Option makeOriginTracking(String name, int line , String fileName) {
     return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), line, tsf().makeTomName_Name( fileName));
   }
   
@@ -362,13 +362,13 @@ public class ASTFactory {
             Option info = makeOriginTracking(Constants.TEXT_NODE,-1,"??");
             TomList list = tsf().makeTomList();
             list = tsf().makeTomList(term,list);
-						NameList nameList = tsf().makeNameList();
-						nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.TEXT_NODE));
+            NameList nameList = tsf().makeNameList();
+            nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.TEXT_NODE));
             term = tsf().makeTomTerm_Appl(
               makeOption(info),
-							nameList,
-							list,
-							tsf().makeConstraintList());
+              nameList,
+              list,
+              tsf().makeConstraintList());
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }

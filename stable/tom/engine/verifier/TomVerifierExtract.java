@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  * Antoine Reilles
  *
  **/
@@ -40,7 +40,7 @@ public class TomVerifierExtract extends TomTask {
   public TomVerifierExtract() { 
     super("Tom verifier");
   }
-	
+  
   public TomVerifierExtract(String name) {
     super(name);
   }

@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class TestPropp extends TestCase {
-  private Propp test;
+  private Propp1 test;
   private Factory factory;
 
 	public static void main(String[] args) {
@@ -22,7 +22,7 @@ public class TestPropp extends TestCase {
 
   public void setUp() {
     factory = new Factory(new PureFactory());
-    test = new Propp(factory);
+    test = new Propp1(factory);
   }
 
   %include { seq.tom }

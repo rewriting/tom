@@ -10,7 +10,7 @@ import Propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
-public class Propp {
+public class Propp1 {
 
 	private Factory factory;
 	private GenericTraversal traversal;
@@ -19,12 +19,12 @@ public class Propp {
 	%include { seq.tom }
 	// ------------------------------------------------------------
 
-	public Propp() {
+	public Propp1() {
 		this(new Factory(new PureFactory()));
 		this.traversal = new GenericTraversal();
 	}
 
-	public Propp(Factory factory) {
+	public Propp1(Factory factory) {
 		this.factory = factory;
 		this.traversal = new GenericTraversal();
 	}
@@ -552,7 +552,7 @@ public class Propp {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		Propp test = new Propp(new Factory(new PureFactory()));
+		Propp1 test = new Propp1(new Factory(new PureFactory()));
 
 		String query ="";
 		try {

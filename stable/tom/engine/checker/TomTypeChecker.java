@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  * Julien Guyon
  *
  **/
@@ -33,23 +33,23 @@ import jtom.tools.TomTaskInput;
 public class TomTypeChecker extends TomChecker {
 
   public TomTypeChecker() {
-  	super("Tom TypeChecker");	
+    super("Tom TypeChecker"); 
   }
-	
+  
   public void process() {
     try {
-		  long startChrono = 0;
-		  if(verbose) { startChrono = System.currentTimeMillis();
-		  		  	}
-			checkTypeInference(environment().getTerm());
-	  	
-	  	if(verbose) {
-	    	System.out.println("TOM type Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-	  	}
+      long startChrono = 0;
+      if(verbose) { startChrono = System.currentTimeMillis();
+              }
+      checkTypeInference(environment().getTerm());
+      
+      if(verbose) {
+        System.out.println("TOM type Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      }
     } catch (Exception e) {
-			addError("Exception occurs in TomTypeChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-			e.printStackTrace();
-			return;
+      addError("Exception occurs in TomTypeChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      e.printStackTrace();
+      return;
     }
   }
 

@@ -20,7 +20,7 @@
 }
 
 %typeterm JGTreeSet{
-  implement { JGTreeSet}
+  implement { jtom.adt.set.types.JGTreeSet}
   get_fun_sym(t) {null}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}

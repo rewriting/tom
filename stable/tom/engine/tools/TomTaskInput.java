@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -251,7 +251,7 @@ public class TomTaskInput {
   public void setDoCheck(boolean b) {
     doCheck = b;
   }
-	
+  
   public boolean isDoExpand() {
     return doExpand;
   }
@@ -265,7 +265,7 @@ public class TomTaskInput {
   public void setDoOnlyCompile(boolean b) {
     doOnlyCompile = b;
   }
-	
+  
   public boolean isDoCompile() {
     return doCompile;
   }
@@ -411,35 +411,35 @@ public class TomTaskInput {
     help = b;
   }
 
-	public String getInputSuffix() {
-		return inputSuffix;
-	}
+  public String getInputSuffix() {
+    return inputSuffix;
+  }
   
-	public void setInputSuffix(String inputSuffix) {
-		this.inputSuffix = inputSuffix;
-	}
+  public void setInputSuffix(String inputSuffix) {
+    this.inputSuffix = inputSuffix;
+  }
 
-	public void setPackagePath(String packagePath) {
-		this.packagePath = packagePath.replace('.',File.separatorChar);
-	}
-	
-	public String getPackagePath() {
-		return packagePath;
-	}
+  public void setPackagePath(String packagePath) {
+    this.packagePath = packagePath.replace('.',File.separatorChar);
+  }
+  
+  public String getPackagePath() {
+    return packagePath;
+  }
 
-	public void setDestDir(String destDir) {
+  public void setDestDir(String destDir) {
     try {
       this.destDir = new File(destDir).getCanonicalFile();
     } catch (IOException e) {
       System.out.println("IO Exception using file `" + destDir + "`");
       e.printStackTrace();
     }
-	}
-	
-	public File getDestDir() {
+  }
+  
+  public File getDestDir() {
     //System.out.println("getDestDir = " + destDir);
-		return destDir;
-	}
+    return destDir;
+  }
 
   public void setInputFile(String sInputFile) {
     try {
@@ -449,19 +449,19 @@ public class TomTaskInput {
       e.printStackTrace();
     }
 
-	}
-	
-	public File getInputFile() {
+  }
+  
+  public File getInputFile() {
     //System.out.println("getInputFile = " + inputFile);
-		return inputFile;
-	}
+    return inputFile;
+  }
 
-	public String getInputFileNameWithoutSuffix() {
+  public String getInputFileNameWithoutSuffix() {
     String inputFileName = getInputFile().getPath();
     String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
     //System.out.println("getInputFileNameWithoutSuffix = " + res);
     return res;
-	}
+  }
 
   public void setOutputFile(String sOutputFile) {
     try {
@@ -471,12 +471,12 @@ public class TomTaskInput {
       System.out.println("IO Exception using file `" + sOutputFile + "`");
       e.printStackTrace();
     }
-	}
-	
-	public File getOutputFile() {
+  }
+  
+  public File getOutputFile() {
     //System.out.println("getOutputFile = " + outputFile);
-		return outputFile;
-	}
+    return outputFile;
+  }
 
     /*
      * update the outputFile by inserting the packagePath

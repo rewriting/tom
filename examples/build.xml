@@ -77,7 +77,7 @@
   <property name="rbtree" value="RBTree"/>
   <property name="rbtree.dir" location="${examples.dir}/${rbtree}" />
 
-  <property name="set" value="Set"/>
+  <property name="set" value="set"/>
   <property name="set.dir" location="${examples.dir}/${set}" />
 
   <property name="vas" value="Vas"/>

@@ -1,11 +1,11 @@
-package Set;
+package set;
 
 import java.util.*;
 
 import aterm.*;
 import aterm.pure.*;
-import Set.jgset.*;
-import Set.jgset.types.*;
+import set.jgset.*;
+import set.jgset.types.*;
 
 import jtom.runtime.GenericTraversal;
 import jtom.runtime.Replace1;

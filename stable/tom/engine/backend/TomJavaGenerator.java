@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -36,11 +36,11 @@ import jtom.TomEnvironment;
 public class TomJavaGenerator extends TomImperativeGenerator {
    
   public TomJavaGenerator(OutputCode output) {
-		super(output);
-		if(getInput().isStaticFunction()) {
-			this.modifier += "static " ;
-		}
-		this.modifier += "public " ;
+    super(output);
+    if(getInput().isStaticFunction()) {
+      this.modifier += "static " ;
+    }
+    this.modifier += "public " ;
   }
 
 // ------------------------------------------------------------
@@ -52,9 +52,9 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   }
   
   protected void buildExpFalse(int deep) throws IOException {
-		output.write(" false ");
+    output.write(" false ");
   }
-	 
+   
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
     output.writeln(blockName + ": {");
     generateInstructionList(deep+1,instList);

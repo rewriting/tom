@@ -8,23 +8,22 @@ import AddressBook.data.types.*;
 import java.util.Iterator;
 import java.util.HashSet;
 
-public class AddressBook {
+public class AddressBook1 {
   private Factory factory;
-
   private HashSet book;
-
+   
   %include { data.tom }
-  
-  public AddressBook(Factory factory) {
+ 
+  public AddressBook1(Factory factory) {
     this.factory = factory;
   }
-
+ 
   public Factory getDataFactory() {
     return factory;
   }
 
   public final static void main(String[] args) {
-    AddressBook test = new AddressBook(new Factory(new PureFactory()));
+    AddressBook1 test = new AddressBook1(new Factory(new PureFactory()));
     test.run();
   }
   
@@ -38,7 +37,7 @@ public class AddressBook {
       happyBirthday(p, `date(2004,3,27));
     }
   }
-
+ 
   public void happyBirthday(Person p, Date today) {
     %match(Person p, Date today) {
       person(firstname, _ ,date(year,month1,day1)),
@@ -55,6 +54,5 @@ public class AddressBook {
     set.add(`person("Marie","Muller",date(1986,3,26)));
     set.add(`person("Paul","Muller",date(2000,1,27)));
 	}
-
+  
 }
-
