@@ -1,3 +1,12 @@
+2003-03-14  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/runtime/GenericTraversal.java: 
+	  - do not longer use exceptions in TomChecker
+	  - put all traversal function in runtime.GenericTraversal
+	  - extends the generic traversal mechanism apply functions with n
+	    arguments
+	  - removed traversal functions from TomBase and TomExpander
+
 2003-02-26  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
 	* src/jtom/backend/TomGenerator.t: fix a problem in GenDeclMake
