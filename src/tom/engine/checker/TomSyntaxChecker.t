@@ -189,7 +189,7 @@ public class TomSyntaxChecker extends TomChecker {
               Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
                 /*  TOM MATCH STRUCTURE*/
                 `verifyMatch(matchArgsList, patternInstructionList, list);
-                return false;
+                return true;
               }
               RuleSet(list, orgTrack) -> {
                 /*  TOM RULE STRUCTURE*/

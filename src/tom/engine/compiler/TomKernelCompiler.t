@@ -230,6 +230,7 @@ public class TomKernelCompiler extends TomBase {
       manyTomList(currentTerm@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs,constraints=constraints],termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,indexTerm+1);
         TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`tomName);
+
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         
           // SUCCES
