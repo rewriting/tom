@@ -1,7 +1,7 @@
 package tom.platform;
 
 import java.util.*;
-import tom.library.adt.tnode.types.*;
+import tom.library.adt.tnode.types.TNode;
 
 /**
  *
