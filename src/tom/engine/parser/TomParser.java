@@ -29,21 +29,19 @@ package jtom.parser;
 import java.io.*;
 import java.util.*;
 import java.text.*;
+import jtom.TomEnvironment;
 import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
 import jtom.checker.TomCheckerMessage;
 import jtom.xml.Constants;
-import java.lang.Throwable;
 
-public class TomParser implements TomTask, TomParserConstants {
+public class TomParser extends TomTask implements TomParserConstants {
   private int oldPos=0;
   private int oldLine=0;
   private int includeOffSet=0;
   private Position orgTrack;
   private TomBuffer tomBuffer;
-  private SymbolTable symbolTable;
-  private jtom.TomEnvironment environment;
   private TomBackQuoteParser tomBackQuoteParser;
   private TomFactory tomFactory;
   private File importList[];
@@ -52,19 +50,24 @@ public class TomParser implements TomTask, TomParserConstants {
   private LinkedList debuggedStructureList;
   private String text="";
   private TomTask nextTask;
-  private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false, eclipse = false;
+  private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
 
-   public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet,
+   public TomParser(TomBuffer input, TomEnvironment environment, File importList[], int includeOffSet,
                                                         String fileName)  {
           this(input, environment, importList, includeOffSet, fileName, new HashSet());
   }
 
-  public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet,
+  private TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet,
                                                         String fileName, HashSet alreadyParsedFiles) {
-    this(input);
+    super("Tom Parser", environment);
+    jj_input_stream = new JavaCharStream(input, 1, 1);
+    token_source = new TomParserTokenManager(jj_input_stream);
+    token = new Token();
+    jj_ntk = -1;
+    jj_gen = 0;
+    for (int i = 0; i < 64; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
     this.tomBuffer = input;
-    this.symbolTable = environment.getSymbolTable();
-    this.environment = environment;
     this.importList = importList;
     this.includeOffSet = includeOffSet;
     this.orgTrack = makePosition(1,1);
@@ -73,11 +76,6 @@ public class TomParser implements TomTask, TomParserConstants {
     this.tomBackQuoteParser = new TomBackQuoteParser(environment);
     this.tomFactory = new TomFactory(environment);
     includedFiles = alreadyParsedFiles;
-  }
-
-  private void addError(TomTaskInput taskInput, String msg, String file, int line, int level) {
-        TomError err = tsf().makeTomError_Error(msg,file,line,level);
-        taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
   }
 
   private void testIncludedFiles(String fileName) throws TomIncludeException {
@@ -89,81 +87,47 @@ public class TomParser implements TomTask, TomParserConstants {
     }
   }
 
-  public void addTask(TomTask task) {
-        this.nextTask = task;
+  public void initProcess() {
+    debugMode = getInput().isDebugMode();
+    debugMemory = getInput().isDebugMemory();
+    pretty = getInput().isPretty();
+    noWarning = getInput().isNoWarning();
   }
 
-  public void process(TomTaskInput input) {
+  public void process() {
         try {
-            debugMode = input.isDebugMode();
-            debugMemory = input.isDebugMemory();
-            pretty = input.isPretty();
-            noWarning = input.isNoWarning();
-            eclipse = input.isEclipseMode();
                 long startChrono = 0;
-                boolean verbose = input.isVerbose(), intermediate = input.isIntermediate();
-                if(verbose) {
-                        startChrono = System.currentTimeMillis();
-                }
+                boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate();
+                if(verbose) { startChrono = System.currentTimeMillis();}
+
                 TomTerm parsedTerm = startParsing();
+
                 if(verbose) {
                         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
                 }
         if(intermediate) {
-            Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
-            Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable.toTerm());
+            Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
+            Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
         }
 
-        if(input.isDebugMode()) {
-                        Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.debugTableSuffix, getStructTable());
+        if(getInput().isDebugMode()) {
+                        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.debugTableSuffix, getStructTable());
                 }
 
                 // Update taskInput
-                input.setTerm(parsedTerm);
+                getInput().setTerm(parsedTerm);
+
         } catch (TomIncludeException e) {
-          if(eclipse) {
-                addError(input, e.getMessage(), currentFile,  getLine(), 0);
-          }
-          System.out.println(e.getMessage());
-          return;
+          addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
         } catch (TomException e) {
-          System.out.println(e.toString());
-      if(eclipse) {
-                addError(input, e.getMessage(), currentFile,  getLine(), 0);
-          }
-          return;
+          addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
         } catch (ParseException e) {
           String msg = "Parsing exception catched in file `"+currentFile+"`\n"+e.getMessage();
-          System.out.println(msg);
-          if(eclipse) {
-                addError(input, e.getMessage(), currentFile, getLine(), 0);
-          }
-          return;
+          addError(e.getMessage(), currentFile, getLine(), TomCheckerMessage.TOM_ERROR);
         } catch (Exception e) {
-          System.out.println("Unhandled exception occurs during parsing.");
-          e.printStackTrace();
-          addError(input, "Exception occurs in TomParser"+e.getMessage(), currentFile, 0, 0);
-          return;
+          String msg = "Unhandled exception occurs during parsing: "+e.getMessage();
+          addError(msg, currentFile, 0, TomCheckerMessage.TOM_ERROR);
         }
-        if(nextTask != null) {
-      nextTask.process(input);
-    }
-  }
-
-  public TomTask getTask() {
-        return nextTask;
-  }
-
-  public jtom.TomEnvironment environment() {
-    return environment;
-  }
-
-  public TomSignatureFactory tsf() {
-    return environment.getTomSignatureFactory();
-  }
-
-  public ASTFactory ast() {
-    return environment.getASTFactory();
   }
 
   private int getLine() {
@@ -185,16 +149,12 @@ public class TomParser implements TomTask, TomParserConstants {
     return string;
   }
 
-  private TomSymbol getSymbol(String name) {
-    return symbolTable.getSymbol(name);
-  }
-
   private void putSymbol(String name, TomSymbol symbol) {
-    symbolTable.putSymbol(name,symbol);
+    symbolTable().putSymbol(name,symbol);
   }
 
   private void putType(String name, TomType type) {
-    symbolTable.putType(name,type);
+    symbolTable().putType(name,type);
   }
 
   private void switchToTomMode() {
@@ -532,13 +492,13 @@ public class TomParser implements TomTask, TomParserConstants {
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       switch(name.kind) {
           case TOM_INTEGER:
-            ast().makeIntegerSymbol(symbolTable,name.image,optionList);
+            ast().makeIntegerSymbol(symbolTable(),name.image,optionList);
             break;
           case TOM_DOUBLE:
-            ast().makeDoubleSymbol(symbolTable,name.image,optionList);
+            ast().makeDoubleSymbol(symbolTable(),name.image,optionList);
             break;
           case TOM_STRING:
-            ast().makeStringSymbol(symbolTable,name.image,optionList);
+            ast().makeStringSymbol(symbolTable(),name.image,optionList);
             break;
           default:
       }
@@ -1028,7 +988,7 @@ public class TomParser implements TomTask, TomParserConstants {
                * Appl(...,Name(""),args)
                */
             if(tomFactory.isExplicitTermList(childs)) {
-              childs = tomFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
+              childs = tomFactory.metaEncodeExplicitTermList(symbolTable(), (TomTerm)childs.getFirst());
             } else {
               optionList.add(tsf().makeOption_ImplicitXMLChild());
             }
@@ -1111,7 +1071,7 @@ public class TomParser implements TomTask, TomParserConstants {
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
       if(string) {
-        ast().makeStringSymbol(symbolTable,name.image,optionList);
+        ast().makeStringSymbol(symbolTable(),name.image,optionList);
       }
       nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
       {if (true) return tsf().makeTomTerm_Appl(
@@ -1133,7 +1093,7 @@ public class TomParser implements TomTask, TomParserConstants {
     }
       it = childs.iterator();
       while(it.hasNext()) {
-        list.add(tomFactory.metaEncodeXMLAppl(symbolTable,(TomTerm)it.next()));
+        list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),(TomTerm)it.next()));
       }
       {if (true) return implicit;}
     throw new Error("Missing return statement in function");
@@ -1249,7 +1209,7 @@ public class TomParser implements TomTask, TomParserConstants {
           jj_consume_token(TOM_EQUAL);
                                        text+="=";
           term = AnnotedTerm();
-        name = tomFactory.encodeXMLString(symbolTable,id.image);
+        name = tomFactory.encodeXMLString(symbolTable(),id.image);
         nameList = tsf().makeNameList(tsf().makeTomName_Name(name));
         termName = tsf().makeTomTerm_Appl(ast().makeOption(),nameList,tsf().makeTomList());
         } else {
@@ -1281,7 +1241,7 @@ public class TomParser implements TomTask, TomParserConstants {
       list.add(termName);
         // we add the specif value : _
       list.add(tsf().makeTomTerm_Placeholder(ast().makeOption()));
-      list.add(tomFactory.metaEncodeXMLAppl(symbolTable,term));
+      list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
       optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
 
@@ -1582,14 +1542,15 @@ public class TomParser implements TomTask, TomParserConstants {
           ;
         }
         typeArg = jj_consume_token(TOM_IDENTIFIER);
+          astName = ast().makeName(stringSlotName);
           if (!stringSlotName.equals("")) {
-            if(slotNameList.indexOf(stringSlotName) != -1) {
+            if(slotNameList.indexOf(astName) != -1) {
               String detailedMsg = MessageFormat.format(TomCheckerMessage.RepeatedSlotName, new Object[]{stringSlotName});
               String msg = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(orgTrack.getLine()), "%op "+type.image, new Integer(orgTrack.getLine()), currentFile, detailedMsg});
               {if (true) throw new TomException(msg);}
             }
           }
-          slotNameList.add(ast().makeName(stringSlotName));
+          slotNameList.add(astName);
               types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
       }
       jj_consume_token(TOM_RPAREN);
@@ -1625,9 +1586,14 @@ public class TomParser implements TomTask, TomParserConstants {
           mapNameDecl.put(sName,attribute);
         }
         else {
-          String detailedMsg = MessageFormat.format(TomCheckerMessage.WarningTwoSameSlotDecl, new Object[]{sName.getString()});
-          String msg = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(attribute.getOrgTrack().getLine()), "%op "+type.image, new Integer(orgTrack.getLine()), currentFile, detailedMsg});
-          System.out.println(msg);
+          messageError(attribute.getOrgTrack().getLine(),
+                     currentFile,
+                     "%op "+type.image,
+                     orgTrack.getLine(),
+                     TomCheckerMessage.WarningTwoSameSlotDecl,
+                     new Object[]{sName.getString()},
+                     TomCheckerMessage.TOM_WARNING
+                     );
         }
         break;
       case TOM_IS_FSYM:
@@ -1652,6 +1618,14 @@ public class TomParser implements TomTask, TomParserConstants {
         } else {
           Declaration decl = (Declaration)mapNameDecl.get(name1);
           if(decl == null) {
+             messageError(orgTrack.getLine(),
+                         currentFile,
+                         "%op "+type.image,
+                         orgTrack.getLine(),
+                         TomCheckerMessage.WarningMissingSlotDecl,
+                         new Object[]{name1.getString()},
+                         TomCheckerMessage.TOM_WARNING
+                         );
             decl = emptyDeclaration;
           }
           else {
@@ -1663,14 +1637,15 @@ public class TomParser implements TomTask, TomParserConstants {
       }
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
-        if(!noWarning) {
-          Iterator it = mapNameDecl.keySet().iterator();
-          while(it.hasNext()) {
-            TomName remainingSlot = (TomName) it.next();
-                String detailedMsg = MessageFormat.format(TomCheckerMessage.WarningIncompatibleSlotDecl, new Object[]{remainingSlot.getString()});
-                String msg = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()), "%op "+type.image, new Integer(orgTrack.getLine()), currentFile, detailedMsg});
-                System.out.println(msg);
-                }
+        Iterator it = mapNameDecl.keySet().iterator();
+        while(it.hasNext()) {
+           TomName remainingSlot = (TomName) it.next();
+           messageError(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
+                     currentFile,
+                     "%op "+type.image,
+                     orgTrack.getLine(),
+                     TomCheckerMessage.WarningIncompatibleSlotDecl, new Object[]{remainingSlot.getString()},
+                     TomCheckerMessage.TOM_WARNING);
         }
       }
 
@@ -2561,55 +2536,6 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(11, xla); }
   }
 
-  final private boolean jj_3R_43() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_45()) {
-    jj_scanpos = xsp;
-    if (jj_3R_46()) {
-    jj_scanpos = xsp;
-    if (jj_3R_47()) {
-    jj_scanpos = xsp;
-    if (jj_3R_48()) return true;
-    }
-    }
-    }
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_2()) jj_scanpos = xsp;
-    if (jj_3R_28()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_28() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_34()) jj_scanpos = xsp;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_5() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_3()) {
-    jj_scanpos = xsp;
-    if (jj_3R_30()) return true;
-    }
-    return false;
-  }
-
   final private boolean jj_3R_41() {
     if (jj_3R_44()) return true;
     return false;
@@ -2707,12 +2633,6 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_12() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_31() {
     if (jj_scan_token(TOM_LBRACKET)) return true;
     Token xsp;
@@ -2789,12 +2709,6 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_11() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3_2() {
     if (jj_3R_27()) return true;
     return false;
@@ -2803,6 +2717,67 @@ public class TomParser implements TomTask, TomParserConstants {
   final private boolean jj_3R_30() {
     if (jj_3R_27()) return true;
     if (jj_3R_35()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_11() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_43() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_45()) {
+    jj_scanpos = xsp;
+    if (jj_3R_46()) {
+    jj_scanpos = xsp;
+    if (jj_3R_47()) {
+    jj_scanpos = xsp;
+    if (jj_3R_48()) return true;
+    }
+    }
+    }
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_2()) jj_scanpos = xsp;
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_28() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_34()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_12() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_5() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_3R_30()) return true;
+    }
     return false;
   }
 

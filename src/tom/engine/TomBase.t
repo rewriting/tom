@@ -41,9 +41,10 @@ public class TomBase {
   private TomEnvironment tomEnvironment;
   private TomList empty;
   private GenericTraversal traversal;
-  
-  protected final static boolean debug = false;
 
+	public TomBase() {
+	}
+	
   public TomBase(TomEnvironment tomEnvironment) {
     this.tomEnvironment = tomEnvironment;
     this.empty = tomEnvironment.getTomSignatureFactory().makeTomList();
@@ -53,7 +54,11 @@ public class TomBase {
   protected ASTFactory ast() {
     return tomEnvironment.getASTFactory();
   }
-
+	
+	protected TomEnvironment environment() {
+		return tomEnvironment;
+	}
+	
   protected TomSignatureFactory tsf() {
     return tomEnvironment.getTomSignatureFactory();
   }
@@ -576,11 +581,6 @@ public class TomBase {
     }
     System.out.println("findOriginTracking:  not found" + optionList);
     throw new TomRuntimeException(new Throwable("findOriginTracking:  not found" + optionList));
-  }
-   
-  protected void addError(TomTaskInput taskInput, String msg, String file, int line, int level) {
-    TomError err = `Error(msg,file,line,level);
-    taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
   }
 
 }

@@ -24,8 +24,7 @@ Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
 */
 
   package jtom.backend;
-  
-import jtom.TomBase;
+
 import jtom.adt.*;
 import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
@@ -34,53 +33,43 @@ import jtom.tools.TomTaskInput;
 import jtom.tools.Tools;
 import aterm.ATerm;
 import jtom.exception.TomRuntimeException;
+import jtom.TomEnvironment;
 
-public class TomOptimizer extends TomBase implements TomTask {
+public class TomOptimizer extends TomTask {
 
-  private TomTask nextTask;
   private int numberCompiledMatchFound = 0;
   private int numberCompiledPatternFound = 0;
   private int numberVarFound = 0;
   private int numberVarRemoved = 0;
-
-  public TomOptimizer(jtom.TomEnvironment environment) {
-    super(environment);
+	private boolean verbose = false, intermediate = false;
+  public TomOptimizer(TomEnvironment environment) {
+    super("Tom Optimizer", environment);
   }
   
   // ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
   // ------------------------------------------------------------
-    
- public void addTask(TomTask task) {
-  	this.nextTask = task;
-  }
-  public void process(TomTaskInput input) {
+	
+  public void process() {
     try {
-	  long startChrono = 0;
-	  boolean verbose = input.isVerbose(), intermediate = input.isIntermediate();
-	  if(verbose) {
-		startChrono = System.currentTimeMillis();
-	  }
-	  TomTerm optimizedTerm = optimize(input.getTerm());
-	  if(verbose) {
-		System.out.println("TOM optimization phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-	  } 
+		  long startChrono = 0;
+		  boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate();
+		  if(verbose) {
+				startChrono = System.currentTimeMillis();
+		  }
+		  TomTerm optimizedTerm = optimize(getInput().getTerm());
+		  if(verbose) {
+				System.out.println("TOM optimization phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+		  } 
       if(intermediate) {
-          Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.optimizedSuffix, optimizedTerm);
-	  }
-	  input.setTerm(optimizedTerm);
-    } catch (Exception e) {
-    	addError(input, "Exception occurs in TomOptimizer"+e.getMessage(), input.getInputFileName(), 0, 0);
-      e.printStackTrace();
-      return;
-    }
-    if(nextTask != null) {
-      nextTask.process(input);
-    }
-  }
-  
-  public TomTask getTask() {
-  	return nextTask;
+          Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.optimizedSuffix, optimizedTerm);
+	  	}
+			getInput().setTerm(optimizedTerm);
+    	} catch (Exception e) {
+    		addError("Exception occurs in TomOptimizer"+e.getMessage(), getInput().getInputFileName(), 0, 0);
+      	e.printStackTrace();
+      	return;
+    	}
   }
   
   private void optimDebug(String mesg) {

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import jtom.TomBase;
 import jtom.adt.*;
 import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
@@ -37,59 +36,53 @@ import jtom.tools.TomTaskInput;
 import jtom.tools.Tools;
 import aterm.ATerm;
 import jtom.exception.TomRuntimeException;
+import jtom.TomEnvironment;
 
-public class TomCompiler extends TomBase implements TomTask {
-  private TomTask nextTask;
+public class TomCompiler extends TomTask {
   TomKernelCompiler tomKernelCompiler;
   private String debugKey = null;
   private boolean supportedBlock = false, debugMode = false, eCode = false;
   private int absVarNumber = 0;
   
-  public TomCompiler(jtom.TomEnvironment environment,
+  public TomCompiler(TomEnvironment environment,
                      TomKernelCompiler tomKernelCompiler) {
-    super(environment);
+    super("Tom Compiler", environment);
     this.tomKernelCompiler = tomKernelCompiler;
   }
   
 // ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
 // ------------------------------------------------------------
-  
-  public void addTask(TomTask task) {
-    this.nextTask = task;
-  }
-  public void process(TomTaskInput input) {
+
+	public void initProcess() {
+		supportedBlock = getInput().isSupportedBlock();
+		debugMode = getInput().isDebugMode();
+		eCode = getInput().isECode();
+	}
+	
+  public void process() {
     try {
-      supportedBlock = input.isSupportedBlock();
-      debugMode = input.isDebugMode();
-      eCode = input.isECode();
       long startChrono = 0;
-      boolean verbose = input.isVerbose(), intermediate = input.isIntermediate();
-      if(verbose) {
-        startChrono = System.currentTimeMillis();
-      }
-      TomTerm preCompiledTerm = preProcessing(input.getTerm());
+      boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate();
+      if(verbose) { startChrono = System.currentTimeMillis();}
+      
+      TomTerm preCompiledTerm = preProcessing(getInput().getTerm());
       TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
+      
       if(verbose) {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-          Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.compiledSuffix, compiledTerm);
+          Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.compiledSuffix, compiledTerm);
       }
-      input.setTerm(compiledTerm);
+			getInput().setTerm(compiledTerm);
+      
     } catch (Exception e) {
-    	addError(input, "Exception occurs in TomCompiler"+e.getMessage(), input.getInputFileName(), 0, 0);
+    	addError("Exception occurs in TomCompiler"+e.getMessage(), getInput().getInputFileName(), 0, 0);
       e.printStackTrace();
       return;
     }
-    if(nextTask != null) {
-      nextTask.process(input);
-    }
-  }
-    
-  public TomTask getTask() {
-  	return nextTask;
   }
   
     /* 

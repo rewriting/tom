@@ -32,74 +32,66 @@ import java.io.Writer;
 import java.io.IOException;
 import java.util.HashMap;
 
-import jtom.TomBase;
 import jtom.adt.*;
 
 import jtom.tools.TomTask;
 import jtom.tools.OutputCode;
 import jtom.tools.SingleLineOutputCode;
-import jtom.tools.TomTaskInput;
 import jtom.exception.TomRuntimeException;
+import jtom.TomEnvironment;
 
-public class TomGenerator extends TomBase implements TomTask {
+public class TomGenerator extends /*TomBase implements*/ TomTask {
   
-  private TomTask nextTask;
   private String debugKey = null;
   private boolean cCode = false, eCode = false, jCode = false, supportedGoto = false, 
   	supportedBlock = false, debugMode = false, strictType = false, staticFunction = false, 
-  	genDecl = false, pretty = false;
+  	genDecl = false, pretty = false, verbose = false;
   
-  public TomGenerator(jtom.TomEnvironment environment) {
-    super(environment);
+  public TomGenerator(TomEnvironment environment) {
+    super("Tom Generator", environment);
   }
 
 // ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
- public void addTask(TomTask task) {
-  	this.nextTask = task;
-  }
-  public void process(TomTaskInput input) {
+	public void initProcess() {
+		cCode = getInput().isCCode();
+		eCode = getInput().isECode();
+		jCode = getInput().isJCode();
+		supportedGoto = getInput().isSupportedGoto(); 
+		supportedBlock = getInput().isSupportedBlock();
+		debugMode = getInput().isDebugMode();
+		strictType = getInput().isStrictType();
+		staticFunction = getInput().isStaticFunction();
+		genDecl = getInput().isGenDecl();
+		pretty = getInput().isPretty();
+	}
+	
+  public void process() {
     try {
-      cCode = input.isCCode();
-      eCode = input.isECode();
-      jCode = input.isJCode();
-      supportedGoto = input.isSupportedGoto(); 
-      supportedBlock = input.isSupportedBlock();
-      debugMode = input.isDebugMode();
-      strictType = input.isStrictType();
-      staticFunction = input.isStaticFunction();
-      genDecl = input.isGenDecl();
-      pretty = input.isPretty();
+			boolean verbose = getInput().isVerbose();
       long startChrono = 0;
-      boolean verbose = input.isVerbose();
       if(verbose) {
         startChrono = System.currentTimeMillis();
       }
       int defaultDeep = 2;
       
       Writer writer = new BufferedWriter(new OutputStreamWriter(
-                                         new FileOutputStream(input.getOutputFileName())));
+                                         new FileOutputStream(getInput().getOutputFileName())));
       OutputCode out = new OutputCode(writer, cCode, pretty);
-      generate(out,defaultDeep,input.getTerm());
+      generate(out,defaultDeep,getInput().getTerm());
       writer.close();
       if(verbose) {
         System.out.println("TOM generation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
     } catch (Exception e) {
-    	addError(input, "Exception occurs in TomGenerator"+e.getMessage(), input.getInputFileName(), 0, 0);
+    	addError("Exception occurs in TomGenerator"+e.getMessage(), getInput().getInputFileName(), 0, 0);
       e.printStackTrace();
       return;
     }
-    if(nextTask != null) {
-      nextTask.process(input);
-    }
   }
-  
-  public TomTask getTask() {
-  	return nextTask;
-  }
+
     /*
      * Generate the goal language
      */

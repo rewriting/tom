@@ -5,7 +5,7 @@ package jtom.checker;
 
 public final class TomCheckerMessage {
 	  // Error messages linked to 
-	public static String MainErrorMessage = "\n-- Error occured line: {0,number,integer} in structure `{1}` declared line: {2,number,integer} in file: {3}\n---> {4}\n" ;
+	public static String MainErrorMessage = "-- Error occured line: {0,number,integer} in structure `{1}` declared line: {2,number,integer} in file: {3}\n---> {4}\n" ;
 	public static String MultipleSymbolDefinitionError = "Multiple definition of Symbol `{0}`";
 	public static String SymbolCodomainError = "Symbol `{0}` has an unknown return type: `{1}`";
 	public static String SymbolDomainError = "Slot {0,number,integer} of symbol `{1}` declaration has an unknown type: `{2}`";
@@ -15,11 +15,13 @@ public final class TomCheckerMessage {
 	public static String BadMakeDefinition = "Bad number of arguments in 'make(...)' macro-function: {0,number,integer} arguments found but {1,number,integer} expected in symbol definition";
 	public static String ListSymbolDomainError = "List symbol `{0}` has an unknown parameter type: `{1}`";
 	
-	public static String WarningTwoSameSlotDecl = "Warning: GetSlot declaration `get_slot({0},...)` is repeated";
-	public static String WarningIncompatibleSlotDecl = "Incompatible GetSlot declaration: `{0}` does not appears in symbol declaration";
-
-  public static String RepeatedSlotName = "Repeated slot `{0}` in symbol declaration";
+	public static String RepeatedSlotName = "Repeated slot `{0}` in symbol declaration";
+	public static String WarningTwoSameSlotDecl = "Warning: GetSlot declaration `get_slot({0},...)` is repeated. Consider only the first one!!";
+	public static String WarningMissingSlotDecl = "Warning: GetSlot declaration `get_slot({0},...)` is missing. Generic getsubterm macro will be used!!";
+	public static String WarningIncompatibleSlotDecl = "Warning: Incompatible GetSlot declaration: `{0}` does not appears in symbol declaration";
 	
+	public static String BadSlotName = "Slot Name `{0}` is not correct for symbol `{1}`. Possible slot names are : {2}";
+		
 	public static String UnknownMatchArgumentTypeInSignature = "Variable `{0}` has an unknown type: `{1}`";
 	
 	public static String RepeatedMatchArgumentName = "Repeated variable `{0}` in match declaration";
@@ -35,8 +37,7 @@ public final class TomCheckerMessage {
 	public static String InvalidDisjunctionCodomain = "The symbol {0} has type `{1}` but type `{2}` was required";
 	
 	
-	public static String BracketOnListSymbol = "[] are not allowed on lists or arrays nor constants, see `{0}`";
-	public static String BadSlotName = "Slot Name `{0}` is not correct for symbol `{1}`. Possible slot names are : {3}";
+	public static String BracketOnListSymbol = "[] are not allowed on lists or arrays, see `{0}`";
 	
 	public static String SlotRepeated = "Same slot names can not be used several times in symbol `{0}`: Repeated slot Name : `{1}`";
 	public static String SymbolNumberArgument = "Bad number of arguments for symbol `{0}`: {1,number,integer} argument(s) required but {2,number,integer} found";;
@@ -50,6 +51,8 @@ public final class TomCheckerMessage {
 	public static String RepeatedMatchArgumentName6 = " ";
 	public static String RepeatedMatchArgumentName7 = " ";
 	
+	public static int TOM_ERROR = 0;
+	public static int TOM_WARNING = 1;
 	
 	/*Object[] arguments = {
 			new Integer(7),

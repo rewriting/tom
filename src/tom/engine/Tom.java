@@ -190,8 +190,7 @@ public class Tom {
 				} else if (args[i].equals("--noWarning")) {
 					taskInput.setNoWarning(true);
 				} else if (
-					args[i].equals("--noDeclaration")
-						|| args[i].equals("-D")) {
+					args[i].equals("--noDeclaration") || args[i].equals("-D")) {
 					taskInput.setGenDecl(false);
 				} else if (
 					args[i].equals("--pretty") || args[i].equals("-p")) {
@@ -409,7 +408,7 @@ public class Tom {
 		if (initialTask != null
 			&& !taskInput.isHelp()
 			&& !taskInput.isVersion()) {
-			initialTask.process(taskInput);
+			initialTask.startProcess(taskInput);
 			if (taskInput.isAtermStat()) {
 				System.out.println(
 					"\nStatistics:\n" + tomSignatureFactory.getPureFactory());
