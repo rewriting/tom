@@ -213,16 +213,16 @@ public class TomEnvironment {
     // computes the input and output suffixes
     // well, it would be better in the future if we let the generator append the output suffix itself
     // so that's only temporary
-    if ( getPluginPlatform().getOptionBooleanValue("jCode") ) {
+    if ( ((Boolean)getPluginPlatform().getOptionValue("jCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".java";
-    } else if ( getPluginPlatform().getOptionBooleanValue("cCode") ) {
+    } else if ( ((Boolean)getPluginPlatform().getOptionValue("cCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.c";
-    } else if ( getPluginPlatform().getOptionBooleanValue("camlCode") ) {
+    } else if ( ((Boolean)getPluginPlatform().getOptionValue("camlCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.ml";
-    } else if ( getPluginPlatform().getOptionBooleanValue("eCode") ) {
+    } else if ( ((Boolean)getPluginPlatform().getOptionValue("eCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".e";
     } else { // we should never ever be here normally...
@@ -231,7 +231,7 @@ public class TomEnvironment {
     }
 
     // fills the local user import list
-    String imports = getPluginPlatform().getOptionStringValue("import");
+    String imports = (String)getPluginPlatform().getOptionValue("import");
     StringTokenizer st = new StringTokenizer(imports, ":"); // paths are separated by ':'
     while( st.hasMoreTokens() ) {
       String next = st.nextToken();
@@ -241,14 +241,14 @@ public class TomEnvironment {
     setUserImportList(localUserImportList);
 
     // for Eclipse...
-    if ( getPluginPlatform().getOptionBooleanValue("eclipse") )
+    if ( ((Boolean)getPluginPlatform().getOptionValue("eclipse")).booleanValue() )
       setEclipseMode(true);
 
     // computes destdir
-    localDestDir = getPluginPlatform().getOptionStringValue("destdir");
+    localDestDir = (String)getPluginPlatform().getOptionValue("destdir");
     setDestDir(localDestDir);
 
-    String commandLineUserOutputFile = getPluginPlatform().getOptionStringValue("output");
+    String commandLineUserOutputFile = (String)getPluginPlatform().getOptionValue("output");
     if ( commandLineUserOutputFile.length() > 0 ) {
       setUserOutputFile( commandLineUserOutputFile );
     }

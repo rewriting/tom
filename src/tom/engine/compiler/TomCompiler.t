@@ -37,7 +37,7 @@ public class TomCompiler extends TomGenericPlugin {
       int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
 
       long startChrono = System.currentTimeMillis();
-      boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
+      boolean intermediate = getOptionBooleanValue("intermediate");
 
       TomTerm preCompiledTerm = preProcessing( (TomTerm)getTerm() );
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);

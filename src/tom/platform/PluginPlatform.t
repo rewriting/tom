@@ -221,7 +221,7 @@ public class PluginPlatform {
     }
 
     // ... to extract global options
-    optionManager.extractOptionList(node.getDocElem());
+    optionManager.setGlobalOptionList(node.getDocElem());
 
     // ... to extract plugin classpaths
     return extractClassPaths(node.getDocElem());
@@ -271,7 +271,7 @@ public class PluginPlatform {
       return 1;
     }
     
-    String[] inputFiles = optionManager.optionManagement(intances,argumentList);
+    String[] inputFiles = optionManager.initOptionManagement(instances,argumentList);
   
     if(statusHandler.hasError()) {
       return 1;
@@ -342,36 +342,5 @@ public class PluginPlatform {
   public void setOptionValue(String key, Object value) {
     optionManager.setOptionValue(key, value);
   }
-
-  /**
-   * Returns the value of a boolean option.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return a boolean that is the option's value
-   */
-  public boolean getOptionBooleanValue(String optionName) {
-    return optionManager.getOptionBooleanValue(optionName);
-  }
-    
-  /**
-   * Returns the value of an integer option.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return an int that is the option's value
-   */
-  public int getOptionIntegerValue(String optionName) {
-    return optionManager.getOptionIntegerValue(optionName);
-  }
-    
-  /**
-   * Returns the value of a string option.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return a String that is the option's value
-   */
-  public String getOptionStringValue(String optionName) {
-    return optionManager.getOptionStringValue(optionName);
-  }
-
 
 }

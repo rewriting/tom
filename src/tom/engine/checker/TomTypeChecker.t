@@ -22,7 +22,7 @@ public class TomTypeChecker extends TomChecker {
   public void run() {
     if(isActivated()) {
       try {
-	strictType = ! getPluginPlatform().getOptionBooleanValue("lazyType");
+	strictType = !getOptionBooleanValue("lazyType");
 	int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
 	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
 
@@ -49,6 +49,6 @@ public class TomTypeChecker extends TomChecker {
   }
 
   private boolean isActivated() {
-    return !getPluginPlatform().getOptionBooleanValue("noCheck");
+    return !getOptionBooleanValue("noCheck");
   }
 }

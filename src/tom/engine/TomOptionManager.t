@@ -344,20 +344,20 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   public PlatformOptionList requiredOptions() {
     PlatformOptionList prerequisites = `emptyPlatformOptionList();
 
-    if( getOptionBooleanValue("debug") ) {
+    if( ((Boolean)getOptionValue("debug")).booleanValue() ) {
       prerequisites = `concPlatformOption(PluginOption("jCode", "", "", BooleanValue(True()),""), prerequisites*);
       // for the moment debug is only available for Java as target language
     }
 
     // options destdir and output are incompatible
 
-    if( !getOptionStringValue("destdir").equals(".") ) {
+    if( !((String)getOptionValue("destdir")).equals(".") ) {
       prerequisites = `concPlatformOption(PluginOption("output", "", "", StringValue(""), ""), prerequisites*);
       // destdir is not set at its default value -> it has been changed
       // -> we want output at its default value
     }
 
-    if( !getOptionStringValue("output").equals("") ) {
+    if( !((String)getOptionValue("output")).equals("") ) {
       prerequisites = `concPlatformOption(PluginOption("destdir", "", "", StringValue("."), ""), prerequisites*);
       // output is not set at its default value -> it has been changed
       // -> we want destdir at its default value

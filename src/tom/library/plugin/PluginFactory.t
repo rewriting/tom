@@ -160,7 +160,7 @@ public class PluginFactory implements Plugin {
     while( it.hasNext() ) {
       String flagName = (String)it.next();
 	
-      if( getOM().getOptionBooleanValue(flagName) ) {
+      if( ((Boolean)getOM().getOptionValue(flagName)).booleanValue() ) {
 	activatedPlugin = (Plugin)flagOwners.get(flagName);
       }
     }
@@ -184,7 +184,7 @@ public class PluginFactory implements Plugin {
     while( it.hasNext() ) { // for all plugins
       String flagName = (String)it.next();
   
-      if( getOM().getOptionBooleanValue(flagName) ) { // if this plugin is activated
+      if( ((Boolean)getOM().getOptionValue(flagName)).booleanValue() ) { // if this plugin is activated
 	it = flagOwners.keySet().iterator();
 	      
 	while( it.hasNext() ) {

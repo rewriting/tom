@@ -95,7 +95,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   private boolean isActivated() {
-    return getPluginPlatform().getOptionBooleanValue("verify");
+    return getOptionBooleanValue("verify");
   }
 
 

@@ -56,7 +56,7 @@ public class SymbolTable {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
 
-    if( getPluginPlatform().getOptionBooleanValue("cCode") ) {
+    if( ((Boolean)getPluginPlatform().getOptionValue("cCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"int"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
@@ -64,7 +64,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"));
-    } else if( getPluginPlatform().getOptionBooleanValue("jCode") ) {
+    } else if( ((Boolean)getPluginPlatform().getOptionValue("jCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"boolean"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
@@ -72,7 +72,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"));
-    } else if( getPluginPlatform().getOptionBooleanValue("eCode") ) {
+    } else if( ((Boolean)getPluginPlatform().getOptionValue("eCode")).booleanValue() ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"CHARACTER"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"BOOLEAN"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"INTEGER"));
@@ -80,7 +80,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"DOUBLE"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"STRING"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"ANY"));
-    } else if( getPluginPlatform().getOptionBooleanValue("camlCode") ) { // this is really bad, will need to be improved
+    } else if( ((Boolean)getPluginPlatform().getOptionValue("camlCode")).booleanValue() ) { // this is really bad, will need to be improved
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"bool"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));

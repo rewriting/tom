@@ -37,13 +37,13 @@ public class TomBackend extends TomGenericPlugin {
 			
 	OutputCode output = new OutputCode(writer, defaultDeep);
 			
-	if( getPluginPlatform().getOptionBooleanValue("jCode") ) {
+	if( getOptionBooleanValue("jCode") ) {
 	  generator = new TomJavaGenerator(output);
-	} else if( getPluginPlatform().getOptionBooleanValue("cCode") ) {
+	} else if( getOptionBooleanValue("cCode") ) {
 	  generator = new TomCGenerator(output);
-	} else if( getPluginPlatform().getOptionBooleanValue("eCode") ) {
+	} else if( getOptionBooleanValue("eCode") ) {
 	  generator = new TomEiffelGenerator(output);
-	} else if( getPluginPlatform().getOptionBooleanValue("camlCode") ) {
+	} else if( getOptionBooleanValue("camlCode") ) {
 	  generator = new TomCamlGenerator(output);
 	}
 			
@@ -121,6 +121,6 @@ public class TomBackend extends TomGenericPlugin {
     }
 
   private boolean isActivated() {
-    return !getPluginPlatform().getOptionBooleanValue("noOutput");
+    return !getOptionBooleanValue("noOutput");
   }
 }

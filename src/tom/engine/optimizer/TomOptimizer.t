@@ -44,7 +44,7 @@ public class TomOptimizer extends TomGenericPlugin {
                          new Integer((int)(stopChrono-startChrono)) );
 			
 						
-        boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
+        boolean intermediate = getOptionBooleanValue("intermediate");
         if(intermediate) {
           Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
                                 getTerm() );
@@ -70,7 +70,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   private boolean isActivated() {
-    return getPluginPlatform().getOptionBooleanValue("optimize");
+    return getOptionBooleanValue("optimize");
   }
 
 

@@ -70,9 +70,9 @@ public class TomParserPlugin extends TomGenericPlugin {
 
       long startChrono = System.currentTimeMillis();
 	
-      boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
-      boolean java         = getPluginPlatform().getOptionBooleanValue("jCode");
-      boolean debug        = getPluginPlatform().getOptionBooleanValue("debug");
+      boolean intermediate = getOptionBooleanValue("intermediate");
+      boolean java         = getOptionBooleanValue("jCode");
+      boolean debug        = getOptionBooleanValue("debug");
 
       if(java) {
 	TomJavaParser javaParser = TomJavaParser.createParser(fileName);
