@@ -1,0 +1,23 @@
+-- Error occured line: 44 in structure `Match` declared line: 36 in file: `JMatch.t`
+---> The symbol `op0` has type `type0` but type `type1` was required
+
+-- Error occured line: 41 in structure `Match` declared line: 36 in file: `JMatch.t`
+---> Single list variable `X*` is not allowed on top of `match` pattern
+
+-- Error occured line: 41 in structure `Match` declared line: 36 in file: `JMatch.t`
+---> Single list variable `_*` is not allowed on top of `match` pattern
+
+-- Error occured line: 39 in structure `Match` declared line: 36 in file: `JMatch.t`
+---> Bad number of arguments: 2 argument(s) required by match signature but 3 found
+
+-- Error occured line: 37 in structure `Match` declared line: 36 in file: `JMatch.t`
+---> Bad number of arguments: 2 argument(s) required by match signature but 1 found
+
+-- Error occured line: 33 in structure `Match` declared line: 33 in file: `JMatch.t`
+---> Repeated variable `t1` in `match` declaration
+
+-- Error occured line: 30 in structure `Match` declared line: 30 in file: `JMatch.t`
+---> Variable `t` has an unknown type: `type`
+
+Tom SyntaxChecker:  Encountered 6 errors and 1 warnings.
+No file generated.

@@ -116,7 +116,7 @@ Grammar:
 		make_append(var, var) { ... }
 	}
 Test:
-     JOpArray1.t
+     JOpArray.t
        line: 59 Multiple definition of Symbol `concArray7`
        line: 50 Repeated macro-function `make_append`
        line: 43  Arguments must be linear in macro-function `make_append`: Variable `e` is repeated
@@ -137,7 +137,7 @@ Grammar:
 	}
 
 Test:
-     JOpList1.t
+     JOpList.t
        line 58: Multiple definition of Symbol `concList7`
        line 49: Repeated macro-function `make_empty`
        line 42: Arguments must be linear in macro-function `make_insert`: Variable `e` is repeated
@@ -152,24 +152,21 @@ Test:
 ////////////////////
 MATCH DECLARATION
 ////////////////////
-Grammar {
+Grammar:
 	%match(typeName var, typeName var, ...) {
 		term, term, ...-> { ... }
 	}
-}
 
-Test {
-     JMatchRef.t
-     JMatch1.t
-	Variable 't' has an unknown type 'type' (Bad type name in signature)
-	Repeated variable name in Match signature
-	Bad number of arguments: 2 argument(s) required but 1 found in %match structure
-	Bad number of arguments: 2 argument(s) required but 3 found in %match structure
-	Single list variable x* : Not allowed in %match structure
-	Single list variable _* : Not allowed in %match structure
-	For slot 2 :Type 'type1' required but Type 'type0' found
-
-}
+Test:
+     JMatch.t
+     line 44: The symbol `op0` has type `type0` but type `type1` was required
+     line 41: Single list variable `X*` is not allowed on top of `match` pattern
+     line 41: Single list variable `_*` is not allowed on top of `match` pattern
+     line 39: Bad number of arguments: 2 argument(s) required by match signature but 3 found
+     line 37: Bad number of arguments: 2 argument(s) required by match signature but 1 found
+     line 33: Repeated variable `t1` in `match` declaration
+     line 30: Variable `t` has an unknown type: `type`
+     Tom SyntaxChecker:  Encountered 6 errors and 1 warnings.
 
 ////////////////////
 RULE DECLARATION
