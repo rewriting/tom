@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+	id="fr.loria.eclipse.jtom"
+	name="Jtom Plug-in"
+	version="1.0.0"
+	provider-name="LORIA"
+	class="fr.loria.eclipse.jtom.JtomPlugin">
+
+	<runtime>
+		<library name="jtom.jar"/>
+		<library name="jtom-devel1.3gamma.jar"/>
+		<library name="jjtraveler-0.4.2.jar"/>
+		<library name="aterm-1.4.jar"/>
+		<library name="shared-objects-1.4.jar"/>
+		<library name="apigen.jar"/>
+	</runtime>
+	
+	<requires>
+		<import plugin="org.eclipse.core.resources"/>
+		<import plugin="org.eclipse.ui"/>
+	</requires>
+
+	<extension
+			point="org.eclipse.core.resources.builders"
+			id="TomBuilder"
+			name="Tom Builder">
+		<builder hasNature="false"> 
+			<run class="fr.loria.eclipse.jtom.TomBuilder">
+			</run> 
+		</builder> 
+	</extension>
+	
+	<extension
+			point="org.eclipse.core.resources.builders"
+			id="ADTToJavaBuilder"
+			name="ADTToJava Builder">
+		<builder hasNature="false"> 
+			<run class="fr.loria.eclipse.jtom.ADTToJavaBuilder">
+			</run> 
+		</builder> 
+	</extension>
+	
+	<extension
+			point="org.eclipse.ui.preferencePages">
+		<page 
+			id="fr.loria.eclipse.jtom.PreferencePage"
+			class="fr.loria.eclipse.jtom.TomPreferencePage"
+			name="Tom Preferences">
+		</page>
+	</extension>
+  
+	<extension
+			point="org.eclipse.ui.propertyPages">
+		<page
+			id="fr.loria.eclipse.jtom.TomPropertyPage"
+			name="Tom Property"
+			objectClass="org.eclipse.core.resources.IFile"
+			class="fr.loria.eclipse.jtom.TomFilePropertyPage">
+		</page>
+	</extension>
+	
+	<extension
+			point="org.eclipse.ui.propertyPages">
+		<page
+			id="fr.loria.eclipse.jtom.ADTPropertyPage"
+			name="ApiGen Property"
+			objectClass="org.eclipse.core.resources.IFile"
+			class="fr.loria.eclipse.jtom.ADTFilePropertyPage">
+		</page>
+	</extension>
+  
+</plugin>
