@@ -4,7 +4,7 @@
 
 javadir         = ${prefix}/test
 JAVAROOT        = ${top_builddir}/test
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(srcdir)/stable:$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(srcdir)/src:$(srcdir)/stable:$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 source_java     = Peano.t\
 		  List.t\
