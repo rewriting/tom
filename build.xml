@@ -220,6 +220,15 @@
 		<copy todir="${stable.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${stable.bin}" file="${utils}/tom.bat"/>
 		<copy todir="${stable.bin}" file="${utils}/tom"/>
+		<copy todir="${stable.bin}">
+			<fileset dir="${utils}">
+				<include name="adt-to-tom.*"/>
+			</fileset>
+		</copy>
+		<chmod dir="${stable.bin}" perm="ug+x">
+			<include name="*"/>
+			<exclude name="*.bat"/>
+		</chmod>
 
 		<!-- tom library -->
 		<copy todir="${stable.lib}">
@@ -233,6 +242,9 @@
 		<!-- tom share -->
 		<copy todir="${stable.share}">
 			<fileset dir="${stable.mapping}" includes="**/*.tom"/>
+			<fileset dir="${stable.adt}" includes="*.tom">
+				<exclude name="TomSignature.tom"/>
+			</fileset>
 		</copy>
 		<!-- external libs -->
 		<copy todir="${stable.lib}" file="${atermjavajar}"/>
@@ -248,6 +260,16 @@
 		<!-- "tom binary" -->
 		<copy todir="${src.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${src.bin}" file="${utils}/tom.src"/>
+		<copy todir="${src.bin}">
+			<fileset dir="${utils}">
+				<include name="adt-to-tom.*"/>
+			</fileset>
+		</copy>
+		<chmod dir="${src.bin}" perm="ug+x">
+			<include name="*"/>
+			<exclude name="*.bat"/>
+		</chmod>
+
 		<!-- tom library -->
 		<jar jarfile="${src.lib}/Set-${DSTAMP}.jar">
 			<fileset dir="${src.build}" 
@@ -269,6 +291,9 @@
 		<!-- tom share -->
 		<copy todir="${src.share}">
 			<fileset dir="${src.mapping}" includes="**/*.tom"/>
+			<fileset dir="${src.adt}" includes="*.tom">
+				<exclude name="TomSignature.tom"/>
+			</fileset>
 		</copy>
 		<!-- external libs -->
 		<copy todir="${src.lib}" file="${atermjavajar}"/>
