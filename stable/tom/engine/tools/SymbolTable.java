@@ -95,6 +95,18 @@ public class SymbolTable {
     return res;
   }
 
+  public SymbolList getSymbol(TomType type) {
+    SymbolList res = tsf().makeSymbolList();
+    Iterator it = mapSymbolName.values().iterator();
+    while(it.hasNext()) {
+      TomSymbol symbol = (TomSymbol)it.next();
+      if(symbol.getTypesToType().getCodomain() == type) {
+        res = tsf().makeSymbolList(symbol,res);
+      }
+    }
+    return res;
+  }
+
   public TomType getType(String name) {
     TomType res = (TomType)mapTypeName.get(name);
     return res;

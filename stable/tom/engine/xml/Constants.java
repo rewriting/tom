@@ -26,15 +26,15 @@
 
 package jtom.xml;
 
-import java.io.*;
-import aterm.*;
-
 public class Constants {
+  public final static String TNODE          = "TNode";
+  public final static String TNODE_LIST     = "TNodeList";
+  public final static String CONC_TNODE     = "concTNode";
+
   public final static String TEXT_NODE      = "TextNode";
   public final static String COMMENT_NODE   = "CommentNode";
-  public final static String PROCESSING_INSTRUCTION_NODE = "ProcessingInstructionNode";
   public final static String ATTRIBUTE_NODE = "AttributeNode";
-  public final static String CONC_TNODE     = "concTNode";
   public final static String ELEMENT_NODE   = "ElementNode";
+  public final static String PROCESSING_INSTRUCTION_NODE = "ProcessingInstructionNode";
 
 }

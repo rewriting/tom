@@ -25,6 +25,8 @@
 */
 
 package jtom.debug;
+
+import jtom.exception.TomRuntimeException;
   
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -50,12 +52,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.TomList;
-import jtom.adt.TomSignatureFactory;
-import jtom.adt.TomStructureTable;
-import jtom.adt.TomTerm;
+import jtom.adt.*;
 
 import aterm.pure.PureFactory;
 
@@ -109,11 +106,15 @@ public class TomDebugger {
       } catch (FileNotFoundException e) {
         e.printStackTrace();
         System.out.println("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found.");
-        System.exit(1);
+		    throw new TomRuntimeException(new Throwable("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found."));
       } catch (Exception e) {
         e.printStackTrace();
         System.out.println("Exception during reading "+baseFileName[i]+debugTableSuffix);
-        System.exit(1);
+				try {
+  				input.close();
+				} catch(IOException e2) {
+  				throw new RuntimeException("in.close() failed");
+				}
       }
     }
   }
@@ -944,10 +945,11 @@ public class TomDebugger {
         mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Match", fileName, line, nbPatterns, nbSubjects, patternText, patternLine));
         
       } else if (struct.isRuleSet()) {
-        String fileName = struct.getOrgTrack().getFileName().getString();
+        /*String fileName = struct.getOrgTrack().getFileName().getString();
         int line = struct.getOrgTrack().getLine();
         String key = fileName+line;
-        TomList paList = struct.getTomList();
+        System.out.println(struct);
+				TomRuleList paList = struct.getRuleList();
         int nbPatterns =  paList.getLength();
         int nbSubjects = struct.getTomList().getHead().getLhs().getTomTerm().getArgs().getLength();
         String[] patternText = new String[nbPatterns];
@@ -963,10 +965,10 @@ public class TomDebugger {
           paList = paList.getTail();
         }
         mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Rule", fileName, line, nbPatterns, nbSubjects,  patternText, patternLine));
-        
+        */
       } else {
         System.out.println("Corrupt debug term");
-        System.exit(1);
+		    throw new TomRuntimeException(new Throwable("Corrupt debug term"));
       } 
       list = list.getTail();
     }

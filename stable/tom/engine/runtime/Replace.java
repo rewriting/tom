@@ -35,9 +35,8 @@ class Replace {
         case 2: return ((Replace3)this).apply(t, args[0], args[1]);
         default:
           System.out.println("Extend Replace.apply to " + length + " arguments");
-          System.exit(1);
+					throw new RuntimeException("Extend Replace.apply to " + length + " arguments");
     }
-    return t;
   }
 }
 

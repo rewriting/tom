@@ -52,11 +52,11 @@ public class GenericTraversal {
     /*
      * Traverse a subject and replace
      */
-  public ATerm genericTraversal(ATerm subject, Replace1 replace) {
+  public ATerm genericTraversal(ATerm subject, Replace1 replace){
     return genericTraversalArray(subject, replace, new ATerm[] {});
   }
 
-  public ATerm genericTraversal(ATerm subject, Replace2 replace, Object arg1) {
+  public ATerm genericTraversal(ATerm subject, Replace2 replace, Object arg1){
     return genericTraversalArray(subject, replace, new Object[] {arg1});
   }
 
@@ -90,31 +90,23 @@ public class GenericTraversal {
     } catch(Exception e) {
       e.printStackTrace();
       System.out.println("Please, extend genericCollectArray");
-      System.exit(0);
+	    throw new RuntimeException(new Throwable("Please, extend genericCollectArray"));
     }
   } 
 
   protected ATerm genericTraversalArray(ATerm subject, Replace replace, Object[] args) {
     ATerm res = subject;
-  //System.out.println("subject = " + subject);
-      //try {
-      if(subject instanceof ATermAppl) { 
-        res = genericMapterm((ATermAppl) subject, replace, args);
-      } else if(subject instanceof ATermList) {
-        res = genericMap((ATermList) subject, replace, args);
-      } else if(subject instanceof ATermInt) {
-        res = subject;
-      } else {
-       
-        System.out.println("Please, extend genericTraversalArray.."+subject);
-        try {
-          Exception f = null;
-          f.printStackTrace();
-        } catch(Exception e) {
-          e.printStackTrace();
-        }
-        System.exit(0);
-      }
+    
+    if(subject instanceof ATermAppl) { 
+      res = genericMapterm((ATermAppl) subject, replace, args);
+    } else if(subject instanceof ATermList) {
+      res = genericMap((ATermList) subject, replace, args);
+    } else if(subject instanceof ATermInt) {
+      res = subject;
+    } else {
+      System.out.println("Please, extend genericTraversalArray.."+subject);
+		  throw new RuntimeException(new Throwable("Please, extend genericTraversalArray.."+subject));
+    }
     return res;
   } 
 
@@ -124,27 +116,14 @@ public class GenericTraversal {
      */
   private ATermList genericMap(ATermList subject, Replace replace, Object[] args) {
     ATermList res = subject;
-      //try {
-        /*
-      if(!subject.isEmpty()) {
-        ATerm term = replace.apply(subject.getFirst(),args);
-        ATermList list = genericMap(subject.getNext(),replace, args);
-        res = list.insert(term);
-      }
-        */
 
-      res = subject.getEmpty();
-      while(!subject.isEmpty()) {
-        ATerm term = replace.apply(subject.getFirst(),args);
-        res = res.insert(term);
-        subject = subject.getNext();
-      }
-      res = res.reverse();
-        /*} catch(Exception e) {
-        e.printStackTrace();
-      System.out.println("Please, extend genericMap");
-      System.exit(0);
-      }*/
+     res = subject.getEmpty();
+    while(!subject.isEmpty()) {
+      ATerm term = replace.apply(subject.getFirst(),args);
+      res = res.insert(term);
+      subject = subject.getNext();
+    }
+    res = res.reverse();
     return res;
   }
 
@@ -152,21 +131,13 @@ public class GenericTraversal {
      * Apply a function to each subterm of a term
      */
   private ATermAppl genericMapterm(ATermAppl subject, Replace replace, Object[] args) {
-      //try {
-      ATerm newSubterm;
-      for(int i=0 ; i<subject.getArity() ; i++) {
-        newSubterm = replace.apply(subject.getArgument(i),args);
-        if(newSubterm != subject.getArgument(i)) {
-          subject = subject.setArgument(newSubterm,i);
-        }
+    ATerm newSubterm;
+    for(int i=0 ; i<subject.getArity() ; i++) {
+      newSubterm = replace.apply(subject.getArgument(i),args);
+      if(newSubterm != subject.getArgument(i)) {
+        subject = subject.setArgument(newSubterm,i);
       }
-        /*
-    } catch(Exception e) {
-      e.printStackTrace();
-      System.out.println("Please, extend genericMapterm");
-      System.exit(0);
     }
-        */
     return subject;
   }
 
@@ -189,8 +160,8 @@ public class GenericTraversal {
       } 
     } catch(Exception e) {
       System.out.println("exception: " + e);
-      System.out.println("Please, extend genericCollectReplace");
-      System.exit(0);
+      System.out.println("Please, extend genericCollectReplace "+e.getStackTrace());
+	    throw new RuntimeException(new Throwable("Please, extend genericTraversalArray.."+subject));
     }
   } 
 

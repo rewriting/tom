@@ -31,6 +31,7 @@ import jtom.xml.*;
 import aterm.ATerm;
 
 public class ASTFactory {
+
   private TomSignatureFactory tomSignatureFactory;
   
   public ASTFactory(TomSignatureFactory tomSignatureFactory) {
@@ -248,7 +249,6 @@ public class ASTFactory {
      * update the root of lhs: it becomes a defined symbol
      */
   public void updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
-      //List result = term.match("Appl(Option(<term>),Name(<term>),<term>)");
     if(term.isAppl() || term.isRecordAppl()) {
       String key = term.getAstName().getString();
       TomSymbol symbol = symbolTable.getSymbol(key);
@@ -294,7 +294,7 @@ public class ASTFactory {
       if(astName.isName()) {
         String tomName = encodeXMLString(symbolTable,astName.getString());
         term = term.setAstName(tsf().makeTomName_Name(tomName));
-        System.out.println("encodeXMLAppl = " + term);
+          //System.out.println("encodeXMLAppl = " + term);
       }
     }
       return term;
@@ -321,7 +321,7 @@ public class ASTFactory {
             term = tsf().makeTomTerm_Appl(
               makeOption(info),
               tsf().makeTomName_Name(Constants.TEXT_NODE),list);
-              System.out.println("metaEncodeXmlAppl = " + term);
+              //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
       }

@@ -77,39 +77,40 @@ public interface TomParserConstants {
   int TOM_AND = 67;
   int TOM_WHERE = 68;
   int TOM_IF = 69;
-  int TOM_MAKE = 70;
-  int TOM_MAKE_EMPTY = 71;
-  int TOM_MAKE_INSERT = 72;
-  int TOM_MAKE_APPEND = 73;
-  int TOM_IMPLEMENT = 74;
-  int TOM_FSYM = 75;
-  int TOM_GET_SLOT = 76;
-  int TOM_IS_FSYM = 77;
-  int TOM_GET_SUBTERM = 78;
-  int TOM_GET_FUN_SYM = 79;
-  int TOM_CMP_FUN_SYM = 80;
-  int TOM_EQUALS = 81;
-  int TOM_GET_HEAD = 82;
-  int TOM_GET_TAIL = 83;
-  int TOM_IS_EMPTY = 84;
-  int TOM_GET_ELEMENT = 85;
-  int TOM_GET_SIZE = 86;
-  int TOM_INTEGER = 87;
-  int TOM_IDENTIFIER = 88;
-  int TOM_DOUBLE = 89;
-  int EXPONENT = 90;
-  int TOM_LETTER = 91;
-  int TOM_DIGIT = 92;
-  int TOM_STRING = 93;
-  int XML_NAME = 94;
-  int XML_START = 95;
-  int XML_START_ENDING = 96;
-  int XML_CLOSE = 97;
-  int XML_CLOSE_SINGLETON = 98;
-  int DOUBLE_QUOTE = 99;
-  int XML_TEXT = 100;
-  int XML_COMMENT = 101;
-  int XML_PROC = 102;
+  int TOM_BACKQUOTE = 70;
+  int TOM_MAKE = 71;
+  int TOM_MAKE_EMPTY = 72;
+  int TOM_MAKE_INSERT = 73;
+  int TOM_MAKE_APPEND = 74;
+  int TOM_IMPLEMENT = 75;
+  int TOM_FSYM = 76;
+  int TOM_GET_SLOT = 77;
+  int TOM_IS_FSYM = 78;
+  int TOM_GET_SUBTERM = 79;
+  int TOM_GET_FUN_SYM = 80;
+  int TOM_CMP_FUN_SYM = 81;
+  int TOM_EQUALS = 82;
+  int TOM_GET_HEAD = 83;
+  int TOM_GET_TAIL = 84;
+  int TOM_IS_EMPTY = 85;
+  int TOM_GET_ELEMENT = 86;
+  int TOM_GET_SIZE = 87;
+  int TOM_INTEGER = 88;
+  int TOM_IDENTIFIER = 89;
+  int TOM_DOUBLE = 90;
+  int EXPONENT = 91;
+  int TOM_LETTER = 92;
+  int TOM_DIGIT = 93;
+  int TOM_STRING = 94;
+  int XML_NAME = 95;
+  int XML_START = 96;
+  int XML_START_ENDING = 97;
+  int XML_CLOSE = 98;
+  int XML_CLOSE_SINGLETON = 99;
+  int DOUBLE_QUOTE = 100;
+  int XML_TEXT = 101;
+  int XML_COMMENT = 102;
+  int XML_PROC = 103;
 
   int DEFAULT = 0;
   int IN_SINGLE_LINE_COMMENT = 1;
@@ -191,6 +192,7 @@ public interface TomParserConstants {
     "\"&\"",
     "\"where\"",
     "\"if\"",
+    "\"`\"",
     "\"make\"",
     "\"make_empty\"",
     "\"make_insert\"",

@@ -42,9 +42,8 @@ class Collect {
         case 3: return ((Collect4)this).apply(t, args[0], args[1], args[2]);    
         default:
           System.out.println("Extend Collect.apply to " + length + " arguments");
-          System.exit(1);
+          throw new RuntimeException("Extend Collect.apply to " + length + " arguments");
     }
-    return false;
   }
 }
 
