@@ -1,3 +1,7 @@
+2003-12-02    <pem@bach>
+
+	* ported jtom to new version of apigen
+
 2003-11-21    <julien@aircube>
 	* All Tom tools now inherits from TomTask
 	* TomTask is an abstract class that inherit from TomBase

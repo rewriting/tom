@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.40 2003/11/07 10:26:07 moreau Exp $
+# $Id: configure.in,v 1.41 2003/12/02 08:01:45 moreau Exp $
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(jtom,1.5gamma)
@@ -7,7 +7,7 @@ AC_PREREQ(2.13)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.40 2003/11/07 10:26:07 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.41 2003/12/02 08:01:45 moreau Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -40,9 +40,9 @@ dnl Require apigen
 AC_PACKAGE_REQUIRE(apigen, adt-to-java,
    [  --with-apigen=DIR   apigen in DIR])
 ADTTOJAVA=${APIGEN}/bin/adt-to-java
+ADTTOTOM=${APIGEN}/bin/adt-to-tom
 AC_SUBST(ADTTOJAVA)
-
-
+AC_SUBST(ADTTOTOM)
 
 AC_OUTPUT( \
 	Makefile \
@@ -54,7 +54,6 @@ AC_OUTPUT( \
 	doc/Makefile \
 	src/Makefile \
 	src/jtom/Makefile \
-	src/jtom/adt/Makefile \
 	src/jtom/checker/Makefile \
 	src/jtom/tools/Makefile \
 	src/jtom/xml/Makefile \
@@ -64,9 +63,7 @@ AC_OUTPUT( \
 	src/jtom/runtime/Makefile \
 	src/jtom/runtime/strategies/Makefile \
 	src/jtom/runtime/set/Makefile \
-	src/jtom/runtime/set/jgtreeset/Makefile \
 	src/jtom/runtime/xml/Makefile \
-	src/jtom/runtime/xml/adt/Makefile \
 	src/jtom/exception/Makefile \
 	src/jtom/debug/Makefile \
 	stable/Makefile \
