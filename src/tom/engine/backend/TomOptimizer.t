@@ -89,6 +89,10 @@ public class TomOptimizer extends TomBase implements TomTask {
   	return nextTask;
   }
   
+  private void optimDebug(String mesg) {
+    System.out.println(mesg);
+  }
+
   private void exitWithMesg(String mesg) {
     System.out.println(mesg);
     System.exit(1);
@@ -193,8 +197,8 @@ public class TomOptimizer extends TomBase implements TomTask {
 		numberCompiledPatternFound++;
 		avList = declVarList;
 		collectVariables(instList); // fill varList with all the variable in the CP.
-		//optimDebug("Collecting CP completed :");
-		//optimDebug(avList.toString());
+		optimDebug("Collecting CP completed :");
+		optimDebug(avList.toString());
 		TomList newInstList = replaceCompiledPattern(instList);
 		declVarList = updateDeclVarList(declVarList);
 		return `CompiledPattern(newInstList);
@@ -220,6 +224,10 @@ public class TomOptimizer extends TomBase implements TomTask {
 		avList = addOneUse("tom"+numberListToIdentifier(l1),false);
 		return false; // no need to go deeper in a Variable
 	      }
+	      VariableStar[astName=Name(name)] -> {
+		avList = addOneUse(name,false);
+		return false; // no need to go deeper in a Variable
+	      }
 	      CompiledMatch[] -> {
 		// we will inspect this CompiledMatch when replacing the CompiledMatch parent.
 		return false;
@@ -233,6 +241,18 @@ public class TomOptimizer extends TomBase implements TomTask {
 	    %match(Instruction t) {
 	      Assign(Variable[astName=PositionName(l1)],source) -> {
 		String name = "tom"+numberListToIdentifier(l1);
+		if (!isAssigned(name)) {
+		  int minusOne = -1;
+		  //optimDebug("Var "+name+" found in CP");
+		  avList = append(`AssignedVariable(name,source,minusOne,FalseTL,TrueTL),
+		  avList);
+		  numberVarFound++;
+		} else {
+		  avList = addOneUse(name,true);
+		}	
+		return true;// we go deeper to search in the 'source'	    
+	      }
+	      Assign(VariableStar[astName=Name(name)],source) -> {
 		if (!isAssigned(name)) {
 		  int minusOne = -1;
 		  //optimDebug("Var "+name+" found in CP");
@@ -274,15 +294,42 @@ public class TomOptimizer extends TomBase implements TomTask {
 	      Declaration(Variable[astName=PositionName(l1)]) -> {
 		String name = "tom"+numberListToIdentifier(l1);
 		//optimDebug("Declaration of "+name+" found");
-		if (getNbUse(name) <= 1)
-		  return `Tom(empty());
+		if (getNbUse(name) <= 1) {
+		  if (isRemovable(getSource(name))) 
+		    return `Tom(empty());
+		}
 		else
 		  return t;
 	      }
+	      Declaration(VariableStar[astName=Name(name)]) -> {
+		//optimDebug("Declaration of star "+name+" found");
+		if (getNbUse(name) <= 1) {
+		  if (isRemovable(getSource(name))) 
+		    return `Tom(empty());
+		}
+		else
+		  return t;
+	      } 
 	      Variable[astName=PositionName(l1)] -> {
 		String name = "tom"+numberListToIdentifier(l1); 
 		if (getNbUse(name) == 1) { // the variable is found, so used at least one time
 		  Expression expr = getSource(name);
+		  expr = (Expression) traversal().genericTraversal(expr, this); // this line is a first try
+		  %match(Expression expr) {
+		    TomTermToExpression(tomTerm) -> {
+		      return tomTerm;
+		    }
+		    _ -> {
+		      return `ExpressionToTomTerm(expr);
+		    }
+		  } // match
+		} else
+		  return t;
+	      }
+	      VariableStar[astName=Name(name)] -> {
+		if (getNbUse(name) == 1) { // the variable is found, so used at least one time
+		  Expression expr = getSource(name);
+		  expr = (Expression) traversal().genericTraversal(expr, this); // this line is a first try
 		  %match(Expression expr) {
 		    TomTermToExpression(tomTerm) -> {
 		      return tomTerm;
@@ -313,6 +360,16 @@ public class TomOptimizer extends TomBase implements TomTask {
 	    %match(Instruction t) {
 	      Assign(var@Variable[astName=PositionName(l1)],source) -> {	      
 		String name = "tom"+numberListToIdentifier(l1);
+		if (getNbUse(name) <= 1) {
+		  numberVarRemoved++;
+		  return `Action(empty());
+		} else {
+		  Expression expr = (Expression) traversal().genericTraversal(source, this);
+		  return `Assign(var, expr);
+		}
+	      }
+	      Assign(var@VariableStar[astName=Name(name)],source) -> {	
+		System.out.println("coucou :"+name+" "+getNbUse(name));
 		if (getNbUse(name) <= 1) {
 		  numberVarRemoved++;
 		  return `Action(empty());
@@ -373,6 +430,22 @@ public class TomOptimizer extends TomBase implements TomTask {
     return false;
   }
 
+  private boolean isRemovable(Expression varTerm) {
+    TomList tmpList = avList;
+    TomTerm t;
+    while (!tmpList.isEmpty()) {
+      t = tmpList.getHead();
+      %match(TomTerm t, Expression varTerm) {
+	AssignedVariable[varName=name,removable=FalseTL] , TomTermToExpression(Variable[astName=PositionName(l1)])-> {
+	  if (name.equals("tom"+numberListToIdentifier(l1)))
+	    return false;
+	}
+      }
+      tmpList = tmpList.getTail();
+    }
+    return true;
+  }
+
   private TomList addOneUse (final String name, final boolean inAssign) {
     Replace1 replace = new Replace1 () {
 	public ATerm apply(ATerm t) {
@@ -426,15 +499,14 @@ public class TomOptimizer extends TomBase implements TomTask {
     TomTerm t;
     while (!tmpList.isEmpty()) {
       t = tmpList.getHead();
-      %match(TomTerm t) {
-	AssignedVariable[varName=name,nbUse=n,removable=TrueTL] -> {
-	  if (name.equals(varName))
+	%match(TomTerm t, String varName) {
+	  AssignedVariable[varName=name,nbUse=n,removable=TrueTL] , name -> {
 	    return n;
+	  }
+	  AssignedVariable[varName=name,removable=FalseTL] , name -> {
+	    return 2; // 2 or any value that prevent a variable from being removed
+	  }
 	}
-	AssignedVariable[removable=FalseTL] -> {
-	  return 2; // 2 or any value that prevent a variable from being removed
-	}
-      }
       tmpList = tmpList.getTail();
     }
     exitWithMesg(varName+" is not in avList");
@@ -475,6 +547,12 @@ public class TomOptimizer extends TomBase implements TomTask {
 		else
 		  return t;
 	      }
+	      Declaration(VariableStar[astName=Name(name)]) -> {
+		if (getNbUse(name) == 0) //  <= 1 if no problem with code generation
+		  return `Tom(empty());
+		else
+		  return t;
+	      }
 	      _ -> {
 		return traversal().genericTraversal(t, this);
 	      }
@@ -483,6 +561,14 @@ public class TomOptimizer extends TomBase implements TomTask {
 	    %match(Instruction t) {
 	      Assign(Variable[astName=PositionName(l1)],source) -> {
 		String name = "tom"+numberListToIdentifier(l1);
+		if (getNbUse(name) == 0) { // <= 1 if no problem with code generation
+		  numberVarRemoved++;
+		  return `Action(empty());
+		}
+		else
+		  return t;
+	      }
+	      Assign(VariableStar[astName=Name(name)],source) -> {
 		if (getNbUse(name) == 0) { // <= 1 if no problem with code generation
 		  numberVarRemoved++;
 		  return `Action(empty());

@@ -187,13 +187,14 @@ public class TomGenerator extends TomBase implements TomTask {
 
           matchBlock: {
             %match(TomTerm elt) {
-              Composite(concTomTerm(VariableStar[])) | VariableStar[] -> {
+              Composite(concTomTerm(VariableStar[])) | VariableStar[] |
+	      Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
+	      Composite(concTomTerm(Variable[])) -> {
                 out.write("tom_insert_list_" + name + "(");
                 generate(out,deep,elt);
                 out.write(",");
                 break matchBlock;
-              }
-              
+	      }
               _ -> {
                 out.write("tom_make_insert_" + name + "(");
                 generate(out,deep,elt);
