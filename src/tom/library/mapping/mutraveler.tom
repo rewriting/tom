@@ -6,6 +6,10 @@
     equals(t1,t2) {t1.equals(t2)}
   }
 
+/*
+ * basic operators
+ */
+
   %op VisitableVisitor Identity {
     fsym {}
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Identity) }
@@ -34,12 +38,6 @@
     fsym {}
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Choice) }
     make(first,then) { new tom.library.strategy.mutraveler.Choice((VisitableVisitor)first,(VisitableVisitor)then) }
-  }
-
-  %op VisitableVisitor ChoiceOnId(VisitableVisitor, VisitableVisitor) {
-    fsym {}
-    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.ChoiceOnId) }
-    make(first,then) { new tom.library.strategy.mutraveler.ChoiceOnId((VisitableVisitor)first,(VisitableVisitor)then) }
   }
 
   %op VisitableVisitor All(VisitableVisitor) {
@@ -77,11 +75,29 @@
     make(var,v) { tom.library.strategy.mutraveler.MuVar.mu(var,v) }
   }
 
+/*
+ * basic operators with Id considered as a failure
+ */
+
+  %op VisitableVisitor SequenceId(VisitableVisitor, VisitableVisitor) {
+    fsym {}
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.SequenceId) }
+    make(first,then) { new tom.library.strategy.mutraveler.SequenceId((VisitableVisitor)first,(VisitableVisitor)then) }
+  }
+
+/*
+ * basic probabilistic operators
+ */
+
   %op VisitableVisitor Pselect(int, int, VisitableVisitor, VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Pselect) }
     make(p,q,first,then) { new tom.library.strategy.mutraveler.Pselect(p,q,(VisitableVisitor)first,(VisitableVisitor)then) }
   }
+
+/*
+ * strategies
+ */
 
   %op VisitableVisitor Try(VisitableVisitor) {
     fsym {}
@@ -103,12 +119,27 @@
     make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),Choice(Sequence(v,MuVar("x")),Identity))) }
   }
 
-  %op VisitableVisitor InnermostId(VisitableVisitor) {
-    fsym {}
-    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),ChoiceOnId(v,MuVar("x")))) }
-  }
-
   %op VisitableVisitor Repeat(VisitableVisitor) {
     fsym {}
     make(v) { `mu(MuVar("x"),Choice(Sequence(v,MuVar("x")),Identity())) }
   }
+
+/*
+ * strategies with Id considered as failure
+ */
+
+  %op VisitableVisitor TryId(VisitableVisitor) {
+    fsym {}
+    make(v) { v }
+  }
+
+  %op VisitableVisitor RepeatId(VisitableVisitor) {
+    fsym {}
+    make(v) { `mu(MuVar("x"),SequenceId(v,MuVar("x"))) }
+  }
+
+  %op VisitableVisitor InnermostId(VisitableVisitor) {
+    fsym {}
+    make(v) { `mu(MuVar("x"),Sequence(All(MuVar("x")),SequenceId(v,MuVar("x")))) }
+  }
+

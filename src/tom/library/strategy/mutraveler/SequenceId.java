@@ -5,21 +5,22 @@ import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 /**
- * <code>x.accept(Sequence(v1,v2)) = x.accept(v1) ; x.accept(v2)</code>
+ * <code>x.accept(SequenceId(v1,v2)) = x.accept(v1) ; x.accept(v2) if x.accept(v1)!=x</code>
  * <p>
  * Basic visitor combinator with two visitor arguments, that applies
- * these visitors one after the other (sequential composition).
+ * these visitors one after the other (sequential composition), if the first
+ * one is not the identity.
  */
 
-public class ChoiceOnId extends AbstractVisitableVisitor {
+public class SequenceId extends AbstractVisitableVisitor {
 	protected final static int FIRST = 0;
 	protected final static int THEN = 1;
-  public ChoiceOnId(VisitableVisitor first, VisitableVisitor then) {
+  public SequenceId(VisitableVisitor first, VisitableVisitor then) {
     init(first,then);
   }
 
-  public ChoiceOnId(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
-    init(v1,new ChoiceOnId(v2, v3));
+  public SequenceId(VisitableVisitor v1, VisitableVisitor v2, VisitableVisitor v3) {
+    init(v1,new SequenceId(v2, v3));
   }
 
   public Visitable visit(Visitable any) throws VisitFailure {
