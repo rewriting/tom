@@ -30,6 +30,12 @@ options{
         return tomparser.currentFile();
     }
 
+    private boolean xmlTerm = false;
+
+    public void setXmlTerm(boolean b){
+        xmlTerm = b;
+    }
+
     public NewBQParser(ParserSharedInputState state, NewTomParser tomparser){
         this(state);
         this.tomparser = tomparser;
@@ -94,49 +100,85 @@ options{
     // newComposite = true when we have read a comma before
     // the term 'term' in a list of term
     private void addTerm(LinkedList list, TomTerm term, boolean newComposite){
-        if(list.size() > 0) {
+        if(xmlTerm){
+            p("--");
             TomTerm last = (TomTerm) list.getLast();
-
-            %match(TomTerm term){
-                TargetLanguageToTomTerm(ITL(s)) -> {
-                    if(! newComposite){
-                        %match(TomTerm last){
-                            Composite(l) -> {
-                                list.removeLast();
-                                list.add(`Composite(concTomTerm(l*,term)));
-                                return;
-                            }
-                            _ -> {
-                                list.add(`Composite(concTomTerm(term)));
-                                return;
+            p("--");
+            %match(TomTerm last){
+                Composite(l) -> {
+                    list.removeLast();
+                    list.add(`Composite(concTomTerm(l*,term)));
+                    return;
+                }
+                _ -> {
+                    // should not be here
+                    p("!! should not be here !!");
+                    return;
+                }
+            }
+        }
+        else{       
+            if(list.size() > 0) {
+                TomTerm last = (TomTerm) list.getLast();
+                
+                %match(TomTerm term){
+                    TargetLanguageToTomTerm(ITL(s)) -> {
+                        if(! newComposite){
+                            %match(TomTerm last){
+                                Composite(l) -> {
+                                    list.removeLast();
+                                    list.add(`Composite(concTomTerm(l*,term)));
+                                    return;
+                                }
+                                _ -> {
+                                    list.add(`Composite(concTomTerm(term)));
+                                    return;
+                                }
                             }
                         }
+                        else{
+                            list.add(`Composite(concTomTerm(term)));
+                            return;
+                        }
                     }
-                    else{
+                    _ -> {
                         list.add(`Composite(concTomTerm(term)));
                         return;
                     }
                 }
-                _ -> {
-                    list.add(term);
-                    return;
-                }
             }
-        }
-        else{
-            %match(TomTerm term){
-                TargetLanguageToTomTerm[] -> {
-                    list.add(`Composite(concTomTerm(term)));
-                    return;
-                }
-                _ -> {
-                    list.add(term);
-                    return;
-                }
+            else{
+                %match(TomTerm term){
+                    TargetLanguageToTomTerm[] -> {
+                        list.add(`Composite(concTomTerm(term)));
+                        return;
+                    }
+                    Composite[] -> {
+                        list.add(term);
+                        return;
+                    }
+                    _ -> {
+                        list.add(`Composite(concTomTerm(term)));
+                    }
+                }   
             }
         }
     }
 
+    private void addXmlSubTerm(LinkedList list, TomTerm term){
+        if(list.size() > 0){
+            %match(TomTerm term){
+                Composite(concTomTerm(x)) -> {
+                    list.add(x);
+                    return;
+                }
+                _ -> {
+                    list.add(term);
+                }
+            }
+        }
+    }
+    
     private String removeStar(String s){
         return s.substring(0,s.lastIndexOf('*'));
     }
@@ -151,10 +193,17 @@ bqList [LinkedList list]
     TomTerm term = null;
 }
     :
-        term = bqTerm  { addTerm(list,term,false); }
-        ( options{greedy = true;}: BQ_WS )*
+        term = bqTerm
+        {
+            
+            addTerm(list,term,false); 
+        }
+        // eat as much WS as possible : be greedy
+       // ( options{greedy = true;}: BQ_WS )*
         ( 
-            (c:BQ_COMMA ( BQ_WS )* )? term = bqTerm ( BQ_WS )*
+            (c:BQ_COMMA ( BQ_WS )* 
+            )? term = bqTerm 
+            //( BQ_WS )*
             {
                 if(c != null){
                     // if a comma is read, build another composite
@@ -163,6 +212,7 @@ bqList [LinkedList list]
                 else{
                     addTerm(list,term,false);
                 }
+                
                 // antlr does not set token to null value after
                 // doing one time the loop. We have to do it ourselves
                 c = null;
@@ -175,18 +225,15 @@ bqTerm returns [TomTerm result]
     result = null;
     LinkedList blockList = new LinkedList();
     Token t = null;
-    String s = null;
+    String s = "";
 }
     :
         (     
-           // {LA(2) == BQ_STAR}? 
-            //i1:BQ_ID BQ_STAR /*( BQ_WS )**/
             {LA(2) == BQ_STAR}? 
             i1:BQ_ID BQ_STAR 
             {
-//                String name = removeStar(i1.getText());
                 String name = i1.getText();
-                TomTerm varStar = `Composite(concTomTerm(VariableStar(
+                result = `VariableStar(
                     concOption(
                         OriginTracking(
                             Name(name), 
@@ -197,19 +244,31 @@ bqTerm returns [TomTerm result]
                     Name(name),
                     TomTypeAlone("unknown type"),
                     concConstraint()
-                )));
-                result = varStar;
+                );
+
+/*                TomTerm varStar = `Composite(concTomTerm(VariableStar(
+                    concOption(
+                        OriginTracking(
+                            Name(name), 
+                            i1.getLine(), 
+                            Name(currentFile())
+                        )
+                    ),
+                    Name(name),
+                    TomTypeAlone("unknown type"),
+                    concConstraint()
+                )));*/
+//                result = varStar;
             }
             
         |
-            //{LA(2) == BQ_LPAREN}? 
-            (BQ_ID (BQ_WS)* BQ_LPAREN) => i2:BQ_ID ( BQ_WS )*
+            (BQ_ID (BQ_WS)* BQ_LPAREN) => i2:BQ_ID ( w:BQ_WS )*
             BQ_LPAREN ( BQ_WS )* (bqList[blockList])? ( BQ_WS )* BQ_RPAREN /*( BQ_WS )**/
             {
                 if(blockList.size() > 0) {
                     TomList compositeList = makeCompositeList(blockList);
                      
-                    TomTerm composite = `BackQuoteAppl(
+/*                    TomTerm composite = `BackQuoteAppl(
                         concOption(
                             OriginTracking(
                                 Name(i2.getText()), 
@@ -220,7 +279,23 @@ bqTerm returns [TomTerm result]
                         Name(i2.getText()),
                         compositeList
                     );
-                    result = composite;
+                    result = composite;*/
+                    
+                    result = `Composite(
+                        concTomTerm(
+                            BackQuoteAppl(
+                                concOption(
+                                    OriginTracking(
+                                        Name(i2.getText()), 
+                                        i2.getLine(), 
+                                        Name(currentFile())
+                                    )
+                                ),
+                                Name(i2.getText()),
+                                compositeList
+                            )
+                        )
+                    );
                 }
                 else {
                     result = `Composite(concTomTerm(BackQuoteAppl(
@@ -240,9 +315,9 @@ bqTerm returns [TomTerm result]
             }
         
      
-        |   i3:BQ_ID ( BQ_WS )*
+        |   i3:BQ_ID //( BQ_WS )*
             {
-                TomTerm appl = `Composite(concTomTerm(BackQuoteAppl(
+               /* TomTerm appl = `Composite(concTomTerm(BackQuoteAppl(
                     concOption(
                         OriginTracking(
                             Name(i3.getText()), 
@@ -253,7 +328,19 @@ bqTerm returns [TomTerm result]
                     Name(i3.getText()),
                     concTomTerm()
                 )));
-                result = appl;
+                result = appl;*/
+
+                result = `BackQuoteAppl(
+                    concOption(
+                        OriginTracking(
+                            Name(i3.getText()), 
+                            i3.getLine(), 
+                            Name(currentFile())
+                        )
+                    ),
+                    Name(i3.getText()),
+                    concTomTerm()
+                );
             }
         
         |   BQ_LPAREN ( BQ_WS )*
@@ -269,7 +356,7 @@ bqTerm returns [TomTerm result]
                 result = `Composite(compositeList);
             }
 
-        |   s = targetPlus ( BQ_WS )*
+        |   s = targetPlus // ( BQ_WS )*
             {
                 result = `TargetLanguageToTomTerm(ITL(s));
             }
@@ -287,8 +374,9 @@ targetPlus returns [String result]
         |   str:BQ_STRING {result += str.getText();}
         |   m:BQ_MINUS {result += m.getText();}
         |   s:BQ_STAR {result += s.getText();}
+        |   w:BQ_WS {result += w.getText();}
         |   a:ANY {result += a.getText();}
-        )+
+        )
 	;
      
 target returns [Token result]
@@ -302,19 +390,9 @@ target returns [Token result]
     |   str:BQ_STRING {result = str;}
     |   r:BQ_RPAREN {result = r;}
     |   m:BQ_MINUS {result = m;}
+    |   w:BQ_WS {result = w;}
     |   a:ANY {result = a;}
     ;
-
-
-
-
-
-
-
-
-
-
-
 
 beginBqAppl [Token symbol] returns [TomTerm result]
 {
@@ -344,8 +422,17 @@ beginBqAppl [Token symbol] returns [TomTerm result]
         |   ( BQ_WS )*
 
             (
-                BQ_LPAREN ( BQ_WS )* ( bqList[blockList] )? ( BQ_WS )* BQ_RPAREN
+                BQ_LPAREN 
                 {
+                    if(xmlTerm){
+                        blockList.add(`Composite(emptyTomList()));
+                    }
+                }
+               
+                ( BQ_WS )* ( bqList[blockList] )? ( BQ_WS )* BQ_RPAREN
+                {
+                    
+
                     if(blockList.size() > 0) {
                         TomList compositeList = makeCompositeList(blockList);
                         
@@ -380,10 +467,10 @@ beginBqAppl [Token symbol] returns [TomTerm result]
                         
                     }
                 }
-
             |   t = target
                 {
                     addTargetCode(t);
+                    p(t.toString());
                     result = `BackQuoteAppl(concOption(OriginTracking(Name(symbol.getText()), 
                                 symbol.getLine(), 
                                 Name(currentFile())
@@ -396,6 +483,15 @@ beginBqAppl [Token symbol] returns [TomTerm result]
             )
         )
         {
+            if(result.isComposite() && result.getArgs().isSingle()) {
+                TomTerm backQuoteTerm = result.getArgs().getHead(); 
+                if(symbol.getText().equals("xml")) {
+                    TomList args = backQuoteTerm.getArgs();
+                    result = `DoubleBackQuote(args);
+                }   
+            } 
+
+            setXmlTerm(false);
             selector().pop();
         }
     ;

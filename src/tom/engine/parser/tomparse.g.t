@@ -754,7 +754,10 @@ bqTerm returns [TomTerm result]
         |
             i:ALL_ID 
             {
-		blockList.add(i);
+                if(i.getText().equals("xml")){
+                    bqparser.setXmlTerm(true);
+                }
+                blockList.add(i);
                 selector().push("bqlexer");
                 result = bqparser.beginBqAppl(i);
                 selector().pop();
