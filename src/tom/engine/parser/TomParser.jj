@@ -93,7 +93,6 @@ public class TomParser extends TomTask {
     this.tomBackQuoteParser = new TomBackQuoteParser(environment);
     this.tomFactory = new TomFactory(environment);
     includedFiles = alreadyParsedFiles;
-
   }
   
   private void testIncludedFiles(String fileName) throws TomIncludeException {
@@ -122,26 +121,6 @@ public class TomParser extends TomTask {
   		boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate();
   		if(verbose) { startChrono = System.currentTimeMillis();}
 
-        /*
-      if(javaCode) {
-        token_source.SwitchTo(JAVA); 
-        String packageName = JavaPackageDeclaration();
-        // Update taskInput
-        getInput().setPackagePath(packageName);
-        getInput().updateOutputFile();
-        token_source.SwitchTo(DEFAULT);
-        System.out.println("package = '" + getInput().getPackagePath() + "'");
-
-        jj_input_stream = new JavaCharStream(tomBuffer, 1, 1);
-        token_source = new TomParserTokenManager(jj_input_stream);
-        token = new Token();
-        jj_ntk = -1;
-        jj_gen = 0;
-        for (int i = 0; i < jj_la1.length; i++) jj_la1[i] = -1;
-        for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
-      }
-        */
-      
       if(javaCode) {
         File file = new File(currentFile);
         byte inputBuffer[] = new byte[(int)file.length()+1];
@@ -154,7 +133,7 @@ public class TomParser extends TomTask {
         // Update taskInput
         getInput().setPackagePath(packageName);
         getInput().updateOutputFile();
-        System.out.println("package = '" + getInput().getPackagePath() + "'");
+        //System.out.println("package = '" + getInput().getPackagePath() + "'");
       }
       
       
@@ -1553,13 +1532,12 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
       try {
         File file = null;
         boolean found = false;
-        System.out.println("taskInput = " + getInput());
         for(int i=0 ; !found && i<getInput().getImportList().size() ; i++) {
           file = new File((File)getInput().getImportList().get(i),fileName).getAbsoluteFile();
-          System.out.println("look for: " + file.getPath());
+          //System.out.println("look for: " + file.getPath());
           found = file.exists();
         }
-        System.out.println("file found = " + found);
+        //System.out.println("file found = " + found);
                   
           // to get the length of the file
         inputBuffer = new byte[(int)file.length()+1];

@@ -385,7 +385,7 @@ public class TomTaskInput {
 	}
 	
 	public String getPackagePath() {
-    System.out.println("getPackagePath = " + packagePath);
+    //System.out.println("getPackagePath = " + packagePath);
 		return packagePath;
 	}
 
@@ -399,7 +399,7 @@ public class TomTaskInput {
 	}
 	
 	public File getDestDir() {
-    System.out.println("getDestDir = " + destDir);
+    //System.out.println("getDestDir = " + destDir);
 		return destDir;
 	}
 
@@ -414,21 +414,21 @@ public class TomTaskInput {
 	}
 	
 	public File getInputFile() {
-    System.out.println("getInputFile = " + inputFile);
+    //System.out.println("getInputFile = " + inputFile);
 		return inputFile;
 	}
 
 	public String getInputFileNameWithoutSuffix() {
     String inputFileName = getInputFile().getPath();
     String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
-    System.out.println("getInputFileNameWithoutSuffix = " + res);
+    //System.out.println("getInputFileNameWithoutSuffix = " + res);
     return res;
 	}
 
   public void setOutputFile(String sOutputFile) {
     try {
       this.outputFile = new File(sOutputFile).getCanonicalFile();
-      System.out.println("setOutputFile = " + this.outputFile);
+      //System.out.println("setOutputFile = " + this.outputFile);
     } catch (IOException e) {
       System.out.println("IO Exception using file `" + sOutputFile + "`");
       e.printStackTrace();
@@ -436,7 +436,7 @@ public class TomTaskInput {
 	}
 	
 	public File getOutputFile() {
-    System.out.println("getOutputFile = " + outputFile);
+    //System.out.println("getOutputFile = " + outputFile);
 		return outputFile;
 	}
 

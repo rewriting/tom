@@ -140,7 +140,7 @@ public class Tom {
       // Processing the input arguments into taskInput
     try{
     	for (i = 0; i < args.length; i++) {
-       System.out.println("args[" + i + "] = '" + args[i] + "'");
+        //System.out.println("args[" + i + "] = '" + args[i] + "'");
     		if (args[i].charAt(0) != '-') {
     				// Suppose this is the input filename (*[.t])
             // that should never start with a `-` character"
@@ -222,7 +222,7 @@ public class Tom {
             taskInput.setResourceParentPathLocation(args[++i]);
           } else if (args[i].equals("--destdir") || args[i].equals("-d")) {
             localDestDir = args[++i];
-            System.out.println("localDestDir = " + localDestDir);
+            //System.out.println("localDestDir = " + localDestDir);
           } else if (args[i].equals("--output") || args[i].equals("-o")) {
             taskInput.setUserOutputFile(args[++i]);
           } else {
@@ -279,8 +279,6 @@ public class Tom {
       } else {
         String child = new File(taskInput.getInputFileNameWithoutSuffix() + taskInput.getOutputSuffix()).getName();
         File out = new File(taskInput.getDestDir(),child).getAbsoluteFile();
-        System.out.println("child = " + child);
-        System.out.println("out   = " + out);
         taskInput.setOutputFile(out.getPath());
       }
       
