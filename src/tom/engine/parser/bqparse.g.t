@@ -33,12 +33,6 @@ options{
         return tomparser.currentFile();
     }
 
-//    private boolean xmlTerm = false;
-/*
-    public void setXmlTerm(boolean b){
-        xmlTerm = b;
-    }
-*/
     public NewBQParser(ParserSharedInputState state, NewTomParser tomparser){
         this(state);
         this.tomparser = tomparser;
@@ -60,15 +54,7 @@ options{
     private TomSignatureFactory tsf(){
         return environment().getTomSignatureFactory();
     }
-/*
-    private void pushLine(int line){
-        tomparser.pushLine(line);
-    }
 
-    private void pushColumn(int column){
-        tomparser.pushColumn(column);
-    }
-*/
     private void addTargetCode(Token t){
         tomparser.addTargetCode(t);
     }
@@ -94,86 +80,117 @@ options{
         return compositeList;
     }
 
+    private void addComposite(LinkedList list, TomTerm term){
+        %match(TomTerm term){
+            Composite[] -> {
+                list.add(term);
+                return;
+            }
+            _ -> {
+                list.add(`Composite(concTomTerm(term)));
+                return;
+            }
+        }
+    }
+
     // newComposite = true when we have read a comma before
     // the term 'term' in a list of term
     private void addTerm(LinkedList list, TomTerm term, boolean newComposite){
-      /*  if(xmlTerm){
-            TomTerm last = (TomTerm) list.getLast();
-            %match(TomTerm last){
-                Composite(l) -> {
-                    list.removeLast();
-                    list.add(`Composite(concTomTerm(l*,term)));
-                    return;
+        if(list.size() == 0){
+            list.add(`Composite(emptyTomList()));
+        }
+        TomTerm lastElement = (TomTerm) list.getLast();
+        
+        %match(TomTerm lastElement){
+            Composite(l) -> {
+                if(!newComposite){
+                    list.set(list.size()-1,`Composite(concat(l,term)));
                 }
-                _ -> {
-                    // should not be here
-                    p("!! should not be here !!");
-                    return;
+                else{
+                    addComposite(list,term);
                 }
+                return;
             }
-        }*/
-    //    else{       
-            if(list.size() > 0) {
-                TomTerm last = (TomTerm) list.getLast();
-                
-                %match(TomTerm term){
-                    TargetLanguageToTomTerm(ITL(s)) -> {
-                        if(! newComposite){
-                            %match(TomTerm last){
-                                Composite(l) -> {
-                                    list.removeLast();
-                                    list.add(`Composite(concTomTerm(l*,term)));
-                                    return;
-                                }
-                                _ -> {
-                                    list.add(`Composite(concTomTerm(term)));
-                                    return;
-                                }
-                            }
-                        }
-                        else{
-                            list.add(`Composite(concTomTerm(term)));
-                            return;
-                        }
-                    }
-                    _ -> {
-                        list.add(`Composite(concTomTerm(term)));
-                        return;
-                    }
+            _ -> {
+                if(!newComposite){
+                    list.add(term);
+                }
+                else{
+                    addComposite(list,term);
                 }
             }
-            else{
-                %match(TomTerm term){
-                    TargetLanguageToTomTerm[] -> {
-                        list.add(`Composite(concTomTerm(term)));
-                        return;
-                    }
-                    Composite[] -> {
-                        list.add(term);
-                        return;
-                    }
-                    _ -> {
-                        list.add(`Composite(concTomTerm(term)));
-                    }
-                }   
-            }
-//        }
-    }
+        }
+
 /*
-    private void addXmlSubTerm(LinkedList list, TomTerm term){
-        if(list.size() > 0){
+        if(newComposite){
             %match(TomTerm term){
-                Composite(concTomTerm(x)) -> {
-                    list.add(x);
+                Composite[] -> {
+                    list.add(term);
+                    return;
+                }
+                BackQuoteAppl[] -> {
+                    list.add(`Composite(concTomTerm(term)));
                     return;
                 }
                 _ -> {
                     list.add(term);
+                    return;
                 }
             }
         }
-    }
+        else{
+            list.add(term);
+        }
 */
+
+        /*
+        if(list.size() > 0) {
+            TomTerm last = (TomTerm) list.getLast();
+            
+            %match(TomTerm term){
+                TargetLanguageToTomTerm(ITL(s)) -> {
+                    if(! newComposite){
+                        %match(TomTerm last){
+                            Composite(l) -> {
+                                list.removeLast();
+                                list.add(`Composite(concTomTerm(l*,term)));
+                                return;
+                            }
+                            _ -> {
+                                list.add(`Composite(concTomTerm(term)));
+                                return;
+                            }
+                        }
+                    }
+                    else{
+                        list.add(`Composite(concTomTerm(term)));
+                        return;
+                    }
+                }
+                _ -> {
+                    list.add(`Composite(concTomTerm(term)));
+                    return;
+                }
+            }
+        }
+        else{
+            %match(TomTerm term){
+                TargetLanguageToTomTerm[] -> {
+                    list.add(`Composite(concTomTerm(term)));
+                    return;
+                }
+                Composite[] -> {
+                    list.add(term);
+                    return;
+                }
+                _ -> {
+                    list.add(`Composite(concTomTerm(term)));
+                }
+            }   
+        }
+*/
+    }
+    
     private String encodeName(String name) {
         return "\"" + name + "\"";
     }
@@ -194,8 +211,27 @@ options{
             _ -> {return term;}
         }
     }
+    
+    private TomTerm format(TomTerm term){
+        %match(TomTerm term){
+            Composite(concTomTerm(t@BackQuoteAppl[])) -> {
+                return t;
+            }
+            
+            _ -> { return term;}
+        }
+    }
 
-
+    private TomList concat(TomList list, TomTerm term){
+        %match(TomTerm term){
+            Composite(l) -> {
+                return `concTomTerm(list*,l*);
+            }
+            _ -> {
+                return `concTomTerm(list*,term);
+            }
+        }
+    }
 }
 
 
@@ -259,6 +295,8 @@ bqTerm returns [TomTerm result]
 bqTermShared returns [TomTerm result]
 {
     result = null;
+    TomTerm term = null;
+
     LinkedList blockList = new LinkedList();
     Token t = null;
     String s = "";
@@ -291,44 +329,120 @@ bqTermShared returns [TomTerm result]
             ( options{greedy=true;}: BQ_WS )* 
             ( bqList[blockList] )? 
             BQ_RPAREN 
+            (
+                BQ_DOT term = bqTerm
+            )?
             {
-                if(blockList.size() > 0) {
-                    TomList compositeList = makeCompositeList(blockList);
-                    
-                    result = `Composite(
-                        concTomTerm(
-                            BackQuoteAppl(
-                                concOption(
-                                    OriginTracking(
-                                        Name(i2.getText()), 
-                                        i2.getLine(), 
-                                        Name(currentFile())
-                                    )
+                if(term != null){
+                    term = format(term);
+                    if(blockList.size() > 0) {
+                        TomList compositeList = makeCompositeList(blockList);
+                        result = `Composite(
+                            concTomTerm(
+                                BackQuoteAppl(
+                                    concOption(
+                                        OriginTracking(
+                                            Name(i2.getText()), 
+                                            i2.getLine(), 
+                                            Name(currentFile())
+                                        )
+                                    ),
+                                    Name(i2.getText()),
+                                    compositeList
                                 ),
-                                Name(i2.getText()),
-                                compositeList
+                                TargetLanguageToTomTerm(ITL(".")),
+                                term
                             )
-                        )
-                    );
-                }
-                else {
-                    result = `Composite(concTomTerm(BackQuoteAppl(
-                                concOption(
-                                    Constructor(concTomName(Name(i2.getText()))),
-                                    OriginTracking(
-                                        Name(i2.getText()), 
-                                        i2.getLine(), 
-                                        Name(currentFile())
-                                    )
+                        );
+                    }
+                    else{
+                        result = `Composite(
+                            concTomTerm(
+                                BackQuoteAppl(
+                                    concOption(
+                                        Constructor(concTomName(Name(i2.getText()))),
+                                        OriginTracking(
+                                            Name(i2.getText()), 
+                                            i2.getLine(), 
+                                            Name(currentFile())
+                                        )
+                                    ),
+                                    Name(i2.getText()),
+                                    emptyTomList()
                                 ),
-                                Name(i2.getText()),
-                                emptyTomList()
-                            ))
-                    );
+                                TargetLanguageToTomTerm(ITL(".")),
+                                term
+                            )
+                        );
+                    }
+                }
+                else{
+                    if(blockList.size() > 0) {
+                        TomList compositeList = makeCompositeList(blockList);
+                      /*      
+                        result = `BackQuoteAppl(
+                            concOption(
+                                OriginTracking(
+                                    Name(i2.getText()), 
+                                    i2.getLine(), 
+                                    Name(currentFile())
+                                )
+                            ),
+                            Name(i2.getText()),
+                            compositeList
+                        );*/
+                        
+                        result = `Composite(
+                            concTomTerm(
+                                BackQuoteAppl(
+                                    concOption(
+                                        OriginTracking(
+                                            Name(i2.getText()), 
+                                            i2.getLine(), 
+                                            Name(currentFile())
+                                        )
+                                    ),
+                                    Name(i2.getText()),
+                                    compositeList
+                                )   
+                            )
+                        );  
+                    }
+                    else {/*
+                        result = `BackQuoteAppl(
+                            concOption(
+                                Constructor(concTomName(Name(i2.getText()))),
+                                OriginTracking(
+                                    Name(i2.getText()), 
+                                    i2.getLine(), 
+                                    Name(currentFile())
+                                )
+                            ),
+                            Name(i2.getText()),
+                            emptyTomList
+                        );*/
+                        
+                        result = `Composite(
+                            concTomTerm(
+                                BackQuoteAppl(
+                                    concOption( 
+                                        Constructor(concTomName(Name(i2.getText()))),
+                                        OriginTracking(
+                                            Name(i2.getText()), 
+                                            i2.getLine(), 
+                                            Name(currentFile())
+                                        )
+                                    ),
+                                    Name(i2.getText()),
+                                    emptyTomList()
+                                )
+                            )
+                        );
+                    }
                 }
             }
-        
-     
+            
+            
         |   i3:BQ_ID 
             {
                 result = `BackQuoteAppl(
@@ -509,6 +623,7 @@ targetPlusShared returns [String result]
     |   m:BQ_MINUS {result = m.getText();}
     |   s:BQ_STAR {result = s.getText();}
     |   w:BQ_WS {result = w.getText();}
+    |   d:BQ_DOT {result = d.getText();}
     |   a:ANY {result = a.getText();}
     ;
 
@@ -557,6 +672,7 @@ target returns [Token result]
     |   str:BQ_STRING {result = str;}
     |   r:BQ_RPAREN {result = r;}
     |   m:BQ_MINUS {result = m;}
+    |   d:BQ_DOT {result = d;}
     |   w:BQ_WS {result = w;}
     |   a:ANY {result = a;}
     ;
@@ -967,7 +1083,7 @@ XML_TEXT    :   "#TEXT";
 XML_COMMENT :   "#COMMENT";
 XML_PROC    :   "#PROCESSING-INSTRUCTION";
 
-protected BQ_DOT    :    '.'   ;
+BQ_DOT    :    '.'   ;
 
 // tokens to skip : white spaces
 BQ_WS	:	(	' '
