@@ -80,6 +80,7 @@ public class TomTaskInput {
     atermStat = false, // Shows aterm statistics
     eclipseMode = false, // Eclipse mode for error management
 		doVerify = false, // Compilation correctness verification
+		newGenerator = false, //Use the new generator : will become default !
     help = false, // usage called
     version = false; //version called
   
@@ -287,6 +288,13 @@ public class TomTaskInput {
 	}
 	public void setDoVerify(boolean b) {
 		doVerify = b;
+	}
+
+	public boolean isNewGenerator() {
+		return newGenerator;
+	}
+	public void setNewGenerator(boolean b) {
+		newGenerator = b;
 	}
 
 	public boolean isEclipseMode() {

@@ -82,6 +82,7 @@ public class Tom {
 			+ "\n\t--static\t\tGenerate static functions"
 			+ "\n\t--debug\t\t\tGenerate debug primitives"
 			+ "\n\t--verify\t\t\tVerify correctness of match compilation"
+			+ "\n\t--newGen\t\t\tGenerate code using the new generator"
 			+ "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)";
 
   private static int defaultLineNumber = 1;
@@ -180,6 +181,9 @@ public class Tom {
 				} else if (
 					args[i].equals("--verify")) {
 					taskInput.setDoVerify(true);
+				} else if (
+					args[i].equals("--newGen")) {
+					taskInput.setNewGenerator(true);
 				} else if (
 					args[i].equals("--lazyType") || args[i].equals("-l")) {
 					taskInput.setStrictType(false);
@@ -399,7 +403,12 @@ public class Tom {
 			} //DoCompile
 
 			if (taskInput.isPrintOutput()) {
-				TomGenerator generator = new TomGenerator(environment);
+				TomTask generator;
+				if (taskInput.isNewGenerator()) {
+					generator = new TomBackend(environment);
+					else {
+						generator = new TomGenerator(environment);
+					}
 				if (taskInput.isDoOptimization()) {
 					TomOptimizer optimizer = new TomOptimizer(environment);
 					compiler.addTask(optimizer);
