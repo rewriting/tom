@@ -24,28 +24,9 @@
 */
 package jtom.runtime;
 
-import aterm.ATerm;
+import aterm.*;
 
-    /*
-     * collects something in table
-     * returns false if no more traversal is needed
-     * returns true  if traversal has to be continued
-     */
 
-class Collect {
-  boolean apply(ATerm t, Object args[]) {
-    int length = args.length;
-    switch(length) {
-        case 0: return ((Collect1)this).apply(t);
-        case 1: return ((Collect2)this).apply(t, args[0]);
-        case 2: return ((Collect3)this).apply(t, args[0], args[1]);
-        case 3: return ((Collect4)this).apply(t, args[0], args[1], args[2]);    
-        default:
-          System.out.println("Extend Collect.apply to " + length + " arguments");
-          System.exit(1);
-    }
-    return false;
-  }
+public abstract class Collect4 extends Collect {
+  abstract public boolean apply(ATerm t, Object arg1, Object arg2, Object arg3);
 }
-
-  
