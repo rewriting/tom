@@ -913,6 +913,7 @@
       <fileset dir="${src.build}">
         <include name="**/*.class"/>
         <exclude name="jtom/parser/*.class"/>
+        <exclude name="jtom/Tom.class"/>
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${src.build}">
