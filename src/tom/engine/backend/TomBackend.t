@@ -56,7 +56,7 @@ public class TomBackend extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS = 
     "<options>" +
     "<boolean name='noOutput' altName=''  description='Do not generate code' value='false'/>" +
-    "<boolean name='jCode'    altName='j' description='Generate Java code' value='true'/>" + 
+    "<boolean name='jCode'    altName='j' description='Generate Java code' value='false'/>" + 
     "<boolean name='cCode'    altName='c' description='Generate C code' value='false'/>" +
     "<boolean name='camlCode' altName=''  description='Generate Caml code' value='false'/>" + 
     "</options>";
@@ -121,11 +121,7 @@ public class TomBackend extends TomGenericPlugin {
     setOptionValue(optionName, optionValue);
     
     if(optionValue.equals(Boolean.TRUE)) {// no more than 1 type of code can be activated at a time
-	    if(optionName.equals("jCode") || optionName.equals("j")) { 
-		    //System.out.println("Java code activated, other codes desactivated");
-		    setOptionValue("cCode", Boolean.FALSE);
-		    setOptionValue("camlCode", Boolean.FALSE); 
-      } else if(optionName.equals("cCode") || optionName.equals("c")) { 
+      if(optionName.equals("cCode") || optionName.equals("c")) { 
 		    //System.out.println("C code activated, other codes desactivated");
 		    setOptionValue("jCode", Boolean.FALSE);
 		    setOptionValue("camlCode", Boolean.FALSE); 
@@ -133,6 +129,11 @@ public class TomBackend extends TomGenericPlugin {
 		    //System.out.println("Caml code activated, other codes desactivated");
 		    setOptionValue("jCode", Boolean.FALSE);
 		    setOptionValue("cCode", Boolean.FALSE);
+      } else {
+		    //System.out.println("Java code activated, other codes desactivated");
+		    setOptionValue("jCode", Boolean.TRUE);
+		    setOptionValue("cCode", Boolean.FALSE);
+		    setOptionValue("camlCode", Boolean.FALSE); 
       }
     }
   }

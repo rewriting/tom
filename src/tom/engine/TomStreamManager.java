@@ -88,7 +88,7 @@ public class TomStreamManager {
   /**
    * Initializes the TomStreamManager.
    */
-  public void clear() {
+  private void clear() {
     destDir = null;
     inputFile = null;
     outputFile = null;
@@ -106,7 +106,7 @@ public class TomStreamManager {
     // computes the input and output suffixes
     // well, it would be better in the future if we let the generator append the output suffix itself
     // so that's only temporary
-    
+
     if ( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".java";
