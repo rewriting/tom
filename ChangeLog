@@ -1,5 +1,10 @@
+2004-04-07  pem  <pem@polly.loria.fr>
+
+	* annoted variables and non-linear variable are compiled into constraints
+
 2004-04-06  pem  <pem@polly.loria.fr>
 
+	* bootinstall
 	* src/jtom/compiler/TomExpander.t: 
 	  added a post-processing phase to TomExpander
 	  this phases update the codomain of GetHeadDecl in order to
