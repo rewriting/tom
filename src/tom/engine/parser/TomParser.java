@@ -1387,7 +1387,8 @@ public class TomParser extends TomTask implements TomParserConstants {
         jj_la1[39] = jj_gen;
         break label_16;
       }
-      lhs = AnnotedTerm();
+      //<TOM_LBRACKET> <TOM_RBRACKET>
+          lhs = AnnotedTerm();
                           listOfLhs.add(lhs);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_ALTERNATIVE:
@@ -2606,6 +2607,12 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_10() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_51() {
     if (jj_scan_token(XML_COMMENT)) return true;
     return false;
@@ -2629,12 +2636,6 @@ public class TomParser extends TomTask implements TomParserConstants {
 
   final private boolean jj_3R_43() {
     if (jj_3R_46()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_10() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 

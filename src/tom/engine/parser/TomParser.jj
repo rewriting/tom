@@ -1309,6 +1309,7 @@ void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
     }
   <TOM_LBRACE> 
   (
+      //<TOM_LBRACKET> <TOM_RBRACKET>
     lhs = AnnotedTerm() { listOfLhs.add(lhs); }
     [ ( <TOM_ALTERNATIVE> {text += " | ";} lhs = AnnotedTerm() { listOfLhs.add(lhs); } )+ ]
     <TOM_ARROW> {orgText = tsf().makeTomName_Name(text);} rhs = PlainTerm(null)

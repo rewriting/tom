@@ -91,12 +91,20 @@ public class TomKernelExpander extends TomBase {
             } else {
               tomSymbol = getSymbol(strName);
             }
+
             if(tomSymbol != null) {
               TomList subterm = expandVariableList(tomSymbol, l);
               return `Appl(option,nameList,subterm);
-            } else if(l.isEmpty()) {
-              return `Variable(option,nameList.getHead(),type);
+            } else {
+              if(l.isEmpty()  && !hasConstructor(optionList)) {
+                return `Variable(option,nameList.getHead(),type);
+              } else {
+                TomList subterm = expandVariableList(tomSymbol, l);
+                return `Appl(option,nameList,subterm);
+              }
             }
+
+            
           }
           
           Variable(option1,name1,type1) , Appl(optionList,nameList@(Name(strName),_*),l) -> {
@@ -113,6 +121,20 @@ public class TomKernelExpander extends TomBase {
             } else {
               tomSymbol = getSymbol(strName);
             }
+
+            if(tomSymbol != null) {
+              TomList subterm = expandVariableList(tomSymbol, l);
+              return `Appl(option,nameList,subterm);
+            } else {
+              if(l.isEmpty()  && !hasConstructor(optionList)) {
+                return `Variable(option,nameList.getHead(),type1);
+              } else {
+                TomList subterm = expandVariableList(tomSymbol, l);
+                return `Appl(option,nameList,subterm);
+              }
+            }
+
+              /*
             if(tomSymbol != null) {
             	//System.out.println("----->Symbol:"+tomSymbol+ "\n-->args:"+l);
               TomList subterm = expandVariableList(tomSymbol, l);
@@ -120,6 +142,8 @@ public class TomKernelExpander extends TomBase {
             } else if(l.isEmpty()) {
               return `Variable(option,nameList.getHead(),type1);
             }
+              */
+            
           } 
 
           TomTypeToTomTerm(type@Type(tomType,glType)) ,p@Placeholder(optionList) -> {
@@ -137,7 +161,7 @@ public class TomKernelExpander extends TomBase {
           } 
 
           context, appl@Appl(optionList,nameList@(Name(tomName),_*),l) -> {
-              //debugPrintln("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
+               //System.out.println("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
               // create a  symbol
             TomSymbol tomSymbol = getSymbol(tomName);
             if(tomSymbol != null) {
@@ -201,6 +225,16 @@ public class TomKernelExpander extends TomBase {
 
   public TomList expandVariableList(TomSymbol subject, TomList subjectList) {
     //%variable
+
+    if(subject == null) {
+      ArrayList list = new ArrayList();
+      while(!subjectList.isEmpty()) {
+        list.add(expandVariable(null, subjectList.getHead()));
+        subjectList = subjectList.getTail();
+      }
+        return ast().makeList(list);
+    }
+    
     %match(TomSymbol subject) {
       symb@Symbol[typesToType=TypesToType(typeList,codomainType)] -> {
           
