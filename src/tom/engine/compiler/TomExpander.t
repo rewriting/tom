@@ -40,70 +40,8 @@ import jtom.adt.*;
 public class TomExpander extends TomBase {
 
   public TomExpander(jtom.TomEnvironment environment) {
-	super(environment);
+    super(environment);
   }
-
-  protected interface ReplaceContext {
-    ATerm apply(ATerm context,ATerm t) throws TomException;
-  }
-
-    /*
-     * Apply a function to each element of a list
-     */
-  protected ATermList genericMapContext(ATerm context, ATermList subject, ReplaceContext replace) {
-    ATermList res = subject;
-    try {
-      if(!subject.isEmpty()) {
-        ATerm term = replace.apply(context,subject.getFirst());
-        ATermList list = genericMapContext(context,subject.getNext(),replace);
-        res = list.insert(term);
-      }
-    } catch(Exception e) {
-      System.out.println("genericMapContext error: " + e);
-      System.exit(0);
-    }
-    return res;
-  }
-
-    /*
-     * Apply a function to each subterm of a term
-     */
-  protected ATermAppl genericMaptermContext(ATerm context, ATermAppl subject, ReplaceContext replace) {
-    try {
-      ATerm newSubterm;
-      for(int i=0 ; i<subject.getArity() ; i++) {
-        newSubterm = replace.apply(context,subject.getArgument(i));
-        if(newSubterm != subject.getArgument(i)) {
-          subject = subject.setArgument(newSubterm,i);
-        }
-      }
-    } catch(Exception e) {
-      System.out.println("genericMaptermContext error: " + e + subject);
-      e.printStackTrace();
-      System.exit(0);
-    }
-
-    return subject;
-  }
-
-    /*
-     * Traverse a subject and replace
-     */
-  protected ATerm genericTraversalContext(ATerm context, ATerm subject, ReplaceContext replace) {
-    ATerm res = subject;
-    try {
-      if(subject instanceof ATermAppl) {
-        res = genericMaptermContext(context,(ATermAppl) subject,replace);
-      } else if(subject instanceof ATermList) {
-        res = genericMapContext(context,(ATermList) subject,replace);
-      }
-    } catch(Exception e) {
-      System.out.println("genericTraversalContext error: " + e);
-      System.exit(0);
-    }
-    return res;
-  } 
-  
 
 // ------------------------------------------------------------
   %include { Tom.signature }
@@ -115,9 +53,9 @@ public class TomExpander extends TomBase {
      * but also the BackQuoteTerm
      */
   
-  public TomTerm expandTomSyntax(TomTerm subject) throws TomException {
-    Replace replace = new Replace() { 
-        public ATerm apply(ATerm subject) throws TomException {
+  public TomTerm expandTomSyntax(TomTerm subject) {
+    Replace1 replace = new Replace1() { 
+        public ATerm apply(ATerm subject) {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
               BackQuoteTerm[term=t] -> {
@@ -142,8 +80,7 @@ public class TomExpander extends TomBase {
     return (TomTerm) replace.apply(subject); 
   }
 
-  private TomTerm expandRecordAppl(Option option, String tomName, TomList args)
-    throws TomException {
+  private TomTerm expandRecordAppl(Option option, String tomName, TomList args) {
     TomSymbol tomSymbol = getSymbol(tomName);
     SlotList slotList = tomSymbol.getSlotList();
     TomList subtermList = empty();
@@ -181,9 +118,9 @@ public class TomExpander extends TomBase {
     return `Appl(option,Name(tomName),subtermList);
   }
   
-  private TomTerm expandBackQuoteTerm(TomTerm t) throws TomException {
-    Replace replaceSymbol = new Replace() {
-        public ATerm apply(ATerm t) throws TomException {
+  private TomTerm expandBackQuoteTerm(TomTerm t) {
+    Replace1 replaceSymbol = new Replace1() {
+        public ATerm apply(ATerm t) {
           if(t instanceof TomTerm) {
             %match(TomTerm t) {
               Appl[option=Option(optionList),astName=name@Name(tomName),args=l] -> {
@@ -234,8 +171,9 @@ public class TomExpander extends TomBase {
      * replace Name by Symbol
      * replace Name by Variable
      */
-  private ReplaceContext replaceVariable = new ReplaceContext() { 
-      public ATerm apply(ATerm contextSubject,ATerm subject) throws TomException {
+  private Replace2 replaceVariable = new Replace2() { 
+      public ATerm apply(ATerm subject, Object arg1) {
+        TomTerm contextSubject = (TomTerm)arg1;
 
         if(!(subject instanceof TomTerm)) {
           //debugPrintln("expandVariable not a tomTerm: " );
@@ -246,7 +184,7 @@ public class TomExpander extends TomBase {
               TomTypeAlone(tomType) -> { return getType(tomType); }
             }
           }
-          return genericTraversalContext(contextSubject,subject,this);
+          return genericTraversal(subject,this,contextSubject);
         }
 
           //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
@@ -367,17 +305,17 @@ public class TomExpander extends TomBase {
           context, t -> {
             //debugPrintln("expandVariable.11 default: " );
               //System.out.println("expandVariable default:\n\t" + subject );
-            return genericTraversalContext(contextSubject,subject,this);
+            return genericTraversal(subject,this,contextSubject);
           }
         } // end match
       } // end apply
     }; // end new
 
-  public TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) throws TomException {
-    return (TomTerm) replaceVariable.apply(contextSubject,subject); 
+  public TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
+    return (TomTerm) replaceVariable.apply(subject,contextSubject); 
   }
 
-  public TomList expandVariableList(TomSymbol subject, TomList subjectList) throws TomException {
+  public TomList expandVariableList(TomSymbol subject, TomList subjectList) {
     //%variable
     %match(TomSymbol subject) {
       symb@Symbol[typesToType=TypesToType(typeList,codomainType)] -> {
@@ -447,22 +385,17 @@ public class TomExpander extends TomBase {
      * each TomTypeAlone is replace by the corresponding TomType
      */
   public void updateSymbol() {
-    try {
-      Iterator it = symbolTable().keySymbolIterator();
-      while(it.hasNext()) {
-        String tomName = (String)it.next();
-        TomTerm emptyContext = null;
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
-        symbolTable().putSymbol(tomName,tomSymbol);
-      }
-    } catch(TomException e) {
-      System.out.println("updateSymbolExpandVariable error");
-      System.exit(1);
+    Iterator it = symbolTable().keySymbolIterator();
+    while(it.hasNext()) {
+      String tomName = (String)it.next();
+      TomTerm emptyContext = null;
+      TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+      tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+      symbolTable().putSymbol(tomName,tomSymbol);
     }
   }
   
-  private TomSymbol getSymbol(String tomName) throws TomException {
+  private TomSymbol getSymbol(String tomName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     return tomSymbol;
   }

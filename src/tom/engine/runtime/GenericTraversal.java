@@ -40,19 +40,41 @@ public class GenericTraversal {
     boolean apply(ATerm t);
   }
 
-  protected interface Replace {
-    ATerm apply(ATerm t);
+  private class Replace {
+    protected ATerm apply(ATerm t, Object[] args) {
+      int length = args.length;
+      switch(length) {
+          case 0: return ((Replace1)this).apply(t);
+          case 1: return ((Replace2)this).apply(t, args[0]);
+          case 2: return ((Replace3)this).apply(t, args[0], args[1]);
+          default:
+            System.out.println("Extend Replace.apply to " + length + " arguments");
+            System.exit(1);
+      }
+      return t;
+    }
   }
 
+  protected abstract class Replace1 extends Replace {
+    abstract public ATerm apply(ATerm t);
+  }
+
+  protected abstract class Replace2 extends Replace {
+    abstract public ATerm apply(ATerm t, Object arg1);
+  }
+
+  protected abstract class Replace3 extends Replace {
+    abstract public ATerm apply(ATerm t, Object arg1, Object arg2);
+  }
     /*
      * Apply a function to each element of a list
      */
-  protected ATermList genericMap(ATermList subject, Replace replace) {
+  protected ATermList genericMap(ATermList subject, Replace replace, Object[] args) {
     ATermList res = subject;
     try {
       if(!subject.isEmpty()) {
-        ATerm term = replace.apply(subject.getFirst());
-        ATermList list = genericMap(subject.getNext(),replace);
+        ATerm term = replace.apply(subject.getFirst(),args);
+        ATermList list = genericMap(subject.getNext(),replace, args);
         res = list.insert(term);
       }
     } catch(Exception e) {
@@ -65,11 +87,11 @@ public class GenericTraversal {
     /*
      * Apply a function to each subterm of a term
      */
-  protected ATermAppl genericMapterm(ATermAppl subject, Replace replace) {
+  protected ATermAppl genericMapterm(ATermAppl subject, Replace replace, Object[] args) {
     try {
       ATerm newSubterm;
       for(int i=0 ; i<subject.getArity() ; i++) {
-        newSubterm = replace.apply(subject.getArgument(i));
+        newSubterm = replace.apply(subject.getArgument(i),args);
         if(newSubterm != subject.getArgument(i)) {
           subject = subject.setArgument(newSubterm,i);
         }
@@ -112,12 +134,24 @@ public class GenericTraversal {
      * Traverse a subject and replace
      */
   protected ATerm genericTraversal(ATerm subject, Replace replace) {
+    return genericTraversal(subject,replace, new ATerm[] {});
+  }
+
+  protected ATerm genericTraversal(ATerm subject, Replace replace, Object arg1) {
+    return genericTraversal(subject, replace, new Object[] {arg1});
+  }
+
+  protected ATerm genericTraversal(ATerm subject, Replace replace, Object arg1, Object arg2) {
+    return genericTraversal(subject, replace, new Object[] {arg1,arg2});
+  }
+  
+  protected ATerm genericTraversal(ATerm subject, Replace replace, Object[] args) {
     ATerm res = subject;
     try {
       if(subject instanceof ATermAppl) { 
-        res = genericMapterm((ATermAppl) subject,replace);
+        res = genericMapterm((ATermAppl) subject, replace, args);
       } else if(subject instanceof ATermList) {
-        res = genericMap((ATermList) subject,replace);
+        res = genericMap((ATermList) subject, replace, args);
       }
     } catch(Exception e) {
       System.out.println("Please, extend genericTraversal");

@@ -35,11 +35,12 @@ import jtom.tools.*;
 import jtom.exception.*;
 import jtom.checker.*;
 import jtom.adt.*;
+import jtom.runtime.*;
 
-public class TomBase {
+public class TomBase extends GenericTraversal {
   private TomEnvironment tomEnvironment;
   private TomList empty;
-  
+
   private static List emptyList = new ArrayList();
   protected final static boolean debug = false;
 
@@ -319,20 +320,7 @@ public class TomBase {
     return false;
   }
 
-    /*
-     * collects something in table
-     * returns false if no more traversal is needed
-     * returns true  if traversal has to be continued
-     */
-  protected interface Collect {
-    boolean apply(ATerm t) throws TomException;
-  }
-
-  protected interface Replace {
-    ATerm apply(ATerm t) throws TomException;
-  }
-
-  protected TomList tomListMap(TomList subject, Replace replace) {
+  protected TomList tomListMap(TomList subject, Replace1 replace) {
     TomList res = subject;
     try {
       if(!subject.isEmpty()) {
@@ -348,103 +336,10 @@ public class TomBase {
     return res;
   }
   
-    /*
-     * Apply a function to each element of a list
-     */
-  protected ATermList genericMap(ATermList subject, Replace replace) {
-      /*
-        %match(TomList subject) {
-        conc()      -> { return empty(); }
-        conc(t,l*)  -> { return cons(replace.apply(t), map(l,replace)); }
-        _ -> {
-        System.out.println("TomBase.map error on term: " + subject);
-        System.exit(1);
-        }
-        }
-        return null;
-      */
-    ATermList res = subject;
-    try {
-      if(!subject.isEmpty()) {
-        ATerm term = replace.apply(subject.getFirst());
-        ATermList list = genericMap(subject.getNext(),replace);
-        res = list.insert(term);
-      }
-    } catch(Exception e) {
-      System.out.println("genericMap error: " + e);
-      e.printStackTrace();
-      System.exit(0);
-    }
-    return res;
-  }
-
-    /*
-     * Apply a function to each subterm of a term
-     */
-  protected ATermAppl genericMapterm(ATermAppl subject, Replace replace) {
-    try {
-      ATerm newSubterm;
-      for(int i=0 ; i<subject.getArity() ; i++) {
-        newSubterm = replace.apply(subject.getArgument(i));
-        if(newSubterm != subject.getArgument(i)) {
-          subject = subject.setArgument(newSubterm,i);
-        }
-      }
-    } catch(Exception e) {
-      System.out.println("genericMapterm error: " + e);
-      e.printStackTrace();
-      System.exit(0);
-    }
-    return subject;
-  }
-  
-    /*
-     * Traverse a subject and collect
-     * %all(subject, collect(vTable,subject,f)); 
-     */
-  protected void genericCollect(ATerm subject, Collect collect) throws TomException {
-    if(collect.apply(subject)) { 
-      if(subject instanceof ATermAppl) { 
-        ATermAppl subjectAppl = (ATermAppl) subject; 
-        for(int i=0 ; i<subjectAppl.getArity() ; i++) {
-          ATerm term = subjectAppl.getArgument(i);
-          genericCollect(term,collect); 
-        } 
-      } else if(subject instanceof ATermList) { 
-        ATermList subjectList = (ATermList) subject; 
-        while(!subjectList.isEmpty()) { 
-          genericCollect(subjectList.getFirst(),collect); 
-          subjectList = subjectList.getNext(); 
-        } 
-      } else { 
-          //System.out.println("genericCollect(subject) with subject instanceof: " + subject.getClass()); 
-          //System.exit(1); 
-      } 
-    }
-  } 
-
-    /*
-     * Traverse a subject and replace
-     */
-  protected ATerm genericTraversal(ATerm subject, Replace replace) {
-    ATerm res = subject;
-    try {
-      if(subject instanceof ATermAppl) { 
-        res = genericMapterm((ATermAppl) subject,replace);
-      } else if(subject instanceof ATermList) {
-        res = genericMap((ATermList) subject,replace);
-      }
-    } catch(Exception e) {
-      System.out.println("traversal error: " + e);
-      System.exit(0);
-    }
-    return res;
-  } 
-
     // ------------------------------------------------------------
-  protected void collectVariable(final Collection collection, TomTerm subject) throws TomException {
+  protected void collectVariable(final Collection collection, TomTerm subject) {
     Collect collect = new Collect() { 
-        public boolean apply(ATerm t) throws TomException {
+        public boolean apply(ATerm t) {
             //%variable
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;

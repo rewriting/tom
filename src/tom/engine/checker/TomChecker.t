@@ -45,6 +45,8 @@ public class TomChecker extends TomBase {
   private Option currentApplStructureOrgTrack;
   private Integer nullInteger = new Integer(-1);
 
+  private int foundError = 0;
+  
   public TomChecker(jtom.TomEnvironment environment) { 
     super(environment);
   }
@@ -52,13 +54,17 @@ public class TomChecker extends TomBase {
     // ------------------------------------------------------------
   %include { Tom.signature }
     // ------------------------------------------------------------
+
+  public int getNumberFoundError() {
+    return foundError;
+  }
   
     // Main entry point: We check all interesting Tom Structure
-  public void checkSyntax(TomTerm parsedTerm) throws TomException {
+  public void checkSyntax(TomTerm parsedTerm) {
     if(!Flags.doCheck) return;
     Collect collectAndVerify = new Collect() 
       {  
-        public boolean apply(ATerm term) throws TomException {
+        public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
               Match(orgTrack, SubjectList(matchArgsList), PatternList(patternActionList)) -> {  
@@ -98,11 +104,11 @@ public class TomChecker extends TomBase {
     genericCollect(parsedTerm, collectAndVerify);
   }
   
-  public void checkVariableCoherence(TomTerm expandedTerm) throws TomException {
+  public void checkVariableCoherence(TomTerm expandedTerm) {
     if(!Flags.doCheck) return;
     Collect collectAndVerify = new Collect() 
       {  
-        public boolean apply(ATerm term) throws TomException {
+        public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
               Match(orgTrack, _, PatternList(list)) -> {  
@@ -125,7 +131,7 @@ public class TomChecker extends TomBase {
     genericCollect(expandedTerm, collectAndVerify);
   }
 
-  private void verifyMatchVariable(TomList patternList) throws TomException {
+  private void verifyMatchVariable(TomList patternList) {
     while(!patternList.isEmpty()) {
       TomTerm patterns = patternList.getHead().getTermList();
         // collect variables
@@ -136,7 +142,7 @@ public class TomChecker extends TomBase {
     }
   }
 
-  private void verifyRuleVariable(TomList list) throws TomException {
+  private void verifyRuleVariable(TomList list) {
     while(!list.isEmpty()) {
       TomTerm rewriteRule = list.getHead();
       TomTerm lhs = rewriteRule.getLhs();
@@ -187,7 +193,7 @@ public class TomChecker extends TomBase {
     }
   }
   
-  private HashSet verifyVariableType(ArrayList list) throws TomException {
+  private HashSet verifyVariableType(ArrayList list) {
       // compute multiplicities
     HashSet set = new HashSet();
     HashMap multiplicityMap = new HashMap();
@@ -212,21 +218,21 @@ public class TomChecker extends TomBase {
     return set;
   }
   
-  private void messageErrorIncoherentVariable(String name, String type, String type2, OptionList option) throws TomException {
+  private void messageErrorIncoherentVariable(String name, String type, String type2, OptionList option) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     Integer line = findOriginTrackingLine(option);
     String s = "Bad variable type for '"+name+"': it has both type '"+type+"' and '"+type2+"' in structure declared line "+declLine;
     messageError(line,s);
   }
   
-  private void messageRuleErrorUnknownVariable(Collection variableCollectionRhs, Option rewriteRuleOrgTrack) throws TomException {
+  private void messageRuleErrorUnknownVariable(Collection variableCollectionRhs, Option rewriteRuleOrgTrack) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     Integer line = findOriginTrackingLine(rewriteRuleOrgTrack);
     String s = "Unknown variable(s) " +variableCollectionRhs+ " used in right part of %rule declared line "+declLine;
     messageError(line,s);
   }
   
-  private void messageRuleErrorBadRhsVariable(String name, String type, String type2, Option rewriteRuleOrgTrack) throws TomException {
+  private void messageRuleErrorBadRhsVariable(String name, String type, String type2, Option rewriteRuleOrgTrack) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     Integer line = findOriginTrackingLine(rewriteRuleOrgTrack);
     
@@ -234,10 +240,10 @@ public class TomChecker extends TomBase {
     messageError(line,s);
   }
 
-  private void permissiveVerify(TomTerm term) throws TomException {
+  private void permissiveVerify(TomTerm term) {
     Collect permissiveCollectAndVerify = new Collect() 
       {  
-        public boolean apply(ATerm term) throws TomException {
+        public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
               BackQuoteTerm[term=t] -> {
@@ -270,7 +276,7 @@ public class TomChecker extends TomBase {
     /////////////////////////////////
   
     // Given a subject list, we test types in match signature and then number and type of slots found in each pattern
-  private void verifyMatch(TomList subjectList, TomList patternList) throws TomException {
+  private void verifyMatch(TomList subjectList, TomList patternList) {
     ArrayList typeMatchArgs = new ArrayList();
     while( !subjectList.isEmpty() ) {
       TomTerm term = subjectList.getHead();
@@ -294,7 +300,7 @@ public class TomChecker extends TomBase {
   }
     // For each Pattern we count and collect type information but also we test that terms are well formed
     // No top variable star are allowed
-  private void verifyMatchPattern(TomTerm pattern, ArrayList typeMatchArgs) throws TomException {
+  private void verifyMatchPattern(TomTerm pattern, ArrayList typeMatchArgs) {
     int nbExpectedArgs = typeMatchArgs.size();
     TomList termList = pattern.getTermList().getList();
     ArrayList foundTypeMatch = new ArrayList();
@@ -341,7 +347,7 @@ public class TomChecker extends TomBase {
     }
   }
   
-  private void messageMatchErrorNumberArgument(int nbExpectedVar, int nbFoundVar, Integer line) throws TomException {
+  private void messageMatchErrorNumberArgument(int nbExpectedVar, int nbFoundVar, Integer line) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Bad number of arguments: "+nbExpectedVar+" argument(s) required but "+nbFoundVar+" found in %match structure declared line "+declLine; 
     messageError(line,s);
@@ -354,13 +360,13 @@ public class TomChecker extends TomBase {
     System.out.println(" *** For slot "+ slotNumber +" :Type '"+expectedType+"' required but Type '"+givenType+"' found"+" - Line : "+line);
   }
   
-  private void messageMatchTypeVariableError(String name, String type) throws TomException {
+  private void messageMatchTypeVariableError(String name, String type) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Variable '" + name + "' has an unknown type '"+type+"' in %match construct declared line "+declLine;
     messageError(declLine,s);
   }
   
-  private void messageMatchErrorVariableStar(String nameVariableStar, Integer line) throws TomException {
+  private void messageMatchErrorVariableStar(String nameVariableStar, Integer line) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Single list variable '"+nameVariableStar+"*' is not allowed on left most part of %match structure declared line "+declLine;
     messageError(line,s);
@@ -370,7 +376,7 @@ public class TomChecker extends TomBase {
     // SYMBOL AND TYPE CONCERNS //
     //////////////////////////////
   
-  private void verifyDeclaration(Declaration declaration) throws TomException {
+  private void verifyDeclaration(Declaration declaration) {
     %match (Declaration declaration) {
       SymbolDecl(Name(tomName)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
@@ -493,7 +499,7 @@ public class TomChecker extends TomBase {
     /////////////////////////////////
     // SYMBOL DECLARATION CONCERNS //
     /////////////////////////////////
-  private void verifySymbol(String symbolType, TomSymbol tomSymbol) throws TomException {
+  private void verifySymbol(String symbolType, TomSymbol tomSymbol) {
     int nbArgs=0;
     OptionList optionList = tomSymbol.getOption().getOptionList();
       // We save first the origin tracking of the symbol declaration
@@ -523,18 +529,18 @@ public class TomChecker extends TomBase {
     Flags.findErrors = true;
   }
   
-  private void verifySymbolCodomain(String returnTypeName, String symbName, Integer symbLine) throws TomException {
+  private void verifySymbolCodomain(String returnTypeName, String symbName, Integer symbLine) {
     if (symbolTable().getType(returnTypeName) == null){
       messageTypeOperatorError(returnTypeName, symbName, symbLine);
     }
   }
   
-  private void messageTypeOperatorError(String type, String name, Integer line) throws TomException {
+  private void messageTypeOperatorError(String type, String name, Integer line) {
     String s = "Operator '" + name + "' has an unknown return type: '" + type + "'";
     messageError(line,s);
   }
   
-  private int verifyAndCountSymbolArguments(TomList args, String symbName, Integer symbLine) throws TomException {
+  private int verifyAndCountSymbolArguments(TomList args, String symbName, Integer symbLine) {
     TomTerm type;
     int nbArgs=0;
     while(!args.isEmpty()) {
@@ -550,18 +556,18 @@ public class TomChecker extends TomBase {
     return nbArgs;
   }
   
-  private void verifyTypeExist(String typeName, int slotPosition, String symbName, Integer symbLine) throws TomException {
+  private void verifyTypeExist(String typeName, int slotPosition, String symbName, Integer symbLine) {
     if (symbolTable().getType(typeName) == null){
       messageTypesOperatorError(typeName, slotPosition, symbName, symbLine);
     }
   }
   
-  private void messageTypesOperatorError(String type, int slotPosition, String name, Integer line) throws TomException {
+  private void messageTypesOperatorError(String type, int slotPosition, String name, Integer line) {
     String s = "Slot position "+slotPosition + " of operator '"+ name + "' has an unknown type: '" + type + "'";
     messageError(line,s);
   }
   
-  private void verifySymbolOptions(String symbType, OptionList list, int expectedNbMakeArgs) throws TomException {
+  private void verifySymbolOptions(String symbType, OptionList list, int expectedNbMakeArgs) {
     statistics().numberOperatorDefinitionsTested++;
     ArrayList verifyList = new ArrayList();
     boolean foundOpMake = false;
@@ -613,7 +619,7 @@ public class TomChecker extends TomBase {
     }
   }
 
-  private void verifyMakeDeclArgs(TomList argsList, int nbMakeArgs, Option orgTrack, String symbType) throws TomException {
+  private void verifyMakeDeclArgs(TomList argsList, int nbMakeArgs, Option orgTrack, String symbType) {
       // we test the necessity to use different names for each variable-parameter.
     ArrayList listVar = new ArrayList();
     int nbArgsFound =0;
@@ -635,7 +641,7 @@ public class TomChecker extends TomBase {
       messageNumberArgumentsError(nbMakeArgs,nbArgsFound,orgTrack, symbType);
     }
   }
-  private void messageNumberArgumentsError(int nbArg, int nbArg2, Option orgTrack, String symbType) throws TomException {
+  private void messageNumberArgumentsError(int nbArg, int nbArg2, Option orgTrack, String symbType) {
     Integer line = nullInteger, declLine = nullInteger;
     String name = "unknown", nameDecl = "unknown";
     %match(Option orgTrack, Option currentTomStructureOrgTrack) {
@@ -647,7 +653,7 @@ public class TomChecker extends TomBase {
     messageError(line,s);
   }	
   
-  private void messageErrorVariableStar(String nameVariableStar, String nameMethod ,Integer line) throws TomException {
+  private void messageErrorVariableStar(String nameVariableStar, String nameMethod ,Integer line) {
     String s = "List variable '" + nameVariableStar + "' cannot be used in '" + nameMethod + "'";
     messageError(line,s);
   }
@@ -709,7 +715,7 @@ public class TomChecker extends TomBase {
     // RECORDS CONCERNS //
     //////////////////////
   
-  private void verifyRecordStructure(OptionList option, String tomName, TomList args) throws TomException {
+  private void verifyRecordStructure(OptionList option, String tomName, TomList args) {
     TomSymbol symbol = symbolTable().getSymbol(tomName);
     if(symbol != null) {
       SlotList slotList = symbol.getSlotList();
@@ -726,7 +732,7 @@ public class TomChecker extends TomBase {
   }
   
     // We test the existence of slotName contained in pairSlotAppl. and then the associated term
-  private void verifyRecordSlots(TomList listPair, SlotList slotList, String methodName) throws TomException {
+  private void verifyRecordSlots(TomList listPair, SlotList slotList, String methodName) {
     ArrayList slotIndex = new ArrayList();
     while( !listPair.isEmpty() ) {
       TomTerm pair = listPair.getHead();
@@ -773,7 +779,7 @@ public class TomChecker extends TomBase {
     Flags.findErrors = true;
   }
   
-  private void messageBracketError(String name, OptionList optionList) throws TomException {
+  private void messageBracketError(String name, OptionList optionList) {
     Integer line = findOriginTrackingLine(name,optionList);
     String s = "[] are not allowed on lists or arrays nor constants, see: "+name;
     messageError(line,s);
@@ -783,7 +789,7 @@ public class TomChecker extends TomBase {
     // APPL CONCERNS    //
     //////////////////////
   
-  private void verifyApplStructure(OptionList optionList, String name, TomList argsList) throws TomException {
+  private void verifyApplStructure(OptionList optionList, String name, TomList argsList) {
     statistics().numberApplStructuresTested++;
     currentApplStructureOrgTrack = findOriginTracking(optionList);
     TomSymbol symbol = symbolTable().getSymbol(name);
@@ -853,20 +859,20 @@ public class TomChecker extends TomBase {
     }
   }
 
-  private void  messageImpossiblePlaceHolderInListStructure(String listApplName, OptionList optionList) throws TomException {
+  private void  messageImpossiblePlaceHolderInListStructure(String listApplName, OptionList optionList) {
     Integer line = findOriginTrackingLine(optionList);
     Integer declLine = findOriginTrackingLine(currentApplStructureOrgTrack);
     String s = " *** Placeholder is not allowed in list operator '"+listApplName+"' declared line "+declLine;
     messageError(line,s);
   }
   
-  private void  messageApplErrorTypeArgument(String applName, int slotNumber, String expectedType, String givenType, Integer line) throws TomException {
+  private void  messageApplErrorTypeArgument(String applName, int slotNumber, String expectedType, String givenType, Integer line) {
     Integer declLine = findOriginTrackingLine(currentApplStructureOrgTrack);
     String s = "Bad type of argument: Argument "+slotNumber+" of method '" + applName + "' has type '"+expectedType+"' required but type '"+givenType+"' found in structure declared "+declLine;
     messageError(line,s);
   }
     
-  private void permissiveVerifyApplStructure(OptionList optionList, String name, TomList argsList) throws TomException {
+  private void permissiveVerifyApplStructure(OptionList optionList, String name, TomList argsList) {
     statistics().numberApplStructuresTested++;
     TomSymbol symbol = symbolTable().getSymbol(name);
     if(symbol==null && !argsList.isEmpty()) {
@@ -907,7 +913,7 @@ public class TomChecker extends TomBase {
     return false;
   }
 
-  private void messageSymbolError(String name, OptionList optionList) throws TomException {
+  private void messageSymbolError(String name, OptionList optionList) {
     Integer line = findOriginTrackingLine(name, optionList);
     String s = "Symbol method : '" + name + "' not found";
     messageError(line,s);
@@ -927,7 +933,7 @@ public class TomChecker extends TomBase {
     System.out.println(" *** Unknown method '"+name+"' : Ensure the type coherence by yourself line : " + line);
   }
   
-  private void messageNumberArgumentsError(int nbArg, int nbArg2, String name, Integer line) throws TomException {
+  private void messageNumberArgumentsError(int nbArg, int nbArg2, String name, Integer line) {
     String s = "Bad number of arguments for method '" + name + "':" + nbArg + " arguments are required but " + nbArg2 + " are given";
     messageError(line,s);
   }
@@ -942,7 +948,7 @@ public class TomChecker extends TomBase {
      * Lhs and Rhs shall have the same return type
      * Used variable on rhs shall be coherent and declared on lhs
      */ 
-  private void verifyRule(TomList ruleList) throws TomException {
+  private void verifyRule(TomList ruleList) {
     int i = 0;
     TomTerm currentRule;
     String name = "Unknown";
@@ -971,7 +977,7 @@ public class TomChecker extends TomBase {
     }
   }
   
-  private String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  ruleName, int ruleNumber) throws TomException {
+  private String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  ruleName, int ruleNumber) {
     String methodName = "";
     OptionList options = tsf().makeOptionList_EmptyOptionList();
     %match(TomTerm lhs) {
@@ -1009,40 +1015,40 @@ public class TomChecker extends TomBase {
     return methodName;
   }
 
-  private void messageNoMakeForSymbol(String name, OptionList optionList) throws TomException {
+  private void messageNoMakeForSymbol(String name, OptionList optionList) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     Integer line = findOriginTrackingLine(optionList);
     String s = "Symbol '" +name+ "' has no 'make' method associated in structure declared line "+declLine;
     messageError(line,s);
   }
   
-  private void messageRuleErrorVariable(String nameVariableStar, Integer line) throws TomException {
+  private void messageRuleErrorVariable(String nameVariableStar, Integer line) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Alone variable " +nameVariableStar+ " is not allowed on left hand side of structure %rule declared line "+declLine;
     messageError(line,s);
   }
   
-  private void messageRuleErrorVariableStar(String nameVariableStar, Integer line) throws TomException {
+  private void messageRuleErrorVariableStar(String nameVariableStar, Integer line) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Single list variable '" +nameVariableStar+ "*' is not allowed on left hand side of structure %rule declared line "+declLine;
     messageError(line,s);
   }
 
-  private void messageRuleErrorLhsImpossiblePlaceHolder(OptionList optionList) throws TomException {
+  private void messageRuleErrorLhsImpossiblePlaceHolder(OptionList optionList) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     Integer line = findOriginTrackingLine(optionList);
     String s = "Alone placeholder is not allowed in left hand side of structure %rule declared line " +declLine;
     messageError(line,s);
   }
   
-  private void messageRuleErrorConstructorEgality(String  name, String nameExpected, OptionList optionList) throws TomException {
+  private void messageRuleErrorConstructorEgality(String  name, String nameExpected, OptionList optionList) {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     Integer line = findOriginTrackingLine(name, optionList);
     String s = "Left most symbol name '" + nameExpected + "' expected, but '" + name + "' found in left hand side of structure %rule declared line " +declLine;
     messageError(line,s);
   }
   
-  private void verifyRhsRuleStructure(TomTerm ruleRhs) throws TomException {
+  private void verifyRhsRuleStructure(TomTerm ruleRhs) {
     matchBlock: {
       %match(TomTerm ruleRhs) {
         appl@Appl(Option(options),Name(name),args) -> {
@@ -1069,20 +1075,20 @@ public class TomChecker extends TomBase {
     }
   }
 
-  private void messageRuleErrorRhsImpossiblePlaceholder(OptionList optionList) throws TomException {
+  private void messageRuleErrorRhsImpossiblePlaceholder(OptionList optionList) {
     Integer line = findOriginTrackingLine(optionList);
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = " *** Placeholder is not allowed on right part of structure %rule declared line "+declLine;
     messageError(line,s);
   }
   
-  private void messageRuleErrorRhsImpossibleRecord(OptionList optionList, String name) throws TomException {
+  private void messageRuleErrorRhsImpossibleRecord(OptionList optionList, String name) {
     Integer line = findOriginTrackingLine(optionList);
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "\n *** Record '"+name+"[...]' is not allowed on right part of structure %rule declared line "+declLine;
     messageError(line,s);
   }
-  private void messageRuleErrorRhsImpossibleVarStar(OptionList optionList, String name) throws TomException {
+  private void messageRuleErrorRhsImpossibleVarStar(OptionList optionList, String name) {
     Integer line = findOriginTrackingLine(optionList);
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Single list variable '"+name+"*' is not allowed in right hand side of structure %rule declared line " +declLine;
@@ -1115,10 +1121,10 @@ public class TomChecker extends TomBase {
     System.exit(1); return null;
   }
   
-  private void messageError(Integer line, String msg) throws CheckErrorException {
+  private void messageError(Integer line, String msg) {
     if(!Flags.doCheck) return;
     String s = "\n"+msg+"\n-- Error occured at line: " + line + "\n"; 
-    throw new CheckErrorException(s);
+    foundError++;
   }
   // findOriginTrackingLine(_) method returns the first number of line (stocked in optionList).
   private Integer findOriginTrackingLine(OptionList optionList) {

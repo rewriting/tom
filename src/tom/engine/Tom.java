@@ -218,8 +218,13 @@ public class Tom {
         tomChecker.checkSyntax(parsedTerm);
         stopChrono();
         if(Flags.verbose) System.out.println("TOM syntax checking phase " + getChrono());
-
-        
+        if(tomChecker.getNumberFoundError() > 0) {
+          System.out.println("\nTom Checker:  Encountered " +
+                             tomChecker.getNumberFoundError() +
+                             " errors during verification phase.");
+          throw new CheckErrorException();
+        }
+                
 	TomExpander tomExpander = new TomExpander(environment);
         startChrono();
         expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
@@ -251,7 +256,6 @@ public class Tom {
         return;
       } catch(CheckErrorException e2) {
         System.out.println(e2);
-        System.out.println("\nTom Checker:  Encountered errors during verification phase.");
         System.out.println("No file generated.");
         return;
       } catch(TomException e3) {
@@ -334,9 +338,6 @@ public class Tom {
           statistics.initInfoCompiler();
           statistics.initInfoGenerator();
         }
-      } catch(TomException e) {
-        System.out.println(e);
-        System.out.println("No file generated.");
       } catch(IOException e) {
         System.out.println("No file generated.");
         throw new InternalError("read error");
