@@ -5,7 +5,7 @@
 javadir         = ${prefix}/classes/jtom/backend
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
-JAVASOURCES     = TomGenerator.java
+JAVASOURCES     = TomGenerator.java TomOptimizer.java
 java_JAVA       = $(JAVASOURCES)
 EXTRA_DIST      = $(JAVASOURCES)
 
