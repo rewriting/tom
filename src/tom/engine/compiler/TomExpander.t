@@ -345,21 +345,28 @@ public class TomExpander extends TomTask {
         %match(TomTerm e1, TomTerm e2) {
           Appl[args=manyTomList(Appl[nameList=(Name(name1))],_)],
           Appl[args=manyTomList(Appl[nameList=(Name(name2))],_)] -> {
-            if(`name1.compareTo(`name2) >= 0) {
+            if(`name1.compareTo(`name2) > 0) {
               return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
             }
           }
 
           RecordAppl[args=manyTomList(PairSlotAppl(slotName,Appl[nameList=(Name(name1))]),_)],
           RecordAppl[args=manyTomList(PairSlotAppl(slotName,Appl[nameList=(Name(name2))]),_)] -> {
-            if(`name1.compareTo(`name2) >= 0) {
+            if(`name1.compareTo(`name2) > 0) {
               return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
             }
           }
 
           BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name1))],_)],
           BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name2))],_)] -> {
-            if(`name1.compareTo(`name2) >= 0) {
+            if(`name1.compareTo(`name2) > 0) {
+              return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+            }
+          }
+
+          BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name1)],_)],
+          BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name2)],_)] -> {
+            if(`name1.compareTo(`name2) > 0) {
               return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
             }
           }
@@ -404,7 +411,7 @@ public class TomExpander extends TomTask {
     if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 
     /*
-     * the list of attribute should not be expanded before the sort
+     * the list of attributes should not be expanded before the sort
      * the sortAttribute is extended to compare RecordAppl
      */
     attrList = sortAttributeList(attrList);
@@ -416,7 +423,7 @@ public class TomExpander extends TomTask {
       attrList = attrList.getTail();
     }
     newAttrList = (TomList) newAttrList.reverse();
-
+    //System.out.println("attr: " + newAttrList);
     
     while(!childList.isEmpty()) {
       TomTerm newPattern = expandTomSyntax(childList.getHead());
@@ -543,6 +550,8 @@ public class TomExpander extends TomTask {
         
         TomTerm newName = `BackQuoteAppl(emptyOption(),encodeName(name),empty());
         TomTerm newAttribute = metaEncodeTNodeList(aggregateXMLAttribute(context,`Attributes));
+        //System.out.println("aggregate: " + newAttribute);
+
         TomTerm newBody = metaEncodeTNodeList(aggregateXMLBody(context,`Body));
 
         //System.out.println("newbody = " + newBody);
@@ -572,6 +581,8 @@ public class TomExpander extends TomTask {
 
         TomTerm newName = `BackQuoteAppl(emptyOption(),encodeName(name),empty());
         TomTerm newAttribute = metaEncodeTNodeList(aggregateXMLAttribute(context,`Attributes));
+        //System.out.println("aggregate: " + newAttribute);
+
         TomTerm newBody = metaEncodeTNodeList(`concTomTerm());
         TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.ELEMENT_NODE),concTomTerm(context*,newName,newAttribute,newBody));
           //System.out.println("newBackQuoteAppl1 = " + newBackQuoteAppl);
@@ -654,7 +665,9 @@ public class TomExpander extends TomTask {
         list = `manyTomList(attributeNode,list);
       }
     }
-    list = (TomList) sortAttributeList(list).reverse();
+
+    //list = (TomList) sortAttributeList(list).reverse();
+    list = sortAttributeList(list);
     return list;
   }
 

@@ -1,3 +1,9 @@
+2004-04-19  pem  <pem@polly.loria.fr>
+
+	* src/jtom/compiler/TomExpander.t: 
+	  - improved the sortAttributeList method
+	  - fix a test failure
+
 2004-04-16 Julien Guyon <julien.guyon@loria.fr>
 
 	* src/make_rules **/Makefile.am: -O added

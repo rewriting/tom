@@ -5,7 +5,7 @@
 
 JAVAROOT        = ${top_builddir}/src
 
-#TOMFLAGS = 
+TOMFLAGS = -O ${LOCALFLAGS}
 TOM = ${top_builddir}/utils/jtom
 tomjava.stamp: $(TOMSOURCES)
 	@if test -n "$?"; then \

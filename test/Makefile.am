@@ -8,18 +8,20 @@ TNODEADT_STABLE=$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
 
 javadir         = ${prefix}/test
 JAVAROOT        = ${top_builddir}/test
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(top_builddir)/src:$(top_builddir)/src/adt:$(top_builddir)/stable:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(top_builddir)/src:$(top_builddir)/lib/junit.jar:$(top_builddir)/src/adt:$(top_builddir)/stable:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 source_java     = Peano.t \
 		  List.t \
 		  Array.t \
 		  Xml.t \
 		  XmlDom.t \
-		  Record.t
-#	TestDom.t \
-#	TestMatch.t \
-#		  TestList.t \
-#		  TestBuiltin.t
+		  Record.t \
+			TestArray.t \
+	    TestXml.t \
+	    TestMatch.t \
+		  TestBuiltin.t\
+	    TestXmlDom.t \
+		  TestList.t 
 
 source_c        = cfib1.t \
                   loulou.t
@@ -36,7 +38,7 @@ EXTRA_DIST      = $(source_java) $(source_c) $(check_JAVA)
 %.java.test : %.java Makefile
 	@(echo '#! /bin/sh';\
 	 echo 'set -e';\
-	 echo 'CLASSPATH=${top_builddir}:${top_builddir}/src:${top_builddir}/src/adt:${top_builddir}/stable:..:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):${SHARED_OBJECTS}:${CLASSPATH}';\
+	 echo 'CLASSPATH=${top_builddir}:${top_builddir}/lib/junit.jar:${top_builddir}/src:${top_builddir}/src/adt:${top_builddir}/stable:..:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):${SHARED_OBJECTS}:${CLASSPATH}';\
 	 echo 'export CLASSPATH';\
 	 echo "java $* ${srcdir}";\
 	 echo "rm $*.java.test";\

@@ -13,5 +13,5 @@ CLEANFILES 	= $(TOMSOURCES:.t=.java) tomjava.stamp
 EXTRA_DIST 	= $(BOOTSOURCES) $(TOMSOURCES)
 BUILT_SOURCES   = tomjava.stamp $(BOOTSOURCES)
 
-TOMFLAGS = --noDeclaration -O
+LOCALFLAGS = --noDeclaration 
 include $(top_srcdir)/src/make_rules
