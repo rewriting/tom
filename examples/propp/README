@@ -1,5 +1,5 @@
 # Generate API
-adt-to-java --jtom --input term.adt --package adt.propp --output adt/propp
+adt-to-java --jtom --input term.adt -n term --package adt.propp --output adt/propp
 
 # Build parser : you need antlr (www.antlr.org)
 java antlr.Tool seq.g

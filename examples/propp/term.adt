@@ -35,5 +35,8 @@ constructor(Sequent,PROOF,PROOF),
 constructor(Sequent,END,END),
 constructor(Sequent,seq,seq(<left(ListPred)>,<right(ListPred)>)),
 list(ListPred,Pred),
-list(ListSequent,Sequent)
+list(ListSequent,Sequent),
+
+constructor(Pair,pair,pair(<left(int)>,<right(str)>)),
+list(ListPair,Pair)
 ]

@@ -43,21 +43,25 @@ public class Propp {
 		//boolean res      = depthSearch2(new HashSet(),initSeq,search);
 		long stopChrono = System.currentTimeMillis();
 
-		//System.out.println("Traces = " + rules_appl);
-		// Process Traces
-
 		System.out.println("Build Proof Term");
 		ListProof proofTerm = buildProofTerm(initSeq);
+		ListProof pt = proofTerm;
 		//System.out.println("Proof term = " + proofTerm);
 		System.out.println("Build LaTeX, check validity");
-		Collection tex_proofs = new HashSet();
+		ListPair tex_proofs = `concPair();
+		//we may want to use SortedSet instead
 		boolean validity = true;
-		%match(ListProof proofTerm) {
-			concProof(_*,p,_*) -> {
-				tex_proofs.add(proofToTex(p));
-				if (!isValid(p)) { validity = false; }
-			}
+		int proof_number = 0;
+		while(!pt.isEmpty()) {
+			Proof p = pt.getHead();
+			int nbr = rule_nbr(p);
+			String tex = proofToTex(p)+"\n\n\nRules used for proof : "+nbr+"\n\n\n";
+			proof_number += 1;
+			tex_proofs = insertPair(`pair(nbr,tex),tex_proofs);
+			if (!isValid(p)) { validity = false; }
+			pt = pt.getTail();
 		}
+		System.out.println("Number of proofs : " + proof_number);
 		System.out.println("Is input proved ? " + validity);
 
 		write_proof_latex(tex_proofs,"proof.tex");
@@ -135,7 +139,6 @@ public class Propp {
 	//}}}
 
 	Collection rules_appl = new HashSet();
-	Collection result = new HashSet();
 
 	//{{{ public void OneStep(Sequent subject, final Collection collection) 
 	public void OneStep(Sequent subject, final Collection collection) {
@@ -444,6 +447,28 @@ public class Propp {
 		return result.getValue();
 	}
 	//}}}
+	
+	//{{{ public boolean rule_nbr(Proof p)
+	public int rule_nbr(Proof p) {
+		Collect2 collect = new Collect2() {
+			public boolean apply(ATerm subjectAT, Object arg1) {
+				if (subjectAT instanceof Proof) {
+					Proof pt = (Proof)subjectAT;
+					MyInt val = (MyInt) arg1;
+					%match(Proof pt) {
+						rule(_,_,_) -> { val.setValue(val.getValue() + 1) ; }
+					}
+					return true;
+				}
+				return true;
+			}//end apply
+		};//end new
+		
+		MyInt result = new MyInt(0);
+		traversal.genericCollect(p,collect,result);
+		return result.getValue();
+	}
+	//}}}
 
 	//{{{ public class MyBoolean
 	public class MyBoolean {
@@ -459,9 +484,49 @@ public class Propp {
 		}
 	}
 	//}}}
+	
+	//{{{ public class MyInt
+	public class MyInt {
+		private int value;
+		public MyInt(int initValue) {
+			value = initValue;
+		}
+		public void setValue(int val) {
+			value = val;
+		}
+		public int getValue() {
+			return value;
+		}
+	}
+	//}}}
+	
+	//{{{ insertPair
+	public int comparePair(Pair p1,Pair p2) {
+		%match(Pair p1,Pair p2) {
+			pair(i,_),pair(j,_) -> {
+				if (i < j) { return -1;}
+				else {return 1;}
+			}
+		}
+		return 0;
+	}
 
-	//{{{ public void write_proof_latex(Collection tex_p,String file)
-	public void write_proof_latex(Collection tex_p,String file) {
+	public ListPair insertPair(Pair p,ListPair l) {
+    ListPair res = null;
+    if(l.isEmpty()) {
+      res = l.insert(p);
+    } else if(comparePair(p, l.getHead()) < 0) {
+      res = l.insert(p);
+    } else {
+      res = insertPair(p,l.getTail()).insert(l.getHead());
+    }
+    return res;
+	}
+	//}}}
+
+	//{{{ public void write_proof_latex(Map tex_p,String file)
+	public void write_proof_latex(ListPair tex_p,String file) {
+		ListPair tmptex = tex_p;
 		try {
 			File target = new File(file);
 			FileOutputStream out = new FileOutputStream(target);
@@ -470,10 +535,11 @@ public class Propp {
 
 			osw.write("\\documentclass{article}\n\\usepackage{proof}\n\\def\\negd{\\neg_D}\n\\def\\disjd{\\vee_D}\n\\def\\impd{\\to_D}\n\\def\\negg{\\neg_G}\n\\def\\conjg{\\wedge_G}\n\\def\\disjg{\\vee_G}\n\\def\\conjd{\\wedge_D}\n\\def\\impg{\\to_G}\n\\def\\axiom{Axiom}\n\n\\begin{document}");
 			osw.write("\n\n\n");
-			Iterator iter = tex_p.iterator();
-			while(iter.hasNext()) {
-				osw.write((String)iter.next());
+			while(!tmptex.isEmpty()) {
+				Pair p = (Pair)tmptex.getHead();
+				osw.write((String)p.getRight());
 				osw.write("\n\\vspace{3cm}\n\n");
+				tmptex = tmptex.getTail();
 			}
 			osw.write("\n\\end{document}");
 
