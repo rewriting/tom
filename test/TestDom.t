@@ -9,12 +9,8 @@ public class TestDom extends TestCase {
 
 	%include{dom.tom}
 
-	public static void main (String args[]) {
-		TestDom test = new TestDom();
-		test.run("file.xml");
-	}
-
-	public void run(String file) {
+	public void setUp() {
+		String file = "file.xml";
 		try {
 		dom = DocumentBuilderFactory
 			.newInstance()
@@ -23,7 +19,9 @@ public class TestDom extends TestCase {
 		} catch (Exception e) {
 				throw new RuntimeException("Dom parser problem.");
 		}
+	}
 
+	public void testAttributeMatch(){
 		Node node = `xml(dom,
 				<?xml version="1.0" encoding="UTF-8" ?>
 				<Configuration>
@@ -34,12 +32,8 @@ public class TestDom extends TestCase {
 					</Cellule>
 				</Configuration>
 				);
-		assertTrue(checkAttributeMatch(node) == 15);
-	}
-
-	public int checkAttributeMatch(Node eRoot){
 		int res = 0;
-		%match(TNode eRoot) {
+		%match(TNode node) {
 			<Configuration>
 				<Cellule>
 					a @ <Defaut R1=iR />
@@ -161,7 +155,9 @@ public class TestDom extends TestCase {
 				res++;
 			}
 		}
-		return res;
+		assertEquals(
+			"XML attibute matching should not depend on the order of the attibutes", 
+			res, 15);
 	}
 
 }
