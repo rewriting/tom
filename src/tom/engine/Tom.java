@@ -299,12 +299,11 @@ public class Tom {
 
   private TomTask createTaskChainFromInput() {
     String fileName = getInput().getInputFile().getPath();
-    TomExpander expander = new TomExpander();
-    TomSyntaxChecker syntaxChecker = new TomSyntaxChecker();
-    TomTypeChecker typeChecker = new TomTypeChecker();
     TomCompiler compiler = new TomCompiler();
 
     TomTask initialTask = null;
+
+		TomTask currentTail = initialTask;
 
     InputStream input = null;
       // Create the Chain of responsability    
@@ -312,15 +311,24 @@ public class Tom {
       TomTaskParser tomParser = new TomTaskParser(fileName);
       // This is the initial task
       initialTask = tomParser;
-      
+			currentTail = initialTask;
+
       if (getInput().isDoCheck()) {
-        tomParser.addTask(syntaxChecker);
-        syntaxChecker.addTask(expander);
-        expander.addTask(typeChecker);
-      } else {
-        tomParser.addTask(expander);
-      }
-     
+				TomSyntaxChecker syntaxChecker = new TomSyntaxChecker();
+				currentTail.addTask(syntaxChecker);
+				currentTail = syntaxChecker;
+			}
+
+			TomExpander expander = new TomExpander();
+			currentTail.addTask(expander);
+			currentTail= expander;
+
+      if (getInput().isDoCheck()) {
+				TomTypeChecker typeChecker = new TomTypeChecker();
+				currentTail.addTask(typeChecker);
+				currentTail = typeChecker;
+			}
+
     } //DoParse() && DoExpand
     
     if (getInput().isDoCompile()) {
@@ -349,19 +357,15 @@ public class Tom {
           environment().messageError(TomMessage.getString("IOException"), new Object[]{fileName}, "Tom", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
           return null;
         }
-          // This is the initial task
+          // we do only compile : the compiler is the initial task
         initialTask = compiler;
+				currentTail = compiler;
         environment().setTerm(expandedTerm);
       } else {
-        if (getInput().isDoCheck()) {
-            typeChecker.addTask(compiler);
-        } else {
-            expander.addTask(compiler);
-        }
-      }
+				currentTail.addTask(compiler);
+				currentTail = compiler;
+			}
     } //DoCompile
-
-		TomTask currentTail = compiler;
 
 		if (getInput().isDoOptimization()) {
 			TomOptimizer optimizer = new TomOptimizer();
@@ -380,19 +384,6 @@ public class Tom {
       generator = new TomBackend();
 			currentTail.addTask(generator);
     } //PrintOutput
-
-    
-//     if (getInput().isPrintOutput()) {
-//       TomTask generator;
-//       generator = new TomBackend();
-//       if (getInput().isDoOptimization()) {
-//         TomOptimizer optimizer = new TomOptimizer();
-//         compiler.addTask(optimizer);
-//         optimizer.addTask(generator);
-//       } else {
-//         compiler.addTask(generator);
-//       }
-//     } //PrintOutput
 
     return initialTask;
   }
