@@ -32,14 +32,14 @@ package minirho;
 
  import aterm.*;
  import aterm.pure.*;
-// import tom.library.traversal.*;
+ import tom.library.traversal.*;
  import minirho.rho.rhoterm.*;
  import minirho.rho.rhoterm.types.*;
 
  public class Rho {
 
 	 private Factory factory;
-//	 private GenericTraversal traversal;
+	 private GenericTraversal traversal;
 	 private boolean hasBeenSimplified;
 		 //Signature de mon langage, utilise pour les tests.
 	 private RTerm f = null;
@@ -90,21 +90,6 @@ package minirho;
 //		 this.traversal = new GenericTraversal();
 	 }
 
-	 public RTerm simplifyTerm(RTerm t){
-		 %match(RTerm t){
-			 //replace
-			 appSt(match(Z@var(_),A),Z) -> { return A;}
-				_ -> {return t;}
-		 }
-	 }
-	 public Constraint simplifyConst(Constraint c){
-		 %match(Constraint c){
-			 match(app(f@constr(_),A1) , app(f,B1)) -> {return `match(A1,B1);}
-			 _ -> {return c;}
-		 }
-
-
-	 }
 	
   public Factory getRhotermFactory() {
     return factory;
