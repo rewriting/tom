@@ -52,12 +52,12 @@ public class PathOperator {
   protected Sequence runNext(TNode node)
   {
 	if (this.nextOperator ==null) {
-	  HashSequence seq = new HashSequence();
+	  Sequence seq = new Sequence();
 	  seq.add(node);
 	  return seq;
 	}
 	else {
-	  HashSequence seq = new HashSequence();
+	  Sequence seq = new Sequence();
 	  if (node.hasChildList()) {
 		TNodeList childList = ((TNode)node).getChildList(); 
 		
@@ -83,7 +83,7 @@ public class PathOperator {
 
   public Sequence run(TNode subject) 
   {
-	final HashSequence s=new HashSequence(); 
+	final Sequence s=new Sequence(); 
 
 	try {
 	  if (doTest(subject)) {

@@ -34,7 +34,7 @@ public class SlashSlashOperator extends PathOperator{
   public Sequence run(TNode subject) 
   {
 	GenericTraversal traversal = new GenericTraversal();
-	final HashSequence s=new HashSequence(); 
+	final Sequence s=new Sequence(); 
 	
 	Collect1 collect = new Collect1() { 
 		public boolean apply(ATerm t) 

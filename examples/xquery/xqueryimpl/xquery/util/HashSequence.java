@@ -14,13 +14,15 @@ public class HashSequence extends Sequence {
 
   public boolean add(Object o)
   {
-	if (hashtable.put(o, o)==null){
+	if (hashtable.put(o, o)==null) {
 	  super.add(o);
 	}
 	  
 	return true;
   }
   
+
+
   public boolean addAll(Collection c)
   {
 	Iterator i = c.iterator(); 
