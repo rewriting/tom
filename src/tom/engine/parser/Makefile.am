@@ -6,8 +6,7 @@ javadir         = ${prefix}/classes/jtom/parser
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/parser
-BOOTSOURCES	= ASCII_UCodeESC_CharStream.java\
-		  JavaCharStream.java\
+BOOTSOURCES	= JavaCharStream.java\
 		  TomBuffer.java
 
 generated_java  = Token.java\

@@ -56,6 +56,8 @@ import jtom.tools.SymbolTable;
 
 public class TomParserTokenManager implements TomParserConstants
 {
+  public  java.io.PrintStream debugStream = System.out;
+  public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }
 private final int jjStopStringLiteralDfa_0(int pos, long active0)
 {
    switch (pos)
@@ -1737,25 +1739,25 @@ static final long[] jjtoSpecial = {
 static final long[] jjtoMore = {
    0x8e008e00000L, 0x0L, 
 };
-private ASCII_UCodeESC_CharStream input_stream;
+protected JavaCharStream input_stream;
 private final int[] jjrounds = new int[16];
 private final int[] jjstateSet = new int[32];
 StringBuffer image;
 int jjimageLen;
 int lengthOfMatch;
 protected char curChar;
-public TomParserTokenManager(ASCII_UCodeESC_CharStream stream)
+public TomParserTokenManager(JavaCharStream stream)
 {
-   if (ASCII_UCodeESC_CharStream.staticFlag)
+   if (JavaCharStream.staticFlag)
       throw new Error("ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
    input_stream = stream;
 }
-public TomParserTokenManager(ASCII_UCodeESC_CharStream stream, int lexState)
+public TomParserTokenManager(JavaCharStream stream, int lexState)
 {
    this(stream);
    SwitchTo(lexState);
 }
-public void ReInit(ASCII_UCodeESC_CharStream stream)
+public void ReInit(JavaCharStream stream)
 {
    jjmatchedPos = jjnewStateCnt = 0;
    curLexState = defaultLexState;
@@ -1769,7 +1771,7 @@ private final void ReInitRounds()
    for (i = 16; i-- > 0;)
       jjrounds[i] = 0x80000000;
 }
-public void ReInit(ASCII_UCodeESC_CharStream stream, int lexState)
+public void ReInit(JavaCharStream stream, int lexState)
 {
    ReInit(stream);
    SwitchTo(lexState);
@@ -1782,7 +1784,7 @@ public void SwitchTo(int lexState)
       curLexState = lexState;
 }
 
-private final Token jjFillToken()
+protected Token jjFillToken()
 {
    Token t = Token.newToken(jjmatchedKind);
    t.kind = jjmatchedKind;
@@ -1802,7 +1804,7 @@ int jjround;
 int jjmatchedPos;
 int jjmatchedKind;
 
-public final Token getNextToken() 
+public Token getNextToken() 
 {
   int kind;
   Token specialToken = null;
@@ -1976,7 +1978,7 @@ public final Token getNextToken()
   }
 }
 
-final void SkipLexicalActions(Token matchedToken)
+void SkipLexicalActions(Token matchedToken)
 {
    switch(jjmatchedKind)
    {
@@ -1984,7 +1986,7 @@ final void SkipLexicalActions(Token matchedToken)
          break;
    }
 }
-final void MoreLexicalActions()
+void MoreLexicalActions()
 {
    jjimageLen += (lengthOfMatch = jjmatchedPos + 1);
    switch(jjmatchedKind)
