@@ -52,7 +52,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
 
   %op Token LPAREN(image:String) {
     fsym { }
-    is_fsym(t) { (t!=null) && t.kind == TOM_LPAREN }
+    is_fsym(t) { (t!=null) && (t.kind == TOM_LPAREN || t.image.equals("(")) }
     get_slot(image,t) { t.image }
   }
 
@@ -264,4 +264,8 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     return `BackQuoteAppl(option,Name(symbolName),concTomTerm());
   }
   
+  public TomTerm buildVariableStar(String symbolName, int line, String fileName) {
+    OptionList option = `concOption(OriginTracking(Name(symbolName), line, Name(fileName)));
+    return  `VariableStar(option,Name(symbolName),TomTypeAlone("unknown type"),concConstraint());
+  }
 } //class TomBackQuoteParser

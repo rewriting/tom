@@ -1223,11 +1223,20 @@ TomTerm XMLAttribute() throws TomException:
     }
 }
 
+  /*
+   * The goal of this function is to parse a backquoted term
+   * There are 4 cases:
+   *   `(...)
+   *   `identifier(...)
+   *   `identifier
+   *   `identifier*
+   * 
+   */
 void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
   TomTerm term;
   Option orgTrack;
-  Token tk;
+  Token tk, nextTk;
   int parenLevel = 0, lastTokenLine = 0, firstTokenLine = 0;
   boolean backQuoteMode = false;
   LinkedList tokenList = new LinkedList();
@@ -1241,24 +1250,39 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
     firstTokenLine = getLine();
     orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
   }
-     [ backQuote = <TOM_BACKQUOTE> ]
-
+    //[ backQuote = <TOM_BACKQUOTE> ]
     (
       tk=<TOM_LPAREN> { tokenList.add(tk); parenLevel++; backQuoteMode = true; }
     | tk=<TOM_IDENTIFIER> { tokenList.add(tk);
-                            tokenToDecLineMap.put(tk, new Integer(getLine())); }
+                            tokenToDecLineMap.put(tk, new Integer(getLine()));
+                            switchToDefaultMode(); /* switch to DEFAULT mode */
+                          }
     )
     {
-
       try {
-        if(backQuoteMode || getToken(1).kind == TOM_LPAREN) {
+        nextTk = getToken(1);
+          //System.out.println("getToken(1).kind = " + nextTk.kind + " --> '" + nextTk.image + "'");
+        if(backQuoteMode || nextTk.image.equals("(")) {
+            /*
+             * cases:
+             *   `(...)
+             *   `identifier(...)
+             *
+             * nextTk has been tokenized in either in Tom mode, either in Default mode
+             * this is why we test nextTk.image.equals("(")
+             * the first tk may be tokenized in Default mode
+             * since this token cannot be pushed back and re-tokenized in Tom mode
+             * we have to analyse the image and not only the kind
+             * (also in TomBackQuoteParser.t)
+             */
+          switchToTomMode(); /* switch to TOM mode */
           backQuoteMode = true;
           while(backQuoteMode) {
             tk = getNextToken();
-              //System.out.println("tk = " + tk.image);
+              //System.out.println("tk.kind = " + tk.kind + " --> '" + tk.image + "'");
             tokenList.add(tk);
             lastTokenLine = getLine();
-            if(tk.kind == TOM_LPAREN) { 
+            if(tk.kind == TOM_LPAREN || tk.image.equals("(")) { 
               parenLevel++;
             } else if(tk.kind == TOM_RPAREN) {
               parenLevel--;
@@ -1279,25 +1303,35 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
             } 
           } 
           list.add(term);
+          switchToDefaultMode(); /* switch to DEFAULT mode */
         } else {
+            /*
+             * we are in DEFAULT mode
+             * nextTk has been tokenized in Default mode
+             */
+          if(nextTk.image.equals("*")) {
+              /*
+               * the backquote-term is a single variable-star
+               */
+            term = tomBackQuoteParser.buildVariableStar(tk.image,lastTokenLine,currentFile);
+            list.add(term);
+              /*
+               * here we consume the "*" and we go to default mode to
+               * remove the "*" from the "previous code"
+               */
+            tk = getNextToken();
+            switchToDefaultMode(); /* switch to DEFAULT mode */
+          } else {
+            /*
+             * the backquote-term is a single variable
+             */
           term = tomBackQuoteParser.buildBackQuoteAppl(tk.image,lastTokenLine,currentFile);
           list.add(term);
-            /*
-             * we have reconized a variable, but an extra token has been read in Tom mode
-             * this token cannot be pushed back by the parser
-             * this is why we add it to the list
-             */
-          tk = getNextToken();
-          list.add(makeTL(tk.image));
-            //System.out.println("coucou");
-            //System.out.println("*** tk = " + tk.image + " " + tk.kind);
-            //addPreviousCode(list);
+          }
         }
       } catch (TokenMgrError error) {
         throw new TomException("Invalid backquote term started line "+firstTokenLine+": EOF encountered ");
       }  
-
-      switchToDefaultMode(); /* switch to DEFAULT mode */
     }
  }
 

@@ -273,6 +273,14 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       GetSliceArray(Name(name),
                     varArray@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1]),
+                    varBegin@Ref(Variable[option=option2,astName=PositionName(l2),astType=type2]),
+                    expEnd) -> {
+        buildExpGetSliceArray(deep, name, varArray, varBegin, expEnd);
+        return;
+      }
+
+      GetSliceArray(Name(name),
+                    varArray@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1]),
                     varBegin@Variable[option=option2,astName=PositionName(l2),astType=type2],
                     expEnd) -> {
         buildExpGetSliceArray(deep, name, varArray, varBegin, expEnd);
@@ -428,12 +436,12 @@ public abstract class TomAbstractGenerator extends TomBase {
   public void generateTargetLanguage(int deep, TargetLanguage subject) throws IOException {
     %match(TargetLanguage subject) {
       TL(t,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
-        output.write(deep,t, startLine, endLine-startLine);
+        output.write(0,t, startLine, endLine-startLine);
         return;
       }
       
       ITL(t) -> {
-        output.write(deep,t);
+        output.write(0,t);
         return;
       }
 
