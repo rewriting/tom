@@ -73,33 +73,67 @@ package minirho;
 					RTerm term = (RTerm) t;
 					%match(RTerm term){
 						//Compose
-						appSt(phi,appSt(psi,A)) -> {return `appSt(and(g,concConstraint(phi,appSc(phi,psi))),A);}
+						appSt(phi,appSt(psi,A)) -> {
+						    return `appSt(and(g,concConstraint(phi,appSc(phi,psi))),A);
+						}
 						//rho 
-						app(abs(A,B),C)-> {	return `appC(match(A,C),B) ;}		
+						app(abs(A,B),C)-> {	
+						    return `appC(match(A,C),B) ;
+						}		
 						//delta
-						app(struct(A,B),C) -> { return `struct(app(A,C),app(B,C));}
+						app(struct(A,B),C) -> { 
+						    return `struct(app(A,C),app(B,C));
+						}
 						//ToSubstVar
-						appC(match(X@var[],A),B) -> {return `appSt(match(X,A),B);}
+						appC(match(X@var[],A),B) -> {
+						    return `appSt(match(X,A),B);
+						}
 						//ToSubstAnd
-						appC(and(g(),C),A) -> {return `appSt(and(g,C),A);}
+						appC(and(g(),C),A) -> {
+						    return `appSt(and(g,C),A);
+						}
 						//Id
-						appC(match(a@const[],a),A) -> {return `A;}
+						appC(match(a@const[],a),A) -> {
+						    return `A;
+						}
 						//Replace
-						appSt(match(X@var[],A),X) -> {return `A;}
-						appSt(and(g(),(_*,match(X@var[],A),_*)),X) -> {return `A;} 
+						appSt(match(X@var[],A),X) -> {
+						    return `A;
+						}
+						appSt(and(g(),(_*,match(X@var[],A),_*)),X) -> {
+						    return `A;
+						} 
 						//EliminateVar
-						appSt(match[pa=var(x)],Y@var(y)) -> { if (`x !=  `y) return `Y;}
-						appSt(and(g(),(C*,match[pa=var(x)],D*)),Y@var(y)) -> {if (`x != `y) return `appSt(and(g,concConstraint(C*,D*)),Y);} 
+						appSt(match[pa=var(x)],Y@var(y)) -> { 
+						    if (`x !=  `y) { 
+							return `Y;
+						    }
+						}
+						appSt(and(g(),(C*,match[pa=var(x)],D*)),Y@var(y)) -> {
+						    if (`x != `y) {
+							return `appSt(and(g,concConstraint(C*,D*)),Y);
+						    }
+						} 
 						//EliminateConst
-						appSt[term=f@const[]] -> {return `f;}
+						appSt[term=f@const[]] -> {
+						    return `f;
+						}
 						//ShareApp
-						appSt(phi,app(B,C)) -> {return `app(appSt(phi,B),appSt(phi,C));}
+						appSt(phi,app(B,C)) -> {
+						    return `app(appSt(phi,B),appSt(phi,C));
+						}
 						//ShareStruct
-						appSt(phi,struct(A,B)) -> {return `struct(appSt(phi,A),appSt(phi,B));}
+						appSt(phi,struct(A,B)) -> {
+						    return `struct(appSt(phi,A),appSt(phi,B));
+						}
 						//ShareAbs
-						appSt(phi,abs(A,B)) -> {return `abs(A,appSt(phi,B));}
+						appSt(phi,abs(A,B)) -> {
+						    return `abs(A,appSt(phi,B));
+						}
 						//ShareAppC
-						appSt(phi,appC(C,A)) -> {return `appC(appSc(phi,C),appSt(phi,A));}
+						appSt(phi,appC(C,A)) -> {
+						    return `appC(appSc(phi,C),appSt(phi,A));
+						}
 
 					}
 				}
@@ -107,9 +141,13 @@ package minirho;
 					Constraint co = (Constraint)t;
 					%match(Constraint co){
 						//ComposeS
-						appSc(phi,appSc(psi,theta)) -> {return `appSc(and(g,concConstraint(phi,appSc(phi,psi))),theta);}						
+						appSc(phi,appSc(psi,theta)) -> {
+						    return `appSc(and(g,concConstraint(phi,appSc(phi,psi))),theta);
+						}
 						//decompose Structure
-						match(struct(A,B),struct(C,D)) -> {return  `and(dk,concConstraint(match(A,C),match(B,D)));}
+						match(struct(A,B),struct(C,D)) -> {
+						    return  `and(dk,concConstraint(match(A,C),match(B,D)));
+						}
 						//decompose Constructors
 						l:match(app1@app[],app2@app[]) -> {
 							//On peut peut-etre optimiser ici: construire la liste de filtrage en meme tps que l'on teste
@@ -119,42 +157,61 @@ package minirho;
 							isConstant = headIsConstant(isConstant);
 							%match(Constraint isConstant){
 								matchH[] -> {
-									break l;}
+									break l;
+								}
 							}
 							//2. on calcule le resultat a retourner.
 							return normalize(co,computeMatch);
 						}
 						//simplify
-						and(dk(),(X*,match(a@const[],a),Y*)) -> {return `and(dk(),concConstraint(X*,Y*));}
-						and(ng(),(X*,match(a@const[],a),Y*)) -> {return `and(ng(),concConstraint(X*,Y*));}
+						and(dk(),(X*,match(a@const[],a),Y*)) -> {
+						    return `and(dk(),concConstraint(X*,Y*));
+						}
+						and(ng(),(X*,match(a@const[],a),Y*)) -> {
+						    return `and(ng(),concConstraint(X*,Y*));
+						}
 						//We suppose the linearity of patterns
-						and(dk(),(X*,c@match[pa=var[]],Y*,d@match[pa=var[]],Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(c,d)),Y*,Z*));} 
-
+						and(dk(),(X*,c@match[pa=var[]],Y*,d@match[pa=var[]],Z*)) -> {
+						    return `and(dk,concConstraint(X*,and(g,concConstraint(c,d)),Y*,Z*));
+						} 
 						//the following rule is duplicated because we have to take care of commutativity
-						and(dk(),(X*,m@match[pa=var[]],Y*,and(g(),(c*)),Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(m,c*)),Y*,Z*));}
-						and(dk(),(X*,and(g(),(c*)),Y*,m@match[pa=var[]],Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(m,c*)),Y*,Z*));}
-
-						and(dk(),(X*,and(g(),(c*)),Y*,and(g(),(d*)),Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(c*,d*))));}
+						and(dk(),(X*,m@match[pa=var[]],Y*,and(g(),(c*)),Z*)) -> {
+						    return `and(dk,concConstraint(X*,and(g,concConstraint(m,c*)),Y*,Z*));
+						}
+						and(dk(),(X*,and(g(),(c*)),Y*,m@match[pa=var[]],Z*)) -> {
+						    return `and(dk,concConstraint(X*,and(g,concConstraint(m,c*)),Y*,Z*));
+						}
+						and(dk(),(X*,and(g(),(c*)),Y*,and(g(),(d*)),Z*)) -> {
+						    return `and(dk,concConstraint(X*,and(g,concConstraint(c*,d*))));
+						}
 						//NGood
 						
 
 						//ShareMatch A Enrichir
-						appSc(phi,match(B,C)) -> {return `match(B,appSt(phi,C));}
+						appSc(phi,match(B,C)) -> {
+						    return `match(B,appSt(phi,C));
+						}
 						//ShareAnd for all types of "and"
 						appSc(phi,and(x,C)) -> {
-							Replace2 r = new Replace2(){
-									public ATerm apply(ATerm t,Object o){
-										Constraint c = (Constraint)t;
-										%match(Constraint c){
-											x -> {return `appSc((Constraint)o,x);}
-										}
-									}
-								};
-							return `and(x,(ListConstraint)traversal.genericTraversal(C,r,phi));
+						    Replace2 r = new Replace2(){
+							    public ATerm apply(ATerm t,Object o){
+								Constraint c = (Constraint)t;
+								%match(Constraint c){
+								    x -> {
+									return `appSc((Constraint)o,x);
+								    }
+								}
+							    }
+							};
+						    return `and(x,(ListConstraint)traversal.genericTraversal(C,r,phi));
 						}
 						//two rules for dealing with the ands
-						and(l,(X*,and(l,(C*)),Y*)) -> {return `and(l,concConstraint(X*,C*,Y*));}
-						and(l,(c)) -> {return `c;}
+						and(l,(X*,and(l,(C*)),Y*)) -> {
+						    return `and(l,concConstraint(X*,C*,Y*));
+						}
+						and(l,(c)) -> {
+						    return `c;
+						}
 						
 					}
 				}
@@ -163,13 +220,15 @@ package minirho;
 					RTerm term = (RTerm) t;
 					%match(RTerm term){
 						//do not reduce the right-hand side of an abstraction
-						abs(A,B) -> {return `abs((RTerm)apply(A),B);}
+						abs(A,B) -> {
+						    return `abs((RTerm)apply(A),B);
+						}
 					}
 				}
 				return traversal.genericOneStep(t,this);
-//				return traversal.genericTraversal(t,this);
+				//				return traversal.genericTraversal(t,this);
 			 }
-		 };
+	     };
 	 
 //try to normalize
 	 public  ATerm normalize(ATerm form, Replace1 r){
