@@ -100,10 +100,9 @@ public class TomOptimizer extends TomTask {
                * TODO
                * LetRef x where x is used 0 or 1 ==> eliminate
                */
-            (LetRef|LetAssign)(var@(Variable|VariableStar)[astName=name],exp,body) -> {
+            (LetRef|LetAssign)(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
               List list  = computeOccurences(`name,`body);
               int mult = list.size();
-
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
                 environment().messageWarning(orgTrack.getLine(),
@@ -111,21 +110,21 @@ public class TomOptimizer extends TomTask {
                              orgTrack.getAstName().getString(),
                              orgTrack.getLine(),
                              "Variable `{0}` is never used",
-                               new Object[]{`name});
+                                             new Object[]{`extractRealName(tomName)});
                 if(verbose) {
-                  System.out.println(mult + " -> remove:     " + `name);
+                  System.out.println(mult + " -> remove:     " + `extractRealName(tomName));
                 }
                 return optimizeInstruction(`body);
 
               } else if(mult == 1) {
                 if(expConstantInBody(`exp,`body)) {
                   if(verbose) {
-                    System.out.println(mult + " -> inline:     " + `name);
+                    System.out.println(mult + " -> inline:     " + `extractRealName(tomName));
                   }
                   return optimizeInstruction(inlineInstruction(`var,`exp,`body));
                 } else {
                   if(verbose) {
-                    System.out.println(mult + " -> no inline:  " + `name);
+                    System.out.println(mult + " -> no inline:  " + `extractRealName(tomName));
                       //System.out.println("exp  = " + exp);
                       //System.out.println("body = " + body);
                   }
@@ -134,12 +133,12 @@ public class TomOptimizer extends TomTask {
               } else {
                   /* do nothing: traversal */
                 if(verbose) {
-                  System.out.println(mult + " -> do nothing: " + `name);
+                  System.out.println(mult + " -> do nothing: " + `extractRealName(tomName));
                 }
               }
             }
             
-            Let(var@(Variable|VariableStar)[astName=name],exp,body) -> {
+            Let(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
               List list  = computeOccurences(`name,`body);
               int mult = list.size();
 
@@ -150,26 +149,26 @@ public class TomOptimizer extends TomTask {
                              orgTrack.getAstName().getString(),
                              orgTrack.getLine(),
                              "Variable `{0}` is never used",
-                               new Object[]{`name});
+                               new Object[]{`extractRealName(tomName)});
                 if(verbose) {
-                  System.out.println(mult + " -> remove:     " + `name);
+                  System.out.println(mult + " -> remove:     " + `extractRealName(tomName));
                 }
                 return optimizeInstruction(`body); 
               } else if(mult == 1) {
                 if(expConstantInBody(`exp,`body)) {
                   if(verbose) {
-                    System.out.println(mult + " -> inline:     " + `name);
+                    System.out.println(mult + " -> inline:     " + `extractRealName(tomName));
                   }
                   return optimizeInstruction(inlineInstruction(`var,`exp,`body));
                 } else {
                   if(verbose) {
-                    System.out.println(mult + " -> no inline:  " + `name);
+                    System.out.println(mult + " -> no inline:  " + `extractRealName(tomName));
                   }
                 }
               } else {
                   /* do nothing: traversal */
                 if(verbose) {
-                  System.out.println(mult + " -> do nothing: " + `name);
+                  System.out.println(mult + " -> do nothing: " + `extractRealName(tomName));
                 }
               }
             }
@@ -184,6 +183,13 @@ public class TomOptimizer extends TomTask {
       } // end apply
     };
 
+
+  private String extractRealName(String name) {
+    if(name.startsWith("tom_")) {
+      return name.substring(4);
+    }
+    return name;
+  }
 
   public TomTerm optimize(TomTerm subject) {
     return (TomTerm) replace_optimize.apply(subject); 
@@ -334,7 +340,7 @@ public class TomOptimizer extends TomTask {
     traversal().genericCollect(subject, collect);
   }
 
-    Replace2 replace_renameVariable = new Replace2() {
+  Replace2 replace_renameVariable = new Replace2() {
       public ATerm apply(ATerm subject, Object arg1) {
         Set context = (Set) arg1;
         if(subject instanceof TomTerm) {
@@ -353,10 +359,6 @@ public class TomOptimizer extends TomTask {
               Map map = collectMultiplicity(`patternList);
               Set newContext = new HashSet(map.keySet());
               newContext.addAll(context);
-                //Set newContext = map.keySet();
-                //for(Iterator it=context.iterator() ; it.hasNext() ;) {
-                //newContext.add(it.next());
-                //}
               return renameVariableInstruction(`instruction,newContext);
             }
           }

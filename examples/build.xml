@@ -687,7 +687,7 @@
       -->
       <target name="examples" 
               description="Builds the examples (at least some)"
-              depends="xquery, xml, vas, tutorial, set, rbtree, propp, prodrule,
+              depends="xml, vas, tutorial, set, rbtree, propp, prodrule,
               addressbook, apireach, boulderdash, builtin, dom,
               expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens">
       </target>

@@ -1,3 +1,7 @@
+2004-06-07  pem  <pem@polly.loria.fr>
+
+	* src/jtom/optimizer/TomOptimizer.t: fixed TOM-43
+
 2004-06-02  pem  <pem@polly.loria.fr>
 
 	* src/jtom/compiler/TomKernelExpander.t: fixed TOM-41 by adding a
