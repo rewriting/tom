@@ -89,9 +89,9 @@ public class TomCompiler extends TomTask {
 
     /* 
      * preProcessing:
-     * replaces MakeTerm by BuildList, BuildArray or BuildTerm
+     * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
      *
-     * transforms RuleSet into Function + Match + MakeTerm
+     * transforms RuleSet into Function + Match + BuildReducedTerm
      * abstract list-matching patterns
      * rename non-linear patterns
      */
@@ -101,11 +101,11 @@ public class TomCompiler extends TomTask {
         String debugKey = "";
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) {
-            MakeTerm(var@(Variable|VariableStar)[]) -> {
+            BuildReducedTerm(var@(Variable|VariableStar)[]) -> {
               return `var;
             }    
 
-            MakeTerm(Appl[nameList=(name@Name(tomName)),args=termArgs]) -> {
+            BuildReducedTerm(Appl[nameList=(name@Name(tomName)),args=termArgs]) -> {
               TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
               TomList newTermArgs = (TomList) traversal().genericTraversal(`termArgs,replace_preProcessing_makeTerm);
               if(tomSymbol==null || isDefinedSymbol(tomSymbol)) {
@@ -227,8 +227,7 @@ public class TomCompiler extends TomTask {
                               Term(rhsTerm),
                               condList,
                               option) -> {
-                  
-                    TomTerm newRhs = preProcessing(`MakeTerm(rhsTerm));
+                    TomTerm newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
                     Instruction rhsInst = `Return(newRhs);
                     if(getInput().isDebugMode()) {
                       TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
@@ -310,7 +309,7 @@ public class TomCompiler extends TomTask {
 
   Replace1 replace_preProcessing_makeTerm = new Replace1() {
       public ATerm apply(ATerm t) {
-        return preProcessing(`MakeTerm((TomTerm)t));
+        return preProcessing(`BuildReducedTerm((TomTerm)t));
       }
     }; 
 
@@ -335,7 +334,7 @@ public class TomCompiler extends TomTask {
         TomType subjectType = getTermType(`pattern);
         TomNumberList path = tsf().makeTomNumberList();
         path = (TomNumberList) path.append(`RuleVar());
-        TomTerm newSubject = preProcessing(`MakeTerm(subject));
+        TomTerm newSubject = preProcessing(`BuildReducedTerm(subject));
         TomTerm introducedVariable = newSubject;
         TomTerm generatedPatternAction =
           `PatternAction(TermList(cons(pattern,empty())),newAction, option());        
@@ -351,8 +350,8 @@ public class TomCompiler extends TomTask {
       manyInstructionList(EqualityCondition[lhs=lhs,rhs=rhs], tail) -> {
         Instruction newAction = `buildCondition(tail,action);
 
-        TomTerm newLhs = preProcessing(`MakeTerm(lhs));
-        TomTerm newRhs = preProcessing(`MakeTerm(rhs));
+        TomTerm newLhs = preProcessing(`BuildReducedTerm(lhs));
+        TomTerm newRhs = preProcessing(`BuildReducedTerm(rhs));
         Expression equality = `EqualTerm(newLhs,newRhs);
         Instruction generatedTest = `IfThenElse(equality,newAction,Nop());
         return generatedTest;
@@ -513,3 +512,4 @@ public class TomCompiler extends TomTask {
   }
   
 } //class TomCompiler
+

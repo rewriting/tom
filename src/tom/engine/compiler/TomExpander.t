@@ -87,7 +87,7 @@ public class TomExpander extends TomTask {
  
   /*
    * The 'expandTomSyntax' phase replaces:
-   * -each 'RecordAppl' by its expanded term form:
+   * - each 'RecordAppl' by its expanded term form:
    *   (unused slots a replaced by placeholders)
    * - each BackQuoteTerm by its compiled form
    */
@@ -319,6 +319,8 @@ public class TomExpander extends TomTask {
                     return tomFactory.buildArray(`name,args);
                   } else if(isStringOperator(tomSymbol)) {
                     return `BuildVariable(name);
+                  } else if(isDefinedSymbol(tomSymbol)) {
+                    return `FunctionCall(name,args);
                   } else {
                     return `BuildTerm(name,args);
                   }
