@@ -257,21 +257,23 @@
   <!-- compile adt's -->
   <target name="buildadt" depends="initTaskDef, prepare.src">
 	 	     <!--factory="TomSignature"-->
-    <adt file="${src.adt}/TomSignature.adt" 
+    <!--<adt file="${src.adt}/TomSignature.adt" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
-         <!--factory="TNode" -->
     <adt file="${src.adt}/TNode.adt" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
-         <!--factory="Set"--> 
     <adt file="${src.adt}/Set.adt" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
-         <!--factory="Options" -->
     <adt file="${src.adt}/Options.adt" 
          package="jtom.adt" 
-         destdir="${src.gen}"/>
+         destdir="${src.gen}"/>-->
+		<adt srcdir="${src.src}"
+         package="jtom.adt" 
+         destdir="${src.gen}">
+			<include name="jtom/adt/*.adt"/>
+		</adt>
     <copy todir="${src.mapping}">
       <fileset dir="${src.gen}/jtom/adt" includes="*.tom">
         <exclude name="TomSignature.tom"/>
