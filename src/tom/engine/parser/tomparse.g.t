@@ -30,6 +30,27 @@ options{
     //--------------------------
     %include{TomSignature.tom}
     //--------------------------
+        
+    private String filename;
+
+    // the default-mode parser
+    private NewTargetParser targetparser;
+
+    private StringBuffer text = new StringBuffer("");
+    
+    private int lastLine; 
+
+    private TomList debuggedStructureList = null;
+
+    public NewTomParser(ParserSharedInputState state, NewTargetParser target, String filename){
+        this(state);
+        this.filename = filename;
+        this.targetparser = target;
+
+        this.debuggedStructureList = `emptyTomList();
+    }
+
+
 
     private final Factory getTomSignatureFactory(){
         return tsf();
@@ -51,21 +72,15 @@ options{
         return environment().getSymbolTable();
     }
     
-    private String filename;
-
-    // the default-mode parser
-    private NewTargetParser targetparser;
-
-    private StringBuffer text = new StringBuffer("");
-    
-    private int lastLine; 
-
-    public NewTomParser(ParserSharedInputState state, NewTargetParser target, String filename){
-        this(state);
-        this.filename = filename;
-        this.targetparser = target;
-        symbolTable().init();
+    private TomTaskInput getInput() {
+        return TomTaskInput.getInstance();
     }
+
+    public TomStructureTable getStructTable() {
+        return `StructTable(debuggedStructureList);
+    }
+
+
 
     private void pushLine(int line){
         targetparser.pushLine(line);
@@ -84,10 +99,6 @@ options{
         // creer la structure ici
     }
     
-    private TomList makeTomList(LinkedList list){
-        return targetparser.makeTomList(list);
-    }
-   
     private void clearText(){
         text.delete(0,text.length());
     }
@@ -111,84 +122,167 @@ constant returns [Token result]
 /*
  * the %match construct : 
  */
-matchConstruct 
+matchConstruct [Option ot] returns [Instruction result]
 { 
-    String arg = null, mp = null;
-    String result = null;
+    result = null;
+    OptionList optionList = `concOption(ot);
+    StringBuffer debugKey = new StringBuffer(filename + ot.getLine());
+
+    LinkedList argumentList = new LinkedList();
+    LinkedList patternActionList = new LinkedList();
 }
 	:	(
-            LPAREN arg = matchArguments() RPAREN {result = "(" + arg + ")";}
-            LBRACE {result += "{\n";}
+            LPAREN matchArguments[argumentList] RPAREN 
+            LBRACE 
             ( 
-                mp = patternAction() {result += mp + "\n";}
+                patternAction[patternActionList,debugKey] 
             )* 
-            RBRACE {result += "}";}
+            t:RBRACE 
             { 
-                /* Match finished : pop the tomlexer and return in
-                 * the target parser.  
-                 */
+                result = `Match(
+                    SubjectList(ast().makeList(argumentList)),
+                    PatternList(ast().makeList(patternActionList)),
+                    optionList
+                );
+                
+                if (getInput().isDebugMode()){
+                    debuggedStructureList = (TomList) debuggedStructureList.append(result);
+                }
+                
+                // update for new target block...
+                pushLine(t.getLine());
+                pushColumn(t.getColumn());
+                
+                // Match finished : pop the tomlexer and return in
+                // the target parser.  
                 Main.selector.pop(); 
             }
         )
 	;
 
-matchArguments returns [String result]
-{ 
-    String arg = null;
-    result = null;
-}
-    :   (
-            result = matchArgument() ( COMMA  arg = matchArgument() {result += "," + arg;} )*
+matchArguments [LinkedList list]
+    :   
+        (
+            matchArgument[list] ( COMMA matchArgument[list] )*
         )
     ;
 
-matchArgument returns [String result]
-{
-    result = null;
-}
-    :   (
-            i1:ID i2:ID  {result = i1.getText() + " " + i2.getText();}
+matchArgument [LinkedList list]
+    :   
+        (
+            type:ID name:ID 
         )
+        {
+            list.add(`TLVar(name.getText(),TomTypeAlone(type.getText())));
+        }
+        
     ;
 
-patternAction returns [String result]
+patternAction [LinkedList list, StringBuffer debugKey]
 {
-    result = null;
-    String mp = null, mp2 = null;
-    LinkedList bList = new LinkedList();
+    LinkedList matchPatternList = new LinkedList();
+    LinkedList listOfMatchPatternList = new LinkedList();
+    LinkedList listTextPattern = new LinkedList();
+    LinkedList listOrgTrackPattern = new LinkedList();
+    LinkedList blockList = new LinkedList();
+
+    Option option = null;
+
+    clearText();
 }
     :   (
-            mp = matchPattern() {result = mp;}
-            ( 
-                ALTERNATIVE mp2 = matchPattern() {result += "|" + mp2;}
-            )* 
-            ARROW {result += "->";}
+            ( label:ID COLON )?
+             option = matchPattern[matchPatternList] 
             {
-                /*
-                 * actions in target language : call the target lexer and
-                 * call the target parser
-                 */
+                listOfMatchPatternList.add(ast().makeList(matchPatternList));
+                matchPatternList.clear();
+                listTextPattern.add(text.toString());
+                clearText();
+                listOrgTrackPattern.add(option);
+            }
+            ( 
+                ALTERNATIVE matchPattern[matchPatternList] 
+                {
+                    listOfMatchPatternList.add(ast().makeList(matchPatternList));
+                    matchPatternList.clear();
+                    listTextPattern.add(text.toString());
+                    clearText();
+                    listOrgTrackPattern.add(option);
+                }
+            )* 
+            ARROW t:LBRACE
+            {
+                pushLine(t.getLine());
+                pushColumn(t.getColumn());
+                
+                if(getInput().isDebugMode()) {
+                    blockList.add(`ITL(
+                            "jtom.debug.TomDebugger.debugger.patternSuccess(\""
+                            +debugKey
+                            +"\");\n")
+                    );
+                    if(getInput().isDebugMemory()) {
+                        blockList.add(`ITL(
+                                "jtom.debug.TomDebugger.debugger.emptyStack();\n")
+                        );
+                    }
+                }
+
+                // actions in target language : call the target lexer and
+                // call the target parser
                 Main.selector.push("targetlexer");
-                //TargetLanguage action = 
-                targetparser.goalLanguage(new LinkedList());
-//                result += action;
-                /*
-                 * target parser finished : pop the target lexer
-                 */
+                //                TargetLanguage tlCode = targetparser.goalLanguage(blockList);
+                TargetLanguage tlCode = targetparser.targetLanguage(blockList);
+                
+                // target parser finished : pop the target lexer
                 Main.selector.pop();
+
+                blockList.add(tlCode);
+                OptionList optionList = `emptyOptionList();
+                
+                if(label != null){
+                    optionList = `concOption(Label(Name(label.getText())));
+                }
+
+                TomList patterns = null;
+                String patternText = null;
+                for(int i=0 ;  i<listOfMatchPatternList.size() ; i++) {
+                    patterns = (TomList) listOfMatchPatternList.get(i);
+                    patternText = (String) listTextPattern.get(i);
+
+                    //TODO solve with xmlterm
+                    //if (patternText == null) patternText = "";
+                    
+                    optionList = `concOption(
+                        optionList*, 
+                        (Option) listOrgTrackPattern.get(i),
+                        OriginalText(Name(patternText))
+                    );
+                    
+                    list.add(`PatternAction(
+                            TermList(patterns),
+                            AbstractBlock(ast().makeInstructionList(blockList)),
+                            optionList)
+                    );
+                }
             }
         )
     ;
 
-matchPattern returns [String result]
+matchPattern [LinkedList list] returns [Option result]
 {
     result = null;
-    String at = null, at2 = null;
+    TomTerm term = null;
 }
     :   (
-             annotedTerm {result = at;}
+             term = annotedTerm 
+            {
+                list.add(term);
+                result = `OriginTracking(Name("Pattern"),lastLine,Name(filename));
+            }
             ( 
-                COMMA  annotedTerm {result += "," + at2;}
+                COMMA {text.append('\n');}  
+                term = annotedTerm {list.add(term);}
             )*
         )
     ;
@@ -216,9 +310,10 @@ signature
 /*
  * The %rule construct
  */
-ruleConstruct returns [TomRuleList result]
+ruleConstruct [Option orgTrack] returns [Instruction result]
 {
-    result =  `emptyTomRuleList();
+    result = null;
+    TomRuleList ruleList = `emptyTomRuleList();
     TomTerm lhs = null, rhs = null, pattern = null, subject = null;
     TomList listOfLhs = `emptyTomList();
     InstructionList conditionList = `emptyInstructionList();
@@ -254,9 +349,8 @@ ruleConstruct returns [TomRuleList result]
                 OptionList optionList = `concOption(ot,OriginalText(orgText));
                 
                 while(! listOfLhs.isEmpty()){
-                    result = `concTomRule(
-                        result*,
-                        RewriteRule(
+                    ruleList = (TomRuleList) ruleList.append(
+                        `RewriteRule(
                             Term(listOfLhs.getHead()),
                             Term(rhs),
                             conditionList,
@@ -277,9 +371,13 @@ ruleConstruct returns [TomRuleList result]
             pushLine(t.getLine());
             pushColumn(t.getColumn());
 
-            /*
-             * %rule finished. go back in target parser.
-             */
+            result = `RuleSet(ruleList,orgTrack);
+
+            if(getInput().isDebugMode()) {
+                debuggedStructureList = (TomList) debuggedStructureList.append(result);
+            }
+            
+            // %rule finished. go back in target parser.
             Main.selector.pop();
         }
     ;
@@ -343,7 +441,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
                 result = `Appl(
                         ast().makeOptionList(optionList),
                         nameList,
-                        makeTomList(list),
+                        ast().makeList(list),
                         ast().makeConstraintList(constraintList)
                     );
             }
@@ -358,14 +456,14 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
                     result = `RecordAppl(
                         ast().makeOptionList(optionList),
                         nameList,
-                        makeTomList(list),
+                        ast().makeList(list),
                         ast().makeConstraintList(constraintList)
                     );
                 else 
                     result = `Appl(
                         ast().makeOptionList(optionList),
                         nameList,
-                        makeTomList(list),
+                        ast().makeList(list),
                         ast().makeConstraintList(constraintList)
                     );
             }
@@ -382,14 +480,14 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
                     result = `RecordAppl(
                         ast().makeOptionList(optionList),
                         nameList,
-                        makeTomList(list),
+                        ast().makeList(list),
                         ast().makeConstraintList(constraintList)
                     );
                 else 
                     result = `Appl(
                         ast().makeOptionList(optionList),
                         nameList,
-                        makeTomList(list),
+                        ast().makeList(list),
                         ast().makeConstraintList(constraintList)
                     );
             }
@@ -401,7 +499,7 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
                 result = `Appl(
                     ast().makeOptionList(optionList),
                     nameList,
-                    makeTomList(list),
+                    ast().makeList(list),
                     ast().makeConstraintList(constraintList)
                 );
             }
@@ -543,7 +641,7 @@ placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm 
 
 headSymbolList [LinkedList optionList] returns [NameList result]
 { 
-    result = null;
+    result = `emptyNameList();
     TomName name = null;
 }
     :  
