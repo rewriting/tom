@@ -1,30 +1,3 @@
-/*
-  
-    TOM - To One Matching Compiler
-
-    Copyright (C) 2000-2001  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)
-			     Nancy, France.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-
-    Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
-    Christophe Ringeissen	e-mail: Christophe.Ringeissen@loria.fr
-    Marian Vittek		e-mail: vittek@guma.ii.fmph.uniba.sk
-
-*/
-
 import java.util.*;
 
 public class RecordT3 {
@@ -301,4 +274,48 @@ public class RecordT3 {
         return new IntExp(v1.intValue() + v2.intValue());
       }
 
-      Plus[first=e1, second=IntExp(zero)] -> { return e1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+      Plus[first=e1, second=IntExp(zero)] -> { return e1; }
+      Plus[second=e1, first=IntExp(zero)] -> { return e1; }
+
+      Plus[first=e1, second=Uminus(e2)] -> {
+        if(myEquals(e1,e2)) {
+          return new IntExp(0);
+        } else {
+          return t;
+        }
+      }
+
+      Mult[first=IntExp(v1), second=IntExp(v2)] -> {
+        return new IntExp(v1.intValue() * v2.intValue());
+      }
+      
+      Mult[first=e1, second=IntExp(suc(zero))] -> { return e1; }
+      Mult[second=e1, first=IntExp(suc(zero))] -> { return e1; }
+    }
+    return t;
+  }
+
+  public boolean myEquals(Exp t1, Exp t2) {
+    %match(TomExp t1, TomExp t2) {
+      
+      CstExp[value=e1], CstExp[value=e2]       -> { return e1.equals(e2); }
+      
+      UnaryOperator[first=e1], UnaryOperator[first=f1] -> {
+        return t1.getOperator().equals(t2.getOperator()) && myEquals(e1,f1);
+      }
+      
+// ****** erreur ******  first utilise deux fois dans BinaryOperator
+
+      BinaryOperator[first=e1, first=e2], BinaryOperator[first=f1, second=f2] -> {
+        return t1.getOperator().equals(t2.getOperator()) && myEquals(e1,f1) && myEquals(e2,f2);
+      }
+
+// ****** erreur ******
+
+    }
+    return false;
+  }
+
+  
+}
+
