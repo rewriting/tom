@@ -72,5 +72,8 @@ c,[-a,([c,-c],[-b,(a,b)])])] ),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
 # simple example for BVu
 [a,[< a ; [c,- a] >,< - a ; - c >]]
 
-# an more complex example for BVu
+# end of page eight
+[- c,[< a ; (c,- b) >,< - a ; b >]]
+
+# an more complex example for BVu, search < d ; e >
 [ - a ,[ < a ; < d ; - b > > , [ < b ; < e ; - c > > , c ] ] ]
