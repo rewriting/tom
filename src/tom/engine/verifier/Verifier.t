@@ -186,12 +186,12 @@ public class Verifier extends TomBase {
 		DerivTree tree = null;
 		// System.out.println("Build derivation tree for: " + automata);
 
-		Environment startingenv = `env(concSubstitution(),
+		Environment startingenv = `env(subs(),
 																 build_InstrFromAutomata(automata));
 		Instr localAccept = collect_accept(automata);
 
 		Deriv startingderiv = `ebs(startingenv,
-															 env(concSubstitution(undefsubs()),localAccept));
+															 env(subs(undefsubs()),localAccept));
 
 		// System.out.println("The derivation: " + startingderiv);
 
@@ -373,7 +373,7 @@ public class Verifier extends TomBase {
 	protected DerivTree apply_rules(Deriv post, SubstRef outsubst) {
 		%match(Deriv post) {
 			// let rule
-			ebs(env(e,ILLet(x,u,i)),env(concSubstitution(undefsubs()),ip)) -> {
+			ebs(env(e,ILLet(x,u,i)),env(subs(undefsubs()),ip)) -> {
 				// build condition
 				Seq cond = build_dedterm(`appSubsT(e,u));
 				// find "t"
@@ -386,14 +386,14 @@ public class Verifier extends TomBase {
 					}
 				}
 				Deriv up = `ebs(
-					env(concSubstitution(e*,is(x,t)),i),
-					env(concSubstitution(undefsubs()),ip)
+					env(subs(e*,is(x,t)),i),
+					env(subs(undefsubs()),ip)
 					);
 				DerivTree pre = apply_rules(up,outsubst);
 				return `derivrule("let",post,pre,cond);
 				}
 			// iftrue/iffalse rule
-			ebs(env(e,ITE(exp,ift,iff)),env(concSubstitution(undefsubs()),ip)) -> {
+			ebs(env(e,ITE(exp,ift,iff)),env(subs(undefsubs()),ip)) -> {
 				// build condition
 				Seq cond = build_dedexpr(`appSubsE(e,exp));
 				// true or false ?
@@ -408,10 +408,10 @@ public class Verifier extends TomBase {
 				Deriv up = null;
 				String rulename = "fail";
 				if (res == `true()) {
-					up = `ebs(env(e,ift),env(concSubstitution(undefsubs()),ip));
+					up = `ebs(env(e,ift),env(subs(undefsubs()),ip));
 					rulename = "iftrue";
 				} else if (res == `false()) {
-					up = `ebs(env(e,iff),env(concSubstitution(undefsubs()),ip));
+					up = `ebs(env(e,iff),env(subs(undefsubs()),ip));
 					rulename = "iffalse";
 				}	else {
 					System.out.println("How to conclude with: "+ res + " ?");
@@ -420,7 +420,7 @@ public class Verifier extends TomBase {
 				return `derivrule(rulename,post,pre,cond);
 			}
 			// axiom !
-			ebs(env(e,accept[]),env(concSubstitution(undefsubs()),accept[])) -> {
+			ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
 				outsubst.set(`e);
 				return `derivrule("axiom",post,endderiv(),seq());
 			}

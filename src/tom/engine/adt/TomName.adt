@@ -18,6 +18,6 @@
     constructor(TomNumber,AbsVar,AbsVar(<number(TomNumber)>)),
     constructor(TomNumber,RenamedVar,RenamedVar(<astName(TomName)>)),
     constructor(TomNumber,RuleVar,RuleVar),
-    list(TomNumberList,TomNumber)
+    named-list(concTomNumber,TomNumberList,TomNumber)
   ])
 ]

@@ -5,6 +5,6 @@
   [
   constructor(Constraint,Equal,Equal(<variable(TomTerm)>)),
   constructor(Constraint,AssignTo,AssignTo(<variable(TomTerm)>)),
-  list(ConstraintList, Constraint)
+  named-list(concConstraint, ConstraintList, Constraint)
   ])
 ]

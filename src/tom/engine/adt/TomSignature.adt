@@ -39,11 +39,11 @@
   constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>)),
   
   
-  list(TomRuleList,TomRule),
-  list(TomTypeList,TomType),
-  list(SlotList,PairNameDecl),
-  list(TomEntryList, TomEntry),
-  list(SymbolList, TomSymbol),
-  list(NameList, TomName)
+  named-list(concTomRule,TomRuleList,TomRule),
+  named-list(concTomType,TomTypeList,TomType),
+  named-list(concPairNameDecl,SlotList,PairNameDecl),
+  named-list(concTomEntry,TomEntryList,TomEntry),
+  named-list(concTomSymbol,SymbolList,TomSymbol),
+  named-list(concTomName,NameList,TomName)
   ])
 ]

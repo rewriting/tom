@@ -16,6 +16,6 @@
   constructor(Option,ImplicitXMLAttribut,ImplicitXMLAttribut),
   constructor(Option,ImplicitXMLChild,ImplicitXMLChild),
   constructor(Option,noOption,noOption),
-  list(OptionList,Option)
+  named-list(concOption,OptionList,Option)
  ])
 ]

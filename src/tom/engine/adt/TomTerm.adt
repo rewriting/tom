@@ -47,8 +47,8 @@
   constructor(TomTerm,Automata,Automata(<option(OptionList)>,<patternList(TomList)>,<numberList(TomNumberList)>,<inst(Instruction)>)),
   constructor(PatternInstruction,PatternInstruction,PatternInstruction(<pattern(Pattern)>,<action(Instruction)>,<option(OptionList)>)),
   constructor(Pattern,Pattern,Pattern(<tomList(TomList)>)),
-  list(PatternInstructionList,PatternInstruction),
-  list(PatternList,Pattern),
-  list(TomList,TomTerm)
+  named-list(concPatternInstruction,PatternInstructionList,PatternInstruction),
+  named-list(concPattern,PatternList,Pattern),
+  named-list(concTomTerm,TomList,TomTerm)
  ])
 ]

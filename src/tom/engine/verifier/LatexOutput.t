@@ -116,7 +116,7 @@ public class LatexOutput {
 		result += "\n \\[\n";
 		result += "\\begin{array}{c}\n";
 		%match(DerivTree tree) {
-			derivrule(_,ebs(_,env(subsList@concSubstitution(is(_,t),_*),accept(positive,_))),_,_) -> {
+			derivrule(_,ebs(_,env(subsList@subs(is(_,t),_*),accept(positive,_))),_,_) -> {
 				result += "\\applysubs{" + build_latex_from_subslist(subsList);
 				result += "}{" + verifier.pattern_to_string(positive) + "}";
 				result += " = " + build_latex_from_term(t) + "\\\\\n";
@@ -233,10 +233,10 @@ public class LatexOutput {
 	String build_latex_from_subslist(SubstitutionList subslist) {
 		String result = "";
 		%match(SubstitutionList subslist) {
-			concSubstitution() -> { 
+			subs() -> { 
 				return "\\env_{0}";
 			}
-			concSubstitution(h*,t) -> {
+			subs(h*,t) -> {
 				%match(Substitution t) {
 					undefsubs() -> { 
 						result = "\\textit{empty}"+build_latex_from_subslist(`h); 
@@ -264,19 +264,19 @@ public class LatexOutput {
 		String result = "";
 		%match(Term term) {
 			tau(absTerm) -> {
-				return "\\mapping{" + build_latex_from_absterm(absTerm) + "}";
+				return "\\mapping{" + build_latex_from_absterm(`absTerm) + "}";
 			}
 			repr(name) -> {
-				return "\\repr{" + name + "}";
+				return "\\repr{" + `name + "}";
 			}
 			subterm(s,t,index) -> {
-				result = "\\subterm_{" + s + "}("+build_latex_from_term(t)+","+index+")";
+				result = "\\subterm_{" + `s + "}("+build_latex_from_term(`t)+","+`index+")";
 			}
 			slot(s,t,name) -> {
-				result = "\\mathtt{slot}_{" + s + "}("+build_latex_from_term(t)+","+name+")";
+				result = "\\mathtt{slot}_{" + `s + "}("+build_latex_from_term(`t)+","+`name+")";
 			}
-			appSubsT(subs,t) -> {
-				result = "\\applysubs{"+build_latex_from_subslist(subs)+"}{"+build_latex_from_term(t)+"}";
+			appSubsT(subst,t) -> {
+				result = "\\applysubs{"+build_latex_from_subslist(`subst)+"}{"+build_latex_from_term(`t)+"}";
 			}
 		}
 		return result;
