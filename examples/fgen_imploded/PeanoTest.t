@@ -52,7 +52,7 @@ public class PeanoTest {
 
   public Nat fib(Nat t) {
     %match(Nat t) {
-      consZero     -> { return`consSuc(consZero); }
+      consZero     -> { return `consSuc(consZero); }
       pred@consSuc[pred=consZero]   -> { return pred; }
       consSuc[pred=pred@consSuc[pred=x]] -> { return plus(fib(x),fib(pred)); }
     }
