@@ -35,6 +35,7 @@ import java.util.logging.Level;
 import jtom.adt.tomsignature.types.TomTerm;
 import jtom.tools.OutputCode;
 import jtom.tools.TomGenericPlugin;
+import jtom.exception.TomRuntimeException;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
@@ -80,12 +81,14 @@ public class TomBackend extends TomGenericPlugin {
       try {
         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile())));
         OutputCode output = new OutputCode(writer, getOptionManager());
-        if(getOptionBooleanValue("jCode")) {
-          generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
+        if(getOptionBooleanValue("noOutput")) {
+            throw new TomRuntimeException("Backend activated, but noOutput is set");
         } else if(getOptionBooleanValue("cCode")) {
           generator = new TomCGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("camlCode")) {
           generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
+        } else {
+            generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
         }
         generator.generate(defaultDeep, (TomTerm)getWorkingTerm());
         // verbose
@@ -115,33 +118,6 @@ public class TomBackend extends TomGenericPlugin {
    */
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TomBackend.DECLARED_OPTIONS);
-  }
-  
-  public void setOption(String optionName, Object optionValue) {
-    setOptionValue(optionName, optionValue);
-
-
-    System.out.println("setOption: " + optionName + "  " + optionValue);
-    System.out.println(getOptionValue("jCode"));
-    System.out.println(getOptionValue("cCode"));
-    System.out.println(getOptionValue("camlCode"));
-    
-    if(optionValue.equals(Boolean.TRUE)) {// no more than 1 type of code can be activated at a time
-      if(optionName.equals("cCode") || optionName.equals("c")) { 
-		    //System.out.println("C code activated, other codes desactivated");
-		    setOptionValue("jCode", Boolean.FALSE);
-		    setOptionValue("camlCode", Boolean.FALSE); 
-      } else if(optionName.equals("camlCode")) { 
-		    //System.out.println("Caml code activated, other codes desactivated");
-		    setOptionValue("jCode", Boolean.FALSE);
-		    setOptionValue("cCode", Boolean.FALSE);
-      } else {
-		    //System.out.println("Java code activated, other codes desactivated");
-		    setOptionValue("jCode", Boolean.TRUE);
-		    setOptionValue("cCode", Boolean.FALSE);
-		    setOptionValue("camlCode", Boolean.FALSE); 
-      }
-    }
   }
   
   private boolean isActivated() {
