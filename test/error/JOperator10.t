@@ -11,5 +11,4 @@
   make(t1,t2) { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
   get_slot(s0,t) { t.getType() }
-  get_slot(s1,t) { t.getType() }
 }

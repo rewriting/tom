@@ -1,3 +1,6 @@
 
- *** Warning *** Bad type in %match declared line 24
- *** For slot 2 :Type 'type2' required but Type 'type1' found - Line : 25
+Bad type for slot 2 :Type 'type2' required but Type 'type1' found in %match declared line 24
+-- Error occured at line: 25 in file: JMatch4.t
+
+Tom Checker:  Encountered 1 errors during verification phase.
+No file generated.

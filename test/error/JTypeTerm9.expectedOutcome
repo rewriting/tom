@@ -1,7 +1,6 @@
 
- *** Warning *** Multiple definition of type at line 9
- *** Type 'type1' is already defined
+Multiple definition of type: Type 'type1' is already defined
+-- Error occured at line: 9 in file: JTypeTerm9.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

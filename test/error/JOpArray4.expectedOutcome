@@ -1,7 +1,6 @@
 
- *** Missing macro-functions in '%oparray concArray' declared at line 17
- *** Missing function(s) : [make_append]
+Missing macro-function(s) [make_append] in '%oparray concArray'
+-- Error occured at line: 17 in file: JOpArray4.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

@@ -1,7 +1,6 @@
 
 Symbol method : 'opp' not found
--- Error occured at line: 17
+-- Error occured at line: 17 in file: JRecord4.t
 
-
-Tom Checker:  Encountered errors during verification phase.
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

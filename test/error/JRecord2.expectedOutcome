@@ -1,7 +1,6 @@
 
- *** Same slot names can not be used several times: See method 'op' -  Line : 17
- *** Repeated slot Name : 'type'
+Same slot names can not be used several times: See method 'op' -  Line : 17Repeated slot Name : 'type'
+-- Error occured at line: 17 in file: JRecord2.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

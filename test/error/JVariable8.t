@@ -22,6 +22,6 @@
 }
 
 %rule {
-  op(x, x) -> v
+  op(x, x) -> x
     
 }

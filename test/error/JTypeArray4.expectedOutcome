@@ -1,7 +1,6 @@
 
- *** Missing macro-functions in '%typearray type1' declared at line 1
- *** Missing function(s) : [get_size]
+Missing macro-function(s) [get_size] in '%typearray type1'
+-- Error occured at line: 1 in file: JTypeArray4.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

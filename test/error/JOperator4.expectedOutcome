@@ -1,7 +1,6 @@
 
- *** Arguments must be linear in method 'make' of '%op op' declared at line 9
- *** Variable 't1' is repeated - Line : 11
+Arguments must be linear in method 'make' of '%op op' declared at line 9 :Variable 't1' is repeated
+-- Error occured at line: 11 in file: JOperator4.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

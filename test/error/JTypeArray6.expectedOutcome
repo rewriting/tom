@@ -1,7 +1,6 @@
 
- *** Arguments must be linear in method 'cmp_fun_sym' of '%typearray type1' declared at line 1
- *** Variable 't1' is repeated - Line : 4
+Arguments must be linear in method 'cmp_fun_sym' of '%typearray type1' declared at line 1 :Variable 't1' is repeated
+-- Error occured at line: 4 in file: JTypeArray6.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

@@ -1,7 +1,6 @@
 
- *** Repeated macro-functions in '%typeterm type1' declared at line 1
- *** Repeated function :'get_fun_sym' - Line : 6
+Repeated macro-function 'get_fun_sym' in '%typeterm type1' declared line 1
+-- Error occured at line: 6 in file: JTypeTerm6.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

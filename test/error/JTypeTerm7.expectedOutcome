@@ -1,7 +1,6 @@
 
- *** Arguments must be linear in method 'cmp_fun_sym' of '%typeterm type1' declared at line 1
- *** Variable 's1' is repeated - Line : 4
+Arguments must be linear in method 'cmp_fun_sym' of '%typeterm type1' declared at line 1 :Variable 's1' is repeated
+-- Error occured at line: 4 in file: JTypeTerm7.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

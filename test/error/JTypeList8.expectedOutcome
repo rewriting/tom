@@ -1,7 +1,6 @@
 
- *** Arguments must be linear in method 'equals' of '%typelist type1' declared at line 1
- *** Variable 'l1' is repeated - Line : 5
+Arguments must be linear in method 'equals' of '%typelist type1' declared at line 1 :Variable 'l1' is repeated
+-- Error occured at line: 5 in file: JTypeList8.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

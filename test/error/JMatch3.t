@@ -14,5 +14,5 @@
 }
 
 %match(type1 t, type1 t2) {
-  x* -> {}
+  x*, _ -> {}
 }

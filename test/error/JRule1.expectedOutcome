@@ -1,7 +1,6 @@
 
- *** Placeholder is not allowed on right part of structure %rule declared line 16
--- Error occured at line: 17
+Placeholder is not allowed on right part of structure %rule declared line 16
+-- Error occured at line: 17 in file: JRule1.t
 
-
-Tom Checker:  Encountered errors during verification phase.
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

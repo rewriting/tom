@@ -1,7 +1,6 @@
 
- *** Placeholder is not allowed in list operator 'concList' declared line 24
--- Error occured at line: 24
+Placeholder is not allowed in list operator 'concList'
+-- Error occured at line: 24 in file: JAppl7.t
 
-
-Tom Checker:  Encountered errors during verification phase.
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

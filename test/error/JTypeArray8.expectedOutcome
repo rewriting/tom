@@ -1,7 +1,6 @@
 
- *** Repeated macro-functions in '%typearray type1' declared at line 1
- *** Repeated function :'get_element' - Line : 8
+Repeated macro-function 'get_element' in '%typearray type1' declared line 1
+-- Error occured at line: 8 in file: JTypeArray8.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

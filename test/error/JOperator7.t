@@ -8,7 +8,7 @@
 
 %op type1 op(type:type1, type1) {
   fsym { fzero }
-  make(t1) { factory.makeAppl(fzero) }
-  get_slot(type,t) { t.getType() }
+  make() { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
+  get_slot(type,t) { t.getType() }
 }

@@ -1,7 +1,7 @@
 
- *** Slot Name 'term' is not correct: See method 'op' -  Line : 17
- *** Possible Slot Names are : [type]
+Slot Name 'term' is not correct: See method 'op' -  Line : 17
+Possible slot names are : [type]
+-- Error occured at line: 17 in file: JRecord1.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

@@ -1,7 +1,6 @@
 
- *** Missing macro-functions in '%typelist type1' declared at line 1
- *** Missing function(s) : [cmp_fun_sym]
+Missing macro-function(s) [cmp_fun_sym] in '%typelist type1'
+-- Error occured at line: 1 in file: JTypeList2.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

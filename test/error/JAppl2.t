@@ -20,5 +20,5 @@
 }
 
 %match(type1 t, type1 t2) {
-  op(_),zero() -> {}
+  op(_,_),zero() -> {}
 }

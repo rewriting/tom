@@ -1,7 +1,3 @@
-
-Bad number of arguments: 2 argument(s) are required but 1 found in method 'make' in '%op op' declared at line 9
--- Error occured at line: 11
-
-
-Tom Checker:  Encountered errors during verification phase.
-No file generated.
+ Bad number of arguments in 'make(...)' method: less arguments found than 2 as expected in term definition.
+ -- Error occurs at line 11
+ Parsing aborted

@@ -1,3 +1,6 @@
- Bad number of arguments in 'make(...)' method: more arguments found than 1 as expected in term definition.
- Error occurs at line 18
- Parsing aborted
+
+Multiple definition of operator: Operator 'op' is already defined
+-- Error occured at line: 16 in file: JOperator5.t
+
+Tom Checker:  Encountered 1 errors during verification phase.
+No file generated.

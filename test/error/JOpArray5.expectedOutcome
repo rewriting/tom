@@ -1,7 +1,6 @@
 
- *** Arguments must be linear in method 'make_append' of '%oparray concArray' declared at line 17
- *** Variable 'e' is repeated - Line : 20
+Arguments must be linear in method 'make_append' of '%oparray concArray' declared at line 17 :Variable 'e' is repeated
+-- Error occured at line: 20 in file: JOpArray5.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

@@ -1,2 +1,4 @@
-*** Warning *** Some GetSlot declaration are incompatible with operator signature line: 15
-*** This concerns following slotname:[Name("type1")]
+
+Some GetSlot declaration are incompatible with operator signature
+*** This concerns following slotname:[Name("type1")] 
+-- Error occured at line: 15

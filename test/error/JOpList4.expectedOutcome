@@ -1,7 +1,6 @@
 
- *** Missing macro-functions in '%oplist concList' declared at line 17
- *** Missing function(s) : [make_insert]
+Missing macro-function(s) [make_insert] in '%oplist concList'
+-- Error occured at line: 17 in file: JOpList4.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.

@@ -1,7 +1,6 @@
 
- *** Repeated macro-functions in '%op op' declared at line 9
- *** Repeated function :'make' - Line : 12
+Repeated macro-function 'make' in '%op op' declared line 9
+-- Error occured at line: 12 in file: JOperator3.t
 
-*** ERRORS
-*** COMPILATION ABORTED
+Tom Checker:  Encountered 1 errors during verification phase.
 No file generated.
