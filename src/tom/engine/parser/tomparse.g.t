@@ -724,6 +724,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             {LA(2) == EQUAL}?
             id:ALL_ID EQUAL {text.append(id.getText()+"=");}
             (
+                {p("Entry 2-B");}
                 {LA(2) == AT}?
                 anno2:ALL_ID AT
                 {
@@ -736,8 +737,23 @@ xmlAttribute returns [TomTerm result] throws TomException
                 name = tomFactory.encodeXMLString(symbolTable(),id.getText());
                 nameList = `concTomName(Name(name));
                 termName = `Appl(ast().makeOption(),nameList,concTomTerm(),concConstraint());
-             }
 
+                list.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
+                // we add the specif value : _
+                list.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
+                //list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
+                // no longer necessary ot metaEncode Strings in attributes
+                list.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
+                optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile())));
+                option = ast().makeOptionList(optionList);            
+                constraint = ast().makeConstraintList(constraintList);
+                
+                nameList = `concTomName(Name(Constants.ATTRIBUTE_NODE));
+                result = `RecordAppl(option,
+                    nameList,
+                    ast().makeList(list),
+                    constraint);
+            }
         | // [anno1@]_ = [anno2@](_|String|Identifier)
             (
                 anno1:ALL_ID AT
@@ -757,24 +773,25 @@ xmlAttribute returns [TomTerm result] throws TomException
                 }
             )?
             term = unamedVariableOrTermStringIdentifier[optionListAnno2]
+            {
+                list.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
+                // we add the specif value : _
+                list.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
+                //list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
+                // no longer necessary ot metaEncode Strings in attributes
+                list.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
+                optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile())));
+                option = ast().makeOptionList(optionList);            
+                constraint = ast().makeConstraintList(constraintList);
+                
+                nameList = `concTomName(Name(Constants.ATTRIBUTE_NODE));
+                result = `RecordAppl(option,
+                    nameList,
+                    ast().makeList(list),
+                    constraint);
+            }
+
         )
-        {
-            list.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
-            // we add the specif value : _
-            list.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
-            //list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
-            // no longer necessary ot metaEncode Strings in attributes
-            list.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
-            optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile())));
-            option = ast().makeOptionList(optionList);            
-            constraint = ast().makeConstraintList(constraintList);
-      
-            nameList = `concTomName(Name(Constants.ATTRIBUTE_NODE));
-            result = `RecordAppl(option,
-                nameList,
-                ast().makeList(list),
-                constraint);
-        }
     ;
 
 // This corresponds to the implicit notation
