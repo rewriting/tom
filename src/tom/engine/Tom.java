@@ -302,7 +302,6 @@ public class Tom {
     TomExpander expander = new TomExpander();
     TomSyntaxChecker syntaxChecker = new TomSyntaxChecker();
     TomTypeChecker typeChecker = new TomTypeChecker();
-    TomTask verifExtract = new TomVerifierExtract();
     TomCompiler compiler = new TomCompiler();
 
     TomTask initialTask = null;
@@ -321,14 +320,7 @@ public class Tom {
       } else {
         tomParser.addTask(expander);
       }
-      
-      if (getInput().isDoVerify()) {
-        if (getInput().isDoCheck()) {
-          typeChecker.addTask(verifExtract);
-        } else {
-          expander.addTask(verifExtract);
-        }
-      }
+     
     } //DoParse() && DoExpand
     
     if (getInput().isDoCompile()) {
@@ -362,32 +354,45 @@ public class Tom {
         environment().setTerm(expandedTerm);
       } else {
         if (getInput().isDoCheck()) {
-          if (getInput().isDoVerify()) {
-            verifExtract.addTask(compiler);
-          } else {
             typeChecker.addTask(compiler);
-          }
         } else {
-          if (getInput().isDoVerify()) {
-            verifExtract.addTask(compiler);
-          } else {
             expander.addTask(compiler);
-          }
         }
       }
     } //DoCompile
-    
+
+		TomTask currentTail = compiler;
+
+		if (getInput().isDoOptimization()) {
+			TomOptimizer optimizer = new TomOptimizer();
+			currentTail.addTask(optimizer);
+			currentTail = optimizer;
+		}
+
+		if (getInput().isDoVerify()) {
+			TomTask verifExtract = new TomVerifierExtract();
+			currentTail.addTask(verifExtract);
+			currentTail = verifExtract;
+		}
+
     if (getInput().isPrintOutput()) {
       TomTask generator;
       generator = new TomBackend();
-      if (getInput().isDoOptimization()) {
-        TomOptimizer optimizer = new TomOptimizer();
-        compiler.addTask(optimizer);
-        optimizer.addTask(generator);
-      } else {
-        compiler.addTask(generator);
-      }
+			currentTail.addTask(generator);
     } //PrintOutput
+
+    
+//     if (getInput().isPrintOutput()) {
+//       TomTask generator;
+//       generator = new TomBackend();
+//       if (getInput().isDoOptimization()) {
+//         TomOptimizer optimizer = new TomOptimizer();
+//         compiler.addTask(optimizer);
+//         optimizer.addTask(generator);
+//       } else {
+//         compiler.addTask(generator);
+//       }
+//     } //PrintOutput
 
     return initialTask;
   }
