@@ -1,9 +1,10 @@
 /* From Propositional prover by H. Cirstea */
+package Propp;
 
 import aterm.*;
 import aterm.pure.*;
-import adt.propp.term.*;
-import adt.propp.term.types.*;
+import Propp.seq.*;
+import Propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
@@ -12,7 +13,7 @@ public class RecPropp extends Propp {
 	private Factory factory;
 
 	// ------------------------------------------------------------  
-	%include { term.tom }
+	%include { seq.tom }
 	// ------------------------------------------------------------  
 
 	public RecPropp() {

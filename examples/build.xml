@@ -66,6 +66,9 @@
   <property name="pqueens" value="PQueens"/>
   <property name="pqueens.dir" location="${examples.dir}/${pqueens}" />
 
+  <property name="propp" value="Propp"/>
+  <property name="propp.dir" location="${examples.dir}/${propp}" />
+
   <property name="rbtree" value="RBTree"/>
   <property name="rbtree.dir" location="${examples.dir}/${rbtree}" />
 
@@ -432,6 +435,47 @@
     </javac>
   </target>
 
+  <target name="propp" depends="init">
+		<!-- build adt -->
+    <adt file="${propp.dir}/seq.adt" 
+         factory="seq" 
+         package="${propp}" 
+         destdir="${examples.gen}"/>
+		<!-- build parser -->
+		<antlr target="${propp.dir}/seq.g"
+					 outputdirectory="${examples.gen}/${propp}">
+			<classpath>
+				<fileset dir="${propp.dir}">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+		</antlr>
+    <!-- build tom -->
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
+         options="-I ${tom.home}/share/jtom">
+      <include name="${propp}/**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+			<classpath>
+				<path refid="tom.classpath"/>
+				<fileset dir="${propp.dir}">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+      <include name="${propp}/**/*.java"/>
+    </javac>
+		<!-- copy resourses -->
+		<copy todir="${examples.build}/${propp}">
+			<fileset dir="${examples.dir}/${propp}">
+				<include name="examples"/>
+				<include name="*.sty"/>
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+  </target>
+
   <target name="rbtree" depends="init">
     <!-- build adt -->
     <adt file="${rbtree.dir}/tree.adt" 
@@ -591,6 +635,13 @@
         <include name="${pqueens}/README"/>
         <include name="${pqueens}/*.t"/>
         <include name="${pqueens}/*.tom"/>
+
+        <include name="${propp}/README"/>
+        <include name="${propp}/*.t"/>
+        <include name="${propp}/*.g"/>
+        <include name="${propp}/*.jar"/>
+        <include name="${propp}/*.sty"/>
+        <include name="${propp}/examples"/>
 
         <include name="${rbtree}/README"/>
         <include name="${rbtree}/*.t"/>

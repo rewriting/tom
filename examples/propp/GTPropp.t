@@ -1,11 +1,12 @@
 /* From Propositional prover by H. Cirstea */
+package Propp;
 
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
-import adt.propp.term.*;
-import adt.propp.term.types.*;
+import Propp.seq.*;
+import Propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
@@ -15,7 +16,7 @@ public class GTPropp extends Propp {
 	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------  
-	%include { term.tom }
+	%include { seq.tom }
 	// ------------------------------------------------------------  
 
 	public GTPropp() {

@@ -1,3 +1,7 @@
+header {
+	package Propp;
+}
+
 //{{{ class SeqParser extends Parser;
 class SeqParser extends Parser;
 options {

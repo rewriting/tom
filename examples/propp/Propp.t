@@ -1,11 +1,12 @@
 /* From Propositional prover by H. Cirstea */
+package Propp;
 
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
-import adt.propp.term.*;
-import adt.propp.term.types.*;
+import Propp.seq.*;
+import Propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
@@ -15,7 +16,7 @@ public class Propp {
 	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------
-	%include { term.tom }
+	%include { seq.tom }
 	// ------------------------------------------------------------
 
 	public Propp() {
@@ -28,7 +29,7 @@ public class Propp {
 		this.traversal = new GenericTraversal();
 	}
 
-	public final Factory getTermFactory() {
+	public final Factory getSeqFactory() {
 		return factory;
 	}
 
