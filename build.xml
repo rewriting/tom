@@ -804,7 +804,7 @@
 
 	</target>
 	
-	<target name="bundle" depends="dist.src">
+	<target name="bundle.src" depends="dist.src">
 	  	<mkdir dir="${bundle.dir}"/>
 		<unjar src="${sharedobject.lib}" dest="${bundle.dir}"/>
 		<unjar src="${jjtraveler.lib}" dest="${bundle.dir}"/>
@@ -816,6 +816,23 @@
 		<unjar src="${src.lib}/TomSignature-${DSTAMP}.jar" dest="${bundle.dir}"/>
 		<unjar src="${src.lib}/jtom-${DSTAMP}.jar" dest="${bundle.dir}"/>
 		<unjar src="${src.lib}/Set-${DSTAMP}.jar" dest="${bundle.dir}"/>
+			
+		<jar destfile="${aircubebundle}" basedir="${bundle.dir}"></jar>
+		<delete dir="${bundle.dir}"/>
+	</target>
+	
+	<target name="bundle.stable" depends="dist.stable">
+	  	<mkdir dir="${bundle.dir}"/>
+		<unjar src="${sharedobject.lib}" dest="${bundle.dir}"/>
+		<unjar src="${jjtraveler.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${aterm.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${apigen.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${vastoadt.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${concurrent.lib}" dest="${bundle.dir}"/>
+	  	<unjar src="${stable.lib}/TNode-${version}.jar" dest="${bundle.dir}"/>
+		<unjar src="${stable.lib}/TomSignature-${version}.jar" dest="${bundle.dir}"/>
+		<unjar src="${stable.lib}/jtom-${version}.jar" dest="${bundle.dir}"/>
+		<unjar src="${stable.lib}/Set-${version}.jar" dest="${bundle.dir}"/>
 			
 		<jar destfile="${aircubebundle}" basedir="${bundle.dir}"></jar>
 		<delete dir="${bundle.dir}"/>
