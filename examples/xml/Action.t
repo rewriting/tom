@@ -3,7 +3,7 @@ import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;
 import aterm.*;
 import jtom.runtime.*;
-
+ 
 public class Action {
   
   %include{ TNode.tom }

@@ -38,6 +38,13 @@ Previsions pour la v2.0
   analyse des patterns XML
   passer de TomParser.jj a TomParser.t
 
+- new API for %op L f(E*)
+  get_it   : L  -> it
+  has_elt  : L  -> Bool
+  get_elt  : it -> E
+  get_mult : it -> int
+  go_next  : it -> it
+  get_all  : it -> L
 
 ------------------------------------------------------------
 PHASE 1

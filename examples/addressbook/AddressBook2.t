@@ -31,8 +31,7 @@ public class AddressBook2 {
   public void happyBirthday(PersonList book, Date date) {
     %match(PersonList book, Date date) {
       concPerson(_*, person(fn, ln, date(y,m,d)), _*),
-        //concPerson(_*, person[firstname=fn, lastname=ln, birthdate=ddate(y,m,d)], _*),
-        date(_,m,d) -> {
+        date(_,m,d)   -> {
         System.out.println("Happy birthday " + fn + " " + ln);
       }
     }

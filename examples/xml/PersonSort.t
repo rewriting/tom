@@ -4,9 +4,9 @@ import jtom.adt.tnode.types.*;
 import aterm.*;
 
 public class PersonSort {
-   
-  %include{ TNode.tom }
     
+  %include{ TNode.tom }
+         
   private XmlTools xtools;
   private Factory getTNodeFactory() {
       return xtools.getTNodeFactory();
@@ -36,7 +36,7 @@ public class PersonSort {
       _ -> { return subject; }     
     }
   }
-  	
+  	 
   private int compare(TNode t1, TNode t2) {
     %match(TNode t1, TNode t2) {
       <Person Age=#TEXT(a1)><FirstName>#TEXT(n1)</FirstName></Person>,
