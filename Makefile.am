@@ -2,9 +2,9 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS 	= config stable utils test
+SUBDIRS 	= config stable utils test www
 INSTALL_SUBDIRS = $(SUBDIRS) share doc
-DIST_SUBDIRS 	= $(INSTALL_SUBDIRS) src tutorial
+DIST_SUBDIRS 	= $(INSTALL_SUBDIRS) src tutorial 
 
 EXTRA_DIST = reconf
 
