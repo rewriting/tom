@@ -1,1 +1,1 @@
-tom Rho.t;javac minirho/Rho.java;java minirho.Rho
+clear;tom Rho.t;javac minirho/Rho.java;java minirho.Rho
