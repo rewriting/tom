@@ -1,3 +1,4 @@
-java.lang.Throwable: Re-entering included file `JIncludeFile1.t` in `JIncludeFile1.t` forms a cycle. Breaking the parsing...
-Tom Parser:  Encountered 1 errors and 0 warnings.
+D:\workspace\jtom\test\error\JIncludeFile1.t:1:Error:Included file `JIncludeFile1.t` found at line 1 in file `D:\workspace\jtom\test\error\JIncludeFile1.t` forms a cycle
+Tom Task Parser: Encountered 1 error(s) and 0 warning(s)
 No file generated.
+

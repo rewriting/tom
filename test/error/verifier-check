@@ -5,7 +5,7 @@ files=`ls *.t 2>/dev/null`
 generation=0
 
 verbose=0
-TOM=`which jtom.src`
+TOM=`which tom.src`
 COMPARE=`which diff`
 RM=/bin/rm
 
@@ -13,7 +13,7 @@ for x in "$@"; do
     case "$x" in
     -c) shift
         generation=1
-	rm -f *.expectedOutcome
+				rm -f *.expectedOutcome
         ;;
     -v) shift
 	verbose=1

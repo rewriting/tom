@@ -1,29 +1,12 @@
--- Error occured line: 95 in structure `%typelist type10` declared line: 95 in file: `JTypeList.t`
----> Multiple definition of Symbol `type10`
-
--- Error occured line: 81 in structure `structure %typelist type9` declared line: 75 in file: `JTypeList.t`
----> Repeated macro-function `get_head`
-
--- Error occured line: 69 in structure `%typelist type8` declared line: 65 in file: `JTypeList.t`
----> Arguments must be linear in macro-function `equals`: Variable `l1` is repeated
-
--- Error occured line: 58 in structure `%typelist type7` declared line: 55 in file: `JTypeList.t`
----> Arguments must be linear in macro-function `cmp_fun_sym`: Variable `t1` is repeated
-
--- Error occured line: 37 in structure `%typelist type5` declared line: 37 in file: `JTypeList.t`
----> Missing macro-function(s) [ is_empty ]
-
--- Error occured line: 28 in structure `%typelist type4` declared line: 28 in file: `JTypeList.t`
----> Missing macro-function(s) [ get_tail ]
-
--- Error occured line: 19 in structure `%typelist type3` declared line: 19 in file: `JTypeList.t`
----> Missing macro-function(s) [ get_head ]
-
--- Error occured line: 10 in structure `%typelist type2` declared line: 10 in file: `JTypeList.t`
----> Missing macro-function(s) [ cmp_fun_sym ]
-
--- Error occured line: 1 in structure `%typelist type1` declared line: 1 in file: `JTypeList.t`
----> Missing macro-function(s) [ get_fun_sym ]
-
-Tom SyntaxChecker:  Encountered 9 errors and 0 warnings.
+D:\workspace\jtom\test\error\JTypeList.t:95:Error:In structure `%typelist type10` declared line 95, Multiple definition of Symbol `type10`
+D:\workspace\jtom\test\error\JTypeList.t:81:Error:In structure `structure %typelist type9` declared line 75, Repeated macro-function `get_head`
+D:\workspace\jtom\test\error\JTypeList.t:69:Error:In structure `%typelist type8` declared line 65, Arguments must be linear in macro-function `equals`: Variable `l1` is repeated
+D:\workspace\jtom\test\error\JTypeList.t:58:Error:In structure `%typelist type7` declared line 55, Arguments must be linear in macro-function `cmp_fun_sym`: Variable `t1` is repeated
+D:\workspace\jtom\test\error\JTypeList.t:37:Error:In structure `%typelist type5` declared line 37, Missing macro-function(s) [ is_empty ]
+D:\workspace\jtom\test\error\JTypeList.t:28:Error:In structure `%typelist type4` declared line 28, Missing macro-function(s) [ get_tail ]
+D:\workspace\jtom\test\error\JTypeList.t:19:Error:In structure `%typelist type3` declared line 19, Missing macro-function(s) [ get_head ]
+D:\workspace\jtom\test\error\JTypeList.t:10:Error:In structure `%typelist type2` declared line 10, Missing macro-function(s) [ cmp_fun_sym ]
+D:\workspace\jtom\test\error\JTypeList.t:1:Error:In structure `%typelist type1` declared line 1, Missing macro-function(s) [ get_fun_sym ]
+Tom SyntaxChecker: Encountered 9 error(s) and 0 warning(s)
 No file generated.
+

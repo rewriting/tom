@@ -1,23 +1,10 @@
--- Error occured line: 58 in structure `%oplist concList7` declared line: 58 in file: `JOpList.t`
----> Multiple definition of Symbol `concList7`
-
--- Error occured line: 49 in structure `structure %oplist concList6` declared line: 45 in file: `JOpList.t`
----> Repeated macro-function `make_empty`
-
--- Error occured line: 42 in structure `%oplist concList5` declared line: 39 in file: `JOpList.t`
----> Arguments must be linear in macro-function `make_insert`: Variable `e` is repeated
-
--- Error occured line: 34 in structure `%oplist concList4` declared line: 34 in file: `JOpList.t`
----> Missing macro-function(s) [ make_insert ]
-
--- Error occured line: 29 in structure `%oplist concList3` declared line: 29 in file: `JOpList.t`
----> Missing macro-function(s) [ make_empty ]
-
--- Error occured line: 23 in structure `%oplist concList2` declared line: 23 in file: `JOpList.t`
----> List symbol `concList2` has an unknown parameter type: `wrongtype`
-
--- Error occured line: 17 in structure `%oplist concList1` declared line: 17 in file: `JOpList.t`
----> Symbol `concList1` has an unknown return type: `wrongtype`
-
-Tom SyntaxChecker:  Encountered 7 errors and 0 warnings.
+D:\workspace\jtom\test\error\JOpList.t:58:Error:In structure `%oplist concList7` declared line 58, Multiple definition of Symbol `concList7`
+D:\workspace\jtom\test\error\JOpList.t:49:Error:In structure `structure %oplist concList6` declared line 45, Repeated macro-function `make_empty`
+D:\workspace\jtom\test\error\JOpList.t:42:Error:In structure `%oplist concList5` declared line 39, Arguments must be linear in macro-function `make_insert`: Variable `e` is repeated
+D:\workspace\jtom\test\error\JOpList.t:34:Error:In structure `%oplist concList4` declared line 34, Missing macro-function(s) [ make_insert ]
+D:\workspace\jtom\test\error\JOpList.t:29:Error:In structure `%oplist concList3` declared line 29, Missing macro-function(s) [ make_empty ]
+D:\workspace\jtom\test\error\JOpList.t:23:Error:In structure `%oplist concList2` declared line 23, List symbol `concList2` has an unknown parameter type: `wrongtype`
+D:\workspace\jtom\test\error\JOpList.t:17:Error:In structure `%oplist concList1` declared line 17, Symbol `concList1` has an unknown return type: `wrongtype`
+Tom SyntaxChecker: Encountered 7 error(s) and 0 warning(s)
 No file generated.
+

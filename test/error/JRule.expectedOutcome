@@ -1,77 +1,28 @@
--- Error occured line: 107 in structure `Rule` declared line: 107 in file: `JRule.t`
----> Rule `op4` is repeated
-
--- Error occured line: 101 in structure `Rule` declared line: 96 in file: `JRule.t`
----> `_`: Impossible in rule right hand side
-
--- Error occured line: 101 in structure `Rule` declared line: 96 in file: `JRule.t`
----> `op2[...]`: Impossible in rule right hand side
-
--- Error occured line: 101 in structure `Rule` declared line: 96 in file: `JRule.t`
----> `_`: Impossible in rule right hand side
-
--- Error occured line: 97 in structure `Rule` declared line: 96 in file: `JRule.t`
----> `_`: Impossible in rule right hand side
-
--- Error occured line: 97 in structure `Rule` declared line: 96 in file: `JRule.t`
----> Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found
-
--- Error occured line: 97 in structure `Rule` declared line: 96 in file: `JRule.t`
----> `_`: Impossible in rule right hand side
-
--- Error occured line: 94 in structure `Rule` declared line: 88 in file: `JRule.t`
----> `Disjunction`: Impossible in rule right hand side
-
--- Error occured line: 93 in structure `Rule` declared line: 88 in file: `JRule.t`
----> `XML construct a`: Impossible in rule right hand side
-
--- Error occured line: 92 in structure `Rule` declared line: 88 in file: `JRule.t`
----> `X*`: Impossible in rule right hand side
-
--- Error occured line: 91 in structure `Rule` declared line: 88 in file: `JRule.t`
----> `_*`: Impossible in rule right hand side
-
--- Error occured line: 90 in structure `Rule` declared line: 88 in file: `JRule.t`
----> `_`: Impossible in rule right hand side
-
--- Error occured line: 89 in structure `Rule` declared line: 88 in file: `JRule.t`
----> The symbol `op5` has type `type2` but type `type1` was required
-
--- Error occured line: 85 in structure `Rule` declared line: 82 in file: `JRule.t`
----> The symbol `op4` has type `type1` but type `type2` was required
-
--- Warning occured line: 85 in structure `Rule` declared line: 82 in file: `JRule.t`
----> Warning: Ambiguous symbol name. Is`op4` a variable or a constructor? Prefer `op4`() if it is a constructor
-
--- Error occured line: 84 in structure `Rule` declared line: 82 in file: `JRule.t`
----> The symbol `op1` has type `type1` but type `type2` was required
-
--- Error occured line: 79 in structure `Rule` declared line: 77 in file: `JRule.t`
----> Rule head symbol name `op1` expected, but `op2` found
-
--- Warning occured line: 78 in structure `Rule` declared line: 77 in file: `JRule.t`
----> Unknown symbol `f`: Cant do further analyses
-
--- Error occured line: 74 in structure `Rule` declared line: 73 in file: `JRule.t`
----> Rule head symbol `op2` has no `make` method: It is necessary to define one!!
-
--- Error occured line: 70 in structure `Rule` declared line: 69 in file: `JRule.t`
----> `Disjunction`: Impossible in rule left hand side
-
--- Error occured line: 66 in structure `Rule` declared line: 65 in file: `JRule.t`
----> `Disjunction`: Impossible in rule left hand side
-
--- Error occured line: 62 in structure `Rule` declared line: 61 in file: `JRule.t`
----> `XML construct a`: Impossible in rule left hand side
-
--- Error occured line: 58 in structure `Rule` declared line: 57 in file: `JRule.t`
----> `_*`: Impossible in rule left hand side
-
--- Error occured line: 54 in structure `Rule` declared line: 53 in file: `JRule.t`
----> `X*`: Impossible in rule left hand side
-
--- Error occured line: 50 in structure `Rule` declared line: 49 in file: `JRule.t`
----> `_`: Impossible in rule left hand side
-
-Tom SyntaxChecker:  Encountered 23 errors and 2 warnings.
+D:\workspace\jtom\test\error\JRule.t:107:Error:In structure `Rule` declared line 107, Rule `op4` is repeated
+D:\workspace\jtom\test\error\JRule.t:101:Error:In structure `Rule` declared line 96, `_`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:101:Error:In structure `Rule` declared line 96, `op2[...]`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:101:Error:In structure `Rule` declared line 96, `_`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:97:Error:In structure `Rule` declared line 96, `_`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:97:Error:In structure `Rule` declared line 96, Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found;
+D:\workspace\jtom\test\error\JRule.t:97:Error:In structure `Rule` declared line 96, `_`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:94:Error:In structure `Rule` declared line 88, `Disjunction`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:93:Error:In structure `Rule` declared line 88, `XML construct a`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:92:Error:In structure `Rule` declared line 88, `X*`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:91:Error:In structure `Rule` declared line 88, `_*`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:90:Error:In structure `Rule` declared line 88, `_`: Impossible in rule right hand side
+D:\workspace\jtom\test\error\JRule.t:89:Error:In structure `Rule` declared line 88, The symbol `op5` has type `type2` but type `type1` was required
+D:\workspace\jtom\test\error\JRule.t:85:Error:In structure `Rule` declared line 82, The symbol `op4` has type `type1` but type `type2` was required
+D:\workspace\jtom\test\error\JRule.t:84:Error:In structure `Rule` declared line 82, The symbol `op1` has type `type1` but type `type2` was required
+D:\workspace\jtom\test\error\JRule.t:79:Error:In structure `Rule` declared line 77, Rule head symbol name `op1` expected, but `op2` found
+D:\workspace\jtom\test\error\JRule.t:74:Error:In structure `Rule` declared line 73, Rule head symbol `op2` has no `make` method: It is necessary to define one!!
+D:\workspace\jtom\test\error\JRule.t:70:Error:In structure `Rule` declared line 69, `Disjunction`: Impossible in rule left hand side
+D:\workspace\jtom\test\error\JRule.t:66:Error:In structure `Rule` declared line 65, `Disjunction`: Impossible in rule left hand side
+D:\workspace\jtom\test\error\JRule.t:62:Error:In structure `Rule` declared line 61, `XML construct a`: Impossible in rule left hand side
+D:\workspace\jtom\test\error\JRule.t:58:Error:In structure `Rule` declared line 57, `_*`: Impossible in rule left hand side
+D:\workspace\jtom\test\error\JRule.t:54:Error:In structure `Rule` declared line 53, `X*`: Impossible in rule left hand side
+D:\workspace\jtom\test\error\JRule.t:50:Error:In structure `Rule` declared line 49, `_`: Impossible in rule left hand side
+D:\workspace\jtom\test\error\JRule.t:85:Warning:In structure `Rule` declared line 82, Ambiguous symbol name. Is `op4` a variable or a constructor? Prefer `op4()` if it is a constructor
+D:\workspace\jtom\test\error\JRule.t:78:Warning:In structure `Rule` declared line 77, Unknown symbol `f`: Cant do further analyses
+Tom SyntaxChecker: Encountered 23 error(s) and 2 warning(s)
 No file generated.
+

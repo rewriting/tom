@@ -1,21 +1,11 @@
--- Warning occured line: 54 in structure `Rule` declared line: 46 in file: `JVariable.t`
----> Unknown symbol `a`: Cant do further analyses
+D:\workspace\jtom\test\error\JVariable.t:54:Warning:In structure `Rule` declared line 46, Unknown symbol `a`: Cant do further analyses
+Tom SyntaxChecker: Encountered 1 warning(s).
 
-Tom SyntaxChecker:  Encountered 1 warnings.
--- Error occured line: 52 in structure `Rule` declared line: 46 in file: `JVariable.t`
----> Unknown variable(s) `[a]`
-
--- Error occured line: 41 in structure `Rule` declared line: 40 in file: `JVariable.t`
----> Variable `x` has type `type0` instead of type `type2`
-
--- Error occured line: 41 in structure `Rule` declared line: 40 in file: `JVariable.t`
----> Variable `x` has type `type0` instead of type `type1`
-
--- Error occured line: 41 in structure `Rule` declared line: 40 in file: `JVariable.t`
----> Bad variable type for `x`: it has both type `type1` and `type0`
-
--- Error occured line: 41 in structure `Rule` declared line: 40 in file: `JVariable.t`
----> Bad variable type for `x`: it has both type `type1` and `type2`
-
-Tom TypeChecker:  Encountered 5 errors and 0 warnings.
+D:\workspace\jtom\test\error\JVariable.t:52:Error:In structure `Rule` declared line 46, Unknown variable(s) `[a]`
+D:\workspace\jtom\test\error\JVariable.t:41:Error:In structure `Rule` declared line 40, Variable `x` has type `type0` instead of type `type2`
+D:\workspace\jtom\test\error\JVariable.t:41:Error:In structure `Rule` declared line 40, Variable `x` has type `type0` instead of type `type1`
+D:\workspace\jtom\test\error\JVariable.t:41:Error:In structure `Rule` declared line 40, Bad variable type for `x`: it has both type `type1` and `type0`
+D:\workspace\jtom\test\error\JVariable.t:41:Error:In structure `Rule` declared line 40, Bad variable type for `x`: it has both type `type1` and `type2`
+Tom TypeChecker: Encountered 5 error(s) and 0 warning(s)
 No file generated.
+
