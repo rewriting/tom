@@ -138,169 +138,165 @@ public class TomKernelCompiler extends TomBase {
      */
  
   public TomTerm compileMatching(TomTerm subject) {
-      //%variable
     Replace1 replace_compileMatching = new Replace1() {
-        public ATerm apply(ATerm t) { return compileMatching((TomTerm)t); }
-      }; 
-
-    %match(TomTerm subject) {
-      Tom(l) -> {
-        return `Tom(tomListMap(l,replace_compileMatching));
-      }
-
-      TomInclude(l) -> {
-        return `TomInclude(tomListMap(l,replace_compileMatching));
-      }
-      
-      Match(SubjectList(l1),PatternList(l2), optionList)  -> {
-        boolean generatedMatch = false;
-        String currentDebugKey = "noDebug";
-        if(debugMode) {
-          generatedMatch = hasGeneratedMatch(optionList);
-          Option orgTrack = findOriginTracking(optionList);
-          currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-        }
-        
-        TomList patternList, actionList;
-        TomList automataList = empty();
-        ArrayList list;
-        TomNumberList path = tsf().makeTomNumberList();
-
-        matchNumber++;
-        path = (TomNumberList) path.append(`MatchNumber(makeNumber(matchNumber)));
-        
-          /*
-           * create a list of declaration
-           * collect and declare TOM variables (from patterns)
-           * collect match variables (from match(t1,...,tn))
-           * declare and assign intern variable (_1 = t1,..., _n=tn)
-           */
-        TomList matchDeclarationList = empty();
-        TomList matchAssignementList = empty();
-        int index = 1;
-
-        while(!l1.isEmpty()) {
-          TomTerm tlVariable = l1.getHead();
-          matchBlock: {
-            %match(TomTerm tlVariable) { 
-              Variable(option,_,variableType) -> {
-                TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType);
-                matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
-                if (!generatedMatch) {
-                  matchAssignementList = appendInstruction(`AssignMatchSubject(variable,TomTermToExpression(tlVariable)),matchAssignementList);
-                } else {
-                  matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+        public ATerm apply(ATerm subject) {
+          if(subject instanceof TomTerm) { 
+            %match(TomTerm subject) {
+              Match(SubjectList(l1),PatternList(l2), optionList)  -> {
+                boolean generatedMatch = false;
+                String currentDebugKey = "noDebug";
+                if(debugMode) {
+                  generatedMatch = hasGeneratedMatch(optionList);
+                  Option orgTrack = findOriginTracking(optionList);
+                  currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
                 }
-                break matchBlock;
+                
+                TomList patternList, actionList;
+                TomList automataList = empty();
+                ArrayList list;
+                TomNumberList path = tsf().makeTomNumberList();
+                
+                matchNumber++;
+                path = (TomNumberList) path.append(`MatchNumber(makeNumber(matchNumber)));
+                
+                  /*
+                   * create a list of declaration
+                   * collect and declare TOM variables (from patterns)
+                   * collect match variables (from match(t1,...,tn))
+                   * declare and assign intern variable (_1 = t1,..., _n=tn)
+                   */
+                TomList matchDeclarationList = empty();
+                TomList matchAssignementList = empty();
+                int index = 1;
+                
+                while(!l1.isEmpty()) {
+                  TomTerm tlVariable = l1.getHead();
+                  matchBlock: {
+                    %match(TomTerm tlVariable) { 
+                      Variable(option,_,variableType) -> {
+                        TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType);
+                        matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
+                        if (!generatedMatch) {
+                          matchAssignementList = appendInstruction(`AssignMatchSubject(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+                        } else {
+                          matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+                        }
+                        break matchBlock;
+                      }
+                      
+                      BuildTerm(Name(tomName),_) |
+                        BuildList(Name(tomName),_) |
+                        FunctionCall(Name(tomName),_) -> {
+                        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+                        TomType tomType = getSymbolCodomain(tomSymbol);
+                        TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType);
+                        matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
+                        matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+                        break matchBlock;
+                      }
+                      
+                      _ -> {
+                        System.out.println("compileMatching: strange term: " + tlVariable);
+                        break matchBlock;
+                      }
+                    }
+                  } // end matchBlock
+                  index++;
+                  l1 = l1.getTail();
+                }
+                
+                matchDeclarationList = concat(matchDeclarationList,matchAssignementList);
+                
+                  /*
+                   * for each pattern action (<term> -> <action>)
+                   * build a matching automata
+                   */
+                int actionNumber = 0;
+                boolean firstCall=true;
+                boolean defaultPA =false;
+                while(!l2.isEmpty()) {
+                  actionNumber++;
+                  TomTerm pa = l2.getHead();
+                  defaultPA = hasDefaultCase(pa.getOption());
+                  patternList = pa.getTermList().getTomList();
+                  if (debugMode && defaultPA) {
+                      // replace success by leaving structure
+                    TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
+                    TomList tail = pa.getTom().getTomList().getTail();
+                    actionList = `manyTomList(TargetLanguageToTomTerm(tl), tail);
+                  } else {
+                    actionList = pa.getTom().getTomList();
+                  }
+                  
+                  
+                    //System.out.println("patternList   = " + patternList);
+                    //System.out.println("actionList = " + actionList);
+                  if(patternList==null || actionList==null) {
+                    System.out.println("TomKernelCompiler: null value");
+                    throw new TomRuntimeException(new Throwable("TomKernelCompiler: null value"));
+                  }
+                  
+                    // compile nested match constructs
+                  actionList = tomListMap(actionList,this);
+                    //System.out.println("patternList      = " + patternList);
+                    //System.out.println("actionNumber  = " + actionNumber);
+                    //System.out.println("action        = " + actionList);
+                  TomList patternsDeclarationList = empty();
+                  Collection variableCollection = new HashSet();
+                  collectVariable(variableCollection,`Tom(patternList));
+                  
+                  Iterator it = variableCollection.iterator();
+                  while(it.hasNext()) {
+                    TomTerm tmpsubject = (TomTerm)it.next();
+                    patternsDeclarationList = append(`Declaration(tmpsubject),patternsDeclarationList);
+                      //System.out.println("*** " + patternsDeclarationList);
+                  }
+                  
+                  
+                  TomNumberList numberList = (TomNumberList) path.append(`PatternNumber(makeNumber(actionNumber)));
+                  
+                  TomList instructionList;
+                  instructionList = genMatchingAutomataFromPatternList(patternList,path,1,actionList,true);
+                    //firstCall = false;
+                  TomList declarationInstructionList; 
+                  declarationInstructionList = concat(patternsDeclarationList,instructionList);
+                  OptionList automataOptionList = `concOption(Debug(Name(currentDebugKey)));
+                  
+                  TomName label = getLabel(pa.getOption());
+                  if(label != null) {
+                    automataOptionList = `manyOptionList(Label(label),automataOptionList);
+                  }
+                  if(defaultPA) {
+                    automataOptionList = `manyOptionList(DefaultCase(),automataOptionList);
+                  }
+                  
+                  TomTerm automata = `Automata(automataOptionList,numberList,declarationInstructionList);
+                    //System.out.println("automata = " + automata);
+                  
+                  automataList = append(automata,automataList);
+                  l2 = l2.getTail();
+                }
+                
+                  /*
+                   * return the compiled MATCH construction
+                   */
+                
+                TomList astAutomataList = automataListCompileMatchingList(automataList, generatedMatch);
+                return `CompiledMatch(matchDeclarationList,astAutomataList, optionList);
               }
-
-              BuildTerm(Name(tomName),_) |
-              BuildList(Name(tomName),_) |
-              FunctionCall(Name(tomName),_) -> {
-                TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-                TomType tomType = getSymbolCodomain(tomSymbol);
-                TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType);
-                matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
-                matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
-                break matchBlock;
-              }
-
+              
+                // default rule
               _ -> {
-                System.out.println("compileMatching: strange term: " + tlVariable);
-                break matchBlock;
+                return traversal().genericTraversal(subject,this);
               }
-            }
-          } // end matchBlock
-          index++;
-          l1 = l1.getTail();
-        }
-        
-        matchDeclarationList = concat(matchDeclarationList,matchAssignementList);
-  
-          /*
-           * for each pattern action (<term> -> <action>)
-           * build a matching automata
-           */
-        int actionNumber = 0;
-        boolean firstCall=true;
-        boolean defaultPA =false;
-        while(!l2.isEmpty()) {
-          actionNumber++;
-          TomTerm pa = l2.getHead();
-          defaultPA = hasDefaultCase(pa.getOption());
-          patternList = pa.getTermList().getTomList();
-          if (debugMode && defaultPA) {
-              // replace success by leaving structure
-            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
-            TomList tail = pa.getTom().getTomList().getTail();
-            actionList = `manyTomList(TargetLanguageToTomTerm(tl), tail);
-          } else {
-            actionList = pa.getTom().getTomList();
+            } // end match
+          } else { // not instance of TomTerm
+             return traversal().genericTraversal(subject,this);
           }
-          
-          
-            //System.out.println("patternList   = " + patternList);
-            //System.out.println("actionList = " + actionList);
-          if(patternList==null || actionList==null) {
-            System.out.println("TomKernelCompiler: null value");
-			throw new TomRuntimeException(new Throwable("TomKernelCompiler: null value"));
-          }
-          
-            // compile nested match constructs
-          actionList = tomListMap(actionList,replace_compileMatching);
-            //System.out.println("patternList      = " + patternList);
-            //System.out.println("actionNumber  = " + actionNumber);
-            //System.out.println("action        = " + actionList);
-          TomList patternsDeclarationList = empty();
-          Collection variableCollection = new HashSet();
-          collectVariable(variableCollection,`Tom(patternList));
-          
-          Iterator it = variableCollection.iterator();
-          while(it.hasNext()) {
-            TomTerm tmpsubject = (TomTerm)it.next();
-            patternsDeclarationList = append(`Declaration(tmpsubject),patternsDeclarationList);
-              //System.out.println("*** " + patternsDeclarationList);
-          }
-
-
-           TomNumberList numberList = (TomNumberList) path.append(`PatternNumber(makeNumber(actionNumber)));
-         
-          TomList instructionList;
-          instructionList = genMatchingAutomataFromPatternList(patternList,path,1,actionList,true);
-            //firstCall = false;
-          TomList declarationInstructionList; 
-          declarationInstructionList = concat(patternsDeclarationList,instructionList);
-          OptionList automataOptionList = `concOption(Debug(Name(currentDebugKey)));
-
-          TomName label = getLabel(pa.getOption());
-          if(label != null) {
-            automataOptionList = `manyOptionList(Label(label),automataOptionList);
-          }
-          if(defaultPA) {
-            automataOptionList = `manyOptionList(DefaultCase(),automataOptionList);
-          }
-          
-          TomTerm automata = `Automata(automataOptionList,numberList,declarationInstructionList);
-            //System.out.println("automata = " + automata);
-          
-          automataList = append(automata,automataList);
-          l2 = l2.getTail();
-        }
-
-          /*
-           * return the compiled MATCH construction
-           */
-
-        TomList astAutomataList = automataListCompileMatchingList(automataList, generatedMatch);
-        return `CompiledMatch(matchDeclarationList,astAutomataList, optionList);
-      }
-
-        // default rule
-      t -> {
-          //System.out.println("default: " + t);
-        return t;
-      }
-    }
+        } // end apply
+      }; // end new
+    
+     return (TomTerm) replace_compileMatching.apply(subject);
   }
 
   private TomList automataListCompileMatchingList(TomList automataList, boolean generatedMatch) {
