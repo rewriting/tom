@@ -34,7 +34,10 @@ public class TomSyntaxChecker extends TomChecker {
   public TomSyntaxChecker(TomEnvironment env) {
   	super("Tom SyntaxChecker", env);
   }
-	
+  
+  /**
+   * The process function do the work in the Task template process
+   */
   public void process() {
     try {
 			long startChrono = 0;

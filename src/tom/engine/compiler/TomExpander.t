@@ -140,7 +140,6 @@ public class TomExpander extends TomTask {
       // For each slotName (from tomSymbol)
     while(!slotList.isEmpty()) {
       TomName slotName = slotList.getHead().getSlotName();
-        //debugPrintln("\tslotName  = " + slotName);
       TomList pairList = args;
       TomTerm newSubterm = null;
       if(!slotName.isEmptyName()) {
