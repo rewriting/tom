@@ -1,5 +1,5 @@
 [
-  modulentry(Name("TNode"),[],
+  modulentry(Name("TNode"),[],[],
   [
   constructor(TNode,CommentNode,CommentNode(<data(str)>)),
   constructor(TNode,ProcessingInstructionNode,ProcessingInstructionNode(<target(str)>,<data(str)>)),

@@ -1,5 +1,5 @@
 [
-  modulentry(Name("TomSignature"),[],
+  modulentry(Name("TomSignature"),[],[],
   [
   constructor(Declaration,TypeTermDecl,TypeTermDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),
   constructor(Declaration,TypeListDecl,TypeListDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),

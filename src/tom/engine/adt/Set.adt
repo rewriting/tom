@@ -1,5 +1,5 @@
 [
-  modulentry(Name("Set"),[],
+  modulentry(Name("Set"),[],[],
   [
   constructor(JGTreeSet,emptySet,emptySet),
   constructor(JGTreeSet,singleton,singleton(<value(term)>)),
