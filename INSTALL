@@ -60,4 +60,3 @@ We also suggest you to define a TOM_LIB variable and update your CLASSPATH:
 (csh)
   set TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
   setenv CLASSPATH $TOM_LIB:$CLASSPATH
-
