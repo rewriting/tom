@@ -18,8 +18,8 @@ PeanoSimple1.cmo: PeanoSimple1.ml
 PeanoSimple1.tom.cmo: PeanoSimple1.tom.ml
 	ocamlc -c PeanoSimple1.tom.ml
 
-tompeano: peanotype.cmo tomExtension.cmo PeanoSimple1.tom.cmo
-	ocamlc -o tompeano peanotype.cmo tomExtension.cmo PeanoSimple1.tom.cmo
+tompeano: peanotype.cmo PeanoSimple1.tom.cmo
+	ocamlc -o tompeano peanotype.cmo PeanoSimple1.tom.cmo
 
 List1.cmo: List1.ml
 	ocamlc -c List1.ml
