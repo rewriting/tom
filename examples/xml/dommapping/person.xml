@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Persons>
+  <Person Age="30"> <FirstName> Paul   </FirstName> </Person>
+  <Person Age="28"> <FirstName> Mark   </FirstName> </Person>
+  <Person Age="21"> <FirstName> Jurgen </FirstName> </Person>
+  <Person Age="21"> <FirstName> Julien </FirstName> </Person>
+  <Person Age="24"> <FirstName> Pierre-Etienne </FirstName> </Person>
+</Persons>
