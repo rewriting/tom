@@ -173,9 +173,9 @@
     </tom>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}">
-      <classpath refid="tom.classpath"/>
-      <include name="${apireach}/**/*.java"/>
-    </javac>
+			<classpath refid="tom.classpath"/>
+			<include name="${apireach}/**/*.java"/>
+		</javac>
   </target>
 
   <target name="boulderdash" depends="init">
@@ -197,7 +197,7 @@
       <classpath refid="tom.classpath"/>
       <include name="${boulderdash}/**/*.java"/>
     </javac>
-		<!-- copy ressources in build -->
+		<!-- copy resources in build -->
 		<copy todir="${examples.build}/${boulderdash}">
 			<fileset dir="${examples.dir}/${boulderdash}">
 				<include name="*.gif"/>
@@ -237,6 +237,12 @@
       <classpath refid="tom.classpath"/>
       <include name="${dom}/**/*.java"/>
     </javac>
+		<!-- copy resourses -->
+		<copy todir="${examples.build}/${dom}">
+			<fileset dir="${examples.dir}/${dom}">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
   </target>
   
   <target name="expression" depends="init">
@@ -459,12 +465,20 @@
       <classpath refid="tom.classpath"/>
       <include name="${xml}/**/*.java"/>
     </javac>
+		<!-- copy resourses -->
+		<copy todir="${examples.build}/${xml}">
+			<fileset dir="${examples.dir}/${xml}">
+				<include name="*.xml"/>
+				<include name="*.html"/>
+			</fileset>
+		</copy>
+
   </target>
   
   
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="addressbook, apireach, boulderdash, builtin, dom,
+					depends="addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, peano, pnspk, poly, pqueens,
           rbtree, set, xml">
   </target>
@@ -537,8 +551,7 @@
         <include name="${poly}/README"/>
         <include name="${poly}/*.t"/>
         <include name="${poly}/*.adt"/>
-        <include name="${poly}/PolyCommon.java"/>
-        <include name="${poly}/Poly.signature"/>
+        <include name="${poly}/*.java"/>
 
         <include name="${pqueens}/README"/>
         <include name="${pqueens}/*.t"/>

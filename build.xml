@@ -238,12 +238,14 @@
 
 		<!-- tom library -->
 		<copy todir="${stable.lib}">
-			<fileset dir="${stable.src}/adt">
+			<fileset dir="${stable.src}/jtom/adt">
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
 		<jar jarfile="${stable.lib}/jtom-${version}.jar">
-			<fileset dir="${stable.build}" includes="**/*.class"/>
+			<fileset dir="${stable.build}">
+				<include name="**/*.class"/>
+			</fileset>
 		</jar>
 		<!-- tom share -->
 		<copy todir="${stable.share}">
