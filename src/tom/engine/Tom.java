@@ -136,9 +136,9 @@ public class Tom {
   }
 
   private void init(String args[]) {
+    environment().init();
     getInput().init();
     inputFileList = initInputFromArgs(args);
-    environment().init();
   }
 
   private void reinit(String localInputFile) {
@@ -461,9 +461,13 @@ public class Tom {
         // no need to do further work
       return;
     } else if(tom.inputFileList.isEmpty()) {
+      System.out.println("No file to compile");
+      usage();
       tom.addError(TomCheckerMessage.NoFileToCompile, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       return;
     } else if(tom.inputFileList.size()>1 && getInput().getUserOutputFile() != null) {
+      System.out.println("Cannot specify --output with multiple compilations");
+      usage();
       tom.addError(TomCheckerMessage.OutputWithMultipleCompilation, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       return;
     }
