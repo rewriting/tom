@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.44 2003/12/04 13:24:12 moreau Exp $
+# $Id: configure.in,v 1.45 2003/12/04 15:09:00 moreau Exp $
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(jtom,1.5gamma)
@@ -7,7 +7,7 @@ AC_PREREQ(2.13)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.44 2003/12/04 13:24:12 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.45 2003/12/04 15:09:00 moreau Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -45,19 +45,12 @@ ADTTOTOM=${APIGEN}/bin/adt-to-tom
 AC_SUBST(ADTTOJAVA)
 AC_SUBST(ADTTOTOM)
 
-TOMSIGNATURE=${PWD}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar
-SETADT=${PWD}/src/adt/set-${VERSION}.jar:${prefix}/share/set-${VERSION}.jar
-TNODEADT=${PWD}/src/adt/TNode-${VERSION}.jar:${prefix}/share/TNode-${VERSION}.jar
+TOMSIGNATURE=${srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar
+SETADT=${srcdir}/src/adt/set-${VERSION}.jar:${prefix}/share/set-${VERSION}.jar
+TNODEADT=${srcdir}/src/adt/TNode-${VERSION}.jar:${prefix}/share/TNode-${VERSION}.jar
 AC_SUBST(TOMSIGNATURE)
 AC_SUBST(SETADT)
 AC_SUBST(TNODEADT)
-
-TSADT_STABLE=${PWD}/stable/adt/TomSignature-${VERSION}.jar
-SETADT_STABLE=${PWD}/stable/adt/set-${VERSION}.jar
-TNODEADT_STABLE=${PWD}/stable/adt/TNode-${VERSION}.jar
-AC_SUBST(TSADT_STABLE)
-AC_SUBST(SETADT_STABLE)
-AC_SUBST(TNODEADT_STABLE)
 
 AC_OUTPUT( \
 	Makefile \
@@ -85,7 +78,6 @@ AC_OUTPUT( \
 	stable/Makefile \
 	stable/adt/Makefile \
 	stable/jtom/Makefile \
-	stable/jtom/adt/Makefile \
 	stable/jtom/tools/Makefile \
 	stable/jtom/xml/Makefile \
 	stable/jtom/checker/Makefile \
@@ -95,9 +87,7 @@ AC_OUTPUT( \
 	stable/jtom/runtime/Makefile \
 	stable/jtom/runtime/strategies/Makefile \
 	stable/jtom/runtime/set/Makefile \
-	stable/jtom/runtime/set/jgtreeset/Makefile \
 	stable/jtom/runtime/xml/Makefile \
-	stable/jtom/runtime/xml/adt/Makefile \
 	stable/jtom/exception/Makefile \
 	stable/jtom/debug/Makefile \
 	tutorial/Makefile \

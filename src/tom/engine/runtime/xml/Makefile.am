@@ -14,7 +14,7 @@ java_JAVA       = $(BOOTSOURCES)
 JAVAROOT        = ${top_builddir}/src/
 
 CLEANFILES 	= XMLToATerm.java ATermToXML.java
-EXTRA_DIST 	= $(BOOTSOURCES) XMLToATerm.t ATermToXML.t TNode.adt
+EXTRA_DIST 	= $(BOOTSOURCES) XMLToATerm.t ATermToXML.t
 
 BUILT_SOURCES   = XMLToATerm.java ATermToXML.java XmlTools.java
 

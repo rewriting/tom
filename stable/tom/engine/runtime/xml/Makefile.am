@@ -2,6 +2,10 @@
 #    TOM - To One Matching Compiler
 #
 
+TSADT_STABLE=$(top_srcdir)/stable/adt/TomSignature-${VERSION}.jar
+SETADT_STABLE=$(top_srcdir)/stable/adt/set-${VERSION}.jar
+TNODEADT_STABLE=$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
+
 #SUBDIRS         = adt
 
 javadir         = ${prefix}/classes/jtom/runtime/xml

@@ -26,6 +26,6 @@ TNODEJAR=TNode-${VERSION}.jar
 	     s@__JAVA_ATERM__@${JAVA_ATERM}@g' < $< > $@ && chmod +x $@
 
 %.src : %.sh.src Makefile
-	sed 's@__CLASSES__@${top_abs_builddir}/src:${top_abs_builddir}/src/adt:${top_abs_builddir}/stable:${top_abs_builddir}/stable/adt/${TSJAR}:${top_abs_builddir}/stable/adt/${SETJAR}:${top_abs_builddir}/stable/adt/${TNODEJAR}@g;\
-	     s@__INCLUDE__@"-I ${top_abs_builddir}/src/adt -I ${top_abs_builddir}/stable/adt"@g;\
+	sed 's@__CLASSES__@${top_abs_builddir}/src:${top_abs_builddir}/src/adt:${top_abs_builddir}/stable:${top_abs_srcdir}/stable/adt/${TSJAR}:${top_abs_srcdir}/stable/adt/${SETJAR}:${top_abs_srcdir}/stable/adt/${TNODEJAR}@g;\
+	     s@__INCLUDE__@"-I ${top_abs_srcdir}/src/adt -I ${top_abs_srcdir}/stable/adt"@g;\
 	     s@__JAVA_ATERM__@${JAVA_ATERM}@g' < $< > $@ && chmod +x $@
