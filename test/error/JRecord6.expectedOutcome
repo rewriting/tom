@@ -1,12 +1,6 @@
 
- *** Warning *** possible error in structure Rule declared line 93
- *** Unknown method 'plus1' : Ensure the type coherence by yourself line : 96
-
- *** Slot Name 'pred1' is not correct: See method 'suc' -  Line : 101
- *** Possible Slot Names are : [pred]
-
- *** Warning *** possible error in structure Rule declared line 99
- *** Unknown method 'plus2' : Ensure the type coherence by yourself line : 102
+ *** Same slot names can not be used several times: See method 'op' -  Line : 17
+ *** Repeated slot Name : 'type'
 
 *** ERRORS
 *** COMPILATION ABORTED

@@ -1,7 +1,6 @@
 
-
- *** Record 'suc[...]' is not allowed on right part of structure %rule declared line 93
--- Error occured at line: 94
+Alone variable 'y' has type 'type1' instead of type 'type2' in right part of %rule declared line 24
+-- Error occured at line: 25
 
 
 Tom Checker:  Encountered errors during verification phase.

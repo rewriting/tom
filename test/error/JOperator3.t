@@ -6,7 +6,7 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op type1 zero(type1, type1) {
+%op type1 op(type1, type1) {
   fsym { fzero }
   make(t1, t2) { factory.makeAppl(fzero) }
   make(t1, t2) { factory.makeAppl(fzero) }

@@ -1,7 +1,7 @@
 
- *** Slot Name 'pred1' is not correct: See method 'suc' -  Line : 80
- *** Possible Slot Names are : [pred]
+Symbol method : 'opp' not found
+-- Error occured at line: 17
 
-*** ERRORS
-*** COMPILATION ABORTED
+
+Tom Checker:  Encountered errors during verification phase.
 No file generated.

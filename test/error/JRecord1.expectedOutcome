@@ -1,3 +1,7 @@
 
- *** Warning *** Bad type in %match declared line 83
- *** For slot 2 :Type 'term' required but Type 'term1' found - Line : 84
+ *** Slot Name 'term' is not correct: See method 'op' -  Line : 17
+ *** Possible Slot Names are : [type]
+
+*** ERRORS
+*** COMPILATION ABORTED
+No file generated.

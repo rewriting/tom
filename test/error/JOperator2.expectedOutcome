@@ -1,5 +1,5 @@
 
-Slot position 1 of operator 'zero' has an unknown type: 'type2'
+Slot position 1 of operator 'op' has an unknown type: 'type2'
 -- Error occured at line: 9
 
 

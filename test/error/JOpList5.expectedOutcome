@@ -1,5 +1,5 @@
 
- *** Arguments must be linear in method 'make_insert' of '%oplist conc' declared at line 17
+ *** Arguments must be linear in method 'make_insert' of '%oplist concList' declared at line 17
  *** Variable 'e' is repeated - Line : 20
 
 *** ERRORS

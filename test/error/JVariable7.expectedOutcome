@@ -1,6 +1,7 @@
 
- *** Warning *** possible error in structure Rule declared line 93
- *** Unknown method 'plus1' : Ensure the type coherence by yourself line : 96
+Unknown variable(s) [Name("a")] used in right part of %rule declared line 16
+-- Error occured at line: 17
 
- *** Warning *** possible error in structure Rule declared line 99
- *** Unknown method 'plus2' : Ensure the type coherence by yourself line : 102
+
+Tom Checker:  Encountered errors during verification phase.
+No file generated.

@@ -1,5 +1,5 @@
 
-Slot position 1 of operator 'conc' has an unknown type: 'type'
+Slot position 1 of operator 'concArray' has an unknown type: 'type'
 -- Error occured at line: 17
 
 

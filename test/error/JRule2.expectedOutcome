@@ -1,6 +1,9 @@
 
- *** Placeholder is not allowed on right part of structure %rule declared line 93
--- Error occured at line: 94
+ *** Warning *** possible error in structure Rule declared line 16
+ *** Unknown method 'f' : Ensure the type coherence by yourself line : 17
+
+ *** Placeholder is not allowed on right part of structure %rule declared line 16
+-- Error occured at line: 17
 
 
 Tom Checker:  Encountered errors during verification phase.

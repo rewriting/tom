@@ -32,7 +32,7 @@ JTypeArray2.t
 JTypeArray3.t
 	Missing functions : [get_element]
 JTypeArray4.t
-	Missing functions : [get_size
+	Missing functions : [get_size]
 JTypeArray5.t
 	OK: missing equals
 JTypeArray6.t
@@ -70,9 +70,9 @@ OPERATOR DECLARATION
 ////////////////////
 JOperatorRef.t
 JOperator1.t
-	Operator 'zero' has an unknown return type
+	Operator 'op' has an unknown return type
 JOperator2.t
-	Slot position 1 of operator 'zero' has an unknown type
+	Slot position 1 of operator 'op' has an unknown type
 JOperator3.t
 	Repeated macro-functions 'make'
 JOperator4.t
@@ -87,16 +87,17 @@ JOperator8.t
 	GetSlot declaration 'type' is repeated in operator declaration
 JOperator9.t
 	Some GetSlot declaration are incompatible with operator signature
-
+JOperator10.t
+	Repeated slot  's1' in operator declaration
 
 ////////////////////
 OPARRAY DECLARATION
 ////////////////////
 JOpArrayRef.t
 JOpArray1.t
-	Operator 'conc' has an unknown return type
+	Operator 'concArray' has an unknown return type
 JOpArray2.t
-	Slot position 1 of operator 'conc' has an unknown type
+	Slot position 1 of operator 'concArray' has an unknown type
 JOpArray3.t
 	Missing functions : [make_empty]
 JOpArray4.t
@@ -111,9 +112,9 @@ OPLIST DECLARATION
 ////////////////////
 JOpListRef.t
 JOpList1.t
-	Operator 'conc' has an unknown return type
+	Operator 'concList' has an unknown return type
 JOpList2.t
-	Slot position 1 of operator 'conc' has an unknown type
+	Slot position 1 of operator 'concList' has an unknown type
 JOpList3.t
 	Missing functions : [make_empty]
 JOpList4.t
@@ -128,16 +129,13 @@ MATCH DECLARATION
 ////////////////////
 JMatchRef.t
 JMatch1.t
-	Bad number of arguments: 2 argument(s) required but 1 found in %match structure
+	Variable 't' has an unknown type 'type' (Bad type name in signature)
 JMatch2.t
-	Bad number of arguments: 2 argument(s) required but 3 found in %match structure
+	Bad number of arguments: 2 argument(s) required but 1 found in %match structure
 JMatch3.t
 	Single list variable x* : Not allowed in %match structure
 JMatch4.t
-	OK: _ are count
-JMatch5.t
-	Bad type name in signature
-
+	For slot 2 :Type 'type2' required but Type 'type1' found
 
 ////////////////////
 RULE DECLARATION
@@ -152,54 +150,54 @@ JRule3.t
 JRule4.t
 	Single list variable : Not allowed on top of %rule
 JRule5.t
-	Bad number of arguments for method 'fib1':1 arguments are required but 2 are given
+	Bad number of arguments for method 'op':2 arguments are required but 1 are given
 JRule6t
-	Method name 'fib1' expected, but 'fib2' found
+	MLeft most symbol name 'op' expected, but 'op1' found in left hand side of structure %rule
 JRule7.t
-	Single list variable fib1* : Not allowed on top of %rule
+	Single list variable 'x*' is not allowed in right hand side of structure %rule
 JRule8.t
-	Single list variable 'suc*' is not allowed in right hand side of structure %rule
+	Alone variable or operator op is not allowed on left hand side of structur %rule
 JRule9.t
-	Alone variable or operator fib1 is not allowed on left hand side of structur %rule
+	 Record 'op[...]' is not allowed on right part of structure %rule
 JRule10.t
-	 Record 'suc[...]' is not allowed on right part of structure %rule
-JRule10.t
-	TODO:lhs var of incorrect type
+	Alone variable 'y' has type 'type1' instead of type 'type2' in right part of %rule
 
 	
 ////////////////////
 RECORD DECLARATION
 ////////////////////
-
 JRecord1.t
-	For slot 2 :Type 'term' required but Type 'term1' found
+	Slot Name 'term' is not correct: See method 'op' in match slot
 JRecord2.t
-	Slot Name 'pred1' is incorrect
+	Same slot names can not be used several times: See method op' in match slot
 JRecord3.t
-	Same slot names can not be used in same method
+	Slot Name 'typ' is not correct: See method 'op' in complex match slot
 JRecord4.t
-	Slot Name 'pred1' is incorrect in comple method
+	Symbol method : 'opp' not found: succ[...] in match slot
 JRecord5.t
-	Symbol method : 'succ' not found: succ[...]
+	Slot Name 'typ' is not correct: See method 'op' in rule rhs
 JRecord6.t
-	Slot Name 'pred1' is not correct
-JRecord7.t
-	Slot Name 'pred' is not correct: See method 'fib1'
+	Same slot names can not be used several times: See method op' in rule rhs
 
 ////////////////////
 APPL DECLARATION
 ////////////////////
 JAppl1.t
-	Bad number of arguments for method in match
+	Bad number of arguments for method 'op' in match slot
 JAppl2.t
-	OK: zero() in match
+	OK: zero() in match slot
 JAppl3.t
-	Bad appl arg number in complex method in match
+	Bad appl arg number in complex method in match slot
 JAppl4.t
-	Symbol method : 'succ' not found: succ(...) in match
+	Symbol method : 'opp' not found in match slot
 JAppl5.t
-	Bad number of arguments for method 'suc':1 arguments are required but 2 are given in rule
-
+	Bad number of arguments for method 'op' in rule rhs
+JAppl6.t
+	Symbol method : 'opp' not found in rule rhs
+JAppl7.t
+	Placeholder is not allowed in list operator
+JAppl8.t
+	Bad type of argument: Argument 2 of method 'concList' has type 'type2' required but type 'type1'
 
 ////////////////////
 VARIABLE DECLARATION
@@ -207,15 +205,12 @@ VARIABLE DECLARATION
 JVariable1.t
 	Symbol method : 'x' not found: x()
 JVariable2.t
-	Placeholder is not allowed in list operator
 JVariable3.t
-	Bad type of argument: Argument 2 of method 'conc' has type 'E' required but type 'L' found
 JVariable4.t
 JVariable5.t
 JVariable6.t
-JVariable7.t
 	Variables are correctly extracted	
+JVariable7.t
+	Unknown variable(s) [a] used on right part of %rule
 JVariable8.t
-	Unknown variable(s) [y] used on right part of %rule
-JVariable9.t
-	TODO: 2 var x with different types
+	Bad variable type for 'x': it has both type 'type2' and 'type1'

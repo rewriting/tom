@@ -16,5 +16,16 @@
 
 %oplist type1 concList( type2* ) {
   fsym { factory.makeAFun("conc", 1, false) }
+  make_empty()  { factory.makeList() }
   make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }
+}
+
+%op type1 op2 {
+  fsym { fzero }
+  make() { factory.makeAppl(fzero) }
+  is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
+}
+
+%match(type1 t) {
+  concList(X*,op2,X*) -> {}
 }

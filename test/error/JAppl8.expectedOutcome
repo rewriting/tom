@@ -1,0 +1,7 @@
+
+Bad type of argument: Argument 2 of method 'concList' has type 'type2' required but type 'type1' found in structure declared 30
+-- Error occured at line: 30
+
+
+Tom Checker:  Encountered errors during verification phase.
+No file generated.

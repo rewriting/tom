@@ -14,7 +14,7 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%oparray type conc( type2* ) {
+%oparray type concArray( type2* ) {
   fsym { factory.makeAFun("conc", 1, false) }
   make_empty(n)  { factory.makeList() }
   make_append(e,l) { ((ATermList)l).insert((ATerm)e) }

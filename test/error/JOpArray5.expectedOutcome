@@ -1,5 +1,5 @@
 
- *** Arguments must be linear in method 'make_append' of '%oparray conc' declared at line 17
+ *** Arguments must be linear in method 'make_append' of '%oparray concArray' declared at line 17
  *** Variable 'e' is repeated - Line : 20
 
 *** ERRORS

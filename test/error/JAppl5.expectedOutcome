@@ -1,6 +1,6 @@
 
-Bad number of arguments for method 'suc':1 arguments are required but 2 are given
--- Error occured at line: 96
+Bad number of arguments for method 'op':2 arguments are required but 1 are given
+-- Error occured at line: 17
 
 
 Tom Checker:  Encountered errors during verification phase.

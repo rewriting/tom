@@ -1,6 +1,6 @@
 
- *** Slot Name 'pred1' is not correct: See method 'suc' -  Line : 80
- *** Possible Slot Names are : [pred]
+ *** Same slot names can not be used several times: See method 'op' -  Line : 17
+ *** Repeated slot Name : 'type'
 
 *** ERRORS
 *** COMPILATION ABORTED

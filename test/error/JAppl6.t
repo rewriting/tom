@@ -13,6 +13,6 @@
   get_slot(type,t) { t.getType() }
 }
 
-%match(type1 t, type1 t2) {
-  op[term=x], r -> {}
+%rule {
+  x@op(_, op(_, opp(_,_))) -> x
 }

@@ -1,5 +1,5 @@
 
-Bad number of arguments: 2 argument(s) are required but 1 found in method 'make' in '%op zero' declared at line 9
+Bad number of arguments: 2 argument(s) are required but 1 found in method 'make' in '%op op' declared at line 9
 -- Error occured at line: 11
 
 

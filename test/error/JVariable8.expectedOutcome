@@ -1,9 +1,7 @@
+Variable(Option([OriginTracking(Name("x"),25)]),Name("x"),Type(TomType("type1"),TLType(ITL("String"))))
 
- *** Warning *** possible error in structure Rule declared line 93
- *** Unknown method 'plus1' : Ensure the type coherence by yourself line : 96
-
-Unknown variable(s) [y] used on right part of %rule declared line 93
--- Error occured at line: 96
+Bad variable type for 'x': it has both type 'type2' and 'type1' in structure declared line 24
+-- Error occured at line: 25
 
 
 Tom Checker:  Encountered errors during verification phase.

@@ -1,5 +1,5 @@
 
-Operator 'conc' has an unknown return type: 'type'
+Operator 'concArray' has an unknown return type: 'type'
 -- Error occured at line: 17
 
 

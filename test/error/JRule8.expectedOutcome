@@ -1,6 +1,6 @@
 
-Single list variable 'suc*' is not allowed in right hand side of structure %rule declared line 93
--- Error occured at line: 94
+Alone variable op is not allowed on left hand side of structure %rule declared line 17
+-- Error occured at line: 18
 
 
 Tom Checker:  Encountered errors during verification phase.

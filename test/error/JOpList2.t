@@ -14,7 +14,7 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%oplist type1 conc( type* ) {
+%oplist type1 concList( type* ) {
   fsym { factory.makeAFun("conc", 1, false) }
   make_empty()  { factory.makeList() }
   make_insert(e,l) { ((ATermList)l).insert((ATerm)e) }

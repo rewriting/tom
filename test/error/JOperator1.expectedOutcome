@@ -1,5 +1,5 @@
 
-Operator 'zero' has an unknown return type: 'type2'
+Operator 'op' has an unknown return type: 'type2'
 -- Error occured at line: 9
 
 

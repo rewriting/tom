@@ -1,7 +1,3 @@
-
- *** Warning *** Multiple definition of operator at line 16
- *** Operator 'zero' is already defined
-
-*** ERRORS
-*** COMPILATION ABORTED
-No file generated.
+ Bad number of arguments in 'make(...)' method: more arguments found than 1 as expected in term definition.
+ Error occurs at line 18
+ Parsing aborted

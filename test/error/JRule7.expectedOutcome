@@ -1,6 +1,6 @@
 
-Single list variable 'fib1*' is not allowed on left hand side of structure %rule declared line 93
--- Error occured at line: 94
+Single list variable 'x*' is not allowed in right hand side of structure %rule declared line 16
+-- Error occured at line: 17
 
 
 Tom Checker:  Encountered errors during verification phase.

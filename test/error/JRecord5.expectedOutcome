@@ -1,7 +1,7 @@
 
-Symbol method : 'succ' not found
--- Error occured at line: 80
+ *** Slot Name 'typ' is not correct: See method 'op' -  Line : 17
+ *** Possible Slot Names are : [type]
 
-
-Tom Checker:  Encountered errors during verification phase.
+*** ERRORS
+*** COMPILATION ABORTED
 No file generated.
