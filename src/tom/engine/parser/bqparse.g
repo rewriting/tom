@@ -47,12 +47,10 @@ class NewBQParser extends Parser;
         return tomparser.selector();
     }
 
-    private void p(String s){
-        System.out.println(s);
-    }
-
 }
 
+//Handle any code between '(' and ')'
+//called recursively to take care of the imbricated parenthesis
 bqCode [LinkedList list]
     :
         (
@@ -73,6 +71,8 @@ any [LinkedList list]
     |   str:BQ_STRING {list.add(str);}
     ;
 
+//Handle (...)
+//We already read the '(' token in the tom parser
 bqTarget [LinkedList list] returns [TomTerm result]
 { 
     result = null;
@@ -87,12 +87,15 @@ bqTarget [LinkedList list] returns [TomTerm result]
 
             pushLine(t.getLine());
             pushColumn(t.getColumn());
+            //returns to tom parser
             selector().pop();
         }
     ;
 
 targetCode returns [Token result]
-{result = null;}
+{
+    result = null;
+}
     :
         c:BQ_COMMA {result = c;} 
     |   i:BQ_ID {result = i;}
@@ -103,6 +106,8 @@ targetCode returns [Token result]
     |   a:ANY {result = a;}
     ;
 
+//Handle ID* | ID(...) | ID
+//we Already read the ID token in the Tom Parser
 bqTargetAppl [LinkedList list] returns [TomTerm result]
 {
     result = null;
@@ -119,7 +124,8 @@ bqTargetAppl [LinkedList list] returns [TomTerm result]
                 pushLine(s.getLine());
                 pushColumn(s.getColumn());
             }
-        |   l:BQ_LPAREN {list.add(l);} 
+        |
+            l:BQ_LPAREN {list.add(l);} 
             bqCode[list] 
             r:BQ_RPAREN 
             {
@@ -143,6 +149,7 @@ bqTargetAppl [LinkedList list] returns [TomTerm result]
             )?
         )
         {
+            //returns to the Tom parser
             selector().pop();
         }
     ;
@@ -151,7 +158,6 @@ bqTargetAppl [LinkedList list] returns [TomTerm result]
 class NewBQLexer extends Lexer;
 options {
     charVocabulary = '\u0000'..'\uffff'; // each character can be read
-//    filter = BQ;
     k=2;
 }
 
@@ -168,6 +174,7 @@ BQ_RPAREN      :   ')'   ;
 BQ_COMMA       :   ','   ;
 BQ_STAR        :   '*'   ;
 
+// tokens to skip : white spaces
 BQ_WS	:	(	' '
 		|	'\t'
 		|	'\f'
@@ -200,7 +207,7 @@ BQ_STRING  :   '"' (BQ_ESC|~('"'|'\\'|'\n'|'\r'))* '"'
 
 ANY :   '\u0000'..'\uffff'  ;
    
-BQ_MINUS   :   '-' {System.out.println("minus");};
+BQ_MINUS   :   '-' ;
 
 protected
 BQ_DIGIT   :   ('0'..'9')  ;
@@ -247,8 +254,3 @@ protected
 BQ_HEX_DIGIT
 	:	('0'..'9'|'A'..'F'|'a'..'f')
 	;
-/*
-protected 
-BQ  :   .   
-    ;
-*/

@@ -401,7 +401,7 @@ annotedTerm returns [TomTerm result]
     int line = 0;
 }
     :   (
-	    ( 
+            ( 
                 (ID AT) => name:ID AT 
                 {
                     text.append(name.getText());
@@ -700,6 +700,10 @@ headSymbol [LinkedList optionList] returns [TomName result]
         }
     ;
 
+//This rule is called from the target parser
+//Then the rule calls the backquote parser with 2 cases :
+// 1) (...) -> bqTarget
+// 2) ID | ID* | ID(...) -> bqTargetAppl
 bqTerm returns [TomTerm result]
 {
     String bqCode = null;
@@ -721,7 +725,6 @@ bqTerm returns [TomTerm result]
                 blockList.add(i);
                 selector().push("bqlexer");
                 result = bqparser.bqTargetAppl(blockList);
-                
                 selector().pop();
             }
         )
@@ -778,9 +781,6 @@ operator returns [Declaration result] throws TomException
                 typeArg2:ID
                 {
                     astName = ast().makeName(stringSlotName);
-
-                    //astName treatment Start
-
                     if (!stringSlotName.equals("")) {
                         if(slotNameList.indexOf(astName) != -1) {
                             String detailedMsg = MessageFormat.format(TomMessage.getString("RepeatedSlotName"), new Object[]{stringSlotName});
@@ -792,9 +792,6 @@ operator returns [Declaration result] throws TomException
                             System.out.println(msg);
                         }
                     }
-
-                    //astName treatment End
-
                     slotNameList.add(astName); 
                     types = (TomTypeList) types.append(`TomTypeAlone(typeArg2.getText()));
                 }
@@ -818,8 +815,6 @@ operator returns [Declaration result] throws TomException
         )*
         t:RBRACE
         {
-            //slotList treatment Start
-            
             for(int i=slotNameList.size()-1; i>=0 ; i--) {
                 TomName name1 = (TomName)slotNameList.get(i);
                 PairNameDecl pair = null;
@@ -856,9 +851,6 @@ operator returns [Declaration result] throws TomException
                         TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()});
                 }
             }
-
-            //slotList treatment end
-
             astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
             
             putSymbol(name.getText(),astSymbol);
@@ -1621,10 +1613,9 @@ options {
 	k=3; // default lookahead
     charVocabulary = '\u0000'..'\uffff'; // each character can be read
     testLiterals = false;
-  //  filter = true;//OTHER;
 }
 
-tokens{
+tokens { 
     WHERE="where";
     IF="if";
     MAKE_EMPTY = "make_empty";
@@ -1654,10 +1645,10 @@ LBRACKET    :   '[' ;
 RBRACKET    :   ']' ;
 COMMA       :   ',' ;
 ARROW       :   "->";
-DOULEARROW  :   "=>"    ;
+DOULEARROW  :   "=>";
 ALTERNATIVE :   '|' ;
-AFFECT      :   ":="    ;
-DOUBLEEQ    :   "=="    ;
+AFFECT      :   ":=";
+DOUBLEEQ    :   "==";
 COLON       :   ':' ;
 EQUAL       :   '=' ;
 AT          :   '@' ;
@@ -1665,7 +1656,7 @@ STAR        :   '*' ;
 UNDERSCORE  :   '_' ;  
 
 
-
+// tokens to skip : white spaces
 WS	:	(	' '
 		|	'\t'
 		|	'\f'
@@ -1678,6 +1669,36 @@ WS	:	(	' '
 		)
         { $setType(Token.SKIP); }
 	;
+
+
+// tokens to skip : Single Line Comments
+SLCOMMENT
+	:	"//"
+		(~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
+		{
+            $setType(Token.SKIP); 
+            newline();
+        }
+	;
+
+// tokens to skip : Multi Lines Comments
+ML_COMMENT
+	:	"/*"
+		(	
+			options {
+				generateAmbigWarnings=false;
+			}
+		:
+			{ LA(2)!='/' }? '*'
+		|	'\r' '\n'		{newline();}
+		|	'\r'			{newline();}
+		|	'\n'			{newline();}
+		|	~('*'|'\n'|'\r')
+		)*
+		"*/"
+		{$setType(Token.SKIP);}
+	;
+
 
 CHARACTER
 	:	'\'' ( ESC | ~('\''|'\n'|'\r'|'\\') ) '\''
@@ -1725,33 +1746,6 @@ ESC
 protected
 HEX_DIGIT
 	:	('0'..'9'|'A'..'F'|'a'..'f')
-	;
-
-SLCOMMENT
-	:	"//"
-		(~('\n'|'\r'))* ('\n'|'\r'('\n')?)?
-		{
-            $setType(Token.SKIP); 
-            newline();
-        }
-	;
-
-
-ML_COMMENT
-	:	"/*"
-		(	
-			options {
-				generateAmbigWarnings=false;
-			}
-		:
-			{ LA(2)!='/' }? '*'
-		|	'\r' '\n'		{newline();}
-		|	'\r'			{newline();}
-		|	'\n'			{newline();}
-		|	~('*'|'\n'|'\r')
-		)*
-		"*/"
-		{$setType(Token.SKIP);}
 	;
 
 ID
@@ -1819,13 +1813,9 @@ NUM_INT
         )?
 	;
 
-//ANY :   .   ;
-
 protected MINUS         :   '-' ;
 protected PLUS          :   '+' ;
 protected QUOTE         :   '\''    ;
 protected EXPONENT      :   ('e'|'E') ( PLUS | MINUS )? ('0'..'9')+  ;
 protected DOT           :   '.' ;
 protected FLOAT_SUFFIX	:	'f'|'F'|'d'|'D'	;
-
-//protected OTHER :   .   ;
