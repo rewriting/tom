@@ -65,7 +65,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     }
   }
     // Different kind of structures
-  protected static int APPL                          = 0;
+  protected final static int APPL                    = 0;
   protected final static int UNAMED_APPL             = 1;
   protected final static int APPL_DISJUNCTION        = 2;
   protected final static int RECORD_APPL             = 3;

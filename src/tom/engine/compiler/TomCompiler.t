@@ -109,7 +109,6 @@ public class TomCompiler extends TomGenericPlugin {
   
   Replace1 replace_preProcessing = new Replace1() {
       public ATerm apply(ATerm subject) {
-        String debugKey = "";
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) {
             BuildReducedTerm(var@(Variable|VariableStar)[]) -> {
@@ -137,9 +136,6 @@ public class TomCompiler extends TomGenericPlugin {
           %match(Instruction subject) {
             Match(SubjectList(l1),patternInstructionList, matchOptionList)  -> {
               Option orgTrack = findOriginTracking(`matchOptionList);
-              if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
-                debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-              }
               PatternInstructionList newPatternInstructionList = `concPatternInstruction();
               while(!patternInstructionList.isEmpty()) {
                 /*
@@ -206,9 +202,6 @@ public class TomCompiler extends TomGenericPlugin {
 
             RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
               TomRuleList ruleList = `rl;
-              if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
-                debugKey = `orgTrack.getFileName().getString() + `orgTrack.getLine();
-              }
               TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
               TomName name = tomSymbol.getAstName();
               TomTypeList typesList = tomSymbol.getTypesToType().getDomain();        
@@ -238,10 +231,6 @@ public class TomCompiler extends TomGenericPlugin {
                               option) -> {
                     TomTerm newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
                     Instruction rhsInst = `IfThenElse(TrueTL(),Return(newRhs),Nop());
-                    if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
-                      TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
-                      rhsInst = `UnamedBlock(concInstruction(TargetLanguageToInstruction(tl), rhsInst));
-                    }
                     Instruction newRhsInst = `buildCondition(condList,rhsInst);
                   
                     patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(Pattern(matchPatternsList),newRhsInst, option));

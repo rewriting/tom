@@ -37,10 +37,10 @@ public class TomMessage {
   
   private final static String RESOURCE_BUNDLE = "jtom.TomMessageResources";
   // Resource bundle.
-  private static ResourceBundle resourceBundle =  ResourceBundle.getBundle(RESOURCE_BUNDLE);
+  private final static ResourceBundle resourceBundle =  ResourceBundle.getBundle(RESOURCE_BUNDLE);
   
   // Message level
-  public static int TOM_INFO = 0;
+  public final static int TOM_INFO = 0;
   // Default error line
   public static int DEFAULT_ERROR_LINE_NUMBER = 1; 
   

@@ -33,15 +33,13 @@ import tom.platform.OptionManager;
 
 public class OutputCode {
   protected Writer file;
-  private int defaultDeep;
   private OptionManager optionManager;
 
   private int lineCounter = 1;
   private int singleLine = 0;
   
-  public OutputCode(Writer file, int defaultDeep, OptionManager optionManager) {
+  public OutputCode(Writer file, OptionManager optionManager) {
     this.file = file;
-    this.defaultDeep = defaultDeep;
     this.optionManager = optionManager;
   }
 

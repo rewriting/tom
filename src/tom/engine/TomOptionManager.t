@@ -181,10 +181,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     if(option != null) {
       %match(PlatformOption option) {
         PluginOption[value=BooleanValue(True())]  -> { 
-          return new Boolean(true); 
+          return Boolean.valueOf(true); 
         }
         PluginOption[value=BooleanValue(False())] -> { 
-          return new Boolean(false); 
+          return Boolean.valueOf(false); 
         }
         PluginOption[value=IntegerValue(value)]   -> { 
           return new Integer(`value); 
@@ -215,11 +215,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   public PlatformOptionList getRequiredOptionList() {
     PlatformOptionList prerequisites = `emptyPlatformOptionList();
 
-    if(((Boolean)getOptionValue("debug")).booleanValue()) {
-      prerequisites = `concPlatformOption(PluginOption("jCode", "", "", BooleanValue(True()),""), prerequisites*);
-      // for the moment debug is only available for Java as target language
-    }
-    
     // options destdir and output are incompatible
     if(!((String)getOptionValue("destdir")).equals(".")) {
       prerequisites = `concPlatformOption(PluginOption("output", "", "", StringValue(""), ""), prerequisites*);

@@ -45,7 +45,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
   protected String modifier = "";
   protected boolean nodeclMode;
-  protected boolean debugMode;
   protected boolean prettyMode;
 
   public TomImperativeGenerator(OutputCode output, OptionManager optionManager,
@@ -53,7 +52,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     super(output, optionManager, symbolTable);
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
     prettyMode = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
-    debugMode = ((Boolean)optionManager.getOptionValue("debug")).booleanValue();
     
     if(((Boolean)optionManager.getOptionValue("static")).booleanValue()) {
       this.modifier += "static " ;
@@ -225,13 +223,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write("=");
     generateExpression(deep,exp);
     output.writeln(";");
-    if(debugMode && !list.isEmpty()) {
-      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
-      generate(deep,var);
-      output.write("\", ");
-      generateExpression(deep,exp);
-      output.writeln(");");
-    }
   }
 
   protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body) throws IOException {

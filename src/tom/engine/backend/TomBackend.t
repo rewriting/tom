@@ -73,7 +73,7 @@ public class TomBackend extends TomGenericPlugin {
       long startChrono = System.currentTimeMillis();
       try {
         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile())));
-        OutputCode output = new OutputCode(writer, defaultDeep, getOptionManager());
+        OutputCode output = new OutputCode(writer, getOptionManager());
         if(getOptionBooleanValue("jCode")) {
           generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("cCode")) {

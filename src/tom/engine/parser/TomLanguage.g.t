@@ -91,12 +91,7 @@ options{
     
     private int lastLine; 
 
-    private TomList debuggedStructureList = null;
-
     private TomFactory tomFactory;
-
-    private boolean debugMode;
-    private boolean debugMemoryMode;    
 
     private SymbolTable symbolTable;
 
@@ -104,12 +99,9 @@ options{
                      OptionManager optionManager){
         this(state);
         this.targetparser = target;
-        this.debuggedStructureList = `emptyTomList();
         this.bqparser = new BackQuoteParser(state,this);
         this.tomFactory = new TomFactory();
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
-        this.debugMode = ((Boolean)optionManager.getOptionValue("debug")).booleanValue();
-        this.debugMemoryMode = ((Boolean)optionManager.getOptionValue("memory")).booleanValue();
         this.symbolTable = target.getSymbolTable();
     }
     
@@ -133,10 +125,6 @@ options{
         symbolTable.putSymbol(name,symbol);
     }
     
-    public TomStructureTable getStructTable() {
-        return `StructTable(debuggedStructureList);
-    }
-
     private int getLine(){
         return tomlexer.getLine();
     }
@@ -187,8 +175,6 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
 { 
     result = null;
     OptionList optionList = `concOption(ot);
-    StringBuffer debugKey = new StringBuffer(currentFile() + ot.getLine());
-
     LinkedList argumentList = new LinkedList();
     LinkedList patternInstructionList = new LinkedList();
 }
@@ -196,7 +182,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
             LPAREN matchArguments[argumentList] RPAREN 
             LBRACE 
             ( 
-                patternInstruction[patternInstructionList,debugKey] 
+                patternInstruction[patternInstructionList] 
             )* 
             t:RBRACE 
             { 
@@ -205,10 +191,6 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
                     ast().makePatternInstructionList(patternInstructionList),
                     optionList
                 );
-                
-                if(debugMode){
-                    debuggedStructureList = (TomList) debuggedStructureList.append(result);
-                }
                 
                 // update for new target block...
                 updatePosition(t.getLine(),t.getColumn());
@@ -237,7 +219,7 @@ matchArgument [LinkedList list]
         }        
     ;
 
-patternInstruction [LinkedList list, StringBuffer debugKey] throws TomException
+patternInstruction [LinkedList list] throws TomException
 {
     LinkedList matchPatternList = new LinkedList();
     LinkedList listOfMatchPatternList = new LinkedList();
@@ -274,19 +256,6 @@ patternInstruction [LinkedList list, StringBuffer debugKey] throws TomException
                 // update for new target block
                 updatePosition(t.getLine(),t.getColumn());
                 
-                if(debugMode){
-                    blockList.add(`ITL(
-                            "jtom.debug.TomDebugger.debugger.patternSuccess(\""
-                            +debugKey
-                            +"\");\n")
-                    );
-                    if(debugMemoryMode){
-                            blockList.add(
-                                `ITL("jtom.debug.TomDebugger.debugger.emptyStack();\n")
-                            );
-                    }
-                }
-
                 // actions in target language : call the target lexer and
                 // call the target parser
                 selector().push("targetlexer");
@@ -410,10 +379,6 @@ ruleConstruct [Option orgTrack] returns [Instruction result] throws TomException
 
             result = `RuleSet(ruleList,orgTrack);
 
-            if(debugMode){
-                debuggedStructureList = (TomList) debuggedStructureList.append(result);
-            }
-            
             // %rule finished: go back in target parser.
             selector().pop();
         }

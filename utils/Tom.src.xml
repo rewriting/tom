@@ -94,12 +94,6 @@
       <boolean name="static" altName=""
 			  		  description="Generate static functions"
 			  		  value="false"/>
-      <boolean name="debug" altName=""
-			  		   description="Generate debug primitives"
-			  		   value="false"/>
-      <boolean name="memory" altName=""
-			  			 description="Add memory management while debugging"
-			  			 value="false"/>
       <boolean name="stamp" altName=""
 			  			 description="Use stamp to simulate concrete ADT"
 			  			 value="false"/>

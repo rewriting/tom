@@ -60,7 +60,6 @@ public class TomParserPlugin extends TomGenericPlugin {
   /** some output suffixes */
   public static final String PARSED_SUFFIX = ".tfix.parsed";
   public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
-  public static final String DEBUG_TABLE_SUFFIX = ".tfix.debug.table";
 
   /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options><boolean name='parse' altName='' description='Parser (activated by default)' value='true'/></options>";
@@ -132,7 +131,6 @@ public class TomParserPlugin extends TomGenericPlugin {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
-    boolean debug        = ((Boolean)getOptionManager().getOptionValue("debug")).booleanValue();
     boolean eclipse      = ((Boolean)getOptionManager().getOptionValue("eclipse")).booleanValue();
     try {
       // looking for java package
@@ -199,10 +197,6 @@ public class TomParserPlugin extends TomGenericPlugin {
                            + PARSED_SUFFIX, (ATerm)getWorkingTerm());
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
                            + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm());
-    }
-    if(debug) {
-      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
-                           + DEBUG_TABLE_SUFFIX, parser.getStructTable());
     }
   }
   

@@ -265,14 +265,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       }
     }
     s += ") = ";
-      // the debug mode will not work as it for caml
-    if(debugMode) {
-      s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
-      s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
-      s += "return  debugVar;\n}";
-    } else {
-      s += tlCode.getCode() + " ";
-    }
+    s += tlCode.getCode() + " ";
     return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 

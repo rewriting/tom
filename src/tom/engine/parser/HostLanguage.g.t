@@ -138,10 +138,6 @@ options{
     return getStreamManager().getSymbolTable();
   }
   
-  public TomStructureTable getStructTable() {
-    return tomparser.getStructTable();
-  }
-  
   public void updatePosition(){
     updatePosition(getLine(),getColumn());
   }

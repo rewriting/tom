@@ -49,7 +49,6 @@ import tom.platform.OptionManager;
 public abstract class TomAbstractGenerator extends TomBase {
   
   protected OutputCode output;
-  protected String debugKey;
   protected OptionManager optionManager;
   protected SymbolTable symbolTable;
 
