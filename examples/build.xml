@@ -64,6 +64,9 @@
   <property name="expression" value="expression"/>
   <property name="expression.dir" location="${examples.dir}/${expression}" />
 
+  <property name="gomoku" value="gomoku"/>
+  <property name="gomoku.dir" location="${examples.dir}/${gomoku}" />
+
   <property name="gtree" value="gtree"/>
   <property name="gtree.dir" location="${examples.dir}/${gtree}" />
 
@@ -111,6 +114,9 @@
 
   <property name="strategy" value="strategy"/>
   <property name="strategy.dir" location="${examples.dir}/${strategy}" />
+
+  <property name="strings" value="strings"/>
+  <property name="strings.dir" location="${examples.dir}/${strings}" />
 
   <property name="structure" value="structure"/>
   <property name="structure.dir" location="${examples.dir}/${structure}" />
@@ -375,6 +381,11 @@
     <javacompile example="${expression}"/>
   </target>
 
+  <target name="gomoku" depends="init">
+    <tomcompile example="${gomoku}"/>
+    <javacompile example="${gomoku}"/>
+  </target>
+
   <target name="gtree" depends="init">
     <adtcompile example="${gtree}"
                 factory="term"/>
@@ -488,6 +499,11 @@
     <javacompile example="${strategy}"/>
   </target>
 
+  <target name="strings" depends="init">
+    <tomcompile example="${strings}"/>
+    <javacompile example="${strings}"/>
+  </target>
+
   <target name="structure" depends="init">
     <!-- build adt -->    
     <vascompile example="${structure}"/>
@@ -585,9 +601,9 @@
   <target name="examples" 
           description="Builds the examples (at least some)"
           depends="addressbook, apireach, appletxml, boulderdash, builtin,
-          caml, cell, dom, expression, gtree, list, 
+          caml, cell, dom, expression, gomoku, gtree, list, 
           nspk, p3p, peano, pnspk, poly, pqueens,
-          prodrule, propp, rbtree, set, strategy, structure, 
+          prodrule, propp, rbtree, set, strategy, strings, structure, 
           tutorial, vas, xml">
   </target>
 
@@ -645,6 +661,8 @@
         <include name="${expression}/*.t"/>
         <include name="${expression}/*.java"/>
 
+        <include name="${gomoku}/*.t"/>
+
         <include name="${gtree}/README"/>
         <include name="${gtree}/*.t"/>
         <include name="${gtree}/*.adt"/>
@@ -696,7 +714,7 @@
         <include name="${rbtree}/README"/>
         <include name="${rbtree}/*.t"/>
         <include name="${rbtree}/*.adt"/>
-
+        
         <include name="${set}/README"/>
         <include name="${set}/*.t"/>
         <include name="${set}/*.adt"/>
@@ -704,6 +722,9 @@
         <include name="${strategy}/README"/>
         <include name="${strategy}/*.t"/>
         <include name="${strategy}/*.adt"/>
+
+        <include name="${strings}/README"/>
+        <include name="${strings}/*.t"/>
 
         <include name="${structure}/README"/>
         <include name="${structure}/*.t"/>

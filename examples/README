@@ -78,6 +78,10 @@ If you come from the
   Simplification of algebraic expressions
   Concept: complex object mapping, lazy-type
 
+* gomoku
+  Tiny go-moku game
+  Concept: list-matching, vas
+
 * gtree
   Tiny example of tree manipulation
   Concept: apigen
@@ -123,6 +127,10 @@ If you come from the
 * set
   Implementation of Set with maximal sharing
   Concept: apigen, ATerm with unique id
+
+* strings
+	Tiny exemple base on string matching
+	Concept: string matching
 
 * tutorial
   Examples introduced in the tutorial
