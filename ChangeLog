@@ -1,4 +1,12 @@
+2004-04-06  pem  <pem@polly.loria.fr>
+
+	* src/jtom/compiler/TomExpander.t: 
+	  added a post-processing phase to TomExpander
+	  this phases update the codomain of GetHeadDecl in order to
+	  generate correctly typed getHead functions
+
 2004-03-17 julien <julien.guyon@loria.fr>
+	
 	* Start incorporating Vas and prepare field for other tools integration
 
 2004-03-16  pem  <pem@polly.loria.fr>
