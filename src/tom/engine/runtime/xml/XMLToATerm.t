@@ -73,23 +73,7 @@ public class XMLToATerm {
   }
 
   public void convert(String filename) {
-    try {
-      DocumentBuilder db = DocumentBuilderFactory.newInstance(
-	  					 ).newDocumentBuilder();
-      nodeTerm = xmlToATerm(db.parse(filename));
-    } catch (SAXException e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
-    } catch (IOException e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
-    } catch (ParserConfigurationException e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
-    } catch (FactoryConfigurationError e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
-    }
+    nodeTerm = xmlToATerm(convertToNode(filename));
   } 
  
   public void convert(Node node) {
@@ -117,7 +101,6 @@ public class XMLToATerm {
     return null;
   }
 
-    
   public TNodeList nodeListToAterm(NodeList list) {
     TNodeList res = `emptyTNodeList();
     for(int i=list.getLength()-1 ; i>=0 ; i--) {
@@ -227,22 +210,52 @@ public class XMLToATerm {
     
   private TNode makeElementNode(Element elem) {
     TNodeList attrList  = namedNodeMapToAterm(elem.getAttributes());
+      //System.out.println("attrList = " + attrList);
+    attrList = sortAttributeList(attrList);
+      //System.out.println("sorted attrList = " + attrList);
     TNodeList childList = nodeListToAterm(elem.getChildNodes());
     return `ElementNode(elem.getNodeName(),attrList,childList);
   }
 
+  public TNodeList sortAttributeList(TNodeList attrList) {
+    TNodeList res = `emptyTNodeList();
+    while(!attrList.isEmpty()) {
+      res = insertSortedAttribute(attrList.getHead(),res);
+      attrList = attrList.getTail();
+    }
+    return res;
+  }
+
+  private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
+    %match(TNode elt, TNodeList list) {
+      AttributeNode[name=name1], emptyTNodeList() -> {
+        return `manyTNodeList(elt,list);
+      }
+      
+      AttributeNode[name=name1], manyTNodeList(head@AttributeNode[name=name2],tail) -> {
+        if(name1.compareTo(name2) < 0) {
+          return `manyTNodeList(elt,list);
+        } else {
+          return `manyTNodeList(head,insertSortedAttribute(elt,tail));
+        }
+      }
+    }
+    System.out.println("insertSortedAttribute: Strange case");
+    return list;
+  }
+    
   private TNode makeAttributeNode(Attr attr) {
     String specif = (attr.getSpecified() ? "true" : "false");
-    return `AttributeNode(attr.getNodeName()
-			  ,specif
-			  ,TextNode(attr.getNodeValue()));
+    return `AttributeNode(attr.getNodeName(),specif,TextNode(attr.getNodeValue()));
   }
 
   private TNode makeTextNode(Text text) {
-    if (!deleteWhiteSpaceNodes)
+    if (!deleteWhiteSpaceNodes) {
       return `TextNode(text.getData());
-    if (!text.getData().trim().equals(""))
+    }
+    if (!text.getData().trim().equals("")) {
       return `TextNode(text.getData());
+    }
     return null;
   }
   
