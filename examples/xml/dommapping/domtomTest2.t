@@ -16,7 +16,7 @@ import javax.xml.parsers.*;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class domtomTest {
+public class domtomTest2 {
 
   %include{dom.tom}
 
@@ -88,7 +88,7 @@ public class domtomTest {
   }
 
   public static void main(String[] args) {
-    new domtomTest().run();
+    new domtomTest2().run();
 		
   }
 

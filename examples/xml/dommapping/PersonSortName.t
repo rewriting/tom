@@ -6,14 +6,14 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 
-public class PersonSort1 {
+public class PersonSortName {
   private Document dom;  
 
   %include{ dom.tom }
     
 
   public static void main (String args[]) {
-    PersonSort1 person = new PersonSort1();
+    PersonSortName person = new PersonSortName();
     person.run("person.xml");
   }
 

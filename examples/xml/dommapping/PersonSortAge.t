@@ -21,7 +21,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 
-public class PersonSort2 {
+public class PersonSortAge {
    
   private Document dom;
 
@@ -29,7 +29,7 @@ public class PersonSort2 {
 
  
   public static void main (String args[]) {
-    PersonSort2 person = new PersonSort2();
+    PersonSortAge person = new PersonSortAge();
     person.run("person.xml");
   }
 
