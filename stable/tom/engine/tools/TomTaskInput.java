@@ -28,6 +28,7 @@ package jtom.tools;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
+
 import jtom.exception.TomRuntimeException;
 import java.io.*;
 
@@ -42,7 +43,7 @@ public class TomTaskInput {
 
   public static TomTaskInput getInstance() {
     if(instance == null) {
-      throw new TomRuntimeException(new Throwable("cannot get the instance of an unitialized TomTaskInput"));
+      throw new TomRuntimeException("cannot get the instance of an unitialized TomTaskInput");
     }
     return instance;
   }
@@ -52,7 +53,7 @@ public class TomTaskInput {
       instance = new TomTaskInput();
       return instance;
     } else {
-      throw new TomRuntimeException(new Throwable("cannot create two instances of TomTaskInput"));
+      throw new TomRuntimeException("cannot create two instances of TomTaskInput");
     }
   }
 
@@ -445,7 +446,7 @@ public class TomTaskInput {
     try {
       this.inputFile = new File(sInputFile).getCanonicalFile();
     } catch (IOException e) {
-      System.out.println("IO Exception using file `" + sInputFile + "`");
+    	System.out.println("IO Exception using file `" + sInputFile + "`");
       e.printStackTrace();
     }
 
@@ -462,10 +463,18 @@ public class TomTaskInput {
     //System.out.println("getInputFileNameWithoutSuffix = " + res);
     return res;
   }
+  
+  public String getOutputFileNameWithoutSuffix() {
+    String outputFileName = getOutputFile().getPath();
+    String res = outputFileName.substring(0, outputFileName.length() - getOutputSuffix().length());
+    //System.out.println("getInputFileNameWithoutSuffix = " + res);
+    return res;
+  }
 
   public void setOutputFile(String sOutputFile) {
     try {
       this.outputFile = new File(sOutputFile).getCanonicalFile();
+      this.outputFile.getParentFile().mkdirs();
       //System.out.println("setOutputFile = " + this.outputFile);
     } catch (IOException e) {
       System.out.println("IO Exception using file `" + sOutputFile + "`");

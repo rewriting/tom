@@ -49,7 +49,7 @@ public class TomEnvironment {
 
   public static TomEnvironment getInstance() {
     if(instance == null) {
-      throw new TomRuntimeException(new Throwable("cannot get the instance of an unitialized TomEnvironment"));
+      throw new TomRuntimeException("cannot get the instance of an unitialized TomEnvironment");
     }
     return instance;
   }
@@ -64,7 +64,7 @@ public class TomEnvironment {
       instance.symbolTable = symbolTable;
       return instance;
     } else {
-      throw new TomRuntimeException(new Throwable("cannot create two instances of TomEnvironment"));
+      throw new TomRuntimeException("cannot create two instances of TomEnvironment");
     }
   }
 
@@ -106,20 +106,20 @@ public class TomEnvironment {
                   boolean noWarning) {
     boolean res = true; 
     TomErrorList errors = getErrors();
-      //System.out.println(errors);
+    //System.out.println("Errors"+errors);
     int nbTotalError = errors.getLength();
     int nbWarning = 0, nbError=0;
     if(nbTotalError > 0 ) {
       while(!errors.isEmpty()) {
         TomError error = errors.getHead();
-        if (error.getLevel() == 1) {
+        if (error.getLevel() == TomMessage.TOM_WARNING) {
           nbWarning++;
           if (/*!noWarning || */warningAll && !eclipseMode) {
-            System.out.println(error.getMessage());
+            System.out.println(MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{error.getFile(), new Integer(error.getLine()), error.getMessage()}));
           }
-        } else if (error.getLevel() == 0) {
+        } else if (error.getLevel() == TomMessage.TOM_ERROR) {
           if(!eclipseMode){
-            System.out.println(error.getMessage());
+          	System.out.println(MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{error.getFile(), new Integer(error.getLine()), error.getMessage()}));
           }
           res = false;
           nbError++;
@@ -151,16 +151,11 @@ public class TomEnvironment {
     String s;
     msg = MessageFormat.format(msg, msgArg);
     if (level == TomMessage.TOM_ERROR) {
-      s = MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+      s = MessageFormat.format(TomMessage.getString("DetailErrorMessage"), new Object[]{structInfo, new Integer(structInfoLine), msg});
     } else {
-      s = MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+      s = MessageFormat.format(TomMessage.getString("DetailWarningMessage"), new Object[]{structInfo, new Integer(structInfoLine), msg});
     }
-    
-    if(TomTaskInput.getInstance().isEclipseMode()) {
-      addError(msg,fileName, errorLine, level);
-    } else {
-      addError(s,fileName, errorLine, level);
-    }
+    addError(s,fileName, errorLine, level);
   }
          
   public void addError(String msg, String file, int line, int level) {

@@ -1502,86 +1502,75 @@ public class TomParser implements TomParserConstants {
   String vasCode, fileName = "", apiName = null, packageName ="";
   File file;
   LinkedList blockList = new LinkedList();
+        int initialVasLine;
     jj_consume_token(VAS_SIGNATURE);
       addPreviousCode(list);
+                        initialVasLine = getLine();
     vasTL = GoalLanguageBlock(list);
       switchToDefaultMode(); /* switch to DEFAULT mode */
       vasCode = vasTL.getCode().trim();
+                        String destDir = getInput().getDestDir().getPath();
 
-        // Generated ADT from VAS Code
+        // Generated Tom, ADT and API from VAS Code
       Object generatedADTName = null;
       try{
-        Method getInstanceMethod = null, initMethod = null, runMethod = null;
         Class vasClass = Class.forName("vas.Vas");
-        Method methlist[] = vasClass.getDeclaredMethods();
-        for (int i = 0; i < methlist.length; i++) {
-          Method m = methlist[i];
-          if(m.getName().equals("getInstance")) {
-            getInstanceMethod = m;
-          } else if (m.getName().equals("run")) {
-            runMethod = m;
-          } else if (m.getName().equals("init")) {
-            initMethod = m;
-          }
-        }
 
-        Object vasInstance = getInstanceMethod.invoke(vasClass, new Class[]{});
-        String destDir = getInput().getOutputFile().getParent();
-        String[] params = new String[] {"-d", destDir};
-        Object[] realParams = {params};
-        initMethod.invoke(vasInstance, realParams);
-        Object[] realParams2 =  {new ByteArrayInputStream(vasCode.getBytes())};
-        generatedADTName = runMethod.invoke(vasInstance, realParams2);
+                                Method execMethod = vasClass.getMethod("externalExec",
+                                        new Class[]{(new String[]{}).getClass(),
+                                        Class.forName("java.io.InputStream"),
+                                        Class.forName( "java.lang.String")
+                                });
+
+                                ArrayList vasParams = new ArrayList();
+                                // vasParams.add("--verbose");
+                                vasParams.add("--destdir");
+                                vasParams.add(destDir);
+                                packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
+        if(!packageName.equals("")) {
+          vasParams.add("--package");
+          vasParams.add(packageName);
+        }
+                                Object[] realParams = {
+                                                                                        (String[]) vasParams.toArray(new String[vasParams.size()]),
+                                                                                        new ByteArrayInputStream(vasCode.getBytes()),
+                                                                                        currentFile};
+                                generatedADTName = execMethod.invoke(vasClass, realParams);
       } catch (ClassNotFoundException e) {
         {if (true) throw new TomException(TomMessage.getString("VasClassNotFound"));}
       } catch (Exception e) {
         {if (true) throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));}
       }
-        // Generated API and Tom File from generated ADT file
-      try{
-        if(getInput().isJCode() && generatedADTName != null) {
-          Method mainMethod = null;
-          Class apigenClass = Class.forName("apigen.gen.tom.java.Main");
-          mainMethod  = apigenClass.getMethod("main", new Class[]{(new String[]{}).getClass()});
-          String inputFileName = new File((String)generatedADTName).getName();
-          apiName = inputFileName.substring(0, inputFileName.length() - ".adt".length());
-          packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
+                          // Check for errors
+                        try{
+        Class vasEnvironmentClass = Class.forName("vas.VasEnvironment");
+                                Method getErrorMethod = vasEnvironmentClass.getMethod("getErrors", new Class[]{});
+                                Method getInstanceMethod = vasEnvironmentClass.getMethod("getInstance", new Class[]{});
 
-          ArrayList apigenParamList = new ArrayList();
-          apigenParamList.add("--input");
-          apigenParamList.add((String)generatedADTName);
-          apigenParamList.add("--outputdir");
-          apigenParamList.add(getInput().getDestDir().getPath());
-          apigenParamList.add("--name");
-          apigenParamList.add(apiName);
-          apigenParamList.add("--nojar");
-          apigenParamList.add("--javagen");
-          if(!packageName.equals("")) {
-            apigenParamList.add("--package");
-            apigenParamList.add(packageName);
-          }
-          mainMethod.invoke(apigenClass, new Object[]{apigenParamList.toArray(new String[]{})});
-        }
-      } catch (ClassNotFoundException e) {
-        {if (true) throw new TomException(TomMessage.getString("ApigenClassNotFound"));}
+                                Object vasEnvInstance = getInstanceMethod.invoke(vasEnvironmentClass, new Object[]{});
+                                TomErrorList errors = (TomErrorList)(getErrorMethod.invoke(vasEnvInstance, new Object[]{}));
+                                TomError error;
+                                if(!errors.isEmpty()) {
+                                        while(!errors.isEmpty()) {
+                                                error =errors.getHead();
+                                                TomEnvironment.getInstance().addError(error.getMessage(),
+                                                currentFile, error.getLine()+initialVasLine, error.getLevel());
+                                                errors = errors.getTail();
+                                        }
+                                        {if (true) throw new TomException("See next messages for details...");}
+                                }
+                        } catch (ClassNotFoundException e) {
+        {if (true) throw new TomException(TomMessage.getString("VasClassNotFound"));}
       } catch (Exception e) {
-        {if (true) throw new TomException(MessageFormat.format(TomMessage.getString("ApigenInvocationIssue"), new Object[]{e.getMessage()}));}
+        {if (true) throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));}
       }
-
         // Simulate the inclusion of generated Tom file
-      String dir = getInput().getDestDir().getPath();
-      if (packageName != null) {
-        dir = dir + File.separatorChar + packageName;
-      }
-        //if (apiName != null) {
-        //dir = dir + File.separatorChar + apiName;
-        //}
-      String adtFileName = new File((String)generatedADTName).getName();
-      file = new File(dir, adtFileName.substring(0, adtFileName.length()-".adt".length())+".tom");
+      String adtFileName = new File((String)generatedADTName).toString();
+      file = new File(adtFileName.substring(0, adtFileName.length()-".adt".length())+".tom");
       try {
         fileName = file.getCanonicalPath();
       } catch (IOException e) {
-        {if (true) throw new TomIncludeException(MessageFormat.format(TomMessage.getString(""), new Object[]{fileName, currentFile, e.getMessage()}));}
+        {if (true) throw new TomIncludeException(MessageFormat.format(TomMessage.getString("IOExceptionWithGeneratedTomFile"), new Object[]{fileName, currentFile, e.getMessage()}));}
       }
       includeFile(fileName, list);
   }
@@ -2766,12 +2755,6 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_12() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_32() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     Token xsp;
@@ -2792,7 +2775,7 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_11() {
+  final private boolean jj_3_12() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
     return false;
@@ -2835,6 +2818,12 @@ public class TomParser implements TomParserConstants {
   final private boolean jj_3_9() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_EQUAL)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_11() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
@@ -3013,18 +3002,18 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_13() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_33() {
     if (jj_scan_token(TOM_LBRACKET)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_40()) jj_scanpos = xsp;
     if (jj_scan_token(TOM_RBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_13() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 

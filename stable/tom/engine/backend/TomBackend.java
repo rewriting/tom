@@ -49,7 +49,6 @@ public class TomBackend extends TomTask {
     try {
       boolean pretty = getInput().isPretty();
         // initialize outputCode
-      getInput().getOutputFile().getParentFile().mkdirs();
       writer = new BufferedWriter(
         new OutputStreamWriter(
           new FileOutputStream(getInput().getOutputFile())

@@ -63,12 +63,12 @@ public class TomTaskParser extends TomTask {
         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(getInput().isEclipseMode()) {
-        String fileName = getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix;
+        String fileName = getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix;
         Tools.generateOutput(fileName, symbolTable().toTerm());
       }
       if(getInput().isIntermediate()) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedSuffix, parsedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.parsedSuffix, parsedTerm);
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
       }
         
       if(getInput().isDebugMode()) {
@@ -81,6 +81,7 @@ public class TomTaskParser extends TomTask {
     } catch (TokenMgrError e) {
       TomEnvironment.getInstance().addError(TomMessage.getString("TokenMgrError"), new Object[]{fileName, e.getMessage()}, fileName,  parser.getLine(), TomMessage.TOM_ERROR);
     } catch (TomIncludeException e) {
+    	System.out.println("TomIncludeException"+e.getMessage());
       TomEnvironment.getInstance().addError(e.getMessage(), fileName,  parser.getLine(), TomMessage.TOM_ERROR);
     } catch (TomException e) {
       TomEnvironment.getInstance().addError(e.getMessage(), fileName,  parser.getLine(), TomMessage.TOM_ERROR);

@@ -38,8 +38,9 @@ public class TomMessage {
   private static ResourceBundle resourceBundle =  ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
     // Message level
-  public static int TOM_ERROR = 0;
+  public static int TOM_ERROR = 2;
   public static int TOM_WARNING = 1;
+  public static int TOM_INFO = 0;
     // Default error line
   public static int DEFAULT_ERROR_LINE_NUMBER = 1; 
   

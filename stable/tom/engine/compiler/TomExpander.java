@@ -69,8 +69,8 @@ public class TomExpander extends TomTask {
         System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedSuffix, expandedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.expandedSuffix, expandedTerm);
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
       }
       environment().setTerm(expandedTerm);
       
@@ -157,7 +157,7 @@ public class TomExpander extends TomTask {
                     t = t.setCodomain(codomain.getHead());
                     return t;
                   } else {
-                    throw new TomRuntimeException(new Throwable("updateCodomain: bad codomain: " + codomain));
+                    throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
                   }
                 }
               }} }} } 
@@ -251,7 +251,7 @@ public class TomExpander extends TomTask {
               }
               return newArgs;
             } else {
-              throw new TomRuntimeException(new Throwable("expandChar: strange char: " + tomName ));
+              throw new TomRuntimeException("expandChar: strange char: " + tomName );
             }
           }
          }} } }}} }} }} }}} } 

@@ -196,7 +196,7 @@ public class SymbolTable {
       return getDoubleType();
     } 
     System.out.println("Not a builtin type: " + type);
-    throw new TomRuntimeException(new Throwable("getBuiltinType error on term: " + type));
+    throw new TomRuntimeException("getBuiltinType error on term: " + type);
   }
   
   public Iterator keySymbolIterator() {

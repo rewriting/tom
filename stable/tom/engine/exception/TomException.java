@@ -26,21 +26,20 @@
 package jtom.exception;
 
 public class TomException extends Exception {
-  
-  public TomException(Throwable t) {
-    super(t);
-  }
 
   protected String msg="no message";
 
   public TomException() {
   }
-
-  public TomException(String msg) {
-    this(new Throwable(msg));
-    this.msg = msg;
+  
+  public TomException(String message) {
+  	this.msg = message;
   }
 
+  public String getMessage() {
+    return msg;
+  }
+  
   public String toString() {
     return msg;
   }

@@ -107,7 +107,7 @@ public class TomDebugger {
       } catch (FileNotFoundException e) {
         e.printStackTrace();
         System.out.println("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found.");
-        throw new TomRuntimeException(new Throwable("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found."));
+        throw new TomRuntimeException("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found.");
       } catch (Exception e) {
         e.printStackTrace();
         System.out.println("Exception during reading "+baseFileName[i]+debugTableSuffix);
@@ -971,7 +971,7 @@ public class TomDebugger {
         */
       } else {
         System.out.println("Corrupt debug term");
-        throw new TomRuntimeException(new Throwable("Corrupt debug term"));
+        throw new TomRuntimeException("Corrupt debug term");
       } 
       list = list.getTail();
     }

@@ -101,7 +101,7 @@ public class GenericTraversal {
     } catch(Exception e) {
       e.printStackTrace();
       System.out.println("Please, extend genericCollectArray");
-      throw new RuntimeException(new Throwable("Please, extend genericCollectArray"));
+      throw new RuntimeException("Please, extend genericCollectArray");
     }
   } 
 
@@ -116,7 +116,7 @@ public class GenericTraversal {
       res = subject;
     } else {
       System.out.println("Please, extend genericTraversalArray.."+subject);
-      throw new RuntimeException(new Throwable("Please, extend genericTraversalArray.."+subject));
+      throw new RuntimeException("Please, extend genericTraversalArray.."+subject);
     }
     return res;
   } 
@@ -172,7 +172,7 @@ public class GenericTraversal {
     } catch(Exception e) {
       System.out.println("exception: " + e);
       System.out.println("Please, extend genericCollectReplace "+e.getStackTrace());
-      throw new RuntimeException(new Throwable("Please, extend genericTraversalArray.."+subject));
+      throw new RuntimeException("Please, extend genericTraversalArray.."+subject);
     }
   } 
 

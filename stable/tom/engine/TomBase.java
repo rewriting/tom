@@ -34,7 +34,6 @@ import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.runtime.*;
 import jtom.exception.TomRuntimeException;
-import java.lang.Throwable;
 
 public class TomBase {
   private TomList empty;
@@ -147,7 +146,7 @@ return s ;}} }} } if(tom_is_fun_sym_EmptyType(tom_match1_1) ||  false ) {
 return null; } 
 
         System.out.println("getTomType error on term: " + type);
-        throw new TomRuntimeException(new Throwable("getTomType error on term: " + type));
+        throw new TomRuntimeException("getTomType error on term: " + type);
       }} 
 
   }
@@ -157,7 +156,7 @@ return null; }
  return getTLCode(type);  } if(tom_is_fun_sym_Type(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match2_1_2=tom_get_slot_Type_tlType(tom_match2_1); { jtom.adt.tomsignature.types.TomType tlType=tom_match2_1_2; 
  return getTLCode(tlType ); }} } 
 
-        throw new TomRuntimeException(new Throwable("getTLType error on term: " + type));
+        throw new TomRuntimeException("getTLType error on term: " + type);
       }} 
 
   }
@@ -168,7 +167,7 @@ return null; }
  return tlType ; }} }} } 
 
         System.out.println("getTLCode error on term: " + type);
-        throw new TomRuntimeException(new Throwable("getTLCode error on term: " + type));
+        throw new TomRuntimeException("getTLCode error on term: " + type);
       }} 
 
   }
@@ -217,7 +216,7 @@ return null; }
  return tlCode ; }} }} } 
 
         System.out.println("getSymbolCode error on term: " + symbol);
-        throw new TomRuntimeException(new Throwable("getSymbolCode error on term: " + symbol));
+        throw new TomRuntimeException("getSymbolCode error on term: " + symbol);
       }} 
 
   } 
@@ -245,7 +244,7 @@ return null; }
 
 
         System.out.println("getTermType error on term: " + t);
-        throw new TomRuntimeException(new Throwable("getTermType error on term: " + t));
+        throw new TomRuntimeException("getTermType error on term: " + t);
       }} 
 
   }
@@ -266,7 +265,7 @@ return null; }
 
 
         System.out.println("getTermType error on term: " + t);
-        throw new TomRuntimeException(new Throwable("getTermType error on term: " + t));
+        throw new TomRuntimeException("getTermType error on term: " + t);
       }} 
 
   }
@@ -326,7 +325,7 @@ return null; }
 
 
         System.out.println("isListOperator: strange case: '" + subject + "'");
-        throw new TomRuntimeException(new Throwable("isListOperator: strange case: '" + subject + "'"));
+        throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
       }} 
 
   }
@@ -352,7 +351,7 @@ return null; }
 
 
         System.out.println("isArrayOperator: strange case: '" + subject + "'");
-        throw new TomRuntimeException(new Throwable("isArrayOperator: strange case: '" + subject + "'"));
+        throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
       }} 
 
   }
@@ -379,7 +378,7 @@ return null; }
     } catch(Exception e) {
       System.out.println("tomListMap error: " + e);
       e.printStackTrace();
-      throw new TomRuntimeException(new Throwable("tomListMap error: " + e));
+      throw new TomRuntimeException("tomListMap error: " + e);
     }
     return res;
   }
@@ -395,7 +394,7 @@ return null; }
     } catch(Exception e) {
       System.out.println("instructionListMap error: " + e);
       e.printStackTrace();
-      throw new TomRuntimeException(new Throwable("instructionListMap error: " + e));
+      throw new TomRuntimeException("instructionListMap error: " + e);
     }
     return res;
   }
@@ -471,7 +470,7 @@ return null; }
 
 
           return getAssignToVariable(constraintList )!=null;
-        }} } if(tom_is_fun_sym_VariableStar(tom_match14_1) || tom_is_fun_sym_Variable(tom_match14_1) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList tom_match14_1_4=tom_get_slot_Variable_constraints(tom_match14_1); { jtom.adt.tomsignature.types.ConstraintList constraintList=tom_match14_1_4;            return getAssignToVariable(constraintList )!=null;         }} } if(tom_is_fun_sym_UnamedVariableStar(tom_match14_1) || tom_is_fun_sym_UnamedVariable(tom_match14_1) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList tom_match14_1_3=tom_get_slot_UnamedVariable_constraints(tom_match14_1); { jtom.adt.tomsignature.types.ConstraintList constraintList=tom_match14_1_3;            return getAssignToVariable(constraintList )!=null;         }} }}} 
+        }} } if(tom_is_fun_sym_VariableStar(tom_match14_1) || tom_is_fun_sym_Variable(tom_match14_1) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList tom_match14_1_4=tom_get_slot_Variable_constraints(tom_match14_1); { jtom.adt.tomsignature.types.ConstraintList constraintList=tom_match14_1_4;             return getAssignToVariable(constraintList )!=null;          }} } if(tom_is_fun_sym_UnamedVariableStar(tom_match14_1) || tom_is_fun_sym_UnamedVariable(tom_match14_1) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList tom_match14_1_3=tom_get_slot_UnamedVariable_constraints(tom_match14_1); { jtom.adt.tomsignature.types.ConstraintList constraintList=tom_match14_1_3;             return getAssignToVariable(constraintList )!=null;          }} }}} 
 
     return false;
   }
@@ -556,7 +555,7 @@ return null; }
     }
     if(slotList.isEmpty()) {
       System.out.println("getSlotName: bad index error");
-      throw new TomRuntimeException(new Throwable("getSlotName: bad index error"));
+      throw new TomRuntimeException("getSlotName: bad index error");
     }
 
     Declaration decl = slotList.getHead().getSlotDecl();
@@ -608,7 +607,7 @@ return null; }
       optionList = optionList.getTail();
     }
     System.out.println("findOriginTracking:  not found" + optionList);
-    throw new TomRuntimeException(new Throwable("findOriginTracking:  not found" + optionList));
+    throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
   }
 
 }

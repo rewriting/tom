@@ -59,7 +59,7 @@ public class TomVerifierExtract extends TomTask {
       }
         // put extrated data in a file
       Tools.generateOutput(
-                           getInput().getInputFileNameWithoutSuffix() + TomTaskInput.verifExtractionSuffix, 
+			getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.verifExtractionSuffix, 
         extractTerm);
     } catch (Exception e) {
       addError("Exception occured in TomVerifierExtract: "+ e.getMessage(), 

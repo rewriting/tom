@@ -111,7 +111,7 @@ public class ATermToXML {
           write(" SYSTEM \"");
         else {
           System.out.println("Problem in DocumentTypeNode");
-          throw new TomRuntimeException(new Throwable("Problem in DocumentTypeNode"));
+          throw new TomRuntimeException("Problem in DocumentTypeNode");
         }
         write(systemId +"\"");
         if (!internalSubset .equals("UNDEF")) 
@@ -186,7 +186,7 @@ public class ATermToXML {
     } catch (IOException e) {
       System.err.println(e.getMessage());
       e.printStackTrace();
-      throw new TomRuntimeException(new Throwable(e.getMessage()));
+      throw new TomRuntimeException(e.getMessage());
     }
   }
 

@@ -79,12 +79,12 @@ public class Tom {
      */
   List inputFileList;
   
-  private static String version =
+  public static String version =
     "\njtom 2.0rc3\n"
     + "\n"
     + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n";
   
-  private static String usage =
+  public static String usage =
     "Tom usage:"
     + "\n\ttom [options] input[.t] [... input[.t]]"
     + "\nOptions:"
@@ -114,11 +114,11 @@ public class Tom {
     + "\n\t--destdir\t| -d <directory>\t\tSpecify where to place generated files"
     ;
 
-  private static void version() {
+  public static void version() {
     System.out.println(version);
   }
 
-  private static void usage() {
+  public static void usage() {
     System.out.println(usage);
   }
 

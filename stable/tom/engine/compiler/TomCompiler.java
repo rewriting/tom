@@ -69,7 +69,7 @@ public class TomCompiler extends TomTask {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.compiledSuffix, compiledTerm);
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.compiledSuffix, compiledTerm);
       }
       environment().setTerm(compiledTerm);
       
@@ -180,7 +180,7 @@ public class TomCompiler extends TomTask {
                       System.out.println("preProcessing: strange PatternAction: " + elt);
                       //System.out.println("termList = " + elt.getTermList());
                       //System.out.println("tom      = " + elt.getTom()); 
-                      throw new TomRuntimeException(new Throwable("preProcessing: strange PatternAction: " + elt));
+                      throw new TomRuntimeException("preProcessing: strange PatternAction: " + elt);
                     }} 
 
                 } // end matchBlock
@@ -358,7 +358,7 @@ public class TomCompiler extends TomTask {
       }}}}} }}} } 
 
 
-        throw new TomRuntimeException(new Throwable("buildCondition strange term: " + condList));
+        throw new TomRuntimeException("buildCondition strange term: " + condList);
       }} 
 
   }

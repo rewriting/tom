@@ -63,7 +63,7 @@ public class TomKernelExpander extends TomBase {
         TomTerm contextSubject = (TomTerm)arg1;
 
         if(contextSubject == null) {
-          throw new TomRuntimeException(new Throwable("expandVariable: null contextSubject"));
+          throw new TomRuntimeException("expandVariable: null contextSubject");
         }
 
           //System.out.println("expandVariable:\n\t" + subject );
@@ -189,7 +189,7 @@ public class TomKernelExpander extends TomBase {
                if(strName .equals("")) {
                  tomSymbol = getSymbol(type );
                  if(tomSymbol==null) {
-                   throw new TomRuntimeException(new Throwable("no symbol found for type '" + type  + "'"));
+                   throw new TomRuntimeException("no symbol found for type '" + type  + "'");
                  } else {
                    nameList  = tom_cons_list_concTomName(tomSymbol.getAstName(),tom_empty_list_concTomName()) ;
                  }
@@ -342,7 +342,7 @@ public class TomKernelExpander extends TomBase {
      { jtom.adt.tomsignature.types.TomName tom_match7_1=(( jtom.adt.tomsignature.types.TomName)name);{ { jtom.adt.tomsignature.types.TomList tom_match7_2=(( jtom.adt.tomsignature.types.TomList)list);{ if(tom_is_fun_sym_emptyTomList(tom_match7_2) ||  false ) { 
 
          System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
-         throw new TomRuntimeException(new Throwable("getTypeFromVariableList. Stange case '" + name + "' not found"));
+         throw new TomRuntimeException("getTypeFromVariableList. Stange case '" + name + "' not found");
         } { jtom.adt.tomsignature.types.TomName varName=tom_match7_1; if(tom_is_fun_sym_manyTomList(tom_match7_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match7_2_1=tom_get_slot_manyTomList_head(tom_match7_2); { jtom.adt.tomsignature.types.TomList tom_match7_2_2=tom_get_slot_manyTomList_tail(tom_match7_2); if(tom_is_fun_sym_Variable(tom_match7_2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match7_2_1_2=tom_get_slot_Variable_astName(tom_match7_2_1); { jtom.adt.tomsignature.types.TomType tom_match7_2_1_3=tom_get_slot_Variable_astType(tom_match7_2_1); { jtom.adt.tomsignature.types.TomName tom_renamedvar_varName_1=tom_match7_2_1_2; if(tom_terms_equal_TomName(varName, tom_renamedvar_varName_1)) { if(tom_is_fun_sym_Type(tom_match7_2_1_3) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match7_2_1_3; { jtom.adt.tomsignature.types.TomList tail=tom_match7_2_2; 
 
  return type ; }} } }}}} }}} }} { jtom.adt.tomsignature.types.TomName varName=tom_match7_1; if(tom_is_fun_sym_manyTomList(tom_match7_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match7_2_1=tom_get_slot_manyTomList_head(tom_match7_2); { jtom.adt.tomsignature.types.TomList tom_match7_2_2=tom_get_slot_manyTomList_tail(tom_match7_2); if(tom_is_fun_sym_VariableStar(tom_match7_2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match7_2_1_2=tom_get_slot_VariableStar_astName(tom_match7_2_1); { jtom.adt.tomsignature.types.TomType tom_match7_2_1_3=tom_get_slot_VariableStar_astType(tom_match7_2_1); { jtom.adt.tomsignature.types.TomName tom_renamedvar_varName_1=tom_match7_2_1_2; if(tom_terms_equal_TomName(varName, tom_renamedvar_varName_1)) { if(tom_is_fun_sym_Type(tom_match7_2_1_3) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match7_2_1_3; { jtom.adt.tomsignature.types.TomList tail=tom_match7_2_2; 
@@ -356,7 +356,7 @@ public class TomKernelExpander extends TomBase {
 
   private TomList expandVariableList(TomSymbol subject, TomList subjectList) {
     if(subject == null) {
-      throw new TomRuntimeException(new Throwable("expandVariableList: null subject"));
+      throw new TomRuntimeException("expandVariableList: null subject");
     }
     
     //System.out.println("symbol = " + subject.getAstName());
@@ -437,7 +437,7 @@ public class TomKernelExpander extends TomBase {
 
 
         System.out.println("expandVariableList: strange case: '" + subject + "'");
-        throw new TomRuntimeException(new Throwable("expandVariableList: strange case: '" + subject + "'"));
+        throw new TomRuntimeException("expandVariableList: strange case: '" + subject + "'");
       }} 
 
   }
@@ -523,7 +523,7 @@ public class TomKernelExpander extends TomBase {
       }}} }}}}} } 
 
         System.out.println("Strange Match in expandMatchPattern"+match);
-        throw new TomRuntimeException(new Throwable("Strange Match in expandMatchPattern"+match));
+        throw new TomRuntimeException("Strange Match in expandMatchPattern"+match);
       }} 
 
   }
