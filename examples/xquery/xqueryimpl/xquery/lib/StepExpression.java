@@ -90,6 +90,16 @@ public class StepExpression extends AbstractExpression {
   }
 
 
+  public StepExpression(PathOperator pathOperator, NodeTester nodeTest) 
+  {
+	super(); 
+
+	this.pathOperator = pathOperator; 
+	this.pathAxe = PathAxe.createChildPathAxe();
+	this.nodeTest=nodeTest;
+  }
+
+
   public StepExpression(Object childExprs[]) 
   {
 	super(childExprs); 

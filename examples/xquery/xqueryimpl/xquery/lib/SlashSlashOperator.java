@@ -49,8 +49,7 @@ public class SlashSlashOperator extends PathOperator
    */
   public SlashSlashOperator(PathAxe axe, NodeTester nodetester, NodePredicateList predicateList) 
   {
-	super(axe, nodetester, predicateList);
-    
+	super(axe, nodetester, predicateList);    
   }
 
   public Sequence run(Sequence input) throws XQueryTypeException 
@@ -78,6 +77,8 @@ public class SlashSlashOperator extends PathOperator
    */
   public Sequence run(Node node) 
   {
+	System.out.println("SlashSlashOperator: run Node: ");
+	
 	NodeTraversal traversal = new NodeTraversal();
 	final Sequence s=new Sequence(); 
 	//	int index=1;   // predicate base 1, not 0
@@ -91,20 +92,22 @@ public class SlashSlashOperator extends PathOperator
 			  Node anode = (Node)t; 
 			  if (doTest(anode) && doFilter(anode, index)) {
 				s.add(anode);
-				return true;
+				index++;
+				System.out.println(index);
+				return true; // continue
 			  }
-			  index++;
+
 			} 
-			return true; 
+			return true;  // continue
 		  }
 		  catch (XQueryGeneralException e) {
 			System.out.println("ERROR: xqueryGeneral exception");
 			return false; 
 		  }
+
 		} // end apply 
 	  }; // end new 
 	traversal.genericCollect(node, collect); 
-
     return s;
   }
    
