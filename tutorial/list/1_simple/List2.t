@@ -21,12 +21,10 @@ public class List2 {
   %oparray TomList conc( TomTerm* ) {
     fsym            { factory.makeAFun("conc", 1, false) }
     make_empty(n)   { myEmpty(n) }
-    make_add(e,l,n) { myAdd(l,e,n) }
+    make_append(e,l) { myAdd(e,(ArrayList)l) }
   }
 
-  private ArrayList myAdd(ArrayList l, Object e, int n) {
-      //l.set(n,e);
-      //l.add(n,e);
+  private ArrayList myAdd(Object e,ArrayList l) {
     l.add(e);
     return l;
   }

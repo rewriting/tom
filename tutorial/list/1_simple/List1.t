@@ -22,7 +22,7 @@ public class List1 {
   %oplist TomList conc( TomTerm* ) {
     fsym { factory.makeAFun("conc", 1, false) }
     make_empty()  { factory.makeList() }
-    make_add(e,l) { l.insert(e) }
+    make_insert(e,l) { l.insert(e) }
   }
   
   %typeterm TomTerm {
