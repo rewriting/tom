@@ -25,8 +25,6 @@
 	<property name="utils"          location="utils"/>
 	<property name="lib"            location="lib"/>
 	<property name="concurrent.lib" value="${lib}/concurrent.jar"/>
-	<property name="junit.lib"      value="${lib}/junit.jar"/>
-	<property name="antjunit.lib"   value="${lib}/ant-junit.jar"/>
 
 	<!-- for stable -->
 	<property name="stable.src"     location="stable"/>
@@ -211,6 +209,9 @@
 	<target name="dist.stable" 
 					description="Prepare a distribution ready stable package" 
 					depends="clean.dist.stable, stable, prepare.dist.stable">
+		<!-- "tom README and INSTALL" -->
+		<copy todir="${stable.dist}" file="README"/>
+		<copy todir="${stable.dist}" file="INSTALL"/>
 		<!-- "tom binary" -->
 		<copy todir="${stable.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${stable.bin}" file="${utils}/tom.bat"/>
@@ -250,14 +251,34 @@
 		<copy todir="${stable.lib}" file="${apigenjar}"/>
 		<copy todir="${stable.lib}" file="${vastoadtjar}"/>
 		<copy todir="${stable.lib}" file="${concurrent.lib}"/>
-		<copy todir="${stable.lib}" file="${junit.lib}"/>
-		<copy todir="${stable.lib}" file="${antjunit.lib}"/>
+		<!-- prepare tar file -->
+		<mkdir dir="${stable.dist}/jtom-${version}"/>
+		<copy todir="${stable.dist}/jtom-${version}">
+			<fileset dir="${stable.dist}">
+				<include name="**/*"/>
+				<exclude name="jtom-${version}"/>
+				<exclude name="jtom-${version}/**/*"/>
+			</fileset>
+		</copy>
+		<tar tarfile="${stable.dist}/jtom-${version}.tar">
+			<tarfileset dir="${stable.dist}/jtom-${version}">
+				<include name="**/*"/>
+			</tarfileset>
+		</tar>
+    <gzip zipfile="${stable.dist}/jtom-${version}.tar.gz" 
+          src="${stable.dist}/jtom-${version}.tar"/>
+    <delete file="${stable.dist}/jtom-${version}.tar"/>
+    <delete dir="${stable.dist}/jtom-${version}"/>
+
 	</target>
 
 	<target name="dist.src" 
 					description="Prepare a distribution ready source package" 
 					depends="clean.dist.src, src, prepare.dist.src">
 		<tstamp/>
+		<!-- "tom README and INSTALL" -->
+		<copy todir="${src.dist}" file="README"/>
+		<copy todir="${src.dist}" file="INSTALL"/>
 		<!-- "tom binary" -->
 		<copy todir="${src.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${src.bin}" file="${utils}/tom.src"/>
@@ -303,8 +324,24 @@
 		<copy todir="${src.lib}" file="${apigenjar}"/>
 		<copy todir="${src.lib}" file="${vastoadtjar}"/>
 		<copy todir="${src.lib}" file="${concurrent.lib}"/>
-		<copy todir="${src.lib}" file="${junit.lib}"/>
-		<copy todir="${src.lib}" file="${antjunit.lib}"/>
+		<!-- prepare tar file -->
+		<mkdir dir="${src.dist}/jtom-${DSTAMP}"/>
+		<copy todir="${src.dist}/jtom-${DSTAMP}">
+			<fileset dir="${src.dist}">
+				<include name="**/*"/>
+				<exclude name="jtom-${DSTAMP}"/>
+				<exclude name="jtom-${DSTAMP}/**/*"/>
+			</fileset>
+		</copy>
+		<tar tarfile="${src.dist}/jtom-${DSTAMP}.tar">
+			<tarfileset dir="${src.dist}/jtom-${DSTAMP}">
+				<include name="**/*"/>
+			</tarfileset>
+		</tar>
+    <gzip zipfile="${src.dist}/jtom-${DSTAMP}.tar.gz" 
+          src="${src.dist}/jtom-${DSTAMP}.tar"/>
+    <delete file="${src.dist}/jtom-${DSTAMP}.tar"/>
+    <delete dir="${src.dist}/jtom-${DSTAMP}"/>
 	</target>
 
 	<target name="dist.all" 

@@ -10,7 +10,7 @@
   <property name="examples.dir" location="."/>
   <property name="examples.dist" location="dist"/>
 
-  <property name="lib" value="lib"/>
+  <property name="examples.lib" value="lib"/>
 
   <!-- where the examples a build: javac destDir -->
   <property name="examples.gen" location="gen"/>
@@ -96,7 +96,7 @@
       <fileset dir="${tom.home}/lib">
         <include name="*.jar"/>
       </fileset>
-      <fileset dir="${examples.dir}/${lib}">
+      <fileset dir="${examples.dir}/${examples.lib}">
         <include name="*.jar"/>
       </fileset>
     </path>
@@ -560,7 +560,7 @@
         <include name="README"/>
         <include name="build.xml"/>
         <include name="build.sh"/>
-        <include name="${lib}/*.jar"/>
+        <include name="${examples.lib}/*.jar"/>
 
         <include name="${addressbook}/README"/>
         <include name="${addressbook}/*.t"/>
@@ -636,7 +636,6 @@
         <include name="${propp}/README"/>
         <include name="${propp}/*.t"/>
         <include name="${propp}/*.g"/>
-        <include name="${propp}/*.jar"/>
         <include name="${propp}/*.sty"/>
         <include name="${propp}/examples"/>
 
@@ -695,9 +694,6 @@
 			<classpath>
 				<path refid="tom.classpath"/>
 				<pathelement location="${examples.build}"/>
-      <fileset dir="${examples.build}">
-        <include name="**/*.jar"/>
-      </fileset>
 			</classpath>
 			<batchtest>
 				<fileset dir="${examples.gen}">

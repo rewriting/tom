@@ -79,7 +79,7 @@ public class Peano {
   }
 
   %rule {
-    bug(x,zero()) -> x
+    bug(x,x) -> x
     bug(_,_) -> zero()
   }
 
