@@ -1,25 +1,25 @@
 /*
   
-    TOM - To One Matching Compiler
+TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
-			    Nancy, France.
+Copyright (C) 2000-2003 INRIA
+Nancy, France.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
-    Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
 
 */
 
@@ -53,53 +53,56 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
+	/*
+	 * the method implementations are here common to C and Java
+	 */
  	protected void buildTerm(String name, TomList argList) {
-		out.write("tom_make_");
-		out.write(name);
-		out.writeOpenBrace();
+		output.write("tom_make_");
+		output.write(name);
+		output.writeOpenBrace();
 		while(!argList.isEmpty()) {
-			generate(out,deep,argList.getHead());
+			generate(deep,argList.getHead());
 			argList = argList.getTail();
 			if(!argList.isEmpty()) {
-				out.writeComa();
+				output.writeComa();
 			}
 		}
-		out.writeCloseBrace();
+		output.writeCloseBrace();
 	}
 	
 	protected void buildList(String name, TomList argList) {
-        TomSymbol tomSymbol = symbolTable().getSymbol(name);
-        String listType = getTLType(getSymbolCodomain(tomSymbol));
-        int size = 0;
-        while(!argList.isEmpty()) {
-          TomTerm elt = argList.getHead();
+		TomSymbol tomSymbol = symbolTable().getSymbol(name);
+		String listType = getTLType(getSymbolCodomain(tomSymbol));
+		int size = 0;
+		while(!argList.isEmpty()) {
+			TomTerm elt = argList.getHead();
 
-          matchBlock: {
-            %match(TomTerm elt) {
-              Composite(concTomTerm(VariableStar[])) | VariableStar[] |
-	      Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
-	      Composite(concTomTerm(Variable[])) -> {
-                out.write("tom_insert_list_" + name + "(");
-                generate(out,deep,elt);
-                out.write(",");
-                break matchBlock;
-	      }
-              _ -> {
-                out.write("tom_make_insert_" + name + "(");
-                generate(out,deep,elt);
-                out.write(",");
-                break matchBlock;
-              }
-            }
-          } // end matchBlock
+			matchBlock: {
+				%match(TomTerm elt) {
+					Composite(concTomTerm(VariableStar[])) | VariableStar[] |
+						Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
+						Composite(concTomTerm(Variable[])) -> {
+						output.write("tom_insert_list_" + name + "(");
+						generate(deep,elt);
+						output.write(",");
+						break matchBlock;
+					}
+					_ -> {
+						output.write("tom_make_insert_" + name + "(");
+						generate(deep,elt);
+						output.write(",");
+						break matchBlock;
+					}
+				}
+			} // end matchBlock
           
-          argList = argList.getTail();
-          size++;
-        }
-        out.write("(" + listType + ") tom_make_empty_" + name + "()");
-        for(int i=0; i<size; i++) {
-          out.write(")");
-        }
+			argList = argList.getTail();
+			size++;
+		}
+		output.write("(" + listType + ") tom_make_empty_" + name + "()");
+		for(int i=0; i<size; i++) {
+			output.write(")");
+		}
 	} 
 
 	protected void buildArray(String name, TomList argList) {
@@ -113,49 +116,49 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 			matchBlock: {
 				%match(TomTerm elt) {
 					Composite(concTomTerm(VariableStar[])) | VariableStar[] -> {
-						out.write("tom_append_array_" + name + "(");
-						generate(out,deep,elt);
-						out.write(",");
-						break matchBlock;
-              }
-					
-					_ -> {
-						out.write("tom_make_append_" + name + "(");
-						generate(out,deep,elt);
-						out.write(",");
+						output.write("tom_append_array_" + name + "(");
+						generate(deep,elt);
+						output.write(",");
 						break matchBlock;
 					}
-            }
+					
+					_ -> {
+						output.write("tom_make_append_" + name + "(");
+						generate(deep,elt);
+						output.write(",");
+						break matchBlock;
+					}
+				}
 			} // end matchBlock
       
 			reverse = reverse.getTail();
 			size++;
 		}
-		out.write("(" + listType + ") tom_make_empty_" + name + "(" + size + ")"); 
+		output.write("(" + listType + ") tom_make_empty_" + name + "(" + size + ")"); 
 		for(int i=0; i<size; i++) { 
-            //out.write("," + i + ")");
-			out.write(")"); 
+			//out.write("," + i + ")");
+			output.write(")"); 
 		}
 	}
 
 	protected void buildFunctionCall(String name, TomList argList) {
-        out.write(name + "(");
-        while(!argList.isEmpty()) {
-          generate(out,deep,argList.getHead());
-          argList = argList.getTail();
-          if(!argList.isEmpty()) {
-            out.write(", ");
-          }
-        }
-        out.write(")");
+		output.write(name + "(");
+		while(!argList.isEmpty()) {
+			generate(deep,argList.getHead());
+			argList = argList.getTail();
+			if(!argList.isEmpty()) {
+				output.write(", ");
+			}
+		}
+		output.write(")");
 	}
 
 	protected abstract void buildDeclaration(TomTerm var, String name, String type, TomType tlType);
 
 	protected void buildDeclarationStar(TomTerm var, String name, String type, TomType tlType) {
-		out.write(deep,getTLCode(tlType) + " ");
-		generate(out,deep,var);
-		out.writeln(";");
+		output.write(deep,getTLCode(tlType) + " ");
+		generate(deep,var);
+		output.writeln(";");
 	}
 
 	protected void buildFunctionBegin(String tomName, TomList varList) {
@@ -163,14 +166,14 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		String glType = getTLType(getSymbolCodomain(tomSymbol));
 		String name = tomSymbol.getAstName().getString();
     
-		out.write(deep,glType + " " + name + "(");
+		output.write(deep,glType + " " + name + "(");
 		while(!varList.isEmpty()) {
 			TomTerm localVar = varList.getHead();
 			matchBlock: {
 				%match(TomTerm localVar) {
 					v@Variable(option2,name2,type2) -> {
-						out.write(deep,getTLType(type2) + " ");
-						generate(out,deep,v);
+						output.write(deep,getTLType(type2) + " ");
+						generate(deep,v);
 						break matchBlock;
 					}
 					_ -> {
@@ -181,16 +184,16 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 			}
 			varList = varList.getTail();
 			if(!varList.isEmpty()) {
-				out.write(deep,", ");
+				output.write(deep,", ");
 				
 			}
 		}
-		out.writeln(deep,") {");
+		output.writeln(deep,") {");
 		//out.writeln(deep,"return null;");
 	}
 	
 	protected void buildFunctionEnd() {
-			out.writeln(deep,"}");
+		output.writeln(deep,"}");
 	}
 	
 	protected void buildExpNot(Expression exp) {
@@ -202,152 +205,77 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
   protected abstract void buildExpTrue();
   protected abstract void buildExpFalse();
   
-  
   protected void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType) {
-    out.indent(deep);
-    generate(out,deep,var);
-    if(cCode || jCode) {
-      out.write(" = (" + getTLCode(tlType) + ") ");
-    } else if(eCode) {
-      if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
-        out.write(" := ");
-      } else {
-          //out.write(" ?= ");
-        String assignSign = " := ";
-        %match(Expression exp) {
-          GetSubterm[] -> {
-            assignSign = " ?= ";
-          }
-            }
-        out.write(assignSign);
-      }
-    }
-    generateExpression(deep,exp);
-    out.writeln(";");
-    if(debugMode && !list.isEmpty()) {
-      out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
-      generate(out,deep,var);
-      out.write("\", ");
-      generate(out,deep,var); // generateExpression(out,deep,exp);
-      out.write(");\n");
-    }
-  }
-
-    protected void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType) {
-    out.indent(deep);
+    output.indent(deep);
     generate(deep,var);
-    if(cCode || jCode) {
-      out.write(" = (" + getTLCode(tlType) + ") ");
-    } else if(eCode) {
-      if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
-        out.write(" := ");
-      } else {
-          //out.write(" ?= ");
-        String assignSign = " := ";
-        %match(Expression exp) {
-          GetSubterm[] -> {
-            assignSign = " ?= ";
-          }
-        }
-        out.write(assignSign);
-      }
-    }
-    generateExpression(out,deep,exp);
-    out.writeln(";");
-    if (debugMode) {
-      out.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
-      generateExpression(out,deep,exp);
-      out.write("\",");
-      generateExpression(out,deep,exp);
-      out.writeln(");");
+		output.write(" = (" + getTLCode(tlType) + ") ");
+		generateExpression(deep,exp);
+    output.writeln(";");
+    if(debugMode && !list.isEmpty()) {
+      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      generate(deep,var);
+      output.write("\", ");
+      generate(deep,var); // generateExpression(out,deep,exp);
+      output.write(");\n");
     }
   }
 
-  protected void buildNamedBlock(String blockName, TomList instList) {
-    if(cCode) {
-      out.writeln("{");
-      generateList(deep+1,instList);
-      out.writeln("}" + blockName +  ":;");
-    } else if(jCode) {
-      out.writeln(blockName + ": {");
-      generateList(deep+1,instList);
-      out.writeln("}");
-    } else if(eCode) {
-      System.out.println("NamedBlock: Eiffel code not yet implemented");
-      throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
-    }  
+	protected void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType) {
+    output.indent(deep);
+    generate(deep,var);
+		output.write(" = (" + getTLCode(tlType) + ") ");
+    generateExpression(deep,exp);
+    output.writeln(";");
+    if (debugMode) {
+      output.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
+      generateExpression(deep,exp);
+      output.write("\",");
+      generateExpression(deep,exp);
+      output.writeln(");");
+    }
   }
+
+  protected abstract void buildNamedBlock(String blockName, TomList instList);
 
   protected void buildIfThenElse(Expression exp, TomList succesList) {
-    if(cCode || jCode) {
-      out.write(deep,"if("); generateExpression(deep,exp); out.writeln(") {");
-      generateList(deep+1,succesList);
-      out.writeln(deep,"}");
-    } else if(eCode) {
-      out.write(deep,"if "); generateExpression(deep,exp); out.writeln(" then ");
-      generateList(deep+1,succesList);
-      out.writeln(deep,"end;");
-    }
+		output.write(deep,"if("); 
+		generateExpression(deep,exp); 
+		output.writeln(") {");
+		generateList(deep+1,succesList);
+		output.writeln(deep,"}");
   }
 
   protected void buildIfThenElseWithFailure(Expression exp, TomList succesList, TomList failureList) {
-    if(cCode || jCode) {
-      out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
-      generateList(out,deep+1,succesList);
-      out.writeln(deep,"} else {");
-      generateList(out,deep+1,failureList);
-      out.writeln(deep,"}");
-    } else if(eCode) {
-      out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
-      generateList(out,deep+1,succesList);
-      out.writeln(deep," else ");
-      generateList(out,deep+1,failureList);
-      out.writeln(deep,"end;");
-    }
+		output.write(deep,"if("); 
+		generateExpression(deep,exp); 
+		output.writeln(") {");
+		generateList(deep+1,succesList);
+		output.writeln(deep,"} else {");
+		generateList(deep+1,failureList);
+		output.writeln(deep,"}");
   }
 
   protected void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp) {
-    out.indent(deep);
+    output.indent(deep);
     generate(deep,var);
-    if(cCode || jCode) {
-      out.write(" = (" + getTLCode(tlType) + ") ");
-    } else if(eCode) {
-      out.write(" := ");
-    }
+		output.write(" = (" + getTLCode(tlType) + ") ");
     generateExpression(deep,exp);
-    out.writeln(";");
+    output.writeln(";");
     if(debugMode && !list.isEmpty()) {
-      out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
       generate(deep,var);
-      out.write("\", ");
+      output.write("\", ");
       generate(deep,var); // generateExpression(out,deep,exp);
-      out.write(");\n");
+      output.write(");\n");
     }
   }
 
-  protected void buildExitAction(TomNumberList numberList) {
-    if(cCode) {
-      out.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
-    } else if(jCode) {
-      out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
-    } else if(eCode) {
-      System.out.println("ExitAction: Eiffel code not yet implemented");
-      throw new TomRuntimeException(new Throwable("ExitAction: Eiffel code not yet implemented"));
-    }
-  }
+  protected abstract void buildExitAction(TomNumberList numberList);
 
-  protected void buildReturn(Exoression exp) {
-    if(cCode || jCode) {
-      out.write(deep,"return ");
-      generate(out,deep,exp);
-      out.writeln(deep,";");
-    } else if(eCode) {
-      out.writeln(deep,"if Result = Void then");
-      out.write(deep+1,"Result := ");
-      generate(out,deep+1,exp);
-      out.writeln(deep+1,";");
-      out.writeln(deep,"end;");
-    }
+  protected void buildReturn(Expression exp) {
+		output.write(deep,"return ");
+		generate(deep,exp);
+		output.writeln(deep,";");
   }
   
 } // class TomImperativeGenerator

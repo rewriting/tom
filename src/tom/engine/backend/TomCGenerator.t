@@ -54,17 +54,27 @@ public class TomCGenerator extends TomImperativeGenerator {
 // ------------------------------------------------------------
 
 	protected void buildDeclaration(TomTerm var, String name, String type, TomType tlType) {
-		out.write(deep,getTLCode(tlType) + " ");
-		generate(out,deep,var);
-		out.writeln(";");
+		output.write(deep,getTLCode(tlType) + " ");
+		generate(deep,var);
+		output.writeln(";");
 	}
 	
   protected void buildExpTrue() {
-		out.write(" 1 ");
+		output.write(" 1 ");
   }
   
   protected void buildExpFalse() {
-		out.write(" 0 ");
+		output.write(" 0 ");
+  }
+
+  protected void buildNamedBlock(String blockName, TomList instList) {
+		output.writeln("{");
+		generateList(deep+1,instList);
+		output.writeln("}" + blockName +  ":;");
+  }
+
+  protected void buildExitAction(TomNumberList numberList) {
+		output.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
   }
 
 }

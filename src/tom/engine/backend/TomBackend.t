@@ -71,7 +71,7 @@ public class TomBackend extends TomTask {
 			// give the "good" generator
 			if (getInput().isCCode()) {
 				generator = new CGenerator (environment, output, getInput());
-			} elseif (getInput().isJCode()) {
+			} else if (getInput().isJCode()) {
 				generator = new JavaGenerator (environment, output, getInput());
 			}
 		} catch (Exception e) {

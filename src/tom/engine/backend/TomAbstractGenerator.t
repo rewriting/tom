@@ -60,13 +60,13 @@ public abstract class TomAbstractGenerator {
     this.output = output;
     this.input = input;
 
-    supportedGoto = getInput().isSupportedGoto(); 
-    supportedBlock = getInput().isSupportedBlock();
-    debugMode = getInput().isDebugMode();
-    strictType = getInput().isStrictType();
-    staticFunction = getInput().isStaticFunction();
-    genDecl = getInput().isGenDecl();
-    pretty = getInput().isPretty();
+    supportedGoto = input.isSupportedGoto(); 
+    supportedBlock = input.isSupportedBlock();
+    debugMode = input.isDebugMode();
+    strictType = input.isStrictType();
+    staticFunction = input.isStaticFunction();
+    genDecl = input.isGenDecl();
+    pretty = input.isPretty();
 
   }
 
@@ -87,22 +87,22 @@ public abstract class TomAbstractGenerator {
     %match(TomTerm subject) {
       
       Tom(l) -> {
-        generateList(out,deep,l);
+        generateList(deep,l);
         return;
       }
 
       TomInclude(l) -> {
-        generateList(out,deep,l);
+        generateList(deep,l);
         return;
       }
      
       BuildVariable(Name(name)) -> {
-        out.write(name);
+        output.write(name);
         return;
       }
 
       BuildVariable(PositionName(l1)) -> {
-        out.write("tom" + numberListToIdentifier(l1));
+        output.write("tom" + numberListToIdentifier(l1));
         return;
       }
   
@@ -127,7 +127,7 @@ public abstract class TomAbstractGenerator {
       }
 
       Composite(argList) -> {
-        generateList(argList);
+        generateList(deep,argList);
         return;
       }
       
@@ -137,7 +137,7 @@ public abstract class TomAbstractGenerator {
       }
 
       CompiledPattern(instList) -> {
-        generateList(out,deep,instList);
+        generateList(deep,instList);
         return;
       }
 
@@ -146,22 +146,22 @@ public abstract class TomAbstractGenerator {
            * sans type: re-definition lorsque %variable est utilise
            * avec type: probleme en cas de filtrage dynamique
            */
-        out.write("tom" + numberListToIdentifier(l1));
+        output.write("tom" + numberListToIdentifier(l1));
         return;
       }
 
       Variable(option1,Name(name1),type1) -> {
-        out.write(name1);
+        output.write(name1);
         return;
       }
 
       VariableStar(option1,PositionName(l1),type1) -> {
-        out.write("tom" + numberListToIdentifier(l1));
+        output.write("tom" + numberListToIdentifier(l1));
         return;  
       }
 
       VariableStar(option1,Name(name1),type1) -> {
-        out.write(name1);
+        output.write(name1);
         return;
       }
 
@@ -188,7 +188,7 @@ public abstract class TomAbstractGenerator {
       }
 
       EndLocalVariable() -> {
-        out.writeln(deep,"do"); return;
+        output.writeln(deep,"do"); return;
       }
       
       TargetLanguageToTomTerm(t) -> {
@@ -263,7 +263,7 @@ public abstract class TomAbstractGenerator {
       }
 
       EqualFunctionSymbol(var@Variable[astType=type1],
-                          Appl(option,Name(tomName),l)) -> {
+                          Appl(option,(Name(tomName)),l)) -> { // needs to be checked
         buildExpEqualFunctionVarAppl(var, type1, tomName);
         return;
       }
@@ -337,7 +337,7 @@ public abstract class TomAbstractGenerator {
       }
 
       TomTermToExpression(t) -> {
-        generate(out,deep,t);
+        generate(deep,t);
         return;
       }
 
@@ -425,8 +425,8 @@ public abstract class TomAbstractGenerator {
         return;
       }
 
-      OpenBlock()  -> { out.writeln(deep,"{"); return; }
-      CloseBlock() -> { out.writeln(deep,"}"); return; }
+      OpenBlock()  -> { output.writeln(deep,"{"); return; }
+      CloseBlock() -> { output.writeln(deep,"}"); return; }
 
       
       t -> {
@@ -438,26 +438,26 @@ public abstract class TomAbstractGenerator {
 
       
   
-  public void generateTargetLanguage(jtom.tools.OutputCode out, int deep, TargetLanguage subject)
+  public void generateTargetLanguage(int deep, TargetLanguage subject)
     throws IOException {
     if(subject==null) { return; }
     %match(TargetLanguage subject) {
       TL(t,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
-        out.write(deep,t, startLine, endLine-startLine);
+        output.write(deep,t, startLine, endLine-startLine);
         return;
       }
       
       ITL(t) -> {
-        out.write(deep,t);
+        output.write(deep,t);
         return;
       }
 
       Comment(t) -> {
-        out.write("/* ");
-        out.write(deep,t);
-        out.write(" */ ");
+        output.write("/* ");
+        output.write(deep,t);
+        output.write(" */ ");
         if(pretty) {
-          out.writeln();
+          output.writeln();
         }
         return;
       }
@@ -469,13 +469,13 @@ public abstract class TomAbstractGenerator {
     }
   }
 
-  public void generateOption(jtom.tools.OutputCode out, int deep, Option subject)
+  public void generateOption(int deep, Option subject)
     throws IOException {
     if(subject==null) { return; }
     
     %match(Option subject) {
       DeclarationToOption(decl) -> {
-        generateDeclaration(out,deep,decl);
+        generateDeclaration(deep,decl);
         return;
       }
       OriginTracking[] -> { return; }
@@ -489,7 +489,7 @@ public abstract class TomAbstractGenerator {
     }
   }
   
-  public void generateDeclaration(jtom.tools.OutputCode out, int deep, Declaration subject)
+  public void generateDeclaration(int deep, Declaration subject)
     throws IOException {
     if(subject==null) { return; }
     
@@ -1017,7 +1017,7 @@ public abstract class TomAbstractGenerator {
     }
   }
 
-  public void generateList(OutputCode out, int deep, TomList subject)
+  public void generateList(int deep, TomList subject)
     throws IOException {
       //%variable
 
@@ -1032,11 +1032,11 @@ public abstract class TomAbstractGenerator {
 
     TomTerm t = subject.getHead();
     TomList l = subject.getTail(); 
-    generate(out,deep,t);
-    generateList(out,deep,l);
+    generate(deep,t);
+    generateList(deep,l);
   }
 
-  public void generateOptionList(OutputCode out, int deep, OptionList subject)
+  public void generateOptionList(int deep, OptionList subject)
     throws IOException {
       //%variable
     if(subject.isEmpty()) {
@@ -1512,7 +1512,7 @@ public abstract class TomAbstractGenerator {
 
   protected abstract void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType);
   protected abstract void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType);
-  protected abstract void buildNamedBlock(String blockName, TomListinstList);
+  protected abstract void buildNamedBlock(String blockName, TomList instList);
   protected abstract void buildIfThenElse(Expression exp, TomList succesList);
   protected abstract void buildIfThenElseWithFailure(Expression exp, TomList succesList, TomList failureList);
 
@@ -1533,6 +1533,6 @@ public abstract class TomAbstractGenerator {
 
   protected abstract void buildExitAction(TomNumberList numberList);
 
-  protected abstract void buildReturn(Exoression exp);
+  protected abstract void buildReturn(Expression exp);
 
 } // class TomAbstractGenerator

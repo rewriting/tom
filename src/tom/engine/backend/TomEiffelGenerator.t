@@ -138,4 +138,103 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		out.write(" false ");
   }
 
+  protected void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType) {
+    out.indent(deep);
+    generate(out,deep,var);
+		if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
+			out.write(" := ");
+		} else {
+			//out.write(" ?= ");
+			String assignSign = " := ";
+			%match(Expression exp) {
+				GetSubterm[] -> {
+					assignSign = " ?= ";
+				}
+			}
+			out.write(assignSign);
+		}
+    generateExpression(deep,exp);
+    out.writeln(";");
+    if(debugMode && !list.isEmpty()) {
+      out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      generate(out,deep,var);
+      out.write("\", ");
+      generate(out,deep,var); // generateExpression(out,deep,exp);
+      out.write(");\n");
+    }
+  }
+	
+	protected void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType) {
+    out.indent(deep);
+    generate(deep,var);
+		if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
+			out.write(" := ");
+		} else {
+			//out.write(" ?= ");
+			String assignSign = " := ";
+			%match(Expression exp) {
+				GetSubterm[] -> {
+					assignSign = " ?= ";
+				}
+			}
+			out.write(assignSign);
+    }
+    generateExpression(out,deep,exp);
+    out.writeln(";");
+    if (debugMode) {
+      out.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
+      generateExpression(out,deep,exp);
+      out.write("\",");
+      generateExpression(out,deep,exp);
+      out.writeln(");");
+    }
+  }
+
+  protected void buildNamedBlock(String blockName, TomList instList) {
+		System.out.println("NamedBlock: Eiffel code not yet implemented");
+		throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
+  }
+
+  protected void buildIfThenElse(Expression exp, TomList succesList) {
+		out.write(deep,"if "); generateExpression(deep,exp); out.writeln(" then ");
+		generateList(deep+1,succesList);
+		out.writeln(deep,"end;");
+  }
+
+  protected void buildIfThenElseWithFailure(Expression exp, TomList succesList, TomList failureList) {
+		out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
+		generateList(out,deep+1,succesList);
+		out.writeln(deep," else ");
+		generateList(out,deep+1,failureList);
+		out.writeln(deep,"end;");
+  }
+
+  protected void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp) {
+    out.indent(deep);
+    generate(deep,var);
+		out.write(" := ");
+    generateExpression(deep,exp);
+    out.writeln(";");
+    if(debugMode && !list.isEmpty()) {
+      out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      generate(deep,var);
+      out.write("\", ");
+      generate(deep,var); // generateExpression(out,deep,exp);
+      out.write(");\n");
+    }
+  }
+
+  protected void buildExitAction(TomNumberList numberList) {
+      System.out.println("ExitAction: Eiffel code not yet implemented");
+      throw new TomRuntimeException(new Throwable("ExitAction: Eiffel code not yet implemented"));
+  }
+
+  protected void buildReturn(Expression exp) {
+		out.writeln(deep,"if Result = Void then");
+		out.write(deep+1,"Result := ");
+		generate(out,deep+1,exp);
+		out.writeln(deep+1,";");
+		out.writeln(deep,"end;");
+	}
+
 }

@@ -1,25 +1,25 @@
 /*
   
-    TOM - To One Matching Compiler
+TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
-			    Nancy, France.
+Copyright (C) 2000-2003 INRIA
+Nancy, France.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
-    Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
 
 */
 
@@ -54,24 +54,34 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 // ------------------------------------------------------------
 
 	protected void buildDeclaration(TomTerm var, String name, String type, TomType tlType) {
-		out.write(deep,getTLCode(tlType) + " ");
-		generate(out,deep,var);
+		output.write(deep,getTLCode(tlType) + " ");
+		generate(deep,var);
     
 		if(!isBoolType(type) &&
 			 !isIntType(type) &&
 			 !isDoubleType(type)) {
-			out.writeln(" = null;");
+			output.writeln(" = null;");
 		} else {
-			out.writeln(";");
+			output.writeln(";");
 		}
 	}
 
   protected void buildExpTrue() {
-		out.write(" true ");
+		output.write(" true ");
 	}
   
   protected void buildExpFalse() {
-		out.write(" false ");
+		output.write(" false ");
   }
-	
+	 
+	protected void buildNamedBlock(String blockName, TomList instList) {
+		output.writeln(blockName + ": {");
+		generateList(deep+1,instList);
+		output.writeln("}");
+  }
+
+  protected void buildExitAction(TomNumberList numberList) {
+		output.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
+  }
+
 }
