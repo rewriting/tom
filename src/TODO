@@ -1,3 +1,45 @@
+12/12/2003
+----------
+
+Previsions pour la v2.0
+
+- Doc
+  separer le reference manual du user manual
+  creer un vrai tutorial
+  couper la pages web en plusieurs sous-pages
+
+- Plugin-in
+  possibilite de passer les tests et de bootstrapper
+  voir comment integrer javacc
+  optimiser la lecture des fichiers en lisant le buffer
+  revoir le Tom editor
+  ameliorer la fenetre de selection des properties (Tom et ADT)
+  warning ADT file not found
+  completion Tom
+  recuper un peu du mode java
+
+- Debugger
+  integrer le debugger sous eclipse
+
+- XML
+  ameliorer les XMLTools  
+
+- Runtime
+  distribuer le runtime separement
+
+- Moteur
+  AC matching
+  revoir l'api
+  rendre l'integration de theories plus modulaire
+  voir la compilation des records et la disjunction de symboles
+  ameliorer le list-matching
+  filtrer sur les attributs (AC/HashSet)
+  ameliorer le Checker
+  analyse des patterns XML
+  passer de TomParser.jj a TomParser.t
+
+
+------------------------------------------------------------
 PHASE 1
 -------
   /*
@@ -248,7 +290,7 @@ exemple :
 
 	Appl(Option([Annoted(...)]), Symbol(...), [...])
 
-Par list-matching on exprime lesregles generale de la facon suivante :
+Par list-matching on exprime les regles generale de la facon suivante :
 
 	Appl(option(_),
              Symbol(...), [...]) -> {...}
