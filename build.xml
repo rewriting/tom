@@ -31,17 +31,17 @@
 
 	<!-- for stable -->
 	<property name="stable.src" location="stable"/>
-	<property name="stable.adt" location="stable/adt"/>
-	<property name="stable.mapping" location="stable/jtom/runtime/mapping"/>
-	<property name="stable.build" location="stable/build"/>
-	<property name="stable.dist" location="stable/dist"/>
+	<property name="stable.adt" location="${stable.src}/adt"/>
+	<property name="stable.mapping" location="${stable.src}/jtom/runtime/mapping"/>
+	<property name="stable.build" location="${stable.src}/build"/>
+	<property name="stable.dist" location="${stable.src}/dist"/>
 	
 	<!-- for devel (src) -->
 	<property name="src.src" location="src"/>
-	<property name="src.adt" location="src/adt"/>
-	<property name="src.mapping" location="src/jtom/runtime/mapping"/>
-	<property name="src.build" location="src/build"/>  	
-	<property name="src.dist" location="src/dist"/>  	
+	<property name="src.adt" location="${src.src}/adt"/>
+	<property name="src.mapping" location="${src.src}/jtom/runtime/mapping"/>
+	<property name="src.build" location="${src.src}/build"/>  	
+	<property name="src.dist" location="${src.src}/dist"/>  	
 
 	<!-- Property for Javac compilation
 			 <property name="javacFailOnError" value="false"/>
@@ -102,6 +102,11 @@
 	<target name="preparestable">
 		<mkdir dir="${stable.build}"/>
 		<mkdir dir="${stable.dist}"/>
+	</target>
+
+	<!-- target debut to help finding properties problems -->
+	<target name="debug"> 
+		<echoproperties/>
 	</target>
 
 	<!-- builds and defines the custom tasks -->
