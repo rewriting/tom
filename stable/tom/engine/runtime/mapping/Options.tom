@@ -1,0 +1,93 @@
+%include { string.tom }
+%include { int.tom }
+%include { double.tom }
+%include { aterm.tom }
+%include { atermlist.tom }
+%typeterm TomOption{
+  implement { jtom.adt.options.types.TomOption}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%op TomOption OptionBoolean(name:String, altName:String, description:String, valueB:TomBoolean) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isOptionBoolean()}
+  get_slot(name,t) { t.getName()}
+  get_slot(altName,t) { t.getAltName()}
+  get_slot(description,t) { t.getDescription()}
+  get_slot(valueB,t) { t.getValueB()}
+  make(t0, t1, t2, t3) { getOptionsFactory().makeTomOption_OptionBoolean(t0, t1, t2, t3)}
+}
+
+%op TomOption OptionInteger(name:String, altName:String, description:String, valueI:int, attrName:String) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isOptionInteger()}
+  get_slot(name,t) { t.getName()}
+  get_slot(altName,t) { t.getAltName()}
+  get_slot(description,t) { t.getDescription()}
+  get_slot(valueI,t) { t.getValueI()}
+  get_slot(attrName,t) { t.getAttrName()}
+  make(t0, t1, t2, t3, t4) { getOptionsFactory().makeTomOption_OptionInteger(t0, t1, t2, t3, t4)}
+}
+
+%op TomOption OptionString(name:String, altName:String, description:String, valueS:String, attrName:String) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isOptionString()}
+  get_slot(name,t) { t.getName()}
+  get_slot(altName,t) { t.getAltName()}
+  get_slot(description,t) { t.getDescription()}
+  get_slot(valueS,t) { t.getValueS()}
+  get_slot(attrName,t) { t.getAttrName()}
+  make(t0, t1, t2, t3, t4) { getOptionsFactory().makeTomOption_OptionString(t0, t1, t2, t3, t4)}
+}
+
+%typeterm TomBoolean{
+  implement { jtom.adt.options.types.TomBoolean}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%op TomBoolean True {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isTrue()}
+  make() { getOptionsFactory().makeTomBoolean_True()}
+}
+
+%op TomBoolean False {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isFalse()}
+  make() { getOptionsFactory().makeTomBoolean_False()}
+}
+
+%typelist TomOptionList{
+  implement { jtom.adt.options.types.TomOptionList}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
+}
+
+%oplist TomOptionList concTomOption(TomOption*) {
+  fsym { null }
+  is_fsym(t) {(t!= null) && t.isSortTomOptionList()}
+  make_empty() {getOptionsFactory().makeTomOptionList()}
+  make_insert(e,l) {getOptionsFactory().makeTomOptionList(e,l)}
+}
+%op TomOptionList emptyTomOptionList{
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isEmpty()}
+  make() {getOptionsFactory().makeTomOptionList()}
+}
+%op TomOptionList manyTomOptionList(head:TomOption, tail:TomOptionList) {
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isMany()}
+  get_slot(head,t) { t.getHead()}
+  get_slot(tail,t) { t.getTail()}
+  make(e,l) {getOptionsFactory().makeTomOptionList(e,l)}
+}

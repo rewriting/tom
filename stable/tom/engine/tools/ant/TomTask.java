@@ -27,7 +27,7 @@ package jtom.tools.ant;
 
 import java.io.File;
 import java.util.Vector;
-import jtom.Tom;
+import jtom.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -41,6 +41,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * Compiles Tom source files. This task can take the following
  * arguments:
  * <ul>
+ * <li>configfile
  * <li>sourcedir
  * <li>destdir
  * <li>outputfile
@@ -64,6 +65,7 @@ public class TomTask extends MatchingTask {
   private String options;
   private Path src;
   private File destDir;
+  private File configFile;
   private File outputFile;
   private Path compileClasspath;
   private Path compileSourcepath;
@@ -71,13 +73,26 @@ public class TomTask extends MatchingTask {
   private boolean verbose = false;
   private Path extdirs;
   private boolean nowarn = false;
-	private boolean optimize = false;
+  private boolean optimize = false;
+  
 
   protected boolean failOnError = true;
   protected boolean listFiles = false;
   protected File[] compileList = new File[0];
 
   private File tmpDir;
+
+    /**
+     * Set the configuration file
+     * @param  configFile the destination directory
+     */
+  public void setConfig(File configFile) {
+    this.configFile = configFile;
+  }
+
+  public File getConfig() {
+    return configFile;
+  }
 
   public void setOptions(String options) {
     this.options = options;
@@ -473,6 +488,9 @@ public class TomTask extends MatchingTask {
         if (options != null && getOptions().trim().length() > 0) {
           cmd_line = cmd_line.trim() + " " + options;
         }
+        if (configFile != null) {
+          cmd_line = cmd_line.trim() + " -X " + configFile;
+        }
         if (destDir != null) {
           cmd_line = cmd_line.trim() + " -d " + destDir;
         }
@@ -487,17 +505,18 @@ public class TomTask extends MatchingTask {
 				}
         cmd_line = cmd_line.trim() + " -I " + file.getParent();
         cmd_line = cmd_line.trim() + " " + filename;
+
         String[] cmd = split(cmd_line);
           //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
         int err = -1;
-        err = Tom.exec(cmd);
+        err = TomServer.exec(cmd); // before it was Tom.exec(cmd)
         if (err != 0) {
           if (failOnError) {
-            throw new BuildException("Java returned: " + err, getLocation());
+            throw new BuildException("Tom returned: " + err, getLocation());
           } else {
             log("Tom Result: " + err, Project.MSG_ERR);
           }
-        }
+          }
       }
     }
   }

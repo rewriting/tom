@@ -108,7 +108,7 @@ public class domtomTest {
       %match(TNode root) {
               <_><Fils1 Bt1=val At1=val  ></Fils1></_> -> {
              /*<_><Fils1 At1=val Bt1=val  ></Fils1></_> -> {*/
-           System.out.println("ordre ok : "+val);
+           System.out.println("ordre ok : "+`val);
          }
       }
 

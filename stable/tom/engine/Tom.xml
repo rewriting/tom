@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<TOM>
+
+<PLUGINS>
+
+  <plugin
+    name="Parser"
+    version=""
+    description=""
+    classpath="jtom.parser.TomParserPlugin" />
+
+  <plugin
+    name="Syntax checker"
+    version=""
+    description=""
+    classpath="jtom.checker.TomSyntaxChecker" />
+
+  <plugin
+    name="Expander"
+    version=""
+    description=""
+    classpath="jtom.compiler.TomExpander" />
+
+  <plugin
+    name="Type checker"
+    version=""
+    description=""
+    classpath="jtom.checker.TomTypeChecker" />
+
+  <plugin
+    name="Compiler"
+    version=""
+    description=""
+    classpath="jtom.compiler.TomCompiler" />
+
+  <plugin
+    name="Optimizer"
+    version=""
+    description=""
+    classpath="jtom.optimizer.TomOptimizer" />
+
+  <plugin
+    name="Verifier"
+    version=""
+    description=""
+    classpath="jtom.verifier.TomVerifier" />
+
+  <plugin
+    name="Backend"
+    version=""
+    description=""
+    classpath="jtom.backend.TomBackend" />
+
+</PLUGINS>
+
+<OPTIONS>
+
+  <OptionBoolean
+    name="help"
+    altName="h"
+    description="Print this help"
+    valueB="false" />
+
+  <OptionBoolean
+    name="version"
+    altName="V"
+    description="Print version"
+    valueB="false" />
+
+  <OptionBoolean
+    name="verbose"
+    altName="v"
+    description="Set verbose mode on"
+    valueB="false" />
+
+  <OptionBoolean
+    name="intermediate"
+    altName="i"
+    description="Generate intermediate files"
+    valueB="false" />
+
+  <OptionBoolean
+    name="noOutput"
+    altName=""
+    description="Do not generate code"
+    valueB="false" />
+
+  <OptionBoolean
+    name="noDeclaration"
+    altName="D"
+    description="Do not generate code for declarations"
+    valueB="false" />
+
+<!-- doCompile will be replaced by an alternate XML -->
+
+  <OptionBoolean
+    name="noCheck"
+    altName="f"
+    description="Do not check correctness"
+    valueB="false" />
+
+  <OptionBoolean
+    name="Wall"
+    altName=""
+    description="Print all warnings"
+    valueB="false" />
+
+  <OptionBoolean
+    name="noWarning"
+    altName=""
+    description="Do not print warning"
+    valueB="false" />
+
+  <OptionBoolean
+    name="lazyType"
+    altName="l"
+    description="Use universal type"
+    valueB="false" />
+
+  <OptionBoolean
+    name="pretty"
+    altName="p"
+    description="Generate readable code"
+    valueB="false" />
+
+  <OptionBoolean
+    name="atermStat"
+    altName="S"
+    description="Print internal ATerm statistics"
+    valueB="false" />
+
+  <OptionBoolean
+    name="static"
+    altName=""
+    description="Generate static functions"
+    valueB="false" />
+
+  <OptionBoolean
+    name="debug"
+    altName=""
+    description="Generate debug primitives"
+    valueB="false" />
+
+  <OptionBoolean
+    name="memory"
+    altName=""
+    description="Add memory management while debugging (not correct with list matching)"
+    valueB="false" />
+
+  <OptionBoolean
+    name="eclipse"
+    altName=""
+    description="Eclipse mode"
+    valueB="false" />
+
+  <OptionString
+    name="import"
+    altName="I"
+    description="Path for %include"
+    valueS=""
+    attrName="path" />
+
+  <OptionString
+    name="output"
+    altName="o"
+    description="Set output file name"
+    valueS=""
+    attrName="file" />
+
+  <OptionString
+    name="destdir"
+    altName="d"
+    description="Specify where to place generated files"
+    valueS="."
+    attrName="dir" />
+
+</OPTIONS>
+
+<BACKEND>
+
+  <generator
+    classpath="jtom.backend.TomJavaGenerator"
+    flag="jCode" /> <!-- maybe specify an OptionBoolean instead -->
+
+  <generator
+    classpath="jtom.backend.TomCGenerator"
+    flag="cCode" />    
+
+  <generator
+    classpath="jtom.backend.TomCamlGenerator"
+    flag="camlCode" />
+
+  <generator
+    classpath="jtom.backend.TomEiffelGenerator"
+    flag="eCode" />
+
+</BACKEND>
+
+</TOM>

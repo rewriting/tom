@@ -266,7 +266,6 @@
       <include name="jtom/**/*.java"/>
 			<exclude name="jtom/**/Main.java"/>
     </javac>
-    <copy todir="${src.build}/jtom" file="${src.src}/jtom/Tom.xml"/>
   </target>
   
   <target name="build.stable" depends="stable"/>
@@ -323,6 +322,8 @@
   <target name="dist.stable" 
           description="Prepare a distribution ready stable package" 
           depends="clean.dist.stable, stable, prepare.dist.stable, dist.common">
+    <!-- "tom config file" -->
+    <copy todir="${stable.dist}" file="${stable.configfile}"/>
     <!-- "tom binary" -->
     <copy todir="${stable.bin}" file="${utils}/javac-tom"/>
     <copy todir="${stable.bin}" file="${utils}/tom.bat"/>
@@ -387,7 +388,7 @@
           depends="clean.dist.src, src, prepare.dist.src, dist.common">
     <tstamp/>
     <!-- "tom config file" -->
-    <copy todir="${src.dist}" file="${src.src}/jtom/Tom.xml"/>
+    <copy todir="${src.dist}" file="${src.configfile}"/>
     <!-- "tom binary" -->
     <copy todir="${src.bin}" file="${utils}/javac-tom"/>
     <copy todir="${src.bin}" file="${utils}/tom"/>
@@ -712,7 +713,6 @@
 
   <target name="bootstrap" description="Bootstrap source" depends="bootcheck" if="bootstrap.ok">
     <echo> ### BOOTSTRAP PERFORM SUCCESSFULLY!!! ###</echo>
-		<antcall target="clean.bootstrap"/>
   </target>
 
   <target name="bootcheck" depends="performbootstrap">
@@ -841,8 +841,8 @@
 
   <target name="bootinstall" 
           description="Instrall src tree into stable tree" 
-          depends="bootcheck" 
-          if="bootstrap.ok">
+          depends="bootcheck"
+					if="bootstrap.ok">
     <copy todir="${stable.src}" overwrite="true">
       <fileset dir="${src.src}">
         <include name="jtom/**/*.java"/>
@@ -852,8 +852,10 @@
         <include name="jtom/**/*.java"/>
         <exclude name="jtom/adt/**/*.java"/>
       </fileset>
-      <fileset dir="${src.src}"
-               includes="**/*.properties"/>
+      <fileset dir="${src.src}">
+				<include name="**/*.properties"/>
+        <include name="**/*.xml"/>
+      </fileset>
     </copy>
     <jar jarfile="${stable.adt}/Set.jar">
       <fileset dir="${src.build}" 
@@ -874,7 +876,7 @@
     <copy todir="${stable.mapping}" overwrite="true">
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
     </copy>
-
+		<antcall target="clean.bootstrap"/>
   </target>
   
   <target name="bundle.src" depends="dist.src">

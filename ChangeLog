@@ -1,3 +1,7 @@
+2004-05-07  julien guyon  <julien.guyon@loria.fr>
+	* bootinstall of version bumped to 3.0
+  * new Design with plugins
+
 2004-06-28  pem  <pem@polly.loria.fr>
 
 	* src/jtom/parser/TomParser.t (TOKEN): 

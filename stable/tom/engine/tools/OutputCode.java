@@ -38,8 +38,8 @@ public class OutputCode {
     this.defaultDeep = defaultDeep;
   }
 
-  private TomTaskInput getInput() {
-    return TomTaskInput.getInstance();
+  private jtom.TomServer getServer() {
+    return jtom.TomServer.getInstance();
   }
 
   public OutputCode() {
@@ -96,7 +96,7 @@ public class OutputCode {
   }
   
   public void writeln() throws IOException {
-    if(getInput().isPretty()) {
+    if(((Boolean)getServer().getOptionValue("pretty")).booleanValue()) {
       file.write('\n');
     }
   }
@@ -112,16 +112,16 @@ public class OutputCode {
   }
   
   public void write(String s, int line, int length) throws IOException {
-    if(singleLine>0 && !getInput().isCCode()) {
+    if(singleLine>0 && !((Boolean)getServer().getOptionValue("cCode")).booleanValue()) {
       s = s.replace('\n', ' ');
       s = s.replace('\r', ' ');
       s = s.replace('\t', ' ');
       write(s);
       return;
     }
-    if (!getInput().isPretty()) {
+    if (!((Boolean)getServer().getOptionValue("pretty")).booleanValue()) {
       if(lineCounter > line) {
-        if(getInput().isCCode()) {
+        if(((Boolean)getServer().getOptionValue("cCode")).booleanValue()) {
           String s1 = "\n#line "+line+"\n";
             // writeln(deep,s);
           s = s1+s;
@@ -170,7 +170,7 @@ public class OutputCode {
   
   public void indent(int deep) {
     try {
-      if(getInput().isPretty()) {
+      if(((Boolean)getServer().getOptionValue("pretty")).booleanValue()) {
         for(int i=0 ; i<deep ; i++) {
           file.write(' ');
           file.write(' ');

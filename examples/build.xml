@@ -162,7 +162,7 @@
          destdir="${examples.gen}"/>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
-srcdir="${examples.dir}" 
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}"
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -186,7 +186,8 @@ srcdir="${examples.dir}"
          package="${apireach}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}"         
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -208,7 +209,8 @@ srcdir="${examples.dir}"
          package="${boulderdash}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -239,7 +241,8 @@ srcdir="${examples.dir}"
          package="${builtin}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}"
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -259,7 +262,8 @@ srcdir="${examples.dir}"
   <target name="caml" depends="init">
 		<mkdir dir="${examples.gen}/${caml}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}/${caml}"
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -278,7 +282,8 @@ srcdir="${examples.dir}"
 
   <target name="cell" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}"
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -303,7 +308,8 @@ srcdir="${examples.dir}"
 
   <target name="cril" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -339,7 +345,8 @@ srcdir="${examples.dir}"
 
   <target name="dom" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -362,14 +369,16 @@ srcdir="${examples.dir}"
   
   <target name="expression" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
          options="-I ${tom.home}/share/jtom --lazyType">
       <include name="${expression}/**/Record.t"/>
     </tom>
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -393,7 +402,8 @@ srcdir="${examples.dir}"
          package="${gtree}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -410,7 +420,8 @@ srcdir="${examples.dir}"
 
   <target name="list" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -429,7 +440,8 @@ srcdir="${examples.dir}"
 
   <target name="lsystem" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -451,7 +463,8 @@ srcdir="${examples.dir}"
          package="${nspk}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -468,7 +481,8 @@ srcdir="${examples.dir}"
   
   <target name="p3p" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -490,7 +504,8 @@ srcdir="${examples.dir}"
          package="${peano}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -512,7 +527,8 @@ srcdir="${examples.dir}"
          package="${pnspk}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -534,7 +550,8 @@ srcdir="${examples.dir}"
          package="${poly}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -551,7 +568,8 @@ srcdir="${examples.dir}"
 
   <target name="pqueens" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -570,7 +588,8 @@ srcdir="${examples.dir}"
 
   <target name="prodrule" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -599,7 +618,8 @@ srcdir="${examples.dir}"
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -630,7 +650,8 @@ srcdir="${examples.dir}"
          package="${rbtree}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -652,7 +673,8 @@ srcdir="${examples.dir}"
          package="${set}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -669,7 +691,8 @@ srcdir="${examples.dir}"
 
   <target name="tutorial" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -686,7 +709,8 @@ srcdir="${examples.dir}"
 
   <target name="vas" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -703,7 +727,8 @@ srcdir="${examples.dir}"
 
   <target name="xml" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -728,7 +753,8 @@ srcdir="${examples.dir}"
 
   <target name="xquery" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}" srcdir="${examples.dir}" 
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"

@@ -30,12 +30,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import jtom.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.exception.TomRuntimeException;
 
 public class SymbolTable {
   private final static String TYPE_INT       = "int";
+  private final static String TYPE_LONG      = "long";
   private final static String TYPE_CHAR      = "char";
   private final static String TYPE_DOUBLE    = "double";
   private final static String TYPE_STRING    = "String";
@@ -53,39 +55,43 @@ public class SymbolTable {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
 
-    if(getInput().isCCode()) {
+    if( getServer().getOptionBooleanValue("cCode") ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"int"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
+      putType(TYPE_LONG, ast().makeType(TYPE_LONG,"long"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"));
-    } else if(getInput().isJCode()) {
+    } else if( getServer().getOptionBooleanValue("jCode") ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"boolean"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
+      putType(TYPE_LONG, ast().makeType(TYPE_LONG,"long"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"));
-    } else if(getInput().isECode()) {
+    } else if( getServer().getOptionBooleanValue("eCode") ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"CHARACTER"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"BOOLEAN"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"INTEGER"));
+      putType(TYPE_LONG, ast().makeType(TYPE_LONG,"INTEGER"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"DOUBLE"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"STRING"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"ANY"));
-    } else if(getInput().isCamlCode()) { // this is really bad, will need to be improved
+    } else if( getServer().getOptionBooleanValue("camlCode") ) { // this is really bad, will need to be improved
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"bool"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
+      putType(TYPE_LONG, ast().makeType(TYPE_LONG,"long"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"None"));
     }
   }
 
-  private TomTaskInput getInput() {
-    return TomTaskInput.getInstance();
+  private TomServer getServer() {
+    return TomServer.getInstance();
   }
 
   public void regenerateFromTerm(TomSymbolTable symbTable) {
@@ -138,6 +144,10 @@ public class SymbolTable {
     return getType(TYPE_INT);
   }
 
+  public TomType getLongType() {
+    return getType(TYPE_LONG);
+  }
+
   public TomType getCharType() {
     return getType(TYPE_CHAR);
   }
@@ -162,6 +172,10 @@ public class SymbolTable {
     return type.equals(TYPE_INT);
   }
 
+  public boolean isLongType(String type) {
+    return type.equals(TYPE_LONG);
+  }
+
   public boolean isCharType(String type) {
     return type.equals(TYPE_CHAR);
   }
@@ -179,13 +193,15 @@ public class SymbolTable {
   }
 
   public boolean isBuiltinType(String type) {
-    return isIntType(type) || isCharType(type) ||
+    return isIntType(type) || isLongType(type) || isCharType(type) ||
       isStringType(type) || isBoolType(type) || isDoubleType(type);
   }
  
   public TomType getBuiltinType(String type) {
     if(isIntType(type)) {
       return getIntType();
+    } else if(isLongType(type)) {
+      return getLongType();
     } else if(isCharType(type)) {
       return getCharType();
     } else if(isStringType(type)) {
