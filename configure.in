@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.26 2003/08/25 15:49:32 asbin Exp $
+# $Id: configure.in,v 1.27 2003/08/25 15:51:29 moreau Exp $
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(jtom,1.3delta)
@@ -7,7 +7,7 @@ AC_PREREQ(2.13)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.26 2003/08/25 15:49:32 asbin Exp $)
+AC_REVISION($Id: configure.in,v 1.27 2003/08/25 15:51:29 moreau Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -54,8 +54,8 @@ AC_OUTPUT( \
 	src/jtom/backend/Makefile \
 	src/jtom/runtime/Makefile \
 	src/jtom/runtime/strategies/Makefile \
-	src/jtom/runtime/set/Makefile 
-	src/jtom/runtime/set/jgtreeset/Makefile 
+	src/jtom/runtime/set/Makefile \
+	src/jtom/runtime/set/jgtreeset/Makefile \
 	src/jtom/exception/Makefile \
 	src/jtom/debug/Makefile \
 	stable/Makefile \
@@ -68,6 +68,8 @@ AC_OUTPUT( \
 	stable/jtom/backend/Makefile \
 	stable/jtom/runtime/Makefile \
 	stable/jtom/runtime/strategies/Makefile \
+	stable/jtom/runtime/set/Makefile \
+	stable/jtom/runtime/set/jgtreeset/Makefile \
 	stable/jtom/exception/Makefile \
 	stable/jtom/debug/Makefile \
 	tutorial/Makefile \
@@ -87,5 +89,3 @@ AC_OUTPUT( \
 	tutorial/apigen/1_peano_c/Makefile \
 	tutorial/apigen/2_peano_java/Makefile \
 )
-#	stable/jtom/runtime/set/Makefile 
-#	stable/jtom/runtime/set/jgtreeset/Makefile 
