@@ -45,6 +45,8 @@ public class GTPropp extends Propp {
 			}
 		}
 		*/
+		System.out.println("Is input proved ? " + isValid(proofTerm));
+
 		tex_proofs.add(proofToTex(proofTerm));
 
 		System.out.println("Build LaTeX");

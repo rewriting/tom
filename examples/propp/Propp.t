@@ -11,6 +11,7 @@ import antlr.CommonAST;
 public class Propp {
 
 	private TermFactory factory;
+	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------  
 	%include { adt/propp/term.tom }
@@ -18,10 +19,12 @@ public class Propp {
 
 	public Propp() {
 		this(new TermFactory(new PureFactory()));
+		this.traversal = new GenericTraversal();
 	}
 
 	public Propp(TermFactory factory) {
 		this.factory = factory;
+		this.traversal = new GenericTraversal();
 	}
 
 	public final TermFactory getTermFactory() {
@@ -50,6 +53,7 @@ public class Propp {
 		%match(ListProof proofTerm) {
 			concProof(_*,p,_*) -> {
 				tex_proofs.add(proofToTex(p));
+				System.out.println("Is input proved ? " + isValid(p));
 			}
 		}
 
@@ -385,12 +389,52 @@ public class Propp {
 				latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{" + proofToTex(p) + " & " + proofToTex(pp) + "}";
 			}
 
+			// this is not a valid proof
+			hyp(s) -> {
+				latex = "{\\bf " + seqToTex(s) + "}";
+			}
+
 		}
 		//}}}
 
 		return latex;
 	}
 	//}}}
+
+	//{{{ public boolean isValid(Proof p)
+	public boolean isValid(Proof p) {
+		Collect2 collect = new Collect2() {
+			public boolean apply(ATerm subjectAT, Object arg1) {
+				if (subjectAT instanceof Proof) {
+					Proof pt = (Proof)subjectAT;
+					MyBoolean val = (MyBoolean) arg1;
+					%match(Proof pt) {
+						hyp(_) -> { val.setValue(false) ; }
+					}
+					return true;
+				}
+				return true;
+			}//end apply
+		};//end new
+		
+		MyBoolean result = new MyBoolean(true);
+		traversal.genericCollect(p,collect,result);
+		return result.getValue();
+	}
+	//}}}
+
+	public class MyBoolean {
+		private boolean value;
+		public MyBoolean(boolean initValue) {
+			value = initValue;
+		}
+		public void setValue(boolean val) {
+			value = val;
+		}
+		public boolean getValue() {
+			return value;
+		}
+	}
 
 	//{{{ public void write_proof_latex(Collection tex_p,String file)
 	public void write_proof_latex(Collection tex_p,String file) {
@@ -400,7 +444,7 @@ public class Propp {
 
 			OutputStreamWriter osw = new OutputStreamWriter(out,"ISO-8859-1");
 
-			osw.write("\\documentstyle[proof]{article}\n\\def\\negd{\\neg_D}\n\\def\\disjd{\\vee_D}\n\\def\\impd{\\to_D}\n\\def\\negg{\\neg_G}\n\\def\\conjg{\\wedge_G}\n\\def\\disjg{\\vee_G}\n\\def\\conjd{\\wedge_D}\n\\def\\impg{\\to_G}\n\\def\\axiom{Axiom}\n\n\\begin{document}");
+			osw.write("\\documentclass{article}\n\\usepackage{proof}\n\\def\\negd{\\neg_D}\n\\def\\disjd{\\vee_D}\n\\def\\impd{\\to_D}\n\\def\\negg{\\neg_G}\n\\def\\conjg{\\wedge_G}\n\\def\\disjg{\\vee_G}\n\\def\\conjd{\\wedge_D}\n\\def\\impg{\\to_G}\n\\def\\axiom{Axiom}\n\n\\begin{document}");
 			osw.write("\n\n\n");
 			Iterator iter = tex_p.iterator();
 			while(iter.hasNext()) {

@@ -9,3 +9,7 @@ jtom Propp.t
 javac Propp.java
 
 #type your goal
+
+# graphic proof
+latex proof.tex
+xdvi proof.dvi
