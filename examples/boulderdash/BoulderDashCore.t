@@ -1,9 +1,10 @@
+package BoulderDash;
 
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import adt.boulder.boulder.*;
-import adt.boulder.boulder.types.*;
+import BoulderDash.boulder.*;
+import BoulderDash.boulder.types.*;
 
 public class BoulderDashCore {
   private Factory factory;

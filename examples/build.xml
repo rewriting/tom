@@ -150,8 +150,8 @@
     <!-- build adt -->
     <adt file="${boulderdash.dir}/boulder.adt" 
          factory="boulder" 
-         package="adt.boulder" 
-         destdir="${boulderdash.dir}"/>
+         package="BoulderDash" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${boulderdash.dir}" 
          destdir="${boulderdash.dir}" 
@@ -159,7 +159,7 @@
       <include name="**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${boulderdash.dir}" destdir="${boulderdash.dir}">
+    <javac srcdir="${boulderdash.dir}" destdir="${examples.dir}">
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac>

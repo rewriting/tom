@@ -1,3 +1,5 @@
+package BoulderDash;
+
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Color;
@@ -23,7 +25,7 @@ import java.net.URL;
 
 import java.util.HashMap;
 
-import adt.boulder.boulder.*;
+import BoulderDash.boulder.*;
 import aterm.pure.*;
 
 // BOULDERDASH 2D APPLI BUT ALSO APPLET
@@ -148,9 +150,9 @@ public class BoulderDash2D extends JApplet implements ActionListener {
     MediaTracker tracker = new MediaTracker(this);
     URL url = null;
     if (appMode) {
-        sourceImage = this.getToolkit().getImage("images.gif");
+        sourceImage = this.getToolkit().getImage("BoulderDash/images.gif");
     } else {
-      sourceImage = getImage(getCodeBase(),"images.gif");
+      sourceImage = getImage(getCodeBase(),"BoulderDash/images.gif");
     }
     tracker.addImage(sourceImage,0);
     Image[] img;

@@ -1,4 +1,6 @@
- public class BoulderDashImagesData {
+package BoulderDash;
+
+public class BoulderDashImagesData {
   public static final int NUM_IMAGES = 15;
   public static final int IMAGE_SIZE = 20;
   public static int[][] imgCoord =
