@@ -2,6 +2,7 @@ header{
     import aterm.*;
     import aterm.pure.*;
     
+    import jtom.*;
     import jtom.adt.tomsignature.*;
     import jtom.adt.tomsignature.types.*;
 
@@ -21,14 +22,18 @@ class NewTargetParser extends Parser;
         return tsf;
     }
 
+    private TomEnvironment environment() {
+        return TomEnvironment.getInstance();
+    }
+
     // the file to be parsed
     private String filename;
 
     public NewTargetParser(TokenStreamSelector selector, String filename){
         this(selector);
         this.filename = filename;
-        tsf = new Factory(new PureFactory());
-        tomparser = new NewTomParser(getInputState(),this, tsf,filename);
+        this.tsf = environment().getTomSignatureFactory();
+        tomparser = new NewTomParser(getInputState(),this,filename);
     }
 
     // the parser for tom constructs
