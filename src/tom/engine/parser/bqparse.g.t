@@ -252,6 +252,21 @@ options{
         }
     }
 
+    private TomList buildAttributeList(LinkedList list){
+        TomList result = `emptyTomList();
+        TomList tmp = `emptyTomList();
+        for(int i = 0; i < list.size(); i++){
+            if(i< 2){
+                tmp = (TomList) tmp.append((TomTerm) list.get(i));
+            }
+            else{
+                result = (TomList) result.append((TomTerm) list.get(i));
+            }
+        }
+        result = `concTomTerm(result*,tmp*);
+        return result;
+    }
+
     private TomList buildList(LinkedList list){
         TomList result = `emptyTomList();
         for(int i = 0; i < list.size(); i++){
@@ -453,7 +468,9 @@ xmlTerm[TomList context] returns [TomTerm result]
         (
             XML_START ws id:BQ_ID ws attributeList[attributes,context]
             {
-                attributeTomList = buildList(attributes);
+                p("attr list :"+attributes);
+                attributeTomList = buildAttributeList(attributes);
+                p("attr list :"+attributeTomList);
             }
                 
                 ( 
@@ -463,7 +480,7 @@ xmlTerm[TomList context] returns [TomTerm result]
                 {
                         childrenTomList = buildList(children);
                 }
-                    XML_START_ENDING ws BQ_ID ws XML_CLOSE
+                    XML_START_ENDING ws BQ_ID ws XML_CLOSE ws
                 )
                 {
                     TomList args = `concTomTerm(
@@ -567,7 +584,7 @@ basicTerm [TomList context] returns [TomTerm result]
             XML ws BQ_LPAREN ws 
             (
                 ( 
-                    (bqTerm[null] BQ_COMMA) => term = bqTerm[context] BQ_COMMA 
+                    (bqTerm[null] BQ_COMMA) => term = bqTerm[context] BQ_COMMA ws
                     {
                         blockList.add(term);
                     }
