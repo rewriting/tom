@@ -65,7 +65,7 @@ public class P3PEvaluator1 {
             datagroup@<DATA-GROUP></DATA-GROUP>
           </STATEMENT>
         </POLICY>
-     </POLICIES> -> { return datagroup; }
+     </POLICIES> -> { return `datagroup; }
 
   	  <RULESET>
         <RULE>
@@ -75,7 +75,7 @@ public class P3PEvaluator1 {
             </STATEMENT>
           </POLICY>
         </RULE>
-     </RULESET> -> { return datagroup; }
+     </RULESET> -> { return `datagroup; }
 
     }
 
@@ -94,8 +94,8 @@ public class P3PEvaluator1 {
     %match(TNode client) {
       <DATA-GROUP><DATA ref=ref></DATA></DATA-GROUP>
       -> { 
-		System.out.println("ref = " + ref); 
-		res = res && appearsIn(ref,pol);
+		System.out.println("ref = " + `ref); 
+		res = res && appearsIn(`ref,pol);
       }
     }
     return res;
@@ -106,7 +106,7 @@ public class P3PEvaluator1 {
     %match(TNode pol) {
       <DATA-GROUP><DATA ref=ref></DATA></DATA-GROUP>
       -> { 
-		if(ref.equals(refclient)) {
+		if(`ref.equals(refclient)) {
 			return true;
 		}
 	  }

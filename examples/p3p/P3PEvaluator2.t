@@ -78,7 +78,7 @@ public class P3PEvaluator2 {
   private boolean compareDataGroup(TNode pol, TNode client) {
     boolean res = true;
     %match(TNode client) {
-      <DATA-GROUP><DATA ref=ref></DATA></DATA-GROUP> -> { res = res && appearsIn(ref,pol); }
+      <DATA-GROUP><DATA ref=ref></DATA></DATA-GROUP> -> { res = res && appearsIn(`ref,pol); }
     }
     return res;
   }
@@ -87,7 +87,7 @@ public class P3PEvaluator2 {
     %match(TNode pol) {
       <DATA-GROUP><DATA ref=ref></DATA></DATA-GROUP>
          -> { 
-         if(ref.equals(refclient)) {
+         if(`ref.equals(refclient)) {
            return true;
          }
        }
