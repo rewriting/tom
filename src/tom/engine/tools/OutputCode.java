@@ -29,7 +29,7 @@ import java.io.*;
 
 public class OutputCode {
   protected Writer file;
-  private int lineCounter = 0;
+  private int lineCounter = 1;
 
   public OutputCode(Writer file) {
     this.file = file;
