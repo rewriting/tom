@@ -64,7 +64,7 @@ public class Tom {
   private TomGenerator generator;
   
   private static String version =
-    "\njtom 1.3gamma\n" +
+    "\njtom 1.3delta\n" +
     "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
     "                         Nancy, France.\n";
   
