@@ -18,7 +18,6 @@ header{
     import jtom.adt.tomsignature.types.*;
     import jtom.exception.*;
     import jtom.tools.*;
-
     import jtom.xml.Constants;
 
     import tom.platform.*;
@@ -79,7 +78,6 @@ options{
     }
     
     private TomEnvironment environment() {
-       // return getPluginPlatform().getEnvironment();
         return TomEnvironment.getInstance();
     }
 
@@ -106,11 +104,6 @@ options{
     public TomStructureTable getStructTable() {
         return `StructTable(debuggedStructureList);
     }
-/*
-    public NewTomBackQuoteParser tomBQ(){
-        return NewTomBackQuoteParser.getInstance();
-    }
-*/
 
     private int getLine(){
         return tomlexer.getLine();
@@ -140,9 +133,6 @@ options{
         return targetparser.getSelector();
     }
     
-    void p(String s){
-        System.out.println(s);
-    }
 }
 
 constant returns [Token result]
@@ -160,8 +150,7 @@ constant returns [Token result]
     ;
 
 
-// the %match construct : 
- 
+// the %match construct :
 matchConstruct [Option ot] returns [Instruction result] throws TomException
 { 
     result = null;
@@ -1180,48 +1169,6 @@ headSymbol [LinkedList optionList] returns [TomName result]
         }
     ;
 
-//This rule is called from the target parser
-//Then the rule calls the backquote parser with 2 cases :
-// 1) (...) -> bqTarget
-// 2) ALL_ID | ALL_ID* | ALL_ID(...) -> bqTargetAppl
-/*
-bqTerm returns [TomTerm result]
-{
-    String bqCode = null;
-    LinkedList blockList = new LinkedList();
-    result = null;
-}
-    :
-        (
-            l:LPAREN 
-            {
-                blockList.add(l);
-                selector().push("bqlexer");
-                result = bqparser.beginBqComposite();
-                selector().pop();
-            }
-        |
-            i:ALL_ID 
-            {
-                selector().push("bqlexer");
-                if(i.getText().equals("xml")){
-                  //  bqparser.setXmlTerm(true);
-                    //result = bqparser.beginBqAppl(i);
-                    result = bqparser.beginXmlBackquote();
-                    //p(result.toString());
-                }
-                else{
-                    //blockList.add(i);
-                    result = bqparser.beginBqAppl(i);
-                }
-                selector().pop();
-                
-            }
-        )
-    ;
-*/
-
-
 // Operator Declaration
 operator returns [Declaration result] throws TomException
 {
@@ -1304,13 +1251,6 @@ operator returns [Declaration result] throws TomException
 				"WarningTwoSameSlotDecl",
 				new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
 					     "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} );
-
-//                     environment().messageWarning(attribute.getOrgTrack().getLine(),
-//                         currentFile(),
-//                         "%op "+type.getText(),
-//                         ot.getLine(),
-//                         TomMessage.getString("WarningTwoSameSlotDecl"), 
-//                         new Object[]{sName.getString()});
                 }
             }
 
@@ -1333,13 +1273,6 @@ operator returns [Declaration result] throws TomException
 				    "WarningMissingSlotDecl",
 				    new Object[]{currentFile(), new Integer(ot.getLine()),
 						 "%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} );
-
-//                         environment().messageWarning(ot.getLine(), 
-//                             currentFile(),
-//                             "%op "+type.getText(), 
-//                             ot.getLine(), 
-//                             TomMessage.getString("WarningMissingSlotDecl"),
-//                             new Object[]{name1.getString()});
                         decl = emptyDeclaration;
                     }
                     else {
@@ -1360,12 +1293,6 @@ operator returns [Declaration result] throws TomException
 				new Object[]{currentFile(), 
 					     new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
 					     "%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} );
-
-//                     environment().messageWarning(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
-//                         currentFile(),
-//                         "%op "+type.getText(),
-//                         ot.getLine(),
-//                         TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()});
                 }
             }
             
@@ -2249,30 +2176,6 @@ protected
 HEX_DIGIT
 	:	('0'..'9'|'A'..'F'|'a'..'f')
 	;
-/*
-BASIC_ID
-options{ testLiterals = true; }     
-    :   ('a'..'z' | 'A'..'Z')
-        ( 
-            ('a'..'z' | 'A'..'Z') 
-        |   ('0'..'9') 
-        |   UNDERSCORE 
-        )*
-    ;
-*/
-
-/*
-ID
-options{ testLiterals = true; }   
-    :   ('a'..'z' | 'A'..'Z') 
-        ( 
-            ('a'..'z' | 'A'..'Z') 
-        |   ('0'..'9') 
-        |   UNDERSCORE 
-        |   ( MINUS ('a'..'z' | 'A'..'Z') ) 
-        )*  
-    ;
-*/
 
 protected LETTER    :   ('a'..'z' | 'A'..'Z')   ;
 protected DIGIT     :   ('0'..'9')  ;
@@ -2284,7 +2187,6 @@ options{testLiterals = true;}
             (ID_MINUS) => ID_MINUS
         |   ID
         )
-//        {System.out.println("id "+$getText);}
     ;
         
 
@@ -2292,21 +2194,11 @@ protected ID
 options{testLiterals = true;}
     :
         LETTER
-        ( LETTER | DIGIT | UNDERSCORE  /*( (MINUS LETTER) => MINUS LETTER )*/ 
+        ( 
+            options{greedy = true;}:
+            ( LETTER | DIGIT | UNDERSCORE )
         )* 
     ;   
-/*
-ID_MINUS
-options{testLiterals = true;}   
-    :   ('a'..'z' | 'A'..'Z') 
-        ( 
-            ('a'..'z' | 'A'..'Z') 
-        |   ('0'..'9') 
-        |   UNDERSCORE 
-        |   ( MINUS ('a'..'z' | 'A'..'Z') ) 
-        )*  
-    ;
-*/
 
 protected ID_MINUS
     :

@@ -27,6 +27,7 @@ header{
 class NewTargetParser extends Parser;
 
 options{
+    // antlr does not catch exceptions automaticaly
     defaultErrorHandler = false;
 }
 
@@ -56,7 +57,6 @@ options{
     // locations of target language blocks
     Stack lines = new Stack();
     Stack columns = new Stack();
-
 
     public NewTargetParser(TokenStreamSelector selector,String currentFile,HashSet includedFiles,HashSet alreadyParsedFiles){
         this(selector);
@@ -113,8 +113,6 @@ options{
     public TomStructureTable getStructTable() {
         return tomparser.getStructTable();
     }
-
-
 
     // pop the line number of the current block
     public int popLine(){
@@ -174,11 +172,12 @@ options{
         return (! code.equals("") && ! code.matches("\\s*"));
     }
 
-    // returns the current line 
+    // returns the current line number
     public int getLine(){
         return targetlexer.getLine();
     }
     
+    // returns the current column number
     public int getColumn(){
         return targetlexer.getColumn();
     }
@@ -356,7 +355,6 @@ ruleConstruct [LinkedList list] throws TomException
                 list.add(code);
             }
             
-
             Option ot = `OriginTracking(
                 Name("Rule"),
                 t.getLine(),
@@ -479,25 +477,19 @@ signature [LinkedList list] throws TomException
 				Object vasEnvInstance = getInstanceMethod.invoke(vasEnvironmentClass, new Object[]{});
 				TomAlertList alerts = (TomAlertList)(getErrorMethod.invoke(vasEnvInstance, new Object[]{}));
 				TomAlert alert;
-
+                
                 if(!alerts.isEmpty()) {
 					while(!alerts.isEmpty()) {
 						alert = alerts.getHead();
                         if(alert.isError()) {
-			    logger.log(Level.SEVERE,
-				       "SimpleMessage",
-				       new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-
-//                             environment().messageError(
-//                                 alert.getMessage(),
-//                                 currentFile,alert.getLine()+initialVasLine);
-                        } else {
-			    logger.log(Level.WARNING,
-				       "SimpleMessage",
-				       new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-
-//                             environment().messageWarning(alert.getMessage(),
-//                                 currentFile, alert.getLine()+initialVasLine);
+                            logger.log(Level.SEVERE,
+                                "SimpleMessage",
+                                new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
+                        } 
+                        else {
+                            logger.log(Level.WARNING,
+                                "SimpleMessage",
+                                new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
                         }
 						alerts = alerts.getTail();
 					}
@@ -545,13 +537,13 @@ backquoteTerm [LinkedList list]
             } 
             
             Option ot = `OriginTracking(Name("Backquote"),t.getLine(), Name(currentFile));
-            //TomTerm bqTerm = tomparser.bqTerm();
             TomTerm bqTerm = bqparser.beginBackquote();
+            
+            // update position for new target block
             pushLine();
             pushColumn();
             
             list.add(bqTerm);
-
         }
     ;
 
@@ -569,6 +561,9 @@ localVariable [LinkedList list]
             }
             
             list.add(`LocalVariable());
+            
+            pushLine();
+            pushColumn();
         }
     ;
 
@@ -951,7 +946,7 @@ WS	:	(	' '
 // comments
 COMMENT 
     :
-        ( SL_COMMENT | t:ML_COMMENT )//{$setType(t.getType());} )
+        ( SL_COMMENT | t:ML_COMMENT )
         { $setType(Token.SKIP);}
 	;
 

@@ -556,7 +556,7 @@ target returns [Token result]
     :
         in:BQ_INTEGER {result = in;}
     |   str:BQ_STRING {result = str;}
-    |   m:BQ_MINUS {result = m;}
+//    |   m:BQ_MINUS {result = m;}
     |   s:BQ_STAR {result = s;}
     |   w:BQ_WS {result = w;}
     |   d:BQ_DOT {result = d;} 
@@ -596,8 +596,9 @@ basicTerm [TomList context] returns [TomTerm result]
         (
             XML ws BQ_LPAREN ws 
             (
-                ( 
-                    (bqTerm[null] BQ_COMMA) => term = bqTerm[context] BQ_COMMA ws
+                (
+                    (bqTerm[null] BQ_COMMA) => 
+                    term = bqTerm[context] BQ_COMMA ws
                     {
                         blockList.add(term);
                     }
@@ -615,7 +616,6 @@ basicTerm [TomList context] returns [TomTerm result]
             )? BQ_RPAREN
             {
                 TomList compositeList = buildList(blockList);
-//makeCompositeList(blockList);
                 result = `Composite(
                     concTomTerm(
                         TargetLanguageToTomTerm(ITL("(")),
@@ -833,10 +833,12 @@ BQ_SIMPLE_ID
 options{ testLiterals = true; }   
     :   ('a'..'z' | 'A'..'Z') 
         ( 
-            ('a'..'z' | 'A'..'Z') 
-        |   BQ_UNDERSCORE 
-//        |   BQ_DOT
-        |   BQ_DIGIT
+            options{greedy=true;}:
+            (
+                ('a'..'z' | 'A'..'Z') 
+            |   BQ_UNDERSCORE 
+            |   BQ_DIGIT
+            )
         )*
     ;
 
@@ -856,13 +858,8 @@ BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;
 
 BQ_STRING  :   '"' (BQ_ESC|~('"'|'\\'|'\n'|'\r'))* '"'
     ;
-
-ANY 
-options{ testLiterals = true; } 
-    :   '\u0000'..'\uffff'  
-    ;
    
-BQ_MINUS   :   '-'  ;
+protected BQ_MINUS   :   '-'  ;
 
 protected
 BQ_DIGIT   :   ('0'..'9')  ;
@@ -909,3 +906,8 @@ protected
 BQ_HEX_DIGIT
 	:	('0'..'9'|'A'..'F'|'a'..'f')
 	;
+
+ANY 
+    :
+        '\u0000'..'\uffff'  
+    ;
