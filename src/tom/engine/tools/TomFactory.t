@@ -86,7 +86,7 @@ public class TomFactory extends TomBase {
     %match(TomTerm term) {
       Appl[nameList=(Name(tomName))] -> {
           //System.out.println("tomName = " + tomName);
-        TomSymbol tomSymbol = symbolTable.getSymbol(tomName);
+        TomSymbol tomSymbol = symbolTable.getSymbol(`tomName);
         if(tomSymbol != null) {
           if(isStringOperator(tomSymbol)) {
             Option info = ast().makeOriginTracking(Constants.TEXT_NODE,-1,"??");
@@ -117,9 +117,9 @@ public class TomFactory extends TomBase {
     LinkedList list = new LinkedList();
     %match(TomTerm term) {
       Appl[nameList=(Name("")),args=args] -> {
-        while(!args.isEmpty()) {
-          list.add(metaEncodeXMLAppl(symbolTable,args.getHead()));
-          args = args.getTail();
+        while(!`args.isEmpty()) {
+          list.add(metaEncodeXMLAppl(symbolTable,`args.getHead()));
+          `args = `args.getTail();
         }
         return list;
       }
@@ -141,7 +141,7 @@ public class TomFactory extends TomBase {
       manyTomList(head@VariableStar[],tail) |
       manyTomList(head@Composite(concTomTerm(VariableStar[])),tail) -> {
           /*System.out.println("head = " + head);*/
-        TomTerm subList = buildList(name,tail);
+        TomTerm subList = buildList(name,`tail);
         return `BuildAppendList(name,head,subList);
       }
 
@@ -149,7 +149,7 @@ public class TomFactory extends TomBase {
       manyTomList(head@BuildVariable[],tail) |
       manyTomList(head@Variable[],tail) |
       manyTomList(head@Composite(_),tail) -> {
-        TomTerm subList = buildList(name,tail);
+        TomTerm subList = buildList(name,`tail);
         return `BuildConsList(name,head,subList);
       }
     }
@@ -171,7 +171,7 @@ public class TomFactory extends TomBase {
       manyTomList(head@VariableStar[],tail) |
       manyTomList(head@Composite(concTomTerm(VariableStar[])),tail) -> {
           /*System.out.println("head = " + head);*/
-        TomTerm subList = buildArray(name,tail,size+1);
+        TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildAppendArray(name,head,subList);
       }
 
@@ -179,7 +179,7 @@ public class TomFactory extends TomBase {
       manyTomList(head@BuildVariable[],tail) |
       manyTomList(head@Variable[],tail) |
       manyTomList(head@Composite(_),tail) -> {
-        TomTerm subList = buildArray(name,tail,size+1);
+        TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildConsArray(name,head,subList);
       }
     }

@@ -142,8 +142,8 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     TomList listComposite = (TomList) stackList.peek();
     %match(TomList listComposite) {
       concTomTerm(X1*,Composite(concTomTerm(list*))) -> {
-        while(!list.isEmpty()) {
-          TomTerm term = list.getHead();
+        while(!`list.isEmpty()) {
+          TomTerm term = `list.getHead();
           matchBlock: {
             %match(TomTerm term) {
               TargetLanguageToTomTerm(ITL("(")) -> {
@@ -156,7 +156,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
               }
             }
           } // end matchBlock
-          list = list.getTail();
+          `list = `list.getTail();
         }
         return open==0;
       }
@@ -201,7 +201,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
         %match(Token token, Token next) {
           IDENT(name), LPAREN[] -> {
             stackOption.push(`OriginTracking(Name(name), ((Integer)nameToDecLineMap.get(token)).intValue(), Name(currentFileName)));
-            stackName.push(name);
+            stackName.push(`name);
             stackList.push(`concTomTerm(Composite(concTomTerm())));
             token = next;
             if(it.hasNext()) {
@@ -214,7 +214,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
           }
           
           IDENT(name), _ -> {
-            addToLastComposite(stackList,buildBackQuoteAppl(name,((Integer)nameToDecLineMap.get(token)).intValue(),currentFileName));
+            addToLastComposite(stackList,buildBackQuoteAppl(`name,((Integer)nameToDecLineMap.get(token)).intValue(),currentFileName));
             
             break matchBlock;
           }

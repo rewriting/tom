@@ -52,7 +52,7 @@ public class TomKernelCompiler extends TomBase {
 
   private TomName getLabel(OptionList list) {
     %match(OptionList list) {
-      concOption(_*,Label(name@Name[]),_*) -> { return name; }
+      concOption(_*,Label(name@Name[]),_*) -> { return `name; }
     }
     return null;
   }
@@ -70,8 +70,8 @@ public class TomKernelCompiler extends TomBase {
               boolean generatedMatch = false;
               String currentDebugKey = "noDebug";
               if(debugMode) {
-                generatedMatch = hasGeneratedMatch(optionList);
-                Option orgTrack = findOriginTracking(optionList);
+                generatedMatch = hasGeneratedMatch(`optionList);
+                Option orgTrack = findOriginTracking(`optionList);
                 currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
               }
                 
@@ -88,9 +88,9 @@ public class TomKernelCompiler extends TomBase {
                  */
               int actionNumber = 0;
               boolean defaultPA =false;
-              while(!l2.isEmpty()) {
+              while(!`l2.isEmpty()) {
                 actionNumber++;
-                TomTerm pa = l2.getHead();
+                TomTerm pa = `l2.getHead();
                 defaultPA = hasDefaultCase(pa.getOption());
                 patternList = pa.getTermList().getTomList();
                 if (debugMode && defaultPA) {
@@ -125,14 +125,14 @@ public class TomKernelCompiler extends TomBase {
                   //System.out.println("automata = " + automata);
                   
                 automataList = append(automata,automataList);
-                l2 = l2.getTail();
+                `l2 = `l2.getTail();
               }
                 
                 /*
                  * return the compiled Match construction
                  */
               InstructionList astAutomataList = automataListCompileMatchingList(automataList, generatedMatch);
-              Instruction astAutomata = collectVariableFromSubjectList(l1,1,rootpath,`AbstractBlock(astAutomataList));
+              Instruction astAutomata = collectVariableFromSubjectList(`l1,1,rootpath,`AbstractBlock(astAutomataList));
               return `CompiledMatch(astAutomata, optionList);
             }
               
@@ -159,22 +159,22 @@ public class TomKernelCompiler extends TomBase {
     %match(TomList subjectList) { 
       emptyTomList() -> { return body; }
       manyTomList(subjectVar@Variable[option=option,astType=variableType],tail) -> {
-        body = collectVariableFromSubjectList(tail,index+1,path,body);
+        body = collectVariableFromSubjectList(`tail,index+1,path,body);
         TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType,concConstraint());
           // the UnamedBlock encapsulation is needed for Caml
         return `Let(variable,Cast(variableType,TomTermToExpression(subjectVar)),UnamedBlock(concInstruction(body)));
       }
 
       manyTomList(subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_),tail) -> {
-        body = collectVariableFromSubjectList(tail,index+1,path,body);
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+        body = collectVariableFromSubjectList(`tail,index+1,path,body);
+        TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         TomType tomType = getSymbolCodomain(tomSymbol);
         TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType, concConstraint());
         return `Let(variable,TomTermToExpression(subjectVar),body);
       }
 
-      manyTomList(subjectVar,tail) -> {
-        throw new TomRuntimeException(new Throwable("collectVariableFromSubjectList: strange term: " + subjectVar));
+      manyTomList(subjectVar,_) -> {
+        throw new TomRuntimeException(new Throwable("collectVariableFromSubjectList: strange term: " + `subjectVar));
       }
 
     }
@@ -188,25 +188,25 @@ public class TomKernelCompiler extends TomBase {
     %match(TomList automataList) {
       emptyTomList() -> { return `emptyInstructionList(); }
       manyTomList(Automata(optionList,patternList,numberList,instruction),l)  -> {
-        InstructionList newList = automataListCompileMatchingList(l, generatedMatch);
+        InstructionList newList = automataListCompileMatchingList(`l, generatedMatch);
 
         if(!generatedMatch && debugMode) {
-          String debugKey = getDebug(optionList);
+          String debugKey = getDebug(`optionList);
           Instruction tl1 = `TargetLanguageToInstruction(ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+debugKey+"\");\n"));
           Instruction tl2 = `TargetLanguageToInstruction(ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+debugKey+"\");\n"));
-          if(!hasDefaultCase(optionList)) {
-            instruction = `UnamedBlock(concInstruction(tl1,instruction,tl2));
+          if(!hasDefaultCase(`optionList)) {
+            `instruction = `UnamedBlock(concInstruction(tl1,instruction,tl2));
           } else {
-            instruction = `UnamedBlock(concInstruction(tl1,instruction));
+            `instruction = `UnamedBlock(concInstruction(tl1,instruction));
           }
         }
          
-        if(getLabel(optionList) != null) {
+        if(getLabel(`optionList) != null) {
             /*
              * if a label is assigned to a pattern (label:pattern -> action)
              * we generate corresponding labeled-block
              */
-          instruction = `NamedBlock(getLabel(optionList).getString(),
+          `instruction = `NamedBlock(getLabel(optionList).getString(),
                                     concInstruction(instruction));
           					 
         }
@@ -239,14 +239,14 @@ public class TomKernelCompiler extends TomBase {
       
       manyTomList(var@Variable[option=optionList, astType=termType,constraints=constraints],termTail) |
         manyTomList(var@UnamedVariable[option=optionList,astType=termType,constraints=constraints],termTail) -> {
-        Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
+        Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,indexTerm+1);
         Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType, concConstraint()));
-        return buildLet(var, source, subAction);
+        return buildLet(`var, source, subAction);
       }
       
       manyTomList(currentTerm@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs,constraints=constraints],termTail) -> {
-        Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+        Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,indexTerm+1);
+        TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         
@@ -266,7 +266,7 @@ public class TomKernelCompiler extends TomBase {
                                                            tomSymbol,path,subAction,
                                                            newSubjectVariableAST,
                                                            newSubjectVariableAST),
-                                                         termArgs,
+                                                         `termArgs,
                                                          indexSubterm,
                                                          ensureNotEmptyList);
           automataInstruction = `LetRef(newSubjectVariableAST,
@@ -282,7 +282,7 @@ public class TomKernelCompiler extends TomBase {
           Instruction automata = genArrayMatchingAutomata(new MatchingParameter(
                                                             tomSymbol,path,subAction,
                                                             newVariableListAST, newVariableIndexAST),
-                                                          termArgs,
+                                                          `termArgs,
                                                           indexSubterm,
                                                           ensureNotEmptyList);
           Expression glZero = `TomTermToExpression(TargetLanguageToTomTerm(ITL("0")));
@@ -292,7 +292,7 @@ public class TomKernelCompiler extends TomBase {
                                          automata));
         } else {
           int indexSubterm = 0;
-          Instruction automata = genSyntacticMatchingAutomata(subAction,termArgs,path,indexSubterm+1);
+          Instruction automata = genSyntacticMatchingAutomata(subAction,`termArgs,path,indexSubterm+1);
           automataInstruction = `collectSubtermFromSubjectList(termArgs,termTypeList,tomSymbol,subjectVariableAST,indexSubterm,path,automata); 
         }
         
@@ -303,7 +303,7 @@ public class TomKernelCompiler extends TomBase {
              }
           */
 
-        automataInstruction = compileConstraint(currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction);
+        automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction);
 
         Expression cond = `expandDisjunction(EqualFunctionSymbol(termType,subjectVariableAST,currentTerm));
         Instruction test = `IfThenElse(cond,automataInstruction,Nop());
@@ -342,8 +342,8 @@ public class TomKernelCompiler extends TomBase {
           /*
            * get an element and store it
            */
-        Instruction subAction = genListMatchingAutomata(p,termTail,indexTerm+1,true);
-        return genGetElementList(p.subjectListName, var, termType, subAction, ensureNotEmptyList);
+        Instruction subAction = genListMatchingAutomata(p,`termTail,indexTerm+1,true);
+        return genGetElementList(p.subjectListName, `var, `termType, subAction, ensureNotEmptyList);
       }
 
       manyTomList(term@Appl[nameList=nameList@(Name(tomName),_*)],termTail)  -> {
@@ -351,10 +351,10 @@ public class TomKernelCompiler extends TomBase {
            * get an element
            * perform syntactic matching
            */
-        Instruction subAction = genListMatchingAutomata(p,termTail,indexTerm+1,true);
+        Instruction subAction = genListMatchingAutomata(p,`termTail,indexTerm+1,true);
 
         subAction = `genSyntacticMatchingAutomata(subAction,concTomTerm(term),p.path,indexTerm);
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+        TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
         TomTerm var =  `Variable(option(),PositionName(newPath),termType,concConstraint());
@@ -369,7 +369,7 @@ public class TomKernelCompiler extends TomBase {
            * - tail = only VariableStar or UnamedVariableStar
            * - tail = other
            */
-        if(termTail.isEmpty()) {
+        if(`termTail.isEmpty()) {
             /*
              * generate:
              * ---------
@@ -377,7 +377,7 @@ public class TomKernelCompiler extends TomBase {
              * ...
              */
           Expression source = `TomTermToExpression(Ref(p.subjectListName));
-          return buildLet(var, source, p.action);
+          return buildLet(`var, source, p.action);
         } else {
             /*
              * generate:
@@ -386,17 +386,17 @@ public class TomKernelCompiler extends TomBase {
              * LetRef end_i   = subjectList;
              * ...
              */
-          Instruction subAction = genListMatchingAutomata(p,termTail,indexTerm+1,false);
+          Instruction subAction = genListMatchingAutomata(p,`termTail,indexTerm+1,false);
           TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(makeNumber(indexTerm)));
           TomNumberList pathEnd = (TomNumberList) p.path.append(`End(makeNumber(indexTerm)));
           TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType,concConstraint());
           TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),termType,concConstraint());
 
           Expression source = `GetSliceList(p.symbol.getAstName(),variableBeginAST,Ref(variableEndAST));
-          Instruction let = buildLet(var, source, subAction);
+          Instruction let = buildLet(`var, source, subAction);
           Instruction tailExp = `Assign(variableEndAST,GetTail(Ref(variableEndAST)));
           Instruction loop;
-          if(containOnlyVariableStar(termTail)) {
+          if(containOnlyVariableStar(`termTail)) {
               /*
                * do {
                *   * SUBSTITUTION: E_i
@@ -456,7 +456,7 @@ public class TomKernelCompiler extends TomBase {
 
       manyTomList(VariableStar[],termTail) |
       manyTomList(UnamedVariableStar[],termTail) -> {
-        return containOnlyVariableStar(termTail);
+        return containOnlyVariableStar(`termTail);
       }
     }
     return false;
@@ -523,8 +523,8 @@ public class TomKernelCompiler extends TomBase {
           /*
            * get an element and store it
            */
-        Instruction subAction = genArrayMatchingAutomata(p,termTail,indexTerm+1,true);
-        return genGetElementArray(p.subjectListName, p.subjectListIndex, var, termType, subAction, ensureNotEmptyList);
+        Instruction subAction = genArrayMatchingAutomata(p,`termTail,indexTerm+1,true);
+        return genGetElementArray(p.subjectListName, p.subjectListIndex, `var, `termType, subAction, ensureNotEmptyList);
       }
 
       manyTomList(term@Appl[nameList=nameList@(Name(tomName),_*)],termTail)  -> {
@@ -532,10 +532,10 @@ public class TomKernelCompiler extends TomBase {
            * get an element
            * perform syntactic matching
            */
-        Instruction subAction = genArrayMatchingAutomata(p,termTail,indexTerm+1,true);
+        Instruction subAction = genArrayMatchingAutomata(p,`termTail,indexTerm+1,true);
 
         subAction = `genSyntacticMatchingAutomata(subAction,concTomTerm(term),p.path,indexTerm);
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+        TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
         TomTerm var =  `Variable(option(),PositionName(newPath),termType,concConstraint());
@@ -551,7 +551,7 @@ public class TomKernelCompiler extends TomBase {
            * - tail = only VariableStar or UnamedVariableStar
            * - tail = other
            */
-        if(termTail.isEmpty()) {
+        if(`termTail.isEmpty()) {
             /*
              * generate:
              * ---------
@@ -563,7 +563,7 @@ public class TomKernelCompiler extends TomBase {
                                              Ref(p.subjectListIndex),
                                              ExpressionToTomTerm(GetSize(p.subjectListName))
                                              );
-          Instruction let = buildLet(var, source, p.action);
+          Instruction let = buildLet(`var, source, p.action);
           return let;
         } else {
           /*
@@ -573,7 +573,7 @@ public class TomKernelCompiler extends TomBase {
            * int end_i   = subjectIndex;
            * ...
            */
-          Instruction subAction = genArrayMatchingAutomata(p,termTail,indexTerm+1,false);
+          Instruction subAction = genArrayMatchingAutomata(p,`termTail,indexTerm+1,false);
           TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(makeNumber(indexTerm)));
           TomNumberList pathEnd = (TomNumberList) p.path.append(`End(makeNumber(indexTerm)));
           TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),symbolTable().getIntType(),concConstraint());
@@ -584,10 +584,10 @@ public class TomKernelCompiler extends TomBase {
                                              variableBeginAST,
                                              Ref(variableEndAST));
 
-          Instruction let = buildLet(var, source, subAction);
+          Instruction let = buildLet(`var, source, subAction);
           Instruction increment = `Assign(variableEndAST,AddOne(Ref(variableEndAST)));
           Instruction loop;
-          if(containOnlyVariableStar(termTail)) {
+          if(containOnlyVariableStar(`termTail)) {
             /*
              * do {
              *   * SUBSTITUTION: E_i
@@ -686,10 +686,10 @@ public class TomKernelCompiler extends TomBase {
       emptyTomList() -> { return body; }
       
       manyTomList(subtermArg,tail) -> {
-        body = collectSubtermFromSubjectList(tail,termTypeList.getTail(),
+        body = collectSubtermFromSubjectList(`tail,termTypeList.getTail(),
                                              tomSymbol,subjectVariableAST,
                                              indexSubterm+1,path,body);
-        if(subtermArg.isUnamedVariable() && !isAnnotedVariable(subtermArg)) {
+        if(`subtermArg.isUnamedVariable() && !isAnnotedVariable(`subtermArg)) {
             // This is an optimisation 
             // Do not assign the subterm: skip the subterm 
           return body;
@@ -716,11 +716,11 @@ public class TomKernelCompiler extends TomBase {
     Expression cond = `FalseTL();
     %match(Expression exp) {
       EqualFunctionSymbol(termType,exp1,Appl[option=option,nameList=nameList,args=l]) -> {
-        while(!nameList.isEmpty()) {
-          TomName name = nameList.getHead();
+        while(!`nameList.isEmpty()) {
+          TomName name = `nameList.getHead();
           Expression check = `EqualFunctionSymbol(termType,exp1,Appl(option,concTomName(name),l,concConstraint()));
           cond = `Or(check,cond);
-          nameList = nameList.getTail();
+          `nameList = `nameList.getTail();
         }
       }
     }
@@ -738,15 +738,15 @@ public class TomKernelCompiler extends TomBase {
 	private Instruction compileConstraint(TomTerm subject, Expression source, Instruction body) {
     %match(TomTerm subject) {
       (Variable|VariableStar)[constraints=constraints] -> {
-				return buildConstraint(constraints,`TomTermToExpression(subject),body);
+				return buildConstraint(`constraints,`TomTermToExpression(subject),body);
       }
 
       (UnamedVariable|UnamedVariableStar)[constraints=constraints] -> {
-				return buildConstraint(constraints,source,body);
+				return buildConstraint(`constraints,source,body);
       }
 
       Appl[constraints=constraints] -> {
-				return buildConstraint(constraints,source,body);
+				return buildConstraint(`constraints,source,body);
       }
 
       _ -> {
@@ -763,18 +763,18 @@ public class TomKernelCompiler extends TomBase {
 
       concConstraint(Equal(var) ,tail*) -> {
           //System.out.println("constraint: " + source + " EqualTo " + var);
-        Instruction subBody = compileConstraint(var,source,body);
+        Instruction subBody = compileConstraint(`var,source,body);
         return `buildConstraint(tail,source,IfThenElse(EqualTerm(var,ExpressionToTomTerm(source)),subBody,Nop()));
       }
 
       concConstraint(AssignTo(var@(Variable|VariableStar)[]) ,tail*) -> {
           //System.out.println("constraint: " + source + " AssignTo " + var);
-        Instruction subBody = compileConstraint(var,source,body);
+        Instruction subBody = compileConstraint(`var,source,body);
         return `buildConstraint(tail,source,Let(var,source,subBody));
       }
 
       concConstraint(head,tail*) -> {
-        throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraint: " + head));
+        throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraint: " + `head));
       }
     }
     throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraints: " + constraints));

@@ -14,7 +14,7 @@ EXTRA_DIST 	= $(BOOTSOURCES) $(TOMSOURCES)
 CLEANFILES 	= $(TOMSOURCES:.t=.java) tomjava.stamp
 BUILT_SOURCES   = tomjava.stamp $(BOOTSOURCES)
 
-TOMFLAGS = --noWarning
+TOMFLAGS = --noWarning -O
 include $(top_srcdir)/src/make_rules
 
 bootstep:

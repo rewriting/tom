@@ -63,7 +63,7 @@ public class SharedMultiSet extends ATermSet {
             %match(JGTreeSet t) {
               emptySet() -> {return false;}
               pair[value=x] -> {
-                res.add(x);
+                res.add(`x);
                 return false;
               }
               _ -> {return true;}
@@ -101,7 +101,7 @@ public class SharedMultiSet extends ATermSet {
     %match(JGTreeSet t) {
       emptySet()    -> { return 0; }
       pair[value=x] -> { return 1; }
-      branch(l, r) -> {return size(l) + size(r);}
+      branch(l, r) -> {return size(`l) + size(`r);}
     }
     return 0;
   }
@@ -114,9 +114,9 @@ public class SharedMultiSet extends ATermSet {
     %match(JGTreeSet t) {
       emptySet()    -> { return 0; }
       pair[multiplicity=m] -> {
-        return m;
+        return `m;
       }
-      branch(l, r) -> {return multiplicitySize(l) + multiplicitySize(r);}
+      branch(l, r) -> {return multiplicitySize(`l) + multiplicitySize(`r);}
     }
     return 0;
   }
@@ -126,13 +126,13 @@ public class SharedMultiSet extends ATermSet {
       emptySet() -> {
         return null;
       }
-      pair[value=x] -> {return x;}
+      pair[value=x] -> {return `x;}
       branch(l,r) -> {
-        ATerm left = getHead(l);
+        ATerm left = getHead(`l);
         if(left != null) {
           return left;
         }
-        return getHead(r);
+        return getHead(`r);
       }
     }
     return null;
@@ -165,9 +165,9 @@ public class SharedMultiSet extends ATermSet {
           %match(JGTreeSet t) {
             emptySet() -> {return t;}
             pair[] -> {return t;}
-            branch(emptySet(), p@pair[]) -> {return p;}
-            branch(p@pair[], emptySet()) -> {return p;}
-            branch(e@emptySet(), emptySet()) -> {return e;}
+            branch(emptySet(), p@pair[]) -> {return `p;}
+            branch(p@pair[], emptySet()) -> {return `p;}
+            branch(e@emptySet(), emptySet()) -> {return `e;}
             branch(l1, l2) -> {return `branch(reworkJGTreeSet(l1), reworkJGTreeSet(l2));}
             _ -> { return traversal.genericTraversal(t,this); }
           }
@@ -192,12 +192,12 @@ public class SharedMultiSet extends ATermSet {
       }
 
       pair(elt, mult), x -> {
-        return override(elt, mult, x, level);
+        return override(`elt, `mult, `x, level);
       }
 
       x, pair(elt, mult) -> {
           // underride dont worry about multiplicity
-        return underride(elt, x, level);
+        return underride(`elt, `x, level);
       }
 
       branch(l1, r1), branch(l2, r2) -> {
@@ -217,9 +217,9 @@ public class SharedMultiSet extends ATermSet {
       
       p@pair(elt,mult), x |
         x, p@pair(elt,mult) -> {
-        if (contains(elt, x, level)) {
+        if (contains(`elt, `x, level)) {
             /* Warning: we have to choose one of the 2 element: with the lowest multiplicity*/
-          return p;
+          return `p;
         } else {
           return `emptySet();
         }
@@ -241,11 +241,11 @@ public class SharedMultiSet extends ATermSet {
       }
       
       pair[value=y], x -> {
-        return remove(y, x, level);
+        return remove(`y, `x, level);
       }
 
       x, pair[value=y] -> {
-        if (contains(y, x)) {
+        if (contains(`y, `x)) {
             // Warning: we have to choose one of the 2 element: with the lowest multiplicity
           return m2;
         } else {
@@ -266,18 +266,18 @@ public class SharedMultiSet extends ATermSet {
       emptySet()      -> {return t;}
 
       pair[value=x]   -> {
-        if (x == elt) {return `emptySet();}
+        if (`x == elt) {return `emptySet();}
         else {return t;}
       }
 
       branch(l, r) -> {
         JGTreeSet l1 = null, r1=null;
         if( isBitZero(elt, level) ) {
-          l1 = remove(elt, l, level+1);
-          r1 = r;
+          l1 = remove(elt, `l, level+1);
+          r1 = `r;
         } else {
-          l1 = l;
-          r1 = remove(elt, r, level+1);
+          l1 = `l;
+          r1 = remove(elt, `r, level+1);
         }
         %match(JGTreeSet l1, JGTreeSet r1) {
           emptySet(), pair[] -> {return r1;}
@@ -294,17 +294,17 @@ public class SharedMultiSet extends ATermSet {
       emptySet() -> {return false;}
       
       pair[value=x] -> {
-        if(x == elt) return true;
+        if(`x == elt) return true;
       }
       
       branch(l, r) -> {
         if(level == depth) {
-          return (contains(elt, l, level) || contains(elt, r, level));
+          return (contains(elt, `l, level) || contains(elt, `r, level));
         }
         if( isBitZero(elt, level)) {
-          return contains(elt, l, level+1);
+          return contains(elt, `l, level+1);
         } else {
-          return contains(elt, r, level+1);
+          return contains(elt, `r, level+1);
         }
       }
     }
@@ -319,7 +319,7 @@ public class SharedMultiSet extends ATermSet {
       }
 
       pair[value=x, multiplicity=mult]   -> {
-        if(x == elt) {  return makePair(elt, mult+multiplicity);}
+        if(`x == elt) {  return makePair(elt, `mult+multiplicity);}
         else if( level >= depth ) {
           System.out.println("Collision!!!!!!!!");
           collisions++;
@@ -327,10 +327,10 @@ public class SharedMultiSet extends ATermSet {
           return `branch(t, singleton(elt));
           
         }
-        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(override(elt, multiplicity, t, lev), emptySet());}
-        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptySet(), override(elt, multiplicity, t, lev));}
-        else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(makePair(elt, multiplicity), t);}
-        else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, makePair(elt, multiplicity));}
+        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(override(elt, multiplicity, t, lev), emptySet());}
+        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptySet(), override(elt, multiplicity, t, lev));}
+        else if ( isBitZero(elt, level) && isBitOne(`x, level) ) { return `branch(makePair(elt, multiplicity), t);}
+        else if ( isBitOne(elt, level)  && isBitZero(`x, level) ){ return `branch(t, makePair(elt, multiplicity));}
       }
       
       branch(l, r) -> {
@@ -356,7 +356,7 @@ public class SharedMultiSet extends ATermSet {
       emptySet()      -> {return `singleton(elt);}
 
       singleton(x)   -> {
-        if(x == elt) {  return t;}
+        if(`x == elt) {  return t;}
         else if( level >= depth ) {
           System.out.println("Collision!!!!!!!!");
           collisions++;
@@ -364,10 +364,10 @@ public class SharedMultiSet extends ATermSet {
           return `branch(t, singleton(elt));
           
         }
-        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(underride(elt, t, lev), emptySet());}
-        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptySet(), underride(elt, t, lev));}
-        else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(singleton(elt), t);}
-        else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, singleton(elt));}
+        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(underride(elt, t, lev), emptySet());}
+        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptySet(), underride(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitOne(`x, level) ) { return `branch(singleton(elt), t);}
+        else if ( isBitOne(elt, level)  && isBitZero(`x, level) ){ return `branch(t, singleton(elt));}
       }
 
       branch(l, r) -> {

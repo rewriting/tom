@@ -490,7 +490,7 @@ abstract public class TomChecker extends TomTask {
               foundOpMake = true;
               `verifyMakeDeclArgs(makeArgsList, domainLength, orgTrack, symbolType);
             } else {
-              messageError(orgTrack.getLine(), 
+              messageError(`orgTrack.getLine(), 
                            symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
                            TomCheckerMessage.MacroFunctionRepeated,
                            new Object[]{MAKE}, TomCheckerMessage.TOM_ERROR);
@@ -514,7 +514,7 @@ abstract public class TomChecker extends TomTask {
           messageError(orgTrack.getLine(), 
                        symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
                        TomCheckerMessage.NonLinearMacroFunction,
-                       new Object[]{MAKE, name},
+                       new Object[]{MAKE, `name},
                        TomCheckerMessage.TOM_ERROR);
         } else {
           listVar.add(`name);
@@ -612,7 +612,7 @@ abstract public class TomChecker extends TomTask {
                        TomCheckerMessage.TOM_ERROR);
           typeMatchArgs.add(null);
         } else {
-          typeMatchArgs.add(tomType);
+          typeMatchArgs.add(`tomType);
         }
         if(nameMatchArgs.indexOf(`name) == -1) {
           nameMatchArgs.add(`name);
@@ -676,7 +676,7 @@ abstract public class TomChecker extends TomTask {
     currentTomStructureOrgTrack = orgTrack;
     String headSymbolName = "Unknown return type";
     %match(TomRuleList ruleList) {	// for each rewrite rule
-      b1: concTomRule(_*, RewriteRule(Term(lhs),Term(rhs),condList,option),_*) -> {
+      b1: concTomRule(_*, RewriteRule(Term(lhs),Term(rhs),_,_),_*) -> {
          headSymbolName = `verifyLhsRuleAndConstructorEgality(lhs, headSymbolName, ruleNumber);
          if( headSymbolName == null ) { return; }
          `verifyRhsRuleStructure(rhs, headSymbolName);
@@ -828,7 +828,7 @@ abstract public class TomChecker extends TomTask {
           decLine = findOriginTrackingLine(`options);
           termClass = APPL;
 					
-          TomSymbol symbol = ensureValidApplDisjunction(`nameList, expectedType, decLine,hasConstructor(options), args.isEmpty(), permissive, topLevel);
+          TomSymbol symbol = ensureValidApplDisjunction(`nameList, expectedType, decLine,hasConstructor(`options), args.isEmpty(), permissive, topLevel);
           if(symbol == null) {
             break matchblock;
           }
@@ -876,7 +876,7 @@ abstract public class TomChecker extends TomTask {
           %match(NameList nameList) { // We perform tests as we have different RecordAppls: they all must be valid
               // and have the expected return type
             (_*, Name(name), _*) -> {
-              verifyRecordStructure(`options, name, `pairSlotAppls, decLine);
+              verifyRecordStructure(`options, `name, `pairSlotAppls, decLine);
             }
           }
 					
@@ -885,11 +885,11 @@ abstract public class TomChecker extends TomTask {
           break matchblock;
         }
 				
-        XMLAppl[option=options, nameList=nameList@(_*, Name(name), _*)] -> {
+        XMLAppl[option=options, nameList=(_*, Name(_), _*)] -> {
             // TODO: can we do it
             // ensureValidDisjunction(nameList); ??????????
           termClass = XML_APPL;
-          decLine = findOriginTrackingLine(options);
+          decLine = findOriginTrackingLine(`options);
           type = getSymbolCodomain(getSymbol(Constants.ELEMENT_NODE));
           termName = Constants.ELEMENT_NODE;
           break matchblock;
@@ -897,7 +897,7 @@ abstract public class TomChecker extends TomTask {
 				
         Placeholder[option=options] -> {
           termClass = PLACE_HOLDER;
-          decLine = findOriginTrackingLine(options);
+          decLine = findOriginTrackingLine(`options);
           type = null;     
           termName = "_";
           if(permissive) {
@@ -909,9 +909,9 @@ abstract public class TomChecker extends TomTask {
 				
         VariableStar[option=options, astName=Name(name)] -> { 
           termClass = VARIABLE_STAR;
-          decLine = findOriginTrackingLine(options);
+          decLine = findOriginTrackingLine(`options);
           type = null;     
-          termName = name+"*";
+          termName = `name+"*";
           if(!listSymbol) {
             messageError(decLine, TomCheckerMessage.InvalidVariableStarArgument, 
                          new Object[]{termName}, TomCheckerMessage.TOM_ERROR);
@@ -921,7 +921,7 @@ abstract public class TomChecker extends TomTask {
 				
         UnamedVariableStar[option=options] -> {
           termClass = UNAMED_VARIABLE_STAR;
-          decLine = findOriginTrackingLine(options);
+          decLine = findOriginTrackingLine(`options);
           type = null;     
           termName = "_*";
           if(!listSymbol) {
@@ -954,10 +954,10 @@ abstract public class TomChecker extends TomTask {
   public int getClass(TomTerm term) {
     %match(TomTerm term) {
       Appl[nameList=(Name(""))] -> { return UNAMED_APPL;}
-      Appl[nameList=(Name(name))] -> { return APPL;}
-      Appl[nameList=(Name(name), _*)] -> { return APPL_DISJUNCTION;}
-      RecordAppl[nameList=(Name(name))] -> { return RECORD_APPL;}
-      RecordAppl[nameList=(Name(name), _*)] -> { return RECORD_APPL_DISJUNCTION;}
+      Appl[nameList=(Name(_))] -> { return APPL;}
+      Appl[nameList=(Name(_), _*)] -> { return APPL_DISJUNCTION;}
+      RecordAppl[nameList=(Name(_))] -> { return RECORD_APPL;}
+      RecordAppl[nameList=(Name(_), _*)] -> { return RECORD_APPL_DISJUNCTION;}
       XMLAppl[] -> { return XML_APPL;}
       Placeholder[] -> { return PLACE_HOLDER;}
       VariableStar[] -> { return VARIABLE_STAR;}
@@ -969,41 +969,41 @@ abstract public class TomChecker extends TomTask {
   public String getName(TomTerm term) {
     String dijunctionName = "";
     %match(TomTerm term) {
-      Appl[nameList=(Name(name))] -> { return name;}
+      Appl[nameList=(Name(name))] -> { return `name;}
       Appl[nameList=nameList] -> {
         String head;
-        dijunctionName = nameList.getHead().getString();
-        while(!nameList.isEmpty()) {
-          head = nameList.getHead().getString();
+        dijunctionName = `nameList.getHead().getString();
+        while(!`nameList.isEmpty()) {
+          head = `nameList.getHead().getString();
           dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          nameList = nameList.getTail();
+          `nameList = `nameList.getTail();
         }
         return dijunctionName;
       }
-      RecordAppl[nameList=(Name(name))] -> { return name;}
+      RecordAppl[nameList=(Name(name))] -> { return `name;}
       RecordAppl[nameList=nameList] -> {
         String head;
-        dijunctionName = nameList.getHead().getString();
-        while(!nameList.isEmpty()) {
-          head = nameList.getHead().getString();
+        dijunctionName = `nameList.getHead().getString();
+        while(!`nameList.isEmpty()) {
+          head = `nameList.getHead().getString();
           dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          nameList = nameList.getTail();
+          `nameList = `nameList.getTail();
         }
         return dijunctionName;
       }
-      XMLAppl[nameList=(Name(name), _*)] ->{ return name;}
+      XMLAppl[nameList=(Name(name), _*)] ->{ return `name;}
       XMLAppl[nameList=nameList] -> {
         String head;
-        dijunctionName = nameList.getHead().getString();
-        while(!nameList.isEmpty()) {
-          head = nameList.getHead().getString();
+        dijunctionName = `nameList.getHead().getString();
+        while(!`nameList.isEmpty()) {
+          head = `nameList.getHead().getString();
           dijunctionName = ( dijunctionName.compareTo(head) > 0)?dijunctionName:head;
-          nameList = nameList.getTail();
+          `nameList = `nameList.getTail();
         }
         return dijunctionName;
       }
       Placeholder[] 							->{ return "_";}
-      VariableStar[astName=Name(name)]							->{ return name+"*";}
+      VariableStar[astName=Name(name)]							->{ return `name+"*";}
       UnamedVariableStar[] ->{ return "_*";}
       _																->{throw new TomRuntimeException("Invalid Term");}
     }
@@ -1013,39 +1013,39 @@ abstract public class TomChecker extends TomTask {
     matchblock:{
       %match(TomTerm term) {
         Appl[option=options, nameList=(Name(str))] -> {
-          if (str.equals("")) {
-            return new TermDescription(UNAMED_APPL, str, findOriginTrackingLine(options), 
+          if (`str.equals("")) {
+            return new TermDescription(UNAMED_APPL, `str, findOriginTrackingLine(`options), 
                                        null);
               // TODO
           } else {
-            return new TermDescription(APPL, str, findOriginTrackingLine(options), 
-                                       getSymbolCodomain(getSymbol(str)));
+            return new TermDescription(APPL, `str, findOriginTrackingLine(`options), 
+                                       getSymbolCodomain(getSymbol(`str)));
           }
         }
         Appl[option=options, nameList=(Name(name), _*)] -> {
-          return new TermDescription(APPL_DISJUNCTION, name, findOriginTrackingLine(options), 
-                                     getSymbolCodomain(getSymbol(name)));
+          return new TermDescription(APPL_DISJUNCTION, `name, findOriginTrackingLine(`options), 
+                                     getSymbolCodomain(getSymbol(`name)));
         }
         RecordAppl[option=options,nameList=(Name(name))] ->{
-          return new TermDescription(RECORD_APPL, name, findOriginTrackingLine(options), 
-                                     getSymbolCodomain(getSymbol(name)));
+          return new TermDescription(RECORD_APPL, `name, findOriginTrackingLine(`options), 
+                                     getSymbolCodomain(getSymbol(`name)));
         }
         RecordAppl[option=options,nameList=(Name(name), _*)] ->{
-          return new TermDescription(RECORD_APPL_DISJUNCTION, name, findOriginTrackingLine(options), 
-                                     getSymbolCodomain(getSymbol(name)));
+          return new TermDescription(RECORD_APPL_DISJUNCTION, `name, findOriginTrackingLine(`options), 
+                                     getSymbolCodomain(getSymbol(`name)));
         }
         XMLAppl[option=options] -> {
-          return new TermDescription(XML_APPL, Constants.ELEMENT_NODE, findOriginTrackingLine(options), 
+          return new TermDescription(XML_APPL, Constants.ELEMENT_NODE, findOriginTrackingLine(`options), 
                                      getSymbolCodomain(getSymbol(Constants.ELEMENT_NODE)));
         }
         Placeholder[option=options] -> {
-          return new TermDescription(PLACE_HOLDER, "_", findOriginTrackingLine(options),  null);
+          return new TermDescription(PLACE_HOLDER, "_", findOriginTrackingLine(`options),  null);
         }
         VariableStar[option=options, astName=Name(name)] -> { 
-          return new TermDescription(VARIABLE_STAR, name+"*", findOriginTrackingLine(options),  null);
+          return new TermDescription(VARIABLE_STAR, `name+"*", findOriginTrackingLine(`options),  null);
         }
         UnamedVariableStar[option=options] -> {
-          return new TermDescription(UNAMED_VARIABLE_STAR, "_*", findOriginTrackingLine(options),  null);
+          return new TermDescription(UNAMED_VARIABLE_STAR, "_*", findOriginTrackingLine(`options),  null);
         }
         _ -> {
           System.out.println("Strange term "+term);
@@ -1060,7 +1060,7 @@ abstract public class TomChecker extends TomTask {
     SymbolList filteredList = `emptySymbolList();
     %match(SymbolList symbolList) {
       (_*, symbol , _*) -> {  // for each symbol
-        if(isArrayOperator(symbol) || isListOperator(symbol)) {
+        if(isArrayOperator(`symbol) || isListOperator(`symbol)) {
           filteredList = `manySymbolList(symbol,filteredList);
         }
       }
@@ -1144,18 +1144,18 @@ abstract public class TomChecker extends TomTask {
     boolean first = true; // the first symbol give the expected type
     %match(NameList nameList) {
       (_*, Name(dijName), _*) -> { // for each SymbolName
-        symbol =  getSymbol(dijName);
+        symbol =  getSymbol(`dijName);
         if (symbol == null) {
             // In disjunction we can only have known symbols
           messageError(decLine,
                        TomCheckerMessage.UnknownSymbolInDisjunction,
-                       new Object[]{dijName},
+                       new Object[]{`dijName},
                        TomCheckerMessage.TOM_ERROR);
           return null;
         }
         if ( strictType  || !topLevel ) {
             // ensure codomain is correct
-          if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomCheckerMessage.InvalidDisjunctionCodomain, dijName, decLine)) {
+          if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomCheckerMessage.InvalidDisjunctionCodomain, `dijName, decLine)) {
             return null;
           }
         }
@@ -1167,7 +1167,7 @@ abstract public class TomChecker extends TomTask {
           if(currentDomain != domainReference) {
             messageError(decLine, 
                          TomCheckerMessage.InvalidDisjunctionDomain,
-                         new Object[]{dijName},
+                         new Object[]{`dijName},
                          TomCheckerMessage.TOM_ERROR);
             return null;
           }
@@ -1296,7 +1296,7 @@ abstract public class TomChecker extends TomTask {
               %match(TomName slotName, TomTerm pairSlotTerm) {
                 Name[string=name1], PairSlotAppl(Name[string=name1],slotSubterm) -> {
                      // bingo
-                   validateTerm(slotSubterm ,expectedType, false, true, false);
+                   validateTerm(`slotSubterm ,expectedType, false, true, false);
                    break whileBlock;
                  }
                 _ , _ -> {listOfPair = listOfPair.getTail();}
@@ -1339,7 +1339,7 @@ abstract public class TomChecker extends TomTask {
 	
   private int findOriginTrackingLine(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(_*,OriginTracking[line=line],_*) -> { return line; }
+      concOption(_*,OriginTracking[line=line],_*) -> { return `line; }
     }
     return -1;
   }

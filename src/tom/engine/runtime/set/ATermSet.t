@@ -255,7 +255,7 @@ public abstract class ATermSet implements Collection {
   
   protected String topRepartition(JGTreeSet t) {
     %match(JGTreeSet t) {
-      branch(l,r) -> { return "Left branch: "+size(l)+"\tright branch: "+size(r);}
+      branch(l,r) -> { return "Left branch: "+size(`l)+"\tright branch: "+size(`r);}
       _ ->  {return "topRepartition: No a branch";}
     }
   }
@@ -349,11 +349,11 @@ public abstract class ATermSet implements Collection {
               %match(JGTreeSet t) {
                 emptySet() -> {return false;}
                 singleton(x) -> {
-                  res.add(x);
+                  res.add(`x);
                   return false;
                 }
                 pair[value=x] -> {
-                  res.add(x);
+                  res.add(`x);
                   return false;
                 }
                 _ -> {return true;}

@@ -63,7 +63,7 @@ public class SharedSet extends ATermSet {
             %match(JGTreeSet t) {
               emptySet()-> {return false;}
               singleton(x) -> {
-                res.add(x);
+                res.add(`x);
                 return false;
               }
               _ -> {return true;}
@@ -95,7 +95,7 @@ public class SharedSet extends ATermSet {
     %match(JGTreeSet t) {
       emptySet()   -> { return 0; }
       singleton(x) -> { return 1; }
-      branch(l, r) -> {return size(l) + size(r);}
+      branch(l, r) -> {return size(`l) + size(`r);}
     }
     return 0;
   }
@@ -106,13 +106,13 @@ public class SharedSet extends ATermSet {
       emptySet()-> {
         return null;
       }
-      singleton(x) -> {return x;}
+      singleton(x) -> {return `x;}
       branch(l,r) -> {
-        ATerm left = getHead(l);
+        ATerm left = getHead(`l);
         if(left != null) {
           return left;
         }
-        return getHead(r);
+        return getHead(`r);
       }
     }
     return null;
@@ -145,9 +145,9 @@ public class SharedSet extends ATermSet {
           %match(JGTreeSet t) {
             emptySet()-> {return t;}
             singleton(x) -> {return t;}
-            branch(emptySet(), s@singleton(x)) -> {return s;}
-            branch(s@singleton(x), emptySet()) -> {return s;}
-            branch(e@emptySet(), emptySet()) -> {return e;}
+            branch(emptySet(), s@singleton(x)) -> {return `s;}
+            branch(s@singleton(x), emptySet()) -> {return `s;}
+            branch(e@emptySet(), emptySet()) -> {return `e;}
             branch(l1, l2) -> {return `branch(reworkJGTreeSet(l1), reworkJGTreeSet(l2));}
             _ -> { return traversal.genericTraversal(t,this); }
           }
@@ -172,11 +172,11 @@ public class SharedSet extends ATermSet {
       }
 
       singleton(y), x -> {
-        return override(y, x, level);
+        return override(`y, `x, level);
       }
 
       x, singleton(y) -> {
-        return underride(y, x, level);
+        return underride(`y, `x, level);
       }
 
       branch(l1, r1), branch(l2, r2) -> {
@@ -196,8 +196,8 @@ public class SharedSet extends ATermSet {
       
       s@singleton(y), x |
       x, s@singleton(y) -> {
-        if (contains(y, x, level)) {
-          return s;
+        if (contains(`y, `x, level)) {
+          return `s;
         } else {
           return `emptySet();
         }
@@ -219,11 +219,11 @@ public class SharedSet extends ATermSet {
       }
       
       singleton(y), x -> {
-        return remove(y, x, level);
+        return remove(`y, `x, level);
       }
 
       x, singleton(y) -> {
-        if (contains(y, x)) {
+        if (contains(`y, `x)) {
           return m2;
         } else {
           return `emptySet();
@@ -243,18 +243,18 @@ public class SharedSet extends ATermSet {
       emptySet()     -> {return t;}
 
       singleton(x)   -> {
-        if (x == elt) {return `emptySet();}
+        if (`x == elt) {return `emptySet();}
         else {return t;}
       }
 
       branch(l, r) -> {
         JGTreeSet l1 = null, r1=null;
         if( isBitZero(elt, level) ) {
-          l1 = remove(elt, l, level+1);
-          r1 = r;
+          l1 = remove(elt, `l, level+1);
+          r1 = `r;
         } else {
-          l1 = l;
-          r1 = remove(elt, r, level+1);
+          l1 = `l;
+          r1 = remove(elt, `r, level+1);
         }
         %match(JGTreeSet l1, JGTreeSet r1) {
           emptySet(), singleton(x) -> {return r1;}
@@ -271,17 +271,17 @@ public class SharedSet extends ATermSet {
       emptySet()-> {return false;}
       
       singleton(x) -> {
-        if(x == elt) return true;
+        if(`x == elt) return true;
       }
       
       branch(l, r) -> {
         if(level == depth) {
-          return (contains(elt, l, level) || contains(elt, r, level));
+          return (contains(elt, `l, level) || contains(elt, `r, level));
         }
         if( isBitZero(elt, level)) {
-          return contains(elt, l, level+1);
+          return contains(elt, `l, level+1);
         } else {
-          return contains(elt, r, level+1);
+          return contains(elt, `r, level+1);
         }
       }
     }
@@ -300,7 +300,7 @@ public class SharedSet extends ATermSet {
       }
 
       singleton(x)   -> {
-        if(x == elt) {  return `singleton(elt);}
+        if(`x == elt) {  return `singleton(elt);}
         else if( level >= depth ) {
           System.out.println("Collision!!!!!!!!");
           collisions++;
@@ -308,10 +308,10 @@ public class SharedSet extends ATermSet {
           return `branch(t, singleton(elt));
           
         }
-        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(override(elt, t, lev), emptySet());}
-        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptySet(), override(elt, t, lev));}
-        else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(singleton(elt), t);}
-        else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, singleton(elt));}
+        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(override(elt, t, lev), emptySet());}
+        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptySet(), override(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitOne(`x, level) ) { return `branch(singleton(elt), t);}
+        else if ( isBitOne(elt, level)  && isBitZero(`x, level) ){ return `branch(t, singleton(elt));}
       }
       
       branch(l, r) -> {
@@ -337,7 +337,7 @@ public class SharedSet extends ATermSet {
       emptySet()     -> {return `singleton(elt);}
 
       singleton(x)   -> {
-        if(x == elt) {  return t;}
+        if(`x == elt) {  return t;}
         else if( level >= depth ) {
           System.out.println("Collision!!!!!!!!");
           collisions++;
@@ -345,10 +345,10 @@ public class SharedSet extends ATermSet {
           return `branch(t, singleton(elt));
           
         }
-        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(underride(elt, t, lev), emptySet());}
-        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptySet(), underride(elt, t, lev));}
-        else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(singleton(elt), t);}
-        else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, singleton(elt));}
+        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(underride(elt, t, lev), emptySet());}
+        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptySet(), underride(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitOne(`x, level) ) { return `branch(singleton(elt), t);}
+        else if ( isBitOne(elt, level)  && isBitZero(`x, level) ){ return `branch(t, singleton(elt));}
       }
 
       branch(l, r) -> {

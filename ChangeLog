@@ -1,3 +1,9 @@
+2004-04-16 Julien Guyon <julien.guyon@loria.fr>
+
+	* src/make_rules **/Makefile.am: -O added
+	* Adapted all tom source code to -O flag: bootstrap OK
+	* test are less powerfull while migrating to Ant
+
 2004-04-16  Antoine Reilles  <tonio@bonzai>
 
 	* build.sh

@@ -13,13 +13,13 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(top_builddir)/src:$(top_buil
 source_java     = Peano.t \
 		  List.t \
 		  Array.t \
-		  TestMatch.t \
-		  TestList.t \
-		  TestBuiltin.t \
 		  Xml.t \
 		  XmlDom.t \
-		  TestDom.t \
 		  Record.t
+#	TestDom.t \
+#	TestMatch.t \
+#		  TestList.t \
+#		  TestBuiltin.t
 
 source_c        = cfib1.t \
                   loulou.t
@@ -55,7 +55,7 @@ BUILT_SOURCES   = $(check_JAVA) \
 # we use the last compiled compiler to compile the testsuite
 TOMFLAGS = -O
 TOMSTABLE = ${top_builddir}/utils/jtom.stable
-TOMSRC = ${top_builddir}/utils/jtomant.src
+TOMSRC = ${top_builddir}/utils/jtom.src
 TOMTEST = $(TOMSRC)
 
 Record.java: Record.t

@@ -278,7 +278,7 @@ public class XMLToATerm {
       }
       
       AttributeNode[name=name1], manyTNodeList(head@AttributeNode[name=name2],tail) -> {
-        if(name1.compareTo(name2) >= 0) {
+        if(`name1.compareTo(`name2) >= 0) {
           return `manyTNodeList(head,insertSortedAttribute(elt,tail));
         } else {
           return `manyTNodeList(elt,list);

@@ -182,8 +182,8 @@
 	
 	<target name="buildstable" description="compile the TOM stable sources" depends="preparestable">
 		<tstamp/>
-		<!--<pathconvert targetos="windows" property="windowspath" refid="stable.classpath"/>
-				 <echo>classpath = ${windowspath}</echo>-->
+		<pathconvert targetos="windows" property="windowspath" refid="stable.classpath"/>
+				 <echo>classpath = ${windowspath}</echo>
 		<!-- Compile the java code from ${stable} into ${stable} -->
 		<javac srcdir="${stable.src}" destdir="${stable.build}" verbose="${javacVerbose}">
 			<classpath refid="stable.classpath"/>
@@ -263,5 +263,13 @@
 			</batchtest>
 		</myjunit>
 	</target>
+
+    <target name="boostrap">
+    <!-- Clean src--> 
+    <antcall target="cleansrc"/>
+    <!-- Build ADT once--> 
+    <antcall target="buildadt"/>
+    
+  </target>
 
 </project>

@@ -87,65 +87,65 @@ public class ATermToXML {
     %match(TNode n) {
       DocumentNode(docType,docElem) -> {
 				write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-				atermToXML(docType);
-				atermToXML(docElem);
+				atermToXML(`docType);
+				atermToXML(`docElem);
 				write("\n");
 				return;
       }
       DocumentTypeNode(name,publicId,systemId,internalSubset,_,_) -> {
-				write("<!DOCTYPE "+name);
-				if (!publicId.equals("UNDEF") && !systemId.equals("UNDEF"))
-	  			write(" PUBLIC \""+publicId+"\" \"");
-       	else if (!systemId.equals("UNDEF") && publicId.equals("UNDEF"))
+				write("<!DOCTYPE "+`name);
+				if (!`publicId.equals("UNDEF") && !`systemId.equals("UNDEF"))
+	  			write(" PUBLIC \""+`publicId+"\" \"");
+       	else if (!`systemId.equals("UNDEF") && `publicId.equals("UNDEF"))
 	  			write(" SYSTEM \"");
 				else {
 	  			System.out.println("Problem in DocumentTypeNode");
 	  			throw new TomRuntimeException(new Throwable("Problem in DocumentTypeNode"));
 				}
-				write(systemId+"\"");
-				if (!internalSubset.equals("UNDEF")) 
-	  			write(" ["+internalSubset+"]");
+				write(`systemId+"\"");
+				if (!`internalSubset.equals("UNDEF")) 
+	  			write(" ["+`internalSubset+"]");
 					write(">\n");
 					return;
       }
       ElementNode(name,attrList,concTNode()) -> {
-				write("<"+name);
-				atermToXMLList(attrList);
+				write("<"+`name);
+				atermToXMLList(`attrList);
 				write("/>");
 				return;
       }
       ElementNode(name,attrList,childList) -> {
-				write("<"+name);
-				atermToXMLList(attrList);
+				write("<"+`name);
+				atermToXMLList(`attrList);
 				write(">");
-				atermToXMLList(childList);
-				write("</"+name+">");
+				atermToXMLList(`childList);
+				write("</"+`name+">");
 				return;
       }
       AttributeNode(name,specified,child) -> {
-				if (specified.equals("true")) {
-	  			write(" " + name + "=\"" + child + "\"");
+				if (`specified.equals("true")) {
+	  			write(" " + `name + "=\"" + `child + "\"");
 				}
 				return;
       }
       TextNode(data) -> {
-				write(data);
+				write(`data);
 				return;
       }
       CommentNode(data) -> {
-				write("<!-- "+data+" -->");
+				write("<!-- "+`data+" -->");
 				return;
       }
       CDATASectionNode(data) -> {
-				write("<![CDATA["+data+"]]>");
+				write("<![CDATA["+`data+"]]>");
 				return;
       }
       ProcessingInstructionNode(target,data) -> {
-				write("<?"+target+" "+data+"?>");
+				write("<?"+`target+" "+`data+"?>");
 				return;
       }
       EntityReferenceNode(name,childList) -> {
-				write("&"+name+";");
+				write("&"+`name+";");
 				return;
       }
       _ -> {

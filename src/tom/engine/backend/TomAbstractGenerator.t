@@ -102,7 +102,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       l@BuildEmptyList[] |
       l@BuildEmptyArray[] |
       l@(BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[] -> {
-        buildListOrArray(deep, l);
+        buildListOrArray(deep, `l);
         return;
       }
 
@@ -230,7 +230,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetSlot(codomain,Name(opname),slotName, var@Variable[]) -> {
+      GetSlot(_,Name(opname),slotName, var@Variable[]) -> {
         `buildExpGetSlot(deep, opname, slotName, var);
         return;
       }

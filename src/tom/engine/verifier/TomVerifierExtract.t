@@ -25,8 +25,6 @@
 
 package jtom.verifier;
 
-import aterm.*;
-
 import jtom.tools.*;
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;

@@ -85,13 +85,13 @@ public class TomOptimizer extends TomTask {
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) {
             ExpressionToTomTerm(TomTermToExpression(t)) -> {
-              return optimize(t);
+              return optimize(`t);
             }
           }
         } else if(subject instanceof Expression) {
           %match(Expression subject) {
             TomTermToExpression(ExpressionToTomTerm(t)) -> {
-              return optimizeExpression(t);
+              return optimizeExpression(`t);
             }
           }
         } else if(subject instanceof Instruction) {
@@ -102,32 +102,32 @@ public class TomOptimizer extends TomTask {
                * LetRef x where x is used 0 or 1 ==> eliminate
                */
             (LetRef|LetAssign)(var@(Variable|VariableStar)[astName=name],exp,body) -> {
-              List list  = computeOccurences(name,body);
+              List list  = computeOccurences(`name,`body);
               int mult = list.size();
 
               if(mult == 0) {
-                Option orgTrack = findOriginTracking(var.getOption());
+                Option orgTrack = findOriginTracking(`var.getOption());
                 messageError(orgTrack.getLine(),
                              orgTrack.getFileName().getString(),
                              orgTrack.getAstName().getString(),
                              orgTrack.getLine(),
                              "Variable `{0}` is never used",
-                             new Object[]{name},
+                             new Object[]{`name},
                              TomCheckerMessage.TOM_WARNING);
                 if(verbose) {
-                  System.out.println(mult + " -> remove:     " + name);
+                  System.out.println(mult + " -> remove:     " + `name);
                 }
-                return optimizeInstruction(body);
+                return optimizeInstruction(`body);
 
               } else if(mult == 1) {
-                if(expConstantInBody(exp,body)) {
+                if(expConstantInBody(`exp,`body)) {
                   if(verbose) {
-                    System.out.println(mult + " -> inline:     " + name);
+                    System.out.println(mult + " -> inline:     " + `name);
                   }
-                  return optimizeInstruction(inlineInstruction(var,exp,body));
+                  return optimizeInstruction(inlineInstruction(`var,`exp,`body));
                 } else {
                   if(verbose) {
-                    System.out.println(mult + " -> no inline:  " + name);
+                    System.out.println(mult + " -> no inline:  " + `name);
                       //System.out.println("exp  = " + exp);
                       //System.out.println("body = " + body);
                   }
@@ -136,43 +136,43 @@ public class TomOptimizer extends TomTask {
               } else {
                   /* do nothing: traversal */
                 if(verbose) {
-                  System.out.println(mult + " -> do nothing: " + name);
+                  System.out.println(mult + " -> do nothing: " + `name);
                 }
               }
             }
             
             Let(var@(Variable|VariableStar)[astName=name],exp,body) -> {
-              List list  = computeOccurences(name,body);
+              List list  = computeOccurences(`name,`body);
               int mult = list.size();
 
               if(mult == 0) {
-                Option orgTrack = findOriginTracking(var.getOption());
+                Option orgTrack = findOriginTracking(`var.getOption());
                 messageError(orgTrack.getLine(),
                              orgTrack.getFileName().getString(),
                              orgTrack.getAstName().getString(),
                              orgTrack.getLine(),
                              "Variable `{0}` is never used",
-                             new Object[]{name},
+                             new Object[]{`name},
                              TomCheckerMessage.TOM_WARNING);
                 if(verbose) {
-                  System.out.println(mult + " -> remove:     " + name);
+                  System.out.println(mult + " -> remove:     " + `name);
                 }
-                return optimizeInstruction(body); 
+                return optimizeInstruction(`body); 
               } else if(mult == 1) {
-                if(expConstantInBody(exp,body)) {
+                if(expConstantInBody(`exp,`body)) {
                   if(verbose) {
-                    System.out.println(mult + " -> inline:     " + name);
+                    System.out.println(mult + " -> inline:     " + `name);
                   }
-                  return optimizeInstruction(inlineInstruction(var,exp,body));
+                  return optimizeInstruction(inlineInstruction(`var,`exp,`body));
                 } else {
                   if(verbose) {
-                    System.out.println(mult + " -> no inline:  " + name);
+                    System.out.println(mult + " -> no inline:  " + `name);
                   }
                 }
               } else {
                   /* do nothing: traversal */
                 if(verbose) {
-                  System.out.println(mult + " -> do nothing: " + name);
+                  System.out.println(mult + " -> do nothing: " + `name);
                 }
               }
             }
@@ -214,7 +214,7 @@ public class TomOptimizer extends TomTask {
           %match(TomTerm subject) { 
             (Variable|VariableStar)[astName=name] |
             BuildVariable[astName=name] -> {
-              if(variableName == name) {
+              if(variableName == `name) {
                 return `ExpressionToTomTerm(expression);
               }
             }
@@ -242,7 +242,7 @@ public class TomOptimizer extends TomTask {
             %match(TomTerm t) { 
               (Variable|VariableStar)[astName=name] |
                BuildVariable[astName=name] -> {
-                if(variableName == name) {
+                if(variableName == `name) {
                   list.add(t);
                   return false;
                 }
@@ -269,14 +269,14 @@ public class TomOptimizer extends TomTask {
           if(t instanceof Instruction) {
             %match(Instruction t) { 
               Assign[variable=(Variable|VariableStar)[astName=name]] -> {
-                if(variableName == name) {
+                if(variableName == `name) {
                   list.add(t);
                   return false;
                 }
               }
               
               LetAssign[variable=(Variable|VariableStar)[astName=name]] -> {
-                if(variableName == name) {
+                if(variableName == `name) {
                   list.add(t);
                   return false;
                 }
@@ -322,7 +322,7 @@ public class TomOptimizer extends TomTask {
             TomTerm annotedVariable = null;
             %match(TomTerm t) { 
               Ref((Variable|VariableStar)[astName=name])  -> {
-                collection.add(name);
+                collection.add(`name);
                 return false;
               }
 
@@ -344,8 +344,8 @@ public class TomOptimizer extends TomTask {
           %match(TomTerm subject) {
             var@(Variable|VariableStar)[option=option, astName=astName@Name(name)] |
             var@BuildVariable[astName=astName@Name(name)]-> {
-              if(context.contains(astName)) {
-                return var.setAstName(`Name(ast().makeTomVariableName(name)));
+              if(context.contains(`astName)) {
+                return `var.setAstName(`Name(ast().makeTomVariableName(name)));
               }
             }
           }
@@ -353,14 +353,14 @@ public class TomOptimizer extends TomTask {
         } else if(subject instanceof Instruction) {
           %match(Instruction subject) {
             CompiledPattern(patternList,instruction) -> {
-              Map map = collectMultiplicity(patternList);
+              Map map = collectMultiplicity(`patternList);
               Set newContext = new HashSet(map.keySet());
               newContext.addAll(context);
                 //Set newContext = map.keySet();
                 //for(Iterator it=context.iterator() ; it.hasNext() ;) {
                 //newContext.add(it.next());
                 //}
-              return renameVariableInstruction(instruction,newContext);
+              return renameVariableInstruction(`instruction,newContext);
             }
           }
           

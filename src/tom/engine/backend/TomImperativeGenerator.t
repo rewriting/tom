@@ -66,47 +66,47 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   protected void buildListOrArray(int deep, TomTerm list) throws IOException {
     %match(TomTerm list) {
       BuildEmptyList(Name(name)) -> {
-        output.write("tom_empty_list_" + name + "()");
+        output.write("tom_empty_list_" + `name + "()");
         return;
       }
 
       BuildConsList(Name(name), headTerm, tailTerm) -> {
-        output.write("tom_cons_list_" + name + "(");
-        generate(deep,headTerm);
+        output.write("tom_cons_list_" + `name + "(");
+        generate(deep,`headTerm);
         output.write(",");
-        generate(deep,tailTerm);
+        generate(deep,`tailTerm);
         output.write(")");
         return;
       }
 
       BuildAppendList(Name(name), headTerm, tailTerm) -> {
-        output.write("tom_append_list_" + name + "(");
-        generate(deep,headTerm);
+        output.write("tom_append_list_" + `name + "(");
+        generate(deep,`headTerm);
         output.write(",");
-        generate(deep,tailTerm);
+        generate(deep,`tailTerm);
         output.write(")");
         return;
       }
 
       BuildEmptyArray(Name(name),size) -> {
-        output.write("tom_empty_array_" + name + "(" + size + ")");
+        output.write("tom_empty_array_" + `name + "(" + `size + ")");
         return;
       }
 
       BuildConsArray(Name(name), headTerm, tailTerm) -> {
-        output.write("tom_cons_array_" + name + "(");
-        generate(deep,headTerm);
+        output.write("tom_cons_array_" + `name + "(");
+        generate(deep,`headTerm);
         output.write(",");
-        generate(deep,tailTerm);
+        generate(deep,`tailTerm);
         output.write(")");
         return;
       }
 
       BuildAppendArray(Name(name), headTerm, tailTerm) -> {
-        output.write("tom_append_array_" + name + "(");
-        generate(deep,headTerm);
+        output.write("tom_append_array_" + `name + "(");
+        generate(deep,`headTerm);
         output.write(",");
-        generate(deep,tailTerm);
+        generate(deep,`tailTerm);
         output.write(")");
         return;
       }

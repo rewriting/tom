@@ -31,5 +31,6 @@ EXTRA_DIST 	= $(BOOTSOURCES) $(TOMSOURCES) TomParser.jj
 
 BUILT_SOURCES   = tomjava.stamp $(TOMSOURCES:.t=.java)
 
-TOMFLAGS = 
+TOMFLAGS =  -O
+
 include $(top_srcdir)/src/make_rules

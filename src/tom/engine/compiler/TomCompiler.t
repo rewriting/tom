@@ -117,9 +117,9 @@ public class TomCompiler extends TomTask {
                 return `FunctionCall(name,newTermArgs);
               } else {
                 if(isListOperator(tomSymbol)) {
-                  return tomFactory.buildList(name,newTermArgs);
+                  return tomFactory.buildList(`name,newTermArgs);
                 } else if(isArrayOperator(tomSymbol)) {
-                  return tomFactory.buildArray(name,newTermArgs);
+                  return tomFactory.buildArray(`name,newTermArgs);
                 } else {
                   return `BuildTerm(name,newTermArgs);
                 }
@@ -148,7 +148,7 @@ public class TomCompiler extends TomTask {
                   %match(TomTerm elt) {
                     PatternAction(TermList(termList),actionInst, option) -> {
                       TomList newTermList = empty();
-                      Instruction newActionInst = actionInst;
+                      Instruction newActionInst = `actionInst;
                       /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
                       TomList renamedTermList = linearizePattern(`termList,equalityCheck);
@@ -314,7 +314,7 @@ public class TomCompiler extends TomTask {
       manyInstructionList(MatchingCondition[lhs=pattern,rhs=subject], tail) -> {
         Instruction newAction = `buildCondition(tail,action);
 
-        TomType subjectType = getTermType(pattern);
+        TomType subjectType = getTermType(`pattern);
         TomNumberList path = tsf().makeTomNumberList();
         path = (TomNumberList) path.append(`RuleVar());
         TomTerm newSubject = preProcessing(`MakeTerm(subject));
@@ -354,26 +354,26 @@ public class TomCompiler extends TomTask {
     %match(TomTerm subject) {
       var@(UnamedVariable|UnamedVariableStar)[constraints=constraints] -> {
         ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap,equalityCheck);
-        return var.setConstraints(newConstraintList);
+        return `var.setConstraints(newConstraintList);
       }
 
 			var@(Variable|VariableStar)[astName=name,constraints=clist] -> {
-				ConstraintList newConstraintList = renameVariableInConstraintList(clist,multiplicityMap,equalityCheck);
-				if(!multiplicityMap.containsKey(name)) {
+				ConstraintList newConstraintList = renameVariableInConstraintList(`clist,multiplicityMap,equalityCheck);
+				if(!multiplicityMap.containsKey(`name)) {
 					// We see this variable for the first time
-					multiplicityMap.put(name,new Integer(1));
+					multiplicityMap.put(`name,new Integer(1));
 					renamedTerm = `var.setConstraints(newConstraintList);
 				} else {
 					// We have already seen this variable
-					Integer multiplicity = (Integer) multiplicityMap.get(name);
+					Integer multiplicity = (Integer) multiplicityMap.get(`name);
 					int mult = multiplicity.intValue(); 
-					multiplicityMap.put(name,new Integer(mult+1));
+					multiplicityMap.put(`name,new Integer(mult+1));
 					
 					TomNumberList path = tsf().makeTomNumberList();
 					path = (TomNumberList) path.append(`RenamedVar(name));
 					path = (TomNumberList) path.append(makeNumber(mult));
 
-					renamedTerm = var.setAstName(`PositionName(path));
+					renamedTerm = `var.setAstName(`PositionName(path));
 					renamedTerm = renamedTerm.setConstraints(`concConstraint(Equal(var.setConstraints(concConstraint())),newConstraintList*));
 				}
 
@@ -433,7 +433,7 @@ public class TomCompiler extends TomTask {
                                   ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(TomTerm subject) {
-      Appl[nameList=nameList@(Name(tomName),_*), args=arguments] -> {
+      Appl[nameList=(Name(tomName),_*), args=arguments] -> {
         TomList args = `arguments;
         TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         
