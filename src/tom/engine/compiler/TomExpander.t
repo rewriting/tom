@@ -1,5 +1,7 @@
 package jtom.compiler;
 
+import java.util.logging.*;
+
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
@@ -57,10 +59,11 @@ public class TomExpander extends TomGenericPlugin {
                              + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
       }
     } catch (Exception e) {
-	    environment().messageError("Exception occurs in TomExpander: "
-                                 +e.getMessage(), environment().getInputFile().getName(),
-                                 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-	    e.printStackTrace();
+	getLogger().log( Level.SEVERE,
+			 "ExceptionMessage",
+			 new Object[]{environment().getInputFile().getName(), "TomExpander", e.getMessage()} );
+
+	e.printStackTrace();
     }
   }
 

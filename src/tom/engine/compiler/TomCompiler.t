@@ -1,6 +1,7 @@
 package jtom.compiler;
 
 import java.util.*;
+import java.util.logging.*;
 
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
@@ -56,9 +57,10 @@ public class TomCompiler extends TomGenericPlugin {
       }
     }
     catch (Exception e) {
-      environment().messageError("Exception occurs in TomCompiler: "+e.getMessage(), 
-                                 environment().getInputFile().getName(), 
-                                 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      getLogger().log( Level.SEVERE,
+		       "ExceptionMessage",
+		       new Object[]{environment().getInputFile().getName(), "TomCompiler", e.getMessage()} );
+
       e.printStackTrace();
     }
   }
