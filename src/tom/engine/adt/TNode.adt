@@ -1,18 +1,21 @@
 [
-constructor(TNode,CommentNode,CommentNode(<data(str)>)),
-constructor(TNode,ProcessingInstructionNode,ProcessingInstructionNode(<target(str)>,<data(str)>)),
-constructor(TNode,TextNode,TextNode(<data(str)>)),
-constructor(TNode,CDATASectionNode,CDATASectionNode(<data(str)>)),
-constructor(TNode,DocumentNode,DocumentNode(<docType(TNode)>,<docElem(TNode)>)),
-constructor(TNode,ElementNode,ElementNode(<name(str)>,<attrList(TNodeList)>,<childList(TNodeList)>)),
-constructor(TNode,AttributeNode,AttributeNode(<name(str)>,<specified(str)>,<value(str)>)),
-constructor(TNode,DocumentTypeNode,DocumentTypeNode(<name(str)>,<publicId(str)>,
-					    <systemId(str)>,<internalSubset(str)>,
-	                                    <entities(TNodeList)>,
-                                            <notations(TNodeList)>)),
-constructor(TNode,EntityReferenceNode,EntityReferenceNode(<name(str)>,<childList(TNodeList)>)),
-constructor(TNode,EntityNode,EntityNode(<notationName(str)>,<publicId(str)>,<systemId(str)>)),
-constructor(TNode,NotationNode,NotationNode(<publicId(str)>,<systemId(str)>)),
+  modulentry(Name("TNode"),[],
+  [
+  constructor(TNode,CommentNode,CommentNode(<data(str)>)),
+  constructor(TNode,ProcessingInstructionNode,ProcessingInstructionNode(<target(str)>,<data(str)>)),
+  constructor(TNode,TextNode,TextNode(<data(str)>)),
+  constructor(TNode,CDATASectionNode,CDATASectionNode(<data(str)>)),
+  constructor(TNode,DocumentNode,DocumentNode(<docType(TNode)>,<docElem(TNode)>)),
+  constructor(TNode,ElementNode,ElementNode(<name(str)>,<attrList(TNodeList)>,<childList(TNodeList)>)),
+  constructor(TNode,AttributeNode,AttributeNode(<name(str)>,<specified(str)>,<value(str)>)),
+  constructor(TNode,DocumentTypeNode,DocumentTypeNode(<name(str)>,<publicId(str)>,
+	  				    <systemId(str)>,<internalSubset(str)>,
+	                                      <entities(TNodeList)>,
+                                              <notations(TNodeList)>)),
+  constructor(TNode,EntityReferenceNode,EntityReferenceNode(<name(str)>,<childList(TNodeList)>)),
+  constructor(TNode,EntityNode,EntityNode(<notationName(str)>,<publicId(str)>,<systemId(str)>)),
+  constructor(TNode,NotationNode,NotationNode(<publicId(str)>,<systemId(str)>)),
 
-list(TNodeList,TNode)
+  list(TNodeList,TNode)
+ ])
 ]

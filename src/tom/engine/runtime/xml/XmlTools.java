@@ -51,10 +51,10 @@ public class XmlTools {
 
   private ATermToXML a2x;
   private XMLToATerm x2a;
-  private Factory ntf = null;
+  private TNodeFactory ntf = null;
 
   public XmlTools () {
-    ntf = new Factory(new PureFactory());
+    ntf = new TNodeFactory(new PureFactory());
     a2x = new ATermToXML(ntf);
     x2a = new XMLToATerm(ntf);
   }
@@ -63,7 +63,7 @@ public class XmlTools {
     x2a.setDeletingWhiteSpaceNodes(b_d);
   }
 
-  public Factory getTNodeFactory() {
+  public TNodeFactory getTNodeFactory() {
     return ntf;
   }
 

@@ -47,19 +47,19 @@ public class ATermToXML {
   
   %include{ ../../adt/TNode.tom }
 
-  private Factory factory = null;
+  private TNodeFactory factory = null;
   private OutputStream out = System.out;
   private Writer writer = null;
 
-  private Factory getTNodeFactory() {
+  private TNodeFactory getTNodeFactory() {
     return factory;
   }
 
   public ATermToXML () {
-    factory = new Factory(new PureFactory());
+    factory = new TNodeFactory(new PureFactory());
   }
 
-  public ATermToXML (Factory factory) {
+  public ATermToXML (TNodeFactory factory) {
     this.factory = factory;
   }
 

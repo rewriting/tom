@@ -52,7 +52,7 @@ public class XMLToATerm {
   
   %include{ ../../adt/TNode.tom }
   
-  private Factory factory = null;
+  private TNodeFactory factory = null;
   private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
   private Hashtable ht_Nodes = new Hashtable();
@@ -65,15 +65,15 @@ public class XMLToATerm {
     deleteWhiteSpaceNodes=b_d;
   }
 
-  private Factory getTNodeFactory() {
+  private TNodeFactory getTNodeFactory() {
     return factory;
   }
 
   public XMLToATerm () {
-    factory = new Factory(new PureFactory());
+    factory = new TNodeFactory(new PureFactory());
   }
 
-  public XMLToATerm(Factory factory) {
+  public XMLToATerm(TNodeFactory factory) {
     this.factory = factory;
   }
 
@@ -87,7 +87,7 @@ public class XMLToATerm {
     convert(is);
   }
 
-  public XMLToATerm(Factory factory,String filename) {
+  public XMLToATerm(TNodeFactory factory,String filename) {
     this(factory);
     convert(filename);
   }

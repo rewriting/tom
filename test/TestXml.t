@@ -16,7 +16,7 @@ public class TestXml extends TestCase {
 	private LinkedList elements;
 	private LinkedList reverseElements;
 
-	private Factory getTNodeFactory() {
+	private TNodeFactory getTNodeFactory() {
     return xtools.getTNodeFactory();
   }
 

@@ -232,8 +232,8 @@
          factory="TomSignature" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
+         <!--factory="TNode" -->
     <adt file="${src.adt}/TNode.adt" 
-         factory="TNode" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
     <adt file="${src.adt}/Set.adt" 
