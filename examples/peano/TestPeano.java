@@ -27,61 +27,68 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package nspk;
+package peano;
 
 import aterm.*;
-import aterm.pure.*;
-import java.util.*;
-import nspk.term.*;
-import nspk.term.types.*;
+import aterm.pure.SingletonFactory;
+import peano.peano.*;
+import peano.peano.types.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class TestNsh extends TestCase {
-  private Nsh test;
+public class TestPeano extends TestCase {
+  private Nat ten;
+  private Nat fibten;
   private static Factory factory;
 
 	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestNsh.class));
+		junit.textui.TestRunner.run(new TestSuite(TestPeano.class));
 	}
-
+  
   public void setUp() {
+
 		if (factory == null) {
-			factory = Factory.getInstance(new PureFactory());
+			factory = Factory.getInstance(SingletonFactory.getInstance());
 		}
-    test = new Nsh(factory);
-  }
 
-  public void testQuery() {
-    assertEquals("Tests the query function (and toString()).",
-                 "state([agent(sender(1),SLEEP,N(sender(1),sender(1))),agent(sender(0),SLEEP,N(sender(0),sender(0)))],[agent(receiver(1),SLEEP,N(receiver(1),receiver(1))),agent(receiver(0),SLEEP,N(receiver(0),receiver(0)))],intruder(devil,[],[]),[])",
-                 test.query(2,2).toString());
-  }
-
-  public void testCollectOneStep() {
-    Collection c1 = new HashSet();
-    State start = test.query(2,2);
-    test.collectOneStep(start,c1);
-    int nbNext = c1.size();
-    assertEquals("Tests that collectOneStep get enough states.",
-                 6,nbNext);
-  }
-
-  public void testCollect3Steps() {
-    Collection c1 = new HashSet();
-    c1.add(test.query(2,2));
-    for(int i=0;i<3;i++) {
-      Collection c2 = new HashSet();
-      Iterator it = c1.iterator();
-      while(it.hasNext()) {
-        test.collectOneStep((State)it.next(),c2);
-      }
-      c1 = c2;
+    Nat N = zero();
+    for(int i=0 ; i<10 ; i++) {
+      N = suc(N);
     }
-    int nb2Next = c1.size();
-    assertEquals("Tests that collectOneStep get enough states.",
-                 66,nb2Next);
+    ten = N;
+    N = zero();
+    for(int i=0 ; i<89 ; i++) {
+      N = suc(N);
+    }
+    fibten = N;
+
   }
+
+  Nat zero() {
+    return factory.makeNat_Zero();
+  }
+
+  Nat suc(Nat n) {
+    return factory.makeNat_Suc(n);
+  }
+
+  public void testPeanoApigen1() {
+    PeanoApigen1 test;
+    test = new PeanoApigen1(factory);
+  
+    assertEquals("fib(10) should be 89",
+                 fibten,test.fib(ten));
+  }
+
+  public void testPeanoApigen2() {
+    PeanoApigen2 test;
+    test = new PeanoApigen2(factory);
+  
+    assertEquals("fib(10) should be 89",
+                 fibten,test.fib(ten));
+  }
+
 
 }
+
