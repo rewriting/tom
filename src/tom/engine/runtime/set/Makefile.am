@@ -53,3 +53,4 @@ ATermSet.t: jgtreeset/set.tom
 
 jgtreeset/set.tom: set.adt
 	${ADTTOJAVA} -v -i set.adt -j -p jtom.runtime.set.jgtreeset --output jgtreeset
+	mv jgtreeset/SetMakeRules jgtreeset/SetMakeRules.am
