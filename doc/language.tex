@@ -42,11 +42,16 @@ components. Parentheses (...) denote grouping.
   \nt{SubjectName} & ::= & \nt{Identifier}\\
   \nt{Type} & ::= & \nt{Identifier}\\
   \nt{SlotName} & ::= & \nt{Identifier}\\
-  \nt{SymbolName} & ::= & \nt{Identifier}\\
+  \nt{HeadSymbol} & ::= & \nt{Identifier} \\
+  & \alt & \nt{Integer}\\
+  & \alt & \nt{Double}\\
+  & \alt & \nt{String}\\
   \nt{VariableName} & ::= & \nt{Identifier}\\
   \nt{AnnotedName} & ::= & \nt{Identifier}\\
   \nt{FileName} & ::= & \nt{Identifier}\\
-  \nt{Name} & ::= & \nt{Identifier}
+  \nt{Name} & ::= & \nt{Identifier}\\
+  \nt{AttributeName} & ::= & \nt{Identifier}\\
+  \nt{XMLName} & ::= & \nt{Identifier}\\
 \end{tabular}
 \end{center}
 
@@ -81,6 +86,8 @@ So we have:
   & \alt & \nt{OperatorArray}\\
   & \alt & \nt{TypeTerm}\\
   & \alt & \nt{TypeInt}\\
+  & \alt & \nt{TypeDouble}\\
+  & \alt & \nt{TypeString}\\
   & \alt & \nt{TypeList}\\
   & \alt & \nt{TypeArray}\\
   & \alt & \lex{\{} \nt{BlockList} \lex{\}}\\
@@ -108,8 +115,9 @@ So we have:
 \item \nt{Operator}, \nt{OperatorList} and \nt{OperatorArray} are
   replaced by some functions definitions. 
  
-\item \nt{TypeTerm}, \nt{TypeInt}, \nt{TypeList} and \nt{TypeArray}
-  are also replaced by some functions definitions. 
+\item \nt{TypeTerm}, \nt{TypeInt}, \nt{TypeDouble}, \nt{TypeString},
+  \nt{TypeList} and \nt{TypeArray} are also replaced by some functions
+  definitions.  
 \end{itemize}
 
 A \lex{\%match} construct contains two parts:\label{match}
@@ -139,11 +147,48 @@ A term has the following syntax:
 \begin{center}
   \begin{tabular}{lcl}
     \nt{Term} & ::= & [ \nt{AnnotedName} \lex{@} ] \nt{PlainTerm}\\
-    \nt{PlainTerm} & ::= & \nt{SymbolName} \lex{[} \nt{SlotName} \lex{=} \nt{Term}
-    ( \lex{,} \nt{SlotName} \lex{=} \nt{Term} )* \lex{]}\\
+%
+    \nt{PlainTerm} & ::= & \nt{XMLTerm}\\
     & \alt & \nt{VariableName} \lex{*}\\
-    & \alt & \nt{SymbolName} \lex{(} \nt{Term} ( \lex{,} \nt{Term} )* \lex{)}\\
-    & \alt & \lex{\_}
+    & \alt & \nt{HeadSymbolList} [ \nt{ExplicitTermList} \alt\ \nt{ImplicitPairList} ] \\
+    & \alt & \nt{ExplicitTermList}\\
+    & \alt & \lex{\_}\\
+    & \alt & \lex{\_*}\\
+%
+    \nt{HeadSymbolList} & ::= & \nt{HeadSymbol}\\
+    & \alt & \lex{(} \nt{HeadSymbol} ( \lex{\alt} \nt{HeadSymbol} )+ \lex{)}\\
+%
+    \nt{ExplicitTermList} & ::= & \lex{(} \nt{Term} ( \lex{,} \nt{Term} )* \lex{)}\\
+    \nt{ImplicitPairList} & ::= & \lex{[} \nt{PairTerm} ( \lex{,} \nt{PairTerm} )* \lex{]}\\ 
+    \nt{PairTerm} & ::= & \lex{[} \nt{SlotName} \lex{=} \nt{Term} \lex{]}\\ 
+%
+    \nt{XMLTerm} & ::= & \lex{<} \nt{XMLNameList} \nt{XMLAttributeList} \lex{/>}\\ 
+    & \alt & \lex{<} \nt{XMLNameList} \nt{XMLAttributeList} \lex{>}
+    \nt{XMLChilds} \lex{</} \nt{XMLNameList} \lex{>}\\
+    & \alt & \lex{\#TEXT} \lex{(} \nt{Identifier} \alt\ \nt{String} \lex{)}\\
+    & \alt & \lex{\#COMMENT} \lex{(} \nt{Identifier} \alt\ \nt{String} \lex{)}\\
+    & \alt & \lex{\#PROCESSING-INSTRUCTION} \lex{(}
+    (\nt{Identifier} \alt\ \nt{String}) \lex{,} (\nt{Identifier} \alt\ \nt{String}) \lex{)}\\
+%
+    \nt{XMLNameList} & ::= & \nt{XMLName} \\ 
+    & \alt & \lex{(} \nt{XMLName} ( \lex{\alt} \nt{XMLName} )* \lex{)}\\
+    
+%
+    \nt{XMLAttributeList} & ::= & \lex{[} [ \nt{XMLAttribute} (\lex{,}
+    \nt{XMLAttribute})* ] \lex{]}\\  
+    & \alt & \lex{(} [ \nt{XMLAttribute} (\lex{,} \nt{XMLAttribute})* ] \lex{)}\\  
+    & \alt & [ \nt{XMLAttribute} ( \nt{XMLAttribute})* ]\\  
+%
+    \nt{XMLAttribute} & ::= & \nt{AttributeName} \lex{=} \nt{Term}\\
+    & \alt & \lex{\_*} \\ 
+    & \alt & \nt{VariableName} \lex{*}\\
+    & \alt & [\nt{AnnotedName}] \lex{@}] \lex{\_} \lex{=} \nt{Term}\\
+%
+    \nt{XMLChilds} & ::= & \nt{ImplicitTermList}\\ 
+    & \alt & ( \nt{Term} )*\\
+%
+    \nt{ImplicitTermList} & ::= & \lex{[} \nt{Term} ( \lex{,} \nt{Term} )* \lex{]}\\ 
+
   \end{tabular}
 \end{center}
 

@@ -130,6 +130,11 @@ system.<BR>
 In order to quickly install the last version of <FONT COLOR=navy>Tom</FONT>, the best thing
 to do is the following:
 <UL><LI><B>
+</B><B>install the eclipse plugin
+</B></UL><B>
+</B>
+or
+<UL><LI><B>
 </B><B>browse the <FONT COLOR=navy>Tom</FONT></B><B> web page&nbsp;</B><A HREF="http://tom.loria.fr"><B>tom.loria.fr</B></A><B>
 </B><LI><B>get the last jtom-bundle-version.jar distribution
 </B><LI><B>get the associated scripts
@@ -176,8 +181,7 @@ Releases: is a way to get a major release as a software package;
 <FONT COLOR=navy>Tom</FONT> is written in Java and <FONT COLOR=navy>Tom</FONT> itself. You will need a Java
 compiler and interpreter to compile and run <FONT COLOR=navy>Tom</FONT>. 
 <BR>
-We actually use Sun JDK 1.3.1 and 1.4 tools for development and runtime
-execution.
+We actually use Sun JDK 1.4.x tools for development and runtime execution.
 <BR>
 Some tests have already been realized with gcj
 and Jikes without any particular issues.<BR>
@@ -191,10 +195,11 @@ and Jikes without any particular issues.<BR>
 shared-objects
 <LI>JJTraveler
 <LI>aterm-java
+<LI>apigen
 </UL>
 The following figure shows the dependencies order:<BR>
 <BR>
-<IMG SRC="depgraph-jtom.png"><BR>
+<IMG SRC="depgraph-jtom.gif"><BR>
 <BR>
 Such packages are available from:
 <UL><LI>
@@ -648,9 +653,21 @@ components. Parentheses (...) denote grouping. <BR>
 <TD ALIGN=center NOWRAP>::=</TD>
 <TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>SymbolName</I></FONT></TD>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>HeadSymbol</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
 <TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Integer</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Double</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>String</I></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>VariableName</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
@@ -665,6 +682,14 @@ components. Parentheses (...) denote grouping. <BR>
 <TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Name</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>AttributeName</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>XMLName</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
 <TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
 </TR></TABLE>
@@ -741,6 +766,14 @@ So we have:<BR>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeDouble</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeString</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
 <TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeList</I></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
@@ -778,8 +811,9 @@ a <FONT COLOR="#ff00ff"><I>MatchConstruct</I></FONT> is translated into a list o
 <LI><FONT COLOR="#ff00ff"><I>Operator</I></FONT>, <FONT COLOR="#ff00ff"><I>OperatorList</I></FONT> and <FONT COLOR="#ff00ff"><I>OperatorArray</I></FONT> are
  replaced by some functions definitions. <BR>
 <BR>
-<LI><FONT COLOR="#ff00ff"><I>TypeTerm</I></FONT>, <FONT COLOR="#ff00ff"><I>TypeInt</I></FONT>, <FONT COLOR="#ff00ff"><I>TypeList</I></FONT> and <FONT COLOR="#ff00ff"><I>TypeArray</I></FONT>
- are also replaced by some functions definitions. 
+<LI><FONT COLOR="#ff00ff"><I>TypeTerm</I></FONT>, <FONT COLOR="#ff00ff"><I>TypeInt</I></FONT>, <FONT COLOR="#ff00ff"><I>TypeDouble</I></FONT>, <FONT COLOR="#ff00ff"><I>TypeString</I></FONT>,
+ <FONT COLOR="#ff00ff"><I>TypeList</I></FONT> and <FONT COLOR="#ff00ff"><I>TypeArray</I></FONT> are also replaced by some functions
+ definitions. 
 </UL>
 A <FONT COLOR="#0000ff"><TT>%match</TT></FONT> construct contains two parts:<A NAME="match"></A>
 <UL><LI>
@@ -822,8 +856,7 @@ A term has the following syntax:
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>PlainTerm</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>SymbolName</I></FONT> <FONT COLOR="#0000ff"><TT>[</TT></FONT> <FONT COLOR="#ff00ff"><I>SlotName</I></FONT> <FONT COLOR="#0000ff"><TT>=</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT>
- ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>SlotName</I></FONT> <FONT COLOR="#0000ff"><TT>=</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> )* <FONT COLOR="#0000ff"><TT>]</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>XMLTerm</I></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>|</TD>
@@ -831,11 +864,110 @@ A term has the following syntax:
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>|</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>SymbolName</I></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> )* <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>HeadSymbolList</I></FONT> [ <FONT COLOR="#ff00ff"><I>ExplicitTermList</I></FONT> | <FONT COLOR="#ff00ff"><I>ImplicitPairList</I></FONT> ]</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>ExplicitTermList</I></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>|</TD>
 <TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>_</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>_*</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>HeadSymbolList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>HeadSymbol</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>HeadSymbol</I></FONT> ( <FONT COLOR="#0000ff"><TT></TT>|</FONT> <FONT COLOR="#ff00ff"><I>HeadSymbol</I></FONT> )+ <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>ExplicitTermList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> )* <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>ImplicitPairList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>[</TT></FONT> <FONT COLOR="#ff00ff"><I>PairTerm</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>PairTerm</I></FONT> )* <FONT COLOR="#0000ff"><TT>]</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>PairTerm</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>[</TT></FONT> <FONT COLOR="#ff00ff"><I>SlotName</I></FONT> <FONT COLOR="#0000ff"><TT>=</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> <FONT COLOR="#0000ff"><TT>]</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>XMLTerm</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>&lt;</TT></FONT> <FONT COLOR="#ff00ff"><I>XMLNameList</I></FONT> <FONT COLOR="#ff00ff"><I>XMLAttributeList</I></FONT> <FONT COLOR="#0000ff"><TT>/&gt;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>&lt;</TT></FONT> <FONT COLOR="#ff00ff"><I>XMLNameList</I></FONT> <FONT COLOR="#ff00ff"><I>XMLAttributeList</I></FONT> <FONT COLOR="#0000ff"><TT>&gt;</TT></FONT>
+ <FONT COLOR="#ff00ff"><I>XMLChilds</I></FONT> <FONT COLOR="#0000ff"><TT>&lt;/</TT></FONT> <FONT COLOR="#ff00ff"><I>XMLNameList</I></FONT> <FONT COLOR="#0000ff"><TT>&gt;</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>#TEXT</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Identifier</I></FONT> | <FONT COLOR="#ff00ff"><I>String</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>#COMMENT</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Identifier</I></FONT> | <FONT COLOR="#ff00ff"><I>String</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>#PROCESSING-INSTRUCTION</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT>
+ (<FONT COLOR="#ff00ff"><I>Identifier</I></FONT> | <FONT COLOR="#ff00ff"><I>String</I></FONT>) <FONT COLOR="#0000ff"><TT>,</TT></FONT> (<FONT COLOR="#ff00ff"><I>Identifier</I></FONT> | <FONT COLOR="#ff00ff"><I>String</I></FONT>) <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>XMLNameList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>XMLName</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>XMLName</I></FONT> ( <FONT COLOR="#0000ff"><TT></TT>|</FONT> <FONT COLOR="#ff00ff"><I>XMLName</I></FONT> )* <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>XMLAttributeList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>[</TT></FONT> [ <FONT COLOR="#ff00ff"><I>XMLAttribute</I></FONT> (<FONT COLOR="#0000ff"><TT>,</TT></FONT>
+ <FONT COLOR="#ff00ff"><I>XMLAttribute</I></FONT>)* ] <FONT COLOR="#0000ff"><TT>]</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>(</TT></FONT> [ <FONT COLOR="#ff00ff"><I>XMLAttribute</I></FONT> (<FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>XMLAttribute</I></FONT>)* ] <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP>[ <FONT COLOR="#ff00ff"><I>XMLAttribute</I></FONT> ( <FONT COLOR="#ff00ff"><I>XMLAttribute</I></FONT>)* ]</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>XMLAttribute</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>AttributeName</I></FONT> <FONT COLOR="#0000ff"><TT>=</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>_*</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>VariableName</I></FONT> <FONT COLOR="#0000ff"><TT>*</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP>[<FONT COLOR="#ff00ff"><I>AnnotedName</I></FONT>] <FONT COLOR="#0000ff"><TT>@</TT></FONT>] <FONT COLOR="#0000ff"><TT>_</TT></FONT> <FONT COLOR="#0000ff"><TT>=</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>XMLChilds</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>ImplicitTermList</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP>( <FONT COLOR="#ff00ff"><I>Term</I></FONT> )*</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>ImplicitTermList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>[</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> )* <FONT COLOR="#0000ff"><TT>]</TT></FONT></TD>
 </TR></TABLE>
 </DIV><BR>
 In <FONT COLOR=navy>Tom</FONT>, we can also define a set of rewrite rules. All the

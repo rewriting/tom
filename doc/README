@@ -1,5 +1,10 @@
-The documentation is generated using HEVEA those documentations and resources are available at: http://pauillac.inria.fr/~maranget/hevea/.
+The documentation is generated using HEVEA those documentations and
+resources are available at: 
 
-Then, you can use the amnual.sh script in the doc directory to generate either html files either ps either both.
+	  http://pauillac.inria.fr/~maranget/hevea 
+
+Then, you can use the manual.sh script in the doc directory to
+generate either html files either ps either both. 
 
 manual.sh -h for help
+
