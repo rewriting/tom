@@ -31,6 +31,7 @@ import java.util.*;
 import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
+import java.lang.reflect.Constructor;
 
 public class TomParser implements TomTask, TomParserConstants {
 
@@ -218,6 +219,7 @@ public class TomParser implements TomTask, TomParserConstants {
       case MATCHXML:
       case RULE:
       case BACKQUOTE_TERM:
+      case BACKQUOTE_XML:
       case VARIABLE:
       case TYPE:
       case TYPETERM:
@@ -249,6 +251,10 @@ public class TomParser implements TomTask, TomParserConstants {
         break;
       case RULE:
         RuleConstruct(blockList);
+                                           stat.numberTomBlocsRecognized++;
+        break;
+      case BACKQUOTE_XML:
+        BackQuoteXML(blockList);
                                            stat.numberTomBlocsRecognized++;
         break;
       case BACKQUOTE_TERM:
@@ -778,6 +784,21 @@ public class TomParser implements TomTask, TomParserConstants {
                                   docName,
                                   tsf().makeTomTerm_PatternList(ast().makeList(patternActionList)),
                                   option);
+      try{
+        Class xtomExpander = Class.forName("xtom.expander.XTomExpander");
+        Class[] constructorParams = { Class.forName("jtom.TomEnvironment") };
+        Constructor xtomExpanderConstructor = xtomExpander.getConstructor(constructorParams);
+        Object[] params = { environment };
+        TomTask xtomExpand = (TomTask) xtomExpanderConstructor.newInstance(params);
+        TomTask currentNextTask = getTask();
+        addTask(xtomExpand);
+        xtomExpand.addTask(currentNextTask);
+      } catch (ClassNotFoundException e) {
+        System.out.println("You need xtom to use the %matchXML construct");
+      } catch (Exception e) {
+        System.out.println(e.getMessage());
+        e.printStackTrace();
+      }
       list.add(matchXML);
       xmlMode = true;
       if (debugMode)
@@ -2283,6 +2304,18 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
+  final private boolean jj_3_8() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3_5() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     Token xsp;
@@ -2298,6 +2331,12 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_3() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
+    return false;
+  }
+
   final private boolean jj_3_7() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
@@ -2306,24 +2345,6 @@ public class TomParser implements TomTask, TomParserConstants {
 
   final private boolean jj_3R_23() {
     if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_AT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2358,7 +2379,7 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_la1_2();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0xfff2e,0xfff2e,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x600,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0xfffae,0xfffae,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x600,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
       jj_la1_1 = new int[] {0xa,0xa,0x40000000,0x40000,0x40000,0x80000,0x80000,0x80000,0x0,0x80000,0x40000000,0x1000000,0x40000000,0x40000000,0x800000,0x40000000,0x40000,0x40000,0x40000000,0x4000000,0x80000,0x40000000,0x80000,0x1000000,0x40000000,0x0,0x40000000,0x40000,0x40000,0x0,0x0,0x0,0x80000,0x1000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x1000000,0x1000000,0x1000000,};

@@ -36,6 +36,7 @@ import java.util.*;
 import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
+import java.lang.reflect.Constructor;
 
 public class TomParser implements TomTask {
 
@@ -486,6 +487,7 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
       MatchConstruct(blockList)          { stat.numberTomBlocsRecognized++; }
     | MatchXMLConstruct(blockList)       { stat.numberTomBlocsRecognized++; }
     | RuleConstruct(blockList)           { stat.numberTomBlocsRecognized++; }
+    | BackQuoteXML(blockList)            { stat.numberTomBlocsRecognized++; }
 //    | BackQuoteTerm(blockList)           { stat.numberTomBlocsRecognized++; }
     | DollarTerm(blockList)              { stat.numberTomBlocsRecognized++; }
     | IncludeConstruct(blockList)        { stat.numberTomBlocsRecognized++; }
@@ -873,6 +875,21 @@ void MatchXMLConstruct(ArrayList list) throws TomException: /* in DEFAULT mode *
 				  docName,
 				  tsf().makeTomTerm_PatternList(ast().makeList(patternActionList)),
                                   option);
+      try{
+	Class xtomExpander = Class.forName("xtom.expander.XTomExpander");
+	Class[] constructorParams = { Class.forName("jtom.TomEnvironment") };
+	Constructor xtomExpanderConstructor = xtomExpander.getConstructor(constructorParams);
+	Object[] params = { environment };
+	TomTask xtomExpand = (TomTask) xtomExpanderConstructor.newInstance(params);
+	TomTask currentNextTask = getTask();
+	addTask(xtomExpand);
+	xtomExpand.addTask(currentNextTask);
+      } catch (ClassNotFoundException e) {
+	System.out.println("You need xtom to use the %matchXML construct");
+      } catch (Exception e) {
+	System.out.println(e.getMessage());
+	e.printStackTrace();
+      }
       list.add(matchXML);
       xmlMode = true;
       if (debugMode)
