@@ -24,7 +24,7 @@ constructor(Intruder,intruder,intruder(<id(AgentId)>,<listNonce(ListNonce)>,<lis
 constructor(State,state,state(<senders(ListAgent)>,<receivers(ListAgent)>,<intruder(Intruder)>,<network(ListMessage)>)),
 constructor(State,ATTACK,ATTACK),
 constructor(State,ERROR,ERROR),
-list(ListNonce, Nonce),
-list(ListAgent, Agent),
-list(ListMessage, Message)
+named-list(concNonce, ListNonce, Nonce),
+named-list(concAgent, ListAgent, Agent),
+named-list(concMessage, ListMessage, Message)
 ]

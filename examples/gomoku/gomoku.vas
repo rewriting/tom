@@ -7,4 +7,4 @@ abstract syntax
   pawn(color:Int) -> Pawn
   empty(x:Int,y:Int) -> Pawn
   concPawn(Pawn*) -> PawnList
-  concPlateList(PawnList*) -> PawnListList
+  concPawnList(PawnList*) -> PawnListList

@@ -30,14 +30,14 @@ constructor(Pred,mark,mark(<p(Pred)>)),
 constructor(Trace,rappl,rappl(<rule(RuleR)>,<subject(Sequent)>,<prod(ListSequent)>)),
 constructor(Proof,hyp,hyp(<seq(Sequent)>)),
 constructor(Proof,rule,rule(<rule(RuleR)>,<goal(Sequent)>,<lemm(ListProof)>)),
-list(ListProof,Proof),
+named-list(concProof,ListProof,Proof),
 
 constructor(Sequent,PROOF,PROOF),
 constructor(Sequent,END,END),
 constructor(Sequent,seq,seq(<left(ListPred)>,<right(ListPred)>)),
-list(ListPred,Pred),
-list(ListSequent,Sequent),
+named-list(concPred,ListPred,Pred),
+named-list(concSequent,ListSequent,Sequent),
 
 constructor(Pair,pair,pair(<left(int)>,<right(str)>)),
-list(ListPair,Pair)
+named-list(concPair,ListPair,Pair)
 ]

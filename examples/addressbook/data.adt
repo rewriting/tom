@@ -2,5 +2,5 @@
 constructor(Date,date,date(<year(int)>,<month(int)>,<day(int)>)),
 constructor(Date,date2,date2(<year(int)>,<month(int)>,<day(int)>)),
 constructor(Person,person,person(<firstname(str)>,<lastname(str)>,<birthdate(Date)>)),
-list(PersonList, Person)
+named-list(concPerson, PersonList, Person)
 ]

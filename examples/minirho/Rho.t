@@ -57,7 +57,7 @@ package minirho;
 			 appSc(subst:Constraint,co:Constraint) -> Constraint //Substition application on constraints
 			 match(pa:RTerm,rhs:RTerm) -> Constraint
 			 eq(var:RTerm,rhs:RTerm) -> Constraint
-			 concAnd( Constraint* ) -> ListConstraint
+			 concConstraint( Constraint* ) -> ListConstraint
 
 //AUXILARY: not strictly speaking needed: use to check if the head of an application tree is a constructor
 			 matchKO(pa:RTerm,rhs:RTerm) -> Constraint
