@@ -39,7 +39,7 @@ import tom.library.traversal.Replace1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
-
+import jtom.verifier.il.types.*;
 /**
  * The TomVerifier plugin.
  */
@@ -50,10 +50,12 @@ public class TomVerifier extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS = "<options><boolean name='verify' altName='' description='Verify correctness of match compilation' value='false'/></options>";
 
   protected Verifier verif;
+	protected LatexOutput output;
 
   public TomVerifier() {
     super("TomVerifier");
     verif = new Verifier();
+		output = new LatexOutput();
   }
 
   public void run() {
@@ -65,8 +67,12 @@ public class TomVerifier extends TomGenericPlugin {
         Collection purified = purify(matchSet);
         // System.out.println("Purified : " + purified);        
         Collection derivations = getDerivations(purified);
-				System.out.println("Derivations : " + derivations);
-
+// 				System.out.println("Derivations : " + derivations);
+				Iterator it = derivations.iterator();
+				while(it.hasNext()) {
+					System.out.println(
+						output.build_latex_from_tree((DerivTree) it.next()));
+				}
         // verbose
         getLogger().log(Level.INFO, "TomVerificationPhase",
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
@@ -139,6 +145,7 @@ public class TomVerifier extends TomGenericPlugin {
           }
         } // end instanceof Expression
         else if (subject instanceof Instruction) {
+					// the checkstamp should be managed another way 
           %match(Instruction subject) {
             IfThenElse(TrueTL(),success,Nop()) -> {
               return traversal().genericTraversal(`success,this);
@@ -149,6 +156,7 @@ public class TomVerifier extends TomGenericPlugin {
 						CompiledPattern(patterns,inst) -> {
 							return traversal().genericTraversal(`inst,this);
 						}
+						
           }
         } // end instanceof Instruction
         /*

@@ -194,7 +194,8 @@
 			<include name="tom/library/**/*.t"/> 
 			<include name="tom/platform/**/*.t"/> 
 			<include name="jtom/*.t"/> 
-			<exclude name="jtom/parser/*.g.t"/>			
+			<exclude name="jtom/parser/*.g.t"/>
+			<include name="**/LatexOutput.t"/>
 			<include name="**/Verifier.t"/>
 			<exclude name="**/OptionParser.t"/>
 		</tom>
