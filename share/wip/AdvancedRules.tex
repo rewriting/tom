@@ -15,13 +15,13 @@
 
 \subsection{Actuellement}
 
-Les conditions, ou gardes, ont \'et\'e introduites dans \tom r\'ecement.
+Les conditions, ou gardes, ont \'et\'e introduites dans \tom r\'ecemment.
 \\
 
-Actuellement les condition se pr\'esentent sous la forme de fonction (Java ou \tom) retournant un bool\'een.
-Seuls des variables instenti\'e dans le pattern du \%match, ou du pattern filtrant pr\'ec\'edant dans le cas de \%match imbriqu\'es, peuvent \^etre pass\'es en arguments.
+Actuellement les conditions se pr\'esentent sous la forme de fonctions (Java ou \tom) retournant un bool\'een.
+Seuls des variables instanti\'ees dans le pattern du \%match, ou du pattern filtrant pr\'ec\'edent dans le cas de \%match imbriqu\'es, peuvent \^etre pass\'ees en arguments.
 \\\\
-$\%\:match\:\{$
+$\%\:match(s)\:\{$
 
 $p\:when\:c\rightarrow\{\dots\}$
 
@@ -38,8 +38,36 @@ $(p_1\filter s_1)$\textasciicircum\dots\textasciicircum$(p_n\filter s_n)$\textas
 \\\\Deux cas de figures se pr\'esentent :
 \begin{itemize}
 \item $s_1\dots s_n$ sont ind\'ependants. On accroche les gardes simplement et la r\'esolution se fait dans l'ordre d'\'ecriture des patterns.
-\item $s_1\dots s_n$ sont li\'es. L'ordre de r\'esolution doit cette fois ci \^etre d\'etermin\'e par un graphe de d\'ependances. Pour cette raison, les cycles de d\'ependances ne sont permis.
+\item $s_1\dots s_n$ sont li\'es. L'ordre de r\'esolution doit cette fois ci \^etre d\'etermin\'e par un graphe de d\'ependances. Pour cette raison, les cycles de d\'ependances ne sont pas permis. 
 \end{itemize}
+
+\subsubsection{M\'ecanisme}
+Il convient donc en premier lieu de d\'eterminer un ordre entre les diff\'erents \'el\'ements. Notons $P_n$ l'\'el\'ement $(p_n \filter s_n)$, $L_n$ l'ensemble des variables contenues dans $p_n$ et $R_n$ l'ensemble des variables contenues dans $s_n$.\\
+
+Nous dirons que $P_i < P_j$ lorsque que $L_i \cap R_j \ne \emptyset$. Notons qu'il ne s'agit pas d'une relation d'ordre au sens math\'ematique du terme.\\
+
+En d\'eterminant les relations d'ordre des \'el\'ements entre eux il est possible de contruire un graphe de d\'ependances.  En effet $a < b$ peut \^etre interpr\'et\'e comme une ar\^ete de $a$ vers $b$.
+
+Lorsque l'on recontre un cas tel que $a < b$ et $b < a$, on peut en d\'eduire l'existence d'un cycle. Il sera donc impossible de d\'eterminer un ordre de r\'esolution.\\
+
+Si aucune relation d'ordre n'a \'et\'e d\'etect\'e, cela signifie l'ind\'ependance de l'\'el\'ement. Dans ce cas l'ordre de r\'esolution importe peu.\\
+
+En parcourant le graphe, il est possible d'obtenir l'ordre dans lequel les diff\'erents \'el\'ements doivent \^etre trait\'es. L'ordre des arbres entre eux importe peu car ils sont ind\'ependants.
+
+\subsubsection{R\'esolution}
+Une fois l'ordre d\'etermin\'e, la r\'esolution d'un $\%advanced$ peut se ramener à une suite de \%match imbriqu\'es. En effet :
+\\\\
+$\%\:advanced\:\{$
+
+$(p_1\filter s_1)$\textasciicircum\dots\textasciicircum$(p_n\filter s_n)$\textasciicircum$c_1$\textasciicircum\dots\textasciicircum$c_n\rightarrow\{\dots\}$
+\\$\}$
+\\\\
+\'equivaut \`a :
+\\\\
+$\%\:match(s_1)\:\{$
+
+$p_1\:when\:c_1\rightarrow\{\:\dots\:\%\:match(s_n)\:\{\:p_n\:when\:c_n\rightarrow\{\dots\}\:\}\:\}$
+\\$\}$
 
 \subsection{Syntaxe proche de JRule}
 $((\_^*,p,\_^*)\filter s)$\textasciicircum$c\rightarrow\{\dots\}$ devient : $(p\in E)$\textasciicircum$c\rightarrow\{\dots\}$
@@ -49,6 +77,22 @@ Cette notation pourrait intervenir en tant qu'alternative syntaxique, sans engen
 
 \section{Applications}
 
-Cette nouvelle forme de r\'esolution des contraintes est particuli\`erement int\'eressante dans le cas o\`u l'on \'ecrit actuellement des \%match imbriqu\'es. En effet l'arbre des solutions \`a parcourir se r\'eduit.
+Cette nouvelle forme de r\'esolution des contraintes est particuli\`erement in\-t\'e\-res\-sante dans le cas d'instructions \%match imbriqu\'es.
+
+\subsection{Exemple}
+
+Dans cet exemple, l'\'element h(x) contient la variable x instanci\'ee pr\'ec\'edement et va donc en \^etre d\'ependant.
+\\\\
+$\%\:advanced\:\{$
+
+$(f(x)\filter s)$\textasciicircum$(g(y) \filter h(x))\rightarrow\{\dots\}$
+\\$\}$
+\\\\
+L'imbrication des instructions \%match se fera donc ainsi :
+\\\\
+$\%\:match(s)\:\{$
+
+$f(x)\rightarrow\{\:\%\:match(h(x))\:\{\:g(y)\rightarrow\{\dots\}\:\}\:\}$
+\\$\}$
 
 \end{document}
