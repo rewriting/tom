@@ -10,6 +10,7 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SH
 stabledir 	= $(top_srcdir)/stable/jtom/adt
 
 ${TomSignatureAPI}: TomSignature.tom
+
 BOOTSOURCES	= ${TomSignatureAPI}
 
 java_JAVA       = $(BOOTSOURCES)
@@ -19,9 +20,13 @@ JAVAROOT        = ${top_builddir}/src/
 adtdir          = $(datadir)/jtom/
 adt_DATA        = TomSignature.tom
 
-TomSignature.tom: ../TomSignature.adt
-	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt 
-	mv TomSignatureMakeRules TomSignatureMakeRules.am
+#TomSignatureMakeRules.am: TomSignatureMakeRules
+#	cp TomSignatureMakeRules TomSignatureMakeRules.am
+
+#TomSignature.tom: ../TomSignature.adt
+#	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt 
+#	mv TomSignatureMakeRules TomSignatureMakeRules.am
+
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)

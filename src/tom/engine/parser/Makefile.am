@@ -28,7 +28,7 @@ CLEANFILES 	= TomBackQuoteParser.java
 
 $(generated_java): TomParser.jj
 	$(JAVACC) $<
-	touch Token.java ParseException.java TokenMgrError.java
+	@touch Token.java ParseException.java TokenMgrError.java
 
 EXTRA_DIST 	= $(BOOTSOURCES) $(generated_java) TomParser.jj TomBackQuoteParser.t
 
@@ -50,3 +50,10 @@ TOM = ${prefix}/bin/jtom
 
 %.tom.c : %.t
 	$(TOM) --cCode $(TOMFLAGS) $*
+
+TomBackQuoteParser.t: ../adt/TomSignature.tom
+	@touch TomBackQuoteParser.t
+
+../adt/TomSignature.tom: ../TomSignature.adt
+	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt --output ../adt 
+	mv ../adt/TomSignatureMakeRules ../adt/TomSignatureMakeRules.am

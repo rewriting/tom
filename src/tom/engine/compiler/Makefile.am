@@ -38,3 +38,19 @@ TOM = ${prefix}/bin/jtom
 
 %.tom.c : %.t
 	$(TOM) --cCode $(TOMFLAGS) $*
+
+TomKernelCompiler.t: ../adt/TomSignature.tom
+	@touch TomKernelCompiler.t
+
+TomKernelExpander.t: ../adt/TomSignature.tom
+	@touch TomKernelExpander.t
+
+TomCompiler.t: ../adt/TomSignature.tom
+	@touch TomCompiler.t
+
+TomExpander.t: ../adt/TomSignature.tom
+	@touch TomExpander.t
+
+../adt/TomSignature.tom: ../TomSignature.adt
+	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt --output ../adt 
+	mv ../adt/TomSignatureMakeRules ../adt/TomSignatureMakeRules.am

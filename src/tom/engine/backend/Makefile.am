@@ -32,3 +32,13 @@ TOM = ${prefix}/bin/jtom
 
 %.tom.c : %.t
 	$(TOM) --cCode $(TOMFLAGS) $*
+
+TomGenerator.t: ../adt/TomSignature.tom
+	@touch TomGenerator.t
+
+TomOptimizer.t: ../adt/TomSignature.tom
+	@touch TomOptimizer.t
+
+../adt/TomSignature.tom: ../TomSignature.adt
+	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt --output ../adt 
+	mv ../adt/TomSignatureMakeRules ../adt/TomSignatureMakeRules.am

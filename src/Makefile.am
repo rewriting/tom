@@ -24,9 +24,10 @@
 #
 
 SUBDIRS = jtom
-JARFILE    = jtom-devel${VERSION}.jar
-data_DATA  = ${JARFILE}
-CLEANFILES = ${JARFILE}
+JARFILE        = jtom-devel.jar
+JARVERSIONFILE = jtom-devel${VERSION}.jar
+data_DATA  = $(JARFILE) $(JARVERSIONFILE)
+CLEANFILES = ${JARFILE} ${JARVERSIONFILE}
 
 EXTRA_DIST = TODO ALGO 
 
@@ -69,7 +70,9 @@ bootinstall:
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-${JARFILE}:
-	 jar cf ${JARFILE} \
-	`cd ${top_builddir}/src/ && find . -name '*.class'`
+${JARFILE}: ${JARVERSIONFILE}
+	cp ${JARVERSIONFILE} ${JARFILE}
 
+${JARVERSIONFILE}:
+	 jar cf ${JARVERSIONFILE} \
+	`cd ${top_builddir}/src/ && find . -name '*.class'`
