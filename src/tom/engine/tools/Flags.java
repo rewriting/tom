@@ -45,9 +45,8 @@ public class Flags {
 
   public static boolean doParse   = true; // parse a *.t file
   public static boolean doExpand  = true; // expand the AST
-  public static boolean doCheck   = true; // type check the AST
   public static boolean doCompile = true; // compile the AST
-
+  public static boolean doOnlyCompile = false;
   public static boolean intermediate = false; // generate intermediate files
 
 
@@ -60,7 +59,7 @@ public class Flags {
 
   public static boolean findErrors = false; // true if an error is found
 
-  public static boolean doVerify = true; // verify during parsing
+  public static boolean doCheck = true; // verify after parsing and expansion
   public static boolean strictType = true; // no universal type
   public static boolean genDecl = true; // generate declarations
   

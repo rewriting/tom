@@ -57,7 +57,7 @@ public class Tom {
     System.out.println("\t--doCompile: start after type-checking");
     System.out.println("\t--intermediate: generate intermediate files");
     System.out.println("\t--version: print version");
-    System.out.println("\t--noVerify: do not verify correctness");
+    System.out.println("\t--noCheck: do not verify correctness");
     System.out.println("\t--noWarning: do not print nay warning");
     System.out.println("\t--lazyType: use universal type");
     System.out.println("\t--demo: run demo mode");
@@ -103,15 +103,15 @@ public class Tom {
             Flags.supportedBlock = false;
             outputSuffix = ".e";
           } else if(args[i].equals("--doCompile")) {
+            Flags.doOnlyCompile = true;
             Flags.doParse = false;
             Flags.doExpand = false;
-            Flags.doCheck = false;
           } else if(args[i].equals("--intermediate")) {
             Flags.intermediate = true;
           } else if(args[i].equals("--noWarning")) {
             Flags.noWarning = true;
-          } else if(args[i].equals("--noVerify")) {
-            Flags.doVerify = false;
+          } else if(args[i].equals("--noCheck")) {
+            Flags.doCheck = false;
           } else if(args[i].equals("--strictType")) {
             System.out.println("Warning: --strictType is now set by default");
             Flags.strictType = true;
@@ -163,7 +163,7 @@ public class Tom {
 
     if(Flags.doParse) {
       inputFileName = fileName + inputSuffix;
-    } else if(Flags.doCompile) {
+    } else if(Flags.doOnlyCompile) {
       inputFileName = fileName + checkedSuffix;
     }
 
@@ -184,7 +184,7 @@ public class Tom {
     TomTerm checkedTerm  = null;
     TomTerm compiledTerm = null;
 
-    if(Flags.doParse && Flags.doExpand && Flags.doCheck) {
+    if(Flags.doParse && Flags.doExpand) {
       try {
           // to get the length of the file
         File file = new File(inputFileName);
@@ -280,7 +280,7 @@ public class Tom {
     
     if(Flags.doCompile) {
       try {
-        if(!Flags.doCheck) {
+        if(Flags.doOnlyCompile) {
           checkedTerm = (TomTerm) tomSignatureFactory.readFromTextFile(input);
         }
 

@@ -316,7 +316,6 @@ public class TomExpander extends TomBase {
 
           context, Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType)] -> {
               // create a variable
-            System.out.println("pass1.8: Variable(" + strName + "," + tomType + ")");
             TomType localType = getType(tomType);
             if(localType == null) { 
               messageMatchTypeVariableError(strName, tomType);
@@ -326,16 +325,11 @@ public class TomExpander extends TomBase {
           }
           
           context, TLVar(strName,TomTypeAlone(tomType)) -> {
-            System.out.println("pass1.8: TLVar(" + strName + "," + tomType + ")");
-                
-              // create a variable
+              //debugPrintln("pass1.8: TLVar(" + strName + "," + tomType + ")");
+              // create a variable: its type is ensured by checker
             TomType localType = getType(tomType);
-            if ( localType == null ) { 
-              messageMatchTypeVariableError(strName, tomType);
-            } else {
-              Option option = ast().makeOption();
-              return `Variable(option,Name(strName),localType);
-            }
+            Option option = ast().makeOption();
+            return `Variable(option,Name(strName),localType);
           }
               
           SubjectList(l1), TermList(subjectList) -> {
@@ -530,7 +524,7 @@ public class TomExpander extends TomBase {
       it is necessary), we test if 'LRParen(_)' is in the option structure. 
     */
   private void testVariableWithoutParen(Option option, String name) throws TomException {
-    if(!Flags.doVerify) return;
+    if(!Flags.doCheck) return;
     
     OptionList optionList = option.getOptionList();
     Option lrParen = getLRParen(optionList);
@@ -544,10 +538,11 @@ public class TomExpander extends TomBase {
   }
 
   private void messageMatchTypeVariableError(String name, String type) throws TomException {
-    OptionList optionList = optionMatchTypeVariable.getOptionList();
-    Integer line = findOriginTrackingLine("Match", optionList);
+    Integer line = optionMatchTypeVariable.getLine();
     String s = "Variable '" + name + "' has a wrong type:  '" + type + "' in %match construct";
+    System.out.println(s);
     messageError(line,s);
+    System.exit(1);
   }
   private void messageVariableWithParenError( String  name, Integer line ) {
     if(Flags.noWarning) return;

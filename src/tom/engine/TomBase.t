@@ -510,8 +510,9 @@ public class TomBase {
     System.out.println("findOriginTrackingLine: '" + name + "' not found");
     System.exit(1); return null;
   }
+  
   protected void messageError(Integer line, String msg) throws CheckErrorException {
-    if(!Flags.doVerify) return;
+    if(!Flags.doCheck) return;
     String s = "\n"+msg+"\n-- Error occured at line: " + line + "\n"; 
     throw new CheckErrorException(s);
   }

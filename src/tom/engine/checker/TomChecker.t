@@ -54,7 +54,7 @@ public class TomChecker extends TomBase {
   
     // Main entry point: We check all interesting Tom Structure
   public void checkSyntax(TomTerm parsedTerm) throws TomException {
-    if(!Flags.doVerify) return;
+    if(!Flags.doCheck) return;
     Collect collectAndVerify = new Collect() 
       {  
         public boolean apply(ATerm term) throws TomException {
