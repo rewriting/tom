@@ -70,5 +70,6 @@ bootinstall:
 	done
 
 ${JARFILE}:
-	find ${top_builddir}/src/jtom -name '*.class' | xargs jar cf ${JARFILE}
+	 jar cf ${JARFILE} \
+	`cd ${top_builddir}/src/ && find . -name '*.class'`
 
