@@ -25,7 +25,7 @@ header{
     import antlr.*;
 }
 
-class NewTomParser extends Parser;
+class TomParser extends Parser;
 
 options{
     k=1; // the lookahead value during parsing
@@ -42,9 +42,9 @@ options{
     }
 
     // the default-mode parser
-    private NewTargetParser targetparser;
-    protected NewBQParser bqparser;
-    private NewTomLexer tomlexer;
+    private HostParser targetparser;
+    protected BackQuoteParser bqparser;
+    private TomLexer tomlexer;
 
     private Logger logger;
 
@@ -56,13 +56,13 @@ options{
 
     private TomFactory tomFactory;
 
-    public NewTomParser(ParserSharedInputState state, NewTargetParser target){
+    public TomParser(ParserSharedInputState state, HostParser target){
         this(state);
         this.targetparser = target;
         this.debuggedStructureList = `emptyTomList();
-        this.bqparser = new NewBQParser(state,this);
+        this.bqparser = new BackQuoteParser(state,this);
         this.tomFactory = new TomFactory();
-        this.tomlexer = (NewTomLexer) selector().getStream("tomlexer");
+        this.tomlexer = (TomLexer) selector().getStream("tomlexer");
 
         logger = Logger.getLogger(getClass().getName());
     }
@@ -2026,7 +2026,7 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
 
 
 
-class NewTomLexer extends Lexer;
+class TomLexer extends Lexer;
 options {
 	k=3; // default lookahead
     charVocabulary = '\u0000'..'\uffff'; // each character can be read

@@ -24,7 +24,7 @@ header{
 
 
 
-class NewTargetParser extends Parser;
+class HostParser extends Parser;
 
 options{
     // antlr does not catch exceptions automaticaly
@@ -49,20 +49,20 @@ options{
     private Logger logger;
 
     // the parser for tom constructs
-    NewTomParser tomparser; 
+    TomParser tomparser; 
 
     // the lexer for target language
-    NewTargetLexer targetlexer = null;
+    HostLexer targetlexer = null;
     
     // locations of target language blocks
     Stack lines = new Stack();
     Stack columns = new Stack();
 
-    public NewTargetParser(TokenStreamSelector selector,String currentFile,HashSet includedFiles,HashSet alreadyParsedFiles){
+    public HostParser(TokenStreamSelector selector,String currentFile,HashSet includedFiles,HashSet alreadyParsedFiles){
         this(selector);
         this.selector = selector;
         this.currentFile = currentFile;
-        this.targetlexer = (NewTargetLexer) selector.getStream("targetlexer");
+        this.targetlexer = (HostLexer) selector.getStream("targetlexer");
         targetlexer.setParser(this);
         this.includedFileSet = new HashSet(includedFiles);
         testIncludedFile(currentFile, includedFileSet);
@@ -72,11 +72,11 @@ options{
         logger = Logger.getLogger(getClass().getName());
 
         // then create the Tom mode parser
-        tomparser = new NewTomParser(getInputState(),this);
+        tomparser = new TomParser(getInputState(),this);
         bqparser = tomparser.bqparser;
     } 
 
-    NewBQParser bqparser;
+    BackQuoteParser bqparser;
 
     public TokenStreamSelector getSelector(){
         return selector;
@@ -188,7 +188,7 @@ options{
         InputStream input;
         byte inputBuffer[];
         //  TomParser tomParser;
-        NewTargetParser parser = null;
+        HostParser parser = null;
         File file;
         String fileAbsoluteName = "";
         fileName = fileName.trim();
@@ -252,7 +252,7 @@ options{
                 //         throw new TomIncludeException(msg);
             }
             
-            parser = TomMainParser.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet);
+            parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet);
             astTom = parser.input();
             astTom = `TomInclude(astTom.getTomList());
             list.add(astTom);
@@ -782,7 +782,7 @@ targetLanguage [LinkedList list] returns [TargetLanguage result] throws TomExcep
 // here begins the lexer
 
 
-class NewTargetLexer extends Lexer;
+class HostLexer extends Lexer;
 options {
 	k=6; // the default lookahead
 
@@ -800,9 +800,9 @@ options {
     public StringBuffer target = new StringBuffer("");
 
     // the target parser
-    private NewTargetParser parser = null;
+    private HostParser parser = null;
 
-    public void setParser(NewTargetParser parser){
+    public void setParser(HostParser parser){
         this.parser = parser;
     }
     
@@ -946,7 +946,7 @@ WS	:	(	' '
 // comments
 COMMENT 
     :
-        ( SL_COMMENT | t:ML_COMMENT )
+        ( SL_COMMENT | ML_COMMENT )
         { $setType(Token.SKIP);}
 	;
 

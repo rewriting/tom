@@ -16,7 +16,7 @@ header{
     import java.util.*;
 }
 
-class NewBQParser extends Parser;
+class BackQuoteParser extends Parser;
 
 options{
     defaultErrorHandler = false;
@@ -26,18 +26,18 @@ options{
 {
     %include{TomSignature.tom}
     
-    NewBQLexer bqlexer = null;
+    BackQuoteLexer bqlexer = null;
 
-    NewTomParser tomparser = null;
+    TomParser tomparser = null;
 
     String currentFile(){
         return tomparser.currentFile();
     }
 
-    public NewBQParser(ParserSharedInputState state, NewTomParser tomparser){
+    public BackQuoteParser(ParserSharedInputState state, TomParser tomparser){
         this(state);
         this.tomparser = tomparser;
-        bqlexer = (NewBQLexer) selector().getStream("bqlexer");
+        bqlexer = (BackQuoteLexer) selector().getStream("bqlexer");
     }
 
     private final TomSignatureFactory getTomSignatureFactory(){
@@ -66,9 +66,22 @@ options{
 
     private boolean addTarget = false;
 
+    private TomList makeCompositeList(LinkedList list){
+        TomTerm term = null;
+        TomList compositeList = `emptyTomList();
+        Iterator it = list.iterator();
+        
+        while(it.hasNext()){
+            term = (TomTerm) it.next();
+            compositeList = (TomList) compositeList.append(term);
+        }
+        
+        return compositeList;
+    }
+
     private TomTerm buildBqAppl(Token id,LinkedList blockList,TomTerm term,boolean composite){
         TomTerm result = null;
-        TomList list = buildList(blockList);
+        TomList list = makeCompositeList(blockList);
 
         %match(TomList list){
             emptyTomList() -> {
@@ -239,34 +252,7 @@ options{
         }
     }
 
-    private TomList sortAttributeList(TomList list){
-        %match(TomList list){
-            concTomTerm() -> {
-                return list;
-            }
-            concTomTerm(X1*,e1,X2*,e2,X3*) -> {
-                %match(TomTerm e1,TomTerm e2){
-/*
-                    BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name1))],_)],
-                    BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name2))],_)] -> {
-                        if(`name1.compareTo(`name2) > 0) {
-                            return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-                        }
-                    }
-*/
-                    BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name1)],_)],
-                    BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name2)],_)] -> {
-                        if(`name1.compareTo(`name2) > 0) {
-                            return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
-                        }
-                    }
-                }
-            }
-        }
-        return list;
-    }
-
-    private TomList buildAttributeList(LinkedList list){/*
+    private TomList buildAttributeList(LinkedList list){
         TomList result = `emptyTomList();
         TomList tmp = `emptyTomList();
         for(int i = 0; i < list.size(); i++){
@@ -277,9 +263,8 @@ options{
                 result = (TomList) result.append((TomTerm) list.get(i));
             }
         }
-        result = `concTomTerm(result*,tmp*);*/
-        TomList result = buildList(list);
-        return sortAttributeList(result);
+        result = `concTomTerm(result*,tmp*);
+        return result;
     }
 
     private TomList buildList(LinkedList list){
@@ -325,9 +310,6 @@ options{
     }
 
 
-    public void p(String s){
-        System.out.println(s);
-    }
 }
 
 
@@ -556,7 +538,7 @@ target returns [Token result]
     :
         in:BQ_INTEGER {result = in;}
     |   str:BQ_STRING {result = str;}
-//    |   m:BQ_MINUS {result = m;}
+    |   m:BQ_MINUS {result = m;}
     |   s:BQ_STAR {result = s;}
     |   w:BQ_WS {result = w;}
     |   d:BQ_DOT {result = d;} 
@@ -596,9 +578,8 @@ basicTerm [TomList context] returns [TomTerm result]
         (
             XML ws BQ_LPAREN ws 
             (
-                (
-                    (bqTerm[null] BQ_COMMA) => 
-                    term = bqTerm[context] BQ_COMMA ws
+                ( 
+                    (bqTerm[null] BQ_COMMA) => term = bqTerm[context] BQ_COMMA ws
                     {
                         blockList.add(term);
                     }
@@ -615,7 +596,7 @@ basicTerm [TomList context] returns [TomTerm result]
                 termList[blockList,context] 
             )? BQ_RPAREN
             {
-                TomList compositeList = buildList(blockList);
+                TomList compositeList = makeCompositeList(blockList);
                 result = `Composite(
                     concTomTerm(
                         TargetLanguageToTomTerm(ITL("(")),
@@ -768,7 +749,7 @@ beginBackquote returns [TomTerm result]
 
 
 
-class NewBQLexer extends Lexer;
+class BackQuoteLexer extends Lexer;
 options {
     charVocabulary = '\u0000'..'\uffff'; // each character can be read
     k=2;
@@ -833,12 +814,10 @@ BQ_SIMPLE_ID
 options{ testLiterals = true; }   
     :   ('a'..'z' | 'A'..'Z') 
         ( 
-            options{greedy=true;}:
-            (
-                ('a'..'z' | 'A'..'Z') 
-            |   BQ_UNDERSCORE 
-            |   BQ_DIGIT
-            )
+            ('a'..'z' | 'A'..'Z') 
+        |   BQ_UNDERSCORE 
+//        |   BQ_DOT
+        |   BQ_DIGIT
         )*
     ;
 
@@ -858,8 +837,13 @@ BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;
 
 BQ_STRING  :   '"' (BQ_ESC|~('"'|'\\'|'\n'|'\r'))* '"'
     ;
+
+ANY 
+options{ testLiterals = true; } 
+    :   '\u0000'..'\uffff'  
+    ;
    
-protected BQ_MINUS   :   '-'  ;
+BQ_MINUS   :   '-'  ;
 
 protected
 BQ_DIGIT   :   ('0'..'9')  ;
@@ -906,8 +890,3 @@ protected
 BQ_HEX_DIGIT
 	:	('0'..'9'|'A'..'F'|'a'..'f')
 	;
-
-ANY 
-    :
-        '\u0000'..'\uffff'  
-    ;
