@@ -11,7 +11,12 @@
 	</projects>
 <buildSpec>
         <buildCommand>
-            <name>fr.loria.eclipse.jtom.ADTToJavaBuilder</name>
+            <name>fr.loria.eclipse.vas.VasBuilder</name>
+            <arguments>
+            </arguments>
+        </buildCommand>
+        <buildCommand>
+            <name>fr.loria.eclipse.vas.ADTToJavaBuilder</name>
             <arguments>
             </arguments>
         </buildCommand>
