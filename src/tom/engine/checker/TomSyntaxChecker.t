@@ -21,8 +21,7 @@ public class TomSyntaxChecker extends TomChecker implements TomPlugin
 
     public TomSyntaxChecker()
     {
-	myOptions = `concTomOption(OptionBoolean("checkSyntax","","",True()) // activationFlag
-				);
+	myOptions = `emptyTomOptionList();
     }
 
     public void setInput(ATerm term)
@@ -41,43 +40,48 @@ public class TomSyntaxChecker extends TomChecker implements TomPlugin
 
     public void run()
     {
-	try
+	if(amIActivated() == true)
 	    {	
-		long startChrono = System.currentTimeMillis();
-		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-		
-		reinit();
-
-		checkSyntax(term);
-
-		if(verbose)
-		    System.out.println("TOM syntax checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-
-		environment().printAlertMessage("TomSyntaxChecker");
-		if(!environment().isEclipseMode()) {
-		    // remove all warning (in command line only)
-		    environment().clearWarnings();
-		}
+		try
+		    {	
+			long startChrono = System.currentTimeMillis();
+			boolean verbose = getServer().getOptionBooleanValue("verbose");
+			
+			reinit();
+			
+			checkSyntax(term);
+			
+			if(verbose)
+			    System.out.println("TOM syntax checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+			
+			environment().printAlertMessage("TomSyntaxChecker");
+			
+			if(!environment().isEclipseMode()) 
+			    {
+				// remove all warning (in command line only)
+				environment().clearWarnings();
+			    }
+		    }
+		catch (Exception e)
+		    {
+			environment().messageError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), 
+						   environment().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+			e.printStackTrace();
+		    }
 	    }
-	catch (Exception e)
+	else // syntax checker desactivated
 	    {
-		environment().messageError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), 
-					   environment().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-		e.printStackTrace();
+		boolean verbose = getServer().getOptionBooleanValue("verbose");
+		
+		if(verbose)
+		    {
+			System.out.println("The syntax checker is not activated and thus WILL NOT RUN.");
+		    }
 	    }
     }
 
     public TomOptionList declareOptions()
     {
-// 	int i = 0;
-// 	OptionList list = `concOption(myOptions*);
-// 	while(!(list.isEmpty()))
-// 	    {
-// 		i++;
-// 		list = list.getTail();
-// 	    }
-
-// 	System.out.println("1.3. The syntax checker declares " +i+ " options.");
 	return myOptions;
     }
 
@@ -111,5 +115,10 @@ public class TomSyntaxChecker extends TomChecker implements TomPlugin
 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
 		}
 	    }
+    }
+
+    private boolean amIActivated()
+    {
+	return !getServer().getOptionBooleanValue("noCheck");
     }
 }

@@ -21,8 +21,7 @@ public class TomTypeChecker extends TomChecker implements TomPlugin
 
     public TomTypeChecker()
     {
-	myOptions = `concTomOption(OptionBoolean("checkType","","",True()) // activationFlag
-				);
+	myOptions = `emptyTomOptionList();
     }
 
     public void setInput(ATerm term)
@@ -41,42 +40,47 @@ public class TomTypeChecker extends TomChecker implements TomPlugin
 
     public void run()
     {
-	try
+	if(amIActivated() == true)
 	    {
-		long startChrono = System.currentTimeMillis();
-		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-		
-		checkTypeInference(term);
+		try
+		    {
+			long startChrono = System.currentTimeMillis();
+			boolean verbose = getServer().getOptionBooleanValue("verbose");
+			
+			checkTypeInference(term);
+			
+			if(verbose)
+			    System.out.println("TOM type checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+
+			environment().printAlertMessage("TomTypeChecker");
+			
+			if(!environment().isEclipseMode())
+			    {
+				// remove all warning (in command line only)
+				environment().clearWarnings();
+			    }
+		    }
+		catch (Exception e) 
+		    {
+			environment().messageError("Exception occurs in TomTypeChecker: "+e.getMessage(), 
+						   environment().getInputFile().getName(), 
+						   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+			e.printStackTrace();
+		    }
+	    }
+	else // type checker desactivated
+	    {
+		boolean verbose = getServer().getOptionBooleanValue("verbose");
 		
 		if(verbose)
-		    System.out.println("TOM type checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-
-		environment().printAlertMessage("TomTypeChecker");
-		if(!environment().isEclipseMode()) {
-		    // remove all warning (in command line only)
-		    environment().clearWarnings();
-		}
-	    }
-	catch (Exception e) 
-	    {
-		environment().messageError("Exception occurs in TomTypeChecker: "+e.getMessage(), 
-					   environment().getInputFile().getName(), 
-					   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-		e.printStackTrace();
+		    {
+			System.out.println("The type checker is not activated and thus WILL NOT RUN.");
+		    }
 	    }
     }
 
     public TomOptionList declareOptions()
     {
-// 	int i = 0;
-// 	OptionList list = `concOption(myOptions*);
-// 	while(!(list.isEmpty()))
-// 	    {
-// 		i++;
-// 		list = list.getTail();
-// 	    }
-
-// 	System.out.println("1.5. The type checker declares " +i+ " options.");
 	return myOptions;
     }
 
@@ -110,5 +114,10 @@ public class TomTypeChecker extends TomChecker implements TomPlugin
 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
 		}
 	    }
+    }
+
+    private boolean amIActivated()
+    {
+	return !getServer().getOptionBooleanValue("noCheck");
     }
 }

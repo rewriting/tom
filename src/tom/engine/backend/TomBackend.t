@@ -26,28 +26,6 @@ public class TomBackend extends TomBase implements TomPlugin
     private TomAbstractGenerator generator;
     private Writer writer;
 
-    private boolean amIActivated()
-    {
-	TomOptionList list = `concTomOption(myOptions*);
-	
-	while(!(list.isEmpty()))
-	    {
-		TomOption h = list.getHead();
-		%match(TomOption h)
-		    {
-			OptionBoolean[name="noOutput", valueB=True()] -> 
-			    { 
-				return false;
-			    }
-			OptionBoolean[name="noOutput", valueB=False()] -> 
-			    { 
-				return true;
-			    }
-		    }
-		list = list.getTail();
-	    }
-	return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
-    }
 
     public TomBackend()
     {
@@ -149,16 +127,6 @@ public class TomBackend extends TomBase implements TomPlugin
 
     public TomOptionList declareOptions()
     {
-// 	int i = 0;
-// 	OptionList list = `concOption(myOptions*);
-// 	while(!(list.isEmpty()))
-// 	    {
-// 		i++;
-// 		list = list.getTail();
-// 	    }
-
-// 	System.out.println("1.9. The backend declares " +i+ " options.");
-	
 	return myOptions;
     }
 
@@ -224,5 +192,29 @@ public class TomBackend extends TomBase implements TomPlugin
 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
 		}
 	    }
+    }
+
+
+    private boolean amIActivated()
+    {
+	TomOptionList list = `concTomOption(myOptions*);
+	
+	while(!(list.isEmpty()))
+	    {
+		TomOption h = list.getHead();
+		%match(TomOption h)
+		    {
+			OptionBoolean[name="noOutput", valueB=True()] -> 
+			    { 
+				return false;
+			    }
+			OptionBoolean[name="noOutput", valueB=False()] -> 
+			    { 
+				return true;
+			    }
+		    }
+		list = list.getTail();
+	    }
+	return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
     }
 }
