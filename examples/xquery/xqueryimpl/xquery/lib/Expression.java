@@ -75,6 +75,8 @@ public class Expression extends AbstractExpression{
 	  }
 
 	}
+
+	return s;
   }
 
 }

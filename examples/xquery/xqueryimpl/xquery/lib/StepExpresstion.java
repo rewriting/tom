@@ -13,9 +13,12 @@ import xquery.lib.data.type.XQueryTypeException;
 
 // need to ajoute one 
 
-public class StepExpresstion extends Expression {
+public class StepExpresstion extends AbstractExpression {
 
+  // first option; 
   PathOperator pathOperator = null; 
+  PathAxe pathAxe = null; 
+  NodeTest nodeTest = null; 
 
   // eval:     -> need ajout "sequence" (may be EMPTY)  before 1st part
 
@@ -37,9 +40,30 @@ public class StepExpresstion extends Expression {
   }
 
 
+  public StepExpression(Object childExprs[], Object options[]) 
+  {
+	super(childExprs); 
+	pathOperator = options[0]; 
+	pathAxe = options[1];
+	nodeTest=options[2];
+  }
+
+  public StepExpression(Object childExprs[], PathOperator pathOperator, PathAxe pathAxe, NodeTest nodeTest) 
+  {
+	super(childExprs); 
+
+	this.pathOperator = pathOperator; 
+	this.pathAxe = pathAxe;
+	this.nodeTest=nodeTest;
+  }
+
+
   public StepExpression(Object childExprs[]) 
   {
 	super(childExprs); 
+	pathOperator = null; 
+	pathAxe = null;
+	nodeTest=null;
   }
   
 
@@ -61,20 +85,48 @@ public class StepExpresstion extends Expression {
 	  return false; 
 	}
 	// 
-	
+	if ((pathOperator ==null)
+		|| (pathAxe==null)
+		|| (nodeTest==null)) {
+	  return false; 
+	}	
   }
 
-  protected Sequence 
+  
+  protected Sequence doFilter(Sequence inputValue, int childIndex)
+  {
+	NodePredicateList predicateList = new NodePredicateList();
+
+	for (int i=childIndex; i < getArity(); i++) {
+	  predicateList.add(getChild(i));
+	}
+
+	pathOperator.setPathAxe(pathAxe); 
+	pathOperator.setNodeTest(nodeTest);
+	pathOperator.setNodePredicateList(predicateList);
+
+	return pathOperator.run(inputValue);
+  }
+  
 
   public Sequence evaluate() 
   {
+	// verify child expressions
+	if (!verifyContent()) {
+	  return null;
+	}
+
+	
 	Sequence result = getInitialValue(); 
 	
 	Object secondChild = getChild(1); 
+	int childIndex = 1; 
+
 	if (secondChild instanceof AbstractExpression) { // union
-	  result.add(secondChild.evaluate()); 
+	  result.add(((AbstractExpression)secondChild).evaluate()); 
+	  childIndex = 2;
 	}
 	
-	doFilter(result);
+	return doFilter(result, childIndex);
   }
 }

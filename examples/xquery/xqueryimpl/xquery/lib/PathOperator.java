@@ -12,25 +12,52 @@ import xquery.lib.data.type.XQueryTypeException;
 
 public abstract class PathOperator 
 {
-  protected NodePredicate filter;
+  protected NodePredicateList predicateList;
   protected NodeTester tester;
   protected PathOperator nextOperator;
   protected PathAxe axe;
 
-  public PathOperator(PathAxe axe, NodePredicate filter, PathOperator nextOperator) {
+  public PathOperator(PathAxe axe, NodePredicateList predicateList, PathOperator nextOperator) {
 	this.axe=axe;
-	this.filter=filter; 
+	this.predicateList=predicateList; 
 	this.nextOperator=nextOperator; 
 	this.tester = NodeKindTester.createDefaultNodeKindTester(); 
   }
 
+
+  public void setNodeTester(NodeTester tester) 
+  {
+	this.tester =tester; 
+  }
+
+  public void setAxe(PathAxe axe)
+  {
+	this.axe=axe;
+  }
+
+  public void setPredicateList(NodePredicateList predicateList) 
+  {
+	this.predicateList=predicateList; 
+  }
+
+  public void setAxe(PathAxe axe) 
+  {
+	this.axe = axe; 
+  }
   
+
+  public void setTester(NodeTester tester) 
+  {
+	this.tester = tester; 
+  }
+
+
   /**
    * @roseuid 4110B63102BE
    */
   public PathOperator() 
   {
-	this.filter = new NodePredicate();
+	this.predicateList = new NodePredicateList();
 	this.tester = new NodeTester();
 	this.axe=PathAxe.createChildPathAxe();
 	this.nextOperator = null;
@@ -38,13 +65,13 @@ public abstract class PathOperator
    
   /**
    * @param nodetester
-   * @param filter
+   * @param predicateList
    * @param nextOperator
    * @roseuid 410E10F70150
    */
-  public PathOperator(NodeTester nodetester, NodePredicate filter, PathOperator nextOperator) 
+  public PathOperator(NodeTester nodetester, NodePredicateList predicateList, PathOperator nextOperator) 
   {
-    this.filter = filter;
+    this.predicateList = predicateList;
 	this.tester = nodetester;
 	this.axe=PathAxe.createChildPathAxe();
 	this.nextOperator =  nextOperator;
@@ -53,13 +80,13 @@ public abstract class PathOperator
   /**
    * @param axe
    * @param nodetester
-   * @param filter
+   * @param predicateList
    * @param nextOperator
    * @roseuid 410E0C0503B2
    */
-  public PathOperator(PathAxe axe, NodeTester nodetester, NodePredicate filter, PathOperator nextOperator) 
+  public PathOperator(PathAxe axe, NodeTester nodetester, NodePredicateList predicateList, PathOperator nextOperator) 
   {
-    this.filter = filter;
+    this.predicateList = predicateList;
 	this.tester = nodetester;
 	this.axe=axe;
 	this.nextOperator =  nextOperator;
