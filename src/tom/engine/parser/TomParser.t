@@ -1104,19 +1104,18 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
   
 TomTerm TermStringIdentifier(LinkedList options) throws TomException:
 {
-  boolean string = false;
   LinkedList optionList = (options==null)?new LinkedList():options;
   OptionList option;
   Token name;
   NameList nameList;
 }
 {
-  ( name = <TOM_IDENTIFIER> | name = <TOM_STRING> { string = true; } )
+  ( name = <TOM_IDENTIFIER> | name = <TOM_STRING> )
     {
       text += name.image;
       optionList.add(`OriginTracking(Name(name.image),getLine(),Name( currentFile)));
       option = ast().makeOptionList(optionList);
-      if(string) {
+      if(name.kind == TOM_STRING) {
         ast().makeStringSymbol(symbolTable(),name.image,optionList);
       }
       nameList = `concTomName(Name(name.image));
@@ -1126,6 +1125,35 @@ TomTerm TermStringIdentifier(LinkedList options) throws TomException:
         concTomTerm(),
         concConstraint());
     }
+}
+
+TomTerm UnamedVariableOrTermStringIdentifier(LinkedList options) throws TomException:
+{
+  LinkedList optionList = (options==null)?new LinkedList():options;
+  OptionList option;
+  Token name;
+  NameList nameList;
+}
+{
+  ( name = <TOM_UNDERSCORE> | name = <TOM_IDENTIFIER> | name = <TOM_STRING>)
+  {
+    text += name.image;
+    optionList.add(`OriginTracking(Name(name.image),getLine(),Name( currentFile)));
+    option = ast().makeOptionList(optionList);
+    if(name.kind == TOM_UNDERSCORE) {
+      return `UnamedVariable(option,TomTypeAlone("unknown type"),concConstraint());
+    } else {
+      if(name.kind == TOM_STRING) {
+        ast().makeStringSymbol(symbolTable(),name.image,optionList);
+      }
+      nameList = `concTomName(Name(name.image));
+      return `Appl(
+                   option,
+                   nameList,
+                   concTomTerm(),
+                   concConstraint());
+    }
+  }
 }
 
 boolean XMLChilds(LinkedList list) throws TomException:
@@ -1198,7 +1226,7 @@ TomTerm XMLAttribute() throws TomException:
   LOOKAHEAD(2)
   term = UnamedVariableStarOrVariableStar(optionList,constraintList) { return term; }
   |
-  ( // name = [anno2@](String|Identifier)
+  ( // name = [anno2@](_|String|Identifier)
     LOOKAHEAD(2)
     id = <TOM_IDENTIFIER> <TOM_EQUAL> {text+=id.image+"=";}
     [
@@ -1209,13 +1237,13 @@ TomTerm XMLAttribute() throws TomException:
       optionListAnno2.add(`Name(anno2.image));
     }
     ]
-    term=TermStringIdentifier(optionListAnno2)
+    term=UnamedVariableOrTermStringIdentifier(optionListAnno2)
       {
         name = tomFactory.encodeXMLString(symbolTable(),id.image);
         nameList = `concTomName(Name(name));
         termName = `Appl(ast().makeOption(),nameList,concTomTerm(),concConstraint());
       }
-  | // [anno1@]_ = [anno2@](String|Identifier)
+  | // [anno1@]_ = [anno2@](_|String|Identifier)
     [ 
     anno1 = <TOM_IDENTIFIER> <TOM_AT>
     {
@@ -1232,7 +1260,7 @@ TomTerm XMLAttribute() throws TomException:
       optionListAnno2.add(`Name(anno2.image));
     }
     ]
-    term=TermStringIdentifier(optionListAnno2)
+    term=UnamedVariableOrTermStringIdentifier(optionListAnno2)
   ) 
     {
       list.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));

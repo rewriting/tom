@@ -72,12 +72,12 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      BuildVariable(Name(name)) -> {
+      BuildVariable[astName=Name(name)] -> {
         output.write(`name);
         return;
       }
 
-      BuildVariable(PositionName(l)) -> {
+      BuildVariable[astName=PositionName(l)] -> {
         output.write("tom" + numberListToIdentifier(`l));
         return;
       }

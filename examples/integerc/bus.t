@@ -34,11 +34,11 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define A    0
-#define B    1
-#define F    2
-#define MSG  3
-#define CONS 4
+#define A    ((void*)0)
+#define B    ((void*)1)
+#define F    ((void*)2)
+#define MSG  ((void*)3)
+#define CONS ((void*)4)
 
 #define setDest(msg,dest) (msg->subterm[0]=(dest))
 #define setOrig(msg,orig) (msg->subterm[1]=(orig))
@@ -55,8 +55,8 @@ struct list {
   struct list *tail;
 };
 
-struct term s_a = {A, 0, NULL};
-struct term s_b = {B, 0, NULL};
+struct term s_a = {(int)A, 0, NULL};
+struct term s_b = {(int)B, 0, NULL};
 struct term *a  = &s_a;
 struct term *b  = &s_b;
 
@@ -68,10 +68,10 @@ struct term *build_term(int symbol, int arity) {
   return res;
 }
 
-struct list *build_list(struct term *t, struct list *n) {
+struct list *build_list(struct term *e, struct list *l) {
   struct list *res = malloc(sizeof(struct list));
-  res->head = t;
-  res->tail = n;
+  res->head = e;
+  res->tail = l;
   return res;
 }
 
@@ -104,13 +104,13 @@ int list_equal(struct list *l1, struct list *l2) {
 }
 
 struct term *build_f(struct term *x) {
-  struct term *res = build_term(F,1);
+  struct term *res = build_term((int)F,1);
   res->subterm[0] = x;
   return res;
 }
 
 struct term *build_msg(struct term *data) {
-  struct term *res = build_term(MSG,3);
+  struct term *res = build_term((int)MSG,3);
   setDest(res,b);
   setOrig(res,a);
   setData(res,data);
@@ -119,8 +119,8 @@ struct term *build_msg(struct term *data) {
 
 %typeterm term {
   implement { struct term* }
-  get_fun_sym(t)      { t->symbol }
-  cmp_fun_sym(t1,t2)  { t1 == t2 }
+  get_fun_sym(t)      { (void*)t->symbol }
+  cmp_fun_sym(t1,t2)  { (void*)t1 == (void*)t2 }
   get_subterm(t, n)   { t->subterm[n] }
 }
 
@@ -132,7 +132,7 @@ struct term *build_msg(struct term *data) {
 %typelist L {
   implement          { struct list* }
   get_fun_sym(t)     { CONS }
-  cmp_fun_sym(t1,t2) { t1 == t2 }
+  cmp_fun_sym(t1,t2) { (void*)t1 == (void*)t2 }
   equals(l1,l2)      { list_equal(l1,l2) }
   get_head(l)        { l->head }
   get_tail(l)        { (l==NULL)?l:l->tail }
@@ -142,7 +142,7 @@ struct term *build_msg(struct term *data) {
 %oplist L cons( term* ) {
   fsym          { CONS }
   make_empty()  { NULL }
-  make_insert(l,e) { build_list(e,l) }
+  make_insert(e,l) { build_list(e,l) }
 }
 
 void print_term(struct term *tt) {
@@ -170,10 +170,10 @@ struct list *generate_msg(struct list *l, struct term *data) {
 
 struct list *read_msg_for_b(struct list *queue, struct term *data) {
   %match(L queue) {
-    cons(X1*,msg(b,_,f(x)) ,X2*) -> {
-      if(term_equal(x,data)) {
+    cons(X1*,msg(b(),_,f(x)) ,X2*) -> {
+      if(term_equal(`x,data)) {
         printf("read_msg: "); print_term(data); printf("\n");
-        return concat(X1,X2);
+        return `concat(X1,X2);
       }
     }
     _ -> { printf("read_msg: msg not found\n"); return queue; }

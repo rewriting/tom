@@ -218,6 +218,7 @@ public class TomKernelExpander extends TomBase {
                // under a match construct
                // create a constant or a variable
                //TomSymbol tomSymbol = getSymbol(strName);
+
                TomSymbol tomSymbol;
                if(`strName.equals("")) {
                  tomSymbol = getSymbol(`type1);

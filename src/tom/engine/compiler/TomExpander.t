@@ -306,8 +306,8 @@ public class TomExpander extends TomTask {
                 TomSymbol tomSymbol = getSymbol(`tomName);
                 TomList args  = (TomList) traversal().genericTraversal(`l,this);
                 
-                  //System.out.println("BackQuoteTerm: " + `tomName);
-                  //System.out.println("tomSymbol: " + tomSymbol);
+                //System.out.println("BackQuoteTerm: " + `tomName);
+                //System.out.println("tomSymbol: " + tomSymbol);
 
                 if(tomSymbol != null) {
                   if(isListOperator(tomSymbol)) {
@@ -315,14 +315,14 @@ public class TomExpander extends TomTask {
                   } else if(isArrayOperator(tomSymbol)) {
                     return tomFactory.buildArray(`name,args);
                   } else if(isStringOperator(tomSymbol)) {
-                    return `BuildVariable(name);
+                    return `BuildVariable(name,emptyTomList());
                   } else if(isDefinedSymbol(tomSymbol)) {
                     return `FunctionCall(name,args);
                   } else {
                     return `BuildTerm(name,args);
                   }
                 } else if(args.isEmpty() && !hasConstructor(`optionList)) {
-                  return `BuildVariable(name);
+                  return `BuildVariable(name,emptyTomList());
                 } else {
                   return `FunctionCall(name,args);
                 }
@@ -510,7 +510,7 @@ public class TomExpander extends TomTask {
   }
 
   private TomList parseBackQuoteXMLAppl(TomList context,TomList list) {
-      //System.out.println("parseBackQuoteXMLAppl: " + list);
+    //System.out.println("parseBackQuoteXMLAppl: " + list);
     %match(TomList list) {
       concTomTerm(
         TargetLanguageToTomTerm(ITL("#TEXT")),
@@ -525,7 +525,7 @@ public class TomExpander extends TomTask {
       }
 
       concTomTerm(
-        BuildVariable(name),
+        (BuildVariable|BuildTerm)[astName=name],
         TargetLanguageToTomTerm(ITL("*")),
         tail*
         ) -> {
@@ -536,13 +536,13 @@ public class TomExpander extends TomTask {
 
       label2:concTomTerm(
         TargetLanguageToTomTerm(ITL("<")),
-        BuildVariable[astName=name],
+        (BuildVariable|BuildTerm)[astName=name],
         Attributes*,
         TargetLanguageToTomTerm(ITL(">")),
         Body*,
         TargetLanguageToTomTerm(ITL("<")),
         TargetLanguageToTomTerm(ITL("/")),
-        BuildVariable[astName=name],
+        (BuildVariable|BuildTerm)[astName=name],
         TargetLanguageToTomTerm(ITL(">")),
         tail*
         ) -> {
@@ -573,7 +573,7 @@ public class TomExpander extends TomTask {
       
       label3:concTomTerm(
         TargetLanguageToTomTerm(ITL("<")),
-        BuildVariable[astName=name],
+        (BuildVariable|BuildTerm)[astName=name],
         Attributes*,
         TargetLanguageToTomTerm(ITL("/")),
         TargetLanguageToTomTerm(ITL(">")),
@@ -650,7 +650,7 @@ public class TomExpander extends TomTask {
     %match(TomList subjectList) {
       concTomTerm(
         _*,
-        BuildVariable(name),TargetLanguageToTomTerm(ITL("=")),value,
+        (BuildVariable|BuildTerm)[astName=name],TargetLanguageToTomTerm(ITL("=")),value,
         _*) -> {
           //TomTerm newValue = `BackQuoteAppl(emptyOption(),Name(Constants.TEXT_NODE),concTomTerm(value));
           // no longer necessary to encode string attributes
@@ -669,7 +669,7 @@ public class TomExpander extends TomTask {
 
       concTomTerm(
         _*,
-	BuildVariable(name),
+	      (BuildVariable|BuildTerm)[astName=name],
         TargetLanguageToTomTerm(ITL("*")),
         _*) -> {
         TomTerm attributeNode = `VariableStar(emptyOption(),name,TomTypeAlone("unknown type"),concConstraint());
