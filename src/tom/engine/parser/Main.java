@@ -7,11 +7,16 @@ import antlr.*;
 class Main {
   // Define a selector that can switch from java to javadoc; make visible to lexers
   static TokenStreamSelector selector = new TokenStreamSelector();
+    
 
   public static void main(String[] args) {
     try {
       // open a simple stream to the input
-      DataInputStream input = new DataInputStream(System.in);
+	//      DataInputStream input = new DataInputStream(System.in);
+	File file = new File(args[0]);
+	System.out.println("---- " + file);
+
+	DataInputStream input = new DataInputStream(new FileInputStream(file));
 
       // create javadoc lexer; attach to same shared input state as java lexer
       NewTargetLexer targetlexer = new NewTargetLexer(input);
@@ -26,7 +31,7 @@ class Main {
       selector.select("targetlexer"); // start with main java lexer
 
       // Create parser attached to selector
-      NewTargetParser parser = new NewTargetParser(selector);
+      NewTargetParser parser = new NewTargetParser(selector, file.getAbsolutePath());
 
       // Pull in one or more int decls with optional javadoc
       parser.input();

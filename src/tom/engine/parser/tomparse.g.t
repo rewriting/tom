@@ -1,10 +1,20 @@
+
 /*
  * this file contains the lexer and parser for
  * tom constructs
  */
 
-class NewTomParser extends Parser;
+header{
+    import aterm.*;
+    import aterm.pure.*;
+    
+    import jtom.adt.tomsignature.*;
+    import jtom.adt.tomsignature.types.*;
 
+    import antlr.*;
+}
+
+class NewTomParser extends Parser;
 
 options{
     k=2; // the lookahead value during parsing
@@ -13,12 +23,25 @@ options{
 
 
 {
+    //--------------------------
+    %include{TomSignature.tom}
+    //--------------------------
+
+    private Factory tsf;
+    private final Factory getTomSignatureFactory(){
+        return tsf;
+    }
+
+    private String filename;
+
     // the default-mode parser
     private NewTargetParser targetparser;
     
-    public NewTomParser(ParserSharedInputState state, NewTargetParser target){
+    public NewTomParser(ParserSharedInputState state, NewTargetParser target, Factory tsf, String filename){
         this(state);
-        targetparser = target;
+        this.filename = filename;
+        this.targetparser = target;
+        this.tsf = tsf;
     }
 
     // creation of a tom variable : doesn't need a rule
@@ -110,7 +133,7 @@ patternAction returns [String result]
                  * call the target parser
                  */
                 Main.selector.push("targetlexer");
-                String action = targetparser.goalLanguage();
+                TargetLanguage action = targetparser.goalLanguage();
                 result += action;
                 /*
                  * target parser finished : pop the target lexer
@@ -143,7 +166,7 @@ signature
             /*
              * We didn't switch the lexers ! just have to get target code.
              */
-            String vasCode = targetparser.goalLanguage(); 
+            TargetLanguage vasCode = targetparser.goalLanguage(); 
             System.out.println("code to be parsed by VAS :\n --------------------------"
                                 +vasCode+
                                "\n--------------------------");}
@@ -385,8 +408,7 @@ keywordMakeEmptyList
         MAKE_EMPTY (LPAREN RPAREN)? 
         {
             Main.selector.push("targetlexer");
-            String tlCode = targetparser.goalLanguage();
-            System.out.println("--- makeEmptyList : "+tlCode);
+            TargetLanguage tlCode = targetparser.goalLanguage();
             Main.selector.pop();
         }
     ;
@@ -396,8 +418,7 @@ keywordMakeAddList
         MAKE_INSERT LPAREN ID COMMA ID RPAREN
         {
             Main.selector.push("targetlexer");
-            String tlCode = targetparser.goalLanguage();
-            System.out.println("--- makeInsert : "+tlCode);
+            TargetLanguage tlCode = targetparser.goalLanguage();
             Main.selector.pop();
         }
     ;
@@ -407,8 +428,7 @@ keywordMakeEmptyArray
         MAKE_EMPTY LPAREN ID RPAREN
         {
             Main.selector.push("targetlexer");
-            String tlCode = targetparser.goalLanguage();
-            System.out.println("--- makeEmptyarray : "+tlCode);
+            TargetLanguage tlCode = targetparser.goalLanguage();
             Main.selector.pop();
         }
     ;   
@@ -418,8 +438,7 @@ keywordMakeAddArray
         MAKE_APPEND LPAREN ID COMMA ID RPAREN
         {
             Main.selector.push("targetlexer");
-            String tlCode = targetparser.goalLanguage();
-            System.out.println("--- makeaddarray : "+tlCode);
+            TargetLanguage tlCode = targetparser.goalLanguage();
             Main.selector.pop();
         }
     ;
@@ -429,8 +448,7 @@ keywordFsym
         FSYM 
         {
             Main.selector.push("targetlexer");
-            String tlCode = targetparser.goalLanguage();
-            System.out.println("--- fsym : "+tlCode);
+            TargetLanguage tlCode = targetparser.goalLanguage();
             Main.selector.pop();
         }
     ;
@@ -443,7 +461,6 @@ keywordMake
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.targetLanguage();
-                System.out.println("--- make : "+"{"+tlCode);
                 Main.selector.pop();
             }
            
@@ -455,8 +472,7 @@ keywordGetSlot
         GET_SLOT LPAREN ID COMMA ID RPAREN
         {
             Main.selector.push("targetlexer");
-            String tlCode = targetparser.goalLanguage();
-            System.out.println("--- get_slot : "+tlCode);
+            TargetLanguage tlCode = targetparser.goalLanguage();
             Main.selector.pop();
         }
     ;
@@ -466,8 +482,7 @@ keywordIsFsym
         IS_FSYM LPAREN ID RPAREN
        {
             Main.selector.push("targetlexer");
-            String tlCode = targetparser.goalLanguage();
-            System.out.println("--- is_fsym : "+tlCode);
+            TargetLanguage tlCode = targetparser.goalLanguage();
             Main.selector.pop();
         }
     ;
@@ -476,56 +491,117 @@ include
     :   {targetparser.goalLanguage();}
     ;
 
-keywordGetFunSym
+keywordGetFunSym [String type] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+    TargetLanguage tlCode;
+}
     :
         (
-            GET_FUN_SYM LPAREN ID RPAREN
+            t:GET_FUN_SYM 
+            {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+            LPAREN name:ID RPAREN
             {
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- get_fun_sym : "+"{"+tlCode);
+                tlCode = targetparser.goalLanguage();
                 Main.selector.pop();
+
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(filename));
+                OptionList option = `concOption(info);
+                result = `GetFunctionSymbolDecl(
+                    Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    tlCode,ot);
+                System.out.println("***** getfunsym :"+result+"\n");
             }
         )
         
     ;
 
-keywordGetSubterm
+keywordGetSubterm[String type] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+}
     :
         (
-            GET_SUBTERM LPAREN ID COMMA ID RPAREN
+            t:GET_SUBTERM 
+            {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+            LPAREN i1:ID COMMA i2:ID RPAREN
             {
+                Option info1 = `OriginTracking(Name(i1.getText()),i1.getLine(),Name(filename));
+                Option info2 = `OriginTracking(Name(i2.getText()),i2.getLine(),Name(filename));
+                OptionList option1 = `concOption(info1);
+                OptionList option2 = `concOption(info2);
+                
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- get_subterm : "+"{"+tlCode);
+                TargetLanguage tlCode = targetparser.goalLanguage();
                 Main.selector.pop(); 
+
+                result = `GetSubtermDecl(
+                    Variable(option1,Name(i1.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option2,Name(i2.getText()),TomTypeAlone("int"),emptyConstraintList()),
+                    tlCode, ot);
+                System.out.println("**** getsubterm :"+result+"\n");
             }
         )
         
     ;
 
-keywordCmpFunSym
+keywordCmpFunSym [String type] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+}
     :
         (
-            CMP_FUN_SYM LPAREN ID COMMA ID RPAREN
+            t:CMP_FUN_SYM 
+            { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+            LPAREN i1:ID COMMA i2:ID RPAREN
             {
+                Option info1 = `OriginTracking(Name(i1.getText()),i1.getLine(),Name(filename));
+                Option info2 = `OriginTracking(Name(i2.getText()),i2.getLine(),Name(filename));
+                OptionList option1 = `concOption(info1);
+                OptionList option2 = `concOption(info2);
+                
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- cmp_fun_sym : "+"{"+tlCode);
+                TargetLanguage tlCode = targetparser.goalLanguage();
                 Main.selector.pop(); 
+
+                result = `CompareFunctionSymbolDecl(
+                    Variable(option1,Name(i1.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option2,Name(i2.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    tlCode, ot);
+                System.out.println("**** cmpfunsym :"+result+"\n");
             }
         )
     ;
 
-keywordEquals
+keywordEquals[String type] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+}
     :
         (
-            EQUALS LPAREN ID COMMA ID RPAREN
+            t:EQUALS 
+            {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+            LPAREN i1:ID COMMA i2:ID RPAREN
             {
+                Option info1 = `OriginTracking(Name(i1.getText()),i1.getLine(),Name(filename));
+                Option info2 = `OriginTracking(Name(i2.getText()),i2.getLine(),Name(filename));
+                OptionList option1 = `concOption(info1);
+                OptionList option2 = `concOption(info2);
+                
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- equals : "+"{"+tlCode);
+                TargetLanguage tlCode = targetparser.goalLanguage();
                 Main.selector.pop();  
+                
+                result = `TermsEqualDecl(
+                    Variable(option1,Name(i1.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option2,Name(i2.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    tlCode, ot);
+                System.out.println("**** equals :"+result+"\n");
             }
         )
     ;
@@ -536,8 +612,7 @@ keywordGetHead
             GET_HEAD LPAREN ID RPAREN
             {
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- get_head : "+"{"+tlCode);
+                TargetLanguage tlCode = targetparser.goalLanguage();
                 Main.selector.pop();  
             }
         )
@@ -549,8 +624,7 @@ keywordGetTail
             GET_TAIL LPAREN ID RPAREN
             {
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- get_tail : "+"{"+tlCode);
+                TargetLanguage tlCode = targetparser.goalLanguage();
                 Main.selector.pop();  
             }
         )
@@ -562,8 +636,7 @@ keywordIsEmpty
             IS_EMPTY LPAREN ID RPAREN
             {
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- is_empty : "+"{"+tlCode);
+                TargetLanguage tlCode = targetparser.goalLanguage();
                 Main.selector.pop();  
             }
         )
@@ -575,8 +648,7 @@ keywordImplement
             IMPLEMENT
             {
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- implement : "+"{"+tlCode);
+                TargetLanguage tlCode = targetparser.goalLanguage();
                 Main.selector.pop();  
             }
         )
@@ -588,8 +660,7 @@ keywordGetElement
             GET_ELEMENT LPAREN ID COMMA ID RPAREN
             {
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- getElement : "+"{"+tlCode);
+                TargetLanguage tlCode = targetparser.goalLanguage();
                 Main.selector.pop();  
             }
         )
@@ -600,42 +671,66 @@ keywordGetSize
             GET_SIZE LPAREN ID RPAREN
             {
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.goalLanguage();
-                System.out.println("--- getsize : "+"{"+tlCode);
+                TargetLanguage tlCode = targetparser.goalLanguage();
                 Main.selector.pop();  
             }
     ;
 
 typeTerm
-    :   {System.out.println("***** typeTerm");}
-        (
-            ID
+{
+    Declaration result = null;
+    Option ot = null;
+    TomList blockList = `emptyTomList();
+    Declaration attribute = null;
+}
+    :   (
+            type:ID 
+            { 
+                ot = `OriginTracking(Name(type.getText()), type.getLine(),Name(filename));
+                System.out.println(ot);
+            }
             LBRACE
 
             keywordImplement()
             (
-                keywordGetFunSym()
-            |   keywordGetSubterm()
-            |   keywordCmpFunSym()
-            |   keywordEquals()
+                attribute = keywordGetFunSym[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordGetSubterm[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordCmpFunSym[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordEquals[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
             )*
             RBRACE
-
+            
         )
-        {Main.selector.pop();}
+        {
+            result = `TypeTermDecl(Name(type.getText()),blockList,ot);
+            System.out.println(
+                "///////////////////////////////\n\n"+
+                result +
+                "\n\n///////////////////////////////"
+            );
+
+            Main.selector.pop();
+        }
     ;
 
 typeList
-    :   {System.out.println("***** typeList");}
-        (
+    :   (
             ID
             LBRACE
             keywordImplement()
             (
-                keywordGetFunSym()
-            |   keywordGetSubterm()
-            |   keywordCmpFunSym()
-            |   keywordEquals() 
+                keywordGetFunSym[""]
+            |   keywordGetSubterm[""]
+            |   keywordCmpFunSym[""]
+            |   keywordEquals[""]
             |   keywordGetHead()
             |   keywordGetTail()
             |   keywordIsEmpty()
@@ -647,16 +742,15 @@ typeList
     ;
 
 typeArray
-    :   {System.out.println("***** typeArray");}
-        (
+    :   (
             ID
             LBRACE
             keywordImplement()
             (
-                keywordGetFunSym()
-            |   keywordGetSubterm()
-            |   keywordCmpFunSym()
-            |   keywordEquals() 
+                keywordGetFunSym[""]
+            |   keywordGetSubterm[""]
+            |   keywordCmpFunSym[""]
+            |   keywordEquals[""]
             |   keywordGetElement()
             |   keywordGetSize()
             )*
@@ -713,7 +807,6 @@ COLON       :   ':' ;
 EQUAL       :   '=' ;
 AT          :   '@' ;
 STAR        :   '*' ;
-BACKQUOTE   :   '`' ;
 UNDERSCORE  :   '_' ;  
 
 
