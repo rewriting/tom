@@ -33,16 +33,14 @@ import jtom.checker.TomCheckerMessage;;
 
 public abstract class TomTask extends TomBase {
 	
-  private TomTaskInput input;
   private TomTask nextTask;
   private String name;
 	
   public TomTask() {
   }
-  public TomTask(String name, TomEnvironment tomEnvironment,TomTaskInput input) {
-    super(tomEnvironment);
+  public TomTask(String name) {
+    super();
     this.name = name;
-    this.input = input;
   }
 	
   public void addTask(TomTask task){
@@ -70,7 +68,7 @@ public abstract class TomTask extends TomBase {
 	
   public boolean checkNoErrors() {
     boolean res = true; 
-    TomErrorList errors = input.getErrors();
+    TomErrorList errors = getInput().getErrors();
       //System.out.println(errors);
     int nbTotalError = errors.getLength();
     int nbWarning = 0, nbError=0;
@@ -79,11 +77,11 @@ public abstract class TomTask extends TomBase {
         TomError error = errors.getHead();
         if (error.getLevel() == 1) {
           nbWarning++;
-          if (/*!input.isNoWarning() || */input.isWarningAll() && !input.isEclipseMode()) {
+          if (/*!getInput().isNoWarning() || */getInput().isWarningAll() && !getInput().isEclipseMode()) {
             System.out.println(error.getMessage());
           }
         } else if (error.getLevel() == 0) {
-          if(!input.isEclipseMode()){
+          if(!getInput().isEclipseMode()){
             System.out.println(error.getMessage());
           }
           res = false;
@@ -91,11 +89,11 @@ public abstract class TomTask extends TomBase {
         }
         errors= errors.getTail();
       }
-      if (nbError>0 && !input.isEclipseMode()) {
+      if (nbError>0 && !getInput().isEclipseMode()) {
         String msg = name+":  Encountered " + nbError + " errors and "+ nbWarning+" warnings.";
         msg += "No file generated.";
         System.out.println(msg);
-      } else if (nbWarning>0 && !input.isEclipseMode() && !input.isNoWarning()) {
+      } else if (nbWarning>0 && !getInput().isEclipseMode() && !getInput().isNoWarning()) {
         String msg = name+":  Encountered "+ nbWarning+" warnings.";
         System.out.println(msg);
       }
@@ -106,15 +104,11 @@ public abstract class TomTask extends TomBase {
   public void finishProcess() {
       //	Start next task
     if(nextTask != null) {
-      if(!input.isEclipseMode()) {
-        input.setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
+      if(!getInput().isEclipseMode()) {
+        getInput().setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
       } 
       nextTask.startProcess();
     } /*else { System.out.println("No more tasks"); }*/
-  }
-	
-  public TomTaskInput getInput() {
-    return input;
   }
 	
   public TomTask getTask(){
@@ -134,7 +128,7 @@ public abstract class TomTask extends TomBase {
       s = MessageFormat.format(TomCheckerMessage.MainWarningMessage, new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
     }
 		
-    if (input.isEclipseMode()) {
+    if (getInput().isEclipseMode()) {
       addError(msg,fileName, errorLine, level);
     } else {
       addError(s,fileName, errorLine, level);
@@ -142,10 +136,8 @@ public abstract class TomTask extends TomBase {
   }
 				
   public void addError(String msg, String file, int line, int level) {
-    if(input != null) {
-      TomError err = tsf().makeTomError_Error(msg,file,line,level);
-      input.setErrors(tsf().makeTomErrorList(err, input.getErrors()));
-    }
+    TomError err = tsf().makeTomError_Error(msg,file,line,level);
+    getInput().setErrors(tsf().makeTomErrorList(err, getInput().getErrors()));
   }
 		
 }

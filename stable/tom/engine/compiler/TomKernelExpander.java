@@ -39,8 +39,8 @@ import jtom.exception.TomRuntimeException;
 
 public class TomKernelExpander extends TomBase {
 
-  public TomKernelExpander(jtom.TomEnvironment environment) {
-    super(environment);
+  public TomKernelExpander() {
+    super();
   }
 
   // ------------------------------------------------------------

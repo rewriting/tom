@@ -36,8 +36,8 @@ import jtom.TomEnvironment;
 public class TomCamlGenerator extends TomImperativeGenerator {
 
   protected String modifier = "";
-  public TomCamlGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
-    super(environment, taskInput, output);
+  public TomCamlGenerator(OutputCode output) {
+    super(output);
   }
 
 // ------------------------------------------------------------
@@ -202,7 +202,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
                                    String args[],
                                    TargetLanguage tlCode) {
     String s = "";
-    if(!genDecl) { return null; }
+    if(!getInput().isGenDecl()) { return null; }
     s =  "let " + declName + "_" + suffix + "(";
     for(int i=0 ; i<args.length ; ) {
         // the first argument is the type, second the name 
@@ -223,7 +223,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   protected TargetLanguage genDeclMake(String opname, TomType returnType, 
                                        TomList argList, TargetLanguage tlCode) {
     String s = "";
-    if(!genDecl) { return null; }
+    if(!getInput().isGenDecl()) { return null; }
     s = "let tom_make_" + opname + "(";
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
@@ -248,7 +248,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     }
     s += ") = ";
       // the debug mode will not work as it for caml
-    if (debugMode) {
+    if(getInput().isDebugMode()) {
       s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
       s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
       s += "return  debugVar;\n}";
@@ -260,7 +260,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 
   protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
     String s = "";
-    if(!genDecl) {
+    if(!getInput().isGenDecl()) {
       return tom_make_ITL( "") ;
     }
 
@@ -288,7 +288,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       get_slice + "(" + get_tail + "(beginning),ending))\n";
     s+= "\n";
 		//If necessary we remove \n code depending on --pretty option
-    return ast().reworkTLCode(tom_make_ITL(s) , pretty);
+    return ast().reworkTLCode(tom_make_ITL(s) , getInput().isPretty());
   }
   
   protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {

@@ -28,16 +28,14 @@ package jtom.backend;
 import java.io.IOException;
 
 import jtom.adt.tomsignature.types.*;
-
-import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
 import jtom.TomEnvironment;
 
 public class TomCGenerator extends TomImperativeGenerator {
   
-  public TomCGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
-		super(environment, taskInput, output);
-		if (staticFunction) {
+  public TomCGenerator(OutputCode output) {
+		super(output);
+		if(getInput().isStaticFunction()) {
 			this.modifier += "static " ;
 		}
   }

@@ -99,6 +99,7 @@
 
 	<target name="prepare.src">
 		<mkdir dir="${src.build}"/>
+		<mkdir dir="${src.gen}"/>
 		<mkdir dir="${src.dist}"/>
 	</target>
 	
@@ -156,29 +157,14 @@
 
 	<!-- builds the parser using javacc -->
 	<target name="buildparser">
+		<mkdir dir="${src.gen}/jtom/parser"/>
 		<javacc target="${src.src}/jtom/parser/TomParser.jj"
 						outputdirectory="${src.gen}/jtom/parser"
 						javacchome="${javaccdir}" /> 
 	</target>
 
-	<target name="check.newer.adt">
-		<condition property="newer.adt">
-			<or>
-				<not><available file="${src.gen}/jtom/adt/TomSignature.tom"/></not>
-				<not><available file="${src.gen}/jtom/adt/TNode.tom"/></not>
-				<not><available file="${src.gen}/jtom/adt/Set.tom"/></not>
-				<uptodate targetfile="${src.src}/jtom/adt/TomSignature.adt" 
-									srcfile="${src.gen}/jtom/adt/TomSignature.tom"/>
-				<uptodate targetfile="${src.src}/jtom/adt/TNode.adt" 
-									srcfile="${src.gen}/jtom/adt/TNode.tom"/>
-				<uptodate targetfile="${src.src}/jtom/adt/Set.adt" 
-									srcfile="${src.gen}/jtom/adt/Set.tom"/>
-			</or>
-		</condition>
-	</target>
-	
 	<!-- compile adt's -->
-	<target name="buildadt" depends="initTaskDef, prepare.src, check.newer.adt" if="newer.adt">
+	<target name="buildadt" depends="initTaskDef, prepare.src">
 		<adt file="${src.adt}/TomSignature.adt" 
 				 factory="TomSignature" 
 				 package="jtom.adt" 
@@ -203,10 +189,11 @@
 		<antcall target="buildparser"/>
 		<!--<property name="unixpath" refid="src.classpath" />
 		<echo>classpath = ${unixpath}</echo>-->
-		<javac srcdir="${src.src}" destdir="${src.build}" verbose="${javacVerbose}">
+		<javac destdir="${src.build}" verbose="${javacVerbose}">
 			<src path="${src.src}"/>
-			<src path="${src.gen}"/>
+			<src path="${src.src}"/>
 			<classpath refid="src.classpath"/>
+			<include name="jtom/**/*.java"/>
 		</javac>
 	</target>
 	
@@ -427,7 +414,7 @@
 			<exclude name="**/error/**"/>
 		</tom>
 		<javac srcdir="${test}" destdir="${test}" verbose="${javacVerbose}">
-			<classpath refid="src.classpath"/>
+			<classpath refid="tom.classpath"/>
 			<exclude name="**/error/**"/>
 		</javac>
 	</target>

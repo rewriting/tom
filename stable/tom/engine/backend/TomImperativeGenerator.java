@@ -36,8 +36,8 @@ import jtom.TomEnvironment;
 public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
 	protected String modifier = "";
-  public TomImperativeGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
-		super(environment, taskInput, output);
+  public TomImperativeGenerator(OutputCode output) {
+		super(output);
   }
 
   // ------------------------------------------------------------
@@ -205,7 +205,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write("=");
     generateExpression(deep,exp);
     output.writeln(";");
-    if(debugMode && !list.isEmpty()) {
+    if(getInput().isDebugMode() && !list.isEmpty()) {
       output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
       generate(deep,var);
       output.write("\", ");
@@ -295,7 +295,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   
   protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
     String args[];
-    if(strictType) {
+    if(getInput().isStrictType()) {
       args = new String[] { getTLCode(tlType1), name1,
                             getTLCode(tlType2), name2 };
     } else {
@@ -310,7 +310,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   protected TargetLanguage genDeclMake(String opname, TomType returnType, 
                                        TomList argList, TargetLanguage tlCode) {
     String s = "";
-    if(!genDecl) {
+    if(!getInput().isGenDecl()) {
       return tom_make_ITL( "") ;
     }
       
@@ -336,7 +336,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       }
     }
     s += ") { ";
-    if (debugMode) {
+    if (getInput().isDebugMode()) {
       s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
       s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
       s += "return  debugVar;\n}";
@@ -349,7 +349,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
     //%variable
     String s = "";
-    if(!genDecl) {
+    if(!getInput().isGenDecl()) {
       return tom_make_ITL( "") ;
     }
 
@@ -358,7 +358,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     String tlEltType = getTLType(eltType);
 
     String utype = glType;
-    if(!strictType) {
+    if(!getInput().isStrictType()) {
       utype = getTLType(getUniversalType());
     }
 		
@@ -395,12 +395,12 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
     s+= "\n";
     //If necessary we remove \n code depending on --pretty option
-    return ast().reworkTLCode(tom_make_ITL(s) , pretty);
+    return ast().reworkTLCode(tom_make_ITL(s) , getInput().isPretty());
   }
 
   protected TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
     String s = "";
-    if(!genDecl) {
+    if(!getInput().isGenDecl()) {
       return tom_make_ITL( "") ;
     }
 
@@ -408,7 +408,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     String glType = getTLType(listType);
     String tlEltType = getTLType(eltType);
     String utype = glType;
-    if(!strictType) {
+    if(!getInput().isStrictType()) {
       utype =  getTLType(getUniversalType());
     }
 		
@@ -450,7 +450,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
 
     //If necessary we remove \n code depending on --pretty option
-    return ast().reworkTLCode(tom_make_ITL(s) , pretty);
+    return ast().reworkTLCode(tom_make_ITL(s) , getInput().isPretty());
   }
 
   protected TargetLanguage genDecl(String returnType,
@@ -459,7 +459,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
                                    String args[],
                                    TargetLanguage tlCode) {
     String s = "";
-    if(!genDecl) {
+    if(!getInput().isGenDecl()) {
       return tom_make_ITL( "") ;
     }
     s = modifier + returnType + " " + declName + "_" + suffix + "(";

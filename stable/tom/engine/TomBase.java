@@ -37,29 +37,28 @@ import jtom.exception.TomRuntimeException;
 import java.lang.Throwable;
 
 public class TomBase {
-	private TomEnvironment tomEnvironment;
 	private TomList empty;
 	private GenericTraversal traversal;
 
 	public TomBase() {
-	}
-
-	public TomBase(TomEnvironment tomEnvironment) {
-		this.tomEnvironment = tomEnvironment;
-		this.empty = tomEnvironment.getTomSignatureFactory().makeTomList();
+		this.empty = environment().getTomSignatureFactory().makeTomList();
 		this.traversal = new GenericTraversal();
 	}
 
 	protected ASTFactory ast() {
-		return tomEnvironment.getASTFactory();
+		return environment().getASTFactory();
 	}
 
 	protected TomEnvironment environment() {
-		return tomEnvironment;
+		return TomEnvironment.getInstance();
+	}
+
+	protected TomTaskInput getInput() {
+		return TomTaskInput.getInstance();
 	}
 
 	protected Factory tsf() {
-		return tomEnvironment.getTomSignatureFactory();
+		return environment().getTomSignatureFactory();
 	}
 
 	public GenericTraversal traversal() {
@@ -71,7 +70,7 @@ public class TomBase {
 	}
 
 	protected SymbolTable symbolTable() {
-		return tomEnvironment.getSymbolTable();
+		return environment().getSymbolTable();
 	}
 
 	public TomType getUniversalType() {

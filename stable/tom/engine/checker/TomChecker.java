@@ -103,8 +103,8 @@ abstract public class TomChecker extends TomTask {
   private ArrayList alreadyStudiedRule =  new ArrayList();
   private Option currentTomStructureOrgTrack;
 		
-  public TomChecker(String name, TomEnvironment tomEnvironment, TomTaskInput taskInput) {
-    super(name, tomEnvironment,taskInput);
+  public TomChecker(String name) {
+    super(name);
   }
 
   public void initProcess() {

@@ -47,12 +47,39 @@ import aterm.ATerm;
 import aterm.pure.PureFactory;
 
 public class Tom {
+
+  /*
+   * Singleton pattern
+   */
+  private static Tom instance = null;
+  protected Tom() {
+    // exisits to defeat instantiation
+  }
+
+  public static Tom getInstance() {
+    if(instance == null) {
+      instance = new Tom();
+    /*
+     * initialization of the unique instance
+     * the order must be kept:
+     * - the factory is built
+     * - ASTFactory and SymbolTable are created (and initialized latter in Tom.init()->environment().init())
+     * - The environment is created
+     */
+      Factory tomSignatureFactory = new Factory(new PureFactory());
+      TomTaskInput.create(tomSignatureFactory.makeTomErrorList());
+      ASTFactory astFactory = new ASTFactory(tomSignatureFactory);
+      SymbolTable symbolTable = new SymbolTable(astFactory);
+      TomEnvironment.create(tomSignatureFactory, astFactory, symbolTable);
+    }
+    return instance;
+  }
+
+  Factory tsf() {
+    return Tom.getInstance().environment().getTomSignatureFactory();
+  }
+
     //Necessary structure
-  private TomTask initialTask;
-  private TomTaskInput taskInput;
-  private Factory tomSignatureFactory;
-  private TomEnvironment environment;
-    // potential tasks to be connected together to form the compiler chain
 
   private static String version =
     "\njtom 2.0rc1\n"
@@ -96,45 +123,30 @@ public class Tom {
     System.out.println(usage);
   }
 
-  public Tom(String args[]) {
-    PureFactory pureFactory = new PureFactory();
-    tomSignatureFactory = new Factory(pureFactory);
-    taskInput = new TomTaskInput(tomSignatureFactory.makeTomErrorList());
+  private TomTaskInput getInput() {
+    return TomTaskInput.getInstance();
+  }
+  private TomEnvironment environment() {
+    return TomEnvironment.getInstance();
+  }
+
+  private void init(String args[]) {
+    getInput().init();
     modifyTaskInputFromArgs(args);
-    if(taskInput.isHelp() || taskInput.isVersion()) {
+    if(getInput().isHelp() || getInput().isVersion()) {
         // no need to do further work
       return;
     }
-    initializeStructure();
-    createTaskChainFromInput();
+    environment().init();
   }
 
-  public Tom(TomTaskInput input) {
-    tomSignatureFactory = new Factory(new PureFactory());
-    this.taskInput = input;
-    initializeStructure();
-    createTaskChainFromInput();
-  }
-
-  private void initializeStructure() {
-      // create basic structures
-    ASTFactory astFactory = new ASTFactory(tomSignatureFactory);
-    SymbolTable symbolTable =
-      new SymbolTable(
-        astFactory,
-        taskInput.isCCode(),
-        taskInput.isJCode(),
-        taskInput.isECode(),
-				taskInput.isCamlCode());
-    environment =
-      new TomEnvironment(tomSignatureFactory, astFactory, symbolTable);
-  }
 
   private void modifyTaskInputFromArgs(String args[]) {
-    taskInput.setInputSuffix(".t");
-    taskInput.setOutputSuffix(".java");
-    List importList = new ArrayList();
+    getInput().setInputSuffix(".t");
+    getInput().setOutputSuffix(".java");
+    List localUserImportList = new ArrayList();
     String localInputFileName = null;
+    String localOutputFileName = null;
     String localDestDir = null;
     int i =0;
       // Processing the input arguments into taskInput
@@ -149,87 +161,85 @@ public class Tom {
     			// This is on option
     			if (args[i].equals("--version") || args[i].equals("-V")) {
     				version();
-    				taskInput.setVersion(true);
+    				getInput().setVersion(true);
     				addError(version, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_WARNING);
     				return;
     			} else if(args[i].equals("--help") || args[i].equals("-h")) {
     				usage();
-    				taskInput.setHelp(true);
+    				getInput().setHelp(true);
     				addError(usage, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_WARNING);
     				return;
     			} else if(args[i].equals("--import") || args[i].equals("-I")) {
-    				importList.add(new File(args[++i]).getAbsoluteFile());
+    				localUserImportList.add(new File(args[++i]).getAbsoluteFile());
     			} else if (args[i].equals("--cCode") || args[i].equals("-c")) {
-    				taskInput.setCCode();
-            taskInput.setInputSuffix(".t");
-    				taskInput.setOutputSuffix(".tom.c");
+    				getInput().setCCode();
+            getInput().setInputSuffix(".t");
+    				getInput().setOutputSuffix(".tom.c");
     			} else if (args[i].equals("--camlCode")) {
-    				taskInput.setCamlCode();
-            taskInput.setInputSuffix(".t");
-    				taskInput.setOutputSuffix(".tom.ml");
+    				getInput().setCamlCode();
+            getInput().setInputSuffix(".t");
+    				getInput().setOutputSuffix(".tom.ml");
     			} else if (args[i].equals("--eCode") || args[i].equals("-e")) {
-    				taskInput.setECode();
-            taskInput.setInputSuffix(".t");
-    				taskInput.setOutputSuffix(".e");
-    			} else if (
-    					args[i].equals("--noOutput") || args[i].equals("-o")) {
-    				taskInput.setPrintOutput(false);
+    				getInput().setECode();
+            getInput().setInputSuffix(".t");
+    				getInput().setOutputSuffix(".e");
+    			} else if(args[i].equals("--noOutput")) {
+    				getInput().setPrintOutput(false);
     			} else if(args[i].equals("--doCompile") || args[i].equals("-C")) {
-    				taskInput.setDoOnlyCompile(true);
-    				taskInput.setDoParse(false);
-    				taskInput.setDoExpand(false);
-            taskInput.setInputSuffix(TomTaskInput.expandedSuffix);
+    				getInput().setDoOnlyCompile(true);
+    				getInput().setDoParse(false);
+    				getInput().setDoExpand(false);
+            getInput().setInputSuffix(getInput().expandedSuffix);
     			} else if (
     					args[i].equals("--optimize") || args[i].equals("-O")) {
-    				taskInput.setDoOptimization(true);
+    				getInput().setDoOptimization(true);
     			} else if (
     				args[i].equals("--noCheck") || args[i].equals("-f")) {
-    				taskInput.setDoCheck(false);
+    				getInput().setDoCheck(false);
     			} else if (
     				args[i].equals("--verify")) {
-    				taskInput.setDoVerify(true);
+    				getInput().setDoVerify(true);
     			} else if (
     				args[i].equals("--lazyType") || args[i].equals("-l")) {
-    				taskInput.setStrictType(false);
+    				getInput().setStrictType(false);
           } else if (
             args[i].equals("--intermediate") || args[i].equals("-i")) {
-            taskInput.setIntermediate(true);
+            getInput().setIntermediate(true);
           } else if (
             args[i].equals("--verbose") || args[i].equals("-v")) {
-            taskInput.setVerbose(true);
+            getInput().setVerbose(true);
           } else if (
             args[i].equals("--atermStat") || args[i].equals("-s")) {
-            taskInput.setAtermStat(true);
+            getInput().setAtermStat(true);
           } else if (args[i].equals("--Wall")) {
-            taskInput.setWarningAll(true);
+            getInput().setWarningAll(true);
           } else if (args[i].equals("--noWarning")) {
-            taskInput.setNoWarning(true);
+            getInput().setNoWarning(true);
           } else if (
             args[i].equals("--noDeclaration") || args[i].equals("-D")) {
-            taskInput.setGenDecl(false);
+            getInput().setGenDecl(false);
           } else if (
             args[i].equals("--pretty") || args[i].equals("-p")) {
-            taskInput.setPretty(true);
+            getInput().setPretty(true);
           } else if (args[i].equals("--static")) {
-            taskInput.setStaticFunction(true);
+            getInput().setStaticFunction(true);
           } else if (args[i].equals("--debug")) {
-            taskInput.setDebugMode(true);
+            getInput().setDebugMode(true);
           } else if (args[i].equals("--memory")) {
-            taskInput.setDebugMemory(true);
+            getInput().setDebugMemory(true);
           } else if (args[i].equals("--eclipse")) {
-            taskInput.setEclipseMode(true);
-          } else if (args[i].equals("--path")) {
-            taskInput.setResourceParentPathLocation(args[++i]);
+            getInput().setEclipseMode(true);
           } else if (args[i].equals("--destdir") || args[i].equals("-d")) {
             localDestDir = args[++i];
             //System.out.println("localDestDir = " + localDestDir);
           } else if (args[i].equals("--output") || args[i].equals("-o")) {
-            taskInput.setUserOutputFile(args[++i]);
+            localOutputFileName = args[++i];
+            getInput().setUserOutputFile(true);
           } else {
             String s = "'" + args[i] + "' is not a valid option";
             System.out.println(s);
             addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
-            taskInput.setHelp(true);
+            getInput().setHelp(true);
             usage();
             return;
           }
@@ -237,7 +247,7 @@ public class Tom {
     	} // end processing arguments
 
         // For the moment debug is only available for Java as target language
-      taskInput.setDebugMode(taskInput.isJCode() && taskInput.isDebugMode());
+      getInput().setDebugMode(getInput().isJCode() && getInput().isDebugMode());
 
         /*
          * compute destDir:
@@ -245,7 +255,7 @@ public class Tom {
       if(localDestDir==null || localDestDir.length()==0) {
         localDestDir = ".";
       }
-      taskInput.setDestDir(localDestDir);
+      getInput().setDestDir(localDestDir);
       
         /*
          * compute inputFile:
@@ -254,215 +264,200 @@ public class Tom {
          */
       if(localInputFileName==null || localInputFileName.length()==0) {
         System.out.println("No input file name...\n");
-        taskInput.setHelp(true);
+        getInput().setHelp(true);
         usage();
-        if (taskInput.isEclipseMode()) {
+        if (getInput().isEclipseMode()) {
           addError("No input file name...", "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
         }
       }
 
-      if(!localInputFileName.endsWith(taskInput.getInputSuffix())) {
-        localInputFileName += taskInput.getInputSuffix();
+      if(!localInputFileName.endsWith(getInput().getInputSuffix())) {
+        localInputFileName += getInput().getInputSuffix();
       }
-      taskInput.setInputFile(localInputFileName);
+      getInput().setInputFile(localInputFileName);
 
         /*
          * compute outputFile:
-         *  - either use the given outputFileName
+         *  - either use the given localOutputFileName
          *  - either concatenate
          *    the outputDir
          *    [the packagePath] will be updated by the parser
          *    and reuse the inputFileName with a good suffix
          */
-      if(taskInput.getUserOutputFile() != null) {
-        taskInput.setOutputFile(taskInput.getUserOutputFile().getPath());
+      if(getInput().isUserOutputFile()) {
+        File out = new File(localOutputFileName).getAbsoluteFile();
+        getInput().setOutputFile(out.getPath());
       } else {
-        String child = new File(taskInput.getInputFileNameWithoutSuffix() + taskInput.getOutputSuffix()).getName();
-        File out = new File(taskInput.getDestDir(),child).getAbsoluteFile();
-        taskInput.setOutputFile(out.getPath());
+        String child = new File(getInput().getInputFileNameWithoutSuffix() + getInput().getOutputSuffix()).getName();
+        File out = new File(getInput().getDestDir(),child).getAbsoluteFile();
+        getInput().setOutputFile(out.getPath());
       }
       
         // Setting importList
-      taskInput.setImportList(importList);
+      getInput().setUserImportList(localUserImportList);
 
     } catch (ArrayIndexOutOfBoundsException e) {
     	String s = "'" + args[--i] + "'option is supposed to have something after";
       System.out.println(s);
       addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
-      taskInput.setHelp(true);
+      getInput().setHelp(true);
       usage();
       return;
     }
   }
 
-  private void createTaskChainFromInput() {
-    if (taskInput != null) {
-      String fileName = taskInput.getInputFile().getPath();
-      TomKernelExpander kernelExpander = new TomKernelExpander(environment);
-      TomExpander expander = new TomExpander(environment,taskInput,kernelExpander);
-      TomSyntaxChecker syntaxChecker = new TomSyntaxChecker(environment,taskInput);
-      TomTypeChecker typeChecker = new TomTypeChecker(environment,taskInput);
-      TomTask verifExtract = new TomVerifierExtract(environment,taskInput);
-      TomKernelCompiler kernelCompiler = new TomKernelCompiler(environment,
-                                                               taskInput.isDebugMode());
-      TomCompiler compiler = new TomCompiler(environment,taskInput,kernelCompiler);
+  private TomTask createTaskChainFromInput() {
+    String fileName = getInput().getInputFile().getPath();
+    TomExpander expander = new TomExpander();
+    TomSyntaxChecker syntaxChecker = new TomSyntaxChecker();
+    TomTypeChecker typeChecker = new TomTypeChecker();
+    TomTask verifExtract = new TomVerifierExtract();
+    TomCompiler compiler = new TomCompiler();
 
-      InputStream input = null;
-        // Create the Chain of responsability    
-      if (taskInput.isDoParse() && taskInput.isDoExpand()) {
-        byte inputBuffer[] = null;
+    TomTask initialTask = null;
+
+    InputStream input = null;
+    // Create the Chain of responsability    
+    if (getInput().isDoParse() && getInput().isDoExpand()) {
+      byte inputBuffer[] = null;
+      try {
+        input = new FileInputStream(fileName);
+        // to get the length of the file
+        File file = new File(fileName);
+        inputBuffer = new byte[(int) file.length() + 1];
+        input.read(inputBuffer);
+      } catch (FileNotFoundException e) {
+        String s = "File `" + fileName + "` not found.";
+        System.out.println(s);
+        System.out.println("No file generated.");
+        if (getInput().isEclipseMode()) {
+          addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+        }
+        return null;
+      } catch (IOException e4) {
+        String s = "IO Exception reading file `" + fileName + "`";
+        System.out.println(s);
+        System.out.println("No file generated.");
+        if (getInput().isEclipseMode()) {
+          addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+        }
+        return null;
+      }
+      
+      TomParser tomParser =
+        new TomParser(
+                      new TomBuffer(inputBuffer),
+                      0,
+                      fileName);
+      // This is the initial task
+      initialTask = tomParser;
+      
+      if (getInput().isDoCheck()) {
+        tomParser.addTask(syntaxChecker);
+        syntaxChecker.addTask(expander);
+        expander.addTask(typeChecker);
+      } else {
+        tomParser.addTask(expander);
+      }
+      
+      if (getInput().isDoVerify()) {
+        if (getInput().isDoCheck()) {
+          typeChecker.addTask(verifExtract);
+        } else {
+          expander.addTask(verifExtract);
+        }
+      }
+    } //DoParse() && DoExpand
+    
+    if (getInput().isDoCompile()) {
+      // We need a compiler
+      if (getInput().isDoOnlyCompile()) {
+        ATerm fromFileExpandTerm = null;
+        TomTerm expandedTerm = null;
         try {
-          input = new FileInputStream(fileName);
-            // to get the length of the file
-          File file = new File(fileName);
-          inputBuffer = new byte[(int) file.length() + 1];
-          input.read(inputBuffer);
+          fromFileExpandTerm =
+            tsf().getPureFactory().readFromFile(
+                                                              input);
+          expandedTerm =
+            tsf().TomTermFromTerm(
+                                                fromFileExpandTerm);
+          input =
+            new FileInputStream(
+                                getInput().getInputFileNameWithoutSuffix() + ".table");
+          ATerm fromFileSymblTable = null;
+          fromFileSymblTable =
+            tsf().getPureFactory().readFromFile(
+                                                              input);
+          TomSymbolTable symbTable = tsf().TomSymbolTableFromTerm(fromFileSymblTable);
+          environment().getSymbolTable().regenerateFromTerm(symbTable);
         } catch (FileNotFoundException e) {
           String s = "File `" + fileName + "` not found.";
           System.out.println(s);
           System.out.println("No file generated.");
-          if (taskInput.isEclipseMode()) {
+          if (getInput().isEclipseMode()) {
             addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
           }
-          return;
+          return null;
         } catch (IOException e4) {
-          String s = "IO Exception reading file `" + fileName + "`";
+          String s =
+            "IO Exception reading file `" + fileName + "`";
           System.out.println(s);
           System.out.println("No file generated.");
-          if (taskInput.isEclipseMode()) {
+          if (getInput().isEclipseMode()) {
             addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
           }
-          return;
+          return null;
         }
-
-        TomParser tomParser =
-          new TomParser(
-            new TomBuffer(inputBuffer),
-            environment,
-            taskInput,
-            0,
-            fileName);
-          // This is the initial task
-        initialTask = tomParser;
-        
-        if (taskInput.isDoCheck()) {
-          tomParser.addTask(syntaxChecker);
-          syntaxChecker.addTask(expander);
-          expander.addTask(typeChecker);
-        } else {
-          tomParser.addTask(expander);
-        }
-
-        if (taskInput.isDoVerify()) {
-          if (taskInput.isDoCheck()) {
-            typeChecker.addTask(verifExtract);
+        // This is the initial task
+        initialTask = compiler;
+        getInput().setTerm(expandedTerm);
+      } else {
+        if (getInput().isDoCheck()) {
+          if (getInput().isDoVerify()) {
+            verifExtract.addTask(compiler);
           } else {
-            expander.addTask(verifExtract);
+            typeChecker.addTask(compiler);
           }
-        }
-      } //DoParse() && DoExpand
-
-      if (taskInput.isDoCompile()) {
-          // We need a compiler
-        if (taskInput.isDoOnlyCompile()) {
-          ATerm fromFileExpandTerm = null;
-          TomTerm expandedTerm = null;
-          try {
-            fromFileExpandTerm =
-              tomSignatureFactory.getPureFactory().readFromFile(
-                input);
-            expandedTerm =
-              tomSignatureFactory.TomTermFromTerm(
-                fromFileExpandTerm);
-            input =
-              new FileInputStream(
-                taskInput.getInputFileNameWithoutSuffix() + ".table");
-            ATerm fromFileSymblTable = null;
-            fromFileSymblTable =
-              tomSignatureFactory.getPureFactory().readFromFile(
-                input);
-            TomSymbolTable symbTable =
-              tomSignatureFactory.TomSymbolTableFromTerm(
-                fromFileSymblTable);
-            environment.getSymbolTable().regenerateFromTerm(
-              symbTable);
-          } catch (FileNotFoundException e) {
-            String s = "File `" + fileName + "` not found.";
-            System.out.println(s);
-            System.out.println("No file generated.");
-            if (taskInput.isEclipseMode()) {
-              addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
-            }
-            return;
-          } catch (IOException e4) {
-            String s =
-              "IO Exception reading file `" + fileName + "`";
-            System.out.println(s);
-            System.out.println("No file generated.");
-            if (taskInput.isEclipseMode()) {
-              addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
-            }
-            return;
-          }
-            // This is the initial task
-          initialTask = compiler;
-          taskInput.setTerm(expandedTerm);
         } else {
-          if (taskInput.isDoCheck()) {
-            if (taskInput.isDoVerify()) {
-              verifExtract.addTask(compiler);
-            } else {
-              typeChecker.addTask(compiler);
-            }
+          if (getInput().isDoVerify()) {
+            verifExtract.addTask(compiler);
           } else {
-            if (taskInput.isDoVerify()) {
-              verifExtract.addTask(compiler);
-            } else {
-              expander.addTask(compiler);
-            }
+            expander.addTask(compiler);
           }
         }
-      } //DoCompile
+      }
+    } //DoCompile
+    
+    if (getInput().isPrintOutput()) {
+      TomTask generator;
+      generator = new TomBackend();
+      if (getInput().isDoOptimization()) {
+        TomOptimizer optimizer = new TomOptimizer();
+        compiler.addTask(optimizer);
+        optimizer.addTask(generator);
+      } else {
+        compiler.addTask(generator);
+      }
+    } //PrintOutput
 
-      if (taskInput.isPrintOutput()) {
-        TomTask generator;
-        generator = new TomBackend(environment,taskInput);
-        if (taskInput.isDoOptimization()) {
-          TomOptimizer optimizer = new TomOptimizer(environment,taskInput);
-          compiler.addTask(optimizer);
-          optimizer.addTask(generator);
-        } else {
-          compiler.addTask(generator);
-        }
-      } //PrintOutput
-    }
+    return initialTask;
   }
 
   private void addError(String msg, String file, int line, int level) {
     TomError err =
-      tomSignatureFactory.makeTomError_Error(msg, file, line, level);
-    taskInput.setErrors(
-      tomSignatureFactory.makeTomErrorList(err, taskInput.getErrors()));
+      tsf().makeTomError_Error(msg, file, line, level);
+    getInput().setErrors(
+      tsf().makeTomErrorList(err, getInput().getErrors()));
   }
 
-  public TomErrorList getErrors() {
-    TomErrorList res = taskInput.getErrors();
-    if (res == null) {
-        // Do not have been initialised
-      res = tomSignatureFactory.makeTomErrorList();
-      taskInput.setErrors(res);
-    }
-    return res;
-  }
-
-  public void run() {
+  public void run(TomTask initialTask) {
     if (initialTask != null
-        && !taskInput.isHelp()
-        && !taskInput.isVersion()) {
+        && !getInput().isHelp()
+        && !getInput().isVersion()) {
       initialTask.startProcess();
-      if (taskInput.isAtermStat()) {
+      if (getInput().isAtermStat()) {
         System.out.println(
-          "\nStatistics:\n" + tomSignatureFactory.getPureFactory());
+          "\nStatistics:\n" + tsf().getPureFactory());
       }
     }
   }
@@ -474,7 +469,6 @@ public class Tom {
       if(args[i].charAt(0) == '-') {
         options.add(args[i]);
         if(args[i].equals("--import") || args[i].equals("-I") ||
-           args[i].equals("--path") ||
            args[i].equals("--destdir") || args[i].equals("-d") ||
            args[i].equals("--output") || args[i].equals("-o")) {
           options.add(args[++i]);
@@ -490,16 +484,21 @@ public class Tom {
       newArgs[lastArgs++] = (String)it.next();
     }
 
+    Tom tom = Tom.getInstance();
+
     if(files.isEmpty()) {
       newArgs[lastArgs] = "--help";
-      Tom tomCompiler = new Tom(newArgs);
-      tomCompiler.run();
+      tom.init(newArgs);
+      TomTask initialTask = tom.createTaskChainFromInput();
+      tom.run(initialTask);
     }
 
     for(Iterator it = files.iterator() ; it.hasNext() ; ) {
+      
       newArgs[lastArgs] = (String)it.next();
-      Tom tomCompiler = new Tom(newArgs);
-      tomCompiler.run();
+      tom.init(newArgs);
+      TomTask initialTask = tom.createTaskChainFromInput();
+      tom.run(initialTask);
     }
 
 

@@ -28,6 +28,7 @@ package jtom.tools;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
+import jtom.exception.TomRuntimeException;
 import java.io.*;
 
 import jtom.adt.tomsignature.types.*;
@@ -35,7 +36,36 @@ import jtom.adt.tomsignature.types.*;
 public class TomTaskInput {
   private TomTerm term;
   private TomErrorList errors;
-  private List importList;
+
+    /*
+     * Singleton pattern
+     */
+  private static TomTaskInput instance = null;
+  protected TomTaskInput() {
+      // exisits to defeat instantiation
+  }
+
+  public static TomTaskInput getInstance() {
+    if(instance == null) {
+      throw new TomRuntimeException(new Throwable("cannot get the instance of an unitialized TomTaskInput"));
+    }
+    return instance;
+  }
+
+  public static TomTaskInput create(TomErrorList errors) {
+    if(instance == null) {
+      instance = new TomTaskInput();
+      instance.errors = errors;
+      return instance;
+    } else {
+      throw new TomRuntimeException(new Throwable("cannot create two instances of TomTaskInput"));
+    }
+  }
+
+    /*
+     * list of import paths
+     */
+  private List userImportList;
 
     /* 
      * destDir 
@@ -56,75 +86,93 @@ public class TomTaskInput {
   private File outputFile;
 
     /*
-     * userOutputFile
-     * absolute name of the output file given by the user (if any)
-     * substitute outputFile when defined
-     */
-  private File userOutputFile;
-
-    /*
      * packagePath
      * relative path which corresponds to the package defined in the input file (empty by default) 
      */
-  private String packagePath = ""; 
+  private String packagePath; 
 
-    /*
-     * tomHome
-     * absolute path where Tom is installed (empty by default) 
-     */
-  private File tomHome = null;
+  private boolean needDebugExpansion; 
+  private boolean verbose; // a verbose mode (Show duration for each phase)
+  private boolean intermediate; // generate intermediate files
+  private boolean debugMode; // generate debug primitives
+  private boolean jCode;  // generate Java
+  private boolean cCode; // generate C
+  private boolean camlCode; // generate Caml
+  private boolean eCode; // generate Eiffel
+  private boolean doParse  ; // parse a *.t file
+  private boolean doExpand ; // expand the AST
+  private boolean doCompile; // compile the AST
+  private boolean printOutput; // print the output file using a TomGenerator instance
+  private boolean doOnlyCompile; // try to start from an intermediate file
+  private boolean doCheck; // verify after parsing (syntax checking) and expansion (type checking)
+  private boolean strictType; // no universal type
+  private boolean genDecl; // generate declarations
+  private boolean doOptimization; // optimize generated code
+  private boolean warningAll; // print warning error messages
+  private boolean noWarning; // print only warning stopping the compilation
+  private boolean staticFunction; // generate static functions
+  private boolean debugMemory; // generate debug primitives
+  private boolean pretty; // Synchronize TL code and source code
+  private boolean atermStat; // Shows aterm statistics
+  private boolean eclipseMode; // Eclipse mode for error management
+  private boolean doVerify; // Compilation correctness verification
+  private boolean help; // usage called
+  private boolean version; //version called
+  private boolean userOutputFile; //to know if the the output file is given by the user 
 
-  private String inputSuffix = ".t";
-  private String outputSuffix = ".java";
-  private String resourceParentPathLocation = ".";
+  private String inputSuffix;
+  private String outputSuffix;
+  private int language;
 
-  public final static String 
-  parsedSuffix    = ".tfix.parsed",
-    expandedSuffix  = ".tfix.expanded",
-    compiledSuffix  = ".tfix.compiled",
-    optimizedSuffix  = ".tfix.optimized",
-    verifExtractionSuffix = ".tfix.verif",
-    parsedTableSuffix = ".tfix.parsed.table",
-    expandedTableSuffix = ".tfix.expanded.table",
-    debugTableSuffix = ".tfix.debug.table";
+  public final static String parsedSuffix    = ".tfix.parsed";
+  public final static String expandedSuffix  = ".tfix.expanded";
+  public final static String compiledSuffix  = ".tfix.compiled";
+  public final static String optimizedSuffix  = ".tfix.optimized";
+  public final static String verifExtractionSuffix = ".tfix.verif";
+  public final static String parsedTableSuffix = ".tfix.parsed.table";
+  public final static String expandedTableSuffix = ".tfix.expanded.table";
+public final static String debugTableSuffix = ".tfix.debug.table";
   
-  public TomTaskInput(TomErrorList list) {
-    this.errors = list;
-  }
-  
-  private boolean needDebugExpansion = false, 
-    verbose = false, // a verbose mode (Show duration for each phase)
-    intermediate = false, // generate intermediate files
-    debugMode = false, // generate debug primitives
-    jCode = true,  // generate Java
-    cCode = false, // generate C
-    camlCode = false, // generate Caml
-    eCode = false, // generate Eiffel
-    doParse   = true, // parse a *.t file
-    doExpand  = true, // expand the AST
-    doCompile = true, // compile the AST
-    printOutput = true, // print the output file using a TomGenerator instance
-    doOnlyCompile = false, // try to start from an intermediate file
-    doCheck = true, // verify after parsing (syntax checking) and expansion (type checking)
-    strictType = true, // no universal type
-    genDecl = true, // generate declarations
-    doOptimization = false, // optimize generated code
-    warningAll = false, // print warning error messages
-    noWarning = false, // print only warning stopping the compilation
-    staticFunction = false, // generate static functions
-    debugMemory = false, // generate debug primitives
-    pretty = false, // Synchronize TL code and source code
-    atermStat = false, // Shows aterm statistics
-    eclipseMode = false, // Eclipse mode for error management
-    doVerify = false, // Compilation correctness verification
-    help = false, // usage called
-    version = false; //version called
 
   private final static int JAVA   = 1;
   private final static int C      = 2;
   private final static int CAML   = 3;
   private final static int EIFFEL = 4;
-  int language = JAVA;
+
+  public void init() {
+    language = JAVA;
+    inputSuffix = ".t";
+    outputSuffix = ".java";
+    
+    needDebugExpansion = false;
+    verbose = false;
+    intermediate = false;
+    debugMode = false;
+    jCode = true;
+    cCode = false;
+    camlCode = false;
+    eCode = false;
+    doParse   = true;
+    doExpand  = true;
+    doCompile = true;
+    printOutput = true;
+    doOnlyCompile = false;
+    doCheck = true;
+    strictType = true;
+    genDecl = true;
+    doOptimization = false;
+    warningAll = false;
+    noWarning = false;
+    staticFunction = false;
+    debugMemory = false;
+    pretty = false;
+    atermStat = false;
+    eclipseMode = false;
+    doVerify = false;
+    help = false;
+    version = false;
+    userOutputFile = false;
+  }
   
   public void setTerm(TomTerm term) {
     this.term = term;
@@ -325,8 +373,12 @@ public class TomTaskInput {
   }
 
 
-  public void setImportList(List list) {
-    importList = list;
+  public void setUserImportList(List list) {
+    userImportList = list;
+  }
+
+  public List getUserImportList() {
+    return userImportList;
   }
 
     /*
@@ -337,39 +389,29 @@ public class TomTaskInput {
      *  - TOM_HOME/share/jtom
      */
   public List getImportList() {
-    List newImportList = new ArrayList(importList.size()+3);
-    for(Iterator it=importList.iterator() ; it.hasNext() ;) {
-      newImportList.add(it.next());
+    List importList = new ArrayList(getUserImportList().size()+3);
+    for(Iterator it=getUserImportList().iterator() ; it.hasNext() ;) {
+      importList.add(it.next());
     }
-    newImportList.add(new File(getDestDir(),getPackagePath()).getAbsoluteFile());
-    newImportList.add(getInputFile().getParentFile().getAbsoluteFile());
-    String tom_home = System.getProperty("tom.home");
-    if(tom_home != null) {
-      File file = new File(new File(tom_home,"jtom"),"share");
-      newImportList.add(file.getAbsoluteFile());
-      //System.out.println(" extend import list with: " + file.getPath());
-    }
-    //System.out.println("importList = " + importList);
-    return newImportList;
-  }
-
-    /*
-  public List getImportList() {
-    List newImportList = importList;
-    newImportList.add(new File(getDestDir(),getPackagePath()).getAbsoluteFile());
-    newImportList.add(getInputFile().getParentFile().getAbsoluteFile());
-
-    String tom_home = System.getProperty("tom.home");
-    if(tom_home != null) {
-      File file = new File(new File(tom_home,"jtom"),"share");
-      newImportList.add(file.getAbsoluteFile());
+    try {
+      
+      importList.add(new File(getDestDir(),getPackagePath()).getCanonicalFile());
+      
+      importList.add(getInputFile().getParentFile().getCanonicalFile());
+      String tom_home = System.getProperty("tom.home");
+      if(tom_home != null) {
+        File file = new File(new File(tom_home,"jtom"),"share");
+        importList.add(file.getCanonicalFile());
         //System.out.println(" extend import list with: " + file.getPath());
+      }
+      //System.out.println("importList = " + importList);
+    } catch (IOException e) {
+      System.out.println("IO Exception when computing importList");
+      e.printStackTrace();
     }
-      //System.out.println("newImportList = " + newImportList);
-    return newImportList;
+    return importList;
   }
-    */
-  
+ 
   public boolean isVersion() {
     return version;
   }
@@ -384,14 +426,6 @@ public class TomTaskInput {
     help = b;
   }
 
-  public String getResourceParentPathLocation() {
-  	return resourceParentPathLocation;
-  }
-
-  public void setResourceParentPathLocation(String resourceParentPathLocation) {
-  	this.resourceParentPathLocation = resourceParentPathLocation;
-  }
-  
 	public String getInputSuffix() {
 		return inputSuffix;
 	}
@@ -405,7 +439,6 @@ public class TomTaskInput {
 	}
 	
 	public String getPackagePath() {
-    //System.out.println("getPackagePath = " + packagePath);
 		return packagePath;
 	}
 
@@ -465,23 +498,18 @@ public class TomTaskInput {
      * between the destDir and the fileName
      */
   public void updateOutputFile() {
-    if(getUserOutputFile() == null || getUserOutputFile().getPath().length() == 0) {
+    if(!isUserOutputFile()) {
       File out = new File(getOutputFile().getParentFile(),getPackagePath());
       setOutputFile(new File(out, getOutputFile().getName()).getPath());
     }
   }
-  
-  public void setUserOutputFile(String sUserOutputFile) {
-    try {
-      this.userOutputFile = new File(sUserOutputFile).getCanonicalFile();
-    } catch (IOException e) {
-      System.out.println("IO Exception using file `" + sUserOutputFile + "`");
-      e.printStackTrace();
-    }
-	}
-	
-	public File getUserOutputFile() {
-		return userOutputFile;
-	}
-  
+
+  public boolean isUserOutputFile() {
+    return userOutputFile;
+  }
+  public void setUserOutputFile(boolean b) {
+    userOutputFile = b;
+  }
+ 
+ 
 } // class TomTaskInput

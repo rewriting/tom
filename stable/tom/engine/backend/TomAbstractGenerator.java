@@ -37,20 +37,10 @@ import jtom.TomEnvironment;
 public abstract class TomAbstractGenerator extends TomBase {
   
   protected OutputCode output;
-  protected TomTaskInput input;
   protected String debugKey;
-  protected boolean debugMode = false, strictType = false,
-    staticFunction = false, genDecl = false, pretty = false, verbose = false;
-
-  public TomAbstractGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
-    super(environment);
+  public TomAbstractGenerator(OutputCode output) {
+    super();
 	  this.output = output;
-    this.input = taskInput;
-    this.debugMode = input.isDebugMode();
-    this.strictType = input.isStrictType();
-    this.staticFunction = input.isStaticFunction();
-    this.genDecl = input.isGenDecl();
-    this.pretty = input.isPretty();
   }
 
 // ------------------------------------------------------------

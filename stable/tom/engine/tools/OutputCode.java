@@ -30,20 +30,18 @@ import java.io.*;
 public class OutputCode {
   protected Writer file;
   private int lineCounter = 1;
-  protected boolean cCode = false, pretty = false;
   private int defaultDeep;
   private int singleLine = 0;
   
-  public OutputCode(Writer file, 
-                    boolean cCode, 
-                    boolean pretty, 
-                    int defaultDeep) {
+  public OutputCode(Writer file, int defaultDeep) {
     this.file = file;
-    this.cCode = cCode;
-    this.pretty = pretty;
     this.defaultDeep = defaultDeep;
   }
-  
+
+  private TomTaskInput getInput() {
+    return TomTaskInput.getInstance();
+  }
+
   public OutputCode() {
     this.file = new StringWriter();
   }
@@ -98,7 +96,7 @@ public class OutputCode {
   }
   
   public void writeln() throws IOException {
-    if(pretty) {
+    if(getInput().isPretty()) {
       file.write('\n');
     }
   }
@@ -114,16 +112,16 @@ public class OutputCode {
   }
   
   public void write(int deep,String s, int line, int length) throws IOException {
-    if(singleLine>0 && !cCode) {
+    if(singleLine>0 && !getInput().isCCode()) {
       s = s.replace('\n', ' ');
       s = s.replace('\r', ' ');
       s = s.replace('\t', ' ');
       write(s);
       return;
     }
-    if (!pretty) {
+    if (!getInput().isPretty()) {
       if(lineCounter > line) {
-        if(cCode) {
+        if(getInput().isCCode()) {
           String s1 = "\n#line "+line+"\n";
             // writeln(deep,s);
           s = s1+s;
@@ -172,7 +170,7 @@ public class OutputCode {
   
   public void indent(int deep) {
     try {
-      if(pretty) {
+      if(getInput().isPretty()) {
         for(int i=0 ; i<deep ; i++) {
           file.write(' ');
           file.write(' ');

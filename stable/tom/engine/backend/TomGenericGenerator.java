@@ -39,8 +39,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected HashMap getFunSymMap = new HashMap();
   protected HashMap isFsymMap = new HashMap();
   
-  public TomGenericGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
-    super(environment,taskInput,output);
+  public TomGenericGenerator(OutputCode output) {
+    super(output);
   }
 
 // ------------------------------------------------------------
@@ -113,13 +113,13 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
     boolean generated = hasGeneratedMatch(list);
     boolean defaultPattern = hasDefaultCase(list);
     Option orgTrack = null;
-    if(debugMode && !generated) {
+    if(getInput().isDebugMode() && !generated) {
       orgTrack = findOriginTracking(list);
       debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
       output.writeln("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");");
     }
     generateInstruction(deep+1,instruction);
-    if(debugMode && !generated && !defaultPattern) {
+    if(getInput().isDebugMode() && !generated && !defaultPattern) {
       output.writeln("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");");
     }
   }
@@ -236,7 +236,7 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
 TomType tlType, TargetLanguage tlCode) throws IOException {
     String args[];
-    if(!strictType) {
+    if(!getInput().isStrictType()) {
       TomType argType = getUniversalType();
       if(symbolTable().isBuiltinType(type)) {
         argType = symbolTable().getBuiltinType(type);
@@ -264,7 +264,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
     
     TomType returnType = symbolTable().getBoolType();
     String argType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -290,7 +290,7 @@ TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
     TomType returnType = l.getHead();
     
     String argType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -342,7 +342,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   protected void buildGetHeadDecl(int deep, String name1, String suffix, TomType domain, TomType codomain, TargetLanguage tlCode) 
     throws IOException {
     String returnType,argType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       returnType = getTLCode(codomain);
       argType = getTLCode(domain);
     } else {
@@ -359,7 +359,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   protected void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) 
     throws IOException {
     String returnType, argType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       returnType = getTLCode(tlType);
       argType = getTLCode(tlType);
     } else {
@@ -376,7 +376,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   protected void buildIsEmptyDecl(int deep, String name1, String type,
                                   TomType tlType, TargetLanguage tlCode) throws IOException {
     String argType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -391,7 +391,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
 
   protected void buildMakeEmptyList(int deep, String opname, TomType codomain, TargetLanguage tlCode) throws IOException {
     String returnType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       returnType = getTLType(codomain);
     } else {
       returnType = getTLType(getUniversalType());
@@ -408,7 +408,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
 String name2, TomType tlType1, TomType tlType2, TomType fullEltType,
 TomType fullListType, TargetLanguage tlCode) throws IOException {
     String returnType, argListType,argEltType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       argEltType = getTLCode(tlType1);
       argListType = getTLCode(tlType2);
       returnType = argListType;
@@ -432,7 +432,7 @@ TomType fullListType, TargetLanguage tlCode) throws IOException {
   protected void buildGetElementDecl(int deep, String name1, String name2,
 String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
     String returnType, argType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       returnType = getTLType(getUniversalType());
       argType = getTLCode(tlType1);
     } else {
@@ -452,7 +452,7 @@ String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
   protected void buildGetSizeDecl(int deep, String name1, String type,
 TomType tlType, TargetLanguage tlCode) throws IOException {
     String argType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -467,7 +467,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
 
   protected void buildMakeEmptyArray(int deep, String opname, TomType codomain,String name1, TargetLanguage tlCode) throws IOException {
     String returnType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       returnType = getTLType(codomain);
     } else {
       returnType = getTLType(getUniversalType());
@@ -483,7 +483,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
   protected void buildMakeAddArray(int deep, String opname, String name1, String name2, TomType tlType1,
 TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException {
     String returnType, argListType,argEltType;
-    if(strictType) {
+    if(getInput().isStrictType()) {
       argEltType  = getTLCode(tlType1);
       argListType = getTLCode(tlType2);
       returnType  = argListType;
