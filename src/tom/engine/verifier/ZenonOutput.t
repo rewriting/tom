@@ -107,7 +107,7 @@ public class ZenonOutput {
       String value = (String) entry.getValue();
       result += value + " ";
       if (it.hasNext()) {
-          result += " /\\ ";
+          result += " /\\ \n    ";
       }
     }
 		result += "\n";
@@ -255,10 +255,11 @@ public class ZenonOutput {
 		%match(Seq seq) {
 			seq() -> { return seq; }
 			dedterm(concTerm(_*,t,v)) -> {
-				return `dedterm(concTerm(t,v));
+          return `dedterm(concTerm(t,v));
 			}
+      /* What happen in the "false" case ? */
 			dedexpr(concExpr(_*,t,v)) -> {
-				return `dedexpr(concExpr(t,v));
+				return `dedexpr(concExpr(t));
 			}
 		}
 		return seq;
