@@ -25,5 +25,8 @@ EmptyP |- A && (A |=> C) |=> B;
 (^P or ^Q) && ((^P or ^Q) |=> (B |=> C)) && B && (^P or ^Q) && ((^P or ^Q) |=> (B |=> D)) && B |- C && D |=> E;
 #faux
 
+( (A && ^A) && (A && ^A) && (A && ^A) && (A && ^A) && (A && ^A) && (A && ^A) ) |- EmptyP;
+( (A && ^A) && (A && ^A) && (A && ^A) ) |- EmptyP;
+
 (( (A |=> (B && C)) && ((B && C) |=> A)) && ((B |=> ^(C)) && (^(C) |=> B)) &&  A) |- EmptyP;
 # vrai

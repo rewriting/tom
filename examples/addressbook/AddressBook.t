@@ -32,16 +32,17 @@ public class AddressBook {
     Iterator it = book.iterator();
     while(it.hasNext()) {
       Person p = (Person) it.next();
-      happyBirthday(p, `date(2003,9,18));
+      happyBirthday(p, `date(2003,10,19));
     }
   }
 
   public void happyBirthday(Person p, Date today) {
     %match(Person p, Date today) {
-      person(firstname,lastname,date(year,month,day)),
-        date(_,month,day) -> {
-        
-        System.out.println("Happy Birthday " + firstname );  			  
+      person(firstname,lastname,date(year,month1,day1)),
+        date(_,month2,day2) -> {
+          if(month1==month2 && day1==day2) {
+            System.out.println("Happy Birthday " + firstname );
+          }  			  
       }
     }
     

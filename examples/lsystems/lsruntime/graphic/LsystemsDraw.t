@@ -135,9 +135,9 @@ public class LsystemsDraw  extends JComponent {
         }
         taille.add(point);
       }
-      Right -> { point.tourne(angle); }
+      Right() -> { point.tourne(angle); }
       
-      Left -> { point.tourne(-angle); }
+      Left() -> { point.tourne(-angle); }
     }
   }
   

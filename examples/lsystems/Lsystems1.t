@@ -74,12 +74,12 @@ public class Lsystems1 implements LsystemsInterface {
     public NodeList apply(NodeList prev_rev, Node token, NodeList next) {
       %match(Node token) {
         // F -> FF
-        F -> {
+        F() -> {
           return `concNode(F(),F());
         }
         
         // X -> F[+X][-X]FX
-        X -> {
+        X() -> {
           return `concNode(F(),SubList(concNode(Left,X())),SubList(concNode(Right,X())),F(),X());
         }
         

@@ -198,7 +198,7 @@ public class Lsystems3 implements LsystemsInterface {
     public boolean apply(ATerm t) {
       %match(Node t) {
         (Right|Left|F)() -> { return true; }
-				SubList[]        -> { return true; }
+		SubList[]        -> { return true; }
       }
       return false;
     }

@@ -72,31 +72,31 @@ public class Lsystems6 implements LsystemsInterface {
     public NodeList apply(NodeList prev_rev, Node token, NodeList next) {
       %match(NodeList prev_rev,Node token, NodeList next) {
         // F < A -> F
-        concNode(head*,F,I*),A,_ -> {
+        concNode(head*,F(),I*),A(),_ -> {
           if (runtime.UCD(I,extign)) {
             return `concNode(F);
           }
         }
         // F > B -> B F
-        _,F,concNode(I*,B,tail*) -> {
+        _,F(),concNode(I*,B(),tail*) -> {
           if (runtime.UCD(I,extign)) {
             return `concNode(B,F);
           }
         }
         // F > [ B ] B -> F F
-        _,F,concNode(I1*,SubList(concNode(I2*,B,tail1*)),I3*,B,tail2*) -> {
+        _,F(),concNode(I1*,SubList(concNode(I2*,B(),tail1*)),I3*,B(),tail2*) -> {
           if (runtime.UCD(I1,ign) && runtime.UCD(I2,ign) && runtime.UCD(I3,ign)) {
             return `concNode(F,F);
           }
         }
         // A < B > A -> A
-        concNode(head*,A,I1*),B,concNode(I2*,A,tail*) -> {
+        concNode(head*,A(),I1*),B(),concNode(I2*,A(),tail*) -> {
           if (runtime.UCD(I1,ign) && runtime.UCD(I2,ign)) {
             return `concNode(A);
           }
         }
         // F -> A    Attention : à mettre à la fin
-        _,F,_ -> {
+        _,F(),_ -> {
           return `concNode(A);
         }
       }
@@ -107,7 +107,7 @@ public class Lsystems6 implements LsystemsInterface {
   public Ignore ign = new Ignore() {
     public boolean apply(ATerm t) {
       %match(Node t) {
-        Right | Left -> { return true; }
+        (Right | Left)() -> { return true; }
       }
       return false;
     }

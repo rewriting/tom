@@ -75,7 +75,7 @@ public class Lsystems2 implements LsystemsInterface {
         // F .33-> F[+F]F[-F]F
         // F .33-> F[+F]F
         // F .34-> F[-F]F
-        F -> {
+        F() -> {
           int i = runtime.random();
           if      ( i>=0  && i<33  ) { return `concNode(F,SubList(concNode(Left,F)),F,SubList(concNode(Right,F)),F); }
           else if ( i>=33 && i<66  ) { return `concNode(F,SubList(concNode(Left,F)),F); }
