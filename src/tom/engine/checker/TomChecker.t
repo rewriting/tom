@@ -525,7 +525,6 @@ abstract class TomChecker extends TomBase implements TomTask {
 		int ruleNumber = 0;
 		String name = "Unknown return type";
 		
-		
 		%match(TomRuleList ruleList) {	// for each rewrite rule
 			concTomRule(_*, RewriteRule(Term(lhs),Term(rhs),condList,option),_*) -> {
 				//Each Lhs shall start with the same production name
@@ -665,10 +664,15 @@ abstract class TomChecker extends TomBase implements TomTask {
 	}
 	
 	private void messageRuleErrorBadRhsType(OptionList optionList, TomType lhsType, TomType rhsType) {
+		if(!warningAll || noWarning) return;
 		int declLine = currentTomStructureOrgTrack.getLine();
 		int line = findOriginTrackingLine(optionList);
-		String s = "Bad right hand side type: `"+rhsType.getString()+"` instead of `"+lhsType.getString()+"` in structure %rule declared line " +declLine;
-		messageError(line,s);	
+		String rhsTypeName, lhsTypeName;
+		if(rhsType.isEmptyType()) {rhsTypeName = "Not Type Found";} else {rhsTypeName = rhsType.getString();}
+		if(lhsType.isEmptyType()) {lhsTypeName = "Not Type Found";} else {lhsTypeName = lhsType.getString();}
+		String s = "Bad right hand side type: `"+rhsTypeName+"` instead of `"+lhsTypeName+"` in structure %rule declared line " +declLine;
+		//messageError(line,s);	
+		System.out.println(s);
 	}
 	
 	private void messageRuleErrorRhsImpossibleXML(OptionList optionList) {

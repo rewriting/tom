@@ -55,6 +55,7 @@ import java.util.StringTokenizer;
 import jtom.adt.Option;
 import jtom.adt.OptionList;
 import jtom.adt.TomList;
+import jtom.adt.TomRuleList;
 import jtom.adt.TomSignatureFactory;
 import jtom.adt.TomStructureTable;
 import jtom.adt.TomTerm;
@@ -950,10 +951,11 @@ public class TomDebugger {
         mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Match", fileName, line, nbPatterns, nbSubjects, patternText, patternLine));
         
       } else if (struct.isRuleSet()) {
-        String fileName = struct.getOrgTrack().getFileName().getString();
+        /*String fileName = struct.getOrgTrack().getFileName().getString();
         int line = struct.getOrgTrack().getLine();
         String key = fileName+line;
-        TomList paList = struct.getTomList();
+        System.out.println(struct);
+				TomRuleList paList = struct.getRuleList();
         int nbPatterns =  paList.getLength();
         int nbSubjects = struct.getTomList().getHead().getLhs().getTomTerm().getArgs().getLength();
         String[] patternText = new String[nbPatterns];
@@ -969,7 +971,7 @@ public class TomDebugger {
           paList = paList.getTail();
         }
         mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Rule", fileName, line, nbPatterns, nbSubjects,  patternText, patternLine));
-        
+        */
       } else {
         System.out.println("Corrupt debug term");
 		    throw new TomRuntimeException(new Throwable("Corrupt debug term"));
