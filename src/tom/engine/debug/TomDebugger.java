@@ -57,6 +57,8 @@ import jtom.adt.TomSignatureFactory;
 import jtom.adt.TomStructureTable;
 import jtom.adt.TomTerm;
 
+import aterm.pure.PureFactory;
+
 public class TomDebugger {
   public static TomDebugger debugger = null;
   static boolean testingMode = false;
@@ -100,7 +102,7 @@ public class TomDebugger {
         name = file.getName();
         baseFileName[i] = name.substring(0, name.length() - (debugTableSuffix.length()))+".t";
         input = new FileInputStream(file);
-        TomSignatureFactory tsf = new TomSignatureFactory(10);
+        TomSignatureFactory tsf = new TomSignatureFactory(new PureFactory(10));
         table = tsf.TomStructureTableFromFile(input);
         System.out.println("Analysing "+baseFileName[i]+"...");
         analyseStructure(table);

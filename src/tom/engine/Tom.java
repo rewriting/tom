@@ -41,6 +41,7 @@ import jtom.compiler.*;
 import jtom.parser.*;
 import jtom.tools.*;
 import aterm.ATerm;
+import aterm.pure.PureFactory;
 
 
 public class Tom {
@@ -202,7 +203,7 @@ public class Tom {
     taskInput.setOutputFileName(taskInput.inputFileName+taskInput.outputSuffix);
     
       // basic structures
-    TomSignatureFactory tomSignatureFactory = new TomSignatureFactory();
+    TomSignatureFactory tomSignatureFactory = new TomSignatureFactory(new PureFactory());
     ASTFactory   astFactory   = new ASTFactory(tomSignatureFactory);
     SymbolTable  symbolTable  = new SymbolTable(astFactory, taskInput.isCCode(), taskInput.isJCode(),taskInput.isECode());
     TomEnvironment environment = new TomEnvironment(tomSignatureFactory,
@@ -261,12 +262,12 @@ public class Tom {
         ATerm fromFileExpandTerm = null;
         TomTerm expandedTerm = null; 
         try {
-          fromFileExpandTerm = tomSignatureFactory.readFromFile(input);
+          fromFileExpandTerm = tomSignatureFactory.getPureFactory().readFromFile(input);
           expandedTerm = tomSignatureFactory.TomTermFromTerm(fromFileExpandTerm);
           input = new FileInputStream(inputFileName+".table");
           
           ATerm fromFileSymblTable = null;
-          fromFileSymblTable = tomSignatureFactory.readFromFile(input);
+          fromFileSymblTable = tomSignatureFactory.getPureFactory().readFromFile(input);
           TomSymbolTable symbTable = tomSignatureFactory.TomSymbolTableFromTerm(fromFileSymblTable);
           symbolTable.regenerateFromTerm(symbTable);
         } catch (FileNotFoundException e) {
