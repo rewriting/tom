@@ -32,3 +32,7 @@ list: tomExtension.cmo tomList.cmo List1.cmo
 
 tomlist: List1.tom.cmo
 	ocamlc -o tomlist List1.tom.cmo
+
+erat: erat.t
+	jtom.src --camlCode erat.t
+	ocamlc -o erat erat.tom.ml
