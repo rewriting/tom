@@ -841,9 +841,11 @@
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
+				 stamp="off" 
          options="-I ${tom.home}/share/jtom">
+<!-- stamp not yet ready for apigen list -->
       <include name="${structure}/**/*.t"/>
-			<exclude name="${structure}/**/StructureCDT.t"/>
+			<!--			<exclude name="${structure}/**/StructureCDT.t"/> -->
     </tom>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
