@@ -63,20 +63,22 @@ public class Rewrite2 {
   }
 
   public void run() {
-    //Term subject = `f(g(a,b));
+    //Term subject = `g(c,c);
     Term subject = `f(g(g(a,b),g(a,a)));
 
     VisitableVisitor rule = new RewriteSystem();
     VisitableVisitor onceBottomUp = `mu(MuVar("x"),Choice(One(MuVar("x")),rule));
     VisitableVisitor innermostSlow = `mu(MuVar("y"),Choice(Sequence(onceBottomUp,MuVar("y")),Identity()));
-
+    VisitableVisitor innermost = `mu(MuVar("x"),Sequence(All(MuVar("x")),Choice(Sequence(rule,MuVar("x")),Identity)));
     try {
       System.out.println("subject       = " + subject);
       System.out.println("onceBottomUp  = " + onceBottomUp.visit(subject));
       System.out.println("innermostSlow = " + innermostSlow.visit(subject));
+      System.out.println("innermost     = " + innermost.visit(subject));
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
+
 
   }
   

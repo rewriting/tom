@@ -60,7 +60,7 @@ public class Rewrite1 {
   }
 
   public void run() {
-    //Term subject = `f(g(a,b));
+    //Term subject = `g(d,d);
     Term subject = `f(g(g(a,b),g(a,a)));
 
     VisitableVisitor rule = new RewriteSystem();

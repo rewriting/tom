@@ -52,7 +52,7 @@ public class PolyTraveler3 {
 
   public final static void main(String[] args) {
     PolyTraveler3 test = new PolyTraveler3(Factory.getInstance(new PureFactory()));
-    test.run(3);
+    test.run(5);
   }
 
   public void run(int n) {
