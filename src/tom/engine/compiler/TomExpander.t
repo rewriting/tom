@@ -229,12 +229,11 @@ public class TomExpander extends TomTask {
           /*
            * ensure that the argument contains at least 1 character and 2 single quotes
            */
-          if(tomName.length()>0 && 
-             tomName.charAt(0)=='\'' && tomName.charAt(tomName.length()-1)=='\'') {
-            TomSymbol tomSymbol = getSymbol(tomName);
-            TomType termType = tomSymbol.getTypesToType().getCodomain();
-            String type = termType.getTomType().getString();
-            if(symbolTable().isCharType(type) && tomName.length()>3) {
+          TomSymbol tomSymbol = getSymbol(tomName);
+          TomType termType = tomSymbol.getTypesToType().getCodomain();
+          String type = termType.getTomType().getString();
+          if(symbolTable().isCharType(type) && tomName.length()>3) {
+            if(tomName.charAt(0)=='\'' && tomName.charAt(tomName.length()-1)=='\'') {
               TomList newArgs = tail;
               //System.out.println("bingo -> " + tomSymbol);
               for(int i=tomName.length()-2 ; i>0 ;  i--) {
@@ -249,9 +248,9 @@ public class TomExpander extends TomTask {
                 //System.out.println("newSymb = " + getSymbol(newName));
               }
               return newArgs;
+            } else {
+              throw new TomRuntimeException(new Throwable("expandChar: strange char: " + tomName));
             }
-          } else {
-            throw new TomRuntimeException(new Throwable("expandChar: strange char: " + tomName));
           }
         }
 
