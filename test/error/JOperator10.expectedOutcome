@@ -1,0 +1,3 @@
+*** Warning *** Repeated slot  's0' in operator declaration line: 9
+*** Warning *** Some GetSlot declaration are incompatible with operator signature line: 15
+*** This concerns following slotname:[Name("s1")]
