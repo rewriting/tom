@@ -203,8 +203,7 @@ bqList [LinkedList list]
         // eat as much WS as possible : be greedy
        // ( options{greedy = true;}: BQ_WS )*
         ( 
-            (c:BQ_COMMA ( BQ_WS )* 
-            )? term = bqTerm 
+            (c:BQ_COMMA ( options{greedy = true;}: BQ_WS )* )? term = bqTerm 
             //( BQ_WS )*
             {
                 if(c != null){
@@ -247,41 +246,14 @@ bqTerm returns [TomTerm result]
                     TomTypeAlone("unknown type"),
                     concConstraint()
                 );
-
-/*                TomTerm varStar = `Composite(concTomTerm(VariableStar(
-                    concOption(
-                        OriginTracking(
-                            Name(name), 
-                            i1.getLine(), 
-                            Name(currentFile())
-                        )
-                    ),
-                    Name(name),
-                    TomTypeAlone("unknown type"),
-                    concConstraint()
-                )));*/
-//                result = varStar;
             }
             
         |
             (BQ_ID (BQ_WS)* BQ_LPAREN) => i2:BQ_ID ( w:BQ_WS )*
-            BQ_LPAREN ( BQ_WS )* (bqList[blockList])? ( BQ_WS )* BQ_RPAREN /*( BQ_WS )**/
+            BQ_LPAREN ( options{greedy=true;}: BQ_WS )* (bqList[blockList])? BQ_RPAREN 
             {
                 if(blockList.size() > 0) {
                     TomList compositeList = makeCompositeList(blockList);
-                     
-/*                    TomTerm composite = `BackQuoteAppl(
-                        concOption(
-                            OriginTracking(
-                                Name(i2.getText()), 
-                                i2.getLine(), 
-                                Name(currentFile())
-                            )
-                        ),
-                        Name(i2.getText()),
-                        compositeList
-                    );
-                    result = composite;*/
                     
                     result = `Composite(
                         concTomTerm(
@@ -319,19 +291,6 @@ bqTerm returns [TomTerm result]
      
         |   i3:BQ_ID //( BQ_WS )*
             {
-               /* TomTerm appl = `Composite(concTomTerm(BackQuoteAppl(
-                    concOption(
-                        OriginTracking(
-                            Name(i3.getText()), 
-                            i3.getLine(), 
-                            Name(currentFile())
-                        )
-                    ),
-                    Name(i3.getText()),
-                    concTomTerm()
-                )));
-                result = appl;*/
-
                 result = `BackQuoteAppl(
                     concOption(
                         OriginTracking(
@@ -345,8 +304,8 @@ bqTerm returns [TomTerm result]
                 );
             }
         
-        |   BQ_LPAREN ( BQ_WS )*
-            ( bqList[blockList] )? ( BQ_WS )* BQ_RPAREN /*( BQ_WS )**/
+        |   BQ_LPAREN ( options{greedy = true;}: BQ_WS )*
+            ( bqList[blockList] )?  BQ_RPAREN 
             {
                 TomList compositeList = makeCompositeList(blockList);
                 compositeList = `concTomTerm(
@@ -358,7 +317,7 @@ bqTerm returns [TomTerm result]
                 result = `Composite(compositeList);
             }
 
-        |   s = targetPlus // ( BQ_WS )*
+        |   s = targetPlus 
             {
                 result = `TargetLanguageToTomTerm(ITL(s));
             }
@@ -421,20 +380,15 @@ beginBqAppl [Token symbol] returns [TomTerm result]
 		    );
 	    }
 
-        |   ( BQ_WS )*
-
-            (
+        |   (
                 BQ_LPAREN 
                 {
                     if(xmlTerm){
                         blockList.add(`Composite(emptyTomList()));
                     }
                 }
-               
-                ( BQ_WS )* ( bqList[blockList] )? ( BQ_WS )* BQ_RPAREN
+                ( options{greedy = true;}: BQ_WS )* ( bqList[blockList] )? BQ_RPAREN
                 {
-                    
-
                     if(blockList.size() > 0) {
                         TomList compositeList = makeCompositeList(blockList);
                         
@@ -518,6 +472,44 @@ beginBqComposite returns[TomTerm result]
             selector().pop();
         }
     ;
+/*
+beginXmlBackquote
+    :
+        BQ_LPAREN xmlTerm BQ_RPAREN
+    ;
+
+xmlTerm
+    :
+        (
+            "<" BQ_ID xmlAttributeList
+            ( 
+                "/>" 
+            |   ">" xmlChilds "</" BQ_ID ">"
+            )
+        |   bqTerm
+        )
+    ;
+
+xmlAttributeList
+    :
+        ( xmlAttribute )*
+    ;
+
+xmlAttribute
+    :
+        BQ_ID "=" termStringIdentifier
+    ;
+
+termStringIdentifier
+    :
+        BQ_ID | BQ_STRING
+    ;
+
+xmlChilds
+    :
+        ( xmlTerm )*
+    ;
+*/
 
 
 class NewBQLexer extends Lexer;
@@ -571,26 +563,7 @@ BQ_ID
         )*
     ;
 
-/*
-        (
-            BQ_STAR { _ttype = ID_STAR; }
-        |   (
-                ('a'..'z' | 'A'..'Z') 
-            |   BQ_UNDERSCORE 
-            |   BQ_DOT
-            |   BQ_DIGIT
-            )*
-        )
-    ;
 
-*/
-/*
-ID_STAR
-    options{ testLiterals = true; }   
-    :
-        BQ_ID BQ_STAR
-    ;
-*/
 
 BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;
 
