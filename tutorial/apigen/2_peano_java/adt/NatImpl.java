@@ -1,40 +1,22 @@
 package adt;
 
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class NatImpl extends PeanoConstructor
 {
-  public static Nat fromString(String str)
-  {
-    aterm.ATerm trm = getStaticPeanoFactory().parse(str);
-    return fromTerm(trm);
+  protected NatImpl(PeanoFactory factory) {
+     super(factory);
   }
-  public static Nat fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticPeanoFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  protected void init(int hashCode, aterm.ATermList annos, aterm.AFun fun,	aterm.ATerm[] args) {
+    super.init(hashCode, annos, fun, args);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.AFun fun, aterm.ATerm[] i_args) {
+  	super.initHashCode(annos, fun, i_args);
   }
   public boolean isEqual(Nat peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
-  public static Nat fromTerm(aterm.ATerm trm)
-  {
-    Nat tmp;
-    if ((tmp = Nat_Zero.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Nat_Suc.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a Nat: " + trm);
-  }
-
-  public boolean isNat()  {
+  public boolean isSortNat()  {
     return true;
   }
 
@@ -55,14 +37,13 @@ abstract public class NatImpl extends PeanoConstructor
 
   public Nat getPred()
   {
-     throw new RuntimeException("This Nat has no Pred");
+     throw new UnsupportedOperationException("This Nat has no Pred");
   }
 
   public Nat setPred(Nat _pred)
   {
-     throw new RuntimeException("This Nat has no Pred");
+     throw new IllegalArgumentException("Illegal argument: " + _pred);
   }
-
 
 }
 

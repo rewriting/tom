@@ -1,3 +1,4 @@
+import aterm.pure.*;
 import aterm.*;
 import adt.*;
 
@@ -43,7 +44,7 @@ public class Peano2 {
   }
 
   public final static void main(String[] args) {
-    Peano2 test = new Peano2(new PeanoFactory());
+    Peano2 test = new Peano2(new PeanoFactory(new PureFactory()));
     test.run(10);
   }
 

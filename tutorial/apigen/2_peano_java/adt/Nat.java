@@ -1,7 +1,10 @@
 package adt;
 
-abstract public class Nat
+public abstract class Nat
 extends NatImpl
 {
+  protected Nat(PeanoFactory factory) {
+    super(factory);
+  }
 
 }

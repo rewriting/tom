@@ -6,36 +6,30 @@ implements aterm.ATerm
 {
   protected aterm.ATerm term = null;
 
-  abstract protected aterm.ATerm getPattern();
+  PeanoFactory factory = null;
 
-  public aterm.ATerm toTerm() {
-    if(term == null) {
-      java.util.List args = new java.util.LinkedList();
-      for(int i = 0; i<getArity() ; i++) {
-        args.add(((PeanoConstructor) getArgument(i)).toTerm());
-      }
-      setTerm(getFactory().make(getPattern(), args));
-    }
-    return term;
+  public PeanoConstructor(PeanoFactory factory) {
+    super(factory.getPureFactory());
+    this.factory = factory;
   }
 
+  protected void init(int hashCode, aterm.ATermList annos, aterm.AFun fun,	aterm.ATerm[] args) {
+    super.init(hashCode, annos, fun, args);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.AFun fun, aterm.ATerm[] i_args) {
+  	super.initHashCode(annos, fun, i_args);
+  }
+  abstract public aterm.ATerm toTerm();
   public String toString() {
     return toTerm().toString();
   }
-
   protected void setTerm(aterm.ATerm term) {
    this.term = term;
   }
-
   public PeanoFactory getPeanoFactory() {
-    return (PeanoFactory) getFactory();
+    return factory;
   }
-
-  static protected PeanoFactory getStaticPeanoFactory() {
-    return (PeanoFactory) getStaticFactory();
-  }
-
-  public boolean isNat() {
+  public boolean isSortNat() {
     return false;
   }
 
