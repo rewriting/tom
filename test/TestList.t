@@ -101,6 +101,7 @@ public class TestList extends TestCase {
 			suite.addTest(new TestList("testMatch3",i));
 		}
     suite.addTest(new TestList("testMatch4"));
+    suite.addTest(new TestList("testMatch5"));
 		return suite;
 	}
 
@@ -217,6 +218,18 @@ public class TestList extends TestCase {
     assertTrue("TestMatch4",nbSol==6);
 	}
 
+	public void testMatch5() {
+    int nbSol = 0;
+    ATerm l = factory.parse("[l([a,b]),a,b]");
+		%match(L l) {
+      conc(l(conc(R*,T*)),X1*,u,X2*) -> {
+        nbSol++;
+				//System.out.println("R = " + `R* + " T = " + `T*+" X1 = " + `X1* + " X2 = " + `X2*+ " u = " + `u);
+      }
+    }
+
+    assertTrue("TestMatch4",nbSol==6);
+	}
 
   
 }
