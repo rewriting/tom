@@ -21,6 +21,7 @@
 	<!-- set local properties for this build -->
 	<property file="local.properties"/>
 	<property name="java.class.path" value="" />
+	<property name="build.sysclasspath" value="ignore" />
 
 	<!-- current version of TOM -->
 	<property name="version" value="2.0beta"/>
