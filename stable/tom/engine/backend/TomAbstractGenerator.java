@@ -172,6 +172,11 @@ public abstract class TomAbstractGenerator extends TomBase {
 
         buildExpOr(deep, exp1, exp2);
         return;
+      }}}} } if(tom_is_fun_sym_GreaterThan(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match2_1_1=tom_get_slot_GreaterThan_arg1(tom_match2_1); { jtom.adt.tomsignature.types.Expression tom_match2_1_2=tom_get_slot_GreaterThan_arg2(tom_match2_1); { jtom.adt.tomsignature.types.Expression exp1=tom_match2_1_1; { jtom.adt.tomsignature.types.Expression exp2=tom_match2_1_2;
+
+
+        buildExpGreaterThan(deep, exp1, exp2);
+        return;
       }}}} } if(tom_is_fun_sym_TrueTL(tom_match2_1) ||  false ) {
 
 
@@ -699,6 +704,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildCompiledMatch(int deep, Instruction instruction) throws IOException;
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException;
+  protected abstract void buildExpGreaterThan(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
   protected abstract void buildExpEmptyList(int deep, TomType type, TomTerm expList) throws IOException;

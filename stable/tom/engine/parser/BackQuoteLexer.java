@@ -42,6 +42,12 @@ import antlr.SemanticException;
 
 public class BackQuoteLexer extends antlr.CharScanner implements BackQuoteParserTokenTypes, TokenStream
  {
+
+  public void uponEOF()
+    throws TokenStreamException, CharStreamException
+    {
+      throw new TokenStreamException("Premature EOF");
+    }
 public BackQuoteLexer(InputStream in) {
 	this(new ByteBuffer(in));
 }

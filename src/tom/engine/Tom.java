@@ -73,7 +73,7 @@ public class Tom {
     if(platform == null) {
       return 1;
     }
-    System.out.println("Tom Compiler "+Tom.VERSION+" 2000-2004 tom.loria.fr\n");
+    System.out.println("Tom Compiler "+Tom.VERSION+" 2000-2004 tom.loria.fr");
     return platform.run();
   }
    

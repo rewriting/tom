@@ -38,9 +38,6 @@
   get_head(s)         { s.charAt(0) }
   get_tail(s)         { s.substring(1) }
   is_empty(s)         { (s.length()==0) }
-	check_stamp(t)        { }
-  set_stamp(t)          { t }
-  get_implementation(t) { t }
 }
 
 %oplist String concString(char*) {
@@ -49,3 +46,14 @@
   make_empty()     { "" }
   make_insert(c,s) { (c+s) }
 }
+
+/*
+ * old definition of String
+%typeterm String {
+  implement           { String }
+  get_fun_sym(t)      { t }
+  cmp_fun_sym(s1,s2)  { s1.equals(s2) }
+  get_subterm(t, n)   { null }
+  equals(t1,t2)       { t1.equals(t2) }
+}
+*/

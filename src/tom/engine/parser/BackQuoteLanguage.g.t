@@ -415,11 +415,11 @@ target returns [Token result]
     |   xe:XML_EQUAL {result = xe;}
     |   xc:XML_CLOSE  {result = xc;}
     |   a:ANY {
-      /*
+      
       System.out.println("any = '" + a + "'");
       System.out.println("any.text = '" + a.getText() + "'");
       System.out.println("any.type = " + a.getType());
-      */
+      
       result = a;
     }
     ;
@@ -687,7 +687,8 @@ BQ_STRING  :   '"' (BQ_ESC|~('"'|'\\'|'\n'|'\r'))* '"'
 
 ANY 
 options{ testLiterals = true; } 
-    :   '\u0000'..'\uffff'  
+//    :   '\u0000'..'\uffff'  
+    :  .
     ;
    
 BQ_MINUS   :   '-'  ;

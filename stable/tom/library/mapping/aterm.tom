@@ -35,7 +35,4 @@
   cmp_fun_sym(t1,t2)  { t1 == t2 }
   get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
   equals(t1, t2)      { t1 == t2}
-	check_stamp(t)        { }
-  set_stamp(t)          { t }
-  get_implementation(t) { t }
 }
