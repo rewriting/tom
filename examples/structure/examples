@@ -58,7 +58,7 @@
 # [ [(a,b),-a,-b] , [(c,[(a,b),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
 
 # a hard example
-[a,d,(-a,-c),(-b,-d),(b,c,[-a,([c,-c],[-b,(a,b)])])]
+# [a,d,(-a,-c),(-b,-d),(b,c,[-a,([c,-c],[-b,(a,b)])])]
 
 # a very hard example
 # [ [(a,b),-a,-b] , [(c,[(a,b, [a,d,(-a,-c),(-b,-d),(b,c,[-a,([c,-c],[-b,(a,b)])])] ),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
