@@ -104,6 +104,9 @@ public class TomSignatureFactory
   private aterm.AFun funOption_OriginalText;
   private Option protoOption_OriginalText;
   private aterm.ATerm patternOption_OriginalText;
+  private aterm.AFun funOption_Label;
+  private Option protoOption_Label;
+  private aterm.ATerm patternOption_Label;
   private aterm.AFun funOption_XMLPosition;
   private Option protoOption_XMLPosition;
   private aterm.ATerm patternOption_XMLPosition;
@@ -350,6 +353,9 @@ public class TomSignatureFactory
   private aterm.AFun funTomNumber_PatternNumber;
   private TomNumber protoTomNumber_PatternNumber;
   private aterm.ATerm patternTomNumber_PatternNumber;
+  private aterm.AFun funTomNumber_PatternLabel;
+  private TomNumber protoTomNumber_PatternLabel;
+  private aterm.ATerm patternTomNumber_PatternLabel;
   private aterm.AFun funTomNumber_ListNumber;
   private TomNumber protoTomNumber_ListNumber;
   private aterm.ATerm patternTomNumber_ListNumber;
@@ -425,6 +431,9 @@ public class TomSignatureFactory
   private aterm.AFun funTomStructureTable_StructTable;
   private TomStructureTable protoTomStructureTable_StructTable;
   private aterm.ATerm patternTomStructureTable_StructTable;
+  private aterm.AFun funTomError_Error;
+  private TomError protoTomError_Error;
+  private aterm.ATerm patternTomError_Error;
   private aterm.AFun funXMLTerm_Element;
   private XMLTerm protoXMLTerm_Element;
   private aterm.ATerm patternXMLTerm_Element;
@@ -454,6 +463,8 @@ public class TomSignatureFactory
   private aterm.ATerm patternSlotListMany;
   private TomEntryList protoTomEntryList;
   private aterm.ATerm patternTomEntryListMany;
+  private TomErrorList protoTomErrorList;
+  private aterm.ATerm patternTomErrorListMany;
   private TomList emptyTomList;
   private TomNumberList emptyTomNumberList;
   private TomRuleList emptyTomRuleList;
@@ -461,6 +472,7 @@ public class TomSignatureFactory
   private OptionList emptyOptionList;
   private SlotList emptySlotList;
   private TomEntryList emptyTomEntryList;
+  private TomErrorList emptyTomErrorList;
   public TomSignatureFactory(PureFactory factory)
   {
      this.factory = factory;
@@ -605,6 +617,10 @@ public class TomSignatureFactory
     patternOption_OriginalText = factory.parse("OriginalText(<term>)");
     funOption_OriginalText = factory.makeAFun("_Option_OriginalText", 1, false);
     protoOption_OriginalText = new Option_OriginalText(this);
+
+    patternOption_Label = factory.parse("Label(<term>)");
+    funOption_Label = factory.makeAFun("_Option_Label", 1, false);
+    protoOption_Label = new Option_Label(this);
 
     patternOption_XMLPosition = factory.parse("XMLPosition(<str>)");
     funOption_XMLPosition = factory.makeAFun("_Option_XMLPosition", 1, false);
@@ -941,6 +957,10 @@ public class TomSignatureFactory
     funTomNumber_PatternNumber = factory.makeAFun("_TomNumber_PatternNumber", 1, false);
     protoTomNumber_PatternNumber = new TomNumber_PatternNumber(this);
 
+    patternTomNumber_PatternLabel = factory.parse("PatternLabel(<term>)");
+    funTomNumber_PatternLabel = factory.makeAFun("_TomNumber_PatternLabel", 1, false);
+    protoTomNumber_PatternLabel = new TomNumber_PatternLabel(this);
+
     patternTomNumber_ListNumber = factory.parse("ListNumber(<term>)");
     funTomNumber_ListNumber = factory.makeAFun("_TomNumber_ListNumber", 1, false);
     protoTomNumber_ListNumber = new TomNumber_ListNumber(this);
@@ -1049,6 +1069,11 @@ public class TomSignatureFactory
     protoTomStructureTable_StructTable = new TomStructureTable_StructTable(this);
 
 
+    patternTomError_Error = factory.parse("Error(<str>,<str>,<int>,<int>)");
+    funTomError_Error = factory.makeAFun("_TomError_Error", 4, false);
+    protoTomError_Error = new TomError_Error(this);
+
+
     patternXMLTerm_Element = factory.parse("Element(<term>,<term>,<term>)");
     funXMLTerm_Element = factory.makeAFun("_XMLTerm_Element", 3, false);
     protoXMLTerm_Element = new XMLTerm_Element(this);
@@ -1103,6 +1128,11 @@ public class TomSignatureFactory
     protoTomEntryList.init(336, null, null, null);
     emptyTomEntryList = (TomEntryList) factory.build(protoTomEntryList);
     emptyTomEntryList.init(336, emptyTomEntryList, null, null);
+
+    protoTomErrorList = new TomErrorList(this);
+    protoTomErrorList.init(378, null, null, null);
+    emptyTomErrorList = (TomErrorList) factory.build(protoTomErrorList);
+    emptyTomErrorList.init(378, emptyTomErrorList, null, null);
 
   }
   protected Declaration_TypeTermDecl makeDeclaration_TypeTermDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -2060,6 +2090,35 @@ public class TomSignatureFactory
   protected aterm.ATerm toTerm(Option_OriginalTextImpl arg) {
     java.util.List args = new java.util.LinkedList();
     args.add((arg.getAstName()).toTerm());    return factory.make(patternOption_OriginalText, args);
+  }
+
+  protected Option_Label makeOption_Label(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoOption_Label) {
+      protoOption_Label.initHashCode(annos,fun,args);
+      return (Option_Label) factory.build(protoOption_Label);
+    }
+  }
+
+  public Option_Label makeOption_Label(TomName _astName) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName};
+    return makeOption_Label(funOption_Label, args, factory.getEmpty());
+  }
+
+  public Option Option_LabelFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternOption_Label);
+
+    if (children != null) {
+      Option tmp = makeOption_Label(TomNameFromTerm( (aterm.ATerm) children.get(0)));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(Option_LabelImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternOption_Label, args);
   }
 
   protected Option_XMLPosition makeOption_XMLPosition(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -4440,6 +4499,35 @@ public class TomSignatureFactory
     args.add((arg.getNumber()).toTerm());    return factory.make(patternTomNumber_PatternNumber, args);
   }
 
+  protected TomNumber_PatternLabel makeTomNumber_PatternLabel(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomNumber_PatternLabel) {
+      protoTomNumber_PatternLabel.initHashCode(annos,fun,args);
+      return (TomNumber_PatternLabel) factory.build(protoTomNumber_PatternLabel);
+    }
+  }
+
+  public TomNumber_PatternLabel makeTomNumber_PatternLabel(TomName _astName) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName};
+    return makeTomNumber_PatternLabel(funTomNumber_PatternLabel, args, factory.getEmpty());
+  }
+
+  public TomNumber TomNumber_PatternLabelFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternTomNumber_PatternLabel);
+
+    if (children != null) {
+      TomNumber tmp = makeTomNumber_PatternLabel(TomNameFromTerm( (aterm.ATerm) children.get(0)));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(TomNumber_PatternLabelImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternTomNumber_PatternLabel, args);
+  }
+
   protected TomNumber_ListNumber makeTomNumber_ListNumber(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_ListNumber) {
       protoTomNumber_ListNumber.initHashCode(annos,fun,args);
@@ -5165,6 +5253,35 @@ public class TomSignatureFactory
     args.add((arg.getStructList()).toTerm());    return factory.make(patternTomStructureTable_StructTable, args);
   }
 
+  protected TomError_Error makeTomError_Error(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomError_Error) {
+      protoTomError_Error.initHashCode(annos,fun,args);
+      return (TomError_Error) factory.build(protoTomError_Error);
+    }
+  }
+
+  public TomError_Error makeTomError_Error(String _message, String _file, int _line, int _level) {
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_message, 0, true)), factory.makeAppl(factory.makeAFun(_file, 0, true)), factory.makeInt(_line), factory.makeInt(_level)};
+    return makeTomError_Error(funTomError_Error, args, factory.getEmpty());
+  }
+
+  public TomError TomError_ErrorFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternTomError_Error);
+
+    if (children != null) {
+      TomError tmp = makeTomError_Error((String) children.get(0), (String) children.get(1), ((Integer) children.get(2)).intValue(), ((Integer) children.get(3)).intValue());
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(TomError_ErrorImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add(arg.getMessage());    args.add(arg.getFile());    args.add(new Integer(arg.getLine()));    args.add(new Integer(arg.getLevel()));    return factory.make(patternTomError_Error, args);
+  }
+
   protected XMLTerm_Element makeXMLTerm_Element(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoXMLTerm_Element) {
       protoXMLTerm_Element.initHashCode(annos,fun,args);
@@ -5415,6 +5532,21 @@ public class TomSignatureFactory
       return (TomEntryList) factory.build(protoTomEntryList);
     }
   }
+  public TomErrorList makeTomErrorList() {
+    return emptyTomErrorList;
+  }
+  public TomErrorList makeTomErrorList(TomError elem ) {
+    return (TomErrorList) makeTomErrorList(elem, emptyTomErrorList);
+  }
+  public TomErrorList makeTomErrorList(TomError head, TomErrorList tail) {
+    return (TomErrorList) makeTomErrorList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
+  }
+  protected TomErrorList makeTomErrorList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
+    synchronized (protoTomErrorList) {
+      protoTomErrorList.initHashCode(annos,head,tail);
+      return (TomErrorList) factory.build(protoTomErrorList);
+    }
+  }
   public Declaration DeclarationFromTerm(aterm.ATerm trm)
   {
     Declaration tmp;
@@ -5585,6 +5717,11 @@ public class TomSignatureFactory
     }
 
     tmp = Option_OriginalTextFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = Option_LabelFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
@@ -6041,6 +6178,11 @@ public class TomSignatureFactory
       return tmp;
     }
 
+    tmp = TomNumber_PatternLabelFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
     tmp = TomNumber_ListNumberFromTerm(trm);
     if (tmp != null) {
       return tmp;
@@ -6210,6 +6352,17 @@ public class TomSignatureFactory
 
 
     throw new RuntimeException("This is not a TomStructureTable: " + trm);
+  }
+  public TomError TomErrorFromTerm(aterm.ATerm trm)
+  {
+    TomError tmp;
+    tmp = TomError_ErrorFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+
+    throw new RuntimeException("This is not a TomError: " + trm);
   }
   public XMLTerm XMLTermFromTerm(aterm.ATerm trm)
   {
@@ -6382,6 +6535,26 @@ public class TomSignatureFactory
        throw new RuntimeException("This is not a TomEntryList: " + trm);
      }
   }
+  public TomErrorList TomErrorListFromTerm(aterm.ATerm trm)
+  {
+     if (trm instanceof aterm.ATermList) {
+        aterm.ATermList list = ((aterm.ATermList) trm).reverse();
+        TomErrorList result = makeTomErrorList();
+        for (; !list.isEmpty(); list = list.getNext()) {
+          TomError elem = TomErrorFromTerm(list.getFirst());
+           if (elem != null) {
+             result = makeTomErrorList(elem, result);
+           }
+           else {
+             throw new RuntimeException("Invalid element in TomErrorList: " + elem);
+           }
+        }
+        return result;
+     }
+     else {
+       throw new RuntimeException("This is not a TomErrorList: " + trm);
+     }
+  }
   public Declaration DeclarationFromString(String str)
   {
     aterm.ATerm trm = factory.parse(str);
@@ -6510,6 +6683,14 @@ public class TomSignatureFactory
   public TomStructureTable TomStructureTableFromFile(java.io.InputStream stream) throws java.io.IOException {
     return TomStructureTableFromTerm(factory.readFromFile(stream));
   }
+  public TomError TomErrorFromString(String str)
+  {
+    aterm.ATerm trm = factory.parse(str);
+    return TomErrorFromTerm(trm);
+  }
+  public TomError TomErrorFromFile(java.io.InputStream stream) throws java.io.IOException {
+    return TomErrorFromTerm(factory.readFromFile(stream));
+  }
   public XMLTerm XMLTermFromString(String str)
   {
     aterm.ATerm trm = factory.parse(str);
@@ -6573,5 +6754,13 @@ public class TomSignatureFactory
   }
   public TomEntryList TomEntryListFromFile(java.io.InputStream stream) throws java.io.IOException {
     return TomEntryListFromTerm(factory.readFromFile(stream));
+  }
+  public TomErrorList TomErrorListFromString(String str)
+  {
+    aterm.ATerm trm = factory.parse(str);
+    return TomErrorListFromTerm(trm);
+  }
+  public TomErrorList TomErrorListFromFile(java.io.InputStream stream) throws java.io.IOException {
+    return TomErrorListFromTerm(factory.readFromFile(stream));
   }
 }

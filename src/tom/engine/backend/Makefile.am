@@ -24,7 +24,7 @@ bootinstall:
 	done
 
 # we use the last installed compiler to compile the current compiler
-TOMFLAGS = --noWarning --noDeclaration --import $(top_srcdir)/src/jtom/adt
+TOMFLAGS = --noWarning --noDeclaration
 TOM = ${prefix}/bin/jtom
 
 %.java : %.t

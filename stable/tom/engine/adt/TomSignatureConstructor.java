@@ -93,6 +93,10 @@ implements aterm.ATerm
     return false;
   }
 
+  public boolean isSortTomError() {
+    return false;
+  }
+
   public boolean isSortXMLTerm() {
     return false;
   }
@@ -122,6 +126,10 @@ implements aterm.ATerm
   }
 
   public boolean isSortTomEntryList() {
+    return false;
+  }
+
+  public boolean isSortTomErrorList() {
     return false;
   }
 

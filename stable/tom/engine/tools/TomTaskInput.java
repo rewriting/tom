@@ -25,11 +25,18 @@
 
 package jtom.tools;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jtom.adt.TomErrorList;
 import jtom.adt.TomTerm;
 
 public class TomTaskInput {
-  private TomTerm trm;
+  private TomTerm term;
+  private TomErrorList errors;
+  private List importList;
   public String inputFileName = "",
+    baseInputFileName = "",
     outputFileName = "",
     outputSuffix    = ".java",
     parsedSuffix    = ".tfix.parsed",
@@ -39,6 +46,10 @@ public class TomTaskInput {
     parsedTableSuffix = ".tfix.parsed.table",
     expandedTableSuffix = ".tfix.expanded.table",
     debugTableSuffix = ".tfix.debug.table";
+  
+  public TomTaskInput() {
+		importList = new  ArrayList(); 
+  }
   
   private boolean needDebugExpansion = false, 
     verbose = false, // a verbose mode (Show duration for each phase)
@@ -63,17 +74,16 @@ public class TomTaskInput {
     staticFunction = false, // generate static functions
     debugMemory = false, // generate debug primitives
     pretty = false, // Synchronize TL code and source code
-    atermStat = false; // Shows aterm statistics
+    atermStat = false, // Shows aterm statistics
+    eclipseMode = false, // Eclipse mode for error management
+    help = false, // usage called
+    version = false; //version called
   
-    //public static boolean doOptimization = false; // optimize generated code
-  public TomTaskInput() {
-  }
-  
-  public void setTerm(TomTerm trm) {
-  	this.trm = trm;
+  public void setTerm(TomTerm term) {
+  	this.term = term;
   }
   public TomTerm getTerm() {
-  	return trm;
+  	return term;
   }
   public boolean needDebugExpansion() {
 	 return needDebugExpansion;
@@ -91,207 +101,207 @@ public class TomTaskInput {
   }
 
   public boolean isVerbose() {
-	return verbose;
+		return verbose;
   }
-
   public void setVerbose(boolean b) {
-	verbose = b;
+		verbose = b;
   }
 
   public boolean isIntermediate() {
-	return intermediate;
+		return intermediate;
   }
-
   public void setIntermediate(boolean b) {
-	intermediate = b;
+		intermediate = b;
   }
 
   public boolean isDebugMode() {
-	return debugMode;
+		return debugMode;
   }
-
-
   public void setDebugMode(boolean b) {
-	debugMode = b;
+		debugMode = b;
   }
 
   public boolean isPrintOutput() {
-	return printOutput;
+		return printOutput;
   }
-
   public void setPrintOutput(boolean b) {
-	printOutput = b;
+		printOutput = b;
   }
 
   public String getOutputSuffix() {
-	return outputSuffix;
+		return outputSuffix;
   }
   
   public void setOutputSuffix(String string) {
-	outputSuffix = string;
+		outputSuffix = string;
   }
 
   public boolean isCCode() {
-	return cCode;
+		return cCode;
   }
-
-  public boolean isECode() {
-	return eCode;
-  }
-
-  public boolean isJCode() {
-	return jCode;
-  }
-
   public void setCCode(boolean b) {
-	cCode = b;
+		cCode = b;
   }
-
+  
+  public boolean isECode() {
+		return eCode;
+  }
   public void setECode(boolean b) {
-	eCode = b;
+		eCode = b;
   }
-
+  
+  public boolean isJCode() {
+		return jCode;
+  }
   public void setJCode(boolean b) {
-	jCode = b;
+		jCode = b;
   }
 
   public boolean isSupportedBlock() {
-	return supportedBlock;
+		return supportedBlock;
   }
-
-  public boolean isSupportedGoto() {
-	return supportedGoto;
-  }
-
   public void setSupportedBlock(boolean b) {
-	supportedBlock = b;
+		supportedBlock = b;
   }
-
+  
+  public boolean isSupportedGoto() {
+		return supportedGoto;
+  }
   public void setSupportedGoto(boolean b) {
-	supportedGoto = b;
+		supportedGoto = b;
   }
 
+	public boolean isDoCheck() {
+		return doCheck;
+	}
+	public void setDoCheck(boolean b) {
+		doCheck = b;
+	}
+	
+	public boolean isDoExpand() {
+		return doExpand;
+	}
+	public void setDoExpand(boolean b) {
+		doExpand = b;
+	}
 
-public boolean isDoCheck() {
-	return doCheck;
-}
+	public boolean isDoOnlyCompile() {
+		return doOnlyCompile;
+	}
+	public void setDoOnlyCompile(boolean b) {
+		doOnlyCompile = b;
+	}
+	
+	public boolean isDoCompile() {
+		return doCompile;
+	}
+	public void setDoCompile(boolean b) {
+		doCompile = b;
+	}
 
-public boolean isDoCompile() {
-	return doCompile;
-}
+	public boolean isDoParse() {
+		return doParse;
+	}
+	public void setDoParse(boolean b) {
+		doParse = b;
+	}
 
-public boolean isDoExpand() {
-	return doExpand;
-}
+	public boolean isGenDecl() {
+		return genDecl;
+	}
+	public void setGenDecl(boolean b) {
+		genDecl = b;
+	}
 
-public boolean isDoOnlyCompile() {
-	return doOnlyCompile;
-}
+	public boolean isStrictType() {
+		return strictType;
+	}
+	public void setStrictType(boolean b) {
+		strictType = b;
+	}
 
-public boolean isDoParse() {
-	return doParse;
-}
+	public boolean isDoOptimization() {
+		return doOptimization;
+	}
+	public void setDoOptimization(boolean b) {
+		doOptimization = b;
+	}
 
-public boolean isGenDecl() {
-	return genDecl;
-}
+	public boolean isDebugMemory() {
+		return debugMemory;
+	}
+	public void setDebugMemory(boolean b) {
+		debugMemory = b;
+	}
 
+	public boolean isNoWarning() {
+		return noWarning;
+	}
+	public void setNoWarning(boolean b) {
+		noWarning = b;
+	}
 
-public boolean isStrictType() {
-	return strictType;
-}
+	public boolean isStaticFunction() {
+		return staticFunction;
+	}
+	public void setStaticFunction(boolean b) {
+		staticFunction = b;
+	}
 
+	public boolean isWarningAll() {
+		return warningAll;
+	}
+	public void setWarningAll(boolean b) {
+		warningAll = b;
+	}
 
-public void setDoCheck(boolean b) {
-	doCheck = b;
-}
+	public boolean isPretty() {
+		return pretty;
+	}
+	public void setPretty(boolean b) {
+		pretty = b;
+	}
 
+	public boolean isAtermStat() {
+		return atermStat;
+	}
+	public void setAtermStat(boolean b) {
+		atermStat = b;
+	}
 
-public void setDoCompile(boolean b) {
-	doCompile = b;
-}
+	public TomErrorList getErrors() {
+		return errors;
+	}
+	public void setErrors(TomErrorList list) {
+		errors = list;
+	}
 
-/**
- * @param b
- */
-public void setDoExpand(boolean b) {
-	doExpand = b;
-}
+	public boolean isEclipseMode() {
+		return eclipseMode;
+	}
+	public void setEclipseMode(boolean b) {
+		eclipseMode = b;
+	}
 
-/**
- * @param b
- */
-public void setDoOnlyCompile(boolean b) {
-	doOnlyCompile = b;
-}
+	public List getImportList() {
+		return importList;
+	}
+	public void setImportList(List list) {
+		importList = list;
+	}
 
-public void setDoParse(boolean b) {
-	doParse = b;
-}
+	public boolean isVersion() {
+		return version;
+	}
+	public void setVersion(boolean b) {
+		version = b;
+	}
 
-
-public void setGenDecl(boolean b) {
-	genDecl = b;
-}
-
-public void setStrictType(boolean b) {
-	strictType = b;
-}
-
-public boolean isDoOptimization() {
-	return doOptimization;
-}
-
-public void setDoOptimization(boolean b) {
-	doOptimization = b;
-}
-
-public boolean isDebugMemory() {
-	return debugMemory;
-}
-
-public boolean isNoWarning() {
-	return noWarning;
-}
-
-public boolean isStaticFunction() {
-	return staticFunction;
-}
-
-public boolean isWarningAll() {
-	return warningAll;
-}
-
-public void setDebugMemory(boolean b) {
-	debugMemory = b;
-}
-
-public void setNoWarning(boolean b) {
-	noWarning = b;
-}
-
-public void setStaticFunction(boolean b) {
-	staticFunction = b;
-}
-
-public void setWarningAll(boolean b) {
-	warningAll = b;
-}
-
-public boolean isPretty() {
-	return pretty;
-}
-
-public void setPretty(boolean b) {
-	pretty = b;
-}
-
-public boolean isAtermStat() {
-	return atermStat;
-}
-
-public void setAtermStat(boolean b) {
-	atermStat = b;
-}
+	public boolean isHelp() {
+		return help;
+	}
+	public void setHelp(boolean b) {
+		help = b;
+	}
 
 } // class TomTaskInput

@@ -42,7 +42,7 @@ public class TomKernelExpander extends TomBase {
   }
 
 // ------------------------------------------------------------
-  %include { ../adt/Tom.signature } 
+  %include { ../adt/TomSignature.tom } 
 // ------------------------------------------------------------
   
     /*

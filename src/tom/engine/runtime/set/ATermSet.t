@@ -89,7 +89,7 @@ public abstract class ATermSet implements Collection {
     1 << 31
   };
 
-  %include { jgtreeset/set.t }
+  %include { jgtreeset/set.tom }
 
   public int hashCode() {
     return tree.getUniqueIdentifier();

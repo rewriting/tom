@@ -28,7 +28,7 @@ api:
 	adt-to-java -v -i set.adt -j -p jtom.runtime.set.jgtreeset -o jgtreeset -m 'aterm.*'
 
 # we use the last installed compiler to compile the current compiler
-TOMFLAGS = --noWarning --import $(top_srcdir)/src/jtom/runtime/set/jgtreeset
+TOMFLAGS = --noWarning
 TOM = ${prefix}/bin/jtom
 
 SharedSet.java : SharedSet.t

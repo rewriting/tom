@@ -45,9 +45,13 @@ import aterm.pure.PureFactory;
 
 
 public class Tom {
-  private TomTask initialTask = null;
+	  //Necessary structure
+  private TomTask initialTask;
   private TomTaskInput taskInput;
-  
+  private TomSignatureFactory tomSignatureFactory;
+  private TomEnvironment environment;
+  private SymbolTable  symbolTable;
+    // potential tasks to be connected together to form the compiler chain
   private TomParser tomParser;
   private TomTypeChecker typeChecker;
   private TomSyntaxChecker syntaxChecker;
@@ -63,247 +67,323 @@ public class Tom {
   "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
   "                         Nancy, France.\n";
   
+  private static String usage =
+  "Tom usage:"+
+	 "\n\tjava jtom.Tom [options] inputfile[.t]"+
+	 "\nOptions:"+
+	 "\n\t--help \t\t| -h:\tShow this help"+
+	 "\n\t--cCode \t| -c:\tGenerate C code"+
+	 "\n\t--eCode \t| -e:\tGenerate Eiffel code"+
+	 "\n\t--version \t| -V:\tPrint version"+
+	 "\n\t--verbose \t| -v:\tSet verbose mode on"+
+	 "\n\t--intermediate\t| -i:\tGenerate intermediate files"+
+	 "\n\t--noOutput \t| -o:\tDo not generate code"+
+	 "\n\t--noDeclaration | -D:\tDo not generate code for declarations"+
+	 "\n\t--doCompile \t| -C:\tStart after type-checking"+
+	 "\n\t--noCheck \t| -f:\tDo not verify correctness"+
+	 "\n\t--Wall\t\t\tPrint all warnings"+
+	 "\n\t--noWarning\t\tDo not print warning"+
+	 "\n\t--lazyType \t| -l:\tUse universal type"+
+	 "\n\t--import <path> | -I:\tPath for %include"+
+	 "\n\t--pretty\t| -p:\tGenerate readable code"+
+	 "\n\t--atermStat \t| -s:\tPrint internal ATerm statistics"+
+	 "\n\t--optimize \t| -O:\tOptimized generated code"+
+	 "\n\t--static\t\tGenerate static functions"+
+	 "\n\t--debug\t\t\tGenerate debug primitives"+
+	 "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)";
+  
   private static void version() {
-    System.out.println(version);
+		System.out.println(version);
   }
   
   private static void usage() {
-    System.out.println("Tom usage:");
-    System.out.println("\tjava jtom.Tom [options] inputfile");
-    System.out.println("Options:");
-    System.out.println("\t--help \t\t| -h:\tShow this help");
-    System.out.println("\t--cCode \t| -c:\tGenerate C code");
-    System.out.println("\t--eCode \t| -e:\tGenerate Eiffel code");
-    System.out.println("\t--version \t| -V:\tPrint version");
-    System.out.println("\t--verbose \t| -v:\tSet verbose mode on");
-    System.out.println("\t--intermediate\t| -i:\tGenerate intermediate files");
-    System.out.println("\t--noOutput \t| -o:\tDo not generate code");
-    System.out.println("\t--noDeclaration | -D:\tDo not generate code for declarations");
-    System.out.println("\t--doCompile \t| -C:\tStart after type-checking");
-    System.out.println("\t--noCheck \t| -f:\tDo not verify correctness");
-    System.out.println("\t--Wall\t\t\tPrint all warnings");
-    System.out.println("\t--noWarning\t\tDo not print warning");
-    System.out.println("\t--lazyType \t| -l:\tUse universal type");
-    System.out.println("\t--import <path> | -I:\tPath for %include");
-    System.out.println("\t--pretty\t| -p:\tGenerate readable code");
-    System.out.println("\t--atermStat \t| -s:\tPrint internal ATerm statistics");
-    System.out.println("\t--optimize \t| -O:\tOptimized generated code");
-    System.out.println("\t--static\t\tGenerate static functions");
-    System.out.println("\t--debug\t\t\tGenerate debug primitives");
-    System.out.println("\t--memory\t\tAdd memory management while debugging (not correct with list matching)");
-  }
-  
-  public static void main(String args[]) {
-    Tom tomCompiler = new Tom(args);
-    tomCompiler.run();
-  }
-  
-  public void setTaskInput(TomTaskInput input) {
-    taskInput = input;
-  }
-  
-  public void run() {
-    if (initialTask != null) {
-      initialTask.process(taskInput);
-    }
+		System.out.println(usage);
   }
   
   public Tom(String args[]) {
+		tomSignatureFactory = new TomSignatureFactory(new PureFactory());
+		taskInput = createTaskInputFromArgs(args);
+		if (taskInput.isHelp() || taskInput.isVersion() ) {
+			// no need to do further work
+			return;
+		}
+		initializeStructure();
+	  createTaskChainFromInput();
+  }
+  
+  public Tom(TomTaskInput input) {
+		tomSignatureFactory = new TomSignatureFactory(new PureFactory());
+		this.taskInput = input;
+		initializeStructure();
+	  createTaskChainFromInput();
+  }
+
+	private void initializeStructure() {
+			// create basic structures
+		ASTFactory astFactory = new ASTFactory(tomSignatureFactory);
+		symbolTable  = new SymbolTable(astFactory, taskInput.isCCode(), 
+														taskInput.isJCode(),
+														taskInput.isECode());
+		environment = new TomEnvironment(tomSignatureFactory,
+															astFactory,
+															symbolTable);
+	}
+  
+  private TomTaskInput createTaskInputFromArgs(String args[]) {
     String inputSuffix = ".t";
-    InputStream input = null;
-    List importList = new ArrayList();
-    String inputFileName = "";
-    
-      // Create the base taskInput
-    taskInput = new TomTaskInput();
-    
+    List importList = new ArrayList(); 
+      // Create a basic TomTaskInput
+    TomTaskInput taskInputResult = new TomTaskInput();
+		// Shall initialize TomErrorList before anything
+		taskInputResult.setErrors(tomSignatureFactory.makeTomErrorList());
+
       // Processing the input arguments into taskInput
-    if(args.length < 1) {// Need at least one argument
-      usage();
-    } else {
-      for(int i=0; i < args.length; i++) { 
-        if(args[i].charAt(0) != '-') {// Suppose this is the input filename (*[.t]) that should never start with "
-          if(args[i].endsWith(inputSuffix)) {
-	    taskInput.inputFileName = args[i].substring(0,args[i].length()-(inputSuffix.length()));
-          } else {
-	    taskInput.inputFileName = args[i];
-          }
-        } else {// This is on option
-          if(args[i].equals("--version") || args[i].equals("-V")) {
-            version();
-          } else if(args[i].equals("--help") || args[i].equals("-h")) {
-            usage();
-          } else if(args[i].equals("--import") || args[i].equals("-I")) {
-            importList.add(new File(args[++i]));
-          } else if(args[i].equals("--cCode") || args[i].equals("-c")) {
-            taskInput.setJCode(false);
-	    taskInput.setECode(false);
-	    taskInput.setCCode(true);
-            taskInput.setOutputSuffix(".tom.c");
-          } else if(args[i].equals("--eCode") || args[i].equals("-e")) {
-	    taskInput.setJCode(false);
-	    taskInput.setECode(true);
-	    taskInput.setCCode(false);
-	    taskInput.setOutputSuffix(".e");
-	    taskInput.setSupportedGoto(false);
-	    taskInput.setSupportedBlock(false);
-	  } else if(args[i].equals("--noOutput") || args[i].equals("-o")) {
-	    taskInput.setPrintOutput(false);
-          } else if(args[i].equals("--doCompile") || args[i].equals("-C")) {
-	    taskInput.setDoOnlyCompile(true);            
-	    taskInput.setDoParse(false);            
-	    taskInput.setDoExpand(false);
-	  } else if(args[i].equals("--optimize") || args[i].equals("-O")) {
-	    taskInput.setDoOptimization(true);
-	  } else if(args[i].equals("--noCheck") || args[i].equals("-f")) {
-	    taskInput.setDoCheck(false);
-	  } else if(args[i].equals("--lazyType") || args[i].equals("-l")) {
-	    taskInput.setStrictType(false);
-          } else if(args[i].equals("--intermediate") || args[i].equals("-i")) {
-            taskInput.setIntermediate(true);
-	  } else if(args[i].equals("--verbose") || args[i].equals("-v")) {
-	    taskInput.setVerbose(true);
-	  } else if(args[i].equals("--atermStat") || args[i].equals("-s")) {
-	    taskInput.setAtermStat(true);
-          } else if(args[i].equals("--Wall")) {
-	    taskInput.setWarningAll(true);
-          } else if(args[i].equals("--noWarning")) {
-	    taskInput.setNoWarning(true);
-          } else if(args[i].equals("--noDeclaration") || args[i].equals("-D")) {
-	    taskInput.setGenDecl(false);
-          } else if(args[i].equals("--pretty") || args[i].equals("-p")) {
-	    taskInput.setPretty(true);
-          } else if(args[i].equals("--static")) {
-	    taskInput.setStaticFunction(true);
-          } else if(args[i].equals("--debug")) {
-	    taskInput.setDebugMode(true);
-          } else if(args[i].equals("--memory")) {
-	    taskInput.setDebugMemory(true);
-          } else {
-            System.out.println("'" + args[i] + "' is not a valid option");
-            usage();
-          }
+    for(int i=0; i < args.length; i++) { 
+      if(args[i].charAt(0) != '-') {
+          // Suppose this is the input filename (*[.t]) that should never start with a `-` character"
+					taskInputResult.inputFileName = args[i];
+      } else {
+          // This is on option
+        if(args[i].equals("--version") || args[i].equals("-V")) {
+          version();
+				  taskInputResult.setVersion(true);
+					addError(version,"",0,1);
+          return taskInputResult;
+        } else if(args[i].equals("--help") || args[i].equals("-h")) {
+          usage();
+		  		taskInputResult.setHelp(true);
+					addError(usage,"",0,1);
+          return taskInputResult;
+        } else if(args[i].equals("--import") || args[i].equals("-I")) {
+          importList.add(new File(args[++i]));
+        } else if(args[i].equals("--cCode") || args[i].equals("-c")) {
+					taskInputResult.setJCode(false);
+					taskInputResult.setECode(false);
+          taskInputResult.setCCode(true);
+          taskInputResult.setOutputSuffix(".tom.c");
+        } else if(args[i].equals("--eCode") || args[i].equals("-e")) {
+          taskInputResult.setJCode(false);
+          taskInputResult.setECode(true);
+          taskInputResult.setCCode(false);
+          taskInputResult.setOutputSuffix(".e");
+          taskInputResult.setSupportedGoto(false);
+          taskInputResult.setSupportedBlock(false);
+        } else if(args[i].equals("--noOutput") || args[i].equals("-o")) {
+          taskInputResult.setPrintOutput(false);
+        } else if(args[i].equals("--doCompile") || args[i].equals("-C")) {
+          taskInputResult.setDoOnlyCompile(true);            
+          taskInputResult.setDoParse(false);            
+          taskInputResult.setDoExpand(false);
+        } else if(args[i].equals("--optimize") || args[i].equals("-O")) {
+          taskInputResult.setDoOptimization(true);
+        } else if(args[i].equals("--noCheck") || args[i].equals("-f")) {
+          taskInputResult.setDoCheck(false);
+        } else if(args[i].equals("--lazyType") || args[i].equals("-l")) {
+          taskInputResult.setStrictType(false);
+        } else if(args[i].equals("--intermediate") || args[i].equals("-i")) {
+          taskInputResult.setIntermediate(true);
+        } else if(args[i].equals("--verbose") || args[i].equals("-v")) {
+          taskInputResult.setVerbose(true);
+        } else if(args[i].equals("--atermStat") || args[i].equals("-s")) {
+          taskInputResult.setAtermStat(true);
+        } else if(args[i].equals("--Wall")) {
+          taskInputResult.setWarningAll(true);
+        } else if(args[i].equals("--noWarning")) {
+          taskInputResult.setNoWarning(true);
+        } else if(args[i].equals("--noDeclaration") || args[i].equals("-D")) {
+          taskInputResult.setGenDecl(false);
+        } else if(args[i].equals("--pretty") || args[i].equals("-p")) {
+          taskInputResult.setPretty(true);
+        } else if(args[i].equals("--static")) {
+          taskInputResult.setStaticFunction(true);
+        } else if(args[i].equals("--debug")) {
+          taskInputResult.setDebugMode(true);
+        } else if(args[i].equals("--memory")) {
+          taskInputResult.setDebugMemory(true);
+        } else if(args[i].equals("--eclipse")) {
+          taskInputResult.setEclipseMode(true);
+        } else {
+          String s = "'" + args[i] + "' is not a valid option";
+          System.out.println(s);
+          addError(s,"",0,0);
+          taskInputResult.setHelp(true);
+          usage();
+          return taskInputResult;
         }
       }
     } // end processing arguments
     
       // For the moment debug is only available for Java as target language
-    taskInput.setDebugMode(taskInput.isJCode() && taskInput.isDebugMode());
+    taskInputResult.setDebugMode(taskInputResult.isJCode() && taskInputResult.isDebugMode());
     
-    if(taskInput.inputFileName.length() == 0) {
-      System.out.println("no inputfile");
+      // setting Base/Input/OutputFileName
+    if(taskInputResult.inputFileName.length() == 0) {
+      System.out.println("No input file name...\n");
+	  	taskInputResult.setHelp(true);
       usage();
+      if(taskInputResult.isEclipseMode()) {
+      	addError("No input file name...","",0,0);
+      }
+      return taskInputResult;
     }
-      // setting In/OutputFileName
-    if(taskInput.isDoParse()) {
-      inputFileName = taskInput.inputFileName + inputSuffix;
-    } else if(taskInput.isDoOnlyCompile()) {
-      inputFileName = taskInput.inputFileName + taskInput.expandedSuffix;
+    if(taskInputResult.inputFileName.endsWith(inputSuffix)) {
+      taskInputResult.baseInputFileName = taskInputResult.inputFileName.substring(0,taskInputResult.inputFileName.length()-(inputSuffix.length()));
+    } else {
+      taskInputResult.baseInputFileName = taskInputResult.inputFileName;
+	  	taskInputResult.inputFileName = taskInputResult.inputFileName+inputSuffix;
     }
-    taskInput.setOutputFileName(taskInput.inputFileName+taskInput.outputSuffix);
+    if(taskInputResult.isDoOnlyCompile()) {
+      taskInputResult.inputFileName = taskInputResult.baseInputFileName + taskInputResult.expandedSuffix;
+    }
+    taskInputResult.setOutputFileName(taskInputResult.baseInputFileName+taskInputResult.outputSuffix);
     
-      // basic structures
-    TomSignatureFactory tomSignatureFactory = new TomSignatureFactory(new PureFactory());
-    ASTFactory   astFactory   = new ASTFactory(tomSignatureFactory);
-    SymbolTable  symbolTable  = new SymbolTable(astFactory, taskInput.isCCode(), taskInput.isJCode(),taskInput.isECode());
-    TomEnvironment environment = new TomEnvironment(tomSignatureFactory,
-						    astFactory,
-						    symbolTable);
-      // Create the Chain of responsability    
-    if(taskInput.isDoParse() && taskInput.isDoExpand()) {
-      byte inputBuffer[] = null;
-      File fileList[] = new File[importList.size()];
-      Iterator it = importList.iterator();
+    	// Setting importList
+    taskInputResult.setImportList(importList);
 
-      int index=0;
-      while(it.hasNext()) {
-        fileList[index++] = (File)it.next();
-      }
-
-      try {
-        input = new FileInputStream(inputFileName);
-          // to get the length of the file
-        File file = new File(inputFileName);
-        inputBuffer = new byte[(int)file.length()+1];
-        input.read(inputBuffer);
-      } catch (FileNotFoundException e) {
-        System.out.println("\nTom error: File `" + inputFileName + "` not found.");
-        System.out.println("No file generated.");
-        return;
-      }  catch(IOException e4) {
-        System.out.println("\nIO Exception reading file `" + inputFileName + "`");
-        System.out.println("No file generated.");
-        return;
-      }
-      
-      tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,inputFileName);
-      initialTask = tomParser;
-      
-      if(taskInput.isDoCheck()) {
-        syntaxChecker = new TomSyntaxChecker(environment);
-        tomParser.addTask(syntaxChecker);
-      }
-      
-      expander = new TomExpander(environment, new TomKernelExpander(environment));
-      if(taskInput.isDoCheck()) {
-        syntaxChecker.addTask(expander);
-        typeChecker = new TomTypeChecker(environment);
-        expander.addTask(typeChecker);
-      } else {
-        tomParser.addTask(expander);
-      }
-    }
-    
-    if(taskInput.isDoCompile()) {
-        // We need a compiler
-      compiler = new TomCompiler(environment, new TomKernelCompiler(environment, taskInput.isSupportedBlock(), taskInput.isSupportedGoto(), taskInput.isDebugMode()));
-      
-      if(taskInput.isDoOnlyCompile()) {
-        ATerm fromFileExpandTerm = null;
-        TomTerm expandedTerm = null; 
-        try {
-          fromFileExpandTerm = tomSignatureFactory.getPureFactory().readFromFile(input);
-          expandedTerm = tomSignatureFactory.TomTermFromTerm(fromFileExpandTerm);
-          input = new FileInputStream(inputFileName+".table");
-          
-          ATerm fromFileSymblTable = null;
-          fromFileSymblTable = tomSignatureFactory.getPureFactory().readFromFile(input);
-          TomSymbolTable symbTable = tomSignatureFactory.TomSymbolTableFromTerm(fromFileSymblTable);
-          symbolTable.regenerateFromTerm(symbTable);
-        } catch (FileNotFoundException e) {
-          System.out.println("Tom error: File `" + inputFileName + "` not found.");
-          System.out.println("No file generated.");
-          return;
-        } catch(IOException e4) {
-          System.out.println("\nIO Exception reading file `" + inputFileName + "`");
-          System.out.println("No file generated.");
-          return;
-        }
-          // This is the initial task
-        initialTask = compiler;
-        taskInput.setTerm(expandedTerm);
-      } else {
-        if(taskInput.isDoCheck()) {
-          typeChecker.addTask(compiler);
-        }
-        else {
-          expander.addTask(compiler);
-        }
-      }
-    }
-    if(taskInput.isPrintOutput()) {
-      generator = new TomGenerator(environment);
-      if (taskInput.isDoOptimization()) {
-        optimizer = new TomOptimizer(environment);
-        compiler.addTask(optimizer);
-        optimizer.addTask(generator);
-      } else {
-        compiler.addTask(generator);
-      }
-    }
-  
-    if(taskInput.isAtermStat()) {
-      System.out.println("\nStatistics:\n" + tomSignatureFactory.getPureFactory());
-    }
+    return taskInputResult;
   }
+
+  private void createTaskChainFromInput() {
+  	if(taskInput != null) {
+			InputStream input = null;
+		  	// Create the Chain of responsability    
+			if(taskInput.isDoParse() && taskInput.isDoExpand()) {
+		  	byte inputBuffer[] = null;
+		  	List importList = taskInput.getImportList();
+		  	File fileList[] = new File[importList.size()];
+		  	Iterator it = importList.iterator();
+		  	int index=0;
+		  	while(it.hasNext()) {
+					fileList[index++] = (File)it.next();
+		  	}
+		  	try {
+					input = new FileInputStream(taskInput.inputFileName);
+				  	// to get the length of the file
+					File file = new File(taskInput.inputFileName);
+					inputBuffer = new byte[(int)file.length()+1];
+					input.read(inputBuffer);
+		  	} catch (FileNotFoundException e) {
+					String s = "File `" + taskInput.inputFileName + "` not found.";
+					System.out.println(s);
+					System.out.println("No file generated.");
+					if(taskInput.isEclipseMode()) {
+						addError(s,"",0,0);
+					}
+					return;
+		  	}  catch(IOException e4) {
+					String s = "IO Exception reading file `" + taskInput.inputFileName + "`";
+					System.out.println(s);
+					System.out.println("No file generated.");
+					if(taskInput.isEclipseMode()) {
+						addError(s,"",0,0);
+					}
+					return;
+		  	}
+			  tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,taskInput.inputFileName);
+				  // This is the initial task
+		  	initialTask = tomParser;
+			  if(taskInput.isDoCheck()) {
+				syntaxChecker = new TomSyntaxChecker(environment);
+				tomParser.addTask(syntaxChecker);
+			  }
+ 	     
+		  	expander = new TomExpander(environment, new TomKernelExpander(environment));
+		  	if(taskInput.isDoCheck()) {
+				syntaxChecker.addTask(expander);
+				typeChecker = new TomTypeChecker(environment);
+				expander.addTask(typeChecker);
+		  	} else {
+				tomParser.addTask(expander);
+		  	}
+			} //DoParse() && DoExpand
+			
+			if(taskInput.isDoCompile()) {
+					// We need a compiler
+		  	compiler = new TomCompiler(environment, new TomKernelCompiler(environment, taskInput.isSupportedBlock(), taskInput.isSupportedGoto(), taskInput.isDebugMode()));
+			  if(taskInput.isDoOnlyCompile()) {
+				ATerm fromFileExpandTerm = null;
+				TomTerm expandedTerm = null; 
+				try {
+				  fromFileExpandTerm = tomSignatureFactory.getPureFactory().readFromFile(input);
+				  expandedTerm = tomSignatureFactory.TomTermFromTerm(fromFileExpandTerm);
+				  input = new FileInputStream(taskInput.baseInputFileName+".table");       
+				  ATerm fromFileSymblTable = null;
+				  fromFileSymblTable = tomSignatureFactory.getPureFactory().readFromFile(input);
+				  TomSymbolTable symbTable = tomSignatureFactory.TomSymbolTableFromTerm(fromFileSymblTable);
+				  symbolTable.regenerateFromTerm(symbTable);
+				} catch (FileNotFoundException e) {
+				  String s = "File `" + taskInput.inputFileName + "` not found.";
+				  System.out.println(s);
+				  System.out.println("No file generated.");
+						  if(taskInput.isEclipseMode()) {
+							addError(s,"",0,0);
+						  }
+				  return;
+				} catch(IOException e4) {
+				  String s ="IO Exception reading file `" + taskInput.inputFileName + "`";
+				  System.out.println(s);
+				  System.out.println("No file generated.");
+						if(taskInput.isEclipseMode()) {
+							addError(s,"",0,0);
+						} 
+				  return;
+				}
+				  // This is the initial task
+				initialTask = compiler;
+				taskInput.setTerm(expandedTerm);
+			  } else {
+					if(taskInput.isDoCheck()) {
+					  typeChecker.addTask(compiler);
+					}
+					else {
+				  	expander.addTask(compiler);
+					}
+			  }
+			} //DoCompile
+			
+			if(taskInput.isPrintOutput()) {
+		  	generator = new TomGenerator(environment);
+		  	if (taskInput.isDoOptimization()) {
+					optimizer = new TomOptimizer(environment);
+					compiler.addTask(optimizer);
+					optimizer.addTask(generator);
+		  	} else {
+					compiler.addTask(generator);
+		  	}
+			} //PrintOutput
+		}
+  }
+  	 
+ 	private void addError(String msg, String file, int line, int level) {
+  	TomError err = tomSignatureFactory.makeTomError_Error(msg,file,line,level);
+		taskInput.setErrors(tomSignatureFactory.makeTomErrorList(err, taskInput.getErrors()));
+  }
+  
+  public TomErrorList getErrors() {
+		TomErrorList res = taskInput.getErrors();
+		if(res == null) {
+				// Do not have been initialised
+			res = tomSignatureFactory.makeTomErrorList();
+			taskInput.setErrors(res);
+		}
+  	return res;
+  }
+  
+  public void run() {
+		if (initialTask != null && !taskInput.isHelp() && !taskInput.isVersion() ) {
+		  initialTask.process(taskInput);
+			if(taskInput.isAtermStat()) {
+				System.out.println("\nStatistics:\n" + tomSignatureFactory.getPureFactory());
+			}
+			if(taskInput.isDebugMode()) {
+				Tools.generateOutput(taskInput.baseInputFileName + taskInput.debugTableSuffix, tomParser.getStructTable());	
+			}
+		}
+  }
+  
+  public static void main(String args[]) {
+		Tom tomCompiler = new Tom(args);
+		tomCompiler.run();
+  }
+  
 } // class Tom

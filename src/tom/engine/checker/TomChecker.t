@@ -71,7 +71,7 @@ abstract class TomChecker extends TomBase implements TomTask {
   }
   
     // ------------------------------------------------------------
-  %include { ../adt/Tom.signature }
+  %include { ../adt/TomSignature.tom }
     // ------------------------------------------------------------
   
   public void addTask(TomTask task) {

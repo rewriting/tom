@@ -12,14 +12,14 @@ stabledir 	= $(top_srcdir)/stable/jtom/adt
 BOOTSOURCES	= ${TomSignatureAPI}
 
 java_JAVA       = $(BOOTSOURCES)
-EXTRA_DIST      = $(BOOTSOURCES) TomSignatureMakeRules.am Tom.signature
+EXTRA_DIST      = $(BOOTSOURCES) TomSignatureMakeRules.am TomSignature.tom
 JAVAROOT        = ${top_builddir}/src/
 
 adtdir          = $(datadir)/jtom/
-adt_DATA        = Tom.signature
+adt_DATA        = TomSignature.tom
 bootinstall :
 	$(mkinstalldirs) $(stabledir)
-	cp -f Tom.signature TomSignatureMakeRules.am $(BOOTSOURCES) $(stabledir)
+	cp -f TomSignature.tom TomSignatureMakeRules.am $(BOOTSOURCES) $(stabledir)
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done

@@ -38,7 +38,8 @@ import jtom.runtime.Replace1;
 import jtom.runtime.Collect1;
  
 public class SharedMultiSet extends ATermSet {
-  %include { jgtreeset/set.t }
+
+  %include { jgtreeset/set.tom }
   
   public SharedMultiSet(PureFactory pureFactory) {
     if (factory==null) {

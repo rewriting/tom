@@ -32,6 +32,7 @@ import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
 import java.lang.reflect.Constructor;
+import java.lang.Throwable;
 
 public class TomParser implements TomTask, TomParserConstants {
 
@@ -49,7 +50,7 @@ public class TomParser implements TomTask, TomParserConstants {
   private ArrayList debuggedStructureList;
   private String text="";
   private TomTask nextTask;
-  private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
+  private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false, eclipse = false;
 
    public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet,
                                                         String fileName)  {
@@ -71,12 +72,18 @@ public class TomParser implements TomTask, TomParserConstants {
     includedFiles = alreadyParsedFiles;
   }
 
+  private void addError(TomTaskInput taskInput, String msg, String file, int line, int level) {
+        TomError err = tsf().makeTomError_Error(msg,file,line,level);
+        taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
+  }
+
   private void testIncludedFiles(String fileName) throws TomIncludeException {
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
-      System.out.println("Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...");
-      throw new TomIncludeException("Re-entering included file `"+fileName+" `forms a cycle. Breaking the parsing...");
+      String msg = "Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...";
+      System.out.println(msg);
+      throw new TomIncludeException(new Throwable(msg));
     }
   }
 
@@ -91,6 +98,7 @@ public class TomParser implements TomTask, TomParserConstants {
             debugMemory = input.isDebugMemory();
             pretty = input.isPretty();
             noWarning = input.isNoWarning();
+            eclipse = input.isEclipseMode();
                 long startChrono = 0;
                 boolean verbose = input.isVerbose(), intermediate = input.isIntermediate();
                 if(verbose) {
@@ -101,20 +109,28 @@ public class TomParser implements TomTask, TomParserConstants {
                         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
                 }
         if(intermediate) {
-            Tools.generateOutput(input.inputFileName + input.parsedSuffix, parsedTerm);
-            Tools.generateOutput(input.inputFileName + input.parsedTableSuffix, symbolTable.toTerm());
+            Tools.generateOutput(input.baseInputFileName + input.parsedSuffix, parsedTerm);
+            Tools.generateOutput(input.baseInputFileName + input.parsedTableSuffix, symbolTable.toTerm());
         }
                 // Update taskInput
                 input.setTerm(parsedTerm);
         } catch (TomIncludeException e) {
-          //System.out.println(e.getMessage());
+          if(eclipse) {
+                addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+          }
+          System.out.println(e.getMessage());
           return;
         } catch (TomException e) {
-          //System.out.println(e.getMessage());
+                if(eclipse) {
+                addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+          }
           return;
         } catch (ParseException e) {
-          System.out.println("Parsing exception catched in file `"+currentFile+"`");
-          System.out.println(e.getMessage());
+          String msg = "Parsing exception catched in file `"+currentFile+"`\n"+e.getMessage();
+          System.out.println(msg);
+          if(eclipse) {
+                addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+          }
           return;
         } catch (Exception e) {
           System.out.println("Unhandled exception occurs during parsing.");
@@ -372,7 +388,14 @@ public class TomParser implements TomTask, TomParserConstants {
   ArrayList blockList = new ArrayList();
   TargetLanguage tlCode;
   Option option;
-  text = "";
+  Token label = null;
+  text = null;
+    if (jj_2_1(2)) {
+      label = jj_consume_token(TOM_IDENTIFIER);
+      jj_consume_token(TOM_COLON);
+    } else {
+      ;
+    }
     option = MatchPatterns(matchPatternsList);
       listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
       matchPatternsList.clear();
@@ -414,6 +437,9 @@ public class TomParser implements TomTask, TomParserConstants {
       TomList patterns;
       String patternText = "";
       ArrayList optionList = new ArrayList();
+      if(label != null) {
+        optionList.add(tsf().makeOption_Label(tsf().makeTomName_Name(label.image)));
+      }
       for(int i=0 ;  i<listOfMatchPatternsList.size() ; i++) {
         patterns = (TomList)listOfMatchPatternsList.get(i);
         patternText = (String)listTextPattern.get(i);
@@ -485,7 +511,7 @@ public class TomParser implements TomTask, TomParserConstants {
   Option option = null;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   ArrayList optionList = new ArrayList();
-    if (jj_2_1(2)) {
+    if (jj_2_2(2)) {
       name = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_LBRACKET);
        optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
@@ -528,7 +554,7 @@ public class TomParser implements TomTask, TomParserConstants {
         option,
         tsf().makeTomName_Name(name.image),
         ast().makeList(list));}
-    } else if (jj_2_2(2)) {
+    } else if (jj_2_3(2)) {
       name = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_STAR);
       text += name.image+"*";
@@ -656,7 +682,7 @@ public class TomParser implements TomTask, TomParserConstants {
   Token annotedName = null;
   TomTerm term;
   TomName astAnnotedName = null;
-    if (jj_2_3(2)) {
+    if (jj_2_4(2)) {
       annotedName = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_AT);
         text += annotedName.image+"@";
@@ -851,7 +877,7 @@ public class TomParser implements TomTask, TomParserConstants {
   Token annotedName = null;
   XMLTerm term;
   TomName astAnnotedName = null;
-    if (jj_2_4(2)) {
+    if (jj_2_5(2)) {
       annotedName = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_AT);
         text += annotedName.image+"@";
@@ -884,7 +910,7 @@ public class TomParser implements TomTask, TomParserConstants {
   Option option = null;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   ArrayList optionList = new ArrayList();
-    if (jj_2_5(2)) {
+    if (jj_2_6(2)) {
       name = jj_consume_token(TOM_IDENTIFIER);
         text += name.image;
         optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
@@ -1088,41 +1114,27 @@ public class TomParser implements TomTask, TomParserConstants {
   }
 
   final public void IncludeConstruct(ArrayList list) throws ParseException, TomException, TomIncludeException {
-  Token fileName;
-  Token fileExt = null;
-  String fullFileName = "";
+  String fileName;
   TomTerm astTom;
   InputStream input;
   File file;
   byte inputBuffer[];
   TomParser tomParser;
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
     jj_consume_token(INCLUDE);
       addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
 
-    jj_consume_token(TOM_LBRACE);
-    fileName = jj_consume_token(TOM_IDENTIFIER);
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case TOM_DOT:
-      jj_consume_token(TOM_DOT);
-      fileExt = jj_consume_token(TOM_IDENTIFIER);
-      break;
-    default:
-      jj_la1[25] = jj_gen;
-      ;
-    }
-    jj_consume_token(TOM_RBRACE);
-    switchToDefaultMode(); /* switch to DEFAULT mode */
+    tlCode = GoalLanguageBlock(blockList);
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      fileName = tlCode.getCode().trim();
+      fileName.replaceAll("/",File.separator);
     try {
-      fullFileName = fileName.image;
-      if(fileExt != null) {
-        fullFileName += "." + fileExt.image;
-      }
-
-      file = new File(fullFileName);
+      file = new File(fileName);
       if(!file.exists()) {
         boolean found = false;
         for(int i=0 ; !found && i<importList.length ; i++) {
-          file = new File(importList[i],fullFileName);
+          file = new File(importList[i],fileName);
           found = file.exists();
         }
       }
@@ -1132,18 +1144,20 @@ public class TomParser implements TomTask, TomParserConstants {
       input       = new FileInputStream(file);
       input.read(inputBuffer);
 
-      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fullFileName, includedFiles);
-      tomParser.testIncludedFiles(fullFileName);
+      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName, includedFiles);
+      tomParser.testIncludedFiles(fileName);
       astTom = tomParser.startParsing();
       astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
       list.add(astTom);
     } catch (FileNotFoundException e1) {
-      System.out.println("Included file `" + fullFileName + "` not found at line "+getLine()+" from file `"+currentFile+"`");
-      {if (true) throw new TomException();}
+      String msg = "Included file `" + fileName + "` not found at line "+getLine()+" from file `"+currentFile+"`";
+      System.out.println(msg);
+      {if (true) throw new TomException(new Throwable(msg));}
     }  catch (java.io.IOException e2) {
-      System.out.println("IOException occurs reading " + fullFileName + " at line "+getLine());
+      String msg = "IOException occurs reading " + fileName + " at line "+getLine();
+      System.out.println(msg);
       e2.printStackTrace();
-      {if (true) throw new TomException();}
+      {if (true) throw new TomException(new Throwable(msg));}
     }
   }
 
@@ -1172,7 +1186,7 @@ public class TomParser implements TomTask, TomParserConstants {
         ;
         break;
       default:
-        jj_la1[26] = jj_gen;
+        jj_la1[25] = jj_gen;
         break label_12;
       }
       lhs = Term();
@@ -1190,13 +1204,13 @@ public class TomParser implements TomTask, TomParserConstants {
             ;
             break;
           default:
-            jj_la1[27] = jj_gen;
+            jj_la1[26] = jj_gen;
             break label_13;
           }
         }
         break;
       default:
-        jj_la1[28] = jj_gen;
+        jj_la1[27] = jj_gen;
         ;
       }
       jj_consume_token(TOM_ARROW);
@@ -1225,7 +1239,7 @@ public class TomParser implements TomTask, TomParserConstants {
         condList.add(tsf().makeTomTerm_EqualityCondition(pattern,subject));
             break;
           default:
-            jj_la1[29] = jj_gen;
+            jj_la1[28] = jj_gen;
             jj_consume_token(-1);
             throw new ParseException();
           }
@@ -1235,13 +1249,13 @@ public class TomParser implements TomTask, TomParserConstants {
             ;
             break;
           default:
-            jj_la1[30] = jj_gen;
+            jj_la1[29] = jj_gen;
             break label_14;
           }
         }
         break;
       default:
-        jj_la1[31] = jj_gen;
+        jj_la1[30] = jj_gen;
         ;
       }
       Option orgTrack = ast().makeOriginTracking("Pattern",getLine(), currentFile);
@@ -1299,7 +1313,7 @@ public class TomParser implements TomTask, TomParserConstants {
     case TOM_LPAREN:
       jj_consume_token(TOM_LPAREN);
         stringSlotName = "";
-      if (jj_2_6(2)) {
+      if (jj_2_7(2)) {
         slotName = jj_consume_token(TOM_IDENTIFIER);
         jj_consume_token(TOM_COLON);
                                                   stringSlotName = slotName.image;
@@ -1317,12 +1331,12 @@ public class TomParser implements TomTask, TomParserConstants {
           ;
           break;
         default:
-          jj_la1[32] = jj_gen;
+          jj_la1[31] = jj_gen;
           break label_15;
         }
         jj_consume_token(TOM_COMMA);
           stringSlotName = "";
-        if (jj_2_7(2)) {
+        if (jj_2_8(2)) {
           slotName = jj_consume_token(TOM_IDENTIFIER);
           jj_consume_token(TOM_COLON);
                                                     stringSlotName = slotName.image;
@@ -1344,7 +1358,7 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_consume_token(TOM_RPAREN);
       break;
     default:
-      jj_la1[33] = jj_gen;
+      jj_la1[32] = jj_gen;
       ;
     }
     jj_consume_token(TOM_LBRACE);
@@ -1359,7 +1373,7 @@ public class TomParser implements TomTask, TomParserConstants {
         ;
         break;
       default:
-        jj_la1[34] = jj_gen;
+        jj_la1[33] = jj_gen;
         break label_16;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1382,7 +1396,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                                         options.add(attribute);
         break;
       default:
-        jj_la1[35] = jj_gen;
+        jj_la1[34] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1453,7 +1467,7 @@ public class TomParser implements TomTask, TomParserConstants {
         ;
         break;
       default:
-        jj_la1[36] = jj_gen;
+        jj_la1[35] = jj_gen;
         break label_17;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1470,7 +1484,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                                                                    options.add(attribute);
         break;
       default:
-        jj_la1[37] = jj_gen;
+        jj_la1[36] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1516,7 +1530,7 @@ public class TomParser implements TomTask, TomParserConstants {
         ;
         break;
       default:
-        jj_la1[38] = jj_gen;
+        jj_la1[37] = jj_gen;
         break label_18;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1533,7 +1547,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                                                                    options.add(attribute);
         break;
       default:
-        jj_la1[39] = jj_gen;
+        jj_la1[38] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1574,7 +1588,7 @@ public class TomParser implements TomTask, TomParserConstants {
       }
       break;
     default:
-      jj_la1[40] = jj_gen;
+      jj_la1[39] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1592,7 +1606,7 @@ public class TomParser implements TomTask, TomParserConstants {
         ;
         break;
       default:
-        jj_la1[41] = jj_gen;
+        jj_la1[40] = jj_gen;
         break label_19;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1613,7 +1627,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                                   blockList.add(attribute);
         break;
       default:
-        jj_la1[42] = jj_gen;
+        jj_la1[41] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1675,7 +1689,7 @@ public class TomParser implements TomTask, TomParserConstants {
         ;
         break;
       default:
-        jj_la1[43] = jj_gen;
+        jj_la1[42] = jj_gen;
         break label_20;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1708,7 +1722,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                                   blockList.add(attribute);
         break;
       default:
-        jj_la1[44] = jj_gen;
+        jj_la1[43] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1748,7 +1762,7 @@ public class TomParser implements TomTask, TomParserConstants {
         ;
         break;
       default:
-        jj_la1[45] = jj_gen;
+        jj_la1[44] = jj_gen;
         break label_21;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1777,7 +1791,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                                   blockList.add(attribute);
         break;
       default:
-        jj_la1[46] = jj_gen;
+        jj_la1[45] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -2075,7 +2089,7 @@ public class TomParser implements TomTask, TomParserConstants {
        orgTrack = ast().makeOriginTracking("make", getLine(), currentFile);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_LPAREN:
-      if (jj_2_8(2)) {
+      if (jj_2_9(2)) {
         jj_consume_token(TOM_LPAREN);
         jj_consume_token(TOM_RPAREN);
       } else {
@@ -2084,8 +2098,9 @@ public class TomParser implements TomTask, TomParserConstants {
           jj_consume_token(TOM_LPAREN);
           nameArg = jj_consume_token(TOM_IDENTIFIER);
          if( !(nbTypes > 0) ) {
-         System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-           {if (true) throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");}
+           String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
+           System.out.println(msg);
+           {if (true) throw new TomException(new Throwable(msg));}
          }
          type = (TomType)types.elementAt(index++);
          name = tsf().makeTomName_Name(nameArg.image);
@@ -2099,14 +2114,15 @@ public class TomParser implements TomTask, TomParserConstants {
               ;
               break;
             default:
-              jj_la1[47] = jj_gen;
+              jj_la1[46] = jj_gen;
               break label_22;
             }
             jj_consume_token(TOM_COMMA);
             nameArg = jj_consume_token(TOM_IDENTIFIER);
           if( index >= nbTypes ) {
-            System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-            {if (true) throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");}
+            String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
+            System.out.println(msg);
+            {if (true) throw new TomException(new Throwable(msg));}
           }
           type = (TomType)types.elementAt(index++);
           name = tsf().makeTomName_Name(nameArg.image);
@@ -2117,19 +2133,20 @@ public class TomParser implements TomTask, TomParserConstants {
           jj_consume_token(TOM_RPAREN);
           break;
         default:
-          jj_la1[48] = jj_gen;
+          jj_la1[47] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
       }
       break;
     default:
-      jj_la1[49] = jj_gen;
+      jj_la1[48] = jj_gen;
       ;
     }
          if (index<nbTypes) {
-           System.out.println("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-           {if (true) throw new TomException("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");}
+           String msg = "Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
+           System.out.println(msg);
+           {if (true) throw new TomException(new Throwable(msg));}
          }
     tlCode = GoalLanguageBlock(blockList);
      {if (true) return ast().makeMakeDecl(opname,returnType,args,tlCode, orgTrack);}
@@ -2148,7 +2165,7 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_consume_token(TOM_RPAREN);
       break;
     default:
-      jj_la1[50] = jj_gen;
+      jj_la1[49] = jj_gen;
       ;
     }
     tlCode = GoalLanguageBlock(blockList);
@@ -2284,36 +2301,16 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
-  final private boolean jj_3_3() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_AT)) return true;
-    return false;
+  final private boolean jj_2_9(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_9(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(8, xla); }
   }
 
-  final private boolean jj_3_5() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_23()) jj_scanpos = xsp;
+  final private boolean jj_3_9() {
     if (jj_scan_token(TOM_LPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_AT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_STAR)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2323,20 +2320,53 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_23() {
-    if (jj_scan_token(TOM_LBRACKET)) return true;
+  final private boolean jj_3_4() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
     return false;
   }
 
   final private boolean jj_3_6() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_23()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_5() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_STAR)) return true;
+    return false;
+  }
+
   final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_23() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
     return false;
   }
 
@@ -2349,7 +2379,7 @@ public class TomParser implements TomTask, TomParserConstants {
   public boolean lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[51];
+  final private int[] jj_la1 = new int[50];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -2359,15 +2389,15 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_la1_2();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x7ffee,0x7ffee,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x300,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x7ffee,0x7ffee,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x300,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x5,0x5,0x20000000,0x20000,0x20000,0x40000,0x40000,0x40000,0x0,0x40000,0x20000000,0x800000,0x20000000,0x20000000,0x20000000,0x20000,0x20000,0x20000000,0x2000000,0x40000,0x20000000,0x40000,0x800000,0x20000000,0x0,0x400000,0x20000000,0x20000,0x20000,0x0,0x0,0x0,0x40000,0x800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x40000,0x800000,0x800000,0x800000,};
+      jj_la1_1 = new int[] {0x5,0x5,0x20000000,0x20000,0x20000,0x40000,0x40000,0x40000,0x0,0x40000,0x20000000,0x800000,0x20000000,0x20000000,0x20000000,0x20000,0x20000,0x20000000,0x2000000,0x40000,0x20000000,0x40000,0x800000,0x20000000,0x0,0x20000000,0x20000,0x20000,0x0,0x0,0x0,0x40000,0x800000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x40000,0x800000,0x800000,0x800000,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x11c00000,0x0,0x0,0x0,0x0,0x0,0x800000,0x0,0x11c00000,0x0,0x11c00000,0x11c00000,0x800006,0x0,0x0,0x800006,0x0,0x0,0x800006,0x0,0x0,0x800006,0x800001,0x0,0x11c00000,0x0,0x0,0x18,0x18,0x18,0x0,0x0,0x1820,0x1820,0x10c0,0x10c0,0x1140,0x1140,0x0,0x1e000,0x1e000,0xfe000,0xfe000,0x31e000,0x31e000,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0x11c00000,0x0,0x0,0x0,0x0,0x0,0x800000,0x0,0x11c00000,0x0,0x11c00000,0x11c00000,0x800006,0x0,0x0,0x800006,0x0,0x0,0x800006,0x0,0x0,0x800006,0x800001,0x11c00000,0x0,0x0,0x18,0x18,0x18,0x0,0x0,0x1820,0x1820,0x10c0,0x10c0,0x1140,0x1140,0x0,0x1e000,0x1e000,0xfe000,0xfe000,0x31e000,0x31e000,0x0,0x0,0x0,0x0,};
    }
-  final private JJCalls[] jj_2_rtns = new JJCalls[8];
+  final private JJCalls[] jj_2_rtns = new JJCalls[9];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -2377,7 +2407,7 @@ public class TomParser implements TomTask, TomParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 50; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2387,7 +2417,7 @@ public class TomParser implements TomTask, TomParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 50; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2397,7 +2427,7 @@ public class TomParser implements TomTask, TomParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 50; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2407,7 +2437,7 @@ public class TomParser implements TomTask, TomParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 50; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2416,7 +2446,7 @@ public class TomParser implements TomTask, TomParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 50; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2425,7 +2455,7 @@ public class TomParser implements TomTask, TomParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 51; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 50; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2544,7 +2574,7 @@ public class TomParser implements TomTask, TomParserConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 51; i++) {
+    for (int i = 0; i < 50; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -2584,7 +2614,7 @@ public class TomParser implements TomTask, TomParserConstants {
 
   final private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
       JJCalls p = jj_2_rtns[i];
       do {
         if (p.gen > jj_gen) {
@@ -2598,6 +2628,7 @@ public class TomParser implements TomTask, TomParserConstants {
             case 5: jj_3_6(); break;
             case 6: jj_3_7(); break;
             case 7: jj_3_8(); break;
+            case 8: jj_3_9(); break;
           }
         }
         p = p.next;

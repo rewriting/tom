@@ -71,6 +71,11 @@ abstract public class OptionImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isLabel()
+  {
+    return false;
+  }
+
   public boolean isXMLPosition()
   {
     return false;

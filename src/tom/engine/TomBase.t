@@ -160,7 +160,7 @@ public class TomBase {
   }
   
 // ------------------------------------------------------------
-  %include { adt/Tom.signature }
+  %include { adt/TomSignature.tom }
 // ------------------------------------------------------------
 
   protected String getTomType(TomType type) {

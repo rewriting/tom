@@ -23,7 +23,7 @@
     Julien Guyon
 
 */
-
+ 
 package jtom.runtime.set;
 
 import java.util.ArrayList;

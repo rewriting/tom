@@ -28,10 +28,9 @@ bootinstall:
 api:
 	adt-to-java -v -i TomSignature.adt -j -p jtom.adt -o adt -m 'aterm.*'
 	mv adt/TomSignatureMakeRules adt/TomSignatureMakeRules.am
-	mv adt/TomSignature.t adt/Tom.signature
 
 # we use the last installed compiler to compile the current compiler
-TOMFLAGS = --noWarning --import $(top_srcdir)/src/jtom/adt
+TOMFLAGS = --noWarning
 TOM = ${prefix}/bin/jtom
 
 %.java : %.t
