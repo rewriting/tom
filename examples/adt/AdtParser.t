@@ -42,8 +42,15 @@ public class AdtParser {
   }
   
   private void test() {
-    parse("[constructor(Nat,zero,zero),constructor(Nat,suc,suc(<pred(Nat)>))]","Peano");
-    parse("[modulentry(name(\"Peano\"),[name(\"truc\"),name(\"bidule\")],[type(\"Nat\"),type(\"chose\")],[constructor(Nat,zero,zero),constructor(Nat,suc,suc(<pred(Nat)>))])]");
+    //parse("[constructor(Nat,zero,zero),constructor(Nat,suc,suc(<pred(Nat)>))]","Peano");
+    //parse("[modulentry(name(\"Peano\"),[name(\"truc\"),name(\"bidule\")],[type(\"Nat\"),type(\"chose\")],[constructor(Nat,zero,zero),constructor(Nat,suc,suc(<pred(Nat)>))])]");
+    parse("["+
+          "constructor(Date,date,date(<year(int)>,<month(int)>,<day(int)>)),"+
+          "constructor(Date,date2,date2(<year(int)>,<month(int)>,<day(int)>)),"+
+          "constructor(Person,person,person(<firstname(str)>,<lastname(str)>,<birthdate(Date)>)),"+
+          "named-list(\"concPerson\", PersonList, Person)"+
+          //"list(PersonList, Person)"+
+          "]", "AddresseBook");
   }
 
   public void parse(String input) {
@@ -78,7 +85,7 @@ public class AdtParser {
     %match(VasTypeList sortList) {
       concVasType() -> {
         sortList = sortList.append(`VasType(typeString));
-        // Erreur il en manquait un
+        // il en manquait un
       }
       concVasType(_*,VasType(typename),_*) -> {
         if(`typename != typeString) {
@@ -105,7 +112,17 @@ public class AdtParser {
                            concField(StaredField(VasType(elemCodomainString))),
                            VasType(codomainString));
       }
-      // TODO NEXT
+      namedList(opname,sort,elemsort) -> {
+        String codomainString = ((ATermAppl)`sort).getName();
+        appendType(codomainString, sortList);
+        String elemCodomainString = ((ATermAppl)`elemsort).getName();
+        return `Production(opname,
+                           concField(StaredField(VasType(elemCodomainString))),
+                           VasType(codomainString));
+     }
+      _ -> {
+        // TODO EXCEPTION
+      }
     }
    return null;
   }
@@ -179,6 +196,7 @@ public class AdtParser {
     Entries entries = adtFactory.EntriesFromString(input);
     HashSet set = new HashSet();
     collectSort(entries, set);
+    //System.out.println("[modulentry(name(\""+inputName+"\"),[],["+hashSetToStr(set)+"],"+input+")]");
     return ("[modulentry(name(\""+inputName+"\"),[],["+hashSetToStr(set)+"],"+input+")]");
   }
 
@@ -206,8 +224,11 @@ public class AdtParser {
   private String hashSetToStr(HashSet set) {
     String result = "";
     Iterator i = set.iterator();
-    while(i.hasNext()) {
+    if(i.hasNext()) {
       result = result+"type(\""+i.next()+"\")";
+    }
+    while(i.hasNext()) {
+      result = result+",type(\""+i.next()+"\")";
     }
     return result;
   }
