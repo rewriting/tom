@@ -324,27 +324,8 @@ public class Tom {
     InputStream input = null;
       // Create the Chain of responsability    
     if (getInput().isDoParse() && getInput().isDoExpand()) {
-      byte inputBuffer[] = null;
-      try {
-        input = new FileInputStream(fileName);
-          // to get the length of the file
-        File file = new File(fileName);
-        inputBuffer = new byte[(int) file.length() + 1];
-        input.read(inputBuffer);
-      } catch (FileNotFoundException e) {
-        addError(TomMessage.getString("FileNotFound"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-        return null;
-      } catch (IOException e4) {
-        addError(TomMessage.getString("IOException"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-        return null;
-      }
-      
-      TomParser tomParser =
-        new TomParser(
-          new TomBuffer(inputBuffer),
-          0,
-          fileName);
-        // This is the initial task
+      TomTaskParser tomParser = new TomTaskParser(fileName);
+      // This is the initial task
       initialTask = tomParser;
       
       if (getInput().isDoCheck()) {
@@ -484,7 +465,7 @@ public class Tom {
       return 0;
     }
   }
-
+  
   public TomErrorList getErrors() {
     return environment().getErrors();
   }

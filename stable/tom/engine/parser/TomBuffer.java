@@ -39,9 +39,15 @@ public class TomBuffer extends ByteArrayInputStream {
     return pos;
   }
 
+  public int getCount() {
+    return count;
+  }
+
   public String extractBuffer(int start, int end) {
-      //System.out.println("old = " + start + "\tpos = " + end);
-      //System.out.println("extractBuffer = '" + new String(buf,start,end-start) + "'");
+    //System.out.println("count = " + count);
+    //System.out.println("old = " + start + "\tpos = " + end);
+    //System.out.println("extractBuffer = '" + new String(buf,start,end-start) + "'");
+    
     return new String(buf,start,end-start);
   }
 

@@ -91,30 +91,18 @@ public abstract class TomTask extends TomBase {
     return name;
   }
   
-  public void messageError(int errorLine, String fileName,String structInfo, int structInfoLine, String msg, Object[] msgArg, int level) {
-    String s;
-    msg = MessageFormat.format(msg, msgArg);
-    if (level == TomMessage.TOM_ERROR) {
-      s = MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
-    } else {
-      s = MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
-    }
-    
-    if (getInput().isEclipseMode()) {
-      addError(msg,fileName, errorLine, level);
-    } else {
-      addError(s,fileName, errorLine, level);
-    }
+  public void messageError(int errorLine,
+                           String fileName,
+                           String structInfo,
+                           int structInfoLine,
+                           String msg,
+                           Object[] msgArg,
+                           int level) {
+    environment().messageError(errorLine, fileName, structInfo, structInfoLine, msg, msgArg, level);
   }
-        
+
   public void addError(String msg, String file, int line, int level) {
-    TomError err = tsf().makeTomError_Error(msg,file,line,level);
-    environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
+    environment().addError(msg,file,line,level);
   }
   
-  public void addError(String msg, Object[] args, String file, int line, int level) {
-    TomError err = tsf().makeTomError_Error(MessageFormat.format(msg, args), file, line, level);
-    environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
-  }
-    
 }

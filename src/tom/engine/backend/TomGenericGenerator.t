@@ -193,9 +193,16 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   }
 
   protected void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var) throws IOException {
-    output.write("tom_get_slot_" + opname + "_" + slotName + "(");
-    generate(deep,var);
-    output.write(")");
+      //output.write("tom_get_slot_" + opname + "_" + slotName + "(");
+      //generate(deep,var);
+      //output.write(")");
+      output.write("tom_get_slot_");
+      output.write(opname);
+      output.writeUnderscore();
+      output.write(slotName);
+      output.writeOpenBrace();
+      generate(deep,var);
+      output.writeCloseBrace();
   }
 
   protected void buildExpGetTail(int deep, TomType type1, TomTerm var) throws IOException {

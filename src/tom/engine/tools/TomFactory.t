@@ -89,7 +89,7 @@ public class TomFactory extends TomBase {
         TomSymbol tomSymbol = symbolTable.getSymbol(`tomName);
         if(tomSymbol != null) {
           if(isStringOperator(tomSymbol)) {
-            Option info = ast().makeOriginTracking(Constants.TEXT_NODE,-1,"??");
+            Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,Name("??"));
             term = `Appl( ast().makeOption(info),
                           concTomName(Name(Constants.TEXT_NODE)),concTomTerm(term),
                           tsf().makeConstraintList());

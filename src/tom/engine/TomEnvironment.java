@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (C) 2000-2003 INRIA
+ * Copyright (C) 2000-2004 INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -25,10 +25,12 @@
 
 package jtom;
 
+import java.text.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.exception.TomRuntimeException;
 import jtom.adt.tomsignature.types.*;
+import jtom.TomMessage;
 
 public class TomEnvironment {
   private ASTFactory astFactory;
@@ -139,4 +141,38 @@ public class TomEnvironment {
     return res;
   }
 
+  public void messageError(int errorLine,
+                           String fileName,
+                           String structInfo,
+                           int structInfoLine,
+                           String msg,
+                           Object[] msgArg,
+                           int level) {
+    String s;
+    msg = MessageFormat.format(msg, msgArg);
+    if (level == TomMessage.TOM_ERROR) {
+      s = MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+    } else {
+      s = MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+    }
+    
+    if(TomTaskInput.getInstance().isEclipseMode()) {
+      addError(msg,fileName, errorLine, level);
+    } else {
+      addError(s,fileName, errorLine, level);
+    }
+  }
+         
+  public void addError(String msg, String file, int line, int level) {
+    TomError err = getTomSignatureFactory().makeTomError_Error(msg,file,line,level);
+    setErrors(getTomSignatureFactory().makeTomErrorList(err, getErrors()));
+  }
+  
+  public void addError(String msg, Object[] args, String file, int line, int level) {
+    TomError err = getTomSignatureFactory().makeTomError_Error(MessageFormat.format(msg, args), file, line, level);
+    setErrors(getTomSignatureFactory().makeTomErrorList(err, getErrors()));
+  }
+
+
+  
 }

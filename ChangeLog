@@ -1,3 +1,10 @@
+2004-05-09    <pem@BACH>
+
+	* src/jtom/parser/TomParser.t: 
+	  - make TomParser a Tom file
+	  - introduced TomTaskParser
+	  - make TomJavaParser a separate parser
+
 2004-05-07  pem  <pem@polly.loria.fr>
 
 	* bootinstall

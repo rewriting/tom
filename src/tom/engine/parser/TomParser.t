@@ -41,16 +41,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import jtom.TomEnvironment;
+import aterm.*;
+import jtom.adt.tomsignature.Factory;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.tomsignature.types.instruction.RuleSet;
-import jtom.adt.tomsignature.types.instruction.Match;
 import jtom.exception.*;
 import jtom.tools.*;
 import jtom.TomMessage;
 import jtom.xml.Constants;
 
-public class TomParser extends TomTask {
-  private int oldPos=0, oldLine=0, includeOffSet=0;
+public class TomParser {
+  private int oldPos=0, oldLine=0;
   private Position orgTrack;
   private TomBuffer tomBuffer;
   private TomBackQuoteParser tomBackQuoteParser;
@@ -60,102 +60,79 @@ public class TomParser extends TomTask {
   private String currentFile = "";
   private LinkedList debuggedStructureList;
   private String text="";
-  
-  public TomParser(TomBuffer input,
-                   int includeOffSet, 
-                   String fileName) {
-    this(input, includeOffSet, fileName, new HashSet(), new HashSet());
+
+  public static TomParser createParser(String fileName) {
+    return createParser(fileName,new HashSet(), new HashSet());
   }
   
-  private TomParser(TomBuffer input,
-                    int includeOffSet, 
+  public static TomParser createParser(String fileName, HashSet includedFileSet, HashSet alreadyParsedFiles) {
+    try {
+      File file = new File(fileName);
+      InputStream input = new FileInputStream(file);
+      byte inputBuffer[] = new byte[(int)file.length()+1];
+      (new FileInputStream(file)).read(inputBuffer);
+      
+      return new TomParser(input, inputBuffer, fileName, includedFileSet, alreadyParsedFiles);
+    } catch (FileNotFoundException e) {
+      TomEnvironment.getInstance().addError(TomMessage.getString("FileNotFound"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+    } catch (IOException e) {
+      TomEnvironment.getInstance().addError(TomMessage.getString("IOException"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+    }
+    return null;
+  }
+  
+  private TomParser(InputStream input,
+                    byte[] inputBuffer,
                     String fileName,
-                    HashSet includedSet,
+                    HashSet includedFileSet,
                     HashSet alreadyParsedFiles) {
-    super("Tom Parser");
-    jj_input_stream = new JavaCharStream(input, 1, 1);
-    token_source = new TomParserTokenManager(jj_input_stream);
-    token = new Token();
-    jj_ntk = -1;
-    jj_gen = 0;
-    for (int i = 0; i < jj_la1.length; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
-
-    this.tomBuffer = input;
-    this.includeOffSet = includeOffSet;
-    this.orgTrack = makePosition(1,1);
+    this(input);
+    this.tomBuffer = new TomBuffer(inputBuffer);
     this.currentFile = fileName;
+    this.orgTrack = makePosition(1,1);
     this.debuggedStructureList = new LinkedList();
     this.tomBackQuoteParser = new TomBackQuoteParser();
     this.tomFactory = new TomFactory();
-    includedFileSet = new HashSet(includedSet);
+    this.includedFileSet = new HashSet(includedFileSet);
     testIncludedFile(fileName, includedFileSet);
     alreadyParsedFileSet = alreadyParsedFiles;
   }
+
+  //------------------------------------------------------------
+  %include { TomSignature.tom }
+  //------------------------------------------------------------
   
-  public void initProcess() {
+  protected Factory tsf() {
+    return environment().getTomSignatureFactory();
+  }
+  protected final Factory getTomSignatureFactory() {
+    return tsf();
   }
   
-  public void process() {
-  	try {
-  		long startChrono = 0;
-  		boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate();
-  		if(verbose) { startChrono = System.currentTimeMillis();}
-
-      if(getInput().isJCode()) {
-        File file = new File(currentFile);
-        byte inputBuffer[] = new byte[(int)file.length()+1];
-        InputStream input = new FileInputStream(file);
-        input.read(inputBuffer);
-
-        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),0, currentFile);
-        tomParser.token_source.SwitchTo(JAVA);
-        String packageName = tomParser.JavaPackageDeclaration();
-        // Update taskInput
-        getInput().setPackagePath(packageName);
-        getInput().updateOutputFile();
-        //System.out.println("package = '" + getInput().getPackagePath() + "'");
-      } else {
-        getInput().setPackagePath("");
-      }
-      
-  		TomTerm parsedTerm = startParsing();
-  		
-  		if(verbose) {
-  			System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-  		}
-  		if(getInput().isEclipseMode()) {
-  			String fileName = getInput().getInputFileNameWithoutSuffix() + getInput().parsedTableSuffix;
-  			Tools.generateOutput(fileName, symbolTable().toTerm());
-  		}
-      if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().parsedSuffix, parsedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().parsedTableSuffix, symbolTable().toTerm());
-      }
-        
-      if(getInput().isDebugMode()) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().debugTableSuffix, getStructTable());	
-      }
-        
-  		// Update environment
-  		environment().setTerm(parsedTerm);
-      
-    } catch (TokenMgrError e) {
-      addError(TomMessage.getString("TokenMgrError"), new Object[]{currentFile, e.getMessage()}, currentFile,  getLine(), TomMessage.TOM_ERROR);
-  	} catch (TomIncludeException e) {
-  	  addError(e.getMessage(), currentFile,  getLine(), TomMessage.TOM_ERROR);
-  	} catch (TomException e) {
-  	  addError(e.getMessage(), currentFile,  getLine(), TomMessage.TOM_ERROR);
-    } catch (ParseException e) {
-      addError(TomMessage.getString("TokenMgrError"), new Object[]{currentFile, e.getMessage()}, currentFile, getLine(), TomMessage.TOM_ERROR);
-  	} catch (Exception e) {
-      e.printStackTrace();
-  	  addError(TomMessage.getString("UnhandledException"), new Object[]{currentFile, e.getMessage()}, currentFile, 0, TomMessage.TOM_ERROR);
-  	}
+  private ASTFactory ast() {
+    return environment().getASTFactory();
   }
-  
+
+  private TomTaskInput getInput() {
+    return TomTaskInput.getInstance();
+  }
+
+  private TomEnvironment environment() {
+    return TomEnvironment.getInstance();
+  }
+
+  private SymbolTable symbolTable() {
+    return environment().getSymbolTable();
+  }
+
+  public TomStructureTable getStructTable() {
+    TomList list = ast().makeList(debuggedStructureList);
+    return `StructTable(list);
+  }
+
+
   private int getLine() {
-    return  token.beginLine+includeOffSet;
+    return  token.beginLine;
   }
 
   private int getPos() {
@@ -193,19 +170,14 @@ public class TomParser extends TomTask {
   }
   
   public Position makePosition(int line, int column) {
-    return  tsf().makePosition_TextPosition(line+includeOffSet, column);
+    return  `TextPosition(line, column);
   }
   
   private TargetLanguage makeTL(String code) {
     Position newOriginTracking = makePosition(token.beginLine,token.beginColumn);
-    return tsf().makeTargetLanguage_TL(code, orgTrack, newOriginTracking); 
+    return `TL(code, orgTrack, newOriginTracking); 
   }
   
-  public TomStructureTable getStructTable() {
-    TomList list = ast().makeList(debuggedStructureList);
-    return tsf().makeTomStructureTable_StructTable(list);
-  }
-
   private void addPreviousCode(LinkedList list) {
     String code = savePosAndExtract();
     String pureCode = code.replace('\t', ' ');
@@ -266,17 +238,15 @@ public class TomParser extends TomTask {
       	String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
         throw new TomIncludeException(msg);
       }
-        // to get the length of the file
-      inputBuffer = new byte[(int)file.length()+1];
-      input       = new FileInputStream(file);
-      input.read(inputBuffer);
-        
-      tomParser   = new TomParser(new TomBuffer(inputBuffer),0, fileAbsoluteName, includedFileSet, alreadyParsedFileSet);
+       
+      tomParser = TomParser.createParser(fileAbsoluteName, includedFileSet, alreadyParsedFileSet);
       astTom = tomParser.startParsing();     
-      astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
+      astTom = `TomInclude(astTom.getTomList());
       list.add(astTom);
     } catch (Exception e) {
-      if(e instanceof TomIncludeException) {throw (TomIncludeException)e;}
+      if(e instanceof TomIncludeException) {
+        throw (TomIncludeException)e;
+      }
       String msg = MessageFormat.format(TomMessage.getString("ErrorWhileIncludindFile"), new Object[]{e.getClass(), fileAbsoluteName, currentFile, new Integer(getLine()), e.getMessage()});
       throw new TomException(msg);
     }
@@ -490,40 +460,10 @@ TOKEN :
 | < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 | < #MINUS_SIGN: ["-"] >
 | < #TOM_LETTER:
-      [
-       "\u0024",
-       "\u0041"-"\u005a",
-       "\u005f",
-       "\u0061"-"\u007a",
-       "\u00c0"-"\u00d6",
-       "\u00d8"-"\u00f6",
-       "\u00f8"-"\u00ff",
-       "\u0100"-"\u1fff",
-       "\u3040"-"\u318f",
-       "\u3300"-"\u337f",
-       "\u3400"-"\u3d2d",
-       "\u4e00"-"\u9fff",
-       "\uf900"-"\ufaff"
-      ]
+    [ "a"-"z", "A"-"Z" ]
   >
 | < #TOM_DIGIT:
-      [
-       "\u0030"-"\u0039",
-       "\u0660"-"\u0669",
-       "\u06f0"-"\u06f9",
-       "\u0966"-"\u096f",
-       "\u09e6"-"\u09ef",
-       "\u0a66"-"\u0a6f",
-       "\u0ae6"-"\u0aef",
-       "\u0b66"-"\u0b6f",
-       "\u0be7"-"\u0bef",
-       "\u0c66"-"\u0c6f",
-       "\u0ce6"-"\u0cef",
-       "\u0d66"-"\u0d6f",
-       "\u0e50"-"\u0e59",
-       "\u0ed0"-"\u0ed9",
-       "\u1040"-"\u1049"
-      ]
+    [ "0"-"9" ]
   >
 | < TOM_STRING:
       "\""
@@ -563,11 +503,11 @@ TomTerm startParsing() throws TomException : /* in DEFAULT mode */
 {
   BlockList(blockList)
     {
-      upToEOF = tomBuffer.extractBuffer(oldPos,getPos());
+      upToEOF = tomBuffer.extractBuffer(oldPos,tomBuffer.getCount()-1);
       blockList.add(makeTL(upToEOF));
       String comment = "Generated by TOM: Do not edit this file";
-      blockList.addFirst(tsf().makeTargetLanguage_Comment(comment));
-      parseTree = tsf().makeTomTerm_Tom(ast().makeList(blockList));
+      blockList.addFirst(`Comment(comment));
+      parseTree = `Tom(ast().makeList(blockList));
     }
   <EOF>
     {
@@ -606,7 +546,7 @@ void MatchConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
   <MATCH> /* switch to TOM mode */
     {
       addPreviousCode(list);
-      Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
+      Option orgTrack = `OriginTracking(Name("Match"),getLine(), Name(currentFile));
       optionList.add(orgTrack);
       String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
     }
@@ -617,9 +557,9 @@ void MatchConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       OptionList option = ast().makeOptionList(optionList);
-      Match match = tsf().makeInstruction_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
-                                                tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
-                                                option);
+      Instruction match = `Match(SubjectList(ast().makeList(matchArgumentsList)),
+                           PatternList(ast().makeList(patternActionList)),
+                           option);
       list.add(match);
       if (getInput().isDebugMode())
         debuggedStructureList.add(match);
@@ -657,9 +597,9 @@ void PatternAction(LinkedList list, String debugKey) throws TomException: /* in 
   <TOM_ARROW>
     {
       if(getInput().isDebugMode()) {
-        blockList.add(tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n"));
+        blockList.add(`ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n"));
         if(getInput().isDebugMemory()) {
-          blockList.add(tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.emptyStack();\n"));
+          blockList.add(`ITL("jtom.debug.TomDebugger.debugger.emptyStack();\n"));
         }
       }
     }
@@ -670,7 +610,7 @@ void PatternAction(LinkedList list, String debugKey) throws TomException: /* in 
       String patternText = "";
       LinkedList optionList = new LinkedList();
       if(label != null) {
-        optionList.add(tsf().makeOption_Label(tsf().makeTomName_Name(label.image)));
+        optionList.add(`Label(Name(label.image)));
       }
       for(int i=0 ;  i<listOfMatchPatternsList.size() ; i++) {
         patterns = (TomList)listOfMatchPatternsList.get(i);
@@ -678,10 +618,10 @@ void PatternAction(LinkedList list, String debugKey) throws TomException: /* in 
           //TODO solve with xmlterm
           //if (patternText == null) patternText = "";
         optionList.add(listOrgTrackPattern.get(i));
-        optionList.add(tsf().makeOption_OriginalText(tsf().makeTomName_Name(patternText)));
-        list.add(tsf().makeTomTerm_PatternAction(
-                   tsf().makeTomTerm_TermList(patterns),
-                   tsf().makeInstruction_AbstractBlock(ast().makeInstructionList(blockList)),
+        optionList.add(`OriginalText(Name(patternText)));
+        list.add(`PatternAction(
+                   TermList(patterns),
+                   AbstractBlock(ast().makeInstructionList(blockList)),
                    ast().makeOptionList(optionList)));
       }
     }
@@ -708,9 +648,9 @@ void MatchArgument(LinkedList list) throws TomException: /* in TOM mode */
     } else {
       variableName = name.image;
     }
-    list.add(tsf().makeTomTerm_TLVar(
+    list.add(`TLVar(
                    variableName,
-                   tsf().makeTomType_TomTypeAlone(type.image)));
+                   TomTypeAlone(type.image)));
   }
 }
 
@@ -723,7 +663,7 @@ Option MatchPatterns(LinkedList list) throws TomException: /* in TOM mode */
   term=AnnotedTerm()
     {
       list.add(term);
-      orgTrack = ast().makeOriginTracking("Pattern",getLine(), currentFile);
+      orgTrack = `OriginTracking(Name("Pattern"),getLine(), Name(currentFile));
     }
     ( <TOM_COMMA> {text += "\n";} term=AnnotedTerm() { list.add(term); } )*
     { return orgTrack;}
@@ -743,7 +683,7 @@ TomName HeadSymbol(LinkedList optionList)  throws TomException:
     name = <TOM_STRING>)
     {
       text += name.image;
-      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      optionList.add(`OriginTracking(Name(name.image),getLine(), Name(currentFile)));
       switch(name.kind) {
           case TOM_INTEGER:
             ast().makeIntegerSymbol(symbolTable(),name.image,optionList);
@@ -759,7 +699,7 @@ TomName HeadSymbol(LinkedList optionList)  throws TomException:
             break;
           default:
       }
-      return tsf().makeTomName_Name(name.image);
+      return `Name(name.image);
     }
 }
 
@@ -796,7 +736,7 @@ TomTerm UnamedVariableStarOrVariableStar(LinkedList optionList, LinkedList const
   (name = <TOM_IDENTIFIER> | name = <TOM_UNDERSCORE>) <TOM_STAR>
     {
       text += name.image + "*";
-      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      optionList.add(`OriginTracking(Name(name.image),getLine(), Name(currentFile)));
       option = ast().makeOptionList(optionList);
       constraint = ast().makeConstraintList(constraintList);
       if(name.kind == TOM_UNDERSCORE) {
@@ -816,10 +756,10 @@ TomTerm Placeholder(LinkedList optionList, LinkedList constraintList) throws Tom
   <TOM_UNDERSCORE>
     {
       text += "_";
-      optionList.add(ast().makeOriginTracking("_",getLine(), currentFile));
+      optionList.add(`OriginTracking(Name("_"),getLine(), Name(currentFile)));
       option = ast().makeOptionList(optionList);
       constraint = ast().makeConstraintList(constraintList);
-      return tsf().makeTomTerm_Placeholder(option, constraint);
+      return `Placeholder(option, constraint);
     }
 }
 
@@ -854,19 +794,19 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       {
         if(withArgs && list.isEmpty()) {
             // check if it is a constant
-          optionList.add(tsf().makeOption_Constructor(nameList));
+          optionList.add(`Constructor(nameList));
         }
         if(implicit) {
-          return tsf().makeTomTerm_RecordAppl(ast().makeOptionList(optionList),nameList,ast().makeList(list),ast().makeConstraintList(constraintList));
+          return `RecordAppl(ast().makeOptionList(optionList),nameList,ast().makeList(list),ast().makeConstraintList(constraintList));
         } else {
-          return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),ast().makeConstraintList(constraintList));
+          return `Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),ast().makeConstraintList(constraintList));
         }
       }
     | implicit = ExplicitTermList(list)
       {
-        nameList = tsf().makeNameList(tsf().makeTomName_Name(""));
-        optionList.add(ast().makeOriginTracking("",getLine(), currentFile));
-        return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),ast().makeConstraintList(constraintList));
+        nameList = `concTomName(Name(""));
+        optionList.add(`OriginTracking(Name(""),getLine(),Name( currentFile)));
+        return `Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),ast().makeConstraintList(constraintList));
       }
     )
       
@@ -959,7 +899,7 @@ TomTerm PairTerm() throws TomException: /* in TOM mode */
   name = <TOM_IDENTIFIER> <TOM_EQUAL> term = AnnotedTerm()
       {
         text += name.image + "=";  
-        return tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(name.image),term);
+        return `PairSlotAppl(Name(name.image),term);
       }
 }
 
@@ -977,7 +917,7 @@ TomTerm AnnotedTerm() throws TomException: /* in TOM mode */
     annotedName = <TOM_IDENTIFIER> <TOM_AT>
     {
       text += annotedName.image+"@";
-      astAnnotedName = tsf().makeTomName_Name(annotedName.image);
+      astAnnotedName = `Name(annotedName.image);
     }
   ]
     term = PlainTerm(astAnnotedName)
@@ -1000,7 +940,7 @@ NameList XMLNameList(LinkedList optionList, boolean needOrgTrack) throws TomExce
       text += name.image;
       XMLName += name.image;
       decLine = getLine();
-      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
+      nameList = `concTomName(Name(name.image));
     }
    |
     name=<TOM_UNDERSCORE>
@@ -1008,7 +948,7 @@ NameList XMLNameList(LinkedList optionList, boolean needOrgTrack) throws TomExce
       text += name.image;
       XMLName += name.image;
       decLine = getLine();
-      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
+      nameList = `concTomName(Name(name.image));
     }
    |
     <TOM_LPAREN>
@@ -1017,19 +957,19 @@ NameList XMLNameList(LinkedList optionList, boolean needOrgTrack) throws TomExce
       text += name.image;
       XMLName += name.image;
       decLine = getLine();
-      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
+      nameList = `concTomName(Name(name.image));
     }
     ( <TOM_ALTERNATIVE> name=<TOM_IDENTIFIER>
       {
         text += "|" + name.image;
         XMLName += "|" + name.image;
-        nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+        nameList = (NameList)nameList.append(`Name(name.image));
       }
     )+
     <TOM_RPAREN>
    )
     {
-      if(needOrgTrack) {optionList.add(ast().makeOriginTracking(XMLName, decLine, currentFile));}
+      if(needOrgTrack) {optionList.add(`OriginTracking(Name(XMLName), decLine,Name( currentFile)));}
       return nameList;
     }
 }
@@ -1056,7 +996,7 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
      nameList = XMLNameList(optionList, true)
      implicit = XMLAttributeList(attributeList)
         {
-          if(implicit) { optionList.add(tsf().makeOption_ImplicitXMLAttribut()); }
+          if(implicit) { optionList.add(`ImplicitXMLAttribut()); }
         }
      (
        // case: /> 
@@ -1085,7 +1025,7 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
             /*throw new TomException("Error on closing XML pattern: expecting '"+ expected.substring(1) +"' but got '"+found.substring(1)+ "' at line "+getLine());
             return null;*/
             // TODO find the orgTrack of the match
-            messageError(getLine(),
+            environment().messageError(getLine(),
                      currentFile,
                      "match",
                      getLine(),
@@ -1102,7 +1042,7 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
             if(tomFactory.isExplicitTermList(childs)) {
               childs = tomFactory.metaEncodeExplicitTermList(symbolTable(), (TomTerm)childs.getFirst());
             } else {
-              optionList.add(tsf().makeOption_ImplicitXMLChild());
+              optionList.add(`ImplicitXMLChild());
             }
           }
           option = ast().makeOptionList(optionList);
@@ -1110,7 +1050,7 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
         }
       ) // end choice
         {
-          term =  tsf().makeTomTerm_XMLAppl(
+          term =  `XMLAppl(
             option,
             nameList,
             ast().makeList(attributeList),
@@ -1125,13 +1065,13 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
     | <XML_TEXT> <TOM_LPAREN> arg1 = AnnotedTerm() <TOM_RPAREN>
     {
       keyword = Constants.TEXT_NODE;
-      pairSlotList.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));
+      pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
     }
   | // #COMMENT(...)
     <XML_COMMENT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
     {
       keyword = Constants.COMMENT_NODE;
-      pairSlotList.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));
+      pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg1));
     }
   | // #PROCESSING-INSTRUCTION(... , ...)
     <XML_PROC> <TOM_LPAREN>
@@ -1139,16 +1079,16 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
     <TOM_RPAREN>
       {
         keyword = Constants.PROCESSING_INSTRUCTION_NODE;
-        pairSlotList.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_TARGET),arg1));
-        pairSlotList.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg2));
+        pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_TARGET),arg1));
+        pairSlotList.add(`PairSlotAppl(Name(Constants.SLOT_DATA),arg2));
       }
      )
     {
-      optionList.add(ast().makeOriginTracking(keyword,getLine(), currentFile));
+      optionList.add(`OriginTracking(Name(keyword),getLine(),Name( currentFile)));
       option = ast().makeOptionList(optionList);
       constraint = ast().makeConstraintList(constraintList);
-      nameList = tsf().makeNameList(tsf().makeTomName_Name(keyword));
-      return tsf().makeTomTerm_RecordAppl(option,
+      nameList = `concTomName(Name(keyword));
+      return `RecordAppl(option,
                                     nameList,
                                     ast().makeList(pairSlotList),
 																		constraint);
@@ -1169,17 +1109,17 @@ TomTerm TermStringIdentifier(LinkedList options) throws TomException:
   ( name = <TOM_IDENTIFIER> | name = <TOM_STRING> { string = true; } )
     {
       text += name.image;
-      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      optionList.add(`OriginTracking(Name(name.image),getLine(),Name( currentFile)));
       option = ast().makeOptionList(optionList);
       if(string) {
         ast().makeStringSymbol(symbolTable(),name.image,optionList);
       }
-      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
-      return tsf().makeTomTerm_Appl(
+      nameList = `concTomName(Name(name.image));
+      return `Appl(
         option,
         nameList,
-        tsf().makeTomList(),
-				tsf().makeConstraintList());
+        concTomTerm(),
+				concConstraint());
     }
 }
 
@@ -1261,21 +1201,21 @@ TomTerm XMLAttribute() throws TomException:
     anno2 = <TOM_IDENTIFIER> <TOM_AT>
     {
       text += anno2.image + "@";
-      optionListAnno2.add(tsf().makeTomName_Name(anno2.image));
+      optionListAnno2.add(`Name(anno2.image));
     }
     ]
     term=TermStringIdentifier(optionListAnno2)
       {
         name = tomFactory.encodeXMLString(symbolTable(),id.image);
-        nameList = tsf().makeNameList(tsf().makeTomName_Name(name));
-        termName = tsf().makeTomTerm_Appl(ast().makeOption(),nameList,tsf().makeTomList(),tsf().makeConstraintList());
+        nameList = `concTomName(Name(name));
+        termName = `Appl(ast().makeOption(),nameList,concTomTerm(),concConstraint());
       }
   | // [anno1@]_ = [anno2@](String|Identifier)
     [ 
     anno1 = <TOM_IDENTIFIER> <TOM_AT>
     {
       text += anno1.image + "@";
-      optionList.add(tsf().makeTomName_Name(anno1.image));
+      optionList.add(`Name(anno1.image));
     }
     ]
     termName = Placeholder(optionList,constraintList) <TOM_EQUAL> {text+="=";}
@@ -1284,24 +1224,24 @@ TomTerm XMLAttribute() throws TomException:
     anno2 = <TOM_IDENTIFIER> <TOM_AT>
     {
       text += anno2.image + "@";
-      optionListAnno2.add(tsf().makeTomName_Name(anno2.image));
+      optionListAnno2.add(`Name(anno2.image));
     }
     ]
     term=TermStringIdentifier(optionListAnno2)
   ) 
     {
-      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_NAME),termName));
+      list.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
         // we add the specif value : _
-      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_SPECIFIED),tsf().makeTomTerm_Placeholder(ast().makeOption(),ast().makeConstraint())));
+      list.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
         //list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
         // no longer necessary ot metaEncode Strings in attributes
-      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_VALUE),term));
-      optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
+      list.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
+      optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile)));
       option = ast().makeOptionList(optionList);
       constraint = ast().makeConstraintList(constraintList);
       
-      nameList = tsf().makeNameList(tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE));
-      return tsf().makeTomTerm_RecordAppl(option,
+      nameList = `concTomName(Name(Constants.ATTRIBUTE_NODE));
+      return `RecordAppl(option,
                                     nameList,
                                     ast().makeList(list),
 																		constraint);
@@ -1333,7 +1273,7 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
   {
     addPreviousCode(list);
     firstTokenLine = getLine();
-    orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
+    orgTrack = `OriginTracking(Name("Backquote"),getLine(),Name( currentFile));
   }
     //[ backQuote = <TOM_BACKQUOTE> ]
     (
@@ -1384,7 +1324,7 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
             TomTerm backQuoteTerm = term.getArgs().getHead(); 
             if(backQuoteTerm.getAstName().getString().equals("xml")) {
               TomList args = backQuoteTerm.getArgs();
-              term = tsf().makeTomTerm_DoubleBackQuote(args);
+              term = `DoubleBackQuote(args);
             } 
           } 
           list.add(term);
@@ -1524,7 +1464,7 @@ void LocalVariableConstruct(LinkedList list) throws TomException: /* in DEFAULT 
   {
     addPreviousCode(list);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeInstruction_LocalVariable());
+    list.add(`LocalVariable());
   }
 }
 
@@ -1549,7 +1489,7 @@ void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
   TomTerm lhs, rhs;
   TomTerm pattern, subject;
-  TomRuleList ruleList = tsf().makeTomRuleList();
+  TomRuleList ruleList = `concTomRule();
   LinkedList listOfLhs = new LinkedList();
   LinkedList condList = new LinkedList();
   LinkedList nameTypeInRule = new LinkedList();
@@ -1560,32 +1500,32 @@ void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
   <RULE> /* switch to TOM mode */
     {
       addPreviousCode(list);
-      orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine(), currentFile);
+      orgTrackRuleSet = `OriginTracking(Name("Rule"),getLine(),Name( currentFile));
       text = "";
     }
   <TOM_LBRACE> 
   (
     lhs = AnnotedTerm() { listOfLhs.add(lhs); }
     [ ( <TOM_ALTERNATIVE> {text += " | ";} lhs = AnnotedTerm() { listOfLhs.add(lhs); } )+ ]
-    <TOM_ARROW> {orgText = tsf().makeTomName_Name(text);} rhs = PlainTerm(null)
+    <TOM_ARROW> {orgText = `Name(text);} rhs = PlainTerm(null)
     [ (
       <TOM_WHERE> pattern = AnnotedTerm() <TOM_COLON> <TOM_EQUAL> subject = AnnotedTerm()
-      { condList.add(tsf().makeInstruction_MatchingCondition(pattern,subject)); }
+      { condList.add(`MatchingCondition(pattern,subject)); }
     | <TOM_IF> pattern = AnnotedTerm() <TOM_EQUAL> <TOM_EQUAL> subject = AnnotedTerm()
-      { condList.add(tsf().makeInstruction_EqualityCondition(pattern,subject)); }
+      { condList.add(`EqualityCondition(pattern,subject)); }
     )+ ]
     
     {
-      Option orgTrack = ast().makeOriginTracking("Pattern",getLine(), currentFile);
+      Option orgTrack = `OriginTracking(Name("Pattern"),getLine(),Name( currentFile));
       LinkedList optionList = new LinkedList();
       optionList.add(orgTrack);
-      optionList.add(tsf().makeOption_OriginalText(orgText));
+      optionList.add(`OriginalText(orgText));
       for(int i=0 ; i<listOfLhs.size() ; i++) {
         TomTerm term = (TomTerm) listOfLhs.get(i);
         ruleList = (TomRuleList) ruleList.append(
-          tsf().makeTomRule_RewriteRule(
-            tsf().makeTomTerm_Term(term),
-            tsf().makeTomTerm_Term(rhs),
+          `RewriteRule(
+            Term(term),
+            Term(rhs),
             ast().makeInstructionList(condList),
             ast().makeOptionList(optionList)));
       }
@@ -1597,10 +1537,11 @@ void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
     <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    RuleSet rule = tsf().makeInstruction_RuleSet(ruleList, orgTrackRuleSet);
+    Instruction rule = `RuleSet(ruleList, orgTrackRuleSet);
     list.add(rule);
-    if (getInput().isDebugMode())
+    if(getInput().isDebugMode()) {
       debuggedStructureList.add(rule);
+    }
   }
 }
 
@@ -1614,7 +1555,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
 {
   Token type, name, typeArg, slotName;
   LinkedList blockList = new LinkedList();
-  TomTypeList types = tsf().makeTomTypeList();
+  TomTypeList types = `concTomType();
   LinkedList options = new LinkedList();
   LinkedList slotNameList = new LinkedList();
   Map mapNameDecl = new HashMap();
@@ -1624,7 +1565,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
   TargetLanguage tlFsym;
   Declaration attribute;
   TomType tomType;
-  SlotList slotList = tsf().makeSlotList();
+  SlotList slotList = `concPairNameDecl();
   Option orgTrack;
 }
 {
@@ -1635,7 +1576,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
   
   type = <TOM_IDENTIFIER>
   name = <TOM_IDENTIFIER>
-    {   orgTrack = ast().makeOriginTracking(name.image,getLine(), currentFile);
+    {   orgTrack = `OriginTracking(Name(name.image),getLine(),Name( currentFile));
     	options.add(orgTrack);
     }
   [ <TOM_LPAREN>
@@ -1646,7 +1587,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
       typeArg = <TOM_IDENTIFIER>
       {
         slotNameList.add(ast().makeName(stringSlotName)); 
-        types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
+        types = (TomTypeList) types.append(`TomTypeAlone(typeArg.image));
       }
       ( <TOM_COMMA>
         { stringSlotName = ""; }
@@ -1664,7 +1605,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
             }
           }
           slotNameList.add(astName);
-	      types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
+	      types = (TomTypeList) types.append(`TomTypeAlone(typeArg.image));
         }
       )*
       <TOM_RPAREN> ]
@@ -1672,10 +1613,10 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
   <TOM_LBRACE>
     tlFsym = KeywordFsym()
     {
-      astName   = tsf().makeTomName_Name(name.image);
+      astName   = `Name(name.image);
     }
     ( 
-      attribute = KeywordMake(name.image,tsf().makeTomType_TomTypeAlone(type.image),types)  { options.add(attribute); }
+      attribute = KeywordMake(name.image,`TomTypeAlone(type.image),types)  { options.add(attribute); }
     | attribute = KeywordGetSlot(astName, type.image)
       {
         TomName sName = attribute.getSlotName();
@@ -1683,7 +1624,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
           mapNameDecl.put(sName,attribute);
         }
         else {
-          messageError(attribute.getOrgTrack().getLine(),
+          environment().messageError(attribute.getOrgTrack().getLine(),
                      currentFile,
                      "%op "+type.image,
                      orgTrack.getLine(),
@@ -1702,13 +1643,13 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
       for(int i=slotNameList.size()-1; i>=0 ; i--) {
         TomName name1 = (TomName)slotNameList.get(i);
         PairNameDecl pair = null;
-        Declaration emptyDeclaration = tsf().makeDeclaration_EmptyDeclaration();
+        Declaration emptyDeclaration = `EmptyDeclaration();
         if(name1.isEmptyName()) {
-          pair = tsf().makePairNameDecl_Slot(name1,emptyDeclaration);
+          pair = `Slot(name1,emptyDeclaration);
         } else {
           Declaration decl = (Declaration)mapNameDecl.get(name1);
           if(decl == null) {
-             messageError(orgTrack.getLine(), 
+             environment().messageError(orgTrack.getLine(), 
                          currentFile,
                          "%op "+type.image, 
                          orgTrack.getLine(), 
@@ -1721,16 +1662,16 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
           else {
             mapNameDecl.remove(name1);
           }
-          pair = tsf().makePairNameDecl_Slot(name1,decl);
+          pair = `Slot(name1,decl);
         }
-        slotList = tsf().makeSlotList(pair,slotList);
+        slotList = `manySlotList(pair,slotList);
       }
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
         Iterator it = mapNameDecl.keySet().iterator();
         while(it.hasNext()) {
            TomName remainingSlot = (TomName) it.next();
-           messageError(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
+           environment().messageError(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
                      currentFile,
                      "%op "+type.image,
                      orgTrack.getLine(),
@@ -1740,7 +1681,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
       }
       
       astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
-      list.add(tsf().makeDeclaration_SymbolDecl(astName));
+      list.add(`SymbolDecl(astName));
       putSymbol(name.image,astSymbol);
     }
 }
@@ -1749,11 +1690,10 @@ void OperatorList(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
   Token type, name, typeArg;
   LinkedList blockList = new LinkedList();
-  TomTypeList types = tsf().makeTomTypeList();
-  SlotList slotList = tsf().makeSlotList();
+  TomTypeList types = `concTomType();
+  SlotList slotList = `concPairNameDecl();
   LinkedList options = new LinkedList();
   TomSymbol astSymbol;
-  TomName astName;
   TargetLanguage tlFsym;
   Declaration attribute;  
 }
@@ -1763,25 +1703,24 @@ void OperatorList(LinkedList list) throws TomException: /* in DEFAULT mode */
       addPreviousCode(list);
     }
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
-    { options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
+    { options.add(`OriginTracking(Name(name.image),getLine(),Name( currentFile)));}
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
     {
-      types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
+      types = (TomTypeList) types.append(`TomTypeAlone(typeArg.image));
     }
   <TOM_LBRACE>
     tlFsym = KeywordFsym()
     ( 
       attribute = KeywordMakeEmptyList(name.image)                             { options.add(attribute); }
     | attribute = KeywordMakeAddList(name.image, type.image, typeArg.image)    { options.add(attribute); }
-    | attribute = KeywordIsFsym(tsf().makeTomName_Name(name.image), type.image)  { options.add(attribute); }
+    | attribute = KeywordIsFsym(`Name(name.image), type.image)  { options.add(attribute); }
     )*
   <TOM_RBRACE>
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      astName   = tsf().makeTomName_Name(name.image);
-      slotList =tsf().makeSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      slotList =`manySlotList(Slot(EmptyName(), EmptyDeclaration()), slotList);
       astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
-      list.add(tsf().makeDeclaration_ListSymbolDecl(astName));
+      list.add(`ListSymbolDecl(Name(name.image)));
       putSymbol(name.image,astSymbol);
     }
 }
@@ -1790,10 +1729,9 @@ void OperatorArray(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
   Token type, name, typeArg;
   LinkedList blockList = new LinkedList();
-  TomTypeList types = tsf().makeTomTypeList();
-  SlotList slotList = tsf().makeSlotList();
+  TomTypeList types = `concTomType();
+  SlotList slotList = `concPairNameDecl();
   LinkedList options = new LinkedList();
-  TomName astName;
   TomSymbol astSymbol;
   TargetLanguage tlFsym;
   Declaration attribute;
@@ -1804,25 +1742,24 @@ void OperatorArray(LinkedList list) throws TomException: /* in DEFAULT mode */
       addPreviousCode(list);
     }
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
-    { options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
+    { options.add(`OriginTracking(Name(name.image),getLine(),Name( currentFile)));}
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
          { 
- 	   types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
+ 	   types = (TomTypeList) types.append(`TomTypeAlone(typeArg.image));
          }
   <TOM_LBRACE>
     tlFsym = KeywordFsym()
     ( 
       attribute = KeywordMakeEmptyArray(name.image, type.image)              { options.add(attribute); }
     | attribute = KeywordMakeAddArray(name.image, type.image, typeArg.image) { options.add(attribute); }
-    | attribute = KeywordIsFsym(tsf().makeTomName_Name(name.image), type.image)  { options.add(attribute); }
+    | attribute = KeywordIsFsym(`Name(name.image), type.image)  { options.add(attribute); }
     )*
   <TOM_RBRACE>
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      astName   = tsf().makeTomName_Name(name.image);
-      slotList =tsf().makeSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      slotList =`manySlotList(Slot(EmptyName(), EmptyDeclaration()), slotList);
       astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
-      list.add(tsf().makeDeclaration_ArraySymbolDecl(astName));
+      list.add(`ArraySymbolDecl(Name(name.image)));
       putSymbol(name.image,astSymbol);
     }
 }
@@ -1841,7 +1778,6 @@ void TypeTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
   Declaration attribute;
   TomType astType;
   Option orgTrack;
-  TomName name;
 }
 {
   (
@@ -1856,7 +1792,7 @@ void TypeTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
     }
   )
   type=<TOM_IDENTIFIER>
-    { orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name(type.image),getLine(),Name( currentFile));}
   <TOM_LBRACE>
     implement = KeywordImplement()
     ( 
@@ -1868,10 +1804,9 @@ void TypeTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
   <TOM_RBRACE>
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      astType = ast().makeType(type.image,implement);
-      name   = tsf().makeTomName_Name(type.image);
+      astType = `Type(ASTTomType(type.image),TLType(implement));
       putType(type.image,astType);
-      list.add(tsf().makeDeclaration_TypeTermDecl(name, ast().makeList(blockList), orgTrack));
+      list.add(`TypeTermDecl(Name(type.image), ast().makeList(blockList), orgTrack));
     }
 }
 
@@ -1884,7 +1819,6 @@ void TypeList(LinkedList list) throws TomException: /* in DEFAULT mode */
   Declaration attribute;
   TomType astType;
   Option orgTrack;
-  TomName name;
 }
 {
   <TYPELIST> /* switch to TOM mode */
@@ -1893,7 +1827,7 @@ void TypeList(LinkedList list) throws TomException: /* in DEFAULT mode */
     }
   
   type=<TOM_IDENTIFIER>
-    { orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile); }
+    { orgTrack = `OriginTracking(Name(type.image),getLine(),Name( currentFile)); }
   <TOM_LBRACE>
     implement = KeywordImplement()
     ( 
@@ -1908,10 +1842,9 @@ void TypeList(LinkedList list) throws TomException: /* in DEFAULT mode */
   <TOM_RBRACE>
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      astType = ast().makeType(type.image,implement);
-      name   = tsf().makeTomName_Name(type.image);
+      astType = `Type(ASTTomType(type.image),TLType(implement));
       putType(type.image,astType);
-      list.add(tsf().makeDeclaration_TypeListDecl(name, ast().makeList(blockList), orgTrack));
+      list.add(`TypeListDecl(Name(type.image), ast().makeList(blockList), orgTrack));
     }
 }
 
@@ -1923,7 +1856,6 @@ void TypeArray(LinkedList list) throws TomException: /* in DEFAULT mode */
   Declaration attribute;
   TomType astType;
   Option orgTrack;
-  TomName name;
 }
 {
   <TYPEARRAY> /* switch to TOM mode */
@@ -1932,7 +1864,7 @@ void TypeArray(LinkedList list) throws TomException: /* in DEFAULT mode */
     }
   
   type=<TOM_IDENTIFIER>
-    {orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);}
+    {orgTrack = `OriginTracking(Name(type.image),getLine(),Name( currentFile));}
   <TOM_LBRACE>
     implement = KeywordImplement()
     ( 
@@ -1946,10 +1878,9 @@ void TypeArray(LinkedList list) throws TomException: /* in DEFAULT mode */
   <TOM_RBRACE>
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      astType = ast().makeType(type.image,implement);
+      astType = `Type(ASTTomType(type.image),TLType(implement));
       putType(type.image,astType);
-      name   = tsf().makeTomName_Name(type.image);
-      list.add(tsf().makeDeclaration_TypeArrayDecl(name, ast().makeList(blockList), orgTrack));
+      list.add(`TypeArrayDecl(Name(type.image), ast().makeList(blockList), orgTrack));
     }
 }
 
@@ -1998,13 +1929,13 @@ Declaration KeywordGetFunSym(String typeString) throws TomException:
 }
 {
   <TOM_GET_FUN_SYM>
-    { orgTrack = ast().makeOriginTracking("get_fun_sym", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("get_fun_sym"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
+     Option info = `OriginTracking(Name(name.image),getLine(),Name( currentFile));
      OptionList option = ast().makeOption(info);
-     return tsf().makeDeclaration_GetFunctionSymbolDecl(
+     return `GetFunctionSymbolDecl(
                            ast().makeVariable(option,name.image,typeString),
                            ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
@@ -2019,15 +1950,15 @@ Declaration KeywordGetSubterm(String typeString) throws TomException:
 }
 {
   <TOM_GET_SUBTERM>
-     { orgTrack = ast().makeOriginTracking("get_subterm", getLine(), currentFile);}
+     { orgTrack = `OriginTracking(Name("get_subterm"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
-     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
+     Option info1 = `OriginTracking(Name(name1.image),getLine(),Name( currentFile));
+     Option info2 = `OriginTracking(Name(name2.image),getLine(),Name( currentFile));
      OptionList option1 = ast().makeOption(info1);
      OptionList option2 = ast().makeOption(info2);
-     return tsf().makeDeclaration_GetSubtermDecl(
+     return `GetSubtermDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,"int"),
                            ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
@@ -2043,15 +1974,15 @@ Declaration KeywordCmpFunSym(String typeString) throws TomException:
 }
 {
   <TOM_CMP_FUN_SYM>
-    { orgTrack = ast().makeOriginTracking("cmp_fun_sym", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("cmp_fun_sym"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
-     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
+     Option info1 = `OriginTracking(Name(name1.image),getLine(),Name( currentFile));
+     Option info2 = `OriginTracking(Name(name2.image),getLine(),Name( currentFile));
      OptionList option1 = ast().makeOption(info1);
      OptionList option2 = ast().makeOption(info2);
-     return tsf().makeDeclaration_CompareFunctionSymbolDecl(
+     return `CompareFunctionSymbolDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,typeString),
                            ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
@@ -2067,15 +1998,15 @@ Declaration KeywordEquals(String typeString) throws TomException:
 }
 {
   <TOM_EQUALS>
-    { orgTrack = ast().makeOriginTracking("equals", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("equals"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
-     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
+     Option info1 = `OriginTracking(Name(name1.image),getLine(),Name( currentFile));
+     Option info2 = `OriginTracking(Name(name2.image),getLine(),Name( currentFile));
      OptionList option1 = ast().makeOption(info1);
      OptionList option2 = ast().makeOption(info2);
-     return tsf().makeDeclaration_TermsEqualDecl(
+     return `TermsEqualDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,typeString),
                            ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
@@ -2091,16 +2022,15 @@ Declaration KeywordGetHead(String typeString) throws TomException:
 }
 {
   <TOM_GET_HEAD>
-    { orgTrack = ast().makeOriginTracking("get_head", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("get_head"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
+     Option info = `OriginTracking(Name(name.image),getLine(),Name( currentFile));
      OptionList option = ast().makeOption(info);
-     return tsf().makeDeclaration_GetHeadDecl(
-                           symbolTable().getUniversalType(),
-                           ast().makeVariable(option,name.image,typeString),
-                           ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `GetHeadDecl(symbolTable().getUniversalType(),
+                         ast().makeVariable(option,name.image,typeString),
+                         ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
 
@@ -2113,15 +2043,14 @@ Declaration KeywordGetTail(String typeString) throws TomException:
 }
 {
   <TOM_GET_TAIL>
-    { orgTrack = ast().makeOriginTracking("get_tail", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("get_tail"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
+     Option info = `OriginTracking(Name(name.image),getLine(),Name( currentFile));
      OptionList option = ast().makeOption(info);
-     return tsf().makeDeclaration_GetTailDecl(
-                           ast().makeVariable(option,name.image,typeString),
-                           ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `GetTailDecl(ast().makeVariable(option,name.image,typeString),
+                         ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
 
@@ -2134,15 +2063,14 @@ Declaration KeywordIsEmpty(String typeString) throws TomException:
 }
 {
   <TOM_IS_EMPTY>
-    { orgTrack = ast().makeOriginTracking("is_empty", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("is_empty"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
+     Option info = `OriginTracking(Name(name.image),getLine(),Name( currentFile));
      OptionList option = ast().makeOption(info);
-     return tsf().makeDeclaration_IsEmptyDecl(
-                           ast().makeVariable(option,name.image,typeString),
-                           ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `IsEmptyDecl(ast().makeVariable(option,name.image,typeString),
+                         ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
 
@@ -2155,18 +2083,17 @@ Declaration KeywordGetElement(String typeString) throws TomException:
 }
 {
   <TOM_GET_ELEMENT>
-    { orgTrack = ast().makeOriginTracking("get_element", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("get_element"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
-     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
+     Option info1 = `OriginTracking(Name(name1.image),getLine(),Name( currentFile));
+     Option info2 = `OriginTracking(Name(name2.image),getLine(),Name( currentFile));
      OptionList option1 = ast().makeOption(info1);
      OptionList option2 = ast().makeOption(info2);
-     return tsf().makeDeclaration_GetElementDecl(
-                           ast().makeVariable(option1,name1.image,typeString),
-                           ast().makeVariable(option2,name2.image,"int"),
-                           ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `GetElementDecl(ast().makeVariable(option1,name1.image,typeString),
+                            ast().makeVariable(option2,name2.image,"int"),
+                            ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
 
@@ -2179,15 +2106,14 @@ Declaration KeywordGetSize(String typeString) throws TomException:
 }
 {
   <TOM_GET_SIZE>
-    { orgTrack = ast().makeOriginTracking("get_size", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("get_size"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
+     Option info = `OriginTracking(Name(name.image),getLine(),Name( currentFile));
      OptionList option = ast().makeOption(info);
-     return tsf().makeDeclaration_GetSizeDecl(
-                           ast().makeVariable(option,name.image,typeString),
-                           ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `GetSizeDecl(ast().makeVariable(option,name.image,typeString),
+                         ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
 
@@ -2213,19 +2139,17 @@ Declaration KeywordIsFsym(TomName astName, String typeString) throws TomExceptio
 }
 {
   <TOM_IS_FSYM>
-    { orgTrack = ast().makeOriginTracking("is_fsym", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("is_fsym"), getLine(),Name( currentFile));}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
+     Option info = `OriginTracking(Name(name.image),getLine(),Name( currentFile));
      OptionList option = ast().makeOption(info);
-     return tsf().makeDeclaration_IsFsymDecl(
-			   astName,
-                           ast().makeVariable(option,name.image,typeString),
-                           ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `IsFsymDecl(astName,
+                        ast().makeVariable(option,name.image,typeString),
+                        ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
-
 
 Declaration KeywordGetSlot(TomName astName, String typeString) throws TomException:
 {
@@ -2236,18 +2160,17 @@ Declaration KeywordGetSlot(TomName astName, String typeString) throws TomExcepti
 }
 {
   <TOM_GET_SLOT>
-    { orgTrack = ast().makeOriginTracking("get_slot", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("get_slot"), getLine(),Name( currentFile));}
   <TOM_LPAREN> slotName = <TOM_IDENTIFIER>
      <TOM_COMMA> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-       Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
+       Option info = `OriginTracking(Name(name.image),getLine(),Name( currentFile));
        OptionList option = ast().makeOption(info);
-       return tsf().makeDeclaration_GetSlotDecl(
-         astName,
-         tsf().makeTomName_Name(slotName.image),
-         ast().makeVariable(option,name.image,typeString),
-         ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+       return `GetSlotDecl(astName,
+                           Name(slotName.image),
+                           ast().makeVariable(option,name.image,typeString),
+                           ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
 
@@ -2260,47 +2183,44 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
   TargetLanguage tlCode;
   int index = 0;
   TomType type;
-  TomName name;
   Option orgTrack;
   int nbTypes = types.getLength();
 }
 {
   <TOM_MAKE>
-     { orgTrack = ast().makeOriginTracking("make", getLine(), currentFile);}
+     { orgTrack = `OriginTracking(Name("make"), getLine(),Name( currentFile));}
      [ ( LOOKAHEAD(2) 
         <TOM_LPAREN> <TOM_RPAREN>
-       |
+     |
         <TOM_LPAREN>
-      nameArg = <TOM_IDENTIFIER>
+         nameArg = <TOM_IDENTIFIER>
        {
-          if( !(nbTypes > 0) ) {
-            type = tsf().makeTomType_EmptyType();
-          } else {
-	        type = (TomType)types.elementAt(index++);
-	      }
-	      name = tsf().makeTomName_Name(nameArg.image);  
-	      Option info1 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
-	      OptionList option1 = ast().makeOption(info1);
-	      args.add(ast().makeVariable(option1,name, type));
+         if( !(nbTypes > 0) ) {
+           type = `EmptyType();
+         } else {
+           type = (TomType)types.elementAt(index++);
+         }
+         Option info1 = `OriginTracking(Name(nameArg.image),getLine(),Name( currentFile));
+         OptionList option1 = ast().makeOption(info1);
+         args.add(ast().makeVariable(option1,`Name(nameArg.image), type));
        }
      ( <TOM_COMMA> nameArg = <TOM_IDENTIFIER>
         {
           if( index >= nbTypes ) {
-            type = tsf().makeTomType_EmptyType();
+            type = `EmptyType();
           } else {
-	        type = (TomType)types.elementAt(index++);
-	      }
-    	  name = tsf().makeTomName_Name(nameArg.image); 
-   	      Option info2 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
+            type = (TomType)types.elementAt(index++);
+          }
+   	      Option info2 = `OriginTracking(Name(nameArg.image),getLine(),Name( currentFile));
           OptionList option2 = ast().makeOption(info2);
-          args.add(ast().makeVariable(option2,name, type));
+          args.add(ast().makeVariable(option2,`Name(nameArg.image), type));
         }
       )*
       <TOM_RPAREN> ) ]
 
   tlCode = GoalLanguageBlock(blockList)
    {
-     return ast().makeMakeDecl(opname,returnType,args,ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `MakeDecl(Name(opname),returnType,ast().makeList(args),ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
 
@@ -2312,12 +2232,11 @@ Declaration KeywordMakeEmptyList(String name) throws TomException:
 }
 {
   <TOM_MAKE_EMPTY>
-    { orgTrack = ast().makeOriginTracking("make_empty", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("make_empty"), getLine(),Name( currentFile));}
   [<TOM_LPAREN> <TOM_RPAREN>]
   tlCode = GoalLanguageBlock(blockList)
    {
-     return tsf().makeDeclaration_MakeEmptyList(
-                           tsf().makeTomName_Name(name),
+     return `MakeEmptyList(Name(name),
                            ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
@@ -2331,20 +2250,19 @@ Declaration KeywordMakeAddList(String name, String listType, String elementType)
 }
 {
   <TOM_MAKE_INSERT>
-    { orgTrack = ast().makeOriginTracking("make_add", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("make_add"), getLine(),Name( currentFile));}
   <TOM_LPAREN> elementName=<TOM_IDENTIFIER> <TOM_COMMA>
                                     listName=<TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option listInfo = ast().makeOriginTracking(listName.image,getLine(), currentFile);
-     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine(), currentFile);
+     Option listInfo = `OriginTracking(Name(listName.image),getLine(),Name( currentFile));
+     Option elementInfo = `OriginTracking(Name(elementName.image),getLine(),Name( currentFile));
      OptionList listOption = ast().makeOption(listInfo);
      OptionList elementOption = ast().makeOption(elementInfo);
-     return tsf().makeDeclaration_MakeAddList(
-       tsf().makeTomName_Name(name),
-       ast().makeVariable(elementOption,elementName.image,elementType),
-       ast().makeVariable(listOption,listName.image,listType),
-       ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `MakeAddList(Name(name),
+                         ast().makeVariable(elementOption,elementName.image,elementType),
+                         ast().makeVariable(listOption,listName.image,listType),
+                         ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
 
@@ -2357,16 +2275,15 @@ Declaration KeywordMakeEmptyArray(String name, String listType) throws TomExcept
 }
 {
   <TOM_MAKE_EMPTY>
-    { orgTrack = ast().makeOriginTracking("make_empty", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("make_empty"), getLine(),Name( currentFile));}
   <TOM_LPAREN> listName=<TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option listInfo = ast().makeOriginTracking(listName.image,getLine(), currentFile);
+     Option listInfo = `OriginTracking(Name(listName.image),getLine(),Name( currentFile));
      OptionList listOption = ast().makeOption(listInfo);
-     return tsf().makeDeclaration_MakeEmptyArray(
-                           tsf().makeTomName_Name(name),
-                           ast().makeVariable(listOption,listName.image,listType),
-                           ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `MakeEmptyArray(Name(name),
+                            ast().makeVariable(listOption,listName.image,listType),
+                            ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
 }
 
@@ -2379,156 +2296,19 @@ Declaration KeywordMakeAddArray(String name, String listType, String elementType
 }
 {
   <TOM_MAKE_APPEND>
-    { orgTrack = ast().makeOriginTracking("make_append", getLine(), currentFile);}
+    { orgTrack = `OriginTracking(Name("make_append"), getLine(),Name( currentFile));}
   <TOM_LPAREN> elementName=<TOM_IDENTIFIER>    <TOM_COMMA>
                                     listName=<TOM_IDENTIFIER>
                  <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option listInfo = ast().makeOriginTracking(listName.image,getLine(), currentFile);
-     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine(), currentFile);
+     Option listInfo = `OriginTracking(Name(listName.image),getLine(),Name( currentFile));
+     Option elementInfo = `OriginTracking(Name(elementName.image),getLine(),Name( currentFile));
      OptionList listOption = ast().makeOption(listInfo);
      OptionList elementOption = ast().makeOption(elementInfo);
-     return tsf().makeDeclaration_MakeAddArray(
-       tsf().makeTomName_Name(name),
-       ast().makeVariable(elementOption,elementName.image,elementType),
-       ast().makeVariable(listOption,listName.image,listType),
-       ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
+     return `MakeAddArray(Name(name),
+                          ast().makeVariable(elementOption,elementName.image,elementType),
+                          ast().makeVariable(listOption,listName.image,listType),
+                          ast().reworkTLCode(tlCode, getInput().isPretty()), orgTrack);
    }
-}
-
-
-
-/************************************************************
- * JAVA MODE
- ************************************************************/
-/* WHITE SPACE */
-<JAVA>
-SKIP :
-{
-  " "
-| "\t"
-| "\n"
-| "\r"
-| "\f"
-}
-
-/* COMMENTS */
-<JAVA>
-MORE :
-{
-  "//" : JAVA_IN_SINGLE_LINE_COMMENT
-|
-  <"/**" ~["/"]> { input_stream.backup(1); } : JAVA_IN_FORMAL_COMMENT
-|
-  "/*" : JAVA_IN_MULTI_LINE_COMMENT
-}
-
-<JAVA_IN_SINGLE_LINE_COMMENT>
-SPECIAL_TOKEN :
-{
-  <JAVA_SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : JAVA
-}
-
-<JAVA_IN_FORMAL_COMMENT>
-SPECIAL_TOKEN :
-{
-  <JAVA_FORMAL_COMMENT: "*/" > : JAVA
-}
-
-<JAVA_IN_MULTI_LINE_COMMENT>
-SPECIAL_TOKEN :
-{
-  <JAVA_MULTI_LINE_COMMENT: "*/" > : JAVA
-}
-
-<JAVA_IN_SINGLE_LINE_COMMENT,JAVA_IN_FORMAL_COMMENT,JAVA_IN_MULTI_LINE_COMMENT>
-MORE :
-{
-  < ~[] >
-}
-
-/* JAVA IDENTIFIERS */
-<JAVA>
-TOKEN :
-{
-  < JAVA_PACKAGE: "package">
-| < JAVA_SEMICOLON: ";" >
-| < JAVA_DOT: "." >
-| < JAVA_IDENTIFIER: <JAVA_LETTER> (<JAVA_LETTER>|<JAVA_DIGIT>)* >
-| < #JAVA_LETTER:
-      [
-       "\u0024",
-       "\u0041"-"\u005a",
-       "\u005f",
-       "\u0061"-"\u007a",
-       "\u00c0"-"\u00d6",
-       "\u00d8"-"\u00f6",
-       "\u00f8"-"\u00ff",
-       "\u0100"-"\u1fff",
-       "\u3040"-"\u318f",
-       "\u3300"-"\u337f",
-       "\u3400"-"\u3d2d",
-       "\u4e00"-"\u9fff",
-       "\uf900"-"\ufaff"
-      ]
-  >
-| < #JAVA_DIGIT:
-      [
-       "\u0030"-"\u0039",
-       "\u0660"-"\u0669",
-       "\u06f0"-"\u06f9",
-       "\u0966"-"\u096f",
-       "\u09e6"-"\u09ef",
-       "\u0a66"-"\u0a6f",
-       "\u0ae6"-"\u0aef",
-       "\u0b66"-"\u0b6f",
-       "\u0be7"-"\u0bef",
-       "\u0c66"-"\u0c6f",
-       "\u0ce6"-"\u0cef",
-       "\u0d66"-"\u0d6f",
-       "\u0e50"-"\u0e59",
-       "\u0ed0"-"\u0ed9",
-       "\u1040"-"\u1049"
-      ]
-  >
-| < JAVA_OTHER: ~[] >
-
-}
-
-/**********************************************
- * THE JAVA GRAMMAR SPECIFICATION STARTS HERE *
- **********************************************/
-
-String JavaPackageDeclaration() : /* in JAVA mode */
-{ 
-  String packageName = ""; 
-}
-{
-  <JAVA_PACKAGE> packageName = JavaName() <JAVA_SEMICOLON>
-  {
-    return packageName;
-  }
- | [ <JAVA_OTHER> ]
-  {
-    return packageName;
-  }
-
-}
-
-String JavaName() : /* in JAVA mode */
-/*
- * A lookahead of 2 is required below since "Name" can be followed
- * by a ".*" when used in the context of an "ImportDeclaration".
- */
-{
-  String packageName = ""; 
-}
-{
-  <JAVA_IDENTIFIER> { packageName += token.image; }
-  ( LOOKAHEAD(2) <JAVA_DOT> <JAVA_IDENTIFIER> { packageName += "." + token.image; }
-  )*
-  {
-    return packageName;
-  }
 }

@@ -42,7 +42,7 @@ public class TomCompiler extends TomTask {
   TomKernelCompiler tomKernelCompiler;
   private TomFactory tomFactory;
   private int absVarNumber = 0;
-  
+
   public TomCompiler() {
     super("Tom Compiler");
     this.tomKernelCompiler = new TomKernelCompiler();

@@ -217,25 +217,18 @@ public class ASTFactory {
     return list;
   }
 
-  public Option makeOriginTracking(String name, int line , String fileName) {
+  
+  private Option makeOriginTracking(String name, int line , String fileName) {
     return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), line, tsf().makeTomName_Name( fileName));
   }
+
   
-  public Declaration makeMakeDecl(String opname, TomType returnType, List argList, TargetLanguage tlcode, Option orgTrack) {
-    TomName name = tsf().makeTomName_Name(opname);  
-    return tsf().makeDeclaration_MakeDecl(name, returnType, makeList(argList), tlcode, orgTrack);
-  }
-
-  public TomType makeType(String typeNameTom, String typeNametGL) {
-    return makeType(typeNameTom,tsf().makeTargetLanguage_ITL(typeNametGL));
-  }
-
-  public TomType makeType(String typeNameTom, TargetLanguage tlType) {
+  protected TomType makeType(String typeNameTom, String typeNametGL) {
     TomType typeTom = tsf().makeTomType_ASTTomType(typeNameTom);
-    TomType sortTL  = tsf().makeTomType_TLType(tlType);
+    TomType sortTL  = tsf().makeTomType_TLType(tsf().makeTargetLanguage_ITL(typeNametGL));
     return tsf().makeTomType_Type(typeTom,sortTL);
   }
-
+  
     /*
      * create an <sort> symbol
      * where <sort> could be int. double or String  

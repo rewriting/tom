@@ -112,16 +112,6 @@ public interface TomParserConstants {
   int XML_TEXT = 102;
   int XML_COMMENT = 103;
   int XML_PROC = 104;
-  int JAVA_SINGLE_LINE_COMMENT = 113;
-  int JAVA_FORMAL_COMMENT = 114;
-  int JAVA_MULTI_LINE_COMMENT = 115;
-  int JAVA_PACKAGE = 117;
-  int JAVA_SEMICOLON = 118;
-  int JAVA_DOT = 119;
-  int JAVA_IDENTIFIER = 120;
-  int JAVA_LETTER = 121;
-  int JAVA_DIGIT = 122;
-  int JAVA_OTHER = 123;
 
   int DEFAULT = 0;
   int IN_SINGLE_LINE_COMMENT = 1;
@@ -131,10 +121,6 @@ public interface TomParserConstants {
   int TOM_IN_SINGLE_LINE_COMMENT = 5;
   int TOM_IN_FORMAL_COMMENT = 6;
   int TOM_IN_MULTI_LINE_COMMENT = 7;
-  int JAVA = 8;
-  int JAVA_IN_SINGLE_LINE_COMMENT = 9;
-  int JAVA_IN_FORMAL_COMMENT = 10;
-  int JAVA_IN_MULTI_LINE_COMMENT = 11;
 
   String[] tokenImage = {
     "<EOF>",
@@ -242,25 +228,6 @@ public interface TomParserConstants {
     "\"#TEXT\"",
     "\"#COMMENT\"",
     "\"#PROCESSING-INSTRUCTION\"",
-    "\" \"",
-    "\"\\t\"",
-    "\"\\n\"",
-    "\"\\r\"",
-    "\"\\f\"",
-    "\"//\"",
-    "<token of kind 111>",
-    "\"/*\"",
-    "<JAVA_SINGLE_LINE_COMMENT>",
-    "\"*/\"",
-    "\"*/\"",
-    "<token of kind 116>",
-    "\"package\"",
-    "\";\"",
-    "\".\"",
-    "<JAVA_IDENTIFIER>",
-    "<JAVA_LETTER>",
-    "<JAVA_DIGIT>",
-    "<JAVA_OTHER>",
   };
 
 }

@@ -173,13 +173,12 @@
 
 	<!-- compile tom files in src.src with tom.stable -->
 	<target name="buildtom" depends="initTaskDef, buildadt">
+
 		<tom srcdir="${src.src}" 
-				 destdir="${src.gen}" 
-				 options="-I ${stable.mapping} --noDeclaration">
-			<exclude name="**/TomBase.t"/>
-			<exclude name="**/TomBackQuoteParser.t"/>
-			<exclude name="**/runtime/**/*.t"/>	
+				 options="-I ${stable.mapping} -I ${src.gen}/jtom/adt -o ${src.gen}/jtom/parser/TomParser.jj">
+			<include name="**/TomParser.t"/>	
 		</tom>
+
 		<tom srcdir="${src.src}" 
 				 destdir="${src.gen}" 
 				 options="-I ${stable.mapping}">
@@ -187,12 +186,23 @@
 			<include name="**/TomBase.t"/>
 			<include name="**/TomBackQuoteParser.t"/>	
 		</tom>
+		<tom srcdir="${src.src}" 
+				 destdir="${src.gen}" 
+				 options="-I ${stable.mapping} --noDeclaration">
+			<exclude name="**/TomBase.t"/>
+			<exclude name="**/TomParser.t"/>
+			<exclude name="**/TomBackQuoteParser.t"/>
+			<exclude name="**/runtime/**/*.t"/>	
+		</tom>
 	</target>
 
 	<!-- builds the parser using javacc -->
 	<target name="buildparser">
 		<mkdir dir="${src.gen}/jtom/parser"/>
-		<javacc target="${src.src}/jtom/parser/TomParser.jj"
+		<javacc target="${src.gen}/jtom/parser/TomParser.jj"
+						outputdirectory="${src.gen}/jtom/parser"
+						javacchome="${javaccdir}" />
+		<javacc target="${src.src}/jtom/parser/TomJavaParser.jj"
 						outputdirectory="${src.gen}/jtom/parser"
 						javacchome="${javaccdir}" />
 		<delete file="${src.gen}/jtom/parser/JavaCharStream.java"/>
@@ -421,6 +431,7 @@
 	<target name="clean.src" description="Purges the generated devel files">
 		<delete dir="${src.gen}"/>
 		<delete dir="${src.build}"/>
+		<delete dir="${bootstrap.dir}"/>
 		<delete file="${src.mapping}/Set.tom"/>
 		<delete file="${src.mapping}/TNode.tom"/>
 	</target>
@@ -565,7 +576,7 @@
 		<antcall target="clean.test"/>
 		<antcall target="junit.src"/>
 
-		<ant dir="${examples}" target="clean.examples"/>
+		<ant dir="${examples}" target="clean"/>
 		<ant dir="${examples}" target="junit">
 			<property name="tom.home" location="${stable.dist}"/>
 		</ant>
@@ -612,21 +623,13 @@
 			</fileset>
 		</copy>
 
-		<!-- builds parser -->
-		<mkdir dir="${destination}/gen/jtom/parser"/>
-		<javacc target="${src.src}/jtom/parser/TomParser.jj"
-						outputdirectory="${destination}/gen/jtom/parser"
-						javacchome="${javaccdir}" />
-		<delete file="${destination}/gen/jtom/parser/JavaCharStream.java"/>
-
 		<!-- build tom -->
+
 		<tomsrc srcdir="${src.src}" 
-						destdir="${destination}/gen" 
-						options="-I ${src.mapping} --noDeclaration">
-      <exclude name="**/TomBase.t"/>
-      <exclude name="**/TomBackQuoteParser.t"/>
-      <exclude name="**/runtime/**/*.t"/> 
-    </tomsrc>
+				 options="-I ${src.mapping} -I ${destination}/gen/jtom/adt -o ${destination}/gen/jtom/parser/TomParser.jj">
+			<include name="**/TomParser.t"/>	
+		</tomsrc>
+
     <tomsrc srcdir="${src.src}" 
 						destdir="${destination}/gen" 
 						options="-I ${src.mapping}">
@@ -634,6 +637,25 @@
       <include name="**/TomBase.t"/>
       <include name="**/TomBackQuoteParser.t"/> 
     </tomsrc>
+		<tomsrc srcdir="${src.src}" 
+						destdir="${destination}/gen" 
+						options="-I ${src.mapping} --noDeclaration">
+      <exclude name="**/TomBase.t"/>
+      <exclude name="**/TomParser.t"/>
+      <exclude name="**/TomBackQuoteParser.t"/>
+      <exclude name="**/runtime/**/*.t"/> 
+    </tomsrc>
+
+		<!-- builds parser -->
+		<mkdir dir="${destination}/gen/jtom/parser"/>
+		<javacc target="${destination}/gen/jtom/parser/TomParser.jj"
+						outputdirectory="${destination}/gen/jtom/parser"
+						javacchome="${javaccdir}" />
+		<javacc target="${src.src}/jtom/parser/TomJavaParser.jj"
+						outputdirectory="${destination}/gen/jtom/parser"
+						javacchome="${javaccdir}" />
+		<delete file="${destination}/gen/jtom/parser/JavaCharStream.java"/>
+
     <javac destdir="${destination}/build" verbose="${javacVerbose}">
 			<src path="${src.src}"/>
 			<src path="${destination}/gen"/>
@@ -651,6 +673,7 @@
 			</fileset>
 			<!-- we don't want to check the parser generated files, never ever -->
 			<fileset dir="${bootstrap.dir}/build">
+				<include name="jtom/parser/TomParser.class"/>
 				<include name="jtom/parser/TomBackQuoteParser.class"/>
 			</fileset>
 		</concat>
@@ -661,6 +684,7 @@
 			</fileset>
 			<!-- we don't want to check the parser generated files, never ever -->
 			<fileset dir="${src.build}">
+				<include name="jtom/parser/TomParser.class"/>
 				<include name="jtom/parser/TomBackQuoteParser.class"/>
 			</fileset>
 		</concat>
