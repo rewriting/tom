@@ -51,17 +51,17 @@ public class PolyApigen2 {
   }
 
   %rule {
-    differentiate(variable(v1),variable(v1)) -> one
+    differentiate(variable(v1),variable(v1)) -> one()
     differentiate(plus(a1,a2),vx) -> plus(differentiate(a1,vx),
                                           differentiate(a2,vx))
     differentiate(mult(a1,a2),vx) -> plus(mult(a1,differentiate(a2,vx)),
                                           mult(a2,differentiate(a1,vx)))
     differentiate(e@exp(a1),vx)   -> mult(differentiate(a1,vx),e)
-    differentiate(variable(_),_)  -> zero
-    differentiate(constant(c1),_) -> zero
-    differentiate(number(i),_)    -> zero
-    differentiate(zero,_)         -> zero 
-    differentiate(one,_)          -> zero
+    differentiate(variable(_),_)  -> zero()
+    differentiate(constant(c1),_) -> zero()
+    differentiate(number(i),_)    -> zero()
+    differentiate(zero(),_)         -> zero() 
+    differentiate(one(),_)          -> zero()
   }
     
     // simplification
@@ -69,13 +69,13 @@ public class PolyApigen2 {
     Expression res = t;
     block:{
       %match(Expression t) {
-        exp(zero)    -> { res = `one(); break block; }
-        plus(zero,x) -> { res = simplify(`x); break block; }
-        plus(x,zero) -> { res = simplify(`x); break block; }
-        mult(one,x)  -> { res = simplify(`x); break block; }
-        mult(x,one)  -> { res = simplify(`x); break block; }
-        mult(zero,x) -> { res = `zero(); break block; }
-        mult(x,zero) -> { res = `zero(); break block; }
+        exp(zero())    -> { res = `one(); break block; }
+        plus(zero(),x) -> { res = simplify(`x); break block; }
+        plus(x,zero()) -> { res = simplify(`x); break block; }
+        mult(one(),x)  -> { res = simplify(`x); break block; }
+        mult(x,one())  -> { res = simplify(`x); break block; }
+        mult(zero(),x) -> { res = `zero(); break block; }
+        mult(x,zero()) -> { res = `zero(); break block; }
         plus(x,y)    -> { res = `plus(simplify(x),simplify(y)); break block; }
         mult(x,y)    -> { res = `mult(simplify(x),simplify(y));  break block; }
         exp(x)       -> { res = `exp(simplify(x));  break block; }

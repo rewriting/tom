@@ -110,7 +110,7 @@ class Fib3 {
 				
   public ArrayList rec(ArrayList s) {
     %match(Space s) {
-	    concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
+	    concElement(S1*, Fib[arg=n,val=Undef()], S2*) -> {
         if( `(n>2 && !occursFib(S1*,n-1) && !occursFib(S2*,n-1)) ) {
           //if( `n>2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1))  {
           //  if( `n>2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1) ) {
@@ -123,7 +123,7 @@ class Fib3 {
 
   public ArrayList compute(ArrayList s) {
     %match(Space s) {
-      concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
+      concElement(S1*, Fib[arg=n,val=Undef()], S2*) -> {
         ArrayList s12 = `concElement(S1*,S2*);
         %match(Space s12) {
           concElement(T1*, f1@Fib[arg=n1,val=Nat(v1)], T2*, f2@Fib[arg=n2,val=Nat(v2)], T3*) -> {

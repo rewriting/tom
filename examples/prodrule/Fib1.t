@@ -85,7 +85,7 @@ class Fib1 {
 
   public Space rec(Space s) {
     %match(Space s) {
-      concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
+      concElement(S1*, Fib[arg=n,val=Undef()], S2*) -> {
         if(`n >2 && !occursFib(`concElement(S1*,S2*),`n-1)) {
           return `manySpace(Fib(n-1,Undef),s);
         }
@@ -96,7 +96,7 @@ class Fib1 {
 
   public Space compute(Space s) {
     %match(Space s) {
-      concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
+      concElement(S1*, Fib[arg=n,val=Undef()], S2*) -> {
         Space s12 = `concElement(S1*,S2*);
         %match(Space s12) {
           concElement(T1*, Fib[arg=n1,val=Nat(v1)], T2*) -> {

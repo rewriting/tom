@@ -428,7 +428,7 @@ public class Tom {
       String inputFileName = (String)it.next();
       tom.run(inputFileName);
       if(Tom.environment().hasError()) {
-        return 1;
+      	return 1;
       }
     }
     

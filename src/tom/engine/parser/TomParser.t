@@ -199,11 +199,15 @@ public class TomParser {
     fileName = fileName.trim();
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
+		if(fileName.equals("")) {
+			String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"), new Object[]{new Integer(getLine()), currentFile});
+      throw new TomIncludeException(msg);
+		}
     try {
       file = new File(fileName);
       if(file.isAbsolute()) {
         if (!file.exists()) {
-          String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
+          String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine())});
           throw new TomIncludeException(msg);
         }
       } else {

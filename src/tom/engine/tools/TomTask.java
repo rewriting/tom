@@ -57,19 +57,18 @@ public abstract class TomTask extends TomBase {
   }
   
   protected void closeProcess() {
+  	environment().printAlertMessage(name);
     if(!environment().hasError()) {
-      finishProcess();
-    } else {
-			environment().printAlertMessage(name);
-		}
+    	nextProcess();
+    }
   }
   
-  public void finishProcess() {
+  public void nextProcess() {
       // Start next task
     if(nextTask != null) {
       if(!getInput().isEclipseMode()) {
-        // remove all warning (in command line only)
-        environment().setWarnings(tsf().makeTomAlertList());
+          // remove all warning (in command line only)
+        environment().clearWarnings();
       } 
       nextTask.startProcess();
     }

@@ -66,7 +66,7 @@ public class PeanoSimple2 {
   
   public ATermAppl plus(ATermAppl t1, ATermAppl t2) {
     %match(term t1, term t2) {
-      x,zero   -> { return `x; }
+      x,zero() -> { return `x; }
       x,suc(y) -> { return suc(plus(`x,`y)); }
     }
     return null;

@@ -66,9 +66,9 @@ public class PolyAdvanced1 {
     ATermAppl res = t;
     block:{
       %match(term t) {
-        plus(zero, x) | plus(x, zero) |
-        mult(one, x)  | mult(x, one)  -> { res = simplify(`x);  break block; }
-        mult(zero, x) | mult(x, zero) -> { res = `zero();       break block; }
+        plus(zero(), x) | plus(x, zero()) |
+        mult(one(), x)  | mult(x, one())  -> { res = simplify(`x);  break block; }
+        mult(zero(), x) | mult(x, zero()) -> { res = `zero();       break block; }
         plus(x,y) -> { res = `plus( simplify(x), simplify(y) ); break block; }
         mult(x,y) -> { res = `mult( simplify(x), simplify(y) ); break block; }
       }

@@ -60,7 +60,7 @@ public class PeanoAdvanced2 {
 
   public ATermAppl plus(ATermAppl t1, ATermAppl t2) {
     %match(term t1, term t2) {
-      x,zero        -> { return `x; }
+      x,zero()      -> { return `x; }
       x,suc[pred=y] -> { return `suc(plus(x,y)); }
     }
     return null;
@@ -68,8 +68,8 @@ public class PeanoAdvanced2 {
 
   public ATermAppl fib(ATermAppl t) {
     %match(term t) {
-      y@zero             -> { return `suc(y); }
-      y@suc(zero)        -> { return `y; }
+      y@zero ()          -> { return `suc(y); }
+      y@suc(zero())      -> { return `y; }
       suc[pred=y@suc(x)] -> { return `plus(fib(x),fib(y)); }
     }
     return null;

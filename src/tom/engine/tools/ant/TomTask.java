@@ -464,7 +464,9 @@ public class TomTask extends MatchingTask {
 
       for (int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();
-        System.out.println("Compiling " + compileList[i] + "...");
+        if(verbose)
+          System.out.println("Compiling " + compileList[i] + "...");
+        
         File file = new File(filename);
 
         String cmd_line = "";
@@ -479,6 +481,9 @@ public class TomTask extends MatchingTask {
         }
 				if (optimize == true) {
           cmd_line = cmd_line.trim() + " --optimize";
+				}
+				if (nowarn == true) {
+          cmd_line = cmd_line.trim() + " --noWarning";
 				}
         cmd_line = cmd_line.trim() + " -I " + file.getParent();
         cmd_line = cmd_line.trim() + " " + filename;

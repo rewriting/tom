@@ -107,6 +107,14 @@ public class TomEnvironment {
     return warnings;
   }
 
+  public void clearErrors() {
+  	errors = tomSignatureFactory.makeTomAlertList();
+  }
+  
+  public void clearWarnings() {
+  	warnings = tomSignatureFactory.makeTomAlertList();
+  }
+  
   private void setErrors(TomAlertList list) {
     errors = list;
   }

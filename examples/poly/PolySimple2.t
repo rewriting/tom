@@ -118,12 +118,12 @@ public class PolySimple2 {
     // Very basic simplification
   public ATerm simplify(ATerm t) {
     %match(term t) {
-      plus(zero, x) | plus(x, zero) -> { return simplify(`x); }
-      mult(one, x)  | mult(x, one)  -> { return simplify(`x); }
-      mult(zero, x) | mult(x, zero) -> { return `zero(); }
-      plus(x,y)     -> { return `plus( simplify(x), simplify(y) ); }
-      mult(x,y)     -> { return `mult( simplify(x), simplify(y) ); }
-      zero          -> { return `zero(); }
+      plus(zero(), x) | plus(x, zero()) -> { return simplify(`x); }
+      mult(one(), x)  | mult(x, one())  -> { return simplify(`x); }
+      mult(zero(), x) | mult(x, zero()) -> { return `zero(); }
+      plus(x,y)   	  -> { return `plus( simplify(x), simplify(y) ); }
+      mult(x,y)		    -> { return `mult( simplify(x), simplify(y) ); }
+      zero()          -> { return `zero(); }
     }
     return t;
   }

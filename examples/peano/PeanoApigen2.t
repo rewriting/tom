@@ -50,7 +50,7 @@ public class PeanoApigen2 {
 
   public Nat plus(Nat t1, Nat t2) {
     %match(Nat t1, Nat t2) {
-      x, zero   -> { return `x; }
+      x, zero() -> { return `x; }
       x, suc(y) -> { return `suc(plus(x,y)); }
     }
     return null;
@@ -58,8 +58,8 @@ public class PeanoApigen2 {
 
   public Nat fib(Nat t) {
     %match(Nat t) {
-      y@zero        -> { return `suc(y); }
-      y@suc(zero)   -> { return `y; }
+      y@zero()      -> { return `suc(y); }
+      y@suc(zero()) -> { return `y; }
       suc(y@suc(x)) -> { return `plus(fib(x),fib(y)); }
     }
     return null;
