@@ -7,7 +7,8 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SH
 
 stabledir 	= $(top_srcdir)/stable/jtom/parser
 BOOTSOURCES	= JavaCharStream.java\
-		  TomBuffer.java
+		  TomBuffer.java\
+		  TomDollar.java
 
 generated_java  = Token.java\
 		  ParseException.java\
@@ -22,17 +23,15 @@ JAVAROOT        = ${top_builddir}/src/
 
 JAVACC          = @JAVACC@
 
-CLEANFILES 	= 
-#$(generated_java)
+CLEANFILES 	= TomDollar.java $(generated_java)
 
 $(generated_java): TomParser.jj
 	$(JAVACC) $<
 	touch Token.java ParseException.java TokenMgrError.java
 
-EXTRA_DIST 	= $(BOOTSOURCES) $(generated_java) TomParser.jj
+EXTRA_DIST 	= $(BOOTSOURCES) $(generated_java) TomParser.jj TomDollar.t
 
-#	          ASCII_UCodeESC_CharStream.static.java\
-#                  ASCII_UCodeESC_CharStream.nonstatic.java
+BUILT_SOURCES   = TomDollar.java
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)
@@ -40,3 +39,13 @@ bootinstall :
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
+
+# we use the last installed compiler to compile the current compiler
+TOMFLAGS = --noWarning --import $(top_srcdir)/src/jtom/adt
+TOM = ${prefix}/bin/jtom
+
+%.java : %.t
+	$(TOM) $(TOMFLAGS) $*
+
+%.tom.c : %.t
+	$(TOM) --cCode $(TOMFLAGS) $*

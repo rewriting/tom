@@ -186,15 +186,25 @@ public class TomGenerator extends TomBase implements TomTask {
         int size = 0;
         while(!argList.isEmpty()) {
           TomTerm elt = argList.getHead();
-          if(/* elt.isBuildVariableStar() || */ elt.isVariableStar()) {
-            out.write("tom_insert_list_" + name + "(");
-            generate(out,deep,elt);
-            out.write(",");
-          } else {
-            out.write("tom_make_insert_" + name + "(");
-            generate(out,deep,elt);
-            out.write(",");
-          }
+
+          matchBlock: {
+            %match(TomTerm elt) {
+              Composite(concTomTerm(VariableStar[])) | VariableStar[] -> {
+                out.write("tom_insert_list_" + name + "(");
+                generate(out,deep,elt);
+                out.write(",");
+                break matchBlock;
+              }
+              
+              _ -> {
+                out.write("tom_make_insert_" + name + "(");
+                generate(out,deep,elt);
+                out.write(",");
+                break matchBlock;
+              }
+            }
+          } // end matchBlock
+          
           argList = argList.getTail();
           size++;
         }
@@ -212,15 +222,25 @@ public class TomGenerator extends TomBase implements TomTask {
         TomList reverse = reverse(argList);
         while(!reverse.isEmpty()) {
           TomTerm elt = reverse.getHead();
-          if(/* elt.isBuildVariableStar() || */ elt.isVariableStar()) {
-            out.write("tom_append_array_" + name + "(");
-            generate(out,deep,elt);
-            out.write(",");
-          } else {
-            out.write("tom_make_append_" + name + "(");
-            generate(out,deep,elt);
-            out.write(",");
-          }
+
+          matchBlock: {
+            %match(TomTerm elt) {
+              Composite(concTomTerm(X1*,VariableStar[])) | VariableStar[] -> {
+                out.write("tom_append_array_" + name + "(");
+                generate(out,deep,elt);
+                out.write(",");
+                break matchBlock;
+              }
+              
+              _ -> {
+                out.write("tom_make_append_" + name + "(");
+                generate(out,deep,elt);
+                out.write(",");
+                break matchBlock;
+              }
+            }
+          } // end matchBlock
+          
           reverse = reverse.getTail();
           size++;
         }
@@ -252,6 +272,14 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
+      Composite(argList) -> {
+        while(!argList.isEmpty()) {
+          generate(out,deep,argList.getHead());
+          argList = argList.getTail();
+        }
+        return;
+      }
+      
       CompiledMatch(matchDeclarationList, namedBlockList, Option(list)) -> {
         boolean generated = hasGeneratedMatch(list);
         boolean defaultPattern = hasDefaultProd(list);

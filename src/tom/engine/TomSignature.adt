@@ -82,6 +82,7 @@ constructor(TomTerm,MakeFunctionBegin,MakeFunctionBegin(<astName(TomName)>,<subj
 constructor(TomTerm,MakeFunctionEnd,MakeFunctionEnd),
 constructor(TomTerm,Appl,Appl(<option(Option)>,<astName(TomName)>,<args(TomList)>)),
 constructor(TomTerm,DollarAppl,DollarAppl(<option(Option)>,<astName(TomName)>,<args(TomList)>)),
+constructor(TomTerm,Composite,Composite(<args(TomList)>)),
 constructor(TomTerm,RecordAppl,RecordAppl(<option(Option)>,<astName(TomName)>,<args(TomList)>)),
 constructor(TomTerm,PairSlotAppl,PairSlotAppl(<slotName(TomName)>,<appl(TomTerm)>)),
 constructor(TomTerm,Match,Match(<subjectList(TomTerm)>,<patternList(TomTerm)>,<option(Option)>)),

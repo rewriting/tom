@@ -93,6 +93,7 @@ TomTerm_MakeFunctionBeginImpl.java TomTerm_MakeFunctionBegin.java\
 TomTerm_MakeFunctionEndImpl.java TomTerm_MakeFunctionEnd.java\
 TomTerm_ApplImpl.java TomTerm_Appl.java\
 TomTerm_DollarApplImpl.java TomTerm_DollarAppl.java\
+TomTerm_CompositeImpl.java TomTerm_Composite.java\
 TomTerm_RecordApplImpl.java TomTerm_RecordAppl.java\
 TomTerm_PairSlotApplImpl.java TomTerm_PairSlotAppl.java\
 TomTerm_MatchImpl.java TomTerm_Match.java\
@@ -101,10 +102,10 @@ TomTerm_EqualityConditionImpl.java TomTerm_EqualityCondition.java\
 TomTerm_RuleSetImpl.java TomTerm_RuleSet.java\
 TomTerm_SubjectListImpl.java TomTerm_SubjectList.java\
 TomTerm_PatternListImpl.java TomTerm_PatternList.java\
-TomTerm_TermListImpl.java TomTerm_TermList.java\
-TomTerm_TermImpl.java TomTerm_Term.java
+TomTerm_TermListImpl.java TomTerm_TermList.java
 
 TomSignatureAPI2=\
+TomTerm_TermImpl.java TomTerm_Term.java\
 TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
 TomTerm_DefaultPatternActionImpl.java TomTerm_DefaultPatternAction.java\
 TomTerm_TLVarImpl.java TomTerm_TLVar.java\
@@ -153,10 +154,10 @@ Instruction_ExitActionImpl.java Instruction_ExitAction.java\
 Instruction_ReturnImpl.java Instruction_Return.java\
 Instruction_OpenBlockImpl.java Instruction_OpenBlock.java\
 Instruction_CloseBlockImpl.java Instruction_CloseBlock.java\
-Instruction_NamedBlockImpl.java Instruction_NamedBlock.java\
-TomSymbol.java TomSymbolImpl.java
+Instruction_NamedBlockImpl.java Instruction_NamedBlock.java
 
 TomSignatureAPI3=\
+TomSymbol.java TomSymbolImpl.java\
 TomSymbol_SymbolImpl.java TomSymbol_Symbol.java\
 PairNameDecl.java PairNameDeclImpl.java\
 PairNameDecl_SlotImpl.java PairNameDecl_Slot.java\

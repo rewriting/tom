@@ -48,6 +48,7 @@ public class TomParser implements TomTask {
   private SymbolTable symbolTable;
   private Statistics stat;
   private jtom.TomEnvironment environment;
+  private TomDollar tomDollar;
   private File importList[];
   private HashSet includedFiles = new HashSet();
   private String currentFile;
@@ -67,6 +68,7 @@ public class TomParser implements TomTask {
     this.orgTrack = makePosition(1,1);
     this.currentFile = fileName;
     this.debuggedStructureList = new ArrayList();
+    this.tomDollar = new TomDollar(environment);
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
@@ -219,7 +221,7 @@ TOKEN :
   | < RULE:                "%rule" > : TOM
   | < MAKE_TERM:           "%make" > : TOM
   | < BACKQUOTE_TERM:      "`" > : TOM
-  | < DOLLAR_TERM:         "$`" > : TOM
+  | < DOLLAR_TERM:         "$" > : TOM
   | < BACKQUOTE_XML:       "``" > : TOM
   | < VARIABLE:            "%variable" > : TOM
   | < TYPE:                "%type" > : TOM
@@ -397,7 +399,7 @@ TOKEN :
 | < TOM_GET_ELEMENT: "get_element" >
 | < TOM_GET_SIZE:    "get_size" >
 | < TOM_INTEGER: <TOM_DIGIT> (<TOM_DIGIT>)* >
-| < TOM_IDENTIFIER: <TOM_LETTER> (<TOM_LETTER>|<TOM_DIGIT>|<TOM_DOT>|<TOM_UNDERSCORE>|<TOM_MINUS>)* >
+| < TOM_IDENTIFIER: <TOM_LETTER> (<TOM_LETTER>|<TOM_DIGIT>|<TOM_UNDERSCORE>|<TOM_MINUS>)* >
 | < TOM_DOUBLE:
         (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
       | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
@@ -821,6 +823,7 @@ void DollarTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
 }
 {
   <BACKQUOTE_TERM> /* switch to TOM mode */
+       //<DOLLAR_TERM> /* switch to TOM mode */
     {
       addPreviousCode(list);
       orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
@@ -839,8 +842,8 @@ void DollarTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
       }
 
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      term = ast().buildBackQuoteTerm(tokenList);
-        //list.add(tsf().makeTomTerm_BackQuoteTerm(term,orgTrack));
+        //term = ast().buildBackQuoteTerm(tokenList);
+      term = tomDollar.buildDollarTerm(tokenList);
       list.add(term);
     }
 }
@@ -1172,6 +1175,8 @@ void LocalVariableConstruct(ArrayList list) throws TomException: /* in DEFAULT m
 void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode */
 {
   Token fileName;
+  Token fileExt = null;
+  String fullFileName = "";
   TomTerm astTom;
   InputStream input;
   File file;
@@ -1183,15 +1188,20 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
     {
       addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     }
-  <TOM_LBRACE> fileName = <TOM_IDENTIFIER> <TOM_RBRACE>
+  <TOM_LBRACE> fileName = <TOM_IDENTIFIER> [ <TOM_DOT> fileExt = <TOM_IDENTIFIER> ]  <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
     try {
-      file = new File(fileName.image);
+      fullFileName = fileName.image;
+      if(fileExt != null) {
+        fullFileName += "." + fileExt.image;
+      }
+      
+      file = new File(fullFileName);
       if(!file.exists()) {
         boolean found = false;
         for(int i=0 ; !found && i<importList.length ; i++) {
-          file = new File(importList[i],fileName.image);
+          file = new File(importList[i],fullFileName);
           found = file.exists();
         }
       }
@@ -1201,7 +1211,7 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
       input       = new FileInputStream(file);
       input.read(inputBuffer);
       
-      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName.image);
+      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fullFileName);
       astTom = tomParser.startParsing();
       astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
       list.add(astTom);
@@ -1211,7 +1221,7 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
         //includeList = includeList.getTail();
         //}
     } catch (FileNotFoundException e1) {
-      throw new TomException("Included file " + fileName.image + " not found at line "+getLine());
+      throw new TomException("Included file " + fullFileName + " not found at line "+getLine());
     }  catch (java.io.IOException e2) {
       e2.printStackTrace();
       return;
