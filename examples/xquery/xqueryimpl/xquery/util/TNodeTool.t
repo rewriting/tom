@@ -30,10 +30,11 @@ public class TNodeTool {
 		{ 
 		  try {
 			if(t instanceof TNode) { 
-			  TNode tnode=(TNode)t; 
+			  //			  TNode tnode=(TNode)t; 
 			  
-			  if (tester.doTest(tnode)) {
-				sequence.addAll(qualifier.qualify(tnode));
+			  Object newNode = tester.doTest(t);
+			  if (newNode !=null) {
+				sequence.addAll(qualifier.qualify(newNode));
 				return true;
 			  }
 			} 
@@ -89,8 +90,9 @@ public class TNodeTool {
 	  Sequence seq=new Sequence(); 
 	  %match (TNode subject) {
 		<_></_> -> {
-		   if (tester.doTest(subject)) {
-			 seq.addAll(qualifier.qualify(subject));
+		   Object newNode = tester.doTest(subject);
+		   if (tester.doTest(newNode)) {
+			 seq.addAll(qualifier.qualify(newNode));
 		   }
 		 }
 	  }
