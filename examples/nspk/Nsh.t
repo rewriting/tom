@@ -7,24 +7,26 @@ public class Nsh {
 
   private TermFactory factory;
   private GenericTraversal traversal;
-
   
   %include { term.t }
 
   %oplist ATermList concAgent( Agent* ) {
-    fsym { factory.makeAFun("conc", 1, false) }
+    fsym { null }
+    is_fsym(t) { (t instanceof ATermList) }
     make_empty()  { factory.makeList() }
     make_insert(e,l) { l.insert(e) }
   }
    
   %oplist ATermList concMessage( Message* ) {
-    fsym { factory.makeAFun("conc", 1, false) }
+    fsym { null }
+    is_fsym(t) { (t instanceof ATermList) }
     make_empty()  { factory.makeList() }
     make_insert(e,l) { l.insert(e) }
   }
 
   %oplist ATermList concNonce( Nonce* ) {
-    fsym { factory.makeAFun("conc", 1, false) }
+    fsym { null }
+    is_fsym(t) { (t instanceof ATermList) }
     make_empty()  { factory.makeList() }
     make_insert(e,l) { l.insert(e) }
   }
@@ -38,28 +40,12 @@ public class Nsh {
     return factory;
   }
   
-  public void run(int size) {
-
-      // A+SLEEP+N(A,A) * nnl <> B+SLEEP+N(B,B) * nnl <> II#nl#nill <> nill   end
-    State initState1 = `state(
-      concAgent(agent(alice,SLEEP,N(alice,alice))),
-      concAgent(agent(bob,SLEEP,N(bob,bob))),
-      intruder(devil,concNonce(),concMessage()),
-      concMessage());
-
-      // a+SLEEP+N(a,a) * e+SLEEP+N(e,e) * nnl <> b+SLEEP+N(b,b) * d+SLEEP+N(d,d) * nnl <> II#nl#nill <> nill	end
-    State initState2 = `state(
-      concAgent( agent(a,SLEEP,N(a,a)),agent(e,SLEEP,N(e,e)) ),
-      concAgent( agent(b,SLEEP,N(b,b)),agent(d,SLEEP,N(d,d)) ),
-      intruder(devil,concNonce(),concMessage()),
-      concMessage());
-    
-    State initState3 = query(2,2);
-    State initState = query(1,1);
+  public void run(int nbAgent) {
+    State initState = query(nbAgent,nbAgent);
     State search    = `ATTACK();
 
     long startChrono = System.currentTimeMillis();
-    boolean res = reach2(initState3,search);
+    boolean res      = depthSearch(initState,search);
     long stopChrono = System.currentTimeMillis();
 
     System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
@@ -82,7 +68,7 @@ public class Nsh {
     return state;
   }
   
-  public boolean reach(State start, State end) {
+  public boolean breadthSearch(State start, State end) {
     Collection c1 = new HashSet();
     c1.add(start);
 
@@ -94,12 +80,14 @@ public class Nsh {
         collectOneStep((State)it.next(),c2);
       }
 
+      c1.removeAll(result);
+      result.addAll(c1);
+            
       System.out.print("iteration " + i + ":");
       System.out.print("\tc2.size = " + c2.size());
       System.out.println();
       c1.clear();
       c1 = c2;
-      
       if(c2.contains(end)) {
         return true;
       }
@@ -108,10 +96,14 @@ public class Nsh {
     return false;
   }
 
-  public boolean reach2(State start, State end) {
+  Collection result = new HashSet();
+  public boolean depthSearch(State start, State end) {
     Collection c1 = new HashSet();
     collectOneStep(start,c1);
-
+    c1.removeAll(result);
+    result.addAll(c1);
+    System.out.println("result.size = " + result.size());
+    
     if(c1.size() > 0) {
         //System.out.println("c1.size = " + c1.size());
     } else {
@@ -125,7 +117,7 @@ public class Nsh {
 
     Iterator it = c1.iterator();
     while(it.hasNext()) {
-      boolean b = reach2((State)it.next(),end);
+      boolean b = depthSearch((State)it.next(),end);
       if(b) return b;
     }
     return false;
@@ -450,25 +442,25 @@ public class Nsh {
 
   
   private static int MaxMessagesInNetwork = 1;
-  private static boolean authVerif = false;
+  private static boolean authVerif = true;
   private static int fire[] = new int[20];
 
   public final static void main(String[] args) {
     Nsh test = new Nsh(new TermFactory(16));
-    int size = 1;
+    int nbAgent = 1;
     try {
-      MaxMessagesInNetwork = Integer.parseInt(args[0]);
+      nbAgent = Integer.parseInt(args[0]);
+      MaxMessagesInNetwork = Integer.parseInt(args[1]);
     } catch (Exception e) {
-      System.out.println("Usage: java Nsh <size>");
+      System.out.println("Usage: java Nsh <nbAgent> <maxMsg>");
       return;
     }
-    
-    test.run(size);
+
+    test.run(nbAgent);
 
       //for(int i=1 ; i<15 ; i++) {
       //System.out.println("fire[" + i + "] = " + fire[i]);
       //}
-
     
   }
 
