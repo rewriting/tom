@@ -25,9 +25,7 @@
 
 package jtom.compiler;
   
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 import jtom.adt.tomsignature.types.*;
 
@@ -361,7 +359,7 @@ public class TomCompiler extends TomTask {
   }
   
   private TomTerm renameVariable(TomTerm subject,
-                                 HashMap multiplicityMap,
+                                 Map multiplicityMap,
                                  ArrayList equalityCheck) {
     TomTerm renamedTerm = subject;
     
@@ -434,7 +432,7 @@ public class TomCompiler extends TomTask {
   }
 
   private OptionList renameVariableInOptionList(OptionList optionList,
-                                                HashMap multiplicityMap,
+                                                Map multiplicityMap,
                                                 ArrayList equalityCheck) {
     ArrayList list = new ArrayList();
     while(!optionList.isEmpty()) {
@@ -453,24 +451,7 @@ public class TomCompiler extends TomTask {
 
   
   private TomList linearizePattern(TomList subject, ArrayList equalityCheck) {
-    
-      // collect variables
-    ArrayList variableList = new ArrayList();
-    collectVariable(variableList,`PatternList(subject));
-    
-      // compute multiplicities
-    HashMap multiplicityMap = new HashMap();
-    Iterator it = variableList.iterator();
-    while(it.hasNext()) {
-      TomTerm variable = (TomTerm)it.next();
-      TomName name = variable.getAstName();
-      if(multiplicityMap.containsKey(name)) {
-        Integer value = (Integer)multiplicityMap.get(name);
-        multiplicityMap.put(name, new Integer(1+value.intValue()));
-      } else {
-        multiplicityMap.put(name, new Integer(1));
-      }
-    }
+    Map multiplicityMap = collectMultiplicity(subject);
     
       // perform the renaming and generate equality checks
     TomList newList = empty();

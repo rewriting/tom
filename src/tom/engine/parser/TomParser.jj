@@ -207,7 +207,6 @@ public class TomParser extends TomTask {
   private void addPreviousCode(LinkedList list) {
     String code = savePosAndExtract();
     String pureCode = code.replace('\t', ' ');
-    //pureCode = pureCode.replace('\n', ' ');
     if(pureCode.matches("\\s*")) {
       return;
     }
@@ -1237,43 +1236,68 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
 }
 {
   <BACKQUOTE_TERM> /* switch to TOM mode */
-  { addPreviousCode(list); }
+  {
+    addPreviousCode(list);
+    firstTokenLine = getLine();
+    orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
+  }
      [ backQuote = <TOM_BACKQUOTE> ]
+
+    (
+      tk=<TOM_LPAREN> { tokenList.add(tk); parenLevel++; backQuoteMode = true; }
+    | tk=<TOM_IDENTIFIER> { tokenList.add(tk);
+                            tokenToDecLineMap.put(tk, new Integer(getLine())); }
+    )
     {
-      firstTokenLine = getLine();
-      orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
-      backQuoteMode = true;
-      while(backQuoteMode) {
-        try {
-          tk = getNextToken();
-        } catch (TokenMgrError error) {
-          throw new TomException("Invalide backquote term started line "+firstTokenLine+": EOF encountered ");
-        }
-        tokenList.add(tk);
-        if(tk.kind == TOM_LPAREN) { 
-          parenLevel++;
-        } else if(tk.kind == TOM_RPAREN) {
-          parenLevel--;
-          if(parenLevel==0) {
-            backQuoteMode = false;
+
+      try {
+        if(backQuoteMode || getToken(1).kind == TOM_LPAREN) {
+          backQuoteMode = true;
+          while(backQuoteMode) {
+            tk = getNextToken();
+              //System.out.println("tk = " + tk.image);
+            tokenList.add(tk);
+            lastTokenLine = getLine();
+            if(tk.kind == TOM_LPAREN) { 
+              parenLevel++;
+            } else if(tk.kind == TOM_RPAREN) {
+              parenLevel--;
+              if(parenLevel==0) {
+                backQuoteMode = false;
+              }
+            } else if (tk.kind == TOM_IDENTIFIER) {
+              tokenToDecLineMap.put(tk, new Integer(lastTokenLine));
+            }
           }
-        } else if (tk.kind == TOM_IDENTIFIER) {
-          tokenToDecLineMap.put(tk, new Integer(getLine()));
+          term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
+                
+          if(term.isComposite() && term.getArgs().isSingle()) {
+            TomTerm backQuoteTerm = term.getArgs().getHead(); 
+            if(backQuoteTerm.getAstName().getString().equals("xml")) {
+              TomList args = backQuoteTerm.getArgs();
+              term = tsf().makeTomTerm_DoubleBackQuote(args);
+            } 
+          } 
+          list.add(term);
+        } else {
+          term = tomBackQuoteParser.buildBackQuoteAppl(tk.image,lastTokenLine,currentFile);
+          list.add(term);
+            /*
+             * we have reconized a variable, but an extra token has been read in Tom mode
+             * this token cannot be pushed back by the parser
+             * this is why we add it to the list
+             */
+          tk = getNextToken();
+          list.add(makeTL(tk.image));
+            //System.out.println("coucou");
+            //System.out.println("*** tk = " + tk.image + " " + tk.kind);
+            //addPreviousCode(list);
         }
-        lastTokenLine = getLine();
-      }
+      } catch (TokenMgrError error) {
+        throw new TomException("Invalid backquote term started line "+firstTokenLine+": EOF encountered ");
+      }  
+
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      //term = ast().buildBackQuoteTerm(tokenList);
-      term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
-      
-      if(term.isComposite() && term.getArgs().isSingle()) {
-        TomTerm backQuoteTerm = term.getArgs().getHead(); 
-        if(backQuoteTerm.getAstName().getString().equals("xml")) {
-          TomList args = backQuoteTerm.getArgs();
-          term = tsf().makeTomTerm_DoubleBackQuote(args);
-        } 
-      } 
-      list.add(term);
     }
  }
 

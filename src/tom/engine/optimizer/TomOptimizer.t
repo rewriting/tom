@@ -3,7 +3,7 @@
     TOM - To One Matching Compiler
 
     Copyright (C) 2000-2004 INRIA
-			            Nancy, France.
+                  Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,9 +32,10 @@ import java.util.*;
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
 import jtom.tools.TomTask;
-import jtom.runtime.Collect1;
+import jtom.checker.TomCheckerMessage;
 import jtom.xml.Constants;
 import jtom.exception.*;
+import jtom.runtime.*;
 
 public class TomOptimizer extends TomTask {
 	
@@ -69,8 +70,136 @@ public class TomOptimizer extends TomTask {
     }
   }
 
+    /* 
+     * optimize:
+     * remove variables which are only assigned once (but not used)
+     * inline variables which are used only once
+     */
+
+  Replace1 replace_optimize = new Replace1() {
+      public ATerm apply(ATerm subject) {
+        
+        if(subject instanceof TomTerm) {
+          %match(TomTerm subject) {
+            ExpressionToTomTerm(TomTermToExpression(t)) -> {
+              return optimize(t);
+            }
+          }
+        } else if(subject instanceof Expression) {
+          %match(Expression subject) {
+            TomTermToExpression(ExpressionToTomTerm(t)) -> {
+              return optimizeExpression(t);
+            }
+          }
+        } else if(subject instanceof Instruction) {
+          %match(Instruction subject) {
+            
+            Let(var@Variable[astName=name],exp,body) |
+            Let(var@VariableStar[astName=name],exp,body) -> {
+              List list  = computeOccurences(name,body);
+              int mult = list.size();
+              System.out.println(name + " --> " + mult);
+
+              if(mult == 0) {
+                Option orgTrack = findOriginTracking(var.getOption());
+                messageError(orgTrack.getLine(),
+                             orgTrack.getFileName().getString(),
+                             orgTrack.getAstName().getString(),
+                             orgTrack.getLine(),
+                             "Variable `{0}` is never used",
+                             new Object[]{name},
+                             TomCheckerMessage.TOM_WARNING);
+                return optimizeInstruction(body);
+              } else if(mult == 1) {
+                return optimizeInstruction(inlineInstruction(var,exp,body));
+              } else {
+                  /* do nothing: traversal */
+              }
+            }
+
+          } // end match
+        } // end instanceof Instruction
+
+          /*
+           * Defaul case: traversal
+           */
+        return traversal().genericTraversal(subject,this);
+      } // end apply
+    };
+
+
   public TomTerm optimize(TomTerm subject) {
-    return subject;
+    return (TomTerm) replace_optimize.apply(subject); 
+  }
+  
+  public Instruction optimizeInstruction(Instruction subject) {
+    return (Instruction) replace_optimize.apply(subject); 
   }
 
+  public Expression optimizeExpression(Expression subject) {
+    return (Expression) replace_optimize.apply(subject); 
+  }
+
+    /* 
+     * inline:
+     * replace a variable instantiation by its content in the body
+     */
+
+  Replace3 replace_inline = new Replace3() {
+      public ATerm apply(ATerm subject, Object arg1, Object arg2) {
+        TomTerm variable = (TomTerm) arg1;
+        TomName variableName = variable.getAstName();
+        Expression expression = (Expression) arg2;
+        if(subject instanceof TomTerm) {
+          %match(TomTerm subject) { 
+            Variable[astName=name] |
+            VariableStar[astName=name] |
+            BuildVariable[astName=name] -> {
+              if(variableName == name) {
+                return `ExpressionToTomTerm(expression);
+              }
+            }
+          } // end match
+        } // end instanceof TomTerm
+
+          /*
+           * Defaul case: traversal
+           */
+        return traversal().genericTraversal(subject,this,arg1,arg2);
+      } // end apply
+    };
+
+
+  public Instruction inlineInstruction(TomTerm variable, Expression expression,
+                                       Instruction subject) {
+    return (Instruction) replace_inline.apply(subject,variable,expression); 
+  }
+
+  private List computeOccurences(final TomName variableName, ATerm subject) {
+    final List list = new ArrayList();
+    Collect1 collect = new Collect1() { 
+        public boolean apply(ATerm t) {
+          if(t instanceof TomTerm) {
+            %match(TomTerm t) { 
+              Variable[astName=name] |
+              VariableStar[astName=name] |
+              BuildVariable[astName=name] -> {
+                if(variableName == name) {
+                  list.add(t);
+                  return false;
+                }
+              }
+              
+              _ -> { return true; }
+            }
+          } else {
+            return true;
+          }
+        } // end apply
+      }; // end new
+    
+    traversal().genericCollect(subject, collect);
+    return list;
+  }
+    
 }  //Class TomOptimizer

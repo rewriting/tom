@@ -175,7 +175,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     LinkedList accu = new LinkedList();
     Stack stackName = new Stack();
     Stack stackList = new Stack();
-		Stack stackOption = new Stack();
+    Stack stackOption = new Stack();
 
     stackList.push(`concTomTerm(Composite(concTomTerm())));
 
@@ -214,9 +214,8 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
           }
           
           IDENT(name), _ -> {
-            OptionList option = `concOption(OriginTracking(Name(name), ((Integer)nameToDecLineMap.get(token)).intValue(), Name(currentFileName)));
-            addToLastComposite(stackList, `BackQuoteAppl(option,Name(name),concTomTerm()));
-              //concTomTerm(Composite(concTomTerm()))));
+            addToLastComposite(stackList,buildBackQuoteAppl(name,((Integer)nameToDecLineMap.get(token)).intValue(),currentFileName));
+            
             break matchBlock;
           }
           
@@ -260,4 +259,9 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     return term;
   }
 
+  public TomTerm buildBackQuoteAppl(String symbolName, int line, String fileName) {
+    OptionList option = `concOption(OriginTracking(Name(symbolName), line, Name(fileName)));
+    return `BackQuoteAppl(option,Name(symbolName),concTomTerm());
+  }
+  
 } //class TomBackQuoteParser

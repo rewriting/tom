@@ -65,18 +65,21 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     return;
   }
 	
-	protected void buildList(int deep, String name, TomList argList) throws IOException {
+  protected void buildList(int deep, String name, TomList argList) throws IOException {
     TomSymbol tomSymbol = symbolTable().getSymbol(name);
     String listType = getTLType(getSymbolCodomain(tomSymbol));
     int size = 0;
     while(!argList.isEmpty()) {
       TomTerm elt = argList.getHead();
-      
+
       matchBlock: {
         %match(TomTerm elt) {
-          Composite(concTomTerm(VariableStar[])) | VariableStar[] |
+          VariableStar[] |
+          Composite(concTomTerm(VariableStar[])) |  
           Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
-          Composite(concTomTerm(Variable[])) -> {
+          Composite(concTomTerm(Variable[])) |
+          Composite(concTomTerm(Ref(Variable[]))) 
+            -> {
             output.write("tom_insert_list_" + name + "(");
             generate(deep,elt);
             output.write(",");

@@ -422,6 +422,26 @@ public class TomBase {
     traversal().genericCollect(subject, collect);
   }
 
+  protected Map collectMultiplicity(ATerm subject) {
+      // collect variables
+    ArrayList variableList = new ArrayList();
+    collectVariable(variableList,subject);
+      // compute multiplicities
+    HashMap multiplicityMap = new HashMap();
+    Iterator it = variableList.iterator();
+    while(it.hasNext()) {
+      TomTerm variable = (TomTerm)it.next();
+      TomName name = variable.getAstName();
+      if(multiplicityMap.containsKey(name)) {
+        Integer value = (Integer)multiplicityMap.get(name);
+        multiplicityMap.put(name, new Integer(1+value.intValue()));
+      } else {
+        multiplicityMap.put(name, new Integer(1));
+      }
+    }
+    return multiplicityMap;
+  }
+  
   protected boolean isAnnotedVariable(TomTerm t) {
     %match(TomTerm t) {
       Appl[option=optionList] |
@@ -563,5 +583,5 @@ public class TomBase {
     System.out.println("findOriginTracking:  not found" + optionList);
     throw new TomRuntimeException(new Throwable("findOriginTracking:  not found" + optionList));
   }
-
+  
 }
