@@ -80,7 +80,7 @@ public class Tom {
   List inputFileList;
   
   private static String version =
-    "\njtom 2.0rc2\n"
+    "\njtom 2.0rc3\n"
     + "\n"
     + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n";
   
