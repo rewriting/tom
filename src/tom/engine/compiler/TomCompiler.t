@@ -68,7 +68,6 @@ public class TomCompiler extends TomTask {
       
       TomTerm preCompiledTerm = preProcessing(getInput().getTerm());
       TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
-      compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
       
       if(verbose) {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
@@ -531,4 +530,4 @@ public class TomCompiler extends TomTask {
     return newList;
   }
   
-  } //class TomCompiler
+} //class TomCompiler

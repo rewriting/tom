@@ -6,7 +6,7 @@ TSADT_STABLE=$(top_srcdir)/stable/adt/TomSignature-${VERSION}.jar
 SETADT_STABLE=$(top_srcdir)/stable/adt/Set-${VERSION}.jar
 TNODEADT_STABLE=$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
 
-SUBDIRS = tools exception parser checker compiler backend runtime debug xml
+SUBDIRS = tools exception parser checker compiler backend runtime debug xml verifier
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(TSADT_STABLE):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 javadir         = ${prefix}/classes/jtom
