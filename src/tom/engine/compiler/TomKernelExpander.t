@@ -107,11 +107,11 @@ public class TomKernelExpander extends TomBase {
             if(tomSymbol != null) {
               TomList subterm = expandVariableList(tomSymbol, l);
               ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),constraints);
-              System.out.println("newConstraints1.1 = " + newConstraints);
+              //System.out.println("newConstraints1.1 = " + newConstraints);
               return `Appl(option,nameList,subterm,newConstraints);
             } else {
               ConstraintList newConstraints = expandVariableConstraintList(`emptyTerm(),constraints);
-              System.out.println("newConstraints1.2 = " + newConstraints);
+              //System.out.println("newConstraints1.2 = " + newConstraints);
 
               if(l.isEmpty()  && !hasConstructor(option)) {
                 return `Variable(option,nameList.getHead(),type,newConstraints);
@@ -136,7 +136,7 @@ public class TomKernelExpander extends TomBase {
             }
             
             ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type1),constraints);
-            System.out.println("newConstraints2.1 = " + newConstraints);
+            //System.out.println("newConstraints2.1 = " + newConstraints);
             if(tomSymbol != null) {
               TomList subterm = expandVariableList(tomSymbol, l);
               return `Appl(option,nameList,subterm,newConstraints);

@@ -484,6 +484,13 @@ public class TomBase {
     return null;
   }
   
+  protected TomTerm getAssignToVariable(ConstraintList constraintList) {
+    %match(ConstraintList constraintList) {
+      concConstraint(_*,var@Variable[],_*) -> { return `var; }
+    }
+    return null;
+  }
+
   protected Declaration getIsFsymDecl(OptionList optionList) {
     %match(OptionList optionList) {
       concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*) -> { return `decl; }

@@ -164,7 +164,7 @@ constructor(TomEntry,Entry,Entry(<strName(str)>,<astSymbol(TomSymbol)>)),
 constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>)),
 constructor(TomError,Error,Error(<message(str)>,<file(str)>,<line(int)>,<level(int)>)),
 
-constructor(Constraint,Equal,Equal(<kid(TomTerm)>)),
+constructor(Constraint,Equal,Equal(<variable(TomTerm)>)),
 constructor(Constraint,AssignTo,AssignTo(<variable(TomTerm)>)),
 
 list(TomList,TomTerm),

@@ -244,14 +244,14 @@ public class TomKernelCompiler extends TomBase {
         return buildLet(var, source, subAction);
       }
       
-      manyTomList(currentTerm@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs],termTail) -> {
+      manyTomList(currentTerm@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs,constraints=constraints],termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         
         // SUCCES
-        TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType,concConstraint());
+        TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType,constraints);
         Instruction automataInstruction;
         if(isListOperator(tomSymbol)) {
           /*
@@ -295,7 +295,9 @@ public class TomKernelCompiler extends TomBase {
         if(annotedVariable != null) {
           automataInstruction = buildLet(annotedVariable,`TomTermToExpression(subjectVariableAST),automataInstruction);
         }
-        
+
+        automataInstruction = compileConstraint(subjectVariableAST,automataInstruction);
+
         Expression cond = `expandDisjunction(EqualFunctionSymbol(termType,subjectVariableAST,currentTerm));
         Instruction test = `IfThenElse(cond,automataInstruction,Nop());
         return test;
@@ -637,35 +639,51 @@ public class TomKernelCompiler extends TomBase {
       body = buildLet(annotedVariable,source,body);
     }
 		// Take care of constraints
-		%match(TomTerm dest) {
-			var@(Variable|VariableStar)[constraints=conslist] -> {
-				body = buildConstraint(conslist,dest,body);
-				dest = var.setConstraints(`concConstraint());
-      }
-		}
+    body = compileConstraint(dest,body);
 		return `Let(dest,source,body);
   }
 
-	private Instruction buildConstraint(ConstraintList constr, TomTerm var, Instruction body) {
-		if (constr.isEmpty()) { return body; }
-		Expression cond = contraintToExpression(constr.getHead(),var);
-		constr = constr.getTail();
-		while (!constr.isEmpty()) {
-			cond = `And(cond,contraintToExpression(constr.getHead(),var));
-			constr = constr.getTail();
-		}	
-		body = `IfThenElse(cond,body,Nop());
-		return body;
+	private Instruction compileConstraint(TomTerm subject, Instruction body) {
+    %match(TomTerm subject) {
+      (Variable|VariableStar)[constraints=constraints] -> {
+				return buildConstraint(constraints,subject,body);
+      }
+
+      Appl[constraints=constraints] -> {
+				return buildConstraint(constraints,subject,body);
+      }
+
+      _ -> {
+        throw new TomRuntimeException(new Throwable("compileConstraint: strange subject: " + subject));
+      }
+    }
+  }
+
+	private Instruction buildConstraint(ConstraintList constraints, TomTerm term, Instruction body) {
+    %match(ConstraintList constraints) {
+      concConstraint() -> {
+        return body;
+      }
+
+      concConstraint(Equal(var) ,tail*) -> {
+        System.out.println("buildConstraint " + term);
+        System.out.println("EqualTo " + var);
+        return `buildConstraint(tail,term,IfThenElse(EqualTerm(term,var),body,Nop()));
+      }
+
+      concConstraint(AssignTo(var) ,tail*) -> {
+        System.out.println("buildConstraint " + term);
+        System.out.println("AssignTo " + var);
+        return `buildConstraint(tail,term,buildLet(var,TomTermToExpression(term),body));
+      }
+
+      concConstraint(head,tail*) -> {
+        throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraint: " + head));
+      }
+    }
+    throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraints: " + constraints));
 	}
 
-private Expression contraintToExpression(Constraint constr, TomTerm var) {
-	%match(Constraint constr) {
-		Equal(expr) -> {
-			return `EqualTerm(var,expr);
-		}
-	}
-	return `TrueTL();
-}
 
   private class MatchingParameter {
       /*

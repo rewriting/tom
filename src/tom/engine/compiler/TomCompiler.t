@@ -438,7 +438,7 @@ public class TomCompiler extends TomTask {
 				return renamedTerm;
 			}
 
-      Appl[option=optionList, nameList=nameList, args=arguments] -> {
+      Appl[option=optionList, nameList=nameList, args=arguments, constraints=constraints] -> {
         TomList args = `arguments;
         TomList newArgs = empty();
         while(!args.isEmpty()) {
@@ -448,7 +448,7 @@ public class TomCompiler extends TomTask {
           args = args.getTail();
         }
         OptionList newOptionList = renameVariableInOptionList(`optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        renamedTerm = `Appl(newOptionList,nameList,newArgs,concConstraint());
+        renamedTerm = `Appl(newOptionList,nameList,newArgs,constraints);
         return renamedTerm;
       }
     }
@@ -502,7 +502,7 @@ public class TomCompiler extends TomTask {
                                   ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(TomTerm subject) {
-      Appl[option=option, nameList=nameList@(Name(tomName),_*), args=arguments] -> {
+      Appl[option=option, nameList=nameList@(Name(tomName),_*), args=arguments, constraints=constraints] -> {
         TomList args = `arguments;
         TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         
@@ -544,7 +544,7 @@ public class TomCompiler extends TomTask {
         } else {
           newArgs = abstractPatternList(args,abstractedPattern,introducedVariable);
         }
-        abstractedTerm = `Appl(option,nameList,newArgs,concConstraint());
+        abstractedTerm = `Appl(option,nameList,newArgs,constraints);
       }
     } // end match
     return abstractedTerm;
