@@ -1382,59 +1382,36 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
       try{
         Method getInstanceMethod = null, initMethod = null, runMethod = null;
         Class vasClass = Class.forName("vas.Vas");
-        Method methlist[] = vasClass.getDeclaredMethods();
+				Method methlist[] = vasClass.getDeclaredMethods();
         for (int i = 0; i < methlist.length; i++) {  
           Method m = methlist[i];
           if(m.getName().equals("getInstance")) {
             getInstanceMethod = m;
-          } else if (m.getName().equals("run")) {
-            runMethod = m;
           } else if (m.getName().equals("init")) {
             initMethod = m;
+					}	else if (m.getName().equals("run")) {
+            runMethod = m; 
           }
         }
+				Object vasInstance = getInstanceMethod.invoke(vasClass, new Class[]{});
         
-        Object vasInstance = getInstanceMethod.invoke(vasClass, new Class[]{});
-        String destDir = getInput().getOutputFile().getParent();
-        String[] params = new String[] {"-d", destDir};
-        Object[] realParams = {params};
-        initMethod.invoke(vasInstance, realParams);
-        Object[] realParams2 =  {new ByteArrayInputStream(vasCode.getBytes())};
+				ArrayList vasParams = new ArrayList();
+				vasParams.add("--destdir");
+        String destDir = getInput().getDestDir().getPath();
+				vasParams.add(destDir);
+				packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
+        if(!packageName.equals("")) {
+          vasParams.add("--package");
+          vasParams.add(packageName);
+        }
+				Object[] realParams = {(String[]) vasParams.toArray(new String[vasParams.size()])};
+				initMethod.invoke(vasInstance, realParams);
+        Object[] realParams2 =  {new ByteArrayInputStream(vasCode.getBytes()), "Vas from tom file:"+currentFile};
         generatedADTName = runMethod.invoke(vasInstance, realParams2);
       } catch (ClassNotFoundException e) {
         throw new TomException(TomMessage.getString("VasClassNotFound"));
       } catch (Exception e) {
         throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
-      }
-        // Generated API and Tom File from generated ADT file
-      try{
-        if(getInput().isJCode() && generatedADTName != null) {
-          Method mainMethod = null;
-          Class apigenClass = Class.forName("apigen.gen.tom.java.Main");
-          mainMethod  = apigenClass.getMethod("main", new Class[]{(new String[]{}).getClass()});
-          String inputFileName = new File((String)generatedADTName).getName();
-          apiName = inputFileName.substring(0, inputFileName.length() - ".adt".length());
-          packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
-          
-          ArrayList apigenParamList = new ArrayList();
-          apigenParamList.add("--input");
-          apigenParamList.add((String)generatedADTName);
-          apigenParamList.add("--outputdir");
-          apigenParamList.add(getInput().getDestDir().getPath());
-          apigenParamList.add("--name");
-          apigenParamList.add(apiName);
-          apigenParamList.add("--nojar");
-          apigenParamList.add("--javagen");
-          if(!packageName.equals("")) {
-            apigenParamList.add("--package");
-            apigenParamList.add(packageName);
-          }
-          mainMethod.invoke(apigenClass, new Object[]{apigenParamList.toArray(new String[]{})});
-        }
-      } catch (ClassNotFoundException e) {
-        throw new TomException(TomMessage.getString("ApigenClassNotFound"));
-      } catch (Exception e) {
-        throw new TomException(MessageFormat.format(TomMessage.getString("ApigenInvocationIssue"), new Object[]{e.getMessage()}));
       }
 
         // Simulate the inclusion of generated Tom file
