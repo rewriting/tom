@@ -12,7 +12,7 @@ BOOTSOURCES	= GenericTraversal.java\
 		  Replace.java Replace1.java Replace2.java Replace3.java
 
 java_JAVA       = $(BOOTSOURCES)
-EXTRA_DIST      = $(BOOTSOURCES)
+EXTRA_DIST      = $(BOOTSOURCES) concurrent.jar
 JAVAROOT        = ${top_builddir}/src/
 
 bootinstall :
