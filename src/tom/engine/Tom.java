@@ -49,7 +49,7 @@ import aterm.ATerm;
 
 
 public class Tom {
-  private TomTask initialTask;
+  private TomTask initialTask = null;
   private TomTaskInput taskInput;
   
   private TomParser tomParser;
@@ -63,9 +63,9 @@ public class Tom {
   private TomGenerator generator;
   
   private static String version =
-  "\njtom 1.3gamma\n" +
-  "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
-  "                         Nancy, France.\n";
+    "\njtom 1.3gamma\n" +
+    "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
+    "                         Nancy, France.\n";
   
   private static void version() {
     System.out.println(version);
@@ -104,20 +104,22 @@ public class Tom {
   }
   
   public void setTaskInput(TomTaskInput input) {
-	taskInput = input;
+    taskInput = input;
   }
   
   public void run() {
-    initialTask.process(taskInput);
+    if (initialTask != null) {
+      initialTask.process(taskInput);
+    }
   }
   
   public Tom(String args[]) {
     String inputSuffix     = ".t";
     
     // Create the base taskInput
-	taskInput = new TomTaskInput();
+    taskInput = new TomTaskInput();
 	
-	// Processing the input arguments
+    // Processing the input arguments
     List importList = new ArrayList();
     if(args.length < 1) {// Need at least one argument
       usage();
@@ -125,63 +127,63 @@ public class Tom {
       for(int i=0; i < args.length; i++) { 
         if(args[i].charAt(0) != '-') {// Suppose this is the input filename (*[.t]) that should never start with "
           if(args[i].endsWith(inputSuffix)) {
-			taskInput.inputFileName = args[i].substring(0,args[i].length()-(inputSuffix.length()));
+	    taskInput.inputFileName = args[i].substring(0,args[i].length()-(inputSuffix.length()));
           } else {
-			taskInput.inputFileName = args[i];
+	    taskInput.inputFileName = args[i];
           }
         } else {// This is on option
           if(args[i].equals("--version") || args[i].equals("-V")) {
             version();
           } else if(args[i].equals("--help") || args[i].equals("-h")) {
             usage();
-		  } else if(args[i].equals("--import") || args[i].equals("-I")) {
-			importList.add(new File(args[++i]));
+	  } else if(args[i].equals("--import") || args[i].equals("-I")) {
+	    importList.add(new File(args[++i]));
           } else if(args[i].equals("--cCode") || args[i].equals("-c")) {
             taskInput.setJCode(false);
-			taskInput.setECode(false);
-			taskInput.setCCode(true);
+	    taskInput.setECode(false);
+	    taskInput.setCCode(true);
             taskInput.setOutputSuffix(".tom.c");
           } else if(args[i].equals("--eCode") || args[i].equals("-e")) {
-			taskInput.setJCode(false);
-			taskInput.setECode(true);
-			taskInput.setCCode(false);
-			taskInput.setOutputSuffix(".e");
-			taskInput.setSupportedGoto(false);
-			taskInput.setSupportedBlock(false);
-		  } else if(args[i].equals("--noOutput") || args[i].equals("-o")) {
-			taskInput.setPrintOutput(false);
+	    taskInput.setJCode(false);
+	    taskInput.setECode(true);
+	    taskInput.setCCode(false);
+	    taskInput.setOutputSuffix(".e");
+	    taskInput.setSupportedGoto(false);
+	    taskInput.setSupportedBlock(false);
+	  } else if(args[i].equals("--noOutput") || args[i].equals("-o")) {
+	    taskInput.setPrintOutput(false);
           } else if(args[i].equals("--doCompile") || args[i].equals("-C")) {
-			taskInput.setDoOnlyCompile(true);            
-			taskInput.setDoParse(false);            
-			taskInput.setDoExpand(false);
-		  } else if(args[i].equals("--optimize") || args[i].equals("-O")) {
-			taskInput.setDoOptimization(true);
-		  } else if(args[i].equals("--noCheck") || args[i].equals("-f")) {
-			taskInput.setDoCheck(false);
-		  } else if(args[i].equals("--lazyType") || args[i].equals("-l")) {
-			taskInput.setStrictType(false);
+	    taskInput.setDoOnlyCompile(true);            
+	    taskInput.setDoParse(false);            
+	    taskInput.setDoExpand(false);
+	  } else if(args[i].equals("--optimize") || args[i].equals("-O")) {
+	    taskInput.setDoOptimization(true);
+	  } else if(args[i].equals("--noCheck") || args[i].equals("-f")) {
+	    taskInput.setDoCheck(false);
+	  } else if(args[i].equals("--lazyType") || args[i].equals("-l")) {
+	    taskInput.setStrictType(false);
           } else if(args[i].equals("--intermediate") || args[i].equals("-i")) {
             taskInput.setIntermediate(true);
-		  } else if(args[i].equals("--verbose") || args[i].equals("-v")) {
-			taskInput.setVerbose(true);
-		  } else if(args[i].equals("--atermStat") || args[i].equals("-s")) {
-			//Flags.atermStat = true;
+	  } else if(args[i].equals("--verbose") || args[i].equals("-v")) {
+	    taskInput.setVerbose(true);
+	  } else if(args[i].equals("--atermStat") || args[i].equals("-s")) {
+	    //Flags.atermStat = true;
           } else if(args[i].equals("--Wall")) {
-			taskInput.setWarningAll(true);
+	    taskInput.setWarningAll(true);
           } else if(args[i].equals("--noWarning")) {
-			taskInput.setNoWarning(true);
+	    taskInput.setNoWarning(true);
           } else if(args[i].equals("--demo") || args[i].equals("-d")) {
             //Flags.demo = true;            Flags.warningAll = false;
           } else if(args[i].equals("--noDeclaration") || args[i].equals("-D")) {
-			taskInput.setGenDecl(false);
+	    taskInput.setGenDecl(false);
           } else if(args[i].equals("--pretty") || args[i].equals("-p")) {
-			taskInput.setPretty(true);
+	    taskInput.setPretty(true);
           } else if(args[i].equals("--static")) {
-			taskInput.setStaticFunction(true);
+	    taskInput.setStaticFunction(true);
           } else if(args[i].equals("--debug")) {
-			taskInput.setDebugMode(true);
+	    taskInput.setDebugMode(true);
           } else if(args[i].equals("--memory")) {
-			taskInput.setDebugMemory(true);
+	    taskInput.setDebugMemory(true);
           } else {
             System.out.println("'" + args[i] + "' is not a valid option");
             usage();
@@ -190,7 +192,7 @@ public class Tom {
       }
     }
     
-      // For the moment debug is only available for Java as target language
+    // For the moment debug is only available for Java as target language
     taskInput.setDebugMode(taskInput.isJCode() && taskInput.isDebugMode());
     
     if(taskInput.inputFileName.length() == 0) {
@@ -199,7 +201,7 @@ public class Tom {
     }
 
     taskInput.setOutputFileName(taskInput.inputFileName+taskInput.outputSuffix);
-	// basic structures
+    // basic structures
     TomSignatureFactory tomSignatureFactory = new TomSignatureFactory();
     ASTFactory   astFactory   = new ASTFactory(tomSignatureFactory);
     SymbolTable  symbolTable  = new SymbolTable(astFactory, taskInput.isCCode(), taskInput.isJCode(),taskInput.isECode());
@@ -229,7 +231,7 @@ public class Tom {
 
     if(taskInput.isDoParse() && taskInput.isDoExpand()) {
       try {
-          // to get the length of the file
+	// to get the length of the file
         File file = new File(inputFileName);
         byte inputBuffer[] = new byte[(int)file.length()+1];
         input.read(inputBuffer);
@@ -248,16 +250,16 @@ public class Tom {
           tomParser.addTask(syntaxChecker);
         }
         
-          /*int nbError = Checker.getNumberFoundError();
-            if(nbError > 0 ) {
-            for(int i=0 ; i<nbError ; i++) {
-              //System.out.println(tomChecker.getMessage(i));
-              }
+	/*int nbError = Checker.getNumberFoundError();
+	  if(nbError > 0 ) {
+	  for(int i=0 ; i<nbError ; i++) {
+	  //System.out.println(tomChecker.getMessage(i));
+	  }
               
-              String msg = "Tom Checker:  Encountered " + nbError +
-              " errors during verification phase.";
-              throw new CheckErrorException(msg);
-              }*/
+	  String msg = "Tom Checker:  Encountered " + nbError +
+	  " errors during verification phase.";
+	  throw new CheckErrorException(msg);
+	  }*/
         
         expander = new TomExpander(environment, new TomKernelExpander(environment));
         if(taskInput.isDoCheck()) {
@@ -270,11 +272,11 @@ public class Tom {
         
 		
 
-       /* if(Flags.demo) {
-          statistics.initInfoParser();
-          statistics.initInfoChecker();
-          statistics.initInfoVerifier();
-        }*/
+	/* if(Flags.demo) {
+	   statistics.initInfoParser();
+	   statistics.initInfoChecker();
+	   statistics.initInfoVerifier();
+	   }*/
 
       } catch (FileNotFoundException e) {
         System.out.println("\nTom Parser:  File " + inputFileName + " not found.");
@@ -287,8 +289,8 @@ public class Tom {
     }
     
     if(taskInput.isDoCompile()) {
-	  	 // We need a compiler
-	  compiler = new TomCompiler(environment, new TomKernelCompiler(environment, taskInput.isSupportedBlock(), taskInput.isSupportedGoto(), taskInput.isDebugMode()));
+      // We need a compiler
+      compiler = new TomCompiler(environment, new TomKernelCompiler(environment, taskInput.isSupportedBlock(), taskInput.isSupportedGoto(), taskInput.isDebugMode()));
       try {
         if(taskInput.isDoOnlyCompile()) {
           ATerm fromFileExpandTerm = null;
@@ -326,43 +328,43 @@ public class Tom {
           compiler.addTask(generator);
         }
         
-          /*        if(Flags.demo) {
-                    statistics.initInfoCompiler();
-                    statistics.initInfoGenerator();
-                    }*/
+	/*        if(Flags.demo) {
+		  statistics.initInfoCompiler();
+		  statistics.initInfoGenerator();
+		  }*/
       } catch(IOException e) {
         System.out.println("No file generated.");
         throw new InternalError("read error");
       }
     }
-      /*
-        if(Flags.atermStat) {
-        System.out.println("\nStatistics:\n" + tomSignatureFactory);
-        }
+    /*
+      if(Flags.atermStat) {
+      System.out.println("\nStatistics:\n" + tomSignatureFactory);
+      }
         
-        if(Flags.demo) {
-	TomDemo view = new TomDemo();
-	view.complete(statistics.infoParser,
-        statistics.infoChecker,
-        statistics.infoVerifier,
-        statistics.infoCompiler,
-        statistics.infoGenerator);
-	view.info(version,fileName);
-	view.pack(); 
-	view.setSize(550,900);
-	view.setVisible(true);
-        }*/
+      if(Flags.demo) {
+      TomDemo view = new TomDemo();
+      view.complete(statistics.infoParser,
+      statistics.infoChecker,
+      statistics.infoVerifier,
+      statistics.infoCompiler,
+      statistics.infoGenerator);
+      view.info(version,fileName);
+      view.pack(); 
+      view.setSize(550,900);
+      view.setVisible(true);
+      }*/
   }
-/*
-  private static long startChrono,endChrono;
-  private static void startChrono() {
-  startChrono = System.currentTimeMillis();
-  }
-  private static void stopChrono() {
-  endChrono = System.currentTimeMillis();
-  }
-  private static String getChrono() {
-  return "(" + (endChrono-startChrono) + " ms)";
-  }
-*/
+  /*
+    private static long startChrono,endChrono;
+    private static void startChrono() {
+    startChrono = System.currentTimeMillis();
+    }
+    private static void stopChrono() {
+    endChrono = System.currentTimeMillis();
+    }
+    private static String getChrono() {
+    return "(" + (endChrono-startChrono) + " ms)";
+    }
+  */
 } // class Tom
