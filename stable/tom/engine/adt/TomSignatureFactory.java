@@ -1,6 +1,5 @@
 package jtom.adt;
 
-import aterm.*;
 import aterm.pure.PureFactory;
 public class TomSignatureFactory
 {

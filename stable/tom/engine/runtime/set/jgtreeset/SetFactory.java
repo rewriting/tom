@@ -1,6 +1,5 @@
 package jtom.runtime.set.jgtreeset;
 
-import aterm.*;
 import aterm.pure.PureFactory;
 public class SetFactory
 {

@@ -20,7 +20,7 @@ public class Nsh {
   }
 
   public TermFactory getTermFactory() {
-    return factory;
+      return factory;
   }
   
   public void run(int nbAgent) {

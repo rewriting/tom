@@ -30,31 +30,29 @@ import jtom.adt.*;
 
 public class TomEnvironment {
 
-    private ASTFactory astFactory;
-    private TomSignatureFactory tomSignatureFactory;
-    private SymbolTable symbolTable;
-    
-    public TomEnvironment(TomSignatureFactory tomSignatureFactory,
-                          ASTFactory astFactory,
-                          SymbolTable symbolTable) {
-        this.tomSignatureFactory = tomSignatureFactory;
-	this.astFactory   = astFactory;
-	this.symbolTable  = symbolTable;
-    }
+	private ASTFactory astFactory;
+	private TomSignatureFactory tomSignatureFactory;
+	private SymbolTable symbolTable;
 
-    public ASTFactory getASTFactory() {
-	return astFactory;
-    }
+	public TomEnvironment(
+		TomSignatureFactory tomSignatureFactory,
+		ASTFactory astFactory,
+		SymbolTable symbolTable) {
+		this.tomSignatureFactory = tomSignatureFactory;
+		this.astFactory = astFactory;
+		this.symbolTable = symbolTable;
+	}
 
-    public TomSignatureFactory getTomSignatureFactory() {
-	return tomSignatureFactory;
-    }
-  
-    public SymbolTable getSymbolTable() {
-	return symbolTable;
-    }
+	public ASTFactory getASTFactory() {
+		return astFactory;
+	}
+
+	public TomSignatureFactory getTomSignatureFactory() {
+		return tomSignatureFactory;
+	}
+
+	public SymbolTable getSymbolTable() {
+		return symbolTable;
+	}
 
 }
-
-
-

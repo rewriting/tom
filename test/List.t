@@ -64,7 +64,7 @@ public class List {
   }
 
   public ATermList sort1(ATermList l) {
-    %match(L l) {
+        %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
         String xname = ((ATermAppl)x).getName();
         String yname = ((ATermAppl)y).getName();
@@ -148,6 +148,11 @@ public class List {
     assertTrue(double1(sort1(l)) == res);
     assertTrue(double2(sort2(l)) == res);
     assertTrue(double3(sort2(l)) == res);
+
+
+      //System.out.println("l        = " + l);
+      //System.out.println("sorted l = " + sort2(l));
+      //System.out.println("double l = " + double2(sort2(l)));
   }
   
   static void  assertTrue(boolean condition) {

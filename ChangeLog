@@ -1,3 +1,12 @@
+2003-09-23  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* bootinstall
+	* released 1.4 
+	
+2003-09-19  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+ 	* src/jtom/tools/ASTFactory.java: fix the ^M problem under windows
+
 
 2003-09-16  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 

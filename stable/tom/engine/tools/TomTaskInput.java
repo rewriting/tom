@@ -35,20 +35,21 @@ public class TomTaskInput {
   private TomTerm term;
   private TomErrorList errors;
   private List importList;
-  public String inputFileName = "",
-    baseInputFileName = "",
-    outputFileName = "",
-    outputSuffix    = ".java",
-    parsedSuffix    = ".tfix.parsed",
-    expandedSuffix  = ".tfix.expanded",
-    compiledSuffix  = ".tfix.compiled",
-    optimizedSuffix  = ".tfix.optimized",
-    parsedTableSuffix = ".tfix.parsed.table",
-    expandedTableSuffix = ".tfix.expanded.table",
-    debugTableSuffix = ".tfix.debug.table";
+  private String inputFileName = "",
+                 baseInputFileName = "",
+                 outputFileName = "";
+  public static String outputSuffix    = ".java",
+                       parsedSuffix    = ".tfix.parsed",
+                       expandedSuffix  = ".tfix.expanded",
+                       compiledSuffix  = ".tfix.compiled",
+                       optimizedSuffix  = ".tfix.optimized",
+                       parsedTableSuffix = ".tfix.parsed.table",
+                       expandedTableSuffix = ".tfix.expanded.table",
+                       debugTableSuffix = ".tfix.debug.table";
   
-  public TomTaskInput() {
-		importList = new  ArrayList(); 
+  public TomTaskInput(TomErrorList list) {
+		this.importList = new  ArrayList();
+		this.errors = list;
   }
   
   private boolean needDebugExpansion = false, 
@@ -85,19 +86,20 @@ public class TomTaskInput {
   public TomTerm getTerm() {
   	return term;
   }
-  public boolean needDebugExpansion() {
-	 return needDebugExpansion;
-   }
-   public void needDebugExpansion(boolean need) {
-	needDebugExpansion = need;
-   }
+  
+  public boolean getNeedDebugExpansion() {
+  	return needDebugExpansion;
+  }
+  
+  public void setNeedDebugExpansion(boolean need) {
+		needDebugExpansion = need;
+  }
    
   public String getOutputFileName() {
-	return outputFileName;
+		return outputFileName;
   }
-
   public void setOutputFileName(String string) {
-	outputFileName = string;
+		outputFileName = string;
   }
 
   public boolean isVerbose() {
@@ -302,6 +304,21 @@ public class TomTaskInput {
 	}
 	public void setHelp(boolean b) {
 		help = b;
+	}
+
+	public String getBaseInputFileName() {
+		return baseInputFileName;
+	}
+	public String getInputFileName() {
+		return inputFileName;
+	}
+
+	public void setBaseInputFileName(String string) {
+		baseInputFileName = string;
+	}
+
+	public void setInputFileName(String string) {
+		inputFileName = string;
 	}
 
 } // class TomTaskInput

@@ -1,6 +1,5 @@
 package jtom.adt;
 
-import aterm.*;
 
 abstract public class TomTermImpl extends TomSignatureConstructor
 {

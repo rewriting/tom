@@ -32,23 +32,24 @@ public class AddressBook {
     Iterator it = book.iterator();
     while(it.hasNext()) {
     	Person p = (Person) it.next();
-    	happyBirthday(p, `date(2003,9,20));
+    	happyBirthday(p, `date(2003,9,22));
     }
   }
 
   public void happyBirthday(Person p, Date today) {
-  	%match(Person p, Date today) {
-  		person(firstname(fn),lastname(ln),date(year,month,day)), date(_,month,day) -> {
-    			System.out.println("Happy Birthday " + fn );  			  
-    	}
-  	}
+    %match(Person p, Date today) {
+      person(firstname(fn),lastname(ln),date(year,month,day)), date(_,month,day) -> {
+        System.out.println("Happy Birthday " + fn );  			  
+      }
+    }
  }
   
   public void generatePerson(HashSet set) {
 	set.add(`person(firstname("John"),lastname("Smith"),date(1965,9,18)));
 	set.add(`person(firstname("Marie"),lastname("Muller"),date(1986,10,19)));
 	set.add(`person(firstname("Paul"),lastname("Muller"),date(2000,9,20)));
+	set.add(`person(firstname("Albert"),lastname("Moine"),date(2000,9,22)));
   }
-  
+
 }
 

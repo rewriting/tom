@@ -1,6 +1,5 @@
 package jtom.runtime.set.jgtreeset;
 
-import aterm.*;
 
 abstract public class JGTreeSetImpl extends SetConstructor
 {

@@ -1,6 +1,5 @@
 package jtom.adt;
 
-import aterm.*;
 
 abstract public class OptionListImpl extends aterm.pure.ATermListImpl
 {

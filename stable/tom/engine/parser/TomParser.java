@@ -109,9 +109,14 @@ public class TomParser implements TomTask, TomParserConstants {
                         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
                 }
         if(intermediate) {
-            Tools.generateOutput(input.baseInputFileName + input.parsedSuffix, parsedTerm);
-            Tools.generateOutput(input.baseInputFileName + input.parsedTableSuffix, symbolTable.toTerm());
+            Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
+            Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable.toTerm());
         }
+
+        if(input.isDebugMode()) {
+                        Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.debugTableSuffix, getStructTable());
+                }
+
                 // Update taskInput
                 input.setTerm(parsedTerm);
         } catch (TomIncludeException e) {
@@ -135,6 +140,7 @@ public class TomParser implements TomTask, TomParserConstants {
         } catch (Exception e) {
           System.out.println("Unhandled exception occurs during parsing.");
           e.printStackTrace();
+          addError(input, "Exception occurs in TomParser"+e.getMessage(), currentFile, 0, 0);
           return;
         }
         if(nextTask != null) {
@@ -2308,33 +2314,6 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(8, xla); }
   }
 
-  final private boolean jj_3_9() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_7() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_AT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_23()) jj_scanpos = xsp;
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    return false;
-  }
-
   final private boolean jj_3_5() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_AT)) return true;
@@ -2367,6 +2346,33 @@ public class TomParser implements TomTask, TomParserConstants {
 
   final private boolean jj_3R_23() {
     if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_9() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_4() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_23()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_LPAREN)) return true;
     return false;
   }
 
