@@ -25,18 +25,12 @@
 
 package jtom;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -114,13 +108,15 @@ public class Tom {
   }
   
   public Tom(String args[]) {
-    String inputSuffix     = ".t";
+    String inputSuffix = ".t";
+    InputStream input = null;
+    List importList = new ArrayList();
+    String inputFileName = "";
     
-    // Create the base taskInput
+      // Create the base taskInput
     taskInput = new TomTaskInput();
     
-      // Processing the input arguments
-    List importList = new ArrayList();
+      // Processing the input arguments into taskInput
     if(args.length < 1) {// Need at least one argument
       usage();
     } else {
@@ -136,8 +132,8 @@ public class Tom {
             version();
           } else if(args[i].equals("--help") || args[i].equals("-h")) {
             usage();
-	  } else if(args[i].equals("--import") || args[i].equals("-I")) {
-	    importList.add(new File(args[++i]));
+          } else if(args[i].equals("--import") || args[i].equals("-I")) {
+            importList.add(new File(args[++i]));
           } else if(args[i].equals("--cCode") || args[i].equals("-c")) {
             taskInput.setJCode(false);
 	    taskInput.setECode(false);
@@ -167,7 +163,7 @@ public class Tom {
 	  } else if(args[i].equals("--verbose") || args[i].equals("-v")) {
 	    taskInput.setVerbose(true);
 	  } else if(args[i].equals("--atermStat") || args[i].equals("-s")) {
-	    //Flags.atermStat = true;
+	    taskInput.setAtermStat(true);
           } else if(args[i].equals("--Wall")) {
 	    taskInput.setWarningAll(true);
           } else if(args[i].equals("--noWarning")) {
@@ -188,154 +184,126 @@ public class Tom {
           }
         }
       }
-    }
+    } // end processing arguments
     
-    // For the moment debug is only available for Java as target language
+      // For the moment debug is only available for Java as target language
     taskInput.setDebugMode(taskInput.isJCode() && taskInput.isDebugMode());
     
     if(taskInput.inputFileName.length() == 0) {
       System.out.println("no inputfile");
       usage();
     }
-
+      // setting In/OutputFileName
+    if(taskInput.isDoParse()) {
+      inputFileName = taskInput.inputFileName + inputSuffix;
+    } else if(taskInput.isDoOnlyCompile()) {
+      inputFileName = taskInput.inputFileName + taskInput.expandedSuffix;
+    }
     taskInput.setOutputFileName(taskInput.inputFileName+taskInput.outputSuffix);
-    // basic structures
+    
+      // basic structures
     TomSignatureFactory tomSignatureFactory = new TomSignatureFactory();
     ASTFactory   astFactory   = new ASTFactory(tomSignatureFactory);
     SymbolTable  symbolTable  = new SymbolTable(astFactory, taskInput.isCCode(), taskInput.isJCode(),taskInput.isECode());
     TomEnvironment environment = new TomEnvironment(tomSignatureFactory,
 						    astFactory,
 						    symbolTable);
-
-    String inputFileName = "";
-    if(taskInput.isDoParse()) {
-      inputFileName = taskInput.inputFileName + inputSuffix;
-    } else if(taskInput.isDoOnlyCompile()) {
-      inputFileName = taskInput.inputFileName + taskInput.expandedSuffix;
-    }
-
-
-    InputStream input;
-    try {
-      input = new FileInputStream(inputFileName);
-    } catch (FileNotFoundException e) {
-      System.out.println("Tom Parser:  File " + inputFileName + " not found.");
-      System.out.println("No file generated.");
-      return;
-    }
-    
-
+      // Create the Chain of respomsability    
     if(taskInput.isDoParse() && taskInput.isDoExpand()) {
-      try {
-	// to get the length of the file
-        File file = new File(inputFileName);
-        byte inputBuffer[] = new byte[(int)file.length()+1];
-        input.read(inputBuffer);
+      byte inputBuffer[] = null;
+      File fileList[] = new File[importList.size()];
+      Iterator it = importList.iterator();
 
-        File fileList[] = new File[importList.size()];
-        Iterator it = importList.iterator();
-        int index=0;
-        while(it.hasNext()) {
-          fileList[index++] = (File)it.next();
-        }
-        
-        tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,inputFileName);
-        initialTask = tomParser;
-        
-        if(taskInput.isDoCheck()) {
-          syntaxChecker = new TomSyntaxChecker(environment);
-          tomParser.addTask(syntaxChecker);
-        }
-        
-	/*int nbError = Checker.getNumberFoundError();
-	  if(nbError > 0 ) {
-	  for(int i=0 ; i<nbError ; i++) {
-	  //System.out.println(tomChecker.getMessage(i));
-	  }
-              
-	  String msg = "Tom Checker:  Encountered " + nbError +
-	  " errors during verification phase.";
-	  throw new CheckErrorException(msg);
-	  }*/
-        
-        expander = new TomExpander(environment, new TomKernelExpander(environment));
-        if(taskInput.isDoCheck()) {
-          syntaxChecker.addTask(expander);
-          typeChecker = new TomTypeChecker(environment);
-          expander.addTask(typeChecker);
-        } else {
-          tomParser.addTask(expander);
-        }
+      int index=0;
+      while(it.hasNext()) {
+        fileList[index++] = (File)it.next();
+      }
+
+      try {
+        input = new FileInputStream(inputFileName);
+          // to get the length of the file
+        File file = new File(inputFileName);
+        inputBuffer = new byte[(int)file.length()+1];
+        input.read(inputBuffer);
       } catch (FileNotFoundException e) {
-        System.out.println("\nTom Parser:  File " + inputFileName + " not found.");
+        System.out.println("\nTom error: File `" + inputFileName + "` not found.");
         System.out.println("No file generated.");
         return;
       }  catch(IOException e4) {
-        System.out.println("\nNo file generated.");
-        throw new InternalError("read error");
+        System.out.println("\nIO Exception reading file `" + inputFileName + "`");
+        System.out.println("No file generated.");
+        return;
+      }
+      
+      tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,inputFileName);
+      initialTask = tomParser;
+      
+      if(taskInput.isDoCheck()) {
+        syntaxChecker = new TomSyntaxChecker(environment);
+        tomParser.addTask(syntaxChecker);
+      }
+      
+      expander = new TomExpander(environment, new TomKernelExpander(environment));
+      if(taskInput.isDoCheck()) {
+        syntaxChecker.addTask(expander);
+        typeChecker = new TomTypeChecker(environment);
+        expander.addTask(typeChecker);
+      } else {
+        tomParser.addTask(expander);
       }
     }
     
     if(taskInput.isDoCompile()) {
-      // We need a compiler
+        // We need a compiler
       compiler = new TomCompiler(environment, new TomKernelCompiler(environment, taskInput.isSupportedBlock(), taskInput.isSupportedGoto(), taskInput.isDebugMode()));
-      try {
-        if(taskInput.isDoOnlyCompile()) {
-          ATerm fromFileExpandTerm = null;
+      
+      if(taskInput.isDoOnlyCompile()) {
+        ATerm fromFileExpandTerm = null;
+        TomTerm expandedTerm = null; 
+        try {
           fromFileExpandTerm = tomSignatureFactory.readFromFile(input);
-          TomTerm expandedTerm = tomSignatureFactory.TomTermFromTerm(fromFileExpandTerm);
-          try {
-            input = new FileInputStream(inputFileName+".table");
-          } catch (FileNotFoundException e) {
-            System.out.println("Tom Compiler:  File " + inputFileName + " not found.");
-            System.out.println("No file generated.");
-            return;
-          }
+          expandedTerm = tomSignatureFactory.TomTermFromTerm(fromFileExpandTerm);
+          input = new FileInputStream(inputFileName+".table");
+          
           ATerm fromFileSymblTable = null;
           fromFileSymblTable = tomSignatureFactory.readFromFile(input);
           TomSymbolTable symbTable = tomSignatureFactory.TomSymbolTableFromTerm(fromFileSymblTable);
           symbolTable.regenerateFromTerm(symbTable);
+        } catch (FileNotFoundException e) {
+          System.out.println("Tom error: File `" + inputFileName + "` not found.");
+          System.out.println("No file generated.");
+          return;
+        } catch(IOException e4) {
+          System.out.println("\nIO Exception reading file `" + inputFileName + "`");
+          System.out.println("No file generated.");
+          return;
+        }
           // This is the initial task
-          initialTask = compiler;
-          taskInput.setTerm(expandedTerm);
-        } else {
-          if(taskInput.isDoCheck()) {
-            typeChecker.addTask(compiler);
-          }
-          else {
-            expander.addTask(compiler);
-          }
+        initialTask = compiler;
+        taskInput.setTerm(expandedTerm);
+      } else {
+        if(taskInput.isDoCheck()) {
+          typeChecker.addTask(compiler);
         }
-        
-        generator = new TomGenerator(environment);
-        if (taskInput.isDoOptimization()) {
-          optimizer = new TomOptimizer(environment);
-          compiler.addTask(optimizer);
-          optimizer.addTask(generator);
-        } else {
-          compiler.addTask(generator);
+        else {
+          expander.addTask(compiler);
         }
-      } catch(IOException e) {
-        System.out.println("No file generated.");
-        throw new InternalError("read error");
       }
     }
-    /*
-      if(Flags.atermStat) {
+    
+    if(taskInput.isPrintOutput()) {
+      generator = new TomGenerator(environment);
+      if (taskInput.isDoOptimization()) {
+        optimizer = new TomOptimizer(environment);
+        compiler.addTask(optimizer);
+        optimizer.addTask(generator);
+      } else {
+        compiler.addTask(generator);
+      }
+    }
+  
+    if(taskInput.isAtermStat()) {
       System.out.println("\nStatistics:\n" + tomSignatureFactory);
-      }
-    */
+    }
   }
-    /*
-      private static long startChrono,endChrono;
-      private static void startChrono() {
-      startChrono = System.currentTimeMillis();
-      }
-      private static void stopChrono() {
-      endChrono = System.currentTimeMillis();
-      }
-      private static String getChrono() {
-      return "(" + (endChrono-startChrono) + " ms)";
-      }
-    */
 } // class Tom

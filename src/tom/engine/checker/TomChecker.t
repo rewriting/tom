@@ -53,7 +53,6 @@ import jtom.runtime.Collect1;
 import jtom.tools.TomTask;
 import aterm.ATerm;
 import jtom.TomEnvironment;
-import jtom.exception.CheckErrorException;
 
 abstract class TomChecker extends TomBase implements TomTask {
   
