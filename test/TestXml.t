@@ -5,6 +5,7 @@ import aterm.*;
 import jtom.runtime.*;
 import java.util.*;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestXml extends TestCase {
   
@@ -18,6 +19,10 @@ public class TestXml extends TestCase {
 	private Factory getTNodeFactory() {
     return xtools.getTNodeFactory();
   }
+
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(new TestSuite(TestXml.class));
+	}
 
   private TNode xml(TNode t) {
     return t;
@@ -93,7 +98,7 @@ public class TestXml extends TestCase {
 								 reverseElements, res);
   }
 
-	public void textExtractElements() {
+	public void testExtractElements() {
 		TNode list = getXmldoc();
 		LinkedList res = extractElements(list);
 		assertEquals("ExtractElement extract elements in order",

@@ -79,35 +79,76 @@ public class TestPeano extends TestCase {
     tzero = factory.makeAppl(fzero);
   }
 
-  public void testPlus() {
+  public void testPlus1() {
     for(int i=0 ; i<100 ; i++) {
       ATerm N = int2peano(i);
       assertTrue("Testing plus1 with N ="+N+" :", 
 								 peano2int(plus1(N,N)) == (i+i) );
+    }
+	}
+
+  public void testPlus2() {
+    for(int i=0 ; i<100 ; i++) {
+      ATerm N = int2peano(i);
       assertTrue("Testing plus2 with N ="+N+" :",  
 								 peano2int(plus2(N,N)) == (i+i) );
+    }
+	}
+
+  public void testPlus3() {
+    for(int i=0 ; i<100 ; i++) {
+      ATerm N = int2peano(i);
       assertTrue("Testing plus3 with N ="+N+" :",  
 								 peano2int(plus3(N,N)) == (i+i) );
+    }
+	}
+
+  public void testPlus4() {
+    for(int i=0 ; i<100 ; i++) {
+      ATerm N = int2peano(i);
       assertTrue("Testing plus4 with N ="+N+" :",  
 								 peano2int(plus4(N,N)) == (i+i) );
     }
 	}
 
-	public void testFib() {
+	public void testFib1() {
     for(int i=0 ; i<15 ; i++) {
       ATerm N = int2peano(i);
       assertTrue("Testing fib1 with N ="+N+" :",  
 								 peano2int(fib1(N)) == fibint(i) );
+    }
+  }
+
+	public void testFib2() {
+    for(int i=0 ; i<15 ; i++) {
+      ATerm N = int2peano(i);
       assertTrue("Testing fib2 with N ="+N+" :",   
 								 peano2int(fib2(N)) == fibint(i) );
+    }
+  }
+
+	public void testFib3() {
+    for(int i=0 ; i<15 ; i++) {
+      ATerm N = int2peano(i);
       assertTrue("Testing fib3 with N ="+N+" :",   
 								 peano2int(fib3(N)) == fibint(i) );
+    }
+  }
+
+	public void testFib4() {
+    for(int i=0 ; i<15 ; i++) {
+      ATerm N = int2peano(i);
       assertTrue("Testing fib4 with N ="+N+" :",   
 								 peano2int(fib4(N)) == fibint(i) );
+    }
+  }
+
+	public void testFib5() {
+    for(int i=0 ; i<15 ; i++) {
+      ATerm N = int2peano(i);
       assertTrue("Testing fib5 with N ="+N+" :",   
 								 peano2int(fib5(N)) == fibint(i) );
     }
-    
   }
 
   public ATerm plus1(ATerm t1, ATerm t2) {
