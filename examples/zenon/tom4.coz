@@ -1,0 +1,64 @@
+%%begin-auto-proof
+%%location: []
+%%name: tom4
+%%statement
+(*
+  plus(x,zero)
+  plus(x, suc(y))
+  fib(zero)
+  fib(suc(zero))
+  fib(suc(x))
+*)
+(*
+   forall t : T,
+      (forall x : T, ~((plus x zero) = t))
+   /\ (forall x : T, forall y : T, ~((plus x (suc y)) = t))
+   /\ (~((fib zero) = t))
+   /\ (~((fib (suc zero)) = t))
+   /\ (exists x : T, ((fib (suc x)) = t))
+  <->
+   ((symb t) = fib_)
+   /\ ((symb (_1 t)) = suc_)
+   /\ ~((symb (_1 (_1 t))) = zero_)
+*)
+
+forall t : T,
+	 (((fib (suc zero)) = t))
+  ->
+    ((symb (_1 t)) = suc_)
+
+
+
+By
+ symb_suc :
+  forall t : T, ((symb t) = suc_) <-> exists x : T, (t = (suc x))
+
+ symb_fib :
+  forall t : T, ((symb t) = fib_) <-> exists x : T, (t = (fib x))
+
+ symb_zero :
+  forall t : T, ((symb t) = zero_) <-> (t = zero)
+
+ st1_suc :
+  forall x : T, ((_1 (suc x)) = x)
+
+ st1_fib :
+  forall x : T, ((_1 (fib x)) = x)
+
+(*
+ symb_plus :
+  forall t : T, ((symb t) = plus_) <-> exists x : T, exists y : T, (t = (plus x y))
+
+ st1_plus :
+  forall x : T, forall y : T, ((_1 (plus x y)) = x)
+
+ st2_plus :
+  forall x : T, forall y : T, ((_2 (plus x y)) = y)
+*)
+
+ diff_suc_zero : forall x : T, ~((suc x) = zero)
+ diff_suc_fib : forall x : T, forall y : T, ~((suc x) = (fib y))
+ diff_fib_zero : forall x : T, ~((fib x) = zero)
+
+By def
+%%end-auto-proof
