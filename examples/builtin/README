@@ -2,8 +2,8 @@
 
 *  adt-to-tom -n term --nojar --input term.adt --javagen --package adt.builtin
 
-* jtom ApiString.t
-* jtom ApiInteger.t
+* tom ApiString.t
+* tom ApiInteger.t
 * javac ApiString.java
 * javac ApiInteger.java
 * java ApiString
