@@ -1017,6 +1017,7 @@
           if="${bootstrap.ok}">
     <copy todir="${stable.src}" overwrite="true">
       <fileset dir="${src.src}">
+        <include name="**/*.java.in"/>
         <include name="**/*.java"/>
         <include name="**/*.properties"/>
         <include name="lib/*.jar"/>
