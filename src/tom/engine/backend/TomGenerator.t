@@ -187,18 +187,21 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      CompiledMatch(matchDeclarationList, namedBlockList, option) -> {
+      CompiledMatch(matchDeclarationList, namedBlockList, Option(list)) -> {
+        boolean generated = hasGeneratedMatch(list);
+        Option orgTrack = null;
         if(Flags.supportedBlock) {
           generateInstruction(out,deep,`OpenBlock());
         }
-        if(Flags.debugMode) {
-          debugKey = option.getFileName().getString() + option.getLine().toString();
-          out.write("jtom.debug.TomDebugger.debug.entering"+option.getAstName().getString()+"(\""+debugKey+"\");\n");
+        if(Flags.debugMode && !generated) {
+          orgTrack = findOriginTracking(list);
+          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+          out.write("jtom.debug.TomDebugger.debug.entering"+orgTrack.getAstName().getString()+"(\""+debugKey+"\");\n");
         }
         generateList(out,deep+1,matchDeclarationList);
         generateList(out,deep+1,namedBlockList);
-        if(Flags.debugMode) {
-          out.write("jtom.debug.TomDebugger.debug.leaving"+option.getAstName().getString()+"(\""+debugKey+"\");\n");
+        if(Flags.debugMode && !generated) {
+          out.write("jtom.debug.TomDebugger.debug.leaving"+orgTrack.getAstName().getString()+"(\""+debugKey+"\");\n");
         }
         if(Flags.supportedBlock) {
           generateInstruction(out,deep,`CloseBlock());
@@ -638,8 +641,6 @@ public class TomGenerator extends TomBase {
           out.writeln("}" + blockName +  ":;");
         } else if(Flags.jCode) {
           out.writeln(blockName + ": {");
-          if (Flags.debugMode)
-            out.writeln("jtom.debug.TomDebugger.debug.enteringPattern(\""+debugKey+"\");");
           generateList(out,deep+1,instList);
           out.writeln("}");
         } else if(Flags.eCode) {

@@ -491,13 +491,25 @@ public class TomBase {
     while(!optionList.isEmptyOptionList()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
-        Constructor[] -> { return true; }
+        Constructor -> { return true; }
       }
       optionList = optionList.getTail();
     }
     return false;
     }
-
+  
+  protected boolean hasGeneratedMatch(OptionList optionList) {
+      //%variable
+    while(!optionList.isEmptyOptionList()) {
+      Option subject = optionList.getHead();
+      %match(Option subject) {
+        GeneratedMatch -> { return true; }
+      }
+      optionList = optionList.getTail();
+    }
+    return false;
+  }
+  
   protected TomName getSlotName(TomSymbol symbol, int number) {
     //%variable
     SlotList slotList = symbol.getSlotList();

@@ -84,16 +84,13 @@ public class TomCompiler extends TomBase {
       
       RuleSet(ruleList@Cons(
                 RewriteRule[lhs=Term(Appl[astName=Name(tomName)])],tail), orgTrack) -> {
-
+        statistics().numberRuleSetsTransformed++;
         if(Flags.debugMode) {
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
         }
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomName name = tomSymbol.getAstName();
-        TomList typesList = tomSymbol.getTypesToType().getList();
-        
-	statistics().numberRuleSetsTransformed++;
-        
+        TomList typesList = tomSymbol.getTypesToType().getList();        
         TomList path = empty();
         TomList matchArgumentsList = empty();
         TomList patternActionList  = empty();
@@ -143,9 +140,13 @@ public class TomCompiler extends TomBase {
         
         TomTerm subjectListAST = `SubjectList(matchArgumentsList);
         TomTerm makeFunctionBeginAST = `MakeFunctionBegin(name,subjectListAST);
+        ArrayList optionList = new ArrayList();
+        optionList.add(orgTrack);
+          //optionList.add(tsf().makeOption_GeneratedMatch());
+        Option generatedOptions = ast().makeOption(ast().makeOptionList(optionList));
         TomTerm matchAST = `Match(SubjectList(matchArgumentsList),
                                   PatternList(patternActionList),
-                                  orgTrack);
+                                  generatedOptions);
         Instruction buildAST = `Return(BuildTerm(name,tomListMap(matchArgumentsList,replace_preProcessing_makeTerm)));
         TomList l = empty();
         if(Flags.eCode) {
@@ -169,7 +170,8 @@ public class TomCompiler extends TomBase {
         return newPatternAction;
       }
       
-      Match(SubjectList(l1),PatternList(l2), orgTrack) -> {
+      Match(SubjectList(l1),PatternList(l2), matchOption@Option(list))  -> {
+        Option orgTrack = findOriginTracking(list);
         if(Flags.debugMode) {
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
         }
@@ -196,7 +198,7 @@ public class TomCompiler extends TomBase {
                   }
                   TomList elsePart = empty();
                   if(Flags.debugMode) {
-                    TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternFail(\""+debugKey+"\");\n");
+                    TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.linearizationFail(\""+debugKey+"\");\n");
                     elsePart   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
                   }
                     
@@ -211,15 +213,19 @@ public class TomCompiler extends TomBase {
                 newTermList = abstractPatternList(renamedTermList, abstractedPattern, introducedVariable);
                 if(abstractedPattern.size() > 0) {
                     // generate a new match construct
-                  
+
                   TomTerm generatedPatternAction =
                     `PatternAction(TermList(ast().makeList(abstractedPattern)),Tom(newActionList), orgText);        
-                  
+                    // We reconstruct only a list of option with orgTrack and GeneratedMatch
+                  ArrayList optionList = new ArrayList();
+                  optionList.add(orgTrack);
+                  optionList.add(tsf().makeOption_GeneratedMatch());
+                  Option generatedOptions = ast().makeOption(ast().makeOptionList(optionList));
                   TomTerm generatedMatch =
                     `Match(SubjectList(ast().makeList(introducedVariable)),
                            PatternList(cons(generatedPatternAction,empty())),
-                           orgTrack);
-
+                           generatedOptions);
+                    //System.out.println("Generate new Match"+generatedMatch);
                   generatedMatch = preProcessing(generatedMatch);
                   newPatternAction =
                     `PatternAction(TermList(newTermList),Tom(cons(generatedMatch,empty())), orgText);
@@ -232,11 +238,8 @@ public class TomCompiler extends TomBase {
               
               _ -> {
                 System.out.println("preProcessing: strange PatternAction: " + elt);
-
                 System.out.println("termList = " + elt.getTermList());
-                System.out.println("tom      = " + elt.getTom());
-
-                
+                System.out.println("tom      = " + elt.getTom()); 
                 System.exit(1);
               }
             }
@@ -248,7 +251,7 @@ public class TomCompiler extends TomBase {
 
         TomTerm newMatch = `Match(SubjectList(l1),
                                   PatternList(newPatternList),
-                                  orgTrack);
+                                  matchOption);
         return newMatch;
       }
       
@@ -264,6 +267,7 @@ public class TomCompiler extends TomBase {
       Empty() -> { return actionList; }
         
       Cons(MatchingCondition[lhs=pattern,rhs=subject], tail) -> {
+        System.out.println(pattern);
         TomType subjectType = getTermType(pattern);
         TomList path = empty();
         path = append(`RuleVar(),path);
@@ -279,7 +283,8 @@ public class TomCompiler extends TomBase {
 
         TomTerm generatedPatternAction =
           `PatternAction(TermList(cons(pattern,empty())),Tom(newActionList), EmptyName());        
-        
+
+          // Warning: The options are not good
         TomTerm generatedMatch =
           `Match(SubjectList(cons(introducedVariable,empty())),
                  PatternList(cons(generatedPatternAction,empty())),

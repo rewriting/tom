@@ -439,12 +439,14 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   environment.getStatistics().numberMatchBlocsRecognized++;
   ArrayList matchArgumentsList = new ArrayList();
   ArrayList patternActionList = new ArrayList();
+  ArrayList optionList = new ArrayList();
 }
 {
   <MATCH> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
       Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
+      optionList.add(orgTrack);
       String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
     }
 
@@ -453,10 +455,10 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   <TOM_LBRACE> ( PatternAction(patternActionList, debugKey) )* <TOM_RBRACE> /* we are in TOM mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-
+      Option option = ast().makeOption(ast().makeOptionList(optionList));
       TomTerm_Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
                                                     tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
-                                                    orgTrack);
+                                                    option);
       list.add(match);
       if (Flags.debugMode)
         debuggedStructureList.add(match);

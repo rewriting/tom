@@ -284,9 +284,21 @@ public class TomDebugger {
     }
   }
   
+  public void leavingPattern(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      ((TomDebugEnvironment)(environment.peek())).leavingPattern();
+    }
+  }
+  
   public void patternFail(String key) {
     if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
       ((TomDebugEnvironment)(environment.peek())).patternFail();
+    }
+  }
+  
+  public void linearizationFail(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      ((TomDebugEnvironment)(environment.peek())).linearizationFail();
     }
   }
   
@@ -344,8 +356,10 @@ public class TomDebugger {
     while (!list.isEmpty()) {
       TomTerm struct = list.getHead();
       if (struct.isMatch()) {
-        String fileName = struct.getOrgTrack().getFileName().getString();
-        Integer line = struct.getOrgTrack().getLine();
+          // The only present option in the list is the orgTack
+        Option orgTrack = struct.getOption().getOptionList().getHead();
+        String fileName = orgTrack.getFileName().getString();
+        Integer line = orgTrack.getLine();
         String key = fileName+line;
         TomList paList = struct.getPatternList().getList();
         Integer nbPatterns =  evalPatternNumber(paList);

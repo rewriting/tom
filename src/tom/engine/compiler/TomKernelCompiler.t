@@ -129,13 +129,16 @@ public class TomKernelCompiler extends TomBase {
         return `Tom(tomListMap(l,replace_compileMatching));
       }
       
-      Match(SubjectList(l1),PatternList(l2), orgTrack) -> {
+      Match(SubjectList(l1),PatternList(l2), matchOption@Option(optionList))  -> {
         statistics().numberMatchCompiledIntoAutomaton++;
+        boolean generatedMatch = false;
         if(Flags.debugMode) {
+          generatedMatch = hasGeneratedMatch(optionList);
+          Option orgTrack = findOriginTracking(optionList);
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
         }
         
-        TomList termList, actionList;
+        TomList patternList, actionList;
         TomList automataList = empty();
         ArrayList list;
         TomList path = empty();
@@ -160,7 +163,11 @@ public class TomKernelCompiler extends TomBase {
               Variable(option,_,variableType) -> {
                 TomTerm variable = `Variable(option,PositionName(append(makeNumber(index),path)),variableType);
                 matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
-                matchAssignementList = appendInstruction(`AssignMatchSubject(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+                if (!generatedMatch) {
+                  matchAssignementList = appendInstruction(`AssignMatchSubject(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+                } else {
+                  matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+                }
                 break matchBlock;
               }
 
@@ -196,25 +203,24 @@ public class TomKernelCompiler extends TomBase {
         while(!l2.isEmpty()) {
           actionNumber++;
           TomTerm pa = l2.getHead();
-          termList = pa.getTermList().getList();
+          patternList = pa.getTermList().getList();
           actionList = pa.getTom().getList();
 
-            //System.out.println("termList   = " + termList);
+            //System.out.println("patternList   = " + patternList);
             //System.out.println("actionList = " + actionList);
-          if(termList==null || actionList==null) {
+          if(patternList==null || actionList==null) {
             System.out.println("TomKernelCompiler: null value");
             System.exit(1);
           }
-
+          
             // compile nested match constructs
           actionList = tomListMap(actionList,replace_compileMatching);
-              
-            //System.out.println("termList      = " + termList);
+            //System.out.println("patternList      = " + patternList);
             //System.out.println("actionNumber  = " + actionNumber);
             //System.out.println("action        = " + actionList);
           TomList patternsDeclarationList = empty();
           Collection variableCollection = new HashSet();
-          collectVariable(variableCollection,`Tom(termList));
+          collectVariable(variableCollection,`Tom(patternList));
           
           Iterator it = variableCollection.iterator();
           while(it.hasNext()) {
@@ -225,7 +231,7 @@ public class TomKernelCompiler extends TomBase {
 
           TomList numberList = append(`PatternNumber(makeNumber(actionNumber)),path);
           TomList instructionList;
-          instructionList = genTermListMatchingAutomata(termList,path,1,actionList,true);
+          instructionList = genMatchingAutomataFromPatternList(patternList,path,1,actionList,true);
             //firstCall = false;
           TomList declarationInstructionList; 
           declarationInstructionList = concat(patternsDeclarationList,instructionList);
@@ -240,8 +246,8 @@ public class TomKernelCompiler extends TomBase {
            * return the compiled MATCH construction
            */
 
-        TomList astAutomataList = automataListCompileMatchingList(automataList);
-        return `CompiledMatch(matchDeclarationList,astAutomataList, orgTrack);
+        TomList astAutomataList = automataListCompileMatchingList(automataList, generatedMatch);
+        return `CompiledMatch(matchDeclarationList,astAutomataList, matchOption);
       }
 
         // default rule
@@ -252,7 +258,7 @@ public class TomKernelCompiler extends TomBase {
     }
   }
 
-  private TomList automataListCompileMatchingList(TomList automataList) {
+  private TomList automataListCompileMatchingList(TomList automataList, boolean generatedMatch) {
       //%variable
     
     %match(TomList automataList) {
@@ -260,11 +266,17 @@ public class TomKernelCompiler extends TomBase {
         //conc(Automata(numberList,instList),l*)  -> {
       Empty()      -> { return empty(); }
       Cons(Automata(numberList,instList),l)  -> {
-        TomList newList = automataListCompileMatchingList(l);
-        
+        TomList newList = automataListCompileMatchingList(l, generatedMatch);
         if(Flags.supportedGoto) {
+          if(!generatedMatch && Flags.debugMode) {
+            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.enteringPattern(\""+debugKey+"\");\n");
+            instList = `cons(TargetLanguageToTomTerm(tl), instList);
+            tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.leavingPattern(\""+debugKey+"\");\n");
+            TomList list = `cons(TargetLanguageToTomTerm(tl), Empty());
+            instList = concat(instList, list);
+          }
           TomTerm compiledPattern = `CompiledPattern(cons(InstructionToTomTerm(NamedBlock(getBlockName(numberList), instList)),empty()));
-          
+
           return cons(compiledPattern, newList);
         } else {
           TomList result = empty();
@@ -302,34 +314,34 @@ public class TomKernelCompiler extends TomBase {
      * ------------------------------------------------------------
      */
 
-  TomList genTermListMatchingAutomata(TomList termList,
-                                      TomList path,
-                                      int indexTerm,
-                                      TomList actionList,
-                                      boolean gsa) {
+  TomList genMatchingAutomataFromPatternList(TomList termList,
+                                                   TomList path,
+                                                   int indexTerm,
+                                                   TomList actionList,
+                                                   boolean gsa) {
     TomList result = empty();
       //%variable
     if(termList.isEmpty()) {
       if(gsa) {
           // insert the semantic action
-        Instruction action = `Action( actionList);
+        Instruction action = `Action(actionList);
         result = appendInstruction(action,result);
       }
     } else {
       TomTerm head = termList.getHead();
       TomList tail = termList.getTail();
-      TomList newSubActionList = genTermListMatchingAutomata(tail,path,indexTerm+1,actionList,gsa);
+      TomList newSubActionList = genMatchingAutomataFromPatternList(tail,path,indexTerm+1,actionList,gsa);
       TomList newPath          = append(makeNumber(indexTerm),path);
-      TomList newActionList    = genTermMatchingAutomata(head,newPath,newSubActionList,gsa);
+      TomList newActionList    = genMatchingAutomataFromPattern(head,newPath,newSubActionList,gsa);
       result                   = concat(result,newActionList);
     }
     return result;
   }
 
-  TomList genTermMatchingAutomata(TomTerm term,
-                                  TomList path,
-                                  TomList actionList,
-                                  boolean gsa) {
+  TomList genMatchingAutomataFromPattern(TomTerm term,
+                                         TomList path,
+                                         TomList actionList,
+                                         boolean gsa) {
     TomList result = empty();
       //%variable
     matchBlock: {
@@ -411,16 +423,16 @@ public class TomKernelCompiler extends TomBase {
           TomList automataList  = null;
           TomList succesList    = empty();
           TomList failureList   = empty();
-          if(Flags.debugMode) {
-            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternFail(\""+debugKey+"\");");
-            failureList   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
-          }
+//          if(Flags.debugMode) {
+//            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternFail(\""+debugKey+"\");\n");
+//            failureList   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
+//          }
           
           if(isListOperator(tomSymbol)) {
             int tmpIndexSubterm = 1;
             automataList = genListMatchingAutomata(tomSymbol,
                                                    termArgs,path,actionList,
-                                                   gsa,subjectVariableAST, tmpIndexSubterm);
+                                                   gsa,subjectVariableAST, tmpIndexSubterm, false);
           } else if(isArrayOperator(tomSymbol)) {
             int tmpIndexSubterm = 1;
             automataList = genArrayMatchingAutomata(tomSymbol,
@@ -428,7 +440,7 @@ public class TomKernelCompiler extends TomBase {
                                                     gsa,subjectVariableAST, subjectVariableAST,
                                                     tmpIndexSubterm);
           } else {
-            automataList = genTermListMatchingAutomata(termArgs,path,1,actionList,gsa);
+            automataList = genMatchingAutomataFromPatternList(termArgs,path,1,actionList,gsa);
 
             succesList = concat(succesList,declarationList);
             succesList = concat(succesList,assignementList);
@@ -460,7 +472,8 @@ public class TomKernelCompiler extends TomBase {
                                   TomList actionList,
                                   boolean generateSemanticAction,
                                   TomTerm subjectListName,
-                                  int indexTerm) {
+                                  int indexTerm,
+                                  boolean inDoLoop) {
     TomTerm term;
     TomList result = empty();
       //%variable
@@ -487,21 +500,11 @@ public class TomKernelCompiler extends TomBase {
     } 
     
     TomList subList;
-    if(termList.isEmpty()) {
-      subList = empty();
-    } else {
-      subList = genListMatchingAutomata(symbol,
-                                        termList.getTail(), oldPath, actionList,
-                                        generateSemanticAction,variableListAST,indexTerm+1);
-    }
-    
       //System.out.println("\ntermList = " + termList);
-
-      //System.out.println("*** genListMatchingAutomata");
-    
+      //System.out.println("*** genListMatchingAutomata"); 
     matchBlock: {
       %match(TomList termList) {
-
+        
           //conc() -> {
         Empty() -> {
             /*
@@ -511,7 +514,13 @@ public class TomKernelCompiler extends TomBase {
              *   ...
              * }
              */
-
+          if(termList.isEmpty()) {
+            subList = empty();
+          } else {
+            subList = genListMatchingAutomata(symbol,
+                                              termList.getTail(), oldPath, actionList,
+                                              generateSemanticAction,variableListAST,indexTerm+1, false);
+          }
           if(indexTerm > 1) {
             break matchBlock;
           } else {
@@ -519,13 +528,22 @@ public class TomKernelCompiler extends TomBase {
               subList = appendInstruction(`Action( actionList),subList);
             }
             Expression cond = `IsEmptyList(subjectListName);
-            Instruction test = `IfThenElse(cond, subList, empty());
+
+              //
+            TomList failureList   = empty();
+//            if(Flags.debugMode) {
+//              TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternFail(\""+debugKey+"\");/*genListMatchingAutomata conc() */\n");
+//              failureList   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
+//          }
+              //
+            
+            Instruction test = `IfThenElse(cond, subList, failureList/*empty()*/);
             result = appendInstruction(test,result);
             break matchBlock;
           }
         }
         
-          //conc(var:Variable(option,_, termType),termTail*) -> {
+          //conc(var:Variable(soption,_, termType),termTail*) -> {
         Cons(var@Variable(option,_, termType),termTail) -> {
           if(termTail.isEmpty()) {
               /*
@@ -539,6 +557,13 @@ public class TomKernelCompiler extends TomBase {
                *   }
                * }
                */
+            if(termList.isEmpty()) {
+              subList = empty();
+            } else {
+              subList = genListMatchingAutomata(symbol,
+                                                termList.getTail(), oldPath, actionList,
+                                                generateSemanticAction,variableListAST,indexTerm+1, false);
+            }
             
             TomList path = append(makeNumber(indexTerm),oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
@@ -553,11 +578,20 @@ public class TomKernelCompiler extends TomBase {
             }
             
             Expression cond = `IsEmptyList( subjectListName);
-            Instruction test = `IfThenElse(cond, subList, empty());
+            
+              //
+            TomList failureList   = empty();
+//            if(Flags.debugMode && !inDoLoop) {
+//             TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternFail(\""+debugKey+"\");/*genListMatchingAutomata conc(var:Variable(option,_, termType),emptyTail)"+inDoLoop+"*/\n");
+//              failureList   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
+//          }
+              //
+            
+            Instruction test = `IfThenElse(cond, subList, failureList/*empty()*/);
             TomList succesList = appendInstruction(test,concat(declarationList,assignementList));
             
             cond = `Not(IsEmptyList(subjectListName));
-            test = `IfThenElse(cond, succesList, empty());
+            test = `IfThenElse(cond, succesList, failureList/*empty()*/);
             result = appendInstruction(test,result);
             break matchBlock;
           } else {
@@ -570,6 +604,13 @@ public class TomKernelCompiler extends TomBase {
                *   ...
                * }
                */
+            if(termList.isEmpty()) {
+              subList = empty();
+            } else {
+              subList = genListMatchingAutomata(symbol,
+                                                termList.getTail(), oldPath, actionList,
+                                                generateSemanticAction,variableListAST,indexTerm+1, false);
+            }
             TomList path = append(makeNumber(indexTerm),oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
@@ -580,7 +621,16 @@ public class TomKernelCompiler extends TomBase {
             
             TomList succesList = concat(concat(declarationList,assignementList),subList);
             Expression cond = `Not(IsEmptyList(subjectListName));
-            Instruction test = `IfThenElse(cond, succesList, empty());
+            
+              //
+            TomList failureList   = empty();
+//            if(Flags.debugMode && !inDoLoop) {
+//              TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternFail(\""+debugKey+"\");/*genListMatchingAutomata conc(var:Variable(option,_, termType),noEmptyTail*)"+inDoLoop+"*/\n");
+//              failureList   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
+//          }
+              //
+            
+            Instruction test = `IfThenElse(cond, succesList, failureList/*empty()*/);
             result = appendInstruction(test,result);
             break matchBlock;
           }
@@ -618,7 +668,13 @@ public class TomKernelCompiler extends TomBase {
                * E_n = subjectList;
                * ...
                */
-            
+            if(termList.isEmpty()) {
+              subList = empty();
+            } else {
+              subList = genListMatchingAutomata(symbol,
+                                                termList.getTail(), oldPath, actionList,
+                                                generateSemanticAction,variableListAST,indexTerm+1, false);
+            }
             if(generateSemanticAction) {
               subList = appendInstruction(`Action( actionList),subList);
             }
@@ -643,6 +699,13 @@ public class TomKernelCompiler extends TomBase {
                *   subjectList = end_i;
                * } while( !IS_EMPTY_TomList(subjectList) )
                */
+            if(termList.isEmpty()) {
+              subList = empty();
+            } else {
+              subList = genListMatchingAutomata(symbol,
+                                                termList.getTail(), oldPath, actionList,
+                                                generateSemanticAction,variableListAST,indexTerm+1, true);
+            }
             TomList pathBegin = append(`Begin(makeNumber(indexTerm)),oldPath);
             TomList pathEnd = append(`End(makeNumber(indexTerm)),oldPath);
             TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType);
@@ -775,11 +838,20 @@ public class TomKernelCompiler extends TomBase {
             }
             
             Expression cond = `IsEmptyArray( subjectListName,subjectListIndex);
-            Instruction test = `IfThenElse(cond, subList, empty());
+            
+              //
+            TomList failureList   = empty();
+            if(Flags.debugMode) {
+              TargetLanguage tl = tsf().makeTargetLanguage_ITL("genArrayMatchingAutomata Cons(Var, tail) empty"+debugKey);
+              failureList   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
+            }
+              //
+            
+            Instruction test = `IfThenElse(cond, subList, failureList/*empty()*/);
             TomList succesList = appendInstruction(test,concat(declarationList,assignementList));
             
             cond = `Not(IsEmptyArray( subjectListName,subjectListIndex));
-            test = `IfThenElse(cond, succesList, empty());
+            test = `IfThenElse(cond, succesList, failureList/*empty()*/);
             result = appendInstruction(test,result);
             break matchBlock;
           } else {
@@ -803,9 +875,15 @@ public class TomKernelCompiler extends TomBase {
             assignementList = appendInstruction(`Increment(subjectListIndex),assignementList);
             
             succesList = concat(concat(concat(succesList,declarationList),assignementList),subList);
-            
+              //
+            TomList failureList   = empty();
+            if(Flags.debugMode) {
+              TargetLanguage tl = tsf().makeTargetLanguage_ITL("genArrayMatchingAutomata Cons(Var, tail) NOT empty"+debugKey);
+              failureList   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
+            }
+              //
             Expression cond = `Not(IsEmptyArray( subjectListName,subjectListIndex));
-            Instruction test = `IfThenElse(cond, succesList, empty());
+            Instruction test = `IfThenElse(cond, succesList, failureList/*empty()*/);
             
             result = appendInstruction(test,result);
             break matchBlock;

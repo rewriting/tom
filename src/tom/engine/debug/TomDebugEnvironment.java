@@ -39,7 +39,10 @@ public class TomDebugEnvironment {
   private HashSet patternList;
   private String patternText[];
   private int step = 0;
-
+  private String lastPatternResult = null;
+  private static String FAILURE = "Failure";
+    private static String SUCCESS = "Success";
+  
   public TomDebugEnvironment(TomDebugStructure struct) {
     this.patternList = struct.watchPatternList;
     this.patternText = struct.patternText;
@@ -98,20 +101,38 @@ public class TomDebugEnvironment {
     incrementStep();
     if(patternList.contains(new Integer(getStep()))) {
       System.out.println("\t\tEntering Pattern number "+ getStep());
+      lastPatternResult = FAILURE;
+      debugBreak();
+    }
+  }
+  
+  public void leavingPattern() {
+    if(patternList.contains(new Integer(getStep()))) {
+      System.out.println("\t\t Leaving Pattern number "+ getStep()+" with "+lastPatternResult);
       debugBreak();
     }
   }
   
   public void patternFail() {
    if(patternList.contains(new Integer(getStep()))) {
-     System.out.println("\t\tPattern fails");
-     debugBreak();
+     lastPatternResult = FAILURE;
+       //System.out.println("\t\tPattern fails");
+       //debugBreak();
    }
+  }
+  
+  public void linearizationFail() {
+    if(patternList.contains(new Integer(getStep()))) {
+      lastPatternResult = FAILURE;
+      System.out.println("\t\tPattern fails because of linearization issue");
+        //debugBreak();
+    }
   }
   
   public void patternSuccess() {
     if(patternList.contains(new Integer(getStep()))) {
-      System.out.println("\t\tPattern succeeds");
+      lastPatternResult = SUCCESS;
+      System.out.println("\t\tPattern number "+getStep()+" succeeds");
       debugBreak();
     }
   }

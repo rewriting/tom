@@ -255,9 +255,11 @@ public class TomParser implements TomParserConstants {
   environment.getStatistics().numberMatchBlocsRecognized++;
   ArrayList matchArgumentsList = new ArrayList();
   ArrayList patternActionList = new ArrayList();
+  ArrayList optionList = new ArrayList();
     jj_consume_token(MATCH);
       list.add(makeTL(savePosAndExtract()));
       Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
+      optionList.add(orgTrack);
       String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
     jj_consume_token(TOM_LPAREN);
     MatchArguments(matchArgumentsList);
@@ -279,10 +281,10 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-
+      Option option = ast().makeOption(ast().makeOptionList(optionList));
       TomTerm_Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
                                                     tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
-                                                    orgTrack);
+                                                    option);
       list.add(match);
       if (Flags.debugMode)
         debuggedStructureList.add(match);

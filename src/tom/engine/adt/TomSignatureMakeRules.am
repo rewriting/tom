@@ -34,6 +34,7 @@ Option_TomNameToOptionImpl.java Option_TomNameToOption.java\
 Option_TomTermToOptionImpl.java Option_TomTermToOption.java\
 Option_OptionImpl.java Option_Option.java\
 Option_DefinedSymbolImpl.java Option_DefinedSymbol.java\
+Option_GeneratedMatchImpl.java Option_GeneratedMatch.java\
 Option_OriginTrackingImpl.java Option_OriginTracking.java\
 Option_ConstructorImpl.java Option_Constructor.java\
 Option_OriginalTextImpl.java Option_OriginalText.java\
@@ -49,10 +50,10 @@ Expression_EqualFunctionSymbolImpl.java Expression_EqualFunctionSymbol.java\
 Expression_EqualTermImpl.java Expression_EqualTerm.java\
 Expression_GetSubtermImpl.java Expression_GetSubterm.java\
 Expression_IsFsymImpl.java Expression_IsFsym.java\
-Expression_GetSlotImpl.java Expression_GetSlot.java\
-Expression_GetHeadImpl.java Expression_GetHead.java
+Expression_GetSlotImpl.java Expression_GetSlot.java
 
 TomSignatureAPI1=\
+Expression_GetHeadImpl.java Expression_GetHead.java\
 Expression_GetTailImpl.java Expression_GetTail.java\
 Expression_GetSizeImpl.java Expression_GetSize.java\
 Expression_GetElementImpl.java Expression_GetElement.java\
@@ -101,10 +102,10 @@ TomTerm_MatchingConditionImpl.java TomTerm_MatchingCondition.java\
 TomTerm_EqualityConditionImpl.java TomTerm_EqualityCondition.java\
 TomTerm_RuleSetImpl.java TomTerm_RuleSet.java\
 TomTerm_RewriteRuleImpl.java TomTerm_RewriteRule.java\
-TomTerm_SubjectListImpl.java TomTerm_SubjectList.java\
-TomTerm_PatternListImpl.java TomTerm_PatternList.java
+TomTerm_SubjectListImpl.java TomTerm_SubjectList.java
 
 TomSignatureAPI2=\
+TomTerm_PatternListImpl.java TomTerm_PatternList.java\
 TomTerm_TermListImpl.java TomTerm_TermList.java\
 TomTerm_TermImpl.java TomTerm_Term.java\
 TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
@@ -153,10 +154,10 @@ TomSymbol_SymbolImpl.java TomSymbol_Symbol.java\
 SlotList.java SlotListImpl.java\
 SlotList_EmptySlotListImpl.java SlotList_EmptySlotList.java\
 SlotList_ConsSlotListImpl.java SlotList_ConsSlotList.java\
-PairNameDecl.java PairNameDeclImpl.java\
-PairNameDecl_SlotImpl.java PairNameDecl_Slot.java
+PairNameDecl.java PairNameDeclImpl.java
 
 TomSignatureAPI3=\
+PairNameDecl_SlotImpl.java PairNameDecl_Slot.java\
 TomSymbolTable.java TomSymbolTableImpl.java\
 TomSymbolTable_TableImpl.java TomSymbolTable_Table.java\
 TomEntryList.java TomEntryListImpl.java\
