@@ -33,6 +33,9 @@ import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 
+import aterm.*;
+import aterm.pure.*;
+
 public class TomEnvironment
 {
     private SymbolTable symbolTable;
@@ -66,16 +69,43 @@ public class TomEnvironment
     /**
      * Eclipse mode for error management
      */
-	private Collection importsToDiscard;
-	
     private boolean eclipseMode; 
     private String inputSuffix;
     private String outputSuffix;
 
+    private Collection importsToDiscard;
 
-    public TomEnvironment(SymbolTable symbolTable) 
+    /**
+     * 
+     */
+    private ASTFactory astFactory;
+
+    /**
+     * 
+     */
+    private TomSignatureFactory tomSignatureFactory;
+
+    /**
+     * An accessor method.
+     * 
+     * @return an ASTFactory
+     */
+    public ASTFactory getASTFactory() { return astFactory; }
+    
+    /**
+     * An accessor method.
+     * 
+     * @return a TomSignatureFactory
+     */
+    public TomSignatureFactory getTomSignatureFactory() { return tomSignatureFactory; }
+
+
+    public TomEnvironment() 
     {
-	this.symbolTable = symbolTable;
+        tomSignatureFactory = new TomSignatureFactory(new PureFactory());
+        astFactory = new ASTFactory(tomSignatureFactory);
+		
+        symbolTable = new SymbolTable(astFactory);
 
 	errors = getTomSignatureFactory().makeTomAlertList();
 	warnings = getTomSignatureFactory().makeTomAlertList();
@@ -183,14 +213,6 @@ public class TomEnvironment
 	if ( userOutputFile.length() > 0 ) {
 	    setUserOutputFile( userOutputFile );
 	}
-    }
-
-    public ASTFactory getASTFactory() {
-	return getServer().getASTFactory();
-    }
-
-    public TomSignatureFactory getTomSignatureFactory() {
-	return getServer().getTomSignatureFactory();
     }
 
     public SymbolTable getSymbolTable() {

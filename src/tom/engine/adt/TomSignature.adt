@@ -121,9 +121,6 @@
   
   constructor(TomTerm,TomInclude,TomInclude(<tomList(TomList)>)),
   constructor(TomTerm,Automata,Automata(<option(OptionList)>,<patternList(TomList)>,<numberList(TomNumberList)>,<inst(Instruction)>)),
-  
-  constructor(TomTerm,FileName,FileName(<name(str)>)),
-  
  
   constructor(TomRule,RewriteRule,RewriteRule(<lhs(TomTerm)>,<rhs(TomTerm)>,<condList(InstructionList)>,<option(OptionList)>)),
   

@@ -49,7 +49,7 @@ public class TomBase {
     }
 
     protected ASTFactory ast() {
-			return getServer().getASTFactory();
+			return environment().getASTFactory();
     }
 
     protected TomEnvironment environment() {
@@ -70,7 +70,7 @@ public class TomBase {
     }
 
     protected TomSignatureFactory tsf() {
-			return getServer().getTomSignatureFactory();
+			return environment().getTomSignatureFactory();
     }
 
     public GenericTraversal traversal() {

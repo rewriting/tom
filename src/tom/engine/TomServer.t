@@ -5,7 +5,7 @@ import java.io.*;
 
 import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;
-import jtom.adt.tomsignature.*;
+
 import jtom.adt.options.*;
 import jtom.adt.options.types.*;
 
@@ -25,7 +25,7 @@ import aterm.pure.*;
  * @author Gr&eacute;gory ANDRIEN
  */
 public class TomServer implements TomPluginOptions {
-  %include{ adt/TomSignature.tom }
+
   %include{ adt/TNode.tom }
   %include{ adt/Options.tom }
 
@@ -68,17 +68,7 @@ public class TomServer implements TomPluginOptions {
   /**
    * 
    */
-  private ASTFactory astFactory;
-    
-  /**
-   * 
-   */
   private TNodeFactory tNodeFactory;
-	
-  /**
-   * 
-   */
-  private TomSignatureFactory tomSignatureFactory;
 	
   /**
    * 
@@ -89,13 +79,6 @@ public class TomServer implements TomPluginOptions {
    * 
    */
   private TomEnvironment environment;
-
-  /**
-   * An accessor method.
-   * 
-   * @return an ASTFactory
-   */
-  public ASTFactory getASTFactory() { return astFactory; }
 	
   /**
    * An accessor method.
@@ -103,13 +86,6 @@ public class TomServer implements TomPluginOptions {
    * @return a TNodeFactory
    */  
   public TNodeFactory getTNodeFactory() { return tNodeFactory; }
-	
-  /**
-   * An accessor method.
-   * 
-   * @return a TomSignatureFactory
-   */
-  public TomSignatureFactory getTomSignatureFactory() { return tomSignatureFactory; }
 	
   /**
    * An accessor method.
@@ -169,11 +145,8 @@ public class TomServer implements TomPluginOptions {
 
         instance.tNodeFactory = new TNodeFactory(new PureFactory());
         instance.optionsFactory = new OptionsFactory(new PureFactory());
-        instance.tomSignatureFactory = new TomSignatureFactory(new PureFactory());
-        instance.astFactory = new ASTFactory(instance.tomSignatureFactory);
-		
-        SymbolTable symbolTable = new SymbolTable(instance.astFactory);
-        instance.environment = new TomEnvironment(symbolTable);
+
+        instance.environment = new TomEnvironment();
 
         return instance;
 	    } else {
@@ -192,8 +165,7 @@ public class TomServer implements TomPluginOptions {
     instance.optionTypes = new HashMap();
     instance.optionValues = new HashMap();
     instance.synonyms = new HashMap();
-    SymbolTable symbolTable = new SymbolTable(instance.astFactory);
-    instance.environment = new TomEnvironment(symbolTable);
+    instance.environment = new TomEnvironment();
   }
 
   /**
@@ -463,7 +435,7 @@ public class TomServer implements TomPluginOptions {
     for(int i = 0; i < inputFiles.length; i++) {
       environment.updateEnvironment(inputFiles[i]);
       //System.out.println(inputFiles[i]);
-      ATerm term = `FileName(inputFiles[i]);
+      ATerm term = (new PureFactory()).makeAFun(inputFiles[i],0,false);
       
       // runs the modules
       it = instances.iterator();

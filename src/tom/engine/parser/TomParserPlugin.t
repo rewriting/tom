@@ -33,14 +33,10 @@ public class TomParserPlugin extends TomGenericPlugin //Base implements TomPlugi
 				);
     }
 
-    // public void setInput(ATerm term)
-//     {
-// 	if (term instanceof TomTerm)
-// 	    this.term = (TomTerm)term;
-// 	else
-// 	    environment().messageError(TomMessage.getString("TomTermExpected"),
-// 				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-//     }
+    public void setInput(ATerm term)
+    {
+	fileName = ((AFun)term).getName();
+    }
 
 //     public ATerm getOutput()
 //     {
@@ -57,11 +53,6 @@ public class TomParserPlugin extends TomGenericPlugin //Base implements TomPlugi
 		boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
 		boolean java = ((Boolean)getServer().getOptionValue("jCode")).booleanValue();
 		boolean debug = ((Boolean)getServer().getOptionValue("debug")).booleanValue();
-
-		%match(TomTerm term)
-		    {
-			FileName(n) -> { fileName = n; }
-		    }
 
 		if(java)
 		    {
