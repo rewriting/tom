@@ -84,14 +84,14 @@ public class ATermToXML {
   }
 
   public void atermToXML(TNode n) {
-     {  TNode tom_match1_1 = null; tom_match1_1 = ( TNode) n;_match1_pattern1: {  TNode docType = null;  TNode docElem = null; if(tom_is_fun_sym_DocumentNode(tom_match1_1) ||  false ) {  TNode tom_match1_1_1 = null;  TNode tom_match1_1_2 = null; tom_match1_1_1 = ( TNode) tom_get_slot_DocumentNode_docType(tom_match1_1); tom_match1_1_2 = ( TNode) tom_get_slot_DocumentNode_docElem(tom_match1_1); docType = ( TNode) tom_match1_1_1; docElem = ( TNode) tom_match1_1_2;
+     {  TNode tom_match1_1 = null; tom_match1_1 = ( TNode) n;_match1_pattern1: {  TNode docElem = null;  TNode docType = null; if(tom_is_fun_sym_DocumentNode(tom_match1_1) ||  false ) {  TNode tom_match1_1_1 = null;  TNode tom_match1_1_2 = null; tom_match1_1_1 = ( TNode) tom_get_slot_DocumentNode_docType(tom_match1_1); tom_match1_1_2 = ( TNode) tom_get_slot_DocumentNode_docElem(tom_match1_1); docType = ( TNode) tom_match1_1_1; docElem = ( TNode) tom_match1_1_2;
  
 				write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 				atermToXML(docType);
 				atermToXML(docElem);
 				write("\n");
 				return;
-       }}_match1_pattern2: {  String name = null;  String systemId = null;  String publicId = null;  String internalSubset = null; if(tom_is_fun_sym_DocumentTypeNode(tom_match1_1) ||  false ) {  String tom_match1_1_1 = null;  String tom_match1_1_2 = null;  String tom_match1_1_3 = null;  String tom_match1_1_4 = null; tom_match1_1_1 = ( String) tom_get_slot_DocumentTypeNode_name(tom_match1_1); tom_match1_1_2 = ( String) tom_get_slot_DocumentTypeNode_publicId(tom_match1_1); tom_match1_1_3 = ( String) tom_get_slot_DocumentTypeNode_systemId(tom_match1_1); tom_match1_1_4 = ( String) tom_get_slot_DocumentTypeNode_internalSubset(tom_match1_1); name = ( String) tom_match1_1_1; publicId = ( String) tom_match1_1_2; systemId = ( String) tom_match1_1_3; internalSubset = ( String) tom_match1_1_4;
+       }}_match1_pattern2: {  String internalSubset = null;  String publicId = null;  String name = null;  String systemId = null; if(tom_is_fun_sym_DocumentTypeNode(tom_match1_1) ||  false ) {  String tom_match1_1_1 = null;  String tom_match1_1_2 = null;  String tom_match1_1_3 = null;  String tom_match1_1_4 = null; tom_match1_1_1 = ( String) tom_get_slot_DocumentTypeNode_name(tom_match1_1); tom_match1_1_2 = ( String) tom_get_slot_DocumentTypeNode_publicId(tom_match1_1); tom_match1_1_3 = ( String) tom_get_slot_DocumentTypeNode_systemId(tom_match1_1); tom_match1_1_4 = ( String) tom_get_slot_DocumentTypeNode_internalSubset(tom_match1_1); name = ( String) tom_match1_1_1; publicId = ( String) tom_match1_1_2; systemId = ( String) tom_match1_1_3; internalSubset = ( String) tom_match1_1_4;
  
 				write("<!DOCTYPE "+name);
 				if (!publicId.equals("UNDEF") && !systemId.equals("UNDEF"))
@@ -107,13 +107,13 @@ public class ATermToXML {
 	  			write(" ["+internalSubset+"]");
 					write(">\n");
 					return;
-       }}_match1_pattern3: {  TNodeList attrList = null;  String name = null; if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) {  String tom_match1_1_1 = null;  TNodeList tom_match1_1_2 = null;  TNodeList tom_match1_1_3 = null; tom_match1_1_1 = ( String) tom_get_slot_ElementNode_name(tom_match1_1); tom_match1_1_2 = ( TNodeList) tom_get_slot_ElementNode_attrList(tom_match1_1); tom_match1_1_3 = ( TNodeList) tom_get_slot_ElementNode_childList(tom_match1_1); name = ( String) tom_match1_1_1; attrList = ( TNodeList) tom_match1_1_2; if(tom_is_fun_sym_concTNode(tom_match1_1_3) ||  false ) {  TNodeList tom_match1_1_3_list1 = null; tom_match1_1_3_list1 = ( TNodeList) tom_match1_1_3; if(tom_is_empty_TNodeList(tom_match1_1_3_list1)) {
+       }}_match1_pattern3: {  String name = null;  TNodeList attrList = null; if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) {  String tom_match1_1_1 = null;  TNodeList tom_match1_1_2 = null;  TNodeList tom_match1_1_3 = null; tom_match1_1_1 = ( String) tom_get_slot_ElementNode_name(tom_match1_1); tom_match1_1_2 = ( TNodeList) tom_get_slot_ElementNode_attrList(tom_match1_1); tom_match1_1_3 = ( TNodeList) tom_get_slot_ElementNode_childList(tom_match1_1); name = ( String) tom_match1_1_1; attrList = ( TNodeList) tom_match1_1_2; if(tom_is_fun_sym_concTNode(tom_match1_1_3) ||  false ) {  TNodeList tom_match1_1_3_list1 = null; tom_match1_1_3_list1 = ( TNodeList) tom_match1_1_3; if(tom_is_empty_TNodeList(tom_match1_1_3_list1)) {
  
 				write("<"+name);
 				atermToXMLList(attrList);
 				write("/>");
 				return;
-       } } }}_match1_pattern4: {  TNodeList attrList = null;  String name = null;  TNodeList childList = null; if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) {  String tom_match1_1_1 = null;  TNodeList tom_match1_1_2 = null;  TNodeList tom_match1_1_3 = null; tom_match1_1_1 = ( String) tom_get_slot_ElementNode_name(tom_match1_1); tom_match1_1_2 = ( TNodeList) tom_get_slot_ElementNode_attrList(tom_match1_1); tom_match1_1_3 = ( TNodeList) tom_get_slot_ElementNode_childList(tom_match1_1); name = ( String) tom_match1_1_1; attrList = ( TNodeList) tom_match1_1_2; childList = ( TNodeList) tom_match1_1_3;
+       } } }}_match1_pattern4: {  TNodeList childList = null;  String name = null;  TNodeList attrList = null; if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) {  String tom_match1_1_1 = null;  TNodeList tom_match1_1_2 = null;  TNodeList tom_match1_1_3 = null; tom_match1_1_1 = ( String) tom_get_slot_ElementNode_name(tom_match1_1); tom_match1_1_2 = ( TNodeList) tom_get_slot_ElementNode_attrList(tom_match1_1); tom_match1_1_3 = ( TNodeList) tom_get_slot_ElementNode_childList(tom_match1_1); name = ( String) tom_match1_1_1; attrList = ( TNodeList) tom_match1_1_2; childList = ( TNodeList) tom_match1_1_3;
  
 				write("<"+name);
 				atermToXMLList(attrList);
@@ -121,7 +121,7 @@ public class ATermToXML {
 				atermToXMLList(childList);
 				write("</"+name+">");
 				return;
-       }}_match1_pattern5: {  String name = null;  TNode child = null;  String specified = null; if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) {  String tom_match1_1_1 = null;  String tom_match1_1_2 = null;  TNode tom_match1_1_3 = null; tom_match1_1_1 = ( String) tom_get_slot_AttributeNode_name(tom_match1_1); tom_match1_1_2 = ( String) tom_get_slot_AttributeNode_specified(tom_match1_1); tom_match1_1_3 = ( TNode) tom_get_slot_AttributeNode_child(tom_match1_1); name = ( String) tom_match1_1_1; specified = ( String) tom_match1_1_2; child = ( TNode) tom_match1_1_3;
+       }}_match1_pattern5: {  TNode child = null;  String specified = null;  String name = null; if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) {  String tom_match1_1_1 = null;  String tom_match1_1_2 = null;  TNode tom_match1_1_3 = null; tom_match1_1_1 = ( String) tom_get_slot_AttributeNode_name(tom_match1_1); tom_match1_1_2 = ( String) tom_get_slot_AttributeNode_specified(tom_match1_1); tom_match1_1_3 = ( TNode) tom_get_slot_AttributeNode_child(tom_match1_1); name = ( String) tom_match1_1_1; specified = ( String) tom_match1_1_2; child = ( TNode) tom_match1_1_3;
  
 				if (specified.equals("true")) {
 	  			write(" "+name+"=\"");

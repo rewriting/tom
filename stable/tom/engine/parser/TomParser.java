@@ -1318,7 +1318,7 @@ public class TomParser extends TomTask implements TomParserConstants {
 
       if(term.isComposite() && term.getArgs().isSingle()) {
         TomTerm backQuoteTerm = term.getArgs().getHead();
-        if(backQuoteTerm.getAstName().getString().equals("XML") && backQuoteTerm.getArgs().isSingle()) {
+        if(backQuoteTerm.getAstName().getString().equals("xml") && backQuoteTerm.getArgs().isSingle()) {
           term = tsf().makeTomTerm_DoubleBackQuote(backQuoteTerm.getArgs().getHead());
         }
       } else if(backQuote != null) {
