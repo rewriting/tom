@@ -242,7 +242,7 @@ public class Tom {
       // For the moment debug is only available for Java as target language
     taskInput.setDebugMode(taskInput.isJCode() && taskInput.isDebugMode());
 
-      // setting Base/Input/OutputFileName
+      // setting Base/Input/OutputFileName/ResourceParentPathLocation
     if (taskInput.getInputFileName().length() == 0) {
       System.out.println("No input file name...\n");
       taskInput.setHelp(true);
@@ -251,7 +251,8 @@ public class Tom {
         addError("No input file name...", "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       }
     }
-    if (taskInput.getInputFileName().endsWith(inputSuffix)) {
+    
+    if(taskInput.getInputFileName().endsWith(inputSuffix)) {
       taskInput.setBaseInputFileName(
         taskInput.getInputFileName().substring(
           0,
@@ -262,13 +263,23 @@ public class Tom {
       taskInput.setInputFileName(
         taskInput.getInputFileName() + inputSuffix);
     }
+    
     if (taskInput.isDoOnlyCompile()) {
       taskInput.setInputFileName(
         taskInput.getBaseInputFileName() + TomTaskInput.expandedSuffix);
     }
+    
     taskInput.setOutputFileName(
       taskInput.getBaseInputFileName() + taskInput.getOutputSuffix());
 
+
+    File file = new File(taskInput.getInputFileName());
+    if(file.getParent() == null) {
+      taskInput.setParentPath(".");
+    } else {
+      taskInput.setParentPath(file.getParent());
+    }
+    
       // Setting importList
     taskInput.setImportList(importList);
   }

@@ -63,13 +63,20 @@ public class TomParser extends TomTask {
   	xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
   
   
-  public TomParser(TomBuffer input, TomEnvironment environment, File importList[], int includeOffSet, 
-                   String fileName)  {
+  public TomParser(TomBuffer input,
+                   TomEnvironment environment,
+                   File importList[],
+                   int includeOffSet, 
+                   String fileName) {
     this(input, environment, importList, includeOffSet, fileName, new HashSet());
   }
   
-  private TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, 
-                    String fileName, HashSet alreadyParsedFiles) {
+  private TomParser(TomBuffer input,
+                    TomEnvironment environment,
+                    File importList[],
+                    int includeOffSet, 
+                    String fileName,
+                    HashSet alreadyParsedFiles) {
     super("Tom Parser", environment);
     jj_input_stream = new JavaCharStream(input, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
@@ -78,6 +85,7 @@ public class TomParser extends TomTask {
     jj_gen = 0;
     for (int i = 0; i < 64; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+
     this.tomBuffer = input;
     this.importList = importList;
     this.includeOffSet = includeOffSet;
@@ -1394,7 +1402,10 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 				Object[] realParams =  {new ByteArrayInputStream(vasCode.getBytes())};
 				Object resultFromVas = runMethod.invoke(vas, realParams);
         
-        fileName = currentPath+File.separatorChar+".generatedFromVas";
+        String outputPath = getInput().getParentPath();
+          //System.out.println("outputPath = " + outputPath);
+        fileName = outputPath + File.separatorChar + ".generatedFromVas";
+        
         file = new File(fileName);
         fileName = file.getCanonicalPath();
         OutputStream output = new FileOutputStream(file);
@@ -1412,12 +1423,13 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 		      finalPar[i] = "--input";
 		      finalPar[i+1] = fileName;
 		      finalPar[i+2] = "--output";
-		      finalPar[i+3] = currentPath;
+		      finalPar[i+3] = outputPath;
 		      finalPar[i+4] = "--nojar";
 					
 		      apigen.gen.tom.java.Main.main(finalPar);
 		       	// find apiname
 		      apiName = extractApiName(par);
+            //System.out.println("apiName = " + apiName);
 		    } else if (cCode) {
 		    	String[] par = {"--input", ".generatedFromVas.adt", "--cGen",
 		      	"--output", ".", "--name", "api"};
@@ -1436,7 +1448,8 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
       }
       
       try {
-	      fileName = currentPath+File.separatorChar+apiName+".tom";
+        String outputPath = getInput().getParentPath();
+	      fileName = outputPath + File.separatorChar+apiName+".tom";
   	    file = new File(fileName);
     	  fileName = file.getCanonicalPath();
     		if(file.exists()) {

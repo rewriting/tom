@@ -39,6 +39,7 @@ public class TomTaskInput {
     outputFileName = "",
     outputSuffix    = ".java",
     resourceParentPathLocation = ".",
+    parentPath = ".",
 		inputSuffix = ".t",
 		rawFileName = "";
   public final static String 
@@ -335,6 +336,14 @@ public class TomTaskInput {
   	this.resourceParentPathLocation = resourceParentPathLocation;
   }
   
+  public String getParentPath() {
+  	return parentPath;
+  }
+
+  public void setParentPath(String parentPath) {
+  	this.parentPath = parentPath;
+  }
+
 	public String getInputSuffix() {
 		return inputSuffix;
 	}
