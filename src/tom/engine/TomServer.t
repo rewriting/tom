@@ -405,7 +405,7 @@ public class TomServer implements TomPluginOptions
 	for(int i = 0; i < inputFiles.length; i++)
 	    {
 		environment.updateEnvironment(inputFiles[i]);
-		System.out.println(inputFiles[i]);
+		//System.out.println(inputFiles[i]);
 		ATerm term = `FileName(inputFiles[i]);
 
 		// runs the modules
