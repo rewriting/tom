@@ -111,6 +111,10 @@
     <taskdef name="tom" 
            classname="jtom.tools.ant.TomTask"
            classpathref="tom.classpath"/>
+		<taskdef name="tomantlr" 
+						 classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
+			<classpath refid="tom.classpath"/>
+		</taskdef>
   </target>
   
   <target name="prepare.examples">
@@ -433,10 +437,10 @@
          package="${propp}" 
          destdir="${examples.gen}"/>
 		<!-- build parser -->
-		<antlr target="${propp.dir}/SeqParser.g"
+		<tomantlr target="${propp.dir}/SeqParser.g"
 					 outputdirectory="${examples.gen}/${propp}">
 			<classpath refid="tom.classpath"/>
-		</antlr>
+		</tomantlr>
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
