@@ -86,6 +86,9 @@
   <property name="set" value="set"/>
   <property name="set.dir" location="${examples.dir}/${set}" />
 
+  <property name="tutorial" value="tutorial"/>
+  <property name="tutorial.dir" location="${examples.dir}/${tutorial}" />
+
   <property name="vas" value="vas"/>
   <property name="vas.dir" location="${examples.dir}/${vas}" />
 
@@ -547,6 +550,22 @@
     </javac>
   </target>
 
+  <target name="tutorial" depends="init">
+    <!-- build tom -->
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
+				 optimize="${optimize}"
+         options="-I ${tom.home}/share/jtom">
+      <include name="${tutorial}/**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
+      <classpath refid="tom.classpath"/>
+      <include name="${tutorial}/**/*.java"/>
+    </javac>
+  </target>
+
   <target name="vas" depends="init">
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
@@ -592,11 +611,11 @@
           description="Builds the examples (at least some)"
 					depends="addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, peano, pnspk, poly, pqueens,
-          prodrule, propp, rbtree, set, xml, vas">
+          prodrule, propp, rbtree, set, vas, xml">
 -->
   <target name="examples" 
           description="Builds the examples (at least some)"
-					depends="vas, xml, set, rbtree, propp, prodrule,
+					depends="xml, vas, tutorial, set, rbtree, propp, prodrule,
           addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, peano, pnspk, poly, pqueens">
   </target>
@@ -700,6 +719,10 @@
         <include name="${set}/README"/>
         <include name="${set}/*.t"/>
         <include name="${set}/*.adt"/>
+
+        <include name="${tutorial}/README"/>
+        <include name="${tutorial}/*.t"/>
+        <include name="${tutorial}/*.xml"/>
 
         <include name="${vas}/README"/>
         <include name="${vas}/*.t"/>

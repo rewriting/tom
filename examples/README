@@ -124,6 +124,10 @@ If you come from the
   Implementation of Set with maximal sharing
   Concept: apigen, ATerm with unique id
 
+* tutorial
+  Examples introduced in the tutorial
+  Concept: string matching, XML
+
 * vas
   Introduction to the VAS abstract syntax
   Concept: vas
