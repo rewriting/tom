@@ -1,0 +1,8 @@
+* term.adt describes the abstract data-type
+
+*  adt-to-java --input term.adt --jtom --package adt --output adt
+
+* jtom --import adt GTree.t
+* javac Gtree.java
+* java Gtree
+
