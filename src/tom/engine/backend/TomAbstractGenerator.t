@@ -24,7 +24,7 @@
 */
 
 package jtom.backend;
- 
+
 import aterm.*;
 
 import java.io.IOException;
@@ -449,9 +449,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         output.write("/* ");
         output.write(deep,t);
         output.write(" */ ");
-        if(pretty) {
-          output.writeln();
-        }
+        output.writeln();
         return;
       }
 
@@ -713,12 +711,12 @@ public abstract class TomAbstractGenerator extends TomBase {
     if(debugMode && !generated) {
       orgTrack = findOriginTracking(list);
       debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-      output.write("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");\n");
+      output.writeln("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");");
     }
     generateList(deep+1,matchDeclarationList);
     generateList(deep+1,namedBlockList);
     if(debugMode && !generated && !defaultPattern) {
-      output.write("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
+      output.writeln("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");");
     }
     if(supportedBlock) {
       generateInstruction(deep,`CloseBlock());

@@ -27,16 +27,9 @@ package jtom.backend;
  
 import aterm.*;
 
-//import java.io.FileOutputStream;
-//import java.io.BufferedWriter;
-//import java.io.OutputStreamWriter;
-//import java.io.Writer;
 import java.io.IOException;
-//import java.util.HashMap;
 
 import jtom.adt.tomsignature.types.*;
-
-//import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
 import jtom.exception.TomRuntimeException;
@@ -216,7 +209,7 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
       generate(deep,var);
       output.write("\", ");
       generate(deep,var); // generateExpression(out,deep,exp);
-      output.write(");\n");
+      output.writeln(");");
     }
   }
 
@@ -266,7 +259,7 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
       generate(deep,var);
       output.write("\", ");
       generate(deep,var); // generateExpression(out,deep,exp);
-      output.write(");\n");
+      output.write(");");
     }
   }
 
@@ -457,11 +450,9 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     s+= "    result = " + reverse + "(result);\n";
     s+= "    return result;\n";
     s+= "  }\n";
-    
-    TargetLanguage resultTL = `ITL(s);
+
       //If necessary we remove \n code depending on --pretty option
-    resultTL = ast().reworkTLCode(resultTL, pretty);
-    return resultTL;
+    return ast().reworkTLCode(`ITL(s), pretty);
   }
 
   protected TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
@@ -517,10 +508,8 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     s+= "    return result;\n";
     s+= "  }\n";
 
-    TargetLanguage resultTL = `ITL(s);
 		//If necessary we remove \n code depending on --pretty option
-    resultTL = ast().reworkTLCode(resultTL, pretty);
-    return resultTL;
+    return ast().reworkTLCode(`ITL(s), pretty);
   }
 
   protected TargetLanguage genDecl(String returnType,
@@ -539,10 +528,11 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
 			}
 		} 
 		s += ") { return " + tlCode.getCode() + "; }";
-    if(tlCode.isTL())
+    if(tlCode.isTL()) {
       return `TL(s, tlCode.getStart(), tlCode.getEnd());
-    else
-      return `ITL(s);
+	} else {
+      return `ITL(s); // pas de \n donc pas besoin de reworkTL
+	}
   }
 
   

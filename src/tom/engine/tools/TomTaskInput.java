@@ -290,13 +290,6 @@ public class TomTaskInput {
 		doVerify = b;
 	}
 
-	public boolean isNewGenerator() {
-		return newGenerator;
-	}
-	public void setNewGenerator(boolean b) {
-		newGenerator = b;
-	}
-
 	public boolean isEclipseMode() {
 		return eclipseMode;
 	}

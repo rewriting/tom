@@ -1849,10 +1849,8 @@ public class TomParser extends TomTask implements TomParserConstants {
       break;
     case TYPE:
       jj_consume_token(TYPE);
-      addPreviousCode(list);
-      if(!noWarning) {
-        System.out.println("Warning: %type is obsolete");
-      }
+      addPreviousCode(list);//TODO to remove
+
       break;
     default:
       jj_la1[53] = jj_gen;
@@ -2090,8 +2088,7 @@ public class TomParser extends TomTask implements TomParserConstants {
   TargetLanguage tlCode;
     jj_consume_token(TOM_IMPLEMENT);
     tlCode = GoalLanguageBlock(blockList);
-     tlCode = ast().reworkTLCode(tlCode, pretty);
-     {if (true) return tlCode;}
+     {if (true) return ast().reworkTLCode(tlCode, pretty);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2110,7 +2107,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      OptionList option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetFunctionSymbolDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2134,7 +2131,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_GetSubtermDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,"int"),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2158,7 +2155,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_CompareFunctionSymbolDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,typeString),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2182,7 +2179,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_TermsEqualDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,typeString),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2201,7 +2198,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      OptionList option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetHeadDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2220,7 +2217,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      OptionList option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetTailDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2239,7 +2236,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      OptionList option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_IsEmptyDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2263,7 +2260,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_GetElementDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,"int"),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2282,7 +2279,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      OptionList option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetSizeDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2291,8 +2288,7 @@ public class TomParser extends TomTask implements TomParserConstants {
   TargetLanguage tlCode;
     jj_consume_token(TOM_FSYM);
     tlCode = GoalLanguageBlock(blockList);
-     tlCode = ast().reworkTLCode(tlCode, pretty);
-     {if (true) return tlCode;}
+     {if (true) return ast().reworkTLCode(tlCode, pretty);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2312,7 +2308,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_IsFsymDecl(
                            astName,
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2335,7 +2331,7 @@ public class TomParser extends TomTask implements TomParserConstants {
          astName,
          tsf().makeTomName_Name(slotName.image),
          ast().makeVariable(option,name.image,typeString),
-         tlCode, orgTrack);}
+         ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2407,7 +2403,7 @@ public class TomParser extends TomTask implements TomParserConstants {
       ;
     }
     tlCode = GoalLanguageBlock(blockList);
-     {if (true) return ast().makeMakeDecl(opname,returnType,args,tlCode, orgTrack);}
+     {if (true) return ast().makeMakeDecl(opname,returnType,args,ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2429,7 +2425,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     tlCode = GoalLanguageBlock(blockList);
      {if (true) return tsf().makeDeclaration_MakeEmptyList(
                            tsf().makeTomName_Name(name),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2454,7 +2450,7 @@ public class TomParser extends TomTask implements TomParserConstants {
        tsf().makeTomName_Name(name),
        ast().makeVariable(elementOption,elementName.image,elementType),
        ast().makeVariable(listOption,listName.image,listType),
-       tlCode, orgTrack);}
+       ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2474,7 +2470,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_MakeEmptyArray(
                            tsf().makeTomName_Name(name),
                            ast().makeVariable(listOption,listName.image,listType),
-                           tlCode, orgTrack);}
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2499,7 +2495,7 @@ public class TomParser extends TomTask implements TomParserConstants {
        tsf().makeTomName_Name(name),
        ast().makeVariable(elementOption,elementName.image,elementType),
        ast().makeVariable(listOption,listName.image,listType),
-       tlCode, orgTrack);}
+       ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");
   }
 
@@ -2789,12 +2785,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_13() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_52() {
     if (jj_scan_token(XML_PROC)) return true;
     return false;
@@ -2804,6 +2794,12 @@ public class TomParser extends TomTask implements TomParserConstants {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_3R_37()) return true;
     if (jj_scan_token(TOM_ALTERNATIVE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_13() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 

@@ -31,31 +31,33 @@ public class OutputCode {
   protected Writer file;
   private int lineCounter = 1;
   protected boolean cCode = false, pretty = false;
-	private int defaultDeep;
-	private boolean singleline = false;
-
+  private int defaultDeep;
+  private boolean singleLine = false;
+  
   public OutputCode(Writer file, 
-										boolean cCode, 
-										boolean pretty, 
-										int defaultDeep) {
+                    boolean cCode, 
+                    boolean pretty, 
+                    int defaultDeep) {
     this.file = file;
     this.cCode = cCode;
     this.pretty = pretty;
-	this.defaultDeep = defaultDeep;
+    this.defaultDeep = defaultDeep;
   }
-
+  
   public OutputCode() {
     this.file = new StringWriter();
   }
-	
-	public void setSingleLine() {
-		this.singleline = true;
-	}
-	
-	public void unsetSingleLine() {
-		this.singleline = false;
-	}
-	
+  
+  public void setSingleLine() {
+    System.out.println("setSingleLine");
+    this.singleLine = true;
+  }
+  
+  public void unsetSingleLine() {
+    System.out.println("UnsetSingleLine");
+    this.singleLine = false;
+  }
+  
   public Writer getFile() {
     return file;
   }
@@ -87,26 +89,20 @@ public class OutputCode {
       e.printStackTrace();
     }
   }
-
+  
   public void write(int n) throws IOException {
     write(Integer.toString(n));
   }
-
+  
   public void write(int deep,String s) throws IOException {
     indent(deep);
     write(s);
   }
-
-  protected void internalWriteln() throws IOException {
-    if(!singleline) {
-		file.write('\n');
-    lineCounter++;
-		}
-  }
-
+  
   public void writeln() throws IOException {
     if(pretty) {
-      internalWriteln();
+      System.out.println("pretty:"+pretty+" singleLine"+singleLine);
+      file.write('\n');
     }
   }
   
@@ -114,39 +110,44 @@ public class OutputCode {
     write(s);
     writeln();
   }
-
+  
   public void writeln(int deep,String s) throws IOException {
     write(deep,s);
     writeln();
   }
-
+  
   public void write(int deep,String s, int line, int length) throws IOException {
-		if (!singleline) {
-			if(lineCounter > line && !pretty) {
-				if(cCode) {
-					String s1 = "\n#line "+line+"\n";
-          // writeln(deep,s);
-					s = s1+s;
-				} else {
-					//s = s.replace('\n', ' ');
-          //System.out.println("Warning: Synchronization issue: Line: " + line + " versus LineCounter:" + lineCounter);
-					length = 0;
-				}
-			}
-			while(lineCounter < line) {
-				internalWriteln();
-			}
-			lineCounter+= length;
-		}
-
-		/*if (singleline && !pretty) {
-			s = s.replace('\n', ' ');
-			s = s.replace('\r', ' ');
-			s = s.replace('\t', ' ');
-		}*/
+    if(singleLine && !cCode) {
+      s = s.replace('\n', ' ');
+      s = s.replace('\r', ' ');
+      s = s.replace('\t', ' ');
+      write(s);
+      return;
+    }
+    if (!pretty) {
+      if(lineCounter > line) {
+        if(cCode) {
+          String s1 = "\n#line "+line+"\n";
+            // writeln(deep,s);
+          s = s1+s;
+        } else { // Java Stuff
+          length = 0;
+          s = s.replace('\n', ' ');
+          s = s.replace('\r', ' ');
+          s = s.replace('\t', ' ');
+          System.out.println("remove:"+s);
+        }
+      } else if(lineCounter < line) {
+        while(lineCounter < line) {
+          write("\n");
+          lineCounter++;
+        }
+      }
+      lineCounter+= length;
+    }
     write(deep,s);
   } 
-
+  
   public void close() {
     try {
       file.flush();
@@ -156,7 +157,7 @@ public class OutputCode {
       e.printStackTrace();
     }
   }
-
+  
   public String stringDump() {
     try {
       if(file instanceof StringWriter) {
@@ -171,7 +172,7 @@ public class OutputCode {
       return null;
     }
   }
-
+  
   public void indent(int deep) {
     try {
       if(pretty) {
@@ -187,5 +188,5 @@ public class OutputCode {
       e.printStackTrace();
     }
   }
-
+  
 }

@@ -219,7 +219,7 @@ TOKEN :
   | < MAKE_TERM:           "%make" > : TOM
   | < BACKQUOTE_TERM:      "`" > : TOM
   | < VARIABLE:            "%variable" > : TOM
-  | < TYPE:                "%type" > : TOM
+  | < TYPE:            "%type" > : TOM
   | < TYPETERM:            "%typeterm" > : TOM
   | < TYPEINT:             "%typeint" > : TOM
   | < TYPEDOUBLE:          "%typedouble" > : TOM
@@ -1649,15 +1649,12 @@ void TypeTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
     {
       addPreviousCode(list);
     }
-  | 
-    <TYPE> /* switch to TOM mode */
+  |
+    <TYPE> /* switch to TOM mode */ 
     {
-      addPreviousCode(list);
-      if(!noWarning) {
-        System.out.println("Warning: %type is obsolete");
-      }
+      addPreviousCode(list);//TODO to remove
     }
-  )  
+  )
   type=<TOM_IDENTIFIER>
     { orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);}
   <TOM_LBRACE>
@@ -1820,8 +1817,7 @@ TargetLanguage KeywordImplement() throws TomException:
   <TOM_IMPLEMENT>
   tlCode = GoalLanguageBlock(blockList)
    {
-     tlCode = ast().reworkTLCode(tlCode, pretty);
-     return tlCode;
+     return ast().reworkTLCode(tlCode, pretty);
    }
 }
 
@@ -1842,7 +1838,7 @@ Declaration KeywordGetFunSym(String typeString) throws TomException:
      OptionList option = ast().makeOption(info);
      return tsf().makeDeclaration_GetFunctionSymbolDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -1866,7 +1862,7 @@ Declaration KeywordGetSubterm(String typeString) throws TomException:
      return tsf().makeDeclaration_GetSubtermDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,"int"),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -1890,7 +1886,7 @@ Declaration KeywordCmpFunSym(String typeString) throws TomException:
      return tsf().makeDeclaration_CompareFunctionSymbolDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,typeString),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -1914,7 +1910,7 @@ Declaration KeywordEquals(String typeString) throws TomException:
      return tsf().makeDeclaration_TermsEqualDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,typeString),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -1935,7 +1931,7 @@ Declaration KeywordGetHead(String typeString) throws TomException:
      OptionList option = ast().makeOption(info);
      return tsf().makeDeclaration_GetHeadDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -1956,7 +1952,7 @@ Declaration KeywordGetTail(String typeString) throws TomException:
      OptionList option = ast().makeOption(info);
      return tsf().makeDeclaration_GetTailDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -1977,7 +1973,7 @@ Declaration KeywordIsEmpty(String typeString) throws TomException:
      OptionList option = ast().makeOption(info);
      return tsf().makeDeclaration_IsEmptyDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -2001,7 +1997,7 @@ Declaration KeywordGetElement(String typeString) throws TomException:
      return tsf().makeDeclaration_GetElementDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,"int"),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -2022,7 +2018,7 @@ Declaration KeywordGetSize(String typeString) throws TomException:
      OptionList option = ast().makeOption(info);
      return tsf().makeDeclaration_GetSizeDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -2035,8 +2031,7 @@ TargetLanguage KeywordFsym() throws TomException:
   <TOM_FSYM>
   tlCode = GoalLanguageBlock(blockList)
    {
-     tlCode = ast().reworkTLCode(tlCode, pretty);
-     return tlCode;
+     return ast().reworkTLCode(tlCode, pretty);
    }
 }
 
@@ -2058,7 +2053,7 @@ Declaration KeywordIsFsym(TomName astName, String typeString) throws TomExceptio
      return tsf().makeDeclaration_IsFsymDecl(
 			   astName,
                            ast().makeVariable(option,name.image,typeString),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -2083,7 +2078,7 @@ Declaration KeywordGetSlot(TomName astName, String typeString) throws TomExcepti
          astName,
          tsf().makeTomName_Name(slotName.image),
          ast().makeVariable(option,name.image,typeString),
-         tlCode, orgTrack);
+         ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -2136,7 +2131,7 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
 
   tlCode = GoalLanguageBlock(blockList)
    {
-     return ast().makeMakeDecl(opname,returnType,args,tlCode, orgTrack);
+     return ast().makeMakeDecl(opname,returnType,args,ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -2154,7 +2149,7 @@ Declaration KeywordMakeEmptyList(String name) throws TomException:
    {
      return tsf().makeDeclaration_MakeEmptyList(
                            tsf().makeTomName_Name(name),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -2180,7 +2175,7 @@ Declaration KeywordMakeAddList(String name, String listType, String elementType)
        tsf().makeTomName_Name(name),
        ast().makeVariable(elementOption,elementName.image,elementType),
        ast().makeVariable(listOption,listName.image,listType),
-       tlCode, orgTrack);
+       ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -2202,7 +2197,7 @@ Declaration KeywordMakeEmptyArray(String name, String listType) throws TomExcept
      return tsf().makeDeclaration_MakeEmptyArray(
                            tsf().makeTomName_Name(name),
                            ast().makeVariable(listOption,listName.image,listType),
-                           tlCode, orgTrack);
+                           ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 
@@ -2229,7 +2224,7 @@ Declaration KeywordMakeAddArray(String name, String listType, String elementType
        tsf().makeTomName_Name(name),
        ast().makeVariable(elementOption,elementName.image,elementType),
        ast().makeVariable(listOption,listName.image,listType),
-       tlCode, orgTrack);
+       ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
 

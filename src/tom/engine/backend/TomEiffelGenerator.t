@@ -144,7 +144,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
       generate(deep,var);
       output.write("\", ");
       generate(deep,var); // generateExpression(out,deep,exp);
-      output.write(");\n");
+      output.writeln(");");
     }
   }
 	
@@ -204,7 +204,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
       generate(deep,var);
       output.write("\", ");
       generate(deep,var); // generateExpression(out,deep,exp);
-      output.write(");\n");
+      output.writeln(");");
     }
   }
 
