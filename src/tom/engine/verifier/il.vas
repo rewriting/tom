@@ -13,10 +13,9 @@ abstract syntax
 	var(name:String)                                         -> Variable
 
 	tau(abst:AbsTerm)                                        -> Term
-	absvar(varname:String)                                   -> AbsTerm
+	absvar(varname:Variable)                                 -> AbsTerm
 	st(symbol:Symbol,abst:AbsTerm,index:Int)                 -> AbsTerm
 	sl(symbol:Symbol,abst:AbsTerm,name:String)               -> AbsTerm
-	vtot(var:Variable)                                       -> Term
 	repr(term:String)                                        -> Term
 	subterm(symbol:Symbol,t:Term,index:Int)                  -> Term
 	slot(symbol:Symbol,t:Term,name:String)                   -> Term

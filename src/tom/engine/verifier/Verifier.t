@@ -64,18 +64,40 @@ public class Verifier extends TomBase {
 			}
 		}
 	}
-	
+
+	Variable build_Variable_from_TomName(TomName name) {
+		%match(TomName name) {
+			Name(stringname) -> {
+				return `var(stringname);
+			}
+			PositionName(numberlist) -> {
+				return `var(numberlist.toString());
+			}
+			EmptyName() -> {
+				return `var("emptyName");
+			}
+		}
+		return `var("error while building variable name");
+	}
+
+	Term build_Term_from_TomName(TomName name) {
+		return `tau(absvar(build_Variable_from_TomName(name)));
+	}
+
 	public Term build_TermFromExpression(Expression expression) {
 		%match(Expression expression) {
 			GetSubterm(codomain,Variable[astName=name], Number(index)) -> {
 				// we will need to find the head symbol
-				return `subterm(fsymbol("empty"),vtot(var(name.toString())),index);
+				Term term = build_Term_from_TomName(name);
+				return `subterm(fsymbol("empty"),term,index);
 			}
 			GetSlot(codomain,Name(symbolName),slotName,Variable[astName=name]) -> {
-				return `slot(fsymbol(symbolName),vtot(var(name.toString())),slotName);
+				Term term = build_Term_from_TomName(name);
+				return `slot(fsymbol(symbolName),term,slotName);
 			}
 			TomTermToExpression(Variable[astName=name]) -> {
-				return `vtot(var(name.toString()));
+				Term term = build_Term_from_TomName(name);
+				return `term;
 			}
 			Cast(type,expr) -> {
 				return build_TermFromExpression(expr);
@@ -101,7 +123,8 @@ public class Verifier extends TomBase {
 			TrueTL()  -> { return `true(); }
 			FalseTL() -> { return `false(); }
 			EqualFunctionSymbol(type,Variable[astName=name],Appl[nameList=symbolName]) -> {
-				return `isfsym(vtot(var(name.toString())),fsymbol(extract_Name(symbolName)));
+				Term term = build_Term_from_TomName(name);
+				return `isfsym(term,fsymbol(extract_Name(symbolName)));
 			}
 			EqualFunctionSymbol(type,term1,Appl[nameList=symbolName]) -> {
 				return `isfsym(build_TermFromTomTerm(term1),fsymbol(extract_Name(symbolName)));
@@ -129,12 +152,14 @@ public class Verifier extends TomBase {
 										build_InstrFromAutomata(iff));
 			}
 			Let(Variable[astName=avar],expr,body) -> {
-				return `ILLet(var(avar.toString()),
+				Variable thevar = build_Variable_from_TomName(avar);
+				return `ILLet(thevar,
 											build_TermFromExpression(expr),
 											build_InstrFromAutomata(body));
 			}
 			LetAssign(Variable[astName=avar],expr,body) -> {
-				return `ILLet(var(avar.toString()),
+				Variable thevar = build_Variable_from_TomName(avar);
+				return `ILLet(thevar,
 											build_TermFromExpression(expr),
 											build_InstrFromAutomata(body));
 			}
@@ -293,20 +318,6 @@ public class Verifier extends TomBase {
 				AbsTerm term = `sl(s,t,slotName);
 				return `concTerm(trm,tau(term));
 			}
-			subterm(s,vtot(var(t)),index) -> {
-				// we shall test if term t has symbol s 
-				AbsTerm term = `st(s,absvar(t),index);
-				return `concTerm(trm,tau(term));
-			}
-			slot(s,vtot(var(t)),slotName) -> {
-				// we shall test if term t has symbol s 
-				AbsTerm term = `sl(s,absvar(t),slotName);
-				return `concTerm(trm,tau(term));
-			}
-			vtot(var(t)) -> {
-				AbsTerm term = `absvar(t);
-				return `concTerm(trm,tau(term));
-			}
 			_ -> { 
 				System.out.println("apply TermRules : nothing applies to:" + trm);
 				return `concTerm(trm); }
@@ -320,12 +331,6 @@ public class Verifier extends TomBase {
 			}
 			isfsym(tau(t),symbol) -> {
 				return `concExpr(ex,tisfsym(t,symbol));
-			}
-			eq(vtot(var(tl)),vtot(var(tr))) -> {
-				return `concExpr(ex,teq(absvar(tl),absvar(tr)));
-			}
-			isfsym(vtot(var(t)),symbol) -> {
-				return `concExpr(ex,tisfsym(absvar(t),symbol));
 			}
 			eq(lt,rt) -> {
 				// first reduce the argument
@@ -463,7 +468,7 @@ public class Verifier extends TomBase {
 			public ATerm apply(ATerm subject, Object arg1) {
 				if (subject instanceof Term) {
 					%match(Term subject) {
-						vtot(v@var(name)) -> {
+						tau(absvar(v@var(name))) -> {
 							Map map = (Map) arg1;
 							if (map.containsKey(v)) {
 								return (Term)map.get(v);

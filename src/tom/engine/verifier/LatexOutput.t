@@ -28,7 +28,7 @@ package jtom.verifier;
 
 import jtom.*;
 import aterm.*;
-import aterm.pure.SingletonFactory;
+import aterm.pure.*;
 import java.util.*;
 import tom.library.traversal.*;
 import jtom.adt.tomsignature.types.*;
@@ -43,18 +43,30 @@ public class LatexOutput {
 
 
 	protected jtom.verifier.il.ilFactory factory;
+  private GenericTraversal traversal;
 
 	public LatexOutput() {
 		factory = ilFactory.getInstance(SingletonFactory.getInstance());
+    this.traversal = new GenericTraversal();
 	}
 
+  public GenericTraversal traversal() {
+    return this.traversal;
+  }
+  
 	protected final ilFactory getIlFactory() {
 		return factory;
 	}
 
 	public String build_latex(DerivTree tree) {
+		
+		Map variableset = new HashMap();
+		tree = collect_program_variables(tree,variableset);
+
 		String result = "\\documentclass{article}\n";
 		result += "\\usepackage{proof}\n";
+		result += "\\usepackage{xspace}";
+		result += "\\usepackage{amssymb}";
 		result += "\\input{include.tex}\n\n";
 		result += "\\begin{document}\n";
 		result += build_latex_from_tree(tree);
@@ -63,14 +75,41 @@ public class LatexOutput {
 		return result;
 	}
 
+	DerivTree collect_program_variables(DerivTree tree, Map variables) {
+		return (DerivTree) collect_prog_vars.apply(tree,variables);
+	}
+	private Replace2 collect_prog_vars = new Replace2() {
+			public ATerm apply(ATerm subject, Object astore) {
+				Map store = (Map) astore;
+				
+				if (subject instanceof Variable) {
+					%match(Variable subject) {
+						var(name) -> {
+							String newname = name;
+							if (store.containsKey(name)){
+								newname = (String) store.get(name);
+							} else {
+								if (name.startsWith("[") && name.endsWith("]")) {
+									newname = "X_" + store.size();
+								}
+								store.put(name,newname);
+							}
+							return `var(newname);
+						}
+					}
+				}
+				return traversal().genericTraversal(subject,this,astore);
+			}
+		};
+
 	public String build_latex_from_tree(DerivTree tree) {
 		String result = "";
 		%match(DerivTree tree) {
 			derivrule(name,post,pre,condition) -> {
 				result = "\n\\infer["	
 					+ build_latex_from_Seq(condition) + "]\n{"
-					+ build_latex_from_tree(pre) + "}\n{" 
-					+ build_latex_from_deriv(post) + "}\n";
+					+ build_latex_from_deriv(post) + "}\n{" 
+					+ build_latex_from_tree(pre) + "}\n";
 			}
 		}
 		return result;
@@ -119,7 +158,7 @@ public class LatexOutput {
 		String result = "";
 		%match(Variable variable) {
 			var(name) -> {
-				return "{\\verb|" + name + "|}";
+				return "{" + name + "}";
 			}
 		}
 		return result;
@@ -129,10 +168,7 @@ public class LatexOutput {
 		String result = "";
 		%match(Term term) {
 			tau(absTerm) -> {
-				return "\\mapping{" + absTerm + "}";
-			}
-			vtot(variable) -> {
-				return build_latex_from_var(variable);
+				return "\\mapping{" + build_latex_from_absterm(absTerm) + "}";
 			}
 			repr(name) -> {
 				return "\\repr{" + name + "}";
@@ -154,7 +190,7 @@ public class LatexOutput {
 		String result = "";
 		%match(Instr instr) {
 			accept(positive,negative) -> {
-				result = "\\accept_{\\verb|" + positive.toString() + "|}"; 
+				result = "\\accept_{" + "positive" + "}"; 
 			}
 			refuse() -> {
 				result = "\\refuse ";
@@ -207,7 +243,7 @@ public class LatexOutput {
 	String build_latex_from_absterm(AbsTerm absterm) {
 		String result = "";
 		%match(AbsTerm absterm) {
-			absvar(name) -> {
+			absvar(var(name)) -> {
 				return "{" + name + "}";
 			}
 			st(s,t,index) -> {
