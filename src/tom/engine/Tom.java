@@ -113,10 +113,10 @@ public class Tom {
     + "\n\t--atermStat \t| -s:\tPrint internal ATerm statistics"
     + "\n\t--optimize \t| -O:\tOptimized generated code"
     + "\n\t--static\t\tGenerate static functions"
-    + "\n\t--debug\t\t\tGenerate debug primitives"
-    + "\n\t--verify\t\t\tVerify correctness of match compilation"
+    //+ "\n\t--debug\t\t\tGenerate debug primitives"
+    //+ "\n\t--verify\t\t\tVerify correctness of match compilation"
     + "\n\t--output \t| -o:\tSet output file name"
-    + "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)"
+    //+ "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)"
     + "\n\t--destdir\t| -d <directory>\t\tSpecify where to place generated files"
     ;
 

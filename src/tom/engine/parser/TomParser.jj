@@ -2,6 +2,7 @@ options {
    JAVA_UNICODE_ESCAPE = true;
    STATIC = false;
    //DEBUG_PARSER = true;
+   //DEBUG_TOKEN_MANAGER = true;
  //DEBUG_LOOKAHEAD = true;
  }
  
@@ -119,8 +120,9 @@ public class TomParser extends TomTask {
         getInput().setPackagePath(packageName);
         getInput().updateOutputFile();
         //System.out.println("package = '" + getInput().getPackagePath() + "'");
+      } else {
+        getInput().setPackagePath("");
       }
-      
       
   		TomTerm parsedTerm = startParsing();
   		
@@ -2522,6 +2524,8 @@ TOKEN :
        "\u1040"-"\u1049"
       ]
   >
+| < JAVA_OTHER: ~[] >
+
 }
 
 /**********************************************
@@ -2533,10 +2537,15 @@ String JavaPackageDeclaration() : /* in JAVA mode */
   String packageName = ""; 
 }
 {
-  [ <JAVA_PACKAGE> packageName = JavaName() <JAVA_SEMICOLON> ]
+  <JAVA_PACKAGE> packageName = JavaName() <JAVA_SEMICOLON>
   {
     return packageName;
   }
+ | [ <JAVA_OTHER> ]
+  {
+    return packageName;
+  }
+
 }
 
 String JavaName() : /* in JAVA mode */
