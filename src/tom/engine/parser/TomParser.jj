@@ -131,7 +131,9 @@ public class TomParser implements TomTask {
   	  System.out.println(e.getMessage());
   	  return;
   	} catch (TomException e) {
-		if(eclipse) {
+  	  String msg = "Parsing exception catched in file `"+currentFile+"`\n"+e.getMessage();
+  	  System.out.println(msg);
+          if(eclipse) {
   	  	addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
   	  }
   	  return;
@@ -355,6 +357,9 @@ SKIP :
 | "\n"
 | "\r"
 | "\f"
+| <	( " " | "\t" | "\n" | "\r" )+		  >
+| <	"<!--" ( ~["-"] | ( "-" ~["-"] ) )* "-->" >
+| <	"<?"   (~[">"])* ">"                      >
 }
 
 /* TOM COMMENTS */
@@ -492,7 +497,13 @@ TOKEN :
       )*
       "\""
   >
-
+        
+| < XML_NAME: (<TOM_LETTER>|<TOM_DIGIT>)+ (<TOM_LETTER>|<TOM_DIGIT> | "_" )*          >
+| < XML_START: "<" >
+| < XML_START_ENDING: "</" >
+| < XML_CLOSE: ">" >
+| < XML_CLOSE_SINGLETON: "/>" >
+| < DOUBLE_QUOTE: "\"">
 }
 
 
@@ -625,6 +636,8 @@ void PatternAction(LinkedList list, String debugKey) throws TomException: /* in 
       for(int i=0 ;  i<listOfMatchPatternsList.size() ; i++) {
         patterns = (TomList)listOfMatchPatternsList.get(i);
         patternText = (String)listTextPattern.get(i);
+          //TODO solve with xmlterm
+        if (patternText == null) patternText = "";
         optionList.add(listOrgTrackPattern.get(i));
         optionList.add(tsf().makeOption_OriginalText(tsf().makeTomName_Name(patternText)));
         option = ast().makeOption(ast().makeOptionList(optionList));;
@@ -672,13 +685,75 @@ Option MatchPatterns(LinkedList list) throws TomException: /* in TOM mode */
 TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
 {
   LinkedList list = new LinkedList();
-  Token name, slotName;
+  LinkedList list2 = new LinkedList();
+  boolean xmlAttrImplicit, xmlChildImplicit;
+  Token name, slotName, close;
   TomTerm term;
   Option option = null;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   LinkedList optionList = new LinkedList();
+  TomName tomName;
+        
 }
 {
+    // xmlterm
+    (LOOKAHEAD( <XML_START> name=<TOM_IDENTIFIER> XMLAttributes() <XML_CLOSE_SINGLETON>)
+     <XML_START> name=<TOM_IDENTIFIER>
+        {
+          text +="<"+name.image;
+          optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+        }
+     xmlAttrImplicit= XMLAttributes(list) <XML_CLOSE_SINGLETON>
+    {
+      text += "\\>";
+      if(xmlAttrImplicit) {
+        optionList.add(tsf().makeOption_ImplicitXMLAttribut());
+      }
+      if(annotedName!=null) { optionList.add(annotedName); }
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      term = tsf().makeTomTerm_XMLAppl(
+        option,
+        tsf().makeTomName_Name(name.image),
+        ast().makeList(list),
+        tsf().makeTomList());
+      System.out.println("XML Singleton Term: "+name.image+"===>"+term+"\n");
+      return term;
+    }
+  |
+    <XML_START> name=<TOM_IDENTIFIER>
+      {
+        text +="<"+name.image;
+        optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      }
+     xmlAttrImplicit= XMLAttributes(list) <XML_CLOSE>{text+=">";} xmlChildImplicit = XMLChilds(list2) <XML_START_ENDING>close=<TOM_IDENTIFIER><XML_CLOSE>
+    {
+      text += "</"+ close.image +">";
+      if (name.image.equals(close.image)) {
+        if(xmlAttrImplicit) {
+          optionList.add(tsf().makeOption_ImplicitXMLAttribut());
+        }
+        if(xmlChildImplicit) {
+          optionList.add(tsf().makeOption_ImplicitXMLChild());
+        }
+        if(annotedName!=null) {
+          optionList.add(annotedName);
+        }
+        option = ast().makeOption(ast().makeOptionList(optionList));
+        term =  tsf().makeTomTerm_XMLAppl(
+          option,
+          tsf().makeTomName_Name(name.image),
+          ast().makeList(list),
+          ast().makeList(list2));
+        System.out.println("XML Term: "+name.image+"===>"+term+"\n");
+        return term;
+      }
+      else {
+        throw new TomException(new Throwable("Erreur sur balise fermante "));
+        return null;
+      }
+    }
+     ) // lookahead
+  |  
     // f[left=a,...]
     LOOKAHEAD(2)
     name = <TOM_IDENTIFIER> <TOM_LBRACKET>
@@ -799,9 +874,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
         option,
         tsf().makeTomName_Name(name.image),
         tsf().makeTomList());
-    }
-
-    
+    } 
 }
 
 TomTerm Term() throws TomException: /* in TOM mode */
@@ -825,6 +898,166 @@ TomTerm Term() throws TomException: /* in TOM mode */
       {
         return term;
       }
+}
+
+boolean XMLAttributes(LinkedList list) throws TomException:
+{// variable declaration
+  TomTerm leftTerm, rightTerm;
+  Token name;
+  Option option;
+}
+{//grammar
+  <TOM_LBRACKET>{text+="[";} // explicit
+  (
+    LOOKAHEAD(3)
+    leftTerm=Term() <TOM_EQUAL>{text+="=";} rightTerm=Term()
+      {
+        System.out.println(leftTerm +"  =  "+rightTerm);
+        list.add(tsf().makeTomTerm_XMLAttribute(leftTerm, rightTerm));
+      }
+    |
+    LOOKAHEAD(2)
+     name = <TOM_IDENTIFIER> <TOM_STAR>
+      {
+        text+=name.image+"*";
+        System.out.println(name.image+ "STAR");
+        option = ast().makeOption(tsf().makeOptionList());
+        list.add(ast().makeVariableStar(option,name.image,"unknown type"));
+      }
+    |
+    <TOM_UNDERSCORE> <TOM_STAR>
+      {
+        text+="_*";
+        System.out.println("_STAR");
+        option = ast().makeOption(tsf().makeOptionList());
+        list.add(ast().makeUnamedVariableStar(option,"unknown type"));
+      }
+  )*
+  <TOM_RBRACKET>
+  {
+    text +="]";
+    System.out.println("ExplicitMode for attribute");
+    return true;
+  }
+ |
+    // implicit mode
+  (
+    leftTerm=Term() <TOM_EQUAL>{text+="=";} rightTerm=Term()
+      {
+        System.out.println(leftTerm +"  =  "+rightTerm);
+        list.add(tsf().makeTomTerm_XMLAttribute(leftTerm, rightTerm));
+      }
+  )*
+  {
+    System.out.println("ImplicitMode for attribute");
+    return false;
+  }
+}
+
+
+boolean XMLChilds(LinkedList list) throws TomException:
+{// variable declaration
+  TomTerm term;
+  Token name;
+  XMLTerm term2;
+  Option option;
+  LinkedList optionList = new LinkedList();
+}
+{//grammar
+  <TOM_LBRACKET>{text+="[";} // explicit
+  (
+    LOOKAHEAD(3)
+    term = Term() // a Term
+      {
+        System.out.println(term);
+        list.add(term);
+      }
+   |// #TEXT | #COMMENT | #PROCESSING-INSTRUCTION
+    <TOM_SHARP> name = <TOM_IDENTIFIER> {text += "#"+name.image;}
+    [
+      <TOM_LPAREN> 
+      {text += "(";}    
+      term2 = XMLVariable(null)               
+	{
+            // todo
+        }
+      ( <TOM_COMMA> {text += " , ";} term2 = XMLVariable(null)
+      {
+          //todo
+      }
+      )*
+      <TOM_RPAREN>{text += ")";}
+    ]
+    {
+      System.out.println(text);
+      String rWord = name.image.toUpperCase();
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      list.add(tsf().makeXMLTerm_ReservedWord(tsf().makeTomName_Name(rWord),
+					     ast().makeList(list),
+                                              option));
+    }
+   |
+    LOOKAHEAD(2)
+    name = <TOM_IDENTIFIER> <TOM_STAR>
+      {
+        text+=name.image+"*";
+        System.out.println(name.image+ "STAR");
+        option = ast().makeOption(tsf().makeOptionList());
+        list.add(ast().makeVariableStar(option,name.image,"unknown type"));
+      }
+   |
+    <TOM_UNDERSCORE> <TOM_STAR>
+      {
+        text+="_*";
+        System.out.println("_STAR");
+        option = ast().makeOption(tsf().makeOptionList());
+        list.add(ast().makeUnamedVariableStar(option,"unknown type"));
+      }
+  )*
+  <TOM_RBRACKET>
+  {
+    text +="]";
+    System.out.println("ExplicitMode for child");
+    return true;
+  }
+ |
+    // implicit mode
+  (
+    term = Term() //a Term
+      {
+        list.add(term);
+        System.out.println(term);
+      }
+   |// #TEXT | #COMMENT | #PROCESSING-INSTRUCTION
+    <TOM_SHARP> name = <TOM_IDENTIFIER> {text += "#"+name.image;}
+    [
+      <TOM_LPAREN> 
+      {text += "(";}    
+      term2 = XMLVariable(null)               
+	{
+            // todo
+        }
+      ( <TOM_COMMA> {text += " , ";} term2 = XMLVariable(null)
+      { 
+        // todo
+      } )*
+      <TOM_RPAREN> {text += ")";}
+    ]
+    {
+      System.out.println(text);
+      String rWord = name.image.toUpperCase();
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      list.add(tsf().makeXMLTerm_ReservedWord(tsf().makeTomName_Name(rWord),
+					     ast().makeList(list),
+                                              option));
+    }
+  )*
+  {
+    System.out.println("ImplicitMode for child");
+    return false;
+  }
 }
 
 void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */

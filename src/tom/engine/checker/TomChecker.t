@@ -308,9 +308,9 @@ abstract class TomChecker extends TomBase implements TomTask {
     traversal().genericCollect(term, permissiveCollectAndVerify);
   }
   
-    /////////////////////////////////
+    //////////////////////////////////////////////////////////////
     // MATCH VERIFICATION CONCERNS //
-    /////////////////////////////////
+    //////////////////////////////////////////////////////////////
   
     // Given a subject list, we test types in match signature
     // and then number and type of slots found in each pattern
@@ -376,6 +376,14 @@ abstract class TomChecker extends TomBase implements TomTask {
           line = findOriginTrackingLine(options);
           nbFoundArgs++;
           foundTypeMatch.add(extractType(symbolTable().getSymbol(name)));
+        }
+        
+        XMLAppl[option=Option(options), astName=Name(name)] -> {
+	        line = findOriginTrackingLine(options);
+        	nbFoundArgs++;
+        	// TODO assign a type to that argument
+        	System.out.println("Need type verification on XMLAppl");
+        	foundTypeMatch.add(extractType(symbolTable().getSymbol(name)));
         }
       }
       termList = termList.getTail();
