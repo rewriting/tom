@@ -1,0 +1,58 @@
+body{
+background-color:#3399FF;
+color:#fff;
+font-family: Arial, Helvetica, sans-serif;
+font-size:small;
+margin:2em 1%;
+padding:10px;
+}
+
+h2{
+color:#000;
+background-color: #BBDDFF;
+border:1px solid #000;
+padding: 0 0 0 10px;
+width: auto;
+font-style: italic;
+}
+
+#page{
+color:#000;
+background-color:#fff;
+background-position:top right;
+background-repeat:no-repeat;
+border:3px solid #000;
+padding: 10px;
+}
+
+#title {
+	font-size: xx-large;
+	text-align: center;
+}
+
+#logo{
+margin:4em 0 0 5%;
+}
+
+#logo img{
+border:0;
+}
+
+#logo a{
+color:#000;
+background-color:transparent;
+}
+
+#cvspath {
+	color:#006400;
+	background-color:transparent;
+}
+
+#footer {
+font-size: x-small;
+background-color:transparent;
+}
+
+#stats img {
+	border: 0;
+}
