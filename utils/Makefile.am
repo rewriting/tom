@@ -1,4 +1,4 @@
-EXTRA_DIST = jtom.sh.src
+EXTRA_DIST = jtom.sh.src jtom.vim
 
 bin_SCRIPTS = jtom jtom.stable jtom.src
 #noinst_SCRIPTS = jtom.stable jtom.src
