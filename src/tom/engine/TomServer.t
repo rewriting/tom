@@ -35,17 +35,27 @@ public class TomServer implements TomPluginOptions {
   public final static String VERSION = "3.0alpha";
     
   /**
-   * The Vector containing a reference to the plugins.
+   * The List containing a reference to the plugins.
    * It also has a reference to the TomServer (for option management purposes).
    */
-  private Vector instances;
+  private List instances;
     
   /**
-   * A Vector of TomOptionList objects indicating what services can be provided by each plugin.
-   * The mapping between plugins and services is done so : a plugin in the instances Vector shares the
-   * same index as the services it provides in the services Vector.
+   * A List of TomOptionList objects indicating what services can be provided by each plugin.
+   * The mapping between plugins and services is done so : a plugin in the instances List shares the
+   * same index as the services it provides in the services List.
    */
-  private Vector services;
+  private List services;
+
+  /**
+   * A Map allowing to match options and plugins
+   */
+  private Map optionOwners;
+
+  /**
+   * A Map allowing to match options and values
+   */
+  private Map optionValues;
 	
   /**
    * 
@@ -142,8 +152,11 @@ public class TomServer implements TomPluginOptions {
   public static TomServer create() {
     if(instance == null) {
         instance = new TomServer();
-        instance.instances = new Vector();
+        
+	instance.instances = new Vector();
         instance.services = new Vector();
+	instance.optionOwners = new HashMap();
+	instance.optionValues = new HashMap();
 
         instance.tNodeFactory = new TNodeFactory(new PureFactory());
         instance.optionsFactory = new OptionsFactory(new PureFactory());
@@ -167,6 +180,8 @@ public class TomServer implements TomPluginOptions {
   public static void clear() {
     instance.instances = new Vector();
     instance.services = new Vector();
+    instance.optionOwners = new HashMap();
+    instance.optionValues = new HashMap();
     SymbolTable symbolTable = new SymbolTable(instance.astFactory);
     instance.environment = new TomEnvironment(symbolTable);
   }
@@ -247,12 +262,12 @@ public class TomServer implements TomPluginOptions {
    * the class paths of the plugins that are going to be used.
    * 
    * @param xmlConfigurationFile the name of the XML configuration file to be parsed
-   * @return a Vector containing the class paths of the plugins
+   * @return a List containing the class paths of the plugins
    */
-  private Vector parseConfigFile(String xmlConfigurationFile) {
+  private List parseConfigFile(String xmlConfigurationFile) {
     // parses configuration file...
     XmlTools xtools = new XmlTools();
-    Vector classPaths = new Vector();
+    List classPaths = new Vector();
     TNode node = (TNode)xtools.convertXMLToATerm(xmlConfigurationFile);
 
     if( node == null ) {
@@ -293,7 +308,38 @@ public class TomServer implements TomPluginOptions {
     Iterator it = instances.iterator();
     while(it.hasNext()) {
       TomPluginOptions plugin = (TomPluginOptions)it.next();
-      services.add(plugin.declaredOptions());
+
+      TomOptionList list = plugin.declaredOptions();
+      services.add(list);
+
+      while(!(list.isEmpty())) {
+	  TomOption option = list.getHead();
+	  
+	  %match(TomOption option) {
+	      OptionBoolean[name=n, altName=an] 
+		  -> {
+		  optionOwners.put(n, plugin);
+		  if( an.length() > 0 )
+		      optionOwners.put(an, plugin);
+	      }
+
+	      OptionInteger[name=n, altName=an] 
+		  -> {
+		  optionOwners.put(n, plugin);
+		  if( an.length() > 0 )
+		      optionOwners.put(an, plugin);
+	      }
+
+	      OptionString[name=n, altName=an] 
+		  -> {
+		  optionOwners.put(n, plugin);
+		  if( an.length() > 0 )
+		      optionOwners.put(an, plugin);
+	      }
+	  }
+		  
+	  list = list.getTail();
+      }
     }
 
     // set options accordingly to the arguments given in input
@@ -304,7 +350,38 @@ public class TomServer implements TomPluginOptions {
     it = instances.iterator();
     while(it.hasNext()) {
       TomPluginOptions plugin = (TomPluginOptions)it.next();
-      services.add(plugin.declaredOptions());
+      
+      TomOptionList list = plugin.declaredOptions();
+      services.add(list);
+
+      while(!(list.isEmpty())) {
+	  TomOption option = list.getHead();
+	  
+	  %match(TomOption option) {
+	      OptionBoolean[name=n, altName=an, valueB=v] 
+		  -> {
+		  optionValues.put(n, v);
+		  if( an.length() > 0 )
+		      optionValues.put(an, v);
+	      }
+
+	      OptionInteger[name=n, altName=an, valueI=v] 
+		  -> {
+		  optionValues.put(n, new Integer(v));
+		  if( an.length() > 0 )
+		      optionValues.put(an, new Integer(v));
+	      }
+
+	      OptionString[name=n, altName=an, valueS=v] 
+		  -> {
+		  optionValues.put(n, v);
+		  if( an.length() > 0 )
+		      optionValues.put(an, v);
+	      }
+	  }
+
+	  list = list.getTail();
+      }
     }
 
     environment.initInputFromArgs(); // is here because options need to be set to the right value before
@@ -343,7 +420,7 @@ public class TomServer implements TomPluginOptions {
 	    return 1;
     }
 
-    Vector classPaths = parseConfigFile(xmlConfigurationFile);
+    List classPaths = parseConfigFile(xmlConfigurationFile);
   
     if( classPaths == null ) {
       // method parseConfigFile encountered an error
@@ -362,7 +439,7 @@ public class TomServer implements TomPluginOptions {
         if(instance instanceof TomPlugin) {
           instances.add(instance);
         } else {
-          System.out.println("pas un plugin");
+	  //System.out.println("pas un plugin");
           environment.messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
         }
@@ -424,9 +501,9 @@ public class TomServer implements TomPluginOptions {
    * Extracts the plugins' class paths from the XML configuration file.
    * 
    * @param node the node containing the XML document
-   * @param v the Vector into which class paths will be put
+   * @param v the List into which class paths will be put
    */
-  private void extractClassPaths(TNode node, Vector v)
+  private void extractClassPaths(TNode node, List v)
   {
     %match(TNode node)
     {
@@ -455,16 +532,16 @@ public class TomServer implements TomPluginOptions {
    * and the instance of the plugin who declared it.
    * 
    * @param optionName the name of the option we're looking information about
-   * @return a Vector containing a String indicating the type of the option ("boolean",
+   * @return a List containing a String indicating the type of the option ("boolean",
    * "integer" or "string"), along with a reference to the plugin declaring the option. 
    */
-  public Vector aboutThisOption(String optionName)
+  public List aboutThisOption(String optionName)
   {
-    Vector pair = new Vector();
+    List pair = new Vector();
 
     for(int i = 0; i < services.size(); i++)
 	    {
-        TomOptionList ol = (TomOptionList)services.elementAt(i);
+        TomOptionList ol = (TomOptionList)services.get(i);
         TomOptionList list = `concTomOption(ol*);
 
         while(!(list.isEmpty()))
@@ -476,7 +553,7 @@ public class TomServer implements TomPluginOptions {
               {
                 if(n.equals(optionName)||a.equals(optionName))
                   {
-                    TomPluginOptions plugin = (TomPluginOptions)instances.elementAt(i);
+                    TomPluginOptions plugin = (TomPluginOptions)instances.get(i);
                     //System.out.println("Option named " +optionName+
                     //		   " found in " +plugin.getClass().getName());
                     pair.add("boolean");
@@ -488,7 +565,7 @@ public class TomServer implements TomPluginOptions {
               {
                 if(n.equals(optionName)||a.equals(optionName))
                   {
-                    TomPluginOptions plugin = (TomPluginOptions)instances.elementAt(i);
+                    TomPluginOptions plugin = (TomPluginOptions)instances.get(i);
                     //System.out.println("Option named " +optionName+
                     //		   " found in " +plugin.getClass().getName());
                     pair.add("integer");
@@ -500,7 +577,7 @@ public class TomServer implements TomPluginOptions {
               {
                 if(n.equals(optionName)||a.equals(optionName))
                   {
-                    TomPluginOptions plugin = (TomPluginOptions)instances.elementAt(i);
+                    TomPluginOptions plugin = (TomPluginOptions)instances.get(i);
                     //System.out.println("Option named " +optionName+
                     //		   " found in " +plugin.getClass().getName());
                     pair.add("string");
@@ -525,11 +602,9 @@ public class TomServer implements TomPluginOptions {
    */
   public Object getOptionValue(String optionName)
   {
-    Vector pair = new Vector();
-
     for(int i = 0; i < services.size(); i++)
 	    {
-        TomOptionList ol = (TomOptionList)services.elementAt(i);
+        TomOptionList ol = (TomOptionList)services.get(i);
         TomOptionList list = `concTomOption(ol*);
 
         while(!(list.isEmpty()))
@@ -579,11 +654,9 @@ public class TomServer implements TomPluginOptions {
    */
   public boolean getOptionBooleanValue(String optionName)
   {
-    Vector pair = new Vector();
-
     for(int i = 0; i < services.size(); i++)
 	    {
-        TomOptionList ol = (TomOptionList)services.elementAt(i);
+        TomOptionList ol = (TomOptionList)services.get(i);
         TomOptionList list = `concTomOption(ol*);
 
         while(!(list.isEmpty()))
@@ -619,11 +692,9 @@ public class TomServer implements TomPluginOptions {
    */
   public int getOptionIntegerValue(String optionName)
   {
-    Vector pair = new Vector();
-
     for(int i = 0; i < services.size(); i++)
 	    {
-        TomOptionList ol = (TomOptionList)services.elementAt(i);
+        TomOptionList ol = (TomOptionList)services.get(i);
         TomOptionList list = `concTomOption(ol*);
 
         while(!(list.isEmpty()))
@@ -655,11 +726,9 @@ public class TomServer implements TomPluginOptions {
    */
   public String getOptionStringValue(String optionName)
   {
-    Vector pair = new Vector();
-
     for(int i = 0; i < services.size(); i++)
 	    {
-        TomOptionList ol = (TomOptionList)services.elementAt(i);
+        TomOptionList ol = (TomOptionList)services.get(i);
         TomOptionList list = `concTomOption(ol*);
 
         while(!(list.isEmpty()))
@@ -707,7 +776,7 @@ public class TomServer implements TomPluginOptions {
 
     for(int i = 0; i < services.size(); i++)
 	    {
-        TomOptionList ol = (TomOptionList)services.elementAt(i);
+        TomOptionList ol = (TomOptionList)services.get(i);
         TomOptionList list = `concTomOption(ol*);
 
         while(!(list.isEmpty()))
@@ -766,7 +835,7 @@ public class TomServer implements TomPluginOptions {
 
         for(int i = 0; i < services.size(); i++)
           {
-            TomOptionList ol = (TomOptionList)services.elementAt(i);
+            TomOptionList ol = (TomOptionList)services.get(i);
 			
             %match(TomOptionList ol, TomOption h)
             {
@@ -889,7 +958,7 @@ public class TomServer implements TomPluginOptions {
    */
   public String[] processArguments(String[] argumentList)
   {
-    Vector inputFiles = new Vector();
+    List inputFiles = new Vector();
     StringBuffer imports = new StringBuffer();
     boolean outputEncountered = false;
     boolean destdirEncountered = false;
@@ -944,7 +1013,7 @@ public class TomServer implements TomPluginOptions {
                     else destdirEncountered = true;
                   }
 
-                Vector about = aboutThisOption(s);
+                List about = aboutThisOption(s);
 
                 if(about == null) // option not found
                   {
@@ -956,8 +1025,8 @@ public class TomServer implements TomPluginOptions {
                   }
                 else
                   {
-                    String type = (String)about.elementAt(0);
-                    TomPluginOptions plugin = (TomPluginOptions)about.elementAt(1);
+                    String type = (String)about.get(0);
+                    TomPluginOptions plugin = (TomPluginOptions)about.get(1);
 					
                     if (type.equals("boolean"))
                       {
