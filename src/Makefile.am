@@ -24,9 +24,9 @@
 #
 
 SUBDIRS = jtom
-JARFILE        = jtom-devel.jar
+JARFILE = jtom-devel.jar
 JARVERSIONFILE = jtom-devel-${VERSION}.jar
-data_DATA  = $(JARFILE) $(JARVERSIONFILE)
+data_DATA  = 
 CLEANFILES = ${JARFILE} ${JARVERSIONFILE}
 
 EXTRA_DIST = TODO ALGO 
@@ -69,6 +69,8 @@ bootinstall:
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
+
+jar: ${JARFILE}
 
 ${JARFILE}: ${JARVERSIONFILE}
 	cp ${JARVERSIONFILE} ${JARFILE}
