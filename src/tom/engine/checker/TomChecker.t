@@ -32,7 +32,6 @@ import java.util.*;
 
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.tools.*;
 import jtom.runtime.Collect1;
 import jtom.xml.Constants;
 import jtom.exception.*;

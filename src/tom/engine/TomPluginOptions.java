@@ -6,7 +6,6 @@
 
 package jtom;
 
-import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
 
 public interface TomPluginOptions

@@ -160,7 +160,7 @@ public class TomServer implements TomPluginOptions
 	    }
 	else
 	    {
-		instance.clear();
+		TomServer.clear();
 		return instance;
 		//throw new TomRuntimeException(TomMessage.getString("TwoTomServerInstance"));
 	    }

@@ -33,7 +33,6 @@ import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.*;
-import jtom.adt.options.types.*;
 import jtom.runtime.*;
 import jtom.exception.TomRuntimeException;
 

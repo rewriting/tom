@@ -26,13 +26,11 @@
 package jtom.compiler;
   
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.HashSet;
 
 import jtom.TomBase;
 import jtom.adt.tomsignature.types.*;
-import jtom.runtime.Replace1;
 import jtom.runtime.Replace2;
 import aterm.*;
 import jtom.exception.TomRuntimeException;
