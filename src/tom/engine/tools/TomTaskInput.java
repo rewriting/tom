@@ -43,6 +43,7 @@ public class TomTaskInput {
                         expandedSuffix  = ".tfix.expanded",
                         compiledSuffix  = ".tfix.compiled",
                         optimizedSuffix  = ".tfix.optimized",
+		                    verifExtractionSuffix = ".tfix.verif",
                         parsedTableSuffix = ".tfix.parsed.table",
                         expandedTableSuffix = ".tfix.expanded.table",
                         debugTableSuffix = ".tfix.debug.table";
@@ -78,6 +79,7 @@ public class TomTaskInput {
     pretty = false, // Synchronize TL code and source code
     atermStat = false, // Shows aterm statistics
     eclipseMode = false, // Eclipse mode for error management
+		doVerify = false, // Compilation correctness verification
     help = false, // usage called
     version = false; //version called
   
@@ -278,6 +280,13 @@ public class TomTaskInput {
 	}
 	public void setErrors(TomErrorList list) {
 		errors = list;
+	}
+
+	public boolean isDoVerify() {
+		return doVerify;
+	}
+	public void setDoVerify(boolean b) {
+		doVerify = b;
 	}
 
 	public boolean isEclipseMode() {

@@ -41,6 +41,7 @@ import jtom.checker.*;
 import jtom.compiler.*;
 import jtom.parser.*;
 import jtom.tools.*;
+import jtom.verifier.*;
 import aterm.ATerm;
 import aterm.pure.PureFactory;
 
@@ -80,6 +81,7 @@ public class Tom {
 			+ "\n\t--optimize \t| -O:\tOptimized generated code"
 			+ "\n\t--static\t\tGenerate static functions"
 			+ "\n\t--debug\t\t\tGenerate debug primitives"
+			+ "\n\t--verify\t\t\tVerify correctness of match compilation"
 			+ "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)";
 
   private static int defaultLineNumber = 1;
@@ -176,6 +178,9 @@ public class Tom {
 					args[i].equals("--noCheck") || args[i].equals("-f")) {
 					taskInput.setDoCheck(false);
 				} else if (
+					args[i].equals("--verify")) {
+					taskInput.setDoVerify(true);
+				} else if (
 					args[i].equals("--lazyType") || args[i].equals("-l")) {
 					taskInput.setStrictType(false);
 				} else if (
@@ -259,6 +264,7 @@ public class Tom {
 					new TomKernelExpander(environment));
 			TomSyntaxChecker syntaxChecker = new TomSyntaxChecker(environment);
 			TomTypeChecker typeChecker = new TomTypeChecker(environment);
+			TomTask verifExtract = new TomVerifierExtract(environment);
 			TomCompiler compiler =
 				new TomCompiler(
 					environment,
@@ -320,6 +326,14 @@ public class Tom {
 				} else {
 					tomParser.addTask(expander);
 				}
+
+				if (taskInput.isDoVerify()) {
+					if (taskInput.isDoCheck()) {
+						typeChecker.addTask(verifExtract);
+					} else {
+						expander.addTask(verifExtract);
+					}
+				}
 			} //DoParse() && DoExpand
 
 			if (taskInput.isDoCompile()) {
@@ -369,9 +383,17 @@ public class Tom {
 					taskInput.setTerm(expandedTerm);
 				} else {
 					if (taskInput.isDoCheck()) {
-						typeChecker.addTask(compiler);
+						if (taskInput.isDoVerify()) {
+							verifExtract.addTask(compiler);
+						} else {
+							typeChecker.addTask(compiler);
+						}
 					} else {
+						if (taskInput.isDoVerify()) {
+							verifExtract.addTask(compiler);
+						} else {
 						expander.addTask(compiler);
+						}
 					}
 				}
 			} //DoCompile

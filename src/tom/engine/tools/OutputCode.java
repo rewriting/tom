@@ -55,12 +55,6 @@ public class OutputCode {
   public void writeCloseBrace() throws IOException {
     file.write(')');
   }
-  public void writeOpenCBrace() throws IOException {
-    file.write('{');
-  }
-  public void writeCloseCBrace() throws IOException {
-    file.write('}');
-  }
   public void writeComa() throws IOException {
     file.write(',');
   }
