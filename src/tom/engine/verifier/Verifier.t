@@ -47,48 +47,51 @@ public class Verifier extends TomBase {
 		public sorts 
 			Symbol Representation Variable Term Expr Instr 
 			Substitution SubstitutionList Environment
-			Seq TermList ExprList
+			Seq TermList ExprList AbsTerm
 			Deriv DerivTree
 
 		abstract syntax
-			fsymbol(name:String)                    -> Symbol
+			fsymbol(name:String)                       -> Symbol
 			
-			var(name:String)                        -> Variable
+			var(name:String)                           -> Variable
 
-			vtot(var:Variable)                      -> Term
-			repr(term:String)                       -> Term
-			subterm(symbol:Symbol,t:Term,index:Int) -> Term
-			slot(symbol:Symbol,t:Term,name:String)  -> Term
+			tau(abst:AbsTerm)                          -> Term
+			absvar(varname:String)                     -> AbsTerm
+			st(symbol:Symbol,abst:AbsTerm,index:Int)   -> AbsTerm
+			sl(symbol:Symbol,abst:AbsTerm,name:String) -> AbsTerm
+			vtot(var:Variable)                         -> Term
+			repr(term:String)                          -> Term
+			subterm(symbol:Symbol,t:Term,index:Int)    -> Term
+			slot(symbol:Symbol,t:Term,name:String)     -> Term
 
-			true                                    -> Expr
-			false                                   -> Expr
-			isfsym(t:Term,symbol:Symbol)            -> Expr
-			eq(lt:Term,rt:Term)                     -> Expr
-			tisfsym(t:Term,symbol:Symbol)            -> Expr
-			teq(lt:Term,rt:Term)                     -> Expr
+			true                                       -> Expr
+			false                                      -> Expr
+			isfsym(t:Term,symbol:Symbol)               -> Expr
+			eq(lt:Term,rt:Term)                        -> Expr
+			tisfsym(t:Term,symbol:Symbol)              -> Expr
+			teq(lt:Term,rt:Term)                       -> Expr
 
-			accept                                  -> Instr
-			refuse                                  -> Instr
-			ITE(e:Expr,ift:Instr,iff:Instr)         -> Instr
-			ILLet(var:Variable,t:Term,body:Instr)   -> Instr
+			accept(positive:term,negative:term)        -> Instr
+			refuse                                     -> Instr
+			ITE(e:Expr,ift:Instr,iff:Instr)            -> Instr
+			ILLet(var:Variable,t:Term,body:Instr)      -> Instr
 
-			undefsubs                               -> Substitution
-			is(var:Variable,term:Term)              -> Substitution
-			subs(Substitution *)                    -> SubstitutionList
-			env(subs:SubstitutionList,i:Instr)      -> Environment
+			undefsubs                                  -> Substitution
+			is(var:Variable,term:Term)                 -> Substitution
+			subs(Substitution *)                       -> SubstitutionList
+			env(subs:SubstitutionList,i:Instr)         -> Environment
 
-			ebs(lhs:Environment,rhs:Environment)    -> Deriv
-			endderiv                                -> DerivTree
+			ebs(lhs:Environment,rhs:Environment)       -> Deriv
+			endderiv                                   -> DerivTree
 			derivrule(name:String,post:Deriv,pre:DerivTree,cond:Seq) -> DerivTree
 
-			seq                                     -> Seq
-			tau(term:String)                        -> Term
-			appSubsT(subs:SubstitutionList,t:Term)  -> Term
-			appSubsE(subs:SubstitutionList,e:Expr)  -> Expr
-			dedterm(terms:TermList)                 -> Seq
-			concTerm(Term *)                        -> TermList
-			dedexpr(exprs:ExprList)                 -> Seq
-			concExpr(Expr *)                        -> ExprList
+			seq                                        -> Seq
+			appSubsT(subs:SubstitutionList,t:Term)     -> Term
+			appSubsE(subs:SubstitutionList,e:Expr)     -> Expr
+			dedterm(terms:TermList)                    -> Seq
+			concTerm(Term *)                           -> TermList
+			dedexpr(exprs:ExprList)                    -> Seq
+			concExpr(Expr *)                           -> ExprList
 	}
 
 	protected jtom.verifier.verifier.il.ilFactory factory;
@@ -126,9 +129,12 @@ public class Verifier extends TomBase {
 			TomTermToExpression(Variable[astName=name]) -> {
 				return `vtot(var(name.toString()));
 			}
+			Cast(type,expr) -> {
+				return build_TermFromExpression(expr);
+			}
 			_ -> {
 				System.out.println("build_TermFromExpression don't know how to handle this: " + expression);
-				return `repr("");
+				return `repr("autre foirade avec " + expression);
 			}
 		}
 	}
@@ -165,13 +171,10 @@ public class Verifier extends TomBase {
 
 	public Instr build_InstrFromAutomata(Instruction automata) {
 		%match(Instruction automata) {
-			TargetLanguageToInstruction(_) -> { 
-				// This should be an action
-				return `accept(); 
+			TypedAction(action,positivePatterns,negativePatterns) -> {
+				return `accept(positivePatterns,negativePatterns);
 			}
-			Return[] -> {
-				return `accept();
-			}
+
 			IfThenElse(cond,ift,iff) -> {
 				return `ITE(build_ExprFromExpression(cond),
 										build_InstrFromAutomata(ift),
@@ -186,6 +189,9 @@ public class Verifier extends TomBase {
 				return `ILLet(var(avar.toString()),
 											build_TermFromExpression(expr),
 											build_InstrFromAutomata(body));
+			}
+			CompiledPattern(patterns,instr) -> {
+				return build_InstrFromAutomata(`instr);
 			}
 			Nop() -> {
 				// tom uses nop in the iffalse part of ITE
@@ -204,9 +210,10 @@ public class Verifier extends TomBase {
 
 		Environment startingenv = `env(concSubstitution(),
 																 build_InstrFromAutomata(automata));
+		Instr localAccept = collect_accept(automata);
 
 		Deriv startingderiv = `ebs(startingenv,
-															 env(concSubstitution(undefsubs()),accept));
+															 env(concSubstitution(undefsubs()),localAccept));
 
 		// System.out.println("The derivation: " + startingderiv);
 
@@ -222,6 +229,33 @@ public class Verifier extends TomBase {
 		// System.out.println("The tree: " + tree);
 		return tree;
 	}
+  
+	private Collect2 collect_accept = new Collect2() {
+	    public boolean apply(ATerm subject, Object astore) {
+        Collection store = (Collection)astore;
+        if (subject instanceof Instruction) {
+          %match(Instruction subject) {
+            TypedAction(action,positive,negative)  -> {
+              store.add(`accept(positive,negative));
+            }
+            
+            // default rule
+            _ -> {
+							return true;
+            }
+          }//end match
+        } else { 
+					return true;
+        }
+	    }//end apply
+    }; //end new
+  
+  public Instr collect_accept(Instruction subject) {
+    Collection result = new HashSet();
+    traversal().genericCollect(subject,collect_accept,result);
+    return (Instr) result.iterator().next();
+  }
+  
 
 /**
  * The axioms the mapping has to verify
@@ -258,6 +292,9 @@ public class Verifier extends TomBase {
   // need to be reworked : this IS a BAD way to do it !
 	protected TermList apply_termRules(Term trm) {
 		%match(Term trm) {
+			tau[] -> {
+				return `concTerm(trm);
+			}
 			subterm(s,t@subterm[],index) -> {
 				// first reduce the argument
 				TermList reduced = apply_termRules(`t);
@@ -300,22 +337,26 @@ public class Verifier extends TomBase {
 			}
 			subterm(s,tau(t),index) -> {
 				// we shall test if term t has symbol s 
-				String term = t + "_pos_" + index;
+				AbsTerm term = `st(s,t,index);
 				return `concTerm(trm,tau(term));
 			}
 			slot(s,tau(t),slotName) -> {
 				// we shall test if term t has symbol s 
-				String term = t + "_slot_" + slotName;
+				AbsTerm term = `sl(s,t,slotName);
 				return `concTerm(trm,tau(term));
 			}
 			subterm(s,vtot(var(t)),index) -> {
 				// we shall test if term t has symbol s 
-				String term = t + "_pos_" + index;
+				AbsTerm term = `st(s,absvar(t),index);
 				return `concTerm(trm,tau(term));
 			}
 			slot(s,vtot(var(t)),slotName) -> {
 				// we shall test if term t has symbol s 
-				String term = t + "_slot_" + slotName;
+				AbsTerm term = `sl(s,absvar(t),slotName);
+				return `concTerm(trm,tau(term));
+			}
+			vtot(var(t)) -> {
+				AbsTerm term = `absvar(t);
 				return `concTerm(trm,tau(term));
 			}
 			_ -> { 
@@ -333,10 +374,10 @@ public class Verifier extends TomBase {
 				return `concExpr(ex,tisfsym(tau(t),symbol));
 			}
 			eq(vtot(var(tl)),vtot(var(tr))) -> {
-				return `concExpr(ex,teq(tau(tl),tau(tr)));
+				return `concExpr(ex,teq(tau(absvar(tl)),tau(absvar(tr))));
 			}
 			isfsym(vtot(var(t)),symbol) -> {
-				return `concExpr(ex,tisfsym(tau(t),symbol));
+				return `concExpr(ex,tisfsym(tau(absvar(t)),symbol));
 			}
 			eq(lt,rt) -> {
 				// first reduce the argument
@@ -418,7 +459,7 @@ public class Verifier extends TomBase {
 				return `derivrule(rulename,post,pre,cond);
 			}
 			// axiom !
-			ebs(env(e,accept()),env(concSubstitution(undefsubs()),accept())) -> {
+			ebs(env(e,accept[]),env(concSubstitution(undefsubs()),accept[])) -> {
 				outsubst.set(`e);
 				return `derivrule("axiom",post,endderiv(),seq());
 			}
@@ -454,15 +495,15 @@ public class Verifier extends TomBase {
 	}
 
 	private class SubstRef {
-		private SubstitutionList sl;
+		private SubstitutionList sublist;
 		public SubstRef() {
-			sl = null;
+			sublist = null;
 		}
-		public void set(SubstitutionList ssl) {
-			this.sl = ssl;
+		public void set(SubstitutionList ssublist) {
+			this.sublist = ssublist;
 		}
 		public SubstitutionList get() {
-			return sl;
+			return sublist;
 		}
 	}
 
@@ -490,8 +531,8 @@ public class Verifier extends TomBase {
 
 	public Term replaceVarsInTerm(Term subject) {
 		%match(Term subject) {
-			appSubsT(sl,term) -> {
-				Map map = build_varmap(sl, new HashMap());
+			appSubsT(sublist,term) -> {
+				Map map = build_varmap(sublist, new HashMap());
 				return (Term) replace_VarbyTerm.apply(term,map);
 			}
 		}
@@ -500,16 +541,16 @@ public class Verifier extends TomBase {
 
 	public Expr replaceVarsInExpr(Expr subject) {
 		%match(Expr subject) {
-			appSubsE(sl,term) -> {
-				Map map = build_varmap(sl, new HashMap());
+			appSubsE(sublist,term) -> {
+				Map map = build_varmap(sublist, new HashMap());
 				return (Expr) replace_VarbyTerm.apply(term,map);
 			}
 		}
 		return subject;
 	}
 
-	private Map build_varmap(SubstitutionList sl, Map map) {
-		%match(SubstitutionList sl) {
+	private Map build_varmap(SubstitutionList sublist, Map map) {
+		%match(SubstitutionList sublist) {
 			()                -> { return map; }
 			(undefsubs(),t*)  -> { return build_varmap(`t,map);}
 			(is(v,term),t*)   -> { 

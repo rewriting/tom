@@ -65,6 +65,8 @@ public class TomVerifier extends TomGenericPlugin {
         Collection purified = purify(matchSet);
         // System.out.println("Purified : " + purified);        
         Collection derivations = getDerivations(purified);
+				System.out.println("Derivations : " + derivations);
+
         // verbose
         getLogger().log(Level.INFO, "TomVerificationPhase",
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
@@ -113,7 +115,6 @@ public class TomVerifier extends TomGenericPlugin {
   public Collection collectMatch(TomTerm subject) {
     Collection result = new HashSet();
     traversal().genericCollect(subject,collect_match,result);
-    //collect_matching.apply(subject, result);
     return result;
   }
   
@@ -122,12 +123,8 @@ public class TomVerifier extends TomGenericPlugin {
     Iterator it = subject.iterator();
     while (it.hasNext()) {
 	    Instruction cm = (Instruction)it.next();
-	    %match(Instruction cm) {
-        CompiledMatch(automata, options)  -> {
-          // simplify the IL automata
-          purified.add(`CompiledMatch(simplify_il(automata),options));
-        }
-	    }
+			// simplify the IL automata
+			purified.add((simplify_il(cm)));
     }
     return purified;
   }
@@ -146,6 +143,12 @@ public class TomVerifier extends TomGenericPlugin {
             IfThenElse(TrueTL(),success,Nop()) -> {
               return traversal().genericTraversal(`success,this);
             }
+						UnamedBlock(concInstruction(CheckStamp(_),AbstractBlock(concInstruction(inst)))) -> {
+							return traversal().genericTraversal(`inst,this);
+						}
+						CompiledPattern(patterns,inst) -> {
+							return traversal().genericTraversal(`inst,this);
+						}
           }
         } // end instanceof Instruction
         /*
@@ -166,7 +169,8 @@ public class TomVerifier extends TomGenericPlugin {
 	    Instruction cm = (Instruction)it.next();
 	    %match(Instruction cm) {
         CompiledMatch(automata, options)  -> {
-          derivations.add(`CompiledMatch(apply_replace_getDerivations(automata),options));
+          //derivations.add(apply_replace_getDerivations(automata),options);
+          derivations.add(verif.build_tree(automata));
         }
 	    }
     }
