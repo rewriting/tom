@@ -76,19 +76,19 @@ public class Tree1 {
   }
 
   public Tree balance(Color color, Tree lhs, ATerm elt, Tree rhs) {
-
     %match(Color color, Tree lhs, ATerm elt, Tree rhs) {
       B, node(R,node(R,a,x,b),y,c), z, d |
       B, node(R,a,x,node(R,b,y,c)), z, d |
       B, a, x, node(R,node(R,b,y,c),z,d) |
-      B, a, x, node(R,b,y,node(R,c,z,d)) -> { return `node(R,node(B,a,x,b),y,node(B,c,z,d)); }
+      B, a, x, node(R,b,y,node(R,c,z,d)) -> {
+        return `node(R,node(B,a,x,b),y,node(B,c,z,d));
+      }
     }
       // no balancing necessary
     return `node(color,lhs,elt,rhs);
   }
   
   public Tree balance2(Color color, Tree lhs, ATerm elt, Tree rhs) {
-
     %match(Color color, Tree lhs, ATerm elt, Tree rhs) {
         // color flip
       B, node(R,a@node(R,_,_,_),x,b), y, node(R,c,z,d) |
@@ -120,10 +120,16 @@ public class Tree1 {
 
     Element array[] = new Element[3*n];
     long startChrono = System.currentTimeMillis();
-    for(int i=0 ; i<n ; i++) {
-      array[3*i+0] = en(e1,i);
-      array[3*i+1] = en(e2,i);
-      array[3*i+2] = en(e3,i);
+    array[0] = e1;
+    array[1] = e2;
+    array[2] = e3;
+    for(int i=1 ; i<n ; i++) {
+      Element old_e1 = array[3*i+0-3];
+      Element old_e2 = array[3*i+1-3];
+      Element old_e3 = array[3*i+2-3];
+      array[3*i+0] = `f(old_e1);
+      array[3*i+1] = `f(old_e2);
+      array[3*i+2] = `f(old_e3);
     }
     long stopChrono = System.currentTimeMillis();
     System.out.println("building " + n + " in " + (stopChrono-startChrono) + " ms");
@@ -143,6 +149,16 @@ public class Tree1 {
     }    
     stopChrono = System.currentTimeMillis();
     System.out.println("set  size = " + set.size() + " in " + (stopChrono-startChrono) + " ms");
+
+    ATermList list = factory.makeList();
+    startChrono = System.currentTimeMillis();
+    for(int i=0 ; i<3*n ; i++) {
+      list = list.insert(array[i]);
+    }    
+    stopChrono = System.currentTimeMillis();
+    System.out.println("ATlist  size = " + list.getLength() + " in " + (stopChrono-startChrono) + " ms");
+
+
     
   }
   
@@ -156,7 +172,7 @@ public class Tree1 {
   
   public final static void main(String[] args) {
     Tree1 test = new Tree1(new TreeFactory());
-    test.run(1000);
+    test.run(10000);
   }
 
   class MyComparator implements Comparator {
@@ -173,7 +189,8 @@ public class Tree1 {
       } else if(ho1 > ho2) {
         return 1;
       } else {
-        System.out.println("hum");
+        System.out.println("compare: hashCode collision");
+        System.exit(1);
       }
       return 1;
     }
