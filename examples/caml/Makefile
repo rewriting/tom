@@ -35,4 +35,4 @@ tomlist: List1.tom.cmo
 
 erat: erat.t
 	jtom.src --camlCode erat.t
-	ocamlc -o erat erat.tom.ml
+	ocamlopt -o erat erat.tom.ml
