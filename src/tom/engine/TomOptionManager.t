@@ -1,6 +1,7 @@
 package jtom;
 
 import java.util.*;
+import java.util.logging.*;
 import java.io.*;
 
 import jtom.adt.tnode.*;
@@ -63,7 +64,15 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    */
   private Map synonyms;
 
+  /**
+   *
+   */
   private OptionsFactory optionsFactory;
+
+  /**
+   *
+   */
+  private static Logger logger;
 
   /**
    *
@@ -79,6 +88,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     return optionsFactory;
   }
 
+
   public TomOptionManager() {
     optionOwners = new HashMap();
     optionTypes = new HashMap();
@@ -86,6 +96,8 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     synonyms = new HashMap();
 
     optionsFactory = OptionsFactory.getInstance(SingletonFactory.getInstance());
+
+    logger = Logger.getLogger(getClass().getName());
   }
 
   public void setPlugins(List plugins) {
@@ -177,15 +189,16 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     // set options accordingly to the arguments given in input
     String[] inputFiles = processArguments(argumentList);
 
-    //environment().initInputFromArgs(); // is here because options need to be set to the right value before
-
     // checks if every plugin's needs are fulfilled
     it = owners.iterator();
     while(it.hasNext()) {
       TomPluginOptions plugin = (TomPluginOptions)it.next();
       boolean canGoOn = arePrerequisitesMet(plugin.requiredOptions());
       if (!canGoOn) {
-        System.out.println("prerequisites issue");
+	  logger.log(Level.SEVERE,
+		     TomMessage.getString("PrerequisitesIssue"),
+		     plugin.getClass().getName());
+
 //         environment().messageError(TomMessage.getString("PrerequisitesIssue"), 
 //                                  new Object[]{plugin.getClass().getName()},
 //                                  "TomServer",
@@ -208,7 +221,10 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     Object obj = optionValues.get(optionName);
 
     if (obj == null) {
-	System.out.println("option not found");
+	logger.log(Level.SEVERE,
+		   TomMessage.getString("OptionNotFound"),
+		   optionName);
+
 // 	environment().messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
 // 				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return null;
@@ -228,7 +244,10 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     Object obj = optionValues.get(optionName);
 
     if (obj == null) {
-	System.out.println("option not found");
+	logger.log(Level.SEVERE,
+		   TomMessage.getString("OptionNotFound"),
+		   optionName);
+
 // 	environment().messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
 // 				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return false;
@@ -236,7 +255,10 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
 	try {
 	    return ((Boolean)obj).booleanValue();
 	} catch (ClassCastException cce) {
-	    System.out.println("option not found");
+	    logger.log(Level.SEVERE,
+		       TomMessage.getString("OptionNotFound"),
+		       optionName);
+	  
 // 	    environment().messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
 // 				     "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	    return false; // we shouldn't be here if the option is indeed a boolean option, that's why we raise an error
@@ -255,7 +277,9 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     Object obj = optionValues.get(optionName);
 
     if (obj == null) {
-	System.out.println("option not found");
+	logger.log(Level.SEVERE,
+		   TomMessage.getString("OptionNotFound"),
+		   optionName);
 // 	environment().messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
 // 				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return 0;
@@ -263,7 +287,9 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
 	try {
 	return ((Integer)obj).intValue();
 	} catch (ClassCastException cce) {
-	    System.out.println("option not found");
+	    logger.log(Level.SEVERE,
+		       TomMessage.getString("OptionNotFound"),
+		       optionName);
 // 	    environment().messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
 // 				     "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	    return 0; // we shouldn't be here if the option is indeed an integer option, that's why we raise an error
@@ -282,7 +308,10 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     Object obj = optionValues.get(optionName);
 
     if (obj == null) {
-	System.out.println("option not found");
+	logger.log(Level.SEVERE,
+		   TomMessage.getString("OptionNotFound"),
+		   optionName);
+
 // 	environment().messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
 // 				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return null;
@@ -290,7 +319,10 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
 	try {
 	return (String)obj;
 	} catch (ClassCastException cce) {
-	    System.out.println("option not found");
+	    logger.log(Level.SEVERE,
+		       TomMessage.getString("OptionNotFound"),
+		       optionName);
+
 // 	    environment().messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
 // 				     "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	    return null; // we shouldn't be here if the option is indeed a string option, that's why we raise an error
@@ -394,6 +426,9 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
 	      boolean expectedValue = option.getValueB().isTrue();
 	      boolean actualValue = getOptionBooleanValue(optionName);
 	      if ( actualValue != expectedValue ) {
+		  logger.log(Level.SEVERE,
+			     TomMessage.getString("IncorrectOptionValue"),
+			     new Object[]{optionName,Boolean.toString(expectedValue),Boolean.toString(actualValue)});
 // 		  environment().messageError(TomMessage.getString("IncorrectOptionValue"),
 // 					   new Object[]{optionName,Boolean.toString(expectedValue),Boolean.toString(actualValue)},
 // 					   "TomServer",TomMessage.DEFAULT_ERROR_LINE_NUMBER);
@@ -403,6 +438,9 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
 	      int expectedValue = option.getValueI();
 	      int actualValue = getOptionIntegerValue(optionName);
 	      if ( actualValue != expectedValue ) {
+		  logger.log(Level.SEVERE,
+			     TomMessage.getString("IncorrectOptionValue"),
+			     new Object[]{optionName,Integer.toString(expectedValue),Integer.toString(actualValue)});
 // 		  environment().messageError(TomMessage.getString("IncorrectOptionValue"),
 // 					   new Object[]{optionName,Integer.toString(expectedValue),Integer.toString(actualValue)},
 // 					   "TomServer",TomMessage.DEFAULT_ERROR_LINE_NUMBER);
@@ -412,6 +450,9 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
 	      String expectedValue = option.getValueS();
 	      String actualValue = getOptionStringValue(optionName);
 	      if ( ! actualValue.equals(expectedValue) ) {
+		  logger.log(Level.SEVERE,
+			     TomMessage.getString("IncorrectOptionValue"),
+			     new Object[]{optionName,expectedValue,actualValue});
 // 		  environment().messageError(TomMessage.getString("IncorrectOptionValue"),
 // 					   new Object[]{optionName,expectedValue,actualValue},
 // 					   "TomServer",TomMessage.DEFAULT_ERROR_LINE_NUMBER);
@@ -489,16 +530,13 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     boolean destdirEncountered = false;
     int i = 0;
 
-    try
-	    {
-        for(; i < argumentList.length; i++)
-          {
+    try {
+        for(; i < argumentList.length; i++) {
             String s = argumentList[i];
 			
             if(!s.startsWith("-")) // input file name, should never start with '-'
               inputFiles.add(s);
-            else // s does start with '-', thus is -or at least should be- an option
-              {
+            else { // s does start with '-', thus is -or at least should be- an option
                 s = s.substring(1); // crops the '-'
                 if(s.startsWith("-")) // if there's another one
                   s = s.substring(1); // crops the second '-'
@@ -507,94 +545,86 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
                   displayHelp();
                 if( s.equals("version") || s.equals("V") )
                   displayVersion();
-                if( s.equals("X") )
-                  {
+                if( s.equals("X") ) {
                     // if we're here, the TomServer has already handled the "-X" option
                     // and all errors that might occur
                     // just skip it,along with its argument
                     i++;
                     continue;
-                  }
-                if( s.equals("import") || s.equals("I") )
-                  {
+		}
+                if( s.equals("import") || s.equals("I") ) {
                     imports.append(argumentList[++i] + ":");
-                  }
-                if( s.equals("output") || s.equals("o") )
-                  {
-                    if(outputEncountered)
-                      {
-			  System.out.println("output twice");
+		}
+                if( s.equals("output") || s.equals("o") ) {
+                    if(outputEncountered) {
+			  logger.log(Level.SEVERE,
+				     TomMessage.getString("OutputTwice"));
 //                         environment().messageError(TomMessage.getString("OutputTwice"),
 //                                                  "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-                      }
+		    }
                     else outputEncountered = true;
-                  }
-                if( s.equals("destdir") || s.equals("d") )
-                  {
-                    if(destdirEncountered)
-                      {
-			  System.out.println("destdir twice");
+		}
+                if( s.equals("destdir") || s.equals("d") ) {
+                    if(destdirEncountered) {
+			logger.log(Level.SEVERE,
+				   TomMessage.getString("DestdirTwice"));
 //                         environment().messageError(TomMessage.getString("DestdirTwice"),
 //                                                  "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-                      }
+		    }
                     else destdirEncountered = true;
-                  }
+		}
 
 		String type = (String)optionTypes.get(s);
 		TomPluginOptions plugin = (TomPluginOptions)optionOwners.get(s);
 
-                if(type == null || plugin == null) // option not found
-                  {
-		      System.out.println("invalid option");
+                if(type == null || plugin == null) {// option not found
+		    logger.log(Level.SEVERE,
+			       TomMessage.getString("InvalidOption"),
+			       argumentList[i]);
 //                     environment().messageError(TomMessage.getString("InvalidOption"), 
 //                                              new Object[]{argumentList[i]},
 //                                              "TomServer", 
 //                                              TomMessage.DEFAULT_ERROR_LINE_NUMBER);
                     return (String[])inputFiles.toArray(new String[]{});
-                  }
-                else
-                  {                    				
-                    if (type.equals("boolean"))
-                      {
-			  plugin.setOption(s, Boolean.TRUE);
-                      }
-                    else if (type.equals("integer"))
-                      {
+		}
+                else {                    				
+                    if (type.equals("boolean")) {
+			plugin.setOption(s, Boolean.TRUE);
+		    } else if (type.equals("integer")) {
                         String t = argumentList[++i];
                         plugin.setOption(s, new Integer(t));
-                      }
-                    else if (type.equals("string")) 
-                      {
-                        if ( !( s.equals("import") || s.equals("I") ) ) // "import" is handled in the end
-                          {
+		    } else if (type.equals("string")) {
+                        if ( !( s.equals("import") || s.equals("I") ) ) {// "import" is handled in the end
                             String t = argumentList[++i];
                             plugin.setOption(s, t);
-                          }
-                      }
-                  }	
-              }
-          }
+			}
+		    }
+		}	
 	    }
-    catch (ArrayIndexOutOfBoundsException e) 
-	    {
-		System.out.println("incomplete option");
+	}
+    } catch (ArrayIndexOutOfBoundsException e) {
+	logger.log(Level.SEVERE,
+		   TomMessage.getString("InvalidOption"),
+		   argumentList[--i]);
+
 //         environment().messageError(TomMessage.getString("IncompleteOption"), 
 //                                  new Object[]{argumentList[--i]}, 
 //                                  "TomServer", 
 //                                  TomMessage.DEFAULT_ERROR_LINE_NUMBER);
         return (String[])inputFiles.toArray(new String[]{});
-	    }
+    }
 
     setOption("import",imports.toString());
 
-    if(inputFiles.isEmpty())
-	    {
-		System.out.println("no file to compile");
+    if(inputFiles.isEmpty()) {
+	logger.log(Level.SEVERE,
+		   TomMessage.getString("NoFileToCompile"));
+
 //         environment().messageError(TomMessage.getString("NoFileToCompile"), 
 //                                  "TomServer", 
 //                                  TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-	    }
-
+    }
+    
     return (String[])inputFiles.toArray(new String[]{});	
   }
 
@@ -603,56 +633,46 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    * 
    * @param node the node containing the XML file
    */
-  public void extractOptionList(TNode node)
-  {
+  public void extractOptionList(TNode node) {
     globalOptions = `emptyTomOptionList();
-    %match(TNode node)
-    {
+    %match(TNode node) {
       <server>opt@<options></options></server> -> {
-		    %match(TNode opt)
-         {
-           ElementNode[childList = c]
-             -> { while(!(c.isEmpty()))
-               {
-                 TNode h = c.getHead();
+	%match(TNode opt) {
+	  ElementNode[childList = c] -> { 
+	    while(!(c.isEmpty())) {
+	      TNode h = c.getHead();
 					
-                 %match(TNode h){
-                   ob@ElementNode[name="OptionBoolean"] -> { extractOptionBoolean(ob); }
+	      %match(TNode h) {
+                 ob@ElementNode[name="OptionBoolean"] -> { extractOptionBoolean(ob); }
 					    
-                   oi@ElementNode[name="OptionInteger"] -> { extractOptionInteger(oi); }
+                 oi@ElementNode[name="OptionInteger"] -> { extractOptionInteger(oi); }
 					    
-                   os@ElementNode[name="OptionString"] -> { extractOptionString(os); }
-                 }
+                 os@ElementNode[name="OptionString"] -> { extractOptionString(os); }
+	      }
 					
-                 c = c.getTail();
-               }
-           }
-         }
+	      c = c.getTail();
+	    }
+	  }
+	}
       }
     }
-  }	
+  }
 
   /**
    * Adds a boolean option to the global options.
    * 
    * @param optionBooleanNode the node containing the option
    */
-  private void extractOptionBoolean(TNode optionBooleanNode)
-  {
-    %match(TNode optionBooleanNode)
-    {
-      <OptionBoolean
-        [name = n,
-         altName = an,
-         description = d,
-         valueB = v] /> ->
-      {
-        %match(String v)
-        {
-          ('true') ->
-          { globalOptions = `concTomOption(globalOptions*, OptionBoolean(n, an, d, True())); }
-          ('false') ->
-          { globalOptions = `concTomOption(globalOptions*, OptionBoolean(n, an, d, False())); }
+  private void extractOptionBoolean(TNode optionBooleanNode) {
+    %match(TNode optionBooleanNode) {
+      <OptionBoolean [name = n, altName = an, description = d, valueB = v] /> -> {
+	%match(String v) {
+          ('true') -> { 
+	    globalOptions = `concTomOption(globalOptions*, OptionBoolean(n, an, d, True())); 
+	  }
+	  ('false') -> { 
+	    globalOptions = `concTomOption(globalOptions*, OptionBoolean(n, an, d, False())); 
+	  }
         }
       }
     }
@@ -663,17 +683,9 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    * 
    * @param optionIntegerNode the node containing the option
    */
-  private void extractOptionInteger(TNode optionIntegerNode)
-  {
-    %match(TNode optionIntegerNode)
-    {
-      <OptionInteger
-        [name = n,
-         altName = an,
-         description = d,
-         valueI = v,
-         attrName = at] /> ->
-      {
+  private void extractOptionInteger(TNode optionIntegerNode) {
+    %match(TNode optionIntegerNode) {
+      <OptionInteger [name = n, altName = an, description = d, valueI = v, attrName = at] /> -> {
         globalOptions = `concTomOption(OptionInteger(n, an, d, Integer.parseInt(v), at), globalOptions*);
       }
     }
@@ -684,17 +696,9 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    * 
    * @param optionStringNode the node containing the option
    */
-  private void extractOptionString(TNode optionStringNode)
-  {
-    %match(TNode optionStringNode)
-    {
-      <OptionString
-        [name = n,
-         altName = an,
-         description = d,
-         valueS = v,
-         attrName = at] /> ->
-      {
+  private void extractOptionString(TNode optionStringNode) {
+    %match(TNode optionStringNode) {
+      <OptionString [name = n, altName = an, description = d, valueS = v, attrName = at] /> -> {
         globalOptions = `concTomOption(OptionString(n, an, d, v, at), globalOptions*);
       }
     }

@@ -6,9 +6,6 @@ import java.io.*;
 
 import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;
-
-import jtom.exception.*;
-
 import jtom.runtime.xml.*;
 
 import aterm.*;
@@ -54,7 +51,15 @@ public class TomServer {
    */
   public OptionManager getOptionManager() { return optionManager; }
 
-  protected static Logger logger;
+  /**
+   *
+   */
+  private static Logger logger;
+
+  /**
+   *
+   */
+  private TomStatusHandler statusHandler;
 
   /**
    * Part of the Singleton pattern. The unique instance of the TomServer.
@@ -68,16 +73,16 @@ public class TomServer {
     
   /**
    * Part of the Singleton pattern. Returns the instance of the TomServer if it has been initialized before,
-   * otherwise it throws a TomRuntimeException.
+   * otherwise it throws a RuntimeException.
    * 
    * @return the instance of the TomServer
-   * @throws TomRuntimeException if the TomServer hasn't been initialized before the call
+   * @throws RuntimeException if the TomServer hasn't been initialized before the call
    */
   public static TomServer getInstance()
   {
     if(instance == null)
 	    {
-        throw new TomRuntimeException(TomMessage.getString("GetInitializedTomServerInstance"));
+        throw new RuntimeException(TomMessage.getString("GetInitializedTomServerInstance"));
 	    }
     return instance;
   }
@@ -96,6 +101,8 @@ public class TomServer {
       instance.tNodeFactory = TNodeFactory.getInstance(SingletonFactory.getInstance());
       instance.optionManager = optionManager;
 
+      instance.statusHandler = new TomStatusHandler();
+      Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);
       instance.logger = Logger.getLogger(loggerRadical+".TomServer");
 	
       return instance;
@@ -112,7 +119,7 @@ public class TomServer {
     instance.instances = new ArrayList();
     try {
     	instance.optionManager = (OptionManager)instance.optionManager.getClass().newInstance();
-    } catch(Exception e) { System.out.println( "problem when reinitializing option manager : "
+    } catch(Exception e) { System.out.println( "Problem when reinitializing option manager : "
 					       + e.getMessage() ); }
   }
 
@@ -298,8 +305,11 @@ public class TomServer {
 
     for(int i = 0; i < inputFiles.length; i++) {
 
+
+	if(logger.isLoggable(Level.FINER)) {
       logger.log(Level.FINER,
 		 "Now compiling : " + inputFiles[i]);
+	}
 
       ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
       
@@ -308,23 +318,26 @@ public class TomServer {
       while(it.hasNext()) {
         TomPlugin plugin = (TomPlugin)it.next();
         plugin.setInput(term);
-        plugin.run(); // TODO: return code for plugins
+        plugin.run();
         term = plugin.getOutput();
 
-//         if( environment.hasError() ) {
+         if( statusHandler.hasError() ) {
 //           environment.printAlertMessage(plugin.getClass().toString());
 //           environment.messageError(TomMessage.getString("ProcessingError"), new Object[]{inputFiles[i]},
 //                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-//           break;
-//         }
+           break;
+         }
       }
     }
-//     if( environment.hasError() ) {
+
+    //System.out.println( statusHandler.toString() );
+
+    if( statusHandler.hasError() ) {
 //       environment.printAlertMessage("TomServer");
-//       return 1;
-//     } else {
-	    return 0;
-//     }
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
     

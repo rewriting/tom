@@ -21,7 +21,7 @@ public class Tom {
     rootLogger.setUseParentHandlers(false);
 
     Handler ch = new ConsoleHandler();
-    ch.setLevel(Level.FINER);
+    ch.setLevel(Level.ALL); // that way, all the logs accepted by the logger are printed
 
     rootLogger.addHandler(ch);
 
