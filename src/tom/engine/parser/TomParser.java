@@ -1377,7 +1377,7 @@ public class TomParser extends TomTask implements TomParserConstants {
 
   final public void Signature(LinkedList list) throws ParseException, TomException {
         TargetLanguage vasTL;
-        String vasCode, fileName, apiName = null;
+        String vasCode, fileName = "", apiName = null;
         Token arguments;
   TomTerm astTom;
   InputStream input;
@@ -1386,7 +1386,7 @@ public class TomParser extends TomTask implements TomParserConstants {
   TomParser tomParser;
   LinkedList blockList = new LinkedList();
     jj_consume_token(VAS_SIGNATURE);
-      addPreviousCode(list);{System.out.println("Analysing Vas");}
+      addPreviousCode(list);
     jj_consume_token(TOM_LPAREN);
     arguments = jj_consume_token(TOM_STRING);
     jj_consume_token(TOM_RPAREN);
@@ -1394,7 +1394,6 @@ public class TomParser extends TomTask implements TomParserConstants {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       vasCode = vasTL.getCode().trim();
       try{
-        System.out.println("Calling Vas "+arguments.image);
                                 Class vasClass = Class.forName("vas.Vas");
                                 Constructor vasConstructor = vasClass.getConstructor(new Class[]{});
                                 Object vas = vasConstructor.newInstance(new Class[]{}); // an instance of Vas
@@ -1403,46 +1402,36 @@ public class TomParser extends TomTask implements TomParserConstants {
                                 Object[] realParams =  {new ByteArrayInputStream(vasCode.getBytes())};
                                 Object resultFromVas = runMethod.invoke(vas, realParams);
 
-        fileName = currentPath+File.separatorChar+".generatedFromVas.adt";
+        fileName = currentPath+File.separatorChar+".generatedFromVas";
         file = new File(fileName);
         fileName = file.getCanonicalPath();
-        System.out.println(fileName);
         OutputStream output = new FileOutputStream(file);
               Writer writer = new BufferedWriter(new OutputStreamWriter(output));
               writer.write(resultFromVas.toString());
               writer.flush();
               writer.close();
-              System.out.println(javaCode);
               if(javaCode) {
-                System.out.println("Arguments: "+arguments.image.substring(1, arguments.image.length()-1));
                       String[] par = arguments.image.substring(1, arguments.image.length()-1).split(" ");
-                      String[] finalPar = new String[par.length+4];
+                      String[] finalPar = new String[par.length+5];
                       int i = 0;
                       for(;i<par.length;i++){
                         finalPar[i] = par[i];
-
                       }
                       finalPar[i] = "--input";
                       finalPar[i+1] = fileName;
                       finalPar[i+2] = "--output";
                       finalPar[i+3] = currentPath;
-                      for(i=0;i<finalPar.length;i++){
-                        System.out.println(finalPar[i]);
+                      finalPar[i+4] = "--nojar";
 
-                      }
-                      System.out.println("currentPath: "+currentPath);
-                      apiName = extractApiName(par);
-                      System.out.println("apiName: "+apiName);
                       apigen.gen.tom.java.Main.main(finalPar);
+                        // find apiname
+                      apiName = extractApiName(par);
                     } else if (cCode) {
                         String[] par = {"--input", ".generatedFromVas.adt", "--cGen",
                         "--output", ".", "--name", "api"};
                         apigen.gen.tom.c.Main.main(par);
                     }
 
-        //System.out.println("Intermediate result: "+resultFromVas);
-
-        //Entries entries =  vas.run(new ByteArrayInputStream(vasCode.getBytes()));
       } catch (ClassNotFoundException e) {
                                 System.out.println("You need vas-to-adt to use the %signature construct");
       } catch (NoSuchMethodException e) {
@@ -1452,12 +1441,11 @@ public class TomParser extends TomTask implements TomParserConstants {
                                 e.printStackTrace();
       }
 
-      fileName = apiName+".tom";
-      file = new File(fileName);
-      System.out.println(fileName);
-        if(file.exists()) {
-                try {
-                      System.out.println("exists");
+      try {
+              fileName = currentPath+File.separatorChar+apiName+".tom";
+            file = new File(fileName);
+          fileName = file.getCanonicalPath();
+                if(file.exists()) {
                         // to get the length of the file
                         inputBuffer = new byte[(int)file.length()+1];
                         input       = new FileInputStream(file);
@@ -1468,15 +1456,15 @@ public class TomParser extends TomTask implements TomParserConstants {
                         astTom = tomParser.startParsing();
                 astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
                 list.add(astTom);
-                } catch (TokenMgrError error) {
+                    } else {
+                        System.out.println(fileName+" does not exist");
+                    }
+                  } catch (TokenMgrError error) {
                 String msg = "TokenMgrError in file '" + fileName + "' generated from file '"+currentFile+"'"+ error.getMessage();
-                {if (true) throw new TomException(msg);}
-                } catch (java.io.IOException e2) {
-                String msg = "IOException occurs reading " + fileName + " at line "+getLine();
-                {if (true) throw new TomException(msg);}
-                }
-            } else {
-                System.out.println(fileName+" does not exist");
+              {if (true) throw new TomException(msg);}
+            } catch (java.io.IOException e2) {
+              String msg = "IOException occurs reading " + fileName + " at line "+getLine();
+              {if (true) throw new TomException(msg);}
             }
   }
 
@@ -2698,18 +2686,18 @@ public class TomParser extends TomTask implements TomParserConstants {
     finally { jj_save(12, xla); }
   }
 
-  final private boolean jj_3_13() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_33() {
     if (jj_scan_token(TOM_LBRACKET)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_40()) jj_scanpos = xsp;
     if (jj_scan_token(TOM_RBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_13() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2765,12 +2753,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_12() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_31() {
     if (jj_scan_token(TOM_LBRACKET)) return true;
     Token xsp;
@@ -2816,7 +2798,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_11() {
+  final private boolean jj_3_12() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
     return false;
@@ -2866,6 +2848,12 @@ public class TomParser extends TomTask implements TomParserConstants {
 
   final private boolean jj_3R_28() {
     if (jj_3R_33()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_11() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 

@@ -231,7 +231,7 @@ public class Tom {
         }
     	} // end processing arguments
     } catch (ArrayIndexOutOfBoundsException e) {
-    	String s = "'" + args[--i] + "' is supposed to have something after";
+    	String s = "'" + args[--i] + "'option is supposed to have something after";
       System.out.println(s);
       addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
       taskInput.setHelp(true);
