@@ -158,5 +158,35 @@ public class TomFactory extends TomBase {
      
   }
 
+  public TomTerm buildArray(TomName name,TomList args) {
+    return buildArray(name,(TomList)args.reverse(),0);
+  }
+
+  private TomTerm buildArray(TomName name,TomList args, int size) {
+    %match(TomList args) {
+      emptyTomList() -> {
+        return `BuildEmptyArray(name,size);
+      }
+
+      manyTomList(head@VariableStar[],tail) |
+      manyTomList(head@Composite(concTomTerm(VariableStar[])),tail) -> {
+          /*System.out.println("head = " + head);*/
+        TomTerm subList = buildArray(name,tail,size+1);
+        return `BuildAppendArray(name,head,subList);
+      }
+
+      manyTomList(head@BuildTerm[],tail) |
+      manyTomList(head@BuildVariable[],tail) |
+      manyTomList(head@Variable[],tail) |
+      manyTomList(head@Composite(_),tail) -> {
+        TomTerm subList = buildArray(name,tail,size+1);
+        return `BuildConsArray(name,head,subList);
+      }
+    }
+
+    throw new TomRuntimeException(new Throwable("buildArray strange term: " + args));
+     
+  }
+
   
 }

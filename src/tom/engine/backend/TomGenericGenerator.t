@@ -65,10 +65,6 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildRef(int deep, TomTerm term) throws IOException;
   protected abstract void buildInstructionSequence(int deep, Instruction instruction) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
-  protected abstract void buildEmptyList(int deep, String name) throws IOException;
-  protected abstract void buildConsList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException;
-  protected abstract void buildAppendList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException;
-  protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
@@ -406,7 +402,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
 
     generateTargetLanguage(deep,
                            genDecl(returnType,
-                                   "tom_make_empty", opname,
+                                   "tom_empty_list", opname,
                                    new String[] { },
                                    tlCode));
   }
@@ -480,7 +476,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
       returnType = getTLType(getUniversalType());
     }
 
-    generateTargetLanguage(deep, genDecl(returnType, "tom_make_empty", opname,
+    generateTargetLanguage(deep, genDecl(returnType, "tom_empty_array", opname,
                                              new String[] {
                                                getTLType(symbolTable().getIntType()), name1,
                                              },
@@ -503,7 +499,7 @@ TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCo
     
     generateTargetLanguage(deep,
                            genDecl(argListType,
-                                   "tom_make_append", opname,
+                                   "tom_cons_array", opname,
                                    new String[] {
                                      argEltType, name1,
                                      argListType, name2

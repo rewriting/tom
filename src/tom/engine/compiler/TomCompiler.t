@@ -119,7 +119,7 @@ public class TomCompiler extends TomTask {
                 if(isListOperator(tomSymbol)) {
                   return tomFactory.buildList(name,newTermArgs);
                 } else if(isArrayOperator(tomSymbol)) {
-                  return `BuildArray(name,newTermArgs);
+                  return tomFactory.buildArray(name,newTermArgs);
                 } else {
                   return `BuildTerm(name,newTermArgs);
                 }

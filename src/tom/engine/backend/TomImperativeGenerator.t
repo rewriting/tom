@@ -40,9 +40,9 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 		super(environment, output, input);
   }
 
-// ------------------------------------------------------------
+  // ------------------------------------------------------------
   %include { ../../adt/TomSignature.tom }
-// ------------------------------------------------------------
+  // ------------------------------------------------------------
 
 	protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException;
 	protected abstract void buildExpTrue(int deep) throws IOException;
@@ -63,142 +63,127 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     return;
   }
 	
-  protected void buildEmptyList(int deep, String name) throws IOException {
-    output.write("tom_make_empty_" + name + "()");
-    return;
+  protected void buildListOrArray(int deep, TomTerm list) throws IOException {
+    %match(TomTerm list) {
+      BuildEmptyList(Name(name)) -> {
+        output.write("tom_empty_list_" + name + "()");
+        return;
+      }
+
+      BuildConsList(Name(name), headTerm, tailTerm) -> {
+        output.write("tom_cons_list_" + name + "(");
+        generate(deep,headTerm);
+        output.write(",");
+        generate(deep,tailTerm);
+        output.write(")");
+        return;
+      }
+
+      BuildAppendList(Name(name), headTerm, tailTerm) -> {
+        output.write("tom_append_list_" + name + "(");
+        generate(deep,headTerm);
+        output.write(",");
+        generate(deep,tailTerm);
+        output.write(")");
+        return;
+      }
+
+      BuildEmptyArray(Name(name),size) -> {
+        output.write("tom_empty_array_" + name + "(" + size + ")");
+        return;
+      }
+
+      BuildConsArray(Name(name), headTerm, tailTerm) -> {
+        output.write("tom_cons_array_" + name + "(");
+        generate(deep,headTerm);
+        output.write(",");
+        generate(deep,tailTerm);
+        output.write(")");
+        return;
+      }
+
+      BuildAppendArray(Name(name), headTerm, tailTerm) -> {
+        output.write("tom_append_array_" + name + "(");
+        generate(deep,headTerm);
+        output.write(",");
+        generate(deep,tailTerm);
+        output.write(")");
+        return;
+      }
+    }
   }
-  
-  protected void buildConsList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException {
-    output.write("tom_cons_list_" + name + "(");
-    generate(deep,headTerm);
-    output.write(",");
-    generate(deep,tailTerm);
-    output.write(")");
-    return;
-  }
-  protected void buildAppendList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException {
-    output.write("tom_append_list_" + name + "(");
-    generate(deep,headTerm);
-    output.write(",");
-    generate(deep,tailTerm);
-    output.write(")");
-    return;
+
+  protected void buildFunctionCall(int deep, String name, TomList argList) throws IOException {
+    output.write(name);
+    output.writeOpenBrace();
+    while(!argList.isEmpty()) {
+      generate(deep,argList.getHead());
+      argList = argList.getTail();
+      if(!argList.isEmpty()) {
+        output.writeComa();
+      }
+    }
+    output.writeCloseBrace();
   }
 
-
-	protected void buildArray(int deep, String name, TomList argList) throws IOException {
-		TomSymbol tomSymbol = symbolTable().getSymbol(name);
-		String listType = getTLType(getSymbolCodomain(tomSymbol));
-		int size = 0;
-		TomList reverse = reverse(argList);
-		while(!reverse.isEmpty()) {
-			TomTerm elt = reverse.getHead();
-			
-			matchBlock: {
-				%match(TomTerm elt) {
-          VariableStar[] |
-          Ref(VariableStar[]) |
-          Composite(concTomTerm(VariableStar[])) |  
-          Composite(concTomTerm(Ref(VariableStar[]))) |  
-          ExpressionToTomTerm(GetSliceArray[]) |
-          Composite(concTomTerm(ExpressionToTomTerm(GetSliceArray[]))) 
-                                      -> {
-						output.write("tom_append_array_" + name + "(");
-						generate(deep,elt);
-						output.write(",");
-						break matchBlock;
-					}
-					
-					_ -> {
-						output.write("tom_make_append_" + name + "(");
-						generate(deep,elt);
-						output.write(",");
-						break matchBlock;
-					}
-				}
-			} // end matchBlock
-      
-			reverse = reverse.getTail();
-			size++;
-		}
-		output.write("(" + listType + ") tom_make_empty_" + name + "(" + size + ")"); 
-		for(int i=0; i<size; i++) { 
-			//out.write("," + i + ")");
-			output.write(")"); 
-		}
-	}
-
-	protected void buildFunctionCall(int deep, String name, TomList argList) throws IOException {
-	 	output.write(name);
-		output.writeOpenBrace();
-		while(!argList.isEmpty()) {
-			generate(deep,argList.getHead());
-			argList = argList.getTail();
-			if(!argList.isEmpty()) {
-				output.writeComa();
-			}
-		}
-		output.writeCloseBrace();
-	}
-
-	protected void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException {
-		TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-		String glType = getTLType(getSymbolCodomain(tomSymbol));
-		String name = tomSymbol.getAstName().getString();
+  protected void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException {
+    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    String glType = getTLType(getSymbolCodomain(tomSymbol));
+    String name = tomSymbol.getAstName().getString();
     
-		output.write(deep,glType + " " + name + "(");
-		while(!varList.isEmpty()) {
-			TomTerm localVar = varList.getHead();
-			matchBlock: {
-				%match(TomTerm localVar) {
-					v@Variable[astType=type2] -> {
-						output.write(deep,getTLType(`type2) + " ");
-						generate(deep,`v);
-						break matchBlock;
-					}
-					_ -> {
-						System.out.println("MakeFunction: strange term: " + localVar);
-						throw new TomRuntimeException(new Throwable("MakeFunction: strange term: " + localVar));
-					}
-				}
-			}
-			varList = varList.getTail();
-			if(!varList.isEmpty()) {
-				output.write(deep,", ");
+    output.write(deep,glType + " " + name + "(");
+    while(!varList.isEmpty()) {
+      TomTerm localVar = varList.getHead();
+      matchBlock: {
+        %match(TomTerm localVar) {
+          v@Variable[astType=type2] -> {
+            output.write(deep,getTLType(`type2) + " ");
+            generate(deep,`v);
+            break matchBlock;
+          }
+          _ -> {
+            System.out.println("MakeFunction: strange term: " + localVar);
+            throw new TomRuntimeException(new Throwable("MakeFunction: strange term: " + localVar));
+          }
+        }
+      }
+      varList = varList.getTail();
+      if(!varList.isEmpty()) {
+        output.write(deep,", ");
 				
-			}
-		}
-		output.writeln(deep,") {");
-	}
+      }
+    }
+    output.writeln(deep,") {");
+  }
 	
-	protected void buildFunctionEnd(int deep) throws IOException {
-		output.writeln(deep,"}");
-	}
+  protected void buildFunctionEnd(int deep) throws IOException {
+    output.writeln(deep,"}");
+  }
 	
-	protected void buildExpNot(int deep, Expression exp) throws IOException {
-		output.write("!(");
-		generateExpression(deep,exp);
-		output.write(")");
-	}
+  protected void buildExpNot(int deep, Expression exp) throws IOException {
+    output.write("!(");
+    generateExpression(deep,exp);
+    output.write(")");
+  }
 
   protected void buildRef(int deep, TomTerm term) throws IOException {
     generate(deep,term);
   }
 
   protected void buildExpCast(int deep, TomType tlType, Expression exp) throws IOException {
-      /*
-        TomType expType = getTermType(exp);
-        if(expType.hasTlType() && expType.getTlType() == tlType) {
-        generateExpression(deep,exp);
-        } else {
-        output.write("((" + getTLCode(tlType) + ")");
-        generateExpression(deep,exp);
-        output.write(")");
-        }
-      */
+    /*
+      TomType expType = getTermType(exp);
+      if(expType.hasTlType() && expType.getTlType() == tlType) {
+      generateExpression(deep,exp);
+      } else {
       output.write("((" + getTLCode(tlType) + ")");
       generateExpression(deep,exp);
       output.write(")");
+      }
+    */
+    output.write("((" + getTLCode(tlType) + ")");
+    generateExpression(deep,exp);
+    output.write(")");
   }
   
   protected void buildLet(int deep, TomTerm var, OptionList optionList, TomType tlType, 
@@ -215,7 +200,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   protected void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException {
-      //output.indent(deep);
+    //output.indent(deep);
     generate(deep,var);
     output.write("=");
     generateExpression(deep,exp);
@@ -241,21 +226,21 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   protected void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException {
-		output.write(deep,"if("); 
-		generateExpression(deep,exp); 
-		output.writeln(") {");
-		generateInstruction(deep+1,succes);
-		output.writeln(deep,"}");
+    output.write(deep,"if("); 
+    generateExpression(deep,exp); 
+    output.writeln(") {");
+    generateInstruction(deep+1,succes);
+    output.writeln(deep,"}");
   }
 
   protected void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {
-		output.write(deep,"if("); 
-		generateExpression(deep,exp); 
-		output.writeln(") {");
-		generateInstruction(deep+1,succes);
-		output.writeln(deep,"} else {");
-		generateInstruction(deep+1,failure);
-		output.writeln(deep,"}");
+    output.write(deep,"if("); 
+    generateExpression(deep,exp); 
+    output.writeln(") {");
+    generateInstruction(deep+1,succes);
+    output.writeln(deep,"} else {");
+    generateInstruction(deep+1,failure);
+    output.writeln(deep,"}");
   }
 
   protected void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException {
@@ -275,9 +260,9 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   protected void buildReturn(int deep, TomTerm exp) throws IOException {
-		output.write(deep,"return ");
-		generate(deep,exp);
-		output.writeln(deep,";");
+    output.write(deep,"return ");
+    generate(deep,exp);
+    output.writeln(deep,";");
   }
 
   protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException {
@@ -291,8 +276,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     TomType type = `TypesToType(concTomType(domain),codomain);
     String s = (String)getSubtermMap.get(type);
     if(s == null) {
-        s = "((" + getTLType(codomain) + ")tom_get_subterm_" + getTomType(domain) + "(";
-          //s = "tom_get_subterm_" + getTomType(domain) + "(";
+      s = "((" + getTLType(codomain) + ")tom_get_subterm_" + getTomType(domain) + "(";
+      //s = "tom_get_subterm_" + getTomType(domain) + "(";
       getSubtermMap.put(type,s);
     }
     output.write(s);
@@ -308,7 +293,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write("))");
   }
   
-protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
+  protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
     String args[];
     if(strictType) {
       args = new String[] { getTLCode(tlType1), name1,
@@ -324,45 +309,45 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
 
   protected TargetLanguage genDeclMake(String opname, TomType returnType, 
                                        TomList argList, TargetLanguage tlCode) {
-	String s = "";
-	if(!genDecl) {
-          return `ITL("");
-        }
+    String s = "";
+    if(!genDecl) {
+      return `ITL("");
+    }
       
-	s = modifier + getTLType(returnType) + " tom_make_" + opname + "(";
-	while(!argList.isEmpty()) {
-		TomTerm arg = argList.getHead();
-		matchBlock: {
-			%match(TomTerm arg) {
-				Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]] -> {
-					s += getTLCode(`tlType) + " " + `name;
-					break matchBlock;
-				}
+    s = modifier + getTLType(returnType) + " tom_make_" + opname + "(";
+    while(!argList.isEmpty()) {
+      TomTerm arg = argList.getHead();
+      matchBlock: {
+        %match(TomTerm arg) {
+          Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]] -> {
+            s += getTLCode(`tlType) + " " + `name;
+            break matchBlock;
+          }
             
-				_ -> {
-					System.out.println("genDeclMake: strange term: " + arg);
-					throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
-				}
-			}
-		}
-		argList = argList.getTail();
-		if(!argList.isEmpty()) {
-			s += ", ";
-		}
-	}
-	s += ") { ";
-	if (debugMode) {
-		s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
-		s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
-		s += "return  debugVar;\n}";
-	} else {
-		s += "return " + tlCode.getCode() + "; }";
-	}
-	return `TL(s, tlCode.getStart(), tlCode.getEnd());
-}
+          _ -> {
+            System.out.println("genDeclMake: strange term: " + arg);
+            throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
+          }
+        }
+      }
+      argList = argList.getTail();
+      if(!argList.isEmpty()) {
+        s += ", ";
+      }
+    }
+    s += ") { ";
+    if (debugMode) {
+      s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
+      s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
+      s += "return  debugVar;\n}";
+    } else {
+      s += "return " + tlCode.getCode() + "; }";
+    }
+    return `TL(s, tlCode.getStart(), tlCode.getEnd());
+  }
 
   protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
-		//%variable
+    //%variable
     String s = "";
     if(!genDecl) {
       return `ITL("");
@@ -382,7 +367,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     String is_empty = "tom_is_empty_" + tomType;
     String term_equal = "tom_terms_equal_" + tomType;
     String make_insert = listCast + "tom_cons_list_" + name;
-    String make_empty = listCast + "tom_make_empty_" + name;
+    String make_empty = listCast + "tom_empty_list_" + name;
     String get_head = eltCast + "tom_get_head_" + tomType;
     String get_tail = listCast + "tom_get_tail_" + tomType;
     String get_slice = listCast + "tom_get_slice_" + name;
@@ -409,7 +394,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     s+= "   }\n";
     s+= "  }\n";
     s+= "\n";
-		//If necessary we remove \n code depending on --pretty option
+    //If necessary we remove \n code depending on --pretty option
     return ast().reworkTLCode(`ITL(s), pretty);
   }
 
@@ -429,14 +414,14 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
 		
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
-    String make_empty = listCast + "tom_make_empty_" + name;
-    String make_append = listCast + "tom_make_append_" + name;
+    String make_empty = listCast + "tom_empty_array_" + name;
+    String make_insert = listCast + "tom_cons_array_" + name;
     String get_element = eltCast + "tom_get_element_" + tomType;
     
     s = modifier + utype + " tom_get_slice_" + name +  "(" + utype + " subject, int begin, int end) {\n";
     s+= "   " + glType + " result = " + make_empty + "(end - begin);\n";
     s+= "    while( begin != end ) {\n";
-    s+= "      result = " + make_append + "(" + get_element + "(subject, begin),result);\n";
+    s+= "      result = " + make_insert + "(" + get_element + "(subject, begin),result);\n";
     s+= "      begin++;\n";
     s+="     }\n";
     s+= "    return result;\n";
@@ -451,13 +436,13 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
 
     s+= "    index=size1;\n";
     s+= "    while(index > 0) {\n";
-    s+= "      result = " + make_append + "(" + get_element + "(l1,(size1-index)),result);\n";
+    s+= "      result = " + make_insert + "(" + get_element + "(l1,(size1-index)),result);\n";
     s+= "      index--;\n";
     s+= "    }\n";
 
     s+= "    index=size2;\n";
     s+= "    while(index > 0) {\n";
-    s+= "      result = " + make_append + "(" + get_element + "(l2,(size2-index)),result);\n";
+    s+= "      result = " + make_insert + "(" + get_element + "(l2,(size2-index)),result);\n";
     s+= "      index--;\n";
     s+= "    }\n";
    

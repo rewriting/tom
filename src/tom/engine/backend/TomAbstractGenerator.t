@@ -99,23 +99,10 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      BuildEmptyList(Name(name)) -> {
-        buildEmptyList(deep, `name);
-        return;
-      }
-
-      BuildConsList(Name(name), headTerm, tailTerm) -> {
-        buildConsList(deep, `name, `headTerm, `tailTerm);
-        return;
-      }
-
-      BuildAppendList(Name(name), headTerm, tailTerm) -> {
-        buildAppendList(deep, `name, `headTerm, `tailTerm);
-        return;
-      }
-
-      BuildArray(Name(name), argList) -> {
-        buildArray(deep, `name, `argList);
+      l@BuildEmptyList[] |
+      l@BuildEmptyArray[] |
+      l@(BuildConsList|BuildAppendList|BuildConsArray|BuildAppendArray)[] -> {
+        buildListOrArray(deep, l);
         return;
       }
 
@@ -671,10 +658,8 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList) throws IOException;
   protected abstract void buildRef(int deep, TomTerm term) throws IOException;
-  protected abstract void buildEmptyList(int deep, String name) throws IOException;
-  protected abstract void buildConsList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException;
-  protected abstract void buildAppendList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException;
-  protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
+  protected abstract void buildListOrArray(int deep, TomTerm list) throws IOException;
+
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;

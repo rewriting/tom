@@ -64,12 +64,12 @@ public class TomParser extends TomTask {
   
   
   public TomParser(TomBuffer input, TomEnvironment environment, File importList[], int includeOffSet, 
-  							String fileName)  {
-  	  this(input, environment, importList, includeOffSet, fileName, new HashSet());
+                   String fileName)  {
+    this(input, environment, importList, includeOffSet, fileName, new HashSet());
   }
   
   private TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, 
-  							String fileName, HashSet alreadyParsedFiles) {
+                    String fileName, HashSet alreadyParsedFiles) {
     super("Tom Parser", environment);
     jj_input_stream = new JavaCharStream(input, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
@@ -124,29 +124,31 @@ public class TomParser extends TomTask {
   			String fileName = currentPath+File.separatorChar+ "."+getInput().getRawFileName() + TomTaskInput.parsedTableSuffix;
   			Tools.generateOutput(fileName, symbolTable().toTerm());
   		}
-        if(intermediate) {
-            Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
-            Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
-        }
+      if(intermediate) {
+        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
+        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
+      }
         
-        if(getInput().isDebugMode()) {
-			Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.debugTableSuffix, getStructTable());	
-		}
+      if(getInput().isDebugMode()) {
+        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.debugTableSuffix, getStructTable());	
+      }
         
   		// Update taskInput
   		getInput().setTerm(parsedTerm);
-    } catch (TokenMgrError error) {
-      addError(error.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
+      
+    } catch (TokenMgrError e) {
+  	  String msg = "Parsing exception catched in file '"+currentFile+"'\n" + e.getMessage();
+      addError(msg, currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
   	} catch (TomIncludeException e) {
   	  addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
   	} catch (TomException e) {
   	  addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
-  	} catch (ParseException e) {
-  	  String msg = "Parsing exception catched in file '"+currentFile+"'\n"+e.getMessage();
-  	  addError(e.getMessage(), currentFile, getLine(), TomCheckerMessage.TOM_ERROR);
+    } catch (ParseException e) {
+  	  String msg = "Parsing exception catched in file '"+currentFile+"'\n" + e.getMessage();
+      addError(msg, currentFile, getLine(), TomCheckerMessage.TOM_ERROR);
   	} catch (Exception e) {
   	  String msg = "Unhandled exception occurs during parsing: "+e.getMessage();
-          e.printStackTrace();
+      e.printStackTrace();
   	  addError(msg, currentFile, 0, TomCheckerMessage.TOM_ERROR);
   	}
   }

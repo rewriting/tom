@@ -241,7 +241,7 @@ public class TomOptimizer extends TomTask {
           if(t instanceof TomTerm) {
             %match(TomTerm t) { 
               (Variable|VariableStar)[astName=name] |
-              BuildVariable[astName=name] -> {
+               BuildVariable[astName=name] -> {
                 if(variableName == name) {
                   list.add(t);
                   return false;
@@ -280,6 +280,13 @@ public class TomOptimizer extends TomTask {
                 }
               }
 
+              Increment((Variable|VariableStar)[astName=name])  -> {
+                if(variableName == name) {
+                  list.add(name);
+                  return false;
+                }
+              }
+
               _ -> { return true; }
             }
           } else {
@@ -309,6 +316,7 @@ public class TomOptimizer extends TomTask {
   protected void collectRefVariable(final Collection collection, ATerm subject) {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
+          //System.out.println("t = " + t);
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;
             %match(TomTerm t) { 
@@ -316,7 +324,7 @@ public class TomOptimizer extends TomTask {
                 collection.add(name);
                 return false;
               }
-             
+
               _ -> { return true; }
             }
           } else {

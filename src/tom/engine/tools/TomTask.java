@@ -92,7 +92,8 @@ public abstract class TomTask extends TomBase {
         errors= errors.getTail();
       }
       if (nbError>0 && !input.isEclipseMode()) {
-        String msg = name+":  Encountered " + nbError + " errors and "+ nbWarning+" warnings.\nNo file generated.";
+        String msg = name+":  Encountered " + nbError + " errors and "+ nbWarning+" warnings.";
+        msg += "No file generated.";
         System.out.println(msg);
       } else if (nbWarning>0 && !input.isEclipseMode() && !input.isNoWarning()) {
         String msg = name+":  Encountered "+ nbWarning+" warnings.";

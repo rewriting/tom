@@ -268,7 +268,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     String is_empty    = "tom_is_empty_" + tomType;
     String term_equal  = "tom_terms_equal_" + tomType;
     String make_insert = "tom_cons_list_" + name;
-    String make_empty  = "tom_make_empty_" + name;
+    String make_empty  = "tom_empty_list_" + name;
     String get_head    = "tom_get_head_" + tomType;
     String get_tail    = "tom_get_tail_" + tomType;
     String get_slice   = "tom_get_slice_" + name;
