@@ -1330,7 +1330,6 @@ public abstract class TomAbstractGenerator {
   protected abstract void buildReturn(Expression exp);
   protected abstract void buildSymbolDecl(String tomName);
   protected abstract void buildArraySymbolDecl(String tomName);
-  protected abstract void buildReturn(Expression exp);
 
   protected abstract void buildListSymbolDecl(int deep, String tomName);{
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
