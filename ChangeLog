@@ -1,3 +1,8 @@
+2005-03-23  emilie  <emilie@galadriel.loria.fr>
+
+	* src/jtom/optimizer/TomOptimizer.t: 
+	  - new optimizer (-O2) for test-fusion and test-merging
+
 2005-03-22  pem  <pem@polly.loria.fr>
 
 	* src/jtom/compiler/TomKernelCompiler.t: 	

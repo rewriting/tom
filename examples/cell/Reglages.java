@@ -38,18 +38,23 @@ package cell;
 
 class Reglages
 {
-    int delai, style;
-    int generationDebut;
-    int generationFin;
-    int generationActuelle;
-    boolean grid, dd, td;
-    boolean lecture, pause;
-    int mode = 1;
-    static final int COULEUR = 1;
-    static final int DONNEES = 0;
-
+  int delai, style;
+  int generationDebut;
+  int generationFin;
+  int generationActuelle;
+  long startChrono;
+  long debutPause,finPause;
+  boolean grid, dd, td;
+  boolean lecture, pause;
+  int mode = 1;
+  static final int COULEUR = 1;
+  static final int DONNEES = 0;
+  
 	Reglages()
 	{
+    startChrono = 0;
+    debutPause = 0;
+    finPause = 0;
 		delai = 1995;
 		generationDebut = 1;
 		generationActuelle = generationDebut;

@@ -65,34 +65,39 @@ class Affichage implements ActionListener
   
   public void actionPerformed(ActionEvent ae )
   {
+
     timer.setDelay(reg.delai);
     if (reg.lecture)
       {
-	reg.generationActuelle++;
-	pb.setMinimum(reg.generationDebut);
-	pb.setMaximum(reg.generationFin);
-	e.dessine();
-	e.ChangeEtat(td.Suivant()); // passage à l'état suivant
-	if (reg.generationActuelle >= reg.generationFin)
-	  reg.lecture = false;
-	debut = reg.generationActuelle; // étonnant non ?
+        reg.generationActuelle++;
+        pb.setMinimum(reg.generationDebut);
+        pb.setMaximum(reg.generationFin);
+        e.dessine();
+        e.ChangeEtat(td.Suivant()); // passage à l'état suivant
+        if (reg.generationActuelle >= reg.generationFin){
+          reg.lecture = false;
+          System.out.println(reg.generationActuelle + " state changes in " + (System.currentTimeMillis()-reg.startChrono)+ " ms");
+        }	
+        debut = reg.generationActuelle; // étonnant non ?
       }
     else
       {
-	if (reg.generationDebut != debut && !reg.pause)
-	{
-	  e.ChangeEtat(td.Generation(reg.generationDebut));
-	debut  = reg.generationDebut;
-	}
+        if (reg.generationDebut != debut && !reg.pause)
+          {
+            e.ChangeEtat(td.Generation(reg.generationDebut));
+            debut  = reg.generationDebut;
+           }
       }
     pb.setValue(reg.generationActuelle);
     pb.setString(new Integer(reg.generationActuelle).toString());
-	pb.setStringPainted(true);
+    pb.setStringPainted(true);
+
+
 
   }
-
-    public void redessine() {
-	e.dessine();
+  
+  public void redessine() {
+      e.dessine();
     }
 			
 }

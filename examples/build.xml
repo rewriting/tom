@@ -12,6 +12,7 @@
 
   <property name="nowarnings" value="false"/>
   <property name="optimize" value="off"/>
+  <property name="optimize2" value="off"/>
   <property name="pretty" value="off"/>
   <property name="visitable" value="on"/>
   <property name="stamp" value="off"/>
@@ -180,6 +181,7 @@
              destdir="${examples.gen}"         
              nowarn="${nowarnings}"
              optimize="${optimize}"
+             optimize2="${optimize2}"
              pretty="${pretty}"
              options="-I ${tom.home}/share/jtom">
           <include name="@{example}/**/*.t"/>
@@ -214,7 +216,6 @@
       <attribute name="example"/>
       <sequential>
         <javac destdir="${examples.build}"
-               optimize="${optimize}"
                nowarn="${nowarnings}">
           <src path="${examples.dir}"/>
           <src path="${examples.gen}"/>
@@ -292,6 +293,7 @@
          destdir="${examples.gen}/${caml}"
          nowarn="${nowarnings}"
          optimize="${optimize}"
+         optimize2="${optimize2}"
          options="--camlCode -I ${tom.home}/share/jtom">
       <include name="${caml}/**/*.t"/>
       <exclude name="${caml}/List1.t"/>
@@ -364,6 +366,7 @@
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
+         optimize2="${optimize2}"
          options="-I ${tom.home}/share/jtom --lazyType">
       <include name="${expression}/**/Record.t"/>
     </tom>
@@ -371,6 +374,7 @@
          srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
+         optimize2="${optimize2}"
          optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
       <include name="${expression}/**/RecordStrict.t"/>
@@ -520,6 +524,7 @@
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
+         optimize2="${optimize2}"
          pretty="${pretty}"
          stamp="off" 
          options="-I ${tom.home}/share/jtom">
@@ -532,6 +537,7 @@
          srcdir="${examples.dir}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
+         optimize2="${optimize2}"
          stamp="off" 
          options="-I ${tom.home}/share/jtom"
          outputfile="${examples.gen}/${structure}/StructParser.g">
@@ -565,6 +571,7 @@
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
+         optimize2="${optimize2}"
          stamp="off"
          options="-I ${tom.home}/share/jtom">
       <include name="${vas}/**/*.t"/>

@@ -68,6 +68,10 @@ public class PILFactory extends TomBase {
     return (TomTerm) replace_remove.apply(subject);
   }
 
+ public ATerm remove(ATerm subject) {
+    return replace_remove.apply(subject);
+  }
+
   Replace1 replace_remove = new Replace1() {
       public ATerm apply(ATerm subject) {
         // removes options
@@ -111,29 +115,163 @@ public class PILFactory extends TomBase {
     }
     return res;
   }
-  String prettyPrint(ATerm subject) {
+  public String prettyPrint(ATerm subject) {
     if (subject instanceof Instruction) {
       %match(Instruction subject) {
-        CompiledMatch(automata,_) -> { return prettyPrint(`automata); }
+        CompiledMatch(automata,_) -> { 
+          return prettyPrint(`automata); 
+        }
+        
+     
         Let(variable,src,body) -> {
-          return "let " + prettyPrint(variable) + " = " + prettyPrint(src) + " in \n" + prettyPrint(body) + "";
+          return "let " + prettyPrint(variable) + " = " + prettyPrint(src) + " in\n\t" + prettyPrint(body).replaceAll("\n","\n\t");
         }
+
+        LetRef(variable,src,body) -> {
+          return "letRef " + prettyPrint(variable) + " = " + prettyPrint(src) + " in\n\t" + prettyPrint(body).replaceAll("\n","\n\t");
+        }
+
+        LetAssign(variable,src,body) -> {
+          return "letAssign " + prettyPrint(variable) + " = " + prettyPrint(src) + " in\n\t" + prettyPrint(body).replaceAll("\n","\n\t");
+        }
+        
+
+        DoWhile(doInst,condition) ->{
+          return "do\n\t " + prettyPrint(doInst).replaceAll("\n","\n\t") +"while "+ prettyPrint(condition);
+        }
+
+        WhileDo(condition,doInst) ->{
+          return "while "+ prettyPrint(condition)+"do\n\t " + prettyPrint(doInst).replaceAll("\n","\n\t");
+        }
+  
+
+        IfThenElse(cond,success,Nop()) -> {
+          return  "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success).replaceAll("\n","\n\t"); 
+        }
+
         IfThenElse(cond,success,failure) -> {
-          return "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success) + "\n\telse " + prettyPrint(failure) + "\n";
+          return "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(failure).replaceAll("\n","\n\t")+"\n";
         }
 
-        AbstractBlock(list) -> {
-          return prettyPrint(list);
+      
+        AbstractBlock(concInstruction(x*,Nop(),y*)) -> {
+          return prettyPrint(`AbstractBlock(concInstruction(x*,y*)));
+        }
+  
+        AbstractBlock(instList) -> {
+          return prettyPrint(`instList);
         }
 
+        UnamedBlock(instList) -> {
+          return prettyPrint(`instList);
+        }
+        
+
+       TypedAction(_,_,_) -> {
+         return "targetLanguageInstructions";
+        }
+
+        CompiledPattern(_,automata) -> { 
+          return prettyPrint(`automata); 
+        }
+        
+        CheckStamp(_) -> {
+          return "";
+        }
+                   
       }
+
+
+    } else if (subject instanceof Expression) {
+      %match(Expression subject) {
+        TomTermToExpression(astTerm) -> {
+          return prettyPrint(astTerm);
+        }
+
+        EqualFunctionSymbol(astType,exp1,exp2) -> {
+          return "is_fun_sym("+prettyPrint(exp1)+","+prettyPrint(exp2)+")";
+        }
+        
+        IsEmptyList[variable=kid1] -> {
+          return "is_empty("+prettyPrint(kid1)+")";
+        }
+
+        GetHead[variable=variable] -> {
+          return "getHead("+prettyPrint(variable)+")";
+        }
+
+        GetSlot(codomain,astName,slotNameString,variable) -> {
+          return "get_slot_"+prettyPrint(astName)+"_"+slotNameString+"("+prettyPrint(variable)+")";
+        }
+      }
+
     } else if (subject instanceof TomTerm) {
       %match(TomTerm subject) {
-        Variable[astName=Name(name)] -> {
-          return `name;
+        Variable(_,name,_,_) -> {
+          return prettyPrint(`name);
+        }
+
+        VariableStar(_,name,_,_) -> {
+          return prettyPrint(`name);
+        }
+
+        Ref(term) -> {
+          return prettyPrint(`term);
+        }
+
+        Appl(optionList,nameList,args,constraints) ->{
+          return prettyPrint(nameList); 
         }
       }
-    } else if(subject instanceof ATermList) {
+    } else if (subject instanceof TomName) {
+      %match(TomName subject) {
+        PositionName(number_list) -> {
+          return "t"+prettyPrint(number_list);
+        }
+        Name(string) -> {
+          return string;
+        }
+      }
+    } else if (subject instanceof TomNumber) {
+      %match(TomNumber subject) {
+        Number(n) -> {
+          return "_"+n;
+        }
+
+        MatchNumber(number) -> {
+          return prettyPrint(number);
+        }
+        
+        ListNumber(number) -> {
+          return "listNumber"+prettyPrint(number);
+        }
+
+        Begin(number) -> {
+          return "begin"+prettyPrint(number);
+        }
+
+        End(number) -> {
+          return "end"+prettyPrint(number);
+        }
+
+      }
+      
+    } else if(subject instanceof InstructionList) {
+      ATermList list = (ATermList)subject;
+      if(list.isEmpty()) {
+        return "";
+      } else {
+        return prettyPrint(list.getFirst()) + "\n" + prettyPrint(list.getNext());
+      }
+    }  else if(subject instanceof TomNumberList) {
+      ATermList list = (ATermList)subject;
+      if(list.isEmpty()) {
+        return "";
+      } else {
+        return prettyPrint(list.getFirst()) + prettyPrint(list.getNext());
+      }
+    }
+    else if(subject instanceof ATermList) {
       ATermList list = (ATermList)subject;
       if(list.isEmpty()) {
         return "";
@@ -141,7 +279,9 @@ public class PILFactory extends TomBase {
         return prettyPrint(list.getFirst()) + " " + prettyPrint(list.getNext());
       }
     }
+
     return subject.toString();
+
   }
 
   private Collect2 collect_match = new Collect2() {

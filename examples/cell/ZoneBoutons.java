@@ -49,9 +49,9 @@ class ZoneBoutons extends JPanel
 
     ZoneBoutons()
     {
-    	ImageIcon playIcon = new ImageIcon("Cell/play.gif");
-    	ImageIcon stopIcon = new ImageIcon("Cell/stop.gif");
-    	ImageIcon pauseIcon = new ImageIcon("Cell/pause.gif");
+    	ImageIcon playIcon = new ImageIcon("cell/play.gif");
+    	ImageIcon stopIcon = new ImageIcon("cell/stop.gif");
+    	ImageIcon pauseIcon = new ImageIcon("cell/pause.gif");
 	r = new Reglages();;
 	JSlider choixDelai;
 	JComboBox choixFigure;
@@ -154,6 +154,7 @@ class ZoneBoutons extends JPanel
     {
 	public void actionPerformed(ActionEvent e)
 	{
+    if(!r.pause) r.debutPause = System.currentTimeMillis();
 	    r.pause = true;
 	    r.lecture = false;
 	}
@@ -163,9 +164,11 @@ class ZoneBoutons extends JPanel
     {
 	public void actionPerformed(ActionEvent e)
 	{
-	    r.pause = false;
-	    r.lecture = false;
-	    r.generationActuelle = r.generationDebut;
+    r.debutPause =0;
+    r.finPause=0;
+    r.pause = false;
+    r.lecture = false;
+    r.generationActuelle = r.generationDebut;
 	}
     }
 
@@ -176,7 +179,7 @@ class ZoneBoutons extends JPanel
 	{
 		if (!r.lecture && !r.pause) // etat stop
 		{
-
+      r.startChrono =  System.currentTimeMillis();
    		  int debut = (new Integer(genDeb.getText())).intValue();
           int fin = (new Integer(genFin.getText())).intValue();
 	      if ( debut > fin || debut < 1)
@@ -195,6 +198,8 @@ class ZoneBoutons extends JPanel
 
 	    if (!r.lecture && r.pause) // etat  pause
 	    {
+        r.finPause = System.currentTimeMillis();
+        r.startChrono =  r.startChrono+(r.finPause-r.debutPause);
 	    	r.lecture = true;
 	    	r.pause = false;
 	    }
