@@ -160,6 +160,7 @@ public class BoulderDashCore {
     while(it.hasNext()) {
       Bead b = (Bead) it.next();
       boolean f = gravity(newSpace,b);
+      System.out.println("fire = " + f);
       fire = fire || f ;
     }
     space=newSpace;
@@ -169,8 +170,15 @@ public class BoulderDashCore {
 
   // return true if fire a rule
   public boolean gravity(HashMap newSpace, Bead b) {
+
+    System.out.println("isBead = " + b.isBead());
+    System.out.println("value  = " + b.getValue());
+    System.out.println("south  = " + getSouthBead(b));
+
+    
     %match(Bead b) {
       beadRock[s=empty()] -> {
+        System.out.println("fire ");
         Bead newBead = `bead(getSouthPosition(b.getPos()),b.getValue());
         marked.add(b);
         putBead(newSpace,newBead);

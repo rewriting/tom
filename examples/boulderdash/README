@@ -17,7 +17,7 @@ Coordonate system for Java 2D and used Topology:
  Y
 
 * Term.adt describes the abstract data-type
-*  adt-to-java --input term.adt --jtom --package boulder.adt --output adt/boulder
+*  adt-to-java --input boulder.adt --jtom --package adt.boulder --output adt/boulder
 
 * jtom BoulderDashCore.t
 * javac *.java
