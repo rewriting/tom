@@ -33,7 +33,7 @@ import aterm.*;
 
 public class TomBackQuoteParser extends TomBase implements TomParserConstants {
   
-	private HashMap nameToDecLineMap;
+  private HashMap nameToDecLineMap;
 	
   public TomBackQuoteParser(jtom.TomEnvironment environment) {
     super(environment);
@@ -201,7 +201,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
       matchBlock: {
         %match(Token token, Token next) {
           IDENT(name), LPAREN[] -> {
-						stackOption.push(`OriginTracking(Name(name), ((Integer)nameToDecLineMap.get(token)).intValue(), Name(currentFileName)));
+            stackOption.push(`OriginTracking(Name(name), ((Integer)nameToDecLineMap.get(token)).intValue(), Name(currentFileName)));
             stackName.push(name);
             stackList.push(`concTomTerm(Composite(concTomTerm())));
             token = next;
