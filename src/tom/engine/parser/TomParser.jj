@@ -471,7 +471,7 @@ void MatchArgument(ArrayList list) throws TomException: /* in TOM mode */
 }
 {
   type=<TOM_IDENTIFIER> name=<TOM_IDENTIFIER>
-  {  	list.add(tsf().makeTomTerm_GLVar(
+  {  	list.add(tsf().makeTomTerm_TLVar(
                    name.image,
                    tsf().makeTomType_TomTypeAlone(type.image)));
   }

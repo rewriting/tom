@@ -69,8 +69,6 @@ public class TomGenerator extends TomBase {
         return;
       }
      
-      Line[] -> { return; }
-     
       BuildVariable(Name(name)) -> {
         out.write(name);
         return;
@@ -497,7 +495,7 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      TrueGL -> {
+      TrueTL -> {
         if(Flags.cCode) {
           out.write(" 1 ");
         } else if(Flags.jCode) {
@@ -508,7 +506,7 @@ public class TomGenerator extends TomBase {
         return;
       }
       
-      FalseGL -> {
+      FalseTL -> {
         if(Flags.cCode) {
           out.write(" 0 ");
         } else if(Flags.jCode) {

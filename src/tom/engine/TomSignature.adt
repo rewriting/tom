@@ -55,14 +55,14 @@
   [Option,TomTermToOption, TomTermToOption(<astTerm(TomTerm)>) ],
   [Option,Option,Option(<optionList(OptionList)>) ],
   [Option,DefinedSymbol ,DefinedSymbol ],
-  [Option,OriginTracking,OriginTracking(<astName(TomName)>, <line(TomTerm)>) ],
+  [Option,OriginTracking,OriginTracking(<astName(TomName)>, <line(int)>) ],
   [Option,LRParen,LRParen(<astName(TomName)>) ],
 
   [Expression,TomTermToExpression, TomTermToExpression(<astTerm(TomTerm)>) ],
   [Expression,Not,Not(<arg(Expression)>) ],
   [Expression,And,And(<arg1(Expression)>,<arg2(Expression)>) ],
-  [Expression,TrueGL ,TrueGL ],
-  [Expression,FalseGL ,FalseGL ],
+  [Expression,TrueTL ,TrueTL ],
+  [Expression,FalseTL ,FalseTL ],
   [Expression,IsEmptyList,IsEmptyList(<kid1(TomTerm)>) ],
   [Expression,IsEmptyArray,IsEmptyArray(<kid1(TomTerm)>,<kid2(TomTerm)>) ],
   [Expression,EqualFunctionSymbol,
@@ -158,7 +158,7 @@
 
   [TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<tom(TomTerm)>) ],
 
-  [TomTerm,GLVar,GLVar(<strName(str)>,<astType(TomType)>) ],
+  [TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>) ],
 
   [TomTerm,Variable,
     Variable(<option(Option)>, <astName(TomName)>, <astType(TomType)>) ],
@@ -216,8 +216,6 @@
 
   [TomTerm,NamedBlock,NamedBlock(<blockName(str)>,<instList(TomList)>) ],
 
-
-  [TomTerm,Line,Line(<string(str)>) ],
 
   [TomTerm,DotTerm,DotTerm(<kid1(TomTerm)>, <kid2(TomTerm)>) ],
 

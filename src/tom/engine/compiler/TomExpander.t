@@ -316,6 +316,7 @@ public class TomExpander extends TomBase {
 
           context, Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType)] -> {
               // create a variable
+            System.out.println("pass1.8: Variable(" + strName + "," + tomType + ")");
             TomType localType = getType(tomType);
             if(localType == null) { 
               messageMatchTypeVariableError(strName, tomType);
@@ -324,8 +325,8 @@ public class TomExpander extends TomBase {
             }
           }
           
-          context, GLVar(strName,TomTypeAlone(tomType)) -> {
-            //debugPrintln("pass1.8: GLVar(" + strName + "," + tomType + ")");
+          context, TLVar(strName,TomTypeAlone(tomType)) -> {
+            System.out.println("pass1.8: TLVar(" + strName + "," + tomType + ")");
                 
               // create a variable
             TomType localType = getType(tomType);
@@ -536,7 +537,7 @@ public class TomExpander extends TomBase {
     if(lrParen!=null) {
       String nameLrParen = lrParen.getAstName().getString();
       if(name.equals(nameLrParen)) {
-        String line = findOriginTrackingLine(name, optionList);
+        Integer line = findOriginTrackingLine(name, optionList);
         messageVariableWithParenError(name,line);
       }
     }
@@ -544,11 +545,11 @@ public class TomExpander extends TomBase {
 
   private void messageMatchTypeVariableError(String name, String type) throws TomException {
     OptionList optionList = optionMatchTypeVariable.getOptionList();
-    String line = findOriginTrackingLine("Match", optionList);
+    Integer line = findOriginTrackingLine("Match", optionList);
     String s = "Variable '" + name + "' has a wrong type:  '" + type + "' in %match construct";
     messageError(line,s);
   }
-  private void messageVariableWithParenError( String  name, String line ) {
+  private void messageVariableWithParenError( String  name, Integer line ) {
     if(Flags.noWarning) return;
     System.out.println("\n *** Warning *** Variable with () is not recommanded");
     System.out.println(" *** Variable '"+name+"' has () - Line : "+line);

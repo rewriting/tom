@@ -42,6 +42,7 @@ public class TomChecker extends TomBase {
   private ArrayList alreadyStudiedSymbol =  new ArrayList();
   private ArrayList alreadyStudiedType =  new ArrayList();  
   private Option currentTomStructureOrgTrack;
+  private Integer nullInteger = new Integer(-1);
 
   public TomChecker(jtom.TomEnvironment environment) { 
     super(environment);
@@ -136,7 +137,7 @@ public class TomChecker extends TomBase {
     while( !subjectList.isEmpty() ) {
       TomTerm term = subjectList.getHead();
       %match( TomTerm term ) {
-        GLVar(name, TomTypeAlone(type)) -> {
+        TLVar(name, TomTypeAlone(type)) -> {
           if(symbolTable().getType(type) == null) {
             messageMatchTypeVariableError(name, type);
           }
@@ -159,7 +160,7 @@ public class TomChecker extends TomBase {
     int nbExpectedArgs = typeMatchArgs.size();
     TomList termList = pattern.getTermList().getList();
     ArrayList foundTypeMatch = new ArrayList();
-    String line = " - ";
+    Integer line = nullInteger;
     int nbFoundArgs = 0;
     
     while( !termList.isEmpty() ) {
@@ -206,27 +207,27 @@ public class TomChecker extends TomBase {
     return getTomType(type);
   }
   
-  private void messageMatchErrorNumberArgument(int nbExpectedVar, int nbFoundVar, String line) throws TomException {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+  private void messageMatchErrorNumberArgument(int nbExpectedVar, int nbFoundVar, Integer line) throws TomException {
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Bad number of arguments: "+nbExpectedVar+" argument(s) required but "+nbFoundVar+" found in %match structure declared line "+declLine; 
     messageError(line,s);
   }
   
-  private void messageMatchErrorTypeArgument(int slotNumber, String expectedType, String givenType, String line) {
+  private void messageMatchErrorTypeArgument(int slotNumber, String expectedType, String givenType, Integer line) {
     if(Flags.noWarning) return;
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     System.out.println("\n *** Warning *** Bad type in %match declared line "+declLine);
     System.out.println(" *** For slot "+ slotNumber +" :Type '"+expectedType+"' required but Type '"+givenType+"' found"+" - Line : "+line);
   }
   
   private void messageMatchTypeVariableError(String name, String type) throws TomException {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Variable '" + name + "' has an unknown type '"+type+"' in %match construct declared line "+declLine;
     messageError(declLine,s);
   }
   
-private void messageMatchErrorVariableStar(String nameVariableStar, String line) throws TomException {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+private void messageMatchErrorVariableStar(String nameVariableStar, Integer line) throws TomException {
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Single list variable "+nameVariableStar+"* is not allowed on left most part of %match structure declared line "+declLine;
     messageError(line,s);
   }
@@ -349,7 +350,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
 
   private void messageTypeErrorYetDefined(String name) {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     System.out.println("\n *** Warning *** Multiple definition of type at line "+declLine);
     System.out.println(" *** Type '"+ name +"' is already defined");
     Flags.findErrors = true;
@@ -366,7 +367,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     TomList l = getSymbolDomain(tomSymbol);
     TomType type = getSymbolCodomain(tomSymbol);
     String name = tomSymbol.getAstName().getString();
-    String line  = findOriginTrackingLine(optionList);
+    Integer line  = findOriginTrackingLine(optionList);
     SlotList slotList = tomSymbol.getSlotList();
     verifyMultipleDefinitionOfSymbol(name, line);
     verifySymbolCodomain(type.getString(), name, line);
@@ -374,7 +375,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     verifySymbolOptions(symbolType, optionList, nbArgs);
   }
   
-  private void verifyMultipleDefinitionOfSymbol(String name, String line) {
+  private void verifyMultipleDefinitionOfSymbol(String name, Integer line) {
     if(alreadyStudiedSymbol.contains(name)) {
       messageOperatorErrorYetDefined(name,line);
     }
@@ -382,24 +383,24 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
       alreadyStudiedSymbol.add(name);
   }
   
-  private void messageOperatorErrorYetDefined(String name, String line) {
+  private void messageOperatorErrorYetDefined(String name, Integer line) {
     System.out.println("\n *** Warning *** Multiple definition of operator at line "+line);
     System.out.println(" *** Operator '"+ name +"' is already defined");
     Flags.findErrors = true;
   }
   
-  private void verifySymbolCodomain(String returnTypeName, String symbName, String symbLine) throws TomException {
+  private void verifySymbolCodomain(String returnTypeName, String symbName, Integer symbLine) throws TomException {
     if (symbolTable().getType(returnTypeName) == null){
       messageTypeOperatorError(returnTypeName, symbName, symbLine);
     }
   }
   
-  private void messageTypeOperatorError(String type, String name, String line) throws TomException {
+  private void messageTypeOperatorError(String type, String name, Integer line) throws TomException {
     String s = "Operator '" + name + "' has an unknown return type: '" + type + "'";
     messageError(line,s);
   }
   
-  private int verifyAndCountSymbolArguments(TomList args, String symbName, String symbLine) throws TomException {
+  private int verifyAndCountSymbolArguments(TomList args, String symbName, Integer symbLine) throws TomException {
     TomTerm type;
     int nbArgs=0;
     while(!args.isEmpty()) {
@@ -415,13 +416,13 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     return nbArgs;
   }
   
-  private void verifyTypeExist(String typeName, int slotPosition, String symbName, String symbLine) throws TomException {
+  private void verifyTypeExist(String typeName, int slotPosition, String symbName, Integer symbLine) throws TomException {
     if (symbolTable().getType(typeName) == null){
       messageTypesOperatorError(typeName, slotPosition, symbName, symbLine);
     }
   }
   
-  private void messageTypesOperatorError(String type, int slotPosition, String name, String line) throws TomException {
+  private void messageTypesOperatorError(String type, int slotPosition, String name, Integer line) throws TomException {
     String s = "Slot position "+slotPosition + " of operator '"+ name + "' has an unknown type: '" + type + "'";
     messageError(line,s);
   }
@@ -496,9 +497,10 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     }
   }
   private void messageNumberArgumentsError(int nbArg, int nbArg2, Option orgTrack, String symbType) throws TomException {
-    String line = "not found", name = "unknown", declLine = "not found",nameDecl = "unknown";
+    Integer line = nullInteger, declLine = nullInteger;
+    String name = "unknown", nameDecl = "unknown";
     %match(Option orgTrack, Option currentTomStructureOrgTrack) {
-      OriginTracking(Name(orgName), Line(orgLine)), OriginTracking(Name(declOrgName),Line(declOrgLine)) -> {
+      OriginTracking(Name(orgName), orgLine), OriginTracking(Name(declOrgName),declOrgLine) -> {
         declLine = declOrgLine;nameDecl = declOrgName;line = orgLine;name = orgName;
       }
     }
@@ -506,7 +508,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     messageError(line,s);
   }	
   
-  private void messageErrorVariableStar(String nameVariableStar, String nameMethod ,String line) throws TomException {
+  private void messageErrorVariableStar(String nameVariableStar, String nameMethod ,Integer line) throws TomException {
     String s = "List variable '" + nameVariableStar + "' cannot be used in '" + nameMethod + "'";
     messageError(line,s);
   }
@@ -526,9 +528,10 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
   
   private void messageMacroFunctionRepeated(String nameFunction, Option orgTrack, String declType) {
-    String line = "not found", name = "unknown", nameDecl = "unknown", declLine = "not found";
+    Integer line = nullInteger, declLine = nullInteger;
+    String name = "unknown", nameDecl = "unknown";
     %match(Option orgTrack, Option currentTomStructureOrgTrack) {
-      OriginTracking(Name(orgName),Line(orgLine)), OriginTracking(Name(declOrgName),Line(declOrgLine)) -> {
+      OriginTracking(Name(orgName),orgLine), OriginTracking(Name(declOrgName),declOrgLine) -> {
         declLine = declOrgLine;nameDecl = declOrgName;line = orgLine;name = orgName;
       }
     } 
@@ -537,9 +540,10 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     Flags.findErrors = true;
   } 
   private void messageTwoSameNameVariableError(String nameFunction, String nameVar, Option orgTrack, String declType) {
-    String line = "not found", name = "unknown", nameDecl = "unknown", declLine = "not found";
+     Integer line = nullInteger, declLine = nullInteger;
+    String name = "unknown", nameDecl = "unknown";
     %match(Option orgTrack, Option currentTomStructureOrgTrack) {
-      OriginTracking(Name(orgName),Line(orgLine)), OriginTracking(Name(declOrgName),Line(declOrgLine)) -> {
+      OriginTracking(Name(orgName),orgLine), OriginTracking(Name(declOrgName),declOrgLine) -> {
         declLine = declOrgLine;nameDecl = declOrgName;line = orgLine;name = orgName;
       }
     }
@@ -549,10 +553,10 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
   
   private void messageMissingMacroFunctions(String nameConstruct, ArrayList list) {
-    String line = "not found";
+    Integer line = nullInteger;
     String name = "unknown";
     %match(Option currentTomStructureOrgTrack) {
-      OriginTracking(Name(orgName), Line(orgLine)) -> {
+      OriginTracking(Name(orgName), orgLine) -> {
         line = orgLine;
         name = orgName;
       }
@@ -611,7 +615,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     }
     %match( TomTerm pairSlotName ) {
       PairSlotAppl[slotName=Name(name),appl=Appl[option=Option(list)]] -> {
-        String line = findOriginTrackingLine(list);
+        Integer line = findOriginTrackingLine(list);
         System.out.println("\n *** Slot Name '" + name + "' is not correct: See method '"+methodName+ "' -  Line : "+line);
       }
     }
@@ -622,7 +626,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   private void messageSlotRepeatedError(TomTerm pairSlotName, String methodName) {
     %match( TomTerm pairSlotName ) {
       PairSlotAppl(Name(name), Appl[option=Option(list)]) -> {
-        String line = findOriginTrackingLine(list);
+        Integer line = findOriginTrackingLine(list);
         System.out.println("\n *** Same slot names can not be used several times: See method "+methodName+ "' -  Line : "+line);
         System.out.println(" *** Repeated slot Name : '"+name+"'");
       }
@@ -631,7 +635,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
   
   private void messageBracketError(String name, OptionList optionList) throws TomException {
-    String line = findOriginTrackingLine(name,optionList);
+    Integer line = findOriginTrackingLine(name,optionList);
     String s = "[] are not allowed on lists or arrays nor constants, see: "+name;
     messageError(line,s);
   }
@@ -653,7 +657,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
           int nbExpectedArgs = length(getSymbolDomain(symbol));
           int nbFoundArgs = length(argsList);
           if (nbExpectedArgs != nbFoundArgs) {
-            String line = findOriginTrackingLine(name,optionList);
+            Integer line = findOriginTrackingLine(name,optionList);
             messageNumberArgumentsError(nbExpectedArgs, nbFoundArgs, name, line);
           }
         }
@@ -674,7 +678,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
           int nbExpectedArgs = length(getSymbolDomain(symbol));
           int nbFoundArgs = length(argsList);
           if (nbExpectedArgs != nbFoundArgs) {
-            String line = findOriginTrackingLine(name,optionList);
+            Integer line = findOriginTrackingLine(name,optionList);
             messageNumberArgumentsError(nbExpectedArgs, nbFoundArgs, name, line);
           }
         }
@@ -703,25 +707,26 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
 
   private void messageSymbolError(String name, OptionList optionList) throws TomException {
-    String line = findOriginTrackingLine(name, optionList);
+    Integer line = findOriginTrackingLine(name, optionList);
     String s = "Symbol method : '" + name + "' not found";
     messageError(line,s);
   }
   
   private void messageWarningSymbol(String name, OptionList optionList) {
     if(Flags.noWarning) return;
-    String declLine = "not found",nameDecl = "unknown";
+    String nameDecl = "unknown";
+    Integer declLine = nullInteger;
     %match (Option currentTomStructureOrgTrack) {
-       OriginTracking(Name(declOrgName),Line(declOrgLine)) -> {
+       OriginTracking(Name(declOrgName),declOrgLine) -> {
         declLine = declOrgLine;nameDecl = declOrgName;
       }
     }
-    String line = findOriginTrackingLine(name, optionList);
+    Integer line = findOriginTrackingLine(name, optionList);
     System.out.println("\n *** Warning *** possible error in structure "+nameDecl+" declared line "+declLine);
     System.out.println(" *** Unknown method '"+name+"' : Ensure the type coherence by yourself line : " + line);
   }
   
-  private void messageNumberArgumentsError(int nbArg, int nbArg2, String name, String line) throws TomException {
+  private void messageNumberArgumentsError(int nbArg, int nbArg2, String name, Integer line) throws TomException {
     String s = "Bad number of arguments for method '" + name + "':" + nbArg + " arguments are required but " + nbArg2 + " are given";
     messageError(line,s);
   }
@@ -773,7 +778,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
       appl@Appl(Option(optionList),Name(name), args) -> {
         // No alone variable noor simple constructor
         if( args.isEmpty() && getLRParen(optionList)==null) {
-          String line = findOriginTrackingLine(optionList);
+          Integer line = findOriginTrackingLine(optionList);
           messageRuleErrorVariable(name, line);
         }
         checkSyntax(appl);
@@ -785,7 +790,7 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
         methodName = name;
       }
       VariableStar[option=Option(optionList), astName=Name(name1)] -> { 
-        String line = findOriginTrackingLine(name1,optionList);
+        Integer line = findOriginTrackingLine(name1,optionList);
         messageRuleErrorVariableStar(name1, line); 
       }
       Placeholder[option=Option(t)] -> { 
@@ -805,34 +810,34 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
 
   private void messageNoMakeForSymbol(String name, OptionList optionList) throws TomException {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
-    String line = findOriginTrackingLine(optionList);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(optionList);
     String s = "Symbol '" +name+ "' has no 'make' method associated in structure declared line "+declLine;
     messageError(line,s);
   }
   
-  private void messageRuleErrorVariable(String nameVariableStar, String line) throws TomException {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+  private void messageRuleErrorVariable(String nameVariableStar, Integer line) throws TomException {
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Alone variable " +nameVariableStar+ " is not allowed on left hand side of structure %rule declared line "+declLine;
     messageError(line,s);
   }
   
-  private void messageRuleErrorVariableStar(String nameVariableStar, String line) throws TomException {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+  private void messageRuleErrorVariableStar(String nameVariableStar, Integer line) throws TomException {
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Single list variable " +nameVariableStar+ "* is not allowed on left hand side of structure %rule declared line "+declLine;
     messageError(line,s);
   }
 
   private void messageRuleErrorLhsImpossiblePlaceHolder(OptionList optionList) throws TomException {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
-    String line = findOriginTrackingLine(optionList);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(optionList);
     String s = "Alone placeholder is not allowed in left hand side of structure %rule declared line " +declLine;
     messageError(line,s);
   }
   
   private void messageRuleErrorConstructorEgality(String  name, String nameExpected, OptionList optionList) throws TomException {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
-    String line = findOriginTrackingLine(name, optionList);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(name, optionList);
     String s = "Left most symbol name '" + nameExpected + "' expected, but '" + name + "' found in left hand side of structure %rule declared line " +declLine;
     messageError(line,s);
   }
@@ -865,21 +870,21 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
 
   private void messageRuleErrorRhsImpossiblePlaceholder(OptionList optionList) throws TomException {
-    String line = findOriginTrackingLine(optionList);
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(optionList);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = " *** Placeholder is not allowed on right part of structure %rule declared line "+declLine;
     messageError(line,s);
   }
   
   private void messageRuleErrorRhsImpossibleRecord(OptionList optionList, String name) throws TomException {
-    String line = findOriginTrackingLine(optionList);
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(optionList);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "\n *** Record '"+name+"[...]' is not allowed on right part of structure %rule declared line "+declLine;
     messageError(line,s);
   }
   private void messageRuleErrorRhsImpossibleVarStar(OptionList optionList, String name) throws TomException {
-    String line = findOriginTrackingLine(optionList);
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(optionList);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Single list variable '"+name+"*' is not allowed in right hand side of structure %rule declared line " +declLine;
     messageError(line,s);
   }
@@ -901,8 +906,8 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
   }
   
   private void messageRuleErrorUnknownVariable(Collection variableCollectionRhs, Option rewriteRuleOrgTrack) throws TomException {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
-    String line = findOriginTrackingLine(rewriteRuleOrgTrack);
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(rewriteRuleOrgTrack);
     String s = "Unknown variable(s) " +variableCollectionRhs+ " used on right part of %rule declared line "+declLine;
     messageError(line,s);
   }
@@ -971,8 +976,8 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     return null;
   }
   
-  private void messageRuleErrorUnknownVariable(String name, String line) {
-    String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+  private void messageRuleErrorUnknownVariable(String name, Integer line) {
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     System.out.println("\n *** Variables used on right part of rule have to be declared in left part of rule declared line "+declLine);
     System.out.println("Variable '"+name+"' not decared - Line : "+line);
     Flags.findErrors = true;
@@ -983,11 +988,11 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     // GLOBALS //
     /////////////
   // findOriginTrackingLine(_) method returns the first number of line (stocked in optionList).
-  private String findOriginTrackingLine(OptionList optionList) {
+  private Integer findOriginTrackingLine(OptionList optionList) {
     while(!optionList.isEmptyOptionList()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
-        OriginTracking[line=Line[string=line]] -> {
+        OriginTracking[line=line] -> {
           return line;
         }
       }
@@ -1012,8 +1017,8 @@ private void messageMatchErrorVariableStar(String nameVariableStar, String line)
     System.exit(1);return null;
   }
 
-  private String findOriginTrackingLine(Option option) {
-    return option.getLine().getString();
+  private Integer findOriginTrackingLine(Option option) {
+    return option.getLine();
   }
 
 } //class verify

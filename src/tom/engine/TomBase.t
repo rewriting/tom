@@ -495,11 +495,11 @@ public class TomBase {
   }
 
     // findOriginTrackingLine(_,_) method returns the line (stocked in optionList)  of object 'name'.
-  protected String findOriginTrackingLine(String name, OptionList optionList) {
+  protected Integer findOriginTrackingLine(String name, OptionList optionList) {
     while(!optionList.isEmptyOptionList()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
-        OriginTracking[astName=Name[string=origName],line=Line[string=line]] -> {
+        OriginTracking[astName=Name[string=origName],line=line] -> {
           if(name.equals(origName)) {
             return line;
           }
@@ -510,7 +510,7 @@ public class TomBase {
     System.out.println("findOriginTrackingLine: '" + name + "' not found");
     System.exit(1); return null;
   }
-  protected void messageError(String line, String msg) throws CheckErrorException {
+  protected void messageError(Integer line, String msg) throws CheckErrorException {
     if(!Flags.doVerify) return;
     String s = "\n"+msg+"\n-- Error occured at line: " + line + "\n"; 
     throw new CheckErrorException(s);

@@ -198,7 +198,7 @@ public class TomCompiler extends TomBase {
                 ArrayList equalityCheck = new ArrayList();
                 TomList renamedTermList = linearizePattern(termList,equalityCheck);
                 if(equalityCheck.size() > 0) {
-                  Expression cond = `TrueGL();
+                  Expression cond = `TrueTL();
                   Iterator it = equalityCheck.iterator();
                   while(it.hasNext()) {
                     Expression equality = (Expression)it.next();
@@ -557,7 +557,7 @@ public class TomCompiler extends TomBase {
           TomList result = empty();
           TomTerm variableAST = getBlockVariable(numberList);
           result = append(`Declaration(variableAST),result);
-          result = append(`Assign(variableAST, TrueGL()),result);
+          result = append(`Assign(variableAST, TrueTL()),result);
           if(Flags.supportedBlock) { // Test
             result = append(`OpenBlock(),result);
           }
