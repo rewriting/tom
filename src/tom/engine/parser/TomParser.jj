@@ -440,7 +440,6 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   <TOM_LBRACE> ( PatternAction(patternActionList) )* <TOM_RBRACE> /* we are in TOM mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       Option info = ast().makeOriginTracking("Match",getLine());
       Option option = ast().makeOption(info);
       list.add(tsf().makeTomTerm_Match(
@@ -636,7 +635,6 @@ void BackQuoteTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
   term = Term()
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-      //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_BackQuoteTerm(term));
   }
 }
@@ -649,7 +647,6 @@ void LocalVariableConstruct(ArrayList list) throws TomException: /* in DEFAULT m
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(makeTL(savePosAndExtract()));
-          //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_LocalVariable());
   }
 }
@@ -671,7 +668,6 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
   <TOM_LBRACE> fileName = <TOM_IDENTIFIER> <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-      //oldPos = getPos() + token.image.length();
     try {
 
 
@@ -750,7 +746,6 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-      //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_RuleSet(ast().makeList(ruleList)));
     verifier().testMakeDefine(ruleList);
   }
@@ -831,7 +826,6 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
       verifier().testOperator(ast().makeOptionList(options));
       nameMethod = name.image;
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine()));
       verifier().testOperatorYetDefined(name.image);
@@ -873,7 +867,6 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
     {
       verifier().testOperatorList(ast().makeOptionList(options));
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine())); 	
       verifier().testOperatorYetDefined(name.image);
@@ -916,7 +909,6 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
     {
       verifier().testOperatorArray(ast().makeOptionList(options));
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine())); 
       verifier().testOperatorYetDefined(name.image);
@@ -966,7 +958,6 @@ void TypeTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
   <TOM_RBRACE>
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
       list.addAll(blockList);
@@ -981,7 +972,6 @@ void TypeInt(ArrayList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       list.add(makeTL(savePosAndExtract()));
-        //oldPos = getPos() + token.image.length();
       ast().makeIntegerDecl(list);
     }
 }
@@ -1015,7 +1005,6 @@ void TypeList(ArrayList list) throws TomException: /* in DEFAULT mode */
   <TOM_RBRACE>
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
@@ -1052,8 +1041,6 @@ void TypeArray(ArrayList list) throws TomException: /* in DEFAULT mode */
   <TOM_RBRACE>
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
-      
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
       list.addAll(blockList);
@@ -1072,7 +1059,6 @@ TargetLanguage GoalLanguageBlock(ArrayList blockList) throws TomException:
   <TOM_LBRACE> /* we are in TOM mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
     }
   BlockList(blockList)
     <RBRACE> /* we are in DEFAULT mode */
@@ -1094,11 +1080,8 @@ TargetLanguage KeywordImplement() throws TomException:
   <TOM_IMPLEMENT>
   tlCode = GoalLanguageBlock(blockList)
    {
-     System.out.println("Avant\n" +tlCode);
      tlCode = ast().reworkTLCode(tlCode);
-     System.out.println("Apres\n"+tlCode);
      return tlCode;
-       //return tsf().makeTomTerm_Implement(tlCode);
    }
 }
 
@@ -1285,6 +1268,7 @@ TargetLanguage KeywordFsym() throws TomException:
   <TOM_FSYM>
   tlCode = GoalLanguageBlock(blockList)
    {
+     tlCode = ast().reworkTLCode(tlCode);
      return tlCode;
    }
 }

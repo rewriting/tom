@@ -268,7 +268,6 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       Option info = ast().makeOriginTracking("Match",getLine());
       Option option = ast().makeOption(info);
       list.add(tsf().makeTomTerm_Match(
@@ -526,7 +525,6 @@ public class TomParser implements TomParserConstants {
       list.add(makeTL(savePosAndExtract()));
     term = Term();
     switchToDefaultMode(); /* switch to DEFAULT mode */
-      //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_BackQuoteTerm(term));
   }
 
@@ -534,7 +532,6 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(VARIABLE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(makeTL(savePosAndExtract()));
-          //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_LocalVariable());
   }
 
@@ -551,7 +548,6 @@ public class TomParser implements TomParserConstants {
     fileName = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RBRACE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-      //oldPos = getPos() + token.image.length();
     try {
 
 
@@ -634,7 +630,6 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-      //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_RuleSet(ast().makeList(ruleList)));
     verifier().testMakeDefine(ruleList);
   }
@@ -749,7 +744,6 @@ public class TomParser implements TomParserConstants {
       verifier().testOperator(ast().makeOptionList(options));
       nameMethod = name.image;
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine()));
       verifier().testOperatorYetDefined(name.image);
@@ -808,7 +802,6 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       verifier().testOperatorList(ast().makeOptionList(options));
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine()));
       verifier().testOperatorYetDefined(name.image);
@@ -868,7 +861,6 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       verifier().testOperatorArray(ast().makeOptionList(options));
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine()));
       verifier().testOperatorYetDefined(name.image);
@@ -945,7 +937,6 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
       list.addAll(blockList);
@@ -956,7 +947,6 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TYPEINT);
       switchToDefaultMode(); /* switch to DEFAULT mode */
       list.add(makeTL(savePosAndExtract()));
-        //oldPos = getPos() + token.image.length();
       ast().makeIntegerDecl(list);
   }
 
@@ -1024,7 +1014,6 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
 
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
@@ -1091,8 +1080,6 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
-
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
       list.addAll(blockList);
@@ -1105,7 +1092,6 @@ public class TomParser implements TomParserConstants {
   final public TargetLanguage GoalLanguageBlock(ArrayList blockList) throws ParseException, TomException {
     jj_consume_token(TOM_LBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-        //oldPos = getPos() + token.image.length();
 
     BlockList(blockList);
     jj_consume_token(RBRACE);
@@ -1121,12 +1107,8 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
     jj_consume_token(TOM_IMPLEMENT);
     tlCode = GoalLanguageBlock(blockList);
-     System.out.println("Avant\n" +tlCode);
      tlCode = ast().reworkTLCode(tlCode);
-     System.out.println("Apres\n"+tlCode);
      {if (true) return tlCode;}
-       //return tsf().makeTomTerm_Implement(tlCode);
-
     throw new Error("Missing return statement in function");
   }
 
@@ -1308,6 +1290,7 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
     jj_consume_token(TOM_FSYM);
     tlCode = GoalLanguageBlock(blockList);
+     tlCode = ast().reworkTLCode(tlCode);
      {if (true) return tlCode;}
     throw new Error("Missing return statement in function");
   }
@@ -1544,10 +1527,26 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3_2() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_STAR)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_5() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_COLON)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1561,22 +1560,6 @@ public class TomParser implements TomParserConstants {
   }
 
   final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_COLON)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_5() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_COLON)) return true;
