@@ -113,7 +113,8 @@
     <adt file="${addressbook.dir}/data.adt" 
          factory="data" 
          package="AddressBook" 
-         destdir="${examples.dir}"/>
+				 outputtomdir="${addressbook.dir}"
+         outputdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${addressbook.dir}" 
          destdir="${addressbook.dir}" 
