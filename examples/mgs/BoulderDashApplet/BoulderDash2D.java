@@ -6,7 +6,7 @@ import java.util.*;
 
 import adt.*;
 // BOULDERDASH 2D APPLI BUT ALSO APPLET
-// <applet code=BoulderDash2D width=400 height=440>
+// <applet code=BoulderDash2D.class width=400 height=440>
 // </applet>
 
 public class BoulderDash2D extends JApplet {
@@ -66,7 +66,7 @@ public class BoulderDash2D extends JApplet {
   
   public void run() {
     JFrame frame = new JFrame("BoulderDash Application");
-    frame.setBackground(Color.blue);
+    frame.setBackground(Color.green);
     p.setBackground(Color.blue);
     frame.setSize(400, 420);
     frame.setContentPane(p);
@@ -180,11 +180,11 @@ class BoulderDashPanel extends JPanel {
   }
   
   public void paintComponent(Graphics g) {
+    super.paintComponent(g);
       //System.out.println("paintComponent called");
     g.fillRect(0,0,400,400);
     Graphics2D g2d = (Graphics2D)g;
-    if(space.isEmpty()) {
-      System.out.println("empty Space");
+    if(space == null || space.isEmpty()) {
         // Default: just an animation
       for (int x=0;x<400;x+=20) {
         for (int y=0;y<400;y+=20) {
