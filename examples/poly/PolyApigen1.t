@@ -74,8 +74,8 @@ public class PolyApigen1 {
         plus(x,zero()) -> { res = simplify(`x); break block; }
         mult(one(),x)  -> { res = simplify(`x); break block; }
         mult(x,one())  -> { res = simplify(`x); break block; }
-        mult(zero(),x) -> { res = `zero(); break block; }
-        mult(x,zero()) -> { res = `zero(); break block; }
+        mult(zero(),_) -> { res = `zero(); break block; }
+        mult(_,zero()) -> { res = `zero(); break block; }
         plus(x,y)      -> { res = `plus(simplify(x),simplify(y)); break block; }
         mult(x,y)      -> { res = `mult(simplify(x),simplify(y)); break block; }
         exp(x)         -> { res = `exp(simplify(x)); break block; }

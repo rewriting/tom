@@ -104,11 +104,11 @@ public class PolySimple2 {
         res2 = `mult(arg2, differentiate(arg1, var));
         return `plus(res1,res2);
       }
-      X(), var -> { return `zero(); }
-      Y(), var -> { return `zero(); }
-      a(), var -> { return `zero(); }
-      b(), var -> { return `zero(); }
-      c(), var -> { return `zero(); }
+      X(), _ -> { return `zero(); }
+      Y(), _ -> { return `zero(); }
+      a(), _ -> { return `zero(); }
+      b(), _ -> { return `zero(); }
+      c(), _ -> { return `zero(); }
       _, _ -> { System.out.println("No match for: " + poly); }
 	    
     }
@@ -120,7 +120,7 @@ public class PolySimple2 {
     %match(term t) {
       plus(zero(), x) | plus(x, zero()) -> { return simplify(`x); }
       mult(one(), x)  | mult(x, one())  -> { return simplify(`x); }
-      mult(zero(), x) | mult(x, zero()) -> { return `zero(); }
+      mult(zero(), _) | mult(_, zero()) -> { return `zero(); }
       plus(x,y)   	  -> { return `plus( simplify(x), simplify(y) ); }
       mult(x,y)		    -> { return `mult( simplify(x), simplify(y) ); }
       zero()          -> { return `zero(); }

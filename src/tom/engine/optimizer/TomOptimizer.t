@@ -109,8 +109,8 @@ public class TomOptimizer extends TomTask {
                              orgTrack.getFileName().getString(),
                              orgTrack.getAstName().getString(),
                              orgTrack.getLine(),
-                             "Variable `{0}` is never used",
-                                             new Object[]{`extractRealName(tomName)});
+                             TomMessage.getString("UnusedVariable"),
+															 new Object[]{`extractRealName(tomName)});
                 if(verbose) {
                   System.out.println(mult + " -> remove:     " + `extractRealName(tomName));
                 }

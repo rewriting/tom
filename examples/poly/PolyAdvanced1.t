@@ -68,7 +68,7 @@ public class PolyAdvanced1 {
       %match(term t) {
         plus(zero(), x) | plus(x, zero()) |
         mult(one(), x)  | mult(x, one())  -> { res = simplify(`x);  break block; }
-        mult(zero(), x) | mult(x, zero()) -> { res = `zero();       break block; }
+        mult(zero(), _) | mult(_, zero()) -> { res = `zero();       break block; }
         plus(x,y) -> { res = `plus( simplify(x), simplify(y) ); break block; }
         mult(x,y) -> { res = `mult( simplify(x), simplify(y) ); break block; }
       }

@@ -58,7 +58,7 @@ public class StratList {
     if (!stratlist.isEmpty()) {
       first = (Strat)stratlist.get(0);
     } else {
-      System.out.println("c'est étrange: " + stratlist);
+      System.out.println("This is strange: " + stratlist);
     }
     return first;
   }

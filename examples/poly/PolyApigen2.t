@@ -58,8 +58,8 @@ public class PolyApigen2 {
                                           mult(a2,differentiate(a1,vx)))
     differentiate(e@exp(a1),vx)   -> mult(differentiate(a1,vx),e)
     differentiate(variable(_),_)  -> zero()
-    differentiate(constant(c1),_) -> zero()
-    differentiate(number(i),_)    -> zero()
+    differentiate(constant(_),_) -> zero()
+    differentiate(number(_),_)    -> zero()
     differentiate(zero(),_)         -> zero() 
     differentiate(one(),_)          -> zero()
   }
