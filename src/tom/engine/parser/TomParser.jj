@@ -152,6 +152,11 @@ public class TomParser {
 
   private void addPreviousCode(ArrayList list) {
     String code = savePosAndExtract();
+    String pureCode = code.replace('\t', ' ');
+    pureCode = pureCode.replace('\n', ' ');
+    if(pureCode.matches("\\s*")) {
+      return;
+    }
     if (code.equals("")) {return ;}
     list.add(makeTL(code));
   }

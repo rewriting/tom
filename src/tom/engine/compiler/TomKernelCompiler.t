@@ -128,7 +128,11 @@ public class TomKernelCompiler extends TomBase {
       Tom(l) -> {
         return `Tom(tomListMap(l,replace_compileMatching));
       }
-            
+
+      TomInclude(l) -> {
+        return `TomInclude(tomListMap(l,replace_compileMatching));
+      }
+      
       Match(SubjectList(l1),PatternList(l2), matchOption@Option(optionList))  -> {
         statistics().numberMatchCompiledIntoAutomaton++;
         boolean generatedMatch = false;

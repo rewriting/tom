@@ -37,12 +37,14 @@ public final class SingleLineOutputCode extends OutputCode {
   }
 
   public void writeln(String s) throws IOException {
-    s = " " + s.trim();
     write(s);
     writeln();
   }
   
   public void write(int deep,String s, int line, int length) throws IOException {
-    writeln(s);
+    String s2 = s.replace('\n', ' ');
+    s2 = s2.replace('\t', ' ');
+    System.out.println("SingleLineOutputCode ["+ s2 +"]");
+    writeln(s2);
   }
 }
