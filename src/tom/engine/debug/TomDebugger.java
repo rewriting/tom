@@ -42,9 +42,9 @@ import jtom.adt.*;
 import jtom.debug.TomDebugEnvironment;
 
 public class TomDebugger {
-  BufferedReader in;
   public static TomDebugger debug = null;
-
+  static boolean testingMode = false;
+  BufferedReader in;
   Map mapKeyDebugStructure;
   Set debuggedStructureKeySet;
   String[] watchPatterns;
@@ -52,9 +52,13 @@ public class TomDebugger {
   String[] baseFileName;
   Stack environment;
   boolean nextFailure = false;
-  int nextFailureStatus;
-  
+
   public TomDebugger(String[] fileName) {
+    this(fileName, false);
+  }
+  
+  public TomDebugger(String[] fileName, boolean testingMode) {
+    this.testingMode = testingMode;
     this.debug = this;
     this.baseFileName = new String[fileName.length];
     this.in = new BufferedReader(new InputStreamReader(System.in));
@@ -223,7 +227,7 @@ public class TomDebugger {
   private void showPatterns(String key) {
     TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
     for(int i=0;i<struct.nbPatterns.intValue();i++){
-      System.out.println("Pattern at line: "+struct.patternLine[i]);
+      System.out.println("Pattern declared line: "+struct.patternLine[i]);
       System.out.println(struct.patternText[i]);
       System.out.println("--------------------------------------------------------------------------------");
     }

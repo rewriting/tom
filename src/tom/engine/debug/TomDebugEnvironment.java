@@ -29,41 +29,33 @@ package jtom.debug;
 import java.util.*;
 import java.io.*;
 
+import  jtom.debug.TomDebugStructure;
+
 public class TomDebugEnvironment {
-  private String key;
-  private String type;
-  private String fileName = null;
-  private Integer line = null;
+  private TomDebugStructure debugStructure;
   private BufferedReader in;
   private ArrayList subjects;
   private ArrayList substitutions;
-  private HashSet patternList;
-  private String patternText[];
-  private Integer patternLine[];
   private int step = 0;
   private String lastPatternResult = null;
   private String totalMatchResult = null;
-  private static String FAILURE = "Failure";
-  private static String SUCCESS = "Success";
   private boolean failureLookup = false;
   private boolean resultLookup = false;
   private boolean nextLookup = false;
   
+  private static String FAILURE = "Failure";
+  private static String SUCCESS = "Success";
+  
   public TomDebugEnvironment(TomDebugStructure struct, boolean failureLookup ) {
-    this.patternList = struct.watchPatternList;
-    this.patternText = struct.patternText;
-    this.patternLine = struct.patternLine;
-    this.key = struct.key;
-    this.type = struct.type;
-    this.fileName = struct.fileName;
-    this.line = struct.line;
+    this.debugStructure = struct;
+    
     this.failureLookup = failureLookup;
     this.subjects = new ArrayList();
     this.substitutions = new ArrayList();
     this.in = new BufferedReader(new InputStreamReader(System.in));
     totalMatchResult = FAILURE;
     if(!failureLookup) {
-      System.out.println("\tEntering "+struct.type+" declared in "+fileName+" at line "+line);
+      System.out.println("\tEntering "+struct.type+" declared in "+struct.fileName+" at line "+struct.line);
     }
   }
 
@@ -74,12 +66,12 @@ public class TomDebugEnvironment {
         result = 0;
       }
       if(result == -1) {
-         System.out.println(type+" declared in "+fileName+" at line "+line+" completely fails with subject(s)");
+         System.out.println(debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line+" completely fails with subject(s)");
          showSubjects();
       }
       return result;
     }
-    System.out.println("\tLeaving "+type+" declared in "+fileName+" at line "+line);
+    System.out.println("\tLeaving "+debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line);
     try {
       String str = "";
       System.out.print(">:(Press enter to contine....");
@@ -97,8 +89,8 @@ public class TomDebugEnvironment {
     incrementStep();
     nextLookup = false;
     if(failureLookup) {return;}
-    if(patternList.contains(new Integer(getStep()))) {      
-      System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation declared line "+patternLine[getStep()-1]);
+    if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {      
+      System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation declared line "+debugStructure.patternLine[getStep()-1]);
       lastPatternResult = FAILURE;
       substitutions.clear();
       debugBreak();
@@ -108,7 +100,7 @@ public class TomDebugEnvironment {
   public void leavingPattern() {
     if(failureLookup) {return;}
     if(nextLookup) {return;}
-    if(patternList.contains(new Integer(getStep()))) {
+    if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {
       System.out.println("\t\tLeaving  Pattern number "+ getStep()+" evaluation with "+lastPatternResult);
       debugBreak();
     }
@@ -117,7 +109,7 @@ public class TomDebugEnvironment {
   public void linearizationFail() {
     if(failureLookup) {return;}
     if(nextLookup) {return;}
-    if(patternList.contains(new Integer(getStep()))) {
+    if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {
       lastPatternResult = FAILURE;
       System.out.println("\t\tPattern fails because of linearization issue");
     }
@@ -129,7 +121,7 @@ public class TomDebugEnvironment {
       return;
     }
     if(nextLookup) {return;}
-    if(patternList.contains(new Integer(getStep()))) {
+    if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {
       lastPatternResult = SUCCESS;
       System.out.println("\t\tPattern number "+getStep()+" succeeds");
       debugBreak();
@@ -137,7 +129,7 @@ public class TomDebugEnvironment {
   }
   
   public String getKey() {
-    return key;
+    return debugStructure.key;
   }
 
   public void addSubject(String name, Object trm) {
@@ -168,19 +160,23 @@ public class TomDebugEnvironment {
 
   public void showPatterns() {
     try {
-      System.out.println("Pattern declared line "+patternLine[getStep()-1]);
-      System.out.println(patternText[getStep()-1]);
+      System.out.println("Pattern declared line "+debugStructure.patternLine[getStep()-1]);
+      System.out.println(debugStructure.patternText[getStep()-1]);
     } catch (Exception e) {
     }
   }
   
   private void debugBreak() {
+    if(TomDebugger.testingMode) {
+      return;
+    }
     try {
       String str = "";
       System.out.print("? to see the available command list>:");
       str = in.readLine();
       processBreak(str);
     } catch (IOException e) {
+      System.out.println("Catching exception:"+e.getStackTrace());
     }
   }  
 
