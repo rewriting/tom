@@ -231,7 +231,7 @@ public class TomCompiler extends TomTask {
             
               while(!typesList.isEmpty()) {
                 TomType subtermType = typesList.getHead();
-                variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concExpression());
+                variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concConstraint());
                 matchArgumentsList = append(variable,matchArgumentsList);
                 typesList = typesList.getTail();
                 index++;
@@ -386,8 +386,8 @@ public class TomCompiler extends TomTask {
           path = (TomNumberList) path.append(makeNumber(mult));
           OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
 					// add the constraint renamedVariable = Variable
-          renamedTerm = `Variable(newOptionList,PositionName(path),type,concExpression(EqualTerm(subject,renamedTerm),clist*));
-            //System.out.println("renamedTerm = " + renamedTerm);
+          renamedTerm = `Variable(newOptionList,PositionName(path),type,concConstraint(Equal(subject),clist*));
+            System.out.println("renamedTerm = " + renamedTerm);
 
           Expression newEquality = `EqualTerm(subject,renamedTerm);
           equalityCheck.add(newEquality);
@@ -407,7 +407,7 @@ public class TomCompiler extends TomTask {
           path = appendNumber(mult,path);
           OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
 					// add the constraint renamedVariable = Variable
-          renamedTerm = `VariableStar(newOptionList,PositionName(path),type,concExpression(EqualTerm(subject,renamedTerm),clist*));
+          renamedTerm = `VariableStar(newOptionList,PositionName(path),type,concConstraint(Equal(subject),clist*));
 
             //System.out.println("renamedTerm = " + renamedTerm);
 
@@ -497,7 +497,7 @@ public class TomCompiler extends TomTask {
                   absVarNumber++;
                   path = (TomNumberList) path.append(`AbsVar(makeNumber(absVarNumber)));
                   
-                  TomTerm newVariable = `Variable(option(),PositionName(path),type2,concExpression());
+                  TomTerm newVariable = `Variable(option(),PositionName(path),type2,concConstraint());
                   
                   //System.out.println("newVariable = " + newVariable);
                   

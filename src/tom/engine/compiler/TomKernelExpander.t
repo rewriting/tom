@@ -111,7 +111,7 @@ public class TomKernelExpander extends TomBase {
               return `Appl(option,nameList,subterm);
             } else {
               if(l.isEmpty()  && !hasConstructor(optionList)) {
-                return `Variable(option,nameList.getHead(),type,concExpression());
+                return `Variable(option,nameList.getHead(),type,concConstraint());
               } else {
                 TomList subterm = expandVariableList(`emptySymbol(), l);
                 return `Appl(option,nameList,subterm);
@@ -139,7 +139,7 @@ public class TomKernelExpander extends TomBase {
               return `Appl(option,nameList,subterm);
             } else {
               if(l.isEmpty()  && !hasConstructor(optionList)) {
-                return `Variable(option,nameList.getHead(),type1,concExpression());
+                return `Variable(option,nameList.getHead(),type1,concConstraint());
               } else {
                 TomList subterm = expandVariableList(`emptySymbol(), l);
                 return `Appl(option,nameList,subterm);
@@ -179,7 +179,7 @@ public class TomKernelExpander extends TomBase {
           context, Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType)] -> {
               // create a variable
             TomType localType = getType(tomType);
-            return `Variable(option,Name(strName),localType,concExpression());
+            return `Variable(option,Name(strName),localType,concConstraint());
           }
           
           context, TLVar(strName,TomTypeAlone(tomType)) -> {
@@ -187,14 +187,14 @@ public class TomKernelExpander extends TomBase {
               // create a variable: its type is ensured by checker
             TomType localType = getType(tomType);
             OptionList option = ast().makeOption();
-            return `Variable(option,Name(strName),localType,concExpression());
+            return `Variable(option,Name(strName),localType,concConstraint());
           }
               
          context, TLVar(strName,localType@Type[]) -> {
               //debugPrintln("expandVariable.8: TLVar(" + strName + "," + tomType + ")");
               // create a variable: its type is ensured by checker
             OptionList option = ast().makeOption();
-            return `Variable(option,Name(strName),localType,concExpression());
+            return `Variable(option,Name(strName),localType,concConstraint());
           }
 
          SubjectList(l1), TermList(subjectList) -> {
@@ -272,7 +272,7 @@ public class TomKernelExpander extends TomBase {
                 VariableStar(optionList,name,_) -> {
                   Option orgTrack = findOriginTracking(optionList);
                   OptionList option = `replaceAnnotedName(optionList,codomainType,orgTrack);
-                  list.add(`VariableStar(option,name,codomainType,concExpression()));
+                  list.add(`VariableStar(option,name,codomainType,concConstraint()));
                     //System.out.println("*** break: " + subterm);
                   break matchBlock;
                 }
@@ -340,7 +340,7 @@ public class TomKernelExpander extends TomBase {
       emptyOptionList() -> { return subjectList; }
       manyOptionList(TomNameToOption(name@Name[]),l)   -> {
         return `manyOptionList(
-          TomTermToOption(Variable(ast().makeOption(orgTrack),name,type,concExpression())),
+          TomTermToOption(Variable(ast().makeOption(orgTrack),name,type,concConstraint())),
           replaceAnnotedName(l,type,orgTrack));
       }
       manyOptionList(t,l) -> {

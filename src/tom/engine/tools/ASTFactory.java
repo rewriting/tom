@@ -131,19 +131,19 @@ public class ASTFactory {
   }
 
   public TomTerm makeVariable(OptionList option, String name, String type) {
-    return tsf().makeTomTerm_Variable(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeExpressionList());  
+    return tsf().makeTomTerm_Variable(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeConstraintList());  
   }
 
   public TomTerm makeVariable(OptionList option, TomName name, TomType type) {
-    return tsf().makeTomTerm_Variable(option, name, type, tsf().makeExpressionList());  
+    return tsf().makeTomTerm_Variable(option, name, type, tsf().makeConstraintList());  
   }
 
   public TomTerm makeVariableStar(OptionList option, String name, String type) {
-    return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeExpressionList());  
+    return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeConstraintList());  
   }
 
   public TomTerm makeVariableStar(OptionList option, TomName name, TomType type) {
-    return tsf().makeTomTerm_VariableStar(option, name, type, tsf().makeExpressionList());  
+    return tsf().makeTomTerm_VariableStar(option, name, type, tsf().makeConstraintList());  
   }
 
   public TomTerm makeUnamedVariableStar(OptionList option, String type) {
