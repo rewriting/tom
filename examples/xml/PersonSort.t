@@ -1,6 +1,6 @@
 import jtom.runtime.xml.*;
-import jtom.runtime.xml.adt.tnode.*;
-import jtom.runtime.xml.adt.tnode.types.*;
+import jtom.adt.tnode.*;
+import jtom.adt.tnode.types.*;
 import aterm.*;
 
 public class PersonSort {
@@ -29,7 +29,7 @@ public class PersonSort {
     %match(TNode subject) {
       <Persons>(X1*,p1,X2*,p2,X3*)</Persons> -> {
         if(compare(p1,p2) > 0) {
-          return sort(`XML(<Persons>X1* p2 X2* p1 X3*</Persons>));	
+          return sort(`xml(<Persons>X1* p2 X2* p1 X3*</Persons>));	
         }	
       }
       
