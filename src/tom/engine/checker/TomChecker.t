@@ -29,7 +29,6 @@ package jtom.checker;
 import aterm.*;
 
 import java.util.*;
-import java.util.LinkedList;
 
 import jtom.TomEnvironment;
 import jtom.adt.*;
@@ -37,7 +36,7 @@ import jtom.tools.TomTask;
 import jtom.runtime.Collect1;
 import jtom.xml.Constants;
 import jtom.exception.*;
-import jtom.runtime.set.SharedSet;
+//import jtom.runtime.set.SharedSet;
 
 abstract public class TomChecker extends TomTask {
 	

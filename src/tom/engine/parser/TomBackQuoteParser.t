@@ -33,6 +33,8 @@ import aterm.*;
 
 public class TomBackQuoteParser extends TomBase implements TomParserConstants {
   
+	private HashMap nameToDecLineMap;
+	
   public TomBackQuoteParser(jtom.TomEnvironment environment) {
     super(environment);
   }
@@ -104,16 +106,16 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     return false;
   }
   
-  private TomTerm buildTermFromStack(Stack stackList, Stack stackName) {
+  private TomTerm buildTermFromStack(Stack stackList, Stack stackName, Stack stackOption) {
     String name = (String) stackName.pop();
     TomList args = (TomList) stackList.pop();
     OptionList option;
     
     if(isEmptyComposite(args)) {
-      option = ast().makeOption(`Constructor(concTomName(Name(name))));
+      option = `concOption( Constructor(concTomName(Name(name))), (Option)stackOption.pop() );
       args = `concTomTerm();
     } else {
-      option = ast().makeOption();
+      option = `concOption((Option)stackOption.pop() );
     }
 
     return `BackQuoteAppl(option,Name(name),args);
@@ -167,12 +169,14 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     return open==0;
   }
   
-  public TomTerm buildBackQuoteTerm(List tokenList) {
+  public TomTerm buildBackQuoteTerm(List tokenList, HashMap nameToDecLineMap, String currentFileName) {
+    this.nameToDecLineMap = nameToDecLineMap;
     Token token = null;
     Token next = null;
     LinkedList accu = new LinkedList();
     Stack stackName = new Stack();
     Stack stackList = new Stack();
+		Stack stackOption = new Stack();
 
     stackList.push(`concTomTerm(Composite(concTomTerm())));
 
@@ -197,6 +201,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
       matchBlock: {
         %match(Token token, Token next) {
           IDENT(name), LPAREN[] -> {
+						stackOption.push(`OriginTracking(Name(name), ((Integer)nameToDecLineMap.get(token)).intValue(), Name(currentFileName)));
             stackName.push(name);
             stackList.push(`concTomTerm(Composite(concTomTerm())));
             token = next;
@@ -210,7 +215,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
           }
           
           IDENT(name), _ -> {
-            OptionList option = ast().makeOption();
+						OptionList option = `concOption(OriginTracking(Name(name), ((Integer)nameToDecLineMap.get(token)).intValue(), Name(currentFileName)));
             addToLastComposite(stackList, `BackQuoteAppl(option,Name(name),concTomTerm()));
               //concTomTerm(Composite(concTomTerm()))));
             break matchBlock;
@@ -230,7 +235,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
           RPAREN(image), _ -> {
             if(isWellFormed(stackList)) {
               detectVariableStar(stackList);
-              TomTerm term = buildTermFromStack(stackList, stackName);
+              TomTerm term = buildTermFromStack(stackList, stackName, stackOption);
               addToLastComposite(stackList, term);
               break matchBlock;
             } else {
@@ -251,7 +256,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     }
 
     TomTerm term = ((TomList)stackList.pop()).getHead();
-      //System.out.println(term);
+     //System.out.println(term);
     
     return term;
   }

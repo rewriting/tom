@@ -42,9 +42,7 @@ import jtom.checker.TomCheckerMessage;
 import jtom.xml.Constants;
 
 public class TomParser extends TomTask {
-  private int oldPos=0;
-  private int oldLine=0;
-  private int includeOffSet=0;
+  private int oldPos=0, oldLine=0, includeOffSet=0;
   private Position orgTrack;
   private TomBuffer tomBuffer;
   private TomBackQuoteParser tomBackQuoteParser;
@@ -54,7 +52,6 @@ public class TomParser extends TomTask {
   private String currentFile;
   private LinkedList debuggedStructureList;
   private String text="";
-  private TomTask nextTask;
   private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
   
    public TomParser(TomBuffer input, TomEnvironment environment, File importList[], int includeOffSet, 
@@ -79,7 +76,6 @@ public class TomParser extends TomTask {
     this.currentFile = fileName;
     this.debuggedStructureList = new LinkedList();
     this.tomBackQuoteParser = new TomBackQuoteParser(environment);
-    this.tomFactory = new TomFactory(environment);
     includedFiles = alreadyParsedFiles;
   }
   
@@ -728,16 +724,15 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   LinkedList list = new LinkedList();
   Token name;
   TomTerm term;
-  OptionList option = null;
-  Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   LinkedList optionList = new LinkedList();
   NameList nameList = null;
   boolean implicit;
-
+  OptionList option = null;
+  Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   if(annotedName!=null) { optionList.add(annotedName); }
 }
 {
-    term = XMLTerm(astAnnotedName) { return term; }
+    term = XMLTerm(option) { return term; }
   | // X* | _*
     LOOKAHEAD(2)
     term = UnamedVariableStarOrVariableStar(optionList) {return term; }
@@ -922,21 +917,18 @@ NameList XMLNameList(LinkedList optionList) throws TomException:
     }
 }
 
-TomTerm XMLTerm(TomName astAnnotedName) throws TomException:
+TomTerm XMLTerm(OptionList option) throws TomException:
 {
   TomTerm term;
   TomTerm arg1;
   TomTerm arg2;
   LinkedList list = new LinkedList();
   LinkedList childs = new LinkedList();
-  Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   LinkedList optionList = new LinkedList();
   String keyword = "";
-  OptionList option;
   boolean implicit;
   NameList nameList;
   NameList closingNameList;
-  if(annotedName!=null) { optionList.add(annotedName); }
 }
 {
   (
@@ -1056,9 +1048,9 @@ boolean XMLChilds(LinkedList list) throws TomException:
 }
 {
   (LOOKAHEAD(2)
-   implicit = ImplicitTermList(childs) |
-     //implicit = ExplicitTermList(childs) |
-   implicit = XMLTermList(childs) )
+   implicit = ImplicitTermList(childs)
+     // | implicit = ExplicitTermList(childs)
+   | implicit = XMLTermList(childs) )
     {
       it = childs.iterator();
       while(it.hasNext()) {
@@ -1116,7 +1108,7 @@ TomTerm XMLAttribute() throws TomException:
   | 
   ( // name = Term
     LOOKAHEAD(2)
-    id = <TOM_IDENTIFIER> <TOM_EQUAL> {text+="=";} term=AnnotedTerm()
+    id = <TOM_IDENTIFIER> <TOM_EQUAL> {text+=id.image+"=";} term=AnnotedTerm()
       {
         name = tomFactory.encodeXMLString(symbolTable(),id.image);
         nameList = tsf().makeNameList(tsf().makeTomName_Name(name));
@@ -1151,12 +1143,12 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
   TomTerm term;
   Option orgTrack;
-
   Token tk;
-  int parenLevel = 0;
+  int parenLevel = 0, lastTokenLine = 0;
   boolean backQuoteMode = false;
   LinkedList tokenList = new LinkedList();
   Token backQuote = null;
+  HashMap tokenToDecLineMap = new HashMap();
 }
 {
   <BACKQUOTE_TERM> /* switch to TOM mode */
@@ -1168,19 +1160,22 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
       while(backQuoteMode) {
         tk = getNextToken();
         tokenList.add(tk);
-        if(tk.kind == TOM_LPAREN) {
+        if(tk.kind == TOM_LPAREN) { 
           parenLevel++;
         } else if(tk.kind == TOM_RPAREN) {
           parenLevel--;
           if(parenLevel==0) {
             backQuoteMode = false;
           }
-        } 
+        } else if (tk.kind == TOM_IDENTIFIER) {
+        	tokenToDecLineMap.put(tk, new Integer(getLine()));
+        }
+        lastTokenLine = getLine();
       }
 
       switchToDefaultMode(); /* switch to DEFAULT mode */
         //term = ast().buildBackQuoteTerm(tokenList);
-      term = tomBackQuoteParser.buildBackQuoteTerm(tokenList);
+      term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
       if(backQuote != null) {
         term = tsf().makeTomTerm_DoubleBackQuote(term);
       }
