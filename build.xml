@@ -446,19 +446,19 @@
     </javac>
   </target>
 
-  <target name="bootcheck" depends="performbootstrap">
-    <mkdir dir="${src.src}/bootcheck"/>
-      <concat destfile="${src.src}/bootcheck/version1">
-                 <fileset dir="${bootstep.folder}" includes="**/*.class"/>
-              </concat>
-      <concat destfile="${src.src}/bootcheck/version2">
-                 <fileset dir="${src.build}" includes="**/*.class"/>
-              </concat>
-  <condition property="bootstrap.ok">
-    <filesmatch file1="${src.src}/bootcheck/version1" file2="${src.src}/bootcheck/version2"/>
-  </condition>
-  <delete dir="${src.src}/bootcheck"/>
-  </target>
+	<target name="bootcheck" depends="performbootstrap">
+		<mkdir dir="${src.src}/bootcheck"/>
+		<concat destfile="${src.src}/bootcheck/version1">
+			<fileset dir="${bootstep.folder}" includes="**/*.class"/>
+		</concat>
+		<concat destfile="${src.src}/bootcheck/version2">
+			<fileset dir="${src.build}" includes="**/*.class"/>
+		</concat>
+		<condition property="bootstrap.ok">
+			<filesmatch file1="${src.src}/bootcheck/version1" file2="${src.src}/bootcheck/version2"/>
+		</condition>
+		<delete dir="${src.src}/bootcheck"/>
+	</target>
 	
   <target name="performbootstrap" depends="stable, initsrc">
 		<!-- Clean src
@@ -488,34 +488,29 @@
     <echo> Bootstrap perform successfully!!</echo>
   </target>
 
- <target name="bootinstall" depends="bootcheck" if="bootstrap.ok">
-     <copy todir="${stable.src}" overwrite="true">
-      <fileset dir="${src.src}">
-        <include name="**/*.java"/>
-        <exclude name="jtom/adt/**/*.java"/>
-      </fileset>
-    </copy>
-     <jar jarfile="${stable.adt}/Set-${version}.jar">
-      <fileset dir="${src.build}" 
-        includes="jtom/adt/set/**/*.class"/>
-    </jar>
-<jar jarfile="${stable.adt}/TNode-${version}.jar">
-	<fileset dir="${src.build}" 
-	 includes="jtom/adt/tnode/**/*.class"/>
-</jar>
-<jar jarfile="${stable.adt}/TomSignature-${version}.jar">
-	<fileset dir="${src.build}" 
-	 includes="jtom/adt/tomsignature/**/*.class"/>
-</jar>
-    <copy todir="${stable.adt}" >
-      <fileset dir="${src.adt}">
-        <include name="*.tom"/>
-      </fileset>
-    </copy>
+	<target name="bootinstall" depends="bootcheck" if="bootstrap.ok">
+		<copy todir="${stable.src}" overwrite="true">
+			<fileset dir="${src.src}">
+				<include name="**/*.java"/>
+				<exclude name="jtom/adt/**/*.java"/>
+			</fileset>
+		</copy>
+		<jar jarfile="${stable.adt}/Set-${version}.jar">
+			<fileset dir="${src.build}" 
+							 includes="jtom/adt/set/**/*.class"/>
+		</jar>
+		<jar jarfile="${stable.adt}/TNode-${version}.jar">
+			<fileset dir="${src.build}" 
+							 includes="jtom/adt/tnode/**/*.class"/>
+		</jar>
+		<jar jarfile="${stable.adt}/TomSignature-${version}.jar">
+			<fileset dir="${src.build}" 
+							 includes="jtom/adt/tomsignature/**/*.class"/>
+		</jar>
 		<copy todir="${stable.mapping}">
 			<fileset dir="${src.mapping}" includes="**/*.tom"/>
 		</copy>
 
-</target>
+	</target>
 
 </project>
