@@ -365,6 +365,16 @@ public class TomOptionManager extends TomBase implements OptionManager, TomPlugi
   }
 
   /**
+   * Self-explanatory. Displays the current version of the TOM compiler.
+   */
+  public void displayVersion()
+  {
+    System.out.println("\njtom " + TomServer.VERSION + "\n\n"
+                       + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n");
+    System.exit(0);
+  }
+
+  /**
    * Checks if all the options a plugin needs are here.
    * 
    * @param list a list of options that must be found with the right value
@@ -426,36 +436,27 @@ public class TomOptionManager extends TomBase implements OptionManager, TomPlugi
    */
   public TomOptionList requiredOptions()
   {
-
-    TomOptionList list = `concTomOption(globalOptions*);
     TomOptionList prerequisites = `emptyTomOptionList();
 
-    while(!(list.isEmpty()))
-	    {
-        TomOption h = list.getHead();
-        %match(TomOption h)
-		    {
-          OptionBoolean[name="debug", valueB=True()] -> 
-			    { 
-            prerequisites = `concTomOption(OptionBoolean("jCode", "", "", True()), prerequisites*);
-            // For the moment debug is only available for Java as target language
-			    }
-          OptionString[name="destdir", valueS=v] -> 
-			    { 
-            if(!v.equals(".")) // destdir is not set at its default value -> it has been changed
-              prerequisites = `concTomOption(OptionString("output", "", "", "", ""), prerequisites*);
-            // destdir and output incompatible -> we want output at its default value
-			    }
-          OptionString[name="output", valueS=v] -> 
-			    { 
-            if(!v.equals("")) // output is not set at its default value -> it has been changed
-              prerequisites = `concTomOption(OptionString("destdir", "", "", ".", ""), prerequisites*);
-            // destdir and output incompatible -> we want destdir at its default value
-			    }
-		    }
+    if( getOptionBooleanValue("debug") ) {
+      prerequisites = `concTomOption(OptionBoolean("jCode", "", "", True()), prerequisites*);
+      // for the moment debug is only available for Java as target language
+    }
 
-        list = list.getTail();
-	    }
+    // options destdir and output are incompatible
+
+    if( !getOptionStringValue("destdir").equals(".") ) {
+      prerequisites = `concTomOption(OptionString("output", "", "", "", ""), prerequisites*);
+      // destdir is not set at its default value -> it has been changed
+      // -> we want output at its default value
+    }
+
+    if( !getOptionStringValue("output").equals("") ) {
+      prerequisites = `concTomOption(OptionString("destdir", "", "", ".", ""), prerequisites*);
+      // output is not set at its default value -> it has been changed
+      // -> we want destdir at its default value
+    }
+
     return prerequisites;
   }
 
@@ -500,7 +501,7 @@ public class TomOptionManager extends TomBase implements OptionManager, TomPlugi
                 if( s.equals("help") || s.equals("h") )
                   displayHelp();
                 if( s.equals("version") || s.equals("V") )
-                  getServer().displayVersion();
+                  displayVersion();
                 if( s.equals("X") )
                   {
                     // if we're here, the TomServer has already handled the "-X" option
