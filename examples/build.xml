@@ -415,8 +415,10 @@
       <include name="${list}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+    <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
+      <src path="${examples.dir}"/>
+      <src path="${examples.gen}"/>
       <classpath refid="tom.classpath"/>
       <include name="${list}/**/*.java"/>
     </javac>

@@ -40,6 +40,10 @@ public class List2 {
     this.factory = factory;
   }
 
+	public ATermFactory getFactory() {
+		return factory;
+	}
+
   %typearray TomList {
     implement { ArrayList }
     get_fun_sym(t)   { ((t instanceof ArrayList)?factory.makeAFun("conc", 1, false):null) }
@@ -110,6 +114,10 @@ public class List2 {
       _ -> { return l; }
     }
   }
+
+	public ArrayList makeSubject() {
+		return `conc(a,b,c,a,b,c,a);
+	}
 
   public void run() {
     ArrayList l    = `conc(a,b,c,a,b,c,a,c);
