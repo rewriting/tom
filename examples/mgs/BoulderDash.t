@@ -9,6 +9,7 @@ public class BoulderDash {
   private HashMap space;
   private HashSet marked;
   private HashMap newSpace;
+  private static int SIZE = 20;
 
   %include { term.t }
 
@@ -119,6 +120,9 @@ public class BoulderDash {
     }
 
     String s = "";
+    for(int y=ymax+1 ; y<SIZE ; y++) {
+      s += "\n";
+    }
     for(int y=ymax ; y>=0 ; y--) {
       String line = "";
       for(int x=0 ; x<=xmax ; x++) {
@@ -140,13 +144,15 @@ public class BoulderDash {
   public void run() {
     space = new HashMap();
     marked = new HashSet();
-    setGround(space,20);
-    putBead(space,10,5,rock);
-    putBead(space,10,6,rock);
-    putBead(space,10,7,rock);
-    putBead(space,10,8,rock);
-    putBead(space,10,9,rock);
-
+    /*
+       setGround(space,20);
+       putBead(space,10,5,rock);
+       putBead(space,10,6,rock);
+       putBead(space,10,7,rock);
+       putBead(space,10,8,rock);
+       putBead(space,10,9,rock);
+     */
+    setRock(space);
     boolean fire = true;
     while(fire) {
       System.out.println(toMatrix(space));
@@ -189,7 +195,7 @@ public class BoulderDash {
         return true;
       }
 
-beadRock[s=s@beadRock[w=empty()],w=empty()] -> {
+      beadRock[s=s@beadRock[w=empty()],w=empty()] -> {
         Bead newBead = `bead(getWestPosition(getSouthPosition(b.getPos())),b.getValue());
         putBead(newSpace,newBead);
         putBead(newSpace,s);
@@ -227,6 +233,28 @@ beadRock[s=s@beadRock[w=empty()],w=empty()] -> {
     for(int i=0 ; i<size ; i++) {
       putBead(space,i,0,ground);
     }
+  }
+
+  public void setRock(HashMap space) {
+    for(int i=0 ; i<SIZE ; i++) {
+      putBead(space,i,0,ground);
+      putBead(space,i,SIZE-1,ground);
+      putBead(space,0,i,ground);
+      putBead(space,SIZE-1,i,ground);
+    }
+    for(int i=0 ; i<SIZE/2-1 ; i++) {
+      putBead(space,i,SIZE/2,ground);
+    }
+    for(int i=SIZE/2+1 ; i<SIZE ; i++) {
+      putBead(space,i,SIZE/2,ground);
+    }
+
+    for(int j=SIZE/2+1 ; j<SIZE-1 ; j++) {
+      for(int i=1 ; i<SIZE-1 ; i++) {
+        putBead(space,i,j,rock);
+      }
+    }
+
   }
 
 
