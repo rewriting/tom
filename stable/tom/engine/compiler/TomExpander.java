@@ -56,7 +56,7 @@ public class TomExpander extends TomTask {
         debugMode = getInput().isDebugMode();
       if(verbose) { startChrono = System.currentTimeMillis(); }
       
-      TomTerm syntaxExpandedTerm = expandTomSyntax(getInput().getTerm());
+      TomTerm syntaxExpandedTerm = expandTomSyntax(environment().getTerm());
       tomKernelExpander.updateSymbolTable();
       TomTerm context = tom_make_emptyTerm() ;
       TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
@@ -73,7 +73,7 @@ public class TomExpander extends TomTask {
         Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().expandedSuffix, expandedTerm);
         Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().expandedTableSuffix, symbolTable().toTerm());
       }
-      getInput().setTerm(expandedTerm);
+      environment().setTerm(expandedTerm);
       
     } catch (Exception e) {
       addError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);

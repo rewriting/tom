@@ -28,11 +28,14 @@ package jtom;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.exception.TomRuntimeException;
+import jtom.adt.tomsignature.types.*;
 
 public class TomEnvironment {
 	private ASTFactory astFactory;
 	private Factory tomSignatureFactory;
 	private SymbolTable symbolTable;
+  private TomTerm term;
+  private TomErrorList errors;
 
   /*
    * Singleton pattern
@@ -65,6 +68,8 @@ public class TomEnvironment {
 
   public void init() {
     symbolTable.init();
+    errors = tomSignatureFactory.makeTomErrorList();
+    term = null;
   }
 
 	public ASTFactory getASTFactory() {
@@ -78,5 +83,54 @@ public class TomEnvironment {
 	public SymbolTable getSymbolTable() {
 		return symbolTable;
 	}
+
+  public void setTerm(TomTerm term) {
+    this.term = term;
+  }
+  public TomTerm getTerm() {
+    return term;
+  }
+  
+  public TomErrorList getErrors() {
+    return errors;
+  }
+  public void setErrors(TomErrorList list) {
+    errors = list;
+  }
+
+  public boolean checkNoErrors(String taskName, boolean eclipseMode, boolean warningAll, boolean noWarning) {
+    boolean res = true; 
+    TomErrorList errors = getErrors();
+      //System.out.println(errors);
+    int nbTotalError = errors.getLength();
+    int nbWarning = 0, nbError=0;
+    if(nbTotalError > 0 ) {
+      while(!errors.isEmpty()) {
+        TomError error = errors.getHead();
+        if (error.getLevel() == 1) {
+          nbWarning++;
+          if (/*!noWarning || */warningAll && !eclipseMode) {
+            System.out.println(error.getMessage());
+          }
+        } else if (error.getLevel() == 0) {
+          if(!eclipseMode){
+            System.out.println(error.getMessage());
+          }
+          res = false;
+          nbError++;
+        }
+        errors= errors.getTail();
+      }
+      if (nbError>0 && !eclipseMode) {
+        String msg = taskName+":  Encountered " + nbError + " errors and "+ nbWarning+" warnings.";
+        msg += "No file generated.";
+        System.out.println(msg);
+      } else if (nbWarning>0 && !eclipseMode && !noWarning) {
+        String msg = taskName+":  Encountered "+ nbWarning+" warnings.";
+        System.out.println(msg);
+      }
+    }
+    return res;
+  }
 
 }

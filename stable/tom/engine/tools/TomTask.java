@@ -67,17 +67,16 @@ public abstract class TomTask extends TomBase {
   }
 	
   public boolean checkNoErrors() {
-    boolean res = true; 
-    TomErrorList errors = getInput().getErrors();
+    return environment().checkNoErrors(name, getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning());
       //System.out.println(errors);
-    int nbTotalError = errors.getLength();
+    /*int nbTotalError = errors.getLength();
     int nbWarning = 0, nbError=0;
     if(nbTotalError > 0 ) {
       while(!errors.isEmpty()) {
         TomError error = errors.getHead();
         if (error.getLevel() == 1) {
           nbWarning++;
-          if (/*!getInput().isNoWarning() || */getInput().isWarningAll() && !getInput().isEclipseMode()) {
+          if (getInput().isWarningAll() && !getInput().isEclipseMode()) {
             System.out.println(error.getMessage());
           }
         } else if (error.getLevel() == 0) {
@@ -98,14 +97,14 @@ public abstract class TomTask extends TomBase {
         System.out.println(msg);
       }
     }
-    return res;
+    return res;*/
   }
 	
   public void finishProcess() {
       //	Start next task
     if(nextTask != null) {
       if(!getInput().isEclipseMode()) {
-        getInput().setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
+        environment().setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
       } 
       nextTask.startProcess();
     } /*else { System.out.println("No more tasks"); }*/
@@ -137,7 +136,7 @@ public abstract class TomTask extends TomBase {
 				
   public void addError(String msg, String file, int line, int level) {
     TomError err = tsf().makeTomError_Error(msg,file,line,level);
-    getInput().setErrors(tsf().makeTomErrorList(err, getInput().getErrors()));
+    environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
   }
 		
 }

@@ -40,7 +40,7 @@ public class TomTypeChecker extends TomChecker {
 		  long startChrono = 0;
 		  if(verbose) { startChrono = System.currentTimeMillis();
 		  		  	}
-			checkTypeInference(getInput().getTerm());
+			checkTypeInference(environment().getTerm());
 	  	
 	  	if(verbose) {
 	    	System.out.println("TOM type Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");

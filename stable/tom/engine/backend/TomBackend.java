@@ -23,7 +23,7 @@
  *
  **/
 
-  package jtom.backend;
+package jtom.backend;
  
 
 import java.io.FileOutputStream;
@@ -41,6 +41,7 @@ public class TomBackend extends TomTask {
   private final static int defaultDeep = 2;
   private TomAbstractGenerator generator;
   private Writer writer;
+
   public TomBackend() {
     super("Tom Generator");
   }
@@ -77,13 +78,15 @@ public class TomBackend extends TomTask {
       if(verbose) {
         startChrono = System.currentTimeMillis();
       }
-      generator.generate(defaultDeep, getInput().getTerm());
+      generator.generate(defaultDeep, environment().getTerm());
       if(verbose) {
         System.out.println("TOM generation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
     } catch (Exception e) {
-      addError("Exception occurs in TomGenerator: "+e.getMessage(), 
-               getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+      addError("Exception occurs in TomGenerator: " + e.getMessage(), 
+               getInput().getInputFile().getName(), 
+               TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, 
+               TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }
