@@ -50,8 +50,10 @@ public static java.util.ArrayList tom_mapping_buildNamedNodeMap(org.w3c.dom.Name
 		str_name = n.item(it).getNodeName();
 		ins = res.size();
 		for(int jt=0;jt<res.size();jt++) {
-			if (((org.w3c.dom.Attr)res.get(jt)).getNodeName().compareTo(str_name)>0)
+			if (((org.w3c.dom.Attr)res.get(jt)).getNodeName().compareTo(str_name)>0) {
 				ins = jt;
+				break;
+			}
 		}
 		res.add(ins,n.item(it));
 	} 
