@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.8 2003/03/04 09:39:36 moreau Exp $
+# $Id: configure.in,v 1.9 2003/03/14 16:18:38 moreau Exp $
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(jtom,1.2beta)
@@ -7,7 +7,7 @@ AC_PREREQ(2.13)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.8 2003/03/04 09:39:36 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.9 2003/03/14 16:18:38 moreau Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -39,7 +39,7 @@ dnl Require ATerm Java library
 AC_PACKAGE_REQUIRE(aterm-java, aterm-java-config,
    [  --with-aterm-java=DIR   ATerm-javalibrary is in DIR])
 dnl ATERM_JAVA is not allowed in Makefile.am's
-JAVA_ATERM="${ATERM_JAVA}/share/aterm-1.1.jar"
+JAVA_ATERM="${ATERM_JAVA}/share/aterm-1.2beta.jar"
 AC_SUBST(JAVA_ATERM)
 
 AC_OUTPUT( \
