@@ -199,8 +199,7 @@ public class TomCompiler extends TomTask {
               return newMatch;
             }
 
-            RuleSet(rl@manyTomRuleList(
-                                       RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
+            RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
               TomRuleList ruleList = `rl;
               if(debugMode) {
                 debugKey = `orgTrack.getFileName().getString() + `orgTrack.getLine();
@@ -224,6 +223,7 @@ public class TomCompiler extends TomTask {
                 index++;
               }
             
+              boolean hasDefaultCase = false;
               while(!ruleList.isEmpty()) {
                 TomRule rule = ruleList.getHead();
                 %match(TomRule rule) {
@@ -241,6 +241,7 @@ public class TomCompiler extends TomTask {
                     Instruction newRhsInst = `buildCondition(condList,rhsInst);
                   
                     patternActionList = append(`PatternAction(TermList(matchPatternsList),newRhsInst, option),patternActionList);
+                    hasDefaultCase = hasDefaultCase || (isDefaultCase(matchPatternsList) && condList.isEmpty());
                   }
                 } 
                 ruleList = ruleList.getTail();
@@ -255,7 +256,14 @@ public class TomCompiler extends TomTask {
               Instruction matchAST = `Match(SubjectList(matchArgumentsList),
                                             PatternList(patternActionList),
                                             generatedOptions);
-              Instruction buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(matchArgumentsList,replace_preProcessing_makeTerm)));
+
+              Instruction buildAST;
+              if(hasDefaultCase) {
+                buildAST = `Nop();
+              } else {
+                buildAST = `Return(BuildTerm(name,(TomList) traversal().genericTraversal(matchArgumentsList,replace_preProcessing_makeTerm)));
+              }
+
               InstructionList l;
               if(eCode) {
                 l = `concInstruction(
@@ -289,6 +297,21 @@ public class TomCompiler extends TomTask {
       } // end apply
     };
   
+  private boolean isDefaultCase(TomList l) {
+    %match(TomList l) {
+      emptyTomList() -> {
+        return true;
+      }
+      manyTomList((UnamedVariable|UnamedVariableStar)[],tail) -> {
+        return isDefaultCase(tail);
+      }
+      manyTomList((Variable|VariableStar)[],tail) -> {
+        return isDefaultCase(tail);
+      }
+    }
+    return false;
+  }
+
   Replace1 replace_preProcessing_makeTerm = new Replace1() {
       public ATerm apply(ATerm t) {
         return preProcessing(`MakeTerm((TomTerm)t));

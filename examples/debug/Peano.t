@@ -12,6 +12,15 @@ public class Peano {
     get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
     cmp_fun_sym(t1,t2)  { t1 == t2 }
     get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
+    equals(t1, t2)      { t1 == t2}
+  }
+
+  %typeterm appl {
+    implement { ATermAppl }
+    get_fun_sym(t)      { (t.getAFun()) }
+    cmp_fun_sym(t1,t2)  { t1 == t2 }
+    get_subterm(t, n)   { (t.getArgument(n)) }
+    equals(t1, t2)      { t1 == t2}
   }
 
   %op term zero {
@@ -20,9 +29,44 @@ public class Peano {
     is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
   }
   
-  %op term suc(term) {
+  %op term suc(pred:term) {
     fsym { fsuc }
     make(t) { factory.makeAppl(fsuc,t) }
+  }
+
+  %op term plus1(term,term) {
+    fsym { }
+    make(t1,t2) { plus1(t1,t2) }
+  }
+
+  %op term fib1(term) {
+    fsym { factory.makeAFun("fib1" , 1, false) }
+    make(t) { fib1(t) }
+  }
+
+  %op term fib2(term) {
+    fsym { factory.makeAFun("fib2" , 1, false) }
+    make(t) { fib2(t) }
+  }
+
+  %op term fib5(term) {
+    fsym { factory.makeAFun("fib5" , 1, false) }
+    make(t) { fib2(t) }
+  }
+  
+  %op appl term2appl(term) {
+    fsym { factory.makeAFun("term2appl" , 1, false) }
+    make(t) { factory.makeAppl(factory.makeAFun("term2appl",1,false),t) }
+  }
+
+  %op term appl2term(appl) {
+    fsym { factory.makeAFun("appl2term" , 1, false) }
+    make(t) { appl2term(t) }
+  }
+
+  %op term bug(term,term) {
+    fsym { factory.makeAFun("bug" , 2, false) }
+    make(t1,t2) { factory.makeAppl(factory.makeAFun("bug" , 2, false),t1,t2) }
   }
 
   public Peano(ATermFactory factory) {
@@ -34,33 +78,107 @@ public class Peano {
     tzero = factory.makeAppl(fzero);
   }
 
-  public void run() {
-    ATerm N = int2peano(2);
-    assertTrue( peano2int(plus(N,N)) == 4 );
+  %rule {
+    bug(x,zero()) -> x
+    bug(_,_) -> zero()
   }
-  
+
+  public void run() {
+    for(int i=0 ; i<100 ; i++) {
+      ATerm N = int2peano(i);
+      assertTrue( peano2int(plus1(N,N)) == (i+i) );
+      assertTrue( peano2int(plus2(N,N)) == (i+i) );
+      assertTrue( peano2int(plus3(N,N)) == (i+i) );
+      assertTrue( peano2int(plus4(N,N)) == (i+i) );
+    }
+
+    for(int i=0 ; i<15 ; i++) {
+      ATerm N = int2peano(i);
+      assertTrue( peano2int(fib1(N)) == fibint(i) );
+      assertTrue( peano2int(fib2(N)) == fibint(i) );
+      assertTrue( peano2int(fib3(N)) == fibint(i) );
+      assertTrue( peano2int(fib4(N)) == fibint(i) );
+      assertTrue
+        ( peano2int(fib5(N)) == fibint(i) );
+    }
+    
+  }
+
   public final static void main(String[] args) {
     Peano test = new Peano(new PureFactory(16));
     test.run();
   }
 
-  private ATerm id(ATerm t) {
-    return t;
+  public ATerm plus1(ATerm t1, ATerm t2) {
+    %match(term t1, term t2) {
+      x,(zero|zero)[]   -> { return `x; }
+      x,suc(y) -> { return suc(plus1(`x,`y)); }
+    }
+    //@ assert false;  
+    return null;
+  }
+
+  public ATerm plus2(ATerm t1, ATerm t2) {
+    %match(term t1, term t2) {
+      x,zero()   -> { return `x; }
+      x,suc[pred=y] -> { return suc(plus2(`x,`y)); }
+    }
+    return null;
+  }
+
+  public ATerm plus3(ATerm t1, ATerm t2) {
+    %match(term t1, term t2) {
+      x,zero()   -> { return `x; }
+      x@_,suc[pred=y@z] -> { return suc(plus3(`x,`y)); }
+    }
+    return null;
+  }
+
+    public ATerm plus4(ATerm t1, ATerm t2) {
+    %match(term t1, term t2) {
+      x,(zero|zero)[]   -> { return `x; }
+      x,(suc|suc)[pred=y] -> { return suc(plus1(`x,`y)); }
+    }
+    return null;
   }
   
-  public ATerm plus(ATerm t1, ATerm t2) {
-    %match(term t1, term t2) {
-<<<<<<< Peano.t
-      x,x -> { System.out.println("plip plop"); }
-			//y@x,zero()   -> { System.out.println("The y : " + `y); return `x; }
-      x,zero()   -> { 
-				//System.out.println("The y : " + `y); 
-				return `x; 
-			}
-=======
-      x@_,y@zero()   -> { return `x; }
->>>>>>> 1.6
-      x,suc(y) -> { return `suc(plus1(x,y)); }
+  %rule {
+    fib1(zero())        -> suc(zero())
+    fib1(suc(zero()))   -> suc(zero())
+    fib1(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
+  }
+  
+  %rule {
+    //    fib5(zero())      -> suc(appl2term(term2appl(x))) where x:= zero()
+    fib5(zero())      -> suc(x) where x:= zero()
+    fib5(x)           -> x      if x == suc(zero())
+    fib5(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
+  }
+  
+  %rule {
+    fib2(zero())-> suc(zero())
+    fib2(x@suc[pred=zero()]) -> suc(zero())
+    fib2(suc(y@suc(x))) -> plus2(fib2(x),fib2(y))
+  }
+
+  %rule {
+    appl2term(term2appl(x)) -> x
+  }
+
+  public ATerm fib3(ATerm t) {
+    %match(term t) {
+      zero()             -> { return `suc(zero()); }
+      suc[pred=x@zero()] -> { return `suc(x); }
+      suc(suc(x))      -> { return plus3(fib3(`x),fib3(suc(`x))); }
+    }
+    return null;
+  }
+
+  public ATerm fib4(ATerm t) {
+    %match(term t) {
+      zero()      -> { return `suc(zero()); }
+      suc(zero()) -> { return `suc(zero()); }
+      suc(suc(x)) -> { return plus3(fib4(`x),fib4(suc(`x))); }
     }
     return null;
   }
@@ -88,7 +206,7 @@ public class Peano {
   public int peano2int(ATerm N) {
     %match(term N) {
       zero() -> { return 0; }
-      suc(x) -> {return 1+`peano2int(x); }
+      suc(x) -> {return 1+peano2int(`x); }
     }
     return 0;
   }
