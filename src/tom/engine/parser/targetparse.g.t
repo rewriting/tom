@@ -113,7 +113,15 @@ options{
     public int popColumn(){
         return ((Integer) columns.pop()).intValue();
     }
-
+    
+    public void pushLine(){
+        lines.push(new Integer(getLine()));
+    }
+    
+    public void pushColumn(){
+        columns.push(new Integer(getColumn()));
+    }
+    
     // push the line number of the next block
     public void pushLine(int line){
         lines.push(new Integer(line));
@@ -154,9 +162,13 @@ options{
         return (! code.equals("") && ! code.matches("\\s*"));
     }
 
-    // returns the current line (for error management)
+    // returns the current line 
     public int getLine(){
         return targetlexer.getLine();
+    }
+    
+    public int getColumn(){
+        return targetlexer.getColumn();
     }
 
     private void includeFile(String fileName, LinkedList list) 
@@ -594,6 +606,8 @@ includeConstruct [LinkedList list] throws TomException
         tlCode = goalLanguage[blockList]
         {
             includeFile(tlCode.getCode(),list);
+            pushLine();
+            pushColumn();
         }   
     ;
 
