@@ -34,8 +34,8 @@ import java.util.NoSuchElementException;
 
 import jtom.runtime.Collect1;
 import jtom.runtime.GenericTraversal;
-import jtom.runtime.set.jgtreeset.set.*;
-import jtom.runtime.set.jgtreeset.set.types.*;
+import jtom.adt.set.*;
+import jtom.adt.set.types.*;
 import aterm.*;
 
 public abstract class ATermSet implements Collection {
@@ -88,7 +88,7 @@ public abstract class ATermSet implements Collection {
     1 << 31
   };
 
-  %include { ../../../adt/set.tom }
+  %include { ../../../adt/Set.tom }
 
   public int hashCode() {
     return tree.getUniqueIdentifier();

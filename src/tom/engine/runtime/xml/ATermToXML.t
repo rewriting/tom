@@ -26,8 +26,8 @@
 package jtom.runtime.xml;
 
 import java.io.*;
-import jtom.runtime.xml.adt.tnode.*;
-import jtom.runtime.xml.adt.tnode.types.*;
+import jtom.adt.tnode.*;
+import jtom.adt.tnode.types.*;
 import aterm.*;
 import aterm.pure.*;
 import jtom.exception.TomRuntimeException;

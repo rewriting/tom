@@ -32,8 +32,8 @@ import org.w3c.dom.NodeList;
 
 import aterm.*;
 import aterm.pure.*;
-import jtom.runtime.xml.adt.tnode.*;
-import jtom.runtime.xml.adt.tnode.types.*;
+import jtom.adt.tnode.*;
+import jtom.adt.tnode.types.*;
 
 public class XmlTools {
 

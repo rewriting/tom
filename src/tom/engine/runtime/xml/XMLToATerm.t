@@ -30,8 +30,8 @@ import aterm.*;
 import aterm.pure.*;
 
 import java.io.*;
-import jtom.runtime.xml.adt.tnode.*;
-import jtom.runtime.xml.adt.tnode.types.*;
+import jtom.adt.tnode.*;
+import jtom.adt.tnode.types.*;
 import jtom.exception.TomRuntimeException;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;

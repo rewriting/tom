@@ -31,15 +31,15 @@ import java.util.*;
 import aterm.*;
 import aterm.pure.PureFactory;
 
-import jtom.runtime.set.jgtreeset.set.*;
-import jtom.runtime.set.jgtreeset.set.types.*;
+import jtom.adt.set.*;
+import jtom.adt.set.types.*;
 
 import jtom.runtime.Replace1;
 import jtom.runtime.Collect1;
 
 public class SharedSet extends ATermSet {
 
-  %include { ../../../adt/set.tom }
+  %include { ../../../adt/Set.tom }
   
   public SharedSet(PureFactory pureFactory) {
     if (factory==null) {
