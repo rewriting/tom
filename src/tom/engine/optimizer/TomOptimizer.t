@@ -32,7 +32,7 @@ import java.util.*;
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
 import jtom.tools.*;
-import jtom.checker.TomCheckerMessage;
+import jtom.TomMessage;
 import jtom.runtime.*;
 
 public class TomOptimizer extends TomTask {
@@ -63,7 +63,7 @@ public class TomOptimizer extends TomTask {
       environment().setTerm(optimizedTerm);
       
     } catch (Exception e) {
-      addError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+      addError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }
@@ -113,7 +113,7 @@ public class TomOptimizer extends TomTask {
                              orgTrack.getLine(),
                              "Variable `{0}` is never used",
                              new Object[]{`name},
-                             TomCheckerMessage.TOM_WARNING);
+                             TomMessage.TOM_WARNING);
                 if(verbose) {
                   System.out.println(mult + " -> remove:     " + `name);
                 }
@@ -153,7 +153,7 @@ public class TomOptimizer extends TomTask {
                              orgTrack.getLine(),
                              "Variable `{0}` is never used",
                              new Object[]{`name},
-                             TomCheckerMessage.TOM_WARNING);
+                             TomMessage.TOM_WARNING);
                 if(verbose) {
                   System.out.println(mult + " -> remove:     " + `name);
                 }

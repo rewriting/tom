@@ -1,5 +1,5 @@
 /*
- *   
+ * 
  * TOM - To One Matching Compiler
  * 
  * Copyright (C) 2000-2004 INRIA
@@ -20,37 +20,38 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
- * Julien Guyon
  *
  **/
 
-package jtom.checker;
+package jtom;
 
-import jtom.TomEnvironment;
-import jtom.TomMessage;
-import jtom.tools.TomTaskInput;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-public class TomTypeChecker extends TomChecker {
-
-  public TomTypeChecker() {
-  	super("Tom TypeChecker");	
-  }
+/**
+ * @author julien
+ */
+public class TomMessage {
 	
-  public void process() {
-    try {
-		  long startChrono = 0;
-		  if(verbose) { startChrono = System.currentTimeMillis();
-		  		  	}
-			checkTypeInference(environment().getTerm());
-	  	
-	  	if(verbose) {
-	    	System.out.println("TOM type Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-	  	}
-    } catch (Exception e) {
-			addError("Exception occurs in TomTypeChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-			e.printStackTrace();
-			return;
-    }
-  }
+	private final static String RESOURCE_BUNDLE = "jtom.TomMessageResources";
+	  // Resource bundle.
+	private static ResourceBundle resourceBundle =  ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
-} // Class TomSyntaxChecker
+    // Message level
+  public static int TOM_ERROR = 0;
+  public static int TOM_WARNING = 1;
+	  // Default error line
+  public static int DEFAULT_ERROR_LINE_NUMBER = 1; 
+	
+	public static String getString(String key) {
+		try {
+			return resourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";
+		}
+	}
+
+	public static ResourceBundle getResourceBundle() {
+		return resourceBundle;
+	}
+}

@@ -93,6 +93,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement location="${src.build}"/>
+		<pathelement location="${src.src}"/>
 	</path>
 
 	<path id="tom.classpath">
@@ -256,9 +257,12 @@
 			</fileset>
 		</copy>
 		<jar jarfile="${stable.lib}/jtom-${version}.jar">
-			<fileset dir="${stable.build}">
-				<include name="**/*.class"/>
-			</fileset>
+			<fileset dir="${stable.build}"
+				includes="**/*.class"/>
+			
+				<fileset dir="${stable.src}" 
+						includes="**/*.properties"/>
+			
 		</jar>
 		<!-- tom share -->
 		<copy todir="${stable.share}">
@@ -332,6 +336,8 @@
 			<fileset dir="${src.build}" 
 							 includes="**/*.class"
 							 excludes="jtom/adt/**/*.class"/>
+			<fileset dir="${src.src}" 
+						includes="**/*.properties"/>
 		</jar>
 		<!-- tom share -->
 		<copy todir="${src.share}">
@@ -642,6 +648,8 @@
 				<include name="jtom/**/*.java"/>
 				<exclude name="jtom/adt/**/*.java"/>
 			</fileset>
+			<fileset dir="${src.src}"
+				includes="**/*.properties"/>
 		</copy>
 		<jar jarfile="${stable.adt}/Set-${version}.jar">
 			<fileset dir="${src.build}" 

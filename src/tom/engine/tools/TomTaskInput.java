@@ -130,7 +130,7 @@ public class TomTaskInput {
   public final static String verifExtractionSuffix = ".tfix.verif";
   public final static String parsedTableSuffix = ".tfix.parsed.table";
   public final static String expandedTableSuffix = ".tfix.expanded.table";
-public final static String debugTableSuffix = ".tfix.debug.table";
+  public final static String debugTableSuffix = ".tfix.debug.table";
   
 
   private final static int JAVA   = 1;

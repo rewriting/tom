@@ -46,7 +46,7 @@ import jtom.adt.tomsignature.types.instruction.RuleSet;
 import jtom.adt.tomsignature.types.instruction.Match;
 import jtom.exception.*;
 import jtom.tools.*;
-import jtom.checker.TomCheckerMessage;
+import jtom.TomMessage;
 import jtom.xml.Constants;
 
 public class TomParser extends TomTask {
@@ -142,18 +142,18 @@ public class TomParser extends TomTask {
       
     } catch (TokenMgrError e) {
   	  String msg = "Parsing exception catched in file '"+currentFile+"'\n" + e.getMessage();
-      addError(msg, currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
+      addError(msg, currentFile,  getLine(), TomMessage.TOM_ERROR);
   	} catch (TomIncludeException e) {
-  	  addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
+  	  addError(e.getMessage(), currentFile,  getLine(), TomMessage.TOM_ERROR);
   	} catch (TomException e) {
-  	  addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
+  	  addError(e.getMessage(), currentFile,  getLine(), TomMessage.TOM_ERROR);
     } catch (ParseException e) {
   	  String msg = "Parsing exception catched in file '"+currentFile+"'\n" + e.getMessage();
-      addError(msg, currentFile, getLine(), TomCheckerMessage.TOM_ERROR);
+      addError(msg, currentFile, getLine(), TomMessage.TOM_ERROR);
   	} catch (Exception e) {
   	  String msg = "Unhandled exception occurs during parsing: "+e.getMessage();
       e.printStackTrace();
-  	  addError(msg, currentFile, 0, TomCheckerMessage.TOM_ERROR);
+  	  addError(msg, currentFile, 0, TomMessage.TOM_ERROR);
   	}
   }
   
@@ -1097,9 +1097,9 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
                      currentFile,
                      "match",
                      getLine(),
-                     TomCheckerMessage.MalformedXMLTerm, 
+                     TomMessage.getString("MalformedXMLTerm"), 
                      new Object[]{expected.substring(1), found.substring(1)},
-                     TomCheckerMessage.TOM_ERROR);
+                     TomMessage.TOM_ERROR);
           }
           if(implicit) {
               /*
@@ -1673,8 +1673,8 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
           astName = ast().makeName(stringSlotName);
           if (!stringSlotName.equals("")) {
             if(slotNameList.indexOf(astName) != -1) {
-              String detailedMsg = MessageFormat.format(TomCheckerMessage.RepeatedSlotName, new Object[]{stringSlotName});
-              String msg = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(orgTrack.getLine()), "%op "+type.image, new Integer(orgTrack.getLine()), currentFile, detailedMsg});
+              String detailedMsg = MessageFormat.format(TomMessage.getString("RepeatedSlotName"), new Object[]{stringSlotName});
+              String msg = MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{new Integer(orgTrack.getLine()), "%op "+type.image, new Integer(orgTrack.getLine()), currentFile, detailedMsg});
               throw new TomException(msg);
             }
           }
@@ -1702,9 +1702,9 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
                      currentFile,
                      "%op "+type.image,
                      orgTrack.getLine(),
-                     TomCheckerMessage.WarningTwoSameSlotDecl, 
+                     TomMessage.getString("WarningTwoSameSlotDecl"), 
                      new Object[]{sName.getString()},
-                     TomCheckerMessage.TOM_WARNING
+                     TomMessage.TOM_WARNING
                      );
         }
       }
@@ -1727,9 +1727,9 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
                          currentFile,
                          "%op "+type.image, 
                          orgTrack.getLine(), 
-                         TomCheckerMessage.WarningMissingSlotDecl,
+                         TomMessage.getString("WarningMissingSlotDecl"),
                          new Object[]{name1.getString()},
-                         TomCheckerMessage.TOM_WARNING
+                         TomMessage.TOM_WARNING
                          );
             decl = emptyDeclaration;
           }
@@ -1749,8 +1749,8 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
                      currentFile,
                      "%op "+type.image,
                      orgTrack.getLine(),
-                     TomCheckerMessage.WarningIncompatibleSlotDecl, new Object[]{remainingSlot.getString()},
-                     TomCheckerMessage.TOM_WARNING);
+                     TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()},
+                     TomMessage.TOM_WARNING);
         }
       }
       

@@ -29,7 +29,7 @@ package jtom.verifier;
 import jtom.tools.*;
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
-import jtom.checker.TomCheckerMessage;
+import jtom.TomMessage;
 
 public class TomVerifierExtract extends TomTask {
 
@@ -64,7 +64,7 @@ public class TomVerifierExtract extends TomTask {
         extractTerm);
     } catch (Exception e) {
       addError("Exception occured in TomVerifierExtract: "+ e.getMessage(), 
-               getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+               getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }

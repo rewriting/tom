@@ -27,6 +27,7 @@
 package jtom.checker;
 
 import jtom.TomEnvironment;
+import jtom.TomMessage;
 import jtom.tools.TomTaskInput;
 
 public class TomSyntaxChecker extends TomChecker {
@@ -50,7 +51,7 @@ public class TomSyntaxChecker extends TomChecker {
 		  	System.out.println("TOM syntax Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  	}
     } catch (Exception e) {
-			addError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+			addError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
 			e.printStackTrace();
 			return;
     }

@@ -29,7 +29,7 @@ import java.text.MessageFormat;
 
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.checker.TomCheckerMessage;;
+import jtom.TomMessage;
 
 public abstract class TomTask extends TomBase {
 	
@@ -94,10 +94,10 @@ public abstract class TomTask extends TomBase {
   public void messageError(int errorLine, String fileName,String structInfo, int structInfoLine, String msg, Object[] msgArg, int level) {
     String s;
     msg = MessageFormat.format(msg, msgArg);
-    if (level == TomCheckerMessage.TOM_ERROR) {
-      s = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+    if (level == TomMessage.TOM_ERROR) {
+      s = MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
     } else {
-      s = MessageFormat.format(TomCheckerMessage.MainWarningMessage, new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+      s = MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
     }
 		
     if (getInput().isEclipseMode()) {
