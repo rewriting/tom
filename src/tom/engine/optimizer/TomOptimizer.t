@@ -56,7 +56,7 @@ public class TomOptimizer extends TomTask {
       boolean verbose = getInput().isVerbose();
       if(verbose) { startChrono = System.currentTimeMillis();}
       
-      TomTerm renamedTerm = getInput().getTerm();
+      TomTerm renamedTerm = renameVariable(getInput().getTerm(),new HashSet());
       TomTerm optimizedTerm = optimize(renamedTerm);
       
       if(verbose) {
@@ -97,7 +97,12 @@ public class TomOptimizer extends TomTask {
             }
           }
         } else if(subject instanceof Instruction) {
+          boolean verbose = getInput().isVerbose();
           %match(Instruction subject) {
+              /*
+               * TODO
+               * LetRef x where x is used 0 or 1 ==> eliminate
+               */
             
             Let(var@(Variable|VariableStar)[astName=name],exp,body) -> {
               List list  = computeOccurences(name,body);
@@ -112,18 +117,26 @@ public class TomOptimizer extends TomTask {
                              "Variable `{0}` is never used",
                              new Object[]{name},
                              TomCheckerMessage.TOM_WARNING);
-                System.out.println(mult + " -> remove:     " + name);
+                if(verbose) {
+                  System.out.println(mult + " -> remove:     " + name);
+                }
                 return optimizeInstruction(body); 
               } else if(mult == 1) {
                 if(expConstantInBody(exp,body)) {
-                  System.out.println(mult + " -> inline:     " + name);
+                  if(verbose) {
+                    System.out.println(mult + " -> inline:     " + name);
+                  }
                   return optimizeInstruction(inlineInstruction(var,exp,body));
                 } else {
-                  System.out.println(mult + " -> no inline:  " + name);
+                  if(verbose) {
+                    System.out.println(mult + " -> no inline:  " + name);
+                  }
                 }
               } else {
                   /* do nothing: traversal */
-                System.out.println(mult + " -> do nothing: " + name);
+                if(verbose) {
+                  System.out.println(mult + " -> do nothing: " + name);
+                }
               }
             }
 
@@ -244,5 +257,49 @@ public class TomOptimizer extends TomTask {
     
     traversal().genericCollect(subject, collect);
   }
-  
+
+    Replace2 replace_renameVariable = new Replace2() {
+      public ATerm apply(ATerm subject, Object arg1) {
+        Set context = (Set) arg1;
+        if(subject instanceof TomTerm) {
+          %match(TomTerm subject) {
+            var@(Variable|VariableStar)[option=option, astName=astName@Name(name)] |
+            var@BuildVariable[astName=astName@Name(name)]-> {
+              if(context.contains(astName)) {
+                return var.setAstName(`Name(ast().makeTomVariableName(name)));
+              }
+            }
+          }
+        } else if(subject instanceof Expression) {
+        } else if(subject instanceof Instruction) {
+          %match(Instruction subject) {
+            CompiledPattern(patternList,instruction) -> {
+              Map map = collectMultiplicity(patternList);
+              Set newContext = new HashSet(map.keySet());
+              newContext.addAll(context);
+                //Set newContext = map.keySet();
+                //for(Iterator it=context.iterator() ; it.hasNext() ;) {
+                //newContext.add(it.next());
+                //}
+              return renameVariableInstruction(instruction,newContext);
+            }
+          }
+          
+        } // end instanceof Instruction
+
+          /*
+           * Defaul case: traversal
+           */
+        return traversal().genericTraversal(subject,this,context);
+      } // end apply
+    };
+
+
+  public TomTerm renameVariable(TomTerm subject, Set context) {
+    return (TomTerm) replace_renameVariable.apply(subject,context); 
+  }
+
+  public Instruction renameVariableInstruction(Instruction subject, Set context) {
+    return (Instruction) replace_renameVariable.apply(subject,context); 
+  }
 }  //Class TomOptimizer

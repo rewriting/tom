@@ -338,5 +338,8 @@ public class ASTFactory {
     return term;
   }
 
+  public String makeTomVariableName(String name) {
+    return "tom_" + name;
+  }
   
 }

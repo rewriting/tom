@@ -349,7 +349,7 @@ public class TomKernelExpander extends TomBase {
     }
     return null;
   }
-  
+
     /*
      * Replace pattern with only variables or underscore (UnamedVariables)
      * By DefaultPattern

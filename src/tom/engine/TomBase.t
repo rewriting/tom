@@ -414,7 +414,6 @@ public class TomBase {
   protected void collectVariable(final Collection collection, ATerm subject) {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
-            //%variable
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;
             %match(TomTerm t) { 

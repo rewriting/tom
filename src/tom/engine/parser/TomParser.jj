@@ -636,11 +636,20 @@ void MatchArguments(LinkedList list) throws TomException: /* in TOM mode */
 void MatchArgument(LinkedList list) throws TomException: /* in TOM mode */
 {
   Token type,name;
+  Token backquote = null;
+  String variableName;
 }
 {
-  type=<TOM_IDENTIFIER> name=<TOM_IDENTIFIER>
-  {  	list.add(tsf().makeTomTerm_TLVar(
-                   name.image,
+  type=<TOM_IDENTIFIER> [backquote=<TOM_BACKQUOTE>] name=<TOM_IDENTIFIER>
+  {
+    if(backquote!=null) {
+        //variableName = ast().makeTomVariableName(name.image);
+      variableName = name.image;
+    } else {
+      variableName = name.image;
+    }
+    list.add(tsf().makeTomTerm_TLVar(
+                   variableName,
                    tsf().makeTomType_TomTypeAlone(type.image)));
   }
 }
@@ -1044,7 +1053,8 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
     
   // #TEXT(...)
 //  | <XML_TEXT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
-       | <XML_TEXT> <TOM_LPAREN> arg1 = PlainTerm(null) <TOM_RPAREN>
+//       | <XML_TEXT> <TOM_LPAREN> arg1 = PlainTerm(null) <TOM_RPAREN>
+              | <XML_TEXT> <TOM_LPAREN> arg1 = AnnotedTerm() <TOM_RPAREN>
     {
       keyword = Constants.TEXT_NODE;
       list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));

@@ -121,7 +121,7 @@ public class TomKernelCompiler extends TomBase {
                   automataOptionList = `manyOptionList(DefaultCase(),automataOptionList);
                 }
                 TomNumberList numberList = (TomNumberList) rootpath.append(`PatternNumber(makeNumber(actionNumber)));
-                TomTerm automata = `Automata(automataOptionList,numberList,matchingAutomata);
+                TomTerm automata = `Automata(automataOptionList,patternList,numberList,matchingAutomata);
                   //System.out.println("automata = " + automata);
                   
                 automataList = append(automata,automataList);
@@ -187,7 +187,7 @@ public class TomKernelCompiler extends TomBase {
   private InstructionList automataListCompileMatchingList(TomList automataList, boolean generatedMatch) {
     %match(TomList automataList) {
       emptyTomList() -> { return `emptyInstructionList(); }
-      manyTomList(Automata(optionList,numberList,instruction),l)  -> {
+      manyTomList(Automata(optionList,patternList,numberList,instruction),l)  -> {
         InstructionList newList = automataListCompileMatchingList(l, generatedMatch);
 
         if(!generatedMatch && debugMode) {
@@ -210,7 +210,7 @@ public class TomKernelCompiler extends TomBase {
                            concInstruction(instruction));
           					 
         }
-        return `concInstruction(CompiledPattern(instruction), newList*);
+        return `concInstruction(CompiledPattern(patternList,instruction), newList*);
       }
     }
     return null;

@@ -388,7 +388,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      CompiledPattern(instruction) -> {
+      CompiledPattern(_,instruction) -> {
         `buildInstructionSequence(deep,instruction);
         return;
       }
