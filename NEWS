@@ -1,5 +1,21 @@
 This document should be read in reverse order (from bottom to top).
 
+version 2.0:
+  - support for Caml
+	- introduced several predefined mappings
+	- added an optimizer which performs inlining and improves the
+	  efficiency of the generated code
+	- support for builtin char and builtin string (seen as list of
+	  char)  
+  - a better XML support (backquote notation, anonymous nodes)
+	- re-designed kernel compiler (with better algorithms)
+	- re-designed list-matching
+	- annoted variables and non-linear variable are compiled into constraints
+  - syntactic patterns are no longer abstracted, but compiled in list-matching
+	- several bugs fixed (improved the sortAttributeList method, major
+	  bug in the Type Expander)  
+  - removed %typeint, %typedouble and %typestring (use predefined mapping instead)
+
 version 1.5:
 	- ported jtom to new version of apigen
 	- new TomChecker and simpler regression test infrastructure
