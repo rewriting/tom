@@ -1,6 +1,0 @@
-
-Multiple definition of type: Type 'type1' is already defined
--- Error occured at line: 9 in file: JTypeTerm9.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

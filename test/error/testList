@@ -16,21 +16,13 @@ Test {
      JTypeTermRef.t
      JTypeTerm1.t
 	Missing functions : [get_fun_sym]
-     JTypeTerm2.t
 	Missing functions : [cmp_fun_sym]
-     JTypeTerm3.t
 	Missing functions : [get_subterm]
-     JTypeTerm4.t
 	Missing functions : [get_fun_sym, cmp_fun_sym, get_subterm]
-     JTypeTerm5.t
 	missing optional `equals` function : No message
-     JTypeTerm6.t
 	 Repeated macro-functions 'get_fun_sym'
-     JTypeTerm7.t
 	Arguments must be linear in declaration 'cmp_fun_sym'
-     JTypeTerm8.t
 	Arguments must be linear in declaration 'equals'
-     JTypeTerm9.t
 	Multiple definition of type
 }
 
@@ -51,19 +43,12 @@ Test {
      JTypeArrayRef.t
      JTypeArray1.t
 	Missing functions : [get_fun_sym]
-     JTypeArray2.t
 	Missing functions : [cmp_fun_sym]
-     JTypeArray3.t
 	Missing functions : [get_element]
-     JTypeArray4.t
 	Missing functions : [get_size]
-     JTypeArray5.t
 	missing optional `equals` function : No message
-     JTypeArray6.t
 	Arguments must be linear in declaration 'cmp_fun_sym'
-     JTypeArray7.t
 	Arguments must be linear in declaration 'equals
-     JTypeArray8.t
 	Repeated macro-functions 'get_element'
 }
 
@@ -84,21 +69,13 @@ Test {
      JTypeListRef.t
      JTypeList1.t
 	Missing functions : [get_fun_sym]
-     JTypeList2.t
 	Missing functions : [cmp_fun_sym]
-     JTypeList3.t
 	Missing functions : [get_head]
-     JTypeList4.t
-	 Missing functions : [get_tail]
-     JTypeList5.t
+	Missing functions : [get_tail]
 	Missing functions : [is_empty]
-     JTypeList6.t
 	OK: Missing equals
-     JTypeList7.t
 	Arguments must be linear in declaration 'cmp_fun_sym'
-     JTypeList8.t
 	Arguments must be linear in declaration 'equals'
-     JTypeList9.t
 	Repeated macro-functions 'get_head'
 }
 
@@ -118,24 +95,22 @@ Test {
      JOperatorRef.t
      JOperator1.t
 	Operator 'op' has an unknown return type
-     JOperator2.t
 	Slot position 1 of operator 'op' has an unknown type
-     JOperator3.t
 	Repeated macro-functions 'make'
-     JOperator4.t
 	Arguments must be linear in declaration 'make'
-     JOperator5.t
-	Multiple definition of operator
-     JOperator6.t
 	OK: Operator defined before type declaration
-     JOperator7.t
-	Bad number of arguments in method 'make'
-     JOperator8.t
+
+     JOperator2.t
 	GetSlot declaration 'type' is repeated in operator declaration
-     JOperator9.t
 	Some GetSlot declaration are incompatible with operator signature
-     JOperator10.t
 	Repeated slot  's1' in operator declaration
+
+     JOperator3.t
+	Bad number of arguments in method 'make'
+
+     JOperator4.t
+	Multiple definition of operator
+
 }
 
 ////////////////////
@@ -153,15 +128,10 @@ Test {
      JOpArrayRef.t
      JOpArray1.t
 	Operator 'concArray' has an unknown return type
-     JOpArray2.t
 	Slot position 1 of operator 'concArray' has an unknown type
-     JOpArray3.t
 	Missing functions : [make_empty]
-     JOpArray4.t
 	Missing functions : [make_append]
-     JOpArray5.t
 	Arguments must be linear in declaration 'make_append'
-     JOpArray6.t
 	Repeated macro-functions 'make_append'
 }
 
@@ -180,15 +150,10 @@ Test {
      JOpListRef.t
      JOpList1.t
 	Operator 'concList' has an unknown return type
-     JOpList2.t
 	Slot position 1 of operator 'concList' has an unknown type
-     JOpList3.t
 	Missing functions : [make_empty]
-     JOpList4.t
 	Missing functions : [make_insert]
-     JOpList5.t
 	Arguments must be linear in declaration 'make_insert'
-     JOpList6.t
 	Repeated macro-functions 'make_empty'
 }
 

@@ -1,6 +1,0 @@
-
-Repeated macro-function 'get_fun_sym' in '%typeterm type1' declared line 1
--- Error occured at line: 6 in file: JTypeTerm6.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

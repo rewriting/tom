@@ -1,6 +1,0 @@
-
-Missing macro-function(s) [get_head] in '%typelist type1'
--- Error occured at line: 1 in file: JTypeList3.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

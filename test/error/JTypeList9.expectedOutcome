@@ -1,6 +1,0 @@
-
-Repeated macro-function 'get_head' in '%typelist type1' declared line 1
--- Error occured at line: 7 in file: JTypeList9.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

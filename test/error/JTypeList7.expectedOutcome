@@ -1,6 +1,0 @@
-
-Arguments must be linear in method 'cmp_fun_sym' of '%typelist type1' declared at line 1 :Variable 't1' is repeated
--- Error occured at line: 4 in file: JTypeList7.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

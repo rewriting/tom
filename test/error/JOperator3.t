@@ -6,9 +6,9 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op type1 op(type1, type1) {
+%op type1 op(type:type1, type1) {
   fsym { fzero }
-  make(t1, t2) { factory.makeAppl(fzero) }
-  make(t1, t2) { factory.makeAppl(fzero) }
+  make(t1, t2, t3) { factory.makeAppl(fzero) }// Bad number of arguments in make(...) macro-function: 3 arguments found but 2 expected in symbol definition (line11)
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
+  get_slot(type,t) { t.getType() }
 }
