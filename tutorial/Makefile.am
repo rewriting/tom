@@ -2,7 +2,7 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS = integer peano poly list apigen
+SUBDIRS = integer peano poly list apigen xml
 
 EXTRA_DIST = README
 
