@@ -100,20 +100,26 @@ public class LsystemsDraw  extends JComponent {
 
 
   public Polygon paint(NodeList root, Polygon poly) {
-    %match(NodeList root) {
-      concNode() -> { return poly; }
-      concNode(SubList(sublist),tail*) -> {
-        Point3D old_point = new Point3D(point);
-        Polygon new_poly = new Polygon();
-        addPoint(point,new_poly);
-        liste.add(paint(sublist,new_poly));
-        point = old_point;
-        return paint(tail,poly);
+    while(!root.isEmpty()) {
+      Node node = root.getHead();
+      matchBlock: {
+        %match(Node node) {
+          SubList(sublist) -> {
+            Point3D old_point = new Point3D(point);
+            Polygon new_poly = new Polygon();
+            addPoint(point,new_poly);
+            liste.add(paint(sublist,new_poly));
+            point = old_point;
+            break matchBlock;
+          }
+          
+          _ -> {
+            paint(node,poly);
+            break matchBlock;
+          }
+        }
       }
-      concNode(node,tail*) -> {
-        paint(node,poly);
-        return paint(tail,poly);
-      }
+      root = root.getTail();
     }
     return poly;
   }
