@@ -3,33 +3,39 @@ TOM Instructions
 
 The simplest way to install TOM is:
 -----------------------------------
+
+  - browse the Tom web page tom.loria.fr 
+  -  install the eclipse plugin
+  or 
+  - get the last jtom-bundle-version.jar distribution
+  - get the associated scripts
+  - customize your CLASSPATH and PATH
+
+The complex way to install TOM is:
+----------------------------------
+
   1. Get and install the shared-objects package
 	 a. Type `./configure --prefix=<INSTALLDIR>'
 	 b. Type `make'
 	 c. Type `make install'
  
-  2. Get and install the JJTraveler package
-	 a. Type `./configure --prefix=<INSTALLDIR>'
-	 b. Type `make'
-	 c. Type `make install'
-  3. Get and install the aterm-java package
-	 a. Type `./configure --prefix=<INSTALLDIR>\
-                              --with-shared-objects=<SHARED-OBJECT-INSTALLDIR>'
-	 b. Type `make'
-	 c. Type `make install'
+  2. Get and install 
+      - JJTraveler
+      - aterm
+      - shared-objects
+      - aterm-java
+      - apigen
 
-  4. Configure the current package:
-	 `./configure --prefix=<INSTALLDIR>\
-                      --with-shared-objects=<SHARED-OBJECT-INSTALLDIR>\
-                      --with-aterm-java=<ATERM-JAVA-INSTALLDIR>'
+  3. Configure the current package:
+	 `./configure --prefix=<INSTALLDIR'
 
-  5. Type `make' to compile the package.
+  4. Type `make' to compile the package.
 
-  6. Type `make install' to install the package.
+  5. Type `make install' to install the package.
 
 Packages are available at:
 --------------------------
-     http://www.loria.fr/ELAN/tom
+     http://tom.loria.fr
   or http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase
   or http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/DailyDistributions
 
@@ -45,7 +51,6 @@ In order to modify the tool:
      If something goes wrong, re-install the stable version:
           `cd ..', `make install'
      Then, correct the `src' directory
-
 
   5. Type `make bootinstall' to make the current version become the
      stable one.
