@@ -866,8 +866,8 @@
       </target>
 
       <target name="junit" description="Runs junit acceptance tests" depends="examples, initjunit">
-        <tomjunit printsummary="on"
-                  fork="false"
+        <tomjunit printsummary="yes"
+                  fork="true"
                   haltonfailure="false"
                   failureproperty="tests.failed"
                   showoutput="true">
@@ -884,6 +884,7 @@
               <exclude name="gen/**/*"/>
             </fileset>
           </batchtest>
+					<formatter type="plain"/>
         </tomjunit>
 
         <fail if="tests.failed">
