@@ -3,9 +3,9 @@ import aterm.pure.*;
 import expression.*;
 import java.util.*;
 
-public class Poly2 {
+public class PolyApigen2 {
   private ExpressionFactory factory;
-  public Poly2(ExpressionFactory factory) {
+  public PolyApigen2(ExpressionFactory factory) {
     this.factory = factory;
   }
   public ExpressionFactory getExpressionFactory() {
@@ -77,7 +77,7 @@ public class Poly2 {
   }
     
   public final static void main(String[] args) {
-    Poly2 test = new  Poly2(new  ExpressionFactory());
+    PolyApigen2 test = new  PolyApigen2(new  ExpressionFactory());
     test.run(2);
   }
 }

@@ -1,55 +1,59 @@
 import aterm.*;
 import aterm.pure.*;
+import jtom.runtime.*;
 
 import java.util.*;
 
-public class Poly1 {
+public class PolyAdvanced3 {
     
   private ATermFactory factory;
-  public Poly1(ATermFactory factory) {
+  private GenericTraversal traversal;
+
+  public PolyAdvanced3(ATermFactory factory) {
     this.factory = factory;
+    this.traversal = new GenericTraversal();
   }
 
   %include { Poly.signature }
   
-    // Everything is now AtermAppl to avoid casting:
+    // Simplified version of differentiate
   public ATermAppl differentiate(ATermAppl poly, ATermAppl variable) {
     %match(term poly, term variable) {
-      X(), X() | Y(), Y() -> { return `one(); }
-      plus(a1,a2), var  -> { return `plus(differentiate(a1, var),differentiate(a2, var)); }
+      X(), X() |
+      Y(), Y()          -> { return `one(); }
+      plus(a1,a2), var  -> { return `plus(differentiate(a1, var),
+                                          differentiate(a2, var)); }
       mult(a1,a2), var  -> { 
+
         ATermAppl res1, res2;
         res1 =`mult(a1, differentiate(a2, var));
         res2 =`mult(a2, differentiate(a1, var));
         return `plus(res1,res2);
       }
-      X(), var | Y(), var | a(), var | b(), var | c(), var
-            -> { return `zero(); }
-
-      _ , _ -> { System.out.println("No match for: " + poly +" , "+variable); }
-	    
     }
-    return null;
+    return `zero();
   }
-    
-    // Improved simplification
+
+    // Simplification using a traversal function
   public ATermAppl simplify(ATermAppl t) {
-    ATermAppl res = t;
-    block:{
-      %match(term t) {
-        plus(zero, x) | plus(x, zero) |
-        mult(one, x)  | mult(x, one)  -> { res = simplify(x);   break block; }
-        mult(zero, x) | mult(x, zero) -> { res = `zero();       break block; }
-        plus(x,y) -> { res = `plus( simplify(x), simplify(y) ); break block; }
-        mult(x,y) -> { res = `mult( simplify(x), simplify(y) ); break block; }
-      }
-    }
-    if(t != res) {
+    Replace1 replace = new Replace1() {
+        public ATerm apply(ATerm t) {
+          %match(term t) {
+            plus(zero,x) | plus(x,zero) |
+            mult(one,x)  | mult(x,one)  -> { return x; }
+            mult(zero,x) | mult(x,zero) -> { return `zero(); }
+            _ -> { return traversal.genericTraversal(t,this); }
+          }
+        }
+      };
+
+    ATermAppl res = (ATermAppl)replace.apply(t);
+    if(res != t) {
       res = simplify(res);
     }
     return res;
   }
-
+  
   public void run() {
     ATermAppl t    = `mult(X(),plus(X(),a()));
     ATermAppl var1 = `X();
@@ -67,7 +71,7 @@ public class Poly1 {
   }
   
   public final static void main(String[] args) {
-    Poly1 test = new  Poly1(new PureFactory());
+    PolyAdvanced3 test = new  PolyAdvanced3(new PureFactory());
     test.run();
   }
 }

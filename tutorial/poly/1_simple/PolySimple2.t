@@ -3,12 +3,12 @@ import aterm.pure.*;
 
 import java.util.*;
 
-public class Poly2 {
+public class PolySimple2 {
     
   private ATermFactory factory;
   private AFun fplus, fmult;
 
-  public Poly2(ATermFactory factory) {
+  public PolySimple2(ATermFactory factory) {
     this.factory = factory;
     fmult = factory.makeAFun("mult", 2, false);
     fplus = factory.makeAFun("plus", 2, false);	   
@@ -117,7 +117,7 @@ public class Poly2 {
   }
     
   public final static void main(String[] args) {
-    Poly2 test = new  Poly2(new PureFactory());
+    PolySimple2 test = new  PolySimple2(new PureFactory());
     test.run();
   }
 }

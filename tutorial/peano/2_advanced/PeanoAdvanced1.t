@@ -2,9 +2,9 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 
-public class Peano2 {
+public class PeanoAdvanced1 {
   ATermFactory factory;
-  public Peano2(ATermFactory factory) {
+  public PeanoAdvanced1(ATermFactory factory) {
     this.factory = factory;
   }
 
@@ -30,32 +30,23 @@ public class Peano2 {
 
   public ATermAppl plus(ATermAppl t1, ATermAppl t2) {
     %match(term t1, term t2) {
-      x,zero        -> { return x; }
-      x,suc[pred=y] -> { return `suc(plus(x,y)); }
+      x,zero   -> { return x; }
+      x,suc(y) -> { return `suc(plus(x,y)); }
     }
     return null;
   }
 
-  public ATermAppl fib(ATermAppl t) {
-    %match(term t) {
-      y@zero             -> { return `suc(y); }
-      y@suc(zero)        -> { return y; }
-      suc[pred=y@suc(x)] -> { return `plus(fib(x),fib(y)); }
-    }
-    return null;
-  }
-  
   public void run(int n) {
     ATermAppl N = `zero();
     for(int i=0 ; i<n ; i++) {
       N = `suc(N);
     }
-    ATermAppl res = fib(N);
-    System.out.println("fib(" + n + ") = " + res);
+    ATermAppl res = plus(N,N);
+    System.out.println("plus(" + n + "," + n + ") = " + res);
   }
 
   public final static void main(String[] args) {
-    Peano2 test = new Peano2(new PureFactory());
+    PeanoAdvanced1 test = new PeanoAdvanced1(new PureFactory());
     test.run(10);
   }
  

@@ -4,12 +4,12 @@ import jtom.runtime.*;
 
 import java.util.*;
 
-public class Poly2 {
+public class PolyAdvanced2 {
     
   private ATermFactory factory;
   private GenericTraversal traversal;
   
-  public Poly2(ATermFactory factory) {
+  public PolyAdvanced2(ATermFactory factory) {
     this.factory = factory;
     this.traversal = new GenericTraversal();
   }
@@ -72,7 +72,7 @@ public class Poly2 {
   }
   
   public final static void main(String[] args) {
-    Poly2 test = new  Poly2(new PureFactory());
+    PolyAdvanced2 test = new  PolyAdvanced2(new PureFactory());
     test.run();
   }
 }

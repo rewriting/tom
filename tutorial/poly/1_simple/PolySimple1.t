@@ -1,13 +1,13 @@
 import aterm.*;
 import aterm.pure.*;
 
-public class Poly1 {
+public class PolySimple1 {
     
   private ATermFactory factory;
   private AFun fzero, fone, fa, fX, fplus, fmult;
   public ATermAppl tzero;
     
-  public Poly1(ATermFactory factory) {
+  public PolySimple1(ATermFactory factory) {
     this.factory = factory;
 	
     fzero = factory.makeAFun("zero", 0, false);
@@ -99,7 +99,7 @@ public class Poly1 {
   }
     
   public final static void main(String[] args) {
-    Poly1 test = new  Poly1(new PureFactory(16));
+    PolySimple1 test = new  PolySimple1(new PureFactory(16));
     test.run();
   }
 }

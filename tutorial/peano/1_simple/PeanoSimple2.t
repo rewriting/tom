@@ -2,25 +2,24 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 
-public class Peano1 {
+public class PeanoSimple2 {
 
   ATermFactory factory;
   AFun fzero, fsuc;
-  ATerm tzero;
+  ATermAppl tzero;
 
-  public Peano1(ATermFactory factory) {
+  public PeanoSimple2(ATermFactory factory) {
     this.factory = factory;
     fzero = factory.makeAFun("zero", 0, false);
     fsuc  = factory.makeAFun("suc" , 1, false);
     tzero = factory.makeAppl(fzero);
   }
 
-
   %typeterm term {
-    implement           { ATerm }
-    get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
+    implement           { ATermAppl }
+    get_fun_sym(t)      { t.getAFun() }
     cmp_fun_sym(t1,t2)  { t1 == t2 }
-    get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
+    get_subterm(t, n)   { t.getArgument(n) }
   }
 
   %op term zero {
@@ -31,11 +30,11 @@ public class Peano1 {
     fsym { fsuc }
   }
 
-  public ATerm suc(ATerm t) {
+  public ATermAppl suc(ATermAppl t) {
     return factory.makeAppl(fsuc,t);
   }
   
-  public ATerm plus(ATerm t1, ATerm t2) {
+  public ATermAppl plus(ATermAppl t1, ATermAppl t2) {
     %match(term t1, term t2) {
       x,zero   -> { return x; }
       x,suc(y) -> { return suc(plus(x,y)); }
@@ -44,16 +43,16 @@ public class Peano1 {
   }
 
   public void run(int n) {
-    ATerm N = tzero;
+    ATermAppl N = tzero;
     for(int i=0 ; i<n ; i++) {
       N = suc(N);
     }
-    ATerm res = plus(N,N);
+    ATermAppl res = plus(N,N);
     System.out.println("plus(" + n + "," + n + ") = " + res);
   }
 
   public final static void main(String[] args) {
-    Peano1 test = new Peano1(new PureFactory());
+    PeanoSimple2 test = new PeanoSimple2(new PureFactory());
     test.run(10);
   }
  

@@ -2,9 +2,9 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 
-public class Peano3 {
+public class PeanoSimple3 {
   ATermFactory factory;
-  public Peano3(ATermFactory factory) {
+  public PeanoSimple3(ATermFactory factory) {
     this.factory = factory;
   }
 
@@ -43,7 +43,7 @@ public class Peano3 {
   }
 
   public final static void main(String[] args) {
-    Peano3 test = new Peano3(new PureFactory());
+    PeanoSimple3 test = new PeanoSimple3(new PureFactory());
     test.run(10);
   }
  
