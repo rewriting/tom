@@ -5,6 +5,7 @@
   [
   constructor(TomTerm,Appl,Appl(<option(OptionList)>,<nameList(NameList)>,<args(TomList)>,<constraints(ConstraintList)>)),
   constructor(TomTerm,XMLAppl,XMLAppl(<option(OptionList)>,<nameList(NameList)>,<attrList(TomList)>,<childList(TomList)>,<constraints(ConstraintList)>)),
+  constructor(TomTerm,Variable,Variable(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>,<constraints(ConstraintList)>)),
   constructor(TomTerm,VariableStar,VariableStar(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>,<constraints(ConstraintList)>)),
   constructor(TomTerm,Placeholder,Placeholder(<option(OptionList)>,<constraints(ConstraintList)>)),
   constructor(TomTerm,UnamedVariable,UnamedVariable(<option(OptionList)>,<astType(TomType)>,<constraints(ConstraintList)>)),
@@ -31,7 +32,6 @@
   constructor(TomTerm,Term,Term(<tomTerm(TomTerm)>)),
   constructor(TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<action(Instruction)>,<option(OptionList)>)),
   constructor(TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>)),
-  constructor(TomTerm,Variable,Variable(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>,<constraints(ConstraintList)>)),
   constructor(TomTerm,Ref,Ref(<tomTerm(TomTerm)>)),
   
   constructor(TomTerm,BuildReducedTerm,BuildReducedTerm(<kid1(TomTerm)>)),

@@ -2,7 +2,6 @@
   modulentry(
 	Name("TomSignature"),
   [
-	 Name("TomAlert"), 
 	 Name("TomName"),
 	 Name("TomConstraint"),
 	 Name("TomInstruction"),
