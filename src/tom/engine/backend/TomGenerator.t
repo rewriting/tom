@@ -90,6 +90,11 @@ public class TomGenerator extends TomBase {
         return;
       }
 
+      BuildBuiltin(Name(name)) -> {
+        out.write(name);
+        return;
+      }
+
       BuildTerm(Name(name), argList) -> {
         out.write("tom_make_");
         out.write(name);

@@ -479,13 +479,12 @@ public class TomParser implements TomParserConstants {
       if(annotedName!=null) { optionList.add(annotedName); }
       optionList.add(ast().makeOriginTracking(name.image,getLine()));
       option = ast().makeOption(ast().makeOptionList(optionList));
-
       ast().makeIntegerSymbol(symbolTable,name.image,optionList);
 
       {if (true) return tsf().makeTomTerm_Appl(
         option,
         tsf().makeTomName_Name(name.image),
-        ast().makeList(list));}
+        tsf().makeTomList_Empty());}
         break;
       default:
         jj_la1[12] = jj_gen;

@@ -119,6 +119,7 @@ TomTerm_BuildVariableStarImpl.java TomTerm_BuildVariableStar.java\
 TomTerm_BuildTermImpl.java TomTerm_BuildTerm.java\
 TomTerm_BuildListImpl.java TomTerm_BuildList.java\
 TomTerm_BuildArrayImpl.java TomTerm_BuildArray.java\
+TomTerm_BuildBuiltinImpl.java TomTerm_BuildBuiltin.java\
 TomTerm_CompiledMatchImpl.java TomTerm_CompiledMatch.java\
 TomTerm_AutomataImpl.java TomTerm_Automata.java\
 TomTerm_MatchNumberImpl.java TomTerm_MatchNumber.java\
@@ -153,10 +154,10 @@ TomSymbolTable.java TomSymbolTableImpl.java\
 TomSymbolTable_TableImpl.java TomSymbolTable_Table.java\
 TomEntryList.java TomEntryListImpl.java\
 TomEntryList_EmptyEntryListImpl.java TomEntryList_EmptyEntryList.java\
-TomEntryList_ConsEntryListImpl.java TomEntryList_ConsEntryList.java\
-TomEntry.java TomEntryImpl.java
+TomEntryList_ConsEntryListImpl.java TomEntryList_ConsEntryList.java
 
 TomSignatureAPI3=\
+TomEntry.java TomEntryImpl.java\
 TomEntry_EntryImpl.java TomEntry_Entry.java
 
 TomSignatureAPI=\

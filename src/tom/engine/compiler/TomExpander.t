@@ -133,6 +133,8 @@ public class TomExpander extends TomBase {
                     return `BuildList(name,args);
                   } else if(isArrayOperator(tomSymbol)) {
                     return `BuildArray(name,args);
+                  } else if(isIntegerOperator(tomSymbol)) {
+                    return `BuildBuiltin(name);
                   } else {
                     return `BuildTerm(name,args);
                   }

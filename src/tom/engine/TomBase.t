@@ -320,6 +320,13 @@ public class TomBase extends GenericTraversal {
     return false;
   }
 
+  protected boolean isIntegerOperator(TomSymbol subject) {
+    if(subject==null) {
+      return false;
+    }
+    return isIntType(getTomType(getSymbolCodomain(subject)));
+  }
+
   protected TomList tomListMap(TomList subject, Replace1 replace) {
     TomList res = subject;
     try {

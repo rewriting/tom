@@ -585,13 +585,12 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       if(annotedName!=null) { optionList.add(annotedName); }
       optionList.add(ast().makeOriginTracking(name.image,getLine()));
       option = ast().makeOption(ast().makeOptionList(optionList));
-
       ast().makeIntegerSymbol(symbolTable,name.image,optionList);
       
       return tsf().makeTomTerm_Appl(
         option,
         tsf().makeTomName_Name(name.image),
-        ast().makeList(list));
+        tsf().makeTomList_Empty());
     }
 }
 
