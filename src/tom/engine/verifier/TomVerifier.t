@@ -4,7 +4,6 @@ import jtom.*;
 
 import aterm.*;
 import java.util.*;
-import jtom.tools.*;
 import jtom.runtime.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
