@@ -89,36 +89,31 @@ public class TomKernelExpander extends TomBase {
             }
           }
         } else if(subject instanceof TomRule) {
-          %match(TomTerm contextSubject, TomRule subject) {
-            context, RewriteRule(Term(lhs@Appl[option=optionList,nameList=(Name(tomName))]),
-                                 Term(rhs),
-                                 condList,
-                                 option)  -> { 
-               // System.out.println("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
-               TomSymbol tomSymbol = getSymbol(`tomName);
-               TomType symbolType = getSymbolCodomain(tomSymbol);
-               TomTerm newLhs = `Term(expandVariable(context,lhs));
-               TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
-
-               //System.out.println("newLhs = \n" + newLhs);
-               //System.out.println("newRhs = \n" + newRhs);
-
-               // build the list of variables that occur in the lhs
-               HashSet set = new HashSet();
-               collectVariable(set,newLhs);
-               TomList varList = ast().makeList(set);
-               InstructionList newCondList = `emptyInstructionList();
-               while(!`condList.isEmpty()) {
-                 Instruction cond = `condList.getHead();
-                 Instruction newCond = expandVariableInstruction(`Tom(varList),cond);
-                 newCondList = `manyInstructionList(newCond,newCondList);
-                 collectVariable(set,newCond); 
-                 varList = ast().makeList(set);
-                 `condList = `condList.getTail();
-               }
+          %match(TomRule subject) {
+            RewriteRule(Term(lhs@Appl[option=optionList,nameList=(Name(tomName))]),
+                        Term(rhs),
+                        condList,
+                        option)  -> { 
+              TomSymbol tomSymbol = getSymbol(`tomName);
+              TomType symbolType = getSymbolCodomain(tomSymbol);
+              TomTerm newLhs = `Term(expandVariable(contextSubject,lhs));
+              TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
+              // build the list of variables that occur in the lhs
+              HashSet set = new HashSet();
+              collectVariable(set,newLhs);
+              TomList varList = ast().makeList(set);
+              InstructionList newCondList = `emptyInstructionList();
+              while(!`condList.isEmpty()) {
+                Instruction cond = `condList.getHead();
+                Instruction newCond = expandVariableInstruction(`Tom(varList),cond);
+                newCondList = `manyInstructionList(newCond,newCondList);
+                collectVariable(set,newCond); 
+                varList = ast().makeList(set);
+                `condList = `condList.getTail();
+              }
               
-               return `RewriteRule(newLhs,newRhs,newCondList,option);
-             }
+              return `RewriteRule(newLhs,newRhs,newCondList,option);
+            }
           } // end match
         } else if(subject instanceof Instruction) {
           %match(TomTerm contextSubject, Instruction subject) {
@@ -179,22 +174,18 @@ public class TomKernelExpander extends TomBase {
           } // end match
         } else if(subject instanceof TomTerm) {
           %match(TomTerm contextSubject, TomTerm subject) {
-            TomTypeToTomTerm(type@Type[]) , Appl[option=option,nameList=nameList@(Name(strName),_*),args=l,constraints=constraints] -> {
-             
-               //System.out.println("expandVariable.1: Type(" + type);
-               //System.out.println("--> " + subject);
-
-               // create a constant or a variable
-               TomSymbol tomSymbol;
-               if(`strName.equals("")) {
-                 tomSymbol = getSymbol(`type);
-                 if(tomSymbol==null) {
-                   throw new TomRuntimeException("no symbol found for type '" + `type + "'");
-                 } else {
+            context, Appl[option=option,nameList=nameList@(Name(tomName),_*),args=l,constraints=constraints] -> {
+               TomSymbol tomSymbol = null;
+               if(`tomName.equals("")) {
+                 if(contextSubject.hasAstType()) {
+                   tomSymbol = getSymbol(contextSubject.getAstType());
                    `nameList = `concTomName(tomSymbol.getAstName());
+                   if(tomSymbol==null) {
+                     throw new TomRuntimeException("no symbol found for type '" + contextSubject.getAstType() + "'");
+                   } 
                  }
                } else {
-                 tomSymbol = getSymbol(`strName);
+                 tomSymbol = getSymbol(`tomName);
                }
 
                if(tomSymbol != null) {
@@ -202,63 +193,33 @@ public class TomKernelExpander extends TomBase {
                  ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),`constraints);
                  return `Appl(option,nameList,subterm,newConstraints);
                } else {
-                 if(`l.isEmpty()  && !hasConstructor(`option)) {
-                   ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
-                   return `Variable(option,nameList.getHead(),type,newConstraints);
-                 } else {
-                   TomList subterm = expandVariableList(`emptySymbol(), `l);
-                   ConstraintList newConstraints = expandVariableConstraintList(`emptyTerm(),`constraints);
-                   return `Appl(option,nameList,subterm,newConstraints);
+                 %match(TomTerm contextSubject) {
+                   TomTypeToTomTerm(type@Type[]) -> {
+                     if(`l.isEmpty()  && !hasConstructor(`option)) {
+                       ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
+                       return `Variable(option,nameList.getHead(),type,newConstraints);
+                     } else {
+                       TomList subterm = expandVariableList(`emptySymbol(), `l);
+                       ConstraintList newConstraints = expandVariableConstraintList(`emptyTerm(),`constraints);
+                       return `Appl(option,nameList,subterm,newConstraints);
+                     }
+                   }
+                   Variable[astType=type] -> {
+                     ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),`constraints);
+                     if(`l.isEmpty()  && !hasConstructor(`option)) {
+                       return `Variable(option,nameList.getHead(),type,newConstraints);
+                     } else {
+                       TomList subterm = expandVariableList(`emptySymbol(), `l);
+                       return `Appl(option,nameList,subterm,newConstraints);
+                     }
+                   }
+                   _ -> {
+                     // do nothing
+                   }
                  }
                }
              }
-          
-            Variable[option=option1,astName=name1,astType=type1] , Appl[option=option,nameList=nameList@(Name(strName),_*),args=l,constraints=constraints] -> {
-               // System.out.println("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
-               // under a match construct
-               // create a constant or a variable
-               //TomSymbol tomSymbol = getSymbol(strName);
 
-               TomSymbol tomSymbol;
-               if(`strName.equals("")) {
-                 tomSymbol = getSymbol(`type1);
-                 `nameList = `concTomName(tomSymbol.getAstName());
-               } else {
-                 tomSymbol = getSymbol(`strName);
-               }
-            
-               ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type1),`constraints);
-               //System.out.println("newConstraints2.1 = " + newConstraints);
-               if(tomSymbol != null) {
-                 TomList subterm = expandVariableList(tomSymbol, `l);
-                 return `Appl(option,nameList,subterm,newConstraints);
-               } else {
-                 if(`l.isEmpty()  && !hasConstructor(`option)) {
-                   return `Variable(option,nameList.getHead(),type1,newConstraints);
-                 } else {
-                   TomList subterm = expandVariableList(`emptySymbol(), `l);
-                   return `Appl(option,nameList,subterm,newConstraints);
-                 }
-               }
-             } 
-
-            context, appl@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=l,constraints=constraints] -> {
-               //System.out.println("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
-               // create a  symbol
-               TomSymbol tomSymbol = getSymbol(`tomName);
-               if(tomSymbol != null) {
-                 TomList subterm = expandVariableList(tomSymbol, `l);
-                 ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),`constraints);
-                 //System.out.println("newConstraints3.1 = " + newConstraints);
-                 //System.out.println("***** expandVariable.6: expandVariableList = " + subterm);
-                 //System.out.println("***** expandVariable.6: appl        = " + appl);
-                 //System.out.println("***** expandVariable.6: constraints = " + constraints);
-                 return `Appl(optionList,nameList,subterm,newConstraints);
-               } else {
-                 // do nothing
-                 //System.out.println("***** expandVariable.6: do nothing: " + constraints);
-               }
-             }
 
             context@TomTypeToTomTerm(type@Type[]), Variable[option=option,astName=astName,astType=TomTypeAlone[],constraints=constraints] -> {
                // create a variable
@@ -288,7 +249,6 @@ public class TomKernelExpander extends TomBase {
              } 
 
             context, TLVar(strName,TomTypeAlone(tomType)) -> {
-               //debugPrintln("expandVariable.8: TLVar(" + strName + "," + tomType + ")");
                // create a variable: its type is ensured by checker
                TomType localType = getType(`tomType);
                OptionList option = ast().makeOption();
@@ -296,7 +256,6 @@ public class TomKernelExpander extends TomBase {
              }
               
             context, TLVar(strName,localType@Type[]) -> {
-               //debugPrintln("expandVariable.8: TLVar(" + strName + "," + tomType + ")");
                // create a variable: its type is ensured by checker
                OptionList option = ast().makeOption();
                return `Variable(option,Name(strName),localType,concConstraint());
