@@ -117,7 +117,7 @@ public class OutputCode {
       }
       else {
       System.out.println("Warning: Synchronization issue: Line: " +
-                         line + " versus LineCounter:" + lineCounter +s);
+                         line + " versus LineCounter:" + lineCounter);
       }
     }
     

@@ -659,7 +659,7 @@ public class TomChecker extends TomBase {
     Integer line = nullInteger, declLine = nullInteger;
     String name = "unknown", nameDecl = "unknown";
     %match(Option orgTrack, Option currentTomStructureOrgTrack) {
-      OriginTracking(Name(orgName), orgLine), OriginTracking(Name(declOrgName),declOrgLine) -> {
+      OriginTracking(Name(orgName), orgLine, Name(orgFileName)), OriginTracking(Name(declOrgName),declOrgLine, Name(declFileName)) -> {
         declLine = declOrgLine;nameDecl = declOrgName;line = orgLine;name = orgName;
       }
     }
@@ -690,7 +690,7 @@ public class TomChecker extends TomBase {
     Integer line = nullInteger, declLine = nullInteger;
     String name = "unknown", nameDecl = "unknown";
     %match(Option orgTrack, Option currentTomStructureOrgTrack) {
-      OriginTracking(Name(orgName),orgLine), OriginTracking(Name(declOrgName),declOrgLine) -> {
+      OriginTracking(Name(orgName), orgLine, Name(orgFileName)), OriginTracking(Name(declOrgName),declOrgLine, Name(declFileName)) -> {
         declLine = declOrgLine;nameDecl = declOrgName;line = orgLine;name = orgName;
       }
     } 
@@ -699,10 +699,10 @@ public class TomChecker extends TomBase {
     Flags.findErrors = true;
   } 
   private void messageTwoSameNameVariableError(String nameFunction, String nameVar, Option orgTrack, String declType) {
-     Integer line = nullInteger, declLine = nullInteger;
+    Integer line = nullInteger, declLine = nullInteger;
     String name = "unknown", nameDecl = "unknown";
     %match(Option orgTrack, Option currentTomStructureOrgTrack) {
-      OriginTracking(Name(orgName),orgLine), OriginTracking(Name(declOrgName),declOrgLine) -> {
+      OriginTracking(Name(orgName), orgLine, Name(orgFileName)), OriginTracking(Name(declOrgName),declOrgLine, Name(declFileName)) -> {
         declLine = declOrgLine;nameDecl = declOrgName;line = orgLine;name = orgName;
       }
     }
@@ -715,7 +715,7 @@ public class TomChecker extends TomBase {
     Integer line = nullInteger;
     String name = "unknown";
     %match(Option currentTomStructureOrgTrack) {
-      OriginTracking(Name(orgName), orgLine) -> {
+      OriginTracking(Name(orgName), orgLine, _) -> {
         line = orgLine;
         name = orgName;
       }
@@ -938,7 +938,7 @@ public class TomChecker extends TomBase {
     String nameDecl = "unknown";
     Integer declLine = nullInteger;
     %match (Option currentTomStructureOrgTrack) {
-       OriginTracking(Name(declOrgName),declOrgLine) -> {
+       OriginTracking(Name(declOrgName),declOrgLine,_) -> {
         declLine = declOrgLine;nameDecl = declOrgName;
       }
     }
@@ -1142,7 +1142,8 @@ public class TomChecker extends TomBase {
     errorMessage.add(s);
     System.out.println(s);
   }
-  // findOriginTrackingLine(_) method returns the first number of line (stocked in optionList).
+  
+    // findOriginTrackingLine(_) method returns the first number of line (stocked in optionList).
   private Integer findOriginTrackingLine(OptionList optionList) {
     while(!optionList.isEmptyOptionList()) {
       Option subject = optionList.getHead();
@@ -1156,7 +1157,7 @@ public class TomChecker extends TomBase {
     System.out.println("findOriginTrackingLine:  not found");
     System.exit(1);return null;
   }
-
+  
   private Integer findOriginTrackingLine(Option option) {
     return option.getLine();
   }

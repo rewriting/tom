@@ -55,6 +55,7 @@ public class TomParser {
   private jtom.TomEnvironment environment;
   private File importList[];
   private static HashSet includedFiles = new HashSet();
+  private String currentFile;
 
   public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, String fileName) {
     this(input);
@@ -64,6 +65,7 @@ public class TomParser {
     this.importList = importList;
     this.includeOffSet = includeOffSet;
     this.orgTrack = makePosition(1,1);
+    this.currentFile = fileName;
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
@@ -435,7 +437,7 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   <MATCH> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
-      Option orgTrack = ast().makeOriginTracking("Match",getLine());
+      Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
     }
 
   <TOM_LPAREN> MatchArguments(matchArgumentsList) <TOM_RPAREN>
@@ -523,7 +525,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     // f[left=a,...]
     LOOKAHEAD(2)
     name = <TOM_IDENTIFIER> <TOM_LBRACKET>
-      {optionList.add(ast().makeOriginTracking(name.image,getLine()));}
+      {optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
     [ slotName = <TOM_IDENTIFIER> <TOM_EQUAL> term = Term()
       { list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term)); }
       ( <TOM_COMMA>
@@ -545,13 +547,13 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     name = <TOM_IDENTIFIER> <TOM_STAR>
     {
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking(name.image,getLine()));
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
       return ast().makeVariableStar(option,name.image,"unknown type");
     }
   | // f(a,...), x. g()
     name = <TOM_IDENTIFIER>
-      {optionList.add(ast().makeOriginTracking(name.image,getLine()));}
+      {optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
     [ <TOM_LPAREN>
       [
       term = DotTerm()               { list.add(term); }
@@ -577,7 +579,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     <TOM_UNDERSCORE>
     {
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking("_",getLine()));
+      optionList.add(ast().makeOriginTracking("_",getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
       return tsf().makeTomTerm_Placeholder(option);
     }
@@ -585,7 +587,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     name = <TOM_INTEGER>
     {
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking(name.image,getLine()));
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
       ast().makeIntegerSymbol(symbolTable,name.image,optionList);
       
@@ -643,7 +645,7 @@ void BackQuoteTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
   <BACKQUOTE_TERM> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
-      orgTrack = ast().makeOriginTracking("Backquote",getLine());
+      orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
     }
   term = Term()
   {
@@ -725,7 +727,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   <RULE> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
-      orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine());
+      orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine(), currentFile);
     }
   <TOM_LBRACE> 
   (
@@ -740,7 +742,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     )+ ]
     
     {
-      Option orgTrack = ast().makeOriginTracking("Rule",getLine());
+      Option orgTrack = ast().makeOriginTracking("Rule",getLine(), currentFile);
       environment.getStatistics().numberRuleRulesRecognized++;
       for(int i=0 ; i<listOfLhs.size() ; i++) {
         TomTerm term = (TomTerm) listOfLhs.get(i);
@@ -794,7 +796,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
   
   type = <TOM_IDENTIFIER>
   name = <TOM_IDENTIFIER>
-    {    options.add(ast().makeOriginTracking(name.image,getLine()));}
+    {    options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
   [ <TOM_LPAREN>
 
       { stringSlotName = ""; }
@@ -901,7 +903,7 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
       list.add(makeTL(savePosAndExtract()));
     }
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
-    { options.add(ast().makeOriginTracking(name.image,getLine()));}
+    { options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
     {
       types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
@@ -941,7 +943,7 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
       list.add(makeTL(savePosAndExtract()));
     }
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
-    { options.add(ast().makeOriginTracking(name.image,getLine()));}
+    { options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
          { 
  	   types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
@@ -993,7 +995,7 @@ void TypeTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
     }
   )  
   type=<TOM_IDENTIFIER>
-    { orgTrack = ast().makeOriginTracking(type.image,getLine());}
+    { orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);}
   <TOM_LBRACE>
     implement = KeywordImplement()
     ( 
@@ -1040,7 +1042,7 @@ void TypeList(ArrayList list) throws TomException: /* in DEFAULT mode */
     }
   
   type=<TOM_IDENTIFIER>
-    { orgTrack = ast().makeOriginTracking(type.image,getLine()); }
+    { orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile); }
   <TOM_LBRACE>
     implement = KeywordImplement()
     ( 
@@ -1079,7 +1081,7 @@ void TypeArray(ArrayList list) throws TomException: /* in DEFAULT mode */
     }
   
   type=<TOM_IDENTIFIER>
-    {orgTrack = ast().makeOriginTracking(type.image,getLine());}
+    {orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);}
   <TOM_LBRACE>
     implement = KeywordImplement()
     ( 
@@ -1146,11 +1148,11 @@ Declaration KeywordGetFunSym(String typeString) throws TomException:
 }
 {
   <TOM_GET_FUN_SYM>
-    { orgTrack = ast().makeOriginTracking("get_fun_sym", getLine());}
+    { orgTrack = ast().makeOriginTracking("get_fun_sym", getLine(), currentFile);}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      return tsf().makeDeclaration_GetFunctionSymbolDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1167,12 +1169,12 @@ Declaration KeywordGetSubterm(String typeString) throws TomException:
 }
 {
   <TOM_GET_SUBTERM>
-     { orgTrack = ast().makeOriginTracking("get_subterm", getLine());}
+     { orgTrack = ast().makeOriginTracking("get_subterm", getLine(), currentFile);}
   <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info1 = ast().makeOriginTracking(name1.image,getLine());
-     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
+     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
      Option option1 = ast().makeOption(info1);
      Option option2 = ast().makeOption(info2);
      return tsf().makeDeclaration_GetSubtermDecl(
@@ -1191,12 +1193,12 @@ Declaration KeywordCmpFunSym(String typeString) throws TomException:
 }
 {
   <TOM_CMP_FUN_SYM>
-    { orgTrack = ast().makeOriginTracking("cmp_fun_sym", getLine());}
+    { orgTrack = ast().makeOriginTracking("cmp_fun_sym", getLine(), currentFile);}
   <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info1 = ast().makeOriginTracking(name1.image,getLine());
-     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
+     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
      Option option1 = ast().makeOption(info1);
      Option option2 = ast().makeOption(info2);
      return tsf().makeDeclaration_CompareFunctionSymbolDecl(
@@ -1215,12 +1217,12 @@ Declaration KeywordEquals(String typeString) throws TomException:
 }
 {
   <TOM_EQUALS>
-    { orgTrack = ast().makeOriginTracking("equals", getLine());}
+    { orgTrack = ast().makeOriginTracking("equals", getLine(), currentFile);}
   <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info1 = ast().makeOriginTracking(name1.image,getLine());
-     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
+     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
      Option option1 = ast().makeOption(info1);
      Option option2 = ast().makeOption(info2);
      return tsf().makeDeclaration_TermsEqualDecl(
@@ -1239,11 +1241,11 @@ Declaration KeywordGetHead(String typeString) throws TomException:
 }
 {
   <TOM_GET_HEAD>
-    { orgTrack = ast().makeOriginTracking("get_head", getLine());}
+    { orgTrack = ast().makeOriginTracking("get_head", getLine(), currentFile);}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      return tsf().makeDeclaration_GetHeadDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1260,11 +1262,11 @@ Declaration KeywordGetTail(String typeString) throws TomException:
 }
 {
   <TOM_GET_TAIL>
-    { orgTrack = ast().makeOriginTracking("get_tail", getLine());}
+    { orgTrack = ast().makeOriginTracking("get_tail", getLine(), currentFile);}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      return tsf().makeDeclaration_GetTailDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1281,11 +1283,11 @@ Declaration KeywordIsEmpty(String typeString) throws TomException:
 }
 {
   <TOM_IS_EMPTY>
-    { orgTrack = ast().makeOriginTracking("is_empty", getLine());}
+    { orgTrack = ast().makeOriginTracking("is_empty", getLine(), currentFile);}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      return tsf().makeDeclaration_IsEmptyDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1302,12 +1304,12 @@ Declaration KeywordGetElement(String typeString) throws TomException:
 }
 {
   <TOM_GET_ELEMENT>
-    { orgTrack = ast().makeOriginTracking("get_element", getLine());}
+    { orgTrack = ast().makeOriginTracking("get_element", getLine(), currentFile);}
   <TOM_LPAREN> name1 = <TOM_IDENTIFIER> <TOM_COMMA> name2 = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info1 = ast().makeOriginTracking(name1.image,getLine());
-     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
+     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
      Option option1 = ast().makeOption(info1);
      Option option2 = ast().makeOption(info2);
      return tsf().makeDeclaration_GetElementDecl(
@@ -1326,11 +1328,11 @@ Declaration KeywordGetSize(String typeString) throws TomException:
 }
 {
   <TOM_GET_SIZE>
-    { orgTrack = ast().makeOriginTracking("get_size", getLine());}
+    { orgTrack = ast().makeOriginTracking("get_size", getLine(), currentFile);}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      return tsf().makeDeclaration_GetSizeDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1361,11 +1363,11 @@ Declaration KeywordIsFsym(TomName astName, String typeString) throws TomExceptio
 }
 {
   <TOM_IS_FSYM>
-    { orgTrack = ast().makeOriginTracking("is_fsym", getLine());}
+    { orgTrack = ast().makeOriginTracking("is_fsym", getLine(), currentFile);}
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      return tsf().makeDeclaration_IsFsymDecl(
 			   astName,
@@ -1384,12 +1386,12 @@ Declaration KeywordGetSlot(TomName astName, String typeString) throws TomExcepti
 }
 {
   <TOM_GET_SLOT>
-    { orgTrack = ast().makeOriginTracking("get_slot", getLine());}
+    { orgTrack = ast().makeOriginTracking("get_slot", getLine(), currentFile);}
   <TOM_LPAREN> slotName = <TOM_IDENTIFIER>
      <TOM_COMMA> name = <TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-       Option info = ast().makeOriginTracking(name.image,getLine());
+       Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
        Option option = ast().makeOption(info);
        return tsf().makeDeclaration_GetSlotDecl(
          astName,
@@ -1414,7 +1416,7 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
 }
 {
   <TOM_MAKE>
-     { orgTrack = ast().makeOriginTracking("make", getLine());}
+     { orgTrack = ast().makeOriginTracking("make", getLine(), currentFile);}
      [ ( LOOKAHEAD(2) 
         <TOM_LPAREN> <TOM_RPAREN>
        |
@@ -1427,7 +1429,7 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
          }
          type = (TomType)types.get(index++);
          name = tsf().makeTomName_Name(nameArg.image);  
-         Option info1 = ast().makeOriginTracking(nameArg.image,getLine());
+         Option info1 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
          Option option1 = ast().makeOption(info1);
          args.add(tsf().makeTomTerm_Variable(option1,name, type));
        }
@@ -1439,7 +1441,7 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
           }
           type = (TomType)types.get(index++);
           name = tsf().makeTomName_Name(nameArg.image); 
-          Option info2 = ast().makeOriginTracking(nameArg.image,getLine());
+          Option info2 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
           Option option2 = ast().makeOption(info2);
           args.add(tsf().makeTomTerm_Variable(option2,name, type));
         }
@@ -1459,7 +1461,7 @@ Declaration KeywordMakeEmptyList(String name) throws TomException:
 }
 {
   <TOM_MAKE_EMPTY>
-    { orgTrack = ast().makeOriginTracking("make_empty", getLine());}
+    { orgTrack = ast().makeOriginTracking("make_empty", getLine(), currentFile);}
   [<TOM_LPAREN> <TOM_RPAREN>]
   tlCode = GoalLanguageBlock(blockList)
    {
@@ -1478,13 +1480,13 @@ Declaration KeywordMakeAddList(String name, String listType, String elementType)
 }
 {
   <TOM_MAKE_INSERT>
-    { orgTrack = ast().makeOriginTracking("make_add", getLine());}
+    { orgTrack = ast().makeOriginTracking("make_add", getLine(), currentFile);}
   <TOM_LPAREN> elementName=<TOM_IDENTIFIER> <TOM_COMMA>
                                     listName=<TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option listInfo = ast().makeOriginTracking(listName.image,getLine());
-     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine());
+     Option listInfo = ast().makeOriginTracking(listName.image,getLine(), currentFile);
+     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine(), currentFile);
      Option listOption = ast().makeOption(listInfo);
      Option elementOption = ast().makeOption(elementInfo);
      return tsf().makeDeclaration_MakeAddList(
@@ -1504,11 +1506,11 @@ Declaration KeywordMakeEmptyArray(String name, String listType) throws TomExcept
 }
 {
   <TOM_MAKE_EMPTY>
-    { orgTrack = ast().makeOriginTracking("make_empty", getLine());}
+    { orgTrack = ast().makeOriginTracking("make_empty", getLine(), currentFile);}
   <TOM_LPAREN> listName=<TOM_IDENTIFIER> <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option listInfo = ast().makeOriginTracking(listName.image,getLine());
+     Option listInfo = ast().makeOriginTracking(listName.image,getLine(), currentFile);
      Option listOption = ast().makeOption(listInfo);
      return tsf().makeDeclaration_MakeEmptyArray(
                            tsf().makeTomName_Name(name),
@@ -1526,14 +1528,14 @@ Declaration KeywordMakeAddArray(String name, String listType, String elementType
 }
 {
   <TOM_MAKE_APPEND>
-    { orgTrack = ast().makeOriginTracking("make_append", getLine());}
+    { orgTrack = ast().makeOriginTracking("make_append", getLine(), currentFile);}
   <TOM_LPAREN> elementName=<TOM_IDENTIFIER>    <TOM_COMMA>
                                     listName=<TOM_IDENTIFIER>
                  <TOM_RPAREN>
   tlCode = GoalLanguageBlock(blockList)
    {
-     Option listInfo = ast().makeOriginTracking(listName.image,getLine());
-     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine());
+     Option listInfo = ast().makeOriginTracking(listName.image,getLine(), currentFile);
+     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine(), currentFile);
      Option listOption = ast().makeOption(listInfo);
      Option elementOption = ast().makeOption(elementInfo);
      return tsf().makeDeclaration_MakeAddArray(

@@ -49,6 +49,7 @@ public class TomParser implements TomParserConstants {
   private jtom.TomEnvironment environment;
   private File importList[];
   private static HashSet includedFiles = new HashSet();
+  private String currentFile;
 
   public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, String fileName) {
     this(input);
@@ -58,6 +59,7 @@ public class TomParser implements TomParserConstants {
     this.importList = importList;
     this.includeOffSet = includeOffSet;
     this.orgTrack = makePosition(1,1);
+    this.currentFile = fileName;
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
@@ -247,7 +249,7 @@ public class TomParser implements TomParserConstants {
   ArrayList patternActionList = new ArrayList();
     jj_consume_token(MATCH);
       list.add(makeTL(savePosAndExtract()));
-      Option orgTrack = ast().makeOriginTracking("Match",getLine());
+      Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     MatchArguments(matchArgumentsList);
     jj_consume_token(TOM_RPAREN);
@@ -373,7 +375,7 @@ public class TomParser implements TomParserConstants {
     if (jj_2_1(2)) {
       name = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_LBRACKET);
-       optionList.add(ast().makeOriginTracking(name.image,getLine()));
+       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_IDENTIFIER:
         slotName = jj_consume_token(TOM_IDENTIFIER);
@@ -412,7 +414,7 @@ public class TomParser implements TomParserConstants {
       name = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_STAR);
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking(name.image,getLine()));
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
       {if (true) return ast().makeVariableStar(option,name.image,"unknown type");}
     } else {
@@ -420,7 +422,7 @@ public class TomParser implements TomParserConstants {
       case TOM_IDENTIFIER:
         // f(a,...), x. g()
             name = jj_consume_token(TOM_IDENTIFIER);
-       optionList.add(ast().makeOriginTracking(name.image,getLine()));
+       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_LPAREN:
           jj_consume_token(TOM_LPAREN);
@@ -469,7 +471,7 @@ public class TomParser implements TomParserConstants {
       case TOM_UNDERSCORE:
         jj_consume_token(TOM_UNDERSCORE);
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking("_",getLine()));
+      optionList.add(ast().makeOriginTracking("_",getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
       {if (true) return tsf().makeTomTerm_Placeholder(option);}
         break;
@@ -477,7 +479,7 @@ public class TomParser implements TomParserConstants {
         // integer
             name = jj_consume_token(TOM_INTEGER);
       if(annotedName!=null) { optionList.add(annotedName); }
-      optionList.add(ast().makeOriginTracking(name.image,getLine()));
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
       ast().makeIntegerSymbol(symbolTable,name.image,optionList);
 
@@ -549,7 +551,7 @@ public class TomParser implements TomParserConstants {
   Option orgTrack;
     jj_consume_token(BACKQUOTE_TERM);
       list.add(makeTL(savePosAndExtract()));
-      orgTrack = ast().makeOriginTracking("Backquote",getLine());
+      orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
     term = Term();
     switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(tsf().makeTomTerm_BackQuoteTerm(term, orgTrack));
@@ -614,7 +616,7 @@ public class TomParser implements TomParserConstants {
   Option orgTrackRuleSet;
     jj_consume_token(RULE);
       list.add(makeTL(savePosAndExtract()));
-      orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine());
+      orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine(), currentFile);
     jj_consume_token(TOM_LBRACE);
     label_8:
     while (true) {
@@ -695,7 +697,7 @@ public class TomParser implements TomParserConstants {
         jj_la1[20] = jj_gen;
         ;
       }
-      Option orgTrack = ast().makeOriginTracking("Rule",getLine());
+      Option orgTrack = ast().makeOriginTracking("Rule",getLine(), currentFile);
       environment.getStatistics().numberRuleRulesRecognized++;
       for(int i=0 ; i<listOfLhs.size() ; i++) {
         TomTerm term = (TomTerm) listOfLhs.get(i);
@@ -737,7 +739,7 @@ public class TomParser implements TomParserConstants {
       list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
-         options.add(ast().makeOriginTracking(name.image,getLine()));
+         options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_LPAREN:
       jj_consume_token(TOM_LPAREN);
@@ -878,7 +880,7 @@ public class TomParser implements TomParserConstants {
       list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
-      options.add(ast().makeOriginTracking(name.image,getLine()));
+      options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
     jj_consume_token(TOM_LPAREN);
     typeArg = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_STAR);
@@ -935,7 +937,7 @@ public class TomParser implements TomParserConstants {
       list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
-      options.add(ast().makeOriginTracking(name.image,getLine()));
+      options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
     jj_consume_token(TOM_LPAREN);
     typeArg = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_STAR);
@@ -1007,7 +1009,7 @@ public class TomParser implements TomParserConstants {
       throw new ParseException();
     }
     type = jj_consume_token(TOM_IDENTIFIER);
-      orgTrack = ast().makeOriginTracking(type.image,getLine());
+      orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);
     jj_consume_token(TOM_LBRACE);
     implement = KeywordImplement();
     label_15:
@@ -1072,7 +1074,7 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TYPELIST);
       list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
-      orgTrack = ast().makeOriginTracking(type.image,getLine());
+      orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);
     jj_consume_token(TOM_LBRACE);
     implement = KeywordImplement();
     label_16:
@@ -1145,7 +1147,7 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TYPEARRAY);
       list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
-     orgTrack = ast().makeOriginTracking(type.image,getLine());
+     orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);
     jj_consume_token(TOM_LBRACE);
     implement = KeywordImplement();
     label_17:
@@ -1234,12 +1236,12 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_GET_FUN_SYM);
-      orgTrack = ast().makeOriginTracking("get_fun_sym", getLine());
+      orgTrack = ast().makeOriginTracking("get_fun_sym", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetFunctionSymbolDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1253,15 +1255,15 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_GET_SUBTERM);
-       orgTrack = ast().makeOriginTracking("get_subterm", getLine());
+       orgTrack = ast().makeOriginTracking("get_subterm", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name1 = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_COMMA);
     name2 = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info1 = ast().makeOriginTracking(name1.image,getLine());
-     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
+     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
      Option option1 = ast().makeOption(info1);
      Option option2 = ast().makeOption(info2);
      {if (true) return tsf().makeDeclaration_GetSubtermDecl(
@@ -1277,15 +1279,15 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_CMP_FUN_SYM);
-      orgTrack = ast().makeOriginTracking("cmp_fun_sym", getLine());
+      orgTrack = ast().makeOriginTracking("cmp_fun_sym", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name1 = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_COMMA);
     name2 = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info1 = ast().makeOriginTracking(name1.image,getLine());
-     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
+     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
      Option option1 = ast().makeOption(info1);
      Option option2 = ast().makeOption(info2);
      {if (true) return tsf().makeDeclaration_CompareFunctionSymbolDecl(
@@ -1301,15 +1303,15 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_EQUALS);
-      orgTrack = ast().makeOriginTracking("equals", getLine());
+      orgTrack = ast().makeOriginTracking("equals", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name1 = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_COMMA);
     name2 = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info1 = ast().makeOriginTracking(name1.image,getLine());
-     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
+     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
      Option option1 = ast().makeOption(info1);
      Option option2 = ast().makeOption(info2);
      {if (true) return tsf().makeDeclaration_TermsEqualDecl(
@@ -1325,12 +1327,12 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_GET_HEAD);
-      orgTrack = ast().makeOriginTracking("get_head", getLine());
+      orgTrack = ast().makeOriginTracking("get_head", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetHeadDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1344,12 +1346,12 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_GET_TAIL);
-      orgTrack = ast().makeOriginTracking("get_tail", getLine());
+      orgTrack = ast().makeOriginTracking("get_tail", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetTailDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1363,12 +1365,12 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_IS_EMPTY);
-      orgTrack = ast().makeOriginTracking("is_empty", getLine());
+      orgTrack = ast().makeOriginTracking("is_empty", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_IsEmptyDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1382,15 +1384,15 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_GET_ELEMENT);
-      orgTrack = ast().makeOriginTracking("get_element", getLine());
+      orgTrack = ast().makeOriginTracking("get_element", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name1 = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_COMMA);
     name2 = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info1 = ast().makeOriginTracking(name1.image,getLine());
-     Option info2 = ast().makeOriginTracking(name2.image,getLine());
+     Option info1 = ast().makeOriginTracking(name1.image,getLine(), currentFile);
+     Option info2 = ast().makeOriginTracking(name2.image,getLine(), currentFile);
      Option option1 = ast().makeOption(info1);
      Option option2 = ast().makeOption(info2);
      {if (true) return tsf().makeDeclaration_GetElementDecl(
@@ -1406,12 +1408,12 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_GET_SIZE);
-      orgTrack = ast().makeOriginTracking("get_size", getLine());
+      orgTrack = ast().makeOriginTracking("get_size", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetSizeDecl(
                            ast().makeVariable(option,name.image,typeString),
@@ -1435,12 +1437,12 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_IS_FSYM);
-      orgTrack = ast().makeOriginTracking("is_fsym", getLine());
+      orgTrack = ast().makeOriginTracking("is_fsym", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option info = ast().makeOriginTracking(name.image,getLine());
+     Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_IsFsymDecl(
                            astName,
@@ -1455,14 +1457,14 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_GET_SLOT);
-      orgTrack = ast().makeOriginTracking("get_slot", getLine());
+      orgTrack = ast().makeOriginTracking("get_slot", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     slotName = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_COMMA);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-       Option info = ast().makeOriginTracking(name.image,getLine());
+       Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
        Option option = ast().makeOption(info);
        {if (true) return tsf().makeDeclaration_GetSlotDecl(
          astName,
@@ -1484,7 +1486,7 @@ public class TomParser implements TomParserConstants {
   Option orgTrack;
   int nbTypes = types.size();
     jj_consume_token(TOM_MAKE);
-       orgTrack = ast().makeOriginTracking("make", getLine());
+       orgTrack = ast().makeOriginTracking("make", getLine(), currentFile);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_LPAREN:
       if (jj_2_6(2)) {
@@ -1501,7 +1503,7 @@ public class TomParser implements TomParserConstants {
          }
          type = (TomType)types.get(index++);
          name = tsf().makeTomName_Name(nameArg.image);
-         Option info1 = ast().makeOriginTracking(nameArg.image,getLine());
+         Option info1 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
          Option option1 = ast().makeOption(info1);
          args.add(tsf().makeTomTerm_Variable(option1,name, type));
           label_18:
@@ -1522,7 +1524,7 @@ public class TomParser implements TomParserConstants {
           }
           type = (TomType)types.get(index++);
           name = tsf().makeTomName_Name(nameArg.image);
-          Option info2 = ast().makeOriginTracking(nameArg.image,getLine());
+          Option info2 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
           Option option2 = ast().makeOption(info2);
           args.add(tsf().makeTomTerm_Variable(option2,name, type));
           }
@@ -1549,7 +1551,7 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_MAKE_EMPTY);
-      orgTrack = ast().makeOriginTracking("make_empty", getLine());
+      orgTrack = ast().makeOriginTracking("make_empty", getLine(), currentFile);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_LPAREN:
       jj_consume_token(TOM_LPAREN);
@@ -1572,15 +1574,15 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_MAKE_INSERT);
-      orgTrack = ast().makeOriginTracking("make_add", getLine());
+      orgTrack = ast().makeOriginTracking("make_add", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     elementName = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_COMMA);
     listName = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option listInfo = ast().makeOriginTracking(listName.image,getLine());
-     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine());
+     Option listInfo = ast().makeOriginTracking(listName.image,getLine(), currentFile);
+     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine(), currentFile);
      Option listOption = ast().makeOption(listInfo);
      Option elementOption = ast().makeOption(elementInfo);
      {if (true) return tsf().makeDeclaration_MakeAddList(
@@ -1597,12 +1599,12 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_MAKE_EMPTY);
-      orgTrack = ast().makeOriginTracking("make_empty", getLine());
+      orgTrack = ast().makeOriginTracking("make_empty", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     listName = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option listInfo = ast().makeOriginTracking(listName.image,getLine());
+     Option listInfo = ast().makeOriginTracking(listName.image,getLine(), currentFile);
      Option listOption = ast().makeOption(listInfo);
      {if (true) return tsf().makeDeclaration_MakeEmptyArray(
                            tsf().makeTomName_Name(name),
@@ -1617,15 +1619,15 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlCode;
   Option orgTrack;
     jj_consume_token(TOM_MAKE_APPEND);
-      orgTrack = ast().makeOriginTracking("make_append", getLine());
+      orgTrack = ast().makeOriginTracking("make_append", getLine(), currentFile);
     jj_consume_token(TOM_LPAREN);
     elementName = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_COMMA);
     listName = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RPAREN);
     tlCode = GoalLanguageBlock(blockList);
-     Option listInfo = ast().makeOriginTracking(listName.image,getLine());
-     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine());
+     Option listInfo = ast().makeOriginTracking(listName.image,getLine(), currentFile);
+     Option elementInfo = ast().makeOriginTracking(elementName.image,getLine(), currentFile);
      Option listOption = ast().makeOption(listInfo);
      Option elementOption = ast().makeOption(elementInfo);
      {if (true) return tsf().makeDeclaration_MakeAddArray(
@@ -1678,30 +1680,6 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_STAR)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_5() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_COLON)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_4() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1722,6 +1700,30 @@ public class TomParser implements TomParserConstants {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_LBRACKET)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_STAR)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_5() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_COLON)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

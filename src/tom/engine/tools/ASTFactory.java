@@ -154,8 +154,8 @@ public class ASTFactory {
     return tsf().makeOption_Option(argList);
   }
 
-  public Option makeOriginTracking( String name, String line ) {
-    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), new Integer(line) );
+  public Option makeOriginTracking(String name, String line , String fileName) {
+    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), new Integer(line),tsf().makeTomName_Name( fileName));
   }
   
   public Declaration makeMakeDecl(String opname, TomType returnType, ArrayList argList, TargetLanguage tlcode, Option orgTrack) {

@@ -55,7 +55,7 @@
   [Option,TomTermToOption, TomTermToOption(<astTerm(TomTerm)>) ],
   [Option,Option,Option(<optionList(OptionList)>) ],
   [Option,DefinedSymbol ,DefinedSymbol ],
-  [Option,OriginTracking,OriginTracking(<astName(TomName)>, <line(int)>) ],
+  [Option,OriginTracking,OriginTracking(<astName(TomName)>, <line(int)>,<fileName(TomName)>) ],
   [Option,Constructor,Constructor(<astName(TomName)>) ],
 
   [Expression,TomTermToExpression, TomTermToExpression(<astTerm(TomTerm)>) ],
