@@ -15,7 +15,7 @@
 	<!-- set local properties for this build -->
 	<property file="local.properties"/>
 	<property name="build.sysclasspath" value="ignore" />
-
+	
 	<!-- current version of TOM -->
 	<property name="version" value="2.0rc1"/>
 	
@@ -40,7 +40,7 @@
 	<property name="src.gen"      location="${src.src}/gen"/>  	
 	<property name="src.build"    location="${src.src}/build"/>  	
 	<property name="src.dist"     location="${src.src}/dist"/>
-
+	
 	<!-- for dist -->
 	<property name="dist"         location="dist"/>
 
@@ -389,6 +389,8 @@
 	<target name="clean.src" description="Purges the generated devel files">
 		<delete dir="${src.gen}"/>
 		<delete dir="${src.build}"/>
+		<delete file="${src.mapping}/Set.tom"/>
+		<delete file="${src.mapping}/TNode.tom"/>
 	</target>
 
 	<target name="clean.test" description="Cleans acceptance tests directory">
@@ -396,10 +398,14 @@
     <delete dir="${test.build}"/>
 	</target>
 
-	<target name="clean" description="Cleans everything in the project" depends="clean.stable, clean.src, clean.test">
+	<target name="clean" description="Cleans everything in the project"
+	depends="clean.stable, clean.src, clean.test">
+    <ant dir="${examples}" target="clean"/>
 	</target>	
 
-	<target name="clean.dist" description="Mr proper" depends="clean, clean.dist.src, clean.dist.stable">
+	<target name="clean.dist" description="Mr proper" depends="clean,
+					clean.dist.src, clean.dist.stable">
+    <ant dir="${examples}" target="clean.dist"/>
 	</target>
 
 	<target name="clean.dist.src" description="Remove the src distribution">
@@ -607,7 +613,7 @@
 			<filesmatch file1="${src.src}/bootcheck/version1" 
 									file2="${src.src}/bootcheck/version2"/>
 		</condition>
-		<!--<delete dir="${src.src}/bootcheck"/>-->
+		<delete dir="${src.src}/bootcheck"/>
 	</target>
 	
   <target name="performbootstrap" depends="stable, clean.src">
