@@ -25,35 +25,32 @@
 
 package tom.platform;
 
-import aterm.ATerm;
-
 /**
- * This interface must be implemented by all Tom plugins.
- * It provides methods to access options (inherited from the
- * TomPluginOptions interface) as well as methods to run
- * the compilation (one to "feed" the plugin, another one
- * to run it and a third one to retrieve the processed term).
+ * This interface must be implemented by all plugins. It provides methods
+ * to access options (inherited from the OptionOwner interface) as well as
+ * methods to run the compilation. The processing follow the template:
+ * "feed" the plugin (set), run it, retrieve the processed term(get)
  *
  * @author Gr&eacute;gory ANDRIEN
  */
-public interface Plugin extends OptionOwner
-{
-    /**
-     * Sets the input of the plugin.
-     *
-     * @param term the input ATerm
-     */
-    public abstract void setTerm(ATerm term);
-
-    /**
-     * Retrieves the output of the plugin.
-     *
-     * @return the output ATerm
-     */
-    public abstract ATerm getTerm();
-
-    /**
-     * Runs the plugin.
-     */
-    public abstract void run();
+public interface Plugin extends OptionOwner {
+  /**
+   * Sets the input of the plugin.
+   *
+   * @param arg the input argument
+   */
+  public void setArg(Object arg);
+  
+  /**
+   * Runs the plugin.
+   */
+  public void run();
+  
+  /**
+   * Retrieves the output of the plugin.
+   *
+   * @return the output argument
+   */
+  public Object getArg();
+    
 }

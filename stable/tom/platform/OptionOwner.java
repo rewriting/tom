@@ -28,10 +28,11 @@ package tom.platform;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 /**
- * This interface contains the option-related methods of TomPlugin.
+ * This interface contains the option-related methods of Plugin.
  *
  * @author Gr&eacute;gory ANDRIEN
  */
+
 public interface OptionOwner {
 
   /**
@@ -39,17 +40,16 @@ public interface OptionOwner {
    *
    * @return the options declared by the plugin
    */
-  public abstract PlatformOptionList declaredOptions();
+  public PlatformOptionList getDeclaredOptionList();
 
   /**
-   * Returns a list containing the options the plugin requires in order
-   * to do what is expected of it. A plugin may indeed require that
-   * some options are set to specific values depending on which tasks
-   * it is told to accomplish.
+   * Returns a list containing the options the plugin requires in order to do
+   * what is expected of it. A plugin may indeed require that some options are
+   * set to specific values depending on which tasks it is told to accomplish.
    *
    * @return the plugin's prerequisites
    */
-  public abstract PlatformOptionList requiredOptions();
+  public PlatformOptionList getRequiredOptionList();
 
   /**
    * Sets the option whose name is given to the specified value.
@@ -57,5 +57,12 @@ public interface OptionOwner {
    * @param name the option's name
    * @param value the option's value
    */
-  public abstract void setOption(String name, Object value);
+  public void setOption(String name, Object value);
+  
+  /**
+   * Sets the associated OptionManager
+   *
+   */
+  public void setOptionManager(OptionManager om);
+
 }
