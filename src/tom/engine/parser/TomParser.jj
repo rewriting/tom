@@ -1040,20 +1040,20 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
         }
     
   // #TEXT(...)
-  | <XML_TEXT> <TOM_LPAREN> arg1 = TermStringIdentifier() <TOM_RPAREN>
+  | <XML_TEXT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
     {
       keyword = Constants.TEXT_NODE;
       list.add(arg1);
     }
   | // #COMMENT(...)
-    <XML_COMMENT> <TOM_LPAREN> arg1 = TermStringIdentifier() <TOM_RPAREN>
+    <XML_COMMENT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
     {
       keyword = Constants.COMMENT_NODE;
       list.add(arg1);
     }
   | // #PROCESSING-INSTRUCTION(... , ...)
     <XML_PROC> <TOM_LPAREN>
-    arg1=TermStringIdentifier() <TOM_COMMA> arg2=TermStringIdentifier()
+    arg1=TermStringIdentifier(null) <TOM_COMMA> arg2=TermStringIdentifier(null)
     <TOM_RPAREN>
       {
         keyword = Constants.PROCESSING_INSTRUCTION_NODE;
@@ -1072,10 +1072,11 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
     }
 }
 
-TomTerm TermStringIdentifier() throws TomException:
+  
+TomTerm TermStringIdentifier(LinkedList options) throws TomException:
 {
   boolean string = false;
-  LinkedList optionList = new LinkedList();
+  LinkedList optionList = (options==null)?new LinkedList():options;
   OptionList option;
   Token name;
   NameList nameList;
@@ -1153,40 +1154,61 @@ TomTerm XMLAttribute() throws TomException:
   LinkedList list = new LinkedList();
   TomTerm term;
   TomTerm termName = null;
-  Token id;
+  Token id,anno1,anno2;
   String name;
   OptionList option;
   LinkedList optionList = new LinkedList();
+  LinkedList optionListAnno2 = new LinkedList();
   NameList nameList;
 }
 {
     // _* | X*
   LOOKAHEAD(2)
   term = UnamedVariableStarOrVariableStar(optionList) { return term; }
-  | 
-  ( // name = Term
+  |
+  ( // name = [anno2@](String|Identifier)
     LOOKAHEAD(2)
-    id = <TOM_IDENTIFIER> <TOM_EQUAL> {text+=id.image+"=";} term=AnnotedTerm()
+    id = <TOM_IDENTIFIER> <TOM_EQUAL> {text+=id.image+"=";}
+    [
+      LOOKAHEAD(2)
+    anno2 = <TOM_IDENTIFIER> <TOM_AT>
+    {
+      text += anno2.image + "@";
+      optionListAnno2.add(tsf().makeTomName_Name(anno2.image));
+    }
+    ]
+    term=TermStringIdentifier(optionListAnno2)
       {
         name = tomFactory.encodeXMLString(symbolTable(),id.image);
         nameList = tsf().makeNameList(tsf().makeTomName_Name(name));
         termName = tsf().makeTomTerm_Appl(ast().makeOption(),nameList,tsf().makeTomList());
       }
-  | // [foo@]_ = Term
+  | // [anno1@]_ = [anno2@](String|Identifier)
     [ 
-    id = <TOM_IDENTIFIER> <TOM_AT>
+    anno1 = <TOM_IDENTIFIER> <TOM_AT>
     {
-      text += id.image + "@";
-      optionList.add(tsf().makeTomName_Name(id.image));
+      text += anno1.image + "@";
+      optionList.add(tsf().makeTomName_Name(anno1.image));
     }
     ]
-    termName = Placeholder(optionList) <TOM_EQUAL> {text+="=";} term=AnnotedTerm()
+    termName = Placeholder(optionList) <TOM_EQUAL> {text+="=";}
+    [
+      LOOKAHEAD(2)
+    anno2 = <TOM_IDENTIFIER> <TOM_AT>
+    {
+      text += anno2.image + "@";
+      optionListAnno2.add(tsf().makeTomName_Name(anno2.image));
+    }
+    ]
+    term=TermStringIdentifier(optionListAnno2)
   ) 
     {
       list.add(termName);
         // we add the specif value : _
       list.add(tsf().makeTomTerm_Placeholder(ast().makeOption()));
-      list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
+        //list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
+        // no longer necessary ot metaEncode Strings in attributes
+      list.add(term);
       optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
       

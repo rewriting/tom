@@ -124,9 +124,7 @@ public class ATermToXML {
       }
       AttributeNode(name,specified,child) -> {
 				if (specified.equals("true")) {
-	  			write(" "+name+"=\"");
-	  			atermToXML(child);
-	  			write("\"");
+	  			write(" " + name + "=\"" + child + "\"");
 				}
 				return;
       }

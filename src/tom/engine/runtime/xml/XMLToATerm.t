@@ -261,7 +261,7 @@ public class XMLToATerm {
     
   private TNode makeAttributeNode(Attr attr) {
     String specif = (attr.getSpecified() ? "true" : "false");
-    return `AttributeNode(attr.getNodeName(),specif,TextNode(attr.getNodeValue()));
+    return `AttributeNode(attr.getNodeName(),specif,attr.getNodeValue());
   }
 
   private TNode makeTextNode(Text text) {
