@@ -85,7 +85,11 @@ public class TomExpander extends TomTask {
       return;
     }
   }
-  
+
+  private TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
+    return tomKernelExpander.expandVariable(contextSubject,subject); 
+  }
+ 
   /*
    * The 'expandTomSyntax' phase replaces:
    * -each 'RecordAppl' by its expanded term form:
@@ -658,136 +662,6 @@ public class TomExpander extends TomTask {
   }
 
   
-
-    /*
-     * At Tom expander level, we worry only about RewriteRule and
-     *  their condlist
-     * replace Name by Symbol
-     * replace Name by Variable
-     */
-
-  private Replace2 replace_expandVariable = new Replace2() {
-      public ATerm apply(ATerm subject, Object arg1) {
-        TomTerm contextSubject = (TomTerm)arg1;
-        if(contextSubject == null) {
-          throw new TomRuntimeException(new Throwable("replace_expandVariable: null contextSubject"));
-        }
-
-        if(subject instanceof TomRule) {
-          %match(TomTerm contextSubject, TomRule subject) {
-            context, RewriteRule(Term(lhs@Appl[option=optionList,nameList=(Name(tomName))]),
-                                 Term(rhs),
-                                 condList,
-                                 option) -> { 
-                //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
-              TomSymbol tomSymbol = getSymbol(tomName);
-              TomType symbolType = getSymbolCodomain(tomSymbol);
-              TomTerm newLhs = `Term(expandVariable(context,lhs));
-              TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
-              
-                // build the list of variables that occur in the lhs
-              HashSet set = new HashSet();
-              collectVariable(set,newLhs);
-              TomList varList = ast().makeList(set);
-              InstructionList newCondList = `emptyInstructionList();
-              while(!condList.isEmpty()) {
-                Instruction cond = condList.getHead();
-                Instruction newCond = expandVariableInstruction(`Tom(varList),cond);
-                newCondList = `manyInstructionList(newCond,newCondList);
-                collectVariable(set,newCond); 
-                varList = ast().makeList(set);
-                condList = condList.getTail();
-              }
-              
-              return `RewriteRule(newLhs,newRhs,newCondList,option);
-            }
-          } // end match
-        } else if(subject instanceof Instruction) {
-          %match(TomTerm contextSubject, Instruction subject) {
-            Tom(varList), MatchingCondition[lhs=lhs@Appl[nameList=(Name(lhsName),_*)],
-                                            rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
-              TomSymbol lhsSymbol = getSymbol(lhsName);
-              TomSymbol rhsSymbol = getSymbol(rhsName);
-              TomType type;
-              
-              if(lhsSymbol != null) {
-                type = getSymbolCodomain(lhsSymbol);
-              } else if(rhsSymbol != null) {
-                type = getSymbolCodomain(rhsSymbol);
-              } else {
-                  // both lhs and rhs are variables
-                  // since lhs is a fresh variable, we look for rhs
-                type = getTypeFromVariableList(`Name(rhsName),varList);
-              }
-              
-              TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
-              TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
-              return `MatchingCondition(newLhs,newRhs);
-            }
-            
-            Tom(varList), EqualityCondition[lhs=lhs@Appl[nameList=(Name(lhsName))],
-                                            rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
-              TomSymbol lhsSymbol = getSymbol(lhsName);
-              TomSymbol rhsSymbol = getSymbol(rhsName);
-              TomType type;
-              
-              if(lhsSymbol != null) {
-                type = getSymbolCodomain(lhsSymbol);
-              } else if(rhsSymbol != null) {
-                type = getSymbolCodomain(rhsSymbol);
-              } else {
-                  // both lhs and rhs are variables
-                type = getTypeFromVariableList(`Name(lhsName),varList);
-              }
-              
-                //System.out.println("EqualityCondition type = " + type);
-              
-              TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
-              TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
-                
-                //System.out.println("lhs    = " + lhs);
-                //System.out.println("newLhs = " + newLhs);
-              
-              return `EqualityCondition(newLhs,newRhs);
-            }
-          } // end match
-        } // end instance of Instruction
-
-        ATerm res = traversal().genericTraversal(subject,this,contextSubject);
-        //System.out.println("res1 =\n" + res);
-        res = tomKernelExpander.replace_expandVariable.apply(res,contextSubject);
-        //System.out.println("res2 =\n" + res);
-        return res;
-      } // end apply
-    }; // end replace
-
-  private TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
-    return (TomTerm) replace_expandVariable.apply(subject,contextSubject); 
-  }
-
-  private Instruction expandVariableInstruction(TomTerm contextSubject, Instruction subject) {
-    return (Instruction) replace_expandVariable.apply(subject,contextSubject); 
-  }
-
-  private TomType getTypeFromVariableList(TomName name, TomList list) {
-
-      //System.out.println("name = " + name);
-      //System.out.println("list = " + list);
-    
-    %match(TomName name,TomList list) {
-      _,emptyTomList() -> {
-        System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
-        throw new TomRuntimeException(new Throwable("getTypeFromVariableList. Stange case '" + name + "' not found"));
-      }
-
-      varName, manyTomList(Variable[astName=varName,astType=type@Type[]],tail) -> { return type; }
-      varName, manyTomList(VariableStar[astName=varName,astType=type@Type[]],tail) -> { return type; }
-      _, manyTomList(t,tail) -> { return getTypeFromVariableList(name,tail); }
-      
-    }
-    return null;
-  }
- 
 } // Class TomExpander
 
 

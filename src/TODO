@@ -1,16 +1,17 @@
 
-1703/2004
+17/03/2004
 ----------
  premieres idees sur le meta-preprocesseur
 
   %newcommand %vas[1] %special_text(vas-to-tom, #1)
   %newcommand %java[1] ...
+  %newcommand %rule[1] %special_text(jtom, #1)
 
   %special_text(vas-to-tom, "--javagen -n peano" ) {
    ...
   }
 
-  %special_tree(jtom, "" ) {
+  %special_text(jtom, "" ) {
     %rule {
        ... 
     }

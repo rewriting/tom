@@ -135,10 +135,10 @@ public class TomCompiler extends TomTask {
               }
               TomList newPatternList = empty();
               while(!patternList.isEmpty()) {
-                  /*
-                   * the call to preProcessing performs the recursive expansion
-                   * of nested match constructs
-                   */
+                /*
+                 * the call to preProcessing performs the recursive expansion
+                 * of nested match constructs
+                 */
                 TomTerm elt = preProcessing(patternList.getHead());
                 TomTerm newPatternAction = elt;
               
@@ -147,42 +147,42 @@ public class TomCompiler extends TomTask {
                     PatternAction(TermList(termList),actionInst, option) -> {
                       TomList newTermList = empty();
                       Instruction newActionInst = actionInst;
-                        /* generate equality checks */
+                      /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
                       TomList renamedTermList = linearizePattern(`termList,equalityCheck);
 											newPatternAction = `PatternAction(TermList(renamedTermList),actionInst, option);        
                     
-                        /* abstract patterns */
+                      /* abstract patterns */
                       ArrayList abstractedPattern  = new ArrayList();
                       ArrayList introducedVariable = new ArrayList();
                       newTermList = abstractPatternList(renamedTermList, abstractedPattern, introducedVariable);
 
                       if(abstractedPattern.size() > 0) {
-                          /* generate a new match construct */
+                        /* generate a new match construct */
                       
                         TomTerm generatedPatternAction =
                           `PatternAction(TermList(ast().makeList(abstractedPattern)),newActionInst, concOption());        
-                          /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
+                        /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
                         OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
                         Instruction generatedMatch =
                           `Match(SubjectList(ast().makeList(introducedVariable)),
                                  PatternList(cons(generatedPatternAction,empty())),
                                  generatedMatchOptionList);
-                          /*System.out.println("Generate new Match"+generatedMatch); */
+                        /*System.out.println("Generate new Match"+generatedMatch); */
                         generatedMatch = preProcessingInstruction(generatedMatch);
                         newPatternAction =
                           `PatternAction(TermList(newTermList),generatedMatch, option);
                       
-                          /*System.out.println("newPatternAction = " + newPatternAction); */
+                        /*System.out.println("newPatternAction = " + newPatternAction); */
                       }
-                        /* do nothing */
+                      /* do nothing */
                       break matchBlock;
                     }
                   
                     _ -> {
                       System.out.println("preProcessing: strange PatternAction: " + elt);
-                        //System.out.println("termList = " + elt.getTermList());
-                        //System.out.println("tom      = " + elt.getTom()); 
+                      //System.out.println("termList = " + elt.getTermList());
+                      //System.out.println("tom      = " + elt.getTom()); 
                       throw new TomRuntimeException(new Throwable("preProcessing: strange PatternAction: " + elt));
                     }
                   }
@@ -199,7 +199,7 @@ public class TomCompiler extends TomTask {
             }
 
             RuleSet(rl@manyTomRuleList(
-                    RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
+                                       RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
               TomRuleList ruleList = `rl;
               if(debugMode) {
                 debugKey = `orgTrack.getFileName().getString() + `orgTrack.getLine();
@@ -249,7 +249,7 @@ public class TomCompiler extends TomTask {
               Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,subjectListAST);
               ArrayList optionList = new ArrayList();
               optionList.add(`orgTrack);
-                //optionList.add(tsf().makeOption_GeneratedMatch());
+              //optionList.add(tsf().makeOption_GeneratedMatch());
               OptionList generatedOptions = ast().makeOptionList(optionList);
               Instruction matchAST = `Match(SubjectList(matchArgumentsList),
                                             PatternList(patternActionList),
@@ -258,20 +258,20 @@ public class TomCompiler extends TomTask {
               InstructionList l;
               if(eCode) {
                 l = `concInstruction(
-                  makeFunctionBeginAST,
-                  LocalVariable(),
-                  EndLocalVariable(),
-                  matchAST,
-                  buildAST,
-                  MakeFunctionEnd()
-                  );
+                                     makeFunctionBeginAST,
+                                     LocalVariable(),
+                                     EndLocalVariable(),
+                                     matchAST,
+                                     buildAST,
+                                     MakeFunctionEnd()
+                                     );
               } else {
                 l = `concInstruction(
-                  makeFunctionBeginAST,
-                  matchAST,
-                  buildAST,
-                  MakeFunctionEnd()
-                  );
+                                     makeFunctionBeginAST,
+                                     matchAST,
+                                     buildAST,
+                                     MakeFunctionEnd()
+                                     );
               }
             
               return preProcessingInstruction(`AbstractBlock(l));
@@ -357,15 +357,14 @@ public class TomCompiler extends TomTask {
 
 			var@(Variable|VariableStar)[astName=name,constraints=clist] -> {
 				ConstraintList newConstraintList = renameVariableInConstraintList(clist,multiplicityMap,equalityCheck);
-				if (!multiplicityMap.containsKey(name)) {
+				if(!multiplicityMap.containsKey(name)) {
 					// We see this variable for the first time
 					multiplicityMap.put(name,new Integer(1));
 					renamedTerm = `var.setConstraints(newConstraintList);
-				}
-				else {
+				} else {
 					// We have already seen this variable
 					Integer multiplicity = (Integer) multiplicityMap.get(name);
-					int mult = multiplicity.intValue();
+					int mult = multiplicity.intValue(); 
 					multiplicityMap.put(name,new Integer(mult+1));
 					
 					TomNumberList path = tsf().makeTomNumberList();
