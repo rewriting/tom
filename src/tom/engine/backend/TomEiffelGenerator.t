@@ -129,5 +129,13 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		out.write("not ");
 		generateExpression(out,deep,exp);
 	}
-	
+
+  protected void buildExpTrue() {
+		out.write(" true ");
+  }
+  
+  protected void buildExpFalse() {
+		out.write(" false ");
+  }
+
 }

@@ -59,4 +59,12 @@ public class TomCGenerator extends TomImperativeGenerator {
 		out.writeln(";");
 	}
 	
+  protected void buildExpTrue() {
+		out.write(" 1 ");
+  }
+  
+  protected void buildExpFalse() {
+		out.write(" 0 ");
+  }
+
 }

@@ -199,24 +199,8 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		out.write(")");
 	}
 
-  protected abstract void buildExpTrue() {
-    if(cCode) {
-      out.write(" 1 ");
-    } else if(jCode) {
-      out.write(" true ");
-    } else if(eCode) {
-      out.write(" true ");
-    }
-  }
+  protected abstract void buildExpTrue();
   
-  protected abstract void buildExpFalse() {
-    if(cCode) {
-      out.write(" 0 ");
-    } else if(jCode) {
-      out.write(" false ");
-    } else if(eCode) {
-      out.write(" false ");
-    }
-  }
+  protected abstract void buildExpFalse();
 	
 }

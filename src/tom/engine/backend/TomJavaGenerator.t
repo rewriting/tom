@@ -66,4 +66,12 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 		}
 	}
 
+  protected void buildExpTrue() {
+		out.write(" true ");
+	}
+  
+  protected void buildExpFalse() {
+		out.write(" false ");
+  }
+	
 }
