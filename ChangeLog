@@ -1,3 +1,9 @@
+2004-03-16  pem  <pem@polly.loria.fr>
+
+	* src/jtom/compiler/TomKernelCompiler.t: 
+	  - syntactic patterns are no longer abstracted
+	  - compilation of syntactic patterns in list-matching
+
 2004-03-15    <pem@bach>
 
 	* src/jtom/Tom.java: allows Tom to compile several files 

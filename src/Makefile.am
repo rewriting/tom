@@ -8,7 +8,7 @@ JARVERSIONFILE = jtom-devel-${VERSION}.jar
 data_DATA  = 
 CLEANFILES = ${JARFILE} ${JARVERSIONFILE}
 
-EXTRA_DIST = TODO ALGO 
+EXTRA_DIST = TODO ALGO make_rules
 
 bootstrap:
 	@$(MAKE) clean

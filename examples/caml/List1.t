@@ -23,6 +23,7 @@ try (
     conc(x1*,x,x,x2*) -> {
       raise (Res(swapsort(`conc(x1*,x,x2*))))
     }
+
   }
   ; l
 )

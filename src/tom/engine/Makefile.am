@@ -10,7 +10,7 @@ stabledir 	= $(top_srcdir)/stable/jtom
 TOMSOURCES      = TomBase.t
 BOOTSOURCES	= $(TOMSOURCES:.t=.java) Tom.java TomEnvironment.java
 java_JAVA       = $(BOOTSOURCES)
-EXTRA_DIST 	= $(BOOTSOURCES) $(TOMSOURCES) make_rules
+EXTRA_DIST 	= $(BOOTSOURCES) $(TOMSOURCES) 
 CLEANFILES 	= $(TOMSOURCES:.t=.java) tomjava.stamp
 BUILT_SOURCES   = tomjava.stamp $(BOOTSOURCES)
 
