@@ -275,7 +275,6 @@
       <include name="**/*.java"/>
     </javac>
   </target>
-
   
   <target name="pqueens">
     <!-- build tom -->
@@ -333,7 +332,7 @@
  
   <target name="set">
     <!-- build adt -->
-    <adt file="${set.dir}/set.adt" 
+    <adt file="${set.dir}/jgset.adt" 
          factory="jgset" 
          package="adt" 
          destdir="${set.dir}"/>
@@ -382,8 +381,8 @@
   <target name="build.examples" 
           description="Builds the examples (at least some)"
           depends="addressbook, apireach, boulderdash, builtin, dom,
-					expression, gtree, nspk, pnspk, pqueens, rbtree, reach, vas, 
-					set, xml">
+					expression, gtree, nspk, pnspk, pqueens, rbtree, reach, set,
+          vas, xml">
   </target>
   
   <target name="dist.examples" description="Prepare a

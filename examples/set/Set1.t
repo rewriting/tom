@@ -2,8 +2,8 @@ import java.util.*;
 
 import aterm.*;
 import aterm.pure.*;
-import adt.set.*;
-import adt.set.types.*;
+import adt.jgset.*;
+import adt.jgset.types.*;
 
 import jtom.runtime.GenericTraversal;
 import jtom.runtime.Replace1;
@@ -50,9 +50,9 @@ public class Set1 {
     1 << 30,
     1 << 31
   };
-  
+
   %include { jgset.tom }
-  
+
   public Set1(Factory factory) {
     this(factory, 31);
   }
@@ -92,7 +92,7 @@ public class Set1 {
   
   public int card(JGSet t) {
     %match(JGSet t) {
-      emptySet()    -> { return 0; }
+      emptyJGSet()    -> { return 0; }
       singleton(x) -> { return 1; }
       branch(l, r) -> {return card(l) + card(r);}
     }
@@ -109,7 +109,7 @@ public class Set1 {
     // getHead return the first left inner element found
   public ATerm getHead(JGSet t) {
     %match(JGSet t) {
-      emptySet() -> {
+      emptyJGSet() -> {
         return null;
       }
       singleton(x) -> {return x;}
@@ -131,10 +131,10 @@ public class Set1 {
   /* Simple binary operation skeleton
  private JGSet f(JGSet m1, JGSet m2) {
    %match(JGSet m1, JGSet m2) {
-      emptySet, x -> {
+      emptyJGSet, x -> {
         return f2(m2);
       }
-      x, emptySet -> {
+      x, emptyJGSet -> {
         return f1(m1);
       }
       singleton(y) , x -> {
@@ -153,11 +153,11 @@ public class Set1 {
     Replace1 replace = new Replace1() {
         public ATerm apply(ATerm t) {
           %match(JGSet t) {
-            emptySet() -> {return t;}
+            emptyJGSet() -> {return t;}
             singleton(x) -> {return t;}
-            branch(emptySet(), s@singleton(x)) -> {return s;}
-            branch(s@singleton(x), emptySet()) -> {return s;}
-            branch(e@emptySet(), emptySet()) -> {return e;}
+            branch(emptyJGSet(), s@singleton(x)) -> {return s;}
+            branch(s@singleton(x), emptyJGSet()) -> {return s;}
+            branch(e@emptyJGSet(), emptyJGSet()) -> {return e;}
             branch(l1, l2) -> {return `branch(reworkJGSet(l1), reworkJGSet(l2));}
             _ -> { return traversal.genericTraversal(t,this); }
           }
@@ -173,11 +173,11 @@ public class Set1 {
   
   private JGSet union(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptySet(), x -> {
+      emptyJGSet(), x -> {
         return m2;
       }
 
-      x, emptySet() -> {
+      x, emptyJGSet() -> {
         return m1;
       }
 
@@ -199,9 +199,9 @@ public class Set1 {
   
   private JGSet intersection(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptySet(), x |
-        x, emptySet() -> { 
-        return `emptySet();
+      emptyJGSet(), x |
+        x, emptyJGSet() -> { 
+        return `emptyJGSet();
       }
       
       s@singleton(y), x |
@@ -209,7 +209,7 @@ public class Set1 {
         if (member(y, x, level)) {
           return s;
         } else {
-          return `emptySet();
+          return `emptyJGSet();
         }
       }
 
@@ -223,9 +223,9 @@ public class Set1 {
   
   public JGSet restriction(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptySet(), x |
-      x, emptySet() -> { 
-        return `emptySet();
+      emptyJGSet(), x |
+      x, emptyJGSet() -> { 
+        return `emptyJGSet();
       }
       
       singleton(y), x -> {
@@ -236,7 +236,7 @@ public class Set1 {
         if (member(y, x)) {
           return m2;
         } else {
-          return `emptySet();
+          return `emptyJGSet();
         }
       }
 
@@ -250,10 +250,10 @@ public class Set1 {
   
   private JGSet remove(ATerm elt, JGSet t, int level) {
     %match(JGSet t) {
-      emptySet()     -> {return t;}
+      emptyJGSet()     -> {return t;}
 
       singleton(x)   -> {
-        if (x == elt) {return `emptySet();}
+        if (x == elt) {return `emptyJGSet();}
         else {return t;}
       }
 
@@ -267,8 +267,8 @@ public class Set1 {
           r1 = remove(elt, r, level+1);
         }
         %match(JGSet l1, JGSet r1) {
-          emptySet(), singleton(x) -> {return r1;}
-          singleton(x), emptySet() -> {return l1;}
+          emptyJGSet(), singleton(x) -> {return r1;}
+          singleton(x), emptyJGSet() -> {return l1;}
           _, _ -> {return `branch(l1, r1);}
         }
       }
@@ -278,7 +278,7 @@ public class Set1 {
 
   private boolean member(ATerm elt, JGSet t, int level) {
     %match(JGSet t) {
-      emptySet() -> {return false;}
+      emptyJGSet() -> {return false;}
       
       singleton(x) -> {
         if(x == elt) return true;
@@ -301,7 +301,7 @@ public class Set1 {
   private JGSet override(ATerm elt, JGSet t, int level) {
     int lev = level+1;
     %match(JGSet t) {
-      emptySet()      -> {return `singleton(elt);}
+      emptyJGSet()      -> {return `singleton(elt);}
 
       singleton(x)   -> {
         if(x == elt) {  return `singleton(elt);}
@@ -312,8 +312,8 @@ public class Set1 {
           return `branch(t, singleton(elt));
           
         }
-        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(override(elt, t, lev), emptySet);}
-        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptySet, override(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(override(elt, t, lev), emptyJGSet);}
+        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptyJGSet, override(elt, t, lev));}
         else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(singleton(elt), t);}
         else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, singleton(elt));}
       }
@@ -338,12 +338,12 @@ public class Set1 {
   private JGSet underride(ATerm elt, JGSet t, int level) {
     int lev = level+1;
     %match(JGSet t) {
-      emptySet()     -> {return `singleton(elt);}
+      emptyJGSet()     -> {return `singleton(elt);}
 
       singleton(x)   -> {
         if(x == elt) {  return t;}
-        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(underride(elt, t, lev), emptySet);}
-        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptySet, underride(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(underride(elt, t, lev), emptyJGSet);}
+        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptyJGSet, underride(elt, t, lev));}
         else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(singleton(elt), t);}
         else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, singleton(elt));}
       }
@@ -407,10 +407,10 @@ public class Set1 {
       // Execution 
   public void run(int n) {
 
-    JGSet t0 = `emptySet();
-    JGSet t00 = `emptySet();
-    JGSet t1 = `emptySet();
-    JGSet t2 = `emptySet();
+    JGSet t0 = `emptyJGSet();
+    JGSet t00 = `emptyJGSet();
+    JGSet t1 = `emptyJGSet();
+    JGSet t2 = `emptyJGSet();
     Element e1 = `e1();
     Element e2 = `e2();
     Element e3 = `e3();
@@ -458,7 +458,7 @@ public class Set1 {
     if (t0 == remove(trm, t1)) {System.out.println("getTail is OK");}
     System.out.println("getTail from tree in: "+ (stopChrono-startChrono) + " ms");
     
-      //Adding element to a java Set
+      //Adding element to a java JGSet
     TreeSet set = new TreeSet(comparator);
     startChrono = System.currentTimeMillis();
     for(int i=0 ; i<3*n ; i++) {
@@ -475,13 +475,13 @@ public class Set1 {
     stopChrono = System.currentTimeMillis();
     System.out.println("Found each element of JGSet size = " + size + " in " + (stopChrono-startChrono) + " ms");
     
-      // Looking for elements in a java Set
+      // Looking for elements in a java JGSet
     startChrono = System.currentTimeMillis();
     for(int i=0 ; i<3*n ; i++) {
       if( set.contains(array[i]) == false) System.out.println("Loose an element");
     }
     stopChrono = System.currentTimeMillis();
-    System.out.println("Found each element of java Set size = " + size + " in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Found each element of java JGSet size = " + size + " in " + (stopChrono-startChrono) + " ms");
     
       //Maximal sharing
     TreeSet set2 = new TreeSet(comparator);
@@ -501,7 +501,7 @@ public class Set1 {
     startChrono = System.currentTimeMillis();
     set.addAll(set2);
     stopChrono = System.currentTimeMillis();
-    System.out.println("Simple union for java Set in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Simple union for java JGSet in " + (stopChrono-startChrono) + " ms");
 
      
     startChrono = System.currentTimeMillis();
@@ -513,11 +513,11 @@ public class Set1 {
     startChrono = System.currentTimeMillis();
     set.containsAll(set2);
     stopChrono = System.currentTimeMillis();
-    System.out.println("Simple intersection for java Set in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Simple intersection for java JGSet in " + (stopChrono-startChrono) + " ms");
     
-    JGSet t5 = `emptySet();
-    JGSet t6 = `emptySet();
-    JGSet t7 = `emptySet();
+    JGSet t5 = `emptyJGSet();
+    JGSet t6 = `emptyJGSet();
+    JGSet t7 = `emptyJGSet();
     TreeSet set5 = new TreeSet(comparator);
     TreeSet set6 = new TreeSet(comparator);
     TreeSet set7 = new TreeSet(comparator);
@@ -542,7 +542,7 @@ public class Set1 {
     startChrono = System.currentTimeMillis();
     set5.addAll(set6);
     stopChrono = System.currentTimeMillis();
-    System.out.println("Complex union for java Set in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Complex union for java JGSet in " + (stopChrono-startChrono) + " ms");
 
 
     startChrono = System.currentTimeMillis();
@@ -553,7 +553,7 @@ public class Set1 {
     startChrono = System.currentTimeMillis();
     set5.containsAll(set6);
     stopChrono = System.currentTimeMillis();
-    System.out.println("Complex intersection for java Set in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Complex intersection for java JGSet in " + (stopChrono-startChrono) + " ms");
     
   }
 

@@ -1,5 +1,5 @@
 [
-constructor(JGSet,emptySet,emptySet),
+constructor(JGSet,emptyJGSet,emptyJGSet),
 constructor(JGSet,singleton,singleton(<value(term)>)),
 constructor(JGSet,branch,branch(<left(JGSet)>,<right(JGSet)>)),
 constructor(Element,f,f(<elt(Element)>)),
