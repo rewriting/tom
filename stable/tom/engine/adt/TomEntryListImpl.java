@@ -53,6 +53,9 @@ abstract public class TomEntryListImpl extends aterm.pure.ATermListImpl
   public boolean isMany() {
     return !isEmpty();
   }
+  public boolean isSingle() {
+    return !isEmpty() && getNext().isEmpty();
+  }
   public boolean hasHead() {
     return !isEmpty();
   }

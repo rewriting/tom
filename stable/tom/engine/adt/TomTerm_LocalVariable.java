@@ -3,7 +3,7 @@ package jtom.adt;
 public class TomTerm_LocalVariable
 extends TomTerm_LocalVariableImpl
 {
-  TomTerm_LocalVariable(TomSignatureFactory factory) {
+  protected TomTerm_LocalVariable(TomSignatureFactory factory) {
     super(factory);
   }
 

@@ -232,9 +232,6 @@ public class TomSignatureFactory extends PureFactory
   private aterm.AFun funTomTerm_MakeTerm;
   private TomTerm protoTomTerm_MakeTerm;
   private aterm.ATerm patternTomTerm_MakeTerm;
-  private aterm.AFun funTomTerm_BackQuoteTerm;
-  private TomTerm protoTomTerm_BackQuoteTerm;
-  private aterm.ATerm patternTomTerm_BackQuoteTerm;
   private aterm.AFun funTomTerm_FunctionCall;
   private TomTerm protoTomTerm_FunctionCall;
   private aterm.ATerm patternTomTerm_FunctionCall;
@@ -247,6 +244,12 @@ public class TomSignatureFactory extends PureFactory
   private aterm.AFun funTomTerm_Appl;
   private TomTerm protoTomTerm_Appl;
   private aterm.ATerm patternTomTerm_Appl;
+  private aterm.AFun funTomTerm_BackQuoteAppl;
+  private TomTerm protoTomTerm_BackQuoteAppl;
+  private aterm.ATerm patternTomTerm_BackQuoteAppl;
+  private aterm.AFun funTomTerm_Composite;
+  private TomTerm protoTomTerm_Composite;
+  private aterm.ATerm patternTomTerm_Composite;
   private aterm.AFun funTomTerm_RecordAppl;
   private TomTerm protoTomTerm_RecordAppl;
   private aterm.ATerm patternTomTerm_RecordAppl;
@@ -301,9 +304,6 @@ public class TomSignatureFactory extends PureFactory
   private aterm.AFun funTomTerm_UnamedVariable;
   private TomTerm protoTomTerm_UnamedVariable;
   private aterm.ATerm patternTomTerm_UnamedVariable;
-  private aterm.AFun funTomTerm_DotTerm;
-  private TomTerm protoTomTerm_DotTerm;
-  private aterm.ATerm patternTomTerm_DotTerm;
   private aterm.AFun funTomTerm_LocalVariable;
   private TomTerm protoTomTerm_LocalVariable;
   private aterm.ATerm patternTomTerm_LocalVariable;
@@ -322,9 +322,6 @@ public class TomSignatureFactory extends PureFactory
   private aterm.AFun funTomTerm_BuildArray;
   private TomTerm protoTomTerm_BuildArray;
   private aterm.ATerm patternTomTerm_BuildArray;
-  private aterm.AFun funTomTerm_BuildBuiltin;
-  private TomTerm protoTomTerm_BuildBuiltin;
-  private aterm.ATerm patternTomTerm_BuildBuiltin;
   private aterm.AFun funTomTerm_CompiledMatch;
   private TomTerm protoTomTerm_CompiledMatch;
   private aterm.ATerm patternTomTerm_CompiledMatch;
@@ -783,10 +780,6 @@ public class TomSignatureFactory extends PureFactory
     funTomTerm_MakeTerm = makeAFun("_TomTerm_MakeTerm", 1, false);
     protoTomTerm_MakeTerm = new TomTerm_MakeTerm(this);
 
-    patternTomTerm_BackQuoteTerm = parse("BackQuoteTerm(<term>,<term>)");
-    funTomTerm_BackQuoteTerm = makeAFun("_TomTerm_BackQuoteTerm", 2, false);
-    protoTomTerm_BackQuoteTerm = new TomTerm_BackQuoteTerm(this);
-
     patternTomTerm_FunctionCall = parse("FunctionCall(<term>,<term>)");
     funTomTerm_FunctionCall = makeAFun("_TomTerm_FunctionCall", 2, false);
     protoTomTerm_FunctionCall = new TomTerm_FunctionCall(this);
@@ -802,6 +795,14 @@ public class TomSignatureFactory extends PureFactory
     patternTomTerm_Appl = parse("Appl(<term>,<term>,<term>)");
     funTomTerm_Appl = makeAFun("_TomTerm_Appl", 3, false);
     protoTomTerm_Appl = new TomTerm_Appl(this);
+
+    patternTomTerm_BackQuoteAppl = parse("BackQuoteAppl(<term>,<term>,<term>)");
+    funTomTerm_BackQuoteAppl = makeAFun("_TomTerm_BackQuoteAppl", 3, false);
+    protoTomTerm_BackQuoteAppl = new TomTerm_BackQuoteAppl(this);
+
+    patternTomTerm_Composite = parse("Composite(<term>)");
+    funTomTerm_Composite = makeAFun("_TomTerm_Composite", 1, false);
+    protoTomTerm_Composite = new TomTerm_Composite(this);
 
     patternTomTerm_RecordAppl = parse("RecordAppl(<term>,<term>,<term>)");
     funTomTerm_RecordAppl = makeAFun("_TomTerm_RecordAppl", 3, false);
@@ -875,10 +876,6 @@ public class TomSignatureFactory extends PureFactory
     funTomTerm_UnamedVariable = makeAFun("_TomTerm_UnamedVariable", 2, false);
     protoTomTerm_UnamedVariable = new TomTerm_UnamedVariable(this);
 
-    patternTomTerm_DotTerm = parse("DotTerm(<term>,<term>)");
-    funTomTerm_DotTerm = makeAFun("_TomTerm_DotTerm", 2, false);
-    protoTomTerm_DotTerm = new TomTerm_DotTerm(this);
-
     patternTomTerm_LocalVariable = parse("LocalVariable");
     funTomTerm_LocalVariable = makeAFun("_TomTerm_LocalVariable", 0, false);
     protoTomTerm_LocalVariable = new TomTerm_LocalVariable(this);
@@ -902,10 +899,6 @@ public class TomSignatureFactory extends PureFactory
     patternTomTerm_BuildArray = parse("BuildArray(<term>,<term>)");
     funTomTerm_BuildArray = makeAFun("_TomTerm_BuildArray", 2, false);
     protoTomTerm_BuildArray = new TomTerm_BuildArray(this);
-
-    patternTomTerm_BuildBuiltin = parse("BuildBuiltin(<term>)");
-    funTomTerm_BuildBuiltin = makeAFun("_TomTerm_BuildBuiltin", 1, false);
-    protoTomTerm_BuildBuiltin = new TomTerm_BuildBuiltin(this);
 
     patternTomTerm_CompiledMatch = parse("CompiledMatch(<term>,<term>,<term>)");
     funTomTerm_CompiledMatch = makeAFun("_TomTerm_CompiledMatch", 3, false);
@@ -3457,37 +3450,6 @@ public class TomSignatureFactory extends PureFactory
     return make(patternTomTerm_MakeTerm, args);
   }
 
-  protected TomTerm_BackQuoteTerm makeTomTerm_BackQuoteTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_BackQuoteTerm) {
-      protoTomTerm_BackQuoteTerm.initHashCode(annos,fun,args);
-      return (TomTerm_BackQuoteTerm) build(protoTomTerm_BackQuoteTerm);
-    }
-  }
-
-  public TomTerm_BackQuoteTerm makeTomTerm_BackQuoteTerm(TomTerm _tomTerm, Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_tomTerm, _option};
-    return makeTomTerm_BackQuoteTerm( funTomTerm_BackQuoteTerm, args, empty);
-  }
-
-  public TomTerm TomTerm_BackQuoteTermFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_BackQuoteTerm);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_BackQuoteTerm(TomTermFromTerm( (aterm.ATerm) children.get(0)), OptionFromTerm( (aterm.ATerm) children.get(1)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_BackQuoteTermImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((Option)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_BackQuoteTerm, args);
-  }
-
   protected TomTerm_FunctionCall makeTomTerm_FunctionCall(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_FunctionCall) {
       protoTomTerm_FunctionCall.initHashCode(annos,fun,args);
@@ -3609,6 +3571,68 @@ public class TomSignatureFactory extends PureFactory
     args.add(((TomName)arg.getArgument(1)).toTerm());
     args.add(((TomList)arg.getArgument(2)).toTerm());
     return make(patternTomTerm_Appl, args);
+  }
+
+  protected TomTerm_BackQuoteAppl makeTomTerm_BackQuoteAppl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_BackQuoteAppl) {
+      protoTomTerm_BackQuoteAppl.initHashCode(annos,fun,args);
+      return (TomTerm_BackQuoteAppl) build(protoTomTerm_BackQuoteAppl);
+    }
+  }
+
+  public TomTerm_BackQuoteAppl makeTomTerm_BackQuoteAppl(Option _option, TomName _astName, TomList _args) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _args};
+    return makeTomTerm_BackQuoteAppl( funTomTerm_BackQuoteAppl, args, empty);
+  }
+
+  public TomTerm TomTerm_BackQuoteApplFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternTomTerm_BackQuoteAppl);
+
+    if (children != null) {
+      TomTerm tmp = makeTomTerm_BackQuoteAppl(OptionFromTerm( (aterm.ATerm) children.get(0)), TomNameFromTerm( (aterm.ATerm) children.get(1)), TomListFromTerm( (aterm.ATerm) children.get(2)));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(TomTerm_BackQuoteApplImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add(((Option)arg.getArgument(0)).toTerm());
+    args.add(((TomName)arg.getArgument(1)).toTerm());
+    args.add(((TomList)arg.getArgument(2)).toTerm());
+    return make(patternTomTerm_BackQuoteAppl, args);
+  }
+
+  protected TomTerm_Composite makeTomTerm_Composite(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_Composite) {
+      protoTomTerm_Composite.initHashCode(annos,fun,args);
+      return (TomTerm_Composite) build(protoTomTerm_Composite);
+    }
+  }
+
+  public TomTerm_Composite makeTomTerm_Composite(TomList _args) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_args};
+    return makeTomTerm_Composite( funTomTerm_Composite, args, empty);
+  }
+
+  public TomTerm TomTerm_CompositeFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternTomTerm_Composite);
+
+    if (children != null) {
+      TomTerm tmp = makeTomTerm_Composite(TomListFromTerm( (aterm.ATerm) children.get(0)));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(TomTerm_CompositeImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add(((TomList)arg.getArgument(0)).toTerm());
+    return make(patternTomTerm_Composite, args);
   }
 
   protected TomTerm_RecordAppl makeTomTerm_RecordAppl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -4169,37 +4193,6 @@ public class TomSignatureFactory extends PureFactory
     return make(patternTomTerm_UnamedVariable, args);
   }
 
-  protected TomTerm_DotTerm makeTomTerm_DotTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_DotTerm) {
-      protoTomTerm_DotTerm.initHashCode(annos,fun,args);
-      return (TomTerm_DotTerm) build(protoTomTerm_DotTerm);
-    }
-  }
-
-  public TomTerm_DotTerm makeTomTerm_DotTerm(TomTerm _kid1, TomTerm _kid2) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2};
-    return makeTomTerm_DotTerm( funTomTerm_DotTerm, args, empty);
-  }
-
-  public TomTerm TomTerm_DotTermFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_DotTerm);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_DotTerm(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_DotTermImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_DotTerm, args);
-  }
-
   protected TomTerm_LocalVariable makeTomTerm_LocalVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_LocalVariable) {
       protoTomTerm_LocalVariable.initHashCode(annos,fun,args);
@@ -4379,36 +4372,6 @@ public class TomSignatureFactory extends PureFactory
     args.add(((TomName)arg.getArgument(0)).toTerm());
     args.add(((TomList)arg.getArgument(1)).toTerm());
     return make(patternTomTerm_BuildArray, args);
-  }
-
-  protected TomTerm_BuildBuiltin makeTomTerm_BuildBuiltin(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_BuildBuiltin) {
-      protoTomTerm_BuildBuiltin.initHashCode(annos,fun,args);
-      return (TomTerm_BuildBuiltin) build(protoTomTerm_BuildBuiltin);
-    }
-  }
-
-  public TomTerm_BuildBuiltin makeTomTerm_BuildBuiltin(TomName _astName) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeTomTerm_BuildBuiltin( funTomTerm_BuildBuiltin, args, empty);
-  }
-
-  public TomTerm TomTerm_BuildBuiltinFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_BuildBuiltin);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_BuildBuiltin(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_BuildBuiltinImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_BuildBuiltin, args);
   }
 
   protected TomTerm_CompiledMatch makeTomTerm_CompiledMatch(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -6173,11 +6136,6 @@ public class TomSignatureFactory extends PureFactory
       return tmp;
     }
 
-    tmp = TomTerm_BackQuoteTermFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
     tmp = TomTerm_FunctionCallFromTerm(trm);
     if (tmp != null) {
       return tmp;
@@ -6194,6 +6152,16 @@ public class TomSignatureFactory extends PureFactory
     }
 
     tmp = TomTerm_ApplFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = TomTerm_BackQuoteApplFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = TomTerm_CompositeFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
@@ -6288,11 +6256,6 @@ public class TomSignatureFactory extends PureFactory
       return tmp;
     }
 
-    tmp = TomTerm_DotTermFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
     tmp = TomTerm_LocalVariableFromTerm(trm);
     if (tmp != null) {
       return tmp;
@@ -6319,11 +6282,6 @@ public class TomSignatureFactory extends PureFactory
     }
 
     tmp = TomTerm_BuildArrayFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = TomTerm_BuildBuiltinFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }

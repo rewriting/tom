@@ -701,14 +701,6 @@
   make(t0) { getTomSignatureFactory().makeTomTerm_MakeTerm(t0)}
 }
 
-%op TomTerm BackQuoteTerm(tomTerm:TomTerm, option:Option) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isBackQuoteTerm()}
-  get_slot(tomTerm,t) { t.getTomTerm()}
-  get_slot(option,t) { t.getOption()}
-  make(t0, t1) { getTomSignatureFactory().makeTomTerm_BackQuoteTerm(t0, t1)}
-}
-
 %op TomTerm FunctionCall(astName:TomName, args:TomList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isFunctionCall()}
@@ -738,6 +730,22 @@
   get_slot(astName,t) { t.getAstName()}
   get_slot(args,t) { t.getArgs()}
   make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_Appl(t0, t1, t2)}
+}
+
+%op TomTerm BackQuoteAppl(option:Option, astName:TomName, args:TomList) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isBackQuoteAppl()}
+  get_slot(option,t) { t.getOption()}
+  get_slot(astName,t) { t.getAstName()}
+  get_slot(args,t) { t.getArgs()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_BackQuoteAppl(t0, t1, t2)}
+}
+
+%op TomTerm Composite(args:TomList) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isComposite()}
+  get_slot(args,t) { t.getArgs()}
+  make(t0) { getTomSignatureFactory().makeTomTerm_Composite(t0)}
 }
 
 %op TomTerm RecordAppl(option:Option, astName:TomName, args:TomList) {
@@ -884,14 +892,6 @@
   make(t0, t1) { getTomSignatureFactory().makeTomTerm_UnamedVariable(t0, t1)}
 }
 
-%op TomTerm DotTerm(kid1:TomTerm, kid2:TomTerm) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isDotTerm()}
-  get_slot(kid1,t) { t.getKid1()}
-  get_slot(kid2,t) { t.getKid2()}
-  make(t0, t1) { getTomSignatureFactory().makeTomTerm_DotTerm(t0, t1)}
-}
-
 %op TomTerm LocalVariable {
   fsym {}
   is_fsym(t) { (t!= null) && t.isLocalVariable()}
@@ -933,13 +933,6 @@
   get_slot(astName,t) { t.getAstName()}
   get_slot(args,t) { t.getArgs()}
   make(t0, t1) { getTomSignatureFactory().makeTomTerm_BuildArray(t0, t1)}
-}
-
-%op TomTerm BuildBuiltin(astName:TomName) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isBuildBuiltin()}
-  get_slot(astName,t) { t.getAstName()}
-  make(t0) { getTomSignatureFactory().makeTomTerm_BuildBuiltin(t0)}
 }
 
 %op TomTerm CompiledMatch(decls:TomList, automataList:TomList, option:Option) {

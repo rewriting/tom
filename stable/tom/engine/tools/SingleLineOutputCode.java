@@ -29,8 +29,8 @@ import java.io.*;
 
 public final class SingleLineOutputCode extends OutputCode {
 
-  public SingleLineOutputCode(Writer file) {
-    super(file);
+  public SingleLineOutputCode(Writer file, boolean cCode, boolean pretty) {
+    super(file, cCode, pretty);
   }
 
   protected void internalWriteln() throws IOException {

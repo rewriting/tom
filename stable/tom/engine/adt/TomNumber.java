@@ -3,7 +3,7 @@ package jtom.adt;
 public abstract class TomNumber
 extends TomNumberImpl
 {
-  TomNumber(TomSignatureFactory factory) {
+  protected TomNumber(TomSignatureFactory factory) {
     super(factory);
   }
 

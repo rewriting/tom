@@ -4,6 +4,7 @@ import jtom.runtime.*;
 import adt.*;
 
 public class Nsh {
+  private static boolean authVerif = true;
 
   private TermFactory factory;
   private GenericTraversal traversal;
@@ -488,7 +489,6 @@ public class Nsh {
 
   
   private static int maxMessagesInNetwork = 1;
-  private static boolean authVerif = true;
   private static int fire[] = new int[20];
 
   public final static void main(String[] args) {

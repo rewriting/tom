@@ -3,7 +3,7 @@ package jtom.adt;
 public class SlotList
 extends SlotListImpl
 {
-  SlotList(TomSignatureFactory factory) {
+  protected SlotList(TomSignatureFactory factory) {
     super(factory);
   }
 

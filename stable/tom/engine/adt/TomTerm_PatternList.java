@@ -3,7 +3,7 @@ package jtom.adt;
 public class TomTerm_PatternList
 extends TomTerm_PatternListImpl
 {
-  TomTerm_PatternList(TomSignatureFactory factory) {
+  protected TomTerm_PatternList(TomSignatureFactory factory) {
     super(factory);
   }
 

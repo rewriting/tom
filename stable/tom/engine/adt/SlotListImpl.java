@@ -53,6 +53,9 @@ abstract public class SlotListImpl extends aterm.pure.ATermListImpl
   public boolean isMany() {
     return !isEmpty();
   }
+  public boolean isSingle() {
+    return !isEmpty() && getNext().isEmpty();
+  }
   public boolean hasHead() {
     return !isEmpty();
   }

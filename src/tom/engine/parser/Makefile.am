@@ -8,7 +8,7 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SH
 stabledir 	= $(top_srcdir)/stable/jtom/parser
 BOOTSOURCES	= JavaCharStream.java\
 		  TomBuffer.java\
-		  TomDollar.java
+		  TomBackQuoteParser.java
 
 generated_java  = Token.java\
 		  ParseException.java\
@@ -23,15 +23,15 @@ JAVAROOT        = ${top_builddir}/src/
 
 JAVACC          = @JAVACC@
 
-CLEANFILES 	= TomDollar.java $(generated_java)
+CLEANFILES 	= TomBackQuoteParser.java $(generated_java)
 
 $(generated_java): TomParser.jj
 	$(JAVACC) $<
 	touch Token.java ParseException.java TokenMgrError.java
 
-EXTRA_DIST 	= $(BOOTSOURCES) $(generated_java) TomParser.jj TomDollar.t
+EXTRA_DIST 	= $(BOOTSOURCES) $(generated_java) TomParser.jj TomBackQuoteParser.t
 
-BUILT_SOURCES   = TomDollar.java
+BUILT_SOURCES   = TomBackQuoteParser.java
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)

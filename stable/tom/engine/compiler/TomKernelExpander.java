@@ -42,7 +42,7 @@ public class TomKernelExpander extends TomBase {
   }
 
 // ------------------------------------------------------------
-     
+     
 // ------------------------------------------------------------
   
     /*
@@ -156,7 +156,7 @@ public class TomKernelExpander extends TomBase {
               subjectList = subjectList.getTail();
               l1 = l1.getTail();
             }
-            return tom_make_TermList(ast().makeList(list)) ;
+            return tom_make_TermList(ast() .makeList(list)) ;
            } }}matchlab_match2_pattern9: {  Option option = null;  TomTerm patternList = null;  TomTerm tomSubjectList = null;  TomTerm context = null; context = ( TomTerm) tom_match2_1; if(tom_is_fun_sym_Match(tom_match2_2)) {  TomTerm tom_match2_2_1 = null;  TomTerm tom_match2_2_2 = null;  Option tom_match2_2_3 = null; tom_match2_2_1 = ( TomTerm) tom_get_slot_Match_subjectList(tom_match2_2); tom_match2_2_2 = ( TomTerm) tom_get_slot_Match_patternList(tom_match2_2); tom_match2_2_3 = ( Option) tom_get_slot_Match_option(tom_match2_2); tomSubjectList = ( TomTerm) tom_match2_2_1; patternList = ( TomTerm) tom_match2_2_2; option = ( Option) tom_match2_2_3;
 
  
@@ -225,7 +225,7 @@ public class TomKernelExpander extends TomBase {
           }
         } else {
           while(!subjectList.isEmpty()) {
-            list.add(expandVariable(tom_make_TomTypeToTomTerm(typeList.getHead()) , subjectList.getHead()));
+            list.add(expandVariable(tom_make_TomTypeToTomTerm(typeList .getHead()) , subjectList.getHead()));
             subjectList = subjectList.getTail();
             typeList    = typeList.getTail();
           }
@@ -271,7 +271,7 @@ public class TomKernelExpander extends TomBase {
      {  OptionList tom_match5_1 = null; tom_match5_1 = ( OptionList) subjectList;matchlab_match5_pattern1: { if(tom_is_fun_sym_emptyOptionList(tom_match5_1)) {
   return subjectList;  }}matchlab_match5_pattern2: {  TomName name = null;  OptionList l = null; if(tom_is_fun_sym_manyOptionList(tom_match5_1)) {  Option tom_match5_1_1 = null;  OptionList tom_match5_1_2 = null; tom_match5_1_1 = ( Option) tom_get_slot_manyOptionList_head(tom_match5_1); tom_match5_1_2 = ( OptionList) tom_get_slot_manyOptionList_tail(tom_match5_1); if(tom_is_fun_sym_TomNameToOption(tom_match5_1_1)) {  TomName tom_match5_1_1_1 = null; tom_match5_1_1_1 = ( TomName) tom_get_slot_TomNameToOption_astName(tom_match5_1_1); if(tom_is_fun_sym_Name(tom_match5_1_1_1)) {  String tom_match5_1_1_1_1 = null; tom_match5_1_1_1_1 = ( String) tom_get_slot_Name_string(tom_match5_1_1_1); name = ( TomName) tom_match5_1_1_1; l = ( OptionList) tom_match5_1_2;
  
-        return tom_make_manyOptionList(tom_make_TomTermToOption(tom_make_Variable(ast().makeOption(orgTrack),name,type)),replaceAnnotedName(l, type, orgTrack))
+        return tom_make_manyOptionList(tom_make_TomTermToOption(tom_make_Variable(ast() .makeOption(orgTrack),name,type)),replaceAnnotedName(l, type, orgTrack))
 
  ;
        } } }}matchlab_match5_pattern3: {  Option t = null;  OptionList l = null; if(tom_is_fun_sym_manyOptionList(tom_match5_1)) {  Option tom_match5_1_1 = null;  OptionList tom_match5_1_2 = null; tom_match5_1_1 = ( Option) tom_get_slot_manyOptionList_head(tom_match5_1); tom_match5_1_2 = ( OptionList) tom_get_slot_manyOptionList_tail(tom_match5_1); t = ( Option) tom_match5_1_1; l = ( OptionList) tom_match5_1_2;
@@ -319,8 +319,8 @@ public class TomKernelExpander extends TomBase {
         while(!list.isEmpty()) {
           pa = list.getHead();
           if( isDefaultPattern(pa.getTermList().getTomList()) ) {
-            newPatternList = cons(tom_make_DefaultPatternAction(pa.getTermList(),pa.getTom(),pa.getOption()) , newPatternList);
-            newOption = tom_make_Option(tom_make_manyOptionList(tom_make_WithDefaultProduction(),option.getOptionList())) ;
+            newPatternList = cons(tom_make_DefaultPatternAction(pa .getTermList(),pa .getTom(),pa .getOption()) , newPatternList);
+            newOption = tom_make_Option(tom_make_manyOptionList(tom_make_WithDefaultProduction(),option .getOptionList())) ;
             needModification = true;
             if(!list.getTail().isEmpty()) {
                 // the default pattern is not the latest one!!

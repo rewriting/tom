@@ -34,7 +34,8 @@ JAVASOURCES     = ASCII_UCodeESC_CharStream.java\
                   TokenMgrError.java\
                   TomParser.java\
                   TomParserConstants.java\
-                  TomParserTokenManager.java
+                  TomParserTokenManager.java\
+		  TomBackQuoteParser.java
 
 java_JAVA       = $(JAVASOURCES)
 EXTRA_DIST      = $(JAVASOURCES)

@@ -3,7 +3,7 @@ package jtom.adt;
 public class Position_Position
 extends Position_PositionImpl
 {
-  Position_Position(TomSignatureFactory factory) {
+  protected Position_Position(TomSignatureFactory factory) {
     super(factory);
   }
 

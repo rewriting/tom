@@ -3,7 +3,7 @@ package jtom.adt;
 public abstract class PairNameDecl
 extends PairNameDeclImpl
 {
-  PairNameDecl(TomSignatureFactory factory) {
+  protected PairNameDecl(TomSignatureFactory factory) {
     super(factory);
   }
 

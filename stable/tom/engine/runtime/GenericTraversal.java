@@ -106,7 +106,7 @@ public class GenericTraversal {
       } else {
           //} catch(Exception e) {
           //e.printStackTrace();
-        System.out.println("Please, extend genericTraversalArray");
+        System.out.println("Please, extend genericTraversalArray.."+subject);
         System.exit(0);
       }
     return res;

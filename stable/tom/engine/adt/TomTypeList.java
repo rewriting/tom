@@ -3,7 +3,7 @@ package jtom.adt;
 public class TomTypeList
 extends TomTypeListImpl
 {
-  TomTypeList(TomSignatureFactory factory) {
+  protected TomTypeList(TomSignatureFactory factory) {
     super(factory);
   }
 

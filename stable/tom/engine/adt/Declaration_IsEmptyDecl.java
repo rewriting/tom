@@ -3,7 +3,7 @@ package jtom.adt;
 public class Declaration_IsEmptyDecl
 extends Declaration_IsEmptyDeclImpl
 {
-  Declaration_IsEmptyDecl(TomSignatureFactory factory) {
+  protected Declaration_IsEmptyDecl(TomSignatureFactory factory) {
     super(factory);
   }
 

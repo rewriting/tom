@@ -48,7 +48,7 @@ public class TomParser implements TomTask {
   private SymbolTable symbolTable;
   private Statistics stat;
   private jtom.TomEnvironment environment;
-  private TomDollar tomDollar;
+  private TomBackQuoteParser tomBackQuoteParser;
   private File importList[];
   private HashSet includedFiles;
   private String currentFile;
@@ -74,7 +74,7 @@ public class TomParser implements TomTask {
     this.orgTrack = makePosition(1,1);
     this.currentFile = fileName;
     this.debuggedStructureList = new ArrayList();
-    this.tomDollar = new TomDollar(environment);
+    this.tomBackQuoteParser = new TomBackQuoteParser(environment);
     includedFiles = alreadyParsedFiles;
   }
 
@@ -240,7 +240,6 @@ TOKEN :
   | < RULE:                "%rule" > : TOM
   | < MAKE_TERM:           "%make" > : TOM
   | < BACKQUOTE_TERM:      "`" > : TOM
-  | < DOLLAR_TERM:         "$" > : TOM
   | < BACKQUOTE_XML:       "``" > : TOM
   | < VARIABLE:            "%variable" > : TOM
   | < TYPE:                "%type" > : TOM
@@ -509,7 +508,7 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
     | MatchXMLConstruct(blockList)       { stat.numberTomBlocsRecognized++; }
     | RuleConstruct(blockList)           { stat.numberTomBlocsRecognized++; }
     | BackQuoteXML(blockList)            { stat.numberTomBlocsRecognized++; }
-    | DollarTerm(blockList)              { stat.numberTomBlocsRecognized++; }
+    | BackQuoteTerm(blockList)              { stat.numberTomBlocsRecognized++; }
     | IncludeConstruct(blockList)        { stat.numberTomBlocsRecognized++; }
     | LocalVariableConstruct(blockList)  { stat.numberTomBlocsRecognized++; }
     | Operator(blockList)                { stat.numberTomBlocsRecognized++; }
@@ -793,24 +792,23 @@ TomTerm Term() throws TomException: /* in TOM mode */
       }
 }
 
-void DollarTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
+void BackQuoteTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   TomTerm term;
   Option orgTrack;
 
   Token tk;
   int parenLevel = 0;
-  boolean dollar_mode = false;
+  boolean backQuoteMode = false;
   ArrayList tokenList = new ArrayList();
 }
 {
   <BACKQUOTE_TERM> /* switch to TOM mode */
-       //<DOLLAR_TERM> /* switch to TOM mode */
     {
       addPreviousCode(list);
       orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
-      dollar_mode = true;
-      while(dollar_mode) {
+      backQuoteMode = true;
+      while(backQuoteMode) {
         tk = getNextToken();
         tokenList.add(tk);
         if(tk.kind == TOM_LPAREN) {
@@ -818,14 +816,14 @@ void DollarTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
         } else if(tk.kind == TOM_RPAREN) {
           parenLevel--;
           if(parenLevel==0) {
-            dollar_mode = false;
+            backQuoteMode = false;
           }
         } 
       }
 
       switchToDefaultMode(); /* switch to DEFAULT mode */
         //term = ast().buildBackQuoteTerm(tokenList);
-      term = tomDollar.buildDollarTerm(tokenList);
+      term = tomBackQuoteParser.buildBackQuoteTerm(tokenList);
       list.add(term);
     }
 }

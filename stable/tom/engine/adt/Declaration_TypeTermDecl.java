@@ -3,7 +3,7 @@ package jtom.adt;
 public class Declaration_TypeTermDecl
 extends Declaration_TypeTermDeclImpl
 {
-  Declaration_TypeTermDecl(TomSignatureFactory factory) {
+  protected Declaration_TypeTermDecl(TomSignatureFactory factory) {
     super(factory);
   }
 

@@ -1,6 +1,12 @@
-2003-08-21  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+2003-08-22  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+        * bootinstall
+	* src/jtom/parser/TomParser.jj: removed old backquote and dotTerm parser
+	* src/jtom/tools/ASTFactory.java: removed previous dollar/backquote parser
+	* src/jtom/checker/TomChecker.t: adapted to DollarTerm
+	* src/jtom/TomSignature.adt: removed DotTerm, BuildBuiltin, BackquoteTerm
 
-	* re-implementation of the backquote parser
+2003-08-21  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+	* major redesign of the backquote parser
 	* should be compatible with the old one, but not yet finished
 
 2003-08-21    <julien.guyon@loria.fr>
@@ -15,7 +21,6 @@
 	* %typeint is now an int instead of an Integer
 
 2003-08-14    <pem@bach>
-
 	* bootstrap with the new apigen and aterm-java design
 	* bootinstall
 	* runtime/strategies added to stable

@@ -100,8 +100,8 @@ public class TomExpander extends TomBase implements TomTask {
         public ATerm apply(ATerm subject) {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
-              dollarTerm@DollarAppl[] -> {
-                return expandDollarAppl(dollarTerm);
+              backQuoteTerm@BackQuoteAppl[] -> {
+                return expandBackQuoteAppl(backQuoteTerm);
               }
 
               RecordAppl(option,Name(tomName),args) -> {
@@ -159,12 +159,12 @@ public class TomExpander extends TomBase implements TomTask {
     return `Appl(option,Name(tomName),subtermList);
   }
 
-  protected TomTerm expandDollarAppl(TomTerm t) {
+  protected TomTerm expandBackQuoteAppl(TomTerm t) {
     Replace1 replaceSymbol = new Replace1() {
         public ATerm apply(ATerm t) {
           if(t instanceof TomTerm) {
             %match(TomTerm t) {
-              DollarAppl[option=Option(optionList),astName=name@Name(tomName),args=l] -> {
+              BackQuoteAppl[option=Option(optionList),astName=name@Name(tomName),args=l] -> {
                 TomSymbol tomSymbol = getSymbol(tomName);
                 TomList args  = (TomList) traversal().genericTraversal(l,this);
                 

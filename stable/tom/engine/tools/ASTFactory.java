@@ -25,22 +25,9 @@
 
 package jtom.tools;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import jtom.adt.Declaration;
-import jtom.adt.Expression;
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.SlotList;
-import jtom.adt.TargetLanguage;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomSignatureFactory;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomType;
-import jtom.adt.TomTypeList;
+import java.util.*;
+import jtom.adt.*;
+import jtom.parser.*;
 import aterm.ATerm;
 
 public class ASTFactory {
@@ -78,6 +65,10 @@ public class ASTFactory {
         term = tsf().makeTomTerm_ExpressionToTomTerm((Expression)elt);
       } else if(elt instanceof TomName) {
         term = tsf().makeTomTerm_TomNameToTomTerm((TomName)elt);
+      } else if(elt instanceof XMLTerm) {
+        term = tsf().makeTomTerm_XMLTermToTomTerm((XMLTerm)elt);
+      } else if(elt instanceof Instruction) {
+        term = tsf().makeTomTerm_InstructionToTomTerm((Instruction)elt);
       } else {
         term = (TomTerm)elt;
       }
@@ -175,24 +166,22 @@ public class ASTFactory {
   private void makeSortSymbol(SymbolTable symbolTable,
                              String sort,
                              String value, ArrayList optionList) {
-    String resultType = sort;
     TomTypeList typeList = tsf().makeTomTypeList();
     TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
     SlotList slotList = tsf().makeSlotList();
-    TomSymbol astSymbol = makeSymbol(value,resultType,typeList,slotList,optionList,tlFsym);
+    TomSymbol astSymbol = makeSymbol(value,sort,typeList,slotList,optionList,tlFsym);
     symbolTable.putSymbol(value,astSymbol);
   }
 
   private void makeSortDecl(ArrayList list, String sort,
                             String equality_t1t2) {
-    String typeString = sort;
     Declaration getFunSym, getSubterm;
     Declaration cmpFunSym, equals;
     Option option = makeOption();
-    TomTerm variable_t = makeVariable(option,"t",typeString);
-    TomTerm variable_t1 = makeVariable(option,"t1",typeString);
-    TomTerm variable_t2 = makeVariable(option,"t2",typeString);
-    TomTerm variable_n = makeVariable(option,"n",typeString);
+    TomTerm variable_t = makeVariable(option,"t",sort);
+    TomTerm variable_t1 = makeVariable(option,"t1",sort);
+    TomTerm variable_t2 = makeVariable(option,"t2",sort);
+    TomTerm variable_n = makeVariable(option,"n","int");
     getFunSym = tsf().makeDeclaration_GetFunctionSymbolDecl(
       variable_t,tsf().makeTargetLanguage_ITL("t"), option);
     getSubterm = tsf().makeDeclaration_GetSubtermDecl(
@@ -213,7 +202,8 @@ public class ASTFactory {
      */
   public void makeIntegerSymbol(SymbolTable symbolTable,
                                 String value, ArrayList optionList) {
-    makeSortSymbol(symbolTable, "int", value, optionList);
+    String sort = "int";
+    makeSortSymbol(symbolTable, sort, value, optionList);
   }
 
   public void makeIntegerDecl(ArrayList list) {
@@ -226,8 +216,9 @@ public class ASTFactory {
      * create an double symbol
      */
   public void makeDoubleSymbol(SymbolTable symbolTable,
-                                String value, ArrayList optionList) {
-    makeSortSymbol(symbolTable, "double", value, optionList);
+                               String value, ArrayList optionList) {
+    String sort = "double";
+    makeSortSymbol(symbolTable, sort, value, optionList);
   }
 
   public void makeDoubleDecl(ArrayList list) {
@@ -241,7 +232,8 @@ public class ASTFactory {
      */
   public void makeStringSymbol(SymbolTable symbolTable,
                                String value, ArrayList optionList) {
-    makeSortSymbol(symbolTable, "String", value, optionList);
+    String sort = "String";
+    makeSortSymbol(symbolTable, sort, value, optionList);
   } 
 
   public void makeStringDecl(ArrayList list) {
@@ -266,10 +258,9 @@ public class ASTFactory {
     }
   }
 
-  public TargetLanguage reworkTLCode(TargetLanguage code) {
-    if(!Flags.pretty){
+  public TargetLanguage reworkTLCode(TargetLanguage code, boolean pretty) {
+    if(!pretty){
       String tlCode = code.getCode();
-//      tlCode = " "+tlCode.trim();
       tlCode = tlCode.replace('\n', ' ');
       return tsf().makeTargetLanguage_ITL(tlCode);
     } else
@@ -282,4 +273,5 @@ public class ASTFactory {
     else
       return tsf().makeTomName_EmptyName();
   }
+  
 }

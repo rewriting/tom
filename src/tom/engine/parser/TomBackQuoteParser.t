@@ -34,9 +34,9 @@ import jtom.tools.TomTaskInput;
 import jtom.tools.Tools;
 import aterm.*;
 
-public class TomDollar extends TomBase implements TomParserConstants {
+public class TomBackQuoteParser extends TomBase implements TomParserConstants {
   
-  public TomDollar(jtom.TomEnvironment environment) {
+  public TomBackQuoteParser(jtom.TomEnvironment environment) {
     super(environment);
   }
   
@@ -120,14 +120,14 @@ public class TomDollar extends TomBase implements TomParserConstants {
       option = ast().makeOption();
     }
 
-    return `DollarAppl(option,Name(name),args);
+    return `BackQuoteAppl(option,Name(name),args);
   }
 
   private void detectVariableStar(Stack stackList) {
     TomList list = (TomList) stackList.peek();
     %match(TomList list) {
       concTomTerm(X1*,Composite(concTomTerm(L*,
-                                            DollarAppl(option,
+                                            BackQuoteAppl(option,
                                                        Name(name),
                                                        concTomTerm()),
                                             TargetLanguageToTomTerm(ITL("*"))))) -> {
@@ -171,7 +171,7 @@ public class TomDollar extends TomBase implements TomParserConstants {
     return open==0;
   }
   
-  public TomTerm buildDollarTerm(List tokenList) {
+  public TomTerm buildBackQuoteTerm(List tokenList) {
     Token token = null;
     Token next = null;
     LinkedList accu = new LinkedList();
@@ -207,7 +207,7 @@ public class TomDollar extends TomBase implements TomParserConstants {
             if(it.hasNext()) {
               next = (Token)it.next();
             } else {
-              System.out.println("buildDollarTerm: term not correct");
+              System.out.println("buildBackQuoteTerm: term not correct");
               finish = true;
             }
             break matchBlock;
@@ -215,7 +215,7 @@ public class TomDollar extends TomBase implements TomParserConstants {
           
           IDENT(name), _ -> {
             Option option = ast().makeOption();
-            addToLastComposite(stackList, `DollarAppl(option,Name(name),concTomTerm()));
+            addToLastComposite(stackList, `BackQuoteAppl(option,Name(name),concTomTerm()));
               //concTomTerm(Composite(concTomTerm()))));
             break matchBlock;
           }
@@ -260,4 +260,4 @@ public class TomDollar extends TomBase implements TomParserConstants {
     return term;
   }
   
-} //class TomDollar
+} //class TomBackQuoteParser

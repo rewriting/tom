@@ -38,6 +38,7 @@ import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
+import jtom.tools.Tools;
 import aterm.ATerm;
 
 public class TomOptimizer extends TomBase implements TomTask {
@@ -53,7 +54,7 @@ public class TomOptimizer extends TomBase implements TomTask {
   }
   
   // ------------------------------------------------------------
-    
+    
   // ------------------------------------------------------------
     
  public void addTask(TomTask task) {
@@ -61,10 +62,22 @@ public class TomOptimizer extends TomBase implements TomTask {
   }
   public void process(TomTaskInput input) {
     try {
-	  System.out.println("Processing TomOptimizer Task");
+	  long startChrono = 0;
+	  boolean verbose = input.isVerbose(), intermediate = input.isIntermediate();
+	  if(verbose) {
+		startChrono = System.currentTimeMillis();
+	  }
 	  TomTerm optimizedTerm = optimize(input.getTerm());
+	  if(verbose) {
+		System.out.println("TOM optimization phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+	  } 
+      if(intermediate) {
+          Tools.generateOutput(input.inputFileName + input.optimizedSuffix, optimizedTerm);
+	  }
 	  input.setTerm(optimizedTerm);
     } catch (Exception e) {
+      e.printStackTrace();
+      return;
     }
     if(nextTask != null) {
       nextTask.process(input);
@@ -107,7 +120,7 @@ public class TomOptimizer extends TomBase implements TomTask {
     Replace1 replace = new Replace1 () {
 	public ATerm apply(ATerm t) {
 	  if (t instanceof TomTerm) {
-	     {  TomTerm tom_match1_1 = null; tom_match1_1 = ( TomTerm) t;matchlab_match1_pattern1: {  Option option = null;  TomList automata = null;  TomList decls = null; if(tom_is_fun_sym_CompiledMatch(tom_match1_1)) {  TomList tom_match1_1_1 = null;  TomList tom_match1_1_2 = null;  Option tom_match1_1_3 = null; tom_match1_1_1 = ( TomList) tom_get_slot_CompiledMatch_decls(tom_match1_1); tom_match1_1_2 = ( TomList) tom_get_slot_CompiledMatch_automataList(tom_match1_1); tom_match1_1_3 = ( Option) tom_get_slot_CompiledMatch_option(tom_match1_1); decls = ( TomList) tom_match1_1_1; automata = ( TomList) tom_match1_1_2; option = ( Option) tom_match1_1_3;
+	     {  TomTerm tom_match1_1 = null; tom_match1_1 = ( TomTerm) t;matchlab_match1_pattern1: {  TomList automata = null;  TomList decls = null;  Option option = null; if(tom_is_fun_sym_CompiledMatch(tom_match1_1)) {  TomList tom_match1_1_1 = null;  TomList tom_match1_1_2 = null;  Option tom_match1_1_3 = null; tom_match1_1_1 = ( TomList) tom_get_slot_CompiledMatch_decls(tom_match1_1); tom_match1_1_2 = ( TomList) tom_get_slot_CompiledMatch_automataList(tom_match1_1); tom_match1_1_3 = ( Option) tom_get_slot_CompiledMatch_option(tom_match1_1); decls = ( TomList) tom_match1_1_1; automata = ( TomList) tom_match1_1_2; option = ( Option) tom_match1_1_3;
  
 		numberCompiledMatchFound++;
 		declVarList = traversalCollectDecls(decls);
@@ -137,7 +150,7 @@ public class TomOptimizer extends TomBase implements TomTask {
  
 	String name = "tom"+numberListToIdentifier(l1);
 	numberVarFound++;
-	return cons(tom_make_AssignedVariable(name,source,0,tom_make_FalseTL(),tom_make_TrueTL()) ,
+	return cons(tom_make_AssignedVariable(name,source, 0,tom_make_FalseTL(),tom_make_TrueTL()) ,
 	traversalCollectDecls(l));
        } } } }}matchlab_match2_pattern2: {
   
@@ -158,7 +171,7 @@ public class TomOptimizer extends TomBase implements TomTask {
     list = avList;
     while(!list.isEmpty()) {
       av = list.getHead();
-       {  TomTerm tom_match3_1 = null;  TomTerm tom_match3_2 = null; tom_match3_1 = ( TomTerm) t; tom_match3_2 = ( TomTerm) av;matchlab_match3_pattern1: {  String name = null;  String tom_renamedvar_name_1 = null; if(tom_is_fun_sym_AssignedVariable(tom_match3_1)) {  String tom_match3_1_1 = null;  Expression tom_match3_1_2 = null;  int tom_match3_1_3;  Expression tom_match3_1_4 = null;  Expression tom_match3_1_5 = null; tom_match3_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match3_1); tom_match3_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match3_1); tom_match3_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match3_1); tom_match3_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match3_1); tom_match3_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match3_1); tom_renamedvar_name_1 = ( String) tom_match3_1_1; if(tom_is_fun_sym_AssignedVariable(tom_match3_2)) {  String tom_match3_2_1 = null;  Expression tom_match3_2_2 = null;  int tom_match3_2_3;  Expression tom_match3_2_4 = null;  Expression tom_match3_2_5 = null; tom_match3_2_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match3_2); tom_match3_2_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match3_2); tom_match3_2_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match3_2); tom_match3_2_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match3_2); tom_match3_2_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match3_2); name = ( String) tom_match3_2_1; if(tom_terms_equal_String(name, tom_renamedvar_name_1) &&  true ) {
+       {  TomTerm tom_match3_1 = null;  TomTerm tom_match3_2 = null; tom_match3_1 = ( TomTerm) t; tom_match3_2 = ( TomTerm) av;matchlab_match3_pattern1: {  String tom_renamedvar_name_1 = null;  String name = null; if(tom_is_fun_sym_AssignedVariable(tom_match3_1)) {  String tom_match3_1_1 = null;  Expression tom_match3_1_2 = null;  int tom_match3_1_3;  Expression tom_match3_1_4 = null;  Expression tom_match3_1_5 = null; tom_match3_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match3_1); tom_match3_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match3_1); tom_match3_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match3_1); tom_match3_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match3_1); tom_match3_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match3_1); tom_renamedvar_name_1 = ( String) tom_match3_1_1; if(tom_is_fun_sym_AssignedVariable(tom_match3_2)) {  String tom_match3_2_1 = null;  Expression tom_match3_2_2 = null;  int tom_match3_2_3;  Expression tom_match3_2_4 = null;  Expression tom_match3_2_5 = null; tom_match3_2_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match3_2); tom_match3_2_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match3_2); tom_match3_2_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match3_2); tom_match3_2_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match3_2); tom_match3_2_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match3_2); name = ( String) tom_match3_2_1; if(tom_terms_equal_String(name, tom_renamedvar_name_1) &&  true ) {
  
 	  return cons(av,updateDeclVarList(l));
 	 } } }} }
@@ -306,7 +319,7 @@ public class TomOptimizer extends TomBase implements TomTask {
 		  Expression expr = (Expression) traversal().genericTraversal(source, this);
 		  return tom_make_Assign(var,expr) ;
 		}
-	       } } }}matchlab_match9_pattern2: {  TomNumberList l1 = null;  TomTerm var = null; if(tom_is_fun_sym_Assign(tom_match9_1)) {  TomTerm tom_match9_1_1 = null;  Expression tom_match9_1_2 = null; tom_match9_1_1 = ( TomTerm) tom_get_slot_Assign_kid1(tom_match9_1); tom_match9_1_2 = ( Expression) tom_get_slot_Assign_source(tom_match9_1); var = ( TomTerm) tom_match9_1_1; if(tom_is_fun_sym_TomTermToExpression(tom_match9_1_2)) {  TomTerm tom_match9_1_2_1 = null; tom_match9_1_2_1 = ( TomTerm) tom_get_slot_TomTermToExpression_astTerm(tom_match9_1_2); if(tom_is_fun_sym_Variable(tom_match9_1_2_1)) {  Option tom_match9_1_2_1_1 = null;  TomName tom_match9_1_2_1_2 = null;  TomType tom_match9_1_2_1_3 = null; tom_match9_1_2_1_1 = ( Option) tom_get_slot_Variable_option(tom_match9_1_2_1); tom_match9_1_2_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match9_1_2_1); tom_match9_1_2_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match9_1_2_1); if(tom_is_fun_sym_PositionName(tom_match9_1_2_1_2)) {  TomNumberList tom_match9_1_2_1_2_1 = null; tom_match9_1_2_1_2_1 = ( TomNumberList) tom_get_slot_PositionName_numberList(tom_match9_1_2_1_2); l1 = ( TomNumberList) tom_match9_1_2_1_2_1;
+	       } } }}matchlab_match9_pattern2: {  TomTerm var = null;  TomNumberList l1 = null; if(tom_is_fun_sym_Assign(tom_match9_1)) {  TomTerm tom_match9_1_1 = null;  Expression tom_match9_1_2 = null; tom_match9_1_1 = ( TomTerm) tom_get_slot_Assign_kid1(tom_match9_1); tom_match9_1_2 = ( Expression) tom_get_slot_Assign_source(tom_match9_1); var = ( TomTerm) tom_match9_1_1; if(tom_is_fun_sym_TomTermToExpression(tom_match9_1_2)) {  TomTerm tom_match9_1_2_1 = null; tom_match9_1_2_1 = ( TomTerm) tom_get_slot_TomTermToExpression_astTerm(tom_match9_1_2); if(tom_is_fun_sym_Variable(tom_match9_1_2_1)) {  Option tom_match9_1_2_1_1 = null;  TomName tom_match9_1_2_1_2 = null;  TomType tom_match9_1_2_1_3 = null; tom_match9_1_2_1_1 = ( Option) tom_get_slot_Variable_option(tom_match9_1_2_1); tom_match9_1_2_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match9_1_2_1); tom_match9_1_2_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match9_1_2_1); if(tom_is_fun_sym_PositionName(tom_match9_1_2_1_2)) {  TomNumberList tom_match9_1_2_1_2_1 = null; tom_match9_1_2_1_2_1 = ( TomNumberList) tom_get_slot_PositionName_numberList(tom_match9_1_2_1_2); l1 = ( TomNumberList) tom_match9_1_2_1_2_1;
       
 		String name = "tom"+numberListToIdentifier(l1);
 		if (getNbUse(name) <= 1) 
@@ -363,14 +376,14 @@ public class TomOptimizer extends TomBase implements TomTask {
     Replace1 replace = new Replace1 () {
 	public ATerm apply(ATerm t) {
 	  if (t instanceof TomTerm) {
-	     {  TomTerm tom_match12_1 = null; tom_match12_1 = ( TomTerm) t;matchlab_match12_pattern1: {  Expression source = null;  int nbUse;  String varName = null; if(tom_is_fun_sym_AssignedVariable(tom_match12_1)) {  String tom_match12_1_1 = null;  Expression tom_match12_1_2 = null;  int tom_match12_1_3;  Expression tom_match12_1_4 = null;  Expression tom_match12_1_5 = null; tom_match12_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match12_1); tom_match12_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match12_1); tom_match12_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match12_1); tom_match12_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match12_1); tom_match12_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match12_1); varName = ( String) tom_match12_1_1; source = ( Expression) tom_match12_1_2; nbUse = ( int) tom_match12_1_3; if(tom_is_fun_sym_TrueTL(tom_match12_1_4)) { if(tom_is_fun_sym_FalseTL(tom_match12_1_5)) {
+	     {  TomTerm tom_match12_1 = null; tom_match12_1 = ( TomTerm) t;matchlab_match12_pattern1: {  String varName = null;  int nbUse;  Expression source = null; if(tom_is_fun_sym_AssignedVariable(tom_match12_1)) {  String tom_match12_1_1 = null;  Expression tom_match12_1_2 = null;  int tom_match12_1_3;  Expression tom_match12_1_4 = null;  Expression tom_match12_1_5 = null; tom_match12_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match12_1); tom_match12_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match12_1); tom_match12_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match12_1); tom_match12_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match12_1); tom_match12_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match12_1); varName = ( String) tom_match12_1_1; source = ( Expression) tom_match12_1_2; nbUse = ( int) tom_match12_1_3; if(tom_is_fun_sym_TrueTL(tom_match12_1_4)) { if(tom_is_fun_sym_FalseTL(tom_match12_1_5)) {
  
 		if (varName.equals(name)) {
 		  int newNbUse = nbUse + 1;
 		  return tom_make_AssignedVariable(varName,source,newNbUse,tom_make_TrueTL(),tom_make_FalseTL()) ;
 		} else
 		  return t;
-	       } } }}matchlab_match12_pattern2: {  int nbUse;  Expression source = null;  String varName = null; if(tom_is_fun_sym_AssignedVariable(tom_match12_1)) {  String tom_match12_1_1 = null;  Expression tom_match12_1_2 = null;  int tom_match12_1_3;  Expression tom_match12_1_4 = null;  Expression tom_match12_1_5 = null; tom_match12_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match12_1); tom_match12_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match12_1); tom_match12_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match12_1); tom_match12_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match12_1); tom_match12_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match12_1); varName = ( String) tom_match12_1_1; source = ( Expression) tom_match12_1_2; nbUse = ( int) tom_match12_1_3; if(tom_is_fun_sym_TrueTL(tom_match12_1_4)) { if(tom_is_fun_sym_TrueTL(tom_match12_1_5)) {
+	       } } }}matchlab_match12_pattern2: {  String varName = null;  Expression source = null;  int nbUse; if(tom_is_fun_sym_AssignedVariable(tom_match12_1)) {  String tom_match12_1_1 = null;  Expression tom_match12_1_2 = null;  int tom_match12_1_3;  Expression tom_match12_1_4 = null;  Expression tom_match12_1_5 = null; tom_match12_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match12_1); tom_match12_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match12_1); tom_match12_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match12_1); tom_match12_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match12_1); tom_match12_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match12_1); varName = ( String) tom_match12_1_1; source = ( Expression) tom_match12_1_2; nbUse = ( int) tom_match12_1_3; if(tom_is_fun_sym_TrueTL(tom_match12_1_4)) { if(tom_is_fun_sym_TrueTL(tom_match12_1_5)) {
  
 		if (varName.equals(name)) {
 		  int newNbUse = nbUse+ 1;
@@ -381,7 +394,7 @@ public class TomOptimizer extends TomBase implements TomTask {
 		    return tom_make_AssignedVariable(varName,source,newNbUse,tom_make_TrueTL(),tom_make_TrueTL()) ;
 		} else
 		  return t;
-	       } } }}matchlab_match12_pattern3: {  int nbUse;  Expression source = null;  String varName = null; if(tom_is_fun_sym_AssignedVariable(tom_match12_1)) {  String tom_match12_1_1 = null;  Expression tom_match12_1_2 = null;  int tom_match12_1_3;  Expression tom_match12_1_4 = null;  Expression tom_match12_1_5 = null; tom_match12_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match12_1); tom_match12_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match12_1); tom_match12_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match12_1); tom_match12_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match12_1); tom_match12_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match12_1); varName = ( String) tom_match12_1_1; source = ( Expression) tom_match12_1_2; nbUse = ( int) tom_match12_1_3; if(tom_is_fun_sym_FalseTL(tom_match12_1_4)) { if(tom_is_fun_sym_TrueTL(tom_match12_1_5)) {
+	       } } }}matchlab_match12_pattern3: {  int nbUse;  String varName = null;  Expression source = null; if(tom_is_fun_sym_AssignedVariable(tom_match12_1)) {  String tom_match12_1_1 = null;  Expression tom_match12_1_2 = null;  int tom_match12_1_3;  Expression tom_match12_1_4 = null;  Expression tom_match12_1_5 = null; tom_match12_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match12_1); tom_match12_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match12_1); tom_match12_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match12_1); tom_match12_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match12_1); tom_match12_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match12_1); varName = ( String) tom_match12_1_1; source = ( Expression) tom_match12_1_2; nbUse = ( int) tom_match12_1_3; if(tom_is_fun_sym_FalseTL(tom_match12_1_4)) { if(tom_is_fun_sym_TrueTL(tom_match12_1_5)) {
  
 		if (varName.equals(name)) {
 		  int newNbUse = nbUse + 1;
@@ -412,7 +425,7 @@ public class TomOptimizer extends TomBase implements TomTask {
     TomTerm t;
     while (!tmpList.isEmpty()) {
       t = tmpList.getHead();
-       {  TomTerm tom_match13_1 = null; tom_match13_1 = ( TomTerm) t;matchlab_match13_pattern1: {  String name = null;  int n; if(tom_is_fun_sym_AssignedVariable(tom_match13_1)) {  String tom_match13_1_1 = null;  Expression tom_match13_1_2 = null;  int tom_match13_1_3;  Expression tom_match13_1_4 = null;  Expression tom_match13_1_5 = null; tom_match13_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match13_1); tom_match13_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match13_1); tom_match13_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match13_1); tom_match13_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match13_1); tom_match13_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match13_1); name = ( String) tom_match13_1_1; n = ( int) tom_match13_1_3; if(tom_is_fun_sym_TrueTL(tom_match13_1_5)) {
+       {  TomTerm tom_match13_1 = null; tom_match13_1 = ( TomTerm) t;matchlab_match13_pattern1: {  int n;  String name = null; if(tom_is_fun_sym_AssignedVariable(tom_match13_1)) {  String tom_match13_1_1 = null;  Expression tom_match13_1_2 = null;  int tom_match13_1_3;  Expression tom_match13_1_4 = null;  Expression tom_match13_1_5 = null; tom_match13_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match13_1); tom_match13_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match13_1); tom_match13_1_3 = ( int) tom_get_slot_AssignedVariable_nbUse(tom_match13_1); tom_match13_1_4 = ( Expression) tom_get_slot_AssignedVariable_usedInDoWhile(tom_match13_1); tom_match13_1_5 = ( Expression) tom_get_slot_AssignedVariable_removable(tom_match13_1); name = ( String) tom_match13_1_1; n = ( int) tom_match13_1_3; if(tom_is_fun_sym_TrueTL(tom_match13_1_5)) {
  
 	  if (name.equals(varName))
 	    return n;

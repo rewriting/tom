@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-
+    
     Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
 
 */
@@ -73,35 +73,36 @@ public interface TomParserConstants {
   int TOM_RBRACE = 60;
   int TOM_UNDERSCORE = 61;
   int TOM_MINUS = 62;
-  int TOM_STAR = 63;
-  int TOM_SHARP = 64;
-  int TOM_AND = 65;
-  int TOM_WHERE = 66;
-  int TOM_IF = 67;
-  int TOM_MAKE = 68;
-  int TOM_MAKE_EMPTY = 69;
-  int TOM_MAKE_INSERT = 70;
-  int TOM_MAKE_APPEND = 71;
-  int TOM_IMPLEMENT = 72;
-  int TOM_FSYM = 73;
-  int TOM_GET_SLOT = 74;
-  int TOM_IS_FSYM = 75;
-  int TOM_GET_SUBTERM = 76;
-  int TOM_GET_FUN_SYM = 77;
-  int TOM_CMP_FUN_SYM = 78;
-  int TOM_EQUALS = 79;
-  int TOM_GET_HEAD = 80;
-  int TOM_GET_TAIL = 81;
-  int TOM_IS_EMPTY = 82;
-  int TOM_GET_ELEMENT = 83;
-  int TOM_GET_SIZE = 84;
-  int TOM_INTEGER = 85;
-  int TOM_IDENTIFIER = 86;
-  int TOM_DOUBLE = 87;
-  int EXPONENT = 88;
-  int TOM_LETTER = 89;
-  int TOM_DIGIT = 90;
-  int TOM_STRING = 91;
+  int TOM_PLUS = 63;
+  int TOM_STAR = 64;
+  int TOM_SHARP = 65;
+  int TOM_AND = 66;
+  int TOM_WHERE = 67;
+  int TOM_IF = 68;
+  int TOM_MAKE = 69;
+  int TOM_MAKE_EMPTY = 70;
+  int TOM_MAKE_INSERT = 71;
+  int TOM_MAKE_APPEND = 72;
+  int TOM_IMPLEMENT = 73;
+  int TOM_FSYM = 74;
+  int TOM_GET_SLOT = 75;
+  int TOM_IS_FSYM = 76;
+  int TOM_GET_SUBTERM = 77;
+  int TOM_GET_FUN_SYM = 78;
+  int TOM_CMP_FUN_SYM = 79;
+  int TOM_EQUALS = 80;
+  int TOM_GET_HEAD = 81;
+  int TOM_GET_TAIL = 82;
+  int TOM_IS_EMPTY = 83;
+  int TOM_GET_ELEMENT = 84;
+  int TOM_GET_SIZE = 85;
+  int TOM_INTEGER = 86;
+  int TOM_IDENTIFIER = 87;
+  int TOM_DOUBLE = 88;
+  int EXPONENT = 89;
+  int TOM_LETTER = 90;
+  int TOM_DIGIT = 91;
+  int TOM_STRING = 92;
 
   int DEFAULT = 0;
   int IN_SINGLE_LINE_COMMENT = 1;
@@ -176,6 +177,7 @@ public interface TomParserConstants {
     "\"}\"",
     "\"_\"",
     "\"-\"",
+    "\"+\"",
     "\"*\"",
     "\"#\"",
     "\"&\"",

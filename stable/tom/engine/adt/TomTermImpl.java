@@ -83,11 +83,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isBackQuoteTerm()
-  {
-    return false;
-  }
-
   public boolean isFunctionCall()
   {
     return false;
@@ -104,6 +99,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean isAppl()
+  {
+    return false;
+  }
+
+  public boolean isBackQuoteAppl()
+  {
+    return false;
+  }
+
+  public boolean isComposite()
   {
     return false;
   }
@@ -198,11 +203,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isDotTerm()
-  {
-    return false;
-  }
-
   public boolean isLocalVariable()
   {
     return false;
@@ -229,11 +229,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean isBuildArray()
-  {
-    return false;
-  }
-
-  public boolean isBuildBuiltin()
   {
     return false;
   }
@@ -333,22 +328,17 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasTomTerm()
-  {
-    return false;
-  }
-
-  public boolean hasOption()
-  {
-    return false;
-  }
-
   public boolean hasArgs()
   {
     return false;
   }
 
   public boolean hasSubjectListAST()
+  {
+    return false;
+  }
+
+  public boolean hasOption()
   {
     return false;
   }
@@ -393,6 +383,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean hasTomTerm()
+  {
+    return false;
+  }
+
   public boolean hasTermList()
   {
     return false;
@@ -404,11 +399,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasStrName()
-  {
-    return false;
-  }
-
-  public boolean hasKid2()
   {
     return false;
   }
@@ -583,26 +573,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Kid1");
   }
 
-  public TomTerm getTomTerm()
-  {
-     throw new RuntimeException("This TomTerm has no TomTerm");
-  }
-
-  public TomTerm setTomTerm(TomTerm _tomTerm)
-  {
-     throw new RuntimeException("This TomTerm has no TomTerm");
-  }
-
-  public Option getOption()
-  {
-     throw new RuntimeException("This TomTerm has no Option");
-  }
-
-  public TomTerm setOption(Option _option)
-  {
-     throw new RuntimeException("This TomTerm has no Option");
-  }
-
   public TomList getArgs()
   {
      throw new RuntimeException("This TomTerm has no Args");
@@ -621,6 +591,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setSubjectListAST(TomTerm _subjectListAST)
   {
      throw new RuntimeException("This TomTerm has no SubjectListAST");
+  }
+
+  public Option getOption()
+  {
+     throw new RuntimeException("This TomTerm has no Option");
+  }
+
+  public TomTerm setOption(Option _option)
+  {
+     throw new RuntimeException("This TomTerm has no Option");
   }
 
   public TomName getSlotName()
@@ -703,6 +683,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no OrgTrack");
   }
 
+  public TomTerm getTomTerm()
+  {
+     throw new RuntimeException("This TomTerm has no TomTerm");
+  }
+
+  public TomTerm setTomTerm(TomTerm _tomTerm)
+  {
+     throw new RuntimeException("This TomTerm has no TomTerm");
+  }
+
   public TomTerm getTermList()
   {
      throw new RuntimeException("This TomTerm has no TermList");
@@ -731,16 +721,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setStrName(String _strName)
   {
      throw new RuntimeException("This TomTerm has no StrName");
-  }
-
-  public TomTerm getKid2()
-  {
-     throw new RuntimeException("This TomTerm has no Kid2");
-  }
-
-  public TomTerm setKid2(TomTerm _kid2)
-  {
-     throw new RuntimeException("This TomTerm has no Kid2");
   }
 
   public TomList getDecls()

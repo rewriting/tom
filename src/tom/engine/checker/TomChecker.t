@@ -117,8 +117,8 @@ abstract class TomChecker extends TomBase implements TomTask {
                 verifyRule(list);
                 return false;
               }
-              dollarTerm@DollarAppl(Option(options),Name(name),args) -> {
-                permissiveVerify(dollarTerm);
+              backQuoteTerm@BackQuoteAppl(Option(options),Name(name),args) -> {
+                permissiveVerify(backQuoteTerm);
                 return false;
               }
 
@@ -283,7 +283,7 @@ abstract class TomChecker extends TomBase implements TomTask {
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
-              DollarAppl(Option(options),Name(name),args) -> {
+              BackQuoteAppl(Option(options),Name(name),args) -> {
                 permissiveVerifyApplStructure(options, name, args);
                 return true;
               }
