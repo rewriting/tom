@@ -670,10 +670,10 @@ goalLanguage [LinkedList list] returns [TargetLanguage result] throws TomExcepti
         blockList[list]
         t2:RBRACE 
         {
-            result = `TL(cleanCode(getCode()),
-                TextPosition(currentLine(),currentColumn()),
-                TextPosition(t2.getLine(),t2.getColumn())
-            );
+          result = `TL(cleanCode(getCode()),
+                       TextPosition(currentLine(),currentColumn()),
+                       TextPosition(t2.getLine(),t2.getColumn())
+                       );
             targetlexer.clearTarget();
         }
     ;
@@ -690,12 +690,10 @@ targetLanguage [LinkedList list] returns [TargetLanguage result] throws TomExcep
             //System.out.println("code = " + code);
             //System.out.println("list = " + list);
 
-            result = `TL(
-                code,
-                TextPosition(currentLine(),currentColumn()),
-                TextPosition(t.getLine(),t.getColumn())
-            );
-            
+            result = `TL(code,
+                         TextPosition(currentLine(),currentColumn()),
+                         TextPosition(t.getLine(),t.getColumn())
+                         );
             targetlexer.clearTarget();
         }
     ;

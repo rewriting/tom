@@ -1,3 +1,8 @@
+2005-03-25  pem  <pem@polly.loria.fr>
+
+	* src/jtom/compiler/TomExpander.t: 
+    - allows to use backquote notation all make*() constructs
+
 2005-03-24  pem  <pem@polly.loria.fr>
 
 	* src/jtom/compiler/TomExpander.t: 

@@ -2034,11 +2034,9 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
             l:LBRACE
             {
                 updatePosition(t.getLine(),t.getColumn());
-
                 selector().push("targetlexer");
                 LinkedList blockList = new LinkedList();
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
-                //System.out.println("make: " + tlCode);
                 selector().pop();
                 blockList.add(tlCode);
                 result = `MakeDecl(Name(opname),returnType,args,AbstractBlock(ast().makeInstructionList(blockList)),ot);
@@ -2055,12 +2053,14 @@ keywordMakeEmptyList[String name] returns [Declaration result] throws TomExcepti
         t:MAKE_EMPTY
         { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile())); }
         (LPAREN RPAREN)?
-        {
+        LBRACE
+        {   
             selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            LinkedList blockList = new LinkedList();
+            TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
-
-            result = `MakeEmptyList(Name(name),tlCode,ot);
+            blockList.add(tlCode);
+            result = `MakeEmptyList(Name(name),AbstractBlock(ast().makeInstructionList(blockList)),ot);
         }
     ;
 
@@ -2074,6 +2074,7 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
         {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
 
         LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
+        LBRACE
         {
             Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(currentFile()));  
             Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),Name(currentFile()));
@@ -2081,13 +2082,14 @@ keywordMakeAddList[String name, String listType, String elementType] returns [De
             OptionList elementOption = `concOption(elementInfo);
 
             selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            LinkedList blockList = new LinkedList();
+            TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
-            
+            blockList.add(tlCode);
             result = `MakeAddList(Name(name),
                 Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),emptyConstraintList()),
                 Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
-                tlCode,ot);
+                AbstractBlock(ast().makeInstructionList(blockList)),ot);
         }
     ;
 
@@ -2100,17 +2102,19 @@ keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
         t:MAKE_EMPTY
         {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
         LPAREN listName:ALL_ID RPAREN
+        LBRACE
         {
             Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(currentFile()));  
             OptionList listOption = `concOption(listInfo);
 
             selector().push("targetlexer");
-            TargetLanguage tlCode =  targetparser.goalLanguage(new LinkedList());
+            LinkedList blockList = new LinkedList();
+            TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
-
+            blockList.add(tlCode);
             result = `MakeEmptyArray(Name(name),
                 Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
-                tlCode,ot);
+                AbstractBlock(ast().makeInstructionList(blockList)),ot);
         }
     ;   
 
@@ -2123,10 +2127,13 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
         t:MAKE_APPEND
         {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(currentFile()));}
         LPAREN elementName:ALL_ID COMMA listName:ALL_ID RPAREN
+        LBRACE
         {
             selector().push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            LinkedList blockList = new LinkedList();
+            TargetLanguage tlCode = targetparser.targetLanguage(blockList);
             selector().pop();
+            blockList.add(tlCode);
 
             Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(currentFile()));  
             Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),Name(currentFile()));
@@ -2136,7 +2143,7 @@ keywordMakeAddArray[String name, String listType, String elementType] returns [D
             result = `MakeAddArray(Name(name),
                 Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),emptyConstraintList()),
                 Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
-                tlCode,ot);
+                AbstractBlock(ast().makeInstructionList(blockList)),ot);
         }
     ;
 

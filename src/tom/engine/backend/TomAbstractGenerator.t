@@ -596,18 +596,18 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      MakeEmptyList(Name(opname), tlCode@TL[], _) -> {
+      MakeEmptyList(Name(opname), instr, _) -> {
         TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
-        `genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), TargetLanguageToInstruction(tlCode));
+        `genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), instr);
         return;
       }
 
       MakeAddList(Name(opname),
                   elt@Variable[astType=fullEltType@Type[tlType=tlType1@TLType[]]],
                   list@Variable[astType=fullListType@Type[tlType=tlType2@TLType[]]],
-                  tlCode@TL[], _) -> {
+                  instr, _) -> {
         TomType returnType = fullListType;
-        `genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), TargetLanguageToInstruction(tlCode));
+        `genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), instr);
         `genDeclList(opname, fullListType,fullEltType);
         return;
       }
@@ -627,19 +627,19 @@ public abstract class TomAbstractGenerator extends TomBase {
       
       MakeEmptyArray(Name(opname),
                      Variable[option=option,astName=name,astType=type, constraints=constraints],
-                     tlCode@TL[], _) -> {
+                     instr, _) -> {
         TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
         TomTerm newVar = `Variable(option, name, getSymbolTable().getIntType(), constraints);
-        `genDeclMake("tom_empty_array_" + opname, returnType, concTomTerm(newVar), TargetLanguageToInstruction(tlCode));
+        `genDeclMake("tom_empty_array_" + opname, returnType, concTomTerm(newVar), instr);
         return;
       }
 
       MakeAddArray(Name(opname),
                    elt@Variable[astType=fullEltType@Type[tlType=tlType1@TLType[]]],
                    list@Variable[astType=fullArrayType@Type[tlType=tlType2@TLType[]]],
-                   tlCode@TL[], _) -> {
+                   instr, _) -> {
         TomType returnType = fullArrayType;
-        `genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), TargetLanguageToInstruction(tlCode));
+        `genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), instr);
         `genDeclArray(opname, fullArrayType, fullEltType);
         return;
       }
