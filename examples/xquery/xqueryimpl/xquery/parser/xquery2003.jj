@@ -1,0 +1,1264 @@
+options {
+	LOOKAHEAD = 2;
+}
+
+PARSER_BEGIN(XQueryParser)
+
+
+
+
+import java.io.*;
+import java.util.Vector;
+
+class XQueryParser {
+
+  public static void main(String args[]) throws Exception {
+
+    XQueryParser ql = null;
+    if (args.length == 0 ) {
+            System.out.println("--Input: test.xq");
+            ql = new XQueryParser(new FileInputStream("test.xq"));
+    } else {
+            System.out.println("--Input: "+args[0]);
+            ql = new xquery(new FileInputStream(args[0]));
+    }
+    try {
+      ql.Start();
+      System.out.println("--Done.");
+    } catch (Exception e) {
+      System.out.println("--Undone.");
+      System.out.println(e.getMessage());
+      e.printStackTrace();
+    }
+  }
+}
+
+PARSER_END(XQueryParser)
+
+
+void Start() throws Exception : {}
+{
+	XQueryFile()
+}
+
+
+void XQueryFile() throws Exception : {}
+{
+	Pragma()
+}
+
+void Pragma() throws Exception : {} 
+{
+	<L_PAR_FOURPOINT> QName() (PragmaContents()) * <FOURPOINT_R_PAR>
+}
+
+void MUExtension() throws Exception : {}
+{
+	<L_PAR_FOURPOINT> QName() "extention" (ExtensionContents()) * <FOURPOINT_R_PAR>
+}
+
+void ExprComment() throws Exception: {}
+{
+	<L_PAR_TWOPOINT> (ExprCommentContent() | ExprComment())* <TWOPOINT_R_PAR>
+}
+
+
+void ExprCommentContent() throws Exception: {}
+{
+	Char() 
+}
+
+void PragmaContents() throws Exception: {}
+{
+	Char()
+}
+
+void ExtensionContents() 
+	throws Exception: {}
+{
+	Char()
+}
+
+
+// [1]    	Pragma 	   ::=    	"(::" "pragma" QName PragmaContents* "::)" 	/* gn: parens */
+// [2]    	MUExtension 	   ::=    	"(::" "extension" QName ExtensionContents* "::)" 	/* gn: parens */
+// [3]    	ExprComment 	   ::=    	"(:" (ExprCommentContent | ExprComment)* ":)" 	/* gn: comments */
+// [4]    	ExprCommentContent 	   ::=    	Char 	/* gn: parens */
+// [5]    	PragmaContents 	   ::=    	Char
+// [6]    	ExtensionContents 	   ::=    	Char
+
+
+void IntegerLiteral(Token t) 
+	throws Exception: {}
+{
+	t=<DIGITS>
+}
+
+
+// [7]    	IntegerLiteral 	   ::=    	Digits
+
+void DecimalLiteral(Token t) 
+	throws Exception: {}
+{
+	t = <DECIMAL_LITERAL>
+}
+
+
+// [8]    	DecimalLiteral 	   ::=    	("." Digits) | (Digits "." [0-9]*) 	/* ws: explicit */
+
+void DoubleLiteral(Token t) 
+	throws Exception: {}
+{
+	t = <DOUBLE_LITERAL>
+}
+
+// [9]    	DoubleLiteral 	   ::=    	(("." Digits) | (Digits ("." [0-9]*)?)) ("e" | "E") ("+" | "-")? Digits 	/* ws: explicit */
+
+
+
+// [22]    	PredefinedEntityRef 	   ::=    	"&" ("lt" | "gt" | "amp" | "quot" | "apos") ";" 	/* ws: explicit */
+
+
+
+void PredefinedEntityRef() throws Exception: {}
+{
+	"&" (<LT> | <GT> | <AMP> | <QUOT> | <APOS>) <SEMICOLON>
+}
+
+
+// [10]    	StringLiteral 	   ::=    	('"' (PredefinedEntityRef | CharRef | ('"' '"') | [^"&])* '"') | ("'" (PredefinedEntityRef | CharRef | ("'" "'") | [^'&])* "'") 	/* ws: significant */
+
+void StringLiteral() throws Exception : {}
+{
+	(<DOUBLE_QUOTE> (PredefinedEntityRef() | CharRef() | (<DOUBLE_QUOTE> <DOUBLE_QUOTE>) )* <DOUBLE_QUOTE>)
+		| (<SINGLE_QUOTE> (PredefinedEntityRef() | CharRef() | (<DOUBLE_QUOTE> <DOUBLE_QUOTE>) )* <SINGLE_QUOTE>)
+}
+
+
+
+// [11]    	S 	   ::=    	[http://www.w3.org/TR/REC-xml#NT-S]  	/* gn: xml-version */
+
+// void Space() throws Exception : {}
+// {
+// 	" "
+// }
+
+// [12]    	SchemaMode 	   ::=    	"lax" | "strict" | "skip"
+
+void SchemaMode() throws Exception: {}
+{
+	<LAX> | <SKIP_KEYWORD> | <STRICT>
+}
+
+// [13]    	SchemaGlobalTypeName 	   ::=    	"type" "(" QName ")"
+
+void SchemaGlobalTypeName() throws Exception: {}
+{
+	<TYPE> <L_PAR> QName()
+}
+
+// [14]    	SchemaGlobalContext 	   ::=    	QName | SchemaGlobalTypeName
+
+void SchemaGlobalContext() throws Exception: {}
+{
+	QName() | SchemaGlobalTypeName()
+}
+// [15]    	SchemaContextStep 	   ::=    	QName
+
+void SchemaContextStep() throws Exception: {}
+{
+	QName()
+}
+// [16]    	Digits 	   ::=    	[0-9]+
+
+
+void Digits(Token t) 
+	throws Exception: {}
+{
+	t = <DIGITS>
+}
+
+
+// [17]    	EscapeQuot 	   ::=    	'"' '"'
+void EscapeQuot() throws Exception : {}
+{
+	<DOUBLE_QUOTE> <DOUBLE_QUOTE>
+}
+
+// [18]    	PITarget 	   ::=    	NCName
+
+void PITarget() throws Exception: {}
+{
+	<NCNAME>
+}
+// [19]    	NCName 	   ::=    	[http://www.w3.org/TR/REC-xml-names/#NT-NCName] Names 	/* gn: xml-version */
+
+
+// [20]    	VarName 	   ::=    	QName
+
+void VarName() throws Exception: {}
+{
+	QName()
+}
+// [21]    	QName 	   ::=    	[http://www.w3.org/TR/REC-xml-names/#NT-QName] Names 	/* gn: xml-version */
+
+
+void QName() throws Exception: {}
+{
+	<QNAME>
+}
+
+
+
+// [23]    	HexDigits 	   ::=    	([0-9] | [a-f] | [A-F])+
+
+void HexDigits(Token t) throws Exception: {}
+{
+	t=<HEX_DIGITS>
+}
+
+// [24]    	CharRef 	   ::=    	"&#" (Digits | ("x" HexDigits)) ";" 	/* ws: explicit */
+
+void CharRef() throws Exception : {}
+{
+	"&#" (<DIGITS> | ("x" <HEX_DIGITS>)) <SEMICOLON>
+}
+// [25]    	EscapeApos 	   ::=    	"''"
+
+void EscapeApos() throws Exception : {}
+{
+	"''"
+}
+// [26]    	Char 	   ::=    	[http://www.w3.org/TR/REC-xml#NT-Char] XML 	/* gn: xml-version */
+
+void Char() throws Exception : {}
+{
+	<CHAR>
+}
+// [27]    	ElementContentChar 	   ::=    	Char - [{}<&]
+
+void ElementContentChar() throws Exception : {}
+{
+	<CHAR>
+}
+
+// [28]    	QuotAttContentChar 	   ::=    	Char - ["{}<&]
+
+void QuotAttContentChar() throws Exception : {}
+{
+	<CHAR>
+}
+// [29]    	AposAttContentChar 	   ::=    	Char - ['{}<&]
+void AposAttContentChar() throws Exception : {}
+{
+	<CHAR>
+}
+
+
+// Non-Terminals
+// [30]    	Module 	   ::=    	VersionDecl? (MainModule | LibraryModule)
+
+void Module() throws Exception: {}
+{
+	[VersionDecl()] (MainModule() | LibraryModule())
+}
+
+// [31]    	MainModule 	   ::=    	Prolog QueryBody
+
+void MainModule() throws Exception: {}
+{
+	Prolog() QueryBody()
+}
+
+// [32]    	LibraryModule 	   ::=    	ModuleDecl Prolog
+void LibraryModule() throws Exception: {}
+{
+	ModuleDecl() Prolog()
+}
+// [33]    	ModuleDecl 	   ::=    	<"module" "namespace"> NCName "=" StringLiteral Separator
+void ModuleDecl() throws Exception: {}
+{
+	<MODULE> <NAMESPACE> <NCNAME> <EQUAL> StringLiteral() Separator()
+}
+// [34]    	Prolog 	   ::=    	((NamespaceDecl
+// | XMLSpaceDecl
+// | DefaultNamespaceDecl
+// | DefaultCollationDecl
+// | BaseURIDecl
+// | SchemaImport
+// | ModuleImport
+// | VarDecl
+// | ValidationDecl
+// | FunctionDecl) Separator)*
+
+void Prolog() throws Exception: {}
+{
+	(
+	 (NamespaceDecl() 
+	  XMLSpaceDecl() 
+	  DefaultNamespaceDecl() 
+	  DefaultCollationDecl() 
+	  BaseURIDecl() 
+	  SchemaImport() 
+	  ModuleImport() 
+	  VarDecl() 
+	  ValidationDecl()
+	  FunctionDecl()) 
+	 Separator()
+	 )*
+}
+
+// [35]    	Separator 	   ::=    	";"
+
+void Separator(Token t) 
+	throws Exception: {}
+{
+	t = <SEMICOLON>
+}
+
+// [36]    	VersionDecl 	   ::=    	<"xquery" "version" StringLiteral> Separator
+
+void VersionDecl() throws Exception: {}
+{
+	<XQUERY> <VERSION> StringLiteral() Separator()
+}
+// [37]    	ModuleImport 	   ::=    	<"import" "module"> ("namespace" NCName "=")? StringLiteral <"at" StringLiteral>?
+
+void ModuleImport() throws Exception: {}
+{
+	<IMPORT> <MODULE> [<NAMESPACE> <NCNAME> <EQUAL>] StringLiteral() [<AT> StringLiteral()]
+}
+// [38]    	VarDecl 	   ::=    	<"declare" "variable" "$"> VarName TypeDeclaration? (("{" Expr "}") | "external")
+
+void VarDecl() throws Exception: {}
+{
+	<DECLARE> <VARIABLE> <DOLLAR> VarName() [TypeDeclaration()] ((<L_BRACE> Expr() <R_BRACE>) | <EXTERNAL>)
+}
+// [39]    	QueryBody 	   ::=    	Expr
+
+void QueryBody() throws Exception: {}
+{
+	Expr()
+}
+// [40]    	Expr 	   ::=    	ExprSingle ("," ExprSingle)*
+
+void Expr() throws Exception: {}
+{
+	ExprSingle() (<COMMA> ExprSingle())*
+}
+// [41]    	ExprSingle 	   ::=    	FLWORExpr
+// | QuantifiedExpr
+// | TypeswitchExpr
+// | IfExpr
+// | OrExpr
+void ExprSingle() throws Exception: {}
+{
+	FLWORExpr() 
+		| QuantifiedExpr()
+		| TypeswitchExpr()
+		| IfExpr()
+		| OrExpr()
+}
+
+// [42]    	FLWORExpr 	   ::=    	(ForClause | LetClause)+ WhereClause? OrderByClause? "return" ExprSingle
+
+void FLWORExpr() throws Exception: {}
+{
+	(ForClause() | LetClause())+ [WhereClause()] [OrderByClause()] <RETURN> ExprSingle()
+}
+// [43]    	ForClause 	   ::=    	<"for" "$"> VarName TypeDeclaration? PositionalVar? "in" ExprSingle ("," "$" VarName TypeDeclaration? PositionalVar? "in" ExprSingle)*
+
+void ForClause() throws Exception: {}
+{
+	<FOR> <DOLLAR> VarName() [TypeDeclaration()] [PositionalVar()] <IN> ExprSingle() (<COMMA> <DOLLAR> VarName() [TypeDeclaration()] [PositionalVar()] <IN> ExprSingle())*
+}
+// [44]    	PositionalVar 	   ::=    	"at" "$" VarName
+
+void PositionalVar() throws Exception: {}
+{
+	<AT> <DOLLAR> VarName()
+}
+// [45]    	LetClause 	   ::=    	<"let" "$"> VarName TypeDeclaration? ":=" ExprSingle ("," "$" VarName TypeDeclaration? ":=" ExprSingle)*
+
+void LetClause() throws Exception: {}
+{
+	<LET> <DOLLAR> VarName() [TypeDeclaration()] <SET_EQUAL_TO> ExprSingle() (<COMMA> <DOLLAR> VarName() [TypeDeclaration()] <SET_EQUAL_TO> ExprSingle())*
+}
+// [46]    	WhereClause 	   ::=    	"where" Expr
+
+void WhereClause() throws Exception: {}
+{
+	<WHERE> Expr()
+}
+// [47]    	OrderByClause 	   ::=    	(<"order" "by"> | <"stable" "order" "by">) OrderSpecList
+
+void OrderByClause() throws Exception: {}
+{
+	((<ORDER> <BY>) | (<STABLE> <ORDER> <BY>)) OrderSpecList()
+}
+// [48]    	OrderSpecList 	   ::=    	OrderSpec ("," OrderSpec)*
+
+void OrderSpecList() throws Exception: {}
+{
+	OrderSpec() (<COMMA> OrderSpec())*
+}
+// [49]    	OrderSpec 	   ::=    	ExprSingle OrderModifier
+
+void OrderSpec() throws Exception: {}
+{
+	ExprSingle() OrderModifier()
+}
+// [50]    	OrderModifier 	   ::=    	("ascending" | "descending")? (<"empty" "greatest"> | <"empty" "least">)? ("collation" StringLiteral)?
+
+void OrderModifier() throws Exception: {}
+{
+	[<ASCENDING> | <DESCENDING>] [(<EMPTY> <GREATEST>) | (<EMPTY> <LEAST>)] [<COLLATION> StringLiteral()]
+}
+// [51]    	QuantifiedExpr 	   ::=    	(<"some" "$"> | <"every" "$">) VarName TypeDeclaration? "in" ExprSingle ("," "$" VarName TypeDeclaration? "in" ExprSingle)* "satisfies" ExprSingle
+
+void QuantifiedExpr() throws Exception: {}
+{
+	((<SOME> <DOLLAR>) | (<EVERY> <DOLLAR>)) VarName() [TypeDeclaration()] <IN> ExprSingle() 
+		(<SOME> <DOLLAR> VarName() [TypeDeclaration()] <IN> ExprSingle())* <SATISFIED> ExprSingle() 
+}
+// [52]    	TypeswitchExpr 	   ::=    	<"typeswitch" "("> Expr ")" CaseClause+ "default" ("$" VarName)? "return" ExprSingle
+
+void TypeswitchExpr() throws Exception: {}
+{
+	<TYPESWITCH> <L_PAR> Expr() <R_PAR> (CaseClause())+ <DEFAULT_> [<DOLLAR> VarName()] <RETURN> ExprSingle()
+}
+// [53]    	CaseClause 	   ::=    	"case" ("$" VarName "as")? SequenceType "return" ExprSingle
+
+void CaseClause() throws Exception: {}
+{
+	<CASE> [<DOLLAR> VarName() <AS>] SequenceType() <RETURN> ExprSingle()
+}
+// [54]    	IfExpr 	   ::=    	<"if" "("> Expr ")" "then" ExprSingle "else" ExprSingle
+
+void IfExpr() throws Exception: {}
+{
+	<IF> <L_PAR> Expr() <R_PAR> <THEN> ExprSingle() <ELSE> ExprSingle()
+}
+// [55]    	OrExpr 	   ::=    	AndExpr ( "or" AndExpr )*
+
+void OrExpr() throws Exception: {}
+{
+	AndExpr() (<OR> AndExpr())* 
+}
+// [56]    	AndExpr 	   ::=    	InstanceofExpr ( "and" InstanceofExpr )*
+
+void AndExpr() throws Exception: {}
+{
+	InstanceofExpr() (<AND> InstanceofExpr())*
+}
+// [57]    	InstanceofExpr 	   ::=    	TreatExpr ( <"instance" "of"> SequenceType )?
+
+void InstanceofExpr() throws Exception: {}
+{
+	TreatExpr() [<INSTANCE> <OF> SequenceType()]
+}
+// [58]    	TreatExpr 	   ::=    	CastableExpr ( <"treat" "as"> SequenceType )?
+
+void TreatExpr() throws Exception: {}
+{
+	CastableExpr() [<TREAT> <AS> SequenceType()]
+}
+// [59]    	CastableExpr 	   ::=    	CastExpr ( <"castable" "as"> SingleType )?
+
+void CastableExpr() throws Exception: {}
+{
+	CastExpr() [<CASTABLE> <AS> SingleType() ]
+}
+// [60]    	CastExpr 	   ::=    	ComparisonExpr ( <"cast" "as"> SingleType )?
+
+void CastExpr() throws Exception: {}
+{
+	ComparisonExpr() [<CAST> <AS> SingleType()]
+}
+// [61]    	ComparisonExpr 	   ::=    	RangeExpr ( (ValueComp
+// | GeneralComp
+// | NodeComp) RangeExpr )?
+
+void ComparisonExpr() throws Exception: {}
+{
+	RangeExpr() [(ValueComp() | GeneralComp() | NodeComp()) RangeExpr()]
+}
+// [62]    	RangeExpr 	   ::=    	AdditiveExpr ( "to" AdditiveExpr )?
+
+void RangeExpr() throws Exception: {}
+{
+	AdditiveExpr() [<TO> AdditiveExpr()]
+}
+// [63]    	AdditiveExpr 	   ::=    	MultiplicativeExpr ( ("+" | "-") MultiplicativeExpr )*
+
+void AdditiveExpr() throws Exception: {}
+{
+	MultiplicativeExpr() ((<PLUS> | <MINUS>) MultiplicativeExpr() )*
+}
+// [64]    	MultiplicativeExpr 	   ::=    	UnaryExpr ( ("*" | "div" | "idiv" | "mod") UnaryExpr )*
+
+void MultiplicativeExpr() throws Exception: {}
+{
+	UnaryExpr()  ((<MULTIPLY> | <DIV> | <IDIV> | <MOD>) UnaryExpr())*
+}
+// [65]    	UnaryExpr 	   ::=    	("-" | "+")* UnionExpr
+
+void UnaryExpr() throws Exception: {}
+{
+	(<PLUS> | <MINUS>)* UnionExpr()
+}
+// [66]    	UnionExpr 	   ::=    	IntersectExceptExpr ( ("union" | "|") IntersectExceptExpr )*
+
+void UnionExpr() throws Exception: {}
+{
+	IntersectExceptExpr() ( (<UNION> | <BAR>) IntersectExceptExpr())*
+}
+// [67]    	IntersectExceptExpr 	   ::=    	ValueExpr ( ("intersect" | "except") ValueExpr )*
+
+void IntersectExceptExpr() throws Exception: {}
+{
+	ValueExpr() ((<INTERSECT> | <EXCEPT>) ValueExpr())*
+}
+// [68]    	ValueExpr 	   ::=    	ValidateExpr | PathExpr
+
+void ValueExpr() throws Exception: {}
+{
+	ValidateExpr() | PathExpr()
+}
+// [69]    	PathExpr 	   ::=    	("/" RelativePathExpr?)
+// | ("//" RelativePathExpr)
+// | RelativePathExpr 	/* gn: leading-lone-slash */
+
+void PathExpr() throws Exception: {}
+{
+	(<SLASH> [RelativePathExpr()]) |	(<SLASH_SLASH> RelativePathExpr()) | RelativePathExpr()
+}
+// [70]    	RelativePathExpr 	   ::=    	StepExpr (("/" | "//") StepExpr)*
+
+void RelativePathExpr() throws Exception: {}
+{
+	StepExpr() ((<SLASH> | <SLASH_SLASH>))*
+}
+// [71]    	StepExpr 	   ::=    	AxisStep | FilterStep
+
+void StepExpr() throws Exception: {}
+{
+	AxisStep() | FilterStep()
+}
+// [72]    	AxisStep 	   ::=    	(ForwardStep | ReverseStep) Predicates
+
+void AxisStep() throws Exception: {}
+{
+	(ForwardStep() | ReverseStep()) Predicates()
+}
+// [73]    	FilterStep 	   ::=    	PrimaryExpr Predicates
+
+void FilterStep() throws Exception: {}
+{
+	PrimaryExpr() Predicates()
+}
+// [74]    	ContextItemExpr 	   ::=    	"."
+
+void ContextItemExpr() throws Exception: {}
+{
+	<POINT>
+}
+// [75]    	PrimaryExpr 	   ::=    	Literal | VarRef | ParenthesizedExpr | ContextItemExpr | FunctionCall | Constructor
+
+void PrimaryExpr() throws Exception: {}
+{
+	Literal() | VarRef() | ParenthesizedExpr() | ContextItemExpr() | FunctionCall() | Constructor()
+}
+// [76]    	VarRef 	   ::=    	"$" VarName
+
+void VarRef() throws Exception: {}
+{
+	<DOLLAR> VarName()
+}
+// [77]    	Predicates 	   ::=    	("[" Expr "]")*
+
+void Predicates() throws Exception: {}
+{
+	(<L_BRACKET> Expr() <R_BRACKET>)*
+}
+// [78]    	ValidateExpr 	   ::=    	(<"validate" "{"> | (<"validate" "global"> "{") | (<"validate" "context"> SchemaContextLoc "{") | (<"validate" SchemaMode> SchemaContext? "{")) Expr "}" 	/* gn: validate */
+
+void ValidateExpr() throws Exception: {}
+{
+	(<VALIDATE> <L_BRACE>) | (<VALIDATE> <GLOBAL> <L_BRACE>) | (<VALIDATE> <CONTEXT> SchemaContextLoc() <L_BRACE>) | (<VALIDATE> SchemaMode() [SchemaContext()] <L_BRACE>) Expr() <R_BRACE>
+}
+// [79]    	SchemaContext 	   ::=    	("context" SchemaContextLoc) | "global"
+
+void SchemaContext() throws Exception: {}
+{
+	(<CONTEXT> SchemaContextLoc()) | <GLOBAL>
+}
+// [80]    	Constructor 	   ::=    	DirElemConstructor
+// | ComputedConstructor
+// | XmlComment
+// | XmlPI
+// | CdataSection
+
+void Constructor() throws Exception: {}
+{
+	DirElemConstructor() | ComputedConstructor() | XmlComment() | XmlPI() | CdataSection()
+}
+// [81]    	ComputedConstructor 	   ::=    	CompElemConstructor
+// | CompAttrConstructor
+// | CompDocConstructor
+// | CompTextConstructor
+// | CompXmlPI
+// | CompXmlComment
+// | CompNSConstructor
+
+void ComputedConstructor() throws Exception: {}
+{
+	CompElemConstructor() | CompAttrConstructor() | CompDocConstructor() | CompTextConstructor() | CompXmlPI() | CompXmlComment() | CompNSConstructor()
+}
+// [82]    	GeneralComp 	   ::=    	"=" | "!=" | "<" | "<=" | ">" | ">=" 	/* gn: lt */
+
+void GeneralComp() throws Exception: {}
+{
+	<EQUAL> | <NOT_EQUAL> | <LESS> | <LESS_OR_EQUAL> | <GREATER> | <GREATER_OR_EQUAL>
+}
+// [83]    	ValueComp 	   ::=    	"eq" | "ne" | "lt" | "le" | "gt" | "ge"
+
+void ValueComp() throws Exception: {}
+{
+	<EQ> | <NE> |<LT> | <LE> | <GT> | <GE>
+}
+// [84]    	NodeComp 	   ::=    	"is" | "<<" | ">>"
+
+void NodeComp() throws Exception: {}
+{
+	<IS> | <PRECEDE> | <FOLLOW>
+}
+// [85]    	ForwardStep 	   ::=    	(ForwardAxis NodeTest) | AbbrevForwardStep
+
+void ForwardStep() throws Exception: {}
+{
+	(ForwardAxis() NodeTest()) | AbbrevForwardStep()
+}
+// [86]    	ReverseStep 	   ::=    	(ReverseAxis NodeTest) | AbbrevReverseStep
+
+void ReverseStep() throws Exception: {}
+{
+	(ReverseAxis() NodeTest())  | AbbrevReverseStep()
+}
+// [87]    	AbbrevForwardStep 	   ::=    	"@"? NodeTest
+
+void AbbrevForwardStep() throws Exception: {}
+{
+	[<ARROBA>] NodeTest()
+}
+// [88]    	AbbrevReverseStep 	   ::=    	".."
+
+void AbbrevReverseStep() throws Exception: {}
+{
+	<POINT_POINT>
+}
+// [89]    	ForwardAxis 	   ::=    	<"child" "::">
+// | <"descendant" "::">
+// | <"attribute" "::">
+// | <"self" "::">
+// | <"descendant-or-self" "::">
+// | <"following-sibling" "::">
+// | <"following" "::">
+
+void ForwardAxis() throws Exception: {}
+{
+	(<CHILD> <FOUR_POINT>)
+		| (<DESCENDANT> <FOUR_POINT>)
+		| (<ATTRIBUTE> <FOUR_POINT>)
+		| (<SELF> <FOUR_POINT>)
+		| (<DESCENDANT_OR_SELF> <FOUR_POINT>)
+		| (<FOLLOWING_SIBLING> <FOUR_POINT>)
+		| (<FOLLOWING> <FOUR_POINT>)
+}
+// [90]    	ReverseAxis 	   ::=    	<"parent" "::">
+// | <"ancestor" "::">
+// | <"preceding-sibling" "::">
+// | <"preceding" "::">
+// | <"ancestor-or-self" "::">
+
+void ReverseAxis() throws Exception: {}
+{
+	(<PARENT> <FOUR_POINT>)
+		|(<ANCESTOR> <FOUR_POINT>)
+		|(<PRECEDING_SIBLING> <FOUR_POINT>)
+		|(<PRECEDING> <FOUR_POINT>)
+		|(<ANCESTOR_OR_SELF> <FOUR_POINT>)
+		}
+// [91]    	NodeTest 	   ::=    	KindTest | NameTest
+
+void NodeTest() throws Exception: {}
+{
+	KindTest() | NameTest()
+}
+// [92]    	NameTest 	   ::=    	QName | Wildcard
+
+void NameTest() throws Exception: {}
+{
+	QName() | WildCard()
+}
+// [93]    	Wildcard 	   ::=    	"*"
+// | <NCName ":" "*">
+// | <"*" ":" NCName> 	/* ws: explicit */
+
+void WildCard() throws Exception: {}
+{
+	<STAR> | (<NCNAME> <TWO_POINT> <STAR>) | (<STAR> <TWO_POINT> <NCNAME>)
+}
+// [94]    	Literal 	   ::=    	NumericLiteral | StringLiteral
+
+void Literal() throws Exception: {}
+{
+	NumericLiteral() | StringLiteral()
+}
+// [95]    	NumericLiteral 	   ::=    	IntegerLiteral | DecimalLiteral | DoubleLiteral
+void NumericLiteral() throws Exception: {}
+{
+	IntegerLiteral() | DecimalLiteral() | DoubleLiteral()
+}
+// [96]    	ParenthesizedExpr 	   ::=    	"(" Expr? ")"
+
+void ParenthesizedExpr () throws Exception: {}
+{
+	<L_PAR> [Expr()] <R_PAR>
+}
+// [97]    	FunctionCall 	   ::=    	<QName "("> (ExprSingle ("," ExprSingle)*)? ")"
+
+void FunctionCall() throws Exception: {}
+{
+	QName() <L_PAR> [ExprSingle() (<COMMA> ExprSingle())*] <R_PAR>
+}
+// [98]    	DirElemConstructor 	   ::=    	"<" QName AttributeList ("/>" | (">" ElementContent* "</" QName S? ">")) 	/* ws: explicit */
+// 				/* gn: lt */
+
+void DirElemConstructor() throws Exception: {}
+{
+	<LESS> QName() AttributeList() ( <SLASH_GREATER> | (<GREATER> (ElementContent())* <LESS_SLASH> QName()  <GREATER>))
+}
+// [99]    	CompDocConstructor 	   ::=    	<"document" "{"> Expr "}"
+
+void CompDocConstructor() throws Exception: {}
+{
+	<DOCUMENT> <L_BRACE> Expr() <R_BRACE>
+}
+// [100]    	CompElemConstructor 	   ::=    	(<"element" QName "{"> | (<"element" "{"> Expr "}" "{")) Expr? "}"
+
+void CompElemConstructor() throws Exception: {}
+{
+	((<ELEMENT> QName() <L_BRACE> ) | ( <ELEMENT> <L_BRACE> Expr() <R_BRACE> <L_BRACE>)) [Expr()] <R_BRACE>
+}
+
+// [101]    	CompNSConstructor 	   ::=    	<"namespace" NCName "{"> Expr "}"
+
+void CompNSConstructor() throws Exception: {}
+{
+	<NAMESPACE> <NCNAME> <L_BRACE> Expr() <R_BRACE>
+}
+// [102]    	CompAttrConstructor 	   ::=    	(<"attribute" QName "{"> | (<"attribute" "{"> Expr "}" "{")) Expr? "}"
+
+void CompAttrConstructor() throws Exception: {}
+{
+	((<ATTRIBUTE> QName() <L_BRACE>) | (<ATTRIBUTE> <L_BRACE> Expr() <R_BRACE> <L_BRACE>)) [Expr()] <R_BRACE>
+}
+
+// [103]    	CompXmlPI 	   ::=    	(<"processing-instruction" NCName "{"> | (<"processing-instruction" "{"> Expr "}" "{")) Expr? "}"
+
+void CompXmlPI() throws Exception: {}
+{
+	((<PROCESSING_INSTRUCTION> <NCNAME> <L_BRACE>) | (<PROCESSING_INSTRUCTION> <L_BRACE> Expr() <R_BRACE> <L_BRACE>)) [Expr()] <R_BRACE>
+}
+
+// [104]    	CompXmlComment 	   ::=    	<"comment" "{"> Expr "}"
+
+void CompXmlComment() throws Exception: {}
+{
+	<COMMENT> <L_BRACE> Expr() <R_BRACE>
+}
+
+// [105]    	CompTextConstructor 	   ::=    	<"text" "{"> Expr? "}"
+
+void CompTextConstructor() throws Exception: {}
+{
+	<TEXT> <L_BRACE> Expr() <R_BRACE>
+}
+// [106]    	CdataSection 	   ::=    	"<![CDATA[" Char* "]]>" 	/* ws: significant */
+
+void CdataSection() throws Exception: {}
+{
+	"<![CDATA[" (Char())* "]]>"
+}
+// [107]    	XmlPI 	   ::=    	"<?" PITarget Char* "?>" 	/* ws: explicit */
+
+void XmlPI() throws Exception: {}
+{
+	"<?" PITarget() (Char())* "?>"
+}
+// [108]    	XmlComment 	   ::=    	"<!--" Char* "-->" 	/* ws: significant */
+
+void XmlComment() throws Exception: {}
+{
+	"<!--" (Char())* "-->"
+}
+// [109]    	ElementContent 	   ::=    	ElementContentChar
+// | "{{"
+// | "}}"
+// | DirElemConstructor
+// | EnclosedExpr
+// | CdataSection
+// | CharRef
+// | PredefinedEntityRef
+// | XmlComment
+// | XmlPI 	/* ws: significant */
+
+void ElementContent() throws Exception: {}
+{
+	ElementContentChar() 
+		| <L_BRACE_BRACE> 
+		| <R_BRACE_BRACE> 
+		| DirElemConstructor() 
+		| EnclosedExpr() 
+		| CdataSection() 
+		| CharRef() 
+		| PredefinedEntityRef() 
+		| XmlComment() 
+		| XmlPI()
+}
+// [110]    	AttributeList 	   ::=    	(S (QName S? "=" S? AttributeValue)?)* 	/* ws: explicit */
+
+void AttributeList() throws Exception: {}
+{
+	( QName()  <EQUAL>  AttributeValue())*
+}
+// [111]    	AttributeValue 	   ::=    	('"' (EscapeQuot | QuotAttrValueContent)* '"')
+// | ("'" (EscapeApos | AposAttrValueContent)* "'") 	/* ws: significant */
+
+void AttributeValue() throws Exception: {}
+{
+	(<DOUBLE_QUOTE> (EscapeQuot() | QuotAttrValueContent())* <DOUBLE_QUOTE>) 
+		| (<DOUBLE_QUOTE> (EscapeQuot() | AposValueContent())* <DOUBLE_QUOTE>) 
+}
+// [112]    	QuotAttrValueContent 	   ::=    	QuotAttContentChar
+// | CharRef
+// | "{{"
+// | "}}"
+// | EnclosedExpr
+// | PredefinedEntityRef 	/* ws: significant */
+
+void QuotAttrValueContent() throws Exception: {}
+{
+	QuotAttContentChar() 
+		| CharRef() 
+		| <L_BRACE_BRACE> 
+		| <R_BRACE_BRACE> 
+		| EnclosedExpr() 
+		| PredefinedEntityRef()
+}
+// [113]    	AposAttrValueContent 	   ::=    	AposAttContentChar
+// | CharRef
+// | "{{"
+// | "}}"
+// | EnclosedExpr
+// | PredefinedEntityRef 	/* ws: significant */
+
+void AposValueContent() throws Exception: {}
+{
+	AposAttContentChar() 
+		| CharRef() 
+		| <L_BRACE_BRACE> 
+		| <R_BRACE_BRACE> 
+		| EnclosedExpr() 
+		| PredefinedEntityRef()
+}
+// [114]    	EnclosedExpr 	   ::=    	"{" Expr "}"
+
+void EnclosedExpr() throws Exception: {}
+{
+	<L_BRACE> Expr() <R_BRACE>
+}
+// [115]    	XMLSpaceDecl 	   ::=    	<"declare" "xmlspace"> ("preserve" | "strip")
+
+void XMLSpaceDecl() throws Exception: {}
+{
+	<DECLARE> <XMLSPACE> (<PRESERVE> | <STRIP>) 
+}
+// [116]    	DefaultCollationDecl 	   ::=    	<"declare" "default" "collation"> StringLiteral
+
+void DefaultCollationDecl() throws Exception: {}
+{
+	<DECLARE> <DEFAULT_> <COLLATION> StringLiteral()
+}
+// [117]    	BaseURIDecl 	   ::=    	<"declare" "base-uri"> StringLiteral
+
+void BaseURIDecl() throws Exception: {}
+{
+	<DECLARE> <BASE_URI> StringLiteral()
+}
+
+// [118]    	NamespaceDecl 	   ::=    	<"declare" "namespace"> NCName "=" StringLiteral
+
+void NamespaceDecl() throws Exception: {}
+{
+	<DECLARE><NAMESPACE> <NCNAME> <EQUAL> StringLiteral()
+}
+// [119]    	DefaultNamespaceDecl 	   ::=    	(<"declare" "default" "element"> | <"declare" "default" "function">) "namespace" StringLiteral
+
+void DefaultNamespaceDecl() throws Exception: {}
+{
+	((<DECLARE> <DEFAULT_> <ELEMENT>) | (<DECLARE> <DEFAULT_> <FUNCTION>)) <NAMESPACE> StringLiteral()
+}
+// [120]    	FunctionDecl 	   ::=    	<"declare" "function"> <QName "("> ParamList? (")" | (<")" "as"> SequenceType)) (EnclosedExpr | "external") 	/* gn: parens */
+
+void FunctionDecl() throws Exception: {}
+{
+	<DECLARE> <FUNCTION> QName() <L_PAR> [ParamList()] (<R_PAR> | <AS> SequenceType()) (EnclosedExpr() | <EXTERNAL>)
+}
+// [121]    	ParamList 	   ::=    	Param ("," Param)*
+
+void ParamList() throws Exception: {}
+{
+	Param() (<COMMA> Param())*
+}
+// [122]    	Param 	   ::=    	"$" VarName TypeDeclaration?
+
+void Param() throws Exception: {}
+{
+	<DOLLAR> VarName() [TypeDeclaration()]
+}
+// [123]    	TypeDeclaration 	   ::=    	"as" SequenceType
+void TypeDeclaration() throws Exception: {}
+{
+	<AS> SequenceType()
+}
+// [124]    	SingleType 	   ::=    	AtomicType "?"?
+
+void SingleType() throws Exception: {}
+{
+	AtomicType() [<INTERROGATION>]
+}
+// [125]    	SequenceType 	   ::=    	(ItemType OccurrenceIndicator?)
+// | <"empty" "(" ")">
+
+void SequenceType() throws Exception: {}
+{
+	(ItemType() [OccurenceIndicator()]) <EMPTY> <L_PAR> <R_PAR>
+}
+// [126]    	AtomicType 	   ::=    	QName
+void AtomicType() throws Exception: {}
+{
+	QName()
+}
+// [127]    	ItemType 	   ::=    	AtomicType | KindTest | <"item" "(" ")">
+
+void ItemType() throws Exception: {}
+{
+	AtomicType() | KindTest() | <ITEM> <L_PAR> <R_PAR>
+}
+// [128]    	KindTest 	   ::=    	DocumentTest
+// | ElementTest
+// | AttributeTest
+// | PITest
+// | CommentTest
+// | TextTest
+// | AnyKindTest
+
+void KindTest() throws Exception: {}
+{
+	DocumentTest() | ElementTest() | AttributeTest() | PITest() | CommentTest() | TextTest() | AnyKindTest()
+}
+// [129]    	ElementTest 	   ::=    	<"element" "("> ((SchemaContextPath ElementName)
+// | (ElementNameOrWildcard ("," TypeNameOrWildcard "nillable"?)?))? ")"
+
+void ElementTest() throws Exception: {}
+{
+	<ELEMENT> <L_PAR> [(SchemaContextPath() ElementName()) | (ElementNameOrWildCard() [(<COMMA> TypeNameOrWildCard() [<NILLABLE>])])] <R_PAR>
+}
+// [130]    	AttributeTest 	   ::=    	<"attribute" "("> ((SchemaContextPath AttributeName)
+// | (AttribNameOrWildcard ("," TypeNameOrWildcard)?))? ")"
+
+void AttributeTest() throws Exception: {}
+{
+	<ATTRIBUTE> <L_PAR> [(SchemaContextPath() AttributeName()) | (AttribNameOrWildcard()  [<COMMA> TypeNameOrWildCard()])] <R_PAR>
+}
+// [131]    	ElementName 	   ::=    	QName
+
+void ElementName() throws Exception: {}
+{
+	QName()
+}
+// [132]    	AttributeName 	   ::=    	QName
+
+void AttributeName() throws Exception: {}
+{
+	QName()
+}
+// [133]    	TypeName 	   ::=    	QName
+
+void TypeName() throws Exception: {}
+{
+	QName()
+}
+
+// [134]    	ElementNameOrWildcard 	   ::=    	ElementName | "*"
+
+void ElementNameOrWildCard() throws Exception: {}
+{
+	ElementName() | <STAR>
+}
+
+// [135]    	AttribNameOrWildcard 	   ::=    	AttributeName | "*"
+
+void AttribNameOrWildcard() throws Exception: {}
+{
+	AttributeName() | <STAR>
+}
+
+// [136]    	TypeNameOrWildcard 	   ::=    	TypeName | "*"
+void TypeNameOrWildCard() throws Exception: {}
+{
+	TypeName() | <STAR>
+}
+
+// [137]    	PITest 	   ::=    	<"processing-instruction" "("> (NCName | StringLiteral)? ")"
+
+void PITest() throws Exception: {}
+{
+	<PROCESSING_INSTRUCTION> <L_PAR> [<NCNAME> | StringLiteral()] <R_PAR>
+}
+// [138]    	DocumentTest 	   ::=    	<"document-node" "("> ElementTest? ")"
+
+void DocumentTest() throws Exception: {}
+{
+	<DOCUMENT_NODE> <L_PAR> [ElementTest()] <R_PAR>
+}
+// [139]    	CommentTest 	   ::=    	<"comment" "("> ")"
+
+void CommentTest() throws Exception: {}
+{
+	<COMMENT> <L_PAR> <R_PAR>
+}
+// [140]    	TextTest 	   ::=    	<"text" "("> ")"
+
+void TextTest() throws Exception: {}
+{
+	<TEXT> <L_PAR><R_PAR>
+}
+// [141]    	AnyKindTest 	   ::=    	<"node" "("> ")"
+void AnyKindTest() throws Exception: {}
+{
+	<NODE> <L_PAR><R_PAR>
+}
+// [142]    	SchemaContextPath 	   ::=    	<SchemaGlobalContext "/"> <SchemaContextStep "/">*
+
+void SchemaContextPath() throws Exception: {}
+{
+	SchemaGlobalContext() <SLASH> [SchemaContextStep() <SLASH>]
+}
+// [143]    	SchemaContextLoc 	   ::=    	(SchemaContextPath? QName) | SchemaGlobalTypeName
+
+void SchemaContextLoc() throws Exception: {}
+{
+	([SchemaContextPath()] QName()) | SchemaGlobalTypeName()
+}
+// [144]    	OccurrenceIndicator 	   ::=    	"?" | "*" | "+"
+
+void OccurenceIndicator() throws Exception: {}
+{
+	<INTERROGATION> | <STAR> | <PLUS>
+}
+// [145]    	ValidationDecl 	   ::=    	<"declare" "validation"> SchemaMode
+
+void ValidationDecl() throws Exception: {}
+{
+	<DECLARE> <VALIDATION> SchemaMode()
+}
+// [146]    	SchemaImport 	   ::=    	<"import" "schema"> SchemaPrefix? StringLiteral <"at" StringLiteral>?
+
+voiod SchemaImport() throws Exception: {}
+{
+	<IMPORT> <SCHEMA> [SchemaPrefix()] StringLiteral() [<AT> StringLiteral()]
+}
+// [147]    	SchemaPrefix 	   ::=    	("namespace" NCName "=") | (<"default" "element"> "namespace")
+
+void SchemaPrefix() throws Exception: {}
+{
+	(<NAMESPACE> <NCNAME> <EQUAL>) | (<DEFAULT_> <ELEMENT> <NAMESPACE>)
+}
+
+
+
+SKIP : { " " | "\t" | "\n" | "\r" }
+
+TOKEN :{ <L_PAR_FOURPOINT : "(::"> }
+TOKEN : { <FOURPOINT_R_PAR : "::)">}
+TOKEN :{ <L_PAR_TWOPOINT : "(:"> }
+TOKEN : { <TWOPOINT_R_PAR : ":)">}
+TOKEN : { <L_PAR : "(">}
+TOKEN : { <R_PAR : ")">}
+
+
+TOKEN : { <PLUS : "+">}
+TOKEN : { <MINUS : "-">}
+
+TOKEN : { <DOUBLE_QUOTE : "\"">}
+TOKEN : { <SINGLE_QUOTE : "'">}
+
+TOKEN : { <DIGIT : ["0"-"9"] > }
+TOKEN : { <DIGITS : (["0"-"9"])+ > }
+
+// [8]    	DecimalLiteral 	   ::=    	("." Digits) | (Digits "." [0-9]*) 	/* ws: explicit */
+TOKEN : { <DECIMAL_LITERAL: (<POINT> <DIGITS>) | (<DIGITS> <POINT> <DIGITS>) >}
+// [9]    	DoubleLiteral 	   ::=    	(("." Digits) | (Digits ("." [0-9]*)?)) ("e" | "E") ("+" | "-")? Digits 	/* ws: explicit */
+TOKEN : { <DOUBLE_LITERAL: ((<POINT> <DIGITS>) | (<DIGITS> (<POINT> <DIGITS>)?)) 
+		("e" | "E") (<PLUS> | <MINUS>)? <DIGITS>    >}
+
+
+TOKEN : { <POINT : ".">}
+// [10]    	StringLiteral 	   ::=    	('"' (PredefinedEntityRef | CharRef | ('"' '"') | [^"&])* '"') | ("'" (PredefinedEntityRef | CharRef | ("'" "'") | [^'&])* "'") 	/* ws: significant */
+//TOKEN : { <STRING_LITERAL :  (<DOUBLE_QUOTE> (<PREDIFINED
+// 	>}
+
+TOKEN : { <SKIP_KEYWORD : "skip">}
+TOKEN : { <LAX : "lax">}
+TOKEN : { <STRICT : "strict">}
+TOKEN : { <TYPE : "type">}
+
+// [23]    	HexDigits 	   ::=    	([0-9] | [a-f] | [A-F])+
+TOKEN : { <HEX_DIGITS : (["0"-"9"] | ["a"-"f"] | ["A"-"F"])+>}
+
+TOKEN : {<NAMESPACE: "namespace">}
+TOKEN : {<ELEMENT: "element">}
+TOKEN : {<DEFAULT_: "default">}
+TOKEN : {<EQUAL: "=">}
+TOKEN : {<AT: "at">}
+TOKEN : {<SCHEMA: "schema">}
+TOKEN : {<IMPORT: "import">}
+TOKEN : {<VALIDATION: "validation">}
+TOKEN : {<DECLARE: "declare">}
+TOKEN : {<STAR: "*">}
+TOKEN : {<INTERROGATION: "?">}
+TOKEN : {<SLASH: "/">}
+TOKEN : {<NODE: "node">}
+TOKEN : {<TEXT: "text">}
+TOKEN : {<COMMENT: "comment">}
+TOKEN : {<PROCESSING_INSTRUCTION: "processing-instruction">}
+
+TOKEN : {<DOCUMENT_NODE: "document-node">}
+TOKEN : {<COMMA: ",">}
+TOKEN : {<ATTRIBUTE: "attribute">}
+TOKEN : {<NILLABLE: "nillable">}
+TOKEN : {<ITEM: "item">}
+TOKEN : {<EMPTY: "empty">}
+
+TOKEN : {<AS: "as">}
+TOKEN : {<DOLLAR: "$">}
+TOKEN : {<EXTERNAL: "external">}
+TOKEN : {<FUNCTION: "function">}
+TOKEN : {<BASE_URI: "base_uri">}
+TOKEN : {<STRIP: "strip">}
+TOKEN : {<PRESERVE: "preserve">}
+TOKEN : {<XMLSPACE: "xmlspace">}
+TOKEN : {<COLLATION: "collation">}
+TOKEN : {<L_BRACE_BRACE: "{{">}
+TOKEN : {<R_BRACE_BRACE: "}}">}
+
+TOKEN : {<L_BRACE: "{">}
+TOKEN : {<R_BRACE: "}">}
+TOKEN : {<DOCUMENT: "document">}
+TOKEN : {<GREATER: ">">}
+TOKEN : {<LESS_SLASH: "</">}
+TOKEN : {<TWO_POINT: ":">}
+TOKEN : {<FOUR_POINT: "::">}
+TOKEN : {<SLASH_GREATER: "/>">}
+TOKEN : {<POINT_POINT: "..">}
+TOKEN : {<LESS: "<">}
+TOKEN : {<ANCESTOR_OR_SELF: "ancestor_or_self">}
+TOKEN : {<PRECEDING: "preceding">}
+TOKEN : {<PRECEDING_SIBLING: "preceding_sibling">}
+TOKEN : {<ANCESTOR: "ancestor">}
+TOKEN : {<PARENT: "parent">}
+TOKEN : {<FOLLOWING: "following">}
+TOKEN : {<FOLLOWING_SIBLING: "following_sibling">}
+TOKEN : {<DESCENDANT_OR_SELF: "descendant_or_self">}
+TOKEN : {<SELF: "self">}
+TOKEN : {<DESCENDANT: "descendant">}
+TOKEN : {<CHILD: "child">}
+TOKEN : {<ARROBA: "@">}
+TOKEN : {<FOLLOW: ">>">}
+TOKEN : {<PRECEDE: "<<">}
+TOKEN : {<IS: "is">}
+TOKEN : {<GE: "ge">}
+TOKEN : {<GT: "gt">}
+TOKEN : {<LE: "le">}
+TOKEN : {<LT: "lt">}
+TOKEN : {<NE: "ne">}
+TOKEN : {<EQ: "eq">}
+TOKEN : {<GREATER_OR_EQUAL: ">=">}
+TOKEN : {<LESS_OR_EQUAL: "<=">}
+TOKEN : {<NOT_EQUAL: "!=">}
+TOKEN : {<CONTEXT: "context">}
+TOKEN : {<VALIDATE: "validate">}
+TOKEN : {<GLOBAL: "global">}
+TOKEN : {<L_BRACKET: "[">}
+TOKEN : {<R_BRACKET: "]">}
+TOKEN : {<SLASH_SLASH: "//">}
+TOKEN : {<EXCEPT: "except">}
+TOKEN : {<INTERSECT: "intersect">}
+TOKEN : {<BAR: "|">}
+TOKEN : {<UNION: "union">}
+TOKEN : {<MOD: "mod">}
+TOKEN : {<DIV: "div">}
+TOKEN : {<IDIV: "idiv">}
+TOKEN : {<MULTIPLY: "multiply">}
+TOKEN : {<TO: "to">}
+TOKEN : {<CAST: "cast">}
+TOKEN : {<CASTABLE: "castable">}
+TOKEN : {<TREAT: "treat">}
+TOKEN : {<OF: "of">}
+TOKEN : {<INSTANCE: "instance">}
+TOKEN : {<AND: "and">}
+TOKEN : {<OR: "or">}
+TOKEN : {<IF: "if">}
+TOKEN : {<THEN: "then">}
+TOKEN : {<ELSE: "else">}
+TOKEN : {<RETURN: "return">}
+TOKEN : {<CASE: "case">}
+TOKEN : {<TYPESWITCH: "typeswitch">}
+TOKEN : {<SATISFIED: "satisfied">}
+TOKEN : {<IN: "in">}
+TOKEN : {<EVERY: "every">}
+TOKEN : {<SOME: "some">}
+TOKEN : {<LEAST: "least">}
+TOKEN : {<GREATEST: "greatest">}
+TOKEN : {<DESCENDING: "descending">}
+TOKEN : {<ASCENDING: "ascending">}
+TOKEN : {<BY: "by">}
+TOKEN : {<ORDER: "order">}
+TOKEN : {<STABLE: "stable">}
+TOKEN : {<WHERE: "where">}
+TOKEN : {<SET_EQUAL_TO: ":=">}
+TOKEN : {<LET: "let">}
+TOKEN : {<FOR: "for">}
+TOKEN : {<MODULE: "module">}
+TOKEN : {<XQUERY: "xquery">}
+TOKEN : {<VERSION: "version">}
+TOKEN : {<VARIABLE: "variable">}
+
+TOKEN : {<AMP: "amp">}
+TOKEN : {<QUOT: "quot">}
+TOKEN : {<APOS: "apos">}
+
+
+TOKEN : {<UNDERLINE: "_">}
+
+TOKEN: { <LETTER: ["a"-"f"] | ["A"-"F"]>}
+TOKEN : {<NCNAME: (<LETTER> | "_") (<NCNAMECHAR>)*>}
+TOKEN : {<QNAME: (<NCNAME> <TWO_POINT>)? <NCNAME> >}
+TOKEN : {<NCNAMECHAR: <LETTER> | <DIGIT> | <POINT> | "-" | <UNDERLINE>>}
+TOKEN : {<CHAR: "char">}
+
+TOKEN : {<SEMICOLON: ";">}
+

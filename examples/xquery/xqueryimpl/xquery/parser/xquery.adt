@@ -1,0 +1,147 @@
+[
+  modulentry(
+	Name("xquery"),
+  [
+	 Name("FLWORExpr"), 
+	 Name("ForLetClause"),
+	 //	 Name("ForLetClauseList"),
+	 Name("OneForClause"),
+	 //	 Name("OneForClauseList"),
+	 Name("TypeDeclaration"),
+	 Name("ItemType"),
+	 Name("WhereClause"),
+	 Name("OrderClause"),
+	 Name("OrderSpec"),
+	 Name("OrderModifier"),
+	 Name("ReturnClause"),
+	 Name("Expr"),
+	 Name("AdditiveExpr"),
+	 Name("MultiplicativeExpr"),
+	 Name("UnionExpr"),
+	 Name("IntersectExceptExpr"),	 
+	 Name("ComparisonExpr"),
+	 Name("ExprList"),
+	 Name("ValueExpr"),
+	 Name("PathExpr"),
+	 Name("RunningStep"),
+	 //	 Name("PathExprList"),
+	 //	 Name("AttrbuteList"),
+	 Name("Attribute"),
+	 Name("Variable"),
+
+	 Name("SlashStepExpr"),
+	 Name("SlashSlashStepExpr"),
+	 Name("StepExpr"),
+	 //	 Name("StepExprList"),
+	 Name("Predicate"),
+	 //	 Name("PredicateList"),
+	 Name("Axis"),
+	 Name("NodeTest"),
+	 Name("NodeKindTest"),
+	 Name("QName")
+	],		
+  [],
+  [ 
+ constructor(FLWORExpr, Flwor, Flwor(<forletlist(ForLetClauseList)>, <whereclause(WhereClause)>, <orderclause(OrderClause)>, <returnclause(ReturnClause)>)),
+ constructor(FLWORExpr, flwor1, flwor1(<forletlist(ForLetClauseList)>,  <orderclause(OrderClause)>, <returnclause(ReturnClause)>)),
+ 
+ constructor(FLWORExpr, flwor2, flwor2(<forletlist(ForLetClauseList)>, <whereclause(WhereClause)>, <returnclause(ReturnClause)>)),
+ 
+ constructor(FLWORExpr, flwor3, flwor3(<forletlist(ForLetClauseList)>, <returnclause(ReturnClause)>)),
+ 
+ constructor(ForLetClause, fromforclause, fromforclause(<data(OneForClauseList)>)),
+ constructor(ForLetClause, fromletclause, fromletclause(<data(OneLetClauseList)>)),
+ list(ForLetClauseList, ForLetClause),
+ 
+
+ constructor(OneForClause, oneforclause1, oneforclause1(<var(Variable)>, <expr(Expr)>)),
+ constructor(OneForClause, oneforclause2, oneforclause2(<var(Variable)>, <type(TypeDeclaration)>, <expr(Expr)>)),
+ constructor(OneForClause, oneforclause3, oneforclause3(<var(Variable)>, <positionvar(Variable)>, <expr(Expr)>)),
+ constructor(OneForClause, oneforclause4, oneforclause4(<var(Variable)>, <positionvar(Variable)>,<type(TypeDeclaration)>, <expr(Expr)>)),
+ 
+ constructor(OneLetClause, oneletclause1, oneletclause1(<var(Variable)>, <expr(Expr)>)), 
+ constructor(OneLetClause, oneletclause2, oneletclause2(<var(Variable)>, <type(TypeDeclaration)>,<expr(Expr)>)), 
+  
+ 
+ list(OneForClauseList, OneForClause),
+ list(OneLetClauseList, OneLetClause),
+ 
+ constructor(TypeDeclaration, typedeclaration, typedeclaration(<itemtype(ItemType)>, <occurenceindicator(int)>)), 
+ 
+ constructor(ItemType, itemtype1, itemtype1(<type(QName)>)), // atomicType
+ constructor(ItemType, itemtype2, itemtype2()), // kindtest - to revise
+ constructor(ItemType, itemtype3, itemtype3()),  // empty()
+ 
+ constructor(WhereClause, whereclause(<expr(Expr)>)),
+ constructor(OrderClause, orderclause, orderclause(<stable(int)>, <orderspeclist(OrderSpecList)>)), // stable = 0: (NOTHING); =1: STABLE
+ constructor(OrderSpec, orderspec, orderspec(<expr(Expr)>, <ordermodifier(OrderModifier)>)),
+ constructor(OrderModifier, ordermodifier1, ordermodifier1(<ascending(int)>, <emptygreatest(int)>)),
+ constructor(OrderModifier, ordermodifier2, ordermodifier2(<ascending(int)>, <emptygreatest(int)>, <collation(str)>)),
+ 
+ constructor(ReturnClause, returnclause, returnclause(<expr(Expr)>)),
+ list(OrderSpecList, OrderSpec),
+ 
+ 
+ constructor(Expr, stringliteral, stringliteral(<data(str)>)),
+ constructor(Expr, integerliteral, integerliteral(<value(int)>)),
+ constructor(Expr, varref, varref(<var(Variable)>)),
+ constructor(Expr, functioncall, functioncall(<functionname(QName)>,<params(ExprList)>))
+ constructor(Expr, direlemconstructor, direlemconstructor(<name(QName)>, <attrs(AttrList)>, <content(Expr)>)),
+ 
+ constructor(Expr, apathexpr, apathexpr(<expr(PathExpr>))),
+ constructor(Expr, flworexpr, flworexpr(<expr(FLWORExpr))),
+ constructor(Expr, pathexprlist, pathexprlist(<exprs(PathExprList)>)),
+ 
+ list(ExprList, Expr),
+ list(PathExprList, PathExpr),
+ list(AttributeList, Attribute),
+ 
+ 
+ constructor(Attribute, elemattribute, elemattribute(<name(QName)>, <value(Expr)>)),
+ 
+ constructor(Variable, variable , variable(<name(QName)>, <value(Expr)>)),
+ 
+ constructor(PathExpr, pathexpr, pathexpr(<expr(Expr)>, <steps(StepExprList)>)),
+ constructor(PathExpr, varsteppathexpr, varsteppathexpr(<varref(Variable)>, <steps(StepExprList)>)),
+ constructor(PathExpr, varpathexpr, varsteppathexpr(<varref(Variable)>, <steps(ExprList)>)),
+ 
+ // step expression
+ constructor(SlashStepExpr, slashstep, slashstep(<axis(Axis)>, <nodetest(NodeTest)>,<predicates(PredicateList)>)),
+ constructor(SlashSlashStepExpr, slashslashstep, slashslashstep(<<axis(Axis)>, <nodetest(NodeTest)>,<predicates(PredicateList)>>)),
+ constructor(StepExpr, parenthesestep, parenthesestep(<<axis(Axis)>, <nodetest(NodeTest)>,<predicates(PredicateList)>>)),
+ 
+ constructor(StepExpr, fromslashexpr,  fromslashexpr(<slashepxr(SlashStepExpr)>)),
+ constructor(StepExpr, fromslashslashexpr,  fromslashexpr(<slashslashepxr(SlashSlashStepExpr)>)),
+ 
+ list(StepExprList, StepExpr),
+ list(PredicateList, Predicate)
+  
+ constructor(Predicate, booleanpredicate, booleanpredicate(<expr(Expr)>)),
+ constructor(Predicate, numericpredicate, numericpredicate(<expr(Expr)>)),
+ 
+ constructor(Axis, selfaxis, selfaxis),
+ constructor(Axis, parentaxis, selfaxis),
+ constructor(Axis, childaxis, selfaxis),
+ constructor(Axis, attributeaxis, selfaxis),
+ constructor(Axis, descendantorselfaxis, selfaxis),
+ 
+ constructor(NodeTest, nodekindtest, nodekindtest(<kindtest(NodeKindTest)>))
+ constructor(NodeTest, nodenametest, nodenametest(<nametest(NodeNameTest)>))
+ 
+ constructor(NodeKindTest, documentnodekindtest, documentnodekindtest);
+ constructor(NodeKindTest, elementnodekindtest, elementnodekindtest);
+ constructor(NodeKindTest, attributenodekindtest, attributenodekindtest);
+ constructor(NodeKindTest, commentnodekindtest, commentnodekindtest);
+ constructor(NodeKindTest, processinginstructionnodekindtest, processinginstructionnodekindtest);
+ constructor(NodeKindTest, anynodekindtest, anynodekindtest);
+ constructor(NodeKindTest, textnodekindtest, textnodekindtest);
+ 
+ constructor(NodeTest, nodenametest, nodenametest(<qname(QName)>)),
+ constructor(NodeTest, prefixwildcardnametest, prefixwildcardnametest(<domainname(str)>)),
+ constructor(NodeTest, wildcardsuffixnametest, wildcarsuffixnametest(<localname(str)>)),
+ 
+ constructor(QName, qname, qname(<name(str)>))
+
+ ])
+
+]
