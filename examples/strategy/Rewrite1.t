@@ -66,7 +66,9 @@ public class Rewrite1 {
     try {
       System.out.println("subject       = " + subject);
       System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visit(subject));
+      System.out.println("onceBottomUpId= " + `OnceBottomUpId(ruleId).visit(subject));
       System.out.println("bottomUp      = " + `BottomUp(Try(rule)).visit(subject));
+      System.out.println("bottomUpId    = " + `BottomUp(ruleId).visit(subject));
       System.out.println("innermost     = " + `Innermost(rule).visit(subject));
       System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).visit(subject));
       System.out.println("innermostId   = " + `InnermostId(ruleId).visit(subject));
@@ -78,7 +80,7 @@ public class Rewrite1 {
   
   class RewriteSystem extends strategy.term.termVisitableFwd {
     public RewriteSystem() {
-      super(new tom.library.strategy.mutraveler.Fail());
+      super(`Fail());
     }
     
     public Term visit_Term(Term arg) throws VisitFailure { 
@@ -87,13 +89,14 @@ public class Rewrite1 {
         b() -> { return `c(); }
         g(c(),c()) -> { return `c(); }
       }
-      throw new VisitFailure();
+      return (Term)`Fail().visit(arg);
+      //throw new VisitFailure();
     }
   }
 
   class RewriteSystemId extends strategy.term.termVisitableFwd {
     public RewriteSystemId() {
-      super(new tom.library.strategy.mutraveler.Identity());
+      super(`Identity());
     }
     
     public Term visit_Term(Term arg) {
