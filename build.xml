@@ -234,6 +234,11 @@
 		<copy todir="${stable.share}">
 			<fileset dir="${stable.mapping}" includes="**/*.tom"/>
 		</copy>
+		<!-- external libs -->
+		<copy todir="${stable.lib}" file="${atermjavajar}"/>
+		<copy todir="${stable.lib}" file="${sharedobjectjar}"/>
+		<copy todir="${stable.lib}" file="${jjtravelerjar}"/>
+		<copy todir="${stable.lib}" file="${apigenjar}"/>
 	</target>
 
 	<target name="distsrc" 
@@ -265,6 +270,11 @@
 		<copy todir="${src.share}">
 			<fileset dir="${src.mapping}" includes="**/*.tom"/>
 		</copy>
+		<!-- external libs -->
+		<copy todir="${src.lib}" file="${atermjavajar}"/>
+		<copy todir="${src.lib}" file="${sharedobjectjar}"/>
+		<copy todir="${src.lib}" file="${jjtravelerjar}"/>
+		<copy todir="${src.lib}" file="${apigenjar}"/>
 	</target>
 
 	<target name="distall" 

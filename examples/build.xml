@@ -12,10 +12,20 @@
 	<!-- Examples to build and distribute -->
 	<property name="adressbook.dir" location="${examples.dir}/AddressBook" />
 
-
-	<!-- tasks for building src -->
-	<taskdef name="adt" classname="jtom.tools.ant.ApigenTask"/>
-	<taskdef name="tom" classname="jtom.tools.ant.TomTask" />
+	<!-- Define classpath for building stable and source	-->
+	<path id="tom.classpath">
+		<fileset dir="${env.TOM_HOME}/lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- tasks for building -->
+	<taskdef name="adt" 
+					 classname="jtom.tools.ant.ApigenTask"
+					 classpathref="tom.classpath"/>
+	<taskdef name="tom" 
+					 classname="jtom.tools.ant.TomTask"
+					 classpathref="tom.classpath"/>
 
 	<target name="prepare.examples">
 		<mkdir dir="${examples.dist}"/>
@@ -52,8 +62,9 @@
 				 options="-I ${env.TOM_HOME}/share/jtom">
 			<include name="**/*.t"/>
 		</tom>
-		<!-- compile java -->
+		<!-- build java source -->
 		<javac srcdir="${adressbook.dir}" destdir="${adressbook.dir}">
+			<classpath refid="tom.classpath"/>
 			<include name="**/*.java"/>
 		</javac>
 	</target>
@@ -66,15 +77,15 @@
 	<target name="dist.examples" description="Prepare a
 		distribution of examples" depends="prepare.examples">
 		<tar tarfile="${examples.dist}/jtom-examples.tar">
-			<tarfileset dir="${adressbook.dir}">
-				<include name="*.t"/>
-				<include name="*.adt"/>
+			<tarfileset dir="${examples.dir}">
+				<include name="AddressBook/*.t"/>
+				<include name="AddressBook/*.adt"/>
 			</tarfileset>
 		</tar>
 	</target>
 
-	<target name="distclean" description="Mr proper" depends="cleanall">
-		<delete dir="${dist.examples.dir}"/>
+	<target name="clean.dist" description="Mr proper" depends="cleanall">
+		<delete dir="${examples.dist}"/>
 	</target>
 
 	<target name="cleanall" 
