@@ -47,6 +47,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <li>destdir</li>
  * <li>outputfile</li>
  * <li>optimize</li>
+ * <li>pretty</li>
  * <li>verbose</li>
  * <li>failonerror</li>
  * <li>stamp</li>
@@ -76,6 +77,7 @@ public class TomTask extends MatchingTask {
   private Path extdirs;
   private boolean nowarn = false;
   private boolean optimize = false;
+  private boolean pretty = false;
   
 
   protected boolean failOnError = true;
@@ -357,6 +359,17 @@ public class TomTask extends MatchingTask {
 	}
 	
 	/**
+	 * If true, compiles with pretty-printing enabled.
+	 * @param pretty if true compile with pretty-printing enabled
+	 */
+	public void setPretty(boolean pretty) {
+		this.pretty = pretty;
+	}
+	
+	public boolean getPretty() {
+		return pretty;
+	}
+	/**
 	 * If true, enables the -nowarn option.
 	 * @param flag if true, enable the -nowarn option
 	 */
@@ -525,6 +538,9 @@ public class TomTask extends MatchingTask {
       }
       if(optimize == true) {
         cmd_line = cmd_line.trim() + " --optimize";
+      }
+      if(pretty == true) {
+        cmd_line = cmd_line.trim() + " --pretty";
       }
       if(stamp == true) {
         cmd_line = cmd_line.trim() + " --stamp";

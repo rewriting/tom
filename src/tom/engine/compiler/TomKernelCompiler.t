@@ -402,13 +402,16 @@ public class TomKernelCompiler extends TomBase {
                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);
                *   ...
                *   end_i = (TomList) GET_TAIL_TomList(end_i);
-               * } 
+               * }
+               * subjectList = begin_i 
                */
 
             Instruction assign1 = tailExp;
             Instruction letAssign = `LetAssign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)),UnamedBlock(concInstruction(let,assign1)));
             loop = `WhileDo(Not(IsEmptyList(Ref(variableEndAST))),letAssign);
+            loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListName,TomTermToExpression(Ref(variableBeginAST)),Nop())));
           }
+
           Instruction letEnd = `LetRef(variableEndAST,
                                        TomTermToExpression(Ref(p.subjectListName)),
                                        loop);
