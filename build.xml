@@ -17,7 +17,7 @@
   <property name="build.sysclasspath" value="ignore" />
   <property name="nowarnings" value="false" />  
   <!-- current version of TOM -->
-  <property name="version" value="2.0rc4"/>
+  <property name="version" value="2.0rc5"/>
   
   <!-- some used directory location -->
   <property name="test"           location="test"/>
