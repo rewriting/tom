@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!DOCTYPE tom [
+  <!ELEMENT tom (plugins,options)>
+
+  <!ELEMENT plugins (plugin*)>
+
+  <!ELEMENT plugin EMPTY>
+  <!ATTLIST plugin
+    name CDATA #IMPLIED
+    version CDATA #IMPLIED
+    description CDATA #IMPLIED
+    classpath CDATA #REQUIRED>
+
+  <!ELEMENT options (OptionBoolean*,OptionInteger*,OptionString*)>
+
+  <!ELEMENT OptionBoolean EMPTY>
+  <!ATTLIST OptionBoolean
+    name CDATA #REQUIRED
+    altName CDATA #IMPLIED
+    description CDATA #IMPLIED
+    valueB (true|false) "false">
+
+  <!ELEMENT OptionInteger EMPTY>
+  <!ATTLIST OptionInteger
+    name CDATA #REQUIRED
+    altName CDATA #IMPLIED
+    description CDATA #IMPLIED
+    valueI CDATA "0"
+    attrName CDATA #REQUIRED>
+
+  <!ELEMENT OptionString EMPTY>
+  <!ATTLIST OptionString
+    name CDATA #REQUIRED
+    altName CDATA #IMPLIED
+    description CDATA #IMPLIED
+    valueS CDATA ""
+    attrName CDATA #REQUIRED>
+]>
+
 <tom>
 
 <plugins>
@@ -165,11 +203,12 @@
 
 </options>
 
+<!--
 <backend>
 
   <generator
     classpath="jtom.backend.TomJavaGenerator"
-    flag="jCode" /> <!-- maybe specify an OptionBoolean instead -->
+    flag="jCode (maybe specify an OptionBoolean instead)" />
 
   <generator
     classpath="jtom.backend.TomCGenerator"
@@ -184,5 +223,6 @@
     flag="eCode" />
 
 </backend>
+-->
 
 </tom>
