@@ -142,9 +142,9 @@ constant returns [Token result]
         )
     ;
 
-/*
- * the %match construct : 
- */
+
+// the %match construct : 
+ 
 matchConstruct [Option ot] returns [Instruction result] throws TomException
 { 
     result = null;
@@ -168,7 +168,6 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
                     optionList
                 );
                 
-                //if (getInput().isDebugMode()){
                 if(((Boolean)getServer().getOptionValue("debug")).booleanValue()){
                     debuggedStructureList = (TomList) debuggedStructureList.append(result);
                 }
@@ -177,7 +176,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
                 pushLine(t.getLine());
                 pushColumn(t.getColumn());
                 
-                // Match finished : pop the tomlexer and return in
+                // Match is finished : pop the tomlexer and return in
                 // the target parser.  
                 selector().pop(); 
             }
@@ -194,12 +193,11 @@ matchArguments [LinkedList list]
 matchArgument [LinkedList list]
     :   
         (
-            type:ID name:ID 
+            type:ID ( BACKQUOTE )? name:ID 
         )
         {
             list.add(`TLVar(name.getText(),TomTypeAlone(type.getText())));
-        }
-        
+        }        
     ;
 
 patternAction [LinkedList list, StringBuffer debugKey] throws TomException
@@ -225,7 +223,7 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
                 listOrgTrackPattern.add(option);
             }
             ( 
-                ALTERNATIVE matchPattern[matchPatternList] 
+                ALTERNATIVE option = matchPattern[matchPatternList] 
                 {
                     listOfMatchPatternList.add(ast().makeList(matchPatternList));
                     matchPatternList.clear();
@@ -236,18 +234,17 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
             )* 
             ARROW t:LBRACE
             {
+                // update for new target block
                 pushLine(t.getLine());
                 pushColumn(t.getColumn());
                 
                 if(((Boolean)getServer().getOptionValue("debug")).booleanValue()){
-                        //if(getInput().isDebugMode()) {
                     blockList.add(`ITL(
                             "jtom.debug.TomDebugger.debugger.patternSuccess(\""
                             +debugKey
                             +"\");\n")
                     );
-                    if(((Boolean)getServer().getOptionValue("memory")).booleanValue()) {
-                            //if(getInput().isDebugMemory()) {
+                    if(((Boolean)getServer().getOptionValue("memory")).booleanValue()){
                             blockList.add(
                                 `ITL("jtom.debug.TomDebugger.debugger.emptyStack();\n")
                             );
@@ -257,10 +254,8 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
                 // actions in target language : call the target lexer and
                 // call the target parser
                 selector().push("targetlexer");
-                //                TargetLanguage tlCode = targetparser.goalLanguage(blockList);
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
 
-                
                 // target parser finished : pop the target lexer
                 selector().pop();
 
@@ -315,9 +310,8 @@ matchPattern [LinkedList list] returns [Option result]
     ;
 
 
-/*
- * The %rule construct
- */
+
+// The %rule construct
 ruleConstruct [Option orgTrack] returns [Instruction result]
 {
     result = null;
@@ -335,15 +329,21 @@ ruleConstruct [Option orgTrack] returns [Instruction result]
             lhs = annotedTerm 
             {listOfLhs = `concTomTerm(lhs);}
             ( ALTERNATIVE {text.append('|');} lhs = annotedTerm() 
-                {listOfLhs = `concTomTerm(listOfLhs*,lhs);} 
+                {//listOfLhs = `concTomTerm(listOfLhs*,lhs);
+                    listOfLhs = (TomList) listOfLhs.append(lhs);
+                } 
             )*
  
             ARROW {orgText = `Name(text.toString());} rhs = plainTerm[null,0]
             (
                 WHERE pattern = annotedTerm AFFECT subject = annotedTerm 
-                {conditionList = `concInstruction(conditionList*, MatchingCondition(pattern,subject));}
+                {//conditionList = `concInstruction(conditionList*, MatchingCondition(pattern,subject));
+                    conditionList = (InstructionList) conditionList.append(`MatchingCondition(pattern,subject));
+                }
             |   IF pattern = annotedTerm DOUBLEEQ subject = annotedTerm
-                {conditionList = `concInstruction(conditionList*, EqualityCondition(pattern,subject));}
+                {//conditionList = `concInstruction(conditionList*, EqualityCondition(pattern,subject));
+                    conditionList = (InstructionList) conditionList.append(`EqualityCondition(pattern,subject));
+                }
             )*
             
             {
@@ -382,18 +382,16 @@ ruleConstruct [Option orgTrack] returns [Instruction result]
             result = `RuleSet(ruleList,orgTrack);
 
             if(((Boolean)getServer().getOptionValue("debug")).booleanValue()){
-                //if(getInput().isDebugMode()) {
                 debuggedStructureList = (TomList) debuggedStructureList.append(result);
             }
             
-            // %rule finished. go back in target parser.
+            // %rule finished: go back in target parser.
             selector().pop();
         }
     ;
 
-/*
- * terms for %match and %rule
- */
+
+// terms for %match and %rule
 annotedTerm returns [TomTerm result]
 {
     result = null;
@@ -446,7 +444,8 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
             {LA(2) != LPAREN && LA(2) != LBRACKET}? 
             name = headSymbol[optionList] 
             {
-                nameList = `concTomName(nameList*,name);
+                //nameList = `concTomName(nameList*,name);
+                nameList = (NameList) nameList.append(name);
                 result = `Appl(
                         ast().makeOptionList(optionList),
                         nameList,
@@ -456,7 +455,9 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
             }
 
         |   // f(...) or f[...]
-            name = headSymbol[optionList] {nameList = `concTomName(nameList*,name);}
+            name = headSymbol[optionList] {//nameList = `concTomName(nameList*,name);}
+                nameList = (NameList) nameList.append(name);
+            }
             implicit = args[list,secondOptionList]
             {
                 if(list.isEmpty())
@@ -521,21 +522,28 @@ args [LinkedList list, LinkedList optionList] returns [boolean result]
     result = false;
 }
     :   (
+            // (term , term , ...)
             t1:LPAREN {text.append('(');} 
             ( termList[list] )? 
             t2:RPAREN 
             {
+                // setting line number for origin tracking
+                // in %rule construct
                 setLastLine(t2.getLine());
+
                 text.append(t2.getText());
             
                 result = false;
                 optionList.add(`OriginTracking(Name(""),t1.getLine(),Name(currentFile())));
             }
             
-        |   t3:LBRACKET {text.append('[');} 
+        |   // [term = term , term = term , ...]
+            t3:LBRACKET {text.append('[');} 
             ( pairList[list] )? 
             t4:RBRACKET 
             {
+                // setting line number for origin tracking
+                // in %rule construct
                 setLastLine(t4.getLine());
                 text.append(t4.getText());
                 
@@ -551,7 +559,7 @@ termList [LinkedList list]
 }
     :   (
             term = annotedTerm {list.add(term);}
-            ( COMMA {text.append(',');} term = annotedTerm() {list.add(term);})*
+            ( COMMA {text.append(',');} term = annotedTerm {list.add(term);})*
         )
     ;
 
@@ -578,7 +586,8 @@ pairList [LinkedList list]
             )*
         )
 ;
-          
+   
+// _* or var*       
 variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm result]
 { 
     result = null; 
@@ -604,10 +613,12 @@ variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm
             {
                 text.append(name);
                 text.append(t.getText());
+
+                // setting line number for origin tracking
+                // in %rule construct
                 setLastLine(t.getLine());
                 
                 optionList.add(`OriginTracking(Name(name),line,Name(currentFile())));
-                // faire une nouvelle fonction ?
                 options = ast().makeOptionList(optionList);
                 constraints = ast().makeConstraintList(constraintList);
                 if(name1 == null)
@@ -627,6 +638,7 @@ variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm
         )
     ;
 
+// _
 placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm result]
 { 
     result = null;
@@ -649,6 +661,7 @@ placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm 
         )
     ;
 
+// ( id | id | ...)
 headSymbolList [LinkedList optionList] returns [NameList result]
 { 
     result = `emptyNameList();
@@ -657,12 +670,19 @@ headSymbolList [LinkedList optionList] returns [NameList result]
     :  
         (
             LPAREN {text.append('(');}
-            name = headSymbol[optionList] {result = `concTomName(result*,name);}
+            name = headSymbol[optionList] {//result = `concTomName(result*,name);}
+                result = (NameList) result.append(name);
+            }
             ALTERNATIVE {text.append('|');}
-            name = headSymbol[optionList] {result = `concTomName(result*,name);}
+            name = headSymbol[optionList] {//result = `concTomName(result*,name);}
+                result = (NameList) result.append(name);
+            }
             ( 
                 ALTERNATIVE {text.append('|');} 
-                name = headSymbol[optionList] {result = `concTomName(result*,name);})* 
+                name = headSymbol[optionList] {//result = `concTomName(result*,name);}
+                    result = (NameList) result.append(name);
+                }
+            )* 
             t:RPAREN 
             {
                 text.append(t.getText());
@@ -693,7 +713,6 @@ headSymbol [LinkedList optionList] returns [TomName result]
             }
         )
         {
-            
             setLastLine(line);
             result = `Name(name);
             optionList.add(`OriginTracking(result,line, Name(currentFile())));
@@ -731,21 +750,18 @@ bqTerm returns [TomTerm result]
     ;
 
 
-/*
- * Operator Declaration
- */
 
+// Operator Declaration
 operator returns [Declaration result] throws TomException
 {
-
     result=null;
     Option ot = null;
-    TomTypeList types = `concTomType();
+    TomTypeList types = `emptyTomTypeList();
     LinkedList options = new LinkedList();
     LinkedList slotNameList = new LinkedList();
-    SlotList slotList = `concPairNameDecl();
+    SlotList slotList = `emptySlotList();
     TomName astName = null;
-    TomSymbol astSymbol;
+//    TomSymbol astSymbol;
     String stringSlotName = null;
     Declaration attribute;
     TargetLanguage tlFsym;
@@ -755,7 +771,7 @@ operator returns [Declaration result] throws TomException
     :
         type:ID name:ID 
         {
-            astName = `Name(name.getText());
+            //astName = `Name(name.getText());
             ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
             options.add(ot);
         }
@@ -781,6 +797,7 @@ operator returns [Declaration result] throws TomException
                 typeArg2:ID
                 {
                     astName = ast().makeName(stringSlotName);
+
                     if (!stringSlotName.equals("")) {
                         if(slotNameList.indexOf(astName) != -1) {
                             String detailedMsg = MessageFormat.format(TomMessage.getString("RepeatedSlotName"), new Object[]{stringSlotName});
@@ -788,10 +805,10 @@ operator returns [Declaration result] throws TomException
                                 TomMessage.getString("MainErrorMessage"), 
                                 new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg}
                             );
-                            //throw new TomException(msg);
-                            System.out.println(msg);
+                            throw new TomException(msg);
                         }
                     }
+
                     slotNameList.add(astName); 
                     types = (TomTypeList) types.append(`TomTypeAlone(typeArg2.getText()));
                 }
@@ -808,7 +825,21 @@ operator returns [Declaration result] throws TomException
             { options.add(attribute); }
 
         |   attribute = keywordGetSlot[astName,type.getText()]
-            { options.add(attribute); }
+           // { options.add(attribute); }
+            {
+                TomName sName = attribute.getSlotName();
+                if (mapNameDecl.get(sName)==null) {
+                    mapNameDecl.put(sName,attribute);
+                }
+                else {
+                    environment().messageWarning(attribute.getOrgTrack().getLine(),
+                        currentFile(),
+                        "%op "+type.getText(),
+                        ot.getLine(),
+                        TomMessage.getString("WarningTwoSameSlotDecl"), 
+                        new Object[]{sName.getString()});
+                }
+            }
 
         |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(attribute); }
@@ -851,8 +882,8 @@ operator returns [Declaration result] throws TomException
                         TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()});
                 }
             }
-            astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
             
+            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
             putSymbol(name.getText(),astSymbol);
 
             result = `SymbolDecl(astName);
@@ -866,18 +897,18 @@ operator returns [Declaration result] throws TomException
 operatorList returns [Declaration result] throws TomException
 {
     result = null;
-    Option ot = null;
-    TomTypeList types = `concTomType();
+//    Option ot = null;
+    TomTypeList types = `emptyTomTypeList();
     LinkedList options = new LinkedList();
-    SlotList slotList = `concPairNameDecl();
+  //  SlotList slotList = `concPairNameDecl();
     Declaration attribute = null;
     TargetLanguage tlFsym;
-    TomSymbol astSymbol;
+//    TomSymbol astSymbol;
 }
     :
         type:ID name:ID
         {
-            ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
             options.add(ot);
         }
         LPAREN typeArg:ID STAR RPAREN
@@ -898,9 +929,18 @@ operatorList returns [Declaration result] throws TomException
         )*
         t:RBRACE
         { 
-
-            slotList =`manySlotList(Slot(EmptyName(), EmptyDeclaration()), slotList);
-            astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
+            //slotList =`manySlotList(Slot(EmptyName(), EmptyDeclaration()), slotList);
+            SlotList slotList = `concPairNameDecl(Slot(EmptyName(), EmptyDeclaration()));
+          //  astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
+            TomSymbol astSymbol = ast().makeSymbol(
+                name.getText(), 
+                type.getText(), 
+                types, 
+                slotList, 
+                options, 
+                tlFsym
+            );
+            
             putSymbol(name.getText(),astSymbol);
 
             result = `ListSymbolDecl(Name(name.getText()));
@@ -914,18 +954,18 @@ operatorList returns [Declaration result] throws TomException
 operatorArray returns [Declaration result] throws TomException
 {
     result = null;
-    Option ot = null;
-    TomTypeList types = `concTomType();
+//    Option ot = null;
+    TomTypeList types = `emptyTomTypeList();
     LinkedList options = new LinkedList();
-    SlotList slotList = `concPairNameDecl();
+//    SlotList slotList = `concPairNameDecl();
     Declaration attribute = null;
     TargetLanguage tlFsym;
-    TomSymbol astSymbol;
+//    TomSymbol astSymbol;
 }
     :
         type:ID name:ID
         {
-            ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
+            Option ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(currentFile()));
             options.add(ot);
         }
         LPAREN typeArg:ID STAR RPAREN
@@ -946,8 +986,8 @@ operatorArray returns [Declaration result] throws TomException
         )*
         t:RBRACE
         { 
-            slotList =`manySlotList(Slot(EmptyName(), EmptyDeclaration()), slotList);
-            astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
+            SlotList slotList = `concPairNameDecl(Slot(EmptyName(), EmptyDeclaration()));
+            TomSymbol astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
             putSymbol(name.getText(),astSymbol);
 
             result = `ArraySymbolDecl(Name(name.getText()));
@@ -958,10 +998,6 @@ operatorArray returns [Declaration result] throws TomException
         }
     ;
 
-/*
- * Type Declaration
- */
-
 typeTerm returns [Declaration result] throws TomException
 {
     result = null;
@@ -969,7 +1005,7 @@ typeTerm returns [Declaration result] throws TomException
     TomList blockList = `emptyTomList();
     Declaration attribute = null;
     TargetLanguage implement = null;
-    TomType astType;
+//    TomType astType;
 }
     :   (
             type:ID
@@ -981,22 +1017,30 @@ typeTerm returns [Declaration result] throws TomException
             implement = keywordImplement
             (
                 attribute = keywordGetFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));
+                }
 
             |   attribute = keywordGetSubterm[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));
+                }
 
             |   attribute = keywordCmpFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));
+                }
 
             |   attribute = keywordEquals[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));
+                }
 
             )*
             t:RBRACE
         )
         {
-            astType = `Type(ASTTomType(type.getText()),TLType(implement));
+            TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
             putType(type.getText(), astType);
 
             result = `TypeTermDecl(Name(type.getText()),blockList,ot);
@@ -1014,7 +1058,7 @@ typeList returns [Declaration result] throws TomException
     Declaration attribute = null;
     TomList blockList = `emptyTomList();
     TargetLanguage implement = null;
-    TomType astType;
+//  TomType astType;
 }
     :   (
             type:ID
@@ -1023,32 +1067,39 @@ typeList returns [Declaration result] throws TomException
             implement = keywordImplement
             (
                 attribute = keywordGetFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordGetSubterm[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordCmpFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordEquals[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordGetHead[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordGetTail[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordIsEmpty[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             )*
             t:RBRACE
 
         )
         {
-            astType = `Type(ASTTomType(type.getText()),TLType(implement));
+            TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
             putType(type.getText(), astType);
 
             result = `TypeListDecl(Name(type.getText()),blockList,ot);
@@ -1067,7 +1118,7 @@ typeArray returns [Declaration result] throws TomException
     Declaration attribute = null;
     TomList blockList = `emptyTomList();
     TargetLanguage implement = null;
-    TomType astType;
+ //   TomType astType;
 }
     :   (
             type:ID
@@ -1076,28 +1127,34 @@ typeArray returns [Declaration result] throws TomException
             implement = keywordImplement
             (                
                 attribute = keywordGetFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordGetSubterm[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordCmpFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordEquals[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordGetElement[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordGetSize[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                {//blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+                    blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
             
             )*
             t:RBRACE
         )
         {
-            astType = `Type(ASTTomType(type.getText()),TLType(implement));
+            TomType astType = `Type(ASTTomType(type.getText()),TLType(implement));
             putType(type.getText(), astType);
 
             result = `TypeArrayDecl(Name(type.getText()),blockList,ot);
@@ -1131,7 +1188,7 @@ keywordGetFunSym [String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+//    TargetLanguage tlCode = null;
 }
     :
         (
@@ -1143,7 +1200,7 @@ keywordGetFunSym [String type] returns [Declaration result] throws TomException
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();
 
                 result = `GetFunctionSymbolDecl(
@@ -1157,7 +1214,7 @@ keywordGetSubterm[String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+//    TargetLanguage tlCode = null;
 }
     :
         (
@@ -1171,7 +1228,7 @@ keywordGetSubterm[String type] returns [Declaration result] throws TomException
                 OptionList option2 = `concOption(info2);
                 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop(); 
 
                 result = `GetSubtermDecl(
@@ -1186,7 +1243,7 @@ keywordCmpFunSym [String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+  //  TargetLanguage tlCode = null;
 }
     :
         (
@@ -1200,7 +1257,7 @@ keywordCmpFunSym [String type] returns [Declaration result] throws TomException
                 OptionList option2 = `concOption(info2);
                 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop(); 
 
                 result = `CompareFunctionSymbolDecl(
@@ -1215,7 +1272,7 @@ keywordEquals[String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+//    TargetLanguage tlCode = null;
 }
     :
         (
@@ -1229,7 +1286,7 @@ keywordEquals[String type] returns [Declaration result] throws TomException
                 OptionList option2 = `concOption(info2);
                 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
                 
                 result = `TermsEqualDecl(
@@ -1243,7 +1300,7 @@ keywordGetHead[String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+//    TargetLanguage tlCode = null;
 }
     :
         (
@@ -1255,7 +1312,7 @@ keywordGetHead[String type] returns [Declaration result] throws TomException
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
 
                 result = `GetHeadDecl(
@@ -1271,7 +1328,7 @@ keywordGetTail[String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+//    TargetLanguage tlCode = null;
 }
     :
         (
@@ -1283,7 +1340,7 @@ keywordGetTail[String type] returns [Declaration result] throws TomException
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
 
                 result = `GetTailDecl(
@@ -1298,7 +1355,7 @@ keywordIsEmpty[String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+ //   TargetLanguage tlCode = null;
 }
     :
         (
@@ -1310,7 +1367,7 @@ keywordIsEmpty[String type] returns [Declaration result] throws TomException
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage  tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop(); 
 
                 result = `IsEmptyDecl(
@@ -1325,7 +1382,7 @@ keywordGetElement[String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;;
+ //   TargetLanguage tlCode = null;;
 }
     :
         (
@@ -1339,7 +1396,7 @@ keywordGetElement[String type] returns [Declaration result] throws TomException
                 OptionList option2 = `concOption(info2);
                 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
                 
                 result = `GetElementDecl(
@@ -1354,7 +1411,7 @@ keywordGetSize[String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+//    TargetLanguage tlCode = null;
 }
     :
         (
@@ -1366,7 +1423,7 @@ keywordGetSize[String type] returns [Declaration result] throws TomException
                 OptionList option = `concOption(info);
 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
 
                 result = `GetSizeDecl(
@@ -1393,7 +1450,7 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+ //   TargetLanguage tlCode = null;
 }
     :
         t:IS_FSYM
@@ -1404,7 +1461,7 @@ keywordIsFsym [TomName astName, String typeString] returns [Declaration result] 
             OptionList option = `concOption(info);
 
             selector().push("targetlexer");
-            tlCode = targetparser.goalLanguage(new LinkedList());
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             selector().pop();
 
             result = `IsFsymDecl(astName,
@@ -1417,7 +1474,7 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode = null;
+//    TargetLanguage tlCode = null;
 }
     :
         (
@@ -1429,7 +1486,7 @@ keywordGetSlot [TomName astName, String type] returns [Declaration result] throw
                 OptionList option = `concOption(info);
                 
                 selector().push("targetlexer");
-                tlCode = targetparser.goalLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop(); 
 
                 result = `GetSlotDecl(astName,
@@ -1445,7 +1502,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
     result = null;
     Option ot = null;
     TomList args = `emptyTomList();
-    TargetLanguage tlCode = null;
+//    TargetLanguage tlCode = null;
     int index = 0;
     TomType type;
     int nbTypes = types.getLength();
@@ -1500,7 +1557,7 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                 pushColumn(l.getColumn());
 
                 selector().push("targetlexer");
-                tlCode = targetparser.targetLanguage(new LinkedList());
+                TargetLanguage tlCode = targetparser.targetLanguage(new LinkedList());
                 selector().pop();
 
                 result = `MakeDecl(Name(opname),returnType,args,tlCode,ot);
@@ -1653,7 +1710,8 @@ COLON       :   ':' ;
 EQUAL       :   '=' ;
 AT          :   '@' ;
 STAR        :   '*' ;
-UNDERSCORE  :   '_' ;  
+UNDERSCORE  :   '_' ; 
+BACKQUOTE   :   "`" ; 
 
 
 // tokens to skip : white spaces

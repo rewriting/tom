@@ -205,9 +205,11 @@ BQ_INTEGER :   ( BQ_MINUS )? ( BQ_DIGIT )+     ;
 BQ_STRING  :   '"' (BQ_ESC|~('"'|'\\'|'\n'|'\r'))* '"'
     ;
 
-ANY :   '\u0000'..'\uffff'  ;
+ANY 
+    :   '\u0000'..'\uffff'  
+    ;
    
-BQ_MINUS   :   '-' ;
+BQ_MINUS   :   '-'  ;
 
 protected
 BQ_DIGIT   :   ('0'..'9')  ;
