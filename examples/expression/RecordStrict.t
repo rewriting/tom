@@ -135,17 +135,15 @@ public class RecordStrict {
   public String prettyPrint(Exp t) {
     String op = t.getOperator();
 
-    if(t instanceof CstExp) {
-      return op;
-    } else {
-      %match(Exp t) {
-        UnaryOperator[first=e1] -> {
-          return op + "(" + prettyPrint(e1) + ")";
-        }
-        
-        BinaryOperator[first=e1,second=e2] -> {
-          return op + "(" + prettyPrint(e1) + "," + prettyPrint(e2) + ")";
-        }
+    %match(Exp t) {
+      CstExp() -> { return op; }
+
+      UnaryOperator[first=e1] -> {
+        return op + "(" + prettyPrint(e1) + ")";
+      }
+      
+      BinaryOperator[first=e1,second=e2] -> {
+        return op + "(" + prettyPrint(e1) + "," + prettyPrint(e2) + ")";
       }
     }
     return "error";
