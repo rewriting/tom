@@ -23,7 +23,8 @@ JAVAROOT        = ${top_builddir}/src/
 
 JAVACC          = @JAVACC@
 
-CLEANFILES 	= TomBackQuoteParser.java $(generated_java)
+CLEANFILES 	= TomBackQuoteParser.java
+#$(generated_java)
 
 $(generated_java): TomParser.jj
 	$(JAVACC) $<
