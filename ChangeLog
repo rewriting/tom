@@ -1,3 +1,23 @@
+2003-10-02    <pem@bach>
+
+	* src/jtom/compiler/TomKernelExpander.t: 
+	  - introduced UnamedVariableStar
+	  - fix a bug in linearization of annoted variables
+
+	* src/jtom/compiler/TomKernelCompiler.t: 
+	  - introduced UnamedVariableStar
+	  - allow UnamedVariable and UnamedVariableStar in list-matching
+	  - allow annoted variables in list-matching
+
+	* src/jtom/compiler/TomCompiler.t: 
+	  - allow non-linear annoted UnamedVariable
+
+	* src/jtom/backend/TomGenerator.t: 
+	  - do not generate code for Assign(UnameVariable...,...)
+
+	* test/Array.t: added new tests
+	* test/List.t: added new tests
+
 2003-09-23  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
 	* bootinstall
