@@ -1,5 +1,4 @@
 # This file predefines some proporties:
-# - where JavaCC is
 # - where jtom-doc is
 
 tomdocdir       = {JTOMDOCPATH}
