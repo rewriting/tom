@@ -345,7 +345,7 @@ public class TomBase extends GenericTraversal {
   
     // ------------------------------------------------------------
   protected void collectVariable(final Collection collection, TomTerm subject) {
-    Collect collect = new Collect() { 
+    Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
             //%variable
           if(t instanceof TomTerm) {

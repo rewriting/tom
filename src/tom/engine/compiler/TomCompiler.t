@@ -775,7 +775,7 @@ public class TomCompiler extends TomBase {
 
 
   public void collectDeclaration(final Collection collection, TomTerm subject) {
-    Collect collect = new Collect() { 
+    Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
             //%variable
           %match(TomTerm t) {

@@ -36,8 +36,31 @@ public class GenericTraversal {
      * returns false if no more traversal is needed
      * returns true  if traversal has to be continued
      */
-  protected interface Collect {
-    boolean apply(ATerm t);
+  private class Collect {
+    boolean apply(ATerm t, Object args[]) {
+      int length = args.length;
+      switch(length) {
+          case 0: return ((Collect1)this).apply(t);
+          case 1: return ((Collect2)this).apply(t, args[0]);
+          case 2: return ((Collect3)this).apply(t, args[0], args[1]);
+          default:
+            System.out.println("Extend Collect.apply to " + length + " arguments");
+            System.exit(1);
+      }
+      return false;
+    }
+  }
+
+  protected abstract class Collect1 extends Collect {
+    abstract public boolean apply(ATerm t);
+  }
+
+  protected abstract class Collect2 extends Collect {
+    abstract public boolean apply(ATerm t, Object arg1);
+  }
+
+  protected abstract class Collect3 extends Collect {
+    abstract public boolean apply(ATerm t, Object arg1, Object arg2);
   }
 
   private class Replace {
@@ -104,24 +127,37 @@ public class GenericTraversal {
     }
     return subject;
   }
+
+  protected void genericCollect(ATerm subject, Collect collect) {
+    genericCollect(subject,collect, new ATerm[] {});
+  }
+
+  protected void genericCollect(ATerm subject, Collect collect, Object arg1) {
+    genericCollect(subject, collect, new Object[] {arg1});
+  }
+
+  protected void genericCollect(ATerm subject, Collect collect, Object arg1, Object arg2) {
+    genericCollect(subject, collect, new Object[] {arg1,arg2});
+  }
+
   
     /*
      * Traverse a subject and collect
      * %all(subject, collect(vTable,subject,f)); 
      */
-  protected void genericCollect(ATerm subject, Collect collect) {
+  protected void genericCollect(ATerm subject, Collect collect, Object[] args) {
     try {
-      if(collect.apply(subject)) { 
+      if(collect.apply(subject,args)) { 
         if(subject instanceof ATermAppl) { 
           ATermAppl subjectAppl = (ATermAppl) subject; 
           for(int i=0 ; i<subjectAppl.getArity() ; i++) {
             ATerm term = subjectAppl.getArgument(i);
-            genericCollect(term,collect); 
+            genericCollect(term,collect,args); 
           } 
         } else if(subject instanceof ATermList) { 
           ATermList subjectList = (ATermList) subject; 
           while(!subjectList.isEmpty()) { 
-            genericCollect(subjectList.getFirst(),collect); 
+            genericCollect(subjectList.getFirst(),collect,args); 
             subjectList = subjectList.getNext(); 
           } 
         } 
@@ -162,12 +198,12 @@ public class GenericTraversal {
     return res;
   } 
 
-  protected interface Collect2 {
+  protected interface CollectReach {
     boolean apply(ATerm t, Collection c);
   }
 
   
-  protected void genericCollect2(ATerm subject, Collect2 collect,
+  protected void genericCollectReach(ATerm subject, CollectReach collect,
                                  Collection collection) {
     try {
       if(subject instanceof ATermAppl) {
@@ -176,7 +212,7 @@ public class GenericTraversal {
         collect.apply(subject,collection);
         for(int i=0 ; i<subjectAppl.getArity() ; i++) {
           Collection tmpCollection = new ArrayList();
-          genericCollect2(subjectAppl.getArgument(i),collect,tmpCollection);
+          genericCollectReach(subjectAppl.getArgument(i),collect,tmpCollection);
           Iterator it = tmpCollection.iterator();
           while(it.hasNext()) {
             collection.add(subjectAppl.setArgument((ATerm)it.next(),i));

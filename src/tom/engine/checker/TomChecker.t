@@ -66,7 +66,7 @@ public class TomChecker extends TomBase {
     // Main entry point: We check all interesting Tom Structure
   public void checkSyntax(TomTerm parsedTerm) {
     if(!Flags.doCheck) return;
-    Collect collectAndVerify = new Collect() 
+    Collect1 collectAndVerify = new Collect1() 
       {  
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
@@ -110,7 +110,7 @@ public class TomChecker extends TomBase {
   
   public void checkVariableCoherence(TomTerm expandedTerm) {
     if(!Flags.doCheck) return;
-    Collect collectAndVerify = new Collect() 
+    Collect1 collectAndVerify = new Collect1() 
       {  
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
@@ -255,7 +255,7 @@ public class TomChecker extends TomBase {
   }
 
   private void permissiveVerify(TomTerm term) {
-    Collect permissiveCollectAndVerify = new Collect() 
+    Collect1 permissiveCollectAndVerify = new Collect1() 
       {  
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
