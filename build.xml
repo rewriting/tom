@@ -33,6 +33,7 @@
   <property name="jjtraveler.lib" value="${lib}/jjtraveler.jar"/>
   <property name="apigen.lib" value="${lib}/apigen.jar"/>
   <property name="vastoadt.lib" value="${lib}/vas-to-adt.jar"/>
+	<property name="antlr.lib" value="${lib}/antlr.jar"/>
   
   <!-- Aircube bundle -->
   <property name="bundle.dir" value="bundle"/>
@@ -317,6 +318,7 @@
     <copy todir="${src.lib}" file="${apigen.lib}"/>
     <copy todir="${src.lib}" file="${vastoadt.lib}"/>
     <copy todir="${src.lib}" file="${concurrent.lib}"/>
+  	<copy todir="${src.lib}" file="${antlr.lib}"/>
 
   </target>
 
