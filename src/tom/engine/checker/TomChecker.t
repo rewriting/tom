@@ -885,13 +885,28 @@ abstract public class TomChecker extends TomTask {
           break matchblock;
         }
         
-        XMLAppl[option=options, nameList=(_*, Name(_), _*)] -> {
+        XMLAppl[option=options, nameList=(_*, Name(_), _*), childList=childList] -> {
             // TODO: can we do it
             // ensureValidDisjunction(nameList); ??????????
           termClass = XML_APPL;
           decLine = findOriginTrackingLine(`options);
           type = getSymbolCodomain(getSymbol(Constants.ELEMENT_NODE));
           termName = Constants.ELEMENT_NODE;
+          
+          TomList args = `childList;
+          /*
+           * we cannot use the following expression
+           *   TomType TNodeType = symbolTable().getType(Constants.TNODE);
+           * because TNodeType should be a TomTypeAlone and not an expanded type
+           */
+          TomType TNodeType = getSymbolCodomain(symbolTable().getSymbol(Constants.ELEMENT_NODE));
+          //System.out.println("TNodeType = " + TNodeType);
+          while(!args.isEmpty()) {
+            // repeat analyse with associated expected type and control arity
+            validateTerm(args.getHead(), TNodeType, true, false, permissive);
+            args = args.getTail();
+          }
+
           break matchblock;
         }
         
@@ -1068,7 +1083,7 @@ abstract public class TomChecker extends TomTask {
     
     if(filteredList.isEmpty()) {
       messageError(decLine,
-                   TomMessage.getString("UnknowUnamedList"),
+                   TomMessage.getString("UnknownUnamedList"),
                    new Object[]{expectedType.getString()},
                    TomMessage.TOM_ERROR);
       return null;
@@ -1140,7 +1155,7 @@ abstract public class TomChecker extends TomTask {
                    TomMessage.TOM_ERROR);     
     }
    
-    // with part is common between Appl and records with multiple head symbols
+    // this part is common between Appl and records with multiple head symbols
     boolean first = true; // the first symbol give the expected type
     %match(NameList nameList) {
       (_*, Name(dijName), _*) -> { // for each SymbolName
@@ -1179,7 +1194,7 @@ abstract public class TomChecker extends TomTask {
   
   private boolean ensureSymbolCodomain(TomType currentCodomain, TomType expectedType, String msg, String symbolName, int decLine) {
     if(currentCodomain != expectedType) {
-        //System.out.println(currentCodomain+"!="+expectedType);
+      //System.out.println(currentCodomain+"!="+expectedType);
       messageError(decLine, 
                    msg,
                    new Object[]{symbolName, currentCodomain.getString(), expectedType.getString()},

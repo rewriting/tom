@@ -415,15 +415,22 @@ public class TomExpander extends TomTask {
      */
     attrList = sortAttributeList(attrList);
 
+    /*
+     * Attributes: go from implicit notation to explicit notation
+     */
     while(!attrList.isEmpty()) {
       TomTerm newPattern = expandTomSyntax(attrList.getHead());
       newAttrList = `manyTomList(newPattern,newAttrList);
-      if(implicitAttribute) { newAttrList = `manyTomList(star,newAttrList); }
+      if(implicitAttribute) { 
+        newAttrList = `manyTomList(star,newAttrList); 
+      }
       attrList = attrList.getTail();
     }
     newAttrList = (TomList) newAttrList.reverse();
-    //System.out.println("attr: " + newAttrList);
     
+    /*
+     * Childs: go from implicit notation to explicit notation
+     */
     while(!childList.isEmpty()) {
       TomTerm newPattern = expandTomSyntax(childList.getHead());
       newChildList = `manyTomList(newPattern,newChildList);
@@ -448,7 +455,6 @@ public class TomExpander extends TomTask {
       /*
        * encode the name and put it into the table of symbols
        */
-
     NameList newNameList = `concTomName();
     matchBlock: {
       %match(NameList nameList) {

@@ -1039,7 +1039,8 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
   TomTerm term;
   TomTerm arg1;
   TomTerm arg2;
-  LinkedList list = new LinkedList();
+  LinkedList pairSlotList = new LinkedList();
+  LinkedList attributeList = new LinkedList();
   LinkedList childs = new LinkedList();
   String keyword = "";
   boolean implicit;
@@ -1053,7 +1054,7 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
     // < NODE attributes [ /> | > childs </NODE> ]
     <XML_START> { text += "<"; }
      nameList = XMLNameList(optionList, true)
-     implicit = XMLAttributeList(list)
+     implicit = XMLAttributeList(attributeList)
         {
           if(implicit) { optionList.add(tsf().makeOption_ImplicitXMLAttribut()); }
         }
@@ -1112,7 +1113,7 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
           term =  tsf().makeTomTerm_XMLAppl(
             option,
             nameList,
-            ast().makeList(list),
+            ast().makeList(attributeList),
             ast().makeList(childs),
 						ast().makeConstraintList(constraintList));
           return term;
@@ -1121,16 +1122,16 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
   // #TEXT(...)
 //  | <XML_TEXT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
 //       | <XML_TEXT> <TOM_LPAREN> arg1 = PlainTerm(null) <TOM_RPAREN>
-              | <XML_TEXT> <TOM_LPAREN> arg1 = AnnotedTerm() <TOM_RPAREN>
+    | <XML_TEXT> <TOM_LPAREN> arg1 = AnnotedTerm() <TOM_RPAREN>
     {
       keyword = Constants.TEXT_NODE;
-      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));
+      pairSlotList.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));
     }
   | // #COMMENT(...)
     <XML_COMMENT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
     {
       keyword = Constants.COMMENT_NODE;
-      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));
+      pairSlotList.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));
     }
   | // #PROCESSING-INSTRUCTION(... , ...)
     <XML_PROC> <TOM_LPAREN>
@@ -1138,8 +1139,8 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
     <TOM_RPAREN>
       {
         keyword = Constants.PROCESSING_INSTRUCTION_NODE;
-        list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_TARGET),arg1));
-        list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg2));
+        pairSlotList.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_TARGET),arg1));
+        pairSlotList.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg2));
       }
      )
     {
@@ -1149,7 +1150,7 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
       nameList = tsf().makeNameList(tsf().makeTomName_Name(keyword));
       return tsf().makeTomTerm_RecordAppl(option,
                                     nameList,
-                                    ast().makeList(list),
+                                    ast().makeList(pairSlotList),
 																		constraint);
 
     }
