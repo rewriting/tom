@@ -82,6 +82,8 @@
 				<include name="AddressBook/*.adt"/>
 			</tarfileset>
 		</tar>
+		<gzip zipfile="${examples.dist}/jtom-examples.tar.gz" src="${examples.dist}/jtom-examples.tar"/>
+		<delete file="${examples.dist}/jtom-examples.tar"/>
 	</target>
 
 	<target name="clean.dist" description="Mr proper" depends="cleanall">
