@@ -964,7 +964,7 @@ abstract class TomChecker extends TomBase implements TomTask {
   }
   
 	private void messageVariableWithConstructorNameError(String name, int line) {
-		String s = "Ambiguous variable name "+ name;
+		String s = "Ambiguous variable name. Is '" + name  + "' a variable or a constructor? Use " + name + "() if it is a constructor.";
 		messageError(line,s);
 	}
 
