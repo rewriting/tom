@@ -231,7 +231,8 @@ public class UC4_2 {
 	
 	TNode objs[]={_i};
 	
-	return tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData02(), new TNodeQualifier());	
+	SlashSlashOperator oper = new SlashSlashOperator(new _TNodeTester_collectData02(), null);
+	return oper.run(subject);
 	
   }
 
@@ -255,7 +256,9 @@ public class UC4_2 {
 	  }
 	}
 	
-	return tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
+	SlashSlashOperator oper = new SlashSlashOperator(new _TNodeTester_collectData01(), null);
+
+	return oper.run(subject);
   }
 
 

@@ -19,48 +19,6 @@ public class TNodeTool {
 	return xtools.getTNodeFactory();
   }
 
-//   public Sequence operatorStar(TNode subject,final TNodeTester tester, final TNodeQualifier qualifier) 
-//   {
-// 	HashSequence seq = new HashSequence();
-		
-// 	TNodeList childList = ((TNode)node).getChildList(); 
-// 	for (int i=0; i<childList.getLength(); i++) {
-// 	  Sequence s = this.collectData02(childList.getTNodeAt(i));
-// 	  seq.addAll(s);
-// 	}
-// 	return seq;
-//   }
-
-
-//   public Sequence operatorSlashSlash(TNode subject,final TNodeTester tester, final TNodeQualifier qualifier) 
-//   {
-// 	GenericTraversal traversal = new GenericTraversal();
-// 	final HashSequence sequence=new HashSequence(); 
-	
-// 	Collect1 collect = new Collect1() { 
-// 		public boolean apply(ATerm t) 
-// 		{ 
-// 		  try {
-// 			if(t instanceof TNode) { 
-// 			  if (tester.doTest(t)) {
-// 				sequence.addAll(qualifier.qualify(t));
-// 				return true;
-// 			  }
-// 			} 
-// 			return true; 
-// 		  }
-// 		  catch (XQueryGeneralException e) {
-// 			System.out.println("ERROR: xqueryGeneral exception");
-// 			return false; 
-// 		  }
-// 		} // end apply 
-// 	  }; // end new 
-// 	traversal.genericCollect(subject, collect); 
-	
-	
-//     return sequence;
-//   }
-
   
   public Sequence distinctValues(Sequence seq, Comparator comparator, TNodeTester tester, TNodeQualifier qualifier)
 	throws XQueryGeneralException
@@ -89,26 +47,6 @@ public class TNodeTool {
 	return result;
   }
 
-//   public Sequence operatorSlash(TNode subject,final TNodeTester tester,final TNodeQualifier qualifier) 
-//   {
-// 	try {
-// 	//return null;
-// 	  Sequence seq=new Sequence(); 
-// 	  %match (TNode subject) {
-// 		<_></_> -> {
-// 		   if (tester.doTest(subject)) {
-// 			 seq.addAll(qualifier.qualify(subject));
-// 		   }
-// 		 }
-// 	  }
-	  
-// 	  return seq;
-// 	}
-// 	catch (XQueryGeneralException e) {
-// 	  System.out.println("ERROR: xqueryGeneral exception");
-// 	  return null; 
-// 	}
-//   }
 
   public void printResult(QueryRecordSet queryRecordSet, RecordPrinter printer) 
 	throws XQueryGeneralException

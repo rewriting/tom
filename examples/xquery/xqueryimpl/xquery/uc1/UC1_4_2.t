@@ -254,20 +254,21 @@ public class UC1_4_2 {
 		  }
 		}
 		
-		class _TNodeQualifier_collectData01 extends TNodeQualifier{
-		    public Sequence qualify(Object node) 
+		class _TNodeTester02_collectData01 extends TNodeTester{
+		    public boolean doTest(Object node) 
 		  {
-			Sequence result = new Sequence(); 
 			%match (TNode node) {
-			  <bib>book@<book></book></bib> -> {
-				 result.add(book); 
+			  <book></book> -> {
+				 return true; 
 			   }
 			}
-			return result;
+			return false;
 		  }
 		}
 
-		return tnodetool.operatorSlash(subject, new _TNodeTester_collectData01(), new _TNodeQualifier_collectData01());	
+		PathOperator oper = new SlashOperator(new _TNodeTester_collectData01(), 
+											  new SlashOperator(new _TNodeTester02_collectData01(), null));
+		return oper.run(subject);
 	  }
 	}
   
@@ -426,8 +427,9 @@ public class UC1_4_2 {
 		return false;
 	  }
 	}
-	
-	return tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
+
+	SlashSlashOperator oper = new SlashSlashOperator(new _TNodeTester_collectData01(), null);	
+	return oper.run(subject);
   }
 
 
