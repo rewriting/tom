@@ -12,7 +12,7 @@
       <library name="jjtraveler-0.4.2.jar"/>
       <library name="aterm-1.5beta.jar"/>
       <library name="shared-objects-1.4.jar"/>
-      <library name="apigen-1.7beta.jar"/>
+      <library name="apigen.jar"/>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
@@ -82,7 +82,7 @@
             id="fr.loria.eclipse.jtom.ADTPropertyPage">
       </page>
    </extension>
-<!-- Tom editor-->
+<!-- Tom editor
    <extension
          point="org.eclipse.ui.documentProviders">
       <provider
@@ -90,30 +90,42 @@
             class="fr.loria.eclipse.jtom.editor.TomDocumentProvider"
             id="fr.loria.eclipse.jtom.editor.TomDocumentProvider">
       </provider>
-   </extension>
+   </extension>-->
    <extension
          point="org.eclipse.ui.editors">
-<!--contributorClass="fr.loria.eclipse.jtom.editor.TomActionContributor"-->
       <editor
+      	  	id="fr.loria.eclipse.jtom.editor.TomEditor"
             name="Tom Editor"
-            icon="icons/Tom.gif"
+            icon="icons/BigTom.gif"
             extensions="t"
             class="fr.loria.eclipse.jtom.editor.TomEditor"
-            id="fr.loria.eclipse.jtom.editor.TomEditor">
+            >
+			<!--contributorClass="fr.loria.eclipse.jtom.editor.TomActionContributor"-->
       </editor>
    </extension>
 
-<!-- Tom Pop-up-->
+<!-- Tom and ADTPop-up-->
   <extension point = "org.eclipse.ui.popupMenus">
      <objectContribution
         id="fr.loria.eclipse.jtom.TomPopupBuilder"
         objectClass="org.eclipse.core.resources.IFile"
 	    nameFilter="*.t">
 	    <action id="fr.loria.eclipse.jtom.TomPopupBuilder.Action"
-	       label="Compile..."
+	       label="TomCompile..."
 	       menubarPath="additions"
-	       icon="icons/Tom.gif"
+	       icon="icons/BigTom.gif"
 	       class="fr.loria.eclipse.jtom.TomPopupBuilder"	
+	       enablesFor="1">
+	    </action>
+	 </objectContribution>
+	      <objectContribution
+        id="fr.loria.eclipse.jtom.ADTPopupBuilder"
+        objectClass="org.eclipse.core.resources.IFile"
+	    nameFilter="*.adt">
+	    <action id="fr.loria.eclipse.jtom.ADTPopupBuilder.Action"
+	       label="Generate API..."
+	       icon="icons/BigAPI.gif"
+	       class="fr.loria.eclipse.jtom.ADTPopupBuilder"	
 	       enablesFor="1">
 	    </action>
 	 </objectContribution>
