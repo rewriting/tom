@@ -38,7 +38,7 @@ package minirho;
 
  public class Rho {
 
-	 private Factory factory;
+	 private rhotermFactory factory;
 //	 private GenericTraversal traversal;
 	 private boolean hasBeenSimplified;
 		 //Signature de mon langage, utilise pour les tests.
@@ -47,10 +47,9 @@ package minirho;
 	 private RTerm X = null;
 
 		 //On suppose la conjonction de contraintes representee par des listes de contraintes (donc assoc). Dans les regles on se rend compte que en fait la commutativite du \land n'est pas utile.
-	 %vas {
-		 // extension of adt syntax
+	%vas{
 		 module rhoterm
-
+     imports 
 		 public
 			 sorts RTerm Constraint
 
@@ -85,7 +84,7 @@ package minirho;
 //			 concConstraintng( MatchConstraint* ) -> Constraint
 
 
-	 public Rho(Factory factory) {
+	 public Rho(rhotermFactory factory) {
 		 this.factory = factory;
 //		 this.traversal = new GenericTraversal();
 	 }
@@ -106,7 +105,7 @@ package minirho;
 
 	 }
 	
-  public Factory getRhotermFactory() {
+  public rhotermFactory getRhotermFactory() {
     return factory;
   }
     public void run(){
@@ -114,7 +113,7 @@ package minirho;
 			System.out.println(simplifyTerm(essai));
     }
     public final static void main(String[] args) {
-			Rho rhoEngine = new Rho(new Factory(new PureFactory()));
+			Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
 			rhoEngine.run();
 
 
