@@ -374,15 +374,24 @@
     </chmod>
 
     <!-- tom library -->
-    <copy todir="${stable.lib}">
-      <fileset dir="${stable.src}/jtom/adt">
-        <include name="*.jar"/>
-      </fileset>
-    </copy>
-    <jar jarfile="${stable.lib}/jtom.jar">
-      <fileset dir="${stable.build}" includes="**/*.class"/>
-      <fileset dir="${stable.src}" includes="**/*.properties"/>
+		<jar jarfile="${stable.lib}/tom-library.jar">
+      <fileset dir="${stable.build}" includes="tom/library/**/*.class"/>
     </jar>
+    <jar jarfile="${stable.lib}/plugin-platform.jar">
+      <fileset dir="${stable.build}" includes="tom/platform/**/*.class"/>
+      <fileset dir="${stable.src}" includes="tom/platform/**/*.properties"/>
+    </jar>
+    <jar jarfile="${stable.lib}/jtom.jar">
+      <fileset dir="${stable.build}" includes="jtom/**/*.class"/>
+      <fileset dir="${stable.src}" includes="jtom/**/*.properties"/>
+    </jar>
+
+    <copy todir="${stable.lib}">
+      <fileset dir="${stable.src}/jtom/adt" includes="*.jar"/>
+      <fileset dir="${stable.src}/tom/library/adt" includes="*.jar"/>
+      <fileset dir="${stable.src}/tom/platform/adt" includes="*.jar"/>
+    </copy>
+
     <!-- tom share -->
     <copy todir="${stable.share}">
       <fileset dir="${stable.mapping}" includes="**/*.tom"/>
@@ -442,30 +451,35 @@
     </chmod>
 
     <!-- tom library -->
-		<!--
-			<jar jarfile="${src.lib}/Set-${DSTAMP}.jar">
-			<fileset dir="${src.build}" 
-			includes="tom/library/adt/set/**/*.class"/>
-			</jar>
-		-->
-    <jar jarfile="${src.lib}/tom-library-${DSTAMP}.jar">
-      <fileset dir="${src.build}" 
-               includes="tom/library/**/*.class"/>
-    </jar>
     <jar jarfile="${src.lib}/TomSignature-${DSTAMP}.jar">
+      <fileset dir="${src.build}" includes="jtom/adt/tomsignature/**/*.class"/>
+    </jar>
+    <jar jarfile="${src.lib}/Set-${DSTAMP}.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>
+    </jar>
+    <jar jarfile="${src.lib}/TNode-${DSTAMP}.jar">
+      <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
+    </jar>
+    <jar jarfile="${src.lib}/PlatformOption-${DSTAMP}.jar">
+      <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
+    </jar>
+
+		<jar jarfile="${src.lib}/tom-library-${DSTAMP}.jar">
       <fileset dir="${src.build}" 
-               includes="jtom/adt/tomsignature/**/*.class"/>
+							 includes="tom/library/**/*.class"
+							 excludes="tom/library/**/adt/**/*.class"/>
     </jar>
     <jar jarfile="${src.lib}/plugin-platform-${DSTAMP}.jar">
       <fileset dir="${src.build}" 
-               includes="tom/platform/**/*.class"/>
+               includes="tom/platform/**/*.class"
+							 excludes="tom/platform/**/adt/**/*.class"/>
+			<fileset dir="${src.src}" includes="tom/platform/**/*.properties"/>
     </jar>
     <jar jarfile="${src.lib}/jtom-${DSTAMP}.jar">
       <fileset dir="${src.build}" 
                includes="jtom/**/*.class"
                excludes="jtom/adt/**/*.class"/>
-      <fileset dir="${src.src}" 
-               includes="**/*.properties"/>
+      <fileset dir="${src.src}" includes="jtom/**/*.properties"/>
     </jar>
     <!-- tom share -->
     <copy todir="${src.share}">
@@ -824,7 +838,7 @@
     <antcall target="buildadt"/>
     <copy todir="${destination}/gen">
       <fileset dir="${src.gen}">
-        <include name="jtom/adt/**/*"/>
+        <include name="**/adt/**/*"/>
       </fileset>
     </copy>
 
@@ -903,23 +917,21 @@
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
     </copy>
 
-    <jar jarfile="${stable.src}/jtom/adt/TomSignature.jar">
-      <fileset dir="${src.build}" 
-               includes="jtom/adt/tomsignature/**/*.class"/>
-    </jar>
+    <mkdir dir="${stable.src}/jtom/adt"/>
     <mkdir dir="${stable.src}/tom/library/adt"/>
+    <mkdir dir="${stable.src}/tom/platform/adt"/>
+
+    <jar jarfile="${stable.src}/jtom/adt/TomSignature.jar">
+      <fileset dir="${src.build}" includes="jtom/adt/tomsignature/**/*.class"/>
+    </jar>
     <jar jarfile="${stable.src}/tom/library/adt/Set.jar">
-      <fileset dir="${src.build}" 
-               includes="tom/library/adt/set/**/*.class"/>
+      <fileset dir="${src.build}" includes="tom/library/adt/set/**/*.class"/>
     </jar>
     <jar jarfile="${stable.src}/tom/library/adt/TNode.jar">
-      <fileset dir="${src.build}" 
-               includes="tom/platform/adt/tnode/**/*.class"/>
+      <fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
     </jar>
-    <mkdir dir="${stable.src}/tom/platform/adt"/>
     <jar jarfile="${stable.src}/tom/platform/adt/PlatformOption.jar">
-      <fileset dir="${src.build}" 
-               includes="tom/platform/adt/platformoption/**/*.class"/>
+      <fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
     </jar>
 		<antcall target="clean.bootstrap"/>
 
@@ -933,11 +945,10 @@
     <unjar src="${apigen.lib}" dest="${bundle.dir}"/>
     <unjar src="${vastoadt.lib}" dest="${bundle.dir}"/>
     <unjar src="${concurrent.lib}" dest="${bundle.dir}"/>
-    <unjar src="${src.lib}/TNode-${DSTAMP}.jar" dest="${bundle.dir}"/>
+    <unjar src="${src.lib}/tom-library-${DSTAMP}.jar" dest="${bundle.dir}"/>
     <unjar src="${src.lib}/TomSignature-${DSTAMP}.jar" dest="${bundle.dir}"/>
-    <unjar src="${src.lib}/Options-${DSTAMP}.jar" dest="${bundle.dir}"/>
+    <unjar src="${src.lib}/plugin-platform-${DSTAMP}.jar" dest="${bundle.dir}"/>
     <unjar src="${src.lib}/jtom-${DSTAMP}.jar" dest="${bundle.dir}"/>
-    <unjar src="${src.lib}/Set-${DSTAMP}.jar" dest="${bundle.dir}"/>
     
     <jar destfile="${aircubebundle}" basedir="${bundle.dir}"></jar>
     <delete dir="${bundle.dir}"/>
@@ -951,11 +962,10 @@
     <unjar src="${apigen.lib}" dest="${bundle.dir}"/>
     <unjar src="${vastoadt.lib}" dest="${bundle.dir}"/>
     <unjar src="${concurrent.lib}" dest="${bundle.dir}"/>
-    <unjar src="${stable.lib}/TNode.jar" dest="${bundle.dir}"/>
+    <unjar src="${stable.lib}/tom-library.jar" dest="${bundle.dir}"/>
     <unjar src="${stable.lib}/TomSignature.jar" dest="${bundle.dir}"/>
-    <unjar src="${stable.lib}/Options.jar" dest="${bundle.dir}"/>
+    <unjar src="${stable.lib}/plugin-platform.jar" dest="${bundle.dir}"/>
     <unjar src="${stable.lib}/jtom.jar" dest="${bundle.dir}"/>
-    <unjar src="${stable.lib}/Set.jar" dest="${bundle.dir}"/>
     
     <jar destfile="${aircubebundle}" basedir="${bundle.dir}"></jar>
     <delete dir="${bundle.dir}"/>
