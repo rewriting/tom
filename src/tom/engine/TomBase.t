@@ -50,32 +50,32 @@ public class TomBase {
     }
 
     protected ASTFactory ast() {
-	return getServer().getASTFactory();
+			return getServer().getASTFactory();
     }
 
     protected TomEnvironment environment() {
-	return getServer().getEnvironment();
+			return getServer().getEnvironment();
     }
 
     public TomServer getServer()
     {
-	return TomServer.getInstance();
+			return TomServer.getInstance();
     }
 
     protected OptionsFactory getOptionsFactory() {
-	return getServer().getOptionsFactory();
+			return getServer().getOptionsFactory();
     }
 
     protected TomSignatureFactory tsf() {
-	return getServer().getTomSignatureFactory();
+			return getServer().getTomSignatureFactory();
     }
 
     public GenericTraversal traversal() {
-	return this.traversal;
+			return this.traversal;
     }
 
     protected final TomSignatureFactory getTomSignatureFactory() {
-	return tsf();
+			return tsf();
     }
 
     protected SymbolTable symbolTable() {

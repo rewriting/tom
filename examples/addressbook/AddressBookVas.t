@@ -35,7 +35,7 @@ import addressbook.addressbookvas.person.*;
 import addressbook.addressbookvas.person.types.*;
 
 public class AddressBookVas {
-  private Factory factory;
+  private personFactory factory;
 
   %vas {
       //
@@ -52,19 +52,19 @@ public class AddressBookVas {
       person(firstname:String,lastname:String, birthdate:Date) -> Person
       concPerson( Person* ) -> PersonList
       bob -> Person
-      alice() -> Person
+      alice -> Person
   }
  
-  public AddressBookVas(Factory factory) {
+  public AddressBookVas(personFactory factory) {
     this.factory = factory;
   }
  
-  public Factory getPersonFactory() {
+  public personFactory getPersonFactory() {
     return factory;
   }
 
   public final static void main(String[] args) {
-    AddressBookVas test = new AddressBookVas(new Factory(new PureFactory()));
+    AddressBookVas test = new AddressBookVas(new personFactory(new PureFactory()));
     test.run();
   }
   
