@@ -212,6 +212,7 @@
       <exclude name="**/tomparse.g.t"/>
       <exclude name="**/targetparse.g.t"/>
       <exclude name="**/NewTomBackQuoteParser.t"/>
+      <exclude name="**/TomMainParser.t"/>
     </tom>
   </target>
 
@@ -820,6 +821,7 @@
       <exclude name="**/tomparse.g.t"/>
       <exclude name="**/targetparse.g.t"/>
       <exclude name="**/NewTomBackQuoteParser.t"/>
+      <exclude name="**/TomMainParser.t"/>
     </tomsrc>
 
     <!-- builds parser -->

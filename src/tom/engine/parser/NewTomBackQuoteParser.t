@@ -1,4 +1,5 @@
- 
+package jtom.parser;
+
 import java.util.*;
 
 import jtom.*;
@@ -10,40 +11,40 @@ import antlr.*;
 
 public class NewTomBackQuoteParser 
     extends TomBase 
-    implements NewBQParserTokenTypes, NewTomParserTokenTypes {
+    implements jtom.parser.NewBQParserTokenTypes, jtom.parser.NewTomParserTokenTypes {
  
     %include{TomSignature.tom}
 
-    %typeterm Token {
-	implement {Token}
+    %typeterm AntlrToken {
+	implement {antlr.Token}
 	get_fun_sym(t) { null }
 	cmp_fun_sym(s1,s2) { false }
 	get_subterm(t,n) { null }
 	equals(t1,t2) { t1.equals(t2) }
     }
 
-    %op Token LPAREN(name:String,line:int) {
+    %op AntlrToken LPAREN(name:String,line:int) {
 	fsym { }
 	is_fsym(t) { (t!=null) && (t.getType() == LPAREN || t.getType() == BQ_LPAREN) }
 	get_slot(name,t) { t.getText() }
 	get_slot(line,t) { t.getLine() }
     }
 
-    %op Token RPAREN(name:String,line:int) {
+    %op AntlrToken RPAREN(name:String,line:int) {
 	fsym { }
 	is_fsym(t) { (t!=null) && t.getType() == BQ_RPAREN}
 	get_slot(name,t) { t.getText() }
 	get_slot(line,t) { t.getLine() }
     }
     
-    %op Token IDENT(name:String,line:int) {
+    %op AntlrToken IDENT(name:String,line:int) {
 	fsym { }
 	is_fsym(t) { (t!=null) && (t.getType() == ID || t.getType() == BQ_ID) }
 	get_slot(name,t) { t.getText() }
 	get_slot(line,t) { t.getLine() }
     }
     
-    %op Token COMMA(name:String,line:int) {
+    %op AntlrToken COMMA(name:String,line:int) {
 	fsym { }
 	is_fsym(t) { (t!=null) && t.getType() == BQ_COMMA }
 	get_slot(name,t) { t.getText() }
@@ -68,7 +69,7 @@ public class NewTomBackQuoteParser
     }
 
     public TomTerm buildBackQuoteAppl(LinkedList tokenList, String fileName) {
-	Token t = (Token) tokenList.getFirst();
+	antlr.Token t = (antlr.Token) tokenList.getFirst();
 	return buildBackQuoteAppl(t.getText(),t.getLine(),fileName);
     }
 
@@ -78,7 +79,7 @@ public class NewTomBackQuoteParser
     }
 
     public TomTerm buildVariableStar(LinkedList tokenList, String fileName) {
-	Token t = (Token) tokenList.getFirst();
+	antlr.Token t = (antlr.Token) tokenList.getFirst();
 	return buildVariableStar(t.getText(),t.getLine(),fileName);
     }
 
@@ -175,7 +176,7 @@ public class NewTomBackQuoteParser
     }
 
     public TomTerm buildBackQuoteTerm(LinkedList tokenList, String filename) {
-	Token current = null, next = null;
+	antlr.Token current = null, next = null;
 	Stack stackName = new Stack();
 	Stack stackList = new Stack();
 	Stack stackOption = new Stack();
@@ -185,19 +186,19 @@ public class NewTomBackQuoteParser
 	Iterator it = tokenList.iterator();
 	
 	if(it.hasNext()) {
-	    next = (Token)it.next();
+	    next = (antlr.Token)it.next();
 	}
 	boolean finish = false;
 	while(! finish){
 	    
 	    current = next;
 	    if(it.hasNext()) 
-		next = (Token)it.next();
+		next = (antlr.Token)it.next();
 	    else 
 		finish = true;
 
 	    matchBlock: {
-		%match(Token current, Token next) {
+		%match(AntlrToken current, AntlrToken next) {
 		    IDENT(name,line), LPAREN[] -> {
 			stackOption.push(`OriginTracking(
 							 Name(name), 
@@ -208,7 +209,7 @@ public class NewTomBackQuoteParser
 			stackList.push(`concTomTerm(Composite(concTomTerm())));
 			current = next;
 			if(it.hasNext()) 
-			    next = (Token)it.next();
+			    next = (antlr.Token)it.next();
 			else {
 			    System.out.println("buildBackQuoteTerm: term not correct");
 			    finish = true;

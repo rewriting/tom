@@ -364,7 +364,7 @@ public class TomServer implements TomPluginOptions
       Object instance;
       String path = (String)it.next();
       try
-		    { 
+	  { 
           instance = Class.forName(path).newInstance();
           if(instance instanceof TomPlugin)
             instances.add(instance);
@@ -407,7 +407,7 @@ public class TomServer implements TomPluginOptions
 		environment.updateEnvironment(inputFiles[i]);
 		System.out.println(inputFiles[i]);
 		ATerm term = `FileName(inputFiles[i]);
-      
+
 		// runs the modules
 		it = instances.iterator();
 		it.next(); // skips the server
