@@ -31,33 +31,32 @@
   fsym { fzero }
     //make(t1,t2) { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
-  get_slot(type,t) { t.getType() }
 }
 
 
 %rule {
-  x@_ -> x // `_`: Impossible in rule left hand side
+  x@_ -> x // `_`: Impossible in rule left hand side (line 38)
 }
 
 %rule {
-  x@X* -> x // `X*`: Impossible in rule left hand side
+  x@X* -> x // `X*`: Impossible in rule left hand side (line 42)
 }
 
 %rule {
-  x@_* -> x // `_*`: Impossible in rule left hand side
+  x@_* -> x // `_*`: Impossible in rule left hand side (line 46)
 }
 
 %rule {
-  x@<a></a> -> x // `XML Construct a`: Impossible in rule left hand side
+  x@<a></a> -> x // `XML Construct a`: Impossible in rule left hand side (line 50)
 }
 
 %rule {
-  x@(op1|op2)() -> x // `Disjunction`: Impossible in rule left hand side
+  x@(op1|op2)() -> x // `Disjunction`: Impossible in rule left hand side (line 54)
 }
-/*
+
 %rule {
   (op1|op2)[] -> f() // `Disjunction`: Impossible in rule left hand side
-}*/
+}
 
 %rule {
   op2(_,_) -> f() // Rule head symbol `op2` has no `make` method: It is necessary to define one!!
@@ -75,12 +74,12 @@
 }
 
 %rule {
-  op3 -> op2(op3, op3) //The symbol `op2` has type `type1` but type `type2` was required
-    op3 -> _ //`_`: Impossible in rule right hand side
-  op3 -> _*  //`_*`: Impossible in rule right hand side
-    op3 -> X*  // //`X*`: Impossible in rule right hand side
-  op3 -> <a></a> //`XML construct a`: Impossible in rule right hand side
-  op3 -> (op1|op2)() //`Disjunction`: Impossible in rule right hand side
+  op3() -> op2(op3(), op3()) //The symbol `op2` has type `type1` but type `type2` was required
+  op3() -> _ //`_`: Impossible in rule right hand side
+  op3() -> _*  //`_*`: Impossible in rule right hand side
+  op3() -> X*  // //`X*`: Impossible in rule right hand side
+  op3() -> <a></a> //`XML construct a`: Impossible in rule right hand side
+  op3() -> (op1|op2)() //`Disjunction`: Impossible in rule right hand side
 }
 %rule {
   op1[] -> op1(op1(_,op1(_)) ,_)

@@ -50,6 +50,7 @@ public class Peano {
       assertTrue( peano2int(plus1(N,N)) == (i+i) );
       assertTrue( peano2int(plus2(N,N)) == (i+i) );
       assertTrue( peano2int(plus3(N,N)) == (i+i) );
+      assertTrue( peano2int(plus4(N,N)) == (i+i) );
     }
 
     for(int i=0 ; i<15 ; i++) {
@@ -69,7 +70,7 @@ public class Peano {
 
   public ATerm plus1(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {
-      x,(zero|zero)()   -> { return x; }
+      x,(zero|zero)[]   -> { return x; }
       x,suc(y) -> { return suc(plus1(x,y)); }
     }
     return null;
@@ -91,6 +92,14 @@ public class Peano {
     return null;
   }
 
+    public ATerm plus4(ATerm t1, ATerm t2) {
+    %match(term t1, term t2) {
+      x,(zero|zero)[]   -> { return x; }
+      x,(suc|suc)[pred=y] -> { return suc(plus1(x,y)); }
+    }
+    return null;
+  }
+  
   %rule {
     fib1(zero())        -> suc(zero)
     fib1(suc(zero()))   -> suc(zero)
