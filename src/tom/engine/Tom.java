@@ -159,6 +159,8 @@ public class Tom {
       usage();
     }
 
+    Flags.debugMode = Flags.jCode && Flags.debugMode;
+      
     if(fileName.length() == 0) {
       System.out.println("no inputfile");
       usage();

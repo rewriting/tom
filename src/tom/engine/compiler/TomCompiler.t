@@ -39,7 +39,7 @@ import jtom.runtime.*;
 
 public class TomCompiler extends TomBase {
   TomKernelCompiler tomKernelCompiler;
-
+  private String debugKey = null;
   public TomCompiler(jtom.TomEnvironment environment,
                      TomKernelCompiler tomKernelCompiler) {
     super(environment);
@@ -85,6 +85,9 @@ public class TomCompiler extends TomBase {
       RuleSet(ruleList@Cons(
                 RewriteRule[lhs=Term(Appl[astName=Name(tomName)])],tail), orgTrack) -> {
 
+        if(Flags.debugMode) {
+          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+        }
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomName name = tomSymbol.getAstName();
         TomList typesList = tomSymbol.getTypesToType().getList();
@@ -120,6 +123,11 @@ public class TomCompiler extends TomBase {
               if(Flags.supportedBlock) {
                 rhsList = appendInstruction(`OpenBlock(),rhsList);
               }
+              if(Flags.debugMode) {
+                TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternSuccess(\""+debugKey+"\");\n");
+                rhsList = append(`TargetLanguageToTomTerm(tl), rhsList);
+              }
+              
               rhsList = appendInstruction(`Return(newRhs),rhsList);
               if(Flags.supportedBlock) {
                 rhsList = appendInstruction(`CloseBlock(),rhsList);
@@ -162,6 +170,9 @@ public class TomCompiler extends TomBase {
       }
       
       Match(SubjectList(l1),PatternList(l2), orgTrack) -> {
+        if(Flags.debugMode) {
+          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+        }
         TomList newPatternList = empty();
         while(!l2.isEmpty()) {
           TomTerm elt = preProcessing(l2.getHead());
@@ -183,7 +194,13 @@ public class TomCompiler extends TomBase {
                     Expression equality = (Expression)it.next();
                     cond = `And(equality,cond);
                   }
-                  newActionList = cons(`InstructionToTomTerm(IfThenElse(cond,actionList,empty())),empty());
+                  TomList elsePart = empty();
+                  if(Flags.debugMode) {
+                    TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternFail(\""+debugKey+"\");\n");
+                    elsePart   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
+                  }
+                    
+                  newActionList = cons(`InstructionToTomTerm(IfThenElse(cond,actionList,elsePart)),empty());
                   newPatternAction = `PatternAction(TermList(renamedTermList),Tom(newActionList), orgText);        
                     //System.out.println("\nnewPatternAction = " + newPatternAction);
                 }

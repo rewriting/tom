@@ -36,7 +36,7 @@ import jtom.adt.*;
 import jtom.runtime.*;
 
 public class TomKernelCompiler extends TomBase {
-
+  private String debugKey = null;
   public TomKernelCompiler(jtom.TomEnvironment environment) {
     super(environment);
   }
@@ -129,9 +129,12 @@ public class TomKernelCompiler extends TomBase {
         return `Tom(tomListMap(l,replace_compileMatching));
       }
       
-      Match(SubjectList(l1),PatternList(l2), optionMatch) -> {
+      Match(SubjectList(l1),PatternList(l2), orgTrack) -> {
         statistics().numberMatchCompiledIntoAutomaton++;
-
+        if(Flags.debugMode) {
+          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+        }
+        
         TomList termList, actionList;
         TomList automataList = empty();
         ArrayList list;
@@ -157,7 +160,7 @@ public class TomKernelCompiler extends TomBase {
               Variable(option,_,variableType) -> {
                 TomTerm variable = `Variable(option,PositionName(append(makeNumber(index),path)),variableType);
                 matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
-                matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+                matchAssignementList = appendInstruction(`AssignMatchSubject(variable,TomTermToExpression(tlVariable)),matchAssignementList);
                 break matchBlock;
               }
 
@@ -238,7 +241,7 @@ public class TomKernelCompiler extends TomBase {
            */
 
         TomList astAutomataList = automataListCompileMatchingList(automataList);
-        return `CompiledMatch(matchDeclarationList,astAutomataList, optionMatch);
+        return `CompiledMatch(matchDeclarationList,astAutomataList, orgTrack);
       }
 
         // default rule
@@ -408,7 +411,11 @@ public class TomKernelCompiler extends TomBase {
           TomList automataList  = null;
           TomList succesList    = empty();
           TomList failureList   = empty();
-
+          if(Flags.debugMode) {
+            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternFail(\""+debugKey+"\");");
+            failureList   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
+          }
+          
           if(isListOperator(tomSymbol)) {
             int tmpIndexSubterm = 1;
             automataList = genListMatchingAutomata(tomSymbol,

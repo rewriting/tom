@@ -445,11 +445,12 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     {
       list.add(makeTL(savePosAndExtract()));
       Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
+      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
     }
 
   <TOM_LPAREN> MatchArguments(matchArgumentsList) <TOM_RPAREN>
 
-  <TOM_LBRACE> ( PatternAction(patternActionList) )* <TOM_RBRACE> /* we are in TOM mode */
+  <TOM_LBRACE> ( PatternAction(patternActionList, debugKey) )* <TOM_RBRACE> /* we are in TOM mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
 
@@ -462,35 +463,46 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     }
 }
 
-void PatternAction(ArrayList list) throws TomException: /* in TOM mode */
+void PatternAction(ArrayList list, String debugKey) throws TomException: /* in TOM mode */
 {
   environment.getStatistics().numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
+  ArrayList listTextPattern = new ArrayList();
   ArrayList listOfMatchPatternsList = new ArrayList();
   ArrayList blockList = new ArrayList();
-  String string;
   TargetLanguage tlCode;
+  text = "";
 }
 {
-  MatchPatterns(matchPatternsList, "")
+  MatchPatterns(matchPatternsList)
     { listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
-      matchPatternsList.clear(); }
-  [ ( <TOM_ALTERNATIVE> {text += " | ";} MatchPatterns(matchPatternsList, text) 
+      matchPatternsList.clear();
+      listTextPattern.add(text);text = "";
+    }
+  [ ( <TOM_ALTERNATIVE>  MatchPatterns(matchPatternsList) 
     { listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
-      matchPatternsList.clear(); }
+      matchPatternsList.clear();
+      listTextPattern.add(text);text = "";
+    }
     )+ ]
   <TOM_ARROW>
-    tlCode = GoalLanguageBlock(blockList)
-  {
-    blockList.add(tlCode);
-    for(int i=0 ;  i<listOfMatchPatternsList.size() ; i++) {
-      TomList patterns = (TomList)listOfMatchPatternsList.get(i);
-      list.add(tsf().makeTomTerm_PatternAction(
-                 tsf().makeTomTerm_TermList(patterns),
-                 tsf().makeTomTerm_Tom(ast().makeList(blockList)),
-                 tsf().makeTomName_Name(text)));
+    {
+      if(Flags.debugMode) {
+        blockList.add(tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternSuccess(\""+debugKey+"\");\n"));
+      }
     }
-  }
+  tlCode = GoalLanguageBlock(blockList)
+    {
+      blockList.add(tlCode);
+      for(int i=0 ;  i<listOfMatchPatternsList.size() ; i++) {
+        TomList patterns = (TomList)listOfMatchPatternsList.get(i);
+        String patternText = (String)listTextPattern.get(i);
+        list.add(tsf().makeTomTerm_PatternAction(
+                   tsf().makeTomTerm_TermList(patterns),
+                   tsf().makeTomTerm_Tom(ast().makeList(blockList)),
+                   tsf().makeTomName_Name(patternText)));
+      }
+    }
 }
 
 void MatchArguments(ArrayList list) throws TomException: /* in TOM mode */
@@ -511,14 +523,13 @@ void MatchArgument(ArrayList list) throws TomException: /* in TOM mode */
   }
 }
 
-void MatchPatterns(ArrayList list, String orgText) throws TomException: /* in TOM mode */
+void MatchPatterns(ArrayList list) throws TomException: /* in TOM mode */
 {
   TomTerm term;
-  text = orgText;
 }
 {
   term=Term() { list.add(term); }
-    ( <TOM_COMMA> {text += ",";} term=Term() { list.add(term); } )*
+    ( <TOM_COMMA> {text += "\n";} term=Term() { list.add(term); } )*
 }
 
 
@@ -628,7 +639,8 @@ TomTerm Term() throws TomException: /* in TOM mode */
     // foo@PlainTerm()
     LOOKAHEAD(2) 
     annotedName = <TOM_IDENTIFIER> <TOM_AT>
-    { astAnnotedName = tsf().makeTomName_Name(annotedName.image); }
+      { text += annotedName.image+"@";
+      astAnnotedName = tsf().makeTomName_Name(annotedName.image); }
     term = PlainTerm(astAnnotedName)
     {
       return term;
