@@ -1,34 +1,61 @@
 /*
  * 	LangtonSelf.java
- * 	par Emmanuel Hainry
+ * 	par Emmanuel Hainry et Blaise Potard
  *
  * 	Fonction de transition de l'automate auto-réplicateur 
  * 	de Langton.
+ * 	Remarque : les regles sont definies a rotation pres, 
+ *	donc on commence par calculer un representant "canonique" 
+ *	du membre gauche et seules les règles appliquées aux 
+ *	representants canoniques sont ecrites.
  */
-
+ 
 package Cell;
 
 public class LangtonSelf extends TwoDimCellularAutomaton {
-	
-	%include{int.tom}
-	
+
+	%include {int.tom}	
+
 	public int nextGeneration(Matrice Neighbourhood) {
 		int N  = Neighbourhood.matrice[0][1];
 		int W  = Neighbourhood.matrice[1][0];
 		int C  = Neighbourhood.matrice[1][1];
 		int E  = Neighbourhood.matrice[1][2];
 		int S  = Neighbourhood.matrice[2][1];
-		return transition(N, W, C, E, S, 0);
+		return transition(canonique(N, W, C, E, S));
+	}
+
+	public int canonique(int N, int W, int C, int E, int S) {
+	// renvoie le représentant de NWCES modulo rotation 
+	// tel que NESW soit minimal
+		int[] tableau = {N, E, S, W, N, E, S};
+		int min = 33333;// MAXINT=33333
+		int res = 12345;// variable res might not have been initialized
+		for (int i=0; i<4; i++) {
+			int total = 1000*tableau[i]+100*tableau[i+1]+
+				10*tableau[i+2]+tableau[i+3];
+			if (total < min) {
+			min = total;
+			res = 10000 * tableau[i]
+				+ 1000 * tableau[i+3]
+				+ 100 * C
+				+ 10 * tableau[i+1]
+				+ tableau[i+2];
+			}
+		}
+		return res;
 	}
 	
-	public int transition(int N, int W, int C, int E, int S, int i) {
-		if (i>3) { 	// if no rule is found after 4 rotations
-			return C;
-		} else {
-			%match (int N, int W, int C, int E, int S) {
+	public int transition(int code) {
+		int S = code % 10;
+		int E = (code / 10) % 10;
+		int C = (code /100) % 10;
+ 		int W = (code/1000) % 10;
+		int N = (code/10000)% 10;
+		%match (int N, int W, int C, int E, int S) {
 		  0,
 		1,0,0,
-		  0	-> {return 2;}	// cap a path
+		  0	-> {return 2;}	
 		  0,
 		6,0,0,
 		  0	-> {return 3;}
@@ -51,20 +78,11 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		1,0,0,
 		  2	-> {return 2;}
 		  0,
-		2,0,0,
-		  2	-> {return 0;}
-		  0,
-		3,0,0,
-		  2	-> {return 0;}
-		  0,
 		6,0,0,
 		  2	-> {return 2;}
 		  0,
 		7,0,0,
 		  2	-> {return 2;}
-		  0,
-		2,0,0,
-		  3	-> {return 0;}
 		  0,
 		2,0,0,
 		  5	-> {return 5;}
@@ -78,23 +96,8 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		2,0,1,
 		  0	-> {return 2;}
 		  0,
-		2,0,1,
-		  1	-> {return 0;}
-		  0,
-		2,0,2,
-		  0	-> {return 0;}
-		  0,
-		3,0,2,
-		  0	-> {return 0;}
-		  0,
-		5,0,2,
-		  0	-> {return 0;}
-		  0,
 		2,0,2,
 		  1	-> {return 5;}
-		  0,
-		2,0,2,
-		  2	-> {return 0;}
 		  0,
 		2,0,2,
 		  3	-> {return 2;}
@@ -153,38 +156,14 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		7,0,5,
 		  2	-> {return 1;}
 		  0,
-		1,1,0,
-		  0	-> {return 1;}
-		  0,
-		6,1,0,
-		  0	-> {return 1;}
-		  0,
 		7,1,0,
 		  0	-> {return 7;}
-		  0,
-		1,1,0,
-		  1	-> {return 1;}
-		  0,
-		2,1,0,
-		  1	-> {return 1;}
-		  0,
-		1,1,0,
-		  2	-> {return 1;}
 		  0,
 		4,1,0,
 		  2	-> {return 4;}
 		  0,
 		7,1,0,
 		  2	-> {return 7;}
-		  0,
-		1,1,0,
-		  5	-> {return 1;}
-		  0,
-		1,1,1,
-		  0	-> {return 1;}
-		  0,
-		1,1,1,
-		  1	-> {return 1;}
 		  0,
 		4,1,1,
 		  2	-> {return 4;}
@@ -194,12 +173,6 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		  0,
 		2,1,2,
 		  0	-> {return 6;}
-		  0,
-		2,1,2,
-		  1	-> {return 1;}
-		  0,
-		1,1,2,
-		  2	-> {return 1;}
 		  0,
 		4,1,2,
 		  2	-> {return 4;}
@@ -234,20 +207,8 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		2,1,5,
 		  4	-> {return 7;}
 		  1,
-		2,1,1,
-		  1	-> {return 1;}
-		  1,
-		2,1,1,
-		  2	-> {return 1;}
-		  1,
 		4,1,1,
 		  2	-> {return 4;}
-		  1,
-		5,1,1,
-		  2	-> {return 1;}
-		  1,
-		6,1,1,
-		  2	-> {return 1;}
 		  1,
 		7,1,1,
 		  2	-> {return 7;}
@@ -255,35 +216,17 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		2,1,1,
 		  5	-> {return 2;}
 		  1,
-		2,1,2,
-		  1	-> {return 1;}
-		  1,
-		2,1,2,
-		  2	-> {return 1;}
-		  1,
 		4,1,2,
 		  2	-> {return 4;}
-		  1,
-		5,1,2,
-		  2	-> {return 1;}
 		  1,
 		7,1,2,
 		  2	-> {return 7;}
 		  1,
 		2,1,2,
-		  3	-> {return 1;}
-		  1,
-		2,1,2,
 		  4	-> {return 4;}
 		  1,
 		2,1,2,
-		  6	-> {return 1;}
-		  1,
-		2,1,2,
 		  7	-> {return 7;}
-		  1,
-		2,1,3,
-		  2	-> {return 1;}
 		  2,
 		4,1,2,
 		  2	-> {return 4;}
@@ -312,44 +255,11 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		7,1,5,
 		  2	-> {return 5;}
 		  0,
-		1,2,0,
-		  0	-> {return 2;}
-		  0,
-		2,2,0,
-		  0	-> {return 2;}
-		  0,
-		4,2,0,
-		  0	-> {return 2;}
-		  0,
 		7,2,0,
 		  0	-> {return 1;}
 		  0,
-		2,2,0,
-		  1	-> {return 2;}
-		  0,
-		5,2,0,
-		  1	-> {return 2;}
-		  0,
-		1,2,0,
-		  2	-> {return 2;}
-		  0,
-		2,2,0,
-		  2	-> {return 2;}
-		  0,
-		3,2,0,
-		  2	-> {return 2;}
-		  0,
-		4,2,0,
-		  2	-> {return 2;}
-		  0,
 		5,2,0,
 		  2	-> {return 0;}
-		  0,
-		6,2,0,
-		  2	-> {return 2;}
-		  0,
-		7,2,0,
-		  2	-> {return 2;}
 		  0,
 		2,2,0,
 		  3	-> {return 6;}
@@ -360,80 +270,17 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		1,2,0,
 		  5	-> {return 7;}
 		  0,
-		2,2,0,
-		  5	-> {return 2;}
-		  0,
 		7,2,0,
 		  5	-> {return 5;}
-		  0,
-		2,2,0,
-		  7	-> {return 2;}
-		  0,
-		2,2,1,
-		  0	-> {return 2;}
-		  0,
-		2,2,1,
-		  1	-> {return 2;}
-		  0,
-		2,2,1,
-		  2	-> {return 2;}
-		  0,
-		2,2,1,
-		  4	-> {return 2;}
-		  0,
-		2,2,1,
-		  7	-> {return 2;}
-		  0,
-		2,2,2,
-		  0	-> {return 2;}
-		  0,
-		3,2,2,
-		  0	-> {return 2;}
-		  0,
-		5,2,2,
-		  0	-> {return 2;}
 		  0,
 		7,2,2,
 		  0	-> {return 3;}
 		  0,
 		2,2,2,
-		  1	-> {return 2;}
-		  0,
-		5,2,2,
-		  1	-> {return 2;}
-		  0,
-		1,2,2,
-		  2	-> {return 2;}
-		  0,
-		2,2,2,
-		  2	-> {return 2;}
-		  0,
-		7,2,2,
-		  2	-> {return 2;}
-		  0,
-		2,2,2,
 		  3	-> {return 1;}
 		  0,
 		2,2,2,
-		  4	-> {return 2;}
-		  0,
-		5,2,2,
-		  4	-> {return 2;}
-		  0,
-		2,2,2,
 		  5	-> {return 0;}
-		  0,
-		5,2,2,
-		  5	-> {return 2;}
-		  0,
-		2,2,2,
-		  6	-> {return 2;}
-		  0,
-		2,2,2,
-		  7	-> {return 2;}
-		  0,
-		2,2,3,
-		  1	-> {return 2;}
 		  0,
 		1,2,3,
 		  2	-> {return 6;}
@@ -441,92 +288,14 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		2,2,3,
 		  2	-> {return 6;}
 		  0,
-		2,2,3,
-		  4	-> {return 2;}
-		  0,
-		2,2,4,
-		  2	-> {return 2;}
-		  0,
-		2,2,5,
-		  1	-> {return 2;}
-		  0,
-		1,2,5,
-		  2	-> {return 2;}
-		  0,
-		2,2,5,
-		  2	-> {return 2;}
-		  0,
 		2,2,5,
 		  5	-> {return 1;}
 		  0,
 		2,2,5,
 		  7	-> {return 5;}
-		  0,
-		2,2,6,
-		  2	-> {return 2;}
-		  0,
-		2,2,6,
-		  7	-> {return 2;}
-		  0,
-		2,2,7,
-		  1	-> {return 2;}
-		  0,
-		2,2,7,
-		  2	-> {return 2;}
-		  0,
-		2,2,7,
-		  4	-> {return 2;}
-		  0,
-		2,2,7,
-		  7	-> {return 2;}
-		  1,
-		2,2,1,
-		  2	-> {return 2;}
 		  1,
 		6,2,1,
 		  2	-> {return 1;}
-		  1,
-		2,2,2,
-		  2	-> {return 2;}
-		  1,
-		4,2,2,
-		  2	-> {return 2;}
-		  1,
-		6,2,2,
-		  2	-> {return 2;}
-		  1,
-		7,2,2,
-		  2	-> {return 2;}
-		  1,
-		2,2,4,
-		  2	-> {return 2;}
-		  1,
-		2,2,5,
-		  2	-> {return 2;}
-		  1,
-		2,2,6,
-		  2	-> {return 2;}
-		  1,
-		2,2,7,
-		  2	-> {return 2;}
-		  2,
-		7,2,2,
-		  2	-> {return 2;}
-		  2,
-		4,2,2,
-		  4	-> {return 2;}
-		  2,
-		6,2,2,
-		  4	-> {return 2;}
-		  2,
-		6,2,2,
-		  7	-> {return 2;}
-		  2,
-		7,2,2,
-		  7	-> {return 2;}
-		  0,
-		1,3,0,
-		  0	-> {return 3;}
 		  0,
 		2,3,0,
 		  0	-> {return 2;}
@@ -536,9 +305,6 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		  0,
 		7,3,0,
 		  0	-> {return 6;}
-		  0,
-		2,3,0,
-		  1	-> {return 3;}
 		  0,
 		2,3,0,
 		  4	-> {return 1;}
@@ -581,12 +347,6 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		  0,
 		2,5,0,
 		  0	-> {return 2;}
-		  0,
-		1,5,0,
-		  2	-> {return 5;}
-		  0,
-		2,5,0,
-		  2	-> {return 5;}
 		  0,
 		3,5,0,
 		  2	-> {return 2;}
@@ -645,9 +405,6 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		2,6,2,
 		  2	-> {return 5;}
 		  0,
-		7,7,0,
-		  0	-> {return 7;}
-		  0,
 		2,7,1,
 		  1	-> {return 0;}
 		  0,
@@ -674,10 +431,7 @@ public class LangtonSelf extends TwoDimCellularAutomaton {
 		  0,
 		2,7,2,
 		  7	-> {return 0;}
-		  _,
-		_,_,_,
-		  _	-> {return transition(W, S, C, N, E, i+1);}
-			}
+		_,_,_,_,_ -> {return C;}
 		}
 	}
 }
