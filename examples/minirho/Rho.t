@@ -69,7 +69,6 @@ package minirho;
 //All the reduction rules of the RhoXC-calculus. First, those transforming RTerms. Secondly, those transforming Constraints
 	 Replace1 reductionRules = new Replace1() {
 			 public ATerm apply(ATerm t) {
-//				 System.out.println("J'essaye de reduire: " +  t);
 				if (t instanceof RTerm) {// Reduction rules for terms
 					RTerm term = (RTerm) t;
 					%match(RTerm term){
@@ -120,31 +119,22 @@ package minirho;
 							isConstant = headIsConstant(isConstant);
 							%match(Constraint isConstant){
 								matchH[] -> {
-									System.out.println("no, still one matchH");
-									break l;}//no ,still one matchH
-								//								_ -> {
-								//								System.out.println("yes!");
-								//	}
+									break l;}
 							}
 							//2. on calcule le resultat a retourner.
-							//							System.out.println("DANS MA CONTRAINTE J'AI" + co);
-							//					System.out.println("APRES J'AI" + computeMatch.apply(co));
 							return computeMatch.apply(co);
 						}
 						//simplify
 						and(dk(),(X*,match(a@const[],a),Y*)) -> {return `and(dk(),concConstraint(X*,Y*));}
 						and(ng(),(X*,match(a@const[],a),Y*)) -> {return `and(ng(),concConstraint(X*,Y*));}
 						//We suppose the linearity of patterns
-//						and(dk(),c@(match[pa=var[]],match[pa=var[]])) -> {return `and(g,c);} 
 						and(dk(),(X*,c@match[pa=var[]],Y*,d@match[pa=var[]],Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(c,d)),Y*,Z*));} 
 
 						//the following rule is duplicated because we have to take care of commutativity
-//						and(dk(),c@(match[pa=var[]],and[lab=g()])) -> {return `and(g,c);} 
 						and(dk(),(X*,m@match[pa=var[]],Y*,and(g(),(c*)),Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(m,c*)),Y*,Z*));}
+						and(dk(),(X*,and(g(),(c*)),Y*,m@match[pa=var[]],Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(m,c*)),Y*,Z*));}
 
-						and(dk(),c@(and[lab=g()],match[pa=var[]])) -> {return `and(g,c);} 
-
-						and(dk(),c@(and[lab=g()],and[lab=g()])) -> {return `and(g,c);} 
+						and(dk(),(X*,and(g(),(c*)),Y*,and(g(),(d*)),Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(c*,d*))));}
 						//NGood!!!!!!!!!!!!!!!!: A AJOUTER
 						//ShareMatch A Enrichir
 						appSc(phi,match(B,C)) -> {return `match(B,appSt(phi,C));}
@@ -160,7 +150,9 @@ package minirho;
 								};
 							return `and(x,(ListConstraint)traversal.genericTraversal(C,r,phi));
 						}
+						//two rules for dealing with the ands
 						and(l,(X*,and(l,(C*)),Y*)) -> {return `and(l,concConstraint(X*,C*,Y*));}
+						and(l,(c)) -> {return `c;}
 						
 					}
 				}
@@ -172,9 +164,8 @@ package minirho;
 						abs(A,B) -> {return `abs((RTerm)apply(A),B);}
 					}
 				}
-				//PLEASE MODIFY!!!
-//				return traversal.genericOneStep(t,this);
-				return traversal.genericTraversal(t,this);
+				return traversal.genericOneStep(t,this);
+//				return traversal.genericTraversal(t,this);
 			 }
 		 };
 	 
@@ -203,9 +194,6 @@ package minirho;
 		 RTerm resu;
 		 String s;
 		 System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\n by Germain Faure and ...\n version 0.1 \n ******************************************************************");
-		 Constraint c = `and(dk(),concConstraint(and(dk,concConstraint(match(var("X"),app(abs(var("X"),var("X")),const("a")))))));
-		 System.out.println(normalize(c,reductionRules));
-
 		 while(true){
 			 System.out.print("RomCal>");
 			 s = Clavier.lireLigne();
@@ -249,11 +237,15 @@ package minirho;
 					 }
 				 }
 				 return traversal.genericTraversal(t,this);
-}};
-//auxilary function for the decomposition of the constructors
+			 }};
+
+	 //auxilary function for the decomposition of the constructors
 	 public Constraint headIsConstant(Constraint c){
 		 return (Constraint)normalize(c,headisConstant);
 	 }
+
+
+//PRINT FUNCTIONS
 	 public String printInfix(ATerm t){
 		 if (t instanceof RTerm){
 			 return printInfixTerm((RTerm)t);
