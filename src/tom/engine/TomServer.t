@@ -111,7 +111,7 @@ public class TomServer {
   public static void clear() {
     instance.instances = new ArrayList();
     try {
-    instance.optionManager = (OptionManager)instance.optionManager.getClass().newInstance();
+    	instance.optionManager = (OptionManager)instance.optionManager.getClass().newInstance();
     } catch(Exception e) { System.out.println( "problem when reinitializing option manager : "
 					       + e.getMessage() ); }
   }

@@ -9,22 +9,24 @@ import aterm.*;
  */
 public class TomStarter extends TomGenericPlugin {
 
-  ATerm termToRelay;
-  String fileName = null;
+	ATerm termToRelay;
+	String fileName = null;
 
-  public void setInput(ATerm term) {
-    termToRelay = term;
-    fileName = ((AFun)term).getName();
-  }
+	public void setInput(ATerm term) {
+		termToRelay = term;
+		fileName = ((AFun)term).getName();
+	}
 
-  public ATerm getOutput() {
-    return termToRelay;
-  }
+	public ATerm getOutput() {
+		return termToRelay;
+	}
 
-  public void run() {
-      TomEnvironment env = TomEnvironment.getInstance();//create();
-    env.initInputFromArgs();
-    env.updateEnvironment(fileName);
-  }
+	public void run() {
+		// We need here to create the environment : 
+		// We need to be sure we don't have side effects with the environment singleton
+		TomEnvironment env = TomEnvironment.create();
+		env.initInputFromArgs();
+		env.updateEnvironment(fileName);
+	}
 
 }
