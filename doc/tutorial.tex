@@ -10,11 +10,21 @@ all examples presnted here can be found and ran.
 The difficulties encountered in this tutorial is increasing with each
 section and subsection. Most of the examples are based on Java and the
 corresponding ATerm library for terms representation.
+Each example can be ran using by default suite of commands:
+\\> jtom Example.t
+\\> javac Example.java
+\\> java Example
+Extra commands are explain when necessary.
+
+\section{Introduction to the ATerm library for Java}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Peano integer}
-The Peano integer formalism aims to represent integer as Zero and the
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The Peano integer formalism aims to represent integer as Zero or the
 successor of an integer.
-\subsection{Simple}
+\subsection{Simple examples}
 \TOM\ allows to define such algebraic specifications. First, we define
 the sort term and the 2 defined operators: zero and suc.
 
@@ -39,15 +49,153 @@ the sort term and the 2 defined operators: zero and suc.
 \end{quote}
 \}\\
 
+Once the operators are defined, let us consider a simple symbolic
+computation (addition) defined on Peano integers.
 
-\subsection{Advanced}
+public ATerm plus(ATerm t1, ATerm t2) \{\\
+\begin{quote}
+ \match\ (term t1, term t2) \{\\
+\begin{quote}
+  x,zero   \textbf{->} \{ return x; \}\\
+  x,suc(y) \textbf{->} \{ return suc(plus(x,y)); \}\\
+\end{quote}
+  \}\\
+  return null;\\
+\end{quote}
+\}\\
+
+We can easily see that this program is complete but we need to add a
+last return statement else Java compiler will complain.
+
+The Peano2 examples shows how to map an algebraic sprcification to
+another representation in the target language. So, in this second
+example, you see that terms are \textsf{implemented} by \textbf{ATermAppl} instead
+of \textbf{ATerm}. This implementation choice will simplify the way
+\implement, \getfs, \cmpfs\ and \gets\ are implemented.
+
+\subsection{Using Bacquote construct}
+The Peano3 examples illustrates the way the backquote construct can be
+used to simplify term creation. This is realized by adding a
+\textsf{make} function to each defined operator. This way, the Java suc
+function is no more usefull and is directly replace by the
+corresponding \make\ in suc operator definition. 
+
+\op\ term zero \{\\
+\begin{quote}
+  \fsym \{ factory.makeAFun("zero",0,false) \}\\
+  \make \{ factory.makeAppl(factory.makeAFun("zero",0,false))\}\\
+\end{quote}
+\}\\
+  
+\op\ term suc(term) \{\\
+\begin{quote}
+ \fsym    { factory.makeAFun("suc",1,false) }\\
+ \make(t) { factory.makeAppl(factory.makeAFun("suc",1,false),t) }\\
+\end{quote}
+\}\\
+
+Then, the creation of the term representing the integer N become easy:\\
+ATermAppl N = \backquote zero();
+for(int i=0 ; i<n ; i++) \{\\
+  N = \backquote suc(N);\\
+\}\\
+
+But, the Backquote construct is more powerfull. Indeed, it is
+translated in a function call. This allows to write in the macth
+construct:
+
+x,suc(y) -> { return \backquote suc(plus(x,y)); }
+
+The plus function we be called and its result will be passed to create
+the successor term; Of course, this is correct because plus returns a
+term expected by the successor operator: suc. Running \TOM\ on this
+example leeds for a warning message saying that it can not inferate
+type-checking for this construct, because it has no knowledge on plus
+function. To avoid the warning messages, please use:
+\\> jtom -W Peano3
+
+\subsection{Advanced examples and more powerfull operators}
+As we see in previous examples, the operator definition can be
+developped to simplify the use of \TOM\ main construct. We can also
+supply others functions to specialized their default behavior defined
+in the corresponding term definition.
+
+The Peano1 example shows this point:
+
+\typeterm term \{\\
+\begin{quote}
+  \implement           \{ ATermAppl \}\\
+  \getfs(t)      \{ null \}\\
+  \cmpfs(t1,t2)  \{ false \}\\
+  \gets(t, n)   \{ null \}\\
+\end{quote}
+\}\\
+
+\op term zero \{\\
+\begin{quote}
+  \fsym       \{ \textsf{/* empty */} \}\\
+  \isfs(t) \{ t.getAFun() == factory.makeAFun("zero",0,false) \}\\
+  \make       \{ factory.makeAppl(factory.makeAFun("zero",0,false)) \}\\
+\end{quote}
+\}\\
+  
+\op term suc(pred:term) \{\\
+\begin{quote}
+  \fsym             \{ \textsf{/* empty */} \}\\
+  \isfs(t)       \{ t.getAFun() == factory.makeAFun("suc",1,false) \}\\
+  \getslot(pred,t) \{ (ATermAppl)t.getArgument(0) \}\\
+  \make(t)          \{ factory.makeAppl(factory.makeAFun("suc",1,false),t) \}\\
+\end{quote}
+\}\\
+\\
+In the Peano2 example, we can see the facilities offered to extract
+slot from match construct but also from term using defined slot names
+or \@ facilities.
+
+public ATermAppl fib(ATermAppl t) \{\\
+\begin{quote}
+  \match(term t) \{\\
+\begin{quote}
+    \textsf{y@}zero             -> \{ return `suc( \textsf{y}); \}\\
+    \textsf{y@}suc(zero)        -> \{ return \textsf{y}; \}\\
+    suc\textsf{[pred=y@}suc(\textsf{x})\textsf{]} -> \{ return `plus(fib(\textsf{x}),fib(\textsf{y})); \}\\
+\end{quote}
+  \}\\
+  return null;\\
+\end{quote}
+\}\\
 
 \section{Integer and Fibonacci}
-\subsection{Simple}
-\subsection{Advanced}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As seen in previous examples, all results leed to expression of the
+result in Peano paradigm. \TOM\ offers a way to directly works with
+integer.
+
+public class Jint \{\\
+\begin{quote}
+  \typeint\\
+  public final static void main(String[] args) \{\\
+    Jint test = new Jint();\\
+    int res = test.fib(10);\\
+    System.out.println("res = " + res);\\
+  \}\\
+  public int fib(int t) \{\\
+\begin{quote}
+    \match(\textsf{int t}) \{\\
+      \textsf{0} -> \{ return 1; \}\\
+      \textsf{1} -> \{ return 1; \}\\
+      \textsf{n} -> \{ return fib(n-1) + fib(n-2); \}\\
+    \}\\
+\end{quote}
+  \}\\
+\end{quote}
+\}\\
 
 \section{List}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Apigen and the automatic generation of term representation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Polynomial expression and \TOM}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -98,7 +98,7 @@ So we have:
   definition. This constructs may appear anywhere function declaration
   is valid in the target language. 
 
-\item a \nt{BackQuoteTerm} is translated into a function call.
+\item\label{backquote} a \nt{BackQuoteTerm} is translated into a function call.
 
 \item a \nt{IncludeConstruct} is replaced by the content of the
   file referenced by the construct.
@@ -112,7 +112,7 @@ So we have:
   are also replaced by some functions definitions. 
 \end{itemize}
 
-A \lex{\%match} construct contains two parts:
+A \lex{\%match} construct contains two parts:\label{match}
 \begin{itemize}
 \item a list of target language variables. These variables should
   contains the object on which patterns are matched
@@ -166,7 +166,7 @@ left-handsides should begin with the same root symbol:
         \nt{SlotName} \lex{:} ] \nt{Type} )* \lex{)} ]\\
         &&
         \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMake} \alt
-        \nt{KeywordGetSlot} )* \lex{\}}\\
+        \nt{KeywordGetSlot} \alt \nt{KeywordIsFsym})* \lex{\}}\\
         \nt{OperatorList} & ::= & 
         \lex{\%oplist} \nt{Type} \nt{Name} \lex{(} \nt{Type} \lex{*}
         \lex{)}\\
@@ -242,10 +242,13 @@ left-handsides should begin with the same root symbol:
         \lex{get\_size} \lex{(} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
 \nt{KeywordFsym} & ::= &
         \lex{fsym} \nt{GoalLanguageBlock}\\
+\nt{KeywordMake} & ::= &
+        \lex{make} \lex{(} \nt{Name} ( \lex{,} \nt{Name} )* \lex{)}
+        \nt{GoalLanguageBlock}\\
+\nt{KeywordIsFsym} & ::= &
+        \lex{is\_fsym} \lex{(} \nt{Name} )* \lex{)} \nt{GoalLanguageBlock}\\
 \nt{KeywordGetSlot} & ::= &
         \lex{get\_slot} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
-\nt{KeywordMake} & ::= &
-        \lex{make} \lex{(} \nt{Name} ( \lex{,} \nt{Name} )* \lex{)} \nt{GoalLanguageBlock}\\
 \nt{KeywordMakeEmptyList} & ::= &
         \lex{make\_empty} [ \lex{(} \lex{)} ] \nt{GoalLanguageBlock}\\
 \nt{KeywordMakeAddList} & ::= &
@@ -267,17 +270,17 @@ left-handsides should begin with the same root symbol:
 When defining a new type with the \lex{\%typeterm} constructs,
 several access functions have to be defined:
 \begin{itemize}
-\item the \lex{implement} construct describes how the new type is 
+\item\label{implement} the \lex{implement} construct describes how the new type is 
   implemented. The target language part written between braces
   (\lex{'\{'} and \lex{'\}'}) is never parsed. It is used by
   the compiler to declare some functions and variables.
 
-\item the \lex{get\_fun\_sym(t)} construct corresponds to a
+\item\label{getfs} the \lex{get\_fun\_sym(t)} construct corresponds to a
   function (parametrised by a term variable) that should return the
   root symbol of a given term (the term referenced by the term
   variable \texttt{t} in this example). 
 
-\item the \lex{cmp\_fun\_sym(s1,s2)} construct corresponds to a
+\item\label{cmpfs} the \lex{cmp\_fun\_sym(s1,s2)} construct corresponds to a
   predicate (parametrised by two symbol variables).
   This predicate should return \texttt{true} if the symbols are
   ``equal''. The \texttt{true} value should correspond to the 
@@ -285,14 +288,14 @@ several access functions have to be defined:
   (\texttt{true} in \Java, and something different from \texttt{0} in
   \Clang\ for example). 
 
-\item the \lex{get\_subterm(t,n)} construct corresponds to a
+\item\label{gets} the \lex{get\_subterm(t,n)} construct corresponds to a
   function (parametrised by a term variable and an integer).
   This function should return the \texttt{n-th} subterm of the
   term~\texttt{t}. This never called with and integer paramter that
   does not correspond to the arity of the root symbol of the
   considered term (i.e. we alway have $0 \leq n < arity$).
 
-\item the \lex{equals(t1,t2)} construct corresponds to a
+\item\label{equals} the \lex{equals(t1,t2)} construct corresponds to a
   predicate (parametrised by two term variables).
   This predicate should return \texttt{true} if the terms are
   ``equal''. The \texttt{true} value should correspond to the 
@@ -332,22 +335,28 @@ the two different access functions have to be defined:
   By convention, an empty list contains \texttt{0} element.
 \end{itemize}
 
+\noindent\label{int}
+When introducing integer type with the \lex{\%typeint} construct, then
+the int type can be directly used as a term.
+
 \subsection{Operator definition}\label{opdef}
 
 \noindent
 When defining a new symbol with the \lex{\%op} construct, the user
 should specify how the symbol is implemented. This is done by the
-\lex{fsym} construct.
+\lex{fsym} construct.\label{fsym}
 The expression between braces should correspond (modulo the
 \lex{cmp\_fun\_sym} predicate) to the expression returned by the
 function \lex{get\_fun\_sym} applied to a term rooted by the
 considered symbol.  
-When defining a symbol, is it also possible to specify a
+\label{make}When defining a symbol, is it also possible to specify a
 \lex{make} construct. This function is parametrised by several 
 term variables (i.e. that should correspond to the arity of the
 symbol). A call to this \lex{make} function should return a term
 rooted by the considered symbol, where each subterm correspond to the
 terms given in arguments to the function.
+
+\label{isfsym} Need to write something about isfsym
 
 \noindent
 As mentioned in the syntax definition, it is also possible to name
@@ -360,7 +369,7 @@ Adopting this programming style has two main advantages:
   signature (adding a field for example) without necessary having to
   modify every pattern that occurs in the program.
 
-\item you may also specialize the \lex{get\_subterm} access
+\item\label{getslot} you may also specialize the \lex{get\_subterm} access
 function for a given constructor. This can be done with the
 \lex{get\_slot} construct.
 \end{itemize}
