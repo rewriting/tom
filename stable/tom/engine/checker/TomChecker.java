@@ -183,7 +183,7 @@ throw new TomRuntimeException("Invalid Term");}
     getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage("DetailedMessage",
                     new Object[]{structInfo, new Integer(structDeclLine),
                                  MessageFormat.format(msg,msgArgs)}),
-																 fileName, errorLine));
+                                 fileName, errorLine));
   }
   
   protected void messageWarning(int errorLine, String msg, Object[] msgArg) {
@@ -197,7 +197,7 @@ throw new TomRuntimeException("Invalid Term");}
     getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("DetailedMessage",
                     new Object[]{structInfo, new Integer(structDeclLine),
                                  MessageFormat.format(msg,msgArgs)}),
-																 fileName, errorLine));
+                                 fileName, errorLine));
   }
   
 }  //Class TomChecker

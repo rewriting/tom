@@ -27,13 +27,13 @@ public class Some extends AbstractVisitableVisitor {
     Visitable result = any;
     int successCount = 0;
     for (int i = 0; i < childCount; i++) {
-	    try { 
+      try { 
         result = result.setChildAt(i,getArgument(0).visit(any.getChildAt(i))); 
         successCount++;
-	    } catch(VisitFailure f) { }
+      } catch(VisitFailure f) { }
     }
     if (successCount == 0) {
-	    throw new VisitFailure("Some: None of the " + 
+      throw new VisitFailure("Some: None of the " + 
                              childCount + " arguments of " +
                              any + " succeeded.");
     }

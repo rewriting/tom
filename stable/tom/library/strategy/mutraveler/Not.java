@@ -9,16 +9,16 @@ import jjtraveler.VisitFailure;
  */
 
 public class Not extends AbstractVisitableVisitor {
-	
+  
   public Not(VisitableVisitor v) {
     init(v);
   }
 
   public Visitable visit(Visitable x) throws VisitFailure {
     try {
-	    getArgument(0).visit(x);
+      getArgument(0).visit(x);
     } catch (VisitFailure f) {
-	    return x;
+      return x;
     }
     throw new VisitFailure();
   }

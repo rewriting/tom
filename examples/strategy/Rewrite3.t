@@ -68,14 +68,14 @@ public class Rewrite3 {
   public void run() {
     //Term subject = `g(c,c);
     Term subject = `f(g(g(a,b),g(c,c)));
+    VisitableVisitor rule = new RewriteSystem();
 
     System.out.println("subject = " + subject);
-    System.out.println("occurs  = " + occurs(subject));
+    System.out.println("occurs  = " + occurs(rule, subject));
 
   }
   
-  private boolean occurs(Term subject) {
-    VisitableVisitor rule = new RewriteSystem();
+  private boolean occurs(VisitableVisitor rule, Term subject) {
     VisitableVisitor onceBottomUp = travelerFactory.OnceBottomUp(rule);
     try {
       onceBottomUp.visit(subject);

@@ -84,9 +84,9 @@ public class PluginPlatform {
    * </ul>
    */
   public int run() {
-  	boolean globalSuccess = true;
-  	int globalNbOfErrors = 0;
-  	int globalNbOfWarnings = 0;
+    boolean globalSuccess = true;
+    int globalNbOfErrors = 0;
+    int globalNbOfWarnings = 0;
     // intialize run instances
     lastGeneratedObjects = new ArrayList();
     // for each input we call the sequence of plug-ins
@@ -102,12 +102,12 @@ public class PluginPlatform {
       while(it.hasNext()) {
         Plugin plugin = (Plugin)it.next();
         plugin.setArgs(pluginArg);
-				if(statusHandler.hasError()) {
+        if(statusHandler.hasError()) {
           getLogger().log(Level.SEVERE, "SettingArgError");
           success = false;
           globalSuccess = false;
           globalNbOfErrors += statusHandler.nbOfErrors();
-        	globalNbOfWarnings += statusHandler.nbOfWarnings();
+          globalNbOfWarnings += statusHandler.nbOfWarnings();
           break;
         }
         plugin.run();
@@ -117,7 +117,7 @@ public class PluginPlatform {
           success = false;
           globalSuccess = false;
           globalNbOfErrors += statusHandler.nbOfErrors();
-        	globalNbOfWarnings += statusHandler.nbOfWarnings();
+          globalNbOfWarnings += statusHandler.nbOfWarnings();
           break;
         }
         pluginArg = plugin.getArgs();
@@ -126,7 +126,7 @@ public class PluginPlatform {
         // save the first element of last plugin getArg response
         // this shall correspond to a generated file name
         lastGeneratedObjects.add(pluginArg[0]);
-      	globalNbOfWarnings += statusHandler.nbOfWarnings();
+        globalNbOfWarnings += statusHandler.nbOfWarnings();
       }
     }
 
@@ -157,7 +157,7 @@ public class PluginPlatform {
   }
   
   public RuntimeAlert getAlertForInput(String filePath) {
-  	return statusHandler.getAlertForInput(filePath);
+    return statusHandler.getAlertForInput(filePath);
   }
 
   /** logger accessor in case of logging needs*/

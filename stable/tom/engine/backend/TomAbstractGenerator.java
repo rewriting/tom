@@ -460,7 +460,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   public void generateTargetLanguage(int deep, TargetLanguage subject) throws IOException {
      { jtom.adt.tomsignature.types.TargetLanguage tom_match4_1=(( jtom.adt.tomsignature.types.TargetLanguage)subject); if(tom_is_fun_sym_TL(tom_match4_1) ||  false ) { { String  tom_match4_1_1=tom_get_slot_TL_code(tom_match4_1); { jtom.adt.tomsignature.types.Position tom_match4_1_2=tom_get_slot_TL_start(tom_match4_1); { jtom.adt.tomsignature.types.Position tom_match4_1_3=tom_get_slot_TL_end(tom_match4_1); { String  t=tom_match4_1_1; if(tom_is_fun_sym_TextPosition(tom_match4_1_2) ||  false ) { { int  tom_match4_1_2_1=tom_get_slot_TextPosition_line(tom_match4_1_2); { int  startLine=tom_match4_1_2_1; if(tom_is_fun_sym_TextPosition(tom_match4_1_3) ||  false ) { { int  tom_match4_1_3_1=tom_get_slot_TextPosition_line(tom_match4_1_3); { int  endLine=tom_match4_1_3_1;
 
-	  // output.write(" ");
+    // output.write(" ");
         output.write(t, startLine, endLine - startLine);
         return;
       }} }}} }}}}} } if(tom_is_fun_sym_ITL(tom_match4_1) ||  false ) { { String  tom_match4_1_1=tom_get_slot_ITL_code(tom_match4_1); { String  t=tom_match4_1_1;

@@ -1382,13 +1382,13 @@ tryAgain:
 				}
 				if ( inputState.guessing==0 ) {
 					
-									if (t != null && t.getText().toUpperCase().indexOf('F')>=0) {
-						_ttype = NUM_FLOAT;
-									}
-									else {
-						_ttype = NUM_DOUBLE; // assume double
-									}
-									
+					if (t != null && t.getText().toUpperCase().indexOf('F')>=0) {
+					_ttype = NUM_FLOAT;
+					}
+					else {
+					_ttype = NUM_DOUBLE; // assume double
+					}
+					
 				}
 			}
 			else {
@@ -1663,13 +1663,13 @@ tryAgain:
 					}
 					if ( inputState.guessing==0 ) {
 						
-									if (t != null && t.getText().toUpperCase() .indexOf('F') >= 0) {
+						if (t != null && t.getText().toUpperCase() .indexOf('F') >= 0) {
 						_ttype = NUM_FLOAT;
-									}
+						}
 						else {
-							           	_ttype = NUM_DOUBLE; // assume double
-									}
-									
+						_ttype = NUM_DOUBLE; // assume double
+						}
+						
 					}
 				}
 				else {

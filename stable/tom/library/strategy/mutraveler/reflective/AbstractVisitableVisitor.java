@@ -9,7 +9,7 @@ import jjtraveler.Visitable;
  */
 
 public abstract class AbstractVisitableVisitor implements VisitableVisitor {
-	protected VisitableVisitor[] visitors;
+  protected VisitableVisitor[] visitors;
 
   public void init() {
     visitors = new VisitableVisitor[] {};
@@ -24,24 +24,24 @@ public abstract class AbstractVisitableVisitor implements VisitableVisitor {
     visitors = new VisitableVisitor[] {v1,v2,v3};
   }
 
-	public VisitableVisitor getArgument(int i) {
-	  return visitors[i];
-	}
-	public void setArgument(int i, VisitableVisitor child) {
-	  visitors[i]= child;
-	}
+  public VisitableVisitor getArgument(int i) {
+    return visitors[i];
+  }
+  public void setArgument(int i, VisitableVisitor child) {
+    visitors[i]= child;
+  }
 
-	public int getChildCount() {
+  public int getChildCount() {
     return visitors.length;
   }
 
-	public Visitable getChildAt(int i) {
-	  	return visitors[i];
-	}
-	
-	public Visitable setChildAt(int i, Visitable child) {
-		visitors[i]= (VisitableVisitor) child;
+  public Visitable getChildAt(int i) {
+      return visitors[i];
+  }
+  
+  public Visitable setChildAt(int i, Visitable child) {
+    visitors[i]= (VisitableVisitor) child;
     return this;
-	}
+  }
 
 }

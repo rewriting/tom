@@ -64,7 +64,7 @@ public class TestArray2 extends TestCase {
 		%match(jtList l) {
       conc(ListElement(conc(R*,T*)),X1*,u,X2*) -> {
         nbSol++;
-				//System.out.println("R = " + `R* + " T = " + `T*+" X1 = " + `X1* + " u = " + `u + " X2 = " + `X2*);
+				System.out.println("R = " + `R* + " T = " + `T*+" X1 = " + `X1* + " u = " + `u + " X2 = " + `X2*);
       }
     }
 

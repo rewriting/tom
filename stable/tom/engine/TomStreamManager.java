@@ -77,6 +77,7 @@ public class TomStreamManager {
   public TomStreamManager(){
     symbolTable = new SymbolTable(TomBase.getAstFactory());
     importsToDiscard = new HashSet();
+    //importsToDiscard.add("boolean.tom");
     importsToDiscard.add("string.tom");
     importsToDiscard.add("int.tom");
     importsToDiscard.add("double.tom");

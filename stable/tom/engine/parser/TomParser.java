@@ -2509,10 +2509,10 @@ public TomParser(ParserSharedInputState state) {
 					mapNameDecl.put(sName,attribute);
 					} else {
 					getLogger().log(new PlatformLogRecord(Level.WARNING,
-							TomMessage.getMessage("WarningTwoSameSlotDecl",
+					TomMessage.getMessage("WarningTwoSameSlotDecl",
 					new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
 					"%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ),
-																										 currentFile(), getLine()));
+					currentFile(), getLine()));
 					}
 					
 				}
@@ -2546,10 +2546,10 @@ public TomParser(ParserSharedInputState state) {
 			} else {
 			Declaration decl = (Declaration)mapNameDecl.get(name1);
 			if(decl == null) {
-				getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningMissingSlotDecl",
-						new Object[]{currentFile(), new Integer(ot.getLine()),
-						"%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} ),
-																currentFile(), getLine()));
+			getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningMissingSlotDecl",
+			new Object[]{currentFile(), new Integer(ot.getLine()),
+			"%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} ),
+			currentFile(), getLine()));
 			decl = emptyDeclaration;
 			}
 			else {
@@ -2565,10 +2565,10 @@ public TomParser(ParserSharedInputState state) {
 			while(it.hasNext()) {
 			TomName remainingSlot = (TomName) it.next();
 			getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningIncompatibleSlotDecl",
-					new Object[]{currentFile(), 
-					new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
-															"%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} ),
-															currentFile(), getLine()));
+			new Object[]{currentFile(), 
+			new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
+			"%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} ),
+			currentFile(), getLine()));
 			}
 			}
 			

@@ -12,8 +12,8 @@ import jjtraveler.VisitFailure;
  */
 
 public class Sequence extends AbstractVisitableVisitor {
-	protected final static int FIRST = 0;
-	protected final static int THEN = 1;
+  protected final static int FIRST = 0;
+  protected final static int THEN = 1;
   public Sequence(VisitableVisitor first, VisitableVisitor then) {
     init(first,then);
   }
