@@ -37,12 +37,12 @@ public class TomTaskInput {
   private TomTerm term;
   private TomErrorList errors;
 
-  /*
-   * Singleton pattern
-   */
+    /*
+     * Singleton pattern
+     */
   private static TomTaskInput instance = null;
   protected TomTaskInput() {
-    // exisits to defeat instantiation
+      // exisits to defeat instantiation
   }
 
   public static TomTaskInput getInstance() {
@@ -62,9 +62,9 @@ public class TomTaskInput {
     }
   }
 
-  /*
-   * list of import paths
-   */
+    /*
+     * list of import paths
+     */
   private List userImportList;
 
     /* 
@@ -89,10 +89,41 @@ public class TomTaskInput {
      * packagePath
      * relative path which corresponds to the package defined in the input file (empty by default) 
      */
-  private String packagePath = ""; 
+  private String packagePath; 
 
-  private String inputSuffix = ".t";
-  private String outputSuffix = ".java";
+  private boolean needDebugExpansion; 
+  private boolean verbose; // a verbose mode (Show duration for each phase)
+  private boolean intermediate; // generate intermediate files
+  private boolean debugMode; // generate debug primitives
+  private boolean jCode;  // generate Java
+  private boolean cCode; // generate C
+  private boolean camlCode; // generate Caml
+  private boolean eCode; // generate Eiffel
+  private boolean doParse  ; // parse a *.t file
+  private boolean doExpand ; // expand the AST
+  private boolean doCompile; // compile the AST
+  private boolean printOutput; // print the output file using a TomGenerator instance
+  private boolean doOnlyCompile; // try to start from an intermediate file
+  private boolean doCheck; // verify after parsing (syntax checking) and expansion (type checking)
+  private boolean strictType; // no universal type
+  private boolean genDecl; // generate declarations
+  private boolean doOptimization; // optimize generated code
+  private boolean warningAll; // print warning error messages
+  private boolean noWarning; // print only warning stopping the compilation
+  private boolean staticFunction; // generate static functions
+  private boolean debugMemory; // generate debug primitives
+  private boolean pretty; // Synchronize TL code and source code
+  private boolean atermStat; // Shows aterm statistics
+  private boolean eclipseMode; // Eclipse mode for error management
+  private boolean doVerify; // Compilation correctness verification
+  private boolean help; // usage called
+  private boolean version; //version called
+  private boolean userOutputFile; //to know if the the output file is given by the user 
+
+  private String inputSuffix;
+  private String outputSuffix;
+  private int language;
+
   public final static String parsedSuffix    = ".tfix.parsed";
   public final static String expandedSuffix  = ".tfix.expanded";
   public final static String compiledSuffix  = ".tfix.compiled";
@@ -100,43 +131,48 @@ public class TomTaskInput {
   public final static String verifExtractionSuffix = ".tfix.verif";
   public final static String parsedTableSuffix = ".tfix.parsed.table";
   public final static String expandedTableSuffix = ".tfix.expanded.table";
-  public final static String debugTableSuffix = ".tfix.debug.table";
+public final static String debugTableSuffix = ".tfix.debug.table";
   
-  private boolean needDebugExpansion = false, 
-    verbose = false, // a verbose mode (Show duration for each phase)
-    intermediate = false, // generate intermediate files
-    debugMode = false, // generate debug primitives
-    jCode = true,  // generate Java
-    cCode = false, // generate C
-    camlCode = false, // generate Caml
-    eCode = false, // generate Eiffel
-    doParse   = true, // parse a *.t file
-    doExpand  = true, // expand the AST
-    doCompile = true, // compile the AST
-    printOutput = true, // print the output file using a TomGenerator instance
-    doOnlyCompile = false, // try to start from an intermediate file
-    doCheck = true, // verify after parsing (syntax checking) and expansion (type checking)
-    strictType = true, // no universal type
-    genDecl = true, // generate declarations
-    doOptimization = false, // optimize generated code
-    warningAll = false, // print warning error messages
-    noWarning = false, // print only warning stopping the compilation
-    staticFunction = false, // generate static functions
-    debugMemory = false, // generate debug primitives
-    pretty = false, // Synchronize TL code and source code
-    atermStat = false, // Shows aterm statistics
-    eclipseMode = false, // Eclipse mode for error management
-    doVerify = false, // Compilation correctness verification
-    help = false, // usage called
-    version = false; //version called
-
-  private boolean userOutputFile=false; //to know if the the output file is given by the user 
 
   private final static int JAVA   = 1;
   private final static int C      = 2;
   private final static int CAML   = 3;
   private final static int EIFFEL = 4;
-  private int language = JAVA;
+
+  public void init() {
+    language = JAVA;
+    inputSuffix = ".t";
+    outputSuffix = ".java";
+    
+    needDebugExpansion = false;
+    verbose = false;
+    intermediate = false;
+    debugMode = false;
+    jCode = true;
+    cCode = false;
+    camlCode = false;
+    eCode = false;
+    doParse   = true;
+    doExpand  = true;
+    doCompile = true;
+    printOutput = true;
+    doOnlyCompile = false;
+    doCheck = true;
+    strictType = true;
+    genDecl = true;
+    doOptimization = false;
+    warningAll = false;
+    noWarning = false;
+    staticFunction = false;
+    debugMemory = false;
+    pretty = false;
+    atermStat = false;
+    eclipseMode = false;
+    doVerify = false;
+    help = false;
+    version = false;
+    userOutputFile = false;
+  }
   
   public void setTerm(TomTerm term) {
     this.term = term;
@@ -396,7 +432,6 @@ public class TomTaskInput {
 	}
 	
 	public String getPackagePath() {
-    //System.out.println("getPackagePath = " + packagePath);
 		return packagePath;
 	}
 

@@ -25,6 +25,7 @@
 
 package jtom.tools;
 
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
@@ -336,6 +337,24 @@ public class TomTaskInput {
      *  - TOM_HOME/share/jtom
      */
   public List getImportList() {
+    List newImportList = new ArrayList(importList.size()+3);
+    for(Iterator it=importList.iterator() ; it.hasNext() ;) {
+      newImportList.add(it.next());
+    }
+    newImportList.add(new File(getDestDir(),getPackagePath()).getAbsoluteFile());
+    newImportList.add(getInputFile().getParentFile().getAbsoluteFile());
+    String tom_home = System.getProperty("tom.home");
+    if(tom_home != null) {
+      File file = new File(new File(tom_home,"jtom"),"share");
+      newImportList.add(file.getAbsoluteFile());
+      //System.out.println(" extend import list with: " + file.getPath());
+    }
+    //System.out.println("importList = " + importList);
+    return newImportList;
+  }
+
+    /*
+  public List getImportList() {
     List newImportList = importList;
     newImportList.add(new File(getDestDir(),getPackagePath()).getAbsoluteFile());
     newImportList.add(getInputFile().getParentFile().getAbsoluteFile());
@@ -349,7 +368,8 @@ public class TomTaskInput {
       //System.out.println("newImportList = " + newImportList);
     return newImportList;
   }
- 
+    */
+  
   public boolean isVersion() {
     return version;
   }

@@ -131,6 +131,7 @@ public class Tom {
   }
 
   private void init(String args[]) {
+    getInput().init();
     modifyTaskInputFromArgs(args);
     if(getInput().isHelp() || getInput().isVersion()) {
         // no need to do further work
@@ -448,16 +449,6 @@ public class Tom {
       tsf().makeTomError_Error(msg, file, line, level);
     getInput().setErrors(
       tsf().makeTomErrorList(err, getInput().getErrors()));
-  }
-
-  public TomErrorList getErrors() {
-    TomErrorList res = getInput().getErrors();
-    if (res == null) {
-        // Do not have been initialised
-      res = tsf().makeTomErrorList();
-      getInput().setErrors(res);
-    }
-    return res;
   }
 
   public void run(TomTask initialTask) {
