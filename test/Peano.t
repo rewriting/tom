@@ -57,6 +57,8 @@ public class Peano {
       ATerm N = int2peano(i);
       assertTrue( peano2int(fib1(N)) == fibint(i) );
       assertTrue( peano2int(fib2(N)) == fibint(i) );
+      assertTrue( peano2int(fib3(N)) == fibint(i) );
+      assertTrue( peano2int(fib4(N)) == fibint(i) );
     }
     
   }
@@ -97,8 +99,7 @@ public class Peano {
   }
   
   %rule {
-    fib2(zero)             -> suc(zero)
-    fib2(x@suc[pred=zero]) -> x
+    fib2(zero) | fib2(x@suc[pred=zero]) -> suc(zero)
     fib2(suc(y@suc(x)))    -> plus2(fib2(x),fib2(y))
   }
 
@@ -107,6 +108,14 @@ public class Peano {
       zero             -> { return `suc(zero); }
       suc[pred=x@zero] -> { return `suc(x); }
       suc(suc(x))      -> { return plus3(fib3(x),fib3(suc(x))); }
+    }
+    return null;
+  }
+
+  public ATerm fib4(ATerm t) {
+    %match(term t) {
+      zero | suc(zero) -> { return `suc(zero); }
+      suc(suc(x))      -> { return plus3(fib4(x),fib4(suc(x))); }
     }
     return null;
   }

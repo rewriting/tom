@@ -15,8 +15,7 @@ public class Poly1 {
     // Everything is now AtermAppl to avoid casting:
   public ATermAppl differentiate(ATermAppl poly, ATermAppl variable) {
     %match(term poly, term variable) {
-      X(), X() -> { return `one(); }
-      Y(), Y() -> { return `one(); }
+      X(), X() | Y(), Y() -> { return `one(); }
       plus(a1,a2), var  -> { return `plus(differentiate(a1, var),differentiate(a2, var)); }
       mult(a1,a2), var  -> { 
         ATermAppl res1, res2;
@@ -24,11 +23,9 @@ public class Poly1 {
         res2 =`mult(a2, differentiate(a1, var));
         return `plus(res1,res2);
       }
-      X(), var -> { return `zero(); }
-      Y(), var -> { return `zero(); }
-      a(), var -> { return `zero(); }
-      b(), var -> { return `zero(); }
-      c(), var -> { return `zero(); }
+      X(), var | Y(), var | a(), var | b(), var | c(), var
+            -> { return `zero(); }
+
       _ , _ -> { System.out.println("No match for: " + poly +" , "+variable); }
 	    
     }
@@ -40,14 +37,11 @@ public class Poly1 {
     ATermAppl res = t;
     block:{
       %match(term t) {
-        plus(zero, x) -> { res = simplify(x);                       break block; }
-        plus(x, zero) -> { res = simplify(x);                       break block; }
-        mult(one, x)  -> { res = simplify(x);                       break block; }
-        mult(x, one)  -> { res = simplify(x);                       break block; }
-        mult(zero, x) -> { res = `zero();                           break block; }
-        mult(x, zero) -> { res = `zero();                           break block; }
-        plus(x,y)     -> { res = `plus( simplify(x), simplify(y) ); break block; }
-        mult(x,y)     -> { res = `mult( simplify(x), simplify(y) ); break block; }
+        plus(zero, x) | plus(x, zero) |
+        mult(one, x)  | mult(x, one)  -> { res = simplify(x);   break block; }
+        mult(zero, x) | mult(x, zero) -> { res = `zero();       break block; }
+        plus(x,y) -> { res = `plus( simplify(x), simplify(y) ); break block; }
+        mult(x,y) -> { res = `mult( simplify(x), simplify(y) ); break block; }
       }
     }
     if(t != res) {

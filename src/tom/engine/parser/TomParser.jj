@@ -306,6 +306,7 @@ TOKEN :
 {
   < TOM_ARROW:       "->" >
 | < TOM_DOUBLE_ARROW:"=>" >
+| < TOM_ALTERNATIVE: "|" >
 | < TOM_COMMA:       "," >
 | < TOM_COLON:       ":" >
 | < TOM_EQUAL:       "=" >
@@ -451,19 +452,30 @@ void PatternAction(ArrayList list) throws TomException: /* in TOM mode */
 {
   environment.getStatistics().numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
+  ArrayList listOfMatchPatternsList = new ArrayList();
   ArrayList blockList = new ArrayList();
   String string;
   TargetLanguage tlCode;
 }
 {
   MatchPatterns(matchPatternsList)
+    { listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
+      matchPatternsList.clear(); }
+  [ ( <TOM_ALTERNATIVE> MatchPatterns(matchPatternsList) 
+    { listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
+      matchPatternsList.clear(); }
+    )+ ]
+ 
   <TOM_ARROW>
     tlCode = GoalLanguageBlock(blockList)
   {
     blockList.add(tlCode);
-    list.add(tsf().makeTomTerm_PatternAction(
-               tsf().makeTomTerm_TermList(ast().makeList(matchPatternsList)),
-               tsf().makeTomTerm_Tom(ast().makeList(blockList))));
+    for(int i=0 ;  i<listOfMatchPatternsList.size() ; i++) {
+      TomList patterns = (TomList)listOfMatchPatternsList.get(i);
+      list.add(tsf().makeTomTerm_PatternAction(
+                 tsf().makeTomTerm_TermList(patterns),
+                 tsf().makeTomTerm_Tom(ast().makeList(blockList))));
+    }
   }
 }
 
@@ -669,20 +681,6 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
     try {
-
-
-        /*
-    File path = new File("jtom\\adt");
-    System.out.println("path = " + path);
-    File abspath = path.getAbsoluteFile();
-    System.out.println("abspath = " + abspath);
-
-    File newfile = new File(path,"TomSignature.t");
-    System.out.println("newfile = " + newfile);
-    System.out.println("exist = " + newfile.exists());
-
-        */
-      
       file = new File(fileName.image);
       if(!file.exists()) {
         boolean found = false;
@@ -716,6 +714,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   environment.getStatistics().numberRuleBlocsRecognized++;
   TomTerm lhs, rhs;
   ArrayList ruleList = new ArrayList();
+  ArrayList listOfLhs = new ArrayList();
   ArrayList nameTypeInRule = new ArrayList();
   Option orgTrack;
 }
@@ -727,14 +726,20 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     }
   <TOM_LBRACE> 
   (
-    lhs = Term() <TOM_ARROW> rhs = PlainTerm(null)
+    lhs = Term() { listOfLhs.add(lhs); }
+    [ ( <TOM_ALTERNATIVE> lhs = Term() { listOfLhs.add(lhs); } )+ ]
+    <TOM_ARROW> rhs = PlainTerm(null)
     {
       Option orgTrack2 = ast().makeOriginTracking("Rule",getLine());
       environment.getStatistics().numberRuleRulesRecognized++;
-      ruleList.add(tsf().makeTomTerm_RewriteRule(
-                     tsf().makeTomTerm_Term(lhs),
-                     tsf().makeTomTerm_Term(rhs),
-                     orgTrack2));
+      for(int i=0 ; i<listOfLhs.size() ; i++) {
+        TomTerm term = (TomTerm) listOfLhs.get(i);
+        ruleList.add(tsf().makeTomTerm_RewriteRule(
+                       tsf().makeTomTerm_Term(term),
+                       tsf().makeTomTerm_Term(rhs),
+                       orgTrack2));
+      }
+      listOfLhs.clear();
     }
   )*
     <TOM_RBRACE>

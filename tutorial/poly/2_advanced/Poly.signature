@@ -6,7 +6,7 @@
     equals(t1, t2)      { t1.equals(t2) }
   }
     
-    // My operators with constructors allowing to use "`" symbol 
+    /* My operators with constructors allowing to use "`" symbol */
   %op term zero {
     fsym { factory.makeAFun("0",0,false) }
     make { factory.makeAppl(factory.makeAFun("0", 0, false)) }
@@ -39,7 +39,7 @@
     make { factory.makeAppl(factory.makeAFun("Y", 0, false)) }
   }
 
-    // this show how to use get_slot
+    /* this show how to use get_slot */
   %op term mult(arg1:term, arg2:term) {
     fsym { factory.makeAFun("mult",2,false) }
     get_slot(arg1,t) {(ATermAppl)t.getArgument(0) }

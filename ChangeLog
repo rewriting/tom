@@ -1,16 +1,39 @@
+2003-03-16    <pem@bach>
+
+	* src/jtom/parser/TomParser.jj: 
+	  - disjunction of patterns are now allowed
+	    the corresponding semantic action is dupplicated
+	    (p_1 | p_2 -> rhs) is transformed into
+	    (p_1 -> rhs and p_2 -> rhs)
+	    when p_1 and p_2 match, the rhs is evaluated twice
+ 
+	  - tutorial and tests updated to use disjunctive patterns
+	
+2003-03-15    <pem@bach>
+
+	* examples/Reach.t: based on runtime.GenericTraversal
+
+	* tutorial/poly/2_advanced: 
+          - poly tutorial is now based on runtime.GenericTraversal
+	  - bug: single-line comments are not supported in imported signature
+	
 2003-03-14  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
 	* src/jtom/runtime/GenericTraversal.java: 
 	  - do not longer use exceptions in TomChecker
-	  - put all traversal function in runtime.GenericTraversal
+	  - put all traversal functions in runtime.GenericTraversal
 	  - extends the generic traversal mechanism apply functions with n
 	    arguments
 	  - removed traversal functions from TomBase and TomExpander
 
-2003-02-26  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+2003-02-27    <pem@bach>
 
-	* src/jtom/backend/TomGenerator.t: fix a problem in GenDeclMake
+	* src/jtom/backend/TomGenerator.t: 
+          generation of declarations guarded by isDefinedSymbol
+	  fix a bug in genDeclMake
 	
+	* src/jtom/compiler/TomCompiler.t: 
+	  isDefinedSymbol moved to TomBase
 
 2003-02-21    <pem@bach>
 	* bootinstall
@@ -24,7 +47,7 @@
 
 2003-01-23    <pem@bach>
 
-        * release 1.1 under BSD license
+        * release 1.1 under GPL license
 
 2003-01-18    <pem@bach>
 

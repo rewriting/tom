@@ -1,9 +1,10 @@
 import aterm.*;
 import aterm.pure.*;
+import jtom.runtime.*;
 
 import java.util.*;
 
-public class Poly2 extends PolyCommon {
+public class Poly2 extends GenericTraversal {
     
   private ATermFactory factory;
   public Poly2(ATermFactory factory) {
@@ -15,8 +16,7 @@ public class Poly2 extends PolyCommon {
     // Simplified version of differentiate
   public ATermAppl differentiate(ATermAppl poly, ATermAppl variable) {
     %match(term poly, term variable) {
-      X(), X()          -> { return `one(); }
-      Y(), Y()          -> { return `one(); }
+      X(), X() | Y(), Y() -> { return `one(); }
       plus(a1,a2), var  -> { return `plus(differentiate(a1, var),differentiate(a2, var)); }
       mult(a1,a2), var  -> { 
         ATermAppl res1, res2;
@@ -30,17 +30,14 @@ public class Poly2 extends PolyCommon {
 
   public ATermAppl simplifyFunction(ATermAppl t) {
     %match(term t) {
-      plus(zero,x) -> { return x; }
-      plus(x,zero) -> { return x; }
-      mult(one,x)  -> { return x; }
-      mult(x,one)  -> { return x; }
-      mult(zero,x) -> { return `zero(); }
-      mult(x,zero) -> { return `zero(); }
-      _            -> { return (ATermAppl) genericTraversal(t,replace); }
+      plus(zero,x) | plus(x,zero) |
+      mult(one,x)  | mult(x,one)  -> { return x; }
+      mult(zero,x) | mult(x,zero) -> { return `zero(); }
+      _ -> { return (ATermAppl) genericTraversal(t,replace); }
     }
   }
 
-  Replace replace = new Replace() {
+  Replace1 replace = new Replace1() {
       public ATerm apply(ATerm t) {
         return simplifyFunction((ATermAppl)t);
       }

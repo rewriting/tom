@@ -55,41 +55,42 @@ public interface TomParserConstants {
   int TOM_MULTI_LINE_COMMENT = 41;
   int TOM_ARROW = 43;
   int TOM_DOUBLE_ARROW = 44;
-  int TOM_COMMA = 45;
-  int TOM_COLON = 46;
-  int TOM_EQUAL = 47;
-  int TOM_AT = 48;
-  int TOM_DOT = 49;
-  int TOM_LPAREN = 50;
-  int TOM_RPAREN = 51;
-  int TOM_LBRACKET = 52;
-  int TOM_RBRACKET = 53;
-  int TOM_LBRACE = 54;
-  int TOM_RBRACE = 55;
-  int TOM_UNDERSCORE = 56;
-  int TOM_MINUS = 57;
-  int TOM_STAR = 58;
-  int TOM_MAKE = 59;
-  int TOM_MAKE_EMPTY = 60;
-  int TOM_MAKE_INSERT = 61;
-  int TOM_MAKE_APPEND = 62;
-  int TOM_IMPLEMENT = 63;
-  int TOM_FSYM = 64;
-  int TOM_GET_SLOT = 65;
-  int TOM_IS_FSYM = 66;
-  int TOM_GET_SUBTERM = 67;
-  int TOM_GET_FUN_SYM = 68;
-  int TOM_CMP_FUN_SYM = 69;
-  int TOM_EQUALS = 70;
-  int TOM_GET_HEAD = 71;
-  int TOM_GET_TAIL = 72;
-  int TOM_IS_EMPTY = 73;
-  int TOM_GET_ELEMENT = 74;
-  int TOM_GET_SIZE = 75;
-  int TOM_INTEGER = 76;
-  int TOM_IDENTIFIER = 77;
-  int TOM_LETTER = 78;
-  int TOM_DIGIT = 79;
+  int TOM_ALTERNATIVE = 45;
+  int TOM_COMMA = 46;
+  int TOM_COLON = 47;
+  int TOM_EQUAL = 48;
+  int TOM_AT = 49;
+  int TOM_DOT = 50;
+  int TOM_LPAREN = 51;
+  int TOM_RPAREN = 52;
+  int TOM_LBRACKET = 53;
+  int TOM_RBRACKET = 54;
+  int TOM_LBRACE = 55;
+  int TOM_RBRACE = 56;
+  int TOM_UNDERSCORE = 57;
+  int TOM_MINUS = 58;
+  int TOM_STAR = 59;
+  int TOM_MAKE = 60;
+  int TOM_MAKE_EMPTY = 61;
+  int TOM_MAKE_INSERT = 62;
+  int TOM_MAKE_APPEND = 63;
+  int TOM_IMPLEMENT = 64;
+  int TOM_FSYM = 65;
+  int TOM_GET_SLOT = 66;
+  int TOM_IS_FSYM = 67;
+  int TOM_GET_SUBTERM = 68;
+  int TOM_GET_FUN_SYM = 69;
+  int TOM_CMP_FUN_SYM = 70;
+  int TOM_EQUALS = 71;
+  int TOM_GET_HEAD = 72;
+  int TOM_GET_TAIL = 73;
+  int TOM_IS_EMPTY = 74;
+  int TOM_GET_ELEMENT = 75;
+  int TOM_GET_SIZE = 76;
+  int TOM_INTEGER = 77;
+  int TOM_IDENTIFIER = 78;
+  int TOM_LETTER = 79;
+  int TOM_DIGIT = 80;
 
   int DEFAULT = 0;
   int IN_SINGLE_LINE_COMMENT = 1;
@@ -146,6 +147,7 @@ public interface TomParserConstants {
     "<token of kind 42>",
     "\"->\"",
     "\"=>\"",
+    "\"|\"",
     "\",\"",
     "\":\"",
     "\"=\"",
