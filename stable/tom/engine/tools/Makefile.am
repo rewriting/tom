@@ -26,8 +26,8 @@
 javadir         = ${prefix}/classes/jtom/tools
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
-JAVASOURCES     = Flags.java TomEnvironment.java  OutputCode.java
-SingleLineOutputCode.java SymbolTable.java\
+JAVASOURCES     = Flags.java TomEnvironment.java OutputCode.java\
+		  SingleLineOutputCode.java SymbolTable.java\
                   ASTFactory.java Statistics.java
 java_JAVA       = $(JAVASOURCES)
 EXTRA_DIST      = $(JAVASOURCES)
