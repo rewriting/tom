@@ -24,7 +24,7 @@
 	<property name="examples"       location="examples"/>
 	<property name="utils"          location="utils"/>
 	<property name="lib"            location="lib"/>
-	<property name="man"            location="share"/>
+	<property name="share"          location="share"/>
 
 	<!-- libraries -->
 	<property name="concurrent.lib" value="${lib}/concurrent.jar"/>
@@ -282,9 +282,15 @@
 				<exclude name="TomSignature.tom"/>
 			</fileset>
 		</copy>
-		<copy todir="${stable.share}">
-			<fileset dir="${man}"> 
+		<copy todir="${stable.dist}/share">
+			<fileset dir="${share}"> 
 				<include name="man/**/*"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${stable.dist}/share/contrib"/>
+		<copy todir="${stable.dist}/share/contrib">
+			<fileset dir="${utils}">
+				<include name="*.vim"/>
 			</fileset>
 		</copy>
 
@@ -365,9 +371,15 @@
 				<exclude name="TomSignature.tom"/>
 			</fileset>
 		</copy>
-		<copy todir="${src.share}">
-			<fileset dir="${man}"> 
+		<copy todir="${src.dist}/share">
+			<fileset dir="${share}"> 
 				<include name="man/**/*"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${src.dist}/share/contrib"/>
+		<copy todir="${src.dist}/share/contrib">
+			<fileset dir="${utils}">
+				<include name="*.vim"/>
 			</fileset>
 		</copy>
 		<!-- external libs -->
