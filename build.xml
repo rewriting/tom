@@ -17,7 +17,7 @@
   <property name="build.sysclasspath" value="ignore" />
   <property name="nowarnings" value="false" />  
   <!-- current version of TOM -->
-  <property name="version" value="2.0"/>
+  <property name="version" value="3.0alpha"/>
   
   <!-- some used directory location -->
   <property name="test"           location="test"/>
@@ -85,6 +85,7 @@
 
   <!-- for bootstrap -->
   <property name="bootstrap.dir" location="${src.src}/bootstrap" />
+
   <!-- Properties for Javac compilation
        <property name="javacFailOnError" value="false"/>
        <property name="javacSource" value="1.3"/>
@@ -180,13 +181,15 @@
   <!-- compile tom files in src.src with tom.stable -->
   <target name="buildtom" depends="initTaskDef, buildadt">
 
-    <tom srcdir="${src.src}"
+    <tom config="${stable.configfile}"
+				 srcdir="${src.src}"
          outputfile="${src.gen}/jtom/parser/TomParser.jj"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/TomParser.t"/>  
     </tom>
 
-    <tom srcdir="${src.src}" 
+    <tom config="${stable.configfile}"
+				 srcdir="${src.src}" 
          destdir="${src.gen}" 
          options="-I ${src.mapping}">
       <include name="**/runtime/**/*.t"/> 
@@ -194,10 +197,9 @@
       <include name="**/Verifier.t"/>
       <include name="**/TomBackQuoteParser.t"/> 
       <include name="**/TomServer.t"/>
-      <exclude name="**/tomparse.g.t"/>
-      <exclude name="**/targetparse.g.t"/>
     </tom>
-    <tom srcdir="${src.src}" 
+    <tom config="${stable.configfile}"
+				 srcdir="${src.src}" 
          destdir="${src.gen}" 
          options="-I ${src.mapping} --noDeclaration">
       <exclude name="**/TomBase.t"/>
@@ -467,12 +469,16 @@
     <delete dir="${stable.build}"/>
   </target>
   
-  <target name="clean.src" description="Purges the generated devel files">
+  <target name="clean.src" description="Purges the generated devel files" depends="clean.bootstrap">
     <delete dir="${src.gen}"/>
     <delete dir="${src.build}"/>
-    <delete dir="${bootstrap.dir}"/>
     <delete file="${src.mapping}/Set.tom"/>
     <delete file="${src.mapping}/TNode.tom"/>
+    <delete file="${src.mapping}/Options.tom"/>
+  </target>
+
+  <target name="clean.bootstrap">
+    <delete dir="${bootstrap.dir}"/>
   </target>
 
   <target name="clean.test" description="Cleans acceptance tests directory">
@@ -514,16 +520,19 @@
   <target name="test" description="Compile and run acceptance tests" depends="initsrc, prepare.test">
     <mkdir dir="${test.gen}"/>
     <mkdir dir="${test.build}"/>
-    <tomsrc config="${src.configfile}" srcdir="${test}"
-    destdir="${test.gen}" options="-I ${src.mapping} --verbose -I ${src.adt}">
+    <tomsrc config="${src.configfile}"
+						srcdir="${test}"
+						destdir="${test.gen}" options="-I ${src.mapping} -I ${src.adt}">
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="**/error/**"/>
     </tomsrc>
-    <tomsrc config="${src.configfile}" srcdir="${test}"
-      destdir="${test.gen}" options="-I ${src.mapping} -I ${src.adt} --lazyType --verbose">
+    <tomsrc config="${src.configfile}"
+						srcdir="${test}"
+						destdir="${test.gen}"
+						options="-I ${src.mapping} -I ${src.adt} --lazyType">
       <include name="Record.t"/>
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
@@ -539,14 +548,20 @@
   </target>
 
   <target name="test.stable" description="Compile and run acceptance tests with stable" depends="initTaskDef,prepare.test">
-    <tom srcdir="${test}" destdir="${test.gen}" options="-I ${stable.mapping}">
+    <tom config="${stable.configfile}"
+				 srcdir="${test}"
+				 destdir="${test.gen}"
+				 options="-I ${stable.mapping}">
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="**/error/**"/>
     </tom>
-    <tom srcdir="${test}" destdir="${test.gen}" options="-I ${stable.mapping} --lazyType">
+    <tom config="${stable.configfile}"
+				 srcdir="${test}"
+				 destdir="${test.gen}"
+				 options="-I ${stable.mapping} --lazyType">
       <include name="Record.t"/>
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
@@ -695,66 +710,9 @@
              includes="**/*.t"/>
   </target>
 
-  <!-- compile tom files in src.src with tom.src -->      
-  <target name="bootstep" depends="initsrc" if="destination">
-
-    <mkdir dir="${destination}/gen"/>
-    <mkdir dir="${destination}/build"/>
-
-    <!-- rebuild and copy adt -->
-    <antcall target="buildadt"/>
-    <copy todir="${destination}/gen">
-      <fileset dir="${src.gen}">
-        <include name="jtom/adt/**/*"/>
-      </fileset>
-    </copy>
-
-    <!-- build tom -->
-
-    <tomsrc srcdir="${src.src}" 
-            options="-I ${src.mapping} -I ${destination}/gen/jtom/adt -o ${destination}/gen/jtom/parser/TomParser.jj">
-      <include name="**/TomParser.t"/>  
-    </tomsrc>
-
-    <tomsrc srcdir="${src.src}" 
-            destdir="${destination}/gen" 
-            options="-I ${src.mapping}">
-      <include name="**/runtime/**/*.t"/> 
-      <include name="**/TomBase.t"/>
-      <include name="**/Verifier.t"/>
-      <include name="**/TomBackQuoteParser.t"/>
-      <include name="**/TomServer.t"/>
-    </tomsrc>
-    <tomsrc srcdir="${src.src}" 
-            destdir="${destination}/gen" 
-            options="-I ${src.mapping} --noDeclaration">
-      <exclude name="**/TomBase.t"/>
-      <exclude name="**/TomParser.t"/>
-      <exclude name="**/Verifier.t"/>
-      <exclude name="**/TomBackQuoteParser.t"/>
-      <exclude name="**/TomServer.t"/>
-      <exclude name="**/runtime/**/*.t"/> 
-    </tomsrc>
-
-    <!-- builds parser -->
-    <mkdir dir="${destination}/gen/jtom/parser"/>
-    <javacc target="${destination}/gen/jtom/parser/TomParser.jj"
-            outputdirectory="${destination}/gen/jtom/parser"
-            javacchome="${javaccdir}" />
-    <javacc target="${src.src}/jtom/parser/TomJavaParser.jj"
-            outputdirectory="${destination}/gen/jtom/parser"
-            javacchome="${javaccdir}" />
-    <delete file="${destination}/gen/jtom/parser/JavaCharStream.java"/>
-
-    <javac destdir="${destination}/build" 
-           debug="${javacDebugInfo}"
-           verbose="${javacVerbose}"
-           nowarn="${nowarnings}">
-      <src path="${src.src}"/>
-      <src path="${destination}/gen"/>
-      <classpath refid="src.classpath"/>
-      <include name="jtom/**/*.java"/>
-    </javac>
+  <target name="bootstrap" description="Bootstrap source" depends="bootcheck" if="bootstrap.ok">
+    <echo> ### BOOTSTRAP PERFORM SUCCESSFULLY!!! ###</echo>
+		<antcall target="clean.bootstrap"/>
   </target>
 
   <target name="bootcheck" depends="performbootstrap">
@@ -785,14 +743,11 @@
       <filesmatch file1="${src.src}/bootcheck/version1" 
                   file2="${src.src}/bootcheck/version2"/>
     </condition>
-    <delete dir="${src.src}/bootcheck"/>
+		<delete dir="${src.src}/bootcheck"/>
   </target>
   
-  <target name="performbootstrap" depends="stable, clean.src">
-    <!-- Clean src
-         <antcall target="clean.src"/>
-         Build src with stable 
-         <antcall target="src"/> -->
+  <target name="performbootstrap" depends="src">
+	<echo> CALLING BOOTSTEP 1 ...</echo>
     <!-- compile src with tomsrc -->
     <mkdir dir="${bootstrap.dir}"/>
     <antcall target="bootstep">
@@ -807,6 +762,7 @@
     </move>
 
     <!-- compile again src with tomsrc -->
+		<echo> CALLING BOOTSTEP 2 ...</echo>
     <delete dir="${bootstrap.dir}"/>
     <mkdir dir="${bootstrap.dir}"/>
     <antcall target="bootstep">
@@ -814,8 +770,73 @@
     </antcall>
   </target>
 
-  <target name="bootstrap" description="Bootstrap source" depends="bootcheck" if="bootstrap.ok">
-    <echo> Bootstrap perform successfully!!</echo>
+
+  <!-- compile tom files in src.src with tom.src -->      
+  <target name="bootstep" depends="initsrc" if="destination">
+
+    <mkdir dir="${destination}/gen"/>
+    <mkdir dir="${destination}/build"/>
+
+    <!-- rebuild and copy adt -->
+    <antcall target="buildadt"/>
+    <copy todir="${destination}/gen">
+      <fileset dir="${src.gen}">
+        <include name="jtom/adt/**/*"/>
+      </fileset>
+    </copy>
+
+    <!-- build tom -->
+
+    <tomsrc config="${src.configfile}"
+						srcdir="${src.src}" 
+            options="-I ${src.mapping} -I ${destination}/gen/jtom/adt -o ${destination}/gen/jtom/parser/TomParser.jj">
+      <include name="**/TomParser.t"/>  
+    </tomsrc>
+
+    <tomsrc config="${src.configfile}"
+						srcdir="${src.src}" 
+            destdir="${destination}/gen" 
+            options="-I ${src.mapping}">
+      <include name="**/runtime/**/*.t"/> 
+      <include name="**/TomBase.t"/>
+      <include name="**/Verifier.t"/>
+      <include name="**/TomBackQuoteParser.t"/>
+      <include name="**/TomServer.t"/>
+    </tomsrc>
+    <tomsrc config="${src.configfile}"
+						srcdir="${src.src}" 
+            destdir="${destination}/gen" 
+            options="-I ${src.mapping} --noDeclaration">
+      <exclude name="**/TomBase.t"/>
+      <exclude name="**/TomParser.t"/>
+      <exclude name="**/Verifier.t"/>
+      <exclude name="**/TomBackQuoteParser.t"/>
+      <exclude name="**/TomServer.t"/>
+      <exclude name="**/runtime/**/*.t"/> 
+      <exclude name="**/tomparse.g.t"/>
+      <exclude name="**/targetparse.g.t"/>
+    </tomsrc>
+
+    <!-- builds parser -->
+    <mkdir dir="${destination}/gen/jtom/parser"/>
+    <javacc target="${destination}/gen/jtom/parser/TomParser.jj"
+            outputdirectory="${destination}/gen/jtom/parser"
+            javacchome="${javaccdir}" />
+    <javacc target="${src.src}/jtom/parser/TomJavaParser.jj"
+            outputdirectory="${destination}/gen/jtom/parser"
+            javacchome="${javaccdir}" />
+    <delete file="${destination}/gen/jtom/parser/JavaCharStream.java"/>
+
+    <javac destdir="${destination}/build" 
+           debug="${javacDebugInfo}"
+           verbose="${javacVerbose}"
+           nowarn="${nowarnings}">
+      <src path="${src.src}"/>
+      <src path="${destination}/gen"/>
+      <classpath refid="src.classpath"/>
+      <include name="jtom/**/*.java"/>
+      <exclude name="jtom/**/Main.java"/>
+    </javac>
   </target>
 
   <target name="bootinstall" 
