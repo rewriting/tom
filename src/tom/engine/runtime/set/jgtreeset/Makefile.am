@@ -12,7 +12,7 @@ stabledir 	= $(top_srcdir)/stable/jtom/runtime/set/jgtreeset
 BOOTSOURCES	= ${SetAPI}
 
 java_JAVA       = $(BOOTSOURCES)
-EXTRA_DIST      = $(BOOTSOURCES) 
+EXTRA_DIST      = $(BOOTSOURCES) SetMakeRules set.t
 JAVAROOT        = ${top_builddir}/src/
 
 bootinstall :

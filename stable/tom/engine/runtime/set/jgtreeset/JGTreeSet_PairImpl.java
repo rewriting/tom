@@ -3,46 +3,35 @@ package jtom.runtime.set.jgtreeset;
 abstract public class JGTreeSet_PairImpl
 extends JGTreeSet
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  protected void init(int hashCode, aterm.ATermList annos, aterm.AFun fun,	aterm.ATerm[] args) {
+    super.init(hashCode, annos, fun, args);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.AFun fun, aterm.ATerm[] i_args) {
+  	super.initHashCode(annos, fun, i_args);
+  }
+  protected JGTreeSet_PairImpl(SetFactory factory) {
+    super(factory);
   }
   private static int index_value = 0;
   private static int index_multiplicity = 1;
   public shared.SharedObject duplicate() {
-    JGTreeSet_Pair clone = new JGTreeSet_Pair();
+    JGTreeSet_Pair clone = new JGTreeSet_Pair(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof JGTreeSet_Pair) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getSetFactory().makeJGTreeSet_Pair(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("pair(<term>,<int>)");
-  }
-
-  static public JGTreeSet fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      JGTreeSet tmp = getStaticSetFactory().makeJGTreeSet_Pair((aterm.ATerm) children.get(0), (Integer) children.get(1));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public aterm.ATerm toTerm() {
-    if(term == null) {
-      java.util.List args = new java.util.LinkedList();
-      args.add((aterm.ATerm) getArgument(0));
-      args.add(new Integer(((aterm.ATermInt) getArgument(1)).getInt()));
-      setTerm(getFactory().make(getPattern(), args));
+    if (term == null) {
+      term = getSetFactory().toTerm(this);
     }
     return term;
   }
@@ -72,14 +61,14 @@ extends JGTreeSet
     return (JGTreeSet) super.setArgument(_value, index_value);
   }
 
-  public Integer getMultiplicity()
+  public int getMultiplicity()
   {
-   return new Integer(((aterm.ATermInt) this.getArgument(index_multiplicity)).getInt());
+   return ((aterm.ATermInt) this.getArgument(index_multiplicity)).getInt();
   }
 
-  public JGTreeSet setMultiplicity(Integer _multiplicity)
+  public JGTreeSet setMultiplicity(int _multiplicity)
   {
-    return (JGTreeSet) super.setArgument(getFactory().makeInt(_multiplicity.intValue()), index_multiplicity);
+    return (JGTreeSet) super.setArgument(getFactory().makeInt(_multiplicity), index_multiplicity);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {

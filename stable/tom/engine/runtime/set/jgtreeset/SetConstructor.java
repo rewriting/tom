@@ -1,47 +1,36 @@
 package jtom.runtime.set.jgtreeset;
 
-import aterm.pure.PureFactory;
-
 abstract public class SetConstructor
 extends aterm.pure.ATermApplImpl
 implements aterm.ATerm
 {
-  private static SetFactory factory;
-  
   protected aterm.ATerm term = null;
 
-  abstract protected aterm.ATerm getPattern();
+  SetFactory factory = null;
 
-  
-  static public void initialize(SetFactory f) {
-    factory = f;
-  }
-  
-  public aterm.ATerm toTerm() {
-    if(term == null) {
-      java.util.List args = new java.util.LinkedList();
-      for(int i = 0; i<getArity() ; i++) {
-        args.add(((SetConstructor) getArgument(i)).toTerm());
-      }
-      setTerm(getFactory().make(getPattern(), args));
-    }
-    return term;
+  public SetConstructor(SetFactory factory) {
+    super(factory);
+    this.factory = factory;
   }
 
+  protected void init(int hashCode, aterm.ATermList annos, aterm.AFun fun,	aterm.ATerm[] args) {
+    super.init(hashCode, annos, fun, args);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.AFun fun, aterm.ATerm[] i_args) {
+  	super.initHashCode(annos, fun, i_args);
+  }
+  abstract public aterm.ATerm toTerm();
   public String toString() {
     return toTerm().toString();
   }
-
   protected void setTerm(aterm.ATerm term) {
    this.term = term;
   }
-
   public SetFactory getSetFactory() {
     return factory;
   }
-
-  static protected SetFactory getStaticSetFactory() {
-    return factory;
+  public boolean isSortJGTreeSet() {
+    return false;
   }
 
 }

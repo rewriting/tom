@@ -1,7 +1,10 @@
 package jtom.runtime.set.jgtreeset;
 
-abstract public class JGTreeSet
+public abstract class JGTreeSet
 extends JGTreeSetImpl
 {
+  protected JGTreeSet(SetFactory factory) {
+    super(factory);
+  }
 
 }

@@ -26,17 +26,18 @@
 
 package jtom.runtime.set;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-import aterm.*;
-import aterm.pure.PureFactory;
 
-import jtom.runtime.set.jgtreeset.SetFactory;
-import jtom.runtime.set.jgtreeset.JGTreeSet;
-
-import jtom.runtime.GenericTraversal;
-import jtom.runtime.Replace1;
 import jtom.runtime.Collect1;
+import jtom.runtime.GenericTraversal;
+import jtom.runtime.set.jgtreeset.JGTreeSet;
+import jtom.runtime.set.jgtreeset.SetFactory;
+import aterm.*;
 
 public abstract class ATermSet implements Collection {
 
@@ -50,7 +51,6 @@ public abstract class ATermSet implements Collection {
   protected int modCount = 0;
   protected static GenericTraversal traversal = new GenericTraversal();
 
-  static private Integer one = new Integer(1);
   static protected JGTreeSet emptyTree;
   static protected SetFactory factory = null;
   static protected int collisions = 0;
@@ -89,7 +89,7 @@ public abstract class ATermSet implements Collection {
     1 << 31
   };
 
-    public Object tom_get_fun_sym_String( String t) { return t; } public boolean tom_cmp_fun_sym_String(Object s1, Object s2) { return  s1.equals(s2); } public Object tom_get_subterm_String( String t, int n) { return null; } public boolean tom_terms_equal_String(Object t1, Object t2) { return t1.equals(t2); }  public Object tom_get_fun_sym_Integer( Integer t) { return t; } public boolean tom_cmp_fun_sym_Integer(Object s1, Object s2) { return  s1.equals(s2); } public Object tom_get_subterm_Integer( Integer t, int n) { return null; } public boolean tom_terms_equal_Integer(Object t1, Object t2) { return t1.equals(t2); }  public Object tom_get_fun_sym_Double( Double t) { return t; } public boolean tom_cmp_fun_sym_Double(Object s1, Object s2) { return  s1.equals(s2); } public Object tom_get_subterm_Double( Double t, int n) { return null; } public boolean tom_terms_equal_Double(Object t1, Object t2) { return t1.equals(t2); }  public Object tom_get_fun_sym_ATerm( ATerm t) { return ((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null); } public boolean tom_cmp_fun_sym_ATerm(Object s1, Object s2) { return  s1==s2; } public Object tom_get_subterm_ATerm( ATerm t, int n) { return (((ATermAppl)t).getArgument(n)); } public boolean tom_terms_equal_ATerm(Object t1, Object t2) { return t1.equals(t2); }  public Object tom_get_fun_sym_JGTreeSet( JGTreeSet t) { return null; } public boolean tom_cmp_fun_sym_JGTreeSet(Object s1, Object s2) { return  false; } public Object tom_get_subterm_JGTreeSet( JGTreeSet t, int n) { return null; } public boolean tom_terms_equal_JGTreeSet(Object t1, Object t2) { return t1.equals(t2); }  public boolean tom_is_fun_sym_emptySet( JGTreeSet t) { return  (t!= null) &&t.isEmptySet(); } public  JGTreeSet tom_make_emptySet() { return  getSetFactory().makeJGTreeSet_EmptySet(); }  public boolean tom_is_fun_sym_singleton( JGTreeSet t) { return  (t!= null) &&t.isSingleton(); } public  JGTreeSet tom_make_singleton( ATerm t0) { return  getSetFactory().makeJGTreeSet_Singleton(t0); } public  ATerm tom_get_slot_singleton_value( JGTreeSet t) { return  t.getValue(); }  public boolean tom_is_fun_sym_pair( JGTreeSet t) { return  (t!= null) &&t.isPair(); } public  JGTreeSet tom_make_pair( ATerm t0,  Integer t1) { return  getSetFactory().makeJGTreeSet_Pair(t0, t1); } public  ATerm tom_get_slot_pair_value( JGTreeSet t) { return  t.getValue(); } public  Integer tom_get_slot_pair_multiplicity( JGTreeSet t) { return  t.getMultiplicity(); }  public boolean tom_is_fun_sym_branch( JGTreeSet t) { return  (t!= null) &&t.isBranch(); } public  JGTreeSet tom_make_branch( JGTreeSet t0,  JGTreeSet t1) { return  getSetFactory().makeJGTreeSet_Branch(t0, t1); } public  JGTreeSet tom_get_slot_branch_left( JGTreeSet t) { return  t.getLeft(); } public  JGTreeSet tom_get_slot_branch_right( JGTreeSet t) { return  t.getRight(); }  
+  public Object tom_get_fun_sym_String( String t) { return t; }public boolean tom_cmp_fun_sym_String(Object s1, Object s2) { return  s1.equals(s2); }public Object tom_get_subterm_String( String t,  int n) { return null; }public boolean tom_terms_equal_String(Object t1, Object t2) { return t1.equals(t2); }public  int tom_get_fun_sym_int( int t) { return t; }public boolean tom_cmp_fun_sym_int( int s1,  int s2) { return  (s1 == s2); }public Object tom_get_subterm_int( int t,  int n) { return null; }public boolean tom_terms_equal_int( int t1,  int t2) { return (t1 == t2); }public  double tom_get_fun_sym_double( double t) { return t; }public boolean tom_cmp_fun_sym_double( double s1,  double s2) { return  (s1 == s2); }public Object tom_get_subterm_double( double t,  int n) { return null; }public boolean tom_terms_equal_double( double t1,  double t2) { return (t1 == t2); }public Object tom_get_fun_sym_ATerm( aterm.ATerm t) { return ((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null); }public boolean tom_cmp_fun_sym_ATerm(Object s1, Object s2) { return  s1==s2; }public Object tom_get_subterm_ATerm( aterm.ATerm t,  int n) { return (((ATermAppl)t).getArgument(n)); }public boolean tom_terms_equal_ATerm(Object t1, Object t2) { return t1.equals(t2); }public Object tom_get_fun_sym_ATermList( aterm.ATermList t) { return ((t instanceof ATermList)?getSetFactory().makeAFun("conc",1,false):null); }public boolean tom_cmp_fun_sym_ATermList(Object s1, Object s2) { return  s1==s2; }public boolean tom_terms_equal_ATermList(Object t1, Object t2) { return t1.equals(t2); }public Object tom_get_head_ATermList( aterm.ATermList l) { return l.getFirst(); }public  aterm.ATermList tom_get_tail_ATermList( aterm.ATermList l) { return l.getNext(); }public boolean tom_is_empty_ATermList( aterm.ATermList l) { return l.isEmpty(); }public Object tom_get_fun_sym_JGTreeSet( JGTreeSet t) { return null; }public boolean tom_cmp_fun_sym_JGTreeSet(Object s1, Object s2) { return  false; }public Object tom_get_subterm_JGTreeSet( JGTreeSet t,  int n) { return null; }public boolean tom_terms_equal_JGTreeSet(Object t1, Object t2) { return t1.equals(t2); }public boolean tom_is_fun_sym_emptySet( JGTreeSet t) { return  (t!= null) && t.isEmptySet(); }public  JGTreeSet tom_make_emptySet() { return  getSetFactory().makeJGTreeSet_EmptySet(); }public boolean tom_is_fun_sym_singleton( JGTreeSet t) { return  (t!= null) && t.isSingleton(); }public  JGTreeSet tom_make_singleton( aterm.ATerm t0) { return  getSetFactory().makeJGTreeSet_Singleton(t0); }public  aterm.ATerm tom_get_slot_singleton_value( JGTreeSet t) { return  t.getValue(); }public boolean tom_is_fun_sym_pair( JGTreeSet t) { return  (t!= null) && t.isPair(); }public  JGTreeSet tom_make_pair( aterm.ATerm t0,  int t1) { return  getSetFactory().makeJGTreeSet_Pair(t0, t1); }public  aterm.ATerm tom_get_slot_pair_value( JGTreeSet t) { return  t.getValue(); }public  int tom_get_slot_pair_multiplicity( JGTreeSet t) { return  t.getMultiplicity(); }public boolean tom_is_fun_sym_branch( JGTreeSet t) { return  (t!= null) && t.isBranch(); }public  JGTreeSet tom_make_branch( JGTreeSet t0,  JGTreeSet t1) { return  getSetFactory().makeJGTreeSet_Branch(t0, t1); }public  JGTreeSet tom_get_slot_branch_left( JGTreeSet t) { return  t.getLeft(); }public  JGTreeSet tom_get_slot_branch_right( JGTreeSet t) { return  t.getRight(); }   
 
   public int hashCode() {
     return tree.getUniqueIdentifier();
@@ -164,7 +164,7 @@ public abstract class ATermSet implements Collection {
   
   private boolean addATerm(ATerm elt) {
     JGTreeSet before = tree;
-    tree = override(elt, one, tree, 0);
+    tree = override(elt, 1, tree, 0);
     modCount++;
     return tree == before;
   }
@@ -228,7 +228,7 @@ public abstract class ATermSet implements Collection {
     return contains(elt, t, 0);
   }
   protected JGTreeSet add(ATerm elt, JGTreeSet t) {
-    return override(elt, new Integer(1), t, 0);
+    return override(elt, 1, t, 0);
   }
   
   protected JGTreeSet remove(ATerm elt, JGTreeSet t) {
@@ -255,7 +255,7 @@ public abstract class ATermSet implements Collection {
   }
   
   protected String topRepartition(JGTreeSet t) {
-     {  JGTreeSet tom_match1_1 = null; tom_match1_1 = ( JGTreeSet) t;matchlab_match1_pattern1: {  JGTreeSet l = null;  JGTreeSet r = null; if(tom_is_fun_sym_branch(tom_match1_1)) {  JGTreeSet tom_match1_1_1 = null;  JGTreeSet tom_match1_1_2 = null; tom_match1_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match1_1); tom_match1_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match1_1); l = ( JGTreeSet) tom_match1_1_1; r = ( JGTreeSet) tom_match1_1_2;
+     {  JGTreeSet tom_match1_1 = null; tom_match1_1 = ( JGTreeSet) t;matchlab_match1_pattern1: {  JGTreeSet r = null;  JGTreeSet l = null; if(tom_is_fun_sym_branch(tom_match1_1)) {  JGTreeSet tom_match1_1_1 = null;  JGTreeSet tom_match1_1_2 = null; tom_match1_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match1_1); tom_match1_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match1_1); l = ( JGTreeSet) tom_match1_1_1; r = ( JGTreeSet) tom_match1_1_2;
   return "Left branch: "+size(l)+"\tright branch: "+size(r); }}matchlab_match1_pattern2: {
  return "topRepartition: No a branch";} }
  
@@ -295,7 +295,7 @@ public abstract class ATermSet implements Collection {
 
   protected abstract boolean contains(ATerm elt, JGTreeSet t, int level);
     
-  protected abstract JGTreeSet override(ATerm elt, Integer multiplicity, JGTreeSet t, int level);
+  protected abstract JGTreeSet override(ATerm elt, int multiplicity, JGTreeSet t, int level);
   
   protected abstract JGTreeSet underride(ATerm elt, JGTreeSet t, int level);
 
@@ -348,11 +348,11 @@ public abstract class ATermSet implements Collection {
           public boolean apply(ATerm t) {
             if(t instanceof JGTreeSet) {
                {  JGTreeSet tom_match2_1 = null; tom_match2_1 = ( JGTreeSet) t;matchlab_match2_pattern1: { if(tom_is_fun_sym_emptySet(tom_match2_1)) {
- return false; }}matchlab_match2_pattern2: {  ATerm x = null; if(tom_is_fun_sym_singleton(tom_match2_1)) {  ATerm tom_match2_1_1 = null; tom_match2_1_1 = ( ATerm) tom_get_slot_singleton_value(tom_match2_1); x = ( ATerm) tom_match2_1_1;
+ return false; }}matchlab_match2_pattern2: {  aterm.ATerm x = null; if(tom_is_fun_sym_singleton(tom_match2_1)) {  aterm.ATerm tom_match2_1_1 = null; tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match2_1); x = ( aterm.ATerm) tom_match2_1_1;
  
                   res.add(x);
                   return false;
-                 }}matchlab_match2_pattern3: {  ATerm x = null; if(tom_is_fun_sym_pair(tom_match2_1)) {  ATerm tom_match2_1_1 = null;  Integer tom_match2_1_2 = null; tom_match2_1_1 = ( ATerm) tom_get_slot_pair_value(tom_match2_1); tom_match2_1_2 = ( Integer) tom_get_slot_pair_multiplicity(tom_match2_1); x = ( ATerm) tom_match2_1_1;
+                 }}matchlab_match2_pattern3: {  aterm.ATerm x = null; if(tom_is_fun_sym_pair(tom_match2_1)) {  aterm.ATerm tom_match2_1_1 = null;  int tom_match2_1_2; tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match2_1); tom_match2_1_2 = ( int) tom_get_slot_pair_multiplicity(tom_match2_1); x = ( aterm.ATerm) tom_match2_1_1;
  
                   res.add(x);
                   return false;
@@ -365,7 +365,7 @@ public abstract class ATermSet implements Collection {
           } // Apply
         }; //new
       
-      ATermSet.this.traversal.genericCollect(tree, collect);
+      ATermSet.traversal.genericCollect(tree, collect);
       ATerm[] result = new ATerm[res.size()];
       for(int i=0;i<res.size();i++) {
         result[i] = (ATerm) (((ArrayList)res).get(i));

@@ -3,40 +3,39 @@ package jtom.runtime.set.jgtreeset;
 abstract public class JGTreeSet_BranchImpl
 extends JGTreeSet
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  protected void init(int hashCode, aterm.ATermList annos, aterm.AFun fun,	aterm.ATerm[] args) {
+    super.init(hashCode, annos, fun, args);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.AFun fun, aterm.ATerm[] i_args) {
+  	super.initHashCode(annos, fun, i_args);
+  }
+  protected JGTreeSet_BranchImpl(SetFactory factory) {
+    super(factory);
   }
   private static int index_left = 0;
   private static int index_right = 1;
   public shared.SharedObject duplicate() {
-    JGTreeSet_Branch clone = new JGTreeSet_Branch();
+    JGTreeSet_Branch clone = new JGTreeSet_Branch(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof JGTreeSet_Branch) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getSetFactory().makeJGTreeSet_Branch(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("branch(<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getSetFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public JGTreeSet fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      JGTreeSet tmp = getStaticSetFactory().makeJGTreeSet_Branch(JGTreeSet.fromTerm( (aterm.ATerm) children.get(0)), JGTreeSet.fromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isBranch()
   {
     return true;

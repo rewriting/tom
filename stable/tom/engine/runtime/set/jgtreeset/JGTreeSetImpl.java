@@ -1,45 +1,26 @@
 package jtom.runtime.set.jgtreeset;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
 
 abstract public class JGTreeSetImpl extends SetConstructor
 {
-  static JGTreeSet fromString(String str)
-  {
-    aterm.ATerm trm = getStaticFactory().parse(str);
-    return fromTerm(trm);
+  protected JGTreeSetImpl(SetFactory factory) {
+     super(factory);
   }
-  static JGTreeSet fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  protected void init(int hashCode, aterm.ATermList annos, aterm.AFun fun,	aterm.ATerm[] args) {
+    super.init(hashCode, annos, fun, args);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.AFun fun, aterm.ATerm[] i_args) {
+  	super.initHashCode(annos, fun, i_args);
   }
   public boolean isEqual(JGTreeSet peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static JGTreeSet fromTerm(aterm.ATerm trm)
-  {
-    JGTreeSet tmp;
-    if ((tmp = JGTreeSet_EmptySet.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = JGTreeSet_Singleton.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = JGTreeSet_Pair.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = JGTreeSet_Branch.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a JGTreeSet: " + trm);
+  public boolean isSortJGTreeSet()  {
+    return true;
   }
 
   public boolean isEmptySet()
@@ -92,12 +73,12 @@ abstract public class JGTreeSetImpl extends SetConstructor
      throw new RuntimeException("This JGTreeSet has no Value");
   }
 
-  public Integer getMultiplicity()
+  public int getMultiplicity()
   {
      throw new RuntimeException("This JGTreeSet has no Multiplicity");
   }
 
-  public JGTreeSet setMultiplicity(Integer _multiplicity)
+  public JGTreeSet setMultiplicity(int _multiplicity)
   {
      throw new RuntimeException("This JGTreeSet has no Multiplicity");
   }
@@ -121,7 +102,6 @@ abstract public class JGTreeSetImpl extends SetConstructor
   {
      throw new RuntimeException("This JGTreeSet has no Right");
   }
-
 
 }
 
