@@ -31,31 +31,56 @@ package prodrule;
 
 import aterm.*;
 import aterm.pure.*;
-import prodrule.fib.*;
-import prodrule.fib.types.*;
+import prodrule.fib3.*;
+import prodrule.fib3.types.*;
+import java.util.*;
 
-class Fib2 {
+class Fib3 {
   private Factory factory;
 
   %vas {
     // extension of adt syntax
-    module fib
+    module fib3
       
     public
-      sorts Element Space
+      sorts Element
       
     abstract syntax
       Undef -> Element
       Nat( value:Int ) -> Element
       Fib(arg:Int, val:Element) -> Element
-      concElement( Element* ) -> Space
    }
 
-  public Fib2(Factory factory) {
+  %typearray Space {
+    implement { ArrayList }
+    get_fun_sym(t)   { ((t instanceof ArrayList)?factory.getPureFactory().makeAFun("concElement", 1, false):null) }
+    cmp_fun_sym(t1,t2) { t1 == t2 }
+    equals(l1,l2)      { l1.equals(l2) }
+    get_element(l,n)   { l.get(n) }
+    get_size(l)        { l.size() }
+  }
+
+  %oparray Space concElement( Element* ) {
+    fsym            { factory.getPureFactory().makeAFun("concElement", 1, false) }
+    make_empty(n)   { myEmpty(n) }
+    make_append(e,l) { myAdd(e,(ArrayList)l) }
+  }
+
+  private ArrayList myAdd(Object e,ArrayList l) {
+    l.add(e);
+    return l;
+  }
+  
+  private ArrayList myEmpty(int n) {
+    ArrayList res = new ArrayList(n);
+    return res;
+  }
+
+  public Fib3(Factory factory) {
     this.factory = factory;
   } 
 
-  public Factory getFibFactory() {
+  public Factory getFib3Factory() {
     return factory;
   }
   
@@ -63,14 +88,14 @@ class Fib2 {
     long startChrono = System.currentTimeMillis();
     System.out.println("running...");
     int n = 200;
-    Space space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef));
+    ArrayList space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef));
     space = loop(space);
     System.out.println("fib(" + n + ") = " + result(space,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
   }
   
-  public Space loop(Space s) {
-    Space oldSpace = s;
-    Space space = compute(rec(oldSpace));
+  public ArrayList loop(ArrayList s) {
+    ArrayList oldSpace = s;
+    ArrayList space = compute(rec(oldSpace));
     while(space != oldSpace) {
       oldSpace = space;
       space = compute(rec(space));
@@ -79,31 +104,35 @@ class Fib2 {
   }
 
   public final static void main(String[] args) {
-    Fib2 test = new Fib2(new Factory(new PureFactory(16)));
+    Fib3 test = new Fib3(new Factory(new PureFactory(16)));
     test.run();
   }
 
-  public Space rec(Space s) {
+  public ArrayList rec(ArrayList s) {
     %match(Space s) {
       concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
         if(`n >2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1)) {
-          return `manySpace(Fib(n-1,Undef),s);
+          return `concElement(Fib(n-1,Undef),s*);
         }
       }
     }
     return s;
   }
 
-  public Space compute(Space s) {
+  public ArrayList compute(ArrayList s) {
     %match(Space s) {
       concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
-        Space s12 = `concElement(S1*,S2*);
+        ArrayList s12 = `concElement(S1*,S2*);
         %match(Space s12) {
-          concElement(_*, Fib[arg=n1,val=Nat(v1)], _*, Fib[arg=n2,val=Nat(v2)], _*) -> {
-            if( `(n1+1==n && n2+2==n) || `(n2+1==n && n1+2==n) ) {
+          concElement(T1*, f1@Fib[arg=n1,val=Nat(v1)], T2*, f2@Fib[arg=n2,val=Nat(v2)], T3*) -> {
+            if(`(n1+1==n && n2+2==n)) {
               int modulo = (`v1+`v2)%1000000;
-              return `manySpace(Fib(n,Nat(modulo)),s12);
+              return `concElement(Fib(n,Nat(modulo)),f1,T1*,T2*,T3*);
+            } else if(`(n2+1==n && n1+2==n) ) {
+              int modulo = (`v1+`v2)%1000000;
+              return `concElement(Fib(n,Nat(modulo)),f2,T1*,T2*,T3*);
             }
+
           }
         }
       }
@@ -111,7 +140,7 @@ class Fib2 {
     return s;
   }
 
-  public boolean occursFib(Space s, int value) {
+  public boolean occursFib(ArrayList s, int value) {
     %match(Space s) {
       concElement(S1*, Fib[arg=n], S2*) -> {
         if(`n == value) {
@@ -122,7 +151,7 @@ class Fib2 {
     return false;
   }
 
-  public int result(Space s, int value) {
+  public int result(ArrayList s, int value) {
     %match(Space s) {
       concElement(_*, Fib[arg=n, val=Nat(v)], _*) -> {
         if(`n == value) {
