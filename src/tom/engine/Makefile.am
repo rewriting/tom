@@ -4,7 +4,7 @@
 
 SUBDIRS         = runtime tools exception parser checker compiler backend debug xml
 
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 javadir         = ${prefix}/classes/jtom
 
@@ -15,8 +15,11 @@ java_JAVA       = $(BOOTSOURCES)
 JAVAROOT        = ${top_builddir}/src/
 
 EXTRA_DIST 	= $(BOOTSOURCES) TomBase.t TomSignature.adt
-CLEANFILES 	= TomBase.java
+CLEANFILES 	= TomBase.java ${JARFILE}
 BUILT_SOURCES   = TomBase.java
+
+JARFILE         = TomSignature-$(VERSION).jar
+data_DATA       = ${JARFILE}
 
 bootinstall:
 	$(mkinstalldirs) $(stabledir)
@@ -29,10 +32,14 @@ TomBase.java: TomBase.t adt/TomSignature.tom
 	$(TOM) $(TOMFLAGS) $<
 
 api:
-	${ADTTOTOM} --javagen -i TomSignature.adt -n TomSignature -p jtom.adt --output $(JAVAROOT)
+	${ADTTOTOM}  -i TomSignature.adt -n TomSignature --output adt
+	${ADTTOJAVA} --version $(VERSION) -i TomSignature.adt -n TomSignature -p jtom.adt --output $(JAVAROOT)
 
 adt/TomSignature.tom: TomSignature.adt
-	${ADTTOTOM} --javagen -i TomSignature.adt -n TomSignature -p jtom.adt --output $(JAVAROOT)
+	$(MAKE) api
+
+$(JARFILE): adt/TomSignature.tom
+	$(MAKE) api
 
 # we use the last installed compiler to compile the current compiler
 TOMFLAGS = --noWarning

@@ -4,7 +4,7 @@
 
 #SUBDIRS		= jgtreeset
 javadir         = ${prefix}/classes/jtom/runtime/set
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/set
 BOOTSOURCES	= SharedSet.java SharedMultiSet.java ATermSet.java

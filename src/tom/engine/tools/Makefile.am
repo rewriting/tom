@@ -3,7 +3,7 @@
 #
 
 javadir         = ${prefix}/classes/jtom/tools
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/tools
 BOOTSOURCES	= Tools.java OutputCode.java SingleLineOutputCode.java\
