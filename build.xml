@@ -189,30 +189,36 @@
   <!-- compile tom files in src.src with tom.stable -->
   <target name="buildtom" depends="initTaskDef, buildadt">
 
+
+
+
+<!--
     <tom config="${stable.configfile}"
 				 srcdir="${src.src}"
          outputfile="${src.gen}/jtom/parser/TomParser.jj"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/TomParser.t"/>  
     </tom>
+-->
 
-		<tom config="${stable.configfile}"
-				 srcdir="${src.src}"
-         outputfile="${src.gen}/jtom/parser/tomparse.g"
-         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-      <include name="**/tomparse.g.t"/>  
+
+   <tom config="${stable.configfile}"
+	srcdir="${src.src}"
+	outputfile="${src.gen}/jtom/parser/TomLanguage.g"
+	options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+	<include name="**/TomLanguage.g.t"/>  
     </tom>
     <tom config="${stable.configfile}"
 	 srcdir="${src.src}"
-         outputfile="${src.gen}/jtom/parser/targetparse.g"
+         outputfile="${src.gen}/jtom/parser/HostLanguage.g"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-      <include name="**/targetparse.g.t"/>  
+      <include name="**/HostLanguage.g.t"/>  
     </tom>
     <tom config="${stable.configfile}"
 				 srcdir="${src.src}"
-         outputfile="${src.gen}/jtom/parser/bqparse.g"
+         outputfile="${src.gen}/jtom/parser/BackQuoteLanguage.g"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-      <include name="**/bqparse.g.t"/>  
+      <include name="**/BackQuoteLanguage.g.t"/>  
     </tom>
 
     <tom config="${stable.configfile}"
@@ -223,7 +229,7 @@
       <include name="tom/platform/**/*.t"/> 
       <include name="jtom/*.t"/> 
       <include name="**/Verifier.t"/>
-      <include name="**/TomBackQuoteParser.t"/> 
+   <!--   <include name="**/TomBackQuoteParser.t"/> -->
     </tom>
 
     <tom config="${stable.configfile}"
@@ -231,35 +237,44 @@
          destdir="${src.gen}" 
          options="-I ${src.mapping} --noDeclaration">
       <exclude name="jtom/*.t"/>
-      <exclude name="**/TomParser.t"/>
+<!--      <exclude name="**/TomParser.t"/> -->
       <exclude name="**/Verifier.t"/>
-      <exclude name="**/TomBackQuoteParser.t"/>
-      <exclude name="**/tomparse.g.t"/>
-      <exclude name="**/targetparse.g.t"/>
-      <exclude name="**/bqparse.g.t"/>
+    <!--  <exclude name="**/TomBackQuoteParser.t"/> -->
+      <exclude name="**/TomLanguage.g.t"/>
+      <exclude name="**/HostLanguage.g.t"/>
+      <exclude name="**/BackQuoteLanguage.g.t"/>
     </tom>
   </target>
 
   <!-- builds the parser using javacc -->
   <target name="buildparser">
     <mkdir dir="${src.gen}/jtom/parser"/>
-		<javacc target="${src.gen}/jtom/parser/TomParser.jj"
+    
+<!--
+    <javacc target="${src.gen}/jtom/parser/TomParser.jj"
             outputdirectory="${src.gen}/jtom/parser"
             javacchome="${javaccdir}" />
-    <javacc target="${src.src}/jtom/parser/TomJavaParser.jj"
+-->
+<!--    <javacc target="${src.src}/jtom/parser/TomJavaParser.jj"
             outputdirectory="${src.gen}/jtom/parser"
             javacchome="${javaccdir}" />
-    <delete file="${src.gen}/jtom/parser/JavaCharStream.java"/>
+   <delete file="${src.gen}/jtom/parser/JavaCharStream.java"/>
+-->
 
-		<antlr target="${src.gen}/jtom/parser/tomparse.g"
+<antlr target="${src.src}/jtom/parser/TomJavaParser.g"
            outputdirectory="${src.gen}/jtom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
-    <antlr target="${src.gen}/jtom/parser/targetparse.g"
+
+   <antlr target="${src.gen}/jtom/parser/TomLanguage.g"
            outputdirectory="${src.gen}/jtom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
-    <antlr target="${src.gen}/jtom/parser/bqparse.g"
+    <antlr target="${src.gen}/jtom/parser/HostLanguage.g"
+           outputdirectory="${src.gen}/jtom/parser">
+      <classpath refid="stable.classpath"/>
+    </antlr>
+    <antlr target="${src.gen}/jtom/parser/BackQuoteLanguage.g"
               outputdirectory="${src.gen}/jtom/parser">
       <classpath refid="stable.classpath"/>
     </antlr>
@@ -706,6 +721,8 @@
     <ant dir="${examples}" target="clean"/>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${stable.dist}"/>
+      <!-- changement -->
+      <property name="tomconfigfile" location="${stable.dist}/Tom.xml"/>
     </ant>
 
     <echo>Test tom-stable in examples with optimizer</echo>
@@ -713,12 +730,16 @@
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${stable.dist}"/>
       <property name="optimize" value="on"/>
+      <!-- changement -->
+      <property name="tomconfigfile" location="${stable.dist}/Tom.xml"/>
     </ant>
 
     <echo>Test tom-source in examples</echo>
     <ant dir="${examples}" target="clean"/>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
+      <!-- changement -->
+      <property name="tomconfigfile" location="${src.dist}/Tom.src.xml"/>
     </ant>
 
     <echo>Test tom-source in examples with optimizer</echo>
@@ -726,6 +747,8 @@
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
       <property name="optimize" value="on"/>
+      <!-- changement -->
+      <property name="tomconfigfile" location="${src.dist}/Tom.src.xml"/>
     </ant>
   </target>
 
@@ -786,8 +809,14 @@
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${bootstrap.dir}/build">
-        <include name="jtom/parser/TomParser.class"/>
-        <include name="jtom/parser/TomBackQuoteParser.class"/>
+      <include name="jtom/parser/TomLexer.class"/>
+      <include name="jtom/parser/TomParser.class"/>
+      <include name="jtom/parser/HostLexer.class"/>
+      <include name="jtom/parser/HostParser.class"/>
+      <include name="jtom/parser/BackQuoteLexer.class"/>
+      <include name="jtom/parser/BackQuoteParser.class"/>
+<!--        <include name="jtom/parser/TomParser.class"/> -->
+<!--        <include name="jtom/parser/TomBackQuoteParser.class"/> -->
       </fileset>
     </concat>
     <concat destfile="${src.src}/bootcheck/version2">
@@ -797,8 +826,14 @@
       </fileset>
       <!-- we don't want to check the parser generated files, never ever -->
       <fileset dir="${src.build}">
-        <include name="jtom/parser/TomParser.class"/>
-        <include name="jtom/parser/TomBackQuoteParser.class"/>
+      <include name="jtom/parser/TomLexer.class"/>
+      <include name="jtom/parser/TomParser.class"/>
+      <include name="jtom/parser/HostLexer.class"/>
+      <include name="jtom/parser/HostParser.class"/>
+      <include name="jtom/parser/BackQuoteLexer.class"/>
+      <include name="jtom/parser/BackQuoteParser.class"/>
+<!--        <include name="jtom/parser/TomParser.class"/> -->
+<!--        <include name="jtom/parser/TomBackQuoteParser.class"/> -->
       </fileset>
     </concat>
     <condition property="bootstrap.ok">
@@ -849,44 +884,96 @@
 
     <!-- build tom -->
 
+
+<!--
     <tomsrc config="${src.configfile}"
 						srcdir="${src.src}" 
             options="-I ${src.mapping} -I ${destination}/gen/jtom/adt -o ${destination}/gen/jtom/parser/TomParser.jj">
       <include name="**/TomParser.t"/>  
     </tomsrc>
+-->
 
     <tomsrc config="${src.configfile}"
-						srcdir="${src.src}" 
-            destdir="${destination}/gen" 
+    srcdir="${src.src}" 
+	 destdir="${destination}/gen" 
             options="-I ${src.mapping}">
-      <include name="tom/library/**/*.t"/> 
+	    <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
       <include name="jtom/*.t"/> 
       <include name="**/Verifier.t"/>
-      <include name="**/TomBackQuoteParser.t"/> 
+   <!--   <include name="**/TomBackQuoteParser.t"/>  -->
+      </tomsrc>
+
+    <!-- changements nouveau parseur -->
+    <tomsrc config="${src.configfile}"
+	 srcdir="${src.src}"
+         outputfile="${destination}/gen/jtom/parser/TomLanguage.g"
+         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+	 <include name="**/TomLanguage.g.t"/>  
     </tomsrc>
+    <tomsrc config="${src.configfile}"
+	 srcdir="${src.src}"
+         outputfile="${destination}/gen/jtom/parser/HostLanguage.g"
+         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+	 <include name="**/HostLanguage.g.t"/>  
+    </tomsrc>
+    <tomsrc config="${src.configfile}"
+	 srcdir="${src.src}"
+         outputfile="${destination}/gen/jtom/parser/BackQuoteLanguage.g"
+         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+	 <include name="**/BackQuoteLanguage.g.t"/>  
+    </tomsrc>
+
+
+
     <tomsrc config="${src.configfile}"
 						srcdir="${src.src}" 
             destdir="${destination}/gen" 
             options="-I ${src.mapping} --noDeclaration">
       <exclude name="jtom/*.t"/>
-      <exclude name="**/TomParser.t"/>
+<!--      <exclude name="**/TomParser.t"/> -->
       <exclude name="**/Verifier.t"/>
-      <exclude name="**/TomBackQuoteParser.t"/>
-      <exclude name="**/tomparse.g.t"/>
-      <exclude name="**/targetparse.g.t"/>
-      <exclude name="**/bqparse.g.t"/>
+<!--      <exclude name="**/TomBackQuoteParser.t"/> -->
+      <exclude name="**/TomLanguage.g.t"/>
+      <exclude name="**/HostLanguage.g.t"/>
+      <exclude name="**/BackQuoteLanguage.g.t"/>
+
     </tomsrc>
 
     <!-- builds parser -->
     <mkdir dir="${destination}/gen/jtom/parser"/>
-    <javacc target="${destination}/gen/jtom/parser/TomParser.jj"
+  
+<!--
+  <javacc target="${destination}/gen/jtom/parser/TomParser.jj"
             outputdirectory="${destination}/gen/jtom/parser"
             javacchome="${javaccdir}" />
+-->
+<!--
     <javacc target="${src.src}/jtom/parser/TomJavaParser.jj"
             outputdirectory="${destination}/gen/jtom/parser"
             javacchome="${javaccdir}" />
     <delete file="${destination}/gen/jtom/parser/JavaCharStream.java"/>
+-->
+
+    <!-- changements nouveau parseur -->
+    <antlr target="${src.src}/jtom/parser/TomJavaParser.g"
+           outputdirectory="${destination}/gen/jtom/parser">
+	   <classpath refid="src.classpath"/>
+    </antlr>
+    <antlr target="${src.gen}/jtom/parser/TomLanguage.g"
+           outputdirectory="${destination}/gen/jtom/parser">
+	   <classpath refid="src.classpath"/>
+    </antlr>
+    <antlr target="${src.gen}/jtom/parser/HostLanguage.g"
+           outputdirectory="${destination}/gen/jtom/parser">
+	   <classpath refid="src.classpath"/>
+    </antlr>
+    <antlr target="${src.gen}/jtom/parser/BackQuoteLanguage.g"
+           outputdirectory="${destination}/gen/jtom/parser">
+	   <classpath refid="src.classpath"/>
+    </antlr>
+
+
 
     <javac destdir="${destination}/build" 
            debug="${javacDebugInfo}"
