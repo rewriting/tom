@@ -30,12 +30,28 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import jtom.TomBase;
-import jtom.adt.*;
+import jtom.adt.Expression;
+import jtom.adt.Instruction;
+import jtom.adt.Option;
+import jtom.adt.OptionList;
+import jtom.adt.TargetLanguage;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomNumberList;
+import jtom.adt.TomRule;
+import jtom.adt.TomRuleList;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomTerm;
+import jtom.adt.TomType;
+import jtom.adt.TomTypeList;
 import jtom.runtime.Replace1;
 import jtom.tools.Flags;
+import jtom.tools.TomTask;
+import jtom.tools.TomTaskInput;
 import aterm.ATerm;
 
-public class TomCompiler extends TomBase {
+public class TomCompiler extends TomBase implements TomTask {
+  private TomTask nextTask;
   TomKernelCompiler tomKernelCompiler;
   private String debugKey = null;
   public TomCompiler(jtom.TomEnvironment environment,
@@ -48,6 +64,26 @@ public class TomCompiler extends TomBase {
   %include { Tom.signature }
 // ------------------------------------------------------------
 
+  public void addTask(TomTask task) {
+  	this.nextTask = task;
+  }
+  public void process(TomTaskInput input) {
+  	try {
+  	  System.out.println("Processing TomCompiler Task");
+  	  TomTerm preCompiledTerm = preProcessing(input.getTerm());
+  	  TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
+      compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
+      input.setTerm(compiledTerm);
+    } catch (Exception e) {
+    }
+    if(nextTask != null) {
+      nextTask.process(input);
+    }
+  }
+  
+  public TomTask getTask() {
+  	return nextTask;
+  }
     /* 
      * preProcessing:
      *

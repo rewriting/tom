@@ -7,7 +7,7 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SH
 
 stabledir 	= $(top_srcdir)/stable/jtom/tools
 BOOTSOURCES	= Flags.java OutputCode.java SingleLineOutputCode.java ASTFactory.java \
-                  SymbolTable.java Statistics.java
+                  SymbolTable.java Statistics.java TomTask.java TomTaskInput.java
 java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES)
 JAVAROOT        = ${top_builddir}/src/

@@ -42,7 +42,7 @@ public class TomKernelExpander extends TomBase {
   }
 
 // ------------------------------------------------------------
-  %include { Tom.signature }
+  %include { Tom.signature } 
 // ------------------------------------------------------------
   
     /*

@@ -39,6 +39,9 @@ import jtom.exception.TomException;
 import jtom.tools.ASTFactory;
 import jtom.tools.Flags;
 import jtom.tools.SymbolTable;
+import jtom.tools.Statistics;
+import jtom.tools.TomTask;
+import jtom.tools.TomTaskInput;
 
 public class TomParserTokenManager implements TomParserConstants
 {

@@ -39,6 +39,17 @@ import jtom.adt.*;
 
 
 public class Tom {
+  private TomTask initialTask;
+  private TomTaskInput taskInput;
+  private TomParser tomParser;
+  private TomChecker tomChecker;
+  private TomExpander tomExpander;
+  private TomKernelExpander tomKernelExpander;
+  private TomKernelCompiler tomKernelCompiler;
+  private TomCompiler tomCompiler;
+  private TomOptimizer tomOptimizer;
+  private TomGenerator tomGenerator;
+		  
   private static String version =
   "\njtom 1.3gamma\n" +
   "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
@@ -77,6 +88,15 @@ public class Tom {
   }
 
   public static void main(String args[]) {
+  	Tom tomCompiler = new Tom(args);
+	tomCompiler.run();
+  }
+  
+  public void run() {
+  	initialTask.process(taskInput);
+  }
+  
+  public Tom(String args[]) {
     String fileName        = "";
     String inputSuffix     = ".t";
     String outputSuffix    = ".java";
@@ -196,7 +216,9 @@ public class Tom {
       System.out.println("No file generated.");
       return;
     }
-        
+    
+    
+    
     TomTerm parsedTerm   = null;
     TomTerm expandedTerm = null;
     TomTerm compiledTerm = null;
@@ -215,27 +237,31 @@ public class Tom {
           fileList[index++] = (File)it.next();
         }
         
-        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,inputFileName);
-        startChrono();
-        parsedTerm = tomParser.startParsing();
-        stopChrono();
+        
+        tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,inputFileName);
+		initialTask = tomParser;
+        //TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,inputFileName);
+        //startChrono();
+        //parsedTerm = tomParser.startParsing();
+        //stopChrono();
         if(Flags.verbose) System.out.println("TOM parsing phase " + getChrono());
         if(Flags.intermediate) {
           generateOutput(fileName + parsedSuffix,parsedTerm);
           generateOutput(fileName + parsedTableSuffix,symbolTable.toTerm());
         }
         
-        TomChecker  tomChecker = new TomChecker(environment);
-        startChrono();
-        tomChecker.checkSyntax(parsedTerm);
-        stopChrono();
+        tomChecker = new TomChecker(environment);
+		tomParser.addTask(tomChecker);
+        //startChrono();
+        //tomChecker.checkSyntax(parsedTerm);
+        //stopChrono();
         if(Flags.verbose) {
           System.out.println("TOM syntax checking phase " + getChrono());
         }
         int nbError = tomChecker.getNumberFoundError();
         if(nbError > 0 ) {
           for(int i=0 ; i<nbError ; i++) {
-            System.out.println(tomChecker.getMessage(i));
+            //System.out.println(tomChecker.getMessage(i));
           }
           
           String msg = "Tom Checker:  Encountered " + nbError +
@@ -243,14 +269,18 @@ public class Tom {
           throw new CheckErrorException(msg);
         }
         
-	TomKernelExpander tomKernelExpander = new TomKernelExpander(environment);
-	TomExpander tomExpander = new TomExpander(environment,tomKernelExpander);
-        startChrono();
-        expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
+		tomKernelExpander = new TomKernelExpander(environment);
+		tomExpander = new TomExpander(environment,tomKernelExpander);
+        //startChrono();
+        /*expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
         tomKernelExpander.updateSymbolTable();
         TomTerm context = null;
         expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
-        tomChecker.checkVariableCoherence(expandedTerm);
+        tomChecker.checkVariableCoherence(expandedTerm);*/
+		///////////////////////////////////////////////////////
+		tomChecker.addTask(tomExpander);
+		
+		
         if(Flags.debugMode) {
           expandedTerm  = tomKernelExpander.expandMatchPattern(expandedTerm);
         }
@@ -275,15 +305,6 @@ public class Tom {
 
       } catch (FileNotFoundException e) {
         System.out.println("\nTom Parser:  File " + inputFileName + " not found.");
-        System.out.println("No file generated.");
-        return;
-      } catch(ParseException e1) {
-        System.out.println(e1);
-        System.out.println("\nTom Parser:  Encountered errors during parsing.");
-        System.out.println("No file generated.");
-        return;
-      } catch(CheckErrorException e2) {
-        System.out.println(e2);
         System.out.println("No file generated.");
         return;
       } catch(TomException e3) {
@@ -316,16 +337,18 @@ public class Tom {
           symbolTable.regenerateFromTerm(symbTable);
         }
 
-        TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(environment);
-        TomCompiler tomCompiler = new TomCompiler(environment,tomKernelCompiler);
-        startChrono();
+        tomKernelCompiler = new TomKernelCompiler(environment);
+        tomCompiler = new TomCompiler(environment,tomKernelCompiler);
+		///////////////////////////////////////////////////////
+		tomExpander.addTask(tomCompiler);
+        /*startChrono();
         compiledTerm = tomCompiler.preProcessing(expandedTerm);
         
         compiledTerm = tomKernelCompiler.compileMatching(compiledTerm);
           //System.out.println("pass2 =\n" + compiledTerm);
         compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
           //System.out.println("postProcessing =\n" + compiledTerm);
-        stopChrono();
+        stopChrono();*/
         if(Flags.verbose) {
           System.out.println("TOM compilation phase " + getChrono());
         }
@@ -334,7 +357,7 @@ public class Tom {
         }
 
         if (Flags.doOptimization) {
-          TomOptimizer tomOptimizer = new TomOptimizer(environment);
+          tomOptimizer = new TomOptimizer(environment);
           startChrono();
           compiledTerm = tomOptimizer.optimize(compiledTerm);
           stopChrono();
@@ -342,15 +365,18 @@ public class Tom {
           if(Flags.intermediate) generateOutput(fileName + optimizedSuffix,compiledTerm);   
         }
         
-	TomGenerator tomGenerator = new TomGenerator(environment);
-        startChrono();
+	tomGenerator = new TomGenerator(environment);
+	tomCompiler.addTask(tomGenerator);
+	
+	taskInput = new TomTaskInput(fileName + outputSuffix);
+        /*startChrono();
         int defaultDeep = 2;
         Writer writer = new BufferedWriter(new OutputStreamWriter(
           new FileOutputStream(fileName + outputSuffix)));
         OutputCode out = new OutputCode(writer);
         tomGenerator.generate(out,defaultDeep,compiledTerm);
         writer.close();
-        stopChrono();
+        stopChrono();*/
         if(Flags.verbose) {
           System.out.println("TOM generation phase " + getChrono());
         }
@@ -405,5 +431,8 @@ public class Tom {
       e.printStackTrace();
     }
   }
- 
+  
+  public static void mainProgram(String args[], InputStream input, Writer writer) {
+
+  }
 }

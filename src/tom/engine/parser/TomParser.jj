@@ -47,8 +47,12 @@ import jtom.exception.TomException;
 import jtom.tools.ASTFactory;
 import jtom.tools.Flags;
 import jtom.tools.SymbolTable;
+import jtom.tools.Statistics;
+import jtom.tools.TomTask;
+import jtom.tools.TomTaskInput;
 
-public class TomParser {
+
+public class TomParser implements TomTask {
 
   private int oldPos=0;
   private int oldLine=0;
@@ -56,16 +60,19 @@ public class TomParser {
   private Position orgTrack;
   private TomBuffer tomBuffer;
   private SymbolTable symbolTable;
+  private Statistics stat;
   private jtom.TomEnvironment environment;
   private File importList[];
   private static HashSet includedFiles = new HashSet();
   private String currentFile;
   private ArrayList debuggedStructureList;
   private String text="";
+  private TomTask nextTask;
   
   public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, String fileName) {
     this(input);
     this.tomBuffer = input;
+    this.stat = environment.getStatistics();
     this.symbolTable = environment.getSymbolTable();
     this.environment = environment;
     this.importList = importList;
@@ -79,6 +86,27 @@ public class TomParser {
       System.out.println("Re-entering included file forms a cycle. Breaking the parsing...");
       System.exit(1);        
     }
+  }
+
+  public void addTask(TomTask task) {
+  	this.nextTask = task;
+  }
+  
+  public void process(TomTaskInput input) {
+  	try {
+  	    System.out.println("Processing TomParser Task");
+  		TomTerm parsedTerm = startParsing();
+  		// Update taskInput
+  		input.setTerm(parsedTerm);
+  	} catch (Exception e) {
+  	}
+  	if(nextTask != null) {
+      nextTask.process(input);
+    }
+  }
+  
+  public TomTask getTask() {
+  	return nextTask;
   }
 	
   public jtom.TomEnvironment environment() { 
@@ -102,7 +130,7 @@ public class TomParser {
   }
 
   private String savePosAndExtract() {
-    environment.getStatistics().numberStrangerBlocsRecognized++;
+    stat.numberStrangerBlocsRecognized++;
     return savePosAndExtract(0);
   }
   
@@ -450,20 +478,20 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
 {}
 {
   (
-      MatchConstruct(blockList)          { environment.getStatistics().numberTomBlocsRecognized++; }
-    | MatchXMLConstruct(blockList)       { environment.getStatistics().numberTomBlocsRecognized++; }
-    | RuleConstruct(blockList)           { environment.getStatistics().numberTomBlocsRecognized++; }
-    | BackQuoteTerm(blockList)           { environment.getStatistics().numberTomBlocsRecognized++; }
-    | IncludeConstruct(blockList)        { environment.getStatistics().numberTomBlocsRecognized++; }
-    | LocalVariableConstruct(blockList)  { environment.getStatistics().numberTomBlocsRecognized++; }
-    | Operator(blockList)                { environment.getStatistics().numberTomBlocsRecognized++; }
-    | OperatorList(blockList)            { environment.getStatistics().numberTomBlocsRecognized++; }
-    | OperatorArray(blockList)           { environment.getStatistics().numberTomBlocsRecognized++; }
-    | TypeTerm(blockList)                { environment.getStatistics().numberTomBlocsRecognized++; }
-    | TypeInt(blockList)                 { environment.getStatistics().numberTomBlocsRecognized++; }
-    | TypeString(blockList)              { environment.getStatistics().numberTomBlocsRecognized++; }
-    | TypeList(blockList)                { environment.getStatistics().numberTomBlocsRecognized++; }
-    | TypeArray(blockList)               { environment.getStatistics().numberTomBlocsRecognized++; }
+      MatchConstruct(blockList)          { stat.numberTomBlocsRecognized++; }
+    | MatchXMLConstruct(blockList)       { stat.numberTomBlocsRecognized++; }
+    | RuleConstruct(blockList)           { stat.numberTomBlocsRecognized++; }
+    | BackQuoteTerm(blockList)           { stat.numberTomBlocsRecognized++; }
+    | IncludeConstruct(blockList)        { stat.numberTomBlocsRecognized++; }
+    | LocalVariableConstruct(blockList)  { stat.numberTomBlocsRecognized++; }
+    | Operator(blockList)                { stat.numberTomBlocsRecognized++; }
+    | OperatorList(blockList)            { stat.numberTomBlocsRecognized++; }
+    | OperatorArray(blockList)           { stat.numberTomBlocsRecognized++; }
+    | TypeTerm(blockList)                { stat.numberTomBlocsRecognized++; }
+    | TypeInt(blockList)                 { stat.numberTomBlocsRecognized++; }
+    | TypeString(blockList)              { stat.numberTomBlocsRecognized++; }
+    | TypeList(blockList)                { stat.numberTomBlocsRecognized++; }
+    | TypeArray(blockList)               { stat.numberTomBlocsRecognized++; }
     | <LBRACE> BlockList(blockList) <RBRACE>
     | <OTHER>
   )*
@@ -471,7 +499,7 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
 
 void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
-  environment.getStatistics().numberMatchBlocsRecognized++;
+  stat.numberMatchBlocsRecognized++;
   ArrayList matchArgumentsList = new ArrayList();
   ArrayList patternActionList = new ArrayList();
   ArrayList optionList = new ArrayList();
@@ -502,7 +530,7 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 
 void PatternAction(ArrayList list, String debugKey) throws TomException: /* in TOM mode */
 {
-  environment.getStatistics().numberMatchRulesRecognized++;
+  stat.numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
   ArrayList listTextPattern = new ArrayList();
   ArrayList listOrgTrackPattern = new ArrayList();
@@ -797,7 +825,7 @@ void MatchXMLConstruct(ArrayList list) throws TomException: /* in DEFAULT mode *
 
 void XMLPatternAction(ArrayList list, String debugKey) throws TomException: /* in TOM mode */
 {
-    //environment.getStatistics().numberMatchRulesRecognized++;
+    //stat.numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
   ArrayList listTextPattern = new ArrayList();
   ArrayList listOrgTrackPattern = new ArrayList();
@@ -1120,7 +1148,7 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
 
 void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
-  environment.getStatistics().numberRuleBlocsRecognized++;
+  stat.numberRuleBlocsRecognized++;
   TomTerm lhs, rhs;
   TomTerm pattern, subject;
   TomRuleList ruleList = tsf().makeTomRuleList();
@@ -1151,7 +1179,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     
     {
       Option orgTrack = ast().makeOriginTracking("Pattern",getLine(), currentFile);
-      environment.getStatistics().numberRuleRulesRecognized++;
+      stat.numberRuleRulesRecognized++;
       ArrayList optionList = new ArrayList();
       optionList.add(orgTrack);
       optionList.add(tsf().makeOption_OriginalText(orgText));

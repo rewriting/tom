@@ -25,17 +25,40 @@
 
 package jtom.backend;
   
+import java.io.FileOutputStream;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.io.IOException;
 import java.util.HashMap;
 
 import jtom.TomBase;
-import jtom.adt.*;
+import jtom.adt.Declaration;
+import jtom.adt.Expression;
+import jtom.adt.Instruction;
+import jtom.adt.Option;
+import jtom.adt.OptionList;
+import jtom.adt.Position;
+import jtom.adt.SlotList;
+import jtom.adt.TargetLanguage;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomNumber;
+import jtom.adt.TomNumberList;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomTerm;
+import jtom.adt.TomType;
+import jtom.adt.TomTypeList;
 import jtom.tools.Flags;
+import jtom.tools.TomTask;
 import jtom.tools.OutputCode;
 import jtom.tools.SingleLineOutputCode;
+import jtom.tools.TomTaskInput;
 
-public class TomGenerator extends TomBase {
 
+public class TomGenerator extends TomBase implements TomTask {
+  
+  private TomTask nextTask;
   private String debugKey = null;
   
   public TomGenerator(jtom.TomEnvironment environment) {
@@ -45,7 +68,29 @@ public class TomGenerator extends TomBase {
 // ------------------------------------------------------------
   %include { Tom.signature }
 // ------------------------------------------------------------
+
+ public void addTask(TomTask task) {
+  	this.nextTask = task;
+  }
+  public void process(TomTaskInput input) {
+    try {
+      System.out.println("Processing TomGenerator Task");
+      int defaultDeep = 2;
+      Writer writer = new BufferedWriter(new OutputStreamWriter(
+          new FileOutputStream(input.getOutputFileName())));
+      OutputCode out = new OutputCode(writer);
+      generate(out,defaultDeep,input.getTerm());
+      writer.close();
+    } catch (Exception e) {
+    }
+    if(nextTask != null) {
+      nextTask.process(input);
+    }
+  }
   
+  public TomTask getTask() {
+  	return nextTask;
+  }
     /*
      * Generate the goal language
      */

@@ -25,14 +25,24 @@ Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
 
   package jtom.backend;
   
-import aterm.*;
+import jtom.TomBase;
+import jtom.adt.Expression;
+import jtom.adt.Instruction;
+import jtom.adt.Option;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomNumberList;
+import jtom.adt.TomTerm;
+import jtom.adt.TomType;
+import jtom.runtime.Collect1;
+import jtom.runtime.Replace1;
+import jtom.tools.TomTask;
+import jtom.tools.TomTaskInput;
+import aterm.ATerm;
 
-import jtom.*;
-import jtom.runtime.*;
-import jtom.adt.*;
+public class TomOptimizer extends TomBase implements TomTask {
 
-public class TomOptimizer extends TomBase {
-
+  private TomTask nextTask;
   private int numberCompiledMatchFound = 0;
   private int numberCompiledPatternFound = 0;
   private int numberVarFound = 0;
@@ -43,12 +53,28 @@ public class TomOptimizer extends TomBase {
   }
   
   // ------------------------------------------------------------
-
   %include { Tom.signature }
-
   // ------------------------------------------------------------
     
- 
+ public void addTask(TomTask task) {
+  	this.nextTask = task;
+  }
+  public void process(TomTaskInput input) {
+    try {
+	  System.out.println("Processing TomOptimizer Task");
+	  TomTerm optimizedTerm = optimize(input.getTerm());
+	  input.setTerm(optimizedTerm);
+    } catch (Exception e) {
+    }
+    if(nextTask != null) {
+      nextTask.process(input);
+    }
+  }
+  
+  public TomTask getTask() {
+  	return nextTask;
+  }
+  
   private void exitWithMesg(String mesg) {
     System.out.println(mesg);
     System.exit(1);

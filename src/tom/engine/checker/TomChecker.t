@@ -27,23 +27,42 @@
 
 package jtom.checker;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import aterm.*;
+import jtom.TomBase;
+import jtom.adt.Declaration;
+import jtom.adt.Option;
+import jtom.adt.OptionList;
+import jtom.adt.SlotList;
+import jtom.adt.TargetLanguage;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomRule;
+import jtom.adt.TomRuleList;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomTerm;
+import jtom.adt.TomType;
+import jtom.adt.TomTypeList;
+import jtom.runtime.Collect1;
+import jtom.tools.Flags;
+import jtom.tools.TomTask;
+import jtom.tools.TomTaskInput;
+import aterm.ATerm;
 
-import jtom.*;
-import jtom.tools.*;
-import jtom.adt.*;
-import jtom.runtime.*;
-
-public class TomChecker extends TomBase {
+public class TomChecker extends TomBase implements TomTask {
   
   private ArrayList alreadyStudiedSymbol =  new ArrayList();
   private ArrayList alreadyStudiedType =  new ArrayList();  
   private Option currentTomStructureOrgTrack;
   private Integer nullInteger = new Integer(-1);
-
   private List errorMessage = new ArrayList();
+  private TomTask nextTask;
   
   public TomChecker(jtom.TomEnvironment environment) { 
     super(environment);
@@ -53,6 +72,32 @@ public class TomChecker extends TomBase {
   %include { Tom.signature }
     // ------------------------------------------------------------
 
+    public void addTask(TomTask task) {
+  	this.nextTask = task;
+  }
+  
+  public void process(TomTaskInput input) {
+  	try {
+  	  if (input.needSyntaxChecking()) {
+  	    System.out.println("Processing TomSyntaxChecking Task");
+  	  	checkSyntax(input.getTerm());
+  	  	input.needSyntaxChecking(false);
+  	  } else if (input.needTypeChecking()) {
+  	    System.out.println("Processing TomTypeChecking Task");
+  	  	checkVariableCoherence(input.getTerm());
+  	  	input.needTypeChecking(false);
+  	  }
+  	} catch (Exception e) {
+  	}
+    if(nextTask != null) {
+      nextTask.process(input);
+    }
+  }
+  
+  public TomTask getTask() {
+  	return nextTask;
+  }
+  
   public int getNumberFoundError() {
     return errorMessage.size();
   }
@@ -61,11 +106,10 @@ public class TomChecker extends TomBase {
     return (String)errorMessage.get(n);
   }
 
-    // Main entry point: We check all interesting Tom Structure
+    // Main syntax checking entry point: We check all interesting Tom Structure
   public void checkSyntax(TomTerm parsedTerm) {
     if(!Flags.doCheck) return;
-    Collect1 collectAndVerify = new Collect1() 
-      {  
+    Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
@@ -106,6 +150,7 @@ public class TomChecker extends TomBase {
     traversal().genericCollect(parsedTerm, collectAndVerify);   
   }
   
+    // Main type checking entry point: We check all interesting Tom Structure
   public void checkVariableCoherence(TomTerm expandedTerm) {
     if(!Flags.doCheck) return;
     Collect1 collectAndVerify = new Collect1() 
@@ -970,12 +1015,14 @@ public class TomChecker extends TomBase {
         options = optionList;
         methodName = name;
       }
-      VariableStar[option=Option(optionList), astName=Name(name1)] -> { 
-        Integer line = findOriginTrackingLine(name1,optionList);
-        messageRuleErrorVariableStar(name1, line); 
+      VariableStar[option=Option(optionList), astName=Name(name1)] -> {
+        Integer line = findOriginTrackingLine(name1,optionList);    
+        messageRuleErrorVariableStar(name1, line);
+        return ruleName;
       }
       Placeholder[option=Option(options2)] -> { 
-        messageRuleErrorLhsImpossiblePlaceHolder(options2); 
+        messageRuleErrorLhsImpossiblePlaceHolder(options2);
+        return ruleName;
       }
       rec@RecordAppl(Option(optionList),Name(name),args) -> {
         checkSyntax(rec);
@@ -1104,7 +1151,7 @@ public class TomChecker extends TomBase {
       }
       optionList = optionList.getTail();
     }
-    System.out.println("findOriginTrackingLine: '" + name + "' not found");
+    System.out.println("findOriginTrackingLine: '" + name + "' not found in "+optionList);
     System.exit(1); return null;
   }
   

@@ -31,8 +31,11 @@ import jtom.TomBase;
 import jtom.adt.*;
 import jtom.runtime.Replace1;
 import aterm.ATerm;
+import jtom.tools.TomTask;
+import jtom.tools.TomTaskInput;
 
-public class TomExpander extends TomBase {
+public class TomExpander extends TomBase implements TomTask {
+  private TomTask nextTask;
   TomKernelExpander tomKernelExpander;
   
   public TomExpander(jtom.TomEnvironment environment,
@@ -45,6 +48,28 @@ public class TomExpander extends TomBase {
   %include { Tom.signature }
 // ------------------------------------------------------------
 
+  public void addTask(TomTask task) {
+  	this.nextTask = task;
+  }
+  public void process(TomTaskInput input) {
+  	try {
+  	  System.out.println("Processing TomExpander Task");
+      TomTerm syntaxExpandedTerm = expandTomSyntax(input.getTerm());
+      tomKernelExpander.updateSymbolTable();
+      TomTerm context = null;
+      TomTerm expandedTerm  = expandVariable(context, syntaxExpandedTerm);
+      input.setTerm(expandedTerm);
+    } catch (Exception e) {
+    }
+    if(nextTask != null) {
+      nextTask.process(input);
+    }
+  }
+  
+  public TomTask getTask() {
+  	return nextTask;
+  }
+  
     /*
      * The 'expandTomSyntax' phase replaces:
      * -each 'RecordAppl' by its expanded term form:
