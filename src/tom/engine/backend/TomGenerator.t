@@ -121,7 +121,6 @@ public class TomGenerator extends TomBase implements TomTask {
       //System.out.println("Generate: " + subject);
       //%variable
 
-    statistics().numberPartsGoalLanguage++;
 
     %match(TomTerm subject) {
       
@@ -449,7 +448,6 @@ public class TomGenerator extends TomBase implements TomTask {
     throws IOException {
     if(subject==null) { return; }
     
-    statistics().numberPartsGoalLanguage++;
     %match(Expression subject) {
       Not(exp) -> {
         if(cCode || jCode) {
@@ -661,7 +659,6 @@ public class TomGenerator extends TomBase implements TomTask {
     throws IOException {
     if(subject==null) { return; }
     
-    statistics().numberPartsGoalLanguage++;
     %match(Instruction subject) {
 
       Assign(var@Variable(Option(list),name1,
@@ -746,7 +743,6 @@ public class TomGenerator extends TomBase implements TomTask {
       
         //IfThenElse(exp,succesList,conc()) -> {
       IfThenElse(exp,succesList,emptyTomList()) -> {
-        statistics().numberIfThenElseTranformed++;
         if(cCode || jCode) {
           out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
           generateList(out,deep+1,succesList);
@@ -760,7 +756,6 @@ public class TomGenerator extends TomBase implements TomTask {
       }
 
       IfThenElse(exp,succesList,failureList) -> {
-        statistics().numberIfThenElseTranformed++;
         if(cCode || jCode) {
           out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
           generateList(out,deep+1,succesList);
@@ -865,16 +860,13 @@ public class TomGenerator extends TomBase implements TomTask {
   public void generateTargetLanguage(jtom.tools.OutputCode out, int deep, TargetLanguage subject)
     throws IOException {
     if(subject==null) { return; }
-    statistics().numberPartsGoalLanguage++;
     %match(TargetLanguage subject) {
       TL(t,Position[line=startLine], Position[line=endLine]) -> {
-        statistics().numberPartsCopied++;
         out.write(deep,t, startLine, endLine-startLine);
         return;
       }
       
       ITL(t) -> {
-        statistics().numberPartsCopied++;
         out.write(deep,t);
         return;
       }
@@ -890,7 +882,6 @@ public class TomGenerator extends TomBase implements TomTask {
     throws IOException {
     if(subject==null) { return; }
     
-    statistics().numberPartsGoalLanguage++;
     %match(Option subject) {
       DeclarationToOption(decl) -> {
         generateDeclaration(out,deep,decl);
@@ -911,7 +902,6 @@ public class TomGenerator extends TomBase implements TomTask {
     throws IOException {
     if(subject==null) { return; }
     
-    statistics().numberPartsGoalLanguage++;
     %match(Declaration subject) {
       EmptyDeclaration() -> {
         return;

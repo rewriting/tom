@@ -46,7 +46,6 @@ public class TomParser implements TomTask {
   private Position orgTrack;
   private TomBuffer tomBuffer;
   private SymbolTable symbolTable;
-  private Statistics stat;
   private jtom.TomEnvironment environment;
   private TomBackQuoteParser tomBackQuoteParser;
   private File importList[];
@@ -66,7 +65,6 @@ public class TomParser implements TomTask {
   							String fileName, HashSet alreadyParsedFiles) {
     this(input);
     this.tomBuffer = input;
-    this.stat = environment.getStatistics();
     this.symbolTable = environment.getSymbolTable();
     this.environment = environment;
     this.importList = importList;
@@ -158,7 +156,6 @@ public class TomParser implements TomTask {
   }
 
   private String savePosAndExtract() {
-    stat.numberStrangerBlocsRecognized++;
     return savePosAndExtract(0);
   }
   
@@ -504,22 +501,22 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
 {}
 {
   (
-      MatchConstruct(blockList)          { stat.numberTomBlocsRecognized++; }
-    | MatchXMLConstruct(blockList)       { stat.numberTomBlocsRecognized++; }
-    | RuleConstruct(blockList)           { stat.numberTomBlocsRecognized++; }
-    | BackQuoteXML(blockList)            { stat.numberTomBlocsRecognized++; }
-    | BackQuoteTerm(blockList)              { stat.numberTomBlocsRecognized++; }
-    | IncludeConstruct(blockList)        { stat.numberTomBlocsRecognized++; }
-    | LocalVariableConstruct(blockList)  { stat.numberTomBlocsRecognized++; }
-    | Operator(blockList)                { stat.numberTomBlocsRecognized++; }
-    | OperatorList(blockList)            { stat.numberTomBlocsRecognized++; }
-    | OperatorArray(blockList)           { stat.numberTomBlocsRecognized++; }
-    | TypeTerm(blockList)                { stat.numberTomBlocsRecognized++; }
-    | TypeInt(blockList)                 { stat.numberTomBlocsRecognized++; }
-    | TypeDouble(blockList)              { stat.numberTomBlocsRecognized++; }
-    | TypeString(blockList)              { stat.numberTomBlocsRecognized++; }
-    | TypeList(blockList)                { stat.numberTomBlocsRecognized++; }
-    | TypeArray(blockList)               { stat.numberTomBlocsRecognized++; }
+      MatchConstruct(blockList)
+    | MatchXMLConstruct(blockList)
+    | RuleConstruct(blockList)
+    | BackQuoteXML(blockList)
+    | BackQuoteTerm(blockList)
+    | IncludeConstruct(blockList)
+    | LocalVariableConstruct(blockList)
+    | Operator(blockList)
+    | OperatorList(blockList)
+    | OperatorArray(blockList)
+    | TypeTerm(blockList)     
+    | TypeInt(blockList)      
+    | TypeDouble(blockList)   
+    | TypeString(blockList)   
+    | TypeList(blockList)     
+    | TypeArray(blockList)    
     | <LBRACE> BlockList(blockList) <RBRACE>
     | <OTHER>
   )*
@@ -527,7 +524,6 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
 
 void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
-  stat.numberMatchBlocsRecognized++;
   ArrayList matchArgumentsList = new ArrayList();
   ArrayList patternActionList = new ArrayList();
   ArrayList optionList = new ArrayList();
@@ -558,7 +554,6 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 
 void PatternAction(ArrayList list, String debugKey) throws TomException: /* in TOM mode */
 {
-  stat.numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
   ArrayList listTextPattern = new ArrayList();
   ArrayList listOrgTrackPattern = new ArrayList();
@@ -884,7 +879,6 @@ void MatchXMLConstruct(ArrayList list) throws TomException: /* in DEFAULT mode *
 
 void XMLPatternAction(ArrayList list, String debugKey) throws TomException: /* in TOM mode */
 {
-    //stat.numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
   ArrayList listTextPattern = new ArrayList();
   ArrayList listOrgTrackPattern = new ArrayList();
@@ -1211,7 +1205,6 @@ void IncludeConstruct(ArrayList list) throws TomException, TomIncludeException :
 
 void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
-  stat.numberRuleBlocsRecognized++;
   TomTerm lhs, rhs;
   TomTerm pattern, subject;
   TomRuleList ruleList = tsf().makeTomRuleList();
@@ -1242,7 +1235,6 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     
     {
       Option orgTrack = ast().makeOriginTracking("Pattern",getLine(), currentFile);
-      stat.numberRuleRulesRecognized++;
       ArrayList optionList = new ArrayList();
       optionList.add(orgTrack);
       optionList.add(tsf().makeOption_OriginalText(orgText));

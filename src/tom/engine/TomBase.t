@@ -64,10 +64,6 @@ public class TomBase {
     return tsf();
   }
   
-  protected Statistics statistics() {
-    return tomEnvironment.getStatistics();
-  }
-
   protected SymbolTable symbolTable() {
     return tomEnvironment.getSymbolTable();
   }

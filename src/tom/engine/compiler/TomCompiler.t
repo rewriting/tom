@@ -123,7 +123,6 @@ public class TomCompiler extends TomBase implements TomTask {
       
       RuleSet(ruleList@manyTomRuleList(
                 RewriteRule[lhs=Term(Appl[astName=Name(tomName)])],tail), orgTrack) -> {
-        statistics().numberRuleSetsTransformed++;
         if(debugMode) {
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
         }

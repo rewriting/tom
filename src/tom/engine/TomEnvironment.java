@@ -33,16 +33,13 @@ public class TomEnvironment {
     private ASTFactory astFactory;
     private TomSignatureFactory tomSignatureFactory;
     private SymbolTable symbolTable;
-    private Statistics statistics;
     
     public TomEnvironment(TomSignatureFactory tomSignatureFactory,
                           ASTFactory astFactory,
-                          SymbolTable symbolTable,
-                          Statistics statistics) {
+                          SymbolTable symbolTable) {
         this.tomSignatureFactory = tomSignatureFactory;
 	this.astFactory   = astFactory;
 	this.symbolTable  = symbolTable;
-        this.statistics   = statistics;
     }
 
     public ASTFactory getASTFactory() {
@@ -55,10 +52,6 @@ public class TomEnvironment {
   
     public SymbolTable getSymbolTable() {
 	return symbolTable;
-    }
-
-    public Statistics getStatistics() {
-	return statistics;
     }
 
 }

@@ -41,7 +41,6 @@ public class TomParser implements TomTask, TomParserConstants {
   private Position orgTrack;
   private TomBuffer tomBuffer;
   private SymbolTable symbolTable;
-  private Statistics stat;
   private jtom.TomEnvironment environment;
   private TomBackQuoteParser tomBackQuoteParser;
   private File importList[];
@@ -61,7 +60,6 @@ public class TomParser implements TomTask, TomParserConstants {
                                                         String fileName, HashSet alreadyParsedFiles) {
     this(input);
     this.tomBuffer = input;
-    this.stat = environment.getStatistics();
     this.symbolTable = environment.getSymbolTable();
     this.environment = environment;
     this.importList = importList;
@@ -153,7 +151,6 @@ public class TomParser implements TomTask, TomParserConstants {
   }
 
   private String savePosAndExtract() {
-    stat.numberStrangerBlocsRecognized++;
     return savePosAndExtract(0);
   }
 
@@ -264,68 +261,52 @@ public class TomParser implements TomTask, TomParserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case MATCH:
         MatchConstruct(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case MATCHXML:
         MatchXMLConstruct(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case RULE:
         RuleConstruct(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case BACKQUOTE_XML:
         BackQuoteXML(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case BACKQUOTE_TERM:
         BackQuoteTerm(blockList);
-                                              stat.numberTomBlocsRecognized++;
         break;
       case INCLUDE:
         IncludeConstruct(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case VARIABLE:
         LocalVariableConstruct(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case OPERATOR:
         Operator(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case OPERATOR_LIST:
         OperatorList(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case OPERATOR_ARRAY:
         OperatorArray(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPE:
       case TYPETERM:
         TypeTerm(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPEINT:
         TypeInt(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPEDOUBLE:
         TypeDouble(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPESTRING:
         TypeString(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPELIST:
         TypeList(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case TYPEARRAY:
         TypeArray(blockList);
-                                           stat.numberTomBlocsRecognized++;
         break;
       case LBRACE:
         jj_consume_token(LBRACE);
@@ -344,7 +325,6 @@ public class TomParser implements TomTask, TomParserConstants {
   }
 
   final public void MatchConstruct(ArrayList list) throws ParseException, TomException {
-  stat.numberMatchBlocsRecognized++;
   ArrayList matchArgumentsList = new ArrayList();
   ArrayList patternActionList = new ArrayList();
   ArrayList optionList = new ArrayList();
@@ -385,7 +365,6 @@ public class TomParser implements TomTask, TomParserConstants {
   }
 
   final public void PatternAction(ArrayList list, String debugKey) throws ParseException, TomException {
-  stat.numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
   ArrayList listTextPattern = new ArrayList();
   ArrayList listOrgTrackPattern = new ArrayList();
@@ -796,7 +775,6 @@ public class TomParser implements TomTask, TomParserConstants {
   }
 
   final public void XMLPatternAction(ArrayList list, String debugKey) throws ParseException, TomException {
-    //stat.numberMatchRulesRecognized++;
   ArrayList matchPatternsList = new ArrayList();
   ArrayList listTextPattern = new ArrayList();
   ArrayList listOrgTrackPattern = new ArrayList();
@@ -1170,7 +1148,6 @@ public class TomParser implements TomTask, TomParserConstants {
   }
 
   final public void RuleConstruct(ArrayList list) throws ParseException, TomException {
-  stat.numberRuleBlocsRecognized++;
   TomTerm lhs, rhs;
   TomTerm pattern, subject;
   TomRuleList ruleList = tsf().makeTomRuleList();
@@ -1268,7 +1245,6 @@ public class TomParser implements TomTask, TomParserConstants {
         ;
       }
       Option orgTrack = ast().makeOriginTracking("Pattern",getLine(), currentFile);
-      stat.numberRuleRulesRecognized++;
       ArrayList optionList = new ArrayList();
       optionList.add(orgTrack);
       optionList.add(tsf().makeOption_OriginalText(orgText));
@@ -2308,41 +2284,6 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
-  final private boolean jj_3_7() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_STAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_23() {
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3_3() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_AT)) return true;
@@ -2361,6 +2302,41 @@ public class TomParser implements TomTask, TomParserConstants {
   final private boolean jj_3_4() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_AT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_STAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_23() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_8() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 

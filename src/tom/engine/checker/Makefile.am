@@ -15,7 +15,7 @@ JAVAROOT        = ${top_builddir}/src/
 CLEANFILES 	= TomChecker.java
 EXTRA_DIST 	= $(BOOTSOURCES) TomChecker.t
 
-BUILT_SOURCES   = TomChecker.java TomSyntaxChecker.java TomTypeChecker.java
+BUILT_SOURCES   = TomChecker.java
 
 bootinstall :
 	$(mkinstalldirs) $(stabledir)

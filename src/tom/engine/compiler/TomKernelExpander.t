@@ -85,7 +85,6 @@ public class TomKernelExpander extends TomBase {
             if(tomSymbol != null) {
               return `Appl(option,name,emptyTomList());
             } else {
-              statistics().numberVariablesDetected++;
               return `Variable(option,name,type);
             }
           }
@@ -100,7 +99,6 @@ public class TomKernelExpander extends TomBase {
             if(tomSymbol != null) {
               return `Appl(option,name,emptyTomList());
             } else {
-              statistics().numberVariablesDetected++;
               return `Variable(option,name,type1);
             }
           } 

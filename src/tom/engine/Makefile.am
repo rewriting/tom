@@ -2,16 +2,14 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS         = adt runtime tools exception parser checker compiler backend debug buttons 
-# buttons 
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+SUBDIRS         = adt runtime tools exception parser checker compiler backend debug 
 
-BUTTONSDIR = buttons
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 javadir         = ${prefix}/classes/jtom
 
 stabledir 	= $(top_srcdir)/stable/jtom
-BOOTSOURCES	= Tom.java TomBase.java  TomDemo.java TomEnvironment.java
+BOOTSOURCES	= Tom.java TomBase.java TomEnvironment.java
 java_JAVA       = $(BOOTSOURCES)
 
 JAVAROOT        = ${top_builddir}/src/
@@ -20,13 +18,9 @@ EXTRA_DIST 	= $(BOOTSOURCES) TomBase.t TomSignature.adt
 CLEANFILES 	= TomBase.java
 BUILT_SOURCES   = TomBase.java
 
-#install:
-#	cp -rf $(BUTTONSDIR) ${javadir}
-
 bootinstall:
 	$(mkinstalldirs) $(stabledir)
 	cp -f $(BOOTSOURCES) $(stabledir)
-	cp -rf $(BUTTONSDIR) $(stabledir)
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done

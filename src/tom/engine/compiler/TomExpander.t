@@ -139,7 +139,6 @@ public class TomExpander extends TomBase implements TomTask {
             %match(TomName slotName, TomTerm pairSlotName) {
               Name[string=name], PairSlotAppl(Name[string=name],slotSubterm) -> {
                   // bingo
-                statistics().numberSlotsExpanded++;
                 newSubterm = expandTomSyntax(slotSubterm);
                 break whileBlock;
               }

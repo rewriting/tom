@@ -86,18 +86,15 @@ public class TomKernelCompiler extends TomBase {
       }
        
       MakeTerm(var@Variable[astName=name]) -> {
-        statistics().numberMakeTermReplaced++;
         return var;
       }    
 
       MakeTerm(var@VariableStar[astName=name]) -> {
-        statistics().numberMakeTermReplaced++;
         return var;
       }
 
       MakeTerm(Appl(Option(optionList),name@Name(tomName),termArgs)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        statistics().numberMakeTermReplaced++;
         TomList newTermArgs = tomListMap(termArgs,replace_preProcessing_makeTerm);
 
         if(tomSymbol==null || isDefinedSymbol(tomSymbol)) {
@@ -143,7 +140,6 @@ public class TomKernelCompiler extends TomBase {
       }
       
       Match(SubjectList(l1),PatternList(l2), matchOption@Option(optionList))  -> {
-        statistics().numberMatchCompiledIntoAutomaton++;
         boolean generatedMatch = false;
         String currentDebugKey = "noDebug";
         if(debugMode) {

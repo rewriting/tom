@@ -330,7 +330,6 @@ abstract class TomChecker extends TomBase implements TomTask {
     }
     
     while(!patternList.isEmpty()) {
-      statistics().numberMatchesTested++;
       TomTerm terms = patternList.getHead();
       verifyMatchPattern(terms, typeMatchArgs);
       patternList = patternList.getTail();
@@ -457,7 +456,6 @@ abstract class TomChecker extends TomBase implements TomTask {
     // TYPE DECLARATION CONCERNS //
     ///////////////////////////////
   private void verifyTypeDecl(String declType, TomList listOfDeclaration) {
-    statistics().numberTypeDefinitonsTested++;
     ArrayList verifyList = new ArrayList();
     verifyList.add("get_fun_sym");
     verifyList.add("cmp_fun_sym");
@@ -606,7 +604,6 @@ abstract class TomChecker extends TomBase implements TomTask {
   }
   
   private void verifySymbolOptions(String symbType, OptionList list) {
-    statistics().numberOperatorDefinitionsTested++;
     ArrayList verifyList = new ArrayList();
     boolean foundOpMake = false;
     if(symbType == "%op"){
@@ -793,7 +790,6 @@ abstract class TomChecker extends TomBase implements TomTask {
     //////////////////////
   
   private void verifyApplStructure(OptionList optionList, String name, TomList argsList) {
-    statistics().numberApplStructuresTested++;
     TomSymbol symbol = symbolTable().getSymbol(name);
     if(symbol==null  && (hasConstructor(optionList) || !argsList.isEmpty())) {
       messageSymbolError(name, optionList);
@@ -874,7 +870,6 @@ abstract class TomChecker extends TomBase implements TomTask {
   }
     
   private void permissiveVerifyApplStructure(OptionList optionList, String name, TomList argsList) {
-    statistics().numberApplStructuresTested++;
     TomSymbol symbol = symbolTable().getSymbol(name);
     if(symbol==null && !argsList.isEmpty()) {
       messageWarningSymbol(name, optionList);
@@ -953,7 +948,6 @@ abstract class TomChecker extends TomBase implements TomTask {
       matchBlock: {
         %match(TomRule currentRule) {
           RewriteRule(Term(lhs),Term(rhs),condList,option) -> {
-            statistics().numberRulesTested++;
             name = verifyLhsRuleAndConstructorEgality(lhs, name, i);
             if(i == 0) {
                 // update the root of lhs: it becomes a defined symbol

@@ -64,9 +64,9 @@ public class Tom {
   private TomGenerator generator;
   
   private static String version =
-    "\njtom 1.3delta\n" +
-    "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
-    "                         Nancy, France.\n";
+  "\njtom 1.3delta\n" +
+  "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
+  "                         Nancy, France.\n";
   
   private static void version() {
     System.out.println(version);
@@ -89,7 +89,6 @@ public class Tom {
     System.out.println("\t--Wall\t\t\tPrint all warnings");
     System.out.println("\t--noWarning\t\tDo not print warning");
     System.out.println("\t--lazyType \t| -l:\tUse universal type");
-    System.out.println("\t--demo \t\t| -d:\tRun demo mode");
     System.out.println("\t--import <path> | -I:\tPath for %include");
     System.out.println("\t--pretty\t| -p:\tGenerate readable code");
     System.out.println("\t--atermStat \t| -s:\tPrint internal ATerm statistics");
@@ -119,8 +118,8 @@ public class Tom {
     
     // Create the base taskInput
     taskInput = new TomTaskInput();
-	
-    // Processing the input arguments
+    
+      // Processing the input arguments
     List importList = new ArrayList();
     if(args.length < 1) {// Need at least one argument
       usage();
@@ -173,8 +172,6 @@ public class Tom {
 	    taskInput.setWarningAll(true);
           } else if(args[i].equals("--noWarning")) {
 	    taskInput.setNoWarning(true);
-          } else if(args[i].equals("--demo") || args[i].equals("-d")) {
-            //Flags.demo = true;            Flags.warningAll = false;
           } else if(args[i].equals("--noDeclaration") || args[i].equals("-D")) {
 	    taskInput.setGenDecl(false);
           } else if(args[i].equals("--pretty") || args[i].equals("-p")) {
@@ -206,11 +203,9 @@ public class Tom {
     TomSignatureFactory tomSignatureFactory = new TomSignatureFactory();
     ASTFactory   astFactory   = new ASTFactory(tomSignatureFactory);
     SymbolTable  symbolTable  = new SymbolTable(astFactory, taskInput.isCCode(), taskInput.isJCode(),taskInput.isECode());
-    Statistics   statistics   = new Statistics();
     TomEnvironment environment = new TomEnvironment(tomSignatureFactory,
 						    astFactory,
-						    symbolTable,
-						    statistics);
+						    symbolTable);
 
     String inputFileName = "";
     if(taskInput.isDoParse()) {
@@ -271,15 +266,6 @@ public class Tom {
         } else {
           tomParser.addTask(expander);
         }
-        
-		
-
-	/* if(Flags.demo) {
-	   statistics.initInfoParser();
-	   statistics.initInfoChecker();
-	   statistics.initInfoVerifier();
-	   }*/
-
       } catch (FileNotFoundException e) {
         System.out.println("\nTom Parser:  File " + inputFileName + " not found.");
         System.out.println("No file generated.");
@@ -329,11 +315,6 @@ public class Tom {
         } else {
           compiler.addTask(generator);
         }
-        
-	/*        if(Flags.demo) {
-		  statistics.initInfoCompiler();
-		  statistics.initInfoGenerator();
-		  }*/
       } catch(IOException e) {
         System.out.println("No file generated.");
         throw new InternalError("read error");
@@ -343,30 +324,18 @@ public class Tom {
       if(Flags.atermStat) {
       System.out.println("\nStatistics:\n" + tomSignatureFactory);
       }
-        
-      if(Flags.demo) {
-      TomDemo view = new TomDemo();
-      view.complete(statistics.infoParser,
-      statistics.infoChecker,
-      statistics.infoVerifier,
-      statistics.infoCompiler,
-      statistics.infoGenerator);
-      view.info(version,fileName);
-      view.pack(); 
-      view.setSize(550,900);
-      view.setVisible(true);
-      }*/
+    */
   }
-  /*
-    private static long startChrono,endChrono;
-    private static void startChrono() {
-    startChrono = System.currentTimeMillis();
-    }
-    private static void stopChrono() {
-    endChrono = System.currentTimeMillis();
-    }
-    private static String getChrono() {
-    return "(" + (endChrono-startChrono) + " ms)";
-    }
-  */
+    /*
+      private static long startChrono,endChrono;
+      private static void startChrono() {
+      startChrono = System.currentTimeMillis();
+      }
+      private static void stopChrono() {
+      endChrono = System.currentTimeMillis();
+      }
+      private static String getChrono() {
+      return "(" + (endChrono-startChrono) + " ms)";
+      }
+    */
 } // class Tom
