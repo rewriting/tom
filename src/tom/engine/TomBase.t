@@ -563,4 +563,29 @@ public class TomBase {
     return -1;
   }
 
+  protected boolean isDefinedSymbol(TomSymbol subject) {
+      //%variable
+    if(subject==null) {
+      return false;
+    }
+    %match(TomSymbol subject) {
+      Symbol(Name(name1),TypesToType(typeList,type1),_,Option(optionList),tlCode1) -> {
+        while(!optionList.isEmptyOptionList()) {
+          Option opt = optionList.getHead();
+          %match(Option opt) {
+            DefinedSymbol  -> { return true; }
+          }
+          optionList = optionList.getTail();
+        }
+        return false;
+      }
+      
+      _ -> {
+        System.out.println("isDefinedSymbol: strange case: '" + subject + "'");
+        System.exit(1);
+      }
+    }
+    return false;
+  }
+
 }

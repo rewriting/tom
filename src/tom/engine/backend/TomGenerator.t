@@ -748,7 +748,7 @@ public class TomGenerator extends TomBase {
         TomType type1 = getSymbolCodomain(tomSymbol);
         String name1 = tomSymbol.getAstName().getString();
 
-        if(Flags.cCode) {
+        if(Flags.cCode && isDefinedSymbol(tomSymbol)) {
             // TODO: build an abstract declaration
           int argno=1;
             /*
@@ -781,8 +781,8 @@ public class TomGenerator extends TomBase {
               out.writeOpenBrace();
               while (!l.isEmpty()) {
                 out.write(getTLType(l.getHead().getAstType()));
-                out.writeUnderscore();
-                out.write(argno);
+                  //out.writeUnderscore();
+                  //out.write(argno);
                 argno++;
                 l = l.getTail() ;
                 if(!l.isEmpty()) {
@@ -1322,7 +1322,7 @@ public class TomGenerator extends TomBase {
         TomTerm arg = argList.getHead();
         matchBlock: {
           %match(TomTerm arg) {
-            Variable(option,Name(name), Type(TomType(type),TLType(TL[code=glType]))) -> {
+            Variable(option,Name(name), Type(TomType(type),tlType@TLType[])) -> {
               s += name;
               break matchBlock;
             }
