@@ -38,8 +38,10 @@ public class Propp {
 		//boolean res      = depthSearch2(new HashSet(),initSeq,search);
 		long stopChrono = System.currentTimeMillis();
 
-		System.out.println("Traces = " + rules_appl);
+                  //System.out.println("Traces = " + rules_appl);
 		// Process Traces
+
+                System.out.println("Build Proof Term");
 		ListProof proofTerm = buildProofTerm(initSeq,rules_appl);
 		System.out.println("Proof term = " + proofTerm);
 		Collection tex_proofs = new HashSet();
@@ -48,7 +50,9 @@ public class Propp {
 				tex_proofs.add(proofToTex(p));
 			}
 		}
-		write_proof_latex(tex_proofs,"proof.tex");
+
+                System.out.println("Build LaTeX");
+                write_proof_latex(tex_proofs,"proof.tex");
 		System.out.println("Latex : " + tex_proofs);
 		System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
 
@@ -326,13 +330,12 @@ public class Propp {
 
 	//{{{ public String listPredToTex(ListPred l)
 	public String listPredToTex(ListPred l) {
-		String latex= "";
-		%match(ListPred l) {
-			concPred(_*,p,_*) -> {
-				latex += " , " + predToTex(p);
-			}
-		}
-		return latex.substring(3);
+          String latex = "";
+          while(!l.isEmpty()) {
+            latex += " , " + predToTex(l.getHead());
+            l = l.getTail();
+          }
+          return latex;
 	}
 	//}}}
 

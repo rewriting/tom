@@ -63,7 +63,7 @@ public class RecPropp {
 			// {{{	negd
 			seq(concPred(X*),concPred(Y*,neg(Z),R*)) -> {
 				Sequent prod = `seq(concPred(X*,Z),concPred(Y*,R*));
-				traces.put(subject,`pair(negd,prod));
+				//traces.put(subject,`pair(negd,prod));
 				return Step(prod);
 			}
 			// }}}
@@ -71,7 +71,7 @@ public class RecPropp {
 			//{{{ disjd
 			seq(concPred(X*),concPred(Y*,vee(Z,R),S*)) -> {
 				Sequent prod = `seq(concPred(X*),concPred(Y*,Z,R,S*));
-				traces.put(subject,`pair(disjd,prod));
+				//traces.put(subject,`pair(disjd,prod));
 				return Step(prod);
 			}
 			//}}}			
@@ -79,7 +79,7 @@ public class RecPropp {
 			//{{{ impd
 			seq(concPred(X*),concPred(S*,impl(Y,Z),R*)) -> {
 				Sequent prod = `seq(concPred(X*,Y),concPred(S*,Z,R*));
-				traces.put(subject,`pair(impd,prod));
+				//traces.put(subject,`pair(impd,prod));
 				return Step(prod);
 			}
 			//}}}
@@ -87,7 +87,7 @@ public class RecPropp {
 			//{{{ negg
 			seq(concPred(X*,neg(Y),S*),concPred(Z*)) -> {
 				Sequent prod = `seq(concPred(X*,S*),concPred(Y,Z*));
-				traces.put(subject,`pair(negg,prod));
+				//traces.put(subject,`pair(negg,prod));
 				return Step(prod);
 			}
 			//}}}
@@ -95,7 +95,7 @@ public class RecPropp {
 			//{{{ conjg
 			seq(concPred(X*,wedge(Y,Z),S*),concPred(R*)) -> {
 				Sequent prod = `seq(concPred(X*,Y,Z,S*),concPred(R*));		
-				traces.put(subject,`pair(conjg,prod));
+				//traces.put(subject,`pair(conjg,prod));
 				return Step(prod);
 			}
 			//}}}
@@ -103,9 +103,9 @@ public class RecPropp {
 			//{{{ disjg
 			seq(concPred(X*,vee(Y,Z),S*),concPred(R*)) -> {
 				Sequent s1 = `seq(concPred(X*,Y,S*),concPred(R*));
-				traces.put(subject,`pair(disjg,s1));
+				//traces.put(subject,`pair(disjg,s1));
 				Sequent s2 = `seq(concPred(X*,Z,S*),concPred(R*));
-				traces.put(subject,`pair(disjg,s2));
+				//traces.put(subject,`pair(disjg,s2));
 				ListSequent l1 = Step(s1);
 				ListSequent l2 = Step(s2);
 				return `concSequent(l1*,l2*);
@@ -115,9 +115,9 @@ public class RecPropp {
 			//{{{ conjd
 			seq(concPred(R*),concPred(X*,vee(Y,Z),S*)) -> {
 				Sequent s1 = `seq(concPred(R*),concPred(X*,Y,S*));
-				traces.put(subject,`pair(conjg,s1));
+				//traces.put(subject,`pair(conjg,s1));
 				Sequent s2 = `seq(concPred(R*),concPred(X*,Z,S*));
-				traces.put(subject,`pair(conjg,s2));
+				//traces.put(subject,`pair(conjg,s2));
 				ListSequent l1 = Step(s1);	
 				ListSequent l2 = Step(s2);	
 				return `concSequent(l1*,l2*);
@@ -127,9 +127,9 @@ public class RecPropp {
 			//{{{ impg
 			seq(concPred(X*,impl(Y,Z),S*),concPred(R*)) -> {
 				Sequent s1 = `seq(concPred(X*,S*),concPred(R*,Y));
-				traces.put(subject,`pair(conjg,s1));
+				//traces.put(subject,`pair(conjg,s1));
 				Sequent s2 = `seq(concPred(X*,Z,S*),concPred(R*));
-				traces.put(subject,`pair(conjg,s2));
+				//traces.put(subject,`pair(conjg,s2));
 				ListSequent l1 = Step(s1);
 				ListSequent l2 = Step(s2);
 				return `concSequent(l1*,l2*);
@@ -140,7 +140,7 @@ public class RecPropp {
 			seq(concPred(_*,X,_*),concPred(_*,X,_*)) -> {
 				if (X != `EmptyP()) {
 					Sequent prod = `PROOF();
-					traces.put(subject,`pair(axiom,prod));
+					//traces.put(subject,`pair(axiom,prod));
 					return `concSequent(prod);
 				}
 			}
