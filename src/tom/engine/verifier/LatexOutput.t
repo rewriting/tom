@@ -41,13 +41,14 @@ public class LatexOutput {
 	%include { il.tom }
 	// ------------------------------------------------------------
 
-
 	protected jtom.verifier.il.ilFactory factory;
   private GenericTraversal traversal;
+	private TomVerifier verifier;
 
-	public LatexOutput() {
+	public LatexOutput(TomVerifier verifier) {
 		factory = ilFactory.getInstance(SingletonFactory.getInstance());
     this.traversal = new GenericTraversal();
+		this.verifier = verifier;
 	}
 
   public GenericTraversal traversal() {
@@ -58,35 +59,109 @@ public class LatexOutput {
 		return factory;
 	}
 
-	public String build_latex(DerivTree tree) {
-		
-		Map variableset = new HashMap();
-		tree = collect_program_variables(tree,variableset);
-
+	public String build_latex(Collection derivationSet) {
 		String result = "\\documentclass{article}\n";
 		result += "\\usepackage{proof}\n";
 		result += "\\usepackage{xspace}\n";
 		result += "\\usepackage{amssymb}\n";
 		result += "\\input{include.tex}\n\n";
 		result += "\\begin{document}\n";
+		
+		Iterator it = derivationSet.iterator();
+		while(it.hasNext()) {
+			DerivTree tree = (DerivTree) it.next();
+			result += build_latex(tree);	
+			result += "\n \\newpage\n";
+		}
+		result += "\n\\end{document}";
+		return result;
+	}
+
+	public String build_latex(DerivTree tree) {
+		
+		Map variableset = new HashMap();
+		tree = collect_program_variables(tree,variableset);
+
+		String result = "";
 
 		// Use a TreeMap to have the conditions sorted
 		Map conditions = new TreeMap();
 		result += build_latex_from_tree(tree, conditions);
 
-		result += "\n \\[\n";
-		result += "\\begin{array}{ll}\n";
+		Map conds = new TreeMap();
+		// Raw list of conditions
 		Iterator it = conditions.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry entry = (Map.Entry) it.next();
-			result += ((String) entry.getKey()) + ": & ";
-			result += ((String) entry.getValue()) + "\\\\\n";
+			conds.put(
+				((String) entry.getKey()),
+				build_latex_from_Seq((Seq) entry.getValue()));
 		}
+		result += make_two_cols_array(conds);
+
+		// clears the map for reuse
+		conds.clear();
+		// only the conclusions
+		it = conditions.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			conds.put(((String) entry.getKey()),build_latex_from_Seq(clean_Seq((Seq) entry.getValue())));
+		}
+		result += make_two_cols_array(conds);
+
+		// clears the map for reuse
+		conds.clear();
+		result += "\nThe theorem to prove is:\n";
+		result += "\n \\[\n";
+		result += "\\begin{array}{c}\n";
+		%match(DerivTree tree) {
+			derivrule(_,ebs(_,env(subsList@concSubstitution(is(_,t),_*),accept(positive,_))),_,_) -> {
+				result += "\\applysubs{" + build_latex_from_subslist(subsList);
+				result += "}{" + verifier.pattern_to_string(positive) + "}";
+				result += " = " + build_latex_from_term(t) + "\\\\\n";
+			}
+		}
+		result += "\\Leftrightarrow\\\\\n";
+		result += "\\begin{array}{ll}\n";
+		// only the interesting conditions : dedexpr
+		it = conditions.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			Seq value = (Seq) entry.getValue();
+			if (value.isDedexpr()) {
+				conds.put(((String) entry.getKey()),
+									build_latex_from_Seq(clean_Seq(value)));
+			}
+		}
+		result += make_two_cols_lines(conds);
+		result += "\\end{array}\n";
 		result += "\\end{array}\n";
 		result += "\\]\n";
 
-		result += "\n\\end{document}";
-
+		return result;
+	}
+	
+	/*
+	 * Take care to give a TreeMap if you want the output to be sorted
+	 */
+	String make_two_cols_array(Map linesList) {
+		String result = "";
+		result += "\n \\[\n";
+		result += "\\begin{array}{ll}\n";
+		result += make_two_cols_lines(linesList);
+		result += "\\end{array}\n";
+		result += "\\]\n";
+		return result;
+	}
+	String make_two_cols_lines(Map linesList) {
+		String result = "";
+		Iterator it = linesList.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry entry = (Map.Entry) it.next();
+			result += ((String) entry.getKey()) + ": & ";
+			result += ((String) entry.getValue());
+			result += "\\\\\n";
+		}
 		return result;
 	}
 
@@ -121,9 +196,8 @@ public class LatexOutput {
 		String result = "";
 		%match(DerivTree tree) {
 			derivrule(name,post,pre,condition) -> {
-				String cond = build_latex_from_Seq(condition);
 				String condname = "\\fbox{" + (conditions.size()+1) + "}";
-				conditions.put(condname,cond);
+				conditions.put(condname,condition);
 				result = "\n\\infer["	
 					+ condname + "]\n{"
 					+ build_latex_from_deriv(post) + "}\n{" 
@@ -211,7 +285,7 @@ public class LatexOutput {
 		String result = "";
 		%match(Instr instr) {
 			accept(positive,negative) -> {
-				result = "\\accept_{" + "positive" + "}"; 
+				result = "\\accept_{" + verifier.pattern_to_string(positive) + "}";
 			}
 			refuse() -> {
 				result = "\\refuse ";
@@ -306,4 +380,18 @@ public class LatexOutput {
 		}
 		return result;
 	}
+
+	Seq clean_Seq(Seq seq) {
+		%match(Seq seq) {
+			seq() -> { return seq; }
+			dedterm(concTerm(_*,t,v)) -> {
+				return `dedterm(concTerm(t,v));
+			}
+			dedexpr(concExpr(_*,t,v)) -> {
+				return `dedexpr(concExpr(t,v));
+			}
+		}
+		return seq;
+	}
+
 }

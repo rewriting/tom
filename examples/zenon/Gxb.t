@@ -17,6 +17,7 @@ class Gxb {
 		abstract syntax
 			a -> Hop
 			b -> Hop
+      f(arg:Hop) -> Hop
 			g(left:Hop,right:Hop) -> Hop
 	}
 
@@ -38,9 +39,11 @@ class Gxb {
 	void test() {
 		Hop test = `g(a(),b());
 		%match(Hop test) {
-			g(x,b()) -> { System.out.println(x); }
+			g(x,b()) -> { System.out.println(`x); }
 		}
-
-}
-
+		Hop essai = `f(f(f(a)));
+		%match(Hop essai) {
+			f(f(f(y))) -> { System.out.println(`y); }
+		}
+	}
 }

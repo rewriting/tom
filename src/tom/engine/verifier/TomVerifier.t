@@ -20,8 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- *
- **/
+ * **/
 
 package jtom.verifier;
 
@@ -30,9 +29,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 
-import jtom.adt.tomsignature.types.Expression;
-import jtom.adt.tomsignature.types.Instruction;
-import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.tools.TomGenericPlugin;
 import tom.library.traversal.Collect2;
 import tom.library.traversal.Replace1;
@@ -54,9 +52,13 @@ public class TomVerifier extends TomGenericPlugin {
 
   public TomVerifier() {
     super("TomVerifier");
-    verif = new Verifier();
-		output = new LatexOutput();
+		init();
   }
+
+	void init () {
+    verif = new Verifier();
+		output = new LatexOutput(this);
+	}
 
   public void run() {
     if(isActivated()) {
@@ -68,11 +70,8 @@ public class TomVerifier extends TomGenericPlugin {
         // System.out.println("Purified : " + purified);        
         Collection derivations = getDerivations(purified);
 // 				System.out.println("Derivations : " + derivations);
-				Iterator it = derivations.iterator();
-				while(it.hasNext()) {
-					System.out.println(
-						output.build_latex((DerivTree) it.next()));
-				}
+				String latex = output.build_latex(derivations);
+				System.out.println(latex);
         // verbose
         getLogger().log(Level.INFO, "TomVerificationPhase",
                         new Integer((int)(System.currentTimeMillis()-startChrono)));
@@ -206,5 +205,77 @@ public class TomVerifier extends TomGenericPlugin {
         return traversal().genericTraversal(subject,this);
 	    }//end apply
     };//end new Replace1 
+
+	public String pattern_to_string(ATerm patternList) {
+		return pattern_to_string((PatternList) patternList);
+	}
+	public String pattern_to_string(PatternList patternList) {
+		String result = "";
+		Pattern h = null;
+		PatternList tail = patternList;
+		if(!tail.isEmpty()) {
+			h = tail.getHead();
+			tail = tail.getTail();
+			result = pattern_to_string(h);
+		}
+
+		while(!tail.isEmpty()) {
+			h = tail.getHead();
+			result = "," + pattern_to_string(h);
+			tail = tail.getTail();
+		}
+		return result;
+	}
+	public String pattern_to_string(Pattern pattern) {
+		String result = "";
+		%match(Pattern pattern) {
+			Pattern(tomList) -> {
+				return pattern_to_string(tomList);
+			}
+		}
+		return result;
+	}
+	public String pattern_to_string(TomList tomList) {
+		String result = "";
+		TomTerm h = null;
+		TomList tail = tomList;
+		if(!tail.isEmpty()) {
+			h = tail.getHead();
+			tail = tail.getTail();
+			result = pattern_to_string(h);
+		}
+
+		while(!tail.isEmpty()) {
+			h = tail.getHead();
+			result = "," + pattern_to_string(h);
+			tail = tail.getTail();
+		}
+		return result;
+	}
+	public String pattern_to_string(TomTerm tomTerm) {
+		%match(TomTerm tomTerm) {
+			Appl(_,concTomName(Name(name),_*),childrens,_) -> {
+				if (childrens.isEmpty()) {
+					return name;
+				} else {
+					name = name + "(";
+					TomTerm head = childrens.getHead();
+					name += pattern_to_string(head);
+					TomList tail = childrens.getTail();
+					while(!tail.isEmpty()) {
+						head = tail.getHead();
+						name += "," + pattern_to_string(head);
+						tail = tail.getTail();
+					}
+					name += ")";
+					return name;
+				}
+			}
+			Variable(_,Name(name),_,_) -> {
+				return name;
+			}
+		}
+		return "StrangePattern" + tomTerm;
+	}
   
 } // class TomVerifier
