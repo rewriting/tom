@@ -302,7 +302,7 @@ public class Tom {
         if(Flags.doOnlyCompile) {
           ATerm fromFileExpandTerm = null;
           fromFileExpandTerm = tomSignatureFactory.readFromFile(input);
-          expandedTerm = (TomTerm) TomTerm.fromTerm(fromFileExpandTerm);
+          expandedTerm = (TomTerm) TomTermImpl.fromTerm(fromFileExpandTerm);
           try {
             input = new FileInputStream(inputFileName+".table");
           } catch (FileNotFoundException e) {
@@ -312,7 +312,7 @@ public class Tom {
           }
           ATerm fromFileSymblTable = null;
           fromFileSymblTable = tomSignatureFactory.readFromFile(input);
-          TomSymbolTable symbTable = (TomSymbolTable) TomSymbolTable.fromTerm(fromFileSymblTable);
+          TomSymbolTable symbTable = (TomSymbolTable) TomSymbolTableImpl.fromTerm(fromFileSymblTable);
           symbolTable.regenerateFromTerm(symbTable);
         }
 

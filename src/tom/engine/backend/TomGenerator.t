@@ -660,7 +660,7 @@ public class TomGenerator extends TomBase {
       }
       
         //IfThenElse(exp,succesList,conc()) -> {
-      IfThenElse(exp,succesList,Empty()) -> {
+      IfThenElse(exp,succesList,emptyTomList()) -> {
         statistics().numberIfThenElseTranformed++;
         if(Flags.cCode || Flags.jCode) {
           out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");

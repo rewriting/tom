@@ -41,12 +41,11 @@ public class TomBase {
   private TomList empty;
   private GenericTraversal traversal;
   
-  private static List emptyList = new ArrayList();
   protected final static boolean debug = false;
 
   public TomBase(TomEnvironment tomEnvironment) {
     this.tomEnvironment = tomEnvironment;
-    this.empty = tsf().makeTomList_Empty();
+    this.empty = tsf().makeTomList();
     this.traversal = new GenericTraversal();
   }
 
@@ -58,7 +57,7 @@ public class TomBase {
     return tomEnvironment.getTomSignatureFactory();
   }
 
-  protected GenericTraversal traversal() {
+  public GenericTraversal traversal() {
     return this.traversal;
   }
 
@@ -94,8 +93,8 @@ public class TomBase {
     return symbolTable().getType("universal");
   }
 
-  protected TomTerm makeNumber(int n) {
-    return tsf().makeTomTerm_Number(new Integer(n));
+  protected TomNumber makeNumber(int n) {
+    return tsf().makeTomNumber_Number(new Integer(n));
   }
   
   protected TomList empty() {
@@ -104,11 +103,17 @@ public class TomBase {
 
   protected TomList cons(TomTerm t, TomList l) {
     if(t!=null) {
-      return tsf().makeTomList_Cons(t,l);
+      return tsf().makeTomList(t,l);
     } else {
+      System.out.println("cons: Warning t == null");
       return l;
     }
   }
+
+  protected TomNumberList appendNumber(int n, TomNumberList path) {
+    return (TomNumberList) path.append(makeNumber(n));
+  }
+  
 
   protected TomList appendInstruction(Instruction t, TomList l) {
     return append(`InstructionToTomTerm(t), l);
@@ -241,8 +246,8 @@ public class TomBase {
 
   private HashMap numberListToIdentifierMap = new HashMap();
 
-  private String elementToIdentifier(TomTerm subject) {
-    %match(TomTerm subject) {
+  private String elementToIdentifier(TomNumber subject) {
+    %match(TomNumber subject) {
       Begin(Number(i)) -> { return "begin" + i; }
       End(Number(i)) -> { return "end" + i; }
       MatchNumber(Number(i)) -> { return "match" + i; }
@@ -257,10 +262,10 @@ public class TomBase {
     }
   }
   
-  protected String numberListToIdentifier(TomList l) {
+  protected String numberListToIdentifier(TomNumberList l) {
     String res = (String)numberListToIdentifierMap.get(l);
     if(res == null) {
-      TomList key = l;
+      TomNumberList key = l;
       StringBuffer buf = new StringBuffer(30);
       while(!l.isEmpty()) {
         buf.append("_" + elementToIdentifier(l.getHead()));

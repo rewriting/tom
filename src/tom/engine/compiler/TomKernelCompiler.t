@@ -59,7 +59,7 @@ public class TomKernelCompiler extends TomBase {
   private Option option() {
     return ast().makeOption();
   }
-  
+
   Replace1 replace_preProcessing = new Replace1() {
       public ATerm apply(ATerm t) { return preProcessing((TomTerm)t); }
     };
@@ -149,10 +149,10 @@ public class TomKernelCompiler extends TomBase {
         TomList patternList, actionList;
         TomList automataList = empty();
         ArrayList list;
-        TomList path = empty();
+        TomNumberList path = tsf().makeTomNumberList();
 
         matchNumber++;
-        path = append(`MatchNumber(makeNumber(matchNumber)),path);
+        path = (TomNumberList) path.append(`MatchNumber(makeNumber(matchNumber)));
         
           /*
            * create a list of declaration
@@ -169,7 +169,7 @@ public class TomKernelCompiler extends TomBase {
           matchBlock: {
             %match(TomTerm tlVariable) { 
               Variable(option,_,variableType) -> {
-                TomTerm variable = `Variable(option,PositionName(append(makeNumber(index),path)),variableType);
+                TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType);
                 matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
                 if (!generatedMatch) {
                   matchAssignementList = appendInstruction(`AssignMatchSubject(variable,TomTermToExpression(tlVariable)),matchAssignementList);
@@ -184,7 +184,7 @@ public class TomKernelCompiler extends TomBase {
               FunctionCall(Name(tomName),_) -> {
                 TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
                 TomType tomType = getSymbolCodomain(tomSymbol);
-                TomTerm variable = `Variable(option(),PositionName(append(makeNumber(index),path)),tomType);
+                TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType);
                 matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
                 matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
                 break matchBlock;
@@ -218,7 +218,7 @@ public class TomKernelCompiler extends TomBase {
               // replace success by leaving structure
             TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
             TomList tail = pa.getTom().getTomList().getTail();
-            actionList = `Cons(TargetLanguageToTomTerm(tl), tail);
+            actionList = `manyTomList(TargetLanguageToTomTerm(tl), tail);
           } else {
             actionList = pa.getTom().getTomList();
           }
@@ -247,7 +247,7 @@ public class TomKernelCompiler extends TomBase {
               //System.out.println("*** " + patternsDeclarationList);
           }
           
-          TomList numberList = append(`PatternNumber(makeNumber(actionNumber)),path);
+          TomNumberList numberList = (TomNumberList) path.append(`PatternNumber(makeNumber(actionNumber)));
           TomList instructionList;
           instructionList = genMatchingAutomataFromPatternList(patternList,path,1,actionList,true);
             //firstCall = false;
@@ -287,15 +287,15 @@ public class TomKernelCompiler extends TomBase {
     %match(TomList automataList) {
         //conc()      -> { return empty(); }
         //conc(Automata(numberList,instList),l*)  -> {
-      Empty()      -> { return empty(); }
-      Cons(Automata(numberList,instList, Name(dbgKey)),l)  -> {
+      emptyTomList()      -> { return empty(); }
+      manyTomList(Automata(numberList,instList, Name(dbgKey)),l)  -> {
         TomList newList = automataListCompileMatchingList(l, generatedMatch);
         if(Flags.supportedGoto) {
           if(!generatedMatch && Flags.debugMode) {
             TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+dbgKey+"\");\n");
             instList = `cons(TargetLanguageToTomTerm(tl), instList);
             tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+dbgKey+"\");\n");
-            TomList list = `cons(TargetLanguageToTomTerm(tl), Empty());
+            TomList list = `cons(TargetLanguageToTomTerm(tl), emptyTomList());
             instList = concat(instList, list);
           }
           TomTerm compiledPattern = `CompiledPattern(cons(InstructionToTomTerm(NamedBlock(getBlockName(numberList), instList)),empty()));
@@ -317,7 +317,7 @@ public class TomKernelCompiler extends TomBase {
           return result;
         }
       }
-      Cons(DefaultAutomata(numberList,instList, Name(dbgKey)),l)  -> {
+      manyTomList(DefaultAutomata(numberList,instList, Name(dbgKey)),l)  -> {
         TomList newList = automataListCompileMatchingList(l, generatedMatch);
         if(Flags.supportedGoto) {
           if(!generatedMatch && Flags.debugMode) {
@@ -335,12 +335,12 @@ public class TomKernelCompiler extends TomBase {
     return null;
   }
 
-  private String getBlockName(TomList numberList) {
+  private String getBlockName(TomNumberList numberList) {
     String name = "matchlab" + numberListToIdentifier(numberList);
     return name;
   }
 
-  private TomTerm getBlockVariable(TomList numberList) {
+  private TomTerm getBlockVariable(TomNumberList numberList) {
     String name = "matchlab" + numberListToIdentifier(numberList);
     return `Variable(option(),Name(name),getBoolType());
   }
@@ -352,7 +352,7 @@ public class TomKernelCompiler extends TomBase {
      */
 
   TomList genMatchingAutomataFromPatternList(TomList termList,
-                                                   TomList path,
+                                                   TomNumberList path,
                                                    int indexTerm,
                                                    TomList actionList,
                                                    boolean gsa) {
@@ -368,7 +368,7 @@ public class TomKernelCompiler extends TomBase {
       TomTerm head = termList.getHead();
       TomList tail = termList.getTail();
       TomList newSubActionList = genMatchingAutomataFromPatternList(tail,path,indexTerm+1,actionList,gsa);
-      TomList newPath          = append(makeNumber(indexTerm),path);
+      TomNumberList newPath    = appendNumber(indexTerm,path);
       TomList newActionList    = genMatchingAutomataFromPattern(head,newPath,newSubActionList,gsa);
       result                   = concat(result,newActionList);
     }
@@ -376,7 +376,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
   TomList genMatchingAutomataFromPattern(TomTerm term,
-                                         TomList path,
+                                         TomNumberList path,
                                          TomList actionList,
                                          boolean gsa) {
     TomList result = empty();
@@ -429,11 +429,11 @@ public class TomKernelCompiler extends TomBase {
           int indexSubterm = 0;
           TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType); 
           while(!termTypeList.isEmpty()) {
-            TomType subtermType = termTypeList.getHead();
-            TomList newPath = append(makeNumber(indexSubterm+1),path);
+            TomType subtermType    = termTypeList.getHead();
+            TomNumberList newPath  = appendNumber(indexSubterm+1,path);
             TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType);
             TomTerm declaration    = `Declaration(newVariableAST);
-            declarationList      = append(declaration,declarationList);
+            declarationList        = append(declaration,declarationList);
             
             Expression getSubtermAST;
 
@@ -500,7 +500,7 @@ public class TomKernelCompiler extends TomBase {
   
   TomList genListMatchingAutomata(TomSymbol symbol,
                                   TomList termList,
-                                  TomList oldPath,
+                                  TomNumberList oldPath,
                                   TomList actionList,
                                   boolean generateSemanticAction,
                                   TomTerm subjectListName,
@@ -517,7 +517,7 @@ public class TomKernelCompiler extends TomBase {
     if(indexTerm > 1) {
       variableListAST = subjectListName;
     } else {
-      TomList pathList = append(`ListNumber(makeNumber(indexTerm)),oldPath);
+      TomNumberList pathList = (TomNumberList) oldPath.append(`ListNumber(makeNumber(indexTerm)));
       
       %match(TomTerm subjectListName) {
         Variable(option,_, termType) -> {
@@ -544,7 +544,7 @@ public class TomKernelCompiler extends TomBase {
       %match(TomList termList) {
         
           //conc() -> {
-        Empty() -> {
+        emptyTomList() -> {
             /*
              * generate:
              * ---------
@@ -566,7 +566,7 @@ public class TomKernelCompiler extends TomBase {
         }
         
           //conc(var:Variable(soption,_, termType),termTail*) -> {
-        Cons(var@Variable(option,_, termType),termTail) -> {
+        manyTomList(var@Variable(option,_, termType),termTail) -> {
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -579,7 +579,7 @@ public class TomKernelCompiler extends TomBase {
                *   }
                * }
                */            
-            TomList path = append(makeNumber(indexTerm),oldPath);
+            TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             TomList declarationList = empty();
@@ -610,7 +610,7 @@ public class TomKernelCompiler extends TomBase {
                *   ...
                * }
                */
-            TomList path = append(makeNumber(indexTerm),oldPath);
+            TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             TomList declarationList = empty();
@@ -627,7 +627,7 @@ public class TomKernelCompiler extends TomBase {
         }
         
           //conc(UnamedVariable(option,_),termTail*) -> {
-        Cons(UnamedVariable(option,_),termTail) -> {
+        manyTomList(UnamedVariable(option,_),termTail) -> {
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -650,7 +650,7 @@ public class TomKernelCompiler extends TomBase {
         }
         
           //conc(var:VariableStar(option,_, termType),termTail*) -> {
-        Cons(var@VariableStar(option,_, termType),termTail) -> {
+        manyTomList(var@VariableStar(option,_, termType),termTail) -> {
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -662,7 +662,7 @@ public class TomKernelCompiler extends TomBase {
               subList = appendInstruction(`Action( actionList),subList);
             }
             
-            TomList path = append(makeNumber(indexTerm),oldPath);
+            TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             Instruction assignement = `Assign(var,TomTermToExpression(subjectListName));
             result = concat(appendInstruction(assignement,result),subList);
@@ -682,8 +682,8 @@ public class TomKernelCompiler extends TomBase {
                *   subjectList = end_i;
                * } while( !IS_EMPTY_TomList(subjectList) )
                */
-            TomList pathBegin = append(`Begin(makeNumber(indexTerm)),oldPath);
-            TomList pathEnd = append(`End(makeNumber(indexTerm)),oldPath);
+            TomNumberList pathBegin = (TomNumberList) oldPath.append(`Begin(makeNumber(indexTerm)));
+            TomNumberList pathEnd = (TomNumberList) oldPath.append(`End(makeNumber(indexTerm)));
             TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType);
             TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),termType);
             TomList declarationList = empty();
@@ -693,7 +693,7 @@ public class TomKernelCompiler extends TomBase {
             assignementList = appendInstruction(`Assign(variableBeginAST,TomTermToExpression(subjectListName)),assignementList);
             assignementList = appendInstruction(`Assign(variableEndAST,TomTermToExpression(subjectListName)),assignementList);
             
-            TomList path = append(makeNumber(indexTerm),oldPath);
+            TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             TomList doList = empty();
             doList = appendInstruction(`Assign(var,GetSliceList(symbol.getAstName(),variableBeginAST,variableEndAST)),doList);
@@ -727,7 +727,7 @@ public class TomKernelCompiler extends TomBase {
 
   TomList genArrayMatchingAutomata(TomSymbol symbol,
                                    TomList termList,
-                                   TomList oldPath,
+                                   TomNumberList oldPath,
                                    TomList actionList,
                                    boolean generateSemanticAction,
                                    TomTerm subjectListName,
@@ -749,8 +749,8 @@ public class TomKernelCompiler extends TomBase {
       variableListAST = subjectListName;
       variableIndexAST = subjectListIndex;
     } else {
-      TomList pathList = append(`ListNumber(makeNumber(indexTerm)),oldPath);
-      TomList pathIndex = append(`IndexNumber(makeNumber(indexTerm)),oldPath);
+      TomNumberList pathList = (TomNumberList) oldPath.append(`ListNumber(makeNumber(indexTerm)));
+      TomNumberList pathIndex = (TomNumberList) oldPath.append(`IndexNumber(makeNumber(indexTerm)));
 
       matchBlock: {
         %match(TomTerm subjectListName) {
@@ -785,7 +785,7 @@ public class TomKernelCompiler extends TomBase {
       %match(TomList termList) {
         
           //conc(var:Variable(option, _, termType),termTail*) -> {
-        Cons(var@Variable(option, _, termType),termTail) -> {
+        manyTomList(var@Variable(option, _, termType),termTail) -> {
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -798,7 +798,7 @@ public class TomKernelCompiler extends TomBase {
                *   }
                * }
                */
-            TomList path = append(makeNumber(indexTerm),oldPath);
+            TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             TomList declarationList = empty();
@@ -828,7 +828,7 @@ public class TomKernelCompiler extends TomBase {
                *   ...
                * }
                */
-            TomList path = append(makeNumber(indexTerm),oldPath);
+            TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             TomList declarationList = empty();
@@ -848,7 +848,7 @@ public class TomKernelCompiler extends TomBase {
         }
         
           //conc(UnamedVariable(option,_),termTail*) -> {
-        Cons(UnamedVariable(option,_),termTail) -> {
+        manyTomList(UnamedVariable(option,_),termTail) -> {
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -871,7 +871,7 @@ public class TomKernelCompiler extends TomBase {
         }
         
           //conc(var:VariableStar(option,_, termType),termTail*) -> {
-        Cons(var@VariableStar(option,_, termType),termTail) -> {
+        manyTomList(var@VariableStar(option,_, termType),termTail) -> {
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -883,7 +883,7 @@ public class TomKernelCompiler extends TomBase {
               subList = appendInstruction(`Action( actionList),subList);
             }
             
-            TomList path = append(makeNumber(indexTerm),oldPath);
+            TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             Instruction assignement = `Assign(var,GetSliceArray(
@@ -908,8 +908,8 @@ public class TomKernelCompiler extends TomBase {
                * } while( !IS_EMPTY_TomList(subjectList) )
                */
 
-            TomList pathBegin = append(`Begin(makeNumber(indexTerm)),oldPath);
-            TomList pathEnd = append(`End(makeNumber(indexTerm)),oldPath);
+            TomNumberList pathBegin = (TomNumberList) oldPath.append(`Begin(makeNumber(indexTerm)));
+            TomNumberList pathEnd = (TomNumberList) oldPath.append(`End(makeNumber(indexTerm)));
               // TODO: termType
             TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),getIntType());
             TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),getIntType());
@@ -920,7 +920,7 @@ public class TomKernelCompiler extends TomBase {
             assignementList = appendInstruction(`Assign(variableBeginAST,TomTermToExpression(subjectListIndex)),assignementList);
             assignementList = appendInstruction(`Assign(variableEndAST,TomTermToExpression(subjectListIndex)),assignementList);
             
-            TomList path = append(makeNumber(indexTerm),oldPath);
+            TomNumberList path = appendNumber(indexTerm,oldPath);
             TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             TomList doList = empty();
             doList = appendInstruction(`Assign(var,

@@ -76,21 +76,21 @@ public class TomKernelExpander extends TomBase {
           //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
         
         %match(TomTerm contextSubject, TomTerm subject) {
-          TomTypeToTomTerm(type@Type(tomType,glType)) , appl@Appl(Option(optionList),name@Name(strName),Empty()) -> {
+          TomTypeToTomTerm(type@Type(tomType,glType)) , appl@Appl(Option(optionList),name@Name(strName),emptyTomList()) -> {
               //debugPrintln("expandVariable.1: Type(" + tomType + "," + glType + ")");
             Option orgTrack = findOriginTracking(optionList);
             Option option = `Option(replaceAnnotedName(optionList,type,orgTrack));
               // create a constant or a variable
             TomSymbol tomSymbol = getSymbol(strName);
             if(tomSymbol != null) {
-              return `Appl(option,name,Empty());
+              return `Appl(option,name,emptyTomList());
             } else {
               statistics().numberVariablesDetected++;
               return `Variable(option,name,type);
             }
           }
           
-          Variable(option1,name1,type1) , appl@Appl(Option(optionList),name@Name(strName),Empty()) -> {
+          Variable(option1,name1,type1) , appl@Appl(Option(optionList),name@Name(strName),emptyTomList()) -> {
               //debugPrintln("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
             Option orgTrack = findOriginTracking(optionList);
             Option option = `Option(replaceAnnotedName(optionList,type1,orgTrack));
@@ -98,7 +98,7 @@ public class TomKernelExpander extends TomBase {
               // create a constant or a variable
             TomSymbol tomSymbol = getSymbol(strName);
             if(tomSymbol != null) {
-              return `Appl(option,name,Empty());
+              return `Appl(option,name,emptyTomList());
             } else {
               statistics().numberVariablesDetected++;
               return `Variable(option,name,type1);

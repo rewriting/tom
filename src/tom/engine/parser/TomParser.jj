@@ -676,7 +676,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       return tsf().makeTomTerm_Appl(
         option,
         tsf().makeTomName_Name(name.image),
-        tsf().makeTomList_Empty());
+        tsf().makeTomList());
     }
   | // string
     name = <TOM_STRING>
@@ -690,7 +690,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       return tsf().makeTomTerm_Appl(
         option,
         tsf().makeTomName_Name(name.image),
-        tsf().makeTomList_Empty());
+        tsf().makeTomList());
     }
 
     
@@ -821,7 +821,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   environment.getStatistics().numberRuleBlocsRecognized++;
   TomTerm lhs, rhs;
   TomTerm pattern, subject;
-  ArrayList ruleList = new ArrayList();
+  TomRuleList ruleList = tsf().makeTomRuleList();
   ArrayList listOfLhs = new ArrayList();
   ArrayList condList = new ArrayList();
   ArrayList nameTypeInRule = new ArrayList();
@@ -855,11 +855,12 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
       optionList.add(tsf().makeOption_OriginalText(orgText));
       for(int i=0 ; i<listOfLhs.size() ; i++) {
         TomTerm term = (TomTerm) listOfLhs.get(i);
-        ruleList.add(tsf().makeTomTerm_RewriteRule(
-                       tsf().makeTomTerm_Term(term),
-                       tsf().makeTomTerm_Term(rhs),
-                       ast().makeList(condList),
-                       ast().makeOption(ast().makeOptionList(optionList))));
+        ruleList = (TomRuleList) ruleList.append(
+          tsf().makeTomRule_RewriteRule(
+            tsf().makeTomTerm_Term(term),
+            tsf().makeTomTerm_Term(rhs),
+            ast().makeList(condList),
+            ast().makeOption(ast().makeOptionList(optionList))));
       }
       listOfLhs.clear();
       condList.clear();
@@ -869,7 +870,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    TomTerm_RuleSet rule = tsf().makeTomTerm_RuleSet(ast().makeList(ruleList), orgTrackRuleSet);
+    TomTerm_RuleSet rule = tsf().makeTomTerm_RuleSet(ruleList, orgTrackRuleSet);
     list.add(rule);
     if (Flags.debugMode)
       debuggedStructureList.add(rule);

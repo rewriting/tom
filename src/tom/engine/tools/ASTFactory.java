@@ -55,20 +55,16 @@ public class ASTFactory {
   }
 
   protected TomList cons(TomTerm t, TomList l) {
-    return tsf().makeTomList_Cons(t,l);
+    return tsf().makeTomList(t,l);
   }
 
   protected TomList append(TomTerm t, TomList l) {
-    if(l.isEmpty()) {
-      return cons(t,l);
-    } else {
-      return cons(l.getHead(), append(t,l.getTail()));
-    }
+    return (TomList) l.append(t);
   }
 
   public TomList makeList(Collection c) {
     Object array[] = c.toArray();
-    TomList list = tsf().makeTomList_Empty();
+    TomList list = tsf().makeTomList();
     for(int i=array.length-1; i>=0 ; i--) {
       ATerm elt = (ATerm)array[i];
       TomTerm term;
@@ -254,7 +250,7 @@ public class ASTFactory {
       TomSymbol symbol = symbolTable.getSymbol(key);
       if (symbol != null) {
         OptionList optionList = symbol.getOption().getOptionList();
-        optionList = (OptionList)optionList.append(tsf().makeOption_DefinedSymbol());
+        optionList = (OptionList) optionList.append(tsf().makeOption_DefinedSymbol());
         symbolTable.putSymbol(key,symbol.setOption(makeOption(optionList)));
       }
     }

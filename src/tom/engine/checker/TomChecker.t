@@ -145,9 +145,9 @@ public class TomChecker extends TomBase {
     }
   }
 
-  private void verifyRuleVariable(TomList list) {
+  private void verifyRuleVariable(TomRuleList list) {
     while(!list.isEmpty()) {
-      TomTerm rewriteRule = list.getHead();
+      TomRule rewriteRule = list.getHead();
       TomTerm lhs = rewriteRule.getLhs();
       TomTerm rhs = rewriteRule.getRhs();
       TomList condList = rewriteRule.getCondList();
@@ -921,14 +921,14 @@ public class TomChecker extends TomBase {
      * Lhs and Rhs shall have the same return type
      * Used variable on rhs shall be coherent and declared on lhs
      */ 
-  private void verifyRule(TomList ruleList) {
+  private void verifyRule(TomRuleList ruleList) {
     int i = 0;
-    TomTerm currentRule;
+    TomRule currentRule;
     String name = "Unknown";
     while(!ruleList.isEmpty()) {
       currentRule = ruleList.getHead();
       matchBlock: {
-        %match(TomTerm currentRule) {
+        %match(TomRule currentRule) {
           RewriteRule(Term(lhs),Term(rhs),condList,option) -> {
             statistics().numberRulesTested++;
             name = verifyLhsRuleAndConstructorEgality(lhs, name, i);

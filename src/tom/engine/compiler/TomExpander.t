@@ -78,7 +78,7 @@ public class TomExpander extends TomBase {
     return (TomTerm) replace.apply(subject); 
   }
 
-  private TomTerm expandRecordAppl(Option option, String tomName, TomList args) {
+  protected TomTerm expandRecordAppl(Option option, String tomName, TomList args) {
     TomSymbol tomSymbol = getSymbol(tomName);
     SlotList slotList = tomSymbol.getSlotList();
     TomList subtermList = empty();
@@ -116,7 +116,7 @@ public class TomExpander extends TomBase {
     return `Appl(option,Name(tomName),subtermList);
   }
   
-  private TomTerm expandBackQuoteTerm(TomTerm t) {
+  protected TomTerm expandBackQuoteTerm(TomTerm t) {
     Replace1 replaceSymbol = new Replace1() {
         public ATerm apply(ATerm t) {
           if(t instanceof TomTerm) {
@@ -180,10 +180,10 @@ public class TomExpander extends TomBase {
       //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
     %match(TomTerm contextSubject, TomTerm subject) {
 
-      context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
+      context, TomRuleToTomTerm(RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
                            Term(rhs),
                            condList,
-                           option) -> { 
+                           option)) -> { 
           //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
         TomSymbol tomSymbol = getSymbol(tomName);
         TomType symbolType = getSymbolCodomain(tomSymbol);
@@ -204,7 +204,7 @@ public class TomExpander extends TomBase {
           condList = condList.getTail();
         }
         
-        return `RewriteRule(newLhs,newRhs,newCondList,option);
+        return `TomRuleToTomTerm(RewriteRule(newLhs,newRhs,newCondList,option));
       }
         
       Tom(varList), MatchingCondition[lhs=lhs@Appl[astName=Name(lhsName)],
@@ -267,14 +267,14 @@ public class TomExpander extends TomBase {
       //System.out.println("list = " + list);
     
     %match(TomName name,TomList list) {
-      _,Empty() -> {
+      _,emptyTomList() -> {
         System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
         System.exit(1);
       }
 
-      varName, Cons(Variable[astName=varName,astType=type@Type[]],tail) -> { return type; }
-      varName, Cons(VariableStar[astName=varName,astType=type@Type[]],tail) -> { return type; }
-      _, Cons(t,tail) -> { return getTypeFromVariableList(name,tail); }
+      varName, manyTomList(Variable[astName=varName,astType=type@Type[]],tail) -> { return type; }
+      varName, manyTomList(VariableStar[astName=varName,astType=type@Type[]],tail) -> { return type; }
+      _, manyTomList(t,tail) -> { return getTypeFromVariableList(name,tail); }
       
     }
     return null;

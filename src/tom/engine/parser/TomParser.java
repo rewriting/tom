@@ -560,7 +560,7 @@ public class TomParser implements TomParserConstants {
       {if (true) return tsf().makeTomTerm_Appl(
         option,
         tsf().makeTomName_Name(name.image),
-        tsf().makeTomList_Empty());}
+        tsf().makeTomList());}
         break;
       case TOM_STRING:
         // string
@@ -574,7 +574,7 @@ public class TomParser implements TomParserConstants {
       {if (true) return tsf().makeTomTerm_Appl(
         option,
         tsf().makeTomName_Name(name.image),
-        tsf().makeTomList_Empty());}
+        tsf().makeTomList());}
         break;
       default:
         jj_la1[12] = jj_gen;
@@ -706,7 +706,7 @@ public class TomParser implements TomParserConstants {
   environment.getStatistics().numberRuleBlocsRecognized++;
   TomTerm lhs, rhs;
   TomTerm pattern, subject;
-  ArrayList ruleList = new ArrayList();
+  TomRuleList ruleList = tsf().makeTomRuleList();
   ArrayList listOfLhs = new ArrayList();
   ArrayList condList = new ArrayList();
   ArrayList nameTypeInRule = new ArrayList();
@@ -806,11 +806,12 @@ public class TomParser implements TomParserConstants {
       optionList.add(tsf().makeOption_OriginalText(orgText));
       for(int i=0 ; i<listOfLhs.size() ; i++) {
         TomTerm term = (TomTerm) listOfLhs.get(i);
-        ruleList.add(tsf().makeTomTerm_RewriteRule(
-                       tsf().makeTomTerm_Term(term),
-                       tsf().makeTomTerm_Term(rhs),
-                       ast().makeList(condList),
-                       ast().makeOption(ast().makeOptionList(optionList))));
+        ruleList = (TomRuleList) ruleList.append(
+          tsf().makeTomRule_RewriteRule(
+            tsf().makeTomTerm_Term(term),
+            tsf().makeTomTerm_Term(rhs),
+            ast().makeList(condList),
+            ast().makeOption(ast().makeOptionList(optionList))));
       }
       listOfLhs.clear();
       condList.clear();
@@ -818,7 +819,7 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    TomTerm_RuleSet rule = tsf().makeTomTerm_RuleSet(ast().makeList(ruleList), orgTrackRuleSet);
+    TomTerm_RuleSet rule = tsf().makeTomTerm_RuleSet(ruleList, orgTrackRuleSet);
     list.add(rule);
     if (Flags.debugMode)
       debuggedStructureList.add(rule);
@@ -1826,18 +1827,18 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_3() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_AT)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_6() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_RPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_AT)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

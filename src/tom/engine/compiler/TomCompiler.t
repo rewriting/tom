@@ -80,7 +80,7 @@ public class TomCompiler extends TomBase {
         return `Tom(tomListMap(l,replace_preProcessing));
       }
       
-      RuleSet(ruleList@Cons(
+      RuleSet(ruleList@manyTomRuleList(
                 RewriteRule[lhs=Term(Appl[astName=Name(tomName)])],tail), orgTrack) -> {
         statistics().numberRuleSetsTransformed++;
         if(Flags.debugMode) {
@@ -89,25 +89,25 @@ public class TomCompiler extends TomBase {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomName name = tomSymbol.getAstName();
         TomTypeList typesList = tomSymbol.getTypesToType().getDomain();        
-        TomList path = empty();
+        TomNumberList path = tsf().makeTomNumberList();
         TomList matchArgumentsList = empty();
         TomList patternActionList  = empty();
         TomTerm variable;
         int index = 0;
 
-        path = append(`RuleVar(),path);
+        path = (TomNumberList) path.append(`RuleVar());
         
         while(!typesList.isEmpty()) {
           TomType subtermType = typesList.getHead();
-          variable = `Variable(option(),PositionName(append(makeNumber(index),path)),subtermType);
+          variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType);
           matchArgumentsList = append(variable,matchArgumentsList);
           typesList = typesList.getTail();
           index++;
         }
         
         while(!ruleList.isEmpty()) {
-          TomTerm rule = ruleList.getHead();
-          %match(TomTerm rule) {
+          TomRule rule = ruleList.getHead();
+          %match(TomRule rule) {
             RewriteRule(Term(Appl[args=matchPatternsList]),
                         Term(rhsTerm),
                         condList,
@@ -266,13 +266,13 @@ public class TomCompiler extends TomBase {
   
   private TomList buildCondition(TomList condList, TomList actionList) {
     %match(TomList condList) {
-      Empty() -> { return actionList; }
+      emptyTomList() -> { return actionList; }
         
-      Cons(MatchingCondition[lhs=pattern,rhs=subject], tail) -> {
+      manyTomList(MatchingCondition[lhs=pattern,rhs=subject], tail) -> {
         System.out.println(pattern);
         TomType subjectType = getTermType(pattern);
-        TomList path = empty();
-        path = append(`RuleVar(),path);
+        TomNumberList path = tsf().makeTomNumberList();
+        path = (TomNumberList) path.append(`RuleVar());
         TomTerm newSubject = preProcessing(`MakeTerm(subject));
     
           //TomTerm introducedVariable = `Variable(option(),PositionName(path),subjectType);
@@ -300,7 +300,7 @@ public class TomCompiler extends TomBase {
 
       }
 
-      Cons(EqualityCondition[lhs=lhs,rhs=rhs], tail) -> {
+      manyTomList(EqualityCondition[lhs=lhs,rhs=rhs], tail) -> {
         TomTerm newLhs = preProcessing(`MakeTerm(lhs));
         TomTerm newRhs = preProcessing(`MakeTerm(rhs));
 
@@ -333,9 +333,9 @@ public class TomCompiler extends TomBase {
           mult = mult-1;
           multiplicityMap.put(name,new Integer(mult));
           
-          TomList path = empty();
-          path = append(`RenamedVar(name),path);
-          path = append(makeNumber(mult),path);
+          TomNumberList path = tsf().makeTomNumberList();
+          path = (TomNumberList) path.append(`RenamedVar(name));
+          path = (TomNumberList) path.append(makeNumber(mult));
           renamedTerm = `Variable(option(),PositionName(path),type);
 
             //System.out.println("renamedTerm = " + renamedTerm);
@@ -353,9 +353,9 @@ public class TomCompiler extends TomBase {
           mult = mult-1;
           multiplicityMap.put(name,new Integer(mult));
           
-          TomList path = empty();
-          path = append(`RenamedVar(name),path);
-          path = append(makeNumber(mult),path);
+          TomNumberList path = tsf().makeTomNumberList();
+          path = (TomNumberList) path.append(`RenamedVar(name));
+          path = appendNumber(mult,path);
           renamedTerm = `VariableStar(option(),PositionName(path),type);
 
             //System.out.println("renamedTerm = " + renamedTerm);
@@ -451,10 +451,10 @@ public class TomCompiler extends TomBase {
                   //System.out.println("Abstract: " + appl);
                 abstractedPattern.add(appl);
 
-                TomList path = empty();
+                TomNumberList path = tsf().makeTomNumberList();
                   //path = append(`AbsVar(makeNumber(introducedVariable.size())),path);
                 absVarNumber++;
-                path = append(`AbsVar(makeNumber(absVarNumber)),path);
+                path = (TomNumberList) path.append(`AbsVar(makeNumber(absVarNumber)));
                   
                 TomTerm newVariable = `Variable(option(),PositionName(path),type2);
 

@@ -1,3 +1,11 @@
+2003-08-12    <pem@bach>
+	* src/jtom/TomSignature.adt: 
+	  - TomTypeList introduced
+	  - TomRule and TomRuleList introduced
+	  - TomNumber and TomNumberList introduced
+	  - TomList implemented as a list
+
+	* src/jtom/TomBase.t: introduced apigen list-operators
 
 2003-08-05  Pierre-Etienne Moreau  <pem@escher.loria.fr>
         * convert ADT files to new style
