@@ -108,6 +108,7 @@ public class TomMainParser extends TomGenericPlugin {
     try {
 	
       p("-- NEW PARSER --");
+      p("-- file "+currentFile+" --");
 
       int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
       int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();

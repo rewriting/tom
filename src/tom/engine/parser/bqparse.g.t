@@ -4,6 +4,7 @@ header{
     import jtom.*;
     import jtom.adt.tomsignature.*;
     import jtom.adt.tomsignature.types.*;
+    import jtom.xml.*;
 
     import tom.platform.*;
     
@@ -103,9 +104,7 @@ options{
     // the term 'term' in a list of term
     private void addTerm(LinkedList list, TomTerm term, boolean newComposite){
         if(xmlTerm){
-            p("--");
             TomTerm last = (TomTerm) list.getLast();
-            p("--");
             %match(TomTerm last){
                 Composite(l) -> {
                     list.removeLast();
@@ -180,11 +179,31 @@ options{
             }
         }
     }
-    
+    /*
     private String removeStar(String s){
         return s.substring(0,s.lastIndexOf('*'));
     }
-    
+    */
+    private String encodeName(String name) {
+        return "\"" + name + "\"";
+    }
+ 
+    private TomList buildList(LinkedList list){
+        TomList result = `emptyTomList();
+        for(int i = 0; i < list.size(); i++){
+            result = (TomList) result.append((TomTerm) list.get(i));
+        }
+        return result;
+    }
+
+    private TomTerm removeComposite(TomTerm term){
+        %match(TomTerm term){
+            Composite(concTomTerm(arg@BackQuoteAppl[])) -> {
+                return arg;
+            }
+            _ -> {return term;}
+        }
+    }
 
 
 }
@@ -201,9 +220,10 @@ bqList [LinkedList list]
             addTerm(list,term,false); 
         }
         // eat as much WS as possible : be greedy
-       // ( options{greedy = true;}: BQ_WS )*
+        // ( options{greedy = true;}: BQ_WS )*
         ( 
-            (c:BQ_COMMA ( options{greedy = true;}: BQ_WS )* )? term = bqTerm 
+            (
+                c:BQ_COMMA ( options{greedy = true;}: BQ_WS )* )? term = bqTerm 
             //( BQ_WS )*
             {
                 if(c != null){
@@ -221,7 +241,24 @@ bqList [LinkedList list]
         )* 
     ;
 
+
+
 bqTerm returns [TomTerm result]
+{
+    result = null;
+    String s;
+}
+    :
+        (   
+            result = bqTermShared
+        |   s = targetPlus
+            {
+                result = `TargetLanguageToTomTerm(ITL(s));
+            }
+        )
+    ;
+
+bqTermShared returns [TomTerm result]
 {
     result = null;
     LinkedList blockList = new LinkedList();
@@ -316,36 +353,90 @@ bqTerm returns [TomTerm result]
                 
                 result = `Composite(compositeList);
             }
-
-        |   s = targetPlus 
-            {
-                result = `TargetLanguageToTomTerm(ITL(s));
-            }
         )
     ;
 
+bqTermForXml returns [TomTerm result]
+{
+    result = null;
+    String s;
+}
+    :
+        result = bqTermShared
+    |   s = targetPlusShared
+        {
+            result = `TargetLanguageToTomTerm(ITL(s));
+        }
+    ;
 
-targetPlus returns [String result]
+
+targetPlusShared returns [String result]
 {
     result = "";
 }
     :
+        in:BQ_INTEGER {result = in.getText();}
+    |   str:BQ_STRING {result = str.getText();}
+    |   m:BQ_MINUS {result = m.getText();}
+    |   s:BQ_STAR {result = s.getText();}
+    |   w:BQ_WS {result = w.getText();}
+    |   a:ANY {result = a.getText();}
+    ;
+
+targetPlus returns [String result]
+{
+    result = "";
+    String x = "";
+}
+    :
         (
-            in:BQ_INTEGER {result += in.getText();}
-        |   str:BQ_STRING {result += str.getText();}
-        |   m:BQ_MINUS {result += m.getText();}
-        |   s:BQ_STAR {result += s.getText();}
-        |   w:BQ_WS {result += w.getText();}
-        |   a:ANY {result += a.getText();}
-        )
+            x = xmlToken {result += x;}
+        |   x = targetPlusShared {result += x;}
+        )+
 	;
+
+xmlToken returns [String result]
+{
+    result = "";
+}
+    :
+        
+        t:XML_START_ENDING    {result = t.getText();}
+    |   t1:XML_CLOSE_SINGLETON {result = t1.getText();}
+    |   t2:XML_START  {result = t2.getText();}
+    |   t3:XML_CLOSE  {result = t3.getText();}
+    |   t4:DOUBLE_QUOTE {result = t4.getText();}
+    |   t5:XML_TEXT {result = t5.getText();}
+    |   t6:XML_COMMENT {result = t6.getText();}
+    |   t7:XML_PROC {result = t7.getText();}
+    |   t8:XML_EQUAL {result = t8.getText();}
+    ;
+
+xmlTokenToken returns [Token result]
+{
+    result = null;
+}
+    :
+        
+        t:XML_START_ENDING    {result = t;}
+    |   t1:XML_CLOSE_SINGLETON {result = t1;}
+    |   t2:XML_START  {result = t2;}
+    |   t3:XML_CLOSE  {result = t3;}
+    |   t4:DOUBLE_QUOTE {result = t4;}
+    |   t5:XML_TEXT {result = t5;}
+    |   t6:XML_COMMENT {result = t6;}
+    |   t7:XML_PROC {result = t7;}
+    |   t8:XML_EQUAL {result = t8;}
+    ;
+
      
 target returns [Token result]
 {
     result = null;
 }
     :
-        c:BQ_COMMA {result = c;} 
+        result = xmlTokenToken
+    |    c:BQ_COMMA {result = c;} 
     |   i:BQ_ID {result = i;}
     |   in:BQ_INTEGER {result = in;}
     |   str:BQ_STRING {result = str;}
@@ -383,9 +474,9 @@ beginBqAppl [Token symbol] returns [TomTerm result]
         |   (
                 BQ_LPAREN 
                 {
-                    if(xmlTerm){
+                   /* if(xmlTerm){
                         blockList.add(`Composite(emptyTomList()));
-                    }
+                    }*/
                 }
                 ( options{greedy = true;}: BQ_WS )* ( bqList[blockList] )? BQ_RPAREN
                 {
@@ -426,7 +517,6 @@ beginBqAppl [Token symbol] returns [TomTerm result]
             |   t = target
                 {
                     addTargetCode(t);
-                    p(t.toString());
                     result = `BackQuoteAppl(concOption(OriginTracking(Name(symbol.getText()), 
                                 symbol.getLine(), 
                                 Name(currentFile())
@@ -472,44 +562,253 @@ beginBqComposite returns[TomTerm result]
             selector().pop();
         }
     ;
-/*
-beginXmlBackquote
+
+beginXmlBackquote returns [TomTerm result]
+{
+    result = null;
+    TomTerm term = null;
+    TomList termList = `emptyTomList();
+    TomList contextList = `emptyTomList();
+}
+
     :
-        BQ_LPAREN xmlTerm BQ_RPAREN
+        BQ_LPAREN (BQ_WS)* 
+        ( {LA(1) != XML_START}? contextList = context )?
+        (
+            term = xmlTerm[contextList]//[attributeList,childrenList]
+            {
+/*
+                if(contextList != null){
+                    term = updateContext(term,contextList);
+                    contextList = null;
+                }
+*/
+                termList = (TomList) termList.append(term);
+            }
+        )*
+        BQ_RPAREN
+        { 
+            selector().pop();
+       //     termList = updateContext(termList,contextList);
+            result = `Composite(termList);
+        }
     ;
 
-xmlTerm
+context returns [TomList result]
+{
+    result = `emptyTomList();
+    TomTerm term = null;
+}
+    :
+        {LA(1) != XML_START}? term = bqTermForXml BQ_COMMA (BQ_WS)*
+        {
+            result = (TomList) result.append(removeComposite(term));
+        }
+        ( 
+            {LA(1) != XML_START}? term = bqTermForXml
+                {
+                    result = (TomList) result.append(removeComposite(term));
+                }
+            BQ_COMMA (BQ_WS)*
+        )*
+    ;
+
+xmlTerm [TomList context] //[LinkedList attributes, LinkedList children] 
+returns [TomTerm result]
+{
+    result = null;
+    TomTerm term = null;
+
+    LinkedList attributes = new LinkedList();
+    LinkedList children = new LinkedList();
+    TomList attributeTomList = `emptyTomList();
+    TomList childrenTomList = `emptyTomList();
+}
     :
         (
-            "<" BQ_ID xmlAttributeList
+            XML_START (BQ_WS)* name:BQ_ID
+            
+            (BQ_WS)* xmlAttributeList[attributes,context]
+            {
+                attributeTomList = buildList(attributes);
+            }
             ( 
-                "/>" 
-            |   ">" xmlChilds "</" BQ_ID ">"
+                XML_CLOSE_SINGLETON (BQ_WS)*
+                
+            |   XML_CLOSE (BQ_WS)*  
+                xmlChildren[children,context]
+                {
+                    childrenTomList = buildList(children);
+                }
+                XML_START_ENDING (BQ_WS)* 
+                BQ_ID (BQ_WS)* XML_CLOSE
             )
-        |   bqTerm
+            {
+                if(context == null){
+                    result = `BackQuoteAppl(
+                        emptyOptionList(),
+                        Name(Constants.ELEMENT_NODE),
+                        concTomTerm(
+                        BackQuoteAppl(
+                                emptyOptionList(),
+                                Name(encodeName(name.getText())),
+                                emptyTomList()
+                            ),
+                            BackQuoteAppl(
+                                emptyOptionList(),
+                                Name(Constants.CONC_TNODE),
+                                attributeTomList
+                            ),
+                            BackQuoteAppl(
+                                emptyOptionList(),
+                                Name(Constants.CONC_TNODE),
+                                childrenTomList
+                            )
+                        )
+                    );
+                }
+                else{
+                    result = `BackQuoteAppl(
+                        emptyOptionList(),
+                        Name(Constants.ELEMENT_NODE),
+                        concTomTerm(
+                            context*,
+                            BackQuoteAppl(
+                                emptyOptionList(),
+                                Name(encodeName(name.getText())),
+                                emptyTomList()
+                            ),
+                            BackQuoteAppl(
+                                emptyOptionList(),
+                                Name(Constants.CONC_TNODE),
+                                attributeTomList
+                            ),
+                            BackQuoteAppl(
+                                emptyOptionList(),
+                                Name(Constants.CONC_TNODE),
+                                childrenTomList
+                            )
+                        )
+                    );
+                }
+            }
+            
+            
+        |   term = bqTermForXml
+            {
+              result = term;
+            }
         )
     ;
 
-xmlAttributeList
+xmlAttributeList [LinkedList attributeList, TomList context]
+{
+    TomTerm term = null;
+}
     :
-        ( xmlAttribute )*
+        ( 
+            term = xmlAttribute[context]
+            {
+                attributeList.add(term);
+            }
+            (BQ_WS)* 
+        )*
     ;
 
-xmlAttribute
+xmlAttribute [TomList context] returns [TomTerm result]
+{
+    result = null;
+    TomTerm value = null;
+}
     :
-        BQ_ID "=" termStringIdentifier
+        n:BQ_ID  
+        (
+            (BQ_WS)* XML_EQUAL (BQ_WS)* value = termStringIdentifier
+            {
+                if(context == null){
+                    result = `BackQuoteAppl(
+                        emptyOptionList(),
+                        Name(Constants.ATTRIBUTE_NODE),
+                        concTomTerm(
+                            BackQuoteAppl(
+                                emptyOptionList(),
+                                Name(encodeName(n.getText())),
+                                emptyTomList()
+                            ),
+                            BackQuoteAppl(
+                                emptyOptionList(),
+                                Name("\"true\""),
+                                emptyTomList()
+                            ),
+                            value
+                        )
+                    );
+                }   
+                else{
+                    result = `BackQuoteAppl(
+                        emptyOptionList(),
+                        Name(Constants.ATTRIBUTE_NODE),
+                        concTomTerm(
+                            context*,
+                            BackQuoteAppl(
+                                emptyOptionList(),
+                                Name(encodeName(n.getText())),
+                                emptyTomList()
+                            ),
+                            BackQuoteAppl(
+                                emptyOptionList(),
+                                Name("\"true\""),
+                                emptyTomList()
+                            ),
+                            value
+                        )
+                    );
+                }
+            }
+        |   BQ_STAR 
+            {
+                result = `VariableStar(
+                    emptyOptionList(),
+                    Name(n.getText()),
+                    TomTypeAlone("unknown type"),
+                    emptyConstraintList()
+                );
+            }
+        )
     ;
 
-termStringIdentifier
+termStringIdentifier returns [TomTerm result]
+{
+    result = null;
+}
     :
-        BQ_ID | BQ_STRING
+        name:BQ_ID 
+        {
+            result = `TargetLanguageToTomTerm(ITL(name.getText()));
+        }
+    |   string:BQ_STRING
+        {
+            result = `TargetLanguageToTomTerm(ITL(string.getText()));
+        }
     ;
 
-xmlChilds
+xmlChildren [LinkedList children, TomList context]
+{
+   // result = null;
+    TomTerm term = null;
+    
+    LinkedList attributeList = new LinkedList();
+    LinkedList childrenList = new LinkedList();    
+}
     :
-        ( xmlTerm )*
+        ( 
+            term = xmlTerm[context]//[attributeList,childrenList] 
+            {
+                children.add(term);
+            }
+            (BQ_WS)*
+        )*
     ;
-*/
 
 
 class NewBQLexer extends Lexer;
@@ -532,6 +831,17 @@ BQ_RPAREN      :    ')'   ;
 BQ_COMMA       :    ','   ;
 BQ_STAR        :    '*'   ;
 
+//XML Tokens
+XML_EQUAL   :   '=' ;
+XML_START_ENDING    : "</" ;
+XML_CLOSE_SINGLETON : "/>" ;
+XML_START   :   '<';
+XML_CLOSE   :   '>' ;
+DOUBLE_QUOTE:   '\"';
+XML_TEXT    :   "#TEXT";
+XML_COMMENT :   "#COMMENT";
+XML_PROC    :   "#PROCESSING-INSTRUCTION";
+
 protected BQ_DOT    :    '.'   ;
 
 // tokens to skip : white spaces
@@ -550,16 +860,34 @@ BQ_WS	:	(	' '
 
 
 
-
-
 BQ_ID
-    options{ testLiterals = true; }   
+options{ testLiterals = true; }   
+    :
+        (
+            (BQ_MINUS_ID) => BQ_MINUS_ID
+        |   BQ_SIMPLE_ID
+        )
+    ;
+
+protected
+BQ_SIMPLE_ID
+options{ testLiterals = true; }   
     :   ('a'..'z' | 'A'..'Z') 
         ( 
             ('a'..'z' | 'A'..'Z') 
         |   BQ_UNDERSCORE 
         |   BQ_DOT
         |   BQ_DIGIT
+        )*
+    ;
+
+protected
+BQ_MINUS_ID
+    :
+        BQ_SIMPLE_ID BQ_MINUS ('a'..'z' | 'A'..'Z') 
+        ( 
+            BQ_MINUS ('a'..'z' | 'A'..'Z') 
+        |   BQ_SIMPLE_ID
         )*
     ;
 

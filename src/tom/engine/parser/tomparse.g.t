@@ -1196,13 +1196,19 @@ bqTerm returns [TomTerm result]
         |
             i:ALL_ID 
             {
-                if(i.getText().equals("xml")){
-                    bqparser.setXmlTerm(true);
-                }
-                blockList.add(i);
                 selector().push("bqlexer");
-                result = bqparser.beginBqAppl(i);
+                if(i.getText().equals("xml")){
+                  //  bqparser.setXmlTerm(true);
+                    //result = bqparser.beginBqAppl(i);
+                    result = bqparser.beginXmlBackquote();
+                    //p(result.toString());
+                }
+                else{
+                    //blockList.add(i);
+                    result = bqparser.beginBqAppl(i);
+                }
                 selector().pop();
+                
             }
         )
     ;
