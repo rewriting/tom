@@ -30,5 +30,5 @@ List1.tom.cmo: List1.tom.ml
 list: tomExtension.cmo tomList.cmo List1.cmo
 	ocamlc -o list tomExtension.cmo tomList.cmo List1.cmo
 
-tomlist: tomExtension.cmo List1.tom.cmo
-	ocamlc -o tomlist tomExtension.cmo List1.tom.cmo
+tomlist: List1.tom.cmo
+	ocamlc -o tomlist List1.tom.cmo

@@ -1,4 +1,3 @@
-
 open Peanotype ;;
 exception Erreur of string ;;
 
