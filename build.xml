@@ -226,7 +226,14 @@
 		</delete>
 	</target>
 
-	<target name="check" description="Compile and run acceptance tests" depends="initsrc">
+	<target name="inittest">
+		<!-- For this to work, you must add lib/junit.jar to your classpath -->
+		<taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+			<classpath refid="tomsrc.classpath"/>
+		</taskdef>
+	</target>
+	
+	<target name="check" description="Compile and run acceptance tests" depends="initsrc, inittest">
 		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.mapping} -I ${src.adt}">
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
@@ -237,6 +244,20 @@
 			<include name="Record.t"/>
 			<exclude name="**/error/**"/>
 		</tomsrc>
+		<javac srcdir="${test}" destdir="${test}" verbose="${javacVerbose}">
+			<classpath refid="src.classpath"/>
+			<exclude name="**/error/**"/>
+		</javac>
+		<junit printsummary="yes">
+			<classpath refid="src.classpath"/>
+			<batchtest>
+				<fileset dir="${test}">
+					<include name="**/*TestArray.java"/>
+					<exclude name="**/error/**"/>
+				</fileset>
+			</batchtest>
+			<formatter type="plain"/>
+		</junit>
 	</target>
 
 </project>
