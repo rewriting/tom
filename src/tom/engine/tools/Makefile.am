@@ -8,7 +8,7 @@ javadir         = ${prefix}/classes/jtom/tools
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(TSADT_SRC):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/tools
-BOOTSOURCES	= Tools.java OutputCode.java SingleLineOutputCode.java\
+BOOTSOURCES	= Tools.java OutputCode.java \
 		  ASTFactory.java TomFactory.java\
                   SymbolTable.java TomTask.java TomTaskInput.java
 
