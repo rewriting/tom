@@ -728,12 +728,11 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   LinkedList optionList = new LinkedList();
   NameList nameList = null;
   boolean implicit;
-  OptionList option = null;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   if(annotedName!=null) { optionList.add(annotedName); }
 }
 {
-    term = XMLTerm(option) { return term; }
+    term = XMLTerm(optionList) { return term; }
   | // X* | _*
     LOOKAHEAD(2)
     term = UnamedVariableStarOrVariableStar(optionList) {return term; }
@@ -755,18 +754,17 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
           }
         }
         
-        option = ast().makeOptionList(optionList);
+        
         if(implicit) {
-          return tsf().makeTomTerm_RecordAppl(option,nameList,ast().makeList(list));
+          return tsf().makeTomTerm_RecordAppl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
         } else {
-          return tsf().makeTomTerm_Appl(option,nameList,ast().makeList(list));
+          return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
         }
       }
   | // identifier | integer | double | string
     nameList = HeadSymbolList(optionList)
     {
-      option = ast().makeOptionList(optionList);
-      return tsf().makeTomTerm_Appl(option,nameList,tsf().makeTomList());
+      return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,tsf().makeTomList());
     }
 }
 
@@ -918,18 +916,18 @@ NameList XMLNameList(LinkedList optionList) throws TomException:
     }
 }
 
-TomTerm XMLTerm(OptionList option) throws TomException:
+TomTerm XMLTerm(LinkedList optionList) throws TomException:
 {
   TomTerm term;
   TomTerm arg1;
   TomTerm arg2;
   LinkedList list = new LinkedList();
   LinkedList childs = new LinkedList();
-  LinkedList optionList = new LinkedList();
   String keyword = "";
   boolean implicit;
   NameList nameList;
   NameList closingNameList;
+  OptionList option;
 }
 {
   (
@@ -1177,7 +1175,13 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
       switchToDefaultMode(); /* switch to DEFAULT mode */
         //term = ast().buildBackQuoteTerm(tokenList);
       term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
-      if(backQuote != null) {
+
+      if(term.isComposite() && term.getArgs().isSingle()) {
+        TomTerm backQuoteTerm = term.getArgs().getHead();
+        if(backQuoteTerm.getAstName().getString().equals("XML") && backQuoteTerm.getArgs().isSingle()) {
+          term = tsf().makeTomTerm_DoubleBackQuote(backQuoteTerm.getArgs().getHead());
+        }
+      } else if(backQuote != null) {
         term = tsf().makeTomTerm_DoubleBackQuote(term);
       }
       list.add(term);
