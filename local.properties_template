@@ -2,5 +2,4 @@
 # - where JavaCC is
 # - where jtom-doc is
 
-javaccdir       = {JAVACCPATH}/java/javacc-3.2
 tomdocdir       = {JTOMDOCPATH}
