@@ -366,6 +366,12 @@ abstract class TomChecker extends TomBase implements TomTask {
           foundTypeMatch.add((TomTerm) null);
           messageMatchErrorVariableStar(name, line); 
         }
+        UnamedVariableStar[option=Option(list)] -> {
+          line = findOriginTrackingLine(list);
+          nbFoundArgs++;
+          foundTypeMatch.add((TomTerm) null);
+        }
+
         RecordAppl(Option(options),Name(name),args) ->{
           line = findOriginTrackingLine(options);
           nbFoundArgs++;
@@ -817,14 +823,19 @@ abstract class TomChecker extends TomBase implements TomTask {
               nbFoundArgs++;
               foundType.add(extractType(symbolTable().getSymbol(name1)));
             }
-            VariableStar[] -> {nbFoundArgs++;foundType.add((TomTerm)null);}
+            
+            VariableStar[] -> {
+              nbFoundArgs++;
+              foundType.add((TomTerm)null);
+            }
+            UnamedVariableStar[] -> {
+              nbFoundArgs++;
+              foundType.add((TomTerm)null);
+            }
+
             Placeholder[option=Option(options)] -> {
-              if(false && listOrArray) {
-                messageImpossiblePlaceHolderInListStructure(name,options);
-              } else {
                 nbFoundArgs++;
                 foundType.add((TomTerm)null);
-              }
             }
           }
           argsList =  argsList.getTail();
@@ -862,12 +873,6 @@ abstract class TomChecker extends TomBase implements TomTask {
     }
   }
 
-  private void  messageImpossiblePlaceHolderInListStructure(String listApplName, OptionList optionList) {
-    int line = findOriginTrackingLine(optionList);
-    String s = "Placeholder is not allowed in list operator '"+listApplName+"'";
-    messageError(line,s);
-  }
-  
   private void  messageApplErrorTypeArgument(String applName, int slotNumber, String expectedType, String givenType, int line) {
     String s = "Bad type of argument: Argument "+slotNumber+" of method '" + applName + "' has type '"+expectedType+"' required but type '"+givenType+"' found";
     messageError(line,s);
@@ -1000,6 +1005,8 @@ abstract class TomChecker extends TomBase implements TomTask {
         messageRuleErrorVariableStar(name1, line);
         return ruleName;
       }
+
+      UnamedVariableStar[option=Option(options2)] |
       Placeholder[option=Option(options2)] -> { 
         messageRuleErrorLhsImpossiblePlaceHolder(options2);
         return ruleName;
@@ -1063,6 +1070,7 @@ abstract class TomChecker extends TomBase implements TomTask {
           permissiveVerify(appl);
           break matchBlock;
         }
+        UnamedVariableStar[option=Option(option)] |
         Placeholder[option=Option(option)] -> {
           messageRuleErrorRhsImpossiblePlaceholder(option);
           break matchBlock;

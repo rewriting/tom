@@ -403,7 +403,7 @@ public class TomBase {
 
   protected TomTerm getAnnotedVariable(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(X1*,TomTermToOption(var@Variable(option,name,type)),X2*) -> { return var; }
+      concOption(_*,TomTermToOption(var@Variable(option,name,type)),_*) -> { return var; }
     }
     return null;
   }
