@@ -133,6 +133,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @param optionValue the option's desired value
    */
   public void optionChanged(String optionName, Object optionValue) {
+    //optionName = getCanonicalName(optionName);
     if(optionName.equals("verbose")) {
       if( ((Boolean)optionValue).booleanValue() ) { 
         Tom.changeLogLevel(Level.INFO);
@@ -166,7 +167,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     }
     // alert the owner of the change
     OptionOwner owner = getOptionOwnerFromName(optionName);
-    owner.optionChanged(optionName, optionValue);
+    owner.optionChanged(getCanonicalName(optionName), optionValue);
   }
   
   /**
