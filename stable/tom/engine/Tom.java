@@ -86,7 +86,7 @@ public class Tom {
   }
   
   private static String version =
-    "\njtom 2.0rc1\n"
+    "\njtom 2.0rc2\n"
     + "\n"
     + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n";
   

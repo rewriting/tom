@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  *
- * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
  *
  **/
 
@@ -53,8 +53,8 @@ public class TomTaskParser extends TomTask {
   }
   
   public void process() {
-  	try {
-  		long startChrono = System.currentTimeMillis();
+    try {
+      long startChrono = System.currentTimeMillis();
       if(getInput().isJCode()) {
         TomJavaParser javaParser = TomJavaParser.createParser(fileName);
         String packageName = javaParser.JavaPackageDeclaration();
@@ -66,39 +66,39 @@ public class TomTaskParser extends TomTask {
         getInput().setPackagePath("");
       }
       this.parser = TomParser.createParser(fileName);
-  		TomTerm parsedTerm = parser.startParsing();
-  		
-  		if(getInput().isVerbose()) {
-  			System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-  		}
-  		if(getInput().isEclipseMode()) {
-  			String fileName = getInput().getInputFileNameWithoutSuffix() + getInput().parsedTableSuffix;
-  			Tools.generateOutput(fileName, symbolTable().toTerm());
-  		}
+      TomTerm parsedTerm = parser.startParsing();
+      
+      if(getInput().isVerbose()) {
+        System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      }
+      if(getInput().isEclipseMode()) {
+        String fileName = getInput().getInputFileNameWithoutSuffix() + getInput().parsedTableSuffix;
+        Tools.generateOutput(fileName, symbolTable().toTerm());
+      }
       if(getInput().isIntermediate()) {
         Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().parsedSuffix, parsedTerm);
         Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().parsedTableSuffix, symbolTable().toTerm());
       }
         
       if(getInput().isDebugMode()) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().debugTableSuffix, parser.getStructTable());	
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().debugTableSuffix, parser.getStructTable());  
       }
         
-  		// Update environment
-  		environment().setTerm(parsedTerm);
+      // Update environment
+      environment().setTerm(parsedTerm);
       
     } catch (TokenMgrError e) {
       TomEnvironment.getInstance().addError(TomMessage.getString("TokenMgrError"), new Object[]{fileName, e.getMessage()}, fileName,  TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-  	} catch (TomIncludeException e) {
-  	  TomEnvironment.getInstance().addError(e.getMessage(), fileName,  TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-  	} catch (TomException e) {
-  	  TomEnvironment.getInstance().addError(e.getMessage(), fileName,  TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+    } catch (TomIncludeException e) {
+      TomEnvironment.getInstance().addError(e.getMessage(), fileName,  TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+    } catch (TomException e) {
+      TomEnvironment.getInstance().addError(e.getMessage(), fileName,  TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
     } catch (ParseException e) {
       TomEnvironment.getInstance().addError(TomMessage.getString("TokenMgrError"), new Object[]{fileName, e.getMessage()}, fileName, TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-  	} catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
-  	  TomEnvironment.getInstance().addError(TomMessage.getString("UnhandledException"), new Object[]{fileName, e.getMessage()}, fileName, 0, TomMessage.TOM_ERROR);
-  	}
+      TomEnvironment.getInstance().addError(TomMessage.getString("UnhandledException"), new Object[]{fileName, e.getMessage()}, fileName, 0, TomMessage.TOM_ERROR);
+    }
   }
 
 

@@ -4,6 +4,9 @@
     This script prepare a bundle of Tom examples
   </description>
 
+	<!-- current version of TOM -->
+	<property name="version" value="2.0rc2"/>
+
   <property environment="env" />
 	<property name="tom.home" value="${env.TOM_HOME}"/>
   <!-- some used directory location -->
@@ -545,7 +548,7 @@
   </target>
   
   <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">
-    <tar tarfile="${examples.dist}/jtom-examples.tar.gz" compression="gzip">
+    <tar tarfile="${examples.dist}/jtom-${version}-examples.tar.gz" compression="gzip">
       <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
         <include name="README"/>
         <include name="build.xml"/>

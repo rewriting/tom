@@ -28,7 +28,7 @@ options {
   * along with this program; if not, write to the Free Software
   * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
   *
-  * Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+  * Pierre-Etienne Moreau e-mail: Pierre-Etienne.Moreau@loria.fr
   *
   **/
 
@@ -188,54 +188,54 @@ public class TomParser {
     list.add(makeTL(code));
   }
   
-	private static boolean testIncludedFile(String fileName, HashSet fileSet) {
-		// !(true) if the set did not already contain the specified element.
-		return !fileSet.add(fileName);
-	}
-	
-	private void includeFile(String fileName, LinkedList list) throws TomException, TomIncludeException {
-	  TomTerm astTom;
-  	InputStream input;
-  	byte inputBuffer[];
-  	TomParser tomParser;
-		File file;
-		String fileAbsoluteName = "";
-		fileName = fileName.trim();
+  private static boolean testIncludedFile(String fileName, HashSet fileSet) {
+    // !(true) if the set did not already contain the specified element.
+    return !fileSet.add(fileName);
+  }
+  
+  private void includeFile(String fileName, LinkedList list) throws TomException, TomIncludeException {
+    TomTerm astTom;
+    InputStream input;
+    byte inputBuffer[];
+    TomParser tomParser;
+    File file;
+    String fileAbsoluteName = "";
+    fileName = fileName.trim();
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
     try {
       file = new File(fileName);
       if(file.isAbsolute()) {
         if (!file.exists()) {
-	      	String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
-  	      throw new TomIncludeException(msg);
-  	    }
+          String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
+          throw new TomIncludeException(msg);
+        }
       } else {
-	      boolean found = false;
-	        // try first relative to inputfilename
-	      File parent = new File(currentFile).getParentFile();
-	      file = new File(parent, fileName).getCanonicalFile();
-	      found = file.exists();
-	      if(!found) {
-	          // Look for importList
-	        for(int i=0 ; !found && i<getInput().getImportList().size() ; i++) {
-  	        file = new File((File)getInput().getImportList().get(i),fileName).getCanonicalFile();
-    	      //System.out.println("look for: " + file.getPath());
-    	      found = file.exists();
-    	    }
-       	  if(!found) {
-       	 		String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
+        boolean found = false;
+          // try first relative to inputfilename
+        File parent = new File(currentFile).getParentFile();
+        file = new File(parent, fileName).getCanonicalFile();
+        found = file.exists();
+        if(!found) {
+            // Look for importList
+          for(int i=0 ; !found && i<getInput().getImportList().size() ; i++) {
+            file = new File((File)getInput().getImportList().get(i),fileName).getCanonicalFile();
+            //System.out.println("look for: " + file.getPath());
+            found = file.exists();
+          }
+          if(!found) {
+            String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
             throw new TomIncludeException(msg);
-        	}
+          }
         }
       }
       fileAbsoluteName = file.getAbsolutePath();
       if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
         String msg = MessageFormat.format(TomMessage.getString("IncludedFileCycle"), new Object[]{fileName, new Integer(getLine()), currentFile});
-  	      throw new TomIncludeException(msg);
+          throw new TomIncludeException(msg);
       }
-      if(TomParser.testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {  	
-      	String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
+      if(TomParser.testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
+        String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
         throw new TomIncludeException(msg);
       }
        
@@ -250,7 +250,7 @@ public class TomParser {
       String msg = MessageFormat.format(TomMessage.getString("ErrorWhileIncludindFile"), new Object[]{e.getClass(), fileAbsoluteName, currentFile, new Integer(getLine()), e.getMessage()});
       throw new TomException(msg);
     }
-	}
+  }
 }
 
 PARSER_END(TomParser)
@@ -363,9 +363,9 @@ SKIP :
 | "\n"
 | "\r"
 | "\f"
-| <	( " " | "\t" | "\n" | "\r" )+		  >
-| <	"<!--" ( ~["-"] | ( "-" ~["-"] ) )* "-->" >
-| <	"<?"   (~[">"])* ">"                      >
+| < ( " " | "\t" | "\n" | "\r" )+     >
+| < "<!--" ( ~["-"] | ( "-" ~["-"] ) )* "-->" >
+| < "<?"   (~[">"])* ">"                      >
 }
 
 /* TOM COMMENTS */
@@ -1014,14 +1014,14 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
         {
           if(!nameList.equals(closingNameList)) {
             String found="", expected ="";
-          	while(!nameList.isEmpty()) {
-          		expected += "|"+nameList.getHead().getString();
-          		nameList = nameList.getTail();
-          	}
-          	while(!closingNameList.isEmpty()) {
-          		found += "|"+closingNameList.getHead().getString();
-          		closingNameList = closingNameList.getTail();
-          	}
+            while(!nameList.isEmpty()) {
+              expected += "|"+nameList.getHead().getString();
+              nameList = nameList.getTail();
+            }
+            while(!closingNameList.isEmpty()) {
+              found += "|"+closingNameList.getHead().getString();
+              closingNameList = closingNameList.getTail();
+            }
             /*throw new TomException("Error on closing XML pattern: expecting '"+ expected.substring(1) +"' but got '"+found.substring(1)+ "' at line "+getLine());
             return null;*/
             // TODO find the orgTrack of the match
@@ -1055,7 +1055,7 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
             nameList,
             ast().makeList(attributeList),
             ast().makeList(childs),
-						ast().makeConstraintList(constraintList));
+            ast().makeConstraintList(constraintList));
           return term;
         }
     
@@ -1091,7 +1091,7 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
       return `RecordAppl(option,
                                     nameList,
                                     ast().makeList(pairSlotList),
-																		constraint);
+                                    constraint);
 
     }
 }
@@ -1119,7 +1119,7 @@ TomTerm TermStringIdentifier(LinkedList options) throws TomException:
         option,
         nameList,
         concTomTerm(),
-				concConstraint());
+        concConstraint());
     }
 }
 
@@ -1244,7 +1244,7 @@ TomTerm XMLAttribute() throws TomException:
       return `RecordAppl(option,
                                     nameList,
                                     ast().makeList(list),
-																		constraint);
+                                    constraint);
     }
 }
 
@@ -1362,13 +1362,13 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
 
 void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
-	TargetLanguage vasTL;
-	String vasCode, fileName = "", apiName = null, packageName ="";
+  TargetLanguage vasTL;
+  String vasCode, fileName = "", apiName = null, packageName ="";
   File file;
   LinkedList blockList = new LinkedList();
 }
 {
-	<VAS_SIGNATURE> /* switch to TOM mode */
+  <VAS_SIGNATURE> /* switch to TOM mode */
     {
       addPreviousCode(list);
     }
@@ -1419,15 +1419,15 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
           ArrayList apigenParamList = new ArrayList();
           apigenParamList.add("--input");
           apigenParamList.add((String)generatedADTName);
-					apigenParamList.add("--outputdir");
-					apigenParamList.add(getInput().getDestDir().getPath());
-					apigenParamList.add("--name");
-					apigenParamList.add(apiName);
-					apigenParamList.add("--nojar");
-					apigenParamList.add("--javagen");
-					if(!packageName.equals("")) {
-          	apigenParamList.add("--package");
-  					apigenParamList.add(packageName);
+          apigenParamList.add("--outputdir");
+          apigenParamList.add(getInput().getDestDir().getPath());
+          apigenParamList.add("--name");
+          apigenParamList.add(apiName);
+          apigenParamList.add("--nojar");
+          apigenParamList.add("--javagen");
+          if(!packageName.equals("")) {
+            apigenParamList.add("--package");
+            apigenParamList.add(packageName);
           }
           mainMethod.invoke(apigenClass, new Object[]{apigenParamList.toArray(new String[]{})});
         }
@@ -1437,7 +1437,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         throw new TomException(MessageFormat.format(TomMessage.getString("ApigenInvocationIssue"), new Object[]{e.getMessage()}));
       }
 
-				// Simulate the inclusion of generated Tom file
+        // Simulate the inclusion of generated Tom file
       String dir = getInput().getDestDir().getPath();
       if (packageName != null) {
         dir = dir + File.separatorChar + packageName;
@@ -1449,10 +1449,10 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
       file = new File(dir, adtFileName.substring(0, adtFileName.length()-".adt".length())+".tom");
       try {
         fileName = file.getCanonicalPath();
-	    } catch (IOException e) {
+      } catch (IOException e) {
         throw new TomIncludeException(MessageFormat.format(TomMessage.getString(""), new Object[]{fileName, currentFile, e.getMessage()}));
-	    } 
-	    includeFile(fileName, list);
+      } 
+      includeFile(fileName, list);
     }
   
 }
@@ -1577,7 +1577,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
   type = <TOM_IDENTIFIER>
   name = <TOM_IDENTIFIER>
     {   orgTrack = `OriginTracking(Name(name.image),getLine(),Name( currentFile));
-    	options.add(orgTrack);
+      options.add(orgTrack);
     }
   [ <TOM_LPAREN>
       { stringSlotName = ""; }
@@ -1605,7 +1605,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
             }
           }
           slotNameList.add(astName);
-	      types = (TomTypeList) types.append(`TomTypeAlone(typeArg.image));
+        types = (TomTypeList) types.append(`TomTypeAlone(typeArg.image));
         }
       )*
       <TOM_RPAREN> ]
@@ -1745,7 +1745,7 @@ void OperatorArray(LinkedList list) throws TomException: /* in DEFAULT mode */
     { options.add(`OriginTracking(Name(name.image),getLine(),Name( currentFile)));}
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
          { 
- 	   types = (TomTypeList) types.append(`TomTypeAlone(typeArg.image));
+     types = (TomTypeList) types.append(`TomTypeAlone(typeArg.image));
          }
   <TOM_LBRACE>
     tlFsym = KeywordFsym()
@@ -2211,7 +2211,7 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
           } else {
             type = (TomType)types.elementAt(index++);
           }
-   	      Option info2 = `OriginTracking(Name(nameArg.image),getLine(),Name( currentFile));
+          Option info2 = `OriginTracking(Name(nameArg.image),getLine(),Name( currentFile));
           OptionList option2 = ast().makeOption(info2);
           args.add(ast().makeVariable(option2,`Name(nameArg.image), type));
         }
