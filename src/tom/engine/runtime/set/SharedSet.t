@@ -35,14 +35,21 @@ import jtom.runtime.set.jgtreeset.*;
 
 import jtom.runtime.GenericTraversal;
 import jtom.runtime.Replace1;
+import jtom.runtime.Collect1;
 
-public class SharedSet {
+public class SharedSet implements Collection {
 
+    // The internal representation of Shared Sets are trees defined by Jean Goubault 
   private JGTreeSet tree = null;
+    // depth of tree allows to represent set with 2^depth elements
   private int depth = 31;
+    // Count how many elements are in the set
+  private int count = 0;
+    // Modification counter to detect issues in iteration operation
+  private int modCount = 0;
   private static SetFactory factory = null;
-  private GenericTraversal traversal = new GenericTraversal();;
-  private int collisions = 0;
+  private GenericTraversal traversal = new GenericTraversal();
+  private static int collisions = 0;
   private final static int[] mask =
   { 1 << 0, 
     1 << 1,
@@ -86,90 +93,236 @@ public class SharedSet {
     this.tree = makeEmptySet();
   }
   
-  private SharedSet(SetFactory fact, JGTreeSet tree) {
+  private SharedSet(SetFactory fact, JGTreeSet tree, int count) {
     this.factory = fact;
     this.traversal = new GenericTraversal();
     this.tree = tree;
+    this.count = count;
+  }
+
+  public int hashCode() {
+    return tree.getUniqueIdentifier();
   }
   
   private SetFactory getSetFactory() { 
     return factory;
   }
   
-  public JGTreeSet makeEmptySet() {
+  private JGTreeSet makeEmptySet() {
     return getSetFactory().makeJGTreeSet_EmptySet();
   }
   
-  public JGTreeSet makeSingleton(ATerm trm) {
+  private JGTreeSet makeSingleton(ATerm trm) {
     return getSetFactory().makeJGTreeSet_Singleton(trm);
   }
   
-  public JGTreeSet makeBranch(JGTreeSet left, JGTreeSet right) {
+  private JGTreeSet makeBranch(JGTreeSet left, JGTreeSet right) {
     return getSetFactory().makeJGTreeSet_Branch(left, right);
   }
  
-  public JGTreeSet getTreeSet() {
+  private JGTreeSet getTreeSet() {
     return tree;
   }
 
-    // 1rst interface
+  public String toString() {
+    return tree.toString();
+  }
+  
+    // High level interface
   public boolean equals(SharedSet set) {
     return (tree == set.getTreeSet());
+  }
+
+  public void clear() {
+    tree = makeEmptySet();
+    count = 0;
   }
   
   public boolean isEmpty() {
     return tree.isEmptySet();
   }
 
-  public boolean member(ATerm elt) {
-    return member(elt, tree, 0);
+  public boolean contains(Object o) {
+    if (o instanceof ATerm)
+      return contains((ATerm)o);
+    else
+      throw new RuntimeException("Not an ATerm");
+  }
+  
+  public boolean containsAll(Collection c) {
+    Iterator it = c.iterator();
+    Object o = null;
+    while(it.hasNext()) {
+      o = it.next();
+      if (o instanceof ATerm) {
+        if (!contains((ATerm)o))
+          return false;
+      }
+      else
+        throw new RuntimeException("Not an ATerm");
+    }
+    return true;    
+  }
+  
+  public Object[] toArray() {
+    final Collection res = new ArrayList();
+      Collect1 collect = new Collect1() {
+          public boolean apply(ATerm t) {
+            if(t instanceof JGTreeSet) {
+              %match(JGTreeSet t) {
+                emptySet -> {return false;}
+                singleton(x) -> {
+                  res.add(x);
+                  return false;
+                }
+                _ -> {return true;}
+              }
+            } else {
+              return true;
+            }
+          } // Apply
+        }; //new
+      
+      SharedSet.this.traversal.genericCollect(tree, collect);
+      ATerm[] result = new ATerm[res.size()];
+      for(int i=0;i<res.size();i++) {
+        result[i] = (ATerm) (((ArrayList)res).get(i));
+      }
+      return result;
+        //return SetIterator.createTableFromTree(tree);
+  }
+
+   public Object[] toArray(Object[] o) {
+    final Collection res = new ArrayList();
+      Collect1 collect = new Collect1() {
+          public boolean apply(ATerm t) {
+            if(t instanceof JGTreeSet) {
+              %match(JGTreeSet t) {
+                emptySet -> {return false;}
+                singleton(x) -> {
+                  res.add(x);
+                  return false;
+                }
+                _ -> {return true;}
+              }
+            } else {
+              return true;
+            }
+          } // Apply
+        }; //new
+      
+      SharedSet.this.traversal.genericCollect(tree, collect);
+      ATerm[] result = new ATerm[res.size()];
+      for(int i=0;i<res.size();i++) {
+        result[i] = (ATerm) (((ArrayList)res).get(i));
+      }
+      return result;
+        //return SetIterator.createTableFromTree(tree);
+  }
+    
+  public boolean contains(ATerm elt) {
+    return contains(elt, tree, 0);
+  }
+  
+  public boolean add(Object o) {
+    if (o instanceof ATerm)
+      return add((ATerm)o);
+    else
+      throw new RuntimeException("Not an ATerm");
   }
   
   public boolean add(ATerm elt) {
     JGTreeSet c = (JGTreeSet)tree.duplicate();
     tree = override(elt, tree, 0);
+    modCount++;
     return (tree.equivalent(c));
   }
 
+  public boolean addAll(Collection c) {
+    JGTreeSet before = (JGTreeSet)tree.duplicate();
+    
+    Iterator it = c.iterator();
+    Object o = null;
+    while(it.hasNext()) {
+      o = it.next();
+      if (o instanceof ATerm) {
+        tree = override(o, tree, 0);
+      }
+      else
+        throw new RuntimeException("Not an ATerm");
+    }
+    modCount++;
+    return (tree.equivalent(before));
+  }
+  
+  public boolean remove(Object o) {
+    if (o instanceof ATerm)
+      return remove((ATerm)o);
+    else
+      throw new RuntimeException("Not an ATerm");
+  }
   public boolean remove(ATerm elt) {
     JGTreeSet c = (JGTreeSet)tree.duplicate();
     tree = remove(elt, tree, 0);
+    modCount++;
     return (tree.equivalent(c));
+  }
+
+  public boolean removeAll(Collection c) {
+    JGTreeSet before = (JGTreeSet)tree.duplicate();
+    
+    Iterator it = c.iterator();
+    Object o = null;
+    while(it.hasNext()) {
+      o = it.next();
+      if (o instanceof ATerm) {
+        tree = remove(o, tree, 0);
+      }
+      else
+        throw new RuntimeException("Not an ATerm");
+    }
+    modCount++;
+    return (tree.equivalent(before));
+  }
+  
+  public boolean retainAll(Collection c) {
+    return true;
   }
 
   public int size() {
     return size(tree);
   }
-
+  
     // getHead return the first left inner element found
   public ATerm getHead() {
     return getHead(tree);
   }
-
+  
   public SharedSet getTail() {
     JGTreeSet set = remove(getHead(tree), tree);
-    return new SharedSet(getSetFactory(), set);
+    return new SharedSet(getSetFactory(), set, count-1);
   }
-
-
   
-    // 2nd interface
-  public boolean isEmpty(JGTreeSet set) {
+  public String topRepartition() {
+    return topRepartition(tree);
+  }
+    // Low interface
+  private boolean isEmpty(JGTreeSet set) {
     return set.isEmptySet();
   }
   
-  public boolean member(ATerm elt, JGTreeSet t) {
-    return member(elt, t, 0);
+  private boolean contains(ATerm elt, JGTreeSet t) {
+    return contains(elt, t, 0);
   }
-  public JGTreeSet add(ATerm elt, JGTreeSet t) {
+  private JGTreeSet add(ATerm elt, JGTreeSet t) {
     return override(elt, t, 0);
   }
   
-  public JGTreeSet remove(ATerm elt, JGTreeSet t) {
+  private JGTreeSet remove(ATerm elt, JGTreeSet t) {
     return remove(elt, t, 0);
   }
   
-  public int size(JGTreeSet t) {
+  private int size(JGTreeSet t) {
     %match(JGTreeSet t) {
       emptySet    -> { return 0; }
       singleton(x) -> { return 1; }
@@ -179,7 +332,7 @@ public class SharedSet {
   }
 
       // getHead return the first left inner element found
-  public ATerm getHead(JGTreeSet t) {
+  private ATerm getHead(JGTreeSet t) {
     %match(JGTreeSet t) {
       emptySet -> {
         return null;
@@ -196,24 +349,24 @@ public class SharedSet {
     return null;
   }
 
-  public JGTreeSet getTail(JGTreeSet t) {
+  private JGTreeSet getTail(JGTreeSet t) {
     return remove(getHead(t), t);
   }
   
-  public JGTreeSet union(JGTreeSet t1, JGTreeSet t2) {
+  private JGTreeSet union(JGTreeSet t1, JGTreeSet t2) {
     return union(t1, t2, 0);
   }
 
-  public JGTreeSet intersection(JGTreeSet t1, JGTreeSet t2) {
+  private JGTreeSet intersection(JGTreeSet t1, JGTreeSet t2) {
     JGTreeSet result = intersection(t1, t2, 0);
     return result;
       //return reworkJGTreeSet(result);
   }
   
-  public void topRepartition(JGTreeSet t) {
+  private String topRepartition(JGTreeSet t) {
     %match(JGTreeSet t) {
-      branch(l,r) -> { System.out.println("Left branch: "+size(l)+"\tright branch: "+size(r));return;}
-      _ ->  {System.out.println("topRepartition: No a branch");}
+      branch(l,r) -> { return "Left branch: "+size(l)+"\tright branch: "+size(r);}
+      _ ->  {return "topRepartition: No a branch";}
     }
   }
 
@@ -296,7 +449,7 @@ public class SharedSet {
       
       s@singleton(y), x |
       x, s@singleton(y) -> {
-        if (member(y, x, level)) {
+        if (contains(y, x, level)) {
           return s;
         } else {
           return `emptySet();
@@ -311,7 +464,7 @@ public class SharedSet {
     return null;
   }
   
-  public JGTreeSet restriction(JGTreeSet m1, JGTreeSet m2, int level) {
+  private JGTreeSet restriction(JGTreeSet m1, JGTreeSet m2, int level) {
     %match(JGTreeSet m1, JGTreeSet m2) {
       emptySet, x |
       x, emptySet -> { 
@@ -323,7 +476,7 @@ public class SharedSet {
       }
 
       x, singleton(y) -> {
-        if (member(y, x)) {
+        if (contains(y, x)) {
           return m2;
         } else {
           return `emptySet();
@@ -336,6 +489,13 @@ public class SharedSet {
       }
     }
     return null;
+  }
+
+  private JGTreeSet remove(Object o, JGTreeSet t, int level) {
+    if (o instanceof ATerm)
+      return remove(o, t, level);
+    else
+      throw new RuntimeException("Not an ATerm");
   }
   
   private JGTreeSet remove(ATerm elt, JGTreeSet t, int level) {
@@ -366,7 +526,7 @@ public class SharedSet {
     return null;
   }
 
-  private boolean member(ATerm elt, JGTreeSet t, int level) {
+  private boolean contains(ATerm elt, JGTreeSet t, int level) {
     %match(JGTreeSet t) {
       emptySet -> {return false;}
       
@@ -376,16 +536,24 @@ public class SharedSet {
       
       branch(l, r) -> {
         if(level == depth) {
-          return (member(elt, l, level) || member(elt, r, level));
+          return (contains(elt, l, level) || contains(elt, r, level));
         }
         if( isBitZero(elt, level)) {
-          return member(elt, l, level+1);
+          return contains(elt, l, level+1);
         } else {
-          return member(elt, r, level+1);
+          return contains(elt, r, level+1);
         }
       }
     }
     return false;
+  }
+
+  
+  private JGTreeSet override(Object o, JGTreeSet t, int level) {
+    if (o instanceof ATerm)
+      return override(o, t, level);
+    else
+      throw new RuntimeException("Not an ATerm");
   }
   
   private JGTreeSet override(ATerm elt, JGTreeSet t, int level) {
@@ -464,4 +632,106 @@ public class SharedSet {
     return ( (elt.getUniqueIdentifier() & mask[position]) > 0);
   }
 
+
+
+     // Iterator interface
+
+  public Iterator iterator() {
+    if(tree.isEmptySet())
+      return new EmptySetIterator();
+    return new SetIterator();
+  }
+  
+  private static class EmptySetIterator implements Iterator {
+    public boolean hasNext() {
+      return false;
+    }
+    public Object next() {
+      throw new NoSuchElementException();
+    }
+    public void remove() {
+      throw new IllegalStateException();
+    }
+  }
+  
+  private class SetIterator implements Iterator {
+    
+    ATerm[] table = createTableFromTree(SharedSet.this.tree);
+    int index = table.length;
+    ATerm entry = null;
+    ATerm lastReturned = null;
+    
+      /**
+       * The modCount value that the iterator believes that the backing
+       * List should have.  If this expectation is violated, the iterator
+       * has detected concurrent modification.
+       */
+    private int expectedModCount = modCount;
+    
+    private ATerm[] createTableFromTree(JGTreeSet tree) {
+      final Collection res = new ArrayList();
+      Collect1 collect = new Collect1() {
+          public boolean apply(ATerm t) {
+            if(t instanceof JGTreeSet) {
+              %match(JGTreeSet t) {
+                emptySet -> {return false;}
+                singleton(x) -> {
+                  res.add(x);
+                  return false;
+                }
+                _ -> {return true;}
+              }
+            } else {
+              return true;
+            }
+          } // Apply
+        }; //new
+      
+      SharedSet.this.traversal.genericCollect(tree, collect);
+      ATerm[] result = new ATerm[res.size()];
+      for(int i=0;i<res.size();i++) {
+        result[i] = (ATerm) (((ArrayList)res).get(i));
+      }
+      return result;
+    }
+
+    public boolean hasNext() {
+      ATerm e = entry;
+      int i = index;
+      ATerm t[] = table;
+        /* Use locals for faster loop iteration */
+      while (e == null && i > 0)
+        e = t[--i];
+      entry = e;
+      index = i;
+      return e != null;
+    }
+    
+    public Object next() {
+      if (modCount != expectedModCount)
+        throw new ConcurrentModificationException();
+      
+      ATerm et = entry;
+      int i = index;
+      ATerm t[] = table;
+      
+        /* Use locals for faster loop iteration */
+      while (et == null && i > 0) 
+        et = t[--i];
+      
+      entry = et;
+      index = i;
+      if (et != null) {
+        ATerm res = lastReturned = entry;
+        entry = null;
+        return res;
+      }
+      throw new NoSuchElementException();
+    }
+    
+    public void remove() {
+      throw new RuntimeException("not yet implemented!");
+    }
+  }
+  
 } //Class SharedSet
