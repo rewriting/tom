@@ -116,6 +116,39 @@ public class TomTypeChecker extends TomChecker {
       }; // end new
     traversal().genericCollect(expandedTerm, collectAndVerify);
   } //checkTypeInference
+
+  /* 
+   * Collect unknown (not in symbol table) appls without ()
+   */
+  private void collectUnknownsAppls(ArrayList unknownsApplsInWhen, TomList guards) {
+    Collect1 collectAndVerify = new Collect1() {  
+        public boolean apply(ATerm term) {
+          if(term instanceof TomTerm) {
+            %match(TomTerm term) {
+              app@Appl[option=opts,args=[]] -> {
+                boolean isConstructor = false;
+                %match(OptionList opts) {
+                  (_*,Constructor[],_*) -> {
+                    isConstructor = true;
+                  }
+                }
+                if(!isConstructor) {
+                  if((symbolTable().getSymbolFromName(getName(app)))==null) {
+                    messageError(findOriginTrackingLine(app.getOption()),
+                                 TomMessage.getMessage("UnknownVariableInWhen"),
+                                 new Object[]{getName(app)});
+                  }
+                  // else, it's actually app()
+                } // else, it's a unknown (ie : java) function
+                return true;
+              }
+            }
+          } 
+          return true;
+        }// end apply
+      }; // end new
+    traversal().genericCollect(guards, collectAndVerify);
+  }
   
   private void verifyMatchVariable(PatternInstructionList patternInstructionList) {
     while(!patternInstructionList.isEmpty()) {
@@ -123,8 +156,14 @@ public class TomTypeChecker extends TomChecker {
       Pattern pattern = pa.getPattern();
         // collect variables
       ArrayList variableList = new ArrayList();
-      collectVariable(variableList, pattern);      
+      collectVariable(variableList, pattern);
       verifyVariableTypeListCoherence(variableList);
+      // verify variables in WHEN instruction
+      ArrayList unknownsApplsInWhen = new ArrayList();
+      // collect unknown variables
+      collectUnknownsAppls(unknownsApplsInWhen, pattern.getGuards());
+      //System.out.println("vars in guard "+unknownsApplsInWhen);
+
       patternInstructionList = patternInstructionList.getTail();
     }
   } //verifyMatchVariable

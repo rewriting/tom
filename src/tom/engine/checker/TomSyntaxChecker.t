@@ -561,6 +561,7 @@ public class TomSyntaxChecker extends TomChecker {
       concPatternInstruction(_*, PatternInstruction[pattern=Pattern(terms,guards)], _*) -> {
         // control each pattern vs the match definition
         `verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
+        `verifyWhenPattern(guards);
       }
     }
   }
@@ -594,6 +595,16 @@ public class TomSyntaxChecker extends TomChecker {
           }
         }
         counter++;
+      }
+    }
+  }
+
+  // each term shall be valid
+  private void verifyWhenPattern(TomList termList) {
+    %match(TomList termList) {
+      concTomTerm(_*, term, _*) -> {
+        // the type is boolean, no variablestar, toplevel and permisive
+        `validateTerm(term, TomTypeAlone("boolean") , false, true, true);
       }
     }
   }
@@ -758,6 +769,7 @@ public class TomSyntaxChecker extends TomChecker {
           
           TomSymbol symbol = ensureValidApplDisjunction(`nameList, expectedType, decLine,hasConstructor(`options), args.isEmpty(), permissive, topLevel);
           if(symbol == null) {
+            validateTermThrough(term,permissive);
             break matchblock;
           }
             // Type is OK
@@ -886,8 +898,26 @@ public class TomSyntaxChecker extends TomChecker {
     }
     return new TermDescription(termClass, termName, decLine, type); 
   }
+  
+  private void validateTermThrough(TomTerm term, boolean permissive) {
+    %match(TomTerm term) {
+        app@Appl[option=options, nameList=nameList, args=arguments] -> {
+          TomList args = `arguments;
+          while(!args.isEmpty()) {
+            TomTerm child = args.getHead();
+            TomSymbol sym = getSymbolFromName(getName(child));
+            if(sym != null) {
+              validateTerm(child,sym.getTypesToType().getCodomain(),false,false,permissive);
+            } else {
+              validateTermThrough(child,permissive);
+            }
+            args = args.getTail();
+          }
+        }
+    }
+  }
 
-    public TermDescription analyseTerm(TomTerm term) {
+  public TermDescription analyseTerm(TomTerm term) {
     matchblock:{
       %match(TomTerm term) {
         Appl[option=options, nameList=(Name(str))] -> {
@@ -932,7 +962,7 @@ public class TomSyntaxChecker extends TomChecker {
       }
     }
   }
-  
+
   private TomSymbol ensureValideUnamedList(TomType expectedType, int decLine) {
     SymbolList symbolList = symbolTable().getSymbolFromType(expectedType);
     SymbolList filteredList = `emptySymbolList();
