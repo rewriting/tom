@@ -149,7 +149,7 @@ public class TomCompiler extends TomTask {
                         /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
                       TomList renamedTermList = linearizePattern(termList,equalityCheck);
-                      if(equalityCheck.size() > 0) {
+											/*if(equalityCheck.size() > 0) {
                         Expression cond = `TrueTL();
                         Iterator it = equalityCheck.iterator();
                         while(it.hasNext()) {
@@ -164,8 +164,9 @@ public class TomCompiler extends TomTask {
                       
                         newActionInst = `IfThenElse(cond,actionInst,elsePart);
                         newPatternAction = `PatternAction(TermList(renamedTermList),newActionInst, option);        
-                          /*System.out.println("\nnewPatternAction = " + newPatternAction);*/
-                      }
+                          //System.out.println("\nnewPatternAction = " + newPatternAction);
+                      }*/
+											newPatternAction = `PatternAction(TermList(renamedTermList),actionInst, option);        
                     
                         /* abstract patterns */
                       ArrayList abstractedPattern  = new ArrayList();

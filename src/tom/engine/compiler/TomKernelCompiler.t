@@ -293,7 +293,7 @@ public class TomKernelCompiler extends TomBase {
         
         TomTerm annotedVariable = getAnnotedVariable(optionList);
         if(annotedVariable != null) {
-          automataInstruction = `Let(annotedVariable,TomTermToExpression(subjectVariableAST),automataInstruction);
+          automataInstruction = buildLet(annotedVariable,`TomTermToExpression(subjectVariableAST),automataInstruction);
         }
         
         Expression cond = `expandDisjunction(EqualFunctionSymbol(subjectVariableAST,term));
@@ -427,7 +427,8 @@ public class TomKernelCompiler extends TomBase {
         Instruction body = `UnamedBlock(concInstruction(Assign(p.subjectListName,GetTail(Ref(p.subjectListName))),subAction));
         Expression source = `GetHead(Ref(p.subjectListName));
         //Instruction let = buildAnnotedLet(optionList, source, var, body);
-        Instruction let = `Let(var, source, body);
+        //Instruction let = `Let(var, source, body);
+        Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyList(Ref(p.subjectListName))),
                                        let, Nop());
         return test;
@@ -565,7 +566,8 @@ public class TomKernelCompiler extends TomBase {
         Instruction body = `UnamedBlock(concInstruction(Increment(p.subjectListIndex),subAction));
         Expression source = `GetElement(p.subjectListName,p.subjectListIndex);
         //Instruction let = buildAnnotedLet(optionList, source, var, body);
-        Instruction let = `Let(var, source, body);
+        //Instruction let = `Let(var, source, body);
+        Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyArray(Ref(p.subjectListName),Ref(p.subjectListIndex))),
                                        let, Nop());
         return test;
@@ -631,13 +633,20 @@ public class TomKernelCompiler extends TomBase {
     return cond;
   }
 
+	private Instruction buildLet(TomTerm dest,
+                               Expression source,
+                               Instruction body) {
+		return buildAnnotedLet(`concOption(),source,dest,body);
+}
+
+
   private Instruction buildAnnotedLet(OptionList optionList,
                                       Expression source,
                                       TomTerm dest,
                                       Instruction body) {
     TomTerm annotedVariable = getAnnotedVariable(optionList);
     if(annotedVariable != null) {
-      body = `Let(annotedVariable,source,body);
+      body = buildLet(annotedVariable,source,body);
     }
 		// Take care of constraints
 		%match(TomTerm dest) {
