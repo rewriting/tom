@@ -37,12 +37,12 @@ public class TomVerifierExtract extends TomTask {
   %include { ../adt/TomSignature.tom }
     // ------------------------------------------------------------
 
-  public TomVerifierExtract(TomEnvironment tomEnvironment) { 
-    super("Tom verifier", tomEnvironment);
+  public TomVerifierExtract(TomEnvironment tomEnvironment, TomTaskInput taskInput) { 
+    super("Tom verifier", tomEnvironment, taskInput);
   }
 	
-  public TomVerifierExtract(String name, TomEnvironment tomEnvironment) {
-    super(name, tomEnvironment);
+  public TomVerifierExtract(String name, TomEnvironment tomEnvironment,TomTaskInput taskInput) {
+    super(name, tomEnvironment,taskInput);
   }
 
   protected void process() {
@@ -60,11 +60,11 @@ public class TomVerifierExtract extends TomTask {
       }
         // put extrated data in a file
       Tools.generateOutput(
-        getInput().getBaseInputFileName() + TomTaskInput.verifExtractionSuffix, 
+        getInput().getInputFileNameWithoutSuffix() + TomTaskInput.verifExtractionSuffix, 
         extractTerm);
     } catch (Exception e) {
       addError("Exception occured in TomVerifierExtract: "+ e.getMessage(), 
-               getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+               getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }

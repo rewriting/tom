@@ -31,7 +31,7 @@ import java.util.*;
 
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
-import jtom.tools.TomTask;
+import jtom.tools.*;
 import jtom.checker.TomCheckerMessage;
 import jtom.runtime.*;
 
@@ -41,8 +41,8 @@ public class TomOptimizer extends TomTask {
   %include { ../adt/TomSignature.tom }
   // ------------------------------------------------------------
 		
-  public TomOptimizer(TomEnvironment tomEnvironment) {
-    super("Tom Optimizer", tomEnvironment);
+  public TomOptimizer(TomEnvironment tomEnvironment,TomTaskInput taskInput) {
+    super("Tom Optimizer", tomEnvironment,taskInput);
   }
 
   public void initProcess() {
@@ -63,7 +63,7 @@ public class TomOptimizer extends TomTask {
       getInput().setTerm(optimizedTerm);
       
     } catch (Exception e) {
-      addError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+      addError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }

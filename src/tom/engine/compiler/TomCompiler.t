@@ -45,9 +45,9 @@ public class TomCompiler extends TomTask {
   private boolean debugMode = false, eCode = false;
   private int absVarNumber = 0;
   
-  public TomCompiler(TomEnvironment environment,
+  public TomCompiler(TomEnvironment environment, TomTaskInput taskInput,
                      TomKernelCompiler tomKernelCompiler) {
-    super("Tom Compiler", environment);
+    super("Tom Compiler", environment,taskInput);
     this.tomKernelCompiler = tomKernelCompiler;
     this.tomFactory = new TomFactory(environment);
   }
@@ -75,13 +75,13 @@ public class TomCompiler extends TomTask {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.compiledSuffix, compiledTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.compiledSuffix, compiledTerm);
       }
       getInput().setTerm(compiledTerm);
       
     } catch (Exception e) {
       addError("Exception occurs in TomCompiler: "+e.getMessage(), 
-							 getInput().getInputFileName(), 
+							 getInput().getInputFile().getName(), 
 							 TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, 
 							 TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();

@@ -39,8 +39,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected HashMap getFunSymMap = new HashMap();
   protected HashMap isFsymMap = new HashMap();
   
-  public TomGenericGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-    super(environment,output,input);
+  public TomGenericGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
+    super(environment,taskInput,output);
   }
 
 // ------------------------------------------------------------

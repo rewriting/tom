@@ -36,8 +36,8 @@ import jtom.TomEnvironment;
 
 public class TomEiffelGenerator extends TomImperativeGenerator {
   
-  public TomEiffelGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-		super(environment, output, input);
+  public TomEiffelGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
+		super(environment, taskInput, output);
   }
 
 // ------------------------------------------------------------

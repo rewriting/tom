@@ -35,8 +35,8 @@ import jtom.TomEnvironment;
 
 public class TomJavaGenerator extends TomImperativeGenerator {
    
-  public TomJavaGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-		super(environment, output, input);
+  public TomJavaGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
+		super(environment, taskInput, output);
 		if (staticFunction) {
 			this.modifier += "static " ;
 		}

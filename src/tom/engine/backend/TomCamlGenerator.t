@@ -36,8 +36,8 @@ import jtom.TomEnvironment;
 public class TomCamlGenerator extends TomImperativeGenerator {
 
   protected String modifier = "";
-  public TomCamlGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-    super(environment, output, input);
+  public TomCamlGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
+    super(environment, taskInput, output);
   }
 
 // ------------------------------------------------------------

@@ -39,9 +39,9 @@ public class TomExpander extends TomTask {
   private TomKernelExpander tomKernelExpander;
   private TomFactory tomFactory;
   
-  public TomExpander(TomEnvironment environment,
+  public TomExpander(TomEnvironment environment,TomTaskInput taskInput,
                      TomKernelExpander tomKernelExpander) {
-    super("Tom Expander", environment);
+    super("Tom Expander", environment,taskInput);
     this.tomKernelExpander = tomKernelExpander;
     this.tomFactory = new TomFactory(environment);
   }
@@ -71,13 +71,13 @@ public class TomExpander extends TomTask {
         System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.expandedSuffix, expandedTerm);
-        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedSuffix, expandedTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
       }
       getInput().setTerm(expandedTerm);
       
     } catch (Exception e) {
-      addError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+      addError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }

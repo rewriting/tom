@@ -32,7 +32,7 @@ import java.util.*;
 
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
-import jtom.tools.TomTask;
+import jtom.tools.*;
 import jtom.runtime.Collect1;
 import jtom.xml.Constants;
 import jtom.exception.*;
@@ -103,8 +103,8 @@ abstract public class TomChecker extends TomTask {
   private ArrayList alreadyStudiedRule =  new ArrayList();
   private Option currentTomStructureOrgTrack;
 		
-  public TomChecker(String name, TomEnvironment tomEnvironment) {
-    super(name, tomEnvironment);
+  public TomChecker(String name, TomEnvironment tomEnvironment, TomTaskInput taskInput) {
+    super(name, tomEnvironment,taskInput);
   }
 
   public void initProcess() {
@@ -1345,7 +1345,7 @@ abstract public class TomChecker extends TomTask {
 
   private void ensureOriginTrackingLine(int line) {
     if(line < 0) {
-      addError("findOriginTrackingLine:  not found", getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+      addError("findOriginTrackingLine:  not found", getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       System.out.println("findOriginTrackingLine: not found ");
         //throw new TomRuntimeException(new Throwable("foo"));
 

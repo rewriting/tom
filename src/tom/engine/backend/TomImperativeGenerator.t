@@ -36,8 +36,8 @@ import jtom.TomEnvironment;
 public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
 	protected String modifier = "";
-  public TomImperativeGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-		super(environment, output, input);
+  public TomImperativeGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
+		super(environment, taskInput, output);
   }
 
   // ------------------------------------------------------------

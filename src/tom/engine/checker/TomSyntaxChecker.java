@@ -27,11 +27,12 @@
 package jtom.checker;
 
 import jtom.TomEnvironment;
+import jtom.tools.TomTaskInput;
 
 public class TomSyntaxChecker extends TomChecker {
 
-  public TomSyntaxChecker(TomEnvironment env) {
-  	super("Tom SyntaxChecker", env);
+  public TomSyntaxChecker(TomEnvironment env,TomTaskInput taskInput) {
+  	super("Tom SyntaxChecker", env,taskInput);
   }
   
   /**
@@ -49,7 +50,7 @@ public class TomSyntaxChecker extends TomChecker {
 		  	System.out.println("TOM syntax Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  	}
     } catch (Exception e) {
-			addError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+			addError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
 			e.printStackTrace();
 			return;
     }

@@ -42,10 +42,10 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected boolean debugMode = false, strictType = false,
     staticFunction = false, genDecl = false, pretty = false, verbose = false;
 
-  public TomAbstractGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
+  public TomAbstractGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
     super(environment);
 	  this.output = output;
-    this.input = input;
+    this.input = taskInput;
     this.debugMode = input.isDebugMode();
     this.strictType = input.isStrictType();
     this.staticFunction = input.isStaticFunction();

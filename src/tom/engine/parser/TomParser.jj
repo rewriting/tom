@@ -54,7 +54,6 @@ public class TomParser extends TomTask {
   private TomBuffer tomBuffer;
   private TomBackQuoteParser tomBackQuoteParser;
   private TomFactory tomFactory;
-  private File importList[];
   private HashSet includedFiles;
   private String currentFile = "", currentPath = "";
   private LinkedList debuggedStructureList;
@@ -65,21 +64,28 @@ public class TomParser extends TomTask {
   
   public TomParser(TomBuffer input,
                    TomEnvironment environment,
-                   File importList[],
+                   TomTaskInput taskInput,
                    int includeOffSet, 
                    String fileName) {
-    this(input, environment, importList, includeOffSet, fileName, new HashSet());
+    this(input, environment, taskInput,includeOffSet, fileName, new HashSet());
   }
   
   private TomParser(TomBuffer input,
                     TomEnvironment environment,
-                    File importList[],
+                    TomTaskInput taskInput,
                     int includeOffSet, 
                     String fileName,
                     HashSet alreadyParsedFiles) {
-    super("Tom Parser", environment);
+    super("Tom Parser", environment, taskInput);
+    jj_input_stream = new JavaCharStream(input, 1, 1);
+    token_source = new TomParserTokenManager(jj_input_stream);
+    token = new Token();
+    jj_ntk = -1;
+    jj_gen = 0;
+    for (int i = 0; i < jj_la1.length; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+
     this.tomBuffer = input;
-    this.importList = importList;
     this.includeOffSet = includeOffSet;
     this.orgTrack = makePosition(1,1);
     this.currentFile = fileName;
@@ -87,6 +93,7 @@ public class TomParser extends TomTask {
     this.tomBackQuoteParser = new TomBackQuoteParser(environment);
     this.tomFactory = new TomFactory(environment);
     includedFiles = alreadyParsedFiles;
+
   }
   
   private void testIncludedFiles(String fileName) throws TomIncludeException {
@@ -99,14 +106,6 @@ public class TomParser extends TomTask {
   }
   
   public void initProcess() {
-    jj_input_stream = new JavaCharStream(tomBuffer, 1, 1);
-    token_source = new TomParserTokenManager(jj_input_stream);
-    token = new Token();
-    jj_ntk = -1;
-    jj_gen = 0;
-    for (int i = 0; i < 65; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
-
     debugMode = getInput().isDebugMode();
     debugMemory = getInput().isDebugMemory();
     pretty = getInput().isPretty();
@@ -123,38 +122,58 @@ public class TomParser extends TomTask {
   		boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate();
   		if(verbose) { startChrono = System.currentTimeMillis();}
 
-        		
-      /*
+        /*
       if(javaCode) {
-        token_source.SwitchTo(JAVA);
+        token_source.SwitchTo(JAVA); 
         String packageName = JavaPackageDeclaration();
         // Update taskInput
         getInput().setPackagePath(packageName);
+        getInput().updateOutputFile();
         token_source.SwitchTo(DEFAULT);
-        initProcess();
+        System.out.println("package = '" + getInput().getPackagePath() + "'");
 
-        System.out.println("package = " + getInput().getPackagePath());
-        
-
+        jj_input_stream = new JavaCharStream(tomBuffer, 1, 1);
+        token_source = new TomParserTokenManager(jj_input_stream);
+        token = new Token();
+        jj_ntk = -1;
+        jj_gen = 0;
+        for (int i = 0; i < jj_la1.length; i++) jj_la1[i] = -1;
+        for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
       }
-      */
+        */
+      
+      if(javaCode) {
+        File file = new File(currentFile);
+        byte inputBuffer[] = new byte[(int)file.length()+1];
+        InputStream input = new FileInputStream(file);
+        input.read(inputBuffer);
 
+        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment(), getInput(), 0, currentFile, new HashSet());
+        tomParser.token_source.SwitchTo(JAVA);
+        String packageName = tomParser.JavaPackageDeclaration();
+        // Update taskInput
+        getInput().setPackagePath(packageName);
+        getInput().updateOutputFile();
+        System.out.println("package = '" + getInput().getPackagePath() + "'");
+      }
+      
+      
   		TomTerm parsedTerm = startParsing();
   		
   		if(verbose) {
   			System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
   		}
   		if(eclipseMode) {
-  			String fileName = currentPath+File.separatorChar+ "."+getInput().getRawFileName() + TomTaskInput.parsedTableSuffix;
+  			String fileName = currentPath+File.separatorChar + "." + getInput().getInputFile().getName() + TomTaskInput.parsedTableSuffix;
   			Tools.generateOutput(fileName, symbolTable().toTerm());
   		}
       if(intermediate) {
-        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
-        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedSuffix, parsedTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
       }
         
       if(getInput().isDebugMode()) {
-        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.debugTableSuffix, getStructTable());	
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.debugTableSuffix, getStructTable());	
       }
         
   		// Update taskInput
@@ -1409,6 +1428,9 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       vasCode = vasTL.getCode().trim();
+                
+      System.out.println("Vas: not yet implemented");
+/*
       try{
 				Class vasClass = Class.forName("vas.Vas");
 				Constructor vasConstructor = vasClass.getConstructor(new Class[]{});
@@ -1443,10 +1465,6 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 		      finalPar[i+3] = outputPath;
 		      finalPar[i+4] = "--nojar";
 					
-          //for(int ii=0 ; ii<finalPar.length; ii++) {
-          //System.out.println(finalPar[ii] + " ");
-          //}
-
 		      apigen.gen.tom.java.Main.main(finalPar);
 		       	// find apiname
 		      apiName = extractApiName(par);
@@ -1469,6 +1487,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
       }
       
       try {
+          
         String outputPath = getInput().getParentPath();
 	      fileName = outputPath + File.separatorChar + apiName + ".tom";
   	    file = new File(fileName);
@@ -1479,7 +1498,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
  		    	input       = new FileInputStream(file);
  	    		input.read(inputBuffer);
      	
- 	   	 		tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName, includedFiles);
+ 	   	 		tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(), getInput(), 0, fileName, includedFiles);
  	   	   	tomParser.testIncludedFiles(fileName);
  	   	   	astTom = tomParser.startParsing();
  	      	astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
@@ -1487,6 +1506,8 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 	 	    } else {
 	 	    	System.out.println(fileName+" does not exist");
 	 	    }
+
+        
 	 	  } catch (TokenMgrError error) {
  	     	String msg = "TokenMgrError in file '" + fileName + "' generated from file '"+currentFile+"'"+ error.getMessage();
  	      throw new TomException(msg);
@@ -1494,6 +1515,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
  	      String msg = "IOException occurs reading " + fileName + " at line "+getLine();
  	      throw new TomException(msg);
  	    }
+*/
     }
   }
 
@@ -1513,7 +1535,6 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
   String fileName;
   TomTerm astTom;
   InputStream input;
-  File file;
   byte inputBuffer[];
   TomParser tomParser;
   LinkedList blockList = new LinkedList();
@@ -1530,21 +1551,22 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
       fileName = tlCode.getCode().trim();
       fileName = fileName.replace('/',File.separatorChar);
       try {
-        file = new File(fileName);
-        if(!file.exists()) {
-          boolean found = false;
-          for(int i=0 ; !found && i<importList.length ; i++) {
-            file = new File(importList[i],fileName);
-            found = file.exists();
-          }
+        File file = null;
+        boolean found = false;
+        System.out.println("taskInput = " + getInput());
+        for(int i=0 ; !found && i<getInput().getImportList().size() ; i++) {
+          file = new File((File)getInput().getImportList().get(i),fileName).getAbsoluteFile();
+          System.out.println("look for: " + file.getPath());
+          found = file.exists();
         }
-        
+        System.out.println("file found = " + found);
+                  
           // to get the length of the file
         inputBuffer = new byte[(int)file.length()+1];
         input       = new FileInputStream(file);
         input.read(inputBuffer);
         
-        tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName, includedFiles);
+        tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(), getInput(), 0, fileName, includedFiles);
         tomParser.testIncludedFiles(fileName);
         astTom = tomParser.startParsing();
         astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
@@ -2465,28 +2487,15 @@ MORE :
   < ~[] >
 }
 
-<JAVA>
-MORE :
-{
-  ";" : JAVA_IN_UP_TO_END
-}
-
-<JAVA_IN_UP_TO_END>
-MORE :
-{
-  < ~[] >
-}
-
 /* JAVA IDENTIFIERS */
 <JAVA>
 TOKEN :
 {
   < JAVA_PACKAGE: "package">
-    //| < JAVA_SEMICOLON: ";" >
+| < JAVA_SEMICOLON: ";" >
 | < JAVA_DOT: "." >
-|  < JAVA_IDENTIFIER: <JAVA_LETTER> (<JAVA_LETTER>|<JAVA_DIGIT>)* >
-|
-  < #JAVA_LETTER:
+| < JAVA_IDENTIFIER: <JAVA_LETTER> (<JAVA_LETTER>|<JAVA_DIGIT>)* >
+| < #JAVA_LETTER:
       [
        "\u0024",
        "\u0041"-"\u005a",
@@ -2503,8 +2512,7 @@ TOKEN :
        "\uf900"-"\ufaff"
       ]
   >
-|
-  < #JAVA_DIGIT:
+| < #JAVA_DIGIT:
       [
        "\u0030"-"\u0039",
        "\u0660"-"\u0669",
@@ -2523,7 +2531,6 @@ TOKEN :
        "\u1040"-"\u1049"
       ]
   >
-| < JAVA_OTHER: ~[] >
 }
 
 /**********************************************
@@ -2535,10 +2542,7 @@ String JavaPackageDeclaration() : /* in JAVA mode */
   String packageName = ""; 
 }
 {
-  [ <JAVA_PACKAGE> packageName = JavaName() ] //<JAVA_SEMICOLON> ]
-    //( <OTHER>|<JAVA_SEMICOLON>|<JAVA_DOT>|<JAVA_IDENTIFIER> )*
-    // token_source.SwitchTo(JAVAUPTOEND);
-  <EOF>
+  [ <JAVA_PACKAGE> packageName = JavaName() <JAVA_SEMICOLON> ]
   {
     return packageName;
   }
