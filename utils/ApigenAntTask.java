@@ -59,7 +59,7 @@ public class ApigenAntTask extends Task {
 	public void execute() throws BuildException {
 		try {
 			System.out.println("Compiling " + adtFile + "...");
-			String str_command = " --javagen --nojar -n "+ str_factory;
+			String str_command = "--javagen --nojar -n "+ str_factory;
 			if(options != null && !options.equals(""))
 				str_command = str_command + " " + options.trim();
 			if(str_command.indexOf("-i") < 0)
