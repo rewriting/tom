@@ -1,6 +1,4 @@
 import aterm.*;
-import aterm.pure.*;
-import java.util.*;
 
 public class PolyCommon {
 

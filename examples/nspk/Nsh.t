@@ -1,7 +1,6 @@
 import aterm.*;
 import java.util.*;
 import jtom.runtime.*;
-import jtom.runtime.set.*;
 import adt.*;
 
 public class Nsh {
