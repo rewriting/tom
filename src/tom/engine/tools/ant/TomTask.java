@@ -41,15 +41,13 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * Compiles Tom source files. This task can take the following
  * arguments:
  * <ul>
- * <li>configfile</li>
+ * <li>config</li>
  * <li>logpropertiesfile</li>
- * <li>sourcedir</li>
+ * <li>srcdir</li>
  * <li>destdir</li>
  * <li>outputfile</li>
  * <li>optimize</li>
- * <li>debug</li>
  * <li>verbose</li>
- * <li>visitable</li>
  * <li>failonerror</li>
  * <li>stamp</li>
  * </ul>
@@ -65,17 +63,15 @@ public class TomTask extends MatchingTask {
   private static final String FAIL_MSG
     = "Compile failed; see the compiler error output for details.";
 
-  private String options;
+  private String options = null;
   private Path src;
   private File destDir;
-  private File configFile;
+  private File configFile = null;
   private String logPropertiesFile;
   private File outputFile;
   private Path compileClasspath;
   private Path compileSourcepath;
-  private boolean depend = false;
   private boolean verbose = false;
-  private boolean visitable = false;
   private boolean stamp = false;
   private Path extdirs;
   private boolean nowarn = false;
@@ -332,11 +328,6 @@ public class TomTask extends MatchingTask {
     this.verbose = verbose;
   }
 
-  public void setVisitable(boolean visitable) {
-    this.visitable = visitable;
-  }
-
-
   public void setStamp(boolean stamp) {
     this.stamp = stamp;
   }
@@ -348,10 +339,6 @@ public class TomTask extends MatchingTask {
    */
   public boolean getVerbose() {
     return verbose;
-  }
-
-  public boolean getVisitable() {
-    return visitable;
   }
 
   public boolean getStamp() {
@@ -538,9 +525,6 @@ public class TomTask extends MatchingTask {
       }
       if(optimize == true) {
         cmd_line = cmd_line.trim() + " --optimize";
-      }
-      if(visitable == true) {
-        cmd_line = cmd_line.trim() + " --visitable";
       }
       if(stamp == true) {
         cmd_line = cmd_line.trim() + " --stamp";

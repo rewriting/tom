@@ -30,6 +30,7 @@
 	<property name="stable.mapping" location="${stable.src}/tom/library/mapping"/>
 	<property name="stable.build"   location="${stable.src}/build"/>
 	<property name="stable.dist"    location="${stable.src}/dist"/>
+	<property name="stable.doc"    location="${stable.src}/doc"/>
 	<property name="stable.lib"     location="${stable.src}/lib"/>
 
 	<!--some used directory location  for devel -->
@@ -39,6 +40,7 @@
 	<property name="src.gen"      location="${src.src}/gen"/>   
 	<property name="src.build"    location="${src.src}/build"/>   
 	<property name="src.dist"     location="${src.src}/dist"/>
+	<property name="src.doc"     location="${src.src}/doc"/>
 	<property name="src.lib"      location="${src.src}/lib"/>
 	
 	<!-- for distribution: top, stable and src -->
@@ -1039,6 +1041,39 @@
 		<delete dir="${bundle.temp.dir}/META-INF"/>
 		<jar destfile="${aircubebundlestable}" basedir="${bundle.temp.dir}"></jar>
 		<delete dir="${bundle.temp.dir}"/>
+	</target>
+
+	<target name="stable.doc">
+		<mkdir dir="${stable.doc}"/>		
+		<javadoc destdir="${stable.doc}"
+						 windowtitle="TOM documentation">
+			<classpath refid="stable.classpath"/>
+			<fileset dir="${stable.src}">
+				<include name="tom/**/*.java"/>
+				<include name="jtom/**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="src.doc" depends="build.src">
+		<mkdir dir="${src.doc}"/>		
+		<javadoc destdir="${src.doc}"
+						 windowtitle="TOM documentation">
+			<classpath refid="src.classpath"/>
+			<fileset dir="${src.src}">
+				<include name="tom/**/*.java"/>
+				<include name="jtom/**/*.java"/>
+			</fileset>
+			<fileset dir="${src.gen}">
+				<include name="tom/**/*.java"/>
+				<include name="jtom/**/*.java"/>
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="clean.doc">
+		<delete dir="stable.doc"/>
+		<delete dir="src.doc"/>
 	</target>
 	
 	<!--
