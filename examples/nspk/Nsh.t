@@ -2,24 +2,25 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
-import adt.nsh.*;
+import adt.nsh.term.*;
+import adt.nsh.term.types.*;
 
 public class Nsh {
   private static boolean authVerif = true;
 
-  private TermFactory factory;
+  private Factory factory;
   private GenericTraversal traversal;
 
 // ------------------------------------------------------------  
-  %include { adt/nsh/term.tom }
+  %include { term.tom }
 // ------------------------------------------------------------  
  
-  public Nsh(TermFactory factory) {
+  public Nsh(Factory factory) {
     this.factory = factory;
     this.traversal = new GenericTraversal();
   }
 
-  public final TermFactory getTermFactory() {
+  public final Factory getTermFactory() {
       return factory;
   }
   
@@ -545,7 +546,7 @@ public class Nsh {
   private static int fire[] = new int[20];
 
   public final static void main(String[] args) {
-    Nsh test = new Nsh(new TermFactory(new PureFactory()));
+    Nsh test = new Nsh(new Factory(new PureFactory()));
     int nbAgent = 1;
     //System.out.println("agent = " + `paul());
     try {

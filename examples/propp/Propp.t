@@ -4,30 +4,31 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
-import adt.propp.*;
+import adt.propp.term.*;
+import adt.propp.term.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
 public class Propp {
 
-	private TermFactory factory;
+	private Factory factory;
 	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------
-	%include { adt/propp/term.tom }
+	%include { term.tom }
 	// ------------------------------------------------------------
 
 	public Propp() {
-		this(new TermFactory(new PureFactory()));
+		this(new Factory(new PureFactory()));
 		this.traversal = new GenericTraversal();
 	}
 
-	public Propp(TermFactory factory) {
+	public Propp(Factory factory) {
 		this.factory = factory;
 		this.traversal = new GenericTraversal();
 	}
 
-	public final TermFactory getTermFactory() {
+	public final Factory getTermFactory() {
 		return factory;
 	}
 
@@ -557,7 +558,7 @@ public class Propp {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		Propp test = new Propp(new TermFactory(new PureFactory()));
+		Propp test = new Propp(new Factory(new PureFactory()));
 
 		String query ="";
 		try {

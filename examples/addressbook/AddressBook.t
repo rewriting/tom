@@ -1,27 +1,28 @@
 import aterm.*;
 import aterm.pure.*;
-import adt.address.*;
+import adt.address.data.*;
+import adt.address.data.types.*;
 
 import java.util.Iterator;
 import java.util.HashSet;
 
 public class AddressBook {
-  private DataFactory factory;
+  private Factory factory;
 
   private HashSet book;
   
-  %include { adt/address/data.tom }
+  %include { data.tom }
  
-  public AddressBook(DataFactory factory) {
+  public AddressBook(Factory factory) {
     this.factory = factory;
   }
 
-  public DataFactory getDataFactory() {
+  public Factory getDataFactory() {
     return factory;
   }
 
   public final static void main(String[] args) {
-    AddressBook test = new AddressBook(new DataFactory(new PureFactory()));
+    AddressBook test = new AddressBook(new Factory(new PureFactory()));
     test.run();
   }
   
