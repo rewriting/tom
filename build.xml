@@ -253,6 +253,7 @@
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>
       <include name="jtom/**/*.java"/>
+			<exclude name="jtom/**/Main.java"/>
     </javac>
     <copy todir="${src.build}/jtom" file="${src.src}/jtom/Tom.xml"/>
     <copy todir="${src.build}/jtom/starter" file="${src.src}/jtom/starter/Options.xml"/>
