@@ -19,7 +19,7 @@
 
   <property environment="env" />
   <property name="tom.home" value="${env.TOM_HOME}"/>
-	
+  
   <!-- some used directory location -->
   <property name="examples.dir" location="."/>
   <property name="examples.dist" location="dist"/>
@@ -132,9 +132,9 @@
   </target>
   
   <target name="init" if="examples.build">
-		<fail unless="env.TOM_HOME"
-					message="TOM_HOME has to be defined in your environment, 
-					to find the Tom classes"/>
+    <fail unless="env.TOM_HOME"
+          message="TOM_HOME has to be defined in your environment, 
+          to find the Tom classes"/>
     <mkdir dir="${examples.build}"/>
     <mkdir dir="${examples.gen}"/>
     <!-- Define classpath for building stable and source  -->
@@ -155,13 +155,28 @@
     <taskdef name="tom" 
              classname="jtom.tools.ant.TomTask"
              classpathref="tom.classpath"/>
-		<taskdef name="vas" 
-						 classname="vas.ant.VasTask" 
-						 classpathref="tom.classpath"/>
+    <taskdef name="vas" 
+             classname="vas.ant.VasTask" 
+             classpathref="tom.classpath"/>
     <taskdef name="tomantlr" 
              classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
       <classpath refid="tom.classpath"/>
     </taskdef>
+
+    <macrodef name="tomcompile">
+      <attribute name="example"/>
+      <sequential>
+        <tom config="${tomconfigfile}"
+             srcdir="${examples.dir}" 
+             destdir="${examples.gen}"         
+             nowarn="${nowarnings}"
+             optimize="${optimize}"
+             options="-I ${tom.home}/share/jtom">
+          <include name="@{example}/**/*.t"/>
+        </tom>
+      </sequential>
+  </macrodef>
+
   </target>
   
   <target name="prepare.examples">
@@ -184,17 +199,10 @@
          factory="data" 
          package="${addressbook}" 
          destdir="${examples.gen}">
-			<include name="${addressbook}/**/*.adt"/>
-		</adt>
+      <include name="${addressbook}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}"
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-			<include name="${addressbook}/**/*.t"/>
-		</tom>
+    <tomcompile example="${addressbook}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" 
            destdir="${examples.build}" 
@@ -211,19 +219,13 @@
          factory="reach" 
          package="${apireach}" 
          destdir="${examples.gen}">
-			<include name="${apireach}/**/*.adt"/>
-		</adt>
+      <include name="${apireach}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}"         
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${apireach}/**/*.t"/>
-    </tom>
+    <tomcompile example="${apireach}"/>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+    <javac srcdir="${examples.gen}" 
+           destdir="${examples.build}"
            nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${apireach}/**/*.java"/>
@@ -232,14 +234,7 @@
 
   <target name="appletxml" depends="init"> 
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}"         
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${appletxml}/**/*.t"/>
-    </tom>
+    <tomcompile example="${appletxml}"/>
     <!-- build java source -->
     <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -255,18 +250,11 @@
     <adt srcdir="${examples.dir}"
          factory="boulder" 
          package="${boulderdash}" 
-				 destdir="${examples.gen}">
-			<include name="${boulderdash}/**/*.adt"/>
-		</adt>
+         destdir="${examples.gen}">
+      <include name="${boulderdash}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${boulderdash}/**/*.t"/>
-    </tom>
+    <tomcompile example="${boulderdash}"/>
     <!-- build java source -->
     <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -286,21 +274,14 @@
 
   <target name="builtin" depends="init">
     <!-- build adt -->
-		<adt srcdir="${examples.dir}"
-				 factory="term" 
-				 package="${builtin}" 
-				 destdir="${examples.gen}">
-			<include name="${builtin}/**/*.adt"/>
-		</adt>
+    <adt srcdir="${examples.dir}"
+         factory="term" 
+         package="${builtin}" 
+         destdir="${examples.gen}">
+      <include name="${builtin}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}"
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${builtin}/**/*.t"/>
-    </tom>
+    <tomcompile example="${builtin}"/>
     <!-- build java source -->
     <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -312,33 +293,33 @@
   </target>
 
   <target name="caml" depends="init">
-		<mkdir dir="${examples.gen}/${caml}"/>
+    <mkdir dir="${examples.gen}/${caml}"/>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
+         srcdir="${examples.dir}" 
          destdir="${examples.gen}/${caml}"
          nowarn="${nowarnings}"
          optimize="${optimize}"
          options="--camlCode -I ${tom.home}/share/jtom">
       <include name="${caml}/**/*.t"/>
-			<exclude name="${caml}/List1.t"/>
-			<exclude name="${caml}/PeanoMapped.t"/>
+      <exclude name="${caml}/List1.t"/>
+      <exclude name="${caml}/PeanoMapped.t"/>
     </tom>
     <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
+         srcdir="${examples.dir}" 
          outputfile="${examples.gen}/${caml}/List1.tom.ml"
          nowarn="${nowarnings}"
          optimize="${optimize}"
          options="--camlCode -I ${tom.home}/share/jtom">
-			<include name="${caml}/List1.t"/>
+      <include name="${caml}/List1.t"/>
     </tom>
     <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
+         srcdir="${examples.dir}" 
          outputfile="${examples.gen}/${caml}/PeanoMapped.tom.ml"
          nowarn="${nowarnings}"
          optimize="${optimize}"
          options="--camlCode -I ${tom.home}/share/jtom">
-			<include name="${caml}/PeanoMapped.t"/>
+      <include name="${caml}/PeanoMapped.t"/>
     </tom>
     <!-- copy resources in build -->
     <copy todir="${examples.build}/${caml}">
@@ -352,14 +333,7 @@
 
   <target name="cell" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}"
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${cell}/**/*.t"/>
-    </tom>
+    <tomcompile example="${cell}"/>
     <!-- build java source -->
     <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -378,15 +352,8 @@
 
   <target name="cril" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${cril}/**/*.t"/>
-    </tom> 
-		<!-- builds the parser using javacc -->
+    <tomcompile example="${cril}"/>
+    <!-- builds the parser using javacc -->
     <mkdir dir="${example.gen}/cril/jtom/ddd/data/ddd"/>
     <javacc target="${examples.dir}/cril/jtom/ddd/data/ddd/parser.jj"
             outputdirectory="${example.gen}/cril/jtom/ddd/data/ddd"
@@ -404,7 +371,7 @@
       <include name="${cril}/**/*.java"/>
     </javac>
 
-    <!-- copy resourses -->
+    <!-- copy resources -->
     <copy todir="${examples.build}/${cril}">
       <fileset dir="${examples.dir}/${cril}">
         <include name="*.xml"/>
@@ -415,21 +382,14 @@
 
   <target name="dom" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${dom}/**/*.t"/>
-    </tom>
+    <tomcompile example="${dom}"/>
     <!-- build java source -->
     <javac srcdir="${examples.dir}" destdir="${examples.build}"
            nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${dom}/**/*.java"/>
     </javac>
-    <!-- copy resourses -->
+    <!-- copy resources -->
     <copy todir="${examples.build}/${dom}">
       <fileset dir="${examples.dir}/${dom}">
         <include name="*.xml"/>
@@ -440,7 +400,7 @@
   <target name="expression" depends="init">
     <!-- build tom -->
     <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
+         srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -448,7 +408,7 @@
       <include name="${expression}/**/Record.t"/>
     </tom>
     <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
+         srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
@@ -458,8 +418,8 @@
     <!-- build java source -->
     <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
-			<src path="${examples.dir}"/>
-			<src path="${examples.gen}"/>
+      <src path="${examples.dir}"/>
+      <src path="${examples.gen}"/>
       <classpath refid="tom.classpath"/>
       <include name="${expression}/**/*.java"/>
     </javac>
@@ -471,17 +431,10 @@
          factory="term" 
          package="${gtree}" 
          destdir="${examples.gen}">
-			<include name="${gtree}/**/*.adt"/>
-		</adt>
+      <include name="${gtree}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${gtree}/**/*.t"/>
-    </tom>
+    <tomcompile example="${gtree}"/>
     <!-- build java source -->
     <javac srcdir="${examples.dir}" destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -492,14 +445,7 @@
 
   <target name="list" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${list}/**/*.t"/>
-    </tom>
+    <tomcompile example="${list}"/>
     <!-- build java source -->
     <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -512,14 +458,7 @@
 
   <target name="lsystem" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${lsystem}/**/*.t"/>
-    </tom>
+    <tomcompile example="${lsystem}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.dir}"
            nowarn="${nowarnings}">
@@ -534,17 +473,10 @@
          factory="term" 
          package="${minirho}" 
          destdir="${examples.gen}">
-			<include name="${minirho}/**/*.adt"/>
-		</adt>
+      <include name="${minirho}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${minirho}/**/*.t"/>
-    </tom>
+    <tomcompile example="${minirho}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -559,17 +491,10 @@
          factory="term" 
          package="${nspk}" 
          destdir="${examples.gen}">
-			<include name="${nspk}/**/*.adt"/>
-		</adt>
+      <include name="${nspk}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${nspk}/**/*.t"/>
-    </tom>
+    <tomcompile example="${nspk}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -580,14 +505,7 @@
   
   <target name="p3p" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${p3p}/**/*.t"/>
-    </tom>
+    <tomcompile example="${p3p}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -607,19 +525,13 @@
          factory="peano" 
          package="${peano}" 
          destdir="${examples.gen}">
-			<include name="${peano}/**/*.adt"/>
-		</adt>
+      <include name="${peano}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${peano}/**/*.t"/>
-    </tom>
+    <tomcompile example="${peano}"/>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+    <javac srcdir="${examples.gen}" 
+           destdir="${examples.build}"
            nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${peano}/**/*.java"/>
@@ -632,19 +544,13 @@
          factory="term" 
          package="${pnspk}" 
          destdir="${examples.gen}">
-			<include name="${pnspk}/**/*.adt"/>
-		</adt>
+      <include name="${pnspk}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${pnspk}/**/*.t"/>
-    </tom>
+    <tomcompile example="${pnspk}"/>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+    <javac srcdir="${examples.gen}" 
+           destdir="${examples.build}"
            nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${pnspk}/**/*.java"/>
@@ -656,21 +562,15 @@
     <adt srcdir="${examples.dir}"
          factory="expression" 
          package="${poly}" 
-				 visitable="true"
+         visitable="true"
          destdir="${examples.gen}">
-			<include name="${poly}/**/*.adt"/>
-		</adt>
+      <include name="${poly}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${poly}/**/*.t"/>
-    </tom>
+    <tomcompile example="${poly}"/>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+    <javac srcdir="${examples.gen}" 
+           destdir="${examples.build}"
            nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${poly}/**/*.java"/>
@@ -679,14 +579,7 @@
 
   <target name="pqueens" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${pqueens}/**/*.t"/>
-    </tom>
+    <tomcompile example="${pqueens}"/>
     <!-- build java source -->
     <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -699,14 +592,7 @@
 
   <target name="prodrule" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${prodrule}/**/*.t"/>
-    </tom>
+    <tomcompile example="${prodrule}"/>
     <!-- build java source -->
     <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -724,8 +610,8 @@
          visitable="true" 
          package="${propp}" 
          destdir="${examples.gen}">
-			<include name="${propp}/**/*.adt"/>
-		</adt>
+      <include name="${propp}/**/*.adt"/>
+    </adt>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${propp}"/>
     <tomantlr target="${propp.dir}/SeqParser.g"
@@ -733,14 +619,7 @@
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${propp}/**/*.t"/>
-    </tom>
+    <tomcompile example="${propp}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -749,7 +628,7 @@
       </classpath>
       <include name="${propp}/**/*.java"/>
     </javac>
-    <!-- copy resourses -->
+    <!-- copy resources -->
     <copy todir="${examples.build}/${propp}">
       <fileset dir="${examples.dir}/${propp}">
         <include name="examples"/>
@@ -764,17 +643,10 @@
          factory="tree" 
          package="${rbtree}" 
          destdir="${examples.gen}">
-			<include name="${rbtree}/**/*.adt"/>
-		</adt>
+      <include name="${rbtree}/**/*.adt"/>
+    </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${rbtree}/**/*.t"/>
-    </tom>
+    <tomcompile example="${rbtree}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -789,17 +661,10 @@
          factory="jgset" 
          package="${set}" 
          destdir="${examples.gen}">
-			<include name="${set}/**/*.adt"/>
-	</adt>
+      <include name="${set}/**/*.adt"/>
+  </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${set}/**/*.t"/>
-    </tom>
+    <tomcompile example="${set}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -812,20 +677,13 @@
     <!-- build adt -->
     <adt srcdir="${examples.dir}"
          factory="term" 
-				 visitable="true"
+         visitable="true"
          package="${strategy}" 
          destdir="${examples.gen}">
-			<include name="${strategy}/**/*.adt"/>
-	</adt>
+      <include name="${strategy}/**/*.adt"/>
+  </adt>
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${strategy}/**/*.t"/>
-    </tom>
+    <tomcompile example="${strategy}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -835,34 +693,34 @@
   </target>
 
   <target name="structure" depends="init">
-    <!-- build adt -->		
-		<vas file="${examples.dir}/${structure}/Struct.vas"
-			   config="${vasconfigfile}"
-				 package="${structure}" 
-				 destdir="${examples.gen}">
-		</vas> 
+    <!-- build adt -->    
+    <vas file="${examples.dir}/${structure}/Struct.vas"
+         config="${vasconfigfile}"
+         package="${structure}" 
+         destdir="${examples.gen}">
+    </vas> 
     <!-- build tom -->
     <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
+         srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
          pretty="${pretty}"
-				 stamp="off" 
+         stamp="off" 
          options="-I ${tom.home}/share/jtom">
 <!-- stamp not yet ready for apigen list -->
       <include name="${structure}/**/*.t"/>
-			<exclude name="${structure}/**/StructParser.g.t"/>
-			<!--			<exclude name="${structure}/**/StructureCDT.t"/> -->
+      <exclude name="${structure}/**/StructParser.g.t"/>
+      <!--      <exclude name="${structure}/**/StructureCDT.t"/> -->
     </tom>
     <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
+         srcdir="${examples.dir}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
-				 stamp="off" 
+         stamp="off" 
          options="-I ${tom.home}/share/jtom"
-				 outputfile="${examples.gen}/${structure}/StructParser.g">
-			<include name="${structure}/**/StructParser.g.t"/>
+         outputfile="${examples.gen}/${structure}/StructParser.g">
+      <include name="${structure}/**/StructParser.g.t"/>
     </tom>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${structure}"/>
@@ -873,12 +731,12 @@
     <!-- build java source -->
     <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
-			<src path="${examples.dir}"/>
-			<src path="${examples.gen}"/>
-			<classpath refid="tom.classpath"/>
-			<include name="${structure}/**/*.java"/>
+      <src path="${examples.dir}"/>
+      <src path="${examples.gen}"/>
+      <classpath refid="tom.classpath"/>
+      <include name="${structure}/**/*.java"/>
     </javac>
-    <!-- copy resourses -->
+    <!-- copy resources -->
     <copy todir="${examples.build}/${structure}">
       <fileset dir="${examples.dir}/${structure}">
         <include name="examples"/>
@@ -888,14 +746,7 @@
 
   <target name="tutorial" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${tutorial}/**/*.t"/>
-    </tom>
+    <tomcompile example="${tutorial}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
            nowarn="${nowarnings}">
@@ -907,11 +758,11 @@
   <target name="vas" depends="init">
     <!-- build tom -->
     <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
+         srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
-				 stamp="off"
+         stamp="off"
          options="-I ${tom.home}/share/jtom">
       <include name="${vas}/**/*.t"/>
     </tom>
@@ -925,21 +776,14 @@
 
   <target name="xml" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${xml}/**/*.t"/>
-    </tom>
+    <tomcompile example="${xml}"/>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
            nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${xml}/**/*.java"/>
     </javac>
-    <!-- copy resourses -->
+    <!-- copy resources -->
     <copy todir="${examples.build}/${xml}">
       <fileset dir="${examples.dir}/${xml}">
         <include name="*.xml"/>
@@ -951,21 +795,15 @@
 
   <target name="xquery" depends="init">
     <!-- build tom -->
-    <tom config="${tomconfigfile}"
-				 srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
-         nowarn="${nowarnings}"
-         optimize="${optimize}"
-         options="-I ${tom.home}/share/jtom">
-      <include name="${xquery}/**/*.t"/>
-    </tom>
+    <tomcompile example="${xquery}"/>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+    <javac srcdir="${examples.gen}" 
+           destdir="${examples.build}"
            nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${xquery}/**/*.java"/>
     </javac>
-    <!-- copy resourses -->
+    <!-- copy resources -->
     <copy todir="${examples.build}/${xquery}">
       <fileset dir="${examples.dir}/${xquery}">
         <include name="*.xquery"/>
@@ -975,20 +813,20 @@
 
   </target>
   
-	<target name="examples" 
+  <target name="examples" 
             description="Builds the examples (at least some)"
             depends="addressbook, apireach, appletxml, boulderdash, builtin,
-						caml, cell, dom, expression, gtree, list, 
-						nspk, p3p, peano, pnspk, poly, pqueens,
+            caml, cell, dom, expression, gtree, list, 
+            nspk, p3p, peano, pnspk, poly, pqueens,
             prodrule, propp, rbtree, set, strategy, structure, 
-						tutorial, vas, xml">
+            tutorial, vas, xml">
       </target>
 
-			<target name="dist.examples" 
-							description="Prepare a distribution of examples" 
-							depends="prepare.examples">
+      <target name="dist.examples" 
+              description="Prepare a distribution of examples" 
+              depends="prepare.examples">
         <tar tarfile="${examples.dist}/jtom-${version}-examples.tar.gz" 
-						 compression="gzip">
+             compression="gzip">
           <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
             <include name="README"/>
             <include name="build.xml"/>
