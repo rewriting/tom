@@ -1,3 +1,8 @@
+2003-02-26  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/backend/TomGenerator.t: fix a problem in GenDeclMake
+	
+
 2003-02-21    <pem@bach>
 	* bootinstall
 	* new architecture: expander + backend

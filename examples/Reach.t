@@ -1,6 +1,7 @@
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
+import jtom.runtime.*;
 
 public class Reach extends GenericTraversal {
 
@@ -39,18 +40,70 @@ public class Reach extends GenericTraversal {
   }
 
   public void run() {
-    ATerm number  = int2peano(2);
-    ATerm subject = `f(number);
+    ATerm subject = `f(a);
+
+    ATerm number = int2peano(15);
+    ATerm search = `f(number);
 
     System.out.println("subject = " + subject);
 
-    ArrayList list = new ArrayList();
-    collectOneStep(list,subject);
-    
-    System.out.println("list = " + list);
+      //ArrayList collection = new ArrayList();
+      //collectOneStep(collection,subject);
+      //System.out.println("list = " + collection);
 
+    long startChrono = System.currentTimeMillis();
+    boolean res = reach(subject,search);
+    long stopChrono = System.currentTimeMillis();
+
+    System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
     
-    
+  }
+
+    /*
+     * Apply a function to each subterm of a term
+     * and collect all possible results in a collection
+     */
+  public void collectOneStep(final Collection collection, ATerm subject) {
+    Collect2 collect = new Collect2() { 
+        public boolean apply(ATerm t, Collection c) {
+          %match(term t) { 
+            f(x)    -> { c.add(`f(s(x))); }
+            f(s(x)) -> { c.add(`f(f(x))); }
+            s(s(x)) -> { c.add(`f(x)); }
+          }
+          return true;
+        } // end apply
+      }; // end new
+    genericCollect2(subject, collect, collection); 
+  }
+
+  static final int MAXITER = 25;
+  public boolean reach(ATerm start, ATerm end) {
+    Collection result = new HashSet();
+    Collection c1 = new HashSet();
+    c1.add(start);
+
+    for(int i=1 ; i<MAXITER ; i++) {
+      Collection c2 = new HashSet();
+      Iterator it = c1.iterator();
+      while(it.hasNext()) {
+        collectOneStep(c2,(ATerm)it.next());
+      }
+
+      System.out.print("iteration " + i + ":");
+      System.out.print("\tc2.size = " + c2.size());
+      c2.removeAll(result);
+      System.out.print("\tc2'.size = " + c2.size());
+      System.out.println();
+      c1 = c2;
+      result.addAll(c2);
+        //System.out.println("result.size = " + result.size());
+
+      if(result.contains(end)) {
+        return true;
+      }
+    }
+    return false;
   }
   
   public final static void main(String[] args) {
@@ -72,24 +125,6 @@ public class Reach extends GenericTraversal {
       s(x) -> {return 1+peano2int(x); }
     }
     return 0;
-  }
-  
-    /*
-     * Apply a function to each subterm of a term
-     * and collect all possible results in a collection
-     */
-  public void collectOneStep(final Collection collection, ATerm subject) {
-    Collect collect = new Collect() { 
-        public boolean apply(ATerm t) {
-          %match(term t) { 
-            f(x)    -> { collection.add(`f(s(x))); }
-            f(s(x)) -> { collection.add(`f(f(x))); }
-            s(s(x)) -> { collection.add(`f(x)); }
-          }
-          return true;
-        } // end apply
-      }; // end new
-    genericCollect(subject, collect); 
   }
   
 }
