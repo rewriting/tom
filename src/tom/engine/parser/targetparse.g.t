@@ -99,7 +99,6 @@ options{
     }
     
     private TomEnvironment environment() {
-//        return getPluginPlatform().getEnvironment();
         return TomEnvironment.getInstance();
     }
     
@@ -229,7 +228,6 @@ options{
             }
             fileAbsoluteName = file.getAbsolutePath();
             if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
-                p("--- included file "+fileAbsoluteName+" current file: "+currentFile);
                 String msg = MessageFormat.format(
                     TomMessage.getString("IncludedFileCycle"), 
                     new Object[]{fileName, new Integer(getLine()), currentFile}

@@ -66,22 +66,9 @@ options{
 
     private boolean addTarget = false;
 
-    private TomList makeCompositeList(LinkedList list){
-        TomTerm term = null;
-        TomList compositeList = `emptyTomList();
-        Iterator it = list.iterator();
-        
-        while(it.hasNext()){
-            term = (TomTerm) it.next();
-            compositeList = (TomList) compositeList.append(term);
-        }
-        
-        return compositeList;
-    }
-
     private TomTerm buildBqAppl(Token id,LinkedList blockList,TomTerm term,boolean composite){
         TomTerm result = null;
-        TomList list = makeCompositeList(blockList);
+        TomList list = buildList(blockList);
 
         %match(TomList list){
             emptyTomList() -> {
@@ -252,7 +239,34 @@ options{
         }
     }
 
-    private TomList buildAttributeList(LinkedList list){
+    private TomList sortAttributeList(TomList list){
+        %match(TomList list){
+            concTomTerm() -> {
+                return list;
+            }
+            concTomTerm(X1*,e1,X2*,e2,X3*) -> {
+                %match(TomTerm e1,TomTerm e2){
+/*
+                    BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name1))],_)],
+                    BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name2))],_)] -> {
+                        if(`name1.compareTo(`name2) > 0) {
+                            return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+                        }
+                    }
+*/
+                    BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name1)],_)],
+                    BackQuoteAppl[args=manyTomList(BackQuoteAppl[astName=Name(name2)],_)] -> {
+                        if(`name1.compareTo(`name2) > 0) {
+                            return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    private TomList buildAttributeList(LinkedList list){/*
         TomList result = `emptyTomList();
         TomList tmp = `emptyTomList();
         for(int i = 0; i < list.size(); i++){
@@ -263,8 +277,9 @@ options{
                 result = (TomList) result.append((TomTerm) list.get(i));
             }
         }
-        result = `concTomTerm(result*,tmp*);
-        return result;
+        result = `concTomTerm(result*,tmp*);*/
+        TomList result = buildList(list);
+        return sortAttributeList(result);
     }
 
     private TomList buildList(LinkedList list){
@@ -468,9 +483,7 @@ xmlTerm[TomList context] returns [TomTerm result]
         (
             XML_START ws id:BQ_ID ws attributeList[attributes,context]
             {
-                p("attr list :"+attributes);
                 attributeTomList = buildAttributeList(attributes);
-                p("attr list :"+attributeTomList);
             }
                 
                 ( 
@@ -601,7 +614,8 @@ basicTerm [TomList context] returns [TomTerm result]
                 termList[blockList,context] 
             )? BQ_RPAREN
             {
-                TomList compositeList = makeCompositeList(blockList);
+                TomList compositeList = buildList(blockList);
+//makeCompositeList(blockList);
                 result = `Composite(
                     concTomTerm(
                         TargetLanguageToTomTerm(ITL("(")),
