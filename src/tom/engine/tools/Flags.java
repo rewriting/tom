@@ -53,7 +53,8 @@ public class Flags {
   public static boolean supportedGoto  = true; //true; // if the target language has gotos
   public static boolean supportedBlock = true; // if the target language has blocks
 
-  public static boolean warning = false; // print warning error messages
+  public static boolean warningAll = false; // print warning error messages
+  public static boolean noWarning = false;  // print only warning stopping the compilation
 
   public static boolean demo = false; // run demonstration interface
 

@@ -357,6 +357,7 @@ public class TomChecker extends TomBase {
     }
       // we test the type egality between arguments and pattern-action,
       // if it is not a variable  => type is null
+    if(!Flags.strictType) return;
     for( int slot = 0; slot < nbExpectedArgs; slot++ ) {
       if ( (foundTypeMatch.get(slot) !=  typeMatchArgs.get(slot)) && (foundTypeMatch.get(slot) != null))
       { 	
@@ -372,7 +373,6 @@ public class TomChecker extends TomBase {
   }
   
   private void messageMatchErrorTypeArgument(int slotNumber, String expectedType, String givenType, Integer line) {
-    if(!Flags.warning) return;
     Integer declLine = currentTomStructureOrgTrack.getLine();
     String s =  "Bad type for slot "+ slotNumber +" :Type '"+expectedType+"' required but Type '"+givenType+"' found in %match declared line "+declLine;
     messageError(line, s);
@@ -903,7 +903,7 @@ public class TomChecker extends TomBase {
   }
   
   private void messageWarningSymbol(String name, OptionList optionList) {
-    if(!Flags.warning) return;
+    if(!Flags.warningAll || Flags.noWarning) return;
     String nameDecl = currentTomStructureOrgTrack.getAstName().getString();
     Integer declLine = currentTomStructureOrgTrack.getLine();
     Integer line = findOriginTrackingLine(name, optionList);

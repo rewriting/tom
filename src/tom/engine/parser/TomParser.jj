@@ -873,7 +873,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
       }
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
-        if(Flags.warning) {
+        if(!Flags.noWarning) {
           System.out.println("\nSome GetSlot declaration are incompatible with operator signature");
           System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet()+" \n-- Error occured at line: "+getLine());
         }
@@ -991,7 +991,7 @@ void TypeTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
     <TYPE> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
-      if(Flags.warning) {
+      if(!Flags.noWarning) {
         System.out.println("Warning: %type is obsolete");
       }
     }

@@ -855,7 +855,7 @@ public class TomParser implements TomParserConstants {
       }
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
-        if(Flags.warning) {
+        if(!Flags.noWarning) {
           System.out.println("\nSome GetSlot declaration are incompatible with operator signature");
           System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet()+" \n-- Error occured at line: "+getLine());
         }
@@ -1001,7 +1001,7 @@ public class TomParser implements TomParserConstants {
     case TYPE:
       jj_consume_token(TYPE);
       list.add(makeTL(savePosAndExtract()));
-      if(Flags.warning) {
+      if(!Flags.noWarning) {
         System.out.println("Warning: %type is obsolete");
       }
       break;
@@ -1735,7 +1735,7 @@ public class TomParser implements TomParserConstants {
   }
 
   public TomParserTokenManager token_source;
-  ASCII_UCodeESC_CharStream jj_input_stream;
+  JavaCharStream jj_input_stream;
   public Token token, jj_nt;
   private int jj_ntk;
   private Token jj_scanpos, jj_lastpos;
@@ -1752,7 +1752,7 @@ public class TomParser implements TomParserConstants {
   private int jj_gc = 0;
 
   public TomParser(java.io.InputStream stream) {
-    jj_input_stream = new ASCII_UCodeESC_CharStream(stream, 1, 1);
+    jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
@@ -1772,7 +1772,7 @@ public class TomParser implements TomParserConstants {
   }
 
   public TomParser(java.io.Reader stream) {
-    jj_input_stream = new ASCII_UCodeESC_CharStream(stream, 1, 1);
+    jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;

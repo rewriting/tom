@@ -55,17 +55,18 @@ public class Tom {
     System.out.println("\t--version | -V:\t\tPrint version");
     System.out.println("\t--verbose | -v:\t\tSet verbose mode on");
     System.out.println("\t--intermediate | -i:\tGenerate intermediate files");
-    System.out.println("\t--noOutput | -o:\t\tDo not generate code");
+    System.out.println("\t--noOutput | -o:\tDo not generate code");
     System.out.println("\t--noDeclaration | -D:\tDo not generate code for declarations");
     System.out.println("\t--doCompile | -C:\tStart after type-checking");
     System.out.println("\t--noCheck | -f:\t\tDo not verify correctness");
-    System.out.println("\t--Wall:\tPrint warnings");
-    System.out.println("\t--lazyType | -l:\t\tUse universal type");
+    System.out.println("\t--Wall:\t\t\tPrint all warnings");
+    System.out.println("\t--noWarning:\tPrint warning before stopping the compilation");
+    System.out.println("\t--lazyType | -l:\tUse universal type");
     System.out.println("\t--demo | -d:\t\tRun demo mode");
     System.out.println("\t--import <path> | -I:\tPath for %include");
     System.out.println("\t--pretty | -p:\t\tGenerate readable code");
     System.out.println("\t--atermStat | -s:\tPrint internal ATerm statistics");
-    System.out.println("\t--optimize | -O:\t\tOptimized generated code");
+    System.out.println("\t--optimize | -O:\tOptimized generated code");
     System.out.println("\t--static:\t\tGenerate static functions");
     System.exit(0);
   }
@@ -112,14 +113,16 @@ public class Tom {
           } else if(args[i].equals("--intermediate") || args[i].equals("-i")) {
             Flags.intermediate = true;
           } else if(args[i].equals("--Wall")) {
-            Flags.warning = true;
+            Flags.warningAll = true;
+          } else if(args[i].equals("--noWarning")) {
+            Flags.noWarning = true;
           } else if(args[i].equals("--noCheck") || args[i].equals("-f")) {
             Flags.doCheck = false;
           } else if(args[i].equals("--lazyType") || args[i].equals("-l")) {
             Flags.strictType = false;
 	  } else if(args[i].equals("--demo") || args[i].equals("-d")) {
 	    Flags.demo = true;
-            Flags.warning = false;
+            Flags.warningAll = false;
 	  } else if(args[i].equals("--noDeclaration") || args[i].equals("-D")) {
 	    Flags.genDecl = false;
 	  } else if(args[i].equals("--import") || args[i].equals("-I")) {
