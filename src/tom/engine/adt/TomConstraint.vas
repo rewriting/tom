@@ -1,12 +1,11 @@
 module TomConstraint
-imports TomTerm
+imports TomSignature 
 
 public
-
-sorts Constraint ConstraintList
+sorts Constraint ConstraintList 
 
 abstract syntax
-  Equal(variable:TomTerm) -> Constraint
-  AssignTo(variable:TomTerm) -> Constraint
 
-  concConstraint(Constraint*) -> ConstraintList
+Equal(variable:TomTerm) -> Constraint
+AssignTo(variable:TomTerm) -> Constraint
+concConstraint(Constraint*) -> ConstraintList

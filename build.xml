@@ -304,7 +304,6 @@
       <srcfiles dir= "${src.src}/jtom/adt" includes="*.vas"/>
     </uptodate>
 
-<!--
     <vas config="${stable.vasconfigfile}"
          srcdir="${src.src}"
          package="jtom.adt" 
@@ -312,13 +311,15 @@
          destdir="${src.gen}">
       <include name="jtom/adt/TomSignature.vas"/>
     </vas>
--->
+
+<!--
     <adt srcdir="${src.src}"
          package="jtom.adt" 
          name="tomsignature" 
          destdir="${src.gen}">
       <include name="jtom/adt/*.adt"/>
     </adt>
+-->
 
     <copy todir="${src.mapping}/adt">
       <fileset dir="${src.gen}/tom/library/adt" includes="**/*.tom"/>

@@ -1,0 +1,36 @@
+module TomInstruction
+imports TomSignature 
+
+public
+sorts InstructionList Instruction 
+
+abstract syntax
+
+TomTermToInstruction(tom:TomTerm) -> Instruction
+TargetLanguageToInstruction(tl:TargetLanguage) -> Instruction
+IfThenElse(condition:Expression,succesInst:Instruction,failureInst:Instruction) -> Instruction
+DoWhile(doInst:Instruction,condition:Expression) -> Instruction
+WhileDo(condition:Expression,doInst:Instruction) -> Instruction
+Assign(variable:TomTerm,source:Expression) -> Instruction
+Let(variable:TomTerm,source:Expression,astInstruction:Instruction) -> Instruction
+LetRef(variable:TomTerm,source:Expression,astInstruction:Instruction) -> Instruction
+LetAssign(variable:TomTerm,source:Expression,astInstruction:Instruction) -> Instruction
+AssignMatchSubject(kid1:TomTerm,source:Expression) -> Instruction
+Return(kid1:TomTerm) -> Instruction
+Nop() -> Instruction
+AbstractBlock(instList:InstructionList) -> Instruction
+UnamedBlock(instList:InstructionList) -> Instruction
+NamedBlock(blockName:String,instList:InstructionList) -> Instruction
+RuleSet(ruleList:TomRuleList,orgTrack:Option) -> Instruction
+Match(subjectList:TomTerm,astPatternInstructionList:PatternInstructionList,option:OptionList) -> Instruction
+CompiledMatch(automataInst:Instruction,option:OptionList) -> Instruction
+CompiledPattern(patternList:TomList,automataInst:Instruction) -> Instruction
+MatchingCondition(lhs:TomTerm,rhs:TomTerm) -> Instruction
+TypedEqualityCondition(tomType:TomType,lhs:TomTerm,rhs:TomTerm) -> Instruction
+EqualityCondition(lhs:TomTerm,rhs:TomTerm) -> Instruction
+MakeFunctionBegin(astName:TomName,subjectListAST:TomTerm) -> Instruction
+MakeFunctionEnd() -> Instruction
+CheckStamp(variable:TomTerm) -> Instruction
+concInstruction(Instruction*) -> InstructionList
+RawAction(astInstruction:Instruction) -> Instruction
+TypedAction(astInstruction:Instruction,positivePatternList:PatternList,negativePatternList:PatternList) -> Instruction
