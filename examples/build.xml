@@ -93,12 +93,13 @@
     <mkdir dir="${examples.gen}"/>
     <!-- Define classpath for building stable and source  -->
     <path id="tom.classpath">
-      <fileset dir="${tom.home}/lib">
-        <include name="*.jar"/>
-      </fileset>
       <fileset dir="${examples.dir}/${examples.lib}">
         <include name="*.jar"/>
       </fileset>
+      <fileset dir="${tom.home}/lib">
+        <include name="*.jar"/>
+      </fileset>
+
     </path>
   
     <!-- tasks for building -->
@@ -650,7 +651,7 @@
   </target> 
 
 	<target name="initjunit">
-		<taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+	   	<taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
 			<classpath refid="tom.classpath"/>
 		</taskdef>
 	</target>

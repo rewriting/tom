@@ -14,6 +14,6 @@ if $cygwin ; then
     TOM_HOME=`cygpath --windows "$TOM_HOME"`
 fi
 
-LOCALCLASSPATH=`echo "$TOM_HOME"/lib/junit.jar | tr ' ' ':'` 
+LOCALCLASSPATH=`echo ./lib/junit.jar | tr ' ' ':'` 
 
 CLASSPATH=${LOCALCLASSPATH} ant $*

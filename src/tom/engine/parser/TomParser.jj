@@ -1408,7 +1408,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
       switchToDefaultMode(); /* switch to DEFAULT mode */
       vasCode = vasTL.getCode().trim();
                 
-      Object res = null;
+      Object generatedADTName = null;
       try{
         Method getInstanceMethod = null, initMethod = null, runMethod = null;
         Class vasClass = Class.forName("vas.Vas");
@@ -1430,7 +1430,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         Object[] realParams = {params};
         initMethod.invoke(vasInstance, realParams);
         Object[] realParams2 =  {new ByteArrayInputStream(vasCode.getBytes())};
-        res = runMethod.invoke(vasInstance, realParams2);
+        generatedADTName = runMethod.invoke(vasInstance, realParams2);
       } catch (ClassNotFoundException e) {
         String msg = "You need vas-to-adt to use the %vas construct";
         System.out.println(e.getMessage());
@@ -1440,34 +1440,46 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         e.printStackTrace();
       }
 
-      String inputFileName = new File((String)res).getName();
-      apiName = inputFileName.substring(0, inputFileName.length() - ".adt".length());
-      packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
-      if(getInput().isJCode() && res != null) {
-        String[] finalPar = new String[10];
-        finalPar[0] = "--input";
-        finalPar[1] = (String)res;
-        finalPar[2] = "--outputdir";
-        finalPar[3] = getInput().getDestDir().getAbsolutePath();
-        finalPar[4] = "--name";
-        finalPar[5] = apiName;
-        finalPar[6] = "--nojar";
-        finalPar[7] = "--javagen";
-        finalPar[8] = "--package";
-        finalPar[9] = packageName;
-        
-        apigen.gen.tom.java.Main.main(finalPar);
+      try{
+        if(getInput().isJCode() && generatedADTName != null) {
+          Method mainMethod = null;
+          Class apigenClass = Class.forName("apigen.gen.tom.java.Main");
+          mainMethod  = apigenClass.getMethod("main", new Class[]{(new String[]{}).getClass()});
+          String inputFileName = new File((String)generatedADTName).getName();
+          apiName = inputFileName.substring(0, inputFileName.length() - ".adt".length());
+          packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
+          
+          String[] apigenParameters = new String[10];
+          apigenParameters[0] = "--input";
+          apigenParameters[1] = (String)generatedADTName;
+          apigenParameters[2] = "--outputdir";
+          apigenParameters[3] = getInput().getDestDir().getPath();
+          apigenParameters[4] = "--name";
+          apigenParameters[5] = apiName;
+          apigenParameters[6] = "--nojar";
+          apigenParameters[7] = "--javagen";
+          apigenParameters[8] = "--package";
+          apigenParameters[9] = packageName;
+          mainMethod.invoke(apigenClass, new Object[]{apigenParameters});
+        }
+      } catch (ClassNotFoundException e) {
+        String msg = "You need apigen to use the %vas construct";
+        System.out.println(e.getMessage());
+        throw new TomException(msg);
+      } catch (Exception e) {
+        System.out.println(e.getMessage());
+        e.printStackTrace();
       }
 
       try {
-        String dir = getInput().getDestDir().getAbsolutePath();
+        String dir = getInput().getDestDir().getPath();
         if (packageName != null) {
           dir = dir + File.separatorChar + packageName;
         }
           //if (apiName != null) {
           //dir = dir + File.separatorChar + apiName;
           //}
-        String adtFileName = new File((String)res).getName();
+        String adtFileName = new File((String)generatedADTName).getName();
         file = new File(dir, adtFileName.substring(0, adtFileName.length()-".adt".length())+".tom");
         fileName = file.getCanonicalPath();
         if(file.exists()) {

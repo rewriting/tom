@@ -469,6 +469,8 @@
 	</target>
 
 	<target name="test.stable" description="Compile and run acceptance tests with stable" depends="initTaskDef">
+		<mkdir dir="${test.gen}"/>
+		<mkdir dir="${test.build}"/>
 		<tom srcdir="${test}" destdir="${test.gen}" options="-I ${stable.mapping}">
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
