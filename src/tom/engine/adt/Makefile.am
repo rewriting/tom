@@ -15,9 +15,11 @@ java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES) TomSignatureMakeRules.am Tom.signature
 JAVAROOT        = ${top_builddir}/src/
 
+adtdir          = $(datadir)/jtom/
+adt_DATA        = Tom.signature
 bootinstall :
 	$(mkinstalldirs) $(stabledir)
-	cp -f TomSignatureMakeRules.am $(BOOTSOURCES) $(stabledir)
+	cp -f Tom.signature TomSignatureMakeRules.am $(BOOTSOURCES) $(stabledir)
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done

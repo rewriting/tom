@@ -13,3 +13,5 @@ EXTRA_DIST      = $(JAVASOURCES) TomSignatureMakeRules.am
 
 JAVAROOT        = ${top_builddir}/stable/
 
+adtdir          = $(datadir)/jtom/
+adt_DATA        = Tom.signature

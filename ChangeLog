@@ -4,6 +4,8 @@
 	* bootinstall
 	* runtime/strategies added to stable
 	* bumped to 1.3gamma
+	* "string" tom type renamed into "String"
+	* builtin strings supported in back-quoted terms
 	
 2003-08-12    <pem@bach>
 	* src/jtom/TomSignature.adt: 
