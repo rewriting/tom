@@ -34,7 +34,6 @@ import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.runtime.*;
 import jtom.exception.TomRuntimeException;
-import java.lang.Throwable;
 
 public class TomBase {
   private TomList empty;
@@ -147,7 +146,7 @@ public class TomBase {
       EmptyType() -> {return null;}
       _ -> {
         System.out.println("getTomType error on term: " + type);
-        throw new TomRuntimeException(new Throwable("getTomType error on term: " + type));
+        throw new TomRuntimeException("getTomType error on term: " + type);
       }
     }
   }
@@ -157,7 +156,7 @@ public class TomBase {
       TLType[]  -> { return getTLCode(type); }
       Type[tlType=tlType] -> { return getTLCode(`tlType); }
       _ -> {
-        throw new TomRuntimeException(new Throwable("getTLType error on term: " + type));
+        throw new TomRuntimeException("getTLType error on term: " + type);
       }
     }
   }
@@ -168,7 +167,7 @@ public class TomBase {
       TLType(ITL[code=tlType]) -> { return `tlType; }
       _ -> {
         System.out.println("getTLCode error on term: " + type);
-        throw new TomRuntimeException(new Throwable("getTLCode error on term: " + type));
+        throw new TomRuntimeException("getTLCode error on term: " + type);
       }
     }
   }
@@ -217,7 +216,7 @@ public class TomBase {
       Symbol[tlCode=ITL[code=tlCode]] -> { return `tlCode; }
       _ -> {
         System.out.println("getSymbolCode error on term: " + symbol);
-        throw new TomRuntimeException(new Throwable("getSymbolCode error on term: " + symbol));
+        throw new TomRuntimeException("getSymbolCode error on term: " + symbol);
       }
     }
   } 
@@ -245,7 +244,7 @@ public class TomBase {
 
       _ -> {
         System.out.println("getTermType error on term: " + t);
-        throw new TomRuntimeException(new Throwable("getTermType error on term: " + t));
+        throw new TomRuntimeException("getTermType error on term: " + t);
       }
     }
   }
@@ -266,7 +265,7 @@ public class TomBase {
 
       _ -> {
         System.out.println("getTermType error on term: " + t);
-        throw new TomRuntimeException(new Throwable("getTermType error on term: " + t));
+        throw new TomRuntimeException("getTermType error on term: " + t);
       }
     }
   }
@@ -326,7 +325,7 @@ public class TomBase {
 
       _ -> {
         System.out.println("isListOperator: strange case: '" + subject + "'");
-        throw new TomRuntimeException(new Throwable("isListOperator: strange case: '" + subject + "'"));
+        throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
       }
     }
   }
@@ -352,7 +351,7 @@ public class TomBase {
 
       _ -> {
         System.out.println("isArrayOperator: strange case: '" + subject + "'");
-        throw new TomRuntimeException(new Throwable("isArrayOperator: strange case: '" + subject + "'"));
+        throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
       }
     }
   }
@@ -379,7 +378,7 @@ public class TomBase {
     } catch(Exception e) {
       System.out.println("tomListMap error: " + e);
       e.printStackTrace();
-      throw new TomRuntimeException(new Throwable("tomListMap error: " + e));
+      throw new TomRuntimeException("tomListMap error: " + e);
     }
     return res;
   }
@@ -395,7 +394,7 @@ public class TomBase {
     } catch(Exception e) {
       System.out.println("instructionListMap error: " + e);
       e.printStackTrace();
-      throw new TomRuntimeException(new Throwable("instructionListMap error: " + e));
+      throw new TomRuntimeException("instructionListMap error: " + e);
     }
     return res;
   }
@@ -556,7 +555,7 @@ public class TomBase {
     }
     if(slotList.isEmpty()) {
       System.out.println("getSlotName: bad index error");
-      throw new TomRuntimeException(new Throwable("getSlotName: bad index error"));
+      throw new TomRuntimeException("getSlotName: bad index error");
     }
 
     Declaration decl = slotList.getHead().getSlotDecl();
@@ -608,7 +607,7 @@ public class TomBase {
       optionList = optionList.getTail();
     }
     System.out.println("findOriginTracking:  not found" + optionList);
-    throw new TomRuntimeException(new Throwable("findOriginTracking:  not found" + optionList));
+    throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
   }
 
 }

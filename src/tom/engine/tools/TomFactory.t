@@ -153,7 +153,7 @@ public class TomFactory extends TomBase {
       }
     }
 
-    throw new TomRuntimeException(new Throwable("buildList strange term: " + args));
+    throw new TomRuntimeException("buildList strange term: " + args);
      
   }
 
@@ -183,7 +183,7 @@ public class TomFactory extends TomBase {
       }
     }
 
-    throw new TomRuntimeException(new Throwable("buildArray strange term: " + args));
+    throw new TomRuntimeException("buildArray strange term: " + args);
      
   }
 

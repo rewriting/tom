@@ -141,7 +141,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
           }
           _ -> {
             System.out.println("MakeFunction: strange term: " + localVar);
-            throw new TomRuntimeException(new Throwable("MakeFunction: strange term: " + localVar));
+            throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
           }
         }
       }
@@ -324,7 +324,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
             
           _ -> {
             System.out.println("genDeclMake: strange term: " + arg);
-            throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
+            throw new TomRuntimeException("genDeclMake: strange term: " + arg);
           }
         }
       }

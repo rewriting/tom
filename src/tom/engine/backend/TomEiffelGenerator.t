@@ -80,7 +80,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
               }
               _ -> {
                 System.out.println("MakeFunction: strange term: " + localVar);
-                throw new TomRuntimeException(new Throwable("MakeFunction: strange term: " + localVar));
+                throw new TomRuntimeException("MakeFunction: strange term: " + localVar);
               }
             }
           }
@@ -140,14 +140,14 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   protected void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
     System.out.println("buildLet code not yet implemented");
-    throw new TomRuntimeException(new Throwable("buildLet: Eiffel code not yet implemented"));
+    throw new TomRuntimeException("buildLet: Eiffel code not yet implemented");
   }
 
   protected void buildLetRef(int deep, TomTerm var, OptionList optionList,
                              TomType tlType, 
                              Expression exp, Instruction body) throws IOException {
     System.out.println("buildLetRef code not yet implemented");
-    throw new TomRuntimeException(new Throwable("buildLetRef: Eiffel code not yet implemented"));
+    throw new TomRuntimeException("buildLetRef: Eiffel code not yet implemented");
   }
 
   
@@ -179,12 +179,12 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
     System.out.println("NamedBlock: Eiffel code not yet implemented");
-    throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
+    throw new TomRuntimeException("NamedBlock: Eiffel code not yet implemented");
   }
 
   protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
     System.out.println("UnamedBlock: Eiffel code not yet implemented");
-    throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
+    throw new TomRuntimeException("NamedBlock: Eiffel code not yet implemented");
   }
 
   protected void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException {
@@ -203,7 +203,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
       System.out.println("ExitAction: Eiffel code not yet implemented");
-      throw new TomRuntimeException(new Throwable("ExitAction: Eiffel code not yet implemented"));
+      throw new TomRuntimeException("ExitAction: Eiffel code not yet implemented");
   }
 
   protected void buildReturn(int deep, TomTerm exp) throws IOException {
@@ -295,7 +295,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
             
           _ -> {
             System.out.println("genDeclMake: strange term: " + arg);
-            throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
+            throw new TomRuntimeException("genDeclMake: strange term: " + arg);
           }
         }
       }

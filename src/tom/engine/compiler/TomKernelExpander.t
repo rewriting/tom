@@ -63,7 +63,7 @@ public class TomKernelExpander extends TomBase {
         TomTerm contextSubject = (TomTerm)arg1;
 
         if(contextSubject == null) {
-          throw new TomRuntimeException(new Throwable("expandVariable: null contextSubject"));
+          throw new TomRuntimeException("expandVariable: null contextSubject");
         }
 
           //System.out.println("expandVariable:\n\t" + subject );
@@ -189,7 +189,7 @@ public class TomKernelExpander extends TomBase {
                if(`strName.equals("")) {
                  tomSymbol = getSymbol(`type);
                  if(tomSymbol==null) {
-                   throw new TomRuntimeException(new Throwable("no symbol found for type '" + `type + "'"));
+                   throw new TomRuntimeException("no symbol found for type '" + `type + "'");
                  } else {
                    `nameList = `concTomName(tomSymbol.getAstName());
                  }
@@ -342,7 +342,7 @@ public class TomKernelExpander extends TomBase {
     %match(TomName name,TomList list) {
       _,emptyTomList() -> {
          System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
-         throw new TomRuntimeException(new Throwable("getTypeFromVariableList. Stange case '" + name + "' not found"));
+         throw new TomRuntimeException("getTypeFromVariableList. Stange case '" + name + "' not found");
        }
 
       varName, manyTomList(Variable[astName=varName,astType=type@Type[]],tail) -> { return `type; }
@@ -356,7 +356,7 @@ public class TomKernelExpander extends TomBase {
 
   private TomList expandVariableList(TomSymbol subject, TomList subjectList) {
     if(subject == null) {
-      throw new TomRuntimeException(new Throwable("expandVariableList: null subject"));
+      throw new TomRuntimeException("expandVariableList: null subject");
     }
     
     //System.out.println("symbol = " + subject.getAstName());
@@ -437,7 +437,7 @@ public class TomKernelExpander extends TomBase {
 
       _ -> {
         System.out.println("expandVariableList: strange case: '" + subject + "'");
-        throw new TomRuntimeException(new Throwable("expandVariableList: strange case: '" + subject + "'"));
+        throw new TomRuntimeException("expandVariableList: strange case: '" + subject + "'");
       }
     }
   }
@@ -523,7 +523,7 @@ public class TomKernelExpander extends TomBase {
       }
       _ -> {
         System.out.println("Strange Match in expandMatchPattern"+match);
-        throw new TomRuntimeException(new Throwable("Strange Match in expandMatchPattern"+match));
+        throw new TomRuntimeException("Strange Match in expandMatchPattern"+match);
       }
     }
   }

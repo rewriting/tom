@@ -98,7 +98,7 @@ public class TomKernelCompiler extends TomBase {
                 }
                 if(patternList==null || actionInst==null) {
                   System.out.println("TomKernelCompiler: null value");
-                  throw new TomRuntimeException(new Throwable("TomKernelCompiler: null value"));
+                  throw new TomRuntimeException("TomKernelCompiler: null value");
                 }
                   
                   /*
@@ -170,7 +170,7 @@ public class TomKernelCompiler extends TomBase {
       }
 
       manyTomList(subjectVar,_) -> {
-        throw new TomRuntimeException(new Throwable("collectVariableFromSubjectList: strange term: " + `subjectVar));
+        throw new TomRuntimeException("collectVariableFromSubjectList: strange term: " + `subjectVar);
       }
 
     }
@@ -308,7 +308,7 @@ public class TomKernelCompiler extends TomBase {
       
       _ -> {
         System.out.println("GenSyntacticMatchingAutomata strange term: " + termList);
-        throw new TomRuntimeException(new Throwable("GenSyntacticMatchingAutomata strange term: " + termList));
+        throw new TomRuntimeException("GenSyntacticMatchingAutomata strange term: " + termList);
       }
     }
   }
@@ -439,7 +439,7 @@ public class TomKernelCompiler extends TomBase {
       
       _ -> {
         System.out.println("GenListMatchingAutomata strange termList: " + termList);
-        throw new TomRuntimeException(new Throwable("GenListMatchingAutomata strange termList: " + termList));
+        throw new TomRuntimeException("GenListMatchingAutomata strange termList: " + termList);
       }
     }
   }
@@ -625,7 +625,7 @@ public class TomKernelCompiler extends TomBase {
 
       _ -> {
         System.out.println("GenArrayMatchingAutomata strange termList: " + termList);
-        throw new TomRuntimeException(new Throwable("GenArrayMatchingAutomata strange termList: " + termList));
+        throw new TomRuntimeException("GenArrayMatchingAutomata strange termList: " + termList);
       }
     }
   }
@@ -746,7 +746,7 @@ public class TomKernelCompiler extends TomBase {
       }
 
       _ -> {
-        throw new TomRuntimeException(new Throwable("compileConstraint: strange subject: " + subject));
+        throw new TomRuntimeException("compileConstraint: strange subject: " + subject);
       }
     }
   }
@@ -770,10 +770,10 @@ public class TomKernelCompiler extends TomBase {
       }
 
       concConstraint(head,tail*) -> {
-        throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraint: " + `head));
+        throw new TomRuntimeException("buildConstraint: unknown constraint: " + `head);
       }
     }
-    throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraints: " + constraints));
+    throw new TomRuntimeException("buildConstraint: unknown constraints: " + constraints);
   }
 
 

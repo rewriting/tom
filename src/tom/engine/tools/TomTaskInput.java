@@ -28,6 +28,8 @@ package jtom.tools;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.List;
+
+import jtom.TomEnvironment;
 import jtom.exception.TomRuntimeException;
 import java.io.*;
 
@@ -42,7 +44,7 @@ public class TomTaskInput {
 
   public static TomTaskInput getInstance() {
     if(instance == null) {
-      throw new TomRuntimeException(new Throwable("cannot get the instance of an unitialized TomTaskInput"));
+      throw new TomRuntimeException("cannot get the instance of an unitialized TomTaskInput");
     }
     return instance;
   }
@@ -52,7 +54,7 @@ public class TomTaskInput {
       instance = new TomTaskInput();
       return instance;
     } else {
-      throw new TomRuntimeException(new Throwable("cannot create two instances of TomTaskInput"));
+      throw new TomRuntimeException("cannot create two instances of TomTaskInput");
     }
   }
 
@@ -445,7 +447,7 @@ public class TomTaskInput {
     try {
       this.inputFile = new File(sInputFile).getCanonicalFile();
     } catch (IOException e) {
-      System.out.println("IO Exception using file `" + sInputFile + "`");
+    	System.out.println("IO Exception using file `" + sInputFile + "`");
       e.printStackTrace();
     }
 

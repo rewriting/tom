@@ -81,6 +81,7 @@ public class TomTaskParser extends TomTask {
     } catch (TokenMgrError e) {
       TomEnvironment.getInstance().addError(TomMessage.getString("TokenMgrError"), new Object[]{fileName, e.getMessage()}, fileName,  parser.getLine(), TomMessage.TOM_ERROR);
     } catch (TomIncludeException e) {
+    	System.out.println("TomIncludeException"+e.getMessage());
       TomEnvironment.getInstance().addError(e.getMessage(), fileName,  parser.getLine(), TomMessage.TOM_ERROR);
     } catch (TomException e) {
       TomEnvironment.getInstance().addError(e.getMessage(), fileName,  parser.getLine(), TomMessage.TOM_ERROR);

@@ -951,7 +951,7 @@ abstract public class TomChecker extends TomTask {
         
         _ -> {
           System.out.println("Strange term in pattern "+term);
-          throw new TomRuntimeException(new Throwable("Strange Term "+term));
+          throw new TomRuntimeException("Strange Term "+term);
         }
       }
     }
@@ -1063,7 +1063,7 @@ abstract public class TomChecker extends TomTask {
         }
         _ -> {
           System.out.println("Strange term "+term);
-          throw new TomRuntimeException(new Throwable("Strange Term "+term));
+          throw new TomRuntimeException("Strange Term "+term);
         }
       }
     }
@@ -1362,8 +1362,6 @@ abstract public class TomChecker extends TomTask {
     if(line < 0) {
       addError("findOriginTrackingLine:  not found", getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
       System.out.println("findOriginTrackingLine: not found ");
-        //throw new TomRuntimeException(new Throwable("foo"));
-
     }
   }
 }  //Class TomChecker

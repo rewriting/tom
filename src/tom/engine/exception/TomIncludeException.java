@@ -28,10 +28,6 @@ package jtom.exception;
 public class TomIncludeException extends TomException {
   public TomIncludeException() {
   }
-
-  public TomIncludeException(Throwable t) {
-    super(t);
-  }
   
   public TomIncludeException(String msg) {
     super(msg);

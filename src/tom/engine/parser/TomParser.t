@@ -1366,11 +1366,13 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
   String vasCode, fileName = "", apiName = null, packageName ="";
   File file;
   LinkedList blockList = new LinkedList();
+	int initialVasLine;
 }
 {
   <VAS_SIGNATURE> /* switch to TOM mode */
     {
       addPreviousCode(list);
+			initialVasLine = getLine();
     }
   vasTL = GoalLanguageBlock(list)
     {
@@ -1393,9 +1395,11 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
             runMethod = m; 
           }
         }
-				Object vasInstance = getInstanceMethod.invoke(vasClass, new Class[]{});
+				Object vasInstance = getInstanceMethod.invoke(vasClass, new Object[]{});
         
 				ArrayList vasParams = new ArrayList();
+				vasParams.add("--external");
+				//vasParams.add("--verbose");
 				vasParams.add("--destdir");
         String destDir = getInput().getDestDir().getPath();
 				vasParams.add(destDir);
@@ -1406,7 +1410,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         }
 				Object[] realParams = {(String[]) vasParams.toArray(new String[vasParams.size()])};
 				initMethod.invoke(vasInstance, realParams);
-        Object[] realParams2 =  {new ByteArrayInputStream(vasCode.getBytes()), "Vas from tom file:"+currentFile};
+        Object[] realParams2 =  {new ByteArrayInputStream(vasCode.getBytes()), currentFile};
         generatedADTName = runMethod.invoke(vasInstance, realParams2);
       } catch (ClassNotFoundException e) {
         throw new TomException(TomMessage.getString("VasClassNotFound"));
@@ -1414,6 +1418,28 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
       }
 
+			try{
+        Class vasEnvironmentClass = Class.forName("vas.VasEnvironment");
+				Method getErrorMethod = vasEnvironmentClass.getMethod("getErrors", new Class[]{});
+				Method getInstanceMethod = vasEnvironmentClass.getMethod("getInstance", new Class[]{});
+
+				Object vasEnvInstance = getInstanceMethod.invoke(vasEnvironmentClass, new Object[]{});
+				TomErrorList errors = (TomErrorList)(getErrorMethod.invoke(vasEnvInstance, new Object[]{}));
+				TomError error;
+				if(!errors.isEmpty()) {
+					while(!errors.isEmpty()) {
+						error =errors.getHead();
+						TomEnvironment.getInstance().addError(error.getMessage(),
+						currentFile, error.getLine()+initialVasLine, error.getLevel());
+						errors = errors.getTail();
+					}
+					throw new TomException("See next messages");
+				}
+			} catch (ClassNotFoundException e) {
+        throw new TomException(TomMessage.getString("VasClassNotFound"));
+      } catch (Exception e) {
+        throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
+      }
         // Simulate the inclusion of generated Tom file
       String dir = getInput().getDestDir().getPath();
       if (packageName != null) {

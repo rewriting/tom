@@ -194,7 +194,7 @@ public class XMLToATerm {
     case Node.DOCUMENT_FRAGMENT_NODE:
       //The node is a DocumentFragment.
       System.out.println("We shouldn't find DocumentFragment in a freshly-parsed document");
-      throw new TomRuntimeException(new Throwable("We shouldn't find DocumentFragment in a freshly-parsed document"));
+      throw new TomRuntimeException("We shouldn't find DocumentFragment in a freshly-parsed document");
       //break;
     case Node.DOCUMENT_NODE:
       //The node is a Document.
@@ -229,7 +229,7 @@ public class XMLToATerm {
       //break;
     default : 
       System.err.println("The type of Node is unknown");
-      throw new TomRuntimeException(new Throwable("The type of Node is unknown"));
+      throw new TomRuntimeException("The type of Node is unknown");
     } // switch
   }
 

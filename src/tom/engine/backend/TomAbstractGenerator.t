@@ -150,7 +150,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       t -> {
         System.out.println("Cannot generate code for: " + `t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for: " + `t));
+        throw new TomRuntimeException("Cannot generate code for: " + `t);
       }
     }
   }
@@ -266,7 +266,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       t -> {
         System.out.println("Cannot generate code for expression: " + `t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for expression: " + `t));
+        throw new TomRuntimeException("Cannot generate code for expression: " + `t);
       }
     }
   }
@@ -399,7 +399,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       
       t -> {
         System.out.println("Cannot generate code for instruction: " + `t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for instruction: " + `t));
+        throw new TomRuntimeException("Cannot generate code for instruction: " + `t);
       }
     }
   }
@@ -424,7 +424,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       t -> {
         System.out.println("Cannot generate code for TL: " + `t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for TL: " + `t));
+        throw new TomRuntimeException("Cannot generate code for TL: " + `t);
       }
     }
   }
@@ -441,7 +441,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       t -> {
         System.out.println("Cannot generate code for option: " + `t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for option: " + `t));
+        throw new TomRuntimeException("Cannot generate code for option: " + `t);
       }
     }
   }
@@ -583,7 +583,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       
       t -> {
         System.out.println("Cannot generate code for declaration: " + `t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for declaration: " + `t));
+        throw new TomRuntimeException("Cannot generate code for declaration: " + `t);
       }
     }
   }
