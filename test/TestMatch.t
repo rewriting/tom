@@ -172,10 +172,10 @@ public class TestMatch {
   public ATerm match4(ATerm t) {
     ATerm res = fail;
     %match(E t) {
-      h(a, l(conc(X1*,x,f(x),X2*)))       -> { return pattern1; }
-      h(b, l(conc(X1*,x,X2*,f(x),X3*)))   -> { return pattern2; }
-      h(c, l(conc(X1*,x,x@f(_),X2*)))     -> { return pattern3; }
-      h(d, l(conc(X1*,x,X2*,x@f(_),X3*))) -> { return pattern4; }
+      h(a(), l(conc(X1*,x,f(x),X2*)))       -> { return pattern1; }
+      h(b(), l(conc(X1*,x,X2*,f(x),X3*)))   -> { return pattern2; }
+      h(c(), l(conc(X1*,x,x@f(_),X2*)))     -> { return pattern3; }
+      h(d(), l(conc(X1*,x,X2*,x@f(_),X3*))) -> { return pattern4; }
     }
     return res;
   }
@@ -191,8 +191,8 @@ public class TestMatch {
   public ATerm match5(ATerm t) { 
     ATerm res = fail;
     %match(E t) { 
-      h(a, l(conc(X1*,vx@f(_),X2*,vx@f(_),X3*))) -> { return pattern1; }
-      h(b, l(conc(X1*,ff(vx@f(x)),X2*,ff(vx@f(y)),X3*))) -> { return pattern2; } 
+      h(a(), l(conc(X1*,vx@f(_),X2*,vx@f(_),X3*))) -> { return pattern1; }
+      h(b(), l(conc(X1*,ff(vx@f(x)),X2*,ff(vx@f(y)),X3*))) -> { return pattern2; } 
     } 
     return res;
   } 

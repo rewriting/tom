@@ -13,7 +13,6 @@
   get_slot(type,t) { t.getType() }
 }
 
-
-%rule {
-  x@toto -> x
+%match(type1 t, type1 t2) {
+  _, _, _ -> {}
 }

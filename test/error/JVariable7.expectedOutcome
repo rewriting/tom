@@ -1,0 +1,6 @@
+
+Unknown variable(s) [Name("a")] used in right part of %rule declared line 16
+-- Error occured at line: 17 in file: JVariable7.t
+
+Tom Checker:  Encountered 1 errors during verification phase.
+No file generated.

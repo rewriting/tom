@@ -69,7 +69,7 @@ public class Peano {
 
   public ATerm plus1(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {
-      x,zero   -> { return x; }
+      x,zero()   -> { return x; }
       x,suc(y) -> { return suc(plus1(x,y)); }
     }
     return null;
@@ -77,7 +77,7 @@ public class Peano {
 
   public ATerm plus2(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {
-      x,zero   -> { return x; }
+      x,zero()   -> { return x; }
       x,suc[pred=y] -> { return suc(plus2(x,y)); }
     }
     return null;
@@ -85,27 +85,27 @@ public class Peano {
 
   public ATerm plus3(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {
-      x,zero   -> { return x; }
+      x,zero()   -> { return x; }
       x@_,suc[pred=y@z] -> { return suc(plus3(x,y)); }
     }
     return null;
   }
 
   %rule {
-    fib1(zero)        -> suc(zero)
-    fib1(suc(zero))   -> suc(zero)
+    fib1(zero())        -> suc(zero)
+    fib1(suc(zero()))   -> suc(zero)
     fib1(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
   }
   
   %rule {
-    fib2(zero) | fib2(x@suc[pred=zero]) -> suc(zero)
+    fib2(zero()) | fib2(x@suc[pred=zero()]) -> suc(zero)
     fib2(suc(y@suc(x)))    -> plus2(fib2(x),fib2(y))
   }
 
   public ATerm fib3(ATerm t) {
     %match(term t) {
-      zero             -> { return `suc(zero); }
-      suc[pred=x@zero] -> { return `suc(x); }
+      zero()             -> { return `suc(zero); }
+      suc[pred=x@zero()] -> { return `suc(x); }
       suc(suc(x))      -> { return plus3(fib3(x),fib3(suc(x))); }
     }
     return null;
@@ -113,7 +113,7 @@ public class Peano {
 
   public ATerm fib4(ATerm t) {
     %match(term t) {
-      zero | suc(zero) -> { return `suc(zero); }
+      zero() | suc(zero()) -> { return `suc(zero); }
       suc(suc(x))      -> { return plus3(fib4(x),fib4(suc(x))); }
     }
     return null;
@@ -141,7 +141,7 @@ public class Peano {
 
   public int peano2int(ATerm N) {
     %match(term N) {
-      zero -> { return 0; }
+      zero() -> { return 0; }
       suc(x) -> {return 1+peano2int(x); }
     }
     return 0;

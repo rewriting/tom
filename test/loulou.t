@@ -25,7 +25,7 @@ int suc(int t) {
 
 int plus(int t1, int t2) {
   %match(Nat t1, Nat t2) {
-    x,zero   -> { return x; }
+    x,zero()   -> { return x; }
     x,suc(y) -> { return suc(plus(x,y)); }
   }
 }

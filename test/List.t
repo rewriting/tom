@@ -133,7 +133,7 @@ public class List {
 
   public ATermList double5(ATermList l) {
     %match(L l) {
-      conc(X1*,x@a,X2*,x@a,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
+      conc(X1*,x@a(),X2*,x@a(),X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
       conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
       conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
       _ -> { return l; }

@@ -27,5 +27,5 @@
 }
 
 %match(type1 t) {
-  concList(X*,op2,X*) -> {}
+  concList(X*,op2(),X*) -> {}
 }

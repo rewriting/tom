@@ -1,1 +1,1 @@
-Included file `NoFile.t` not found at line 1 from file `JIncludeFile2.t`
+java.lang.Throwable: Included file `NoFile.t` not found at line 1 from file `JIncludeFile2.t`

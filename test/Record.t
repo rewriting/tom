@@ -288,8 +288,8 @@ public class Record {
         return new IntExp(v1.intValue() + v2.intValue());
       }
 
-      Plus[first=e1, second=IntExp(zero)] -> { return e1; }
-      Plus[second=e1, first=IntExp(zero)] -> { return e1; }
+      Plus[first=e1, second=IntExp(zero())] -> { return e1; }
+      Plus[second=e1, first=IntExp(zero())] -> { return e1; }
 
       Plus[first=e1, second=Uminus(e2)] -> {
         if(myEquals(e1,e2)) {
@@ -303,8 +303,8 @@ public class Record {
         return new IntExp(v1.intValue() * v2.intValue());
       }
       
-      Mult[first=e1, second=IntExp(suc(zero))] -> { return e1; }
-      Mult[second=e1, first=IntExp(suc(zero))] -> { return e1; }
+      Mult[first=e1, second=IntExp(suc(zero()))] -> { return e1; }
+      Mult[second=e1, first=IntExp(suc(zero()))] -> { return e1; }
     }
     return t;
   }

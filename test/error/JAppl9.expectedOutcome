@@ -1,0 +1,6 @@
+
+Impossible variable star _* as argument 1 of non list operator method 'conc'
+-- Error occured at line: 23 in file: JAppl9.t
+
+Tom Checker:  Encountered 1 errors during verification phase.
+No file generated.

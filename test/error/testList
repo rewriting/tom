@@ -1,165 +1,254 @@
+List of realized syntactic Test
+
 ////////////////////
 TYPETERM DECLARATION
 ////////////////////
-JTypeTermRef.t
-JTypeTerm1.t
+Grammar {
+	%typeterm typeName {
+		implement	     { ... }
+		get_fun_sym(var)     { ... }
+		cmp_fun_sym(var,var) { ... }
+		get_subterm(var,var) { ... }
+		[equals(var,var)     { ... }]
+	}
+}
+Test {
+     JTypeTermRef.t
+     JTypeTerm1.t
 	Missing functions : [get_fun_sym]
-JTypeTerm2.t
+     JTypeTerm2.t
 	Missing functions : [cmp_fun_sym]
-JTypeTerm3.t
+     JTypeTerm3.t
 	Missing functions : [get_subterm]
-JTypeTerm4.t
+     JTypeTerm4.t
 	Missing functions : [get_fun_sym, cmp_fun_sym, get_subterm]
-JTypeTerm5.t
-	OK: missing equals
-JTypeTerm6.t
+     JTypeTerm5.t
+	missing optional `equals` function : No message
+     JTypeTerm6.t
 	 Repeated macro-functions 'get_fun_sym'
-JTypeTerm7.t
+     JTypeTerm7.t
 	Arguments must be linear in declaration 'cmp_fun_sym'
-JTypeTerm8.t
+     JTypeTerm8.t
 	Arguments must be linear in declaration 'equals'
-JTypeTerm9.t
+     JTypeTerm9.t
 	Multiple definition of type
+}
 
 ////////////////////
 TYPEARRAY DECLARATION
 ////////////////////
-JTypeArrayRef.t
-JTypeArray1.t
+Grammar {
+	%typearray typeName {
+		implement            { ... }
+		get_fun_sym(var)     { ... }
+		cmp_fun_sym(var,var) { ... }
+		get_element(var,var) { ... }
+		get_size(var)        { ... }
+		[equals(var,var)     { ... }]
+	}
+}
+Test {
+     JTypeArrayRef.t
+     JTypeArray1.t
 	Missing functions : [get_fun_sym]
-JTypeArray2.t
+     JTypeArray2.t
 	Missing functions : [cmp_fun_sym]
-JTypeArray3.t
+     JTypeArray3.t
 	Missing functions : [get_element]
-JTypeArray4.t
+     JTypeArray4.t
 	Missing functions : [get_size]
-JTypeArray5.t
-	OK: missing equals
-JTypeArray6.t
+     JTypeArray5.t
+	missing optional `equals` function : No message
+     JTypeArray6.t
 	Arguments must be linear in declaration 'cmp_fun_sym'
-JTypeArray7.t
+     JTypeArray7.t
 	Arguments must be linear in declaration 'equals
-JTypeArray8.t
+     JTypeArray8.t
 	Repeated macro-functions 'get_element'
+}
 
 ////////////////////
 TYPELIST DECLARATION
 ////////////////////
-JTypeListRef.t
-JTypeList1.t
+Grammar {
+	%typelist typeName {
+		implement	     { ... }
+		get_fun_sym(var)     { ... }
+		cmp_fun_sym(var,var) { ... }
+		get_head(var)    { ... }
+		get_tail(var)    { ... }
+		is_empty(var)    { ... }
+	}
+}
+Test {
+     JTypeListRef.t
+     JTypeList1.t
 	Missing functions : [get_fun_sym]
-JTypeList2.t
+     JTypeList2.t
 	Missing functions : [cmp_fun_sym]
-JTypeList3.t
+     JTypeList3.t
 	Missing functions : [get_head]
-JTypeList4.t
+     JTypeList4.t
 	 Missing functions : [get_tail]
-JTypeList5.t
+     JTypeList5.t
 	Missing functions : [is_empty]
-JTypeList6.t
+     JTypeList6.t
 	OK: Missing equals
-JTypeList7.t
+     JTypeList7.t
 	Arguments must be linear in declaration 'cmp_fun_sym'
-JTypeList8.t
+     JTypeList8.t
 	Arguments must be linear in declaration 'equals'
-JTypeList9.t
+     JTypeList9.t
 	Repeated macro-functions 'get_head'
+}
 
 ////////////////////
 OPERATOR DECLARATION
 ////////////////////
-JOperatorRef.t
-JOperator1.t
+Grammar {
+	%op typeName opName [(slotName:type, type,... )] {
+		fsym             { ... }
+		[is_fsym(var)     { ... }
+		 make(var, ...)   { ... }
+		 get_slot(type,t) { ... }
+		]
+	}
+}
+Test {
+     JOperatorRef.t
+     JOperator1.t
 	Operator 'op' has an unknown return type
-JOperator2.t
+     JOperator2.t
 	Slot position 1 of operator 'op' has an unknown type
-JOperator3.t
+     JOperator3.t
 	Repeated macro-functions 'make'
-JOperator4.t
+     JOperator4.t
 	Arguments must be linear in declaration 'make'
-JOperator5.t
+     JOperator5.t
 	Multiple definition of operator
-JOperator6.t
+     JOperator6.t
 	OK: Operator defined before type declaration
-JOperator7.t
+     JOperator7.t
 	Bad number of arguments in method 'make'
-JOperator8.t
+     JOperator8.t
 	GetSlot declaration 'type' is repeated in operator declaration
-JOperator9.t
+     JOperator9.t
 	Some GetSlot declaration are incompatible with operator signature
-JOperator10.t
+     JOperator10.t
 	Repeated slot  's1' in operator declaration
+}
 
 ////////////////////
 OPARRAY DECLARATION
 ////////////////////
-JOpArrayRef.t
-JOpArray1.t
+Grammar {
+	%oparray typeName opName(typeName*) {
+		fsym                  { ... }
+		make_empty(var)       { ... }
+		make_append(var, var) { ... }
+	}
+}
+
+Test {
+     JOpArrayRef.t
+     JOpArray1.t
 	Operator 'concArray' has an unknown return type
-JOpArray2.t
+     JOpArray2.t
 	Slot position 1 of operator 'concArray' has an unknown type
-JOpArray3.t
+     JOpArray3.t
 	Missing functions : [make_empty]
-JOpArray4.t
+     JOpArray4.t
 	Missing functions : [make_append]
-JOpArray5.t
+     JOpArray5.t
 	Arguments must be linear in declaration 'make_append'
-JOpArray6.t
+     JOpArray6.t
 	Repeated macro-functions 'make_append'
+}
 
 ////////////////////
 OPLIST DECLARATION
 ////////////////////
-JOpListRef.t
-JOpList1.t
+Grammar {
+	%oplist typeName opName(typeName*) {
+		fsym                  { ... }
+		make_empty(var)       { ... }
+		make_insert(var, var) { ... }
+	}
+}
+
+Test {
+     JOpListRef.t
+     JOpList1.t
 	Operator 'concList' has an unknown return type
-JOpList2.t
+     JOpList2.t
 	Slot position 1 of operator 'concList' has an unknown type
-JOpList3.t
+     JOpList3.t
 	Missing functions : [make_empty]
-JOpList4.t
+     JOpList4.t
 	Missing functions : [make_insert]
-JOpList5.t
+     JOpList5.t
 	Arguments must be linear in declaration 'make_insert'
-JOpList6.t
+     JOpList6.t
 	Repeated macro-functions 'make_empty'
-	
+}
+
+
 ////////////////////
 MATCH DECLARATION
 ////////////////////
-JMatchRef.t
-JMatch1.t
+Grammar {
+	%match(typeName var, typeName var, ...) {
+		term, term, ...-> { ... }
+	}
+}
+
+Test {
+     JMatchRef.t
+     JMatch1.t
 	Variable 't' has an unknown type 'type' (Bad type name in signature)
-JMatch2.t
+     JMatch2.t
 	Bad number of arguments: 2 argument(s) required but 1 found in %match structure
-JMatch3.t
+     JMatch2Bis.t
+	Bad number of arguments: 2 argument(s) required but 3 found in %match structure
+     JMatch3.t
 	Single list variable x* : Not allowed in %match structure
-JMatch4.t
+     JMatch3Bis.t
+	Single list variable _* : Not allowed in %match structure
+     JMatch4.t
 	For slot 2 :Type 'type2' required but Type 'type1' found
+}
 
 ////////////////////
 RULE DECLARATION
 ////////////////////
-JRuleRef.t
-JRule1.t
+Grammar {
+	%rule {
+	  term -> term [where term := term] [if term == term]
+	  ... 
+	}
+}
+
+Test {
+     JRuleRef.t
+     JRule1.t
 	'_' is impossible on top of Rhs
-JRule2.t
+     JRule2.t
 	'_' is impossible on Rhs even in app structure
-JRule3.t
+     JRule3.t
 	Alone placeholder : Not allowed in left hand side
-JRule4.t
+     JRule4.t
 	Single list variable : Not allowed on top of %rule
-JRule5.t
+     JRule5.t
 	Bad number of arguments for method 'op':2 arguments are required but 1 are given
-JRule6t
-	MLeft most symbol name 'op' expected, but 'op1' found in left hand side of structure %rule
-JRule7.t
+     JRule6t
+	Left most symbol name 'op' expected, but 'op1' found in left hand side of structure %rule
+     JRule7.t
 	Single list variable 'x*' is not allowed in right hand side of structure %rule
-JRule8.t
-	Alone variable or operator op is not allowed on left hand side of structur %rule
-JRule9.t
+     JRule8.t
+	Alone variable or operator toto is not allowed on left hand side of structure %rule
+     JRule9.t
 	 Record 'op[...]' is not allowed on right part of structure %rule
-JRule10.t
+     JRule10.t
 	Alone variable 'y' has type 'type1' instead of type 'type2' in right part of %rule
 
 	
@@ -195,9 +284,13 @@ JAppl5.t
 JAppl6.t
 	Symbol method : 'opp' not found in rule rhs
 JAppl7.t
-	Placeholder is not allowed in list operator
+	Placeholder is allowed in list operator
 JAppl8.t
 	Bad type of argument: Argument 2 of method 'concList' has type 'type2' required but type 'type1'
+JAppl9.t 
+	_* in non list operator
+JAppl10.t 
+	Var* in non list operator
 
 ////////////////////
 VARIABLE DECLARATION

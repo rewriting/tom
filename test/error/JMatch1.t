@@ -13,6 +13,6 @@
   get_slot(type,t) { t.getType() }
 }
 
-%match(type t, type1 t2) {
+%match(type t) {
 
 }

@@ -1,5 +1,1 @@
-Parsing exception catched in file `JParse.t`
-Encountered "}" at line 1, column 10.
-Was expecting:
-    <TOM_IDENTIFIER> ...
-    
+java.lang.Throwable: Included file `` not found at line 1 from file `JParse.t`

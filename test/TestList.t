@@ -94,12 +94,12 @@ public class TestList {
     ATerm res = fail;
     ATermList l = (ATermList)t;
     %match(L l) {
-      conc(f(a))                  -> { return factory.parse("pattern1"); }
-      conc(X1*,f(a))              -> { return factory.parse("pattern2"); }
-      conc(X1*,f(a),X2*,f(b))     -> { return factory.parse("pattern3"); }
-      conc(X1*,f(a),X2*,f(b),X3*) -> { return factory.parse("pattern4"); }
-      conc(f(b),X2*,f(b),X3*)     -> { return factory.parse("pattern5"); }
-      conc(X1*,f(c),f(x),X3*)     -> { return factory.parse("pattern6"); }
+      conc(f(a()))                  -> { return factory.parse("pattern1"); }
+      conc(X1*,f(a()))              -> { return factory.parse("pattern2"); }
+      conc(X1*,f(a()),X2*,f(b()))     -> { return factory.parse("pattern3"); }
+      conc(X1*,f(a()),X2*,f(b()),X3*) -> { return factory.parse("pattern4"); }
+      conc(f(b()),X2*,f(b()),X3*)     -> { return factory.parse("pattern5"); }
+      conc(X1*,f(c()),f(x),X3*)     -> { return factory.parse("pattern6"); }
       conc()                      -> { return factory.parse("pattern7"); }
     }
     return res;
@@ -120,8 +120,8 @@ public class TestList {
   public ATerm match2(ATerm t) {
     ATerm res = fail;
     %match(E t) {
-      h(a,l(conc(f(a))))                       -> { return factory.parse("pattern1"); }
-      h(l(conc(f(a))),a)                       -> { return factory.parse("pattern2"); }
+      h(a(),l(conc(f(a()))))                       -> { return factory.parse("pattern1"); }
+      h(l(conc(f(a()))),a())                       -> { return factory.parse("pattern2"); }
       h(l(conc(X1*,x,y,X2*)),z)                -> { if(y==z) return factory.parse("pattern3"); }
       h(l(conc(X1*,x,X2*)),l(conc(Y1*,y,Y2*))) -> { if(X2==Y2 && !X2.isEmpty())
                                                       return factory.parse("pattern4"); }

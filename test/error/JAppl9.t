@@ -14,14 +14,11 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op type1 op(type:type2, type1) {
-  fsym { fzero }
-  make(t1,t2) { factory.makeAppl(fzero) }
-  is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
-  get_slot(type,t) { t.getType() }
+%op type1 conc( type2, type2 ) {
+  fsym { factory.makeAFun("conc", 1, false) }
+  make(t1,t2)  { factory.makeList() }
 }
 
-%rule {
-  y@op(x, x) -> y
-    
+%match(type1 t) {
+  conc(_*,_) -> {}
 }
