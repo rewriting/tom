@@ -7,13 +7,12 @@
   equals(t1,t2) { t1.equals(t2) }
 }
 
-%op type1 op9(type1:type1, type1) {
+%op type1 op9(slot1:type1, slot2: type1) { // Warning: GetSlot declaration `get_slot(slot2,...)` is missing. SlotName will not be considered
   fsym { fzero }
   make(t1,t2) { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
-  get_slot(type,t) { t.getType() } // Incompatible GetSlot declaration: type does not appears in symbol signature (line14)
-  get_slot(type1,t) { t.getType() }
-  get_slot(type2,t) { t.getType() } // Incompatible GetSlot declaration: type2 does not appears in symbol signature (line16)
+  get_slot(badslot,t) { t.getType() } // Incompatible GetSlot declaration: badslot does not appears in symbol signature (line14)
+  get_slot(slot1,t) { t.getType() }
 }
 
 %op type1 op7(type:type1, type1) {

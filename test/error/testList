@@ -101,6 +101,7 @@ Test {
 	OK: Operator defined before type declaration
 
      JOperator2.t
+	Warning: GetSlot declaration `get_slot(slot2,...)` is missing. SlotName will not be considered
 	GetSlot declaration 'type' is repeated in operator declaration
 	Some GetSlot declaration are incompatible with operator signature
 	Repeated slot  's1' in operator declaration
@@ -220,36 +221,29 @@ Test {
 RECORD DECLARATION
 ////////////////////
 JRecord1.t
-	Slot Name 'term' is not correct: See method 'op' in match slot
-JRecord2.t
-	Same slot names can not be used several times: See method op' in match slot
-JRecord3.t
-	Slot Name 'typ' is not correct: See method 'op' in complex match slot
-JRecord4.t
-	Symbol method : 'opp' not found: succ[...] in match slot
-JRecord5.t
-	Slot Name 'typ' is not correct: See method 'op' in rule rhs
-JRecord6.t
-	Same slot names can not be used several times: See method op' in rule rhs
+	Slot Name `badslot` is not correct for symbol `op`. Possible slot names are : [slot1, slot2]
+	[] are not allowed on lists or arrays, see `concList1`
+	Same slot names can not be used several times in symbol `op`: Repeated slot Name : `slot1`
+	Unknown symbol opp
 
 ////////////////////
 APPL DECLARATION
 ////////////////////
 JAppl1.t
-	Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found (line62)
-	Bad number of arguments for symbol `op2`: 2 argument(s) required but 3 found (line64)
-	Too many list symbols with returned type `type2`:  concList2 concList3 (line66)
+	Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found
+	Bad number of arguments for symbol `op2`: 2 argument(s) required but 3 found
+	Too many list symbols with returned type `type2`:  concList2 concList3
 	OK: Only one list symbol with returned type `type1`
-	Not able to found a list symbol of type: `type0 (line70)
-	The symbol op1 has type `type1` but type `type2` was required (x2) (line72)
-	_* (&& X*) is not allowed in non list symbol (line74)
+	Not able to found a list symbol of type: `type0
+	The symbol op1 has type `type1` but type `type2` was required (x2)
+	_* (&& X*) is not allowed in non list symbol
 	OK: variable opVariable
-	Unknown symbol opError (line78)
-	Unknown symbol opError2 (line80) opError2()
-	Warning: Ambiguous symbol name. Is`op0` a variable or a constructor? Prefer `op0`() if it is a constructor (line82)
-	The symbol op0 has type `type0` but type `type2` was required (line82)
-	The symbol op0 has type `type0` but type `type2` was required (line85)
-	The symbol op0 has type `type0` but type `type2` was required (line87) "nested Appl"
+	Unknown symbol opErro (line78)
+	Unknown symbol opError2 "opError2()"
+	Warning: Ambiguous symbol name. Is`op0` a variable or a constructor? Prefer `op0`() if it is a constructor
+	The symbol op0 has type `type0` but type `type2` was required
+	The symbol op0 has type `type0` but type `type2` was required
+	The symbol op0 has type `type0` but type `type2` was required "nested Appl"
 
 ////////////////////
 VARIABLE DECLARATION
