@@ -57,9 +57,11 @@ public abstract class TomTask extends TomBase {
   }
   
   protected void closeProcess() {
-    if(checkNoErrors()) {
+    if(!environment().hasError()) {
       finishProcess();
-    }
+    } else {
+			environment().printAlertMessage(name);
+		}
   }
   
   public void finishProcess() {
@@ -96,7 +98,7 @@ public abstract class TomTask extends TomBase {
                              int line,
                              String msg,
                              Object[] msgArg) {
-    environment().messageWarning(errorLine, fileName, structInfo, line, msg, msgArg);
+    environment().messageWarning(warningLine, fileName, structInfo, line, msg, msgArg);
   }
 
   public void messageError(String msg, String fileName, int line) {

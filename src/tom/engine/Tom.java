@@ -440,9 +440,6 @@ public class Tom {
       String inputFileName = (String)it.next();
       tom.run(inputFileName);
 
-      System.out.println("error = " + environment().getErrors());
-
-
       if(Tom.environment().hasError()) {
         return 1;
       }

@@ -613,7 +613,7 @@ abstract public class TomChecker extends TomTask {
         } else {
             // Maybe its an error to have the 2 same name variable in the match definition: warn the user
           messageWarning(currentTomStructureOrgTrack.getLine(),
-                       TomMessage.getString("RepeatedMatchArgumentName"),
+												 TomMessage.getString("RepeatedMatchArgumentName"),
                          new Object[]{`name});
         }
       } 
@@ -1312,6 +1312,17 @@ abstract public class TomChecker extends TomTask {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
     messageError(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
+  }
+
+  private void messageWarning(int errorLine, String msg, Object[] msgArg) {
+    String structName = currentTomStructureOrgTrack.getAstName().getString();
+    messageWarning(errorLine, structName, msg, msgArg);
+  }
+  
+  private void messageWarning(int errorLine, String structInfo, String msg, Object[] msgArgs) {
+    String fileName = currentTomStructureOrgTrack.getFileName().getString();
+    int structDeclLine = currentTomStructureOrgTrack.getLine();
+    messageWarning(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
   }
   
   

@@ -1384,11 +1384,12 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
       try{
         Class vasClass = Class.forName("vas.Vas");
 				
-				Method execMethod = vasClass.getMethod("externalExec",
+				Method execMethod = vasClass.getMethod(
+					"externalExec",
 					new Class[]{(new String[]{}).getClass(), 
-					Class.forName("java.io.InputStream"),
-					Class.forName( "java.lang.String")
-				});
+											Class.forName("java.io.InputStream"),
+											Class.forName( "java.lang.String")
+					});
 
 				ArrayList vasParams = new ArrayList();
 				// vasParams.add("--verbose");
