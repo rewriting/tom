@@ -11,18 +11,22 @@ import jtom.runtime.*;
 public class SlashSlashOperator extends PathOperator{
   %include {TNode.tom}
 
-  private XmlTools xtools = new XmlTools();
-
-  private Factory getTNodeFactory() 
-  {
-	return xtools.getTNodeFactory();
-  }
-
 
   public SlashSlashOperator(TNodeTester tester, PathOperator nextOperator)
   {
 	super(tester, nextOperator);
   }
+
+  public SlashSlashOperator(PathOperator nextOperator)
+  {
+	super(nextOperator);
+  }
+
+  public SlashSlashOperator()
+  {
+	super();
+  }
+
 
 
   public Sequence run(TNode subject) 

@@ -8,20 +8,23 @@ import aterm.*;
 import java.util.*;
 import jtom.runtime.*;
 
-public class StarOperator extends PathOperator{
+public class SlashArrobaStarOperator extends PathOperator {
   %include {TNode.tom}
 
-  private XmlTools xtools = new XmlTools();
 
-  private Factory getTNodeFactory() 
-  {
-	return xtools.getTNodeFactory();
-  }
-
-
-  public StarOperator(TNodeTester tester, PathOperator nextOperator)
+  public SlashArrobaStarOperator(TNodeTester tester, PathOperator nextOperator)
   {
 	super(tester, nextOperator);
+  }
+
+  public SlashArrobaStarOperator(PathOperator nextOperator)
+  {
+	super(nextOperator);
+  }
+
+  public SlashArrobaStarOperator()
+  {
+	super();
   }
 
 
@@ -30,10 +33,14 @@ public class StarOperator extends PathOperator{
 	try {
 	  //return null;
 	  HashSequence seq=new HashSequence(); 
-	  if (doTest(subject)) {
-		seq.addAll(runNext(subject));
+	  %match (TNode subject) {
+		<_></_> -> {
+		   if (doTest(subject)) {
+			 seq.addAll(runNext(subject));
+		   }
+		 }
 	  }
-	  
+
 	  return seq;
 	}
 	

@@ -11,9 +11,9 @@ import jtom.runtime.*;
 public class PathOperator {
   %include {TNode.tom}
 
-  private XmlTools xtools = new XmlTools();
+  protected XmlTools xtools = new XmlTools();
 
-  private Factory getTNodeFactory() 
+  protected Factory getTNodeFactory() 
   {
 	return xtools.getTNodeFactory();
   }
@@ -27,6 +27,20 @@ public class PathOperator {
 	this.tester =tester;
 	this.nextOperator = nextOperator; 
   }
+
+  public PathOperator(PathOperator nextOperator)
+  {
+	this.tester =new TNodeTester();
+	this.nextOperator = nextOperator; 
+  }
+
+  public PathOperator()
+  {
+	this.tester = new TNodeTester();
+	this.nextOperator = null; 
+  }
+
+
 
   protected boolean doTest(Object node) 
 	throws XQueryGeneralException

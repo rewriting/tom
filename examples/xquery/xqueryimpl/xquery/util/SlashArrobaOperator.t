@@ -8,40 +8,46 @@ import aterm.*;
 import java.util.*;
 import jtom.runtime.*;
 
-public class SlashOperator extends PathOperator{
+public class SlashArrobaOperator extends PathOperator {
   %include {TNode.tom}
 
-  public SlashOperator(TNodeTester tester, SlashOperator nextOperator)
+
+  public SlashArrobaOperator(TNodeTester tester, PathOperator nextOperator)
   {
 	super(tester, nextOperator);
   }
 
-  public SlashOperator(SlashOperator nextOperator)
+  public SlashArrobaOperator(PathOperator nextOperator)
   {
 	super(nextOperator);
   }
 
-  public SlashOperator()
+  public SlashArrobaOperator()
   {
 	super();
   }
 
+
   public Sequence run(TNode subject) 
   {
-
 	try {
 	  //return null;
 	  HashSequence seq=new HashSequence(); 
-	  if (doTest(subject)) {
-		seq.addAll(runNext(subject));
-	  }	  
+	  %match (TNode subject) {
+		<_></_> -> {
+		   if (doTest(subject)) {
+			 seq.addAll(runNext(subject));
+		   }
+		 }
+	  }
+
 	  return seq;
 	}
+	
 	catch (XQueryGeneralException e) {
 	  System.out.println("ERROR: xqueryGeneral exception");
 	  return null; 
 	}
-	
   }
 
 }
