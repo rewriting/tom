@@ -471,9 +471,11 @@ public class Nsh {
               M) -> {
               if(sizeMessage(M) < maxMessagesInNetwork) {
                 ListAgent subjectED = `concAgent(E*,D*);
+				ListAgent subjectED2 = subjectED;	
+				ListNonce listNonce2 = listNonce;
                 %match(ListAgent subjectED, ListAgent subjectED,
                        ListNonce listNonce, ListNonce listNonce) {
-                  concAgent(_*,agent(y,_,_),_*),
+                  concAgent(_*,agent(_,y,_,_),_*),
                   concAgent(_*,agent(xadd,_,_),_*),
                   concNonce(_*,init,_*),
                   concNonce(_*,resp,_*) -> {
@@ -487,7 +489,7 @@ public class Nsh {
                 }
               }
             }
-
+ 
               //------------------------------
               // the ATTACK
               //------------------------------

@@ -9,8 +9,7 @@ TNODEADT_STABLE=$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
 javadir         = ${prefix}/classes/jtom/parser
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(TSADT_STABLE):$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
-JAVASOURCES     = ASCII_UCodeESC_CharStream.java\
-		  JavaCharStream.java\
+JAVASOURCES     = JavaCharStream.java\
                   TomBuffer.java\
 		  Token.java\
                   ParseException.java\

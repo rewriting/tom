@@ -25,12 +25,11 @@
 
 package jtom.tools;
 
+import aterm.*;
 import jtom.*;
 import java.util.*;
-import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.xml.*;
-import aterm.*;
 
 public class TomFactory extends TomBase {
 
@@ -50,7 +49,7 @@ public class TomFactory extends TomBase {
 
   public TomList metaEncodeTermList(SymbolTable symbolTable,TomList list) {
      {  TomList tom_match1_1 = null; tom_match1_1 = ( TomList) list;_match1_pattern1: { if(tom_is_fun_sym_emptyTomList(tom_match1_1) ||  false ) {
-  return tom_make_emptyTomList() ; }}_match1_pattern2: {  TomList tail = null;  TomTerm head = null; if(tom_is_fun_sym_manyTomList(tom_match1_1) ||  false ) {  TomTerm tom_match1_1_1 = null;  TomList tom_match1_1_2 = null; tom_match1_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match1_1); tom_match1_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match1_1); head = ( TomTerm) tom_match1_1_1; tail = ( TomList) tom_match1_1_2;
+  return tom_make_emptyTomList() ; }}_match1_pattern2: {  TomTerm head = null;  TomList tail = null; if(tom_is_fun_sym_manyTomList(tom_match1_1) ||  false ) {  TomTerm tom_match1_1_1 = null;  TomList tom_match1_1_2 = null; tom_match1_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match1_1); tom_match1_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match1_1); head = ( TomTerm) tom_match1_1_1; tail = ( TomList) tom_match1_1_2;
  
         return tom_make_manyTomList(metaEncodeXMLAppl(symbolTable, head),metaEncodeTermList(symbolTable, tail))
  ;
@@ -114,7 +113,7 @@ public class TomFactory extends TomBase {
   
   public LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
-     {  TomTerm tom_match8_1 = null; tom_match8_1 = ( TomTerm) term;_match8_pattern1: {  TomList args = null;  TomName tom_absvar4 = null; if(tom_is_fun_sym_Appl(tom_match8_1) ||  false ) {  NameList tom_match8_1_2 = null;  TomList tom_match8_1_3 = null; tom_match8_1_2 = ( NameList) tom_get_slot_Appl_nameList(tom_match8_1); tom_match8_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match8_1); if(tom_is_fun_sym_concTomName(tom_match8_1_2) ||  false ) {  NameList tom_match8_1_2_list1 = null; tom_match8_1_2_list1 = ( NameList) tom_match8_1_2; if(!(tom_is_empty_NameList(tom_match8_1_2_list1))) { tom_absvar4 = ( TomName) tom_get_head_NameList(tom_match8_1_2_list1); tom_match8_1_2_list1 = ( NameList) tom_get_tail_NameList(tom_match8_1_2_list1); if(tom_is_empty_NameList(tom_match8_1_2_list1)) { args = ( TomList) tom_match8_1_3; {  TomName tom_match9_1 = null; tom_match9_1 = ( TomName) tom_absvar4;_match9_pattern1: { if(tom_is_fun_sym_Name(tom_match9_1) ||  false ) {  String tom_match9_1_1 = null; tom_match9_1_1 = ( String) tom_get_slot_Name_string(tom_match9_1); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match9_1_1) , "") ||  false ) {
+     {  TomTerm tom_match8_1 = null; tom_match8_1 = ( TomTerm) term;_match8_pattern1: {  TomName tom_absvar4 = null;  TomList args = null; if(tom_is_fun_sym_Appl(tom_match8_1) ||  false ) {  NameList tom_match8_1_2 = null;  TomList tom_match8_1_3 = null; tom_match8_1_2 = ( NameList) tom_get_slot_Appl_nameList(tom_match8_1); tom_match8_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match8_1); if(tom_is_fun_sym_concTomName(tom_match8_1_2) ||  false ) {  NameList tom_match8_1_2_list1 = null; tom_match8_1_2_list1 = ( NameList) tom_match8_1_2; if(!(tom_is_empty_NameList(tom_match8_1_2_list1))) { tom_absvar4 = ( TomName) tom_get_head_NameList(tom_match8_1_2_list1); tom_match8_1_2_list1 = ( NameList) tom_get_tail_NameList(tom_match8_1_2_list1); if(tom_is_empty_NameList(tom_match8_1_2_list1)) { args = ( TomList) tom_match8_1_3; {  TomName tom_match9_1 = null; tom_match9_1 = ( TomName) tom_absvar4;_match9_pattern1: { if(tom_is_fun_sym_Name(tom_match9_1) ||  false ) {  String tom_match9_1_1 = null; tom_match9_1_1 = ( String) tom_get_slot_Name_string(tom_match9_1); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match9_1_1) , "") ||  false ) {
  
         while(!args.isEmpty()) {
           list.add(metaEncodeXMLAppl(symbolTable,args.getHead()));

@@ -53,7 +53,7 @@ public class Tom {
 	// potential tasks to be connected together to form the compiler chain
 
 	private static String version =
-          "\njtom 1.5gamma\n"
+          "\njtom 1.5\n"
           + "\n"
           + "Copyright (C) 2000-2003 INRIA, Nancy, France.\n";
 
@@ -82,6 +82,7 @@ public class Tom {
 			+ "\n\t--debug\t\t\tGenerate debug primitives"
 			+ "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)";
 
+  private static int defaultLineNumber = 1;
 	private static void version() {
 		System.out.println(version);
 	}
@@ -138,12 +139,12 @@ public class Tom {
 				if (args[i].equals("--version") || args[i].equals("-V")) {
 					version();
 					taskInput.setVersion(true);
-					addError(version, "", 0, 1);
+					addError(version, "", defaultLineNumber, TomCheckerMessage.TOM_WARNING);
 					return;
 				} else if (args[i].equals("--help") || args[i].equals("-h")) {
 					usage();
 					taskInput.setHelp(true);
-					addError(usage, "", 0, 1);
+					addError(usage, "", defaultLineNumber, TomCheckerMessage.TOM_WARNING);
 					return;
 				} else if (
 					args[i].equals("--import") || args[i].equals("-I")) {
@@ -207,7 +208,7 @@ public class Tom {
 				} else {
 					String s = "'" + args[i] + "' is not a valid option";
 					System.out.println(s);
-					addError(s, "", 0, 0);
+					addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
 					taskInput.setHelp(true);
 					usage();
 					return;
@@ -224,7 +225,7 @@ public class Tom {
 			taskInput.setHelp(true);
 			usage();
 			if (taskInput.isEclipseMode()) {
-				addError("No input file name...", "", 0, 0);
+				addError("No input file name...", "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
 			}
 		}
 		if (taskInput.getInputFileName().endsWith(inputSuffix)) {
@@ -290,7 +291,7 @@ public class Tom {
 					System.out.println(s);
 					System.out.println("No file generated.");
 					if (taskInput.isEclipseMode()) {
-						addError(s, "", 0, 0);
+						addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
 					}
 					return;
 				} catch (IOException e4) {
@@ -298,7 +299,7 @@ public class Tom {
 					System.out.println(s);
 					System.out.println("No file generated.");
 					if (taskInput.isEclipseMode()) {
-						addError(s, "", 0, 0);
+						addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
 					}
 					return;
 				}
@@ -350,7 +351,7 @@ public class Tom {
 						System.out.println(s);
 						System.out.println("No file generated.");
 						if (taskInput.isEclipseMode()) {
-							addError(s, "", 0, 0);
+							addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
 						}
 						return;
 					} catch (IOException e4) {
@@ -359,7 +360,7 @@ public class Tom {
 						System.out.println(s);
 						System.out.println("No file generated.");
 						if (taskInput.isEclipseMode()) {
-							addError(s, "", 0, 0);
+							addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
 						}
 						return;
 					}

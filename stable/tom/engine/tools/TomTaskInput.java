@@ -2,8 +2,8 @@
   
 	TOM - To One Matching Compiler
 
-	Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)
-				 Nancy, France.
+	Copyright (C) 2000-2003 INRIA
+				Nancy, France.
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@ package jtom.tools;
 import java.util.ArrayList;
 import java.util.List;
 
-import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 
 public class TomTaskInput {
