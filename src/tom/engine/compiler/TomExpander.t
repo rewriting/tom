@@ -61,7 +61,7 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
 	  	
 	  	TomTerm syntaxExpandedTerm = expandTomSyntax(getInput().getTerm());
       tomKernelExpander.updateSymbolTable();
-      TomTerm context = null;
+      TomTerm context = `emptyTerm();
       TomTerm expandedTerm  = expandVariable(context, syntaxExpandedTerm);
       
       if(debugMode) {

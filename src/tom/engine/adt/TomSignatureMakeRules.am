@@ -86,6 +86,7 @@ TomTerm_VariableStar.java\
 TomTerm_Placeholder.java\
 TomTerm_UnamedVariable.java\
 TomTerm_UnamedVariableStar.java\
+TomTerm_EmptyTerm.java\
 TomTerm_TargetLanguageToTomTerm.java\
 TomTerm_TomTypeToTomTerm.java\
 TomTerm_TomNameToTomTerm.java\
@@ -101,10 +102,10 @@ TomTerm_FunctionCall.java\
 TomTerm_MakeFunctionBegin.java\
 TomTerm_MakeFunctionEnd.java\
 TomTerm_BackQuoteAppl.java\
-TomTerm_DoubleBackQuote.java\
-TomTerm_Composite.java
+TomTerm_DoubleBackQuote.java
 
 TomSignatureAPI2=\
+TomTerm_Composite.java\
 TomTerm_RecordAppl.java\
 TomTerm_PairSlotAppl.java\
 TomTerm_Match.java\
@@ -153,10 +154,11 @@ Instruction_ExitAction.java\
 Instruction_Return.java\
 Instruction_OpenBlock.java\
 Instruction_CloseBlock.java\
-Instruction_NamedBlock.java\
-TomSymbol.java
+Instruction_NamedBlock.java
 
 TomSignatureAPI3=\
+TomSymbol.java\
+TomSymbol_EmptySymbol.java\
 TomSymbol_Symbol.java\
 PairNameDecl.java\
 PairNameDecl_Slot.java\

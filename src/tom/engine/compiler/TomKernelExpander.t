@@ -54,8 +54,12 @@ public class TomKernelExpander extends TomBase {
       public ATerm apply(ATerm subject, Object arg1) {
         TomTerm contextSubject = (TomTerm)arg1;
 
+        if(contextSubject == null) {
+          throw new TomRuntimeException(new Throwable("expandVariable: null contextSubject"));
+        }
+
           //System.out.println("expandVariable:\n\t" + subject );
-        
+
         if(!(subject instanceof TomTerm)) {
             //debugPrintln("expandVariable not a tomTerm: " );
             //System.out.println("expandVariable not a tomTerm:\n\t" + subject );
@@ -99,7 +103,7 @@ public class TomKernelExpander extends TomBase {
               if(l.isEmpty()  && !hasConstructor(optionList)) {
                 return `Variable(option,nameList.getHead(),type);
               } else {
-                TomList subterm = expandVariableList(tomSymbol, l);
+                TomList subterm = expandVariableList(`emptySymbol(), l);
                 return `Appl(option,nameList,subterm);
               }
             }
@@ -129,7 +133,7 @@ public class TomKernelExpander extends TomBase {
               if(l.isEmpty()  && !hasConstructor(optionList)) {
                 return `Variable(option,nameList.getHead(),type1);
               } else {
-                TomList subterm = expandVariableList(tomSymbol, l);
+                TomList subterm = expandVariableList(`emptySymbol(), l);
                 return `Appl(option,nameList,subterm);
               }
             }
@@ -225,17 +229,25 @@ public class TomKernelExpander extends TomBase {
 
   public TomList expandVariableList(TomSymbol subject, TomList subjectList) {
     //%variable
-
     if(subject == null) {
-      ArrayList list = new ArrayList();
-      while(!subjectList.isEmpty()) {
-        list.add(expandVariable(null, subjectList.getHead()));
-        subjectList = subjectList.getTail();
-      }
-        return ast().makeList(list);
+      throw new TomRuntimeException(new Throwable("expandVariableList: null subject"));
     }
     
     %match(TomSymbol subject) {
+
+      emptySymbol() -> {
+          /*
+           * If the top symbol is unknown, the subterms
+           * are expanded in an empty context
+           */
+        ArrayList list = new ArrayList();
+        while(!subjectList.isEmpty()) {
+          list.add(expandVariable(`emptyTerm(), subjectList.getHead()));
+          subjectList = subjectList.getTail();
+        }
+        return ast().makeList(list);
+      }
+
       symb@Symbol[typesToType=TypesToType(typeList,codomainType)] -> {
           
           // process a list of subterms and a list of types
@@ -314,7 +326,7 @@ public class TomKernelExpander extends TomBase {
     Iterator it = symbolTable().keySymbolIterator();
     while(it.hasNext()) {
       String tomName = (String)it.next();
-      TomTerm emptyContext = null;
+      TomTerm emptyContext = `emptyTerm();
       TomSymbol tomSymbol = getSymbol(tomName);
       tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
       symbolTable().putSymbol(tomName,tomSymbol);
@@ -344,7 +356,7 @@ public class TomKernelExpander extends TomBase {
   }
   
     /*
-     * Replace pattern with only variables or underscore (UnNamedVariables)
+     * Replace pattern with only variables or underscore (UnamedVariables)
      * By DefaultPattern
      */
   public TomTerm expandMatchPattern(TomTerm subject) {

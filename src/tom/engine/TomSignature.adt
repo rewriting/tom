@@ -80,6 +80,7 @@ constructor(TomTerm,Placeholder,Placeholder(<option(OptionList)>)),
 constructor(TomTerm,UnamedVariable,UnamedVariable(<option(OptionList)>,<astType(TomType)>)),
 constructor(TomTerm,UnamedVariableStar,UnamedVariableStar(<option(OptionList)>,<astType(TomType)>)),
 
+constructor(TomTerm,emptyTerm, emptyTerm),
 constructor(TomTerm,TargetLanguageToTomTerm,TargetLanguageToTomTerm(<tl(TargetLanguage)>)),
 constructor(TomTerm,TomTypeToTomTerm,TomTypeToTomTerm(<astType(TomType)>)),
 constructor(TomTerm,TomNameToTomTerm,TomNameToTomTerm(<astName(TomName)>)),
@@ -147,7 +148,10 @@ constructor(Instruction,Return,Return(<kid1(TomTerm)>)),
 constructor(Instruction,OpenBlock,OpenBlock),
 constructor(Instruction,CloseBlock,CloseBlock),
 constructor(Instruction,NamedBlock,NamedBlock(<blockName(str)>,<instList(TomList)>)),
+
+constructor(TomSymbol, emptySymbol, emptySymbol),
 constructor(TomSymbol,Symbol,Symbol(<astName(TomName)>,<typesToType(TomType)>,<slotList(SlotList)>,<option(OptionList)>,<tlCode(TargetLanguage)>)),
+
 constructor(PairNameDecl,Slot,Slot(<slotName(TomName)>,<slotDecl(Declaration)>)),
 constructor(TomSymbolTable,Table,Table(<entryList(TomEntryList)>)),
 constructor(TomEntry,Entry,Entry(<strName(str)>,<astSymbol(TomSymbol)>)),
