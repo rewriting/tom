@@ -72,7 +72,6 @@ constructor(TomTerm,DeclarationToTomTerm,DeclarationToTomTerm(<astDeclaration(De
 constructor(TomTerm,OptionToTomTerm,OptionToTomTerm(<astOption(Option)>)),
 constructor(TomTerm,ExpressionToTomTerm,ExpressionToTomTerm(<astExpression(Expression)>)),
 constructor(TomTerm,InstructionToTomTerm,InstructionToTomTerm(<astInstruction(Instruction)>)),
-constructor(TomTerm,TomRuleToTomTerm,TomRuleToTomTerm(<astTomRule(TomRule)>)),
 constructor(TomTerm,Tom,Tom(<tomList(TomList)>)),
 constructor(TomTerm,TomInclude,TomInclude(<tomList(TomList)>)),
 constructor(TomTerm,MakeTerm,MakeTerm(<kid1(TomTerm)>)),

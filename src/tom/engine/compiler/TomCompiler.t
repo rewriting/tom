@@ -309,7 +309,7 @@ public class TomCompiler extends TomBase implements TomTask {
       emptyTomList() -> { return actionList; }
         
       manyTomList(MatchingCondition[lhs=pattern,rhs=subject], tail) -> {
-        System.out.println(pattern);
+          //System.out.println("pattern: " + pattern);
         TomType subjectType = getTermType(pattern);
         TomNumberList path = tsf().makeTomNumberList();
         path = (TomNumberList) path.append(`RuleVar());

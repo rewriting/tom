@@ -167,7 +167,7 @@ public class TomKernelExpander extends TomBase {
             // default rule
           context, t -> {
             //debugPrintln("expandVariable.11 default: " );
-              //System.out.println("expandVariable default:\n\t" + subject );
+            //System.out.println("expandVariable default:\n\t" + subject );
             return traversal().genericTraversal(subject,this,contextSubject);
           }
         } // end match

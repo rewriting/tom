@@ -290,7 +290,6 @@ public class Tom {
         }
       }
     }
-    
     if(taskInput.isPrintOutput()) {
       generator = new TomGenerator(environment);
       if (taskInput.isDoOptimization()) {

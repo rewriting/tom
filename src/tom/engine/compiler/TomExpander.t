@@ -30,6 +30,7 @@ import java.util.HashSet;
 import jtom.TomBase;
 import jtom.adt.*;
 import jtom.runtime.Replace1;
+import jtom.runtime.Replace2;
 import aterm.ATerm;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
@@ -197,39 +198,33 @@ public class TomExpander extends TomBase implements TomTask {
      * replace Name by Symbol
      * replace Name by Variable
      */
+
+  Replace2 replace_expandVariable = new Replace2() {
+      public ATerm apply(ATerm t, Object arg1) {
+        TomTerm contextSubject = (TomTerm)arg1;
+        return expandVariable(contextSubject, (TomTerm)t);
+      }
+    };
+  
   public TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
-    if(!(subject instanceof TomTerm)) {
-      return tomKernelExpander.expandVariable(contextSubject,subject);
-    }
 
-      //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
+      //System.out.println("expandVariable:\n\t" + subject );
+      
     %match(TomTerm contextSubject, TomTerm subject) {
-
-      context, TomRuleToTomTerm(RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
-                           Term(rhs),
-                           condList,
-                           option)) -> { 
-          //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
-        TomSymbol tomSymbol = getSymbol(tomName);
-        TomType symbolType = getSymbolCodomain(tomSymbol);
-        TomTerm newLhs = `Term(expandVariable(context,lhs));
-        TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
-        
-          // build the list of variables that occur in the lhs
-        HashSet set = new HashSet();
-        collectVariable(set,newLhs);
-        TomList varList = ast().makeList(set);
-        TomList newCondList = empty();
-        while(!condList.isEmpty()) {
-          TomTerm cond = condList.getHead();
-          TomTerm newCond = expandVariable(`Tom(varList),cond);
-          newCondList = append(newCond,newCondList);
-          collectVariable(set,newCond);
-          varList = ast().makeList(set);
-          condList = condList.getTail();
+      context, Tom(l) -> {
+        TomList newL = (TomList) traversal().genericTraversal(l,replace_expandVariable,contextSubject);
+        return `Tom(newL);
+      }
+      
+      context, RuleSet(ruleList,orgTrack) -> { 
+        TomRuleList newRuleList = `emptyTomRuleList();
+        while(!ruleList.isEmpty()) {
+          TomRule rule = ruleList.getHead();
+          newRuleList = (TomRuleList) newRuleList.append(expandRewriteRule(context,rule));
+          ruleList = ruleList.getTail();
         }
         
-        return `TomRuleToTomTerm(RewriteRule(newLhs,newRhs,newCondList,option));
+        return `RuleSet(newRuleList,orgTrack);
       }
         
       Tom(varList), MatchingCondition[lhs=lhs@Appl[astName=Name(lhsName)],
@@ -286,6 +281,47 @@ public class TomExpander extends TomBase implements TomTask {
     } // end match
   }
 
+
+  public TomRule expandRewriteRule(TomTerm contextSubject, TomRule subject) {
+      
+    %match(TomTerm contextSubject, TomRule subject) {
+
+      context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
+                           Term(rhs),
+                           condList,
+                           option) -> { 
+          //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
+        TomSymbol tomSymbol = getSymbol(tomName);
+        TomType symbolType = getSymbolCodomain(tomSymbol);
+        TomTerm newLhs = `Term(expandVariable(context,lhs));
+        TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
+        
+          // build the list of variables that occur in the lhs
+        HashSet set = new HashSet();
+        collectVariable(set,newLhs);
+        TomList varList = ast().makeList(set);
+        TomList newCondList = empty();
+        while(!condList.isEmpty()) {
+          TomTerm cond = condList.getHead();
+          TomTerm newCond = expandVariable(`Tom(varList),cond);
+          newCondList = append(newCond,newCondList);
+          collectVariable(set,newCond);
+          varList = ast().makeList(set);
+          condList = condList.getTail();
+        }
+        
+        return `RewriteRule(newLhs,newRhs,newCondList,option);
+      }
+      
+        // default rule
+      context, t -> {
+        System.out.println("expandRewriteRule. Stange case '" + t);
+        return null;
+      }
+    } // end match
+  }
+
+  
   private TomType getTypeFromVariableList(TomName name, TomList list) {
 
       //System.out.println("name = " + name);
