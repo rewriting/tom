@@ -99,11 +99,11 @@ class SPropp extends Propp1 {
 	public Proof solve(Proof init) {
 
 		VisitableVisitor rule = new CalculusRules();
-		VisitableVisitor onceBottomUp = travelerFactory.OnceBottomUp(rule);
+		VisitableVisitor bottomUp = travelerFactory.BottomUp(rule);
 
 		Proof res = null;
 		try {
-			res = (Proof)onceBottomUp.visit(init);
+			res = (Proof)bottomUp.visit(init);
 		} catch (jjtraveler.VisitFailure e) {
 			return init;
 		}
@@ -115,7 +115,7 @@ class SPropp extends Propp1 {
 
 	class CalculusRules extends propp.seq.VisitableFwd {
 		public CalculusRules() {
-			super(new jjtraveler.Fail());
+			super(new jjtraveler.Identity());
 		}
 		
 		public Proof visit_Proof(Proof subject) throws jjtraveler.VisitFailure {
@@ -220,7 +220,7 @@ class SPropp extends Propp1 {
 					}// end %match
 				}
 			}
-			throw new jjtraveler.VisitFailure();
+			return subject;
 		}
 	}
  
