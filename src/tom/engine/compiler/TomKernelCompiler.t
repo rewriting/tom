@@ -291,10 +291,12 @@ public class TomKernelCompiler extends TomBase {
           automataInstruction = `collectSubtermFromSubjectList(termArgs,termTypeList,tomSymbol,subjectVariableAST,indexSubterm,path,automata); 
         }
         
-        TomTerm annotedVariable = getAnnotedVariable(optionList);
+        /* TODO:remove old things
+				TomTerm annotedVariable = getAnnotedVariable(optionList);
         if(annotedVariable != null) {
           automataInstruction = buildLet(annotedVariable,`TomTermToExpression(subjectVariableAST),automataInstruction);
         }
+				*/
 
         automataInstruction = compileConstraint(subjectVariableAST,automataInstruction);
 
@@ -634,10 +636,12 @@ public class TomKernelCompiler extends TomBase {
 	private Instruction buildLet(TomTerm dest,
                                Expression source,
                                Instruction body) {
-    TomTerm annotedVariable = getAnnotedVariable(dest.getOption());
+    /* TODO: remove old things
+		TomTerm annotedVariable = getAnnotedVariable(dest.getOption());
     if(annotedVariable != null) {
       body = buildLet(annotedVariable,source,body);
     }
+		*/
 		// Take care of constraints
     body = compileConstraint(dest,body);
 		return `Let(dest,source,body);
@@ -645,7 +649,7 @@ public class TomKernelCompiler extends TomBase {
 
 	private Instruction compileConstraint(TomTerm subject, Instruction body) {
     %match(TomTerm subject) {
-      (Variable|VariableStar)[constraints=constraints] -> {
+      (Variable|VariableStar|UnamedVariable|UnamedVariableStar)[constraints=constraints] -> {
 				return buildConstraint(constraints,subject,body);
       }
 

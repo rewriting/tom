@@ -407,17 +407,17 @@ public class TomBase {
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;
             %match(TomTerm t) { 
-              (Variable|VariableStar)[option=optionList] -> {
+              (Variable|VariableStar)[constraints=constraintList] -> {
                 collection.add(t);
-                annotedVariable = getAnnotedVariable(`optionList);
+                annotedVariable = getAssignToVariable(`constraintList);
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
                 }
                 return false;
               }
               
-              (UnamedVariable|UnamedVariableStar)[option=optionList] -> {
-                annotedVariable = getAnnotedVariable(`optionList);
+              (UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
+                annotedVariable = getAssignToVariable(`constraintList);
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
                 }
@@ -425,9 +425,9 @@ public class TomBase {
               }
               
                 // to collect annoted nodes but avoid collect variables in optionSymbol
-              Appl[option=optionList, args=subterms] -> {
+              Appl[args=subterms, constraints=constraintList] -> {
                 collectVariable(collection,`Tom(subterms));
-                annotedVariable = getAnnotedVariable(`optionList);
+                annotedVariable = getAssignToVariable(`constraintList);
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
                 }
@@ -467,26 +467,28 @@ public class TomBase {
   
   protected boolean isAnnotedVariable(TomTerm t) {
     %match(TomTerm t) {
-      Appl[option=optionList] |
-      (Variable|VariableStar)[option=optionList] |
-      (UnamedVariable|UnamedVariableStar)[option=optionList] 
+      Appl[constraints=constraintList] |
+      (Variable|VariableStar)[constraints=constraintList] |
+      (UnamedVariable|UnamedVariableStar)[constraints=constraintList] 
         -> {
-        return getAnnotedVariable(`optionList)!=null;
+        return getAssignToVariable(`constraintList)!=null;
       }
     }
     return false;
   }
    
-  protected TomTerm getAnnotedVariable(OptionList optionList) {
-    %match(OptionList optionList) {
-      concOption(_*,TomTermToOption(var@Variable[]),_*) -> { return `var; }
+	 /*
+  protected TomTerm getAnnotedVariable(ConstraintList constraintList) {
+    %match(ConstraintList constraintList) {
+      concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
     }
     return null;
   }
+	*/
   
   protected TomTerm getAssignToVariable(ConstraintList constraintList) {
     %match(ConstraintList constraintList) {
-      concConstraint(_*,var@Variable[],_*) -> { return `var; }
+      concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
     }
     return null;
   }

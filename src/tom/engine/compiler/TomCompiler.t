@@ -349,13 +349,15 @@ public class TomCompiler extends TomTask {
     
     %match(TomTerm subject) {
       UnamedVariable[option=optionList,astType=type,constraints=constraint] -> {
-        OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        return `UnamedVariable(newOptionList,type,constraint);
+        //OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        ConstraintList newConstraintList = `renameVariableInConstraintList(constraint,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        return `UnamedVariable(optionList,type,newConstraintList);
       }
       
       UnamedVariableStar[option=optionList,astType=type,constraints=constraint] -> {
-        OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        return `UnamedVariableStar(newOptionList,type,constraint);
+        //OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        ConstraintList newConstraintList = `renameVariableInConstraintList(constraint,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        return `UnamedVariableStar(optionList,type,newConstraintList);
       }
 
 			Variable[option=optionList,astName=name,astType=type,constraints=clist] -> {
@@ -370,7 +372,8 @@ public class TomCompiler extends TomTask {
 					TomNumberList path = tsf().makeTomNumberList();
 					path = (TomNumberList) path.append(`RenamedVar(name));
 					path = (TomNumberList) path.append(makeNumber(mult));
-					OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+					//OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+					ConstraintList newConstraintList = renameVariableInConstraintList(clist,multiplicityMap,maxmultiplicityMap,equalityCheck);
 					if (mult < maxmult -1) {
 						// add the constraint renamedVariable = renamedVariable+1
 						TomTerm oldVar;
@@ -378,10 +381,10 @@ public class TomCompiler extends TomTask {
 						oldpath = (TomNumberList) oldpath.append(`RenamedVar(name));
 						oldpath = (TomNumberList) oldpath.append(makeNumber(mult + 1));
 						oldVar = `Variable(optionList,PositionName(oldpath),type,concConstraint());
-						renamedTerm = `Variable(newOptionList,PositionName(path),type,concConstraint(Equal(oldVar),clist*));
+						renamedTerm = `Variable(optionList,PositionName(path),type,concConstraint(Equal(oldVar),newConstraintList*));
 					} else {
 						// No constraint for the first renamed variable
-						renamedTerm = `Variable(newOptionList,PositionName(path),type,concConstraint(clist*));
+						renamedTerm = `Variable(optionList,PositionName(path),type,newConstraintList);
 					}
 					// System.out.println("renamedTerm = " + renamedTerm);
 
@@ -410,7 +413,8 @@ public class TomCompiler extends TomTask {
 					TomNumberList path = tsf().makeTomNumberList();
 					path = (TomNumberList) path.append(`RenamedVar(name));
 					path = appendNumber(mult,path);
-					OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+					//OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+					ConstraintList newConstraintList = renameVariableInConstraintList(clist,multiplicityMap,maxmultiplicityMap,equalityCheck);
 					if (mult < maxmult -1) {
 						// add the constraint renamedVariable = renamedVariable+1
 						TomTerm oldVar;
@@ -418,10 +422,10 @@ public class TomCompiler extends TomTask {
 						oldpath = (TomNumberList) oldpath.append(`RenamedVar(name));
 						oldpath = (TomNumberList) oldpath.append(makeNumber(mult + 1));
 						oldVar = `VariableStar(optionList,PositionName(oldpath),type,concConstraint());
-						renamedTerm = `VariableStar(newOptionList,PositionName(path),type,concConstraint(Equal(oldVar),clist*));
+						renamedTerm = `VariableStar(optionList,PositionName(path),type,concConstraint(Equal(oldVar),newConstraintList*));
 					} else {
 						// No constraint for the first renamed variable
-						renamedTerm = `VariableStar(newOptionList,PositionName(path),type,concConstraint(clist*));
+						renamedTerm = `VariableStar(optionList,PositionName(path),type,newConstraintList);
 					}
 					//System.out.println("renamedTerm = " + renamedTerm);
 
@@ -447,14 +451,36 @@ public class TomCompiler extends TomTask {
           newArgs = append(newElt,newArgs);
           args = args.getTail();
         }
-        OptionList newOptionList = renameVariableInOptionList(`optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        renamedTerm = `Appl(newOptionList,nameList,newArgs,constraints);
+        //OptionList newOptionList = renameVariableInOptionList(`optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        renamedTerm = `Appl(optionList,nameList,newArgs,newConstraintList);
         return renamedTerm;
       }
     }
     return renamedTerm;
   }
 
+  private ConstraintList renameVariableInConstraintList(ConstraintList constraintList,
+                                                Map multiplicityMap,
+                                                Map maxmultiplicityMap,
+                                                ArrayList equalityCheck) {
+		System.out.println("slist : " + constraintList);
+    ArrayList list = new ArrayList();
+    while(!constraintList.isEmpty()) {
+      Constraint cstElt = constraintList.getHead();
+      Constraint newCstElt = cstElt;
+      %match(Constraint cstElt) {
+        AssignTo(var@Variable[]) -> {
+          newCstElt = `AssignTo(renameVariable(var,multiplicityMap,maxmultiplicityMap,equalityCheck));
+        }
+      }
+      list.add(newCstElt);
+      constraintList = constraintList.getTail();
+    }
+		System.out.println(" gives : " + list);
+    return ast().makeConstraintList(list);
+  }
+/*
   private OptionList renameVariableInOptionList(OptionList optionList,
                                                 Map multiplicityMap,
                                                 Map maxmultiplicityMap,
@@ -473,7 +499,7 @@ public class TomCompiler extends TomTask {
     }
     return ast().makeOptionList(list);
   }
-
+*/
   
   private TomList linearizePattern(TomList subject, ArrayList equalityCheck) {
     Map multiplicityMap = collectMultiplicity(subject);
