@@ -280,6 +280,24 @@
          optimize="${optimize}"
          options="--camlCode -I ${tom.home}/share/jtom">
       <include name="${caml}/**/*.t"/>
+			<exclude name="${caml}/List1.t"/>
+			<exclude name="${caml}/PeanoMapped.t"/>
+    </tom>
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
+         outputfile="${examples.gen}/${caml}/List1.tom.ml"
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         options="--camlCode -I ${tom.home}/share/jtom">
+			<include name="${caml}/List1.t"/>
+    </tom>
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
+         outputfile="${examples.gen}/${caml}/PeanoMapped.tom.ml"
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         options="--camlCode -I ${tom.home}/share/jtom">
+			<include name="${caml}/PeanoMapped.t"/>
     </tom>
     <!-- copy resources in build -->
     <copy todir="${examples.build}/${caml}">
