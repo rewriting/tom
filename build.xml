@@ -392,7 +392,7 @@
 		</javac>
 	</target>
 
-	<target name="check" description="Runs junit acceptance tests" depends="test, initjunit">
+	<target name="junit" description="Runs junit acceptance tests" depends="test, initjunit">
 		<tomjunit printsummary="on"
 							fork="false"
 							haltonfailure="false"

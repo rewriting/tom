@@ -548,7 +548,7 @@
 		</taskdef>
 	</target>
 
-	<target name="check" description="Runs junit acceptance tests" depends="examples, initjunit">
+	<target name="junit" description="Runs junit acceptance tests" depends="examples, initjunit">
 		<tomjunit printsummary="on"
 							fork="false"
 							haltonfailure="false"
