@@ -133,101 +133,111 @@ public class Tom {
   private void modifyTaskInputFromArgs(String args[]) {
     String inputSuffix = ".t";
     List importList = new ArrayList();
-
+    int i =0;
       // Processing the input arguments into taskInput
-    for (int i = 0; i < args.length; i++) {
-      if (args[i].charAt(0) != '-') {
-          // Suppose this is the input filename (*[.t]) that should never start with a `-` character"
-        taskInput.setInputFileName(args[i]);
-      } else {
-          // This is on option
-        if (args[i].equals("--version") || args[i].equals("-V")) {
-          version();
-          taskInput.setVersion(true);
-          addError(version, "", defaultLineNumber, TomCheckerMessage.TOM_WARNING);
-          return;
-        } else if (args[i].equals("--help") || args[i].equals("-h")) {
-          usage();
-          taskInput.setHelp(true);
-          addError(usage, "", defaultLineNumber, TomCheckerMessage.TOM_WARNING);
-          return;
-        } else if (
-          args[i].equals("--import") || args[i].equals("-I")) {
-          importList.add(new File(args[++i]));
-        } else if (args[i].equals("--cCode") || args[i].equals("-c")) {
-          taskInput.setJCode(false);
-          taskInput.setECode(false);
-          taskInput.setCamlCode(false);
-          taskInput.setCCode(true);
-          taskInput.setOutputSuffix(".tom.c");
-        } else if (args[i].equals("--camlCode")) {
-          taskInput.setJCode(false);
-          taskInput.setCamlCode(true);
-          taskInput.setOutputSuffix(".tom.ml");
-        } else if (args[i].equals("--eCode") || args[i].equals("-e")) {
-          taskInput.setJCode(false);
-          taskInput.setECode(true);
-          taskInput.setCCode(false);
-          taskInput.setCamlCode(false);
-          taskInput.setOutputSuffix(".e");
-        } else if (
-          args[i].equals("--noOutput") || args[i].equals("-o")) {
-          taskInput.setPrintOutput(false);
-        } else if (
-          args[i].equals("--doCompile") || args[i].equals("-C")) {
-          taskInput.setDoOnlyCompile(true);
-          taskInput.setDoParse(false);
-          taskInput.setDoExpand(false);
-        } else if (
-          args[i].equals("--optimize") || args[i].equals("-O")) {
-          taskInput.setDoOptimization(true);
-        } else if (
-          args[i].equals("--noCheck") || args[i].equals("-f")) {
-          taskInput.setDoCheck(false);
-        } else if (
-          args[i].equals("--verify")) {
-          taskInput.setDoVerify(true);
-        } else if (
-          args[i].equals("--lazyType") || args[i].equals("-l")) {
-          taskInput.setStrictType(false);
-        } else if (
-          args[i].equals("--intermediate") || args[i].equals("-i")) {
-          taskInput.setIntermediate(true);
-        } else if (
-          args[i].equals("--verbose") || args[i].equals("-v")) {
-          taskInput.setVerbose(true);
-        } else if (
-          args[i].equals("--atermStat") || args[i].equals("-s")) {
-          taskInput.setAtermStat(true);
-        } else if (args[i].equals("--Wall")) {
-          taskInput.setWarningAll(true);
-        } else if (args[i].equals("--noWarning")) {
-          taskInput.setNoWarning(true);
-        } else if (
-          args[i].equals("--noDeclaration") || args[i].equals("-D")) {
-          taskInput.setGenDecl(false);
-        } else if (
-          args[i].equals("--pretty") || args[i].equals("-p")) {
-          taskInput.setPretty(true);
-        } else if (args[i].equals("--static")) {
-          taskInput.setStaticFunction(true);
-        } else if (args[i].equals("--debug")) {
-          taskInput.setDebugMode(true);
-        } else if (args[i].equals("--memory")) {
-          taskInput.setDebugMemory(true);
-        } else if (args[i].equals("--eclipse")) {
-          taskInput.setEclipseMode(true);
-        } else {
-          String s = "'" + args[i] + "' is not a valid option";
-          System.out.println(s);
-          addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
-          taskInput.setHelp(true);
-          usage();
-          return;
+    try{
+    	for (i = 0; i < args.length; i++) {
+    		if (args[i].charAt(0) != '-') {
+    				// Suppose this is the input filename (*[.t]) that should never start with a `-` character"
+    			taskInput.setInputFileName(args[i]);
+    		} else {
+    			// This is on option
+    			if (args[i].equals("--version") || args[i].equals("-V")) {
+    				version();
+    				taskInput.setVersion(true);
+    				addError(version, "", defaultLineNumber, TomCheckerMessage.TOM_WARNING);
+    				return;
+    			} else if (args[i].equals("--help") || args[i].equals("-h")) {
+    				usage();
+    				taskInput.setHelp(true);
+    				addError(usage, "", defaultLineNumber, TomCheckerMessage.TOM_WARNING);
+    				return;
+    			} else if (
+    					args[i].equals("--import") || args[i].equals("-I")) {
+    				importList.add(new File(args[++i]));
+    			} else if (args[i].equals("--cCode") || args[i].equals("-c")) {
+    				taskInput.setJCode(false);
+    				taskInput.setECode(false);
+    				taskInput.setCamlCode(false);
+    				taskInput.setCCode(true);
+    				taskInput.setOutputSuffix(".tom.c");
+    			} else if (args[i].equals("--camlCode")) {
+    				taskInput.setJCode(false);
+    				taskInput.setCamlCode(true);
+    				taskInput.setOutputSuffix(".tom.ml");
+    			} else if (args[i].equals("--eCode") || args[i].equals("-e")) {
+    				taskInput.setJCode(false);
+    				taskInput.setECode(true);
+    				taskInput.setCCode(false);
+    				taskInput.setCamlCode(false);
+    				taskInput.setOutputSuffix(".e");
+    			} else if (
+    					args[i].equals("--noOutput") || args[i].equals("-o")) {
+    				taskInput.setPrintOutput(false);
+    			} else if (
+    					args[i].equals("--doCompile") || args[i].equals("-C")) {
+    				taskInput.setDoOnlyCompile(true);
+    				taskInput.setDoParse(false);
+    				taskInput.setDoExpand(false);
+    			} else if (
+    					args[i].equals("--optimize") || args[i].equals("-O")) {
+    				taskInput.setDoOptimization(true);
+    			} else if (
+    				args[i].equals("--noCheck") || args[i].equals("-f")) {
+    				taskInput.setDoCheck(false);
+    			} else if (
+    				args[i].equals("--verify")) {
+    				taskInput.setDoVerify(true);
+    			} else if (
+    				args[i].equals("--lazyType") || args[i].equals("-l")) {
+    				taskInput.setStrictType(false);
+          } else if (
+            args[i].equals("--intermediate") || args[i].equals("-i")) {
+            taskInput.setIntermediate(true);
+          } else if (
+            args[i].equals("--verbose") || args[i].equals("-v")) {
+            taskInput.setVerbose(true);
+          } else if (
+            args[i].equals("--atermStat") || args[i].equals("-s")) {
+            taskInput.setAtermStat(true);
+          } else if (args[i].equals("--Wall")) {
+            taskInput.setWarningAll(true);
+          } else if (args[i].equals("--noWarning")) {
+            taskInput.setNoWarning(true);
+          } else if (
+            args[i].equals("--noDeclaration") || args[i].equals("-D")) {
+            taskInput.setGenDecl(false);
+          } else if (
+            args[i].equals("--pretty") || args[i].equals("-p")) {
+            taskInput.setPretty(true);
+          } else if (args[i].equals("--static")) {
+            taskInput.setStaticFunction(true);
+          } else if (args[i].equals("--debug")) {
+            taskInput.setDebugMode(true);
+          } else if (args[i].equals("--memory")) {
+            taskInput.setDebugMemory(true);
+          } else if (args[i].equals("--eclipse")) {
+            taskInput.setEclipseMode(true);
+          } else if (args[i].equals("--path")) {
+            taskInput.setResourceParentPathLocation(args[++i]);
+          } else {
+            String s = "'" + args[i] + "' is not a valid option";
+            System.out.println(s);
+            addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
+            taskInput.setHelp(true);
+            usage();
+            return;
+          }
         }
-      }
-    } // end processing arguments
-
+    	} // end processing arguments
+    } catch (ArrayIndexOutOfBoundsException e) {
+    	String s = "'" + args[--i] + "' is supposed to have something after";
+      System.out.println(s);
+      addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
+      taskInput.setHelp(true);
+      usage();
+      return;
+    }
       // For the moment debug is only available for Java as target language
     taskInput.setDebugMode(taskInput.isJCode() && taskInput.isDebugMode());
 

@@ -108,10 +108,11 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 	}
 
   protected void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException {
-    output.write(deep,"if "); 
+    output.write(deep,"(if "); 
     generateExpression(deep,exp); 
     output.writeln(" then ");
     generateInstruction(deep+1,succes);
+    output.writeln(deep,")");
   }
 
   protected void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {
@@ -212,7 +213,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     String get_tail    = "tom_get_tail_" + tomType;
     String get_slice   = "tom_get_slice_" + name;
     
-    s+= "let tom_insert_list_" + name +  "(l1,l2) =\n";
+    s+= "let rec tom_insert_list_" + name +  "(l1,l2) =\n";
     s+= "   if " + is_empty + "(l1) then l2\n";
     s+= "   else if " + is_empty + "(l2) then l1\n";
     s+= "        else if " + is_empty + "(" + get_tail + "(l1)) then \n";  
@@ -221,7 +222,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     s+= "              " + make_insert + "(" + get_head + "(l1),tom_insert_list_" + name +  "(" + get_tail + "(l1),l2))\n";
     s+= "\n";
     
-    s+=  "let tom_get_slice_" + name + "(beginning, ending) =\n"; 
+    s+=  "let rec tom_get_slice_" + name + "(beginning, ending) =\n"; 
     s+= "   if " + term_equal + "(beginning,ending) then " + make_empty + "()\n";
     s+= "   else " +  make_insert + "(" + get_head + "(beginning)," + 
       get_slice + "(" + get_tail + "(beginning),ending))\n";
