@@ -174,33 +174,28 @@ public class PluginPlatform {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      logger.log(Level.SEVERE,
-		 "IncompleteOption",
-		 argumentList[--i]);
+      logger.log(Level.SEVERE, "IncompleteOption", argumentList[--i]); 
     }
 
-     if( statusHandler.hasError() ) {
-       return null;
-     }
+    if( statusHandler.hasError() ) {
+      return null;
+    }
 
     try {
       File file = new File(xmlConfigurationFile);
       
       if(! file.exists() ) {
         // the case where the specified file doesn't exist is handled here
-	logger.log(Level.SEVERE,
-		   "ConfigFileNotFound",
-		   xmlConfigurationFile);
+        logger.log(Level.SEVERE, "ConfigFileNotFound", xmlConfigurationFile);
       }
     } catch(NullPointerException npe) {
       // the lack of a configuration file is handled here
-      logger.log(Level.SEVERE,
-		 "ConfigFileNotSpecified");
+      logger.log(Level.SEVERE, "ConfigFileNotSpecified");
     }
 
-     if( statusHandler.hasError() ) {
-       return null;
-     }
+    if( statusHandler.hasError() ) {
+      return null;
+    }
 
     return xmlConfigurationFile;
   }
@@ -215,7 +210,6 @@ public class PluginPlatform {
   private List parseConfigFile(String xmlConfigurationFile) {
     // parses configuration file...
     XmlTools xtools = new XmlTools();
-    List classPaths = new ArrayList();
     TNode node = (TNode)xtools.convertXMLToATerm(xmlConfigurationFile);
 
     if( node == null ) {
@@ -230,8 +224,7 @@ public class PluginPlatform {
     optionManager.extractOptionList(node.getDocElem());
 
     // ... to extract plugin classpaths
-    extractClassPaths(node.getDocElem(), classPaths);
-    return classPaths;
+    return extractClassPaths(node.getDocElem());
   }
 
   /**
@@ -258,26 +251,19 @@ public class PluginPlatform {
     }
   
     // creates an instance of each plugin
-    Iterator it = classPaths.iterator();
-    while(it.hasNext()) {
+    for(Iterator it = classPaths.iterator() ; it.hasNext() ;) {
       String path = (String)it.next();
       try { 
         Object pluginInstance = Class.forName(path).newInstance();
         if(pluginInstance instanceof Plugin) {
           instances.add(pluginInstance);
         } else {
-          logger.log(Level.SEVERE,
-                     "ClassNotAPlugin",
-                     path);
+          logger.log(Level.SEVERE, "ClassNotAPlugin", path);
         }
       } catch(ClassNotFoundException cnfe) { 
-        logger.log(Level.WARNING,
-                   "ClassNotFound",
-                   path);
+        logger.log(Level.WARNING, "ClassNotFound", path);
       } catch(Exception e) { 
-        logger.log(Level.SEVERE,
-                   "InstantiationError",
-                   path);
+        logger.log(Level.SEVERE, "InstantiationError", path);
       }
     }
 
@@ -288,32 +274,26 @@ public class PluginPlatform {
     optionManager.setPlugins(instances);
     String[] inputFiles = optionManager.optionManagement(argumentList);
   
-    if( statusHandler.hasError() ) {
+    if(statusHandler.hasError()) {
       return 1;
     }
 
     for(int i = 0; i < inputFiles.length; i++) { // for each file
-      logger.log(Level.FINER,
-                 "NowCompiling",
-                 inputFiles[i]);
+      logger.log(Level.FINER, "NowCompiling", inputFiles[i]);
 
       // creates an ATerm containing the input file name
       ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
       
       // runs the modules
-      it = instances.iterator();
-      while(it.hasNext()) {
+      for(Iterator it = instances.iterator(); it.hasNext(); ) {
         Plugin plugin = (Plugin)it.next();
         plugin.setTerm(term);
         plugin.run();
         term = plugin.getTerm();
-
-	if( statusHandler.hasError() ) {
-	  logger.log(Level.SEVERE,
-		     "ProcessingError",
-		     inputFiles[i]);
-	  break;
-	}
+        if(statusHandler.hasError()) {
+          logger.log(Level.SEVERE, "ProcessingError", inputFiles[i]);
+          break;
+        }
       }
     }
 
@@ -321,18 +301,14 @@ public class PluginPlatform {
     int nbOfWarnings = statusHandler.nbOfWarnings();
 
     if( statusHandler.hasError() ) {
-      logger.log( Level.OFF, // this is the highest possible level > will be printed no matter what 
-		  "TaskErrorMessage",
-		  new Object[]{ new Integer(nbOfErrors), new Integer(nbOfWarnings) } );
+      // this is the highest possible level > will be printed no matter what 
+      logger.log( Level.OFF,  "TaskErrorMessage", new Object[]{ new Integer(nbOfErrors), new Integer(nbOfWarnings) } );
       return 1;
     } else if( statusHandler.hasWarning() ) {
-      logger.log( Level.OFF,
-		  "TaskWarningMessage",
-		  new Integer(nbOfWarnings) );
-      return 0;
-    } else {
+      logger.log( Level.OFF, "TaskWarningMessage", new Integer(nbOfWarnings) );
       return 0;
     }
+    return 0;
   }
 
     
@@ -342,29 +318,17 @@ public class PluginPlatform {
    * @param node the node containing the XML document
    * @param v the List into which class paths will be put
    */
-  private void extractClassPaths(TNode node, List v) {
+  private List extractClassPaths(TNode node) {
+    List res = new ArrayList();
     %match(TNode node) {
-      <server>plug@<plugins></plugins></server> -> {
-	%match(TNode plug) {
-	  ElementNode[childList = cl] -> { // gets the <plugin> nodes 
-	    while(!(cl.isEmpty())) { // for each node...
-	      TNode pluginNode = cl.getHead();
-	      %match(TNode pluginNode) {
-		<plugin [classpath = cp] /> -> { 
-		  v.add(cp);
-		  logger.log(Level.FINER,
-			     "ClassPathRead",
-			     cp);
-		}
-	      }
-	      cl = cl.getTail();
-	    }
-	  }
-	}
-      }
+      <server><plugins><plugin [classpath=cp]/></plugins></server> -> {
+         res.add(cp);
+         logger.log(Level.FINER, "ClassPathRead", cp);
+       }
     }
+    return res;
   }
-
+  
   /**
    * Returns the value of an option. Returns an Object which is a Boolean, a String or an Integer
    * depending on what the option type is.

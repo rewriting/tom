@@ -22,7 +22,7 @@ public interface OptionManager {
    *
    *
    * @param args
-   * @return
+   * @return an array of String containing the names of the files to compile
    */
   public abstract String[] optionManagement(String[] args);
 
