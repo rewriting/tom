@@ -683,7 +683,7 @@ public class TomKernelCompiler extends TomBase {
       concConstraint(AssignTo(var@(Variable|VariableStar)[]) ,tail*) -> {
         //System.out.println("constraint: " + source + " AssignTo " + var);
         Instruction subBody = compileConstraint(var,source,body);
-        return `buildConstraint(tail,source,buildLet(var,source,subBody));
+        return `buildConstraint(tail,source,Let(var,source,subBody));
         //return newBody;
       }
 
