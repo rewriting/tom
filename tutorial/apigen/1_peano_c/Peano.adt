@@ -1,5 +1,4 @@
-[ 
-  [ Nat , cons-zero , cons-zero ] , 
-  [ Nat , cons-suc , cons-suc(<pred(Nat)>) ] 
+[
+constructor(Nat,cons-zero,cons-zero),
+constructor(Nat,cons-suc,cons-suc(<pred(Nat)>))
 ]
-

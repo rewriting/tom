@@ -43,7 +43,7 @@ struct term *suc(struct term *x) {
   fsym { SUC }
 }
 
-%op term plus(term,term) {
+%op term plus(a:term,b:term) {
   fsym { PLUS }
 }
 

@@ -1,5 +1,8 @@
-2003-06-06  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
+2003-08-05  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+        * convert ADT files to new style
+
+2003-06-06  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 	* bootinstall
 
 2003-5-23    <julien.guyon@loria.fr>

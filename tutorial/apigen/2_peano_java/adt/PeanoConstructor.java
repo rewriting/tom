@@ -27,12 +27,16 @@ implements aterm.ATerm
    this.term = term;
   }
 
-  protected PeanoFactory getPeanoFactory() {
+  public PeanoFactory getPeanoFactory() {
     return (PeanoFactory) getFactory();
   }
 
   static protected PeanoFactory getStaticPeanoFactory() {
     return (PeanoFactory) getStaticFactory();
+  }
+
+  public boolean isNat() {
+    return false;
   }
 
 }

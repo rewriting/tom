@@ -63,15 +63,9 @@ public class List2 {
         String xname = x.getName();
         String yname = y.getName();
         if(xname.compareTo(yname) > 0) {
-            /*
-              ArrayList result = X1;
-              result.add(y);
-              result.addAll(X2);
-              result.add(x);
-              result.addAll(X3);
-              return swapSort( result );
-            */
-          return `swapSort(conc(X1*,y,X2*,x,X3*));
+            //return `swapSort(conc(X1*,y,X2*,x,X3*));
+          System.out.println("x -> " + x + "\ty -> " + y);
+          
         }
       }
 
@@ -82,12 +76,6 @@ public class List2 {
   public ArrayList removeDouble(ArrayList l) {
     %match(TomList l) {
       conc(X1*,x,x,X2*) -> {
-          /*
-        ArrayList result = X1;
-        result.add(x);
-        result.addAll(X2);
-        return removeDouble( result );
-          */
         return `removeDouble(conc(X1*,x,X2*));
         
       }

@@ -1,7 +1,6 @@
 package adt;
 
-
-public class Nat_ZeroImpl
+abstract public class Nat_ZeroImpl
 extends Nat
 {
   static private aterm.ATerm pattern = null;
@@ -9,7 +8,6 @@ extends Nat
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-
   public shared.SharedObject duplicate() {
     Nat_Zero clone = new Nat_Zero();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -24,7 +22,6 @@ extends Nat
     pattern = getStaticFactory().parse("zero");
   }
 
-
   static public Nat fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -38,21 +35,18 @@ extends Nat
       return null;
     }
   }
-
   public boolean isZero()
   {
     return true;
   }
 
-
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
       throw new RuntimeException("Nat_Zero has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
-    int b = 0x9e3779b9;
+    int b = (getAFun().hashCode()<<8);
 
     a -= b; a -= c; a ^= (c >> 13);
     b -= c; b -= a; b ^= (a << 8);

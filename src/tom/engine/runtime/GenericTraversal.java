@@ -84,7 +84,9 @@ public class GenericTraversal {
             genericCollectArray(subjectList.getFirst(),collect,args); 
             subjectList = subjectList.getNext(); 
           } 
-        } 
+        } else if(subject instanceof ATermInt) {
+          ATermInt subjectInt = (ATermInt) subject;
+        }
       }
     } catch(Exception e) {
       e.printStackTrace();
@@ -100,6 +102,8 @@ public class GenericTraversal {
         res = genericMapterm((ATermAppl) subject, replace, args);
       } else if(subject instanceof ATermList) {
         res = genericMap((ATermList) subject, replace, args);
+      } else if(subject instanceof ATermInt) {
+        res = subject;
       }
     } catch(Exception e) {
       e.printStackTrace();
@@ -122,6 +126,7 @@ public class GenericTraversal {
         res = list.insert(term);
       }
     } catch(Exception e) {
+      e.printStackTrace();
       System.out.println("Please, extend genericMap");
       System.exit(0);
     }
@@ -141,6 +146,7 @@ public class GenericTraversal {
         }
       }
     } catch(Exception e) {
+      e.printStackTrace();
       System.out.println("Please, extend genericMapterm");
       System.exit(0);
     }
@@ -165,6 +171,7 @@ public class GenericTraversal {
         }
       } 
     } catch(Exception e) {
+      System.out.println("exception: " + e);
       System.out.println("Please, extend genericCollectReplace");
       System.exit(0);
     }

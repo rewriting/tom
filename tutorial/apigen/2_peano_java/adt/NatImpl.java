@@ -3,26 +3,22 @@ package adt;
 import java.io.InputStream;
 import java.io.IOException;
 
-
 abstract public class NatImpl extends PeanoConstructor
 {
-  static Nat fromString(String str)
+  public static Nat fromString(String str)
   {
     aterm.ATerm trm = getStaticPeanoFactory().parse(str);
     return fromTerm(trm);
   }
-
-  static Nat fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static Nat fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticPeanoFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(Nat peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static Nat fromTerm(aterm.ATerm trm)
   {
     Nat tmp;
@@ -38,6 +34,9 @@ abstract public class NatImpl extends PeanoConstructor
     throw new RuntimeException("This is not a Nat: " + trm);
   }
 
+  public boolean isNat()  {
+    return true;
+  }
 
   public boolean isZero()
   {
@@ -54,7 +53,6 @@ abstract public class NatImpl extends PeanoConstructor
     return false;
   }
 
-
   public Nat getPred()
   {
      throw new RuntimeException("This Nat has no Pred");
@@ -64,7 +62,6 @@ abstract public class NatImpl extends PeanoConstructor
   {
      throw new RuntimeException("This Nat has no Pred");
   }
-
 
 
 }

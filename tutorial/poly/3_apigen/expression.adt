@@ -1,10 +1,10 @@
 [
-  [Expression, zero, zero],
-  [Expression, one, one],
-  [Expression, mult, mult(<arg1(Expression)>, <arg2(Expression)>)],
-  [Expression, plus, plus(<arg1(Expression)>, <arg2(Expression)>)],
-  [Expression, exp, exp(<arg1(Expression)>)],
-  [Expression, variable, variable(<string(str)>)],
-  [Expression, constant, constant(<string(str)>)],
-  [Expression, number, number(<integer(int)>)]
+constructor(Expression,zero,zero),
+constructor(Expression,one,one),
+constructor(Expression,mult,mult(<arg1(Expression)>,<arg2(Expression)>)),
+constructor(Expression,plus,plus(<arg1(Expression)>,<arg2(Expression)>)),
+constructor(Expression,exp,exp(<arg1(Expression)>)),
+constructor(Expression,variable,variable(<string(str)>)),
+constructor(Expression,constant,constant(<string(str)>)),
+constructor(Expression,number,number(<integer(int)>))
 ]

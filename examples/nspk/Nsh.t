@@ -60,6 +60,7 @@ public class Nsh {
     ATermList s = `concAgent();
     for(int index=0 ; index<nbSenders ; index++) {
       Integer i = new Integer(index);
+        //s = s.insert(`agent(sender(i),SLEEP,N(sender(i),sender(i))));
       s = s.insert(`agent(sender(i),SLEEP,N(sender(i),sender(i))));
     }
     ATermList r = `concAgent();

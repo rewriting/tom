@@ -294,7 +294,7 @@ public class TomKernelExpander extends TomBase {
               m@Match(subjectList,patternList, option) -> {
                   // find other match in PA list
                 TomTerm newPatternList = expandMatchPattern(patternList);
-                return expandPattern(`Match(subjectList, newPatternList, option));
+                return expandPattern(`Match(subjectList, newPatternList, option)); 
               } 
               _  -> {
                 return traversal().genericTraversal(subject,this);

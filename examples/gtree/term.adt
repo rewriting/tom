@@ -1,9 +1,6 @@
 [
-
- [Tree, nil, nil], 
- [Tree, node, node(<left(Tree)>,<root(int)>,<right(Tree)>)], 
-
- [Tree, supT, supT(<arg1(Tree)>,<arg2(Tree)>)], 
- [Tree, ackT, ackT(<arg1(Tree)>)] 
-
+constructor(Tree,nil,nil),
+constructor(Tree,node,node(<left(Tree)>,<root(int)>,<right(Tree)>)),
+constructor(Tree,supT,supT(<arg1(Tree)>,<arg2(Tree)>)),
+constructor(Tree,ackT,ackT(<arg1(Tree)>))
 ]

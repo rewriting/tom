@@ -1,4 +1,5 @@
-[ 
-  [ Nat , zero, zero ],
-  [ Nat , suc,  suc ( < pred ( Nat ) > ) ] 
+[
+constructor(Nat,zero,zero),
+constructor(Nat,suc,suc(<pred(Nat)>))
 ]
+

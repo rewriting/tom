@@ -57,6 +57,7 @@ public class GTree2 {
     return tree;
   }
 
+ 
   public Tree simplifyFunction(Tree tree) {
     %match(Tree tree) {
       supT(ackT(t1),ackT(t2)) -> { return `ackT(supT(t1,t2)); }

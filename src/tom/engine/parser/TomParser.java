@@ -1833,7 +1833,7 @@ public class TomParser implements TomParserConstants {
   }
 
   public TomParserTokenManager token_source;
-  JavaCharStream jj_input_stream;
+  ASCII_UCodeESC_CharStream jj_input_stream;
   public Token token, jj_nt;
   private int jj_ntk;
   private Token jj_scanpos, jj_lastpos;
@@ -1850,7 +1850,7 @@ public class TomParser implements TomParserConstants {
   private int jj_gc = 0;
 
   public TomParser(java.io.InputStream stream) {
-    jj_input_stream = new JavaCharStream(stream, 1, 1);
+    jj_input_stream = new ASCII_UCodeESC_CharStream(stream, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
@@ -1870,7 +1870,7 @@ public class TomParser implements TomParserConstants {
   }
 
   public TomParser(java.io.Reader stream) {
-    jj_input_stream = new JavaCharStream(stream, 1, 1);
+    jj_input_stream = new ASCII_UCodeESC_CharStream(stream, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;

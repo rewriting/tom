@@ -1,7 +1,6 @@
 package adt;
 
-
-public class Nat_SucImpl
+abstract public class Nat_SucImpl
 extends Nat
 {
   static private aterm.ATerm pattern = null;
@@ -10,7 +9,6 @@ extends Nat
     return pattern;
   }
   private static int index_pred = 0;
-
   public shared.SharedObject duplicate() {
     Nat_Suc clone = new Nat_Suc();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -25,7 +23,6 @@ extends Nat
     pattern = getStaticFactory().parse("suc(<term>)");
   }
 
-
   static public Nat fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -39,7 +36,6 @@ extends Nat
       return null;
     }
   }
-
   public boolean isSuc()
   {
     return true;
@@ -49,7 +45,6 @@ extends Nat
   {
     return true;
   }
-
 
   public Nat getPred()
   {
@@ -72,11 +67,10 @@ extends Nat
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
-    int b = 0x9e3779b9;
+    int b = (getAFun().hashCode()<<8);
     a += (getArgument(0).hashCode() << 0);
 
     a -= b; a -= c; a ^= (c >> 13);
