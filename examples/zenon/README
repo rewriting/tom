@@ -1,0 +1,6 @@
+zenon -ifocal -ocoq tom1.coz > proof.v
+coqtop -I /usr/local/lib/foc
+> Load top
+> Print tom1.
+
+zenon -ifocal -ocoq tom2.coz > proof.v

@@ -1,0 +1,30 @@
+%%begin-auto-proof
+%%location: []
+%%name: tom2
+%%statement
+
+forall t : T,
+   ((g (_1 t) b) = t)
+   /\  (forall y : T, ~((g a y) = t))
+  <->
+   ((symb t) = g_)
+   /\ ((symb (_2 t)) = b_)
+   /\ ~((symb (_1 t)) = a_)
+
+By symb_g :
+  forall t : T, ((symb t) = g_) <-> exists x : T, exists y : T, (t = (g x y))
+
+ symb_a :
+  forall t : T, ((symb t) = a_) <-> (t = a)
+
+ symb_b :
+  forall t : T, ((symb t) = b_) <-> (t = b)
+
+ st1_g :
+  forall x : T, forall y : T, ((_1 (g x y)) = x)
+
+ st2_g :
+  forall x : T, forall y : T, ((_2 (g x y)) = y)
+
+By def
+%%end-auto-proof
