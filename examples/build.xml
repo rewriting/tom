@@ -14,6 +14,9 @@
   <property name="examples.build" location="build"/>
 
   <!-- Examples to build and distribute -->
+  <property name="cell" value="Cell"/>
+  <property name="cell.dir" location="${examples.dir}/${cell}" />
+
   <property name="addressbook" value="AddressBook"/>
   <property name="addressbook.dir" location="${examples.dir}/${addressbook}" />
 
@@ -141,6 +144,28 @@
     <delete dir="${rbtree.dir}/tree"/>
     <delete dir="${set.dir}/jgset"/>
     <delete dir="${peano.dir}/peano"/>
+  </target>
+
+  <target name="cell" depends="init">
+    <!-- build tom -->
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+				 <include name="${cell}/**/*.t"/>
+    </tom>
+    <!-- build java source -->
+		<javac destdir="${examples.build}">
+			<src path="${examples.dir}"/>
+			<src path="${examples.gen}"/>
+      <classpath refid="tom.classpath"/>
+			<include name="${cell}/**/*.java"/>
+    </javac>
+		<!-- copy resources in build -->
+		<copy todir="${examples.build}/${cell}">
+			<fileset dir="${examples.dir}/${cell}">
+				<include name="*.gif"/>
+			</fileset>
+		</copy>
   </target>
 
   <target name="addressbook" depends="init">
