@@ -223,13 +223,31 @@ public class TomParser extends TomTask {
   }
   
   private String extractApiName(String[] par) {
-  	String res = null;
-  	for(int i=0;i<par.length;i++) {
-  		if(par[i].equals("--name") || par[i].equals("-n")) {
-  			return par[++i];
-  		}
-  	}
-  	return res;
+    String res = null;
+    try {
+      for(int i=0;i<par.length;i++) {
+        if(par[i].equals("--name") || par[i].equals("-n")) {
+          return par[++i];
+        }
+      }
+      return res;
+    } catch (ArrayIndexOutOfBoundsException e) {
+      return null;
+    }
+  }
+  
+  private String extractPackageName(String[] par) {
+    String res = null;
+    try {
+      for(int i=0;i<par.length;i++) {
+        if(par[i].equals("--package") || par[i].equals("-p")) {
+          return par[++i];
+        }
+      }
+      return res;
+    } catch (ArrayIndexOutOfBoundsException e) {
+      return null;
+    }
   }
 }
 
@@ -1371,7 +1389,7 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
 void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
 	TargetLanguage vasTL;
-	String vasCode, fileName = "", apiName = null;
+	String vasCode, fileName = "", apiName = null, packageName ="";
 	Token arguments;
   TomTerm astTom;
   InputStream input;
@@ -1385,103 +1403,99 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
     {
       addPreviousCode(list);
     }
-    <TOM_LPAREN>
-    arguments = <TOM_STRING>
-    <TOM_RPAREN>
   vasTL = GoalLanguageBlock(list)
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       vasCode = vasTL.getCode().trim();
                 
-      System.out.println("Vas: not yet implemented");
-/*
+      Object res = null;
       try{
-				Class vasClass = Class.forName("vas.Vas");
-				Constructor vasConstructor = vasClass.getConstructor(new Class[]{});
-				Object vas = vasConstructor.newInstance(new Class[]{}); // an instance of Vas
-				Class[] params = {Class.forName("java.io.InputStream")};
-				Method runMethod = vasClass.getMethod("run", params);
-				Object[] realParams =  {new ByteArrayInputStream(vasCode.getBytes())};
-				Object resultFromVas = runMethod.invoke(vas, realParams);
+        Method getInstanceMethod = null, initMethod = null, runMethod = null;
+        Class vasClass = Class.forName("vas.Vas");
+        Method methlist[] = vasClass.getDeclaredMethods();
+        for (int i = 0; i < methlist.length; i++) {  
+          Method m = methlist[i];
+          if(m.getName().equals("getInstance")) {
+            getInstanceMethod = m;
+          } else if (m.getName().equals("run")) {
+            runMethod = m;
+          } else if (m.getName().equals("init")) {
+            initMethod = m;
+          }
+        }
         
-        String outputPath = getInput().getParentPath();
-          //System.out.println("outputPath = " + outputPath);
-        fileName = outputPath + File.separatorChar + ".generatedFromVas";
-        //fileName = outputPath + File.separatorChar + apiName + ".tom";
-
-        file = new File(fileName);
-        fileName = file.getCanonicalPath();
-        OutputStream output = new FileOutputStream(file);
-	      Writer writer = new BufferedWriter(new OutputStreamWriter(output));
-	      writer.write(resultFromVas.toString());
-	      writer.flush();
-	      writer.close();
-	      if(getInput().isJCode()) {
-		      String[] par = arguments.image.substring(1, arguments.image.length()-1).split(" ");
-		      String[] finalPar = new String[par.length+5];
-		      int i = 0;
-		      for(;i<par.length;i++){
-		      	finalPar[i] = par[i];
-		      }
-		      finalPar[i] = "--input";
-		      finalPar[i+1] = fileName;
-		      finalPar[i+2] = "--output";
-		      finalPar[i+3] = outputPath;
-		      finalPar[i+4] = "--nojar";
-					
-		      apigen.gen.tom.java.Main.main(finalPar);
-		       	// find apiname
-		      apiName = extractApiName(par);
-            //System.out.println("apiName = " + apiName);
-		    } else if (getInput().isCCode()) {
-		    	String[] par = {"--input", ".generatedFromVas.adt", "--cGen",
-		      	"--output", ".", "--name", "api"};
-		    	apigen.gen.tom.c.Main.main(par);
-		    }
-	      
+        Object vasInstance = getInstanceMethod.invoke(vasClass, new Class[]{});
+        String destDir = getInput().getOutputFile().getParent();
+        String[] params = new String[] {"-d", destDir};
+        Object[] realParams = {params};
+        initMethod.invoke(vasInstance, realParams);
+        Object[] realParams2 =  {new ByteArrayInputStream(vasCode.getBytes())};
+        res = runMethod.invoke(vasInstance, realParams2);
       } catch (ClassNotFoundException e) {
-				String msg = "You need vas-to-adt to use the %vas construct";
- 	      throw new TomException(msg);
-      } catch (NoSuchMethodException e) {
-				String msg = "You need vas-to-adt to use the %vas construct";
- 	      throw new TomException(msg);
+        String msg = "You need vas-to-adt to use the %vas construct";
+        System.out.println(e.getMessage());
+        throw new TomException(msg);
       } catch (Exception e) {
-				System.out.println(e.getMessage());
-				e.printStackTrace();
+        System.out.println(e.getMessage());
+        e.printStackTrace();
       }
-      
-      try {
-          
-        String outputPath = getInput().getParentPath();
-	      fileName = outputPath + File.separatorChar + apiName + ".tom";
-  	    file = new File(fileName);
-    	  fileName = file.getCanonicalPath();
-    		if(file.exists()) {
- 	  	     	// to get the length of the file
- 		    	inputBuffer = new byte[(int)file.length()+1];
- 		    	input       = new FileInputStream(file);
- 	    		input.read(inputBuffer);
-     	
- 	   	 		tomParser   = new TomParser(new TomBuffer(inputBuffer),0, fileName, includedFiles);
- 	   	   	tomParser.testIncludedFiles(fileName);
- 	   	   	astTom = tomParser.startParsing();
- 	      	astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
- 	      	list.add(astTom);
-	 	    } else {
-	 	    	System.out.println(fileName+" does not exist");
-	 	    }
 
+      String inputFileName = new File((String)res).getName();
+      apiName = inputFileName.substring(0, inputFileName.length() - ".adt".length());
+      packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
+      if(getInput().isJCode() && res != null) {
+        String[] finalPar = new String[10];
+        finalPar[0] = "--input";
+        finalPar[1] = (String)res;
+        finalPar[2] = "--outputdir";
+        finalPar[3] = getInput().getDestDir().getAbsolutePath();
+        finalPar[4] = "--name";
+        finalPar[5] = apiName;
+        finalPar[6] = "--nojar";
+        finalPar[7] = "--javagen";
+        finalPar[8] = "--package";
+        finalPar[9] = packageName;
         
-	 	  } catch (TokenMgrError error) {
- 	     	String msg = "TokenMgrError in file '" + fileName + "' generated from file '"+currentFile+"'"+ error.getMessage();
- 	      throw new TomException(msg);
- 	    } catch (java.io.IOException e2) {
- 	      String msg = "IOException occurs reading " + fileName + " at line "+getLine();
- 	      throw new TomException(msg);
- 	    }
-*/
+        apigen.gen.tom.java.Main.main(finalPar);
+      }
+
+      try {
+        String dir = getInput().getDestDir().getAbsolutePath();
+        if (packageName != null) {
+          dir = dir + File.separatorChar + packageName;
+        }
+          //if (apiName != null) {
+          //dir = dir + File.separatorChar + apiName;
+          //}
+        String adtFileName = new File((String)res).getName();
+        file = new File(dir, adtFileName.substring(0, adtFileName.length()-".adt".length())+".tom");
+        fileName = file.getCanonicalPath();
+        if(file.exists()) {
+            // to get the length of the file
+          inputBuffer = new byte[(int)file.length()+1];
+          input       = new FileInputStream(file);
+          input.read(inputBuffer);
+          
+          tomParser   = new TomParser(new TomBuffer(inputBuffer),0, fileName, includedFiles);
+          tomParser.testIncludedFiles(fileName);
+          astTom = tomParser.startParsing();
+          astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
+          list.add(astTom);
+        } else {
+          System.out.println(fileName+" does not exist");
+        }
+        
+        
+      } catch (TokenMgrError error) {
+        String msg = "TokenMgrError in file '" + fileName + "' generated from file '"+currentFile+"'"+ error.getMessage();
+        throw new TomException(msg);
+      } catch (java.io.IOException e2) {
+        String msg = "IOException occurs reading " + fileName + " at line "+getLine();
+        throw new TomException(msg);
+      }
     }
-  }
+  
+}
 
 void LocalVariableConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
 {}

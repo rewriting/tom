@@ -52,6 +52,10 @@
 	<property name="src.share"    location="${src.dist}/share/jtom"/>
 	<property name="src.doc"      location="${src.dist}/doc"/>
 
+        <!-- for test -->
+	<property name="test.gen"      location="${test}/gen"/>  	
+	<property name="test.build"    location="${test}/build"/>
+
   <!-- for bootstrap -->
   <property name="bootstep.folder" location="${src.src}/bootstrap" />
 	<!-- Property for Javac compilation
@@ -398,7 +402,9 @@
 	</target>
 
 	<target name="clean.test" description="Cleans acceptance tests directory">
-		<delete>
+    <delete dir="${test.gen}"/>
+    <delete dir="${test.build}"/>
+	<!--	<delete>
 			<fileset dir="${test}" includes="*.class" />
 		</delete>
 		<delete>
@@ -407,7 +413,7 @@
 					<mapper type="glob" from="*.java" to="*.t"/>
 				</present>
 			</fileset>
-		</delete>
+		</delete>-->
 	</target>
 
 	<target name="clean" description="Cleans everything in the project" depends="clean.stable, clean.src, clean.test">
@@ -437,38 +443,40 @@
 	</target>
 	
 	<target name="test" description="Compile and run acceptance tests" depends="initsrc">
-		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.mapping} -I ${src.adt}">
+		<mkdir dir="${test.gen}"/>
+		<mkdir dir="${test.build}"/>
+		<tomsrc srcdir="${test}" destdir="${test.gen}" options="-I ${src.mapping} -I ${src.adt}">
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
 			<exclude name="Record.t"/>
 			<exclude name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
 		</tomsrc>
-		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.mapping} --lazyType -I ${src.adt}">
+		<tomsrc srcdir="${test}" destdir="${test.gen}" options="-I ${src.mapping} --lazyType -I ${src.adt}">
 			<include name="Record.t"/>
 			<include name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
 		</tomsrc>
-		<javac srcdir="${test}" destdir="${test}" verbose="${javacVerbose}">
+		<javac srcdir="${test.gen}" destdir="${test.build}" verbose="${javacVerbose}">
 			<classpath refid="src.classpath"/>
 			<exclude name="**/error/**"/>
 		</javac>
 	</target>
 
 	<target name="test.stable" description="Compile and run acceptance tests with stable" depends="initTaskDef">
-		<tom srcdir="${test}" destdir="${test}" options="-I ${stable.mapping}">
+		<tom srcdir="${test}" destdir="${test.gen}" options="-I ${stable.mapping}">
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
 			<exclude name="Record.t"/>
 			<exclude name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
 		</tom>
-		<tom srcdir="${test}" destdir="${test}" options="-I ${stable.mapping} --lazyType">
+		<tom srcdir="${test}" destdir="${test.gen}" options="-I ${stable.mapping} --lazyType">
 			<include name="Record.t"/>
 			<include name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
 		</tom>
-		<javac srcdir="${test}" destdir="${test}" verbose="${javacVerbose}">
+		<javac srcdir="${test.gen}" destdir="${test.build}" verbose="${javacVerbose}">
 			<classpath refid="tom.classpath"/>
 			<exclude name="**/error/**"/>
 		</javac>
@@ -483,12 +491,12 @@
 							showoutput="true">
 			<classpath>
 				<path refid="tom.classpath"/>
-				<pathelement location="${test}"/>
+				<pathelement location="${test.build}"/>
 			</classpath>
 			<batchtest>
-				<fileset dir="${test}">
+				<fileset dir="${test.gen}">
 					<include name="**/Test*.java"/>
-					<exclude name="**/error/**"/>
+					<!--<exclude name="**/error/**"/>-->
 				</fileset>
 			</batchtest>
 		</tomjunitstable>
@@ -511,12 +519,12 @@
 							showoutput="true">
 			<classpath>
 				<path refid="src.classpath"/>
-				<pathelement location="${test}"/>
+				<pathelement location="${test.build}"/>
 			</classpath>
 			<batchtest>
-				<fileset dir="${test}">
+				<fileset dir="${test.gen}">
 					<include name="**/Test*.java"/>
-					<exclude name="**/error/**"/>
+					<!--<exclude name="**/error/**"/>-->
 				</fileset>
 			</batchtest>
 		</tomjunit>

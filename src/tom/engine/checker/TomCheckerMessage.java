@@ -47,7 +47,7 @@ public final class TomCheckerMessage {
   public static String IncompleteOption = "Expecting information after option: {1}";
   public static String FileNotFound = "File {1} not found";
   public static String NoFileToCompile = "No file to compile";
-  public static String OutputWithMultipleCompilation = "cannot specify --output with multiple compilations";
+  public static String OutputWithMultipleCompilation = "Cannot specify --output with multiple compilations";
   public static String IOException = "IO Exception reading file {1}";
   
 //Error messages linked to operator and type definitions

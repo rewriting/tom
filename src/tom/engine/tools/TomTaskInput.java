@@ -502,8 +502,8 @@ public final static String debugTableSuffix = ".tfix.debug.table";
     }
   }
  
-	public File getUserOutputFile() {
-		return userOutputFile;
-	}
+  public File getUserOutputFile() {
+    return userOutputFile;
+  }
  
 } // class TomTaskInput
