@@ -1,0 +1,678 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD>
+
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.06">
+<TITLE>
+ The core language
+</TITLE>
+</HEAD>
+<BODY TEXT=black BGCOLOR=white>
+<A HREF="system.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="manual.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="lib.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+<HR>
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc14"><B><FONT SIZE=6>Chapter&nbsp;3</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=6>The core language</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE>
+
+This document is intended as a reference manual for the <FONT COLOR=navy>Tom</FONT>
+language. It lists the language constructs, and gives their precise
+syntax and informal semantics. It is by no means a tutorial
+introduction to the language: there is not a single example.<BR>
+<BR>
+<A NAME="toc9"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc15"><B><FONT SIZE=5>3.1</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Notations</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE>
+<BR>
+The syntax of the language is given in BNF-like notation. Terminal
+symbols are set in typewriter font (<FONT COLOR="#0000ff"><TT>like this</TT></FONT>). Non-terminal
+symbols are set in italic font (<FONT COLOR="#ff00ff"><I>like that</I></FONT>). Square brackets
+[...] denote optional components. Parentheses with a trailing
+star sign (...)* denotes zero, one or several repetitions of the
+enclosed components. Parentheses with a trailing 
+plus sign (...)+ denote one or several repetitions of the enclosed
+components. Parentheses (...) denote grouping. <BR>
+<BR>
+<A NAME="toc10"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc16"><B><FONT SIZE=5>3.2</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Lexical conventions</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE>
+<DIV ALIGN=center>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Letter</I></FONT> ( <FONT COLOR="#ff00ff"><I>Letter</I></FONT> |<FONT COLOR="#ff00ff"><I>Digit</I></FONT>
+ |<FONT COLOR="#0000ff"><TT>.</TT></FONT> |<FONT COLOR="#0000ff"><TT>_</TT></FONT> |<FONT COLOR="#0000ff"><TT>-</TT></FONT> )*</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Integer</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Digit</I></FONT> ( <FONT COLOR="#ff00ff"><I>Digit</I></FONT> )*</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Letter</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>A</TT></FONT> ... <FONT COLOR="#0000ff"><TT>Z</TT></FONT> |<FONT COLOR="#0000ff"><TT>a</TT></FONT> ... <FONT COLOR="#0000ff"><TT>z</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Digit</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>0</TT></FONT> ... <FONT COLOR="#0000ff"><TT>9</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Other</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP>a character</TD>
+</TR></TABLE>
+</DIV><BR>
+<A NAME="toc11"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc17"><B><FONT SIZE=5>3.3</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Names</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE>
+<DIV ALIGN=center>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>SubjectName</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Type</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>SlotName</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>SymbolName</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>VariableName</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>AnnotedName</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>FileName</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Name</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
+</TR></TABLE>
+</DIV><BR>
+<A NAME="toc12"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc18"><B><FONT SIZE=5>3.4</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5><FONT COLOR=navy>Tom</FONT></FONT></B><B><FONT SIZE=5> syntax</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE>
+A <FONT COLOR=navy>Tom</FONT> program is a target language program (namely <FONT COLOR=purple>C</FONT> or <FONT COLOR=purple>Java</FONT>)
+embedded with some new preprocessor constructs such as
+<FONT COLOR="#0000ff"><TT>%typeterm</TT></FONT>, <FONT COLOR="#0000ff"><TT>%op</TT></FONT>, <FONT COLOR="#0000ff"><TT>%rule</TT></FONT> and <FONT COLOR="#0000ff"><TT>%match</TT></FONT>.
+<FONT COLOR=navy>Tom</FONT> is a multi-languages preprocessor, so, its syntax depends from 
+the target language syntax. But for simplicity, we will only present
+the syntax of its constructs and explain how they can be integrated
+into the target language.
+Basically, a <FONT COLOR=navy>Tom</FONT> program is list of blocks, where each block is
+either a <FONT COLOR=navy>Tom</FONT> construct, either a sequence of characters.
+The idea is that that after transformation, the sequence of characters
+merged with the compiled <FONT COLOR=navy>Tom</FONT> constructs should be a valid target
+language program.
+So we have:<BR>
+<DIV ALIGN=center>
+<TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Tom</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>BlockList</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>BlockList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>(</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchConstruct</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>RuleConstruct</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>BackQuoteTerm</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>IncludeConstruct</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>LocalVariableConstruct</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Operator</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>OperatorList</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>OperatorArray</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeTerm</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeInt</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeList</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeArray</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>BlockList</I></FONT> <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Other</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>)*</TD>
+</TR></TABLE>
+</DIV>
+<UL><LI>
+a <FONT COLOR="#ff00ff"><I>MatchConstruct</I></FONT> is translated into a list of
+ instructions. This constructs may appear anywhere a list of
+ instructions is valid in the target language.<BR>
+<BR>
+<LI>a <FONT COLOR="#ff00ff"><I>RuleConstruct</I></FONT> is translated into a function
+ definition. This constructs may appear anywhere function declaration
+ is valid in the target language. <BR>
+<BR>
+<LI><A NAME="backquote"></A> a <FONT COLOR="#ff00ff"><I>BackQuoteTerm</I></FONT> is translated into a function call.<BR>
+<BR>
+<LI>a <FONT COLOR="#ff00ff"><I>IncludeConstruct</I></FONT> is replaced by the content of the
+ file referenced by the construct.<BR>
+<BR>
+<LI>a <FONT COLOR="#ff00ff"><I>LocalVariableConstruct</I></FONT> is replaced by variable declarations.<BR>
+<BR>
+<LI><FONT COLOR="#ff00ff"><I>Operator</I></FONT>, <FONT COLOR="#ff00ff"><I>OperatorList</I></FONT> and <FONT COLOR="#ff00ff"><I>OperatorArray</I></FONT> are
+ replaced by some functions definitions. <BR>
+<BR>
+<LI><FONT COLOR="#ff00ff"><I>TypeTerm</I></FONT>, <FONT COLOR="#ff00ff"><I>TypeInt</I></FONT>, <FONT COLOR="#ff00ff"><I>TypeList</I></FONT> and <FONT COLOR="#ff00ff"><I>TypeArray</I></FONT>
+ are also replaced by some functions definitions. 
+</UL>
+A <FONT COLOR="#0000ff"><TT>%match</TT></FONT> construct contains two parts:<A NAME="match"></A>
+<UL><LI>
+a list of target language variables. These variables should
+ contains the object on which patterns are matched<BR>
+<BR>
+<LI>a list of rules: a pattern and a semantic action (written in the
+ target language)
+</UL>
+The construct is defined as follow:<BR>
+<DIV ALIGN=center>
+ <TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchConstruct</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%match</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT>
+ <FONT COLOR="#ff00ff"><I>MatchArguments</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT>
+ ( <FONT COLOR="#ff00ff"><I>PatternAction</I></FONT> )* 
+ <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchArguments</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchArgument</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>MatchArgument</I></FONT> )*</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchArgument</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#ff00ff"><I>SubjectName</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>PatternAction</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchPatterns</I></FONT> <FONT COLOR="#0000ff"><TT>-&gt;</TT></FONT>
+ <FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>BlockList</I></FONT> <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchPatterns</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Term</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> )*</TD>
+</TR></TABLE>
+</DIV><BR>
+A term has the following syntax:
+<DIV ALIGN=center>
+ <TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Term</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP>[ <FONT COLOR="#ff00ff"><I>AnnotedName</I></FONT> <FONT COLOR="#0000ff"><TT>@</TT></FONT> ] <FONT COLOR="#ff00ff"><I>PlainTerm</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>PlainTerm</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>SymbolName</I></FONT> <FONT COLOR="#0000ff"><TT>[</TT></FONT> <FONT COLOR="#ff00ff"><I>SlotName</I></FONT> <FONT COLOR="#0000ff"><TT>=</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT>
+ ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>SlotName</I></FONT> <FONT COLOR="#0000ff"><TT>=</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> )* <FONT COLOR="#0000ff"><TT>]</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>VariableName</I></FONT> <FONT COLOR="#0000ff"><TT>*</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>SymbolName</I></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> )* <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>_</TT></FONT></TD>
+</TR></TABLE>
+</DIV><BR>
+In <FONT COLOR=navy>Tom</FONT>, we can also define a set of rewrite rules. All the
+left-handsides should begin with the same root symbol:<BR>
+<DIV ALIGN=center>
+ <TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>RuleConstruct</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%rule</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT> ( <FONT COLOR="#ff00ff"><I>Term</I></FONT> <FONT COLOR="#0000ff"><TT>-&gt;</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MakeConstruct</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%make</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR></TABLE>
+</DIV><BR>
+<DIV ALIGN=center>
+ <TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>IncludeConstruct</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%include</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>FileName</I></FONT> <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Operator</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%op</TT></FONT> <FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT>
+ [ <FONT COLOR="#0000ff"><TT>(</TT></FONT> [ <FONT COLOR="#ff00ff"><I>SlotName</I></FONT> <FONT COLOR="#0000ff"><TT>:</TT></FONT> ] <FONT COLOR="#ff00ff"><I>Type</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> [
+ <FONT COLOR="#ff00ff"><I>SlotName</I></FONT> <FONT COLOR="#0000ff"><TT>:</TT></FONT> ] <FONT COLOR="#ff00ff"><I>Type</I></FONT> )* <FONT COLOR="#0000ff"><TT>)</TT></FONT> ]</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>&nbsp;</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMake</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordGetSlot</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordIsFsym</I></FONT>)* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>OperatorList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%oplist</TT></FONT> <FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#0000ff"><TT>*</TT></FONT>
+ <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>&nbsp;</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyList</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordMakeInsert</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>OperatorArray</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%oparray</TT></FONT> <FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#0000ff"><TT>*</TT></FONT>
+ <FONT COLOR="#0000ff"><TT>)</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>&nbsp;</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyArray</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordMakeAppend</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR></TABLE>
+</DIV><BR>
+<DIV ALIGN=center>
+ <TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeTerm</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%type</TT></FONT> <FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT>
+ <FONT COLOR="#ff00ff"><I>KeywordImplement</I></FONT>
+ ( 
+ <FONT COLOR="#ff00ff"><I>KeywordGetFunSym</I></FONT> 
+ |<FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT> 
+ |<FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT> 
+ |<FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT> 
+ )*
+ <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%typelist</TT></FONT> <FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT>
+ <FONT COLOR="#ff00ff"><I>KeywordImplement</I></FONT>
+ [<FONT COLOR="#ff00ff"><I>KeywordGetFunSym</I></FONT>]
+ [<FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT>]
+ [<FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT>]
+ [<FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT>]
+ [<FONT COLOR="#ff00ff"><I>KeywordGetHead</I></FONT>]
+ [<FONT COLOR="#ff00ff"><I>KeywordGetTail</I></FONT>]
+ [<FONT COLOR="#ff00ff"><I>KeywordIsEmpty</I></FONT>]
+ <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>TypeArray</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%typearray</TT></FONT> <FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT>
+ <FONT COLOR="#ff00ff"><I>KeywordImplement</I></FONT>
+ ( 
+ <FONT COLOR="#ff00ff"><I>KeywordGetFunSym</I></FONT>
+ |<FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT>
+ |<FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT>
+ |<FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT>
+ |<FONT COLOR="#ff00ff"><I>KeywordGetElement</I></FONT>
+ |<FONT COLOR="#ff00ff"><I>KeywordGetSize</I></FONT>
+ )*
+ <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR></TABLE>
+</DIV><BR>
+<DIV ALIGN=center>
+ <TABLE CELLSPACING=2 CELLPADDING=0>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>BlockList</I></FONT> <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordImplement</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>implement</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordGetFunSym</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>get_fun_sym</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>get_subterm</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>cmp_fun_sym</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>equals</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordGetHead</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>get_head</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordGetTail</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>get_tail</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordIsEmpty</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>is_empty</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordGetElement</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>get_element</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordGetSize</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>get_size</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>fsym</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordMake</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>make</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> )* <FONT COLOR="#0000ff"><TT>)</TT></FONT>
+ <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordIsFsym</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>is_fsym</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> )* <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordGetSlot</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>get_slot</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordMakeEmptyList</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>make_empty</TT></FONT> [ <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> ] <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordMakeInsert</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>make_insert</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordMakeEmptyArray</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>make_empty</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>KeywordMakeAppend</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>make_append</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
+</TR></TABLE>
+</DIV><BR>
+<A NAME="toc13"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc19"><B><FONT SIZE=5>3.5</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5><FONT COLOR=navy>Tom</FONT></FONT></B><B><FONT SIZE=5> semantic</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE>
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>3.5.1</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Type definition</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><A NAME="typedef"></A><BR>
+When defining a new type with the <FONT COLOR="#0000ff"><TT>%typeterm</TT></FONT> constructs,
+several access functions have to be defined:
+<UL><LI>
+<A NAME="implement"></A> the <FONT COLOR="#0000ff"><TT>implement</TT></FONT> construct describes how the new type is 
+ implemented. The target language part written between braces
+ (<FONT COLOR="#0000ff"><TT>'{'</TT></FONT> and <FONT COLOR="#0000ff"><TT>'}'</TT></FONT>) is never parsed. It is used by
+ the compiler to declare some functions and variables.<BR>
+<BR>
+<LI><A NAME="getfs"></A> the <FONT COLOR="#0000ff"><TT>get_fun_sym(t)</TT></FONT> construct corresponds to a
+ function (parametrised by a term variable) that should return the
+ root symbol of a given term (the term referenced by the term
+ variable <TT>t</TT> in this example). <BR>
+<BR>
+<LI><A NAME="cmpfs"></A> the <FONT COLOR="#0000ff"><TT>cmp_fun_sym(s1,s2)</TT></FONT> construct corresponds to a
+ predicate (parametrised by two symbol variables).
+ This predicate should return <TT>true</TT> if the symbols are
+ ``equal''. The <TT>true</TT> value should correspond to the 
+ builtin <TT>true</TT> value of the considered target language.
+ (<TT>true</TT> in <FONT COLOR=purple>Java</FONT>, and something different from <TT>0</TT> in
+ <FONT COLOR=purple>C</FONT> for example). <BR>
+<BR>
+<LI><A NAME="getsub"></A> the <FONT COLOR="#0000ff"><TT>get_subterm(t,n)</TT></FONT> construct corresponds to a
+ function (parametrised by a term variable and an integer).
+ This function should return the <TT>n-th</TT> subterm of the
+ term&nbsp;<TT>t</TT>. This never called with and integer paramter that
+ does not correspond to the arity of the root symbol of the
+ considered term (i.e. we alway have 0 <FONT FACE=symbol>£</FONT> <I>n</I> &lt; <I>arity</I>).<BR>
+<BR>
+<LI><A NAME="equals"></A> the <FONT COLOR="#0000ff"><TT>equals(t1,t2)</TT></FONT> construct corresponds to a
+ predicate (parametrised by two term variables).
+ This predicate should return <TT>true</TT> if the terms are
+ ``equal''. The <TT>true</TT> value should correspond to the 
+ builtin <TT>true</TT> value of the considered target language.
+ This last optional predicate is only used to compile non-linear 
+ left-handsides. It is not needed, if the specification does not
+ contain such patterns.
+</UL>
+<A NAME="listdef"></A>
+When defining a new type with the <FONT COLOR="#0000ff"><TT>%typelist</TT></FONT> construct,
+several other access functions have to be defined:
+<UL><LI>
+<A NAME="geth"></A> the <FONT COLOR="#0000ff"><TT>get_head(l)</TT></FONT> function is parametrised by a list
+ variable and should return the first element of the considered list.<BR>
+<BR>
+<LI><A NAME="gett"></A> the <FONT COLOR="#0000ff"><TT>get_tail(l)</TT></FONT> function is parametrised by a list
+ variable and should return the tail of the considered list.<BR>
+<BR>
+<LI><A NAME="isempty"></A> the <FONT COLOR="#0000ff"><TT>is_empty(l)</TT></FONT> constructs corresponds to a
+ predicate parametrised by a list variable.
+ This predicate should return <TT>true</TT> if the considered list
+ contains no element.
+</UL>
+<A NAME="arraydef"></A>
+When defining a new type with the <FONT COLOR="#0000ff"><TT>%typearray</TT></FONT> construct,
+the two different access functions have to be defined:
+<UL><LI>
+<A NAME="gete"></A> the <FONT COLOR="#0000ff"><TT>get_element(l,n)</TT></FONT> construct is parametrised by a list
+ variable and an integer. This should correspond to a function that
+ return the <TT>n-th</TT> element of the considered list&nbsp;<TT>l</TT>.<BR>
+<BR>
+<LI><A NAME="getsize"></A> the <FONT COLOR="#0000ff"><TT>get_size(l)</TT></FONT> constructs corresponds to a function
+ that returns the size of the considered list.
+ By convention, an empty list contains <TT>0</TT> element.
+</UL>
+<A NAME="int"></A>
+When introducing integer type with the <FONT COLOR="#0000ff"><TT>%typeint</TT></FONT> construct, then
+the int type can be directly used as a term.<BR>
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>3.5.2</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Operator definition</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><A NAME="opdef"></A><BR>
+When defining a new symbol with the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> construct, the user
+should specify how the symbol is implemented. This is done by the
+<FONT COLOR="#0000ff"><TT>fsym</TT></FONT> construct.<A NAME="fsym"></A>
+The expression between braces should correspond (modulo the
+<FONT COLOR="#0000ff"><TT>cmp_fun_sym</TT></FONT> predicate) to the expression returned by the
+function <FONT COLOR="#0000ff"><TT>get_fun_sym</TT></FONT> applied to a term rooted by the
+considered symbol. 
+<A NAME="make"></A>When defining a symbol, is it also possible to specify a
+<FONT COLOR="#0000ff"><TT>make</TT></FONT> construct. This function is parametrised by several 
+term variables (i.e. that should correspond to the arity of the
+symbol). A call to this <FONT COLOR="#0000ff"><TT>make</TT></FONT> function should return a term
+rooted by the considered symbol, where each subterm correspond to the
+terms given in arguments to the function.<BR>
+<BR>
+<A NAME="isfsym"></A> Need to write something about isfsym<BR>
+<BR>
+As mentioned in the syntax definition, it is also possible to name
+each field of a constructor symbol by using the
+<TT>Type f(name1:Type, name2:Type2)</TT> syntax. 
+Adopting this programming style has two main advantages:
+<UL><LI>
+when writing a pattern, this allows you write <TT>f[name2=a]</TT>
+ instead of <TT>f(_,a)</TT>. One benefit is that you can modify the
+ signature (adding a field for example) without necessary having to
+ modify every pattern that occurs in the program.<BR>
+<BR>
+<LI><A NAME="getslot"></A> you may also specialize the <FONT COLOR="#0000ff"><TT>get_subterm</TT></FONT> access
+function for a given constructor. This can be done with the
+<FONT COLOR="#0000ff"><TT>get_slot</TT></FONT> construct.
+</UL>
+<BR>
+<A NAME="oplistdef"></A>
+When defining a new symbol with the <FONT COLOR="#0000ff"><TT>%oplist</TT></FONT> construct,
+the user has to specify how the symbol is implemented. 
+The user has also to specify how a list can be built (this is no
+longer optional as in the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> construct):
+<UL><LI>
+<A NAME="emptylist"></A> the <FONT COLOR="#0000ff"><TT>make_empty()</TT></FONT> construct should return an empty
+ list.<BR>
+<BR>
+<LI><A NAME="insert"></A> the <FONT COLOR="#0000ff"><TT>make_insert(e,l)</TT></FONT> construct corresponds to a function
+ parametrised by a list variable and a term variable. This function
+ should return a new list&nbsp;<TT>l'</TT> where the element&nbsp;<TT>e</TT>
+ has been inserted at the head of the list&nbsp;<TT>l</TT>
+ (i.e. <FONT COLOR="#0000ff"><TT>equals(get_head(l'),e)</TT></FONT> and
+ <FONT COLOR="#0000ff"><TT>equals(get_tail(l'),l)</TT></FONT> should be <TT>true</TT>).
+</UL>
+<A NAME="oparraydef"></A>
+When defining a new symbol with the <FONT COLOR="#0000ff"><TT>%oparray</TT></FONT> construct,
+the user has to specify how the symbol is implemented. 
+The user has also to specify how a list can be built (this is no 
+longer optional as in the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> construct):
+<UL><LI>
+<A NAME="emptyarray"></A> the <FONT COLOR="#0000ff"><TT>make_empty(n)</TT></FONT> construct should return a list of
+ size&nbsp;<TT>n</TT>. <BR>
+<BR>
+<LI><A NAME="append"></A> the <FONT COLOR="#0000ff"><TT>make_append(e,l)</TT></FONT> construct corresponds to a
+ function parametrised by a list variable and a term variable.<BR><BR>
+!! Warning..<BR><BR>
+This function should return a list&nbsp;<TT>l'</TT> such that
+ the element&nbsp;<TT>e</TT> is at the <TT>n-th</TT> position.
+</UL>
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>3.5.3</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Match definition</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><BR>
+In order to match patterns against a list of subjects, <FONT COLOR=navy>Tom</FONT> provides
+the <FONT COLOR="#0000ff"><TT>%match</TT></FONT> construct.
+This constructs contains two parts:
+<UL><LI>
+a list of <FONT COLOR="#ff00ff"><I>MatchArgument</I></FONT>: this is a list of (target
+ language) variables that reference the terms to be matched.
+<LI>a list of <FONT COLOR="#ff00ff"><I>PatternAction</I></FONT>: this is a list of pairs
+ (pattern,action), where an action is a set of target language
+ instructions. 
+</UL>
+The <FONT COLOR="#0000ff"><TT>%match</TT></FONT> construct is evaluated in the following way:
+<UL><LI>
+given a list of ground terms (referenced by the list of target
+ language variables), the execution control is transfered to the
+ first <FONT COLOR="#ff00ff"><I>PatternAction</I></FONT> whose patterns match the list of ground
+ terms.
+<LI>given a <FONT COLOR="#ff00ff"><I>PatternAction</I></FONT>, the list of free variables is
+ instantiated and the associated semantic action is executed.
+ If the execution control is transfered outside the
+ <FONT COLOR="#0000ff"><TT>%match</TT></FONT> instruction (by a <TT>goto</TT>, <TT>break</TT> or
+ <TT>return</TT> for example), the matching process is finished.
+ Otherwise, it is continued as follows:
+ <UL><LI>
+ if the considered matching theory may return several matches
+ (list-matching for instance), for each match, the list of free
+ variables is instantiated and the associated semantic action is
+ executed.
+ <LI>when all matches have been computed (there is at most one match
+ in the syntactic theory), the execution control is transfered to
+ the next <FONT COLOR="#ff00ff"><I>PatternAction</I></FONT> whose patterns match the list of
+ ground terms. 
+ </UL><BR>
+<BR>
+<LI>when there is no more <FONT COLOR="#ff00ff"><I>PatternAction</I></FONT> whose patterns
+ match the list of ground terms, the <FONT COLOR="#0000ff"><TT>%match</TT></FONT> instruction is
+ finished, and the execution control is transfered to the next
+ instruction. 
+</UL>
+<B>Note:</B> the behaviour is not determined if a semantic action
+modifies a target language variable which is an argument of a
+<FONT COLOR="#0000ff"><TT>%match</TT></FONT> instruction under evaluation.<BR>
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>3.5.4</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Rule definition</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><BR>
+The <FONT COLOR="#0000ff"><TT>%rule</TT></FONT> construct is composed of a list of rewrite rules
+(the left-hand side is a term and the right-hand side is a term).
+All these rules should begin with the same root symbol. The <FONT COLOR=navy>Tom</FONT>
+compiler should generate a function (with one argument) whose name
+correspond to the name of this unique root symbol.
+Given a ground term, applying this function returns the instanciated
+right-hand side of the first rule whose pattern matches the considered 
+subject.
+When no rule can be applied (i.e. no pattern matches the subject),
+the given ground term, rooted by the root symbol of the rewrite system
+is returned.
+<BR>
+<BR>
+<HR>
+<A HREF="system.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
+<A HREF="manual.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>
+<A HREF="lib.html"><IMG SRC ="next_motif.gif" ALT="Next"></A>
+</BODY>
+</HTML>
