@@ -658,6 +658,7 @@ public class TomParser implements TomParserConstants {
         ruleList.add(tsf().makeTomTerm_RewriteRule(
                        tsf().makeTomTerm_Term(term),
                        tsf().makeTomTerm_Term(rhs),
+                       tsf().makeTomList_Empty(),
                        orgTrack2));
       }
       listOfLhs.clear();

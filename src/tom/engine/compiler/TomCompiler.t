@@ -137,7 +137,9 @@ public class TomCompiler extends TomBase {
         while(!ruleList.isEmpty()) {
           TomTerm rule = ruleList.getHead();
           %match(TomTerm rule) { 
-            RewriteRule[lhs=Term(Appl[args=matchPatternsList]), rhs=Term(rhsTerm)] -> {
+            RewriteRule[lhs=Term(Appl[args=matchPatternsList]),
+                        rhs=Term(rhsTerm),
+                        condList=condList] -> {
               
               TomTerm newRhs = pass2_1(`MakeTerm(rhsTerm));
               TomList rhsList = empty();
@@ -148,7 +150,15 @@ public class TomCompiler extends TomBase {
               if(Flags.supportedBlock) {
                 rhsList = appendInstruction(`CloseBlock(),rhsList);
               }
-              patternActionList = append(`PatternAction(TermList(matchPatternsList),Tom(rhsList)),patternActionList);
+
+              TomTerm condRhs = `Tom(rhsList);
+              while(!condList.isEmpty()) {
+                Expression cond = condList.getHead().getAstExpression();
+                TomList actionList = cons(condRhs,empty());
+                condRhs = `InstructionToTomTerm(IfThenElse(cond,actionList,empty()));
+              }
+              
+              patternActionList = append(`PatternAction(TermList(matchPatternsList),condRhs),patternActionList);
             }
           } 
           ruleList = ruleList.getTail();

@@ -286,21 +286,17 @@ public class TomExpander extends TomBase {
             return `Match(option,newSubjectList,newPatternList);
           }
 
-            /*
-          context, TomTypeToTomTerm(TomTypeAlone(tomType)) -> {
-            //debugPrintln("expandVariable.12: TomTypeAlone(" + tomType + ")");
-              // get a type
-            return `TomTypeToTomTerm(getType(tomType));
-          }
-            */
-          
-          context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),Term(rhs), orgTrack) -> { 
+          context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
+                               Term(rhs),
+                               condList,
+                               orgTrack) -> { 
             //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
             TomSymbol tomSymbol = getSymbol(tomName);
             TomType symbolType = getSymbolCodomain(tomSymbol);
             TomTerm newLhs = `Term(expandVariable(context,lhs));
             TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
-            return `RewriteRule(newLhs,newRhs,orgTrack);
+            TomList newCondList = empty();
+            return `RewriteRule(newLhs,newRhs,newCondList,orgTrack);
           }
               
             // default rule

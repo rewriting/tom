@@ -960,7 +960,7 @@ public class TomChecker extends TomBase {
       currentRule = ruleList.getHead();
       matchBlock: {
         %match(TomTerm currentRule) {
-          RewriteRule(Term(lhs),Term(rhs),orgTrack) -> {
+          RewriteRule(Term(lhs),Term(rhs),condList,orgTrack) -> {
             statistics().numberRulesTested++;
             name = verifyLhsRuleAndConstructorEgality(lhs, name, i);
             if(i == 0) {
