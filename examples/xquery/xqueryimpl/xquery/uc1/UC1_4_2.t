@@ -150,10 +150,11 @@ public class UC1_4_2 {
 		
 		_last=(String)(record.getField(0)); 
 		_first=(String)(record.getField(1)); 
+		System.out.println("<author>");
 		
 		System.out.println("<last>"+ _last + "</last>");
 		System.out.println("<first>"+ _first + "</first>");
-		
+		System.out.println("</author>");
 		
 		this._forLetWhereOrderReturn02(); 
 
@@ -244,7 +245,7 @@ public class UC1_4_2 {
 		class _TNodeTester_collectData01 extends TNodeTester{
 		  public boolean doTest(Object obj) {
 			%match (TNode obj) {
-			  <bib><book></book></bib> -> {
+			  <bib></bib> -> {
 				 return true; 
 			   }
 			}
@@ -266,7 +267,7 @@ public class UC1_4_2 {
 		  }
 		}
 
-		return tnodetool.collectData2(subject, new _TNodeTester_collectData01(), new _TNodeQualifier_collectData01());	
+		return tnodetool.operatorSlash(subject, new _TNodeTester_collectData01(), new _TNodeQualifier_collectData01());	
 	  }
 	}
   
@@ -426,7 +427,7 @@ public class UC1_4_2 {
 	  }
 	}
 	
-	return tnodetool.collectData(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
   }
 
 

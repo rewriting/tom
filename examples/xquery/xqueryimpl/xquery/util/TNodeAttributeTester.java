@@ -21,6 +21,10 @@ public class TNodeAttributeTester extends TNodeTester {
   public boolean doTest (Object obj)
 	throws XQueryGeneralException
   {
+// 	System.out.println("enter");
+	
+// 	System.out.println(obj);
+	
 	if (obj instanceof TNode) {
 	  if (((TNode)obj).isAttributeNode()) {
 		return true;

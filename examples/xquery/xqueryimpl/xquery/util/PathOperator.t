@@ -48,6 +48,7 @@ public class PathOperator {
 	return tester.doTest(node);
   }
 
+
   protected Sequence runNext(TNode node)
   {
 	if (this.nextOperator ==null) {
@@ -57,15 +58,24 @@ public class PathOperator {
 	}
 	else {
 	  HashSequence seq = new HashSequence();
-	  %match (TNode node) {
-		<_></_> -> {
-		   TNodeList childList = ((TNode)node).getChildList(); 
-		   for (int i=0; i<childList.getLength(); i++) {
-			 Sequence s = this.nextOperator.run(childList.getTNodeAt(i));
-			 seq.addAll(s);
-		   }
-		 }
+	  if (node.hasChildList()) {
+		TNodeList childList = ((TNode)node).getChildList(); 
+		
+		for (int i=0; i<childList.getLength(); i++) {
+		  Sequence s = this.nextOperator.run(childList.getTNodeAt(i));
+		  seq.addAll(s);
+		}
 	  }
+
+	  if (node.hasAttrList()) {
+		TNodeList attrList = ((TNode)node).getAttrList(); 
+		
+		for (int i=0; i<attrList.getLength(); i++) {
+		  Sequence s = this.nextOperator.run(attrList.getTNodeAt(i));
+		  seq.addAll(s);
+		}
+	  }
+
 	  return seq;
 	}
   }
