@@ -293,7 +293,7 @@
 			<include name="jtom/adt/TomSignature.adt"/>
 			<include name="jtom/adt/TomAlert.adt"/>
 			<include name="jtom/adt/TomName.adt"/>
-			<include name="jtom/adt/TomConstraint.adt"/>
+			<!--<include name="jtom/adt/TomConstraint.adt"/>-->
 		</adt>
     <copy todir="${src.mapping}">
       <fileset dir="${src.gen}/jtom/adt" includes="*.tom">
@@ -569,8 +569,10 @@
     <mkdir dir="${test.gen}"/>
     <mkdir dir="${test.build}"/>
     <tomsrc config="${src.configfile}"
+						verbose="yes"
 						srcdir="${test}"
-						destdir="${test.gen}" options="-I ${src.mapping} -I ${src.adt}">
+						destdir="${test.gen}" 
+						options="-v -I ${src.mapping} -I ${src.adt}">
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
       <exclude name="Record.t"/>

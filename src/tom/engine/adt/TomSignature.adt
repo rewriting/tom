@@ -1,7 +1,7 @@
 [
   modulentry(
 	Name("TomSignature"),
-  [Name("TomAlert"), Name("TomName"), Name("TomConstraint")],
+  [Name("TomAlert"), Name("TomName")],
   [],
   [
   constructor(Declaration,TypeTermDecl,TypeTermDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),
@@ -169,6 +169,12 @@
   list(SlotList,PairNameDecl),
   list(TomEntryList, TomEntry),
   list(SymbolList, TomSymbol),
-  list(NameList, TomName)
+  list(NameList, TomName),
+
+  constructor(Constraint,Equal,Equal(<variable(TomTerm)>)),
+  constructor(Constraint,AssignTo,AssignTo(<variable(TomTerm)>)),
+  list(ConstraintList, Constraint)
+
+
   ])
 ]
