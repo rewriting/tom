@@ -13,18 +13,11 @@ public interface OptionManager {
   /**
    *
    *
-   * @param plugins
-   * @return
-   */
-  public abstract void setPlugins(List plugins);
-
-  /**
-   *
-   *
+   * @param plugins list of plugins handled by the platform
    * @param args
    * @return an array of String containing the names of the files to compile
    */
-  public abstract String[] optionManagement(String[] args);
+  public abstract String[] initOptionManagement(List plugins, String[] args);
 
   /**
    *
@@ -45,32 +38,8 @@ public interface OptionManager {
   /**
    *
    *
-   * @param optionName the option's name
-   * @return the option's value as a boolean
-   */
-  public abstract boolean getOptionBooleanValue(String optionName);
-
-  /**
-   *
-   *
-   * @param optionName the option's name
-   * @return the option's value as an int
-   */
-  public abstract int getOptionIntegerValue(String optionName);
-
-  /**
-   *
-   *
-   * @param optionName the option's name
-   * @return the option's value as a String
-   */
-  public abstract String getOptionStringValue(String optionName);
-
-
-  /**
-   *
-   *
    * @param xmlDocument
    */
-  public void extractOptionList(TNode xmlDocument);
+  public void setGlobalOptionList(TNode xmlDocument);
+
 }

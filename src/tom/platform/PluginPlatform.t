@@ -271,8 +271,7 @@ public class PluginPlatform {
       return 1;
     }
     
-    optionManager.setPlugins(instances);
-    String[] inputFiles = optionManager.optionManagement(argumentList);
+    String[] inputFiles = optionManager.optionManagement(intances,argumentList);
   
     if(statusHandler.hasError()) {
       return 1;
@@ -340,6 +339,10 @@ public class PluginPlatform {
     return optionManager.getOptionValue(optionName);
   }
 
+  public void setOptionValue(String key, Object value) {
+    optionManager.setOptionValue(key, value);
+  }
+
   /**
    * Returns the value of a boolean option.
    * 
@@ -370,8 +373,5 @@ public class PluginPlatform {
     return optionManager.getOptionStringValue(optionName);
   }
 
-  public void setOptionValue(String key, Object value) {
-    optionManager.setOptionValue(key, value);
-  }
 
 }

@@ -56,11 +56,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private final static String[] NULL_STRING_ARRAY = new String[0];
 
   /**
-   * A list containing the owners of options (which implement OptionOwner).
-   */
-  private List optionOwnerList;
-
-  /**
    * The global options.
    */    
   private PlatformOptionList globalOptions;
@@ -106,12 +101,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     logger = Logger.getLogger(getClass().getName());
   }
 
-  public void setPlugins(List plugins) {
-    optionOwnerList = new ArrayList();
-    optionOwnerList.add(this);
-    optionOwnerList.addAll(plugins);
-  }
-
   /**
    * This method does the following :
    * <ul>
@@ -127,7 +116,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @param argumentList the command line
    * @return an array of String containing the names of the files to compile
    */
-  public String[] optionManagement(String[] argumentList) {
+  public String[] initOptionManagement(List plugins, String[] argumentList) {
+    List optionOwnerList = new ArrayList(plugins);
+    optionOwnerList.add(this);
+
     // collects the options/services provided by each plugin
     for(Iterator it = optionOwnerList.iterator(); it.hasNext() ; ) {
       OptionOwner plugin = (OptionOwner)it.next();
@@ -258,47 +250,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   }
 
   /**
-   * Returns the value of a boolean option.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return a boolean that is the option's value
-   */
-  public boolean getOptionBooleanValue(String optionName) {
-    return ((Boolean)getOptionValue(optionName)).booleanValue();
-  }
-
-  /**
-   * Returns the value of an integer option.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return an int that is the option's value
-   */
-  public int getOptionIntegerValue(String optionName) {
-    return ((Integer)getOptionValue(optionName)).intValue();
-  }
-    
-  /**
-   * Returns the value of a string option.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return a String that is the option's value
-   */
-  public String getOptionStringValue(String optionName) {
-    return (String) getOptionValue(optionName);
-  }
-
-
-  private PlatformOptionList optionList() {
-    PlatformOptionList res = `emptyPlatformOptionList();
-    for(Iterator it = optionOwnerList.iterator(); it.hasNext() ; ) {
-      OptionOwner plugin = (OptionOwner)it.next();
-      PlatformOptionList list = plugin.declaredOptions();
-      res = `concPlatformOption(res*, list*);
-    }
-    return res;
-  }
-
-  /**
    * Self-explanatory. Displays an help message indicating how to use the compiler.
    */
   private void displayHelp() {
@@ -309,9 +260,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 
     buffer.append("\n\t-X <file>:\tDefines an alternate XML configuration file\n");
 
-    PlatformOptionList helpList = optionList();
-    while(!(helpList.isEmpty())) {
-      PlatformOption h = helpList.getHead();
+    for(Iterator it = mapNameToOption.values().iterator(); it.hasNext() ; ) {
+      PlatformOption h = (PlatformOption)it.next();
       %match(PlatformOption h) {
         PluginOption[name=name, altName=altName, description=description, attrName=attrName] -> {
           buffer.append("\t--" + name);
@@ -325,7 +275,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           buffer.append("\n");
         }
       }			
-      helpList = helpList.getTail();
     }
 	
     System.out.println(buffer.toString());
@@ -379,7 +328,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * 
    * @param node the node containing the XML file
    */
-  public void extractOptionList(TNode node) {
+  public void setGlobalOptionList(TNode node) {
     %match(TNode node) {
       <server>opt@<options></options></server> -> {
          globalOptions = xmlNodeToOptionList(opt);
