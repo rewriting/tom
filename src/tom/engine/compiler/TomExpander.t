@@ -281,17 +281,33 @@ public class TomExpander extends TomTask {
       /*
        * encode the name and put it into the table of symbols
        */
+
+
     NameList newNameList = `concTomName();
-    %match(NameList nameList) {
-      (_*,Name(name),_*) -> {
-        newNameList = (NameList)newNameList.append(`Name(tomFactory.encodeXMLString(symbolTable(),name)));
+    matchBlock: {
+      %match(NameList nameList) {
+        (Name("_")) -> {
+          break matchBlock;
+        }
+
+        (_*,Name(name),_*) -> {
+          newNameList = (NameList)newNameList.append(`Name(tomFactory.encodeXMLString(symbolTable(),name)));
+        }
       }
     }
-    String tomName = newNameList.getHead().getString();
+
+      /*
+       * a single "_" is converted into a Placeholder to match
+       * any XML node
+       */
+    TomTerm xmlHead = (newNameList.isEmpty())?`Placeholder(emptyOption()):`Appl(convertOriginTracking(newNameList.getHead().getString(),optionList),newNameList,empty());
+
+    
     TomList newArgs = `concTomTerm(
-      Appl(convertOriginTracking(tomName,optionList),newNameList,empty()),
+      xmlHead,
       Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList),
       Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList));
+    
     TomTerm result = `Appl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs);
       //System.out.println("expandXML out:\n" + result);
     return result;

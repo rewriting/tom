@@ -1,3 +1,11 @@
+2004-01-29    <pem@bach>
+
+	* src/jtom/compiler/TomExpander.t: anonymous XML nodes are allowed
+	  <_ []> ... </_>
+	* modified signature of Xml AttributeNode: the value is now a
+	  String (instead of a Term). 
+	  attr=#TEXT(x) has to be replaced by attr=x where x is a String  
+
 2003-12-10  pem  <pem@polly.loria.fr>
 
 	* bootinstall

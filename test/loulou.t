@@ -12,21 +12,24 @@
 }
 
 %op Nat zero {
-  fsym { ZERO }
+  fsym { 0 }
 }
 
-%op Nat suc(Nat) {
-  fsym { SUC }
+%op Nat suc(p:Nat) {
+  fsym {  }
+  is_fsym(t) { t>0 }
+  get_slot(p,t) { t-1 }
+  make(t) { t+1 }
 }
 
-int suc(int t) {
-  return t+1;
-}
+//int suc(int t) {
+//  return t+1;
+//}
 
 int plus(int t1, int t2) {
   %match(Nat t1, Nat t2) {
     x,zero()   -> { return x; }
-    x,suc(y) -> { return suc(plus(x,y)); }
+    x,suc(y) -> { return `suc(plus(x,y)); }
   }
 }
 

@@ -26,6 +26,11 @@ public class Peano {
     make(t) { factory.makeAppl(fsuc,t) }
   }
 
+  %op term plus1(term,term) {
+    fsym { }
+    make(t1,t2) { plus1(t1,t2) }
+  }
+
   %op term fib1(term) {
     fsym { factory.makeAFun("fib1" , 1, false) }
     make(t) { fib1(t) }
@@ -65,11 +70,12 @@ public class Peano {
       assertTrue( peano2int(fib2(N)) == fibint(i) );
       assertTrue( peano2int(fib3(N)) == fibint(i) );
       assertTrue( peano2int(fib4(N)) == fibint(i) );
-      assertTrue( peano2int(fib5(N)) == fibint(i) );
+      assertTrue
+        ( peano2int(fib5(N)) == fibint(i) );
     }
     
   }
-  
+
   public final static void main(String[] args) {
     Peano test = new Peano(new PureFactory(16));
     test.run();
@@ -80,6 +86,7 @@ public class Peano {
       x,(zero|zero)[]   -> { return x; }
       x,suc(y) -> { return suc(plus1(x,y)); }
     }
+    //@ assert false;  
     return null;
   }
 
@@ -114,8 +121,8 @@ public class Peano {
   }
   
   %rule {
-    fib5(zero())             -> suc(x) where x:= zero()
-    fib5(x)                  -> x      if x == suc(zero())
+    fib5(zero())      -> suc(x) where x:= zero()
+    fib5(x)           -> x      if x == suc(zero())
     fib5(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
   }
   

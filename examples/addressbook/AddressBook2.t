@@ -24,13 +24,14 @@ public class AddressBook2 {
   
   public void run() {
     PersonList book = generateBook();
-    Date today = `date(2003,11,6);
+    Date today = `date(2003,1,28);
     happyBirthday(book,today);
   }
  
   public void happyBirthday(PersonList book, Date date) {
     %match(PersonList book, Date date) {
       concPerson(_*, person(fn, ln, date(y,m,d)), _*),
+        //concPerson(_*, person[firstname=fn, lastname=ln, birthdate=ddate(y,m,d)], _*),
         date(_,m,d) -> {
         System.out.println("Happy birthday " + fn + " " + ln);
       }
@@ -39,9 +40,9 @@ public class AddressBook2 {
   
   public PersonList generateBook() {
     return `concPerson(
-      person("John","Smith",date(1965,9,18)),
-      person("Marie","Muller",date(1986,9,6)),
-      person("Paul","Muller",date(2000,11,6))
+      person("John","Smith",date(1965,1,18)),
+      person("Marie","Muller",date(1986,1,28)),
+      person("Paul","Muller",date(2000,1,29))
       );
   }
   

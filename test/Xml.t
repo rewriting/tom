@@ -80,7 +80,7 @@ public class Xml {
   TNode swapElements(TNode list) {
     %match(TNode list) {
       <IntegerList (attr*)>(X1*,
-                            n1@<(Integer|Int) []>#TEXT(s1)</(Integer|Int)>,
+                            n1@<_ []>#TEXT(s1)</_>,
                             n2@<(Integer|Int) []>#TEXT(s2)</(Integer|Int)>,
                             X2*)</IntegerList> -> {
         if(s1.compareTo(s2) < 0) {

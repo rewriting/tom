@@ -3,7 +3,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
+    Copyright (C) 2000-2004 INRIA
 			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
@@ -900,6 +900,13 @@ public class TomParser extends TomTask implements TomParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_IDENTIFIER:
       name = jj_consume_token(TOM_IDENTIFIER);
+      text += name.image;
+      XMLName += name.image;
+      decLine = getLine();
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
+      break;
+    case TOM_UNDERSCORE:
+      name = jj_consume_token(TOM_UNDERSCORE);
       text += name.image;
       XMLName += name.image;
       decLine = getLine();
@@ -2663,17 +2670,17 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_6() {
+    if (jj_3R_31()) return true;
+    return false;
+  }
+
   final private boolean jj_3R_32() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_39()) jj_scanpos = xsp;
     if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_3R_31()) return true;
     return false;
   }
 
@@ -2722,22 +2729,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_30() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(89)) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(62)) return true;
-    }
-    if (jj_scan_token(TOM_STAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_42() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    return false;
-  }
-
   final private boolean jj_3_9() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_EQUAL)) return true;
@@ -2752,6 +2743,22 @@ public class TomParser extends TomTask implements TomParserConstants {
   final private boolean jj_3_12() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_30() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(89)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(62)) return true;
+    }
+    if (jj_scan_token(TOM_STAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_42() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
     return false;
   }
 
@@ -2776,13 +2783,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_35() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_3R_37()) return true;
-    if (jj_scan_token(TOM_ALTERNATIVE)) return true;
-    return false;
-  }
-
   final private boolean jj_3_11() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
@@ -2792,6 +2792,23 @@ public class TomParser extends TomTask implements TomParserConstants {
   final private boolean jj_3_13() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_52() {
+    if (jj_scan_token(XML_PROC)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_35() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_3R_37()) return true;
+    if (jj_scan_token(TOM_ALTERNATIVE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_51() {
+    if (jj_scan_token(XML_COMMENT)) return true;
     return false;
   }
 
@@ -2810,18 +2827,13 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_52() {
-    if (jj_scan_token(XML_PROC)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_48() {
     if (jj_3R_32()) return true;
     return false;
   }
 
-  final private boolean jj_3R_51() {
-    if (jj_scan_token(XML_COMMENT)) return true;
+  final private boolean jj_3R_50() {
+    if (jj_scan_token(XML_TEXT)) return true;
     return false;
   }
 
@@ -2836,11 +2848,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     xsp = jj_scanpos;
     if (jj_3R_40()) jj_scanpos = xsp;
     if (jj_scan_token(TOM_RBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_50() {
-    if (jj_scan_token(XML_TEXT)) return true;
     return false;
   }
 
@@ -2891,7 +2898,7 @@ public class TomParser extends TomTask implements TomParserConstants {
       jj_la1_0 = new int[] {0x4001fff6,0x4001fff6,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x1,0x1,0x41000000,0x40000,0x40000,0x80000,0x80000,0x0,0x40000,0x1000000,0x40000000,0x4000000,0x1000000,0x0,0x41000000,0x80000,0x41000000,0x80000,0x41000000,0x41000000,0x80000,0x0,0x80000,0x0,0x40000,0x1000000,0x0,0x0,0x0,0x80000,0x40000000,0x80000,0x40000000,0x40000000,0x5000000,0x0,0x40000000,0x40000000,0x0,0x41000000,0x40000,0x40000,0x0,0x0,0x0,0x80000,0x1000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x1000000,0x1000000,0x1000000,};
+      jj_la1_1 = new int[] {0x1,0x1,0x41000000,0x40000,0x40000,0x80000,0x80000,0x0,0x40000,0x1000000,0x40000000,0x4000000,0x1000000,0x0,0x41000000,0x80000,0x41000000,0x80000,0x41000000,0x41000000,0x80000,0x0,0x80000,0x0,0x40000,0x41000000,0x0,0x0,0x0,0x80000,0x40000000,0x80000,0x40000000,0x40000000,0x5000000,0x0,0x40000000,0x40000000,0x0,0x41000000,0x40000,0x40000,0x0,0x0,0x0,0x80000,0x1000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x1000000,0x1000000,0x1000000,};
    }
    private static void jj_la1_2() {
       jj_la1_2 = new int[] {0x0,0x0,0x47000000,0x0,0x0,0x0,0x0,0x47000000,0x0,0x47000000,0x2000000,0x0,0x0,0x0,0x47000000,0x0,0x47000000,0x0,0x47000000,0x47000000,0x0,0x2000000,0x0,0x2000000,0x0,0x2000000,0x0,0x0,0x42000000,0x0,0x2000000,0x0,0x2000000,0x2000000,0x0,0x2000000,0x2000000,0x2000000,0x40,0x47000000,0x0,0x0,0x30,0x30,0x30,0x0,0x0,0x6080,0x6080,0x4300,0x4300,0x4500,0x4500,0x0,0x78000,0x78000,0x3f8000,0x3f8000,0xc78000,0xc78000,0x0,0x0,0x0,0x0,};
