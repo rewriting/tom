@@ -100,10 +100,6 @@ public class TomExpander extends TomBase implements TomTask {
         public ATerm apply(ATerm subject) {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
-              BackQuoteTerm[tomTerm=t] -> {
-                return expandBackQuoteTerm(t);
-              }
-            
               dollarTerm@DollarAppl[] -> {
                 return expandDollarAppl(dollarTerm);
               }
@@ -191,64 +187,6 @@ public class TomExpander extends TomBase implements TomTask {
             return traversal().genericTraversal(t,this);
           }
           return traversal().genericTraversal(t,this);
-        } // end apply
-      }; // end replaceSymbol
-    return (TomTerm) replaceSymbol.apply(t);
-  }
-  
-  private boolean isBuiltinOperator(TomSymbol subject) {
-    if(subject==null) {
-      return false;
-    }
-    String type = getTomType(getSymbolCodomain(subject));
-    return isIntType(type) || isDoubleType(type) || isStringType(type);
-  }
-  
-  protected TomTerm expandBackQuoteTerm(TomTerm t) {
-    Replace1 replaceSymbol = new Replace1() {
-        public ATerm apply(ATerm t) {
-          if(t instanceof TomTerm) {
-            %match(TomTerm t) {
-              Appl[option=Option(optionList),astName=name@Name(tomName),args=l] -> {
-                TomSymbol tomSymbol = getSymbol(tomName);
-                TomList args  = (TomList) traversal().genericTraversal(l,this);
-
-                if(tomSymbol != null) {
-                  if(isListOperator(tomSymbol)) {
-                    return `BuildList(name,args);
-                  } else if(isArrayOperator(tomSymbol)) {
-                    return `BuildArray(name,args);
-                  } else if(isBuiltinOperator(tomSymbol)) {
-                    return `BuildBuiltin(name);
-                  } else {
-                    return `BuildTerm(name,args);
-                  }
-                } else if(args.isEmpty() && !hasConstructor(optionList)) {
-                  return `BuildVariable(name);
-                } else {
-                  return `FunctionCall(name,args);
-                }
-              }
-
-              DotTerm(t1,t2) -> {
-                TomTerm tt1 = (TomTerm) this.apply(t1);
-                TomTerm tt2 = (TomTerm) this.apply(t2);
-                return `DotTerm(tt1,tt2);
-              }
-              
-              var@VariableStar[astName=name] -> {
-                  return var;
-              }
-              
-              _ -> {
-                System.out.println("replaceSymbol: strange case: '" + t + "'");
-                System.exit(1);
-              }
-            }
-            return t;
-          } else {
-            return traversal().genericTraversal(t,this);
-          }
         } // end apply
       }; // end replaceSymbol
     return (TomTerm) replaceSymbol.apply(t);

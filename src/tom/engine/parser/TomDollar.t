@@ -244,7 +244,6 @@ public class TomDollar extends TomBase implements TomParserConstants {
           }
           
           other, _ -> {
-            System.out.println("other, _");
             addToLastComposite(stackList, `TargetLanguageToTomTerm(ITL(other.image)));
             break matchBlock;
           }
@@ -256,7 +255,7 @@ public class TomDollar extends TomBase implements TomParserConstants {
     }
 
     TomTerm term = ((TomList)stackList.pop()).getHead();
-    System.out.println(term);
+      //System.out.println(term);
     
     return term;
   }

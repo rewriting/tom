@@ -114,14 +114,12 @@ TomTerm_VariableImpl.java TomTerm_Variable.java\
 TomTerm_VariableStarImpl.java TomTerm_VariableStar.java\
 TomTerm_PlaceholderImpl.java TomTerm_Placeholder.java\
 TomTerm_UnamedVariableImpl.java TomTerm_UnamedVariable.java\
-TomTerm_DotTermImpl.java TomTerm_DotTerm.java\
 TomTerm_LocalVariableImpl.java TomTerm_LocalVariable.java\
 TomTerm_EndLocalVariableImpl.java TomTerm_EndLocalVariable.java\
 TomTerm_BuildVariableImpl.java TomTerm_BuildVariable.java\
 TomTerm_BuildTermImpl.java TomTerm_BuildTerm.java\
 TomTerm_BuildListImpl.java TomTerm_BuildList.java\
 TomTerm_BuildArrayImpl.java TomTerm_BuildArray.java\
-TomTerm_BuildBuiltinImpl.java TomTerm_BuildBuiltin.java\
 TomTerm_CompiledMatchImpl.java TomTerm_CompiledMatch.java\
 TomTerm_CompiledPatternImpl.java TomTerm_CompiledPattern.java\
 TomTerm_AssignedVariableImpl.java TomTerm_AssignedVariable.java\
@@ -154,11 +152,11 @@ Instruction_ExitActionImpl.java Instruction_ExitAction.java\
 Instruction_ReturnImpl.java Instruction_Return.java\
 Instruction_OpenBlockImpl.java Instruction_OpenBlock.java\
 Instruction_CloseBlockImpl.java Instruction_CloseBlock.java\
-Instruction_NamedBlockImpl.java Instruction_NamedBlock.java
+Instruction_NamedBlockImpl.java Instruction_NamedBlock.java\
+TomSymbol.java TomSymbolImpl.java\
+TomSymbol_SymbolImpl.java TomSymbol_Symbol.java
 
 TomSignatureAPI3=\
-TomSymbol.java TomSymbolImpl.java\
-TomSymbol_SymbolImpl.java TomSymbol_Symbol.java\
 PairNameDecl.java PairNameDeclImpl.java\
 PairNameDecl_SlotImpl.java PairNameDecl_Slot.java\
 TomSymbolTable.java TomSymbolTableImpl.java\

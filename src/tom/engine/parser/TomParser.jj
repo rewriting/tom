@@ -490,7 +490,6 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
     | MatchXMLConstruct(blockList)       { stat.numberTomBlocsRecognized++; }
     | RuleConstruct(blockList)           { stat.numberTomBlocsRecognized++; }
     | BackQuoteXML(blockList)            { stat.numberTomBlocsRecognized++; }
-//    | BackQuoteTerm(blockList)           { stat.numberTomBlocsRecognized++; }
     | DollarTerm(blockList)              { stat.numberTomBlocsRecognized++; }
     | IncludeConstruct(blockList)        { stat.numberTomBlocsRecognized++; }
     | LocalVariableConstruct(blockList)  { stat.numberTomBlocsRecognized++; }
@@ -627,8 +626,6 @@ Option MatchPatterns(ArrayList list) throws TomException: /* in TOM mode */
     { return orgTrack;}
 }
 
-
-
 TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
 {
   ArrayList list = new ArrayList();
@@ -672,15 +669,15 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       option = ast().makeOption(ast().makeOptionList(optionList));
       return ast().makeVariableStar(option,name.image,"unknown type");
     }
-  | // f(a,...), x. g()
+  | // f(a,...)
     name = <TOM_IDENTIFIER>
       {optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       text += name.image;
       }
     [ <TOM_LPAREN> {text += "(";}
       [
-      term = DotTerm()               { list.add(term); }
-      ( <TOM_COMMA> {text += " , ";} term = DotTerm() { list.add(term); } )*
+      term = Term()               { list.add(term); }
+      ( <TOM_COMMA> {text += " , ";} term = Term() { list.add(term); } )*
       ]
       <TOM_RPAREN>
       {
@@ -775,40 +772,6 @@ TomTerm Term() throws TomException: /* in TOM mode */
       {
         return term;
       }
-}
-
-TomTerm DotTerm() throws TomException: /* in TOM mode */
-{
-  TomTerm term = null;
-  TomTerm dotterm = null;
-}
-{
-  term = Term() [ <TOM_DOT> {text += ".";} dotterm = Term()  ]
-    {
-      if(dotterm != null) {
-        return tsf().makeTomTerm_DotTerm(term,dotterm);
-      } else {
-        return term;
-      }
-    }
-}
-
-void BackQuoteTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
-{
-  TomTerm term;
-  Option orgTrack;
-}
-{
-  <BACKQUOTE_TERM> /* switch to TOM mode */
-    {
-      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
-      orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
-    }
-  term = Term()
-  {
-    switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTomTerm_BackQuoteTerm(term, orgTrack));
-  }
 }
 
 void DollarTerm(ArrayList list) throws TomException: /* in DEFAULT mode */

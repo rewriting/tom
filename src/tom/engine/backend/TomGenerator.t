@@ -157,11 +157,6 @@ public class TomGenerator extends TomBase implements TomTask {
         //return;
         //}
 
-      BuildBuiltin(Name(name)) -> {
-        out.write(name);
-        return;
-      }
-
       BuildTerm(Name(name), argList) -> {
         out.write("tom_make_");
         out.write(name);
@@ -225,7 +220,7 @@ public class TomGenerator extends TomBase implements TomTask {
 
           matchBlock: {
             %match(TomTerm elt) {
-              Composite(concTomTerm(X1*,VariableStar[])) | VariableStar[] -> {
+              Composite(concTomTerm(VariableStar[])) | VariableStar[] -> {
                 out.write("tom_append_array_" + name + "(");
                 generate(out,deep,elt);
                 out.write(",");
@@ -262,13 +257,6 @@ public class TomGenerator extends TomBase implements TomTask {
           }
         }
         out.write(")");
-        return;
-      }
-
-      DotTerm(t1,t2) -> {
-        generate(out,deep,t1);
-        out.write(".");
-        generate(out,deep,t2);
         return;
       }
 
