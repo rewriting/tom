@@ -115,8 +115,12 @@ public abstract class ATermSet implements Collection {
   }
   
     // High level interface
-  public boolean equals(ATermSet set) {
-    return (tree == set.getTreeSet());
+  public boolean equals(Object set) {
+		if (set instanceof ATermSet) {
+			return (tree == ((ATermSet)set).getTreeSet());
+		} else {
+			return false;
+		}
   }
 
   public void clear() {
