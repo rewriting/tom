@@ -47,4 +47,5 @@ public class TomSyntaxChecker extends TomChecker {
   private boolean isActivated() {
     return !getOptionBooleanValue("noCheck");
   }
-}
+
+} // class TomSyntaxChecker

@@ -56,19 +56,19 @@ options{
 
     private TomFactory tomFactory;
 
-    public TomParser(ParserSharedInputState state, HostParser target){
+    private boolean debugMode;
+    private boolean debugMemoryMode;    
+
+    public TomParser(ParserSharedInputState state, HostParser target, OptionManager optionManager){
         this(state);
         this.targetparser = target;
         this.debuggedStructureList = `emptyTomList();
         this.bqparser = new BackQuoteParser(state,this);
         this.tomFactory = new TomFactory();
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
-
+        this.debugMode = ((Boolean)optionManager.getOptionValue("debug")).booleanValue();
+        this.debugMemoryMode = ((Boolean)optionManager.getOptionValue("memory")).booleanValue();
         logger = Logger.getLogger(getClass().getName());
-    }
-
-    public OptionManager getOptionManager(){
-      return TomOptionManager.getInstance();
     }
     
     private final TomSignatureFactory getTomSignatureFactory(){
@@ -176,7 +176,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
                     optionList
                 );
                 
-                if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()){
+                if(debugMode){
                     debuggedStructureList = (TomList) debuggedStructureList.append(result);
                 }
                 
@@ -248,13 +248,13 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
   //              pushColumn(t.getColumn());
                 updatePosition(t.getLine(),t.getColumn());
                 
-                if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()){
+                if(debugMode){
                     blockList.add(`ITL(
                             "jtom.debug.TomDebugger.debugger.patternSuccess(\""
                             +debugKey
                             +"\");\n")
                     );
-                    if(((Boolean)getOptionManager().getOptionValue("memory")).booleanValue()){
+                    if(debugMemoryMode){
                             blockList.add(
                                 `ITL("jtom.debug.TomDebugger.debugger.emptyStack();\n")
                             );
@@ -386,7 +386,7 @@ ruleConstruct [Option orgTrack] returns [Instruction result] throws TomException
 
             result = `RuleSet(ruleList,orgTrack);
 
-            if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()){
+            if(debugMode){
                 debuggedStructureList = (TomList) debuggedStructureList.append(result);
             }
             

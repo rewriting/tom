@@ -31,16 +31,18 @@ import java.util.HashMap;
 import jtom.adt.tomsignature.types.*;
 import jtom.tools.OutputCode;
 
+import tom.platform.OptionManager;
+
 public abstract class TomGenericGenerator extends TomAbstractGenerator {
   
   protected HashMap getSubtermMap = new HashMap();
   protected HashMap getFunSymMap = new HashMap();
   protected HashMap isFsymMap = new HashMap();
-  private boolean lazy;
+  protected boolean lazyMode;
 
-  public TomGenericGenerator(OutputCode output) {
+  public TomGenericGenerator(OutputCode output, OptionManager optionManager) {
     super(output);
-    lazy = ((Boolean)getOptionManager().getOptionValue("lazyType")).booleanValue();
+    lazyMode = ((Boolean)optionManager.getOptionValue("lazyType")).booleanValue();
   }
 
 // ------------------------------------------------------------
@@ -232,7 +234,7 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
 TomType tlType, TargetLanguage tlCode) throws IOException {
     String args[];
-    if(lazy) {
+    if(lazyMode) {
       TomType argType = getUniversalType();
       if(symbolTable().isBuiltinType(type)) {
         argType = symbolTable().getBuiltinType(type);
@@ -260,7 +262,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
     
     TomType returnType = symbolTable().getBoolType();
     String argType;
-    if(!lazy) {
+    if(!lazyMode) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -286,7 +288,7 @@ TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
     TomType returnType = l.getHead();
     
     String argType;
-    if(!lazy) {
+    if(!lazyMode) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -338,7 +340,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   protected void buildGetHeadDecl(int deep, String name1, String suffix, TomType domain, TomType codomain, TargetLanguage tlCode) 
     throws IOException {
     String returnType,argType;
-    if(!lazy) {
+    if(!lazyMode) {
       returnType = getTLCode(codomain);
       argType = getTLCode(domain);
     } else {
@@ -355,7 +357,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   protected void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) 
     throws IOException {
     String returnType, argType;
-    if(!lazy) {
+    if(!lazyMode) {
       returnType = getTLCode(tlType);
       argType = getTLCode(tlType);
     } else {
@@ -372,7 +374,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   protected void buildIsEmptyDecl(int deep, String name1, String type,
                                   TomType tlType, TargetLanguage tlCode) throws IOException {
     String argType;
-    if(!lazy) {
+    if(!lazyMode) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -387,7 +389,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
 
   protected void buildMakeEmptyList(int deep, String opname, TomType codomain, TargetLanguage tlCode) throws IOException {
     String returnType;
-    if(!lazy) {
+    if(!lazyMode) {
       returnType = getTLType(codomain);
     } else {
       returnType = getTLType(getUniversalType());
@@ -404,7 +406,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
 String name2, TomType tlType1, TomType tlType2, TomType fullEltType,
 TomType fullListType, TargetLanguage tlCode) throws IOException {
     String returnType, argListType,argEltType;
-    if(!lazy) {
+    if(!lazyMode) {
       argEltType = getTLCode(tlType1);
       argListType = getTLCode(tlType2);
       returnType = argListType;
@@ -428,7 +430,7 @@ TomType fullListType, TargetLanguage tlCode) throws IOException {
   protected void buildGetElementDecl(int deep, String name1, String name2,
 String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
     String returnType, argType;
-    if(!lazy) {
+    if(!lazyMode) {
       returnType = getTLType(getUniversalType());
       argType = getTLCode(tlType1);
     } else {
@@ -448,7 +450,7 @@ String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
   protected void buildGetSizeDecl(int deep, String name1, String type,
 TomType tlType, TargetLanguage tlCode) throws IOException {
     String argType;
-    if(!lazy) {
+    if(!lazyMode) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -463,7 +465,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
 
   protected void buildMakeEmptyArray(int deep, String opname, TomType codomain,String name1, TargetLanguage tlCode) throws IOException {
     String returnType;
-    if(!lazy) {
+    if(!lazyMode) {
       returnType = getTLType(codomain);
     } else {
       returnType = getTLType(getUniversalType());
@@ -479,7 +481,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
   protected void buildMakeAddArray(int deep, String opname, String name1, String name2, TomType tlType1,
 TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException {
     String returnType, argListType,argEltType;
-    if(!lazy) {
+    if(!lazyMode) {
       argEltType  = getTLCode(tlType1);
       argListType = getTLCode(tlType2);
       returnType  = argListType;
@@ -524,4 +526,4 @@ TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCo
     }
   }
   
-} // class TomAbstractGenerator
+} // class TomGenericGenerator

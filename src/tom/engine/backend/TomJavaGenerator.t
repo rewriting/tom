@@ -31,13 +31,12 @@ import java.io.IOException;
 import jtom.adt.tomsignature.types.*;
 import jtom.tools.OutputCode;
 
+import tom.platform.OptionManager;
+
 public class TomJavaGenerator extends TomImperativeGenerator {
    
-  public TomJavaGenerator(OutputCode output) {
-    super(output);
-    if(((Boolean)getOptionManager().getOptionValue("static")).booleanValue()) {
-      this.modifier += "static " ;
-    }
+  public TomJavaGenerator(OutputCode output, OptionManager optionManager) {
+    super(output, optionManager);
     this.modifier += "public " ;
   }
 
@@ -59,4 +58,4 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.writeln("}");
   }
 
-}
+} // class TomJavaGenerator

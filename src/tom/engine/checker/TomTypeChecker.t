@@ -51,4 +51,5 @@ public class TomTypeChecker extends TomChecker {
   private boolean isActivated() {
     return !getOptionBooleanValue("noCheck");
   }
-}
+
+} // class TomTypeChecker

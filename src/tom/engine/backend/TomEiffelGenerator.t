@@ -32,15 +32,17 @@ import jtom.adt.tomsignature.types.*;
 import jtom.tools.OutputCode;
 import jtom.exception.TomRuntimeException;
 
+import tom.platform.OptionManager;
+
 public class TomEiffelGenerator extends TomImperativeGenerator {
   
-  public TomEiffelGenerator(OutputCode output) {
-    super(output);
+  public TomEiffelGenerator(OutputCode output, OptionManager optionManager) {
+    super(output, optionManager);
   }
-
-// ------------------------------------------------------------
+  
+  // ------------------------------------------------------------
   %include { adt/TomSignature.tom }
-// ------------------------------------------------------------
+  // ------------------------------------------------------------
 
   protected void buildComment(int deep, String text) throws IOException {
     output.writeln("-- " + text);
@@ -124,7 +126,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
       output.write(assignSign);
     generateExpression(deep,exp);
     output.writeln(";");
-    if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue() && !list.isEmpty()) {
+    if(debugMode && !list.isEmpty()) {
       output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
       generate(deep,var);
       output.write("\", ");
@@ -168,7 +170,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     }
     generateExpression(deep,exp);
     output.writeln(";");
-    if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
+    if(debugMode) {
       output.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
       generateExpression(deep,exp);
       output.write("\",");
@@ -241,7 +243,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 
   protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
     String args[];
-    if(!((Boolean)getOptionManager().getOptionValue("lazyType")).booleanValue()) {
+    if(!lazyMode) {
       args = new String[] { getTLCode(tlType1), name1,
                             getTLCode(tlType2), name2 };
     } else {
@@ -258,7 +260,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
                                    String args[],
                                    TargetLanguage tlCode) {
     String s = "";
-    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) { return null; }
+    if(nodeclMode) { return null; }
     s = declName + "_" + suffix + "(";
     for(int i=0 ; i<args.length ; ) {
       s+= args[i+1] + ": " + args[i];
@@ -278,7 +280,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
                                             TomList argList, TargetLanguage tlCode) throws IOException {
       //%variable
     String s = "";
-    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) { return null; }
+    if(nodeclMode) { return null; }
     boolean braces = !argList.isEmpty();
     s = "tom_make_" + opname;
     if(braces) {
@@ -314,7 +316,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   protected TargetLanguage genDeclList(int deep, String name, TomType listType, TomType eltType) throws IOException {
       //%variable
     String s = "";
-    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) { return null; }
+    if(nodeclMode) { return null; }
     System.out.println("genDeclList: Eiffel code not yet implemented");
     return null;
   }
@@ -323,7 +325,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   protected TargetLanguage genDeclArray(int deep, String name, TomType listType, TomType eltType) throws IOException {
     //%variable
     String s = "";
-    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) { return null; }
+    if(nodeclMode) { return null; }
     System.out.println("genDeclArray: Eiffel code not yet implemented");
     return null;
   }
@@ -334,7 +336,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
                         String args[],
                         TargetLanguage tlCode) {
     String s = "";
-    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) { return null; }
+    if(nodeclMode) { return null; }
     s = declName + "_" + suffix + "(";
     for(int i=0 ; i<args.length ; ) {
       s+= args[i+1] + ": " + args[i];
@@ -350,4 +352,4 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
       return `ITL(s);
   }
 
-}
+} // class TomEiffelGenerator

@@ -62,6 +62,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   }
 
   %include{ adt/PlatformOption.tom }
+  
   /**
    * Accessor method necessary to include adt/PlatformOption.tom
    * @return a PlatformOptionFactory
@@ -88,24 +89,24 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private List inputFileList;
 
   /** the TomOptionManager logger */
-  private  Logger logger = Logger.getLogger(getClass().getName());
+  private Logger logger = Logger.getLogger(getClass().getName());
   
-  private static TomOptionManager instance;
+  //private static TomOptionManager instance;
 
-  private TomOptionManager() {
+  public TomOptionManager() {
     mapNameToOptionOwner = new HashMap();
     mapNameToOption = new HashMap();
     mapShortNameToName = new HashMap();
     inputFileList = new ArrayList();
   }
-  
+  /*
   public static TomOptionManager getInstance() {
     if(instance == null) {
       throw new RuntimeException();
     }
     return instance;
-  }
-
+    }
+  */
   /**
    * This method does the following :
    * <ul>
@@ -122,17 +123,16 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @param argumentList the command line
    * @return an array of String containing the names of the files to compile
    */
-  public static int create(ConfigurationManager confManager, String[] commandLine) {
+  /*public int create(ConfigurationManager confManager, String[] commandLine) {
     instance = new TomOptionManager();
     return instance.initialize(confManager, commandLine);
-  }
+    }*/
 
-  private int initialize(ConfigurationManager confManager, String[] commandLine) {
-    List optionOwnerList = new ArrayList(confManager.getPluginsReferenceList());
+  public int initialize(ConfigurationManager confManager, String[] commandLine) {
+    List optionOwnerList = new ArrayList(confManager.getPluginsList());
     optionOwnerList.add(this);
-    
-    this.globalOptions = confManager.getGlobalOtionList();    
-    collectOptions(optionOwnerList, confManager.getPluginsReferenceList());
+    this.globalOptions = confManager.getGlobalOptionList();    
+    collectOptions(optionOwnerList, confManager.getPluginsList());
     this.inputFileList = processArguments(commandLine);
     if(this.inputFileList == null) {
       return 1;
@@ -146,13 +146,14 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   public void collectOptions(List optionOwnerList, List plugins) {
     Iterator owners = optionOwnerList.iterator();
     while(owners.hasNext()) {
-      OptionOwner plugin = (OptionOwner)owners.next();
-      PlatformOptionList list = plugin.getDeclaredOptionList();
+      OptionOwner owner = (OptionOwner)owners.next();
+      PlatformOptionList list = owner.getDeclaredOptionList();
+      owner.setOptionManager((OptionManager)this);
       while(!list.isEmpty()) {
         PlatformOption option = list.getHead();
         %match(PlatformOption option) {
           PluginOption[name=name, altName=altName] -> {
-            setOptionOwnerFromName(`name, plugin);
+            setOptionOwnerFromName(`name, owner);
             setOptionFromName(`name, option);
             if(altName.length() > 0) {
               mapShortNameToName.put(`altName,`name);
@@ -163,7 +164,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       }
     }
   }
-
+  
   /**
    * Checks if every plugin's needs are fulfilled
    */
@@ -350,13 +351,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * 
    * @param node the node containing the XML file
    */
-  public void setGlobalOptionList(TNode node) {
+  /*public void setGlobalOptionList(TNode node) {
     %match(TNode node) {
       <server>opt@<options></options></server> -> {
         globalOptions = xmlNodeToOptionList(`opt);
        }
     }
-  }
+    }*/
 
   /**
    * From OptionOwner Interface
@@ -531,5 +532,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     }
     return list;
   }
+
+  public void setOptionManager(OptionManager om) {}
   
-}
+} // class TomOptionManager.t

@@ -58,7 +58,7 @@ public class PluginPlatform {
   }
     
   /** The List of reference to plugins. */
-  private List pluginsReferenceList;
+  private List pluginsList;
     
   /** The option manager */
   private OptionManager optionManager;
@@ -74,11 +74,11 @@ public class PluginPlatform {
   /**
    * Class Pluginplatform constructor
    */
-  public PluginPlatform(OptionManager optionManager, ConfigurationManager confManager, String loggerRadical) {
-    this.pluginsReferenceList = confManager.getPluginsReferenceList();
-    this.optionManager = optionManager;
+  public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
+    this.pluginsList = confManager.getPluginsList();
+    this.optionManager = confManager.getOptionManager();
     this.statusHandler = new StatusHandler();
-    this.logger = Logger.getLogger(loggerRadical+".PluginPlatform","tom.platform.PluginPlatformResources");
+    this.logger = Logger.getLogger(getClass().getName());
     this.inputFileList = optionManager.getInputFileList();
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
   }
@@ -98,7 +98,7 @@ public class PluginPlatform {
       Object arg = inputFileList.get(i);
       logger.log(Level.FINER, "NowCompiling", arg);
       // runs the modules
-      Iterator it = pluginsReferenceList.iterator();
+      Iterator it = pluginsList.iterator();
       while(it.hasNext()) {
         Plugin plugin = (Plugin)it.next();
         plugin.setArg(arg);
@@ -139,6 +139,13 @@ public class PluginPlatform {
   public OptionManager getOptionManager() { return optionManager; }
   
   /**
+   * From OptionManagerAn accessor method.
+   * @return the OptionManager
+   */
+  public void setOptionManager(OptionManager om) {}
+
+  
+  /**
    * This method analyzes the command line and determines which configuration
    * file should be used. As the tom scripts already specify a default
    * configuration file which can be overridden by the user, only the last one
@@ -148,7 +155,7 @@ public class PluginPlatform {
    * @param commandLine the command line
    * @return a String containing the path to the configuration file to be used
    */
-  private String extractConfigFileName(String[] commandLine) {
+  /* private String extractConfigFileName(String[] commandLine) {
     String xmlConfigurationFile = null; 
     int i=0;
     try {
@@ -174,7 +181,7 @@ public class PluginPlatform {
     }
     
     return xmlConfigurationFile;
-  }
+    }*/
   
   /**
    * This method parses the configuration and extracts the global options as
@@ -183,7 +190,7 @@ public class PluginPlatform {
    * @param xmlConfigurationFile the name of the XML configuration file
    * @return a List containing the class paths of the listed plugins
    */
-  private List analyseConfigFile(String xmlConfigurationFile) {
+  /*  private List analyseConfigFile(String xmlConfigurationFile) {
     // parses configuration file...
     XmlTools xtools = new XmlTools();
     TNode node = (TNode)xtools.convertXMLToATerm(xmlConfigurationFile);
@@ -196,7 +203,7 @@ public class PluginPlatform {
     optionManager.setGlobalOptionList(node.getDocElem());
     // ... to extract plugin classpaths
     return extractClassPaths(node.getDocElem());
-  }
+    }*/
     
   /**
    * Extracts the plugins' class paths from the XML configuration file.
@@ -204,7 +211,7 @@ public class PluginPlatform {
    * @param node the node containing the XML document
    * @return the List of plugins class path
    */
-  private List extractClassPaths(TNode node) {
+  /*  private List extractClassPaths(TNode node) {
     List res = new ArrayList();
     %match(TNode node) {
       <server><plugins><plugin [classpath=cp]/></plugins></server> -> {
@@ -213,7 +220,7 @@ public class PluginPlatform {
        }
     }
     return res;
-  }
+    }*/
   
   /**
    * Returns the value of an option. Returns an Object which is a Boolean, a

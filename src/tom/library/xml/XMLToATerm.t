@@ -112,19 +112,18 @@ public class XMLToATerm {
       DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       return db.parse(filename);
     } catch (SAXException e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      System.err.println("XMLToATerm: "+ e.getMessage());
+      //e.printStackTrace();
     } catch (IOException e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      System.err.println("XMLToATerm: "+ e.getMessage());
+      //e.printStackTrace();
     } catch (ParserConfigurationException e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      System.err.println("XMLToATerm: "+ e.getMessage());
+      //e.printStackTrace();
     } catch (FactoryConfigurationError e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      System.err.println("XMLToATerm: "+ e.getMessage());
+      //e.printStackTrace();
     }
-    System.out.println("We shouldn't be there...");
     return null;
   }
 
@@ -133,19 +132,18 @@ public class XMLToATerm {
       DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       return db.parse(is);
     } catch (SAXException e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      System.err.println("XMLToATerm: "+ e.getMessage());
+      //e.printStackTrace();
     } catch (IOException e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      System.err.println("XMLToATerm: "+ e.getMessage());
+      //e.printStackTrace();
     } catch (ParserConfigurationException e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      System.err.println("XMLToATerm: "+ e.getMessage());
+      //e.printStackTrace();
     } catch (FactoryConfigurationError e) {
-      System.err.println(e.getMessage());
-      e.printStackTrace();
+      System.err.println("XMLToATerm: "+ e.getMessage());
+      //e.printStackTrace();
     }
-    System.out.println("We shouldn't be there...");
     return null;
   }
 
@@ -192,7 +190,7 @@ public class XMLToATerm {
       //break;
     case Node.DOCUMENT_FRAGMENT_NODE:
       //The node is a DocumentFragment.
-      System.out.println("We shouldn't find DocumentFragment in a freshly-parsed document");
+      System.err.println("We shouldn't find DocumentFragment in a freshly-parsed document");
       throw new RuntimeException("We shouldn't find DocumentFragment in a freshly-parsed document");
       //break;
     case Node.DOCUMENT_NODE:
@@ -295,7 +293,7 @@ public class XMLToATerm {
         }
       }
     }
-    System.out.println("insertSortedAttribute: Strange case");
+    System.err.println("insertSortedAttribute: Strange case");
     return list;
   }
     

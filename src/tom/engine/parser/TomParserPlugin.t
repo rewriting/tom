@@ -38,8 +38,9 @@ import jtom.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
-import tom.platform.adt.platformoption.types.*;
 import jtom.exception.*;
+import tom.platform.adt.platformoption.types.*;
+import tom.platform.*;
 
 public class TomParserPlugin extends TomGenericPlugin {
   
@@ -63,16 +64,16 @@ public class TomParserPlugin extends TomGenericPlugin {
     return TomOptionManager.xmlToOptionList(TomParserPlugin.DECLARED_OPTIONS);
   }
   
-  protected static HostParser newParser(String fileName) throws FileNotFoundException,IOException{
+  protected static HostParser newParser(String fileName, OptionManager optionManager) throws FileNotFoundException,IOException{
     HashSet includedFiles = new HashSet();
     HashSet alreadyParsedFiles = new HashSet();
     
-    return newParser(fileName,includedFiles,alreadyParsedFiles);
+    return newParser(fileName,includedFiles,alreadyParsedFiles, optionManager);
   }
   
   //create new parsers
-  protected static HostParser newParser(String fileName,HashSet includedFiles,HashSet alreadyParsedFiles) 
-    throws FileNotFoundException,IOException {
+  protected static HostParser newParser(String fileName,HashSet includedFiles,HashSet alreadyParsedFiles,
+                                        OptionManager optionManager) throws FileNotFoundException,IOException {
     
     // The input Stream
     DataInputStream input = new DataInputStream(new FileInputStream(new File(fileName)));
@@ -95,7 +96,7 @@ public class TomParserPlugin extends TomGenericPlugin {
     
     // create the parser for target mode
     // also create tom parser and backquote parser
-    return new HostParser(selector,fileName,includedFiles,alreadyParsedFiles);
+    return new HostParser(selector,fileName,includedFiles,alreadyParsedFiles, optionManager);
   }
   
   public void run() {
@@ -119,7 +120,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       else{
         environment().setPackagePath("");
       }
-      parser = newParser(currentFile);
+      parser = newParser(currentFile, getOptionManager());
       
       super.setArg(parser.input());
       

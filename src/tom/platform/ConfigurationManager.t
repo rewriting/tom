@@ -63,73 +63,79 @@ public class ConfigurationManager {
     return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
   }
   
-  /** */
+  /** configuration file name */
   private String xmlConfigurationFileName;
 
   /** The plugins instance list*/
-  private List pluginsReferenceList;
+  private List pluginsList;
 
   /** The global options */    
   private PlatformOptionList globalOptions;
+
+  /** The OptionManager */
+  private OptionManager optionManager;
   
   public ConfigurationManager(String xmlConfigurationFileName) {
     this.xmlConfigurationFileName = xmlConfigurationFileName;
-    this.pluginsReferenceList = new ArrayList();
-    globalOptions = `emptyPlatformOptionList;
+    this.pluginsList = new ArrayList();
   }
   
-  public int initialize() {
+  public int initialize(String[] commandLine) {
     XmlTools xtools = new XmlTools();
     TNode configurationNode = (TNode)xtools.convertXMLToATerm(xmlConfigurationFileName);
     if(configurationNode == null) {
-      // parsing failed
       getLogger().log(Level.SEVERE, "ConfigFileNotXML", xmlConfigurationFileName);
       return 1;
     }
-    if(initPluginReferenceList(configurationNode.getDocElem())==1) {
+    if(createPlugins(configurationNode.getDocElem())==1) {
       return 1;
     }
-    return initGlobalOptionList(configurationNode.getDocElem());
+    if(createOptionManager(configurationNode.getDocElem()) == 1) {
+      return 1;
+    }
+    return optionManager.initialize(this, commandLine);
   }
 
-  public List getPluginsReferenceList() {
-    return pluginsReferenceList;
+  public List getPluginsList() {
+    return pluginsList;
+  }
+
+  public OptionManager  getOptionManager() {
+    return optionManager;
   }
   
-  public PlatformOptionList getGlobalOtionList() {
+  public PlatformOptionList getGlobalOptionList() {
     return globalOptions;
   }
   
-  private int initPluginReferenceList(TNode configurationNode) {
+  private int createPlugins(TNode configurationNode) {
     List pluginsClassPaths = extractClassPaths(configurationNode);
     // creates an instance of each plugin
     Iterator classPathIt = pluginsClassPaths.iterator();
     while(classPathIt.hasNext()) {
-      String path = (String)classPathIt.next();
+      String pluginClass = (String)classPathIt.next();
       try { 
-        Object pluginInstance = Class.forName(path).newInstance();
+        Object pluginInstance = Class.forName(pluginClass).newInstance();
         if(pluginInstance instanceof Plugin) {
-          pluginsReferenceList.add(pluginInstance);
+          pluginsList.add(pluginInstance);
         } else {
-          getLogger().log(Level.SEVERE, "ClassNotAPlugin", path);
-          pluginsReferenceList = null;
+          getLogger().log(Level.SEVERE, "ClassNotAPlugin", pluginClass);
+          pluginsList = null;
           return 1;
         }
-      } catch(ClassNotFoundException cnfe) { 
-        getLogger().log(Level.WARNING, "ClassNotFound", path);
+      } catch(ClassNotFoundException cnfe) {
+        getLogger().log(Level.WARNING, "ClassNotFound", pluginClass);
       } catch(Exception e) {
-            System.out.println("PATH: "+path);
-            e.printStackTrace();
-
-        getLogger().log(Level.SEVERE, "InstantiationError", path);
-        pluginsReferenceList = null;
+        //e.printStackTrace();
+        getLogger().log(Level.SEVERE, "InstantiationError", pluginClass);
+        pluginsList = null;
         return 1;
       }
     }
     return 0;
   }
-
-    /**
+  
+  /**
    * Extracts the plugins' class paths from the XML configuration file.
    * 
    * @param node the node containing the XML document
@@ -138,7 +144,7 @@ public class ConfigurationManager {
   private List extractClassPaths(TNode node) {
     List res = new ArrayList();
     %match(TNode node) {
-      <server><plugins><plugin [classpath=cp]/></plugins></server> -> {
+      <platform><plugins><plugin [class=cp]/></plugins></platform> -> {
          res.add(cp);
          getLogger().log(Level.FINER, "ClassPathRead", cp);
        }
@@ -151,10 +157,29 @@ public class ConfigurationManager {
    * 
    * @param node the node containing the XML file
    */
-  public int initGlobalOptionList(TNode node) {
+  public int createOptionManager(TNode node) {
     %match(TNode node) {
-      <server>opt@<options></options></server> -> {
+      <platform>opt@<optionmanager class=omclass></optionmanager></platform> -> {
         globalOptions = xmlNodeToOptionList(`opt);
+        try {
+          Object omInstance = Class.forName(omclass).newInstance();
+          if(omInstance instanceof OptionManager) {
+            optionManager = (OptionManager)omInstance;
+          } else {
+            getLogger().log(Level.SEVERE, "ClassNotOptionManager", `omclass);
+            return 1;
+          }
+        } catch(ClassNotFoundException cnfe) {
+          getLogger().log(Level.SEVERE, "ClassNotFound", `omclass);
+          optionManager = null;
+          return 1;
+        } catch (Exception e) {
+          e.printStackTrace();
+          System.out.println(e.getMessage());
+          getLogger().log(Level.SEVERE, "InstantiationError", `omclass);
+          optionManager = null;
+          return 1;
+        }
         return 0;
       }
     }
@@ -164,16 +189,16 @@ public class ConfigurationManager {
   private PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
     PlatformOptionList list = `emptyPlatformOptionList();
     %match(TNode optionsNode) {
-      <options>(_*,option,_*)</options> -> {
+      <optionmanager>(_*,option,_*)</optionmanager> -> {
         %match(TNode option) {
-          <OptionBoolean [name = n, altName = an, description = d, value = v] /> -> {	
+          <boolean [name = n, altName = an, description = d, value = v] /> -> {	
             PlatformBoolean bool = Boolean.valueOf(`v).booleanValue()?`True():`False();
             list = `concPlatformOption(list*, PluginOption(n, an, d, BooleanValue(bool), "")); 
           }
-          <OptionInteger [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
+          <integer [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
             list = `concPlatformOption(list*, PluginOption(n, an, d, IntegerValue(Integer.parseInt(v)), at));
           }
-          <OptionString [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
+          <string [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
             list = `concPlatformOption(list*, PluginOption(n, an, d, StringValue(v), at));
           }
         }
@@ -186,4 +211,4 @@ public class ConfigurationManager {
     return Logger.getLogger(getClass().getName());
   }
 
-}
+} //class ConfigurationManager

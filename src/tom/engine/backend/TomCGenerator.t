@@ -30,18 +30,17 @@ import java.io.IOException;
 import jtom.adt.tomsignature.types.*;
 import jtom.tools.OutputCode;
 
+import tom.platform.OptionManager;
+
 public class TomCGenerator extends TomImperativeGenerator {
   
-  public TomCGenerator(OutputCode output) {
-    super(output);
-    if(((Boolean)getOptionManager().getOptionValue("static")).booleanValue()) {
-      this.modifier += "static " ;
-    }
+  public TomCGenerator(OutputCode output, OptionManager optionManager) {
+    super(output, optionManager);
   }
-
-// ------------------------------------------------------------
+  
+  // ------------------------------------------------------------
   %include { adt/TomSignature.tom }
-// ------------------------------------------------------------
+  // ------------------------------------------------------------
 
   protected void buildExpTrue(int deep) throws IOException {
     output.write(" 1 ");
@@ -202,4 +201,4 @@ public class TomCGenerator extends TomImperativeGenerator {
     generateSlotList(deep, slotList);
   }
 
-}
+} // class TomCGenerator

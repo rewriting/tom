@@ -78,48 +78,6 @@ public class TomBase {
     }
   }
 
-  public OptionManager getOptionManager() {
-    return TomOptionManager.getInstance();
-  }
-
-  public void setOptionValue(String name, Object value) {
-    getOptionManager().setOptionValue(name, value);
-  }
-
-  protected Object getOptionValue(String name) {
-    return getOptionManager().getOptionValue(name);
-  }
-
-  /**
-   * Returns the value of a boolean option.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return a boolean that is the option's value
-   */
-  public boolean getOptionBooleanValue(String optionName) {
-    return ((Boolean)getOptionValue(optionName)).booleanValue();
-  }
-
-  /**
-   * Returns the value of an integer option.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return an int that is the option's value
-   */
-  public int getOptionIntegerValue(String optionName) {
-    return ((Integer)getOptionValue(optionName)).intValue();
-  }
-    
-  /**
-   * Returns the value of a string option.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return a String that is the option's value
-   */
-  public String getOptionStringValue(String optionName) {
-    return (String) getOptionValue(optionName);
-  }
-
   public GenericTraversal traversal() {
     return this.traversal;
   }
@@ -660,4 +618,4 @@ public class TomBase {
     throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
   }
 
-}
+} // class TomBase

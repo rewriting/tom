@@ -55,7 +55,7 @@ public class TomStarter extends TomGenericPlugin {
     // We need here to create the environment : 
     // We need to be sure we don't have side effects with the environment singleton
     TomEnvironment env = TomEnvironment.create();
-    env.initializeFromPlatformOptions();
+    env.initializeFromOptionManager(getOptionManager());
     env.prepareForInputFile(fileName);
   }
 
@@ -63,4 +63,4 @@ public class TomStarter extends TomGenericPlugin {
     return argToRelay;
   }
 
-}
+} // class TomStarter

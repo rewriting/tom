@@ -63,20 +63,26 @@ public class Tom {
       e.printStackTrace();
       return 1;
     }
-    String confFileName = extractConfigFileName(commandLine);
-    if(confFileName == null) {
+
+    PluginPlatform platform = PluginPlatformFactory.getInstance().create(commandLine, Tom.LOGGERRADICAL); 
+    if(platform == null) {
       return 1;
     }
-    ConfigurationManager confManager = new ConfigurationManager(confFileName);
-    if(confManager.initialize() == 1) {
-      return 1;
-    }
-    if(TomOptionManager.create(confManager, commandLine) == 1) { 
-      return 1;
-    }
-    PluginPlatform platform =new PluginPlatform(TomOptionManager.getInstance(),
-                                                confManager,
-                                                Tom.LOGGERRADICAL);
+    /*    String confFileName = extractConfigFileName(commandLine);
+          if(confFileName == null) {
+          return 1;
+          }
+          ConfigurationManager confManager = new ConfigurationManager(confFileName);
+          if(confManager.initialize() == 1) {
+          return 1;
+          }
+          if(TomOptionManager.create(confManager, commandLine) == 1) { 
+          return 1;
+          }
+          PluginPlatform platform =new PluginPlatform(TomOptionManager.getInstance(),
+          confManager,
+          Tom.LOGGERRADICAL);
+    */
     return platform.run();
   }
    

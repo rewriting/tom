@@ -694,34 +694,35 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName) throws IOException ;
   protected abstract void buildGetFunctionSymbolDecl(int deep, String type, String name,
-TomType tlType, TargetLanguage tlCode) throws IOException;
+                                                     TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
-TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
+                                              TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
-TomType tlType, TargetLanguage tlCode) throws IOException;
+                                          TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
-TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException;
+                                           TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException;
   protected abstract void  buildCompareFunctionSymbolDecl(int deep, String name1,
-String name2, String type1, String type2, TargetLanguage tlCode) throws IOException;
+                                                          String name2, String type1, String type2, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTermsEqualDecl(int deep, String name1, String name2,
-String type1, String type2, TargetLanguage tlCode) throws IOException;
+                                              String type1, String type2, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetHeadDecl(int deep, String name1, String suffix, TomType domain, TomType codomain,TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, String name1, String type,
-TomType tlType, TargetLanguage tlCode) throws IOException;
+                                           TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildMakeEmptyList(int deep, String opname, TomType codomain, TargetLanguage tlCode) throws IOException;
   protected abstract void buildMakeAddList(int deep, String opname, String name1,
-String name2, TomType tlType1, TomType tlType2, TomType fullEltType,
-TomType fullListType, TargetLanguage tlCode) throws IOException;
+                                           String name2, TomType tlType1, TomType tlType2, TomType fullEltType,
+                                           TomType fullListType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetElementDecl(int deep, String name1, String name2,
-String type1, TomType tlType1, TargetLanguage tlCode) throws IOException;
+                                              String type1, TomType tlType1, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, String name1, String type,
-TomType tlType, TargetLanguage tlCode) throws IOException;
+                                           TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildMakeEmptyArray(int deep, String opname, TomType codomain,String name1, TargetLanguage tlCode) throws IOException;
   protected abstract void buildMakeAddArray(int deep, String opname, String name1, String name2, TomType tlType1,
-TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException;
+                                            TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTypeTermDecl(int deep, TomList declList) throws IOException;
   protected abstract void buildTypeListDecl(int deep, TomList declList) throws IOException;
   protected abstract void buildTypeArrayDecl(int deep, TomList declList) throws IOException;
   protected abstract void generateDeclarationFromList(int deep, TomList declList) throws IOException;
+  
 } // class TomAbstractGenerator

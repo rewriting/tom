@@ -27,68 +27,77 @@ header{
 class HostParser extends Parser;
 
 options{
-    // antlr does not catch exceptions automaticaly
-    defaultErrorHandler = false;
+  // antlr does not catch exceptions automaticaly
+  defaultErrorHandler = false;
 }
 
 
 {
-    //--------------------------
-    %include{TomSignature.tom}
-    //--------------------------
+  //--------------------------
+  %include{TomSignature.tom}
+  //--------------------------
+  
+  // the lexer selector
+  private TokenStreamSelector selector = null;
+  
+  // the file to be parsed
+  private String currentFile = null;
+  
+  private HashSet includedFileSet = null;
+  private HashSet alreadyParsedFileSet = null;
+  
+  private Logger logger;
+  
+  // the parser for tom constructs
+  TomParser tomparser; 
+  
+  // the lexer for target language
+  HostLexer targetlexer = null;
 
-    // the lexer selector
-    private TokenStreamSelector selector = null;
+  OptionManager optionManager;
 
-    // the file to be parsed
-    private String currentFile = null;
-
-    private HashSet includedFileSet = null;
-    private HashSet alreadyParsedFileSet = null;
-
-    private Logger logger;
-
-    // the parser for tom constructs
-    TomParser tomparser; 
-
-    // the lexer for target language
-    HostLexer targetlexer = null;
-    
-    // locations of target language blocks
-
-    private int currentLine = 1;
-    private int currentColumn = 1;
-
-/*
+  BackQuoteParser bqparser;
+  
+  // locations of target language blocks
+  
+  private int currentLine = 1;
+  private int currentColumn = 1;
+  
+  /*
     Stack lines = new Stack();
     Stack columns = new Stack();
-*/
-    public HostParser(TokenStreamSelector selector,String currentFile,HashSet includedFiles,HashSet alreadyParsedFiles){
-        this(selector);
-        this.selector = selector;
-        this.currentFile = currentFile;
-        this.targetlexer = (HostLexer) selector.getStream("targetlexer");
-        targetlexer.setParser(this);
-        this.includedFileSet = new HashSet(includedFiles);
-        testIncludedFile(currentFile, includedFileSet);
-
-        this.alreadyParsedFileSet = alreadyParsedFiles;
-        
-        logger = Logger.getLogger(getClass().getName());
-
-        // then create the Tom mode parser
-        tomparser = new TomParser(getInputState(),this);
-        bqparser = tomparser.bqparser;
+  */
+    public HostParser(TokenStreamSelector selector,String currentFile,
+                      HashSet includedFiles,HashSet alreadyParsedFiles, 
+                      OptionManager optionManager){
+      this(selector);
+      this.selector = selector;
+      this.currentFile = currentFile;
+      this.targetlexer = (HostLexer) selector.getStream("targetlexer");
+      targetlexer.setParser(this);
+      this.includedFileSet = new HashSet(includedFiles);
+      testIncludedFile(currentFile, includedFileSet);
+      
+      this.alreadyParsedFileSet = alreadyParsedFiles;
+      
+      logger = Logger.getLogger(getClass().getName());
+      
+      // then create the Tom mode parser
+      tomparser = new TomParser(getInputState(),this, optionManager);
+      bqparser = tomparser.bqparser;
+      this.optionManager = optionManager;
     } 
 
-    BackQuoteParser bqparser;
-
-    public TokenStreamSelector getSelector(){
-        return selector;
+    private OptionManager getOptionManager() {
+      return optionManager;
     }
-
+    
+    public TokenStreamSelector getSelector(){
+      return selector;
+    }
+    
     public String getCurrentFile(){
-        return currentFile;
+      return currentFile;
     }
     
     private final TomSignatureFactory getTomSignatureFactory(){
@@ -281,7 +290,7 @@ options{
                 //         throw new TomIncludeException(msg);
             }
             
-            parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet);
+            parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet, getOptionManager());
             astTom = parser.input();
             astTom = `TomInclude(astTom.getTomList());
             list.add(astTom);

@@ -27,6 +27,7 @@ package tom.platform;
 
 import java.util.*;
 import tom.library.adt.tnode.types.TNode;
+import tom.platform.adt.platformoption.types.*;
 
 /**
  * Manage the list of option of different plugin but also global option
@@ -41,9 +42,12 @@ public interface OptionManager {
    *
    *
    * @param xmlDocument
-   */
-  public void setGlobalOptionList(TNode xmlDocument);
+   *
+   public void setGlobalOptionList(TNode xmlDocument);*/
+
+  public int initialize(ConfigurationManager confManager, String[] commandLine);
   
+  //public void setGlobalOptionList(PlatformOptionList globalOptions);
   /**
    *
    *

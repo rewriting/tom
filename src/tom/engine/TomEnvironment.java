@@ -148,7 +148,7 @@ public class TomEnvironment {
    * Reinitializes the TomEnvironment instance.
    */
   public static void clear() {
-    instance.symbolTable.init();
+    //instance.symbolTable.init();
     instance.destDir = null;
     instance.inputFile = null;
     instance.outputFile = null;
@@ -159,11 +159,11 @@ public class TomEnvironment {
     instance.outputSuffix = ".java";
   }
 
-  public void initializeFromPlatformOptions() {
-    OptionManager optionManager = TomOptionManager.getInstance();
+  public void initializeFromOptionManager(OptionManager optionManager) {
     List localUserImportList = new ArrayList();
     String localDestDir = null;
 
+    symbolTable.init(optionManager);
     // computes the input and output suffixes
     // well, it would be better in the future if we let the generator append the output suffix itself
     // so that's only temporary
@@ -210,7 +210,6 @@ public class TomEnvironment {
   }
   
   public void prepareForInputFile(String localInputFileName) { // updateInputOutputFiles + init
-    symbolTable.init();
     // compute inputFile:
     //  - add a suffix if necessary
     if(!localInputFileName.endsWith(getInputSuffix())) {

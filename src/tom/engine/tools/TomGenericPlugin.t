@@ -62,6 +62,9 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   /** the status handler */
   private StatusHandler statusHandler;
 
+  /** the option manager */
+  private OptionManager optionManager;
+  
   /**
    * An accessor method, so that the plugin can see its logger.
    *
@@ -120,6 +123,14 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    */
   public Object getArg() {
     return term;
+  }
+  
+  /**
+   * From Plugin interface 
+   * The setOptionManager save the reference to the OM.
+   */
+  public void setOptionManager(OptionManager optionManager) {
+    this.optionManager = optionManager;
   }
   
   /**
@@ -185,5 +196,47 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
       }
     }
   }
+  
+  public OptionManager getOptionManager() {
+    return optionManager;
+  }
 
-}
+  public void setOptionValue(String name, Object value) {
+    optionManager.setOptionValue(name, value);
+  }
+
+  protected Object getOptionValue(String name) {
+    return optionManager.getOptionValue(name);
+  }
+
+  /**
+   * Returns the value of a boolean option.
+   * 
+   * @param optionName the name of the option whose value is seeked
+   * @return a boolean that is the option's value
+   */
+  public boolean getOptionBooleanValue(String optionName) {
+    return ((Boolean)getOptionValue(optionName)).booleanValue();
+  }
+
+  /**
+   * Returns the value of an integer option.
+   * 
+   * @param optionName the name of the option whose value is seeked
+   * @return an int that is the option's value
+   */
+  public int getOptionIntegerValue(String optionName) {
+    return ((Integer)getOptionValue(optionName)).intValue();
+  }
+    
+  /**
+   * Returns the value of a string option.
+   * 
+   * @param optionName the name of the option whose value is seeked
+   * @return a String that is the option's value
+   */
+  public String getOptionStringValue(String optionName) {
+    return (String) getOptionValue(optionName);
+  }
+
+} // class TomGenericPlugin

@@ -184,6 +184,11 @@ public class PluginFactory implements Plugin {
       return;
     }
   }
+  
+  /**
+   * From OptionOwner interface inherited from Plugin interface
+   */
+  public void setOptionManager(OptionManager optionManager) {}
 
   /**
    * From OptionOwner interface inherited from Plugin interface

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE server [
-  <!ELEMENT server (plugins,options)>
+<!DOCTYPE platform [
+  <!ELEMENT platform (plugins,optionmanager)>
 
   <!ELEMENT plugins (plugin*)>
 
@@ -10,27 +10,29 @@
     name CDATA #IMPLIED
     version CDATA #IMPLIED
     description CDATA #IMPLIED
-    classpath CDATA #REQUIRED>
+    class CDATA #REQUIRED>
 
-  <!ELEMENT options (OptionBoolean*,OptionInteger*,OptionString*)>
+  <!ELEMENT optionmanager (boolean*,integer*,string*)>
+	<!ATTLIST optionmanager
+    class CDATA #REQUIRED>
 
-  <!ELEMENT OptionBoolean EMPTY>
-  <!ATTLIST OptionBoolean
+  <!ELEMENT boolean EMPTY>
+  <!ATTLIST boolean
     name CDATA #REQUIRED
     altName CDATA ""
     description CDATA ""
     value (true|false) #REQUIRED>
 
-  <!ELEMENT OptionInteger EMPTY>
-  <!ATTLIST OptionInteger
+  <!ELEMENT integer EMPTY>
+  <!ATTLIST integer
     name CDATA #REQUIRED
     altName CDATA ""
     description CDATA ""
     value CDATA #REQUIRED
     attrName CDATA #REQUIRED>
 
-  <!ELEMENT OptionString EMPTY>
-  <!ATTLIST OptionString
+  <!ELEMENT string EMPTY>
+  <!ATTLIST string
     name CDATA #REQUIRED
     altName CDATA ""
     description CDATA ""
@@ -38,169 +40,81 @@
     attrName CDATA #REQUIRED>
 ]>
 
-<server>
+<platform>
 
-<plugins>
+  <plugins>
+    <plugin name="Starter"
+						class="jtom.starter.TomStarter"/>
+		<plugin name="Parser"
+						class="jtom.parser.TomParserPlugin"/>
+		<plugin name="Syntax checker"
+						class="jtom.checker.TomSyntaxChecker"/>
+		<plugin name="Expander"
+						class="jtom.compiler.TomExpander"/>
+		<plugin name="Type checker"
+						class="jtom.checker.TomTypeChecker"/>
+		<plugin name="Compiler"
+						class="jtom.compiler.TomCompiler"/>
+		<plugin name="Optimizer"
+						class="jtom.optimizer.TomOptimizer"/>
+		<plugin name="Verifier"
+						class="jtom.verifier.TomVerifier"/>
+    <plugin  name="Backend"
+						 class="jtom.backend.TomBackend"/>
+  </plugins>
 
-  <plugin
-    name="Starter"
-    version=""
-    description="Only here to initialize the environment"
-    classpath="jtom.starter.TomStarter" />
+  <optionmanager class="jtom.TomOptionManager">
+    <boolean name="help" altName="h"
+						 description="Print this help"
+						 value="false"/>
+		<boolean name="version" altName="V"
+						 description="Print version"
+						 value="false"/>
+		<boolean name="verbose" altName="v"
+						 description="Set verbose mode on"
+						 value="false"/>
+    <boolean name="intermediate" altName="i"
+					   description="Generate intermediate files"
+					   value="false"/>
+    <boolean name="noDeclaration" altName="D"
+					 description="Do not generate code for declarations"
+					 value="false"/>
+    <boolean name="noCheck" altName="f"
+					 description="Do not check correctness"
+					 value="false"/>
+    <boolean name="noWarning" altName=""
+					 description="Do not print warning"
+					 value="false"/>
+    <boolean name="lazyType" altName="l"
+					 description="Use universal type"
+					 value="false"/>
+    <boolean name="pretty" altName="p"
+						 description="Generate readable code"
+						 value="false"/>
+    <boolean name="static" altName=""
+					  description="Generate static functions"
+					  value="false"/>
+    <boolean name="debug" altName=""
+					   description="Generate debug primitives"
+					   value="false"/>
+    <boolean name="memory" altName=""
+						 description="Add memory management while debugging (not correct with list matching)"
+						 value="false"/>
+    <boolean name="eclipse" altName=""
+						 description="Sets Eclipse mode"
+						 value="false"/>
+    <string name="import"	altName="I"
+						description="Path for %include"
+						value=""
+						attrName="path"/>
+    <string name="output"	altName="o"
+						description="Set output file name"
+						value=""
+						attrName="file"/>
+    <string name="destdir" altName="d"
+						description="Specify where to place generated files"
+						value="."
+						attrName="dir"/>
+  </optionmanager>
 
-  <plugin
-    name="Parser"
-    version=""
-    description="Parser written with ANTLR"
-    classpath="jtom.parser.TomParserPlugin" />
-
-  <plugin
-    name="Syntax checker"
-    version=""
-    description=""
-    classpath="jtom.checker.TomSyntaxChecker" />
-
-  <plugin
-    name="Expander"
-    version=""
-    description=""
-    classpath="jtom.compiler.TomExpander" />
-
-  <plugin
-    name="Type checker"
-    version=""
-    description=""
-    classpath="jtom.checker.TomTypeChecker" />
-
-  <plugin
-    name="Compiler"
-    version=""
-    description=""
-    classpath="jtom.compiler.TomCompiler" />
-
-  <plugin
-    name="Optimizer"
-    version=""
-    description=""
-    classpath="jtom.optimizer.TomOptimizer" />
-
-  <plugin
-    name="Verifier"
-    version=""
-    description=""
-    classpath="jtom.verifier.TomVerifier" />
-
-  <plugin
-    name="Backend"
-    version=""
-    description=""
-    classpath="jtom.backend.TomBackend" />
-
-</plugins>
-
-<options>
-
-  <OptionBoolean
-    name="help"
-    altName="h"
-    description="Print this help"
-    value="false" />
-
-  <OptionBoolean
-    name="version"
-    altName="V"
-    description="Print version"
-    value="false" />
-
-  <OptionBoolean
-    name="verbose"
-    altName="v"
-    description="Set verbose mode on"
-    value="false" />
-
-  <OptionBoolean
-    name="intermediate"
-    altName="i"
-    description="Generate intermediate files"
-    value="false" />
-
-  <OptionBoolean
-    name="noDeclaration"
-    altName="D"
-    description="Do not generate code for declarations"
-    value="false" />
-
-<!-- doCompile will be replaced by an alternate XML -->
-
-  <OptionBoolean
-    name="noCheck"
-    altName="f"
-    description="Do not check correctness"
-    value="false" />
-
-  <OptionBoolean
-    name="noWarning"
-    altName=""
-    description="Do not print warning"
-    value="false" />
-
-  <OptionBoolean
-    name="lazyType"
-    altName="l"
-    description="Use universal type"
-    value="false" />
-
-  <OptionBoolean
-    name="pretty"
-    altName="p"
-    description="Generate readable code"
-    value="false" />
-
-  <OptionBoolean
-    name="static"
-    altName=""
-    description="Generate static functions"
-    value="false" />
-
-  <OptionBoolean
-    name="debug"
-    altName=""
-    description="Generate debug primitives"
-    value="false" />
-
-  <OptionBoolean
-    name="memory"
-    altName=""
-    description="Add memory management while debugging (not correct with list matching)"
-    value="false" />
-
-  <OptionBoolean
-    name="eclipse"
-    altName=""
-    description="Sets Eclipse mode"
-    value="false" />
-
-  <OptionString
-    name="import"
-    altName="I"
-    description="Path for %include"
-    value=""
-    attrName="path" />
-
-  <OptionString
-    name="output"
-    altName="o"
-    description="Set output file name"
-    value=""
-    attrName="file" />
-
-  <OptionString
-    name="destdir"
-    altName="d"
-    description="Specify where to place generated files"
-    value="."
-    attrName="dir" />
-
-</options>
-
-</server>
+</platform>

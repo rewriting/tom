@@ -31,20 +31,22 @@ import jtom.adt.tomsignature.types.*;
 import jtom.tools.OutputCode;
 import jtom.exception.TomRuntimeException;
 
+import tom.platform.OptionManager;
+
 public class TomCamlGenerator extends TomImperativeGenerator {
 
-  public TomCamlGenerator(OutputCode output) {
-    super(output);
+  public TomCamlGenerator(OutputCode output, OptionManager optionManager) {
+    super(output, optionManager);
   }
-
-// ------------------------------------------------------------
+  
+  // ------------------------------------------------------------
   %include { adt/TomSignature.tom }
-// ------------------------------------------------------------
-
-    /*
-     * the implementation of methods are here for caml 
-     */
-
+  // ------------------------------------------------------------
+  
+  /*
+   * the implementation of methods are here for caml 
+   */
+  
   protected void buildInstructionSequence(int deep, Instruction instruction) throws IOException {
     generateInstruction(deep,instruction);
     output.writeln(";");
@@ -199,7 +201,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
                                    String args[],
                                    TargetLanguage tlCode) {
     String s = "";
-    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) { return null; }
+    if(nodeclMode) { return null; }
     s =  "let " + declName + "_" + suffix + "(";
     for(int i=0 ; i<args.length ; ) {
         // the first argument is the type, second the name 
@@ -220,7 +222,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   protected TargetLanguage genDeclMake(String opname, TomType returnType, 
                                        TomList argList, TargetLanguage tlCode) {
     String s = "";
-    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) { return null; }
+    if(nodeclMode) { return null; }
     s = "let tom_make_" + opname + "(";
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
@@ -245,7 +247,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     }
     s += ") = ";
       // the debug mode will not work as it for caml
-    if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
+    if(debugMode) {
       s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
       s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
       s += "return  debugVar;\n}";
@@ -257,7 +259,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
 
   protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
     String s = "";
-    if(((Boolean)getOptionManager().getOptionValue("noDeclaration")).booleanValue()) {
+    if(nodeclMode) {
       return `ITL("");
     }
 
@@ -285,7 +287,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       get_slice + "(" + get_tail + "(beginning),ending))\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    return ast().reworkTLCode(`ITL(s), ((Boolean)getOptionManager().getOptionValue("pretty")).booleanValue());
+    return ast().reworkTLCode(`ITL(s), prettyMode);
   }
   
   protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {

@@ -28,47 +28,44 @@ public class TomBackend extends TomGenericPlugin {
   public void run() {
     if(isActivated() == true) {
       try {
-	int errorsAtStart = getStatusHandler().nbOfErrors();
-	int warningsAtStart = getStatusHandler().nbOfWarnings();
-
-	long startChrono = System.currentTimeMillis();
+        int errorsAtStart = getStatusHandler().nbOfErrors();
+        int warningsAtStart = getStatusHandler().nbOfWarnings();
+        
+        long startChrono = System.currentTimeMillis();
 				
-	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
-			
-	OutputCode output = new OutputCode(writer, defaultDeep);
-			
-	if( getOptionBooleanValue("jCode") ) {
-	  generator = new TomJavaGenerator(output);
-	} else if( getOptionBooleanValue("cCode") ) {
-	  generator = new TomCGenerator(output);
-	} else if( getOptionBooleanValue("eCode") ) {
-	  generator = new TomEiffelGenerator(output);
-	} else if( getOptionBooleanValue("camlCode") ) {
-	  generator = new TomCamlGenerator(output);
-	}
-			
-	generator.generate( defaultDeep, (TomTerm)getArg() );
-	
-	getLogger().log( Level.INFO,
-			 "TomGenerationPhase",
-			 new Integer((int)(System.currentTimeMillis()-startChrono)) );
-	
-	writer.close();
-
-	printAlertMessage(errorsAtStart, warningsAtStart);
+        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
+        
+        OutputCode output = new OutputCode(writer, defaultDeep, getOptionManager());
+        
+        if(getOptionBooleanValue("jCode")) {
+          generator = new TomJavaGenerator(output, getOptionManager());
+        } else if(getOptionBooleanValue("cCode")) {
+          generator = new TomCGenerator(output, getOptionManager());
+        } else if(getOptionBooleanValue("eCode")) {
+          generator = new TomEiffelGenerator(output, getOptionManager());
+        } else if(getOptionBooleanValue("camlCode")) {
+          generator = new TomCamlGenerator(output, getOptionManager());
+        }
+        
+        generator.generate( defaultDeep, (TomTerm)getArg() );
+        
+        getLogger().log( Level.INFO, "TomGenerationPhase",
+                         new Integer((int)(System.currentTimeMillis()-startChrono)) );
+        
+        writer.close();
+        printAlertMessage(errorsAtStart, warningsAtStart);
       }
       catch (Exception e) {
-	getLogger().log( Level.SEVERE,
-			 "ExceptionMessage",
-			 new Object[]{environment().getInputFile().getName(), "TomBackend", e.getMessage()} );
-	
-	e.printStackTrace();
+        getLogger().log( Level.SEVERE, "ExceptionMessage",
+                         new Object[]{environment().getInputFile().getName(), "TomBackend", e.getMessage()} );
+        
+        e.printStackTrace();
       }
     } else { // backend desactivated
-	getLogger().log(Level.INFO, "The backend is not activated and thus WILL NOT RUN.\nNo output !");
+      getLogger().log(Level.INFO, "The backend is not activated and thus WILL NOT RUN.\nNo output !");
     }
   }
-
+  
   public PlatformOptionList getDeclaredOptionList() {
     String noOutput = "<OptionBoolean name=\"noOutput\" altName=\"\" description=\"Do not generate code\" value=\"false\"/>";
     String jCode = "<OptionBoolean name=\"jCode\" altName=\"j\" description=\"Generate Java code\" value=\"true\"/>";

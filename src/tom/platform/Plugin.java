@@ -33,25 +33,24 @@ package tom.platform;
  *
  * @author Gr&eacute;gory ANDRIEN
  */
-public interface Plugin extends OptionOwner
-{
-    /**
-     * Sets the input of the plugin.
-     *
-     * @param arg the input argument
-     */
-    public void setArg(Object arg);
-
-    /**
-     * Runs the plugin.
-     */
-    public void run();
-
-    /**
-     * Retrieves the output of the plugin.
-     *
-     * @return the output argument
-     */
-    public Object getArg();
-
+public interface Plugin extends OptionOwner {
+  /**
+   * Sets the input of the plugin.
+   *
+   * @param arg the input argument
+   */
+  public void setArg(Object arg);
+  
+  /**
+   * Runs the plugin.
+   */
+  public void run();
+  
+  /**
+   * Retrieves the output of the plugin.
+   *
+   * @return the output argument
+   */
+  public Object getArg();
+    
 }
