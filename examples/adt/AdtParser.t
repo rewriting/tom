@@ -225,7 +225,7 @@ public class AdtParser {
     traversal.genericCollect(subject, collect);
   }
 
-  private String hashSetToStr(HashMap map) {
+  private String hashMapToStr(HashMap map) {
     String result = "";
     Set set = map.keySet();
     Iterator i = set.iterator();
