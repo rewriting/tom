@@ -43,7 +43,7 @@ javaName returns [String result]
 :
   name:ID { result += name.getText(); }
 (
- DOT sname:ID { result += sname.getText(); }
+ DOT sname:ID { result += "."+sname.getText(); }
  )*
   ;
 
