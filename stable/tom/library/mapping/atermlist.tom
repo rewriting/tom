@@ -37,4 +37,7 @@
   get_head(l)    { ((ATermList)l).getFirst() }
   get_tail(l)    { ((ATermList)l).getNext() }
   is_empty(l)    { ((ATermList)l).isEmpty() }
+	check_stamp(t)        { }
+  set_stamp(t)          { t }
+  get_implementation(t) { t }
 }

@@ -35,6 +35,9 @@
   cmp_fun_sym(s1,s2)  { (s1==s2) }
   get_subterm(t, n)   { null }
   equals(t1,t2)       { (t1==t2) }
+	check_stamp(t)        { }
+  set_stamp(t)          { t }
+  get_implementation(t) { t }
 }
 
 %typeterm Character {
@@ -43,6 +46,9 @@
   cmp_fun_sym(s1,s2)  { (s1.equals(s2)) }
   get_subterm(t, n)   { null }
   equals(t1,t2)       { (t1.equals(t2)) }
+	check_stamp(t)        { }
+  set_stamp(t)          { t }
+  get_implementation(t) { t }
 }
 
 %op Character Char(c:char) {

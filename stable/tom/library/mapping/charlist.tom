@@ -38,6 +38,9 @@
   get_head(s)         { s.substring(0,1) }
   get_tail(s)         { s.substring(1) }
   is_empty(s)         { (s.length()==0) }
+	check_stamp(t)        { }
+  set_stamp(t)          { t }
+  get_implementation(t) { t }
 }
 
 %oplist String concString(String*) {

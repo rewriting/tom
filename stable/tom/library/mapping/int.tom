@@ -33,4 +33,7 @@
   cmp_fun_sym(s1,s2)  { (s1==s2) }
   get_subterm(t, n)   { null }
   equals(t1,t2)       { (t1==t2) }
+	check_stamp(t)        { }
+  set_stamp(t)          { t }
+  get_implementation(t) { t }
 }
