@@ -144,7 +144,7 @@ public class TomChecker extends TomBase {
       ArrayList variableList = new ArrayList();
       collectVariable(variableList, patterns);
         //SharedSet set = new SharedSet(getTomSignatureFactory());
-      collectVariable(set, patterns);
+        //collectVariable(set, patterns);
         //System.out.println("Set="+set.getTreeSet());
         //System.out.println("Collection="+variableList);      
       verifyVariableType(variableList);
