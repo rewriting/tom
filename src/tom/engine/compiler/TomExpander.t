@@ -50,7 +50,7 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
   }
 
 // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
+  %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 		
   public void process() {

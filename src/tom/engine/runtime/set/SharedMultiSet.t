@@ -2,8 +2,8 @@
   
     TOM - To One Matching Compiler
     
-    Copyright (C) 2000-2003  LORIA (CNRST, INPL, INRIA, UHP, U-Nancy 2)
-    Nancy, France.
+    Copyright (C) 2000-2003 INRIA
+                            Nancy, France.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ import jtom.runtime.Collect1;
  
 public class SharedMultiSet extends ATermSet {
 
-  %include { jgtreeset/set.tom }
+  %include { ../../../adt/set.tom }
   
   public SharedMultiSet(PureFactory pureFactory) {
     if (factory==null) {

@@ -3,7 +3,7 @@
 #
 
 #SUBDIRS         = adt
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TOMSIGNATURE):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TNODEADT):$$CLASSPATH
 
 javadir         = ${prefix}/classes/jtom/runtime/xml
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/xml
@@ -25,20 +25,11 @@ bootinstall:
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-ATermToXML.java: ATermToXML.t adt/TNode.tom
-	$(TOM) $(TOMFLAGS) $<
-
-XMLToATerm.java: XMLToATerm.t adt/TNode.tom
-	$(TOM) $(TOMFLAGS) $<
-
-api:
-	${ADTTOTOM} --javagen -i TNode.adt -n TNode -p jtom.runtime.xml.adt --output $(JAVAROOT)
-
-adt/TNode.tom: TNode.adt
-	${ADTTOTOM} --javagen -i TNode.adt -n TNode -p jtom.runtime.xml.adt --output $(JAVAROOT)
-
-TOMFLAGS = --noWarning 
+TOMFLAGS =
 TOM = ${prefix}/bin/jtom
 
-%.java : %.t
-	$(TOM) $(TOMFLAGS) $*
+ATermToXML.java: ATermToXML.t $(JAVAROOT)/adt/TNode.tom
+	$(TOM) $(TOMFLAGS) $<
+
+XMLToATerm.java: XMLToATerm.t $(JAVAROOT)/adt/TNode.tom
+	$(TOM) $(TOMFLAGS) $<

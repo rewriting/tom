@@ -36,15 +36,13 @@ import jtom.runtime.*;
 import jtom.exception.TomRuntimeException;
 import java.lang.Throwable;
 
-//import jtom.runtime.set.SharedSet;
-
 public class TomBase {
   private TomEnvironment tomEnvironment;
   private TomList empty;
   private GenericTraversal traversal;
 
-	public TomBase() {
-	}
+  public TomBase() {
+  }
 	
   public TomBase(TomEnvironment tomEnvironment) {
     this.tomEnvironment = tomEnvironment;
@@ -172,7 +170,7 @@ public class TomBase {
   }
   
 // ------------------------------------------------------------
-   %include { adt/TomSignature.tom }
+   %include { ../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
   protected String getTomType(TomType type) {

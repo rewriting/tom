@@ -25,15 +25,7 @@ bootinstall :
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-TOMFLAGS = --noWarning --noDeclaration
+TOMFLAGS = --noDeclaration
 TOM = ${prefix}/bin/jtom
-
-%.java : %.t
-	$(TOM) $(TOMFLAGS) $*
-
-TomFactory.t: ../adt/TomSignature.tom
-	@touch TomFactory.t
-
-../adt/TomSignature.tom: ../TomSignature.adt
-	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt --output ../adt 
-	mv ../adt/TomSignatureMakeRules ../adt/TomSignatureMakeRules.am
+TomFactory.java: TomFactory.t $(JAVAROOT)/adt/TomSignature.tom
+	$(TOM) $(TOMFLAGS) $<

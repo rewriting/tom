@@ -42,18 +42,7 @@ bootinstall :
 	done
 
 # we use the last installed compiler to compile the current compiler
-TOMFLAGS = --noWarning
+TOMFLAGS = 
 TOM = ${prefix}/bin/jtom
-
-%.java : %.t
-	$(TOM) $(TOMFLAGS) $*
-
-%.tom.c : %.t
-	$(TOM) --cCode $(TOMFLAGS) $*
-
-TomBackQuoteParser.t: ../adt/TomSignature.tom
-	@touch TomBackQuoteParser.t
-
-../adt/TomSignature.tom: ../TomSignature.adt
-	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt --output ../adt 
-	mv ../adt/TomSignatureMakeRules ../adt/TomSignatureMakeRules.am
+TomBackQuoteParser.java: TomBackQuoteParser.t $(JAVAROOT)/adt/TomSignature.tom
+	$(TOM) $(TOMFLAGS) $<

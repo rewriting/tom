@@ -25,22 +25,21 @@
 
 package jtom.runtime.xml;
 
+import java.util.*;
+import aterm.*;
+import aterm.pure.*;
+
 import java.io.*;
 import jtom.runtime.xml.adt.tnode.*;
 import jtom.runtime.xml.adt.tnode.types.*;
-import java.util.Hashtable;
-import java.util.ArrayList;
-import java.util.Collection;
-import aterm.*;
-import aterm.pure.*;
+import jtom.exception.TomRuntimeException;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
-import jtom.exception.TomRuntimeException;
 
 public class XMLToATerm {
   
-  %include{ adt/TNode.tom }
+  %include{ ../../../adt/TNode.tom }
 	
   private Factory factory = null;
   private TNode nodeTerm = null;

@@ -23,7 +23,7 @@
 #    Marian Vittek		e-mail: vittek@guma.ii.fmph.uniba.sk
 #
 
-SUBDIRS = jtom
+SUBDIRS = adt jtom
 JARFILE = jtom-devel.jar
 JARVERSIONFILE = jtom-devel-${VERSION}.jar
 data_DATA  = 

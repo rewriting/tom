@@ -53,7 +53,7 @@ public class TomCompiler extends TomTask {
   }
   
 // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
+  %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
 	public void initProcess() {

@@ -30,7 +30,7 @@ bootinstall:
 	done
 
 # we use the last installed compiler to compile the current compiler
-TOMFLAGS = --noWarning --noDeclaration
+TOMFLAGS = --noDeclaration
 TOM = ${prefix}/bin/jtom
 
 %.java : %.t
@@ -39,18 +39,14 @@ TOM = ${prefix}/bin/jtom
 %.tom.c : %.t
 	$(TOM) --cCode $(TOMFLAGS) $*
 
-TomKernelCompiler.t: ../adt/TomSignature.tom
-	@touch TomKernelCompiler.t
+TomKernelCompiler.java: TomKernelCompiler.t $(JAVAROOT)/adt/TomSignature.tom
+	$(TOM) $(TOMFLAGS) $<
 
-TomKernelExpander.t: ../adt/TomSignature.tom
-	@touch TomKernelExpander.t
+TomKernelExpander.java: TomKernelExpander.t $(JAVAROOT)/adt/TomSignature.tom
+	$(TOM) $(TOMFLAGS) $<
 
-TomCompiler.t: ../adt/TomSignature.tom
-	@touch TomCompiler.t
+TomCompiler.java: TomCompiler.t $(JAVAROOT)/adt/TomSignature.tom
+	$(TOM) $(TOMFLAGS) $<
 
-TomExpander.t: ../adt/TomSignature.tom
-	@touch TomExpander.t
-
-../adt/TomSignature.tom: ../TomSignature.adt
-	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt --output ../adt 
-	mv ../adt/TomSignatureMakeRules ../adt/TomSignatureMakeRules.am
+TomExpander.java: TomExpander.t $(JAVAROOT)/adt/TomSignature.tom
+	$(TOM) $(TOMFLAGS) $<

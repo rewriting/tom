@@ -2,8 +2,8 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)
-			     Nancy, France.
+    Copyright (C) 2000-2003 INRIA
+			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ import aterm.*;
 public class TomFactory extends TomBase {
 
 // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
+  %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
   public TomFactory(jtom.TomEnvironment environment) {
