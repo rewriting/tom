@@ -209,16 +209,12 @@ public class UC4_2 {
 
   protected Sequence _collectData02(TNode subject) { 
 	class _TNodeTester_collectData02 extends TNodeTester {
-	  _TNodeTester_collectData02(Object objects[])
-	  {
-		super(objects);
-	  }
 
 	  public boolean doTest(Object obj)
 	  {
 		TNode o = (TNode) obj;
 		if (o.isElementNode()) {
-		  TNode obj2 = (TNode)(this.objects[0]);
+		  TNode obj2 = _i;
 		  %match (TNode o, TNode obj2) {
 			<bid_tuple>itemno1@<itemno></itemno></bid_tuple>, 
 			   <item_tuple>itemno2@<itemno></itemno></item_tuple> -> {
@@ -235,7 +231,7 @@ public class UC4_2 {
 	
 	TNode objs[]={_i};
 	
-	return tnodetool.collectData(subject, new _TNodeTester_collectData02(objs), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData02(), new TNodeQualifier());	
 	
   }
 
@@ -259,7 +255,7 @@ public class UC4_2 {
 	  }
 	}
 	
-	return tnodetool.collectData(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
   }
 
 

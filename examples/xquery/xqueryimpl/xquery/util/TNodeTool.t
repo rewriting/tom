@@ -23,18 +23,15 @@ public class TNodeTool {
   public Sequence operatorSlashSlash(TNode subject,final TNodeTester tester, final TNodeQualifier qualifier) 
   {
 	GenericTraversal traversal = new GenericTraversal();
-	final Sequence sequence=new Sequence(); 
+	final HashSequence sequence=new HashSequence(); 
 	
 	Collect1 collect = new Collect1() { 
 		public boolean apply(ATerm t) 
 		{ 
 		  try {
 			if(t instanceof TNode) { 
-			  //			  TNode tnode=(TNode)t; 
-			  
-			  Object newNode = tester.doTest(t);
-			  if (newNode !=null) {
-				sequence.addAll(qualifier.qualify(newNode));
+			  if (tester.doTest(t)) {
+				sequence.addAll(qualifier.qualify(t));
 				return true;
 			  }
 			} 
@@ -64,10 +61,7 @@ public class TNodeTool {
 	while (enum.hasMoreElements()) {
 	  Object obj = (enum.nextElement());
 
-	  //System.out.println(obj);
-	  
-
-	  if (tester.doTest(obj)!=null) {
+	  if (tester.doTest(obj)) {
 		if (!sequencetool.contain(output, obj, comparator)) {
 		  output.add(obj);
 		}
@@ -83,16 +77,15 @@ public class TNodeTool {
 	return result;
   }
 
-  public   Sequence collectData2(TNode subject,final TNodeTester tester,final TNodeQualifier qualifier) 
+  public Sequence operatorSlash(TNode subject,final TNodeTester tester,final TNodeQualifier qualifier) 
   {
 	try {
 	//return null;
 	  Sequence seq=new Sequence(); 
 	  %match (TNode subject) {
 		<_></_> -> {
-		   Object newNode = tester.doTest(subject);
-		   if (newNode !=null ) {
-			 seq.addAll(qualifier.qualify(newNode));
+		   if (tester.doTest(subject)) {
+			 seq.addAll(qualifier.qualify(subject));
 		   }
 		 }
 	  }

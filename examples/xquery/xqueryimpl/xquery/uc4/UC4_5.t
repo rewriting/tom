@@ -337,7 +337,7 @@ public class UC4_5 {
 		   }		   
 		 }
 		 
-		 return tnodetool.collectData(subject, new _TNodeTester01_collectData01(), new TNodeQualifier());	
+		 return tnodetool.operatorSlashSlash(subject, new _TNodeTester01_collectData01(), new TNodeQualifier());	
 	   }
 	  
 	  protected float _max01 (Sequence seq) 
@@ -418,7 +418,7 @@ public class UC4_5 {
 
 	}
 	
-	return tnodetool.collectData(subject, new _TNodeTester01_collectData01(), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester01_collectData01(), new TNodeQualifier());	
   }
 
   protected Sequence _collectData02(TNode subject) throws XQueryGeneralException
@@ -437,7 +437,7 @@ public class UC4_5 {
 
 	}
 	
-	return tnodetool.collectData(subject, new _TNodeTester01_collectData02(), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester01_collectData02(), new TNodeQualifier());	
   }
 
 
@@ -458,7 +458,7 @@ public class UC4_5 {
 
 	}
 	
-	return tnodetool.collectData(subject, new _TNodeTester01_collectData03(), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester01_collectData03(), new TNodeQualifier());	
   }
 
 
@@ -479,7 +479,7 @@ public class UC4_5 {
 
 	}
 	
-	return tnodetool.collectData(subject, new _TNodeTester01_collectData04(), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester01_collectData04(), new TNodeQualifier());	
   }
 
 

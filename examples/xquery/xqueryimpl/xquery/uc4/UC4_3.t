@@ -232,7 +232,7 @@ public class UC4_3 {
 	  }
 	}
 	
-	return tnodetool.collectData(subject, new _TNodeTester_collectData02(), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData02(), new TNodeQualifier());	
 	
   }
 
@@ -252,7 +252,7 @@ public class UC4_3 {
 
 	}
 	
-	return tnodetool.collectData(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
   }
 
 

@@ -8,6 +8,7 @@ import aterm.*;
 import java.util.*;
 import jtom.runtime.*;
 
+
 public class TNodeQualifier {
 
   %include {TNode.tom}
@@ -26,6 +27,5 @@ public class TNodeQualifier {
 	result.add(node);
 	return result;
   }
-  
 }
 

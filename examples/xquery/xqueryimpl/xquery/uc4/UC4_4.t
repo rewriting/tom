@@ -177,7 +177,7 @@ public class UC4_4 {
 	}
 	
 	//	Object objs[]={_i};
-	Sequence result = tnodetool.collectData(subject, new _TNodeTester_collectData02(), new TNodeQualifier());	
+	Sequence result = tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData02(), new TNodeQualifier());	
 
 	return result; 
   }
@@ -199,7 +199,7 @@ public class UC4_4 {
 
 	}
 	
-	return tnodetool.collectData(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
+	return tnodetool.operatorSlashSlash(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
   }
 
 

@@ -23,9 +23,9 @@ public class TNodeTester {
 	}
   }
 
-  public Object doTest (Object obj)
+  public boolean doTest (Object obj)
 	throws XQueryGeneralException
-  {return obj;}
+  {return true;}
 
 
   public void setObject(Object objs[]) 
