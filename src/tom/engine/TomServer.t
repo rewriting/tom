@@ -228,91 +228,93 @@ public class TomServer implements TomPluginOptions
     {
 	String xmlConfigurationFile = whichConfigFile(argumentList);
 
- 	if( xmlConfigurationFile == null ) {// method whichConfigFile encountered an error
-			return 1;
- 	    }
+ 	if( xmlConfigurationFile == null ) {
+    // method whichConfigFile encountered an error
+    return 1;
+  }
 	Vector classPaths = parseConfigFile(xmlConfigurationFile);
-
+  
 	if( classPaths == null ) // method parseConfigFile encountered an error
 	    {
-		environment.printErrorMessage();
-		return 1;
+        environment.printErrorMessage();
+        return 1;
 	    }
-
+  
 	// creates an instance of each plugin
 	instances.add(this); // the server is added to allow option declaration and mapping
 	Iterator it = classPaths.iterator();
 	while(it.hasNext())
-	    {
-		Object instance;
-		String path = (String)it.next();
-		try
+    {
+      Object instance;
+      String path = (String)it.next();
+      try
 		    { 
-			instance = Class.forName(path).newInstance();
-			if(instance instanceof TomPlugin)
-			    instances.add(instance);
-			else
-			    {
-				System.out.println("pas un plugin");
-				environment.messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
-							 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-			    }
+          instance = Class.forName(path).newInstance();
+          if(instance instanceof TomPlugin)
+            instances.add(instance);
+          else
+            {
+              System.out.println("pas un plugin");
+              environment.messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
+                                       "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+            }
 		    }
-		catch(ClassNotFoundException cnfe) 
+      catch(ClassNotFoundException cnfe) 
 		    { 
-			environment.messageWarning(TomMessage.getString("ClassNotFound"),new Object[]{path},
-						 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+          environment.messageWarning(TomMessage.getString("ClassNotFound"),new Object[]{path},
+                                     "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
 		    }
-		catch(Exception e) 
+      catch(Exception e) 
 		    { 
-			environment.messageError(TomMessage.getString("InstantiationError"),
-						 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+          environment.messageError(TomMessage.getString("InstantiationError"),
+                                   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
 		    }
-	    }
-
-	if( environment.hasError() )
-	    {
-		environment.printErrorMessage();
-		return 1;
-	    }
-
-	String[] inputFiles = optionManagement(argumentList);
-
-	if( environment.hasError() )
-	    {
-		environment.printAlertMessage("TomServer");
-		displayHelp();
-		return 1;
-	    }
-
-	for(int i = 0; i < inputFiles.length; i++)
-	    {
-		environment.updateEnvironment(inputFiles[i]);
-			System.out.println(inputFiles[i]);
-		ATerm term = `FileName(inputFiles[i]);
-		
-		// runs the modules
-		it = instances.iterator();
-		it.next(); // skips the server
-		TomPlugin plugin;
-		while(it.hasNext())
-		    {
-			plugin = (TomPlugin)it.next();
-			plugin.setInput(term);
-			plugin.run();
-			term = plugin.getOutput();
-			
-			if( environment.hasError() )
-					environment.printAlertMessage(plugin.getClass().toString());
-			    return 1;
-		    }
-	    }
-
-	if( environment.hasError() )
-	    return 1;
-	else
-	    return 0;
     }
+  
+	if( environment.hasError() )
+    {
+      environment.printErrorMessage();
+      return 1;
+    }
+  
+	String[] inputFiles = optionManagement(argumentList);
+  
+	if( environment.hasError() )
+    {
+      environment.printAlertMessage("TomServer");
+      displayHelp();
+      return 1;
+    }
+  
+	for(int i = 0; i < inputFiles.length; i++)
+    {
+      environment.updateEnvironment(inputFiles[i]);
+			System.out.println(inputFiles[i]);
+      ATerm term = `FileName(inputFiles[i]);
+      
+      // runs the modules
+      it = instances.iterator();
+      it.next(); // skips the server
+      while(it.hasNext())
+		    {
+          TomPlugin plugin = (TomPlugin)it.next();
+          plugin.setInput(term);
+          plugin.run();
+          term = plugin.getOutput();
+          
+          if( environment.hasError() )
+            {
+              environment.printAlertMessage(plugin.getClass().toString());
+              return 1;
+            }
+        }
+    }
+  if( environment.hasError() )
+    return 1;
+  else
+    return 0;
+    }
+    
 
     private void extractClassPaths(TNode node, Vector v)
     {
