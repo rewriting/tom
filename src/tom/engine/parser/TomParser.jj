@@ -37,6 +37,7 @@ import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
 import java.lang.reflect.Constructor;
+import java.lang.Throwable;
 
 public class TomParser implements TomTask {
 
@@ -54,7 +55,7 @@ public class TomParser implements TomTask {
   private ArrayList debuggedStructureList;
   private String text="";
   private TomTask nextTask;
-  private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
+  private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false, eclipse = false;
   
    public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, 
   							String fileName)  {
@@ -76,12 +77,18 @@ public class TomParser implements TomTask {
     includedFiles = alreadyParsedFiles;
   }
 
+  private void addError(TomTaskInput taskInput, String msg, String file, int line, int level) {
+  	TomError err = tsf().makeTomError_Error(msg,file,line,level);
+	taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
+  }
+  
   private void testIncludedFiles(String fileName) throws TomIncludeException {
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
-      System.out.println("Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...");
-      throw new TomIncludeException("Re-entering included file `"+fileName+" `forms a cycle. Breaking the parsing...");
+      String msg = "Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...";
+      System.out.println(msg);
+      throw new TomIncludeException(new Throwable(msg));
     }
   }
   
@@ -96,6 +103,7 @@ public class TomParser implements TomTask {
   	    debugMemory = input.isDebugMemory();
   	    pretty = input.isPretty();
   	    noWarning = input.isNoWarning();
+  	    eclipse = input.isEclipseMode();
   		long startChrono = 0;
   		boolean verbose = input.isVerbose(), intermediate = input.isIntermediate();
   		if(verbose) {
@@ -106,20 +114,28 @@ public class TomParser implements TomTask {
   			System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
   		}
         if(intermediate) {
-            Tools.generateOutput(input.inputFileName + input.parsedSuffix, parsedTerm);
-            Tools.generateOutput(input.inputFileName + input.parsedTableSuffix, symbolTable.toTerm());
+            Tools.generateOutput(input.baseInputFileName + input.parsedSuffix, parsedTerm);
+            Tools.generateOutput(input.baseInputFileName + input.parsedTableSuffix, symbolTable.toTerm());
         }
   		// Update taskInput
   		input.setTerm(parsedTerm);
   	} catch (TomIncludeException e) {
-  	  //System.out.println(e.getMessage());
+  	  if(eclipse) {
+  	  	addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+  	  }
+  	  System.out.println(e.getMessage());
   	  return;
   	} catch (TomException e) {
-  	  //System.out.println(e.getMessage());
+		if(eclipse) {
+  	  	addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+  	  }
   	  return;
   	} catch (ParseException e) {
-  	  System.out.println("Parsing exception catched in file `"+currentFile+"`");
-  	  System.out.println(e.getMessage());
+  	  String msg = "Parsing exception catched in file `"+currentFile+"`\n"+e.getMessage();
+  	  System.out.println(msg);
+	  if(eclipse) {
+  	  	addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+  	  }
   	  return;
   	} catch (Exception e) {
   	  System.out.println("Unhandled exception occurs during parsing.");
@@ -1199,12 +1215,14 @@ void IncludeConstruct(ArrayList list) throws TomException, TomIncludeException :
       astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
       list.add(astTom);
     } catch (FileNotFoundException e1) {
-      System.out.println("Included file `" + fullFileName + "` not found at line "+getLine()+" from file `"+currentFile+"`");
-      throw new TomException();
+      String msg = "Included file `" + fullFileName + "` not found at line "+getLine()+" from file `"+currentFile+"`";
+      System.out.println(msg);
+      throw new TomException(new Throwable(msg));
     }  catch (java.io.IOException e2) {
-      System.out.println("IOException occurs reading " + fullFileName + " at line "+getLine());
+      String msg = "IOException occurs reading " + fullFileName + " at line "+getLine();
+      System.out.println(msg);
       e2.printStackTrace();
-      throw new TomException();
+      throw new TomException(new Throwable(msg));
     }
    }
 }
@@ -1955,8 +1973,9 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
       nameArg = <TOM_IDENTIFIER>
        {
          if( !(nbTypes > 0) ) {
-         System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-           throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+           String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
+           System.out.println(msg);
+           throw new TomException(new Throwable(msg));
          }
          type = (TomType)types.elementAt(index++);
          name = tsf().makeTomName_Name(nameArg.image);  
@@ -1967,8 +1986,9 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
      ( <TOM_COMMA> nameArg = <TOM_IDENTIFIER>
         {
           if( index >= nbTypes ) {
-            System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-            throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+            String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
+            System.out.println(msg);
+            throw new TomException(new Throwable(msg));
           }
           type = (TomType)types.elementAt(index++);
           name = tsf().makeTomName_Name(nameArg.image); 
@@ -1980,8 +2000,9 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
       <TOM_RPAREN> ) ]
        {
          if (index<nbTypes) {
-           System.out.println("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-           throw new TomException("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+           String msg = "Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
+           System.out.println(msg);
+           throw new TomException(new Throwable(msg));
          }
        }
   tlCode = GoalLanguageBlock(blockList)

@@ -25,11 +25,18 @@
 
 package jtom.tools;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jtom.adt.TomErrorList;
 import jtom.adt.TomTerm;
 
 public class TomTaskInput {
   private TomTerm trm;
+  private TomErrorList errors;
+  private List importList;
   public String inputFileName = "",
+    baseInputFileName = "",
     outputFileName = "",
     outputSuffix    = ".java",
     parsedSuffix    = ".tfix.parsed",
@@ -39,6 +46,10 @@ public class TomTaskInput {
     parsedTableSuffix = ".tfix.parsed.table",
     expandedTableSuffix = ".tfix.expanded.table",
     debugTableSuffix = ".tfix.debug.table";
+  
+  public TomTaskInput() {
+		importList = new  ArrayList(); 
+  }
   
   private boolean needDebugExpansion = false, 
     verbose = false, // a verbose mode (Show duration for each phase)
@@ -63,11 +74,8 @@ public class TomTaskInput {
     staticFunction = false, // generate static functions
     debugMemory = false, // generate debug primitives
     pretty = false, // Synchronize TL code and source code
-    atermStat = false; // Shows aterm statistics
-  
-    //public static boolean doOptimization = false; // optimize generated code
-  public TomTaskInput() {
-  }
+    atermStat = false, // Shows aterm statistics
+    eclipseMode = false; // Eclipse mode for error management
   
   public void setTerm(TomTerm trm) {
   	this.trm = trm;
@@ -292,6 +300,30 @@ public boolean isAtermStat() {
 
 public void setAtermStat(boolean b) {
 	atermStat = b;
+}
+
+public boolean isEclipseMode() {
+	return eclipseMode;
+}
+
+public TomErrorList getErrors() {
+	return errors;
+}
+
+public void setEclipseMode(boolean b) {
+	eclipseMode = b;
+}
+
+public void setErrors(TomErrorList list) {
+	errors = list;
+}
+
+public List getImportList() {
+	return importList;
+}
+
+public void setImportList(List list) {
+	importList = list;
 }
 
 } // class TomTaskInput

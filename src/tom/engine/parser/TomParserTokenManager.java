@@ -31,6 +31,7 @@ import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
 import java.lang.reflect.Constructor;
+import java.lang.Throwable;
 
 public class TomParserTokenManager implements TomParserConstants
 {

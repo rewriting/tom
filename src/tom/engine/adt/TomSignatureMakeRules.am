@@ -165,6 +165,8 @@ TomEntry.java TomEntryImpl.java\
 TomEntry_EntryImpl.java TomEntry_Entry.java\
 TomStructureTable.java TomStructureTableImpl.java\
 TomStructureTable_StructTableImpl.java TomStructureTable_StructTable.java\
+TomError.java TomErrorImpl.java\
+TomError_ErrorImpl.java TomError_Error.java\
 XMLTerm.java XMLTermImpl.java\
 XMLTerm_ElementImpl.java XMLTerm_Element.java\
 XMLTerm_AttributeImpl.java XMLTerm_Attribute.java\
@@ -177,7 +179,8 @@ TomRuleList.java TomRuleListImpl.java\
 TomTypeList.java TomTypeListImpl.java\
 OptionList.java OptionListImpl.java\
 SlotList.java SlotListImpl.java\
-TomEntryList.java TomEntryListImpl.java
+TomEntryList.java TomEntryListImpl.java\
+TomErrorList.java TomErrorListImpl.java
 
 TomSignatureAPI=\
 TomSignatureFactory.java TomSignatureConstructor.java\

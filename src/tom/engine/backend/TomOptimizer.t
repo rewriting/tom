@@ -72,7 +72,7 @@ public class TomOptimizer extends TomBase implements TomTask {
 		System.out.println("TOM optimization phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  } 
       if(intermediate) {
-          Tools.generateOutput(input.inputFileName + input.optimizedSuffix, optimizedTerm);
+          Tools.generateOutput(input.baseInputFileName + input.optimizedSuffix, optimizedTerm);
 	  }
 	  input.setTerm(optimizedTerm);
     } catch (Exception e) {

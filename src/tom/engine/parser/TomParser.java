@@ -32,6 +32,7 @@ import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
 import java.lang.reflect.Constructor;
+import java.lang.Throwable;
 
 public class TomParser implements TomTask, TomParserConstants {
 
@@ -49,7 +50,7 @@ public class TomParser implements TomTask, TomParserConstants {
   private ArrayList debuggedStructureList;
   private String text="";
   private TomTask nextTask;
-  private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
+  private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false, eclipse = false;
 
    public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet,
                                                         String fileName)  {
@@ -71,12 +72,18 @@ public class TomParser implements TomTask, TomParserConstants {
     includedFiles = alreadyParsedFiles;
   }
 
+  private void addError(TomTaskInput taskInput, String msg, String file, int line, int level) {
+        TomError err = tsf().makeTomError_Error(msg,file,line,level);
+        taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
+  }
+
   private void testIncludedFiles(String fileName) throws TomIncludeException {
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
-      System.out.println("Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...");
-      throw new TomIncludeException("Re-entering included file `"+fileName+" `forms a cycle. Breaking the parsing...");
+      String msg = "Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...";
+      System.out.println(msg);
+      throw new TomIncludeException(new Throwable(msg));
     }
   }
 
@@ -91,6 +98,7 @@ public class TomParser implements TomTask, TomParserConstants {
             debugMemory = input.isDebugMemory();
             pretty = input.isPretty();
             noWarning = input.isNoWarning();
+            eclipse = input.isEclipseMode();
                 long startChrono = 0;
                 boolean verbose = input.isVerbose(), intermediate = input.isIntermediate();
                 if(verbose) {
@@ -101,20 +109,28 @@ public class TomParser implements TomTask, TomParserConstants {
                         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
                 }
         if(intermediate) {
-            Tools.generateOutput(input.inputFileName + input.parsedSuffix, parsedTerm);
-            Tools.generateOutput(input.inputFileName + input.parsedTableSuffix, symbolTable.toTerm());
+            Tools.generateOutput(input.baseInputFileName + input.parsedSuffix, parsedTerm);
+            Tools.generateOutput(input.baseInputFileName + input.parsedTableSuffix, symbolTable.toTerm());
         }
                 // Update taskInput
                 input.setTerm(parsedTerm);
         } catch (TomIncludeException e) {
-          //System.out.println(e.getMessage());
+          if(eclipse) {
+                addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+          }
+          System.out.println(e.getMessage());
           return;
         } catch (TomException e) {
-          //System.out.println(e.getMessage());
+                if(eclipse) {
+                addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+          }
           return;
         } catch (ParseException e) {
-          System.out.println("Parsing exception catched in file `"+currentFile+"`");
-          System.out.println(e.getMessage());
+          String msg = "Parsing exception catched in file `"+currentFile+"`\n"+e.getMessage();
+          System.out.println(msg);
+          if(eclipse) {
+                addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+          }
           return;
         } catch (Exception e) {
           System.out.println("Unhandled exception occurs during parsing.");
@@ -1148,12 +1164,14 @@ public class TomParser implements TomTask, TomParserConstants {
       astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
       list.add(astTom);
     } catch (FileNotFoundException e1) {
-      System.out.println("Included file `" + fullFileName + "` not found at line "+getLine()+" from file `"+currentFile+"`");
-      {if (true) throw new TomException();}
+      String msg = "Included file `" + fullFileName + "` not found at line "+getLine()+" from file `"+currentFile+"`";
+      System.out.println(msg);
+      {if (true) throw new TomException(new Throwable(msg));}
     }  catch (java.io.IOException e2) {
-      System.out.println("IOException occurs reading " + fullFileName + " at line "+getLine());
+      String msg = "IOException occurs reading " + fullFileName + " at line "+getLine();
+      System.out.println(msg);
       e2.printStackTrace();
-      {if (true) throw new TomException();}
+      {if (true) throw new TomException(new Throwable(msg));}
     }
   }
 
@@ -2094,8 +2112,9 @@ public class TomParser implements TomTask, TomParserConstants {
           jj_consume_token(TOM_LPAREN);
           nameArg = jj_consume_token(TOM_IDENTIFIER);
          if( !(nbTypes > 0) ) {
-         System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-           {if (true) throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");}
+           String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
+           System.out.println(msg);
+           {if (true) throw new TomException(new Throwable(msg));}
          }
          type = (TomType)types.elementAt(index++);
          name = tsf().makeTomName_Name(nameArg.image);
@@ -2115,8 +2134,9 @@ public class TomParser implements TomTask, TomParserConstants {
             jj_consume_token(TOM_COMMA);
             nameArg = jj_consume_token(TOM_IDENTIFIER);
           if( index >= nbTypes ) {
-            System.out.println("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-            {if (true) throw new TomException("Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");}
+            String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
+            System.out.println(msg);
+            {if (true) throw new TomException(new Throwable(msg));}
           }
           type = (TomType)types.elementAt(index++);
           name = tsf().makeTomName_Name(nameArg.image);
@@ -2138,8 +2158,9 @@ public class TomParser implements TomTask, TomParserConstants {
       ;
     }
          if (index<nbTypes) {
-           System.out.println("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-           {if (true) throw new TomException("Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");}
+           String msg = "Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
+           System.out.println(msg);
+           {if (true) throw new TomException(new Throwable(msg));}
          }
     tlCode = GoalLanguageBlock(blockList);
      {if (true) return ast().makeMakeDecl(opname,returnType,args,tlCode, orgTrack);}
@@ -2301,47 +2322,6 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(8, xla); }
   }
 
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_STAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_23() {
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_9() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_7() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3_4() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_AT)) return true;
@@ -2360,6 +2340,47 @@ public class TomParser implements TomTask, TomParserConstants {
   final private boolean jj_3_5() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_AT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_8() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_STAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_23() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_9() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 

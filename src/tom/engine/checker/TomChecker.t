@@ -53,6 +53,7 @@ import jtom.runtime.Collect1;
 import jtom.tools.TomTask;
 import aterm.ATerm;
 import jtom.TomEnvironment;
+import jtom.tools.TomTaskInput;
 
 abstract class TomChecker extends TomBase implements TomTask {
   
@@ -63,6 +64,7 @@ abstract class TomChecker extends TomBase implements TomTask {
   private List errorMessage = new ArrayList();
   protected TomTask nextTask;
   protected boolean strictType = false, warningAll = false, noWarning = false;
+  TomTaskInput input;
   
   public TomChecker(TomEnvironment environment) { 
     super(environment);
@@ -1110,6 +1112,7 @@ abstract class TomChecker extends TomBase implements TomTask {
   private void messageError(int line, String msg) {
     String s = "\n"+msg+"\n-- Error occured at line: " + line +" in file: "+currentTomStructureOrgTrack.getFileName().getString()+"\n";
     errorMessage.add(s);
+    addError(input, msg, currentTomStructureOrgTrack.getFileName().getString(), line, 0);
   }
   
     // findOriginTrackingLine(_,_) method returns the line (stocked in optionList)  of object 'name'.

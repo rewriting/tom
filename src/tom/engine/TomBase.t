@@ -600,4 +600,9 @@ public class TomBase {
     System.out.println("findOriginTracking:  not found"+optionList);
     System.exit(1);return null;
   }
+   
+  protected void addError(TomTaskInput taskInput, String msg, String file, int line, int level) {
+  	TomError err = tsf().makeTomError_Error(msg,file,line,level);
+	taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
+  }
 }

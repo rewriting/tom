@@ -28,10 +28,6 @@ package jtom.parser;
 import java.util.*;
 import jtom.TomBase;
 import jtom.adt.*;
-import jtom.runtime.Replace1;
-import jtom.tools.TomTask;
-import jtom.tools.TomTaskInput;
-import jtom.tools.Tools;
 import aterm.*;
 
 public class TomBackQuoteParser extends TomBase implements TomParserConstants {

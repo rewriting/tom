@@ -140,7 +140,7 @@ constructor(PairNameDecl,Slot,Slot(<slotName(TomName)>,<slotDecl(Declaration)>))
 constructor(TomSymbolTable,Table,Table(<entryList(TomEntryList)>)),
 constructor(TomEntry,Entry,Entry(<strName(str)>,<astSymbol(TomSymbol)>)),
 constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>)),
-
+constructor(TomError,Error,Error(<message(str)>,<file(str)>,<line(int)>,<level(int)>)),
 
 constructor(TomTerm,MatchXML,MatchXML(<docName(str)>,<patternList(TomTerm)>,<option(Option)>)),
 constructor(TomTerm,BackQuoteXML,BackQuoteXML(<xmlTerm(XMLTerm)>,<option(Option)>)),
@@ -160,6 +160,7 @@ list(TomRuleList,TomRule),
 list(TomTypeList,TomType),
 list(OptionList,Option),
 list(SlotList,PairNameDecl),
-list(TomEntryList, TomEntry)
+list(TomEntryList, TomEntry),
+list(TomErrorList, TomError)
 
 ]

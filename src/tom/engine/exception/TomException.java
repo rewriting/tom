@@ -26,7 +26,12 @@
 package jtom.exception;
 
 public class TomException extends Exception {
-  protected String msg="no message";
+  
+	public TomException(Throwable t) {
+		super(t);
+	}
+
+	protected String msg="no message";
 
   public TomException() {
   }
