@@ -40,11 +40,11 @@
     description=""
     classpath="jtom.optimizer.TomOptimizer" />
 
-  <plugin
+<!--  <plugin
     name="Verifier"
     version=""
     description=""
-    classpath="jtom.verifier.TomVerifier" />
+    classpath="jtom.verifier.TomVerifier" />-->
 
   <plugin
     name="Backend"
