@@ -174,6 +174,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      GreaterThan(exp1,exp2) -> {
+        buildExpGreaterThan(deep, `exp1, `exp2);
+        return;
+      }
+
       TrueTL() -> {
         buildExpTrue(deep);
         return;
@@ -699,6 +704,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildCompiledMatch(int deep, Instruction instruction) throws IOException;
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException;
+  protected abstract void buildExpGreaterThan(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
   protected abstract void buildExpEmptyList(int deep, TomType type, TomTerm expList) throws IOException;

@@ -7,6 +7,7 @@
   constructor(Expression,Not,Not(<arg(Expression)>)),
   constructor(Expression,And,And(<arg1(Expression)>,<arg2(Expression)>)),
   constructor(Expression,Or,Or(<arg1(Expression)>,<arg2(Expression)>)),
+  constructor(Expression,GreaterThan,GreaterThan(<arg1(Expression)>,<arg2(Expression)>)),
   constructor(Expression,TrueTL,TrueTL),
   constructor(Expression,FalseTL,FalseTL),
   constructor(Expression,IsEmptyList,IsEmptyList(<kid1(TomTerm)>)),

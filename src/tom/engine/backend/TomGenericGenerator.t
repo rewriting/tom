@@ -131,6 +131,13 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
     output.write(" || ");
     generateExpression(deep,exp2);
   }
+
+  protected void buildExpGreaterThan(int deep, Expression exp1, Expression exp2) throws IOException {
+    generateExpression(deep,exp1);
+    output.write(" > ");
+    generateExpression(deep,exp2);
+  }
+
   protected void buildExpEmptyList(int deep, TomType type, TomTerm expList) throws IOException {
     output.write("tom_is_empty_" + getTomType(type) + "(");
     generate(deep,expList);
