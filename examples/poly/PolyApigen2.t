@@ -36,6 +36,7 @@ import poly.expression.types.*;
 
 public class PolyApigen2 {
   private Factory factory;
+
   public PolyApigen2(Factory factory) {
     this.factory = factory;
   }

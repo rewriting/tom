@@ -30,21 +30,24 @@
 package poly;
 
 import aterm.*;
-import aterm.pure.*;
-//import jjtraveler.*;
+import aterm.pure.PureFactory;
+import poly.expression.*;
+import poly.expression.types.*;
+public class PolyTraveler1 {
 
-public class PolyTraveler {
-    
-  private ATermFactory factory;
+  private Factory factory;
 
-  public PolyTraveler(ATermFactory factory) {
+  public PolyTraveler1(Factory factory) {
     this.factory = factory;
   }
+  public Factory getExpressionFactory() {
+    return factory;
+  }
 
-  %include { Poly.signature }
-  
+  %include { expression.tom }
+    
   public void run() {
-    ATermAppl t    = `mult(X(),plus(X(),a()));
+    Expression t    = `mult(variable("x"),plus(variable("x"),constant("a")));
     jjtraveler.Visitor v = new SimplifyPlus();
     //v.setTerm(t);
     jjtraveler.Visitor bu = new jjtraveler.BottomUp(v);
@@ -58,7 +61,7 @@ public class PolyTraveler {
   }
   
   public final static void main(String[] args) {
-    PolyTraveler test = new  PolyTraveler(new PureFactory());
+    PolyTraveler1 test = new PolyTraveler1(Factory.getInstance(new PureFactory()));
     test.run();
   }
 
@@ -100,10 +103,6 @@ public class PolyTraveler {
     }
   */
 
-
-
-}
-
   class SimplifyPlus extends poly.expression.Fwd {
     private ATerm term;
     public void setTerm(ATerm t) {
@@ -118,10 +117,19 @@ public class PolyTraveler {
       super(new jjtraveler.Identity());
     }
 
-    public void visit_Expression_Plus(poly.expression.types.expression.Plus plus) {
-      System.out.println("plus = " + plus);
+    public void visit_Expression_Plus(poly.expression.types.expression.Plus arg) { //throws jjtraveler.VisitFailure {
+      System.out.println("plus = " + arg);
     }
+
+    public void visit_Expression_Zero(poly.expression.types.expression.Zero arg) { 
+      System.out.println("zero = " + arg);
+    }
+
   }
+
+
+}
+
 
 
 
