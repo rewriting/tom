@@ -5,7 +5,7 @@ options {
 	k = 1;
 }
 
-seq: list_pred (SEQ^ list_pred)* END!
+seq: list_pred SEQ^ list_pred END!
 ;
 
 list_pred: pred (LIST^ pred)*
@@ -42,19 +42,21 @@ WS  : (' '
 ;
 
 LPAREN	: '(' ;
-RPAREN	: ')' ;
-SEQ			: "|-";
+RPAREN: ')' ;
+SEQ		: "|-";
 IMPL		: "=>"
 				| "|=>"
 				;
-OR			: "or";
-AND			: "&&";
+OR			: "or"
+				| "\\/";
+AND		: "&&"
+				| "/\\";
 LIST		: ':' ;
-NOT			: '!' 
+NOT		: '!' 
 				| '^'
 				| '~'
 				;
-END			: ';' ;
+END		: ';' ;
 
 
 //protected

@@ -201,7 +201,7 @@ public class Propp {
 					//}}}
 
 					//{{{ conjd
-					seq(concPred(R*),concPred(X*,vee(Y,Z),S*)) -> {
+					seq(concPred(R*),concPred(X*,wedge(Y,Z),S*)) -> {
 						match = true;
 						Sequent prod = `seq(concPred(R*),concPred(X*,Y,S*));
 						c.add(prod);
@@ -322,12 +322,24 @@ public class Propp {
 
 	//{{{ public String listPredToTex(ListPred l)
 	public String listPredToTex(ListPred l) {
-		String latex = "";
-		while(!l.isEmpty()) {
-			latex += " , " + predToTex(l.getHead());
-			l = l.getTail();
+		%match(ListPred l) {
+			concPred()     -> {return "";}
+			concPred(a)    -> {return predToTex(a);}
+			concPred(h,t*) -> {return predToTex(h) + " , " + listPredToTex(t);}
 		}
-		return latex;
+		return "";
+		/*
+			 String latex = "";
+			 if (!l.isEmpty()) {
+			 latex += predToTex(l.getHead());
+			 l = l.getTail();
+			 }
+			 while(!l.isEmpty()) {
+			 latex += " , " + predToTex(l.getHead());
+			 l = l.getTail();
+			 }
+			 return latex;
+		 */
 	}
 	//}}}
 

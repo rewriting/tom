@@ -1,8 +1,11 @@
 (A |=> (B |=> C)) && ^((A && B) |=> C) |- EmptyP ;
 # vrai
 
+(A |=> (B |=> C)) && (A && B) && ^(C) |- EmptyP;
+# vrai
+
 (A |=> (B |=> C)) : ^(A && B) |=> C |- EmptyP;
-# faux
+# vrai
 
 (^(B) => ^(A)) |- (C => A) => (C => B);
 # vrai
@@ -15,9 +18,6 @@ EmptyP |- A && (A |=> C) |=> B;
 
 (^P or ^Q) && ((^P or ^Q) |=> (B |=> C)) && B && (^P or ^Q) && ((^P or ^Q) |=> (B |=> D)) && B |- C && D |=> E;
 #faux
-
-(A |=> (B |=> C)) && (A && B) && ^(C) |- EmptyP;
-# vrai
 
 (( (A |=> (B && C)) && ((B && C) |=> A)) && ((B |=> ^(C)) && (^(C) |=> B)) &&  A) |- EmptyP;
 # vrai

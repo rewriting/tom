@@ -119,7 +119,7 @@ public class RecPropp extends Propp {
 			//}}}
 
 			//{{{ conjd
-			seq(concPred(R*),concPred(X*,vee(Y,Z),S*)) -> {
+			seq(concPred(R*),concPred(X*,wedge(Y,Z),S*)) -> {
 				Sequent s1 = `seq(concPred(R*),concPred(X*,Y,S*));
 				Sequent s2 = `seq(concPred(R*),concPred(X*,Z,S*));
 				ListSequent l1 = Step(s1);	
