@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+"""
+This script can be user as an output filter for ./build.sh
+to be used from within emacs or vim, to report errors in the correct file
+"""
+
+import fileinput
+import re
+import os.path
+
+def buildTomFileName(filename):
+	seekgen = re.compile(r"""(gen\/)""")
+	seekext = re.compile(r"""(\.java$)""")
+	tomfile = seekgen.sub('',filename)
+	tomfile = seekext.sub('.t',tomfile)
+	return tomfile
+
+seekFileName=re.compile(r"""(?P<file>((\/\b\w+)+)(\.java)):""",re.IGNORECASE)
+
+for line in fileinput.input():
+	newline = line
+	m = seekFileName.search(line)
+	if (m):
+		filename = m.group("file")
+		tomfile = buildTomFileName(filename)
+		print tomfile
+		if os.path.isfile(tomfile):
+			newline = seekFileName.sub(tomfile+':',line)
+	print newline
