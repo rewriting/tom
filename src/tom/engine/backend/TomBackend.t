@@ -54,41 +54,50 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 		try
 		    {
 			long startChrono = System.currentTimeMillis();
-			TomOptionList list = `concTomOption(myOptions*);
-			boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+			//TomOptionList list = `concTomOption(myOptions*);
+			boolean verbose = getServer().getOptionBooleanValue("verbose");
 			
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
 			
 			OutputCode output = new OutputCode(writer, defaultDeep);
 			
-			while(!(list.isEmpty()))
-			    {
-				TomOption h = list.getHead();
-				%match(TomOption h)
-				    {
-					OptionBoolean[name="jCode", valueB=True()] -> 
-					    { 
-						generator = new TomJavaGenerator(output);
-						break;
-					    }
-					OptionBoolean[name="cCode", valueB=True()] -> 
-					    { 
-						generator = new TomCGenerator(output);
-						break;
-					    }
-					OptionBoolean[name="eCode", valueB=True()] -> 
-					    { 
-						generator = new TomEiffelGenerator(output);
-						break;
-					    }
-					OptionBoolean[name="camlCode", valueB=True()] -> 
-					    { 
-						generator = new TomCamlGenerator(output);
-						break;
-					    }
-				    }
-				list = list.getTail();
-			    }
+			if( getServer().getOptionBooleanValue("jCode") )
+			    generator = new TomJavaGenerator(output);
+			else if( getServer().getOptionBooleanValue("cCode") )
+			    generator = new TomCGenerator(output);
+			else if( getServer().getOptionBooleanValue("eCode") )
+			    generator = new TomEiffelGenerator(output);
+			else if( getServer().getOptionBooleanValue("camlCode") )
+			    generator = new TomCamlGenerator(output);
+
+// 			while(!(list.isEmpty()))
+// 			    {
+// 				TomOption h = list.getHead();
+// 				%match(TomOption h)
+// 				    {
+// 					OptionBoolean[name="jCode", valueB=True()] -> 
+// 					    { 
+// 						generator = new TomJavaGenerator(output);
+// 						break;
+// 					    }
+// 					OptionBoolean[name="cCode", valueB=True()] -> 
+// 					    { 
+// 						generator = new TomCGenerator(output);
+// 						break;
+// 					    }
+// 					OptionBoolean[name="eCode", valueB=True()] -> 
+// 					    { 
+// 						generator = new TomEiffelGenerator(output);
+// 						break;
+// 					    }
+// 					OptionBoolean[name="camlCode", valueB=True()] -> 
+// 					    { 
+// 						generator = new TomCamlGenerator(output);
+// 						break;
+// 					    }
+// 				    }
+// 				list = list.getTail();
+// 			    }
 			
 			generator.generate(defaultDeep, term);
 			
@@ -112,7 +121,7 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 	    }
 	else // backend desactivated
 	    {
-		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+		boolean verbose = getServer().getOptionBooleanValue("verbose");
 		
 		if(verbose)
 		    {
@@ -132,85 +141,50 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 // 	return `emptyTomOptionList();
 //     }
 
-    public void setOption(String optionName, String optionValue)
-    {
- 	%match(TomOptionList myOptions)
- 	    {
-		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			{			    
-			    %match(String optionValue)
-				{
-				    ('true') ->
-					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-				    ('false') ->
-					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-				}
+  public void setOption(String optionName, String optionValue) {
+    String type = getServer().getOptionsType(optionName);
+    if( type == "boolean")
+      putOptionValue(optionName, new Boolean(optionValue));
+    else if( type == "integer")
+      putOptionValue(optionName, new Integer(optionValue));
+    else if( type == "string")
+      putOptionValue(optionName, optionValue);
 
-			    if(optionValue.equals("true")) // no more than 1 type of code can be activated at a time
-				{
-				    if(n.equals("jCode"))
-					{ 
-					    //System.out.println("Java code activated, other codes desactivated");
-					    setOption("cCode","false");
-					    setOption("eCode","false");
-					    setOption("camlCode","false"); 
-					}
-				    else if(n.equals("cCode"))
-					{ 
-					    //System.out.println("C code activated, other codes desactivated");
-					    setOption("jCode","false");
-					    setOption("eCode","false");
-					    setOption("camlCode","false"); 
-					}
-				    else if(n.equals("eCode"))
-					{ 
-					    //System.out.println("Eiffel code activated, other codes desactivated");
-					    setOption("jCode","false");
-					    setOption("cCode","false");
-					    setOption("camlCode","false"); 
-					}
-				    else if(n.equals("camlCode"))
-					{ 
-					    //System.out.println("Caml code activated, other codes desactivated");
-					    setOption("jCode","false");
-					    setOption("cCode","false");
-					    setOption("eCode","false"); 
-					}
-				}
-			}
+    if(optionValue.equals("true")) // no more than 1 type of code can be activated at a time
+	{
+	    if( optionName.equals("jCode") || optionName.equals("j") )
+		{ 
+		    //System.out.println("Java code activated, other codes desactivated");
+		    putOptionValue("cCode", Boolean.FALSE);
+		    putOptionValue("eCode", Boolean.FALSE);
+		    putOptionValue("camlCode", Boolean.FALSE); 
 		}
-		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+	    else if( optionName.equals("cCode") || optionName.equals("c") )
+		{ 
+		    //System.out.println("C code activated, other codes desactivated");
+		    putOptionValue("jCode", Boolean.FALSE);
+		    putOptionValue("eCode", Boolean.FALSE);
+		    putOptionValue("camlCode", Boolean.FALSE); 
 		}
-		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+	    else if( optionName.equals("eCode") || optionName.equals("e") )
+		{ 
+		    //System.out.println("Eiffel code activated, other codes desactivated");
+		    putOptionValue("jCode", Boolean.FALSE);
+		    putOptionValue("cCode", Boolean.FALSE);
+		    putOptionValue("camlCode", Boolean.FALSE); 
 		}
-	    }
+	    else if( optionName.equals("camlCode") )
+		{ 
+		    //System.out.println("Caml code activated, other codes desactivated");
+		    putOptionValue("jCode", Boolean.FALSE);
+		    putOptionValue("cCode", Boolean.FALSE);
+		    putOptionValue("eCode", Boolean.FALSE); 
+		}
+	}
     }
 
 
   private boolean isActivated() {
-    TomOptionList list = `concTomOption(myOptions*);
-	
-    while(!(list.isEmpty()))
-	    {
-        TomOption h = list.getHead();
-        %match(TomOption h)
-		    {
-          OptionBoolean[name="noOutput", valueB=True()] -> 
-			    { 
-            return false;
-			    }
-          OptionBoolean[name="noOutput", valueB=False()] -> 
-			    { 
-            return true;
-			    }
-		    }
-        list = list.getTail();
-	    }
-    return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
+    return !getServer().getOptionBooleanValue("noOutput");
   }
 }

@@ -93,26 +93,12 @@ public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
    * @param optionValue the option's value
    */
   public void setOption(String optionName, String optionValue) {
-    TomOptionList subject = declaredOptions();
-    %match(TomOptionList subject) {
-      concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*) -> { 
-        if(n.equals(optionName)||alt.equals(optionName)) {
-          %match(String optionValue) {
-            ('true') -> { myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-            ('false') -> { myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-          }
-        }
-      }
-      concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*) -> { 
-        if(n.equals(optionName)||alt.equals(optionName)) {
-          myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-        }
-      }
-      concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*) -> { 
-        if(n.equals(optionName)||alt.equals(optionName)) {
-          myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-        }
-      }
-    }
+    String type = getServer().getOptionsType(optionName);
+    if( type == "boolean")
+	putOptionValue(optionName, new Boolean(optionValue));
+    else if( type == "integer")
+	putOptionValue(optionName, new Integer(optionValue));
+    else if( type == "string")
+	putOptionValue(optionName, optionValue);
   }
 }

@@ -129,29 +129,9 @@ public class TomVerifier extends TomGenericPlugin //Base implements TomPlugin
 // 	    }
 //     }
 
-    private boolean isActivated()
-    {
-	TomOptionList list = `concTomOption(myOptions*);
-	
-	while(!(list.isEmpty()))
-	    {
-		TomOption h = list.getHead();
-		%match(TomOption h)
-		    {
-			OptionBoolean[name="verify", valueB=val] -> 
-			    { 
-				%match(TomBoolean val)
-				    {
-					True() -> { return true; }
-					False() -> { return false; }
-				    }
-			    }
-		    }
-		
-		list = list.getTail();
-	    }
-	return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
-    }
+  private boolean isActivated() {
+    return getServer().getOptionBooleanValue("verify");
+  }
 
     private Collect2 collect_match = new Collect2() {
 	    public boolean apply(ATerm subject, Object astore) {

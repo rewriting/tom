@@ -61,6 +61,10 @@ public class TomBase {
 			return TomServer.getInstance();
     }
 
+  public void putOptionValue(Object key, Object value) {
+      getServer().putOptionValue(key, value);
+  }
+
     protected OptionsFactory getOptionsFactory() {
 			return getServer().getOptionsFactory();
     }

@@ -59,6 +59,11 @@ public class TomServer implements TomPluginOptions {
    * A Map allowing to match option names and their values
    */
   private Map optionValues;
+
+  /**
+   * An option can have up to two different names ; this map allows us to find synonyms.
+   */
+  private Map synonyms;
 	
   /**
    * 
@@ -160,6 +165,7 @@ public class TomServer implements TomPluginOptions {
 	instance.optionOwners = new HashMap();
 	instance.optionTypes = new HashMap();
 	instance.optionValues = new HashMap();
+	instance.synonyms = new HashMap();
 
         instance.tNodeFactory = new TNodeFactory(new PureFactory());
         instance.optionsFactory = new OptionsFactory(new PureFactory());
@@ -185,6 +191,7 @@ public class TomServer implements TomPluginOptions {
     instance.optionOwners = new HashMap();
     instance.optionTypes = new HashMap();
     instance.optionValues = new HashMap();
+    instance.synonyms = new HashMap();
     SymbolTable symbolTable = new SymbolTable(instance.astFactory);
     instance.environment = new TomEnvironment(symbolTable);
   }
@@ -321,33 +328,45 @@ public class TomServer implements TomPluginOptions {
 	  TomOption option = list.getHead();
 	  
 	  %match(TomOption option) {
-	      OptionBoolean[name=n, altName=an] 
+	      OptionBoolean[name=n, altName=an, valueB=v] 
 		  -> {
 		  optionOwners.put(n, plugin);
 		  optionTypes.put(n,"boolean");
+		  optionValues.put(n, new Boolean(v.isTrue()));
 		  if( an.length() > 0 ) {
 		      optionOwners.put(an, plugin);
 		      optionTypes.put(an,"boolean");
+		      optionValues.put(an, new Boolean(v.isTrue()));
+		      synonyms.put(n,an);
+		      synonyms.put(an,n);
 		  }
 	      }
 
-	      OptionInteger[name=n, altName=an] 
+	      OptionInteger[name=n, altName=an, valueI=v] 
 		  -> {
 		  optionOwners.put(n, plugin);
 		  optionTypes.put(n,"integer");
+		  optionValues.put(n, new Integer(v));
 		  if( an.length() > 0 ) {
 		      optionOwners.put(an, plugin);
 		      optionTypes.put(an,"integer");
+		      optionValues.put(an, new Integer(v));
+		      synonyms.put(n,an);
+		      synonyms.put(an,n);
 		  }
 	      }
 
-	      OptionString[name=n, altName=an] 
+	      OptionString[name=n, altName=an, valueS=v] 
 		  -> {
 		  optionOwners.put(n, plugin);
 		  optionTypes.put(n,"string");
+		  optionValues.put(n, v);
 		  if( an.length() > 0 ) {
 		      optionOwners.put(an, plugin);
 		      optionTypes.put(an,"string");
+		      optionValues.put(an, v);
+		      synonyms.put(n,an);
+		      synonyms.put(an,n);
 		  }
 	      }
 	  }
@@ -358,48 +377,6 @@ public class TomServer implements TomPluginOptions {
 
     // set options accordingly to the arguments given in input
     String[] inputFiles = processArguments(argumentList);
-
-    // regenerates the options/services now that the proper values have been set
-    it = instances.iterator();
-    while(it.hasNext()) {
-      TomPluginOptions plugin = (TomPluginOptions)it.next();
-      
-      TomOptionList list = plugin.declaredOptions();
-      
-      while(!(list.isEmpty())) {
-	  TomOption option = list.getHead();
-	  
-	  %match(TomOption option) {
-	      OptionBoolean[name=n, altName=an, valueB=v] 
-		  -> {
-		  Boolean bool = new Boolean(false); // compulsory initialization
-		  %match(TomBoolean v) {
-		      True() -> { bool = new Boolean(true); }
-		      False() -> { bool = new Boolean(false); }
-		  }
-		  optionValues.put(n, bool);
-		  if( an.length() > 0 )
-		      optionValues.put(an, bool);
-	      }
-
-	      OptionInteger[name=n, altName=an, valueI=v] 
-		  -> {
-		  optionValues.put(n, new Integer(v));
-		  if( an.length() > 0 )
-		      optionValues.put(an, new Integer(v));
-	      }
-
-	      OptionString[name=n, altName=an, valueS=v] 
-		  -> {
-		  optionValues.put(n, v);
-		  if( an.length() > 0 )
-		      optionValues.put(an, v);
-	      }
-	  }
-
-	  list = list.getTail();
-      }
-    }
 
     environment.initInputFromArgs(); // is here because options need to be set to the right value before
 
@@ -659,6 +636,16 @@ public class TomServer implements TomPluginOptions {
     }
   }
 
+  public void putOptionValue(Object key, Object value) {
+    Object replaced = optionValues.put(key, value);
+    //System.out.println("Replaced " +replaced+ " by " +value+ " (" +key+ ")");
+    Object synonym = synonyms.get(key);
+    if( synonym != null ) { // if a synonym exists
+      replaced = optionValues.put(synonym, value);
+      //System.out.println("Replaced " +replaced+ " by " +value+ " (" +synonym+ ")");
+    }
+  }
+
   /**
    * Self-explanatory. Displays the current version of the TOM compiler.
    */
@@ -835,31 +822,14 @@ public class TomServer implements TomPluginOptions {
    * @param optionName the option's name
    * @param optionValue the option's desired value
    */
-  public void setOption(String optionName, String optionValue)
-  {
-    %match(TomOptionList globalOptions)
-    {
-      concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-          {
-            %match(String optionValue)
-            {
-              ('true') ->
-              { globalOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-              ('false') ->
-              { globalOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-            }
-          }
-      }
-      concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-          globalOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-      }
-      concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-          globalOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-      }
-    }
+  public void setOption(String optionName, String optionValue) {
+    String type = getOptionsType(optionName);
+    if( type == "boolean")
+	putOptionValue(optionName, new Boolean(optionValue));
+    else if( type == "integer")
+	putOptionValue(optionName, new Integer(optionValue));
+    else if( type == "string")
+	putOptionValue(optionName, optionValue);
   }
 
   /**
