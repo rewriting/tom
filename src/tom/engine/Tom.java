@@ -208,7 +208,20 @@ public class Tom {
           generateOutput(fileName + parsedTableSuffix,symbolTable.toTerm());
         }
         
-        TomVerifier  tomVerifier = new TomVerifier(environment);        
+        TomVerifier  tomVerifier = new TomVerifier(environment);
+        startChrono();
+        try {
+          tomVerifier.verify(parsedTerm);
+          tomParser.updateSymbol();
+        }
+        catch (TomException e) {
+          System.out.println("TomVerifier catch:" + e);
+          System.exit(1);
+        }
+        stopChrono();
+        if(Flags.verbose) System.out.println("TOM verification phase " + getChrono());
+
+        
 	TomChecker tomChecker = new TomChecker(environment,tomVerifier);
         startChrono();
         expandedTerm = tomChecker.expand(parsedTerm);
@@ -217,20 +230,7 @@ public class Tom {
         if(Flags.intermediate) {
           generateOutput(fileName + expandedSuffix,expandedTerm);
         }
-
-        startChrono();
-        try {
-          tomVerifier.verify(expandedTerm);
-          tomParser.updateSymbol();
-        }
-        catch (TomException e) {
-          System.out.println("TomVerifier catch:" + e);
-          System.exit(1);
-        }
-        
-        stopChrono();
-        if(Flags.verbose) System.out.println("TOM verification phase " + getChrono());
-        
+     
         startChrono();
         TomTerm context = null;
         tomChecker.updateSymbolPass1();

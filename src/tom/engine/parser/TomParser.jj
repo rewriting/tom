@@ -428,6 +428,7 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   <MATCH> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
+      Option orgTrack = ast().makeOriginTracking("Match",getLine());
     }
 
   <TOM_LPAREN> MatchArguments(matchArgumentsList) <TOM_RPAREN>
@@ -435,10 +436,8 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   <TOM_LBRACE> ( PatternAction(patternActionList) )* <TOM_RBRACE> /* we are in TOM mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      Option info = ast().makeOriginTracking("Match",getLine());
-      Option option = ast().makeOption(info);
       list.add(tsf().makeTomTerm_Match(
-                 option,
+                 orgTrack,
                  tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
                  tsf().makeTomTerm_PatternList( ast().makeList(patternActionList))));
     }
@@ -713,15 +712,17 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   ArrayList ruleList = new ArrayList();
   int ruleNumber=0;
   ArrayList nameTypeInRule = new ArrayList();
+  Option orgTrack;
 }
 {
   <RULE> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
+      orgTrack = ast().makeOriginTracking("Rule",getLine());;
     }
   <TOM_LBRACE> 
   (
-    lhs = Term() <TOM_ARROW> rhs = Term()
+    lhs = Term() <TOM_ARROW> rhs = PlainTerm(null)
     {
       environment.getStatistics().numberRuleRulesRecognized++;
       ruleList.add(tsf().makeTomTerm_RewriteRule(
@@ -737,7 +738,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTomTerm_RuleSet(ast().makeList(ruleList)));
+    list.add(tsf().makeTomTerm_RuleSet(orgTrack,ast().makeList(ruleList)));
   }
 }
 

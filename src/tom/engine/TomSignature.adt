@@ -144,7 +144,7 @@
 
   [TomTerm,MakeFunctionEnd ,MakeFunctionEnd ],
 
-  [TomTerm,RuleSet,RuleSet(<list(TomList)>) ],
+  [TomTerm,RuleSet,RuleSet(<option(Option)>, <list(TomList)>) ],
 
   [TomTerm,RewriteRule,RewriteRule(<lhs(TomTerm)>, <rhs(TomTerm)>) ],
 

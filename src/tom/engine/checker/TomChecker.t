@@ -154,23 +154,15 @@ public class TomChecker extends TomBase {
     throws TomException {
     TomSymbol tomSymbol = getSymbol(tomName);
     if(tomSymbol != null) {
-        //System.out.println("\ttomSymbol = " + tomSymbol);
       TomList slotList = getSymbolSlotList(tomSymbol);
-        //System.out.println("\tslotList  = " + slotList);
-                
       TomList subtermList = empty();
         // For each slotName (from tomSymbol)
       TomList slotListBis = empty();
       TomList slotListTer = empty();
       slotListBis = slotList;
-      if( slotList == null ) {
-        verifier().messageBracketError((TomTerm)subject);
-      }
-      verifier().testNumberAndRepeatedSlotName(args,slotListBis);
-      verifier().testPairSlotName(args,slotListBis);
       while(!slotList.isEmpty()) {
         TomTerm slotName = slotList.getHead();
-        //debugPrintln("\tslotName  = " + slotName);
+          //debugPrintln("\tslotName  = " + slotName);
         TomList pairList = args;
         TomTerm newSubterm = null;
         if(slotName.getString().length() > 0) {
@@ -190,19 +182,18 @@ public class TomChecker extends TomBase {
             }
           } // end whileBlock
         }
-                  
+        
         if(newSubterm == null) {
           newSubterm = `Placeholder(ast().makeOption());
         }
         subtermList = append(newSubterm,subtermList);
         slotList = slotList.getTail();
       }
-                
-      //debugPrintln("subtermList = " + subtermList);
+      
       return `Appl(option,Name(tomName),subtermList);
     } else {
       System.out.println("Tchou tchou y a encore du boulot pour les symbol non definis");
-      verifier().messageSymbolError(tomName, option.getOptionList());
+        //verifier().messageSymbolError(tomName, option.getOptionList());
       return null;
     }
   }
@@ -339,7 +330,8 @@ public class TomChecker extends TomBase {
               Option option = `Option(replaceAnnotedName(optionList,getSymbolType(tomSymbol)));
               return `Appl(option,name,subterm);
             } else {
-              verifier().messageSymbolError(tomName, optionList);
+              System.out.println("Tchou tchou");
+                //verifier().messageSymbolError(tomName, optionList);
             }
           }
 
@@ -381,8 +373,7 @@ public class TomChecker extends TomBase {
               
           context, Match(option,tomSubjectList,patternList) -> {
             //debugPrintln("pass1.10: Match(" + tomSubjectList + "," + patternList + ")");
-            //verifier().testMatchTypeCompatibility(tomSubjectList, patternList);
-            //verifier().affectOptionMatchTypeVariable(option);
+            verifier().affectOptionMatchTypeVariable(option);
             TomTerm newSubjectList = pass1(context,tomSubjectList);
             TomTerm newPatternList = pass1(newSubjectList,patternList);
             return `Match(option,newSubjectList,newPatternList);
@@ -398,7 +389,6 @@ public class TomChecker extends TomBase {
           
           context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),Term(rhs)) -> { 
             //debugPrintln("pass1.13: Rule(" + lhs + "," + rhs + ")");
-            //verifier().testRuleVariable(lhs,rhs);
             TomSymbol tomSymbol = getSymbol(tomName);
             if(tomSymbol != null) {
               TomType symbolType = getSymbolType(tomSymbol);

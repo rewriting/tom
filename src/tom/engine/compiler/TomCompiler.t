@@ -106,7 +106,7 @@ public class TomCompiler extends TomBase {
         }
       }
 
-      RuleSet(ruleList@Cons(
+      RuleSet(_, ruleList@Cons(
                 RewriteRule[lhs=Term(Appl[astName=Name(tomName)])],tail)) -> {
 
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
