@@ -259,14 +259,48 @@
 		</javac>
 	</target>  
 
-	<target name="dist.stable" 
-					description="Prepare a distribution ready stable package" 
-					depends="clean.dist.stable, stable, prepare.dist.stable">
+	<target name="dist.common" 
+					description="Prepare common part of distribution" 
+					depends="prepare.dist.stable,prepare.dist.src">
 		<!-- "tom README and INSTALL" -->
 		<copy todir="${stable.dist}" file="README"/>
 		<copy todir="${stable.dist}" file="INSTALL"/>
 		<copy todir="${stable.dist}" file="NEWS"/>
 		<copy todir="${stable.dist}" file="AUTHORS"/>
+		<copy todir="${src.dist}" file="README"/>
+		<copy todir="${src.dist}" file="INSTALL"/>
+		<copy todir="${src.dist}" file="NEWS"/>
+		<copy todir="${src.dist}" file="AUTHORS"/>
+		<!-- tom doc -->
+		<copy todir="${stable.doc}">
+			<fileset dir="${tomdocdir}">
+				<include name="**/*.pdf"/>
+			</fileset>
+		</copy>
+		<copy todir="${src.doc}">
+			<fileset dir="${tomdocdir}">
+				<include name="**/*.pdf"/>
+			</fileset>
+		</copy>
+		<!-- external libs -->
+		<copy todir="${stable.lib}" file="${aterm.lib}"/>
+		<copy todir="${stable.lib}" file="${sharedobject.lib}"/>
+		<copy todir="${stable.lib}" file="${jjtraveler.lib}"/>
+		<copy todir="${stable.lib}" file="${apigen.lib}"/>
+		<copy todir="${stable.lib}" file="${vastoadt.lib}"/>
+		<copy todir="${stable.lib}" file="${concurrent.lib}"/>
+		<copy todir="${src.lib}" file="${aterm.lib}"/>
+		<copy todir="${src.lib}" file="${sharedobject.lib}"/>
+		<copy todir="${src.lib}" file="${jjtraveler.lib}"/>
+		<copy todir="${src.lib}" file="${apigen.lib}"/>
+		<copy todir="${src.lib}" file="${vastoadt.lib}"/>
+		<copy todir="${src.lib}" file="${concurrent.lib}"/>
+
+	</target>
+
+	<target name="dist.stable" 
+					description="Prepare a distribution ready stable package" 
+					depends="clean.dist.stable, stable, prepare.dist.stable, dist.common">
 		<!-- "tom binary" -->
 		<copy todir="${stable.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${stable.bin}" file="${utils}/tom.bat"/>
@@ -310,19 +344,6 @@
 			</fileset>
 		</copy>
 
-		<!-- external libs -->
-		<copy todir="${stable.lib}" file="${aterm.lib}"/>
-		<copy todir="${stable.lib}" file="${sharedobject.lib}"/>
-		<copy todir="${stable.lib}" file="${jjtraveler.lib}"/>
-		<copy todir="${stable.lib}" file="${apigen.lib}"/>
-		<copy todir="${stable.lib}" file="${vastoadt.lib}"/>
-		<copy todir="${stable.lib}" file="${concurrent.lib}"/>
-		<!-- tom doc -->
-		<copy todir="${stable.doc}">
-			<fileset dir="${tomdocdir}">
-				<include name="**/*.pdf"/>
-			</fileset>
-		</copy>
 		<!-- prepare tar file -->
 		<tar tarfile="${dist}/jtom-${version}.tar.gz" compression="gzip">
 			<tarfileset dir="${stable.dist}" prefix="jtom-${version}" mode="755">
@@ -341,13 +362,8 @@
 
 	<target name="dist.src" 
 					description="Prepare a distribution ready source package" 
-					depends="clean.dist.src, src, prepare.dist.src">
+					depends="clean.dist.src, src, prepare.dist.src, dist.common">
 		<tstamp/>
-		<!-- "tom README and INSTALL" -->
-		<copy todir="${src.dist}" file="README"/>
-		<copy todir="${src.dist}" file="INSTALL"/>
-		<copy todir="${src.dist}" file="NEWS"/>
-		<copy todir="${src.dist}" file="AUTHORS"/>
 		<!-- "tom binary" -->
 		<copy todir="${src.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${src.bin}" file="${utils}/tom"/>
@@ -400,17 +416,6 @@
 				<include name="*.vim"/>
 			</fileset>
 		</copy>
-		<!-- external libs -->
-		<copy todir="${src.lib}" file="${aterm.lib}"/>
-		<copy todir="${src.lib}" file="${sharedobject.lib}"/>
-		<copy todir="${src.lib}" file="${jjtraveler.lib}"/>
-		<copy todir="${src.lib}" file="${apigen.lib}"/>
-		<copy todir="${src.lib}" file="${vastoadt.lib}"/>
-		<copy todir="${src.lib}" file="${concurrent.lib}"/>
-		<!-- tom doc -->
-		<copy todir="${src.doc}" file="${referencepdf}"/>
-		<copy todir="${src.doc}" file="${guidepdf}"/>
-		<copy todir="${src.doc}" file="${tutorialpdf}"/>
 		<!-- prepare tar file -->
 		<tar tarfile="${dist}/jtom-${DSTAMP}.tar.gz" compression="gzip">
 			<tarfileset dir="${src.dist}" prefix="jtom-${version}" mode="755">
