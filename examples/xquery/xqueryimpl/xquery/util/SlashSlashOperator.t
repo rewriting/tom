@@ -14,17 +14,19 @@ public class SlashSlashOperator extends PathOperator{
 
   public SlashSlashOperator(TNodeTester tester, PathOperator nextOperator)
   {
+	
+	
 	super(tester, nextOperator);
   }
 
   public SlashSlashOperator(PathOperator nextOperator)
   {
-	super(nextOperator);
+	super(new TNodeElementTester(), nextOperator);
   }
 
   public SlashSlashOperator()
   {
-	super();
+	super(new TNodeElementTester(), null);
   }
 
 
