@@ -100,22 +100,22 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
   
       BuildTerm(Name(name), argList) -> {
-        buildTerm(deep, name,argList);
+        buildTerm(deep, name, argList);
         return;
       }
 
       BuildList(Name(name), argList) -> {
-        buildList(deep, name,argList);
+        buildList(deep, name, argList);
         return;
       }
 
       BuildArray(Name(name), argList) -> {
-        buildArray(deep, name,argList);
+        buildArray(deep, name, argList);
         return;
       }
 
       FunctionCall(Name(name), argList) -> {
-        buildFunctionCall(deep, name,argList);
+        buildFunctionCall(deep, name, argList);
         return;
       }
 
@@ -130,7 +130,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       CompiledPattern(instList) -> {
-        generateList(deep,instList);
+        generateList(deep, instList);
         return;
       }
 

@@ -128,7 +128,7 @@ public class OutputCode {
           // writeln(deep,s);
 					s = s1+s;
 				} else {
-					s = s.replace('\n', ' ');
+					//s = s.replace('\n', ' ');
           //System.out.println("Warning: Synchronization issue: Line: " + line + " versus LineCounter:" + lineCounter);
 					length = 0;
 				}
@@ -139,11 +139,11 @@ public class OutputCode {
 			lineCounter+= length;
 		}
 
-		if (singleline && !pretty) {
+		/*if (singleline && !pretty) {
 			s = s.replace('\n', ' ');
 			s = s.replace('\r', ' ');
 			s = s.replace('\t', ' ');
-		}
+		}*/
     write(deep,s);
   } 
 

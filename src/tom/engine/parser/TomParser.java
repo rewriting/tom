@@ -185,7 +185,7 @@ public class TomParser extends TomTask implements TomParserConstants {
   private void addPreviousCode(LinkedList list) {
     String code = savePosAndExtract();
     String pureCode = code.replace('\t', ' ');
-    pureCode = pureCode.replace('\n', ' ');
+    //pureCode = pureCode.replace('\n', ' ');
     if(pureCode.matches("\\s*")) {
       return;
     }

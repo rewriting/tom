@@ -272,8 +272,8 @@ public class ASTFactory {
   public TargetLanguage reworkTLCode(TargetLanguage code, boolean pretty) {
     if(!pretty){
       String tlCode = code.getCode();
-      tlCode = tlCode.replace('\n', ' ');
-      tlCode = tlCode.replace('\r', ' ');
+      //tlCode = tlCode.replace('\n', ' ');
+      //tlCode = tlCode.replace('\r', ' ');
       return tsf().makeTargetLanguage_ITL(tlCode);
     } else
       return code;
