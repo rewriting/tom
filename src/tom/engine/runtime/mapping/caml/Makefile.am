@@ -5,11 +5,11 @@
 javadir         = ${prefix}/classes/jtom
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/mapping/caml
 
-MAPPING         = int.tom list.tom
-EXTRA_DIST 	= ${MAPPING}
+BOOTSOURCES         = int.tom list.tom
+EXTRA_DIST 	= ${BOOTSOURCES}
 CLEANFILES 	= 
 
 adtdir          = $(datadir)/jtom/caml
-adt_DATA        = ${MAPPING}
+adt_DATA        = ${BOOTSOURCES}
 
 include $(top_srcdir)/src/make_rules
