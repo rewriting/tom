@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.62 2004/03/23 17:14:55 moreau Exp $
+# $Id: configure.in,v 1.63 2004/04/03 20:59:17 reilles Exp $
 
 AC_INIT
 AC_CONFIG_SRCDIR([configure.in])
@@ -8,7 +8,7 @@ AC_PREREQ(2.57)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.62 2004/03/23 17:14:55 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.63 2004/04/03 20:59:17 reilles Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -18,7 +18,7 @@ dnl AC_PROG_RANLIB
 dnl AC_PROG_INSTALL
 
 AC_JAVA_OPTIONS
-JAVAC=javac
+dnl JAVAC=javac
 AC_CHECK_CLASSPATH
 AC_PROG_JAVAC
 AC_PROG_JAVA
@@ -39,7 +39,7 @@ AC_SUBST(JAVA_ATERM)
 
 dnl Require apigen
 AC_PACKAGE_REQUIRE(apigen, adt-to-tom,
-   [  --with-apigen=DIR   apigen in DIR])
+   [  --with-apigen=DIR   apigen is in DIR])
 
 ADTTOTOM=${APIGEN}/bin/adt-to-tom
 AC_SUBST(ADTTOTOM)
