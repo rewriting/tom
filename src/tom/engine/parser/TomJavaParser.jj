@@ -52,9 +52,9 @@ public class TomJavaParser {
       input.read(inputBuffer);
       return new TomJavaParser(new TomBuffer(inputBuffer));
     } catch (FileNotFoundException e) {
-      TomEnvironment.getInstance().addError(TomMessage.getString("FileNotFound"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().messageError(TomMessage.getString("FileNotFound"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     } catch (IOException e) {
-      TomEnvironment.getInstance().addError(TomMessage.getString("IOException"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().messageError(TomMessage.getString("IOException"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     }
     return null;
   }

@@ -57,23 +57,17 @@ public abstract class TomTask extends TomBase {
   }
   
   protected void closeProcess() {
-    if ( checkNoErrors() ) {
+    if(checkNoErrors()) {
       finishProcess();
     }
-  }
-  
-  public boolean checkNoErrors() {
-    return environment().checkNoErrors(name,
-                                       getInput().isEclipseMode(),
-                                       getInput().isWarningAll(),
-                                       getInput().isNoWarning());
   }
   
   public void finishProcess() {
       // Start next task
     if(nextTask != null) {
       if(!getInput().isEclipseMode()) {
-        environment().setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
+        // remove all warning (in command line only)
+        environment().setWarnings(tsf().makeTomAlertList());
       } 
       nextTask.startProcess();
     }
@@ -86,19 +80,31 @@ public abstract class TomTask extends TomBase {
   public String getName() {
     return name;
   }
-  
+
   public void messageError(int errorLine,
                            String fileName,
                            String structInfo,
-                           int structInfoLine,
+                           int line,
                            String msg,
-                           Object[] msgArg,
-                           int level) {
-    environment().messageError(errorLine, fileName, structInfo, structInfoLine, msg, msgArg, level);
+                           Object[] msgArg) {
+    environment().messageError(errorLine, fileName, structInfo, line, msg, msgArg);
+  }
+         
+  public void messageWarning(int warningLine,
+                             String fileName,
+                             String structInfo,
+                             int line,
+                             String msg,
+                             Object[] msgArg) {
+    environment().messageWarning(errorLine, fileName, structInfo, line, msg, msgArg);
   }
 
-  public void addError(String msg, String file, int line, int level) {
-    environment().addError(msg,file,line,level);
+  public void messageError(String msg, String fileName, int line) {
+    environment().messageError(msg,fileName,line);
   }
   
+  public void messageWarning(String msg, String fileName, int line) {
+    environment().messageWarning(msg,fileName,line);
+  }
+
 }

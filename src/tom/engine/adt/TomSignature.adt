@@ -169,7 +169,9 @@ constructor(PairNameDecl,Slot,Slot(<slotName(TomName)>,<slotDecl(Declaration)>))
 constructor(TomSymbolTable,Table,Table(<entryList(TomEntryList)>)),
 constructor(TomEntry,Entry,Entry(<strName(str)>,<astSymbol(TomSymbol)>)),
 constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>)),
-constructor(TomError,Error,Error(<message(str)>,<file(str)>,<line(int)>,<level(int)>)),
+
+constructor(TomAlert,Error,Error(<message(str)>,<file(str)>,<line(int)>)),
+constructor(TomAlert,Warning,Warning(<message(str)>,<file(str)>,<line(int)>)),
 
 constructor(Constraint,Equal,Equal(<variable(TomTerm)>)),
 constructor(Constraint,AssignTo,AssignTo(<variable(TomTerm)>)),
@@ -182,7 +184,7 @@ list(OptionList,Option),
 list(InstructionList,Instruction),
 list(SlotList,PairNameDecl),
 list(TomEntryList, TomEntry),
-list(TomErrorList, TomError),
+list(TomAlertList, TomAlert),
 list(SymbolList, TomSymbol),
 list(NameList, TomName),
 list(ConstraintList, Constraint)

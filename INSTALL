@@ -55,7 +55,6 @@ We also suggest you to define a TOM_LIB variable and update your CLASSPATH:
 
 (bash)
   TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
-  export TOM_HOME=/usr/local/jtom
   export CLASSPATH=${TOM_LIB}:${CLASSPATH}
 
 (csh)

@@ -200,8 +200,7 @@ abstract public class TomChecker extends TomTask {
         }
         messageError(orgTrack.getLine(),
                      TomMessage.getString("UnknownVariable"),
-                     new Object[]{rhsSet.toString()},
-                     TomMessage.TOM_ERROR);
+                     new Object[]{rhsSet.toString()});
       }
         // case of rhs is a single variable
       %match (TomTerm rhs) {
@@ -224,8 +223,7 @@ abstract public class TomChecker extends TomTask {
               if(typeLhs != typeRhs) {
                 messageError(orgTrack.getLine(),
                              TomMessage.getString("BadVariableType"),
-                             new Object[]{`name, typeRhs.getTomType().getString(), typeLhs.getTomType().getString()},
-                             TomMessage.TOM_ERROR);
+                             new Object[]{`name, typeRhs.getTomType().getString(), typeLhs.getTomType().getString()});
               }
             }
           }
@@ -251,8 +249,7 @@ abstract public class TomChecker extends TomTask {
         if(!(type==type2)) {
           messageError(findOriginTrackingLine(variable.getOption()),
                        TomMessage.getString("IncoherentVariable"),
-                       new Object[]{name.getString(), type.getTomType().getString(), type2.getTomType().getString()},
-                       TomMessage.TOM_ERROR);
+                       new Object[]{name.getString(), type.getTomType().getString(), type2.getTomType().getString()});
         }
       } else {
         map.put(name, variable);
@@ -415,7 +412,7 @@ abstract public class TomChecker extends TomTask {
       messageError(currentTomStructureOrgTrack.getLine(), 
                    symbolType+" "+symbName, 
                    TomMessage.getString("SymbolCodomainError"),
-                   new Object[]{symbName, codomain}, TomMessage.TOM_ERROR);
+                   new Object[]{symbName, codomain});
     }
   } //verifySymbolCodomain
    
@@ -428,7 +425,7 @@ abstract public class TomChecker extends TomTask {
             messageError(currentTomStructureOrgTrack.getLine(), 
                          symbolType+" "+symbName, 
                          TomMessage.getString("SymbolDomainError"),
-                         new Object[]{new Integer(position), symbName, `typeName}, TomMessage.TOM_ERROR);
+                         new Object[]{new Integer(position), symbName, `typeName});
           }
           position++;
         }
@@ -441,7 +438,7 @@ abstract public class TomChecker extends TomTask {
             messageError(currentTomStructureOrgTrack.getLine(), 
                          symbolType+" "+symbName, 
                          TomMessage.getString("ListSymbolDomainError"),
-                         new Object[]{symbName, `typeName}, TomMessage.TOM_ERROR);
+                         new Object[]{symbName, `typeName});
           }
         }
       } //match
@@ -492,7 +489,7 @@ abstract public class TomChecker extends TomTask {
               messageError(`orgTrack.getLine(), 
                            symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
                            TomMessage.getString("MacroFunctionRepeated"),
-                           new Object[]{MAKE}, TomMessage.TOM_ERROR);
+                           new Object[]{MAKE});
             }
           }
         }
@@ -513,8 +510,7 @@ abstract public class TomChecker extends TomTask {
           messageError(orgTrack.getLine(), 
                        symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
                        TomMessage.getString("NonLinearMacroFunction"),
-                       new Object[]{MAKE, `name},
-                       TomMessage.TOM_ERROR);
+                       new Object[]{MAKE, `name});
         } else {
           listVar.add(`name);
         }
@@ -525,7 +521,7 @@ abstract public class TomChecker extends TomTask {
       messageError(orgTrack.getLine(), 
                    symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
                    TomMessage.getString("BadMakeDefinition"),
-                   new Object[]{new Integer(nbArgs), new Integer(domainLength)}, TomMessage.TOM_ERROR);     
+                   new Object[]{new Integer(nbArgs), new Integer(domainLength)});     
     }
   } //verifyMakeDeclArgs
   
@@ -555,7 +551,7 @@ abstract public class TomChecker extends TomTask {
       messageError(currentTomStructureOrgTrack.getLine(), 
                    symbolType+" "+name, 
                    TomMessage.getString("MultipleSymbolDefinitionError"),
-                   new Object[]{name}, TomMessage.TOM_ERROR);
+                   new Object[]{name});
     } else {
       list.add(name);
     }
@@ -568,7 +564,7 @@ abstract public class TomChecker extends TomTask {
       messageError(orgTrack.getLine(), 
                    "structure "+symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
                    TomMessage.getString("MacroFunctionRepeated"),
-                   new Object[]{function}, TomMessage.TOM_ERROR);
+                   new Object[]{function});
     }
   } //checkField
    
@@ -578,7 +574,7 @@ abstract public class TomChecker extends TomTask {
       messageError(orgTrack.getLine(), 
                    symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
                    TomMessage.getString("NonLinearMacroFunction"),
-                   new Object[]{function, name1}, TomMessage.TOM_ERROR);
+                   new Object[]{function, name1});
     }
   } //checkFieldAndLinearArgs
    
@@ -591,7 +587,7 @@ abstract public class TomChecker extends TomTask {
     messageError(currentTomStructureOrgTrack.getLine(), 
                  symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(),
                  TomMessage.getString("MissingMacroFunctions"),
-                 new Object[]{listOfMissingMacros}, TomMessage.TOM_ERROR);
+                 new Object[]{listOfMissingMacros});
   } //messageMissingMacroFunctions
    
     /** 
@@ -607,8 +603,7 @@ abstract public class TomChecker extends TomTask {
         if (!testTypeExistence(`type)) {
           messageError(currentTomStructureOrgTrack.getLine(),
                        TomMessage.getString("UnknownMatchArgumentTypeInSignature"),
-                       new Object[]{`name, `type},
-                       TomMessage.TOM_ERROR);
+                       new Object[]{`name, `type});
           typeMatchArgs.add(null);
         } else {
           typeMatchArgs.add(`tomType);
@@ -617,10 +612,9 @@ abstract public class TomChecker extends TomTask {
           nameMatchArgs.add(`name);
         } else {
             // Maybe its an error to have the 2 same name variable in the match definition: warn the user
-          messageError(currentTomStructureOrgTrack.getLine(),
+          messageWarning(currentTomStructureOrgTrack.getLine(),
                        TomMessage.getString("RepeatedMatchArgumentName"),
-                       new Object[]{`name},
-                       TomMessage.TOM_WARNING);
+                         new Object[]{`name});
         }
       } 
     }
@@ -639,8 +633,7 @@ abstract public class TomChecker extends TomTask {
     if(nbFoundArgs != nbExpectedArgs) {
       messageError(findOriginTrackingLine(termList.getHead().getOption()),
                    TomMessage.getString("BadMatchNumberArgument"),
-                   new Object[]{new Integer(nbExpectedArgs), new Integer(nbFoundArgs)},
-                   TomMessage.TOM_ERROR);
+                   new Object[]{new Integer(nbExpectedArgs), new Integer(nbFoundArgs)});
         // we can not continue because we will use the fact that each element of the pattern
         // has the expected type declared in the Match definition
       return ;
@@ -654,8 +647,7 @@ abstract public class TomChecker extends TomTask {
         if(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR) {
           messageError(termDesc.decLine, 
                        TomMessage.getString("IncorrectVariableStarInMatch"), 
-                       new Object[]{termDesc.name},
-                       TomMessage.TOM_ERROR);
+                       new Object[]{termDesc.name});
         } else {    // Analyse of the term if expectedType != null  
           expectedType = (TomType)typeMatchArgs.get(counter);
           if (expectedType != null) { // the type is known
@@ -700,8 +692,7 @@ abstract public class TomChecker extends TomTask {
         termName = getName(lhs);
       } 
       messageError(findOriginTrackingLine(lhs.getOption()), 
-                   TomMessage.getString("IncorrectRuleLHSClass"), new Object[]{termName}, 
-                   TomMessage.TOM_ERROR);
+                   TomMessage.getString("IncorrectRuleLHSClass"), new Object[]{termName});
       return null;
     }
     
@@ -712,8 +703,7 @@ abstract public class TomChecker extends TomTask {
       if( symbol == null ) {
         messageError(findOriginTrackingLine(lhs.getOption()),
                      TomMessage.getString("UnknownSymbol"), 
-                     new Object[]{currentHeadSymbolName},
-                     TomMessage.TOM_ERROR);
+                     new Object[]{currentHeadSymbolName});
           // We can not continue anymore
         return null;
       }
@@ -721,15 +711,13 @@ abstract public class TomChecker extends TomTask {
       if ( !findMakeDecl(symbol.getOption())) {
         messageError(findOriginTrackingLine(lhs.getOption()),
                      TomMessage.getString("NoRuleMakeDecl"), 
-                     new Object[]{currentHeadSymbolName},
-                     TomMessage.TOM_ERROR);
+                     new Object[]{currentHeadSymbolName});
       }
       
       if(alreadyStudiedRule.contains(currentHeadSymbolName)) {
         messageError(currentTomStructureOrgTrack.getLine(),
                      TomMessage.getString("MultipleRuleDefinition"),
-                     new Object[]{currentHeadSymbolName},
-                     TomMessage.TOM_ERROR);
+                     new Object[]{currentHeadSymbolName});
         return null;
       } else {
         alreadyStudiedRule.add(currentHeadSymbolName);
@@ -740,7 +728,7 @@ abstract public class TomChecker extends TomTask {
       if (!headSymbolName.equals(currentHeadSymbolName)) {
         messageError(findOriginTrackingLine(lhs.getOption()),
                      TomMessage.getString("DifferentRuleConstructor"), 
-                     new Object[]{headSymbolName, currentHeadSymbolName}, TomMessage.TOM_ERROR); 
+                     new Object[]{headSymbolName, currentHeadSymbolName}); 
       }
     }
     symbol = getSymbol(currentHeadSymbolName);
@@ -775,8 +763,7 @@ abstract public class TomChecker extends TomTask {
         termName = getName(rhs);
       } 
       messageError(findOriginTrackingLine(rhs.getOption()), 
-                   TomMessage.getString("IncorrectRuleRHSClass"), new Object[]{termName}, 
-                   TomMessage.TOM_ERROR);
+                   TomMessage.getString("IncorrectRuleRHSClass"), new Object[]{termName});
       return;
     }
     
@@ -789,8 +776,7 @@ abstract public class TomChecker extends TomTask {
         String rhsTypeName;
         if(rhsType.isEmptyType()) {rhsTypeName = "Not Type Found";} else {rhsTypeName = rhsType.getString();}
         messageError(findOriginTrackingLine(rhs.getOption()), 
-                     TomMessage.getString("IncorrectRuleRHSType"), new Object[]{rhsTypeName, lhsType.getString()}, 
-                     TomMessage.TOM_ERROR);
+                     TomMessage.getString("IncorrectRuleRHSType"), new Object[]{rhsTypeName, lhsType.getString()});
       }
     }
   }
@@ -845,7 +831,7 @@ abstract public class TomChecker extends TomTask {
             int nbExpectedArgs = types.getLength();
             if(nbArgs != nbExpectedArgs) {
               messageError(decLine, TomMessage.getString("SymbolNumberArgument"), 
-                           new Object[]{termName, new Integer(nbExpectedArgs), new Integer(nbArgs)}, TomMessage.TOM_ERROR);
+                           new Object[]{termName, new Integer(nbExpectedArgs), new Integer(nbArgs)});
               break matchblock;
             }
             while(!args.isEmpty()) {
@@ -861,7 +847,7 @@ abstract public class TomChecker extends TomTask {
         rec@RecordAppl[option=options,nameList=nameList,args=pairSlotAppls] ->{
           if(permissive) {
             messageError(findOriginTrackingLine(`options), TomMessage.getString("IncorrectRuleRHSClass"), 
-                         new Object[]{getName(`rec)+"[...]"}, TomMessage.TOM_ERROR);
+                         new Object[]{getName(`rec)+"[...]"});
           }
           decLine = findOriginTrackingLine(`options);
           termClass = RECORD_APPL;
@@ -916,7 +902,7 @@ abstract public class TomChecker extends TomTask {
           termName = "_";
           if(permissive) {
             messageError(decLine, TomMessage.getString("IncorrectRuleRHSClass"), 
-                         new Object[]{termName}, TomMessage.TOM_ERROR);
+                         new Object[]{termName});
           }
           break matchblock;
         }
@@ -928,7 +914,7 @@ abstract public class TomChecker extends TomTask {
           termName = `name+"*";
           if(!listSymbol) {
             messageError(decLine, TomMessage.getString("InvalidVariableStarArgument"), 
-                         new Object[]{termName}, TomMessage.TOM_ERROR);
+                         new Object[]{termName});
           }
           break matchblock;
         }
@@ -940,11 +926,11 @@ abstract public class TomChecker extends TomTask {
           termName = "_*";
           if(!listSymbol) {
             messageError(decLine, TomMessage.getString("InvalidVariableStarArgument"), 
-                         new Object[]{termName}, TomMessage.TOM_ERROR);
+                         new Object[]{termName});
           }
           if(permissive) {
             messageError(decLine, TomMessage.getString("IncorrectRuleRHSClass"), 
-                         new Object[]{termName}, TomMessage.TOM_ERROR);
+                         new Object[]{termName});
           }
           break matchblock;
         }
@@ -1083,8 +1069,7 @@ abstract public class TomChecker extends TomTask {
     if(filteredList.isEmpty()) {
       messageError(decLine,
                    TomMessage.getString("UnknownUnamedList"),
-                   new Object[]{expectedType.getString()},
-                   TomMessage.TOM_ERROR);
+                   new Object[]{expectedType.getString()});
       return null;
     } else if(!filteredList.getTail().isEmpty()) {
       String symbolsString = "";
@@ -1094,8 +1079,7 @@ abstract public class TomChecker extends TomTask {
       }
       messageError(decLine,
                    TomMessage.getString("AmbigousUnamedList"),
-                   new Object[]{expectedType.getString(), symbolsString},
-                   TomMessage.TOM_ERROR);
+                   new Object[]{expectedType.getString(), symbolsString});
       return null;
     } else { 
       return filteredList.getHead();
@@ -1116,13 +1100,11 @@ abstract public class TomChecker extends TomTask {
           if(!permissive) {
             messageError(decLine,
                          TomMessage.getString("UnknownSymbol"),
-                         new Object[]{res},
-                         TomMessage.TOM_ERROR);
+                         new Object[]{res});
           } else {
-            messageError(decLine,
+            messageWarning(decLine,
                          TomMessage.getString("UnknownPermissiveSymbol"),
-                         new Object[]{res},
-                         TomMessage.TOM_WARNING);
+                           new Object[]{res});
           }
         }
       } else { //known symbol     
@@ -1132,10 +1114,9 @@ abstract public class TomChecker extends TomTask {
           // WARNING consider as a symbol and not a variable
           String codomain = getTomType(getSymbolCodomain(symbol));
           if( !symbolTable().isBuiltinType(codomain) ) {
-            messageError(decLine, 
+            messageWarning(decLine, 
                          TomMessage.getString("AmbigousSymbolWithoutConstructor"),
-                         new Object[]{res},
-                         TomMessage.TOM_WARNING); // only a warning
+                           new Object[]{res});
           }
         }
         if ( strictType  || !topLevel ) {
@@ -1150,8 +1131,7 @@ abstract public class TomChecker extends TomTask {
     if(permissive) { 
       messageError(decLine, 
                    TomMessage.getString("ImpossiblePermissiveAndDisjunction"),
-                   new Object[]{},
-                   TomMessage.TOM_ERROR);     
+                   new Object[]{});
     }
    
     // this part is common between Appl and records with multiple head symbols
@@ -1163,8 +1143,7 @@ abstract public class TomChecker extends TomTask {
             // In disjunction we can only have known symbols
           messageError(decLine,
                        TomMessage.getString("UnknownSymbolInDisjunction"),
-                       new Object[]{`dijName},
-                       TomMessage.TOM_ERROR);
+                       new Object[]{`dijName});
           return null;
         }
         if ( strictType  || !topLevel ) {
@@ -1181,8 +1160,7 @@ abstract public class TomChecker extends TomTask {
           if(currentDomain != domainReference) {
             messageError(decLine, 
                          TomMessage.getString("InvalidDisjunctionDomain"),
-                         new Object[]{`dijName},
-                         TomMessage.TOM_ERROR);
+                         new Object[]{`dijName});
             return null;
           }
         }
@@ -1196,8 +1174,7 @@ abstract public class TomChecker extends TomTask {
       //System.out.println(currentCodomain+"!="+expectedType);
       messageError(decLine, 
                    msg,
-                   new Object[]{symbolName, currentCodomain.getString(), expectedType.getString()},
-                   TomMessage.TOM_ERROR);
+                   new Object[]{symbolName, currentCodomain.getString(), expectedType.getString()});
       return false;
     }
     return true;
@@ -1211,8 +1188,7 @@ abstract public class TomChecker extends TomTask {
           // it is not correct to use Record an unknown symbols
         messageError(decLine,
                      TomMessage.getString("UnknownSymbol"),
-                     new Object[]{res},
-                     TomMessage.TOM_ERROR);
+                     new Object[]{res});
         return null;    
       } else { // known symbol
           // ensure type correctness if necessary
@@ -1240,16 +1216,14 @@ abstract public class TomChecker extends TomTask {
       if(slotTermPairs.isEmpty() && (isListOperator(symbol) ||  isArrayOperator(symbol)) ) {
         messageError(decLine,
                      TomMessage.getString("BracketOnListSymbol"),
-                     new Object[]{tomName},
-                     TomMessage.TOM_ERROR);
+                     new Object[]{tomName});
       }
         // TODO verify type
       verifyRecordSlots(slotTermPairs,slotList, getSymbolDomain(symbol), tomName, decLine);
     } else {
       messageError(decLine,
                    TomMessage.getString("UnknownSymbol"),
-                   new Object[]{tomName},
-                   TomMessage.TOM_ERROR);
+                   new Object[]{tomName});
     }
   }
   
@@ -1279,8 +1253,7 @@ abstract public class TomChecker extends TomTask {
         }
         messageError(decLine,
                      TomMessage.getString("BadSlotName"), 
-                     new Object[]{pairSlotName.getString(), methodName, listOfPossibleSlot.toString()},
-                     TomMessage.TOM_ERROR); 
+                     new Object[]{pairSlotName.getString(), methodName, listOfPossibleSlot.toString()});
         return; //break analyses
       } else { // then check for repeated good slot name
         Integer integerIndex = new Integer(index);
@@ -1288,8 +1261,7 @@ abstract public class TomChecker extends TomTask {
             // Error: repeated slot
           messageError(decLine,
                        TomMessage.getString("SlotRepeated"),
-                       new Object[]{methodName, pairSlotName.getString()},
-                       TomMessage.TOM_ERROR);
+                       new Object[]{methodName, pairSlotName.getString()});
           return; //break analyses
         }
         studiedSlotIndexList.add(integerIndex);
@@ -1331,15 +1303,15 @@ abstract public class TomChecker extends TomTask {
      * Message Functions
      */
 
-  private void messageError(int errorLine, String msg, Object[] msgArg, int level) {
+  private void messageError(int errorLine, String msg, Object[] msgArg) {
     String structName = currentTomStructureOrgTrack.getAstName().getString();
-    messageError(errorLine, structName, msg, msgArg, level);
+    messageError(errorLine, structName, msg, msgArg);
   }
   
-  private void messageError(int errorLine, String structInfo, String msg, Object[] msgArgs, int level) {
+  private void messageError(int errorLine, String structInfo, String msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    messageError(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs, level);
+    messageError(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
   }
   
   
@@ -1360,7 +1332,7 @@ abstract public class TomChecker extends TomTask {
 
   private void ensureOriginTrackingLine(int line) {
     if(line < 0) {
-      addError("findOriginTrackingLine:  not found", getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      messageError("findOriginTrackingLine:  not found", getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       System.out.println("findOriginTrackingLine: not found ");
     }
   }

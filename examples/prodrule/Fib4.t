@@ -117,10 +117,10 @@ class Fib4 {
     public boolean rec(ArrayList WM) {
 	%match(Space WM) {
 	    concElement(_*, Fib[arg=n,val=Undef()], _*) -> {
-		if(`n >2 && !`occursFib(WM,n-1)) {
+        if(`n>2 && !`occursFib(WM,n-1)) {
 		    WM.add(0,`Fib(n-1,Undef));
 		    fire++;
-		    return true;
+		    return (true);
 		}
 	    }
 	}

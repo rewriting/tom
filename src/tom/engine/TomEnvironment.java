@@ -37,7 +37,8 @@ public class TomEnvironment {
   private Factory tomSignatureFactory;
   private SymbolTable symbolTable;
   private TomTerm term;
-  private TomErrorList errors;
+  private TomAlertList errors;
+  private TomAlertList warnings;
 
   /*
    * Singleton pattern
@@ -70,7 +71,8 @@ public class TomEnvironment {
 
   public void init() {
     symbolTable.init();
-    errors = tomSignatureFactory.makeTomErrorList();
+    errors = tomSignatureFactory.makeTomAlertList();
+    warnings = tomSignatureFactory.makeTomAlertList();
     term = null;
   }
 
@@ -92,53 +94,72 @@ public class TomEnvironment {
   public TomTerm getTerm() {
     return term;
   }
-  
-  public TomErrorList getErrors() {
+
+  private static TomTaskInput getInput() {
+    TomTaskInput.getInstance();
+  }
+
+  public TomAlertList getErrors() {
     return errors;
   }
-  public void setErrors(TomErrorList list) {
+
+  public TomAlertList getWarnings() {
+    return warnings;
+  }
+
+  private void setErrors(TomAlertList list) {
     errors = list;
   }
 
-  public boolean checkNoErrors(String taskName,
-                  boolean eclipseMode,
-                  boolean warningAll,
-                  boolean noWarning) {
-    boolean res = true; 
-    TomErrorList errors = getErrors();
-    //System.out.println("Errors"+errors);
-    int nbTotalError = errors.getLength();
-    int nbWarning = 0, nbError=0;
-    if(nbTotalError > 0 ) {
+  private void setWarnings(TomAlertList list) {
+    warnings = list;
+  }
+
+  public boolean hasError() {
+    return getErrors().getLengh()>0;
+  }
+
+  public boolean hasWarning() {
+    return getWarnings().getLengh()>0;
+  }
+
+  public void printErrorMessage() {
+    if(!getInput().isEclipseMode()) {
+      TomAlertList errors = getErrors();
       while(!errors.isEmpty()) {
-        TomError error = errors.getHead();
-        if (error.getLevel() == TomMessage.TOM_WARNING) {
-          nbWarning++;
-          if (/*!noWarning || */warningAll && !eclipseMode) {
-            System.out.println(MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{error.getFile(), new Integer(error.getLine()), error.getMessage()}));
-          }
-        } else if (error.getLevel() == TomMessage.TOM_ERROR) {
-          if(!eclipseMode){
-          	System.out.println(MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{error.getFile(), new Integer(error.getLine()), error.getMessage()}));
-          }
-          res = false;
-          nbError++;
-        }
-        errors= errors.getTail();
+        TomAlert error = errors.getHead();
+        System.out.println(MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{error.getFile(), new Integer(error.getLine()), error.getMessage()}));
       }
-      if (nbError>0 && !eclipseMode) {
-        String msg = taskName+":  Encountered " + nbError + " errors and "+ nbWarning+" warnings.";
-        msg += "No file generated.";
-        System.out.println(msg);
-      } else if (nbWarning>0 && !eclipseMode && !noWarning) {
-        String msg = taskName+":  Encountered "+ nbWarning+" warnings.";
-        System.out.println(msg);
+      errors= errors.getTail();
+    }
+  }
+
+  public void printWarningMessage() {
+    if(!getInput().isEclipseMode() && !getInput().isNoWarning()) {
+      TomAlertList warnings = getWarnings();
+      while(!warnings.isEmpty()) {
+        TomAlert warning = warnings.getHead();
+        System.out.println(MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{warning.getFile(), new Integer(warning.getLine()), warning.getMessage()}));
       }
-      if(!eclipseMode) {
-        setErrors(getTomSignatureFactory().makeTomErrorList());
+      warnings= warnings.getTail();
+    }
+  }
+
+  public void printAlertMessage(String taskName) {
+    if(!getInput().isEclipseMode()) {
+      printErrorMessage();
+      printWarningMessage();
+      if(hasError()) {
+        String msg = taskName+": Encountered " + 
+          getErrors().getLengh() + " errors and " +
+          getWarnings().getLengh() + " warnings." +
+          "No file generated.";
+        System.out.println(msg);
+      } else if(hasWarning()) {
+        String msg = taskName+": Encountered "+ nbWarning + " warnings.";
+        System.out.println(msg);
       }
     }
-    return res;
   }
 
   public void messageError(int errorLine,
@@ -146,28 +167,40 @@ public class TomEnvironment {
                            String structInfo,
                            int structInfoLine,
                            String msg,
-                           Object[] msgArg,
-                           int level) {
-    String s;
-    msg = MessageFormat.format(msg, msgArg);
-    if (level == TomMessage.TOM_ERROR) {
-      s = MessageFormat.format(TomMessage.getString("DetailErrorMessage"), new Object[]{structInfo, new Integer(structInfoLine), msg});
-    } else {
-      s = MessageFormat.format(TomMessage.getString("DetailWarningMessage"), new Object[]{structInfo, new Integer(structInfoLine), msg});
-    }
-    addError(s,fileName, errorLine, level);
+                           Object[] msgArg) {
+    String s = MessageFormat.format(TomMessage.getString("DetailErrorMessage"), new Object[]{structInfo, new Integer(structInfoLine), MessageFormat.format(msg, msgArg)});
+    messageError(s,fileName, errorLine, level);
   }
          
-  public void addError(String msg, String file, int line, int level) {
-    TomError err = getTomSignatureFactory().makeTomError_Error(msg,file,line,level);
-    setErrors(getTomSignatureFactory().makeTomErrorList(err, getErrors()));
-  }
-  
-  public void addError(String msg, Object[] args, String file, int line, int level) {
-    TomError err = getTomSignatureFactory().makeTomError_Error(MessageFormat.format(msg, args), file, line, level);
-    setErrors(getTomSignatureFactory().makeTomErrorList(err, getErrors()));
+  public void messageWarning(int warningLine,
+                           String fileName,
+                           String structInfo,
+                           int structInfoLine,
+                           String msg,
+                           Object[] msgArg) {
+    String s = MessageFormat.format(TomMessage.getString("DetailWarningMessage"), new Object[]{structInfo, new Integer(structInfoLine), MessageFormat.format(msg, msgArg)});
+    messageWarning(s,fileName, warningLine, level);
   }
 
+  public void messageError(String msg, String file, int line) {
+    TomAlert err = getTomSignatureFactory().makeTomAlert_Error(msg,file,line);
+    setErrors(getTomSignatureFactory().makeTomAlertList(err, getErrors()));
+  }
+  
+  public void messageError(String msg, Object[] args, String file, int line) {
+    TomError err = getTomSignatureFactory().makeTomAlert_Error(MessageFormat.format(msg, args), file, line);
+    setErrors(getTomSignatureFactory().makeTomAlertList(err, getErrors()));
+  }
+
+  public void messageWarning(String msg, String file, int line) {
+    TomAlert err = getTomSignatureFactory().makeTomAlert_Warning(msg,file,line);
+    setWarnings(getTomSignatureFactory().makeTomAlertList(err, getWarnings()));
+  }
+  
+  public void messageWarning(String msg, Object[] args, String file, int line) {
+    TomWarning err = getTomSignatureFactory().makeTomAlert_Warning(MessageFormat.format(msg, args), file, line);
+    setWarnings(getTomSignatureFactory().makeTomAlertList(err, getWarnings()));
+  }
 
   
 }

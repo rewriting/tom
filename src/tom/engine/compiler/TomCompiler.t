@@ -74,10 +74,9 @@ public class TomCompiler extends TomTask {
       environment().setTerm(compiledTerm);
       
     } catch (Exception e) {
-      addError("Exception occurs in TomCompiler: "+e.getMessage(), 
+      messageError("Exception occurs in TomCompiler: "+e.getMessage(), 
                getInput().getInputFile().getName(), 
-               TomMessage.DEFAULT_ERROR_LINE_NUMBER, 
-               TomMessage.TOM_ERROR);
+                   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
       return;
     }

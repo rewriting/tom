@@ -79,17 +79,17 @@ public class TomTaskParser extends TomTask {
       environment().setTerm(parsedTerm);
       
     } catch (TokenMgrError e) {
-      TomEnvironment.getInstance().addError(TomMessage.getString("TokenMgrError"), new Object[]{fileName, e.getMessage()}, fileName,  parser.getLine(), TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().messageError(TomMessage.getString("TokenMgrError"), new Object[]{fileName, e.getMessage()}, fileName,  parser.getLine());
     } catch (TomIncludeException e) {
     	System.out.println("TomIncludeException"+e.getMessage());
-      TomEnvironment.getInstance().addError(e.getMessage(), fileName,  parser.getLine(), TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().messageError(e.getMessage(), fileName,  parser.getLine());
     } catch (TomException e) {
-      TomEnvironment.getInstance().addError(e.getMessage(), fileName,  parser.getLine(), TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().messageError(e.getMessage(), fileName,  parser.getLine());
     } catch (ParseException e) {
-      TomEnvironment.getInstance().addError(TomMessage.getString("ParseException"), new Object[]{fileName, e.getMessage()}, fileName, parser.getLine(), TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().messageError(TomMessage.getString("ParseException"), new Object[]{fileName, e.getMessage()}, fileName, parser.getLine());
     } catch (Exception e) {
       e.printStackTrace();
-      TomEnvironment.getInstance().addError(TomMessage.getString("UnhandledException"), new Object[]{fileName, e.getMessage()}, fileName, TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().messageError(TomMessage.getString("UnhandledException"), new Object[]{fileName, e.getMessage()}, fileName, TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     }
   }
 

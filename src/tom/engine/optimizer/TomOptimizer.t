@@ -62,7 +62,7 @@ public class TomOptimizer extends TomTask {
       environment().setTerm(optimizedTerm);
       
     } catch (Exception e) {
-      addError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      messageError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
       return;
     }
@@ -106,13 +106,12 @@ public class TomOptimizer extends TomTask {
 
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
-                messageError(orgTrack.getLine(),
+                messageWarning(orgTrack.getLine(),
                              orgTrack.getFileName().getString(),
                              orgTrack.getAstName().getString(),
                              orgTrack.getLine(),
                              "Variable `{0}` is never used",
-                             new Object[]{`name},
-                             TomMessage.TOM_WARNING);
+                               new Object[]{`name});
                 if(verbose) {
                   System.out.println(mult + " -> remove:     " + `name);
                 }
@@ -146,13 +145,12 @@ public class TomOptimizer extends TomTask {
 
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
-                messageError(orgTrack.getLine(),
+                messageWarning(orgTrack.getLine(),
                              orgTrack.getFileName().getString(),
                              orgTrack.getAstName().getString(),
                              orgTrack.getLine(),
                              "Variable `{0}` is never used",
-                             new Object[]{`name},
-                             TomMessage.TOM_WARNING);
+                               new Object[]{`name});
                 if(verbose) {
                   System.out.println(mult + " -> remove:     " + `name);
                 }

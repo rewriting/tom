@@ -63,8 +63,8 @@ public class TomBackend extends TomTask {
         generator = new TomCamlGenerator (output);
       }
     } catch (Exception e) {
-      addError("Exception occurs in TomBackend Init: "+e.getMessage(), 
-               getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      messageError("Exception occurs in TomBackend Init: "+e.getMessage(), 
+               getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
     }
   }
@@ -81,10 +81,9 @@ public class TomBackend extends TomTask {
         System.out.println("TOM generation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
     } catch (Exception e) {
-      addError("Exception occurs in TomGenerator: " + e.getMessage(), 
+      messageError("Exception occurs in TomGenerator: " + e.getMessage(), 
                getInput().getInputFile().getName(), 
-               TomMessage.DEFAULT_ERROR_LINE_NUMBER, 
-               TomMessage.TOM_ERROR);
+                   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
       return;
     }

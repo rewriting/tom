@@ -815,5 +815,15 @@
 		<jar destfile="${aircubebundle}" basedir="${bundle.dir}"></jar>
 		<delete dir="${bundle.dir}"/>
 	</target>
+
+	<!--
+	<target name="tags">
+		<exec>
+			find /Volumes/Home/pem/workspace/jtom/src/jtom \( -name "*.t" -o
+			-name "*.java" \) | xargs etags - -language=java
+		</exec>
+	</target>
+	-->
+
 </project>
 

@@ -62,8 +62,8 @@ public class TomVerifierExtract extends TomTask {
 			getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.verifExtractionSuffix, 
         extractTerm);
     } catch (Exception e) {
-      addError("Exception occured in TomVerifierExtract: "+ e.getMessage(), 
-               getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      messageError("Exception occured in TomVerifierExtract: "+ e.getMessage(), 
+                   getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
       return;
     }

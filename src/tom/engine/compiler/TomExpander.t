@@ -75,7 +75,7 @@ public class TomExpander extends TomTask {
       environment().setTerm(expandedTerm);
       
     } catch (Exception e) {
-      addError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      messageError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
       return;
     }
