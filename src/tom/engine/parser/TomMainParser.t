@@ -109,6 +109,9 @@ public class TomMainParser extends TomGenericPlugin {
 	
       p("-- NEW PARSER --");
 
+      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
       long startChrono = System.currentTimeMillis();
 	    
       boolean verbose      = ((Boolean)getPluginPlatform().getOptionValue("verbose")).booleanValue();
@@ -153,7 +156,7 @@ public class TomMainParser extends TomGenericPlugin {
 	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
 			       + DEBUG_TABLE_SUFFIX, parser.getStructTable());
       
-      printAlertMessage();
+      printAlertMessage(errorsAtStart, warningsAtStart);
     }
     catch (TokenStreamException e){
 	e.printStackTrace();

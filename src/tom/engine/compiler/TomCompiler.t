@@ -33,6 +33,9 @@ public class TomCompiler extends TomGenericPlugin {
 
   public void run() {
     try {
+      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
       long startChrono = System.currentTimeMillis();
       boolean verbose      = getPluginPlatform().getOptionBooleanValue("verbose");
       boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
@@ -50,7 +53,7 @@ public class TomCompiler extends TomGenericPlugin {
       }
       setTerm(compiledTerm);
 
-      printAlertMessage();
+      printAlertMessage(errorsAtStart, warningsAtStart);
     } catch (Exception e) {
       getLogger().log( Level.SEVERE,
 		       "ExceptionMessage",

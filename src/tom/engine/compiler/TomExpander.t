@@ -33,6 +33,9 @@ public class TomExpander extends TomGenericPlugin {
 
   public void run() {
     try {
+      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
       long startChrono = System.currentTimeMillis();
       boolean verbose      = getPluginPlatform().getOptionBooleanValue("verbose");
       boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
@@ -58,6 +61,8 @@ public class TomExpander extends TomGenericPlugin {
 	      Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
                              + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
       }
+
+      printAlertMessage(errorsAtStart, warningsAtStart);
     } catch (Exception e) {
 	getLogger().log( Level.SEVERE,
 			 "ExceptionMessage",

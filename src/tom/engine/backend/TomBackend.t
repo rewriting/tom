@@ -28,6 +28,9 @@ public class TomBackend extends TomGenericPlugin {
   public void run() {
     if(isActivated() == true) {
       try {
+      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
 	long startChrono = System.currentTimeMillis();
 	boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
 			
@@ -53,7 +56,7 @@ public class TomBackend extends TomGenericPlugin {
 	
 	writer.close();
 
-	printAlertMessage();
+	printAlertMessage(errorsAtStart, warningsAtStart);
       }
       catch (Exception e) {
 	  getLogger().log( Level.SEVERE,

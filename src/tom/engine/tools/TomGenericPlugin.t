@@ -69,18 +69,10 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     return logger;
   }
 
-  /** Number of errors when plugin starts, used in printAlertMessage() */
-  private int errorsAtStart;
-
-  /** Number of errors when plugin starts, used in printAlertMessage() */
-  private int warningsAtStart;
-
   /** Constructor method. */
   public TomGenericPlugin(String name) {
     pluginName = name;
     logger = Logger.getLogger(getClass().getName());
-    errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-    warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
   }
 
   /**
@@ -144,7 +136,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     putOptionValue(optionName, optionValue);
   }
 
-  public void printAlertMessage() {
+  public void printAlertMessage(int errorsAtStart, int warningsAtStart) {
     if(!environment().isEclipseMode()) {
       StatusHandler status = getPluginPlatform().getStatusHandler();
 

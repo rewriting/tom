@@ -22,6 +22,9 @@ public class TomSyntaxChecker extends TomChecker {
   public void run() {
     if(isActivated()) {	
       try {	
+      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
         long startChrono = System.currentTimeMillis();
         reinit();
         checkSyntax( (TomTerm)getTerm() );
@@ -29,7 +32,7 @@ public class TomSyntaxChecker extends TomChecker {
           System.out.println("TOM syntax checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
         }
 
-        printAlertMessage();
+        printAlertMessage(errorsAtStart, warningsAtStart);
         
       } catch (Exception e) {
 	getLogger().log( Level.SEVERE,

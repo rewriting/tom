@@ -27,6 +27,9 @@ public class TomOptimizer extends TomGenericPlugin {
   public void run() {
     if(isActivated()) {
       try {
+      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
 	long startChrono = System.currentTimeMillis();
 						
 	boolean verbose      = getPluginPlatform().getOptionBooleanValue("verbose");
@@ -43,7 +46,7 @@ public class TomOptimizer extends TomGenericPlugin {
 	  Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
 				getTerm() );
 		
-	printAlertMessage();
+	printAlertMessage(errorsAtStart, warningsAtStart);
 
       } catch (Exception e) {
 	  getLogger().log( Level.SEVERE,

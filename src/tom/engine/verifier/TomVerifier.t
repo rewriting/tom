@@ -56,6 +56,9 @@ public class TomVerifier extends TomGenericPlugin {
   public void run() {
     if(isActivated()) {
       try {
+      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
 	long startChrono = System.currentTimeMillis();
 	boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
 
@@ -73,7 +76,7 @@ public class TomVerifier extends TomGenericPlugin {
 	if(verbose)
 	    System.out.println("TOM verification phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
 	    
-	printAlertMessage();
+	printAlertMessage(errorsAtStart, warningsAtStart);
 	
       } catch (Exception e) {
 	  getLogger().log( Level.SEVERE,

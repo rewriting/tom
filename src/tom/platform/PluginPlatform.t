@@ -25,6 +25,7 @@
 
 package tom.platform;
 
+import java.text.*;
 import java.util.*;
 import java.util.logging.*;
 import java.io.*;
@@ -320,8 +321,20 @@ public class PluginPlatform {
 
     //System.out.println( statusHandler.toString() );
 
+    int nbOfErrors   = statusHandler.nbOfErrors();
+    int nbOfWarnings = statusHandler.nbOfWarnings();
+
     if( statusHandler.hasError() ) {
+      logger.log( Level.WARNING,
+		  "TaskErrorMessage",
+		  new Object[]{ new Integer(nbOfErrors), 
+				new Integer(nbOfWarnings) } );
       return 1;
+    } else if( statusHandler.hasWarning() ) {
+      logger.log( Level.WARNING,
+		  "TaskWarningMessage",
+		  new Integer(nbOfWarnings) );
+      return 0;
     } else {
       return 0;
     }

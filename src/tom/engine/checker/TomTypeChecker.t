@@ -22,6 +22,9 @@ public class TomTypeChecker extends TomChecker {
   public void run() {
     if(isActivated()) {
       try {
+      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
         long startChrono = System.currentTimeMillis();
         checkTypeInference( (TomTerm)getTerm() );
 			
@@ -29,7 +32,7 @@ public class TomTypeChecker extends TomChecker {
           System.out.println("TOM type checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
         }
 
-        printAlertMessage();
+        printAlertMessage(errorsAtStart, warningsAtStart);
 	  
       } catch (Exception e) {
 	  getLogger().log( Level.SEVERE,
