@@ -10,6 +10,8 @@
   <property name="examples.dir" location="."/>
   <property name="examples.dist" location="dist"/>
 
+  <property name="lib" value="lib"/>
+
   <!-- where the examples a build: javac destDir -->
   <property name="examples.gen" location="gen"/>
   <property name="examples.build" location="build"/>
@@ -92,6 +94,9 @@
     <!-- Define classpath for building stable and source  -->
     <path id="tom.classpath">
       <fileset dir="${tom.home}/lib">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${examples.dir}/${lib}">
         <include name="*.jar"/>
       </fileset>
     </path>
@@ -444,11 +449,7 @@
 		<!-- build parser -->
 		<antlr target="${propp.dir}/SeqParser.g"
 					 outputdirectory="${examples.gen}/${propp}">
-			<classpath>
-				<fileset dir="${propp.dir}">
-					<include name="**/*.jar"/>
-				</fileset>
-			</classpath>
+			<classpath refid="tom.classpath"/>
 		</antlr>
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
@@ -460,9 +461,6 @@
     <javac srcdir="${examples.gen}" destdir="${examples.build}">
 			<classpath>
 				<path refid="tom.classpath"/>
-				<fileset dir="${propp.dir}">
-					<include name="**/*.jar"/>
-				</fileset>
 			</classpath>
       <include name="${propp}/**/*.java"/>
     </javac>
@@ -471,7 +469,6 @@
 			<fileset dir="${examples.dir}/${propp}">
 				<include name="examples"/>
 				<include name="*.sty"/>
-				<include name="*.jar"/>
 			</fileset>
 		</copy>
   </target>
@@ -549,8 +546,7 @@
 		</copy>
 
   </target>
-  
-  
+    
   <target name="examples" 
           description="Builds the examples (at least some)"
 					depends="addressbook, apireach, boulderdash, builtin, dom,
@@ -564,6 +560,7 @@
         <include name="README"/>
         <include name="build.xml"/>
         <include name="build.sh"/>
+        <include name="${lib}/*.jar"/>
 
         <include name="${addressbook}/README"/>
         <include name="${addressbook}/*.t"/>
