@@ -42,6 +42,7 @@ public class TomChecker extends TomBase {
   private ArrayList alreadyStudiedSymbol =  new ArrayList();
   private ArrayList alreadyStudiedType =  new ArrayList();  
   private Option currentTomStructureOrgTrack;
+  private Option currentApplStructureOrgTrack;
   private Integer nullInteger = new Integer(-1);
 
   public TomChecker(jtom.TomEnvironment environment) { 
@@ -224,7 +225,7 @@ public class TomChecker extends TomBase {
   
   private void messageMatchErrorVariableStar(String nameVariableStar, Integer line) throws TomException {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
-    String s = "Single list variable "+nameVariableStar+"* is not allowed on left most part of %match structure declared line "+declLine;
+    String s = "Single list variable '"+nameVariableStar+"*' is not allowed on left most part of %match structure declared line "+declLine;
     messageError(line,s);
   }
   
@@ -426,7 +427,8 @@ public class TomChecker extends TomBase {
   private void verifySymbolOptions(String symbType, OptionList list, int expectedNbMakeArgs) throws TomException {
     statistics().numberOperatorDefinitionsTested++;
     ArrayList verifyList = new ArrayList();
-    if(symbType == "%op"){    
+    boolean foundOpMake = false;
+    if(symbType == "%op"){
     } else if(symbType == "%oparray" ) {
       verifyList.add("make_empty");
       verifyList.add("make_append");
@@ -460,7 +462,11 @@ public class TomChecker extends TomBase {
         }
           /*for a symbol*/
         DeclarationToOption(MakeDecl[args=makeArgsList, orgTrack=orgTrack]) -> {
-          verifyMakeDeclArgs(makeArgsList, expectedNbMakeArgs, orgTrack, symbType);
+          if (!foundOpMake) {
+            foundOpMake = true;
+            verifyMakeDeclArgs(makeArgsList, expectedNbMakeArgs, orgTrack, symbType);
+          }
+          else {messageMacroFunctionRepeated("make", orgTrack, symbType);}
         }
       }
       list = list.getTail();
@@ -642,7 +648,7 @@ public class TomChecker extends TomBase {
   
   private void verifyApplStructure(OptionList optionList, String name, TomList argsList) throws TomException {
     statistics().numberApplStructuresTested++;
-    currentTomStructureOrgTrack = findOriginTracking(optionList);
+    currentApplStructureOrgTrack = findOriginTracking(optionList);
     TomSymbol symbol = symbolTable().getSymbol(name);
     if(symbol==null  && (hasConstructor(optionList) || !argsList.isEmpty())) {
       messageSymbolError(name, optionList);
@@ -712,13 +718,13 @@ public class TomChecker extends TomBase {
 
   private void  messageImpossiblePlaceHolderInListStructure(String listApplName, OptionList optionList) throws TomException {
     Integer line = findOriginTrackingLine(optionList);
-    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer declLine = findOriginTrackingLine(currentApplStructureOrgTrack);
     String s = " *** Placeholder is not allowed in list operator '"+listApplName+"' declared line "+declLine;
     messageError(line,s);
   }
   
   private void  messageApplErrorTypeArgument(String applName, int slotNumber, String expectedType, String givenType, Integer line) throws TomException {
-    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer declLine = findOriginTrackingLine(currentApplStructureOrgTrack);
     String s = "Bad type of argument: Argument "+slotNumber+" of method '" + applName + "' has type '"+expectedType+"' required but type '"+givenType+"' found in structure declared "+declLine;
     messageError(line,s);
   }
@@ -882,7 +888,7 @@ public class TomChecker extends TomBase {
   
   private void messageRuleErrorVariableStar(String nameVariableStar, Integer line) throws TomException {
     Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
-    String s = "Single list variable " +nameVariableStar+ "* is not allowed on left hand side of structure %rule declared line "+declLine;
+    String s = "Single list variable '" +nameVariableStar+ "*' is not allowed on left hand side of structure %rule declared line "+declLine;
     messageError(line,s);
   }
 

@@ -707,7 +707,13 @@ public class TomParser implements TomParserConstants {
         break;
       case TOM_GET_SLOT:
         attribute = KeywordGetSlot(astName, type.image);
-                                                         mapNameDecl.put(attribute.getSlotName(),attribute);
+        TomName sName = attribute.getSlotName();
+        if (mapNameDecl.get(sName)==null) {
+          mapNameDecl.put(sName,attribute);
+        }
+        else {
+          System.out.println("*** Warning *** GetSlot declaration '"+sName.getString()+"' is repeated in operator declaration line: "+getLine());
+        }
         break;
       case TOM_IS_FSYM:
         attribute = KeywordIsFsym(astName, type.image);
@@ -743,7 +749,7 @@ public class TomParser implements TomParserConstants {
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
         if(!Flags.noWarning) {
-          System.out.println("*** Warning *** Some GetSlot declaration are incompatible with operator signature declared line: "+getLine());
+          System.out.println("*** Warning *** Some GetSlot declaration are incompatible with operator signature line: "+getLine());
           System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet());
         }
       }

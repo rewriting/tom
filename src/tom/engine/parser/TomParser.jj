@@ -797,7 +797,16 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
     }
     ( 
       attribute = KeywordMake(name.image,tsf().makeTomType_TomTypeAlone(type.image),types)  { options.add(attribute); }
-    | attribute = KeywordGetSlot(astName, type.image)  { mapNameDecl.put(attribute.getSlotName(),attribute); }
+    | attribute = KeywordGetSlot(astName, type.image)
+      {
+        TomName sName = attribute.getSlotName();
+        if (mapNameDecl.get(sName)==null) {
+          mapNameDecl.put(sName,attribute);
+        }
+        else {
+          System.out.println("*** Warning *** GetSlot declaration '"+sName.getString()+"' is repeated in operator declaration line: "+getLine());
+        }
+      }
     | attribute = KeywordIsFsym(astName, type.image)  { options.add(attribute); }
     )*
   <TOM_RBRACE>
@@ -825,7 +834,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
         if(!Flags.noWarning) {
-          System.out.println("*** Warning *** Some GetSlot declaration are incompatible with operator signature declared line: "+getLine());
+          System.out.println("*** Warning *** Some GetSlot declaration are incompatible with operator signature line: "+getLine());
           System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet());
         }
       }
