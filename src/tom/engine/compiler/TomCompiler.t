@@ -78,7 +78,10 @@ public class TomCompiler extends TomTask {
       getInput().setTerm(compiledTerm);
       
     } catch (Exception e) {
-      addError("Exception occurs in TomCompiler: "+e.getMessage(), getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+      addError("Exception occurs in TomCompiler: "+e.getMessage(), 
+							 getInput().getInputFileName(), 
+							 TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, 
+							 TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }
@@ -429,7 +432,7 @@ public class TomCompiler extends TomTask {
                                   ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(TomTerm subject) {
-      Appl[option=option, nameList=nameList@(Name(tomName),_*), args=arguments, constraints=constraints] -> {
+      Appl[nameList=nameList@(Name(tomName),_*), args=arguments] -> {
         TomList args = `arguments;
         TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         
@@ -471,7 +474,7 @@ public class TomCompiler extends TomTask {
         } else {
           newArgs = abstractPatternList(args,abstractedPattern,introducedVariable);
         }
-        abstractedTerm = `Appl(option,nameList,newArgs,constraints);
+        abstractedTerm = subject.setArgs(newArgs);
       }
     } // end match
     return abstractedTerm;

@@ -335,8 +335,8 @@ public class TomKernelCompiler extends TomBase {
         return test;
       }
         
-      manyTomList(var@Variable[option=optionList, astType=termType],termTail) |
-      manyTomList(var@UnamedVariable[option=optionList,astType=termType],termTail) -> {
+      manyTomList(var@Variable[astType=termType],termTail) |
+      manyTomList(var@UnamedVariable[astType=termType],termTail) -> {
         /*
          * generate:
          * ---------
@@ -356,8 +356,8 @@ public class TomKernelCompiler extends TomBase {
         return test;
       }
         
-      manyTomList(var@VariableStar[option=optionList, astType=termType],termTail) |
-      manyTomList(var@UnamedVariableStar[option=optionList,astType=termType],termTail) -> {
+      manyTomList(var@VariableStar[astType=termType],termTail) |
+      manyTomList(var@UnamedVariableStar[astType=termType],termTail) -> {
         if(termTail.isEmpty()) {
           /*
            * generate:
@@ -409,7 +409,7 @@ public class TomKernelCompiler extends TomBase {
         }
       }
 
-      manyTomList(term@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs],termTail)  -> {
+      manyTomList(term@Appl[nameList=nameList@(Name(tomName),_*)],termTail)  -> {
         /*
          * generate:
          * ---------
@@ -546,7 +546,7 @@ public class TomKernelCompiler extends TomBase {
       }
 
 
-      manyTomList(term@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs],termTail)  -> {
+      manyTomList(term@Appl[nameList=nameList@(Name(tomName),_*)],termTail)  -> {
         /*
          * generate:
          * ---------
@@ -636,12 +636,6 @@ public class TomKernelCompiler extends TomBase {
 	private Instruction buildLet(TomTerm dest,
                                Expression source,
                                Instruction body) {
-    /* TODO: remove old things
-		TomTerm annotedVariable = getAnnotedVariable(dest.getOption());
-    if(annotedVariable != null) {
-      body = buildLet(annotedVariable,source,body);
-    }
-		*/
 		// Take care of constraints
     body = compileConstraint(dest,source,body);
 		return `Let(dest,source,body);
@@ -677,14 +671,12 @@ public class TomKernelCompiler extends TomBase {
         //System.out.println("constraint: " + source + " EqualTo " + var);
         Instruction subBody = compileConstraint(var,source,body);
         return `buildConstraint(tail,source,IfThenElse(EqualTerm(var,ExpressionToTomTerm(source)),subBody,Nop()));
-        //return newBody;
       }
 
       concConstraint(AssignTo(var@(Variable|VariableStar)[]) ,tail*) -> {
         //System.out.println("constraint: " + source + " AssignTo " + var);
         Instruction subBody = compileConstraint(var,source,body);
         return `buildConstraint(tail,source,Let(var,source,subBody));
-        //return newBody;
       }
 
       concConstraint(head,tail*) -> {
@@ -727,7 +719,3 @@ public class TomKernelCompiler extends TomBase {
   }
   
 } // end of class
-  
-
-
-    
