@@ -64,8 +64,12 @@ public class TomGenerator extends TomBase {
       }
 
       TomInclude(l) -> {
-        OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile());
-        generateList(singleLineOutput,deep,l);
+        if (Flags.jCode) {
+          OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile());
+          generateList(singleLineOutput,deep,l);
+        } else {
+          generateList(out,deep,l);
+        }
         return;
       }
      

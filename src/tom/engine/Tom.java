@@ -198,7 +198,7 @@ public class Tom {
           fileList[index++] = (File)it.next();
         }
         
-        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList);
+        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0);
         startChrono();
         parsedTerm = tomParser.startParsing();
         stopChrono();

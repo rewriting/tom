@@ -42,19 +42,21 @@ public class TomParser implements TomParserConstants {
 
   private int oldPos=0;
   private int oldLine=0;
+  private int includeOffSet=0;
   private Position orgTrack;
   private TomBuffer tomBuffer;
   private SymbolTable symbolTable;
   private jtom.TomEnvironment environment;
   private File importList[];
 
-  public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[]) {
+  public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet) {
     this(input);
     this.tomBuffer = input;
     this.symbolTable = environment.getSymbolTable();
     this.environment = environment;
     this.importList = importList;
-    orgTrack = makePosition(1,1);
+    this.includeOffSet = includeOffSet-1;
+    this.orgTrack = makePosition(1,1);
   }
 
   public jtom.TomEnvironment environment() {
@@ -70,7 +72,7 @@ public class TomParser implements TomParserConstants {
   }
 
   private String getLine() {
-    return  java.lang.String.valueOf(token.beginLine);
+    return  (java.lang.String.valueOf(token.beginLine+includeOffSet));
   }
 
   private int getPos() {
@@ -117,7 +119,7 @@ public class TomParser implements TomParserConstants {
   }
 
   public Position makePosition(int line, int column) {
-    return  tsf().makePosition_Position(new Integer(line), new Integer(column));
+    return  tsf().makePosition_Position(new Integer(line+includeOffSet), new Integer(column));
   }
 
   private TargetLanguage makeTL(String code) {
@@ -568,7 +570,7 @@ public class TomParser implements TomParserConstants {
       inputBuffer = new byte[(int)file.length()+1];
       input       = new FileInputStream(file);
       input.read(inputBuffer);
-      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList);
+      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, Integer.valueOf(getLine()).intValue());
       astTom = tomParser.startParsing();
       astTom = tsf().makeTomTerm_TomInclude(astTom.getList());
       list.add(astTom);
@@ -1583,14 +1585,6 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_STAR)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_3() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1627,6 +1621,14 @@ public class TomParser implements TomParserConstants {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_LBRACKET)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_STAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
