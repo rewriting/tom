@@ -224,6 +224,7 @@ public class Verifier extends TomBase {
     // System.out.println("The derivation: " + startingderiv);
 
     Collection tree_list_pre = apply_sem_rules(startingderiv);
+    System.out.println("Trees: " + tree_list_pre);
     // replace substitutions in trees
     Collection tree_list = new HashSet();
     Iterator it = tree_list_pre.iterator();
@@ -309,7 +310,7 @@ public class Verifier extends TomBase {
     return `dedterm(concTerm(ded*));
   }
 
-  protected Seq build_dedexpr(Expr sp) {
+  protected ExprList build_dedexpr(Expr sp) {
     ExprList ded = `concExpr(sp);
     %match(Expr sp) {
       appSubsE[] -> { 
@@ -319,7 +320,7 @@ public class Verifier extends TomBase {
     }
 
     // System.out.println("dedexpr gives: " + ded);
-    return `dedexpr(concExpr(ded*,true));
+    return `ded;
   }
 
   // need to be reworked : this IS a BAD way to do it !
@@ -432,10 +433,32 @@ public class Verifier extends TomBase {
         if(instruction_contains(`h,ip)) {
           // continue the derivation
           System.out.println("une branche");
+          Deriv up = `ebs(env(e,h),env(subs(undefsubs()),ip));
+          Collection pre_list = apply_sem_rules(up);
 
+          Iterator it = pre_list.iterator();
+          while(it.hasNext()) {
+            DerivTree pre = (DerivTree) it.next();
+            c.add(`derivrule("seqa",post,pre,seq()));
+          }
         } else {
           System.out.println("une autre branche");
+          Deriv up = `ebs(env(e,h),env(subs(undefsubs()),refuse()));
+          Collection pre_list = apply_sem_rules(up);
 
+          // continue the derivation with t
+          up = `ebs(env(e,sequence(t*)),env(subs(undefsubs()),ip));
+          Collection post_list = apply_sem_rules(up);
+
+          Iterator it = pre_list.iterator();
+          while(it.hasNext()) {
+            DerivTree pre = (DerivTree) it.next();
+            Iterator it2 = post_list.iterator();
+            while(it2.hasNext()) {
+              DerivTree pre2 = (DerivTree) it2.next();
+              c.add(`derivrule2("seqb",post,pre,pre2,seq()));
+            }
+          }
         }
       }
       // let rule
@@ -465,42 +488,38 @@ public class Verifier extends TomBase {
       // iftrue/iffalse rule
       ebs(env(e,ITE(exp,ift,iff)),env(subs(undefsubs()),ip)) -> {
         // build condition
-        Seq cond = build_dedexpr(`appSubsE(e,exp));
-        // true or false ?
-        Expr res = null;
-        %match(Seq cond) {
-          dedexpr(concExpr(_*,x)) -> { res = `x; }
-            _ -> { if (res == null) { 
-              System.out.println("build_dedexpr has a problem with " + cond);
-            }
-          }
-        }
-        Deriv up = null;
-        String rulename = "fail";
-        if (res == `true()) {
-          up = `ebs(env(e,ift),env(subs(undefsubs()),ip));
-          rulename = "iftrue";
-        } else if (res == `false()) {
-          up = `ebs(env(e,iff),env(subs(undefsubs()),ip));
-          rulename = "iffalse";
-        } else {
-          System.out.println("How to conclude with: "+ res + " ?");
-        }
+        ExprList cond = build_dedexpr(`appSubsE(e,exp));
+
+        Deriv up = `ebs(env(e,ift),env(subs(undefsubs()),ip));
+        String rulename = "iftrue";
+        
         Collection pre_list = apply_sem_rules(up);
         Iterator it = pre_list.iterator();
         while(it.hasNext()) {
           DerivTree pre = (DerivTree) it.next();
-          c.add(`derivrule(rulename,post,pre,cond));
+          c.add(`derivrule(rulename,post,pre,dedexpr(concExpr(cond*,true()))));
+        }
+
+        up = `ebs(env(e,iff),env(subs(undefsubs()),ip));
+        rulename = "iffalse";
+        
+        pre_list = apply_sem_rules(up);
+        it = pre_list.iterator();
+        while(it.hasNext()) {
+          DerivTree pre = (DerivTree) it.next();
+          c.add(`derivrule(rulename,post,pre,dedexpr(concExpr(cond*,false()))));
         }
       }
-      // axiom !
+      // axioms !
       ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
-        c.add(`derivrule("axiom",post,endderiv(),seq()));
+        c.add(`derivrule("axiom_accept",post,endderiv(),seq()));
+      }
+      ebs(env(e,refuse[]),env(subs(undefsubs()),refuse[])) -> {
+        c.add(`derivrule("axiom_refuse",post,endderiv(),seq()));
       }
       _ -> { 
         if (c.isEmpty()) {
-          System.out.println("Ratai ! " + post);
-          c.add(`derivrule("problem",post,endderiv(),seq()));
+            //System.out.println("Ratai ! " + post);
         }
       }
     }
@@ -526,67 +545,6 @@ public class Verifier extends TomBase {
     Collection collect = new HashSet();
     traversal().genericCollect(i,collect_find,collect,goal);
     return !collect.isEmpty();
-  }
-
-  protected DerivTree apply_rules(Deriv post, SubstRef outsubst) {
-    %match(Deriv post) {
-      // let rule
-      ebs(env(e,ILLet(x,u,i)),env(subs(undefsubs()),ip)) -> {
-        // build condition
-        Seq cond = build_dedterm(`appSubsT(e,u));
-        // find "t"
-        Term t = null;
-        %match(Seq cond) {
-          dedterm(concTerm(_*,r)) -> { t = `r; }
-          _ -> { if (t == null) { 
-              System.out.println("build_dedterm has a problem with " + cond);
-            }
-          }
-        }
-        Deriv up = `ebs(
-          env(subs(e*,is(x,t)),i),
-          env(subs(undefsubs()),ip)
-          );
-        DerivTree pre = apply_rules(up,outsubst);
-        return `derivrule("let",post,pre,cond);
-        }
-      // iftrue/iffalse rule
-      ebs(env(e,ITE(exp,ift,iff)),env(subs(undefsubs()),ip)) -> {
-        // build condition
-        Seq cond = build_dedexpr(`appSubsE(e,exp));
-        // true or false ?
-        Expr res = null;
-        %match(Seq cond) {
-          dedexpr(concExpr(_*,x)) -> { res = `x; }
-          _ -> { if (res == null) { 
-              System.out.println("build_dedexpr has a problem with " + cond);
-            }
-          }
-        }
-        Deriv up = null;
-        String rulename = "fail";
-        if (res == `true()) {
-          up = `ebs(env(e,ift),env(subs(undefsubs()),ip));
-          rulename = "iftrue";
-        } else if (res == `false()) {
-          up = `ebs(env(e,iff),env(subs(undefsubs()),ip));
-          rulename = "iffalse";
-        } else {
-          System.out.println("How to conclude with: "+ res + " ?");
-        }
-        DerivTree pre = apply_rules(up,outsubst);
-        return `derivrule(rulename,post,pre,cond);
-      }
-      // axiom !
-      ebs(env(e,accept[]),env(subs(undefsubs()),accept[])) -> {
-        outsubst.set(`e);
-        return `derivrule("axiom",post,endderiv(),seq());
-      }
-      _ -> { 
-        System.out.println("Ratai ! " + post);
-        return `derivrule("problem",post,endderiv(),seq());
-      }
-    }
   }
 
 /**

@@ -51,3 +51,4 @@ abstract syntax
 	ebs(lhs:Environment,rhs:Environment)       -> Deriv
 	endderiv                                   -> DerivTree
 	derivrule(name:String,post:Deriv,pre:DerivTree,cond:Seq) -> DerivTree
+	derivrule2(name:String,post:Deriv,pre:DerivTree,pre2:DerivTree,cond:Seq) -> DerivTree
