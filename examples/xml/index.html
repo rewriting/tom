@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+	<title>TOM: A Pattern Matching Compiler for Multiple Target Languages</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+	<meta name="description" content="TOM: A Pattern Matching Compiler"/>
+	<meta name="keywords" content="tom, pattern, matching, compiler, rewriting, programming language, program transformation, pattern matching"/>
+</head>
+
+<body>
+
+<div id="page">
+        <div id="title">
+		<h1>Jtom: a (Java) To One Matching compiler</h1>
+	</div>
+
+	<div id="description">
+			TOM is a language extension which adds pattern matching facilities to
+			an existing imperative language.  
+			In the current version, TOM supports C, Java and Eiffel as native
+			language.	
+	</div>
+	
+	<div id="news">
+		<h2>News</h2>
+		<dl>
+			<dd>jtom-1.3 will be released by the end of August.
+				This major release improves the use of builtins and integrates a debugger.</dd>
+			<dd>A Tom eclipse plugin is under development and will be released in September</dd>
+			<dd>xtom: an extended version of Tom dedicated to XML transformations will be released in September</dd>
+			<dd>a nice application of Tom:  <a href="BoulderDashNTom.html">BoulderDash</a></dd>
+		</dl>
+	</div>
+
+	
+	<div id="publications">
+		<h2>Publications</h2>
+		Pierre-Etienne Moreau, Christophe Ringeissen and Marian Vittek. 
+       A Pattern Matching Compiler.
+       <em>In D. Parigot and M. G. J. van den Brand, editors, 1st International Workshop on Language Descriptions, Tools and Applications</em>,
+       Genova (Italy), volume 44 of ENTCS. April 2001.
+		<br/>
+		 Pierre-Etienne Moreau, Christophe Ringeissen and Marian Vittek. 
+       A Pattern Matching Compiler for Multiple Target Languages. 
+       <em>In G. Hedin, editor, 12th Conference on Compiler Construction</em>,
+       Warsaw (Poland), volume 2622 of LNCS, pages 61-76. Springer-Verlag, May 2003.
+	</div>
+	
+	<div id="tool">
+		<h2>Principles</h2>
+		The tool does not impose a fixed term representation, rather it accepts
+		implementation of terms (or term like data types) of yet existing
+		applications and it permits to define and execute rewriting rules upon
+		those types.  
+		
+		The main design of the implementation can be decomposed into several parts:
+		<ul>
+			<li>A parsing phase that generates Abstract Syntax Trees (using <a
+			href="http://www.cwi.nl/projects/MetaEnv/aterm/">ATerms</a>)</li>
+			<li>An expansion phase that performs syntactic sugar replacement</li>
+			<li>A type-checking phase that performs type inference</li>
+			<li>A transformation phase that performs program transformation</li>
+			<li>A compilation phase that transforms the AST into an abstract program</li>
+			<li>A generation phase that transform the abstract program into the
+					target language</li>
+		</ul>
+	</div>
+	
+	<div id="features">
+		<dl> 
+  			<dt> The current implementation supports C and Java as target language</dt>
+  			<dt> It is usable: the TOM compiler is written in TOM itself</dt>
+  			<dt> A full <a href="manual.html"> online documentation </a> with installation instructions, language description and tutorial</dt>
+		</dl>
+	</div>
+	
+	<div id="download">
+   	<h2>Download</h2>
+		
+		<div id="release">
+			<h3>Releases</h3>
+			<dl>
+	  			<dd> [2003-04-24] <a href="../Soft/jtom-1.2.tar.gz">jtom-1.2.tar.gz</a>: Version 1.2 released</dd>
+	  			<dd> [2003-01-23] <a href="../Soft/jtom-1.1.tar.gz">jtom-1.1.tar.gz</a>: Version 1.1 released</dd>
+	  			<dd> [2002-11-21] <a href="../Soft/jtom-1.0.tar.gz">jtom-1.0.tar.gz</a>: Version 1.0 released</dd>
+	  			<dd> [2002-11-07] <a href="../Soft/jtom-0.6.tar.gz">jtom-0.6.tar.gz</a>: Efficiency improved and backquotes introduced</dd>
+	  			<dd> [2002-08-21] <a href="../Soft/jtom-0.5.tar.gz">jtom-0.5.tar.gz</a>: A release with the new front-end</dd>
+	  			<dd> [2002-01-28] <a href="../Soft/jtom-0.4.1.tar.gz">jtom-0.4.1.tar.gz</a></dd>
+				<dd> [2002-01-24] <a href="../Soft/jtom-0.4.tar.gz">jtom-0.4.tar.gz</a>: Complete re-implementation of the syntactic matching</dd>
+	  			<dd> [2002-01-22] <a href="../Soft/jtom-0.3.tar.gz">jtom-0.3.tar.gz</a>: A release with full list-matching</dd>
+	  			<dd> [2001-09-10] <a href="../Soft/jtom-0.2.5.tar.gz">jtom-0.2.5.tar.gz</a></dd>
+	  			<dd> [2001-06-15] <a href="../Soft/jtom-0.2.4.tar.gz">jtom-0.2.4.tar.gz</a></dd>
+	  			<dd> [2001-06-01] <a href="../Soft/jtom-0.2.3.tar.gz">jtom-0.2.3.tar.gz</a>: A release with rewrite rules</dd>
+	  			<dd> [2001-05-14] <a href="../Soft/jtom-0.2.2.tar.gz">jtom-0.2.2.tar.gz</a>: A release with records</dd>
+	  			<dd> [2001-03-20]	<a href="../Soft/jtom-0.2.1.tar.gz">jtom-0.2.1.tar.gz</a>: A release with list-matching</dd>
+	  			<dd> [2001-03-09] <a href="../Soft/jtom-0.2.tar.gz">jtom-0.2.tar.gz</a>: The first stable release</dd>
+			</dl>	
+		</div>
+			
+		<div id="bundle">
+			<h3>Bundles</h3>
+			<dl>
+  				<dd> [2003-04-24]	<a href="../Soft/jtom-bundle-1.2.tar.gz">jtom-bundle-1.2.tar.gz</a>: This package contains a self-content bundle of jtom-1.2</dd>
+  				<dd> [2003-02-03]	<a href="../Soft/jtom-bundle-1.1.tar.gz">jtom-bundle-1.1.tar.gz</a>: This package contains a self-content bundle of jtom-1.1</dd>
+  				<dd> [2002-11-21]	<a href="../Soft/jtom-bundle-1.0.tar.gz">jtom-bundle-1.0.tar.gz</a>: This package contains a self-content bundle of jtom-1.0</dd>
+			</dl>
+		</div>
+		  
+		<div id="jar">
+			<h3>Jar distribution</h3>
+			<dl>
+			  	<dd> [2003-04-24]	<a href="../Soft/jar/jtom-1.2.jar">jtom-1.2.jar</a></dd>
+ 				<dd> [2003-04-24] <a href="../Soft/jar/aterm-1.2.jar">aterm-1.2.jar</a></dd>
+ 				<dd> [2003-04-24]	<a href="../Soft/jar/shared-objects-1.2.jar">shared-objects-1.2.jar</a></dd>
+ 				<dd> [2003-04-24]	<a href="../Soft/jar/jjtraveler-0.4.jar">jjtraveler-0.4.jar</a></dd>
+			</dl>
+		</div>
+	
+		<div id="daily">
+			<h3>Daily distribution</h3>
+			The best way to get the last version of jtom is to download the
+			<a href="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/DailyDistributions">daily distribution</a> (at CWI):
+			<dl>
+  				<dd> <a href="http://www.cwi.nl/projects/MetaEnv/daily-dist/jtom-1.3beta.tar.gz">jtom-1.3beta.tar.gz</a></dd>
+  				<dd> <a href="http://www.cwi.nl/projects/MetaEnv/daily-dist/aterm-java-1.3beta.tar.gz">aterm-java-1.3beta.tar.gz</a></dd>
+  				<dd> <a href="http://www.cwi.nl/projects/MetaEnv/daily-dist/shared-objects-1.3beta.tar.gz">shared-objects-1.3beta.tar.gz</a></dd>
+  				<dd> <a href="http://www.cwi.nl/projects/MetaEnv/daily-dist/JJTraveler-0.4.tar.gz">JJTraveler-0.4.tar.gz</a></dd>
+			</dl>
+		</div>
+
+		
+		<div id="cvs">
+			<h3>CVS distribution</h3>
+			<dl>
+  				<dd>jtom is available by anonymous cvs:<br/>
+					<div id="cvs_path">cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom</div>
+				</dd>
+			   <dd> some cvs snapshots are also available:
+					<a href="../Soft/daily/jtom-cvs.tgz">jtom-cvs.tgz</a>,
+					<a href="../Soft/daily/JJTraveler-cvs.tgz">JJTraveler-cvs.tgz</a>,
+					<a href="../Soft/daily/aterm-java-cvs.tgz">aterm-java-cvs.tgz</a>, and
+					<a href="../Soft/daily/shared-objects-cvs.tgz">shared-objects-cvs.tgz</a>
+				</dd>
+			</dl>
+		</div>
+	</div>
+			
+	<div id="museum">	
+ 		<h3>Museum</h3> 
+		<dl>
+  			<dd><a href="http://www.loria.fr/ELAN/mtom">mtom</a></dd>
+		</dl>
+	</div>
+
+</div>	
+	
+<hr/>
+<div id="footer">
+  Last modified : August, 25th 2003<br/>
+  Email : Pierre-Etienne.Moreau@loria.fr<br/>
+  Valid <a href="http://validator.w3.org/check/referer" title="Check page validity">XHTML 1.1</a> and <a href="http://jigsaw.w3.org/css-validator/" title="Check CSS Style Validity">CSS2</a> Page.
+</div>
+
+
+<!-- Begin Nedstat Basic code -->
+<!-- Title: TOM -->
+<!-- URL: http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom -->
+<script type="JavaScript" src="http://m1.nedstatbasic.net/basic.js"></script>
+<script type="JavaScript">
+<!--
+  nedstatbasic("AB7a5w5616+f3nV30WzHpD/ihr7w", 0);
+// -->
+</script>
+<div id="stats">
+	<a href="http://v1.nedstatbasic.net/stats?AB7a5w5616+f3nV30WzHpD/ihr7w">
+	<img src="http://m1.nedstatbasic.net/n?id=AB7a5w5616+f3nV30WzHpD/ihr7w" width="18" height="18" alt="Statistics"/>
+	</a>
+</div>
+<!-- End Nedstat Basic code -->
+
+</body>
+</html>
