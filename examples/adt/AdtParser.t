@@ -13,8 +13,6 @@ import java.io.*;
 public class AdtParser {
   private AdtFactory adtFactory;
   private VasFactory vasFactory;
-  private VasTypeList typeList;
-  private ProductionList prodList; 
 
   %include {Adt.tom}
   %include {Vas.tom}
@@ -28,8 +26,6 @@ public class AdtParser {
   public AdtParser(AdtFactory adtFactory, VasFactory vasFactory) {
     this.adtFactory = adtFactory;
     this.vasFactory = vasFactory;
-    typeList = `concVasType();
-    prodList = `concProduction();
   }
   
   private final AdtFactory getAdtFactory() {
@@ -41,37 +37,39 @@ public class AdtParser {
   }
   
   private void test() {
-    toModularAdt("[constructor(Nat,zero,zero),constructor(Nat,suc,suc(<pred(Nat)>))]","Peano");
+    parse("[constructor(Nat,zero,zero),constructor(Nat,suc,suc(<pred(Nat)>))]","Peano");
+    parse("[modulentry(name(\"Peano\"),[],[type(\"Nat\")],[constructor(Nat,zero,zero),constructor(Nat,suc,suc(<pred(Nat)>))])]");
   }
 
-  private void toModularAdt(String input, String inputName) {
-    Entries entries = adtFactory.EntriesFromString(input);
-    %match(Entries entries) {
-      concEntry(_*,entry,_*) -> {
-        Production prod =  buildEntry(`entry);
-        prodList = prodList.append(prod);
-      }
+  public void parse(String input) {
+    if(!input.startsWith("[modulentry")) {
+      // TODO EXCEPTION
+    } else {
+      modularAdtToVas(input);
     }
-    VasModule vm = `VasModule(VasModuleName(inputName),
-                              concSection(Imports(concImportedVasModule()),
-                                          Public(concGrammar(Sorts(typeList),Grammar(prodList)))));
-    System.out.println(vm);   
-  }
-  
-  private Production buildEntry(Entry entry) {
-    %match(Entry entry) {
-      constructor(sort,opname,syntax) -> { 
-       String stringName = ((ATermAppl)`opname).getName();
-       String codomainString = ((ATermAppl)`sort).getName();
-       FieldList fieldList = buildFieldList(((ATermAppl)`syntax).getArguments());
-       appendType(codomainString);
-       return `Production(stringName, fieldList, VasType(codomainString));
-      }
-    }
-   return null;
   }
 
-  private void appendType(String typeString) {
+  public void parse(String input, String inputName) {
+    if(!input.startsWith("[modulentry")) {
+      modularAdtToVas(toModular(input, inputName));
+    } else {
+      // TODO EXCEPTION
+    }
+  }
+
+  public void modularAdtToVas(String input) {
+    VasTypeList typeList = `concVasType();
+    ProductionList prodList = `concProduction();
+    ImportList importList = `concImportedVasModule();
+    AdtModules modules = adtFactory.AdtModulesFromString(input);
+    %match(AdtModules modules) {
+      concAdtModule(_*,module,_*) -> {
+        System.out.println(buildModule(module, typeList, prodList, importList));
+      }
+    }
+  }
+
+  private void appendType(String typeString, VasTypeList typeList) {
     %match(VasTypeList typeList) {
       concVasType() -> {
         typeList = typeList.append(`VasType(typeString));
@@ -82,6 +80,37 @@ public class AdtParser {
         }
       }
     }
+  }
+
+  private Production buildEntry(Entry entry, VasTypeList typeList) {
+    %match(Entry entry) {
+      constructor(sort,opname,syntax) -> { 
+        String stringName = ((ATermAppl)opname).getName();
+        String codomainString = ((ATermAppl)sort).getName();
+        FieldList fieldList = buildFieldList(((ATermAppl)syntax).getArguments());
+        appendType(codomainString, typeList);
+        return `Production(stringName, fieldList, VasType(codomainString));
+      }
+      list(sort,elemsort) -> {
+        String codomainString = ((ATermAppl)sort).getName();
+        appendType(codomainString, typeList);
+        String elemCodomainString = ((ATermAppl)elemsort).getName();
+        return `Production("conc"+elemCodomainString,
+                           concField(StaredField(VasType(elemCodomainString))),
+                           VasType(codomainString));
+      }
+      // TODO NEXT
+    }
+   return null;
+  }
+
+  private void buildImports(Imports imports, ImportList importList) {
+    %match(Imports imports) {
+      concAdtModuleName(_*,name(importName),_*) -> {
+        importList.append(`Import(VasModuleName(importName)));
+      }
+    }
+    // TODO fermeture transitive
   }
   
   private FieldList buildFieldList(ATermList subtermList) {
@@ -104,5 +133,31 @@ public class AdtParser {
       return res;
     */
   }
-  
+
+  private VasModule buildModule(AdtModule module, VasTypeList typeList, ProductionList prodList, ImportList importList) {
+    String inputName = "";
+    %match(AdtModule module) {
+      modulentry[modulename=moduleName] -> {
+        inputName = `moduleName.getName();
+      }
+      modulentry[importedModule=imports] -> {
+        buildImports(imports, importList);
+      }
+      modulentry[definedSorts=sorts] -> {
+        // Redondant ?
+      }
+      modulentry(_,_,_,concEntry(_*,entry,_*)) -> {
+        Production prod =  buildEntry(`entry, typeList);
+        prodList = prodList.append(prod);
+      }
+    }
+    return `VasModule(VasModuleName(inputName),
+                      concSection(Imports(importList),
+                                  Public(concGrammar(Sorts(typeList),Grammar(prodList)))));
+  };
+
+  private String toModular(String input, String inputName) {
+    return ("[modulentry(name(\""+inputName+"\"),[],[],"+input+")]");
+  }
+
 }
