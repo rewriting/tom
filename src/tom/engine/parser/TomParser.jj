@@ -321,6 +321,7 @@ TOKEN :
 | < TOM_UNDERSCORE:  "_" >
 | < TOM_MINUS:       "-" >
 | < TOM_STAR:        "*" >
+| < TOM_WHERE:       "where" >
 | < TOM_MAKE:        "make" >
 | < TOM_MAKE_EMPTY:  "make_empty" >
 | < TOM_MAKE_INSERT: "make_insert" >
@@ -714,30 +715,36 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   TomTerm lhs, rhs;
   ArrayList ruleList = new ArrayList();
   ArrayList listOfLhs = new ArrayList();
+  ArrayList condList = new ArrayList();
   ArrayList nameTypeInRule = new ArrayList();
-  Option orgTrack;
+  Option orgTrackRuleSet;
 }
 {
   <RULE> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
-      orgTrack = ast().makeOriginTracking("Rule",getLine());
+      orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine());
     }
   <TOM_LBRACE> 
   (
     lhs = Term() { listOfLhs.add(lhs); }
     [ ( <TOM_ALTERNATIVE> lhs = Term() { listOfLhs.add(lhs); } )+ ]
     <TOM_ARROW> rhs = PlainTerm(null)
+    [ (
+      <TOM_WHERE> lhs = Term() <TOM_COLON> <TOM_EQUAL> rhs = Term()
+      { condList.add(tsf().makeTomTerm_MatchingCondition(lhs,rhs)); }
+    )+ ]
+    
     {
-      Option orgTrack2 = ast().makeOriginTracking("Rule",getLine());
+      Option orgTrack = ast().makeOriginTracking("Rule",getLine());
       environment.getStatistics().numberRuleRulesRecognized++;
       for(int i=0 ; i<listOfLhs.size() ; i++) {
         TomTerm term = (TomTerm) listOfLhs.get(i);
         ruleList.add(tsf().makeTomTerm_RewriteRule(
                        tsf().makeTomTerm_Term(term),
                        tsf().makeTomTerm_Term(rhs),
-                       tsf().makeTomList_Empty(),
-                       orgTrack2));
+                       ast().makeList(condList),
+                       orgTrack));
       }
       listOfLhs.clear();
     }
@@ -745,9 +752,11 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTomTerm_RuleSet(orgTrack,ast().makeList(ruleList)));
+    list.add(tsf().makeTomTerm_RuleSet(orgTrackRuleSet,ast().makeList(ruleList)));
   }
 }
+
+
 
 /*
  * Operator Declaration

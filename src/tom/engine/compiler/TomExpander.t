@@ -48,9 +48,10 @@ public class TomExpander extends TomBase {
 // ------------------------------------------------------------
 
     /*
-     * The 'expandTomSyntax' phase replaces each 'RecordAppl' by its classical term form:
-     *     => The unused slots a replaced by placeholders
-     * but also the BackQuoteTerm
+     * The 'expandTomSyntax' phase replaces each 'RecordAppl'
+     * by its expanded term form:
+     *   - unused slots a replaced by placeholders
+     *   - BackQuoteTerm are compiled
      */
   
   public TomTerm expandTomSyntax(TomTerm subject) {
@@ -67,7 +68,6 @@ public class TomExpander extends TomBase {
               }
             
               _ -> {
-                  //System.out.println("expand this = " + this);
                 return genericTraversal(subject,this);
               }
             } // end match
@@ -125,7 +125,6 @@ public class TomExpander extends TomBase {
             %match(TomTerm t) {
               Appl[option=Option(optionList),astName=name@Name(tomName),args=l] -> {
                 TomSymbol tomSymbol = getSymbol(tomName);
-                  //TomList args  = tomListMap(l,this);
                 TomList args  = (TomList) genericTraversal(l,this);
 
                 if(tomSymbol != null) {
@@ -178,9 +177,8 @@ public class TomExpander extends TomBase {
         TomTerm contextSubject = (TomTerm)arg1;
 
         if(!(subject instanceof TomTerm)) {
-          //debugPrintln("expandVariable not a tomTerm: " );
+            //debugPrintln("expandVariable not a tomTerm: " );
             //System.out.println("expandVariable not a tomTerm:\n\t" + subject );
-          
           if(subject instanceof TomType) {
             %match(TomType subject) {
               TomTypeAlone(tomType) -> { return getType(tomType); }
@@ -193,8 +191,7 @@ public class TomExpander extends TomBase {
         
         %match(TomTerm contextSubject, TomTerm subject) {
           TomTypeToTomTerm(type@Type(tomType,glType)) , appl@Appl(Option(optionList),name@Name(strName),Empty()) -> {
-            //debugPrintln("expandVariable.1: Type(" + tomType + "," + glType + ")");
-            //debugPrintln("appl = " + appl);
+              //debugPrintln("expandVariable.1: Type(" + tomType + "," + glType + ")");
             Option orgTrack = findOriginTracking(optionList);
             Option option = `Option(replaceAnnotedName(optionList,type,orgTrack));
               // create a constant or a variable
@@ -208,8 +205,7 @@ public class TomExpander extends TomBase {
           }
           
           Variable(option1,name1,type1) , appl@Appl(Option(optionList),name@Name(strName),Empty()) -> {
-            //debugPrintln("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
-            //debugPrintln("appl = " + appl);
+              //debugPrintln("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
             Option orgTrack = findOriginTracking(optionList);
             Option option = `Option(replaceAnnotedName(optionList,type1,orgTrack));
               // under a match construct
@@ -238,9 +234,7 @@ public class TomExpander extends TomBase {
           } 
               
           context, appl@Appl(Option(optionList),name@Name(tomName),l) -> {
-            //debugPrintln("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
-            //debugPrintln("\tcontext = " + context);
-                
+              //debugPrintln("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
               // create a  symbol
             TomSymbol tomSymbol = getSymbol(tomName);
             if(tomSymbol != null) {
@@ -286,6 +280,14 @@ public class TomExpander extends TomBase {
             return `Match(option,newSubjectList,newPatternList);
           }
 
+          context, MatchingCondition[lhs=lhs,rhs=rhs@Appl(Option(optionList),Name(tomName),l)] -> {
+            TomSymbol tomSymbol = getSymbol(tomName);
+            TomType symbolType = getSymbolCodomain(tomSymbol);
+            TomTerm newLhs = `expandVariable(TomTypeToTomTerm(symbolType),lhs);
+            TomTerm newRhs = `expandVariable(TomTypeToTomTerm(symbolType),rhs);
+            return `MatchingCondition(newLhs,newRhs);
+          }
+
           context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
                                Term(rhs),
                                condList,
@@ -296,6 +298,11 @@ public class TomExpander extends TomBase {
             TomTerm newLhs = `Term(expandVariable(context,lhs));
             TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
             TomList newCondList = empty();
+            while(!condList.isEmpty()) {
+              newCondList = append(expandVariable(context, condList.getHead()),newCondList);
+              condList = condList.getTail();
+            }
+
             return `RewriteRule(newLhs,newRhs,newCondList,orgTrack);
           }
               

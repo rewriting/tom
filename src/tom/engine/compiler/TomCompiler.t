@@ -151,14 +151,9 @@ public class TomCompiler extends TomBase {
                 rhsList = appendInstruction(`CloseBlock(),rhsList);
               }
 
-              TomTerm condRhs = `Tom(rhsList);
-              while(!condList.isEmpty()) {
-                Expression cond = condList.getHead().getAstExpression();
-                TomList actionList = cons(condRhs,empty());
-                condRhs = `InstructionToTomTerm(IfThenElse(cond,actionList,empty()));
-              }
-              
-              patternActionList = append(`PatternAction(TermList(matchPatternsList),condRhs),patternActionList);
+              TomTerm newCondRhs = buildMatchingCondition(condList,rhsList);
+             
+              patternActionList = append(`PatternAction(TermList(matchPatternsList),newCondRhs),patternActionList);
             }
           } 
           ruleList = ruleList.getTail();
@@ -225,6 +220,7 @@ public class TomCompiler extends TomBase {
                 newTermList = abstractPatternList(renamedTermList, abstractedPattern, introducedVariable);
                 if(abstractedPattern.size() > 0) {
                     // generate a new match construct
+                  
                   TomTerm generatedPatternAction =
                     `PatternAction(TermList(ast().makeList(abstractedPattern)),Tom(newActionList));        
                   
@@ -232,7 +228,7 @@ public class TomCompiler extends TomBase {
                     `Match(option(),
                            SubjectList(ast().makeList(introducedVariable)),
                            PatternList(cons(generatedPatternAction,empty())));
-                  
+
                   generatedMatch = pass2_1(generatedMatch);
                   newPatternAction =
                     `PatternAction(TermList(newTermList),Tom(cons(generatedMatch,empty())));
@@ -268,6 +264,37 @@ public class TomCompiler extends TomBase {
     }
   }
 
+  private TomTerm buildMatchingCondition(TomList condList, TomList actionList) {
+    %match(TomList condList) {
+      Empty() -> { return `Tom(actionList); }
+      Cons(MatchingCondition[lhs=pattern, rhs=subject],tail) -> {
+        TomTerm action = buildMatchingCondition(tail,actionList);
+
+        TomList path = empty();
+        path = append(`RuleVar(),path);
+        TomTerm newSubject = pass2_1(`MakeTerm(subject));
+
+        TomTerm introducedVariable = null;
+          // introducedVariable = subject
+          // Declare and Assign 
+                
+        TomTerm generatedPatternAction =
+          `PatternAction(TermList(cons(pattern,empty())),action);        
+
+        TomTerm generatedMatch =
+          `Match(option(),
+                 SubjectList(cons(introducedVariable,empty())),
+                 PatternList(cons(generatedPatternAction,empty())));
+        
+        return generatedMatch;
+      }
+    }
+
+    System.out.println("buildMatchingCondition strange term: " + condList);
+    System.exit(1);
+    return null;
+  }
+  
   private TomTerm renameVariable(TomTerm subject,
                                  HashMap multiplicityMap,
                                  ArrayList equalityCheck) {
@@ -434,20 +461,20 @@ public class TomCompiler extends TomBase {
   }
   
     /* 
-     * pass2_2:
+     * compileMatching:
      *
      * compiles Match into and automaton
      */
  
-  public TomTerm pass2_2(TomTerm subject) {
+  public TomTerm compileMatching(TomTerm subject) {
       //%variable
-    Replace1 replace_pass2_2 = new Replace1() {
-        public ATerm apply(ATerm t) { return pass2_2((TomTerm)t); }
+    Replace1 replace_compileMatching = new Replace1() {
+        public ATerm apply(ATerm t) { return compileMatching((TomTerm)t); }
       }; 
 
     %match(TomTerm subject) {
       Tom(l) -> {
-        return `Tom(tomListMap(l,replace_pass2_2));
+        return `Tom(tomListMap(l,replace_compileMatching));
       }
       
       Match(optionMatch,SubjectList(l1),PatternList(l2)) -> {
@@ -506,7 +533,7 @@ public class TomCompiler extends TomBase {
           }
 
             // compile nested match constructs
-          actionList = tomListMap(actionList,replace_pass2_2);
+          actionList = tomListMap(actionList,replace_compileMatching);
               
             //System.out.println("termList      = " + termList);
             //System.out.println("actionNumber  = " + actionNumber);
@@ -539,7 +566,7 @@ public class TomCompiler extends TomBase {
            * return the compiled MATCH construction
            */
 
-        TomList astAutomataList = automataListPass2_2List(automataList);
+        TomList astAutomataList = automataListCompileMatchingList(automataList);
         return `CompiledMatch(matchDeclarationList,astAutomataList);
       }
 
@@ -551,7 +578,7 @@ public class TomCompiler extends TomBase {
     }
   }
 
-  private TomList automataListPass2_2List(TomList automataList) {
+  private TomList automataListCompileMatchingList(TomList automataList) {
       //%variable
     
     %match(TomList automataList) {
@@ -559,7 +586,7 @@ public class TomCompiler extends TomBase {
         //conc(Automata(numberList,instList),l*)  -> {
       Empty()      -> { return empty(); }
       Cons(Automata(numberList,instList),l)  -> {
-        TomList newList = automataListPass2_2List(l);
+        TomList newList = automataListCompileMatchingList(l);
         
         if(Flags.supportedGoto) {
           return cons(`InstructionToTomTerm(NamedBlock(getBlockName(numberList), instList)), newList);
