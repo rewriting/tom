@@ -43,26 +43,30 @@ import jtom.tools.SingleLineOutputCode;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
-public class TomAbstractGenerator {
+public abstract class TomAbstractGenerator {
   
-	protected OutputCode output;
-	protected TomTaskInput input;
+  protected OutputCode output;
+  protected TomTaskInput input;
   protected String debugKey;
   protected boolean supportedGoto = false, 
-  	supportedBlock = false, debugMode = false, strictType = false, staticFunction = false, 
-  	genDecl = false, pretty = false, verbose = false;
+    supportedBlock = false, debugMode = false, strictType = false, staticFunction = false, 
+    genDecl = false, pretty = false, verbose = false;
+
+  private HashMap getSubtermMap = new HashMap();
+  private HashMap getFunSymMap = new HashMap();
+  private HashMap isFsymMap = new HashMap();
   
   public TomAbstractGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-		this.output = output;
-		this.input = input;
+    this.output = output;
+    this.input = input;
 
-		supportedGoto = getInput().isSupportedGoto(); 
-		supportedBlock = getInput().isSupportedBlock();
-		debugMode = getInput().isDebugMode();
-		strictType = getInput().isStrictType();
-		staticFunction = getInput().isStaticFunction();
-		genDecl = getInput().isGenDecl();
-		pretty = getInput().isPretty();
+    supportedGoto = getInput().isSupportedGoto(); 
+    supportedBlock = getInput().isSupportedBlock();
+    debugMode = getInput().isDebugMode();
+    strictType = getInput().isStrictType();
+    staticFunction = getInput().isStaticFunction();
+    genDecl = getInput().isGenDecl();
+    pretty = getInput().isPretty();
 
   }
 
@@ -78,7 +82,7 @@ public class TomAbstractGenerator {
     throws IOException {
       //System.out.println("Generate: " + subject);
       //%variable
-
+    TomTerm subject = input.getTerm();
 
     %match(TomTerm subject) {
       
@@ -103,36 +107,32 @@ public class TomAbstractGenerator {
       }
   
       BuildTerm(Name(name), argList) -> {
-				buildTerm(name,argList);
+        buildTerm(name,argList);
         return;
       }
 
       BuildList(Name(name), argList) -> {
-				buildList(name,argList);
+        buildList(name,argList);
         return;
       }
 
       BuildArray(Name(name), argList) -> {
-				buildArray(name,argList);
+        buildArray(name,argList);
         return;
       }
 
       FunctionCall(Name(name), argList) -> {
-				buildFunctionCall(name,argList);
+        buildFunctionCall(name,argList);
         return;
       }
 
       Composite(argList) -> {
-				generateList(argList);
-//         while(!argList.isEmpty()) {
-//           generate(out,deep,argList.getHead());
-//           argList = argList.getTail();
-//         }
+        generateList(argList);
         return;
       }
       
       CompiledMatch(matchDeclarationList, namedBlockList, list) -> {
-				buildCompiledMatch(matchDeclarationList, namedBlockList, list);
+        buildCompiledMatch(matchDeclarationList, namedBlockList, list);
         return;
       }
 
@@ -166,9 +166,9 @@ public class TomAbstractGenerator {
       }
 
       Declaration(var@Variable(option1,name1,
-                                 Type(ASTTomType(type),tlType@TLType[]))) -> {
-				buildDeclaration(var, name1, type, tlType);
-         return;
+                               Type(ASTTomType(type),tlType@TLType[]))) -> {
+        buildDeclaration(var, name1, type, tlType);
+        return;
       }
 
       Declaration(var@VariableStar(option1,name1,
@@ -178,18 +178,18 @@ public class TomAbstractGenerator {
       }
 
       MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
-				buildFunctionBegin(tomName, varList);
+        buildFunctionBegin(tomName, varList);
         return;
       }
 
       MakeFunctionEnd() -> {
-				buildFunctionEnd();
+        buildFunctionEnd();
         return;
       }
 
       EndLocalVariable() -> {
-				out.writeln(deep,"do"); return;
-			}
+        out.writeln(deep,"do"); return;
+      }
       
       TargetLanguageToTomTerm(t) -> {
         generateTargetLanguage(deep,t);
@@ -228,182 +228,103 @@ public class TomAbstractGenerator {
     
     %match(Expression subject) {
       Not(exp) -> {
-				buildExpNot(exp);
+        buildExpNot(exp);
         return;
       }
 
       And(exp1,exp2) -> {
-        generateExpression(out,deep,exp1);
-        out.write(" && ");
-        generateExpression(out,deep,exp2);
+        buildExpAnd(exp1, exp2);
         return;
       }
 
       Or(exp1,exp2) -> {
-        generateExpression(out,deep,exp1);
-        out.write(" || ");
-        generateExpression(out,deep,exp2);
+        buildExpOr(exp1, exp2);
         return;
       }
 
       TrueTL() -> {
-        if(cCode) {
-          out.write(" 1 ");
-        } else if(jCode) {
-          out.write(" true ");
-        } else if(eCode) {
-          out.write(" true ");
-        }
+        buildExpTrue();
         return;
       }
       
       FalseTL() -> {
-        if(cCode) {
-          out.write(" 0 ");
-        } else if(jCode) {
-          out.write(" false ");
-        } else if(eCode) {
-          out.write(" false ");
-        }
+        buildExpFalse();
         return;
       }
 
       IsEmptyList(var@Variable[astType=type1]) -> {
-        out.write("tom_is_empty_" + getTomType(type1) + "(");
-        generate(out,deep,var);
-        out.write(")");
+        buildExpEmptyList(type1);
         return;
       }
 
       IsEmptyArray(varArray@Variable[astType=type1], varIndex@Variable[]) -> {
-        generate(out,deep,varIndex);
-        out.write(" >= ");
-        out.write("tom_get_size_" + getTomType(type1) + "(");
-        generate(out,deep,varArray);
-        out.write(")");
+        buildExpEmptyArray(type1, varIndex);
         return;
       }
 
       EqualFunctionSymbol(var@Variable[astType=type1],
-                          Appl(option,nameList@(Name(tomName)),l)) -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        TomName termNameAST = tomSymbol.getAstName();
-        OptionList termOptionList = tomSymbol.getOption();
-        
-        Declaration isFsymDecl = getIsFsymDecl(termOptionList);
-        if(isFsymDecl != null) {
-          generateExpression(out,deep,`IsFsym(termNameAST,var));
-        } else {
-          String s = (String)getFunSymMap.get(type1);
-          if(s == null) {
-            s = "tom_cmp_fun_sym_" + getTomType(type1) + "(tom_get_fun_sym_" + getTomType(type1) + "(";
-            getFunSymMap.put(type1,s);
-          }
-          out.write(s);
-          generate(out,deep,var);
-          out.write(") , " + getSymbolCode(tomSymbol) + ")");
-        }
+                          Appl(option,Name(tomName),l)) -> {
+        buildExpEqualFunctionVarAppl(var, type1, tomName);
         return;
       }
       
       EqualFunctionSymbol(var1@Variable[astType=type1],var2) -> {
           //System.out.println("EqualFunctionSymbol(...," + var2 + ")");
-        out.write("tom_cmp_fun_sym_" + getTomType(type1) + "(");
-        out.write("tom_get_fun_sym_" + getTomType(type1) + "(");
-        generate(out,deep,var1);
-        out.write(") , " + var2 + ")");
+        buildExpEqualFunctionVarVar(type1, var2);
         return;
       }
 
       EqualTerm(var1@Variable[astType=type1],var2) -> {
-        out.write("tom_terms_equal_" + getTomType(type1) + "(");
-        generate(out,deep,var1);
-        out.write(", ");
-        generate(out,deep,var2);
-        out.write(")");
+        buildExpEqualTermVar(type1, var1, var2);
         return;
       }
 
       EqualTerm(var1@VariableStar[astType=type1],var2) -> {
-        out.write("tom_terms_equal_" + getTomType(type1) + "(");
-        generate(out,deep,var1);
-        out.write(", ");
-        generate(out,deep,var2);
-        out.write(")");
+        buildExpEqualTermVarStar(type1, var1, var2);
         return;
       }
 
       IsFsym(Name(opname), var@Variable(option1,PositionName(l1),type1)) -> {
-        String s = (String)isFsymMap.get(opname);
-        if(s == null) {
-          s = "tom_is_fun_sym_" + opname + "(";
-          isFsymMap.put(opname,s);
-        } 
-        out.write(s);
-        generate(out,deep,var);
-        out.write(")");
+        buildExpIsFsym(opname, var);
         return;
       }
 
       GetSubterm(var@Variable(option1,PositionName(l1),type1),Number(number)) -> {
-        String s = (String)getSubtermMap.get(type1);
-        if(s == null) {
-          s = "tom_get_subterm_" + getTomType(type1) + "(";
-          getSubtermMap.put(type1,s);
-        } 
-        out.write(s);
-        generate(out,deep,var);
-        out.write(", " + number + ")");
+        buildExpGetSubterm(var, type1);
         return;
       }
 
       GetSlot(Name(opname),slotName, var@Variable[]) -> {
-        out.write("tom_get_slot_" + opname + "_" + slotName + "(");
-        generate(out,deep,var);
-        out.write(")");
+        buildExpGetSlot(opname, slotName, var);
         return;
       }
 
       GetHead(var@Variable(option1,PositionName(l1),type1)) -> {
-        out.write("tom_get_head_" + getTomType(type1) + "(");
-        generate(out,deep,var);
-        out.write(")");
+        buildExpGetHead(type1, var);
         return;
       }
 
       GetTail(var@Variable(option1,PositionName(l1),type1)) -> {
-        out.write("tom_get_tail_" + getTomType(type1) + "(");
-        generate(out,deep,var); 
-        out.write(")");
+        buildExpGetTail(type1, var);
         return;
       }
 
       GetSize(var@Variable(option1,PositionName(l1),type1)) -> {
-        out.write("tom_get_size_" + getTomType(type1) + "(");
-        generate(out,deep,var);
-        out.write(")");
+        buildExpGetSize(type1, var);
         return;
       }
 
       GetElement( varName@Variable(option1,PositionName(l1),type1),
-                 varIndex@Variable(option2,PositionName(l2),type2)) -> {
-        out.write("tom_get_element_" + getTomType(type1) + "(");
-        generate(out,deep,varName);
-        out.write(",");
-        generate(out,deep,varIndex);
-        out.write(")");
+                  varIndex@Variable(option2,PositionName(l2),type2)) -> {
+        buildExpGetElement(type1, varName, varIndex);
         return;
       }
 
       GetSliceList(Name(name),
                    varBegin@Variable(option1,PositionName(l1),type1),
-                     varEnd@Variable(option2,PositionName(l2),type2)) -> {
+                   varEnd@Variable(option2,PositionName(l2),type2)) -> {
         
-        out.write("tom_get_slice_" + name + "(");
-        generate(out,deep,varBegin);
-        out.write(",");
-        generate(out,deep,varEnd);
-        out.write(")");
+        buildExpGetSliceList(name, varBegin, varEnd);
         return;
       }
 
@@ -411,14 +332,7 @@ public class TomAbstractGenerator {
                     varArray@Variable(option1,PositionName(l1),type1),
                     varBegin@Variable(option2,PositionName(l2),type2),
                     expEnd) -> {
-        
-        out.write("tom_get_slice_" + name + "(");
-        generate(out,deep,varArray);
-        out.write(",");
-        generate(out,deep,varBegin);
-        out.write(",");
-        generate(out,deep,expEnd);
-        out.write(")");
+        buildExpGetSliceArray(name, varArray, varBegin, expEnd);
         return;
       }
 
@@ -434,7 +348,7 @@ public class TomAbstractGenerator {
     }
   }
 
-  public void generateInstruction(jtom.tools.OutputCode out, int deep, Instruction subject)
+  public void generateInstruction(int deep, Instruction subject)
     throws IOException {
     if(subject==null) { return; }
     
@@ -442,189 +356,72 @@ public class TomAbstractGenerator {
 
       Assign(var@Variable(list,name1,
                           Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
-        out.indent(deep);
-        generate(out,deep,var);
-        if(cCode || jCode) {
-          out.write(" = (" + getTLCode(tlType) + ") ");
-        } else if(eCode) {
-          if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
-            out.write(" := ");
-          } else {
-              //out.write(" ?= ");
-            String assignSign = " := ";
-            %match(Expression exp) {
-              GetSubterm[] -> {
-                assignSign = " ?= ";
-              }
-            }
-            out.write(assignSign);
-          }
-        }
-        generateExpression(out,deep,exp);
-        out.writeln(";");
-        if(debugMode && !list.isEmpty()) {
-          out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
-          generate(out,deep,var);
-          out.write("\", ");
-          generate(out,deep,var); // generateExpression(out,deep,exp);
-          out.write(");\n");
-        }
+        buildAssignVar(deep, var, type, tlType);
         return;
       }
 
       Assign(UnamedVariable[],exp) |  
-      Assign(UnamedVariableStar[],exp) -> {
+        Assign(UnamedVariableStar[],exp) -> {
         return;
       }
 
       AssignMatchSubject(var@Variable(option1,name1,
                                       Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
-        out.indent(deep);
-        generate(out,deep,var);
-        if(cCode || jCode) {
-          out.write(" = (" + getTLCode(tlType) + ") ");
-        } else if(eCode) {
-          if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
-            out.write(" := ");
-          } else {
-              //out.write(" ?= ");
-            String assignSign = " := ";
-            %match(Expression exp) {
-              GetSubterm[] -> {
-                assignSign = " ?= ";
-              }
-            }
-            out.write(assignSign);
-          }
-        }
-        generateExpression(out,deep,exp);
-        out.writeln(";");
-        if (debugMode) {
-          out.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
-          generateExpression(out,deep,exp);
-          out.write("\",");
-          generateExpression(out,deep,exp);
-          out.writeln(");");
-        }
+        buildAssignMatch(deep, var, type, tlType);
         return;
       }
       
       NamedBlock(blockName,instList) -> {
-        if(cCode) {
-          out.writeln("{");
-          generateList(out,deep+1,instList);
-          out.writeln("}" + blockName +  ":;");
-        } else if(jCode) {
-          out.writeln(blockName + ": {");
-          generateList(out,deep+1,instList);
-          out.writeln("}");
-        } else if(eCode) {
-          System.out.println("NamedBlock: Eiffel code not yet implemented");
-          throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
-        }  
+        buildNamedBlock(blockName, instList);
         return;
       }
       
         //IfThenElse(exp,succesList,conc()) -> {
       IfThenElse(exp,succesList,emptyTomList()) -> {
-        if(cCode || jCode) {
-          out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
-          generateList(out,deep+1,succesList);
-          out.writeln(deep,"}");
-        } else if(eCode) {
-          out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
-          generateList(out,deep+1,succesList);
-          out.writeln(deep,"end;");
-        }
+        buildIfThenElse(exp,succesList);
         return;
       }
 
       IfThenElse(exp,succesList,failureList) -> {
-        if(cCode || jCode) {
-          out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
-          generateList(out,deep+1,succesList);
-          out.writeln(deep,"} else {");
-          generateList(out,deep+1,failureList);
-          out.writeln(deep,"}");
-        } else if(eCode) {
-          out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
-          generateList(out,deep+1,succesList);
-          out.writeln(deep," else ");
-          generateList(out,deep+1,failureList);
-          out.writeln(deep,"end;");
-        }
+        buildIfThenElseWithFailure(exp, succesList, failureList);
         return;
       }
 
       DoWhile(succesList,exp) -> {
-        out.writeln(deep,"do {");
-        generateList(out,deep+1,succesList);
-        out.write(deep,"} while("); generateExpression(out,deep,exp); out.writeln(");");
+        buildDoWhile(succesList,exp);
         return;
       }
 
       Assign(var@VariableStar(list,name1,
                               Type(ASTTomType(type),tlType@TLType[])),exp) -> {
-        out.indent(deep);
-        generate(out,deep,var);
-        if(cCode || jCode) {
-          out.write(" = (" + getTLCode(tlType) + ") ");
-        } else if(eCode) {
-          out.write(" := ");
-        }
-        generateExpression(out,deep,exp);
-        out.writeln(";");
-        if(debugMode && !list.isEmpty()) {
-          out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
-          generate(out,deep,var);
-          out.write("\", ");
-          generate(out,deep,var); // generateExpression(out,deep,exp);
-          out.write(");\n");
-        }
+        buildAssignVarExp(deep, var, tlType, exp);
         return;
       }
 
       Increment(var@Variable[]) -> {
-        generate(out,deep,var);
-        out.write(" = ");
-        generate(out,deep,var);
-        out.writeln(" + 1;");
+        buildIncrement(var);
         return;
       }
 
       Action(l) -> {
-        while(!l.isEmpty()) {
-          generate(out,deep,l.getHead());
-          l = l.getTail();
-        }
-          //out.writeln("// ACTION: " + l);
+        generateList(deep, l);
+  /*
+    while(!l.isEmpty()) {
+    generate(out,deep,l.getHead());
+    l = l.getTail();
+    }
+      //out.writeln("// ACTION: " + l);
+      */
         return;
       }
 
       ExitAction(numberList) -> {
-        if(cCode) {
-          out.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
-        } else if(jCode) {
-          out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
-        } else if(eCode) {
-          System.out.println("ExitAction: Eiffel code not yet implemented");
-          throw new TomRuntimeException(new Throwable("ExitAction: Eiffel code not yet implemented"));
-        }
+        buildExitAction(numberList);
         return;
       }
 
       Return(exp) -> {
-        if(cCode || jCode) {
-          out.write(deep,"return ");
-          generate(out,deep,exp);
-          out.writeln(deep,";");
-        } else if(eCode) {
-          out.writeln(deep,"if Result = Void then");
-          out.write(deep+1,"Result := ");
-          generate(out,deep+1,exp);
-          out.writeln(deep+1,";");
-          out.writeln(deep,"end;");
-        }
+        buildReturn(exp);
         return;
       }
 
@@ -713,23 +510,23 @@ public class TomAbstractGenerator {
           int argno=1;
             /*
               String s = "";
-          if(!l.isEmpty()) {
-            s = getTLType(type1) + " " + name1;
+              if(!l.isEmpty()) {
+              s = getTLType(type1) + " " + name1;
             
-            if(!l.isEmpty()) {
+              if(!l.isEmpty()) {
               s += "(";
               while (!l.isEmpty()) {
-                s += getTLType(l.getHead()) + " _" + argno;
-                argno++;
-                l = l.getTail() ;
-                if(!l.isEmpty()) {
-                  s += ",";
-                }
+              s += getTLType(l.getHead()) + " _" + argno;
+              argno++;
+              l = l.getTail() ;
+              if(!l.isEmpty()) {
+              s += ",";
+              }
               }
               s += ");";
-            }
-          }
-            generate(out,deep,makeTL(s));
+              }
+              }
+              generate(out,deep,makeTL(s));
             */
 
           out.indent(deep);
@@ -811,7 +608,7 @@ public class TomAbstractGenerator {
           // inspect the slotlist
         generateSlotList(out, deep, slotList);
         return ;
-            }
+      }
 
       ListSymbolDecl(Name(tomName)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
@@ -877,11 +674,11 @@ public class TomAbstractGenerator {
         }
 
         TomType returnType = getUniversalType();
-          if(isIntType(type)) {
-            returnType = getIntType();
-          } else if(isDoubleType(type)) {
-            returnType = getDoubleType();
-          }
+        if(isIntType(type)) {
+          returnType = getIntType();
+        } else if(isDoubleType(type)) {
+          returnType = getDoubleType();
+        }
         generateTargetLanguage(out,deep,
                                genDecl(getTLType(returnType),
                                        "tom_get_fun_sym", type,args,tlCode));
@@ -912,19 +709,19 @@ public class TomAbstractGenerator {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String opname = tomSymbol.getAstName().getString();
 
-	  TomType returnType = getBoolType();
-	  String argType;
-	  if(strictType) {
-	      argType = getTLCode(tlType);
-	  } else {
-	      argType = getTLType(getUniversalType());
-	  }
+        TomType returnType = getBoolType();
+        String argType;
+        if(strictType) {
+          argType = getTLCode(tlType);
+        } else {
+          argType = getTLType(getUniversalType());
+        }
 
-	  generateTargetLanguage(out,deep, genDecl(getTLType(returnType),
-				     "tom_is_fun_sym", opname,
-				     new String[] { argType, name1 },
-				     tlCode));
-	  return;
+        generateTargetLanguage(out,deep, genDecl(getTLType(returnType),
+                                                 "tom_is_fun_sym", opname,
+                                                 new String[] { argType, name1 },
+                                                 tlCode));
+        return;
       }
  
       GetSlotDecl[astName=Name(tomName),
@@ -943,15 +740,15 @@ public class TomAbstractGenerator {
         TomType returnType = l.getHead();
         
 	String argType;
-	  if(strictType) {
-	      argType = getTLCode(tlType);
-	  } else {
-	      argType = getTLType(getUniversalType());
-	  }
+        if(strictType) {
+          argType = getTLCode(tlType);
+        } else {
+          argType = getTLType(getUniversalType());
+        }
         generateTargetLanguage(out,deep, genDecl(getTLType(returnType),
-                                   "tom_get_slot", opname  + "_" + slotName.getString(),
-                                   new String[] { argType, name1 },
-                                   tlCode));
+                                                 "tom_get_slot", opname  + "_" + slotName.getString(),
+                                                 new String[] { argType, name1 },
+                                                 tlCode));
         return;
       }
 
@@ -1106,12 +903,12 @@ public class TomAbstractGenerator {
         }
       
         generateTargetLanguage(out,deep, genDecl(returnType,
-                               "tom_get_element", type1,
-                               new String[] {
-                                 argType, name1,
-                                 getTLType(getIntType()), name2
-                               },
-                               tlCode));
+                                                 "tom_get_element", type1,
+                                                 new String[] {
+                                                   argType, name1,
+                                                   getTLType(getIntType()), name2
+                                                 },
+                                                 tlCode));
         return;
       }
       
@@ -1136,17 +933,17 @@ public class TomAbstractGenerator {
                      Variable(option1,Name(name1), Type(ASTTomType(type1),_)),
                      tlCode@TL[], _) -> {
         generateTargetLanguage(out,deep, genDecl(getTLType(getUniversalType()), "tom_make_empty", opname,
-                                   new String[] {
-                                     getTLType(getIntType()), name1,
-                                   },
-                                   tlCode));
+                                                 new String[] {
+                                                   getTLType(getIntType()), name1,
+                                                 },
+                                                 tlCode));
         return;
       }
 
       MakeAddArray(Name(opname),
                    Variable(option1,Name(name1), fullEltType@Type(ASTTomType(type1),tlType1@TLType[])),
                    Variable(option2,Name(name2), fullArrayType@Type(ASTTomType(type2),tlType2@TLType[])),
-                  tlCode@TL[], _) -> {
+                   tlCode@TL[], _) -> {
 
         String returnType, argListType,argEltType;
         if(strictType) {
@@ -1223,6 +1020,12 @@ public class TomAbstractGenerator {
   public void generateList(OutputCode out, int deep, TomList subject)
     throws IOException {
       //%variable
+
+      //         while(!argList.isEmpty()) {
+//           generate(out,deep,argList.getHead());
+//           argList = argList.getTail();
+//         }
+    
     if(subject.isEmpty()) {
       return;
     }
@@ -1254,12 +1057,12 @@ public class TomAbstractGenerator {
     }
   }
   
-  // ------------------------------------------------------------
+    // ------------------------------------------------------------
   private TargetLanguage genDecl(String returnType,
-                        String declName,
-                        String suffix,
-                        String args[],
-                        TargetLanguage tlCode) {
+                                 String declName,
+                                 String suffix,
+                                 String args[],
+                                 TargetLanguage tlCode) {
     String s = "";
     if(!genDecl) { return null; }
     String modifier ="";
@@ -1298,8 +1101,8 @@ public class TomAbstractGenerator {
 
   
   private TargetLanguage genDeclMake(String opname, TomType returnType, 
-  						TomList argList, TargetLanguage tlCode) {
-    //%variable
+                                     TomList argList, TargetLanguage tlCode) {
+      //%variable
     String s = "";
     if(!genDecl) { return null; }
     String modifier = "";
@@ -1375,7 +1178,7 @@ public class TomAbstractGenerator {
   }
   
   private TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
-    //%variable
+      //%variable
     String s = "";
     if(!genDecl) { return null; }
 
@@ -1449,7 +1252,7 @@ public class TomAbstractGenerator {
   }
 
   private TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
-    //%variable
+      //%variable
     String s = "";
     if(!genDecl) { return null; }
 
@@ -1515,40 +1318,221 @@ public class TomAbstractGenerator {
     return resultTL;
   }
  
-	protected abstract void buildTerm(String name, TomList argList);
-	protected abstract void buildList(String name, TomList argList);
-	protected abstract void buildArray(String name, TomList argList);
-	protected abstract void buildFunctionCall(String name, TomList argList);
+  protected abstract void buildTerm(String name, TomList argList);
+  protected abstract void buildList(String name, TomList argList);
+  protected abstract void buildArray(String name, TomList argList);
+  protected abstract void buildFunctionCall(String name, TomList argList);
 
-	protected void buildCompiledMatch() {
-		boolean generated = hasGeneratedMatch(list);
-		boolean defaultPattern = hasDefaultCase(list);
-		Option orgTrack = null;
-		if(supportedBlock) {
-			generateInstruction(out,deep,`OpenBlock());
-		}
-		if(debugMode && !generated) {
-			orgTrack = findOriginTracking(list);
-			debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-			out.write("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");\n");
-		}
-		generateList(out,deep+1,matchDeclarationList);
-		generateList(out,deep+1,namedBlockList);
-		if(debugMode && !generated && !defaultPattern) {
-			out.write("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
-		}
-		if(supportedBlock) {
-			generateInstruction(out,deep,`CloseBlock());
-		}
-	}
+  protected void buildCompiledMatch() {
+    boolean generated = hasGeneratedMatch(list);
+    boolean defaultPattern = hasDefaultCase(list);
+    Option orgTrack = null;
+    if(supportedBlock) {
+      generateInstruction(out,deep,`OpenBlock());
+    }
+    if(debugMode && !generated) {
+      orgTrack = findOriginTracking(list);
+      debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
+      out.write("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");\n");
+    }
+    generateList(out,deep+1,matchDeclarationList);
+    generateList(out,deep+1,namedBlockList);
+    if(debugMode && !generated && !defaultPattern) {
+      out.write("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
+    }
+    if(supportedBlock) {
+      generateInstruction(out,deep,`CloseBlock());
+    }
+  }
 	
-	protected abstract void buildDeclaration(TomTerm var, String name, String type, TomType tlType);
-	protected abstract void buildDeclarationStar(TomTerm var, String name, String type, TomType tlType);
- 	protected abstract void buildFunctionBegin(String tomName, TomList varList); 
-	protected abstract void buildFunctionEnd();
-	protected abstract void buildExpNot(Expression exp);
-	private HashMap getSubtermMap = new HashMap();
-  private HashMap getFunSymMap = new HashMap();
-  private HashMap isFsymMap = new HashMap();
-	
-}
+  protected abstract void buildDeclaration(TomTerm var, String name, String type, TomType tlType);
+  protected abstract void buildDeclarationStar(TomTerm var, String name, String type, TomType tlType);
+  protected abstract void buildFunctionBegin(String tomName, TomList varList); 
+  protected abstract void buildFunctionEnd();
+  protected abstract void buildExpNot(Expression exp);
+  
+  protected void buildExpAnd(Expression exp1, Expression exp2) {
+    generateExpression(out,deep,exp1);
+    out.write(" && ");
+    generateExpression(out,deep,exp2);
+  }
+  protected void buildExpOr(Expression exp1, Expression exp2) {
+    generateExpression(out,deep,exp1);
+    out.write(" || ");
+    generateExpression(out,deep,exp2);
+  }
+
+  protected abstract void buildExpTrue(); {
+    if(cCode) {
+      out.write(" 1 ");
+    } else if(jCode) {
+      out.write(" true ");
+    } else if(eCode) {
+      out.write(" true ");
+    }
+  }
+
+  protected abstract void buildExpFalse(); {
+    if(cCode) {
+      out.write(" 0 ");
+    } else if(jCode) {
+      out.write(" false ");
+    } else if(eCode) {
+      out.write(" false ");
+    }
+  }
+
+  protected void buildExpEmptyList(TomType type1) {
+    out.write("tom_is_empty_" + getTomType(type1) + "(");
+    generate(out,deep,var);
+    out.write(")");
+  }
+
+  protected void buildExpEmptyArray(TomType type1, TomTerm varIndex) {
+    generate(out,deep,varIndex);
+    out.write(" >= ");
+    out.write("tom_get_size_" + getTomType(type1) + "(");
+    generate(out,deep,varArray);
+    out.write(")");
+  }
+
+  protected void buildExpEqualFunctionVarAppl(TomTerm var, TomType type1, String tomName) {
+    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    TomName termNameAST = tomSymbol.getAstName();
+    OptionList termOptionList = tomSymbol.getOption();
+    
+    Declaration isFsymDecl = getIsFsymDecl(termOptionList);
+    if(isFsymDecl != null) {
+      generateExpression(out,deep,`IsFsym(termNameAST,var));
+    } else {
+      String s = (String)getFunSymMap.get(type1);
+      if(s == null) {
+        s = "tom_cmp_fun_sym_" + getTomType(type1) + "(tom_get_fun_sym_" + getTomType(type1) + "(";
+        getFunSymMap.put(type1,s);
+      }
+      out.write(s);
+      generate(out,deep,var);
+      out.write(") , " + getSymbolCode(tomSymbol) + ")");
+    }
+  }
+
+  protected void buildExpEqualFunctionVarVar(TomType type1, TomTerm var2) {
+    out.write("tom_cmp_fun_sym_" + getTomType(type1) + "(");
+    out.write("tom_get_fun_sym_" + getTomType(type1) + "(");
+    generate(out,deep,var1);
+    out.write(") , " + var2 + ")");///??????????????????????????????
+  }
+
+  protected void buildExpEqualTerm(TomType type1, TomTerm var1,TomTerm var2) {
+    out.write("tom_terms_equal_" + getTomType(type1) + "(");
+    generate(out,deep,var1);
+    out.write(", ");
+    generate(out,deep,var2);
+    out.write(")");
+  }
+
+  protected void buildExpEqualTermVarStar(TomType type1, TomTerm var1, TomTerm var2) {
+    out.write("tom_terms_equal_" + getTomType(type1) + "(");
+    generate(out,deep,var1);
+    out.write(", ");
+    generate(out,deep,var2);
+    out.write(")");
+  }
+
+  protected void buildExpIsFsym(String opname, TomTerm var) {
+    String s = (String)isFsymMap.get(opname);
+    if(s == null) {
+      s = "tom_is_fun_sym_" + opname + "(";
+      isFsymMap.put(opname,s);
+    } 
+    out.write(s);
+    generate(out,deep,var);
+    out.write(")");
+  }
+
+  protected void buildExpGetSubterm(TomTerm var, TomType type1) {
+    String s = (String)getSubtermMap.get(type1);
+    if(s == null) {
+      s = "tom_get_subterm_" + getTomType(type1) + "(";
+      getSubtermMap.put(type1,s);
+    } 
+    out.write(s);
+    generate(out,deep,var);
+    out.write(", " + number + ")");
+  }
+
+  protected void buildExpGetSlot(String opname, String slotName, TomTerm var) {
+    out.write("tom_get_slot_" + opname + "_" + slotName + "(");
+    generate(out,deep,var);
+    out.write(")");
+  }
+
+  protected void buildExpGetHead(TomType type1, TomTerm var) {
+    out.write("tom_get_head_" + getTomType(type1) + "(");
+    generate(out,deep,var);
+    out.write(")");
+  }
+  protected void buildExpGetTail(TomType type1, TomTerm var) {
+    out.write("tom_get_tail_" + getTomType(type1) + "(");
+    generate(out,deep,var); 
+    out.write(")");
+  }
+
+  protected void buildExpGetSize(TomType type1, TomTerm var) {
+    out.write("tom_get_size_" + getTomType(type1) + "(");
+    generate(out,deep,var);
+    out.write(")");
+  }
+
+  protected void buildExpGetElement(TomType type1, TomTerm varName, TomTerm varIndex) {
+    out.write("tom_get_element_" + getTomType(type1) + "(");
+    generate(out,deep,varName);
+    out.write(",");
+    generate(out,deep,varIndex);
+    out.write(")");
+  }
+
+  protected void buildExpGetSliceList(String name, TomTerm varBegin, TomTerm varEnd) {
+    out.write("tom_get_slice_" + name + "(");
+    generate(out,deep,varBegin);
+    out.write(",");
+    generate(out,deep,varEnd);
+    out.write(")");
+  }
+
+  protected void buildExpGetSliceArray(String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd) {
+    out.write("tom_get_slice_" + name + "(");
+    generate(out,deep,varArray);
+    out.write(",");
+    generate(out,deep,varBegin);
+    out.write(",");
+    generate(out,deep,expEnd);
+    out.write(")");
+  }
+
+  protected abstract void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType);
+  protected abstract void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType);
+  protected abstract void buildNamedBlock(String blockName, TomListinstList);
+  protected abstract void buildIfThenElse(Expression exp, TomList succesList);
+  protected abstract void buildIfThenElseWithFailure(Expression exp, TomList succesList, TomList failureList);
+
+  protected void buildDoWhile(TomList succesList, Expression exp) {
+    out.writeln(deep,"do {");
+    generateList(deep+1,succesList);
+    out.write(deep,"} while("); generateExpression(out,deep,exp); out.writeln(");");
+  }
+  
+  protected abstract void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp);
+
+  protected void buildIncrement(TomTerm var) {
+    generate(out,deep,var);
+    out.write(" = ");
+    generate(out,deep,var);
+    out.writeln(" + 1;");
+  }
+
+  protected abstract void buildExitAction(TomNumberList numberList);
+
+  protected abstract void buildReturn(Exoression exp);
+
+} // class TomAbstractGenerator

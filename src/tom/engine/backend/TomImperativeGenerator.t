@@ -233,4 +233,121 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     }
   }
 
-}
+    protected void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType) {
+    out.indent(deep);
+    generate(deep,var);
+    if(cCode || jCode) {
+      out.write(" = (" + getTLCode(tlType) + ") ");
+    } else if(eCode) {
+      if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
+        out.write(" := ");
+      } else {
+          //out.write(" ?= ");
+        String assignSign = " := ";
+        %match(Expression exp) {
+          GetSubterm[] -> {
+            assignSign = " ?= ";
+          }
+        }
+        out.write(assignSign);
+      }
+    }
+    generateExpression(out,deep,exp);
+    out.writeln(";");
+    if (debugMode) {
+      out.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
+      generateExpression(out,deep,exp);
+      out.write("\",");
+      generateExpression(out,deep,exp);
+      out.writeln(");");
+    }
+  }
+
+  protected void buildNamedBlock(String blockName, TomList instList) {
+    if(cCode) {
+      out.writeln("{");
+      generateList(deep+1,instList);
+      out.writeln("}" + blockName +  ":;");
+    } else if(jCode) {
+      out.writeln(blockName + ": {");
+      generateList(deep+1,instList);
+      out.writeln("}");
+    } else if(eCode) {
+      System.out.println("NamedBlock: Eiffel code not yet implemented");
+      throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
+    }  
+  }
+
+  protected void buildIfThenElse(Expression exp, TomList succesList) {
+    if(cCode || jCode) {
+      out.write(deep,"if("); generateExpression(deep,exp); out.writeln(") {");
+      generateList(deep+1,succesList);
+      out.writeln(deep,"}");
+    } else if(eCode) {
+      out.write(deep,"if "); generateExpression(deep,exp); out.writeln(" then ");
+      generateList(deep+1,succesList);
+      out.writeln(deep,"end;");
+    }
+  }
+
+  protected void buildIfThenElseWithFailure(Expression exp, TomList succesList, TomList failureList) {
+    if(cCode || jCode) {
+      out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
+      generateList(out,deep+1,succesList);
+      out.writeln(deep,"} else {");
+      generateList(out,deep+1,failureList);
+      out.writeln(deep,"}");
+    } else if(eCode) {
+      out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
+      generateList(out,deep+1,succesList);
+      out.writeln(deep," else ");
+      generateList(out,deep+1,failureList);
+      out.writeln(deep,"end;");
+    }
+  }
+
+  protected void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp) {
+    out.indent(deep);
+    generate(deep,var);
+    if(cCode || jCode) {
+      out.write(" = (" + getTLCode(tlType) + ") ");
+    } else if(eCode) {
+      out.write(" := ");
+    }
+    generateExpression(deep,exp);
+    out.writeln(";");
+    if(debugMode && !list.isEmpty()) {
+      out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      generate(deep,var);
+      out.write("\", ");
+      generate(deep,var); // generateExpression(out,deep,exp);
+      out.write(");\n");
+    }
+  }
+
+  protected void buildExitAction(TomNumberList numberList) {
+    if(cCode) {
+      out.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
+    } else if(jCode) {
+      out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
+    } else if(eCode) {
+      System.out.println("ExitAction: Eiffel code not yet implemented");
+      throw new TomRuntimeException(new Throwable("ExitAction: Eiffel code not yet implemented"));
+    }
+  }
+
+  protected void buildReturn(Exoression exp) {
+    if(cCode || jCode) {
+      out.write(deep,"return ");
+      generate(out,deep,exp);
+      out.writeln(deep,";");
+    } else if(eCode) {
+      out.writeln(deep,"if Result = Void then");
+      out.write(deep+1,"Result := ");
+      generate(out,deep+1,exp);
+      out.writeln(deep+1,";");
+      out.writeln(deep,"end;");
+    }
+  }
+  
+} // class TomImperativeGenerator
