@@ -37,9 +37,12 @@ constructor(Option,ImplicitXMLAttribut,ImplicitXMLAttribut),
 constructor(Option,ImplicitXMLChild,ImplicitXMLChild),
 constructor(Option,noOption,noOption),
 
-constructor(Option,OptionBoolean,OptionBoolean(<name(str)>,<altName(str)>,<description(str)>,<valueB(int)>)),
+constructor(Option,OptionBoolean,OptionBoolean(<name(str)>,<altName(str)>,<description(str)>,<valueB(TomBoolean)>)),
 constructor(Option,OptionInteger,OptionInteger(<name(str)>,<altName(str)>,<description(str)>,<valueI(int)>,<attrName(str)>)),
 constructor(Option,OptionString,OptionString(<name(str)>,<altName(str)>,<description(str)>,<valueS(str)>,<attrName(str)>)),
+
+constructor(TomBoolean,True,True),
+constructor(TomBoolean,False,False),
 
 constructor(Expression,TomTermToExpression,TomTermToExpression(<astTerm(TomTerm)>)),
 constructor(Expression,Not,Not(<arg(Expression)>)),
@@ -124,7 +127,7 @@ constructor(TomTerm,BuildAppendArray,BuildAppendArray(<astName(TomName)>,<headTe
 constructor(TomTerm,TomInclude,TomInclude(<tomList(TomList)>)),
 constructor(TomTerm,Automata,Automata(<option(OptionList)>,<patternList(TomList)>,<numberList(TomNumberList)>,<inst(Instruction)>)),
 
-constructor(TomTerm,TomString,TomString(<source(str)>)),
+constructor(TomTerm,FileName,FileName(<name(str)>)),
 
 constructor(TomNumber,MatchNumber,MatchNumber(<number(TomNumber)>)),
 constructor(TomNumber,PatternNumber,PatternNumber(<number(TomNumber)>)),

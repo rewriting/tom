@@ -1,86 +1,91 @@
-/*
- *   
- * TOM - To One Matching Compiler
- * 
- * Copyright (C) 2000-2004 INRIA
- * Nancy, France.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+/**
  *
- **/
+ * The TomCompiler plugin.
+ *
+ */
 
 package jtom.compiler;
-  
+
 import java.util.*;
 
 import jtom.adt.tomsignature.types.*;
 
 import jtom.runtime.Replace1;
-import jtom.tools.TomTask;
-import jtom.tools.TomTaskInput;
 import jtom.tools.*;
 import jtom.TomMessage;
 import aterm.*;
 import jtom.exception.TomRuntimeException;
+import jtom.*;
 
-public class TomCompiler extends TomTask {
-  TomKernelCompiler tomKernelCompiler;
-  private TomFactory tomFactory;
-  private int absVarNumber = 0;
 
-  public TomCompiler() {
-    super("Tom Compiler");
-    this.tomKernelCompiler = new TomKernelCompiler();
-    this.tomFactory = new TomFactory();
-  }
-  
-// ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
-// ------------------------------------------------------------
+public class TomCompiler extends TomBase implements TomPlugin
+{
+    %include { ../adt/TomSignature.tom }
 
-  public void initProcess() {
-  }
-  
-  public void process() {
-    try {
-      long startChrono = 0;
-      boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate();
-      if(verbose) { startChrono = System.currentTimeMillis();}
-      
-      TomTerm preCompiledTerm = preProcessing(environment().getTerm());
-      //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
-      TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
-      
-      if(verbose) {
-        System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-      }
-      if(intermediate) {
-        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.compiledSuffix, compiledTerm);
-      }
-      environment().setTerm(compiledTerm);
-      
-    } catch (Exception e) {
-      environment().messageError("Exception occurs in TomCompiler: "+e.getMessage(), 
-               getInput().getInputFile().getName(), 
-                   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-      e.printStackTrace();
-      return;
+    private TomTerm term;
+    private OptionList myOptions;
+
+    private TomKernelCompiler tomKernelCompiler = new TomKernelCompiler();
+    private TomFactory tomFactory = new TomFactory();
+    private int absVarNumber = 0;
+
+    public static final String COMPILED_SUFFIX = ".tfix.compiled"; // was previously in TomTaskInput
+
+    public TomCompiler()
+    {
+	myOptions = `concOption(OptionBoolean("compile","","",True()) // activationFlag
+				);
     }
-  }
+
+    public void setInput(ATerm term)
+    {
+	if (term instanceof TomTerm)
+	    this.term = (TomTerm)term;
+	else
+	    environment().messageError(TomMessage.getString("TomTermExpected"),
+				       "TomCompiler", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+    }
+
+    public ATerm getOutput()
+    {
+	return term;
+    }
+
+    public void run()
+    {
+	try
+	    {
+		long startChrono = System.currentTimeMillis();
+		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+		boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
+
+		TomTerm preCompiledTerm = preProcessing(term);
+		//System.out.println("preCompiledTerm = \n" + preCompiledTerm);
+		TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
+      
+		if(verbose)
+		    System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+
+		if(intermediate)
+		    Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
+
+		term = compiledTerm;
+
+		environment().printAlertMessage("TomCompiler");
+		if(!environment().isEclipseMode()) {
+		    // remove all warning (in command line only)
+		    environment().clearWarnings();
+		}
+	    }
+	catch (Exception e)
+	    {
+		environment().messageError("Exception occurs in TomCompiler: "+e.getMessage(), 
+					   environment().getInputFile().getName(), 
+					   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+		e.printStackTrace();
+	    }
+    }
+  
 
   private OptionList option() {
     return ast().makeOption();
@@ -126,7 +131,7 @@ public class TomCompiler extends TomTask {
             Match(SubjectList(l1),PatternList(l2), matchOptionList)  -> {
               TomList patternList = `l2;
               Option orgTrack = findOriginTracking(`matchOptionList);
-              if(getInput().isDebugMode()) {
+              if(((Boolean)getServer().getOptionValue("debug")).booleanValue()) {
                 debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
               }
               TomList newPatternList = empty();
@@ -196,7 +201,7 @@ public class TomCompiler extends TomTask {
 
             RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
               TomRuleList ruleList = `rl;
-              if(getInput().isDebugMode()) {
+              if(((Boolean)getServer().getOptionValue("debug")).booleanValue()) {
                 debugKey = `orgTrack.getFileName().getString() + `orgTrack.getLine();
               }
               TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
@@ -228,7 +233,7 @@ public class TomCompiler extends TomTask {
                               option) -> {
                     TomTerm newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
                     Instruction rhsInst = `IfThenElse(TrueTL(),Return(newRhs),Nop());
-                    if(getInput().isDebugMode()) {
+                    if(((Boolean)getServer().getOptionValue("debug")).booleanValue()) {
                       TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
                       rhsInst = `UnamedBlock(concInstruction(TargetLanguageToInstruction(tl), rhsInst));
                     }
@@ -259,7 +264,7 @@ public class TomCompiler extends TomTask {
                 //}
 
               InstructionList l;
-              if(getInput().isECode()) {
+              if(((Boolean)getServer().getOptionValue("eCode")).booleanValue()) {
                 l = `concInstruction(
                                      makeFunctionBeginAST,
                                      LocalVariable(),
@@ -511,6 +516,52 @@ public class TomCompiler extends TomTask {
     }
     return newList;
   }
-  
-} //class TomCompiler
 
+    public OptionList declareOptions()
+    {
+// 	int i = 0;
+// 	OptionList list = `concOption(myOptions*);
+// 	while(!(list.isEmpty()))
+// 	    {
+// 		i++;
+// 		list = list.getTail();
+// 	    }
+
+// 	System.out.println("1.6. The compiler declares " +i+ " options.");
+	
+	return myOptions;
+    }
+
+    public OptionList requiredOptions()
+    {
+	return `emptyOptionList();
+    }
+
+    public void setOption(String optionName, String optionValue)
+    {
+ 	%match(OptionList myOptions)
+ 	    {
+		concOption(av*, OptionBoolean(n, alt, desc, val), ap*)
+		    -> { if(n.equals(optionName)||alt.equals(optionName))
+			{
+			    %match(String optionValue)
+				{
+				    ('true') ->
+					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
+				    ('false') ->
+					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
+				}
+			}
+		}
+		concOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
+		    -> { if(n.equals(optionName)||alt.equals(optionName))
+			myOptions = `concOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+		}
+		concOption(av*, OptionString(n, alt, desc, val, attr), ap*)
+		    -> { if(n.equals(optionName)||alt.equals(optionName))
+			myOptions = `concOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+		}
+	    }
+    }
+
+}

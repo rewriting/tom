@@ -1,72 +1,152 @@
-/*
- *   
- * TOM - To One Matching Compiler
- * 
- * Copyright (C) 2000-2004 INRIA
- * Nancy, France.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+/**
  *
- **/
+ * The TomOptimizer plugin.
+ *
+ */
 
 package jtom.optimizer;
 
-import aterm.*;
-
-import java.util.*;
-
+import jtom.*;
 import jtom.adt.tomsignature.types.*;
+import aterm.*;
+import java.util.*;
 import jtom.tools.*;
 import jtom.TomMessage;
 import jtom.runtime.*;
 
-public class TomOptimizer extends TomTask {
-  
-  // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
-  // ------------------------------------------------------------
-    
-  public TomOptimizer() {
-    super("Tom Optimizer");
-  }
+public class TomOptimizer extends TomBase implements TomPlugin
+{
+    %include{ ../adt/TomSignature.tom }
 
-  public void initProcess() {
-  } 
-  
-  public void process() {
-    try {
-      long startChrono = 0;
-      boolean verbose = getInput().isVerbose();
-      if(verbose) { startChrono = System.currentTimeMillis();}
-      
-      TomTerm renamedTerm = renameVariable(environment().getTerm(),new HashSet());
-      TomTerm optimizedTerm = optimize(renamedTerm);
-      
-      if(verbose) {
-        System.out.println("TOM optimization phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-      }
-      environment().setTerm(optimizedTerm);
-      
-    } catch (Exception e) {
-      environment().messageError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-      e.printStackTrace();
-      return;
+    private TomTerm term;
+    private OptionList myOptions;
+
+    public static final String OPTIMIZED_SUFFIX = ".tfix.optimized"; // was previously in TomTaskInput
+
+    public TomOptimizer()
+    {
+	myOptions = `concOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
+				);
     }
-  }
+
+    public void setInput(ATerm term)
+    {
+	if (term instanceof TomTerm)
+	    this.term = (TomTerm)term;
+	else
+	    environment().messageError(TomMessage.getString("TomTermExpected"),
+				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+    }
+
+    public ATerm getOutput()
+    {
+	return term;
+    }
+
+    public void run()
+    {
+	try
+	    {
+		long startChrono = System.currentTimeMillis();
+		OptionList list = `concOption(myOptions*);
+		boolean willRun = true;
+
+		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+		boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
+		
+		while(!(list.isEmpty()))
+		    {
+			Option h = list.getHead();
+			%match(Option h)
+			    {
+				OptionBoolean[name="optimize", valueB=val] -> 
+				    { 
+					%match(TomBoolean val)
+					    {
+						True() -> { willRun = true; }
+						False() -> { willRun = false; }
+					    }
+				    }
+			    }
+			list = list.getTail();
+		    }
+		if(willRun)
+		    {
+			TomTerm renamedTerm = renameVariable(term, new HashSet());
+			TomTerm optimizedTerm = optimize(renamedTerm);
+			term = optimizedTerm;
+			if(verbose)			
+			    System.out.println("TOM optimization phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+			if(intermediate)
+			    Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
+						 + OPTIMIZED_SUFFIX, term);
+		    }
+		else
+		    {
+			if(verbose)
+			    System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
+		    }
+
+		environment().printAlertMessage("TomOptimizer");
+		if(!environment().isEclipseMode()) {
+		    // remove all warning (in command line only)
+		    environment().clearWarnings();
+		}
+	    }
+	catch (Exception e) 
+	    {
+		environment().messageError("Exception occurs in TomOptimizer: "
+					   +e.getMessage(), environment().getInputFile().getName(), 
+					   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+		e.printStackTrace();
+	    }
+    }
+
+    public OptionList declareOptions()
+    {
+// 	int i = 0;
+// 	OptionList list = `concOption(myOptions*);
+// 	while(!(list.isEmpty()))
+// 	    {
+// 		i++;
+// 		list = list.getTail();
+// 	    }
+
+// 	System.out.println("1.7. The optimizer declares " +i+ " options.");
+	return myOptions;
+    }
+
+    public OptionList requiredOptions()
+    {
+	return `emptyOptionList();
+    }
+
+    public void setOption(String optionName, String optionValue)
+    {
+ 	%match(OptionList myOptions)
+ 	    {
+		concOption(av*, OptionBoolean(n, alt, desc, val), ap*)
+		    -> { if(n.equals(optionName)||alt.equals(optionName))
+			{
+			    %match(String optionValue)
+				{
+				    ('true') ->
+					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
+				    ('false') ->
+					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
+				}
+			}
+		}
+		concOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
+		    -> { if(n.equals(optionName)||alt.equals(optionName))
+			myOptions = `concOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+		}
+		concOption(av*, OptionString(n, alt, desc, val, attr), ap*)
+		    -> { if(n.equals(optionName)||alt.equals(optionName))
+			myOptions = `concOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+		}
+	    }
+    }
 
     /* 
      * optimize:
@@ -94,7 +174,7 @@ public class TomOptimizer extends TomTask {
             }
           }
         } else if(subject instanceof Instruction) {
-          boolean verbose = getInput().isVerbose();
+          boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
           %match(Instruction subject) {
               /*
                * TODO
@@ -379,4 +459,5 @@ public class TomOptimizer extends TomTask {
   public Instruction renameVariableInstruction(Instruction subject, Set context) {
     return (Instruction) replace_renameVariable.apply(subject,context); 
   }
-}  //Class TomOptimizer
+
+}

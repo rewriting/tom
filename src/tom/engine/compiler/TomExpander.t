@@ -1,30 +1,12 @@
-/*
- *   
- * TOM - To One Matching Compiler
- * 
- * Copyright (C) 2000-2004 INRIA
- * Nancy, France.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
- * 
- * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+/**
  *
- **/
+ * The TomExpander plugin.
+ *
+ */
 
 package jtom.compiler;
 
+import jtom.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.runtime.Replace1;
 import aterm.*;
@@ -33,50 +15,123 @@ import jtom.xml.Constants;
 import jtom.exception.TomRuntimeException;
 import jtom.TomMessage;
 
-public class TomExpander extends TomTask {
-  
-  private TomKernelExpander tomKernelExpander;
-  private TomFactory tomFactory;
-  
-  public TomExpander() {
-    super("Tom Expander");
-    this.tomKernelExpander = new TomKernelExpander();
-    this.tomFactory = new TomFactory();
-  }
+public class TomExpander extends TomBase implements TomPlugin
+{
+    %include { ../adt/TomSignature.tom }
 
-// ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
-// ------------------------------------------------------------
-    
-  public void process() {
-    try {
-      long startChrono = 0;
-      boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate(),
-        debugMode = getInput().isDebugMode();
-      if(verbose) { startChrono = System.currentTimeMillis(); }
-      
-      TomTerm syntaxExpandedTerm = expandTomSyntax(environment().getTerm());
-      tomKernelExpander.updateSymbolTable();
-      TomTerm context = `emptyTerm();
-      TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
-      TomTerm stringExpandedTerm   = expandString(variableExpandedTerm);
-      TomTerm expandedTerm         = updateCodomain(stringExpandedTerm);
-      
-      if(verbose) {
-        System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-      }
-      if(intermediate) {
-        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.expandedSuffix, expandedTerm);
-        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
-      }
-      environment().setTerm(expandedTerm);
-      
-    } catch (Exception e) {
-      environment().messageError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-      e.printStackTrace();
-      return;
+    private TomTerm term;
+    private OptionList myOptions;
+
+    private TomKernelExpander tomKernelExpander;
+    private TomFactory tomFactory;
+
+    public static final String EXPANDED_SUFFIX = ".tfix.expanded"; // was previously in TomTaskInput
+    public static final String EXPANDED_TABLE_SUFFIX = ".tfix.expanded.table"; // was previously in TomTaskInput
+  
+    public TomExpander()
+    {
+	myOptions = `concOption(OptionBoolean("expand","","",True()) // activationFlag
+				);
+	tomKernelExpander = new TomKernelExpander();
+	tomFactory = new TomFactory();
     }
-  }
+
+    public void setInput(ATerm term)
+    {
+	if (term instanceof TomTerm)
+	    this.term = (TomTerm)term;
+	else
+	    environment().messageError(TomMessage.getString("TomTermExpected"),
+				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+    }
+
+    public ATerm getOutput()
+    {
+	return term;
+    }
+
+    public void run()
+    {
+	try
+	    {
+		long startChrono = System.currentTimeMillis();
+		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+		boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
+
+		TomTerm syntaxExpandedTerm   = expandTomSyntax(term);
+		tomKernelExpander.updateSymbolTable();
+		TomTerm context = `emptyTerm();
+		TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
+		TomTerm stringExpandedTerm   = expandString(variableExpandedTerm);
+		TomTerm expandedTerm         = updateCodomain(stringExpandedTerm);
+		term = expandedTerm;
+
+		if(verbose)
+		    System.out.println("TOM expanding phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+		
+		if(intermediate)
+		    {
+			Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
+					     + EXPANDED_SUFFIX, expandedTerm);
+			Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
+					     + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
+		    }
+	    }
+	catch (Exception e) 
+	    {
+		environment().messageError("Exception occurs in TomExpander: "
+					   +e.getMessage(), environment().getInputFile().getName(),
+					   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+		e.printStackTrace();
+	    }
+    }
+
+    public OptionList declareOptions()
+    {
+// 	int i = 0;
+// 	OptionList list = `concOption(myOptions*);
+// 	while(!(list.isEmpty()))
+// 	    {
+// 		i++;
+// 		list = list.getTail();
+// 	    }
+
+// 	System.out.println("1.4. The expander declares " +i+ " options.");
+	
+	return myOptions;
+    }
+
+    public OptionList requiredOptions()
+    {
+	return `emptyOptionList();
+    }
+
+    public void setOption(String optionName, String optionValue)
+    {
+ 	%match(OptionList myOptions)
+ 	    {
+		concOption(av*, OptionBoolean(n, alt, desc, val), ap*)
+		    -> { if(n.equals(optionName)||alt.equals(optionName))
+			{
+			    %match(String optionValue)
+				{
+				    ('true') ->
+					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
+				    ('false') ->
+					{ myOptions = `concOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
+				}
+			}
+		}
+		concOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
+		    -> { if(n.equals(optionName)||alt.equals(optionName))
+			myOptions = `concOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+		}
+		concOption(av*, OptionString(n, alt, desc, val, attr), ap*)
+		    -> { if(n.equals(optionName)||alt.equals(optionName))
+			myOptions = `concOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+		}
+	    }
+    }
 
   private TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
     return tomKernelExpander.expandVariable(contextSubject,subject); 
@@ -682,5 +737,4 @@ public class TomExpander extends TomTask {
     return list;
   }
 
-  
-} // Class TomExpander
+}

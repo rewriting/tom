@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import jtom.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.exception.TomRuntimeException;
@@ -54,7 +55,7 @@ public class SymbolTable {
     mapSymbolName = new HashMap();
     mapTypeName = new HashMap();
 
-    if(getInput().isCCode()) {
+    if( getServer().getOptionBooleanValue("cCode") ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"int"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
@@ -62,7 +63,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"));
-    } else if(getInput().isJCode()) {
+    } else if( getServer().getOptionBooleanValue("jCode") ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"boolean"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
@@ -70,7 +71,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"));
-    } else if(getInput().isECode()) {
+    } else if( getServer().getOptionBooleanValue("eCode") ) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"CHARACTER"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"BOOLEAN"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"INTEGER"));
@@ -78,7 +79,7 @@ public class SymbolTable {
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"DOUBLE"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"STRING"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"ANY"));
-    } else if(getInput().isCamlCode()) { // this is really bad, will need to be improved
+    } else if( getServer().getOptionBooleanValue("camlCode") ) { // this is really bad, will need to be improved
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"bool"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
@@ -89,8 +90,8 @@ public class SymbolTable {
     }
   }
 
-  private TomTaskInput getInput() {
-    return TomTaskInput.getInstance();
+  private TomServer getServer() {
+    return TomServer.getInstance();
   }
 
   public void regenerateFromTerm(TomSymbolTable symbTable) {

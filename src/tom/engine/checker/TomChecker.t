@@ -30,6 +30,7 @@ import aterm.*;
 
 import java.util.*;
 
+import jtom.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.tools.*;
 import jtom.runtime.Collect1;
@@ -37,7 +38,7 @@ import jtom.xml.Constants;
 import jtom.exception.*;
 import jtom.TomMessage;
 
-abstract public class TomChecker extends TomTask {
+abstract public class TomChecker extends TomBase {
   
     // ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
@@ -103,15 +104,27 @@ abstract public class TomChecker extends TomTask {
   private ArrayList alreadyStudiedRule =  new ArrayList();
   private Option currentTomStructureOrgTrack;
     
-  public TomChecker(String name) {
-    super(name);
-  }
+    public TomChecker(String name) {
+	//    super(name);
+    }
+
+    public TomChecker()
+    {
+    }
+
+    protected void reinit()
+    {
+	alreadyStudiedTypes =  new ArrayList();
+	alreadyStudiedSymbols =  new ArrayList();
+	alreadyStudiedRule =  new ArrayList();
+	currentTomStructureOrgTrack = null;
+    }
 
   public void initProcess() {
-    verbose = getInput().isVerbose();
-    strictType = getInput().isStrictType();
-    warningAll = getInput().isWarningAll();
-    noWarning = getInput().isNoWarning();
+    verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+    strictType = ! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue();
+    warningAll = ((Boolean)getServer().getOptionValue("Wall")).booleanValue();
+    noWarning = ((Boolean)getServer().getOptionValue("noWarning")).booleanValue();
   } 
     /**
      * Main type checking entry point:
@@ -1343,7 +1356,7 @@ abstract public class TomChecker extends TomTask {
 
   private void ensureOriginTrackingLine(int line) {
     if(line < 0) {
-      environment().messageError("findOriginTrackingLine:  not found", getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      environment().messageError("findOriginTrackingLine:  not found", environment().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       System.out.println("findOriginTrackingLine: not found ");
     }
   }
