@@ -40,6 +40,25 @@ public class PolyApigen1 {
     this.factory = factory;
   }
 
+  /*
+  %vas {
+    module poly
+      imports int str
+      
+    public
+      sorts Expression
+
+    abstract syntax
+      zero                                   -> Expression
+      one                                    -> Expression
+      mult(arg1:Expression, arg2:Expression) -> Expression
+      plus(arg1:Expression, arg2:Expression) -> Expression
+      exp(arg1:Expression)                   -> Expression
+      variable(string:str)                   -> Expression
+      constant(string:str)                   -> Expression
+      number(integer:int)                    -> Expression
+  }
+  */
   public Factory getExpressionFactory() {
     return factory;
   }

@@ -1,0 +1,30 @@
+[
+  modulentry(Name("TomDeclaration"),
+	[Name("TomSignature")],
+	[Type("Declaration")],
+  [
+  constructor(Declaration,TypeTermDecl,TypeTermDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),
+  constructor(Declaration,TypeListDecl,TypeListDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),
+  constructor(Declaration,TypeArrayDecl,TypeArrayDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),
+  constructor(Declaration,GetFunctionSymbolDecl,GetFunctionSymbolDecl(<termArg(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,GetSubtermDecl,GetSubtermDecl(<termArg(TomTerm)>,<variable(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,IsFsymDecl,IsFsymDecl(<astName(TomName)>,<variable(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,GetSlotDecl,GetSlotDecl(<astName(TomName)>,<slotName(TomName)>,<variable(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,CompareFunctionSymbolDecl,CompareFunctionSymbolDecl(<symbolArg1(TomTerm)>,<symbolArg2(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,TermsEqualDecl,TermsEqualDecl(<termArg1(TomTerm)>,<termArg2(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,GetHeadDecl,GetHeadDecl(<codomain(TomType)>,<variable(TomTerm)>,<tlcode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,GetTailDecl,GetTailDecl(<variable(TomTerm)>,<tlcode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,IsEmptyDecl,IsEmptyDecl(<variable(TomTerm)>,<tlcode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,MakeEmptyList,MakeEmptyList(<astName(TomName)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,MakeAddList,MakeAddList(<astName(TomName)>,<varElt(TomTerm)>,<varList(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,GetElementDecl,GetElementDecl(<kid1(TomTerm)>,<kid2(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,GetSizeDecl,GetSizeDecl(<kid1(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,MakeEmptyArray,MakeEmptyArray(<astName(TomName)>,<varSize(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,MakeAddArray,MakeAddArray(<astName(TomName)>,<varElt(TomTerm)>,<varList(TomTerm)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,MakeDecl,MakeDecl(<astName(TomName)>,<astType(TomType)>,<args(TomList)>,<tlCode(TargetLanguage)>,<orgTrack(Option)>)),
+  constructor(Declaration,SymbolDecl,SymbolDecl(<astName(TomName)>)),
+  constructor(Declaration,ListSymbolDecl,ListSymbolDecl(<astName(TomName)>)),
+  constructor(Declaration,ArraySymbolDecl,ArraySymbolDecl(<astName(TomName)>)),
+  constructor(Declaration,EmptyDeclaration,EmptyDeclaration)
+ ])
+]

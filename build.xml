@@ -296,6 +296,11 @@
 			<include name="jtom/adt/TomAlert.adt"/>
 			<include name="jtom/adt/TomName.adt"/>
 			<include name="jtom/adt/TomConstraint.adt"/>
+			<include name="jtom/adt/TomInstruction.adt"/>
+			<include name="jtom/adt/TomExpression.adt"/>
+			<include name="jtom/adt/TomDeclaration.adt"/>
+			<include name="jtom/adt/TomOption.adt"/>
+			<include name="jtom/adt/TomTerm.adt"/>
 		</adt>
     <copy todir="${src.mapping}">
       <fileset dir="${src.gen}/jtom/adt" includes="*.tom">

@@ -1,0 +1,53 @@
+[
+  modulentry(Name("TomTerm"),
+	[Name("TomSignature")],
+	[Type("TomTerm"),Type("TomList")],
+  [
+  constructor(TomTerm,Appl,Appl(<option(OptionList)>,<nameList(NameList)>,<args(TomList)>,<constraints(ConstraintList)>)),
+  constructor(TomTerm,XMLAppl,XMLAppl(<option(OptionList)>,<nameList(NameList)>,<attrList(TomList)>,<childList(TomList)>,<constraints(ConstraintList)>)),
+  constructor(TomTerm,VariableStar,VariableStar(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>,<constraints(ConstraintList)>)),
+  constructor(TomTerm,Placeholder,Placeholder(<option(OptionList)>,<constraints(ConstraintList)>)),
+  constructor(TomTerm,UnamedVariable,UnamedVariable(<option(OptionList)>,<astType(TomType)>,<constraints(ConstraintList)>)),
+  constructor(TomTerm,UnamedVariableStar,UnamedVariableStar(<option(OptionList)>,<astType(TomType)>,<constraints(ConstraintList)>)),
+  
+  constructor(TomTerm,emptyTerm, emptyTerm),
+  constructor(TomTerm,TargetLanguageToTomTerm,TargetLanguageToTomTerm(<tl(TargetLanguage)>)),
+  constructor(TomTerm,TomTypeToTomTerm,TomTypeToTomTerm(<astType(TomType)>)),
+  constructor(TomTerm,TomNameToTomTerm,TomNameToTomTerm(<astName(TomName)>)),
+  constructor(TomTerm,TomSymbolToTomTerm,TomSymbolToTomTerm(<astSymbol(TomSymbol)>)),
+  constructor(TomTerm,DeclarationToTomTerm,DeclarationToTomTerm(<astDeclaration(Declaration)>)),
+  constructor(TomTerm,OptionToTomTerm,OptionToTomTerm(<option(OptionList)>)),
+  constructor(TomTerm,ExpressionToTomTerm,ExpressionToTomTerm(<astExpression(Expression)>)),
+  constructor(TomTerm,InstructionToTomTerm,InstructionToTomTerm(<astInstruction(Instruction)>)),
+  constructor(TomTerm,Tom,Tom(<tomList(TomList)>)),
+  constructor(TomTerm,BackQuoteAppl,BackQuoteAppl(<option(OptionList)>,<astName(TomName)>,<args(TomList)>)),
+  constructor(TomTerm,DoubleBackQuote,DoubleBackQuote(<args(TomList)>)),
+  constructor(TomTerm,Composite,Composite(<args(TomList)>)),
+  constructor(TomTerm,RecordAppl,RecordAppl(<option(OptionList)>,<nameList(NameList)>,<args(TomList)>,<constraints(ConstraintList)>)),
+  constructor(TomTerm,PairSlotAppl,PairSlotAppl(<slotName(TomName)>,<appl(TomTerm)>)),
+  constructor(TomTerm,SubjectList,SubjectList(<tomList(TomList)>)),
+  constructor(TomTerm,PatternList,PatternList(<tomList(TomList)>)),
+  constructor(TomTerm,TermList,TermList(<tomList(TomList)>)),
+  constructor(TomTerm,Term,Term(<tomTerm(TomTerm)>)),
+  constructor(TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<action(Instruction)>,<option(OptionList)>)),
+  constructor(TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>)),
+  constructor(TomTerm,Variable,Variable(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>,<constraints(ConstraintList)>)),
+  constructor(TomTerm,Ref,Ref(<tomTerm(TomTerm)>)),
+  
+  constructor(TomTerm,BuildReducedTerm,BuildReducedTerm(<kid1(TomTerm)>)),
+  constructor(TomTerm,FunctionCall,FunctionCall(<astName(TomName)>,<args(TomList)>)),
+  constructor(TomTerm,BuildVariable,BuildVariable(<astName(TomName)>,<args(TomList)>)),
+  constructor(TomTerm,BuildTerm,BuildTerm(<astName(TomName)>,<args(TomList)>)),
+  
+  constructor(TomTerm,BuildEmptyList,BuildEmptyList(<astName(TomName)>)),
+  constructor(TomTerm,BuildConsList,BuildConsList(<astName(TomName)>,<headTerm(TomTerm)>,<tailTerm(TomTerm)>)),
+  constructor(TomTerm,BuildAppendList,BuildAppendList(<astName(TomName)>,<headTerm(TomTerm)>,<tailTerm(TomTerm)>)),
+  constructor(TomTerm,BuildEmptyArray,BuildEmptyArray(<astName(TomName)>,<size(int)>)),
+  constructor(TomTerm,BuildConsArray,BuildConsArray(<astName(TomName)>,<headTerm(TomTerm)>,<tailTerm(TomTerm)>)),
+  constructor(TomTerm,BuildAppendArray,BuildAppendArray(<astName(TomName)>,<headTerm(TomTerm)>,<tailTerm(TomTerm)>)),
+  
+  constructor(TomTerm,TomInclude,TomInclude(<tomList(TomList)>)),
+  constructor(TomTerm,Automata,Automata(<option(OptionList)>,<patternList(TomList)>,<numberList(TomNumberList)>,<inst(Instruction)>)),
+  list(TomList,TomTerm)
+ ])
+]

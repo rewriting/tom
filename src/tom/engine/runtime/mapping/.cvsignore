@@ -4,3 +4,8 @@ Options.tom
 TomAlert.tom
 TomName.tom
 TomConstraint.tom
+TomInstruction.tom
+TomExpression.tom
+TomDeclaration.tom
+TomOption.tom
+TomTerm.tom

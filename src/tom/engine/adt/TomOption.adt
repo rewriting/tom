@@ -1,0 +1,21 @@
+[
+  modulentry(Name("TomOption"),
+	[Name("TomSignature")],
+	[Type("Option"),Type("OptionList")],
+  [
+  constructor(Option,DeclarationToOption,DeclarationToOption(<astDeclaration(Declaration)>)),
+  constructor(Option,TomNameToOption,TomNameToOption(<astName(TomName)>)),
+  constructor(Option,TomTermToOption,TomTermToOption(<astTerm(TomTerm)>)),
+  constructor(Option,DefinedSymbol,DefinedSymbol),
+  constructor(Option,GeneratedMatch,GeneratedMatch),
+  constructor(Option,OriginTracking,OriginTracking(<astName(TomName)>,<line(int)>,<fileName(TomName)>)),
+  constructor(Option,Constructor,Constructor(<nameList(NameList)>)),
+  constructor(Option,OriginalText,OriginalText(<astName(TomName)>)),
+  constructor(Option,Label,Label(<astName(TomName)>)),
+  constructor(Option,Debug,Debug(<astName(TomName)>)),
+  constructor(Option,ImplicitXMLAttribut,ImplicitXMLAttribut),
+  constructor(Option,ImplicitXMLChild,ImplicitXMLChild),
+  constructor(Option,noOption,noOption),
+  list(OptionList,Option)
+ ])
+]
