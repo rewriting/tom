@@ -77,9 +77,9 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
           TomTerm localVar = varList.getHead();
           matchBlock: {
             %match(TomTerm localVar) {
-              v@Variable[option=option2,astName=name2,astType=type2] -> {
-                  generate(deep,v);
-                  output.write(deep,": " + getTLType(type2));
+              v@Variable[astType=type2] -> {
+                  generate(deep,`v);
+                  output.write(deep,": " + getTLType(`type2));
                 break matchBlock;
               }
               _ -> {
@@ -161,14 +161,14 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		if(symbolTable().isBoolType(type) || symbolTable().isIntType(type) || symbolTable().isDoubleType(type)) {
                   output.write(" := ");
 		} else {
-                    //out.write(" ?= ");
-                  String assignSign = " := ";
-                  %match(Expression exp) {
-                    GetSubterm[] -> {
-                      assignSign = " ?= ";
-                    }
-                  }
-                  output.write(assignSign);
+        //out.write(" ?= ");
+      String assignSign = " := ";
+      %match(Expression exp) {
+        GetSubterm[] -> {
+          assignSign = " ?= ";
+        }
+      }
+      output.write(assignSign);
     }
     generateExpression(deep,exp);
     output.writeln(";");
@@ -292,8 +292,8 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 			TomTerm arg = argList.getHead();
 			matchBlock: {
 				%match(TomTerm arg) {
-					Variable[option=option,astName=Name(name), astType=Type(ASTTomType(type),tlType@TLType[])] -> {
-						s += name + ": " + getTLCode(tlType);
+					Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]] -> {
+						s += `name + ": " + getTLCode(`tlType);
 						break matchBlock;
 					}
             

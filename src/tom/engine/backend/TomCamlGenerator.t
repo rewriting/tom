@@ -198,8 +198,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       matchBlock: {
         %match(TomTerm arg) {
             // in caml, we are not interested in the type of arguments
-          Variable[option=option,astName=Name(name)] -> {
-            s += name;
+          Variable[astName=Name(name)] -> {
+            s += `name;
             break matchBlock;
           }
           

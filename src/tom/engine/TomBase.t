@@ -142,9 +142,9 @@ public class TomBase {
 
   protected String getTomType(TomType type) {
     %match(TomType type) {
-      ASTTomType(s) -> {return s;}
-      TomTypeAlone(s) -> {return s;}
-      Type(ASTTomType(s),_) -> {return s;}
+      ASTTomType(s) -> {return `s;}
+      TomTypeAlone(s) -> {return `s;}
+      Type(ASTTomType(s),_) -> {return `s;}
       EmptyType() -> {return null;}
       _ -> {
         System.out.println("getTomType error on term: " + type);
@@ -156,7 +156,7 @@ public class TomBase {
   protected String getTLType(TomType type) {
     %match(TomType type) {
       TLType[]  -> { return getTLCode(type); }
-      Type[tlType=tlType] -> { return getTLCode(tlType); }
+      Type[tlType=tlType] -> { return getTLCode(`tlType); }
       _ -> {
         throw new TomRuntimeException(new Throwable("getTLType error on term: " + type));
       }
@@ -165,8 +165,8 @@ public class TomBase {
 
   protected String getTLCode(TomType type) {
     %match(TomType type) {
-      TLType(TL[code=tlType])  -> { return tlType; }
-      TLType(ITL[code=tlType]) -> { return tlType; }
+      TLType(TL[code=tlType])  -> { return `tlType; }
+      TLType(ITL[code=tlType]) -> { return `tlType; }
       _ -> {
         System.out.println("getTLCode error on term: " + type);
         throw new TomRuntimeException(new Throwable("getTLCode error on term: " + type));
@@ -224,8 +224,8 @@ public class TomBase {
   protected String getSymbolCode(TomSymbol symbol) {
       //%variable
     %match(TomSymbol symbol) {
-      Symbol[tlCode=TL[code=tlCode]]  -> { return tlCode; }
-      Symbol[tlCode=ITL[code=tlCode]] -> { return tlCode; }
+      Symbol[tlCode=TL[code=tlCode]]  -> { return `tlCode; }
+      Symbol[tlCode=ITL[code=tlCode]] -> { return `tlCode; }
       _ -> {
         System.out.println("getSymbolCode error on term: " + symbol);
 		throw new TomRuntimeException(new Throwable("getSymbolCode error on term: " + symbol));
@@ -235,8 +235,8 @@ public class TomBase {
 
   protected TomType getTermType(TomTerm t){
     %match(TomTerm t) {
-      Appl(option, (Name(tomName),_*), subterms) -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+      Appl[nameList=(Name(tomName),_*)] -> {
+        TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         return tomSymbol.getTypesToType().getCodomain();
       }
       
@@ -244,11 +244,11 @@ public class TomBase {
       VariableStar[astType=type] |
       UnamedVariable[astType=type] |
       UnamedVariableStar[astType=type] 
-        -> { return type; }
+        -> { return `type; }
 
       ExpressionToTomTerm(term) |
       Ref(term)
-        -> { return getTermType(term); }
+        -> { return getTermType(`term); }
       
       TargetLanguageToTomTerm(TL[]) |
       TargetLanguageToTomTerm(ITL[]) 
@@ -267,13 +267,13 @@ public class TomBase {
       GetHead[codomain=type] |
       GetSlot[codomain=type] |
       GetElement[codomain=type]
-        -> { return type; }
+        -> { return `type; }
 
       TomTermToExpression(term) |
       GetTail[variable=term] |
       GetSliceList[variableBeginAST=term] |
       GetSliceArray[subjectListName=term]
-        -> { return getTermType(term); }
+        -> { return getTermType(`term); }
 
       _ -> {
         System.out.println("getTermType error on term: " + t);
@@ -286,16 +286,16 @@ public class TomBase {
 
   private String elementToIdentifier(TomNumber subject) {
     %match(TomNumber subject) {
-      Begin(Number(i)) -> { return "begin" + i; }
-      End(Number(i)) -> { return "end" + i; }
-      MatchNumber(Number(i)) -> { return "match" + i; }
-      PatternNumber(Number(i)) -> { return "pattern" + i; }
-      ListNumber(Number(i)) -> { return "list" + i; }
-      IndexNumber(Number(i)) -> { return "index" + i; }
-      AbsVar(Number(i)) -> { return "absvar" + i; }
-      RenamedVar(Name(name)) -> { return "renamedvar_" + name; }
+      Begin(Number(i)) -> { return "begin" + `i; }
+      End(Number(i)) -> { return "end" + `i; }
+      MatchNumber(Number(i)) -> { return "match" + `i; }
+      PatternNumber(Number(i)) -> { return "pattern" + `i; }
+      ListNumber(Number(i)) -> { return "list" + `i; }
+      IndexNumber(Number(i)) -> { return "index" + `i; }
+      AbsVar(Number(i)) -> { return "absvar" + `i; }
+      RenamedVar(Name(name)) -> { return "renamedvar_" + `name; }
       RuleVar() -> { return "rulevar"; }
-      Number(i) -> { return "" + i; }
+      Number(i) -> { return "" + `i; }
       _ -> { return subject.toString(); }
     }
   }
@@ -318,12 +318,12 @@ public class TomBase {
   }
 
   protected boolean isListOperator(TomSymbol subject) {
-    //%variable
     if(subject==null) {
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol[option=optionList] -> {
+      Symbol[option=l] -> {
+        OptionList optionList = `l;
         while(!optionList.isEmpty()) {
           Option opt = optionList.getHead();
           %match(Option opt) {
@@ -348,7 +348,8 @@ public class TomBase {
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol[option=optionList] -> {
+      Symbol[option=l] -> {
+        OptionList optionList = `l;
         while(!optionList.isEmpty()) {
           Option opt = optionList.getHead();
           %match(Option opt) {
@@ -417,19 +418,17 @@ public class TomBase {
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;
             %match(TomTerm t) { 
-              Variable[option=optionList] |
-              VariableStar[option=optionList] -> {
+              (Variable|VariableStar)[option=optionList] -> {
                 collection.add(t);
-                annotedVariable = getAnnotedVariable(optionList);
+                annotedVariable = getAnnotedVariable(`optionList);
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
                 }
                 return false;
               }
               
-              UnamedVariable[option=optionList] |
-              UnamedVariableStar[option=optionList] -> {
-                annotedVariable = getAnnotedVariable(optionList);
+              (UnamedVariable|UnamedVariableStar)[option=optionList] -> {
+                annotedVariable = getAnnotedVariable(`optionList);
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
                 }
@@ -439,7 +438,7 @@ public class TomBase {
                 // to collect annoted nodes but avoid collect variables in optionSymbol
               Appl[option=optionList, args=subterms] -> {
                 collectVariable(collection,`Tom(subterms));
-                annotedVariable = getAnnotedVariable(optionList);
+                annotedVariable = getAnnotedVariable(`optionList);
                 if(annotedVariable!=null) {
                   collection.add(annotedVariable);
                 }
@@ -480,11 +479,10 @@ public class TomBase {
   protected boolean isAnnotedVariable(TomTerm t) {
     %match(TomTerm t) {
       Appl[option=optionList] |
-      Variable[option=optionList] |
-      VariableStar[option=optionList] |
-      UnamedVariable[option=optionList] |
-      UnamedVariableStar[option=optionList] -> {
-        return getAnnotedVariable(optionList)!=null;
+      (Variable|VariableStar)[option=optionList] |
+      (UnamedVariable|UnamedVariableStar)[option=optionList] 
+        -> {
+        return getAnnotedVariable(`optionList)!=null;
       }
     }
     return false;
@@ -492,21 +490,21 @@ public class TomBase {
    
   protected TomTerm getAnnotedVariable(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(_*,TomTermToOption(var@Variable[]),_*) -> { return var; }
+      concOption(_*,TomTermToOption(var@Variable[]),_*) -> { return `var; }
     }
     return null;
   }
   
   protected Declaration getIsFsymDecl(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*) -> { return decl; }
+      concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*) -> { return `decl; }
     }
     return null;
   }
 
   protected String getDebug(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(_*,Debug(Name(str)),_*) -> { return str; }
+      concOption(_*,Debug(Name(str)),_*) -> { return `str; }
     }
 
     return null;
@@ -555,25 +553,23 @@ public class TomBase {
   } 
   
   protected TomName getSlotName(TomSymbol symbol, int number) {
-    //%variable
     SlotList slotList = symbol.getSlotList();
     for(int index = 0; !slotList.isEmpty() && index<number ; index++) {
       slotList = slotList.getTail();
     }
     if(slotList.isEmpty()) {
       System.out.println("getSlotName: bad index error");
-	  throw new TomRuntimeException(new Throwable("getSlotName: bad index error"));
+      throw new TomRuntimeException(new Throwable("getSlotName: bad index error"));
     }
 
     Declaration decl = slotList.getHead().getSlotDecl();
     %match(Declaration decl) {
-      GetSlotDecl[slotName=name] -> { return name; }
+      GetSlotDecl[slotName=name] -> { return `name; }
     }
     return null;
   }
   
   protected int getSlotIndex(SlotList slotList, TomName slotName) {
-    //%variable
     int index = 0;
     while(!slotList.isEmpty()) {
       TomName name = slotList.getHead().getSlotName();
@@ -588,14 +584,13 @@ public class TomBase {
   }
 
   protected boolean isDefinedSymbol(TomSymbol subject) {
-      //%variable
     if(subject==null) {
       System.out.println("isDefinedSymbol: subject == null");
       return false;
     }
     %match(TomSymbol subject) {
       Symbol[option=optionList] -> {
-        return hasDefinedSymbol(optionList);
+        return hasDefinedSymbol(`optionList);
       }
     }
     return false;
@@ -610,7 +605,7 @@ public class TomBase {
       Option subject = optionList.getHead();
       %match(Option subject) {
         orgTrack@OriginTracking[] -> {
-          return orgTrack;
+          return `orgTrack;
         }
       }
       optionList = optionList.getTail();

@@ -100,17 +100,13 @@ public class TomCompiler extends TomTask {
       public ATerm apply(ATerm subject) {
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) {
-            MakeTerm(var@Variable[astName=name]) -> {
-              return var;
+            MakeTerm(var@(Variable|VariableStar)[]) -> {
+              return `var;
             }    
 
-            MakeTerm(var@VariableStar[astName=name]) -> {
-              return var;
-            }
-
-            MakeTerm(Appl(optionList,(name@Name(tomName)),termArgs)) -> {
-              TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-              TomList newTermArgs = (TomList) traversal().genericTraversal(termArgs,replace_preProcessing_makeTerm);
+            MakeTerm(Appl[nameList=(name@Name(tomName)),args=termArgs]) -> {
+              TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
+              TomList newTermArgs = (TomList) traversal().genericTraversal(`termArgs,replace_preProcessing_makeTerm);
               if(tomSymbol==null || isDefinedSymbol(tomSymbol)) {
                 return `FunctionCall(name,newTermArgs);
               } else {
@@ -128,17 +124,18 @@ public class TomCompiler extends TomTask {
         } else if(subject instanceof Instruction) {
           %match(Instruction subject) {
             Match(SubjectList(l1),PatternList(l2), matchOptionList)  -> {
-              Option orgTrack = findOriginTracking(matchOptionList);
+              TomList patternList = `l2;
+              Option orgTrack = findOriginTracking(`matchOptionList);
               if(debugMode) {
                 debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
               }
               TomList newPatternList = empty();
-              while(!l2.isEmpty()) {
+              while(!patternList.isEmpty()) {
                   /*
                    * the call to preProcessing performs the recursive expansion
                    * of nested match constructs
                    */
-                TomTerm elt = preProcessing(l2.getHead());
+                TomTerm elt = preProcessing(patternList.getHead());
                 TomTerm newPatternAction = elt;
               
                 matchBlock: {
@@ -148,7 +145,7 @@ public class TomCompiler extends TomTask {
                       Instruction newActionInst = actionInst;
                         /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
-                      TomList renamedTermList = linearizePattern(termList,equalityCheck);
+                      TomList renamedTermList = linearizePattern(`termList,equalityCheck);
 											newPatternAction = `PatternAction(TermList(renamedTermList),actionInst, option);        
                     
                         /* abstract patterns */
@@ -188,7 +185,7 @@ public class TomCompiler extends TomTask {
                 } // end matchBlock
               
                 newPatternList = append(newPatternAction,newPatternList);
-                l2 = l2.getTail();
+                patternList = patternList.getTail();
               }
             
               Instruction newMatch = `Match(SubjectList(l1),
@@ -197,12 +194,13 @@ public class TomCompiler extends TomTask {
               return newMatch;
             }
 
-            RuleSet(ruleList@manyTomRuleList(
-                      RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],tail), orgTrack) -> {
+            RuleSet(rl@manyTomRuleList(
+                    RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
+              TomRuleList ruleList = `rl;
               if(debugMode) {
-                debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
+                debugKey = `orgTrack.getFileName().getString() + `orgTrack.getLine();
               }
-              TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+              TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
               TomName name = tomSymbol.getAstName();
               TomTypeList typesList = tomSymbol.getTypesToType().getDomain();        
               TomNumberList path = tsf().makeTomNumberList();
@@ -235,7 +233,7 @@ public class TomCompiler extends TomTask {
                       TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
                       rhsInst = `UnamedBlock(concInstruction(TargetLanguageToInstruction(tl), rhsInst));
                     }
-                    Instruction newRhsInst = buildCondition(condList,rhsInst);
+                    Instruction newRhsInst = `buildCondition(condList,rhsInst);
                   
                     patternActionList = append(`PatternAction(TermList(matchPatternsList),newRhsInst, option),patternActionList);
                   }
@@ -246,7 +244,7 @@ public class TomCompiler extends TomTask {
               TomTerm subjectListAST = `SubjectList(matchArgumentsList);
               Instruction makeFunctionBeginAST = `MakeFunctionBegin(name,subjectListAST);
               ArrayList optionList = new ArrayList();
-              optionList.add(orgTrack);
+              optionList.add(`orgTrack);
                 //optionList.add(tsf().makeOption_GeneratedMatch());
               OptionList generatedOptions = ast().makeOptionList(optionList);
               Instruction matchAST = `Match(SubjectList(matchArgumentsList),
@@ -307,7 +305,7 @@ public class TomCompiler extends TomTask {
       emptyInstructionList() -> { return action; }
        
       manyInstructionList(MatchingCondition[lhs=pattern,rhs=subject], tail) -> {
-        Instruction newAction = buildCondition(tail,action);
+        Instruction newAction = `buildCondition(tail,action);
 
         TomType subjectType = getTermType(pattern);
         TomNumberList path = tsf().makeTomNumberList();
@@ -326,7 +324,7 @@ public class TomCompiler extends TomTask {
       }
 
       manyInstructionList(EqualityCondition[lhs=lhs,rhs=rhs], tail) -> {
-        Instruction newAction = buildCondition(tail,action);
+        Instruction newAction = `buildCondition(tail,action);
 
         TomTerm newLhs = preProcessing(`MakeTerm(lhs));
         TomTerm newRhs = preProcessing(`MakeTerm(rhs));
@@ -350,12 +348,12 @@ public class TomCompiler extends TomTask {
     
     %match(TomTerm subject) {
       UnamedVariable[option=optionList,astType=type] -> {
-        OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
         return `UnamedVariable(newOptionList,type);
       }
       
       UnamedVariableStar[option=optionList,astType=type] -> {
-        OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
         return `UnamedVariableStar(newOptionList,type);
       }
 
@@ -439,7 +437,8 @@ public class TomCompiler extends TomTask {
 				return renamedTerm;
 			}
 
-      Appl[option=optionList, nameList=nameList, args=args] -> {
+      Appl[option=optionList, nameList=nameList, args=arguments] -> {
+        TomList args = `arguments;
         TomList newArgs = empty();
         while(!args.isEmpty()) {
           TomTerm elt = args.getHead();
@@ -447,7 +446,7 @@ public class TomCompiler extends TomTask {
           newArgs = append(newElt,newArgs);
           args = args.getTail();
         }
-        OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        OptionList newOptionList = renameVariableInOptionList(`optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
         renamedTerm = `Appl(newOptionList,nameList,newArgs);
         return renamedTerm;
       }
@@ -502,8 +501,9 @@ public class TomCompiler extends TomTask {
                                   ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(TomTerm subject) {
-      Appl[option=option, nameList=nameList@(Name(tomName),_*), args=args] -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+      Appl[option=option, nameList=nameList@(Name(tomName),_*), args=arguments] -> {
+        TomList args = `arguments;
+        TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
         
         TomList newArgs = empty();
         if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
@@ -518,10 +518,10 @@ public class TomCompiler extends TomTask {
                  */
 
                   //System.out.println("Abstract: " + appl);
-                TomSymbol tomSymbol2 = symbolTable().getSymbol(tomName2);
+                TomSymbol tomSymbol2 = symbolTable().getSymbol(`tomName2);
                 if(isListOperator(tomSymbol2) || isArrayOperator(tomSymbol2)) {
                   TomType type2 = tomSymbol2.getTypesToType().getCodomain();
-                  abstractedPattern.add(appl);
+                  abstractedPattern.add(`appl);
                   
                   TomNumberList path = tsf().makeTomNumberList();
                   //path = append(`AbsVar(makeNumber(introducedVariable.size())),path);

@@ -3,9 +3,7 @@
 #
 
 javadir         = ${prefix}/classes/jtom/optimizer
-
-
-JAVASOURCES     = TomOptimizer.java
+JAVASOURCES     = TomOptimizer.java 
 java_JAVA       = $(JAVASOURCES)
 EXTRA_DIST      = $(JAVASOURCES)
 

@@ -67,102 +67,102 @@ public abstract class TomAbstractGenerator extends TomBase {
     %match(TomTerm subject) {
       
       Tom(l) -> {
-        generateList(deep,l);
+        generateList(deep,`l);
         return;
       }
 
       TomInclude(l) -> {
-        generateListInclude(deep,l);
+        generateListInclude(deep,`l);
         return;
       }
      
       Ref(term) -> {
-        buildRef(deep, term);
+        buildRef(deep, `term);
         return;
       }
 
       BuildVariable(Name(name)) -> {
-        output.write(name);
+        output.write(`name);
         return;
       }
 
-      BuildVariable(PositionName(l1)) -> {
-        output.write("tom" + numberListToIdentifier(l1));
+      BuildVariable(PositionName(l)) -> {
+        output.write("tom" + numberListToIdentifier(`l));
         return;
       }
   
       BuildTerm(Name(name), argList) -> {
-        buildTerm(deep, name, argList);
+        buildTerm(deep, `name, `argList);
         return;
       }
 
       BuildList(Name(name), argList) -> {
-        buildList(deep, name, argList);
+        buildList(deep, `name, `argList);
         return;
       }
 
       BuildArray(Name(name), argList) -> {
-        buildArray(deep, name, argList);
+        buildArray(deep, `name, `argList);
         return;
       }
 
       FunctionCall(Name(name), argList) -> {
-        buildFunctionCall(deep, name, argList);
+        buildFunctionCall(deep,`name, `argList);
         return;
       }
 
       Composite(argList) -> {
-        generateList(deep,argList);
+        generateList(deep,`argList);
         return;
       }
       
-      Variable[option=option1,astName=PositionName(l1),astType=type1] -> {
+      Variable[astName=PositionName(l)] -> {
           /*
            * sans type: re-definition lorsque %variable est utilise
            * avec type: probleme en cas de filtrage dynamique
            */
-        output.write("tom" + numberListToIdentifier(l1));
+        output.write("tom" + numberListToIdentifier(`l));
         return;
       }
 
-      Variable[option=option1,astName=Name(name1),astType=type1] -> {
-        output.write(name1);
+      Variable[astName=Name(name)] -> {
+        output.write(`name);
         return;
       }
 
-      VariableStar[option=option1,astName=PositionName(l1),astType=type1] -> {
-        output.write("tom" + numberListToIdentifier(l1));
+      VariableStar[astName=PositionName(l)] -> {
+        output.write("tom" + numberListToIdentifier(`l));
         return;  
       }
 
-      VariableStar[option=option1,astName=Name(name1),astType=type1] -> {
-        output.write(name1);
+      VariableStar[astName=Name(name)] -> {
+        output.write(`name);
         return;
       }
 
       TargetLanguageToTomTerm(t) -> {
-        generateTargetLanguage(deep,t);
+        generateTargetLanguage(deep,`t);
         return;
       }
 
       DeclarationToTomTerm(t) -> {
-        generateDeclaration(deep,t);
+        generateDeclaration(deep,`t);
         return;
       }
 
       ExpressionToTomTerm(t) -> {
-        generateExpression(deep,t);
+        generateExpression(deep,`t);
         return;
       }
 
       InstructionToTomTerm(t) -> {
-        generateInstruction(deep,t);
+        generateInstruction(deep,`t);
         return;
       }
 
       t -> {
-        System.out.println("Cannot generate code for: " + t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for: " + t));
+        System.out.println("Cannot generate code for: " + `t);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for: " + `t));
       }
     }
   }
@@ -170,17 +170,17 @@ public abstract class TomAbstractGenerator extends TomBase {
   public void generateExpression(int deep, Expression subject) throws IOException {
     %match(Expression subject) {
       Not(exp) -> {
-        buildExpNot(deep, exp);
+        buildExpNot(deep, `exp);
         return;
       }
 
       And(exp1,exp2) -> {
-        buildExpAnd(deep, exp1, exp2);
+        buildExpAnd(deep, `exp1, `exp2);
         return;
       }
 
       Or(exp1,exp2) -> {
-        buildExpOr(deep, exp1, exp2);
+        buildExpOr(deep, `exp1, `exp2);
         return;
       }
 
@@ -195,84 +195,84 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       IsEmptyList(expList) -> {
-        buildExpEmptyList(deep, getTermType(expList), expList);
+        buildExpEmptyList(deep, getTermType(`expList), `expList);
         return;
       }
 
       IsEmptyArray(expArray, expIndex) -> {
-        buildExpEmptyArray(deep, getTermType(expArray),expIndex, expArray);
+        buildExpEmptyArray(deep, getTermType(`expArray), `expIndex, `expArray);
         return;
       }
 
       EqualFunctionSymbol(type, exp,
-                          Appl(option,(Name(tomName)),l)) -> { // needs to be checked
-        buildEqualFunctionSymbol(deep, type, exp, tomName);
+                          Appl[nameList=(Name(tomName))]) -> { // needs to be checked
+        buildEqualFunctionSymbol(deep, `type, `exp, `tomName);
         return;
       }
 
       EqualTerm(exp1,exp2) -> {
-        buildExpEqualTerm(deep, getTermType(exp1), exp1, exp2);
+        buildExpEqualTerm(deep, getTermType(`exp1), `exp1, `exp2);
         return;
       }
 
       IsFsym(Name(opname), exp) -> {
-        buildExpIsFsym(deep, opname, exp);
+        buildExpIsFsym(deep, `opname, `exp);
         return;
       }
 
       Cast(Type(_,tlType@TLType[]),exp) -> {
-        buildExpCast(deep, tlType, exp);
+        buildExpCast(deep, `tlType, `exp);
         return;
       }
 
       GetSubterm(codomain, exp, Number(number)) -> {
-        buildExpGetSubterm(deep, getTermType(exp), codomain, exp, number);
+        buildExpGetSubterm(deep, getTermType(`exp), `codomain, `exp, `number);
         return;
       }
 
       GetSlot(codomain,Name(opname),slotName, var@Variable[]) -> {
-        buildExpGetSlot(deep, opname, slotName, var);
+        `buildExpGetSlot(deep, opname, slotName, var);
         return;
       }
 
       GetHead(codomain,exp) -> {
-        buildExpGetHead(deep, getTermType(exp), codomain, exp);
+        `buildExpGetHead(deep, getTermType(exp), codomain, exp);
         return;
       }
 
       GetTail(exp) -> {
-        buildExpGetTail(deep, getTermType(exp), exp);
+        buildExpGetTail(deep, getTermType(`exp), `exp);
         return;
       }
 
       GetSize(exp) -> {
-        buildExpGetSize(deep, getTermType(exp), exp);
+        buildExpGetSize(deep, getTermType(`exp), `exp);
         return;
       }
 
       GetElement(codomain, varName, varIndex) -> {
-        buildExpGetElement(deep,getTermType(varName),codomain, varName, varIndex);
+        buildExpGetElement(deep,getTermType(`varName),`codomain, `varName, `varIndex);
         return;
       }
 
       GetSliceList(Name(name), varBegin, varEnd) -> {
-        buildExpGetSliceList(deep, name, varBegin, varEnd);
+        buildExpGetSliceList(deep, `name, `varBegin, `varEnd);
         return;
       }
 
       GetSliceArray(Name(name),varArray,varBegin,expEnd) -> {
-        buildExpGetSliceArray(deep, name, varArray, varBegin, expEnd);
+        buildExpGetSliceArray(deep, `name, `varArray, `varBegin, `expEnd);
         return;
       }
 
       TomTermToExpression(t) -> {
-        generate(deep,t);
+        generate(deep,`t);
         return;
       }
 
       t -> {
-        System.out.println("Cannot generate code for expression: " + t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for expression: " + t));
+        System.out.println("Cannot generate code for expression: " + `t);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for expression: " + `t));
       }
     }
   }
@@ -281,12 +281,12 @@ public abstract class TomAbstractGenerator extends TomBase {
     %match(Instruction subject) {
 
       TargetLanguageToInstruction(t) -> {
-        generateTargetLanguage(deep,t);
+        `generateTargetLanguage(deep,t);
         return;
       }
 
       TomTermToInstruction(t) -> {
-        generate(deep,t);
+        `generate(deep,t);
         return;
       }
 
@@ -295,12 +295,12 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
-        buildFunctionBegin(deep, tomName, varList);
+        `buildFunctionBegin(deep, tomName, varList);
         return;
       }
 
       MakeFunctionEnd() -> {
-        buildFunctionEnd(deep);
+        `buildFunctionEnd(deep);
         return;
       }
 
@@ -310,93 +310,92 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       
       Assign(var@(Variable|VariableStar)[option=option],exp) -> {
-        buildAssignVar(deep, var, option, exp);
+        `buildAssignVar(deep, var, option, exp);
         return;
       }
 
 			AssignMatchSubject(var@Variable[option=option],exp) -> {
-				buildAssignVar(deep, var, option, exp);
+				`buildAssignVar(deep, var, option, exp);
 				return;
 			}
 
-      Assign((UnamedVariable|UnamedVariableStar)[],exp) -> {
+      Assign((UnamedVariable|UnamedVariableStar)[],_) -> {
         return;
       }
 
-      (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],exp,body) -> {
-        generateInstruction(deep,body);
+      (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
+        `generateInstruction(deep,body);
         return;
       }
 
       Let(var@(Variable|VariableStar)[option=list,astType=Type[tlType=tlType@TLType[]]],exp,body) -> {
-        buildLet(deep, var, list, tlType, exp, body);
+        `buildLet(deep, var, list, tlType, exp, body);
         return;
       }
 
       LetRef(var@(Variable|VariableStar)[option=list,astType=Type[tlType=tlType@TLType[]]],exp,body) -> {
-        buildLetRef(deep, var, list, tlType, exp, body);
+        `buildLetRef(deep, var, list, tlType, exp, body);
         return;
       }
 
       AbstractBlock(instList) -> {
-        generateInstructionList(deep, instList);
+        `generateInstructionList(deep, instList);
         return;
       }
 
       UnamedBlock(instList) -> {
-        buildUnamedBlock(deep, instList);
+        `buildUnamedBlock(deep, instList);
         return;
       }
 
       NamedBlock(blockName,instList) -> {
-        buildNamedBlock(deep, blockName, instList);
+        `buildNamedBlock(deep, blockName, instList);
         return;
       }
       
-        //IfThenElse(exp,succesList,conc()) -> {
       IfThenElse(exp,succesList,Nop()) -> {
-        buildIfThenElse(deep, exp,succesList);
+        `buildIfThenElse(deep, exp,succesList);
         return;
       }
 
       IfThenElse(exp,succesList,failureList) -> {
-        buildIfThenElseWithFailure(deep, exp, succesList, failureList);
+        `buildIfThenElseWithFailure(deep, exp, succesList, failureList);
         return;
       }
 
       DoWhile(succes,exp) -> {
-        buildDoWhile(deep, succes,exp);
+        `buildDoWhile(deep, succes,exp);
         return;
       }
 
       Increment(var@Variable[]) -> {
-        buildIncrement(deep, var);
+        `buildIncrement(deep, var);
         return;
       }
 
       Action(l) -> {
-        generateList(deep, l);
+        `generateList(deep, l);
         return;
       }
 
       Return(exp) -> {
-        buildReturn(deep, exp);
+        `buildReturn(deep, exp);
         return;
       }
 
       CompiledMatch(instruction, list) -> {
-        buildCompiledMatch(deep, instruction, list);
+        `buildCompiledMatch(deep, instruction, list);
         return;
       }
       
       CompiledPattern(instruction) -> {
-        buildInstructionSequence(deep,instruction);
+        `buildInstructionSequence(deep,instruction);
         return;
       }
       
       t -> {
-        System.out.println("Cannot generate code for instruction: " + t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for instruction: " + t));
+        System.out.println("Cannot generate code for instruction: " + `t);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for instruction: " + `t));
       }
     }
   }
@@ -404,23 +403,23 @@ public abstract class TomAbstractGenerator extends TomBase {
   public void generateTargetLanguage(int deep, TargetLanguage subject) throws IOException {
     %match(TargetLanguage subject) {
       TL(t,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
-        output.write(0,t, startLine, endLine-startLine);
+        output.write(0,`t, `startLine, `endLine - `startLine);
         return;
       }
       
       ITL(t) -> {
-        output.write(0,t);
+        output.write(0,`t);
         return;
       }
 
       Comment(t) -> {
-        buildComment(deep,t);
+        `buildComment(deep,t);
         return;
       }
 
       t -> {
-        System.out.println("Cannot generate code for TL: " + t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for TL: " + t));
+        System.out.println("Cannot generate code for TL: " + `t);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for TL: " + `t));
       }
     }
   }
@@ -428,7 +427,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   public void generateOption(int deep, Option subject) throws IOException {
     %match(Option subject) {
       DeclarationToOption(decl) -> {
-        generateDeclaration(deep,decl);
+        `generateDeclaration(deep,decl);
         return;
       }
       OriginTracking[] -> { return; }
@@ -436,8 +435,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       Constructor[] -> { return; }
 
       t -> {
-        System.out.println("Cannot generate code for option: " + t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for option: " + t));
+        System.out.println("Cannot generate code for option: " + `t);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for option: " + `t));
       }
     }
   }
@@ -448,140 +447,137 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       (SymbolDecl|ArraySymbolDecl|ListSymbolDecl)(Name(tomName)) -> {
-        buildSymbolDecl(deep, tomName);
+        `buildSymbolDecl(deep, tomName);
         return ;
       }
 
-      GetFunctionSymbolDecl(Variable[option=option,astName=Name(name),
+      GetFunctionSymbolDecl(Variable[astName=Name(name),
                                      astType=Type(ASTTomType(type),tlType@TLType[])],
                             tlCode, _) -> {
-        buildGetFunctionSymbolDecl(deep, type, name, tlType, tlCode);
+        `buildGetFunctionSymbolDecl(deep, type, name, tlType, tlCode);
         return;
       }
       
-      GetSubtermDecl(Variable[option=option1,astName=Name(name1),
-                              astType=Type(ASTTomType(type1),tlType1@TLType[])],
-                     Variable[option=option2,astName=Name(name2),
-                              astType=Type(ASTTomType(type2),tlType2@TLType[])],
+      GetSubtermDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type1),tlType1@TLType[])],
+                     Variable[astName=Name(name2), astType=Type[tlType=tlType2@TLType[]]],
                      tlCode, _) -> {
-        buildGetSubtermDecl(deep, name1, name2, type1, tlType1, tlType2, tlCode);
+        `buildGetSubtermDecl(deep, name1, name2, type1, tlType1, tlType2, tlCode);
         return;
       }
       
       IsFsymDecl(Name(tomName),
-		   Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),tlType@TLType[])],
-                 tlCode@TL[], _) -> {
-        buildIsFsymDecl(deep, tomName, name1, tlType, tlCode);
+		   Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]], tlCode@TL[], _) -> {
+        `buildIsFsymDecl(deep, tomName, name, tlType, tlCode);
         return;
       }
  
       GetSlotDecl[astName=Name(tomName),
                   slotName=slotName,
-                  variable=Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),tlType@TLType[])],
+                  variable=Variable[astName=Name(name), astType=Type[tlType=tlType@TLType[]]],
                   tlCode=tlCode@TL[]] -> {
-        buildGetSlotDecl(deep, tomName, name1, tlType, tlCode, slotName);
+        `buildGetSlotDecl(deep, tomName, name, tlType, tlCode, slotName);
         return;
       }
 
-      CompareFunctionSymbolDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),_)],
-                                Variable[option=option2,astName=Name(name2), astType=Type(ASTTomType(type2),_)],
+      CompareFunctionSymbolDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type1),_)],
+                                Variable[astName=Name(name2), astType=Type(ASTTomType(type2),_)],
                                 tlCode, _) -> {
-        buildCompareFunctionSymbolDecl(deep, name1, name2, type1, type2, tlCode);
+        `buildCompareFunctionSymbolDecl(deep, name1, name2, type1, type2, tlCode);
         return;
       }
 
-      TermsEqualDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),_)],
-                     Variable[option=option2,astName=Name(name2), astType=Type(ASTTomType(type2),_)],
+      TermsEqualDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type1),_)],
+                     Variable[astName=Name(name2), astType=Type(ASTTomType(type2),_)],
                      tlCode, _) -> {
-        buildTermsEqualDecl(deep, name1, name2, type1, type2, tlCode);
+        `buildTermsEqualDecl(deep, name1, name2, type1, type2, tlCode);
         return;
       }
       
-      GetHeadDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
+      GetHeadDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
                   tlCode@TL[], _) -> {
-        buildGetHeadDecl(deep, name1, type, tlType, tlCode);
+        `buildGetHeadDecl(deep, name1, type, tlType, tlCode);
         return;
       }
 
-      GetTailDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
+      GetTailDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
                   tlCode@TL[], _) -> {
-        buildGetTailDecl(deep, name1, type, tlType, tlCode);
+        `buildGetTailDecl(deep, name1, type, tlType, tlCode);
         return;
       }
 
-      IsEmptyDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
+      IsEmptyDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
                   tlCode@TL[], _) -> {
-        buildIsEmptyDecl(deep, name1, type, tlType, tlCode);
+        `buildIsEmptyDecl(deep, name1, type, tlType, tlCode);
         return;
       }
 
       MakeEmptyList(Name(opname), tlCode@TL[], _) -> {
         //System.out.println("symbol = " + getSymbol(opname));
-        TomType codomain = getSymbolCodomain(getSymbol(opname));
-        buildMakeEmptyList(deep, opname, codomain, tlCode);
+        TomType codomain = `getSymbolCodomain(getSymbol(opname));
+        `buildMakeEmptyList(deep, opname, codomain, tlCode);
         return;
       }
 
       MakeAddList(Name(opname),
-                  Variable[option=option1,astName=Name(name1), astType=fullEltType@Type(ASTTomType(type1),tlType1@TLType[])],
-                  Variable[option=option2,astName=Name(name2), astType=fullListType@Type(ASTTomType(type2),tlType2@TLType[])],
+                  Variable[astName=Name(name1), astType=fullEltType@Type[tlType=tlType1@TLType[]]],
+                  Variable[astName=Name(name2), astType=fullListType@Type[tlType=tlType2@TLType[]]],
                   tlCode@TL[], _) -> {
-        buildMakeAddList(deep, opname, name1, name2, tlType1, tlType2, fullEltType, fullListType, tlCode);
+        `buildMakeAddList(deep, opname, name1, name2, tlType1, tlType2, fullEltType, fullListType, tlCode);
         return;
       }
 
-      GetElementDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),tlType1@TLType[])],
-                     Variable[option=option2,astName=Name(name2), astType=Type(ASTTomType(type2),tlType2@TLType[])],
+      GetElementDecl(Variable[astName=Name(name1), astType=Type[tomType=ASTTomType(type1),tlType=tlType1@TLType[]]],
+                     Variable[astName=Name(name2)],
                      tlCode@TL[], _) -> {
-        buildGetElementDecl(deep, name1, name2, type1, tlType1, tlCode);
+        `buildGetElementDecl(deep, name1, name2, type1, tlType1, tlCode);
         return;
       }
       
-      GetSizeDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
+      GetSizeDecl(Variable[astName=Name(name), astType=Type(ASTTomType(type),tlType@TLType[])],
                   tlCode@TL[], _) -> {
-        buildGetSizeDecl(deep, name1, type, tlType, tlCode);
+        `buildGetSizeDecl(deep, name, type, tlType, tlCode);
         return;
       }
       
       MakeEmptyArray(Name(opname),
-                     Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),_)],
+                     Variable[astName=Name(name)],
                      tlCode@TL[], _) -> {
-        TomType codomain = getSymbolCodomain(getSymbol(opname));
-        buildMakeEmptyArray(deep, opname, codomain, name1, tlCode);
+        TomType codomain = `getSymbolCodomain(getSymbol(opname));
+        `buildMakeEmptyArray(deep, opname, codomain, name, tlCode);
         return;
       }
 
       MakeAddArray(Name(opname),
-                   Variable[option=option1,astName=Name(name1), astType=fullEltType@Type(ASTTomType(type1),tlType1@TLType[])],
-                   Variable[option=option2,astName=Name(name2), astType=fullArrayType@Type(ASTTomType(type2),tlType2@TLType[])],
+                   Variable[astName=Name(name1), astType=fullEltType@Type[tlType=tlType1@TLType[]]],
+                   Variable[astName=Name(name2), astType=fullArrayType@Type[tlType=tlType2@TLType[]]],
                    tlCode@TL[], _) -> {
-        buildMakeAddArray(deep, opname, name1, name2, tlType1, tlType2, fullEltType, fullArrayType, tlCode);
+        `buildMakeAddArray(deep, opname, name1, name2, tlType1, tlType2, fullEltType, fullArrayType, tlCode);
         return;
       }
 
       MakeDecl(Name(opname), returnType, argList, tlCode@TL[], _) -> {
-        generateTargetLanguage(deep, genDeclMake(opname, returnType, argList, tlCode));
+        `generateTargetLanguage(deep, genDeclMake(opname, returnType, argList, tlCode));
         return;
       }
       
       TypeTermDecl[keywordList=declList] -> {
-        buildTypeTermDecl(deep, declList);
+        `buildTypeTermDecl(deep, declList);
         return;
       }
 
       TypeListDecl[keywordList=declList] -> { 
-        buildTypeListDecl(deep, declList);
+        `buildTypeListDecl(deep, declList);
         return;
       }
 
       TypeArrayDecl[keywordList=declList] -> { 
-        buildTypeArrayDecl(deep, declList);
+        `buildTypeArrayDecl(deep, declList);
         return;
       }
       
       t -> {
-        System.out.println("Cannot generate code for declaration: " + t);
-        throw new TomRuntimeException(new Throwable("Cannot generate code for declaration: " + t));
+        System.out.println("Cannot generate code for declaration: " + `t);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for declaration: " + `t));
       }
     }
   }

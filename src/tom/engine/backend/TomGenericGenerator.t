@@ -531,7 +531,7 @@ TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCo
     while(!declList.isEmpty()) {
       term = declList.getHead();
       %match (TomTerm term){
-        DeclarationToTomTerm(declaration) -> {generateDeclaration(deep, declaration);}
+        DeclarationToTomTerm(declaration) -> {generateDeclaration(deep, `declaration);}
       }
       declList = declList.getTail();
     }

@@ -124,13 +124,13 @@ abstract public class TomChecker extends TomTask {
           if(term instanceof Instruction) {
             %match(Instruction term) {
               Match(_, PatternList(list), oplist) -> {  
-                currentTomStructureOrgTrack = findOriginTracking(oplist);
-                verifyMatchVariable(list);
+                currentTomStructureOrgTrack = findOriginTracking(`oplist);
+                verifyMatchVariable(`list);
                 return false;
               }
               RuleSet(list, orgTrack) -> {
-                currentTomStructureOrgTrack = orgTrack;
-                verifyRuleVariable(list);
+                currentTomStructureOrgTrack = `orgTrack;
+                verifyRuleVariable(`list);
                 return false;
               }
             }
@@ -210,22 +210,22 @@ abstract public class TomChecker extends TomTask {
           String methodName = "";
           %match(TomTerm lhs) {
             Term(Appl[nameList=(Name(name1))]) -> {
-              methodName = name1;
+              methodName = `name1;
             }
             Term(RecordAppl[nameList=(Name(name1))]) -> {
-              methodName = name1;
+              methodName = `name1;
             }
           }
           TomType typeRhs = getSymbolCodomain(getSymbol(methodName));
           Iterator it = variableLhs.iterator();
           while(it.hasNext()) {
             TomTerm term = (TomTerm)it.next();
-            if(term.getAstName().getString() == name) {
+            if(term.getAstName().getString() == `name) {
               TomType typeLhs = term.getAstType();
               if(typeLhs != typeRhs) {
                 messageError(orgTrack.getLine(),
                              TomCheckerMessage.BadVariableType ,
-                             new Object[]{name, typeRhs.getTomType().getString(), typeLhs.getTomType().getString()},
+                             new Object[]{`name, typeRhs.getTomType().getString(), typeLhs.getTomType().getString()},
                              TomCheckerMessage.TOM_ERROR);
               }
             }
@@ -274,18 +274,18 @@ abstract public class TomChecker extends TomTask {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
               DeclarationToTomTerm(declaration) -> {
-                verifyDeclaration(declaration);
+                `verifyDeclaration(declaration);
                 return false;
               }
             }
           } else if(subject instanceof Instruction) {
             %match(Instruction subject) {
               Match(SubjectList(matchArgsList), PatternList(patternActionList), list) -> {  
-                verifyMatch(matchArgsList, patternActionList, list);
+                `verifyMatch(matchArgsList, patternActionList, list);
                 return false;
               }
               RuleSet(list, orgTrack) -> {
-                verifyRule(list, orgTrack);
+                `verifyRule(list, orgTrack);
                 return false;
               }
             }
@@ -305,18 +305,18 @@ abstract public class TomChecker extends TomTask {
     %match (Declaration declaration) {
         // Types
       TypeTermDecl(Name(tomName), tomList, orgTrack) -> {
-        verifyTypeDecl(TYPE_TERM, tomName, tomList, orgTrack);
+        `verifyTypeDecl(TYPE_TERM, tomName, tomList, orgTrack);
       }
       TypeListDecl(Name(tomName), tomList, orgTrack) -> {
-        verifyTypeDecl(TYPE_LIST, tomName, tomList, orgTrack);
+        `verifyTypeDecl(TYPE_LIST, tomName, tomList, orgTrack);
       }
       TypeArrayDecl(Name(tomName), tomList, orgTrack) -> {
-        verifyTypeDecl(TYPE_ARRAY, tomName, tomList, orgTrack);
+        `verifyTypeDecl(TYPE_ARRAY, tomName, tomList, orgTrack);
       }
         // Symbols
-      SymbolDecl(Name(tomName))         -> { verifySymbol(CONSTRUCTOR, getSymbol(tomName)); }
-      ArraySymbolDecl(Name(tomName)) -> { verifySymbol(OP_ARRAY, getSymbol(tomName)); }
-      ListSymbolDecl(Name(tomName))    -> {	verifySymbol(OP_LIST, getSymbol(tomName)); }
+      SymbolDecl(Name(tomName))      -> { `verifySymbol(CONSTRUCTOR, getSymbol(tomName)); }
+      ArraySymbolDecl(Name(tomName)) -> { `verifySymbol(OP_ARRAY, getSymbol(tomName)); }
+      ListSymbolDecl(Name(tomName))  -> {	`verifySymbol(OP_LIST, getSymbol(tomName)); }
 		
     }
   } //verifyDeclaration
@@ -345,38 +345,39 @@ abstract public class TomChecker extends TomTask {
       verifyList.add(IS_EMPTY);
     }
     %match(TomList listOfDeclaration) {
-      (_*, DeclarationToTomTerm(decl), _*) -> { // for each Declaration
-        %match (Declaration decl) {
+      (_*, DeclarationToTomTerm(d), _*) -> { // for each Declaration
+        Declaration decl=`d;
+        %match(Declaration decl) {
             // Common Macro functions
           GetFunctionSymbolDecl[orgTrack=orgTrack] -> {
-            checkField(GET_FUN_SYM,verifyList,orgTrack, declType);
+            `checkField(GET_FUN_SYM,verifyList,orgTrack, declType);
           }
           CompareFunctionSymbolDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack) -> {
-            checkFieldAndLinearArgs(CMP_FUN_SYM,verifyList,orgTrack,name1,name2, declType);
+            `checkFieldAndLinearArgs(CMP_FUN_SYM,verifyList,orgTrack,name1,name2, declType);
           }
           TermsEqualDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack) -> {
-            checkFieldAndLinearArgs(EQUALS,verifyList,orgTrack,name1,name2, declType);
+            `checkFieldAndLinearArgs(EQUALS,verifyList,orgTrack,name1,name2, declType);
           }
             // Term specific Macro functions
           GetSubtermDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack) -> {
-            checkFieldAndLinearArgs(GET_SUBTERM,verifyList,orgTrack,name1,name2, declType);
+            `checkFieldAndLinearArgs(GET_SUBTERM,verifyList,orgTrack,name1,name2, declType);
           }
             // List specific Macro functions
           GetHeadDecl[orgTrack=orgTrack] -> {
-            checkField(GET_HEAD,verifyList,orgTrack, declType);
+            `checkField(GET_HEAD,verifyList,orgTrack, declType);
           }
           GetTailDecl[orgTrack=orgTrack] -> {
-            checkField(GET_TAIL,verifyList,orgTrack, declType);
+            `checkField(GET_TAIL,verifyList,orgTrack, declType);
           }
           IsEmptyDecl[orgTrack=orgTrack] -> {
-            checkField(IS_EMPTY,verifyList,orgTrack, declType);
+            `checkField(IS_EMPTY,verifyList,orgTrack, declType);
           }
             // Array specific Macro functions
           GetElementDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack) -> { 
-            checkFieldAndLinearArgs(GET_ELEMENT,verifyList,orgTrack,name1,name2, declType);
+            `checkFieldAndLinearArgs(GET_ELEMENT,verifyList,orgTrack,name1,name2, declType);
           }
           GetSizeDecl[orgTrack=orgTrack] -> {
-            checkField(GET_SIZE,verifyList,orgTrack, declType);
+            `checkField(GET_SIZE,verifyList,orgTrack, declType);
           }
         }
       }
@@ -424,11 +425,11 @@ abstract public class TomChecker extends TomTask {
     if(symbolType == CONSTRUCTOR) {
       %match(TomTypeList args) {
         (_*,  TomTypeAlone(typeName),_*) -> { // for each symbol types
-          if(!testTypeExistence(typeName)) {
+          if(!testTypeExistence(`typeName)) {
             messageError(currentTomStructureOrgTrack.getLine(), 
                          symbolType+" "+symbName, 
                          TomCheckerMessage.SymbolDomainError,
-                         new Object[]{new Integer(position), symbName, typeName}, TomCheckerMessage.TOM_ERROR);
+                         new Object[]{new Integer(position), symbName, `typeName}, TomCheckerMessage.TOM_ERROR);
           }
           position++;
         }
@@ -437,11 +438,11 @@ abstract public class TomChecker extends TomTask {
     } else { // OPARRAY and OPLIST
       %match(TomTypeList args) {
         (TomTypeAlone(typeName)) -> {
-          if(!testTypeExistence(typeName)) {
+          if(!testTypeExistence(`typeName)) {
             messageError(currentTomStructureOrgTrack.getLine(), 
                          symbolType+" "+symbName, 
                          TomCheckerMessage.ListSymbolDomainError,
-                         new Object[]{symbName, typeName}, TomCheckerMessage.TOM_ERROR);
+                         new Object[]{symbName, `typeName}, TomCheckerMessage.TOM_ERROR);
           }
         }
       } //match
@@ -466,27 +467,28 @@ abstract public class TomChecker extends TomTask {
     }
  	
     %match(OptionList list) {
-      (_*, DeclarationToOption(decl), _*) -> { // for each Declaration
+      (_*, DeclarationToOption(d), _*) -> { // for each Declaration
+        Declaration decl=`d;
         %match(Declaration decl ) {
             // for a array symbol 
           MakeEmptyArray[orgTrack=orgTrack] -> { 
-            checkField(MAKE_EMPTY,verifyList,orgTrack, symbolType);
+            `checkField(MAKE_EMPTY,verifyList,orgTrack, symbolType);
           }
           MakeAddArray[varList=Variable[astName=Name(name1)], varElt=Variable[astName=Name(name2)], orgTrack=orgTrack] -> {
-            checkFieldAndLinearArgs(MAKE_APPEND, verifyList, orgTrack, name1, name2, symbolType);
+            `checkFieldAndLinearArgs(MAKE_APPEND, verifyList, orgTrack, name1, name2, symbolType);
           }
             // for a List symbol
           MakeEmptyList[orgTrack=orgTrack] -> {
-            checkField(MAKE_EMPTY,verifyList,orgTrack, symbolType);         
+            `checkField(MAKE_EMPTY,verifyList,orgTrack, symbolType);         
           }
           MakeAddList[varList=Variable[astName=Name(name1)], varElt=Variable[astName=Name(name2)], orgTrack=orgTrack] -> {
-            checkFieldAndLinearArgs(MAKE_INSERT, verifyList, orgTrack, name1, name2, symbolType);
+            `checkFieldAndLinearArgs(MAKE_INSERT, verifyList, orgTrack, name1, name2, symbolType);
           }
             // for a symbol
           MakeDecl[args=makeArgsList, orgTrack=orgTrack] -> {
             if (!foundOpMake) {
               foundOpMake = true;
-              verifyMakeDeclArgs(makeArgsList, domainLength, orgTrack, symbolType);
+              `verifyMakeDeclArgs(makeArgsList, domainLength, orgTrack, symbolType);
             } else {
               messageError(orgTrack.getLine(), 
                            symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
@@ -507,15 +509,15 @@ abstract public class TomChecker extends TomTask {
     int nbArgs = 0;
     ArrayList listVar = new ArrayList();
     %match(TomList argsList) {
-      (_*, Variable[option=listOption, astName=Name(name)] ,_*) -> { // for each Macro variable
-        if(listVar.contains(name)) {
+      (_*, Variable[astName=Name(name)] ,_*) -> { // for each Macro variable
+        if(listVar.contains(`name)) {
           messageError(orgTrack.getLine(), 
                        symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
                        TomCheckerMessage.NonLinearMacroFunction,
                        new Object[]{MAKE, name},
                        TomCheckerMessage.TOM_ERROR);
         } else {
-          listVar.add(name);
+          listVar.add(`name);
         }
         nbArgs++;
       }
@@ -533,11 +535,11 @@ abstract public class TomChecker extends TomTask {
     ArrayList listSlot = new ArrayList();
     %match(SlotList slotList) {
       (_*, Slot[slotName=Name(name)], _*) -> { // for each Slot
-        if(listSlot.contains(name)) {
+        if(listSlot.contains(`name)) {
             //TODO
             //messageWarningTwoSameSlotDeclError(name, orgTrack, symbolType);
         } else {
-          listSlot.add(name);
+          listSlot.add(`name);
         }
       }
     }
@@ -603,22 +605,22 @@ abstract public class TomChecker extends TomTask {
       // From the subjects list(match definition), we test each used type and keep them in memory
     %match(TomList subjectList) {
       concTomTerm(_*, TLVar(name, tomType@TomTypeAlone(type)), _*) -> { // for each Match args
-        if (!testTypeExistence(type)) {
+        if (!testTypeExistence(`type)) {
           messageError(currentTomStructureOrgTrack.getLine(),
                        TomCheckerMessage.UnknownMatchArgumentTypeInSignature,
-                       new Object[]{name, type},
+                       new Object[]{`name, `type},
                        TomCheckerMessage.TOM_ERROR);
           typeMatchArgs.add(null);
         } else {
           typeMatchArgs.add(tomType);
         }
-        if(nameMatchArgs.indexOf(name) == -1) {
-          nameMatchArgs.add(name);
+        if(nameMatchArgs.indexOf(`name) == -1) {
+          nameMatchArgs.add(`name);
         } else {
             // Maybe its an error to have the 2 same name variable in the match definition: warn the user
           messageError(currentTomStructureOrgTrack.getLine(),
                        TomCheckerMessage.RepeatedMatchArgumentName,
-                       new Object[]{name},
+                       new Object[]{`name},
                        TomCheckerMessage.TOM_WARNING);
         }
       }	
@@ -627,7 +629,7 @@ abstract public class TomChecker extends TomTask {
       // we now compare pattern to its definition
     %match(TomList patternList) {
       concTomTerm(_*, PatternAction[termList=TermList(terms)], _*) -> { // control each pattern vs the match definition
-        verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
+        `verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
       }
     }
   }
@@ -649,7 +651,7 @@ abstract public class TomChecker extends TomTask {
     int counter = 0;
     %match(TomList termList) {
       concTomTerm(_*, term, _*) -> { // no term can be a  Var* nor _*: not allowed as top leftmost symbol
-        TermDescription termDesc = analyseTerm(term);
+        TermDescription termDesc = analyseTerm(`term);
         if(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR) {
           messageError(termDesc.decLine, 
                        TomCheckerMessage.IncorrectVariableStarInMatch, 
@@ -658,7 +660,7 @@ abstract public class TomChecker extends TomTask {
         } else {		// Analyse of the term if expectedType != null	
           expectedType = (TomType)typeMatchArgs.get(counter);
           if (expectedType != null) { // the type is known
-            validateTerm(term, expectedType, false, true, false);
+            validateTerm(`term, expectedType, false, true, false);
           }
         }
         counter++;
@@ -675,9 +677,9 @@ abstract public class TomChecker extends TomTask {
     String headSymbolName = "Unknown return type";
     %match(TomRuleList ruleList) {	// for each rewrite rule
       b1: concTomRule(_*, RewriteRule(Term(lhs),Term(rhs),condList,option),_*) -> {
-         headSymbolName = verifyLhsRuleAndConstructorEgality(lhs, headSymbolName, ruleNumber);
+         headSymbolName = `verifyLhsRuleAndConstructorEgality(lhs, headSymbolName, ruleNumber);
          if( headSymbolName == null ) { return; }
-         verifyRhsRuleStructure(rhs, headSymbolName);
+         `verifyRhsRuleStructure(rhs, headSymbolName);
          ruleNumber++;
        }
     }
@@ -802,8 +804,8 @@ abstract public class TomChecker extends TomTask {
     Option orgTrack;
     matchblock:{
       %match(TomTerm term) {
-       	Appl(options, nameList@(Name("")), args) -> {
-          decLine = findOriginTrackingLine(options);
+       	Appl(options, (Name("")), args) -> {
+          decLine = findOriginTrackingLine(`options);
           termClass = UNAMED_APPL;
             // there shall be only one list symbol with expectedType as Codomain
             // else ensureValideUnamedList returns null
@@ -815,23 +817,24 @@ abstract public class TomChecker extends TomTask {
             type = expectedType;
             termName = symbol.getAstName().getString();
               // whatever the arity is, we continue recursively and there is only one element in the Domain
-            validateListOperatorArgs(args, symbol.getTypesToType().getDomain().getHead(),permissive);
+            validateListOperatorArgs(`args, symbol.getTypesToType().getDomain().getHead(),permissive);
             if(permissive) { System.out.println("UnamedList but permissive");}
             break matchblock;
           }
        	}
         
-        Appl(options, nameList, args) -> {
-          decLine = findOriginTrackingLine(options);
+        Appl(options, nameList, arguments) -> {
+          TomList args = `arguments;
+          decLine = findOriginTrackingLine(`options);
           termClass = APPL;
 					
-          TomSymbol symbol = ensureValidApplDisjunction(nameList, expectedType, decLine,hasConstructor(options), args.isEmpty(), permissive, topLevel);
+          TomSymbol symbol = ensureValidApplDisjunction(`nameList, expectedType, decLine,hasConstructor(options), args.isEmpty(), permissive, topLevel);
           if(symbol == null) {
             break matchblock;
           }
             // Type is OK
           type = expectedType;     
-          termName = nameList.getHead().getString();
+          termName = `nameList.getHead().getString();
           boolean listOp = (isListOperator(symbol) || isArrayOperator(symbol));
           if (listOp) {
               // whatever the arity is, we continue recursively and there is only one element in the Domain
@@ -858,13 +861,13 @@ abstract public class TomChecker extends TomTask {
 				
         rec@RecordAppl(options,nameList, pairSlotAppls) ->{
           if(permissive) {
-            messageError(findOriginTrackingLine(options), TomCheckerMessage.IncorrectRuleRHSClass, 
-                         new Object[]{getName(rec)+"[...]"}, TomCheckerMessage.TOM_ERROR);
+            messageError(findOriginTrackingLine(`options), TomCheckerMessage.IncorrectRuleRHSClass, 
+                         new Object[]{getName(`rec)+"[...]"}, TomCheckerMessage.TOM_ERROR);
           }
-          decLine = findOriginTrackingLine(options);
+          decLine = findOriginTrackingLine(`options);
           termClass = RECORD_APPL;
 	
-          TomSymbol symbol = ensureValidRecordDisjunction(nameList, expectedType, decLine, true);
+          TomSymbol symbol = ensureValidRecordDisjunction(`nameList, expectedType, decLine, true);
           if(symbol == null) {
             break matchblock;
           }
@@ -873,12 +876,12 @@ abstract public class TomChecker extends TomTask {
           %match(NameList nameList) { // We perform tests as we have different RecordAppls: they all must be valid
               // and have the expected return type
             (_*, Name(name), _*) -> {
-              verifyRecordStructure(options, name, pairSlotAppls, decLine);
+              verifyRecordStructure(`options, name, `pairSlotAppls, decLine);
             }
           }
 					
           type = expectedType;     
-          termName = nameList.getHead().getString();
+          termName = `nameList.getHead().getString();
           break matchblock;
         }
 				
