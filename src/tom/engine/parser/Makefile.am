@@ -7,6 +7,7 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SH
 
 stabledir 	= $(top_srcdir)/stable/jtom/parser
 BOOTSOURCES	= ASCII_UCodeESC_CharStream.java\
+		  JavaCharStream.java\
 		  TomBuffer.java
 
 generated_java  = Token.java\
