@@ -63,5 +63,6 @@ public class Flags {
   public static boolean strictType = true; // no universal type
   public static boolean genDecl = true; // generate declarations
 
-  public static boolean doOptimization = false; // generate declarations
+  public static boolean doOptimization = false; // optimize generated code
+  public static boolean staticFunction = false; // generate static functions
 }

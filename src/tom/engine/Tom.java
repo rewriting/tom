@@ -66,6 +66,7 @@ public class Tom {
     System.out.println("\t--pretty | -p:\t\tGenerate readable code");
     System.out.println("\t--atermStat | -s:\tPrint internal ATerm statistics");
     System.out.println("\t--optimize | -O:\t\tOptimized generated code");
+    System.out.println("\t--static:\t\tGenerate static functions");
     System.exit(0);
   }
 
@@ -128,6 +129,8 @@ public class Tom {
 	    Flags.pretty = true;
           } else if(args[i].equals("--optimize") || args[i].equals("-O")) {
 	    Flags.doOptimization = true;
+          } else if(args[i].equals("--static")) {
+	    Flags.staticFunction = true;
           } else if(args[i].equals("--help") || args[i].equals("-h")) {
 	    usage();
           } else {

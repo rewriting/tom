@@ -1304,7 +1304,12 @@ public class TomGenerator extends TomBase {
       }
       s += ") (" + tlCode.getCode() +")";
     } else if(Flags.jCode) {
-      s = "public " + returnType + " " + declName + "_" + suffix + "(";
+      String modifier ="public ";
+      if(Flags.staticFunction) {
+        modifier +="static ";
+      }
+
+      s = modifier + returnType + " " + declName + "_" + suffix + "(";
       for(int i=0 ; i<args.length ; ) {
         s+= args[i] + " " + args[i+1];
         i+=2;
@@ -1362,7 +1367,12 @@ public class TomGenerator extends TomBase {
       }
       s += ") (" + tlCode.getCode() + ")";
     } else if(Flags.jCode) {
-      s = "public " + getTLType(returnType) + " tom_make_" + opname + "(";
+      String modifier ="public ";
+      if(Flags.staticFunction) {
+        modifier +="static ";
+      }
+
+      s = modifier + getTLType(returnType) + " tom_make_" + opname + "(";
       while(!argList.isEmpty()) {
         TomTerm arg = argList.getHead();
         matchBlock: {
@@ -1433,6 +1443,9 @@ public class TomGenerator extends TomBase {
       System.out.println("genDeclList: Eiffel code not yet implemented");
     } else if(Flags.jCode) {
       modifier ="public ";
+      if(Flags.staticFunction) {
+        modifier +="static ";
+      }
       if(!Flags.strictType) {
         utype =  getTLType(getUniversalType());
       }
@@ -1497,6 +1510,9 @@ public class TomGenerator extends TomBase {
       System.out.println("genDeclArray: Eiffel code not yet implemented");
     } else if(Flags.jCode) {
       modifier ="public ";
+      if(Flags.staticFunction) {
+        modifier +="static ";
+      }
       if(!Flags.strictType) {
         utype =  getTLType(getUniversalType());
       }
