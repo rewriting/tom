@@ -203,31 +203,6 @@ public class ASTFactory {
     TomSymbol astSymbol = makeSymbol(value,sort,typeList,slotList,optionList,tlFsym);
     symbolTable.putSymbol(value,astSymbol);
   }
-
-  private void makeSortDecl(List list, String sort,
-                            String equality_t1t2) {
-    Declaration getFunSym, getSubterm;
-    Declaration cmpFunSym, equals;
-    Option option = tsf().makeOption_NoOption();
-    
-    TomTerm variable_t = makeVariable(makeOption(),"t",sort);
-    TomTerm variable_t1 = makeVariable(makeOption(),"t1",sort);
-    TomTerm variable_t2 = makeVariable(makeOption(),"t2",sort);
-    TomTerm variable_n = makeVariable(makeOption(),"n","int");
-    getFunSym = tsf().makeDeclaration_GetFunctionSymbolDecl(
-      variable_t,tsf().makeTargetLanguage_ITL("t"), option);
-    getSubterm = tsf().makeDeclaration_GetSubtermDecl(
-      variable_t,variable_n,tsf().makeTargetLanguage_ITL("null"), option);
-    cmpFunSym = tsf().makeDeclaration_CompareFunctionSymbolDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL(equality_t1t2), option);
-    equals = tsf().makeDeclaration_TermsEqualDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL(equality_t1t2), option);
-    list.add(getFunSym);
-    list.add(getSubterm);
-    list.add(cmpFunSym);
-    list.add(equals);
-  }
-  
   
     /*
      * create an integer symbol
@@ -238,25 +213,21 @@ public class ASTFactory {
     makeSortSymbol(symbolTable, sort, value, optionList);
   }
 
-  public void makeIntegerDecl(List list) {
-    String sort = "int";
-    String equality_t1t2 = "(t1 == t2)";
-    makeSortDecl(list,sort,equality_t1t2);
-  }
-
     /*
-     * create an double symbol
+     * create a char symbol
+     */
+  public void makeCharSymbol(SymbolTable symbolTable,
+                             String value, List optionList) {
+    String sort = "char";
+    makeSortSymbol(symbolTable, sort, value, optionList);
+  }
+    /*
+     * create a double symbol
      */
   public void makeDoubleSymbol(SymbolTable symbolTable,
                                String value, List optionList) {
     String sort = "double";
     makeSortSymbol(symbolTable, sort, value, optionList);
-  }
-
-  public void makeDoubleDecl(List list) {
-    String sort = "double";
-    String equality_t1t2 = "(t1 == t2)";
-    makeSortDecl(list,sort,equality_t1t2);
   }
 
     /*
@@ -267,12 +238,6 @@ public class ASTFactory {
     String sort = "String";
     makeSortSymbol(symbolTable, sort, value, optionList);
   } 
-  
-  public void makeStringDecl(List list) {
-    String sort = "String";
-    String equality_t1t2 = "t1.equals(t2)";
-    makeSortDecl(list,sort,equality_t1t2);
-  }
   
     /*
      * update the root of lhs: it becomes a defined symbol

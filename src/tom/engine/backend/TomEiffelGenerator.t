@@ -118,7 +118,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
-    if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
+    if(symbolTable().isBoolType(type) || symbolTable().isIntType(type) || symbolTable().isDoubleType(type)) {
       output.write(" := ");
     } else {
       //out.write(" ?= ");
@@ -158,17 +158,17 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 	protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
-		if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
-			output.write(" := ");
+		if(symbolTable().isBoolType(type) || symbolTable().isIntType(type) || symbolTable().isDoubleType(type)) {
+                  output.write(" := ");
 		} else {
-			//out.write(" ?= ");
-			String assignSign = " := ";
-			%match(Expression exp) {
-				GetSubterm[] -> {
-					assignSign = " ?= ";
-				}
-			}
-			output.write(assignSign);
+                    //out.write(" ?= ");
+                  String assignSign = " := ";
+                  %match(Expression exp) {
+                    GetSubterm[] -> {
+                      assignSign = " ?= ";
+                    }
+                  }
+                  output.write(assignSign);
     }
     generateExpression(deep,exp);
     output.writeln(";");

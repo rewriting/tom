@@ -178,6 +178,9 @@ public class TomExpander extends TomTask {
                 TomSymbol tomSymbol = getSymbol(tomName);
                 TomList args  = (TomList) traversal().genericTraversal(l,this);
                 
+                  //System.out.println("BackQuoteTerm: " + tomName);
+                  //System.out.println("tomSymbol: " + tomSymbol);
+
                 if(tomSymbol != null) {
                   if(isListOperator(tomSymbol)) {
                     return `BuildList(name,args);

@@ -28,7 +28,6 @@ package jtom.backend;
 import aterm.*;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import jtom.adt.tomsignature.types.*;
 import jtom.TomBase;
@@ -45,20 +44,15 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected boolean debugMode = false, strictType = false,
     staticFunction = false, genDecl = false, pretty = false, verbose = false;
 
-  private HashMap getSubtermMap = new HashMap();
-  private HashMap getFunSymMap = new HashMap();
-  private HashMap isFsymMap = new HashMap();
-  
   public TomAbstractGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
     super(environment);
-	this.output = output;
+	  this.output = output;
     this.input = input;
-
-    debugMode = input.isDebugMode();
-    strictType = input.isStrictType();
-    staticFunction = input.isStaticFunction();
-    genDecl = input.isGenDecl();
-    pretty = input.isPretty();
+		this.debugMode = input.isDebugMode();
+		this.strictType = input.isStrictType();
+		this.staticFunction = input.isStaticFunction();
+		this.genDecl = input.isGenDecl();
+		this.pretty = input.isPretty();
   }
 
 // ------------------------------------------------------------
@@ -68,11 +62,8 @@ public abstract class TomAbstractGenerator extends TomBase {
     /*
      * Generate the goal language
      */
-  
-  protected void generate(int deep, TomTerm subject)
-    throws IOException {
-      //System.out.println("Generate: " + subject);
-
+ 
+  protected void generate(int deep, TomTerm subject)throws IOException {
     %match(TomTerm subject) {
       
       Tom(l) -> {
@@ -171,10 +162,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 
-  public void generateExpression(int deep, Expression subject)
-    throws IOException {
-    if(subject==null) { return; }
-    
+  public void generateExpression(int deep, Expression subject) throws IOException {
     %match(Expression subject) {
       Not(exp) -> {
         buildExpNot(deep, exp);
@@ -219,7 +207,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       
       EqualFunctionSymbol(var1@Variable[astType=type1],var2) -> {
           //System.out.println("EqualFunctionSymbol(...," + var2 + ")");
-        buildExpEqualFunctionVarVar(deep, type1, var1, var2);
+        String s = var2.toString();
+        buildExpEqualFunctionVarVar(deep, type1, var1, s);
         return;
       }
 
@@ -297,10 +286,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 
-  public void generateInstruction(int deep, Instruction subject)
-    throws IOException {
-    if(subject==null) { return; }
-    
+  public void generateInstruction(int deep, Instruction subject) throws IOException {
     %match(Instruction subject) {
 
       TargetLanguageToInstruction(t) -> {
@@ -332,11 +318,17 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      Assign(var@(Variable|VariableStar)(list,name1,
+      Assign(var@(Variable|VariableStar)(option,name1,
                           Type(ASTTomType(type),tlType@TLType[])),exp) -> {
-        buildAssignVar(deep, var, list, type, tlType, exp);
+        buildAssignVar(deep, var, option, type, tlType, exp);
         return;
       }
+
+			AssignMatchSubject(var@Variable(option,name1,
+																			Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
+				buildAssignVar(deep, var, option, type, tlType, exp);
+				return;
+			}
 
       Assign((UnamedVariable|UnamedVariableStar)[],exp) -> {
         return;
@@ -357,12 +349,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      AssignMatchSubject(var@Variable(option1,name1,
-                                      Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
-        buildAssignMatch(deep, var, type, tlType, exp);
-        return;
-      }
-      
       AbstractBlock(instList) -> {
         generateInstructionList(deep, instList);
         return;
@@ -404,13 +390,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      /*
-      ExitAction(numberList) -> {
-        buildExitAction(deep, numberList);
-        return;
-      }
-      */
-
       Return(exp) -> {
         buildReturn(deep, exp);
         return;
@@ -434,9 +413,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
   
-  public void generateTargetLanguage(int deep, TargetLanguage subject)
-    throws IOException {
-    if(subject==null) { return; }
+  public void generateTargetLanguage(int deep, TargetLanguage subject) throws IOException {
     %match(TargetLanguage subject) {
       TL(t,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
         output.write(deep,t, startLine, endLine-startLine);
@@ -460,10 +437,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 
-  public void generateOption(int deep, Option subject)
-    throws IOException {
-    if(subject==null) { return; }
-    
+  public void generateOption(int deep, Option subject) throws IOException {
     %match(Option subject) {
       DeclarationToOption(decl) -> {
         generateDeclaration(deep,decl);
@@ -480,26 +454,13 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
   
-  public void generateDeclaration(int deep, Declaration subject)
-    throws IOException {
-    if(subject==null) { return; }
-    
+  public void generateDeclaration(int deep, Declaration subject) throws IOException {
     %match(Declaration subject) {
       EmptyDeclaration() -> {
         return;
       }
-      SymbolDecl(Name(tomName)) -> {
+      (SymbolDecl|ArraySymbolDecl|ListSymbolDecl)(Name(tomName)) -> {
         buildSymbolDecl(deep, tomName);
-        return ;
-      }
-      
-      ArraySymbolDecl(Name(tomName)) -> {
-        buildArraySymbolDecl(deep, tomName);
-        return ;
-      }
-
-      ListSymbolDecl(Name(tomName)) -> {
-        buildListSymbolDecl(deep, tomName);
         return ;
       }
 
@@ -520,7 +481,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       
       IsFsymDecl(Name(tomName),
-		 Variable(option1,Name(name1), Type(ASTTomType(type1),tlType@TLType[])),
+		   Variable(option1,Name(name1), Type(ASTTomType(type1),tlType@TLType[])),
                  tlCode@TL[], _) -> {
         buildIsFsymDecl(deep, tomName, name1, tlType, tlCode);
         return;
@@ -672,7 +633,9 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
   
+	
     // ------------------------------------------------------------
+	
   protected abstract TargetLanguage genDecl(String returnType,
                                             String declName,
                                             String suffix,
@@ -686,6 +649,8 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   protected abstract TargetLanguage genDeclArray(String name, TomType listType, TomType eltType);
  
+	// ------------------------------------------------------------
+  
   protected abstract void buildInstructionSequence() throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList) throws IOException;
@@ -696,495 +661,66 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
 
-  protected void buildCompiledMatch(int deep, Instruction instruction, OptionList list) throws IOException {
-    boolean generated = hasGeneratedMatch(list);
-    boolean defaultPattern = hasDefaultCase(list);
-    Option orgTrack = null;
-    if(debugMode && !generated) {
-      orgTrack = findOriginTracking(list);
-      debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-      output.writeln("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");");
-    }
-    generateInstruction(deep+1,instruction);
-    if(debugMode && !generated && !defaultPattern) {
-      output.writeln("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");");
-    }
-  }
-	
-  
-  protected void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException {
-    generateExpression(deep,exp1);
-    output.write(" && ");
-    generateExpression(deep,exp2);
-  }
-  protected void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException {
-    generateExpression(deep,exp1);
-    output.write(" || ");
-    generateExpression(deep,exp2);
-  }
-
+  protected abstract void buildCompiledMatch(int deep, Instruction instruction, OptionList list) throws IOException;
+	protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
+  protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
-
   protected abstract void buildExpFalse(int deep) throws IOException;
-
-  protected void buildExpEmptyList(int deep, TomType type1, TomTerm var) throws IOException {
-    output.write("tom_is_empty_" + getTomType(type1) + "(");
-    generate(deep,var);
-    output.write(")");
-  }
-
-  protected void buildExpEmptyArray(int deep, TomType type1, TomTerm varIndex, TomTerm varArray) throws IOException {
-    generate(deep,varIndex);
-    output.write(" >= ");
-    output.write("tom_get_size_" + getTomType(type1) + "(");
-    generate(deep,varArray);
-    output.write(")");
-  }
-
-  protected void buildExpEqualFunctionVarAppl(int deep, TomTerm var, TomType type1, String tomName) throws IOException {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-    TomName termNameAST = tomSymbol.getAstName();
-    OptionList termOptionList = tomSymbol.getOption();
-    
-    Declaration isFsymDecl = getIsFsymDecl(termOptionList);
-    if(isFsymDecl != null) {
-      generateExpression(deep,`IsFsym(termNameAST,var));
-    } else {
-      String s = (String)getFunSymMap.get(type1);
-      if(s == null) {
-        s = "tom_cmp_fun_sym_" + getTomType(type1) + "(tom_get_fun_sym_" + getTomType(type1) + "(";
-        getFunSymMap.put(type1,s);
-      }
-      output.write(s);
-      generate(deep,var);
-      output.write(") , " + getSymbolCode(tomSymbol) + ")");
-    }
-  }
-
-  protected void buildExpEqualFunctionVarVar(int deep, TomType type1, TomTerm var1, TomTerm var2) throws IOException {
-    output.write("tom_cmp_fun_sym_" + getTomType(type1) + "(");
-    output.write("tom_get_fun_sym_" + getTomType(type1) + "(");
-    generate(deep,var1);
-    output.write(") , " + var2 + ")");///??????????????????????????????
-  }
-
-  protected void buildExpEqualTermVar(int deep, TomType type1, TomTerm var1,TomTerm var2) throws IOException {
-    output.write("tom_terms_equal_" + getTomType(type1) + "(");
-    generate(deep,var1);
-    output.write(", ");
-    generate(deep,var2);
-    output.write(")");
-  }
-
-  protected void buildExpEqualTermVarStar(int deep, TomType type1, TomTerm var1, TomTerm var2) throws IOException {
-    output.write("tom_terms_equal_" + getTomType(type1) + "(");
-    generate(deep,var1);
-    output.write(", ");
-    generate(deep,var2);
-    output.write(")");
-  }
-
-  protected void buildExpIsFsym(int deep, String opname, TomTerm var) throws IOException {
-    String s = (String)isFsymMap.get(opname);
-    if(s == null) {
-      s = "tom_is_fun_sym_" + opname + "(";
-      isFsymMap.put(opname,s);
-    } 
-    output.write(s);
-    generate(deep,var);
-    output.write(")");
-  }
-
-  protected void buildExpGetSubterm(int deep, TomTerm var, TomType type1, int number) throws IOException {
-    String s = (String)getSubtermMap.get(type1);
-    if(s == null) {
-      s = "tom_get_subterm_" + getTomType(type1) + "(";
-      getSubtermMap.put(type1,s);
-    } 
-    output.write(s);
-    generate(deep,var);
-    output.write(", " + number + ")");
-  }
-
-  protected void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var) throws IOException {
-    output.write("tom_get_slot_" + opname + "_" + slotName + "(");
-    generate(deep,var);
-    output.write(")");
-  }
-
-  protected void buildExpGetHead(int deep, TomType type1, TomTerm var) throws IOException {
-    output.write("tom_get_head_" + getTomType(type1) + "(");
-    generate(deep,var);
-    output.write(")");
-  }
-  protected void buildExpGetTail(int deep, TomType type1, TomTerm var) throws IOException {
-    output.write("tom_get_tail_" + getTomType(type1) + "(");
-    generate(deep,var); 
-    output.write(")");
-  }
-
-  protected void buildExpGetSize(int deep, TomType type1, TomTerm var) throws IOException {
-    output.write("tom_get_size_" + getTomType(type1) + "(");
-    generate(deep,var);
-    output.write(")");
-  }
-
-  protected void buildExpGetElement(int deep, TomType type1, TomTerm varName, TomTerm varIndex) throws IOException {
-    output.write("tom_get_element_" + getTomType(type1) + "(");
-    generate(deep,varName);
-    output.write(",");
-    generate(deep,varIndex);
-    output.write(")");
-  }
-
-  protected void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd) throws IOException {
-    output.write("tom_get_slice_" + name + "(");
-    generate(deep,varBegin);
-    output.write(",");
-    generate(deep,varEnd);
-    output.write(")");
-  }
-
-  protected void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd) throws IOException {
-    output.write("tom_get_slice_" + name + "(");
-    generate(deep,varArray);
-    output.write(",");
-    generate(deep,varBegin);
-    output.write(",");
-    generate(deep,expEnd);
-    output.write(")");
-  }
-
+  protected abstract void buildExpEmptyList(int deep, TomType type1, TomTerm var) throws IOException;
+  protected abstract void buildExpEmptyArray(int deep, TomType type1, TomTerm varIndex, TomTerm varArray) throws IOException;
+  protected abstract void buildExpEqualFunctionVarAppl(int deep, TomTerm var, TomType type1, String tomName) throws IOException;
+  protected abstract void buildExpEqualFunctionVarVar(int deep, TomType type1, TomTerm var1, String var2) throws IOException;
+  protected abstract void buildExpEqualTermVar(int deep, TomType type1, TomTerm var1,TomTerm var2) throws IOException;
+  protected abstract void buildExpEqualTermVarStar(int deep, TomType type1, TomTerm var1, TomTerm var2) throws IOException;
+  protected abstract void buildExpIsFsym(int deep, String opname, TomTerm var) throws IOException;
+  protected abstract void buildExpGetSubterm(int deep, TomTerm var, TomType type1, int number) throws IOException;
+  protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var) throws IOException;
+  protected abstract void buildExpGetHead(int deep, TomType type1, TomTerm var) throws IOException;
+  protected abstract void buildExpGetTail(int deep, TomType type1, TomTerm var) throws IOException;
+  protected abstract void buildExpGetSize(int deep, TomType type1, TomTerm var) throws IOException;
+  protected abstract void buildExpGetElement(int deep, TomType type1, TomTerm varName, TomTerm varIndex) throws IOException;
+  protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd) throws IOException;
+  protected abstract void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd) throws IOException;
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException ;
   protected abstract void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp, Instruction body) throws IOException ;
-  protected abstract void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException ;
   protected abstract void buildUnamedBlock(int deep, InstructionList instList) throws IOException ;
   protected abstract void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException ;
   protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
-
-  protected void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException {
-    output.writeln(deep,"do {");
-    generateInstruction(deep+1,succes);
-    output.write(deep,"} while(");
-    generateExpression(deep,exp);
-	output.writeln(");");
-  }
-  
-
-  protected void buildIncrement(int deep, TomTerm var) throws IOException {
-    generate(deep,var);
-    output.write(" = ");
-    generate(deep,var);
-    output.writeln(" + 1;");
-  }
-
-  
-  protected abstract void buildExitAction(int deep, TomNumberList numberList) throws IOException ;
+  protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
+  protected abstract void buildIncrement(int deep, TomTerm var) throws IOException;
   protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName) throws IOException ;
-  protected abstract void buildArraySymbolDecl(int deep, String tomName) throws IOException ;
-  protected abstract void buildListSymbolDecl(int deep, String tomName) throws IOException ;
-
-  protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
-TomType tlType, TargetLanguage tlCode) throws IOException {
-    String args[];
-    if(!strictType) {
-      TomType argType = getUniversalType();
-      if(isIntType(type)) {
-        argType = getIntType();
-      } else if(isDoubleType(type)) {
-        argType = getDoubleType();
-      }
-      args = new String[] { getTLType(argType), name };
-    } else {
-      args = new String[] { getTLCode(tlType), name };
-    }
-    
-    TomType returnType = getUniversalType();
-    if(isIntType(type)) {
-      returnType = getIntType();
-    } else if(isDoubleType(type)) {
-      returnType = getDoubleType();
-    }
-    generateTargetLanguage(deep,
-                           genDecl(getTLType(returnType),
-                                   "tom_get_fun_sym", type,args,tlCode));
-  }
-
-
+  protected abstract void buildGetFunctionSymbolDecl(int deep, String type, String name,
+TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
 TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
-
-  protected void buildIsFsymDecl(int deep, String tomName, String name1,
-TomType tlType, TargetLanguage tlCode) throws IOException {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-    String opname = tomSymbol.getAstName().getString();
-    
-    TomType returnType = getBoolType();
-    String argType;
-    if(strictType) {
-      argType = getTLCode(tlType);
-    } else {
-      argType = getTLType(getUniversalType());
-    }
-    
-    generateTargetLanguage(deep, genDecl(getTLType(returnType),
-                                         "tom_is_fun_sym", opname,
-                                         new String[] { argType, name1 },
-                                         tlCode));
-  }
-
-  protected void buildGetSlotDecl(int deep, String tomName, String name1,
-TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-    String opname = tomSymbol.getAstName().getString();
-    TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
-    
-    int slotIndex = getSlotIndex(tomSymbol.getSlotList(),slotName);
-    TomTypeList l = typesList;
-    for(int index = 0; !l.isEmpty() && index<slotIndex ; index++) {
-      l = l.getTail();
-    }
-    TomType returnType = l.getHead();
-    
-    String argType;
-    if(strictType) {
-      argType = getTLCode(tlType);
-    } else {
-      argType = getTLType(getUniversalType());
-    }
-    generateTargetLanguage(deep, genDecl(getTLType(returnType),
-                                             "tom_get_slot", opname  + "_" + slotName.getString(),
-                                             new String[] { argType, name1 },
-                                             tlCode));
-  }
-
-  protected void  buildCompareFunctionSymbolDecl(int deep, String name1,
-String name2, String type1, String type2, TargetLanguage tlCode) throws IOException {
-    TomType argType1 = getUniversalType();
-    if(isIntType(type1)) {
-      argType1 = getIntType();
-    } else if(isDoubleType(type2)) {
-      argType1 = getDoubleType();
-    }
-    TomType argType2 = getUniversalType();
-    if(isIntType(type2)) {
-      argType2 = getIntType();
-    } else if(isDoubleType(type2)) {
-      argType2 = getDoubleType();
-    }
-    
-    generateTargetLanguage(deep, genDecl(getTLType(getBoolType()), "tom_cmp_fun_sym", type1,
-                                         new String[] {
-                                           getTLType(argType1), name1,
-                                           getTLType(argType2), name2
-                                         },
-                                         tlCode));
-  }
-
-  protected void buildTermsEqualDecl(int deep, String name1, String name2,
-String type1, String type2, TargetLanguage tlCode) throws IOException {
-    TomType argType1 = getUniversalType();
-    if(isIntType(type1)) {
-      argType1 = getIntType();
-    } else if(isDoubleType(type2)) {
-      argType1 = getDoubleType();
-    }
-    TomType argType2 = getUniversalType();
-    if(isIntType(type2)) {
-      argType2 = getIntType();
-    } else if(isDoubleType(type2)) {
-      argType2 = getDoubleType();
-    }
-    
-    generateTargetLanguage(deep, genDecl(getTLType(getBoolType()), "tom_terms_equal", type1,
-                                             new String[] {
-                                               getTLType(argType1), name1,
-                                               getTLType(argType2), name2
-                                             },
-                                             tlCode));
-  }
-
-  protected void buildGetHeadDecl(int deep, String name1, String type, TomType tlType,TargetLanguage tlCode) 
-    throws IOException {
-    String returnType,argType;
-
-    /*
-     * type is the type of the list-variable, not the type of the head
-     */
-    if(strictType) {
-      //returnType = getTLCode(tlType);
-      argType = getTLCode(tlType);
-    } else {
-      //returnType = getTLType(getUniversalType());
-      argType = getTLType(getUniversalType());
-    }
-    returnType = getTLType(getUniversalType());
-    generateTargetLanguage(deep,
-                           genDecl(returnType, "tom_get_head", type,
-                                   new String[] { argType, name1 },
-                                   tlCode));
-  }
-
-  protected void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) 
-    throws IOException {
-    String returnType, argType;
-    if(strictType) {
-      returnType = getTLCode(tlType);
-      argType = getTLCode(tlType);
-    } else {
-      returnType = getTLType(getUniversalType());
-      argType = getTLType(getUniversalType());
-    }
-    
-    generateTargetLanguage(deep,
-                           genDecl(returnType, "tom_get_tail", type,
-                                   new String[] { argType, name1 },
-                                   tlCode));
-  }
-
-  protected void buildIsEmptyDecl(int deep, String name1, String type,
-TomType tlType, TargetLanguage tlCode) throws IOException {
-    String argType;
-    if(strictType) {
-      argType = getTLCode(tlType);
-    } else {
-      argType = getTLType(getUniversalType());
-    }
-    
-    generateTargetLanguage(deep,
-                           genDecl(getTLType(getBoolType()),
-                                   "tom_is_empty", type,
-                                   new String[] { argType, name1 },
-                                   tlCode));
-  }
-
-  protected void buildMakeEmptyList(int deep, String opname, TargetLanguage tlCode) throws IOException {
-    String returnType = getTLType(getUniversalType());
-    generateTargetLanguage(deep,
-                           genDecl(returnType,
-                                   "tom_make_empty", opname,
-                                   new String[] { },
-                                   tlCode));
-  }
-
-  protected void buildMakeAddList(int deep, String opname, String name1,
+  protected abstract void buildIsFsymDecl(int deep, String tomName, String name1,
+TomType tlType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildGetSlotDecl(int deep, String tomName, String name1,
+TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException;
+  protected abstract void  buildCompareFunctionSymbolDecl(int deep, String name1,
+String name2, String type1, String type2, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildTermsEqualDecl(int deep, String name1, String name2,
+String type1, String type2, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildGetHeadDecl(int deep, String name1, String type, TomType tlType,TargetLanguage tlCode) throws IOException;
+  protected abstract void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildIsEmptyDecl(int deep, String name1, String type,
+TomType tlType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildMakeEmptyList(int deep, String opname, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildMakeAddList(int deep, String opname, String name1,
 String name2, TomType tlType1, TomType tlType2, TomType fullEltType,
-TomType fullListType, TargetLanguage tlCode) throws IOException {
-    String returnType, argListType,argEltType;
-    if(strictType) {
-      argEltType = getTLCode(tlType1);
-      argListType = getTLCode(tlType2);
-      returnType = argListType;
-    } else {
-      argEltType  = getTLType(getUniversalType());
-      argListType = getTLType(getUniversalType());
-      returnType  = argListType;
-    }
-    
-    generateTargetLanguage(deep, genDecl(returnType,
-                                             "tom_make_insert", opname,
-                                             new String[] {
-                                               argEltType, name1,
-                                               argListType, name2
-                                             },
-                                             tlCode));
-    
-    generateTargetLanguage(deep, genDeclList(opname, fullListType,fullEltType));
-  }
-
-  protected void buildGetElementDecl(int deep, String name1, String name2,
-String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
-    String returnType, argType;
-    if(strictType) {
-      returnType = getTLType(getUniversalType());
-      argType = getTLCode(tlType1);
-    } else {
-      returnType = getTLType(getUniversalType());
-      argType = getTLType(getUniversalType());
-    }
-    
-    generateTargetLanguage(deep, genDecl(returnType,
-                                         "tom_get_element", type1,
-                                         new String[] {
-                                           argType, name1,
-                                           getTLType(getIntType()), name2
-                                         },
-                                         tlCode));
-  }
-
-  protected void buildGetSizeDecl(int deep, String name1, String type,
-TomType tlType, TargetLanguage tlCode) throws IOException {
-    String argType;
-    if(strictType) {
-      argType = getTLCode(tlType);
-    } else {
-      argType = getTLType(getUniversalType());
-    }
-    
-    generateTargetLanguage(deep,
-                           genDecl(getTLType(getIntType()),
-                                   "tom_get_size", type,
-                                   new String[] { argType, name1 },
-                                   tlCode));
-  }
-
-  protected void buildMakeEmptyArray(int deep, String opname, String name1, TargetLanguage tlCode) throws IOException {
-    generateTargetLanguage(deep, genDecl(getTLType(getUniversalType()), "tom_make_empty", opname,
-                                             new String[] {
-                                               getTLType(getIntType()), name1,
-                                             },
-                                             tlCode));
-  }
-
-  protected void buildMakeAddArray(int deep, String opname, String name1, String name2, TomType tlType1,
-TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException {
-    String returnType, argListType,argEltType;
-    if(strictType) {
-      argEltType  = getTLCode(tlType1);
-      argListType = getTLCode(tlType2);
-      returnType  = argListType;
-      
-    } else {
-      argEltType  = getTLType(getUniversalType());
-      argListType = getTLType(getUniversalType());
-      returnType  = argListType;
-    }
-    
-    generateTargetLanguage(deep,
-                           genDecl(argListType,
-                                   "tom_make_append", opname,
-                                   new String[] {
-                                     argEltType, name1,
-                                     argListType, name2
-                                   },
-                                   tlCode));
-    generateTargetLanguage(deep, genDeclArray(opname, fullArrayType, fullEltType));
-  }
-
-  protected void buildTypeTermDecl(int deep, TomList declList) throws IOException {
-    generateDeclarationFromList(deep, declList);
-  }
-
-  protected void buildTypeListDecl(int deep, TomList declList) throws IOException {
-    generateDeclarationFromList(deep, declList);
-  }
-
-  protected void buildTypeArrayDecl(int deep, TomList declList) throws IOException {
-    generateDeclarationFromList(deep, declList);
-  }
-  
-  protected final void generateDeclarationFromList(int deep, TomList declList) throws IOException {
-    TomTerm term;
-    while(!declList.isEmpty()) {
-      term = declList.getHead();
-      %match (TomTerm term){
-        DeclarationToTomTerm(declaration) -> {generateDeclaration(deep, declaration);}
-      }
-      declList = declList.getTail();
-    }
-  }
-  
+TomType fullListType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildGetElementDecl(int deep, String name1, String name2,
+String type1, TomType tlType1, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildGetSizeDecl(int deep, String name1, String type,
+TomType tlType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildMakeEmptyArray(int deep, String opname, String name1, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildMakeAddArray(int deep, String opname, String name1, String name2, TomType tlType1,
+TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildTypeTermDecl(int deep, TomList declList) throws IOException;
+  protected abstract void buildTypeListDecl(int deep, TomList declList) throws IOException;
+  protected abstract void buildTypeArrayDecl(int deep, TomList declList) throws IOException;
+  protected abstract void generateDeclarationFromList(int deep, TomList declList) throws IOException;
 } // class TomAbstractGenerator

@@ -113,7 +113,6 @@ public class TomCompiler extends TomTask {
             MakeTerm(Appl(optionList,(name@Name(tomName)),termArgs)) -> {
               TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
               TomList newTermArgs = (TomList) traversal().genericTraversal(termArgs,replace_preProcessing_makeTerm);
-            
               if(tomSymbol==null || isDefinedSymbol(tomSymbol)) {
                 return `FunctionCall(name,newTermArgs);
               } else {

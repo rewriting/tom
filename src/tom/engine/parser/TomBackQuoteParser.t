@@ -30,7 +30,6 @@ import jtom.TomBase;
 import jtom.adt.tomsignature.types.*;
 import aterm.*;
 
-
 public class TomBackQuoteParser extends TomBase implements TomParserConstants {
   
   private HashMap nameToDecLineMap;
@@ -215,7 +214,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
           }
           
           IDENT(name), _ -> {
-						OptionList option = `concOption(OriginTracking(Name(name), ((Integer)nameToDecLineMap.get(token)).intValue(), Name(currentFileName)));
+            OptionList option = `concOption(OriginTracking(Name(name), ((Integer)nameToDecLineMap.get(token)).intValue(), Name(currentFileName)));
             addToLastComposite(stackList, `BackQuoteAppl(option,Name(name),concTomTerm()));
               //concTomTerm(Composite(concTomTerm()))));
             break matchBlock;
@@ -256,7 +255,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     }
 
     TomTerm term = ((TomList)stackList.pop()).getHead();
-     //System.out.println(term);
+      //System.out.println(term);
     
     return term;
   }

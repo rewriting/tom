@@ -8,15 +8,24 @@ javadir         = ${prefix}/classes/jtom/backend
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(TSADT_SRC):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/backend
-BOOTSOURCES	= TomAbstractGenerator.java TomImperativeGenerator.java TomJavaGenerator.java TomCGenerator.java TomCamlGenerator.java TomEiffelGenerator.java TomBackend.java
+BOOTSOURCES	= TomAbstractGenerator.java TomGenericGenerator.java\
+                  TomImperativeGenerator.java TomJavaGenerator.java\
+		  TomCGenerator.java TomCamlGenerator.java\
+                  TomEiffelGenerator.java TomBackend.java
 java_JAVA       = $(BOOTSOURCES)
 
 JAVAROOT        = ${top_builddir}/src
 
-CLEANFILES 	= TomOptimizer.java TomAbstractGenerator.java TomImperativeGenerator.java TomJavaGenerator.java TomCGenerator.java TomCamlGenerator.java TomEiffelGenerator.java
-EXTRA_DIST 	= $(BOOTSOURCES) TomOptimizer.t TomAbstractGenerator.t TomImperativeGenerator.t TomJavaGenerator.t TomCGenerator.t TomCamlGenerator.t TomEiffelGenerator.t
+CLEANFILES 	= TomAbstractGenerator.java TomGenericGenerator.java\
+                  TomImperativeGenerator.java TomJavaGenerator.java TomCGenerator.java\
+                  TomCamlGenerator.java TomEiffelGenerator.java
+EXTRA_DIST 	= $(BOOTSOURCES) TomAbstractGenerator.t TomGenericGenerator.t\
+                  TomImperativeGenerator.t TomJavaGenerator.t TomCGenerator.t\
+                  TomCamlGenerator.t TomEiffelGenerator.t
 
-BUILT_SOURCES   = TomAbstractGenerator.java TomImperativeGenerator.java TomJavaGenerator.java TomCGenerator.java TomCamlGenerator.java TomEiffelGenerator.java
+BUILT_SOURCES   = TomAbstractGenerator.java TomGenericGenerator.java\
+                  TomImperativeGenerator.java TomJavaGenerator.java\
+                  TomCGenerator.java TomCamlGenerator.java TomEiffelGenerator.java
 
 bootinstall:
 	$(mkinstalldirs) $(stabledir)

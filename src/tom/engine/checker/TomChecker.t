@@ -1,30 +1,31 @@
-/*
+ /*
   
-TOM - To One Matching Compiler
+    TOM - To One Matching Compiler
 
-Copyright (C) 2000-2004 INRIA
-Nancy, France.
+    Copyright (C) 2000-2004 INRIA
+			    Nancy, France.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
-Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
-Julien Guyon
+    Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+    Christophe Mayer            ESIAL Student
+    Julien Guyon
 
 */
 
-                           package jtom.checker;
+package jtom.checker;
 
 import aterm.*;
 
@@ -1110,10 +1111,10 @@ abstract public class TomChecker extends TomTask {
         }
       } else { //known symbol			
         if(emptyChilds && !constructor ) { // this correspond to: known
-            // we know the symbol but it is not called has a constructor and argsList is empty
-            // it is not a string or int or double so WARNING consider as a symbol and not a variable
+            //	we know the symbol but it is not called has a constructor and argsList is empty
+            // it is a builtin type (String, int, char, ...): WARNING consider as a symbol and not a variable
           String codomain = getTomType(getSymbolCodomain(symbol));
-          if( ! (codomain.equals("String") || codomain.equals("double") || codomain.equals("int")) ) {
+          if( !symbolTable().isBuiltinType(codomain) ) {
             messageError(decLine, 
                          TomCheckerMessage.AmbigousSymbolWithoutConstructor,
                          new Object[]{res},

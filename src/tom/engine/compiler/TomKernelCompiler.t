@@ -273,7 +273,7 @@ public class TomKernelCompiler extends TomBase {
           TomNumberList newPathList = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
           TomNumberList newPathIndex = (TomNumberList) path.append(`IndexNumber(makeNumber(indexSubterm)));
           TomTerm newVariableListAST = `Variable(option(),PositionName(newPathList),termType);
-          TomTerm newVariableIndexAST = `Variable(option(),PositionName(newPathIndex),getIntType());
+          TomTerm newVariableIndexAST = `Variable(option(),PositionName(newPathIndex),symbolTable().getIntType());
           Instruction automata = genArrayMatchingAutomata(new MatchingParameter(
                                                             tomSymbol,path,subAction,
                                                             newVariableListAST, newVariableIndexAST),
@@ -487,8 +487,8 @@ public class TomKernelCompiler extends TomBase {
           TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(makeNumber(indexTerm)));
           TomNumberList pathEnd = (TomNumberList) p.path.append(`End(makeNumber(indexTerm)));
             /* TODO: termType */
-          TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),getIntType());
-          TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),getIntType());
+          TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),symbolTable().getIntType());
+          TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),symbolTable().getIntType());
 
           Expression source = `GetSliceArray(p.symbol.getAstName(),
                                              p.subjectListName,variableBeginAST,

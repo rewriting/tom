@@ -74,36 +74,8 @@ public class TomBase {
     return tomEnvironment.getSymbolTable();
   }
 
-  protected boolean isIntType(String type) {
-    return type.equals("int");
-  }
-
-  protected boolean isStringType(String type) {
-    return type.equals("String");
-  }
-
-  protected boolean isBoolType(String type) {
-    return type.equals("bool");
-  }
-
-  protected boolean isDoubleType(String type) {
-    return type.equals("double");
-  }
-  
-  protected TomType getIntType() {
-    return symbolTable().getType("int");
-  }
-
-  protected TomType getDoubleType() {
-    return symbolTable().getType("double");
-  }
-
-  protected TomType getBoolType() {
-    return symbolTable().getType("bool");
-  }
-  
-  protected TomType getUniversalType() {
-    return symbolTable().getType("universal");
+  public TomType getUniversalType() {
+    return symbolTable().getUniversalType();
   }
 
   protected TomNumber makeNumber(int n) {

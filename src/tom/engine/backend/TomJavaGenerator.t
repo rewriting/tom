@@ -63,8 +63,4 @@ public class TomJavaGenerator extends TomImperativeGenerator {
     output.writeln("}");
   }
 
-  protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
-		output.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
-  }
-
 }

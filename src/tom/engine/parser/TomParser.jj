@@ -89,7 +89,7 @@ public class TomParser extends TomTask {
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
-      String msg = "Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...";
+      String msg = "Re-entering included file '"+fileName+"' in '"+currentFile+"' forms a cycle. Breaking the parsing...";
       throw new TomIncludeException(new Throwable(msg));
     }
   }
@@ -129,7 +129,7 @@ public class TomParser extends TomTask {
   	} catch (TomException e) {
   	  addError(e.getMessage(), currentFile,  getLine(), TomCheckerMessage.TOM_ERROR);
   	} catch (ParseException e) {
-  	  String msg = "Parsing exception catched in file `"+currentFile+"`\n"+e.getMessage();
+  	  String msg = "Parsing exception catched in file '"+currentFile+"'\n"+e.getMessage();
   	  addError(e.getMessage(), currentFile, getLine(), TomCheckerMessage.TOM_ERROR);
   	} catch (Exception e) {
   	  String msg = "Unhandled exception occurs during parsing: "+e.getMessage();
@@ -222,9 +222,6 @@ TOKEN :
   | < VARIABLE:            "%variable" > : TOM
   | < TYPE:                "%type" > : TOM
   | < TYPETERM:            "%typeterm" > : TOM
-  | < TYPEINT:             "%typeint" > : TOM
-  | < TYPEDOUBLE:          "%typedouble" > : TOM
-  | < TYPESTRING:          "%typestring" > : TOM
   | < TYPELIST:            "%typelist" > : TOM
   | < TYPEARRAY:           "%typearray" > : TOM
   | < INCLUDE:             "%include" > : TOM
@@ -381,6 +378,7 @@ TOKEN :
 | < TOM_WHERE:       "where" >
 | < TOM_IF:          "if" >
 | < TOM_BACKQUOTE:   "`" >
+| < TOM_QUOTE:       "'" >
 | < TOM_MAKE:        "make" >
 | < TOM_MAKE_EMPTY:  "make_empty" >
 | < TOM_MAKE_INSERT: "make_insert" >
@@ -399,6 +397,7 @@ TOKEN :
 | < TOM_GET_ELEMENT: "get_element" >
 | < TOM_GET_SIZE:    "get_size" >
 | < TOM_INTEGER: <TOM_DIGIT> (<TOM_DIGIT>)* >
+| < TOM_CHAR:  <TOM_QUOTE> <TOM_LETTER> <TOM_QUOTE>>
 | < TOM_IDENTIFIER: <TOM_LETTER> (<TOM_LETTER>|<TOM_DIGIT>|<TOM_UNDERSCORE>|<TOM_MINUS>)* >
 | < TOM_DOUBLE:
         (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
@@ -506,9 +505,6 @@ void BlockList(LinkedList blockList) throws TomException : /* in DEFAULT mode */
     | OperatorList(blockList)
     | OperatorArray(blockList)
     | TypeTerm(blockList)     
-    | TypeInt(blockList)      
-    | TypeDouble(blockList)   
-    | TypeString(blockList)   
     | TypeList(blockList)     
     | TypeArray(blockList)    
     | <LBRACE> BlockList(blockList) <RBRACE>
@@ -649,6 +645,7 @@ TomName HeadSymbol(LinkedList optionList)  throws TomException:
     // identifier | integer | double | string
   ( name = <TOM_IDENTIFIER> |
     name = <TOM_INTEGER> |
+    name = <TOM_CHAR> |
     name = <TOM_DOUBLE> |
     name = <TOM_STRING>)
     {
@@ -657,6 +654,9 @@ TomName HeadSymbol(LinkedList optionList)  throws TomException:
       switch(name.kind) {
           case TOM_INTEGER:
             ast().makeIntegerSymbol(symbolTable(),name.image,optionList);
+            break;
+          case TOM_CHAR:
+            ast().makeCharSymbol(symbolTable(),name.image,optionList);
             break;
           case TOM_DOUBLE:
             ast().makeDoubleSymbol(symbolTable(),name.image,optionList);
@@ -982,7 +982,7 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
           		found += "|"+closingNameList.getHead().getString();
           		closingNameList = closingNameList.getTail();
           	}
-            /*throw new TomException("Error on closing XML pattern: expecting `"+ expected.substring(1) +"` but got `"+found.substring(1)+ "` at line "+getLine());
+            /*throw new TomException("Error on closing XML pattern: expecting '"+ expected.substring(1) +"' but got '"+found.substring(1)+ "' at line "+getLine());
             return null;*/
             // TODO find the orgTrack of the match
             messageError(getLine(),
@@ -1304,7 +1304,7 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
         astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
         list.add(astTom);
       } catch (FileNotFoundException e1) {
-        String msg = "Included file `" + fileName + "` not found at line "+getLine()+" from file `"+currentFile+"`";
+        String msg = "Included file '" + fileName + "' not found at line "+getLine()+" from file '"+currentFile+"'";
         throw new TomIncludeException(msg);
       }  catch (java.io.IOException e2) {
         String msg = "IOException occurs reading " + fileName + " at line "+getLine();
@@ -1644,38 +1644,6 @@ void TypeTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
     }
 }
 
-void TypeInt(LinkedList list) throws TomException: /* in DEFAULT mode */
-{}
-{
-  <TYPEINT> /* switch to TOM mode */
-    {
-      addPreviousCode(list);
-      switchToDefaultMode(); /* switch to DEFAULT mode */
-      ast().makeIntegerDecl(list);
-    }
-}
-
-void TypeDouble(LinkedList list) throws TomException: /* in DEFAULT mode */
-{}
-{
-  <TYPEDOUBLE> /* switch to TOM mode */
-    {
-      addPreviousCode(list);
-      switchToDefaultMode(); /* switch to DEFAULT mode */
-      ast().makeDoubleDecl(list);
-    }
-}
-
-void TypeString(LinkedList list) throws TomException: /* in DEFAULT mode */
-{}
-{
-  <TYPESTRING> /* switch to TOM mode */
-    {
-      addPreviousCode(list);
-      switchToDefaultMode(); /* switch to DEFAULT mode */
-      ast().makeStringDecl(list);
-    }
-}
 
 void TypeList(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
