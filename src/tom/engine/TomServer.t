@@ -5,9 +5,6 @@
  *
  */
 
-// test command line :
-// java jtom.TomServer --import ~/jtom/src/dist/share/jtom ~/jtom/examples/tutorial/HelloWorld.t --verbose --optimize --intermediate
-
 package jtom;
 
 import java.util.*;
@@ -34,35 +31,100 @@ public class TomServer implements TomPluginOptions
     %include{ adt/TNode.tom }
     %include{ adt/Options.tom }
 
+    /**
+     * The current version of the TOM compiler. 
+     */
     public final static String VERSION = "3.0alpha";
     
+    /**
+     * The Vector containing a reference to the plugins. 
+     * It also has a reference to the TomServer (for option management purposes).
+     */
     private Vector instances;
+    
+    /**
+     * A Vector of TomOptionList objects indicating what services can be provided by each plugin. 
+     * The mapping between plugins and services is done so : a plugin in the instances Vector shares the 
+     * same index as the services it provides in the services Vector. 
+     */
     private Vector services;
-
+	
+    /**
+     * 
+     */
     private ASTFactory astFactory;
+    
+    /**
+     * 
+     */
     private TNodeFactory tNodeFactory;
+	
+    /**
+     * 
+     */
     private TomSignatureFactory tomSignatureFactory;
+	
+    /**
+     * 
+     */
     private OptionsFactory optionsFactory;
-
+	
+    /**
+     * 
+     */
     private TomEnvironment environment;
 
-    public ASTFactory getASTFactory() { return astFactory; }  
+    /**
+     * An accessor method.
+     * 
+     * @return an ASTFactory
+     */
+    public ASTFactory getASTFactory() { return astFactory; }
+	
+    /**
+     * An accessor method.
+     * 
+     * @return a TNodeFactory
+     */  
     public TNodeFactory getTNodeFactory() { return tNodeFactory; }
+	
+    /**
+     * An accessor method.
+     * 
+     * @return a TomSignatureFactory
+     */
     public TomSignatureFactory getTomSignatureFactory() { return tomSignatureFactory; }
+	
+    /**
+     * An accessor method.
+     * 
+     * @return an OptionsFactory
+     */
     public OptionsFactory getOptionsFactory() { return optionsFactory; }
-
+	
+    /**
+     * An accessor method.
+     * 
+     * @return a TomEnvironment
+     */
     public TomEnvironment getEnvironment() { return environment; }
 
     /**
-     * Singleton pattern
+     * Part of the Singleton pattern. The unique instance of the TomServer.
      */
     private static TomServer instance = null;
+    
     /**
-     * Singleton pattern
+     * Part of the Singleton pattern. A protected constructor method, that exists to defeat instantiation.
      */
-    protected TomServer(){} // exists to defeat instantiation
+    protected TomServer(){}
+    
     /**
-     * Singleton pattern
+     * Part of the Singleton pattern. Returns the instance of the TomServer if it has been initialized before, 
+     * otherwise it throws a TomRuntimeException.
+     * 
+     * @return the instance of the TomServer
+     * @throws TomRuntimeException if the TomServer hasn't been initialized before the call  
      */
     public static TomServer getInstance()
     {
@@ -73,6 +135,12 @@ public class TomServer implements TomPluginOptions
 	return instance;
     }
 
+    /**
+     * Part of the Singleton pattern. Initializes the TomServer in case it hasn't been done before, 
+     * otherwise it reinitializes it.
+     * 
+     * @return the instance of the TomServer
+     */
     public static TomServer create()
     {
 	if(instance == null)
@@ -99,6 +167,9 @@ public class TomServer implements TomPluginOptions
 	    }
     }
 
+    /**
+     * Reinitializes the TomServer instance.
+     */
     public static void clear() {
 	instance.instances = new Vector();
 	instance.services = new Vector();
@@ -106,12 +177,24 @@ public class TomServer implements TomPluginOptions
 	instance.environment = new TomEnvironment(symbolTable);
     }
 
+    /**
+     * 
+     * @param args
+     * @return
+     */
     public static int exec(String args[])
     {
 	TomServer server = TomServer.create();
 	return server.run(args);
     }
 
+    /**
+     * This method analyzes the command line and determines which configuration file should be used : 
+     * the default one or a custom one.
+     * 
+     * @param argumentList the command line
+     * @return a String containing the path to the configuration file to be used
+     */
     private String whichConfigFile(String[] argumentList)
     {
 	String xmlConfigurationFile = "./jtom/Tom.xml"; // default configuration file
@@ -157,6 +240,13 @@ public class TomServer implements TomPluginOptions
 	return xmlConfigurationFile;
     }
 
+    /**
+     * This method parses the configuration and extracts the global options as well as 
+     * the class paths of the plugins that are going to be used.
+     * 
+     * @param xmlConfigurationFile the name of the XML configuration file to be parsed
+     * @return a Vector containing the class paths of the plugins
+     */
     private Vector parseConfigFile(String xmlConfigurationFile)
     {
 	// parses configuration file...
@@ -182,6 +272,21 @@ public class TomServer implements TomPluginOptions
 	return classPaths;
     }
 
+    /**
+     * This method does the following :
+     * <ul>
+     * <li>a first call to declareOptions() on the TomServer and each plugin, in order to determine 
+     * which options exist and their default values ;</li>
+     * <li>a call to processArguments() in order to read the command line and set the options to 
+     * their actual values ;</li>
+     * <li>a second call to declareOptions() in order to collect the options' real value ;</li>
+     * <li>it then tells the environment to set some values right ;</li>
+     * <li>eventually, prerequisites are checked.</li>
+     * </ul>
+     * 
+     * @param argumentList the command line
+     * @return an array of String containing the names of the files to compile
+     */
     private String[] optionManagement(String[] argumentList)
     {
 	// collects the options/services provided by each plugin
@@ -224,14 +329,25 @@ public class TomServer implements TomPluginOptions
 	return inputFiles;
     }
 
+    /**
+     * The main method, which runs the TomServer.
+     * 
+     * @param argumentList the command line
+     * @return an error code :
+     * <ul>
+     * <li>0 if no error was encountered</li>
+     * <li>1 if something went wrong</li>
+     * </ul>
+     */
     public int run(String[] argumentList)
     {
 	String xmlConfigurationFile = whichConfigFile(argumentList);
 
  	if( xmlConfigurationFile == null ) {
-    // method whichConfigFile encountered an error
-    return 1;
-  }
+	    // method whichConfigFile encountered an error
+	    return 1;
+	}
+
 	Vector classPaths = parseConfigFile(xmlConfigurationFile);
   
 	if( classPaths == null ) // method parseConfigFile encountered an error
@@ -272,50 +388,61 @@ public class TomServer implements TomPluginOptions
     }
   
 	if( environment.hasError() )
-    {
-      environment.printErrorMessage();
-      return 1;
-    }
-  
+	    {
+		environment.printErrorMessage();
+		return 1;
+	    }
+
 	String[] inputFiles = optionManagement(argumentList);
   
 	if( environment.hasError() )
-    {
-      environment.printAlertMessage("TomServer");
-      displayHelp();
-      return 1;
-    }
-  
-	for(int i = 0; i < inputFiles.length; i++)
-    {
-      environment.updateEnvironment(inputFiles[i]);
-			System.out.println(inputFiles[i]);
-      ATerm term = `FileName(inputFiles[i]);
-      
-      // runs the modules
-      it = instances.iterator();
-      it.next(); // skips the server
-      while(it.hasNext())
-		    {
-          TomPlugin plugin = (TomPlugin)it.next();
-          plugin.setInput(term);
-          plugin.run();
-          term = plugin.getOutput();
-          
-          if( environment.hasError() )
-            {
-              environment.printAlertMessage(plugin.getClass().toString());
-              return 1;
-            }
-        }
-    }
-  if( environment.hasError() )
-    return 1;
-  else
-    return 0;
-    }
-    
+	    {
+		environment.printAlertMessage("TomServer");
+		displayHelp();
+		return 1;
+	    }
 
+	for(int i = 0; i < inputFiles.length; i++)
+	    {
+		environment.updateEnvironment(inputFiles[i]);
+		System.out.println(inputFiles[i]);
+		ATerm term = `FileName(inputFiles[i]);
+      
+		// runs the modules
+		it = instances.iterator();
+		it.next(); // skips the server
+		while(it.hasNext())
+		    {
+			TomPlugin plugin = (TomPlugin)it.next();
+			plugin.setInput(term);
+			plugin.run();
+			term = plugin.getOutput();
+          
+			if( environment.hasError() )
+			    {
+				environment.printAlertMessage(plugin.getClass().toString());
+				environment.messageError("Error while processing file " + inputFiles[i],
+							 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+				break;
+			    }
+		    }
+	    }
+	if( environment.hasError() )
+	    {
+		environment.printAlertMessage("TomServer");
+		return 1;
+	    }
+	else
+	    return 0;
+    }
+
+    
+    /**
+     * Extracts the plugins' class paths from the XML configuration file.
+     * 
+     * @param node the node containing the XML document
+     * @param v the Vector into which class paths will be put
+     */
     private void extractClassPaths(TNode node, Vector v)
     {
 	%match(TNode node)
@@ -343,9 +470,10 @@ public class TomServer implements TomPluginOptions
     /**
      * A mapping method which return both the type of the option whose name is given
      * and the instance of the plugin who declared it.
-     * This is done at the same time, since when we find the option (if it exists),
-     * we learn both its type and its location. So it's only logical to return them at the
-     * same time, but maybe we're not using the most elegant of ways...
+     * 
+     * @param optionName the name of the option we're looking information about
+     * @return a Vector containing a String indicating the type of the option ("boolean", 
+     * "integer" or "string"), along with a reference to the plugin declaring the option. 
      */
     public Vector aboutThisOption(String optionName)
     {
@@ -408,7 +536,9 @@ public class TomServer implements TomPluginOptions
     /**
      * Returns the value of an option. Returns an Object which is a Boolean, a String or an Integer
      * depending on what the option type is.
-     * @return An Object containing the option's value.
+     * 
+     * @param optionName the name of the option whose value is seeked
+     * @return an Object containing the option's value
      */
     public Object getOptionValue(String optionName)
     {
@@ -460,7 +590,9 @@ public class TomServer implements TomPluginOptions
 
     /**
      * Returns the value of a boolean option.
-     * @return A boolean that is the option's value.
+     * 
+     * @param optionName the name of the option whose value is seeked
+     * @return a boolean that is the option's value
      */
     public boolean getOptionBooleanValue(String optionName)
     {
@@ -495,9 +627,12 @@ public class TomServer implements TomPluginOptions
 				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return false;
     }
+    
     /**
      * Returns the value of an integer option.
-     * @return An integer that is the option's value.
+     * 
+     * @param optionName the name of the option whose value is seeked
+     * @return an int that is the option's value
      */
     public int getOptionIntegerValue(String optionName)
     {
@@ -528,9 +663,12 @@ public class TomServer implements TomPluginOptions
 				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return 0;
     }
+    
     /**
      * Returns the value of a string option.
-     * @return A string that is the option's value, or null if the option wasn't found or isn't of string value.
+     * 
+     * @param optionName the name of the option whose value is seeked
+     * @return a String that is the option's value
      */
     public String getOptionStringValue(String optionName)
     {
@@ -563,7 +701,7 @@ public class TomServer implements TomPluginOptions
     }
 
     /**
-     * Self-explanatory.
+     * Self-explanatory. Displays the current version of the TOM compiler.
      */
     public void displayVersion()
     {
@@ -573,7 +711,7 @@ public class TomServer implements TomPluginOptions
     }
 
     /**
-     * Self-explanatory.
+     * Self-explanatory. Displays an help message indicating how to use the compiler.
      */
     public void displayHelp()
     {
@@ -632,6 +770,9 @@ public class TomServer implements TomPluginOptions
 
     /**
      * Checks if all the options a plugin needs are here.
+     * 
+     * @param list a list of options that must be found with the right value
+     * @return true if every option was found with the right value, false otherwise
      */
     public boolean arePrerequisitesMet(TomOptionList list)
     {
@@ -661,20 +802,34 @@ public class TomServer implements TomPluginOptions
 	return true;
     }
 
+    /**
+     * Entry point of the class
+     * 
+     * @param args the command line
+     */
     public static void main(String args[])
     {
 	exec(args);
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * The global options.
+     */    
     private TomOptionList globalOptions;
 
+    /**
+     * 
+     * @return the global options
+     */
     public TomOptionList declareOptions()
     {
 	return globalOptions;
     }
 
+    /**
+     * 
+     * @return the prerequisites
+     */
     public TomOptionList requiredOptions()
     {
 
@@ -710,6 +865,12 @@ public class TomServer implements TomPluginOptions
 	return prerequisites;
     }
 
+    /**
+     * Sets an option to the desired value.
+     * 
+     * @param optionName the option's name
+     * @param optionValue the option's desired value
+     */
     public void setOption(String optionName, String optionValue)
     {
 	%match(TomOptionList globalOptions)
@@ -739,7 +900,9 @@ public class TomServer implements TomPluginOptions
 
     /**
      * This method takes the arguments given by the user and deduces the options to set, then sets them.
-     * @return An array containing the name of the input files.
+     * 
+     * @param argumentList
+     * @return an array containing the name of the input files
      */
     public String[] processArguments(String[] argumentList)
     {
@@ -855,6 +1018,11 @@ public class TomServer implements TomPluginOptions
 	return (String[])inputFiles.toArray(new String[]{});	
     }
 
+    /**
+     * Extracts the global options from the XML configuration file.
+     * 
+     * @param node the node containing the XML file
+     */
     public void extractOptionList(TNode node)
     {
 	%match(TNode node)
@@ -883,6 +1051,11 @@ public class TomServer implements TomPluginOptions
 	    }
     }	
 
+    /**
+     * Adds a boolean option to the global options.
+     * 
+     * @param optionBooleanNode the node containing the option
+     */
     private void extractOptionBoolean(TNode optionBooleanNode)
     {
 	%match(TNode optionBooleanNode)
@@ -904,6 +1077,11 @@ public class TomServer implements TomPluginOptions
 	    }
     }
 
+    /**
+     * Adds an integer option to the global options.
+     * 
+     * @param optionIntegerNode the node containing the option
+     */
     private void extractOptionInteger(TNode optionIntegerNode)
     {
 	%match(TNode optionIntegerNode)
@@ -920,6 +1098,11 @@ public class TomServer implements TomPluginOptions
 	    }
     }
 
+    /**
+     * Adds a string option to the global options.
+     * 
+     * @param optionStringNode the node containing the option
+     */
     private void extractOptionString(TNode optionStringNode)
     {
 	%match(TNode optionStringNode)
