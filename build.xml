@@ -479,7 +479,7 @@
   </target>
 
   <target name="init.junit">
-    <taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+    <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
       <classpath refid="tomsrc.classpath"/>
     </taskdef>
   </target>
@@ -568,7 +568,7 @@
 
   <target name="junit.src" depends="junit"/>
   <target name="junit" description="Runs junit acceptance tests" depends="clean.test, test, init.junit">
-    <tomjunit printsummary="on"
+    <junit printsummary="on"
               fork="false"
               haltonfailure="false"
               failureproperty="tests.failed"
@@ -583,7 +583,7 @@
           <!--<exclude name="**/error/**"/>-->
         </fileset>
       </batchtest>
-    </tomjunit>
+    </junit>
 
     <fail if="tests.failed">
       ****************************************************
