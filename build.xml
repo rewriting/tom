@@ -408,14 +408,14 @@
 	</target>
 
 	<target name="test.stable" description="Compile and run acceptance tests with stable" depends="initTaskDef">
-		<tom srcdir="${test}" destdir="${test}" options="-I ${stable.mapping} -I ${stable.adt}">
+		<tom srcdir="${test}" destdir="${test}" options="-I ${stable.mapping}">
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
 			<exclude name="Record.t"/>
 			<exclude name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
 		</tom>
-		<tom srcdir="${test}" destdir="${test}" options="-I ${stable.mapping} --lazyType -I ${stable.adt}">
+		<tom srcdir="${test}" destdir="${test}" options="-I ${stable.mapping} --lazyType">
 			<include name="Record.t"/>
 			<include name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
@@ -515,7 +515,8 @@
 			<fileset dir="${src.build}" includes="**/*.class"/>
 		</concat>
 		<condition property="bootstrap.ok">
-			<filesmatch file1="${src.src}/bootcheck/version1" file2="${src.src}/bootcheck/version2"/>
+			<filesmatch file1="${src.src}/bootcheck/version1" 
+									file2="${src.src}/bootcheck/version2"/>
 		</condition>
 		<delete dir="${src.src}/bootcheck"/>
 	</target>
