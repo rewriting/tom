@@ -28,8 +28,6 @@ options{
     defaultErrorHandler = false;
 }
 
-
-
     {
     //--------------------------
     %include{TomSignature.tom}
@@ -91,10 +89,6 @@ options{
         return environment().getSymbolTable();
     }
     
-  /*  private TomTaskInput getInput() {
-        return TomTaskInput.getInstance();
-    }*/
-
     public TomStructureTable getStructTable() {
         return `StructTable(debuggedStructureList);
     }
