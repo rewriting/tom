@@ -47,8 +47,9 @@ public class TomTaskInput {
     expandedTableSuffix = ".tfix.expanded.table",
     debugTableSuffix = ".tfix.debug.table";
   
-  public TomTaskInput() {
-		importList = new  ArrayList(); 
+  public TomTaskInput(TomErrorList list) {
+		this.importList = new  ArrayList();
+		this.errors = list;
   }
   
   private boolean needDebugExpansion = false, 

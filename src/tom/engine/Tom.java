@@ -63,7 +63,7 @@ public class Tom {
   private TomGenerator generator;
   
   private static String version =
-  "\njtom 1.4alpha\n" +
+  "\njtom 1.4beta\n" +
   "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
   "                         Nancy, France.\n";
   
@@ -102,7 +102,8 @@ public class Tom {
   
   public Tom(String args[]) {
 		tomSignatureFactory = new TomSignatureFactory(new PureFactory());
-		taskInput = createTaskInputFromArgs(args);
+		taskInput = new TomTaskInput(tomSignatureFactory.makeTomErrorList());
+		modifyTaskInputFromArgs(args);
 		if (taskInput.isHelp() || taskInput.isVersion() ) {
 			// no need to do further work
 			return;
@@ -129,118 +130,111 @@ public class Tom {
 															symbolTable);
 	}
   
-  private TomTaskInput createTaskInputFromArgs(String args[]) {
+  private void modifyTaskInputFromArgs(String args[]) {
     String inputSuffix = ".t";
-    List importList = new ArrayList(); 
-      // Create a basic TomTaskInput
-    TomTaskInput taskInputResult = new TomTaskInput();
-		// Shall initialize TomErrorList before anything
-		taskInputResult.setErrors(tomSignatureFactory.makeTomErrorList());
+    List importList = new ArrayList();
 
       // Processing the input arguments into taskInput
     for(int i=0; i < args.length; i++) { 
       if(args[i].charAt(0) != '-') {
           // Suppose this is the input filename (*[.t]) that should never start with a `-` character"
-					taskInputResult.inputFileName = args[i];
+					taskInput.inputFileName = args[i];
       } else {
           // This is on option
         if(args[i].equals("--version") || args[i].equals("-V")) {
           version();
-				  taskInputResult.setVersion(true);
+				  taskInput.setVersion(true);
 					addError(version,"",0,1);
-          return taskInputResult;
+					return;
         } else if(args[i].equals("--help") || args[i].equals("-h")) {
           usage();
-		  		taskInputResult.setHelp(true);
+		  		taskInput.setHelp(true);
 					addError(usage,"",0,1);
-          return taskInputResult;
+					return;
         } else if(args[i].equals("--import") || args[i].equals("-I")) {
           importList.add(new File(args[++i]));
         } else if(args[i].equals("--cCode") || args[i].equals("-c")) {
-					taskInputResult.setJCode(false);
-					taskInputResult.setECode(false);
-          taskInputResult.setCCode(true);
-          taskInputResult.setOutputSuffix(".tom.c");
+					taskInput.setJCode(false);
+					taskInput.setECode(false);
+          taskInput.setCCode(true);
+          taskInput.setOutputSuffix(".tom.c");
         } else if(args[i].equals("--eCode") || args[i].equals("-e")) {
-          taskInputResult.setJCode(false);
-          taskInputResult.setECode(true);
-          taskInputResult.setCCode(false);
-          taskInputResult.setOutputSuffix(".e");
-          taskInputResult.setSupportedGoto(false);
-          taskInputResult.setSupportedBlock(false);
+          taskInput.setJCode(false);
+          taskInput.setECode(true);
+          taskInput.setCCode(false);
+          taskInput.setOutputSuffix(".e");
+          taskInput.setSupportedGoto(false);
+          taskInput.setSupportedBlock(false);
         } else if(args[i].equals("--noOutput") || args[i].equals("-o")) {
-          taskInputResult.setPrintOutput(false);
+          taskInput.setPrintOutput(false);
         } else if(args[i].equals("--doCompile") || args[i].equals("-C")) {
-          taskInputResult.setDoOnlyCompile(true);            
-          taskInputResult.setDoParse(false);            
-          taskInputResult.setDoExpand(false);
+          taskInput.setDoOnlyCompile(true);            
+          taskInput.setDoParse(false);            
+          taskInput.setDoExpand(false);
         } else if(args[i].equals("--optimize") || args[i].equals("-O")) {
-          taskInputResult.setDoOptimization(true);
+          taskInput.setDoOptimization(true);
         } else if(args[i].equals("--noCheck") || args[i].equals("-f")) {
-          taskInputResult.setDoCheck(false);
+          taskInput.setDoCheck(false);
         } else if(args[i].equals("--lazyType") || args[i].equals("-l")) {
-          taskInputResult.setStrictType(false);
+          taskInput.setStrictType(false);
         } else if(args[i].equals("--intermediate") || args[i].equals("-i")) {
-          taskInputResult.setIntermediate(true);
+          taskInput.setIntermediate(true);
         } else if(args[i].equals("--verbose") || args[i].equals("-v")) {
-          taskInputResult.setVerbose(true);
+          taskInput.setVerbose(true);
         } else if(args[i].equals("--atermStat") || args[i].equals("-s")) {
-          taskInputResult.setAtermStat(true);
+          taskInput.setAtermStat(true);
         } else if(args[i].equals("--Wall")) {
-          taskInputResult.setWarningAll(true);
+          taskInput.setWarningAll(true);
         } else if(args[i].equals("--noWarning")) {
-          taskInputResult.setNoWarning(true);
+          taskInput.setNoWarning(true);
         } else if(args[i].equals("--noDeclaration") || args[i].equals("-D")) {
-          taskInputResult.setGenDecl(false);
+          taskInput.setGenDecl(false);
         } else if(args[i].equals("--pretty") || args[i].equals("-p")) {
-          taskInputResult.setPretty(true);
+          taskInput.setPretty(true);
         } else if(args[i].equals("--static")) {
-          taskInputResult.setStaticFunction(true);
+          taskInput.setStaticFunction(true);
         } else if(args[i].equals("--debug")) {
-          taskInputResult.setDebugMode(true);
+          taskInput.setDebugMode(true);
         } else if(args[i].equals("--memory")) {
-          taskInputResult.setDebugMemory(true);
+          taskInput.setDebugMemory(true);
         } else if(args[i].equals("--eclipse")) {
-          taskInputResult.setEclipseMode(true);
+          taskInput.setEclipseMode(true);
         } else {
           String s = "'" + args[i] + "' is not a valid option";
           System.out.println(s);
           addError(s,"",0,0);
-          taskInputResult.setHelp(true);
+          taskInput.setHelp(true);
           usage();
-          return taskInputResult;
+          return;
         }
       }
     } // end processing arguments
     
       // For the moment debug is only available for Java as target language
-    taskInputResult.setDebugMode(taskInputResult.isJCode() && taskInputResult.isDebugMode());
+    taskInput.setDebugMode(taskInput.isJCode() && taskInput.isDebugMode());
     
       // setting Base/Input/OutputFileName
-    if(taskInputResult.inputFileName.length() == 0) {
+    if(taskInput.inputFileName.length() == 0) {
       System.out.println("No input file name...\n");
-	  	taskInputResult.setHelp(true);
+	  	taskInput.setHelp(true);
       usage();
-      if(taskInputResult.isEclipseMode()) {
+      if(taskInput.isEclipseMode()) {
       	addError("No input file name...","",0,0);
       }
-      return taskInputResult;
     }
-    if(taskInputResult.inputFileName.endsWith(inputSuffix)) {
-      taskInputResult.baseInputFileName = taskInputResult.inputFileName.substring(0,taskInputResult.inputFileName.length()-(inputSuffix.length()));
+    if(taskInput.inputFileName.endsWith(inputSuffix)) {
+      taskInput.baseInputFileName = taskInput.inputFileName.substring(0,taskInput.inputFileName.length()-(inputSuffix.length()));
     } else {
-      taskInputResult.baseInputFileName = taskInputResult.inputFileName;
-	  	taskInputResult.inputFileName = taskInputResult.inputFileName+inputSuffix;
+      taskInput.baseInputFileName = taskInput.inputFileName;
+	  	taskInput.inputFileName = taskInput.inputFileName+inputSuffix;
     }
-    if(taskInputResult.isDoOnlyCompile()) {
-      taskInputResult.inputFileName = taskInputResult.baseInputFileName + taskInputResult.expandedSuffix;
+    if(taskInput.isDoOnlyCompile()) {
+      taskInput.inputFileName = taskInput.baseInputFileName + taskInput.expandedSuffix;
     }
-    taskInputResult.setOutputFileName(taskInputResult.baseInputFileName+taskInputResult.outputSuffix);
+    taskInput.setOutputFileName(taskInput.baseInputFileName+taskInput.outputSuffix);
     
     	// Setting importList
-    taskInputResult.setImportList(importList);
-
-    return taskInputResult;
+    taskInput.setImportList(importList);
   }
 
   private void createTaskChainFromInput() {
