@@ -150,8 +150,9 @@ public class TomExpander extends TomBase {
                 return `DotTerm(tt1,tt2);
               }
 
-              VariableStar[astName=name] -> {
-                return `BuildVariableStar(name);
+              var@VariableStar[astName=name] -> {
+                  //return `BuildVariableStar(name); 
+                  return var;
               }
               
               _ -> {
@@ -176,12 +177,21 @@ public class TomExpander extends TomBase {
       public ATerm apply(ATerm subject, Object arg1) {
         TomTerm contextSubject = (TomTerm)arg1;
 
+          //System.out.println("expandVariable:\n\t" + subject );
+        
         if(!(subject instanceof TomTerm)) {
             //debugPrintln("expandVariable not a tomTerm: " );
             //System.out.println("expandVariable not a tomTerm:\n\t" + subject );
           if(subject instanceof TomType) {
             %match(TomType subject) {
-              TomTypeAlone(tomType) -> { return getType(tomType); }
+              TomTypeAlone(tomType) -> {
+                TomType type = getType(tomType);
+                if(type != null) {
+                  return type;
+                } else {
+                  return subject; // useful for TomTypeAlone("unknown type")
+                    }
+              }
             }
           }
           return genericTraversal(subject,this,contextSubject);
@@ -315,8 +325,15 @@ public class TomExpander extends TomBase {
                 // both lhs and rhs are variables
               type = getTypeFromVariableList(`Name(lhsName),varList);
             }
+
+              //System.out.println("EqualityCondition type = " + type);
+
             TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
             TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
+
+              //System.out.println("lhs    = " + lhs);
+              //System.out.println("newLhs = " + newLhs);
+
             return `EqualityCondition(newLhs,newRhs);
           }
 
@@ -324,7 +341,7 @@ public class TomExpander extends TomBase {
                                Term(rhs),
                                condList,
                                orgTrack) -> { 
-            //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
+              //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
             TomSymbol tomSymbol = getSymbol(tomName);
             TomType symbolType = getSymbolCodomain(tomSymbol);
             TomTerm newLhs = `Term(expandVariable(context,lhs));
@@ -389,7 +406,7 @@ public class TomExpander extends TomBase {
 
             matchBlock: {
               %match(TomTerm subterm) {
-                VariableStar(voption,name,type) -> {
+                VariableStar(voption,name,_) -> {
                   list.add(`VariableStar(voption,name,codomainType));
                     //System.out.println("*** break: " + subterm);
                   break matchBlock;
@@ -451,19 +468,20 @@ public class TomExpander extends TomBase {
   }
 
   private TomType getTypeFromVariableList(TomName name, TomList list) {
-    %match(TomList list) {
-      Empty() -> {
+
+      //System.out.println("name = " + name);
+      //System.out.println("list = " + list);
+    
+    %match(TomName name,TomList list) {
+      _,Empty() -> {
         System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
         System.exit(1);
       }
 
-      Cons(Variable[astName=varName,astType=Type[tomType=tomType]],tail) -> {
-        if(varName == name) {
-          return tomType;
-        } else {
-          return getTypeFromVariableList(name,tail);
-        }
-      }
+      varName, Cons(Variable[astName=varName,astType=type@Type[]],tail) -> { return type; }
+      varName, Cons(VariableStar[astName=varName,astType=type@Type[]],tail) -> { return type; }
+      _, Cons(t,tail) -> { return getTypeFromVariableList(name,tail); }
+      
     }
     return null;
   }

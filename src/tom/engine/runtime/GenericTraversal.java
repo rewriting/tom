@@ -78,7 +78,7 @@ public class GenericTraversal {
         res = list.insert(term);
       }
     } catch(Exception e) {
-      System.out.println("Please, extend genericMapterm");
+      System.out.println("Please, extend genericMap");
       System.exit(0);
     }
     return res;
@@ -97,6 +97,8 @@ public class GenericTraversal {
         }
       }
     } catch(Exception e) {
+      e.printStackTrace();
+
       System.out.println("Please, extend genericMapterm");
       System.exit(0);
     }

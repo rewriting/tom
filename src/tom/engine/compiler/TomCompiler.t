@@ -305,10 +305,11 @@ public class TomCompiler extends TomBase {
 
       }
 
-      Cons(EqualityCondition[lhs=pattern,rhs=subject], tail) -> {
-        TomTerm newPattern = pass2_1(`MakeTerm(pattern));
-        TomTerm newSubject = pass2_1(`MakeTerm(subject));
-        Expression equality = `EqualTerm(newPattern,newSubject);
+      Cons(EqualityCondition[lhs=lhs,rhs=rhs], tail) -> {
+        TomTerm newLhs = pass2_1(`MakeTerm(lhs));
+        TomTerm newRhs = pass2_1(`MakeTerm(rhs));
+
+        Expression equality = `EqualTerm(newLhs,newRhs);
         TomList newActionList = buildCondition(tail,actionList);
         TomTerm generatedTest = `InstructionToTomTerm(IfThenElse(equality,newActionList,empty()));
         TomList conditionList = cons(generatedTest,empty());

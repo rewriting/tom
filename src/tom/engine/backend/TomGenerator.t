@@ -85,10 +85,10 @@ public class TomGenerator extends TomBase {
         return;
       }
       
-      BuildVariableStar(Name(name)) -> {
-        out.write(name);
-        return;
-      }
+        //BuildVariableStar(Name(name)) -> {
+        //out.write(name);
+        //return;
+        //}
 
       BuildBuiltin(Name(name)) -> {
         out.write(name);
@@ -119,7 +119,7 @@ public class TomGenerator extends TomBase {
         int size = 0;
         while(!argList.isEmpty()) {
           TomTerm elt = argList.getHead();
-          if(elt.isBuildVariableStar()) {
+          if(/* elt.isBuildVariableStar() || */ elt.isVariableStar()) {
             out.write("tom_insert_list_" + name + "(");
             generate(out,deep,elt);
             out.write(",");
@@ -145,7 +145,7 @@ public class TomGenerator extends TomBase {
         TomList reverse = reverse(argList);
         while(!reverse.isEmpty()) {
           TomTerm elt = reverse.getHead();
-          if(elt.isBuildVariableStar()) {
+          if(/* elt.isBuildVariableStar() || */ elt.isVariableStar()) {
             out.write("tom_append_array_" + name + "(");
             generate(out,deep,elt);
             out.write(",");
@@ -196,6 +196,7 @@ public class TomGenerator extends TomBase {
         }
         return;
       }
+
       Variable(option1,PositionName(l1),type1) -> {
           //System.out.println("Variable(option1,PositionName(l1),type1)");
           //System.out.println("subject = " + subject);
