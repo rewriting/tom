@@ -44,6 +44,11 @@ public class List {
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
   
+  %op L double3(L) {
+    fsym { factory.makeAFun("double3", 1, false) }
+    make(l) { double3(l) }
+  }
+
   public List(ATermFactory factory) {
     this.factory = factory;
   }
@@ -114,6 +119,11 @@ public class List {
     }
   }
 
+  %rule {
+    double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
+    double3(conc(X*)) -> conc(X*)
+  }
+
   public void testList1() {
     ATerm ta = factory.makeAppl(factory.makeAFun("a", 0, false));
     ATerm tb = factory.makeAppl(factory.makeAFun("b", 0, false));
@@ -138,6 +148,7 @@ public class List {
     
     assertTrue(double1(sort1(l)) == res);
     assertTrue(double2(sort2(l)) == res);
+    assertTrue(double3(sort2(l)) == res);
   }
   
   static void  assertTrue(boolean condition) {
