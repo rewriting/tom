@@ -221,7 +221,7 @@ public class TomKernelCompiler extends TomBase {
           TomList patternsDeclarationList = empty();
           Collection variableCollection = new HashSet();
           collectVariable(variableCollection,`Tom(patternList));
-          
+
           Iterator it = variableCollection.iterator();
           while(it.hasNext()) {
             TomTerm tmpsubject = (TomTerm)it.next();

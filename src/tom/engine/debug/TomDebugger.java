@@ -46,7 +46,7 @@ public class TomDebugger {
   public static TomDebugger debug = null;
 
   Map mapKeyDebugStructure;
-  Set debugStructureKeySet;
+  Set debuggedStructureKeySet;
   
   boolean subst = true;
   String[] watchPatterns;
@@ -72,19 +72,16 @@ public class TomDebugger {
       System.out.println("Exception during reading "+structureFileName+".tfix.debug.table");
       System.exit(1);
     }
-
     this.debug = this;
     this.baseFileName = structureFileName;
     this.in = new BufferedReader(new InputStreamReader(System.in));
-    
-    mapKeyDebugStructure = new HashMap();
+    this.debuggedStructureKeySet = new HashSet();
+    this.watchPatterns = new String[100];
+    this.environment = new Stack();
+    this.mapKeyDebugStructure = new HashMap();
+
     analyseStructure(table);
-
-    debugStructureKeySet = new HashSet();
-
-    watchPatterns = new String[100];
-    environment = new Stack();
-
+    showAvailableStructure();
     start();
   }
   
@@ -94,7 +91,7 @@ public class TomDebugger {
   private void start() {
     try {
       String str = "";
-      System.out.print(">:");
+      System.out.print("? to see the available command list>:");
       str = in.readLine();
       process(str);
     } catch (IOException e) {
@@ -103,30 +100,36 @@ public class TomDebugger {
 
     private void process(String str) {
     if(str.equals("?")) {
-      System.out.println("\nFollowing commands are allowed:\n\t?:show this help\n\tinfo: Show information on structure that can be debugged\n\trun: exit debugger configuration and run the program\n\ts: save configuration\n\tl: load configuration from file\n\tm: define breakpoint for Match structure\n\tt: define Term pattern to be watch\n\tsubstOff: do not show substitution");
+      System.out.println("\nFollowing commands are allowed:");
+      System.out.println("\t ?:show this help");
+      System.out.println("\t info: Show information on structure that can be debugged");
+      System.out.println("\t run: exit debugger configuration and run the program");
+      System.out.println("\t save: save configuration");
+      System.out.println("\t load: load configuration from file");
+      System.out.println("\t struct: define breakpoint for Match-Rule structures");
+      System.out.println("\t clear: clear breakpoint list");
+      System.out.println("\t term: define Term pattern to be watch");
+      System.out.println("\t substOff: do not show substitution");
+      System.out.println("\t more: Show patterns of a specific available structure");
     } else if (str.equals("run")) {
-      System.out.println(debugStructureKeySet);
+        //System.out.println(debuggedStructureKeySet);
       return;
     } else if (str.equals("info")) {
-      TomDebugStructure struct;
-      System.out.println("Valid structures to be debugged:");
-      Collection structList = mapKeyDebugStructure.values();
-      Iterator it = structList.iterator();
-      while(it.hasNext()) {
-        struct = (TomDebugStructure)it.next();
-        System.out.println("\t- "+struct.type+" declared in "+struct.fileName+" at line "+struct.line+" with "+struct.nbPatterns+" patterns");
-      }
-      System.out.println("\nHere are the corresponding maximum allowed pattern numbers (0 is not a valid entry)");
-    } else if (str.equals("s")) {
+      showAvailableStructure();
+    } else if (str.equals("save")) {
       System.out.println("Function not yet defined");
-    } else if (str.equals("l")) {
+    } else if (str.equals("load")) {
       System.out.println("Function not yet defined");
-    } else if (str.equals("m")) {
-      defineMatchWatcher();
-    } else if (str.equals("t")) {
+    } else if (str.equals("struct")) {
+      defineStructWatcher();
+    } else if (str.equals("clear")) {
+      debuggedStructureKeySet.clear();
+    } else if (str.equals("term")) {
       defineTermWatcher();
     } else if (str.equals("substOff")) {
       subst = false;
+    } else if (str.equals("more")) {
+      showMoreDetails();
     } else {
       System.out.println("Unknow command: please enter `?` to know the available commands");
     }
@@ -134,12 +137,60 @@ public class TomDebugger {
     return ;
   }
 
-    private void defineMatchWatcher() {
+  private void showAvailableStructure() {
+    TomDebugStructure struct;
+    System.out.println("Valid structures to be debugged and their corresponding maximum allowed pattern numbers:");
+    Collection structList = mapKeyDebugStructure.values();
+    Iterator it = structList.iterator();
+    while(it.hasNext()) {
+      struct = (TomDebugStructure)it.next();
+      System.out.println("\t- "+struct.type+" declared in "+struct.fileName+" at line "+struct.line+" with "+struct.nbPatterns+" patterns");
+    }
+  }
+  
+  private void showMoreDetails() {
+     try {
+      String str = "";
+      int input = 0;
+      while (str != null) {
+        System.out.print(">Enter structure line number (0 to exit):");
+        str = in.readLine();
+        try {
+          input = Integer.parseInt(str, 10);
+        }catch (NumberFormatException e) {
+          System.out.println("Not a valid number");
+          continue;
+        }
+        if (input == 0) {
+          System.out.println();
+          return;
+        } else {
+          String key = baseFileName+".t"+input;
+          if (mapKeyDebugStructure.keySet().contains(key)) {
+            showPatterns(key);
+          } else {
+            System.out.println("Not a valid line number, please use first `info` command to ensure valid entry");
+          }
+        }
+      }
+    } catch (IOException e) {
+    }
+  }
+
+  private void showPatterns(String key) {
+    TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
+    for(int i=0;i<struct.nbPatterns.intValue();i++){
+      System.out.println(struct.patternText[i]);
+      System.out.println("--------------------------------------------------------------------------------");
+    }
+  }
+  
+  private void defineStructWatcher() {
     try {
       String str = "";
       int input = 0;
       while (str != null) {
-        System.out.print(">Enter structure line number:");
+        System.out.print(">Enter structure line number (0 to exit):");
         str = in.readLine();
         try {
           input = Integer.parseInt(str, 10);
@@ -155,7 +206,7 @@ public class TomDebugger {
           if (mapKeyDebugStructure.keySet().contains(key)) {
             HashSet list = definePatternWatcher(input);
             ((TomDebugStructure)mapKeyDebugStructure.get(key)).watchPatternList = list;
-            debugStructureKeySet.add(key);
+            debuggedStructureKeySet.add(key);
           } else {
             System.out.println("Not a valid line number, please use info command to ensure valid entry");
           }
@@ -174,7 +225,7 @@ public class TomDebugger {
       String str = "";
       int input = 0;
       while (str != null) {
-        System.out.print(">Enter Pattern Number:");
+        System.out.print(">Enter Pattern Number (0 to exit, `all` to have them all):");
         str = in.readLine();
         if (str.equals("all")) {
           
@@ -226,7 +277,7 @@ public class TomDebugger {
   private void debugBreak() {
     try {
       String str = "";
-      System.out.print(">:");
+      System.out.print("? to see the available command list>:");
       str = in.readLine();
       processBreak(str);
     } catch (IOException e) {
@@ -235,7 +286,16 @@ public class TomDebugger {
 
   private void processBreak(String str) {
     if(str.equals("?")) {
-      System.out.println("\nFollowing commands are allowed:\n\t?: show this help\n\tnext: jump to next breakpoint\n\tsubject: show the current subject list\n\tpattern: show the current pattern list\n\tsubst: show the already done substitution(s)");
+      System.out.println("\nFollowing commands are allowed:");
+      System.out.println("\t ?: show this help");
+      System.out.println("\t next: jump to next breakpoint");
+      System.out.println("\t subject: show the current subject list");
+      System.out.println("\t pattern: show the current pattern list");
+      System.out.println("\t subst: show the already done substitution(s)");
+    } else if (str.equals("next")) {
+      System.out.println("Function not yet defined");
+    } else if (str.equals("subst")) {
+      System.out.println("Function not yet defined");
     } else if (str.equals("n") || str.equals("")) {
       return;
     } else if (str.equals("subject")) {
@@ -253,13 +313,13 @@ public class TomDebugger {
     //////////////////////
   
   public void enteringMatch(String key) {
-    if(debugStructureKeySet.contains(key)) {
+    if(debuggedStructureKeySet.contains(key)) {
       environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key))); 
     }
   }
   
   public void enteringRule(String key) {
-    if(debugStructureKeySet.contains(key)) {
+    if(debuggedStructureKeySet.contains(key)) {
       environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key)));
     }
   }
@@ -275,8 +335,9 @@ public class TomDebugger {
 
   public void leavingRule(String key) {
     if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      ((TomDebugEnvironment)(environment.peek())).leaving();
       environment.pop();
-      System.out.println("\tLeaving Match");
+      System.out.println("\tLeaving Rule");
     }
   }
   
@@ -289,12 +350,6 @@ public class TomDebugger {
   public void leavingPattern(String key) {
     if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
       ((TomDebugEnvironment)(environment.peek())).leavingPattern();
-    }
-  }
-  
-  public void patternFail(String key) {
-    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
-      ((TomDebugEnvironment)(environment.peek())).patternFail();
     }
   }
   
@@ -312,10 +367,8 @@ public class TomDebugger {
 
   public void termCreation(Object trm) {
     java.util.List children;
-      //System.out.println("\t\tTested Term: "+trm);
     for(int i = 0; i <nbPatterns; i++ ) {
       if (trm instanceof ATerm) {
-          //System.out.println("\t\t\tvs pattern: "+patterns[i]);
         children = null;
         children = ((ATerm)trm).match(watchPatterns[i]);
         if (children != null) {
@@ -328,29 +381,29 @@ public class TomDebugger {
     }
   }
   
-  public void specifySubject(String key, ATerm trm) {
+  public void specifySubject(String key, String name, ATerm trm) {
     if (!environment.empty())
-    ((TomDebugEnvironment)environment.peek()).addSubject(trm);
+    ((TomDebugEnvironment)environment.peek()).addSubject(name, trm);
   }
 
-  public void addSubstitution(ATerm trm) {
+  public void addSubstitution(String key, String name, ATerm trm) {
     if (!environment.empty())
-      ((TomDebugEnvironment)environment.peek()).addSubstitution(trm);
+      ((TomDebugEnvironment)environment.peek()).addSubstitution(name, trm);
   }
   
   private void showSubjectList() {
     if (!environment.empty())
-      ((TomDebugEnvironment)environment.peek()).showSubjectList();
+      ((TomDebugEnvironment)environment.peek()).showSubjects();
   }
 
   private void showPattern() {
     if (!environment.empty())
-      ((TomDebugEnvironment)environment.peek()).showPattern();
+      ((TomDebugEnvironment)environment.peek()).showPatterns();
   }
   
   private void showSubst() {
     if (!environment.empty())
-      ((TomDebugEnvironment)environment.peek()).showSubst();
+      ((TomDebugEnvironment)environment.peek()).showSubsts();
   }
   
   private void analyseStructure(TomStructureTable trm) {
@@ -372,8 +425,8 @@ public class TomDebugger {
           patternText[i++] = pa.getOrgText().getString();
           paList = paList.getTail();
         }
-
         mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Match", fileName, line, nbPatterns, patternText));
+        
       } else if (struct.isRuleSet()) {
         String fileName = struct.getOrgTrack().getFileName().getString();
         Integer line = struct.getOrgTrack().getLine();
@@ -388,6 +441,7 @@ public class TomDebugger {
           paList = paList.getTail();
         }
         mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Rule", fileName, line, nbPatterns, patternText));
+        
       } else {
         System.out.println("Corrupt debug term");
         System.exit(1);
@@ -427,4 +481,4 @@ class TomDebugStructure {
   public String toString() {
     return type+fileName+line+watchPatternList;
   }
-}
+} // Class TomDebugStructure

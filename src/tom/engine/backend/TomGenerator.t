@@ -579,7 +579,7 @@ public class TomGenerator extends TomBase {
     statistics().numberPartsGoalLanguage++;
     %match(Instruction subject) {
 
-      Assign(var@Variable(option1,name1,
+      Assign(var@Variable(Option(list),name1,
                           Type(tomType@TomType(type),tlType@TLType[])),exp) -> {
         out.indent(deep);
         generate(out,deep,var);
@@ -601,6 +601,13 @@ public class TomGenerator extends TomBase {
         }
         generateExpression(out,deep,exp);
         out.writeln(";");
+        if(Flags.debugMode && !list.isEmptyOptionList()) {
+          out.write("jtom.debug.TomDebugger.debug.addSubstitution(\""+debugKey+"\",\"");
+          generate(out,deep,var);
+          out.write("\", ");
+          generateExpression(out,deep,exp);
+          out.write(");\n");
+        }
         return;
       }
       
@@ -627,7 +634,9 @@ public class TomGenerator extends TomBase {
         generateExpression(out,deep,exp);
         out.writeln(";");
         if (Flags.debugMode) {
-          out.write("jtom.debug.TomDebugger.debug.specifySubject(\""+debugKey+"\",");
+          out.write("jtom.debug.TomDebugger.debug.specifySubject(\""+debugKey+"\",\"");
+          generateExpression(out,deep,exp);
+          out.writeln("\",");
           generateExpression(out,deep,exp);
           out.writeln(");");
         }

@@ -41,8 +41,9 @@ public class TomDebugEnvironment {
   private String patternText[];
   private int step = 0;
   private String lastPatternResult = null;
+  private String totalMatchResult = null;
   private static String FAILURE = "Failure";
-    private static String SUCCESS = "Success";
+  private static String SUCCESS = "Success";
   
   public TomDebugEnvironment(TomDebugStructure struct) {
     this.patternList = struct.watchPatternList;
@@ -55,7 +56,7 @@ public class TomDebugEnvironment {
     this.subjects = new ArrayList();
     this.substitutions = new ArrayList();
     this.in = new BufferedReader(new InputStreamReader(System.in));
-
+    totalMatchResult = FAILURE;
     System.out.println("\tEntering "+struct.type+" declared in "+fileName+" at line "+line);
 
   }
@@ -83,61 +84,58 @@ public class TomDebugEnvironment {
     step++;
   }
 
-  public void addSubstitution(Object substitution) {
-    substitutions.add(substitution);
+  public void addSubject(String name, Object trm) {
+    subjects.add(new Substitution(name, trm));
   }
 
-  public void addSubject(Object trm) {
-    subjects.add(trm);
-  }
-
-  public void showSubjectList() {
+  public void showSubjects() {
     Iterator it = subjects.iterator();
+    Substitution s;
     while(it.hasNext()) {
-      System.out.println(it.next());
+      s = (Substitution)it.next();
+      System.out.println(s.name+":\t"+s.object);
     }
   }
   
-  public void showPattern() {
+  public void addSubstitution(String name, Object trm) {
+    substitutions.add(new Substitution(name, trm));
+  }
+  
+  public void showSubsts() {
+    Iterator it = substitutions.iterator();
+    Substitution s;
+    while(it.hasNext()) {
+      s = (Substitution)it.next();
+      System.out.println(s.name+":\t"+s.object);
+    }
+  }
+
+  public void showPatterns() {
     System.out.println(patternText[getStep()-1]);
   }
-  
-  public void showSubst() {
-    Iterator it = substitutions.iterator();
-    while(it.hasNext()) {
-      System.out.println(it.next());
-    }
-  }
-  
+
   public void enteringPattern() {
     incrementStep();
     if(patternList.contains(new Integer(getStep()))) {
-      System.out.println("\t\tEntering Pattern number "+ getStep());
+      
+      System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation");
       lastPatternResult = FAILURE;
+      substitutions.clear();
       debugBreak();
     }
   }
   
   public void leavingPattern() {
     if(patternList.contains(new Integer(getStep()))) {
-      System.out.println("\t\t Leaving Pattern number "+ getStep()+" with "+lastPatternResult);
+      System.out.println("\t\t Leaving Pattern number "+ getStep()+" evaluation with "+lastPatternResult);
       debugBreak();
     }
-  }
-  
-  public void patternFail() {
-   if(patternList.contains(new Integer(getStep()))) {
-     lastPatternResult = FAILURE;
-       //System.out.println("\t\tPattern fails");
-       //debugBreak();
-   }
   }
   
   public void linearizationFail() {
     if(patternList.contains(new Integer(getStep()))) {
       lastPatternResult = FAILURE;
       System.out.println("\t\tPattern fails because of linearization issue");
-        //debugBreak();
     }
   }
   
@@ -152,7 +150,7 @@ public class TomDebugEnvironment {
     private void debugBreak() {
     try {
       String str = "";
-      System.out.print(">:");
+      System.out.print("? to see the available command list>:");
       str = in.readLine();
       processBreak(str);
     } catch (IOException e) {
@@ -161,17 +159,33 @@ public class TomDebugEnvironment {
 
   private void processBreak(String str) {
     if(str.equals("?")) {
-      System.out.println("\nFollowing commands are allowed:\n\t?: show this help\n\tnext: jump to next breakpoint\n\tsubject: show the current subject list\n\tpattern: show the current pattern list\n\tsubst: show the already done substitution(s)");
+      System.out.println("\nFollowing commands are allowed:");
+      System.out.println("\t?: show this help");
+      System.out.println("\tnext: jump to next breakpoint");
+      System.out.println("\tsubject: show the current subject list");
+      System.out.println("\tpattern: show the current pattern list");
+       System.out.println("\tsubst: show the realized substitution(s)");
     } else if (str.equals("n") || str.equals("")) {
       return;
     } else if (str.equals("subject")) {
-      showSubjectList();
+      showSubjects();
     } else if (str.equals("pattern")) {
-      showPattern();
+      showPatterns();
+    } else if (str.equals("subst")) {
+      showSubsts();
     } else {
       System.out.println("Unknow command: please enter `?` to know the available commands");
     }
     debugBreak();
   }
-  
+
+  class Substitution {
+    String name;
+    Object object;
+
+    Substitution(String name, Object object) {
+      this.name = name;
+      this.object = object;
+    }
+  } 
 }
