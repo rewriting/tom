@@ -89,12 +89,12 @@ public class TomSignatureFactory
   private aterm.AFun funOption_DefinedSymbol;
   private Option protoOption_DefinedSymbol;
   private aterm.ATerm patternOption_DefinedSymbol;
+  private aterm.AFun funOption_DefaultCase;
+  private Option protoOption_DefaultCase;
+  private aterm.ATerm patternOption_DefaultCase;
   private aterm.AFun funOption_GeneratedMatch;
   private Option protoOption_GeneratedMatch;
   private aterm.ATerm patternOption_GeneratedMatch;
-  private aterm.AFun funOption_WithDefaultProduction;
-  private Option protoOption_WithDefaultProduction;
-  private aterm.ATerm patternOption_WithDefaultProduction;
   private aterm.AFun funOption_OriginTracking;
   private Option protoOption_OriginTracking;
   private aterm.ATerm patternOption_OriginTracking;
@@ -107,6 +107,9 @@ public class TomSignatureFactory
   private aterm.AFun funOption_Label;
   private Option protoOption_Label;
   private aterm.ATerm patternOption_Label;
+  private aterm.AFun funOption_Debug;
+  private Option protoOption_Debug;
+  private aterm.ATerm patternOption_Debug;
   private aterm.AFun funOption_XMLPosition;
   private Option protoOption_XMLPosition;
   private aterm.ATerm patternOption_XMLPosition;
@@ -284,9 +287,6 @@ public class TomSignatureFactory
   private aterm.AFun funTomTerm_PatternAction;
   private TomTerm protoTomTerm_PatternAction;
   private aterm.ATerm patternTomTerm_PatternAction;
-  private aterm.AFun funTomTerm_DefaultPatternAction;
-  private TomTerm protoTomTerm_DefaultPatternAction;
-  private aterm.ATerm patternTomTerm_DefaultPatternAction;
   private aterm.AFun funTomTerm_TLVar;
   private TomTerm protoTomTerm_TLVar;
   private aterm.ATerm patternTomTerm_TLVar;
@@ -335,9 +335,6 @@ public class TomSignatureFactory
   private aterm.AFun funTomTerm_Automata;
   private TomTerm protoTomTerm_Automata;
   private aterm.ATerm patternTomTerm_Automata;
-  private aterm.AFun funTomTerm_DefaultAutomata;
-  private TomTerm protoTomTerm_DefaultAutomata;
-  private aterm.ATerm patternTomTerm_DefaultAutomata;
   private aterm.AFun funTomTerm_MatchXML;
   private TomTerm protoTomTerm_MatchXML;
   private aterm.ATerm patternTomTerm_MatchXML;
@@ -353,9 +350,6 @@ public class TomSignatureFactory
   private aterm.AFun funTomNumber_PatternNumber;
   private TomNumber protoTomNumber_PatternNumber;
   private aterm.ATerm patternTomNumber_PatternNumber;
-  private aterm.AFun funTomNumber_PatternLabel;
-  private TomNumber protoTomNumber_PatternLabel;
-  private aterm.ATerm patternTomNumber_PatternLabel;
   private aterm.AFun funTomNumber_ListNumber;
   private TomNumber protoTomNumber_ListNumber;
   private aterm.ATerm patternTomNumber_ListNumber;
@@ -459,6 +453,8 @@ public class TomSignatureFactory
   private aterm.ATerm patternTomTypeListMany;
   private OptionList protoOptionList;
   private aterm.ATerm patternOptionListMany;
+  private InstructionList protoInstructionList;
+  private aterm.ATerm patternInstructionListMany;
   private SlotList protoSlotList;
   private aterm.ATerm patternSlotListMany;
   private TomEntryList protoTomEntryList;
@@ -470,6 +466,7 @@ public class TomSignatureFactory
   private TomRuleList emptyTomRuleList;
   private TomTypeList emptyTomTypeList;
   private OptionList emptyOptionList;
+  private InstructionList emptyInstructionList;
   private SlotList emptySlotList;
   private TomEntryList emptyTomEntryList;
   private TomErrorList emptyTomErrorList;
@@ -598,13 +595,13 @@ public class TomSignatureFactory
     funOption_DefinedSymbol = factory.makeAFun("_Option_DefinedSymbol", 0, false);
     protoOption_DefinedSymbol = new Option_DefinedSymbol(this);
 
+    patternOption_DefaultCase = factory.parse("DefaultCase");
+    funOption_DefaultCase = factory.makeAFun("_Option_DefaultCase", 0, false);
+    protoOption_DefaultCase = new Option_DefaultCase(this);
+
     patternOption_GeneratedMatch = factory.parse("GeneratedMatch");
     funOption_GeneratedMatch = factory.makeAFun("_Option_GeneratedMatch", 0, false);
     protoOption_GeneratedMatch = new Option_GeneratedMatch(this);
-
-    patternOption_WithDefaultProduction = factory.parse("WithDefaultProduction");
-    funOption_WithDefaultProduction = factory.makeAFun("_Option_WithDefaultProduction", 0, false);
-    protoOption_WithDefaultProduction = new Option_WithDefaultProduction(this);
 
     patternOption_OriginTracking = factory.parse("OriginTracking(<term>,<int>,<term>)");
     funOption_OriginTracking = factory.makeAFun("_Option_OriginTracking", 3, false);
@@ -621,6 +618,10 @@ public class TomSignatureFactory
     patternOption_Label = factory.parse("Label(<term>)");
     funOption_Label = factory.makeAFun("_Option_Label", 1, false);
     protoOption_Label = new Option_Label(this);
+
+    patternOption_Debug = factory.parse("Debug(<term>)");
+    funOption_Debug = factory.makeAFun("_Option_Debug", 1, false);
+    protoOption_Debug = new Option_Debug(this);
 
     patternOption_XMLPosition = factory.parse("XMLPosition(<str>)");
     funOption_XMLPosition = factory.makeAFun("_Option_XMLPosition", 1, false);
@@ -864,10 +865,6 @@ public class TomSignatureFactory
     funTomTerm_PatternAction = factory.makeAFun("_TomTerm_PatternAction", 3, false);
     protoTomTerm_PatternAction = new TomTerm_PatternAction(this);
 
-    patternTomTerm_DefaultPatternAction = factory.parse("DefaultPatternAction(<term>,<term>,<term>)");
-    funTomTerm_DefaultPatternAction = factory.makeAFun("_TomTerm_DefaultPatternAction", 3, false);
-    protoTomTerm_DefaultPatternAction = new TomTerm_DefaultPatternAction(this);
-
     patternTomTerm_TLVar = factory.parse("TLVar(<str>,<term>)");
     funTomTerm_TLVar = factory.makeAFun("_TomTerm_TLVar", 2, false);
     protoTomTerm_TLVar = new TomTerm_TLVar(this);
@@ -932,10 +929,6 @@ public class TomSignatureFactory
     funTomTerm_Automata = factory.makeAFun("_TomTerm_Automata", 3, false);
     protoTomTerm_Automata = new TomTerm_Automata(this);
 
-    patternTomTerm_DefaultAutomata = factory.parse("DefaultAutomata(<term>,<term>,<term>)");
-    funTomTerm_DefaultAutomata = factory.makeAFun("_TomTerm_DefaultAutomata", 3, false);
-    protoTomTerm_DefaultAutomata = new TomTerm_DefaultAutomata(this);
-
     patternTomTerm_MatchXML = factory.parse("MatchXML(<str>,<term>,<term>)");
     funTomTerm_MatchXML = factory.makeAFun("_TomTerm_MatchXML", 3, false);
     protoTomTerm_MatchXML = new TomTerm_MatchXML(this);
@@ -956,10 +949,6 @@ public class TomSignatureFactory
     patternTomNumber_PatternNumber = factory.parse("PatternNumber(<term>)");
     funTomNumber_PatternNumber = factory.makeAFun("_TomNumber_PatternNumber", 1, false);
     protoTomNumber_PatternNumber = new TomNumber_PatternNumber(this);
-
-    patternTomNumber_PatternLabel = factory.parse("PatternLabel(<term>)");
-    funTomNumber_PatternLabel = factory.makeAFun("_TomNumber_PatternLabel", 1, false);
-    protoTomNumber_PatternLabel = new TomNumber_PatternLabel(this);
 
     patternTomNumber_ListNumber = factory.parse("ListNumber(<term>)");
     funTomNumber_ListNumber = factory.makeAFun("_TomNumber_ListNumber", 1, false);
@@ -1119,20 +1108,25 @@ public class TomSignatureFactory
     emptyOptionList = (OptionList) factory.build(protoOptionList);
     emptyOptionList.init(252, emptyOptionList, null, null);
 
+    protoInstructionList = new InstructionList(this);
+    protoInstructionList.init(294, null, null, null);
+    emptyInstructionList = (InstructionList) factory.build(protoInstructionList);
+    emptyInstructionList.init(294, emptyInstructionList, null, null);
+
     protoSlotList = new SlotList(this);
-    protoSlotList.init(294, null, null, null);
+    protoSlotList.init(336, null, null, null);
     emptySlotList = (SlotList) factory.build(protoSlotList);
-    emptySlotList.init(294, emptySlotList, null, null);
+    emptySlotList.init(336, emptySlotList, null, null);
 
     protoTomEntryList = new TomEntryList(this);
-    protoTomEntryList.init(336, null, null, null);
+    protoTomEntryList.init(378, null, null, null);
     emptyTomEntryList = (TomEntryList) factory.build(protoTomEntryList);
-    emptyTomEntryList.init(336, emptyTomEntryList, null, null);
+    emptyTomEntryList.init(378, emptyTomEntryList, null, null);
 
     protoTomErrorList = new TomErrorList(this);
-    protoTomErrorList.init(378, null, null, null);
+    protoTomErrorList.init(420, null, null, null);
     emptyTomErrorList = (TomErrorList) factory.build(protoTomErrorList);
-    emptyTomErrorList.init(378, emptyTomErrorList, null, null);
+    emptyTomErrorList.init(420, emptyTomErrorList, null, null);
 
   }
   protected Declaration_TypeTermDecl makeDeclaration_TypeTermDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -1947,6 +1941,35 @@ public class TomSignatureFactory
     return factory.make(patternOption_DefinedSymbol, args);
   }
 
+  protected Option_DefaultCase makeOption_DefaultCase(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoOption_DefaultCase) {
+      protoOption_DefaultCase.initHashCode(annos,fun,args);
+      return (Option_DefaultCase) factory.build(protoOption_DefaultCase);
+    }
+  }
+
+  public Option_DefaultCase makeOption_DefaultCase() {
+    aterm.ATerm[] args = new aterm.ATerm[] {};
+    return makeOption_DefaultCase(funOption_DefaultCase, args, factory.getEmpty());
+  }
+
+  public Option Option_DefaultCaseFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternOption_DefaultCase);
+
+    if (children != null) {
+      Option tmp = makeOption_DefaultCase();
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(Option_DefaultCaseImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    return factory.make(patternOption_DefaultCase, args);
+  }
+
   protected Option_GeneratedMatch makeOption_GeneratedMatch(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_GeneratedMatch) {
       protoOption_GeneratedMatch.initHashCode(annos,fun,args);
@@ -1974,35 +1997,6 @@ public class TomSignatureFactory
   protected aterm.ATerm toTerm(Option_GeneratedMatchImpl arg) {
     java.util.List args = new java.util.LinkedList();
     return factory.make(patternOption_GeneratedMatch, args);
-  }
-
-  protected Option_WithDefaultProduction makeOption_WithDefaultProduction(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoOption_WithDefaultProduction) {
-      protoOption_WithDefaultProduction.initHashCode(annos,fun,args);
-      return (Option_WithDefaultProduction) factory.build(protoOption_WithDefaultProduction);
-    }
-  }
-
-  public Option_WithDefaultProduction makeOption_WithDefaultProduction() {
-    aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeOption_WithDefaultProduction(funOption_WithDefaultProduction, args, factory.getEmpty());
-  }
-
-  public Option Option_WithDefaultProductionFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternOption_WithDefaultProduction);
-
-    if (children != null) {
-      Option tmp = makeOption_WithDefaultProduction();
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(Option_WithDefaultProductionImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    return factory.make(patternOption_WithDefaultProduction, args);
   }
 
   protected Option_OriginTracking makeOption_OriginTracking(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -2119,6 +2113,35 @@ public class TomSignatureFactory
   protected aterm.ATerm toTerm(Option_LabelImpl arg) {
     java.util.List args = new java.util.LinkedList();
     args.add((arg.getAstName()).toTerm());    return factory.make(patternOption_Label, args);
+  }
+
+  protected Option_Debug makeOption_Debug(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoOption_Debug) {
+      protoOption_Debug.initHashCode(annos,fun,args);
+      return (Option_Debug) factory.build(protoOption_Debug);
+    }
+  }
+
+  public Option_Debug makeOption_Debug(TomName _astName) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName};
+    return makeOption_Debug(funOption_Debug, args, factory.getEmpty());
+  }
+
+  public Option Option_DebugFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternOption_Debug);
+
+    if (children != null) {
+      Option tmp = makeOption_Debug(TomNameFromTerm( (aterm.ATerm) children.get(0)));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(Option_DebugImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternOption_Debug, args);
   }
 
   protected Option_XMLPosition makeOption_XMLPosition(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -3832,35 +3855,6 @@ public class TomSignatureFactory
     args.add((arg.getTermList()).toTerm());    args.add((arg.getTom()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_PatternAction, args);
   }
 
-  protected TomTerm_DefaultPatternAction makeTomTerm_DefaultPatternAction(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_DefaultPatternAction) {
-      protoTomTerm_DefaultPatternAction.initHashCode(annos,fun,args);
-      return (TomTerm_DefaultPatternAction) factory.build(protoTomTerm_DefaultPatternAction);
-    }
-  }
-
-  public TomTerm_DefaultPatternAction makeTomTerm_DefaultPatternAction(TomTerm _termList, TomTerm _tom, Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_termList, _tom, _option};
-    return makeTomTerm_DefaultPatternAction(funTomTerm_DefaultPatternAction, args, factory.getEmpty());
-  }
-
-  public TomTerm TomTerm_DefaultPatternActionFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_DefaultPatternAction);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_DefaultPatternAction(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_DefaultPatternActionImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getTermList()).toTerm());    args.add((arg.getTom()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_DefaultPatternAction, args);
-  }
-
   protected TomTerm_TLVar makeTomTerm_TLVar(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_TLVar) {
       protoTomTerm_TLVar.initHashCode(annos,fun,args);
@@ -4303,8 +4297,8 @@ public class TomSignatureFactory
     }
   }
 
-  public TomTerm_Automata makeTomTerm_Automata(TomNumberList _numberList, TomList _instList, TomName _debugName) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_numberList, _instList, _debugName};
+  public TomTerm_Automata makeTomTerm_Automata(Option _option, TomNumberList _numberList, TomList _instList) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_option, _numberList, _instList};
     return makeTomTerm_Automata(funTomTerm_Automata, args, factory.getEmpty());
   }
 
@@ -4313,7 +4307,7 @@ public class TomSignatureFactory
     java.util.List children = trm.match(patternTomTerm_Automata);
 
     if (children != null) {
-      TomTerm tmp = makeTomTerm_Automata(TomNumberListFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), TomNameFromTerm( (aterm.ATerm) children.get(2)));
+      TomTerm tmp = makeTomTerm_Automata(OptionFromTerm( (aterm.ATerm) children.get(0)), TomNumberListFromTerm( (aterm.ATerm) children.get(1)), TomListFromTerm( (aterm.ATerm) children.get(2)));
       return tmp;
     }
     else {
@@ -4322,36 +4316,7 @@ public class TomSignatureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_AutomataImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add((arg.getNumberList()).toTerm());    args.add((arg.getInstList()).toTerm());    args.add((arg.getDebugName()).toTerm());    return factory.make(patternTomTerm_Automata, args);
-  }
-
-  protected TomTerm_DefaultAutomata makeTomTerm_DefaultAutomata(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_DefaultAutomata) {
-      protoTomTerm_DefaultAutomata.initHashCode(annos,fun,args);
-      return (TomTerm_DefaultAutomata) factory.build(protoTomTerm_DefaultAutomata);
-    }
-  }
-
-  public TomTerm_DefaultAutomata makeTomTerm_DefaultAutomata(TomNumberList _numberList, TomList _instList, TomName _debugName) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_numberList, _instList, _debugName};
-    return makeTomTerm_DefaultAutomata(funTomTerm_DefaultAutomata, args, factory.getEmpty());
-  }
-
-  public TomTerm TomTerm_DefaultAutomataFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_DefaultAutomata);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_DefaultAutomata(TomNumberListFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), TomNameFromTerm( (aterm.ATerm) children.get(2)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_DefaultAutomataImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getNumberList()).toTerm());    args.add((arg.getInstList()).toTerm());    args.add((arg.getDebugName()).toTerm());    return factory.make(patternTomTerm_DefaultAutomata, args);
+    args.add((arg.getOption()).toTerm());    args.add((arg.getNumberList()).toTerm());    args.add((arg.getInstList()).toTerm());    return factory.make(patternTomTerm_Automata, args);
   }
 
   protected TomTerm_MatchXML makeTomTerm_MatchXML(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -4497,35 +4462,6 @@ public class TomSignatureFactory
   protected aterm.ATerm toTerm(TomNumber_PatternNumberImpl arg) {
     java.util.List args = new java.util.LinkedList();
     args.add((arg.getNumber()).toTerm());    return factory.make(patternTomNumber_PatternNumber, args);
-  }
-
-  protected TomNumber_PatternLabel makeTomNumber_PatternLabel(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomNumber_PatternLabel) {
-      protoTomNumber_PatternLabel.initHashCode(annos,fun,args);
-      return (TomNumber_PatternLabel) factory.build(protoTomNumber_PatternLabel);
-    }
-  }
-
-  public TomNumber_PatternLabel makeTomNumber_PatternLabel(TomName _astName) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeTomNumber_PatternLabel(funTomNumber_PatternLabel, args, factory.getEmpty());
-  }
-
-  public TomNumber TomNumber_PatternLabelFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomNumber_PatternLabel);
-
-    if (children != null) {
-      TomNumber tmp = makeTomNumber_PatternLabel(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomNumber_PatternLabelImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getAstName()).toTerm());    return factory.make(patternTomNumber_PatternLabel, args);
   }
 
   protected TomNumber_ListNumber makeTomNumber_ListNumber(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -5502,6 +5438,21 @@ public class TomSignatureFactory
       return (OptionList) factory.build(protoOptionList);
     }
   }
+  public InstructionList makeInstructionList() {
+    return emptyInstructionList;
+  }
+  public InstructionList makeInstructionList(Instruction elem ) {
+    return (InstructionList) makeInstructionList(elem, emptyInstructionList);
+  }
+  public InstructionList makeInstructionList(Instruction head, InstructionList tail) {
+    return (InstructionList) makeInstructionList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
+  }
+  protected InstructionList makeInstructionList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
+    synchronized (protoInstructionList) {
+      protoInstructionList.initHashCode(annos,head,tail);
+      return (InstructionList) factory.build(protoInstructionList);
+    }
+  }
   public SlotList makeSlotList() {
     return emptySlotList;
   }
@@ -5696,12 +5647,12 @@ public class TomSignatureFactory
       return tmp;
     }
 
-    tmp = Option_GeneratedMatchFromTerm(trm);
+    tmp = Option_DefaultCaseFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
 
-    tmp = Option_WithDefaultProductionFromTerm(trm);
+    tmp = Option_GeneratedMatchFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
@@ -5722,6 +5673,11 @@ public class TomSignatureFactory
     }
 
     tmp = Option_LabelFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = Option_DebugFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
@@ -6057,11 +6013,6 @@ public class TomSignatureFactory
       return tmp;
     }
 
-    tmp = TomTerm_DefaultPatternActionFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
     tmp = TomTerm_TLVarFromTerm(trm);
     if (tmp != null) {
       return tmp;
@@ -6142,11 +6093,6 @@ public class TomSignatureFactory
       return tmp;
     }
 
-    tmp = TomTerm_DefaultAutomataFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
     tmp = TomTerm_MatchXMLFromTerm(trm);
     if (tmp != null) {
       return tmp;
@@ -6174,11 +6120,6 @@ public class TomSignatureFactory
     }
 
     tmp = TomNumber_PatternNumberFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = TomNumber_PatternLabelFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
@@ -6495,6 +6436,26 @@ public class TomSignatureFactory
        throw new RuntimeException("This is not a OptionList: " + trm);
      }
   }
+  public InstructionList InstructionListFromTerm(aterm.ATerm trm)
+  {
+     if (trm instanceof aterm.ATermList) {
+        aterm.ATermList list = ((aterm.ATermList) trm).reverse();
+        InstructionList result = makeInstructionList();
+        for (; !list.isEmpty(); list = list.getNext()) {
+          Instruction elem = InstructionFromTerm(list.getFirst());
+           if (elem != null) {
+             result = makeInstructionList(elem, result);
+           }
+           else {
+             throw new RuntimeException("Invalid element in InstructionList: " + elem);
+           }
+        }
+        return result;
+     }
+     else {
+       throw new RuntimeException("This is not a InstructionList: " + trm);
+     }
+  }
   public SlotList SlotListFromTerm(aterm.ATerm trm)
   {
      if (trm instanceof aterm.ATermList) {
@@ -6738,6 +6699,14 @@ public class TomSignatureFactory
   }
   public OptionList OptionListFromFile(java.io.InputStream stream) throws java.io.IOException {
     return OptionListFromTerm(factory.readFromFile(stream));
+  }
+  public InstructionList InstructionListFromString(String str)
+  {
+    aterm.ATerm trm = factory.parse(str);
+    return InstructionListFromTerm(trm);
+  }
+  public InstructionList InstructionListFromFile(java.io.InputStream stream) throws java.io.IOException {
+    return InstructionListFromTerm(factory.readFromFile(stream));
   }
   public SlotList SlotListFromString(String str)
   {

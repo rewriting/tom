@@ -121,6 +121,10 @@ implements aterm.ATerm
     return false;
   }
 
+  public boolean isSortInstructionList() {
+    return false;
+  }
+
   public boolean isSortSlotList() {
     return false;
   }

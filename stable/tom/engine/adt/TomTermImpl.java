@@ -161,11 +161,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isDefaultPatternAction()
-  {
-    return false;
-  }
-
   public boolean isTLVar()
   {
     return false;
@@ -242,11 +237,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean isAutomata()
-  {
-    return false;
-  }
-
-  public boolean isDefaultAutomata()
   {
     return false;
   }
@@ -432,11 +422,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasNumberList()
-  {
-    return false;
-  }
-
-  public boolean hasDebugName()
   {
     return false;
   }
@@ -789,16 +774,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setNumberList(TomNumberList _numberList)
   {
      throw new IllegalArgumentException("Illegal argument: " + _numberList);
-  }
-
-  public TomName getDebugName()
-  {
-     throw new UnsupportedOperationException("This TomTerm has no DebugName");
-  }
-
-  public TomTerm setDebugName(TomName _debugName)
-  {
-     throw new IllegalArgumentException("Illegal argument: " + _debugName);
   }
 
   public String getDocName()

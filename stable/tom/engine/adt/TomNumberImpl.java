@@ -31,11 +31,6 @@ abstract public class TomNumberImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isPatternLabel()
-  {
-    return false;
-  }
-
   public boolean isListNumber()
   {
     return false;
@@ -81,12 +76,12 @@ abstract public class TomNumberImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasAstName()
+  public boolean hasInteger()
   {
     return false;
   }
 
-  public boolean hasInteger()
+  public boolean hasAstName()
   {
     return false;
   }
@@ -101,16 +96,6 @@ abstract public class TomNumberImpl extends TomSignatureConstructor
      throw new IllegalArgumentException("Illegal argument: " + _number);
   }
 
-  public TomName getAstName()
-  {
-     throw new UnsupportedOperationException("This TomNumber has no AstName");
-  }
-
-  public TomNumber setAstName(TomName _astName)
-  {
-     throw new IllegalArgumentException("Illegal argument: " + _astName);
-  }
-
   public int getInteger()
   {
      throw new UnsupportedOperationException("This TomNumber has no Integer");
@@ -119,6 +104,16 @@ abstract public class TomNumberImpl extends TomSignatureConstructor
   public TomNumber setInteger(int _integer)
   {
      throw new IllegalArgumentException("Illegal argument: " + _integer);
+  }
+
+  public TomName getAstName()
+  {
+     throw new UnsupportedOperationException("This TomNumber has no AstName");
+  }
+
+  public TomNumber setAstName(TomName _astName)
+  {
+     throw new IllegalArgumentException("Illegal argument: " + _astName);
   }
 
 }

@@ -46,12 +46,12 @@ abstract public class OptionImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isGeneratedMatch()
+  public boolean isDefaultCase()
   {
     return false;
   }
 
-  public boolean isWithDefaultProduction()
+  public boolean isGeneratedMatch()
   {
     return false;
   }
@@ -72,6 +72,11 @@ abstract public class OptionImpl extends TomSignatureConstructor
   }
 
   public boolean isLabel()
+  {
+    return false;
+  }
+
+  public boolean isDebug()
   {
     return false;
   }

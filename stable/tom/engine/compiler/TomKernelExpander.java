@@ -59,7 +59,7 @@ public class TomKernelExpander extends TomBase {
             //debugPrintln("expandVariable not a tomTerm: " );
             //System.out.println("expandVariable not a tomTerm:\n\t" + subject );
           if(subject instanceof TomType) {
-             {  TomType tom_match1_1 = null; tom_match1_1 = ( TomType) subject;matchlab_match1_pattern1: {  String tomType = null; if(tom_is_fun_sym_TomTypeAlone(tom_match1_1)) {  String tom_match1_1_1 = null; tom_match1_1_1 = ( String) tom_get_slot_TomTypeAlone_string(tom_match1_1); tomType = ( String) tom_match1_1_1;
+             {  TomType tom_match1_1 = null; tom_match1_1 = ( TomType) subject;_match1_pattern1: {  String tomType = null; if(tom_is_fun_sym_TomTypeAlone(tom_match1_1)) {  String tom_match1_1_1 = null; tom_match1_1_1 = ( String) tom_get_slot_TomTypeAlone_string(tom_match1_1); tomType = ( String) tom_match1_1_1;
  
                 TomType type = getType(tomType);
                 if(type != null) {
@@ -75,7 +75,7 @@ public class TomKernelExpander extends TomBase {
 
           //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
         
-         {  TomTerm tom_match2_1 = null;  TomTerm tom_match2_2 = null; tom_match2_1 = ( TomTerm) contextSubject; tom_match2_2 = ( TomTerm) subject;matchlab_match2_pattern1: {  TomTerm appl = null;  TomName name = null;  TomType type = null;  String strName = null;  TomType glType = null;  TomType tomType = null;  OptionList optionList = null; if(tom_is_fun_sym_TomTypeToTomTerm(tom_match2_1)) {  TomType tom_match2_1_1 = null; tom_match2_1_1 = ( TomType) tom_get_slot_TomTypeToTomTerm_astType(tom_match2_1); if(tom_is_fun_sym_Type(tom_match2_1_1)) {  TomType tom_match2_1_1_1 = null;  TomType tom_match2_1_1_2 = null; tom_match2_1_1_1 = ( TomType) tom_get_slot_Type_tomType(tom_match2_1_1); tom_match2_1_1_2 = ( TomType) tom_get_slot_Type_tlType(tom_match2_1_1); type = ( TomType) tom_match2_1_1; tomType = ( TomType) tom_match2_1_1_1; glType = ( TomType) tom_match2_1_1_2; if(tom_is_fun_sym_Appl(tom_match2_2)) {  Option tom_match2_2_1 = null;  TomName tom_match2_2_2 = null;  TomList tom_match2_2_3 = null; tom_match2_2_1 = ( Option) tom_get_slot_Appl_option(tom_match2_2); tom_match2_2_2 = ( TomName) tom_get_slot_Appl_astName(tom_match2_2); tom_match2_2_3 = ( TomList) tom_get_slot_Appl_args(tom_match2_2); appl = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1; if(tom_is_fun_sym_Name(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_Name_string(tom_match2_2_2); name = ( TomName) tom_match2_2_2; strName = ( String) tom_match2_2_2_1; if(tom_is_fun_sym_emptyTomList(tom_match2_2_3)) {
+         {  TomTerm tom_match2_1 = null;  TomTerm tom_match2_2 = null; tom_match2_1 = ( TomTerm) contextSubject; tom_match2_2 = ( TomTerm) subject;_match2_pattern1: {  TomTerm appl = null;  TomName name = null;  TomType type = null;  String strName = null;  TomType glType = null;  TomType tomType = null;  OptionList optionList = null; if(tom_is_fun_sym_TomTypeToTomTerm(tom_match2_1)) {  TomType tom_match2_1_1 = null; tom_match2_1_1 = ( TomType) tom_get_slot_TomTypeToTomTerm_astType(tom_match2_1); if(tom_is_fun_sym_Type(tom_match2_1_1)) {  TomType tom_match2_1_1_1 = null;  TomType tom_match2_1_1_2 = null; tom_match2_1_1_1 = ( TomType) tom_get_slot_Type_tomType(tom_match2_1_1); tom_match2_1_1_2 = ( TomType) tom_get_slot_Type_tlType(tom_match2_1_1); type = ( TomType) tom_match2_1_1; tomType = ( TomType) tom_match2_1_1_1; glType = ( TomType) tom_match2_1_1_2; if(tom_is_fun_sym_Appl(tom_match2_2)) {  Option tom_match2_2_1 = null;  TomName tom_match2_2_2 = null;  TomList tom_match2_2_3 = null; tom_match2_2_1 = ( Option) tom_get_slot_Appl_option(tom_match2_2); tom_match2_2_2 = ( TomName) tom_get_slot_Appl_astName(tom_match2_2); tom_match2_2_3 = ( TomList) tom_get_slot_Appl_args(tom_match2_2); appl = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1; if(tom_is_fun_sym_Name(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_Name_string(tom_match2_2_2); name = ( TomName) tom_match2_2_2; strName = ( String) tom_match2_2_2_1; if(tom_is_fun_sym_emptyTomList(tom_match2_2_3)) {
  
               //debugPrintln("expandVariable.1: Type(" + tomType + "," + glType + ")");
             Option orgTrack = findOriginTracking(optionList);
@@ -87,7 +87,7 @@ public class TomKernelExpander extends TomBase {
             } else {
               return tom_make_Variable(option,name,type) ;
             }
-           } } } } } }}matchlab_match2_pattern2: {  TomName name = null;  TomTerm appl = null;  String strName = null;  TomName name1 = null;  OptionList optionList = null;  Option option1 = null;  TomType type1 = null; if(tom_is_fun_sym_Variable(tom_match2_1)) {  Option tom_match2_1_1 = null;  TomName tom_match2_1_2 = null;  TomType tom_match2_1_3 = null; tom_match2_1_1 = ( Option) tom_get_slot_Variable_option(tom_match2_1); tom_match2_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match2_1); tom_match2_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match2_1); option1 = ( Option) tom_match2_1_1; name1 = ( TomName) tom_match2_1_2; type1 = ( TomType) tom_match2_1_3; if(tom_is_fun_sym_Appl(tom_match2_2)) {  Option tom_match2_2_1 = null;  TomName tom_match2_2_2 = null;  TomList tom_match2_2_3 = null; tom_match2_2_1 = ( Option) tom_get_slot_Appl_option(tom_match2_2); tom_match2_2_2 = ( TomName) tom_get_slot_Appl_astName(tom_match2_2); tom_match2_2_3 = ( TomList) tom_get_slot_Appl_args(tom_match2_2); appl = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1; if(tom_is_fun_sym_Name(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_Name_string(tom_match2_2_2); name = ( TomName) tom_match2_2_2; strName = ( String) tom_match2_2_2_1; if(tom_is_fun_sym_emptyTomList(tom_match2_2_3)) {
+           } } } } } }}_match2_pattern2: {  TomName name = null;  TomTerm appl = null;  String strName = null;  TomName name1 = null;  OptionList optionList = null;  Option option1 = null;  TomType type1 = null; if(tom_is_fun_sym_Variable(tom_match2_1)) {  Option tom_match2_1_1 = null;  TomName tom_match2_1_2 = null;  TomType tom_match2_1_3 = null; tom_match2_1_1 = ( Option) tom_get_slot_Variable_option(tom_match2_1); tom_match2_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match2_1); tom_match2_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match2_1); option1 = ( Option) tom_match2_1_1; name1 = ( TomName) tom_match2_1_2; type1 = ( TomType) tom_match2_1_3; if(tom_is_fun_sym_Appl(tom_match2_2)) {  Option tom_match2_2_1 = null;  TomName tom_match2_2_2 = null;  TomList tom_match2_2_3 = null; tom_match2_2_1 = ( Option) tom_get_slot_Appl_option(tom_match2_2); tom_match2_2_2 = ( TomName) tom_get_slot_Appl_astName(tom_match2_2); tom_match2_2_3 = ( TomList) tom_get_slot_Appl_args(tom_match2_2); appl = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1; if(tom_is_fun_sym_Name(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_Name_string(tom_match2_2_2); name = ( TomName) tom_match2_2_2; strName = ( String) tom_match2_2_2_1; if(tom_is_fun_sym_emptyTomList(tom_match2_2_3)) {
 
  
               //debugPrintln("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
@@ -101,21 +101,21 @@ public class TomKernelExpander extends TomBase {
             } else {
               return tom_make_Variable(option,name,type1) ;
             }
-           } } } } }}matchlab_match2_pattern3: {  TomTerm p = null;  TomType glType = null;  TomType type = null;  OptionList optionList = null;  TomType tomType = null; if(tom_is_fun_sym_TomTypeToTomTerm(tom_match2_1)) {  TomType tom_match2_1_1 = null; tom_match2_1_1 = ( TomType) tom_get_slot_TomTypeToTomTerm_astType(tom_match2_1); if(tom_is_fun_sym_Type(tom_match2_1_1)) {  TomType tom_match2_1_1_1 = null;  TomType tom_match2_1_1_2 = null; tom_match2_1_1_1 = ( TomType) tom_get_slot_Type_tomType(tom_match2_1_1); tom_match2_1_1_2 = ( TomType) tom_get_slot_Type_tlType(tom_match2_1_1); type = ( TomType) tom_match2_1_1; tomType = ( TomType) tom_match2_1_1_1; glType = ( TomType) tom_match2_1_1_2; if(tom_is_fun_sym_Placeholder(tom_match2_2)) {  Option tom_match2_2_1 = null; tom_match2_2_1 = ( Option) tom_get_slot_Placeholder_option(tom_match2_2); p = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1;
+           } } } } }}_match2_pattern3: {  TomTerm p = null;  TomType glType = null;  TomType type = null;  OptionList optionList = null;  TomType tomType = null; if(tom_is_fun_sym_TomTypeToTomTerm(tom_match2_1)) {  TomType tom_match2_1_1 = null; tom_match2_1_1 = ( TomType) tom_get_slot_TomTypeToTomTerm_astType(tom_match2_1); if(tom_is_fun_sym_Type(tom_match2_1_1)) {  TomType tom_match2_1_1_1 = null;  TomType tom_match2_1_1_2 = null; tom_match2_1_1_1 = ( TomType) tom_get_slot_Type_tomType(tom_match2_1_1); tom_match2_1_1_2 = ( TomType) tom_get_slot_Type_tlType(tom_match2_1_1); type = ( TomType) tom_match2_1_1; tomType = ( TomType) tom_match2_1_1_1; glType = ( TomType) tom_match2_1_1_2; if(tom_is_fun_sym_Placeholder(tom_match2_2)) {  Option tom_match2_2_1 = null; tom_match2_2_1 = ( Option) tom_get_slot_Placeholder_option(tom_match2_2); p = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1;
 
  
             Option orgTrack = findOriginTracking(optionList);
             Option option = tom_make_Option(replaceAnnotedName(optionList, type, orgTrack)) ;
               // create an unamed variable
             return tom_make_UnamedVariable(option,type) ;
-           } } } }}matchlab_match2_pattern4: {  Option option1 = null;  TomName name1 = null;  TomType type1 = null;  TomTerm p = null;  OptionList optionList = null; if(tom_is_fun_sym_Variable(tom_match2_1)) {  Option tom_match2_1_1 = null;  TomName tom_match2_1_2 = null;  TomType tom_match2_1_3 = null; tom_match2_1_1 = ( Option) tom_get_slot_Variable_option(tom_match2_1); tom_match2_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match2_1); tom_match2_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match2_1); option1 = ( Option) tom_match2_1_1; name1 = ( TomName) tom_match2_1_2; type1 = ( TomType) tom_match2_1_3; if(tom_is_fun_sym_Placeholder(tom_match2_2)) {  Option tom_match2_2_1 = null; tom_match2_2_1 = ( Option) tom_get_slot_Placeholder_option(tom_match2_2); p = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1;
+           } } } }}_match2_pattern4: {  Option option1 = null;  TomName name1 = null;  TomType type1 = null;  TomTerm p = null;  OptionList optionList = null; if(tom_is_fun_sym_Variable(tom_match2_1)) {  Option tom_match2_1_1 = null;  TomName tom_match2_1_2 = null;  TomType tom_match2_1_3 = null; tom_match2_1_1 = ( Option) tom_get_slot_Variable_option(tom_match2_1); tom_match2_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match2_1); tom_match2_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match2_1); option1 = ( Option) tom_match2_1_1; name1 = ( TomName) tom_match2_1_2; type1 = ( TomType) tom_match2_1_3; if(tom_is_fun_sym_Placeholder(tom_match2_2)) {  Option tom_match2_2_1 = null; tom_match2_2_1 = ( Option) tom_get_slot_Placeholder_option(tom_match2_2); p = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1;
 
  
             Option orgTrack = findOriginTracking(optionList);
             Option option = tom_make_Option(replaceAnnotedName(optionList, type1, orgTrack)) ;
               // create an unamed variable
             return tom_make_UnamedVariable(option,type1) ;
-           } } }}matchlab_match2_pattern5: {  String tomName = null;  TomTerm appl = null;  TomTerm context = null;  OptionList optionList = null;  TomName name = null;  TomList l = null; context = ( TomTerm) tom_match2_1; if(tom_is_fun_sym_Appl(tom_match2_2)) {  Option tom_match2_2_1 = null;  TomName tom_match2_2_2 = null;  TomList tom_match2_2_3 = null; tom_match2_2_1 = ( Option) tom_get_slot_Appl_option(tom_match2_2); tom_match2_2_2 = ( TomName) tom_get_slot_Appl_astName(tom_match2_2); tom_match2_2_3 = ( TomList) tom_get_slot_Appl_args(tom_match2_2); appl = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1; if(tom_is_fun_sym_Name(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_Name_string(tom_match2_2_2); name = ( TomName) tom_match2_2_2; tomName = ( String) tom_match2_2_2_1; l = ( TomList) tom_match2_2_3;
+           } } }}_match2_pattern5: {  String tomName = null;  TomTerm appl = null;  TomTerm context = null;  OptionList optionList = null;  TomName name = null;  TomList l = null; context = ( TomTerm) tom_match2_1; if(tom_is_fun_sym_Appl(tom_match2_2)) {  Option tom_match2_2_1 = null;  TomName tom_match2_2_2 = null;  TomList tom_match2_2_3 = null; tom_match2_2_1 = ( Option) tom_get_slot_Appl_option(tom_match2_2); tom_match2_2_2 = ( TomName) tom_get_slot_Appl_astName(tom_match2_2); tom_match2_2_3 = ( TomList) tom_get_slot_Appl_args(tom_match2_2); appl = ( TomTerm) tom_match2_2; if(tom_is_fun_sym_Option(tom_match2_2_1)) {  OptionList tom_match2_2_1_1 = null; tom_match2_2_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match2_2_1); optionList = ( OptionList) tom_match2_2_1_1; if(tom_is_fun_sym_Name(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_Name_string(tom_match2_2_2); name = ( TomName) tom_match2_2_2; tomName = ( String) tom_match2_2_2_1; l = ( TomList) tom_match2_2_3;
 
  
               //debugPrintln("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
@@ -128,13 +128,13 @@ public class TomKernelExpander extends TomBase {
               Option option = tom_make_Option(replaceAnnotedName(optionList, getSymbolCodomain(tomSymbol), orgTrack)) ;
               return tom_make_Appl(option,name,subterm) ;
             }
-           } } }}matchlab_match2_pattern6: {  String tomType = null;  Option option = null;  TomTerm context = null;  String strName = null; context = ( TomTerm) tom_match2_1; if(tom_is_fun_sym_Variable(tom_match2_2)) {  Option tom_match2_2_1 = null;  TomName tom_match2_2_2 = null;  TomType tom_match2_2_3 = null; tom_match2_2_1 = ( Option) tom_get_slot_Variable_option(tom_match2_2); tom_match2_2_2 = ( TomName) tom_get_slot_Variable_astName(tom_match2_2); tom_match2_2_3 = ( TomType) tom_get_slot_Variable_astType(tom_match2_2); option = ( Option) tom_match2_2_1; if(tom_is_fun_sym_Name(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_Name_string(tom_match2_2_2); strName = ( String) tom_match2_2_2_1; if(tom_is_fun_sym_TomTypeAlone(tom_match2_2_3)) {  String tom_match2_2_3_1 = null; tom_match2_2_3_1 = ( String) tom_get_slot_TomTypeAlone_string(tom_match2_2_3); tomType = ( String) tom_match2_2_3_1;
+           } } }}_match2_pattern6: {  String tomType = null;  Option option = null;  TomTerm context = null;  String strName = null; context = ( TomTerm) tom_match2_1; if(tom_is_fun_sym_Variable(tom_match2_2)) {  Option tom_match2_2_1 = null;  TomName tom_match2_2_2 = null;  TomType tom_match2_2_3 = null; tom_match2_2_1 = ( Option) tom_get_slot_Variable_option(tom_match2_2); tom_match2_2_2 = ( TomName) tom_get_slot_Variable_astName(tom_match2_2); tom_match2_2_3 = ( TomType) tom_get_slot_Variable_astType(tom_match2_2); option = ( Option) tom_match2_2_1; if(tom_is_fun_sym_Name(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_Name_string(tom_match2_2_2); strName = ( String) tom_match2_2_2_1; if(tom_is_fun_sym_TomTypeAlone(tom_match2_2_3)) {  String tom_match2_2_3_1 = null; tom_match2_2_3_1 = ( String) tom_get_slot_TomTypeAlone_string(tom_match2_2_3); tomType = ( String) tom_match2_2_3_1;
 
  
               // create a variable
             TomType localType = getType(tomType);
             return tom_make_Variable(option,tom_make_Name(strName),localType) ;
-           } } }}matchlab_match2_pattern7: {  TomTerm context = null;  String strName = null;  String tomType = null; context = ( TomTerm) tom_match2_1; if(tom_is_fun_sym_TLVar(tom_match2_2)) {  String tom_match2_2_1 = null;  TomType tom_match2_2_2 = null; tom_match2_2_1 = ( String) tom_get_slot_TLVar_strName(tom_match2_2); tom_match2_2_2 = ( TomType) tom_get_slot_TLVar_astType(tom_match2_2); strName = ( String) tom_match2_2_1; if(tom_is_fun_sym_TomTypeAlone(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_TomTypeAlone_string(tom_match2_2_2); tomType = ( String) tom_match2_2_2_1;
+           } } }}_match2_pattern7: {  TomTerm context = null;  String strName = null;  String tomType = null; context = ( TomTerm) tom_match2_1; if(tom_is_fun_sym_TLVar(tom_match2_2)) {  String tom_match2_2_1 = null;  TomType tom_match2_2_2 = null; tom_match2_2_1 = ( String) tom_get_slot_TLVar_strName(tom_match2_2); tom_match2_2_2 = ( TomType) tom_get_slot_TLVar_astType(tom_match2_2); strName = ( String) tom_match2_2_1; if(tom_is_fun_sym_TomTypeAlone(tom_match2_2_2)) {  String tom_match2_2_2_1 = null; tom_match2_2_2_1 = ( String) tom_get_slot_TomTypeAlone_string(tom_match2_2_2); tomType = ( String) tom_match2_2_2_1;
 
  
               //debugPrintln("expandVariable.8: TLVar(" + strName + "," + tomType + ")");
@@ -142,7 +142,7 @@ public class TomKernelExpander extends TomBase {
             TomType localType = getType(tomType);
             Option option = ast().makeOption();
             return tom_make_Variable(option,tom_make_Name(strName),localType) ;
-           } }}matchlab_match2_pattern8: {  TomList subjectList = null;  TomList l1 = null; if(tom_is_fun_sym_SubjectList(tom_match2_1)) {  TomList tom_match2_1_1 = null; tom_match2_1_1 = ( TomList) tom_get_slot_SubjectList_tomList(tom_match2_1); l1 = ( TomList) tom_match2_1_1; if(tom_is_fun_sym_TermList(tom_match2_2)) {  TomList tom_match2_2_1 = null; tom_match2_2_1 = ( TomList) tom_get_slot_TermList_tomList(tom_match2_2); subjectList = ( TomList) tom_match2_2_1;
+           } }}_match2_pattern8: {  TomList subjectList = null;  TomList l1 = null; if(tom_is_fun_sym_SubjectList(tom_match2_1)) {  TomList tom_match2_1_1 = null; tom_match2_1_1 = ( TomList) tom_get_slot_SubjectList_tomList(tom_match2_1); l1 = ( TomList) tom_match2_1_1; if(tom_is_fun_sym_TermList(tom_match2_2)) {  TomList tom_match2_2_1 = null; tom_match2_2_1 = ( TomList) tom_get_slot_TermList_tomList(tom_match2_2); subjectList = ( TomList) tom_match2_2_1;
 
  
             //debugPrintln("expandVariable.9: TermList(" + subjectList + ")");
@@ -155,14 +155,14 @@ public class TomKernelExpander extends TomBase {
               l1 = l1.getTail();
             }
             return tom_make_TermList(ast() .makeList(list)) ;
-           } }}matchlab_match2_pattern9: {  TomTerm context = null;  Option option = null;  TomTerm patternList = null;  TomTerm tomSubjectList = null; context = ( TomTerm) tom_match2_1; if(tom_is_fun_sym_Match(tom_match2_2)) {  TomTerm tom_match2_2_1 = null;  TomTerm tom_match2_2_2 = null;  Option tom_match2_2_3 = null; tom_match2_2_1 = ( TomTerm) tom_get_slot_Match_subjectList(tom_match2_2); tom_match2_2_2 = ( TomTerm) tom_get_slot_Match_patternList(tom_match2_2); tom_match2_2_3 = ( Option) tom_get_slot_Match_option(tom_match2_2); tomSubjectList = ( TomTerm) tom_match2_2_1; patternList = ( TomTerm) tom_match2_2_2; option = ( Option) tom_match2_2_3;
+           } }}_match2_pattern9: {  TomTerm context = null;  Option option = null;  TomTerm patternList = null;  TomTerm tomSubjectList = null; context = ( TomTerm) tom_match2_1; if(tom_is_fun_sym_Match(tom_match2_2)) {  TomTerm tom_match2_2_1 = null;  TomTerm tom_match2_2_2 = null;  Option tom_match2_2_3 = null; tom_match2_2_1 = ( TomTerm) tom_get_slot_Match_subjectList(tom_match2_2); tom_match2_2_2 = ( TomTerm) tom_get_slot_Match_patternList(tom_match2_2); tom_match2_2_3 = ( Option) tom_get_slot_Match_option(tom_match2_2); tomSubjectList = ( TomTerm) tom_match2_2_1; patternList = ( TomTerm) tom_match2_2_2; option = ( Option) tom_match2_2_3;
 
  
             //debugPrintln("expandVariable.10: Match(" + tomSubjectList + "," + patternList + ")");
             TomTerm newSubjectList = expandVariable(context,tomSubjectList);
             TomTerm newPatternList = expandVariable(newSubjectList,patternList);
             return tom_make_Match(newSubjectList,newPatternList,option) ;
-           }}matchlab_match2_pattern10: {  TomTerm t = null;  TomTerm context = null; context = ( TomTerm) tom_match2_1; t = ( TomTerm) tom_match2_2;
+           }}_match2_pattern10: {  TomTerm t = null;  TomTerm context = null; context = ( TomTerm) tom_match2_1; t = ( TomTerm) tom_match2_2;
 
 
  
@@ -180,7 +180,7 @@ public class TomKernelExpander extends TomBase {
 
   public TomList expandVariableList(TomSymbol subject, TomList subjectList) {
     //%variable
-     {  TomSymbol tom_match3_1 = null; tom_match3_1 = ( TomSymbol) subject;matchlab_match3_pattern1: {  TomSymbol symb = null;  TomTypeList typeList = null;  TomType codomainType = null; if(tom_is_fun_sym_Symbol(tom_match3_1)) {  TomName tom_match3_1_1 = null;  TomType tom_match3_1_2 = null;  SlotList tom_match3_1_3 = null;  Option tom_match3_1_4 = null;  TargetLanguage tom_match3_1_5 = null; tom_match3_1_1 = ( TomName) tom_get_slot_Symbol_astName(tom_match3_1); tom_match3_1_2 = ( TomType) tom_get_slot_Symbol_typesToType(tom_match3_1); tom_match3_1_3 = ( SlotList) tom_get_slot_Symbol_slotList(tom_match3_1); tom_match3_1_4 = ( Option) tom_get_slot_Symbol_option(tom_match3_1); tom_match3_1_5 = ( TargetLanguage) tom_get_slot_Symbol_tlCode(tom_match3_1); symb = ( TomSymbol) tom_match3_1; if(tom_is_fun_sym_TypesToType(tom_match3_1_2)) {  TomTypeList tom_match3_1_2_1 = null;  TomType tom_match3_1_2_2 = null; tom_match3_1_2_1 = ( TomTypeList) tom_get_slot_TypesToType_domain(tom_match3_1_2); tom_match3_1_2_2 = ( TomType) tom_get_slot_TypesToType_codomain(tom_match3_1_2); typeList = ( TomTypeList) tom_match3_1_2_1; codomainType = ( TomType) tom_match3_1_2_2;
+     {  TomSymbol tom_match3_1 = null; tom_match3_1 = ( TomSymbol) subject;_match3_pattern1: {  TomSymbol symb = null;  TomTypeList typeList = null;  TomType codomainType = null; if(tom_is_fun_sym_Symbol(tom_match3_1)) {  TomName tom_match3_1_1 = null;  TomType tom_match3_1_2 = null;  SlotList tom_match3_1_3 = null;  Option tom_match3_1_4 = null;  TargetLanguage tom_match3_1_5 = null; tom_match3_1_1 = ( TomName) tom_get_slot_Symbol_astName(tom_match3_1); tom_match3_1_2 = ( TomType) tom_get_slot_Symbol_typesToType(tom_match3_1); tom_match3_1_3 = ( SlotList) tom_get_slot_Symbol_slotList(tom_match3_1); tom_match3_1_4 = ( Option) tom_get_slot_Symbol_option(tom_match3_1); tom_match3_1_5 = ( TargetLanguage) tom_get_slot_Symbol_tlCode(tom_match3_1); symb = ( TomSymbol) tom_match3_1; if(tom_is_fun_sym_TypesToType(tom_match3_1_2)) {  TomTypeList tom_match3_1_2_1 = null;  TomType tom_match3_1_2_2 = null; tom_match3_1_2_1 = ( TomTypeList) tom_get_slot_TypesToType_domain(tom_match3_1_2); tom_match3_1_2_2 = ( TomType) tom_get_slot_TypesToType_codomain(tom_match3_1_2); typeList = ( TomTypeList) tom_match3_1_2_1; codomainType = ( TomType) tom_match3_1_2_2;
  
         //debugPrintln("expandVariableList.1: " + subjectList);
           
@@ -206,12 +206,12 @@ public class TomKernelExpander extends TomBase {
             TomTerm subterm = subjectList.getHead();
 
             matchBlock: {
-               {  TomTerm tom_match4_1 = null; tom_match4_1 = ( TomTerm) subterm;matchlab_match4_pattern1: {  Option voption = null;  TomName name = null; if(tom_is_fun_sym_VariableStar(tom_match4_1)) {  Option tom_match4_1_1 = null;  TomName tom_match4_1_2 = null;  TomType tom_match4_1_3 = null; tom_match4_1_1 = ( Option) tom_get_slot_VariableStar_option(tom_match4_1); tom_match4_1_2 = ( TomName) tom_get_slot_VariableStar_astName(tom_match4_1); tom_match4_1_3 = ( TomType) tom_get_slot_VariableStar_astType(tom_match4_1); voption = ( Option) tom_match4_1_1; name = ( TomName) tom_match4_1_2;
+               {  TomTerm tom_match4_1 = null; tom_match4_1 = ( TomTerm) subterm;_match4_pattern1: {  Option voption = null;  TomName name = null; if(tom_is_fun_sym_VariableStar(tom_match4_1)) {  Option tom_match4_1_1 = null;  TomName tom_match4_1_2 = null;  TomType tom_match4_1_3 = null; tom_match4_1_1 = ( Option) tom_get_slot_VariableStar_option(tom_match4_1); tom_match4_1_2 = ( TomName) tom_get_slot_VariableStar_astName(tom_match4_1); tom_match4_1_3 = ( TomType) tom_get_slot_VariableStar_astType(tom_match4_1); voption = ( Option) tom_match4_1_1; name = ( TomName) tom_match4_1_2;
  
                   list.add(tom_make_VariableStar(voption,name,codomainType) );
                     //System.out.println("*** break: " + subterm);
                   break matchBlock;
-                 }}matchlab_match4_pattern2: {
+                 }}_match4_pattern2: {
 
  
                   list.add(expandVariable(tom_make_TomTypeToTomTerm(domainType) , subterm));
@@ -231,7 +231,7 @@ public class TomKernelExpander extends TomBase {
        
         result = ast().makeList(list);
         return result;
-       } }}matchlab_match3_pattern2: {
+       } }}_match3_pattern2: {
 
  
         System.out.println("expandVariableList: strange case: '" + subject + "'");
@@ -266,13 +266,13 @@ public class TomKernelExpander extends TomBase {
 
   private OptionList replaceAnnotedName(OptionList subjectList, TomType type, Option orgTrack) {
     //%variable
-     {  OptionList tom_match5_1 = null; tom_match5_1 = ( OptionList) subjectList;matchlab_match5_pattern1: { if(tom_is_fun_sym_emptyOptionList(tom_match5_1)) {
-  return subjectList;  }}matchlab_match5_pattern2: {  TomName name = null;  OptionList l = null; if(tom_is_fun_sym_manyOptionList(tom_match5_1)) {  Option tom_match5_1_1 = null;  OptionList tom_match5_1_2 = null; tom_match5_1_1 = ( Option) tom_get_slot_manyOptionList_head(tom_match5_1); tom_match5_1_2 = ( OptionList) tom_get_slot_manyOptionList_tail(tom_match5_1); if(tom_is_fun_sym_TomNameToOption(tom_match5_1_1)) {  TomName tom_match5_1_1_1 = null; tom_match5_1_1_1 = ( TomName) tom_get_slot_TomNameToOption_astName(tom_match5_1_1); if(tom_is_fun_sym_Name(tom_match5_1_1_1)) {  String tom_match5_1_1_1_1 = null; tom_match5_1_1_1_1 = ( String) tom_get_slot_Name_string(tom_match5_1_1_1); name = ( TomName) tom_match5_1_1_1; l = ( OptionList) tom_match5_1_2;
+     {  OptionList tom_match5_1 = null; tom_match5_1 = ( OptionList) subjectList;_match5_pattern1: { if(tom_is_fun_sym_emptyOptionList(tom_match5_1)) {
+  return subjectList;  }}_match5_pattern2: {  TomName name = null;  OptionList l = null; if(tom_is_fun_sym_manyOptionList(tom_match5_1)) {  Option tom_match5_1_1 = null;  OptionList tom_match5_1_2 = null; tom_match5_1_1 = ( Option) tom_get_slot_manyOptionList_head(tom_match5_1); tom_match5_1_2 = ( OptionList) tom_get_slot_manyOptionList_tail(tom_match5_1); if(tom_is_fun_sym_TomNameToOption(tom_match5_1_1)) {  TomName tom_match5_1_1_1 = null; tom_match5_1_1_1 = ( TomName) tom_get_slot_TomNameToOption_astName(tom_match5_1_1); if(tom_is_fun_sym_Name(tom_match5_1_1_1)) {  String tom_match5_1_1_1_1 = null; tom_match5_1_1_1_1 = ( String) tom_get_slot_Name_string(tom_match5_1_1_1); name = ( TomName) tom_match5_1_1_1; l = ( OptionList) tom_match5_1_2;
  
         return tom_make_manyOptionList(tom_make_TomTermToOption(tom_make_Variable(ast() .makeOption(orgTrack),name,type)),replaceAnnotedName(l, type, orgTrack))
 
  ;
-       } } }}matchlab_match5_pattern3: {  OptionList l = null;  Option t = null; if(tom_is_fun_sym_manyOptionList(tom_match5_1)) {  Option tom_match5_1_1 = null;  OptionList tom_match5_1_2 = null; tom_match5_1_1 = ( Option) tom_get_slot_manyOptionList_head(tom_match5_1); tom_match5_1_2 = ( OptionList) tom_get_slot_manyOptionList_tail(tom_match5_1); t = ( Option) tom_match5_1_1; l = ( OptionList) tom_match5_1_2;
+       } } }}_match5_pattern3: {  OptionList l = null;  Option t = null; if(tom_is_fun_sym_manyOptionList(tom_match5_1)) {  Option tom_match5_1_1 = null;  OptionList tom_match5_1_2 = null; tom_match5_1_1 = ( Option) tom_get_slot_manyOptionList_head(tom_match5_1); tom_match5_1_2 = ( OptionList) tom_get_slot_manyOptionList_tail(tom_match5_1); t = ( Option) tom_match5_1_1; l = ( OptionList) tom_match5_1_2;
  
         return tom_make_manyOptionList(t,replaceAnnotedName(l, type, orgTrack)) ;
        }} }
@@ -288,12 +288,12 @@ public class TomKernelExpander extends TomBase {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
           if(subject instanceof TomTerm) {
-             {  TomTerm tom_match6_1 = null; tom_match6_1 = ( TomTerm) subject;matchlab_match6_pattern1: {  TomTerm m = null;  Option option = null;  TomTerm subjectList = null;  TomTerm patternList = null; if(tom_is_fun_sym_Match(tom_match6_1)) {  TomTerm tom_match6_1_1 = null;  TomTerm tom_match6_1_2 = null;  Option tom_match6_1_3 = null; tom_match6_1_1 = ( TomTerm) tom_get_slot_Match_subjectList(tom_match6_1); tom_match6_1_2 = ( TomTerm) tom_get_slot_Match_patternList(tom_match6_1); tom_match6_1_3 = ( Option) tom_get_slot_Match_option(tom_match6_1); m = ( TomTerm) tom_match6_1; subjectList = ( TomTerm) tom_match6_1_1; patternList = ( TomTerm) tom_match6_1_2; option = ( Option) tom_match6_1_3;
+             {  TomTerm tom_match6_1 = null; tom_match6_1 = ( TomTerm) subject;_match6_pattern1: {  TomTerm m = null;  Option option = null;  TomTerm subjectList = null;  TomTerm patternList = null; if(tom_is_fun_sym_Match(tom_match6_1)) {  TomTerm tom_match6_1_1 = null;  TomTerm tom_match6_1_2 = null;  Option tom_match6_1_3 = null; tom_match6_1_1 = ( TomTerm) tom_get_slot_Match_subjectList(tom_match6_1); tom_match6_1_2 = ( TomTerm) tom_get_slot_Match_patternList(tom_match6_1); tom_match6_1_3 = ( Option) tom_get_slot_Match_option(tom_match6_1); m = ( TomTerm) tom_match6_1; subjectList = ( TomTerm) tom_match6_1_1; patternList = ( TomTerm) tom_match6_1_2; option = ( Option) tom_match6_1_3;
  
                   // find other match in PA list
                 TomTerm newPatternList = expandMatchPattern(patternList);
                 return expandPattern(tom_make_Match(subjectList,newPatternList,option) ); 
-               }}matchlab_match6_pattern2: {
+               }}_match6_pattern2: {
  
                 return traversal().genericTraversal(subject,this);
               } }
@@ -308,17 +308,15 @@ public class TomKernelExpander extends TomBase {
   }
 
   private TomTerm expandPattern(TomTerm match) {
-     {  TomTerm tom_match7_1 = null; tom_match7_1 = ( TomTerm) match;matchlab_match7_pattern1: {  TomList list = null;  Option option = null;  TomTerm subjectList = null; if(tom_is_fun_sym_Match(tom_match7_1)) {  TomTerm tom_match7_1_1 = null;  TomTerm tom_match7_1_2 = null;  Option tom_match7_1_3 = null; tom_match7_1_1 = ( TomTerm) tom_get_slot_Match_subjectList(tom_match7_1); tom_match7_1_2 = ( TomTerm) tom_get_slot_Match_patternList(tom_match7_1); tom_match7_1_3 = ( Option) tom_get_slot_Match_option(tom_match7_1); subjectList = ( TomTerm) tom_match7_1_1; if(tom_is_fun_sym_PatternList(tom_match7_1_2)) {  TomList tom_match7_1_2_1 = null; tom_match7_1_2_1 = ( TomList) tom_get_slot_PatternList_tomList(tom_match7_1_2); list = ( TomList) tom_match7_1_2_1; option = ( Option) tom_match7_1_3;
+     {  TomTerm tom_match7_1 = null; tom_match7_1 = ( TomTerm) match;_match7_pattern1: {  TomList list = null;  Option option = null;  TomTerm subjectList = null; if(tom_is_fun_sym_Match(tom_match7_1)) {  TomTerm tom_match7_1_1 = null;  TomTerm tom_match7_1_2 = null;  Option tom_match7_1_3 = null; tom_match7_1_1 = ( TomTerm) tom_get_slot_Match_subjectList(tom_match7_1); tom_match7_1_2 = ( TomTerm) tom_get_slot_Match_patternList(tom_match7_1); tom_match7_1_3 = ( Option) tom_get_slot_Match_option(tom_match7_1); subjectList = ( TomTerm) tom_match7_1_1; if(tom_is_fun_sym_PatternList(tom_match7_1_2)) {  TomList tom_match7_1_2_1 = null; tom_match7_1_2_1 = ( TomList) tom_get_slot_PatternList_tomList(tom_match7_1_2); list = ( TomList) tom_match7_1_2_1; option = ( Option) tom_match7_1_3;
  
         boolean needModification = false;
-        TomTerm pa;
-        Option newOption = option;
         TomList newPatternList = empty();
         while(!list.isEmpty()) {
-          pa = list.getHead();
+          TomTerm pa = list.getHead();
           if( isDefaultPattern(pa.getTermList().getTomList()) ) {
-            newPatternList = cons(tom_make_DefaultPatternAction(pa .getTermList(),pa .getTom(),pa .getOption()) , newPatternList);
-            newOption = tom_make_Option(tom_make_manyOptionList(tom_make_WithDefaultProduction(),option .getOptionList())) ;
+            Option newPatternActionOption =  tom_make_Option(tom_make_manyOptionList(tom_make_DefaultCase(),pa .getOption() .getOptionList())) ;
+            newPatternList = cons(tom_make_PatternAction(pa .getTermList(),pa .getTom(),newPatternActionOption) , newPatternList);
             needModification = true;
             if(!list.getTail().isEmpty()) {
                 // the default pattern is not the latest one!!
@@ -332,11 +330,12 @@ public class TomKernelExpander extends TomBase {
         }
         if(needModification) {
           newPatternList = reverse(newPatternList);
-          return tom_make_Match(subjectList,tom_make_PatternList(newPatternList),newOption) ;
+          Option newMatchOption =tom_make_Option(tom_make_manyOptionList(tom_make_DefaultCase(),option .getOptionList())) ;
+          return tom_make_Match(subjectList,tom_make_PatternList(newPatternList),newMatchOption) ;
         } else {
           return match;
         }
-       } }}matchlab_match7_pattern2: {
+       } }}_match7_pattern2: {
  
         System.out.println("Strange Match in expandMatchPattern"+match);
         System.exit(1);
@@ -349,7 +348,7 @@ public class TomKernelExpander extends TomBase {
     TomTerm term;
     while(!pList.isEmpty()) {
       term = pList.getHead();
-       {  TomTerm tom_match8_1 = null; tom_match8_1 = ( TomTerm) term;matchlab_match8_pattern1: { if(tom_is_fun_sym_Appl(tom_match8_1)) {  Option tom_match8_1_1 = null;  TomName tom_match8_1_2 = null;  TomList tom_match8_1_3 = null; tom_match8_1_1 = ( Option) tom_get_slot_Appl_option(tom_match8_1); tom_match8_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match8_1); tom_match8_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match8_1);
+       {  TomTerm tom_match8_1 = null; tom_match8_1 = ( TomTerm) term;_match8_pattern1: { if(tom_is_fun_sym_Appl(tom_match8_1)) {  Option tom_match8_1_1 = null;  TomName tom_match8_1_2 = null;  TomList tom_match8_1_3 = null; tom_match8_1_1 = ( Option) tom_get_slot_Appl_option(tom_match8_1); tom_match8_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match8_1); tom_match8_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match8_1);
  
           return false;
          }} }
