@@ -265,7 +265,14 @@
 
 	<target name="cleantest" description="Cleans acceptance tests directory">
 		<delete>
-			<fileset dir="${test}" includes="*.java, *.class" />
+			<fileset dir="${test}" includes="*.class" />
+		</delete>
+		<delete>
+			<fileset dir="${test}" includes="**/*.java">
+				<present targetdir="${test}">
+					<mapper type="glob" from="*.java" to="*.t"/>
+				</present>
+			</fileset>
 		</delete>
 	</target>
 
