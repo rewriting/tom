@@ -56,18 +56,15 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
  	protected void buildTerm(String name, TomList argList) {
 		out.write("tom_make_");
 		out.write(name);
-		if(eCode && argList.isEmpty()) {
-		} else {
-			out.writeOpenBrace();
-			while(!argList.isEmpty()) {
-				generate(out,deep,argList.getHead());
-				argList = argList.getTail();
-				if(!argList.isEmpty()) {
-              out.writeComa();
-				}
+		out.writeOpenBrace();
+		while(!argList.isEmpty()) {
+			generate(out,deep,argList.getHead());
+			argList = argList.getTail();
+			if(!argList.isEmpty()) {
+				out.writeComa();
 			}
-			out.writeCloseBrace();
 		}
+		out.writeCloseBrace();
 	}
 	
 	protected void buildList(String name, TomList argList) {
@@ -105,7 +102,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
         }
 	} 
 
-	protected void buildList(String name, TomList argList) {
+	protected void buildArray(String name, TomList argList) {
 		TomSymbol tomSymbol = symbolTable().getSymbol(name);
 		String listType = getTLType(getSymbolCodomain(tomSymbol));
 		int size = 0;
@@ -153,101 +150,53 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
         out.write(")");
 	}
 
-	protected void buildDeclaration(TomTerm var, String name, String type, TomType tlType) {
-       if(cCode || jCode) {
-          out.write(deep,getTLCode(tlType) + " ");
-          generate(out,deep,var);
-        } else if(eCode) {
-          generate(out,deep,var);
-          out.write(deep,": " + getTLCode(tlType));
-        }
-        
-        if(jCode &&
-           !isBoolType(type) &&
-           !isIntType(type) &&
-           !isDoubleType(type)) {
-          out.writeln(" = null;");
-        } else {
-          out.writeln(";");
-        }
-	}
-	
+	protected abstract void buildDeclaration(TomTerm var, String name, String type, TomType tlType);
+
 	protected void buildDeclarationStar(TomTerm var, String name, String type, TomType tlType) {
-			if(cCode || jCode) {
-          out.write(deep,getTLCode(tlType) + " ");
-          generate(out,deep,var);
-        } else if(eCode) {
-          generate(out,deep,var);
-          out.write(deep,": " + getTLCode(tlType));
-        }
-        out.writeln(";");
+		out.write(deep,getTLCode(tlType) + " ");
+		generate(out,deep,var);
+		out.writeln(";");
 	}
 
 	protected void buildFunctionBegin(String tomName, TomList varList) {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        String glType = getTLType(getSymbolCodomain(tomSymbol));
-        String name = tomSymbol.getAstName().getString();
-        
-        if(cCode || jCode) {
-          out.write(deep,glType + " " + name + "(");
-        } else if(eCode) {
-          out.write(deep,name + "(");
-        }
-        while(!varList.isEmpty()) {
-          TomTerm localVar = varList.getHead();
-          matchBlock: {
-            %match(TomTerm localVar) {
-              v@Variable(option2,name2,type2) -> {
-                if(cCode || jCode) {
-                  out.write(deep,getTLType(type2) + " ");
-                  generate(out,deep,v);
-                } else if(eCode) {
-                  generate(out,deep,v);
-                  out.write(deep,": " + getTLType(type2));
-                }
-                break matchBlock;
-              }
-              _ -> {
-                System.out.println("MakeFunction: strange term: " + localVar);
-                throw new TomRuntimeException(new Throwable("MakeFunction: strange term: " + localVar));
-              }
-            }
-          }
-          varList = varList.getTail();
-          if(!varList.isEmpty()) {
-            if(cCode || jCode) {
-              out.write(deep,", ");
-            } else if(eCode) {
-              out.write(deep,"; ");
-            }
-          }
-        }
-        if(cCode || jCode) {
-          out.writeln(deep,") {");
-        } else if(eCode) {
-          out.writeln(deep,"): " + glType + " is");
-          out.writeln(deep,"local ");
-        }
-          //out.writeln(deep,"return null;");
+		TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+		String glType = getTLType(getSymbolCodomain(tomSymbol));
+		String name = tomSymbol.getAstName().getString();
+    
+		out.write(deep,glType + " " + name + "(");
+		while(!varList.isEmpty()) {
+			TomTerm localVar = varList.getHead();
+			matchBlock: {
+				%match(TomTerm localVar) {
+					v@Variable(option2,name2,type2) -> {
+						out.write(deep,getTLType(type2) + " ");
+						generate(out,deep,v);
+						break matchBlock;
+					}
+					_ -> {
+						System.out.println("MakeFunction: strange term: " + localVar);
+						throw new TomRuntimeException(new Throwable("MakeFunction: strange term: " + localVar));
+					}
+				}
+			}
+			varList = varList.getTail();
+			if(!varList.isEmpty()) {
+				out.write(deep,", ");
+				
+			}
+		}
+		out.writeln(deep,") {");
+		//out.writeln(deep,"return null;");
 	}
 	
 	protected void buildFunctionEnd() {
-		if(cCode || jCode) {
 			out.writeln(deep,"}");
-		} else if(eCode) {
-			out.writeln(deep,"end;");
-		}
 	}
 	
 	protected void buildExpNot(Expression exp) {
-		if(cCode || jCode) {
-			out.write("!(");
-			generateExpression(out,deep,exp);
-			out.write(")");
-		} else if(eCode) {
-			out.write("not ");
-			generateExpression(out,deep,exp);
-		}
+		out.write("!(");
+		generateExpression(out,deep,exp);
+		out.write(")");
 	}
 
   protected abstract void buildExpTrue() {
