@@ -53,11 +53,12 @@ public class Nsh {
       intruder(devil,concNonce(),concMessage()),
       concMessage());
     
+    State initState3 = query(2,2);
     State initState = query(1,1);
     State search    = `ATTACK();
 
     long startChrono = System.currentTimeMillis();
-    boolean res = reach(initState,search);
+    boolean res = reach(initState3,search);
     long stopChrono = System.currentTimeMillis();
 
     System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
@@ -222,7 +223,7 @@ public class Nsh {
                   concAgent(E1*,agent(x,COMMIT(),N(x,v)),E2*),
                   D,
                   intru,
-                  concMessage(M1*,msg(x,v,K(z),N(n2,n4),DN(),DA()),M2*));
+                  concMessage(M1*,msg(x,v,K(v),N(n2,n4),DN(),DA()),M2*));
                 c.add(state);
               }
 
@@ -358,7 +359,7 @@ public class Nsh {
               //------------------------------
               // attack on the receiver
             state(
-              concAgent(E1*,agent(x,COMMIT(),N(x,y)),E2*),
+              pool1@concAgent(E1*,agent(x,COMMIT(),N(x,y)),E2*),
               D,intruder(w,l,ll),M) -> {
               if(y!=w &&
                  !existAgent(`agent(y,WAIT(),N(y,x)),D) &&
@@ -373,9 +374,9 @@ public class Nsh {
               // attack on the sender
             state(
               E,
-              concAgent(D1*,agent(y,COMMIT(),N(y,x)),D2*),
+              pool1@concAgent(D1*,agent(y,COMMIT(),N(y,x)),D2*),
               intruder(w,l,ll),M) -> {
-              if(x!=w && !existAgent(`agent(y,COMMIT(),N(x,y)),E) ) {
+              if(x!=w && !existAgent(`agent(x,COMMIT(),N(x,y)),E) ) {
                 State state = `ATTACK();
                 c.add(state);
               } 
