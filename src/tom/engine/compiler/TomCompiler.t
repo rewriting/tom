@@ -343,28 +343,28 @@ public class TomCompiler extends TomTask {
   
   private TomTerm renameVariable(TomTerm subject,
                                  Map multiplicityMap,
-                                 Map maxmultiplicityMap,
+                                 Map maxMultiplicityMap,
                                  ArrayList equalityCheck) {
     TomTerm renamedTerm = subject;
     
     %match(TomTerm subject) {
       UnamedVariable[option=optionList,astType=type,constraints=constraint] -> {
-        //OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        ConstraintList newConstraintList = `renameVariableInConstraintList(constraint,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        //OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxMultiplicityMap,equalityCheck);
+        ConstraintList newConstraintList = `renameVariableInConstraintList(constraint,multiplicityMap,maxMultiplicityMap,equalityCheck);
         return `UnamedVariable(optionList,type,newConstraintList);
       }
       
       UnamedVariableStar[option=optionList,astType=type,constraints=constraint] -> {
-        //OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        ConstraintList newConstraintList = `renameVariableInConstraintList(constraint,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        //OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxMultiplicityMap,equalityCheck);
+        ConstraintList newConstraintList = `renameVariableInConstraintList(constraint,multiplicityMap,maxMultiplicityMap,equalityCheck);
         return `UnamedVariableStar(optionList,type,newConstraintList);
       }
 
 			Variable[option=optionList,astName=name,astType=type,constraints=clist] -> {
 				Integer multiplicity = (Integer) multiplicityMap.get(name);
 				int mult = multiplicity.intValue();
-				Integer maxmultiplicity = (Integer) maxmultiplicityMap.get(name);
-				int maxmult = maxmultiplicity.intValue();
+				Integer maxMultiplicity = (Integer) maxMultiplicityMap.get(name);
+				int maxMult = maxMultiplicity.intValue();
 				if(mult > 1) {
 					mult = mult-1;
 					multiplicityMap.put(name,new Integer(mult));
@@ -372,9 +372,9 @@ public class TomCompiler extends TomTask {
 					TomNumberList path = tsf().makeTomNumberList();
 					path = (TomNumberList) path.append(`RenamedVar(name));
 					path = (TomNumberList) path.append(makeNumber(mult));
-					//OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-					ConstraintList newConstraintList = renameVariableInConstraintList(clist,multiplicityMap,maxmultiplicityMap,equalityCheck);
-					if (mult < maxmult -1) {
+					//OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxMultiplicityMap,equalityCheck);
+					ConstraintList newConstraintList = renameVariableInConstraintList(clist,multiplicityMap,maxMultiplicityMap,equalityCheck);
+					if (mult < maxMult -1) {
 						// add the constraint renamedVariable = renamedVariable+1
 						TomTerm oldVar;
 						TomNumberList oldpath = tsf().makeTomNumberList();
@@ -391,7 +391,7 @@ public class TomCompiler extends TomTask {
 					Expression newEquality = `EqualTerm(subject,renamedTerm);
 					equalityCheck.add(newEquality);
 				}
-				else if (maxmult > 1) {
+				else if (maxMult > 1) {
 					TomNumberList oldpath = tsf().makeTomNumberList();
 					oldpath = (TomNumberList) oldpath.append(`RenamedVar(name));
 					oldpath = (TomNumberList) oldpath.append(makeNumber(mult));
@@ -404,8 +404,8 @@ public class TomCompiler extends TomTask {
 			VariableStar[option=optionList,astName=name,astType=type,constraints=clist] -> {
 				Integer multiplicity = (Integer)multiplicityMap.get(name);
 				int mult = multiplicity.intValue();
-				Integer maxmultiplicity = (Integer) maxmultiplicityMap.get(name);
-				int maxmult = maxmultiplicity.intValue();
+				Integer maxMultiplicity = (Integer) maxMultiplicityMap.get(name);
+				int maxMult = maxMultiplicity.intValue();
 				if(mult > 1) {
 					mult = mult-1;
 					multiplicityMap.put(name,new Integer(mult));
@@ -413,9 +413,9 @@ public class TomCompiler extends TomTask {
 					TomNumberList path = tsf().makeTomNumberList();
 					path = (TomNumberList) path.append(`RenamedVar(name));
 					path = appendNumber(mult,path);
-					//OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-					ConstraintList newConstraintList = renameVariableInConstraintList(clist,multiplicityMap,maxmultiplicityMap,equalityCheck);
-					if (mult < maxmult -1) {
+					//OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,maxMultiplicityMap,equalityCheck);
+					ConstraintList newConstraintList = renameVariableInConstraintList(clist,multiplicityMap,maxMultiplicityMap,equalityCheck);
+					if (mult < maxMult -1) {
 						// add the constraint renamedVariable = renamedVariable+1
 						TomTerm oldVar;
 						TomNumberList oldpath = tsf().makeTomNumberList();
@@ -432,7 +432,7 @@ public class TomCompiler extends TomTask {
 					Expression newEquality = `EqualTerm(subject,renamedTerm);
 					equalityCheck.add(newEquality);
 				} 
-				else if (maxmult > 1) {
+				else if (maxMult > 1) {
 					TomNumberList oldpath = tsf().makeTomNumberList();
 					oldpath = (TomNumberList) oldpath.append(`RenamedVar(name));
 					oldpath = (TomNumberList) oldpath.append(makeNumber(mult));
@@ -447,12 +447,12 @@ public class TomCompiler extends TomTask {
         TomList newArgs = empty();
         while(!args.isEmpty()) {
           TomTerm elt = args.getHead();
-          TomTerm newElt = renameVariable(elt,multiplicityMap,maxmultiplicityMap,equalityCheck);
+          TomTerm newElt = renameVariable(elt,multiplicityMap,maxMultiplicityMap,equalityCheck);
           newArgs = append(newElt,newArgs);
           args = args.getTail();
         }
-        //OptionList newOptionList = renameVariableInOptionList(`optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap,maxmultiplicityMap,equalityCheck);
+        //OptionList newOptionList = renameVariableInOptionList(`optionList,multiplicityMap,maxMultiplicityMap,equalityCheck);
+        ConstraintList newConstraintList = renameVariableInConstraintList(`constraints,multiplicityMap,maxMultiplicityMap,equalityCheck);
         renamedTerm = `Appl(optionList,nameList,newArgs,newConstraintList);
         return renamedTerm;
       }
@@ -462,7 +462,7 @@ public class TomCompiler extends TomTask {
 
   private ConstraintList renameVariableInConstraintList(ConstraintList constraintList,
                                                 Map multiplicityMap,
-                                                Map maxmultiplicityMap,
+                                                Map maxMultiplicityMap,
                                                 ArrayList equalityCheck) {
     ArrayList list = new ArrayList();
     while(!constraintList.isEmpty()) {
@@ -470,7 +470,7 @@ public class TomCompiler extends TomTask {
       Constraint newCstElt = cstElt;
       %match(Constraint cstElt) {
         AssignTo(var@Variable[]) -> {
-          newCstElt = `AssignTo(renameVariable(var,multiplicityMap,maxmultiplicityMap,equalityCheck));
+          newCstElt = `AssignTo(renameVariable(var,multiplicityMap,maxMultiplicityMap,equalityCheck));
         }
       }
       list.add(newCstElt);
@@ -481,7 +481,7 @@ public class TomCompiler extends TomTask {
 /*
   private OptionList renameVariableInOptionList(OptionList optionList,
                                                 Map multiplicityMap,
-                                                Map maxmultiplicityMap,
+                                                Map maxMultiplicityMap,
                                                 ArrayList equalityCheck) {
     ArrayList list = new ArrayList();
     while(!optionList.isEmpty()) {
@@ -489,7 +489,7 @@ public class TomCompiler extends TomTask {
       Option newOptElt = optElt;
       %match(Option optElt) {
         TomTermToOption(var@Variable[]) -> {
-          newOptElt = `TomTermToOption(renameVariable(var,multiplicityMap,maxmultiplicityMap,equalityCheck));
+          newOptElt = `TomTermToOption(renameVariable(var,multiplicityMap,maxMultiplicityMap,equalityCheck));
         }
       }
       list.add(newOptElt);
@@ -501,20 +501,20 @@ public class TomCompiler extends TomTask {
   
   private TomList linearizePattern(TomList subject, ArrayList equalityCheck) {
     Map multiplicityMap = collectMultiplicity(subject);
-    Map maxmultiplicityMap = new HashMap();
+    Map maxMultiplicityMap = new HashMap();
 		// maxMultMap must be a deep clone of multMap
 		Iterator it = multiplicityMap.keySet().iterator();
 		Integer value;
 		while (it.hasNext()) {
 			Object key = it.next();
 			value = new Integer(((Integer)multiplicityMap.get(key)).intValue());
-			maxmultiplicityMap.put(key,value);
+			maxMultiplicityMap.put(key,value);
 		}
       // perform the renaming and generate equality checks
     TomList newList = empty();
     while(!subject.isEmpty()) {
       TomTerm elt = subject.getHead();
-      TomTerm newElt = renameVariable(elt,multiplicityMap,maxmultiplicityMap,equalityCheck);
+      TomTerm newElt = renameVariable(elt,multiplicityMap,maxMultiplicityMap,equalityCheck);
       newList = append(newElt,newList);
       subject = subject.getTail();
     }
