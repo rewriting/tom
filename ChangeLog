@@ -4,6 +4,9 @@
 	  added a post-processing phase to TomExpander
 	  this phases update the codomain of GetHeadDecl in order to
 	  generate correctly typed getHead functions
+	* detect concatenated-char : 'abc'
+	  and expand it into a list of char: 'a','b','c'
+	  
 
 2004-03-17 julien <julien.guyon@loria.fr>
 	
