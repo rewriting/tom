@@ -493,11 +493,12 @@ abstract public class TomChecker extends TomTask {
 					messageError(orgTrack.getLine(), 
 								symbolType+" "+currentTomStructureOrgTrack.getAstName().getString(), 
 								TomCheckerMessage.NonLinearMacroFunction,
-								new Object[]{MAKE, name}, TomCheckerMessage.TOM_ERROR);
+								new Object[]{MAKE, name},
+								TomCheckerMessage.TOM_ERROR);
 				} else {
 					listVar.add(name);
-					nbArgs++;
 				}
+				nbArgs++;
 			}
 		}
 		if(nbArgs != domainLength) {
@@ -579,8 +580,7 @@ abstract public class TomChecker extends TomTask {
 		// Given a MatchConstruct's subject list and pattern-action list
 	private void verifyMatch(TomList subjectList, TomList patternList, OptionList list) {
 		currentTomStructureOrgTrack = findOriginTracking(list);
-		ArrayList typeMatchArgs = new ArrayList();
-		ArrayList nameMatchArgs = new ArrayList();
+		ArrayList typeMatchArgs = new ArrayList(), nameMatchArgs = new ArrayList();
 			// From the subjects list(match definition), we test each used type and keep them in memory
 		%match(TomList subjectList) {
 			concTomTerm(_*, TLVar(name, tomType@TomTypeAlone(type)), _*) -> { // for each Match args
@@ -596,6 +596,7 @@ abstract public class TomChecker extends TomTask {
 				if(nameMatchArgs.indexOf(name) == -1) {
 					nameMatchArgs.add(name);
 				} else {
+						// Maybe its an error: warn the user
 					messageError(currentTomStructureOrgTrack.getLine(),
 																TomCheckerMessage.RepeatedMatchArgumentName,
 																new Object[]{name},
@@ -603,23 +604,16 @@ abstract public class TomChecker extends TomTask {
 				}
 			}	
 		}	
-			// Then control each pattern vs the match definition
 		%match(TomList patternList) {
-			concTomTerm(_*, PatternAction[termList=TermList(terms)], _*) -> { // for each PatternAction
+			concTomTerm(_*, PatternAction[termList=TermList(terms)], _*) -> { // control each pattern vs the match definition
 				verifyMatchPattern(terms, typeMatchArgs);
 			}
 		}
 	}
-
-		// For each Pattern we count and collect type information
-		// but also we test that terms are well formed
-		// No top variable/underscore star are allowed
+	
+	  // each patternList shall have the expected length and each term shall be valid
 	private void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs) {
-		String termTypeName, expectedTypeName;
-		TomType expectedType;
-		int nbFoundArgs = termList.getLength();
-		int nbExpectedArgs = typeMatchArgs.size();
-
+		int nbFoundArgs = termList.getLength(), nbExpectedArgs = typeMatchArgs.size();
 		if(nbFoundArgs != nbExpectedArgs) {
 			messageError(findOriginTrackingLine(termList.getHead().getOption()),
 														TomCheckerMessage.BadMatchNumberArgument,
@@ -627,43 +621,27 @@ abstract public class TomChecker extends TomTask {
 														TomCheckerMessage.TOM_ERROR);
 			return ;
 		}
+		
+		TomType expectedType;
 		int counter = 0, termClass = 0;
 		%match(TomList termList) {
-			p: concTomTerm(_*, term, _*) -> { // for each Term
-					// Var* and _* are not allowed as top leftmost symbol
+			concTomTerm(_*, term, _*) -> { // no term can be a  Var* nor _*: not allowed as top leftmost symbol
 				TermDescription termDesc = analyseTerm(term);
 				if(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR) {
 					messageError(termDesc.decLine, 
 																TomCheckerMessage.IncorrectVariableStar, 
 																new Object[]{termDesc.name},
 																TomCheckerMessage.TOM_ERROR);
-				} else {			
-					// Analyse of the term if expectedType != null
+				} else {		// Analyse of the term if expectedType != null	
 					expectedType = (TomType)typeMatchArgs.get(counter);
 					if (expectedType != null) {
 						validateTerm(term, expectedType, false, true, false);
 					}
-					counter++;
-				/*
-				  // ensure type coherence if strictType
-				termTypeName = termDesc.type();
-				
-				expectedTypeName = expectedType!=null?expectedType.getString():null;
-				if(strictType) {
-					if(termTypeName != null && expectedTypeName !=null &&
-						!termTypeName.equals(expectedTypeName) ) {
-						messageError(termDesc.decLine,
-																	TomCheckerMessage.WrongMatchArgumentTypeInPattern,
-																	new Object[]{new Integer(counter+1), expectedTypeName, termTypeName },
-																	TomCheckerMessage.TOM_ERROR);
-					}
 				}
-			*/
-				}
+				counter++;
 			}
 		}
 	}
-
 
 	/** 
 	 * RULE VERIFICATION CONCERNS 
@@ -1151,8 +1129,8 @@ abstract public class TomChecker extends TomTask {
 	}
 	
 	private boolean ensureSymbolCodomain(TomType currentCodomain, TomType expectedType, String msg, String symbolName, int decLine) {
-		if(currentCodomain !=expectedType) {
-				//System.out.println(currentCodomain+"!="+expectedType);
+		if(currentCodomain != expectedType) {
+			  //System.out.println(currentCodomain+"!="+expectedType);
 			messageError(decLine, 
 														msg,
 														new Object[]{symbolName, currentCodomain.getString(), expectedType.getString()},
@@ -1176,8 +1154,7 @@ abstract public class TomChecker extends TomTask {
 			} else { // known symbol
 					// ensure type correctness
 				TomType currentCodomain = getSymbolCodomain(symbol);
-				if(currentCodomain != expectedType) {
-					
+				if (!ensureSymbolCodomain(currentCodomain, expectedType, TomCheckerMessage.InvalidCodomain, res, decLine)) {
 					return null;
 				}
 			}
