@@ -72,7 +72,7 @@ public class Record {
     get_slot(first,t) { ((Uminus)t).first }
   }
 
-  %op CstExp StringExp(value:string) {
+  %op CstExp StringExp(value:String) {
     fsym { } 
     is_fsym(t) { t instanceof StringExp }
     get_slot(value,t) { ((StringExp)t).value }

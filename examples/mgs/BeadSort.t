@@ -9,7 +9,7 @@ public class BeadSort {
   private HashMap space;
   private HashMap newSpace;
 
-  %include { MgsADT.tom }
+  %include { adt/MgsADT.tom }
 
   %op Bead beadNS(n:Bead, s:Bead) {
     fsym { }
@@ -50,7 +50,7 @@ public class BeadSort {
   }
   
   private Position getNorthPosition(Position p) {
-      return `pos(p.getX(),p.getY()+1);
+    return `pos(p.getX(),p.getY()+1);
   }
   
   private Position getSouthPosition(Position p) {

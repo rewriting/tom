@@ -53,7 +53,7 @@ public class RecordStrict {
     is_fsym(t) { t instanceof CstExp }
   }
 
-  %op Exp StringExp(value:string) {
+  %op Exp StringExp(value:String) {
     fsym { } 
     is_fsym(t) { t instanceof StringExp }
     get_slot(value,t) { ((StringExp)t).value }

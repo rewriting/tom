@@ -29,7 +29,7 @@ public class Lsystems3 implements LsystemsInterface {
   %include { lsruntime/adt/lsystems.tom }
   %include { lsruntime/extras.tom }
   
-  public Lsystems3(String[] args,LsystemsRuntime runtime) {
+  public Lsystems3(String[] args, LsystemsRuntime runtime) {
     this.runtime = runtime;
     if(args.length > 0) {
       for(int i=0; i < args.length; i++) { 
