@@ -57,7 +57,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 	/*
 	 * the method implementations are here common to C and Java
 	 */
- 	protected void buildTerm(int deep, String name, TomList argList) {
+ 	protected void buildTerm(int deep, String name, TomList argList) throws IOException {
 		output.write("tom_make_");
 		output.write(name);
 		output.writeOpenBrace();
@@ -71,7 +71,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		output.writeCloseBrace();
 	}
 	
-	protected void buildList(int deep, String name, TomList argList) {
+	protected void buildList(int deep, String name, TomList argList) throws IOException {
 		TomSymbol tomSymbol = symbolTable().getSymbol(name);
 		String listType = getTLType(getSymbolCodomain(tomSymbol));
 		int size = 0;
@@ -106,7 +106,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		}
 	} 
 
-	protected void buildArray(int deep, String name, TomList argList) {
+	protected void buildArray(int deep, String name, TomList argList) throws IOException {
 		TomSymbol tomSymbol = symbolTable().getSymbol(name);
 		String listType = getTLType(getSymbolCodomain(tomSymbol));
 		int size = 0;
@@ -142,7 +142,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		}
 	}
 
-	protected void buildFunctionCall(int deep, String name, TomList argList) {
+	protected void buildFunctionCall(int deep, String name, TomList argList) throws IOException {
 		output.write(name + "(");
 		while(!argList.isEmpty()) {
 			generate(deep,argList.getHead());
@@ -156,13 +156,13 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 
 	protected abstract void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType);
 
-	protected void buildDeclarationStar(int deep, TomTerm var, String name, String type, TomType tlType) {
+	protected void buildDeclarationStar(int deep, TomTerm var, String name, String type, TomType tlType)  throws IOException{
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
 		output.writeln(";");
 	}
 
-	protected void buildFunctionBegin(int deep, String tomName, TomList varList) {
+	protected void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException {
 		TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
 		String glType = getTLType(getSymbolCodomain(tomSymbol));
 		String name = tomSymbol.getAstName().getString();
@@ -193,20 +193,20 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		//out.writeln(deep,"return null;");
 	}
 	
-	protected void buildFunctionEnd(int deep) {
+	protected void buildFunctionEnd(int deep) throws IOException {
 		output.writeln(deep,"}");
 	}
 	
-	protected void buildExpNot(int deep, Expression exp) {
+	protected void buildExpNot(int deep, Expression exp) throws IOException {
 		output.write("!(");
 		generateExpression(deep,exp);
 		output.write(")");
 	}
 
-  protected abstract void buildExpTrue(int deep);
-  protected abstract void buildExpFalse(int deep);
+  protected abstract void buildExpTrue(int deep) throws IOException;
+  protected abstract void buildExpFalse(int deep) throws IOException;
   
-  protected void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType) {
+  protected void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		output.write(" = (" + getTLCode(tlType) + ") ");
@@ -221,7 +221,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     }
   }
 
-	protected void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType) {
+	protected void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		output.write(" = (" + getTLCode(tlType) + ") ");
@@ -236,9 +236,9 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     }
   }
 
-  protected abstract void buildNamedBlock(int deep, String blockName, TomList instList);
+  protected abstract void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException;
 
-  protected void buildIfThenElse(int deep, Expression exp, TomList succesList) {
+  protected void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException {
 		output.write(deep,"if("); 
 		generateExpression(deep,exp); 
 		output.writeln(") {");
@@ -246,7 +246,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		output.writeln(deep,"}");
   }
 
-  protected void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) {
+  protected void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) throws IOException {
 		output.write(deep,"if("); 
 		generateExpression(deep,exp); 
 		output.writeln(") {");
@@ -256,7 +256,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		output.writeln(deep,"}");
   }
 
-  protected void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp) {
+  protected void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		output.write(" = (" + getTLCode(tlType) + ") ");
@@ -271,16 +271,16 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     }
   }
 
-  protected abstract void buildExitAction(int deep, TomNumberList numberList);
+  protected abstract void buildExitAction(int deep, TomNumberList numberList) throws IOException;
 
-  protected void buildReturn(int deep, Expression exp) {
+  protected void buildReturn(int deep, Expression exp) throws IOException {
 		output.write(deep,"return ");
 		generate(deep,exp);
 		output.writeln(deep,";");
   }
 
 
-	protected void buildSymbolDecl(int deep, String tomName) {
+	protected void buildSymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
@@ -294,7 +294,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     generateSlotList(deep, slotList);
   }
 
-  protected void buildArraySymbolDecl(int deep, String tomName) {
+  protected void buildArraySymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();        
@@ -308,7 +308,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     generateSlotList(deep, slotList);
   }
 
-  protected void buildListSymbolDecl(int deep, String tomName) {
+  protected void buildListSymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
@@ -322,7 +322,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     generateSlotList(deep, slotList);
   }
 
-protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2) {
+protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2) throws IOException {
     String args[];
     if(strictType) {
       args = new String[] { getTLCode(tlType1), name1,
@@ -339,7 +339,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
 																	 String declName,
 																	 String suffix,
 																	 String args[],
-																	 TargetLanguage tlCode) {
+																	 TargetLanguage tlCode) throws IOException {
     String s = "";
     if(!genDecl) { return null; }
 		s = modifier + returnType + " " + declName + "_" + suffix + "(";
@@ -358,7 +358,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
 		}
 
   protected void TargetLanguage genDeclMake(int deep, String opname, TomType returnType, 
-                                            TomList argList, TargetLanguage tlCode) {
+                                            TomList argList, TargetLanguage tlCode) throws IOException {
 		//%variable
     String s = "";
     if(!genDecl) { return null; }

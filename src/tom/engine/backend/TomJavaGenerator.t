@@ -57,7 +57,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-	protected void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType) {
+	protected void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType) throws IOException {
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
     
@@ -70,21 +70,21 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 		}
 	}
 
-  protected void buildExpTrue(int deep) {
+  protected void buildExpTrue(int deep) throws IOException {
 		output.write(" true ");
 	}
   
-  protected void buildExpFalse(int deep) {
+  protected void buildExpFalse(int deep) throws IOException {
 		output.write(" false ");
   }
 	 
-	protected void buildNamedBlock(int deep, String blockName, TomList instList) {
+	protected void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException {
 		output.writeln(blockName + ": {");
 		generateList(deep+1,instList);
 		output.writeln("}");
   }
 
-  protected void buildExitAction(int deep, TomNumberList numberList) {
+  protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
 		output.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
   }
 

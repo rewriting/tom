@@ -56,31 +56,31 @@ public class TomCGenerator extends TomImperativeGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-	protected void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType) {
+	protected void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType) throws IOException {
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
 		output.writeln(";");
 	}
 	
-  protected void buildExpTrue(int deep) {
+  protected void buildExpTrue(int deep) throws IOException {
 		output.write(" 1 ");
   }
   
-  protected void buildExpFalse(int deep) {
+  protected void buildExpFalse(int deep) throws IOException {
 		output.write(" 0 ");
   }
 
-  protected void buildNamedBlock(int deep, String blockName, TomList instList) {
+  protected void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException {
 		output.writeln("{");
 		generateList(deep+1,instList);
 		output.writeln("}" + blockName +  ":;");
   }
 
-  protected void buildExitAction(int deep, TomNumberList numberList) {
+  protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
 		output.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
   }
 
-	protected void buildSymbolDecl(int deep, String tomName) {
+	protected void buildSymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
@@ -143,7 +143,7 @@ public class TomCGenerator extends TomImperativeGenerator {
   }
 
 
-  protected void buildArraySymbolDecl(int deep, String tomName) {
+  protected void buildArraySymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();        
@@ -183,7 +183,7 @@ public class TomCGenerator extends TomImperativeGenerator {
   }
 
 
-  protected void buildListSymbolDecl(int deep, String tomName) {
+  protected void buildListSymbolDecl(int deep, String tomName) throws IOException {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
