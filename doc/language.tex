@@ -26,7 +26,7 @@ components. Parentheses (...) denote grouping.
 \begin{center}
 \begin{tabular}{lcl}
   \nt{Identifier} & ::= & \nt{Letter} ( \nt{Letter} \alt \nt{Digit}
-  \alt \lex{.} \alt \lex{\_} \alt \lex{-} )*\\
+  \alt \lex{\_} \alt \lex{-} )*\\
   \nt{Integer} & ::= & \nt{Digit} ( \nt{Digit} )*\\
   \nt{Letter} & ::= & \lex{A} ... \lex{Z} \alt \lex{a} ... \lex{z}\\
   \nt{Digit} & ::= & \lex{0} ... \lex{9}\\
@@ -128,8 +128,7 @@ The construct is defined as follow:
     \nt{MatchArguments} \lex{)} \lex{\{}
     ( \nt{PatternAction} )* 
     \lex{\}}\\
-  \nt{MatchArguments} & ::= & \nt{MatchArgument} ( \lex{,} \nt{MatchArgument} )* \\
-  \nt{MatchArgument}  & ::= & \nt{Type} \nt{SubjectName}\\
+  \nt{MatchArguments} & ::= & \nt{Type} \nt{SubjectName} ( \lex{,} \nt{Type} \nt{SubjectName} )* \\
   \nt{PatternAction} & ::= & \nt{MatchPatterns} \lex{->}
      \lex{\{} \nt{BlockList} \lex{\}} \\
   \nt{MatchPatterns} & ::= & \nt{Term} ( \lex{,} \nt{Term} )*
@@ -153,8 +152,11 @@ left-handsides should begin with the same root symbol:
 
 \begin{center}
   \begin{tabular}{lcl}
-    \nt{RuleConstruct} & ::= & \lex{\%rule} \lex{\{} ( \nt{Term} \lex{->} \nt{Term} )* \lex{\}}\\
-    \nt{MakeConstruct} & ::= & \lex{\%make} \lex{\{} \nt{Term} \lex{\}}
+    \nt{RuleConstruct} & ::= & \lex{\%rule} \lex{\{} ( \nt{Rule} )* \lex{\}}\\
+    \nt{Rule} & ::= & \nt{RuleBody} ( \nt{RuleCondition} )*\\
+    \nt{RuleBody} & ::= & \nt{Term} \lex{->} \nt{Term}\\
+    \nt{RuleCondition} & ::= & \lex{where} \nt{Term} \lex{:=} \nt{Term}\\
+    & \alt & \lex{if} \nt{Term} \lex{=} \nt{Term}
 \end{tabular}
 \end{center}
 
@@ -293,7 +295,7 @@ several access functions have to be defined:
   This function should return the \texttt{n-th} subterm of the
   term~\texttt{t}. This never called with and integer paramter that
   does not correspond to the arity of the root symbol of the
-  considered term (i.e. we alway have $0 \leq n < arity$).
+  considered term (i.e. we alway have $0 <= n < arity$).
 
 \item\label{equals} the \lex{equals(t1,t2)} construct corresponds to a
   predicate (parametrised by two term variables).
@@ -342,21 +344,27 @@ the int type can be directly used as a term.
 \subsection{Operator definition}\label{opdef}
 
 \noindent
-When defining a new symbol with the \lex{\%op} construct, the user
-should specify how the symbol is implemented. This is done by the
-\lex{fsym} construct.\label{fsym}
+When defining a new symbol with the \lex{\%op}~$s$ construct, the user
+should specify how the symbol~$s$ is implemented. This is done by the
+\lex{fsym} \lex{\{} implementation\_of\_s \lex{\}} construct.\label{fsym}
 The expression between braces should correspond (modulo the
 \lex{cmp\_fun\_sym} predicate) to the expression returned by the
 function \lex{get\_fun\_sym} applied to a term rooted by the
-considered symbol.  
+considered symbol ($s$ in this case).  
+
+\label{isfsym} 
+The \lex{isfysm(t)} \lex{\{} predicate(t) \lex{\}} construct can be
+used to specialize this mechanism. When \lex{isfsym} is defined, the
+predicate (given between braces) is used to check if a term $t$ is
+rooted by the considered symbol ($s$ in this example). This replaces
+the use of \lex{get\_fun\_sym} and \lex{cmp\_fun\_sym}.
+
 \label{make}When defining a symbol, is it also possible to specify a
 \lex{make} construct. This function is parametrised by several 
 term variables (i.e. that should correspond to the arity of the
 symbol). A call to this \lex{make} function should return a term
 rooted by the considered symbol, where each subterm correspond to the
 terms given in arguments to the function.
-
-\label{isfsym} Need to write something about isfsym
 
 \noindent
 As mentioned in the syntax definition, it is also possible to name
@@ -373,6 +381,7 @@ Adopting this programming style has two main advantages:
 function for a given constructor. This can be done with the
 \lex{get\_slot} construct.
 \end{itemize}
+
 
 \smallskip\noindent\label{oplistdef}
 When defining a new symbol with the \lex{\%oplist} construct,
@@ -402,7 +411,8 @@ longer optional as in the \lex{\%op} construct):
 
 \item\label{append} the \lex{make\_append(e,l)} construct corresponds to a
   function parametrised by a list variable and a term variable. 
-\\\\!! Warning..\\\\
+
+\textbf{Warning: }
 This function should return a list~\texttt{l'} such that
   the element~\texttt{e} is at the \texttt{n-th} position.
 \end{itemize}
@@ -413,7 +423,7 @@ In order to match patterns against a list of subjects, \TOM\ provides
 the \lex{\%match} construct.
 This constructs contains two parts:
 \begin{itemize}
-\item a list of \nt{MatchArgument}: this is a list of (target
+\item a \nt{MatchArguments}: this is a list of (target
   language) variables that reference the terms to be matched.
 \item a list of \nt{PatternAction}: this is a list of pairs
   (pattern,action), where an action is a set of target language
@@ -456,14 +466,28 @@ modifies a target language variable which is an argument of a
 
 \subsection{Rule definition}
 
-The \lex{\%rule} construct is composed of a list of rewrite rules
-(the left-hand side is a term and the right-hand side is a term).
-All these rules should begin with the same root symbol. The \TOM\
-compiler should generate a function (with one argument) whose name
-correspond to the name of this unique root symbol.
+The \lex{\%rule} construct is composed of a list of conditional
+rewrite rules (the left-hand side is a term and the right-hand side is
+a term). All these rules should begin with the same root symbol. The
+\TOM\ compiler should generate a function (with one argument) whose
+name correspond to the name of this unique root symbol.
 Given a ground term, applying this function returns the instanciated
 right-hand side of the first rule whose pattern matches the considered 
-subject.
-When no rule can be applied (i.e. no pattern matches the subject),
-the given ground term, rooted by the root symbol of the rewrite system
-is returned.
+subject and whose conditions are satisfied.
+When no rule can be applied (i.e. no pattern matches the subject, or
+no condition is satisfied), the given ground term, rooted by the root
+symbol of the rewrite system is returned.
+
+In Tom, we consider two kinds of conditions:
+\begin{itemize}
+\item an equality condition ($t_1 = t_2$) is a pair of ground terms that
+  belong to the same type.
+  The condition is satisfied when the normal forms of the two terms
+  ($t_1$ and $t_2$) are equal modulo the \lex{equals} predicate defined in
+  the definition of the type associated to $t_1$ and $t_2$.
+\item a matching condition ($p := t$) is a pair of terms where p may
+  contains free variable. The conditon is satisfied if the pattern~$p$
+  can be matched against the normal form of~$t$. In this case, the
+  free variables of~$p$ are instantited and can be used in other
+  conditions or the right-hand side of the rule.
+\end{itemize}

@@ -52,14 +52,20 @@ instructions.
 This is the simplest way to have quickly \TOM\ running on your
 computer.
 \begin{itemize}
-\item Untar the package: 
+\item Untar the package:
+\begin{verbatim}
   > tar xzf jtom-bundle-VERSION.tar.gz
+\end{verbatim}
 \item Download and unpack the required packages:
-  \\> ./collect.sh
+\begin{verbatim}
+  > ./collect.sh
+\end{verbatim}
 \item Configure, build and install:
-  \\> ./configure --help gives a complete list of available configuration parameters.
-  \\> ./configure <<configuration parameters>>
-  \\> gmake
+\begin{verbatim}
+  > ./configure --help gives a complete list of available configuration parameters.
+  > ./configure <<configuration parameters>>
+  > gmake
+\end{verbatim}
 \end{itemize}
 
 Once all is done, you are ready using \TOM\ using jtom command.
@@ -81,9 +87,8 @@ Once all is done, you are ready using \TOM\ using jtom command.
 --with-JJTraveler=<JJT-DIR> --with-shared-objects=<SHARED-DIR>' 
 \\ b. Type `make'
 \\ c. Type `make install'
-
 \item Configure and install \TOM\ package:
-\\ a./configure --prefix=<INSTALLDIR>
+\\ a. `./configure --prefix=<INSTALLDIR>
 --with-shared-objects=<SHARED-DIR> --with-aterm-java=<ATERM-DIR>'
 \\ b. Type `make' to compile the package.
 \\ c. Type `make install' to install the package.
@@ -113,15 +118,15 @@ on each compilation passes\\
 --doCompile | -C&       Start after type-checking (used after a
 compilation process with --intermediate option\\
 --noCheck | -f&         Do not realize checking phases \\
---noWarning | -W&       Do not print any warning \\
+--Wall&       Print all warnings \\
 --lazyType | -l&        Use universal type \\
---demo | -d&            Run demo mode \\
 --import <path> | -I&   Path for \%include construct to find included files\\
 --pretty | -p&          Generate readable code with indentation \\
 --atermStat | -s&       Print internal ATerm statistics \\
 --optimize | -O&        Optimized generated code \\
 --static&               Generate static functions \\
 --debug&                Generate debug primitives \\
+--memory&               Add memory management while debugging (not correct with list matching)\\
 \hline
 \end{tabular}
 
@@ -133,14 +138,14 @@ The latest developments of \TOM\ are available from anonymous cvs at:
 \\cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom
 \paragraph{\TOM\ Architecture}
 In \TOM\ directory architecture, 2 main branches can be underlined:
-`stable` and `src`...
-The `stable` branch contains the stable material to build a running
-\TOM\ compiler. The `src` branch is used to make new developments.
+`stable' and `src'...
+The `stable' branch contains the stable material to build a running
+\TOM\ compiler. The `src' branch is used to make new developments.
 Once in src directory, you can modify the sources. then, 
 \begin{enumerate}
 \item Type `make' to build a new system and use jtom.src to use and
   test the new system.
-\item At `src` directory level, type `make bootstrap' to bootstrap and
+\item At `src' directory level, type `make bootstrap' to bootstrap and
   install a new system.
   If something goes wrong, re-install the stable version:
   `cd ../../stable'; `make install'
@@ -148,16 +153,16 @@ Once in src directory, you can modify the sources. then,
 \item If you are happy from the result, type `make bootinstall' to
   make the current version become the stable one.   WARNING: this action may be VERY DANGEROUS !!!
 \end{enumerate}
-Please send a mail to \mailto{pierre-etienne.moreau@loria.fr} to propose your
+Please send a mail to \mailto{Pierre-Etienne.Moreau@loria.fr} to propose your
 suggestions.
 
 \paragraph{Additional tools for developments}
 To simplify \TOM\ development, an extra package called Apigen is used
 to generate data structures used by \TOM. All generated files can be
-found in `jtom $\backslash$adt` directory.
+found in `jtom $\backslash$adt' directory.
 \\This package is available at
 \ahref{\packagebase}{CWI package base Page}.
 WARNING: We will need to install JUnit to build this package.
-Once TomSignature.adt is modified, `make api` to re-generate \TOM\
+Once TomSignature.adt is modified, `make api' to re-generate \TOM\
 data structures.
  
