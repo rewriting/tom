@@ -99,6 +99,7 @@
 	<path id="tom.classpath">
 		<path refid="stable.classpath"/>
 		<pathelement location="${stable.build}"/>
+		<pathelement location="${stable.src}"/>
 	</path>
 
 	<path id="tomsrc.classpath">
