@@ -7,31 +7,11 @@ public class Nsh {
 
   private TermFactory factory;
   private GenericTraversal traversal;
-  
+
+// ------------------------------------------------------------  
   %include { term.t }
+// ------------------------------------------------------------  
 
-  %oplist ATermList concAgent( Agent* ) {
-    fsym { null }
-    is_fsym(t) { (t instanceof ATermList) }
-    make_empty()  { factory.makeList() }
-    make_insert(e,l) { l.insert(e) }
-  }
-   
-  %oplist ATermList concMessage( Message* ) {
-    fsym { null }
-    is_fsym(t) { (t instanceof ATermList) }
-    make_empty()  { factory.makeList() }
-    make_insert(e,l) { l.insert(e) }
-  }
-
-  %oplist ATermList concNonce( Nonce* ) {
-    fsym { null }
-    is_fsym(t) { (t instanceof ATermList) }
-    make_empty()  { factory.makeList() }
-    make_insert(e,l) { l.insert(e) }
-  }
-
-  
   public Nsh(TermFactory factory) {
     this.factory = factory;
     this.traversal = new GenericTraversal();
@@ -56,16 +36,17 @@ public class Nsh {
   }
 
   public State query(int nbSenders, int nbReceivers) {
-    ATermList s = `concAgent();
+    ListAgent s = `concAgent();
     for(int index=0 ; index<nbSenders ; index++) {
-      Integer i = new Integer(index);
-        //s = s.insert(`agent(sender(i),SLEEP,N(sender(i),sender(i))));
-      s = s.insert(`agent(sender(i),SLEEP,N(sender(i),sender(i))));
+        Integer i = new Integer(index);
+        s = s.insert(`agent(sender(i),SLEEP,N(sender(i),sender(i))));
+          //s = `concAgent(agent(sender(i),SLEEP,N(sender(i),sender(i))),s*);
     }
-    ATermList r = `concAgent();
+    ListAgent r = `concAgent();
     for(int index=0 ; index<nbReceivers ; index++) {
-      Integer i = new Integer(index);
-      r = r.insert(`agent(receiver(i),SLEEP,N(receiver(i),receiver(i))));
+        Integer i = new Integer(index);
+        r = r.insert(`agent(receiver(i),SLEEP,N(receiver(i),receiver(i))));
+          //r = `concAgent(agent(receiver(i),SLEEP,N(receiver(i),receiver(i))),r*);
     }
     State state =
       `state(s,r,intruder(devil,concNonce(),concMessage()),concMessage());
@@ -141,8 +122,6 @@ public class Nsh {
       msg[src=x,dst=receiver[]], msg[src=x,dst=sender[]] -> { return -1;  }
       
     }
-      
-
     
     String s1 = m1.toString();
     String s2 = m2.toString();
@@ -150,30 +129,21 @@ public class Nsh {
       //System.out.println("m1 = " + s1);
       //System.out.println("m2 = " + s2);
     int res = s1.compareTo(s2);
-
-    
     
     return res;
   }
 
-    /*
-  ATermList insertMessage(Message m,ATermList l) {
-    return l.insert(m);
-  }
-    */
-    
-  ATermList insertMessage(Message m,ATermList l) {
-    ATermList res = null;
+  ListMessage insertMessage(Message m,ListMessage l) {
+    ListMessage res = null;
     if(l.isEmpty()) {
       res = l.insert(m);
-    } else if(compareMessage(m, (Message)l.getFirst()) < 0) {
-      res =  l.insert(m);
-        //System.out.println("res = " + res);
+    } else if(compareMessage(m, l.getHead()) < 0) {
+      res = l.insert(m);
     } else {
-      res = insertMessage(m,l.getNext()).insert(l.getFirst());
-        //System.out.println("res = " + res);
+      res = insertMessage(m,l.getTail()).insert(l.getHead());
     }
 
+      //System.out.println("res = " + res);
     return res;
   }
     
@@ -214,29 +184,29 @@ public class Nsh {
     return `A(dai);
   }
 
-  public boolean existAgent(Agent agent, ATermList list) {
+  public boolean existAgent(Agent agent, ListAgent list) {
       /*
-        %match(Agent agent, ATermList list) {
-        x, concAgent()          -> { return false; }
-        x, concAgent(X1*,x,X2*) -> { return true; }
-        }
-        return false;
+    %match(Agent agent, ListAgent list) {
+      x, concAgent()          -> { return false; }
+      x, concAgent(X1*,x,X2*) -> { return true; }
+    }
+    return false;
       */
-    return list.indexOf(agent,0) >= 0;
+      return list.indexOf(agent,0) >= 0;
   }
 
-  public boolean existMessage(Message message, ATermList list) {
+  public boolean existMessage(Message message, ListMessage list) {
       /*
-        %match(Message message, ATermList list) {
-        x, concMessage            -> { return false; }
+        %match(Message message, ListMessage list) {
+        x, concMessage()          -> { return false; }
         x, concMessage(X1*,x,X2*) -> { return true; }
         }
         return false;
       */
-    return list.indexOf(message,0) >= 0;
+      return list.indexOf(message,0) >= 0;
   }
 
-  public int sizeMessage(ATermList list) {
+  public int sizeMessage(ListMessage list) {
     return list.getLength();
   }
   
@@ -421,8 +391,8 @@ public class Nsh {
               intru@intruder(w,l,concMessage(L1*,msg(x,y,K(z),N(n1,n3),N(n2,n4),A(v)),L2*)),
               M) -> {
               if(sizeMessage(M) < MaxMessagesInNetwork) {
-                ATermList subjectList = `concAgent(E*,D*);
-                %match(ATermList subjectList) {
+                ListAgent subjectList = `concAgent(E*,D*);
+                %match(ListAgent subjectList) {
                   concAgent(A1*,agent(t,_,_),A2*) -> {
                     Message message = `msg(w,t,K(z),N(n1,n3),N(n2,n4),A(v));
                     if(!existMessage(message,M)) {
@@ -450,10 +420,10 @@ public class Nsh {
               intru@intruder(w,listNonce@concNonce(L1*,resp,L2*),ll),
               M) -> {
               if(sizeMessage(M) < MaxMessagesInNetwork) {
-                ATermList subjectED = `concAgent(E*,D*);
-                %match(ATermList subjectED,
-                       ATermList subjectED,
-                       ATermList listNonce) {
+                ListAgent subjectED = `concAgent(E*,D*);
+                %match(ListAgent subjectED,
+                       ListAgent subjectED,
+                       ListNonce listNonce) {
                   concAgent(A1*,agent(y,_,_),A2*),
                   concAgent(A3*,agent(xadd,_,_),A4*),
                   concNonce(L3*,init,L4*) -> {
@@ -496,8 +466,6 @@ public class Nsh {
                 fire[13]++;
               } 
             }
-           
-            
           }
           
           return true;
@@ -509,8 +477,8 @@ public class Nsh {
       //traversal.genericCollect(subject, collect, collection); 
   }
 
-  public ATermList simplify(ATermList list) {
-    %match(ATermList list) {
+  public ListNonce simplify(ListNonce list) {
+    %match(ListNonce list) {
       concNonce(N1*,x,N2*,x,N3*) -> {
         return `simplify(concNonce(N1*,x,N2*,N3*));
       }
@@ -539,12 +507,5 @@ public class Nsh {
     }
 
     test.run(nbAgent);
-
-      //for(int i=1 ; i<15 ; i++) {
-      //System.out.println("fire[" + i + "] = " + fire[i]);
-      //}
-    
   }
-
-  
 }
