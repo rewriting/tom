@@ -1111,8 +1111,9 @@ abstract public class TomChecker extends TomTask {
         }
       } else { //known symbol			
         if(emptyChilds && !constructor ) { // this correspond to: known
-            //	we know the symbol but it is not called has a constructor and argsList is empty
-            // it is a builtin type (String, int, char, ...): WARNING consider as a symbol and not a variable
+          //	we know the symbol but it is not called has a constructor and argsList is empty
+          // it is a builtin type (String, int, char, double, ...)
+          // WARNING consider as a symbol and not a variable
           String codomain = getTomType(getSymbolCodomain(symbol));
           if( !symbolTable().isBuiltinType(codomain) ) {
             messageError(decLine, 
