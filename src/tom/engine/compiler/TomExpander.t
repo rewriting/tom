@@ -25,7 +25,7 @@
 
 package jtom.compiler;
   
-import java.util.HashSet;
+import java.util.*;
 
 import jtom.adt.tomsignature.types.*;
 import jtom.runtime.Replace1;
@@ -63,8 +63,9 @@ public class TomExpander extends TomTask {
       TomTerm syntaxExpandedTerm = expandTomSyntax(getInput().getTerm());
       tomKernelExpander.updateSymbolTable();
       TomTerm context = `emptyTerm();
-      TomTerm variableExpandedTerm  = expandVariable(context, syntaxExpandedTerm);
-      TomTerm expandedTerm  = updateCodomain(variableExpandedTerm);
+      TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
+      TomTerm stringExpandedTerm   = expandString(variableExpandedTerm);
+      TomTerm expandedTerm         = updateCodomain(stringExpandedTerm);
       
       if(debugMode) {
         tomKernelExpander.expandMatchPattern(expandedTerm);
@@ -139,7 +140,7 @@ public class TomExpander extends TomTask {
    * this post-processing phase replaces untyped (universalType) codomain
    * by their precise type (according to the symbolTable)
    */
-  public TomTerm updateCodomain(TomTerm subject) {
+  private TomTerm updateCodomain(TomTerm subject) {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
           if(subject instanceof Declaration) {
@@ -176,6 +177,90 @@ public class TomExpander extends TomTask {
       }; // end new
 
     return (TomTerm) replace.apply(subject);
+  }
+
+  /*
+   * replace 'abc' by conc('a','b','c')
+   */
+  private TomTerm expandString(TomTerm subject) {
+    Replace1 replace = new Replace1() { 
+        public ATerm apply(ATerm subject) {
+          if(subject instanceof TomTerm) {
+            %match(TomTerm subject) {
+              appl@Appl[nameList=nameList@(Name(tomName),_*),args=args] -> {
+                TomSymbol tomSymbol = getSymbol(tomName);
+                //System.out.println("appl = " + subject);
+                if(tomSymbol != null) {
+                  if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+                    TomList newArgs = expandChar(args);
+                    return appl.setArgs(newArgs);
+                  }
+                }
+              }
+
+              // default rule
+              _ -> {
+                return traversal().genericTraversal(subject,this);
+              }
+            } // end match
+          } else {
+            // not instance of Declaration
+            return traversal().genericTraversal(subject,this);
+          }
+
+        } // end apply
+      }; // end new
+
+    return (TomTerm) replace.apply(subject);
+  }
+
+  /*
+   * detect ill-formed char: 'abc'
+   * and expand it into a list of char: 'a','b','c'
+   */
+  private TomList expandChar(TomList args) {
+    if(args.isEmpty()) {
+      return args;
+    } else {
+      TomTerm head = args.getHead();
+      TomList tail = expandChar(args.getTail());
+      %match(TomTerm head) {
+        Appl[option=option,nameList=nameList@(Name(tomName)),args=()] -> {
+          /*
+           * ensure that the argument contains at least 1 character and 2 single quotes
+           */
+          if(tomName.length()>0 && 
+             tomName.charAt(0)=='\'' && tomName.charAt(tomName.length()-1)=='\'') {
+            TomSymbol tomSymbol = getSymbol(tomName);
+            TomType termType = tomSymbol.getTypesToType().getCodomain();
+            String type = termType.getTomType().getString();
+            if(symbolTable().isCharType(type) && tomName.length()>3) {
+              TomList newArgs = tail;
+              //System.out.println("bingo -> " + tomSymbol);
+              for(int i=tomName.length()-2 ; i>0 ;  i--) {
+                char c = tomName.charAt(i);
+                String newName = "'" + c + "'";
+                TomSymbol newSymbol = tomSymbol.setAstName(`Name(newName));
+                newSymbol = newSymbol.setTlCode(`ITL(newName));
+                symbolTable().putSymbol(newName,newSymbol);
+                TomTerm newHead = head.setNameList(`concTomName(Name(newName)));
+                newArgs = `manyTomList(newHead,newArgs);
+                //System.out.println("newHead = " + newHead);
+                //System.out.println("newSymb = " + getSymbol(newName));
+              }
+              return newArgs;
+            }
+          } else {
+            throw new TomRuntimeException(new Throwable("expandChar: strange char: " + tomName));
+          }
+        }
+
+        _ -> {
+          return `manyTomList(head,tail);
+        }
+      }
+
+    }
   }
 
   protected TomTerm expandRecordAppl(OptionList option, NameList nameList, TomList args) {

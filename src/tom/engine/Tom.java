@@ -137,6 +137,7 @@ public class Tom {
       // Processing the input arguments into taskInput
     try{
     	for (i = 0; i < args.length; i++) {
+        //System.out.println("args = " + args[i]);
     		if (args[i].charAt(0) != '-') {
     				// Suppose this is the input filename (*[.t]) that should never start with a `-` character"
     			taskInput.setInputFileName(args[i]);
@@ -477,11 +478,20 @@ public class Tom {
     for(Iterator it = options.iterator() ; it.hasNext() ; ) {
       newArgs[lastArgs++] = (String)it.next();
     }
+
+    if(files.isEmpty()) {
+      newArgs[lastArgs] = "--help";
+      Tom tomCompiler = new Tom(newArgs);
+      tomCompiler.run();
+    }
+
     for(Iterator it = files.iterator() ; it.hasNext() ; ) {
       newArgs[lastArgs] = (String)it.next();
       Tom tomCompiler = new Tom(newArgs);
       tomCompiler.run();
     }
+
+
   }
 
 } // class Tom

@@ -178,6 +178,7 @@ public class TomBase {
     return symbolTable().getSymbol(tomName);
   }
 
+  
   protected TomSymbol getSymbol(TomType tomType) {
     SymbolList list = symbolTable().getSymbol(tomType);
     SymbolList filteredList = `emptySymbolList();
@@ -190,17 +191,6 @@ public class TomBase {
       list = list.getTail();
     }
 		return filteredList.getHead();
-		/*
-    if(filteredList.isEmpty()) {
-        // TODO
-      System.out.println("getSymbol: symbol not found: " + tomType);
-    } else if(!filteredList.getTail().isEmpty()) {
-        // TODO
-      System.out.println("getSymbol: ambiguities: " + filteredList);
-    } else {
-      return filteredList.getHead();
-    }
-    return null;*/
   }
   
   protected TomType getSymbolCodomain(TomSymbol symbol) {
