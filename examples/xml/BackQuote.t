@@ -1,5 +1,6 @@
 import jtom.runtime.xml.*;
-import jtom.runtime.xml.adt.*;
+import jtom.runtime.xml.adt.tnode.*;
+import jtom.runtime.xml.adt.tnode.types.*;
 import aterm.*;
 
 public class BackQuote {
@@ -8,7 +9,7 @@ public class BackQuote {
     
   private XmlTools xtools;
  
-  private TNodeFactory getTNodeFactory() {
+  private Factory getTNodeFactory() {
       return xtools.getTNodeFactory();
   }
 
@@ -29,7 +30,7 @@ public class BackQuote {
       //t = ``xml(<A> <B/> </A>);
       //t = ``xml(<A at1="foo" at2=x at3=dd("text")/>);
 
-    t = ``xml(<A at1="x"><B at2="foo"/> </A>);
+    t = `XML(<A at1="x"><B at2="foo"/> </A>);
     
     System.out.println("t = " + t);
     

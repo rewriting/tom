@@ -1,5 +1,6 @@
 import jtom.runtime.xml.*;
-import jtom.runtime.xml.adt.*;
+import jtom.runtime.xml.adt.tnode.*;
+import jtom.runtime.xml.adt.tnode.types.*;
 import aterm.*;
 import jtom.runtime.*;
 
@@ -9,7 +10,7 @@ public class Action {
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();
-  private TNodeFactory getTNodeFactory() {
+  private Factory getTNodeFactory() {
       return xtools.getTNodeFactory();
   }
 
