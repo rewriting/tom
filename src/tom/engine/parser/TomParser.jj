@@ -821,7 +821,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
               setSlotDecl.add(stringSlotName);
             }
             else {
-              System.out.println("*** Warning *** Repeated slot  '"+stringSlotName+"' in operator declaration line: "+getLine());
+              System.out.println("\nRepeated slot '"+stringSlotName+"' in operator declaration\n-- Error occured at line "+getLine());
             }
           }
           nameList.add(ast().makeName(stringSlotName));
@@ -844,7 +844,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
           mapNameDecl.put(sName,attribute);
         }
         else {
-          System.out.println("*** Warning *** GetSlot declaration '"+sName.getString()+"' is repeated in operator declaration line: "+getLine());
+          System.out.println("\nGetSlot declaration 'get_slot("+sName.getString()+",...)' is repeated in operator declaration\n-- Error occured at line: "+getLine());
         }
       }
     | attribute = KeywordIsFsym(astName, type.image)  { options.add(attribute); }
@@ -874,8 +874,8 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
         if(!Flags.noWarning) {
-          System.out.println("*** Warning *** Some GetSlot declaration are incompatible with operator signature line: "+getLine());
-          System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet());
+          System.out.println("\nSome GetSlot declaration are incompatible with operator signature");
+          System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet()+" \n-- Error occured at line: "+getLine());
         }
       }
       
@@ -1423,8 +1423,8 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
         <TOM_LPAREN>
       nameArg = <TOM_IDENTIFIER>
        {
-         if( index>=nbTypes ) {
-           System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occurs at line "+getLine()+"\n Parsing aborted");
+         if( !(nbTypes > 0) ) {
+           System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occured at line "+getLine()+"\n Parsing aborted");
            System.exit(1);
          }
          type = (TomType)types.get(index++);
@@ -1433,10 +1433,10 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
          Option option1 = ast().makeOption(info1);
          args.add(tsf().makeTomTerm_Variable(option1,name, type));
        }
-      ( <TOM_COMMA> nameArg = <TOM_IDENTIFIER>
+     ( <TOM_COMMA> nameArg = <TOM_IDENTIFIER>
         {
-          if( index>=nbTypes ) {
-            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occurs at line "+getLine()+"\n Parsing aborted");
+          if( index >= nbTypes ) {
+            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
             System.exit(1);
           }
           type = (TomType)types.get(index++);
@@ -1447,6 +1447,12 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
         }
       )*
       <TOM_RPAREN> ) ]
+       {
+         if (index<nbTypes) {
+           System.out.println(" Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+            System.exit(1);
+         }
+       }
   tlCode = GoalLanguageBlock(blockList)
    {
      return ast().makeMakeDecl(opname,returnType,args,tlCode, orgTrack);

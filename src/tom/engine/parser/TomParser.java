@@ -780,7 +780,7 @@ public class TomParser implements TomParserConstants {
               setSlotDecl.add(stringSlotName);
             }
             else {
-              System.out.println("*** Warning *** Repeated slot  '"+stringSlotName+"' in operator declaration line: "+getLine());
+              System.out.println("\nRepeated slot '"+stringSlotName+"' in operator declaration\n-- Error occured at line "+getLine());
             }
           }
           nameList.add(ast().makeName(stringSlotName));
@@ -819,7 +819,7 @@ public class TomParser implements TomParserConstants {
           mapNameDecl.put(sName,attribute);
         }
         else {
-          System.out.println("*** Warning *** GetSlot declaration '"+sName.getString()+"' is repeated in operator declaration line: "+getLine());
+          System.out.println("\nGetSlot declaration 'get_slot("+sName.getString()+",...)' is repeated in operator declaration\n-- Error occured at line: "+getLine());
         }
         break;
       case TOM_IS_FSYM:
@@ -856,8 +856,8 @@ public class TomParser implements TomParserConstants {
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
         if(!Flags.noWarning) {
-          System.out.println("*** Warning *** Some GetSlot declaration are incompatible with operator signature line: "+getLine());
-          System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet());
+          System.out.println("\nSome GetSlot declaration are incompatible with operator signature");
+          System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet()+" \n-- Error occured at line: "+getLine());
         }
       }
 
@@ -1497,8 +1497,8 @@ public class TomParser implements TomParserConstants {
         case TOM_LPAREN:
           jj_consume_token(TOM_LPAREN);
           nameArg = jj_consume_token(TOM_IDENTIFIER);
-         if( index>=nbTypes ) {
-           System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occurs at line "+getLine()+"\n Parsing aborted");
+         if( !(nbTypes > 0) ) {
+           System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occured at line "+getLine()+"\n Parsing aborted");
            System.exit(1);
          }
          type = (TomType)types.get(index++);
@@ -1518,8 +1518,8 @@ public class TomParser implements TomParserConstants {
             }
             jj_consume_token(TOM_COMMA);
             nameArg = jj_consume_token(TOM_IDENTIFIER);
-          if( index>=nbTypes ) {
-            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occurs at line "+getLine()+"\n Parsing aborted");
+          if( index >= nbTypes ) {
+            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
             System.exit(1);
           }
           type = (TomType)types.get(index++);
@@ -1541,6 +1541,10 @@ public class TomParser implements TomParserConstants {
       jj_la1[38] = jj_gen;
       ;
     }
+         if (index<nbTypes) {
+           System.out.println(" Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
+            System.exit(1);
+         }
     tlCode = GoalLanguageBlock(blockList);
      {if (true) return ast().makeMakeDecl(opname,returnType,args,tlCode, orgTrack);}
     throw new Error("Missing return statement in function");

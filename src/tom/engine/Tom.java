@@ -219,16 +219,16 @@ public class Tom {
         stopChrono();
         if(Flags.verbose) System.out.println("TOM syntax checking phase " + getChrono());
         int nbError = tomChecker.getNumberFoundError();
-        if(nbError > 0) {
+        if(nbError > 0 ) {
           for(int i=0 ; i<nbError ; i++) {
-              //System.out.println(tomChecker.getMessage(i));
+            System.out.println(tomChecker.getMessage(i));
           }
           
           String msg = "Tom Checker:  Encountered " + nbError +
             " errors during verification phase.";
           throw new CheckErrorException(msg);
         }
-                
+        
 	TomExpander tomExpander = new TomExpander(environment);
         startChrono();
         expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
@@ -271,18 +271,6 @@ public class Tom {
         System.out.println("\nNo file generated.");
         throw new InternalError("read error");
       }
-    }
-    
-      /*
-       * The compilation process is stopped if an error occured during
-       * parsing or type checking
-       */
-
-    if(Flags.findErrors) {
-      System.out.println("\n*** ERRORS");
-      System.out.println("*** COMPILATION ABORTED");
-      System.out.println("No file generated.");
-      System.exit(0);
     }
     
     if(Flags.doCompile) {

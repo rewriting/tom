@@ -120,8 +120,6 @@ public class GenericTraversal {
         }
       }
     } catch(Exception e) {
-      e.printStackTrace();
-
       System.out.println("Please, extend genericMapterm");
       System.exit(0);
     }
@@ -163,6 +161,7 @@ public class GenericTraversal {
         } 
       }
     } catch(Exception e) {
+      e.printStackTrace();
       System.out.println("Please, extend genericCollect");
       System.exit(0);
     }
