@@ -1,0 +1,27 @@
+//
+// definition of adt
+//
+module Adt
+imports
+
+public
+
+sorts Entries Entry
+
+abstract syntax
+
+  constructor(sort:term,alternative:term,term-pattern:term) -> Entry
+  list(sort:term,elem-sort:term) -> Entry
+  named-list(opname:str,sort:term,elem-sort:term) -> Entry
+  separated-list(sort:term,elem-sort:term,separators:Separators)  -> Entry
+  concSeparator(Separator*) -> Separators
+  default(term-pattern:term)  -> Separator
+
+	concEntry(Entry*) -> Entries
+  concAdtModule(AdtModule*) -> AdtModules
+  concAdtModuleName(AdtModuleName*) -> Imports
+  concAdtType(AdtType*) -> Sorts
+  
+	modulentry(modulename:AdtModuleName, importedModule:Imports, definedSorts:Sorts, entries:Entries) -> AdtModule
+	type(name:str) -> AdtType
+	name(name:str) -> AdtModuleName
