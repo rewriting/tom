@@ -1,0 +1,4 @@
+
+* jtom --lazyType Record
+* javac Record.java
+* java Record
