@@ -1,9 +1,11 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper]{book}
 \usepackage{fullpage}
 
 \usepackage{alltt}
 \usepackage{verbatim}
 \usepackage{color}
+\usepackage{url}
+\usepackage{hevea}
 
 \newcommand{\TOM}{\textsc{Tom}}
 \newcommand{\JTOM}{\textsc{JTom}}
@@ -16,32 +18,33 @@
 \newcommand{\lex}[1]{\textcolor{blue}{\texttt{#1}}}
 \newcommand{\nt}[1]{\textcolor{magenta}{\textit{#1}}}
 
+\urldef{\tompage}{\url}{http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/}
+\urldef{\packagebase}{\url}{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase}
+
 \title{\TOM\ Language Reference}
 \author{Pierre-Etienne Moreau\\(with Julien Guyon and Christophe Ringeissen)}
-\date{}
-
+\date{April 14, 2003}
+\setcounter{tocdepth}{1}
 \begin{document}
 \maketitle
-
 \tableofcontents
 
-%\input introduction
+\newpage
+%\input{introduction}
 
-\input{install.tex}
+\newpage
+\input{install}
 
-\input{system.tex}
+\newpage
+\input{system}
 
-\input{language.tex}
+\newpage
+\input{language}
 
-%\input library
+\newpage
+\input{library}
 
-%\input tutorial
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
+\newpage
+%\input{tutorial}
 
 \end{document}

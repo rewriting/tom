@@ -1,9 +1,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The system}
+\part{The system}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{\TOM\ core}
+\cutname{system.html}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This part of the manual gives basic information on \TOM\ internals.
 
-The current version of \TOM\footnote{available at
-  \texttt{http://www.loria.fr/ELAN/Toolkit}} is written in
+
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The current version of \TOM\ is written in
 \Java+\TOM\ itself. 
 It reads the program to be compiled and builds an abstract syntax tree
 (AST) to represent the program.
@@ -14,10 +20,8 @@ The last stage of the compiler is a generation phase that transform
 the AST into a concrete program written in \Clang\ or \Java, depending 
 on the chosen target language.
 
-%\subsection{How \TOM\ is implemented}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{The front-end}
+\section{The front-end}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The front-end is the part of the system that reads the input program
 and builds the associated abstract syntax tree.
@@ -66,7 +70,7 @@ well parenthesed or not. This explains why it is needed to be able to
 recognize and count the target language open and close block
 commands. 
 
-\subsection{The compiler}
+\section{The compiler}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The compiler receives as input an AST that merely corresponds to the 
 input \TOM\ program (this is roughly a list of interleaved target
@@ -86,7 +90,7 @@ is completly independ from the chosen target language, and can easily
 be reused.
 
 
-\subsection{The back-end}
+\section{The back-end}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The back-end takes the last form of AST as input and generates a
 concrete program written in the target language. This stage consists

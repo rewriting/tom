@@ -1,16 +1,15 @@
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The language}
+\part{The language}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsection{Foreword}
+\chapter{The core language}
+\cutname{language.html}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 This document is intended as a reference manual for the \TOM\
 language. It lists the language constructs, and gives their precise
 syntax and informal semantics. It is by no means a tutorial
 introduction to the language: there is not a single example.
 
-\subsection{Notations}
+\section{Notations}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The syntax of the language is given in BNF-like notation. Terminal
@@ -22,7 +21,7 @@ enclosed components. Parentheses with a trailing
 plus sign  (...)+ denote one or several repetitions of the enclosed
 components. Parentheses (...) denote grouping. 
 
-\subsection{Lexical conventions}
+\section{Lexical conventions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{center}
 \begin{tabular}{lcl}
@@ -36,7 +35,7 @@ components. Parentheses (...) denote grouping.
 \end{center}
 
 
-\subsection{Names}
+\section{Names}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{center}
 \begin{tabular}{lcl}
@@ -52,7 +51,7 @@ components. Parentheses (...) denote grouping.
 \end{center}
 
 
-\subsection{\TOM\ syntax}
+\section{\TOM\ syntax}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 A \TOM\ program is a target language program (namely \Clang\ or \Java)
 embedded with some new preprocessor constructs such as
@@ -259,10 +258,10 @@ left-handsides should begin with the same root symbol:
 \end{center}
 
 
-\subsection{\TOM\ semantic}
+\section{\TOM\ semantic}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Type definition}
+\subsection{Type definition}
 
 \noindent
 When defining a new type with the \lex{\%typeterm} constructs,
@@ -333,7 +332,7 @@ the two different access functions have to be defined:
   By convention, an empty list contains \texttt{0} element.
 \end{itemize}
 
-\subsubsection{Operator definition}
+\subsection{Operator definition}
 
 \noindent
 When defining a new symbol with the \lex{\%op} construct, the user
@@ -398,7 +397,7 @@ longer optional as in the \lex{\%op} construct):
   the element~\texttt{e} is at the \texttt{n-th} position.
 \end{itemize}
 
-\subsubsection{Match definition}
+\subsection{Match definition}
 
 In order to match patterns against a list of subjects, \TOM\ provides
 the \lex{\%match} construct.
@@ -445,7 +444,7 @@ The \lex{\%match} construct is evaluated in the following way:
 modifies a target language variable which is an argument of a
 \lex{\%match} instruction under evaluation.
 
-\subsubsection{Rule definition}
+\subsection{Rule definition}
 
 The \lex{\%rule} construct is composed of a list of rewrite rules
 (the left-hand side is a term and the right-hand side is a term).

@@ -1,28 +1,54 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Installing and using the system}
+\part{Installing and using the system}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Installing and using the system}
+\cutname{install.html}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This part of the manual gives basic information to get and install the
+system.
 
-\subsection{Downloads and requirements}
-The current version of \TOM\ is available at
-  \ahref{http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/}{http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/}.
-In this page, you will find the latest release of \TOM.There are 2
-kinds of packages:
+\section{Requirements and download}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The current version of \TOM\ is available at \ahref{\tompage}{TOM Home Page}.
+In this page, you will find the latest release of \TOM.
+\\There are 2 kinds of packages:
 \begin{itemize}
-\item \TOM\ software;
+\item \TOM\ software package;
 \item A bundle package with \TOM\ software itself and all dependencies
   packages;
 \end{itemize}
 
+\paragraph{Compiling and runtime tools}
 \TOM\ is written in Java and \TOM\ itself. You will need a Java
-compiler and interpreter. 
-We use Sun JDK 1.3.1 and 1.4 tools for development and runtime
-excecution. Some tests have already been realized with gcj
-and Jikes.
-\subsection{Installation}
-Depending on the package you download, here is the installation
+compiler and interpreter to compile and run \TOM. 
+\\We actually use Sun JDK 1.3.1 and 1.4 tools for development and runtime
+excecution.
+\\Some tests have already been realized with gcj
+and Jikes without any particular issues.
+
+\paragraph{Package dependencies}
+\TOM\ software depends on others packages:
+\begin{itemize}
+\item shared-objects
+\item JJTraveler
+\item aterm-java
+\end{itemize}
+The following image shows the dependencies order:
+
+\imgsrc{depgraphjtom.pgn}
+
+Such packages are available at:
+\begin{itemize}
+\item \ahref{\tompage}{\TOM\ Home Page}
+\item \ahref{\packagebase}{CWI package base Page}
+\end{itemize}    
+
+\section{Installation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Depending on the\TOM\ package you download, here is the installation
 instructions.
 
-\subsubsection{Installing the bundle package}
+\subsection{Installing the bundle package}
 This is the simplest way to have quickly \TOM\ running on your
 computer.
 \begin{itemize}
@@ -38,57 +64,41 @@ computer.
 
 Once all is done, you are ready using \TOM\ using jtom command.
 
-\subsubsection{Installing \TOM\ package}
-\paragraph{Package dependencies}
-\TOM\ software depends on others packages:
-\begin{itemize}
-\item shared-objects
-\item JJTraveler
-\item aterm-java
-\end{itemize}
-The following image shows the dependencies order:
-
-\imgsrc{depgraphjtom.pgn}
-
-Packages are available at:
-\begin{itemize}
-\item \ahref{http://www.loria.fr/ELAN/tom}{http://www.loria.fr/ELAN/tom}
-\item \ahref{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase}{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase}
-\item \ahref{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/DailyDistributions}{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/DailyDistributions}
-\end{itemize}    
+\subsection{Installing \TOM\ package}
 
 \paragraph{Installation process}
 \begin{enumerate}
 \item Get and install the shared-objects package
-         \\a. Type `./configure --prefix=<INSTALLDIR>'
-         \\b. Type `make'
-         \\c. Type `make install'
+\\ a. Type `./configure --prefix=<SHARED-DIR>'
+\\ b. Type `make'
+\\ c. Type `make install'
+\item Get and install the JJTraveler package
+\\ a. Type `./configure --prefix=<JJT-DIR>'
+\\ b. Type `make'
+\\ c. Type `make install'
 \item Get and install the aterm-java package
-         \\a. Type `./configure --prefix=<INSTALLDIR>\
-                              --with-shared-objects=<INSTALLDIR>/share/shared-obj
-ects-1.0.jar'
-         \\b. Type `make'
-         \\c. Type `make install'
+\\ a. Type `./configure --prefix=<ATERM-DIR>
+--with-JJTraveler=<JJT-DIR> --with-shared-objects=<SHARED-DIR>' 
+\\ b. Type `make'
+\\ c. Type `make install'
 
 \item Configure and install \TOM\ package:
-         \\a./configure --prefix=<INSTALLDIR>\
-                      --with-shared-objects=<INSTALLDIR>/share/shared-objects-1.0
-.jar\
-                      --with-aterm-java=<INSTALLDIR>/share/aterm-1.0.jar'
-         \\b. Type `make' to compile the package.
-
-         \\c. Type `make install' to install the package.
+\\ a./configure --prefix=<INSTALLDIR>
+--with-shared-objects=<SHARED-DIR> --with-aterm-java=<ATERM-DIR>'
+\\ b. Type `make' to compile the package.
+\\ c. Type `make install' to install the package.
 \end{enumerate}
 
 
-\subsection{Command line Arguments}
-\subsubsection{NAME}
+\section{Command line Arguments}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{NAME}
      jtom - compile \TOM\ file (.t) into specified target languages
 
-\subsubsection{SYNOPSIS}
+\subsection{SYNOPSIS}
      jtom [-hceVvioDCfWldpsO] [-I path] filename[.t]
 
-\subsubsection{DESCRIPTION}
+\subsection{DESCRIPTION}
 \begin{tabular}{|l|l|}
 \hline
 --help | -h&            Show the help \\
@@ -115,10 +125,12 @@ compilation process with --intermediate option\\
 \hline
 \end{tabular}
 
-\subsection{For developpers}
+
+\section{For developpers}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{CVS repository}
 The latest developments of \TOM\ are available from anonymous cvs at:
-cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom
+\\cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom
 \paragraph{\TOM\ Architecture}
 In \TOM\ directory architecture, 2 main branches can be underlined:
 `stable` and `src`...
@@ -134,18 +146,17 @@ Once in src directory, you can modify the sources. then,
   `cd ../../stable'; `make install'
   Then, correct the `src' directory
 \item If you are happy from the result, type `make bootinstall' to
-  make the current version become the stable one.
-     WARNING: this action may be VERY DANGEROUS !
+  make the current version become the stable one.   WARNING: this action may be VERY DANGEROUS !!!
 \end{enumerate}
-Please send a mail to pierre-etienne.moreau@loria.fr, to propose your
+Please send a mail to \mailto{pierre-etienne.moreau@loria.fr} to propose your
 suggestions.
 
 \paragraph{Additional tools for developments}
 To simplify \TOM\ development, an extra package called Apigen is used
 to generate data structures used by \TOM. All generated files can be
 found in `jtom $\backslash$adt` directory.
-This package is available at
-\ahref{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase}{http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase}.
-WARNIG: We will need to install JUnit to build this package.
+\\This package is available at
+\ahref{\packagebase}{CWI package base Page}.
+WARNING: We will need to install JUnit to build this package.
 Once TomSignature.adt is modified, `make api` to re-generate \TOM\
 data structures.
