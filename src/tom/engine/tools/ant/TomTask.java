@@ -39,44 +39,21 @@ import org.apache.tools.ant.util.JavaEnvUtils;
 import org.apache.tools.ant.util.SourceFileScanner;
 
 /**
- * Compiles Java source files. This task can take the following
+ * Compiles Tom source files. This task can take the following
  * arguments:
  * <ul>
  * <li>sourcedir
  * <li>destdir
- * <li>deprecation
- * <li>classpath
- * <li>bootclasspath
- * <li>extdirs
  * <li>optimize
  * <li>debug
- * <li>encoding
- * <li>target
- * <li>depend
  * <li>verbose
  * <li>failonerror
- * <li>includeantruntime
- * <li>includejavaruntime
- * <li>source
- * <li>compiler
  * </ul>
  * Of these arguments, the <b>sourcedir</b> and <b>destdir</b> are required.
  * <p>
  * When this task executes, it will recursively scan the sourcedir and
  * destdir looking for Java source files to compile. This task makes its
  * compile decision based on timestamp.
- *
- * @author James Davidson <a href="mailto:duncan@x180.com">duncan@x180.com</a>
- * @author Robin Green
- *         <a href="mailto:greenrd@hotmail.com">greenrd@hotmail.com</a>
- * @author Stefan Bodewig
- * @author <a href="mailto:jayglanville@home.com">J D Glanville</a>
- *
- * @version $Revision: 1.1 $
- *
- * @since Ant 1.1
- *
- * @ant.task category="java"
  */
 
 public class TomTask extends MatchingTask {
@@ -98,36 +75,16 @@ public class TomTask extends MatchingTask {
   protected boolean listFiles = false;
   protected File[] compileList = new File[0];
 
-  private String source;
   private File tmpDir;
 
   public void setOptions(String options) {
     this.options = options;
   }
+
+	public String getOptions() {
+		return options;
+	}
   
-    /**
-     * Get the value of source.
-     * @return value of source.
-     */
-  public String getSource() {
-    return source;
-  }
-
-    /**
-     * Value of the -source command-line switch; will be ignored
-     * by all implementations except modern and jikes.
-     *
-     * If you use this attribute together with jikes, you must
-     * make sure that your version of jikes supports the -source switch.
-     * Legal values are 1.3, 1.4 and 1.5 - by default, no -source argument
-     * will be used at all.
-     *
-     * @param v  Value to assign to source.
-     */
-  public void setSource(String  v) {
-    this.source = v;
-  }
-
     /**
      * Adds a path for source compilation.
      *
@@ -171,16 +128,16 @@ public class TomTask extends MatchingTask {
   }
 
     /**
-     * Set the destination directory into which the Java source
+     * Set the destination directory into which the Tom source
      * files should be compiled.
-     * @param destDir the destination director
+     * @param destDir the destination directory
      */
   public void setDestdir(File destDir) {
     this.destDir = destDir;
   }
 
     /**
-     * Gets the destination directory into which the java source files
+     * Gets the destination directory into which the Tom source files
      * should be compiled.
      * @return the destination directory
      */
@@ -350,26 +307,6 @@ public class TomTask extends MatchingTask {
   }
 
     /**
-     * Where Ant should place temporary files.
-     *
-     * @since Ant 1.6
-     * @param tmpDir the temporary directory
-     */
-  public void setTempdir(File tmpDir) {
-    this.tmpDir = tmpDir;
-  }
-
-    /**
-     * Where Ant should place temporary files.
-     *
-     * @since Ant 1.6
-     * @return the temporary directory
-     */
-  public File getTempdir() {
-    return tmpDir;
-  }
-
-    /**
      * Executes the task.
      * @exception BuildException if an error occurs
      */
@@ -467,8 +404,6 @@ public class TomTask extends MatchingTask {
 
     /**
      * Perform the compilation.
-     *
-     * @since Ant 1.5
      */
   protected void compile() {
 
@@ -481,7 +416,17 @@ public class TomTask extends MatchingTask {
         String filename = compileList[i].getAbsolutePath();
         System.out.println("Compiling " + compileList[i] + "...");
         File file = new File(filename);
-        String[] cmd = split(options+" "+filename+" -I "+file.getParent());
+
+				String cmd_line = "";
+				if (options != null && getOptions().trim().length() > 0) {
+					cmd_line = cmd_line.trim() + " " + options;
+				}
+				if (destDir != null) {
+					cmd_line = cmd_line.trim() + " -d " + destDir;
+				}
+				cmd_line = cmd_line.trim() + " -I " + file.getParent();
+				cmd_line = cmd_line.trim() + " " + filename;
+        String[] cmd = split(cmd_line);
         Tom.main(cmd);
       }
             
