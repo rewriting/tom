@@ -23,7 +23,7 @@
  *
  **/
 
-package tom.platform.tools;
+package tom.library.plugin;
 
 import java.util.*;
 import java.util.logging.*;
