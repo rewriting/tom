@@ -1055,13 +1055,6 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
 			new Object[]{currentFile, new Integer(getLine()), 
 				     "match", new Integer(getLine()),
 				     expected.substring(1), found.substring(1)} );
-
-// 		environment().messageError(getLine(),
-//                      currentFile,
-//                      "match",
-//                      getLine(),
-//                      TomMessage.getString("MalformedXMLTerm"), 
-//                      new Object[]{expected.substring(1), found.substring(1)});
           }
           if(implicit) {
               /*
@@ -1388,16 +1381,10 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 		    logger.log( Level.SEVERE,
 				"SimpleMessage",
 				new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-
-//               environment().messageError(alert.getMessage(),
-// 					 currentFile, alert.getLine()+initialVasLine);
 		} else {
 		    logger.log( Level.WARNING,
 				"SimpleMessage",
 				new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-
-// 		    environment().messageWarning(alert.getMessage(),
-// 						 currentFile, alert.getLine()+initialVasLine);
 		}
 		alerts = alerts.getTail();
 	    }
@@ -1594,13 +1581,6 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
 			"WarningTwoSameSlotDecl",
 			new Object[]{currentFile, new Integer(attribute.getOrgTrack().getLine()),
 				     "%op "+type.image, new Integer(ot.getLine()), sName.getString()} );
-
-//           environment().messageWarning(attribute.getOrgTrack().getLine(),
-//                                        currentFile,
-//                                        "%op "+type.image,
-//                                        ot.getLine(),
-//                                        TomMessage.getString("WarningTwoSameSlotDecl"), 
-//                                        new Object[]{sName.getString()});
         }
       }
     | attribute = KeywordIsFsym(astName, type.image)  { options.add(attribute); }
@@ -1618,20 +1598,10 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
         } else {
           Declaration decl = (Declaration)mapNameDecl.get(name1);
           if(decl == null) {
-	    
-	      //System.out.println("!!!!! 1 PASSAGE !!!!!");
-
 	    logger.log( Level.WARNING,
 			"WarningMissingSlotDecl",
 			new Object[]{currentFile, new Integer(ot.getLine()),
 				     "%op "+type.image, new Integer(ot.getLine()), name1.getString()} );             
-
-// 	      environment().messageWarning(ot.getLine(), 
-//                          currentFile,
-//                          "%op "+type.image, 
-//                          ot.getLine(), 
-//                          TomMessage.getString("WarningMissingSlotDecl"),
-//                                           new Object[]{name1.getString()});
             decl = emptyDeclaration;
           }
           else {
@@ -1648,14 +1618,9 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
            TomName remainingSlot = (TomName) it.next();
 	    logger.log( Level.WARNING,
 			"WarningIncompatibleSlotDecl",
-			new Object[]{currentFile, new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
+			new Object[]{currentFile, 
+				     new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
 				     "%op "+type.image, new Integer(ot.getLine()), remainingSlot.getString()} );
-
-//          environment().messageWarning(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
-// 					currentFile,
-// 					"%op "+type.image,
-// 					ot.getLine(),
-//                                      TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()});
         }
       }
       

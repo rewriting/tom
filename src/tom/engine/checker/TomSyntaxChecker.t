@@ -22,15 +22,18 @@ public class TomSyntaxChecker extends TomChecker {
   public void run() {
     if(isActivated()) {	
       try {	
-      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+	strictType = ! getPluginPlatform().getOptionBooleanValue("lazyType");
+	int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
 
         long startChrono = System.currentTimeMillis();
+
         reinit();
         checkSyntax( (TomTerm)getTerm() );
-        if(verbose) {
-          System.out.println("TOM syntax checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-        }
+
+	getLogger().log( Level.INFO,
+			 "TomSyntaxCheckingPhase",
+			 new Integer((int)(System.currentTimeMillis()-startChrono)) );      
 
         printAlertMessage(errorsAtStart, warningsAtStart);
         
@@ -41,9 +44,7 @@ public class TomSyntaxChecker extends TomChecker {
         e.printStackTrace();
       }
     } else { // syntax checker desactivated
-      if(verbose) {
-        System.out.println("The syntax checker is not activated and thus WILL NOT RUN.");
-      }
+	getLogger().log( Level.INFO, "The syntax checker is not activated and thus WILL NOT RUN.");
     }
   }
 

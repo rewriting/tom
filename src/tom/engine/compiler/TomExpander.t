@@ -37,7 +37,6 @@ public class TomExpander extends TomGenericPlugin {
       int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
 
       long startChrono = System.currentTimeMillis();
-      boolean verbose      = getPluginPlatform().getOptionBooleanValue("verbose");
       boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
 
       TomTerm syntaxExpandedTerm   = expandTomSyntax( (TomTerm)getTerm() );
@@ -51,9 +50,9 @@ public class TomExpander extends TomGenericPlugin {
 
       setTerm(expandedTerm);
 
-      if(verbose) {
-        System.out.println("TOM expanding phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-      }
+      getLogger().log( Level.INFO,
+		       "TomExpandingPhase",
+		       new Integer((int)(System.currentTimeMillis()-startChrono)) );
       
       if(intermediate) {
 	      Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()

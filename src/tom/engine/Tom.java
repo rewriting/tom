@@ -34,21 +34,23 @@ import tom.platform.*;
  */
 public class Tom {
 
-  /**
-   * The current version of the TOM compiler. 
-   */
+  /** The current version of the TOM compiler. */
   public final static String VERSION = "3.0alpha";
 
+  /** */
   private static Logger rootLogger;
+
+  /** */
+  private static Handler consoleHandler;
 
   public static int exec(String[] args) {
     rootLogger = Logger.getLogger("jtom", "jtom.TomMessageResources");
     rootLogger.setLevel(Level.WARNING);
     /* 
-     * IMPORTANT : the rootLogger's level can be lowered but shouldn't be risen
-     * indeed, if it is higher than Level.WARNING, the TomStatusHandler won't see warnings
-     * that's why the noWarning option will be handled by changing the ConsoleHandler's level
-     * while the verbose option will lower the rootLogger's level to Level.INFO
+     * IMPORTANT : the root logger's level can be lowered but shouldn't be risen
+     * indeed, if it is higher than Level.WARNING, the status handler won't see warnings
+     * that's why the "noWarning" option is handled by changing the console handler's level
+     * while the "verbose" option lowers the root logger's level to Level.INFO
      */
   
     rootLogger.setUseParentHandlers(false);
@@ -58,10 +60,10 @@ public class Tom {
       rootLogger.removeHandler(handlers[i]);
     }
 
-    Handler console = new ConsoleHandler();
-    console.setLevel(Level.ALL); // by default, print everything that the logger sends
-    console.setFormatter( new TomBasicFormatter() );
-    rootLogger.addHandler(console);
+    consoleHandler = new ConsoleHandler();
+    consoleHandler.setLevel(Level.ALL); // by default, print everything that the logger sends
+    consoleHandler.setFormatter( new TomBasicFormatter() );
+    rootLogger.addHandler(consoleHandler);
 
 //     try{
 //       Handler fh = new FileHandler("log");
@@ -77,6 +79,24 @@ public class Tom {
 
   public static void main(String[] args) {
     exec(args);
+  }
+
+  /**
+   * This method should be used to change the level of logging, instead of directly
+   * accessing to the root logger via the Logger.getLogger() static method.
+   * Indeed, this method respect the fact that the root logger's level should
+   * never ever be set higher than Level.WARNING, because it would cause the status
+   * handler to malfunction.
+   *
+   * @param newLevel the level to which we want to set the log output
+   */
+  public static void changeLogLevel(Level newLevel) {
+    if( newLevel.intValue() <= Level.WARNING.intValue() ) {
+      rootLogger.setLevel(newLevel);
+    } else {
+      consoleHandler.setLevel(newLevel);
+      // that way, warnings are not printed, but still seen by the status handler
+    }
   }
 
 }

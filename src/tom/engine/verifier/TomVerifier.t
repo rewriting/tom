@@ -56,11 +56,10 @@ public class TomVerifier extends TomGenericPlugin {
   public void run() {
     if(isActivated()) {
       try {
-      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+	int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
 
 	long startChrono = System.currentTimeMillis();
-	boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
 
 	TomTerm extractTerm = `emptyTerm();
 	// here the extraction stuff
@@ -73,8 +72,9 @@ public class TomVerifier extends TomGenericPlugin {
 			
 	Collection derivations = getDerivations(purified);
 
-	if(verbose)
-	    System.out.println("TOM verification phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+	getLogger().log( Level.INFO,
+			 "TomVerificationPhase",
+			 new Integer((int)(System.currentTimeMillis()-startChrono)) );
 	    
 	printAlertMessage(errorsAtStart, warningsAtStart);
 	
@@ -84,11 +84,8 @@ public class TomVerifier extends TomGenericPlugin {
 			   new Object[]{environment().getInputFile().getName(), "TomVerifier", e.getMessage()} );
 	  e.printStackTrace();
       }
-    } else {
-      boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
-	    
-      if(verbose)
-	  System.out.println("The verifier is not activated and thus WILL NOT RUN.");
+    } else {	    
+      getLogger().log(Level.INFO, "The verifier is not activated and thus WILL NOT RUN.");
     }
   }
 

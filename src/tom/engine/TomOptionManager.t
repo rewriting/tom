@@ -514,6 +514,14 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public void setOption(String optionName, Object optionValue) {
     putOptionValue(optionName, optionValue);
+
+    if( optionValue.equals(Boolean.TRUE) ) {
+      if( optionName.equals("verbose") ) {
+	Tom.changeLogLevel(Level.INFO);
+      } else if( optionName.equals("noWarning") ) {
+	Tom.changeLogLevel(Level.SEVERE);
+      }
+    }
   }
 
   /**

@@ -27,20 +27,20 @@ public class TomOptimizer extends TomGenericPlugin {
   public void run() {
     if(isActivated()) {
       try {
-      int errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
-      int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+	int errorsAtStart   = getPluginPlatform().getStatusHandler().nbOfErrors();
+	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
 
 	long startChrono = System.currentTimeMillis();
 						
-	boolean verbose      = getPluginPlatform().getOptionBooleanValue("verbose");
 	boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
 						
 	TomTerm renamedTerm   = renameVariable( (TomTerm)getTerm(), new HashSet() );
 	TomTerm optimizedTerm = optimize(renamedTerm);
 	setTerm(optimizedTerm);
 			
-	if(verbose)			
-	  System.out.println("TOM optimization phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+	getLogger().log( Level.INFO,
+			 "TomOptimizationPhase",
+			 new Integer((int)(System.currentTimeMillis()-startChrono)) );
 			
 	if(intermediate)
 	  Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
@@ -49,17 +49,14 @@ public class TomOptimizer extends TomGenericPlugin {
 	printAlertMessage(errorsAtStart, warningsAtStart);
 
       } catch (Exception e) {
-	  getLogger().log( Level.SEVERE,
-			   "ExceptionMessage",
-			   new Object[]{environment().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
+	getLogger().log( Level.SEVERE,
+			 "ExceptionMessage",
+			 new Object[]{environment().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
 
-	  e.printStackTrace();
+	e.printStackTrace();
       }
     } else {
-      boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
-	    
-      if(verbose)
-	System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
+      getLogger().log(Level.INFO, "The optimizer is not activated and thus WILL NOT RUN.");
     }
   }
 

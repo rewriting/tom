@@ -33,11 +33,9 @@ import java.io.*;
 import aterm.*;
 import aterm.pure.*;
 
-import tom.platform.*; 
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
 import tom.library.xml.*;
-
 
 /**
  * The TomServer manages plugins. It parses Tom.xml in order to find which
@@ -319,19 +317,16 @@ public class PluginPlatform {
       }
     }
 
-    //System.out.println( statusHandler.toString() );
-
     int nbOfErrors   = statusHandler.nbOfErrors();
     int nbOfWarnings = statusHandler.nbOfWarnings();
 
     if( statusHandler.hasError() ) {
-      logger.log( Level.WARNING,
+      logger.log( Level.OFF, // this is the highest possible level > will be printed no matter what 
 		  "TaskErrorMessage",
-		  new Object[]{ new Integer(nbOfErrors), 
-				new Integer(nbOfWarnings) } );
+		  new Object[]{ new Integer(nbOfErrors), new Integer(nbOfWarnings) } );
       return 1;
     } else if( statusHandler.hasWarning() ) {
-      logger.log( Level.WARNING,
+      logger.log( Level.OFF,
 		  "TaskWarningMessage",
 		  new Integer(nbOfWarnings) );
       return 0;

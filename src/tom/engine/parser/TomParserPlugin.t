@@ -65,7 +65,6 @@ public class TomParserPlugin extends TomGenericPlugin {
 
       long startChrono = System.currentTimeMillis();
 	
-      boolean verbose      = getPluginPlatform().getOptionBooleanValue("verbose");
       boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
       boolean java         = getPluginPlatform().getOptionBooleanValue("jCode");
       boolean debug        = getPluginPlatform().getOptionBooleanValue("debug");
@@ -73,7 +72,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       if(java) {
 	TomJavaParser javaParser = TomJavaParser.createParser(fileName);
 	String packageName = javaParser.JavaPackageDeclaration();
-	// Update taskInput
+	// Update environment
 	environment().setPackagePath(packageName);
 	environment().updateOutputFile();
       }	else {
@@ -86,9 +85,9 @@ public class TomParserPlugin extends TomGenericPlugin {
       TomTerm parsedTerm = parser.startParsing();
       super.setTerm(parsedTerm);
 
-      if(verbose) 
-	System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-      // TODO: to be replaced by a log(Level.INFO)
+      getLogger().log( Level.INFO,
+		       "TomParsingPhase",
+		       new Integer((int)(System.currentTimeMillis()-startChrono)) );
 
       if(environment().isEclipseMode()) {
 	String outputFileName = environment().getInputFile().getParent()+ File.separator + "."
@@ -105,8 +104,8 @@ public class TomParserPlugin extends TomGenericPlugin {
       }
         
       if(debug)
-	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + DEBUG_TABLE_SUFFIX, 
-			       parser.getStructTable());
+	Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + DEBUG_TABLE_SUFFIX, 
+			     parser.getStructTable());
 
       printAlertMessage(errorsAtStart, warningsAtStart);
 
@@ -154,6 +153,6 @@ public class TomParserPlugin extends TomGenericPlugin {
 
   public PlatformOptionList declaredOptions() {
     return `concPlatformOption(OptionBoolean("parse","","",True()) // activation flag
-			  );
+			       );
   }
 }
