@@ -49,12 +49,10 @@ public class OutputCode {
   }
   
   public void setSingleLine() {
-    System.out.println("setSingleLine");
     this.singleLine = true;
   }
   
   public void unsetSingleLine() {
-    System.out.println("UnsetSingleLine");
     this.singleLine = false;
   }
   
@@ -135,7 +133,7 @@ public class OutputCode {
           s = s.replace('\n', ' ');
           s = s.replace('\r', ' ');
           s = s.replace('\t', ' ');
-          System.out.println("remove:"+s);
+            //System.out.println("remove:"+s);
         }
       } else if(lineCounter < line) {
         while(lineCounter < line) {

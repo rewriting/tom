@@ -214,6 +214,10 @@ public class TomCompiler extends TomTask {
         }
         TomList newPatternList = empty();
         while(!l2.isEmpty()) {
+            /*
+             * the call to preProcessing performs the recursive expansion
+             * of nested match constructs
+             */
           TomTerm elt = preProcessing(l2.getHead());
           TomTerm newPatternAction = elt;
           
@@ -221,7 +225,7 @@ public class TomCompiler extends TomTask {
             %match(TomTerm elt) {
               PatternAction(TermList(termList),Tom(actionList), option) -> {
                 TomList newTermList = empty();
-                TomList newActionList = tomListMap(actionList,replace_preProcessing);
+                TomList newActionList = actionList;
                   /* generate equality checks */
                 ArrayList equalityCheck = new ArrayList();
                 TomList renamedTermList = linearizePattern(termList,equalityCheck);
