@@ -183,8 +183,7 @@ public class Tom {
     				getInput().setECode();
             getInput().setInputSuffix(".t");
     				getInput().setOutputSuffix(".e");
-    			} else if (
-    					args[i].equals("--noOutput") || args[i].equals("-o")) {
+    			} else if(args[i].equals("--noOutput")) {
     				getInput().setPrintOutput(false);
     			} else if(args[i].equals("--doCompile") || args[i].equals("-C")) {
     				getInput().setDoOnlyCompile(true);

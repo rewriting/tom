@@ -97,12 +97,12 @@
 		<path refid="src.classpath"/>
 	</path>
 
-	<target name="preparesrc">
+	<target name="prepare.src">
 		<mkdir dir="${src.build}"/>
 		<mkdir dir="${src.dist}"/>
 	</target>
 	
-	<target name="preparestable">
+	<target name="prepare.stable">
 		<mkdir dir="${stable.build}"/>
 		<mkdir dir="${stable.dist}"/>
 	</target>
@@ -178,7 +178,7 @@
 	</target>
 	
 	<!-- compile adt's -->
-	<target name="buildadt" depends="initTaskDef, preparesrc, check.newer.adt" if="newer.adt">
+	<target name="buildadt" depends="initTaskDef, prepare.src, check.newer.adt" if="newer.adt">
 		<adt file="${src.adt}/TomSignature.adt" 
 				 factory="TomSignature" 
 				 package="jtom.adt" 
@@ -198,7 +198,7 @@
 		</copy>
 	</target>
 
-	<target name="src" description="compile the TOM development sources" depends="preparesrc">
+	<target name="src" description="compile the TOM development sources" depends="prepare.src">
 		<antcall target="buildtom"/>
 		<antcall target="buildparser"/>
 		<!--<property name="unixpath" refid="src.classpath" />
@@ -210,7 +210,7 @@
 		</javac>
 	</target>
 	
-	<target name="stable" description="compile the TOM stable sources" depends="preparestable">
+	<target name="stable" description="compile the TOM stable sources" depends="prepare.stable">
 		<!-- Compile the java code from ${stable} into ${stable} -->
 		<javac srcdir="${stable.src}" destdir="${stable.build}" verbose="${javacVerbose}">
 			<classpath refid="stable.classpath"/>
@@ -219,7 +219,7 @@
 
 	<target name="dist.stable" 
 					description="Prepare a distribution ready stable package" 
-					depends="stable, prepare.dist.stable">
+					depends="clean.dist.stable, stable, prepare.dist.stable">
 		<!-- "tom binary" -->
 		<copy todir="${stable.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${stable.bin}" file="${utils}/tom.bat"/>
@@ -265,7 +265,7 @@
 
 	<target name="dist.src" 
 					description="Prepare a distribution ready source package" 
-					depends="src, prepare.dist.src">
+					depends="clean.dist.src, src, prepare.dist.src">
 		<tstamp/>
 		<!-- "tom binary" -->
 		<copy todir="${src.bin}" file="${utils}/javac-tom"/>
@@ -371,9 +371,15 @@
 	<target name="clean" description="Cleans everything in the project" depends="clean.stable, clean.src, clean.test">
 	</target>	
 
-	<target name="clean.dist" description="Mr proper" depends="clean">
-		<delete dir="${stable.dist}"/>
+	<target name="clean.dist" description="Mr proper" depends="clean, clean.dist.src, clean.dist.stable">
+	</target>
+
+	<target name="clean.dist.src" description="Remove the src distribution">
 		<delete dir="${src.dist}"/>
+	</target>
+
+	<target name="clean.dist.stable" description="Remove the stable distribution" depends="clean">
+		<delete dir="${stable.dist}"/>
 	</target>
 
 	<target name="initjunit">

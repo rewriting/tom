@@ -393,15 +393,22 @@ public final static String debugTableSuffix = ".tfix.debug.table";
     for(Iterator it=getUserImportList().iterator() ; it.hasNext() ;) {
       importList.add(it.next());
     }
-    importList.add(new File(getDestDir(),getPackagePath()).getAbsoluteFile());
-    importList.add(getInputFile().getParentFile().getAbsoluteFile());
-    String tom_home = System.getProperty("tom.home");
-    if(tom_home != null) {
-      File file = new File(new File(tom_home,"jtom"),"share");
-      importList.add(file.getAbsoluteFile());
-      //System.out.println(" extend import list with: " + file.getPath());
+    try {
+      
+      importList.add(new File(getDestDir(),getPackagePath()).getCanonicalFile());
+      
+      importList.add(getInputFile().getParentFile().getCanonicalFile());
+      String tom_home = System.getProperty("tom.home");
+      if(tom_home != null) {
+        File file = new File(new File(tom_home,"jtom"),"share");
+        importList.add(file.getCanonicalFile());
+        //System.out.println(" extend import list with: " + file.getPath());
+      }
+      //System.out.println("importList = " + importList);
+    } catch (IOException e) {
+      System.out.println("IO Exception when computing importList");
+      e.printStackTrace();
     }
-    //System.out.println("importList = " + importList);
     return importList;
   }
  

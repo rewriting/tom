@@ -1516,25 +1516,27 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
 }
 {
   <INCLUDE> /* switch to TOM mode */
-    {
-      addPreviousCode(list);
-    }
+  {
+    addPreviousCode(list);
+  }
   tlCode = GoalLanguageBlock(blockList)
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       fileName = tlCode.getCode().trim();
       fileName = fileName.replace('/',File.separatorChar);
+      fileName = fileName.replace('\\',File.separatorChar);
       try {
         File file = null;
         boolean found = false;
         for(int i=0 ; !found && i<getInput().getImportList().size() ; i++) {
-          file = new File((File)getInput().getImportList().get(i),fileName).getAbsoluteFile();
+          file = new File((File)getInput().getImportList().get(i),fileName).getCanonicalFile();
           //System.out.println("look for: " + file.getPath());
           found = file.exists();
         }
+        
         //System.out.println("file found = " + found);
-                  
-          // to get the length of the file
+        
+        // to get the length of the file
         inputBuffer = new byte[(int)file.length()+1];
         input       = new FileInputStream(file);
         input.read(inputBuffer);
