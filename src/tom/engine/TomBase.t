@@ -171,9 +171,9 @@ public class TomBase {
 
   protected String getTomType(TomType type) {
     %match(TomType type) {
-      TomType(s) -> {return s;}
+      ASTTomType(s) -> {return s;}
       TomTypeAlone(s) -> {return s;}
-      Type(TomType(s),_) -> {return s;}
+      Type(ASTTomType(s),_) -> {return s;}
       EmptyType() -> {return null;}
       _ -> {
         System.out.println("getTomType error on term: " + type);
@@ -204,14 +204,16 @@ public class TomBase {
   protected TomSymbol getSymbol(TomType tomType) {
     SymbolList list = symbolTable().getSymbol(tomType);
     SymbolList filteredList = `emptySymbolList();
-    while(!list.isEmpty()) {
+    // Not necessary since checker ensure the uniqueness of the symbol
+   while(!list.isEmpty()) {
       TomSymbol head = list.getHead();
       if(isArrayOperator(head) || isListOperator(head)) {
         filteredList = `manySymbolList(head,filteredList);
       }
       list = list.getTail();
     }
-        
+		return filteredList.getHead();
+		/*
     if(filteredList.isEmpty()) {
         // TODO
       System.out.println("getSymbol: symbol not found: " + tomType);
@@ -221,7 +223,7 @@ public class TomBase {
     } else {
       return filteredList.getHead();
     }
-    return null;
+    return null;*/
   }
   
   protected TomType getSymbolCodomain(TomSymbol symbol) {
@@ -257,8 +259,7 @@ public class TomBase {
   protected TomType getTermType(TomTerm t){
       //%variable
     %match(TomTerm t) {
-    	// TODO: Need an index for Appl
-      Appl(option, (Name(tomName)),subterms) -> {
+      Appl(option, (Name(tomName)), subterms) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         return tomSymbol.getTypesToType().getCodomain();
       }

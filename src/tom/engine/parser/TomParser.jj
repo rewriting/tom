@@ -33,9 +33,11 @@ package jtom.parser;
 
 import java.io.*;
 import java.util.*;
+import java.text.*;
 import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
+import jtom.checker.TomCheckerMessage;
 import jtom.xml.Constants;
 import java.lang.Throwable;
 
@@ -88,7 +90,6 @@ public class TomParser implements TomTask {
       includedFiles.add(fileName);
     } else {
       String msg = "Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...";
-        //System.out.println(msg);
       throw new TomIncludeException(new Throwable(msg));
     }
   }
@@ -126,22 +127,21 @@ public class TomParser implements TomTask {
   		input.setTerm(parsedTerm);
   	} catch (TomIncludeException e) {
   	  if(eclipse) {
-  	  	addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+  	  	addError(input, e.getMessage(), currentFile,  getLine(), 0);
   	  }
   	  System.out.println(e.getMessage());
   	  return;
   	} catch (TomException e) {
-  	  String msg = "Parsing exception catched in file `"+currentFile+"`\n"+e.getMessage();
-  	  System.out.println(msg);
-          if(eclipse) {
-  	  	addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+  	  System.out.println(e.toString());
+      if(eclipse) {
+  	  	addError(input, e.getMessage(), currentFile,  getLine(), 0);
   	  }
   	  return;
   	} catch (ParseException e) {
   	  String msg = "Parsing exception catched in file `"+currentFile+"`\n"+e.getMessage();
   	  System.out.println(msg);
 	  if(eclipse) {
-  	  	addError(input, e.getMessage(), currentFile,  (new Integer(getLine())).intValue(), 0);
+  	  	addError(input, e.getMessage(), currentFile, getLine(), 0);
   	  }
   	  return;
   	} catch (Exception e) {
@@ -171,8 +171,8 @@ public class TomParser implements TomTask {
     return environment.getASTFactory();
   }
   
-  private String getLine() {
-    return  (java.lang.String.valueOf(token.beginLine+includeOffSet));
+  private int getLine() {
+    return  token.beginLine+includeOffSet;
   }
 
   private int getPos() {
@@ -213,12 +213,12 @@ public class TomParser implements TomTask {
   private void switchToDefaultMode() {
     token_source.SwitchTo(DEFAULT);
     oldPos = getPos() + token.image.length();
-    oldLine = Integer.valueOf( getLine() ).intValue();
+    oldLine = getLine();
     orgTrack = makePosition(token.beginLine,token.beginColumn);
   }
   
   public Position makePosition(int line, int column) {
-    return  tsf().makePosition_Position(line+includeOffSet, column);
+    return  tsf().makePosition_TextPosition(line+includeOffSet, column);
   }
   
   private TargetLanguage makeTL(String code) {
@@ -773,7 +773,11 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       {
         if(!implicit && list.isEmpty()) {
  	  // check if it is a constant
-          optionList.add(tsf().makeOption_Constructor(symbol));
+ 	  	  if(symbol != null) {
+            optionList.add(tsf().makeOption_Constructor(symbol));
+          } else {
+            // TODO: nothing 
+          }
         }
         if(symbol == null) {
           symbol = tsf().makeTomName_Name("");
@@ -954,7 +958,7 @@ TomTerm XMLTerm(TomName astAnnotedName) throws TomException:
         {
           text += "</"+ close.image +">";
           if(!name.image.equals(close.image)) {
-            throw new TomException(new Throwable("Error on closing node"));
+            throw new TomException("Error on closing node");
             return null;
           }
           if(implicit) {
@@ -1231,13 +1235,12 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
         list.add(astTom);
       } catch (FileNotFoundException e1) {
         String msg = "Included file `" + fileName + "` not found at line "+getLine()+" from file `"+currentFile+"`";
-          //System.out.println(msg);
-        throw new TomIncludeException(new Throwable(msg));
+        throw new TomIncludeException(msg);
       }  catch (java.io.IOException e2) {
         String msg = "IOException occurs reading " + fileName + " at line "+getLine();
         System.out.println(msg);
         e2.printStackTrace();
-        throw new TomException(new Throwable(msg));
+        throw new TomException(msg);
       }
     }
 }
@@ -1313,9 +1316,8 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
   LinkedList blockList = new LinkedList();
   TomTypeList types = tsf().makeTomTypeList();
   LinkedList options = new LinkedList();
-  LinkedList nameList = new LinkedList();
+  LinkedList slotNameList = new LinkedList();
   Map mapNameDecl = new HashMap();
-  Set setSlotDecl = new HashSet();
   TomName astName;
   TomSymbol astSymbol;
   String stringSlotName;
@@ -1323,6 +1325,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
   Declaration attribute;
   TomType tomType;
   SlotList slotList = tsf().makeSlotList();
+  Option orgTrack;
 }
 {
   <OPERATOR> /* switch to TOM mode */
@@ -1332,7 +1335,9 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
   
   type = <TOM_IDENTIFIER>
   name = <TOM_IDENTIFIER>
-    {    options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
+    {   orgTrack = ast().makeOriginTracking(name.image,getLine(), currentFile);
+    	options.add(orgTrack);
+    }
   [ <TOM_LPAREN>
       { stringSlotName = ""; }
       [ LOOKAHEAD(2)
@@ -1340,8 +1345,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
       ]
       typeArg = <TOM_IDENTIFIER>
       {
-        if (!stringSlotName.equals("")) { setSlotDecl.add(stringSlotName);}
-        nameList.add(ast().makeName(stringSlotName)); 
+        slotNameList.add(ast().makeName(stringSlotName)); 
         types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
       }
       ( <TOM_COMMA>
@@ -1352,15 +1356,14 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
         typeArg = <TOM_IDENTIFIER>
         {
           if (!stringSlotName.equals("")) {
-            if (!setSlotDecl.contains(stringSlotName)) {
-              setSlotDecl.add(stringSlotName);
-            }
-            else {
-              System.out.println("\nRepeated slot '"+stringSlotName+"' in operator declaration\n-- Error occured at line "+getLine());
+            if(slotNameList.indexOf(stringSlotName) != -1) {
+              String detailedMsg = MessageFormat.format(TomCheckerMessage.RepeatedSlotName, new Object[]{stringSlotName});
+              String msg = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(orgTrack.getLine()), "%op "+type.image, new Integer(orgTrack.getLine()), currentFile, detailedMsg});
+              throw new TomException(msg);
             }
           }
-          nameList.add(ast().makeName(stringSlotName));
-	  types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
+          slotNameList.add(ast().makeName(stringSlotName));
+	      types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
         }
       )*
       <TOM_RPAREN> ]
@@ -1379,7 +1382,9 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
           mapNameDecl.put(sName,attribute);
         }
         else {
-          System.out.println("\nGetSlot declaration 'get_slot("+sName.getString()+",...)' is repeated in operator declaration\n-- Error occured at line: "+getLine());
+          String detailedMsg = MessageFormat.format(TomCheckerMessage.WarningTwoSameSlotDecl, new Object[]{sName.getString()});
+          String msg = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(attribute.getOrgTrack().getLine()), "%op "+type.image, new Integer(orgTrack.getLine()), currentFile, detailedMsg});
+          System.out.println(msg);
         }
       }
     | attribute = KeywordIsFsym(astName, type.image)  { options.add(attribute); }
@@ -1388,8 +1393,8 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
 
-      for(int i=nameList.size()-1; i>=0 ; i--) {
-        TomName name1 = (TomName)nameList.get(i);
+      for(int i=slotNameList.size()-1; i>=0 ; i--) {
+        TomName name1 = (TomName)slotNameList.get(i);
         PairNameDecl pair = null;
         Declaration emptyDeclaration = tsf().makeDeclaration_EmptyDeclaration();
         if(name1.isEmptyName()) {
@@ -1409,8 +1414,13 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
         if(!noWarning) {
-          System.out.println("\nSome GetSlot declaration are incompatible with operator signature");
-          System.out.println("*** This concerns following slotname:"+ mapNameDecl.keySet()+" \n-- Error occured at line: "+getLine());
+          Iterator it = mapNameDecl.keySet().iterator();
+          while(it.hasNext()) {
+            TomName remainingSlot = (TomName) it.next();
+          	String detailedMsg = MessageFormat.format(TomCheckerMessage.WarningIncompatibleSlotDecl, new Object[]{remainingSlot.getString()});
+          	String msg = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()), "%op "+type.image, new Integer(orgTrack.getLine()), currentFile, detailedMsg});
+          	System.out.println(msg);
+          	}
         }
       }
       
@@ -1984,39 +1994,31 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
         <TOM_LPAREN>
       nameArg = <TOM_IDENTIFIER>
        {
-         if( !(nbTypes > 0) ) {
-           String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
-             //System.out.println(msg);
-           throw new TomException(new Throwable(msg));
-         }
-         type = (TomType)types.elementAt(index++);
-         name = tsf().makeTomName_Name(nameArg.image);  
-         Option info1 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
-         OptionList option1 = ast().makeOption(info1);
-         args.add(tsf().makeTomTerm_Variable(option1,name, type));
+          if( !(nbTypes > 0) ) {
+            type = tsf().makeTomType_EmptyType();
+          } else {
+	        type = (TomType)types.elementAt(index++);
+	      }
+	      name = tsf().makeTomName_Name(nameArg.image);  
+	      Option info1 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
+	      OptionList option1 = ast().makeOption(info1);
+	      args.add(tsf().makeTomTerm_Variable(option1,name, type));
        }
      ( <TOM_COMMA> nameArg = <TOM_IDENTIFIER>
         {
           if( index >= nbTypes ) {
-            String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
-              //System.out.println(msg);
-            throw new TomException(new Throwable(msg));
-          }
-          type = (TomType)types.elementAt(index++);
-          name = tsf().makeTomName_Name(nameArg.image); 
-          Option info2 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
+            type = tsf().makeTomType_EmptyType();
+          } else {
+	        type = (TomType)types.elementAt(index++);
+	      }
+    	  name = tsf().makeTomName_Name(nameArg.image); 
+   	      Option info2 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
           OptionList option2 = ast().makeOption(info2);
           args.add(tsf().makeTomTerm_Variable(option2,name, type));
         }
       )*
       <TOM_RPAREN> ) ]
-       {
-         if (index<nbTypes) {
-           String msg = "Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
-             //System.out.println(msg);
-           throw new TomException(new Throwable(msg));
-         }
-       }
+
   tlCode = GoalLanguageBlock(blockList)
    {
      return ast().makeMakeDecl(opname,returnType,args,tlCode, orgTrack);

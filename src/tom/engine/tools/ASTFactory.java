@@ -138,8 +138,8 @@ public class ASTFactory {
     return list;
   }
 
-   public Option makeOriginTracking(String name, String line , String fileName) {
-    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), Integer.parseInt(line),tsf().makeTomName_Name( fileName));
+   public Option makeOriginTracking(String name, int line , String fileName) {
+    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), line, tsf().makeTomName_Name( fileName));
   }
   
   public Declaration makeMakeDecl(String opname, TomType returnType, List argList, TargetLanguage tlcode, Option orgTrack) {
@@ -152,7 +152,7 @@ public class ASTFactory {
   }
 
   public TomType makeType(String typeNameTom, TargetLanguage tlType) {
-    TomType typeTom = tsf().makeTomType_TomType(typeNameTom);
+    TomType typeTom = tsf().makeTomType_ASTTomType(typeNameTom);
     TomType sortTL  = tsf().makeTomType_TLType(tlType);
     return tsf().makeTomType_Type(typeTom,sortTL);
   }
@@ -311,7 +311,7 @@ public class ASTFactory {
           TomType type = tomSymbol.getTypesToType().getCodomain();
             //System.out.println("type = " + type);
           if(type.isTomTypeAlone() && type.getString().equals("String")) {
-            Option info = makeOriginTracking(Constants.TEXT_NODE,"-1","??");
+            Option info = makeOriginTracking(Constants.TEXT_NODE,-1,"??");
             TomList list = tsf().makeTomList();
             list = tsf().makeTomList(term,list);
 						NameList nameList = tsf().makeNameList();

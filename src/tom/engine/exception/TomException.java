@@ -37,6 +37,7 @@ public class TomException extends Exception {
   }
 
   public TomException(String msg) {
+  	this(new Throwable(msg));
     this.msg = msg;
   }
 

@@ -7,7 +7,7 @@ javadir         = ${prefix}/classes/jtom/checker
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/checker
-BOOTSOURCES	= TomChecker.java TomSyntaxChecker.java TomTypeChecker.java
+BOOTSOURCES	= TomChecker.java TomSyntaxChecker.java TomTypeChecker.java TomCheckerMessage.java
 java_JAVA       = $(BOOTSOURCES)
 
 JAVAROOT        = ${top_builddir}/src/

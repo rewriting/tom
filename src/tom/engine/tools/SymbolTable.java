@@ -40,8 +40,8 @@ public class SymbolTable {
   public SymbolTable(ASTFactory astFactory, boolean cCode, boolean jCode, boolean eCode) {
     this.astFactory = astFactory;
     this.cCode = cCode;
-	this.jCode = jCode;
-	this.eCode = eCode;
+	  this.jCode = jCode;
+	  this.eCode = eCode;
     init();
   }
   private void init() {

@@ -27,9 +27,11 @@
 package jtom.parser;
 import java.io.*;
 import java.util.*;
+import java.text.*;
 import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
+import jtom.checker.TomCheckerMessage;
 import jtom.xml.Constants;
 import java.lang.Throwable;
 

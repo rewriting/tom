@@ -66,11 +66,11 @@ TargetLanguage_TLImpl.java TargetLanguage_TL.java\
 TargetLanguage_ITLImpl.java TargetLanguage_ITL.java\
 TargetLanguage_CommentImpl.java TargetLanguage_Comment.java\
 Position.java PositionImpl.java\
-Position_PositionImpl.java Position_Position.java\
+Position_TextPositionImpl.java Position_TextPosition.java\
 TomType.java TomTypeImpl.java\
 TomType_TypeImpl.java TomType_Type.java\
 TomType_TypesToTypeImpl.java TomType_TypesToType.java\
-TomType_TomTypeImpl.java TomType_TomType.java\
+TomType_ASTTomTypeImpl.java TomType_ASTTomType.java\
 TomType_TomTypeAloneImpl.java TomType_TomTypeAlone.java\
 TomType_TLTypeImpl.java TomType_TLType.java\
 TomType_EmptyTypeImpl.java TomType_EmptyType.java\

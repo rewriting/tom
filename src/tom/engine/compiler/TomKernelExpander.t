@@ -100,7 +100,7 @@ public class TomKernelExpander extends TomBase {
           }
           
           Variable(option1,name1,type1) , appl@Appl(optionList,(name@Name(strName)),l) -> {
-              //debugPrintln("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
+              //System.out.println("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
             Option orgTrack = findOriginTracking(optionList);
             OptionList option = `replaceAnnotedName(optionList,type1,orgTrack);
               // under a match construct
@@ -114,6 +114,7 @@ public class TomKernelExpander extends TomBase {
               tomSymbol = getSymbol(strName);
             }
             if(tomSymbol != null) {
+            	//System.out.println("----->Symbol:"+tomSymbol+ "\n-->args:"+l);
               TomList subterm = expandVariableList(tomSymbol, l);
               return `Appl(option,concTomName(name),subterm);
             } else if(l.isEmpty()) {
@@ -165,7 +166,7 @@ public class TomKernelExpander extends TomBase {
           }
               
           SubjectList(l1), TermList(subjectList) -> {
-            //debugPrintln("expandVariable.9: TermList(" + subjectList + ")");
+            //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
                 
               // process a list of subterms
             ArrayList list = new ArrayList();
@@ -202,7 +203,6 @@ public class TomKernelExpander extends TomBase {
     //%variable
     %match(TomSymbol subject) {
       symb@Symbol[typesToType=TypesToType(typeList,codomainType)] -> {
-        //debugPrintln("expandVariableList.1: " + subjectList);
           
           // process a list of subterms and a list of types
         TomList result = null;
