@@ -1,1 +1,0 @@
-tom Rho;javac-tom minirho/Rho.java;java minirho.Rho
