@@ -8,10 +8,6 @@
 \newcommand{\Java}{\textsf{Java}}
 \newcommand{\Eiffel}{\textsf{Eiffel}}
 
-\newenvironment{grammar}%
-{\endgraf\verbatim}%
-{\endverbatim}
-
 \def\programboxed#1{\begingroup
   \def\verbatim@processline{%
     {\setbox0=\hbox{\the\verbatim@line}%
@@ -78,6 +74,7 @@ have to be introduced by the ``\%typeterm'' primitive. It allows to
 define the mapping between algebraic sort and its concrete sort in the
 target language but
 also to give the materials necessary for pattern matching implementation.
+
 \begin{verbatimwrite}{program.txt}
   %typeterm Nat {
     implement { Term }
@@ -88,6 +85,8 @@ also to give the materials necessary for pattern matching implementation.
   }
 \end{verbatimwrite}
 \programboxed{program.txt}
+
+
 \begin{description}
 \item[implement:] describes how the algebraic type is
 implemented.
@@ -346,6 +345,6 @@ debugger but must not be a crucial point in the implementation choices..
 \subsubsection{Debugging match and rule construct}
 
 \subsubsection{Watching terms}
-This could be easily done by tracking the result of backquote construct call.
+This can be easily done by tracking the result of backquote construct call.
 
 \end{document}

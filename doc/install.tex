@@ -1,0 +1,148 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Installing and using the system}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Downloads and requirements}
+The current version of \TOM\ is available at
+  \texttt{http://www.loria.fr/ELAN/Toolkit}.
+In this page, you will find the latest release of \TOM. There are 2
+kinds of packages:
+\begin{itemize}
+\item \TOM\ itself;
+\item A bundle package with \TOM\ software itself and all dependencies
+  packages;
+\end{itemize}
+
+\TOM\ is written in Java and \TOM\ itself. You will need a Java
+compiler and interpreter. 
+We use Sun JDK 1.3.1 and 1.4 for development and runtime
+excecution. Some tests have alraedy been realized with gcj
+and Jikes.
+\subsection{Installation}
+Depending on the package you download, here is the installation
+instructions.
+
+\subsubsection{Installing the bundle package}
+This is the simplest way to have quickly \TOM\ running on your
+computer.
+\begin{itemize}
+\item Untar the package: 
+  > tar xzf jtom-bundle-VERSION.tar.gz
+\item Download and unpack the required packages:
+  > ./collect.sh
+\item Configure, build and install:
+  > ./configure --help gives a complete list of available configuration parameters.
+  > ./configure <<configuration parameters>>
+  > gmake
+\end{itemize}
+
+Once all is done, you are ready using \TOM\ using jtom command.
+
+\subsubsection{Installing \TOM\ package}
+\paragraph{Package dependencies}
+\TOM\ software depends on others packages:
+\begin{itemize}
+\item shared-objects
+\item JJTraveler
+\item aterm-java
+\end{itemize}
+The following image shows the dependencies order:
+
+
+Packages are available at:
+\begin{itemize}
+\item http://www.loria.fr/ELAN/tom
+\item http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase 
+\item http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/DailyDistributions 
+\end{itemize}    
+
+\paragraph{Installation process}
+\begin{enumerate}
+\item Get and install the shared-objects package
+         a. Type `./configure --prefix=<INSTALLDIR>'
+         b. Type `make'
+         c. Type `make install'
+\item Get and install the aterm-java package
+         a. Type `./configure --prefix=<INSTALLDIR>\
+                              --with-shared-objects=<INSTALLDIR>/share/shared-obj
+ects-1.0.jar'
+         b. Type `make'
+         c. Type `make install'
+
+\item Configure and install \TOM\ package:
+         a./configure --prefix=<INSTALLDIR>\
+                      --with-shared-objects=<INSTALLDIR>/share/shared-objects-1.0
+.jar\
+                      --with-aterm-java=<INSTALLDIR>/share/aterm-1.0.jar'
+         b. Type `make' to compile the package.
+
+         c. Type `make install' to install the package.
+\end{enumerate}
+
+
+\subsection{Command line Arguments}
+\subsubsection{NAME}
+     jtom - compile \TOM\ file (.t) into specified target languages
+
+\subsubsection{SYNOPSIS}
+     jtom [-hceVvioDCfWldpsO] [-I path] filename[.t]
+
+\subsubsection{DESCRIPTION}
+\begin{tabular}{|l|l|}
+\hline
+--help | -h&             Show this help \\
+--cCode | -c&           Generate C code \\
+        --eCode | -e&           Generate Eiffel code \\
+        --version | -V&         Print version \\
+        --verbose | -v&         Set verbose mode on \\
+        --intermediate | -i&    Generate intermediate files \\
+        --noOutput | -o&                Do not generate code \\
+        --noDeclaration | -D&   Do not generate code for declarations \\
+        --doCompile | -C&       Start after type-checking \\
+        --noCheck | -f&         Do not verify correctness \\
+        --noWarning | -W&       Do not print any warning \\
+        --lazyType | -l&                Use universal type \\
+        --demo | -d&            Run demo mode \\
+        --import <path> | -I&   Path for \%include \\
+        --pretty | -p&          Generate readable code \\
+        --atermStat | -s&       Print internal ATerm statistics \\
+        --optimize | -O&                Optimized generated code \\
+        --static&               Generate static functions \\
+        --debug&                Generate debug primitives \\
+\hline
+\end{tabular}
+
+\subsection{For developpers}
+\paragraph{CVS repository}
+The latest developments of \TOM\ are available from anonymous cvs at:
+cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom
+\paragraph{\TOM\ Architecture}
+In \TOM\ directory architecture, 2 main branches can be underlined:
+`stable` and `src`...
+The `stable` branch contains the stable material to build a running
+\TOM\ compiler. The `src` branch is used to make new developments.
+Once in src directory, you can modify the sources. then, 
+\begin{enumerate}
+\item Type `make' to build a new system and use jtom.src to use and
+  test the new system.
+\item At `src` directory level, type `make bootstrap' to bootstrap and
+  install a new system.
+  If something goes wrong, re-install the stable version:
+  `cd ../../stable'; `make install'
+  Then, correct the `src' directory
+\item If you are happy from the result, type `make bootinstall' to
+  make the current version become the stable one.
+     WARNING: this action may be VERY DANGEROUS !
+\end{enumerate}
+Please send a mail to pierre-etienne.moreau@loria.fr, to propose your
+suggestions.
+
+\paragraph{Additional tools for developments}
+To simplify \TOM\ development, an extra package called Apigen is used
+to generate data structures used by \TOM. All generated files can be
+found in `jtom $\backslash$adt` directory.
+This package is available at
+http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase.
+WARNIG: We will need to install JUnit to build this package.
+Once TomSignature.adt is modified, `make api` to re-generate \TOM\
+data structures.
