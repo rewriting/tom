@@ -101,7 +101,7 @@ public class Fib5 {
   }
 
   public final static void main(String[] args) {
-    Fib5 test = new Fib5(new fibFactory(new PureFactory(16)));
+    Fib5 test = new Fib5(fibFactory.getInstance(new PureFactory(16)));
 
     try {
       test.run(Integer.parseInt(args[0]));

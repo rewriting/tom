@@ -50,7 +50,7 @@ public class TestAddressBook extends TestCase {
   }
 
   public void setUp() {
-    factory = new Factory(new PureFactory());
+    factory = Factory.getInstance(new PureFactory());
     test = new AddressBook1(factory);
     book = new HashSet();
     test.generatePerson(book);

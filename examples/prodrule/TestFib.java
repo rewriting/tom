@@ -39,6 +39,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class TestFib extends TestCase {
+	private static PureFactory pure;
   private Fib1 fib1;
   private Fib2 fib2;
   private Fib3 fib3;
@@ -51,11 +52,14 @@ public class TestFib extends TestCase {
 	}
 
   public void setUp() {
-    fib1 = new Fib1(new prodrule.fib1.fib.fibFactory(new PureFactory()));
-    fib2 = new Fib2(new prodrule.fib2.fib.fibFactory(new PureFactory()));
-    fib3 = new Fib3(new prodrule.fib3.fib.fibFactory(new PureFactory()));
-    fib4 = new Fib4(new prodrule.fib4.fib.fibFactory(new PureFactory()));
-    fib5 = new Fib5(new prodrule.fib5.fib.fibFactory(new PureFactory()));
+		if (pure == null) {
+			pure = new PureFactory();
+		}
+    fib1 = new Fib1(prodrule.fib1.fib.fibFactory.getInstance(pure));
+    fib2 = new Fib2(prodrule.fib2.fib.fibFactory.getInstance(pure));
+    fib3 = new Fib3(prodrule.fib3.fib.fibFactory.getInstance(pure));
+    fib4 = new Fib4(prodrule.fib4.fib.fibFactory.getInstance(pure));
+    fib5 = new Fib5(prodrule.fib5.fib.fibFactory.getInstance(pure));
     n = 50;
   }
 

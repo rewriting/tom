@@ -34,7 +34,7 @@ import aterm.pure.*;
 // </applet>
 
 public class BoulderDash2D extends JApplet implements ActionListener {
-  private BoulderDashCore core = new BoulderDashCore(new Factory(new PureFactory()));
+  private BoulderDashCore core = new BoulderDashCore(Factory.getInstance(new PureFactory()));
   private JButton b1 = new JButton("Animation"), 
     b2 = new JButton("Get next");
   private JBoulderDashPanel p = new JBoulderDashPanel();

@@ -43,14 +43,16 @@ import junit.framework.TestSuite;
 
 public class TestPropp extends TestCase {
   private Propp1 test;
-  private Factory factory;
+  private static Factory factory;
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(new TestSuite(TestPropp.class));
 	}
 
   public void setUp() {
-    factory = new Factory(new PureFactory());
+		if (factory == null) {
+			factory = Factory.getInstance(new PureFactory());
+		}
     test = new Propp1(factory);
   }
 

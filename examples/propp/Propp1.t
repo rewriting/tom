@@ -49,7 +49,7 @@ public class Propp1 {
 	// ------------------------------------------------------------
 
 	public Propp1() {
-		this(new Factory(new PureFactory()));
+		this(Factory.getInstance(new PureFactory()));
 		this.traversal = new GenericTraversal();
 	}
 
@@ -581,7 +581,7 @@ public class Propp1 {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		Propp1 test = new Propp1(new Factory(new PureFactory()));
+		Propp1 test = new Propp1(Factory.getInstance(new PureFactory()));
 
 		String query ="";
 		try {

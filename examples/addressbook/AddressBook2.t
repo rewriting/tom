@@ -49,7 +49,7 @@ public class AddressBook2 {
   }
 
   public final static void main(String[] args) {
-    AddressBook2 test = new AddressBook2(new Factory(new PureFactory()));
+    AddressBook2 test = new AddressBook2(Factory.getInstance(new PureFactory()));
     test.run();
   }
   

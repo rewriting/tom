@@ -80,7 +80,7 @@ public class Fib2 {
   }
 
   public final static void main(String[] args) {
-    Fib2 test = new Fib2(new fibFactory(new PureFactory(16)));
+    Fib2 test = new Fib2(fibFactory.getInstance(new PureFactory(16)));
     try {
       test.run(Integer.parseInt(args[0]));
     } catch (Exception e) {

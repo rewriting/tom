@@ -46,7 +46,7 @@ public class RecPropp extends Propp1 {
 	// ------------------------------------------------------------  
 
 	public RecPropp() {
-		this(new Factory(new PureFactory()));
+		this(Factory.getInstance(new PureFactory()));
 	}
 		
 	public RecPropp(Factory factory) {
@@ -184,7 +184,7 @@ public class RecPropp extends Propp1 {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		RecPropp test = new RecPropp(new Factory(new PureFactory()));
+		RecPropp test = new RecPropp(Factory.getInstance(new PureFactory()));
 
 		String query ="";
 		try {

@@ -111,7 +111,7 @@ public class Fib4 {
   }
 
   public final static void main(String[] args) {
-    Fib4 test = new Fib4(new fibFactory(new PureFactory(16)));
+    Fib4 test = new Fib4(fibFactory.getInstance(new PureFactory(16)));
     try {
       test.run(Integer.parseInt(args[0]));
     } catch (Exception e) {

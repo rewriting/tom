@@ -575,7 +575,7 @@ public class Nsh {
   private static int fire[] = new int[20];
 
   public final static void main(String[] args) {
-    Nsh test = new Nsh(new Factory(new PureFactory()));
+    Nsh test = new Nsh(Factory.getInstance(new PureFactory()));
     int nbAgent = 1;
     //System.out.println("agent = " + `paul());
     try {

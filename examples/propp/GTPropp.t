@@ -49,7 +49,7 @@ public class GTPropp extends Propp1 {
 	// ------------------------------------------------------------  
 
 	public GTPropp() {
-		this(new Factory(new PureFactory()));
+		this(Factory.getInstance(new PureFactory()));
 		this.traversal = new GenericTraversal();
 	}
 		
@@ -207,7 +207,7 @@ public class GTPropp extends Propp1 {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		GTPropp test = new GTPropp(new Factory(new PureFactory()));
+		GTPropp test = new GTPropp(Factory.getInstance(new PureFactory()));
 
 		String query ="";
 		try {

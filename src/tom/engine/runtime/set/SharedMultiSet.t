@@ -53,7 +53,7 @@ public class SharedMultiSet extends ATermSet {
   
   public SharedMultiSet(PureFactory pureFactory) {
     if (factory==null) {
-      factory = new SetFactory(pureFactory);
+      factory = SetFactory.getInstance(pureFactory);
     }
     emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
     this.tree = makeEmptySet();

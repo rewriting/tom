@@ -106,20 +106,20 @@ public class TomServer {
    */
   public static TomServer create() {
     if(instance == null) {
-        instance = new TomServer();
+			instance = new TomServer();
         
-	instance.instances = new ArrayList();
-        instance.tNodeFactory = new TNodeFactory(new PureFactory());
-        instance.environment = new TomEnvironment();
-	instance.optionManager = new TomOptionManager();
+			instance.instances = new ArrayList();
+			instance.tNodeFactory = TNodeFactory.getInstance(PureFactorySingleton.getInstance());
+			instance.environment = new TomEnvironment();
+			instance.optionManager = new TomOptionManager();
 
-        return instance;
-	    } else {
-        TomServer.clear();
-        return instance;
-        //throw new TomRuntimeException(TomMessage.getString("TwoTomServerInstance"));
-	    }
-  }
+			return instance;
+		} else {
+			TomServer.clear();
+			return instance;
+			//throw new TomRuntimeException(TomMessage.getString("TwoTomServerInstance"));
+		}
+	}
 
   /**
    * Reinitializes the TomServer instance.
@@ -295,7 +295,7 @@ public class TomServer {
     for(int i = 0; i < inputFiles.length; i++) {
       environment.updateEnvironment(inputFiles[i]);
       //System.out.println(inputFiles[i]);
-      ATerm term = (new PureFactory()).makeAFun(inputFiles[i],0,false);
+      ATerm term = (PureFactorySingleton.getInstance()).makeAFun(inputFiles[i],0,false);
       
       // runs the modules
       it = instances.iterator();

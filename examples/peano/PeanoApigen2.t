@@ -76,7 +76,7 @@ public class PeanoApigen2 {
   }
 
   public final static void main(String[] args) {
-    PeanoApigen2 test = new PeanoApigen2(new Factory(new PureFactory()));
+    PeanoApigen2 test = new PeanoApigen2(Factory.getInstance(new PureFactory()));
     test.run(10);
   }
 

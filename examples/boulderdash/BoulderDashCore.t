@@ -106,7 +106,7 @@ public class BoulderDashCore {
   }
 
   public final static void main(String[] args) {
-    BoulderDashCore test = new BoulderDashCore(new Factory(new PureFactory()));
+    BoulderDashCore test = new BoulderDashCore(Factory.getInstance(new PureFactory()));
     test.run();
   }
   

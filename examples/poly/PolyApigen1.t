@@ -106,7 +106,7 @@ public class PolyApigen1 {
   }
     
   public final static void main(String[] args) {
-    PolyApigen1 test = new  PolyApigen1(new Factory(new PureFactory()));
+    PolyApigen1 test = new  PolyApigen1(Factory.getInstance(new PureFactory()));
     test.run(2);
   }
 }

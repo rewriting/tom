@@ -72,7 +72,7 @@ public class ApiString {
   }
   
   public final static void main(String[] args) {
-    ApiString test = new ApiString(new Factory(new PureFactory()));
+    ApiString test = new ApiString(Factory.getInstance(new PureFactory()));
     test.run();
   }
   

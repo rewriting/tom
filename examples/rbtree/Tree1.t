@@ -204,7 +204,7 @@ public class Tree1 {
   }
   
   public final static void main(String[] args) {
-    Tree1 test = new Tree1(new Factory(new PureFactory()));
+    Tree1 test = new Tree1(Factory.getInstance(new PureFactory()));
     test.run(10000);
   }
 

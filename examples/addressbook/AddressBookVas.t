@@ -64,7 +64,7 @@ public class AddressBookVas {
   }
 
   public final static void main(String[] args) {
-    AddressBookVas test = new AddressBookVas(new personFactory(new PureFactory()));
+    AddressBookVas test = new AddressBookVas(personFactory.getInstance(new PureFactory()));
     test.run();
   }
   

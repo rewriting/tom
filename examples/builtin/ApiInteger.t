@@ -71,7 +71,7 @@ public class ApiInteger {
   }
   
   public final static void main(String[] args) {
-    ApiInteger test = new ApiInteger(new Factory(new PureFactory(16)));
+    ApiInteger test = new ApiInteger(Factory.getInstance(new PureFactory(16)));
     test.run();
   }
   

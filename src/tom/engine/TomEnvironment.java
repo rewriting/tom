@@ -115,11 +115,10 @@ public class TomEnvironment
 
     public TomEnvironment() 
     {
-	PureFactory pure = new PureFactory();
-        tomSignatureFactory = new TomSignatureFactory(pure);
+        tomSignatureFactory = TomSignatureFactory.getInstance(PureFactorySingleton.getInstance());
         astFactory = new ASTFactory(tomSignatureFactory);
-        optionsFactory = new OptionsFactory(pure);
-
+        optionsFactory = OptionsFactory.getInstance(PureFactorySingleton.getInstance());
+		
         symbolTable = new SymbolTable(astFactory);
 
 	errors = getTomSignatureFactory().makeTomAlertList();

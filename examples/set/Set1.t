@@ -396,7 +396,7 @@ public class Set1 {
   }
   
   public final static void main(String[] args) {
-    Factory fact = new Factory(new PureFactory());
+    Factory fact = Factory.getInstance(new PureFactory());
     Set1 test;
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     int input = 0;

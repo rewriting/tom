@@ -91,7 +91,7 @@ public class GTree1 {
     }
   
   public final static void main(String[] args) {
-    GTree1 test = new GTree1(new Factory(new PureFactory()));
+    GTree1 test = new GTree1(Factory.getInstance(new PureFactory()));
 
     test.run(0);
   }
