@@ -84,7 +84,7 @@ public class TomParser implements TomTask {
       includedFiles.add(fileName);
     } else {
       System.out.println("Re-entering included file forms a cycle. Breaking the parsing...");
-      System.exit(1);        
+        //System.exit(1);        
     }
   }
 
@@ -1179,7 +1179,7 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
     } catch (FileNotFoundException e1) {
       System.out.println("Included file " + fileName.image + " not found at line "+getLine());
       //e1.printStackTrace();
-	System.exit(1);
+	//System.exit(1);
     }  catch (java.io.IOException e2) {
       e2.printStackTrace();
     }
@@ -1935,7 +1935,7 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
        {
          if( !(nbTypes > 0) ) {
            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occured at line "+getLine()+"\n Parsing aborted");
-           System.exit(1);
+             //System.exit(1);
          }
          type = (TomType)types.elementAt(index++);
          name = tsf().makeTomName_Name(nameArg.image);  
@@ -1947,7 +1947,7 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
         {
           if( index >= nbTypes ) {
             System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-            System.exit(1);
+              //System.exit(1);
           }
           type = (TomType)types.elementAt(index++);
           name = tsf().makeTomName_Name(nameArg.image); 
@@ -1960,7 +1960,7 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
        {
          if (index<nbTypes) {
            System.out.println(" Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-            System.exit(1);
+             //System.exit(1);
          }
        }
   tlCode = GoalLanguageBlock(blockList)

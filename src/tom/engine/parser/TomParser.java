@@ -78,7 +78,7 @@ public class TomParser implements TomTask, TomParserConstants {
       includedFiles.add(fileName);
     } else {
       System.out.println("Re-entering included file forms a cycle. Breaking the parsing...");
-      System.exit(1);
+        //System.exit(1);        
     }
   }
 
@@ -1118,7 +1118,7 @@ public class TomParser implements TomTask, TomParserConstants {
     } catch (FileNotFoundException e1) {
       System.out.println("Included file " + fileName.image + " not found at line "+getLine());
       //e1.printStackTrace();
-        System.exit(1);
+        //System.exit(1);
     }  catch (java.io.IOException e2) {
       e2.printStackTrace();
     }
@@ -2064,7 +2064,7 @@ public class TomParser implements TomTask, TomParserConstants {
           nameArg = jj_consume_token(TOM_IDENTIFIER);
          if( !(nbTypes > 0) ) {
            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occured at line "+getLine()+"\n Parsing aborted");
-           System.exit(1);
+             //System.exit(1);
          }
          type = (TomType)types.elementAt(index++);
          name = tsf().makeTomName_Name(nameArg.image);
@@ -2085,7 +2085,7 @@ public class TomParser implements TomTask, TomParserConstants {
             nameArg = jj_consume_token(TOM_IDENTIFIER);
           if( index >= nbTypes ) {
             System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-            System.exit(1);
+              //System.exit(1);
           }
           type = (TomType)types.elementAt(index++);
           name = tsf().makeTomName_Name(nameArg.image);
@@ -2108,7 +2108,7 @@ public class TomParser implements TomTask, TomParserConstants {
     }
          if (index<nbTypes) {
            System.out.println(" Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
-            System.exit(1);
+             //System.exit(1);
          }
     tlCode = GoalLanguageBlock(blockList);
      {if (true) return ast().makeMakeDecl(opname,returnType,args,tlCode, orgTrack);}
