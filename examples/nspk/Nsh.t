@@ -45,7 +45,9 @@ public class Nsh {
     State search    = `ATTACK();
 
     long startChrono = System.currentTimeMillis();
-    boolean res      = depthSearch(initState,search);
+      boolean res      = breadthSearch(initState,search);
+      //boolean res      = depthSearch(initState,search);
+      //boolean res      = depthSearch2(new HashSet(),initState,search);
     long stopChrono = System.currentTimeMillis();
 
     System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
@@ -72,6 +74,11 @@ public class Nsh {
     Collection c1 = new HashSet();
     c1.add(start);
 
+    Collection memory1;
+    Collection memory2;
+    memory1 = c1;
+    memory2 = c1;
+    
     int i = 0;
     while(!c1.isEmpty()) {
       Collection c2 = new HashSet();
@@ -80,14 +87,21 @@ public class Nsh {
         collectOneStep((State)it.next(),c2);
       }
 
-      c1.removeAll(result);
-      result.addAll(c1);
+      int c2size = c2.size();
+        //c2.removeAll(memory1);
+        //c2.removeAll(memory2);
+
+        //c2.removeAll(result);
+        //result.addAll(c2);
             
       System.out.print("iteration " + i + ":");
-      System.out.print("\tc2.size = " + c2.size());
+      System.out.print("\tc2: " + c2size + " --> " +c2.size());
+        //System.out.print("\tresult.size = " + result.size());
       System.out.println();
-      c1.clear();
+
       c1 = c2;
+        //memory2 = memory1;
+        //memory1 = c2;
       if(c2.contains(end)) {
         return true;
       }
@@ -100,9 +114,10 @@ public class Nsh {
   public boolean depthSearch(State start, State end) {
     Collection c1 = new HashSet();
     collectOneStep(start,c1);
-    c1.removeAll(result);
-    result.addAll(c1);
-    System.out.println("result.size = " + result.size());
+
+      c1.removeAll(result);
+      result.addAll(c1);
+        //System.out.println("\tresult.size = " + result.size());
     
     if(c1.size() > 0) {
         //System.out.println("c1.size = " + c1.size());
@@ -123,6 +138,85 @@ public class Nsh {
     return false;
   }
 
+
+  public int compareMessage(Message m1, Message m2) {
+      
+    %match(Message m1, Message m2) {
+      msg[src=sender[]], msg[src=receiver[]] -> { return 1;  }
+      msg[src=receiver[]], msg[src=sender[]] -> { return -1;  }
+      msg[src=receiver[]], msg[src=devil()]  -> { return 1;  }
+      msg[src=sender[]], msg[src=devil()]    -> { return 1;  }
+      msg[src=devil()], msg[src=receiver[]]  -> { return -1;  }
+      msg[src=devil()], msg[src=sender[]]    -> { return -1;  }
+
+      msg[src=x,dst=sender[]], msg[src=x,dst=receiver[]] -> { return 1;  }
+      msg[src=x,dst=receiver[]], msg[src=x,dst=sender[]] -> { return -1;  }
+      
+    }
+      
+
+    
+    String s1 = m1.toString();
+    String s2 = m2.toString();
+    
+      //System.out.println("m1 = " + s1);
+      //System.out.println("m2 = " + s2);
+    int res = s1.compareTo(s2);
+
+    
+    
+    return res;
+  }
+
+    /*
+  ATermList insertMessage(Message m,ATermList l) {
+    return l.insert(m);
+  }
+    */
+    
+  ATermList insertMessage(Message m,ATermList l) {
+    ATermList res = null;
+    if(l.isEmpty()) {
+      res = l.insert(m);
+    } else if(compareMessage(m, (Message)l.getFirst()) < 0) {
+      res =  l.insert(m);
+        //System.out.println("res = " + res);
+    } else {
+      res = insertMessage(m,l.getNext()).insert(l.getFirst());
+        //System.out.println("res = " + res);
+    }
+
+    return res;
+  }
+    
+  
+  public boolean depthSearch2(Collection local, State start, State end) {
+    Collection c1 = new HashSet();
+    collectOneStep(start,c1);
+
+      c1.removeAll(local);
+      local.addAll(c1);
+        //System.out.println("\tlocal.size = " + local.size());
+    
+    if(c1.size() > 0) {
+        //System.out.println("c1.size = " + c1.size());
+    } else {
+      return false;
+    }
+    
+    if(c1.contains(end)) {
+      System.out.println("ATTACK");
+      return true;
+    }
+
+    Iterator it = c1.iterator();
+    Collection c = new HashSet();
+    while(it.hasNext()) {
+      boolean b = depthSearch2(c,(State)it.next(),end);
+      if(b) return b;
+    }
+    return false;
+  }
   
   public Nonce DN() {
     return `N(dai,dai);
@@ -177,7 +271,7 @@ public class Nsh {
                 State state = `state(
                   concAgent(E1*,agent(x,WAIT,N(x,y)),E2*),
                   dst,I,
-                  concMessage(msg(x,y,K(y),N(x,y),DN(),A(x)),M*));
+                  insertMessage(msg(x,y,K(y),N(x,y),DN(),A(x)),M));
                 c.add(state);
                 fire[1]++;
               }
@@ -217,7 +311,7 @@ public class Nsh {
                 E,
                 concAgent(D1*,agent(y,WAIT(),N(y,z)),D2*),
                 intru,
-                concMessage(M1*,msg(y,z,K(z),N(n1,n3),N(y,z),A(y)),M2*));
+                insertMessage(msg(y,z,K(z),N(n1,n3),N(y,z),A(y)),concMessage(M1*,M2*)));
               c.add(state);
               fire[3]++;
             }
@@ -245,7 +339,7 @@ public class Nsh {
                   concAgent(E1*,agent(x,COMMIT(),N(x,v)),E2*),
                   D,
                   intru,
-                  concMessage(M1*,msg(x,v,K(v),N(n2,n4),DN(),DA()),M2*));
+                  insertMessage(msg(x,v,K(v),N(n2,n4),DN(),DA()),concMessage(M1*,M2*)));
                 c.add(state);
                 fire[4]++;
               }
@@ -322,7 +416,7 @@ public class Nsh {
               if(w!=z && w!=y) {
                 State state = `state(
                   E, D,
-                  intruder(w,l,concMessage(message,ll*)),
+                  intruder(w,l,insertMessage(message,ll)),
                   concMessage(M1*,M2*));
                 c.add(state);
                 fire[9]++;
@@ -344,7 +438,7 @@ public class Nsh {
                   concAgent(A1*,agent(t,_,_),A2*) -> {
                     Message message = `msg(w,t,K(z),N(n1,n3),N(n2,n4),A(v));
                     if(!existMessage(message,M)) {
-                      State state = `state(E,D,intru,concMessage(message,M*));
+                      State state = `state(E,D,intru,insertMessage(message,M));
                       c.add(state);
                       fire[10]++;
                     } 
@@ -377,7 +471,7 @@ public class Nsh {
                   concNonce(L3*,init,L4*) -> {
                     Message message = `msg(w,y,K(y),resp,init,A(xadd));
                     if(!existMessage(message,M)) {
-                      State state = `state(E,D,intru,concMessage(message,M*));
+                      State state = `state(E,D,intru,insertMessage(message,M));
                       c.add(state);
                       fire[11]++;
                     } 

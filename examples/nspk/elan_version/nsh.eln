@@ -30,7 +30,7 @@ operators
    II  : AgentId;
    dai   : AgentId;  //dummy AgentId
  
-   AuthVerif 		: bool 	alias    false:;//true:; // 
+   AuthVerif 		: bool 	alias    true:;//true:; // 
 
    SLEEP  : SWC;
    WAIT   : SWC;
