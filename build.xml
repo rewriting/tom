@@ -42,6 +42,8 @@
 	<property name="src.dist"     location="${src.src}/dist"/>
 
 	<!-- for dist -->
+	<property name="dist"         location="dist"/>
+
 	<property name="stable.bin"   location="${stable.dist}/bin"/>
 	<property name="stable.lib"   location="${stable.dist}/lib"/>
 	<property name="stable.share" location="${stable.dist}/share/jtom"/>
@@ -119,6 +121,7 @@
 	</target>
 
 	<target name="prepare.dist.stable">
+		<mkdir dir="${dist}"/>
 		<mkdir dir="${stable.bin}"/>
 		<mkdir dir="${stable.lib}"/>
 		<mkdir dir="${stable.share}"/>
@@ -126,6 +129,7 @@
 	</target>
 
 	<target name="prepare.dist.src">
+		<mkdir dir="${dist}"/>
 		<mkdir dir="${src.bin}"/>
 		<mkdir dir="${src.lib}"/>
 		<mkdir dir="${src.share}"/>
@@ -275,7 +279,7 @@
 		<copy todir="${stable.doc}" file="${guidepdf}"/>
 		<copy todir="${stable.doc}" file="${tutorialpdf}"/>
 		<!-- prepare tar file -->
-		<tar tarfile="${stable.src}/jtom-${version}.tar.gz" compression="gzip">
+		<tar tarfile="${dist}/jtom-${version}.tar.gz" compression="gzip">
 			<tarfileset dir="${stable.dist}" prefix="jtom-${version}" mode="755">
 				<include name="bin/*"/>
 				<exclude name="bin/*.bat"/>
@@ -348,7 +352,7 @@
 		<copy todir="${src.doc}" file="${guidepdf}"/>
 		<copy todir="${src.doc}" file="${tutorialpdf}"/>
 		<!-- prepare tar file -->
-		<tar tarfile="${src.src}/jtom-${DSTAMP}.tar.gz" compression="gzip">
+		<tar tarfile="${dist}/jtom-${DSTAMP}.tar.gz" compression="gzip">
 			<tarfileset dir="${src.dist}" prefix="jtom-${version}" mode="755">
 				<include name="bin/*"/>
 				<exclude name="bin/*.bat"/>
