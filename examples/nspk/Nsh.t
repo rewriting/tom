@@ -67,7 +67,6 @@ public class Nsh {
       System.out.print("\tc2: " + c2.size());
         //System.out.print("\tresult.size = " + result.size());
       System.out.println();
-
       c1 = c2;
       if(c2.contains(end)) {
         return true;
@@ -105,7 +104,34 @@ public class Nsh {
     return false;
   }
 
+ public boolean depthSearch2(Collection local, State start, State end) {
+    Collection c1 = new HashSet();
+    collectOneStep(start,c1);
 
+      c1.removeAll(local);
+      local.addAll(c1);
+        //System.out.println("\tlocal.size = " + local.size());
+    
+    if(c1.size() > 0) {
+        //System.out.println("c1.size = " + c1.size());
+    } else {
+      return false;
+    }
+    
+    if(c1.contains(end)) {
+      System.out.println("ATTACK");
+      return true;
+    }
+
+    Iterator it = c1.iterator();
+    Collection c = new HashSet();
+    while(it.hasNext()) {
+      boolean b = depthSearch2(c,(State)it.next(),end);
+      if(b) return b;
+    }
+    return false;
+  }
+  
   public int compareMessage(Message m1, Message m2) {
       
     %match(Message m1, Message m2) {
@@ -199,34 +225,6 @@ public class Nsh {
     return res;
   }
      
-  public boolean depthSearch2(Collection local, State start, State end) {
-    Collection c1 = new HashSet();
-    collectOneStep(start,c1);
-
-      c1.removeAll(local);
-      local.addAll(c1);
-        //System.out.println("\tlocal.size = " + local.size());
-    
-    if(c1.size() > 0) {
-        //System.out.println("c1.size = " + c1.size());
-    } else {
-      return false;
-    }
-    
-    if(c1.contains(end)) {
-      System.out.println("ATTACK");
-      return true;
-    }
-
-    Iterator it = c1.iterator();
-    Collection c = new HashSet();
-    while(it.hasNext()) {
-      boolean b = depthSearch2(c,(State)it.next(),end);
-      if(b) return b;
-    }
-    return false;
-  }
-  
   public Nonce DN() {
     return `N(dai,dai);
   }
@@ -402,11 +400,11 @@ public class Nsh {
             state(
               E, D,
               intruder(w,l,ll),
-              concMessage(M1*,msg(z,x,K(w),N(n1,n3),N(n2,n4),A(v)),M2*)) -> {
+              concMessage(M1*,msg(z,_,K(w),N1,N2,_),M2*)) -> {
               if(w!=z) {
                 State state = `state(
                   E, D,
-                  intruder(w,insertNonce(N(n1,n3),insertNonce(N(n2,n4),l)),ll),
+                  intruder(w,insertNonce(N1,insertNonce(N2,l)),ll),
                   concMessage(M1*,M2*));
                 c.add(state);
                 fire[8]++;
@@ -468,16 +466,16 @@ public class Nsh {
 
             state(
               E, D,
-              intru@intruder(w,listNonce@concNonce(_*,resp,_*),ll),
+              intru@intruder(w,listNonce,ll),
               M) -> {
               if(sizeMessage(M) < maxMessagesInNetwork) {
                 ListAgent subjectED = `concAgent(E*,D*);
-                %match(ListAgent subjectED,
-                       ListAgent subjectED,
-                       ListNonce listNonce) {
+                %match(ListAgent subjectED, ListAgent subjectED,
+                       ListNonce listNonce, ListNonce listNonce) {
                   concAgent(_*,agent(y,_,_),_*),
                   concAgent(_*,agent(xadd,_,_),_*),
-                  concNonce(_*,init,_*) -> {
+                  concNonce(_*,init,_*),
+                  concNonce(_*,resp,_*) -> {
                     Message message = `msg(w,y,K(y),resp,init,A(xadd));
                     if(!existMessage(message,M)) {
                       State state = `state(E,D,intru,insertMessage(message,M));

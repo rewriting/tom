@@ -7,6 +7,8 @@ CLEANFILES =${bin_SCRIPTS}
 
 top_abs_srcdir=$(shell cd ${top_srcdir}; pwd)
 top_abs_builddir=$(shell cd ${top_builddir}; pwd)
+tom_signature=${TOMSIGNATURE}
+
 
 TSJAR=TomSignature-${VERSION}.jar
 SETJAR=set-${VERSION}.jar
