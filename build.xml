@@ -974,7 +974,7 @@
 
     <!-- build tom -->
     <antcall target="buildtom.common">
-      <param name="gen.destination" value="${destination}"/>
+      <param name="gen.destination" value="${destination}/gen"/>
       <param name="withsource" value="yes"/>
     </antcall>
 
@@ -1116,8 +1116,7 @@
     <delete dir="src.doc"/>
   </target>
   
-  <!--
-    <target name="tags">
+  <!-- <target name="tags">
     <exec>
     find /Volumes/Home/pem/workspace/jtom/src/jtom \( -name "*.t" -o
     -name "*.java" \) | xargs etags - -language=java
