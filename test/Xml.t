@@ -1,6 +1,6 @@
 import jtom.runtime.xml.*;
-import jtom.runtime.xml.adt.tnode.*;
-import jtom.runtime.xml.adt.tnode.types.*;
+import jtom.adt.tnode.*;
+import jtom.adt.tnode.types.*;
 import aterm.*;
 import jtom.runtime.*;
 import java.util.*;
@@ -34,7 +34,7 @@ public class Xml {
 
     LinkedList elements = new LinkedList();
     LinkedList reverseElements = new LinkedList();
-    t = `XML(<IntegerList/>);
+    t = `xml(<IntegerList/>);
     for(int i =1 ; i<5 ; i++) {
       t = `addInteger(t,i);
       elements.addLast("" + i);
@@ -56,10 +56,10 @@ public class Xml {
       <IntegerList _*>(integers*)</IntegerList> -> {
         String s = ""+n;
         if(n%2 == 0) {
-          return `XML(<IntegerList> integers* <Integer>#TEXT(s)</Integer>
+          return `xml(<IntegerList> integers* <Integer>#TEXT(s)</Integer>
                        </IntegerList>);
         } else {
-          return `XML(<IntegerList> integers* <Int>#TEXT(s)</Int>
+          return `xml(<IntegerList> integers* <Int>#TEXT(s)</Int>
                        </IntegerList>);
         }
       }
@@ -84,7 +84,7 @@ public class Xml {
                             n2@<(Integer|Int) []>#TEXT(s2)</(Integer|Int)>,
                             X2*)</IntegerList> -> {
         if(s1.compareTo(s2) < 0) {
-          return `XML(swapElements(<IntegerList attr*>X1* n2 n1 X2*</IntegerList>));
+          return `xml(swapElements(<IntegerList attr*>X1* n2 n1 X2*</IntegerList>));
         }
       }
     }
