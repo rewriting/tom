@@ -148,9 +148,21 @@
 		</target>
   		
 		<target name="buildadt" depends="init, preparesrc, check.newer.adt" if="newer.adt">
-			<adt file="${src.adt}/TomSignature.adt" factory="TomSignature" package="jtom.adt" destdir="${src.adt}"/>
-			<adt file="${src.adt}/TNode.adt" factory="TNode" package="jtom.adt" destdir="${src.adt}"/>
-			<adt file="${src.adt}/Set.adt" factory="Set" package="jtom.adt" destdir="${src.adt}"/>
+			<adt 
+			 file="${src.adt}/TomSignature.adt" 
+			 factory="TomSignature" 
+			 package="jtom.adt" 
+			 destdir="${src.adt}"/>
+			<adt 
+			 file="${src.adt}/TNode.adt" 
+			 factory="TNode" 
+			 package="jtom.adt" 
+			 destdir="${src.adt}"/>
+			<adt 
+			 file="${src.adt}/Set.adt" 
+			 factory="Set" 
+			 package="jtom.adt" 
+			 destdir="${src.adt}"/>
 	</target>
   	
   	<target name="buildsrc" description="compile the TOM development sources" depends="preparesrc">
@@ -191,6 +203,13 @@
 				<include name="TomParserTokenManager.java"/>
 			</fileset>
 		</delete>
+		<delete>
+			<fileset dir="${src.src}" includes="**/*.java">
+				<present targetdir="${src.src}">
+					<mapper type="glob" from="*.java" to="*.t"/>
+				</present>
+			</fileset>
+		</delete>
 	</target>
 
 	<target name="cleantest" description="Cleans acceptance tests directory">
@@ -203,6 +222,7 @@
 		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.runtime}/mapping">
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
+			<exclude name="Array.t"/>
 		</tomsrc>
 	</target>
 
