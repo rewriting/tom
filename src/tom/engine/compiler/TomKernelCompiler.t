@@ -36,7 +36,7 @@ import jtom.adt.*;
 import jtom.runtime.*;
 
 public class TomKernelCompiler extends TomBase {
-  private String debugKey = null;
+
   public TomKernelCompiler(jtom.TomEnvironment environment) {
     super(environment);
   }
@@ -132,10 +132,11 @@ public class TomKernelCompiler extends TomBase {
       Match(SubjectList(l1),PatternList(l2), matchOption@Option(optionList))  -> {
         statistics().numberMatchCompiledIntoAutomaton++;
         boolean generatedMatch = false;
+        String currentDebugKey = "noDebug";
         if(Flags.debugMode) {
           generatedMatch = hasGeneratedMatch(optionList);
           Option orgTrack = findOriginTracking(optionList);
-          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+          currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
         }
         
         TomList patternList, actionList;
@@ -208,7 +209,7 @@ public class TomKernelCompiler extends TomBase {
           
           if (Flags.debugMode && defaultPA) {
               // replace success by leaving structure
-            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
+            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
             TomList tail = pa.getTom().getList().getTail();
             actionList = `Cons(TargetLanguageToTomTerm(tl), tail);
           } else {
@@ -247,9 +248,9 @@ public class TomKernelCompiler extends TomBase {
           declarationInstructionList = concat(patternsDeclarationList,instructionList);
           TomTerm automata;
           if(!defaultPA) {
-            automata = `Automata(numberList,declarationInstructionList);
+            automata = `Automata(numberList,declarationInstructionList, Name(currentDebugKey));
           } else {
-            automata = `DefaultAutomata(numberList,declarationInstructionList);
+            automata = `DefaultAutomata(numberList,declarationInstructionList, Name(currentDebugKey));
           }
             //System.out.println("automata = " + automata);
           
@@ -280,13 +281,13 @@ public class TomKernelCompiler extends TomBase {
         //conc()      -> { return empty(); }
         //conc(Automata(numberList,instList),l*)  -> {
       Empty()      -> { return empty(); }
-      Cons(Automata(numberList,instList),l)  -> {
+      Cons(Automata(numberList,instList, Name(dbgKey)),l)  -> {
         TomList newList = automataListCompileMatchingList(l, generatedMatch);
         if(Flags.supportedGoto) {
           if(!generatedMatch && Flags.debugMode) {
-            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+debugKey+"\");\n");
+            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+dbgKey+"\");\n");
             instList = `cons(TargetLanguageToTomTerm(tl), instList);
-            tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+debugKey+"\");\n");
+            tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+dbgKey+"\");\n");
             TomList list = `cons(TargetLanguageToTomTerm(tl), Empty());
             instList = concat(instList, list);
           }
@@ -309,17 +310,12 @@ public class TomKernelCompiler extends TomBase {
           return result;
         }
       }
-      Cons(DefaultAutomata(numberList,instList),l)  -> {
+      Cons(DefaultAutomata(numberList,instList, Name(dbgKey)),l)  -> {
         TomList newList = automataListCompileMatchingList(l, generatedMatch);
         if(Flags.supportedGoto) {
           if(!generatedMatch && Flags.debugMode) {
-            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringDefaultPattern(\""+debugKey+"\");\n");
-              // insert leavingStructure call after patternSuccess
-            
+            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringDefaultPattern(\""+dbgKey+"\");\n");
             instList = `cons(TargetLanguageToTomTerm(tl), instList);
-              //tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
-              //TomList list = `cons(TargetLanguageToTomTerm(tl), Empty());
-              //instList = concat(instList, list);
           }
           TomTerm compiledPattern = `CompiledPattern(cons(InstructionToTomTerm(NamedBlock(getBlockName(numberList), instList)),empty()));
           return cons(compiledPattern, newList);

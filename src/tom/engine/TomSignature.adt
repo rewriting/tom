@@ -162,8 +162,8 @@
   [TomTerm,CompiledPattern,CompiledPattern(<instList(TomList)>) ],
   [TomTerm,AssignedVariable,AssignedVariable(<varName(str)>,<source(Expression)>,<nbUse(int)>) ],
 
-  [TomTerm,Automata,Automata(<numberList(TomList)>,<instList(TomList)>) ],
-  [TomTerm,DefaultAutomata,DefaultAutomata(<numberList(TomList)>,<instList(TomList)>) ],
+  [TomTerm,Automata,Automata(<numberList(TomList)>,<instList(TomList)>, <debugName(TomName)>) ],
+  [TomTerm,DefaultAutomata,DefaultAutomata(<numberList(TomList)>,<instList(TomList)>, <debugName(TomName)>) ],
 
   [TomTerm,MatchNumber,MatchNumber(<number(TomTerm)>) ],
   [TomTerm,PatternNumber,PatternNumber(<number(TomTerm)>) ],

@@ -288,8 +288,8 @@ public class TomBase {
           %match(Option opt) {
             DeclarationToOption(MakeEmptyList[]) -> { return true; }
             DeclarationToOption(MakeAddList[])   -> { return true; }
+            _ -> {optionList = optionList.getTail();}
           }
-          optionList = optionList.getTail();
         }
         return false;
       }
@@ -314,8 +314,8 @@ public class TomBase {
           %match(Option opt) {
             DeclarationToOption(MakeEmptyArray[]) -> { return true; }
             DeclarationToOption(MakeAddArray[])   -> { return true; }
+            _ -> {optionList = optionList.getTail();}
           }
-          optionList = optionList.getTail();
         }
         return false;
       }
@@ -468,8 +468,8 @@ public class TomBase {
         TomTermToOption(var@Variable(option,name,type)) -> {
           return var;
         }
+        _ -> {subjectList = subjectList.getTail();}
       }
-      subjectList = subjectList.getTail();
     }
     return null;
   }
@@ -492,11 +492,11 @@ public class TomBase {
       Option subject = optionList.getHead();
       %match(Option subject) {
         Constructor -> { return true; }
+        _ -> {optionList = optionList.getTail();}
       }
-      optionList = optionList.getTail();
     }
     return false;
-    }
+  }
   
   protected boolean hasGeneratedMatch(OptionList optionList) {
       //%variable
@@ -504,8 +504,8 @@ public class TomBase {
       Option subject = optionList.getHead();
       %match(Option subject) {
         GeneratedMatch -> { return true; }
+        _ -> {optionList = optionList.getTail();}
       }
-      optionList = optionList.getTail();
     }
     return false;
   }
@@ -516,8 +516,8 @@ public class TomBase {
       Option subject = optionList.getHead();
       %match(Option subject) {
         WithDefaultProduction -> { return true; }
-      }
-      optionList = optionList.getTail();
+        _ -> {optionList = optionList.getTail();}
+      }    
     }
     return false;
   }
@@ -588,8 +588,8 @@ public class TomBase {
         orgTrack@OriginTracking[] -> {
           return orgTrack;
         }
+        _ -> {optionList = optionList.getTail();}
       }
-      optionList = optionList.getTail();
     }
     System.out.println("findOriginTracking:  not found"+optionList);
     System.exit(1);return null;

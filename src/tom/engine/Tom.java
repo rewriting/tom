@@ -74,6 +74,7 @@ public class Tom {
     System.out.println("\t--optimize \t| -O:\tOptimized generated code");
     System.out.println("\t--static\t\tGenerate static functions");
     System.out.println("\t--debug\t\t\tGenerate debug primitives");
+    System.out.println("\t--memory\t\tAdd memory management while debugging (not correct with list matching)");
     System.exit(0);
   }
 
@@ -144,6 +145,8 @@ public class Tom {
 	    Flags.staticFunction = true;
           } else if(args[i].equals("--debug")) {
 	    Flags.debugMode = true;
+          } else if(args[i].equals("--memory")) {
+	    Flags.debugMemory = true;
           } else if(args[i].equals("--help") || args[i].equals("-h")) {
 	    usage();
           } else {

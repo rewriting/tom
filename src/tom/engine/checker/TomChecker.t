@@ -629,8 +629,8 @@ public class TomChecker extends TomBase {
           }
           else {messageMacroFunctionRepeated("make", orgTrack, symbType);}
         }
+        _ -> {      list = list.getTail();}
       }
-      list = list.getTail();
     }
     if(!verifyList.isEmpty()) {
       messageMissingMacroFunctions(symbType, verifyList);
@@ -893,8 +893,8 @@ public class TomChecker extends TomBase {
           return true;
         }
         DefinedSymbol -> {return true;}
+        _ -> {list = list.getTail();}
       }
-      list = list.getTail();
     }
     return false;
   }

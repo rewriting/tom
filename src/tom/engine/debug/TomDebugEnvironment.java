@@ -58,7 +58,7 @@ public class TomDebugEnvironment {
   }
   
   public String toString() {
-    return debugStructure+debugStructure.type+debugStructure.fileName+debugStructure.line+debugStructure.watchPatternList;
+    return "Pattern `"+getStep()+"` of `"+debugStructure.type+"` declared in `"+debugStructure.fileName+"` at line "+debugStructure.line+" (addr: "+debugStructure+")";
   }
 
   public String getKey() {
@@ -84,7 +84,7 @@ public class TomDebugEnvironment {
     }
   }
 
-   public void enteringPattern() {
+  public void enteringPattern() {
     incrementStep();
     nextLookup = false;
     if(failureLookup) {return;}
@@ -167,17 +167,19 @@ public class TomDebugEnvironment {
       }
       if(result == -1) {
          System.out.println(debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line+" completely fails with subject(s)");
-         showSubjects();
+         try {
+           String str = "";
+           System.out.print(">:(Press s to see the subject or enter to contine....");
+           str = in.readLine();
+           if (str == "s") {
+             showSubjects();
+           }
+         } catch (IOException e) {
+         }          
       }
       return result;
     }
     System.out.println("\tLeaving "+debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line);
-    /*try {
-      String str = "";
-      System.out.print(">:(Press enter to contine....");
-      str = in.readLine();
-    } catch (IOException e) {
-    }*/
 
     if(lastPatternResult == SUCCESS) {
       result = 0;
@@ -209,6 +211,7 @@ public class TomDebugEnvironment {
       System.out.println("\tsubject   | s\t:Show the current subject list");
       System.out.println("\tpattern   | p\t:Show the current pattern list");
       System.out.println("\tsubst     | S\t:Show the realized substitution(s)");
+      System.out.println("\tStack     | ES\t:Show the current Stack");
     } else if (str.equals("")) {
       return;
     } else if (str.equals("next") || str.equals("n")) {
@@ -225,6 +228,8 @@ public class TomDebugEnvironment {
       showPatterns();
     } else if (str.equals("subst") || str.equals("S")) {
       showSubsts();
+    } else if (str.equals("stack") || str.equals("ES")) {
+      jtom.debug.TomDebugger.debugger.showStack();
     } else {
       System.out.println("Unknow command: please enter `?` to list available commands");
     }

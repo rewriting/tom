@@ -112,35 +112,38 @@ public class TomDebugger {
     } catch (IOException e) {
     }
   }
-
-    private void configure(String str) {
+  
+  private void configure(String str) {
     if(str.equals("?")) {
       System.out.println("\nFollowing commands are allowed:");
       System.out.println("\t ?\t\t:Show this help");
       System.out.println("\t info    | i\t:Show information on structure that can be debugged");
-      System.out.println("\t run     | R\t:Exit debugger configuration, jump to next breakpoint");
-      System.out.println("\t failure | F\t:Exit debugger configuration and run the program");
-      System.out.println("\t save    | S\t:Save configuration");
+      System.out.println("\t run     | r\t:Exit debugger configuration, jump to next defined breakpoint");
+      System.out.println("\t failure | f\t:Exit debugger configuration, jump to next Match failure");
+      System.out.println("\t save    | s\t:Save configuration");
       System.out.println("\t load    | L\t:Load configuration from file");
       System.out.println("\t breakpt | b\t:Define breakpoint for Match-Rule structures");
-      System.out.println("\t clear   | c\t:Clear breakpoint list");
       System.out.println("\t term    | t\t:Define Term pattern handler to be activated");
       System.out.println("\t more    | m\t:Show patterns of a specific available structure");
       System.out.println("\t list    | l\t:List defined breakpoint");
-    } else if (str.equals("run")     || str.equals("R")) {
+      System.out.println("\t clear   | c\t:Clear breakpoint list");
+      System.out.println("\t remove  | R\t:Remove a defined breakpoint");
+      System.out.println("\t stack   | S\t:Show Environment Stack");
+      System.out.println("\t cl\t\t:Clear screen (unix system)");
+    } else if (str.equals("run")     || str.equals("r")) {
         //System.out.println(debuggedStructureKeySet);
       return;
-    } else if (str.equals("failure") || str.equals("F")) {
+    } else if (str.equals("failure") || str.equals("f")) {
       nextFailure = true;
       return;
     } else if (str.equals("info")    || str.equals("i")) {
       showAvailableStructure();
-    } else if (str.equals("save")    || str.equals("S")) {
+    } else if (str.equals("save")    || str.equals("s")) {
       saveConfigurationToFile();
     } else if (str.equals("load")    || str.equals("L")) {
       loadConfigurationFromFile();
     } else if (str.equals("breakpt") || str.equals("b")) {
-      defineStructWatcher();
+      defineBreakpoint();
     } else if (str.equals("clear")   || str.equals("c")) {
       debuggedStructureKeySet.clear();
     } else if (str.equals("term")    || str.equals("t")) {
@@ -149,6 +152,12 @@ public class TomDebugger {
       showStructureDetails();
     } else if (str.equals("list")    || str.equals("l")) {
       showBreakpoint();
+    } else if (str.equals("remove")  || str.equals("R")) {
+      removeBreakpoint();
+    } else if (str.equals("stack")   || str.equals("S")) {
+      showStack();
+    } else if (str.equals("cl")) {
+      clscrn();
     } else {
       System.out.println("Unknow command: please enter `?` to list available commands");
     }
@@ -189,6 +198,12 @@ public class TomDebugger {
       System.out.println("Unknow command: please enter `?` to list available commands");
     }
     showMenu2();
+  }
+
+  private void clscrn(){
+    for (int i=0; i<100; i++) {
+      System.out.println("");
+    }
   }
   
   private void saveConfigurationToFile() {
@@ -303,53 +318,49 @@ public class TomDebugger {
         s2.toLowerCase());
     }
   }
+
+  public void showStack() {
+    if(environment.isEmpty()) {
+      System.out.println("Empty environment");
+      return;
+    }
+    int max =  (10 > environment.size()) ? environment.size() : 10;
+    for(int i=0;i<max;i++) {
+      System.out.println(i+": "+environment.elementAt(i));
+    }
+  }
   
   private void showAvailableStructure() {
     TomDebugStructure struct;
     Collection structList = mapKeyDebugStructure.values();
     Iterator it = structList.iterator();
-    System.out.println("Valid structures to be debugged and their corresponding maximum allowed pattern numbers:");
+    if (it.hasNext()) {
+      System.out.println("Valid structures to be debugged and their corresponding maximum allowed pattern numbers:");
+    } else {
+      System.out.println("No structure to debug");
+      return;
+    }
     while(it.hasNext()) {
       struct = (TomDebugStructure)it.next();
-      System.out.println("\t- "+struct.type+" declared in "+struct.fileName+" at line "+struct.line+" with "+struct.nbPatterns+" patterns");
+      System.out.println("\t- `"+struct.type+"` declared in `"+struct.fileName+"` at line "+struct.line+" with "+struct.nbPatterns+" patterns");
     }
   }
-  
-  private void showBreakpoint() {
-   TomDebugStructure struct;
-   Collection structList = mapKeyDebugStructure.values();
-   Iterator it = structList.iterator();
-   System.out.println("Structures and their corresponding debugged pattern numbers:");
-   while(it.hasNext()) {
-     struct = (TomDebugStructure)it.next();
-     if (struct.watchPatternList != null) {
-       Integer[] tab = (Integer[])((struct.watchPatternList).toArray(new Integer[]{}));
-       Arrays.sort(tab);
-       System.out.println(tab.length);
-       System.out.println("\t- "+struct.type+" declared in "+struct.fileName+" at line "+struct.line+" with "+struct.nbPatterns+" patterns");
-       for(int i=0;i<tab.length;i++) {
-         System.out.println("\t\t-Pattern "+tab[i]+" at line "+struct.patternLine[tab[i].intValue()-1]);
-         System.out.println(struct.patternText[tab[i].intValue()-1]);
-       }
-     }
-   }
-  }
-  
+    
   private void showStructureDetails() {
      try {
       String str = "";
       int input = 0;
-      String fileName = getFileName();
+      String fileName = getFileName("");
       if (fileName == null) {
         return;
       }
       while (str != null) {
-        System.out.print("\t>Structure line number (0 to exit):");
+        System.out.print("\t>Enter structure line number in "+fileName+" (0:exit):");
         str = in.readLine();
         try {
           input = Integer.parseInt(str, 10);
         }catch (NumberFormatException e) {
-          System.out.println("Not a valid number");
+          System.out.println("Not a number");
           continue;
         }
         if (input == 0) {
@@ -367,29 +378,270 @@ public class TomDebugger {
     } catch (IOException e) {
     }
   }
-  private String getFileName() {
-    String str = "";
-    int input = 0;
+
+  private void defineBreakpoint() {
+    System.out.println("\nA breakpoint is defined by: the file name, the structure line number and the pattern number (optional)");
+    try {
+      String str = "";
+      int input = 0;
+        // getting a file Name
+      String fileName = getFileName("All files means defining all possible breakpoints");
+      if (fileName == null) {
+        return;
+      }
+      if (str.equals("AllFiles")) {
+          // All files means all possible breakpoints
+        System.out.println("...Defining breakpoints for all couple of Structure/Pattern in all files ");
+        Collection structList = mapKeyDebugStructure.values();
+        TomDebugStructure struct;
+        Iterator it = structList.iterator();
+        while(it.hasNext()) {
+          struct = (TomDebugStructure)it.next();
+          HashSet set = new HashSet();
+          for (int i=1; i<=struct.nbPatterns.intValue();i++) {
+            set.add(new Integer(i));
+          }
+          struct.watchPatternList = set;
+          debuggedStructureKeySet.add(struct.key);
+        }
+        return;
+      }
+        // we get a file name
+      while (str != null) {
+        System.out.print("\n\t>Enter a structure line number in "+fileName+" (0:exit, `all`:all):");
+        str = in.readLine();
+        if (str.equals("all")) {
+          System.out.println("... Adding all possible breakpoints for structures in file "+fileName+"\n");
+          Collection structList = mapKeyDebugStructure.values();
+          TomDebugStructure struct;
+          Iterator it = structList.iterator();
+          while(it.hasNext()) {
+            struct = (TomDebugStructure)it.next();
+            if(!(struct.key).startsWith(fileName)) {
+              continue;
+            }
+            HashSet set = new HashSet();
+            for (int i=1; i<=struct.nbPatterns.intValue();i++) {
+              set.add(new Integer(i));
+            }
+            struct.watchPatternList = set;
+            debuggedStructureKeySet.add(struct.key);
+          }
+          return;
+        }
+        try {
+          input = Integer.parseInt(str, 10);
+        }catch (NumberFormatException e) {
+          System.out.println("Not a number");
+          continue;
+        }
+        if (input == 0) {
+          System.out.println();
+          return;
+        } else {
+          String key = fileName+input;
+          if (mapKeyDebugStructure.keySet().contains(key)) {
+            HashSet set = definePatternWatcher(input, fileName);
+            ((TomDebugStructure)mapKeyDebugStructure.get(key)).watchPatternList = set;
+            debuggedStructureKeySet.add(key);
+          } else {
+            System.out.println("Not a valid line number, please exit and use `info` command to see valid entry");
+          }
+        }
+      }
+    } catch (IOException e) {
+    }
+  }
+  
+  private HashSet definePatternWatcher(int line, String fileName) {
+    HashSet result = new HashSet();
+    String key = fileName+line;
+    TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
+    int nbPatterns = struct.nbPatterns.intValue();
+    try {
+      String str = "";
+      int input = 0;
+      while (str != null) {
+        System.out.print("\t\t>Complete breakpoint with pattern number (0:exit, `all`:all):");
+        str = in.readLine();
+        if (str.equals("all")) {
+          System.out.println("... Adding breakpoints for all patterns of structure line "+line+" in file "+fileName);
+          for (int i=1; i<=nbPatterns;i++) {
+            result.add(new Integer(i));
+          }
+          return result;
+        }
+        else {
+          try {
+            input = Integer.parseInt(str, 10);
+          }catch (NumberFormatException e) {
+            System.out.println("Not a number");
+            continue;
+          }
+          if (input == 0) {
+            return result;
+          } else {
+            if (input <= nbPatterns) {
+              result.add(new Integer(input));
+            } else {
+              System.out.println("Not a valid pattern number: this structure has only "+nbPatterns+" patterns");
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+    }
+    return result;
+  }
+  
+  private void showBreakpoint() {
+    TomDebugStructure struct;
+    if(debuggedStructureKeySet.isEmpty()) {
+      System.out.println("No breakpoints");
+      return;
+    } else {
+      clscrn();
+      System.out.println("\nList of yet defined breakpoint(s):\n");
+      Iterator it = debuggedStructureKeySet.iterator();
+      while(it.hasNext()) {
+        struct = (TomDebugStructure)mapKeyDebugStructure.get((String)it.next());
+        Integer[] tab = (Integer[])((struct.watchPatternList).toArray(new Integer[]{}));
+        Arrays.sort(tab);
+        System.out.println("- "+struct.type+" declared in "+struct.fileName+" at line "+struct.line+" with "+struct.nbPatterns+" patterns");
+        if(tab.length == 0) {
+          System.out.println("\t- No patterns are used for this breakpoint");
+        }
+        for(int i=0;i<tab.length;i++) {
+          System.out.println("\t-Pattern "+tab[i]+" at line "+struct.patternLine[tab[i].intValue()-1]+":");
+          System.out.println("\t=>\t "+struct.patternText[tab[i].intValue()-1]);
+        }
+        System.out.println();
+      }
+    }
+  }
+  
+  private void removeBreakpoint() {
+    try {
+      String str = "", str2 = "";
+      int input = 0;
+      String fileName = getFileName("All files means removing all breakpoints");
+      if (fileName == null) {
+        return;
+      }
+      if (str.equals("AllFiles")) {
+        System.out.println("...Clearing all breakpoints in all files");
+        debuggedStructureKeySet.clear();
+        return;
+      }        
+      while (str != null) {
+        System.out.print("\t>Enter structure line number (0:exit, `all`:all):");
+        str = in.readLine();
+        if (str.equals("all")) {
+          System.out.println("...Clearing all breakpoints in file "+fileName+"\n");
+          TomDebugStructure struct;
+          String key;
+          Iterator it = debuggedStructureKeySet.iterator();
+          ArrayList listOfKey = new ArrayList();
+          while(it.hasNext()) {
+            key = (String)it.next();
+            if(key.startsWith(fileName)) {
+              listOfKey.add(key);
+                //struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
+                //struct.watchPatternList = null;
+            }
+          }
+          for(int i=0;i<listOfKey.size();i++) {
+            debuggedStructureKeySet.remove(listOfKey.get(i));
+          }
+          return;
+        }
+        try {
+          input = Integer.parseInt(str, 10);
+        }catch (NumberFormatException e) {
+          System.out.println("Not a number");
+          continue;
+        }
+        if (input == 0) {
+          System.out.println();
+          return;
+        } else {
+          String key = fileName+input;
+          
+          if (mapKeyDebugStructure.keySet().contains(key)) {
+            TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);;
+              // obtain pattern number
+            if(struct.watchPatternList.isEmpty()) {
+              System.out.println("Removing breakpoint on structure (No pattern were associated to this breakpoint)\n");
+              debuggedStructureKeySet.remove(key);
+              continue;
+            }
+            while (str2 != null) {
+              System.out.print("\t>Pattern  number (0:exit, `all`:all):");
+              str2 = in.readLine();
+              if(str2.equals("all")) {
+                struct.watchPatternList = null;
+                debuggedStructureKeySet.remove(key);
+              }
+              try {
+                input = Integer.parseInt(str2, 10);
+              }catch (NumberFormatException e) {
+                System.out.println("Not a number");
+                continue;
+              }
+              if (input == 0) {
+                System.out.println();
+                break;
+              } else {
+                if (true == struct.watchPatternList.remove(new Integer(input))) {
+                  if (struct.watchPatternList.isEmpty()) {
+                    struct.watchPatternList = null;
+                    debuggedStructureKeySet.remove(key);
+                  }
+                } else {
+                   System.out.println("No breakpoint on pattern number "+input);
+                }
+              }
+            }
+          } else {
+            System.out.println("Not a valid line number, please use first `list` command to see breakpoint list");
+          }
+        }
+      }
+     } catch (IOException e) {
+     }
+  }
+  
+  private String getFileName(String message) {
     if(baseFileName.length == 1) {
       return baseFileName[0];
     }
-    try {
-      while (true) {
-        System.out.println(">Choose base original file name:(0 to exit)");
-        for(int i=0;i<baseFileName.length;i++) {
+    String str = "";
+    int input = 0;
+    boolean emptyMessage = message.equals("");
+      
+      try {
+        while (true) {
+        System.out.println(">Choose base original file name to be used:(0:exit)");
+        int i = 0;
+        for(;i<baseFileName.length;i++) {
           System.out.println((i+1)+")\t"+baseFileName[i]);
+        }
+        if (!emptyMessage) {
+          System.out.println((i+1)+")\t All files ("+message+")");
         }
         str = in.readLine();
         try {
           input = Integer.parseInt(str, 10);
         }catch (NumberFormatException e) {
-          System.out.println("Not a valid number");
+          System.out.println("Not a number");
           continue;
         }
         if(input == 0) {
           return null;
-        } else if ((input-1) >= baseFileName.length) {
-          System.out.println("Not a valid number");
+        } else if ((input-1) == baseFileName.length && !emptyMessage) {
+          return new String("AllFiles");
+        } else if ((input-1) > baseFileName.length) {
+          System.out.println("Number out of range");
           continue;
         } else {
           return baseFileName[input-1];
@@ -407,97 +659,6 @@ public class TomDebugger {
       System.out.println(struct.patternText[i]);
       System.out.println("--------------------------------------------------------------------------------");
     }
-  }
-  
-  private void defineStructWatcher() {
-    try {
-      String str = "";
-      int input = 0;
-      String fileName = getFileName();
-      if (fileName == null) {
-        return;
-      }
-      while (str != null) {
-        System.out.print("\t>Structure line number (0 to exit, `all` for all):");
-        str = in.readLine();
-        if (str.equals("all")) {
-            // TODO
-          Collection structList = mapKeyDebugStructure.values();
-          TomDebugStructure struct;
-          Iterator it = structList.iterator();
-          while(it.hasNext()) {
-            struct = (TomDebugStructure)it.next();
-            HashSet set = new HashSet();
-            for (int i=1; i<=struct.nbPatterns.intValue();i++) {
-              set.add(new Integer(i));
-            }
-            struct.watchPatternList = set;
-            debuggedStructureKeySet.add(struct.key);
-          }
-          return;
-        }
-        try {
-          input = Integer.parseInt(str, 10);
-        }catch (NumberFormatException e) {
-          System.out.println("Not a valid number");
-          continue;
-        }
-        if (input == 0) {
-          System.out.println();
-          return;
-        } else {
-          String key = fileName+input;
-          if (mapKeyDebugStructure.keySet().contains(key)) {
-            HashSet set = definePatternWatcher(input, fileName);
-            ((TomDebugStructure)mapKeyDebugStructure.get(key)).watchPatternList = set;
-            debuggedStructureKeySet.add(key);
-          } else {
-            System.out.println("Not a valid line number, please use first `info` command to ensure valid entry");
-          }
-        }
-      }
-    } catch (IOException e) {
-    }
-  }
-  
-  private HashSet definePatternWatcher(int line, String fileName) {
-    HashSet result = new HashSet();
-    String key = fileName+line;
-    TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
-    int nbPatterns = struct.nbPatterns.intValue();
-    try {
-      String str = "";
-      int input = 0;
-      while (str != null) {
-        System.out.print("\t\t>Pattern Number (0 to exit, `all` for all):");
-        str = in.readLine();
-        if (str.equals("all")) {
-          for (int i=1; i<=nbPatterns;i++) {
-            result.add(new Integer(i));
-          }
-          return result;
-        }
-        else {
-          try {
-            input = Integer.parseInt(str, 10);
-          }catch (NumberFormatException e) {
-            System.out.println("Not a valid number");
-            continue;
-          }
-          if (input == 0) {
-            return result;
-          } else {
-            if (input <= nbPatterns) {
-              result.add(new Integer(input));
-            } else {
-              System.out.println("Not a valid pattern number: this structure has only "+nbPatterns+" patterns");
-            }
-          }
-        }
-      }
-    } catch (IOException e) {
-    }
-    return result;
   }
 
   private void defineTermWatcher() {
@@ -557,7 +718,7 @@ public class TomDebugger {
   }
 
   private boolean evalCondition(String key) {
-    return (debuggedStructureKeySet.contains(key) || nextFailure);
+    return (debuggedStructureKeySet.contains(key) /*|| nextFailure*/);
   }
   
   public void enteringStructure(String key) {

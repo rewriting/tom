@@ -103,8 +103,8 @@ public class TomExpander extends TomBase {
                 newSubterm = expandTomSyntax(slotSubterm);
                 break whileBlock;
               }
+              _ , _ -> {pairList = pairList.getTail();}
             }
-            pairList = pairList.getTail();
           }
         } // end whileBlock
       }

@@ -291,10 +291,12 @@ public class TomKernelExpander extends TomBase {
         public ATerm apply(ATerm subject) {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
-              m@Match -> {
-                return expandPattern(m);
+              m@Match(subjectList,patternList, option) -> {
+                  // find other match in PA list
+                TomTerm newPatternList = expandMatchPattern(patternList);
+                return expandPattern(`Match(subjectList, newPatternList, option));
               } 
-              _ -> {
+              _  -> {
                 return traversal().genericTraversal(subject,this);
               }
             } // end match

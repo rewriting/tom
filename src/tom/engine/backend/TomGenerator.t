@@ -1465,7 +1465,7 @@ public class TomGenerator extends TomBase {
       }
       s += ") { ";
       if (Flags.debugMode) {
-        s += "\n"+getTLType(returnType)+ "debugVar = " + tlCode.getCode() +";\n";
+        s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
         s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
         s += "return  debugVar;\n}";
       } else {
