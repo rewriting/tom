@@ -2,8 +2,6 @@
 #   Lsystems
 #
 
-SUBDIRS         = 
-
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$(JTOM):$$CLASSPATH
 
 javadir         = .

@@ -22,26 +22,26 @@ public class AddressBook2 {
   }
   
   public void run() {
-  	 PersonList book = generateBook();
-  	 Date today = `date(2003,9,18);
-     happyBirthday(book,today);
+    PersonList book = generateBook();
+    Date today = `date(2003,11,6);
+    happyBirthday(book,today);
   }
 
   public void happyBirthday(PersonList book, Date date) {
-  	%match(PersonList book, Date date) {
-  		concPerson(X1*, person(fn, ln, date(y,m,d)), X2*),
-  		date(_,m,d) -> {
-    			System.out.println("Happy birthday " + fn + " " + ln);
-     	}
-   	}
+    %match(PersonList book, Date date) {
+      concPerson(X1*, person(fn, ln, date(y,m,d)), X2*),
+        date(_,m,d) -> {
+        System.out.println("Happy birthday " + fn + " " + ln);
+      }
+    }
   }
   
   public PersonList generateBook() {
- 		return `concPerson(
-		  person("John","Smith",date(1965,9,18)),
-		  person("Marie","Muller",date(1986,10,19)),
-		  person("Paul","Muller",date(2000,9,20))
-		);
+    return `concPerson(
+      person("John","Smith",date(1965,9,18)),
+      person("Marie","Muller",date(1986,10,19)),
+      person("Paul","Muller",date(2000,11,6))
+      );
   }
   
 }

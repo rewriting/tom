@@ -1,0 +1,49 @@
+import jtom.runtime.xml.*;
+import jtom.runtime.xml.adt.*;
+import aterm.*;
+import jtom.runtime.*;
+
+public class PersonSort {
+   
+  %include{ TNode.tom }
+    
+  private XmlTools xtools;
+  private TNodeFactory getTNodeFactory() {
+      return xtools.getTNodeFactory();
+  }
+ 
+  public static void main (String args[]) {
+    PersonSort person = new PersonSort();
+    person.run("person.xml");
+  }
+
+  private void run(String filename){
+    xtools = new XmlTools();
+    TNode term = (TNode)xtools.convertXMLToATerm(filename);
+    
+    term = sort(term.getDocElem());
+    xtools.printXMLFromATerm(term);
+  }
+    
+  private TNode sort(TNode subject) {
+    %match(TNode subject) {
+      <Persons>(X1*,p1,X2*,p2,X3*)</Persons> -> {
+        if(compare(p1,p2) > 0) {
+          return ``sort(<Persons>X1* p2 X2* p1 X3*</Persons>);	
+        }	
+      }
+      
+      _ -> { return subject; }     
+    }
+  }
+  	
+  private int compare(TNode t1, TNode t2) {
+    %match(TNode t1, TNode t2) {
+      <Person Age=#TEXT(a1)></Person>,
+      <Person Age=#TEXT(a2)><FirstName>#TEXT(n2)</FirstName></Person>
+      -> { return a1.compareTo(a2); }
+    }
+    return 0;
+  }
+  
+}

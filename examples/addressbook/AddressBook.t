@@ -31,20 +31,19 @@ public class AddressBook {
     
     Iterator it = book.iterator();
     while(it.hasNext()) {
-    	Person p = (Person) it.next();
-    	happyBirthday(p, `date(2003,9,18));
+      Person p = (Person) it.next();
+      happyBirthday(p, `date(2003,9,18));
     }
   }
 
   public void happyBirthday(Person p, Date today) {
     %match(Person p, Date today) {
-        person(firstname,lastname,date(year,month,day)),
+      person(firstname,lastname,date(year,month,day)),
         date(_,month,day) -> {
         
         System.out.println("Happy Birthday " + firstname );  			  
       }
     }
-    
     
  }
   

@@ -481,9 +481,10 @@ public class Nsh {
         return `simplify(concNonce(N1*,x,N2*,N3*));
       }
 
-      concNonce(N1*,N(dai,dai),N2*) -> {
-        return `simplify(concNonce(N1*,N2*));
+      concNonce(N1*,N(dai(),dai()),N2*) -> {
+          return `simplify(concNonce(N1*,N2*));
       }
+      
     }
     return list;
   }

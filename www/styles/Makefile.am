@@ -2,8 +2,6 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS = 
-
 EXTRA_DIST = 
 
 WWWDIR = /local/www-equipes/protheo/SOFTWARES/tom
