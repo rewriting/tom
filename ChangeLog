@@ -1,6 +1,12 @@
+2003-08-21  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* re-implementation of the backquote parser
+	* should be compatible with the old one, but not yet finished
+
 2003-08-21    <julien.guyon@loria.fr>
 	* Remove Flags.java, add TomSyntaxChecker.java and TomTypeChecker.java
         * Simplify Tom interface
+	
 2003-08-20    <pem@bach>
         * bootinstall
 	

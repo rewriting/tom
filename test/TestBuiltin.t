@@ -117,8 +117,8 @@ public class TestBuiltin {
 
   public String matchStringE(ATerm t) {
     %match(E t) {
-        string("Albert") -> { return `"Albert"; }
-        string("Roger") -> { return `"Roger"; }
+        string("Albert") -> { return "Albert"; }
+        string("Roger") -> { return "Roger"; }
         _ -> { return "Unknown"; }
     }
   }
@@ -133,8 +133,8 @@ public class TestBuiltin {
 
   public double matchDoubleE(ATerm t) {
     %match(E t) {
-        double(1.23) -> { return `1.23; }
-        double(3.14) -> { return `3.14; }
+        double(1.23) -> { return 1.23; }
+        double(3.14) -> { return 3.14; }
         _ -> { return 0; }
     }
   }
