@@ -11,18 +11,30 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>fr.loria.eclipse.vas.VasBuilder</name>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
 			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>fr.loria.eclipse.vas.VasBuilder.launch</value>
+				</dictionary>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>fr.loria.eclipse.vas.ADTToJavaBuilder</name>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
 			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>fr.loria.eclipse.vas.ADTToJavaBuilder.launch</value>
+				</dictionary>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>fr.loria.eclipse.jtom.TomBuilder</name>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
 			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>fr.loria.eclipse.jtom.TomBuilder (1).launch</value>
+				</dictionary>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
@@ -31,8 +43,12 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>fr.loria.eclipse.jtom.TomBuildAnalyser</name>
+			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
 			<arguments>
+				<dictionary>
+					<key>LaunchConfigHandle</key>
+					<value>fr.loria.eclipse.jtom.TomBuildAnalyser (1).launch</value>
+				</dictionary>
 			</arguments>
 		</buildCommand>
 	</buildSpec>
