@@ -1,3 +1,6 @@
+2003-08-21    <julien.guyon@loria.fr>
+	* Remove Flags.java, add TomSyntaxChecker.java and TomTypeChecker.java
+        * Simplify Tom interface
 2003-08-20    <pem@bach>
         * bootinstall
 	
