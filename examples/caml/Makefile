@@ -37,7 +37,7 @@ erat: erat.t
 	tom.src --camlCode erat.t
 	ocamlopt -o erat erat.tom.ml
 
-eratopt: erat.t
+Eratopt: erat.t
 	tom.src --camlCode -O erat.t
 	ocamlopt -o eratopt erat.tom.ml
 

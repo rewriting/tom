@@ -447,9 +447,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       CheckStamp(variable) -> {
-        if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-          `buildCheckStamp(deep, getTermType(variable), variable);
-        }
+        `buildCheckStamp(deep, getTermType(variable), variable);
         return;
       }
 
@@ -524,7 +522,6 @@ public abstract class TomAbstractGenerator extends TomBase {
                               astType=Type(ASTTomType(type),tlType@TLType[])], 
                      //astType=Type((type),tlType@TLType[])], 
                      tlCode, _) -> {
-        //optionManager.setOptionValue("stamp",Boolean.TRUE);
         `buildCheckStampDecl(deep, type, name, tlType, tlCode);
         return;
       }
@@ -532,7 +529,6 @@ public abstract class TomAbstractGenerator extends TomBase {
       SetStampDecl(Variable[astName=Name(name), 
                               astType=Type(ASTTomType(type),tlType@TLType[])], 
                      tlCode, _) -> {
-        //optionManager.setOptionValue("stamp",Boolean.TRUE);
         `buildSetStampDecl(deep, type, name, tlType, tlCode);
         return;
       }
@@ -540,7 +536,6 @@ public abstract class TomAbstractGenerator extends TomBase {
       GetImplementationDecl(Variable[astName=Name(name), 
                               astType=Type(ASTTomType(type),tlType@TLType[])], 
                      tlCode, _) -> {
-        //optionManager.setOptionValue("stamp",Boolean.TRUE);
         `buildGetImplementationDecl(deep, type, name, tlType, tlCode);
         return;
       }

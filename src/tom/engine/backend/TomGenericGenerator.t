@@ -115,9 +115,11 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   }
 
   protected void buildCheckStamp(int deep, TomType type, TomTerm variable) throws IOException {
-    output.write("tom_check_stamp_" + getTomType(type) + "(");
-    generate(deep,variable);
-    output.write(");");
+    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
+      output.write("tom_check_stamp_" + getTomType(type) + "(");
+      generate(deep,variable);
+      output.write(");");
+    }
   }
 
   protected void buildSymbolDecl(int deep, String tomName) throws IOException {
