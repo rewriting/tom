@@ -522,8 +522,8 @@ public class TomParser implements TomParserConstants {
 
   final public void LocalVariableConstruct(ArrayList list) throws ParseException, TomException {
     jj_consume_token(VARIABLE);
-    switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(makeTL(savePosAndExtract()));
+    switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(tsf().makeTomTerm_LocalVariable());
   }
 
@@ -946,8 +946,8 @@ public class TomParser implements TomParserConstants {
 
   final public void TypeInt(ArrayList list) throws ParseException, TomException {
     jj_consume_token(TYPEINT);
-      switchToDefaultMode(); /* switch to DEFAULT mode */
       list.add(makeTL(savePosAndExtract()));
+      switchToDefaultMode(); /* switch to DEFAULT mode */
       ast().makeIntegerDecl(list);
   }
 

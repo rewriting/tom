@@ -637,8 +637,8 @@ void LocalVariableConstruct(ArrayList list) throws TomException: /* in DEFAULT m
 {
   <VARIABLE> /* switch to TOM mode */
   {
-    switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(makeTL(savePosAndExtract()));
+    switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(tsf().makeTomTerm_LocalVariable());
   }
 }
@@ -971,8 +971,8 @@ void TypeInt(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <TYPEINT> /* switch to TOM mode */
     {
-      switchToDefaultMode(); /* switch to DEFAULT mode */
       list.add(makeTL(savePosAndExtract()));
+      switchToDefaultMode(); /* switch to DEFAULT mode */
       ast().makeIntegerDecl(list);
     }
 }
