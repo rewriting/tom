@@ -37,12 +37,12 @@ import jtom.runtime.GenericTraversal;
 import jtom.runtime.Replace1;
 
 public class SharedSet {
-  
-  private static SetFactory factory = null;
+
+  private JGTreeSet tree = null;
   private int depth = 31;
-  private JGTreeSet tree;
-  
+  private static SetFactory factory = null;
   private GenericTraversal traversal = new GenericTraversal();;
+  private int collisions = 0;
   private final static int[] mask =
   { 1 << 0, 
     1 << 1,
@@ -77,42 +77,29 @@ public class SharedSet {
     1 << 30,
     1 << 31
   };
-  private int collisions = 0;
 
   %include { set.t }
-  
-  
-/*  public SharedSet() {
-    this(10);
-  }
-*/
   
   public SharedSet(PureFactory fact) {
     this.factory = new SetFactory(fact);
     this.traversal = new GenericTraversal();
-    tree = makeEmptySet();
-  }
-
-  public JGTreeSet getTreeSet() {
-    return tree;
+    this.tree = makeEmptySet();
   }
   
-  public SetFactory getSetFactory() { 
+  private SharedSet(SetFactory fact, JGTreeSet tree) {
+    this.factory = fact;
+    this.traversal = new GenericTraversal();
+    this.tree = tree;
+  }
+  
+  private SetFactory getSetFactory() { 
     return factory;
   }
-
-  public boolean equals(SharedSet set) {
-    return (tree == set.getTreeSet());
-  }
   
-  public boolean isEmpty(JGTreeSet set) {
-    return set.isEmptySet();
-  }
-
   public JGTreeSet makeEmptySet() {
     return getSetFactory().makeJGTreeSet_EmptySet();
   }
-
+  
   public JGTreeSet makeSingleton(ATerm trm) {
     return getSetFactory().makeJGTreeSet_Singleton(trm);
   }
@@ -120,15 +107,28 @@ public class SharedSet {
   public JGTreeSet makeBranch(JGTreeSet left, JGTreeSet right) {
     return getSetFactory().makeJGTreeSet_Branch(left, right);
   }
+ 
+  public JGTreeSet getTreeSet() {
+    return tree;
+  }
+
+    // 1rst interface
+  public boolean equals(SharedSet set) {
+    return (tree == set.getTreeSet());
+  }
+  
+  public boolean isEmpty() {
+    return tree.isEmptySet();
+  }
+
+  public boolean member(ATerm elt) {
+    return member(elt, tree, 0);
+  }
   
   public boolean add(ATerm elt) {
     JGTreeSet c = (JGTreeSet)tree.duplicate();
     tree = override(elt, tree, 0);
     return (tree.equivalent(c));
-  }
-  
-  public JGTreeSet add(ATerm elt, JGTreeSet t) {
-    return override(elt, t, 0);
   }
 
   public boolean remove(ATerm elt) {
@@ -136,45 +136,49 @@ public class SharedSet {
     tree = remove(elt, tree, 0);
     return (tree.equivalent(c));
   }
-  public JGTreeSet remove(ATerm elt, JGTreeSet t) {
-    return remove(elt, t, 0);
+
+  public int size() {
+    return size(tree);
   }
 
-  public boolean member(ATerm elt) {
-    return member(elt, tree, 0);
+    // getHead return the first left inner element found
+  public ATerm getHead() {
+    return getHead(tree);
+  }
+
+  public SharedSet getTail() {
+    JGTreeSet set = remove(getHead(tree), tree);
+    return new SharedSet(getSetFactory(), set);
+  }
+
+
+  
+    // 2nd interface
+  public boolean isEmpty(JGTreeSet set) {
+    return set.isEmptySet();
   }
   
   public boolean member(ATerm elt, JGTreeSet t) {
     return member(elt, t, 0);
   }
-
-  public JGTreeSet union(JGTreeSet t1, JGTreeSet t2) {
-    return union(t1, t2, 0);
-  }
-
-  public JGTreeSet intersection(JGTreeSet t1, JGTreeSet t2) {
-    JGTreeSet result = intersection(t1, t2, 0);
-    return result;
-      //return reworkJGTreeSet(result);
+  public JGTreeSet add(ATerm elt, JGTreeSet t) {
+    return override(elt, t, 0);
   }
   
-  public int card(JGTreeSet t) {
+  public JGTreeSet remove(ATerm elt, JGTreeSet t) {
+    return remove(elt, t, 0);
+  }
+  
+  public int size(JGTreeSet t) {
     %match(JGTreeSet t) {
       emptySet    -> { return 0; }
       singleton(x) -> { return 1; }
-      branch(l, r) -> {return card(l) + card(r);}
+      branch(l, r) -> {return size(l) + size(r);}
     }
     return 0;
   }
 
-  public void topRepartition(JGTreeSet t) {
-    %match(JGTreeSet t) {
-      branch(l,r) -> { System.out.println("Left branch: "+card(l)+"\tright branch: "+card(r));return;}
-      _ ->  {System.out.println("topRepartition: No a branch");}
-    }
-  }
-
-    // getHead return the first left inner element found
+      // getHead return the first left inner element found
   public ATerm getHead(JGTreeSet t) {
     %match(JGTreeSet t) {
       emptySet -> {
@@ -195,6 +199,24 @@ public class SharedSet {
   public JGTreeSet getTail(JGTreeSet t) {
     return remove(getHead(t), t);
   }
+  
+  public JGTreeSet union(JGTreeSet t1, JGTreeSet t2) {
+    return union(t1, t2, 0);
+  }
+
+  public JGTreeSet intersection(JGTreeSet t1, JGTreeSet t2) {
+    JGTreeSet result = intersection(t1, t2, 0);
+    return result;
+      //return reworkJGTreeSet(result);
+  }
+  
+  public void topRepartition(JGTreeSet t) {
+    %match(JGTreeSet t) {
+      branch(l,r) -> { System.out.println("Left branch: "+size(l)+"\tright branch: "+size(r));return;}
+      _ ->  {System.out.println("topRepartition: No a branch");}
+    }
+  }
+
   
   /* Simple binary operation skeleton
  private JGTreeSet f(JGTreeSet m1, JGTreeSet m2) {
