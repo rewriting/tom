@@ -59,7 +59,7 @@ public class TomParser implements TomParserConstants {
     this.tomVerifier = tomVerifier;
     this.environment = environment;
     this.importList = importList;
-    orgTrack = ast().emptyPosition();
+    orgTrack = makePosition(0,0);
   }
 
   public jtom.TomEnvironment environment() {
@@ -126,11 +126,15 @@ public class TomParser implements TomParserConstants {
     token_source.SwitchTo(DEFAULT);
     oldPos = getPos() + token.image.length();
     oldLine = Integer.valueOf( getLine() ).intValue();
-    orgTrack = ast().makePosition(token.beginLine,token.beginColumn);
+    orgTrack = makePosition(token.beginLine,token.beginColumn);
+  }
+
+  public Position makePosition(int line, int column) {
+    return  tsf().makePosition_Position(new Integer(line), new Integer(column));
   }
 
   private TargetLanguage makeTL(String code) {
-    Position newOriginTracking = ast().makePosition(token.beginLine,token.beginColumn);
+    Position newOriginTracking = makePosition(token.beginLine,token.beginColumn);
     return tsf().makeTargetLanguage_TL(code, orgTrack, newOriginTracking);
   }
 
@@ -1527,6 +1531,22 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
+  final private boolean jj_3_4() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3_6() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1555,22 +1575,6 @@ public class TomParser implements TomParserConstants {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_AT)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_COLON)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

@@ -65,7 +65,7 @@ public class TomParser {
     this.tomVerifier = tomVerifier;	
     this.environment = environment;
     this.importList = importList;
-    orgTrack = ast().emptyPosition();
+    orgTrack = makePosition(0,0);
   }
 	
   public jtom.TomEnvironment environment() { 
@@ -132,11 +132,15 @@ public class TomParser {
     token_source.SwitchTo(DEFAULT);
     oldPos = getPos() + token.image.length();
     oldLine = Integer.valueOf( getLine() ).intValue();
-    orgTrack = ast().makePosition(token.beginLine,token.beginColumn);
+    orgTrack = makePosition(token.beginLine,token.beginColumn);
   }
-
+  
+  public Position makePosition(int line, int column) {
+    return  tsf().makePosition_Position(new Integer(line), new Integer(column));
+  }
+  
   private TargetLanguage makeTL(String code) {
-    Position newOriginTracking = ast().makePosition(token.beginLine,token.beginColumn);
+    Position newOriginTracking = makePosition(token.beginLine,token.beginColumn);
     return tsf().makeTargetLanguage_TL(code, orgTrack, newOriginTracking); 
   }
 

@@ -63,7 +63,7 @@ public class Tom {
     System.out.println("\t--demo: run demo mode");
     System.out.println("\t--noDeclaration: do not generate code for declarations");
     System.out.println("\t--import <path>: path for %include");
-    System.out.println("\t--synchroTL: synchronize generated code and source code for debugging purpose");
+    System.out.println("\t--pretty: generate readable code");
     System.exit(0);
   }
 
@@ -126,8 +126,8 @@ public class Tom {
             i++;
             File importFile = new File(args[i]);
             importList.add(importFile);
-          } else if(args[i].equals("--synchroTL")) {
-	    Flags.synchroTL = true;
+          } else if(args[i].equals("--pretty")) {
+	    Flags.pretty = true;
           } else {
             System.out.println("'" + args[i] + "' is not a valid option");
             usage();
@@ -293,7 +293,7 @@ public class Tom {
         int defaultDeep = 2;
         Writer writer = new BufferedWriter(new OutputStreamWriter(
           new FileOutputStream(fileName + outputSuffix)));
-        OutputCode out = new OutputCode(writer, Flags.synchroTL);
+        OutputCode out = new OutputCode(writer, Flags.pretty);
         tomGenerator.generate(out,defaultDeep,compiledTerm);
         writer.close();
         stopChrono();

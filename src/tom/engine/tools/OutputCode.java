@@ -30,11 +30,11 @@ import java.io.*;
 public final class OutputCode {
   private Writer file;
   private int lineCounter = 0;
-  private boolean synchroTL = false;
+  private boolean pretty = false;
   
-  public OutputCode(Writer file, boolean synchro) {
+  public OutputCode(Writer file, boolean prety) {
     this.file = file;
-    synchroTL = synchro;
+    pretty = prety;
   }
 
   public OutputCode() {
@@ -91,27 +91,26 @@ public final class OutputCode {
 
   public void writeln(String s) throws IOException {
     write(s);
-    if(!synchroTL)
+    if(pretty)
       writeln();
   }
 
   public void writeln(int deep,String s) throws IOException {
     write(deep,s);
-    if(!synchroTL)
+    if(pretty)
       writeln();
   }
 
   public void write(int deep,String s, int line, int length) throws IOException {
-    if(lineCounter > line && synchroTL) {
-      System.out.println("Synchronization issue:"+s);
+    if(lineCounter > line && !pretty) {
+      System.out.println("Synchronization issue:" +s+ "\nLine: "+line +" versus LineCounter:"+ lineCounter);
     }
     
     while(lineCounter < line) {
-      write("/* newline : Line: "+line+" Length:"+ length +" LineCounter:"+ lineCounter+"*/");
+//        write("/* newline : Line: "+line+" Length:"+ length +" LineCounter:"+ lineCounter+"*/");
       writeln();
     }
-
-    write(0, "/*" + "Line: " + line + " Length:" + length + "*/");
+//      write(0, "/*" + "Line: " + line + " Length:" + length + "*/");
     write(deep,s);
     lineCounter+= length;
   } 

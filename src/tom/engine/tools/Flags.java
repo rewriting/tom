@@ -29,7 +29,7 @@ import java.util.*;
 
 public class Flags {
 
-  public static boolean synchroTL = false; // Synchronize TL code and source code
+  public static boolean pretty = false; // Synchronize TL code and source code
   
   public static boolean verbose = false;
   

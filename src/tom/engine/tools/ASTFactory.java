@@ -117,19 +117,11 @@ public class ASTFactory {
     return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type));  
   }
 
-  public Position emptyPosition() {
-    return  makePosition(0,0);
-  }
-
-  public Position makePosition(int line, int column) {
-    return  tsf().makePosition_Position(new Integer(line), new Integer(column));
-  }
-
   public TomSymbol makeSymbol(String symbolName, String resultType, ArrayList typeList, String glString) {
     TomName name = tsf().makeTomName_Name(symbolName);
     TomType typesToType =  tsf().makeTomType_TypesToType(makeList(typeList), tsf().makeTomType_TomTypeAlone(resultType));
     Option options = makeOption();
-    TargetLanguage code = tsf().makeTargetLanguage_TL(glString, emptyPosition(), emptyPosition());
+    TargetLanguage code = tsf().makeTargetLanguage_ITL(glString);
     return tsf().makeTomSymbol_Symbol(name,typesToType,options,code);
   }
 
@@ -188,7 +180,7 @@ public class ASTFactory {
   }
 
   public TomType makeType(String typeNameTom, String typeNametGL) {
-    return makeType(typeNameTom,tsf().makeTargetLanguage_TL(typeNametGL, emptyPosition(), emptyPosition()));
+    return makeType(typeNameTom,tsf().makeTargetLanguage_ITL(typeNametGL));
   }
 
   public TomType makeType(String typeNameTom, TargetLanguage tlType) {
@@ -204,7 +196,7 @@ public class ASTFactory {
                                 String value, ArrayList optionList) {
     String resultType = "int";
     ArrayList typeList = new ArrayList();
-    TargetLanguage tlFsym = tsf().makeTargetLanguage_TL(value, emptyPosition(), emptyPosition());
+    TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
 
     TomSymbol astSymbol = makeSymbol(value,resultType,typeList,optionList,tlFsym);
     symbolTable.putSymbol(value,astSymbol);
@@ -220,13 +212,13 @@ public class ASTFactory {
     TomTerm variable_t2 = makeVariable(option,"t2",typeString);
     TomTerm variable_n = makeVariable(option,"n",typeString);
     getFunSym = tsf().makeDeclaration_GetFunctionSymbolDecl(
-      variable_t,tsf().makeTargetLanguage_TL("t", emptyPosition(), emptyPosition()));
+      variable_t,tsf().makeTargetLanguage_ITL("t"));
     getSubterm = tsf().makeDeclaration_GetSubtermDecl(
-      variable_t,variable_n,tsf().makeTargetLanguage_TL("null", emptyPosition(), emptyPosition()));
+      variable_t,variable_n,tsf().makeTargetLanguage_ITL("null"));
     cmpFunSym = tsf().makeDeclaration_CompareFunctionSymbolDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_TL("t1==t2", emptyPosition(), emptyPosition()));
+      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"));
     equals = tsf().makeDeclaration_TermsEqualDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_TL("t1==t2", emptyPosition(), emptyPosition()));
+      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"));
     list.add(getFunSym);
     list.add(getSubterm);
     list.add(cmpFunSym);
@@ -293,9 +285,13 @@ public class ASTFactory {
   }
 
   public TargetLanguage reworkTLCode(TargetLanguage code) {
-    String tlCode = code.getCode();
-    tlCode = tlCode.replace('\n', ' ');
-    tlCode = tlCode.replace('\t', ' ');
-    return code.setCode(tlCode);
+    if(!Flags.pretty){
+      String tlCode = code.getCode();
+      tlCode = tlCode.replace('\n', ' ');
+      tlCode = tlCode.replace('\t', ' ');
+      return tsf().makeTargetLanguage_ITL(tlCode);
+    } else
+      return code;
   }
+  
 }

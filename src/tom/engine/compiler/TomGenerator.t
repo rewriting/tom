@@ -269,13 +269,13 @@ public class TomGenerator extends TomBase {
       }
 
       Declaration(var@Variable(option1,name1,
-                               Type(TomType(type),TLType(TL[code=tlType])))) -> {
+                                 Type(TomType(type),tlType@TLType[]))) -> {
         if(Flags.cCode || Flags.jCode) {
-          out.write(deep,tlType + " ");
+          out.write(deep,getTLCode(tlType) + " ");
           generate(out,deep,var);
         } else if(Flags.eCode) {
           generate(out,deep,var);
-          out.write(deep,": " + tlType);
+          out.write(deep,": " + getTLCode(tlType));
         }
         
         if(Flags.jCode && !isBoolType(type) && !isIntType(type)) {
@@ -287,24 +287,25 @@ public class TomGenerator extends TomBase {
       }
 
       Declaration(var@VariableStar(option1,name1,
-                                   Type[tlType=TLType(TL[code=tlType])])) -> {
+                                   Type(TomType(type),tlType@TLType[]))) -> {
         if(Flags.cCode || Flags.jCode) {
-          out.write(deep,tlType + " ");
+          out.write(deep,getTLCode(tlType) + " ");
           generate(out,deep,var);
         } else if(Flags.eCode) {
           generate(out,deep,var);
-          out.write(deep,": " + tlType);
+          out.write(deep,": " + getTLCode(tlType));
         }
         out.writeln(";");
         return;
       }
 
       Assign(var@Variable(option1,name1,
-                          Type[tomType=TomType(type),tlType=TLType(TL[code=tlType])]),exp) -> {
+                          Type(tomType@TomType(type),tlType@TLType[])),exp) -> {
+          //Type[tomType=TomType(type),tlType=TLType(TL[code=tlType])]),exp) -> {
         out.indent(deep);
         generate(out,deep,var);
         if(Flags.cCode || Flags.jCode) {
-          out.write(" = (" + tlType + ") ");
+          out.write(" = (" + getTLCode(tlType) + ") ");
         } else if(Flags.eCode) {
           if(isBoolType(type) || isIntType(type)) {
             out.write(" := ");
@@ -325,11 +326,12 @@ public class TomGenerator extends TomBase {
       }
 
       Assign(var@VariableStar(option1,name1,
-                              Type[tlType=TLType(TL[code=tlType])]),exp) -> {
+                              Type(TomType(type),tlType@TLType[])),exp) -> {
+                                //Type[tlType@TLType(TL[code=tlType])]),exp) -> {
         out.indent(deep);
         generate(out,deep,var);
         if(Flags.cCode || Flags.jCode) {
-          out.write(" = (" + tlType + ") ");
+          out.write(" = (" + getTLCode(tlType) + ") ");
         } else if(Flags.eCode) {
           out.write(" := ");
         }
@@ -400,7 +402,7 @@ public class TomGenerator extends TomBase {
           TomTerm localVar = varList.getHead();
           matchBlock: {
             %match(TomTerm localVar) {
-              v@Variable(option2,name2, type2) -> {
+              v@Variable(option2,name2,type2) -> {
                 if(Flags.cCode || Flags.jCode) {
                   out.write(deep,getTLType(type2) + " ");
                   generate(out,deep,v);
@@ -688,6 +690,12 @@ public class TomGenerator extends TomBase {
         out.write(deep,t, startLine.intValue(), endLine.intValue()-startLine.intValue());
         return;
       }
+      
+      iTL(t) -> {
+        statistics().numberPartsCopied++;
+        out.write(deep,t);
+        return;
+      }
 
       t -> {
         System.out.println("Cannot generate code for: " + t);
@@ -789,13 +797,14 @@ public class TomGenerator extends TomBase {
       }
 
       GetFunctionSymbolDecl(Variable(option,Name(name),
-                                     Type(TomType(type),TLType(TL[code=glType]))),
+                            Type(TomType(type),tlType@TLType[])),
+                                       //Type(TomType(type),TLType(TL[code=glType]))),
                             tlCode@TL[]) -> {
         String args[];
         if(!Flags.strictType) {
           args = new String[] { getTLType(getUniversalType()), name };
         } else {
-          args = new String[] { glType, name };
+          args = new String[] { getTLCode(tlType), name };
         }
 
         TomType returnType = isIntType(type)?getIntType():getUniversalType();
@@ -806,26 +815,28 @@ public class TomGenerator extends TomBase {
       }
       
       GetSubtermDecl(Variable(option1,Name(name1),
-                              Type(TomType(type1),TLType(TL[code=glType1]))), 
+                              Type(TomType(type1),tlType1@TLType[])),
+//Type(TomType(type1),TLType(TL[code=glType1]))), 
                      Variable(option2,Name(name2),
-                              Type(TomType(type2),TLType(TL[code=glType2]))),
+                              Type(TomType(type2),tlType2@TLType[])),
+                                //Type(TomType(type2),TLType(TL[code=glType2]))),
                      tlCode@TL[]) -> {
         String args[];
         if(Flags.strictType || Flags.eCode) {
-          args = new String[] { glType1, name1,
-                                glType2, name2 };
+          args = new String[] { getTLCode(tlType1), name1,
+                                getTLCode(tlType2), name2 };
         } else {
           args = new String[] { getTLType(getUniversalType()), name1,
-                                glType2, name2 };
+                                getTLCode(tlType2), name2 };
         }
         generateTargetLanguage(out,deep, genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1,
                                    args,
                                    tlCode));
         return;
       }
-
+      
       IsFsymDecl(Name(tomName),
-		 Variable(option1,Name(name1), Type(TomType(type1),TLType(TL[code=glType1]))),
+		 Variable(option1,Name(name1), Type(TomType(type1),tlType@TLType[])),//TLType(TL[code=glType1]))),
                  tlCode@TL[]) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String opname = tomSymbol.getAstName().getString();
@@ -833,7 +844,7 @@ public class TomGenerator extends TomBase {
 	  TomType returnType = getBoolType();
 	  String argType;
 	  if(Flags.strictType) {
-	      argType = glType1;
+	      argType = getTLCode(tlType);
 	  } else {
 	      argType = getTLType(getUniversalType());
 	  }
@@ -847,7 +858,7 @@ public class TomGenerator extends TomBase {
  
       GetSlotDecl[astName=Name(tomName),
                   slotName=SlotName(slotName),
-                  term=Variable(option1,Name(name1), Type(TomType(type1),TLType(TL[code=glType1]))), 
+                  term=Variable(option1,Name(name1), Type(TomType(type1),tlType@TLType[])),//,TLType(TL[code=glType1]))), 
                   tlCode=tlCode@TL[]] -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String opname = tomSymbol.getAstName().getString();
@@ -863,7 +874,7 @@ public class TomGenerator extends TomBase {
         
 	String argType;
 	  if(Flags.strictType) {
-	      argType = glType1;
+	      argType = getTLCode(tlType);
 	  } else {
 	      argType = getTLType(getUniversalType());
 	  }
@@ -903,11 +914,11 @@ public class TomGenerator extends TomBase {
         return;
       }
       
-      GetHeadDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))),
+      GetHeadDecl(Variable(option1,Name(name1), Type(TomType(type),tlType@TLType[])),//TLType(TL[code=tlType]))),
                   tlCode@TL[]) -> {
         String argType;
         if(Flags.strictType) {
-          argType = tlType;
+          argType = getTLCode(tlType);
         } else {
           argType = getTLType(getUniversalType());
         }
@@ -920,12 +931,12 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      GetTailDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))),
+      GetTailDecl(Variable(option1,Name(name1), Type(TomType(type),tlType@TLType[])),//TLType(TL[code=tlType]))),
                   tlCode@TL[]) -> {
         String returnType, argType;
         if(Flags.strictType) {
-          returnType = tlType;
-          argType = tlType;
+          returnType = getTLCode(tlType);
+          argType = getTLCode(tlType);
         } else {
           returnType = getTLType(getUniversalType());
           argType = getTLType(getUniversalType());
@@ -938,11 +949,11 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      IsEmptyDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))),
+      IsEmptyDecl(Variable(option1,Name(name1), Type(TomType(type),tlType@TLType[])),//TLType(TL[code=tlType]))),
                   tlCode@TL[]) -> {
         String argType;
         if(Flags.strictType) {
-          argType = tlType;
+          argType = getTLCode(tlType);
         } else {
           argType = getTLType(getUniversalType());
         }
@@ -965,13 +976,13 @@ public class TomGenerator extends TomBase {
       }
 
       MakeAddList(Name(opname),
-                  Variable(option1,Name(name1), fullEltType@Type(TomType(type1),TLType(TL[code=tlType1]))),
-                  Variable(option2,Name(name2), fullListType@Type(TomType(type2),TLType(TL[code=tlType2]))),
+                  Variable(option1,Name(name1), fullEltType@Type(TomType(type1),tlType1@TLType[])),//TLType(TL[code=tlType1]))),
+                  Variable(option2,Name(name2), fullListType@Type(TomType(type2),tlType2@TLType[])),//TLType(TL[code=tlType2]))),
                   tlCode@TL[]) -> {
         String returnType, argListType,argEltType;
         if(Flags.strictType) {
-          argEltType = tlType1;
-          argListType = tlType2;
+          argEltType = getTLCode(tlType1);
+          argListType = getTLCode(tlType2);
           returnType = argListType;
         } else {
           argEltType  = getTLType(getUniversalType());
@@ -991,13 +1002,13 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      GetElementDecl(Variable(option1,Name(name1), Type(TomType(type1),TLType(TL[code=tlType1]))),
-                     Variable(option2,Name(name2), Type(TomType(type2),TLType(TL[code=tlType2]))),
+      GetElementDecl(Variable(option1,Name(name1), Type(TomType(type1),tlType1@TLType[])),//TLType(TL[code=tlType1]))),
+                     Variable(option2,Name(name2), Type(TomType(type2),tlType2@TLType[])),//TLType(TL[code=tlType2]))),
                      tlCode@TL[]) -> {
         String returnType, argType;
         if(Flags.strictType) {
           returnType = getTLType(getUniversalType());
-          argType = tlType1;
+          argType = getTLCode(tlType1);
         } else {
           returnType = getTLType(getUniversalType());
           argType = getTLType(getUniversalType());
@@ -1013,11 +1024,11 @@ public class TomGenerator extends TomBase {
         return;
       }
       
-      GetSizeDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))),
+      GetSizeDecl(Variable(option1,Name(name1), Type(TomType(type),tlType@TLType[])),//TLType(TL[code=tlType]))),
                   tlCode@TL[]) -> {
         String argType;
         if(Flags.strictType) {
-          argType = tlType;
+          argType = getTLCode(tlType);
         } else {
           argType = getTLType(getUniversalType());
         }
@@ -1042,14 +1053,14 @@ public class TomGenerator extends TomBase {
       }
 
       MakeAddArray(Name(opname),
-                  Variable(option1,Name(name1), fullEltType@Type(TomType(type1),TLType(TL[code=tlType1]))),
-                  Variable(option2,Name(name2), fullArrayType@Type(TomType(type2),TLType(TL[code=tlType2]))),
+                   Variable(option1,Name(name1), fullEltType@Type(TomType(type1),tlType1@TLType[])),//TLType(TL[code=tlType1]))),
+                   Variable(option2,Name(name2), fullArrayType@Type(TomType(type2),tlType2@TLType[])),//TLType(TL[code=tlType2]))),
                   tlCode@TL[]) -> {
 
         String returnType, argListType,argEltType;
         if(Flags.strictType) {
-          argEltType  = tlType1;
-          argListType = tlType2;
+          argEltType  = getTLCode(tlType1);
+          argListType = getTLCode(tlType2);
           returnType  = argListType;
 
         } else {
@@ -1188,8 +1199,8 @@ public class TomGenerator extends TomBase {
         TomTerm arg = argList.getHead();
         matchBlock: {
           %match(TomTerm arg) {
-            Variable(option,Name(name), Type(TomType(type),TLType(TL[code=glType]))) -> {
-              s += glType + " " + name;
+            Variable(option,Name(name), Type(TomType(type),tlType@TLType[]))/*TLType(TL[code=glType])))*/ -> {
+              s += getTLCode(tlType) + " " + name;
               break matchBlock;
             }
             
@@ -1215,8 +1226,8 @@ public class TomGenerator extends TomBase {
         TomTerm arg = argList.getHead();
         matchBlock: {
           %match(TomTerm arg) {
-            Variable(option,Name(name), Type(TomType(type),TLType(TL[code=glType]))) -> {
-              s += name + ": " + glType;
+            Variable(option,Name(name), Type(TomType(type),tlType@TLType[]))/*TLType(TL[code=glType])))*/ -> {
+              s += name + ": " + getTLCode(tlType);
               break matchBlock;
             }
             
@@ -1298,8 +1309,10 @@ public class TomGenerator extends TomBase {
     s+= "    return result;\n";
     s+= "  }\n";
     
-    System.out.println("Warning: update position");
-    return `TL(s, ast().emptyPosition(), ast().emptyPosition());
+    TargetLanguage resultTL = `iTL(s);
+      //If necessary we remove \n code depending on --pretty option
+    resultTL = ast().reworkTLCode(resultTL);
+    return resultTL;
   }
 
   private TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
@@ -1359,8 +1372,10 @@ public class TomGenerator extends TomBase {
     s+= "    return result;\n";
     s+= "  }\n";
 
-    System.out.println("Warning: update position");
-    return `TL(s, ast().emptyPosition(), ast().emptyPosition());
+    TargetLanguage resultTL = `iTL(s);
+      //If necessary we remove \n code depending on --pretty option
+    resultTL = ast().reworkTLCode(resultTL);
+    return resultTL;
   }
   
   private HashMap getSubtermMap = new HashMap();

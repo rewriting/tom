@@ -54,6 +54,7 @@ TargetLanguage.java TargetLanguageImpl.java
 
 TomSignatureAPI1=\
 TargetLanguage_TLImpl.java TargetLanguage_TL.java\
+TargetLanguage_ITLImpl.java TargetLanguage_ITL.java\
 Position.java PositionImpl.java \
 Position_PositionImpl.java Position_Position.java\
 TomType.java TomTypeImpl.java \
@@ -101,10 +102,10 @@ TomTerm_TermImpl.java TomTerm_Term.java\
 TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
 TomTerm_GLVarImpl.java TomTerm_GLVar.java\
 TomTerm_VariableImpl.java TomTerm_Variable.java\
-TomTerm_VariableStarImpl.java TomTerm_VariableStar.java\
-TomTerm_PlaceholderImpl.java TomTerm_Placeholder.java
+TomTerm_VariableStarImpl.java TomTerm_VariableStar.java
 
 TomSignatureAPI2=\
+TomTerm_PlaceholderImpl.java TomTerm_Placeholder.java\
 TomTerm_UnamedVariableImpl.java TomTerm_UnamedVariable.java\
 TomTerm_CompiledMatchImpl.java TomTerm_CompiledMatch.java\
 TomTerm_AutomataImpl.java TomTerm_Automata.java\
