@@ -191,11 +191,15 @@ public class TomParser implements TomParserConstants {
     fileName = fileName.trim();
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
+                if(fileName.equals("")) {
+                        String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"), new Object[]{new Integer(getLine()), currentFile});
+      throw new TomIncludeException(msg);
+                }
     try {
       file = new File(fileName);
       if(file.isAbsolute()) {
         if (!file.exists()) {
-          String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
+          String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine())});
           throw new TomIncludeException(msg);
         }
       } else {
@@ -1546,8 +1550,7 @@ public class TomParser implements TomParserConstants {
                                 vasParams.add("--destdir");
                                 vasParams.add(destDir);
                                 packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
-        String inputFileName = getInput().getInputFile().getName();
-        String inputFileNameWithoutExtension = inputFileName.substring(0, inputFileName.length() - getInput().getInputSuffix().length()).toLowerCase();
+        String inputFileNameWithoutExtension = getInput().getRawFileName().toLowerCase();
         String subPackageName = "";
         if(packageName.equals("")) {
           subPackageName = inputFileNameWithoutExtension;
@@ -2817,6 +2820,10 @@ public class TomParser implements TomParserConstants {
            * here we consume the read in advance "*" to remove it from the "previous code"
            */
           tk = getNextToken();
+          /*
+           * we switch to DEFAULT mode to re-assign the oldPos variable
+           */
+          switchToDefaultMode(); /* switch to DEFAULT mode */
         } else {
           /*
            * the backquote-term is a single variable
@@ -2921,11 +2928,6 @@ public class TomParser implements TomParserConstants {
     try { return !jj_3_13(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(12, xla); }
-  }
-
-  final private boolean jj_3R_39() {
-    if (jj_3R_38()) return true;
-    return false;
   }
 
   final private boolean jj_3R_32() {
@@ -3203,6 +3205,11 @@ public class TomParser implements TomParserConstants {
 
   final private boolean jj_3R_47() {
     if (jj_scan_token(TOM_UNDERSCORE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_39() {
+    if (jj_3R_38()) return true;
     return false;
   }
 
