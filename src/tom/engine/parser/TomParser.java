@@ -1128,7 +1128,7 @@ public class TomParser implements TomTask, TomParserConstants {
     tlCode = GoalLanguageBlock(blockList);
       switchToDefaultMode(); /* switch to DEFAULT mode */
       fileName = tlCode.getCode().trim();
-      fileName.replaceAll("/",File.separator);
+      fileName = fileName.replace('/',File.separatorChar);
     try {
       file = new File(fileName);
       if(!file.exists()) {
