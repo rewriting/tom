@@ -61,7 +61,7 @@ public class TomSyntaxChecker extends TomChecker {
   %include { adt/TomSignature.tom }
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = "<options><boolean name='NoSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/></options>";
+  public static final String DECLARED_OPTIONS = "<options><boolean name='noSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/></options>";
 
   /** op and type declarator */
   private final static String OPERATOR    = "Operator";
@@ -165,7 +165,7 @@ public class TomSyntaxChecker extends TomChecker {
   }
   
   private boolean isActivated() {
-    return !getOptionBooleanValue("NoSyntaxCheck");
+    return !getOptionBooleanValue("noSyntaxCheck");
   }
 
   /**

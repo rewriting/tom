@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -131,9 +132,9 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       if( ((Boolean)optionValue).booleanValue() ) { 
         Tom.changeLogLevel(Level.INFO);
       }
-    } else if(optionName.equals("noWarning")) {
+    } else if(optionName.equals("wall")) {
       if( ((Boolean)optionValue).booleanValue() ) { 
-        Tom.changeLogLevel(Level.SEVERE);
+        Tom.changeLogLevel(Level.WARNING);
       }
     }
   }
@@ -315,8 +316,9 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 	    + "\noptions :";
     StringBuffer buffer = new StringBuffer(beginning);
     buffer.append("\n\t-X <file>:\tDefines an alternate XML configuration file\n");
-    
-    Iterator it = mapNameToOption.values().iterator();
+
+    TreeMap treeMap = new TreeMap(mapNameToOption);
+    Iterator it = treeMap.values().iterator();
     while(it.hasNext()) {
       PlatformOption h = (PlatformOption)it.next();
       %match(PlatformOption h) {
@@ -340,8 +342,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * Displays the current version of the TOM compiler.
    */
   public static void displayVersion() {
-    System.out.println("\njtom " + Tom.VERSION + "\n\n"
-                       + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n");
+    System.out.println("\njtom " + Tom.VERSION + "\n" +
+                       "Copyright (C) 2000-2004 INRIA, Nancy, France.\n");
   }
   
   /**
@@ -409,7 +411,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if(argument.equals("version") || argument.equals("V")) {
             TomOptionManager.displayVersion();
-            return null;
           }
           if(argument.equals("X")) {
             // just skip it,along with its argument

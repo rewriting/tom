@@ -82,8 +82,8 @@
       <boolean name="noDeclaration" altName="D"
 			  		 description="Do not generate code for declarations"
 			  		 value="false"/>
-      <boolean name="noWarning" altName=""
-			  		 description="Do not print warning"
+      <boolean name="wall" altName="W"
+			  		 description="Print warning"
 			  		 value="false"/>
       <boolean name="lazyType" altName="l"
 			  		 description="Use universal type"

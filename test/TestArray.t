@@ -225,7 +225,7 @@ public class TestArray extends TestCase {
 		%match(L l) {
       conc(X1*,X2*,X3*) -> {
         nbSol++;
-				System.out.println("X1 = " + `X1* + " X2 = " + `X2*+ " X3 = " + `X3*);
+				//System.out.println("X1 = " + `X1* + " X2 = " + `X2*+ " X3 = " + `X3*);
       }
     }
 
