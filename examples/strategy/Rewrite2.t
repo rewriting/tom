@@ -197,17 +197,29 @@ public class Rewrite2 {
   jjtraveler.reflective.VisitableVisitor VBottomUp(jjtraveler.reflective.VisitableVisitor v) {
     // BottomUp(v) = Sequence(All(BottomUp(v)),v)
     // BottomUp(v) = mu(x,Sequence(All(x),v))
+    genName();
     return `mu(VMuVar("x"),VSequence(VAll(VMuVar("x")),v));
   }
 
+  jjtraveler.reflective.VisitableVisitor VOnceBottomUp(jjtraveler.reflective.VisitableVisitor v) {
+    // BottomUp(v) = mu(x,Choice(One(x),v))
+    genName();
+    return `mu(VMuVar("x"),VChoice(VOne(VMuVar("x")),v));
+  }
+
   jjtraveler.reflective.VisitableVisitor VInnermost(jjtraveler.reflective.VisitableVisitor v) {
-    // Innermost(v) = mu(x,Sequence(All(x),Choice(Sequence(v),Identity)))
+    // Innermost(v) = mu(x,Sequence(All(x),Choice(Sequence(v,x),Identity)))
+    genName();
     return `mu(VMuVar("x"),VSequence(VAll(VMuVar("x")),VChoice(VSequence(v,VMuVar("x")),VIdentity())));
   }
 
+  jjtraveler.reflective.VisitableVisitor VRepeat(jjtraveler.reflective.VisitableVisitor v) {
+    // Repeat(v) = mu(x,Choice(Sequence(v,x),Identity))
+    genName();
+    return `mu(VMuVar("x"),VChoice(VSequence(v,VMuVar("x")),VIdentity()));
+  }
+
   jjtraveler.reflective.VisitableVisitor mu(jjtraveler.reflective.VisitableVisitor var, jjtraveler.reflective.VisitableVisitor v) {
-    // `Sequence(All(BottomUp(v)),v)
-    //
     try {
       jjtraveler.Visitor muExpander = new jjtraveler.BottomUp(new MuExpander(var,v));
       return (jjtraveler.reflective.VisitableVisitor) muExpander.visit(v);
@@ -239,25 +251,38 @@ public class Rewrite2 {
     }
   }
   
-
+  private int nameCounter=0;
+  void genName() {
+    nameCounter++;
+  }
+  String getName() {
+    return "x" + nameCounter;
+  }
   public final static void main(String[] args) {
     Rewrite2 test = new Rewrite2(Factory.getInstance(new PureFactory()));
     test.run();
   }
 
   public void run() {
-    Term subject = `f(g(a,b));
+    //Term subject = `f(g(a,b));
+    Term subject = `f(g(g(a,b),g(a,a)));
+
     jjtraveler.reflective.VisitableVisitor rule = new RewriteSystem();
     jjtraveler.Visitor onceBottomUp = new jjtraveler.OnceBottomUp(rule);
-    //jjtraveler.Visitor bottomUp = new jjtraveler.BottomUp(new jjtraveler.Try(rule));
     jjtraveler.Visitor bottomUp = `VBottomUp(VTry(rule));
     jjtraveler.Visitor innermost = `VInnermost(rule);
 
+    /*
+     * cannot expand nested mu construct
+     */
+    //jjtraveler.Visitor innermostSlow = `VRepeat(VOnceBottomUp(rule));
+
     try {
-      System.out.println("subject      = " + subject);
-      System.out.println("onceBottomUp = " + onceBottomUp.visit(subject));
-      System.out.println("bottomUp     = " + bottomUp.visit(subject));
-      System.out.println("innermost    = " + innermost.visit(subject));
+      System.out.println("subject       = " + subject);
+      System.out.println("onceBottomUp  = " + onceBottomUp.visit(subject));
+      System.out.println("bottomUp      = " + bottomUp.visit(subject));
+      System.out.println("innermost     = " + innermost.visit(subject));
+      //System.out.println("innermostSlow = " + innermostSlow.visit(subject));
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
@@ -273,6 +298,7 @@ public class Rewrite2 {
       %match(Term arg) {
         a() -> { return `b(); }
         b() -> { return `c(); }
+        g(c(),c()) -> { return `c(); }
       }
       throw new jjtraveler.VisitFailure();
     }
