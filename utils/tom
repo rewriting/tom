@@ -50,13 +50,15 @@ else
 fi
 
 TOM_INC="${TOM_HOME}/share/jtom"
+TOM_CONFIG_FILE="${TOM_HOME}/Tom.xml"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
   TOM_HOME=`cygpath --windows "$TOM_HOME"`
   TOM_INC=`cygpath --windows "$TOM_INC"`
   LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
+  TOM_CONFIG_FILE=`cygpath --windows "$TOM_CONFIG_FILE"`
 fi
 
-exec "$JAVACMD" $TOM_OPTS -classpath "$LOCALCLASSPATH" -Dtom.home="${TOM_HOME}" jtom.Tom $TOM_ARGS -I "$TOM_INC" "$@"
+exec "$JAVACMD" $TOM_OPTS -classpath "$LOCALCLASSPATH" -Dtom.home="${TOM_HOME}" jtom.TomServer -X $TOM_CONFIG_FILE $TOM_ARGS -I "$TOM_INC" "$@"
 

@@ -40,11 +40,13 @@
     description=""
     classpath="jtom.optimizer.TomOptimizer" />
 
+<!-- Verifier not part of stable
   <plugin
     name="Verifier"
     version=""
     description=""
     classpath="jtom.verifier.TomVerifier" />
+-->
 
   <plugin
     name="Backend"
