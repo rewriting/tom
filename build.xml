@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Ant for TOM" default="buildstable" basedir=".">
+<project name="Ant for TOM" default="stable" basedir=".">
 	<description>
 		Build script using Ant offering checks, dists,
 		installation, and so on.
-		it aims at offering the same functionality as the
-		automake files included in the TOM source
-		distribution.
 		
 		To use this build file, install ant,
 		and just run ./build.sh in the current directory.
 		
-		You can modify certain default settings via
+		You can modify default settings via
 		ant -Ddist="/home/yourdirectory"
 		for the various properties listed below.
-		
-		Author: Julien GUYON, LORIA
-		Created: August 06, 2003.
 	</description>
 	
 	<!-- set local properties for this build -->
@@ -129,7 +123,7 @@
 
 	<!-- builds and defines the custom tasks -->
 	<!-- tasks for building src -->
-	<target name="initTaskDef" depends="buildstable">
+	<target name="initTaskDef" depends="stable">
 		<taskdef name="adt" classname="jtom.tools.ant.ApigenTask" classpathref="tom.classpath"/>
 		<taskdef name="tom" classname="jtom.tools.ant.TomTask">
 			<classpath refid="tom.classpath"/>
@@ -137,7 +131,7 @@
 	</target>
 
 	<!-- define task for running tom.src -->
-	<target name="initsrc" depends="buildsrc">
+	<target name="initsrc" depends="src">
 		<taskdef name="tomsrc" classname="jtom.tools.ant.TomTask">
 			<classpath refid="tomsrc.classpath"/>
 		</taskdef>
@@ -201,7 +195,7 @@
     </move>
 	</target>
 
-	<target name="buildsrc" description="compile the TOM development sources" depends="preparesrc">
+	<target name="src" description="compile the TOM development sources" depends="preparesrc">
 		<antcall target="buildtom"/>
 		<antcall target="buildparser"/>
 		<!--<property name="unixpath" refid="src.classpath" />
@@ -211,16 +205,16 @@
 		</javac>
 	</target>
 	
-	<target name="buildstable" description="compile the TOM stable sources" depends="preparestable">
+	<target name="stable" description="compile the TOM stable sources" depends="preparestable">
 		<!-- Compile the java code from ${stable} into ${stable} -->
 		<javac srcdir="${stable.src}" destdir="${stable.build}" verbose="${javacVerbose}">
 			<classpath refid="stable.classpath"/>
 		</javac>
 	</target>  
 
-	<target name="diststable" 
+	<target name="dist.stable" 
 					description="Prepare a distribution ready stable package" 
-					depends="buildstable, prepare.dist.stable">
+					depends="stable, prepare.dist.stable">
 		<!-- "tom binary" -->
 		<copy todir="${stable.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${stable.bin}" file="${utils}/tom.bat"/>
@@ -260,9 +254,9 @@
 		<copy todir="${stable.lib}" file="${concurrent.lib}"/>
 	</target>
 
-	<target name="distsrc" 
+	<target name="dist.src" 
 					description="Prepare a distribution ready source package" 
-					depends="buildsrc, prepare.dist.src">
+					depends="src, prepare.dist.src">
 		<tstamp/>
 		<!-- "tom binary" -->
 		<copy todir="${src.bin}" file="${utils}/javac-tom"/>
@@ -311,15 +305,15 @@
 		<copy todir="${src.lib}" file="${concurrent.lib}"/>
 	</target>
 
-	<target name="distall" 
+	<target name="dist.all" 
 		      description="Prepare stable and devel distributions" 
-		      depends="diststable, distsrc"/>
+		      depends="dist.stable, dist.src"/>
 
-	<target name="cleanstable" description="Purges the generated stable files">
+	<target name="clean.stable" description="Purges the generated stable files">
 		<delete dir="${stable.build}"/>
 	</target>
 	
-	<target name="cleansrc" description="Purges the generated devel files">
+	<target name="clean.src" description="Purges the generated devel files">
 		<delete dir="${src.build}"/>
 		<delete dir="${src.adt}/jtom"/>
 		<delete> <fileset dir="${src.adt}" includes="**/*.tom"/></delete>
@@ -344,7 +338,7 @@
 		</delete>
 	</target>
 
-	<target name="cleantest" description="Cleans acceptance tests directory">
+	<target name="clean.test" description="Cleans acceptance tests directory">
 		<delete>
 			<fileset dir="${test}" includes="*.class" />
 		</delete>
@@ -357,10 +351,10 @@
 		</delete>
 	</target>
 
-	<target name="cleanall" description="Cleans everything in the project" depends="cleanstable, cleansrc, cleantest">
+	<target name="clean" description="Cleans everything in the project" depends="clean.stable, clean.src, clean.test">
 	</target>	
 
-	<target name="distclean" description="Mr proper" depends="cleanall">
+	<target name="clean.dist" description="Mr proper" depends="clean">
 		<delete dir="${stable.dist}"/>
 		<delete dir="${src.dist}"/>
 	</target>
@@ -371,7 +365,7 @@
 		</taskdef>
 	</target>
 	
-	<target name="buildtest" description="Compile and run acceptance tests" depends="initsrc">
+	<target name="test" description="Compile and run acceptance tests" depends="initsrc">
 		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.mapping} -I ${src.adt}">
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
@@ -390,7 +384,7 @@
 		</javac>
 	</target>
 
-	<target name="junit" description="Runs junit acceptance tests" depends="buildtest, initjunit">
+	<target name="check" description="Runs junit acceptance tests" depends="test, initjunit">
 		<tomjunit printsummary="on"
 							fork="false"
 							haltonfailure="false"
@@ -419,7 +413,7 @@
 
 	<target name="boostrap">
 		<!-- Clean src--> 
-		<antcall target="cleansrc"/>
+		<antcall target="clean.src"/>
 		<!-- Build ADT once--> 
 		<antcall target="buildadt"/>
     <!-- 

@@ -1,0 +1,5 @@
+Simple:   show how to differentiate a polynom
+Advanced: extended version with non-linearity, disjunction and generic
+          traversal functions 
+Apigen:   same as before, but based on ApiGen.
+	  Also introduce the notion of rewrite rule system

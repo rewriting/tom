@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Ant for Tom-examples" default="dist.examples" basedir=".">
+<project name="Ant for Tom-examples" default="examples" basedir=".">
   <description>
     This script prepare a bundle of Tom examples
   </description>
@@ -445,17 +445,18 @@
   </target>
   
   
-  <target name="build.examples" 
+  <target name="examples" 
           description="Builds the examples (at least some)"
           depends="addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, peano, pnspk, poly, pqueens,
           rbtree, reach, set, vas, xml">
   </target>
   
-  <target name="dist.examples" description="Prepare a
-    distribution of examples" depends="prepare.examples">
+  <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">
     <tar tarfile="${examples.dist}/jtom-examples.tar">
       <tarfileset dir="${examples.dir}">
+        <include name="README"/>
+
         <include name="${addressbook}/README"/>
         <include name="${addressbook}/*.t"/>
         <include name="${addressbook}/*.adt"/>
@@ -557,11 +558,11 @@
     <delete file="${examples.dist}/jtom-examples.tar"/>
   </target>
 
-  <target name="clean.dist" description="Mr proper" depends="cleanall">
+  <target name="clean.dist" description="Mr proper" depends="clean">
     <delete dir="${examples.dist}"/>
   </target>
 
-  <target name="cleanall" 
+  <target name="clean" 
           description="Cleans everything in the project" 
           depends="clean.examples">
   </target> 

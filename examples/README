@@ -10,63 +10,122 @@ Depending on your backgroung, Tom can be seen as:
  - a backend for Rewrite Rule based languages
  - a first step toward a Rule based programming language
 
+* How to start with Tom?
+------------------------
 If you come from the 
  - algrebraic programming community
-   => start with the 'apigen' and the 'poly/apigen' tutorials
+   => start with:
+      - Vas
+      - AddressBook
+      - Peano
+      - Poly
+      - ApiReach
 
  - XML community
-   => start with the 'xml' tutorial
+   => start with
+      - Dom
+      - Xml
 
- - C or Java programming community
-   => start with the 'int' and 'peano' tutorials
+ - Java programming community
+   => start with:
+      - Builtin
+      - Peano
+      - Expression (quite complex)
+
+ - C programming community
+   => start with:
+      - IntegerC
+      - Peano
  
-
-* apigen
-  ======
+* Note about ApiGen:
+--------------------
   ApiGen is a system which take a many-sorted signature as input, and
   generates a concrete implementation for such an abstract data-type.
   In addition, ApiGen (adt-to-tom) automatically generates a mapping
   for Tom.
   This system is usefull to manipulate Abstract Syntax Trees since it
-  offers an efficient implementation (based on ATerms). This
-  implementation support maximal memory sharing, strong static typing
-  as well as parsers and pretty-printers. 
+  offers an efficient implementation (based on ATerms).
+  The implementation supports maximal memory sharing, strong static
+  typing as well as parsers and pretty-printers. 
 
-  - 1_peano_c:    illustrate how to use Tom and ApiGen in order to
-                  describe addition over Peano integers in C
-  - 2_peano_java: same ideas in Java
+* Included examples:
+--------------------
+* AddressBook
+  Small implementation of a data-base
+  Concepts: apigen, list-matching, vas
 
-* integer
-  =======
-  - 1_simple:   illustrate how to use builtin-integers in Java
-                show how to describe addition over Peano integers in C,
-                by defining a simple term data-structure and a Tom mapping 
-  - 2_advanced: illustrate a tricky mapping between Peano and builtin integers
-                show how to define a mapping for the C version of the ATerm Library
+* ApiReach
+  Compute reachable terms (wrt. a rewrite system)
+  Concept: apigen, complex generic traveral
 
-* list
-  ====
-  - 1_simple:   show how to define a mapping for the Java version of
-                the ATerm Library
-                This example introduces the notion of associative
-                operator as well as list-matching
+* BoulderDash
+  Cimulate how rocks go down in the boulder-dash game	
+  Concept: apigen, virtual mapping 
 
-* peano
-  =====
-  - 1_simple:   based on Peano integers and the Java version of the
-    ATerm Library, the examples introduce the backquote notation  
-  - 2_advanced: introduce new mapping capabilities as well as bracket
-    and alias notations
+* Builtin
+  Show how to use builtin integer and string  
+  Concept: list-matching, string-matching
 
-* poly
-  ====
-  - 1_simple:   show how to differentiate a polynom
-  - 2_advanced: extended version with non-linearity, disjunction and
-    generic traversal functions
-  - 3_apigen:   same as before, but based on ApiGen.
-    Also introduce the notion of rewrite rule system
+* Caml
+  Show how to use Tom with Caml  
+  Concept: mapping, list-matching
 
-* xml
-  ===
-  To be created
+* Dom
+  XML manipulation based on DOM
+  Concept: XML, list-matching, DOM
+
+* Expression
+  Simplification of algebraic expressions
+  Concept: complex object mapping, lazy-type
+
+* GTree
+  Tiny example of tree manipulation
+  Concept: apigen
+
+* IntegerC
+  Show how to use Tom with C
+  Concept: mapping, complex mapping on builtin
+  
+* List
+  Introduction to list-matching  
+  Concept: list-matching, mapping to the ATerm library 
+
+* Lsystems
+
+* Nspk
+  Verification of the Needham-Schroeder Public-Key protocol
+  Concept: apigen, complex list-matching, exploration of a search space
+
+* PNspk
+  Parallel verification of the Needham-Schroeder Public-Key protocol
+  Concept: apigen, parallel exploration of a search space, strategy library 
+
+* PQueens
+  Parallel version of the N-Queens problem
+  Concept: strategy library, complex mapping
+
+* Peano
+  Computation with Peano integers
+  Concept: simple mapping, apigen, Tom notation 
+
+* Poly
+  Compute the differentiate form of a polynom
+  Concept: mapping, apigen, generic traversal, rewrite system  
+
+* RBTree
+  Red-Black Tree algorithm
+  Concept: apigen, disjunction of patterns
+
+* Set
+  Implementation of Set with maximal sharing
+  Concept: apigen, ATerm with unique id
+
+* Vas
+  Introduction to the VAS abstract syntax
+  Concept: vas
+
+* Xml
+  XML manipulation based on TNode
+  Concept: XML, list-matching, TNode
+  
 
