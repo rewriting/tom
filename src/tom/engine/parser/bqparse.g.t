@@ -397,8 +397,10 @@ targetPlus returns [String result]
 }
     :
         (
-            t = xmlToken {result += t.getText();}
-        |   x = targetPlusShared {result += x;}
+            options{greedy=true;}:(
+                t = xmlToken {result += t.getText();}
+            |   x = targetPlusShared {result += x;}
+            )
         )+
 	;
 
@@ -443,16 +445,20 @@ context returns [TomList result]
     TomTerm term = null;
 }
     :
-        {LA(1) != XML_START}? term = bqTermForXml BQ_COMMA (BQ_WS)*
+        {LA(1) != XML_START}? term = bqTermForXml BQ_COMMA 
+        ( options{greedy=true;}: BQ_WS )*
         {
             result = (TomList) result.append(removeComposite(term));
         }
         ( 
-            {LA(1) != XML_START}? term = bqTermForXml
+            options{greedy=true;}:
+            (
+                {LA(1) != XML_START}? term = bqTermForXml
                 {
                     result = (TomList) result.append(removeComposite(term));
-                }
-            BQ_COMMA (BQ_WS)*
+                }   
+                BQ_COMMA ( options{greedy=true;}: BQ_WS)*
+            )
         )*
     ;
 
@@ -476,9 +482,9 @@ returns [TomTerm result]
                 attributeTomList = buildList(attributes);
             }
             ( 
-                XML_CLOSE_SINGLETON (BQ_WS)*
+                XML_CLOSE_SINGLETON (options{greedy=true;}: BQ_WS)*
                 
-            |   XML_CLOSE (BQ_WS)*  
+            |   XML_CLOSE (options{greedy=true;}: BQ_WS)*  
                 xmlChildren[children,context]
                 {
                     childrenTomList = buildList(children);
@@ -624,17 +630,14 @@ xmlChildren [LinkedList children, TomList context]
             {
                 children.add(term);
             }
-            (BQ_WS)*
+            (options{greedy=true;}:BQ_WS)*
         )*
     ;
 
 
 
-
-
-
-
 // here we are parsing a term like `idf(...)
+// the identifier has already been read
 beginBqAppl [Token symbol] returns [TomTerm result]
 {
     result = null;
@@ -768,7 +771,7 @@ beginXmlBackquote returns [TomTerm result]
 }
 
     :
-        BQ_LPAREN (BQ_WS)* 
+        BQ_LPAREN (options{greedy=true;}:BQ_WS)* 
         ( {LA(1) != XML_START}? contextList = context )?
         (
             term = xmlTerm[contextList]
