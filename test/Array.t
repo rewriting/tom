@@ -2,6 +2,7 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 
+
 public class Array {
 
   private ATermFactory factory;
