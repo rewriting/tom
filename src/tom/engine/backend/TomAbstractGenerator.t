@@ -27,20 +27,13 @@ package jtom.backend;
  
 import aterm.*;
 
-import java.io.FileOutputStream;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.io.IOException;
 import java.util.HashMap;
 
 import jtom.adt.tomsignature.types.*;
-
 import jtom.TomBase;
-import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
-import jtom.tools.SingleLineOutputCode;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
@@ -269,7 +262,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       
       EqualFunctionSymbol(var1@Variable[astType=type1],var2) -> {
           //System.out.println("EqualFunctionSymbol(...," + var2 + ")");
-        buildExpEqualFunctionVarVar(deep, type1, var2);
+        buildExpEqualFunctionVarVar(deep, type1, var1, var2);
         return;
       }
 
@@ -289,7 +282,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       GetSubterm(var@Variable(option1,PositionName(l1),type1),Number(number)) -> {
-        buildExpGetSubterm(deep, var, type1);
+        buildExpGetSubterm(deep, var, type1, number);
         return;
       }
 
@@ -538,7 +531,7 @@ public abstract class TomAbstractGenerator extends TomBase {
                   slotName=slotName,
                   variable=Variable(option1,Name(name1), Type(ASTTomType(type1),tlType@TLType[])),
                   tlCode=tlCode@TL[]] -> {
-        buildGetSlotDecl(deep, tomName, name1, tlType, tlCode);
+        buildGetSlotDecl(deep, tomName, name1, tlType, tlCode, slotName);
         return;
       }
 
@@ -779,7 +772,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 
-  protected void buildExpEqualFunctionVarVar(int deep, TomType type1, TomTerm var2) {
+  protected void buildExpEqualFunctionVarVar(int deep, TomType type1, TomTerm var1, TomTerm var2) {
     output.write("tom_cmp_fun_sym_" + getTomType(type1) + "(");
     output.write("tom_get_fun_sym_" + getTomType(type1) + "(");
     generate(deep,var1);
@@ -813,7 +806,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     output.write(")");
   }
 
-  protected void buildExpGetSubterm(int deep, TomTerm var, TomType type1) {
+  protected void buildExpGetSubterm(int deep, TomTerm var, TomType type1, int number) {
     String s = (String)getSubtermMap.get(type1);
     if(s == null) {
       s = "tom_get_subterm_" + getTomType(type1) + "(";
@@ -929,18 +922,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 
 
-  protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) {
-    String args[];
-    if(strictType || eCode) {
-      args = new String[] { getTLCode(tlType1), name1,
-                            getTLCode(tlType2), name2 };
-    } else {
-          args = new String[] { getTLType(getUniversalType()), name1,
-                                getTLCode(tlType2), name2 };
-    }
-    generateTargetLanguage(deep, genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1,
-                                             args, tlCode));
-  }
+  protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode);
 
   protected void buildIsFsymDecl(int deep, String tomName, String name1, TomType tlType, TargetLanguage tlCode) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
@@ -960,7 +942,7 @@ public abstract class TomAbstractGenerator extends TomBase {
                                          tlCode));
   }
 
-  protected void buildGetSlotDecl(int deep, String tomName, String name1, TomType tlType, TargetLanguage tlCode) {
+  protected void buildGetSlotDecl(int deep, String tomName, String name1, TomType tlType, TargetLanguage tlCode, TomName slotName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
@@ -1102,7 +1084,7 @@ public abstract class TomAbstractGenerator extends TomBase {
                                              },
                                              tlCode));
     
-    generateTargetLanguage(deep, genDeclList(deep, opname, fullListType,fullEltType));
+    generateTargetLanguage(deep, genDeclList(opname, fullListType,fullEltType));
   }
 
   protected void buildGetElementDecl(int deep, String name1, String name2, String type1, TomType tlType1, TargetLanguage tlCode) {
@@ -1168,7 +1150,7 @@ public abstract class TomAbstractGenerator extends TomBase {
                                      argListType, name2
                                    },
                                    tlCode));
-    generateTargetLanguage(deep, genDeclArray(deep, opname, fullArrayType, fullEltType));
+    generateTargetLanguage(deep, genDeclArray(opname, fullArrayType, fullEltType));
   }
 
   protected void buildTypeTermDecl(int deep, TomList declList) {
