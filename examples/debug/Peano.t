@@ -50,7 +50,16 @@ public class Peano {
   
   public ATerm plus(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {
+<<<<<<< Peano.t
+      x,x -> { System.out.println("plip plop"); }
+			//y@x,zero()   -> { System.out.println("The y : " + `y); return `x; }
+      x,zero()   -> { 
+				//System.out.println("The y : " + `y); 
+				return `x; 
+			}
+=======
       x@_,y@zero()   -> { return `x; }
+>>>>>>> 1.6
       x,suc(y) -> { return `suc(plus1(x,y)); }
     }
     return null;

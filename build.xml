@@ -19,13 +19,15 @@
     </description>
     
     <!-- set local properties for this build -->
-	<property file="local.properties"/>
+		<property file="local.properties"/>
 
     <!-- current version of TOM -->
     <property name="version" value="2.0beta"/>
     <!-- place to find the stable sources -->
     <property name="test" location="test"/>
-  	
+		<property name="utils" location="utils"/>
+		<property name="lib" location="lib"/>
+
     <!-- place to find the stable sources -->
     <property name="stable.src" location="stable"/>
   	<property name="stable.build" location="stable/build"/>
@@ -39,15 +41,14 @@
   	<property name="src.runtime" location="src/jtom/runtime/"/>
   	<property name="stable.runtime" location="stable/jtom/runtime/"/>
 
-  		<!--<property name="javacFailOnError" value="false"/>
-	<property name="javacDebugInfo" value="on"/>
-	<property name="javacSource" value="1.3"/>
-	<property name="javacTarget" value="1.2"/>-->
-  	
+  		<!--
+				<property name="javacFailOnError" value="false"/>
+				<property name="javacDebugInfo" value="on"/>
+				<property name="javacSource" value="1.3"/>
+				<property name="javacTarget" value="1.2"/>
+			-->
+			
   	<property name="javacVerbose" value="false"/>
-
-  	<taskdef name="adt" classname="ApigenAntTask"/>
-  	<taskdef name="tom" classname="TomAntTask"/>
   	
   	<target name="preparesrc">
   		<mkdir dir="${src.build}"/>
@@ -67,6 +68,9 @@
   		<fileset dir="${stable.adt}">
   			<include name="*.jar"/>
   		</fileset>
+  		<fileset dir="${lib}">
+  			<include name="*.jar"/>
+  		</fileset>
   	</path>
   	
   	<path id="src.classpath">
@@ -80,30 +84,67 @@
   		<!--<fileset dir="${src.adt}">
   			<include name="*.jar"/>
   		</fileset>-->
+  		<fileset dir="${lib}">
+  			<include name="*.jar"/>
+  		</fileset>
   	</path>
 
-  	<target name="buildtom" depends="buildadt">
-		<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping --noDeclaration">
-			<exclude name="**/TomBase.t"/>
-			<exclude name="**/TomBackQuoteParser.t"/>
-			<exclude name="**/runtime/**/*.t"/>	
-	  	</tom>
-  		<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping">
-  			<include name="**/runtime/**/*.t"/>	
-  			<include name="**/TomBase.t"/>
-			<include name="**/TomBackQuoteParser.t"/>	
-	  	</tom>
-	</target>
+		<!-- builds the custom tasks -->
+		<target name="init">
+			<javac srcdir="${utils}" destdir="${utils}"/>
+
+			<taskdef name="adt" classname="ApigenAntTask">
+				<classpath>
+					<pathelement location="${utils}"/>
+				</classpath>
+			</taskdef>
+			<taskdef name="tom" classname="TomAntTask">
+				<classpath>
+					<pathelement location="${utils}"/>
+				</classpath>
+			</taskdef>
+		</target>
+
+		<target name="buildtom" depends="init, buildadt">
+			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping --noDeclaration">
+				<exclude name="**/TomBase.t"/>
+				<exclude name="**/TomBackQuoteParser.t"/>
+				<exclude name="**/runtime/**/*.t"/>	
+			</tom>
+			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping">
+				<include name="**/runtime/**/*.t"/>	
+				<include name="**/TomBase.t"/>
+				<include name="**/TomBackQuoteParser.t"/>	
+			</tom>
+		</target>
+
+		<target name="buildparser">
+			<javacc 
+			 target="${src.src}/jtom/parser/TomParser.jj"
+			 javacchome="${javaccdir}" /> 
+		</target>
+
+		<target name="check.newer.adt">
+			<uptodate targetfile="${src.adt}/TomSignature.adt" srcfile="${src.adt}/jtom/adt/" property="newer.adt"/>
+			<uptodate targetfile="${src.adt}/TNode.adt" srcfile="${src.adt}/jtom/adt/" property="newer.adt"/>
+			<uptodate targetfile="${src.adt}/Set.adt" srcfile="${src.adt}/jtom/adt/" property="newer.adt"/>
+			<echo>check new ${newer.adt}</echo>
+		</target>
   		
-  	<target name="buildadt" depends="preparesrc">
-		<adt file="${src.adt}/TomSignature.adt" factory="TomSignature" package="jtom.adt" destdir="${src.adt}"/>
-  		<adt file="${src.adt}/TNode.adt" factory="TNode" package="jtom.adt" destdir="${src.adt}"/>
-  		<adt file="${src.adt}/Set.adt" factory="Set" package="jtom.adt" destdir="${src.adt}"/>
+		<!--
+			<target name="buildadt" depends="init, preparesrc" if="newer.adt">
+		-->
+  	<target name="buildadt" depends="init, preparesrc">
+			<adt file="${src.adt}/TomSignature.adt" factory="TomSignature" package="jtom.adt" destdir="${src.adt}"/>
+			<adt file="${src.adt}/TNode.adt" factory="TNode" package="jtom.adt" destdir="${src.adt}"/>
+			<adt file="${src.adt}/Set.adt" factory="Set" package="jtom.adt" destdir="${src.adt}"/>
 	</target>
   	
   	<target name="buildsrc" description="compile the TOM development sources" depends="preparesrc">
+			<antcall target="check.newer.adt"/>
   		<antcall target="buildadt"/>
   		<antcall target="buildtom"/>
+			<antcall target="buildparser"/>
   		<javac srcdir="${src.src}" destdir="${src.build}" verbose="${javacVerbose}">
 			<classpath refid="src.classpath"/>
 		</javac>
@@ -120,15 +161,25 @@
 		</javac>
 	</target>  
 
-  	<target name="stableclean" description="Purges stable files" >
-  		<delete dir="${stable.build}"/>
+	<target name="cleanstable" description="Purges stable files" >
+		<delete dir="${stable.build}"/>
 	</target>
-
-  	<target name="srcclean" description="Purges src files" >
-  		<delete dir="${src.build}"/>
-  		<delete dir="${src.adt}/jtom"/>
+	
+	<target name="cleansrc" description="Purges src files" >
+		<delete dir="${src.build}"/>
+		<delete dir="${src.adt}/jtom"/>
 		<delete> <fileset dir="${src.adt}" includes="**/*.tom"/></delete>
+		<delete> 
+			<fileset dir="${src.src}/jtom/parser">
+				<include name="Token.java"/>
+				<include name="ParseException.java"/>
+				<include name="TokenMgrError.java"/>
+				<include name="TomParser.java"/>
+				<include name="TomParserConstants.java"/>
+				<include name="TomParserTokenManager.java"/>
+			</fileset>
+		</delete>
 	</target>
+	
 
-
-  </project>
+</project>

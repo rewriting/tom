@@ -79,7 +79,6 @@ public class ApigenAntTask extends Task {
             }
             String cmd[] = split(str_command);
             Main.main(cmd);
-            System.out.println("Finished...");
         }
         catch(Exception e)
         {

@@ -62,14 +62,14 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * @author Stefan Bodewig
  * @author <a href="mailto:jayglanville@home.com">J D Glanville</a>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
  * @since Ant 1.1
  *
  * @ant.task category="java"
  */
 
-public class TomAntTask2 extends MatchingTask {
+public class TomAntTask extends MatchingTask {
 
   private static final String FAIL_MSG
   = "Compile failed; see the compiler error output for details.";
