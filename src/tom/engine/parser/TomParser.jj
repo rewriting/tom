@@ -1,6 +1,8 @@
 options {
   JAVA_UNICODE_ESCAPE = true;
   STATIC = false;
+  //DEBUG_PARSER = true;
+//DEBUG_LOOKAHEAD = true;
 }
 
 PARSER_BEGIN(TomParser) 
@@ -727,7 +729,8 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   TomTerm term;
   LinkedList optionList = new LinkedList();
   NameList nameList = null;
-  boolean implicit;
+  boolean implicit = false;
+  boolean withArgs = false;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   if(annotedName!=null) { optionList.add(annotedName); }
 }
@@ -739,6 +742,34 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   | // _
     term = Placeholder(optionList) {return term; }
   | // f(a,...) | f[slot=a,...]
+    (
+      LOOKAHEAD(3)
+      nameList = HeadSymbolList(optionList)
+      [ LOOKAHEAD( {getToken(1).kind==TOM_LPAREN} )
+        implicit = ExplicitTermList(list) { withArgs = true; }
+      | implicit = ImplicitPairList(list) { withArgs = true; } 
+      ]
+      {
+        if(withArgs && list.isEmpty()) {
+            // check if it is a constant
+          optionList.add(tsf().makeOption_Constructor(nameList));
+        }
+        if(implicit) {
+          return tsf().makeTomTerm_RecordAppl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
+        } else {
+          return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
+        }
+      }
+    | implicit = ExplicitTermList(list)
+      {
+        nameList = tsf().makeNameList(tsf().makeTomName_Name(""));
+        optionList.add(ast().makeOriginTracking("",getLine(), currentFile));
+        return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
+      }
+    )
+      
+    /*
+      
     LOOKAHEAD(2)
       (LOOKAHEAD(2)
          [LOOKAHEAD(3) nameList = HeadSymbolList(optionList)] implicit = ExplicitTermList(list)      |
@@ -766,6 +797,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     {
       return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,tsf().makeTomList());
     }
+    */
 }
 
 // return true for implicit mode
@@ -1049,7 +1081,8 @@ boolean XMLChilds(LinkedList list) throws TomException:
   (LOOKAHEAD(2)
    implicit = ImplicitTermList(childs)
      // | implicit = ExplicitTermList(childs)
-   | implicit = XMLTermList(childs) )
+     | implicit = XMLTermList(childs)
+   )
     {
       it = childs.iterator();
       while(it.hasNext()) {
