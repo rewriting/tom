@@ -439,7 +439,7 @@ signature [LinkedList list] throws TomException
     String adtFileName = adtFile.toString();
     try {
       String moduleName = adtFile.getName().substring(0,adtFile.getName().length()-".adt".length());
-      String tomFileName = adtFile.getParentFile().getCanonicalPath() + File.separatorChar + moduleName + File.separatorChar + moduleName + ".tom";
+      String tomFileName = adtFile.getParentFile().getCanonicalPath() + File.separatorChar + moduleName.toLowerCase() + File.separatorChar + moduleName + ".tom";
 
       //System.out.println("tomFileName = " + tomFileName);
       file = new File(tomFileName);
