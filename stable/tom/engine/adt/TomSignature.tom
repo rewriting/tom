@@ -351,11 +351,16 @@
   make(t0) { getTomSignatureFactory().makeOption_Debug(t0)}
 }
 
-%op Option XMLPosition(place:String) {
+%op Option ImplicitXMLAttribut {
   fsym {}
-  is_fsym(t) { (t!= null) && t.isXMLPosition()}
-  get_slot(place,t) { t.getPlace()}
-  make(t0) { getTomSignatureFactory().makeOption_XMLPosition(t0)}
+  is_fsym(t) { (t!= null) && t.isImplicitXMLAttribut()}
+  make() { getTomSignatureFactory().makeOption_ImplicitXMLAttribut()}
+}
+
+%op Option ImplicitXMLChild {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isImplicitXMLChild()}
+  make() { getTomSignatureFactory().makeOption_ImplicitXMLChild()}
 }
 
 %typeterm Expression{
@@ -746,6 +751,24 @@
   make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_Appl(t0, t1, t2)}
 }
 
+%op TomTerm XMLAppl(option:Option, astName:TomName, attrList:TomList, childList:TomList) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isXMLAppl()}
+  get_slot(option,t) { t.getOption()}
+  get_slot(astName,t) { t.getAstName()}
+  get_slot(attrList,t) { t.getAttrList()}
+  get_slot(childList,t) { t.getChildList()}
+  make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_XMLAppl(t0, t1, t2, t3)}
+}
+
+%op TomTerm XMLAttribute(field:TomTerm, value:TomTerm) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isXMLAttribute()}
+  get_slot(field,t) { t.getField()}
+  get_slot(value,t) { t.getValue()}
+  make(t0, t1) { getTomSignatureFactory().makeTomTerm_XMLAttribute(t0, t1)}
+}
+
 %op TomTerm BackQuoteAppl(option:Option, astName:TomName, args:TomList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isBackQuoteAppl()}
@@ -982,30 +1005,6 @@
   get_slot(numberList,t) { t.getNumberList()}
   get_slot(instList,t) { t.getInstList()}
   make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_Automata(t0, t1, t2)}
-}
-
-%op TomTerm MatchXML(docName:String, patternList:TomTerm, option:Option) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isMatchXML()}
-  get_slot(docName,t) { t.getDocName()}
-  get_slot(patternList,t) { t.getPatternList()}
-  get_slot(option,t) { t.getOption()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_MatchXML(t0, t1, t2)}
-}
-
-%op TomTerm BackQuoteXML(xmlTerm:XMLTerm, option:Option) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isBackQuoteXML()}
-  get_slot(xmlTerm,t) { t.getXmlTerm()}
-  get_slot(option,t) { t.getOption()}
-  make(t0, t1) { getTomSignatureFactory().makeTomTerm_BackQuoteXML(t0, t1)}
-}
-
-%op TomTerm XMLTermToTomTerm(xmlTerm:XMLTerm) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isXMLTermToTomTerm()}
-  get_slot(xmlTerm,t) { t.getXmlTerm()}
-  make(t0) { getTomSignatureFactory().makeTomTerm_XMLTermToTomTerm(t0)}
 }
 
 %typeterm TomNumber{
@@ -1289,56 +1288,6 @@
   get_slot(line,t) { t.getLine()}
   get_slot(level,t) { t.getLevel()}
   make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomError_Error(t0, t1, t2, t3)}
-}
-
-%typeterm XMLTerm{
-  implement { XMLTerm}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
-}
-
-%op XMLTerm Element(astName:TomName, args:TomList, option:Option) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isElement()}
-  get_slot(astName,t) { t.getAstName()}
-  get_slot(args,t) { t.getArgs()}
-  get_slot(option,t) { t.getOption()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeXMLTerm_Element(t0, t1, t2)}
-}
-
-%op XMLTerm Attribute(astName:TomName, args:TomList, option:Option) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isAttribute()}
-  get_slot(astName,t) { t.getAstName()}
-  get_slot(args,t) { t.getArgs()}
-  get_slot(option,t) { t.getOption()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeXMLTerm_Attribute(t0, t1, t2)}
-}
-
-%op XMLTerm ReservedWord(astName:TomName, args:TomList, option:Option) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isReservedWord()}
-  get_slot(astName,t) { t.getAstName()}
-  get_slot(args,t) { t.getArgs()}
-  get_slot(option,t) { t.getOption()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeXMLTerm_ReservedWord(t0, t1, t2)}
-}
-
-%op XMLTerm XMLPlaceholder(option:Option) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isXMLPlaceholder()}
-  get_slot(option,t) { t.getOption()}
-  make(t0) { getTomSignatureFactory().makeXMLTerm_XMLPlaceholder(t0)}
-}
-
-%op XMLTerm XMLVariable(astName:TomName, option:Option) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isXMLVariable()}
-  get_slot(astName,t) { t.getAstName()}
-  get_slot(option,t) { t.getOption()}
-  make(t0, t1) { getTomSignatureFactory().makeXMLTerm_XMLVariable(t0, t1)}
 }
 
 %typelist TomList{

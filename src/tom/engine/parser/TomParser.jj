@@ -1005,10 +1005,9 @@ TomTerm XMLChild() throws TomException:
 }
 
 boolean XMLChilds(LinkedList list) throws TomException:
-{// variable declaration
+{
   TomTerm term;
   Token name;
-  XMLTerm term2;
   Option option;
   LinkedList optionList = new LinkedList();
 }

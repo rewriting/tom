@@ -30,7 +30,6 @@ import java.io.*;
 import aterm.*;
 
 public class Tools {
-
   public static void generateOutput(String outputFileName, ATerm ast) {
     try {
       OutputStream output = new FileOutputStream(outputFileName);

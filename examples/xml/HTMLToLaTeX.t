@@ -6,12 +6,12 @@ import jtom.runtime.*;
 
 public class HTMLToLaTeX {
   
-  %include{ NodeTerm.tom }
+  %include{ TNode.tom }
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();
-  private NodeTermFactory getNodeTermFactory() {
-    return xtools.getNodeTermFactory();
+  private TNodeFactory getTNodeFactory() {
+    return xtools.getTNodeFactory();
   }
 
   public static void main (String args[]) {
@@ -51,8 +51,8 @@ public class HTMLToLaTeX {
   private void toLaTeX(ATerm subject) {
     Collect1 collect = new Collect1 () {
 	public boolean apply(ATerm t) {
-	    if (t instanceof NodeTerm) {
-	    %match(NodeTerm t) {
+	    if (t instanceof TNode) {
+	    %match(TNode t) {
 	      <html><head>h*</head> <body>b*</body></html> -> {
                   //System.out.println("t = " + t);
                   //System.out.println("h = " + h);
@@ -298,8 +298,8 @@ public class HTMLToLaTeX {
   private int tableMaxCol(ATerm t) {
     Collect1 collect = new Collect1 () {
 	public boolean apply(ATerm t) {
-	    if (t instanceof NodeTerm) {
-	      %match(NodeTerm t) {
+	    if (t instanceof TNode) {
+	      %match(TNode t) {
 		<tr>data*</tr> -> {
 		  tableMaxCol(data);
 		  max = (max<currentMax ? currentMax : max);

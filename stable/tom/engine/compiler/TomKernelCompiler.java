@@ -402,19 +402,13 @@ public class TomKernelCompiler extends TomBase {
        {  TomTerm tom_match6_1 = null; tom_match6_1 = ( TomTerm) term;_match6_pattern1: {  OptionList optionList = null;  TomType termType = null;  TomTerm var = null; if(tom_is_fun_sym_Variable(tom_match6_1)) {  Option tom_match6_1_1 = null;  TomType tom_match6_1_3 = null; tom_match6_1_1 = ( Option) tom_get_slot_Variable_option(tom_match6_1); tom_match6_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match6_1); var = ( TomTerm) tom_match6_1; if(tom_is_fun_sym_Option(tom_match6_1_1)) {  OptionList tom_match6_1_1_1 = null; tom_match6_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match6_1_1); optionList = ( OptionList) tom_match6_1_1_1; termType = ( TomType) tom_match6_1_3;
 
  
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
           Expression source = tom_make_TomTermToExpression(tom_make_Variable(option(),tom_make_PositionName(path),termType)) ;
-          result = appendInstruction(tom_make_Assign(var,source) ,result);
-
-          if(annotedVariable != null) {
-            result = appendInstruction(tom_make_Assign(annotedVariable,source) ,result);
-          }
+          result = addAnnotedAssignement(optionList, source, var, result);
           if(gsa) {
             result = appendInstruction(tom_make_Action(actionList) ,result);
           }
-          
           break matchBlock; 
-         } }}_match6_pattern2: {  TomTerm var = null;  OptionList optionList = null;  TomType termType = null; if(tom_is_fun_sym_UnamedVariable(tom_match6_1)) {  Option tom_match6_1_1 = null;  TomType tom_match6_1_2 = null; tom_match6_1_1 = ( Option) tom_get_slot_UnamedVariable_option(tom_match6_1); tom_match6_1_2 = ( TomType) tom_get_slot_UnamedVariable_astType(tom_match6_1); var = ( TomTerm) tom_match6_1; if(tom_is_fun_sym_Option(tom_match6_1_1)) {  OptionList tom_match6_1_1_1 = null; tom_match6_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match6_1_1); optionList = ( OptionList) tom_match6_1_1_1; termType = ( TomType) tom_match6_1_2;            TomTerm annotedVariable = getAnnotedVariable(optionList);           Expression source = tom_make_TomTermToExpression(tom_make_Variable(option(),tom_make_PositionName(path),termType)) ;           result = appendInstruction(tom_make_Assign(var,source) ,result);            if(annotedVariable != null) {             result = appendInstruction(tom_make_Assign(annotedVariable,source) ,result);           }           if(gsa) {             result = appendInstruction(tom_make_Action(actionList) ,result);           }                      break matchBlock;           } }}_match6_pattern3: {  String tomName = null;  TomList termArgs = null;  OptionList optionList = null; if(tom_is_fun_sym_Appl(tom_match6_1)) {  Option tom_match6_1_1 = null;  TomName tom_match6_1_2 = null;  TomList tom_match6_1_3 = null; tom_match6_1_1 = ( Option) tom_get_slot_Appl_option(tom_match6_1); tom_match6_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match6_1); tom_match6_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match6_1); if(tom_is_fun_sym_Option(tom_match6_1_1)) {  OptionList tom_match6_1_1_1 = null; tom_match6_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match6_1_1); optionList = ( OptionList) tom_match6_1_1_1; if(tom_is_fun_sym_Name(tom_match6_1_2)) {  String tom_match6_1_2_1 = null; tom_match6_1_2_1 = ( String) tom_get_slot_Name_string(tom_match6_1_2); tomName = ( String) tom_match6_1_2_1; termArgs = ( TomList) tom_match6_1_3;
+         } }}_match6_pattern2: {  TomTerm var = null;  OptionList optionList = null;  TomType termType = null; if(tom_is_fun_sym_UnamedVariable(tom_match6_1)) {  Option tom_match6_1_1 = null;  TomType tom_match6_1_2 = null; tom_match6_1_1 = ( Option) tom_get_slot_UnamedVariable_option(tom_match6_1); tom_match6_1_2 = ( TomType) tom_get_slot_UnamedVariable_astType(tom_match6_1); var = ( TomTerm) tom_match6_1; if(tom_is_fun_sym_Option(tom_match6_1_1)) {  OptionList tom_match6_1_1_1 = null; tom_match6_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match6_1_1); optionList = ( OptionList) tom_match6_1_1_1; termType = ( TomType) tom_match6_1_2;            Expression source = tom_make_TomTermToExpression(tom_make_Variable(option(),tom_make_PositionName(path),termType)) ;           result = addAnnotedAssignement(optionList, source, var, result);           if(gsa) {             result = appendInstruction(tom_make_Action(actionList) ,result);           }           break matchBlock;           } }}_match6_pattern3: {  OptionList optionList = null;  TomList termArgs = null;  String tomName = null; if(tom_is_fun_sym_Appl(tom_match6_1)) {  Option tom_match6_1_1 = null;  TomName tom_match6_1_2 = null;  TomList tom_match6_1_3 = null; tom_match6_1_1 = ( Option) tom_get_slot_Appl_option(tom_match6_1); tom_match6_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match6_1); tom_match6_1_3 = ( TomList) tom_get_slot_Appl_args(tom_match6_1); if(tom_is_fun_sym_Option(tom_match6_1_1)) {  OptionList tom_match6_1_1_1 = null; tom_match6_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match6_1_1); optionList = ( OptionList) tom_match6_1_1_1; if(tom_is_fun_sym_Name(tom_match6_1_2)) {  String tom_match6_1_2_1 = null; tom_match6_1_2_1 = ( String) tom_get_slot_Name_string(tom_match6_1_2); tomName = ( String) tom_match6_1_2_1; termArgs = ( TomList) tom_match6_1_3;
 
  
           TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
@@ -516,6 +510,18 @@ public class TomKernelCompiler extends TomBase {
       //System.out.println("*** result = " + result);
     return result;
   }
+
+  private TomList addAnnotedAssignement(OptionList optionList,
+                                        Expression source,
+                                        TomTerm dest,
+                                        TomList result) {
+    TomTerm annotedVariable = getAnnotedVariable(optionList);
+    if(annotedVariable != null) {
+      result = appendInstruction(tom_make_Assign(annotedVariable,source) ,result);
+    }
+    result = appendInstruction(tom_make_Assign(dest,source) ,result);
+    return result;
+  }
   
   TomList genListMatchingAutomata(TomSymbol symbol,
                                   TomList termList,
@@ -555,8 +561,6 @@ public class TomKernelCompiler extends TomBase {
       //System.out.println("*** genListMatchingAutomata"); 
     matchBlock: {
        {  TomList tom_match8_1 = null; tom_match8_1 = ( TomList) termList;_match8_pattern1: { if(tom_is_fun_sym_emptyTomList(tom_match8_1)) {
-
-
  
             /*
              * generate:
@@ -576,82 +580,48 @@ public class TomKernelCompiler extends TomBase {
             result = appendInstruction(test,result);
             break matchBlock;
           }
-         }}_match8_pattern2: {  TomTerm var = null;  OptionList optionList = null;  TomType termType = null;  TomList termTail = null; if(tom_is_fun_sym_manyTomList(tom_match8_1)) {  TomTerm tom_match8_1_1 = null;  TomList tom_match8_1_2 = null; tom_match8_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match8_1); tom_match8_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_Variable(tom_match8_1_1)) {  Option tom_match8_1_1_1 = null;  TomType tom_match8_1_1_3 = null; tom_match8_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match8_1_1); tom_match8_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match8_1_1); var = ( TomTerm) tom_match8_1_1; if(tom_is_fun_sym_Option(tom_match8_1_1_1)) {  OptionList tom_match8_1_1_1_1 = null; tom_match8_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match8_1_1_1); optionList = ( OptionList) tom_match8_1_1_1_1; termType = ( TomType) tom_match8_1_1_3; termTail = ( TomList) tom_match8_1_2;
+         }}_match8_pattern2: {  OptionList optionList = null;  TomTerm var = null;  TomType termType = null;  TomList termTail = null; if(tom_is_fun_sym_manyTomList(tom_match8_1)) {  TomTerm tom_match8_1_1 = null;  TomList tom_match8_1_2 = null; tom_match8_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match8_1); tom_match8_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_Variable(tom_match8_1_1)) {  Option tom_match8_1_1_1 = null;  TomType tom_match8_1_1_3 = null; tom_match8_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match8_1_1); tom_match8_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match8_1_1); var = ( TomTerm) tom_match8_1_1; if(tom_is_fun_sym_Option(tom_match8_1_1_1)) {  OptionList tom_match8_1_1_1_1 = null; tom_match8_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match8_1_1_1); optionList = ( OptionList) tom_match8_1_1_1_1; termType = ( TomType) tom_match8_1_1_3; termTail = ( TomList) tom_match8_1_2;
 
 
  
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
+            /*
+             * generate:
+             * ---------
+             * if(!IS_EMPTY_TomList(subjectList)) {
+             *   TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);
+             *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);
+             *   ...
+             * }
+             */            
+          Expression source = tom_make_GetHead(subjectListName) ;
+          TomList assignementList = empty();
+          assignementList = addAnnotedAssignement(optionList, source, var, assignementList);
+          assignementList = appendInstruction(tom_make_Assign(subjectListName,tom_make_GetTail(subjectListName)) ,assignementList);
+          TomList succesList;
           if(termTail.isEmpty()) {
               /*
-               * generate:
-               * ---------
-               * if(!IS_EMPTY_TomList(subjectList)) {
-               *   TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);
-               *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);
                *   if(IS_EMPTY_TomList(subjectList)) {
                *     ...
                *   }
-               * }
-               */            
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;
-            TomList declarationList = empty();
-            TomList assignementList = empty();
-
-            Expression source = tom_make_GetHead(subjectListName) ;
-            if(annotedVariable != null) {
-              assignementList = appendInstruction(tom_make_Assign(annotedVariable,source) ,assignementList);
-            }
-            assignementList = appendInstruction(tom_make_Assign(var,source) ,assignementList);
-            assignementList = appendInstruction(tom_make_Assign(subjectListName,tom_make_GetTail(subjectListName)) ,assignementList);
-            
+               */
             if(generateSemanticAction) {
               subList = appendInstruction(tom_make_Action(actionList) ,subList);
             }
-            
-            Expression cond = tom_make_IsEmptyList(subjectListName) ;
-            
-            Instruction test = tom_make_IfThenElse(cond,subList,empty()) ;
-            TomList succesList = appendInstruction(test,concat(declarationList,assignementList));
-            
-            cond = tom_make_Not(tom_make_IsEmptyList(subjectListName)) ;
-            test = tom_make_IfThenElse(cond,succesList,empty()) ;
-            result = appendInstruction(test,result);
-            break matchBlock;
+            Instruction test = tom_make_IfThenElse(tom_make_IsEmptyList(subjectListName),subList,empty())
+ ;
+            succesList = appendInstruction(test,assignementList);
           } else {
-              /*
-               * generate:
-               * ---------
-               * if(!IS_EMPTY_TomList(subjectList)) {
-               *   TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);
-               *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);
-               *   ...
-               * }
-               */
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;
-            
-            TomList declarationList = empty();
-            TomList assignementList = empty();
-
-            Expression source = tom_make_GetHead(subjectListName) ;
-            if(annotedVariable != null) {
-              assignementList = appendInstruction(tom_make_Assign(annotedVariable,source) ,assignementList);
-            }
-            assignementList = appendInstruction(tom_make_Assign(var,source) ,assignementList);
-            assignementList = appendInstruction(tom_make_Assign(subjectListName,tom_make_GetTail(subjectListName)) ,assignementList);
-            
-            TomList succesList = concat(concat(declarationList,assignementList),subList);
-            Expression cond = tom_make_Not(tom_make_IsEmptyList(subjectListName)) ;
-            Instruction test = tom_make_IfThenElse(cond,succesList,empty()) ;
-            result = appendInstruction(test,result);
-            break matchBlock;
+            succesList = concat(assignementList,subList);
           }
-         } } }}_match8_pattern3: {  TomList termTail = null;  TomTerm var = null;  OptionList optionList = null;  TomType termType = null; if(tom_is_fun_sym_manyTomList(tom_match8_1)) {  TomTerm tom_match8_1_1 = null;  TomList tom_match8_1_2 = null; tom_match8_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match8_1); tom_match8_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_UnamedVariable(tom_match8_1_1)) {  Option tom_match8_1_1_1 = null;  TomType tom_match8_1_1_2 = null; tom_match8_1_1_1 = ( Option) tom_get_slot_UnamedVariable_option(tom_match8_1_1); tom_match8_1_1_2 = ( TomType) tom_get_slot_UnamedVariable_astType(tom_match8_1_1); var = ( TomTerm) tom_match8_1_1; if(tom_is_fun_sym_Option(tom_match8_1_1_1)) {  OptionList tom_match8_1_1_1_1 = null; tom_match8_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match8_1_1_1); optionList = ( OptionList) tom_match8_1_1_1_1; termType = ( TomType) tom_match8_1_1_2; termTail = ( TomList) tom_match8_1_2;            TomTerm annotedVariable = getAnnotedVariable(optionList);           if(termTail.isEmpty()) {               /*                * generate:                * ---------                * if(!IS_EMPTY_TomList(subjectList)) {                *   TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);                *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);                *   if(IS_EMPTY_TomList(subjectList)) {                *     ...                *   }                * }                */                         TomNumberList path = appendNumber(indexTerm,oldPath);             TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;             TomList declarationList = empty();             TomList assignementList = empty();              Expression source = tom_make_GetHead(subjectListName) ;             if(annotedVariable != null) {               assignementList = appendInstruction(tom_make_Assign(annotedVariable,source) ,assignementList);             }             assignementList = appendInstruction(tom_make_Assign(var,source) ,assignementList);             assignementList = appendInstruction(tom_make_Assign(subjectListName,tom_make_GetTail(subjectListName)) ,assignementList);                          if(generateSemanticAction) {               subList = appendInstruction(tom_make_Action(actionList) ,subList);             }                          Expression cond = tom_make_IsEmptyList(subjectListName) ;                          Instruction test = tom_make_IfThenElse(cond,subList,empty()) ;             TomList succesList = appendInstruction(test,concat(declarationList,assignementList));                          cond = tom_make_Not(tom_make_IsEmptyList(subjectListName)) ;             test = tom_make_IfThenElse(cond,succesList,empty()) ;             result = appendInstruction(test,result);             break matchBlock;           } else {               /*                * generate:                * ---------                * if(!IS_EMPTY_TomList(subjectList)) {                *   TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);                *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);                *   ...                * }                */             TomNumberList path = appendNumber(indexTerm,oldPath);             TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;                          TomList declarationList = empty();             TomList assignementList = empty();              Expression source = tom_make_GetHead(subjectListName) ;             if(annotedVariable != null) {               assignementList = appendInstruction(tom_make_Assign(annotedVariable,source) ,assignementList);             }             assignementList = appendInstruction(tom_make_Assign(var,source) ,assignementList);             assignementList = appendInstruction(tom_make_Assign(subjectListName,tom_make_GetTail(subjectListName)) ,assignementList);                          TomList succesList = concat(concat(declarationList,assignementList),subList);             Expression cond = tom_make_Not(tom_make_IsEmptyList(subjectListName)) ;             Instruction test = tom_make_IfThenElse(cond,succesList,empty()) ;             result = appendInstruction(test,result);             break matchBlock;           }          } } }}_match8_pattern4: {  TomTerm var = null;  TomType termType = null;  TomList termTail = null;  OptionList optionList = null; if(tom_is_fun_sym_manyTomList(tom_match8_1)) {  TomTerm tom_match8_1_1 = null;  TomList tom_match8_1_2 = null; tom_match8_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match8_1); tom_match8_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_VariableStar(tom_match8_1_1)) {  Option tom_match8_1_1_1 = null;  TomType tom_match8_1_1_3 = null; tom_match8_1_1_1 = ( Option) tom_get_slot_VariableStar_option(tom_match8_1_1); tom_match8_1_1_3 = ( TomType) tom_get_slot_VariableStar_astType(tom_match8_1_1); var = ( TomTerm) tom_match8_1_1; if(tom_is_fun_sym_Option(tom_match8_1_1_1)) {  OptionList tom_match8_1_1_1_1 = null; tom_match8_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match8_1_1_1); optionList = ( OptionList) tom_match8_1_1_1_1; termType = ( TomType) tom_match8_1_1_3; termTail = ( TomList) tom_match8_1_2;
+          
+          Instruction test = tom_make_IfThenElse(tom_make_Not(tom_make_IsEmptyList(subjectListName)),succesList,empty())
+ ;
+          result = appendInstruction(test,result);
+          break matchBlock;
+         } } }}_match8_pattern3: {  TomTerm var = null;  TomList termTail = null;  OptionList optionList = null;  TomType termType = null; if(tom_is_fun_sym_manyTomList(tom_match8_1)) {  TomTerm tom_match8_1_1 = null;  TomList tom_match8_1_2 = null; tom_match8_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match8_1); tom_match8_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_UnamedVariable(tom_match8_1_1)) {  Option tom_match8_1_1_1 = null;  TomType tom_match8_1_1_2 = null; tom_match8_1_1_1 = ( Option) tom_get_slot_UnamedVariable_option(tom_match8_1_1); tom_match8_1_1_2 = ( TomType) tom_get_slot_UnamedVariable_astType(tom_match8_1_1); var = ( TomTerm) tom_match8_1_1; if(tom_is_fun_sym_Option(tom_match8_1_1_1)) {  OptionList tom_match8_1_1_1_1 = null; tom_match8_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match8_1_1_1); optionList = ( OptionList) tom_match8_1_1_1_1; termType = ( TomType) tom_match8_1_1_2; termTail = ( TomList) tom_match8_1_2;              /*              * generate:              * ---------              * if(!IS_EMPTY_TomList(subjectList)) {              *   TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);              *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);              *   ...              * }              */                       Expression source = tom_make_GetHead(subjectListName) ;           TomList assignementList = empty();           assignementList = addAnnotedAssignement(optionList, source, var, assignementList);           assignementList = appendInstruction(tom_make_Assign(subjectListName,tom_make_GetTail(subjectListName)) ,assignementList);           TomList succesList;           if(termTail.isEmpty()) {               /*                *   if(IS_EMPTY_TomList(subjectList)) {                *     ...                *   }                */             if(generateSemanticAction) {               subList = appendInstruction(tom_make_Action(actionList) ,subList);             }             Instruction test = tom_make_IfThenElse(tom_make_IsEmptyList(subjectListName),subList,empty()) ;             succesList = appendInstruction(test,assignementList);           } else {             succesList = concat(assignementList,subList);           }                      Instruction test = tom_make_IfThenElse(tom_make_Not(tom_make_IsEmptyList(subjectListName)),succesList,empty()) ;           result = appendInstruction(test,result);           break matchBlock;          } } }}_match8_pattern4: {  TomList termTail = null;  TomType termType = null;  OptionList optionList = null;  TomTerm var = null; if(tom_is_fun_sym_manyTomList(tom_match8_1)) {  TomTerm tom_match8_1_1 = null;  TomList tom_match8_1_2 = null; tom_match8_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match8_1); tom_match8_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_VariableStar(tom_match8_1_1)) {  Option tom_match8_1_1_1 = null;  TomType tom_match8_1_1_3 = null; tom_match8_1_1_1 = ( Option) tom_get_slot_VariableStar_option(tom_match8_1_1); tom_match8_1_1_3 = ( TomType) tom_get_slot_VariableStar_astType(tom_match8_1_1); var = ( TomTerm) tom_match8_1_1; if(tom_is_fun_sym_Option(tom_match8_1_1_1)) {  OptionList tom_match8_1_1_1_1 = null; tom_match8_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match8_1_1_1); optionList = ( OptionList) tom_match8_1_1_1_1; termType = ( TomType) tom_match8_1_1_3; termTail = ( TomList) tom_match8_1_2;
 
 
  
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -662,14 +632,9 @@ public class TomKernelCompiler extends TomBase {
             if(generateSemanticAction) {
               subList = appendInstruction(tom_make_Action(actionList) ,subList);
             }
-            
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;
             Expression source = tom_make_TomTermToExpression(subjectListName) ;
-            if(annotedVariable != null) {
-              result = appendInstruction(tom_make_Assign(annotedVariable,source) ,result);
-            }
-            result = concat(appendInstruction(tom_make_Assign(var,source) ,result),subList);
+            result = addAnnotedAssignement(optionList, source, var, result);
+            result = concat(result,subList);
             break matchBlock;
           } else {
               /*
@@ -697,15 +662,9 @@ public class TomKernelCompiler extends TomBase {
             assignementList = appendInstruction(tom_make_Assign(variableBeginAST,tom_make_TomTermToExpression(subjectListName)) ,assignementList);
             assignementList = appendInstruction(tom_make_Assign(variableEndAST,tom_make_TomTermToExpression(subjectListName)) ,assignementList);
             
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;
-            TomList doList = empty();
             Expression source = tom_make_GetSliceList(symbol .getAstName(),variableBeginAST,variableEndAST) ;
-            if(annotedVariable != null) {
-              doList = appendInstruction(tom_make_Assign(annotedVariable,source) ,doList);
-            }
-            doList = appendInstruction(tom_make_Assign(var,source) ,doList);
-            
+            TomList doList = empty();
+            doList = addAnnotedAssignement(optionList, source, var, doList);
             doList = concat(doList,subList);
 
             Expression cond1 = tom_make_Not(tom_make_IsEmptyList(variableEndAST)) ;
@@ -722,7 +681,7 @@ public class TomKernelCompiler extends TomBase {
 
           }
 
-         } } }}_match8_pattern5: {  OptionList optionList = null;  TomList termTail = null;  TomType termType = null;  TomTerm var = null; if(tom_is_fun_sym_manyTomList(tom_match8_1)) {  TomTerm tom_match8_1_1 = null;  TomList tom_match8_1_2 = null; tom_match8_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match8_1); tom_match8_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match8_1_1)) {  Option tom_match8_1_1_1 = null;  TomType tom_match8_1_1_2 = null; tom_match8_1_1_1 = ( Option) tom_get_slot_UnamedVariableStar_option(tom_match8_1_1); tom_match8_1_1_2 = ( TomType) tom_get_slot_UnamedVariableStar_astType(tom_match8_1_1); var = ( TomTerm) tom_match8_1_1; if(tom_is_fun_sym_Option(tom_match8_1_1_1)) {  OptionList tom_match8_1_1_1_1 = null; tom_match8_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match8_1_1_1); optionList = ( OptionList) tom_match8_1_1_1_1; termType = ( TomType) tom_match8_1_1_2; termTail = ( TomList) tom_match8_1_2;            TomTerm annotedVariable = getAnnotedVariable(optionList);           if(termTail.isEmpty()) {               /*                * generate:                * ---------                * E_n = subjectList;                * ...                */             if(generateSemanticAction) {               subList = appendInstruction(tom_make_Action(actionList) ,subList);             }                          TomNumberList path = appendNumber(indexTerm,oldPath);             TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;             Expression source = tom_make_TomTermToExpression(subjectListName) ;             if(annotedVariable != null) {               result = appendInstruction(tom_make_Assign(annotedVariable,source) ,result);             }             result = concat(appendInstruction(tom_make_Assign(var,source) ,result),subList);             break matchBlock;           } else {               /*                * generate:                * ---------                * TomList begin_i = subjectList;                * TomList end_i   = subjectList;                * do {                *   * SUBSTITUTION: E_i                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);                *   ...                *   if(!IS_EMPTY_TomList(end_i) )                *     end_i = (TomList) GET_TAIL_TomList(end_i);                *   subjectList = end_i;                * } while( !IS_EMPTY_TomList(subjectList) )                */             TomNumberList pathBegin = (TomNumberList) oldPath.append(tom_make_Begin(makeNumber(indexTerm)) );             TomNumberList pathEnd = (TomNumberList) oldPath.append(tom_make_End(makeNumber(indexTerm)) );             TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),termType) ;             TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),termType) ;             TomList declarationList = empty();             declarationList = append(tom_make_Declaration(variableBeginAST) ,declarationList);             declarationList = append(tom_make_Declaration(variableEndAST) ,declarationList);             TomList assignementList = empty();             assignementList = appendInstruction(tom_make_Assign(variableBeginAST,tom_make_TomTermToExpression(subjectListName)) ,assignementList);             assignementList = appendInstruction(tom_make_Assign(variableEndAST,tom_make_TomTermToExpression(subjectListName)) ,assignementList);                          TomNumberList path = appendNumber(indexTerm,oldPath);             TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;             TomList doList = empty();             Expression source = tom_make_GetSliceList(symbol .getAstName(),variableBeginAST,variableEndAST) ;             if(annotedVariable != null) {               doList = appendInstruction(tom_make_Assign(annotedVariable,source) ,doList);             }             doList = appendInstruction(tom_make_Assign(var,source) ,doList);                          doList = concat(doList,subList);              Expression cond1 = tom_make_Not(tom_make_IsEmptyList(variableEndAST)) ;             Instruction test1 = tom_make_IfThenElse(cond1,cons(tom_make_InstructionToTomTerm(tom_make_Assign(variableEndAST,tom_make_GetTail(variableEndAST))), empty()),empty()) ;             doList = appendInstruction(test1,doList);             doList = appendInstruction(tom_make_Assign(subjectListName,tom_make_TomTermToExpression(variableEndAST)) ,doList);                          Expression cond2 = tom_make_Not(tom_make_IsEmptyList(subjectListName)) ;             Instruction doWhile = tom_make_DoWhile(doList,cond2) ;                          result = appendInstruction(doWhile,concat(concat(declarationList,result),assignementList));              break matchBlock;            }           } } }}_match8_pattern6: {
+         } } }}_match8_pattern5: {  TomTerm var = null;  TomType termType = null;  OptionList optionList = null;  TomList termTail = null; if(tom_is_fun_sym_manyTomList(tom_match8_1)) {  TomTerm tom_match8_1_1 = null;  TomList tom_match8_1_2 = null; tom_match8_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match8_1); tom_match8_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match8_1_1)) {  Option tom_match8_1_1_1 = null;  TomType tom_match8_1_1_2 = null; tom_match8_1_1_1 = ( Option) tom_get_slot_UnamedVariableStar_option(tom_match8_1_1); tom_match8_1_1_2 = ( TomType) tom_get_slot_UnamedVariableStar_astType(tom_match8_1_1); var = ( TomTerm) tom_match8_1_1; if(tom_is_fun_sym_Option(tom_match8_1_1_1)) {  OptionList tom_match8_1_1_1_1 = null; tom_match8_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match8_1_1_1); optionList = ( OptionList) tom_match8_1_1_1_1; termType = ( TomType) tom_match8_1_1_2; termTail = ( TomList) tom_match8_1_2;            if(termTail.isEmpty()) {               /*                * generate:                * ---------                * E_n = subjectList;                * ...                */             if(generateSemanticAction) {               subList = appendInstruction(tom_make_Action(actionList) ,subList);             }             Expression source = tom_make_TomTermToExpression(subjectListName) ;             result = addAnnotedAssignement(optionList, source, var, result);             result = concat(result,subList);             break matchBlock;           } else {               /*                * generate:                * ---------                * TomList begin_i = subjectList;                * TomList end_i   = subjectList;                * do {                *   * SUBSTITUTION: E_i                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);                *   ...                *   if(!IS_EMPTY_TomList(end_i) )                *     end_i = (TomList) GET_TAIL_TomList(end_i);                *   subjectList = end_i;                * } while( !IS_EMPTY_TomList(subjectList) )                */             TomNumberList pathBegin = (TomNumberList) oldPath.append(tom_make_Begin(makeNumber(indexTerm)) );             TomNumberList pathEnd = (TomNumberList) oldPath.append(tom_make_End(makeNumber(indexTerm)) );             TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),termType) ;             TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),termType) ;             TomList declarationList = empty();             declarationList = append(tom_make_Declaration(variableBeginAST) ,declarationList);             declarationList = append(tom_make_Declaration(variableEndAST) ,declarationList);             TomList assignementList = empty();             assignementList = appendInstruction(tom_make_Assign(variableBeginAST,tom_make_TomTermToExpression(subjectListName)) ,assignementList);             assignementList = appendInstruction(tom_make_Assign(variableEndAST,tom_make_TomTermToExpression(subjectListName)) ,assignementList);                          Expression source = tom_make_GetSliceList(symbol .getAstName(),variableBeginAST,variableEndAST) ;             TomList doList = empty();             doList = addAnnotedAssignement(optionList, source, var, doList);             doList = concat(doList,subList);              Expression cond1 = tom_make_Not(tom_make_IsEmptyList(variableEndAST)) ;             Instruction test1 = tom_make_IfThenElse(cond1,cons(tom_make_InstructionToTomTerm(tom_make_Assign(variableEndAST,tom_make_GetTail(variableEndAST))), empty()),empty()) ;             doList = appendInstruction(test1,doList);             doList = appendInstruction(tom_make_Assign(subjectListName,tom_make_TomTermToExpression(variableEndAST)) ,doList);                          Expression cond2 = tom_make_Not(tom_make_IsEmptyList(subjectListName)) ;             Instruction doWhile = tom_make_DoWhile(doList,cond2) ;                          result = appendInstruction(doWhile,concat(concat(declarationList,result),assignementList));              break matchBlock;            }           } } }}_match8_pattern6: {
 
  
           System.out.println("GenListMatchingAutomata strange termList: " + termList);
@@ -789,11 +748,10 @@ public class TomKernelCompiler extends TomBase {
       //System.out.println("\ntermList = " + termList);
       //System.out.println("*** genArrayMatchingAutomata");
     matchBlock: {
-       {  TomList tom_match10_1 = null; tom_match10_1 = ( TomList) termList;_match10_pattern1: {  TomType termType = null;  TomTerm var = null;  OptionList optionList = null;  TomList termTail = null; if(tom_is_fun_sym_manyTomList(tom_match10_1)) {  TomTerm tom_match10_1_1 = null;  TomList tom_match10_1_2 = null; tom_match10_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match10_1); tom_match10_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match10_1); if(tom_is_fun_sym_Variable(tom_match10_1_1)) {  Option tom_match10_1_1_1 = null;  TomType tom_match10_1_1_3 = null; tom_match10_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match10_1_1); tom_match10_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match10_1_1); var = ( TomTerm) tom_match10_1_1; if(tom_is_fun_sym_Option(tom_match10_1_1_1)) {  OptionList tom_match10_1_1_1_1 = null; tom_match10_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1_1); optionList = ( OptionList) tom_match10_1_1_1_1; termType = ( TomType) tom_match10_1_1_3; termTail = ( TomList) tom_match10_1_2;
+       {  TomList tom_match10_1 = null; tom_match10_1 = ( TomList) termList;_match10_pattern1: {  TomTerm var = null;  TomType termType = null;  OptionList optionList = null;  TomList termTail = null; if(tom_is_fun_sym_manyTomList(tom_match10_1)) {  TomTerm tom_match10_1_1 = null;  TomList tom_match10_1_2 = null; tom_match10_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match10_1); tom_match10_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match10_1); if(tom_is_fun_sym_Variable(tom_match10_1_1)) {  Option tom_match10_1_1_1 = null;  TomType tom_match10_1_1_3 = null; tom_match10_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match10_1_1); tom_match10_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match10_1_1); var = ( TomTerm) tom_match10_1_1; if(tom_is_fun_sym_Option(tom_match10_1_1_1)) {  OptionList tom_match10_1_1_1_1 = null; tom_match10_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1_1); optionList = ( OptionList) tom_match10_1_1_1_1; termType = ( TomType) tom_match10_1_1_3; termTail = ( TomList) tom_match10_1_2;
 
 
  
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -806,18 +764,9 @@ public class TomKernelCompiler extends TomBase {
                *   }
                * }
                */
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;
-            
-            TomList declarationList = empty();
-            TomList assignementList = empty();
-
             Expression source = tom_make_GetElement(subjectListName,subjectListIndex) ;
-            if(annotedVariable != null) {
-              assignementList = appendInstruction(tom_make_Assign(annotedVariable,source) ,assignementList);
-            }
-
-            assignementList = appendInstruction(tom_make_Assign(var,source) ,assignementList);
+            TomList assignementList = empty();
+            assignementList = addAnnotedAssignement(optionList, source, var, assignementList);
             assignementList = appendInstruction(tom_make_Increment(subjectListIndex) ,assignementList);
             
             if(generateSemanticAction) {
@@ -826,7 +775,7 @@ public class TomKernelCompiler extends TomBase {
             
             Expression cond = tom_make_IsEmptyArray(subjectListName,subjectListIndex) ;
             Instruction test = tom_make_IfThenElse(cond,subList,empty()) ;
-            TomList succesList = appendInstruction(test,concat(declarationList,assignementList));
+            TomList succesList = appendInstruction(test,assignementList);
             
             cond = tom_make_Not(tom_make_IsEmptyArray(subjectListName,subjectListIndex)) ;
             test = tom_make_IfThenElse(cond,succesList,empty()) ;
@@ -842,32 +791,24 @@ public class TomKernelCompiler extends TomBase {
                *   ...
                * }
                */
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;
-            
-            TomList declarationList = empty();
             TomList assignementList = empty();
             TomList succesList      = empty();
 
             Expression source = tom_make_GetElement(subjectListName,subjectListIndex) ;
-            if(annotedVariable != null) {
-              assignementList = appendInstruction(tom_make_Assign(annotedVariable,source) ,assignementList);
-            }
-            assignementList = appendInstruction(tom_make_Assign(var,source) ,assignementList);
+            assignementList = addAnnotedAssignement(optionList, source, var, assignementList);
             assignementList = appendInstruction(tom_make_Increment(subjectListIndex) ,assignementList);
             
-            succesList = concat(concat(concat(succesList,declarationList),assignementList),subList);
+            succesList = concat(concat(succesList,assignementList),subList);
             Expression cond = tom_make_Not(tom_make_IsEmptyArray(subjectListName,subjectListIndex)) ;
             Instruction test = tom_make_IfThenElse(cond,succesList,empty()) ;
             
             result = appendInstruction(test,result);
             break matchBlock;
           }
-         } } }}_match10_pattern2: {  TomTerm var = null;  TomList termTail = null;  OptionList optionList = null;  TomType termType = null; if(tom_is_fun_sym_manyTomList(tom_match10_1)) {  TomTerm tom_match10_1_1 = null;  TomList tom_match10_1_2 = null; tom_match10_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match10_1); tom_match10_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match10_1); if(tom_is_fun_sym_UnamedVariable(tom_match10_1_1)) {  Option tom_match10_1_1_1 = null;  TomType tom_match10_1_1_2 = null; tom_match10_1_1_1 = ( Option) tom_get_slot_UnamedVariable_option(tom_match10_1_1); tom_match10_1_1_2 = ( TomType) tom_get_slot_UnamedVariable_astType(tom_match10_1_1); var = ( TomTerm) tom_match10_1_1; if(tom_is_fun_sym_Option(tom_match10_1_1_1)) {  OptionList tom_match10_1_1_1_1 = null; tom_match10_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1_1); optionList = ( OptionList) tom_match10_1_1_1_1; termType = ( TomType) tom_match10_1_1_2; termTail = ( TomList) tom_match10_1_2;            TomTerm annotedVariable = getAnnotedVariable(optionList);           if(termTail.isEmpty()) {               /*                * generate:                * ---------                * if(_match1_1_index_1 < GET_SIZE_L(_match1_1_list_1)) {                *   TomTerm x_j = (TomTerm) GET_ELEMENT_L(_match1_1_list_1,_match1_1_index_1);                *   _match1_1_index_1++;;                *   if(_match1_1_index_1 = GET_SIZE_L(_match1_1_list_1)) {                *     ...                *   }                * }                */             TomNumberList path = appendNumber(indexTerm,oldPath);             TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;                          TomList declarationList = empty();             TomList assignementList = empty();              Expression source = tom_make_GetElement(subjectListName,subjectListIndex) ;             if(annotedVariable != null) {               assignementList = appendInstruction(tom_make_Assign(annotedVariable,source) ,assignementList);             }              assignementList = appendInstruction(tom_make_Assign(var,source) ,assignementList);             assignementList = appendInstruction(tom_make_Increment(subjectListIndex) ,assignementList);                          if(generateSemanticAction) {               subList = appendInstruction(tom_make_Action(actionList) ,subList);             }                          Expression cond = tom_make_IsEmptyArray(subjectListName,subjectListIndex) ;             Instruction test = tom_make_IfThenElse(cond,subList,empty()) ;             TomList succesList = appendInstruction(test,concat(declarationList,assignementList));                          cond = tom_make_Not(tom_make_IsEmptyArray(subjectListName,subjectListIndex)) ;             test = tom_make_IfThenElse(cond,succesList,empty()) ;             result = appendInstruction(test,result);             break matchBlock;           } else {               /*                * generate:                * ---------                * if(!IS_EMPTY_TomList(subjectList,subjectIndex)) {                *   TomTerm x_j = (TomTerm) GET_ELEMENT_TomList(subjectList,subjectIndex);                *   subjectIndex++;                *   ...                * }                */             TomNumberList path = appendNumber(indexTerm,oldPath);             TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;                          TomList declarationList = empty();             TomList assignementList = empty();             TomList succesList      = empty();              Expression source = tom_make_GetElement(subjectListName,subjectListIndex) ;             if(annotedVariable != null) {               assignementList = appendInstruction(tom_make_Assign(annotedVariable,source) ,assignementList);             }             assignementList = appendInstruction(tom_make_Assign(var,source) ,assignementList);             assignementList = appendInstruction(tom_make_Increment(subjectListIndex) ,assignementList);                          succesList = concat(concat(concat(succesList,declarationList),assignementList),subList);             Expression cond = tom_make_Not(tom_make_IsEmptyArray(subjectListName,subjectListIndex)) ;             Instruction test = tom_make_IfThenElse(cond,succesList,empty()) ;                          result = appendInstruction(test,result);             break matchBlock;           }          } } }}_match10_pattern3: {  OptionList optionList = null;  TomTerm var = null;  TomList termTail = null;  TomType termType = null; if(tom_is_fun_sym_manyTomList(tom_match10_1)) {  TomTerm tom_match10_1_1 = null;  TomList tom_match10_1_2 = null; tom_match10_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match10_1); tom_match10_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match10_1); if(tom_is_fun_sym_VariableStar(tom_match10_1_1)) {  Option tom_match10_1_1_1 = null;  TomType tom_match10_1_1_3 = null; tom_match10_1_1_1 = ( Option) tom_get_slot_VariableStar_option(tom_match10_1_1); tom_match10_1_1_3 = ( TomType) tom_get_slot_VariableStar_astType(tom_match10_1_1); var = ( TomTerm) tom_match10_1_1; if(tom_is_fun_sym_Option(tom_match10_1_1_1)) {  OptionList tom_match10_1_1_1_1 = null; tom_match10_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1_1); optionList = ( OptionList) tom_match10_1_1_1_1; termType = ( TomType) tom_match10_1_1_3; termTail = ( TomList) tom_match10_1_2;
+         } } }}_match10_pattern2: {  TomList termTail = null;  OptionList optionList = null;  TomType termType = null;  TomTerm var = null; if(tom_is_fun_sym_manyTomList(tom_match10_1)) {  TomTerm tom_match10_1_1 = null;  TomList tom_match10_1_2 = null; tom_match10_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match10_1); tom_match10_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match10_1); if(tom_is_fun_sym_UnamedVariable(tom_match10_1_1)) {  Option tom_match10_1_1_1 = null;  TomType tom_match10_1_1_2 = null; tom_match10_1_1_1 = ( Option) tom_get_slot_UnamedVariable_option(tom_match10_1_1); tom_match10_1_1_2 = ( TomType) tom_get_slot_UnamedVariable_astType(tom_match10_1_1); var = ( TomTerm) tom_match10_1_1; if(tom_is_fun_sym_Option(tom_match10_1_1_1)) {  OptionList tom_match10_1_1_1_1 = null; tom_match10_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1_1); optionList = ( OptionList) tom_match10_1_1_1_1; termType = ( TomType) tom_match10_1_1_2; termTail = ( TomList) tom_match10_1_2;            if(termTail.isEmpty()) {               /*                * generate:                * ---------                * if(_match1_1_index_1 < GET_SIZE_L(_match1_1_list_1)) {                *   TomTerm x_j = (TomTerm) GET_ELEMENT_L(_match1_1_list_1,_match1_1_index_1);                *   _match1_1_index_1++;;                *   if(_match1_1_index_1 = GET_SIZE_L(_match1_1_list_1)) {                *     ...                *   }                * }                */             Expression source = tom_make_GetElement(subjectListName,subjectListIndex) ;             TomList assignementList = empty();             assignementList = addAnnotedAssignement(optionList, source, var, assignementList);             assignementList = appendInstruction(tom_make_Increment(subjectListIndex) ,assignementList);                          if(generateSemanticAction) {               subList = appendInstruction(tom_make_Action(actionList) ,subList);             }                          Expression cond = tom_make_IsEmptyArray(subjectListName,subjectListIndex) ;             Instruction test = tom_make_IfThenElse(cond,subList,empty()) ;             TomList succesList = appendInstruction(test,assignementList);                          cond = tom_make_Not(tom_make_IsEmptyArray(subjectListName,subjectListIndex)) ;             test = tom_make_IfThenElse(cond,succesList,empty()) ;             result = appendInstruction(test,result);             break matchBlock;           } else {               /*                * generate:                * ---------                * if(!IS_EMPTY_TomList(subjectList,subjectIndex)) {                *   TomTerm x_j = (TomTerm) GET_ELEMENT_TomList(subjectList,subjectIndex);                *   subjectIndex++;                *   ...                * }                */             TomList assignementList = empty();             TomList succesList      = empty();              Expression source = tom_make_GetElement(subjectListName,subjectListIndex) ;             assignementList = addAnnotedAssignement(optionList, source, var, assignementList);             assignementList = appendInstruction(tom_make_Increment(subjectListIndex) ,assignementList);                          succesList = concat(concat(succesList,assignementList),subList);             Expression cond = tom_make_Not(tom_make_IsEmptyArray(subjectListName,subjectListIndex)) ;             Instruction test = tom_make_IfThenElse(cond,succesList,empty()) ;                          result = appendInstruction(test,result);             break matchBlock;           }          } } }}_match10_pattern3: {  TomTerm var = null;  TomList termTail = null;  OptionList optionList = null;  TomType termType = null; if(tom_is_fun_sym_manyTomList(tom_match10_1)) {  TomTerm tom_match10_1_1 = null;  TomList tom_match10_1_2 = null; tom_match10_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match10_1); tom_match10_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match10_1); if(tom_is_fun_sym_VariableStar(tom_match10_1_1)) {  Option tom_match10_1_1_1 = null;  TomType tom_match10_1_1_3 = null; tom_match10_1_1_1 = ( Option) tom_get_slot_VariableStar_option(tom_match10_1_1); tom_match10_1_1_3 = ( TomType) tom_get_slot_VariableStar_astType(tom_match10_1_1); var = ( TomTerm) tom_match10_1_1; if(tom_is_fun_sym_Option(tom_match10_1_1_1)) {  OptionList tom_match10_1_1_1_1 = null; tom_match10_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1_1); optionList = ( OptionList) tom_match10_1_1_1_1; termType = ( TomType) tom_match10_1_1_3; termTail = ( TomList) tom_match10_1_2;
 
 
  
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -879,19 +820,12 @@ public class TomKernelCompiler extends TomBase {
               subList = appendInstruction(tom_make_Action(actionList) ,subList);
             }
             
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;
             Expression source = tom_make_GetSliceArray(symbol .getAstName(),subjectListName,subjectListIndex,tom_make_ExpressionToTomTerm(tom_make_GetSize(subjectListName)))
 
 
 
  ;
-
-            if(annotedVariable != null) {
-              result = appendInstruction(tom_make_Assign(annotedVariable,source) ,result);
-            }
-            
-            result = appendInstruction(tom_make_Assign(var,source) ,result);
+            result = addAnnotedAssignement(optionList, source, var, result);
             result = concat(result,subList);
             break matchBlock;
           } else {
@@ -921,19 +855,11 @@ public class TomKernelCompiler extends TomBase {
             assignementList = appendInstruction(tom_make_Assign(variableBeginAST,tom_make_TomTermToExpression(subjectListIndex)) ,assignementList);
             assignementList = appendInstruction(tom_make_Assign(variableEndAST,tom_make_TomTermToExpression(subjectListIndex)) ,assignementList);
             
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;
-            TomList doList = empty();
-
             Expression source = tom_make_GetSliceArray(symbol .getAstName(),subjectListName,variableBeginAST,variableEndAST)
 
  ;
-            
-            if(annotedVariable != null) {
-              doList = appendInstruction(tom_make_Assign(annotedVariable,source) ,doList);
-            }
-
-            doList = appendInstruction(tom_make_Assign(var,source) ,doList);
+            TomList doList = empty();
+            doList = addAnnotedAssignement(optionList, source, var, doList);
             doList = concat(doList,subList);
             doList = appendInstruction(tom_make_Increment(variableEndAST) ,doList);
             doList = appendInstruction(tom_make_Assign(subjectListIndex,tom_make_TomTermToExpression(variableEndAST)) ,doList); 
@@ -955,7 +881,7 @@ public class TomKernelCompiler extends TomBase {
             result = tmpResult;
             break matchBlock;
           }
-         } } }}_match10_pattern4: {  TomType termType = null;  OptionList optionList = null;  TomTerm var = null;  TomList termTail = null; if(tom_is_fun_sym_manyTomList(tom_match10_1)) {  TomTerm tom_match10_1_1 = null;  TomList tom_match10_1_2 = null; tom_match10_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match10_1); tom_match10_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match10_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match10_1_1)) {  Option tom_match10_1_1_1 = null;  TomType tom_match10_1_1_2 = null; tom_match10_1_1_1 = ( Option) tom_get_slot_UnamedVariableStar_option(tom_match10_1_1); tom_match10_1_1_2 = ( TomType) tom_get_slot_UnamedVariableStar_astType(tom_match10_1_1); var = ( TomTerm) tom_match10_1_1; if(tom_is_fun_sym_Option(tom_match10_1_1_1)) {  OptionList tom_match10_1_1_1_1 = null; tom_match10_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1_1); optionList = ( OptionList) tom_match10_1_1_1_1; termType = ( TomType) tom_match10_1_1_2; termTail = ( TomList) tom_match10_1_2;            TomTerm annotedVariable = getAnnotedVariable(optionList);           if(termTail.isEmpty()) {               /*                * generate:                * ---------                * E_n = GET_SLICE_L(subjectList,subjectIndex,GET_SIZE_L(subjectList));                * ...                */             if(generateSemanticAction) {               subList = appendInstruction(tom_make_Action(actionList) ,subList);             }                          TomNumberList path = appendNumber(indexTerm,oldPath);             TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;             Expression source = tom_make_GetSliceArray(symbol .getAstName(),subjectListName,subjectListIndex,tom_make_ExpressionToTomTerm(tom_make_GetSize(subjectListName))) ;              if(annotedVariable != null) {               result = appendInstruction(tom_make_Assign(annotedVariable,source) ,result);             }                          result = appendInstruction(tom_make_Assign(var,source) ,result);             result = concat(result,subList);             break matchBlock;           } else {               /*                * generate:                * ---------                * int begin_i = subjectIndex;                * int end_i   = subjectIndex;                * do {                *   * SUBSTITUTION: E_i                *   TomList E_i = GET_SLICE_TomList(subjectList,begin_i,end_i);                *   ...                *   end_i++;                *   subjectIndex = end_i;                * } while( !IS_EMPTY_TomList(subjectList) )                */              TomNumberList pathBegin = (TomNumberList) oldPath.append(tom_make_Begin(makeNumber(indexTerm)) );             TomNumberList pathEnd = (TomNumberList) oldPath.append(tom_make_End(makeNumber(indexTerm)) );               /* TODO: termType */             TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),getIntType()) ;             TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),getIntType()) ;             TomList declarationList = empty();             declarationList = append(tom_make_Declaration(variableBeginAST) ,declarationList);             declarationList = append(tom_make_Declaration(variableEndAST) ,declarationList);             TomList assignementList = empty();             assignementList = appendInstruction(tom_make_Assign(variableBeginAST,tom_make_TomTermToExpression(subjectListIndex)) ,assignementList);             assignementList = appendInstruction(tom_make_Assign(variableEndAST,tom_make_TomTermToExpression(subjectListIndex)) ,assignementList);                          TomNumberList path = appendNumber(indexTerm,oldPath);             TomTerm variableAST = tom_make_Variable(option(),tom_make_PositionName(path),termType) ;             TomList doList = empty();              Expression source = tom_make_GetSliceArray(symbol .getAstName(),subjectListName,variableBeginAST,variableEndAST) ;                          if(annotedVariable != null) {               doList = appendInstruction(tom_make_Assign(annotedVariable,source) ,doList);             }              doList = appendInstruction(tom_make_Assign(var,source) ,doList);             doList = concat(doList,subList);             doList = appendInstruction(tom_make_Increment(variableEndAST) ,doList);             doList = appendInstruction(tom_make_Assign(subjectListIndex,tom_make_TomTermToExpression(variableEndAST)) ,doList);                           Expression cond = tom_make_Not(tom_make_IsEmptyArray(subjectListName,subjectListIndex)) ;             Instruction doWhile = tom_make_DoWhile(doList,cond) ;                          TomList tmpResult = empty();             if(supportedBlock) {               tmpResult = appendInstruction(tom_make_OpenBlock() ,tmpResult);             }             tmpResult = concat(tmpResult,declarationList);             tmpResult = concat(tmpResult,result);             tmpResult = concat(tmpResult,assignementList);             tmpResult = appendInstruction(doWhile,tmpResult);             if(supportedBlock) {               tmpResult = appendInstruction(tom_make_CloseBlock() ,tmpResult);             }             result = tmpResult;             break matchBlock;           }          } } }}_match10_pattern5: {
+         } } }}_match10_pattern4: {  TomTerm var = null;  TomList termTail = null;  OptionList optionList = null;  TomType termType = null; if(tom_is_fun_sym_manyTomList(tom_match10_1)) {  TomTerm tom_match10_1_1 = null;  TomList tom_match10_1_2 = null; tom_match10_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match10_1); tom_match10_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match10_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match10_1_1)) {  Option tom_match10_1_1_1 = null;  TomType tom_match10_1_1_2 = null; tom_match10_1_1_1 = ( Option) tom_get_slot_UnamedVariableStar_option(tom_match10_1_1); tom_match10_1_1_2 = ( TomType) tom_get_slot_UnamedVariableStar_astType(tom_match10_1_1); var = ( TomTerm) tom_match10_1_1; if(tom_is_fun_sym_Option(tom_match10_1_1_1)) {  OptionList tom_match10_1_1_1_1 = null; tom_match10_1_1_1_1 = ( OptionList) tom_get_slot_Option_optionList(tom_match10_1_1_1); optionList = ( OptionList) tom_match10_1_1_1_1; termType = ( TomType) tom_match10_1_1_2; termTail = ( TomList) tom_match10_1_2;            if(termTail.isEmpty()) {               /*                * generate:                * ---------                * E_n = GET_SLICE_L(subjectList,subjectIndex,GET_SIZE_L(subjectList));                * ...                */             if(generateSemanticAction) {               subList = appendInstruction(tom_make_Action(actionList) ,subList);             }                          Expression source = tom_make_GetSliceArray(symbol .getAstName(),subjectListName,subjectListIndex,tom_make_ExpressionToTomTerm(tom_make_GetSize(subjectListName))) ;             result = addAnnotedAssignement(optionList, source, var, result);             result = concat(result,subList);             break matchBlock;           } else {               /*                * generate:                * ---------                * int begin_i = subjectIndex;                * int end_i   = subjectIndex;                * do {                *   * SUBSTITUTION: E_i                *   TomList E_i = GET_SLICE_TomList(subjectList,begin_i,end_i);                *   ...                *   end_i++;                *   subjectIndex = end_i;                * } while( !IS_EMPTY_TomList(subjectList) )                */              TomNumberList pathBegin = (TomNumberList) oldPath.append(tom_make_Begin(makeNumber(indexTerm)) );             TomNumberList pathEnd = (TomNumberList) oldPath.append(tom_make_End(makeNumber(indexTerm)) );               /* TODO: termType */             TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),getIntType()) ;             TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),getIntType()) ;             TomList declarationList = empty();             declarationList = append(tom_make_Declaration(variableBeginAST) ,declarationList);             declarationList = append(tom_make_Declaration(variableEndAST) ,declarationList);             TomList assignementList = empty();             assignementList = appendInstruction(tom_make_Assign(variableBeginAST,tom_make_TomTermToExpression(subjectListIndex)) ,assignementList);             assignementList = appendInstruction(tom_make_Assign(variableEndAST,tom_make_TomTermToExpression(subjectListIndex)) ,assignementList);                          Expression source = tom_make_GetSliceArray(symbol .getAstName(),subjectListName,variableBeginAST,variableEndAST) ;             TomList doList = empty();             doList = addAnnotedAssignement(optionList, source, var, doList);             doList = concat(doList,subList);             doList = appendInstruction(tom_make_Increment(variableEndAST) ,doList);             doList = appendInstruction(tom_make_Assign(subjectListIndex,tom_make_TomTermToExpression(variableEndAST)) ,doList);                           Expression cond = tom_make_Not(tom_make_IsEmptyArray(subjectListName,subjectListIndex)) ;             Instruction doWhile = tom_make_DoWhile(doList,cond) ;                          TomList tmpResult = empty();             if(supportedBlock) {               tmpResult = appendInstruction(tom_make_OpenBlock() ,tmpResult);             }             tmpResult = concat(tmpResult,declarationList);             tmpResult = concat(tmpResult,result);             tmpResult = concat(tmpResult,assignementList);             tmpResult = appendInstruction(doWhile,tmpResult);             if(supportedBlock) {               tmpResult = appendInstruction(tom_make_CloseBlock() ,tmpResult);             }             result = tmpResult;             break matchBlock;           }          } } }}_match10_pattern5: {
 
  
           System.out.println("GenArrayMatchingAutomata strange termList: " + termList);

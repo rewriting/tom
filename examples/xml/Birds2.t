@@ -5,12 +5,12 @@ import jtom.runtime.*;
 
 public class Birds2 {
   
-  %include{ NodeTerm.tom }
+  %include{ TNode.tom }
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();
-  private NodeTermFactory getNodeTermFactory() {
-      return xtools.getNodeTermFactory();
+  private TNodeFactory getTNodeFactory() {
+      return xtools.getTNodeFactory();
   }
 
   public static void main (String args[]) {
@@ -28,8 +28,8 @@ public class Birds2 {
   private ATerm replace(ATerm subject) {
     Replace1 replace = new Replace1 () {
 	public ATerm apply(ATerm t) {
-	    if (t instanceof NodeTerm) {
-		%match(NodeTerm t) {
+	    if (t instanceof TNode) {
+		%match(TNode t) {
 		    <Species [Scientific_Name=scname]>[#TEXT(data)]</Species> -> {
                       System.out.println("catched birds '" + data + "'");
                     }

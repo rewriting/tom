@@ -222,7 +222,6 @@ public class TomExpander extends TomBase implements TomTask {
     while(!childList.isEmpty()) {
       TomTerm newPattern = expandTomSyntax(childList.getHead());
         //System.out.println("newPattern = " + newPattern);
-      
       newChildList = `manyTomList(newPattern,newChildList);
       if(implicitChild) {
         if(newPattern.isVariableStar()) {

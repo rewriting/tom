@@ -64,8 +64,6 @@ public class ASTFactory {
         term = tsf().makeTomTerm_ExpressionToTomTerm((Expression)elt);
       } else if(elt instanceof TomName) {
         term = tsf().makeTomTerm_TomNameToTomTerm((TomName)elt);
-      } else if(elt instanceof XMLTerm) {
-        term = tsf().makeTomTerm_XMLTermToTomTerm((XMLTerm)elt);
       } else if(elt instanceof Instruction) {
         term = tsf().makeTomTerm_InstructionToTomTerm((Instruction)elt);
       } else {
@@ -238,7 +236,7 @@ public class ASTFactory {
     String sort = "String";
     makeSortSymbol(symbolTable, sort, value, optionList);
   } 
-
+  
   public void makeStringDecl(List list) {
     String sort = "String";
     String equality_t1t2 = "t1.equals(t2)";

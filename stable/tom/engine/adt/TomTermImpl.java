@@ -95,6 +95,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isXMLAppl()
+  {
+    return false;
+  }
+
+  public boolean isXMLAttribute()
+  {
+    return false;
+  }
+
   public boolean isBackQuoteAppl()
   {
     return false;
@@ -245,21 +255,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isMatchXML()
-  {
-    return false;
-  }
-
-  public boolean isBackQuoteXML()
-  {
-    return false;
-  }
-
-  public boolean isXMLTermToTomTerm()
-  {
-    return false;
-  }
-
   public boolean hasTl()
   {
     return false;
@@ -321,6 +316,26 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasOption()
+  {
+    return false;
+  }
+
+  public boolean hasAttrList()
+  {
+    return false;
+  }
+
+  public boolean hasChildList()
+  {
+    return false;
+  }
+
+  public boolean hasField()
+  {
+    return false;
+  }
+
+  public boolean hasValue()
   {
     return false;
   }
@@ -426,16 +441,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasNumberList()
-  {
-    return false;
-  }
-
-  public boolean hasDocName()
-  {
-    return false;
-  }
-
-  public boolean hasXmlTerm()
   {
     return false;
   }
@@ -568,6 +573,46 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setOption(Option _option)
   {
      throw new IllegalArgumentException("Illegal argument: " + _option);
+  }
+
+  public TomList getAttrList()
+  {
+     throw new UnsupportedOperationException("This TomTerm has no AttrList");
+  }
+
+  public TomTerm setAttrList(TomList _attrList)
+  {
+     throw new IllegalArgumentException("Illegal argument: " + _attrList);
+  }
+
+  public TomList getChildList()
+  {
+     throw new UnsupportedOperationException("This TomTerm has no ChildList");
+  }
+
+  public TomTerm setChildList(TomList _childList)
+  {
+     throw new IllegalArgumentException("Illegal argument: " + _childList);
+  }
+
+  public TomTerm getField()
+  {
+     throw new UnsupportedOperationException("This TomTerm has no Field");
+  }
+
+  public TomTerm setField(TomTerm _field)
+  {
+     throw new IllegalArgumentException("Illegal argument: " + _field);
+  }
+
+  public TomTerm getValue()
+  {
+     throw new UnsupportedOperationException("This TomTerm has no Value");
+  }
+
+  public TomTerm setValue(TomTerm _value)
+  {
+     throw new IllegalArgumentException("Illegal argument: " + _value);
   }
 
   public TomName getSlotName()
@@ -778,26 +823,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setNumberList(TomNumberList _numberList)
   {
      throw new IllegalArgumentException("Illegal argument: " + _numberList);
-  }
-
-  public String getDocName()
-  {
-     throw new UnsupportedOperationException("This TomTerm has no DocName");
-  }
-
-  public TomTerm setDocName(String _docName)
-  {
-     throw new IllegalArgumentException("Illegal argument: " + _docName);
-  }
-
-  public XMLTerm getXmlTerm()
-  {
-     throw new UnsupportedOperationException("This TomTerm has no XmlTerm");
-  }
-
-  public TomTerm setXmlTerm(XMLTerm _xmlTerm)
-  {
-     throw new IllegalArgumentException("Illegal argument: " + _xmlTerm);
   }
 
 }

@@ -1,0 +1,20 @@
+
+
+TNodeAPI0=\
+TNode.java TNodeImpl.java\
+TNode_CommentNodeImpl.java TNode_CommentNode.java\
+TNode_ProcessingInstructionNodeImpl.java TNode_ProcessingInstructionNode.java\
+TNode_TextNodeImpl.java TNode_TextNode.java\
+TNode_CDATASectionNodeImpl.java TNode_CDATASectionNode.java\
+TNode_DocumentNodeImpl.java TNode_DocumentNode.java\
+TNode_ElementNodeImpl.java TNode_ElementNode.java\
+TNode_AttributeNodeImpl.java TNode_AttributeNode.java\
+TNode_DocumentTypeNodeImpl.java TNode_DocumentTypeNode.java\
+TNode_EntityReferenceNodeImpl.java TNode_EntityReferenceNode.java\
+TNode_EntityNodeImpl.java TNode_EntityNode.java\
+TNode_NotationNodeImpl.java TNode_NotationNode.java\
+TNodeList.java TNodeListImpl.java
+
+TNodeAPI=\
+TNodeFactory.java TNodeConstructor.java\
+${TNodeAPI0} 

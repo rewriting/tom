@@ -52,7 +52,7 @@ public class Tom {
 	// potential tasks to be connected together to form the compiler chain
 
 	private static String version =
-		"\njtom 1.5alpha\n"
+		"\njtom 1.5beta\n"
 			+ "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n"
 			+ "                         Nancy, France.\n";
 

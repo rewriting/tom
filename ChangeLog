@@ -1,3 +1,9 @@
+2003-10-20  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* bootinstall
+	* integration of xtom into jtom
+	* src/jtom/parser/TomParser.jj: new XML parser
+
 2003-10-03  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
 	* bootinstall

@@ -978,7 +978,6 @@ public class TomParser implements TomTask, TomParserConstants {
  // variable declaration
   TomTerm term;
   Token name;
-  XMLTerm term2;
   Option option;
   LinkedList optionList = new LinkedList();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -2279,6 +2278,12 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
+  final private boolean jj_3_8() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
   final private boolean jj_3_4() {
     if (jj_scan_token(TOM_UNDERSCORE)) return true;
     if (jj_scan_token(TOM_STAR)) return true;
@@ -2318,12 +2323,6 @@ public class TomParser implements TomTask, TomParserConstants {
   final private boolean jj_3_2() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 

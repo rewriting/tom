@@ -109,9 +109,12 @@ public class TomSignatureFactory
   private aterm.AFun funOption_Debug;
   private Option protoOption_Debug;
   private aterm.ATerm patternOption_Debug;
-  private aterm.AFun funOption_XMLPosition;
-  private Option protoOption_XMLPosition;
-  private aterm.ATerm patternOption_XMLPosition;
+  private aterm.AFun funOption_ImplicitXMLAttribut;
+  private Option protoOption_ImplicitXMLAttribut;
+  private aterm.ATerm patternOption_ImplicitXMLAttribut;
+  private aterm.AFun funOption_ImplicitXMLChild;
+  private Option protoOption_ImplicitXMLChild;
+  private aterm.ATerm patternOption_ImplicitXMLChild;
   private aterm.AFun funExpression_TomTermToExpression;
   private Expression protoExpression_TomTermToExpression;
   private aterm.ATerm patternExpression_TomTermToExpression;
@@ -250,6 +253,12 @@ public class TomSignatureFactory
   private aterm.AFun funTomTerm_Appl;
   private TomTerm protoTomTerm_Appl;
   private aterm.ATerm patternTomTerm_Appl;
+  private aterm.AFun funTomTerm_XMLAppl;
+  private TomTerm protoTomTerm_XMLAppl;
+  private aterm.ATerm patternTomTerm_XMLAppl;
+  private aterm.AFun funTomTerm_XMLAttribute;
+  private TomTerm protoTomTerm_XMLAttribute;
+  private aterm.ATerm patternTomTerm_XMLAttribute;
   private aterm.AFun funTomTerm_BackQuoteAppl;
   private TomTerm protoTomTerm_BackQuoteAppl;
   private aterm.ATerm patternTomTerm_BackQuoteAppl;
@@ -340,15 +349,6 @@ public class TomSignatureFactory
   private aterm.AFun funTomTerm_Automata;
   private TomTerm protoTomTerm_Automata;
   private aterm.ATerm patternTomTerm_Automata;
-  private aterm.AFun funTomTerm_MatchXML;
-  private TomTerm protoTomTerm_MatchXML;
-  private aterm.ATerm patternTomTerm_MatchXML;
-  private aterm.AFun funTomTerm_BackQuoteXML;
-  private TomTerm protoTomTerm_BackQuoteXML;
-  private aterm.ATerm patternTomTerm_BackQuoteXML;
-  private aterm.AFun funTomTerm_XMLTermToTomTerm;
-  private TomTerm protoTomTerm_XMLTermToTomTerm;
-  private aterm.ATerm patternTomTerm_XMLTermToTomTerm;
   private aterm.AFun funTomNumber_MatchNumber;
   private TomNumber protoTomNumber_MatchNumber;
   private aterm.ATerm patternTomNumber_MatchNumber;
@@ -433,21 +433,6 @@ public class TomSignatureFactory
   private aterm.AFun funTomError_Error;
   private TomError protoTomError_Error;
   private aterm.ATerm patternTomError_Error;
-  private aterm.AFun funXMLTerm_Element;
-  private XMLTerm protoXMLTerm_Element;
-  private aterm.ATerm patternXMLTerm_Element;
-  private aterm.AFun funXMLTerm_Attribute;
-  private XMLTerm protoXMLTerm_Attribute;
-  private aterm.ATerm patternXMLTerm_Attribute;
-  private aterm.AFun funXMLTerm_ReservedWord;
-  private XMLTerm protoXMLTerm_ReservedWord;
-  private aterm.ATerm patternXMLTerm_ReservedWord;
-  private aterm.AFun funXMLTerm_XMLPlaceholder;
-  private XMLTerm protoXMLTerm_XMLPlaceholder;
-  private aterm.ATerm patternXMLTerm_XMLPlaceholder;
-  private aterm.AFun funXMLTerm_XMLVariable;
-  private XMLTerm protoXMLTerm_XMLVariable;
-  private aterm.ATerm patternXMLTerm_XMLVariable;
   private TomList protoTomList;
   private aterm.ATerm patternTomListMany;
   private TomNumberList protoTomNumberList;
@@ -628,9 +613,13 @@ public class TomSignatureFactory
     funOption_Debug = factory.makeAFun("_Option_Debug", 1, false);
     protoOption_Debug = new Option_Debug(this);
 
-    patternOption_XMLPosition = factory.parse("XMLPosition(<str>)");
-    funOption_XMLPosition = factory.makeAFun("_Option_XMLPosition", 1, false);
-    protoOption_XMLPosition = new Option_XMLPosition(this);
+    patternOption_ImplicitXMLAttribut = factory.parse("ImplicitXMLAttribut");
+    funOption_ImplicitXMLAttribut = factory.makeAFun("_Option_ImplicitXMLAttribut", 0, false);
+    protoOption_ImplicitXMLAttribut = new Option_ImplicitXMLAttribut(this);
+
+    patternOption_ImplicitXMLChild = factory.parse("ImplicitXMLChild");
+    funOption_ImplicitXMLChild = factory.makeAFun("_Option_ImplicitXMLChild", 0, false);
+    protoOption_ImplicitXMLChild = new Option_ImplicitXMLChild(this);
 
 
     patternExpression_TomTermToExpression = factory.parse("TomTermToExpression(<term>)");
@@ -822,6 +811,14 @@ public class TomSignatureFactory
     funTomTerm_Appl = factory.makeAFun("_TomTerm_Appl", 3, false);
     protoTomTerm_Appl = new TomTerm_Appl(this);
 
+    patternTomTerm_XMLAppl = factory.parse("XMLAppl(<term>,<term>,<term>,<term>)");
+    funTomTerm_XMLAppl = factory.makeAFun("_TomTerm_XMLAppl", 4, false);
+    protoTomTerm_XMLAppl = new TomTerm_XMLAppl(this);
+
+    patternTomTerm_XMLAttribute = factory.parse("XMLAttribute(<term>,<term>)");
+    funTomTerm_XMLAttribute = factory.makeAFun("_TomTerm_XMLAttribute", 2, false);
+    protoTomTerm_XMLAttribute = new TomTerm_XMLAttribute(this);
+
     patternTomTerm_BackQuoteAppl = factory.parse("BackQuoteAppl(<term>,<term>,<term>)");
     funTomTerm_BackQuoteAppl = factory.makeAFun("_TomTerm_BackQuoteAppl", 3, false);
     protoTomTerm_BackQuoteAppl = new TomTerm_BackQuoteAppl(this);
@@ -941,18 +938,6 @@ public class TomSignatureFactory
     patternTomTerm_Automata = factory.parse("Automata(<term>,<term>,<term>)");
     funTomTerm_Automata = factory.makeAFun("_TomTerm_Automata", 3, false);
     protoTomTerm_Automata = new TomTerm_Automata(this);
-
-    patternTomTerm_MatchXML = factory.parse("MatchXML(<str>,<term>,<term>)");
-    funTomTerm_MatchXML = factory.makeAFun("_TomTerm_MatchXML", 3, false);
-    protoTomTerm_MatchXML = new TomTerm_MatchXML(this);
-
-    patternTomTerm_BackQuoteXML = factory.parse("BackQuoteXML(<term>,<term>)");
-    funTomTerm_BackQuoteXML = factory.makeAFun("_TomTerm_BackQuoteXML", 2, false);
-    protoTomTerm_BackQuoteXML = new TomTerm_BackQuoteXML(this);
-
-    patternTomTerm_XMLTermToTomTerm = factory.parse("XMLTermToTomTerm(<term>)");
-    funTomTerm_XMLTermToTomTerm = factory.makeAFun("_TomTerm_XMLTermToTomTerm", 1, false);
-    protoTomTerm_XMLTermToTomTerm = new TomTerm_XMLTermToTomTerm(this);
 
 
     patternTomNumber_MatchNumber = factory.parse("MatchNumber(<term>)");
@@ -1074,27 +1059,6 @@ public class TomSignatureFactory
     patternTomError_Error = factory.parse("Error(<str>,<str>,<int>,<int>)");
     funTomError_Error = factory.makeAFun("_TomError_Error", 4, false);
     protoTomError_Error = new TomError_Error(this);
-
-
-    patternXMLTerm_Element = factory.parse("Element(<term>,<term>,<term>)");
-    funXMLTerm_Element = factory.makeAFun("_XMLTerm_Element", 3, false);
-    protoXMLTerm_Element = new XMLTerm_Element(this);
-
-    patternXMLTerm_Attribute = factory.parse("Attribute(<term>,<term>,<term>)");
-    funXMLTerm_Attribute = factory.makeAFun("_XMLTerm_Attribute", 3, false);
-    protoXMLTerm_Attribute = new XMLTerm_Attribute(this);
-
-    patternXMLTerm_ReservedWord = factory.parse("ReservedWord(<term>,<term>,<term>)");
-    funXMLTerm_ReservedWord = factory.makeAFun("_XMLTerm_ReservedWord", 3, false);
-    protoXMLTerm_ReservedWord = new XMLTerm_ReservedWord(this);
-
-    patternXMLTerm_XMLPlaceholder = factory.parse("XMLPlaceholder(<term>)");
-    funXMLTerm_XMLPlaceholder = factory.makeAFun("_XMLTerm_XMLPlaceholder", 1, false);
-    protoXMLTerm_XMLPlaceholder = new XMLTerm_XMLPlaceholder(this);
-
-    patternXMLTerm_XMLVariable = factory.parse("XMLVariable(<term>,<term>)");
-    funXMLTerm_XMLVariable = factory.makeAFun("_XMLTerm_XMLVariable", 2, false);
-    protoXMLTerm_XMLVariable = new XMLTerm_XMLVariable(this);
 
     protoTomList = new TomList(this);
     protoTomList.init(84, null, null, null);
@@ -2157,33 +2121,62 @@ public class TomSignatureFactory
     args.add((arg.getAstName()).toTerm());    return factory.make(patternOption_Debug, args);
   }
 
-  protected Option_XMLPosition makeOption_XMLPosition(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoOption_XMLPosition) {
-      protoOption_XMLPosition.initHashCode(annos,fun,args);
-      return (Option_XMLPosition) factory.build(protoOption_XMLPosition);
+  protected Option_ImplicitXMLAttribut makeOption_ImplicitXMLAttribut(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoOption_ImplicitXMLAttribut) {
+      protoOption_ImplicitXMLAttribut.initHashCode(annos,fun,args);
+      return (Option_ImplicitXMLAttribut) factory.build(protoOption_ImplicitXMLAttribut);
     }
   }
 
-  public Option_XMLPosition makeOption_XMLPosition(String _place) {
-    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_place, 0, true))};
-    return makeOption_XMLPosition(funOption_XMLPosition, args, factory.getEmpty());
+  public Option_ImplicitXMLAttribut makeOption_ImplicitXMLAttribut() {
+    aterm.ATerm[] args = new aterm.ATerm[] {};
+    return makeOption_ImplicitXMLAttribut(funOption_ImplicitXMLAttribut, args, factory.getEmpty());
   }
 
-  public Option Option_XMLPositionFromTerm(aterm.ATerm trm)
+  public Option Option_ImplicitXMLAttributFromTerm(aterm.ATerm trm)
   {
-    java.util.List children = trm.match(patternOption_XMLPosition);
+    java.util.List children = trm.match(patternOption_ImplicitXMLAttribut);
 
     if (children != null) {
-      Option tmp = makeOption_XMLPosition((String) children.get(0));
+      Option tmp = makeOption_ImplicitXMLAttribut();
       return tmp;
     }
     else {
       return null;
     }
   }
-  protected aterm.ATerm toTerm(Option_XMLPositionImpl arg) {
+  protected aterm.ATerm toTerm(Option_ImplicitXMLAttributImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(arg.getPlace());    return factory.make(patternOption_XMLPosition, args);
+    return factory.make(patternOption_ImplicitXMLAttribut, args);
+  }
+
+  protected Option_ImplicitXMLChild makeOption_ImplicitXMLChild(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoOption_ImplicitXMLChild) {
+      protoOption_ImplicitXMLChild.initHashCode(annos,fun,args);
+      return (Option_ImplicitXMLChild) factory.build(protoOption_ImplicitXMLChild);
+    }
+  }
+
+  public Option_ImplicitXMLChild makeOption_ImplicitXMLChild() {
+    aterm.ATerm[] args = new aterm.ATerm[] {};
+    return makeOption_ImplicitXMLChild(funOption_ImplicitXMLChild, args, factory.getEmpty());
+  }
+
+  public Option Option_ImplicitXMLChildFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternOption_ImplicitXMLChild);
+
+    if (children != null) {
+      Option tmp = makeOption_ImplicitXMLChild();
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(Option_ImplicitXMLChildImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    return factory.make(patternOption_ImplicitXMLChild, args);
   }
 
   protected Expression_TomTermToExpression makeExpression_TomTermToExpression(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -3520,6 +3513,64 @@ public class TomSignatureFactory
     args.add((arg.getOption()).toTerm());    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_Appl, args);
   }
 
+  protected TomTerm_XMLAppl makeTomTerm_XMLAppl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_XMLAppl) {
+      protoTomTerm_XMLAppl.initHashCode(annos,fun,args);
+      return (TomTerm_XMLAppl) factory.build(protoTomTerm_XMLAppl);
+    }
+  }
+
+  public TomTerm_XMLAppl makeTomTerm_XMLAppl(Option _option, TomName _astName, TomList _attrList, TomList _childList) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _attrList, _childList};
+    return makeTomTerm_XMLAppl(funTomTerm_XMLAppl, args, factory.getEmpty());
+  }
+
+  public TomTerm TomTerm_XMLApplFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternTomTerm_XMLAppl);
+
+    if (children != null) {
+      TomTerm tmp = makeTomTerm_XMLAppl(OptionFromTerm( (aterm.ATerm) children.get(0)), TomNameFromTerm( (aterm.ATerm) children.get(1)), TomListFromTerm( (aterm.ATerm) children.get(2)), TomListFromTerm( (aterm.ATerm) children.get(3)));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(TomTerm_XMLApplImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add((arg.getOption()).toTerm());    args.add((arg.getAstName()).toTerm());    args.add((arg.getAttrList()).toTerm());    args.add((arg.getChildList()).toTerm());    return factory.make(patternTomTerm_XMLAppl, args);
+  }
+
+  protected TomTerm_XMLAttribute makeTomTerm_XMLAttribute(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_XMLAttribute) {
+      protoTomTerm_XMLAttribute.initHashCode(annos,fun,args);
+      return (TomTerm_XMLAttribute) factory.build(protoTomTerm_XMLAttribute);
+    }
+  }
+
+  public TomTerm_XMLAttribute makeTomTerm_XMLAttribute(TomTerm _field, TomTerm _value) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_field, _value};
+    return makeTomTerm_XMLAttribute(funTomTerm_XMLAttribute, args, factory.getEmpty());
+  }
+
+  public TomTerm TomTerm_XMLAttributeFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternTomTerm_XMLAttribute);
+
+    if (children != null) {
+      TomTerm tmp = makeTomTerm_XMLAttribute(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(TomTerm_XMLAttributeImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add((arg.getField()).toTerm());    args.add((arg.getValue()).toTerm());    return factory.make(patternTomTerm_XMLAttribute, args);
+  }
+
   protected TomTerm_BackQuoteAppl makeTomTerm_BackQuoteAppl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_BackQuoteAppl) {
       protoTomTerm_BackQuoteAppl.initHashCode(annos,fun,args);
@@ -4390,93 +4441,6 @@ public class TomSignatureFactory
     args.add((arg.getOption()).toTerm());    args.add((arg.getNumberList()).toTerm());    args.add((arg.getInstList()).toTerm());    return factory.make(patternTomTerm_Automata, args);
   }
 
-  protected TomTerm_MatchXML makeTomTerm_MatchXML(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_MatchXML) {
-      protoTomTerm_MatchXML.initHashCode(annos,fun,args);
-      return (TomTerm_MatchXML) factory.build(protoTomTerm_MatchXML);
-    }
-  }
-
-  public TomTerm_MatchXML makeTomTerm_MatchXML(String _docName, TomTerm _patternList, Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_docName, 0, true)), _patternList, _option};
-    return makeTomTerm_MatchXML(funTomTerm_MatchXML, args, factory.getEmpty());
-  }
-
-  public TomTerm TomTerm_MatchXMLFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_MatchXML);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_MatchXML((String) children.get(0), TomTermFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_MatchXMLImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add(arg.getDocName());    args.add((arg.getPatternList()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_MatchXML, args);
-  }
-
-  protected TomTerm_BackQuoteXML makeTomTerm_BackQuoteXML(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_BackQuoteXML) {
-      protoTomTerm_BackQuoteXML.initHashCode(annos,fun,args);
-      return (TomTerm_BackQuoteXML) factory.build(protoTomTerm_BackQuoteXML);
-    }
-  }
-
-  public TomTerm_BackQuoteXML makeTomTerm_BackQuoteXML(XMLTerm _xmlTerm, Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_xmlTerm, _option};
-    return makeTomTerm_BackQuoteXML(funTomTerm_BackQuoteXML, args, factory.getEmpty());
-  }
-
-  public TomTerm TomTerm_BackQuoteXMLFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_BackQuoteXML);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_BackQuoteXML(XMLTermFromTerm( (aterm.ATerm) children.get(0)), OptionFromTerm( (aterm.ATerm) children.get(1)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_BackQuoteXMLImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getXmlTerm()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_BackQuoteXML, args);
-  }
-
-  protected TomTerm_XMLTermToTomTerm makeTomTerm_XMLTermToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_XMLTermToTomTerm) {
-      protoTomTerm_XMLTermToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_XMLTermToTomTerm) factory.build(protoTomTerm_XMLTermToTomTerm);
-    }
-  }
-
-  public TomTerm_XMLTermToTomTerm makeTomTerm_XMLTermToTomTerm(XMLTerm _xmlTerm) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_xmlTerm};
-    return makeTomTerm_XMLTermToTomTerm(funTomTerm_XMLTermToTomTerm, args, factory.getEmpty());
-  }
-
-  public TomTerm TomTerm_XMLTermToTomTermFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_XMLTermToTomTerm);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_XMLTermToTomTerm(XMLTermFromTerm( (aterm.ATerm) children.get(0)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_XMLTermToTomTermImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getXmlTerm()).toTerm());    return factory.make(patternTomTerm_XMLTermToTomTerm, args);
-  }
-
   protected TomNumber_MatchNumber makeTomNumber_MatchNumber(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_MatchNumber) {
       protoTomNumber_MatchNumber.initHashCode(annos,fun,args);
@@ -5289,151 +5253,6 @@ public class TomSignatureFactory
     args.add(arg.getMessage());    args.add(arg.getFile());    args.add(new Integer(arg.getLine()));    args.add(new Integer(arg.getLevel()));    return factory.make(patternTomError_Error, args);
   }
 
-  protected XMLTerm_Element makeXMLTerm_Element(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoXMLTerm_Element) {
-      protoXMLTerm_Element.initHashCode(annos,fun,args);
-      return (XMLTerm_Element) factory.build(protoXMLTerm_Element);
-    }
-  }
-
-  public XMLTerm_Element makeXMLTerm_Element(TomName _astName, TomList _args, Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args, _option};
-    return makeXMLTerm_Element(funXMLTerm_Element, args, factory.getEmpty());
-  }
-
-  public XMLTerm XMLTerm_ElementFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternXMLTerm_Element);
-
-    if (children != null) {
-      XMLTerm tmp = makeXMLTerm_Element(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(XMLTerm_ElementImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_Element, args);
-  }
-
-  protected XMLTerm_Attribute makeXMLTerm_Attribute(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoXMLTerm_Attribute) {
-      protoXMLTerm_Attribute.initHashCode(annos,fun,args);
-      return (XMLTerm_Attribute) factory.build(protoXMLTerm_Attribute);
-    }
-  }
-
-  public XMLTerm_Attribute makeXMLTerm_Attribute(TomName _astName, TomList _args, Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args, _option};
-    return makeXMLTerm_Attribute(funXMLTerm_Attribute, args, factory.getEmpty());
-  }
-
-  public XMLTerm XMLTerm_AttributeFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternXMLTerm_Attribute);
-
-    if (children != null) {
-      XMLTerm tmp = makeXMLTerm_Attribute(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(XMLTerm_AttributeImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_Attribute, args);
-  }
-
-  protected XMLTerm_ReservedWord makeXMLTerm_ReservedWord(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoXMLTerm_ReservedWord) {
-      protoXMLTerm_ReservedWord.initHashCode(annos,fun,args);
-      return (XMLTerm_ReservedWord) factory.build(protoXMLTerm_ReservedWord);
-    }
-  }
-
-  public XMLTerm_ReservedWord makeXMLTerm_ReservedWord(TomName _astName, TomList _args, Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args, _option};
-    return makeXMLTerm_ReservedWord(funXMLTerm_ReservedWord, args, factory.getEmpty());
-  }
-
-  public XMLTerm XMLTerm_ReservedWordFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternXMLTerm_ReservedWord);
-
-    if (children != null) {
-      XMLTerm tmp = makeXMLTerm_ReservedWord(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(XMLTerm_ReservedWordImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_ReservedWord, args);
-  }
-
-  protected XMLTerm_XMLPlaceholder makeXMLTerm_XMLPlaceholder(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoXMLTerm_XMLPlaceholder) {
-      protoXMLTerm_XMLPlaceholder.initHashCode(annos,fun,args);
-      return (XMLTerm_XMLPlaceholder) factory.build(protoXMLTerm_XMLPlaceholder);
-    }
-  }
-
-  public XMLTerm_XMLPlaceholder makeXMLTerm_XMLPlaceholder(Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_option};
-    return makeXMLTerm_XMLPlaceholder(funXMLTerm_XMLPlaceholder, args, factory.getEmpty());
-  }
-
-  public XMLTerm XMLTerm_XMLPlaceholderFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternXMLTerm_XMLPlaceholder);
-
-    if (children != null) {
-      XMLTerm tmp = makeXMLTerm_XMLPlaceholder(OptionFromTerm( (aterm.ATerm) children.get(0)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(XMLTerm_XMLPlaceholderImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_XMLPlaceholder, args);
-  }
-
-  protected XMLTerm_XMLVariable makeXMLTerm_XMLVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoXMLTerm_XMLVariable) {
-      protoXMLTerm_XMLVariable.initHashCode(annos,fun,args);
-      return (XMLTerm_XMLVariable) factory.build(protoXMLTerm_XMLVariable);
-    }
-  }
-
-  public XMLTerm_XMLVariable makeXMLTerm_XMLVariable(TomName _astName, Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _option};
-    return makeXMLTerm_XMLVariable(funXMLTerm_XMLVariable, args, factory.getEmpty());
-  }
-
-  public XMLTerm XMLTerm_XMLVariableFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternXMLTerm_XMLVariable);
-
-    if (children != null) {
-      XMLTerm tmp = makeXMLTerm_XMLVariable(TomNameFromTerm( (aterm.ATerm) children.get(0)), OptionFromTerm( (aterm.ATerm) children.get(1)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(XMLTerm_XMLVariableImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getAstName()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_XMLVariable, args);
-  }
-
   public TomList makeTomList() {
     return emptyTomList;
   }
@@ -5753,7 +5572,12 @@ public class TomSignatureFactory
       return tmp;
     }
 
-    tmp = Option_XMLPositionFromTerm(trm);
+    tmp = Option_ImplicitXMLAttributFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = Option_ImplicitXMLChildFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
@@ -6024,6 +5848,16 @@ public class TomSignatureFactory
       return tmp;
     }
 
+    tmp = TomTerm_XMLApplFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = TomTerm_XMLAttributeFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
     tmp = TomTerm_BackQuoteApplFromTerm(trm);
     if (tmp != null) {
       return tmp;
@@ -6170,21 +6004,6 @@ public class TomSignatureFactory
     }
 
     tmp = TomTerm_AutomataFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = TomTerm_MatchXMLFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = TomTerm_BackQuoteXMLFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = TomTerm_XMLTermToTomTermFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
@@ -6385,37 +6204,6 @@ public class TomSignatureFactory
 
 
     throw new RuntimeException("This is not a TomError: " + trm);
-  }
-  public XMLTerm XMLTermFromTerm(aterm.ATerm trm)
-  {
-    XMLTerm tmp;
-    tmp = XMLTerm_ElementFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = XMLTerm_AttributeFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = XMLTerm_ReservedWordFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = XMLTerm_XMLPlaceholderFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = XMLTerm_XMLVariableFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a XMLTerm: " + trm);
   }
   public TomList TomListFromTerm(aterm.ATerm trm)
   {
@@ -6732,14 +6520,6 @@ public class TomSignatureFactory
   }
   public TomError TomErrorFromFile(java.io.InputStream stream) throws java.io.IOException {
     return TomErrorFromTerm(factory.readFromFile(stream));
-  }
-  public XMLTerm XMLTermFromString(String str)
-  {
-    aterm.ATerm trm = factory.parse(str);
-    return XMLTermFromTerm(trm);
-  }
-  public XMLTerm XMLTermFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return XMLTermFromTerm(factory.readFromFile(stream));
   }
   public TomList TomListFromString(String str)
   {

@@ -96,6 +96,7 @@ public class GenericTraversal {
 
   protected ATerm genericTraversalArray(ATerm subject, Replace replace, Object[] args) {
     ATerm res = subject;
+  //System.out.println("subject = " + subject);
       //try {
       if(subject instanceof ATermAppl) { 
         res = genericMapterm((ATermAppl) subject, replace, args);
@@ -104,9 +105,14 @@ public class GenericTraversal {
       } else if(subject instanceof ATermInt) {
         res = subject;
       } else {
-          //} catch(Exception e) {
-          //e.printStackTrace();
+       
         System.out.println("Please, extend genericTraversalArray.."+subject);
+        try {
+          Exception f = null;
+          f.printStackTrace();
+        } catch(Exception e) {
+          e.printStackTrace();
+        }
         System.exit(0);
       }
     return res;

@@ -32,21 +32,21 @@ import aterm.pure.*;
 
 public class ATermToXML {
   
-  %include{ adt/NodeTerm.tom }
+  %include{ adt/TNode.tom }
 
-  private NodeTermFactory nodesFactory = null;
+  private TNodeFactory nodesFactory = null;
   private OutputStream out = System.out;
   private Writer writer = null;
 
-  private NodeTermFactory getNodeTermFactory() {
+  private TNodeFactory getTNodeFactory() {
     return nodesFactory;
   }
 
   public ATermToXML () {
-    nodesFactory = new NodeTermFactory(new PureFactory());
+    nodesFactory = new TNodeFactory(new PureFactory());
   }
 
-  public ATermToXML (NodeTermFactory factory) {
+  public ATermToXML (TNodeFactory factory) {
     nodesFactory = factory;
   }
 
@@ -67,15 +67,15 @@ public class ATermToXML {
   }
   
   public void convert(ATerm term) {
-    if (term instanceof NodeTerm) {
-      atermToXML((NodeTerm) term);
+    if (term instanceof TNode) {
+      atermToXML((TNode) term);
     } else {
-      System.out.println("ATermToXML can only convert NodeTerm to XML");
+      System.out.println("ATermToXML can only convert TNode to XML");
     }
   }
 
-  public void atermToXML(NodeTerm n) {
-    %match(NodeTerm n) {
+  public void atermToXML(TNode n) {
+    %match(TNode n) {
       DocumentNode(docType,docElem) -> {
 	write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 	atermToXML(docType);
@@ -99,7 +99,7 @@ public class ATermToXML {
 	write(">\n");
 	return;
       }
-      ElementNode(name,attrList,concNodeTerm()) -> {
+      ElementNode(name,attrList,concTNode()) -> {
 	write("<"+name);
 	atermToXMLList(attrList);
 	write("/>");
@@ -142,17 +142,17 @@ public class ATermToXML {
 	return;
       }
       _ -> {
-	System.out.println("Unknown type of NodeTerm : "+n);
+	System.out.println("Unknown type of TNode : "+n);
       }
     }
   }
 
-  private void atermToXMLList(NodeTermList list) {
+  private void atermToXMLList(TNodeList list) {
     if(list.isEmpty()) {
       return;
     }
-    NodeTerm t = (NodeTerm) list.getFirst();
-    NodeTermList l = list.getTail(); 
+    TNode t = (TNode) list.getFirst();
+    TNodeList l = list.getTail(); 
     atermToXML(t);
     atermToXMLList(l);
   }

@@ -97,10 +97,6 @@ implements aterm.ATerm
     return false;
   }
 
-  public boolean isSortXMLTerm() {
-    return false;
-  }
-
   public boolean isSortTomList() {
     return false;
   }

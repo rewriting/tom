@@ -35,25 +35,25 @@ import org.xml.sax.SAXException;
 
 public class XMLToATerm {
   
-  %include{ adt/NodeTerm.tom }
+  %include{ adt/TNode.tom }
 	
-  private NodeTermFactory nodesFactory = null;
-  private NodeTerm nodeTerm = null;
+  private TNodeFactory nodesFactory = null;
+  private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
   
   public void setDeletingWhiteSpaceNodes(boolean b_d) {
     deleteWhiteSpaceNodes=b_d;
   }
 
-  private NodeTermFactory getNodeTermFactory() {
+  private TNodeFactory getTNodeFactory() {
     return nodesFactory;
   }
 
   public XMLToATerm () {
-    nodesFactory = new NodeTermFactory(new PureFactory());
+    nodesFactory = new TNodeFactory(new PureFactory());
   }
 
-  public XMLToATerm(NodeTermFactory factory) {
+  public XMLToATerm(TNodeFactory factory) {
     nodesFactory = factory;
   }
 
@@ -62,7 +62,7 @@ public class XMLToATerm {
     convert(filename);
   }
 
-  public XMLToATerm(NodeTermFactory factory,String filename) {
+  public XMLToATerm(TNodeFactory factory,String filename) {
     this(factory);
     convert(filename);
   }
@@ -116,14 +116,14 @@ public class XMLToATerm {
     return null;
   }
 
-  public NodeTermList nodeListToAterm(NodeList n) {
-    NodeTermList nt_result = `emptyNodeTermList();
+  public TNodeList nodeListToAterm(NodeList n) {
+    TNodeList nt_result = `emptyTNodeList();
     for (int it=0;it<n.getLength();it++)
-      nt_result = `concNodeTerm(xmlToATerm(n.item(it)),nt_result*);
+      nt_result = `concTNode(xmlToATerm(n.item(it)),nt_result*);
     return nt_result;
   }
 	
-  public NodeTerm xmlToATerm(Node node) {
+  public TNode xmlToATerm(Node node) {
     if ( node == null ) { // Nothing to do
       //System.out.println("\n\nFound a null node\n\n");
       return null;
@@ -186,16 +186,16 @@ public class XMLToATerm {
     return null;
   }
 
-  private NodeTerm makeDocumentNode (Document doc){
-    NodeTerm doctype = xmlToATerm(doc.getDoctype());
+  private TNode makeDocumentNode (Document doc){
+    TNode doctype = xmlToATerm(doc.getDoctype());
     if (doctype == null) {
       doctype = `TextNode("");
     }
-    NodeTerm elem = xmlToATerm(doc.getDocumentElement());
+    TNode elem = xmlToATerm(doc.getDocumentElement());
     return `DocumentNode(doctype,elem);
   }
     
-  private NodeTerm makeDocumentTypeNode (DocumentType doctype) {
+  private TNode makeDocumentTypeNode (DocumentType doctype) {
     String name=doctype.getName();
     name = (name == null ? "UNDEF" : name);
     String publicId = doctype.getPublicId();
@@ -205,45 +205,45 @@ public class XMLToATerm {
     String internalSubset = doctype.getInternalSubset();
     internalSubset = (internalSubset == null ? "UNDEF" : internalSubset);
 
-    NodeTermList entitiesList= `concNodeTerm();
+    TNodeList entitiesList= `concTNode();
     NamedNodeMap entities = doctype.getEntities();
     for(int i=0; i < entities.getLength(); i++)
-      entitiesList = `concNodeTerm(entitiesList*,xmlToATerm(entities.item(i)));
+      entitiesList = `concTNode(entitiesList*,xmlToATerm(entities.item(i)));
 
-    NodeTermList notationsList = `concNodeTerm();
+    TNodeList notationsList = `concTNode();
     NamedNodeMap notations = doctype.getNotations();
     for(int i=0; i < notations.getLength(); i++) 
-      notationsList = `concNodeTerm(notationsList*,xmlToATerm(notations.item(i)));
+      notationsList = `concTNode(notationsList*,xmlToATerm(notations.item(i)));
 
     return `DocumentTypeNode(name,publicId,systemId,
 			     internalSubset,entitiesList,notationsList);
   }
     
-  private NodeTerm makeElementNode(Element elem) {
-    NodeTermList attrList=`concNodeTerm();
-    NodeTerm n;
+  private TNode makeElementNode(Element elem) {
+    TNodeList attrList=`concTNode();
+    TNode n;
     NamedNodeMap attrs = elem.getAttributes();
     for(int i=0; i < attrs.getLength(); i++) {
       n = xmlToATerm(attrs.item(i));
-      if (n!=null) attrList = `concNodeTerm(attrList*,n);
+      if (n!=null) attrList = `concTNode(attrList*,n);
     }
-    NodeTermList childList=`concNodeTerm();
+    TNodeList childList=`concTNode();
     NodeList nodes = elem.getChildNodes();
     for(int i = 0; i < nodes.getLength(); i++) {
       n = xmlToATerm(nodes.item(i));
-      if (n!=null) childList = `concNodeTerm(childList*,n);
+      if (n!=null) childList = `concTNode(childList*,n);
     }
     return `ElementNode(elem.getNodeName(),attrList,childList);
   }
 
-  private NodeTerm makeAttributeNode(Attr attr) {
+  private TNode makeAttributeNode(Attr attr) {
     String specif = (attr.getSpecified() ? "true" : "false");
     return `AttributeNode(attr.getNodeName()
 			  ,specif
 			  ,TextNode(attr.getNodeValue()));
   }
 
-  private NodeTerm makeTextNode(Text text) {
+  private TNode makeTextNode(Text text) {
     if (!deleteWhiteSpaceNodes)
       return `TextNode(text.getData());
     if (!text.getData().trim().equals(""))
@@ -251,7 +251,7 @@ public class XMLToATerm {
     return null;
   }
   
-  private NodeTerm makeEntityNode(Entity e) {
+  private TNode makeEntityNode(Entity e) {
     String nn= e.getNotationName();
     nn = (nn == null ? "UNDEF" : nn);
     String publicId = e.getPublicId();
@@ -261,18 +261,18 @@ public class XMLToATerm {
     return `EntityNode(nn,publicId,systemId);
   }
 
-  private NodeTerm makeEntityReferenceNode(EntityReference er) {
-    NodeTermList list=`concNodeTerm();
-    NodeTerm n;
+  private TNode makeEntityReferenceNode(EntityReference er) {
+    TNodeList list=`concTNode();
+    TNode n;
     NodeList nodes = er.getChildNodes();
     for(int i = 0; i < nodes.getLength(); i++) {
       n = xmlToATerm(nodes.item(i));
-      if (n!=null) list = `concNodeTerm(list*,n);
+      if (n!=null) list = `concTNode(list*,n);
     }
     return `EntityReferenceNode(er.getNodeName(),list);
   }
 
-  private NodeTerm makeNotationNode(Notation notation) {
+  private TNode makeNotationNode(Notation notation) {
     String publicId = notation.getPublicId();
     publicId = (publicId == null ? "UNDEF" : publicId);
     String systemId = notation.getSystemId();
@@ -280,15 +280,15 @@ public class XMLToATerm {
     return `NotationNode(publicId,systemId);
   }
 
-  private NodeTerm makeCommentNode(Comment comment) {
+  private TNode makeCommentNode(Comment comment) {
     return `CommentNode(comment.getData());
   }
   
-  private NodeTerm makeCDATASectionNode(CDATASection cdata) {
+  private TNode makeCDATASectionNode(CDATASection cdata) {
     return `CDATASectionNode(cdata.getData());
   }
 
-  private NodeTerm makeProcessingInstructionNode(ProcessingInstruction instr) {
+  private TNode makeProcessingInstructionNode(ProcessingInstruction instr) {
     return `ProcessingInstructionNode(instr.getTarget(),instr.getData());
   }
 

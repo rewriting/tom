@@ -80,7 +80,12 @@ abstract public class OptionImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isXMLPosition()
+  public boolean isImplicitXMLAttribut()
+  {
+    return false;
+  }
+
+  public boolean isImplicitXMLChild()
   {
     return false;
   }
@@ -111,11 +116,6 @@ abstract public class OptionImpl extends TomSignatureConstructor
   }
 
   public boolean hasFileName()
-  {
-    return false;
-  }
-
-  public boolean hasPlace()
   {
     return false;
   }
@@ -178,16 +178,6 @@ abstract public class OptionImpl extends TomSignatureConstructor
   public Option setFileName(TomName _fileName)
   {
      throw new IllegalArgumentException("Illegal argument: " + _fileName);
-  }
-
-  public String getPlace()
-  {
-     throw new UnsupportedOperationException("This Option has no Place");
-  }
-
-  public Option setPlace(String _place)
-  {
-     throw new IllegalArgumentException("Illegal argument: " + _place);
   }
 
 }

@@ -14,7 +14,7 @@ java_JAVA       = $(BOOTSOURCES)
 JAVAROOT        = ${top_builddir}/src/
 
 CLEANFILES 	= XMLToATerm.java ATermToXML.java
-EXTRA_DIST 	= $(BOOTSOURCES) XMLToATerm.t ATermToXML.t NodeTerm.adt
+EXTRA_DIST 	= $(BOOTSOURCES) XMLToATerm.t ATermToXML.t TNode.adt
 
 BUILT_SOURCES   = XMLToATerm.java ATermToXML.java XmlTools.java
 
@@ -25,15 +25,15 @@ bootinstall:
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-ATermToXML.t: adt/NodeTerm.tom
+ATermToXML.t: adt/TNode.tom
 	@touch ATermToXML.t
 
-XMLToATerm.t: adt/NodeTerm.tom
+XMLToATerm.t: adt/TNode.tom
 	@touch XMLToATerm.t
 
-adt/NodeTerm.tom: NodeTerm.adt
-	${ADTTOJAVA} -v -i NodeTerm.adt -j -p jtom.runtime.xml.adt --output adt 
-	mv adt/NodeTermMakeRules adt/NodeTermMakeRules.am
+adt/TNode.tom: TNode.adt
+	${ADTTOJAVA} -v -i TNode.adt -j -p jtom.runtime.xml.adt --output adt 
+	mv adt/TNodeMakeRules adt/TNodeMakeRules.am
 
 TOMFLAGS = --noWarning 
 TOM = ${prefix}/bin/jtom.src
