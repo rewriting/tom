@@ -25,17 +25,20 @@
 
 package jtom.tools;
 
-import java.text.*;
-import java.util.logging.*;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import aterm.*;
-
-import jtom.*;
-import jtom.exception.*;
-import jtom.adt.tomsignature.types.*;
-
-import tom.platform.*;
-import tom.platform.adt.platformoption.types.*;
+import jtom.Tom;
+import jtom.TomBase;
+import jtom.TomStreamManager;
+import jtom.adt.tomsignature.types.TomSymbol;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
+import tom.platform.OptionManager;
+import tom.platform.Plugin;
+import tom.platform.StatusHandler;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 /**
  * TomGenericPlugin is an abstract class which provides some code to
@@ -98,16 +101,13 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    *
    * @param term the input Object
    */
-  public RuntimeAlert setArgs(Object[] arg) {
-    RuntimeAlert errs = new RuntimeAlert();
+  public void setArgs(Object[] arg) {
     if (arg[0] instanceof TomTerm && arg[1] instanceof TomStreamManager) {
       term = (TomTerm)arg[0];
       streamManager = (TomStreamManager)arg[1];
     } else {
       getLogger().log(Level.SEVERE, "InvalidPluginArgument", new Object[]{"[TomTerm, TomStreamManager]", getArgumentArrayString(arg)});
-      //errs.addError();
     }
-    return errs;
   }
 
   public void setWorkingTerm(Object arg) {
@@ -123,7 +123,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * The run() method is not implemented in TomGenericPlugin.
    * The plugin should implement its own run() method itself.
    */
-  public abstract RuntimeAlert run();
+  public abstract void run();
 
   /**
    * From Plugin interface 
@@ -212,27 +212,8 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * @param optionName the option's name
    * @param optionValue the option's value
    */
-  public void setOption(String optionName, Object optionValue) {
-    setOptionValue(optionName, optionValue);
+  public void optionChanged(String optionName, Object optionValue) {
   }
-
-  /*public void printAlertMessage(int errorsAtStart, int warningsAtStart) {
-    if(!getOptionBooleanValue("eclipse")) {
-      
-      int nbOfErrors   = statusHandler.nbOfErrors()   - errorsAtStart;
-      int nbOfWarnings = statusHandler.nbOfWarnings() - warningsAtStart;
-
-      if( nbOfErrors > 0 ) {
-        getLogger().log( Level.SEVERE, "TaskErrorMessage",
-                    new Object[]{pluginName, 
-                                 new Integer(nbOfErrors), 
-                                 new Integer(nbOfWarnings)});
-      } else if( nbOfWarnings > 0 ) {
-        getLogger().log( Level.INFO, "TaskWarningMessage",
-                    new Object[]{pluginName, new Integer(nbOfWarnings)});
-      }
-    }
-    }*/
 
   private void findStatusHandler() {
     Handler[] handlers = Logger.getLogger(Tom.LOG_RADICAL).getHandlers();

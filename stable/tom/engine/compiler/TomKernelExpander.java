@@ -26,15 +26,15 @@
 package jtom.compiler;
   
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Iterator;
 
-import jtom.tools.*;
 import jtom.TomBase;
 import jtom.adt.tomsignature.types.*;
-import tom.library.traversal.Replace2;
-import aterm.*;
 import jtom.exception.TomRuntimeException;
+import jtom.tools.SymbolTable;
+import tom.library.traversal.Replace2;
+import aterm.ATerm;
 
 public class TomKernelExpander extends TomBase {
 
@@ -178,18 +178,51 @@ public class TomKernelExpander extends TomBase {
                //System.out.println("newLhs = " + newLhs);
               
                return tom_make_TypedEqualityCondition(type,newLhs,newRhs);
-              }}} }} }} }}} } }}} }} }} }}} }}} }}} } { jtom.adt.tomsignature.types.TomTerm context=tom_match5_1; if(tom_is_fun_sym_Match(tom_match5_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match5_2_1=tom_get_slot_Match_subjectList(tom_match5_2); { jtom.adt.tomsignature.types.TomTerm tom_match5_2_2=tom_get_slot_Match_astPatternList(tom_match5_2); { jtom.adt.tomsignature.types.OptionList tom_match5_2_3=tom_get_slot_Match_option(tom_match5_2); { jtom.adt.tomsignature.types.TomTerm tomSubjectList=tom_match5_2_1; { jtom.adt.tomsignature.types.TomTerm patternList=tom_match5_2_2; { jtom.adt.tomsignature.types.OptionList option=tom_match5_2_3;
+              }}} }} }} }}} } }}} }} }} }}} }}} }}} } { jtom.adt.tomsignature.types.TomTerm context=tom_match5_1; if(tom_is_fun_sym_Match(tom_match5_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match5_2_1=tom_get_slot_Match_subjectList(tom_match5_2); { jtom.adt.tomsignature.types.PatternInstructionList tom_match5_2_2=tom_get_slot_Match_astPatternInstructionList(tom_match5_2); { jtom.adt.tomsignature.types.OptionList tom_match5_2_3=tom_get_slot_Match_option(tom_match5_2); { jtom.adt.tomsignature.types.TomTerm tomSubjectList=tom_match5_2_1; { jtom.adt.tomsignature.types.PatternInstructionList patternInstructionList=tom_match5_2_2; { jtom.adt.tomsignature.types.OptionList option=tom_match5_2_3;
 
 
                //System.out.println("tomSubjectList = " + tomSubjectList);
                TomTerm newSubjectList = expandVariable(context,tomSubjectList);
                //System.out.println("newSubjectList = " + newSubjectList);
-               TomTerm newPatternList = expandVariable(newSubjectList,patternList);
-               return tom_make_Match(newSubjectList,newPatternList,option);
+               PatternInstructionList newPatternInstructionList = expandVariablePatternInstructionList(newSubjectList,patternInstructionList);
+
+               /*
+                * expansion of RawAction into TypedAction
+                */
+               PatternInstructionList typedActionPatternInstructionList = tom_empty_list_concPatternInstruction();
+               PatternList negativePattern = tom_empty_list_concPattern();
+               while(!newPatternInstructionList.isEmpty()) {
+                 PatternInstruction head = newPatternInstructionList.getHead();
+                  { jtom.adt.tomsignature.types.PatternInstruction tom_match6_1=(( jtom.adt.tomsignature.types.PatternInstruction)head);{ if(tom_is_fun_sym_PatternInstruction(tom_match6_1) ||  false ) { { jtom.adt.tomsignature.types.Pattern tom_match6_1_1=tom_get_slot_PatternInstruction_pattern(tom_match6_1); { jtom.adt.tomsignature.types.Instruction tom_match6_1_2=tom_get_slot_PatternInstruction_action(tom_match6_1); { jtom.adt.tomsignature.types.OptionList tom_match6_1_3=tom_get_slot_PatternInstruction_option(tom_match6_1); { jtom.adt.tomsignature.types.Pattern pattern=tom_match6_1_1; if(tom_is_fun_sym_RawAction(tom_match6_1_2) ||  false ) { { jtom.adt.tomsignature.types.Instruction tom_match6_1_2_1=tom_get_slot_RawAction_astInstruction(tom_match6_1_2); { jtom.adt.tomsignature.types.Instruction actionInst=tom_match6_1_2_1; { jtom.adt.tomsignature.types.OptionList piOption=tom_match6_1_3;
+
+                     Instruction typedAction = tom_make_TypedAction(actionInst,tom_cons_list_concPattern(pattern,tom_empty_list_concPattern()),negativePattern);
+                     typedActionPatternInstructionList = (PatternInstructionList) typedActionPatternInstructionList.append(tom_make_PatternInstruction(pattern,typedAction,piOption));
+                     negativePattern = (PatternList) negativePattern.append(pattern);
+                   }}} }}}}} }}}
+
+                 newPatternInstructionList = newPatternInstructionList.getTail();
+               }
+
+               return tom_make_Match(newSubjectList,typedActionPatternInstructionList,option);
              }}}}}} }}}}}}
  // end match
+        } else if(subject instanceof Pattern) {
+           { jtom.adt.tomsignature.types.TomTerm tom_match7_1=(( jtom.adt.tomsignature.types.TomTerm)contextSubject);{ { jtom.adt.tomsignature.types.Pattern tom_match7_2=(( jtom.adt.tomsignature.types.Pattern)subject);{ if(tom_is_fun_sym_SubjectList(tom_match7_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match7_1_1=tom_get_slot_SubjectList_tomList(tom_match7_1); { jtom.adt.tomsignature.types.TomList l1=tom_match7_1_1; if(tom_is_fun_sym_Pattern(tom_match7_2) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match7_2_1=tom_get_slot_Pattern_tomList(tom_match7_2); { jtom.adt.tomsignature.types.TomList subjectList=tom_match7_2_1;
+
+               //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
+                
+               // process a list of subterms
+               ArrayList list = new ArrayList();
+               while(!subjectList.isEmpty()) {
+                 list.add(expandVariable(l1.getHead(), subjectList.getHead()));
+                 subjectList = subjectList.getTail();
+                 l1 = l1.getTail();
+               }
+               return tom_make_Pattern(getAstFactory().makeList(list));
+             }} }}} }}}}}
+ // end match
         } else if(subject instanceof TomTerm) {
-           { jtom.adt.tomsignature.types.TomTerm tom_match6_1=(( jtom.adt.tomsignature.types.TomTerm)contextSubject);{ { jtom.adt.tomsignature.types.TomTerm tom_match6_2=(( jtom.adt.tomsignature.types.TomTerm)subject);{ { jtom.adt.tomsignature.types.TomTerm context=tom_match6_1; if(tom_is_fun_sym_Appl(tom_match6_2) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match6_2_1=tom_get_slot_Appl_option(tom_match6_2); { jtom.adt.tomsignature.types.NameList tom_match6_2_2=tom_get_slot_Appl_nameList(tom_match6_2); { jtom.adt.tomsignature.types.TomList tom_match6_2_3=tom_get_slot_Appl_args(tom_match6_2); { jtom.adt.tomsignature.types.ConstraintList tom_match6_2_4=tom_get_slot_Appl_constraints(tom_match6_2); { jtom.adt.tomsignature.types.OptionList option=tom_match6_2_1; if(tom_is_fun_sym_concTomName(tom_match6_2_2) ||  false ) { { jtom.adt.tomsignature.types.NameList nameList=tom_match6_2_2; { jtom.adt.tomsignature.types.NameList tom_match6_2_2_list1=tom_match6_2_2; if(!(tom_is_empty_NameList(tom_match6_2_2_list1))) { { jtom.adt.tomsignature.types.TomName tom_match6_2_2_1=tom_get_head_NameList(tom_match6_2_2_list1);tom_match6_2_2_list1=tom_get_tail_NameList(tom_match6_2_2_list1); if(tom_is_fun_sym_Name(tom_match6_2_2_1) ||  false ) { { String  tom_match6_2_2_1_1=tom_get_slot_Name_string(tom_match6_2_2_1); { String  tomName=tom_match6_2_2_1_1; { jtom.adt.tomsignature.types.TomList l=tom_match6_2_3; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match6_2_4;
+           { jtom.adt.tomsignature.types.TomTerm tom_match8_1=(( jtom.adt.tomsignature.types.TomTerm)contextSubject);{ { jtom.adt.tomsignature.types.TomTerm tom_match8_2=(( jtom.adt.tomsignature.types.TomTerm)subject);{ { jtom.adt.tomsignature.types.TomTerm context=tom_match8_1; if(tom_is_fun_sym_Appl(tom_match8_2) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match8_2_1=tom_get_slot_Appl_option(tom_match8_2); { jtom.adt.tomsignature.types.NameList tom_match8_2_2=tom_get_slot_Appl_nameList(tom_match8_2); { jtom.adt.tomsignature.types.TomList tom_match8_2_3=tom_get_slot_Appl_args(tom_match8_2); { jtom.adt.tomsignature.types.ConstraintList tom_match8_2_4=tom_get_slot_Appl_constraints(tom_match8_2); { jtom.adt.tomsignature.types.OptionList option=tom_match8_2_1; if(tom_is_fun_sym_concTomName(tom_match8_2_2) ||  false ) { { jtom.adt.tomsignature.types.NameList nameList=tom_match8_2_2; { jtom.adt.tomsignature.types.NameList tom_match8_2_2_list1=tom_match8_2_2; if(!(tom_is_empty_NameList(tom_match8_2_2_list1))) { { jtom.adt.tomsignature.types.TomName tom_match8_2_2_1=tom_get_head_NameList(tom_match8_2_2_list1);tom_match8_2_2_list1=tom_get_tail_NameList(tom_match8_2_2_list1); if(tom_is_fun_sym_Name(tom_match8_2_2_1) ||  false ) { { String  tom_match8_2_2_1_1=tom_get_slot_Name_string(tom_match8_2_2_1); { String  tomName=tom_match8_2_2_1_1; { jtom.adt.tomsignature.types.TomList l=tom_match8_2_3; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match8_2_4;
 
                TomSymbol tomSymbol = null;
                if(tomName.equals("")) {
@@ -209,7 +242,7 @@ public class TomKernelExpander extends TomBase {
                  ConstraintList newConstraints = expandVariableConstraintList(tom_make_TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),constraints);
                  return tom_make_Appl(option,nameList,subterm,newConstraints);
                } else {
-                  { jtom.adt.tomsignature.types.TomTerm tom_match7_1=(( jtom.adt.tomsignature.types.TomTerm)contextSubject);{ if(tom_is_fun_sym_TomTypeToTomTerm(tom_match7_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match7_1_1=tom_get_slot_TomTypeToTomTerm_astType(tom_match7_1); if(tom_is_fun_sym_Type(tom_match7_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match7_1_1;
+                  { jtom.adt.tomsignature.types.TomTerm tom_match9_1=(( jtom.adt.tomsignature.types.TomTerm)contextSubject);{ if(tom_is_fun_sym_TomTypeToTomTerm(tom_match9_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match9_1_1=tom_get_slot_TomTypeToTomTerm_astType(tom_match9_1); if(tom_is_fun_sym_Type(tom_match9_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match9_1_1;
 
                      if(l.isEmpty()  && !hasConstructor(option)) {
                        ConstraintList newConstraints = expandVariableConstraintList(tom_make_TomTypeToTomTerm(type),constraints);
@@ -219,7 +252,7 @@ public class TomKernelExpander extends TomBase {
                        ConstraintList newConstraints = expandVariableConstraintList(tom_make_emptyTerm(),constraints);
                        return tom_make_Appl(option,nameList,subterm,newConstraints);
                      }
-                   } }} } if(tom_is_fun_sym_Variable(tom_match7_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match7_1_3=tom_get_slot_Variable_astType(tom_match7_1); { jtom.adt.tomsignature.types.TomType type=tom_match7_1_3;
+                   } }} } if(tom_is_fun_sym_Variable(tom_match9_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match9_1_3=tom_get_slot_Variable_astType(tom_match9_1); { jtom.adt.tomsignature.types.TomType type=tom_match9_1_3;
 
                      ConstraintList newConstraints = expandVariableConstraintList(tom_make_TomTypeToTomTerm(type),constraints);
                      if(l.isEmpty()  && !hasConstructor(option)) {
@@ -234,13 +267,13 @@ public class TomKernelExpander extends TomBase {
                    }}
 
                }
-             }}}} }} }}} }}}}}} }} if(tom_is_fun_sym_TomTypeToTomTerm(tom_match6_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm context=tom_match6_1; { jtom.adt.tomsignature.types.TomType tom_match6_1_1=tom_get_slot_TomTypeToTomTerm_astType(tom_match6_1); if(tom_is_fun_sym_Type(tom_match6_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match6_1_1; if(tom_is_fun_sym_Variable(tom_match6_2) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match6_2_1=tom_get_slot_Variable_option(tom_match6_2); { jtom.adt.tomsignature.types.TomName tom_match6_2_2=tom_get_slot_Variable_astName(tom_match6_2); { jtom.adt.tomsignature.types.TomType tom_match6_2_3=tom_get_slot_Variable_astType(tom_match6_2); { jtom.adt.tomsignature.types.ConstraintList tom_match6_2_4=tom_get_slot_Variable_constraints(tom_match6_2); { jtom.adt.tomsignature.types.OptionList option=tom_match6_2_1; { jtom.adt.tomsignature.types.TomName astName=tom_match6_2_2; if(tom_is_fun_sym_TomTypeAlone(tom_match6_2_3) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match6_2_4;
+             }}}} }} }}} }}}}}} }} if(tom_is_fun_sym_TomTypeToTomTerm(tom_match8_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm context=tom_match8_1; { jtom.adt.tomsignature.types.TomType tom_match8_1_1=tom_get_slot_TomTypeToTomTerm_astType(tom_match8_1); if(tom_is_fun_sym_Type(tom_match8_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match8_1_1; if(tom_is_fun_sym_Variable(tom_match8_2) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match8_2_1=tom_get_slot_Variable_option(tom_match8_2); { jtom.adt.tomsignature.types.TomName tom_match8_2_2=tom_get_slot_Variable_astName(tom_match8_2); { jtom.adt.tomsignature.types.TomType tom_match8_2_3=tom_get_slot_Variable_astType(tom_match8_2); { jtom.adt.tomsignature.types.ConstraintList tom_match8_2_4=tom_get_slot_Variable_constraints(tom_match8_2); { jtom.adt.tomsignature.types.OptionList option=tom_match8_2_1; { jtom.adt.tomsignature.types.TomName astName=tom_match8_2_2; if(tom_is_fun_sym_TomTypeAlone(tom_match8_2_3) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match8_2_4;
 
 
 
                // create a variable
                return tom_make_Variable(option,astName,type,expandVariableConstraintList(context,constraints));
-             } }}}}}}} }} }}} } { jtom.adt.tomsignature.types.TomTerm context=tom_match6_1; if(tom_is_fun_sym_Variable(tom_match6_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match6_2; { jtom.adt.tomsignature.types.OptionList tom_match6_2_1=tom_get_slot_Variable_option(tom_match6_2); { jtom.adt.tomsignature.types.TomName tom_match6_2_2=tom_get_slot_Variable_astName(tom_match6_2); { jtom.adt.tomsignature.types.TomType tom_match6_2_3=tom_get_slot_Variable_astType(tom_match6_2); { jtom.adt.tomsignature.types.ConstraintList tom_match6_2_4=tom_get_slot_Variable_constraints(tom_match6_2); { jtom.adt.tomsignature.types.OptionList option=tom_match6_2_1; if(tom_is_fun_sym_Name(tom_match6_2_2) ||  false ) { { String  tom_match6_2_2_1=tom_get_slot_Name_string(tom_match6_2_2); { String  strName=tom_match6_2_2_1; if(tom_is_fun_sym_TomTypeAlone(tom_match6_2_3) ||  false ) { { String  tom_match6_2_3_1=tom_get_slot_TomTypeAlone_string(tom_match6_2_3); { String  tomType=tom_match6_2_3_1; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match6_2_4;
+             } }}}}}}} }} }}} } { jtom.adt.tomsignature.types.TomTerm context=tom_match8_1; if(tom_is_fun_sym_Variable(tom_match8_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match8_2; { jtom.adt.tomsignature.types.OptionList tom_match8_2_1=tom_get_slot_Variable_option(tom_match8_2); { jtom.adt.tomsignature.types.TomName tom_match8_2_2=tom_get_slot_Variable_astName(tom_match8_2); { jtom.adt.tomsignature.types.TomType tom_match8_2_3=tom_get_slot_Variable_astType(tom_match8_2); { jtom.adt.tomsignature.types.ConstraintList tom_match8_2_4=tom_get_slot_Variable_constraints(tom_match8_2); { jtom.adt.tomsignature.types.OptionList option=tom_match8_2_1; if(tom_is_fun_sym_Name(tom_match8_2_2) ||  false ) { { String  tom_match8_2_2_1=tom_get_slot_Name_string(tom_match8_2_2); { String  strName=tom_match8_2_2_1; if(tom_is_fun_sym_TomTypeAlone(tom_match8_2_3) ||  false ) { { String  tom_match8_2_3_1=tom_get_slot_TomTypeAlone_string(tom_match8_2_3); { String  tomType=tom_match8_2_3_1; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match8_2_4;
 
 
                // create a variable
@@ -250,45 +283,33 @@ public class TomKernelExpander extends TomBase {
                } else {
                  // do nothing
                }
-             }}} }}} }}}}}}} }} if(tom_is_fun_sym_TomTypeToTomTerm(tom_match6_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match6_1_1=tom_get_slot_TomTypeToTomTerm_astType(tom_match6_1); if(tom_is_fun_sym_Type(tom_match6_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match6_1_1; if(tom_is_fun_sym_Placeholder(tom_match6_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm p=tom_match6_2; { jtom.adt.tomsignature.types.OptionList tom_match6_2_1=tom_get_slot_Placeholder_option(tom_match6_2); { jtom.adt.tomsignature.types.ConstraintList tom_match6_2_2=tom_get_slot_Placeholder_constraints(tom_match6_2); { jtom.adt.tomsignature.types.OptionList option=tom_match6_2_1; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match6_2_2;
+             }}} }}} }}}}}}} }} if(tom_is_fun_sym_TomTypeToTomTerm(tom_match8_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match8_1_1=tom_get_slot_TomTypeToTomTerm_astType(tom_match8_1); if(tom_is_fun_sym_Type(tom_match8_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match8_1_1; if(tom_is_fun_sym_Placeholder(tom_match8_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm p=tom_match8_2; { jtom.adt.tomsignature.types.OptionList tom_match8_2_1=tom_get_slot_Placeholder_option(tom_match8_2); { jtom.adt.tomsignature.types.ConstraintList tom_match8_2_2=tom_get_slot_Placeholder_constraints(tom_match8_2); { jtom.adt.tomsignature.types.OptionList option=tom_match8_2_1; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match8_2_2;
 
 
                ConstraintList newConstraints = expandVariableConstraintList(tom_make_TomTypeToTomTerm(type),constraints);
                // create an unamed variable
                return tom_make_UnamedVariable(option,type,newConstraints);
-             }}}}} }} }} } if(tom_is_fun_sym_Variable(tom_match6_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match6_1_1=tom_get_slot_Variable_option(tom_match6_1); { jtom.adt.tomsignature.types.TomName tom_match6_1_2=tom_get_slot_Variable_astName(tom_match6_1); { jtom.adt.tomsignature.types.TomType tom_match6_1_3=tom_get_slot_Variable_astType(tom_match6_1); { jtom.adt.tomsignature.types.OptionList option1=tom_match6_1_1; { jtom.adt.tomsignature.types.TomName name1=tom_match6_1_2; { jtom.adt.tomsignature.types.TomType type1=tom_match6_1_3; if(tom_is_fun_sym_Placeholder(tom_match6_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm p=tom_match6_2; { jtom.adt.tomsignature.types.OptionList tom_match6_2_1=tom_get_slot_Placeholder_option(tom_match6_2); { jtom.adt.tomsignature.types.ConstraintList tom_match6_2_2=tom_get_slot_Placeholder_constraints(tom_match6_2); { jtom.adt.tomsignature.types.OptionList option=tom_match6_2_1; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match6_2_2;
+             }}}}} }} }} } if(tom_is_fun_sym_Variable(tom_match8_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match8_1_1=tom_get_slot_Variable_option(tom_match8_1); { jtom.adt.tomsignature.types.TomName tom_match8_1_2=tom_get_slot_Variable_astName(tom_match8_1); { jtom.adt.tomsignature.types.TomType tom_match8_1_3=tom_get_slot_Variable_astType(tom_match8_1); { jtom.adt.tomsignature.types.OptionList option1=tom_match8_1_1; { jtom.adt.tomsignature.types.TomName name1=tom_match8_1_2; { jtom.adt.tomsignature.types.TomType type1=tom_match8_1_3; if(tom_is_fun_sym_Placeholder(tom_match8_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm p=tom_match8_2; { jtom.adt.tomsignature.types.OptionList tom_match8_2_1=tom_get_slot_Placeholder_option(tom_match8_2); { jtom.adt.tomsignature.types.ConstraintList tom_match8_2_2=tom_get_slot_Placeholder_constraints(tom_match8_2); { jtom.adt.tomsignature.types.OptionList option=tom_match8_2_1; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match8_2_2;
 
 
                ConstraintList newConstraints = expandVariableConstraintList(tom_make_TomTypeToTomTerm(type1),constraints);
                // create an unamed variable
                return tom_make_UnamedVariable(option,type1,newConstraints);
-             }}}}} }}}}}}} } { jtom.adt.tomsignature.types.TomTerm context=tom_match6_1; if(tom_is_fun_sym_TLVar(tom_match6_2) ||  false ) { { String  tom_match6_2_1=tom_get_slot_TLVar_strName(tom_match6_2); { jtom.adt.tomsignature.types.TomType tom_match6_2_2=tom_get_slot_TLVar_astType(tom_match6_2); { String  strName=tom_match6_2_1; if(tom_is_fun_sym_TomTypeAlone(tom_match6_2_2) ||  false ) { { String  tom_match6_2_2_1=tom_get_slot_TomTypeAlone_string(tom_match6_2_2); { String  tomType=tom_match6_2_2_1;
+             }}}}} }}}}}}} } { jtom.adt.tomsignature.types.TomTerm context=tom_match8_1; if(tom_is_fun_sym_TLVar(tom_match8_2) ||  false ) { { String  tom_match8_2_1=tom_get_slot_TLVar_strName(tom_match8_2); { jtom.adt.tomsignature.types.TomType tom_match8_2_2=tom_get_slot_TLVar_astType(tom_match8_2); { String  strName=tom_match8_2_1; if(tom_is_fun_sym_TomTypeAlone(tom_match8_2_2) ||  false ) { { String  tom_match8_2_2_1=tom_get_slot_TomTypeAlone_string(tom_match8_2_2); { String  tomType=tom_match8_2_2_1;
 
 
                // create a variable: its type is ensured by checker
                TomType localType = getType(tomType);
                OptionList option = getAstFactory().makeOption();
                return tom_make_Variable(option,tom_make_Name(strName),localType,tom_empty_list_concConstraint());
-             }} }}}} }} { jtom.adt.tomsignature.types.TomTerm context=tom_match6_1; if(tom_is_fun_sym_TLVar(tom_match6_2) ||  false ) { { String  tom_match6_2_1=tom_get_slot_TLVar_strName(tom_match6_2); { jtom.adt.tomsignature.types.TomType tom_match6_2_2=tom_get_slot_TLVar_astType(tom_match6_2); { String  strName=tom_match6_2_1; if(tom_is_fun_sym_Type(tom_match6_2_2) ||  false ) { { jtom.adt.tomsignature.types.TomType localType=tom_match6_2_2;
+             }} }}}} }} { jtom.adt.tomsignature.types.TomTerm context=tom_match8_1; if(tom_is_fun_sym_TLVar(tom_match8_2) ||  false ) { { String  tom_match8_2_1=tom_get_slot_TLVar_strName(tom_match8_2); { jtom.adt.tomsignature.types.TomType tom_match8_2_2=tom_get_slot_TLVar_astType(tom_match8_2); { String  strName=tom_match8_2_1; if(tom_is_fun_sym_Type(tom_match8_2_2) ||  false ) { { jtom.adt.tomsignature.types.TomType localType=tom_match8_2_2;
 
 
                // create a variable: its type is ensured by checker
                OptionList option = getAstFactory().makeOption();
                return tom_make_Variable(option,tom_make_Name(strName),localType,tom_empty_list_concConstraint());
-             } }}}} }} if(tom_is_fun_sym_SubjectList(tom_match6_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match6_1_1=tom_get_slot_SubjectList_tomList(tom_match6_1); { jtom.adt.tomsignature.types.TomList l1=tom_match6_1_1; if(tom_is_fun_sym_TermList(tom_match6_2) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match6_2_1=tom_get_slot_TermList_tomList(tom_match6_2); { jtom.adt.tomsignature.types.TomList subjectList=tom_match6_2_1;
+             } }}}} }}}}}}
 
-
-               //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
-                
-               // process a list of subterms
-               ArrayList list = new ArrayList();
-               while(!subjectList.isEmpty()) {
-                 list.add(expandVariable(l1.getHead(), subjectList.getHead()));
-                 subjectList = subjectList.getTail();
-                 l1 = l1.getTail();
-               }
-               return tom_make_TermList(getAstFactory().makeList(list));
-             }} }}} }}}}}
  // end match
         } // end instanceof TomTerm
           //System.out.println("TomKernelCompiler.expandVariable default:\n\t" + subject );
@@ -310,19 +331,23 @@ public class TomKernelExpander extends TomBase {
     return (ConstraintList) replace_expandVariable.apply(subject,contextSubject); 
   }
 
+  protected PatternInstructionList expandVariablePatternInstructionList(TomTerm contextSubject, PatternInstructionList subject) {
+    return (PatternInstructionList) replace_expandVariable.apply(subject,contextSubject); 
+  }
+
   private TomType getTypeFromVariableList(TomName name, TomList list) {
 
     //System.out.println("name = " + name);
     //System.out.println("list = " + list);
     
-     { jtom.adt.tomsignature.types.TomName tom_match8_1=(( jtom.adt.tomsignature.types.TomName)name);{ { jtom.adt.tomsignature.types.TomList tom_match8_2=(( jtom.adt.tomsignature.types.TomList)list);{ if(tom_is_fun_sym_emptyTomList(tom_match8_2) ||  false ) {
+     { jtom.adt.tomsignature.types.TomName tom_match10_1=(( jtom.adt.tomsignature.types.TomName)name);{ { jtom.adt.tomsignature.types.TomList tom_match10_2=(( jtom.adt.tomsignature.types.TomList)list);{ if(tom_is_fun_sym_emptyTomList(tom_match10_2) ||  false ) {
 
          System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
          throw new TomRuntimeException("getTypeFromVariableList. Stange case '" + name + "' not found");
-        } { jtom.adt.tomsignature.types.TomName varName=tom_match8_1; if(tom_is_fun_sym_manyTomList(tom_match8_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match8_2_1=tom_get_slot_manyTomList_head(tom_match8_2); { jtom.adt.tomsignature.types.TomList tom_match8_2_2=tom_get_slot_manyTomList_tail(tom_match8_2); if(tom_is_fun_sym_Variable(tom_match8_2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match8_2_1_2=tom_get_slot_Variable_astName(tom_match8_2_1); { jtom.adt.tomsignature.types.TomType tom_match8_2_1_3=tom_get_slot_Variable_astType(tom_match8_2_1); { jtom.adt.tomsignature.types.TomName tom_renamedvar_varName_1=tom_match8_2_1_2; if(tom_terms_equal_TomName(varName, tom_renamedvar_varName_1)) { if(tom_is_fun_sym_Type(tom_match8_2_1_3) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match8_2_1_3; { jtom.adt.tomsignature.types.TomList tail=tom_match8_2_2;
+        } { jtom.adt.tomsignature.types.TomName varName=tom_match10_1; if(tom_is_fun_sym_manyTomList(tom_match10_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match10_2_1=tom_get_slot_manyTomList_head(tom_match10_2); { jtom.adt.tomsignature.types.TomList tom_match10_2_2=tom_get_slot_manyTomList_tail(tom_match10_2); if(tom_is_fun_sym_Variable(tom_match10_2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match10_2_1_2=tom_get_slot_Variable_astName(tom_match10_2_1); { jtom.adt.tomsignature.types.TomType tom_match10_2_1_3=tom_get_slot_Variable_astType(tom_match10_2_1); { jtom.adt.tomsignature.types.TomName tom_renamedvar_varName_1=tom_match10_2_1_2; if(tom_terms_equal_TomName(varName, tom_renamedvar_varName_1)) { if(tom_is_fun_sym_Type(tom_match10_2_1_3) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match10_2_1_3; { jtom.adt.tomsignature.types.TomList tail=tom_match10_2_2;
 
- return type; }} } }}}} }}} }} { jtom.adt.tomsignature.types.TomName varName=tom_match8_1; if(tom_is_fun_sym_manyTomList(tom_match8_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match8_2_1=tom_get_slot_manyTomList_head(tom_match8_2); { jtom.adt.tomsignature.types.TomList tom_match8_2_2=tom_get_slot_manyTomList_tail(tom_match8_2); if(tom_is_fun_sym_VariableStar(tom_match8_2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match8_2_1_2=tom_get_slot_VariableStar_astName(tom_match8_2_1); { jtom.adt.tomsignature.types.TomType tom_match8_2_1_3=tom_get_slot_VariableStar_astType(tom_match8_2_1); { jtom.adt.tomsignature.types.TomName tom_renamedvar_varName_1=tom_match8_2_1_2; if(tom_terms_equal_TomName(varName, tom_renamedvar_varName_1)) { if(tom_is_fun_sym_Type(tom_match8_2_1_3) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match8_2_1_3; { jtom.adt.tomsignature.types.TomList tail=tom_match8_2_2;
- return type; }} } }}}} }}} }} if(tom_is_fun_sym_manyTomList(tom_match8_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match8_2_1=tom_get_slot_manyTomList_head(tom_match8_2); { jtom.adt.tomsignature.types.TomList tom_match8_2_2=tom_get_slot_manyTomList_tail(tom_match8_2); { jtom.adt.tomsignature.types.TomTerm t=tom_match8_2_1; { jtom.adt.tomsignature.types.TomList tail=tom_match8_2_2;
+ return type; }} } }}}} }}} }} { jtom.adt.tomsignature.types.TomName varName=tom_match10_1; if(tom_is_fun_sym_manyTomList(tom_match10_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match10_2_1=tom_get_slot_manyTomList_head(tom_match10_2); { jtom.adt.tomsignature.types.TomList tom_match10_2_2=tom_get_slot_manyTomList_tail(tom_match10_2); if(tom_is_fun_sym_VariableStar(tom_match10_2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match10_2_1_2=tom_get_slot_VariableStar_astName(tom_match10_2_1); { jtom.adt.tomsignature.types.TomType tom_match10_2_1_3=tom_get_slot_VariableStar_astType(tom_match10_2_1); { jtom.adt.tomsignature.types.TomName tom_renamedvar_varName_1=tom_match10_2_1_2; if(tom_terms_equal_TomName(varName, tom_renamedvar_varName_1)) { if(tom_is_fun_sym_Type(tom_match10_2_1_3) ||  false ) { { jtom.adt.tomsignature.types.TomType type=tom_match10_2_1_3; { jtom.adt.tomsignature.types.TomList tail=tom_match10_2_2;
+ return type; }} } }}}} }}} }} if(tom_is_fun_sym_manyTomList(tom_match10_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match10_2_1=tom_get_slot_manyTomList_head(tom_match10_2); { jtom.adt.tomsignature.types.TomList tom_match10_2_2=tom_get_slot_manyTomList_tail(tom_match10_2); { jtom.adt.tomsignature.types.TomTerm t=tom_match10_2_1; { jtom.adt.tomsignature.types.TomList tail=tom_match10_2_2;
  return getTypeFromVariableList(name,tail); }}}} }}}}}
 
 
@@ -336,7 +361,7 @@ public class TomKernelExpander extends TomBase {
     }
     
     //System.out.println("symbol = " + subject.getAstName());
-     { jtom.adt.tomsignature.types.TomSymbol tom_match9_1=(( jtom.adt.tomsignature.types.TomSymbol)subject);{ if(tom_is_fun_sym_emptySymbol(tom_match9_1) ||  false ) {
+     { jtom.adt.tomsignature.types.TomSymbol tom_match11_1=(( jtom.adt.tomsignature.types.TomSymbol)subject);{ if(tom_is_fun_sym_emptySymbol(tom_match11_1) ||  false ) {
 
         /*
          * If the top symbol is unknown, the subterms
@@ -348,7 +373,7 @@ public class TomKernelExpander extends TomBase {
           subjectList = subjectList.getTail();
         }
         return getAstFactory().makeList(list);
-       } if(tom_is_fun_sym_Symbol(tom_match9_1) ||  false ) { { jtom.adt.tomsignature.types.TomSymbol symb=tom_match9_1; { jtom.adt.tomsignature.types.TomType tom_match9_1_2=tom_get_slot_Symbol_typesToType(tom_match9_1); if(tom_is_fun_sym_TypesToType(tom_match9_1_2) ||  false ) { { jtom.adt.tomsignature.types.TomTypeList tom_match9_1_2_1=tom_get_slot_TypesToType_domain(tom_match9_1_2); { jtom.adt.tomsignature.types.TomType tom_match9_1_2_2=tom_get_slot_TypesToType_codomain(tom_match9_1_2); { jtom.adt.tomsignature.types.TomTypeList typeList=tom_match9_1_2_1; { jtom.adt.tomsignature.types.TomType codomain=tom_match9_1_2_2;
+       } if(tom_is_fun_sym_Symbol(tom_match11_1) ||  false ) { { jtom.adt.tomsignature.types.TomSymbol symb=tom_match11_1; { jtom.adt.tomsignature.types.TomType tom_match11_1_2=tom_get_slot_Symbol_typesToType(tom_match11_1); if(tom_is_fun_sym_TypesToType(tom_match11_1_2) ||  false ) { { jtom.adt.tomsignature.types.TomTypeList tom_match11_1_2_1=tom_get_slot_TypesToType_domain(tom_match11_1_2); { jtom.adt.tomsignature.types.TomType tom_match11_1_2_2=tom_get_slot_TypesToType_codomain(tom_match11_1_2); { jtom.adt.tomsignature.types.TomTypeList typeList=tom_match11_1_2_1; { jtom.adt.tomsignature.types.TomType codomain=tom_match11_1_2_2;
 
 
           
@@ -375,13 +400,13 @@ public class TomKernelExpander extends TomBase {
             TomTerm subterm = subjectList.getHead();
             //System.out.println("subterm:\n" + subterm);
             matchBlock: {
-               { jtom.adt.tomsignature.types.TomTerm tom_match10_1=(( jtom.adt.tomsignature.types.TomTerm)subterm);{ if(tom_is_fun_sym_VariableStar(tom_match10_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match10_1_1=tom_get_slot_VariableStar_option(tom_match10_1); { jtom.adt.tomsignature.types.TomName tom_match10_1_2=tom_get_slot_VariableStar_astName(tom_match10_1); { jtom.adt.tomsignature.types.ConstraintList tom_match10_1_4=tom_get_slot_VariableStar_constraints(tom_match10_1); { jtom.adt.tomsignature.types.OptionList option=tom_match10_1_1; { jtom.adt.tomsignature.types.TomName name=tom_match10_1_2; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match10_1_4;
+               { jtom.adt.tomsignature.types.TomTerm tom_match12_1=(( jtom.adt.tomsignature.types.TomTerm)subterm);{ if(tom_is_fun_sym_VariableStar(tom_match12_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match12_1_1=tom_get_slot_VariableStar_option(tom_match12_1); { jtom.adt.tomsignature.types.TomName tom_match12_1_2=tom_get_slot_VariableStar_astName(tom_match12_1); { jtom.adt.tomsignature.types.ConstraintList tom_match12_1_4=tom_get_slot_VariableStar_constraints(tom_match12_1); { jtom.adt.tomsignature.types.OptionList option=tom_match12_1_1; { jtom.adt.tomsignature.types.TomName name=tom_match12_1_2; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match12_1_4;
 
                   ConstraintList newConstraints = expandVariableConstraintList(tom_make_TomTypeToTomTerm(codomain),constraints);
                   list.add(tom_make_VariableStar(option,name,codomain,newConstraints));
                   //System.out.println("*** break: " + subterm);
                   break matchBlock;
-                }}}}}} } if(tom_is_fun_sym_UnamedVariableStar(tom_match10_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match10_1_1=tom_get_slot_UnamedVariableStar_option(tom_match10_1); { jtom.adt.tomsignature.types.ConstraintList tom_match10_1_3=tom_get_slot_UnamedVariableStar_constraints(tom_match10_1); { jtom.adt.tomsignature.types.OptionList option=tom_match10_1_1; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match10_1_3;
+                }}}}}} } if(tom_is_fun_sym_UnamedVariableStar(tom_match12_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match12_1_1=tom_get_slot_UnamedVariableStar_option(tom_match12_1); { jtom.adt.tomsignature.types.ConstraintList tom_match12_1_3=tom_get_slot_UnamedVariableStar_constraints(tom_match12_1); { jtom.adt.tomsignature.types.OptionList option=tom_match12_1_1; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match12_1_3;
 
 
                   ConstraintList newConstraints = expandVariableConstraintList(tom_make_TomTypeToTomTerm(codomain),constraints);

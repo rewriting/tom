@@ -26,8 +26,6 @@
 
 package jtom.debug;
 
-import jtom.exception.TomRuntimeException;
-  
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -52,9 +50,13 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
-
+import jtom.adt.tomsignature.TomSignatureFactory;
+import jtom.adt.tomsignature.types.Option;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomStructureTable;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.exception.TomRuntimeException;
 import aterm.pure.SingletonFactory;
 
 public class TomDebugger {

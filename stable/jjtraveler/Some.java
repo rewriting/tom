@@ -1,6 +1,6 @@
 package jjtraveler;
-import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.reflective.AbstractVisitableVisitor;
+import jjtraveler.reflective.VisitableVisitor;
 
 /**
  * <code>T(t1,..,ti,..,tN).accept(Some(v)) = T(t1,...ti.accept(v),..,tN)</code>

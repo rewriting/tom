@@ -29,8 +29,6 @@ import java.util.logging.*;
 import java.io.*;
 import java.util.*;
 
-import jtom.tools.*;
-import tom.platform.*;
 
 /**
  * The PluginPlatform factory is a singleton class that is responsable for the
@@ -63,7 +61,7 @@ public class PluginPlatformFactory {
       Handler consoleHandler = new ConsoleHandler();
       consoleHandler.setLevel(Level.ALL);
       // by default, print everything that the logger sends
-      consoleHandler.setFormatter(new BasicFormatter());
+      consoleHandler.setFormatter(new PlatformFormatter());
       PluginPlatformFactory.logger.addHandler(consoleHandler);
     }
   }

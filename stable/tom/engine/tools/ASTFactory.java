@@ -25,10 +25,13 @@
 
 package jtom.tools;
 
-import java.util.*;
-import jtom.adt.tomsignature.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import jtom.adt.tomsignature.TomSignatureFactory;
 import jtom.adt.tomsignature.types.*;
-import jtom.xml.*;
+import jtom.xml.Constants;
 import aterm.ATerm;
 
 public class ASTFactory {
@@ -133,6 +136,17 @@ public class ASTFactory {
       ATerm elt = (ATerm)argumentList.get(i);
       TomName term = (TomName) elt;
       list = tsf().makeNameList(term,list);
+    }
+    return list;
+  }
+
+  public PatternInstructionList makePatternInstructionList(List argumentList) {
+    PatternInstructionList list = tsf().makePatternInstructionList();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)argumentList.get(i);
+      PatternInstruction term;
+      term = (PatternInstruction)elt;
+      list = tsf().makePatternInstructionList(term,list);
     }
     return list;
   }

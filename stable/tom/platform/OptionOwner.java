@@ -52,12 +52,13 @@ public interface OptionOwner {
   public PlatformOptionList getRequiredOptionList();
 
   /**
-   * Sets the option whose name is given to the specified value.
+   * Method triggered each time an option own is changed: 
+   * The Option owner can react to that change
    *
    * @param name the option's name
    * @param value the option's value
    */
-  public void setOption(String name, Object value);
+  public void optionChanged(String name, Object value);
   
   /**
    * Sets the associated OptionManager

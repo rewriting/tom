@@ -25,10 +25,21 @@
 
 package jtom;
 
-import java.util.logging.*;
-import java.io.*;
+import java.io.IOException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+import java.util.logging.MemoryHandler;
+import java.util.logging.SocketHandler;
+import java.util.logging.StreamHandler;
 
-import tom.platform.*;
+import tom.platform.BasicFormatter;
+import tom.platform.PluginPlatform;
+import tom.platform.PluginPlatformFactory;
 
 /**
  * Main Tom project class
@@ -65,7 +76,6 @@ public class Tom {
     } catch(Exception e) {
       System.err.println(TomMessage.getMessage("LoggingInitializationFailure",
                                                new Object[]{e.getMessage()}));
-      //e.printStackTrace();
       return 1;
     }
     PluginPlatform platform =

@@ -1,6 +1,6 @@
 package jjtraveler;
+
 import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.reflective.AbstractVisitableVisitor;
 
 /**
  * <code>BottomUp(v) = Sequence(All(BottomUp(v)),v)</code>

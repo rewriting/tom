@@ -25,19 +25,17 @@
 
 package jtom;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
 
-import aterm.*;
-import aterm.pure.*;
-
-import jtom.tools.*;
-import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
-import tom.platform.*;
-import tom.platform.adt.platformoption.*;
-import tom.library.traversal.*;
-import jtom.exception.TomRuntimeException;
+import jtom.tools.SymbolTable;
+import tom.platform.OptionManager;
 
 public class TomStreamManager {
 
@@ -339,7 +337,6 @@ public class TomStreamManager {
         return file;
       }
     }
-    System.out.println(fileName+" not found");
     return null;
   }
 } //class TomStreamManager

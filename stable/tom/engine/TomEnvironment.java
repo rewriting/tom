@@ -25,22 +25,12 @@
 
 package jtom;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
 
-import jtom.tools.*;
-import jtom.exception.*;
-
-import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
-
-import tom.platform.*;
-import tom.platform.adt.platformoption.*;
-import tom.platform.adt.platformoption.types.*;
-
-import aterm.*;
-import aterm.pure.*;
+import jtom.adt.tomsignature.TomSignatureFactory;
+import jtom.tools.ASTFactory;
+import tom.platform.adt.platformoption.PlatformOptionFactory;
+import aterm.pure.PureFactory;
+import aterm.pure.SingletonFactory;
 
 /**
  * The TomEnvironment class is a singleton for accessing all used factory

@@ -325,11 +325,11 @@ get_implementation(t) {t}
   make(t0, t1) { getTomOptionFactory().makeInstruction_RuleSet(t0, t1)}
 }
 
-%op Instruction Match(subjectList:TomTerm, astPatternList:TomTerm, option:OptionList) {
+%op Instruction Match(subjectList:TomTerm, astPatternInstructionList:PatternInstructionList, option:OptionList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isMatch()}
   get_slot(subjectList,t) { t.getSubjectList()}
-  get_slot(astPatternList,t) { t.getAstPatternList()}
+  get_slot(astPatternInstructionList,t) { t.getAstPatternInstructionList()}
   get_slot(option,t) { t.getOption()}
   make(t0, t1, t2) { getTomOptionFactory().makeInstruction_Match(t0, t1, t2)}
 }
@@ -406,6 +406,22 @@ get_implementation(t) {t}
   is_fsym(t) { (t!= null) && t.isCheckStamp()}
   get_slot(variable,t) { t.getVariable()}
   make(t0) { getTomOptionFactory().makeInstruction_CheckStamp(t0)}
+}
+
+%op Instruction RawAction(astInstruction:Instruction) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isRawAction()}
+  get_slot(astInstruction,t) { t.getAstInstruction()}
+  make(t0) { getTomOptionFactory().makeInstruction_RawAction(t0)}
+}
+
+%op Instruction TypedAction(astInstruction:Instruction, positivePatternList:PatternList, negativePatternList:PatternList) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isTypedAction()}
+  get_slot(astInstruction,t) { t.getAstInstruction()}
+  get_slot(positivePatternList,t) { t.getPositivePatternList()}
+  get_slot(negativePatternList,t) { t.getNegativePatternList()}
+  make(t0, t1, t2) { getTomOptionFactory().makeInstruction_TypedAction(t0, t1, t2)}
 }
 
 %typelist InstructionList{
@@ -1215,6 +1231,16 @@ get_implementation(t) {t}
   make(t0, t1, t2, t3, t4) { getTomOptionFactory().makeTomTerm_XMLAppl(t0, t1, t2, t3, t4)}
 }
 
+%op TomTerm Variable(option:OptionList, astName:TomName, astType:TomType, constraints:ConstraintList) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isVariable()}
+  get_slot(option,t) { t.getOption()}
+  get_slot(astName,t) { t.getAstName()}
+  get_slot(astType,t) { t.getAstType()}
+  get_slot(constraints,t) { t.getConstraints()}
+  make(t0, t1, t2, t3) { getTomOptionFactory().makeTomTerm_Variable(t0, t1, t2, t3)}
+}
+
 %op TomTerm VariableStar(option:OptionList, astName:TomName, astType:TomType, constraints:ConstraintList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isVariableStar()}
@@ -1368,34 +1394,11 @@ get_implementation(t) {t}
   make(t0) { getTomOptionFactory().makeTomTerm_SubjectList(t0)}
 }
 
-%op TomTerm PatternList(tomList:TomList) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isPatternList()}
-  get_slot(tomList,t) { t.getTomList()}
-  make(t0) { getTomOptionFactory().makeTomTerm_PatternList(t0)}
-}
-
-%op TomTerm TermList(tomList:TomList) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isTermList()}
-  get_slot(tomList,t) { t.getTomList()}
-  make(t0) { getTomOptionFactory().makeTomTerm_TermList(t0)}
-}
-
 %op TomTerm Term(tomTerm:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isTerm()}
   get_slot(tomTerm,t) { t.getTomTerm()}
   make(t0) { getTomOptionFactory().makeTomTerm_Term(t0)}
-}
-
-%op TomTerm PatternAction(termList:TomTerm, action:Instruction, option:OptionList) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isPatternAction()}
-  get_slot(termList,t) { t.getTermList()}
-  get_slot(action,t) { t.getAction()}
-  get_slot(option,t) { t.getOption()}
-  make(t0, t1, t2) { getTomOptionFactory().makeTomTerm_PatternAction(t0, t1, t2)}
 }
 
 %op TomTerm TLVar(strName:String, astType:TomType) {
@@ -1404,16 +1407,6 @@ get_implementation(t) {t}
   get_slot(strName,t) { t.getStrName()}
   get_slot(astType,t) { t.getAstType()}
   make(t0, t1) { getTomOptionFactory().makeTomTerm_TLVar(t0, t1)}
-}
-
-%op TomTerm Variable(option:OptionList, astName:TomName, astType:TomType, constraints:ConstraintList) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isVariable()}
-  get_slot(option,t) { t.getOption()}
-  get_slot(astName,t) { t.getAstName()}
-  get_slot(astType,t) { t.getAstType()}
-  get_slot(constraints,t) { t.getConstraints()}
-  make(t0, t1, t2, t3) { getTomOptionFactory().makeTomTerm_Variable(t0, t1, t2, t3)}
 }
 
 %op TomTerm Ref(tomTerm:TomTerm) {
@@ -1522,6 +1515,106 @@ get_implementation(t) {t}
   make(t0, t1, t2, t3) { getTomOptionFactory().makeTomTerm_Automata(t0, t1, t2, t3)}
 }
 
+%typeterm PatternInstruction{
+  implement { jtom.adt.tomsignature.types.PatternInstruction}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+check_stamp(t) {if(t.getAnnotation(getTomOptionFactory().getPureFactory().makeList()) == getTomOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(jtom.adt.tomsignature.types.PatternInstruction)t.setAnnotation(getTomOptionFactory().getPureFactory().makeList(),getTomOptionFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
+}
+
+%op PatternInstruction PatternInstruction(pattern:Pattern, action:Instruction, option:OptionList) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isPatternInstruction()}
+  get_slot(pattern,t) { t.getPattern()}
+  get_slot(action,t) { t.getAction()}
+  get_slot(option,t) { t.getOption()}
+  make(t0, t1, t2) { getTomOptionFactory().makePatternInstruction_PatternInstruction(t0, t1, t2)}
+}
+
+%typeterm Pattern{
+  implement { jtom.adt.tomsignature.types.Pattern}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+check_stamp(t) {if(t.getAnnotation(getTomOptionFactory().getPureFactory().makeList()) == getTomOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(jtom.adt.tomsignature.types.Pattern)t.setAnnotation(getTomOptionFactory().getPureFactory().makeList(),getTomOptionFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
+}
+
+%op Pattern Pattern(tomList:TomList) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isPattern()}
+  get_slot(tomList,t) { t.getTomList()}
+  make(t0) { getTomOptionFactory().makePattern_Pattern(t0)}
+}
+
+%typelist PatternInstructionList{
+  implement { jtom.adt.tomsignature.types.PatternInstructionList}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
+check_stamp(t) {if(t.getAnnotation(getTomOptionFactory().getPureFactory().makeList()) == getTomOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(jtom.adt.tomsignature.types.PatternInstructionList)t.setAnnotation(getTomOptionFactory().getPureFactory().makeList(),getTomOptionFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
+}
+
+%oplist PatternInstructionList concPatternInstruction(PatternInstruction*) {
+  fsym { null }
+  is_fsym(t) {(t!= null) && t.isSortPatternInstructionList()}
+  make_empty() {getTomOptionFactory().makePatternInstructionList()}
+  make_insert(e,l) {getTomOptionFactory().makePatternInstructionList(e,l)}
+}
+%op PatternInstructionList emptyPatternInstructionList{
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isEmpty()}
+  make() {getTomOptionFactory().makePatternInstructionList()}
+}
+%op PatternInstructionList manyPatternInstructionList(head:PatternInstruction, tail:PatternInstructionList) {
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isMany()}
+  get_slot(head,t) { t.getHead()}
+  get_slot(tail,t) { t.getTail()}
+  make(e,l) {getTomOptionFactory().makePatternInstructionList(e,l)}
+}
+%typelist PatternList{
+  implement { jtom.adt.tomsignature.types.PatternList}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
+check_stamp(t) {if(t.getAnnotation(getTomOptionFactory().getPureFactory().makeList()) == getTomOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+set_stamp(t) {(jtom.adt.tomsignature.types.PatternList)t.setAnnotation(getTomOptionFactory().getPureFactory().makeList(),getTomOptionFactory().getPureFactory().makeList())}
+get_implementation(t) {t}
+}
+
+%oplist PatternList concPattern(Pattern*) {
+  fsym { null }
+  is_fsym(t) {(t!= null) && t.isSortPatternList()}
+  make_empty() {getTomOptionFactory().makePatternList()}
+  make_insert(e,l) {getTomOptionFactory().makePatternList(e,l)}
+}
+%op PatternList emptyPatternList{
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isEmpty()}
+  make() {getTomOptionFactory().makePatternList()}
+}
+%op PatternList manyPatternList(head:Pattern, tail:PatternList) {
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isMany()}
+  get_slot(head,t) { t.getHead()}
+  get_slot(tail,t) { t.getTail()}
+  make(e,l) {getTomOptionFactory().makePatternList(e,l)}
+}
 %typelist TomList{
   implement { jtom.adt.tomsignature.types.TomList}
   get_fun_sym(t) {null}

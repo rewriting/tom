@@ -1,5 +1,5 @@
 package jjtraveler;
-import jjtraveler.reflective.VisitableVisitor;
+
 import jjtraveler.reflective.AbstractVisitableVisitor;
 
 /**

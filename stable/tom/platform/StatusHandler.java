@@ -25,6 +25,7 @@
 
 package tom.platform;
 
+import java.io.File;
 import java.util.*;
 import java.util.logging.*;
 
@@ -32,15 +33,19 @@ public class StatusHandler extends Handler {
 
   /** Map between a log level and the cardinality of published logrecord */
   private Map levelStats;
+  /** Map between a log level and the cardinality of published logrecord */
+  private Map inputAlert;
   
   /** Constructor */
   public StatusHandler() {
     levelStats = new HashMap();
+    inputAlert = new HashMap();
   }
   
   /** Clear all previous records */
   public void clear() {
-    levelStats = new HashMap();
+  	levelStats = new HashMap();
+    inputAlert = new HashMap();
   }
   
   public void publish(LogRecord record) {
@@ -53,6 +58,19 @@ public class StatusHandler extends Handler {
       newStats = new Integer(oldStats.intValue()+1);
     }
     levelStats.put(recordLevel, newStats);
+    
+    if(record instanceof PlatformLogRecord) {
+    	PlatformLogRecord plr = (PlatformLogRecord)record;
+    	String input = plr.getFilePath();
+    	RuntimeAlert ra;
+    	if(!inputAlert.containsKey(input)) {
+    		ra = new RuntimeAlert();
+      } else {
+      	ra = (RuntimeAlert)inputAlert.get(input);
+      }
+    	ra.add(plr);
+    	inputAlert.put(new File(input).getPath(), ra);
+    }
   }
 
   // Part of Handler abstract interface
@@ -96,6 +114,10 @@ public class StatusHandler extends Handler {
   
   public int nbOfWarnings() {
     return nbOfLogs(Level.WARNING);
+  }
+  
+  public RuntimeAlert getAlertForInput(String filePath) {
+  	return (RuntimeAlert)inputAlert.get(new File(filePath).getPath());
   }
   
   /**

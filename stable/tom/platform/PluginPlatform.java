@@ -25,17 +25,13 @@
 
 package tom.platform;
 
-import java.text.*;
 import java.util.*;
 import java.util.logging.*;
-import java.io.*;
 
 import aterm.*;
 import aterm.pure.*;
 
 import tom.library.adt.tnode.*;
-import tom.library.adt.tnode.types.*;
-import tom.library.xml.*;
 
 /**
  * The PluginPlatform manages plugins defined in an xml configuration file.
@@ -61,9 +57,6 @@ public class PluginPlatform {
   /** The List of reference to plugins. */
   private List pluginsList;
     
-  /** The option manager */
-  private OptionManager optionManager;
-	
   /** The status handler */
   private StatusHandler statusHandler;
 
@@ -72,18 +65,13 @@ public class PluginPlatform {
 
   /** List of generated object cleared before each run */
   private List lastGeneratedObjects;
-
-  /** List of generated object cleared before each run */
-  private RuntimeAlert lastRunAlert;
   
   /** Class Pluginplatform constructor */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
     statusHandler = new StatusHandler();
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
-    inputToCompileList = new ArrayList();
     pluginsList = confManager.getPluginsList();
-    optionManager = confManager.getOptionManager();
-    inputToCompileList = optionManager.getInputToCompileList();
+    inputToCompileList = confManager.getOptionManager().getInputToCompileList();
   }
   
   /**
@@ -97,9 +85,11 @@ public class PluginPlatform {
    * </ul>
    */
   public int run() {
+  	boolean globalSuccess = true;
+  	int globalNbOfErrors = 0;
+  	int globalNbOfWarnings = 0;
     // intialize run instances
     lastGeneratedObjects = new ArrayList();
-    //lastRunAlert = new RuntimeAlert();
     // for each input we call the sequence of plug-ins
     for(int i=0; i < inputToCompileList.size(); i++) {
       Object input = inputToCompileList.get(i);
@@ -112,18 +102,23 @@ public class PluginPlatform {
       Iterator it = pluginsList.iterator();
       while(it.hasNext()) {
         Plugin plugin = (Plugin)it.next();
-        lastRunAlert = plugin.setArgs(pluginArg);
-        if(statusHandler.hasError()) {
+        plugin.setArgs(pluginArg);
+				if(statusHandler.hasError()) {
           getLogger().log(Level.SEVERE, "SettingArgError");
           success = false;
+          globalSuccess = false;
+          globalNbOfErrors += statusHandler.nbOfErrors();
+        	globalNbOfWarnings += statusHandler.nbOfWarnings();
           break;
         }
-        RuntimeAlert runAlert = plugin.run();
-        lastRunAlert.concat(runAlert);
+        plugin.run();
         if(statusHandler.hasError()) {
-          success = false;
           getLogger().log(Level.SEVERE, "ProcessingError",
                           new Object[]{plugin.getClass().getName(), initArgument});
+          success = false;
+          globalSuccess = false;
+          globalNbOfErrors += statusHandler.nbOfErrors();
+        	globalNbOfWarnings += statusHandler.nbOfWarnings();
           break;
         }
         pluginArg = plugin.getArgs();
@@ -132,23 +127,18 @@ public class PluginPlatform {
         // save the first element of last plugin getArg response
         // this shall correspond to a generated file name
         lastGeneratedObjects.add(pluginArg[0]);
-      } 
-      //else { 
-      //break;
-      //}
+      	globalNbOfWarnings += statusHandler.nbOfWarnings();
+      }
     }
-    
-    int nbOfErrors   = statusHandler.nbOfErrors();
-    int nbOfWarnings = statusHandler.nbOfWarnings();
 
-    if(statusHandler.hasError()) {
+    if(!globalSuccess) {
       // this is the highest possible level > will be printed no matter what 
-      getLogger().log(Level.SEVERE, "PluginPlatformTaskErrorMessage",
-                      new Integer(nbOfErrors));
+      getLogger().log(Level.SEVERE, "RunErrorMessage",
+                      new Integer(globalNbOfErrors));
       return 1;
-    } else if( statusHandler.hasWarning() ) {
-      getLogger().log(Level.INFO, "PluginPlatformTaskWarningMessage",
-                      new Integer(nbOfWarnings));
+    } else if(globalNbOfWarnings>0) {
+      getLogger().log(Level.INFO, "RunWarningMessage",
+                      new Integer(globalNbOfWarnings));
       return 0;
     }
     return 0;
@@ -166,10 +156,9 @@ public class PluginPlatform {
   public List getLastGeneratedObjects() {
     return lastGeneratedObjects;
   }
-
-  /** return the alerts generated during last run */
-  public RuntimeAlert getLastRunAlert() {
-    return lastRunAlert;
+  
+  public RuntimeAlert getAlertForInput(String filePath) {
+  	return statusHandler.getAlertForInput(filePath);
   }
 
   /** logger accessor in case of logging needs*/

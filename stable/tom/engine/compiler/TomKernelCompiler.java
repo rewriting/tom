@@ -25,15 +25,12 @@
 
 package jtom.compiler;
 
-import jtom.tools.*;
-  
 import jtom.TomBase;
-import jtom.exception.TomRuntimeException;
 import jtom.adt.tomsignature.types.*;
-
+import jtom.exception.TomRuntimeException;
+import jtom.tools.SymbolTable;
 import tom.library.traversal.Replace1;
-
-import aterm.*;
+import aterm.ATerm;
 
 public class TomKernelCompiler extends TomBase {
 
@@ -72,9 +69,8 @@ public class TomKernelCompiler extends TomBase {
   private Replace1 replace_compileMatching = new Replace1() {
       public ATerm apply(ATerm subject) {
         if(subject instanceof Instruction) {
-           { jtom.adt.tomsignature.types.Instruction tom_match2_1=(( jtom.adt.tomsignature.types.Instruction)subject);{ if(tom_is_fun_sym_Match(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match2_1_1=tom_get_slot_Match_subjectList(tom_match2_1); { jtom.adt.tomsignature.types.TomTerm tom_match2_1_2=tom_get_slot_Match_astPatternList(tom_match2_1); { jtom.adt.tomsignature.types.OptionList tom_match2_1_3=tom_get_slot_Match_option(tom_match2_1); if(tom_is_fun_sym_SubjectList(tom_match2_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match2_1_1_1=tom_get_slot_SubjectList_tomList(tom_match2_1_1); { jtom.adt.tomsignature.types.TomList l1=tom_match2_1_1_1; if(tom_is_fun_sym_PatternList(tom_match2_1_2) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match2_1_2_1=tom_get_slot_PatternList_tomList(tom_match2_1_2); { jtom.adt.tomsignature.types.TomList l2=tom_match2_1_2_1; { jtom.adt.tomsignature.types.OptionList optionList=tom_match2_1_3;
+           { jtom.adt.tomsignature.types.Instruction tom_match2_1=(( jtom.adt.tomsignature.types.Instruction)subject);{ if(tom_is_fun_sym_Match(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match2_1_1=tom_get_slot_Match_subjectList(tom_match2_1); { jtom.adt.tomsignature.types.PatternInstructionList tom_match2_1_2=tom_get_slot_Match_astPatternInstructionList(tom_match2_1); { jtom.adt.tomsignature.types.OptionList tom_match2_1_3=tom_get_slot_Match_option(tom_match2_1); if(tom_is_fun_sym_SubjectList(tom_match2_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match2_1_1_1=tom_get_slot_SubjectList_tomList(tom_match2_1_1); { jtom.adt.tomsignature.types.TomList l1=tom_match2_1_1_1; { jtom.adt.tomsignature.types.PatternInstructionList patternInstructionList=tom_match2_1_2; { jtom.adt.tomsignature.types.OptionList optionList=tom_match2_1_3;
 
-              OptionList newOptionList = tom_cons_list_concOption(tom_make_TomTermToOption(tom_make_PatternList(l2)),tom_append_list_concOption(optionList,tom_empty_list_concOption()));
 							TomList patternList = null;
               Instruction actionInst = null;
               TomList automataList = empty();
@@ -87,10 +83,10 @@ public class TomKernelCompiler extends TomBase {
                  * build a matching automata
                  */
               int actionNumber = 0;
-              while(!l2.isEmpty()) {
+              while(!patternInstructionList.isEmpty()) {
                 actionNumber++;
-                TomTerm pa = l2.getHead();
-                patternList = pa.getTermList().getTomList();
+                PatternInstruction pa = patternInstructionList.getHead();
+                patternList = pa.getPattern().getTomList();
                 actionInst = pa.getAction();
                 if(patternList==null || actionInst==null) {
                   System.out.println("TomKernelCompiler: null value");
@@ -114,7 +110,7 @@ public class TomKernelCompiler extends TomBase {
                   //System.out.println("automata = " + automata);
                   
                 automataList = append(automata,automataList);
-                l2 = l2.getTail();
+                patternInstructionList = patternInstructionList.getTail();
               }
                 
                 /*
@@ -122,8 +118,8 @@ public class TomKernelCompiler extends TomBase {
                  */
               InstructionList astAutomataList = automataListCompileMatchingList(automataList);
               Instruction astAutomata = collectVariableFromSubjectList(l1,1,rootpath,tom_make_AbstractBlock(astAutomataList));
-              return tom_make_CompiledMatch(astAutomata,newOptionList);
-            }}} }}} }}}} }
+              return tom_make_CompiledMatch(astAutomata,optionList);
+            }}}} }}}} }
 
 
 

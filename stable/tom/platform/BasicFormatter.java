@@ -30,17 +30,12 @@ import java.util.logging.*;
 public class BasicFormatter extends Formatter {
   
   public String format(LogRecord record) {
-    Level level = record.getLevel();
-    String levelString;
-    
-    if(level.equals(Level.SEVERE)) { 
-      // SEVERE logs are labelled as errors
-      levelString = "ERROR:";
+    if(record instanceof PlatformLogRecord) {
+    	PlatformLogRecord plr  = (PlatformLogRecord)record;
+    	return plr.getFilePath()+":"+plr.getLine()+":"+plr.getMessage()+"\n";
     } else {
-      // use the Level's name: for WARNING,CONFIG,FINE,FINER,FINEST... 
-      levelString = level.toString()+ ":";
+    	return formatMessage(record)+"\n";
     }
-    return levelString+formatMessage(record)+"\n";
   }
 
 } // class BasicFormatter

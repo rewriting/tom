@@ -27,10 +27,18 @@ package jtom.backend;
 
 import java.io.IOException;
 
-import jtom.adt.tomsignature.types.*;
-import jtom.tools.*;
+import jtom.adt.tomsignature.types.Expression;
+import jtom.adt.tomsignature.types.Instruction;
+import jtom.adt.tomsignature.types.InstructionList;
+import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.TargetLanguage;
+import jtom.adt.tomsignature.types.TomList;
+import jtom.adt.tomsignature.types.TomNumberList;
+import jtom.adt.tomsignature.types.TomTerm;
+import jtom.adt.tomsignature.types.TomType;
 import jtom.exception.TomRuntimeException;
-
+import jtom.tools.OutputCode;
+import jtom.tools.SymbolTable;
 import tom.platform.OptionManager;
 
 public class TomCamlGenerator extends TomImperativeGenerator {
@@ -50,7 +58,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   
   protected void buildInstructionSequence(int deep, Instruction instruction) throws IOException {
     generateInstruction(deep,instruction);
-    output.writeln(";");
+    //output.writeln(";");
     return;
   }
 
@@ -168,6 +176,16 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generateInstruction(deep+1,succes);
     output.writeln();
     output.writeln(deep,"done");
+  }
+
+  protected void buildCheckStamp(int deep, TomType type, TomTerm variable) throws IOException {
+    if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
+      output.write("tom_check_stamp_" + getTomType(type) + "(");
+      generate(deep,variable);
+      output.write(")");
+    } else {
+      output.write("()");
+    }
   }
 
   protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException {

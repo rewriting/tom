@@ -27,12 +27,10 @@ package tom.platform;
 
 import java.util.*;
 import java.util.logging.*;
-import java.io.*;
 
 
 import aterm.*;
 import aterm.pure.*;
-import jtom.*;
 
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;
@@ -76,9 +74,6 @@ public class ConfigurationManager {
 
   /** The plugins instance list*/
   private List pluginsList;
-
-  /** The global options */    
-  private PlatformOptionList globalOptions;
 
   /** The OptionManager */
   private OptionManager optionManager;
@@ -125,11 +120,6 @@ public class ConfigurationManager {
   /** Accessor method */
   public OptionManager  getOptionManager() {
     return optionManager;
-  }
-  
-  /** Accessor method */
-  public PlatformOptionList getGlobalOptionList() {
-    return globalOptions;
   }
   
   /** 
@@ -207,7 +197,6 @@ public class ConfigurationManager {
   private int createOptionManager(TNode node) {
      { tom.library.adt.tnode.types.TNode tom_match2_1=(( tom.library.adt.tnode.types.TNode)node);{ if(tom_is_fun_sym_ElementNode(tom_match2_1) ||  false ) { { String  tom_match2_1_1=tom_get_slot_ElementNode_name(tom_match2_1); { tom.library.adt.tnode.types.TNodeList tom_match2_1_2=tom_get_slot_ElementNode_attrList(tom_match2_1); { tom.library.adt.tnode.types.TNodeList tom_match2_1_3=tom_get_slot_ElementNode_childList(tom_match2_1); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match2_1_1) , "platform") ||  false ) { if(tom_is_fun_sym_concTNode(tom_match2_1_2) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match2_1_2_list1=tom_match2_1_2; if(tom_is_fun_sym_concTNode(tom_match2_1_3) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_list1=tom_match2_1_3; { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_begin1=tom_match2_1_3_list1; { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_end1=tom_match2_1_3_list1; while (!(tom_is_empty_TNodeList(tom_match2_1_3_end1))) {tom_match2_1_3_list1=tom_match2_1_3_end1;{ { tom.library.adt.tnode.types.TNode tom_match2_1_3_2=tom_get_head_TNodeList(tom_match2_1_3_list1);tom_match2_1_3_list1=tom_get_tail_TNodeList(tom_match2_1_3_list1); if(tom_is_fun_sym_ElementNode(tom_match2_1_3_2) ||  false ) { { String  tom_match2_1_3_2_1=tom_get_slot_ElementNode_name(tom_match2_1_3_2); { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_2=tom_get_slot_ElementNode_attrList(tom_match2_1_3_2); { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_3=tom_get_slot_ElementNode_childList(tom_match2_1_3_2); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match2_1_3_2_1) , "optionmanager") ||  false ) { if(tom_is_fun_sym_concTNode(tom_match2_1_3_2_2) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_2_list1=tom_match2_1_3_2_2; { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_2_begin1=tom_match2_1_3_2_2_list1; { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_2_end1=tom_match2_1_3_2_2_list1; while (!(tom_is_empty_TNodeList(tom_match2_1_3_2_2_end1))) {tom_match2_1_3_2_2_list1=tom_match2_1_3_2_2_end1;{ { tom.library.adt.tnode.types.TNode tom_match2_1_3_2_2_2=tom_get_head_TNodeList(tom_match2_1_3_2_2_list1);tom_match2_1_3_2_2_list1=tom_get_tail_TNodeList(tom_match2_1_3_2_2_list1); if(tom_is_fun_sym_AttributeNode(tom_match2_1_3_2_2_2) ||  false ) { { String  tom_match2_1_3_2_2_2_1=tom_get_slot_AttributeNode_name(tom_match2_1_3_2_2_2); { String  tom_match2_1_3_2_2_2_3=tom_get_slot_AttributeNode_value(tom_match2_1_3_2_2_2); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match2_1_3_2_2_2_1) , "class") ||  false ) { { String  omclass=tom_match2_1_3_2_2_2_3; if(tom_is_fun_sym_concTNode(tom_match2_1_3_2_3) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_3_list1=tom_match2_1_3_2_3; { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_3_begin1=tom_match2_1_3_2_3_list1; { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_3_end1=tom_match2_1_3_2_3_list1; while (!(tom_is_empty_TNodeList(tom_match2_1_3_2_3_end1))) {tom_match2_1_3_2_3_list1=tom_match2_1_3_2_3_end1;{ { tom.library.adt.tnode.types.TNode tom_match2_1_3_2_3_2=tom_get_head_TNodeList(tom_match2_1_3_2_3_list1);tom_match2_1_3_2_3_list1=tom_get_tail_TNodeList(tom_match2_1_3_2_3_list1); if(tom_is_fun_sym_ElementNode(tom_match2_1_3_2_3_2) ||  false ) { { tom.library.adt.tnode.types.TNode opt=tom_match2_1_3_2_3_2; { String  tom_match2_1_3_2_3_2_1=tom_get_slot_ElementNode_name(tom_match2_1_3_2_3_2); { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_3_2_2=tom_get_slot_ElementNode_attrList(tom_match2_1_3_2_3_2); { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_3_2_3=tom_get_slot_ElementNode_childList(tom_match2_1_3_2_3_2); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match2_1_3_2_3_2_1) , "options") ||  false ) { if(tom_is_fun_sym_concTNode(tom_match2_1_3_2_3_2_2) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_3_2_2_list1=tom_match2_1_3_2_3_2_2; if(tom_is_fun_sym_concTNode(tom_match2_1_3_2_3_2_3) ||  false ) { { tom.library.adt.tnode.types.TNodeList tom_match2_1_3_2_3_2_3_list1=tom_match2_1_3_2_3_2_3;
 
-        globalOptions = OptionParser.xmlNodeToOptionList(opt);
         try {
           Object omInstance = Class.forName(omclass).newInstance();
           if(omInstance instanceof OptionManager) {
@@ -227,6 +216,8 @@ public class ConfigurationManager {
           optionManager = null;
           return 1;
         }
+        PlatformOptionList globalOptions = OptionParser.xmlNodeToOptionList(opt);
+        optionManager.setGlobalOptionList(globalOptions);
         return 0;
       } }} } }}}}} }}tom_match2_1_3_2_3_end1=tom_get_tail_TNodeList(tom_match2_1_3_2_3_end1);} }}}} }} }}} }}tom_match2_1_3_2_2_end1=tom_get_tail_TNodeList(tom_match2_1_3_2_2_end1);} }}}} } }}}} }}tom_match2_1_3_end1=tom_get_tail_TNodeList(tom_match2_1_3_end1);} }}}} }} } }}}} }}}
 

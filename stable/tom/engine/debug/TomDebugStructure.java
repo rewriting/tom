@@ -26,7 +26,7 @@
 
 package jtom.debug;
 
-import java.util.*;
+import java.util.HashSet;
 
 public class TomDebugStructure {
   String[] patternText;
