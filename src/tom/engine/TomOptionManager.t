@@ -567,6 +567,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
                     if(outputEncountered) {
 			  logger.log(Level.SEVERE,
 				     "OutputTwice");
+			  return null;
 		    }
                     else outputEncountered = true;
 		}
@@ -574,6 +575,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
                     if(destdirEncountered) {
 			logger.log(Level.SEVERE,
 				   "DestdirTwice");
+			return null;
 		    }
                     else destdirEncountered = true;
 		}
@@ -586,7 +588,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 			       "InvalidOption",
 			       argumentList[i]);
 
-                    return (String[])inputFiles.toArray(new String[]{});
+                    return null;
 		}
                 else {                    				
                     if (type.equals("boolean")) {
@@ -608,7 +610,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 		   "IncompleteOption",
 		   argumentList[--i]);
 
-        return (String[])inputFiles.toArray(new String[]{});
+        return null;
     }
 
     setOption("import",imports.toString());
@@ -616,9 +618,11 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     if(inputFiles.isEmpty()) {
       logger.log(Level.SEVERE,
 		 "NoFileToCompile");
+      return null;
     } else if(inputFiles.size() > 1 && outputEncountered) {
       logger.log(Level.SEVERE,
 		 "OutputWithMultipleCompilation");
+      return null;
     }
     
     return (String[])inputFiles.toArray(new String[]{});	
