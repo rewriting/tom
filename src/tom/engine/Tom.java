@@ -41,11 +41,11 @@ public class Tom {
 
   public static int exec(String[] args) {
     Handler ch = new ConsoleHandler();
-    ch.setLevel(Level.ALL); // that way, all the logs accepted by the logger are printed
+    ch.setLevel(Level.WARNING); // by default, will be changed by options like verbose or noWarning
     ch.setFormatter( new TomBasicFormatter() );
 
     rootLogger = Logger.getLogger("jtom", "jtom.TomMessageResources");
-    rootLogger.setLevel(Level.WARNING);
+    rootLogger.setLevel(Level.ALL);
     rootLogger.setUseParentHandlers(false);
     rootLogger.addHandler(ch);
 
