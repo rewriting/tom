@@ -11,7 +11,7 @@ esac
 # For Cygwin, ensure paths are in UNIX format before anything is touched
 if $cygwin ; then
   [ -n "$TOM_HOME" ] &&
-    TOM_HOME=`cygpath --unix "$TOM_HOME"`
+    TOM_HOME=`cygpath --windows "$TOM_HOME"`
 fi
 
 LOCALCLASSPATH=`echo lib/junit.jar | tr ' ' ':'` 
