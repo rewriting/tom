@@ -27,8 +27,8 @@ let rec plus (t1,t2)=
     x, suc(y) -> {res := Some (`suc(plus(x,y)))}
   };	
     
-    match !res with 
-	None -> raise (Erreur "rien n'a filtre")
+  match !res with 
+	      None -> raise (Erreur "rien n'a filtre")
       | Some r -> r
   ;
   )
