@@ -36,12 +36,16 @@ public class LsystemsDraw  extends JComponent {
   %include { lsystems.signature }
   %include { extras.t }
   
+  public int MAX_WIDTH = 1024;
+  public int MAX_HEIGHT = 768;
+  public double BORDER = 2.0;
+  
   private double angle;
   private NodeList root;
   private double longueur;
   private Point3D point;
   private Vector liste;
-  private Rectangle taille;
+  public Rectangle taille;
   
   private boolean activeDraw;
   
@@ -60,11 +64,14 @@ public class LsystemsDraw  extends JComponent {
     
     liste = new Vector();
     liste.add(paint(root,poly));
-    System.out.println("taille : "+taille);
     setSize(taille.getSize());
-    System.out.println("size : "+getSize());
-    System.out.println("visibRect : "+getVisibleRect());
     repaint();
+    taille.setRect(taille.getX()-BORDER,taille.getY()-BORDER,taille.getWidth()+BORDER*2+BORDER*10,taille.getHeight()+BORDER*2+BORDER*10);
+    if (taille.width > MAX_WIDTH) 
+      taille.setSize(MAX_WIDTH,taille.height);
+    if (taille.height > MAX_HEIGHT) 
+      taille.setSize(taille.width,MAX_HEIGHT);
+    setSize(taille.getSize());
   }
   
   
@@ -76,7 +83,7 @@ public class LsystemsDraw  extends JComponent {
   public void paintComponent(Graphics g) {
     Graphics2D g2 = (Graphics2D) g;
     
-    Rectangle rec = g2.getClipBounds();
+    //Rectangle rec = g2.getClipBounds();
     g2.translate(-taille.x,-taille.y);
     
     for (int j = liste.size() - 1 ; j >= 0 ; j-- ) {

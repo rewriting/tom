@@ -31,8 +31,12 @@ public class Lsystems2 implements LsystemsInterface {
   %include { extras.t }
   
   public Lsystems2(String[] args,LsystemsFactory factory) {
+    this(args,factory, new LsystemsRuntime(args,factory));
+  }
+  
+  public Lsystems2(String[] args,LsystemsFactory factory,LsystemsRuntime runtime) {
     this.factory = factory;
-    runtime = new LsystemsRuntime(args,factory);
+    this.runtime = runtime;
     if(args.length > 0) {
       for(int i=0; i < args.length; i++) { 
         if(args[i].charAt(0) == '-') {
@@ -54,7 +58,7 @@ public class Lsystems2 implements LsystemsInterface {
   private LsystemsRuntime runtime;
   
   public void run() {
-    runtime.run(matchls,n,delta);
+    runtime.run(matchls,n,delta,longueur);
     if (verbose) System.out.println(factory);
   }
   
@@ -63,6 +67,7 @@ public class Lsystems2 implements LsystemsInterface {
   
   private int n = 6;
   private int delta = 33;
+  private int longueur = 5;
   
   public MatchLsystems matchls = new MatchLsystems() {
     

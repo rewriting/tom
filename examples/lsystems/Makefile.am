@@ -9,7 +9,7 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SH
 javadir         = .
 JAVAROOT        = ${top_builddir}/examples/Lsystems/
 
-BOOTSOURCES     = Lsystems1.java Lsystems2.java Lsystems3.java Lsystems4.java Lsystems5.java Lsystems6.java Lsystems7.java
+BOOTSOURCES     = Lsystems1.java Lsystems2.java Lsystems3.java Lsystems4.java Lsystems5.java Lsystems6.java Lsystems7.java RunExamples.java
 java_JAVA       = $(BOOTSOURCES)
 
 

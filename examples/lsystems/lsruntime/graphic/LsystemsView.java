@@ -19,26 +19,18 @@ public class LsystemsView extends JFrame {
     super(titre);
     myDraw = new LsystemsDraw(factory,angle,longueur,root);
   }
-    
+  
   public LsystemsView(LsystemsFactory factory, String titre, double angle, NodeList root ) {
     super(titre);
     myDraw = new LsystemsDraw(factory,angle,10,root);
   }
-
+  
   public void print() {  
     Container container = getContentPane();
     container.setLayout(new BorderLayout());
-    
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-    
-    js = new JScrollPane(myDraw);
-    container.add(BorderLayout.CENTER, js);
-    
-    pack();
-    setSize(600,400);
-    //show();
+    container.add(myDraw);
+    setSize(myDraw.getSize());
     setVisible(true);
   }
-  
   
 }

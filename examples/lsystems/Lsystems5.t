@@ -31,8 +31,12 @@ public class Lsystems5 implements LsystemsInterface {
   %include { extras.t }
   
   public Lsystems5(String[] args,LsystemsFactory factory) {
+    this(args,factory, new LsystemsRuntime(args,factory));
+  }
+  
+  public Lsystems5(String[] args,LsystemsFactory factory,LsystemsRuntime runtime) {
     this.factory = factory;
-    runtime = new LsystemsRuntime(args,factory);
+    this.runtime = runtime;
     if(args.length > 0) {
       for(int i=0; i < args.length; i++) { 
         if(args[i].charAt(0) == '-') {
