@@ -1,0 +1,23 @@
+[
+constructor(RTerm,var,var(<name(str)>)),
+constructor(RTerm,const,const(<name(str)>)),
+
+constructor(RTerm,abs,abs(<lhs(RTerm)>,<rhs(RTerm)>)),
+constructor(RTerm,app,app(<lhs(RTerm)>,<rhs(RTerm)>)),
+constructor(RTerm,struct,struct(<lhs(RTerm)>,<rhs(RTerm)>)),
+
+constructor(RTerm,appC,appC(<constr(ListConstraint)>, <rterm(RTerm)>)),
+constructor(RTerm,appSt,appSt(<constr(ListConstraint)>, <rterm(RTerm)>)),
+constructor(Constraint,appSc,appSc(<constr(ListConstraint)>, <constr2(ListConstraint)>)),
+
+constructor(Constraint,match,match(<lhs(RTerm)>,<rhs(RTerm)>)),
+
+constructor(Constraint,matchng,matchng(<lhs(RTerm)>,<rhs(RTerm)>)),
+constructor(Constraint,matchg,matchg(<lhs(RTerm)>,<rhs(RTerm)>)),
+constructor(Constraint,g,g(<constraint(ListConstraint)>)),
+constructor(Constraint,ng,ng(<constraint(ListConstraint)>)),
+
+list(ListConstraint,Constraint)
+]
+ 
+ 
