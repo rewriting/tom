@@ -1,5 +1,10 @@
 // $ANTLR 2.7.2: "TomLanguage.g" -> "TomLexer.java"$
 
+  /*
+   * this file contains the lexer and parser for
+   * tom constructs
+   */
+
     package jtom.parser;
 
     import java.util.*;

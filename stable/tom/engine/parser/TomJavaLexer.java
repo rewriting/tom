@@ -1,17 +1,8 @@
 // $ANTLR 2.7.2: "TomJavaParser.g" -> "TomJavaLexer.java"$
 
-  package jtom.parser;
-    
-  import antlr.*;
-    
-  import java.io.*;
-  import java.util.*;
-  import java.text.*;
-
-  import jtom.TomEnvironment;
-  import jtom.exception.*;
-  import jtom.tools.*;
-  import jtom.TomMessage;
+package jtom.parser;
+import antlr.*;
+import java.io.*;
 
 import java.io.InputStream;
 import antlr.TokenStreamException;
@@ -62,9 +53,6 @@ tryAgain:
 	for (;;) {
 		Token _token = null;
 		int _ttype = Token.INVALID_TYPE;
-		setCommitToPath(false);
-		int _m;
-		_m = mark();
 		resetText();
 		try {   // for char stream error handling
 			try {   // for lexical error handling
@@ -116,19 +104,9 @@ tryAgain:
 				default:
 				{
 					if (LA(1)==EOF_CHAR) {uponEOF(); _returnToken = makeToken(Token.EOF_TYPE);}
-				else {
-					commit();
-					try {mOTHER(false);}
-					catch(RecognitionException e) {
-						// catastrophic failure
-						reportError(e);
-						consume();
-					}
-					continue tryAgain;
+				else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				}
-				}
-				commit();
 				if ( _returnToken==null ) continue tryAgain; // found SKIP token
 				_ttype = _returnToken.getType();
 				_ttype = testLiteralsTable(_ttype);
@@ -136,17 +114,6 @@ tryAgain:
 				return _returnToken;
 			}
 			catch (RecognitionException e) {
-				if ( !getCommitToPath() ) {
-					rewind(_m);
-					resetText();
-					try {mOTHER(false);}
-					catch(RecognitionException ee) {
-						// horrendous failure: error in filter rule
-						reportError(ee);
-						consume();
-					}
-					continue tryAgain;
-				}
 				throw new TokenStreamRecognitionException(e);
 			}
 		}
@@ -420,10 +387,6 @@ tryAgain:
 		}
 		
 		}
-		
-		//       target.append($getText);
-		newline(); 
-		
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -478,21 +441,6 @@ tryAgain:
 		} while (true);
 		}
 		match("*/");
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	protected final void mOTHER(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = OTHER;
-		int _saveIndex;
-		
-		{
-		matchNot(EOF_CHAR);
-		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));

@@ -31,36 +31,52 @@ import jtom.tools.*;
 import aterm.*;
 
 /**
- * The TomStarter "plugin". Only here to initialize the TomEnvironment.
+ * The TomStarter "plugin". Only here to initialize the TomStreamManager
+ * and to initalize the plugin platform set/getargs process with it.
+ * The StreamManager contains also the reference to the SymbolTable.
  */
 public class TomStarter extends TomGenericPlugin {
 
-  private Object argToRelay;
-  private String fileName = null;
-
+  /** The args to set during run and to return */
+  private Object[] argToRelay;
+  /** Saved information during setArgs */
+  private String fileName;
+  
+  /** Constructor*/
   public TomStarter() {
     super("TomStarter");
   }
-
-  public void setArg(Object arg) {
-    argToRelay = arg;
-    if (arg instanceof String) {
-      fileName = (String)arg;  
+  
+  /**
+   * inherited from plugin interface
+   * arg[0] should contain the input file name
+   */
+  public void setArgs(Object[] arg) {
+    if (arg[0] instanceof String) {
+      fileName = (String)arg[0];  
     } else {
-      getLogger().log(Level.SEVERE, "TomStarter: A String was expected.");
+      getLogger().log(Level.SEVERE, "InvalidPluginArgument",
+                      new Object[]{"VasStarter", "[String]",
+                                   getArgumentArrayString(arg)});
     }
   }
 
+  /**
+   * inherited from plugin interface
+   * Create the VasStreamManager as input for next plugin
+   */
   public void run() {
-    // We need here to create the environment : 
-    // We need to be sure we don't have side effects with the environment singleton
-    TomEnvironment env = TomEnvironment.getInstance();
-    env.initializeFromOptionManager(getOptionManager());
-    env.prepareForInputFile(fileName);
-    argToRelay = env.getInputFile().toString();
+    TomStreamManager streamManager = new TomStreamManager();
+    streamManager.initializeFromOptionManager(getOptionManager());
+    streamManager.prepareForInputFile(fileName);
+    argToRelay = new Object[]{streamManager};
   }
-
-  public Object getArg() {
+  
+  /**
+   * inherited from plugin interface
+   * returns argTorelay initialized during run call
+   */
+  public Object[] getArgs() {
     return argToRelay;
   }
 

@@ -1,20 +1,20 @@
 // $ANTLR 2.7.2: "BackQuoteLanguage.g" -> "BackQuoteLexer.java"$
 
-    package jtom.parser;
-    
-    import jtom.*;
-    import jtom.adt.tomsignature.*;
-    import jtom.adt.tomsignature.types.*;
-    import jtom.xml.*;
-
-    import tom.platform.*;
-    
-    import aterm.*;
-    import aterm.pure.*;
-
-    import antlr.*;
-
-    import java.util.*;
+  package jtom.parser;
+  
+  import jtom.*;
+  import jtom.adt.tomsignature.*;
+  import jtom.adt.tomsignature.types.*;
+  import jtom.xml.*;
+  
+  import tom.platform.*;
+  
+  import aterm.*;
+  import aterm.pure.*;
+  
+  import antlr.*;
+  
+  import java.util.*;
 
 import java.io.InputStream;
 import antlr.TokenStreamException;
@@ -62,7 +62,7 @@ public BackQuoteLexer(LexerSharedInputState state) {
 	caseSensitiveLiterals = true;
 	setCaseSensitive(true);
 	literals = new Hashtable();
-	literals.put(new ANTLRHashString("xml", this), new Integer(24));
+	literals.put(new ANTLRHashString("xml", this), new Integer(9));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -430,7 +430,7 @@ tryAgain:
 		
 		match("<?");
 		{
-		_loop69:
+		_loop67:
 		do {
 			if ((_tokenSet_4.member(LA(1)))) {
 				{
@@ -438,7 +438,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop69;
+				break _loop67;
 			}
 			
 		} while (true);
@@ -462,10 +462,10 @@ tryAgain:
 		int _saveIndex;
 		
 		{
-		boolean synPredMatched73 = false;
+		boolean synPredMatched71 = false;
 		if (((_tokenSet_2.member(LA(1))) && (_tokenSet_5.member(LA(2))))) {
-			int _m73 = mark();
-			synPredMatched73 = true;
+			int _m71 = mark();
+			synPredMatched71 = true;
 			inputState.guessing++;
 			try {
 				{
@@ -473,12 +473,12 @@ tryAgain:
 				}
 			}
 			catch (RecognitionException pe) {
-				synPredMatched73 = false;
+				synPredMatched71 = false;
 			}
-			rewind(_m73);
+			rewind(_m71);
 			inputState.guessing--;
 		}
-		if ( synPredMatched73 ) {
+		if ( synPredMatched71 ) {
 			mBQ_MINUS_ID(false);
 		}
 		else if ((_tokenSet_2.member(LA(1))) && (true)) {
@@ -535,7 +535,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop83:
+		_loop81:
 		do {
 			switch ( LA(1)) {
 			case '-':
@@ -592,7 +592,7 @@ tryAgain:
 			}
 			default:
 			{
-				break _loop83;
+				break _loop81;
 			}
 			}
 		} while (true);
@@ -640,7 +640,7 @@ tryAgain:
 		}
 		}
 		{
-		_loop78:
+		_loop76:
 		do {
 			switch ( LA(1)) {
 			case '_':
@@ -689,7 +689,7 @@ tryAgain:
 					}
 				}
 			else {
-				break _loop78;
+				break _loop76;
 			}
 			}
 		} while (true);
@@ -768,17 +768,17 @@ tryAgain:
 		}
 		}
 		{
-		int _cnt87=0;
-		_loop87:
+		int _cnt85=0;
+		_loop85:
 		do {
 			if (((LA(1) >= '0' && LA(1) <= '9'))) {
 				mBQ_DIGIT(false);
 			}
 			else {
-				if ( _cnt87>=1 ) { break _loop87; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				if ( _cnt85>=1 ) { break _loop85; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 			}
 			
-			_cnt87++;
+			_cnt85++;
 		} while (true);
 		}
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
@@ -795,7 +795,7 @@ tryAgain:
 		
 		match('"');
 		{
-		_loop91:
+		_loop89:
 		do {
 			if ((LA(1)=='\\')) {
 				mBQ_ESC(false);
@@ -806,7 +806,7 @@ tryAgain:
 				}
 			}
 			else {
-				break _loop91;
+				break _loop89;
 			}
 			
 		} while (true);
@@ -870,17 +870,17 @@ tryAgain:
 		case 'u':
 		{
 			{
-			int _cnt100=0;
-			_loop100:
+			int _cnt98=0;
+			_loop98:
 			do {
 				if ((LA(1)=='u')) {
 					match('u');
 				}
 				else {
-					if ( _cnt100>=1 ) { break _loop100; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+					if ( _cnt98>=1 ) { break _loop98; } else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
 				}
 				
-				_cnt100++;
+				_cnt98++;
 			} while (true);
 			}
 			mBQ_HEX_DIGIT(false);
@@ -950,7 +950,7 @@ tryAgain:
 		_ttype = ANY;
 		int _saveIndex;
 		
-		matchRange('\u0000','\uffff');
+		matchNot(EOF_CHAR);
 		_ttype = testLiteralsTable(_ttype);
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);

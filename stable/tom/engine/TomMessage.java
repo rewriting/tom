@@ -30,19 +30,20 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * @author julien
+ * The TomMessage class is a wrapper for resource bundle
  */
+
 public class TomMessage {
   
   private final static String RESOURCE_BUNDLE = "jtom.TomMessageResources";
-    // Resource bundle.
+  // Resource bundle.
   private static ResourceBundle resourceBundle =  ResourceBundle.getBundle(RESOURCE_BUNDLE);
-
-    // Message level
+  
+  // Message level
   public static int TOM_INFO = 0;
-    // Default error line
+  // Default error line
   public static int DEFAULT_ERROR_LINE_NUMBER = 1; 
-
+  
   public static String getMessage(String key) {
     try {
       return resourceBundle.getString(key);
@@ -50,7 +51,7 @@ public class TomMessage {
       return "!" + key + "!";
     }
   }
-
+  
   public static String getMessage(String key, Object[] details) {
     try {
       return MessageFormat.format(resourceBundle.getString(key), details);
@@ -62,4 +63,5 @@ public class TomMessage {
   public static ResourceBundle getResourceBundle() {
     return resourceBundle;
   }
-}
+
+} // class TomMessage

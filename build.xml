@@ -173,25 +173,23 @@
 
 	<!-- compile tom files in src.src with tom.stable -->
 	<target name="buildtom" depends="initTaskDef, buildadt">
-		<tom config="${stable.configfile}"
-				 srcdir="${src.src}"
-				 outputfile="${src.gen}/jtom/parser/TomLanguage.g"
-				 options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-			<include name="**/TomLanguage.g.t"/>  
-		</tom>
-		<tom config="${stable.configfile}"
-				 srcdir="${src.src}"
-				 outputfile="${src.gen}/jtom/parser/HostLanguage.g"
-				 options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-			<include name="**/HostLanguage.g.t"/>  
-		</tom>
-		<tom config="${stable.configfile}"
-				 srcdir="${src.src}"
-				 outputfile="${src.gen}/jtom/parser/BackQuoteLanguage.g"
-				 options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-			<include name="**/BackQuoteLanguage.g.t"/>  
-		</tom>
 
+		<!--  compile parsers in a specific directory -->
+		<mkdir dir="${src.gen}/jtom/parser"/>
+		<tom config="${stable.configfile}"
+				 srcdir="${src.src}"
+				 destdir="${src.gen}/jtom/parser"
+				 options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+			<include name="**/*.g.t"/>  
+		</tom>
+		<move todir="${src.gen}/jtom/parser" includeemptydirs="false">
+			<fileset dir="${src.gen}/jtom/parser">
+				<include name="**/*.g.java"/>
+			</fileset>
+			<mapper type="glob" from="*.g.java" to="*.g"/>
+		</move>
+
+		<!--  compile in static mode -->
 		<tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
 				 destdir="${src.gen}" 
@@ -199,6 +197,7 @@
 			<include name="**/OptionParser.t"/>
 		</tom>
 
+		<!--  compile in standard mode -->
 		<tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
 				 destdir="${src.gen}" 
@@ -211,15 +210,14 @@
 			<exclude name="**/OptionParser.t"/>
 		</tom>
 
+		<!--  compile without declaration -->
 		<tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
 				 destdir="${src.gen}" 
 				 options="-I ${src.mapping} --noDeclaration">
 			<include name="jtom/**/*.t"/> 
 			<exclude name="jtom/*.t"/>
-			<exclude name="**/TomLanguage.g.t"/>
-			<exclude name="**/HostLanguage.g.t"/>
-			<exclude name="**/BackQuoteLanguage.g.t"/>
+			<exclude name="jtom/parser/*.g.t"/>
 		</tom>
 	</target>
 
@@ -866,6 +864,7 @@
 
 		<!-- build tom -->
 
+		<!--  compile in static mode -->
 		<tomsrc config="${src.configfile}"
 				 srcdir="${src.src}" 
 				 destdir="${destination}/gen" 
@@ -873,6 +872,7 @@
 			<include name="**/OptionParser.t"/>
 		</tomsrc>
 
+		<!--  compile in standard mode -->
 		<tomsrc config="${src.configfile}"
 						srcdir="${src.src}" 
 						destdir="${destination}/gen" 
@@ -884,6 +884,7 @@
 			<exclude name="**/OptionParser.t"/>
 		</tomsrc>
 
+		<!--  compile without declaration -->
 		<tomsrc config="${src.configfile}"
 						srcdir="${src.src}" 
 						destdir="${destination}/gen" 
@@ -896,24 +897,20 @@
 			<exclude name="**/BackQuoteLanguage.g.t"/>
 		</tomsrc>
 
+		<!--  compile parsers in a specific directory -->
+		<mkdir dir="${destination}/gen/jtom/parser"/>
 		<tomsrc config="${src.configfile}"
-						srcdir="${src.src}"
-						outputfile="${destination}/gen/jtom/parser/TomLanguage.g"
-						options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-			<include name="**/TomLanguage.g.t"/>  
+				 srcdir="${src.src}"
+				 destdir="${destination}/gen/jtom/parser"
+				 options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+			<include name="**/*.g.t"/>  
 		</tomsrc>
-		<tomsrc config="${src.configfile}"
-						srcdir="${src.src}"
-						outputfile="${destination}/gen/jtom/parser/HostLanguage.g"
-						options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-			<include name="**/HostLanguage.g.t"/>  
-		</tomsrc>
-		<tomsrc config="${src.configfile}"
-						srcdir="${src.src}"
-						outputfile="${destination}/gen/jtom/parser/BackQuoteLanguage.g"
-						options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
-			<include name="**/BackQuoteLanguage.g.t"/>  
-		</tomsrc>
+		<move todir="${destination}/gen/jtom/parser" includeemptydirs="false">
+			<fileset dir="${destination}/gen/jtom/parser">
+				<include name="**/*.g.java"/>
+			</fileset>
+			<mapper type="glob" from="*.g.java" to="*.g"/>
+		</move>
 
 		<!-- builds parser -->
 		<mkdir dir="${destination}/gen/jtom/parser"/>
@@ -960,7 +957,6 @@
 				<include name="lib/*.jar"/>
 				<exclude name="**/adt/**/*.java"/>
 				<exclude name="**/bootstrap/**/*"/>
-				<exclude name="**/mutraveler/**/*.java"/>
 				<exclude name="**/gen/**/*"/>
 			</fileset>
 			<fileset dir="${src.gen}">
@@ -972,7 +968,7 @@
 			<fileset dir="${src.mapping}" includes="**/*.tom"/>
 		</copy>
 		<copy todir="${stable.src}/jjtraveler" overwrite="true">
-			<fileset dir="${src.src}/tom/library/strategy/mutraveler" includes="**/*.java"/>
+			<fileset dir="${src.src}/jjtraveler" includes="**/*.java"/>
 		</copy>
 
 		<mkdir dir="${stable.src}/jtom/adt"/>

@@ -65,3 +65,10 @@
     is_fsym(t) { (t instanceof jjtraveler.MuVar) }
     make(name) { new jjtraveler.MuVar(name) }
   }
+
+  %op VisitableVisitor Pselect(p:int, q:int, first:VisitableVisitor, then:VisitableVisitor) {
+    fsym {}
+    is_fsym(t) { (t instanceof jjtraveler.Pselect) }
+    make(p,q,v1,v2) { new jjtraveler.Pselect(p,q,(VisitableVisitor)v1,(VisitableVisitor)v2) }
+  }
+

@@ -36,7 +36,7 @@ import tom.platform.*;
 public class Tom {
   
   /** The current version of the TOM compiler. */
-  public final static String VERSION = "2.1 stable - Under development";
+  public final static String VERSION = "2.1 source - Under development";
   
   /** Log radical string*/
   public final static String LOG_RADICAL = "jtom";
@@ -59,7 +59,7 @@ public class Tom {
     exec(args);
   }
   
-  public static int exec(String[] commandLine) {
+  public static int exec(String[] args) {
     try {
       initializeLogging();
     } catch(Exception e) {
@@ -69,11 +69,11 @@ public class Tom {
       return 1;
     }
     PluginPlatform platform =
-      PluginPlatformFactory.getInstance().create(commandLine,Tom.LOG_RADICAL); 
+      PluginPlatformFactory.getInstance().create(args,Tom.LOG_RADICAL); 
     if(platform == null) {
       return 1;
     }
-    System.out.println("Tom Compiler "+Tom.VERSION+" 2000-2004 tom.loria.fr\n");
+    System.out.println("Tom Compiler " + Tom.VERSION + " 2000-2004 tom.loria.fr");
     return platform.run();
   }
    
@@ -134,9 +134,6 @@ public class Tom {
     for(int i = 0; i < handlers.length; i++) {
       logger.removeHandler(handlers[i]);
     }
-    /*Status statusHandler = new StatusHandler();
-      Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);
-    */
   }
   
   private static void refreshTopLoggerHandlers()

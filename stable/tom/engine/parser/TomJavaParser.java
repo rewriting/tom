@@ -1,17 +1,8 @@
 // $ANTLR 2.7.2: "TomJavaParser.g" -> "TomJavaParser.java"$
 
-  package jtom.parser;
-    
-  import antlr.*;
-    
-  import java.io.*;
-  import java.util.*;
-  import java.text.*;
-
-  import jtom.TomEnvironment;
-  import jtom.exception.*;
-  import jtom.tools.*;
-  import jtom.TomMessage;
+package jtom.parser;
+import antlr.*;
+import java.io.*;
 
 import antlr.TokenBuffer;
 import antlr.TokenStreamException;
@@ -71,8 +62,11 @@ public TomJavaParser(ParserSharedInputState state) {
 			result=javaName();
 			match(SEMICOLON);
 		}
-		else if (((LA(1) >= PACKAGE && LA(1) <= OTHER))) {
+		else if (((LA(1) >= PACKAGE && LA(1) <= ML_COMMENT))) {
 			matchNot(EOF);
+		}
+		else if ((LA(1)==EOF)) {
+			match(Token.EOF_TYPE);
 		}
 		else {
 			throw new NoViableAltException(LT(1), getFilename());
@@ -126,8 +120,7 @@ public TomJavaParser(ParserSharedInputState state) {
 		"WS",
 		"COMMENT",
 		"SL_COMMENT",
-		"ML_COMMENT",
-		"OTHER"
+		"ML_COMMENT"
 	};
 	
 	

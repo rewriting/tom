@@ -551,8 +551,9 @@ public class TomTask extends MatchingTask {
       }
       for (int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();
-        if(verbose)
+        if(verbose) {
           System.out.println("Compiling " + filename + "...");
+        }
         // Not usefull since the TomStreamManager already add the parent
         // in importList: clean and reinit for each input file
         //File file = new File(filename);
@@ -560,7 +561,7 @@ public class TomTask extends MatchingTask {
         
         cmd_line = cmd_line.trim() + " " + filename;
       }
-      
+
       String[] cmd = split(cmd_line);
       //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
       int err = -1;

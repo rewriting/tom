@@ -9,7 +9,9 @@
   import jtom.adt.tomsignature.types.*;
   
   import tom.platform.*;
-  
+
+  import vas.Vas;
+
   import java.lang.reflect.*;
   import java.io.*;
   import java.util.*;

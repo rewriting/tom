@@ -1,17 +1,8 @@
 // $ANTLR 2.7.2: "TomJavaParser.g" -> "TomJavaParser.java"$
 
-  package jtom.parser;
-    
-  import antlr.*;
-    
-  import java.io.*;
-  import java.util.*;
-  import java.text.*;
-
-  import jtom.TomEnvironment;
-  import jtom.exception.*;
-  import jtom.tools.*;
-  import jtom.TomMessage;
+package jtom.parser;
+import antlr.*;
+import java.io.*;
 
 public interface TomJavaParserTokenTypes {
 	int EOF = 1;
@@ -26,5 +17,4 @@ public interface TomJavaParserTokenTypes {
 	int COMMENT = 11;
 	int SL_COMMENT = 12;
 	int ML_COMMENT = 13;
-	int OTHER = 14;
 }

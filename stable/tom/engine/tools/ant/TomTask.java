@@ -511,61 +511,71 @@ public class TomTask extends MatchingTask {
           + (compileList.length == 1 ? "" : "s")
           + (destDir != null ? " to " + destDir : ""));
 
-      for (int i = 0; i < compileList.length; i++) {
+      /*for (int i = 0; i < compileList.length; i++) {
         String filename = compileList[i].getAbsolutePath();
         if(verbose)
           System.out.println("Compiling " + compileList[i] + "...");
         
         File file = new File(filename);
-
-        if (logPropertiesFile != null) {
-          System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
-          System.setProperty("java.util.logging.config.file",logPropertiesFile);
+      */
+      
+      if (logPropertiesFile != null) {
+        System.out.println("ANT task : properties = " + System.getProperty("java.util.logging.config.file"));
+        System.setProperty("java.util.logging.config.file",logPropertiesFile);
+      }
+      
+      String cmd_line = "";
+      if(options != null && getOptions().trim().length() > 0) {
+        cmd_line = cmd_line.trim() + " " + options;
+      }
+      if(configFile != null) {
+        cmd_line = cmd_line.trim() + " -X " + configFile;
+      }
+      if(destDir != null) {
+        cmd_line = cmd_line.trim() + " -d " + destDir;
+      }
+      if(outputFile != null) {
+        cmd_line = cmd_line.trim() + " -o " + outputFile;
+      }
+      if(optimize == true) {
+        cmd_line = cmd_line.trim() + " --optimize";
+      }
+      if(visitable == true) {
+        cmd_line = cmd_line.trim() + " --visitable";
+      }
+      if(stamp == true) {
+        cmd_line = cmd_line.trim() + " --stamp";
+      }
+      if(nowarn == true) {
+        cmd_line = cmd_line.trim() + " --noWarning";
+      }
+      for (int i = 0; i < compileList.length; i++) {
+        String filename = compileList[i].getAbsolutePath();
+        if(verbose) {
+          System.out.println("Compiling " + filename + "...");
         }
-
-        String cmd_line = "";
-        if(options != null && getOptions().trim().length() > 0) {
-          cmd_line = cmd_line.trim() + " " + options;
-        }
-        if(configFile != null) {
-          cmd_line = cmd_line.trim() + " -X " + configFile;
-        }
-        if(destDir != null) {
-          cmd_line = cmd_line.trim() + " -d " + destDir;
-        }
-        if(outputFile != null) {
-          cmd_line = cmd_line.trim() + " -o " + outputFile;
-        }
-				if(optimize == true) {
-          cmd_line = cmd_line.trim() + " --optimize";
-				}
-				if(visitable == true) {
-          cmd_line = cmd_line.trim() + " --visitable";
-				}
-				if(stamp == true) {
-          cmd_line = cmd_line.trim() + " --stamp";
-				}
-				if(nowarn == true) {
-          cmd_line = cmd_line.trim() + " --noWarning";
-				}
-        cmd_line = cmd_line.trim() + " -I " + file.getParent();
+        // Not usefull since the TomStreamManager already add the parent
+        // in importList: clean and reinit for each input file
+        //File file = new File(filename);
+        //cmd_line = cmd_line.trim() + " -I " + file.getParent();
+        
         cmd_line = cmd_line.trim() + " " + filename;
+      }
 
-        String[] cmd = split(cmd_line);
-        //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
-        int err = -1;
-        err = Tom.exec(cmd);
-        if(err != 0) {
-          if(failOnError) {
-            throw new BuildException("Tom returned: " + err, getLocation());
-          } else {
-            log("Tom Result: " + err, Project.MSG_ERR);
-          }
+      String[] cmd = split(cmd_line);
+      //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
+      int err = -1;
+      err = Tom.exec(cmd);
+      if(err != 0) {
+        if(failOnError) {
+          throw new BuildException("Tom returned: " + err, getLocation());
+        } else {
+          log("Tom Result: " + err, Project.MSG_ERR);
         }
       }
     }
   }
-
+  
   private String[] split(String str) {
     try {
       String res[] = new String[0];
