@@ -261,3 +261,10 @@ VARIABLE DECLARATION
 	  line 41: Bad variable type for `x`: it has both type `type1` and `type2`
 	Tom TypeChecker:  Encountered 5 errors and 0 warnings.
 
+///
+XML
+///
+
+	JXml.t
+	  line 11: Malformed XML pattern: expecting `Integer|Int` but got `Integer|In`
+	Tom Parser:  Encountered 1 errors and 0 warnings.

@@ -1,0 +1,5 @@
+-- Error occured line: 11 in structure `match` declared line: 11 in file: `JXml.t`
+---> Malformed XML pattern: expecting `Integer|Int` but got `Integer|In`
+
+Tom Parser:  Encountered 1 errors and 0 warnings.
+No file generated.
