@@ -285,11 +285,10 @@
 			<src path="${src.src}"/>
 			<src path="${src.gen}"/>
 			<classpath refid="src.classpath"/>
-			<include name="**/*.java"/>
-			<!--
 			<include name="tom/**/*.java"/>
 			<include name="jtom/**/*.java"/>
-			-->
+			<include name="jjtraveler/**/*.java"/>
+
 		</javac>
 	</target>
 	
@@ -924,11 +923,10 @@
 			<src path="${src.src}"/>
 			<src path="${destination}/gen"/>
 			<classpath refid="src.classpath"/>
-			<include name="**/*.java"/>
-			<!--
 			<include name="tom/**/*.java"/>
 			<include name="jtom/**/*.java"/>
-			-->
+			<include name="jjtraveler/**/*.java"/>
+
 		</javac>
 	</target>
 
