@@ -129,7 +129,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
         buildListOrArray(deep, l);
         return;
-      } } if(tom_is_fun_sym_BuildEmptyArray(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm l=tom_match1_1;          buildListOrArray(deep, l);          return;        } } if(tom_is_fun_sym_BuildAppendArray(tom_match1_1) || tom_is_fun_sym_BuildConsArray(tom_match1_1) || tom_is_fun_sym_BuildAppendList(tom_match1_1) || tom_is_fun_sym_BuildConsList(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm l=tom_match1_1;          buildListOrArray(deep, l);          return;        } } if(tom_is_fun_sym_FunctionCall(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match1_1_1=tom_get_slot_FunctionCall_astName(tom_match1_1); { jtom.adt.tomsignature.types.TomList tom_match1_1_2=tom_get_slot_FunctionCall_args(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) { { String  tom_match1_1_1_1=tom_get_slot_Name_string(tom_match1_1_1); { String  name=tom_match1_1_1_1; { jtom.adt.tomsignature.types.TomList argList=tom_match1_1_2;
+      } } if(tom_is_fun_sym_BuildEmptyArray(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm l=tom_match1_1;         buildListOrArray(deep, l);         return;       } } if(tom_is_fun_sym_BuildAppendArray(tom_match1_1) || tom_is_fun_sym_BuildConsArray(tom_match1_1) || tom_is_fun_sym_BuildAppendList(tom_match1_1) || tom_is_fun_sym_BuildConsList(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm l=tom_match1_1;         buildListOrArray(deep, l);         return;       } } if(tom_is_fun_sym_FunctionCall(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match1_1_1=tom_get_slot_FunctionCall_astName(tom_match1_1); { jtom.adt.tomsignature.types.TomList tom_match1_1_2=tom_get_slot_FunctionCall_args(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) { { String  tom_match1_1_1_1=tom_get_slot_Name_string(tom_match1_1_1); { String  name=tom_match1_1_1_1; { jtom.adt.tomsignature.types.TomList argList=tom_match1_1_2;
 
 
         buildFunctionCall(deep,name, argList);
@@ -337,11 +337,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 
 
 ;
-        return;
-       } if(tom_is_fun_sym_EndLocalVariable(tom_match3_1) ||  false ) {
-
-
-        output.writeln(deep,"do");
         return;
        } if(tom_is_fun_sym_AssignMatchSubject(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match3_1_1=tom_get_slot_AssignMatchSubject_kid1(tom_match3_1); { jtom.adt.tomsignature.types.Expression tom_match3_1_2=tom_get_slot_AssignMatchSubject_source(tom_match3_1); if(tom_is_fun_sym_Variable(tom_match3_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match3_1_1; { jtom.adt.tomsignature.types.OptionList tom_match3_1_1_1=tom_get_slot_Variable_option(tom_match3_1_1); { jtom.adt.tomsignature.types.OptionList option=tom_match3_1_1_1; { jtom.adt.tomsignature.types.Expression exp=tom_match3_1_2;buildAssignVar(deep,var,option,exp)
 

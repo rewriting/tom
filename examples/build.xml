@@ -8,7 +8,7 @@
   <property file="../local.properties"/>
 
   <!-- current version of TOM -->
-  <property name="version" value="2.1rc1"/>
+  <property name="version" value="2.1rc3"/>
 
   <property name="nowarnings" value="false"/>
   <property name="optimize" value="off"/>

@@ -1,8 +1,8 @@
-Tom 2.0 release announcement
-----------------------------
+Tom 2.1 release candidate announcement
+--------------------------------------
 
 It is my great privilege and pleasure to announce the availability of
-Tom version 2.0.
+Tom version 2.1-rc2.
 
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into C and Java.
@@ -27,23 +27,14 @@ data-structure. Tom can be used for large scale developments and
 applications. It comes with documentation, programming, and debugging
 support. 
 
-
 This new release contains many improvements and new features:
 
-  - simple, ant based, installation procedure
-  - Eclipse plug-in, with automatic compilation and error reporting 
-  - support for Caml
-  - several predefined mappings
-  - an optimizer which performs inlining and improves the efficiency
-    of list-matching  
-  - support for builtin char and builtin string (seen as list of
-    char)  
-  - a better XML support (backquote notation, anonymous nodes)
-  - a re-designed kernel compiler (with better algorithms)
-  - a constrained based compilation of non-linear patterns (in a 
-    more efficient way)  
+  - a re-designed plugin based architecture
+  - a new parser based on ANTLR
+  - a library for defining traversal strategies
+  - a new library organization
   - several bugs fixed
-
+  
 Tom is available, in open source (GPL/BSD License), from the Tom web page:
 
   http://tom.loria.fr

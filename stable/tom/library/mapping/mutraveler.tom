@@ -18,57 +18,57 @@
     make() { new jjtraveler.Fail() }
   }
 
-  %op VisitableVisitor Not(v:VisitableVisitor) {
+  %op VisitableVisitor Not(VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.Not) }
     make(v) { new jjtraveler.Not((VisitableVisitor)v) }
   }
 
-  %op VisitableVisitor Sequence(first:VisitableVisitor, then:VisitableVisitor) {
+  %op VisitableVisitor Sequence(VisitableVisitor, VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.Sequence) }
-    make(v1,v2) { new jjtraveler.Sequence((VisitableVisitor)v1,(VisitableVisitor)v2) }
+    make(first,then) { new jjtraveler.Sequence((VisitableVisitor)first,(VisitableVisitor)then) }
   }
 
-  %op VisitableVisitor Choice(first:VisitableVisitor, then:VisitableVisitor) {
+  %op VisitableVisitor Choice(VisitableVisitor, VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.Choice) }
-    make(v1,v2) { new jjtraveler.Choice((VisitableVisitor)v1,(VisitableVisitor)v2) }
+    make(first,then) { new jjtraveler.Choice((VisitableVisitor)first,(VisitableVisitor)then) }
   }
 
-  %op VisitableVisitor All(v:VisitableVisitor) {
+  %op VisitableVisitor All(VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.All) }
     make(v) { new jjtraveler.All((VisitableVisitor)v) }
   }
 
-  %op VisitableVisitor One(v:VisitableVisitor) {
+  %op VisitableVisitor One(VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.One) }
     make(v) { new jjtraveler.One((VisitableVisitor)v) }
   }
 
-  %op VisitableVisitor Some(v:VisitableVisitor) {
+  %op VisitableVisitor Some(VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.Some) }
     make(v) { new jjtraveler.Some((VisitableVisitor)v) }
   }
 
-  %op VisitableVisitor IfThenElse(condition:VisitableVisitor, trueCase:VisitableVisitor, falseCase:VisitableVisitor) {
+  %op VisitableVisitor IfThenElse(VisitableVisitor, VisitableVisitor, VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.IfThenElse) }
-    make(v1,v2,v3) { new jjtraveler.IfThenElse((VisitableVisitor)v1,(VisitableVisitor)v2,(VisitableVisitor)v3) }
+    make(condition,trueCase,falseCase) { new jjtraveler.IfThenElse((VisitableVisitor)condition,(VisitableVisitor)trueCase,(VisitableVisitor)falseCase) }
   }
 
-  %op VisitableVisitor MuVar(name:String) {
+  %op VisitableVisitor MuVar(String) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.MuVar) }
     make(name) { new jjtraveler.MuVar(name) }
   }
 
-  %op VisitableVisitor Pselect(p:int, q:int, first:VisitableVisitor, then:VisitableVisitor) {
+  %op VisitableVisitor Pselect(int, int, VisitableVisitor, VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.Pselect) }
-    make(p,q,v1,v2) { new jjtraveler.Pselect(p,q,(VisitableVisitor)v1,(VisitableVisitor)v2) }
+    make(p,q,first,then) { new jjtraveler.Pselect(p,q,(VisitableVisitor)first,(VisitableVisitor)then) }
   }
 

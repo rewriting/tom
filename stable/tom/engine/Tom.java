@@ -47,7 +47,7 @@ import tom.platform.PluginPlatformFactory;
 public class Tom {
   
   /** The current version of the TOM compiler. */
-  public final static String VERSION = "2.1 source - Under development";
+  public final static String VERSION = "2.1-rc2alpha (src)";
   
   /** Log radical string*/
   public final static String LOG_RADICAL = "jtom";
@@ -83,7 +83,6 @@ public class Tom {
     if(platform == null) {
       return 1;
     }
-    System.out.println("Tom Compiler " + Tom.VERSION + " 2000-2004 tom.loria.fr");
     return platform.run();
   }
    
@@ -106,7 +105,9 @@ public class Tom {
      */
     if(logger != null && newLevel.intValue() <= Level.WARNING.intValue()) {
       logger.setLevel(newLevel);
-    } else if(consoleHandler != null) {
+    } 
+
+    if(consoleHandler != null && newLevel.intValue() >= Level.WARNING.intValue()) {
       // if we've found a global console handler
       consoleHandler.setLevel(newLevel);
       // warnings are no more printed, but still seen by the StatusHandler
@@ -123,6 +124,7 @@ public class Tom {
       logger.setLevel(Level.WARNING);
       consoleHandler = new ConsoleHandler();
       consoleHandler.setLevel(Level.ALL);
+      consoleHandler.setLevel(Level.SEVERE);
       // by default, print everything that the logger sends
       consoleHandler.setFormatter(new BasicFormatter());
       logger.addHandler(consoleHandler);

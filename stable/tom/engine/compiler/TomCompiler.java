@@ -269,25 +269,13 @@ public class TomCompiler extends TomGenericPlugin {
                 //}
 
               InstructionList l;
-              if(((Boolean)getOptionManager().getOptionValue("eCode")).booleanValue()) {
-                l = tom_cons_list_concInstruction(makeFunctionBeginAST,tom_cons_list_concInstruction(tom_make_LocalVariable(),tom_cons_list_concInstruction(tom_make_EndLocalVariable(),tom_cons_list_concInstruction(matchAST,tom_cons_list_concInstruction(buildAST,tom_cons_list_concInstruction(tom_make_MakeFunctionEnd()
-                                     ,tom_empty_list_concInstruction()))))))
-
-
-
-
-
-
-;
-              } else {
-                l = tom_cons_list_concInstruction(makeFunctionBeginAST,tom_cons_list_concInstruction(matchAST,tom_cons_list_concInstruction(buildAST,tom_cons_list_concInstruction(tom_make_MakeFunctionEnd()
-                                     ,tom_empty_list_concInstruction()))))
+              l = tom_cons_list_concInstruction(makeFunctionBeginAST,tom_cons_list_concInstruction(matchAST,tom_cons_list_concInstruction(buildAST,tom_cons_list_concInstruction(tom_make_MakeFunctionEnd()
+                                   ,tom_empty_list_concInstruction()))))
 
 
 
 
 ;
-              }
             
               return preProcessingInstruction(tom_make_AbstractBlock(l));
             } }}} }} }} }} }} }} }}} }}} }}}

@@ -375,18 +375,6 @@ get_implementation(t) {t}
   make(t0, t1) { getTomSignatureFactory().makeInstruction_EqualityCondition(t0, t1)}
 }
 
-%op Instruction LocalVariable {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isLocalVariable()}
-  make() { getTomSignatureFactory().makeInstruction_LocalVariable()}
-}
-
-%op Instruction EndLocalVariable {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isEndLocalVariable()}
-  make() { getTomSignatureFactory().makeInstruction_EndLocalVariable()}
-}
-
 %op Instruction MakeFunctionBegin(astName:TomName, subjectListAST:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isMakeFunctionBegin()}

@@ -53,7 +53,7 @@ public class TomBackend extends TomGenericPlugin {
   private final static int defaultDeep = 2;
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = "<options><boolean name='noOutput' altName='' description='Do not generate code' value='false'/><boolean name='jCode' altName='j' description='Generate Java code' value='true'/><boolean name='cCode' altName='c' description='Generate C code' value='false'/><boolean name='eCode' altName='e' description='Generate Eiffel code' value='false'/><boolean name='camlCode' altName='' description='Generate Caml code' value='false'/></options>";
+  public static final String DECLARED_OPTIONS = "<options><boolean name='noOutput' altName='' description='Do not generate code' value='false'/><boolean name='jCode' altName='j' description='Generate Java code' value='true'/><boolean name='cCode' altName='c' description='Generate C code' value='false'/><boolean name='camlCode' altName='' description='Generate Caml code' value='false'/></options>";
   
   /** the generated file name */
   private String generatedFileName = null;
@@ -78,8 +78,6 @@ public class TomBackend extends TomGenericPlugin {
           generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("cCode")) {
           generator = new TomCGenerator(output, getOptionManager(), symbolTable());
-        } else if(getOptionBooleanValue("eCode")) {
-          generator = new TomEiffelGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("camlCode")) {
           generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
         }
@@ -120,23 +118,15 @@ public class TomBackend extends TomGenericPlugin {
 	    if(optionName.equals("jCode") || optionName.equals("j")) { 
 		    //System.out.println("Java code activated, other codes desactivated");
 		    setOptionValue("cCode", Boolean.FALSE);
-		    setOptionValue("eCode", Boolean.FALSE);
 		    setOptionValue("camlCode", Boolean.FALSE); 
       } else if(optionName.equals("cCode") || optionName.equals("c")) { 
 		    //System.out.println("C code activated, other codes desactivated");
 		    setOptionValue("jCode", Boolean.FALSE);
-		    setOptionValue("eCode", Boolean.FALSE);
-		    setOptionValue("camlCode", Boolean.FALSE); 
-      } else if(optionName.equals("eCode") || optionName.equals("e")) { 
-		    //System.out.println("Eiffel code activated, other codes desactivated");
-		    setOptionValue("jCode", Boolean.FALSE);
-		    setOptionValue("cCode", Boolean.FALSE);
 		    setOptionValue("camlCode", Boolean.FALSE); 
       } else if(optionName.equals("camlCode")) { 
 		    //System.out.println("Caml code activated, other codes desactivated");
 		    setOptionValue("jCode", Boolean.FALSE);
 		    setOptionValue("cCode", Boolean.FALSE);
-		    setOptionValue("eCode", Boolean.FALSE); 
       }
     }
   }

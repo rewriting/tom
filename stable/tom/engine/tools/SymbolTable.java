@@ -79,15 +79,6 @@ public class SymbolTable {
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"));
       putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
-    } else if( ((Boolean)optionManager.getOptionValue("eCode")).booleanValue() ) {
-      putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"CHARACTER"));
-      putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"BOOLEAN"));
-      putType(TYPE_INT, ast().makeType(TYPE_INT,"INTEGER"));
-      putType(TYPE_LONG, ast().makeType(TYPE_LONG,"INTEGER"));
-      putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"DOUBLE"));
-      putType(TYPE_STRING, ast().makeType(TYPE_STRING,"STRING"));
-      putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"ANY"));
-      putType(TYPE_VOID, ast().makeType(TYPE_VOID,"void"));
     } else if( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) { // this is really bad, will need to be improved
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"bool"));
