@@ -79,10 +79,22 @@
  * basic operators with Id considered as a failure
  */
 
+  %op VisitableVisitor OneId(VisitableVisitor) {
+    fsym {}
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.OneId) }
+    make(v) { new tom.library.strategy.mutraveler.OneId((VisitableVisitor)v) }
+  }
+
   %op VisitableVisitor SequenceId(VisitableVisitor, VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.SequenceId) }
     make(first,then) { new tom.library.strategy.mutraveler.SequenceId((VisitableVisitor)first,(VisitableVisitor)then) }
+  }
+
+  %op VisitableVisitor ChoiceId(VisitableVisitor, VisitableVisitor) {
+    fsym {}
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.ChoiceId) }
+    make(first,then) { new tom.library.strategy.mutraveler.ChoiceId((VisitableVisitor)first,(VisitableVisitor)then) }
   }
 
 /*
@@ -136,6 +148,11 @@
   %op VisitableVisitor RepeatId(VisitableVisitor) {
     fsym {}
     make(v) { `mu(MuVar("x"),SequenceId(v,MuVar("x"))) }
+  }
+
+  %op VisitableVisitor OnceBottomUpId(VisitableVisitor) {
+    fsym {}
+    make(v) { `mu(MuVar("x"),ChoiceId(OneId(MuVar("x")),v)) }
   }
 
   %op VisitableVisitor InnermostId(VisitableVisitor) {
