@@ -35,7 +35,6 @@
 	<!--some used directory location  for devel -->
 	<property name="src.src"      location="src"/>
 	<property name="src.adt"      location="${src.src}/jtom/adt"/>
-	<property name="src.library"  location="${src.src}/tom/library"/>
 	<property name="src.mapping"  location="${src.src}/tom/library/mapping"/>
 	<property name="src.gen"      location="${src.src}/gen"/>   
 	<property name="src.build"    location="${src.src}/build"/>   
@@ -85,10 +84,11 @@
 
 	<path id="stable.classpath">
 		<path refid="external.classpath"/>
-		<!-- ADT jar files -->
+		<!-- ADT jar files from tom and jtom -->
 		<fileset dir="${stable.src}">
-			<include name="**/*.jar"/>
+			<include name="**/adt/*.jar"/>
 		</fileset>
+		<!-- and stable lib jar files -->
 		<fileset dir="${stable.lib}">
 			<include name="*.jar"/>
 		</fileset>
@@ -96,6 +96,7 @@
 	
 	<path id="src.classpath">
 		<path refid="external.classpath"/>
+		<!-- Src lib jar files -->
 		<fileset dir="${src.lib}">
 			<include name="*.jar"/>
 		</fileset>
@@ -116,12 +117,10 @@
 	<target name="prepare.src">
 		<mkdir dir="${src.build}"/>
 		<mkdir dir="${src.gen}"/>
-		<mkdir dir="${src.dist}"/>
 	</target>
 	
 	<target name="prepare.stable">
 		<mkdir dir="${stable.build}"/>
-		<mkdir dir="${stable.dist}"/>
 	</target>
 
 	<target name="prepare.test">
@@ -131,6 +130,7 @@
 
 	<target name="prepare.dist.stable">
 		<mkdir dir="${dist}"/>
+		<mkdir dir="${stable.dist}"/>
 		<mkdir dir="${stable.dist.bin}"/>
 		<mkdir dir="${stable.dist.lib}"/>
 		<mkdir dir="${stable.dist.share}"/>
@@ -140,6 +140,7 @@
 
 	<target name="prepare.dist.src">
 		<mkdir dir="${dist}"/>
+		<mkdir dir="${src.dist}"/>
 		<mkdir dir="${src.dist.bin}"/>
 		<mkdir dir="${src.dist.lib}"/>
 		<mkdir dir="${src.dist.share}"/>
@@ -239,7 +240,7 @@
 			<classpath refid="stable.classpath"/>
 		</antlr>
 		<antlr target="${src.gen}/jtom/parser/BackQuoteLanguage.g"
-					 outputdirectory="${src.gen}/jtom/parser" trace="no">
+					 outputdirectory="${src.gen}/jtom/parser">
 			<classpath refid="stable.classpath"/>
 		</antlr>
 	</target>
@@ -457,7 +458,9 @@
 		<jar jarfile="${src.dist.lib}/PlatformOption-${DSTAMP}.jar">
 			<fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
 		</jar>
-
+		<jar jarfile="${src.dist.lib}/PlatformAlert-${DSTAMP}.jar">
+			<fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
+		</jar>
 		<jar jarfile="${src.dist.lib}/mutraveler-${DSTAMP}.jar">
 			<fileset dir="${src.build}" 
 							 includes="jjtraveler/**/*.class"/>
@@ -984,8 +987,11 @@
 		<jar jarfile="${stable.src}/tom/library/adt/TNode.jar">
 			<fileset dir="${src.build}" includes="tom/library/adt/tnode/**/*.class"/>
 		</jar>
-		<jar jarfile="${stable.src}/tom/platform/adt/PlatformOption.jar">
+ 		<jar jarfile="${stable.src}/tom/platform/adt/PlatformOption.jar">
 			<fileset dir="${src.build}" includes="tom/platform/adt/platformoption/**/*.class"/>
+		</jar>
+		<jar jarfile="${stable.src}/tom/platform/adt/PlatformAlert.jar">
+			<fileset dir="${src.build}" includes="tom/platform/adt/platformalert/**/*.class"/>
 		</jar>
 		<antcall target="clean.bootstrap"/>
 	</target>
