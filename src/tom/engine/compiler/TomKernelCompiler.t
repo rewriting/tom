@@ -402,17 +402,11 @@ public class TomKernelCompiler extends TomBase {
       %match(TomTerm term) {
         var@Variable(Option(optionList), _, termType) |
         var@UnamedVariable(Option(optionList), termType) -> {
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
           Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType));
-          result = appendInstruction(`Assign(var,source),result);
-
-          if(annotedVariable != null) {
-            result = appendInstruction(`Assign(annotedVariable,source),result);
-          }
+          result = addAnnotedAssignement(optionList, source, var, result);
           if(gsa) {
             result = appendInstruction(`Action(actionList),result);
           }
-          
           break matchBlock; 
         }
 
@@ -516,6 +510,18 @@ public class TomKernelCompiler extends TomBase {
       //System.out.println("*** result = " + result);
     return result;
   }
+
+  private TomList addAnnotedAssignement(OptionList optionList,
+                                        Expression source,
+                                        TomTerm dest,
+                                        TomList result) {
+    TomTerm annotedVariable = getAnnotedVariable(optionList);
+    if(annotedVariable != null) {
+      result = appendInstruction(`Assign(annotedVariable,source),result);
+    }
+    result = appendInstruction(`Assign(dest,source),result);
+    return result;
+  }
   
   TomList genListMatchingAutomata(TomSymbol symbol,
                                   TomList termList,
@@ -555,8 +561,6 @@ public class TomKernelCompiler extends TomBase {
       //System.out.println("*** genListMatchingAutomata"); 
     matchBlock: {
       %match(TomList termList) {
-        
-          //conc() -> {
         emptyTomList() -> {
             /*
              * generate:
@@ -580,78 +584,44 @@ public class TomKernelCompiler extends TomBase {
         
         manyTomList(var@Variable(Option(optionList),_, termType),termTail) |
         manyTomList(var@UnamedVariable(Option(optionList), termType),termTail) -> {
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
+            /*
+             * generate:
+             * ---------
+             * if(!IS_EMPTY_TomList(subjectList)) {
+             *   TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);
+             *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);
+             *   ...
+             * }
+             */            
+          Expression source = `GetHead(subjectListName);
+          TomList assignementList = empty();
+          assignementList = addAnnotedAssignement(optionList, source, var, assignementList);
+          assignementList = appendInstruction(`Assign(subjectListName,GetTail(subjectListName)),assignementList);
+          TomList succesList;
           if(termTail.isEmpty()) {
               /*
-               * generate:
-               * ---------
-               * if(!IS_EMPTY_TomList(subjectList)) {
-               *   TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);
-               *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);
                *   if(IS_EMPTY_TomList(subjectList)) {
                *     ...
                *   }
-               * }
-               */            
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
-            TomList declarationList = empty();
-            TomList assignementList = empty();
-
-            Expression source = `GetHead(subjectListName);
-            if(annotedVariable != null) {
-              assignementList = appendInstruction(`Assign(annotedVariable,source),assignementList);
-            }
-            assignementList = appendInstruction(`Assign(var,source),assignementList);
-            assignementList = appendInstruction(`Assign(subjectListName,GetTail(subjectListName)),assignementList);
-            
+               */
             if(generateSemanticAction) {
               subList = appendInstruction(`Action(actionList),subList);
             }
-            
-            Expression cond = `IsEmptyList(subjectListName);
-            
-            Instruction test = `IfThenElse(cond, subList, empty());
-            TomList succesList = appendInstruction(test,concat(declarationList,assignementList));
-            
-            cond = `Not(IsEmptyList(subjectListName));
-            test = `IfThenElse(cond, succesList, empty());
-            result = appendInstruction(test,result);
-            break matchBlock;
+            Instruction test = `IfThenElse(IsEmptyList(subjectListName),
+                                              subList, empty());
+            succesList = appendInstruction(test,assignementList);
           } else {
-              /*
-               * generate:
-               * ---------
-               * if(!IS_EMPTY_TomList(subjectList)) {
-               *   TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);
-               *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);
-               *   ...
-               * }
-               */
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
-            
-            TomList declarationList = empty();
-            TomList assignementList = empty();
-
-            Expression source = `GetHead(subjectListName);
-            if(annotedVariable != null) {
-              assignementList = appendInstruction(`Assign(annotedVariable,source),assignementList);
-            }
-            assignementList = appendInstruction(`Assign(var,source),assignementList);
-            assignementList = appendInstruction(`Assign(subjectListName,GetTail(subjectListName)),assignementList);
-            
-            TomList succesList = concat(concat(declarationList,assignementList),subList);
-            Expression cond = `Not(IsEmptyList(subjectListName));
-            Instruction test = `IfThenElse(cond, succesList, empty());
-            result = appendInstruction(test,result);
-            break matchBlock;
+            succesList = concat(assignementList,subList);
           }
+          
+          Instruction test = `IfThenElse(Not(IsEmptyList(subjectListName)),
+                                         succesList, empty());
+          result = appendInstruction(test,result);
+          break matchBlock;
         }
         
         manyTomList(var@VariableStar(Option(optionList),_, termType),termTail) |
         manyTomList(var@UnamedVariableStar(Option(optionList), termType),termTail) -> {
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -662,14 +632,9 @@ public class TomKernelCompiler extends TomBase {
             if(generateSemanticAction) {
               subList = appendInstruction(`Action( actionList),subList);
             }
-            
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             Expression source = `TomTermToExpression(subjectListName);
-            if(annotedVariable != null) {
-              result = appendInstruction(`Assign(annotedVariable,source),result);
-            }
-            result = concat(appendInstruction(`Assign(var,source),result),subList);
+            result = addAnnotedAssignement(optionList, source, var, result);
+            result = concat(result,subList);
             break matchBlock;
           } else {
               /*
@@ -697,15 +662,9 @@ public class TomKernelCompiler extends TomBase {
             assignementList = appendInstruction(`Assign(variableBeginAST,TomTermToExpression(subjectListName)),assignementList);
             assignementList = appendInstruction(`Assign(variableEndAST,TomTermToExpression(subjectListName)),assignementList);
             
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
-            TomList doList = empty();
             Expression source = `GetSliceList(symbol.getAstName(),variableBeginAST,variableEndAST);
-            if(annotedVariable != null) {
-              doList = appendInstruction(`Assign(annotedVariable,source),doList);
-            }
-            doList = appendInstruction(`Assign(var,source),doList);
-            
+            TomList doList = empty();
+            doList = addAnnotedAssignement(optionList, source, var, doList);
             doList = concat(doList,subList);
 
             Expression cond1 = `Not(IsEmptyList(variableEndAST));
@@ -793,7 +752,6 @@ public class TomKernelCompiler extends TomBase {
         
         manyTomList(var@Variable(Option(optionList),_, termType),termTail) |
         manyTomList(var@UnamedVariable(Option(optionList), termType),termTail) -> {
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -806,27 +764,18 @@ public class TomKernelCompiler extends TomBase {
                *   }
                * }
                */
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
-            
-            TomList declarationList = empty();
-            TomList assignementList = empty();
-
             Expression source = `GetElement(subjectListName,subjectListIndex);
-            if(annotedVariable != null) {
-              assignementList = appendInstruction(`Assign(annotedVariable,source),assignementList);
-            }
-
-            assignementList = appendInstruction(`Assign(var,source),assignementList);
+            TomList assignementList = empty();
+            assignementList = addAnnotedAssignement(optionList, source, var, assignementList);
             assignementList = appendInstruction(`Increment(subjectListIndex),assignementList);
             
             if(generateSemanticAction) {
-              subList = appendInstruction(`Action( actionList),subList);
+              subList = appendInstruction(`Action(actionList),subList);
             }
             
             Expression cond = `IsEmptyArray( subjectListName,subjectListIndex);
             Instruction test = `IfThenElse(cond, subList, empty());
-            TomList succesList = appendInstruction(test,concat(declarationList,assignementList));
+            TomList succesList = appendInstruction(test,assignementList);
             
             cond = `Not(IsEmptyArray( subjectListName,subjectListIndex));
             test = `IfThenElse(cond, succesList, empty());
@@ -842,21 +791,14 @@ public class TomKernelCompiler extends TomBase {
                *   ...
                * }
                */
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
-            
-            TomList declarationList = empty();
             TomList assignementList = empty();
             TomList succesList      = empty();
 
             Expression source = `GetElement(subjectListName,subjectListIndex);
-            if(annotedVariable != null) {
-              assignementList = appendInstruction(`Assign(annotedVariable,source),assignementList);
-            }
-            assignementList = appendInstruction(`Assign(var,source),assignementList);
+            assignementList = addAnnotedAssignement(optionList, source, var, assignementList);
             assignementList = appendInstruction(`Increment(subjectListIndex),assignementList);
             
-            succesList = concat(concat(concat(succesList,declarationList),assignementList),subList);
+            succesList = concat(concat(succesList,assignementList),subList);
             Expression cond = `Not(IsEmptyArray( subjectListName,subjectListIndex));
             Instruction test = `IfThenElse(cond, succesList, empty());
             
@@ -867,7 +809,6 @@ public class TomKernelCompiler extends TomBase {
         
         manyTomList(var@VariableStar(Option(optionList),_, termType),termTail) |
         manyTomList(var@UnamedVariableStar(Option(optionList), termType),termTail) -> {
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(termTail.isEmpty()) {
               /*
                * generate:
@@ -879,19 +820,12 @@ public class TomKernelCompiler extends TomBase {
               subList = appendInstruction(`Action( actionList),subList);
             }
             
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             Expression source = `GetSliceArray(
               symbol.getAstName(),subjectListName,
               subjectListIndex,
               ExpressionToTomTerm(GetSize(subjectListName))
               );
-
-            if(annotedVariable != null) {
-              result = appendInstruction(`Assign(annotedVariable,source),result);
-            }
-            
-            result = appendInstruction(`Assign(var,source),result);
+            result = addAnnotedAssignement(optionList, source, var, result);
             result = concat(result,subList);
             break matchBlock;
           } else {
@@ -921,19 +855,11 @@ public class TomKernelCompiler extends TomBase {
             assignementList = appendInstruction(`Assign(variableBeginAST,TomTermToExpression(subjectListIndex)),assignementList);
             assignementList = appendInstruction(`Assign(variableEndAST,TomTermToExpression(subjectListIndex)),assignementList);
             
-            TomNumberList path = appendNumber(indexTerm,oldPath);
-            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
-            TomList doList = empty();
-
             Expression source = `GetSliceArray(symbol.getAstName(),
                                               subjectListName,variableBeginAST,
                                               variableEndAST);
-            
-            if(annotedVariable != null) {
-              doList = appendInstruction(`Assign(annotedVariable,source),doList);
-            }
-
-            doList = appendInstruction(`Assign(var,source),doList);
+            TomList doList = empty();
+            doList = addAnnotedAssignement(optionList, source, var, doList);
             doList = concat(doList,subList);
             doList = appendInstruction(`Increment(variableEndAST),doList);
             doList = appendInstruction(`Assign(subjectListIndex,TomTermToExpression(variableEndAST)),doList); 
