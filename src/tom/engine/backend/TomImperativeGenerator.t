@@ -200,7 +200,37 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 	}
 
   protected abstract void buildExpTrue();
-  
   protected abstract void buildExpFalse();
-	
+  
+  
+  protected void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType) {
+    out.indent(deep);
+    generate(out,deep,var);
+    if(cCode || jCode) {
+      out.write(" = (" + getTLCode(tlType) + ") ");
+    } else if(eCode) {
+      if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
+        out.write(" := ");
+      } else {
+          //out.write(" ?= ");
+        String assignSign = " := ";
+        %match(Expression exp) {
+          GetSubterm[] -> {
+            assignSign = " ?= ";
+          }
+            }
+        out.write(assignSign);
+      }
+    }
+    generateExpression(deep,exp);
+    out.writeln(";");
+    if(debugMode && !list.isEmpty()) {
+      out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      generate(out,deep,var);
+      out.write("\", ");
+      generate(out,deep,var); // generateExpression(out,deep,exp);
+      out.write(");\n");
+    }
+  }
+
 }
