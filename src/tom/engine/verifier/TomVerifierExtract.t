@@ -63,7 +63,7 @@ public class TomVerifierExtract extends TomTask {
 			// System.out.println("Extracted : " + matchSet);
 
 			Collection purified = purify(matchSet);
-			System.out.println("Purified : " + purified);
+			// System.out.println("Purified : " + purified);
 
 			Collection derivations = getDerivations(purified);
 			

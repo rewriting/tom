@@ -201,7 +201,7 @@ public class Verifier extends TomBase {
 
 	public DerivTree build_tree(Instruction automata) {
 		DerivTree tree = null;
-		System.out.println("Build derivation tree for: " + automata);
+		// System.out.println("Build derivation tree for: " + automata);
 
 		Environment startingenv = `env(concSubstitution(),
 																 build_InstrFromAutomata(automata));
@@ -209,18 +209,18 @@ public class Verifier extends TomBase {
 		Deriv startingderiv = `ebs(startingenv,
 															 env(concSubstitution(undefsubs()),accept));
 
-		System.out.println("The derivation: " + startingderiv);
+		// System.out.println("The derivation: " + startingderiv);
 
 		SubstRef output = new SubstRef();
 		tree = apply_rules(startingderiv,output);
 		// Propagate the computed output substitution
 		SubstitutionList outputsubst = output.get();
-		System.out.println("The substitution: " + outputsubst);
+		// System.out.println("The substitution: " + outputsubst);
 		if (outputsubst != null) {
 			tree = replaceUndefSubst(tree,outputsubst);
 		}
 
-		System.out.println("The tree: " + tree);
+		// System.out.println("The tree: " + tree);
 		return tree;
 	}
 
@@ -238,7 +238,7 @@ public class Verifier extends TomBase {
 			}
 		}
 
-		System.out.println("dedterm gives : " + ded);
+		// System.out.println("dedterm gives : " + ded);
 		return `dedterm(concTerm(ded*));
 	}
 
@@ -252,7 +252,7 @@ public class Verifier extends TomBase {
 			}
 		}
 
-		System.out.println("dedexpr gives: " + ded);
+		// System.out.println("dedexpr gives: " + ded);
 		return `dedexpr(concExpr(ded*,true));
 	}
 
@@ -413,7 +413,7 @@ public class Verifier extends TomBase {
 					up = `ebs(env(e,iff),env(concSubstitution(undefsubs()),ip));
 					rulename = "iffalse";
 				}	else {
-					System.out.println("How to conclude with: "+ res);
+					System.out.println("How to conclude with: "+ res + " ?");
 				}
 				DerivTree pre = apply_rules(up,outsubst);
 				return `derivrule(rulename,post,pre,cond);
