@@ -31,11 +31,12 @@ public class Action {
     %match(TNode t) {
       <Actions><Action>
            //<Comp Label="busy" Type=#TEXT(type) Index=i/>
-         <Comp Label="busy" Type=#TEXT(type) Index=i />
+         comp@<Comp Label="busy" Type=#TEXT(type) Index=i />
          </Action></Actions>
          
          -> {
            System.out.println("Action 1 Localisee ! " + type + "  " + i);
+           System.out.println("Comp: " + comp);
          }
       
       _ -> {
@@ -49,18 +50,14 @@ public class Action {
     TNode t = (TNode) subject;
     t = t.getDocElem();
     %match(TNode t) {
-      <Actions><Action>
-         <Comp Index=#TEXT(i) Label=l Type="Wait"/>
-         <Comp Index=#TEXT(j) Label=l Type="Send"/>
-      </Action></Actions>
-    | <Actions><Action>
-         <Comp Index=#TEXT(j) Label=l Type="Send"/>
-         <Comp Index=#TEXT(i) Label=l Type="Wait"/>
-      </Action></Actions>
-         -> {
-           System.out.println("Synchronisation entre "+i+" et "+j+" sur le label "+l.getData());
-         }
-
+      <Actions>a</Actions> -> {
+        %match(TNode a,TNode a) {
+          <Action><Comp Index=#TEXT(i2) Label=l Type="Wait"/></Action>,
+          <Action><Comp Index=#TEXT(i1) Label=l Type="Send"/></Action> -> {
+            System.out.println("Synchronisation sur le label "+l.getData()+" entre "+i1+"(!) et "+i2+"(?)");				
+          }	
+        }
+      }
     } // match
     
   }

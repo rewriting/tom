@@ -217,10 +217,10 @@ public class TomExpander extends TomBase implements TomTask {
     return attrList;
   }
 
-  protected TomTerm expandXMLAppl(OptionList options, String tomName,
+  protected TomTerm expandXMLAppl(OptionList optionList, String tomName,
                                   TomList attrList, TomList childList) {
-    boolean implicitAttribute = hasImplicitXMLAttribut(options);
-    boolean implicitChild     = hasImplicitXMLChild(options);
+    boolean implicitAttribute = hasImplicitXMLAttribut(optionList);
+    boolean implicitChild     = hasImplicitXMLChild(optionList);
     
     TomList newAttrList  = `emptyTomList();
     TomList newChildList = `emptyTomList();
@@ -266,10 +266,10 @@ public class TomExpander extends TomBase implements TomTask {
     tomName = ast().encodeXMLString(symbolTable(),tomName);
     
     TomList newArgs = `concTomTerm(
-      Appl(Option(options),Name(tomName),empty()),
+      Appl(emptyOption,Name(tomName),empty()),
       Appl(emptyOption,Name(Constants.CONC_TNODE), newAttrList),
       Appl(emptyOption,Name(Constants.CONC_TNODE), newChildList));
-    TomTerm result = `Appl(Option(options),Name(Constants.ELEMENT_NODE),newArgs);
+    TomTerm result = `Appl(Option(optionList),Name(Constants.ELEMENT_NODE),newArgs);
       //System.out.println("expand:\n" + result);
     return result;
    

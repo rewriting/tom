@@ -692,7 +692,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   if(annotedName!=null) { optionList.add(annotedName); }
 }
 {
-    term = XMLChild() { return term; }
+    term = XMLChild(astAnnotedName) { return term; }
     |  
     // f[left=a,...]
     LOOKAHEAD(2)
@@ -863,7 +863,7 @@ TomTerm XMLTerm() throws TomException:
   term = Term() { return term; }
 }
 
-TomTerm XMLChild() throws TomException:
+TomTerm XMLChild(TomName astAnnotedName) throws TomException:
 {
   Token name,close;
   TomTerm term;
@@ -871,10 +871,12 @@ TomTerm XMLChild() throws TomException:
   TomTerm arg2;
   LinkedList list = new LinkedList();
   LinkedList childs = new LinkedList();
+  Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   LinkedList optionList = new LinkedList();
   String keyword = "";
   Option option;
   boolean implicit;
+  if(annotedName!=null) { optionList.add(annotedName); }
 }
 {
   (
@@ -884,9 +886,10 @@ TomTerm XMLChild() throws TomException:
           text += "<" + name.image;
           optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
         }
-     implicit = XMLAttributes(list) {
-       if(implicit) { optionList.add(tsf().makeOption_ImplicitXMLAttribut()); }
-     }
+     implicit = XMLAttributes(list)
+        {
+          if(implicit) { optionList.add(tsf().makeOption_ImplicitXMLAttribut()); }
+        }
      (
        // case: /> 
        <XML_CLOSE_SINGLETON>
@@ -938,7 +941,7 @@ TomTerm XMLChild() throws TomException:
         list.add(arg1);
         list.add(arg2);
       }
-  )
+     )
     {
       optionList.add(ast().makeOriginTracking(keyword,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
