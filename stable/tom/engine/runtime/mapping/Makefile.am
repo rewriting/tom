@@ -2,7 +2,7 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS         = c
+SUBDIRS         = c caml
 #javadir         = ${prefix}/classes/jtom/runtime/mapping
 #JAVAROOT        = ${top_builddir}/stable/
 

@@ -254,9 +254,9 @@ public abstract class ATermSet implements Collection {
   }
   
   protected String topRepartition(JGTreeSet t) {
-     { JGTreeSet tom_match1_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_branch(tom_match1_1) ||  false ) { { JGTreeSet tom_match1_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match1_1); { JGTreeSet tom_match1_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match1_1); { JGTreeSet l = ( JGTreeSet) tom_match1_1_1; { JGTreeSet r = ( JGTreeSet) tom_match1_1_2;{
-  return "Left branch: "+size(l)+"\tright branch: "+size(r);}}}}} }{
- return "topRepartition: No a branch";}}}
+     { JGTreeSet tom_match1_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_branch(tom_match1_1) ||  false ) { { JGTreeSet tom_match1_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match1_1); { JGTreeSet tom_match1_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match1_1); { JGTreeSet l = ( JGTreeSet) tom_match1_1_1; { JGTreeSet r = ( JGTreeSet) tom_match1_1_2;
+  return "Left branch: "+size(l)+"\tright branch: "+size(r);}}}} }
+ return "topRepartition: No a branch";}}
  
   }
 
@@ -346,17 +346,17 @@ public abstract class ATermSet implements Collection {
       Collect1 collect = new Collect1() {
           public boolean apply(ATerm t) {
             if(t instanceof JGTreeSet) {
-               { JGTreeSet tom_match2_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match2_1) ||  false ) {{
- return false;} } if(tom_is_fun_sym_singleton(tom_match2_1) ||  false ) { { aterm.ATerm tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match2_1); { aterm.ATerm x = ( aterm.ATerm) tom_match2_1_1;{
+               { JGTreeSet tom_match2_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match2_1) ||  false ) {
+ return false; } if(tom_is_fun_sym_singleton(tom_match2_1) ||  false ) { { aterm.ATerm tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match2_1); { aterm.ATerm x = ( aterm.ATerm) tom_match2_1_1;
  
                   res.add(x);
                   return false;
-                }}} } if(tom_is_fun_sym_pair(tom_match2_1) ||  false ) { { aterm.ATerm tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match2_1); { aterm.ATerm x = ( aterm.ATerm) tom_match2_1_1;{
+                }} } if(tom_is_fun_sym_pair(tom_match2_1) ||  false ) { { aterm.ATerm tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match2_1); { aterm.ATerm x = ( aterm.ATerm) tom_match2_1_1;
  
                   res.add(x);
                   return false;
-                }}} }{
- return true;}}}
+                }} }
+ return true;}}
  
             } else {
               return true;

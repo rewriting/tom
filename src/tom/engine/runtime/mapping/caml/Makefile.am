@@ -2,18 +2,17 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS         = c caml
 javadir         = ${prefix}/classes/jtom
 
-stabledir 	= $(top_srcdir)/stable/jtom/runtime/mapping
+stabledir 	= $(top_srcdir)/stable/jtom/runtime/mapping/caml
 
-JAVAROOT        = ${top_builddir}/src/
+JAVAROOT        = ${top_builddir}/src
 
-MAPPING 	= dom.tom charlist.tom int.tom double.tom string.tom
+MAPPING         = int.tom list.tom
 EXTRA_DIST 	= ${MAPPING}
 CLEANFILES 	= 
 
-adtdir          = $(datadir)/jtom
+adtdir          = $(datadir)/jtom/caml
 adt_DATA        = ${MAPPING}
 
 bootinstall:

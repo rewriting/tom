@@ -1,3 +1,11 @@
+2004-03-10  pem  <pem@polly.loria.fr>
+
+	* bootinstall
+	
+	* src/jtom/backend/TomCamlGenerator.t: 
+	  - compilation of list-matching for Caml
+	  - added caml mapping
+
 2004-03-03    <pem@bach>
 
 	* src/jtom/compiler/TomKernelExpander.t: 
@@ -23,7 +31,7 @@
 	   CompiledMatch, CompiledPattern, MatchingCondition,
 	   EqualityCondition, LocalVariable,EndLocalVariable,
 	   MakeFunctionBegin, MakeFunctionEnd
-         - this makes the code simpler and more typed
+   - this makes the code simpler and more typed
 	
 	* src/jtom/tools/SymbolTable.java: 
 	  - introduced builtin-types (INT,BOOL,STRING,CHAR,DOUBLE)

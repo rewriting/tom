@@ -125,8 +125,8 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   }
 
   protected void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException {
-    output.writeln(deep,"let tom_internal_cond = ref true in\n");
-    output.writeln(deep,"while !tom_internal_cond do\n");
+    output.writeln(deep,"let tom_internal_cond = ref true in");
+    output.writeln(deep,"while !tom_internal_cond do");
     generateInstruction(deep+1,succes);
     output.writeln(deep+1,"; tom_internal_cond := ");
     generateExpression(deep,exp);

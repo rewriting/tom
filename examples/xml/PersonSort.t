@@ -16,7 +16,7 @@ public class PersonSort {
     person.run("person.xml");
   }
 
-  private void run(String filename){
+ private void run(String filename){
     xtools = new XmlTools();
     TNode term = (TNode)xtools.convertXMLToATerm(filename);
     

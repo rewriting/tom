@@ -856,6 +856,13 @@
   make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_Variable(t0, t1, t2)}
 }
 
+%op TomTerm Ref(tomTerm:TomTerm) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isRef()}
+  get_slot(tomTerm,t) { t.getTomTerm()}
+  make(t0) { getTomSignatureFactory().makeTomTerm_Ref(t0)}
+}
+
 %op TomTerm MakeTerm(kid1:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isMakeTerm()}

@@ -60,13 +60,13 @@ public class SharedSet extends ATermSet {
     Collect1 collect = new Collect1() {
         public boolean apply(ATerm t) {
           if(t instanceof JGTreeSet) {
-             { JGTreeSet tom_match1_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match1_1) ||  false ) {{
- return false;} } if(tom_is_fun_sym_singleton(tom_match1_1) ||  false ) { { aterm.ATerm tom_match1_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match1_1); { aterm.ATerm x = ( aterm.ATerm) tom_match1_1_1;{
+             { JGTreeSet tom_match1_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match1_1) ||  false ) {
+ return false; } if(tom_is_fun_sym_singleton(tom_match1_1) ||  false ) { { aterm.ATerm tom_match1_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match1_1); { aterm.ATerm x = ( aterm.ATerm) tom_match1_1_1;
  
                 res.add(x);
                 return false;
-              }}} }{
- return true;}}}
+              }} }
+ return true;}}
  
           } else {
             return true;
@@ -92,28 +92,28 @@ public class SharedSet extends ATermSet {
   }
     // Low interface  
   protected int size(JGTreeSet t) {
-     { JGTreeSet tom_match2_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match2_1) ||  false ) {{
-  return 0; } } if(tom_is_fun_sym_singleton(tom_match2_1) ||  false ) { { aterm.ATerm tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match2_1); { aterm.ATerm x = ( aterm.ATerm) tom_match2_1_1;{
-  return 1; }}} } if(tom_is_fun_sym_branch(tom_match2_1) ||  false ) { { JGTreeSet tom_match2_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match2_1); { JGTreeSet tom_match2_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match2_1); { JGTreeSet l = ( JGTreeSet) tom_match2_1_1; { JGTreeSet r = ( JGTreeSet) tom_match2_1_2;{
- return size(l) + size(r);}}}}} }}}
+     { JGTreeSet tom_match2_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match2_1) ||  false ) {
+  return 0;  } if(tom_is_fun_sym_singleton(tom_match2_1) ||  false ) { { aterm.ATerm tom_match2_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match2_1); { aterm.ATerm x = ( aterm.ATerm) tom_match2_1_1;
+  return 1; }} } if(tom_is_fun_sym_branch(tom_match2_1) ||  false ) { { JGTreeSet tom_match2_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match2_1); { JGTreeSet tom_match2_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match2_1); { JGTreeSet l = ( JGTreeSet) tom_match2_1_1; { JGTreeSet r = ( JGTreeSet) tom_match2_1_2;
+ return size(l) + size(r);}}}} }}}
  
     return 0;
   }
 
       // getHead return the first left inner element found
   protected ATerm getHead(JGTreeSet t) {
-     { JGTreeSet tom_match3_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match3_1) ||  false ) {{
+     { JGTreeSet tom_match3_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match3_1) ||  false ) {
  
         return null;
-      } } if(tom_is_fun_sym_singleton(tom_match3_1) ||  false ) { { aterm.ATerm tom_match3_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match3_1); { aterm.ATerm x = ( aterm.ATerm) tom_match3_1_1;{
- return x;}}} } if(tom_is_fun_sym_branch(tom_match3_1) ||  false ) { { JGTreeSet tom_match3_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match3_1); { JGTreeSet tom_match3_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match3_1); { JGTreeSet l = ( JGTreeSet) tom_match3_1_1; { JGTreeSet r = ( JGTreeSet) tom_match3_1_2;{
+       } if(tom_is_fun_sym_singleton(tom_match3_1) ||  false ) { { aterm.ATerm tom_match3_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match3_1); { aterm.ATerm x = ( aterm.ATerm) tom_match3_1_1;
+ return x;}} } if(tom_is_fun_sym_branch(tom_match3_1) ||  false ) { { JGTreeSet tom_match3_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match3_1); { JGTreeSet tom_match3_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match3_1); { JGTreeSet l = ( JGTreeSet) tom_match3_1_1; { JGTreeSet r = ( JGTreeSet) tom_match3_1_2;
  
         ATerm left = getHead(l);
         if(left != null) {
           return left;
         }
         return getHead(r);
-      }}}}} }}}
+      }}}} }}}
  
     return null;
   }
@@ -142,14 +142,14 @@ public class SharedSet extends ATermSet {
   protected JGTreeSet reworkJGTreeSet(JGTreeSet t) {
     Replace1 replace = new Replace1() {
         public ATerm apply(ATerm t) {
-           { JGTreeSet tom_match4_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match4_1) ||  false ) {{
- return t;} } if(tom_is_fun_sym_singleton(tom_match4_1) ||  false ) { { aterm.ATerm tom_match4_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match4_1); { aterm.ATerm x = ( aterm.ATerm) tom_match4_1_1;{
- return t;}}} } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) { { JGTreeSet tom_match4_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match4_1); { JGTreeSet tom_match4_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match4_1); if(tom_is_fun_sym_emptySet(tom_match4_1_1) ||  false ) { if(tom_is_fun_sym_singleton(tom_match4_1_2) ||  false ) { { JGTreeSet s = ( JGTreeSet) tom_match4_1_2; { aterm.ATerm tom_match4_1_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match4_1_2); { aterm.ATerm x = ( aterm.ATerm) tom_match4_1_2_1;{
- return s;}}}} } }}} } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) { { JGTreeSet tom_match4_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match4_1); { JGTreeSet tom_match4_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match4_1); if(tom_is_fun_sym_singleton(tom_match4_1_1) ||  false ) { { JGTreeSet s = ( JGTreeSet) tom_match4_1_1; { aterm.ATerm tom_match4_1_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match4_1_1); { aterm.ATerm x = ( aterm.ATerm) tom_match4_1_1_1; if(tom_is_fun_sym_emptySet(tom_match4_1_2) ||  false ) {{
- return s;} }}}} }}} } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) { { JGTreeSet tom_match4_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match4_1); { JGTreeSet tom_match4_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match4_1); if(tom_is_fun_sym_emptySet(tom_match4_1_1) ||  false ) { { JGTreeSet e = ( JGTreeSet) tom_match4_1_1; if(tom_is_fun_sym_emptySet(tom_match4_1_2) ||  false ) {{
- return e;} }} }}} } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) { { JGTreeSet tom_match4_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match4_1); { JGTreeSet tom_match4_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match4_1); { JGTreeSet l1 = ( JGTreeSet) tom_match4_1_1; { JGTreeSet l2 = ( JGTreeSet) tom_match4_1_2;{
- return tom_make_branch(reworkJGTreeSet(l1),reworkJGTreeSet(l2)) ;}}}}} }{
-  return traversal.genericTraversal(t,this); }}}
+           { JGTreeSet tom_match4_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match4_1) ||  false ) {
+ return t; } if(tom_is_fun_sym_singleton(tom_match4_1) ||  false ) { { aterm.ATerm tom_match4_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match4_1); { aterm.ATerm x = ( aterm.ATerm) tom_match4_1_1;
+ return t;}} } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) { { JGTreeSet tom_match4_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match4_1); { JGTreeSet tom_match4_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match4_1); if(tom_is_fun_sym_emptySet(tom_match4_1_1) ||  false ) { if(tom_is_fun_sym_singleton(tom_match4_1_2) ||  false ) { { JGTreeSet s = ( JGTreeSet) tom_match4_1_2; { aterm.ATerm tom_match4_1_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match4_1_2); { aterm.ATerm x = ( aterm.ATerm) tom_match4_1_2_1;
+ return s;}}} } }}} } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) { { JGTreeSet tom_match4_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match4_1); { JGTreeSet tom_match4_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match4_1); if(tom_is_fun_sym_singleton(tom_match4_1_1) ||  false ) { { JGTreeSet s = ( JGTreeSet) tom_match4_1_1; { aterm.ATerm tom_match4_1_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match4_1_1); { aterm.ATerm x = ( aterm.ATerm) tom_match4_1_1_1; if(tom_is_fun_sym_emptySet(tom_match4_1_2) ||  false ) {
+ return s; }}}} }}} } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) { { JGTreeSet tom_match4_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match4_1); { JGTreeSet tom_match4_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match4_1); if(tom_is_fun_sym_emptySet(tom_match4_1_1) ||  false ) { { JGTreeSet e = ( JGTreeSet) tom_match4_1_1; if(tom_is_fun_sym_emptySet(tom_match4_1_2) ||  false ) {
+ return e; }} }}} } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) { { JGTreeSet tom_match4_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match4_1); { JGTreeSet tom_match4_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match4_1); { JGTreeSet l1 = ( JGTreeSet) tom_match4_1_1; { JGTreeSet l2 = ( JGTreeSet) tom_match4_1_2;
+ return tom_make_branch(reworkJGTreeSet(l1),reworkJGTreeSet(l2)) ;}}}} }
+  return traversal.genericTraversal(t,this); }}
  
         }
       };
@@ -162,37 +162,37 @@ public class SharedSet extends ATermSet {
   }
   
   protected JGTreeSet union(JGTreeSet m1, JGTreeSet m2, int level) {
-     { JGTreeSet tom_match5_1 = ( JGTreeSet) m1; { JGTreeSet tom_match5_2 = ( JGTreeSet) m2;{ if(tom_is_fun_sym_emptySet(tom_match5_1) ||  false ) { { JGTreeSet x = ( JGTreeSet) tom_match5_2;{
+     { JGTreeSet tom_match5_1 = ( JGTreeSet) m1;{ { JGTreeSet tom_match5_2 = ( JGTreeSet) m2;{ if(tom_is_fun_sym_emptySet(tom_match5_1) ||  false ) { { JGTreeSet x = ( JGTreeSet) tom_match5_2;
  
         return m2;
-      }} } { JGTreeSet x = ( JGTreeSet) tom_match5_1; if(tom_is_fun_sym_emptySet(tom_match5_2) ||  false ) {{
+      } } { JGTreeSet x = ( JGTreeSet) tom_match5_1; if(tom_is_fun_sym_emptySet(tom_match5_2) ||  false ) {
 
  
         return m1;
-      } }} if(tom_is_fun_sym_singleton(tom_match5_1) ||  false ) { { aterm.ATerm tom_match5_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match5_1); { aterm.ATerm y = ( aterm.ATerm) tom_match5_1_1; { JGTreeSet x = ( JGTreeSet) tom_match5_2;{
+       }} if(tom_is_fun_sym_singleton(tom_match5_1) ||  false ) { { aterm.ATerm tom_match5_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match5_1); { aterm.ATerm y = ( aterm.ATerm) tom_match5_1_1; { JGTreeSet x = ( JGTreeSet) tom_match5_2;
 
  
         return override(y, x, level);
-      }}}} } { JGTreeSet x = ( JGTreeSet) tom_match5_1; if(tom_is_fun_sym_singleton(tom_match5_2) ||  false ) { { aterm.ATerm tom_match5_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match5_2); { aterm.ATerm y = ( aterm.ATerm) tom_match5_2_1;{
+      }}} } { JGTreeSet x = ( JGTreeSet) tom_match5_1; if(tom_is_fun_sym_singleton(tom_match5_2) ||  false ) { { aterm.ATerm tom_match5_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match5_2); { aterm.ATerm y = ( aterm.ATerm) tom_match5_2_1;
 
  
         return underride(y, x, level);
-      }}} }} if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) { { JGTreeSet tom_match5_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match5_1); { JGTreeSet tom_match5_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match5_1); { JGTreeSet l1 = ( JGTreeSet) tom_match5_1_1; { JGTreeSet r1 = ( JGTreeSet) tom_match5_1_2; if(tom_is_fun_sym_branch(tom_match5_2) ||  false ) { { JGTreeSet tom_match5_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match5_2); { JGTreeSet tom_match5_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match5_2); { JGTreeSet l2 = ( JGTreeSet) tom_match5_2_1; { JGTreeSet r2 = ( JGTreeSet) tom_match5_2_2;{
+      }} }} if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) { { JGTreeSet tom_match5_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match5_1); { JGTreeSet tom_match5_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match5_1); { JGTreeSet l1 = ( JGTreeSet) tom_match5_1_1; { JGTreeSet r1 = ( JGTreeSet) tom_match5_1_2; if(tom_is_fun_sym_branch(tom_match5_2) ||  false ) { { JGTreeSet tom_match5_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match5_2); { JGTreeSet tom_match5_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match5_2); { JGTreeSet l2 = ( JGTreeSet) tom_match5_2_1; { JGTreeSet r2 = ( JGTreeSet) tom_match5_2_2;
 
  
         int l = level+1;
         return tom_make_branch(union(l1,l2,l),union(r1,r2,l)) ;
-      }}}}} }}}}} }}}}
+      }}}} }}}}} }}}}}
  
     return null;
   }
   
   protected JGTreeSet intersection(JGTreeSet m1, JGTreeSet m2, int level) {
-     { JGTreeSet tom_match6_1 = ( JGTreeSet) m1; { JGTreeSet tom_match6_2 = ( JGTreeSet) m2;{ if(tom_is_fun_sym_emptySet(tom_match6_1) ||  false ) { { JGTreeSet x = ( JGTreeSet) tom_match6_2;{
+     { JGTreeSet tom_match6_1 = ( JGTreeSet) m1;{ { JGTreeSet tom_match6_2 = ( JGTreeSet) m2;{ if(tom_is_fun_sym_emptySet(tom_match6_1) ||  false ) { { JGTreeSet x = ( JGTreeSet) tom_match6_2;
 
   
         return tom_make_emptySet() ;
-      }} } { JGTreeSet x = ( JGTreeSet) tom_match6_1; if(tom_is_fun_sym_emptySet(tom_match6_2) ||  false ) {{           return tom_make_emptySet() ;       } }} if(tom_is_fun_sym_singleton(tom_match6_1) ||  false ) { { JGTreeSet s = ( JGTreeSet) tom_match6_1; { aterm.ATerm tom_match6_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match6_1); { aterm.ATerm y = ( aterm.ATerm) tom_match6_1_1; { JGTreeSet x = ( JGTreeSet) tom_match6_2;{
+      } } { JGTreeSet x = ( JGTreeSet) tom_match6_1; if(tom_is_fun_sym_emptySet(tom_match6_2) ||  false ) {           return tom_make_emptySet() ;        }} if(tom_is_fun_sym_singleton(tom_match6_1) ||  false ) { { JGTreeSet s = ( JGTreeSet) tom_match6_1; { aterm.ATerm tom_match6_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match6_1); { aterm.ATerm y = ( aterm.ATerm) tom_match6_1_1; { JGTreeSet x = ( JGTreeSet) tom_match6_2;
 
 
  
@@ -201,26 +201,26 @@ public class SharedSet extends ATermSet {
         } else {
           return tom_make_emptySet() ;
         }
-      }}}}} } { JGTreeSet x = ( JGTreeSet) tom_match6_1; if(tom_is_fun_sym_singleton(tom_match6_2) ||  false ) { { JGTreeSet s = ( JGTreeSet) tom_match6_2; { aterm.ATerm tom_match6_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match6_2); { aterm.ATerm y = ( aterm.ATerm) tom_match6_2_1;{          if (contains(y, x, level)) {           return s;         } else {           return tom_make_emptySet() ;         }       }}}} }} if(tom_is_fun_sym_branch(tom_match6_1) ||  false ) { { JGTreeSet tom_match6_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match6_1); { JGTreeSet tom_match6_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match6_1); { JGTreeSet l1 = ( JGTreeSet) tom_match6_1_1; { JGTreeSet r1 = ( JGTreeSet) tom_match6_1_2; if(tom_is_fun_sym_branch(tom_match6_2) ||  false ) { { JGTreeSet tom_match6_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match6_2); { JGTreeSet tom_match6_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match6_2); { JGTreeSet l2 = ( JGTreeSet) tom_match6_2_1; { JGTreeSet r2 = ( JGTreeSet) tom_match6_2_2;{
+      }}}} } { JGTreeSet x = ( JGTreeSet) tom_match6_1; if(tom_is_fun_sym_singleton(tom_match6_2) ||  false ) { { JGTreeSet s = ( JGTreeSet) tom_match6_2; { aterm.ATerm tom_match6_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match6_2); { aterm.ATerm y = ( aterm.ATerm) tom_match6_2_1;          if (contains(y, x, level)) {           return s;         } else {           return tom_make_emptySet() ;         }       }}} }} if(tom_is_fun_sym_branch(tom_match6_1) ||  false ) { { JGTreeSet tom_match6_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match6_1); { JGTreeSet tom_match6_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match6_1); { JGTreeSet l1 = ( JGTreeSet) tom_match6_1_1; { JGTreeSet r1 = ( JGTreeSet) tom_match6_1_2; if(tom_is_fun_sym_branch(tom_match6_2) ||  false ) { { JGTreeSet tom_match6_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match6_2); { JGTreeSet tom_match6_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match6_2); { JGTreeSet l2 = ( JGTreeSet) tom_match6_2_1; { JGTreeSet r2 = ( JGTreeSet) tom_match6_2_2;
 
  
         int l = level+1;
         return tom_make_branch(intersection(l1,l2,l),intersection(r1,r2,l)) ;        
-      }}}}} }}}}} }}}}
+      }}}} }}}}} }}}}}
  
     return null;
   }
   
   protected JGTreeSet restriction(JGTreeSet m1, JGTreeSet m2, int level) {
-     { JGTreeSet tom_match7_1 = ( JGTreeSet) m1; { JGTreeSet tom_match7_2 = ( JGTreeSet) m2;{ if(tom_is_fun_sym_emptySet(tom_match7_1) ||  false ) { { JGTreeSet x = ( JGTreeSet) tom_match7_2;{
+     { JGTreeSet tom_match7_1 = ( JGTreeSet) m1;{ { JGTreeSet tom_match7_2 = ( JGTreeSet) m2;{ if(tom_is_fun_sym_emptySet(tom_match7_1) ||  false ) { { JGTreeSet x = ( JGTreeSet) tom_match7_2;
 
   
         return tom_make_emptySet() ;
-      }} } { JGTreeSet x = ( JGTreeSet) tom_match7_1; if(tom_is_fun_sym_emptySet(tom_match7_2) ||  false ) {{           return tom_make_emptySet() ;       } }} if(tom_is_fun_sym_singleton(tom_match7_1) ||  false ) { { aterm.ATerm tom_match7_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match7_1); { aterm.ATerm y = ( aterm.ATerm) tom_match7_1_1; { JGTreeSet x = ( JGTreeSet) tom_match7_2;{
+      } } { JGTreeSet x = ( JGTreeSet) tom_match7_1; if(tom_is_fun_sym_emptySet(tom_match7_2) ||  false ) {           return tom_make_emptySet() ;        }} if(tom_is_fun_sym_singleton(tom_match7_1) ||  false ) { { aterm.ATerm tom_match7_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match7_1); { aterm.ATerm y = ( aterm.ATerm) tom_match7_1_1; { JGTreeSet x = ( JGTreeSet) tom_match7_2;
 
  
         return remove(y, x, level);
-      }}}} } { JGTreeSet x = ( JGTreeSet) tom_match7_1; if(tom_is_fun_sym_singleton(tom_match7_2) ||  false ) { { aterm.ATerm tom_match7_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match7_2); { aterm.ATerm y = ( aterm.ATerm) tom_match7_2_1;{
+      }}} } { JGTreeSet x = ( JGTreeSet) tom_match7_1; if(tom_is_fun_sym_singleton(tom_match7_2) ||  false ) { { aterm.ATerm tom_match7_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match7_2); { aterm.ATerm y = ( aterm.ATerm) tom_match7_2_1;
 
  
         if (contains(y, x)) {
@@ -228,24 +228,24 @@ public class SharedSet extends ATermSet {
         } else {
           return tom_make_emptySet() ;
         }
-      }}} }} if(tom_is_fun_sym_branch(tom_match7_1) ||  false ) { { JGTreeSet tom_match7_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match7_1); { JGTreeSet tom_match7_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match7_1); { JGTreeSet l1 = ( JGTreeSet) tom_match7_1_1; { JGTreeSet r1 = ( JGTreeSet) tom_match7_1_2; if(tom_is_fun_sym_branch(tom_match7_2) ||  false ) { { JGTreeSet tom_match7_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match7_2); { JGTreeSet tom_match7_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match7_2); { JGTreeSet l2 = ( JGTreeSet) tom_match7_2_1; { JGTreeSet r2 = ( JGTreeSet) tom_match7_2_2;{
+      }} }} if(tom_is_fun_sym_branch(tom_match7_1) ||  false ) { { JGTreeSet tom_match7_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match7_1); { JGTreeSet tom_match7_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match7_1); { JGTreeSet l1 = ( JGTreeSet) tom_match7_1_1; { JGTreeSet r1 = ( JGTreeSet) tom_match7_1_2; if(tom_is_fun_sym_branch(tom_match7_2) ||  false ) { { JGTreeSet tom_match7_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match7_2); { JGTreeSet tom_match7_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match7_2); { JGTreeSet l2 = ( JGTreeSet) tom_match7_2_1; { JGTreeSet r2 = ( JGTreeSet) tom_match7_2_2;
 
  
         int l = level+1;
         return tom_make_branch(restriction(l1,l2,l),restriction(r1,r2,l)) ;
-      }}}}} }}}}} }}}}
+      }}}} }}}}} }}}}}
  
     return null;
   }
   
   protected JGTreeSet remove(ATerm elt, JGTreeSet t, int level) {
-     { JGTreeSet tom_match8_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match8_1) ||  false ) {{
- return t;} } if(tom_is_fun_sym_singleton(tom_match8_1) ||  false ) { { aterm.ATerm tom_match8_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match8_1); { aterm.ATerm x = ( aterm.ATerm) tom_match8_1_1;{
+     { JGTreeSet tom_match8_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match8_1) ||  false ) {
+ return t; } if(tom_is_fun_sym_singleton(tom_match8_1) ||  false ) { { aterm.ATerm tom_match8_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match8_1); { aterm.ATerm x = ( aterm.ATerm) tom_match8_1_1;
 
  
         if (x == elt) {return tom_make_emptySet() ;}
         else {return t;}
-      }}} } if(tom_is_fun_sym_branch(tom_match8_1) ||  false ) { { JGTreeSet tom_match8_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match8_1); { JGTreeSet tom_match8_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match8_1); { JGTreeSet l = ( JGTreeSet) tom_match8_1_1; { JGTreeSet r = ( JGTreeSet) tom_match8_1_2;{
+      }} } if(tom_is_fun_sym_branch(tom_match8_1) ||  false ) { { JGTreeSet tom_match8_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match8_1); { JGTreeSet tom_match8_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match8_1); { JGTreeSet l = ( JGTreeSet) tom_match8_1_1; { JGTreeSet r = ( JGTreeSet) tom_match8_1_2;
 
  
         JGTreeSet l1 = null, r1=null;
@@ -256,23 +256,23 @@ public class SharedSet extends ATermSet {
           l1 = l;
           r1 = remove(elt, r, level+1);
         }
-         { JGTreeSet tom_match9_1 = ( JGTreeSet) l1; { JGTreeSet tom_match9_2 = ( JGTreeSet) r1;{ if(tom_is_fun_sym_emptySet(tom_match9_1) ||  false ) { if(tom_is_fun_sym_singleton(tom_match9_2) ||  false ) { { aterm.ATerm tom_match9_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match9_2); { aterm.ATerm x = ( aterm.ATerm) tom_match9_2_1;{
- return r1;}}} } } if(tom_is_fun_sym_singleton(tom_match9_1) ||  false ) { { aterm.ATerm tom_match9_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match9_1); { aterm.ATerm x = ( aterm.ATerm) tom_match9_1_1; if(tom_is_fun_sym_emptySet(tom_match9_2) ||  false ) {{
- return l1;} }}} }{
+         { JGTreeSet tom_match9_1 = ( JGTreeSet) l1;{ { JGTreeSet tom_match9_2 = ( JGTreeSet) r1;{ if(tom_is_fun_sym_emptySet(tom_match9_1) ||  false ) { if(tom_is_fun_sym_singleton(tom_match9_2) ||  false ) { { aterm.ATerm tom_match9_2_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match9_2); { aterm.ATerm x = ( aterm.ATerm) tom_match9_2_1;
+ return r1;}} } } if(tom_is_fun_sym_singleton(tom_match9_1) ||  false ) { { aterm.ATerm tom_match9_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match9_1); { aterm.ATerm x = ( aterm.ATerm) tom_match9_1_1; if(tom_is_fun_sym_emptySet(tom_match9_2) ||  false ) {
+ return l1; }}} }
  return tom_make_branch(l1,r1) ;}}}}
  
-      }}}}} }}}
+      }}}} }}}
  
     return null;
   }
 
   protected boolean contains(ATerm elt, JGTreeSet t, int level) {
-     { JGTreeSet tom_match10_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match10_1) ||  false ) {{
- return false;} } if(tom_is_fun_sym_singleton(tom_match10_1) ||  false ) { { aterm.ATerm tom_match10_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match10_1); { aterm.ATerm x = ( aterm.ATerm) tom_match10_1_1;{
+     { JGTreeSet tom_match10_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match10_1) ||  false ) {
+ return false; } if(tom_is_fun_sym_singleton(tom_match10_1) ||  false ) { { aterm.ATerm tom_match10_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match10_1); { aterm.ATerm x = ( aterm.ATerm) tom_match10_1_1;
 
  
         if(x == elt) return true;
-      }}} } if(tom_is_fun_sym_branch(tom_match10_1) ||  false ) { { JGTreeSet tom_match10_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match10_1); { JGTreeSet tom_match10_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match10_1); { JGTreeSet l = ( JGTreeSet) tom_match10_1_1; { JGTreeSet r = ( JGTreeSet) tom_match10_1_2;{
+      }} } if(tom_is_fun_sym_branch(tom_match10_1) ||  false ) { { JGTreeSet tom_match10_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match10_1); { JGTreeSet tom_match10_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match10_1); { JGTreeSet l = ( JGTreeSet) tom_match10_1_1; { JGTreeSet r = ( JGTreeSet) tom_match10_1_2;
 
  
         if(level == depth) {
@@ -283,7 +283,7 @@ public class SharedSet extends ATermSet {
         } else {
           return contains(elt, r, level+1);
         }
-      }}}}} }}}
+      }}}} }}}
  
     return false;
   }
@@ -294,10 +294,10 @@ public class SharedSet extends ATermSet {
   
   private JGTreeSet override(ATerm elt, JGTreeSet t, int level) {
     int lev = level+1;
-     { JGTreeSet tom_match11_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match11_1) ||  false ) {{
+     { JGTreeSet tom_match11_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match11_1) ||  false ) {
  
         return tom_make_singleton(elt) ;
-      } } if(tom_is_fun_sym_singleton(tom_match11_1) ||  false ) { { aterm.ATerm tom_match11_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match11_1); { aterm.ATerm x = ( aterm.ATerm) tom_match11_1_1;{
+       } if(tom_is_fun_sym_singleton(tom_match11_1) ||  false ) { { aterm.ATerm tom_match11_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match11_1); { aterm.ATerm x = ( aterm.ATerm) tom_match11_1_1;
 
  
         if(x == elt) {  return tom_make_singleton(elt) ;}
@@ -312,7 +312,7 @@ public class SharedSet extends ATermSet {
         else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return tom_make_branch(tom_make_emptySet(),override(elt,t,lev)) ;}
         else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return tom_make_branch(tom_make_singleton(elt),t) ;}
         else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return tom_make_branch(t,tom_make_singleton(elt)) ;}
-      }}} } if(tom_is_fun_sym_branch(tom_match11_1) ||  false ) { { JGTreeSet tom_match11_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match11_1); { JGTreeSet tom_match11_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match11_1); { JGTreeSet l = ( JGTreeSet) tom_match11_1_1; { JGTreeSet r = ( JGTreeSet) tom_match11_1_2;{
+      }} } if(tom_is_fun_sym_branch(tom_match11_1) ||  false ) { { JGTreeSet tom_match11_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match11_1); { JGTreeSet tom_match11_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match11_1); { JGTreeSet l = ( JGTreeSet) tom_match11_1_1; { JGTreeSet r = ( JGTreeSet) tom_match11_1_2;
 
  
         if(level >= depth) {
@@ -326,15 +326,15 @@ public class SharedSet extends ATermSet {
         } else {
           return tom_make_branch(l,override(elt,r,lev)) ;
         }
-      }}}}} }}}
+      }}}} }}}
  
     return null;
   }
   
   protected JGTreeSet underride(ATerm elt, JGTreeSet t, int level) {
     int lev = level+1;
-     { JGTreeSet tom_match12_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match12_1) ||  false ) {{
- return tom_make_singleton(elt) ;} } if(tom_is_fun_sym_singleton(tom_match12_1) ||  false ) { { aterm.ATerm tom_match12_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match12_1); { aterm.ATerm x = ( aterm.ATerm) tom_match12_1_1;{
+     { JGTreeSet tom_match12_1 = ( JGTreeSet) t;{ if(tom_is_fun_sym_emptySet(tom_match12_1) ||  false ) {
+ return tom_make_singleton(elt) ; } if(tom_is_fun_sym_singleton(tom_match12_1) ||  false ) { { aterm.ATerm tom_match12_1_1 = ( aterm.ATerm) tom_get_slot_singleton_value(tom_match12_1); { aterm.ATerm x = ( aterm.ATerm) tom_match12_1_1;
 
  
         if(x == elt) {  return t;}
@@ -349,12 +349,12 @@ public class SharedSet extends ATermSet {
         else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return tom_make_branch(tom_make_emptySet(),underride(elt,t,lev)) ;}
         else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return tom_make_branch(tom_make_singleton(elt),t) ;}
         else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return tom_make_branch(t,tom_make_singleton(elt)) ;}
-      }}} } if(tom_is_fun_sym_branch(tom_match12_1) ||  false ) { { JGTreeSet tom_match12_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match12_1); { JGTreeSet tom_match12_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match12_1); { JGTreeSet l = ( JGTreeSet) tom_match12_1_1; { JGTreeSet r = ( JGTreeSet) tom_match12_1_2;{
+      }} } if(tom_is_fun_sym_branch(tom_match12_1) ||  false ) { { JGTreeSet tom_match12_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match12_1); { JGTreeSet tom_match12_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match12_1); { JGTreeSet l = ( JGTreeSet) tom_match12_1_1; { JGTreeSet r = ( JGTreeSet) tom_match12_1_2;
 
  
         if (isBitZero(elt, level)) {return tom_make_branch(underride(elt,l,lev),r) ;}
         else {return tom_make_branch(l,underride(elt,r,lev)) ;}
-      }}}}} }}}
+      }}}} }}}
  
     return null;
   }

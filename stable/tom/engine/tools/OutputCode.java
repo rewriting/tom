@@ -32,7 +32,7 @@ public class OutputCode {
   private int lineCounter = 1;
   protected boolean cCode = false, pretty = false;
   private int defaultDeep;
-  private boolean singleLine = false;
+  private int singleLine = 0;
   
   public OutputCode(Writer file, 
                     boolean cCode, 
@@ -49,11 +49,11 @@ public class OutputCode {
   }
   
   public void setSingleLine() {
-    this.singleLine = true;
+    this.singleLine++;
   }
   
   public void unsetSingleLine() {
-    this.singleLine = false;
+    this.singleLine--;
   }
   
   public Writer getFile() {
@@ -114,7 +114,7 @@ public class OutputCode {
   }
   
   public void write(int deep,String s, int line, int length) throws IOException {
-    if(singleLine && !cCode) {
+    if(singleLine>0 && !cCode) {
       s = s.replace('\n', ' ');
       s = s.replace('\r', ' ');
       s = s.replace('\t', ' ');

@@ -1,9 +1,17 @@
 open TomExtension;;
-open TomList ;;
+open TomList ;;                                                          
+
 
 exception Res of int list
   
-%include {mapping.tom}
+%include { caml/int.tom }
+%include { caml/list.tom }
+
+%oplist list conc( int* ) {
+  fsym { "conc" }
+  make_empty()  { [] }
+  make_insert(e,l) { e::l }
+}
 
 let rec swapsort l = 
 try (

@@ -10,6 +10,7 @@ public class JLstring {
   is_empty(s)         { (s.length()==0) }
 }
 
+  /*
 %typeterm Char {
   implement           { Character }
   get_fun_sym(t)      { t }
@@ -17,9 +18,11 @@ public class JLstring {
   get_subterm(t, n)   { null }
   equals(t1,t2)       { (t1.equals(t2)) }
 }
+  */
 
+  %include {char.tom}
 
-%oplist String concChar(Char*) {
+%oplist String concChar(char*) {
   fsym             { null }
   is_fsym(t)       { (t!= null) && (t instanceof String) }
   make_empty()     { "" }
@@ -34,10 +37,13 @@ public class JLstring {
   }
 
   public String f(String s) {
-    Character l = new Character('l');
-    Character o = new Character('o');
-    %match(String s, Char l, Char o) {
-      (_*,x,y,_*), x,y -> {
+    //Character l = new Character('l');
+    //Character o = new Character('o');
+    char l = 'l';
+    char o = 'o';
+    %match(String s, char l, char o) {
+      (X1*,x,y,_*), x,y -> {
+        System.out.println("X1   = " + X1);
         System.out.println("char = " + x);
         System.out.println("char = " + y);
       }
