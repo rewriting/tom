@@ -250,6 +250,8 @@ Test {
 	 Record 'op[...]' is not allowed on right part of structure %rule
      JRule10.t
 	Alone variable 'y' has type 'type1' instead of type 'type2' in right part of %rule
+     JRule11.t
+        Bad right hand side type: `type2` instead of `type1`
 
 	
 ////////////////////

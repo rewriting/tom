@@ -1,0 +1,6 @@
+
+Bad right hand side type: `type2` instead of `type1`  in structure %rule declared line 31
+-- Error occured at line: 32 in file: JRule11.t
+
+Tom Checker:  Encountered 1 errors during verification phase.
+No file generated.
