@@ -7,7 +7,7 @@ First,
 *  adt-to-java --input expression.adt --jtom --package expression --output expression
 
 Then, 
-* jtom --import expression Poly1.t
+* jtom Poly1.t
 * javac Poly1.java
 * java Poly1
 

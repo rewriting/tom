@@ -3,7 +3,7 @@
 
 #include "Peano.h"
 
-%include { Peano.t }
+%include { Peano.tom }
 
 
 Nat plus(Nat t1, Nat t2) {

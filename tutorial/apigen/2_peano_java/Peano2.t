@@ -5,7 +5,7 @@ public class Peano2 {
 
   private PeanoFactory factory;
 
-  %include { peano.t }
+  %include { adt/peano.tom }
   
   public Peano2(PeanoFactory factory) {
     this.factory = factory;

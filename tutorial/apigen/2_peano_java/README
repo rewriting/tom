@@ -8,7 +8,7 @@
 
 *  adt-to-java --input peano.adt --jtom --package adt --output adt
 
-* jtom --import adt Peano1.t
+* jtom Peano1.t
 * javac Peano1.java
 * java Peano1
 

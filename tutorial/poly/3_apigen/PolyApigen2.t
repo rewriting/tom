@@ -12,7 +12,7 @@ public class PolyApigen2 {
     return factory;
   }
 
-  %include { expression.t }
+  %include { expression/expression.tom }
 
   %op Expression differentiate(arg1:Expression, arg2:Expression) {
     fsym { }

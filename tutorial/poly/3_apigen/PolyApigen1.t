@@ -13,7 +13,7 @@ public class PolyApigen1 {
     return factory;
   }
 
-    %include { expression.t }
+  %include { expression/expression.tom }
 
   public Expression differentiate(Expression e, Expression v) {
     %match(Expression e, Expression v) {
