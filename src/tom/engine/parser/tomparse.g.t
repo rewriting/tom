@@ -55,6 +55,8 @@ options{
 
     // the default-mode parser
     private NewTargetParser targetparser;
+
+    private StringBuffer text = new StringBuffer("");
     
     public NewTomParser(ParserSharedInputState state, NewTargetParser target, String filename){
         this(state);
@@ -84,20 +86,28 @@ options{
             e.printStackTrace();
         }
     }
+    
+    private TomList makeTomList(LinkedList list){
+        return targetparser.makeTomList(list);
+    }
    
+    private void clearText(){
+        text.delete(0,text.length());
+    }
+
 }
 
-constant returns [String result]
+constant returns [Token result]
 {
     result = null;
 }
 	:	(
-            t1:NUM_INT {result = t1.getText();}
-        |	t2:CHARACTER {result = t2.getText();}
-        |	t3:STRING {result = t3.getText();}
-        |	t4:NUM_FLOAT {result = t4.getText();}
-        |	t5:NUM_LONG {result = t5.getText();}
-        |	t6:NUM_DOUBLE {result = t6.getText();}
+            t1:NUM_INT {result = t1;}
+        |	t2:CHARACTER {result = t2;}
+        |	t3:STRING {result = t3;}
+        |	t4:NUM_FLOAT {result = t4;}
+        |	t5:NUM_LONG {result = t5;}
+        |	t6:NUM_DOUBLE {result = t6;}
         )
     ;
 
@@ -106,11 +116,11 @@ constant returns [String result]
  */
 matchConstruct 
 { 
-    String args = null, mp = null;
+    String arg = null, mp = null;
     String result = null;
 }
 	:	(
-            LPAREN args = matchArguments() RPAREN {result = "(" + args + ")";}
+            LPAREN arg = matchArguments() RPAREN {result = "(" + arg + ")";}
             LBRACE {result += "{\n";}
             ( 
                 mp = patternAction() {result += mp + "\n";}
@@ -179,9 +189,9 @@ matchPattern returns [String result]
     String at = null, at2 = null;
 }
     :   (
-            at = annotedTerm() {result = at;}
+             annotedTerm {result = at;}
             ( 
-                COMMA at2 = annotedTerm() {result += "," + at2;}
+                COMMA  annotedTerm {result += "," + at2;}
             )*
         )
     ;
@@ -209,24 +219,64 @@ signature
 /*
  * The %rule construct
  */
-ruleConstruct 
+ruleConstruct returns [TomRuleList result]
 {
-    String result = "", a1,a2,a3,a4,a5,a6, pt;
+    result =  `emptyTomRuleList();
+    TomTerm lhs = null, rhs = null, pattern = null, subject = null;
+    TomList listOfLhs = `emptyTomList();
+    InstructionList conditionList = `emptyInstructionList();
+    TomName orgText = null;
+    int line = 0;
+
+    clearText();
 }
     :
         LBRACE
         (
-            a1 = annotedTerm() {result += a1;}
-            ( ALTERNATIVE a2 = annotedTerm() {result += "|"+a2;} )* 
-            ARROW pt = plainTerm() {result += " -> "+pt; } 
+            {line = ((NewTomLexer) Main.selector.getCurrentStream()).getLine();}
+            lhs = annotedTerm {listOfLhs = `concTomTerm(lhs);}
+            ( ALTERNATIVE {text.append('|');} lhs = annotedTerm() {listOfLhs = `concTomTerm(listOfLhs*,lhs);} )*
+ 
+            ARROW {orgText = `Name(text.toString());} rhs = plainTerm[null,0]
             (
-                WHERE a3 = annotedTerm() AFFECT a4 = annotedTerm() {result += "\n where"+a3+":="+a4;}
-            |   IF a5 = annotedTerm() DOUBLEEQ a6 = annotedTerm() {result += "\n if"+a5+"=="+a6;}
+                WHERE pattern = annotedTerm AFFECT subject = annotedTerm 
+                {conditionList = `concInstruction(conditionList*, MatchingCondition(pattern,subject));}
+            |   IF pattern = annotedTerm DOUBLEEQ subject = annotedTerm
+                {conditionList = `concInstruction(conditionList*, EqualityCondition(pattern,subject));}
             )*
-            {result += "\n";}
+            
+            {
+                Option ot = `OriginTracking(
+                    Name("Pattern"),
+                    line,
+                    Name(filename)
+                );
+                OptionList optionList = `concOption(ot,OriginalText(orgText));
+                
+                while(! listOfLhs.isEmpty()){
+                    result = `concTomRule(
+                        result*,
+                        RewriteRule(
+                            Term(listOfLhs.getHead()),
+                            Term(rhs),
+                            conditionList,
+                            optionList
+                        )
+                    );
+                    listOfLhs = listOfLhs.getTail();
+                }
+                
+                conditionList = `emptyInstructionList();
+                clearText();
+            }
         )*
-        RBRACE
+        t:RBRACE
         {
+            
+            // update for new target block...
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
+
             /*
              * %rule finished. go back in target parser.
              */
@@ -237,141 +287,284 @@ ruleConstruct
 /*
  * terms for %match and %rule
  */
-annotedTerm returns [String result]
+annotedTerm returns [TomTerm result]
 {
-    result = "";
-    String pt = null;
+    result = null;
+    TomName annotedName = null;
+    int line = 0;
 }
     :   (
             ( 
-                i:ID AT {result += i.getText() + "@";}
+                name:ID AT 
+                {
+                    text.append(name.getText());
+                    text.append('@');
+                    annotedName = `Name(name.getText());
+                    line = name.getLine();
+                }
             )? 
-            pt = plainTerm() {result += pt;}
+            
+            result = plainTerm[annotedName,line] 
         )
     ;
 
-plainTerm returns [String result]
+plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
 {
     result = null;
-    String v = null, p = null, s = null, sl = null, a = null,
-    sl2 = null, a2 = null;
+    Constraint annotedName = 
+    (astAnnotedName == null)?null:ast().makeAssignTo(astAnnotedName, line, filename);
+    LinkedList constraintList = new LinkedList();
+    LinkedList optionList = new LinkedList();
+    LinkedList secondOptionList = new LinkedList();
+    TomTerm term = null;
+    NameList nameList = `emptyNameList();
+    TomName name = null;
+    LinkedList list = new LinkedList();
+    boolean implicit = false;
+    boolean withArgs = false;
 }
     :  
         (   // xml is missing
             // var* or _*
-            v = variableStar() {result = v;}
+            result = variableStar[optionList,constraintList] 
 
         |   // _
-            p = placeHolder() {result = p;}
+            result = placeHolder[optionList,constraintList] 
 
         |   // for a single constant. 
             // ambiguous with the next rule so :
             {LA(2) != LPAREN && LA(2) != LBRACKET}? 
-            s = headSymbol() { result = s;} 
-
-        |   // f(...) or f[...]
-            sl = headSymbol() a = args()  
+            name = headSymbol[optionList] 
             {
-                result = sl + a;               
+                nameList = `concTomName(nameList*,name);
+                result = `Appl(
+                        ast().makeOptionList(optionList),
+                        nameList,
+                        makeTomList(list),
+                        ast().makeConstraintList(constraintList)
+                    );
             }
 
+        |   // f(...) or f[...]
+            name = headSymbol[optionList] {nameList = `concTomName(nameList*,name);}
+            implicit = args[list,secondOptionList]
+            {
+                if(list.isEmpty())
+                    optionList.add(`Constructor(nameList));
+                if(implicit)
+                    result = `RecordAppl(
+                        ast().makeOptionList(optionList),
+                        nameList,
+                        makeTomList(list),
+                        ast().makeConstraintList(constraintList)
+                    );
+                else 
+                    result = `Appl(
+                        ast().makeOptionList(optionList),
+                        nameList,
+                        makeTomList(list),
+                        ast().makeConstraintList(constraintList)
+                    );
+            }
+            
         |   // (f|g...) 
             // ambiguity with the last rule so use syntactic predicat
             // (headSymbolList()) => headSymbolList()
-            (headSymbolList()) => sl2 = headSymbolList() ((args() ) => a2 = args() )?
-            {result = sl2 + a2;}
-            
+            (headSymbolList[null]) => nameList = headSymbolList[optionList] 
+            ( (args[null,null]) => implicit = args[list,secondOptionList] {withArgs = true;})?
+            {
+                if(withArgs && list.isEmpty())
+                    optionList.add(`Constructor(nameList));
+                if(implicit)
+                    result = `RecordAppl(
+                        ast().makeOptionList(optionList),
+                        nameList,
+                        makeTomList(list),
+                        ast().makeConstraintList(constraintList)
+                    );
+                else 
+                    result = `Appl(
+                        ast().makeOptionList(optionList),
+                        nameList,
+                        makeTomList(list),
+                        ast().makeConstraintList(constraintList)
+                    );
+            }
         |   // (...)
-            result = args()
-        )
-    ;
-
-args returns [String result]
-{
-    result = null;
-    String tl = null, pl = null;
-}
-    :   (
-            LPAREN ( tl = termList() )? RPAREN 
+            implicit = args[list,secondOptionList]
             {
-                if(tl != null)
-                    result = "("+tl+")";
-                else
-                    result = "()";
-            }
-        |   LBRACKET ( pl = pairList() )? RBRACKET
-            {
-                if(pl != null)
-                    result = "["+pl+"]";
-                else
-                    result = "[]"; 
+                nameList = `concTomName(Name(""));
+                optionList.addAll(secondOptionList);
+                result = `Appl(
+                    ast().makeOptionList(optionList),
+                    nameList,
+                    makeTomList(list),
+                    ast().makeConstraintList(constraintList)
+                );
             }
         )
     ;
 
-termList returns [String result]
+args [LinkedList list, LinkedList optionList] returns [boolean result]
 {
-    result = null;
-    String a = null;
+    result = false;
 }
     :   (
-            result = annotedTerm() ( COMMA a = annotedTerm() {result += ","+a;})*
+            t1:LPAREN {text.append('(');} 
+            ( termList[list] )? 
+            RPAREN {text.append(')');} 
+            {
+                result = false;
+                optionList.add(`OriginTracking(Name(""),t1.getLine(),Name(filename)));
+            }
+            
+        |   t2:LBRACKET {text.append('[');} 
+            ( pairList[list] )? 
+            RBRACKET {text.append(']');}
+            {
+                result = true;
+                optionList.add(`OriginTracking(Name(""),t2.getLine(),Name(filename)));
+            }
         )
     ;
 
-pairList  returns [String result]
+termList [LinkedList list]
 {
-    result = null;
-    String a = null, a1 = null, a2 = null;
+    TomTerm term = null;
 }
     :   (
-            result = annotedTerm EQUAL a = annotedTerm {result += "=" + a;}
-            ( COMMA a1 = annotedTerm EQUAL a2 = annotedTerm {result += ","+a1+"="+a2;})*
+            term = annotedTerm {list.add(term);}
+            ( COMMA {text.append(',');} term = annotedTerm() {list.add(term);})*
+        )
+    ;
+
+pairList [LinkedList list]
+{
+    TomTerm term = null;
+}
+    :   (
+            name:ID EQUAL 
+            {
+                text.append(name.getText());
+                {text.append('=');}
+            } 
+            term = annotedTerm 
+            {list.add(`PairSlotAppl(Name(name.getText()),term));}
+            ( COMMA {text.append(',');} 
+                name2:ID EQUAL 
+                {
+                    text.append(name2.getText());
+                    text.append('=');
+                } 
+                term = annotedTerm 
+                {list.add(`PairSlotAppl(Name(name2.getText()),term));}
+            )*
         )
 ;
           
-variableStar returns [String result]
-{ result = null; }
-    :   (
-            ( 
-                i:ID {result = i.getText();}
-            |   u:UNDERSCORE {result = u.getText();}
-            ) 
-            STAR {result += "*";}
-        )
-    ;
-
-placeHolder returns [String result]
-{ result = null; 
+variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm result]
+{ 
+    result = null; 
+    String name = null;
+    int line = 0;
+    OptionList options = null;
+    ConstraintList constraints = null;
 }
     :   (
-            UNDERSCORE {result = "_";} 
+            ( 
+                name1:ID 
+                {
+                    name = name1.getText();
+                    line = name1.getLine();
+                }
+            |   name2:UNDERSCORE 
+                {
+                    name = name2.getText();
+                    line = name2.getLine();
+                }
+            ) 
+            STAR 
+            {
+                optionList.add(`OriginTracking(Name(name),line,Name(filename)));
+                // faire une nouvelle fonction ?
+                options = ast().makeOptionList(optionList);
+                constraints = ast().makeConstraintList(constraintList);
+                if(name1 == null)
+                    result = `UnamedVariableStar(
+                        options,
+                        TomTypeAlone("unknown type"),
+                        constraints
+                    );
+                else
+                    result = `VariableStar(
+                        options,
+                        Name(name),
+                        TomTypeAlone("unknown type"),
+                        constraints
+                    );
+            }
         )
     ;
 
-headSymbolList returns [String result]
+placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm result]
 { 
     result = null;
-    String s1 = null, s2 = null, s3 = null;
+    OptionList options = null;
+    ConstraintList constraints = null;
+}
+    :   (
+            t:UNDERSCORE 
+            {
+                optionList.add(
+                    `OriginTracking(Name(t.getText()),t.getLine(),Name(filename))
+                );
+                options = ast().makeOptionList(optionList);
+                constraints = ast().makeConstraintList(constraintList);
+                result = `Placeholder(options, constraints);
+            } 
+        )
+    ;
+
+headSymbolList [LinkedList optionList] returns [NameList result]
+{ 
+    result = null;
+    TomName name = null;
 }
     :  
         (
-            LPAREN s1 = headSymbol() ALTERNATIVE s2 = headSymbol() {result = "(" + s1 + "|" + s2;}
-            ( ALTERNATIVE s3 = headSymbol() {result += "|" + s3;})* 
-            RPAREN {result += ")";}
+            LPAREN 
+            name = headSymbol[optionList] {result = `concTomName(result*,name);}
+            ALTERNATIVE name = headSymbol[optionList] {result = `concTomName(result*,name);}
+            ( ALTERNATIVE name = headSymbol[optionList] {result = `concTomName(result*,name);})* 
+            RPAREN 
         )
     ;
 
-headSymbol returns [String result]
+headSymbol [LinkedList optionList] returns [TomName result]
 { 
     result = null; 
-    String cst = null;
+    int line = 0;
+    String name = null;
+    Token t = null;
 }
     :   (
-            i:ID {result = i.getText();}
-        |   cst = constant() {result = cst;}
-        
+            i:ID 
+            {
+                name = i.getText();
+                line = i.getLine();
+                text.append(name);
+            }
+        |   t = constant
+            {
+                name = t.getText();
+                line = t.getLine();
+                text.append(name);
+            }
         )
+        {
+            result = `Name(name);
+            optionList.add(`OriginTracking(result,line, Name(filename)));
+        }
     ;
 
 operator
@@ -392,7 +585,6 @@ operator
         )?
         {
             result = `SymbolDecl(Name(name.getText()));
-            printRes(result);
         }
         LBRACE
         keywordFsym()
@@ -422,7 +614,6 @@ operatorList
         RBRACE
         { 
             result = `ListSymbolDecl(Name(name.getText()));
-            printRes(result);
 
             Main.selector.pop(); 
         }
@@ -445,7 +636,6 @@ operatorArray
         RBRACE
         { 
             result = `ArraySymbolDecl(Name(name.getText()));
-            printRes(result);
 
             Main.selector.pop(); 
         }
@@ -841,7 +1031,6 @@ typeTerm returns [Declaration result]
         )
         {
             result = `TypeTermDecl(Name(type.getText()),blockList,ot);
-            printRes(result);
 
             // update for new target block...
             pushLine(t.getLine());
@@ -891,7 +1080,6 @@ typeList
         )
         {
             result = `TypeListDecl(Name(type.getText()),blockList,ot);
-            printRes(result);
 
             Main.selector.pop();
         }
@@ -932,7 +1120,6 @@ typeArray
         )
         {
             result = `TypeArrayDecl(Name(type.getText()),blockList,ot);
-            printRes(result);
             
             Main.selector.pop();
             

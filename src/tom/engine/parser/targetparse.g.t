@@ -79,12 +79,21 @@ class NewTargetParser extends Parser;
         return (! code.equals(""));
     }
 
-    private TomList makeTomList(LinkedList list){
+    public TomList makeTomList(LinkedList list){
         TomList result = `emptyTomList();
         for(int i = 0; i < list.size(); i++){
             result = `concTomTerm(result*,(TomTerm) list.get(i));
         }
         return result;
+    }
+
+    private void printRes(ATerm result){
+        try{
+            Main.writer.write(result+"\n\n");
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
 }
@@ -107,7 +116,7 @@ input
                 )
             );
             TomTerm term = `Tom(makeTomList(list));
-            System.out.println("le terme :"+term);
+            printRes(term);
         }
     ;
 
@@ -115,7 +124,7 @@ blockList [LinkedList list]
     :
         (
             matchConstruct()
-        |   ruleConstruct() 
+        |   ruleConstruct[list] 
         |   signature()
         |   localVariable()
         |   operator()
@@ -133,15 +142,30 @@ blockList [LinkedList list]
 
     ;
 
-ruleConstruct
+ruleConstruct [LinkedList list]
+{
+    TargetLanguage code = null;
+}
     :
-        {
-            System.out.println("target language :"+targetlexer.target);
-            targetlexer.clearTarget();
-        }
-        RULE
-        {         
-            tomparser.ruleConstruct();
+        t:RULE
+        {     
+            String textCode = getCode();
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(popLine(),popColumn()),
+                    TextPosition(t.getLine(),t.getColumn())
+                );
+                list.add(`TargetLanguageToTomTerm(code));
+            }
+                
+            TomRuleList ruleList = tomparser.ruleConstruct();
+            Option orgTrackRule = `OriginTracking(
+                Name("Rule"),
+                t.getLine(),
+                Name(filename)
+            );
+            list.add(`InstructionToTomTerm(RuleSet(ruleList,orgTrackRule)));
         }
     ;
 
