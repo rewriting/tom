@@ -69,7 +69,7 @@ public class Peano {
 
   public ATerm plus1(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {
-      x,zero()   -> { return x; }
+      x,(zero|zero)()   -> { return x; }
       x,suc(y) -> { return suc(plus1(x,y)); }
     }
     return null;
@@ -98,8 +98,9 @@ public class Peano {
   }
   
   %rule {
-    fib2(zero()) | fib2(x@suc[pred=zero()]) -> suc(zero)
-    fib2(suc(y@suc(x)))    -> plus2(fib2(x),fib2(y))
+    fib2(zero())-> suc(zero)
+    fib2(x@suc[pred=zero()]) -> suc(zero)
+    fib2(suc(y@suc(x))) -> plus2(fib2(x),fib2(y))
   }
 
   public ATerm fib3(ATerm t) {
@@ -113,8 +114,9 @@ public class Peano {
 
   public ATerm fib4(ATerm t) {
     %match(term t) {
-      zero() | suc(zero()) -> { return `suc(zero); }
-      suc(suc(x))      -> { return plus3(fib4(x),fib4(suc(x))); }
+      zero()      -> { return `suc(zero); }
+      suc(zero()) -> { return `suc(zero); }
+      suc(suc(x)) -> { return plus3(fib4(x),fib4(suc(x))); }
     }
     return null;
   }
