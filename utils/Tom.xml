@@ -84,8 +84,8 @@
       <boolean name="noDeclaration" altName="D"
 			  		 description="Do not generate code for declarations"
 			  		 value="false"/>
-      <boolean name="noWarning" altName=""
-			  		 description="Do not print warning"
+      <boolean name="wall" altName="W"
+			  		 description="Print warning"
 			  		 value="false"/>
       <boolean name="lazyType" altName="l"
 			  		 description="Use universal type"
@@ -96,12 +96,9 @@
       <boolean name="static" altName=""
 			  		  description="Generate static functions"
 			  		  value="false"/>
-      <boolean name="debug" altName=""
-			  		   description="Generate debug primitives"
-			  		   value="false"/>
-      <boolean name="memory" altName=""
-			  			 description="Add memory management while debugging"
-			  			 value="false"/>
+      <boolean name="protected" altName=""
+			  		  description="Generate protected functions"
+			  		  value="false"/>
       <boolean name="stamp" altName=""
 			  			 description="Use stamp to simulate concrete ADT"
 			  			 value="false"/>

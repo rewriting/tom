@@ -53,7 +53,13 @@ public class TomBackend extends TomGenericPlugin {
   private final static int defaultDeep = 2;
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = "<options><boolean name='noOutput' altName='' description='Do not generate code' value='false'/><boolean name='jCode' altName='j' description='Generate Java code' value='true'/><boolean name='cCode' altName='c' description='Generate C code' value='false'/><boolean name='camlCode' altName='' description='Generate Caml code' value='false'/></options>";
+  public static final String DECLARED_OPTIONS = 
+    "<options>" +
+    "<boolean name='noOutput' altName='' description='Do not generate code' value='false'/>" +
+    "<boolean name='jCode' altName='j' description='Generate Java code' value='true'/>" + 
+    "<boolean name='cCode' altName='c' description='Generate C code' value='false'/>" +
+    "<boolean name='camlCode' altName='' description='Generate Caml code' value='false'/>" + 
+    "</options>";
   
   /** the generated file name */
   private String generatedFileName = null;

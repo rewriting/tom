@@ -80,6 +80,7 @@ public class TomTask extends MatchingTask {
   private boolean nowarn = false;
   private boolean optimize = false;
   private boolean pretty = false;
+  private boolean protectedFlag = false;
   
 
   private boolean failOnError = true;
@@ -384,6 +385,19 @@ public class TomTask extends MatchingTask {
 	public boolean getPretty() {
 		return pretty;
 	}
+
+	/**
+	 * If true, generates  protected functions instead of private
+	 * @param protected if true generates  protected functions instead of private
+	 */
+	public void setProtected(boolean flag) {
+		this.protectedFlag = flag;
+	}
+	
+	public boolean getProtected() {
+		return protectedFlag;
+	}
+
 	/**
 	 * If true, disable the --wall option.
 	 * @param flag if true, disable the --wall option

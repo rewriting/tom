@@ -94,6 +94,9 @@
       <boolean name="static" altName=""
 			  		  description="Generate static functions"
 			  		  value="false"/>
+      <boolean name="protected" altName=""
+			  		  description="Generate protected functions"
+			  		  value="false"/>
       <boolean name="stamp" altName=""
 			  			 description="Use stamp to simulate concrete ADT"
 			  			 value="false"/>

@@ -37,11 +37,17 @@ import java.util.StringTokenizer;
 import jtom.tools.SymbolTable;
 import tom.platform.OptionManager;
 
+/**
+ * The TomStreamManager is intended to manage the input and output
+ * streams for the tom compiler process.
+ * The output file depends on the destdir, the package and the suffix.
+ */
 public class TomStreamManager {
 
-  /** The symbol table for the current platform execution
+  /** 
+   * The symbol table for the current platform execution
    * shouldnt be here but as the VasStreamManager is use for one execution...
-  */
+   */
   private SymbolTable symbolTable;
 
   /** List of import paths. */

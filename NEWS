@@ -5,7 +5,7 @@ version 2.1:
   - new parser based on ANTLR
 	- new internal architecture based on plugins
   - new library for defining traversal strategies
-  - fixed a major bug in list-matching
+  - fixed two major bugs, related to completness, in list-matching
   - several bug fixed
 	- new library organization 
     * tom
