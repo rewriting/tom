@@ -1,3 +1,5 @@
+#Multiplicative linear logic
+
 #(1) 
 [a,b,(-a,-b)]
 
@@ -7,7 +9,7 @@
 #(3)
 ([a,-a],[b,-b])
 
-#(4)
+#(4) plus MIX plus MIX0 (not provable in MLL)
 [a,-a,b,-b]
 
 #(5)
