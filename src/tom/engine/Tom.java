@@ -138,7 +138,7 @@ public class Tom {
     for(int i=0; i < args.length; i++) { 
       if(args[i].charAt(0) != '-') {
           // Suppose this is the input filename (*[.t]) that should never start with a `-` character"
-					taskInput.inputFileName = args[i];
+					taskInput.setInputFileName(args[i]);
       } else {
           // This is on option
         if(args[i].equals("--version") || args[i].equals("-V")) {
@@ -214,7 +214,7 @@ public class Tom {
     taskInput.setDebugMode(taskInput.isJCode() && taskInput.isDebugMode());
     
       // setting Base/Input/OutputFileName
-    if(taskInput.inputFileName.length() == 0) {
+    if(taskInput.getInputFileName().length() == 0) {
       System.out.println("No input file name...\n");
 	  	taskInput.setHelp(true);
       usage();
@@ -222,16 +222,16 @@ public class Tom {
       	addError("No input file name...","",0,0);
       }
     }
-    if(taskInput.inputFileName.endsWith(inputSuffix)) {
-      taskInput.baseInputFileName = taskInput.inputFileName.substring(0,taskInput.inputFileName.length()-(inputSuffix.length()));
+    if(taskInput.getInputFileName().endsWith(inputSuffix)) {
+      taskInput.setBaseInputFileName(taskInput.getInputFileName().substring(0,taskInput.getInputFileName().length()-(inputSuffix.length())));
     } else {
-      taskInput.baseInputFileName = taskInput.inputFileName;
-	  	taskInput.inputFileName = taskInput.inputFileName+inputSuffix;
+      taskInput.setBaseInputFileName(taskInput.getInputFileName());
+	  	taskInput.setInputFileName(taskInput.getInputFileName()+inputSuffix);
     }
     if(taskInput.isDoOnlyCompile()) {
-      taskInput.inputFileName = taskInput.baseInputFileName + taskInput.expandedSuffix;
+      taskInput.setInputFileName(taskInput.getBaseInputFileName() + TomTaskInput.expandedSuffix);
     }
-    taskInput.setOutputFileName(taskInput.baseInputFileName+taskInput.outputSuffix);
+    taskInput.setOutputFileName(taskInput.getBaseInputFileName()+TomTaskInput.outputSuffix);
     
     	// Setting importList
     taskInput.setImportList(importList);
@@ -239,6 +239,7 @@ public class Tom {
 
   private void createTaskChainFromInput() {
   	if(taskInput != null) {
+			String fileName  = taskInput.getInputFileName();
 			InputStream input = null;
 		  	// Create the Chain of responsability    
 			if(taskInput.isDoParse() && taskInput.isDoExpand()) {
@@ -250,14 +251,15 @@ public class Tom {
 		  	while(it.hasNext()) {
 					fileList[index++] = (File)it.next();
 		  	}
+
 		  	try {
-					input = new FileInputStream(taskInput.inputFileName);
+					input = new FileInputStream(fileName);
 				  	// to get the length of the file
-					File file = new File(taskInput.inputFileName);
+					File file = new File(fileName);
 					inputBuffer = new byte[(int)file.length()+1];
 					input.read(inputBuffer);
 		  	} catch (FileNotFoundException e) {
-					String s = "File `" + taskInput.inputFileName + "` not found.";
+					String s = "File `" + fileName + "` not found.";
 					System.out.println(s);
 					System.out.println("No file generated.");
 					if(taskInput.isEclipseMode()) {
@@ -265,7 +267,7 @@ public class Tom {
 					}
 					return;
 		  	}  catch(IOException e4) {
-					String s = "IO Exception reading file `" + taskInput.inputFileName + "`";
+					String s = "IO Exception reading file `" + fileName + "`";
 					System.out.println(s);
 					System.out.println("No file generated.");
 					if(taskInput.isEclipseMode()) {
@@ -273,7 +275,7 @@ public class Tom {
 					}
 					return;
 		  	}
-			  tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,taskInput.inputFileName);
+			  tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,fileName);
 				  // This is the initial task
 		  	initialTask = tomParser;
 			  if(taskInput.isDoCheck()) {
@@ -300,13 +302,13 @@ public class Tom {
 				try {
 				  fromFileExpandTerm = tomSignatureFactory.getPureFactory().readFromFile(input);
 				  expandedTerm = tomSignatureFactory.TomTermFromTerm(fromFileExpandTerm);
-				  input = new FileInputStream(taskInput.baseInputFileName+".table");       
+				  input = new FileInputStream(taskInput.getBaseInputFileName()+".table");       
 				  ATerm fromFileSymblTable = null;
 				  fromFileSymblTable = tomSignatureFactory.getPureFactory().readFromFile(input);
 				  TomSymbolTable symbTable = tomSignatureFactory.TomSymbolTableFromTerm(fromFileSymblTable);
 				  symbolTable.regenerateFromTerm(symbTable);
 				} catch (FileNotFoundException e) {
-				  String s = "File `" + taskInput.inputFileName + "` not found.";
+				  String s = "File `" + fileName + "` not found.";
 				  System.out.println(s);
 				  System.out.println("No file generated.");
 						  if(taskInput.isEclipseMode()) {
@@ -314,7 +316,7 @@ public class Tom {
 						  }
 				  return;
 				} catch(IOException e4) {
-				  String s ="IO Exception reading file `" + taskInput.inputFileName + "`";
+				  String s ="IO Exception reading file `" + fileName + "`";
 				  System.out.println(s);
 				  System.out.println("No file generated.");
 						if(taskInput.isEclipseMode()) {
@@ -370,7 +372,7 @@ public class Tom {
 				System.out.println("\nStatistics:\n" + tomSignatureFactory.getPureFactory());
 			}
 			if(taskInput.isDebugMode()) {
-				Tools.generateOutput(taskInput.baseInputFileName + taskInput.debugTableSuffix, tomParser.getStructTable());	
+				Tools.generateOutput(taskInput.getBaseInputFileName() + TomTaskInput.debugTableSuffix, tomParser.getStructTable());	
 			}
 		}
   }

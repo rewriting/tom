@@ -73,10 +73,11 @@ public class TomCompiler extends TomBase implements TomTask {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-          Tools.generateOutput(input.baseInputFileName + input.compiledSuffix, compiledTerm);
+          Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.compiledSuffix, compiledTerm);
       }
       input.setTerm(compiledTerm);
     } catch (Exception e) {
+    	addError(input, "Exception occurs in TomCompiler"+e.getMessage(), input.getInputFileName(), 0, 0);
       e.printStackTrace();
       return;
     }

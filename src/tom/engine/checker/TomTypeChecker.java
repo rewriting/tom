@@ -53,6 +53,7 @@ public class TomTypeChecker extends TomChecker {
 	    	System.out.println("TOM type Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  	}
     } catch (Exception e) {
+			addError(input, "Exception occurs in TomTypeChecker"+e.getMessage(), input.getInputFileName(), 0, 0);
 			e.printStackTrace();
 			return;
     }

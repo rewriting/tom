@@ -1128,6 +1128,7 @@ abstract class TomChecker extends TomBase implements TomTask {
       }
       optionList = optionList.getTail();
     }
+    addError(input, "findOriginTrackingLine:  not found", input.getInputFileName(), 0, 0);
     System.out.println("findOriginTrackingLine: '" + name + "' not found in " + optionList);
     return -1;
     //throw new CheckErrorException();
@@ -1144,6 +1145,7 @@ abstract class TomChecker extends TomBase implements TomTask {
       }
       optionList = optionList.getTail();
     }
+    addError(input, "findOriginTrackingLine:  not found", input.getInputFileName(), 0, 0);
     System.out.println("findOriginTrackingLine:  not found");
     return -1;
     //throw new CheckErrorException();

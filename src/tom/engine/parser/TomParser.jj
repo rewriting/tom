@@ -114,8 +114,8 @@ public class TomParser implements TomTask {
   			System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
   		}
         if(intermediate) {
-            Tools.generateOutput(input.baseInputFileName + input.parsedSuffix, parsedTerm);
-            Tools.generateOutput(input.baseInputFileName + input.parsedTableSuffix, symbolTable.toTerm());
+            Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
+            Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable.toTerm());
         }
   		// Update taskInput
   		input.setTerm(parsedTerm);
@@ -140,6 +140,7 @@ public class TomParser implements TomTask {
   	} catch (Exception e) {
   	  System.out.println("Unhandled exception occurs during parsing.");
   	  e.printStackTrace();
+  	  addError(input, "Exception occurs in TomParser"+e.getMessage(), currentFile, 0, 0);
   	  return;
   	}
   	if(nextTask != null) {
