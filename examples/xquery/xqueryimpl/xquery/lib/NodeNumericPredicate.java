@@ -7,7 +7,7 @@ import org.w3c.dom.*;
 import xquery.lib.data.type.*;
 import xquery.lib.data.Item;
 
-import xquery.util.DomTree02;
+//import xquery.util.DomTree02;
 
 import xquery.lib.data.*;
 
@@ -61,7 +61,7 @@ public class NodeNumericPredicate extends NodePredicate
 	System.out.println("NodeNumericPredicate is running");
 	
 	System.out.println("sibling: " + siblingPosition);
-	DomTree02 dt = new DomTree02(); 
+	//	DomTree02 dt = new DomTree02(); 
 	//	dt.processNode(node);
 	
 	if (this.internalValue == siblingPosition) {

@@ -1,7 +1,7 @@
 package xquery.lib; 
 
 import org.w3c.dom.*;
-import xquery.util.DomTree02;
+//import xquery.util.DomTree02;
 
 
 public class NodeTraversal {
@@ -31,7 +31,7 @@ public class NodeTraversal {
      */
   protected void genericCollectArray(Object subject, Collect collect, Object[] args) 
   {
-	DomTree02 dt = new DomTree02(); 
+	//	DomTree02 dt = new DomTree02(); 
 
     try {
       if(collect.apply(subject,args)) { 
