@@ -7,6 +7,7 @@ exception Erreur of string ;;
   get_fun_sym (t) { get_sym (t)} 
   cmp_fun_sym (t1,t2) {t1=t2} 
   get_subterm (t,n) {get_sub n t} 
+  equals(t1,t2) {t1=t2}
 }
 
   

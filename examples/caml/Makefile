@@ -27,5 +27,5 @@ List1.cmo: List1.ml
 list: tomExtension.cmo tomList.cmo List1.cmo
 	ocamlc -o list tomExtension.cmo tomList.cmo List1.cmo
 
-tomlist: tomExtension.cmo tomList.cmo List1.tom.cmo
-	ocamlc -o list tomExtension.cmo tomList.cmo List1.tom.cmo
+tomlist: tomExtension.cmo List1.tom.cmo
+	ocamlc -o list tomExtension.cmo List1.tom.cmo
