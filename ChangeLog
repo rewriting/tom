@@ -1,3 +1,15 @@
+2003-03-25  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: 
+	* src/jtom/compiler/TomExpander.t: 
+	  - fixed several bugs (matching conditions)
+	  - BuildVariableStar no longer used
+
+	* src/jtom/TomSignature.adt: 
+	  - removed BuildVariableStar
+	  - added fileName to OriginTracking
+	
+
 2003-03-20    <jurgenv@cwi.nl>
 	* Removed dependency on shared-objects. The aterm-java-config
           script takes care of this recursive dependency now. This is
@@ -50,13 +62,16 @@
 	  isDefinedSymbol moved to TomBase
 
 2003-02-21    <pem@bach>
+
 	* bootinstall
 	* new architecture: expander + backend
 
 2003-02-14    <pem@bach>
+
 	* bootinstall
 	
 2003-02-05    julien
+
 	* Introduce SlotList type in symbols
 
 2003-01-23    <pem@bach>
@@ -89,6 +104,7 @@
 	  - backquote support for typearray
 
 2002-12-21    <pem@escher>
+
         * jtom uses the cvs-sop CVS server
 
 2002-12-21    <pem@bach>
@@ -137,13 +153,16 @@
 	  - non-linear patterns are now supported
 
 2002-11-30    <pem@bach>
+
 	* new types (Declaration, Option and Expression)
 	* --strictType by default
 
 2002-11-23    <pem@bach>
+
 	* dead code removed 
 
 2002-11-21    <pem@bach>
+
 	* version 1.0beta
 	* new stable version based on ApiGen
 
@@ -174,6 +193,7 @@
 	* version 0.7: bootstrap with ApiGen (6 types)
 	
 2002-10-29    <pem@bach>
+
 	* version 0.6
 
 	* src/jtom/TomBase.t: use a cache to compute numberListToIdentifier
@@ -206,6 +226,7 @@
 	  - map, maptree and traversal
 
 2002-09-23 <vinju@lagarde>
+
 	* added jtom wrapper script in new utils directory
 
 2002-09-15    <pem@bach>
@@ -250,6 +271,7 @@
   	  automatically compiled
 
 2001-07-19  Pierre-Etienne Moreau  <moreau@loria.fr>
+
         * New package: jtom.tools
 	
 	* src/jtom/tools/Flags.java: 
