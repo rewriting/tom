@@ -1,3 +1,5 @@
+package AddressBook;
+
 import aterm.*;
 import aterm.pure.*;
 import adt.address.data.*;
