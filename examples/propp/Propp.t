@@ -160,6 +160,9 @@ public class Propp {
 					// }}}
 
 					//{{{ disjd
+          // X |- Y, Z, R, S
+          // -----------------
+          // X |- Y, Z \/ R, S
 					seq(concPred(X*),concPred(Y*,vee(Z,R),S*)) -> {
 						match = true;
 						Sequent prod = `seq(concPred(X*),concPred(Y*,Z,R,S*));
@@ -391,6 +394,9 @@ public class Propp {
 			wedge(p1,p2) -> {
 				return predToTex(p1) + "\\wedge " + predToTex(p2);
 			}
+			mark(p) -> {
+				return "\\textcolor{red}{" + predToTex(p) + "}";
+			}
 			_ -> {
 				return pred.toString();
 			}
@@ -536,7 +542,7 @@ public class Propp {
 
 			OutputStreamWriter osw = new OutputStreamWriter(out,"ISO-8859-1");
 
-			osw.write("\\documentclass{article}\n\\usepackage{proof}\n\\def\\negd{\\neg_D}\n\\def\\disjd{\\vee_D}\n\\def\\impd{\\to_D}\n\\def\\negg{\\neg_G}\n\\def\\conjg{\\wedge_G}\n\\def\\disjg{\\vee_G}\n\\def\\conjd{\\wedge_D}\n\\def\\impg{\\to_G}\n\\def\\axiom{Axiom}\n\n\\begin{document}");
+			osw.write("\\documentclass{article}\n\\usepackage{proof}\n\\usepackage{color}\n\\def\\negd{\\neg_D}\n\\def\\disjd{\\vee_D}\n\\def\\impd{\\to_D}\n\\def\\negg{\\neg_G}\n\\def\\conjg{\\wedge_G}\n\\def\\disjg{\\vee_G}\n\\def\\conjd{\\wedge_D}\n\\def\\impg{\\to_G}\n\\def\\axiom{Axiom}\n\n\\begin{document}");
 			osw.write("\n\n\n");
 			while(!tmptex.isEmpty()) {
 				Pair p = (Pair)tmptex.getHead();

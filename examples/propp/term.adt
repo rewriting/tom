@@ -25,6 +25,7 @@ constructor(Pred,impl,impl(<left(Pred)>,<right(Pred)>)),
 constructor(Pred,vee,vee(<left(Pred)>,<right(Pred)>)),
 constructor(Pred,wedge,wedge(<left(Pred)>,<right(Pred)>)),
 constructor(Pred,neg,neg(<p(Pred)>)),
+constructor(Pred,mark,mark(<p(Pred)>)),
 
 constructor(Trace,rappl,rappl(<rule(RuleR)>,<subject(Sequent)>,<prod(ListSequent)>)),
 constructor(Proof,hyp,hyp(<seq(Sequent)>)),
