@@ -1,7 +1,0 @@
-\input{book.hva}
-\input{fancysection.hva}
-\definecolor{part}{named}{NavyBlue}
-\definecolor{chapter}{named}{NavyBlue}
-\definecolor{section}{named}{RoyalBlue}
-\definecolor{subsection}{named}{Blue}
-\definecolor{subsubsection}{named}{Blue}

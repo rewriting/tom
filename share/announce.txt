@@ -1,8 +1,8 @@
-TOM 1.4 release announcement
+TOM 1.5 release announcement
 ----------------------------
 
 It is my great privilege and pleasure to announce the availability of
-jtom-1.4.
+jtom-1.5.
 
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into C and Java.
@@ -18,10 +18,12 @@ and executed.
 
 This new release contains many improved and new features:
 
-     - an Eclipse plugin
-     - an interactive debugger
-     - a generalized backquote construct (for building terms)
+     - an Eclipse plugin (compatible with 2.1.2 and 3.0M5)
      - an extension for XML transformations
+     - a better matching algorithm
+     - an extended pattern syntax
+       (unamed operators, anonymous list variables, implicit notation)  
+
 
 TOM is available, in open source, from the TOM web page:
 

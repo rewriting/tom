@@ -17,7 +17,7 @@ EmptyP |- A && (A |=> B) |=> B;
 # vrai
 
 B /\ C:(B /\ C) => A:~(C => B):A |- EmptyP:B;
-# vrai 
+# Vrai 
 
 EmptyP |- A && (A |=> C) |=> B;
 # faux
