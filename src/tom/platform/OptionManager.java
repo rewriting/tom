@@ -41,21 +41,9 @@ public interface OptionManager {
   /**
    *
    *
-   * @param xmlDocument
-   *
-   public void setGlobalOptionList(TNode xmlDocument);*/
-
+   */
   public int initialize(ConfigurationManager confManager, String[] commandLine);
   
-  //public void setGlobalOptionList(PlatformOptionList globalOptions);
-  /**
-   *
-   *
-   * @param optionName the option's name
-   * @return the option's value as an Object
-   */
-  public Object getOptionValue(String optionName);
-
   /**
    *
    *
@@ -63,13 +51,21 @@ public interface OptionManager {
    * @param value the option's value
    */
   public void setOptionValue(String name, Object value);
-
+  
+  /**
+   *
+   *
+   * @param optionName the option's name
+   * @return the option's value as an Object
+   */
+  public Object getOptionValue(String optionName);
+  
+  
+  
   /**
    * The Option manager is the only able to extract the input file name list 
    * in the list of argument. The computation is done during initialization
-   *
    */
-  public List getInputFileList();
-      
-
+  public List getInputFileList(); 
+  
 }

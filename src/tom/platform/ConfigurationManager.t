@@ -84,7 +84,10 @@ public class ConfigurationManager {
   /** The OptionManager */
   private OptionManager optionManager;
   
-  /** Constructor */
+  /**
+   * Basic Constructor
+   * @return a configurationManager that needs to be initialized
+  */
   public ConfigurationManager(String xmlConfigurationFileName) {
     this.xmlConfigurationFileName = xmlConfigurationFileName;
     this.pluginsList = new ArrayList();
@@ -205,7 +208,7 @@ public class ConfigurationManager {
   private int createOptionManager(TNode node) {
     %match(TNode node) {
       <platform>opt@<optionmanager class=omclass></optionmanager></platform> -> {
-        globalOptions = xmlNodeToOptionList(`opt);
+        globalOptions = OptionParser.xmlNodeToOptionList(`opt);
         try {
           Object omInstance = Class.forName(omclass).newInstance();
           if(omInstance instanceof OptionManager) {
@@ -229,33 +232,6 @@ public class ConfigurationManager {
       }
     }
     return 1;
-  }
- 
-  /**
-   * Extracts the global options from the XML configuration file.
-   * 
-   * @param node the node containing the XML file
-   * @return the PlatformOptionList corresponding to the node
-   */
-  private PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
-    PlatformOptionList list = `emptyPlatformOptionList();
-    %match(TNode optionsNode) {
-      <optionmanager>(_*,option,_*)</optionmanager> -> {
-        %match(TNode option) {
-          <boolean [name = n, altName = an, description = d, value = v] /> -> {	
-            PlatformBoolean bool = Boolean.valueOf(`v).booleanValue()?`True():`False();
-            list = `concPlatformOption(list*, PluginOption(n, an, d, BooleanValue(bool), "")); 
-          }
-          <integer [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
-            list = `concPlatformOption(list*, PluginOption(n, an, d, IntegerValue(Integer.parseInt(v)), at));
-          }
-          <string [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
-            list = `concPlatformOption(list*, PluginOption(n, an, d, StringValue(v), at));
-          }
-        }
-      }
-    }
-    return list;
   }
 
   /** logger accessor in case of logging needs*/

@@ -75,7 +75,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   /** the list of input files extract from the commandLine */
   private List inputFileList;
 
-  /** Constructor */
+  /**
+   * Basic Constructor
+   * @return a configurationManager that needs to be initialized
+   */
   public TomOptionManager() {
     mapNameToOptionOwner = new HashMap();
     mapNameToOption = new HashMap();
@@ -104,92 +107,9 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     return checkAllOptionsDepedencies(optionOwnerList);
   }
 
-  /**
-   * collects the options/services provided by each plugin
-   */
-  public void collectOptions(List optionOwnerList, List plugins) {
-    Iterator owners = optionOwnerList.iterator();
-    while(owners.hasNext()) {
-      OptionOwner owner = (OptionOwner)owners.next();
-      PlatformOptionList list = owner.getDeclaredOptionList();
-      owner.setOptionManager((OptionManager)this);
-      while(!list.isEmpty()) {
-        PlatformOption option = list.getHead();
-        %match(PlatformOption option) {
-          PluginOption[name=name, altName=altName] -> {
-            setOptionOwnerFromName(`name, owner);
-            setOptionFromName(`name, option);
-            if(altName.length() > 0) {
-              mapShortNameToName.put(`altName,`name);
-            }
-          }
-        }
-        list = list.getTail();
-      }
-    }
-  }
-  
-  /**
-   * Checks if every plugin's needs are fulfilled
-   */
-  public int checkAllOptionsDepedencies(List optionOwnerList) {
-    Iterator owners = optionOwnerList.iterator();
-    while(owners.hasNext()) {
-      OptionOwner plugin = (OptionOwner)owners.next();
-      if(!checkOptionDependency(plugin.getRequiredOptionList())) {
-        getLogger().log(Level.SEVERE, "PrerequisitesIssue", plugin.getClass().getName());
-        return 1;
-      }
-    }
-    return 0;
-  }
-
+  /** Accessor Method */
   public List getInputFileList() {
     return inputFileList;
-  }
-
-  private String getCanonicalName(String name) {
-    if(mapShortNameToName.containsKey(name)) {
-      return (String)mapShortNameToName.get(name);
-    }
-    return name;
-  }
-
-  private PlatformOption getOptionFromName(String name) {
-    PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
-    if(option == null) {
-      getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
-      throw new RuntimeException();
-    }
-    return option;
-  }
-
-  private PlatformOption setOptionFromName(String name, PlatformOption option) {
-    return (PlatformOption)mapNameToOption.put(getCanonicalName(name),option);
-  }
-
-  private OptionOwner getOptionOwnerFromName(String name) {
-    OptionOwner plugin = (OptionOwner)mapNameToOptionOwner.get(getCanonicalName(name));
-    if(plugin == null) {
-      getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
-      throw new RuntimeException();
-    }
-    return plugin;
-  }
-
-  private void setOptionOwnerFromName(String name, OptionOwner plugin) {
-    mapNameToOptionOwner.put(getCanonicalName(name),plugin);
-  }
-  
-  private void setOptionPlatformValue(String name, PlatformValue value) {
-    PlatformOption option = getOptionFromName(name);
-    if(option != null) {
-      PlatformOption newOption = option.setValue(value);
-      Object replaced = setOptionFromName(name, newOption);
-      getLogger().log(Level.FINER,"SetValue",new Object[]{name,value,replaced});
-    } else {
-      throw new RuntimeException();
-    }
   }
   
   /**
@@ -244,6 +164,126 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     
     getLogger().log(Level.SEVERE,"OptionNotFound",name);
     throw new RuntimeException();
+  }
+
+  /**
+   * From OptionOwner Interface
+   * @return the global options
+   */
+  public PlatformOptionList getDeclaredOptionList() {
+    return globalOptions;
+  }
+  
+  /**
+   * From OptionOwner Interface
+   * @return the prerequisites
+   */
+  public PlatformOptionList getRequiredOptionList() {
+    PlatformOptionList prerequisites = `emptyPlatformOptionList();
+
+    if(((Boolean)getOptionValue("debug")).booleanValue()) {
+      prerequisites = `concPlatformOption(PluginOption("jCode", "", "", BooleanValue(True()),""), prerequisites*);
+      // for the moment debug is only available for Java as target language
+    }
+    
+    // options destdir and output are incompatible
+    if(!((String)getOptionValue("destdir")).equals(".")) {
+      prerequisites = `concPlatformOption(PluginOption("output", "", "", StringValue(""), ""), prerequisites*);
+      // destdir is not set at its default value -> it has been changed
+      // -> we want output at its default value
+    }
+    if(!((String)getOptionValue("output")).equals("")) {
+      prerequisites = `concPlatformOption(PluginOption("destdir", "", "", StringValue("."), ""), prerequisites*);
+      // output is not set at its default value -> it has been changed
+      // -> we want destdir at its default value
+    }
+    return prerequisites;
+  }
+
+  public void setOptionManager(OptionManager om) {}
+  
+  /**
+   * collects the options/services provided by each plugin
+   */
+  private void collectOptions(List optionOwnerList, List plugins) {
+    Iterator owners = optionOwnerList.iterator();
+    while(owners.hasNext()) {
+      OptionOwner owner = (OptionOwner)owners.next();
+      PlatformOptionList list = owner.getDeclaredOptionList();
+      owner.setOptionManager((OptionManager)this);
+      while(!list.isEmpty()) {
+        PlatformOption option = list.getHead();
+        %match(PlatformOption option) {
+          PluginOption[name=name, altName=altName] -> {
+            setOptionOwnerFromName(`name, owner);
+            setOptionFromName(`name, option);
+            if(altName.length() > 0) {
+              mapShortNameToName.put(`altName,`name);
+            }
+          }
+        }
+        list = list.getTail();
+      }
+    }
+  }
+  
+  /**
+   * Checks if every plugin's needs are fulfilled
+   */
+  private int checkAllOptionsDepedencies(List optionOwnerList) {
+    Iterator owners = optionOwnerList.iterator();
+    while(owners.hasNext()) {
+      OptionOwner plugin = (OptionOwner)owners.next();
+      if(!checkOptionDependency(plugin.getRequiredOptionList())) {
+        getLogger().log(Level.SEVERE, "PrerequisitesIssue", plugin.getClass().getName());
+        return 1;
+      }
+    }
+    return 0;
+  }
+
+  private String getCanonicalName(String name) {
+    if(mapShortNameToName.containsKey(name)) {
+      return (String)mapShortNameToName.get(name);
+    }
+    return name;
+  }
+
+  private PlatformOption getOptionFromName(String name) {
+    PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
+    if(option == null) {
+      getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
+      throw new RuntimeException();
+    }
+    return option;
+  }
+
+  private PlatformOption setOptionFromName(String name, PlatformOption option) {
+    return (PlatformOption)mapNameToOption.put(getCanonicalName(name),option);
+  }
+
+  private OptionOwner getOptionOwnerFromName(String name) {
+    OptionOwner plugin = (OptionOwner)mapNameToOptionOwner.get(getCanonicalName(name));
+    if(plugin == null) {
+      getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
+      throw new RuntimeException();
+    }
+    return plugin;
+  }
+
+  private void setOptionOwnerFromName(String name, OptionOwner plugin) {
+    mapNameToOptionOwner.put(getCanonicalName(name),plugin);
+  }
+  
+  private void setOptionPlatformValue(String name, PlatformValue value) {
+    PlatformOption option = getOptionFromName(name);
+    if(option != null) {
+      PlatformOption newOption = option.setValue(value);
+      Object replaced = setOptionFromName(name, newOption);
+      getLogger().log(Level.FINER,"SetValue",new Object[]{name,value,replaced});
+    } else {
+      throw new RuntimeException();
+    }
   }
   
   /**
@@ -308,40 +348,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       }
     }
     return false;
-  }
-  
-  /**
-   * From OptionOwner Interface
-   * @return the global options
-   */
-  public PlatformOptionList getDeclaredOptionList() {
-    return globalOptions;
-  }
-  
-  /**
-   * From OptionOwner Interface
-   * @return the prerequisites
-   */
-  public PlatformOptionList getRequiredOptionList() {
-    PlatformOptionList prerequisites = `emptyPlatformOptionList();
-
-    if(((Boolean)getOptionValue("debug")).booleanValue()) {
-      prerequisites = `concPlatformOption(PluginOption("jCode", "", "", BooleanValue(True()),""), prerequisites*);
-      // for the moment debug is only available for Java as target language
-    }
-    
-    // options destdir and output are incompatible
-    if(!((String)getOptionValue("destdir")).equals(".")) {
-      prerequisites = `concPlatformOption(PluginOption("output", "", "", StringValue(""), ""), prerequisites*);
-      // destdir is not set at its default value -> it has been changed
-      // -> we want output at its default value
-    }
-    if(!((String)getOptionValue("output")).equals("")) {
-      prerequisites = `concPlatformOption(PluginOption("destdir", "", "", StringValue("."), ""), prerequisites*);
-      // output is not set at its default value -> it has been changed
-      // -> we want destdir at its default value
-    }
-    return prerequisites;
   }
   
   /**
@@ -456,8 +462,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     return fileList;
   }
   
-  public void setOptionManager(OptionManager om) {}
-
   /** logger accessor in case of logging needs*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());

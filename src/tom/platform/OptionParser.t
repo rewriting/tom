@@ -1,0 +1,118 @@
+/*
+ * 
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (C) 2000-2004 INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
+ **/
+
+package tom.platform;
+
+import java.io.*;
+
+import aterm.*;
+import aterm.pure.*;
+
+import tom.library.adt.tnode.*;
+import tom.library.adt.tnode.types.*;
+import tom.platform.adt.platformoption.*;
+import tom.platform.adt.platformoption.types.*;
+import tom.library.xml.*;
+
+
+/**
+ * Helper class to parse OptionOwner options
+ * <!ELEMENT options (boolean*,integer*,string*)>
+ *
+ * <!ELEMENT boolean EMPTY>
+ * <!ATTLIST boolean
+ *   name CDATA #REQUIRED
+ *   altName CDATA ""
+ *   description CDATA ""
+ *   value (true|false) #REQUIRED>
+ *
+ * <!ELEMENT integer EMPTY>
+ * <!ATTLIST integer
+ *   name CDATA #REQUIRED
+ *   altName CDATA ""
+ *   description CDATA ""
+ *   value CDATA #REQUIRED
+ *   attrName CDATA #REQUIRED>
+ *
+ * <!ELEMENT string EMPTY>
+ * <!ATTLIST string
+ *   name CDATA #REQUIRED
+ *   altName CDATA ""
+ *   description CDATA ""
+ *   value CDATA #REQUIRED
+ *   attrName CDATA #REQUIRED>
+ */
+public class OptionParser {
+  
+  %include{ adt/TNode.tom }
+  
+  /**
+   * Accessor method necessary when including adt/TNode.tom 
+   * @return a TNodeFactory
+   */
+  private static TNodeFactory getTNodeFactory() {
+    return TNodeFactory.getInstance(SingletonFactory.getInstance());
+  }
+  
+  %include{ adt/PlatformOption.tom }
+  
+  /**
+   * Accessor method necessary to include adt/PlatformOption.tom
+   * @return a PlatformOptionFactory
+   */
+  private static PlatformOptionFactory getPlatformOptionFactory() {
+    return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
+  }
+  
+  private static XmlTools xtools = new XmlTools();
+  
+  public static PlatformOptionList xmlToOptionList(String xmlString) {
+    InputStream stream = new ByteArrayInputStream(xmlString.getBytes());
+    TNode node = (TNode)xtools.convertXMLToATerm(stream);
+    return xmlNodeToOptionList(node.getDocElem());
+  }
+  
+  public static PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
+    PlatformOptionList list = `emptyPlatformOptionList();
+    %match(TNode optionsNode) {
+      <options>(_*,option,_*)</options> -> {
+        %match(TNode option) {
+          <boolean [name = n, altName = an, description = d, value = v] /> -> {	
+            PlatformBoolean bool = Boolean.valueOf(`v).booleanValue()?`True():`False();
+            list = `concPlatformOption(list*, PluginOption(n, an, d, BooleanValue(bool), "")); 
+          }
+          <integer [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
+            list = `concPlatformOption(list*, PluginOption(n, an, d, IntegerValue(Integer.parseInt(v)), at));
+          }
+          <string [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
+            list = `concPlatformOption(list*, PluginOption(n, an, d, StringValue(v), at));
+          }
+        }
+      }
+    }
+    return list;
+  }
+
+} // class optionParser
