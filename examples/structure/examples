@@ -71,3 +71,6 @@ c,[-a,([c,-c],[-b,(a,b)])])] ),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
 
 # an example for BVu
 [ - a ,[ < a ; < d ; - b > > , [ < b ; < e ; - c > > , c ] ] ]
+
+# simple example for BVu
+[a,[< a ; [c,- a] >,< - a ; - c >]]
