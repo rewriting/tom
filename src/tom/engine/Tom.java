@@ -29,8 +29,6 @@ import java.util.*;
 import java.io.*;
 
 import aterm.*;
-import aterm.pure.*;
-
 import jtom.tools.*;
 import jtom.compiler.*;
 import jtom.checker.*;
@@ -197,9 +195,6 @@ public class Tom {
       System.out.println("Tom Parser:  File " + inputFileName + " not found.");
       System.out.println("No file generated.");
       return;
-    } catch(IOException e) {
-      System.out.println("No file generated.");
-      throw new InternalError("read error");
     }
         
     TomTerm parsedTerm   = null;
@@ -271,7 +266,7 @@ public class Tom {
         if (Flags.debugMode) {
           generateOutput(fileName + debugMatchTableSuffix, tomParser.getStructTable());
         }
-                
+             
         if(Flags.demo) {
           statistics.initInfoParser();
           statistics.initInfoChecker();
@@ -314,10 +309,7 @@ public class Tom {
             System.out.println("Tom Compiler:  File " + inputFileName + " not found.");
             System.out.println("No file generated.");
             return;
-          } catch(IOException e) {
-            System.out.println("No file generated.");
-            throw new InternalError("read error");
-          }
+          } 
           ATerm fromFileSymblTable = null;
           fromFileSymblTable = tomSignatureFactory.readFromFile(input);
           TomSymbolTable symbTable = (TomSymbolTable) TomSymbolTable.fromTerm(fromFileSymblTable);

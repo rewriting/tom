@@ -25,14 +25,34 @@
 */
 
 package jtom.parser;
-import java.io.*;
-import java.util.*;
-import aterm.*;
-import aterm.pure.*;
-import jtom.*;
-import jtom.tools.*;
-import jtom.exception.*;
-import jtom.adt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import jtom.adt.Declaration;
+import jtom.adt.Option;
+import jtom.adt.PairNameDecl;
+import jtom.adt.Position;
+import jtom.adt.SlotList;
+import jtom.adt.TargetLanguage;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomSignatureFactory;
+import jtom.adt.TomStructureTable;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomTerm;
+import jtom.adt.TomTerm_Match;
+import jtom.adt.TomTerm_RuleSet;
+import jtom.adt.TomType;
+import jtom.exception.TomException;
+import jtom.tools.ASTFactory;
+import jtom.tools.Flags;
+import jtom.tools.SymbolTable;
 
 public class TomParserTokenManager implements TomParserConstants
 {

@@ -30,15 +30,11 @@ package jtom.checker;
 import java.util.*;
 
 import aterm.*;
-import aterm.pure.*;
 
 import jtom.*;
 import jtom.tools.*;
-import jtom.exception.*;
 import jtom.adt.*;
 import jtom.runtime.*;
-
-import jtom.runtime.set.SharedSet;
 
 public class TomChecker extends TomBase {
   

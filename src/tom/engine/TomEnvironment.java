@@ -25,13 +25,6 @@
 
 package jtom;
 
-import java.util.*;
-import java.io.*;
-
-import aterm.*;
-import aterm.pure.*;
-
-import jtom.*;
 import jtom.tools.*;
 import jtom.adt.*;
 

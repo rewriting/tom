@@ -28,7 +28,6 @@
 package jtom.parser;
 
 import java.io.*;
-import java.util.*;
 
 public class TomBuffer extends ByteArrayInputStream {
 

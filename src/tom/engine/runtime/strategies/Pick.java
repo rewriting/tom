@@ -1,9 +1,8 @@
 package jtom.runtime.strategies;
 
-import EDU.oswego.cs.dl.util.concurrent.*;
-import aterm.*;
-import java.util.*;
-import jtom.runtime.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public class Pick extends Strat {
   private boolean multistrat = false;

@@ -25,12 +25,22 @@
 
 package jtom.tools;
 
-import java.util.*;
-import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import aterm.*;
-import aterm.pure.*;
-import jtom.adt.*;
+import jtom.adt.Declaration;
+import jtom.adt.Expression;
+import jtom.adt.Option;
+import jtom.adt.OptionList;
+import jtom.adt.SlotList;
+import jtom.adt.TargetLanguage;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomSignatureFactory;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomTerm;
+import jtom.adt.TomType;
+import aterm.ATerm;
 
 public class ASTFactory {
   private TomSignatureFactory tomSignatureFactory;

@@ -1,9 +1,9 @@
 package jtom.runtime.strategies;
 
-import EDU.oswego.cs.dl.util.concurrent.*;
-import aterm.*;
-import java.util.*;
-import jtom.runtime.*;
+import java.util.Collection;
+import java.util.HashSet;
+
+import jtom.runtime.Collect3;
 
 public class Rule extends Strat {
   private Collect3 collect;

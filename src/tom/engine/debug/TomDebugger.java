@@ -26,21 +26,36 @@
 
 package jtom.debug;
   
-import java.util.*;
-import java.io.*;
-import java.lang.Integer;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
-import aterm.*;
-import aterm.pure.*;
-
-import jtom.runtime.*;
-
-import jtom.*;
-import jtom.tools.*;
-import jtom.adt.*;
-
-import jtom.debug.TomDebugEnvironment;
-import jtom.debug.TermHandler;
+import jtom.adt.Option;
+import jtom.adt.OptionList;
+import jtom.adt.TomList;
+import jtom.adt.TomSignatureFactory;
+import jtom.adt.TomStructureTable;
+import jtom.adt.TomTerm;
 
 public class TomDebugger {
   public static TomDebugger debugger = null;
@@ -65,9 +80,9 @@ public class TomDebugger {
     this(new String[]{fileName}, false);
   }
   
-  public TomDebugger(String[] fileName, boolean testingMode) {
-    this.testingMode = testingMode;
-    this.debugger = this;
+  public TomDebugger(String[] fileName, boolean testingModeArg) {
+    testingMode = testingModeArg;
+    debugger = this;
     this.baseFileName = new String[fileName.length];
     this.in = new BufferedReader(new InputStreamReader(System.in));
     this.debuggedStructureKeySet = new HashSet();

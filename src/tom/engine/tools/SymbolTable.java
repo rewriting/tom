@@ -25,12 +25,18 @@
 
 package jtom.tools;
 
-import java.util.*;
-import java.io.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-import aterm.*;
-import aterm.pure.*;
-import jtom.adt.*;
+import jtom.adt.TomEntry;
+import jtom.adt.TomEntryList;
+import jtom.adt.TomSignatureFactory;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomSymbolTable;
+import jtom.adt.TomTerm;
+import jtom.adt.TomType;
 
 public class SymbolTable {
   private Map mapSymbolName = new HashMap();

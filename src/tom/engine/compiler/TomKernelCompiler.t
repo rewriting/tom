@@ -25,15 +25,27 @@
 
 package jtom.compiler;
   
-import java.util.*;
-import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 
-import aterm.*;
-
-import jtom.*;
-import jtom.tools.*;
-import jtom.adt.*;
-import jtom.runtime.*;
+import jtom.TomBase;
+import jtom.adt.Expression;
+import jtom.adt.Instruction;
+import jtom.adt.Option;
+import jtom.adt.OptionList;
+import jtom.adt.TargetLanguage;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomTerm;
+import jtom.adt.TomType;
+import jtom.runtime.Collect1;
+import jtom.runtime.Replace1;
+import jtom.tools.Flags;
+import aterm.ATerm;
 
 public class TomKernelCompiler extends TomBase {
 

@@ -26,14 +26,10 @@
 package jtom;
   
 import java.util.*;
-import java.io.*;
 
 import aterm.*;
-import aterm.pure.*;
 
 import jtom.tools.*;
-import jtom.exception.*;
-import jtom.checker.*;
 import jtom.adt.*;
 import jtom.runtime.*;
 

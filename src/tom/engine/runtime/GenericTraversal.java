@@ -26,7 +26,6 @@
 package jtom.runtime;
 
 import aterm.*;
-import aterm.pure.*;
 import java.util.*;
 
 public class GenericTraversal {

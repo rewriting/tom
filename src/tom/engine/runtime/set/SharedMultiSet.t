@@ -34,7 +34,6 @@ import aterm.pure.PureFactory;
 import jtom.runtime.set.jgtreeset.SetFactory;
 import jtom.runtime.set.jgtreeset.JGTreeSet;
 
-import jtom.runtime.GenericTraversal;
 import jtom.runtime.Replace1;
 import jtom.runtime.Collect1;
 
@@ -42,13 +41,13 @@ public class SharedMultiSet extends ATermSet {
   %include { set.t }
   
   public SharedMultiSet(PureFactory fact) {
-    this.factory = new SetFactory(fact);
-    this.emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
+    factory = new SetFactory(fact);
+    emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
     this.tree = makeEmptySet();
   }
   
   private SharedMultiSet(SetFactory fact, JGTreeSet tree, int count) {
-    this.factory = fact;
+    factory = fact;
     this.tree = tree;
     this.count = count;
   }

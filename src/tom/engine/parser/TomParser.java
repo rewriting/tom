@@ -26,17 +26,35 @@
 
 package jtom.parser;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import aterm.*;
-import aterm.pure.*;
-
-import jtom.*;
-import jtom.tools.*;
-
-import jtom.exception.*;
-import jtom.adt.*;
+import jtom.adt.Declaration;
+import jtom.adt.Option;
+import jtom.adt.PairNameDecl;
+import jtom.adt.Position;
+import jtom.adt.SlotList;
+import jtom.adt.TargetLanguage;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomSignatureFactory;
+import jtom.adt.TomStructureTable;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomTerm;
+import jtom.adt.TomTerm_Match;
+import jtom.adt.TomTerm_RuleSet;
+import jtom.adt.TomType;
+import jtom.exception.TomException;
+import jtom.tools.ASTFactory;
+import jtom.tools.Flags;
+import jtom.tools.SymbolTable;
 
 public class TomParser implements TomParserConstants {
 
@@ -1784,30 +1802,6 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
-  final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_COLON)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_AT)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_2() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1828,6 +1822,30 @@ public class TomParser implements TomParserConstants {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_4() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_AT)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

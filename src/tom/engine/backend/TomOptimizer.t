@@ -25,15 +25,10 @@ Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
 
   package jtom.backend;
   
-import java.util.*;
-import java.io.*;
-
 import aterm.*;
-import aterm.pure.*;
 
 import jtom.*;
 import jtom.runtime.*;
-import jtom.tools.*;
 import jtom.adt.*;
 
 public class TomOptimizer extends TomBase {

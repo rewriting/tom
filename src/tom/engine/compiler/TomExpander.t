@@ -25,15 +25,19 @@
 
 package jtom.compiler;
   
-import java.util.*;
-import java.io.*;
+import java.util.HashSet;
 
-import aterm.*;
-
-import jtom.*;
-import jtom.tools.*;
-import jtom.adt.*;
-import jtom.runtime.*;
+import jtom.TomBase;
+import jtom.adt.Option;
+import jtom.adt.OptionList;
+import jtom.adt.SlotList;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomTerm;
+import jtom.adt.TomType;
+import jtom.runtime.Replace1;
+import aterm.ATerm;
 
 public class TomExpander extends TomBase {
   TomKernelExpander tomKernelExpander;

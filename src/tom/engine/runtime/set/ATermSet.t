@@ -26,17 +26,18 @@
 
 package jtom.runtime.set;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-import aterm.*;
-import aterm.pure.PureFactory;
-
-import jtom.runtime.set.jgtreeset.SetFactory;
-import jtom.runtime.set.jgtreeset.JGTreeSet;
-
-import jtom.runtime.GenericTraversal;
-import jtom.runtime.Replace1;
 import jtom.runtime.Collect1;
+import jtom.runtime.GenericTraversal;
+import jtom.runtime.set.jgtreeset.JGTreeSet;
+import jtom.runtime.set.jgtreeset.SetFactory;
+import aterm.ATerm;
+import aterm.ATermAppl;
 
 public abstract class ATermSet implements Collection {
 

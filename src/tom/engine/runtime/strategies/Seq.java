@@ -1,9 +1,6 @@
 package jtom.runtime.strategies;
 
-import EDU.oswego.cs.dl.util.concurrent.*;
-import aterm.*;
-import java.util.*;
-import jtom.runtime.*;
+import java.util.Collection;
 
 public class Seq extends Strat {
 

@@ -1,9 +1,11 @@
 package jtom.runtime.strategies;
 
-import EDU.oswego.cs.dl.util.concurrent.*;
-import aterm.*;
-import java.util.*;
-import jtom.runtime.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class First extends Strat {
   private int callbacksExpected = 0;

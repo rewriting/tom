@@ -1,9 +1,7 @@
 package jtom.runtime.strategies;
 
-import EDU.oswego.cs.dl.util.concurrent.*;
-import aterm.*;
-import java.util.*;
-import jtom.runtime.*;
+import java.util.Collection;
+import java.util.HashSet;
 
 public class All extends Strat {
   private int callbacksExpected = 0;

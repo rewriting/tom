@@ -25,8 +25,6 @@
 
 package jtom.tools;
 
-import java.util.*;
-
 public class Flags {
 
   public static boolean pretty = false; // Synchronize TL code and source code
