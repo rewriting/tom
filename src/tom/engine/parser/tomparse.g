@@ -1,31 +1,33 @@
+/*
+ * this file contains the lexer and parser for
+ * tom constructs
+ */
 
 class NewTomParser extends Parser;
 
 
 options{
-    k=2;
-    exportVocab = Tom;
+    k=2; // the lookahead value during parsing
 }
 
-tokens{
-    WHERE="where";IF="if";
-}
+
 
 {
+    // the default-mode parser
     private NewTargetParser targetparser;
     
-    public StringBuffer match = new StringBuffer("");
-
     public NewTomParser(ParserSharedInputState state, NewTargetParser target){
         this(state);
         targetparser = target;
     }
 
+    // creation of a tom variable : doesn't need a rule
     public void variable(){
         // creer la structure ici
     }
    
 }
+
 
 constant returns [String result]
 {
@@ -42,6 +44,10 @@ constant returns [String result]
         { System.out.println("constante : "+result); }
 	;
 
+
+/*
+ * the %match construct : 
+ */
 matchConstruct 
 { 
     String args = null, mp = null;
@@ -51,7 +57,8 @@ matchConstruct
             LPAREN args = matchArguments() RPAREN {result = "(" + args + ")";}
             LBRACE {result += "{\n";}
             ( 
-                mp = patternAction() {result += mp + "\n";}
+                mp = patternAction() {result += mp + "\n";
+                System.out.println("patternaction finished");}
             )* 
             RBRACE {result += "}";}
             { 
@@ -59,6 +66,9 @@ matchConstruct
                                    "--------------\n" +
                                     result +
                                    "\n--------------");
+                /* Match finished : pop the tomlexer and return in
+                 * the target parser.  
+                 */
                 Main.selector.pop(); 
             }
         )
@@ -95,12 +105,16 @@ patternAction returns [String result]
             )* 
             ARROW {result += "->";}
             {
+                /*
+                 * actions in target language : call the target lexer and
+                 * call the target parser
+                 */
                 Main.selector.push("targetlexer");
                 String action = targetparser.goalLanguage();
-/*                System.out.println("action : \n -------------------\n"
-                                    + action+
-                                              "\n--------------------");*/
                 result += action;
+                /*
+                 * target parser finished : pop the target lexer
+                 */
                 Main.selector.pop();
             }
         )
@@ -119,10 +133,54 @@ matchPattern returns [String result]
         )
     ;
 
+/*
+ * Vas signature : no parsing. Here, we will just call
+ * vas-to-adt.
+ */
+signature
+    :   
+        { 
+            /*
+             * We didn't switch the lexers ! just have to get target code.
+             */
+            String vasCode = targetparser.goalLanguage(); 
+            System.out.println("code to be parsed by VAS :\n --------------------------"
+                                +vasCode+
+                               "\n--------------------------");}
+        // faire les action adequates ici
+    ;
+
+/*
+ * The %rule construct
+ */
+ruleConstruct
+    :
+        {System.out.println("rule begin");}
+        LBRACE
+        (
+            annotedTerm() ( ALTERNATIVE annotedTerm() )* ARROW plainTerm()
+            (
+                WHERE annotedTerm() AFFECT annotedTerm()
+            |   IF annotedTerm() DOUBLEEQ annotedTerm()
+            )*
+        )*
+        RBRACE
+        {
+            /*
+             * %rule finished. go back in target parser.
+             */
+            Main.selector.pop();System.out.println("rule end");
+        }
+    ;
+
+/*
+ * terms for %match and %rule
+ */
 annotedTerm returns [String result]
 {
     result = "";
     String pt = null;
+    System.out.println("--- annotedTerm");
 }
     :   (
             ( 
@@ -137,32 +195,52 @@ plainTerm returns [String result]
     result = null;
     String v = null, p = null, s = null, el = null, il = null,
     el1 = null, sl = null, el2 = null, il2 = null;
+    System.out.println("--- plainTerm");
 }
     :  
         (   // xml is missing
+            // var* or _*
             v = variableStar() {result = v;}
-        |   p = placeHolder() {result = p;}
-        |    
-            (
-                s = headSymbol() {result = s;}
-                {System.out.println("headsymbol "+s);} 
-                ( 
-                    {LA(3) != WHERE && LA(3) != IF}? el = explicitTermList() {result += el;}
-                |   il = implicitPairList() {result += il;}
-                )?
-            |   {LA(3) != ALTERNATIVE}? el1 = explicitTermList() {result = el1;}
-            |   ( 
-                    sl = headSymbolList()  {result = sl;}
-                    ( 
-                        {LA(3) != WHERE && LA(3) != IF}? el2 = explicitTermList() {result += el2;}
-                    |   il2 = implicitPairList() {result += il2;} )?  
-                )
-            )
+        |   // _
+            p = placeHolder() {result = p;}
+        |   // for a single constant. 
+            // ambiguous with the next rule so :
+            {LA(2) != LPAREN && LA(2) != LBRACKET}? 
+            headSymbol() { } 
+        |   // f(...) or f[...]
+            headSymbol() args()  {System.out.println("--- args or not");  }
+            // (f|g...) 
+            // ambiguity with the last rule so use syntactic predicat
+            // (headSymbolList()) => headSymbolList()
+        |   (headSymbolList()) => headSymbolList() ((args() ) => args() )?
+            // (...)
+        |   args()
         )
     ;
 
+args 
+    {System.out.println("args");}
+    :   (
+            LPAREN ( termList() )? RPAREN
+        |   LBRACKET ( pairList() )? RBRACKET
+        )
+    ;
+
+termList
+    :   (
+            annotedTerm() ( COMMA annotedTerm() )*
+        )
+    ;
+
+pairList
+    :   (
+            annotedTerm EQUAL annotedTerm ( COMMA annotedTerm EQUAL annotedTerm )*
+        )
+;
+          
 variableStar returns [String result]
-{ result = null; }
+{ result = null; 
+    System.out.println("--- variableStar");}
     :   (
             ( 
                 i:ID {result = i.getText();}
@@ -173,7 +251,8 @@ variableStar returns [String result]
     ;
 
 placeHolder returns [String result]
-{ result = null; }
+{ result = null; 
+    System.out.println("--- placeHolder");}
     :   (
             UNDERSCORE {result = "_";} 
         )
@@ -183,6 +262,7 @@ headSymbolList returns [String result]
 { 
     result = null;
     String s1 = null, s2 = null, s3 = null;
+    System.out.println("--- headSymbolList");
 }
     :  
         (
@@ -192,16 +272,11 @@ headSymbolList returns [String result]
         )
     ;
 
-
-
-
-
-
-
 headSymbol returns [String result]
 { 
     result = null; 
     String cst = null;
+    System.out.println("--- headSymbol");
 }
     :   (
             i:ID {result = i.getText();}
@@ -209,118 +284,6 @@ headSymbol returns [String result]
         
         )
     ;
-
-explicitTermList returns [String result]
-{
-    result = null;
-    String at = null, at2 = null;
-}
-    :   (
-            LPAREN {result = "(";}
-            (   at = annotedTerm() {result += at;} 
-                ( 
-                    COMMA at2 = annotedTerm() {result += "," + at2;}
-                )* 
-            )? 
-            RPAREN {result += ")";} 
-        )
-    ;
-
-implicitPairList returns [String result]
-{
-    result = null;
-    String pt = null, pt2 = null;
-}
-    :   (
-            LBRACKET {result = "[";}
-            ( 
-                pt = pairTerm() {result += pt;} 
-                ( 
-                    COMMA pt2 = pairTerm() {result += "," + pt2;}
-                )* 
-            )? 
-            RBRACKET {result += "]";} 
-        )
-    ;
-
-pairTerm returns [String result]
-{
-    result = null;
-    String at = null;
-}
-    :   (
-            i:ID EQUAL at = annotedTerm() {result = i.getText() + "=" + at;}
-        )
-    ;
-
-signature
-    :   
-        { String vasCode = targetparser.goalLanguage(); 
-            System.out.println("code to be parsed by VAS :\n --------------------------"
-                                +vasCode+
-                               "\n--------------------------");}
-        // faire les action adequates ici
-    ;
-
-ruleConstruct
-    :
-        {System.out.println("rule begin");}
-        LBRACE
-        (
-            annotedTerm2() ( ALTERNATIVE annotedTerm2() )* ARROW plainTerm2()
-            (
-                WHERE annotedTerm2() COLON EQUAL annotedTerm2()
-            |   IF annotedTerm2() EQUAL EQUAL annotedTerm2()
-            )*
-        )*
-        RBRACE
-        {Main.selector.pop();System.out.println("rule end");}
-    ;
-
-annotedTerm2 returns [String result]
-{
-    result = "";
-    String pt = null;
-}
-    :   (
-            ( 
-                i:ID AT {result += i.getText() + "@";}
-            )? 
-            pt = plainTerm2() {result += pt;}
-        )
-    ;
-
-plainTerm2 returns [String result]
-{
-    result = null;
-    String v = null, p = null, s = null, el = null, il = null,
-    el1 = null, sl = null, el2 = null, il2 = null;
-}
-    :  
-        (   // xml is missing
-            v = variableStar() {result = v;}
-        |   p = placeHolder() {result = p;}
-        |    
-            (
-                s = headSymbol() {result = s;}
-                {System.out.println("headsymbol "+s);} 
-                ( 
-                    {LA(3) != WHERE && LA(3) != IF}? el = explicitTermList() {result += el;}
-                |   il = implicitPairList() {result += il;}
-                )?
-            |   {LA(3) != ALTERNATIVE}? el1 = explicitTermList() {result = el1;}
-            |   ( 
-                    sl = headSymbolList()  {result = sl;}
-                    ( 
-                        {LA(3) != WHERE && LA(3) != IF}? el2 = explicitTermList() {result += el2;}
-                    |   il2 = implicitPairList() {result += il2;} )?  
-                )
-            )
-        )
-    ;
-
-
-
 
 operator
     :
@@ -384,7 +347,7 @@ operatorArray
 
 keywordMakeEmptyList
     :
-        "make_empty" (LPAREN RPAREN)? 
+        MAKE_EMPTY (LPAREN RPAREN)? 
         {
             Main.selector.push("targetlexer");
             String tlCode = targetparser.goalLanguage();
@@ -395,7 +358,7 @@ keywordMakeEmptyList
 
 keywordMakeAddList
     :
-        "make_insert" LPAREN ID COMMA ID RPAREN
+        MAKE_INSERT LPAREN ID COMMA ID RPAREN
         {
             Main.selector.push("targetlexer");
             String tlCode = targetparser.goalLanguage();
@@ -406,7 +369,7 @@ keywordMakeAddList
 
 keywordMakeEmptyArray
     :
-        "make_empty" LPAREN ID RPAREN
+        MAKE_EMPTY LPAREN ID RPAREN
         {
             Main.selector.push("targetlexer");
             String tlCode = targetparser.goalLanguage();
@@ -417,7 +380,7 @@ keywordMakeEmptyArray
 
 keywordMakeAddArray
     :
-        "make_append" LPAREN ID COMMA ID RPAREN
+        MAKE_APPEND LPAREN ID COMMA ID RPAREN
         {
             Main.selector.push("targetlexer");
             String tlCode = targetparser.goalLanguage();
@@ -428,7 +391,7 @@ keywordMakeAddArray
 
 keywordFsym
     :
-        "fsym" 
+        FSYM 
         {
             Main.selector.push("targetlexer");
             String tlCode = targetparser.goalLanguage();
@@ -440,7 +403,7 @@ keywordFsym
 keywordMake
     :
         (
-            "make" ( LPAREN ( ID ( COMMA ID )* )? RPAREN )?
+            MAKE ( LPAREN ( ID ( COMMA ID )* )? RPAREN )?
             LBRACE
             {
                 Main.selector.push("targetlexer");
@@ -454,7 +417,7 @@ keywordMake
  
 keywordGetSlot
     :
-        "get_slot" LPAREN ID COMMA ID RPAREN
+        GET_SLOT LPAREN ID COMMA ID RPAREN
         {
             Main.selector.push("targetlexer");
             String tlCode = targetparser.goalLanguage();
@@ -465,7 +428,7 @@ keywordGetSlot
 
 keywordIsFsym
     :
-        "is_fsym" LPAREN ID RPAREN
+        IS_FSYM LPAREN ID RPAREN
        {
             Main.selector.push("targetlexer");
             String tlCode = targetparser.goalLanguage();
@@ -481,7 +444,7 @@ include
 keywordGetFunSym
     :
         (
-            "get_fun_sym" LPAREN ID RPAREN
+            GET_FUN_SYM LPAREN ID RPAREN
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -495,7 +458,7 @@ keywordGetFunSym
 keywordGetSubterm
     :
         (
-            "get_subterm" LPAREN ID COMMA ID RPAREN
+            GET_SUBTERM LPAREN ID COMMA ID RPAREN
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -509,7 +472,7 @@ keywordGetSubterm
 keywordCmpFunSym
     :
         (
-            "cmp_fun_sym" LPAREN ID COMMA ID RPAREN
+            CMP_FUN_SYM LPAREN ID COMMA ID RPAREN
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -522,7 +485,7 @@ keywordCmpFunSym
 keywordEquals
     :
         (
-            "equals" LPAREN ID COMMA ID RPAREN
+            EQUALS LPAREN ID COMMA ID RPAREN
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -535,7 +498,7 @@ keywordEquals
 keywordGetHead
     :
         (
-            "get_head" LPAREN ID RPAREN
+            GET_HEAD LPAREN ID RPAREN
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -548,7 +511,7 @@ keywordGetHead
 keywordGetTail
     :
         (
-            "get_tail" LPAREN ID RPAREN
+            GET_TAIL LPAREN ID RPAREN
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -561,7 +524,7 @@ keywordGetTail
 keywordIsEmpty
     :
         (
-            "is_empty" LPAREN ID RPAREN
+            IS_EMPTY LPAREN ID RPAREN
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -574,7 +537,7 @@ keywordIsEmpty
 keywordImplement
     :
         (
-            "implement"
+            IMPLEMENT
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -587,7 +550,7 @@ keywordImplement
 keywordGetElement
     :
         (
-            "get_element" LPAREN ID COMMA ID RPAREN
+            GET_ELEMENT LPAREN ID COMMA ID RPAREN
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -599,7 +562,7 @@ keywordGetElement
 
 keywordGetSize
     :
-        "get_size" LPAREN ID RPAREN
+            GET_SIZE LPAREN ID RPAREN
             {
                 Main.selector.push("targetlexer");
                 String tlCode = targetparser.goalLanguage();
@@ -672,15 +635,32 @@ typeArray
 
 class NewTomLexer extends Lexer;
 options {
-	k=2;
-    exportVocab = Tom;
-    charVocabulary = '\u0000'..'\uffff';
-	codeGenBitsetTestThreshold=20;
+	k=3; // default lookahead
+    charVocabulary = '\u0000'..'\uffff'; // each character can be read
     testLiterals = false;
 }
 
-
-
+tokens{
+    WHERE="where";
+    IF="if";
+    MAKE_EMPTY = "make_empty";
+    MAKE_INSERT = "make_insert";
+    MAKE_APPEND = "make_append";
+    FSYM = "fsym";
+    MAKE = "make";
+    GET_SLOT = "get_slot";
+    IS_FSYM = "is_fsym";
+    GET_FUN_SYM = "get_fun_sym";
+    GET_SUBTERM = "get_subterm";
+    CMP_FUN_SYM = "cmp_fun_sym";
+    EQUALS = "equals";
+    GET_HEAD = "get_head";
+    GET_TAIL = "get_tail";
+    IS_EMPTY = "is_empty";
+    IMPLEMENT = "implement";
+    GET_ELEMENT = "get_element";
+    GET_SIZE = "get_size";
+}
 
 LBRACE      :   '{' ;
 RBRACE      :   '}' ;
@@ -692,12 +672,15 @@ COMMA       :   ',' ;
 ARROW       :   "->";
 DOULEARROW  :   "=>"    ;
 ALTERNATIVE :   '|' ;
+AFFECT      :   ":="    ;
+DOUBLEEQ    :   "=="    ;
 COLON       :   ':' ;
 EQUAL       :   '=' ;
 AT          :   '@' ;
 STAR        :   '*' ;
 BACKQUOTE   :   '`' ;
-UNDERSCORE  :   '_' ;   
+UNDERSCORE  :   '_' ;  
+
 
 WS	:	(	' '
 		|	'\t'

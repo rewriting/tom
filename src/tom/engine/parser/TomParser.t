@@ -2335,11 +2335,11 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
 }
 {
   <BACKQUOTE_TERM> /* switch to BQ mode */
-  {
+      {
     addPreviousCode(list);
     firstTokenLine = getLine();
     ot = `OriginTracking(Name("Backquote"),getLine(),Name( currentFile));
-	}
+      }
   (
    tk=<BQ_LPAREN> { 
      tokenList.add(tk); 
