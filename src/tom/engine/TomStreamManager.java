@@ -109,9 +109,6 @@ public class TomStreamManager {
     } else if ( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.ml";
-    } else if ( ((Boolean)optionManager.getOptionValue("eCode")).booleanValue() ) {
-      inputSuffix = ".t";
-      outputSuffix = ".e";
     } else { // we should never ever be here normally...
       inputSuffix = ".t";
       outputSuffix = ".java";

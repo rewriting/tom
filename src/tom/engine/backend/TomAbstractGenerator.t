@@ -340,11 +340,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      EndLocalVariable() -> {
-        output.writeln(deep,"do");
-        return;
-      }
-      
       AssignMatchSubject(var@Variable[option=option],exp) -> {
         `buildAssignVar(deep, var, option, exp);
         return;

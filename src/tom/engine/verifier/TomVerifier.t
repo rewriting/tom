@@ -143,7 +143,7 @@ public class TomVerifier extends TomGenericPlugin {
             IfThenElse(TrueTL(),success,Nop()) -> {
               return traversal().genericTraversal(`success,this);
             }
-						UnamedBlock(concInstruction(CheckStamp(_),AbstractBlock(concInstruction(inst)))) -> {
+						UnamedBlock(concInstruction(CheckStamp(_),inst)) -> {
 							return traversal().genericTraversal(`inst,this);
 						}
 						CompiledPattern(patterns,inst) -> {

@@ -25,8 +25,6 @@
   constructor(Instruction,MatchingCondition,MatchingCondition(<lhs(TomTerm)>,<rhs(TomTerm)>)),
   constructor(Instruction,TypedEqualityCondition,TypedEqualityCondition(<tomType(TomType)>,<lhs(TomTerm)>,<rhs(TomTerm)>)),
   constructor(Instruction,EqualityCondition,EqualityCondition(<lhs(TomTerm)>,<rhs(TomTerm)>)),
-  constructor(Instruction,LocalVariable,LocalVariable),
-  constructor(Instruction,EndLocalVariable,EndLocalVariable),
   constructor(Instruction,MakeFunctionBegin,MakeFunctionBegin(<astName(TomName)>,<subjectListAST(TomTerm)>)),
   constructor(Instruction,MakeFunctionEnd,MakeFunctionEnd),
   constructor(Instruction,CheckStamp,CheckStamp(<variable(TomTerm)>)),

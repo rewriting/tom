@@ -401,15 +401,6 @@ public class TomBase {
     return false;
   }
 
-  /*
-    protected TomTerm getAnnotedVariable(ConstraintList constraintList) {
-    %match(ConstraintList constraintList) {
-    concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
-    }
-    return null;
-    }
-  */
-
   protected TomTerm getAssignToVariable(ConstraintList constraintList) {
     %match(ConstraintList constraintList) {
 	    concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }

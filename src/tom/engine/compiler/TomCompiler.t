@@ -269,23 +269,12 @@ public class TomCompiler extends TomGenericPlugin {
                 //}
 
               InstructionList l;
-              if(((Boolean)getOptionManager().getOptionValue("eCode")).booleanValue()) {
-                l = `concInstruction(
-                                     makeFunctionBeginAST,
-                                     LocalVariable(),
-                                     EndLocalVariable(),
-                                     matchAST,
-                                     buildAST,
-                                     MakeFunctionEnd()
-                                     );
-              } else {
-                l = `concInstruction(
-                                     makeFunctionBeginAST,
-                                     matchAST,
-                                     buildAST,
-                                     MakeFunctionEnd()
-                                     );
-              }
+              l = `concInstruction(
+                                   makeFunctionBeginAST,
+                                   matchAST,
+                                   buildAST,
+                                   MakeFunctionEnd()
+                                   );
             
               return preProcessingInstruction(`AbstractBlock(l));
             }

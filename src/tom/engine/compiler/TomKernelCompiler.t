@@ -117,7 +117,7 @@ public class TomKernelCompiler extends TomBase {
                  * return the compiled Match construction
                  */
               InstructionList astAutomataList = automataListCompileMatchingList(automataList);
-              Instruction astAutomata = collectVariableFromSubjectList(`l1,1,rootpath,`AbstractBlock(astAutomataList));
+              Instruction astAutomata = `collectVariableFromSubjectList(l1,1,rootpath,AbstractBlock(astAutomataList));
               return `CompiledMatch(astAutomata, optionList);
             }
               
@@ -150,7 +150,7 @@ public class TomKernelCompiler extends TomBase {
         Expression source = `Cast(variableType,TomTermToExpression(subjectVar));
         Instruction checkStamp = `CheckStamp(variable);
           // the UnamedBlock encapsulation is needed for Caml
-        return `Let(variable,source,UnamedBlock(concInstruction(checkStamp,body)));
+        return `Let(variable,source,AbstractBlock(concatInstruction(checkStamp,body)));
       }
 
       manyTomList(subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_),tail) -> {
@@ -161,15 +161,19 @@ public class TomKernelCompiler extends TomBase {
         TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType, concConstraint());
         Expression source = `TomTermToExpression(subjectVar);
         Instruction checkStamp = `CheckStamp(variable);
-        return `Let(variable,source,UnamedBlock(concInstruction(checkStamp,body)));
+        return `Let(variable,source,AbstractBlock(concatInstruction(checkStamp,body)));
       }
-
-      manyTomList(subjectVar,_) -> {
-        throw new TomRuntimeException("collectVariableFromSubjectList: strange term: " + `subjectVar);
-      }
-
     }
-    return `Nop();
+    throw new TomRuntimeException("collectVariableFromSubjectList: strange term: " + `subjectList);
+  }
+
+  private InstructionList concatInstruction(Instruction i1, Instruction i2) {
+    %match(Instruction i1, Instruction i2) {
+      AbstractBlock(l1), AbstractBlock(l2) -> { return `concInstruction(l1*,l2*); }
+      AbstractBlock(l1), y -> { return `concInstruction(l1*,y); }
+      x, AbstractBlock(l2) -> { return `concInstruction(x,l2*); }
+      x, y -> { return `concInstruction(x,y); }
+    }
   }
 
     /*
