@@ -58,7 +58,7 @@ public class PolyTraveler2 {
     Expression var = `variable("X");
     Expression res = `mult(plus(var,zero()),one());
     jjtraveler.Visitor v = new SimplifyPlus();
-    //jjtraveler.Visitor bu = new jjtraveler.BottomUp(v);
+    //jjtraveler.Visitor bu = new jjtraveler.BottomUp(new jjtraveler.Try(v));
     jjtraveler.Visitor bu = new jjtraveler.OnceBottomUp(v);
     try {
       System.out.println(" bu.visit(" + res + ")");
@@ -77,7 +77,7 @@ public class PolyTraveler2 {
     }
     
     public poly.expression.types.Expression visit_Expression(poly.expression.types.Expression arg) throws jjtraveler.VisitFailure { 
-      System.out.println("arg = " + arg);
+      //System.out.println("arg = " + arg);
       %match(Expression arg) {
         exp(zero())    -> { return `one(); }
         plus(zero(),x) -> { return `x; }
@@ -87,9 +87,8 @@ public class PolyTraveler2 {
         mult(zero(),_) -> { return `zero(); }
         mult(_,zero()) -> { return `zero(); }
       }
-      System.out.println("default: " + arg);
+      //System.out.println("default: " + arg);
       //return arg;
-      //return (poly.expression.types.Expression)any.visit(arg);
       throw new jjtraveler.VisitFailure();
     }
     
