@@ -6,7 +6,7 @@ import myadt.*;
 public class AddressBook3 {
   private HashSet book;
  
- %typeint
+  %include {int.tom}
  
  %typeterm Date{
   implement { Date }

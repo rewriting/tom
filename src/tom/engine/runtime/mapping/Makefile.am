@@ -9,7 +9,7 @@ stabledir 	= $(top_srcdir)/stable/jtom/runtime/mapping
 
 JAVAROOT        = ${top_builddir}/src/
 
-MAPPING 	= dom.tom
+MAPPING 	= dom.tom charlist.tom int.tom double.tom string.tom
 EXTRA_DIST 	= ${MAPPING}
 CLEANFILES 	= 
 

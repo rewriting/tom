@@ -26,7 +26,7 @@ public class domtomTest {
   public void run() {
     try {		
       System.out.println("Debut des tests ");
-      //Tests sur le document
+        /*Tests sur le document*/
       System.out.println("\nTest de nouveau document :");
       dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
       dom.appendChild(dom.createElement("Test"));
@@ -38,7 +38,7 @@ public class domtomTest {
       }
       System.out.println("ElementNode : "+root);
 
-      //Creation d'un document XML :
+        /*Creation d'un document XML :*/
       System.out.println("\nTest de creation : ");
 
 
@@ -58,8 +58,8 @@ public class domtomTest {
                             <SousFils2></SousFils2>
                             </Fils1>));
       System.out.println(root);
-
-      //Matching du document
+      */
+        /*Matching du document
       System.out.println("\nTest de matching : ");
       %match(TNode root) {
         <_><Fils1 At1=val></Fils1></_> -> {
@@ -77,7 +77,7 @@ public class domtomTest {
       System.out.println("\nTest de l'ordre des attributs");
       %match(TNode root) {
               <_><Fils1 Bt1=val At1=val  ></Fils1></_> -> {
-           //<_><Fils1 At1=val Bt1=val  ></Fils1></_> -> {
+             /*<_><Fils1 At1=val Bt1=val  ></Fils1></_> -> {*/
            System.out.println("ordre ok : "+val);
          }
       }

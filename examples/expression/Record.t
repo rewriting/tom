@@ -1,7 +1,7 @@
 public class Record { 
 
-  %typeint
-  %typestring
+  %include {int.tom}
+  %include {string.tom}
 
   %typeterm Exp {
     implement { Exp }

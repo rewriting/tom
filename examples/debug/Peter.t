@@ -1,5 +1,5 @@
 public class Peter {
-  %typeint
+  %include {int.tom}
 
   public final static void main(String[] args) {
     new Peter().run();

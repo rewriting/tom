@@ -1,6 +1,6 @@
 public class Jstring {
 
-  %typestring
+  %include {string.tom}
 
   public final static void main(String[] args) {
     Jstring test = new Jstring();
