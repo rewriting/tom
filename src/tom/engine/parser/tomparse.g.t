@@ -761,7 +761,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             term = unamedVariableOrTermStringIdentifier[optionListAnno2]
         )
         {
-            if (varStar==false)
+            if (!varStar)
             {
                 list.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
@@ -927,7 +927,7 @@ implicitTermList [LinkedList list] returns [boolean result] throws TomException
             (
                 term = annotedTerm { list.add(term); }
                 (
-                    TOM_COMMA { text.append(","); }
+                    COMMA { text.append(","); }
                     term = annotedTerm { list.add(term); }
                 )*
             )?
@@ -948,7 +948,8 @@ xmlChilds [LinkedList list] returns [boolean result] throws TomException
 }
     :
         (
-            (implicitTermList[null]) => result = implicitTermList[childs]
+            //(implicitTermList[null]) => 
+            {LA(1) == LBRACKET}? result = implicitTermList[childs]
         |   result = xmlTermList[childs]
         )
         {

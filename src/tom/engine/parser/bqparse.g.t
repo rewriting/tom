@@ -362,19 +362,142 @@ bqTermShared returns [TomTerm result]
     ;
 
 // this rule permit to parse some terms allowed in a `xml() construct
-bqTermForXml returns [TomTerm result]
+bqTermForXml[TomList context] returns [TomTerm result]
 {
     result = null;
+    TomList compositeList = null;
     String s;
 }
     :
-        result = bqTermShared
-    |   s = targetPlusShared
-        {
-            result = `TargetLanguageToTomTerm(ITL(s));
-        }
+        (     
+            {LA(2) == BQ_STAR}?  // ambiguity with two following alternatives
+            i1:BQ_ID BQ_STAR 
+            {
+                String name = i1.getText();
+                result = `VariableStar(
+                    concOption(
+                        OriginTracking(
+                            Name(name), 
+                            i1.getLine(), 
+                            Name(currentFile())
+                        )
+                    ),
+                    Name(name),
+                    TomTypeAlone("unknown type"),
+                    concConstraint()
+                );
+            }
+            
+        |
+            (BQ_ID (BQ_WS)* BQ_LPAREN) =>  // ambiguity with the following alternative
+            // a simple lookahead does not suffy because of the white spaces
+            i2:BQ_ID ( w:BQ_WS )*
+            BQ_LPAREN 
+            ( options{greedy=true;}: BQ_WS )* 
+            ( compositeList = bqTermForXmlList[context])?//[blockList] )? 
+            BQ_RPAREN 
+            {
+                //if(blockList.size() > 0) {
+                if(!compositeList.isEmpty()){
+//                    TomList compositeList = makeCompositeList(blockList);
+                    
+                    result = `Composite(
+                        concTomTerm(
+                            BackQuoteAppl(
+                                concOption(
+                                    OriginTracking(
+                                        Name(i2.getText()), 
+                                        i2.getLine(), 
+                                        Name(currentFile())
+                                    )
+                                ),
+                                Name(i2.getText()),
+                                compositeList
+                            )
+                        )
+                    );
+                }
+                else {
+                    result = `Composite(concTomTerm(BackQuoteAppl(
+                                concOption(
+                                    Constructor(concTomName(Name(i2.getText()))),
+                                    OriginTracking(
+                                        Name(i2.getText()), 
+                                        i2.getLine(), 
+                                        Name(currentFile())
+                                    )
+                                ),
+                                Name(i2.getText()),
+                                emptyTomList()
+                            ))
+                    );
+                }
+            }
+        
+     
+        |   i3:BQ_ID 
+            {
+                result = `BackQuoteAppl(
+                    concOption(
+                        OriginTracking(
+                            Name(i3.getText()), 
+                            i3.getLine(), 
+                            Name(currentFile())
+                        )
+                    ),
+                    Name(i3.getText()),
+                    concTomTerm()
+                );
+            }
+        
+        |   BQ_LPAREN 
+            ( options{greedy = true;}: BQ_WS )*
+            ( compositeList = bqTermForXmlList[context])?//[blockList] )?  
+            BQ_RPAREN 
+            {
+//                TomList compositeList = makeCompositeList(blockList);
+                compositeList = `concTomTerm(
+                    TargetLanguageToTomTerm(ITL("(")),
+                    compositeList*,
+                    TargetLanguageToTomTerm(ITL(")"))
+                );
+                
+                result = `Composite(compositeList);
+            }
+            
+        |   result = xmlTerm[context]
+
+        |   s = targetPlusShared
+            {
+                result = `TargetLanguageToTomTerm(ITL(s));
+            }
+        )
     ;
 
+bqTermForXmlList[TomList context] returns [TomList result]
+{
+    result = `emptyTomList();
+    TomTerm term = null;
+}
+    :
+        term = bqTermForXml[context]
+        {
+            result = (TomList) result.append(term);
+        }
+        ( 
+            (
+                c:BQ_COMMA 
+                ( 
+                    options{greedy = true;}: 
+                    BQ_WS 
+                )* 
+            )? 
+            term = bqTermForXml[context]
+            {
+                result = (TomList) result.append(term);
+            }   
+        )* 
+    ;
 
 targetPlusShared returns [String result]
 {
@@ -443,23 +566,29 @@ context returns [TomList result]
 {
     result = `emptyTomList();
     TomTerm term = null;
+    TomList emptyContext = `emptyTomList();
+    p("contex !!");
 }
     :
-        {LA(1) != XML_START}? term = bqTermForXml BQ_COMMA 
+       {p("one time");} {LA(1) != XML_START}? {p("one time");} term = bqTermShared//[emptyContext]
+        BQ_COMMA 
         ( options{greedy=true;}: BQ_WS )*
         {
             result = (TomList) result.append(removeComposite(term));
         }
         ( 
             options{greedy=true;}:
-            (
-                {LA(1) != XML_START}? term = bqTermForXml
+            ({p("one more time");}
+                {LA(1) != XML_START}? term = bqTermShared//ForXml[emptyContext]
                 {
                     result = (TomList) result.append(removeComposite(term));
                 }   
                 BQ_COMMA ( options{greedy=true;}: BQ_WS)*
             )
         )*
+        {
+            p(result.toString());
+        }
     ;
 
 xmlTerm [TomList context] 
@@ -467,11 +596,12 @@ returns [TomTerm result]
 {
     result = null;
     TomTerm term = null;
+    TomList attributeTomList = `emptyTomList();
+    TomList childrenTomList = `emptyTomList();
+    TomList value = null;
 
     LinkedList attributes = new LinkedList();
     LinkedList children = new LinkedList();
-    TomList attributeTomList = `emptyTomList();
-    TomList childrenTomList = `emptyTomList();
 }
     :
         (
@@ -528,11 +658,23 @@ returns [TomTerm result]
                     );
                 }
             }
-                       
-        |   term = bqTermForXml
+            
+        |   t:XML_TEXT BQ_LPAREN value = bqTermForXmlList[context] BQ_RPAREN
+            {
+                result = `BackQuoteAppl(
+                    emptyOptionList(),
+                    Name(Constants.TEXT_NODE),
+                    concTomTerm(
+                        context*,
+                        Composite(value*)
+                    )
+                );
+            }
+            
+     /*   |   term = bqTermForXml
             {
               result = term;
-            }
+            }*/
         )
     ;
 
@@ -620,18 +762,21 @@ termStringIdentifier returns [TomTerm result]
 xmlChildren [LinkedList children, TomList context]
 {
     TomTerm term = null;
+    TomList child =  null;
     
     LinkedList attributeList = new LinkedList();
     LinkedList childrenList = new LinkedList();    
 }
     :
         ( 
-            term = xmlTerm[context]
-            {
+           // term = xmlTerm[context]
+            child = bqTermForXmlList[context]
+           /* {
                 children.add(term);
-            }
+            }*/
             (options{greedy=true;}:BQ_WS)*
-        )*
+       // )*
+        )?
     ;
 
 
@@ -772,13 +917,17 @@ beginXmlBackquote returns [TomTerm result]
 
     :
         BQ_LPAREN (options{greedy=true;}:BQ_WS)* 
-        ( {LA(1) != XML_START}? contextList = context )?
-        (
+        ( {LA(1) != XML_START}?  ( context ) => contextList = context )?
+        {p(contextList.toString());}
+   /*     (
             term = xmlTerm[contextList]
             {
                 termList = (TomList) termList.append(term);
             }
         )*
+*/
+        termList = bqTermForXmlList[contextList]
+        
         BQ_RPAREN
         { 
             selector().pop();
