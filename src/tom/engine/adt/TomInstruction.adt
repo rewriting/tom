@@ -19,7 +19,7 @@
   constructor(Instruction,UnamedBlock,UnamedBlock(<instList(InstructionList)>)),
   constructor(Instruction,NamedBlock,NamedBlock(<blockName(str)>,<instList(InstructionList)>)),
   constructor(Instruction,RuleSet,RuleSet(<ruleList(TomRuleList)>,<orgTrack(Option)>)),
-  constructor(Instruction,Match,Match(<subjectList(TomTerm)>,<astPatternList(TomTerm)>,<option(OptionList)>)),
+  constructor(Instruction,Match,Match(<subjectList(TomTerm)>,<astPatternInstructionList(PatternInstructionList)>,<option(OptionList)>)),
   constructor(Instruction,CompiledMatch,CompiledMatch(<automataInst(Instruction)>,<option(OptionList)>)),
   constructor(Instruction,CompiledPattern,CompiledPattern(<patternList(TomList)>,<automataInst(Instruction)>)),
   constructor(Instruction,MatchingCondition,MatchingCondition(<lhs(TomTerm)>,<rhs(TomTerm)>)),
@@ -30,6 +30,10 @@
   constructor(Instruction,MakeFunctionBegin,MakeFunctionBegin(<astName(TomName)>,<subjectListAST(TomTerm)>)),
   constructor(Instruction,MakeFunctionEnd,MakeFunctionEnd),
   constructor(Instruction,CheckStamp,CheckStamp(<variable(TomTerm)>)),
-  list(InstructionList,Instruction)
+  list(InstructionList,Instruction),
+
+  constructor(Instruction,RawAction,RawAction(<astInstruction(Instruction)>)),
+  constructor(Instruction,TypedAction,TypedAction(<astInstruction(Instruction)>,<positivePatternList(PatternList)>,<negativePatternList(PatternList)>))
+
   ])
 ]

@@ -419,6 +419,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      TypedAction[astInstruction=inst] -> {
+        generateInstruction(deep,inst);
+        return;
+      }
+
       /*
       Action(l) -> {
         generateList(deep,l);

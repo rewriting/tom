@@ -30,23 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import jtom.adt.tomsignature.TomSignatureFactory;
-import jtom.adt.tomsignature.types.Constraint;
-import jtom.adt.tomsignature.types.ConstraintList;
-import jtom.adt.tomsignature.types.Declaration;
-import jtom.adt.tomsignature.types.Expression;
-import jtom.adt.tomsignature.types.Instruction;
-import jtom.adt.tomsignature.types.InstructionList;
-import jtom.adt.tomsignature.types.NameList;
-import jtom.adt.tomsignature.types.Option;
-import jtom.adt.tomsignature.types.OptionList;
-import jtom.adt.tomsignature.types.SlotList;
-import jtom.adt.tomsignature.types.TargetLanguage;
-import jtom.adt.tomsignature.types.TomList;
-import jtom.adt.tomsignature.types.TomName;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.adt.tomsignature.types.TomType;
-import jtom.adt.tomsignature.types.TomTypeList;
+import jtom.adt.tomsignature.types.*;
 import jtom.xml.Constants;
 import aterm.ATerm;
 
@@ -152,6 +136,17 @@ public class ASTFactory {
       ATerm elt = (ATerm)argumentList.get(i);
       TomName term = (TomName) elt;
       list = tsf().makeNameList(term,list);
+    }
+    return list;
+  }
+
+  public PatternInstructionList makePatternInstructionList(List argumentList) {
+    PatternInstructionList list = tsf().makePatternInstructionList();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)argumentList.get(i);
+      PatternInstruction term;
+      term = (PatternInstruction)elt;
+      list = tsf().makePatternInstructionList(term,list);
     }
     return list;
   }

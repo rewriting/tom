@@ -36,6 +36,7 @@ import jtom.adt.tomsignature.types.Instruction;
 import jtom.adt.tomsignature.types.NameList;
 import jtom.adt.tomsignature.types.Option;
 import jtom.adt.tomsignature.types.OptionList;
+import jtom.adt.tomsignature.types.PatternInstructionList;
 import jtom.adt.tomsignature.types.SlotList;
 import jtom.adt.tomsignature.types.SymbolList;
 import jtom.adt.tomsignature.types.TomList;
@@ -185,9 +186,9 @@ public class TomSyntaxChecker extends TomChecker {
             }
           } else if(subject instanceof Instruction) {
             %match(Instruction subject) {
-              Match(SubjectList(matchArgsList), PatternList(patternActionList), list) -> {
+              Match(SubjectList(matchArgsList), patternInstructionList, list) -> {
                 /*  TOM MATCH STRUCTURE*/
-                `verifyMatch(matchArgsList, patternActionList, list);
+                `verifyMatch(matchArgsList, patternInstructionList, list);
                 return false;
               }
               RuleSet(list, orgTrack) -> {
@@ -529,7 +530,7 @@ public class TomSyntaxChecker extends TomChecker {
   /*
    * Given a MatchConstruct's subject list and pattern-action list
    */
-  private void verifyMatch(TomList subjectList, TomList patternList, OptionList list) {
+  private void verifyMatch(TomList subjectList, PatternInstructionList patternInstructionList, OptionList list) {
     currentTomStructureOrgTrack = findOriginTracking(list);
     ArrayList typeMatchArgs = new ArrayList(),
       nameMatchArgs = new ArrayList();
@@ -556,8 +557,8 @@ public class TomSyntaxChecker extends TomChecker {
     }
     int nbExpectedArgs = typeMatchArgs.size();
     // we now compare pattern to its definition
-    %match(TomList patternList) {
-      concTomTerm(_*, PatternAction[termList=TermList(terms)], _*) -> {
+    %match(PatternInstructionList patternInstructionList) {
+      concPatternInstruction(_*, PatternInstruction[pattern=Pattern(terms)], _*) -> {
         // control each pattern vs the match definition
         `verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
       }

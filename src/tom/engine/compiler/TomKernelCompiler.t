@@ -26,18 +26,7 @@
 package jtom.compiler;
 
 import jtom.TomBase;
-import jtom.adt.tomsignature.types.ConstraintList;
-import jtom.adt.tomsignature.types.Expression;
-import jtom.adt.tomsignature.types.Instruction;
-import jtom.adt.tomsignature.types.InstructionList;
-import jtom.adt.tomsignature.types.OptionList;
-import jtom.adt.tomsignature.types.TomList;
-import jtom.adt.tomsignature.types.TomName;
-import jtom.adt.tomsignature.types.TomNumberList;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.adt.tomsignature.types.TomType;
-import jtom.adt.tomsignature.types.TomTypeList;
+import jtom.adt.tomsignature.types.*;
 import jtom.exception.TomRuntimeException;
 import jtom.tools.SymbolTable;
 import tom.library.traversal.Replace1;
@@ -81,8 +70,7 @@ public class TomKernelCompiler extends TomBase {
       public ATerm apply(ATerm subject) {
         if(subject instanceof Instruction) {
           %match(Instruction subject) {
-            Match(SubjectList(l1),PatternList(l2), optionList)  -> {
-              OptionList newOptionList = `concOption(TomTermToOption(PatternList(l2)),optionList*);
+            Match(SubjectList(l1),patternInstructionList, optionList)  -> {
 							TomList patternList = null;
               Instruction actionInst = null;
               TomList automataList = empty();
@@ -95,10 +83,10 @@ public class TomKernelCompiler extends TomBase {
                  * build a matching automata
                  */
               int actionNumber = 0;
-              while(!`l2.isEmpty()) {
+              while(!`patternInstructionList.isEmpty()) {
                 actionNumber++;
-                TomTerm pa = `l2.getHead();
-                patternList = pa.getTermList().getTomList();
+                PatternInstruction pa = `patternInstructionList.getHead();
+                patternList = pa.getPattern().getTomList();
                 actionInst = pa.getAction();
                 if(patternList==null || actionInst==null) {
                   System.out.println("TomKernelCompiler: null value");
@@ -122,7 +110,7 @@ public class TomKernelCompiler extends TomBase {
                   //System.out.println("automata = " + automata);
                   
                 automataList = append(automata,automataList);
-                `l2 = `l2.getTail();
+                `patternInstructionList = `patternInstructionList.getTail();
               }
                 
                 /*
@@ -130,7 +118,7 @@ public class TomKernelCompiler extends TomBase {
                  */
               InstructionList astAutomataList = automataListCompileMatchingList(automataList);
               Instruction astAutomata = collectVariableFromSubjectList(`l1,1,rootpath,`AbstractBlock(astAutomataList));
-              return `CompiledMatch(astAutomata, newOptionList);
+              return `CompiledMatch(astAutomata, optionList);
             }
               
               // default rule

@@ -27,10 +27,7 @@
   constructor(TomTerm,RecordAppl,RecordAppl(<option(OptionList)>,<nameList(NameList)>,<args(TomList)>,<constraints(ConstraintList)>)),
   constructor(TomTerm,PairSlotAppl,PairSlotAppl(<slotName(TomName)>,<appl(TomTerm)>)),
   constructor(TomTerm,SubjectList,SubjectList(<tomList(TomList)>)),
-  constructor(TomTerm,PatternList,PatternList(<tomList(TomList)>)),
-  constructor(TomTerm,TermList,TermList(<tomList(TomList)>)),
   constructor(TomTerm,Term,Term(<tomTerm(TomTerm)>)),
-  constructor(TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<action(Instruction)>,<option(OptionList)>)),
   constructor(TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>)),
   constructor(TomTerm,Ref,Ref(<tomTerm(TomTerm)>)),
   
@@ -48,6 +45,10 @@
   
   constructor(TomTerm,TomInclude,TomInclude(<tomList(TomList)>)),
   constructor(TomTerm,Automata,Automata(<option(OptionList)>,<patternList(TomList)>,<numberList(TomNumberList)>,<inst(Instruction)>)),
+  constructor(PatternInstruction,PatternInstruction,PatternInstruction(<pattern(Pattern)>,<action(Instruction)>,<option(OptionList)>)),
+  constructor(Pattern,Pattern,Pattern(<tomList(TomList)>)),
+  list(PatternInstructionList,PatternInstruction),
+  list(PatternList,Pattern),
   list(TomList,TomTerm)
  ])
 ]

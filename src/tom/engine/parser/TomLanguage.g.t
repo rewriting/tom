@@ -190,19 +190,19 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
     StringBuffer debugKey = new StringBuffer(currentFile() + ot.getLine());
 
     LinkedList argumentList = new LinkedList();
-    LinkedList patternActionList = new LinkedList();
+    LinkedList patternInstructionList = new LinkedList();
 }
 	:	(
             LPAREN matchArguments[argumentList] RPAREN 
             LBRACE 
             ( 
-                patternAction[patternActionList,debugKey] 
+                patternInstruction[patternInstructionList,debugKey] 
             )* 
             t:RBRACE 
             { 
                 result = `Match(
                     SubjectList(ast().makeList(argumentList)),
-                    PatternList(ast().makeList(patternActionList)),
+                    ast().makePatternInstructionList(patternInstructionList),
                     optionList
                 );
                 
@@ -237,7 +237,7 @@ matchArgument [LinkedList list]
         }        
     ;
 
-patternAction [LinkedList list, StringBuffer debugKey] throws TomException
+patternInstruction [LinkedList list, StringBuffer debugKey] throws TomException
 {
     LinkedList matchPatternList = new LinkedList();
     LinkedList listOfMatchPatternList = new LinkedList();
@@ -317,9 +317,9 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
                         OriginalText(Name(patternText))
                     );
                     
-                    list.add(`PatternAction(
-                            TermList(patterns),
-                            AbstractBlock(ast().makeInstructionList(blockList)),
+                    list.add(`PatternInstruction(
+                            Pattern(patterns),
+                            RawAction(AbstractBlock(ast().makeInstructionList(blockList))),
                             optionList)
                     );
                 }

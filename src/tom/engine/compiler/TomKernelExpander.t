@@ -30,18 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import jtom.TomBase;
-import jtom.adt.tomsignature.types.ConstraintList;
-import jtom.adt.tomsignature.types.Instruction;
-import jtom.adt.tomsignature.types.InstructionList;
-import jtom.adt.tomsignature.types.Option;
-import jtom.adt.tomsignature.types.OptionList;
-import jtom.adt.tomsignature.types.TargetLanguage;
-import jtom.adt.tomsignature.types.TomList;
-import jtom.adt.tomsignature.types.TomName;
-import jtom.adt.tomsignature.types.TomRule;
-import jtom.adt.tomsignature.types.TomSymbol;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.adt.tomsignature.types.TomType;
+import jtom.adt.tomsignature.types.*;
 import jtom.exception.TomRuntimeException;
 import jtom.tools.SymbolTable;
 import tom.library.traversal.Replace2;
@@ -191,12 +180,45 @@ public class TomKernelExpander extends TomBase {
                return `TypedEqualityCondition(type,newLhs,newRhs);
              }
 
-            context, Match(tomSubjectList,patternList, option) -> {
+            context, Match(tomSubjectList,patternInstructionList, option) -> {
                //System.out.println("tomSubjectList = " + tomSubjectList);
                TomTerm newSubjectList = expandVariable(`context,`tomSubjectList);
                //System.out.println("newSubjectList = " + newSubjectList);
-               TomTerm newPatternList = expandVariable(newSubjectList,`patternList);
-               return `Match(newSubjectList,newPatternList, option);
+               PatternInstructionList newPatternInstructionList = expandVariablePatternInstructionList(newSubjectList,`patternInstructionList);
+
+               /*
+                * expansion of RawAction into TypedAction
+                */
+               PatternInstructionList typedActionPatternInstructionList = `concPatternInstruction();
+               PatternList negativePattern = `concPattern();
+               while(!newPatternInstructionList.isEmpty()) {
+                 PatternInstruction head = newPatternInstructionList.getHead();
+                 %match(PatternInstruction head) {
+                   PatternInstruction(pattern,RawAction(actionInst),piOption) -> {
+                     Instruction typedAction = `TypedAction(actionInst,concPattern(pattern),negativePattern);
+                     typedActionPatternInstructionList = (PatternInstructionList) typedActionPatternInstructionList.append(`PatternInstruction(pattern,typedAction,piOption));
+                     negativePattern = (PatternList) negativePattern.append(pattern);
+                   }
+                 }
+                 newPatternInstructionList = newPatternInstructionList.getTail();
+               }
+
+               return `Match(newSubjectList,typedActionPatternInstructionList, option);
+             }
+          } // end match
+        } else if(subject instanceof Pattern) {
+          %match(TomTerm contextSubject, Pattern subject) {
+            SubjectList(l1), Pattern(subjectList) -> {
+               //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
+                
+               // process a list of subterms
+               ArrayList list = new ArrayList();
+               while(!`subjectList.isEmpty()) {
+                 list.add(expandVariable(`l1.getHead(), `subjectList.getHead()));
+                 `subjectList = `subjectList.getTail();
+                 `l1 = `l1.getTail();
+               }
+               return `Pattern(getAstFactory().makeList(list));
              }
           } // end match
         } else if(subject instanceof TomTerm) {
@@ -288,18 +310,6 @@ public class TomKernelExpander extends TomBase {
                return `Variable(option,Name(strName),localType,concConstraint());
              }
 
-            SubjectList(l1), TermList(subjectList) -> {
-               //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
-                
-               // process a list of subterms
-               ArrayList list = new ArrayList();
-               while(!`subjectList.isEmpty()) {
-                 list.add(expandVariable(`l1.getHead(), `subjectList.getHead()));
-                 `subjectList = `subjectList.getTail();
-                 `l1 = `l1.getTail();
-               }
-               return `TermList(getAstFactory().makeList(list));
-             }
           } // end match
         } // end instanceof TomTerm
           //System.out.println("TomKernelCompiler.expandVariable default:\n\t" + subject );
@@ -319,6 +329,10 @@ public class TomKernelExpander extends TomBase {
 
   protected ConstraintList expandVariableConstraintList(TomTerm contextSubject, ConstraintList subject) {
     return (ConstraintList) replace_expandVariable.apply(subject,contextSubject); 
+  }
+
+  protected PatternInstructionList expandVariablePatternInstructionList(TomTerm contextSubject, PatternInstructionList subject) {
+    return (PatternInstructionList) replace_expandVariable.apply(subject,contextSubject); 
   }
 
   private TomType getTypeFromVariableList(TomName name, TomList list) {

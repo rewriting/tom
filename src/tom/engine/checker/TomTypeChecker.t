@@ -35,15 +35,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import jtom.TomMessage;
-import jtom.adt.tomsignature.types.Instruction;
-import jtom.adt.tomsignature.types.InstructionList;
-import jtom.adt.tomsignature.types.Option;
-import jtom.adt.tomsignature.types.TomList;
-import jtom.adt.tomsignature.types.TomName;
-import jtom.adt.tomsignature.types.TomRule;
-import jtom.adt.tomsignature.types.TomRuleList;
-import jtom.adt.tomsignature.types.TomTerm;
-import jtom.adt.tomsignature.types.TomType;
+import jtom.adt.tomsignature.types.*;
 import tom.library.traversal.Collect1;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
@@ -107,9 +99,9 @@ public class TomTypeChecker extends TomChecker {
         public boolean apply(ATerm term) {
           if(term instanceof Instruction) {
             %match(Instruction term) {
-              Match(_, PatternList(list), oplist) -> {  
+              Match(_, patternInstructionList, oplist) -> {  
                 currentTomStructureOrgTrack = findOriginTracking(`oplist);
-                verifyMatchVariable(`list);
+                verifyMatchVariable(`patternInstructionList);
                 return false;
               }
               RuleSet(list, orgTrack) -> {
@@ -125,15 +117,15 @@ public class TomTypeChecker extends TomChecker {
     traversal().genericCollect(expandedTerm, collectAndVerify);
   } //checkTypeInference
   
-  private void verifyMatchVariable(TomList patternList) {
-    while(!patternList.isEmpty()) {
-      TomTerm pa = patternList.getHead();
-      TomTerm patterns = pa.getTermList();
+  private void verifyMatchVariable(PatternInstructionList patternInstructionList) {
+    while(!patternInstructionList.isEmpty()) {
+      PatternInstruction pa = patternInstructionList.getHead();
+      Pattern pattern = pa.getPattern();
         // collect variables
       ArrayList variableList = new ArrayList();
-      collectVariable(variableList, patterns);      
+      collectVariable(variableList, pattern);      
       verifyVariableTypeListCoherence(variableList);
-      patternList = patternList.getTail();
+      patternInstructionList = patternInstructionList.getTail();
     }
   } //verifyMatchVariable
   

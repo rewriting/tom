@@ -33,12 +33,18 @@ public class TestPeano extends TestCase {
   
   %op term suc(pred:term) {
     fsym { fsuc }
+    get_slot(pred,t) { ((ATermAppl)t).getArgument(0)  }
     make(t) { factory.makeAppl(fsuc,t) }
   }
 
   %op term plus1(term,term) {
     fsym { }
     make(t1,t2) { plus1(t1,t2) }
+  }
+
+  %op term plus2(term,term) {
+    fsym { }
+    make(t1,t2) { plus2(t1,t2) }
   }
 
   %op term fib1(term) {

@@ -95,7 +95,7 @@ public class TomVerifier extends TomGenericPlugin {
         Collection store = (Collection)astore;
         if (subject instanceof Instruction) {
           %match(Instruction subject) {
-            CompiledMatch(automata, (_*,TomTermToOption(PatternList(_)),_*))  -> {
+            CompiledMatch(automata, _)  -> {
               store.add(subject);
             }
             
