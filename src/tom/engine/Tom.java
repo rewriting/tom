@@ -234,7 +234,9 @@ public class Tom {
         startChrono();
         tomChecker.checkSyntax(parsedTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM syntax checking phase " + getChrono());
+        if(Flags.verbose) {
+          System.out.println("TOM syntax checking phase " + getChrono());
+        }
         int nbError = tomChecker.getNumberFoundError();
         if(nbError > 0 ) {
           for(int i=0 ; i<nbError ; i++) {
@@ -254,17 +256,21 @@ public class Tom {
         TomTerm context = null;
         expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
         tomChecker.checkVariableCoherence(expandedTerm);
-        expandedTerm  = tomKernelExpander.expandMatchPattern(expandedTerm);
-          //tomChecker.checkMatchPattern(expandedTerm);
+        if(Flags.debugMode) {
+          expandedTerm  = tomKernelExpander.expandMatchPattern(expandedTerm);
+        }
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM expansion phase " + getChrono());
+        if(Flags.verbose) {
+          System.out.println("TOM expansion phase " + getChrono());
+        }
         if(Flags.intermediate) {
           generateOutput(fileName + expandedSuffix,expandedTerm);
           generateOutput(fileName + expandedTableSuffix,symbolTable.toTerm());
         }
 
-        if (Flags.debugMode)
+        if (Flags.debugMode) {
           generateOutput(fileName + debugMatchTableSuffix, tomParser.getStructTable());
+        }
                 
         if(Flags.demo) {
           statistics.initInfoParser();
@@ -328,8 +334,12 @@ public class Tom {
         compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
           //System.out.println("postProcessing =\n" + compiledTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM compilation phase " + getChrono());
-        if(Flags.intermediate) generateOutput(fileName + compiledSuffix,compiledTerm);
+        if(Flags.verbose) {
+          System.out.println("TOM compilation phase " + getChrono());
+        }
+        if(Flags.intermediate) {
+          generateOutput(fileName + compiledSuffix,compiledTerm);
+        }
 
         if (Flags.doOptimization) {
           TomOptimizer tomOptimizer = new TomOptimizer(environment);
@@ -349,7 +359,9 @@ public class Tom {
         tomGenerator.generate(out,defaultDeep,compiledTerm);
         writer.close();
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM generation phase " + getChrono());
+        if(Flags.verbose) {
+          System.out.println("TOM generation phase " + getChrono());
+        }
         if(Flags.demo) {
           statistics.initInfoCompiler();
           statistics.initInfoGenerator();
