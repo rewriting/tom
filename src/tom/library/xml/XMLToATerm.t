@@ -110,7 +110,7 @@ public class XMLToATerm {
   public Node convertToNode(String filename) {
     try {
       DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-      documentFactory.setValidating(true);
+      //documentFactory.setValidating(true);
       DocumentBuilder db = documentFactory.newDocumentBuilder();
       return db.parse(filename);
     } catch (SAXException e) {
