@@ -116,7 +116,6 @@ public class OutputCode {
         s = s1+s;
       }
       else {
-        s = s.trim();
         s = s.replace('\n', ' ');
           //System.out.println("Warning: Synchronization issue: Line: " + line + " versus LineCounter:" + lineCounter);
         length = 0;
