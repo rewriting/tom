@@ -27,7 +27,7 @@ bootinstall:
 	done
 
 TOMFLAGS =
-TOM = ${prefix}/bin/jtom
+TOM = ${top_builddir}/utils/jtom
 
 ATermToXML.java: ATermToXML.t $(JAVAROOT)/adt/TNode.tom
 	$(TOM) $(TOMFLAGS) $<

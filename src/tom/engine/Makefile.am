@@ -32,7 +32,7 @@ TomBase.java: TomBase.t $(JAVAROOT)/adt/TomSignature.tom
 
 # we use the last installed compiler to compile the current compiler
 TOMFLAGS = --noWarning
-TOM = ${prefix}/bin/jtom
+TOM = ${top_builddir}/utils/jtom
 
 %.java : %.t
 	$(TOM) $(TOMFLAGS) $*

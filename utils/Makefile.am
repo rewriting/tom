@@ -1,4 +1,4 @@
-EXTRA_DIST = jtom.sh.src jtom.vim jtom.bat jtom.sh adt-to-java.bat adt-to-java.sh
+EXTRA_DIST = jtom.sh.src jtom.vim jtom.bat jtom.sh adt-to-tom.bat adt-to-tom.sh
 
 bin_SCRIPTS = jtom jtom.stable jtom.src
 #noinst_SCRIPTS = jtom.stable jtom.src

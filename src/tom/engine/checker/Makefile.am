@@ -27,7 +27,7 @@ bootinstall :
 
 # we use the last installed compiler to compile the current compiler
 TOMFLAGS = --noDeclaration
-TOM = ${prefix}/bin/jtom
+TOM = ${top_builddir}/utils/jtom
 TomChecker.java: TomChecker.t $(JAVAROOT)/adt/TomSignature.tom
 	$(TOM) $(TOMFLAGS) $<
 

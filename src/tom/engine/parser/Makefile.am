@@ -45,6 +45,6 @@ bootinstall :
 
 # we use the last installed compiler to compile the current compiler
 TOMFLAGS = 
-TOM = ${prefix}/bin/jtom
+TOM = ${top_builddir}/utils/jtom
 TomBackQuoteParser.java: TomBackQuoteParser.t $(JAVAROOT)/adt/TomSignature.tom
 	$(TOM) $(TOMFLAGS) $<

@@ -28,6 +28,6 @@ bootinstall :
 	done
 
 TOMFLAGS = --noDeclaration
-TOM = ${prefix}/bin/jtom
+TOM = ${top_builddir}/utils/jtom
 TomFactory.java: TomFactory.t $(JAVAROOT)/adt/TomSignature.tom
 	$(TOM) $(TOMFLAGS) $<
