@@ -119,6 +119,7 @@
          destdir="${addressbook.dir}" 
          options="-I ${env.TOM_HOME}/share/jtom">
       <include name="**/*.t"/>
+			<exclude name="**/AddressBookVas.t"/>
     </tom>
     <!-- build java source -->
     <javac srcdir="${addressbook.dir}" destdir="${examples.dir}">
