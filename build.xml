@@ -100,8 +100,8 @@
   <!-- Define classpath for building stable and source  -->
   <path id="stable.classpath">
     <path refid="external.classpath"/>
-    <fileset dir="${stable.adt}"><!-- ADT jar files -->
-      <include name="*.jar"/>
+    <fileset dir="${stable.src}"><!-- ADT jar files -->
+      <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib}">
       <include name="*.jar"/>
