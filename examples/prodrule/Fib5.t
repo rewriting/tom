@@ -31,8 +31,8 @@ package prodrule;
 
 import aterm.*;
 import aterm.pure.*;
-import prodrule.fib3.*;
-import prodrule.fib3.types.*;
+import prodrule.fib5.fib.*;
+import prodrule.fib5.fib.types.*;
 //import java.util.*;
 
 class Fib5 {
@@ -40,14 +40,14 @@ class Fib5 {
 
     %vas {
 	// extension of adt syntax
-	module fib3
+	module fib
       
 	    public
 	    sorts Element
       
 	    abstract syntax
 	    Undef -> Element
-	    Nat( value:Int ) -> Element
+      Nat( value:Int ) -> Element
 	    Fib(arg:Int, val:Element) -> Element
 	    }
 
@@ -72,7 +72,7 @@ class Fib5 {
 	this.factory = factory;
     } 
 
-    public Factory getFib3Factory() {
+    public Factory getFibFactory() {
 	return factory;
     }
   

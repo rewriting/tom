@@ -49,7 +49,7 @@ public class TomSyntaxChecker extends TomChecker {
         System.out.println("TOM syntax Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
     } catch (Exception e) {
-      addError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      environment().messageError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
       return;
     }

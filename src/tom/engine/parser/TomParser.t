@@ -62,24 +62,17 @@ public class TomParser {
   private LinkedList debuggedStructureList;
   private String text="";
 
-  public static TomParser createParser(String fileName) {
+  public static TomParser createParser(String fileName) throws FileNotFoundException, IOException {
     return createParser(fileName,new HashSet(), new HashSet());
   }
   
-  public static TomParser createParser(String fileName, HashSet includedFileSet, HashSet alreadyParsedFiles) {
-    try {
+  public static TomParser createParser(String fileName, HashSet includedFileSet, HashSet alreadyParsedFiles) 
+    throws FileNotFoundException,IOException {
       File file = new File(fileName);
       InputStream input = new FileInputStream(file);
       byte inputBuffer[] = new byte[(int)file.length()+1];
       (new FileInputStream(file)).read(inputBuffer);
-      
       return new TomParser(input, inputBuffer, fileName, includedFileSet, alreadyParsedFiles);
-    } catch (FileNotFoundException e) {
-      TomEnvironment.getInstance().messageError(TomMessage.getString("FileNotFound"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    } catch (IOException e) {
-      TomEnvironment.getInstance().messageError(TomMessage.getString("IOException"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    }
-    return null;
   }
   
   private TomParser(InputStream input,
@@ -1401,10 +1394,17 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 				vasParams.add("--destdir");
 				vasParams.add(destDir);
 				packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
-        if(!packageName.equals("")) {
-          vasParams.add("--package");
-          vasParams.add(packageName);
+        String inputFileName = getInput().getInputFile().getName();
+        String inputFileNameWithoutExtension = inputFileName.substring(0, inputFileName.length() - getInput().getInputSuffix().length()).toLowerCase();
+        String subPackageName = "";
+        if(packageName.equals("")) {
+          subPackageName = inputFileNameWithoutExtension;
+        } else {
+          subPackageName = packageName + "." + inputFileNameWithoutExtension;
         }
+        vasParams.add("--package");
+        vasParams.add(subPackageName);
+
 				Object[] realParams = {
 											(String[]) vasParams.toArray(new String[vasParams.size()]),
 											new ByteArrayInputStream(vasCode.getBytes()),

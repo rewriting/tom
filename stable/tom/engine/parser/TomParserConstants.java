@@ -112,6 +112,25 @@ public interface TomParserConstants {
   int XML_TEXT = 102;
   int XML_COMMENT = 103;
   int XML_PROC = 104;
+  int TOM_OTHER = 105;
+  int BQ_SINGLE_LINE_COMMENT = 110;
+  int BQ_FORMAL_COMMENT = 111;
+  int BQ_MULTI_LINE_COMMENT = 112;
+  int BQ_LPAREN = 114;
+  int BQ_RPAREN = 115;
+  int BQ_STAR = 116;
+  int BQ_COMMA = 117;
+  int BQ_INTEGER = 118;
+  int BQ_IDENTIFIER = 119;
+  int BQ_MINUS_SIGN = 120;
+  int BQ_UNDERSCORE = 121;
+  int BQ_LETTER = 122;
+  int BQ_DIGIT = 123;
+  int BQ_STRING = 124;
+  int BQ_XML_TEXT = 125;
+  int BQ_XML_COMMENT = 126;
+  int BQ_XML_PROC = 127;
+  int BQ_OTHER = 128;
 
   int DEFAULT = 0;
   int IN_SINGLE_LINE_COMMENT = 1;
@@ -121,6 +140,10 @@ public interface TomParserConstants {
   int TOM_IN_SINGLE_LINE_COMMENT = 5;
   int TOM_IN_FORMAL_COMMENT = 6;
   int TOM_IN_MULTI_LINE_COMMENT = 7;
+  int BQ = 8;
+  int BQ_IN_SINGLE_LINE_COMMENT = 9;
+  int BQ_IN_FORMAL_COMMENT = 10;
+  int BQ_IN_MULTI_LINE_COMMENT = 11;
 
   String[] tokenImage = {
     "<EOF>",
@@ -228,6 +251,30 @@ public interface TomParserConstants {
     "\"#TEXT\"",
     "\"#COMMENT\"",
     "\"#PROCESSING-INSTRUCTION\"",
+    "<TOM_OTHER>",
+    "<token of kind 106>",
+    "<token of kind 107>",
+    "<token of kind 108>",
+    "\"/*\"",
+    "<BQ_SINGLE_LINE_COMMENT>",
+    "\"*/\"",
+    "\"*/\"",
+    "<token of kind 113>",
+    "\"(\"",
+    "\")\"",
+    "\"*\"",
+    "\",\"",
+    "<BQ_INTEGER>",
+    "<BQ_IDENTIFIER>",
+    "<BQ_MINUS_SIGN>",
+    "<BQ_UNDERSCORE>",
+    "<BQ_LETTER>",
+    "<BQ_DIGIT>",
+    "<BQ_STRING>",
+    "\"#TEXT\"",
+    "\"#COMMENT\"",
+    "\"#PROCESSING-INSTRUCTION\"",
+    "<BQ_OTHER>",
   };
 
 }

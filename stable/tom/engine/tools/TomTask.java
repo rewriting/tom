@@ -57,23 +57,19 @@ public abstract class TomTask extends TomBase {
   }
   
   protected void closeProcess() {
-    if ( checkNoErrors() ) {
+    if(!environment().hasError()) {
       finishProcess();
-    }
-  }
-  
-  public boolean checkNoErrors() {
-    return environment().checkNoErrors(name,
-                                       getInput().isEclipseMode(),
-                                       getInput().isWarningAll(),
-                                       getInput().isNoWarning());
+    } else {
+			environment().printAlertMessage(name);
+		}
   }
   
   public void finishProcess() {
       // Start next task
     if(nextTask != null) {
       if(!getInput().isEclipseMode()) {
-        environment().setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
+        // remove all warning (in command line only)
+        environment().setWarnings(tsf().makeTomAlertList());
       } 
       nextTask.startProcess();
     }
@@ -86,19 +82,5 @@ public abstract class TomTask extends TomBase {
   public String getName() {
     return name;
   }
-  
-  public void messageError(int errorLine,
-                           String fileName,
-                           String structInfo,
-                           int structInfoLine,
-                           String msg,
-                           Object[] msgArg,
-                           int level) {
-    environment().messageError(errorLine, fileName, structInfo, structInfoLine, msg, msgArg, level);
-  }
 
-  public void addError(String msg, String file, int line, int level) {
-    environment().addError(msg,file,line,level);
-  }
-  
 }

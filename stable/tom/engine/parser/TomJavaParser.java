@@ -36,19 +36,16 @@ import jtom.tools.*;
 import jtom.TomMessage;
 
 public class TomJavaParser implements TomJavaParserConstants {
-  public static TomJavaParser createParser(String fileName) {
-    try {
+  public static TomJavaParser createParser(String fileName) throws FileNotFoundException,IOException {
       File file = new File(fileName);
       byte inputBuffer[] = new byte[(int)file.length()+1];
       InputStream input = new FileInputStream(file);
       input.read(inputBuffer);
       return new TomJavaParser(new TomBuffer(inputBuffer));
-    } catch (FileNotFoundException e) {
-      TomEnvironment.getInstance().addError(TomMessage.getString("FileNotFound"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-    } catch (IOException e) {
-      TomEnvironment.getInstance().addError(TomMessage.getString("IOException"), new Object[]{fileName}, "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-    }
-    return null;
+  }
+
+  public int getLine() {
+    return  token.beginLine;
   }
 
 /**********************************************

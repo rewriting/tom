@@ -31,8 +31,8 @@ package prodrule;
 
 import aterm.*;
 import aterm.pure.*;
-import prodrule.fib.*;
-import prodrule.fib.types.*;
+import prodrule.fib1.fib.*;
+import prodrule.fib1.fib.types.*;
 
 class Fib1 {
   private Factory factory;

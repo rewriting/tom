@@ -152,8 +152,7 @@ public class TomEnvironment {
       if(hasError()) {
         String msg = taskName+": Encountered " + 
           getErrors().getLength() + " errors and " +
-          getWarnings().getLength() + " warnings." +
-          "No file generated.";
+          getWarnings().getLength() + " warnings. No file generated.";
         System.out.println(msg);
       } else if(hasWarning()) {
         String msg = taskName+": Encountered "+ getWarnings().getLength() + " warnings.";

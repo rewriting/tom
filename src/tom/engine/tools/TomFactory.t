@@ -138,7 +138,7 @@ public class TomFactory extends TomBase {
       }
 
       manyTomList(head@VariableStar[],tail) |
-      manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
+        manyTomList(Composite(concTomTerm(_*,head@VariableStar[])),tail) -> {
         TomTerm subList = buildList(name,`tail);
         return `BuildAppendList(name,head,subList);
       }
