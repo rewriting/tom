@@ -96,6 +96,10 @@ If you come from the
   Verification of the Needham-Schroeder Public-Key protocol
   Concept: apigen, complex list-matching, exploration of a search space
 
+* Peano
+  Computation with Peano integers
+  Concept: simple mapping, apigen, Tom notation 
+
 * PNspk
   Parallel verification of the Needham-Schroeder Public-Key protocol
   Concept: apigen, parallel exploration of a search space, strategy library 
@@ -104,9 +108,9 @@ If you come from the
   Parallel version of the N-Queens problem
   Concept: strategy library, complex mapping
 
-* Peano
-  Computation with Peano integers
-  Concept: simple mapping, apigen, Tom notation 
+* ProdRule
+  Implementation of Fibonacci in a Production rule style
+  Concept: Production rule, Rete
 
 * Poly
   Compute the derivative of a polynom

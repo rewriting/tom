@@ -68,6 +68,9 @@
   <property name="pqueens" value="PQueens"/>
   <property name="pqueens.dir" location="${examples.dir}/${pqueens}" />
 
+  <property name="prodrule" value="ProdRule"/>
+  <property name="prodrule.dir" location="${examples.dir}/${prodrule}" />
+
   <property name="propp" value="Propp"/>
   <property name="propp.dir" location="${examples.dir}/${propp}" />
 
@@ -86,7 +89,6 @@
   <target name="testdistexist">
     <available file="${tom.home}/lib" type="dir" property="distexist"/>
   </target>
-
 									
   <target name="init" if="examples.build">
     <mkdir dir="${examples.build}"/>
@@ -410,6 +412,20 @@
     </javac>
   </target>
 
+  <target name="prodrule" depends="init">
+    <!-- build tom -->
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
+         options="-O -I ${tom.home}/share/jtom">
+      <include name="${prodrule}/**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+      <classpath refid="tom.classpath"/>
+      <include name="${prodrule}/**/*.java"/>
+    </javac>
+  </target>
+
   <target name="propp" depends="init">
 		<!-- build adt -->
     <adt file="${propp.dir}/seq.adt" 
@@ -482,7 +498,6 @@
   </target>
 
   <target name="vas" depends="init">
-    <mkdir dir="${examples.gen}/Vas"/>
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
@@ -522,7 +537,7 @@
           description="Builds the examples (at least some)"
 					depends="addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, peano, pnspk, poly, pqueens,
-          propp, rbtree, set, xml, vas">
+          prodrule, propp, rbtree, set, xml, vas">
   </target>
   
   <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">
@@ -553,6 +568,7 @@
         <include name="${builtin}/*.adt"/>
 
         <include name="${caml}/README"/>
+        <include name="${caml}/Makefile"/>
         <include name="${caml}/*.t"/>
         <include name="${caml}/*.adt"/>
         <include name="${caml}/peanotype.ml"/>
@@ -604,6 +620,9 @@
         <include name="${pqueens}/README"/>
         <include name="${pqueens}/*.t"/>
         <include name="${pqueens}/*.tom"/>
+
+        <include name="${prodrule}/README"/>
+        <include name="${prodrule}/*.t"/>
 
         <include name="${propp}/README"/>
         <include name="${propp}/*.t"/>
