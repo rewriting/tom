@@ -394,4 +394,12 @@ public class TomTaskInput {
 		return rawFileName;
 	}
 	
+	public void setPackagePath(String packagePath) {
+		this.packagePath = packagePath;
+	}
+	
+	public String getPackagePath() {
+		return packagePath;
+	}
+
 } // class TomTaskInput

@@ -338,6 +338,7 @@ public class Tom {
           }
           return;
         }
+
         TomParser tomParser =
           new TomParser(
             new TomBuffer(inputBuffer),
@@ -347,6 +348,16 @@ public class Tom {
             fileName);
           // This is the initial task
         initialTask = tomParser;
+        
+        /*
+        if(taskInput.isJCode()) {
+          TomPackageParser tomPackageParser = new TomPackageParser(new TomBuffer(inputBuffer));
+          initialTask = tomPackageParser;
+          initialTask.addTask(tomParser);
+        } else {
+          initialTask = tomParser;
+        }
+        */
 
         if (taskInput.isDoCheck()) {
           tomParser.addTask(syntaxChecker);
