@@ -56,6 +56,7 @@
   [Option,Option,Option(<optionList(OptionList)>) ],
   [Option,DefinedSymbol ,DefinedSymbol ],
   [Option,GeneratedMatch ,GeneratedMatch ],
+  [Option,WithDefaultProduction ,WithDefaultProduction ],
   [Option,OriginTracking,OriginTracking(<astName(TomName)>, <line(int)>,<fileName(TomName)>) ],
   [Option,Constructor,Constructor(<astName(TomName)>) ],
   [Option,OriginalText, OriginalText(<astName(TomName)>)],
@@ -137,7 +138,8 @@
   [TomTerm,PatternList,PatternList(<list(TomList)>) ],
   [TomTerm,TermList,TermList(<list(TomList)>) ],
   [TomTerm,Term,Term(<term(TomTerm)>) ],
-  [TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<tom(TomTerm)>, <option(Option)>) ],
+  [TomTerm,PatternAction,PatternAction(<termList(TomTerm)>, <tom(TomTerm)>, <option(Option)>) ],
+  [TomTerm,DefaultPatternAction,DefaultPatternAction(<termList(TomTerm)>, <tom(TomTerm)>, <option(Option)>) ],
   [TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>) ],
   [TomTerm,Declaration,Declaration(<kid1(TomTerm)>) ],
   [TomTerm,Variable,
@@ -161,6 +163,7 @@
   [TomTerm,AssignedVariable,AssignedVariable(<varName(str)>,<source(Expression)>,<nbUse(int)>) ],
 
   [TomTerm,Automata,Automata(<numberList(TomList)>,<instList(TomList)>) ],
+  [TomTerm,DefaultAutomata,DefaultAutomata(<numberList(TomList)>,<instList(TomList)>) ],
 
   [TomTerm,MatchNumber,MatchNumber(<number(TomTerm)>) ],
   [TomTerm,PatternNumber,PatternNumber(<number(TomTerm)>) ],

@@ -282,4 +282,98 @@ public class TomKernelExpander extends TomBase {
     return null;
   }
   
+    /*
+     * Replace pattern with only variables or underscore (UnNamedVariables)
+     * By DefaultPattern
+     */
+  public TomTerm expandMatchPattern(TomTerm subject) {
+    Replace1 replace = new Replace1() { 
+        public ATerm apply(ATerm subject) {
+          if(subject instanceof TomTerm) {
+            %match(TomTerm subject) {
+              m@Match -> {
+                return expandPattern(m);
+              } 
+              _ -> {
+                return traversal().genericTraversal(subject,this);
+              }
+            } // end match
+          } else {
+            return traversal().genericTraversal(subject,this);
+          }
+        } // end apply
+      }; // end new
+    
+    return (TomTerm) replace.apply(subject); 
+  }
+
+  private TomTerm expandPattern(TomTerm match) {
+    %match(TomTerm match) {
+      Match(subjectList,PatternList(list), option) -> {
+        boolean needModification = false;
+        TomTerm pa;
+        Option newOption = option;
+        TomList newPatternList = empty();
+        while(!list.isEmpty()) {
+          pa = list.getHead();
+          if( isDefaultPattern(pa.getTermList().getList()) ) {
+            newPatternList = cons(`DefaultPatternAction(pa.getTermList(), pa.getTom(), pa.getOption()), newPatternList);
+            newOption = `Option(ConsOptionList(WithDefaultProduction, option.getOptionList()));
+            needModification = true;
+            if(!list.getTail().isEmpty()) {
+                // the default pattern is not the latest one!!
+              System.out.println("Default pattern issue"+pa.getOption());
+            }
+          } else {
+              // we keep the PA
+            newPatternList = cons(list.getHead(), newPatternList);
+          }
+          list = list.getTail();
+        }
+        if(needModification) {
+          newPatternList = reverse(newPatternList);
+          return `Match(subjectList, PatternList(newPatternList), newOption);
+        } else {
+          return match;
+        }
+      }
+      _ -> {
+        System.out.println("Strange Match in expandMatchPattern"+match);
+        System.exit(1);
+        return null;
+      }
+    }
+  }
+
+  private boolean isDefaultPattern(TomList pList) {
+    TomTerm term;
+    while(!pList.isEmpty()) {
+      term = pList.getHead();
+      %match(TomTerm term) {
+        Appl -> {
+          return false;
+        }
+      }
+      pList = pList.getTail();
+    }
+    
+    ArrayList variableList = new ArrayList();
+    collectVariable(variableList,`PatternList(pList));
+    
+      // compute multiplicities
+    HashMap multiplicityMap = new HashMap();
+    Iterator it = variableList.iterator();
+    while(it.hasNext()) {
+      TomTerm variable = (TomTerm)it.next();
+      TomName name = variable.getAstName();
+      if(multiplicityMap.containsKey(name)) {
+        Integer value = (Integer)multiplicityMap.get(name);
+        return false;
+      } else {
+        multiplicityMap.put(name, new Integer(1));
+      }
+    }
+    return true;
+  }
+  
 } // Class TomKernelExpander

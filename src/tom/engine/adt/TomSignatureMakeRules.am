@@ -35,6 +35,7 @@ Option_TomTermToOptionImpl.java Option_TomTermToOption.java\
 Option_OptionImpl.java Option_Option.java\
 Option_DefinedSymbolImpl.java Option_DefinedSymbol.java\
 Option_GeneratedMatchImpl.java Option_GeneratedMatch.java\
+Option_WithDefaultProductionImpl.java Option_WithDefaultProduction.java\
 Option_OriginTrackingImpl.java Option_OriginTracking.java\
 Option_ConstructorImpl.java Option_Constructor.java\
 Option_OriginalTextImpl.java Option_OriginalText.java\
@@ -49,10 +50,10 @@ Expression_IsEmptyArrayImpl.java Expression_IsEmptyArray.java\
 Expression_EqualFunctionSymbolImpl.java Expression_EqualFunctionSymbol.java\
 Expression_EqualTermImpl.java Expression_EqualTerm.java\
 Expression_GetSubtermImpl.java Expression_GetSubterm.java\
-Expression_IsFsymImpl.java Expression_IsFsym.java\
-Expression_GetSlotImpl.java Expression_GetSlot.java
+Expression_IsFsymImpl.java Expression_IsFsym.java
 
 TomSignatureAPI1=\
+Expression_GetSlotImpl.java Expression_GetSlot.java\
 Expression_GetHeadImpl.java Expression_GetHead.java\
 Expression_GetTailImpl.java Expression_GetTail.java\
 Expression_GetSizeImpl.java Expression_GetSize.java\
@@ -101,14 +102,15 @@ TomTerm_MatchImpl.java TomTerm_Match.java\
 TomTerm_MatchingConditionImpl.java TomTerm_MatchingCondition.java\
 TomTerm_EqualityConditionImpl.java TomTerm_EqualityCondition.java\
 TomTerm_RuleSetImpl.java TomTerm_RuleSet.java\
-TomTerm_RewriteRuleImpl.java TomTerm_RewriteRule.java\
-TomTerm_SubjectListImpl.java TomTerm_SubjectList.java
+TomTerm_RewriteRuleImpl.java TomTerm_RewriteRule.java
 
 TomSignatureAPI2=\
+TomTerm_SubjectListImpl.java TomTerm_SubjectList.java\
 TomTerm_PatternListImpl.java TomTerm_PatternList.java\
 TomTerm_TermListImpl.java TomTerm_TermList.java\
 TomTerm_TermImpl.java TomTerm_Term.java\
 TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
+TomTerm_DefaultPatternActionImpl.java TomTerm_DefaultPatternAction.java\
 TomTerm_TLVarImpl.java TomTerm_TLVar.java\
 TomTerm_DeclarationImpl.java TomTerm_Declaration.java\
 TomTerm_VariableImpl.java TomTerm_Variable.java\
@@ -127,6 +129,7 @@ TomTerm_CompiledMatchImpl.java TomTerm_CompiledMatch.java\
 TomTerm_CompiledPatternImpl.java TomTerm_CompiledPattern.java\
 TomTerm_AssignedVariableImpl.java TomTerm_AssignedVariable.java\
 TomTerm_AutomataImpl.java TomTerm_Automata.java\
+TomTerm_DefaultAutomataImpl.java TomTerm_DefaultAutomata.java\
 TomTerm_MatchNumberImpl.java TomTerm_MatchNumber.java\
 TomTerm_PatternNumberImpl.java TomTerm_PatternNumber.java\
 TomTerm_ListNumberImpl.java TomTerm_ListNumber.java\
@@ -151,12 +154,12 @@ Instruction_CloseBlockImpl.java Instruction_CloseBlock.java\
 Instruction_NamedBlockImpl.java Instruction_NamedBlock.java\
 TomSymbol.java TomSymbolImpl.java\
 TomSymbol_SymbolImpl.java TomSymbol_Symbol.java\
-SlotList.java SlotListImpl.java\
-SlotList_EmptySlotListImpl.java SlotList_EmptySlotList.java\
-SlotList_ConsSlotListImpl.java SlotList_ConsSlotList.java\
-PairNameDecl.java PairNameDeclImpl.java
+SlotList.java SlotListImpl.java
 
 TomSignatureAPI3=\
+SlotList_EmptySlotListImpl.java SlotList_EmptySlotList.java\
+SlotList_ConsSlotListImpl.java SlotList_ConsSlotList.java\
+PairNameDecl.java PairNameDeclImpl.java\
 PairNameDecl_SlotImpl.java PairNameDecl_Slot.java\
 TomSymbolTable.java TomSymbolTableImpl.java\
 TomSymbolTable_TableImpl.java TomSymbolTable_Table.java\

@@ -32,19 +32,19 @@ import java.io.*;
 import  jtom.debug.TomDebugStructure;
 
 public class TomDebugEnvironment {
+  private static String FAILURE = "Failure";
+  private static String SUCCESS = "Success";
+  
   private TomDebugStructure debugStructure;
   private BufferedReader in;
   private ArrayList subjects;
   private Map substitutions;
   private int step = 0;
-  private String lastPatternResult = null;
-  private String totalMatchResult = null;
+  private String lastPatternResult = FAILURE;
+  private String totalMatchResult = FAILURE;
   private boolean failureLookup = false;
   private boolean resultLookup = false;
   private boolean nextLookup = false;
-
-  private static String FAILURE = "Failure";
-  private static String SUCCESS = "Success";
   
   public TomDebugEnvironment(TomDebugStructure struct, boolean failureLookup ) {
     this.debugStructure = struct;
@@ -52,43 +52,39 @@ public class TomDebugEnvironment {
     this.subjects = new ArrayList();
     this.substitutions = new HashMap();
     this.in = new BufferedReader(new InputStreamReader(System.in));
-    totalMatchResult = FAILURE;
     if(!failureLookup) {
       System.out.println("\n\tEntering "+struct.type+" declared in "+struct.fileName+" at line "+struct.line);
     }
   }
-
+  
   public String toString() {
     return debugStructure+debugStructure.type+debugStructure.fileName+debugStructure.line+debugStructure.watchPatternList;
   }
-  
-  public int leaving() {
-    int result = -1;// FAILURE
-    if(failureLookup) {
-      if(totalMatchResult == SUCCESS) {
-        result = 0;
-      }
-      if(result == -1) {
-         System.out.println(debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line+" completely fails with subject(s)");
-         showSubjects();
-      }
-      return result;
-    }
-    System.out.println("\tLeaving "+debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line);
-    try {
-      String str = "";
-      System.out.print(">:(Press enter to contine....");
-      str = in.readLine();
-    } catch (IOException e) {
-    }
 
-    if(lastPatternResult == SUCCESS) {
-      result = 0;
-    }
-    return result;
+  public String getKey() {
+    return debugStructure.key;
   }
 
-  public void enteringPattern() {
+  public void addSubject(String name, Object trm) {
+    subjects.add(new Substitution(name, trm));
+    if(subjects.size() == debugStructure.nbSubjects.intValue() && !failureLookup) {
+      System.out.println("Here is(are) the subject(s):");
+      showSubjects();
+      System.out.println();
+        //debugBreak();
+    }
+  }
+
+  public void showSubjects() {
+    Iterator it = subjects.iterator();
+    Substitution s;
+    while(it.hasNext()) {
+      s = (Substitution)it.next();
+      System.out.println(s.name+":\t"+s.object);
+    }
+  }
+
+   public void enteringPattern() {
     incrementStep();
     nextLookup = false;
     if(failureLookup) {return;}
@@ -99,16 +95,39 @@ public class TomDebugEnvironment {
       debugBreak();
     }
   }
-
-  public void leavingPattern() {
-    if(failureLookup) {return;}
-    if(nextLookup) {return;}
-    if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {
-      System.out.println("\t\tLeaving  Pattern number "+ getStep()+" evaluation with "+lastPatternResult);
+  
+  public void enteringDefaultPattern() {
+    incrementStep();
+    nextLookup = false;
+    if(failureLookup) {
+      totalMatchResult = SUCCESS;
+      return;
+    }
+    if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {      
+      System.out.println("\t\tEntering DEFAULT Pattern ( pattern number "+ getStep()+ " declared line "+debugStructure.patternLine[getStep()-1]+" in "+debugStructure.fileName+")");
+      lastPatternResult = FAILURE;
+      substitutions.clear();
       debugBreak();
     }
   }
   
+  public void addSubstitution(String name, Object trm) {
+    substitutions.put(name, new Substitution(name, trm));
+  }
+  
+  public void showSubsts() {
+    Collection c = substitutions.values();
+    Iterator it = c.iterator();
+    Substitution s;
+    if(!it.hasNext()) {
+      System.out.println("No substitutions");
+    }
+    while(it.hasNext()) {
+      s = (Substitution)it.next();
+      System.out.println(s.name+":\t"+s.object);
+    }
+  }
+
   public void linearizationFail() {
     if(failureLookup) {return;}
     if(nextLookup) {return;}
@@ -131,49 +150,39 @@ public class TomDebugEnvironment {
     }
   }
   
-  public String getKey() {
-    return debugStructure.key;
-  }
-
-  public void addSubject(String name, Object trm) {
-    subjects.add(new Substitution(name, trm));
-    if(subjects.size() == debugStructure.nbSubjects.intValue()) {
-      System.out.println("Here is(are) the subject(s):");
-      showSubjects();
-      System.out.println();
-        //debugBreak();
-    }
-  }
-
-  public void showSubjects() {
-    Iterator it = subjects.iterator();
-    Substitution s;
-    while(it.hasNext()) {
-      s = (Substitution)it.next();
-      System.out.println(s.name+":\t"+s.object);
+  public void leavingPattern() {
+    if(failureLookup) {return;}
+    if(nextLookup) {return;}
+    if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {
+      System.out.println("\t\tLeaving  Pattern number "+ getStep()+" evaluation with "+lastPatternResult);
+      debugBreak();
     }
   }
   
-  public void addSubstitution(String name, Object trm) {
-    substitutions.put(name, new Substitution(name, trm));
-  }
-  
-  public void showSubsts() {
-    Collection c = substitutions.values();
-    Iterator it = c.iterator();
-    Substitution s;
-    while(it.hasNext()) {
-      s = (Substitution)it.next();
-      System.out.println(s.name+":\t"+s.object);
+  public int leaving() {
+    int result = -1;// FAILURE
+    if(failureLookup) {
+      if(totalMatchResult == SUCCESS) {
+        result = 0;
+      }
+      if(result == -1) {
+         System.out.println(debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line+" completely fails with subject(s)");
+         showSubjects();
+      }
+      return result;
     }
-  }
+    System.out.println("\tLeaving "+debugStructure.type+" declared in "+debugStructure.fileName+" at line "+debugStructure.line);
+    /*try {
+      String str = "";
+      System.out.print(">:(Press enter to contine....");
+      str = in.readLine();
+    } catch (IOException e) {
+    }*/
 
-  public void showPatterns() {
-    try {
-      System.out.println("Pattern declared line "+debugStructure.patternLine[getStep()-1]);
-      System.out.println(debugStructure.patternText[getStep()-1]);
-    } catch (Exception e) {
+    if(lastPatternResult == SUCCESS) {
+      result = 0;
     }
+    return result;
   }
   
   private void debugBreak() {
@@ -222,6 +231,14 @@ public class TomDebugEnvironment {
     debugBreak();
   }
 
+  public void showPatterns() {
+    try {
+      System.out.println("Pattern declared line "+debugStructure.patternLine[getStep()-1]);
+      System.out.println(debugStructure.patternText[getStep()-1]);
+    } catch (Exception e) {
+    }
+  }
+  
   private int getStep() {
     return step;
   }

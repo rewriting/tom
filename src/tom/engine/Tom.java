@@ -251,6 +251,8 @@ public class Tom {
         TomTerm context = null;
         expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
         tomChecker.checkVariableCoherence(expandedTerm);
+        expandedTerm  = tomKernelExpander.expandMatchPattern(expandedTerm);
+          //tomChecker.checkMatchPattern(expandedTerm);
         stopChrono();
         if(Flags.verbose) System.out.println("TOM expansion phase " + getChrono());
         if(Flags.intermediate) {

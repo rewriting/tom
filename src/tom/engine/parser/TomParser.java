@@ -342,7 +342,7 @@ public class TomParser implements TomParserConstants {
         patterns = (TomList)listOfMatchPatternsList.get(i);
         patternText = (String)listTextPattern.get(i);
         optionList.add(listOrgTrackPattern.get(i));
-        optionList.add(tsf().makeOption_TomNameToOption(tsf().makeTomName_Name(patternText)));
+        optionList.add(tsf().makeOption_OriginalText(tsf().makeTomName_Name(patternText)));
         option = ast().makeOption(ast().makeOptionList(optionList));;
         list.add(tsf().makeTomTerm_PatternAction(
                    tsf().makeTomTerm_TermList(patterns),

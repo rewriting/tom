@@ -139,14 +139,11 @@ public class TomChecker extends TomBase {
 
   private void verifyMatchVariable(TomList patternList) {
     while(!patternList.isEmpty()) {
-      TomTerm patterns = patternList.getHead().getTermList();
+      TomTerm pa = patternList.getHead();
+      TomTerm patterns = pa.getTermList();
         // collect variables
       ArrayList variableList = new ArrayList();
-      collectVariable(variableList, patterns);
-        //SharedSet set = new SharedSet(getTomSignatureFactory());
-        //collectVariable(set, patterns);
-        //System.out.println("Set="+set.getTreeSet());
-        //System.out.println("Collection="+variableList);      
+      collectVariable(variableList, patterns);      
       verifyVariableType(variableList);
       patternList = patternList.getTail();
     }

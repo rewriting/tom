@@ -195,7 +195,7 @@ public class TomDebugger {
     String str ="";
     try {
       while(true) {
-        System.out.print("Configuration file name ("+debugFileExtension+"):");
+        System.out.print("Enter file name ("+debugFileExtension+"):");
         str = in.readLine();
         if (str.equals("")) {
           continue;
@@ -227,7 +227,7 @@ public class TomDebugger {
   }
 
   private void loadConfigurationFromFile() {
-    System.out.println("Configuration file name ("+debugFileExtension+") in:");
+    System.out.println("Choose configuration file name ("+debugFileExtension+") in:");
     try {
       File path = new File(".");
       String[] list = path.list(filter(debugFileExtension));
@@ -518,20 +518,29 @@ public class TomDebugger {
     } catch (IOException e) {
     }
   }
-
+  
   private void showSubjects() {
-    if (!environment.empty())
+    if (!environment.empty()) {
       ((TomDebugEnvironment)environment.peek()).showSubjects();
+    } else {
+      System.out.println("Empty environment");
+    }
   }
-
+  
   private void showPatterns() {
-    if (!environment.empty())
+    if (!environment.empty()) {
       ((TomDebugEnvironment)environment.peek()).showPatterns();
+    } else {
+      System.out.println("Empty environment");
+    }
   }
   
   private void showSubsts() {
-    if (!environment.empty())
+    if (!environment.empty()) {
       ((TomDebugEnvironment)environment.peek()).showSubsts();
+    } else {
+      System.out.println("Empty environment");
+    }
   }
   
     //////////////////////
@@ -565,6 +574,12 @@ public class TomDebugger {
         nextFailure = false;
         showMainMenu();
       }
+    }
+  }
+  
+  public void enteringDefaultPattern(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      ((TomDebugEnvironment)(environment.peek())).enteringDefaultPattern();
     }
   }
   
@@ -650,7 +665,6 @@ public class TomDebugger {
         String key = fileName+line;
         TomList paList = struct.getList();
         Integer nbPatterns =  evalListSize(paList);
-        System.out.println(struct.getList().getHead().getLhs().getTerm().getArgs());
         Integer nbSubjects = evalListSize(struct.getList().getHead().getLhs().getTerm().getArgs());
         String[] patternText = new String[nbPatterns.intValue()];
         Integer[] patternLine = new Integer[nbPatterns.intValue()];
@@ -699,7 +713,7 @@ public class TomDebugger {
     Option op;
     while(!list.isEmptyOptionList()) {
       op = list.getHead();
-      if(op.isTomNameToOption()) {
+      if(op.isOriginalText()) {
         return op.getAstName().getString();
       }
       list = list.getTail();

@@ -165,10 +165,14 @@ public class TomCompiler extends TomBase {
         return preProcessing(`Tom(l));
       }
       
-      PatternAction(tl@TermList(termList),tom@Tom(actionList), option) -> {
+      PatternAction(tl,tom, option) -> {
         return `PatternAction(tl,preProcessing(tom), option);
       }
       
+      DefaultPatternAction(termList, tom, option) -> {
+        return `DefaultPatternAction(termList, preProcessing(tom), option);
+      }
+
       Match(SubjectList(l1),PatternList(l2), matchOption@Option(list))  -> {
         Option orgTrack = findOriginTracking(list);
         if(Flags.debugMode) {
@@ -181,11 +185,12 @@ public class TomCompiler extends TomBase {
           
           matchBlock: {
             %match(TomTerm elt) {
-              PatternAction(TermList(termList),Tom(actionList), option) -> {
+              PatternAction(TermList(termList),Tom(actionList), option) |
+              DefaultPatternAction(TermList(termList),Tom(actionList), option) -> {
                 TomList newTermList = empty();
                 TomList newActionList = actionList;
 
-                  // generate equality checks
+                  /* generate equality checks */
                 ArrayList equalityCheck = new ArrayList();
                 TomList renamedTermList = linearizePattern(termList,equalityCheck);
                 if(equalityCheck.size() > 0) {
@@ -203,19 +208,19 @@ public class TomCompiler extends TomBase {
                     
                   newActionList = cons(`InstructionToTomTerm(IfThenElse(cond,actionList,elsePart)),empty());
                   newPatternAction = `PatternAction(TermList(renamedTermList),Tom(newActionList), option);        
-                    //System.out.println("\nnewPatternAction = " + newPatternAction);
+                    /*System.out.println("\nnewPatternAction = " + newPatternAction);*/
                 }
 
-                  // abstract patterns
+                  /* abstract patterns */
                 ArrayList abstractedPattern  = new ArrayList();
                 ArrayList introducedVariable = new ArrayList();
                 newTermList = abstractPatternList(renamedTermList, abstractedPattern, introducedVariable);
                 if(abstractedPattern.size() > 0) {
-                    // generate a new match construct
+                    /* generate a new match construct */
 
                   TomTerm generatedPatternAction =
                     `PatternAction(TermList(ast().makeList(abstractedPattern)),Tom(newActionList), option);        
-                    // We reconstruct only a list of option with orgTrack and GeneratedMatch
+                    /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
                   ArrayList optionList = new ArrayList();
                   optionList.add(orgTrack);
                   optionList.add(tsf().makeOption_GeneratedMatch());
@@ -224,21 +229,21 @@ public class TomCompiler extends TomBase {
                     `Match(SubjectList(ast().makeList(introducedVariable)),
                            PatternList(cons(generatedPatternAction,empty())),
                            generatedOptions);
-                    //System.out.println("Generate new Match"+generatedMatch);
+                    /*System.out.println("Generate new Match"+generatedMatch); */
                   generatedMatch = preProcessing(generatedMatch);
                   newPatternAction =
                     `PatternAction(TermList(newTermList),Tom(cons(generatedMatch,empty())), option());
 
-                    //System.out.println("newPatternAction = " + newPatternAction);
+                    /*System.out.println("newPatternAction = " + newPatternAction); */
                 }
-                  // do nothing
+                  /* do nothing */
                 break matchBlock;
               }
               
               _ -> {
-                System.out.println("preProcessing: strange PatternAction: " + elt);
-                System.out.println("termList = " + elt.getTermList());
-                System.out.println("tom      = " + elt.getTom()); 
+                System.out.println("preProcessingeuuu: strange PatternAction: " + elt);
+                  //System.out.println("termList = " + elt.getTermList());
+                  //System.out.println("tom      = " + elt.getTom()); 
                 System.exit(1);
               }
             }
@@ -260,7 +265,7 @@ public class TomCompiler extends TomBase {
       }
     }
   }
-
+  
   private TomList buildCondition(TomList condList, TomList actionList) {
     %match(TomList condList) {
       Empty() -> { return actionList; }
@@ -393,11 +398,11 @@ public class TomCompiler extends TomBase {
   }
 
   private TomList linearizePattern(TomList subject, ArrayList equalityCheck) {
-
+    
       // collect variables
     ArrayList variableList = new ArrayList();
     collectVariable(variableList,`PatternList(subject));
-
+    
       // compute multiplicities
     HashMap multiplicityMap = new HashMap();
     Iterator it = variableList.iterator();
@@ -411,22 +416,23 @@ public class TomCompiler extends TomBase {
         multiplicityMap.put(name, new Integer(1));
       }
     }
-
+    
       // perform the renaming and generate equality checks
     TomList newList = empty();
     while(!subject.isEmpty()) {
       TomTerm elt = subject.getHead();
       TomTerm newElt = renameVariable(elt,multiplicityMap,equalityCheck);
-
+      
         // System.out.println("\nelt = " + elt + "\n --> newELt = " + newElt);
-    
+      
       newList = append(newElt,newList);
       subject = subject.getTail();
     }
     return newList;
   }
-
+  
   private static int absVarNumber = 0;
+  
   private TomTerm abstractPattern(TomTerm subject,
                                   ArrayList abstractedPattern,
                                   ArrayList introducedVariable) {

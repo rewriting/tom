@@ -510,6 +510,17 @@ public class TomBase {
     return false;
   }
   
+  protected boolean hasDefaultProd(OptionList optionList) {
+      //%variable
+    while(!optionList.isEmptyOptionList()) {
+      Option subject = optionList.getHead();
+      %match(Option subject) {
+        WithDefaultProduction -> { return true; }
+      }
+      optionList = optionList.getTail();
+    }
+    return false;
+  }
   protected TomName getSlotName(TomSymbol symbol, int number) {
     //%variable
     SlotList slotList = symbol.getSlotList();

@@ -189,6 +189,7 @@ public class TomGenerator extends TomBase {
 
       CompiledMatch(matchDeclarationList, namedBlockList, Option(list)) -> {
         boolean generated = hasGeneratedMatch(list);
+        boolean defaultPattern = hasDefaultProd(list);
         Option orgTrack = null;
         if(Flags.supportedBlock) {
           generateInstruction(out,deep,`OpenBlock());
@@ -200,7 +201,7 @@ public class TomGenerator extends TomBase {
         }
         generateList(out,deep+1,matchDeclarationList);
         generateList(out,deep+1,namedBlockList);
-        if(Flags.debugMode && !generated) {
+        if(Flags.debugMode && !generated && !defaultPattern) {
           out.write("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
         }
         if(Flags.supportedBlock) {
@@ -1464,9 +1465,9 @@ public class TomGenerator extends TomBase {
       }
       s += ") { ";
       if (Flags.debugMode) {
-        s += getTLType(returnType)+ "debugVar = " + tlCode.getCode() +";\n";
+        s += "\n"+getTLType(returnType)+ "debugVar = " + tlCode.getCode() +";\n";
         s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
-          s += "return  debugVar;}";
+        s += "return  debugVar;\n}";
       } else {
         s += "return " + tlCode.getCode() + "; }";
       }

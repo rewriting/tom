@@ -128,7 +128,7 @@ public class TomKernelCompiler extends TomBase {
       Tom(l) -> {
         return `Tom(tomListMap(l,replace_compileMatching));
       }
-      
+            
       Match(SubjectList(l1),PatternList(l2), matchOption@Option(optionList))  -> {
         statistics().numberMatchCompiledIntoAutomaton++;
         boolean generatedMatch = false;
@@ -199,13 +199,23 @@ public class TomKernelCompiler extends TomBase {
            * build a matching automata
            */
         int actionNumber = 0;
-        boolean firstCall=true;
+        boolean firstCall=true, defaultPA =false;
         while(!l2.isEmpty()) {
           actionNumber++;
           TomTerm pa = l2.getHead();
+          defaultPA = pa.isDefaultPatternAction();
           patternList = pa.getTermList().getList();
-          actionList = pa.getTom().getList();
-
+          
+          if (Flags.debugMode && defaultPA) {
+              // replace success by leaving structure
+            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
+            TomList tail = pa.getTom().getList().getTail();
+            actionList = `Cons(TargetLanguageToTomTerm(tl), tail);
+          } else {
+            actionList = pa.getTom().getList();
+          }
+          
+          
             //System.out.println("patternList   = " + patternList);
             //System.out.println("actionList = " + actionList);
           if(patternList==null || actionList==null) {
@@ -221,23 +231,28 @@ public class TomKernelCompiler extends TomBase {
           TomList patternsDeclarationList = empty();
           Collection variableCollection = new HashSet();
           collectVariable(variableCollection,`Tom(patternList));
-
+          
           Iterator it = variableCollection.iterator();
           while(it.hasNext()) {
             TomTerm tmpsubject = (TomTerm)it.next();
             patternsDeclarationList = append(`Declaration(tmpsubject),patternsDeclarationList);
               //System.out.println("*** " + patternsDeclarationList);
           }
-
+          
           TomList numberList = append(`PatternNumber(makeNumber(actionNumber)),path);
           TomList instructionList;
           instructionList = genMatchingAutomataFromPatternList(patternList,path,1,actionList,true);
             //firstCall = false;
           TomList declarationInstructionList; 
           declarationInstructionList = concat(patternsDeclarationList,instructionList);
-          TomTerm automata = `Automata(numberList,declarationInstructionList);
+          TomTerm automata;
+          if(!defaultPA) {
+            automata = `Automata(numberList,declarationInstructionList);
+          } else {
+            automata = `DefaultAutomata(numberList,declarationInstructionList);
+          }
             //System.out.println("automata = " + automata);
-    
+          
           automataList = append(automata,automataList);
           l2 = l2.getTail();
         }
@@ -292,6 +307,25 @@ public class TomKernelCompiler extends TomBase {
           }
           result = cons(`CompiledPattern(result),newList);
           return result;
+        }
+      }
+      Cons(DefaultAutomata(numberList,instList),l)  -> {
+        TomList newList = automataListCompileMatchingList(l, generatedMatch);
+        if(Flags.supportedGoto) {
+          if(!generatedMatch && Flags.debugMode) {
+            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringDefaultPattern(\""+debugKey+"\");\n");
+              // insert leavingStructure call after patternSuccess
+            
+            instList = `cons(TargetLanguageToTomTerm(tl), instList);
+              //tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
+              //TomList list = `cons(TargetLanguageToTomTerm(tl), Empty());
+              //instList = concat(instList, list);
+          }
+          TomTerm compiledPattern = `CompiledPattern(cons(InstructionToTomTerm(NamedBlock(getBlockName(numberList), instList)),empty()));
+          return cons(compiledPattern, newList);
+        } else {
+          System.out.println("Default automata not yet defined");
+          System.exit(1);
         }
       }
     }
