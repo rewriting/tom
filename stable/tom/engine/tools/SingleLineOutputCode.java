@@ -37,7 +37,7 @@ public final class SingleLineOutputCode extends OutputCode {
   }
 
   public void writeln(String s) throws IOException {
-    s = " " + s.trim() +" ";
+    s = " " + s.trim();
     write(s);
     writeln();
   }

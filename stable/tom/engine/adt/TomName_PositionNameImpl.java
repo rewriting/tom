@@ -70,7 +70,7 @@ extends TomName
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
-    int b = 0x9e3779b9;
+    int b = (getAFun().hashCode()<<8);
     a += (getArgument(0).hashCode() << 0);
 
     a -= b; a -= c; a ^= (c >> 13);

@@ -8,8 +8,8 @@ extends TomTerm
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-  private static int index_option = 0;
-  private static int index_list = 1;
+  private static int index_list = 0;
+  private static int index_orgTrack = 1;
   public shared.SharedObject duplicate() {
     TomTerm_RuleSet clone = new TomTerm_RuleSet();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -21,7 +21,7 @@ extends TomTerm
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("RuleSetT(<term>,<term>)");
+    pattern = getStaticFactory().parse("RuleSet(<term>,<term>)");
   }
 
   static public TomTerm fromTerm(aterm.ATerm trm)
@@ -29,7 +29,7 @@ extends TomTerm
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_RuleSet(Option.fromTerm( (aterm.ATerm) children.get(0)), TomList.fromTerm( (aterm.ATerm) children.get(1)));
+      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_RuleSet(TomList.fromTerm( (aterm.ATerm) children.get(0)), Option.fromTerm( (aterm.ATerm) children.get(1)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -42,24 +42,14 @@ extends TomTerm
     return true;
   }
 
-  public boolean hasOption()
-  {
-    return true;
-  }
-
   public boolean hasList()
   {
     return true;
   }
 
-  public Option getOption()
+  public boolean hasOrgTrack()
   {
-    return (Option) this.getArgument(index_option) ;
-  }
-
-  public TomTerm setOption(Option _option)
-  {
-    return (TomTerm) super.setArgument(_option, index_option);
+    return true;
   }
 
   public TomList getList()
@@ -72,16 +62,26 @@ extends TomTerm
     return (TomTerm) super.setArgument(_list, index_list);
   }
 
+  public Option getOrgTrack()
+  {
+    return (Option) this.getArgument(index_orgTrack) ;
+  }
+
+  public TomTerm setOrgTrack(Option _orgTrack)
+  {
+    return (TomTerm) super.setArgument(_orgTrack, index_orgTrack);
+  }
+
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
-        if (! (arg instanceof Option)) { 
-          throw new RuntimeException("Argument 0 of a TomTerm_RuleSet should have type Option");
+        if (! (arg instanceof TomList)) { 
+          throw new RuntimeException("Argument 0 of a TomTerm_RuleSet should have type TomList");
         }
         break;
       case 1:
-        if (! (arg instanceof TomList)) { 
-          throw new RuntimeException("Argument 1 of a TomTerm_RuleSet should have type TomList");
+        if (! (arg instanceof Option)) { 
+          throw new RuntimeException("Argument 1 of a TomTerm_RuleSet should have type Option");
         }
         break;
       default: throw new RuntimeException("TomTerm_RuleSet does not have an argument at " + i );
@@ -91,7 +91,7 @@ extends TomTerm
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
-    int b = 0x9e3779b9;
+    int b = (getAFun().hashCode()<<8);
     a += (getArgument(1).hashCode() << 8);
     a += (getArgument(0).hashCode() << 0);
 

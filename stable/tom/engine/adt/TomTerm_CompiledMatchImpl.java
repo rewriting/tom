@@ -10,6 +10,7 @@ extends TomTerm
   }
   private static int index_decls = 0;
   private static int index_automataList = 1;
+  private static int index_option = 2;
   public shared.SharedObject duplicate() {
     TomTerm_CompiledMatch clone = new TomTerm_CompiledMatch();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -21,7 +22,7 @@ extends TomTerm
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("CompiledMatch(<term>,<term>)");
+    pattern = getStaticFactory().parse("CompiledMatch(<term>,<term>,<term>)");
   }
 
   static public TomTerm fromTerm(aterm.ATerm trm)
@@ -29,7 +30,7 @@ extends TomTerm
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_CompiledMatch(TomList.fromTerm( (aterm.ATerm) children.get(0)), TomList.fromTerm( (aterm.ATerm) children.get(1)));
+      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_CompiledMatch(TomList.fromTerm( (aterm.ATerm) children.get(0)), TomList.fromTerm( (aterm.ATerm) children.get(1)), Option.fromTerm( (aterm.ATerm) children.get(2)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -48,6 +49,11 @@ extends TomTerm
   }
 
   public boolean hasAutomataList()
+  {
+    return true;
+  }
+
+  public boolean hasOption()
   {
     return true;
   }
@@ -72,6 +78,16 @@ extends TomTerm
     return (TomTerm) super.setArgument(_automataList, index_automataList);
   }
 
+  public Option getOption()
+  {
+    return (Option) this.getArgument(index_option) ;
+  }
+
+  public TomTerm setOption(Option _option)
+  {
+    return (TomTerm) super.setArgument(_option, index_option);
+  }
+
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
@@ -84,6 +100,11 @@ extends TomTerm
           throw new RuntimeException("Argument 1 of a TomTerm_CompiledMatch should have type TomList");
         }
         break;
+      case 2:
+        if (! (arg instanceof Option)) { 
+          throw new RuntimeException("Argument 2 of a TomTerm_CompiledMatch should have type Option");
+        }
+        break;
       default: throw new RuntimeException("TomTerm_CompiledMatch does not have an argument at " + i );
     }
     return super.setArgument(arg, i);
@@ -91,7 +112,8 @@ extends TomTerm
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
-    int b = 0x9e3779b9;
+    int b = (getAFun().hashCode()<<8);
+    a += (getArgument(2).hashCode() << 16);
     a += (getArgument(1).hashCode() << 8);
     a += (getArgument(0).hashCode() << 0);
 

@@ -64,4 +64,6 @@ public class Flags {
 
   public static boolean doOptimization = false; // optimize generated code
   public static boolean staticFunction = false; // generate static functions
+
+  public static boolean debugMode = false; // generate debug primitives
 }

@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class TomSymbolTableImpl extends TomSignatureConstructor
 {
-  static TomSymbolTable fromString(String str)
+  public static TomSymbolTable fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static TomSymbolTable fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static TomSymbolTable fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);

@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class TomTermImpl extends TomSignatureConstructor
 {
-  static TomTerm fromString(String str)
+  public static TomTerm fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static TomTerm fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static TomTerm fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
@@ -196,6 +196,10 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     }
 
     if ((tmp = TomTerm_CompiledPattern.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_AssignedVariable.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -467,6 +471,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isAssignedVariable()
+  {
+    return false;
+  }
+
   public boolean isAutomata()
   {
     return false;
@@ -622,12 +631,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasCondList()
+  public boolean hasOrgTrack()
   {
     return false;
   }
 
-  public boolean hasOrgTrack()
+  public boolean hasCondList()
   {
     return false;
   }
@@ -663,6 +672,21 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasInstList()
+  {
+    return false;
+  }
+
+  public boolean hasVarName()
+  {
+    return false;
+  }
+
+  public boolean hasSource()
+  {
+    return false;
+  }
+
+  public boolean hasNbUse()
   {
     return false;
   }
@@ -882,16 +906,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Rhs");
   }
 
-  public TomList getCondList()
-  {
-     throw new RuntimeException("This TomTerm has no CondList");
-  }
-
-  public TomTerm setCondList(TomList _condList)
-  {
-     throw new RuntimeException("This TomTerm has no CondList");
-  }
-
   public Option getOrgTrack()
   {
      throw new RuntimeException("This TomTerm has no OrgTrack");
@@ -900,6 +914,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setOrgTrack(Option _orgTrack)
   {
      throw new RuntimeException("This TomTerm has no OrgTrack");
+  }
+
+  public TomList getCondList()
+  {
+     throw new RuntimeException("This TomTerm has no CondList");
+  }
+
+  public TomTerm setCondList(TomList _condList)
+  {
+     throw new RuntimeException("This TomTerm has no CondList");
   }
 
   public TomTerm getTermList()
@@ -970,6 +994,36 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setInstList(TomList _instList)
   {
      throw new RuntimeException("This TomTerm has no InstList");
+  }
+
+  public String getVarName()
+  {
+     throw new RuntimeException("This TomTerm has no VarName");
+  }
+
+  public TomTerm setVarName(String _varName)
+  {
+     throw new RuntimeException("This TomTerm has no VarName");
+  }
+
+  public Expression getSource()
+  {
+     throw new RuntimeException("This TomTerm has no Source");
+  }
+
+  public TomTerm setSource(Expression _source)
+  {
+     throw new RuntimeException("This TomTerm has no Source");
+  }
+
+  public Integer getNbUse()
+  {
+     throw new RuntimeException("This TomTerm has no NbUse");
+  }
+
+  public TomTerm setNbUse(Integer _nbUse)
+  {
+     throw new RuntimeException("This TomTerm has no NbUse");
   }
 
   public TomList getNumberList()

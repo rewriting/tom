@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class TargetLanguageImpl extends TomSignatureConstructor
 {
-  static TargetLanguage fromString(String str)
+  public static TargetLanguage fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static TargetLanguage fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static TargetLanguage fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);

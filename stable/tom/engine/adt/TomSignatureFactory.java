@@ -64,10 +64,14 @@ public class TomSignatureFactory extends PureFactory
   private Option protoOption_Option;
   private aterm.AFun funOption_DefinedSymbol;
   private Option protoOption_DefinedSymbol;
+  private aterm.AFun funOption_GeneratedMatch;
+  private Option protoOption_GeneratedMatch;
   private aterm.AFun funOption_OriginTracking;
   private Option protoOption_OriginTracking;
   private aterm.AFun funOption_Constructor;
   private Option protoOption_Constructor;
+  private aterm.AFun funOption_OriginalText;
+  private Option protoOption_OriginalText;
   private aterm.AFun funExpression_TomTermToExpression;
   private Expression protoExpression_TomTermToExpression;
   private aterm.AFun funExpression_Not;
@@ -220,6 +224,8 @@ public class TomSignatureFactory extends PureFactory
   private TomTerm protoTomTerm_CompiledMatch;
   private aterm.AFun funTomTerm_CompiledPattern;
   private TomTerm protoTomTerm_CompiledPattern;
+  private aterm.AFun funTomTerm_AssignedVariable;
+  private TomTerm protoTomTerm_AssignedVariable;
   private aterm.AFun funTomTerm_Automata;
   private TomTerm protoTomTerm_Automata;
   private aterm.AFun funTomTerm_MatchNumber;
@@ -248,6 +254,8 @@ public class TomSignatureFactory extends PureFactory
   private Instruction protoInstruction_DoWhile;
   private aterm.AFun funInstruction_Assign;
   private Instruction protoInstruction_Assign;
+  private aterm.AFun funInstruction_AssignMatchSubject;
+  private Instruction protoInstruction_AssignMatchSubject;
   private aterm.AFun funInstruction_Increment;
   private Instruction protoInstruction_Increment;
   private aterm.AFun funInstruction_Action;
@@ -278,6 +286,8 @@ public class TomSignatureFactory extends PureFactory
   private TomEntryList protoTomEntryList_ConsEntryList;
   private aterm.AFun funTomEntry_Entry;
   private TomEntry protoTomEntry_Entry;
+  private aterm.AFun funTomStructureTable_StructTable;
+  private TomStructureTable protoTomStructureTable_StructTable;
   public TomSignatureFactory()
   {
      super();
@@ -295,584 +305,606 @@ public class TomSignatureFactory extends PureFactory
     Declaration.initialize(this);
 
     Declaration_TypeTermDecl.initializePattern();
-    funDeclaration_TypeTermDecl = makeAFun("_TypeTermDecl", 3, false);
+    funDeclaration_TypeTermDecl = makeAFun("_Declaration_TypeTermDecl", 3, false);
     protoDeclaration_TypeTermDecl = new Declaration_TypeTermDecl();
 
     Declaration_TypeListDecl.initializePattern();
-    funDeclaration_TypeListDecl = makeAFun("_TypeListDecl", 3, false);
+    funDeclaration_TypeListDecl = makeAFun("_Declaration_TypeListDecl", 3, false);
     protoDeclaration_TypeListDecl = new Declaration_TypeListDecl();
 
     Declaration_TypeArrayDecl.initializePattern();
-    funDeclaration_TypeArrayDecl = makeAFun("_TypeArrayDecl", 3, false);
+    funDeclaration_TypeArrayDecl = makeAFun("_Declaration_TypeArrayDecl", 3, false);
     protoDeclaration_TypeArrayDecl = new Declaration_TypeArrayDecl();
 
     Declaration_GetFunctionSymbolDecl.initializePattern();
-    funDeclaration_GetFunctionSymbolDecl = makeAFun("_GetFunctionSymbolDecl", 3, false);
+    funDeclaration_GetFunctionSymbolDecl = makeAFun("_Declaration_GetFunctionSymbolDecl", 3, false);
     protoDeclaration_GetFunctionSymbolDecl = new Declaration_GetFunctionSymbolDecl();
 
     Declaration_GetSubtermDecl.initializePattern();
-    funDeclaration_GetSubtermDecl = makeAFun("_GetSubtermDecl", 4, false);
+    funDeclaration_GetSubtermDecl = makeAFun("_Declaration_GetSubtermDecl", 4, false);
     protoDeclaration_GetSubtermDecl = new Declaration_GetSubtermDecl();
 
     Declaration_IsFsymDecl.initializePattern();
-    funDeclaration_IsFsymDecl = makeAFun("_IsFsymDecl", 4, false);
+    funDeclaration_IsFsymDecl = makeAFun("_Declaration_IsFsymDecl", 4, false);
     protoDeclaration_IsFsymDecl = new Declaration_IsFsymDecl();
 
     Declaration_GetSlotDecl.initializePattern();
-    funDeclaration_GetSlotDecl = makeAFun("_GetSlotDecl", 5, false);
+    funDeclaration_GetSlotDecl = makeAFun("_Declaration_GetSlotDecl", 5, false);
     protoDeclaration_GetSlotDecl = new Declaration_GetSlotDecl();
 
     Declaration_CompareFunctionSymbolDecl.initializePattern();
-    funDeclaration_CompareFunctionSymbolDecl = makeAFun("_CompareFunctionSymbolDecl", 4, false);
+    funDeclaration_CompareFunctionSymbolDecl = makeAFun("_Declaration_CompareFunctionSymbolDecl", 4, false);
     protoDeclaration_CompareFunctionSymbolDecl = new Declaration_CompareFunctionSymbolDecl();
 
     Declaration_TermsEqualDecl.initializePattern();
-    funDeclaration_TermsEqualDecl = makeAFun("_TermsEqualDecl", 4, false);
+    funDeclaration_TermsEqualDecl = makeAFun("_Declaration_TermsEqualDecl", 4, false);
     protoDeclaration_TermsEqualDecl = new Declaration_TermsEqualDecl();
 
     Declaration_GetHeadDecl.initializePattern();
-    funDeclaration_GetHeadDecl = makeAFun("_GetHeadDecl", 3, false);
+    funDeclaration_GetHeadDecl = makeAFun("_Declaration_GetHeadDecl", 3, false);
     protoDeclaration_GetHeadDecl = new Declaration_GetHeadDecl();
 
     Declaration_GetTailDecl.initializePattern();
-    funDeclaration_GetTailDecl = makeAFun("_GetTailDecl", 3, false);
+    funDeclaration_GetTailDecl = makeAFun("_Declaration_GetTailDecl", 3, false);
     protoDeclaration_GetTailDecl = new Declaration_GetTailDecl();
 
     Declaration_IsEmptyDecl.initializePattern();
-    funDeclaration_IsEmptyDecl = makeAFun("_IsEmptyDecl", 3, false);
+    funDeclaration_IsEmptyDecl = makeAFun("_Declaration_IsEmptyDecl", 3, false);
     protoDeclaration_IsEmptyDecl = new Declaration_IsEmptyDecl();
 
     Declaration_MakeEmptyList.initializePattern();
-    funDeclaration_MakeEmptyList = makeAFun("_MakeEmptyList", 3, false);
+    funDeclaration_MakeEmptyList = makeAFun("_Declaration_MakeEmptyList", 3, false);
     protoDeclaration_MakeEmptyList = new Declaration_MakeEmptyList();
 
     Declaration_MakeAddList.initializePattern();
-    funDeclaration_MakeAddList = makeAFun("_MakeAddList", 5, false);
+    funDeclaration_MakeAddList = makeAFun("_Declaration_MakeAddList", 5, false);
     protoDeclaration_MakeAddList = new Declaration_MakeAddList();
 
     Declaration_GetElementDecl.initializePattern();
-    funDeclaration_GetElementDecl = makeAFun("_GetElementDecl", 4, false);
+    funDeclaration_GetElementDecl = makeAFun("_Declaration_GetElementDecl", 4, false);
     protoDeclaration_GetElementDecl = new Declaration_GetElementDecl();
 
     Declaration_GetSizeDecl.initializePattern();
-    funDeclaration_GetSizeDecl = makeAFun("_GetSizeDecl", 3, false);
+    funDeclaration_GetSizeDecl = makeAFun("_Declaration_GetSizeDecl", 3, false);
     protoDeclaration_GetSizeDecl = new Declaration_GetSizeDecl();
 
     Declaration_MakeEmptyArray.initializePattern();
-    funDeclaration_MakeEmptyArray = makeAFun("_MakeEmptyArray", 4, false);
+    funDeclaration_MakeEmptyArray = makeAFun("_Declaration_MakeEmptyArray", 4, false);
     protoDeclaration_MakeEmptyArray = new Declaration_MakeEmptyArray();
 
     Declaration_MakeAddArray.initializePattern();
-    funDeclaration_MakeAddArray = makeAFun("_MakeAddArray", 5, false);
+    funDeclaration_MakeAddArray = makeAFun("_Declaration_MakeAddArray", 5, false);
     protoDeclaration_MakeAddArray = new Declaration_MakeAddArray();
 
     Declaration_MakeDecl.initializePattern();
-    funDeclaration_MakeDecl = makeAFun("_MakeDecl", 5, false);
+    funDeclaration_MakeDecl = makeAFun("_Declaration_MakeDecl", 5, false);
     protoDeclaration_MakeDecl = new Declaration_MakeDecl();
 
     Declaration_SymbolDecl.initializePattern();
-    funDeclaration_SymbolDecl = makeAFun("_SymbolDecl", 1, false);
+    funDeclaration_SymbolDecl = makeAFun("_Declaration_SymbolDecl", 1, false);
     protoDeclaration_SymbolDecl = new Declaration_SymbolDecl();
 
     Declaration_ListSymbolDecl.initializePattern();
-    funDeclaration_ListSymbolDecl = makeAFun("_ListSymbolDecl", 1, false);
+    funDeclaration_ListSymbolDecl = makeAFun("_Declaration_ListSymbolDecl", 1, false);
     protoDeclaration_ListSymbolDecl = new Declaration_ListSymbolDecl();
 
     Declaration_ArraySymbolDecl.initializePattern();
-    funDeclaration_ArraySymbolDecl = makeAFun("_ArraySymbolDecl", 1, false);
+    funDeclaration_ArraySymbolDecl = makeAFun("_Declaration_ArraySymbolDecl", 1, false);
     protoDeclaration_ArraySymbolDecl = new Declaration_ArraySymbolDecl();
 
     Declaration_EmptyDeclaration.initializePattern();
-    funDeclaration_EmptyDeclaration = makeAFun("_EmptyDeclaration", 0, false);
+    funDeclaration_EmptyDeclaration = makeAFun("_Declaration_EmptyDeclaration", 0, false);
     protoDeclaration_EmptyDeclaration = new Declaration_EmptyDeclaration();
 
     OptionList.initialize(this);
 
     OptionList_EmptyOptionList.initializePattern();
-    funOptionList_EmptyOptionList = makeAFun("_EmptyOptionList", 0, false);
+    funOptionList_EmptyOptionList = makeAFun("_OptionList_EmptyOptionList", 0, false);
     protoOptionList_EmptyOptionList = new OptionList_EmptyOptionList();
 
     OptionList_ConsOptionList.initializePattern();
-    funOptionList_ConsOptionList = makeAFun("_ConsOptionList", 2, false);
+    funOptionList_ConsOptionList = makeAFun("_OptionList_ConsOptionList", 2, false);
     protoOptionList_ConsOptionList = new OptionList_ConsOptionList();
 
     Option.initialize(this);
 
     Option_DeclarationToOption.initializePattern();
-    funOption_DeclarationToOption = makeAFun("_DeclarationToOption", 1, false);
+    funOption_DeclarationToOption = makeAFun("_Option_DeclarationToOption", 1, false);
     protoOption_DeclarationToOption = new Option_DeclarationToOption();
 
     Option_TomNameToOption.initializePattern();
-    funOption_TomNameToOption = makeAFun("_TomNameToOption", 1, false);
+    funOption_TomNameToOption = makeAFun("_Option_TomNameToOption", 1, false);
     protoOption_TomNameToOption = new Option_TomNameToOption();
 
     Option_TomTermToOption.initializePattern();
-    funOption_TomTermToOption = makeAFun("_TomTermToOption", 1, false);
+    funOption_TomTermToOption = makeAFun("_Option_TomTermToOption", 1, false);
     protoOption_TomTermToOption = new Option_TomTermToOption();
 
     Option_Option.initializePattern();
-    funOption_Option = makeAFun("_Option", 1, false);
+    funOption_Option = makeAFun("_Option_Option", 1, false);
     protoOption_Option = new Option_Option();
 
     Option_DefinedSymbol.initializePattern();
-    funOption_DefinedSymbol = makeAFun("_DefinedSymbol", 0, false);
+    funOption_DefinedSymbol = makeAFun("_Option_DefinedSymbol", 0, false);
     protoOption_DefinedSymbol = new Option_DefinedSymbol();
 
+    Option_GeneratedMatch.initializePattern();
+    funOption_GeneratedMatch = makeAFun("_Option_GeneratedMatch", 0, false);
+    protoOption_GeneratedMatch = new Option_GeneratedMatch();
+
     Option_OriginTracking.initializePattern();
-    funOption_OriginTracking = makeAFun("_OriginTracking", 3, false);
+    funOption_OriginTracking = makeAFun("_Option_OriginTracking", 3, false);
     protoOption_OriginTracking = new Option_OriginTracking();
 
     Option_Constructor.initializePattern();
-    funOption_Constructor = makeAFun("_Constructor", 1, false);
+    funOption_Constructor = makeAFun("_Option_Constructor", 1, false);
     protoOption_Constructor = new Option_Constructor();
+
+    Option_OriginalText.initializePattern();
+    funOption_OriginalText = makeAFun("_Option_OriginalText", 1, false);
+    protoOption_OriginalText = new Option_OriginalText();
 
     Expression.initialize(this);
 
     Expression_TomTermToExpression.initializePattern();
-    funExpression_TomTermToExpression = makeAFun("_TomTermToExpression", 1, false);
+    funExpression_TomTermToExpression = makeAFun("_Expression_TomTermToExpression", 1, false);
     protoExpression_TomTermToExpression = new Expression_TomTermToExpression();
 
     Expression_Not.initializePattern();
-    funExpression_Not = makeAFun("_Not", 1, false);
+    funExpression_Not = makeAFun("_Expression_Not", 1, false);
     protoExpression_Not = new Expression_Not();
 
     Expression_And.initializePattern();
-    funExpression_And = makeAFun("_And", 2, false);
+    funExpression_And = makeAFun("_Expression_And", 2, false);
     protoExpression_And = new Expression_And();
 
     Expression_TrueTL.initializePattern();
-    funExpression_TrueTL = makeAFun("_TrueTL", 0, false);
+    funExpression_TrueTL = makeAFun("_Expression_TrueTL", 0, false);
     protoExpression_TrueTL = new Expression_TrueTL();
 
     Expression_FalseTL.initializePattern();
-    funExpression_FalseTL = makeAFun("_FalseTL", 0, false);
+    funExpression_FalseTL = makeAFun("_Expression_FalseTL", 0, false);
     protoExpression_FalseTL = new Expression_FalseTL();
 
     Expression_IsEmptyList.initializePattern();
-    funExpression_IsEmptyList = makeAFun("_IsEmptyList", 1, false);
+    funExpression_IsEmptyList = makeAFun("_Expression_IsEmptyList", 1, false);
     protoExpression_IsEmptyList = new Expression_IsEmptyList();
 
     Expression_IsEmptyArray.initializePattern();
-    funExpression_IsEmptyArray = makeAFun("_IsEmptyArray", 2, false);
+    funExpression_IsEmptyArray = makeAFun("_Expression_IsEmptyArray", 2, false);
     protoExpression_IsEmptyArray = new Expression_IsEmptyArray();
 
     Expression_EqualFunctionSymbol.initializePattern();
-    funExpression_EqualFunctionSymbol = makeAFun("_EqualFunctionSymbol", 2, false);
+    funExpression_EqualFunctionSymbol = makeAFun("_Expression_EqualFunctionSymbol", 2, false);
     protoExpression_EqualFunctionSymbol = new Expression_EqualFunctionSymbol();
 
     Expression_EqualTerm.initializePattern();
-    funExpression_EqualTerm = makeAFun("_EqualTerm", 2, false);
+    funExpression_EqualTerm = makeAFun("_Expression_EqualTerm", 2, false);
     protoExpression_EqualTerm = new Expression_EqualTerm();
 
     Expression_GetSubterm.initializePattern();
-    funExpression_GetSubterm = makeAFun("_GetSubterm", 2, false);
+    funExpression_GetSubterm = makeAFun("_Expression_GetSubterm", 2, false);
     protoExpression_GetSubterm = new Expression_GetSubterm();
 
     Expression_IsFsym.initializePattern();
-    funExpression_IsFsym = makeAFun("_IsFsym", 2, false);
+    funExpression_IsFsym = makeAFun("_Expression_IsFsym", 2, false);
     protoExpression_IsFsym = new Expression_IsFsym();
 
     Expression_GetSlot.initializePattern();
-    funExpression_GetSlot = makeAFun("_GetSlot", 3, false);
+    funExpression_GetSlot = makeAFun("_Expression_GetSlot", 3, false);
     protoExpression_GetSlot = new Expression_GetSlot();
 
     Expression_GetHead.initializePattern();
-    funExpression_GetHead = makeAFun("_GetHead", 1, false);
+    funExpression_GetHead = makeAFun("_Expression_GetHead", 1, false);
     protoExpression_GetHead = new Expression_GetHead();
 
     Expression_GetTail.initializePattern();
-    funExpression_GetTail = makeAFun("_GetTail", 1, false);
+    funExpression_GetTail = makeAFun("_Expression_GetTail", 1, false);
     protoExpression_GetTail = new Expression_GetTail();
 
     Expression_GetSize.initializePattern();
-    funExpression_GetSize = makeAFun("_GetSize", 1, false);
+    funExpression_GetSize = makeAFun("_Expression_GetSize", 1, false);
     protoExpression_GetSize = new Expression_GetSize();
 
     Expression_GetElement.initializePattern();
-    funExpression_GetElement = makeAFun("_GetElement", 2, false);
+    funExpression_GetElement = makeAFun("_Expression_GetElement", 2, false);
     protoExpression_GetElement = new Expression_GetElement();
 
     Expression_GetSliceList.initializePattern();
-    funExpression_GetSliceList = makeAFun("_GetSliceList", 3, false);
+    funExpression_GetSliceList = makeAFun("_Expression_GetSliceList", 3, false);
     protoExpression_GetSliceList = new Expression_GetSliceList();
 
     Expression_GetSliceArray.initializePattern();
-    funExpression_GetSliceArray = makeAFun("_GetSliceArray", 4, false);
+    funExpression_GetSliceArray = makeAFun("_Expression_GetSliceArray", 4, false);
     protoExpression_GetSliceArray = new Expression_GetSliceArray();
 
     TargetLanguage.initialize(this);
 
     TargetLanguage_TL.initializePattern();
-    funTargetLanguage_TL = makeAFun("_TL", 3, false);
+    funTargetLanguage_TL = makeAFun("_TargetLanguage_TL", 3, false);
     protoTargetLanguage_TL = new TargetLanguage_TL();
 
     TargetLanguage_ITL.initializePattern();
-    funTargetLanguage_ITL = makeAFun("_ITL", 1, false);
+    funTargetLanguage_ITL = makeAFun("_TargetLanguage_ITL", 1, false);
     protoTargetLanguage_ITL = new TargetLanguage_ITL();
 
     Position.initialize(this);
 
     Position_Position.initializePattern();
-    funPosition_Position = makeAFun("_Position", 2, false);
+    funPosition_Position = makeAFun("_Position_Position", 2, false);
     protoPosition_Position = new Position_Position();
 
     TomType.initialize(this);
 
     TomType_Type.initializePattern();
-    funTomType_Type = makeAFun("_Type", 2, false);
+    funTomType_Type = makeAFun("_TomType_Type", 2, false);
     protoTomType_Type = new TomType_Type();
 
     TomType_TypesToType.initializePattern();
-    funTomType_TypesToType = makeAFun("_TypesToType", 2, false);
+    funTomType_TypesToType = makeAFun("_TomType_TypesToType", 2, false);
     protoTomType_TypesToType = new TomType_TypesToType();
 
     TomType_TomType.initializePattern();
-    funTomType_TomType = makeAFun("_TomType", 1, false);
+    funTomType_TomType = makeAFun("_TomType_TomType", 1, false);
     protoTomType_TomType = new TomType_TomType();
 
     TomType_TomTypeAlone.initializePattern();
-    funTomType_TomTypeAlone = makeAFun("_TomTypeAlone", 1, false);
+    funTomType_TomTypeAlone = makeAFun("_TomType_TomTypeAlone", 1, false);
     protoTomType_TomTypeAlone = new TomType_TomTypeAlone();
 
     TomType_TLType.initializePattern();
-    funTomType_TLType = makeAFun("_TLType", 1, false);
+    funTomType_TLType = makeAFun("_TomType_TLType", 1, false);
     protoTomType_TLType = new TomType_TLType();
 
     TomType_EmptyType.initializePattern();
-    funTomType_EmptyType = makeAFun("_EmptyType", 0, false);
+    funTomType_EmptyType = makeAFun("_TomType_EmptyType", 0, false);
     protoTomType_EmptyType = new TomType_EmptyType();
 
     TomName.initialize(this);
 
     TomName_Name.initializePattern();
-    funTomName_Name = makeAFun("_Name", 1, false);
+    funTomName_Name = makeAFun("_TomName_Name", 1, false);
     protoTomName_Name = new TomName_Name();
 
     TomName_PositionName.initializePattern();
-    funTomName_PositionName = makeAFun("_PositionName", 1, false);
+    funTomName_PositionName = makeAFun("_TomName_PositionName", 1, false);
     protoTomName_PositionName = new TomName_PositionName();
 
     TomName_EmptyName.initializePattern();
-    funTomName_EmptyName = makeAFun("_EmptyName", 0, false);
+    funTomName_EmptyName = makeAFun("_TomName_EmptyName", 0, false);
     protoTomName_EmptyName = new TomName_EmptyName();
 
     TomList.initialize(this);
 
     TomList_Empty.initializePattern();
-    funTomList_Empty = makeAFun("_Empty", 0, false);
+    funTomList_Empty = makeAFun("_TomList_Empty", 0, false);
     protoTomList_Empty = new TomList_Empty();
 
     TomList_Cons.initializePattern();
-    funTomList_Cons = makeAFun("_Cons", 2, false);
+    funTomList_Cons = makeAFun("_TomList_Cons", 2, false);
     protoTomList_Cons = new TomList_Cons();
 
     TomTerm.initialize(this);
 
     TomTerm_TargetLanguageToTomTerm.initializePattern();
-    funTomTerm_TargetLanguageToTomTerm = makeAFun("_TargetLanguageToTomTerm", 1, false);
+    funTomTerm_TargetLanguageToTomTerm = makeAFun("_TomTerm_TargetLanguageToTomTerm", 1, false);
     protoTomTerm_TargetLanguageToTomTerm = new TomTerm_TargetLanguageToTomTerm();
 
     TomTerm_TomTypeToTomTerm.initializePattern();
-    funTomTerm_TomTypeToTomTerm = makeAFun("_TomTypeToTomTerm", 1, false);
+    funTomTerm_TomTypeToTomTerm = makeAFun("_TomTerm_TomTypeToTomTerm", 1, false);
     protoTomTerm_TomTypeToTomTerm = new TomTerm_TomTypeToTomTerm();
 
     TomTerm_TomNameToTomTerm.initializePattern();
-    funTomTerm_TomNameToTomTerm = makeAFun("_TomNameToTomTerm", 1, false);
+    funTomTerm_TomNameToTomTerm = makeAFun("_TomTerm_TomNameToTomTerm", 1, false);
     protoTomTerm_TomNameToTomTerm = new TomTerm_TomNameToTomTerm();
 
     TomTerm_TomSymbolToTomTerm.initializePattern();
-    funTomTerm_TomSymbolToTomTerm = makeAFun("_TomSymbolToTomTerm", 1, false);
+    funTomTerm_TomSymbolToTomTerm = makeAFun("_TomTerm_TomSymbolToTomTerm", 1, false);
     protoTomTerm_TomSymbolToTomTerm = new TomTerm_TomSymbolToTomTerm();
 
     TomTerm_DeclarationToTomTerm.initializePattern();
-    funTomTerm_DeclarationToTomTerm = makeAFun("_DeclarationToTomTerm", 1, false);
+    funTomTerm_DeclarationToTomTerm = makeAFun("_TomTerm_DeclarationToTomTerm", 1, false);
     protoTomTerm_DeclarationToTomTerm = new TomTerm_DeclarationToTomTerm();
 
     TomTerm_OptionToTomTerm.initializePattern();
-    funTomTerm_OptionToTomTerm = makeAFun("_OptionToTomTerm", 1, false);
+    funTomTerm_OptionToTomTerm = makeAFun("_TomTerm_OptionToTomTerm", 1, false);
     protoTomTerm_OptionToTomTerm = new TomTerm_OptionToTomTerm();
 
     TomTerm_ExpressionToTomTerm.initializePattern();
-    funTomTerm_ExpressionToTomTerm = makeAFun("_ExpressionToTomTerm", 1, false);
+    funTomTerm_ExpressionToTomTerm = makeAFun("_TomTerm_ExpressionToTomTerm", 1, false);
     protoTomTerm_ExpressionToTomTerm = new TomTerm_ExpressionToTomTerm();
 
     TomTerm_InstructionToTomTerm.initializePattern();
-    funTomTerm_InstructionToTomTerm = makeAFun("_InstructionToTomTerm", 1, false);
+    funTomTerm_InstructionToTomTerm = makeAFun("_TomTerm_InstructionToTomTerm", 1, false);
     protoTomTerm_InstructionToTomTerm = new TomTerm_InstructionToTomTerm();
 
     TomTerm_Tom.initializePattern();
-    funTomTerm_Tom = makeAFun("_Tom", 1, false);
+    funTomTerm_Tom = makeAFun("_TomTerm_Tom", 1, false);
     protoTomTerm_Tom = new TomTerm_Tom();
 
     TomTerm_TomInclude.initializePattern();
-    funTomTerm_TomInclude = makeAFun("_TomInclude", 1, false);
+    funTomTerm_TomInclude = makeAFun("_TomTerm_TomInclude", 1, false);
     protoTomTerm_TomInclude = new TomTerm_TomInclude();
 
     TomTerm_MakeTerm.initializePattern();
-    funTomTerm_MakeTerm = makeAFun("_MakeTerm", 1, false);
+    funTomTerm_MakeTerm = makeAFun("_TomTerm_MakeTerm", 1, false);
     protoTomTerm_MakeTerm = new TomTerm_MakeTerm();
 
     TomTerm_BackQuoteTerm.initializePattern();
-    funTomTerm_BackQuoteTerm = makeAFun("_BackQuoteTerm", 2, false);
+    funTomTerm_BackQuoteTerm = makeAFun("_TomTerm_BackQuoteTerm", 2, false);
     protoTomTerm_BackQuoteTerm = new TomTerm_BackQuoteTerm();
 
     TomTerm_FunctionCall.initializePattern();
-    funTomTerm_FunctionCall = makeAFun("_FunctionCall", 2, false);
+    funTomTerm_FunctionCall = makeAFun("_TomTerm_FunctionCall", 2, false);
     protoTomTerm_FunctionCall = new TomTerm_FunctionCall();
 
     TomTerm_MakeFunctionBegin.initializePattern();
-    funTomTerm_MakeFunctionBegin = makeAFun("_MakeFunctionBegin", 2, false);
+    funTomTerm_MakeFunctionBegin = makeAFun("_TomTerm_MakeFunctionBegin", 2, false);
     protoTomTerm_MakeFunctionBegin = new TomTerm_MakeFunctionBegin();
 
     TomTerm_MakeFunctionEnd.initializePattern();
-    funTomTerm_MakeFunctionEnd = makeAFun("_MakeFunctionEnd", 0, false);
+    funTomTerm_MakeFunctionEnd = makeAFun("_TomTerm_MakeFunctionEnd", 0, false);
     protoTomTerm_MakeFunctionEnd = new TomTerm_MakeFunctionEnd();
 
     TomTerm_Appl.initializePattern();
-    funTomTerm_Appl = makeAFun("_Appl", 3, false);
+    funTomTerm_Appl = makeAFun("_TomTerm_Appl", 3, false);
     protoTomTerm_Appl = new TomTerm_Appl();
 
     TomTerm_RecordAppl.initializePattern();
-    funTomTerm_RecordAppl = makeAFun("_RecordAppl", 3, false);
+    funTomTerm_RecordAppl = makeAFun("_TomTerm_RecordAppl", 3, false);
     protoTomTerm_RecordAppl = new TomTerm_RecordAppl();
 
     TomTerm_PairSlotAppl.initializePattern();
-    funTomTerm_PairSlotAppl = makeAFun("_PairSlotAppl", 2, false);
+    funTomTerm_PairSlotAppl = makeAFun("_TomTerm_PairSlotAppl", 2, false);
     protoTomTerm_PairSlotAppl = new TomTerm_PairSlotAppl();
 
     TomTerm_Match.initializePattern();
-    funTomTerm_Match = makeAFun("_Match", 3, false);
+    funTomTerm_Match = makeAFun("_TomTerm_Match", 3, false);
     protoTomTerm_Match = new TomTerm_Match();
 
     TomTerm_MatchingCondition.initializePattern();
-    funTomTerm_MatchingCondition = makeAFun("_MatchingCondition", 2, false);
+    funTomTerm_MatchingCondition = makeAFun("_TomTerm_MatchingCondition", 2, false);
     protoTomTerm_MatchingCondition = new TomTerm_MatchingCondition();
 
     TomTerm_EqualityCondition.initializePattern();
-    funTomTerm_EqualityCondition = makeAFun("_EqualityCondition", 2, false);
+    funTomTerm_EqualityCondition = makeAFun("_TomTerm_EqualityCondition", 2, false);
     protoTomTerm_EqualityCondition = new TomTerm_EqualityCondition();
 
     TomTerm_RuleSet.initializePattern();
-    funTomTerm_RuleSet = makeAFun("_RuleSet", 2, false);
+    funTomTerm_RuleSet = makeAFun("_TomTerm_RuleSet", 2, false);
     protoTomTerm_RuleSet = new TomTerm_RuleSet();
 
     TomTerm_RewriteRule.initializePattern();
-    funTomTerm_RewriteRule = makeAFun("_RewriteRule", 4, false);
+    funTomTerm_RewriteRule = makeAFun("_TomTerm_RewriteRule", 4, false);
     protoTomTerm_RewriteRule = new TomTerm_RewriteRule();
 
     TomTerm_SubjectList.initializePattern();
-    funTomTerm_SubjectList = makeAFun("_SubjectList", 1, false);
+    funTomTerm_SubjectList = makeAFun("_TomTerm_SubjectList", 1, false);
     protoTomTerm_SubjectList = new TomTerm_SubjectList();
 
     TomTerm_PatternList.initializePattern();
-    funTomTerm_PatternList = makeAFun("_PatternList", 1, false);
+    funTomTerm_PatternList = makeAFun("_TomTerm_PatternList", 1, false);
     protoTomTerm_PatternList = new TomTerm_PatternList();
 
     TomTerm_TermList.initializePattern();
-    funTomTerm_TermList = makeAFun("_TermList", 1, false);
+    funTomTerm_TermList = makeAFun("_TomTerm_TermList", 1, false);
     protoTomTerm_TermList = new TomTerm_TermList();
 
     TomTerm_Term.initializePattern();
-    funTomTerm_Term = makeAFun("_Term", 1, false);
+    funTomTerm_Term = makeAFun("_TomTerm_Term", 1, false);
     protoTomTerm_Term = new TomTerm_Term();
 
     TomTerm_PatternAction.initializePattern();
-    funTomTerm_PatternAction = makeAFun("_PatternAction", 2, false);
+    funTomTerm_PatternAction = makeAFun("_TomTerm_PatternAction", 3, false);
     protoTomTerm_PatternAction = new TomTerm_PatternAction();
 
     TomTerm_TLVar.initializePattern();
-    funTomTerm_TLVar = makeAFun("_TLVar", 2, false);
+    funTomTerm_TLVar = makeAFun("_TomTerm_TLVar", 2, false);
     protoTomTerm_TLVar = new TomTerm_TLVar();
 
     TomTerm_Declaration.initializePattern();
-    funTomTerm_Declaration = makeAFun("_Declaration", 1, false);
+    funTomTerm_Declaration = makeAFun("_TomTerm_Declaration", 1, false);
     protoTomTerm_Declaration = new TomTerm_Declaration();
 
     TomTerm_Variable.initializePattern();
-    funTomTerm_Variable = makeAFun("_Variable", 3, false);
+    funTomTerm_Variable = makeAFun("_TomTerm_Variable", 3, false);
     protoTomTerm_Variable = new TomTerm_Variable();
 
     TomTerm_VariableStar.initializePattern();
-    funTomTerm_VariableStar = makeAFun("_VariableStar", 3, false);
+    funTomTerm_VariableStar = makeAFun("_TomTerm_VariableStar", 3, false);
     protoTomTerm_VariableStar = new TomTerm_VariableStar();
 
     TomTerm_Placeholder.initializePattern();
-    funTomTerm_Placeholder = makeAFun("_Placeholder", 1, false);
+    funTomTerm_Placeholder = makeAFun("_TomTerm_Placeholder", 1, false);
     protoTomTerm_Placeholder = new TomTerm_Placeholder();
 
     TomTerm_UnamedVariable.initializePattern();
-    funTomTerm_UnamedVariable = makeAFun("_UnamedVariable", 2, false);
+    funTomTerm_UnamedVariable = makeAFun("_TomTerm_UnamedVariable", 2, false);
     protoTomTerm_UnamedVariable = new TomTerm_UnamedVariable();
 
     TomTerm_DotTerm.initializePattern();
-    funTomTerm_DotTerm = makeAFun("_DotTerm", 2, false);
+    funTomTerm_DotTerm = makeAFun("_TomTerm_DotTerm", 2, false);
     protoTomTerm_DotTerm = new TomTerm_DotTerm();
 
     TomTerm_LocalVariable.initializePattern();
-    funTomTerm_LocalVariable = makeAFun("_LocalVariable", 0, false);
+    funTomTerm_LocalVariable = makeAFun("_TomTerm_LocalVariable", 0, false);
     protoTomTerm_LocalVariable = new TomTerm_LocalVariable();
 
     TomTerm_EndLocalVariable.initializePattern();
-    funTomTerm_EndLocalVariable = makeAFun("_EndLocalVariable", 0, false);
+    funTomTerm_EndLocalVariable = makeAFun("_TomTerm_EndLocalVariable", 0, false);
     protoTomTerm_EndLocalVariable = new TomTerm_EndLocalVariable();
 
     TomTerm_BuildVariable.initializePattern();
-    funTomTerm_BuildVariable = makeAFun("_BuildVariable", 1, false);
+    funTomTerm_BuildVariable = makeAFun("_TomTerm_BuildVariable", 1, false);
     protoTomTerm_BuildVariable = new TomTerm_BuildVariable();
 
     TomTerm_BuildTerm.initializePattern();
-    funTomTerm_BuildTerm = makeAFun("_BuildTerm", 2, false);
+    funTomTerm_BuildTerm = makeAFun("_TomTerm_BuildTerm", 2, false);
     protoTomTerm_BuildTerm = new TomTerm_BuildTerm();
 
     TomTerm_BuildList.initializePattern();
-    funTomTerm_BuildList = makeAFun("_BuildList", 2, false);
+    funTomTerm_BuildList = makeAFun("_TomTerm_BuildList", 2, false);
     protoTomTerm_BuildList = new TomTerm_BuildList();
 
     TomTerm_BuildArray.initializePattern();
-    funTomTerm_BuildArray = makeAFun("_BuildArray", 2, false);
+    funTomTerm_BuildArray = makeAFun("_TomTerm_BuildArray", 2, false);
     protoTomTerm_BuildArray = new TomTerm_BuildArray();
 
     TomTerm_BuildBuiltin.initializePattern();
-    funTomTerm_BuildBuiltin = makeAFun("_BuildBuiltin", 1, false);
+    funTomTerm_BuildBuiltin = makeAFun("_TomTerm_BuildBuiltin", 1, false);
     protoTomTerm_BuildBuiltin = new TomTerm_BuildBuiltin();
 
     TomTerm_CompiledMatch.initializePattern();
-    funTomTerm_CompiledMatch = makeAFun("_CompiledMatch", 2, false);
+    funTomTerm_CompiledMatch = makeAFun("_TomTerm_CompiledMatch", 3, false);
     protoTomTerm_CompiledMatch = new TomTerm_CompiledMatch();
 
     TomTerm_CompiledPattern.initializePattern();
-    funTomTerm_CompiledPattern = makeAFun("_CompiledPattern", 1, false);
+    funTomTerm_CompiledPattern = makeAFun("_TomTerm_CompiledPattern", 1, false);
     protoTomTerm_CompiledPattern = new TomTerm_CompiledPattern();
 
+    TomTerm_AssignedVariable.initializePattern();
+    funTomTerm_AssignedVariable = makeAFun("_TomTerm_AssignedVariable", 3, false);
+    protoTomTerm_AssignedVariable = new TomTerm_AssignedVariable();
+
     TomTerm_Automata.initializePattern();
-    funTomTerm_Automata = makeAFun("_Automata", 2, false);
+    funTomTerm_Automata = makeAFun("_TomTerm_Automata", 2, false);
     protoTomTerm_Automata = new TomTerm_Automata();
 
     TomTerm_MatchNumber.initializePattern();
-    funTomTerm_MatchNumber = makeAFun("_MatchNumber", 1, false);
+    funTomTerm_MatchNumber = makeAFun("_TomTerm_MatchNumber", 1, false);
     protoTomTerm_MatchNumber = new TomTerm_MatchNumber();
 
     TomTerm_PatternNumber.initializePattern();
-    funTomTerm_PatternNumber = makeAFun("_PatternNumber", 1, false);
+    funTomTerm_PatternNumber = makeAFun("_TomTerm_PatternNumber", 1, false);
     protoTomTerm_PatternNumber = new TomTerm_PatternNumber();
 
     TomTerm_ListNumber.initializePattern();
-    funTomTerm_ListNumber = makeAFun("_ListNumber", 1, false);
+    funTomTerm_ListNumber = makeAFun("_TomTerm_ListNumber", 1, false);
     protoTomTerm_ListNumber = new TomTerm_ListNumber();
 
     TomTerm_IndexNumber.initializePattern();
-    funTomTerm_IndexNumber = makeAFun("_IndexNumber", 1, false);
+    funTomTerm_IndexNumber = makeAFun("_TomTerm_IndexNumber", 1, false);
     protoTomTerm_IndexNumber = new TomTerm_IndexNumber();
 
     TomTerm_AbsVar.initializePattern();
-    funTomTerm_AbsVar = makeAFun("_AbsVar", 1, false);
+    funTomTerm_AbsVar = makeAFun("_TomTerm_AbsVar", 1, false);
     protoTomTerm_AbsVar = new TomTerm_AbsVar();
 
     TomTerm_RenamedVar.initializePattern();
-    funTomTerm_RenamedVar = makeAFun("_RenamedVar", 1, false);
+    funTomTerm_RenamedVar = makeAFun("_TomTerm_RenamedVar", 1, false);
     protoTomTerm_RenamedVar = new TomTerm_RenamedVar();
 
     TomTerm_RuleVar.initializePattern();
-    funTomTerm_RuleVar = makeAFun("_RuleVar", 0, false);
+    funTomTerm_RuleVar = makeAFun("_TomTerm_RuleVar", 0, false);
     protoTomTerm_RuleVar = new TomTerm_RuleVar();
 
     TomTerm_Number.initializePattern();
-    funTomTerm_Number = makeAFun("_Number", 1, false);
+    funTomTerm_Number = makeAFun("_TomTerm_Number", 1, false);
     protoTomTerm_Number = new TomTerm_Number();
 
     TomTerm_Begin.initializePattern();
-    funTomTerm_Begin = makeAFun("_Begin", 1, false);
+    funTomTerm_Begin = makeAFun("_TomTerm_Begin", 1, false);
     protoTomTerm_Begin = new TomTerm_Begin();
 
     TomTerm_End.initializePattern();
-    funTomTerm_End = makeAFun("_End", 1, false);
+    funTomTerm_End = makeAFun("_TomTerm_End", 1, false);
     protoTomTerm_End = new TomTerm_End();
 
     Instruction.initialize(this);
 
     Instruction_IfThenElse.initializePattern();
-    funInstruction_IfThenElse = makeAFun("_IfThenElse", 3, false);
+    funInstruction_IfThenElse = makeAFun("_Instruction_IfThenElse", 3, false);
     protoInstruction_IfThenElse = new Instruction_IfThenElse();
 
     Instruction_DoWhile.initializePattern();
-    funInstruction_DoWhile = makeAFun("_DoWhile", 2, false);
+    funInstruction_DoWhile = makeAFun("_Instruction_DoWhile", 2, false);
     protoInstruction_DoWhile = new Instruction_DoWhile();
 
     Instruction_Assign.initializePattern();
-    funInstruction_Assign = makeAFun("_Assign", 2, false);
+    funInstruction_Assign = makeAFun("_Instruction_Assign", 2, false);
     protoInstruction_Assign = new Instruction_Assign();
 
+    Instruction_AssignMatchSubject.initializePattern();
+    funInstruction_AssignMatchSubject = makeAFun("_Instruction_AssignMatchSubject", 2, false);
+    protoInstruction_AssignMatchSubject = new Instruction_AssignMatchSubject();
+
     Instruction_Increment.initializePattern();
-    funInstruction_Increment = makeAFun("_Increment", 1, false);
+    funInstruction_Increment = makeAFun("_Instruction_Increment", 1, false);
     protoInstruction_Increment = new Instruction_Increment();
 
     Instruction_Action.initializePattern();
-    funInstruction_Action = makeAFun("_Action", 1, false);
+    funInstruction_Action = makeAFun("_Instruction_Action", 1, false);
     protoInstruction_Action = new Instruction_Action();
 
     Instruction_ExitAction.initializePattern();
-    funInstruction_ExitAction = makeAFun("_ExitAction", 1, false);
+    funInstruction_ExitAction = makeAFun("_Instruction_ExitAction", 1, false);
     protoInstruction_ExitAction = new Instruction_ExitAction();
 
     Instruction_Return.initializePattern();
-    funInstruction_Return = makeAFun("_Return", 1, false);
+    funInstruction_Return = makeAFun("_Instruction_Return", 1, false);
     protoInstruction_Return = new Instruction_Return();
 
     Instruction_OpenBlock.initializePattern();
-    funInstruction_OpenBlock = makeAFun("_OpenBlock", 0, false);
+    funInstruction_OpenBlock = makeAFun("_Instruction_OpenBlock", 0, false);
     protoInstruction_OpenBlock = new Instruction_OpenBlock();
 
     Instruction_CloseBlock.initializePattern();
-    funInstruction_CloseBlock = makeAFun("_CloseBlock", 0, false);
+    funInstruction_CloseBlock = makeAFun("_Instruction_CloseBlock", 0, false);
     protoInstruction_CloseBlock = new Instruction_CloseBlock();
 
     Instruction_NamedBlock.initializePattern();
-    funInstruction_NamedBlock = makeAFun("_NamedBlock", 2, false);
+    funInstruction_NamedBlock = makeAFun("_Instruction_NamedBlock", 2, false);
     protoInstruction_NamedBlock = new Instruction_NamedBlock();
 
     TomSymbol.initialize(this);
 
     TomSymbol_Symbol.initializePattern();
-    funTomSymbol_Symbol = makeAFun("_Symbol", 5, false);
+    funTomSymbol_Symbol = makeAFun("_TomSymbol_Symbol", 5, false);
     protoTomSymbol_Symbol = new TomSymbol_Symbol();
 
     SlotList.initialize(this);
 
     SlotList_EmptySlotList.initializePattern();
-    funSlotList_EmptySlotList = makeAFun("_EmptySlotList", 0, false);
+    funSlotList_EmptySlotList = makeAFun("_SlotList_EmptySlotList", 0, false);
     protoSlotList_EmptySlotList = new SlotList_EmptySlotList();
 
     SlotList_ConsSlotList.initializePattern();
-    funSlotList_ConsSlotList = makeAFun("_ConsSlotList", 2, false);
+    funSlotList_ConsSlotList = makeAFun("_SlotList_ConsSlotList", 2, false);
     protoSlotList_ConsSlotList = new SlotList_ConsSlotList();
 
     PairNameDecl.initialize(this);
 
     PairNameDecl_Slot.initializePattern();
-    funPairNameDecl_Slot = makeAFun("_Slot", 2, false);
+    funPairNameDecl_Slot = makeAFun("_PairNameDecl_Slot", 2, false);
     protoPairNameDecl_Slot = new PairNameDecl_Slot();
 
     TomSymbolTable.initialize(this);
 
     TomSymbolTable_Table.initializePattern();
-    funTomSymbolTable_Table = makeAFun("_Table", 1, false);
+    funTomSymbolTable_Table = makeAFun("_TomSymbolTable_Table", 1, false);
     protoTomSymbolTable_Table = new TomSymbolTable_Table();
 
     TomEntryList.initialize(this);
 
     TomEntryList_EmptyEntryList.initializePattern();
-    funTomEntryList_EmptyEntryList = makeAFun("_EmptyEntryList", 0, false);
+    funTomEntryList_EmptyEntryList = makeAFun("_TomEntryList_EmptyEntryList", 0, false);
     protoTomEntryList_EmptyEntryList = new TomEntryList_EmptyEntryList();
 
     TomEntryList_ConsEntryList.initializePattern();
-    funTomEntryList_ConsEntryList = makeAFun("_ConsEntryList", 2, false);
+    funTomEntryList_ConsEntryList = makeAFun("_TomEntryList_ConsEntryList", 2, false);
     protoTomEntryList_ConsEntryList = new TomEntryList_ConsEntryList();
 
     TomEntry.initialize(this);
 
     TomEntry_Entry.initializePattern();
-    funTomEntry_Entry = makeAFun("_Entry", 2, false);
+    funTomEntry_Entry = makeAFun("_TomEntry_Entry", 2, false);
     protoTomEntry_Entry = new TomEntry_Entry();
+
+    TomStructureTable.initialize(this);
+
+    TomStructureTable_StructTable.initializePattern();
+    funTomStructureTable_StructTable = makeAFun("_TomStructureTable_StructTable", 1, false);
+    protoTomStructureTable_StructTable = new TomStructureTable_StructTable();
 
   }
 
@@ -1236,6 +1268,18 @@ public class TomSignatureFactory extends PureFactory
     return makeOption_DefinedSymbol( funOption_DefinedSymbol, args, empty);
   }
 
+  protected Option_GeneratedMatch makeOption_GeneratedMatch(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoOption_GeneratedMatch) {
+      protoOption_GeneratedMatch.initHashCode(annos,fun,args);
+      return (Option_GeneratedMatch) build(protoOption_GeneratedMatch);
+    }
+  }
+
+  public Option_GeneratedMatch makeOption_GeneratedMatch() {
+    aterm.ATerm[] args = new aterm.ATerm[] {};
+    return makeOption_GeneratedMatch( funOption_GeneratedMatch, args, empty);
+  }
+
   protected Option_OriginTracking makeOption_OriginTracking(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_OriginTracking) {
       protoOption_OriginTracking.initHashCode(annos,fun,args);
@@ -1258,6 +1302,18 @@ public class TomSignatureFactory extends PureFactory
   public Option_Constructor makeOption_Constructor(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
     return makeOption_Constructor( funOption_Constructor, args, empty);
+  }
+
+  protected Option_OriginalText makeOption_OriginalText(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoOption_OriginalText) {
+      protoOption_OriginalText.initHashCode(annos,fun,args);
+      return (Option_OriginalText) build(protoOption_OriginalText);
+    }
+  }
+
+  public Option_OriginalText makeOption_OriginalText(TomName _astName) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName};
+    return makeOption_OriginalText( funOption_OriginalText, args, empty);
   }
 
   protected Expression_TomTermToExpression makeExpression_TomTermToExpression(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -1867,8 +1923,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm_Match makeTomTerm_Match(Option _option, TomTerm _subjectList, TomTerm _patternList) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_option, _subjectList, _patternList};
+  public TomTerm_Match makeTomTerm_Match(TomTerm _subjectList, TomTerm _patternList, Option _option) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_subjectList, _patternList, _option};
     return makeTomTerm_Match( funTomTerm_Match, args, empty);
   }
 
@@ -1903,8 +1959,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm_RuleSet makeTomTerm_RuleSet(Option _option, TomList _list) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_option, _list};
+  public TomTerm_RuleSet makeTomTerm_RuleSet(TomList _list, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_list, _orgTrack};
     return makeTomTerm_RuleSet( funTomTerm_RuleSet, args, empty);
   }
 
@@ -1915,8 +1971,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm_RewriteRule makeTomTerm_RewriteRule(TomTerm _lhs, TomTerm _rhs, TomList _condList, Option _orgTrack) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs, _condList, _orgTrack};
+  public TomTerm_RewriteRule makeTomTerm_RewriteRule(TomTerm _lhs, TomTerm _rhs, TomList _condList, Option _option) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs, _condList, _option};
     return makeTomTerm_RewriteRule( funTomTerm_RewriteRule, args, empty);
   }
 
@@ -1963,8 +2019,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm_Term makeTomTerm_Term(TomTerm _kid1) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
+  public TomTerm_Term makeTomTerm_Term(TomTerm _term) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_term};
     return makeTomTerm_Term( funTomTerm_Term, args, empty);
   }
 
@@ -1975,8 +2031,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm_PatternAction makeTomTerm_PatternAction(TomTerm _termList, TomTerm _tom) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_termList, _tom};
+  public TomTerm_PatternAction makeTomTerm_PatternAction(TomTerm _termList, TomTerm _tom, Option _option) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_termList, _tom, _option};
     return makeTomTerm_PatternAction( funTomTerm_PatternAction, args, empty);
   }
 
@@ -2155,8 +2211,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm_CompiledMatch makeTomTerm_CompiledMatch(TomList _decls, TomList _automataList) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_decls, _automataList};
+  public TomTerm_CompiledMatch makeTomTerm_CompiledMatch(TomList _decls, TomList _automataList, Option _option) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_decls, _automataList, _option};
     return makeTomTerm_CompiledMatch( funTomTerm_CompiledMatch, args, empty);
   }
 
@@ -2170,6 +2226,18 @@ public class TomSignatureFactory extends PureFactory
   public TomTerm_CompiledPattern makeTomTerm_CompiledPattern(TomList _instList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_instList};
     return makeTomTerm_CompiledPattern( funTomTerm_CompiledPattern, args, empty);
+  }
+
+  protected TomTerm_AssignedVariable makeTomTerm_AssignedVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_AssignedVariable) {
+      protoTomTerm_AssignedVariable.initHashCode(annos,fun,args);
+      return (TomTerm_AssignedVariable) build(protoTomTerm_AssignedVariable);
+    }
+  }
+
+  public TomTerm_AssignedVariable makeTomTerm_AssignedVariable(String _varName, Expression _source, Integer _nbUse) {
+    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_varName, 0, true)), _source, makeInt(_nbUse.intValue())};
+    return makeTomTerm_AssignedVariable( funTomTerm_AssignedVariable, args, empty);
   }
 
   protected TomTerm_Automata makeTomTerm_Automata(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -2338,6 +2406,18 @@ public class TomSignatureFactory extends PureFactory
   public Instruction_Assign makeInstruction_Assign(TomTerm _kid1, Expression _source) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _source};
     return makeInstruction_Assign( funInstruction_Assign, args, empty);
+  }
+
+  protected Instruction_AssignMatchSubject makeInstruction_AssignMatchSubject(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoInstruction_AssignMatchSubject) {
+      protoInstruction_AssignMatchSubject.initHashCode(annos,fun,args);
+      return (Instruction_AssignMatchSubject) build(protoInstruction_AssignMatchSubject);
+    }
+  }
+
+  public Instruction_AssignMatchSubject makeInstruction_AssignMatchSubject(TomTerm _kid1, Expression _source) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _source};
+    return makeInstruction_AssignMatchSubject( funInstruction_AssignMatchSubject, args, empty);
   }
 
   protected Instruction_Increment makeInstruction_Increment(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -2518,6 +2598,18 @@ public class TomSignatureFactory extends PureFactory
   public TomEntry_Entry makeTomEntry_Entry(String _strName, TomSymbol _astSymbol) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_strName, 0, true)), _astSymbol};
     return makeTomEntry_Entry( funTomEntry_Entry, args, empty);
+  }
+
+  protected TomStructureTable_StructTable makeTomStructureTable_StructTable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomStructureTable_StructTable) {
+      protoTomStructureTable_StructTable.initHashCode(annos,fun,args);
+      return (TomStructureTable_StructTable) build(protoTomStructureTable_StructTable);
+    }
+  }
+
+  public TomStructureTable_StructTable makeTomStructureTable_StructTable(TomList _structList) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_structList};
+    return makeTomStructureTable_StructTable( funTomStructureTable_StructTable, args, empty);
   }
 
 }

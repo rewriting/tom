@@ -8,9 +8,9 @@ extends TomTerm
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-  private static int index_option = 0;
-  private static int index_subjectList = 1;
-  private static int index_patternList = 2;
+  private static int index_subjectList = 0;
+  private static int index_patternList = 1;
+  private static int index_option = 2;
   public shared.SharedObject duplicate() {
     TomTerm_Match clone = new TomTerm_Match();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -30,7 +30,7 @@ extends TomTerm
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_Match(Option.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)));
+      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_Match(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), Option.fromTerm( (aterm.ATerm) children.get(2)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -39,11 +39,6 @@ extends TomTerm
     }
   }
   public boolean isMatch()
-  {
-    return true;
-  }
-
-  public boolean hasOption()
   {
     return true;
   }
@@ -58,14 +53,9 @@ extends TomTerm
     return true;
   }
 
-  public Option getOption()
+  public boolean hasOption()
   {
-    return (Option) this.getArgument(index_option) ;
-  }
-
-  public TomTerm setOption(Option _option)
-  {
-    return (TomTerm) super.setArgument(_option, index_option);
+    return true;
   }
 
   public TomTerm getSubjectList()
@@ -88,11 +78,21 @@ extends TomTerm
     return (TomTerm) super.setArgument(_patternList, index_patternList);
   }
 
+  public Option getOption()
+  {
+    return (Option) this.getArgument(index_option) ;
+  }
+
+  public TomTerm setOption(Option _option)
+  {
+    return (TomTerm) super.setArgument(_option, index_option);
+  }
+
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
-        if (! (arg instanceof Option)) { 
-          throw new RuntimeException("Argument 0 of a TomTerm_Match should have type Option");
+        if (! (arg instanceof TomTerm)) { 
+          throw new RuntimeException("Argument 0 of a TomTerm_Match should have type TomTerm");
         }
         break;
       case 1:
@@ -101,8 +101,8 @@ extends TomTerm
         }
         break;
       case 2:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 2 of a TomTerm_Match should have type TomTerm");
+        if (! (arg instanceof Option)) { 
+          throw new RuntimeException("Argument 2 of a TomTerm_Match should have type Option");
         }
         break;
       default: throw new RuntimeException("TomTerm_Match does not have an argument at " + i );
@@ -110,9 +110,9 @@ extends TomTerm
     return super.setArgument(arg, i);
   }
   protected int hashFunction() {
-    int c = getArgument(1).hashCode() + (getAnnotations().hashCode()<<8);
+    int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
-    int b = 0x9e3779b9;
+    int b = (getAFun().hashCode()<<8);
     a += (getArgument(2).hashCode() << 16);
     a += (getArgument(1).hashCode() << 8);
     a += (getArgument(0).hashCode() << 0);

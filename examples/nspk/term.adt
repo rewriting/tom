@@ -1,4 +1,7 @@
 [
+
+ [State, f, f(<slot(SharedSet)>)],
+
  [AgentId, a, a], 
  [AgentId, b, b], 
  [AgentId, c, c], 

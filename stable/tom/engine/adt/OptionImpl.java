@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class OptionImpl extends TomSignatureConstructor
 {
-  static Option fromString(String str)
+  public static Option fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static Option fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static Option fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
@@ -43,11 +43,19 @@ abstract public class OptionImpl extends TomSignatureConstructor
       return tmp;
     }
 
+    if ((tmp = Option_GeneratedMatch.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
     if ((tmp = Option_OriginTracking.fromTerm(trm)) != null) {
       return tmp;
     }
 
     if ((tmp = Option_Constructor.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = Option_OriginalText.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -80,12 +88,22 @@ abstract public class OptionImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isGeneratedMatch()
+  {
+    return false;
+  }
+
   public boolean isOriginTracking()
   {
     return false;
   }
 
   public boolean isConstructor()
+  {
+    return false;
+  }
+
+  public boolean isOriginalText()
   {
     return false;
   }

@@ -8,7 +8,7 @@ extends TomTerm
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-  private static int index_kid1 = 0;
+  private static int index_term = 0;
   public shared.SharedObject duplicate() {
     TomTerm_Term clone = new TomTerm_Term();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -41,19 +41,19 @@ extends TomTerm
     return true;
   }
 
-  public boolean hasKid1()
+  public boolean hasTerm()
   {
     return true;
   }
 
-  public TomTerm getKid1()
+  public TomTerm getTerm()
   {
-    return (TomTerm) this.getArgument(index_kid1) ;
+    return (TomTerm) this.getArgument(index_term) ;
   }
 
-  public TomTerm setKid1(TomTerm _kid1)
+  public TomTerm setTerm(TomTerm _term)
   {
-    return (TomTerm) super.setArgument(_kid1, index_kid1);
+    return (TomTerm) super.setArgument(_term, index_term);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
@@ -70,7 +70,7 @@ extends TomTerm
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
-    int b = 0x9e3779b9;
+    int b = (getAFun().hashCode()<<8);
     a += (getArgument(0).hashCode() << 0);
 
     a -= b; a -= c; a ^= (c >> 13);

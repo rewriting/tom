@@ -38,14 +38,19 @@ import jtom.adt.*;
 
 public class TomOptimizer extends TomBase {
 
+  private int numberCompiledMatchFound = 0;
+  private int numberCompiledPatternFound = 0;
+  private int numberVarFound = 0;
+  private int numberVarRemoved = 0;
+
   public TomOptimizer(jtom.TomEnvironment environment) {
     super(environment);
-    numberMatchFound = 0;
-    numberVarFound = 0;
   }
   
   // ------------------------------------------------------------
-                                                                                                                                                                  
+
+                                                                                                                                                                         
+
   // ------------------------------------------------------------
     
   private final boolean debug = true;
@@ -55,157 +60,162 @@ public class TomOptimizer extends TomBase {
       System.out.println(s);
   }
 
-  private int numberMatchFound;
-  private int numberVarFound;
+  private void exitWithMesg(String mesg) {
+    System.out.println(mesg);
+    System.exit(1);
+  }
 
   public TomTerm optimize(TomTerm subject) {
     TomTerm optimizedTerm;
     optimizedTerm = optimize_pass_1(subject);
+    System.out.println("numberCompiledMatchFound :"+numberCompiledMatchFound);
+    System.out.println("numberCompiledPatternFound :"+numberCompiledPatternFound);
+    System.out.println("numberVarFound :"+numberVarFound);
+    System.out.println("numberVarRemoved :"+numberVarRemoved);
     return optimizedTerm;
   }
 
+  /* 
+   * optimize_pass_1 : remove useless intermediate variables from a CompiledMatch.
+   */
 
   private TomTerm optimize_pass_1(TomTerm subject) {
-    //optimDebug("Starting pass 1 of the optimizer");
-    ArrayList varList = new ArrayList();
-    collectCompiledMatch(subject, varList,"");
-    /*
-    System.out.println("Nb match :"+numberMatchFound);
-    System.out.println("Nb TOM var found :"+numberVarFound);
-    System.out.println("Nb var in list :"+varList.size());
-    System.out.println(varList);*/
-    // Some list manipulations
-    /*  System.out.println(empty());
-       Integer deux = new Integer(2);
-       System.out.println(l);
-      System.out.println(cons(`Number(deux),empty()));
-       // System.out.println(cons(`Number(deux),null)); -> fails
-       System.out.println(cons(null,cons(`Number(deux),empty())));
-    */
-    return replaceCompiledMatch(subject, varList);
-    //return subject;
+    return replaceCompiledMatch(subject);
   }
 
-  private void collectCompiledMatch(TomTerm subject, final Collection list, final String blockName) {
-    //optimDebug("Entering collectCompiledMatch");
-    Collect1 collect = new Collect1() {
-	public boolean apply(ATerm t) {
+
+  private TomList declVarList; // one for each CompiledMatch
+  private TomList avList; // avList = AssignedVariableList; one for each CompiledPattern
+
+  private TomTerm replaceCompiledMatch(TomTerm subject) {
+    Replace1 replace = new Replace1 () {
+	public ATerm apply(ATerm t) {
 	  if (t instanceof TomTerm) {
-	     { TomTerm tom_match1_1 = null; tom_match1_1 = (TomTerm) t;matchlab_match1_pattern1: { TomList decl = null; TomList automata = null; if(tom_is_fun_sym_CompiledMatch(tom_match1_1)) { TomList tom_match1_1_1 = null; TomList tom_match1_1_2 = null; tom_match1_1_1 = (TomList) tom_get_slot_CompiledMatch_decls(tom_match1_1); tom_match1_1_2 = (TomList) tom_get_slot_CompiledMatch_automataList(tom_match1_1); decl = (TomList) tom_match1_1_1; automata = (TomList) tom_match1_1_2;
+	     {  TomTerm tom_match1_1 = null; tom_match1_1 = ( TomTerm) t;matchlab_match1_pattern1: {  TomList decls = null;  Option option = null;  TomList automata = null; if(tom_is_fun_sym_CompiledMatch(tom_match1_1)) {  TomList tom_match1_1_1 = null;  TomList tom_match1_1_2 = null;  Option tom_match1_1_3 = null; tom_match1_1_1 = ( TomList) tom_get_slot_CompiledMatch_decls(tom_match1_1); tom_match1_1_2 = ( TomList) tom_get_slot_CompiledMatch_automataList(tom_match1_1); tom_match1_1_3 = ( Option) tom_get_slot_CompiledMatch_option(tom_match1_1); decls = ( TomList) tom_match1_1_1; automata = ( TomList) tom_match1_1_2; option = ( Option) tom_match1_1_3;
  
-		collectVariableDecl((TomList) decl, list);
-		collectVariableAuto((TomList) automata, list, blockName);
-		numberMatchFound++;
-		return false;
+		numberCompiledMatchFound++;
+		declVarList = traversalCollectDecls(decls);
+		TomList newAutomata = collectNReplace(automata);
+		//optimDebug("declVarList: \n"+declVarList.toString());
+		TomList newDecls = replaceDeclList(decls);
+		return tom_make_CompiledMatch(newDecls,newAutomata,option) ;
 	       }}matchlab_match1_pattern2: {
- return true;} }
-  //match
-	  } else 
-	    return true;
-	}//apply
-      };
-    traversal().genericCollect(subject, collect);
-  }
-
-
-  private void collectVariableDecl(TomList subject, final Collection list) {
-    Collect1 collect = new Collect1() {
-	public boolean apply(ATerm t) {
-	  if (t instanceof Instruction) {
-	     { Instruction tom_match2_1 = null; tom_match2_1 = (Instruction) t;matchlab_match2_pattern1: { TomList l1 = null; Expression source = null; if(tom_is_fun_sym_Assign(tom_match2_1)) { TomTerm tom_match2_1_1 = null; Expression tom_match2_1_2 = null; tom_match2_1_1 = (TomTerm) tom_get_slot_Assign_kid1(tom_match2_1); tom_match2_1_2 = (Expression) tom_get_slot_Assign_source(tom_match2_1); if(tom_is_fun_sym_Variable(tom_match2_1_1)) { Option tom_match2_1_1_1 = null; TomName tom_match2_1_1_2 = null; TomType tom_match2_1_1_3 = null; tom_match2_1_1_1 = (Option) tom_get_slot_Variable_option(tom_match2_1_1); tom_match2_1_1_2 = (TomName) tom_get_slot_Variable_astName(tom_match2_1_1); tom_match2_1_1_3 = (TomType) tom_get_slot_Variable_astType(tom_match2_1_1); if(tom_is_fun_sym_PositionName(tom_match2_1_1_2)) { TomList tom_match2_1_1_2_1 = null; tom_match2_1_1_2_1 = (TomList) tom_get_slot_PositionName_numberList(tom_match2_1_1_2); l1 = (TomList) tom_match2_1_1_2_1; source = (Expression) tom_match2_1_2;
  
-		if (length(l1) != 2) {
-		  System.err.println("Such variable should have only 2 number id :"+t);
-		  System.exit(1);
-		}
-		AssignedVariable av = 
-		  new AssignedVariable(":tom"+numberListToIdentifier(l1),source,0);
-		if (!list.contains(av)) {
-		  list.add(av);
-		  numberVarFound++;
-		} else {
-		  System.err.println("By construction a variable cannot be assigned twice : "+t);
-		  System.exit(1);
-		}
-		return false;		    
-	       } } }}matchlab_match2_pattern2: {
-  return true; } }
+		return traversal().genericTraversal(t,this);
+	      } }
   // match
 	  } else
-	    return true;
+	    return traversal().genericTraversal(t,this);
 	} //apply
       };
-    traversal().genericCollect(subject, collect);
+    return (TomTerm) replace.apply(subject);
   }
 
-  private void collectVariableAuto(TomList subject, final Collection list, final String blockName) {
-    //optimDebug("Entering collectVariableAuto");
+  private TomList traversalCollectDecls(TomList declsList) {
+    if(declsList.isEmpty()) {
+      return empty();
+    }
+    TomTerm t = declsList.getHead();
+    TomList l = declsList.getTail();
+     {  TomTerm tom_match2_1 = null; tom_match2_1 = ( TomTerm) t;matchlab_match2_pattern1: {  TomList l1 = null;  Expression source = null; if(tom_is_fun_sym_InstructionToTomTerm(tom_match2_1)) {  Instruction tom_match2_1_1 = null; tom_match2_1_1 = ( Instruction) tom_get_slot_InstructionToTomTerm_astInstruction(tom_match2_1); if(tom_is_fun_sym_Assign(tom_match2_1_1)) {  TomTerm tom_match2_1_1_1 = null;  Expression tom_match2_1_1_2 = null; tom_match2_1_1_1 = ( TomTerm) tom_get_slot_Assign_kid1(tom_match2_1_1); tom_match2_1_1_2 = ( Expression) tom_get_slot_Assign_source(tom_match2_1_1); if(tom_is_fun_sym_Variable(tom_match2_1_1_1)) {  Option tom_match2_1_1_1_1 = null;  TomName tom_match2_1_1_1_2 = null;  TomType tom_match2_1_1_1_3 = null; tom_match2_1_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match2_1_1_1); tom_match2_1_1_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match2_1_1_1); tom_match2_1_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match2_1_1_1); if(tom_is_fun_sym_PositionName(tom_match2_1_1_1_2)) {  TomList tom_match2_1_1_1_2_1 = null; tom_match2_1_1_1_2_1 = ( TomList) tom_get_slot_PositionName_numberList(tom_match2_1_1_1_2); l1 = ( TomList) tom_match2_1_1_1_2_1; source = ( Expression) tom_match2_1_1_2;
  
-    // Actually we can't handle non-TOM variables: they could be used outside TOM
-	
-    Collect1 collect = new Collect1() {
+	String name = "tom"+numberListToIdentifier(l1);
+	Integer zero = new Integer(0);
+	//optimDebug("Var "+name+" found in decls");
+	numberVarFound++;
+	return cons(tom_make_AssignedVariable(name,source,zero) ,
+		    traversalCollectDecls(l));
+       } } } }}matchlab_match2_pattern2: {
+  
+	return traversalCollectDecls(l);
+      } }
+ 
+  }
+
+  private TomList updateDeclVarList(TomList varList) {
+    if(varList.isEmpty()) {
+      return empty();
+    }
+    TomTerm t = varList.getHead();
+    TomList l = varList.getTail();
+    
+    TomTerm av;
+    TomList list;
+    list = avList;
+    while(!list.isEmpty()) {
+      av = list.getHead();
+       {  TomTerm tom_match3_1 = null;  TomTerm tom_match3_2 = null; tom_match3_1 = ( TomTerm) t; tom_match3_2 = ( TomTerm) av;matchlab_match3_pattern1: {  String name = null;  String tom_renamedvar_name_1 = null; if(tom_is_fun_sym_AssignedVariable(tom_match3_1)) {  String tom_match3_1_1 = null;  Expression tom_match3_1_2 = null;  Integer tom_match3_1_3 = null; tom_match3_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match3_1); tom_match3_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match3_1); tom_match3_1_3 = ( Integer) tom_get_slot_AssignedVariable_nbUse(tom_match3_1); tom_renamedvar_name_1 = ( String) tom_match3_1_1; if(tom_is_fun_sym_AssignedVariable(tom_match3_2)) {  String tom_match3_2_1 = null;  Expression tom_match3_2_2 = null;  Integer tom_match3_2_3 = null; tom_match3_2_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match3_2); tom_match3_2_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match3_2); tom_match3_2_3 = ( Integer) tom_get_slot_AssignedVariable_nbUse(tom_match3_2); name = ( String) tom_match3_2_1; if(tom_terms_equal_String(name, tom_renamedvar_name_1) &&  true ) {
+ 
+	  return cons(av,updateDeclVarList(l));
+	 } } }} }
+ 
+      list = list.getTail();
+    }
+    exitWithMesg("We should be there");
+    return null;
+  }
+
+  private TomList collectNReplace(TomList automata) {
+    Replace1 replace = new Replace1 () {
+	public ATerm apply(ATerm t) {
+	  if (t instanceof TomTerm) {
+	     {  TomTerm tom_match4_1 = null; tom_match4_1 = ( TomTerm) t;matchlab_match4_pattern1: {  TomList instList = null; if(tom_is_fun_sym_CompiledPattern(tom_match4_1)) {  TomList tom_match4_1_1 = null; tom_match4_1_1 = ( TomList) tom_get_slot_CompiledPattern_instList(tom_match4_1); instList = ( TomList) tom_match4_1_1;
+ 
+		//optimDebug("Entering CP");
+		numberCompiledPatternFound++;
+		avList = declVarList;
+		collectCompiledPattern(instList); // fill varList with all the variable in the CP.
+		//optimDebug("Collecting CP completed :");
+		//optimDebug(avList.toString());
+		TomList newInstList = replaceCompiledPattern(instList);
+		declVarList = updateDeclVarList(declVarList);
+		return tom_make_CompiledPattern(newInstList) ;
+	       }}matchlab_match4_pattern2: {
+ 
+		return traversal().genericTraversal(t,this);
+	      } }
+ 
+	  } else
+	    return traversal().genericTraversal(t,this);
+	}
+      };
+    //optimDebug(automata.toString());
+    return  (TomList) traversal().genericTraversal(automata,replace);
+  }
+
+  private void collectCompiledPattern(TomList subject) {
+     Collect1 collect = new Collect1() {
 	public boolean apply(ATerm t) {
 	  if (t instanceof TomTerm) {
-	     { TomTerm tom_match3_1 = null; tom_match3_1 = (TomTerm) t;matchlab_match3_pattern1: { TomList l1 = null; if(tom_is_fun_sym_Declaration(tom_match3_1)) { TomTerm tom_match3_1_1 = null; tom_match3_1_1 = (TomTerm) tom_get_slot_Declaration_kid1(tom_match3_1); if(tom_is_fun_sym_Variable(tom_match3_1_1)) { Option tom_match3_1_1_1 = null; TomName tom_match3_1_1_2 = null; TomType tom_match3_1_1_3 = null; tom_match3_1_1_1 = (Option) tom_get_slot_Variable_option(tom_match3_1_1); tom_match3_1_1_2 = (TomName) tom_get_slot_Variable_astName(tom_match3_1_1); tom_match3_1_1_3 = (TomType) tom_get_slot_Variable_astType(tom_match3_1_1); if(tom_is_fun_sym_PositionName(tom_match3_1_1_2)) { TomList tom_match3_1_1_2_1 = null; tom_match3_1_1_2_1 = (TomList) tom_get_slot_PositionName_numberList(tom_match3_1_1_2); l1 = (TomList) tom_match3_1_1_2_1;
-  
-		if (l1.getHead().isRenamedVar()) {
-		  AssignedVariable av = 
-		    new AssignedVariable(blockName+":tom"+numberListToIdentifier(l1),
-					 tom_make_TomTermToExpression(tom_make_Tom(empty())) ,-1);
-		  if (!list.contains(av)) {
-		    list.add(av);
-		    numberVarFound++;
-		  }
-		}
-		return false;
-	       } } }}matchlab_match3_pattern2: { TomList l1 = null; if(tom_is_fun_sym_Variable(tom_match3_1)) { Option tom_match3_1_1 = null; TomName tom_match3_1_2 = null; TomType tom_match3_1_3 = null; tom_match3_1_1 = (Option) tom_get_slot_Variable_option(tom_match3_1); tom_match3_1_2 = (TomName) tom_get_slot_Variable_astName(tom_match3_1); tom_match3_1_3 = (TomType) tom_get_slot_Variable_astType(tom_match3_1); if(tom_is_fun_sym_PositionName(tom_match3_1_2)) { TomList tom_match3_1_2_1 = null; tom_match3_1_2_1 = (TomList) tom_get_slot_PositionName_numberList(tom_match3_1_2); l1 = (TomList) tom_match3_1_2_1;
+	     {  TomTerm tom_match5_1 = null; tom_match5_1 = ( TomTerm) t;matchlab_match5_pattern1: {  TomList l1 = null; if(tom_is_fun_sym_Variable(tom_match5_1)) {  Option tom_match5_1_1 = null;  TomName tom_match5_1_2 = null;  TomType tom_match5_1_3 = null; tom_match5_1_1 = ( Option) tom_get_slot_Variable_option(tom_match5_1); tom_match5_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match5_1); tom_match5_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match5_1); if(tom_is_fun_sym_PositionName(tom_match5_1_2)) {  TomList tom_match5_1_2_1 = null; tom_match5_1_2_1 = ( TomList) tom_get_slot_PositionName_numberList(tom_match5_1_2); l1 = ( TomList) tom_match5_1_2_1;
  
-		String name1 = ":tom"+numberListToIdentifier(l1);
-		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
-		  name1 = blockName+name1;
-		Iterator iter = list.iterator();
-		while (iter.hasNext()) {
-		  AssignedVariable av = (AssignedVariable) iter.next();
-		  if (av.name.equals(name1)) {
-		    av.numberOfUse++;
-		    return false;
-		  } 
-		}
-		System.err.println("Variable used never assigned : "+ name1);
-		System.exit(1);
+		avList = addOneUse("tom"+numberListToIdentifier(l1));
 		return false; // no need to go deeper in a Variable
-	       } }}matchlab_match3_pattern3: { if(tom_is_fun_sym_CompiledMatch(tom_match3_1)) { TomList tom_match3_1_1 = null; TomList tom_match3_1_2 = null; tom_match3_1_1 = (TomList) tom_get_slot_CompiledMatch_decls(tom_match3_1); tom_match3_1_2 = (TomList) tom_get_slot_CompiledMatch_automataList(tom_match3_1);
+	       } }}matchlab_match5_pattern2: { if(tom_is_fun_sym_CompiledMatch(tom_match5_1)) {  TomList tom_match5_1_1 = null;  TomList tom_match5_1_2 = null;  Option tom_match5_1_3 = null; tom_match5_1_1 = ( TomList) tom_get_slot_CompiledMatch_decls(tom_match5_1); tom_match5_1_2 = ( TomList) tom_get_slot_CompiledMatch_automataList(tom_match5_1); tom_match5_1_3 = ( Option) tom_get_slot_CompiledMatch_option(tom_match5_1);
  
-		collectCompiledMatch((TomTerm)t,list,blockName);
+		// we will inspect this CompiledMatch when replacing the CompiledMatch parent.
 		return false;
-	       }}matchlab_match3_pattern4: {
+	       }}matchlab_match5_pattern3: { if(tom_is_fun_sym_Declaration(tom_match5_1)) {  TomTerm tom_match5_1_1 = null; tom_match5_1_1 = ( TomTerm) tom_get_slot_Declaration_kid1(tom_match5_1);
+ 
+		return false;
+	       }}matchlab_match5_pattern4: {
  return true;} }
  
 	  } else if (t instanceof Instruction) {
-	     { Instruction tom_match4_1 = null; tom_match4_1 = (Instruction) t;matchlab_match4_pattern1: { TomList l1 = null; Expression source = null; if(tom_is_fun_sym_Assign(tom_match4_1)) { TomTerm tom_match4_1_1 = null; Expression tom_match4_1_2 = null; tom_match4_1_1 = (TomTerm) tom_get_slot_Assign_kid1(tom_match4_1); tom_match4_1_2 = (Expression) tom_get_slot_Assign_source(tom_match4_1); if(tom_is_fun_sym_Variable(tom_match4_1_1)) { Option tom_match4_1_1_1 = null; TomName tom_match4_1_1_2 = null; TomType tom_match4_1_1_3 = null; tom_match4_1_1_1 = (Option) tom_get_slot_Variable_option(tom_match4_1_1); tom_match4_1_1_2 = (TomName) tom_get_slot_Variable_astName(tom_match4_1_1); tom_match4_1_1_3 = (TomType) tom_get_slot_Variable_astType(tom_match4_1_1); if(tom_is_fun_sym_PositionName(tom_match4_1_1_2)) { TomList tom_match4_1_1_2_1 = null; tom_match4_1_1_2_1 = (TomList) tom_get_slot_PositionName_numberList(tom_match4_1_1_2); l1 = (TomList) tom_match4_1_1_2_1; source = (Expression) tom_match4_1_2;
+	     {  Instruction tom_match6_1 = null; tom_match6_1 = ( Instruction) t;matchlab_match6_pattern1: {  Expression source = null;  TomList l1 = null; if(tom_is_fun_sym_Assign(tom_match6_1)) {  TomTerm tom_match6_1_1 = null;  Expression tom_match6_1_2 = null; tom_match6_1_1 = ( TomTerm) tom_get_slot_Assign_kid1(tom_match6_1); tom_match6_1_2 = ( Expression) tom_get_slot_Assign_source(tom_match6_1); if(tom_is_fun_sym_Variable(tom_match6_1_1)) {  Option tom_match6_1_1_1 = null;  TomName tom_match6_1_1_2 = null;  TomType tom_match6_1_1_3 = null; tom_match6_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match6_1_1); tom_match6_1_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match6_1_1); tom_match6_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match6_1_1); if(tom_is_fun_sym_PositionName(tom_match6_1_1_2)) {  TomList tom_match6_1_1_2_1 = null; tom_match6_1_1_2_1 = ( TomList) tom_get_slot_PositionName_numberList(tom_match6_1_1_2); l1 = ( TomList) tom_match6_1_1_2_1; source = ( Expression) tom_match6_1_2;
  
-		if (length(l1) <= 2) {
-		  System.err.println("Such variable should be find in decl of a CompiledMatch :"+t);
-		  System.exit(1);
-		}
-		AssignedVariable av = 
-		  new AssignedVariable(blockName+":tom"+numberListToIdentifier(l1),
-				       source,-1);
-		if (!list.contains(av)) {
-		  list.add(av);
+		String name = "tom"+numberListToIdentifier(l1);
+		if (!isAssigned(name)) {
+		  Integer minusOne = new Integer(-1);
+		  //optimDebug("Var "+name+" found in CP");
+		  avList = append(tom_make_AssignedVariable(name,source,minusOne) ,
+				  avList);
 		  numberVarFound++;
 		} else {
-		  System.err.println("By construction a variable cannot be assigned twice :"+t);
-		  System.exit(1);
-		}
-		return true;	// we go deeper to search in the 'source'		    
-	       } } }}matchlab_match4_pattern2: { TomList instList = null; String name = null; if(tom_is_fun_sym_NamedBlock(tom_match4_1)) { String tom_match4_1_1 = null; TomList tom_match4_1_2 = null; tom_match4_1_1 = (String) tom_get_slot_NamedBlock_blockName(tom_match4_1); tom_match4_1_2 = (TomList) tom_get_slot_NamedBlock_instList(tom_match4_1); name = (String) tom_match4_1_1; instList = (TomList) tom_match4_1_2;
- 
-		//optimDebug("Entering block '"+name+"'");
-		collectVariableAuto(instList,list,name);
-		//optimDebug("Exiting block '"+name+"'");
-		return false;
-	       }}matchlab_match4_pattern3: {
+		  avList = addOneUse(name);
+		}	
+		return true;// we go deeper to search in the 'source'	    
+	       } } }}matchlab_match6_pattern2: {
  return true;} }
   //match
 	  } else {
@@ -216,218 +226,93 @@ public class TomOptimizer extends TomBase {
     traversal().genericCollect(subject, collect);
   }
 
-  private void printTerm(ATerm s) {
-    String str = s.toString();
-    int index = str.indexOf("(");
-    if (index>=0)
-      System.out.println(str.substring(0,index));
-    else
-      System.out.println(str);
-  }
-
-  private TomTerm replaceCompiledMatch(TomTerm subject, final Collection varList) {
-    //optimDebug("Entering replaceCompiledMatch");
-    Replace1 replace = new Replace1() {
-	public ATerm apply(ATerm t) {
-	  if (t instanceof TomTerm) {
-	     { TomTerm tom_match5_1 = null; tom_match5_1 = (TomTerm) t;matchlab_match5_pattern1: { TomList decl = null; TomList automata = null; if(tom_is_fun_sym_CompiledMatch(tom_match5_1)) { TomList tom_match5_1_1 = null; TomList tom_match5_1_2 = null; tom_match5_1_1 = (TomList) tom_get_slot_CompiledMatch_decls(tom_match5_1); tom_match5_1_2 = (TomList) tom_get_slot_CompiledMatch_automataList(tom_match5_1); decl = (TomList) tom_match5_1_1; automata = (TomList) tom_match5_1_2;
- 
-		//System.out.println("Match found");
-		TomList newDecl = replaceUselessVarDecl(decl, varList);
-		TomList newAutomata = replaceUselessVarAuto(automata, varList, "");
-		return tom_make_CompiledMatch(newDecl,newAutomata) ; 
-	       }}matchlab_match5_pattern2: {
- return traversal().genericTraversal(t,this);} }
- 
-	  } else {
-	    return traversal().genericTraversal(t,this);
-	  }
-	} //apply 
-      };
-    return (TomTerm) replace.apply(subject);
-  }
-
-  private TomList replaceUselessVarDecl(TomList subject, final Collection varList) {
-    //optimDebug("Entering replaceUselessVarDecl");
-    Replace1 replace = new Replace1() {
-	public ATerm apply(ATerm t) {
-	  if (t instanceof Instruction) {
-	     { Instruction tom_match6_1 = null; tom_match6_1 = (Instruction) t;matchlab_match6_pattern1: { Expression source = null; TomList l1 = null; if(tom_is_fun_sym_Assign(tom_match6_1)) { TomTerm tom_match6_1_1 = null; Expression tom_match6_1_2 = null; tom_match6_1_1 = (TomTerm) tom_get_slot_Assign_kid1(tom_match6_1); tom_match6_1_2 = (Expression) tom_get_slot_Assign_source(tom_match6_1); if(tom_is_fun_sym_Variable(tom_match6_1_1)) { Option tom_match6_1_1_1 = null; TomName tom_match6_1_1_2 = null; TomType tom_match6_1_1_3 = null; tom_match6_1_1_1 = (Option) tom_get_slot_Variable_option(tom_match6_1_1); tom_match6_1_1_2 = (TomName) tom_get_slot_Variable_astName(tom_match6_1_1); tom_match6_1_1_3 = (TomType) tom_get_slot_Variable_astType(tom_match6_1_1); if(tom_is_fun_sym_PositionName(tom_match6_1_1_2)) { TomList tom_match6_1_1_2_1 = null; tom_match6_1_1_2_1 = (TomList) tom_get_slot_PositionName_numberList(tom_match6_1_1_2); l1 = (TomList) tom_match6_1_1_2_1; source = (Expression) tom_match6_1_2;
- 
-		if (length(l1) != 2) {
-		  System.err.println("Such variable should have only 2 number id :"+t);
-		  System.exit(1);
-		}	      
-		String name1 = ":tom"+numberListToIdentifier(l1);
-		//optimDebug("Assignement of "+name1+" found");
-		Iterator iter = varList.iterator();
-		while (iter.hasNext()) {
-		  AssignedVariable av = (AssignedVariable) iter.next();
-		  if (av.name.equals(name1)) {
-		    //optimDebug("Var "+name1+" found");
-		    if (av.numberOfUse==0) { // TO CHANGE TO <= 1 when replacing in 'Equal' work
-		      //System.out.println(av.numberOfUse);
-		      //optimDebug("Removing assignement of var "+name1);
-		      return tom_make_Action(empty()) ;
-		    } else 
-		      return t;
-		  }
-		}	
-		System.err.println("The variable wasn't added to the list when collecting...");
-		System.exit(1);
-		return null;
-	       } } }}matchlab_match6_pattern2: {
-  return traversal().genericTraversal(t, this);} }
- 
-	  } else if (t instanceof TomTerm) {
-	     { TomTerm tom_match7_1 = null; tom_match7_1 = (TomTerm) t;matchlab_match7_pattern1: { TomList l1 = null; if(tom_is_fun_sym_Declaration(tom_match7_1)) { TomTerm tom_match7_1_1 = null; tom_match7_1_1 = (TomTerm) tom_get_slot_Declaration_kid1(tom_match7_1); if(tom_is_fun_sym_Variable(tom_match7_1_1)) { Option tom_match7_1_1_1 = null; TomName tom_match7_1_1_2 = null; TomType tom_match7_1_1_3 = null; tom_match7_1_1_1 = (Option) tom_get_slot_Variable_option(tom_match7_1_1); tom_match7_1_1_2 = (TomName) tom_get_slot_Variable_astName(tom_match7_1_1); tom_match7_1_1_3 = (TomType) tom_get_slot_Variable_astType(tom_match7_1_1); if(tom_is_fun_sym_PositionName(tom_match7_1_1_2)) { TomList tom_match7_1_1_2_1 = null; tom_match7_1_1_2_1 = (TomList) tom_get_slot_PositionName_numberList(tom_match7_1_1_2); l1 = (TomList) tom_match7_1_1_2_1;
- 
-		Iterator iter = varList.iterator();
-		String name1 = ":tom"+numberListToIdentifier(l1);
-		//optimDebug("Declaration of "+name1+" found");
-		while (iter.hasNext()) {
-		  AssignedVariable av = (AssignedVariable) iter.next();
-		  if (av.name.equals(name1)) {
-		    if (av.numberOfUse==0) { // var is unused : no need to be declared
-		      //optimDebug("Removing declaration of "+name1);
-		      return tom_make_Tom(empty()) ;
-		    } else {
-		      return t;
-		    }
-		  }
-		}	
-		System.err.println("The variable wasn't added to the list when collecting...");
-		System.exit(1);
-		return null;
-		 } } }}matchlab_match7_pattern2: {
-  return traversal().genericTraversal(t, this);} }
- 
-	  } else
-	    return traversal().genericTraversal(t,this);
-	}
-      };
-    return (TomList) traversal().genericTraversal(subject, replace);
-  }
-
-  private TomList replaceUselessVarAuto(TomList subject, final Collection varList, final String blockName) {
+  private TomList replaceCompiledPattern(TomList subject) {
     //optimDebug("Entering replaceUselessVarAuto");
     Replace1 replace = new Replace1() {
 	public ATerm apply(ATerm t) {
 	  //optimDebug("Starting apply on a :");
 	  //printTerm(t);
 	  if (t instanceof TomTerm) {
-	     { TomTerm tom_match8_1 = null; tom_match8_1 = (TomTerm) t;matchlab_match8_pattern1: { TomList l1 = null; if(tom_is_fun_sym_Declaration(tom_match8_1)) { TomTerm tom_match8_1_1 = null; tom_match8_1_1 = (TomTerm) tom_get_slot_Declaration_kid1(tom_match8_1); if(tom_is_fun_sym_Variable(tom_match8_1_1)) { Option tom_match8_1_1_1 = null; TomName tom_match8_1_1_2 = null; TomType tom_match8_1_1_3 = null; tom_match8_1_1_1 = (Option) tom_get_slot_Variable_option(tom_match8_1_1); tom_match8_1_1_2 = (TomName) tom_get_slot_Variable_astName(tom_match8_1_1); tom_match8_1_1_3 = (TomType) tom_get_slot_Variable_astType(tom_match8_1_1); if(tom_is_fun_sym_PositionName(tom_match8_1_1_2)) { TomList tom_match8_1_1_2_1 = null; tom_match8_1_1_2_1 = (TomList) tom_get_slot_PositionName_numberList(tom_match8_1_1_2); l1 = (TomList) tom_match8_1_1_2_1;
+	     {  TomTerm tom_match7_1 = null; tom_match7_1 = ( TomTerm) t;matchlab_match7_pattern1: {  TomList l1 = null; if(tom_is_fun_sym_Declaration(tom_match7_1)) {  TomTerm tom_match7_1_1 = null; tom_match7_1_1 = ( TomTerm) tom_get_slot_Declaration_kid1(tom_match7_1); if(tom_is_fun_sym_Variable(tom_match7_1_1)) {  Option tom_match7_1_1_1 = null;  TomName tom_match7_1_1_2 = null;  TomType tom_match7_1_1_3 = null; tom_match7_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match7_1_1); tom_match7_1_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match7_1_1); tom_match7_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match7_1_1); if(tom_is_fun_sym_PositionName(tom_match7_1_1_2)) {  TomList tom_match7_1_1_2_1 = null; tom_match7_1_1_2_1 = ( TomList) tom_get_slot_PositionName_numberList(tom_match7_1_1_2); l1 = ( TomList) tom_match7_1_1_2_1;
  
-		Iterator iter = varList.iterator();
-		String name1 = ":tom"+numberListToIdentifier(l1);
-		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
-		  name1 = blockName+name1;
+		String name = "tom"+numberListToIdentifier(l1);
 		//optimDebug("Declaration of "+name1+" found");
-		while (iter.hasNext()) {
-		  AssignedVariable av = (AssignedVariable) iter.next();
-		  if (av.name.equals(name1)) {
-		    if (av.numberOfUse==1) { // var is used 1 time : it will be removed
-		      //optimDebug("Removing declaration of "+name1);
-		      return tom_make_InstructionToTomTerm(tom_make_Action(empty())) ;
-		    } else {
-		      return t;
-		    }
-		  }
-		}	
-		System.err.println("The variable wasn't added to the list when collecting...");
-		System.exit(1);
-		return null;
-	       } } }}matchlab_match8_pattern2: { if(tom_is_fun_sym_CompiledMatch(tom_match8_1)) { TomList tom_match8_1_1 = null; TomList tom_match8_1_2 = null; tom_match8_1_1 = (TomList) tom_get_slot_CompiledMatch_decls(tom_match8_1); tom_match8_1_2 = (TomList) tom_get_slot_CompiledMatch_automataList(tom_match8_1);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		if (getNbUse(name) <= 1)
+		  return tom_make_Tom(empty()) ;
+		else
+		  return t;
+	       } } }}matchlab_match7_pattern2: {  TomList l1 = null; if(tom_is_fun_sym_Variable(tom_match7_1)) {  Option tom_match7_1_1 = null;  TomName tom_match7_1_2 = null;  TomType tom_match7_1_3 = null; tom_match7_1_1 = ( Option) tom_get_slot_Variable_option(tom_match7_1); tom_match7_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match7_1); tom_match7_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match7_1); if(tom_is_fun_sym_PositionName(tom_match7_1_2)) {  TomList tom_match7_1_2_1 = null; tom_match7_1_2_1 = ( TomList) tom_get_slot_PositionName_numberList(tom_match7_1_2); l1 = ( TomList) tom_match7_1_2_1;
  
-		return replaceCompiledMatch((TomTerm) t, varList);
-	       }}matchlab_match8_pattern3: {
- return traversal().genericTraversal(t, this);} }
+		String name = "tom"+numberListToIdentifier(l1); 
+		if (getNbUse(name) == 1) { // the variable is found, so used at least one time
+		  Expression expr = getSource(name);
+		   {  Expression tom_match8_1 = null; tom_match8_1 = ( Expression) expr;matchlab_match8_pattern1: {  TomTerm tomTerm = null; if(tom_is_fun_sym_TomTermToExpression(tom_match8_1)) {  TomTerm tom_match8_1_1 = null; tom_match8_1_1 = ( TomTerm) tom_get_slot_TomTermToExpression_astTerm(tom_match8_1); tomTerm = ( TomTerm) tom_match8_1_1;
+ 
+		      return tomTerm;
+		     }}matchlab_match8_pattern2: {
+ 
+		       return tom_make_ExpressionToTomTerm(expr) ;
+		    } }
+  // match
+		} else
+		  return t;
+	       } }}matchlab_match7_pattern3: { if(tom_is_fun_sym_CompiledMatch(tom_match7_1)) {  TomList tom_match7_1_1 = null;  TomList tom_match7_1_2 = null;  Option tom_match7_1_3 = null; tom_match7_1_1 = ( TomList) tom_get_slot_CompiledMatch_decls(tom_match7_1); tom_match7_1_2 = ( TomList) tom_get_slot_CompiledMatch_automataList(tom_match7_1); tom_match7_1_3 = ( Option) tom_get_slot_CompiledMatch_option(tom_match7_1);
+ 
+		// saving context
+		TomList declVarListSav = declVarList;
+		TomList avListSav = avList;
+		// computing the new CompiledMatch
+		TomTerm newCompiledMatch = replaceCompiledMatch((TomTerm) t);
+		// restoring the context
+		declVarList = declVarListSav;
+		avList = avListSav;
+		return newCompiledMatch;
+	       }}matchlab_match7_pattern4: {
+ 
+		return traversal().genericTraversal(t, this);
+	      } }
   //match
 	  } else if (t instanceof Instruction) {
-	     { Instruction tom_match9_1 = null; tom_match9_1 = (Instruction) t;matchlab_match9_pattern1: { Expression source = null; TomTerm var = null; TomList l1 = null; if(tom_is_fun_sym_Assign(tom_match9_1)) { TomTerm tom_match9_1_1 = null; Expression tom_match9_1_2 = null; tom_match9_1_1 = (TomTerm) tom_get_slot_Assign_kid1(tom_match9_1); tom_match9_1_2 = (Expression) tom_get_slot_Assign_source(tom_match9_1); if(tom_is_fun_sym_Variable(tom_match9_1_1)) { Option tom_match9_1_1_1 = null; TomName tom_match9_1_1_2 = null; TomType tom_match9_1_1_3 = null; tom_match9_1_1_1 = (Option) tom_get_slot_Variable_option(tom_match9_1_1); tom_match9_1_1_2 = (TomName) tom_get_slot_Variable_astName(tom_match9_1_1); tom_match9_1_1_3 = (TomType) tom_get_slot_Variable_astType(tom_match9_1_1); var = (TomTerm) tom_match9_1_1; if(tom_is_fun_sym_PositionName(tom_match9_1_1_2)) { TomList tom_match9_1_1_2_1 = null; tom_match9_1_1_2_1 = (TomList) tom_get_slot_PositionName_numberList(tom_match9_1_1_2); l1 = (TomList) tom_match9_1_1_2_1; source = (Expression) tom_match9_1_2;
- 
-		if (length(l1) <= 2) {
-		  System.err.println("Such variable should be find in decl of a CompiledMatch :"+t);
-		  System.exit(1);
-		}	      
-		String name1 = ":tom"+numberListToIdentifier(l1);
-		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
-		  name1 = blockName+name1;
-		//optimDebug("Assignement of "+name1+" found");
-		Iterator iter = varList.iterator();
-		while (iter.hasNext()) {
-		  AssignedVariable av = (AssignedVariable) iter.next();
-		  if (av.name.equals(name1)) {
-		    //optimDebug("Var "+name1+" found");
-		    if (av.numberOfUse<=1) {
-		      //System.out.println(av.numberOfUse);
-		      //optimDebug("Removing assignement of var "+name1);
-		      return tom_make_Action(empty()) ;
-		    } else {
-		      Expression expr = (Expression) traversal().genericTraversal(source, this);
-			return tom_make_Assign(var,expr) ;
-		    } 
-		  }
-		}	
-		System.err.println("The variable wasn't added to the list when collecting...");
-		System.exit(1);
-		return null;
-	       } } }}matchlab_match9_pattern2: { TomList l1 = null; TomTerm var = null; if(tom_is_fun_sym_Assign(tom_match9_1)) { TomTerm tom_match9_1_1 = null; Expression tom_match9_1_2 = null; tom_match9_1_1 = (TomTerm) tom_get_slot_Assign_kid1(tom_match9_1); tom_match9_1_2 = (Expression) tom_get_slot_Assign_source(tom_match9_1); var = (TomTerm) tom_match9_1_1; if(tom_is_fun_sym_TomTermToExpression(tom_match9_1_2)) { TomTerm tom_match9_1_2_1 = null; tom_match9_1_2_1 = (TomTerm) tom_get_slot_TomTermToExpression_astTerm(tom_match9_1_2); if(tom_is_fun_sym_Variable(tom_match9_1_2_1)) { Option tom_match9_1_2_1_1 = null; TomName tom_match9_1_2_1_2 = null; TomType tom_match9_1_2_1_3 = null; tom_match9_1_2_1_1 = (Option) tom_get_slot_Variable_option(tom_match9_1_2_1); tom_match9_1_2_1_2 = (TomName) tom_get_slot_Variable_astName(tom_match9_1_2_1); tom_match9_1_2_1_3 = (TomType) tom_get_slot_Variable_astType(tom_match9_1_2_1); if(tom_is_fun_sym_PositionName(tom_match9_1_2_1_2)) { TomList tom_match9_1_2_1_2_1 = null; tom_match9_1_2_1_2_1 = (TomList) tom_get_slot_PositionName_numberList(tom_match9_1_2_1_2); l1 = (TomList) tom_match9_1_2_1_2_1;
+	     {  Instruction tom_match9_1 = null; tom_match9_1 = ( Instruction) t;matchlab_match9_pattern1: {  Expression source = null;  TomTerm var = null;  TomList l1 = null; if(tom_is_fun_sym_Assign(tom_match9_1)) {  TomTerm tom_match9_1_1 = null;  Expression tom_match9_1_2 = null; tom_match9_1_1 = ( TomTerm) tom_get_slot_Assign_kid1(tom_match9_1); tom_match9_1_2 = ( Expression) tom_get_slot_Assign_source(tom_match9_1); if(tom_is_fun_sym_Variable(tom_match9_1_1)) {  Option tom_match9_1_1_1 = null;  TomName tom_match9_1_1_2 = null;  TomType tom_match9_1_1_3 = null; tom_match9_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match9_1_1); tom_match9_1_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match9_1_1); tom_match9_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match9_1_1); var = ( TomTerm) tom_match9_1_1; if(tom_is_fun_sym_PositionName(tom_match9_1_1_2)) {  TomList tom_match9_1_1_2_1 = null; tom_match9_1_1_2_1 = ( TomList) tom_get_slot_PositionName_numberList(tom_match9_1_1_2); l1 = ( TomList) tom_match9_1_1_2_1; source = ( Expression) tom_match9_1_2;
+ 	      
+		String name = "tom"+numberListToIdentifier(l1);
+		if (getNbUse(name) <= 1) {
+		  numberVarRemoved++;
+		  return tom_make_Action(empty()) ;
+		} else {
+		  Expression expr = (Expression) traversal().genericTraversal(source, this);
+		  return tom_make_Assign(var,expr) ;
+		}
+	       } } }}matchlab_match9_pattern2: {  TomList l1 = null;  TomTerm var = null; if(tom_is_fun_sym_Assign(tom_match9_1)) {  TomTerm tom_match9_1_1 = null;  Expression tom_match9_1_2 = null; tom_match9_1_1 = ( TomTerm) tom_get_slot_Assign_kid1(tom_match9_1); tom_match9_1_2 = ( Expression) tom_get_slot_Assign_source(tom_match9_1); var = ( TomTerm) tom_match9_1_1; if(tom_is_fun_sym_TomTermToExpression(tom_match9_1_2)) {  TomTerm tom_match9_1_2_1 = null; tom_match9_1_2_1 = ( TomTerm) tom_get_slot_TomTermToExpression_astTerm(tom_match9_1_2); if(tom_is_fun_sym_Variable(tom_match9_1_2_1)) {  Option tom_match9_1_2_1_1 = null;  TomName tom_match9_1_2_1_2 = null;  TomType tom_match9_1_2_1_3 = null; tom_match9_1_2_1_1 = ( Option) tom_get_slot_Variable_option(tom_match9_1_2_1); tom_match9_1_2_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match9_1_2_1); tom_match9_1_2_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match9_1_2_1); if(tom_is_fun_sym_PositionName(tom_match9_1_2_1_2)) {  TomList tom_match9_1_2_1_2_1 = null; tom_match9_1_2_1_2_1 = ( TomList) tom_get_slot_PositionName_numberList(tom_match9_1_2_1_2); l1 = ( TomList) tom_match9_1_2_1_2_1;
       
-		String name1 = ":tom"+numberListToIdentifier(l1);
-		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
-		  name1 = blockName+name1;
-		Iterator iter = varList.iterator();
-		while (iter.hasNext()) {
-		  AssignedVariable av = (AssignedVariable) iter.next();
-		  if (av.name.equals(name1)) {
-		    if (av.numberOfUse<=1) {
-		      return tom_make_Assign(var,av.source) ;
-		    } else {
-		      return t;
-		    } 
-		  }
-		}	
-		System.err.println("The variable wasn't added to the list when collecting...");
-		System.exit(1);
-		return null;
-	       } } } }}matchlab_match9_pattern3: { TomList instList = null; String name = null; if(tom_is_fun_sym_NamedBlock(tom_match9_1)) { String tom_match9_1_1 = null; TomList tom_match9_1_2 = null; tom_match9_1_1 = (String) tom_get_slot_NamedBlock_blockName(tom_match9_1); tom_match9_1_2 = (TomList) tom_get_slot_NamedBlock_instList(tom_match9_1); name = (String) tom_match9_1_1; instList = (TomList) tom_match9_1_2;
+		String name = "tom"+numberListToIdentifier(l1);
+		if (getNbUse(name) <= 1) 
+		  return tom_make_Assign(var,getSource(name)) ;
+		else
+		  return t;
+	       } } } }}matchlab_match9_pattern3: {
  
-		//optimDebug("Entering block '"+name+"'");
-		TomList newInstList = replaceUselessVarAuto(instList,varList,name);
-		//optimDebug("Exiting block '"+name+"'");
-		return tom_make_NamedBlock(name,newInstList) ;
-	       }}matchlab_match9_pattern4: {
- return traversal().genericTraversal(t, this);} }
+		return traversal().genericTraversal(t, this);
+	      } }
   //match
-	  } else {
+	  } 
+	  /* ******************************** */
+	  /* This part will be remove when the 
+	   * EqualFunctionSymbol generation will be 
+	   * extended. 
+	   */
+	  else if (t instanceof Expression) {
+	     {  Expression tom_match10_1 = null; tom_match10_1 = ( Expression) t;matchlab_match10_pattern1: { if(tom_is_fun_sym_EqualFunctionSymbol(tom_match10_1)) {  TomTerm tom_match10_1_1 = null;  TomTerm tom_match10_1_2 = null; tom_match10_1_1 = ( TomTerm) tom_get_slot_EqualFunctionSymbol_kid1(tom_match10_1); tom_match10_1_2 = ( TomTerm) tom_get_slot_EqualFunctionSymbol_kid2(tom_match10_1);
+ 
+		return t;
+	       }}matchlab_match10_pattern2: {
+ 
+		return traversal().genericTraversal(t, this);
+	      } }
+ 
+	  }
+	  /* ******************************** */
+	  else {
 	    return  traversal().genericTraversal(t, this);
 	  }
 	} //apply
@@ -435,37 +320,124 @@ public class TomOptimizer extends TomBase {
     return (TomList) traversal().genericTraversal(subject, replace);
   }
 
-  private class AssignedVariable {
-	
-    /* 
-     * private variables to give only read 
-     * access with the homonymous methods 
-     */
-    private Expression source;
-    private String name;
-    private int numberOfUse;
-
-    public AssignedVariable (String name, Expression source, int init) {
-      this.source = source;
-      this.name = name;
-      this.numberOfUse = init;
+  private boolean isAssigned(String varName) {
+    TomList tmpList = avList;
+    TomTerm t;
+    while (!tmpList.isEmpty()) {
+      t = tmpList.getHead();
+       {  TomTerm tom_match11_1 = null; tom_match11_1 = ( TomTerm) t;matchlab_match11_pattern1: {  String name = null; if(tom_is_fun_sym_AssignedVariable(tom_match11_1)) {  String tom_match11_1_1 = null;  Expression tom_match11_1_2 = null;  Integer tom_match11_1_3 = null; tom_match11_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match11_1); tom_match11_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match11_1); tom_match11_1_3 = ( Integer) tom_get_slot_AssignedVariable_nbUse(tom_match11_1); name = ( String) tom_match11_1_1;
+ 
+	  if (name.equals(varName))
+	    return true;
+	 }} }
+ 
+      tmpList = tmpList.getTail();
     }
+    return false;
+  }
 
-    public boolean equals(Object o) {
-      if (o==null)
-	return false;
-      if (o instanceof AssignedVariable) {
-	AssignedVariable av = (AssignedVariable) o;
-	return this.name.equals(av.name);
-      }
-      return false;
+  private TomList addOneUse (final String name) {
+    Replace1 replace = new Replace1 () {
+	public ATerm apply(ATerm t) {
+	  if (t instanceof TomTerm) {
+	     {  TomTerm tom_match12_1 = null; tom_match12_1 = ( TomTerm) t;matchlab_match12_pattern1: {  Integer nbUse = null;  Expression source = null;  String varName = null; if(tom_is_fun_sym_AssignedVariable(tom_match12_1)) {  String tom_match12_1_1 = null;  Expression tom_match12_1_2 = null;  Integer tom_match12_1_3 = null; tom_match12_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match12_1); tom_match12_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match12_1); tom_match12_1_3 = ( Integer) tom_get_slot_AssignedVariable_nbUse(tom_match12_1); varName = ( String) tom_match12_1_1; source = ( Expression) tom_match12_1_2; nbUse = ( Integer) tom_match12_1_3;
+ 
+		if (varName.equals(name)) {
+		  Integer newNbUse = new Integer(nbUse.intValue() + 1);
+		  return tom_make_AssignedVariable(varName,source,newNbUse) ;
+		} else
+		  return t;
+	       }}matchlab_match12_pattern2: {
+ 
+		optimDebug("in rest of match: "+t.toString());
+		exitWithMesg("We should find only AssignedVariable");
+		return null;
+	      } }
+ 
+	  } else 
+	    return traversal().genericTraversal(t,this);
+	} //apply
+      };
+    //optimDebug("Adding one use to "+name);
+    return (TomList) traversal().genericTraversal(avList, replace);
+  }
+
+  private int getNbUse(String varName) {
+    TomList tmpList = avList;
+    TomTerm t;
+    while (!tmpList.isEmpty()) {
+      t = tmpList.getHead();
+       {  TomTerm tom_match13_1 = null; tom_match13_1 = ( TomTerm) t;matchlab_match13_pattern1: {  String name = null;  Integer n = null; if(tom_is_fun_sym_AssignedVariable(tom_match13_1)) {  String tom_match13_1_1 = null;  Expression tom_match13_1_2 = null;  Integer tom_match13_1_3 = null; tom_match13_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match13_1); tom_match13_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match13_1); tom_match13_1_3 = ( Integer) tom_get_slot_AssignedVariable_nbUse(tom_match13_1); name = ( String) tom_match13_1_1; n = ( Integer) tom_match13_1_3;
+ 
+	  if (name.equals(varName))
+	    return n.intValue();
+	 }} }
+ 
+      tmpList = tmpList.getTail();
     }
+    exitWithMesg(varName+" is not in avList");
+    return -1;
+  }
 
-    public String toString() {
-      return "Var '"+name+"' used "+numberOfUse+" times";
+  private Expression getSource(String varName) {
+    TomList tmpList = avList;
+    TomTerm t;
+    while (!tmpList.isEmpty()) {
+      t = tmpList.getHead();
+       {  TomTerm tom_match14_1 = null; tom_match14_1 = ( TomTerm) t;matchlab_match14_pattern1: {  Expression s = null;  String name = null; if(tom_is_fun_sym_AssignedVariable(tom_match14_1)) {  String tom_match14_1_1 = null;  Expression tom_match14_1_2 = null;  Integer tom_match14_1_3 = null; tom_match14_1_1 = ( String) tom_get_slot_AssignedVariable_varName(tom_match14_1); tom_match14_1_2 = ( Expression) tom_get_slot_AssignedVariable_source(tom_match14_1); tom_match14_1_3 = ( Integer) tom_get_slot_AssignedVariable_nbUse(tom_match14_1); name = ( String) tom_match14_1_1; s = ( Expression) tom_match14_1_2;
+ 
+	  if (name.equals(varName))
+	    return s;
+	 }} }
+ 
+      tmpList = tmpList.getTail();
     }
+    exitWithMesg(varName+" is not in avList");
+    return null;
+  }
 
-  } // class AssignedVariable
-
-
+  /*
+   * The following method will be FULLY usefull
+   * when the EqualFunctionSymbol generation will be extended.
+   * We will extend it to the one-time-used variables.
+   */
+  private TomList replaceDeclList(TomList declList) {
+    Replace1 replace = new Replace1 () {
+	public ATerm apply(ATerm t) {
+	  if (t instanceof TomTerm) {
+	     {  TomTerm tom_match15_1 = null; tom_match15_1 = ( TomTerm) t;matchlab_match15_pattern1: {  TomList l1 = null; if(tom_is_fun_sym_Declaration(tom_match15_1)) {  TomTerm tom_match15_1_1 = null; tom_match15_1_1 = ( TomTerm) tom_get_slot_Declaration_kid1(tom_match15_1); if(tom_is_fun_sym_Variable(tom_match15_1_1)) {  Option tom_match15_1_1_1 = null;  TomName tom_match15_1_1_2 = null;  TomType tom_match15_1_1_3 = null; tom_match15_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match15_1_1); tom_match15_1_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match15_1_1); tom_match15_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match15_1_1); if(tom_is_fun_sym_PositionName(tom_match15_1_1_2)) {  TomList tom_match15_1_1_2_1 = null; tom_match15_1_1_2_1 = ( TomList) tom_get_slot_PositionName_numberList(tom_match15_1_1_2); l1 = ( TomList) tom_match15_1_1_2_1;
+ 
+		String name = "tom"+numberListToIdentifier(l1);
+		if (getNbUse(name) == 0) //  <= 1 if no problem with code generation
+		  return tom_make_Tom(empty()) ;
+		else
+		  return t;
+	       } } }}matchlab_match15_pattern2: {
+ 
+		return traversal().genericTraversal(t, this);
+	      } }
+ 
+	  } else if (t instanceof Instruction) {
+	     {  Instruction tom_match16_1 = null; tom_match16_1 = ( Instruction) t;matchlab_match16_pattern1: {  Expression source = null;  TomList l1 = null; if(tom_is_fun_sym_Assign(tom_match16_1)) {  TomTerm tom_match16_1_1 = null;  Expression tom_match16_1_2 = null; tom_match16_1_1 = ( TomTerm) tom_get_slot_Assign_kid1(tom_match16_1); tom_match16_1_2 = ( Expression) tom_get_slot_Assign_source(tom_match16_1); if(tom_is_fun_sym_Variable(tom_match16_1_1)) {  Option tom_match16_1_1_1 = null;  TomName tom_match16_1_1_2 = null;  TomType tom_match16_1_1_3 = null; tom_match16_1_1_1 = ( Option) tom_get_slot_Variable_option(tom_match16_1_1); tom_match16_1_1_2 = ( TomName) tom_get_slot_Variable_astName(tom_match16_1_1); tom_match16_1_1_3 = ( TomType) tom_get_slot_Variable_astType(tom_match16_1_1); if(tom_is_fun_sym_PositionName(tom_match16_1_1_2)) {  TomList tom_match16_1_1_2_1 = null; tom_match16_1_1_2_1 = ( TomList) tom_get_slot_PositionName_numberList(tom_match16_1_1_2); l1 = ( TomList) tom_match16_1_1_2_1; source = ( Expression) tom_match16_1_2;
+ 
+		String name = "tom"+numberListToIdentifier(l1);
+		if (getNbUse(name) == 0) { // <= 1 if no problem with code generation
+		  numberVarRemoved++;
+		  return tom_make_Action(empty()) ;
+		}
+		else
+		  return t;
+	       } } }}matchlab_match16_pattern2: {
+ 
+		return traversal().genericTraversal(t, this);
+	      } }
+ 
+	  } else
+	    return traversal().genericTraversal(t, this);
+	} // apply
+      };//replace      
+    return (TomList) traversal().genericTraversal(declList,replace);
+  }
+      
+  
 } //Class TomOptimizer

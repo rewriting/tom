@@ -1,3 +1,7 @@
+2003-06-06  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* bootinstall
+
 2003-5-23    <julien.guyon@loria.fr>
 	* start debugger development (jtom.debug.TomDebugger)
 	* Introduce SharedSet API (jtom.runtime.set.SharedSet)

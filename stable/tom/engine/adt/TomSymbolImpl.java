@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class TomSymbolImpl extends TomSignatureConstructor
 {
-  static TomSymbol fromString(String str)
+  public static TomSymbol fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static TomSymbol fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static TomSymbol fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);

@@ -39,35 +39,41 @@ import jtom.backend.*;
 import jtom.exception.*;
 import jtom.adt.*;
 
+
 public class Tom {
-  private static String version = "1.2";
+  private static String version =
+  "jtom 1.3beta\n\n" +
+  "Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
+  "                         Nancy, France.\n";
   
   private static void usage() {
+    if(Flags.version) {
+      System.out.println(version);
+      System.exit(0);
+    }
     System.out.println("Tom usage:");
     System.out.println("\tjava jtom.Tom [options] inputfile");
-    if(Flags.version) {
-      System.out.println("\tversion " + version);
-    }
     System.out.println("Options:");
-    System.out.println("\t--help | -h:\t\tShow this help");
-    System.out.println("\t--cCode | -c:\t\tGenerate C code");
-    System.out.println("\t--eCode | -e:\t\tGenerate Eiffel code");
-    System.out.println("\t--version | -V:\t\tPrint version");
-    System.out.println("\t--verbose | -v:\t\tSet verbose mode on");
-    System.out.println("\t--intermediate | -i:\tGenerate intermediate files");
-    System.out.println("\t--noOutput | -o:\tDo not generate code");
+    System.out.println("\t--help \t\t| -h:\tShow this help");
+    System.out.println("\t--cCode \t| -c:\tGenerate C code");
+    System.out.println("\t--eCode \t| -e:\tGenerate Eiffel code");
+    System.out.println("\t--version \t| -V:\tPrint version");
+    System.out.println("\t--verbose \t| -v:\tSet verbose mode on");
+    System.out.println("\t--intermediate\t| -i:\tGenerate intermediate files");
+    System.out.println("\t--noOutput \t| -o:\tDo not generate code");
     System.out.println("\t--noDeclaration | -D:\tDo not generate code for declarations");
-    System.out.println("\t--doCompile | -C:\tStart after type-checking");
-    System.out.println("\t--noCheck | -f:\t\tDo not verify correctness");
-    System.out.println("\t--Wall:\t\t\tPrint all warnings");
-    System.out.println("\t--noWarning:\tPrint warning before stopping the compilation");
-    System.out.println("\t--lazyType | -l:\tUse universal type");
-    System.out.println("\t--demo | -d:\t\tRun demo mode");
+    System.out.println("\t--doCompile \t| -C:\tStart after type-checking");
+    System.out.println("\t--noCheck \t| -f:\tDo not verify correctness");
+    System.out.println("\t--Wall\t\t\tPrint all warnings");
+    System.out.println("\t--noWarning\t\tDo not print warning");
+    System.out.println("\t--lazyType \t| -l:\tUse universal type");
+    System.out.println("\t--demo \t\t| -d:\tRun demo mode");
     System.out.println("\t--import <path> | -I:\tPath for %include");
-    System.out.println("\t--pretty | -p:\t\tGenerate readable code");
-    System.out.println("\t--atermStat | -s:\tPrint internal ATerm statistics");
-    System.out.println("\t--optimize | -O:\tOptimized generated code");
-    System.out.println("\t--static:\t\tGenerate static functions");
+    System.out.println("\t--pretty\t| -p:\tGenerate readable code");
+    System.out.println("\t--atermStat \t| -s:\tPrint internal ATerm statistics");
+    System.out.println("\t--optimize \t| -O:\tOptimized generated code");
+    System.out.println("\t--static\t\tGenerate static functions");
+    System.out.println("\t--debug\t\t\tGenerate debug primitives");
     System.exit(0);
   }
 
@@ -81,8 +87,9 @@ public class Tom {
     String optimizedSuffix  = ".tfix.optimized";
     String parsedTableSuffix = ".tfix.parsed.table";
     String expandedTableSuffix = ".tfix.expanded.table";
-
-    List importList = new ArrayList();
+    String debugMatchTableSuffix = ".tfix.debug.table";
+    
+    List importList = new ArrayList();    
     
     if(args.length >= 1) {
       for(int i=0; i < args.length; i++) { 
@@ -135,6 +142,8 @@ public class Tom {
 	    Flags.doOptimization = true;
           } else if(args[i].equals("--static")) {
 	    Flags.staticFunction = true;
+          } else if(args[i].equals("--debug")) {
+	    Flags.debugMode = true;
           } else if(args[i].equals("--help") || args[i].equals("-h")) {
 	    usage();
           } else {
@@ -153,6 +162,8 @@ public class Tom {
       usage();
     }
 
+    Flags.debugMode = Flags.jCode && Flags.debugMode;
+      
     if(fileName.length() == 0) {
       System.out.println("no inputfile");
       usage();
@@ -236,7 +247,7 @@ public class Tom {
 	TomExpander tomExpander = new TomExpander(environment,tomKernelExpander);
         startChrono();
         expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
-        tomKernelExpander.updateSymbol();
+        tomKernelExpander.updateSymbolTable();
         TomTerm context = null;
         expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
         tomChecker.checkVariableCoherence(expandedTerm);
@@ -247,6 +258,9 @@ public class Tom {
           generateOutput(fileName + expandedTableSuffix,symbolTable.toTerm());
         }
 
+        if (Flags.debugMode)
+          generateOutput(fileName + debugMatchTableSuffix, tomParser.getStructTable());
+                
         if(Flags.demo) {
           statistics.initInfoParser();
           statistics.initInfoChecker();
@@ -302,9 +316,9 @@ public class Tom {
         TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(environment);
         TomCompiler tomCompiler = new TomCompiler(environment,tomKernelCompiler);
         startChrono();
-        TomTerm simpleCheckedTerm = tomCompiler.preProcessing(expandedTerm);
+        compiledTerm = tomCompiler.preProcessing(expandedTerm);
         
-        compiledTerm = tomKernelCompiler.compileMatching(simpleCheckedTerm);
+        compiledTerm = tomKernelCompiler.compileMatching(compiledTerm);
           //System.out.println("pass2 =\n" + compiledTerm);
         compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
           //System.out.println("postProcessing =\n" + compiledTerm);

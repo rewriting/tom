@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class OptionListImpl extends TomSignatureConstructor
 {
-  static OptionList fromString(String str)
+  public static OptionList fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static OptionList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static OptionList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);

@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class InstructionImpl extends TomSignatureConstructor
 {
-  static Instruction fromString(String str)
+  public static Instruction fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static Instruction fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static Instruction fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
@@ -32,6 +32,10 @@ abstract public class InstructionImpl extends TomSignatureConstructor
     }
 
     if ((tmp = Instruction_Assign.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = Instruction_AssignMatchSubject.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -78,6 +82,11 @@ abstract public class InstructionImpl extends TomSignatureConstructor
   }
 
   public boolean isAssign()
+  {
+    return false;
+  }
+
+  public boolean isAssignMatchSubject()
   {
     return false;
   }

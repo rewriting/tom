@@ -2,6 +2,8 @@
 #    TOM - To One Matching Compiler
 #
 
+SUBDIRS         = . set
+
 javadir         = ${prefix}/classes/jtom/runtime
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 

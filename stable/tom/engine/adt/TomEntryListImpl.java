@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class TomEntryListImpl extends TomSignatureConstructor
 {
-  static TomEntryList fromString(String str)
+  public static TomEntryList fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static TomEntryList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static TomEntryList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);

@@ -1,0 +1,415 @@
+ /*
+  
+    TOM - To One Matching Compiler
+    
+    Copyright (C) 2000-2003  LORIA (CNRST, INPL, INRIA, UHP, U-Nancy 2)
+    Nancy, France.
+    
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+    
+    Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+    Julien Guyon
+
+*/
+
+package jtom.runtime.set;
+
+import java.util.*;
+
+import aterm.*;
+import aterm.pure.PureFactory;
+
+import jtom.runtime.set.jgtreeset.SetFactory;
+import jtom.runtime.set.jgtreeset.JGTreeSet;
+
+import jtom.runtime.GenericTraversal;
+import jtom.runtime.Replace1;
+import jtom.runtime.Collect1;
+
+public abstract class ATermSet implements Collection {
+
+    // The internal representation of Shared Sets are trees defined by Jean Goubault 
+  protected JGTreeSet tree = null;
+    // depth of tree allows to represent set with 2^depth elements
+  protected int depth = 31;
+    // Count how many elements are in the set
+  protected int count = 0;
+    // Modification counter to detect issues in iteration operation
+  protected int modCount = 0;
+  protected static GenericTraversal traversal = new GenericTraversal();
+
+  static private Integer one = new Integer(1);
+  static protected JGTreeSet emptyTree;
+  static protected SetFactory factory = null;
+  static protected int collisions = 0;
+  static final protected int[] mask =
+  { 1 << 0, 
+    1 << 1,
+    1 << 2,
+    1 << 3,
+    1 << 4,
+    1 << 5,
+    1 << 6,
+    1 << 7,
+    1 << 8,
+    1 << 9,
+    1 << 10,
+    1 << 11,
+    1 << 12,
+    1 << 13,
+    1 << 14,
+    1 << 15,
+    1 << 16,
+    1 << 17,
+    1 << 18,
+    1 << 19,
+    1 << 20,
+    1 << 21,
+    1 << 22,
+    1 << 23,
+    1 << 24,
+    1 << 25,
+    1 << 26,
+    1 << 27,
+    1 << 28,
+    1 << 29,
+    1 << 30,
+    1 << 31
+  };
+
+    public Object tom_get_fun_sym_String( String t) { return t; } public boolean tom_cmp_fun_sym_String(Object s1, Object s2) { return  s1.equals(s2); } public Object tom_get_subterm_String( String t, int n) { return null; } public boolean tom_terms_equal_String(Object t1, Object t2) { return t1.equals(t2); }  public Object tom_get_fun_sym_Integer( Integer t) { return t; } public boolean tom_cmp_fun_sym_Integer(Object s1, Object s2) { return  s1.equals(s2); } public Object tom_get_subterm_Integer( Integer t, int n) { return null; } public boolean tom_terms_equal_Integer(Object t1, Object t2) { return t1.equals(t2); }  public Object tom_get_fun_sym_Double( Double t) { return t; } public boolean tom_cmp_fun_sym_Double(Object s1, Object s2) { return  s1.equals(s2); } public Object tom_get_subterm_Double( Double t, int n) { return null; } public boolean tom_terms_equal_Double(Object t1, Object t2) { return t1.equals(t2); }  public Object tom_get_fun_sym_ATerm( ATerm t) { return ((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null); } public boolean tom_cmp_fun_sym_ATerm(Object s1, Object s2) { return  s1==s2; } public Object tom_get_subterm_ATerm( ATerm t, int n) { return (((ATermAppl)t).getArgument(n)); } public boolean tom_terms_equal_ATerm(Object t1, Object t2) { return t1.equals(t2); }  public Object tom_get_fun_sym_JGTreeSet( JGTreeSet t) { return null; } public boolean tom_cmp_fun_sym_JGTreeSet(Object s1, Object s2) { return  false; } public Object tom_get_subterm_JGTreeSet( JGTreeSet t, int n) { return null; } public boolean tom_terms_equal_JGTreeSet(Object t1, Object t2) { return t1.equals(t2); }  public boolean tom_is_fun_sym_emptySet( JGTreeSet t) { return  (t!= null) &&t.isEmptySet(); } public  JGTreeSet tom_make_emptySet() { return  getSetFactory().makeJGTreeSet_EmptySet(); }  public boolean tom_is_fun_sym_singleton( JGTreeSet t) { return  (t!= null) &&t.isSingleton(); } public  JGTreeSet tom_make_singleton( ATerm t0) { return  getSetFactory().makeJGTreeSet_Singleton(t0); } public  ATerm tom_get_slot_singleton_value( JGTreeSet t) { return  t.getValue(); }  public boolean tom_is_fun_sym_pair( JGTreeSet t) { return  (t!= null) &&t.isPair(); } public  JGTreeSet tom_make_pair( ATerm t0,  Integer t1) { return  getSetFactory().makeJGTreeSet_Pair(t0, t1); } public  ATerm tom_get_slot_pair_value( JGTreeSet t) { return  t.getValue(); } public  Integer tom_get_slot_pair_multiplicity( JGTreeSet t) { return  t.getMultiplicity(); }  public boolean tom_is_fun_sym_branch( JGTreeSet t) { return  (t!= null) &&t.isBranch(); } public  JGTreeSet tom_make_branch( JGTreeSet t0,  JGTreeSet t1) { return  getSetFactory().makeJGTreeSet_Branch(t0, t1); } public  JGTreeSet tom_get_slot_branch_left( JGTreeSet t) { return  t.getLeft(); } public  JGTreeSet tom_get_slot_branch_right( JGTreeSet t) { return  t.getRight(); }  
+
+  public int hashCode() {
+    return tree.getUniqueIdentifier();
+  }
+  
+  protected SetFactory getSetFactory() { 
+    return factory;
+  }
+  
+  protected JGTreeSet makeEmptySet() {
+    return emptyTree;
+  }
+  
+  protected JGTreeSet makeBranch(JGTreeSet left, JGTreeSet right) {
+    return getSetFactory().makeJGTreeSet_Branch(left, right);
+  }
+  
+  protected JGTreeSet getTreeSet() {
+    return tree;
+  }
+
+  public String toString() {
+    return tree.toString();
+  }
+  
+    // High level interface
+  public boolean equals(ATermSet set) {
+    return (tree == set.getTreeSet());
+  }
+
+  public void clear() {
+    tree = makeEmptySet();
+    count = 0;
+  }
+  
+  public boolean isEmpty() {
+    return tree.isEmptySet();
+  }
+
+  public boolean contains(Object o) {
+    if (o instanceof ATerm)
+      return containsATerm((ATerm)o);
+    else
+      throw new RuntimeException("Not an ATerm");
+  }
+
+  public boolean containsATerm(ATerm elt) {
+    return contains(elt, tree, 0);
+  }
+  
+  public boolean containsAll(Collection c) {
+    Iterator it = c.iterator();
+    Object o = null;
+    while(it.hasNext()) {
+      if (!contains((ATerm)it.next())) {
+        return false;
+      }
+    }
+    return true;    
+  }
+  
+  public abstract Object[] toArray();
+  
+  public abstract Object[] toArray(Object[] o);
+  
+  public boolean add(Object o) {
+    if (o instanceof ATerm)
+      return addATerm((ATerm)o);
+    else
+      throw new RuntimeException("Not an ATerm");
+  }
+  
+  private boolean addATerm(ATerm elt) {
+    JGTreeSet before = tree;
+    tree = override(elt, one, tree, 0);
+    modCount++;
+    return tree == before;
+  }
+  
+  public boolean addAll(Collection c) {
+    JGTreeSet before = tree;
+    Iterator it = c.iterator();
+    while(it.hasNext()) {
+      add(it.next());
+    }
+    return tree != before;
+  }
+  
+  public boolean remove(Object o) {
+    if (o instanceof ATerm)
+      return removeATerm((ATerm)o);
+    else
+      throw new RuntimeException("Not an ATerm");
+  }
+  
+  private boolean removeATerm(ATerm elt) {
+    JGTreeSet c = tree;
+    tree = remove(elt, tree, 0);
+    modCount++;
+    return tree == c;
+  }
+
+  public boolean removeAll(Collection c) {
+    JGTreeSet before = tree;
+    Iterator it = c.iterator();
+    while(it.hasNext()) {
+      remove(it.next());
+    }
+    modCount++;
+    return tree ==before;
+  }
+  
+  public boolean retainAll(Collection c) {
+    return true;
+  }
+
+  public int size() {
+    return size(tree);
+  }
+  
+    // getHead return the first left inner element found
+  public ATerm getHead() {
+    return getHead(tree);
+  }
+  
+  public String topRepartition() {
+    return topRepartition(tree);
+  }
+
+    // Low interface using JGTreeSet classes
+  protected boolean isEmpty(JGTreeSet set) {
+    return set.isEmptySet();
+  }
+  
+  protected boolean contains(ATerm elt, JGTreeSet t) {
+    return contains(elt, t, 0);
+  }
+  protected JGTreeSet add(ATerm elt, JGTreeSet t) {
+    return override(elt, new Integer(1), t, 0);
+  }
+  
+  protected JGTreeSet remove(ATerm elt, JGTreeSet t) {
+    return remove(elt, t, 0);
+  }
+  
+  protected abstract int size(JGTreeSet t);
+ 
+      // getHead return the first left inner element found
+  protected abstract ATerm getHead(JGTreeSet t);
+
+  protected JGTreeSet getTail(JGTreeSet t) {
+    return remove(getHead(t), t);
+  }
+  
+  protected JGTreeSet union(JGTreeSet t1, JGTreeSet t2) {
+    return union(t1, t2, 0);
+  }
+
+  protected JGTreeSet intersection(JGTreeSet t1, JGTreeSet t2) {
+    JGTreeSet result = intersection(t1, t2, 0);
+    return result;
+      //return reworkJGTreeSet(result);
+  }
+  
+  protected String topRepartition(JGTreeSet t) {
+     {  JGTreeSet tom_match1_1 = null; tom_match1_1 = ( JGTreeSet) t;matchlab_match1_pattern1: {  JGTreeSet l = null;  JGTreeSet r = null; if(tom_is_fun_sym_branch(tom_match1_1)) {  JGTreeSet tom_match1_1_1 = null;  JGTreeSet tom_match1_1_2 = null; tom_match1_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match1_1); tom_match1_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match1_1); l = ( JGTreeSet) tom_match1_1_1; r = ( JGTreeSet) tom_match1_1_2;
+  return "Left branch: "+size(l)+"\tright branch: "+size(r); }}matchlab_match1_pattern2: {
+ return "topRepartition: No a branch";} }
+ 
+  }
+
+  
+  /* Simple binary operation skeleton
+ private JGTreeSet f(JGTreeSet m1, JGTreeSet m2) {
+   %match(JGTreeSet m1, JGTreeSet m2) {
+      emptySet, x -> {
+        return f2(m2);
+      }
+      x, emptySet -> {
+        return f1(m1);
+      }
+      singleton(y) , x -> {
+        return g2(y, m2);
+      }
+      x, singleton(y) -> {
+        return g1(y, m1)
+      }
+      branch(l1, r1), branch(l2, r2) -> {
+        return `branch(f(l1, l2, level+1), f(r1, r2, level+1));
+      }
+    }
+  }*/
+
+  protected abstract JGTreeSet reworkJGTreeSet(JGTreeSet t);
+  
+  protected abstract JGTreeSet union(JGTreeSet m1, JGTreeSet m2, int level);
+  
+  protected abstract JGTreeSet intersection(JGTreeSet m1, JGTreeSet m2, int level);
+  
+  protected abstract JGTreeSet restriction(JGTreeSet m1, JGTreeSet m2, int level);
+
+  protected abstract JGTreeSet remove(ATerm elt, JGTreeSet t, int level);
+
+  protected abstract boolean contains(ATerm elt, JGTreeSet t, int level);
+    
+  protected abstract JGTreeSet override(ATerm elt, Integer multiplicity, JGTreeSet t, int level);
+  
+  protected abstract JGTreeSet underride(ATerm elt, JGTreeSet t, int level);
+
+  protected boolean isBitZero(ATerm elt, int position) {
+    return ( (elt.getUniqueIdentifier() & mask[position]) == 0);
+  }
+  
+  protected boolean isBitOne(ATerm elt, int position) {
+    return ( (elt.getUniqueIdentifier() & mask[position]) > 0);
+  }
+
+
+
+     // Iterator interface
+  public Iterator iterator() {
+    if(tree.isEmptySet())
+      return new EmptySetIterator();
+    return new SetIterator();
+  }
+  
+  protected static class EmptySetIterator implements Iterator {
+    public boolean hasNext() {
+      return false;
+    }
+    public Object next() {
+      throw new NoSuchElementException();
+    }
+    public void remove() {
+      throw new IllegalStateException();
+    }
+  } // Class EmptySetIterator
+  
+  protected class SetIterator implements Iterator {
+    
+    ATerm[] table = createTableFromTree(ATermSet.this.tree);
+    int index = table.length;
+    ATerm entry = null;
+    ATerm lastReturned = null;
+    
+      /**
+       * The modCount value that the iterator believes that the backing
+       * List should have.  If this expectation is violated, the iterator
+       * has detected concurrent modification.
+       */
+    private int expectedModCount = modCount;
+    
+    private ATerm[] createTableFromTree(JGTreeSet tree) {
+      final Collection res = new ArrayList();
+      Collect1 collect = new Collect1() {
+          public boolean apply(ATerm t) {
+            if(t instanceof JGTreeSet) {
+               {  JGTreeSet tom_match2_1 = null; tom_match2_1 = ( JGTreeSet) t;matchlab_match2_pattern1: { if(tom_is_fun_sym_emptySet(tom_match2_1)) {
+ return false; }}matchlab_match2_pattern2: {  ATerm x = null; if(tom_is_fun_sym_singleton(tom_match2_1)) {  ATerm tom_match2_1_1 = null; tom_match2_1_1 = ( ATerm) tom_get_slot_singleton_value(tom_match2_1); x = ( ATerm) tom_match2_1_1;
+ 
+                  res.add(x);
+                  return false;
+                 }}matchlab_match2_pattern3: {  ATerm x = null; if(tom_is_fun_sym_pair(tom_match2_1)) {  ATerm tom_match2_1_1 = null;  Integer tom_match2_1_2 = null; tom_match2_1_1 = ( ATerm) tom_get_slot_pair_value(tom_match2_1); tom_match2_1_2 = ( Integer) tom_get_slot_pair_multiplicity(tom_match2_1); x = ( ATerm) tom_match2_1_1;
+ 
+                  res.add(x);
+                  return false;
+                 }}matchlab_match2_pattern4: {
+ return true;} }
+ 
+            } else {
+              return true;
+            }
+          } // Apply
+        }; //new
+      
+      ATermSet.this.traversal.genericCollect(tree, collect);
+      ATerm[] result = new ATerm[res.size()];
+      for(int i=0;i<res.size();i++) {
+        result[i] = (ATerm) (((ArrayList)res).get(i));
+      }
+      return result;
+    }
+
+    public boolean hasNext() {
+      ATerm e = entry;
+      int i = index;
+      ATerm t[] = table;
+        /* Use locals for faster loop iteration */
+      while (e == null && i > 0)
+        e = t[--i];
+      entry = e;
+      index = i;
+      return e != null;
+    }
+    
+    public Object next() {
+      if (modCount != expectedModCount)
+        throw new ConcurrentModificationException();
+      
+      ATerm et = entry;
+      int i = index;
+      ATerm t[] = table;
+      
+        /* Use locals for faster loop iteration */
+      while (et == null && i > 0) 
+        et = t[--i];
+      
+      entry = et;
+      index = i;
+      if (et != null) {
+        ATerm res = lastReturned = entry;
+        entry = null;
+        return res;
+      }
+      throw new NoSuchElementException();
+    }
+    
+    public void remove() {
+      throw new RuntimeException("not yet implemented!");
+    }
+  } // Class SetIterator
+  
+} // Class ATermSet

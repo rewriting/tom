@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class PositionImpl extends TomSignatureConstructor
 {
-  static Position fromString(String str)
+  public static Position fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static Position fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static Position fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);

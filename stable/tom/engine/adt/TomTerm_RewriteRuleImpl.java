@@ -11,7 +11,7 @@ extends TomTerm
   private static int index_lhs = 0;
   private static int index_rhs = 1;
   private static int index_condList = 2;
-  private static int index_orgTrack = 3;
+  private static int index_option = 3;
   public shared.SharedObject duplicate() {
     TomTerm_RewriteRule clone = new TomTerm_RewriteRule();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -59,7 +59,7 @@ extends TomTerm
     return true;
   }
 
-  public boolean hasOrgTrack()
+  public boolean hasOption()
   {
     return true;
   }
@@ -94,14 +94,14 @@ extends TomTerm
     return (TomTerm) super.setArgument(_condList, index_condList);
   }
 
-  public Option getOrgTrack()
+  public Option getOption()
   {
-    return (Option) this.getArgument(index_orgTrack) ;
+    return (Option) this.getArgument(index_option) ;
   }
 
-  public TomTerm setOrgTrack(Option _orgTrack)
+  public TomTerm setOption(Option _option)
   {
-    return (TomTerm) super.setArgument(_orgTrack, index_orgTrack);
+    return (TomTerm) super.setArgument(_option, index_option);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
@@ -133,7 +133,7 @@ extends TomTerm
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
-    int b = 0x9e3779b9;
+    int b = (getAFun().hashCode()<<8);
     a += (getArgument(3).hashCode() << 24);
     a += (getArgument(2).hashCode() << 16);
     a += (getArgument(1).hashCode() << 8);

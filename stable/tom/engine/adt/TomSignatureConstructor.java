@@ -27,7 +27,7 @@ implements aterm.ATerm
    this.term = term;
   }
 
-  protected TomSignatureFactory getTomSignatureFactory() {
+  public TomSignatureFactory getTomSignatureFactory() {
     return (TomSignatureFactory) getFactory();
   }
 

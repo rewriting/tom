@@ -6,12 +6,12 @@ import java.io.IOException;
 
 abstract public class SlotListImpl extends TomSignatureConstructor
 {
-  static SlotList fromString(String str)
+  public static SlotList fromString(String str)
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-  static SlotList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
+  public static SlotList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
