@@ -6,13 +6,17 @@
 <title>TOM: A Pattern Matching Compiler for Multiple Target Languages</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
 <meta name="description" content="TOM: A Pattern Matching Compiler"/>
-<meta name="keywords" content="tom, pattern, matching, compiler, rewriting, programming language, program transformation, pattern matching"/>
-<link rel="stylesheet" type="text/css" media="screen,projection" title="Main Style" href="./styles/mainstyle.css" />
+<meta name="keywords" content="tom, pattern, matching, compiler,
+            rewriting, programming language, program transformation,
+            pattern matching"/> 
+<link rel="stylesheet" type="text/css" media="screen,projection"
+title="Main Style" href="./styles/mainstyle.css" /> 
 </head>
 
 <body>
 <div id="logo">
-<a href="index.html"><img src="images/tom_logo.jpg" alt="TOM : To One Maching compiler" title="Tom home page" /></a>
+<a href="index.html"><img src="images/tom_logo.jpg" alt="TOM : To One
+Maching compiler" title="Tom home page" /></a> 
 </div>
 
 <div id="title">
@@ -24,17 +28,22 @@
 
 <div id="description">
 <dl>
-  <dd>TOM is a language extension which adds pattern matching facilities to an existing imperative language.</dd>
-  <dd>In the current version, TOM supports C, Java and Eiffel as native language.</dd>
+  <dd>TOM is a language extension which adds pattern matching
+       facilities to an existing imperative language.</dd> 
+  <dd>In the current version, TOM supports C, Java and Eiffel as
+       native language.</dd> 
 </dl>
 </div><!--description-->
 
 <div id="news">
 <h2>News</h2>
 <dl>
-  <dd> A Tom eclipse plugin is under development and will be released in September</dd>
-  <dd> xtom: an extended version of Tom dedicated to XML transformations will be released in September</dd>
-  <dd> a nice application of Tom:  <a href="examples/BoulderDashNTom.html">BoulderDash</a></dd>
+  <dd> A Tom eclipse plugin is under development and will be released
+       in September</dd> 
+  <dd> xtom: an extended version of Tom dedicated to XML
+       transformations will be released in September</dd> 
+  <dd> a nice application of Tom:  <a
+       href="examples/BoulderDashNTom.html">BoulderDash</a></dd> 
 </dl>
 </div><!-- news -->
 
@@ -43,7 +52,9 @@
 <ul>
   <li>Pierre-Etienne Moreau, Christophe Ringeissen and Marian Vittek.
        <strong>A Pattern Matching Compiler</strong>.
-       <em>In D. Parigot and M. G. J. van den Brand, editors, 1st International Workshop on Language Descriptions, Tools and Applications</em>,
+       <em>In D. Parigot and M. G. J. van den Brand, editors, 1st
+       International Workshop on Language Descriptions, Tools and
+       Applications</em>, 
        Genova (Italy), volume 44 of ENTCS. April 2001.</li>
   <li>Pierre-Etienne Moreau, Christophe Ringeissen and Marian Vittek.
        <strong>A Pattern Matching Compiler for Multiple Target Languages</strong>.
@@ -55,33 +66,42 @@
 <div id="tool">
 <h2>Principles</h2>
 <dl>
-  <dd>The tool does not impose a fixed term representation, rather it accepts implementation of terms
-       (or term like data types) of yet existing applications and it permits to define and execute rewriting
-       rules upon those types.<br/>
-       The main design of the implementation can be decomposed into several parts:
+  <dd>The tool does not impose a fixed term representation, rather it
+       accepts implementation of terms (or term like data types) of
+       yet existing applications and it permits to define and execute
+       rewriting rules upon those types.<br/>
+       The main design of the implementation can be decomposed into
+       several parts: 
        <ul>
-	 <li>A parsing phase that generates Abstract Syntax Trees (using <a href="http://www.cwi.nl/projects/MetaEnv/aterm/">ATerms</a>)</li>
-	 <li>An expansion phase that performs syntactic sugar replacement</li>
-	 <li>A type-checking phase that performs type inference</li>
-	 <li>A transformation phase that performs program transformation</li>
-	 <li>A compilation phase that transforms the AST into an abstract program</li>
-	 <li>A generation phase that transform the abstract program into the target language</li>
+	 <li>A parsing phase that generates Abstract Syntax Trees
+	      (using <a href="http://www.cwi.nl/projects/MetaEnv/aterm/">ATerms</a>)</li> 
+	 <li>An expansion phase that performs syntactic sugar
+	      replacement</li> 
+	 <li>A type-checking phase that performs type inference</li> 
+	 <li>A transformation phase that performs program
+	      transformation</li> 
+	 <li>A compilation phase that transforms the AST into an
+	      abstract program</li> 
+	 <li>A generation phase that transform the abstract program
+	      into the target language</li> 
        </ul>
        </dd>
 </dl>
 </div><!-- tool -->
 
 <div id="features">
-<h2>Features</h2>
+<h2>Documentation</h2>
 <dl>
-  <dd> The current implementation supports C and Java as target language</dd>
-  <dd> It is usable: the TOM compiler is written in TOM itself</dd>
-  <dd> A full <a href="manual/index.html"> online documentation </a> with installation instructions, language description and tutorial</dd>
+  <dd> A full <a href="manual/index.html"> online documentation </a>
+       with installation instructions, language description and
+       tutorial</dd>  
 </dl>
 </div><!-- features -->
 
 <div id="download">
 <h2>Downloads</h2>
+
+This section contains stable distributions of Jtom.
 
 <div id="release">
 <h3>Releases</h3>
@@ -127,8 +147,13 @@
 
 </div><!-- download -->
 
-<div id="download">
+<div id="The cutting Edge">
 <h2>The cutting Edge</h2>
+
+Jtom is under constant development between releases. For people who
+want to be on the cutting edge, there are several easy mechanisms for
+keeping your system in sync with the latest developments. Be
+warned--the cutting edge is not for everyone!
 
 <div id="jar">
 <h3>Jar devel distribution</h3>
@@ -142,12 +167,15 @@
 <h3>Daily distribution</h3>
 <dl>
   <dd>Another way to get the last version of jtom is to download the
-       <a href="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/DailyDistributions">daily distribution</a> (at CWI):</dd>
-  <dd>- jtom</dd>
-  <dd>- aterm-java</dd>
-  <dd>- shared-objects</dd>
-  <dd>- JJTraveler</dd>
-  <dd>- apigen</dd>
+       <a
+       href="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/DailyDistributions">daily distribution</a> (at CWI):</dd>
+       <ul>
+	 <li>jtom</li>
+	 <li>aterm-java</li>
+	 <li>shared-objects</li>
+	 <li>JJTraveler</li>
+	 <li>apigen</li>
+       </ul>
 </dl>
 </div>
 
