@@ -45,9 +45,9 @@ Maching compiler" title="Tom home page" /></a>
 <div id="news">
 <h2>News</h2>
   <ul>
-  <li> [2003-10-20]
-       Thanks to <a href="xtom.html">XTom</a>,
-       some XML pattern matching facilities have been integrated into Tom.</li>
+  <li> [2003-11-24] Release 1.5 is scheduled for November 28th.
+  <li> [2003-11-24] Creation of the <em>tom-users</em> mailing list.
+  <li> [2003-10-20] XML pattern matching facilities have been integrated into Tom.</li>
   <li> [2003-09-25] Jtom 1.4 released</li>  
   <li> [2003-09-25] Eclipse plugin released</li>  
   <li> A nice application of Tom:  <a
@@ -75,6 +75,28 @@ Maching compiler" title="Tom home page" /></a>
 </ul>
 </div><!-- publications -->
 
+
+<div id="doc">
+<h2>Documentation</h2>
+<ul>
+  <li> To subscribe to the mailing-list of TOM, send email to 
+       <a href="mailto:sympa@loria.fr">sympa@loria.fr</a>, 
+       with <br/>
+       <em>SUBSCRIBE tom-users [Firstname] [Name]</em> in the
+       subject of the message. 
+       <br/>
+       To unsubscribe, send an email with <em>SIGNOFF tom-users</em>
+       in the subject.
+  <li> A full <a href="doc/manual/manual.html"> online documentation </a>
+       with installation instructions, language description and
+       tutorial</li>
+  <li> A short <a href="doc/eclipse/overview.html">Eclipse plug-in tutorial</a>
+  </li>
+</ul>
+
+</div><!-- doc -->
+
+
 <div id="tool">
 <h2>Principles</h2>
 <dl>
@@ -98,10 +120,9 @@ The different advantages of the approach<br/> implemented by TOM are:<br/>
 <br/>
 <ul>
   <li>Efficiency: The gain of efficiency follows from the compilation
-       of matching as implemented in TOM.<br/>
+       of matching as implemented in TOM.
        </li>
 </ul>
-&nbsp;<br/>
 <ul>
   <li>Flexibility: When trying to integrate a black-box tool in an
        existing system, one of the main bottlenecks comes from data 
@@ -111,7 +132,7 @@ The different advantages of the approach<br/> implemented by TOM are:<br/>
        structures for terms/trees and then execute matching upon those data
        structures. We propose to access terms using only a simple <span
        style="font-style: italic;">Application Programming Interface</span>
-       (API) defined by the user.<br/>
+       (API) defined by the user.
   </li>
 </ul>
 <ul>
@@ -119,17 +140,16 @@ The different advantages of the approach<br/> implemented by TOM are:<br/>
        languages (C, Java, and Eiffel). TOM is implemented in TOM itself
        as a series of AST transformations. The code generation is performed at
        the very end, depending on the target language we are interested in.
-       Hence, the target language is really a parameter of TOM.<br/>
+       Hence, the target language is really a parameter of TOM.
   </li>
 </ul>
-<br/>
 <ul>
   <li>Expressivity: TOM supports non-linear patterns and equational
        matching like modern rule-based programming languages. Currently, we
        have implemented pattern matching with list operators. This form of
        associative matching with neutral element is very useful for practical
        applications. The main difference with standard (syntactic) matching is
-       that a single variable may have multiple&nbsp; assignments. <br/>
+       that a single variable may have multiple&nbsp; assignments.
        </li>
 </ul>
 <span style="font-weight: bold;"><br/></span>
@@ -162,18 +182,6 @@ retrieve information from an algebraic data structure.<br/>
 </dd>
 </dl>
 </div><!-- tool -->
-
-<div id="doc">
-<h2>Documentation</h2>
-<dl>
-  <dd> A full <a href="doc/manual/manual.html"> online documentation </a>
-       with installation instructions, language description and
-       tutorial</dd>
-  <dd> A short <a href="doc/eclipse/overview.html">Eclipse plug-in tutorial</a>
-  </dd>
-
-</dl>
-</div><!-- doc -->
 
 <div id="download">
 <h2>Downloads</h2>
