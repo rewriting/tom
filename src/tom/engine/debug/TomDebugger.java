@@ -49,36 +49,39 @@ public class TomDebugger {
   Set debuggedStructureKeySet;
   String[] watchPatterns;
   int nbPatterns = 0;
-  String baseFileName;
+  String[] baseFileName;
   Stack environment;
   boolean nextFailure = false;
   int nextFailureStatus;
   
-  public TomDebugger(String structureFileName) {
-    TomStructureTable table = null;
-    InputStream input = null;
-    try {
-      input = new FileInputStream(structureFileName+".tfix.debug.table");
-      TomSignatureFactory tsf = new TomSignatureFactory(10);
-      table = TomStructureTable.fromTextFile(input);
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-      System.out.println("Fail to create debugger: File " + structureFileName + ".tfix.debug.table not found.");
-      System.exit(1);
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.out.println("Exception during reading "+structureFileName+".tfix.debug.table");
-      System.exit(1);
-    }
+  public TomDebugger(String[] baseFileName) {
     this.debug = this;
-    this.baseFileName = structureFileName;
+    this.baseFileName = baseFileName;
     this.in = new BufferedReader(new InputStreamReader(System.in));
     this.debuggedStructureKeySet = new HashSet();
     this.watchPatterns = new String[100];
     this.environment = new Stack();
     this.mapKeyDebugStructure = new HashMap();
-
-    analyseStructure(table);
+    
+    TomStructureTable table = null;
+    InputStream input = null;
+    for(int i=0;i<baseFileName.length;i++) {
+      try {
+        input = new FileInputStream(baseFileName[i]+".tfix.debug.table");
+        TomSignatureFactory tsf = new TomSignatureFactory(10);
+        table = TomStructureTable.fromTextFile(input);
+        analyseStructure(table);
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+        System.out.println("Fail to create debugger: File " + baseFileName[i] + ".tfix.debug.table not found.");
+        System.exit(1);
+      } catch (Exception e) {
+        e.printStackTrace();
+        System.out.println("Exception during reading "+baseFileName[i]+".tfix.debug.table");
+        System.exit(1);
+      }
+    }
+     
     showAvailableStructure();
     start();
   }
@@ -99,20 +102,20 @@ public class TomDebugger {
     private void configure(String str) {
     if(str.equals("?")) {
       System.out.println("\nFollowing commands are allowed:");
-      System.out.println("\t ?:show this help");
-      System.out.println("\t info | i: Show information on structure that can be debugged");
-      System.out.println("\t run | r: exit debugger configuration, jump to next breakpoint");
-      System.out.println("\t nextMatchFailure |n: exit debugger configuration and run the program");
-      System.out.println("\t save | s: save configuration");
-      System.out.println("\t load | l: load configuration from file");
-      System.out.println("\t breakpoint | b: define breakpoint for Match-Rule structures");
-      System.out.println("\t clear | c: clear breakpoint list");
-      System.out.println("\t term | t: define Term pattern to be watch");
-      System.out.println("\t more | m: Show patterns of a specific available structure");
+      System.out.println("\t ?\t\t:Show this help");
+      System.out.println("\t info    | i\t:Show information on structure that can be debugged");
+      System.out.println("\t run     | r\t:Exit debugger configuration, jump to next breakpoint");
+      System.out.println("\t failure | f\t:Exit debugger configuration and run the program");
+      System.out.println("\t save    | s\t:Save configuration");
+      System.out.println("\t load    | l\t:Load configuration from file");
+      System.out.println("\t breakpt | b\t:Define breakpoint for Match-Rule structures");
+      System.out.println("\t clear   | c\t:Clear breakpoint list");
+      System.out.println("\t term    | t\t:Define Term pattern to be watch");
+      System.out.println("\t more    | m\t:Show patterns of a specific available structure");
     } else if (str.equals("run")) {
         //System.out.println(debuggedStructureKeySet);
       return;
-    } else if (str.equals("nextMatchFailure") || str.equals("n")) {
+    } else if (str.equals("failure") || str.equals("f")) {
       nextFailure = true;
       nextFailureStatus = -1;
       return;
@@ -122,7 +125,7 @@ public class TomDebugger {
       System.out.println("Function not yet defined");
     } else if (str.equals("load") || str.equals("l")) {
       System.out.println("Function not yet defined");
-    } else if (str.equals("breakpoint") || str.equals("b")) {
+    } else if (str.equals("breakpt") || str.equals("b")) {
       defineStructWatcher();
     } else if (str.equals("clear") || str.equals("c")) {
       debuggedStructureKeySet.clear();
@@ -152,6 +155,10 @@ public class TomDebugger {
      try {
       String str = "";
       int input = 0;
+      String fileName = getFileName();
+      if (fileName == null) {
+        return;
+      }
       while (str != null) {
         System.out.print(">Enter structure line number (0 to exit):");
         str = in.readLine();
@@ -165,7 +172,7 @@ public class TomDebugger {
           System.out.println();
           return;
         } else {
-          String key = baseFileName+".t"+input;
+          String key = fileName+".t"+input;
           if (mapKeyDebugStructure.keySet().contains(key)) {
             showPatterns(key);
           } else {
@@ -176,7 +183,39 @@ public class TomDebugger {
     } catch (IOException e) {
     }
   }
-
+  private String getFileName() {
+    String str = "";
+    int input = 0;
+    if(baseFileName.length == 1) {
+      return baseFileName[0];
+    }
+    try {
+      while (true) {
+        System.out.println(">Choose base original file name:(0 to exit)");
+        for(int i=0;i<baseFileName.length;i++) {
+          System.out.println((i+1)+")\t"+baseFileName[i]);
+        }
+        str = in.readLine();
+        try {
+          input = Integer.parseInt(str, 10);
+        }catch (NumberFormatException e) {
+          System.out.println("Not a valid number");
+          continue;
+        }
+        if(input == 0) {
+          return null;
+        } else if ((input-1) >= baseFileName.length) {
+          System.out.println("Not a valid number");
+          continue;
+        } else {
+          return baseFileName[input-1];
+        }
+      }
+    } catch (IOException e) {
+      return null;
+    }
+  }
+  
   private void showPatterns(String key) {
     TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
     for(int i=0;i<struct.nbPatterns.intValue();i++){
@@ -189,6 +228,10 @@ public class TomDebugger {
     try {
       String str = "";
       int input = 0;
+      String fileName = getFileName();
+      if (fileName == null) {
+        return;
+      }
       while (str != null) {
         System.out.print(">Enter structure line number (0 to exit):");
         str = in.readLine();
@@ -202,7 +245,7 @@ public class TomDebugger {
           System.out.println();
           return;
         } else {
-          String key = baseFileName+".t"+input;
+          String key = fileName+".t"+input;
           if (mapKeyDebugStructure.keySet().contains(key)) {
             HashSet list = definePatternWatcher(input);
             ((TomDebugStructure)mapKeyDebugStructure.get(key)).watchPatternList = list;
