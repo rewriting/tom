@@ -62,8 +62,8 @@ public class TomTaskInput {
     noWarning = false, // print only warning stopping the compilation
     staticFunction = false, // generate static functions
     debugMemory = false, // generate debug primitives
-    pretty = false; // Synchronize TL code and source code
-  
+    pretty = false, // Synchronize TL code and source code
+    atermStat = false; // Shows aterm statistics
   
     //public static boolean doOptimization = false; // optimize generated code
   public TomTaskInput() {
@@ -284,6 +284,14 @@ public boolean isPretty() {
 
 public void setPretty(boolean b) {
 	pretty = b;
+}
+
+public boolean isAtermStat() {
+	return atermStat;
+}
+
+public void setAtermStat(boolean b) {
+	atermStat = b;
 }
 
 } // class TomTaskInput

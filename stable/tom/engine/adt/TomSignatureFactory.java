@@ -220,9 +220,6 @@ public class TomSignatureFactory extends PureFactory
   private aterm.AFun funTomTerm_InstructionToTomTerm;
   private TomTerm protoTomTerm_InstructionToTomTerm;
   private aterm.ATerm patternTomTerm_InstructionToTomTerm;
-  private aterm.AFun funTomTerm_TomRuleToTomTerm;
-  private TomTerm protoTomTerm_TomRuleToTomTerm;
-  private aterm.ATerm patternTomTerm_TomRuleToTomTerm;
   private aterm.AFun funTomTerm_Tom;
   private TomTerm protoTomTerm_Tom;
   private aterm.ATerm patternTomTerm_Tom;
@@ -763,10 +760,6 @@ public class TomSignatureFactory extends PureFactory
     patternTomTerm_InstructionToTomTerm = parse("InstructionToTomTerm(<term>)");
     funTomTerm_InstructionToTomTerm = makeAFun("_TomTerm_InstructionToTomTerm", 1, false);
     protoTomTerm_InstructionToTomTerm = new TomTerm_InstructionToTomTerm(this);
-
-    patternTomTerm_TomRuleToTomTerm = parse("TomRuleToTomTerm(<term>)");
-    funTomTerm_TomRuleToTomTerm = makeAFun("_TomTerm_TomRuleToTomTerm", 1, false);
-    protoTomTerm_TomRuleToTomTerm = new TomTerm_TomRuleToTomTerm(this);
 
     patternTomTerm_Tom = parse("Tom(<term>)");
     funTomTerm_Tom = makeAFun("_TomTerm_Tom", 1, false);
@@ -3328,36 +3321,6 @@ public class TomSignatureFactory extends PureFactory
     java.util.List args = new java.util.LinkedList();
     args.add(((Instruction)arg.getArgument(0)).toTerm());
     return make(patternTomTerm_InstructionToTomTerm, args);
-  }
-
-  protected TomTerm_TomRuleToTomTerm makeTomTerm_TomRuleToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_TomRuleToTomTerm) {
-      protoTomTerm_TomRuleToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_TomRuleToTomTerm) build(protoTomTerm_TomRuleToTomTerm);
-    }
-  }
-
-  public TomTerm_TomRuleToTomTerm makeTomTerm_TomRuleToTomTerm(TomRule _astTomRule) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astTomRule};
-    return makeTomTerm_TomRuleToTomTerm( funTomTerm_TomRuleToTomTerm, args, empty);
-  }
-
-  public TomTerm TomTerm_TomRuleToTomTermFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_TomRuleToTomTerm);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_TomRuleToTomTerm(TomRuleFromTerm( (aterm.ATerm) children.get(0)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_TomRuleToTomTermImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add(((TomRule)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_TomRuleToTomTerm, args);
   }
 
   protected TomTerm_Tom makeTomTerm_Tom(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -6112,11 +6075,6 @@ public class TomSignatureFactory extends PureFactory
     }
 
     tmp = TomTerm_InstructionToTomTermFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = TomTerm_TomRuleToTomTermFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }

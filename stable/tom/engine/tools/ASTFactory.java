@@ -27,7 +27,6 @@ package jtom.tools;
 
 import java.util.*;
 import jtom.adt.*;
-import jtom.parser.*;
 import aterm.ATerm;
 
 public class ASTFactory {

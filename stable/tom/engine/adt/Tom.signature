@@ -673,13 +673,6 @@
   make(t0) { getTomSignatureFactory().makeTomTerm_InstructionToTomTerm(t0)}
 }
 
-%op TomTerm TomRuleToTomTerm(astTomRule:TomRule) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isTomRuleToTomTerm()}
-  get_slot(astTomRule,t) { t.getAstTomRule()}
-  make(t0) { getTomSignatureFactory().makeTomTerm_TomRuleToTomTerm(t0)}
-}
-
 %op TomTerm Tom(tomList:TomList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isTom()}

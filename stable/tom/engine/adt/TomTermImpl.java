@@ -63,11 +63,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isTomRuleToTomTerm()
-  {
-    return false;
-  }
-
   public boolean isTom()
   {
     return false;
@@ -313,11 +308,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasAstTomRule()
-  {
-    return false;
-  }
-
   public boolean hasTomList()
   {
     return false;
@@ -541,16 +531,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setAstInstruction(Instruction _astInstruction)
   {
      throw new RuntimeException("This TomTerm has no AstInstruction");
-  }
-
-  public TomRule getAstTomRule()
-  {
-     throw new RuntimeException("This TomTerm has no AstTomRule");
-  }
-
-  public TomTerm setAstTomRule(TomRule _astTomRule)
-  {
-     throw new RuntimeException("This TomTerm has no AstTomRule");
   }
 
   public TomList getTomList()

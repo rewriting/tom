@@ -309,7 +309,7 @@ public class TomCompiler extends TomBase implements TomTask {
   return actionList;  }}matchlab_match4_pattern2: {  TomList tail = null;  TomTerm pattern = null;  TomTerm subject = null; if(tom_is_fun_sym_manyTomList(tom_match4_1)) {  TomTerm tom_match4_1_1 = null;  TomList tom_match4_1_2 = null; tom_match4_1_1 = ( TomTerm) tom_get_slot_manyTomList_head(tom_match4_1); tom_match4_1_2 = ( TomList) tom_get_slot_manyTomList_tail(tom_match4_1); if(tom_is_fun_sym_MatchingCondition(tom_match4_1_1)) {  TomTerm tom_match4_1_1_1 = null;  TomTerm tom_match4_1_1_2 = null; tom_match4_1_1_1 = ( TomTerm) tom_get_slot_MatchingCondition_lhs(tom_match4_1_1); tom_match4_1_1_2 = ( TomTerm) tom_get_slot_MatchingCondition_rhs(tom_match4_1_1); pattern = ( TomTerm) tom_match4_1_1_1; subject = ( TomTerm) tom_match4_1_1_2; tail = ( TomList) tom_match4_1_2;
 
  
-        System.out.println(pattern);
+          //System.out.println("pattern: " + pattern);
         TomType subjectType = getTermType(pattern);
         TomNumberList path = tsf().makeTomNumberList();
         path = (TomNumberList) path.append(tom_make_RuleVar() );

@@ -1,4 +1,6 @@
 2003-08-22  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/compiler/TomExpander.t: fix a problem when expanding RewriteRule
 	* bumped to 1.3delta
         * bootinstall
 	* src/jtom/parser/TomParser.jj: removed old backquote and dotTerm parser
