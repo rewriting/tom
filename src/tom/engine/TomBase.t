@@ -171,7 +171,7 @@ public class TomBase {
   protected String getSymbolCode(TomSymbol symbol) {
       //%variable
     %match(TomSymbol symbol) {
-      Symbol(name,types,option,TLCode(TL(tlCode))) -> { return tlCode; }
+      Symbol(name,types,option,TL[code=tlCode]) -> { return tlCode; }
       
       _ -> {
         System.out.println("getSymbolCode error on term: " + symbol);
@@ -352,9 +352,9 @@ public class TomBase {
      */
   protected ATermAppl genericMapterm(ATermAppl subject, Replace replace) {
     try {
-      ATermAppl newSubterm;
+      ATerm newSubterm;
       for(int i=0 ; i<subject.getArity() ; i++) {
-        newSubterm = (ATermAppl) replace.apply(subject.getArgument(i));
+        newSubterm = replace.apply(subject.getArgument(i));
         if(newSubterm != subject.getArgument(i)) {
           subject = subject.setArgument(newSubterm,i);
         }

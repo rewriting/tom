@@ -78,9 +78,9 @@ public class TomChecker extends TomBase {
      */
   protected ATermAppl genericMaptermContext(ATerm context, ATermAppl subject, ReplaceContext replace) {
     try {
-      ATermAppl newSubterm;
+      ATerm newSubterm;
       for(int i=0 ; i<subject.getArity() ; i++) {
-        newSubterm = (ATermAppl) replace.apply(context,subject.getArgument(i));
+        newSubterm = replace.apply(context,subject.getArgument(i));
         if(newSubterm != subject.getArgument(i)) {
           subject = subject.setArgument(newSubterm,i);
         }

@@ -1244,7 +1244,8 @@ public class TomCompiler extends TomBase {
     TomTerm variableListAST = null;
     TomTerm variableIndexAST = null;
     String szero = "0";
-    Expression glZero = `TomTermToExpression(TargetLanguageToTomTerm(TL(szero)));
+    Integer i = new Integer(0);
+    Expression glZero = `TomTermToExpression(TargetLanguageToTomTerm(TL(szero, option(), i)));
     if(indexTerm > 1) {
       variableListAST = subjectListName;
       variableIndexAST = subjectListIndex;

@@ -29,6 +29,7 @@ import java.io.*;
 
 public final class OutputCode {
   private Writer file;
+  private int lineCounter = 0;
   
   public OutputCode(Writer file) {
     this.file = file;
@@ -83,6 +84,7 @@ public final class OutputCode {
 
   public void writeln() throws IOException {
     file.write('\n');
+    lineCounter++;
   }
 
   public void writeln(String s) throws IOException {
@@ -94,7 +96,30 @@ public final class OutputCode {
     write(deep,s);
     writeln();
   }
-  
+
+  public void write(int deep,String s, String Line, Integer length) throws IOException {
+    int line = Integer.valueOf(Line).intValue();
+    if (line == lineCounter) {
+      write(0, "/*" + "Line: "+line+" Length:"+ length.intValue()+"*/");
+      write(deep,s);
+      lineCounter+= length.intValue();
+    } else if (line > lineCounter) {
+      int diff = line - lineCounter;
+      for(int i=0;i<diff;i++) {
+        write("/* newline : Line: "+line+" Length:"+ length.intValue()+" LineCounter:"+ lineCounter+"*/");
+        writeln();
+      }
+      write(deep,s);
+      lineCounter+= length.intValue();
+    } else{
+      System.out.println("Synchronization issue:"+s);
+      write(deep,s);
+      writeln();
+    }
+//    write(deep,s);
+//   writeln();
+  } 
+
   public void close() {
     try {
       file.flush();

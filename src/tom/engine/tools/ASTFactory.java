@@ -121,7 +121,7 @@ public class ASTFactory {
     TomName name = tsf().makeTomName_Name(symbolName);
     TomType typesToType =  tsf().makeTomType_TypesToType(makeList(typeList), tsf().makeTomType_TomTypeAlone(resultType));
     Option options = makeOption();
-    TomTerm code = tsf().makeTomTerm_TLCode(tsf().makeTargetLanguage_TL(glString));
+    TargetLanguage code = tsf().makeTargetLanguage_TL(glString, tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")),new Integer(0));
     return tsf().makeTomSymbol_Symbol(name,typesToType,options,code);
   }
 
@@ -129,8 +129,7 @@ public class ASTFactory {
     TomName name = tsf().makeTomName_Name(symbolName);
     TomType typesToType =  tsf().makeTomType_TypesToType(makeList(typeList), tsf().makeTomType_TomTypeAlone(resultType));
     Option options = makeOption(makeOptionList(optionList));
-    TomTerm code = tsf().makeTomTerm_TLCode(glFsym);
-    return tsf().makeTomSymbol_Symbol(name,typesToType,options,code);
+    return tsf().makeTomSymbol_Symbol(name,typesToType,options,glFsym);
   }
 
   public Option makeOption() {
@@ -177,12 +176,11 @@ public class ASTFactory {
 
   public Declaration makeMakeDecl(String opname, TomType returnType, ArrayList argList, TargetLanguage tlcode) {
     TomName name = tsf().makeTomName_Name(opname);  
-    TomTerm code = tsf().makeTomTerm_TLCode(tlcode);
-    return tsf().makeDeclaration_MakeDecl(name, returnType, makeList(argList), code);
+    return tsf().makeDeclaration_MakeDecl(name, returnType, makeList(argList), tlcode);
   }
 
   public TomType makeType(String typeNameTom, String typeNametGL) {
-    return makeType(typeNameTom,tsf().makeTargetLanguage_TL(typeNametGL));
+    return makeType(typeNameTom,tsf().makeTargetLanguage_TL(typeNametGL, tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
   }
 
   public TomType makeType(String typeNameTom, TargetLanguage tlType) {
@@ -198,7 +196,7 @@ public class ASTFactory {
                                 String value, ArrayList optionList) {
     String resultType = "int";
     ArrayList typeList = new ArrayList();
-    TargetLanguage tlFsym = tsf().makeTargetLanguage_TL(value);
+    TargetLanguage tlFsym = tsf().makeTargetLanguage_TL(value, tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")),new Integer(0));
 
     TomSymbol astSymbol = makeSymbol(value,resultType,typeList,optionList,tlFsym);
     symbolTable.putSymbol(value,astSymbol);
@@ -214,13 +212,13 @@ public class ASTFactory {
     TomTerm variable_t2 = makeVariable(option,"t2",typeString);
     TomTerm variable_n = makeVariable(option,"n",typeString);
     getFunSym = tsf().makeDeclaration_GetFunctionSymbolDecl(
-      variable_t,tsf().makeTomTerm_TLCode(tsf().makeTargetLanguage_TL("t")));
+      variable_t,tsf().makeTargetLanguage_TL("t", tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
     getSubterm = tsf().makeDeclaration_GetSubtermDecl(
-      variable_t,variable_n,tsf().makeTomTerm_TLCode(tsf().makeTargetLanguage_TL("null")));
+      variable_t,variable_n,tsf().makeTargetLanguage_TL("null", tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
     cmpFunSym = tsf().makeDeclaration_CompareFunctionSymbolDecl(
-      variable_t1,variable_t2,tsf().makeTomTerm_TLCode(tsf().makeTargetLanguage_TL("t1==t2")));
+      variable_t1,variable_t2,tsf().makeTargetLanguage_TL("t1==t2", tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
     equals = tsf().makeDeclaration_TermsEqualDecl(
-      variable_t1,variable_t2,tsf().makeTomTerm_TLCode(tsf().makeTargetLanguage_TL("t1==t2")));
+      variable_t1,variable_t2,tsf().makeTargetLanguage_TL("t1==t2", tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
     list.add(getFunSym);
     list.add(getSubterm);
     list.add(cmpFunSym);
@@ -241,7 +239,7 @@ public class ASTFactory {
       TomList typeList = symbol.getTypesToType().getList();
       TomType type     = symbol.getTypesToType().getCodomain();
       Option  options  = symbol.getOption();
-      TomTerm tlcode   = symbol.getTlCode();
+      TargetLanguage tlcode   = symbol.getTlCode();
 
       if(name==null || typeList==null || type==null || options==null || tlcode==null) {
         System.out.println("ASTFactory: null value");
@@ -277,7 +275,7 @@ public class ASTFactory {
       TomName name       = symbol.getAstName();
       TomType type       = symbol.getTypesToType();
       OptionList optionList = symbol.getOption().getOptionList();
-      TomTerm tlcode     = symbol.getTlCode();
+      TargetLanguage tlcode     = symbol.getTlCode();
 
       optionList = append(tsf().makeOption_DefinedSymbol(),optionList);
       TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,type,makeOption(optionList),tlcode);
