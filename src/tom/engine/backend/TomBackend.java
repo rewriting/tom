@@ -25,7 +25,6 @@
 
 package jtom.backend;
  
-import aterm.*;
 
 import java.io.FileOutputStream;
 import java.io.BufferedWriter;
@@ -68,13 +67,7 @@ public class TomBackend extends TomTask {
 		} catch (Exception e) {
     	addError("Exception occurs in TomBackend Init: "+e.getMessage(), 
 							 getInput().getInputFileName(), 0, 0);
-      e.printStackTrace();
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				System.out.println("TomBackend can t close file: "+e.getMessage());
-			}
+    		e.printStackTrace();
 		}
 	}
 	
