@@ -109,7 +109,7 @@
   </target>
 
   <target name="clean.examples" description="Cleans examples directory">
-    <delete dir="${examples.gen"/>
+    <delete dir="${examples.gen}"/>
     <delete dir="${examples.build}"/>
     <delete>
       <fileset dir="${examples.dir}" includes="**/*.class" />
@@ -615,10 +615,10 @@
 							showoutput="true">
 			<classpath>
 				<path refid="tom.classpath"/>
-				<pathelement location="${examples.dir}"/>
+				<pathelement location="${examples.build}"/>
 			</classpath>
 			<batchtest>
-				<fileset dir="${examples.dir}">
+				<fileset dir="${examples.gen}">
 					<include name="**/Test*.java"/>
 				</fileset>
 			</batchtest>
