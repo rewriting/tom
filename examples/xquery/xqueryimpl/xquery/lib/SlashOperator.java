@@ -120,16 +120,23 @@ public class SlashOperator extends PathOperator
   {
 	Sequence seq=new Sequence();
 	if (node.hasChildNodes()) {
-	  //	  System.out.println("deo hieu the nao, co child ro rang kia ma");
+	  System.out.println("deo hieu the nao, co child ro rang kia ma");
 
 	  NodeList nodelist=node.getChildNodes();
+	  int index=0; 
+	  
 	  for(int i=0;i < nodelist.getLength(); i++) {
 		// System.out.println("i: " + i);		
 		Node childnode = nodelist.item(i);
-		if (doTest(childnode) && doFilter(childnode, i+1)) {  // i is current position in child list
+
+		if (doTest(childnode)) {
+		  index++;
+		  if (doFilter(childnode, index)) {  // i is current position in child list
 		  //		  System.out.println("slashOper; runchildNode: test OK");
-		  seq.add(childnode); // index 1
+			seq.add(childnode); // index 1
+		  }
 		}
+
 // 		else {
 // 		  System.out.println("slashOper; runchildNode: test failed");
 		  
@@ -272,13 +279,21 @@ public class SlashOperator extends PathOperator
 	  //	  System.out.println("deo hieu the nao, co attribute ro rang kia ma");
 	  
 	  NamedNodeMap nodelist=node.getAttributes();
+
+	  int index=0; 
+	  
 	  for(int i=0;i < nodelist.getLength(); i++) {
 		Node childnode = nodelist.item(i);
-		if (doTest(childnode) && doFilter(childnode, i+1)) {
+		
+		if (doTest(childnode)) {
+		  index++; 
+		  if (doFilter(childnode, index)) {
 		  //		  System.out.println("runAttribute-PathOperator return true");
-		  seq.add(childnode);
+			seq.add(childnode);
+		  }
 		}
-	  }
+		
+	  } // for
 	} 
 
 	return seq;

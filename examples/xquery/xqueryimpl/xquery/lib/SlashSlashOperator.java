@@ -81,7 +81,7 @@ public class SlashSlashOperator extends PathOperator
 	//	int index=1;   // predicate base 1, not 0
 	
 	Collect1 collect = new Collect1() { 
- 		int index=1;
+ 		int index=0;
 		public boolean apply(Object t) 
 		{ 
 		  try {
@@ -89,18 +89,20 @@ public class SlashSlashOperator extends PathOperator
 			  Node anode = (Node)t; 
 			  // 			  if (anode.getNodeName().compareTo("book") ==0)
 			  // 				System.out.println("Testing BOOK");
-			  if (doTest(anode) && doFilter(anode, index)) {
-				s.add(anode);
-				//				System.out.println("Test OK");
-				// 				System.out.println("index:"+index);
- 				index++;
-				return true; // continue
+			  
+			  if (doTest(anode)) {
+				index++; 
+				if  (doFilter(anode, index)) {
+				  s.add(anode);
+				//   System.out.println("Test OK");
+// 				  System.out.println("index:"+index);
+				  return true; // continue
+				}
 			  }
-			  // 			  else {
-			  // 				System.out.println("Test Failed");
 			  
-			  // 			  }
-			  
+// 			  else {
+// 				System.out.println("Test Failed");
+// 			  }
 			} 
 			return true;  // continue
 		  }
@@ -111,8 +113,9 @@ public class SlashSlashOperator extends PathOperator
 
 		} // end apply 
 	  }; // end new 
-	traversal.genericCollect(node, collect); 
-    return s;
+	traversal.genericCollect(node, collect);
+	SequenceTool st=new SequenceTool();
+	return st.removeDuplicated(s);
   }
    
   /**

@@ -45,7 +45,6 @@ public class XQueryAnyAtomicType
 
   public boolean qualify(Atom atom) 
   {
-	Atom atom = item.getAtom(); 
 	XQueryAnyAtomicType type = atom.getType();
 	
 	if (type.getClass().isInstance(atom)) {
@@ -56,7 +55,7 @@ public class XQueryAnyAtomicType
 	}
   }
 
-  public static boolean qualify(XQueryAnyAtomicType type)
+  public boolean qualify(XQueryAnyAtomicType type)
   {
 	XQueryAnyAtomicType thistype=createInstance();
 	if (type.getClass().isInstance(thistype)) {

@@ -71,7 +71,7 @@ public class StepExpression extends AbstractExpression {
 	nodeTest= (NodeTester)(options[2]);
   }
 
-  public StepExpression(Object childExprs[], PathOperator pathOperator, PathAxe pathAxe, NodeTester nodeTest) 
+  public StepExpression( PathOperator pathOperator, PathAxe pathAxe, NodeTester nodeTest,Object childExprs[]) 
   {
 	super(childExprs); 
 
@@ -90,6 +90,15 @@ public class StepExpression extends AbstractExpression {
   }
 
 
+  public StepExpression(PathOperator pathOperator, NodeTester nodeTest,Object childExprs[]) 
+  {
+	super(childExprs); 
+
+	this.pathOperator = pathOperator; 
+	this.pathAxe = PathAxe.createChildPathAxe();
+	this.nodeTest=nodeTest;
+  }
+
   public StepExpression(PathOperator pathOperator, NodeTester nodeTest) 
   {
 	super(); 
@@ -98,7 +107,6 @@ public class StepExpression extends AbstractExpression {
 	this.pathAxe = PathAxe.createChildPathAxe();
 	this.nodeTest=nodeTest;
   }
-
 
   public StepExpression(Object childExprs[]) 
   {
@@ -183,13 +191,17 @@ public class StepExpression extends AbstractExpression {
 	//	System.out.println("StepExpr: evaluate: result:" + result.size());
 	
 	Object secondChild = getChild(0); 
-
-	
 	int childIndex = 0; 
 
 	if (secondChild instanceof AbstractExpression) { // union
+	  System.out.println("first child is an Expression");
+	  
 	  result.add(((AbstractExpression)secondChild).evaluate()); 
 	  childIndex = 1;
+	}
+	else {
+	  System.out.println("Khong phai dau");
+	  
 	}
 
 	//	System.out.println("StepExpr: evaluate: result:" + result.size());

@@ -32,7 +32,7 @@ public class Atom
    */
   public Atom(XQueryAnyAtomicType atomType, String value) throws XQueryTypeException 
   {
-	if (!atomType.checkValueType(value)) {
+	if (!atomType.qualify(value)) {
 	  throw new XQueryTypeException("Atom type failed"); 
 	}
 	else {
@@ -78,10 +78,10 @@ public class Atom
   {
     try {
 	  int val = Integer.parseInt(value); 
-	  
+	  return val; 
 	}
 	catch (NumberFormatException e) {
-	  
+	  throw new XQueryTypeException("Atom: cannot convert string: '" + value + "' to decimal value");
 	}
   }
    
@@ -132,7 +132,7 @@ public class Atom
    */
   public void setType(XQueryAnyAtomicType newtype) throws XQueryTypeException 
   {
-	if (!newtype.checkValueType(value)) {
+	if (!newtype.qualify(value)) {
 	  throw new XQueryTypeException("Atom type failed"); 
 	}
 	else {
@@ -152,7 +152,7 @@ public class Atom
   }
 
 
-  public boolean typed() 
+  public boolean isTyped() 
   {
 	XQueryAnyAtomicType atomtype=new XQueryAnyAtomicType(); 
 

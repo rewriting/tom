@@ -126,10 +126,12 @@ public abstract class PathOperator
   protected boolean doFilter(Node node, int index) 
 	throws XQueryTypeException
   {
-	//	System.out.println("PathOperator: dofilter");
+	System.out.println("PathOperator: dofilter");
 	
 	boolean result; 
 	for (int i=0; i<predicateList.size(); i++) {
+	  System.out.println("predicate:"+i);
+	  
 	  NodePredicate predicate = (NodePredicate)(predicateList.get(i)); 
 	  result = predicate.doFilter(node, index); 
 	  if (!result) 

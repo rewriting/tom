@@ -4,6 +4,10 @@ package xquery.lib.data;
 
 import org.w3c.dom.*;
 
+import xquery.lib.XQueryGeneralException;
+import xquery.lib.data.type.XQueryTypeException;
+
+
 public class Item extends Sequence 
 {
   protected Node node;

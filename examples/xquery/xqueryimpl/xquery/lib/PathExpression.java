@@ -127,8 +127,8 @@ public class PathExpression extends AbstractExpression{
 	  // assign initial value
 	  //Sequence s = expr.evaluate(result);
 	  result = expr.evaluate(result);
-// 	  System.out.println("i="+i);
-// 	  System.out.println("PathExpr: doFilter: result:" + result.size());
+	  System.out.println("i="+i);
+	  System.out.println("PathExpr: doFilter: result:" + result.size());
 	  
 	  if (result==null) {
 		return null; 
