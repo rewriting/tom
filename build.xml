@@ -14,7 +14,6 @@
 	
 	<!-- set local properties for this build -->
 	<property file="local.properties"/>
-	<property name="java.class.path" value="" />
 	<property name="build.sysclasspath" value="ignore" />
 
 	<!-- current version of TOM -->
@@ -96,7 +95,6 @@
 
 	<path id="tomsrc.classpath">
 		<path refid="src.classpath"/>
-		<pathelement location="${src.build}"/>
 	</path>
 
 	<target name="preparesrc">

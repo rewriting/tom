@@ -16,9 +16,9 @@ public class TestAddressBook extends TestCase {
   private HashSet book;
   private Factory factory;
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(new TestSuite(TestAddressBook.class));
-	}
+  public static void main(String[] args) {
+    junit.textui.TestRunner.run(new TestSuite(TestAddressBook.class));
+  }
 
   public void setUp() {
     factory = new Factory(new PureFactory());

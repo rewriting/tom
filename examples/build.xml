@@ -10,8 +10,8 @@
   <property name="examples.dist" location="dist"/>
 
   <!-- where the examples a build: javac destDir -->
-  <property name="examples.gen" location="."/>
-  <property name="examples.build" location="."/>
+  <property name="examples.gen" location="gen"/>
+  <property name="examples.build" location="build"/>
 
   <!-- Examples to build and distribute -->
   <property name="addressbook" value="AddressBook"/>
@@ -81,6 +81,8 @@
 									
   <target name="init" if="examples.build">
     <mkdir dir="${examples.build}"/>
+    <mkdir dir="${examples.gen}"/>
+    <mkdir dir="."/>
     <!-- Define classpath for building stable and source  -->
     <path id="tom.classpath">
       <fileset dir="${env.TOM_HOME}/lib">
@@ -107,6 +109,8 @@
   </target>
 
   <target name="clean.examples" description="Cleans examples directory">
+    <delete dir="${examples.gen"/>
+    <delete dir="${examples.build}"/>
     <delete>
       <fileset dir="${examples.dir}" includes="**/*.class" />
     </delete>
