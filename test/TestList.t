@@ -19,6 +19,10 @@ public class TestList extends TestCase {
     fail   = factory.parse("fail");
   }
 	
+	public TestList(String testMethodName) {
+		super(testMethodName);
+	}
+
 	public TestList(String testMethodName,int testNumber) {
 		super(testMethodName);
 		this.testNumber = testNumber;
