@@ -25,11 +25,6 @@ public class TestArray extends TestCase {
     make_append(e,l) { myAdd(e,(ArrayList)l) }
   }
 
-  private ArrayList myAdd(Object e, ArrayList l) {
-    l.add(e);
-    return l;
-  }
-  
   %typeterm E {
     implement           { ATerm }
     get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
@@ -67,7 +62,12 @@ public class TestArray extends TestCase {
     this.factory = new PureFactory(16);
 	}
 
-  public void testArray1() {
+  private ArrayList myAdd(Object e, ArrayList l) {
+    l.add(e);
+    return l;
+  }
+  
+	public ArrayList getUnsortedList() {
     ATerm ta = factory.makeAppl(factory.makeAFun("a", 0, false));
     ATerm tb = factory.makeAppl(factory.makeAFun("b", 0, false));
     ATerm tc = factory.makeAppl(factory.makeAFun("c", 0, false));
@@ -78,7 +78,13 @@ public class TestArray extends TestCase {
     l.add(ta);
     l.add(tb);
     l.add(tc);
-
+		return l;
+	}
+	
+	public ArrayList getSortedList() {
+    ATerm ta = factory.makeAppl(factory.makeAFun("a", 0, false));
+    ATerm tb = factory.makeAppl(factory.makeAFun("b", 0, false));
+    ATerm tc = factory.makeAppl(factory.makeAFun("c", 0, false));
     ArrayList res = new ArrayList();
     res.add(ta);
     res.add(ta);
@@ -86,12 +92,22 @@ public class TestArray extends TestCase {
     res.add(tb);
     res.add(tc);
     res.add(tc);
-    
-    assertTrue(sort1(l).equals(res));
-    assertTrue(sort2(l).equals(res));
-  }
+		return res;
+	}
+   
+	public void testSort1() {
+		assertEquals(
+			"sort1 should return a sorted list",
+			sort1(getUnsortedList()), getSortedList());
+	}
 
-  public void itestArray2() {
+	public void testSort2() {
+		assertEquals(
+			"sort2 should return a sorted list",
+			sort2(getUnsortedList()), getSortedList());
+	}
+
+  public void testArray2() {
     ArrayList l   = `conc(a,b,c,a,b,c,a);
     ArrayList res = `conc(a,b,c);
     
@@ -101,7 +117,6 @@ public class TestArray extends TestCase {
     assertTrue(double4(sort2(l)).equals(res));
     assertTrue(double5(sort2(l)).equals(res));
   }
-
 
   public ArrayList sort1(ArrayList l) {
     %match(L l) {
