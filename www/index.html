@@ -28,18 +28,25 @@ Maching compiler" title="Tom home page" /></a>
 
 <div id="description">
 <dl>
-  <dd>TOM is a language extension which adds pattern matching
-       facilities to an existing imperative language.</dd> 
-  <dd>In the current version, TOM supports C, Java and Eiffel as
-       native language.</dd> 
+  <dd>
+       TOM is a pattern matching compiler which is particularly well-suited
+       for programming various transformations on trees/terms.  
+       Its design follows our experiences on the efficient compilation of
+       <a href="http://www.loria.fr/ELAN">rule-based systems</a>.
+       The tool can be seen as a Yacc-like compiler translating
+       patterns into executable pattern matching automata.   
+       Similarly to Yacc, when a match is found, the corresponding
+       semantic action (a sequence of instructions written in C or
+       Java) is triggered and executed.    
+       </dd>
 </dl>
 </div><!--description-->
 
 <div id="news">
 <h2>News</h2>
   <ul>
-  <li> Jtom 1.4 released</li>  
-  <li> Eclipse plugin released</li>  
+  <li> [2003-09-25] Jtom 1.4 released</li>  
+  <li> [2003-09-25] Eclipse plugin released</li>  
   <li> Xtom: an extended version of Tom dedicated to XML
        transformations will be released soon</li>
   <li> A nice application of Tom:  <a
@@ -59,9 +66,9 @@ Maching compiler" title="Tom home page" /></a>
        <br/>
   </li>
   <li>Pierre-Etienne Moreau, Christophe Ringeissen and Marian Vittek.
-       <A HREF="http://www.loria.fr/~moreau/Papiers/MoreauRV-CC2003.ps.gz">
+       <a href="http://www.loria.fr/~moreau/Papiers/MoreauRV-CC2003.ps.gz">
        <strong>A Pattern Matching Compiler for Multiple Target Languages.</strong>
-       </A>
+       </a>
        <em>In G. Hedin, editor, 12th Conference on Compiler Construction</em>,
        Warsaw (Poland), volume 2622 of LNCS, pages 61-76. Springer-Verlag, May 2003.</li>
 </ul>
@@ -70,26 +77,87 @@ Maching compiler" title="Tom home page" /></a>
 <div id="tool">
 <h2>Principles</h2>
 <dl>
-  <dd>The tool does not impose a fixed term representation, rather it
-       accepts implementation of terms (or term like data types) of
-       yet existing applications and it permits to define and execute
-       rewriting rules upon those types.<br/>
-       The main design of the implementation can be decomposed into
-       several parts: 
-       <ul>
-	 <li>A parsing phase that generates Abstract Syntax Trees
-	      (using <a href="http://www.cwi.nl/projects/MetaEnv/aterm/">ATerms</a>)</li> 
-	 <li>An expansion phase that performs syntactic sugar
-	      replacement</li> 
-	 <li>A type-checking phase that performs type inference</li> 
-	 <li>A transformation phase that performs program
-	      transformation</li> 
-	 <li>A compilation phase that transforms the AST into an
-	      abstract program</li> 
-	 <li>A generation phase that transform the abstract program
-	      into the target language</li> 
-       </ul>
-       </dd>
+<dd>
+TOM is a non-intrusive pattern matching compiler. Its design follows
+our experiences on the efficient compilation of rule-based&nbsp;
+systems. The tool can be seen as a Yacc-like compiler translating
+patterns into executable pattern matching automata. Similarly to Yacc,
+when a match is found, the corresponding <span style="font-style:
+italic;">semantic action</span> (a sequence of instructions written in
+an imperative language) is triggered and executed.<br/>  
+In a way, we can say that TOM translates a <span style="font-style:
+italic;">declarative-imperative</span> function -- defined by pattern
+matching and imperative instructions -- into a <span
+style="font-style: italic;">fully imperative</span> function. The 
+resulting function can be integrated to an application written in a
+classical language such as C, Java and Eiffel, called the <span
+ style="font-style: italic;">target language</span>.
+The different advantages of the approach<br/> implemented by TOM are:<br/>
+<br/>
+<ul>
+  <li>Efficiency: The gain of efficiency follows from the compilation
+       of matching as implemented in TOM.<br/>
+       </li>
+</ul>
+&nbsp;<br/>
+<ul>
+  <li>Flexibility: When trying to integrate a black-box tool in an
+       existing system, one of the main bottlenecks comes from data 
+       conversion and the flexibility offered to the user. One of the
+       main originalities of our system is its independence of term
+       representation. The programmer can use (or re-use) his own data
+       structures for terms/trees and then execute matching upon those data
+       structures. We propose to access terms using only a simple <span
+       style="font-style: italic;">Application Programming Interface</span>
+       (API) defined by the user.<br/>
+  </li>
+</ul>
+<ul>
+  <li>Generality: TOM is able to consider multiple target
+       languages (C, Java, and Eiffel). TOM is implemented in TOM itself
+       as a series of AST transformations. The code generation is performed at
+       the very end, depending on the target language we are interested in.
+       Hence, the target language is really a parameter of TOM.<br/>
+  </li>
+</ul>
+<br/>
+<ul>
+  <li>Expressivity: TOM supports non-linear patterns and equational
+       matching like modern rule-based programming languages. Currently, we
+       have implemented pattern matching with list operators. This form of
+       associative matching with neutral element is very useful for practical
+       applications. The main difference with standard (syntactic) matching is
+       that a single variable may have multiple&nbsp; assignments. <br/>
+       </li>
+</ul>
+<span style="font-weight: bold;"><br/></span>
+TOM does not really define a new language: it is rather a
+language extension which adds new matching primitives to an existing
+imperative language. <br/>
+From an implementation point of view, it is a compiler which accepts
+different <span style="font-style: italic;">native languages</span>.
+The compilation process consists of translating new matching constructs
+into the underlying native language. Since the native language and the
+target language are identical and only introduced constructs are
+expanded, the presented tool can also be seen as a kind of preprocessor.<br/>
+On the other hand, the support of multiple target languages, and the
+fact that the input program has to be completely parsed before the
+transformation process can begin, make us consider TOM as a compiler.<br/>
+<br/>
+For expository reasons, we assume that TOM only adds one new construct:
+<span style="color: rgb(255, 0, 0);">%match</span>. This construct is
+similar to the <span style="font-style: italic;">match</span>
+primitive found in ML and related languages: given a term (called
+subject) and a list of pairs: pattern-action, the <span
+ style="font-style: italic;">match</span> primitive selects a pattern
+that matches the subject and performs the associated action. This
+construct may thus be seen as an etension of the classical switch/case
+construct. The main difference is that the discrimination occurs on a <span
+ style="font-style: italic;">term</span> and not on atomic values like
+characters or integers: the patterns are used to discriminate and
+retrieve information from an algebraic data structure.<br/>
+<br/>
+</dd>
 </dl>
 </div><!-- tool -->
 
