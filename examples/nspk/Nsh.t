@@ -109,16 +109,21 @@ public class Nsh {
   public int compareMessage(Message m1, Message m2) {
       
     %match(Message m1, Message m2) {
-      msg[src=sender[]], msg[src=receiver[]] -> { return 1;  }
+      msg[src=sender[]],   msg[src=receiver[]] -> { return 1;  }
       msg[src=receiver[]], msg[src=sender[]] -> { return -1;  }
       msg[src=receiver[]], msg[src=devil()]  -> { return 1;  }
-      msg[src=sender[]], msg[src=devil()]    -> { return 1;  }
-      msg[src=devil()], msg[src=receiver[]]  -> { return -1;  }
-      msg[src=devil()], msg[src=sender[]]    -> { return -1;  }
+      msg[src=sender[]],   msg[src=devil()]    -> { return 1;  }
+      msg[src=devil()],    msg[src=receiver[]]  -> { return -1;  }
+      msg[src=devil()],    msg[src=sender[]]    -> { return -1;  }
 
-      msg[src=x,dst=sender[]], msg[src=x,dst=receiver[]] -> { return 1;  }
-      msg[src=x,dst=receiver[]], msg[src=x,dst=sender[]] -> { return -1;  }
-      
+      msg[src=x,dst=sender[]],    msg[src=x,dst=receiver[]]  -> { return 1;  }
+      msg[src=x,dst=receiver[]],  msg[src=x,dst=sender[]]    -> { return -1;  }
+     
+      //msg[src=sender(i)],         msg[src=sender(j)]         -> { return j-i;  } 
+      //msg[src=receiver(i)],       msg[src=receiver(j)]       -> { return j-i;  } 
+      //msg[src=x,dst=sender(i)],   msg[src=x,dst=sender(j)]   -> { return j-i;  } 
+      //msg[src=x,dst=receiver(i)], msg[src=x,dst=receiver(j)] -> { return j-i;  } 
+
     }
     
     String s1 = m1.toString();
@@ -131,6 +136,35 @@ public class Nsh {
     return res;
   }
 
+  public int compareNonce(Nonce m1, Nonce m2) {
+      
+    %match(Nonce m1, Nonce m2) {
+      N[id1=sender[]],   N[id1=receiver[]] -> { return 1;  }
+      N[id1=receiver[]], N[id1=sender[]] -> { return -1;  }
+      N[id1=receiver[]], N[id1=devil()]  -> { return 1;  }
+      N[id1=sender[]],   N[id1=devil()]    -> { return 1;  }
+      N[id1=devil()],    N[id1=receiver[]]  -> { return -1;  }
+      N[id1=devil()],    N[id1=sender[]]    -> { return -1;  }
+
+      N[id1=x,id2=sender[]],    N[id1=x,id2=receiver[]]  -> { return 1;  }
+      N[id1=x,id2=receiver[]],  N[id1=x,id2=sender[]]    -> { return -1;  }
+ 
+      //N[id1=sender(i)],         N[id1=sender(j)]         -> { return j-i;  } 
+      //N[id1=receiver(i)],       N[id1=receiver(j)]       -> { return j-i;  } 
+      //N[id1=x,id2=sender(i)],   N[id1=x,id2=sender(j)]   -> { return j-i;  } 
+      //N[id1=x,id2=receiver(i)], N[id1=x,id2=receiver(j)] -> { return j-i;  } 
+     
+    }
+    
+    String s1 = m1.toString();
+    String s2 = m2.toString();
+    
+      //System.out.println("m1 = " + s1);
+      //System.out.println("m2 = " + s2);
+    int res = s1.compareTo(s2);
+    
+    return res;
+  }
   ListMessage insertMessage(Message m,ListMessage l) {
     ListMessage res = null;
     if(l.isEmpty()) {
@@ -145,7 +179,26 @@ public class Nsh {
     return res;
   }
     
-  
+  ListNonce insertNonce(Nonce m,ListNonce l) {
+    ListNonce res = null;
+   %match(Nonce m) {
+      N(dai(),dai()) -> { return l; }
+    }
+ 
+    if(l.isEmpty()) {
+      res = l.insert(m);
+    } else if(m == l.getHead()) {
+      res = l;
+    } else if(compareNonce(m, l.getHead()) < 0) {
+      res = l.insert(m);
+    } else {
+      res = insertNonce(m,l.getTail()).insert(l.getHead());
+    }
+
+      //System.out.println("res = " + res);
+    return res;
+  }
+     
   public boolean depthSearch2(Collection local, State start, State end) {
     Collection c1 = new HashSet();
     collectOneStep(start,c1);
@@ -353,7 +406,7 @@ public class Nsh {
               if(w!=z) {
                 State state = `state(
                   E, D,
-                  intruder(w,simplify(concNonce(N(n1,n3),N(n2,n4),l*)),ll),
+                  intruder(w,insertNonce(N(n1,n3),insertNonce(N(n2,n4),l)),ll),
                   concMessage(M1*,M2*));
                 c.add(state);
                 fire[8]++;
