@@ -1,0 +1,85 @@
+%include { string.tom }
+%include { int.tom }
+%include { double.tom }
+%typeterm ATerm{
+  implement { aterm.ATerm}
+  get_fun_sym(t) {((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null)}
+  cmp_fun_sym(s1,s2) { s1==s2}
+  get_subterm(t,n) {(((ATermAppl)t).getArgument(n))}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%typelist ATermList{
+  implement { aterm.ATermList}
+  get_fun_sym(t) {((t instanceof ATermList)?getExpressionFactory().getPureFactory().makeAFun("conc",1,false):null)}
+  cmp_fun_sym(s1,s2) { s1==s2}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getFirst()}
+  get_tail(l) {l.getNext()}
+  is_empty(l) {l.isEmpty()}
+}
+
+%typeterm Expression{
+  implement { Expression}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%op Expression zero {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isZero()}
+  make() { getExpressionFactory().makeExpression_Zero()}
+}
+
+%op Expression one {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isOne()}
+  make() { getExpressionFactory().makeExpression_One()}
+}
+
+%op Expression mult(arg1:Expression, arg2:Expression) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isMult()}
+  get_slot(arg1,t) { t.getArg1()}
+  get_slot(arg2,t) { t.getArg2()}
+  make(t0, t1) { getExpressionFactory().makeExpression_Mult(t0, t1)}
+}
+
+%op Expression plus(arg1:Expression, arg2:Expression) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isPlus()}
+  get_slot(arg1,t) { t.getArg1()}
+  get_slot(arg2,t) { t.getArg2()}
+  make(t0, t1) { getExpressionFactory().makeExpression_Plus(t0, t1)}
+}
+
+%op Expression exp(arg1:Expression) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isExp()}
+  get_slot(arg1,t) { t.getArg1()}
+  make(t0) { getExpressionFactory().makeExpression_Exp(t0)}
+}
+
+%op Expression variable(string:String) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isVariable()}
+  get_slot(string,t) { t.getString()}
+  make(t0) { getExpressionFactory().makeExpression_Variable(t0)}
+}
+
+%op Expression constant(string:String) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isConstant()}
+  get_slot(string,t) { t.getString()}
+  make(t0) { getExpressionFactory().makeExpression_Constant(t0)}
+}
+
+%op Expression number(integer:int) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isNumber()}
+  get_slot(integer,t) { t.getInteger()}
+  make(t0) { getExpressionFactory().makeExpression_Number(t0)}
+}
+

@@ -22,6 +22,9 @@
   <property name="builtin" value="Builtin"/>
   <property name="builtin.dir" location="${examples.dir}/${builtin}" />
 
+  <property name="caml" value="Caml"/>
+  <property name="caml.dir" location="${examples.dir}/${caml}" />
+
   <property name="dom" value="Dom"/>
   <property name="dom.dir" location="${examples.dir}/${dom}" />
 
@@ -31,14 +34,26 @@
   <property name="gtree" value="GTree"/>
   <property name="gtree.dir" location="${examples.dir}/${gtree}" />
 
+  <property name="integerc" value="IntegerC"/>
+  <property name="integerc.dir" location="${examples.dir}/${integerc}" />
+
+  <property name="list" value="List"/>
+  <property name="list.dir" location="${examples.dir}/${list}" />
+
   <property name="lsystem" value="Lsystems"/>
   <property name="lsystem.dir" location="${examples.dir}/${lsystem}" />
 
   <property name="nspk" value="Nspk"/>
   <property name="nspk.dir" location="${examples.dir}/${nspk}" />
 
+  <property name="peano" value="Peano"/>
+  <property name="peano.dir" location="${examples.dir}/${peano}" />
+
   <property name="pnspk" value="PNspk"/>
   <property name="pnspk.dir" location="${examples.dir}/${pnspk}" />
+
+  <property name="poly" value="Poly"/>
+  <property name="poly.dir" location="${examples.dir}/${poly}" />
 
   <property name="pqueens" value="PQueens"/>
   <property name="pqueens.dir" location="${examples.dir}/${pqueens}" />
@@ -224,6 +239,20 @@
     </javac>
   </target>
 
+  <target name="list">
+    <!-- build tom -->
+    <tom srcdir="${list.dir}" 
+         destdir="${list.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+      <include name="**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${list.dir}" destdir="${list.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
   <target name="lsystem">
     <!-- build tom -->
     <tom srcdir="${lsystem.dir}" 
@@ -257,6 +286,25 @@
     </javac>
   </target>
   
+  <target name="peano">
+    <!-- build adt -->
+    <adt file="${peano.dir}/peano.adt" 
+         factory="peano" 
+         package="adt.peano" 
+         destdir="${peano.dir}"/>
+    <!-- build tom -->
+    <tom srcdir="${peano.dir}" 
+         destdir="${peano.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+      <include name="**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${peano.dir}" destdir="${peano.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
   <target name="pnspk">
     <!-- build adt -->
     <adt file="${pnspk.dir}/term.adt" 
@@ -276,6 +324,25 @@
     </javac>
   </target>
   
+  <target name="poly">
+    <!-- build adt -->
+    <adt file="${poly.dir}/expression.adt" 
+         factory="expression" 
+         package="adt.poly" 
+         destdir="${poly.dir}"/>
+    <!-- build tom -->
+    <tom srcdir="${poly.dir}" 
+         destdir="${poly.dir}" 
+         options="-I ${env.TOM_HOME}/share/jtom">
+      <include name="**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${poly.dir}" destdir="${poly.dir}">
+      <classpath refid="tom.classpath"/>
+      <include name="**/*.java"/>
+    </javac>
+  </target>
+
   <target name="pqueens">
     <!-- build tom -->
     <tom srcdir="${pqueens.dir}" 
@@ -381,8 +448,8 @@
   <target name="build.examples" 
           description="Builds the examples (at least some)"
           depends="addressbook, apireach, boulderdash, builtin, dom,
-					expression, gtree, nspk, pnspk, pqueens, rbtree, reach, set,
-          vas, xml">
+					expression, gtree, list, nspk, peano, pnspk, poly, pqueens,
+          rbtree, reach, set, vas, xml">
   </target>
   
   <target name="dist.examples" description="Prepare a
@@ -406,6 +473,13 @@
         <include name="${builtin}/*.t"/>
         <include name="${builtin}/*.adt"/>
 
+        <include name="${caml}/README"/>
+        <include name="${caml}/*.t"/>
+        <include name="${caml}/*.adt"/>
+        <include name="${caml}/peanotype.ml"/>
+        <include name="${caml}/tomExtension.ml"/>
+        <include name="${caml}/tomList.ml"/>
+
         <include name="${dom}/README"/>
         <include name="${dom}/*.t"/>
         <include name="${dom}/*.adt"/>
@@ -419,13 +493,30 @@
         <include name="${gtree}/*.t"/>
         <include name="${gtree}/*.adt"/>
 
+        <include name="${integerc}/README"/>
+        <include name="${integerc}/*.t"/>
+        <include name="${integerc}/*.adt"/>
+
+        <include name="${list}/README"/>
+        <include name="${list}/*.t"/>
+        <include name="${list}/*.adt"/>
+
         <include name="${nspk}/README"/>
         <include name="${nspk}/*.t"/>
         <include name="${nspk}/*.adt"/>
 
+        <include name="${peano}/README"/>
+        <include name="${peano}/*.t"/>
+
         <include name="${pnspk}/README"/>
         <include name="${pnspk}/*.t"/>
         <include name="${pnspk}/*.adt"/>
+
+        <include name="${poly}/README"/>
+        <include name="${poly}/*.t"/>
+        <include name="${poly}/*.adt"/>
+        <include name="${poly}/PolyCommon.java"/>
+        <include name="${poly}/Poly.signature"/>
 
         <include name="${pqueens}/README"/>
         <include name="${pqueens}/*.t"/>
