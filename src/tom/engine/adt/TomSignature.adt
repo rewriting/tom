@@ -15,6 +15,7 @@
   constructor(TargetLanguage,TL,TL(<code(str)>,<start(Position)>,<end(Position)>)),
   constructor(TargetLanguage,ITL,ITL(<code(str)>)),
   constructor(TargetLanguage,Comment,Comment(<code(str)>)),
+  constructor(TargetLanguage,noTL,noTL),
   constructor(Position,TextPosition,TextPosition(<line(int)>,<column(int)>)),
   
   constructor(TomType,Type,Type(<tomType(TomType)>,<tlType(TomType)>)),

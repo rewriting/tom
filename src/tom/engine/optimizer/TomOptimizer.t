@@ -40,6 +40,7 @@ import jtom.adt.tomsignature.types.Option;
 import jtom.adt.tomsignature.types.TomName;
 import jtom.adt.tomsignature.types.TomTerm;
 import jtom.tools.TomGenericPlugin;
+import jtom.tools.PILFactory;
 import jtom.tools.Tools;
 import tom.library.traversal.Collect1;
 import tom.library.traversal.Replace1;
@@ -60,7 +61,10 @@ public class TomOptimizer extends TomGenericPlugin {
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
 
   /** the declared options string*/
-  private static final String DECLARED_OPTIONS = "<options><boolean name='optimize' altName='O' description='Optimized generated code' value='false'/></options>";
+  private static final String DECLARED_OPTIONS = "<options>" + 
+  "<boolean name='optimize' altName='O' description='Optimized generated code' value='false'/>" +
+  "<boolean name='prettyPIL' altName='pil' description='PrettyPrint IL' value='false'/>" +
+  "</options>";
 
   /** Constructor */
   public TomOptimizer() {
@@ -93,6 +97,11 @@ public class TomOptimizer extends TomGenericPlugin {
       // not active plugin
       getLogger().log(Level.INFO, "The optimizer is not activated and thus WILL NOT RUN.");
     }
+    if (getOptionBooleanValue("prettyPIL")) {
+        PILFactory fact = new PILFactory();
+        System.out.println(fact.prettyPrintCompiledMatch(fact.reduce((TomTerm)getWorkingTerm())));
+    }
+
   }
 
   public PlatformOptionList getDeclaredOptionList() {
