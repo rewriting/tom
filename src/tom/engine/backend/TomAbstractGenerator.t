@@ -85,7 +85,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       TomInclude(l) -> {
-				generateList(deep,l);
+		generateListInclude(deep,l);
         return;
       }
      
