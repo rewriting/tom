@@ -165,9 +165,9 @@ public class Tom {
       if( handlers[i] instanceof ConsoleHandler ) {
         // search for the global console handler
         consoleHandler = handlers[i];
-        handlers[i].setFormatter((Formatter)Class.forName(
+        //handlers[i].setFormatter((Formatter)Class.forName(
                                                           LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter")).newInstance());
-      } else if( handlers[i] instanceof FileHandler ) {
+      }/*else if( handlers[i] instanceof FileHandler ) {
         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.FileHandler.formatter")).newInstance());
       } else if( handlers[i] instanceof SocketHandler ) {
         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.SocketHandler.formatter")).newInstance());
@@ -175,7 +175,7 @@ public class Tom {
         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.MemoryHandler.formatter")).newInstance());
       } else if( handlers[i] instanceof StreamHandler ) {
         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.StreamHandler.formatter")).newInstance());
-      }
+        }*/
       //System.out.println("Handler "+handlers[i]+" has formatter "+handlers[i].getFormatter());    
     }
   }
