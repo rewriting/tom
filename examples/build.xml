@@ -526,7 +526,7 @@
   </target>
   
   <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">
-    <tar tarfile="${examples.dist}/jtom-examples.tar">
+    <tar tarfile="${examples.dist}/jtom-examples.tar.gz" compression="gzip">
       <tarfileset dir="${examples.dir}">
         <include name="README"/>
         <include name="build.xml"/>
@@ -636,9 +636,6 @@
         </not>
       </tarfileset>
     </tar>
-    <gzip zipfile="${examples.dist}/jtom-examples.tar.gz" 
-          src="${examples.dist}/jtom-examples.tar"/>
-    <delete file="${examples.dist}/jtom-examples.tar"/>
   </target>
 
   <target name="clean.dist" description="Mr proper" depends="clean">

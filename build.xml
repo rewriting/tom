@@ -234,7 +234,7 @@
 				<include name="adt-to-tom.*"/>
 			</fileset>
 		</copy>
-		<chmod dir="${stable.bin}" perm="ug+x">
+		<chmod dir="${stable.bin}" perm="ugo+rx">
 			<include name="*"/>
 			<exclude name="*.bat"/>
 		</chmod>
@@ -269,24 +269,19 @@
 		<copy todir="${stable.doc}" file="${guidepdf}"/>
 		<copy todir="${stable.doc}" file="${tutorialpdf}"/>
 		<!-- prepare tar file -->
-		<mkdir dir="${stable.dist}/jtom-${version}"/>
-		<copy todir="${stable.dist}/jtom-${version}">
-			<fileset dir="${stable.dist}">
-				<include name="**/*"/>
-				<exclude name="jtom-${version}"/>
-				<exclude name="jtom-${version}/**/*"/>
-			</fileset>
-		</copy>
-		<tar tarfile="${stable.dist}/jtom-${version}.tar">
-			<tarfileset dir="${stable.dist}/jtom-${version}">
-				<include name="**/*"/>
+		<tar tarfile="${stable.src}/jtom-${version}.tar.gz" compression="gzip">
+			<tarfileset dir="${stable.dist}" prefix="jtom-${version}" mode="755">
+				<include name="bin/*"/>
+				<exclude name="bin/*.bat"/>
+			</tarfileset>
+			<tarfileset dir="${stable.dist}" prefix="jtom-${version}">
+				<include name="bin/*.bat"/>
+			</tarfileset>
+			<tarfileset dir="${stable.dist}" prefix="jtom-${version}">
+				<include name="**"/>
+				<exclude name="bin/*"/>
 			</tarfileset>
 		</tar>
-    <gzip zipfile="${stable.dist}/jtom-${version}.tar.gz" 
-          src="${stable.dist}/jtom-${version}.tar"/>
-    <delete file="${stable.dist}/jtom-${version}.tar"/>
-    <delete dir="${stable.dist}/jtom-${version}"/>
-
 	</target>
 
 	<target name="dist.src" 
@@ -304,7 +299,7 @@
 				<include name="adt-to-tom.*"/>
 			</fileset>
 		</copy>
-		<chmod dir="${src.bin}" perm="ug+x">
+		<chmod dir="${src.bin}" perm="ugo+rx">
 			<include name="*"/>
 			<exclude name="*.bat"/>
 		</chmod>
@@ -346,23 +341,19 @@
 		<copy todir="${src.doc}" file="${guidepdf}"/>
 		<copy todir="${src.doc}" file="${tutorialpdf}"/>
 		<!-- prepare tar file -->
-		<mkdir dir="${src.dist}/jtom-${DSTAMP}"/>
-		<copy todir="${src.dist}/jtom-${DSTAMP}">
-			<fileset dir="${src.dist}">
-				<include name="**/*"/>
-				<exclude name="jtom-${DSTAMP}"/>
-				<exclude name="jtom-${DSTAMP}/**/*"/>
-			</fileset>
-		</copy>
-		<tar tarfile="${src.dist}/jtom-${DSTAMP}.tar">
-			<tarfileset dir="${src.dist}/jtom-${DSTAMP}">
-				<include name="**/*"/>
+		<tar tarfile="${src.src}/jtom-${version}.tar.gz" compression="gzip">
+			<tarfileset dir="${src.dist}" prefix="jtom-${version}" mode="755">
+				<include name="bin/*"/>
+				<exclude name="bin/*.bat"/>
+			</tarfileset>
+			<tarfileset dir="${src.dist}" prefix="jtom-${version}">
+				<include name="bin/*.bat"/>
+			</tarfileset>
+			<tarfileset dir="${src.dist}" prefix="jtom-${version}">
+				<include name="**"/>
+				<exclude name="bin/*"/>
 			</tarfileset>
 		</tar>
-    <gzip zipfile="${src.dist}/jtom-${DSTAMP}.tar.gz" 
-          src="${src.dist}/jtom-${DSTAMP}.tar"/>
-    <delete file="${src.dist}/jtom-${DSTAMP}.tar"/>
-    <delete dir="${src.dist}/jtom-${DSTAMP}"/>
 	</target>
 
 	<target name="dist.all" 
