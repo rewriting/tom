@@ -40,7 +40,7 @@ public class OutputCode {
     this.file = file;
     this.cCode = cCode;
     this.pretty = pretty;
-		this.defaultDeep = defaultDeep;
+	this.defaultDeep = defaultDeep;
   }
 
   public OutputCode() {

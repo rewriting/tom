@@ -14,7 +14,7 @@ java_JAVA       = $(BOOTSOURCES)
 JAVAROOT        = ${top_builddir}/src
 
 CLEANFILES 	= TomGenerator.java TomOptimizer.java TomAbstractGenerator.java TomImperativeGenerator.java TomJavaGenerator.java TomCGenerator.java TomEiffelGenerator.java TomBackend.java
-EXTRA_DIST 	= $(BOOTSOURCES) TomGenerator.t TomOptimizer.t TomAbstractGenerator.t TomImperativeGenerator.t TomJavaGenerator.t TomCGenerator.t TomEiffelGenerator.t TomBackend.t
+EXTRA_DIST 	= $(BOOTSOURCES) TomGenerator.t TomOptimizer.t TomAbstractGenerator.t TomImperativeGenerator.t TomJavaGenerator.t TomCGenerator.t TomEiffelGenerator.t
 
 BUILT_SOURCES   = TomGenerator.java TomOptimizer.java TomAbstractGenerator.java TomImperativeGenerator.java TomJavaGenerator.java TomCGenerator.java TomEiffelGenerator.java TomBackend.java
 

@@ -51,7 +51,8 @@ public abstract class TomAbstractGenerator extends TomBase {
   private HashMap isFsymMap = new HashMap();
   
   public TomAbstractGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-    this.output = output;
+    super(environment);
+	this.output = output;
     this.input = input;
 
     supportedGoto = input.isSupportedGoto(); 
