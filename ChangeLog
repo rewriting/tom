@@ -1,4 +1,12 @@
+2003-03-26  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/runtime/GenericTraversal.java: traversal are now used
+	by composition instead of inheritance
+
 2003-03-25  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/runtime/GenericTraversal.java: extended genericCollect
+	to support multiple arguments
 
 	* src/jtom/compiler/TomCompiler.t: 
 	* src/jtom/compiler/TomExpander.t: 
