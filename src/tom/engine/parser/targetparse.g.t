@@ -64,10 +64,12 @@ options{
         this.currentFile = currentFile;
         this.targetlexer = (NewTargetLexer) selector.getStream("targetlexer");
         targetlexer.setParser(this);
-        this.includedFileSet = includedFiles;
+        this.includedFileSet = new HashSet(includedFiles);
+        testIncludedFile(currentFile, includedFileSet);
+
         this.alreadyParsedFileSet = alreadyParsedFiles;
         
-	logger = Logger.getLogger(getClass().getName());
+        logger = Logger.getLogger(getClass().getName());
 
         // then create the Tom mode parser
         tomparser = new NewTomParser(getInputState(),this);
@@ -227,24 +229,33 @@ options{
             }
             fileAbsoluteName = file.getAbsolutePath();
             if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
-                String msg = MessageFormat.format(TomMessage.getString("IncludedFileCycle"), new Object[]{fileName, new Integer(getLine()), currentFile});
+                p("--- included file "+fileAbsoluteName+" current file: "+currentFile);
+                String msg = MessageFormat.format(
+                    TomMessage.getString("IncludedFileCycle"), 
+                    new Object[]{fileName, new Integer(getLine()), currentFile}
+                );
                 throw new TomIncludeException(msg);
             }
             
 			// if trying to include a file twice, but not in a cycle : discard
             if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
-                if(!environment().isSilentDiscardImport(fileName)) {
-		    
-		    logger.log( Level.WARNING,
-				"IncludedFileAlreadyParsed", 
-				new Object[]{currentFile, new Integer(getLine()), fileName} );
-		}
-		return;
-                // 				String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
+                if(!environment().isSilentDiscardImport(fileName)) {                    
+                    logger.log( 
+                        Level.WARNING,
+                        "IncludedFileAlreadyParsed", 
+                        new Object[]{
+                            currentFile, 
+                            new Integer(getLine()), 
+                            fileName
+                        } 
+                    );
+                }
+                return;
+                // 		    		String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
                 //         throw new TomIncludeException(msg);
             }
             
-            parser = TomMainParser.newParser(fileAbsoluteName);
+            parser = TomMainParser.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet);
             astTom = parser.input();
             astTom = `TomInclude(astTom.getTomList());
             list.add(astTom);
@@ -252,7 +263,17 @@ options{
             if(e instanceof TomIncludeException) {
                 throw (TomIncludeException)e;
             }
-            String msg = MessageFormat.format(TomMessage.getString("ErrorWhileIncludindFile"), new Object[]{e.getClass(), fileAbsoluteName, currentFile, new Integer(getLine()), e.getMessage()});
+            String msg = MessageFormat.format(
+                TomMessage.getString("ErrorWhileIncludindFile"), 
+                new Object[]{
+                    e.getClass(), 
+                    fileAbsoluteName, 
+                    currentFile, 
+                    new Integer(getLine()), 
+                    e.getMessage()
+                }
+            );
+
             throw new TomException(msg);
         }
     }
