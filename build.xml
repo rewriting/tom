@@ -735,6 +735,7 @@
     <ant dir="${examples}" target="clean"/>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${stable.dist}"/>
+      <property name="tomconfigfile" location="${stable.configfile}"/>
     </ant>
   </target>
 
@@ -744,6 +745,7 @@
     <ant dir="${examples}" target="clean"/>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
+      <property name="tomconfigfile" location="${src.configfile}"/>
       <property name="optimize" value="on"/>
     </ant>
   </target>
