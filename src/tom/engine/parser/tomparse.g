@@ -33,8 +33,8 @@ constant returns [String result]
 }
 	:	(
             t1:NUM_INT {result = t1.getText();}
-        |	t2:CHAR_LITERAL {result = t2.getText();}
-        |	t3:STRING_LITERAL {result = t3.getText();}
+        |	t2:CHARACTER {result = t2.getText();}
+        |	t3:STRING {result = t3.getText();}
         |	t4:NUM_FLOAT {result = t4.getText();}
         |	t5:NUM_LONG {result = t5.getText();}
         |	t6:NUM_DOUBLE {result = t6.getText();}
@@ -145,6 +145,7 @@ plainTerm returns [String result]
         |    
             (
                 s = headSymbol() {result = s;}
+                {System.out.println("headsymbol "+s);} 
                 ( 
                     {LA(3) != WHERE && LA(3) != IF}? el = explicitTermList() {result += el;}
                 |   il = implicitPairList() {result += il;}
@@ -191,6 +192,12 @@ headSymbolList returns [String result]
         )
     ;
 
+
+
+
+
+
+
 headSymbol returns [String result]
 { 
     result = null; 
@@ -199,8 +206,7 @@ headSymbol returns [String result]
     :   (
             i:ID {result = i.getText();}
         |   cst = constant() {result = cst;}
-        |   c:CHARACTER {result = c.getText();}
-        |   s:STRING {result = s.getText();}
+        
         )
     ;
 
@@ -255,6 +261,66 @@ signature
                                "\n--------------------------");}
         // faire les action adequates ici
     ;
+
+ruleConstruct
+    :
+        {System.out.println("rule begin");}
+        LBRACE
+        (
+            annotedTerm2() ( ALTERNATIVE annotedTerm2() )* ARROW plainTerm2()
+            (
+                WHERE annotedTerm2() COLON EQUAL annotedTerm2()
+            |   IF annotedTerm2() EQUAL EQUAL annotedTerm2()
+            )*
+        )*
+        RBRACE
+        {Main.selector.pop();System.out.println("rule end");}
+    ;
+
+annotedTerm2 returns [String result]
+{
+    result = "";
+    String pt = null;
+}
+    :   (
+            ( 
+                i:ID AT {result += i.getText() + "@";}
+            )? 
+            pt = plainTerm2() {result += pt;}
+        )
+    ;
+
+plainTerm2 returns [String result]
+{
+    result = null;
+    String v = null, p = null, s = null, el = null, il = null,
+    el1 = null, sl = null, el2 = null, il2 = null;
+}
+    :  
+        (   // xml is missing
+            v = variableStar() {result = v;}
+        |   p = placeHolder() {result = p;}
+        |    
+            (
+                s = headSymbol() {result = s;}
+                {System.out.println("headsymbol "+s);} 
+                ( 
+                    {LA(3) != WHERE && LA(3) != IF}? el = explicitTermList() {result += el;}
+                |   il = implicitPairList() {result += il;}
+                )?
+            |   {LA(3) != ALTERNATIVE}? el1 = explicitTermList() {result = el1;}
+            |   ( 
+                    sl = headSymbolList()  {result = sl;}
+                    ( 
+                        {LA(3) != WHERE && LA(3) != IF}? el2 = explicitTermList() {result += el2;}
+                    |   il2 = implicitPairList() {result += il2;} )?  
+                )
+            )
+        )
+    ;
+
+
+
 
 operator
     :

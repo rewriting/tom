@@ -14,6 +14,9 @@ options {
     }
 }
 
+RULE
+    :   "%rule" {Main.selector.push("tomlexer");}
+    ;
 INCLUDE
     :   "%include" 
     ;

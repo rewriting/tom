@@ -25,7 +25,8 @@ input
 blockList
     :
         (
-            matchConstruct() 
+            matchConstruct()
+        |   ruleConstruct() 
         |   signature()
         |   localVariable()
         |   operator()
@@ -40,6 +41,18 @@ blockList
             RBRACE //{compteur--;}
         |   TARGET
         )*
+    ;
+
+ruleConstruct
+    :
+        {
+            System.out.println("target language :"+targetlexer.target);
+            targetlexer.clearTarget();
+        }
+        RULE
+        {         
+            tomparser.ruleConstruct();
+        }
     ;
 
 matchConstruct
