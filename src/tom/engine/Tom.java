@@ -81,8 +81,8 @@ public class Tom {
      */
   List inputFileList;
   
-  Factory tsf() {
-    return Tom.getInstance().environment().getTomSignatureFactory();
+  static Factory tsf() {
+    return Tom.environment().getTomSignatureFactory();
   }
   
   private static String version =
@@ -131,8 +131,13 @@ public class Tom {
   private static TomTaskInput getInput() {
     return TomTaskInput.getInstance();
   }
-  private TomEnvironment environment() {
-    return TomEnvironment.getInstance();
+  
+  private static TomEnvironment environment() {
+  	  // add a protection against no call to Tom.getInstance()
+  	if(instance == null) {
+  		getInstance();
+  	}
+  	return TomEnvironment.getInstance();
   }
 
   private void init(String args[]) {
@@ -256,13 +261,12 @@ public class Tom {
         // For the moment debug is only available for Java as target language
       getInput().setDebugMode(getInput().isJCode() && getInput().isDebugMode());
 
+      
         /*
          * compute destDir:
          */
-
-
       if(localDestDir==null || localDestDir.length()==0) {
-        localDestDir = ".";
+      	localDestDir=".";
       } else if(getInput().getUserOutputFile() != null) {
         addError(TomMessage.getString("InvalidOutputDestdir"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
         return localInputFileList;
@@ -406,12 +410,12 @@ public class Tom {
     return initialTask;
   }
 
-  private void addError(String msg, String file, int line, int level) {
+  private static void addError(String msg, String file, int line, int level) {
     TomError err = tsf().makeTomError_Error(msg, file, line, level);
     environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
   }
 
-  private void addError(String msg, Object[] args, String file, int line, int level) {
+  private static void addError(String msg, Object[] args, String file, int line, int level) {
     TomError err = tsf().makeTomError_Error(MessageFormat.format(msg, args), file, line, level);
     environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
   }
@@ -436,18 +440,18 @@ public class Tom {
         // no need to do further work
       return 0;
     } else if(tom.inputFileList.isEmpty()) {
-      System.out.println("No file to compile");
-      usage();
-      tom.addError(TomMessage.getString("NoFileToCompile"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
-      return 1;
+        System.out.println("No file to compile");
+        usage();
+        Tom.addError(TomMessage.getString("NoFileToCompile"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+        return 1;
     } else if(tom.inputFileList.size()>1 && getInput().getUserOutputFile() != null) {
       System.out.println("Cannot specify --output with multiple compilations");
       usage();
-      tom.addError(TomMessage.getString("OutputWithMultipleCompilation"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      Tom.addError(TomMessage.getString("OutputWithMultipleCompilation"), "", TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
       return 1;
     }
 
-    if(!tom.environment().checkNoErrors("Tom.Main", getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning()))
+    if(!Tom.environment().checkNoErrors("Tom.Main", getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning()))
       return 1;
     
     for(Iterator it = tom.inputFileList.iterator() ; it.hasNext() ; ) {
@@ -455,7 +459,7 @@ public class Tom {
       tom.run(inputFileName);
     }
     
-    if (!tom.environment().checkNoErrors("Tom.Main", 
+    if (!Tom.environment().checkNoErrors("Tom.Main", 
           getInput().isEclipseMode(), 
           getInput().isWarningAll(), 
           getInput().isNoWarning())) {
@@ -466,7 +470,7 @@ public class Tom {
     }
   }
   
-  public TomErrorList getErrors() {
+  public static TomErrorList getLastErrors() {
     return environment().getErrors();
   }
 
