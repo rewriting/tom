@@ -49,8 +49,7 @@ public class Rewrite1 {
   }
 
   %include { term/term.tom }
-  %include { string.tom }
-  %include{ mutraveler.tom }
+  %include { mutraveler.tom }
   
   public final static void main(String[] args) {
     Rewrite1 test = new Rewrite1(termFactory.getInstance(new PureFactory()));
@@ -63,19 +62,14 @@ public class Rewrite1 {
 
     VisitableVisitor rule = new RewriteSystem();
     VisitableVisitor ruleId = new RewriteSystemId();
-    VisitableVisitor onceBottomUp = `OnceBottomUp(rule);
-    VisitableVisitor bottomUp = `BottomUp(Try(rule));
-    VisitableVisitor innermost = `Innermost(rule);
-    VisitableVisitor innermostSlow = `Repeat(OnceBottomUp(rule));
-    VisitableVisitor innermostId = `InnermostId(ruleId);
 
     try {
       System.out.println("subject       = " + subject);
-      System.out.println("onceBottomUp  = " + onceBottomUp.visit(subject));
-      System.out.println("bottomUp      = " + bottomUp.visit(subject));
-      System.out.println("innermost     = " + innermost.visit(subject));
-      System.out.println("innermostSlow = " + innermostSlow.visit(subject));
-      System.out.println("innermostId   = " + innermostId.visit(subject));
+      System.out.println("onceBottomUp  = " + `OnceBottomUp(rule).visit(subject));
+      System.out.println("bottomUp      = " + `BottomUp(Try(rule)).visit(subject));
+      System.out.println("innermost     = " + `Innermost(rule).visit(subject));
+      System.out.println("innermostSlow = " + `Repeat(OnceBottomUp(rule)).visit(subject));
+      System.out.println("innermostId   = " + `InnermostId(ruleId).visit(subject));
     } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
