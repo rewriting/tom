@@ -1,14 +1,16 @@
 package jtom.optimizer;
 
 import jtom.*;
+import jtom.tools.*;
 import jtom.adt.tomsignature.types.*;
-import tom.platform.adt.platformoption.types.*;
+
 import aterm.*;
+
 import java.util.*;
 import java.util.logging.*;
-import jtom.tools.*;
-import jtom.TomMessage;
+
 import tom.library.traversal.*;
+import tom.platform.adt.platformoption.types.*;
 
 /**
  * The TomOptimizer plugin.
@@ -27,33 +29,36 @@ public class TomOptimizer extends TomGenericPlugin {
   public void run() {
     if(isActivated()) {
       try {
-	int errorsAtStart   = getPluginPlatform().getStatusHandler().nbOfErrors();
-	int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
 
-	long startChrono = System.currentTimeMillis();
+        long startChrono = System.currentTimeMillis();
 						
-	boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
+        TomTerm renamedTerm   = renameVariable( (TomTerm)getTerm(), new HashSet() );
+        TomTerm optimizedTerm = optimize(renamedTerm);
+        setTerm(optimizedTerm);
+
+        long stopChrono = System.currentTimeMillis();
+			
+        getLogger().log( Level.INFO,
+                         "TomOptimizationPhase",
+                         new Integer((int)(stopChrono-startChrono)) );
+			
 						
-	TomTerm renamedTerm   = renameVariable( (TomTerm)getTerm(), new HashSet() );
-	TomTerm optimizedTerm = optimize(renamedTerm);
-	setTerm(optimizedTerm);
-			
-	getLogger().log( Level.INFO,
-			 "TomOptimizationPhase",
-			 new Integer((int)(System.currentTimeMillis()-startChrono)) );
-			
-	if(intermediate)
-	  Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
-				getTerm() );
+        boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
+        if(intermediate) {
+          Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
+                                getTerm() );
+        }
 		
-	printAlertMessage(errorsAtStart, warningsAtStart);
+        int errorsAtStart   = getPluginPlatform().getStatusHandler().nbOfErrors();
+        int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+        printAlertMessage(errorsAtStart, warningsAtStart);
 
       } catch (Exception e) {
-	getLogger().log( Level.SEVERE,
-			 "ExceptionMessage",
-			 new Object[]{environment().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
+        getLogger().log( Level.SEVERE,
+                         "ExceptionMessage",
+                         new Object[]{environment().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
 
-	e.printStackTrace();
+        e.printStackTrace();
       }
     } else {
       getLogger().log(Level.INFO, "The optimizer is not activated and thus WILL NOT RUN.");
@@ -61,8 +66,8 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public PlatformOptionList declaredOptions() {
-    return `concPlatformOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
-			  );
+    // activation flag
+    return `concPlatformOption(OptionBoolean("optimize", "O", "Optimized generated code", False()));
   }
 
   private boolean isActivated() {
@@ -70,15 +75,15 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
 
-    /* 
-     * optimize:
-     * remove variables which are only assigned once (but not used)
-     * inline variables which are used only once
-     *
-     * a variable is inlined when it is used only once and
-     * when the expression depends on ref-variables which
-     * are not modified in the body
-     */
+  /* 
+   * optimize:
+   * remove variables which are only assigned once (but not used)
+   * inline variables which are used only once
+   *
+   * a variable is inlined when it is used only once and
+   * when the expression depends on ref-variables which
+   * are not modified in the body
+   */
 
   Replace1 replace_optimize = new Replace1() {
       public ATerm apply(ATerm subject) {
@@ -96,49 +101,49 @@ public class TomOptimizer extends TomGenericPlugin {
             }
           }
         } else if(subject instanceof Instruction) {
-	    %match(Instruction subject) {
-              /*
-               * TODO
-               * LetRef x where x is used 0 or 1 ==> eliminate
-               */
+          %match(Instruction subject) {
+            /*
+             * TODO
+             * LetRef x where x is used 0 or 1 ==> eliminate
+             */
             (LetRef|LetAssign)(var@(Variable|VariableStar)[astName=name@Name(tomName)],exp,body) -> {
               List list  = computeOccurences(`name,`body);
               int mult = list.size();
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
                 
-		getLogger().log( Level.WARNING,
-				 "UnusedVariable",
-				 new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
-					      `extractRealName(tomName)} );
-		getLogger().log( Level.INFO,
-				 "Remove",
-				 new Object[]{ new Integer(mult), `extractRealName(tomName) });
+                getLogger().log( Level.WARNING,
+                                 "UnusedVariable",
+                                 new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+                                              `extractRealName(tomName)} );
+                getLogger().log( Level.INFO,
+                                 "Remove",
+                                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
                 return optimizeInstruction(`body);
 
               } else if(mult == 1) {
                 if(expConstantInBody(`exp,`body)) {
 
-		    getLogger().log( Level.INFO,
-				     "Inline",
-				     new Object[]{ new Integer(mult), `extractRealName(tomName) });
+                  getLogger().log( Level.INFO,
+                                   "Inline",
+                                   new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
                   return optimizeInstruction(inlineInstruction(`var,`exp,`body));
                 } else {
-		    getLogger().log( Level.INFO,
-				     "NoInline",
-				     new Object[]{ new Integer(mult), `extractRealName(tomName) });
+                  getLogger().log( Level.INFO,
+                                   "NoInline",
+                                   new Object[]{ new Integer(mult), `extractRealName(tomName) });
 
-                      //System.out.println("exp  = " + exp);
-                      //System.out.println("body = " + body);
+                  //System.out.println("exp  = " + exp);
+                  //System.out.println("body = " + body);
                 }
 
               } else {
-                  /* do nothing: traversal */
-		  getLogger().log( Level.INFO,
-				   "DoNothing",
-				   new Object[]{ new Integer(mult), `extractRealName(tomName) });
+                /* do nothing: traversal */
+                getLogger().log( Level.INFO,
+                                 "DoNothing",
+                                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
               }
             }
             
@@ -149,31 +154,31 @@ public class TomOptimizer extends TomGenericPlugin {
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
 
-		getLogger().log( Level.WARNING,
-				 "UnusedVariable",
-				 new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
-					      `extractRealName(tomName)} );
-		getLogger().log( Level.INFO,
-				 "Remove",
-				 new Object[]{ new Integer(mult), `extractRealName(tomName) });
+                getLogger().log( Level.WARNING,
+                                 "UnusedVariable",
+                                 new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+                                              `extractRealName(tomName)} );
+                getLogger().log( Level.INFO,
+                                 "Remove",
+                                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
                 
                 return optimizeInstruction(`body); 
               } else if(mult == 1) {
                 if(expConstantInBody(`exp,`body)) {
-		  getLogger().log( Level.INFO,
-				   "Inline",
-				   new Object[]{ new Integer(mult), `extractRealName(tomName) });
+                  getLogger().log( Level.INFO,
+                                   "Inline",
+                                   new Object[]{ new Integer(mult), `extractRealName(tomName) });
                   return optimizeInstruction(inlineInstruction(`var,`exp,`body));
                 } else {
-		  getLogger().log( Level.INFO,
-				   "NoInline",
-				   new Object[]{ new Integer(mult), `extractRealName(tomName) });
+                  getLogger().log( Level.INFO,
+                                   "NoInline",
+                                   new Object[]{ new Integer(mult), `extractRealName(tomName) });
                 }
               } else {
-                  /* do nothing: traversal */
-		  getLogger().log( Level.INFO,
-				   "DoNothing",
-				   new Object[]{ new Integer(mult), `extractRealName(tomName) });
+                /* do nothing: traversal */
+                getLogger().log( Level.INFO,
+                                 "DoNothing",
+                                 new Object[]{ new Integer(mult), `extractRealName(tomName) });
               }
             }
 
@@ -207,10 +212,10 @@ public class TomOptimizer extends TomGenericPlugin {
     return (Expression) replace_optimize.apply(subject); 
   }
 
-    /* 
-     * inline:
-     * replace a variable instantiation by its content in the body
-     */
+  /* 
+   * inline:
+   * replace a variable instantiation by its content in the body
+   */
 
   Replace3 replace_inline = new Replace3() {
       public ATerm apply(ATerm subject, Object arg1, Object arg2) {
@@ -220,7 +225,7 @@ public class TomOptimizer extends TomGenericPlugin {
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) { 
             (Variable|VariableStar)[astName=name] |
-            BuildVariable[astName=name] -> {
+              BuildVariable[astName=name] -> {
               if(variableName == `name) {
                 return `ExpressionToTomTerm(expression);
               }
@@ -248,7 +253,7 @@ public class TomOptimizer extends TomGenericPlugin {
           if(t instanceof TomTerm) {
             %match(TomTerm t) { 
               (Variable|VariableStar)[astName=name] |
-               BuildVariable[astName=name] -> {
+                BuildVariable[astName=name] -> {
                 if(variableName == `name) {
                   list.add(t);
                   return false;
@@ -272,7 +277,7 @@ public class TomOptimizer extends TomGenericPlugin {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
 
-            //System.out.println("isAssigned(" + variableName + "): " + t);
+          //System.out.println("isAssigned(" + variableName + "): " + t);
           if(t instanceof Instruction) {
             %match(Instruction t) { 
               Assign[variable=(Variable|VariableStar)[astName=name]] -> {
@@ -307,15 +312,15 @@ public class TomOptimizer extends TomGenericPlugin {
     collectRefVariable(c,exp);
     Iterator it = c.iterator();
 
-      //System.out.println("exp  = " + exp);
-      //System.out.println("body = " + body);
+    //System.out.println("exp  = " + exp);
+    //System.out.println("body = " + body);
     while(res && it.hasNext()) {
       TomName name = (TomName) it.next();
-        //List list = computeOccurences(name,body);
-        //res = res && (list.size()==0);
-        //System.out.println("Ref variable: " + name);
+      //List list = computeOccurences(name,body);
+      //res = res && (list.size()==0);
+      //System.out.println("Ref variable: " + name);
       res = res && !isAssigned(name,body);
-        //System.out.println(" assign = " + !res);
+      //System.out.println(" assign = " + !res);
 
     }
     return res; 
@@ -350,7 +355,7 @@ public class TomOptimizer extends TomGenericPlugin {
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) {
             var@(Variable|VariableStar)[option=option, astName=astName@Name(name)] |
-            var@BuildVariable[astName=astName@Name(name)]-> {
+              var@BuildVariable[astName=astName@Name(name)]-> {
               if(context.contains(`astName)) {
                 return `var.setAstName(`Name(ast().makeTomVariableName(name)));
               }
