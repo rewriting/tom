@@ -397,16 +397,10 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     String tlEltType = getTLType(eltType);
 
     String utype = glType;
-    String modifier = "";
-		modifier = "public ";
 		if(!strictType) {
 			utype = getTLType(getUniversalType());
     }
 		
-    if(staticFunction) {
-      modifier += "static ";
-    }
-
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
     String make_empty = listCast +  "tom_make_empty_" + name;
@@ -464,8 +458,6 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     String glType = getTLType(listType);
     String tlEltType = getTLType(eltType);
     String utype = glType;
-    String modifier = "";
-		modifier ="public ";
 		if(!strictType) {
 			utype =  getTLType(getUniversalType());
     }
