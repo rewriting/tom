@@ -11,7 +11,7 @@ stabledir 	= $(top_srcdir)/stable/jtom
 JAVAROOT        = ${top_builddir}/src/
 
 EXTRA_DIST 	= TomSignature.adt
-CLEANFILES 	= ${JARFILE_TS} ${JARFILE_TNODE} ${JARFILE_SET} TomSignature.tom TNode.tom set.tom
+CLEANFILES 	= ${JARFILE_TS} ${JARFILE_TNODE} ${JARFILE_SET} TomSignature.tom TNode.tom set.tom apigen.env
 
 JARFILE_TS      = TomSignature-$(VERSION).jar
 JARFILE_TNODE   = TNode-$(VERSION).jar
@@ -32,16 +32,13 @@ api:
 
 
 TomSignature.tom: TomSignature.adt
-	${ADTTOJAVA} --version $(VERSION) -i TomSignature.adt -n TomSignature -p jtom.adt
-	${ADTTOTOM}  -i TomSignature.adt -n TomSignature
+	${ADTTOTOM}  -i TomSignature.adt -n TomSignature --javagen --version $(VERSION) -p jtom.adt
 
 TNode.tom: TNode.adt
-	${ADTTOJAVA} --version $(VERSION) -i TNode.adt -n TNode -p jtom.runtime.xml.adt
-	${ADTTOTOM}  -i TNode.adt -n TNode
+	${ADTTOTOM}  -i TNode.adt -n TNode --javagen -p jtom.runtime.xml.adt --version $(VERSION)
 
 set.tom: set.adt
-	${ADTTOJAVA} --version $(VERSION) -i set.adt -n set -p jtom.runtime.set.jgtreeset
-	${ADTTOTOM}  -i set.adt -n set
+	${ADTTOTOM}  -i set.adt -n set --javagen --version $(VERSION) -p jtom.runtime.set.jgtreeset
 
 $(JARFILE_TS): TomSignature.tom
 
