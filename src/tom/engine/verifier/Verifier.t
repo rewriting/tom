@@ -39,16 +39,17 @@ import jtom.TomMessage;
 public class Verifier extends TomBase {
 
 	// ------------------------------------------------------------
-// 	%include { ../adt/TomSignature.tom }
+ 	%include { ../adt/TomSignature.tom }
 	// ------------------------------------------------------------
-
-	private Factory factory;
 
 	%vas {
 		module il
 			
-			public 
-			sorts Symbol Representation Variable Term Expr Instr 
+		public sorts 
+			Symbol Representation Variable Term Expr Instr 
+			Substitution SubstitutionList Environment
+			Seq
+			Deriv DerivTree
 
 		abstract syntax
 			fsymbol(name:String)                    -> Symbol
@@ -69,12 +70,35 @@ public class Verifier extends TomBase {
 			refuse                                  -> Instr
 			ITE(e:Expr,ift:Instr,iff:Instr)         -> Instr
 			ILLet(var:Variable,t:Term,body:Instr)   -> Instr
+
+			is(var:Variable,term:Term)              -> Substitution
+			subs(Substitution *)                    -> SubstitutionList
+			env(subs:Substitution,i:Instr)          -> Environment
+
+			ebs(lhs:Environment,rhs:Environment)    -> Deriv
+			iftrue(post:Deriv,pre:Deriv,cond:Seq)   -> DerivTree
+
+			// to be completed
+			seq()                                   -> Seq
+	}
+
+	protected jtom.verifier.verifier.il.Factory factory;
+
+	public Verifier() {
+		super();
+		factory = new Factory(getTomSignatureFactory().getPureFactory());
 	}
 
 	protected final Factory getIlFactory() {
-		return this.factory;
+		return factory;
 	}
-			
+
+	public DerivTree build_tree(Instruction automata) {
+		DerivTree tree = null;
+		System.out.println("Build derivation tree for : " + automata);
+
+		return tree;
+	}
 
 }
 

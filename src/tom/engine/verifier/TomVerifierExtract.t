@@ -39,8 +39,11 @@ public class TomVerifierExtract extends TomTask {
   %include { ../adt/TomSignature.tom }
 	// ------------------------------------------------------------
 
+	protected Verifier verif;
+
   public TomVerifierExtract() { 
     super("Tom verifier");
+		verif = new Verifier();
   }
   
   public TomVerifierExtract(String name) {
@@ -60,7 +63,9 @@ public class TomVerifierExtract extends TomTask {
 			// System.out.println("Extracted : " + matchSet);
 
 			Collection purified = purify(matchSet);
-			System.out.println("Purified : " + purified);
+			// System.out.println("Purified : " + purified);
+
+			Collection derivations = getDerivations(purified);
 			
 			if(verbose) {
         System.out.println("TOM Verifier extraction phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
@@ -109,8 +114,8 @@ public class TomVerifierExtract extends TomTask {
 		Collection purified = new HashSet();
 		Iterator it = subject.iterator();
 		while (it.hasNext()) {
-			Instruction cp = (Instruction)it.next();
-			%match(Instruction cp) {
+			Instruction cm = (Instruction)it.next();
+			%match(Instruction cm) {
 				CompiledMatch(automata, options)  -> {
 					// simplify the IL automata
 					purified.add(`CompiledMatch(simplify_il(automata),options));
@@ -146,5 +151,42 @@ public class TomVerifierExtract extends TomTask {
 	private Instruction simplify_il(Instruction subject) {
 		return (Instruction) replace_simplify_il.apply(subject);
 	}
+
+	public Collection getDerivations(Collection subject) {
+		Collection derivations = new HashSet();
+		Iterator it = subject.iterator();
+		while (it.hasNext()) {
+			Instruction cm = (Instruction)it.next();
+			%match(Instruction cm) {
+				CompiledMatch(automata, options)  -> {
+					derivations.add(`CompiledMatch(apply_replace_getDerivations(automata),options));
+				}
+			}
+		}
+		return derivations;
+	}
+
+	private Instruction apply_replace_getDerivations(Instruction subject) {
+		return (Instruction) replace_getDerivations.apply(subject);
+	}
+
+	Replace1 replace_getDerivations = new Replace1() {
+			public ATerm apply(ATerm subject) {
+				if (subject instanceof Instruction) {
+					%match(Instruction subject) {
+						CompiledPattern(patterns,automata) -> {
+							verif.build_tree(automata);
+							// do not modify the term (for now at least)
+							return traversal().genericTraversal(subject,this);
+						}
+					}
+				}// end instanceof Instruction
+				/*
+				 * Default case : Traversal
+				 */
+				return traversal().genericTraversal(subject,this);
+			}//end apply
+		};//end new Replace1 
+
 
 }

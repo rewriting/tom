@@ -79,7 +79,7 @@ public class Tom {
      */
   private List inputFileList;
   
-  public final static String VERSION = "2.0";
+  public final static String VERSION = "2.1alpha";
   
   public static String usage =
     "\nTom usage:"
@@ -299,13 +299,11 @@ public class Tom {
 
   private TomTask createTaskChainFromInput() {
     String fileName = getInput().getInputFile().getPath();
-    TomExpander expander = new TomExpander();
-    TomSyntaxChecker syntaxChecker = new TomSyntaxChecker();
-    TomTypeChecker typeChecker = new TomTypeChecker();
-    TomTask verifExtract = new TomVerifierExtract();
     TomCompiler compiler = new TomCompiler();
 
     TomTask initialTask = null;
+
+		TomTask currentTail = initialTask;
 
     InputStream input = null;
       // Create the Chain of responsability    
@@ -313,22 +311,24 @@ public class Tom {
       TomTaskParser tomParser = new TomTaskParser(fileName);
       // This is the initial task
       initialTask = tomParser;
-      
+			currentTail = initialTask;
+
       if (getInput().isDoCheck()) {
-        tomParser.addTask(syntaxChecker);
-        syntaxChecker.addTask(expander);
-        expander.addTask(typeChecker);
-      } else {
-        tomParser.addTask(expander);
-      }
-      
-      if (getInput().isDoVerify()) {
-        if (getInput().isDoCheck()) {
-          typeChecker.addTask(verifExtract);
-        } else {
-          expander.addTask(verifExtract);
-        }
-      }
+				TomSyntaxChecker syntaxChecker = new TomSyntaxChecker();
+				currentTail.addTask(syntaxChecker);
+				currentTail = syntaxChecker;
+			}
+
+			TomExpander expander = new TomExpander();
+			currentTail.addTask(expander);
+			currentTail= expander;
+
+      if (getInput().isDoCheck()) {
+				TomTypeChecker typeChecker = new TomTypeChecker();
+				currentTail.addTask(typeChecker);
+				currentTail = typeChecker;
+			}
+
     } //DoParse() && DoExpand
     
     if (getInput().isDoCompile()) {
@@ -357,36 +357,32 @@ public class Tom {
           environment().messageError(TomMessage.getString("IOException"), new Object[]{fileName}, "Tom", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
           return null;
         }
-          // This is the initial task
+          // we do only compile : the compiler is the initial task
         initialTask = compiler;
+				currentTail = compiler;
         environment().setTerm(expandedTerm);
       } else {
-        if (getInput().isDoCheck()) {
-          if (getInput().isDoVerify()) {
-            verifExtract.addTask(compiler);
-          } else {
-            typeChecker.addTask(compiler);
-          }
-        } else {
-          if (getInput().isDoVerify()) {
-            verifExtract.addTask(compiler);
-          } else {
-            expander.addTask(compiler);
-          }
-        }
-      }
+				currentTail.addTask(compiler);
+				currentTail = compiler;
+			}
     } //DoCompile
-    
+
+		if (getInput().isDoOptimization()) {
+			TomOptimizer optimizer = new TomOptimizer();
+			currentTail.addTask(optimizer);
+			currentTail = optimizer;
+		}
+
+		if (getInput().isDoVerify()) {
+			TomTask verifExtract = new TomVerifierExtract();
+			currentTail.addTask(verifExtract);
+			currentTail = verifExtract;
+		}
+
     if (getInput().isPrintOutput()) {
       TomTask generator;
       generator = new TomBackend();
-      if (getInput().isDoOptimization()) {
-        TomOptimizer optimizer = new TomOptimizer();
-        compiler.addTask(optimizer);
-        optimizer.addTask(generator);
-      } else {
-        compiler.addTask(generator);
-      }
+			currentTail.addTask(generator);
     } //PrintOutput
 
     return initialTask;
