@@ -29,7 +29,8 @@ public class TomOptimizer extends TomGenericPlugin {
   public void run() {
     if(isActivated()) {
       try {
-
+        int errorsAtStart   = getPluginPlatform().getStatusHandler().nbOfErrors();
+        int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
         long startChrono = System.currentTimeMillis();
 						
         TomTerm renamedTerm   = renameVariable( (TomTerm)getTerm(), new HashSet() );
@@ -48,9 +49,7 @@ public class TomOptimizer extends TomGenericPlugin {
           Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
                                 getTerm() );
         }
-		
-        int errorsAtStart   = getPluginPlatform().getStatusHandler().nbOfErrors();
-        int warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
+
         printAlertMessage(errorsAtStart, warningsAtStart);
 
       } catch (Exception e) {
