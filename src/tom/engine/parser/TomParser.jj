@@ -76,6 +76,7 @@ public class TomParser extends TomTask {
     this.currentFile = fileName;
     this.debuggedStructureList = new LinkedList();
     this.tomBackQuoteParser = new TomBackQuoteParser(environment);
+    this.tomFactory = new TomFactory(environment);
     includedFiles = alreadyParsedFiles;
   }
   

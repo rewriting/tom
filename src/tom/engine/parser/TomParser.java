@@ -71,6 +71,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     this.currentFile = fileName;
     this.debuggedStructureList = new LinkedList();
     this.tomBackQuoteParser = new TomBackQuoteParser(environment);
+    this.tomFactory = new TomFactory(environment);
     includedFiles = alreadyParsedFiles;
   }
 
@@ -2530,23 +2531,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     finally { jj_save(11, xla); }
   }
 
-  final private boolean jj_3_3() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_2()) jj_scanpos = xsp;
-    if (jj_3R_28()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_28() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_34()) jj_scanpos = xsp;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_43() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2772,6 +2756,23 @@ public class TomParser extends TomTask implements TomParserConstants {
 
   final private boolean jj_3R_45() {
     if (jj_scan_token(XML_START)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_2()) jj_scanpos = xsp;
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_28() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_34()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
