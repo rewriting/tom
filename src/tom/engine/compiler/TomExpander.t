@@ -186,8 +186,7 @@ public class TomExpander extends TomBase {
       context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
                            Term(rhs),
                            condList,
-                           orgTrack,
-                           orgText) -> { 
+                           option) -> { 
           //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
         TomSymbol tomSymbol = getSymbol(tomName);
         TomType symbolType = getSymbolCodomain(tomSymbol);
@@ -208,7 +207,7 @@ public class TomExpander extends TomBase {
           condList = condList.getTail();
         }
         
-        return `RewriteRule(newLhs,newRhs,newCondList,orgTrack, orgText);
+        return `RewriteRule(newLhs,newRhs,newCondList,option);
       }
         
       Tom(varList), MatchingCondition[lhs=lhs@Appl[astName=Name(lhsName)],

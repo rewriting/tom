@@ -158,7 +158,7 @@ public class TomChecker extends TomBase {
       TomTerm lhs = rewriteRule.getLhs();
       TomTerm rhs = rewriteRule.getRhs();
       TomList condList = rewriteRule.getCondList();
-      Option orgTrack = rewriteRule.getOrgTrack();
+      Option orgTrack = findOriginTracking(rewriteRule.getOption().getOptionList());
       
       ArrayList variableLhs = new ArrayList();
       collectVariable(variableLhs, lhs);
@@ -940,7 +940,7 @@ public class TomChecker extends TomBase {
       currentRule = ruleList.getHead();
       matchBlock: {
         %match(TomTerm currentRule) {
-          RewriteRule(Term(lhs),Term(rhs),condList,orgTrack, _) -> {
+          RewriteRule(Term(lhs),Term(rhs),condList,option) -> {
             statistics().numberRulesTested++;
             name = verifyLhsRuleAndConstructorEgality(lhs, name, i);
             if(i == 0) {

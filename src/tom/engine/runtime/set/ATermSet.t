@@ -48,8 +48,9 @@ public abstract class ATermSet implements Collection {
   protected int count = 0;
     // Modification counter to detect issues in iteration operation
   protected int modCount = 0;
-  protected GenericTraversal traversal = new GenericTraversal();
+  protected static GenericTraversal traversal = new GenericTraversal();
 
+  static private Integer one = new Integer(1);
   static protected JGTreeSet emptyTree;
   static protected SetFactory factory = null;
   static protected int collisions = 0;
@@ -130,145 +131,75 @@ public abstract class ATermSet implements Collection {
 
   public boolean contains(Object o) {
     if (o instanceof ATerm)
-      return contains((ATerm)o);
+      return containsATerm((ATerm)o);
     else
       throw new RuntimeException("Not an ATerm");
   }
 
+  public boolean containsATerm(ATerm elt) {
+    return contains(elt, tree, 0);
+  }
+  
   public boolean containsAll(Collection c) {
     Iterator it = c.iterator();
     Object o = null;
     while(it.hasNext()) {
-      o = it.next();
-      if (o instanceof ATerm) {
-        if (!contains((ATerm)o))
-          return false;
+      if (!contains((ATerm)it.next())) {
+        return false;
       }
-      else
-        throw new RuntimeException("Not an ATerm");
     }
     return true;    
   }
   
-  public Object[] toArray() {
-    final Collection res = new ArrayList();
-      Collect1 collect = new Collect1() {
-          public boolean apply(ATerm t) {
-            if(t instanceof JGTreeSet) {
-              %match(JGTreeSet t) {
-                emptySet -> {return false;}
-                pair[value=x] -> {
-                  res.add(x);
-                  return false;
-                }
-                _ -> {return true;}
-              }
-            } else {
-              return true;
-            }
-          } // Apply
-        }; //new
-      
-      ATermSet.this.traversal.genericCollect(tree, collect);
-      ATerm[] result = new ATerm[res.size()];
-      for(int i=0;i<res.size();i++) {
-        result[i] = (ATerm) (((ArrayList)res).get(i));
-      }
-      return result;
-        //return SetIterator.createTableFromTree(tree);
-  }
-
-   public Object[] toArray(Object[] o) {
-    final Collection res = new ArrayList();
-      Collect1 collect = new Collect1() {
-          public boolean apply(ATerm t) {
-            if(t instanceof JGTreeSet) {
-              %match(JGTreeSet t) {
-                emptySet -> {return false;}
-                pair[value=x] -> {
-                  res.add(x);
-                  return false;
-                }
-                _ -> {return true;}
-              }
-            } else {
-              return true;
-            }
-          } // Apply
-        }; //new
-      
-      ATermSet.this.traversal.genericCollect(tree, collect);
-      ATerm[] result = new ATerm[res.size()];
-      for(int i=0;i<res.size();i++) {
-        result[i] = (ATerm) (((ArrayList)res).get(i));
-      }
-      return result;
-        //return SetIterator.createTableFromTree(tree);
-  }
-    
-  public boolean contains(ATerm elt) {
-    return contains(elt, tree, 0);
-  }
+  public abstract Object[] toArray();
+  
+  public abstract Object[] toArray(Object[] o);
   
   public boolean add(Object o) {
     if (o instanceof ATerm)
-      return add((ATerm)o);
+      return addATerm((ATerm)o);
     else
       throw new RuntimeException("Not an ATerm");
   }
   
-  public boolean add(ATerm elt) {
-    JGTreeSet c = (JGTreeSet)tree.duplicate();
-    tree = override(elt, new Integer(1), tree, 0);
+  private boolean addATerm(ATerm elt) {
+    JGTreeSet before = tree;
+    tree = override(elt, one, tree, 0);
     modCount++;
-    return (tree.equivalent(c));
+    return tree == before;
   }
-
+  
   public boolean addAll(Collection c) {
-    JGTreeSet before = (JGTreeSet)tree.duplicate();
-    
+    JGTreeSet before = tree;
     Iterator it = c.iterator();
-    Object o = null;
     while(it.hasNext()) {
-      o = it.next();
-      if (o instanceof ATerm) {
-        tree = override((ATerm)o, new Integer(1), tree, 0);
-      }
-      else
-        throw new RuntimeException("Not an ATerm");
+      add(it.next());
     }
-    modCount++;
-    return (tree.equivalent(before));
+    return tree != before;
   }
   
   public boolean remove(Object o) {
     if (o instanceof ATerm)
-      return remove((ATerm)o);
+      return removeATerm((ATerm)o);
     else
       throw new RuntimeException("Not an ATerm");
   }
-  public boolean remove(ATerm elt) {
-    JGTreeSet c = (JGTreeSet)tree.duplicate();
+  
+  private boolean removeATerm(ATerm elt) {
+    JGTreeSet c = tree;
     tree = remove(elt, tree, 0);
     modCount++;
-    return (tree.equivalent(c));
+    return tree == c;
   }
 
   public boolean removeAll(Collection c) {
-    JGTreeSet before = (JGTreeSet)tree.duplicate();
-    
+    JGTreeSet before = tree;
     Iterator it = c.iterator();
-    Object o = null;
     while(it.hasNext()) {
-      o = it.next();
-      if (o instanceof ATerm) {
-        tree = remove(o, tree, 0);
-      }
-      else
-        throw new RuntimeException("Not an ATerm");
+      remove(it.next());
     }
     modCount++;
-    return (tree.equivalent(before));
+    return tree ==before;
   }
   
   public boolean retainAll(Collection c) {
@@ -284,27 +215,11 @@ public abstract class ATermSet implements Collection {
     return getHead(tree);
   }
   
-    /* public abstract ATermSet getTail() {
-       JGTreeSet set = remove(getHead(tree), tree);
-       return new SharedMultiSet(getSetFactory(), set, count-1);
-       }
-    */
   public String topRepartition() {
     return topRepartition(tree);
   }
 
-
-
-
-
-
-
-
-
-
-
-
-      // Low interface
+    // Low interface using JGTreeSet classes
   protected boolean isEmpty(JGTreeSet set) {
     return set.isEmptySet();
   }
@@ -376,24 +291,10 @@ public abstract class ATermSet implements Collection {
   
   protected abstract JGTreeSet restriction(JGTreeSet m1, JGTreeSet m2, int level);
 
-  protected JGTreeSet remove(Object o, JGTreeSet t, int level) {
-    if (o instanceof ATerm)
-      return remove(o, t, level);
-    else
-      throw new RuntimeException("Not an ATerm");
-  }
-  
   protected abstract JGTreeSet remove(ATerm elt, JGTreeSet t, int level);
 
   protected abstract boolean contains(ATerm elt, JGTreeSet t, int level);
-  
-  protected JGTreeSet override(Object o, Integer multiplicity, JGTreeSet t, int level) {
-    if (o instanceof ATerm)
-      return override(o, multiplicity, t, level);
-    else
-      throw new RuntimeException("Not an ATerm");
-  }
-  
+    
   protected abstract JGTreeSet override(ATerm elt, Integer multiplicity, JGTreeSet t, int level);
   
   protected abstract JGTreeSet underride(ATerm elt, JGTreeSet t, int level);
@@ -409,7 +310,6 @@ public abstract class ATermSet implements Collection {
 
 
      // Iterator interface
-
   public Iterator iterator() {
     if(tree.isEmptySet())
       return new EmptySetIterator();

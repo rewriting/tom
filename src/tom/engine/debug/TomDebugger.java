@@ -54,9 +54,9 @@ public class TomDebugger {
   boolean nextFailure = false;
   int nextFailureStatus;
   
-  public TomDebugger(String[] baseFileName) {
+  public TomDebugger(String[] fileName) {
     this.debug = this;
-    this.baseFileName = baseFileName;
+    this.baseFileName = new String[fileName.length];
     this.in = new BufferedReader(new InputStreamReader(System.in));
     this.debuggedStructureKeySet = new HashSet();
     this.watchPatterns = new String[100];
@@ -64,20 +64,25 @@ public class TomDebugger {
     this.mapKeyDebugStructure = new HashMap();
     
     TomStructureTable table = null;
+    File file = null;
     InputStream input = null;
-    for(int i=0;i<baseFileName.length;i++) {
+    String name =null, debugSuffix = ".tfix.debug.table";
+    for(int i=0;i<fileName.length;i++) {
       try {
-        input = new FileInputStream(baseFileName[i]+".tfix.debug.table");
+        file = new File(fileName[i]+debugSuffix);
+        name = file.getName();
+        baseFileName[i] = name.substring(0, name.length() - (debugSuffix.length()))+".t";
+        input = new FileInputStream(file);
         TomSignatureFactory tsf = new TomSignatureFactory(10);
         table = TomStructureTable.fromTextFile(input);
         analyseStructure(table);
       } catch (FileNotFoundException e) {
         e.printStackTrace();
-        System.out.println("Fail to create debugger: File " + baseFileName[i] + ".tfix.debug.table not found.");
+        System.out.println("Fail to create debugger: File " + baseFileName[i]+debugSuffix+" not found.");
         System.exit(1);
       } catch (Exception e) {
         e.printStackTrace();
-        System.out.println("Exception during reading "+baseFileName[i]+".tfix.debug.table");
+        System.out.println("Exception during reading "+baseFileName[i]+debugSuffix);
         System.exit(1);
       }
     }
@@ -113,11 +118,10 @@ public class TomDebugger {
       System.out.println("\t term    | t\t:Define Term pattern to be watch");
       System.out.println("\t more    | m\t:Show patterns of a specific available structure");
     } else if (str.equals("run")) {
-        //System.out.println(debuggedStructureKeySet);
+      System.out.println(debuggedStructureKeySet);
       return;
     } else if (str.equals("failure") || str.equals("f")) {
       nextFailure = true;
-      nextFailureStatus = -1;
       return;
     } else if (str.equals("info") || str.equals("i")) {
       showAvailableStructure();
@@ -172,7 +176,7 @@ public class TomDebugger {
           System.out.println();
           return;
         } else {
-          String key = fileName+".t"+input;
+          String key = fileName+input;
           if (mapKeyDebugStructure.keySet().contains(key)) {
             showPatterns(key);
           } else {
@@ -219,6 +223,7 @@ public class TomDebugger {
   private void showPatterns(String key) {
     TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
     for(int i=0;i<struct.nbPatterns.intValue();i++){
+      System.out.println("Pattern at line: "+struct.patternLine[i]);
       System.out.println(struct.patternText[i]);
       System.out.println("--------------------------------------------------------------------------------");
     }
@@ -245,9 +250,9 @@ public class TomDebugger {
           System.out.println();
           return;
         } else {
-          String key = fileName+".t"+input;
+          String key = fileName+input;
           if (mapKeyDebugStructure.keySet().contains(key)) {
-            HashSet list = definePatternWatcher(input);
+            HashSet list = definePatternWatcher(input, fileName);
             ((TomDebugStructure)mapKeyDebugStructure.get(key)).watchPatternList = list;
             debuggedStructureKeySet.add(key);
           } else {
@@ -259,9 +264,9 @@ public class TomDebugger {
     }
   }
   
-  private HashSet definePatternWatcher(int line) {
+  private HashSet definePatternWatcher(int line, String fileName) {
     HashSet result = new HashSet();
-    String key = baseFileName+".t"+line;
+    String key = fileName+line;
     TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
     int nbPatterns = struct.nbPatterns.intValue();
     try {
@@ -354,38 +359,25 @@ public class TomDebugger {
     //////////////////////
     // Debug Primitives //
     //////////////////////
+
+  private boolean evalCondition(String key) {
+    return (debuggedStructureKeySet.contains(key) || nextFailure);
+  }
   
-  public void enteringMatch(String key) {
-    if(debuggedStructureKeySet.contains(key) || nextFailure) {
+  public void enteringStructure(String key) {
+    if(evalCondition(key) == true) {
       environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key), nextFailure)); 
     }
   }
   
-  public void enteringRule(String key) {
-    if(debuggedStructureKeySet.contains(key) || nextFailure) {
-      environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key), nextFailure));
-    }
-  }
-  
-  public void leavingMatch(String key) {
+  public void leavingStructure(String key) {
     if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
       int status = ((TomDebugEnvironment)(environment.peek())).leaving();
       environment.pop();
-      if(!nextFailure) {
-        System.out.println("\tLeaving Match\n");
-      } else {
-        if (status == -1) {
-          start();
-        }
+      if (status == -1) {
+        nextFailure = false;
+        start();
       }
-    }
-  }
-
-  public void leavingRule(String key) {
-    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
-      int status = ((TomDebugEnvironment)(environment.peek())).leaving();
-      environment.pop();
-      System.out.println("\tLeaving Rule");
     }
   }
   
@@ -467,13 +459,18 @@ public class TomDebugger {
         TomList paList = struct.getPatternList().getList();
         Integer nbPatterns =  evalPatternNumber(paList);
         String[] patternText = new String[nbPatterns.intValue()];
+        Integer[] patternLine = new Integer[nbPatterns.intValue()];
         int i=0;
+        TomTerm pa;
+        OptionList opList;
         while(!paList.isEmpty()) {
-          TomTerm pa = paList.getHead();
-          patternText[i++] = pa.getOrgText().getString();
+          pa = paList.getHead();
+          opList = pa.getOption().getOptionList();
+          patternText[i] = extractPatternText(opList);
+          patternLine[i++] = extractPatternLine(opList);
           paList = paList.getTail();
         }
-        mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Match", fileName, line, nbPatterns, patternText));
+        mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Match", fileName, line, nbPatterns, patternText, patternLine));
         
       } else if (struct.isRuleSet()) {
         String fileName = struct.getOrgTrack().getFileName().getString();
@@ -482,13 +479,18 @@ public class TomDebugger {
         TomList paList = struct.getList();
         Integer nbPatterns =  evalPatternNumber(paList);
         String[] patternText = new String[nbPatterns.intValue()];
+        Integer[] patternLine = new Integer[nbPatterns.intValue()];
         int i=0;
+        TomTerm pa;
+        OptionList opList;
         while(!paList.isEmpty()) {
-          TomTerm pa = paList.getHead();
-          patternText[i++] = pa.getOrgText().getString();
+          pa = paList.getHead();
+          opList = pa.getOption().getOptionList();
+          patternText[i] = extractPatternText(opList);
+          patternLine[i++] = extractPatternLine(opList);
           paList = paList.getTail();
         }
-        mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Rule", fileName, line, nbPatterns, patternText));
+        mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Rule", fileName, line, nbPatterns, patternText, patternLine));
         
       } else {
         System.out.println("Corrupt debug term");
@@ -506,24 +508,51 @@ public class TomDebugger {
     }
     return new Integer(nbPattern);
   }
+  
+  private Integer extractPatternLine(OptionList list) {
+    Option op;
+    while(!list.isEmptyOptionList()) {
+      op = list.getHead();
+      if(op.isOriginTracking()) {
+        return op.getLine();
+      }
+      list = list.getTail();
+    }
+    return null;
+  }
+
+  private String extractPatternText(OptionList list) {
+    Option op;
+    while(!list.isEmptyOptionList()) {
+      op = list.getHead();
+      if(op.isTomNameToOption()) {
+        return op.getAstName().getString();
+      }
+      list = list.getTail();
+    }
+    return null;
+  }
+  
 } //Class TomDebugger
 
 class TomDebugStructure {
   String[] patternText;
   HashSet watchPatternList;
   Integer nbPatterns;
+  Integer[] patternLine;
   String fileName;
   Integer line;
   String key;
   String type;
 
-  TomDebugStructure(String key, String type, String fileName, Integer line, Integer nbPatterns, String[] patternText){
+  TomDebugStructure(String key, String type, String fileName, Integer line, Integer nbPatterns, String[] patternText, Integer[] patternLine){
     this.key = key;
     this.type = type;
     this.fileName = fileName;
     this.line = line;
     this.nbPatterns = nbPatterns;
     this.patternText = patternText;
+    this.patternLine = patternLine;
   }
 
   public String toString() {

@@ -39,16 +39,20 @@ public class TomDebugEnvironment {
   private ArrayList substitutions;
   private HashSet patternList;
   private String patternText[];
+  private Integer patternLine[];
   private int step = 0;
   private String lastPatternResult = null;
   private String totalMatchResult = null;
   private static String FAILURE = "Failure";
   private static String SUCCESS = "Success";
-  private boolean failureLookup;
+  private boolean failureLookup = false;
+  private boolean resultLookup = false;
+  private boolean nextLookup = false;
   
   public TomDebugEnvironment(TomDebugStructure struct, boolean failureLookup ) {
     this.patternList = struct.watchPatternList;
     this.patternText = struct.patternText;
+    this.patternLine = struct.patternLine;
     this.key = struct.key;
     this.type = struct.type;
     this.fileName = struct.fileName;
@@ -90,11 +94,11 @@ public class TomDebugEnvironment {
   }
 
   public void enteringPattern() {
-    if(failureLookup) return;
     incrementStep();
-    if(patternList.contains(new Integer(getStep()))) {
-      
-      System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation");
+    nextLookup = false;
+    if(failureLookup) {return;}
+    if(patternList.contains(new Integer(getStep()))) {      
+      System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation declared line "+patternLine[getStep()-1]);
       lastPatternResult = FAILURE;
       substitutions.clear();
       debugBreak();
@@ -102,15 +106,17 @@ public class TomDebugEnvironment {
   }
 
   public void leavingPattern() {
-    if(failureLookup) return;
+    if(failureLookup) {return;}
+    if(nextLookup) {return;}
     if(patternList.contains(new Integer(getStep()))) {
-      System.out.println("\t\t Leaving Pattern number "+ getStep()+" evaluation with "+lastPatternResult);
+      System.out.println("\t\tLeaving  Pattern number "+ getStep()+" evaluation with "+lastPatternResult);
       debugBreak();
     }
   }
   
   public void linearizationFail() {
-    if(failureLookup) return;
+    if(failureLookup) {return;}
+    if(nextLookup) {return;}
     if(patternList.contains(new Integer(getStep()))) {
       lastPatternResult = FAILURE;
       System.out.println("\t\tPattern fails because of linearization issue");
@@ -122,6 +128,7 @@ public class TomDebugEnvironment {
       totalMatchResult = SUCCESS;
       return;
     }
+    if(nextLookup) {return;}
     if(patternList.contains(new Integer(getStep()))) {
       lastPatternResult = SUCCESS;
       System.out.println("\t\tPattern number "+getStep()+" succeeds");
@@ -161,6 +168,7 @@ public class TomDebugEnvironment {
 
   public void showPatterns() {
     try {
+      System.out.println("Pattern declared line "+patternLine[getStep()-1]);
       System.out.println(patternText[getStep()-1]);
     } catch (Exception e) {
     }
@@ -179,18 +187,28 @@ public class TomDebugEnvironment {
   private void processBreak(String str) {
     if(str.equals("?")) {
       System.out.println("\nFollowing commands are allowed:");
-      System.out.println("\t?: show this help");
-      System.out.println("\tnext: jump to next breakpoint");
-      System.out.println("\tsubject: show the current subject list");
-      System.out.println("\tpattern: show the current pattern list");
-       System.out.println("\tsubst: show the realized substitution(s)");
-    } else if (str.equals("n") || str.equals("")) {
+      System.out.println("\t?\t\t:Show this help");
+      System.out.println("\tnext      | n\t:Jump to next pattern evaluation");
+      System.out.println("\tgetResult | r\t:Jump to pattern evaluation result");
+      System.out.println("\tnextFail  | f\t:Jump to pattern evaluation result");
+      System.out.println("\tsubject   | s\t:Show the current subject list");
+      System.out.println("\tpattern   | p\t:Show the current pattern list");
+      System.out.println("\tsubst     | S\t:Show the realized substitution(s)");
+    } else if (str.equals("")) {
       return;
-    } else if (str.equals("subject")) {
+    } else if (str.equals("next") || str.equals("n")) {
+      nextLookup = true;
+      return;
+    } else if (str.equals("getResult") || str.equals("r")) {
+      resultLookup = true;
+      return;
+    } else if (str.equals("nextFail") || str.equals("f")) {
+      failureLookup = true;
+    } else if (str.equals("subject") || str.equals("s")) {
       showSubjects();
-    } else if (str.equals("pattern")) {
+    } else if (str.equals("pattern") || str.equals("p")) {
       showPatterns();
-    } else if (str.equals("subst")) {
+    } else if (str.equals("subst") || str.equals("S")) {
       showSubsts();
     } else {
       System.out.println("Unknow command: please enter `?` to know the available commands");

@@ -196,12 +196,12 @@ public class TomGenerator extends TomBase {
         if(Flags.debugMode && !generated) {
           orgTrack = findOriginTracking(list);
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
-          out.write("jtom.debug.TomDebugger.debug.entering"+orgTrack.getAstName().getString()+"(\""+debugKey+"\");\n");
+          out.write("jtom.debug.TomDebugger.debug.enteringStructure(\""+debugKey+"\");\n");
         }
         generateList(out,deep+1,matchDeclarationList);
         generateList(out,deep+1,namedBlockList);
         if(Flags.debugMode && !generated) {
-          out.write("jtom.debug.TomDebugger.debug.leaving"+orgTrack.getAstName().getString()+"(\""+debugKey+"\");\n");
+          out.write("jtom.debug.TomDebugger.debug.leavingStructure(\""+debugKey+"\");\n");
         }
         if(Flags.supportedBlock) {
           generateInstruction(out,deep,`CloseBlock());

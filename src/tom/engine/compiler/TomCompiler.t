@@ -109,11 +109,11 @@ public class TomCompiler extends TomBase {
         
         while(!ruleList.isEmpty()) {
           TomTerm rule = ruleList.getHead();
-          %match(TomTerm rule) { 
-            RewriteRule[lhs=Term(Appl[args=matchPatternsList]),
-                        rhs=Term(rhsTerm),
-                        condList=condList,
-                        orgText=orgText] -> {
+          %match(TomTerm rule) {
+            RewriteRule(Term(Appl[args=matchPatternsList]),
+                        Term(rhsTerm),
+                        condList,
+                        option) -> {
               
               TomTerm newRhs = preProcessing(`MakeTerm(rhsTerm));
               TomList rhsList = empty();
@@ -132,7 +132,7 @@ public class TomCompiler extends TomBase {
               
               TomList newRhsList = buildCondition(condList,rhsList);
              
-              patternActionList = append(`PatternAction(TermList(matchPatternsList),Tom(newRhsList), orgText),patternActionList);
+              patternActionList = append(`PatternAction(TermList(matchPatternsList),Tom(newRhsList), option),patternActionList);
             }
           } 
           ruleList = ruleList.getTail();
@@ -165,9 +165,8 @@ public class TomCompiler extends TomBase {
         return preProcessing(`Tom(l));
       }
       
-      PatternAction(tl@TermList(termList),tom@Tom(actionList), orgText) -> {
-        TomTerm newPatternAction = `PatternAction(tl,preProcessing(tom), orgText);
-        return newPatternAction;
+      PatternAction(tl@TermList(termList),tom@Tom(actionList), option) -> {
+        return `PatternAction(tl,preProcessing(tom), option);
       }
       
       Match(SubjectList(l1),PatternList(l2), matchOption@Option(list))  -> {
@@ -182,7 +181,7 @@ public class TomCompiler extends TomBase {
           
           matchBlock: {
             %match(TomTerm elt) {
-              PatternAction(TermList(termList),Tom(actionList), orgText) -> {
+              PatternAction(TermList(termList),Tom(actionList), option) -> {
                 TomList newTermList = empty();
                 TomList newActionList = actionList;
 
@@ -203,7 +202,7 @@ public class TomCompiler extends TomBase {
                   }
                     
                   newActionList = cons(`InstructionToTomTerm(IfThenElse(cond,actionList,elsePart)),empty());
-                  newPatternAction = `PatternAction(TermList(renamedTermList),Tom(newActionList), orgText);        
+                  newPatternAction = `PatternAction(TermList(renamedTermList),Tom(newActionList), option);        
                     //System.out.println("\nnewPatternAction = " + newPatternAction);
                 }
 
@@ -215,7 +214,7 @@ public class TomCompiler extends TomBase {
                     // generate a new match construct
 
                   TomTerm generatedPatternAction =
-                    `PatternAction(TermList(ast().makeList(abstractedPattern)),Tom(newActionList), orgText);        
+                    `PatternAction(TermList(ast().makeList(abstractedPattern)),Tom(newActionList), option);        
                     // We reconstruct only a list of option with orgTrack and GeneratedMatch
                   ArrayList optionList = new ArrayList();
                   optionList.add(orgTrack);
@@ -228,7 +227,7 @@ public class TomCompiler extends TomBase {
                     //System.out.println("Generate new Match"+generatedMatch);
                   generatedMatch = preProcessing(generatedMatch);
                   newPatternAction =
-                    `PatternAction(TermList(newTermList),Tom(cons(generatedMatch,empty())), orgText);
+                    `PatternAction(TermList(newTermList),Tom(cons(generatedMatch,empty())), option());
 
                     //System.out.println("newPatternAction = " + newPatternAction);
                 }
@@ -282,7 +281,7 @@ public class TomCompiler extends TomBase {
         TomList newActionList = buildCondition(tail,actionList);
 
         TomTerm generatedPatternAction =
-          `PatternAction(TermList(cons(pattern,empty())),Tom(newActionList), EmptyName());        
+          `PatternAction(TermList(cons(pattern,empty())),Tom(newActionList), option());        
 
           // Warning: The options are not good
         TomTerm generatedMatch =

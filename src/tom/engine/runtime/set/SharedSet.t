@@ -43,16 +43,45 @@ public class SharedSet extends ATermSet {
   
   public SharedSet(PureFactory fact) {
     this.factory = new SetFactory(fact);
-    this.traversal = new GenericTraversal();
     this.emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
     this.tree = makeEmptySet();
   }
   
   private SharedSet(SetFactory fact, JGTreeSet tree, int count) {
     this.factory = fact;
-    this.traversal = new GenericTraversal();
     this.tree = tree;
     this.count = count;
+  }
+  
+  public Object[] toArray() {
+    final Collection res = new ArrayList();
+    Collect1 collect = new Collect1() {
+        public boolean apply(ATerm t) {
+          if(t instanceof JGTreeSet) {
+            %match(JGTreeSet t) {
+              emptySet -> {return false;}
+              singleton(x) -> {
+                res.add(x);
+                return false;
+              }
+              _ -> {return true;}
+            }
+          } else {
+            return true;
+          }
+        } // Apply
+      }; //new
+    
+    SharedSet.this.traversal.genericCollect(tree, collect);
+    ATerm[] result = new ATerm[res.size()];
+    for(int i=0;i<res.size();i++) {
+      result[i] = (ATerm) (((ArrayList)res).get(i));
+    }
+    return result;
+  }
+
+  public Object[] toArray(Object[] o) {
+    throw new RuntimeException("Not Yet Implemented");
   }
   
   public SharedSet getTail() {
