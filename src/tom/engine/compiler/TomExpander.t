@@ -473,7 +473,10 @@ public class TomExpander extends TomTask {
         X1*,
         BuildVariable(name),TargetLanguageToTomTerm(ITL("=")),value,
         X2*) -> {
-        TomTerm newValue = `BackQuoteAppl(emptyOption(),Name(Constants.TEXT_NODE),concTomTerm(value));
+          //TomTerm newValue = `BackQuoteAppl(emptyOption(),Name(Constants.TEXT_NODE),concTomTerm(value));
+          // no longer necessary to encode string attributes
+        TomTerm newValue = value;
+        
         TomList args = `concTomTerm(
           BackQuoteAppl(emptyOption(),encodeName(name),concTomTerm()),
           BackQuoteAppl(emptyOption(),Name("\"true\""),concTomTerm()),
