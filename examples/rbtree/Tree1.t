@@ -1,14 +1,15 @@
 import java.util.*;
 
 import aterm.*;
-import adt.*;
+import aterm.pure.*;
+import adt.rbtree.*;
 
 public class Tree1 {
 
   private TreeFactory factory;
   private Comparator comparator;
   
-  %include { adt/tree.tom }
+  %include { adt/rbtree/tree.tom }
   
   public Tree1(TreeFactory factory) {
     this.factory = factory;
@@ -150,7 +151,7 @@ public class Tree1 {
     stopChrono = System.currentTimeMillis();
     System.out.println("set  size = " + set.size() + " in " + (stopChrono-startChrono) + " ms");
 
-    ATermList list = factory.makeList();
+    ATermList list = factory.getPureFactory().makeList();
     startChrono = System.currentTimeMillis();
     for(int i=0 ; i<3*n ; i++) {
       list = list.insert(array[i]);
@@ -171,7 +172,7 @@ public class Tree1 {
   }
   
   public final static void main(String[] args) {
-    Tree1 test = new Tree1(new TreeFactory());
+    Tree1 test = new Tree1(new TreeFactory(new PureFactory()));
     test.run(10000);
   }
 

@@ -1,4 +1,4 @@
-*  adt-to-java --input tree.adt --jtom --package adt --output adt
+*  adt-to-java --input tree.adt --jtom --package adt.rbtree --output adt/rbtree
 
 * jtom Tree1.t
 * javac Tree1.java
