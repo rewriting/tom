@@ -324,7 +324,7 @@
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
-		<jar jarfile="${stable.lib}/jtom-${version}.jar">
+		<jar jarfile="${stable.lib}/jtom.jar">
 			<fileset dir="${stable.build}" includes="**/*.class"/>
 			<fileset dir="${stable.src}" includes="**/*.properties"/>
 		</jar>
@@ -786,15 +786,15 @@
 			<fileset dir="${src.src}"
 				includes="**/*.properties"/>
 		</copy>
-		<jar jarfile="${stable.adt}/Set-${version}.jar">
+		<jar jarfile="${stable.adt}/Set.jar">
 			<fileset dir="${src.build}" 
 							 includes="jtom/adt/set/**/*.class"/>
 		</jar>
-		<jar jarfile="${stable.adt}/TNode-${version}.jar">
+		<jar jarfile="${stable.adt}/TNode.jar">
 			<fileset dir="${src.build}" 
 							 includes="jtom/adt/tnode/**/*.class"/>
 		</jar>
-		<jar jarfile="${stable.adt}/TomSignature-${version}.jar">
+		<jar jarfile="${stable.adt}/TomSignature.jar">
 			<fileset dir="${src.build}" 
 							 includes="jtom/adt/tomsignature/**/*.class"/>
 		</jar>
@@ -829,10 +829,10 @@
 	  	<unjar src="${apigen.lib}" dest="${bundle.dir}"/>
 	  	<unjar src="${vastoadt.lib}" dest="${bundle.dir}"/>
 	  	<unjar src="${concurrent.lib}" dest="${bundle.dir}"/>
-	  	<unjar src="${stable.lib}/TNode-${version}.jar" dest="${bundle.dir}"/>
-		<unjar src="${stable.lib}/TomSignature-${version}.jar" dest="${bundle.dir}"/>
-		<unjar src="${stable.lib}/jtom-${version}.jar" dest="${bundle.dir}"/>
-		<unjar src="${stable.lib}/Set-${version}.jar" dest="${bundle.dir}"/>
+	  	<unjar src="${stable.lib}/TNode.jar" dest="${bundle.dir}"/>
+		<unjar src="${stable.lib}/TomSignature.jar" dest="${bundle.dir}"/>
+		<unjar src="${stable.lib}/jtom.jar" dest="${bundle.dir}"/>
+		<unjar src="${stable.lib}/Set.jar" dest="${bundle.dir}"/>
 			
 		<jar destfile="${aircubebundle}" basedir="${bundle.dir}"></jar>
 		<delete dir="${bundle.dir}"/>
