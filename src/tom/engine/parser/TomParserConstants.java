@@ -37,62 +37,64 @@ public interface TomParserConstants {
   int TYPE = 6;
   int TYPETERM = 7;
   int TYPEINT = 8;
-  int TYPELIST = 9;
-  int TYPEARRAY = 10;
-  int INCLUDE = 11;
-  int OPERATOR = 12;
-  int OPERATOR_LIST = 13;
-  int OPERATOR_ARRAY = 14;
-  int SINGLE_LINE_COMMENT = 23;
-  int FORMAL_COMMENT = 24;
-  int MULTI_LINE_COMMENT = 25;
-  int STRING_LITERAL = 27;
-  int LBRACE = 28;
-  int RBRACE = 29;
-  int OTHER = 30;
-  int TOM_SINGLE_LINE_COMMENT = 39;
-  int TOM_FORMAL_COMMENT = 40;
-  int TOM_MULTI_LINE_COMMENT = 41;
-  int TOM_ARROW = 43;
-  int TOM_DOUBLE_ARROW = 44;
-  int TOM_ALTERNATIVE = 45;
-  int TOM_COMMA = 46;
-  int TOM_COLON = 47;
-  int TOM_EQUAL = 48;
-  int TOM_AT = 49;
-  int TOM_DOT = 50;
-  int TOM_LPAREN = 51;
-  int TOM_RPAREN = 52;
-  int TOM_LBRACKET = 53;
-  int TOM_RBRACKET = 54;
-  int TOM_LBRACE = 55;
-  int TOM_RBRACE = 56;
-  int TOM_UNDERSCORE = 57;
-  int TOM_MINUS = 58;
-  int TOM_STAR = 59;
-  int TOM_WHERE = 60;
-  int TOM_IF = 61;
-  int TOM_MAKE = 62;
-  int TOM_MAKE_EMPTY = 63;
-  int TOM_MAKE_INSERT = 64;
-  int TOM_MAKE_APPEND = 65;
-  int TOM_IMPLEMENT = 66;
-  int TOM_FSYM = 67;
-  int TOM_GET_SLOT = 68;
-  int TOM_IS_FSYM = 69;
-  int TOM_GET_SUBTERM = 70;
-  int TOM_GET_FUN_SYM = 71;
-  int TOM_CMP_FUN_SYM = 72;
-  int TOM_EQUALS = 73;
-  int TOM_GET_HEAD = 74;
-  int TOM_GET_TAIL = 75;
-  int TOM_IS_EMPTY = 76;
-  int TOM_GET_ELEMENT = 77;
-  int TOM_GET_SIZE = 78;
-  int TOM_INTEGER = 79;
-  int TOM_IDENTIFIER = 80;
-  int TOM_LETTER = 81;
-  int TOM_DIGIT = 82;
+  int TYPESTRING = 9;
+  int TYPELIST = 10;
+  int TYPEARRAY = 11;
+  int INCLUDE = 12;
+  int OPERATOR = 13;
+  int OPERATOR_LIST = 14;
+  int OPERATOR_ARRAY = 15;
+  int SINGLE_LINE_COMMENT = 24;
+  int FORMAL_COMMENT = 25;
+  int MULTI_LINE_COMMENT = 26;
+  int STRING_LITERAL = 28;
+  int LBRACE = 29;
+  int RBRACE = 30;
+  int OTHER = 31;
+  int TOM_SINGLE_LINE_COMMENT = 40;
+  int TOM_FORMAL_COMMENT = 41;
+  int TOM_MULTI_LINE_COMMENT = 42;
+  int TOM_ARROW = 44;
+  int TOM_DOUBLE_ARROW = 45;
+  int TOM_ALTERNATIVE = 46;
+  int TOM_COMMA = 47;
+  int TOM_COLON = 48;
+  int TOM_EQUAL = 49;
+  int TOM_AT = 50;
+  int TOM_DOT = 51;
+  int TOM_LPAREN = 52;
+  int TOM_RPAREN = 53;
+  int TOM_LBRACKET = 54;
+  int TOM_RBRACKET = 55;
+  int TOM_LBRACE = 56;
+  int TOM_RBRACE = 57;
+  int TOM_UNDERSCORE = 58;
+  int TOM_MINUS = 59;
+  int TOM_STAR = 60;
+  int TOM_WHERE = 61;
+  int TOM_IF = 62;
+  int TOM_MAKE = 63;
+  int TOM_MAKE_EMPTY = 64;
+  int TOM_MAKE_INSERT = 65;
+  int TOM_MAKE_APPEND = 66;
+  int TOM_IMPLEMENT = 67;
+  int TOM_FSYM = 68;
+  int TOM_GET_SLOT = 69;
+  int TOM_IS_FSYM = 70;
+  int TOM_GET_SUBTERM = 71;
+  int TOM_GET_FUN_SYM = 72;
+  int TOM_CMP_FUN_SYM = 73;
+  int TOM_EQUALS = 74;
+  int TOM_GET_HEAD = 75;
+  int TOM_GET_TAIL = 76;
+  int TOM_IS_EMPTY = 77;
+  int TOM_GET_ELEMENT = 78;
+  int TOM_GET_SIZE = 79;
+  int TOM_INTEGER = 80;
+  int TOM_IDENTIFIER = 81;
+  int TOM_LETTER = 82;
+  int TOM_DIGIT = 83;
+  int TOM_STRING = 84;
 
   int DEFAULT = 0;
   int IN_SINGLE_LINE_COMMENT = 1;
@@ -113,6 +115,7 @@ public interface TomParserConstants {
     "\"%type\"",
     "\"%typeterm\"",
     "\"%typeint\"",
+    "\"%typestring\"",
     "\"%typelist\"",
     "\"%typearray\"",
     "\"%include\"",
@@ -125,12 +128,12 @@ public interface TomParserConstants {
     "\"\\r\"",
     "\"\\f\"",
     "\"//\"",
-    "<token of kind 21>",
+    "<token of kind 22>",
     "\"/*\"",
     "<SINGLE_LINE_COMMENT>",
     "\"*/\"",
     "\"*/\"",
-    "<token of kind 26>",
+    "<token of kind 27>",
     "<STRING_LITERAL>",
     "\"{\"",
     "\"}\"",
@@ -141,12 +144,12 @@ public interface TomParserConstants {
     "\"\\r\"",
     "\"\\f\"",
     "\"//\"",
-    "<token of kind 37>",
+    "<token of kind 38>",
     "\"/*\"",
     "<TOM_SINGLE_LINE_COMMENT>",
     "\"*/\"",
     "\"*/\"",
-    "<token of kind 42>",
+    "<token of kind 43>",
     "\"->\"",
     "\"=>\"",
     "\"|\"",
@@ -187,6 +190,7 @@ public interface TomParserConstants {
     "<TOM_IDENTIFIER>",
     "<TOM_LETTER>",
     "<TOM_DIGIT>",
+    "<TOM_STRING>",
   };
 
 }

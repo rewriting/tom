@@ -218,6 +218,42 @@ public class ASTFactory {
     list.add(cmpFunSym);
     list.add(equals);
   }
+
+    /*
+     * create a string symbol
+     */
+  public void makeStringSymbol(SymbolTable symbolTable,
+                               String value, ArrayList optionList) {
+    String resultType = "string";
+    ArrayList typeList = new ArrayList();
+    TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
+    SlotList slotList = tsf().makeSlotList_EmptySlotList();
+    TomSymbol astSymbol = makeSymbol(value,resultType,typeList,slotList,optionList,tlFsym);
+    symbolTable.putSymbol(value,astSymbol);
+  }
+
+  public void makeStringDecl(ArrayList list) {
+    String typeString = "string";
+    Declaration getFunSym, getSubterm;
+    Declaration cmpFunSym, equals;
+    Option option = makeOption();
+    TomTerm variable_t = makeVariable(option,"t",typeString);
+    TomTerm variable_t1 = makeVariable(option,"t1",typeString);
+    TomTerm variable_t2 = makeVariable(option,"t2",typeString);
+    TomTerm variable_n = makeVariable(option,"n",typeString);
+    getFunSym = tsf().makeDeclaration_GetFunctionSymbolDecl(
+      variable_t,tsf().makeTargetLanguage_ITL("t"), option);
+    getSubterm = tsf().makeDeclaration_GetSubtermDecl(
+      variable_t,variable_n,tsf().makeTargetLanguage_ITL("null"), option);
+    cmpFunSym = tsf().makeDeclaration_CompareFunctionSymbolDecl(
+      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"), option);
+    equals = tsf().makeDeclaration_TermsEqualDecl(
+      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"), option);
+    list.add(getFunSym);
+    list.add(getSubterm);
+    list.add(cmpFunSym);
+    list.add(equals);
+  }
   
     /*
      * update the root of lhs: it becomes a defined symbol

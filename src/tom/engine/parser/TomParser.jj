@@ -201,6 +201,7 @@ TOKEN :
   | < TYPE:                "%type" > : TOM
   | < TYPETERM:            "%typeterm" > : TOM
   | < TYPEINT:             "%typeint" > : TOM
+  | < TYPESTRING:          "%typestring" > : TOM
   | < TYPELIST:            "%typelist" > : TOM
   | < TYPEARRAY:           "%typearray" > : TOM
   | < INCLUDE:             "%include" > : TOM
@@ -416,6 +417,19 @@ TOKEN :
        "\u1040"-"\u1049"
       ]
   >
+| < TOM_STRING:
+      "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+
 }
 
 
@@ -456,6 +470,7 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
     | OperatorArray(blockList)           { environment.getStatistics().numberTomBlocsRecognized++; }
     | TypeTerm(blockList)                { environment.getStatistics().numberTomBlocsRecognized++; }
     | TypeInt(blockList)                 { environment.getStatistics().numberTomBlocsRecognized++; }
+    | TypeString(blockList)              { environment.getStatistics().numberTomBlocsRecognized++; }
     | TypeList(blockList)                { environment.getStatistics().numberTomBlocsRecognized++; }
     | TypeArray(blockList)               { environment.getStatistics().numberTomBlocsRecognized++; }
     | <LBRACE> BlockList(blockList) <RBRACE>
@@ -677,6 +692,22 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
         tsf().makeTomName_Name(name.image),
         tsf().makeTomList_Empty());
     }
+  | // string
+    name = <TOM_STRING>
+    {
+      text += name.image;
+      if(annotedName!=null) { optionList.add(annotedName); }
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      ast().makeStringSymbol(symbolTable,name.image,optionList);
+      
+      return tsf().makeTomTerm_Appl(
+        option,
+        tsf().makeTomName_Name(name.image),
+        tsf().makeTomList_Empty());
+    }
+
+    
 }
 
 TomTerm Term() throws TomException: /* in TOM mode */
@@ -1122,6 +1153,17 @@ void TypeInt(ArrayList list) throws TomException: /* in DEFAULT mode */
       addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       switchToDefaultMode(); /* switch to DEFAULT mode */
       ast().makeIntegerDecl(list);
+    }
+}
+
+void TypeString(ArrayList list) throws TomException: /* in DEFAULT mode */
+{}
+{
+  <TYPESTRING> /* switch to TOM mode */
+    {
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      ast().makeStringDecl(list);
     }
 }
 
