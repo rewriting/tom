@@ -8,7 +8,7 @@
 		distribution.
 		
 		To use this build file, install ant,
-		and just run ant in the current directory.
+		and just run ./build.sh in the current directory.
 		
 		You can modify certain default settings via
 		ant -Ddist="/home/yourdirectory"
@@ -257,7 +257,11 @@
 	</target>
 
 	<target name="junit" description="Runs junit acceptance tests" depends="buildtest, initjunit">
-		<tomjunit printsummary="yes">
+		<tomjunit printsummary="on"
+							fork="false"
+							haltonfailure="false"
+							failureproperty="tests.failed"
+							showoutput="true">
 			<classpath>
 				<path refid="src.classpath"/>
 				<pathelement location="${test}"/>
@@ -269,13 +273,21 @@
 				</fileset>
 			</batchtest>
 		</tomjunit>
+
+		<fail if="tests.failed">
+			****************************************************
+			****************************************************
+			  One or more tests failed. Check the output...
+			****************************************************
+			****************************************************
+		</fail>
 	</target>
 
-    <target name="boostrap">
-    <!-- Clean src--> 
-    <antcall target="cleansrc"/>
-    <!-- Build ADT once--> 
-    <antcall target="buildadt"/>
+	<target name="boostrap">
+		<!-- Clean src--> 
+		<antcall target="cleansrc"/>
+		<!-- Build ADT once--> 
+		<antcall target="buildadt"/>
     
   </target>
 

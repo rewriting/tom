@@ -2,12 +2,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import javax.xml.parsers.*;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestDom extends TestCase {
 	
   private Document dom;
 
 	%include{dom.tom}
+
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(new TestSuite(TestDom.class));
+	}
 
 	public void setUp() {
 		try {

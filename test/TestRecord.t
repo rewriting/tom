@@ -1,6 +1,11 @@
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestRecord extends TestCase {
+
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(new TestSuite(TestPeano.class));
+	}
 
     // ------------------------------------------------------------
   abstract class Exp {
@@ -175,13 +180,6 @@ public class TestRecord extends TestCase {
   }
 
     // ------------------------------------------------------------
-
-  public final static void main(String[] args) {
-    Record test = new Record();
-    test.test1();
-    test.test2();
-    test.test3();
-  }
 
   public Exp buildExp1() {
     return new Mult(new Plus(new IntExp(2), new IntExp(3)), new IntExp(4));

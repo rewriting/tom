@@ -9,6 +9,10 @@ public class TestList extends TestCase {
   private ATermFactory factory;
 	private int testNumber;
 
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(new TestSuite(TestDom.class));
+	}
+
   public void setUp() {
     factory = new PureFactory(16);
     ok   = factory.parse("ok");

@@ -2,6 +2,7 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestArray extends TestCase {
 
@@ -61,6 +62,10 @@ public class TestArray extends TestCase {
     double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
     double3(conc(X*)) -> conc(X*)
   } 
+
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(new TestSuite(TestArray.class));
+	}
 	
 	protected void setUp() {
 		this.factory = new PureFactory(16);

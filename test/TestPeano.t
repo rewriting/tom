@@ -1,6 +1,7 @@
 import aterm.*;
 import aterm.pure.*;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestPeano extends TestCase {
 
@@ -64,6 +65,10 @@ public class TestPeano extends TestCase {
     fsym { factory.makeAFun("appl2term" , 1, false) }
     make(t) { appl2term(t) }
   }
+
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(new TestSuite(TestPeano.class));
+	}
 
   public void setUp() {
     this.factory = new PureFactory(16);

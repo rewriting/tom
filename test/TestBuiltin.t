@@ -1,12 +1,17 @@
 import aterm.*;
 import aterm.pure.*;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestBuiltin extends TestCase {
   private static ATerm ok,fail;
   private static ATerm pattern1,pattern2,pattern3,pattern4,pattern5;
  
   private ATermFactory factory;
+
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(new TestSuite(TestBuiltin.class));
+	}
   
   public void setUp() {
     factory = new PureFactory(16);
