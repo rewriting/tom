@@ -35,16 +35,26 @@ package minirho;
  import tom.library.traversal.*;
  import minirho.rho.rhoterm.*;
  import minirho.rho.rhoterm.types.*;
+
  public class Rho {
 
 	 private rhotermFactory factory;
 	 private GenericTraversal traversal;
 
+
+   public Rho(rhotermFactory factory) {
+     this.factory = factory;
+     this.traversal = new GenericTraversal();
+   }
+  public rhotermFactory getRhotermFactory() {
+    return factory;
+  }
+
 	%vas{
 		 module rhoterm
      imports 
 		 public
-			 sorts RTerm Constraint
+			 sorts RTerm Constraint ListConstraint
 		 abstract syntax
 //TERMS
 			 var(na:String) -> RTerm
@@ -80,7 +90,7 @@ package minirho;
 							
 						//rho 
 						app(abs(P,M),N)-> {	
-						    return `appC(match(P,N),M) ;
+						    return `appC(concConstraint(match(P,N)),M) ;
 						}		
 						//delta
 						app(struct(M1,M2),N) -> { 
@@ -88,11 +98,11 @@ package minirho;
 						}
 						//ToSubstVar
 						appC((match(X@var[],A)),B) -> {
-						    return `appC(eq(X,A),B);
+						    return `appC(concAnd(eq(X,A)),B);
 						}
 						//ToSubstAnd
 						appC((Phi*,match(X@var[],M),Xsi*),N) -> {
-							return `appC(and(Phi,Xsi),appC(eq(X,M),N));
+							return `appC(concAnd(Phi,Xsi),appC(eq(X,M),N));
 						}
 					}
 				}
