@@ -1,3 +1,4 @@
+(* vim: set filetype=ocaml : *)
 (*open TomExtension;;*)
 (*open TomList ;; *)
 

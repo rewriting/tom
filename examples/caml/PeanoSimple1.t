@@ -1,3 +1,5 @@
+(* vim: set filetype=ocaml : *)
+
 open Peanotype ;;
 exception Erreur of string ;;
 
