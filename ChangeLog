@@ -1,3 +1,12 @@
+2003-01-10  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/parser/TomParser.jj: 
+	  - make_add renamed into make_insert (for oplist)
+	  - make_add renamed into make_append (for oparray)
+
+	* src/jtom/compiler/TomGenerator.t: 
+	  - backquote support for typearray
+
 2002-12-21    <pem@escher>
         * jtom uses the cvs-sop CVS server
 
