@@ -1,3 +1,5 @@
+
+
 //Source file: C:\\document\\codegen\\xquery\\lib\\SlashSlashOperator.java
 
 package xquery.lib;
@@ -77,26 +79,33 @@ public class SlashSlashOperator extends PathOperator
    */
   public Sequence run(Node node) 
   {
-	System.out.println("SlashSlashOperator: run Node: ");
+	//	System.out.println("SlashSlashOperator: run Node: ");
 	
 	NodeTraversal traversal = new NodeTraversal();
 	final Sequence s=new Sequence(); 
 	//	int index=1;   // predicate base 1, not 0
 	
 	Collect1 collect = new Collect1() { 
-		int index=1;
+ 		int index=1;
 		public boolean apply(Object t) 
 		{ 
 		  try {
 			if(t instanceof Node) {
 			  Node anode = (Node)t; 
+			  // 			  if (anode.getNodeName().compareTo("book") ==0)
+			  // 				System.out.println("Testing BOOK");
 			  if (doTest(anode) && doFilter(anode, index)) {
 				s.add(anode);
-				index++;
-				System.out.println(index);
+				//				System.out.println("Test OK");
+				// 				System.out.println("index:"+index);
+ 				index++;
 				return true; // continue
 			  }
-
+			  // 			  else {
+			  // 				System.out.println("Test Failed");
+			  
+			  // 			  }
+			  
 			} 
 			return true;  // continue
 		  }

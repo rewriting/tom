@@ -1,6 +1,7 @@
 package xquery.util; 
 
 import org.w3c.dom.*;
+import xquery.util.DomTree02;
 
 
 public class NodeTraversal {
@@ -30,13 +31,28 @@ public class NodeTraversal {
      */
   protected void genericCollectArray(Object subject, Collect collect, Object[] args) 
   {
+	DomTree02 dt = new DomTree02(); 
+
     try {
       if(collect.apply(subject,args)) { 
         if(subject instanceof Node) { 
 		  Node node = (Node)subject; 
+		  // 		  System.out.println("=========================================================================================");
+// 		  if (node.getNodeName().compareTo("#text")!=0) {
+// 			System.out.println(node.getNodeName() + ":" + level + ":" + childNumber);
+// 			System.out.println(node.getChildNodes().getLength());
+// 		  }
+// 		  if (node.getNodeName().compareTo("book") ==0)
+// 			System.out.println("Book found");
+		  
+// 		  if (node.getNodeName().compareTo("#document") ==0) {
+// 			System.out.println(node.getChildNodes().getLength());
+// 		  }
+		  
+		  
 		  // travers all childs
 		  if (node.hasChildNodes()) {
-			NodeList childList = node.getChildNodes();			
+			NodeList childList = node.getChildNodes();
 			for (int i=0; i < childList.getLength(); i++) {
 			  genericCollectArray(childList.item(i), collect, args); 
 			}

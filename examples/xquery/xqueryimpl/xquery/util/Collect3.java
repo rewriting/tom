@@ -40,5 +40,5 @@ package xquery.util;
 import org.w3c.dom.*;
 
 public abstract class Collect3 extends Collect {
-  abstract public boolean apply(Object t, Object arg1, Object arg2);
+  abstract public boolean apply(Object t, Object arg1, Object arg2); 
 }
