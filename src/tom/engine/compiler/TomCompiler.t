@@ -29,7 +29,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
+
 import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;

@@ -28,7 +28,8 @@ package jtom.tools;
 import java.text.MessageFormat;
 
 import jtom.*;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.checker.TomCheckerMessage;;
 
 public abstract class TomTask extends TomBase {

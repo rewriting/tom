@@ -26,7 +26,8 @@
 package jtom.runtime.xml;
 
 import java.io.*;
-import jtom.runtime.xml.adt.*;
+import jtom.runtime.xml.adt.tnode.*;
+import jtom.runtime.xml.adt.tnode.types.*;
 import aterm.*;
 import aterm.pure.*;
 import jtom.exception.TomRuntimeException;
@@ -35,20 +36,20 @@ public class ATermToXML {
   
   %include{ adt/TNode.tom }
 
-  private TNodeFactory nodesFactory = null;
+  private Factory factory = null;
   private OutputStream out = System.out;
   private Writer writer = null;
 
-  private TNodeFactory getTNodeFactory() {
-    return nodesFactory;
+  private Factory getTNodeFactory() {
+    return factory;
   }
 
   public ATermToXML () {
-    nodesFactory = new TNodeFactory(new PureFactory());
+    factory = new Factory(new PureFactory());
   }
 
-  public ATermToXML (TNodeFactory factory) {
-    nodesFactory = factory;
+  public ATermToXML (Factory factory) {
+    this.factory = factory;
   }
 
   public void setOutputStream(OutputStream out){
@@ -61,7 +62,7 @@ public class ATermToXML {
 
   public void convert(String filename) {
     try {
-      convert(nodesFactory.getPureFactory().readFromFile(filename));
+      convert(factory.getPureFactory().readFromFile(filename));
     } catch (IOException e) {
       System.out.println(e.getMessage());
     }

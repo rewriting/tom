@@ -34,7 +34,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.backend.*;
 import jtom.checker.*;
 import jtom.compiler.*;
@@ -47,7 +48,7 @@ public class Tom {
 	//Necessary structure
 	private TomTask initialTask;
 	private TomTaskInput taskInput;
-	private TomSignatureFactory tomSignatureFactory;
+	private Factory tomSignatureFactory;
 	private TomEnvironment environment;
 	// potential tasks to be connected together to form the compiler chain
 
@@ -91,7 +92,7 @@ public class Tom {
 
 	public Tom(String args[]) {
           PureFactory pureFactory = new PureFactory();
-          tomSignatureFactory = new TomSignatureFactory(pureFactory);
+          tomSignatureFactory = new Factory(pureFactory);
           taskInput = new TomTaskInput(tomSignatureFactory.makeTomErrorList());
           modifyTaskInputFromArgs(args);
           if (taskInput.isHelp() || taskInput.isVersion()) {
@@ -103,7 +104,7 @@ public class Tom {
 	}
 
 	public Tom(TomTaskInput input) {
-		tomSignatureFactory = new TomSignatureFactory(new PureFactory());
+		tomSignatureFactory = new Factory(new PureFactory());
 		this.taskInput = input;
 		initializeStructure();
 		createTaskChainFromInput();

@@ -27,7 +27,8 @@ package jtom.tools;
 
 import jtom.*;
 import java.util.*;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.xml.*;
 import aterm.*;
 

@@ -2,8 +2,8 @@
   
     TOM - To One Matching Compiler
     
-    Copyright (C) 2000-2003  LORIA (CNRST, INPL, INRIA, UHP, U-Nancy 2)
-    Nancy, France.
+    Copyright (C) 2000-2003 INRIA
+                            Nancy, France.
     
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,11 +32,10 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
 import jtom.runtime.Collect1;
 import jtom.runtime.GenericTraversal;
-import jtom.runtime.set.jgtreeset.JGTreeSet;
-import jtom.runtime.set.jgtreeset.SetFactory;
+import jtom.runtime.set.jgtreeset.set.*;
+import jtom.runtime.set.jgtreeset.set.types.*;
 import aterm.*;
 
 public abstract class ATermSet implements Collection {
@@ -52,7 +51,7 @@ public abstract class ATermSet implements Collection {
   protected static GenericTraversal traversal = new GenericTraversal();
 
   static protected JGTreeSet emptyTree;
-  static protected SetFactory factory = null;
+  static protected Factory factory = null;
   static protected int collisions = 0;
   static final protected int[] mask =
   { 1 << 0, 
@@ -95,7 +94,7 @@ public abstract class ATermSet implements Collection {
     return tree.getUniqueIdentifier();
   }
   
-  protected SetFactory getSetFactory() { 
+  protected Factory getSetFactory() { 
     return factory;
   }
   

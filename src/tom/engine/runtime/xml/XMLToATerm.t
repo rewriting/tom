@@ -26,7 +26,8 @@
 package jtom.runtime.xml;
 
 import java.io.*;
-import jtom.runtime.xml.adt.*;
+import jtom.runtime.xml.adt.tnode.*;
+import jtom.runtime.xml.adt.tnode.types.*;
 import java.util.Hashtable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +42,7 @@ public class XMLToATerm {
   
   %include{ adt/TNode.tom }
 	
-  private TNodeFactory nodesFactory = null;
+  private Factory factory = null;
   private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
   private Hashtable ht_Nodes = new Hashtable();
@@ -54,16 +55,16 @@ public class XMLToATerm {
     deleteWhiteSpaceNodes=b_d;
   }
 
-  private TNodeFactory getTNodeFactory() {
-    return nodesFactory;
+  private Factory getTNodeFactory() {
+    return factory;
   }
 
   public XMLToATerm () {
-    nodesFactory = new TNodeFactory(new PureFactory());
+    factory = new Factory(new PureFactory());
   }
 
-  public XMLToATerm(TNodeFactory factory) {
-    nodesFactory = factory;
+  public XMLToATerm(Factory factory) {
+    this.factory = factory;
   }
 
   public XMLToATerm(String filename) {
@@ -71,7 +72,7 @@ public class XMLToATerm {
     convert(filename);
   }
 
-  public XMLToATerm(TNodeFactory factory,String filename) {
+  public XMLToATerm(Factory factory,String filename) {
     this(factory);
     convert(filename);
   }

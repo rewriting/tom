@@ -26,16 +26,17 @@
 package jtom;
 
 import jtom.tools.*;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 
 public class TomEnvironment {
 
 	private ASTFactory astFactory;
-	private TomSignatureFactory tomSignatureFactory;
+	private Factory tomSignatureFactory;
 	private SymbolTable symbolTable;
 
 	public TomEnvironment(
-		TomSignatureFactory tomSignatureFactory,
+		Factory tomSignatureFactory,
 		ASTFactory astFactory,
 		SymbolTable symbolTable) {
 		this.tomSignatureFactory = tomSignatureFactory;
@@ -47,7 +48,7 @@ public class TomEnvironment {
 		return astFactory;
 	}
 
-	public TomSignatureFactory getTomSignatureFactory() {
+	public Factory getTomSignatureFactory() {
 		return tomSignatureFactory;
 	}
 

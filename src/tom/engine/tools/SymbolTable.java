@@ -30,7 +30,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 
 public class SymbolTable {
   private boolean cCode = false, jCode = true, eCode =false;
@@ -78,7 +79,7 @@ public class SymbolTable {
     return astFactory;
   }
 
-  protected TomSignatureFactory tsf() {
+  protected Factory tsf() {
     return ast().tsf();
   }
 

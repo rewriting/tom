@@ -31,7 +31,8 @@ import aterm.*;
 import java.util.*;
 
 import jtom.TomEnvironment;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.tools.TomTask;
 import jtom.runtime.Collect1;
 import jtom.xml.Constants;

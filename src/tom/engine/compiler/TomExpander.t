@@ -27,7 +27,8 @@ package jtom.compiler;
   
 import java.util.HashSet;
 
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.runtime.Replace1;
 import jtom.runtime.Replace2;
 import aterm.ATerm;

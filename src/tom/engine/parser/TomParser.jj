@@ -37,7 +37,10 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 import jtom.TomEnvironment;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
+import jtom.adt.tomsignature.types.tomterm.RuleSet;
+import jtom.adt.tomsignature.types.tomterm.Match;
 import jtom.exception.*;
 import jtom.tools.*;
 import jtom.checker.TomCheckerMessage;
@@ -533,7 +536,7 @@ void MatchConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       OptionList option = ast().makeOptionList(optionList);
-      TomTerm_Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
+      Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
                                                     tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
                                                     option);
       list.add(match);
@@ -1364,7 +1367,7 @@ void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
     <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    TomTerm_RuleSet rule = tsf().makeTomTerm_RuleSet(ruleList, orgTrackRuleSet);
+    RuleSet rule = tsf().makeTomTerm_RuleSet(ruleList, orgTrackRuleSet);
     list.add(rule);
     if (debugMode)
       debuggedStructureList.add(rule);

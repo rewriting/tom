@@ -25,7 +25,9 @@ Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
 
   package jtom.backend;
 
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
+
 import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
 import jtom.tools.TomTask;

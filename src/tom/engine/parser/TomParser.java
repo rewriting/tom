@@ -30,7 +30,10 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 import jtom.TomEnvironment;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
+import jtom.adt.tomsignature.types.tomterm.RuleSet;
+import jtom.adt.tomsignature.types.tomterm.Match;
 import jtom.exception.*;
 import jtom.tools.*;
 import jtom.checker.TomCheckerMessage;
@@ -332,7 +335,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
       OptionList option = ast().makeOptionList(optionList);
-      TomTerm_Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
+      Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
                                                     tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
                                                     option);
       list.add(match);
@@ -1498,7 +1501,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    TomTerm_RuleSet rule = tsf().makeTomTerm_RuleSet(ruleList, orgTrackRuleSet);
+    RuleSet rule = tsf().makeTomTerm_RuleSet(ruleList, orgTrackRuleSet);
     list.add(rule);
     if (debugMode)
       debuggedStructureList.add(rule);
@@ -2551,29 +2554,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     finally { jj_save(10, xla); }
   }
 
-  final private boolean jj_3R_28() {
-    if (jj_3R_33()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_27() {
-    if (jj_3R_32()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    Token xsp;
-    xsp = jj_scanpos;
-    lookingAhead = true;
-    jj_semLA = getToken(1).kind==TOM_LPAREN;
-    lookingAhead = false;
-    if (!jj_semLA || jj_3R_27()) {
-    jj_scanpos = xsp;
-    if (jj_3R_28()) return true;
-    }
-    return false;
-  }
-
   final private boolean jj_3_1() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
@@ -2816,6 +2796,29 @@ public class TomParser extends TomTask implements TomParserConstants {
 
   final private boolean jj_3R_50() {
     if (jj_scan_token(XML_TEXT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_28() {
+    if (jj_3R_33()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_27() {
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    Token xsp;
+    xsp = jj_scanpos;
+    lookingAhead = true;
+    jj_semLA = getToken(1).kind==TOM_LPAREN;
+    lookingAhead = false;
+    if (!jj_semLA || jj_3R_27()) {
+    jj_scanpos = xsp;
+    if (jj_3R_28()) return true;
+    }
     return false;
   }
 

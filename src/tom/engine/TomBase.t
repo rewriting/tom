@@ -30,7 +30,8 @@ import java.util.*;
 import aterm.*;
 
 import jtom.tools.*;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.runtime.*;
 import jtom.exception.TomRuntimeException;
 import java.lang.Throwable;
@@ -55,11 +56,11 @@ public class TomBase {
     return tomEnvironment.getASTFactory();
   }
 	
-	protected TomEnvironment environment() {
-		return tomEnvironment;
-	}
+  protected TomEnvironment environment() {
+    return tomEnvironment;
+  }
 	
-  protected TomSignatureFactory tsf() {
+  protected Factory tsf() {
     return tomEnvironment.getTomSignatureFactory();
   }
 
@@ -67,7 +68,7 @@ public class TomBase {
     return this.traversal;
   }
 
-  protected final TomSignatureFactory getTomSignatureFactory() {
+  protected final Factory getTomSignatureFactory() {
     return tsf();
   }
   

@@ -2,7 +2,7 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS		= jgtreeset
+#SUBDIRS		= jgtreeset
 javadir         = ${prefix}/classes/jtom/runtime/set
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
@@ -24,33 +24,19 @@ bootinstall :
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-api:
-	adt-to-java -v -i set.adt -n set -j -p jtom.runtime.set.jgtreeset -o jgtreeset -m 'aterm.*'
-
 # we use the last installed compiler to compile the current compiler
 TOMFLAGS = --noWarning
 TOM = ${prefix}/bin/jtom
 
-SharedSet.java : SharedSet.t
+ATermSet.java : ATermSet.t jgtreeset/set.tom
+	$(TOM) $(TOMFLAGS) $<
+SharedSet.java : SharedSet.t jgtreeset/set.tom
 	$(TOM) $(TOMFLAGS) --noDeclaration $<
-SharedMultiSet.java : SharedMultiSet.t
+SharedMultiSet.java : SharedMultiSet.t jgtreeset/set.tom
 	$(TOM) $(TOMFLAGS) --noDeclaration $<
 
-%.java : %.t
-	$(TOM) $(TOMFLAGS) $*
-
-%.tom.c : %.t
-	$(TOM) --cCode $(TOMFLAGS) $*
-
-SharedSet.t: jgtreeset/set.tom
-	@touch SharedSet.t
-
-SharedMultiSet.t: jgtreeset/set.tom
-	@touch SharedMultiSet.t
-
-ATermSet.t: jgtreeset/set.tom
-	@touch ATermSet.t
+api:
+	${ADTTOTOM} --javagen -i set.adt -n set -p jtom.runtime.set.jgtreeset --output $(JAVAROOT)
 
 jgtreeset/set.tom: set.adt
-	${ADTTOJAVA} -v -i set.adt -n set -j -p jtom.runtime.set.jgtreeset --output jgtreeset
-	mv jgtreeset/SetMakeRules jgtreeset/SetMakeRules.am
+	${ADTTOTOM} --javagen -i set.adt -n set -p jtom.runtime.set.jgtreeset --output $(JAVAROOT)

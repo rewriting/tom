@@ -32,16 +32,17 @@ import org.w3c.dom.NodeList;
 
 import aterm.*;
 import aterm.pure.*;
-import jtom.runtime.xml.adt.*;
+import jtom.runtime.xml.adt.tnode.*;
+import jtom.runtime.xml.adt.tnode.types.*;
 
 public class XmlTools {
 
   private ATermToXML a2x;
   private XMLToATerm x2a;
-  private TNodeFactory ntf = null;
+  private Factory ntf = null;
 
   public XmlTools () {
-    ntf = new TNodeFactory(new PureFactory());
+    ntf = new Factory(new PureFactory());
     a2x = new ATermToXML(ntf);
     x2a = new XMLToATerm(ntf);
   }
@@ -50,7 +51,7 @@ public class XmlTools {
     x2a.setDeletingWhiteSpaceNodes(b_d);
   }
 
-  public TNodeFactory getTNodeFactory() {
+  public Factory getTNodeFactory() {
     return ntf;
   }
 

@@ -2,7 +2,7 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS         = adt runtime tools exception parser checker compiler backend debug xml
+SUBDIRS         = runtime tools exception parser checker compiler backend debug xml
 
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
@@ -25,16 +25,14 @@ bootinstall:
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-TomBase.t: adt/TomSignature.tom
-	@touch TomBase.t
-
-adt/TomSignature.tom: TomSignature.adt
-	${ADTTOJAVA} -v -i TomSignature.adt -n TomSignature -j -p jtom.adt --output adt 
-	mv adt/TomSignatureMakeRules adt/TomSignatureMakeRules.am
+TomBase.java: TomBase.t adt/TomSignature.tom
+	$(TOM) $(TOMFLAGS) $<
 
 api:
-	adt-to-java -v -i TomSignature.adt -n TomSignature -j -p jtom.adt -o adt
-	mv adt/TomSignatureMakeRules adt/TomSignatureMakeRules.am
+	${ADTTOTOM} --javagen -i TomSignature.adt -n TomSignature -p jtom.adt --output $(JAVAROOT)
+
+adt/TomSignature.tom: TomSignature.adt
+	${ADTTOTOM} --javagen -i TomSignature.adt -n TomSignature -p jtom.adt --output $(JAVAROOT)
 
 # we use the last installed compiler to compile the current compiler
 TOMFLAGS = --noWarning

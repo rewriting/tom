@@ -2,7 +2,7 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS         = adt
+#SUBDIRS         = adt
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 javadir         = ${prefix}/classes/jtom/runtime/xml
@@ -25,15 +25,17 @@ bootinstall:
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-ATermToXML.t: adt/TNode.tom
-	@touch ATermToXML.t
+ATermToXML.java: ATermToXML.t adt/TNode.tom
+	$(TOM) $(TOMFLAGS) $<
 
-XMLToATerm.t: adt/TNode.tom
-	@touch XMLToATerm.t
+XMLToATerm.java: XMLToATerm.t adt/TNode.tom
+	$(TOM) $(TOMFLAGS) $<
+
+api:
+	${ADTTOTOM} --javagen -i TNode.adt -n TNode -p jtom.runtime.xml.adt --output $(JAVAROOT)
 
 adt/TNode.tom: TNode.adt
-	${ADTTOJAVA} -v -i TNode.adt -n TNode -j -p jtom.runtime.xml.adt --output adt 
-	mv adt/TNodeMakeRules adt/TNodeMakeRules.am
+	${ADTTOTOM} --javagen -i TNode.adt -n TNode -p jtom.runtime.xml.adt --output $(JAVAROOT)
 
 TOMFLAGS = --noWarning 
 TOM = ${prefix}/bin/jtom

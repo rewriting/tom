@@ -26,19 +26,20 @@
 package jtom.tools;
 
 import java.util.*;
-import jtom.adt.*;
+import jtom.adt.tomsignature.*;
+import jtom.adt.tomsignature.types.*;
 import jtom.xml.*;
 import aterm.ATerm;
 
 public class ASTFactory {
 
-  private TomSignatureFactory tomSignatureFactory;
+  private Factory tomSignatureFactory;
   
-  public ASTFactory(TomSignatureFactory tomSignatureFactory) {
+  public ASTFactory(Factory tomSignatureFactory) {
     this.tomSignatureFactory = tomSignatureFactory;
   }
 
-  protected TomSignatureFactory tsf() {
+  protected Factory tsf() {
     return tomSignatureFactory;
   }
 
