@@ -1,3 +1,15 @@
+This files describes how to ensure non regression a TomChecker.
+
+This tests have been created using: ./verify-check -c
+S, for each *.t file we call jtom --Wall and redirect the output to a corresponding file *.expectedOutcome
+
+To valide the non regression, call ./verify-check
+A diff call is realized on the output of jtom --Wall and the expectedOutcome.
+
+
+Each following section describes expected failure of Tom and its corresponding line and message.
+
+
 ////////////////////
 TYPETERM DECLARATION
 ////////////////////
