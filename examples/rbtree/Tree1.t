@@ -2,21 +2,22 @@ import java.util.*;
 
 import aterm.*;
 import aterm.pure.*;
-import adt.rbtree.*;
+import adt.rbtree.tree.*;
+import adt.rbtree.tree.types.*;
 
 public class Tree1 {
 
-  private TreeFactory factory;
+  private Factory factory;
   private Comparator comparator;
   
-  %include { adt/rbtree/tree.tom }
+  %include { tree.tom }
   
-  public Tree1(TreeFactory factory) {
+  public Tree1(Factory factory) {
     this.factory = factory;
     this.comparator = new MyComparator();
   }
 
-  public TreeFactory getTreeFactory() {
+  public Factory getTreeFactory() {
     return factory;
   }
 
@@ -172,7 +173,7 @@ public class Tree1 {
   }
   
   public final static void main(String[] args) {
-    Tree1 test = new Tree1(new TreeFactory(new PureFactory()));
+    Tree1 test = new Tree1(new Factory(new PureFactory()));
     test.run(10000);
   }
 

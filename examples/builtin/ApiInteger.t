@@ -1,18 +1,19 @@
 import aterm.*;
-import adt.builtin.*;
+import adt.builtin.term.*;
+import adt.builtin.term.types.*;
 import aterm.pure.PureFactory;
 
 public class ApiInteger {
 
-  private TermFactory factory;
+  private Factory factory;
   
-  %include { adt/builtin/term.tom }
+  %include { term.tom }
 
-  public ApiInteger(TermFactory factory) {
+  public ApiInteger(Factory factory) {
     this.factory = factory;
   }
 
-  public TermFactory getTermFactory() {
+  public Factory getTermFactory() {
     return factory;
   }
 
@@ -39,7 +40,7 @@ public class ApiInteger {
   }
   
   public final static void main(String[] args) {
-    ApiInteger test = new ApiInteger(new TermFactory(new PureFactory(16)));
+    ApiInteger test = new ApiInteger(new Factory(new PureFactory(16)));
     test.run();
   }
   
