@@ -41,7 +41,6 @@ import aterm.pure.*;
 import jtom.*;
 import jtom.tools.*;
 
-import jtom.verifier.*;
 import jtom.exception.*;
 import jtom.adt.*;
 
@@ -53,16 +52,14 @@ public class TomParser {
   private Position orgTrack;
   private String nameMethod;
   private TomBuffer tomBuffer;
-  private TomVerifier tomVerifier;
   private SymbolTable symbolTable;
   private jtom.TomEnvironment environment;
   private File importList[];
 
-  public TomParser(TomBuffer input, jtom.TomEnvironment environment, TomVerifier tomVerifier, File importList[]) {
+  public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[]) {
     this(input);
     this.tomBuffer = input;
     this.symbolTable = environment.getSymbolTable();
-    this.tomVerifier = tomVerifier;	
     this.environment = environment;
     this.importList = importList;
     orgTrack = makePosition(0,0);
@@ -78,10 +75,6 @@ public class TomParser {
   
   public ASTFactory ast() {
     return environment.getASTFactory();
-  }
- 
-  public TomVerifier verifier() {
-    return tomVerifier;
   }
   
   private String getLine() {
@@ -395,7 +388,6 @@ TomTerm startParsing() throws TomException : /* in DEFAULT mode */
 {
   BlockList(blockList)
     {
-      verifier().testTypeOperator();
       upToEOF = tomBuffer.extractBuffer(oldPos,getPos());
       blockList.add(makeTL(upToEOF));
       parseTree = tsf().makeTomTerm_Tom(ast().makeList(blockList));
@@ -701,7 +693,7 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
       inputBuffer = new byte[(int)file.length()+1];
       input       = new FileInputStream(file);
       input.read(inputBuffer);
-      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),verifier(),importList);
+      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList);
       astTom = tomParser.startParsing();
       astTom = tsf().makeTomTerm_TomInclude(astTom.getList());
       list.add(astTom);
@@ -738,12 +730,8 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
                      tsf().makeTomTerm_Term(rhs)));
         // update the root of lhs: it becomes a defined symbol
       if(ruleNumber==0) {
-        verifier().testRuleSymbolInSymbolTable(lhs);
         ast().updateDefinedSymbol(symbolTable,lhs);
       }
-      nameTypeInRule = verifier().testRuleTypeAndConstructorEgality(lhs, nameTypeInRule, ruleNumber);
-      verifier().testNoUnderscore(rhs,true);
-      verifier().testRuleTypeEgality(rhs, nameTypeInRule, lhs);
       ruleNumber++;
     }
   )*
@@ -751,7 +739,6 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(tsf().makeTomTerm_RuleSet(ast().makeList(ruleList)));
-    verifier().testMakeDefine(ruleList);
   }
 }
 
@@ -795,7 +782,6 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
       typeArg = <TOM_IDENTIFIER>
       {   
 	  nbArg = nbArg + 1; 
-	  verifier().addTypeOperator(typeArg.image,getLine(),name.image);
 	  types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
       }
       ( <TOM_COMMA>
@@ -807,7 +793,6 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
         { slotList.add(tsf().makeTomTerm_SlotName(stringSlotName)); }
         typeArg = <TOM_IDENTIFIER>
         { nbArg = nbArg + 1;
-          verifier().addTypeOperator(typeArg.image,getLine(),name.image);
           types.add(tsf().makeTomType_TomTypeAlone(typeArg.image)); } )*
       <TOM_RPAREN> ]
 
@@ -827,12 +812,9 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
     )*
   <TOM_RBRACE>
     {
-      verifier().testOperator(ast().makeOptionList(options));
       nameMethod = name.image;
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine()));
-      verifier().testOperatorYetDefined(name.image);
       astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
       list.add(tsf().makeDeclaration_SymbolDecl(astName));
       putSymbol(name.image,astSymbol);
@@ -858,7 +840,6 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
          {
-           verifier().addTypeOperator(typeArg.image,getLine(),name.image);
            types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
          }
   <TOM_LBRACE>
@@ -869,11 +850,8 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
     )*
   <TOM_RBRACE>
     {
-      verifier().testOperatorList(ast().makeOptionList(options));
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine())); 	
-      verifier().testOperatorYetDefined(name.image);
       astName   = tsf().makeTomName_Name(name.image);
       astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
       list.add(tsf().makeDeclaration_SymbolDecl(astName));
@@ -900,7 +878,6 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
          { 
-           verifier().addTypeOperator(typeArg.image,getLine(),name.image);
  	   types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
          }
   <TOM_LBRACE>
@@ -911,11 +888,8 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
     )*
   <TOM_RBRACE>
     {
-      verifier().testOperatorArray(ast().makeOptionList(options));
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine())); 
-      verifier().testOperatorYetDefined(name.image);
       astName   = tsf().makeTomName_Name(name.image);
       astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
       list.add(tsf().makeDeclaration_SymbolDecl(astName));
@@ -936,6 +910,7 @@ void TypeTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
   TargetLanguage implement;
   Declaration attribute;
   TomType astType;
+  Option orgTrack;
 }
 {
   (
@@ -951,6 +926,7 @@ void TypeTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
     }
   )  
   type=<TOM_IDENTIFIER>
+    { orgTrack = ast().makeOriginTracking(type.image,getLine());}
   <TOM_LBRACE>
     implement = KeywordImplement()
     ( 
@@ -964,8 +940,7 @@ void TypeTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
-      list.addAll(blockList);
-      verifier().testTypeTerm(ast().makeOptionList(blockList));
+      list.add(tsf().makeDeclaration_TypeTermDecl(ast().makeList(blockList), orgTrack));
     }
 }
 
@@ -987,6 +962,7 @@ void TypeList(ArrayList list) throws TomException: /* in DEFAULT mode */
   TargetLanguage implement;
   Declaration attribute;
   TomType astType;
+  Option orgTrack;
 }
 {
   <TYPELIST> /* switch to TOM mode */
@@ -995,6 +971,7 @@ void TypeList(ArrayList list) throws TomException: /* in DEFAULT mode */
     }
   
   type=<TOM_IDENTIFIER>
+    { orgTrack = ast().makeOriginTracking(type.image,getLine()); }
   <TOM_LBRACE>
     implement = KeywordImplement()
     ( 
@@ -1009,11 +986,9 @@ void TypeList(ArrayList list) throws TomException: /* in DEFAULT mode */
   <TOM_RBRACE>
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
-      list.addAll(blockList);
-      verifier().testTypeList(ast().makeOptionList(blockList));
+      list.add(tsf().makeDeclaration_TypeListDecl(ast().makeList(blockList), orgTrack));
     }
 }
 
@@ -1024,6 +999,7 @@ void TypeArray(ArrayList list) throws TomException: /* in DEFAULT mode */
   TargetLanguage implement;
   Declaration attribute;
   TomType astType;
+  Option orgTrack;
 }
 {
   <TYPEARRAY> /* switch to TOM mode */
@@ -1032,6 +1008,7 @@ void TypeArray(ArrayList list) throws TomException: /* in DEFAULT mode */
     }
   
   type=<TOM_IDENTIFIER>
+    {orgTrack = ast().makeOriginTracking(type.image,getLine());}
   <TOM_LBRACE>
     implement = KeywordImplement()
     ( 
@@ -1047,8 +1024,7 @@ void TypeArray(ArrayList list) throws TomException: /* in DEFAULT mode */
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
-      list.addAll(blockList);
-      verifier().testTypeArray(ast().makeOptionList(blockList));
+      list.add(tsf().makeDeclaration_TypeArrayDecl(ast().makeList(blockList), orgTrack));
     }
 }
 
@@ -1339,7 +1315,6 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
       nameArg = <TOM_IDENTIFIER>
        {
 	 nbArg2 = nbArg2 + 1;
-	 verifier().testArg(nbArg, nbArg2, false, nameMethod, getLine());
          type = (TomType)types.get(index++);
          name = tsf().makeTomName_Name(nameArg.image);  
          Option info1 = ast().makeOriginTracking(nameArg.image,getLine());
@@ -1349,7 +1324,6 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
       ( <TOM_COMMA> nameArg = <TOM_IDENTIFIER>
         {
 	  nbArg2 = nbArg2 + 1;
-	  verifier().testArg(nbArg, nbArg2, false, nameMethod, getLine());
           type = (TomType)types.get(index++);
           name = tsf().makeTomName_Name(nameArg.image); 
           Option info2 = ast().makeOriginTracking(nameArg.image,getLine());
@@ -1360,7 +1334,6 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
       <TOM_RPAREN> ) ]
   tlCode = GoalLanguageBlock(blockList)
    {
-     verifier().testArg(nbArg, nbArg2, true, nameMethod, getLine());
      return ast().makeMakeDecl(opname,returnType,args,tlCode);
    }
 }

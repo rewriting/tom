@@ -158,8 +158,6 @@ public class Tom {
 						    astFactory,
 						    symbolTable,
 						    statistics);  
-    
-    TomVerifier  tomVerifier = new TomVerifier(environment);
 	
     String inputFileName = "";
 
@@ -200,8 +198,7 @@ public class Tom {
           fileList[index++] = (File)it.next();
         }
         
-        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,tomVerifier,fileList);
-
+        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList);
         startChrono();
         parsedTerm = tomParser.startParsing();
         tomParser.updateSymbol();
@@ -212,6 +209,7 @@ public class Tom {
           generateOutput(fileName + parsedTableSuffix,symbolTable.toTerm());
         }
         
+        TomVerifier  tomVerifier = new TomVerifier(environment);        
 	TomChecker tomChecker = new TomChecker(environment,tomVerifier);
         startChrono();
         expandedTerm = tomChecker.expand(parsedTerm);
@@ -220,6 +218,18 @@ public class Tom {
         if(Flags.intermediate) {
           generateOutput(fileName + expandedSuffix,expandedTerm);
         }
+
+        startChrono();
+        try {
+          tomVerifier.verify(expandedTerm);
+        }
+        catch (TomException e) {
+          System.out.println("TomVerifier catch:" + e);
+          System.exit(1);
+        }
+        
+        stopChrono();
+        if(Flags.verbose) System.out.println("TOM verification phase " + getChrono());
         
         startChrono();
         TomTerm context = null;
@@ -264,7 +274,7 @@ public class Tom {
        */
 
     if(Flags.findErrors) {
-      System.out.println("*** ERRORS");
+      System.out.println("\n*** ERRORS");
       System.out.println("*** COMPILATION ABORTED");
       System.out.println("No file generated.");
       System.exit(0);

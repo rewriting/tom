@@ -1,5 +1,10 @@
 [
-
+  [Declaration,TypeTermDecl,
+   TypeTermDecl(<keywordList(TomList)>,<orgTrack(Option)>)],
+  [Declaration,TypeListDecl,
+   TypeListDecl(<keywordList(TomList)>,<orgTrack(Option)>)],
+  [Declaration,TypeArrayDecl,
+   TypeArrayDecl(<keywordList(TomList)>,<orgTrack(Option)>)],
   [Declaration,GetFunctionSymbolDecl,
    GetFunctionSymbolDecl(<termArg(TomTerm)>,<tlCode(TargetLanguage)>) ],
   [Declaration,GetSubtermDecl,
@@ -128,7 +133,7 @@
 
   [TomTerm,SlotName,SlotName(<string(str)>) ],
 
-  [TomTerm,Match,Match(<option(Option)>,<kid1(TomTerm)>,<kid2(TomTerm)>) ],
+  [TomTerm,Match,Match(<option(Option)>,<subjectList(TomTerm)>,<patternList(TomTerm)>) ],
 
   [TomTerm,MakeFunctionBegin,
     MakeFunctionBegin(<astName(TomName)>,<subjectListAST(TomTerm)>) ],

@@ -2,6 +2,9 @@
 
 TomSignatureAPI0=\
 Declaration.java DeclarationImpl.java \
+Declaration_TypeTermDeclImpl.java Declaration_TypeTermDecl.java\
+Declaration_TypeListDeclImpl.java Declaration_TypeListDecl.java\
+Declaration_TypeArrayDeclImpl.java Declaration_TypeArrayDecl.java\
 Declaration_GetFunctionSymbolDeclImpl.java Declaration_GetFunctionSymbolDecl.java\
 Declaration_GetSubtermDeclImpl.java Declaration_GetSubtermDecl.java\
 Declaration_IsFsymDeclImpl.java Declaration_IsFsymDecl.java\
@@ -47,12 +50,12 @@ Expression_GetSlotImpl.java Expression_GetSlot.java\
 Expression_GetHeadImpl.java Expression_GetHead.java\
 Expression_GetTailImpl.java Expression_GetTail.java\
 Expression_GetSizeImpl.java Expression_GetSize.java\
-Expression_GetElementImpl.java Expression_GetElement.java\
-Expression_GetSliceListImpl.java Expression_GetSliceList.java\
-Expression_GetSliceArrayImpl.java Expression_GetSliceArray.java\
-TargetLanguage.java TargetLanguageImpl.java 
+Expression_GetElementImpl.java Expression_GetElement.java
 
 TomSignatureAPI1=\
+Expression_GetSliceListImpl.java Expression_GetSliceList.java\
+Expression_GetSliceArrayImpl.java Expression_GetSliceArray.java\
+TargetLanguage.java TargetLanguageImpl.java \
 TargetLanguage_TLImpl.java TargetLanguage_TL.java\
 TargetLanguage_ITLImpl.java TargetLanguage_ITL.java\
 Position.java PositionImpl.java \
@@ -99,12 +102,12 @@ TomTerm_RewriteRuleImpl.java TomTerm_RewriteRule.java\
 TomTerm_SubjectListImpl.java TomTerm_SubjectList.java\
 TomTerm_PatternListImpl.java TomTerm_PatternList.java\
 TomTerm_TermListImpl.java TomTerm_TermList.java\
-TomTerm_TermImpl.java TomTerm_Term.java\
-TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
-TomTerm_GLVarImpl.java TomTerm_GLVar.java\
-TomTerm_VariableImpl.java TomTerm_Variable.java
+TomTerm_TermImpl.java TomTerm_Term.java
 
 TomSignatureAPI2=\
+TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
+TomTerm_GLVarImpl.java TomTerm_GLVar.java\
+TomTerm_VariableImpl.java TomTerm_Variable.java\
 TomTerm_VariableStarImpl.java TomTerm_VariableStar.java\
 TomTerm_PlaceholderImpl.java TomTerm_Placeholder.java\
 TomTerm_UnamedVariableImpl.java TomTerm_UnamedVariable.java\
