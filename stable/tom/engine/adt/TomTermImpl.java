@@ -190,6 +190,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isUnamedVariableStar()
+  {
+    return false;
+  }
+
   public boolean isLocalVariable()
   {
     return false;

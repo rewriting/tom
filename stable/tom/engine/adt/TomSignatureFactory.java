@@ -172,6 +172,9 @@ public class TomSignatureFactory
   private aterm.AFun funTargetLanguage_ITL;
   private TargetLanguage protoTargetLanguage_ITL;
   private aterm.ATerm patternTargetLanguage_ITL;
+  private aterm.AFun funTargetLanguage_Comment;
+  private TargetLanguage protoTargetLanguage_Comment;
+  private aterm.ATerm patternTargetLanguage_Comment;
   private aterm.AFun funPosition_Position;
   private Position protoPosition_Position;
   private aterm.ATerm patternPosition_Position;
@@ -304,6 +307,9 @@ public class TomSignatureFactory
   private aterm.AFun funTomTerm_UnamedVariable;
   private TomTerm protoTomTerm_UnamedVariable;
   private aterm.ATerm patternTomTerm_UnamedVariable;
+  private aterm.AFun funTomTerm_UnamedVariableStar;
+  private TomTerm protoTomTerm_UnamedVariableStar;
+  private aterm.ATerm patternTomTerm_UnamedVariableStar;
   private aterm.AFun funTomTerm_LocalVariable;
   private TomTerm protoTomTerm_LocalVariable;
   private aterm.ATerm patternTomTerm_LocalVariable;
@@ -708,6 +714,10 @@ public class TomSignatureFactory
     funTargetLanguage_ITL = factory.makeAFun("_TargetLanguage_ITL", 1, false);
     protoTargetLanguage_ITL = new TargetLanguage_ITL(this);
 
+    patternTargetLanguage_Comment = factory.parse("Comment(<str>)");
+    funTargetLanguage_Comment = factory.makeAFun("_TargetLanguage_Comment", 1, false);
+    protoTargetLanguage_Comment = new TargetLanguage_Comment(this);
+
 
     patternPosition_Position = factory.parse("Position(<int>,<int>)");
     funPosition_Position = factory.makeAFun("_Position_Position", 2, false);
@@ -887,6 +897,10 @@ public class TomSignatureFactory
     patternTomTerm_UnamedVariable = factory.parse("UnamedVariable(<term>,<term>)");
     funTomTerm_UnamedVariable = factory.makeAFun("_TomTerm_UnamedVariable", 2, false);
     protoTomTerm_UnamedVariable = new TomTerm_UnamedVariable(this);
+
+    patternTomTerm_UnamedVariableStar = factory.parse("UnamedVariableStar(<term>,<term>)");
+    funTomTerm_UnamedVariableStar = factory.makeAFun("_TomTerm_UnamedVariableStar", 2, false);
+    protoTomTerm_UnamedVariableStar = new TomTerm_UnamedVariableStar(this);
 
     patternTomTerm_LocalVariable = factory.parse("LocalVariable");
     funTomTerm_LocalVariable = factory.makeAFun("_TomTerm_LocalVariable", 0, false);
@@ -2752,6 +2766,35 @@ public class TomSignatureFactory
     args.add(arg.getCode());    return factory.make(patternTargetLanguage_ITL, args);
   }
 
+  protected TargetLanguage_Comment makeTargetLanguage_Comment(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTargetLanguage_Comment) {
+      protoTargetLanguage_Comment.initHashCode(annos,fun,args);
+      return (TargetLanguage_Comment) factory.build(protoTargetLanguage_Comment);
+    }
+  }
+
+  public TargetLanguage_Comment makeTargetLanguage_Comment(String _code) {
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_code, 0, true))};
+    return makeTargetLanguage_Comment(funTargetLanguage_Comment, args, factory.getEmpty());
+  }
+
+  public TargetLanguage TargetLanguage_CommentFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternTargetLanguage_Comment);
+
+    if (children != null) {
+      TargetLanguage tmp = makeTargetLanguage_Comment((String) children.get(0));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(TargetLanguage_CommentImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add(arg.getCode());    return factory.make(patternTargetLanguage_Comment, args);
+  }
+
   protected Position_Position makePosition_Position(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoPosition_Position) {
       protoPosition_Position.initHashCode(annos,fun,args);
@@ -4026,6 +4069,35 @@ public class TomSignatureFactory
   protected aterm.ATerm toTerm(TomTerm_UnamedVariableImpl arg) {
     java.util.List args = new java.util.LinkedList();
     args.add((arg.getOption()).toTerm());    args.add((arg.getAstType()).toTerm());    return factory.make(patternTomTerm_UnamedVariable, args);
+  }
+
+  protected TomTerm_UnamedVariableStar makeTomTerm_UnamedVariableStar(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_UnamedVariableStar) {
+      protoTomTerm_UnamedVariableStar.initHashCode(annos,fun,args);
+      return (TomTerm_UnamedVariableStar) factory.build(protoTomTerm_UnamedVariableStar);
+    }
+  }
+
+  public TomTerm_UnamedVariableStar makeTomTerm_UnamedVariableStar(Option _option, TomType _astType) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_option, _astType};
+    return makeTomTerm_UnamedVariableStar(funTomTerm_UnamedVariableStar, args, factory.getEmpty());
+  }
+
+  public TomTerm TomTerm_UnamedVariableStarFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternTomTerm_UnamedVariableStar);
+
+    if (children != null) {
+      TomTerm tmp = makeTomTerm_UnamedVariableStar(OptionFromTerm( (aterm.ATerm) children.get(0)), TomTypeFromTerm( (aterm.ATerm) children.get(1)));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(TomTerm_UnamedVariableStarImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add((arg.getOption()).toTerm());    args.add((arg.getAstType()).toTerm());    return factory.make(patternTomTerm_UnamedVariableStar, args);
   }
 
   protected TomTerm_LocalVariable makeTomTerm_LocalVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -5798,6 +5870,11 @@ public class TomSignatureFactory
       return tmp;
     }
 
+    tmp = TargetLanguage_CommentFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
 
     throw new RuntimeException("This is not a TargetLanguage: " + trm);
   }
@@ -6038,6 +6115,11 @@ public class TomSignatureFactory
     }
 
     tmp = TomTerm_UnamedVariableFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = TomTerm_UnamedVariableStarFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }

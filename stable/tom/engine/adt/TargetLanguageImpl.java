@@ -30,6 +30,11 @@ abstract public class TargetLanguageImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isComment()
+  {
+    return false;
+  }
+
   public boolean hasCode()
   {
     return false;

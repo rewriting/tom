@@ -528,6 +528,13 @@
   make(t0) { getTomSignatureFactory().makeTargetLanguage_ITL(t0)}
 }
 
+%op TargetLanguage Comment(code:String) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isComment()}
+  get_slot(code,t) { t.getCode()}
+  make(t0) { getTomSignatureFactory().makeTargetLanguage_Comment(t0)}
+}
+
 %typeterm Position{
   implement { Position}
   get_fun_sym(t) {null}
@@ -888,6 +895,14 @@
   get_slot(option,t) { t.getOption()}
   get_slot(astType,t) { t.getAstType()}
   make(t0, t1) { getTomSignatureFactory().makeTomTerm_UnamedVariable(t0, t1)}
+}
+
+%op TomTerm UnamedVariableStar(option:Option, astType:TomType) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isUnamedVariableStar()}
+  get_slot(option,t) { t.getOption()}
+  get_slot(astType,t) { t.getAstType()}
+  make(t0, t1) { getTomSignatureFactory().makeTomTerm_UnamedVariableStar(t0, t1)}
 }
 
 %op TomTerm LocalVariable {
