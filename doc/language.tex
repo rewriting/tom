@@ -25,10 +25,16 @@ components. Parentheses (...) denote grouping.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{center}
 \begin{tabular}{lcl}
-  \nt{Identifier} & ::= & \nt{Letter} ( \nt{Letter} \alt \nt{Digit}
-  \alt \lex{\_} \alt \lex{-} )*\\
+  \nt{Identifier} & ::= & \nt{Letter} ( \nt{Letter} \alt\ \nt{Digit}
+  \alt\ \lex{\_} \alt\ \lex{-} )*\\
   \nt{Integer} & ::= & \nt{Digit} ( \nt{Digit} )*\\
-  \nt{Letter} & ::= & \lex{A} ... \lex{Z} \alt \lex{a} ... \lex{z}\\
+  \nt{Double} & ::= & (\nt{Digit})+ [\lex{.}] (\nt{Digit})* \alt\ \lex{.} (\nt{Digit})+\\
+  \nt{String} & ::= & \lex{"} 
+  (\nt{Letter} \alt\
+  (\lex{$\backslash$}
+       (\lex{n} \alt\ \lex{t} \alt\ \lex{b} \alt\ \lex{r} \alt\
+  \lex{f} \alt\ \lex{$\backslash$} \alt\ \lex{'} \alt\ \lex{"}) ) )* \lex{"}\\
+  \nt{Letter} & ::= & \lex{A} ... \lex{Z} \alt\ \lex{a} ... \lex{z}\\
   \nt{Digit} & ::= & \lex{0} ... \lex{9}\\
   \nt{Other} & ::= & a character
 \end{tabular}
@@ -212,19 +218,19 @@ left-hand sides should begin with the same root symbol:
         [ \lex{(} [ \nt{SlotName} \lex{:} ] \nt{Type} ( \lex{,} [
         \nt{SlotName} \lex{:} ] \nt{Type} )* \lex{)} ]\\
         &&
-        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMake} \alt
-        \nt{KeywordGetSlot} \alt \nt{KeywordIsFsym})* \lex{\}}\\
+        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMake} \alt\
+        \nt{KeywordGetSlot} \alt\ \nt{KeywordIsFsym})* \lex{\}}\\
         \nt{OperatorList} & ::= & 
         \lex{\%oplist} \nt{Type} \nt{Name} \lex{(} \nt{Type} \lex{*}
         \lex{)}\\
         &&
-        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMakeEmptyList} \alt
+        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMakeEmptyList} \alt\
         \nt{KeywordMakeInsert} )* \lex{\}}\\
         \nt{OperatorArray} & ::= & 
         \lex{\%oparray} \nt{Type} \nt{Name} \lex{(} \nt{Type} \lex{*}
         \lex{)}\\
         &&
-        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMakeEmptyArray} \alt
+        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMakeEmptyArray} \alt\
         \nt{KeywordMakeAppend} )* \lex{\}}
 \end{tabular}
 \end{center}
@@ -235,9 +241,9 @@ left-hand sides should begin with the same root symbol:
     \nt{KeywordImplement}
     ( 
     \nt{KeywordGetFunSym} 
-    \alt \nt{KeywordGetSubterm} 
-    \alt \nt{KeywordCmpFunSym} 
-    \alt \nt{KeywordEquals} 
+    \alt\ \nt{KeywordGetSubterm} 
+    \alt\ \nt{KeywordCmpFunSym} 
+    \alt\ \nt{KeywordEquals} 
     )*
     \lex{\}}\\
     \nt{TypeList} & ::= &
@@ -256,11 +262,11 @@ left-hand sides should begin with the same root symbol:
                 \nt{KeywordImplement}
                 ( 
                   \nt{KeywordGetFunSym}
-                \alt \nt{KeywordGetSubterm}
-                \alt \nt{KeywordCmpFunSym}
-                \alt \nt{KeywordEquals}
-                \alt \nt{KeywordGetElement}
-                \alt \nt{KeywordGetSize}
+                \alt\ \nt{KeywordGetSubterm}
+                \alt\ \nt{KeywordCmpFunSym}
+                \alt\ \nt{KeywordEquals}
+                \alt\ \nt{KeywordGetElement}
+                \alt\ \nt{KeywordGetSize}
                 )*
         \lex{\}}
 \end{tabular}

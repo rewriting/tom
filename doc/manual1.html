@@ -81,21 +81,27 @@ Information on TOM is available the TOM web page&nbsp;<A HREF="http://tom.loria.
 <UL><LI>
 <A HREF="#htoc22">Chapter&nbsp;4&nbsp;&nbsp;Runtime libraries</A>
 <UL><LI>
-<A HREF="#htoc23">4.1&nbsp;&nbsp;Runtime and traversal functions</A>
-<LI><A HREF="#htoc24">4.2&nbsp;&nbsp;Debug</A>
+<A HREF="#htoc23">4.1&nbsp;&nbsp;Generic traversal functions</A>
+<LI><A HREF="#htoc24">4.2&nbsp;&nbsp;Strategy operators</A>
+<LI><A HREF="#htoc25">4.3&nbsp;&nbsp;Set with maximal sharing</A>
+<LI><A HREF="#htoc26">4.4&nbsp;&nbsp;XML documents</A>
+<LI><A HREF="#htoc27">4.5&nbsp;&nbsp;Debugging</A>
 </UL>
 </UL>
-<LI><A HREF="#htoc25">Part&nbsp;V&nbsp;&nbsp;Tutorial</A>
+<LI><A HREF="#htoc28">Part&nbsp;V&nbsp;&nbsp;Tutorial</A>
 <UL><LI>
-<A HREF="#htoc26">Chapter&nbsp;5&nbsp;&nbsp;Tutorial and examples</A>
+<A HREF="#htoc29">Chapter&nbsp;5&nbsp;&nbsp;Tutorial and examples</A>
 <UL><LI>
-<A HREF="#htoc27">5.1&nbsp;&nbsp;Introduction to the ATerm library for Java</A>
-<LI><A HREF="#htoc28">5.2&nbsp;&nbsp;Peano integer</A>
-<LI><A HREF="#htoc29">5.3&nbsp;&nbsp;Integer and Fibonacci</A>
-<LI><A HREF="#htoc30">5.4&nbsp;&nbsp;List</A>
-<LI><A HREF="#htoc31">5.5&nbsp;&nbsp;Apigen and the automatic generation of term representation</A>
-<LI><A HREF="#htoc32">5.6&nbsp;&nbsp;<FONT COLOR=navy>Tom</FONT> runtime and Mathematical expression</A>
-<LI><A HREF="#htoc33">5.7&nbsp;&nbsp;Debugging <FONT COLOR=navy>Tom</FONT></A>
+<A HREF="#htoc30">5.1&nbsp;&nbsp;Transformation of XML documents</A>
+<LI><A HREF="#htoc31">5.2&nbsp;&nbsp;Transformation using ApiGen</A>
+<LI><A HREF="#htoc32">5.3&nbsp;&nbsp;Transformation of user defined data-structures</A>
+<LI><A HREF="#htoc33">5.4&nbsp;&nbsp;Introduction to the ATerm library for Java</A>
+<LI><A HREF="#htoc34">5.5&nbsp;&nbsp;Peano integer</A>
+<LI><A HREF="#htoc35">5.6&nbsp;&nbsp;Integer and Fibonacci</A>
+<LI><A HREF="#htoc36">5.7&nbsp;&nbsp;List</A>
+<LI><A HREF="#htoc37">5.8&nbsp;&nbsp;Apigen and the automatic generation of term representation</A>
+<LI><A HREF="#htoc38">5.9&nbsp;&nbsp;<FONT COLOR=navy>Tom</FONT> runtime and Mathematical expression</A>
+<LI><A HREF="#htoc39">5.10&nbsp;&nbsp;Debugging <FONT COLOR=navy>Tom</FONT></A>
 </UL>
 </UL>
 </UL>
@@ -611,16 +617,28 @@ components. Parentheses (...) denote grouping. <BR>
 <TABLE CELLSPACING=2 CELLPADDING=0>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Letter</I></FONT> ( <FONT COLOR="#ff00ff"><I>Letter</I></FONT> |<FONT COLOR="#ff00ff"><I>Digit</I></FONT>
- |<FONT COLOR="#0000ff"><TT>_</TT></FONT> |<FONT COLOR="#0000ff"><TT>-</TT></FONT> )*</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Letter</I></FONT> ( <FONT COLOR="#ff00ff"><I>Letter</I></FONT> | <FONT COLOR="#ff00ff"><I>Digit</I></FONT>
+ | <FONT COLOR="#0000ff"><TT>_</TT></FONT> | <FONT COLOR="#0000ff"><TT>-</TT></FONT> )*</TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Integer</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
 <TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Digit</I></FONT> ( <FONT COLOR="#ff00ff"><I>Digit</I></FONT> )*</TD>
 </TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Double</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP>(<FONT COLOR="#ff00ff"><I>Digit</I></FONT>)+ [<FONT COLOR="#0000ff"><TT>.</TT></FONT>] (<FONT COLOR="#ff00ff"><I>Digit</I></FONT>)* | <FONT COLOR="#0000ff"><TT>.</TT></FONT> (<FONT COLOR="#ff00ff"><I>Digit</I></FONT>)+</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>String</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>"</TT></FONT> 
+ (<FONT COLOR="#ff00ff"><I>Letter</I></FONT> |
+ (<FONT COLOR="#0000ff"><TT>\</TT></FONT>
+ (<FONT COLOR="#0000ff"><TT>n</TT></FONT> | <FONT COLOR="#0000ff"><TT>t</TT></FONT> | <FONT COLOR="#0000ff"><TT>b</TT></FONT> | <FONT COLOR="#0000ff"><TT>r</TT></FONT> |
+ <FONT COLOR="#0000ff"><TT>f</TT></FONT> | <FONT COLOR="#0000ff"><TT>\</TT></FONT> | <FONT COLOR="#0000ff"><TT>'</TT></FONT> | <FONT COLOR="#0000ff"><TT>"</TT></FONT>) ) )* <FONT COLOR="#0000ff"><TT>"</TT></FONT></TD>
+</TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Letter</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>A</TT></FONT> ... <FONT COLOR="#0000ff"><TT>Z</TT></FONT> |<FONT COLOR="#0000ff"><TT>a</TT></FONT> ... <FONT COLOR="#0000ff"><TT>z</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>A</TT></FONT> ... <FONT COLOR="#0000ff"><TT>Z</TT></FONT> | <FONT COLOR="#0000ff"><TT>a</TT></FONT> ... <FONT COLOR="#0000ff"><TT>z</TT></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Digit</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
@@ -971,7 +989,7 @@ A term has the following syntax:
 </TR></TABLE>
 </DIV><BR>
 In <FONT COLOR=navy>Tom</FONT>, we can also define a set of rewrite rules. All the
-left-handsides should begin with the same root symbol:<BR>
+left-hand sides should begin with the same root symbol:<BR>
 <DIV ALIGN=center>
  <TABLE CELLSPACING=2 CELLPADDING=0>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>RuleConstruct</I></FONT></TD>
@@ -1009,7 +1027,8 @@ left-handsides should begin with the same root symbol:<BR>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>&nbsp;</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMake</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordGetSlot</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordIsFsym</I></FONT>)* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMake</I></FONT> |
+ <FONT COLOR="#ff00ff"><I>KeywordGetSlot</I></FONT> | <FONT COLOR="#ff00ff"><I>KeywordIsFsym</I></FONT>)* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>OperatorList</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
@@ -1018,7 +1037,8 @@ left-handsides should begin with the same root symbol:<BR>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>&nbsp;</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyList</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordMakeInsert</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyList</I></FONT> |
+ <FONT COLOR="#ff00ff"><I>KeywordMakeInsert</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>OperatorArray</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
@@ -1027,7 +1047,8 @@ left-handsides should begin with the same root symbol:<BR>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>&nbsp;</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyArray</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordMakeAppend</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyArray</I></FONT> |
+ <FONT COLOR="#ff00ff"><I>KeywordMakeAppend</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR></TABLE>
 </DIV><BR>
 <DIV ALIGN=center>
@@ -1038,9 +1059,9 @@ left-handsides should begin with the same root symbol:<BR>
  <FONT COLOR="#ff00ff"><I>KeywordImplement</I></FONT>
  ( 
  <FONT COLOR="#ff00ff"><I>KeywordGetFunSym</I></FONT> 
- |<FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT> 
- |<FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT> 
- |<FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT> 
+ | <FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT> 
+ | <FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT> 
+ | <FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT> 
  )*
  <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR>
@@ -1063,11 +1084,11 @@ left-handsides should begin with the same root symbol:<BR>
  <FONT COLOR="#ff00ff"><I>KeywordImplement</I></FONT>
  ( 
  <FONT COLOR="#ff00ff"><I>KeywordGetFunSym</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordGetElement</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordGetSize</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordGetElement</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordGetSize</I></FONT>
  )*
  <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR></TABLE>
@@ -1187,12 +1208,12 @@ several access functions have to be defined:
  the compiler to declare some functions and variables.<BR>
 <BR>
 <LI><A NAME="getfs"></A> the <FONT COLOR="#0000ff"><TT>get_fun_sym(t)</TT></FONT> construct corresponds to a
- function (parametrised by a term variable) that should return the
+ function (parameterized by a term variable) that should return the
  root symbol of a given term (the term referenced by the term
  variable <TT>t</TT> in this example). <BR>
 <BR>
 <LI><A NAME="cmpfs"></A> the <FONT COLOR="#0000ff"><TT>cmp_fun_sym(s1,s2)</TT></FONT> construct corresponds to a
- predicate (parametrised by two symbol variables).
+ predicate (parameterized by two symbol variables).
  This predicate should return <TT>true</TT> if the symbols are
  ``equal''. The <TT>true</TT> value should correspond to the 
  builtin <TT>true</TT> value of the considered target language.
@@ -1200,33 +1221,33 @@ several access functions have to be defined:
  <FONT COLOR=purple>C</FONT> for example). <BR>
 <BR>
 <LI><A NAME="getsub"></A> the <FONT COLOR="#0000ff"><TT>get_subterm(t,n)</TT></FONT> construct corresponds to a
- function (parametrised by a term variable and an integer).
+ function (parameterized by a term variable and an integer).
  This function should return the <TT>n-th</TT> subterm of the
- term&nbsp;<TT>t</TT>. This never called with and integer paramter that
+ term&nbsp;<TT>t</TT>. This never called with and integer parameter that
  does not correspond to the arity of the root symbol of the
  considered term (i.e. we alway have 0 &lt;= <I>n</I> &lt; <I>arity</I>).<BR>
 <BR>
 <LI><A NAME="equals"></A> the <FONT COLOR="#0000ff"><TT>equals(t1,t2)</TT></FONT> construct corresponds to a
- predicate (parametrised by two term variables).
+ predicate (parameterized by two term variables).
  This predicate should return <TT>true</TT> if the terms are
  ``equal''. The <TT>true</TT> value should correspond to the 
  builtin <TT>true</TT> value of the considered target language.
  This last optional predicate is only used to compile non-linear 
- left-handsides. It is not needed, if the specification does not
+ left-hand sides. It is not needed, if the specification does not
  contain such patterns.
 </UL>
 <A NAME="listdef"></A>
 When defining a new type with the <FONT COLOR="#0000ff"><TT>%typelist</TT></FONT> construct,
 several other access functions have to be defined:
 <UL><LI>
-<A NAME="geth"></A> the <FONT COLOR="#0000ff"><TT>get_head(l)</TT></FONT> function is parametrised by a list
+<A NAME="geth"></A> the <FONT COLOR="#0000ff"><TT>get_head(l)</TT></FONT> function is parameterized by a list
  variable and should return the first element of the considered list.<BR>
 <BR>
-<LI><A NAME="gett"></A> the <FONT COLOR="#0000ff"><TT>get_tail(l)</TT></FONT> function is parametrised by a list
+<LI><A NAME="gett"></A> the <FONT COLOR="#0000ff"><TT>get_tail(l)</TT></FONT> function is parameterized by a list
  variable and should return the tail of the considered list.<BR>
 <BR>
 <LI><A NAME="isempty"></A> the <FONT COLOR="#0000ff"><TT>is_empty(l)</TT></FONT> constructs corresponds to a
- predicate parametrised by a list variable.
+ predicate parameterized by a list variable.
  This predicate should return <TT>true</TT> if the considered list
  contains no element.
 </UL>
@@ -1234,7 +1255,7 @@ several other access functions have to be defined:
 When defining a new type with the <FONT COLOR="#0000ff"><TT>%typearray</TT></FONT> construct,
 the two different access functions have to be defined:
 <UL><LI>
-<A NAME="gete"></A> the <FONT COLOR="#0000ff"><TT>get_element(l,n)</TT></FONT> construct is parametrised by a list
+<A NAME="gete"></A> the <FONT COLOR="#0000ff"><TT>get_element(l,n)</TT></FONT> construct is parameterized by a list
  variable and an integer. This should correspond to a function that
  return the <TT>n-th</TT> element of the considered list&nbsp;<TT>l</TT>.<BR>
 <BR>
@@ -1270,7 +1291,7 @@ rooted by the considered symbol (<I>s</I> in this example). This replaces
 the use of <FONT COLOR="#0000ff"><TT>get_fun_sym</TT></FONT> and <FONT COLOR="#0000ff"><TT>cmp_fun_sym</TT></FONT>.<BR>
 <BR>
 <A NAME="make"></A>When defining a symbol, is it also possible to specify a
-<FONT COLOR="#0000ff"><TT>make</TT></FONT> construct. This function is parametrised by several 
+<FONT COLOR="#0000ff"><TT>make</TT></FONT> construct. This function is parameterized by several 
 term variables (i.e. that should correspond to the arity of the
 symbol). A call to this <FONT COLOR="#0000ff"><TT>make</TT></FONT> function should return a term
 rooted by the considered symbol, where each subterm correspond to the
@@ -1301,7 +1322,7 @@ longer optional as in the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> construct):
  list.<BR>
 <BR>
 <LI><A NAME="insert"></A> the <FONT COLOR="#0000ff"><TT>make_insert(e,l)</TT></FONT> construct corresponds to a function
- parametrised by a list variable and a term variable. This function
+ parameterized by a list variable and a term variable. This function
  should return a new list&nbsp;<TT>l'</TT> where the element&nbsp;<TT>e</TT>
  has been inserted at the head of the list&nbsp;<TT>l</TT>
  (i.e. <FONT COLOR="#0000ff"><TT>equals(get_head(l'),e)</TT></FONT> and
@@ -1317,7 +1338,7 @@ longer optional as in the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> construct):
  size&nbsp;<TT>n</TT>. <BR>
 <BR>
 <LI><A NAME="append"></A> the <FONT COLOR="#0000ff"><TT>make_append(e,l)</TT></FONT> construct corresponds to a
- function parametrised by a list variable and a term variable. <BR>
+ function parameterized by a list variable and a term variable. <BR>
 <BR>
 <B>Warning: </B>
 This function should return a list&nbsp;<TT>l'</TT> such that
@@ -1369,7 +1390,7 @@ given a list of ground terms (referenced by the list of target
  finished, and the execution control is transfered to the next
  instruction. 
 </UL>
-<B>Note:</B> the behaviour is not determined if a semantic action
+<B>Note:</B> the behavior is not determined if a semantic action
 modifies a target language variable which is an argument of a
 <FONT COLOR="#0000ff"><TT>%match</TT></FONT> instruction under evaluation.<BR>
 <BR>
@@ -1386,7 +1407,7 @@ rewrite rules (the left-hand side is a term and the right-hand side is
 a term). All these rules should begin with the same root symbol. The
 <FONT COLOR=navy>Tom</FONT> compiler should generate a function (with one argument) whose
 name correspond to the name of this unique root symbol.
-Given a ground term, applying this function returns the instanciated
+Given a ground term, applying this function returns the instantiated
 right-hand side of the first rule whose pattern matches the considered 
 subject and whose conditions are satisfied.
 When no rule can be applied (i.e. no pattern matches the subject, or
@@ -1401,9 +1422,9 @@ an equality condition (<I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> = <I>t</I><SUB><
  (<I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> and <I>t</I><SUB><FONT SIZE=2>2</FONT></SUB>) are equal modulo the <FONT COLOR="#0000ff"><TT>equals</TT></FONT> predicate defined in
  the definition of the type associated to <I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> and <I>t</I><SUB><FONT SIZE=2>2</FONT></SUB>.
 <LI>a matching condition (<I>p</I> := <I>t</I>) is a pair of terms where p may
- contains free variable. The conditon is satisfied if the pattern&nbsp;<I>p</I>
+ contains free variable. The condition is satisfied if the pattern&nbsp;<I>p</I>
  can be matched against the normal form of&nbsp;<I>t</I>. In this case, the
- free variables of&nbsp;<I>p</I> are instantited and can be used in other
+ free variables of&nbsp;<I>p</I> are instantiated and can be used in other
  conditions or the right-hand side of the rule.
 </UL>
 <!--TOC subsection Pattern definition-->
@@ -1514,33 +1535,63 @@ Libraries</B></FONT></DIV></TD>
 
 <!--NAME lib.html-->
 
-<!--TOC section Runtime and traversal functions-->
+<BR>
+<BR>
+<!--TOC section Generic traversal functions-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
 <TR><TD><A NAME="htoc23"><B><FONT SIZE=5>4.1</FONT></B></A></TD>
-<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Runtime and traversal functions</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Generic traversal functions</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
+
 <BR>
-<!--TOC section Debug-->
+<!--TOC section Strategy operators-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
 <TR><TD><A NAME="htoc24"><B><FONT SIZE=5>4.2</FONT></B></A></TD>
-<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Debug</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Strategy operators</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+
+<BR>
+<!--TOC section Set with maximal sharing-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc25"><B><FONT SIZE=5>4.3</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Set with maximal sharing</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+
+<BR>
+<!--TOC section XML documents-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc26"><B><FONT SIZE=5>4.4</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>XML documents</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+
+<BR>
+<!--TOC section Debugging-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc27"><B><FONT SIZE=5>4.5</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Debugging</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
 
 <BR>
 <!--TOC part Tutorial-->
 <DIV ALIGN=center><TABLE CELLPADDING=10>
-<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc25"><FONT SIZE=6><B>Part&nbsp;V</B></FONT></A><FONT SIZE=6><B><BR>
+<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc28"><FONT SIZE=6><B>Part&nbsp;V</B></FONT></A><FONT SIZE=6><B><BR>
 Tutorial</B></FONT></DIV></TD>
 </TR></TABLE></DIV><!--SEC END -->
 
 <!--TOC chapter Tutorial and examples-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc26"><B><FONT SIZE=6>Chapter&nbsp;5</FONT></B></A></TD>
+<TR><TD><A NAME="htoc29"><B><FONT SIZE=6>Chapter&nbsp;5</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=6>Tutorial and examples</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1548,6 +1599,107 @@ Tutorial</B></FONT></DIV></TD>
 <!--NAME tutorial.html-->
 
 <BR>
+<BR>
+<!--TOC section Transformation of XML documents-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc30"><B><FONT SIZE=5>5.1</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Transformation of XML documents</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+
+<BR>
+<!--TOC subsection Retrieving information: Birds example-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>5.1.1</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Retrieving information: Birds example</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+
+<BR>
+<!--TOC subsection Building and sorting a document: PersonSort example-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>5.1.2</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Building and sorting a document: PersonSort example</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+
+<BR>
+<!--TOC section Transformation using ApiGen-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc31"><B><FONT SIZE=5>5.2</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Transformation using ApiGen</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+
+<!--TOC subsection Using the backquote mechanism-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>5.2.1</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Using the backquote mechanism</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+<BR>
+<!--TOC subsection Using list-matching facilities-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>5.2.2</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Using list-matching facilities</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+<BR>
+<!--TOC subsection Building and sorting a database: AddressBook example-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>5.2.3</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Building and sorting a database: AddressBook example</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+
+<BR>
+<!--TOC section Transformation of user defined data-structures-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc32"><B><FONT SIZE=5>5.3</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Transformation of user defined data-structures</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+
+<BR>
+<!--TOC subsection Defining a simple mapping-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>5.3.1</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Defining a simple mapping</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+<BR>
+<!--TOC subsection Using backquote constructs-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>5.3.2</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Using backquote constructs</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+<BR>
+<!--TOC subsection Advanced examples-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>5.3.3</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Advanced examples</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
+<BR>
+<!--TOC subsection Using list-matching-->
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>5.3.4</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Using list-matching</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE><!--SEC END -->
 <BR>
 On top of <FONT COLOR=navy>Tom</FONT> directory, you can find the tutorial directory where
 all examples presented here can be found and ran.
@@ -1565,7 +1717,7 @@ Extra commands are explain when necessary.<BR>
 <!--TOC section Introduction to the ATerm library for Java-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc27"><B><FONT SIZE=5>5.1</FONT></B></A></TD>
+<TR><TD><A NAME="htoc33"><B><FONT SIZE=5>5.4</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Introduction to the ATerm library for Java</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1579,7 +1731,7 @@ More information on the C version is available at:
 <!--TOC section Peano integer-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc28"><B><FONT SIZE=5>5.2</FONT></B></A></TD>
+<TR><TD><A NAME="htoc34"><B><FONT SIZE=5>5.5</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Peano integer</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1591,7 +1743,7 @@ successor of an integer Suc(int).<BR>
 <!--TOC subsection Simple examples-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.2.1</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.5.1</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Simple examples</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1729,7 +1881,7 @@ needed).<BR>
 <!--TOC subsection What about with C language-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.2.2</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.5.2</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>What about with C language</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1751,7 +1903,7 @@ represented terms.<BR>
 <!--TOC subsection Using Bacquote construct-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.2.3</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.5.3</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Using Bacquote construct</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1797,7 +1949,7 @@ function. To avoid the warning messages, please use:
 <!--TOC subsection Advanced examples and more powerfull operators-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.2.4</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.5.4</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Advanced examples and more powerfull operators</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1852,7 +2004,7 @@ return null;<BR>
 <!--TOC section Integer and Fibonacci-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc29"><B><FONT SIZE=5>5.3</FONT></B></A></TD>
+<TR><TD><A NAME="htoc35"><B><FONT SIZE=5>5.6</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Integer and Fibonacci</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1883,7 +2035,7 @@ public int fib(int t) {<BR>
 <!--TOC section List-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc30"><B><FONT SIZE=5>5.4</FONT></B></A></TD>
+<TR><TD><A NAME="htoc36"><B><FONT SIZE=5>5.7</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>List</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1896,7 +2048,7 @@ associated creator operator: <A HREF="#oplistdef"><FONT COLOR="#0000ff"><TT><B>%
 <!--TOC subsection Defining List-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.4.1</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.7.1</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Defining List</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1923,7 +2075,7 @@ associated creator operator: <A HREF="#oplistdef"><FONT COLOR="#0000ff"><TT><B>%
 <!--TOC subsection Defining Array-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.4.2</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.7.2</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Defining Array</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1949,7 +2101,7 @@ associated creator operator: <A HREF="#oplistdef"><FONT COLOR="#0000ff"><TT><B>%
 <!--TOC subsection Swapsort and the power of <FONT COLOR=navy>Tom</FONT>-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.4.3</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.7.3</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Swapsort and the power of <FONT COLOR=navy>Tom</FONT></FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -1978,7 +2130,7 @@ defined function!!!!!<BR>
 <!--TOC section Apigen and the automatic generation of term representation-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc31"><B><FONT SIZE=5>5.5</FONT></B></A></TD>
+<TR><TD><A NAME="htoc37"><B><FONT SIZE=5>5.8</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Apigen and the automatic generation of term representation</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -2001,7 +2153,7 @@ found compilation instructions.<BR>
 <!--TOC subsection Description of Apigen-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.5.1</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.8.1</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Description of Apigen</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -2010,7 +2162,7 @@ Full documentation on Apigen can be found at <A HREF="http://www.cwi.nl/htbin/se
 <!--TOC subsection Java example-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.5.2</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.8.2</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Java example</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -2020,7 +2172,7 @@ All generated file<BR>
 <!--TOC subsection C example-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>5.5.3</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>5.8.3</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>C example</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -2028,7 +2180,7 @@ All generated file<BR>
 <!--TOC section <FONT COLOR=navy>Tom</FONT> runtime and Mathematical expression-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc32"><B><FONT SIZE=5>5.6</FONT></B></A></TD>
+<TR><TD><A NAME="htoc38"><B><FONT SIZE=5>5.9</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5><FONT COLOR=navy>Tom</FONT></FONT></B><B><FONT SIZE=5> runtime and Mathematical expression</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->
@@ -2040,7 +2192,7 @@ also introduces the way the runtime library can be used.<BR>
 <!--TOC section Debugging <FONT COLOR=navy>Tom</FONT>-->
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc33"><B><FONT SIZE=5>5.7</FONT></B></A></TD>
+<TR><TD><A NAME="htoc39"><B><FONT SIZE=5>5.10</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Debugging <FONT COLOR=navy>Tom</FONT></FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><!--SEC END -->

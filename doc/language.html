@@ -52,16 +52,28 @@ components. Parentheses (...) denote grouping. <BR>
 <TABLE CELLSPACING=2 CELLPADDING=0>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Letter</I></FONT> ( <FONT COLOR="#ff00ff"><I>Letter</I></FONT> |<FONT COLOR="#ff00ff"><I>Digit</I></FONT>
- |<FONT COLOR="#0000ff"><TT>_</TT></FONT> |<FONT COLOR="#0000ff"><TT>-</TT></FONT> )*</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Letter</I></FONT> ( <FONT COLOR="#ff00ff"><I>Letter</I></FONT> | <FONT COLOR="#ff00ff"><I>Digit</I></FONT>
+ | <FONT COLOR="#0000ff"><TT>_</TT></FONT> | <FONT COLOR="#0000ff"><TT>-</TT></FONT> )*</TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Integer</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
 <TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Digit</I></FONT> ( <FONT COLOR="#ff00ff"><I>Digit</I></FONT> )*</TD>
 </TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Double</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP>(<FONT COLOR="#ff00ff"><I>Digit</I></FONT>)+ [<FONT COLOR="#0000ff"><TT>.</TT></FONT>] (<FONT COLOR="#ff00ff"><I>Digit</I></FONT>)* | <FONT COLOR="#0000ff"><TT>.</TT></FONT> (<FONT COLOR="#ff00ff"><I>Digit</I></FONT>)+</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>String</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>"</TT></FONT> 
+ (<FONT COLOR="#ff00ff"><I>Letter</I></FONT> |
+ (<FONT COLOR="#0000ff"><TT>\</TT></FONT>
+ (<FONT COLOR="#0000ff"><TT>n</TT></FONT> | <FONT COLOR="#0000ff"><TT>t</TT></FONT> | <FONT COLOR="#0000ff"><TT>b</TT></FONT> | <FONT COLOR="#0000ff"><TT>r</TT></FONT> |
+ <FONT COLOR="#0000ff"><TT>f</TT></FONT> | <FONT COLOR="#0000ff"><TT>\</TT></FONT> | <FONT COLOR="#0000ff"><TT>'</TT></FONT> | <FONT COLOR="#0000ff"><TT>"</TT></FONT>) ) )* <FONT COLOR="#0000ff"><TT>"</TT></FONT></TD>
+</TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Letter</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>A</TT></FONT> ... <FONT COLOR="#0000ff"><TT>Z</TT></FONT> |<FONT COLOR="#0000ff"><TT>a</TT></FONT> ... <FONT COLOR="#0000ff"><TT>z</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>A</TT></FONT> ... <FONT COLOR="#0000ff"><TT>Z</TT></FONT> | <FONT COLOR="#0000ff"><TT>a</TT></FONT> ... <FONT COLOR="#0000ff"><TT>z</TT></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Digit</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
@@ -408,7 +420,7 @@ A term has the following syntax:
 </TR></TABLE>
 </DIV><BR>
 In <FONT COLOR=navy>Tom</FONT>, we can also define a set of rewrite rules. All the
-left-handsides should begin with the same root symbol:<BR>
+left-hand sides should begin with the same root symbol:<BR>
 <DIV ALIGN=center>
  <TABLE CELLSPACING=2 CELLPADDING=0>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>RuleConstruct</I></FONT></TD>
@@ -446,7 +458,8 @@ left-handsides should begin with the same root symbol:<BR>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>&nbsp;</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMake</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordGetSlot</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordIsFsym</I></FONT>)* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMake</I></FONT> |
+ <FONT COLOR="#ff00ff"><I>KeywordGetSlot</I></FONT> | <FONT COLOR="#ff00ff"><I>KeywordIsFsym</I></FONT>)* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>OperatorList</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
@@ -455,7 +468,8 @@ left-handsides should begin with the same root symbol:<BR>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>&nbsp;</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyList</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordMakeInsert</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyList</I></FONT> |
+ <FONT COLOR="#ff00ff"><I>KeywordMakeInsert</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>OperatorArray</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
@@ -464,7 +478,8 @@ left-handsides should begin with the same root symbol:<BR>
 </TR>
 <TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
 <TD ALIGN=center NOWRAP>&nbsp;</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyArray</I></FONT> |<FONT COLOR="#ff00ff"><I>KeywordMakeAppend</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>KeywordFsym</I></FONT> ( <FONT COLOR="#ff00ff"><I>KeywordMakeEmptyArray</I></FONT> |
+ <FONT COLOR="#ff00ff"><I>KeywordMakeAppend</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR></TABLE>
 </DIV><BR>
 <DIV ALIGN=center>
@@ -475,9 +490,9 @@ left-handsides should begin with the same root symbol:<BR>
  <FONT COLOR="#ff00ff"><I>KeywordImplement</I></FONT>
  ( 
  <FONT COLOR="#ff00ff"><I>KeywordGetFunSym</I></FONT> 
- |<FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT> 
- |<FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT> 
- |<FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT> 
+ | <FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT> 
+ | <FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT> 
+ | <FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT> 
  )*
  <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR>
@@ -500,11 +515,11 @@ left-handsides should begin with the same root symbol:<BR>
  <FONT COLOR="#ff00ff"><I>KeywordImplement</I></FONT>
  ( 
  <FONT COLOR="#ff00ff"><I>KeywordGetFunSym</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordGetElement</I></FONT>
- |<FONT COLOR="#ff00ff"><I>KeywordGetSize</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordGetSubterm</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordCmpFunSym</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordEquals</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordGetElement</I></FONT>
+ | <FONT COLOR="#ff00ff"><I>KeywordGetSize</I></FONT>
  )*
  <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR></TABLE>
@@ -620,12 +635,12 @@ several access functions have to be defined:
  the compiler to declare some functions and variables.<BR>
 <BR>
 <LI><A NAME="getfs"></A> the <FONT COLOR="#0000ff"><TT>get_fun_sym(t)</TT></FONT> construct corresponds to a
- function (parametrised by a term variable) that should return the
+ function (parameterized by a term variable) that should return the
  root symbol of a given term (the term referenced by the term
  variable <TT>t</TT> in this example). <BR>
 <BR>
 <LI><A NAME="cmpfs"></A> the <FONT COLOR="#0000ff"><TT>cmp_fun_sym(s1,s2)</TT></FONT> construct corresponds to a
- predicate (parametrised by two symbol variables).
+ predicate (parameterized by two symbol variables).
  This predicate should return <TT>true</TT> if the symbols are
  ``equal''. The <TT>true</TT> value should correspond to the 
  builtin <TT>true</TT> value of the considered target language.
@@ -633,33 +648,33 @@ several access functions have to be defined:
  <FONT COLOR=purple>C</FONT> for example). <BR>
 <BR>
 <LI><A NAME="getsub"></A> the <FONT COLOR="#0000ff"><TT>get_subterm(t,n)</TT></FONT> construct corresponds to a
- function (parametrised by a term variable and an integer).
+ function (parameterized by a term variable and an integer).
  This function should return the <TT>n-th</TT> subterm of the
- term&nbsp;<TT>t</TT>. This never called with and integer paramter that
+ term&nbsp;<TT>t</TT>. This never called with and integer parameter that
  does not correspond to the arity of the root symbol of the
  considered term (i.e. we alway have 0 &lt;= <I>n</I> &lt; <I>arity</I>).<BR>
 <BR>
 <LI><A NAME="equals"></A> the <FONT COLOR="#0000ff"><TT>equals(t1,t2)</TT></FONT> construct corresponds to a
- predicate (parametrised by two term variables).
+ predicate (parameterized by two term variables).
  This predicate should return <TT>true</TT> if the terms are
  ``equal''. The <TT>true</TT> value should correspond to the 
  builtin <TT>true</TT> value of the considered target language.
  This last optional predicate is only used to compile non-linear 
- left-handsides. It is not needed, if the specification does not
+ left-hand sides. It is not needed, if the specification does not
  contain such patterns.
 </UL>
 <A NAME="listdef"></A>
 When defining a new type with the <FONT COLOR="#0000ff"><TT>%typelist</TT></FONT> construct,
 several other access functions have to be defined:
 <UL><LI>
-<A NAME="geth"></A> the <FONT COLOR="#0000ff"><TT>get_head(l)</TT></FONT> function is parametrised by a list
+<A NAME="geth"></A> the <FONT COLOR="#0000ff"><TT>get_head(l)</TT></FONT> function is parameterized by a list
  variable and should return the first element of the considered list.<BR>
 <BR>
-<LI><A NAME="gett"></A> the <FONT COLOR="#0000ff"><TT>get_tail(l)</TT></FONT> function is parametrised by a list
+<LI><A NAME="gett"></A> the <FONT COLOR="#0000ff"><TT>get_tail(l)</TT></FONT> function is parameterized by a list
  variable and should return the tail of the considered list.<BR>
 <BR>
 <LI><A NAME="isempty"></A> the <FONT COLOR="#0000ff"><TT>is_empty(l)</TT></FONT> constructs corresponds to a
- predicate parametrised by a list variable.
+ predicate parameterized by a list variable.
  This predicate should return <TT>true</TT> if the considered list
  contains no element.
 </UL>
@@ -667,7 +682,7 @@ several other access functions have to be defined:
 When defining a new type with the <FONT COLOR="#0000ff"><TT>%typearray</TT></FONT> construct,
 the two different access functions have to be defined:
 <UL><LI>
-<A NAME="gete"></A> the <FONT COLOR="#0000ff"><TT>get_element(l,n)</TT></FONT> construct is parametrised by a list
+<A NAME="gete"></A> the <FONT COLOR="#0000ff"><TT>get_element(l,n)</TT></FONT> construct is parameterized by a list
  variable and an integer. This should correspond to a function that
  return the <TT>n-th</TT> element of the considered list&nbsp;<TT>l</TT>.<BR>
 <BR>
@@ -701,7 +716,7 @@ rooted by the considered symbol (<I>s</I> in this example). This replaces
 the use of <FONT COLOR="#0000ff"><TT>get_fun_sym</TT></FONT> and <FONT COLOR="#0000ff"><TT>cmp_fun_sym</TT></FONT>.<BR>
 <BR>
 <A NAME="make"></A>When defining a symbol, is it also possible to specify a
-<FONT COLOR="#0000ff"><TT>make</TT></FONT> construct. This function is parametrised by several 
+<FONT COLOR="#0000ff"><TT>make</TT></FONT> construct. This function is parameterized by several 
 term variables (i.e. that should correspond to the arity of the
 symbol). A call to this <FONT COLOR="#0000ff"><TT>make</TT></FONT> function should return a term
 rooted by the considered symbol, where each subterm correspond to the
@@ -732,7 +747,7 @@ longer optional as in the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> construct):
  list.<BR>
 <BR>
 <LI><A NAME="insert"></A> the <FONT COLOR="#0000ff"><TT>make_insert(e,l)</TT></FONT> construct corresponds to a function
- parametrised by a list variable and a term variable. This function
+ parameterized by a list variable and a term variable. This function
  should return a new list&nbsp;<TT>l'</TT> where the element&nbsp;<TT>e</TT>
  has been inserted at the head of the list&nbsp;<TT>l</TT>
  (i.e. <FONT COLOR="#0000ff"><TT>equals(get_head(l'),e)</TT></FONT> and
@@ -748,7 +763,7 @@ longer optional as in the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> construct):
  size&nbsp;<TT>n</TT>. <BR>
 <BR>
 <LI><A NAME="append"></A> the <FONT COLOR="#0000ff"><TT>make_append(e,l)</TT></FONT> construct corresponds to a
- function parametrised by a list variable and a term variable. <BR>
+ function parameterized by a list variable and a term variable. <BR>
 <BR>
 <B>Warning: </B>
 This function should return a list&nbsp;<TT>l'</TT> such that
@@ -798,7 +813,7 @@ given a list of ground terms (referenced by the list of target
  finished, and the execution control is transfered to the next
  instruction. 
 </UL>
-<B>Note:</B> the behaviour is not determined if a semantic action
+<B>Note:</B> the behavior is not determined if a semantic action
 modifies a target language variable which is an argument of a
 <FONT COLOR="#0000ff"><TT>%match</TT></FONT> instruction under evaluation.<BR>
 <BR>
@@ -813,7 +828,7 @@ rewrite rules (the left-hand side is a term and the right-hand side is
 a term). All these rules should begin with the same root symbol. The
 <FONT COLOR=navy>Tom</FONT> compiler should generate a function (with one argument) whose
 name correspond to the name of this unique root symbol.
-Given a ground term, applying this function returns the instanciated
+Given a ground term, applying this function returns the instantiated
 right-hand side of the first rule whose pattern matches the considered 
 subject and whose conditions are satisfied.
 When no rule can be applied (i.e. no pattern matches the subject, or
@@ -828,9 +843,9 @@ an equality condition (<I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> = <I>t</I><SUB><
  (<I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> and <I>t</I><SUB><FONT SIZE=2>2</FONT></SUB>) are equal modulo the <FONT COLOR="#0000ff"><TT>equals</TT></FONT> predicate defined in
  the definition of the type associated to <I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> and <I>t</I><SUB><FONT SIZE=2>2</FONT></SUB>.
 <LI>a matching condition (<I>p</I> := <I>t</I>) is a pair of terms where p may
- contains free variable. The conditon is satisfied if the pattern&nbsp;<I>p</I>
+ contains free variable. The condition is satisfied if the pattern&nbsp;<I>p</I>
  can be matched against the normal form of&nbsp;<I>t</I>. In this case, the
- free variables of&nbsp;<I>p</I> are instantited and can be used in other
+ free variables of&nbsp;<I>p</I> are instantiated and can be used in other
  conditions or the right-hand side of the rule.
 </UL>
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
