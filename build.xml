@@ -57,56 +57,66 @@
   		<mkdir dir="${stable.build}"/>
   	</target>
   		
-  	<path id="stable.classpath">
-		<pathelement location="${atermjavajar}"/>
-		<pathelement location="${sharedobjectjar}"/>
-		<pathelement location="${jjtravelerjar}"/>
-		<pathelement location="${apigenjar}"/>
-  		<fileset dir="${src.runtime}">
-  			<include name="*.jar"/>
-  		</fileset>
-  		<fileset dir="${stable.adt}">
-  			<include name="*.jar"/>
-  		</fileset>
-  		<fileset dir="${lib}">
-  			<include name="*.jar"/>
-  		</fileset>
-  	</path>
-  	
-  	<path id="src.classpath">
-		<pathelement location="${atermjavajar}"/>
-		<pathelement location="${sharedobjectjar}"/>
-		<pathelement location="${jjtravelerjar}"/>
-		<pathelement location="${apigenjar}"/>
-  		<fileset dir="${src.runtime}">
-  			<include name="*.jar"/>
-  		</fileset>
-  		<!--<fileset dir="${src.adt}">
-  			<include name="*.jar"/>
-  		</fileset>-->
-  		<fileset dir="${lib}">
-  			<include name="*.jar"/>
-  		</fileset>
-  	</path>
+		<path id="stable.classpath">
+			<pathelement location="${atermjavajar}"/>
+			<pathelement location="${sharedobjectjar}"/>
+			<pathelement location="${jjtravelerjar}"/>
+			<pathelement location="${apigenjar}"/>
+			<pathelement location="${utils}"/>
+			<fileset dir="${src.runtime}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${stable.adt}">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="${lib}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		
+		<path id="src.classpath">
+			<pathelement location="${atermjavajar}"/>
+			<pathelement location="${sharedobjectjar}"/>
+			<pathelement location="${jjtravelerjar}"/>
+			<pathelement location="${apigenjar}"/>
+			<fileset dir="${src.runtime}">
+				<include name="*.jar"/>
+			</fileset>
+			<!--<fileset dir="${src.adt}">
+					 <include name="*.jar"/>
+					 </fileset>-->
+			<fileset dir="${lib}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
 
 		<!-- builds the custom tasks -->
-		<target name="init">
-			<javac srcdir="${utils}" destdir="${utils}"/>
-
-			<taskdef name="adt" classname="ApigenAntTask">
-				<classpath>
-					<pathelement location="${utils}"/>
-				</classpath>
-			</taskdef>
+		<target name="init" depends="buildstable">
+			<javac srcdir="${utils}" destdir="${utils}">
+				<classpath refid="stable.classpath"/>
+			</javac>
+			<taskdef name="adt" classname="ApigenAntTask" classpathref="stable.classpath"/>
 			<taskdef name="tom" classname="TomAntTask">
 				<classpath>
 					<pathelement location="${utils}"/>
+					<pathelement path="${stable.classpath}"/>
+					<pathelement location="${stable.build}"/>
+				</classpath>
+			</taskdef>
+		</target>
+
+		<target name="initsrc" depends="buildsrc">
+			<taskdef name="tomsrc" classname="TomAntTask">
+				<classpath>
+					<pathelement location="${utils}"/>
+					<pathelement path="${src.classpath}"/>
+					<pathelement location="${src.build}"/>
 				</classpath>
 			</taskdef>
 		</target>
 
 		<target name="buildtom" depends="init, buildadt">
-			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping --noDeclaration">
+			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping --noDeclaration" classpath="${stable.classpath}">
 				<exclude name="**/TomBase.t"/>
 				<exclude name="**/TomBackQuoteParser.t"/>
 				<exclude name="**/runtime/**/*.t"/>	
@@ -125,24 +135,26 @@
 		</target>
 
 		<target name="check.newer.adt">
-			<uptodate targetfile="${src.adt}/TomSignature.adt" srcfile="${src.adt}/jtom/adt/" property="newer.adt"/>
-			<uptodate targetfile="${src.adt}/TNode.adt" srcfile="${src.adt}/jtom/adt/" property="newer.adt"/>
-			<uptodate targetfile="${src.adt}/Set.adt" srcfile="${src.adt}/jtom/adt/" property="newer.adt"/>
-			<echo>check new ${newer.adt}</echo>
+			<condition property="newer.adt">
+				<or>
+					<not><available file="${src.adt}/jtom/adt/"/></not>
+					<not><available file="${src.adt}/jtom/adt/"/></not>
+					<not><available file="${src.adt}/jtom/adt/"/></not>
+					<uptodate targetfile="${src.adt}/TomSignature.adt" srcfile="${src.adt}/jtom/adt/"/>
+					<uptodate targetfile="${src.adt}/TNode.adt" srcfile="${src.adt}/jtom/adt/"/>
+					<uptodate targetfile="${src.adt}/Set.adt" srcfile="${src.adt}/jtom/adt/"/>
+				</or>
+			</condition>
 		</target>
   		
-		<!--
-			<target name="buildadt" depends="init, preparesrc" if="newer.adt">
-		-->
-  	<target name="buildadt" depends="init, preparesrc">
+		<target name="buildadt" depends="init, preparesrc, check.newer.adt" if="newer.adt">
 			<adt file="${src.adt}/TomSignature.adt" factory="TomSignature" package="jtom.adt" destdir="${src.adt}"/>
 			<adt file="${src.adt}/TNode.adt" factory="TNode" package="jtom.adt" destdir="${src.adt}"/>
 			<adt file="${src.adt}/Set.adt" factory="Set" package="jtom.adt" destdir="${src.adt}"/>
 	</target>
   	
   	<target name="buildsrc" description="compile the TOM development sources" depends="preparesrc">
-			<antcall target="check.newer.adt"/>
-  		<antcall target="buildadt"/>
+  		<!--<antcall target="buildadt"/>-->
   		<antcall target="buildtom"/>
 			<antcall target="buildparser"/>
   		<javac srcdir="${src.src}" destdir="${src.build}" verbose="${javacVerbose}">
@@ -180,6 +192,18 @@
 			</fileset>
 		</delete>
 	</target>
-	
+
+	<target name="cleantest" description="Cleans acceptance tests directory">
+		<delete>
+			<fileset dir="${test}" includes="*.java, *.class" />
+		</delete>
+	</target>
+
+	<target name="check" description="Compile and run acceptance tests" depends="initsrc">
+		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.runtime}/mapping">
+			<exclude name="cfib1.t"/>
+			<exclude name="loulou.t"/>
+		</tomsrc>
+	</target>
 
 </project>
