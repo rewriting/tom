@@ -156,7 +156,7 @@
              classname="jtom.tools.ant.TomTask"
              classpathref="tom.classpath"/>
     <taskdef name="vas"
-						 classname="vas.ant.VasTask" 
+             classname="vas.ant.VasTask" 
              classpathref="tom.classpath"/>
     <taskdef name="tomantlr" 
              classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
@@ -171,27 +171,27 @@
              destdir="${examples.gen}"         
              nowarn="${nowarnings}"
              optimize="${optimize}"
-						 pretty="${pretty}"
+             pretty="${pretty}"
              options="-I ${tom.home}/share/jtom">
           <include name="@{example}/**/*.t"/>
         </tom>
       </sequential>
-  </macrodef>
-
-	<macrodef name="adtcompile">
-		<attribute name="example"/>
-		<attribute name="factory"/>
-		<sequential>
-			<adt srcdir="${examples.dir}"
-					 factory="@{factory}" 
-					 package="@{example}" 
-					 visitable="${visitable}"
-					 destdir="${examples.gen}">
-				<include name="@{example}/**/*.adt"/>
-			</adt>
-		</sequential>
-	</macrodef>
-
+    </macrodef>
+    
+    <macrodef name="adtcompile">
+      <attribute name="example"/>
+      <attribute name="factory"/>
+      <sequential>
+        <adt srcdir="${examples.dir}"
+             factory="@{factory}" 
+             package="@{example}" 
+             visitable="${visitable}"
+             destdir="${examples.gen}">
+          <include name="@{example}/**/*.adt"/>
+        </adt>
+      </sequential>
+    </macrodef>
+    
   </target>
   
   <target name="prepare.examples">
@@ -202,7 +202,7 @@
   <target name="debug"> 
     <echoproperties/>
   </target>
-
+  
   <target name="clean.examples" description="Cleans examples directory">
     <delete dir="${examples.gen}"/>
     <delete dir="${examples.build}"/>
@@ -210,8 +210,8 @@
 
   <target name="addressbook" depends="init">
     <!-- build adt -->
-		<adtcompile example="${addressbook}"
-								factory="data"/>
+    <adtcompile example="${addressbook}"
+                factory="data"/>
     <!-- build tom -->
     <tomcompile example="${addressbook}"/>
     <!-- build java source -->
@@ -226,8 +226,8 @@
 
   <target name="apireach" depends="init"> 
     <!-- build adt -->
-		<adtcompile example="${apireach}"
-								factory="reach"/>
+    <adtcompile example="${apireach}"
+                factory="reach"/>
     <!-- build tom -->
     <tomcompile example="${apireach}"/>
     <!-- build java source -->
@@ -254,8 +254,8 @@
 
   <target name="boulderdash" depends="init">
     <!-- build adt -->
-		<adtcompile example="${boulderdash}"
-								factory="boulder"/>
+    <adtcompile example="${boulderdash}"
+                factory="boulder"/>
     <!-- build tom -->
     <tomcompile example="${boulderdash}"/>
     <!-- build java source -->
@@ -277,8 +277,8 @@
 
   <target name="builtin" depends="init">
     <!-- build adt -->
-		<adtcompile example="${builtin}"
-								factory="term"/>
+    <adtcompile example="${builtin}"
+                factory="term"/>
     <!-- build tom -->
     <tomcompile example="${builtin}"/>
     <!-- build java source -->
@@ -426,8 +426,8 @@
 
   <target name="gtree" depends="init">
     <!-- build adt -->
-		<adtcompile example="${gtree}"
-								factory="term"/>
+    <adtcompile example="${gtree}"
+                factory="term"/>
     <!-- build tom -->
     <tomcompile example="${gtree}"/>
     <!-- build java source -->
@@ -464,8 +464,8 @@
 
   <target name="minirho" depends="init">
     <!-- build adt -->
-		<adtcompile example="${minirho}"
-								factory="term"/>
+    <adtcompile example="${minirho}"
+                factory="term"/>
     <!-- build tom -->
     <tomcompile example="${minirho}"/>
     <!-- build java source -->
@@ -478,8 +478,8 @@
   
   <target name="nspk" depends="init">
     <!-- build adt -->
-		<adtcompile example="${nspk}"
-								factory="term"/>
+    <adtcompile example="${nspk}"
+                factory="term"/>
     <!-- build tom -->
     <tomcompile example="${nspk}"/>
     <!-- build java source -->
@@ -508,8 +508,8 @@
 
   <target name="peano" depends="init">
     <!-- build adt -->
-		<adtcompile example="${peano}"
-								factory="${peano}"/>
+    <adtcompile example="${peano}"
+                factory="${peano}"/>
     <!-- build tom -->
     <tomcompile example="${peano}"/>
     <!-- build java source -->
@@ -523,8 +523,8 @@
 
   <target name="pnspk" depends="init">
     <!-- build adt -->
-		<adtcompile example="${pnspk}"
-								factory="term"/>
+    <adtcompile example="${pnspk}"
+                factory="term"/>
     <!-- build tom -->
     <tomcompile example="${pnspk}"/>
     <!-- build java source -->
@@ -538,8 +538,8 @@
   
   <target name="poly" depends="init">
     <!-- build adt -->
-		<adtcompile example="${poly}"
-								factory="expression"/>
+    <adtcompile example="${poly}"
+                factory="expression"/>
     <!-- build tom -->
     <tomcompile example="${poly}"/>
     <!-- build java source -->
@@ -579,8 +579,8 @@
 
   <target name="propp" depends="init">
     <!-- build adt -->
-		<adtcompile example="${propp}"
-								factory="seq"/>
+    <adtcompile example="${propp}"
+                factory="seq"/>
     <!-- build parser -->
     <mkdir dir="${examples.gen}/${propp}"/>
     <tomantlr target="${propp.dir}/SeqParser.g"
@@ -608,8 +608,8 @@
 
   <target name="rbtree" depends="init">
     <!-- build adt -->
-		<adtcompile example="${rbtree}"
-								factory="tree"/>
+    <adtcompile example="${rbtree}"
+                factory="tree"/>
     <!-- build tom -->
     <tomcompile example="${rbtree}"/>
     <!-- build java source -->
@@ -622,8 +622,8 @@
 
   <target name="set" depends="init">
     <!-- build adt -->
-		<adtcompile example="${set}"
-								factory="jgset"/>
+    <adtcompile example="${set}"
+                factory="jgset"/>
     <!-- build tom -->
     <tomcompile example="${set}"/>
     <!-- build java source -->
@@ -636,8 +636,8 @@
 
   <target name="strategy" depends="init">
     <!-- build adt -->
-		<adtcompile example="${strategy}"
-								factory="term"/>
+    <adtcompile example="${strategy}"
+                factory="term"/>
     <!-- build tom -->
     <tomcompile example="${strategy}"/>
     <!-- build java source -->
@@ -664,7 +664,7 @@
          pretty="${pretty}"
          stamp="off" 
          options="-I ${tom.home}/share/jtom">
-<!-- stamp not yet ready for apigen list -->
+      <!-- stamp not yet ready for apigen list -->
       <include name="${structure}/**/*.t"/>
       <exclude name="${structure}/**/StructParser.g.t"/>
       <!--      <exclude name="${structure}/**/StructureCDT.t"/> -->
@@ -770,206 +770,206 @@
   </target>
   
   <target name="examples" 
-            description="Builds the examples (at least some)"
-            depends="addressbook, apireach, appletxml, boulderdash, builtin,
-            caml, cell, dom, expression, gtree, list, 
-            nspk, p3p, peano, pnspk, poly, pqueens,
-            prodrule, propp, rbtree, set, strategy, structure, 
-            tutorial, vas, xml">
-      </target>
+          description="Builds the examples (at least some)"
+          depends="addressbook, apireach, appletxml, boulderdash, builtin,
+          caml, cell, dom, expression, gtree, list, 
+          nspk, p3p, peano, pnspk, poly, pqueens,
+          prodrule, propp, rbtree, set, strategy, structure, 
+          tutorial, vas, xml">
+  </target>
 
-      <target name="dist.examples" 
-              description="Prepare a distribution of examples" 
-              depends="prepare.examples">
-        <tar tarfile="${examples.dist}/jtom-${version}-examples.tar.gz" 
-             compression="gzip">
-          <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
-            <include name="README"/>
-            <include name="build.xml"/>
-            <include name="build.sh"/>
-            <include name="${examples.lib}/*.jar"/>
+  <target name="dist.examples" 
+          description="Prepare a distribution of examples" 
+          depends="prepare.examples">
+    <tar tarfile="${examples.dist}/jtom-${version}-examples.tar.gz" 
+         compression="gzip">
+      <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
+        <include name="README"/>
+        <include name="build.xml"/>
+        <include name="build.sh"/>
+        <include name="${examples.lib}/*.jar"/>
 
-            <include name="${addressbook}/README"/>
-            <include name="${addressbook}/*.t"/>
-            <include name="${addressbook}/*.adt"/>
+        <include name="${addressbook}/README"/>
+        <include name="${addressbook}/*.t"/>
+        <include name="${addressbook}/*.adt"/>
 
-            <include name="${apireach}/README"/>
-            <include name="${apireach}/*.t"/>
-            <include name="${apireach}/*.adt"/>
+        <include name="${apireach}/README"/>
+        <include name="${apireach}/*.t"/>
+        <include name="${apireach}/*.adt"/>
 
-            <include name="${appletxml}/README"/>
-            <include name="${appletxml}/*.t"/>
-            <include name="${appletxml}/*.java"/>
+        <include name="${appletxml}/README"/>
+        <include name="${appletxml}/*.t"/>
+        <include name="${appletxml}/*.java"/>
 
-            <include name="${boulderdash}/README"/>
-            <include name="${boulderdash}/*.t"/>
-            <include name="${boulderdash}/*.adt"/>
-            <include name="${boulderdash}/*.gif"/>
-            <include name="${boulderdash}/*.html"/>
-            <include name="${boulderdash}/*.java"/>
+        <include name="${boulderdash}/README"/>
+        <include name="${boulderdash}/*.t"/>
+        <include name="${boulderdash}/*.adt"/>
+        <include name="${boulderdash}/*.gif"/>
+        <include name="${boulderdash}/*.html"/>
+        <include name="${boulderdash}/*.java"/>
 
-            <include name="${builtin}/README"/>
-            <include name="${builtin}/*.t"/>
-            <include name="${builtin}/*.adt"/>
+        <include name="${builtin}/README"/>
+        <include name="${builtin}/*.t"/>
+        <include name="${builtin}/*.adt"/>
 
-            <include name="${caml}/README"/>
-            <include name="${caml}/Makefile"/>
-            <include name="${caml}/*.t"/>
-            <include name="${caml}/peanotype.ml"/>
-            <include name="${caml}/tomExtension.ml"/>
-            <include name="${caml}/tomList.ml"/>
+        <include name="${caml}/README"/>
+        <include name="${caml}/Makefile"/>
+        <include name="${caml}/*.t"/>
+        <include name="${caml}/peanotype.ml"/>
+        <include name="${caml}/tomExtension.ml"/>
+        <include name="${caml}/tomList.ml"/>
 
-            <include name="${cell}/*.t"/>
-            <include name="${cell}/*.java"/>
-            <include name="${cell}/*.gif"/>
+        <include name="${cell}/*.t"/>
+        <include name="${cell}/*.java"/>
+        <include name="${cell}/*.gif"/>
 
-            <include name="${dom}/README"/>
-            <include name="${dom}/*.t"/>
-            <include name="${dom}/*.adt"/>
-            <include name="${dom}/*.xml"/>
+        <include name="${dom}/README"/>
+        <include name="${dom}/*.t"/>
+        <include name="${dom}/*.adt"/>
+        <include name="${dom}/*.xml"/>
 
-            <include name="${expression}/README"/>
-            <include name="${expression}/*.t"/>
-            <include name="${expression}/*.java"/>
+        <include name="${expression}/README"/>
+        <include name="${expression}/*.t"/>
+        <include name="${expression}/*.java"/>
 
-            <include name="${gtree}/README"/>
-            <include name="${gtree}/*.t"/>
-            <include name="${gtree}/*.adt"/>
+        <include name="${gtree}/README"/>
+        <include name="${gtree}/*.t"/>
+        <include name="${gtree}/*.adt"/>
 
-            <include name="${integerc}/README"/>
-            <include name="${integerc}/*.t"/>
-            <include name="${integerc}/*.adt"/>
+        <include name="${integerc}/README"/>
+        <include name="${integerc}/*.t"/>
+        <include name="${integerc}/*.adt"/>
 
-            <include name="${list}/README"/>
-            <include name="${list}/*.t"/>
-            <include name="${list}/*.adt"/>
+        <include name="${list}/README"/>
+        <include name="${list}/*.t"/>
+        <include name="${list}/*.adt"/>
 
-            <include name="${nspk}/README"/>
-            <include name="${nspk}/*.t"/>
-            <include name="${nspk}/*.adt"/>
+        <include name="${nspk}/README"/>
+        <include name="${nspk}/*.t"/>
+        <include name="${nspk}/*.adt"/>
 
-            <include name="${p3p}/README"/>
-            <include name="${p3p}/*.t"/>
-            <include name="${p3p}/*.xml"/>
+        <include name="${p3p}/README"/>
+        <include name="${p3p}/*.t"/>
+        <include name="${p3p}/*.xml"/>
 
-            <include name="${peano}/README"/>
-            <include name="${peano}/*.adt"/>
-            <include name="${peano}/*.t"/>
+        <include name="${peano}/README"/>
+        <include name="${peano}/*.adt"/>
+        <include name="${peano}/*.t"/>
 
-            <include name="${pnspk}/README"/>
-            <include name="${pnspk}/*.t"/>
-            <include name="${pnspk}/*.adt"/>
+        <include name="${pnspk}/README"/>
+        <include name="${pnspk}/*.t"/>
+        <include name="${pnspk}/*.adt"/>
 
-            <include name="${poly}/README"/>
-            <include name="${poly}/*.t"/>
-            <include name="${poly}/Poly.signature"/>
-            <include name="${poly}/*.adt"/>
-            <include name="${poly}/*.java"/>
+        <include name="${poly}/README"/>
+        <include name="${poly}/*.t"/>
+        <include name="${poly}/Poly.signature"/>
+        <include name="${poly}/*.adt"/>
+        <include name="${poly}/*.java"/>
 
-            <include name="${pqueens}/README"/>
-            <include name="${pqueens}/*.t"/>
-            <include name="${pqueens}/*.tom"/>
+        <include name="${pqueens}/README"/>
+        <include name="${pqueens}/*.t"/>
+        <include name="${pqueens}/*.tom"/>
 
-            <include name="${prodrule}/README"/>
-            <include name="${prodrule}/*.t"/>
+        <include name="${prodrule}/README"/>
+        <include name="${prodrule}/*.t"/>
 
-            <include name="${propp}/README"/>
-            <include name="${propp}/*.t"/>
-            <include name="${propp}/*.adt"/>
-            <include name="${propp}/*.g"/>
-            <include name="${propp}/*.sty"/>
-            <include name="${propp}/examples"/>
+        <include name="${propp}/README"/>
+        <include name="${propp}/*.t"/>
+        <include name="${propp}/*.adt"/>
+        <include name="${propp}/*.g"/>
+        <include name="${propp}/*.sty"/>
+        <include name="${propp}/examples"/>
 
-            <include name="${rbtree}/README"/>
-            <include name="${rbtree}/*.t"/>
-            <include name="${rbtree}/*.adt"/>
+        <include name="${rbtree}/README"/>
+        <include name="${rbtree}/*.t"/>
+        <include name="${rbtree}/*.adt"/>
 
-            <include name="${set}/README"/>
-            <include name="${set}/*.t"/>
-            <include name="${set}/*.adt"/>
+        <include name="${set}/README"/>
+        <include name="${set}/*.t"/>
+        <include name="${set}/*.adt"/>
 
-            <include name="${strategy}/README"/>
-            <include name="${strategy}/*.t"/>
-            <include name="${strategy}/*.adt"/>
+        <include name="${strategy}/README"/>
+        <include name="${strategy}/*.t"/>
+        <include name="${strategy}/*.adt"/>
 
-            <include name="${structure}/README"/>
-            <include name="${structure}/*.t"/>
-            <include name="${structure}/*.adt"/>
+        <include name="${structure}/README"/>
+        <include name="${structure}/*.t"/>
+        <include name="${structure}/*.adt"/>
 
-            <include name="${tutorial}/README"/>
-            <include name="${tutorial}/*.t"/>
-            <include name="${tutorial}/*.xml"/>
+        <include name="${tutorial}/README"/>
+        <include name="${tutorial}/*.t"/>
+        <include name="${tutorial}/*.xml"/>
 
-            <include name="${vas}/README"/>
-            <include name="${vas}/*.t"/>
+        <include name="${vas}/README"/>
+        <include name="${vas}/*.t"/>
 
-            <include name="${xml}/README"/>
-            <include name="${xml}/*.t"/>
-            <include name="${xml}/*.adt"/>
-            <include name="${xml}/*.xml"/>
-            <include name="${xml}/*.html"/>
+        <include name="${xml}/README"/>
+        <include name="${xml}/*.t"/>
+        <include name="${xml}/*.adt"/>
+        <include name="${xml}/*.xml"/>
+        <include name="${xml}/*.html"/>
 
-            <include name="${xquery}/README"/>
-            <include name="${xquery}/*.t"/>
-            <include name="${xquery}/*.xml"/>
-            <include name="${xquery}/*.xquery"/>
-            <include name="${xquery}/*.html"/>
+        <include name="${xquery}/README"/>
+        <include name="${xquery}/*.t"/>
+        <include name="${xquery}/*.xml"/>
+        <include name="${xquery}/*.xquery"/>
+        <include name="${xquery}/*.html"/>
 
-            <not>
-              <present targetdir="${examples.dir}">
-                <mapper type="glob" 
-                        from="**/*.java" 
-                        to="**/*.t"/>
-              </present>
-            </not>
-          </tarfileset>
-        </tar>
-      </target>
+        <not>
+          <present targetdir="${examples.dir}">
+            <mapper type="glob" 
+                    from="**/*.java" 
+                    to="**/*.t"/>
+          </present>
+        </not>
+      </tarfileset>
+    </tar>
+  </target>
 
-      <target name="clean.dist" description="Mr proper" depends="clean">
-        <delete dir="${examples.dist}"/>
-      </target>
+  <target name="clean.dist" description="Mr proper" depends="clean">
+    <delete dir="${examples.dist}"/>
+  </target>
 
-      <target name="clean" 
-              description="Cleans everything in the project" 
-              depends="clean.examples">
-      </target> 
+  <target name="clean" 
+          description="Cleans everything in the project" 
+          depends="clean.examples">
+  </target> 
 
-      <target name="initjunit">
-        <taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
-          <classpath refid="tom.classpath"/>
-        </taskdef>
-      </target>
+  <target name="initjunit">
+    <taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+      <classpath refid="tom.classpath"/>
+    </taskdef>
+  </target>
 
-      <target name="junit" description="Runs junit acceptance tests" depends="examples, initjunit">
-        <tomjunit printsummary="yes"
-                  fork="true"
-                  haltonfailure="false"
-                  failureproperty="tests.failed"
-                  showoutput="true">
-          <classpath>
-            <path refid="tom.classpath"/>
-            <pathelement location="${examples.build}"/>
-          </classpath>
-          <batchtest>
-            <fileset dir="${examples.gen}">
-              <include name="**/Test*.java"/>
-            </fileset>
-            <fileset dir="${examples.dir}">
-              <include name="**/Test*.java"/>
-              <exclude name="gen/**/*"/>
-            </fileset>
-          </batchtest>
-        </tomjunit>
+  <target name="junit" description="Runs junit acceptance tests" depends="examples, initjunit">
+    <tomjunit printsummary="yes"
+              fork="true"
+              haltonfailure="false"
+              failureproperty="tests.failed"
+              showoutput="true">
+      <classpath>
+        <path refid="tom.classpath"/>
+        <pathelement location="${examples.build}"/>
+      </classpath>
+      <batchtest>
+        <fileset dir="${examples.gen}">
+          <include name="**/Test*.java"/>
+        </fileset>
+        <fileset dir="${examples.dir}">
+          <include name="**/Test*.java"/>
+          <exclude name="gen/**/*"/>
+        </fileset>
+      </batchtest>
+    </tomjunit>
 
-        <fail if="tests.failed">
-          ****************************************************
-          ****************************************************
-          One or more tests failed. Check the output...
-          ****************************************************
-          ****************************************************
-        </fail>
-      </target>
+    <fail if="tests.failed">
+      ****************************************************
+      ****************************************************
+      One or more tests failed. Check the output...
+      ****************************************************
+      ****************************************************
+    </fail>
+  </target>
 
-      
-    </project>
+  
+</project>
