@@ -1,0 +1,460 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The language}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Foreword}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This document is intended as a reference manual for the \TOM\
+language. It lists the language constructs, and gives their precise
+syntax and informal semantics. It is by no means a tutorial
+introduction to the language: there is not a single example.
+
+\subsection{Notations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The syntax of the language is given in BNF-like notation. Terminal
+symbols are set in typewriter font (\lex{like this}). Non-terminal
+symbols are set in italic font (\nt{like  that}). Square brackets
+[...] denote optional components. Parentheses with a trailing
+star sign  (...)* denotes zero, one or several repetitions of the
+enclosed components. Parentheses with a trailing 
+plus sign  (...)+ denote one or several repetitions of the enclosed
+components. Parentheses (...) denote grouping. 
+
+\subsection{Lexical conventions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+\begin{tabular}{lcl}
+  \nt{Identifier} & ::= & \nt{Letter} ( \nt{Letter} \alt \nt{Digit}
+  \alt \lex{.} \alt \lex{\_} \alt \lex{-} )*\\
+  \nt{Integer} & ::= & \nt{Digit} ( \nt{Digit} )*\\
+  \nt{Letter} & ::= & \lex{A} ... \lex{Z} \alt \lex{a} ... \lex{z}\\
+  \nt{Digit} & ::= & \lex{0} ... \lex{9}\\
+  \nt{Other} & ::= & a character
+\end{tabular}
+\end{center}
+
+
+\subsection{Names}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+\begin{tabular}{lcl}
+  \nt{SubjectName} & ::= & \nt{Identifier}\\
+  \nt{Type} & ::= & \nt{Identifier}\\
+  \nt{SlotName} & ::= & \nt{Identifier}\\
+  \nt{SymbolName} & ::= & \nt{Identifier}\\
+  \nt{VariableName} & ::= & \nt{Identifier}\\
+  \nt{AnnotedName} & ::= & \nt{Identifier}\\
+  \nt{FileName} & ::= & \nt{Identifier}\\
+  \nt{Name} & ::= & \nt{Identifier}
+\end{tabular}
+\end{center}
+
+
+\subsection{\TOM\ syntax}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A \TOM\ program is a target language program (namely \Clang\ or \Java)
+embedded with some new preprocessor constructs such as
+\lex{\%typeterm}, \lex{\%op}, \lex{\%rule} and \lex{\%match}.
+\TOM\ is a multi-languages preprocessor, so, its syntax depends from 
+the target language syntax. But for simplicity, we will only present
+the syntax of its constructs and explain how they can be integrated
+into the target language.
+Basically, a \TOM\ program is list of blocks, where each block is
+either a \TOM\ construct, either a sequence of characters.
+The idea is that that after transformation, the sequence of characters
+merged with the compiled \TOM\ constructs should be a valid target
+language program.
+So we have:
+
+\begin{center}
+\begin{tabular}{lcl}
+  \nt{Tom} & ::= & \nt{BlockList}\\
+  \nt{BlockList} & ::= \\
+  & ( &  \nt{MatchConstruct}\\
+  & \alt & \nt{RuleConstruct}\\
+  & \alt & \nt{BackQuoteTerm}\\
+  & \alt & \nt{IncludeConstruct}\\
+  & \alt & \nt{LocalVariableConstruct}\\
+  & \alt & \nt{Operator}\\
+  & \alt & \nt{OperatorList}\\
+  & \alt & \nt{OperatorArray}\\
+  & \alt & \nt{TypeTerm}\\
+  & \alt & \nt{TypeInt}\\
+  & \alt & \nt{TypeList}\\
+  & \alt & \nt{TypeArray}\\
+  & \alt & \lex{\{} \nt{BlockList} \lex{\}}\\
+  & \alt & \nt{Other}\\
+  &)*\\
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item a \nt{MatchConstruct} is translated into a list of
+  instructions. This constructs may appear anywhere a list of
+  instructions is valid in the target language.
+
+\item a \nt{RuleConstruct} is translated into a function
+  definition. This constructs may appear anywhere function declaration
+  is valid in the target language. 
+
+\item a \nt{BackQuoteTerm} is translated into a function call.
+
+\item a \nt{IncludeConstruct} is replaced by the content of the
+  file referenced by the construct.
+
+\item a \nt{LocalVariableConstruct} is replaced by variable declarations.
+
+\item \nt{Operator}, \nt{OperatorList} and \nt{OperatorArray} are
+  replaced by some functions definitions. 
+ 
+\item \nt{TypeTerm}, \nt{TypeInt}, \nt{TypeList} and \nt{TypeArray}
+  are also replaced by some functions definitions. 
+\end{itemize}
+
+A \lex{\%match} construct contains two parts:
+\begin{itemize}
+\item a list of target language variables. These variables should
+  contains the object on which patterns are matched
+
+\item a list of rules: a pattern and a semantic action (written in the
+  target language)
+\end{itemize}
+The construct is defined as follow:
+
+\begin{center}
+  \begin{tabular}{lcl}
+    \nt{MatchConstruct} & ::= & \lex{\%match} \lex{(}
+    \nt{MatchArguments} \lex{)} \lex{\{}
+    ( \nt{PatternAction} )* 
+    \lex{\}}\\
+  \nt{MatchArguments} & ::= & \nt{MatchArgument} ( \lex{,} \nt{MatchArgument} )* \\
+  \nt{MatchArgument}  & ::= & \nt{Type} \nt{SubjectName}\\
+  \nt{PatternAction} & ::= & \nt{MatchPatterns} \lex{->}
+     \lex{\{} \nt{BlockList} \lex{\}} \\
+  \nt{MatchPatterns} & ::= & \nt{Term} ( \lex{,} \nt{Term} )*
+\end{tabular}
+\end{center}
+
+A term has the following syntax:
+\begin{center}
+  \begin{tabular}{lcl}
+    \nt{Term} & ::= & [ \nt{AnnotedName} \lex{@} ] \nt{PlainTerm}\\
+    \nt{PlainTerm} & ::= & \nt{SymbolName} \lex{[} \nt{SlotName} \lex{=} \nt{Term}
+    ( \lex{,} \nt{SlotName} \lex{=} \nt{Term} )* \lex{]}\\
+    & \alt & \nt{VariableName} \lex{*}\\
+    & \alt & \nt{SymbolName} \lex{(} \nt{Term} ( \lex{,} \nt{Term} )* \lex{)}\\
+    & \alt & \lex{\_}
+  \end{tabular}
+\end{center}
+
+In \TOM, we can also define a set of rewrite rules. All the
+left-handsides should begin with the same root symbol:
+
+\begin{center}
+  \begin{tabular}{lcl}
+    \nt{RuleConstruct} & ::= & \lex{\%rule} \lex{\{} ( \nt{Term} \lex{->} \nt{Term} )* \lex{\}}\\
+    \nt{MakeConstruct} & ::= & \lex{\%make} \lex{\{} \nt{Term} \lex{\}}
+\end{tabular}
+\end{center}
+
+\begin{center}
+  \begin{tabular}{lcl}
+    \nt{IncludeConstruct} & ::= & \lex{\%include} \lex{\{} \nt{FileName} \lex {\}}\\
+    \nt{Operator} & ::= & \lex{\%op} \nt{Type} \nt{Name}
+        [ \lex{(} [ \nt{SlotName} \lex{:} ] \nt{Type} ( \lex{,} [
+        \nt{SlotName} \lex{:} ] \nt{Type} )* \lex{)} ]\\
+        &&
+        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMake} \alt
+        \nt{KeywordGetSlot} )* \lex{\}}\\
+        \nt{OperatorList} & ::= & 
+        \lex{\%oplist} \nt{Type} \nt{Name} \lex{(} \nt{Type} \lex{*}
+        \lex{)}\\
+        &&
+        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMakeEmptyList} \alt
+        \nt{KeywordMakeAddList} )* \lex{\}}\\
+        \nt{OperatorArray} & ::= & 
+        \lex{\%oparray} \nt{Type} \nt{Name} \lex{(} \nt{Type} \lex{*}
+        \lex{)}\\
+        &&
+        \lex{\{} \nt{KeywordFsym} ( \nt{KeywordMakeEmptyEmpty} \alt
+        \nt{KeywordMakeAddArray} )* \lex{\}}
+\end{tabular}
+\end{center}
+
+\begin{center}
+  \begin{tabular}{lcl}
+    \nt{TypeTerm} & ::= & \lex{\%type} \nt{Type} \lex{\{}
+    \nt{KeywordImplement}
+    ( 
+    \nt{KeywordGetFunSym} 
+    \alt \nt{KeywordGetSubterm} 
+    \alt \nt{KeywordCmpFunSym} 
+    \alt \nt{KeywordEquals} 
+    )*
+    \lex{\}}\\
+    \nt{TypeList} & ::= &
+        \lex{\%typelist} \nt{Type} \lex{\{}
+                \nt{KeywordImplement}
+                [\nt{KeywordGetFunSym}]
+                [\nt{KeywordGetSubterm}]
+                [\nt{KeywordCmpFunSym}]
+                [\nt{KeywordEquals}]
+                [\nt{KeywordGetHead}]
+                [\nt{KeywordGetTail}]
+                [\nt{KeywordIsEmpty}]
+                \lex{\}}\\
+    \nt{TypeArray} & ::= &
+        \lex{\%typearray} \nt{Type} \lex{\{}
+                \nt{KeywordImplement}
+                ( 
+                  \nt{KeywordGetFunSym}
+                \alt \nt{KeywordGetSubterm}
+                \alt \nt{KeywordCmpFunSym}
+                \alt \nt{KeywordEquals}
+                \alt \nt{KeywordGetElement}
+                \alt \nt{KeywordGetSize}
+                )*
+        \lex{\}}
+\end{tabular}
+\end{center}
+
+\begin{center}
+  \begin{tabular}{lcl}
+\nt{GoalLanguageBlock} & ::= & \lex{\{} \nt{BlockList} \lex{\}}\\
+\nt{KeywordImplement} & ::= & \lex{implement} \nt{GoalLanguageBlock}\\
+\nt{KeywordGetFunSym} & ::= & \lex{get\_fun\_sym} \lex{(} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordGetSubterm} & ::= & 
+\lex{get\_subterm} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordCmpFunSym} & ::= & 
+\lex{cmp\_fun\_sym} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordEquals} & ::= &
+        \lex{equals} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordGetHead} & ::= &
+        \lex{get\_head} \lex{(} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordGetTail} & ::= &
+        \lex{get\_tail} \lex{(} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordIsEmpty} & ::= &
+        \lex{is\_empty} \lex{(} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordGetElement} & ::= &
+        \lex{get\_element} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordGetSize} & ::= &
+        \lex{get\_size} \lex{(} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordFsym} & ::= &
+        \lex{fsym} \nt{GoalLanguageBlock}\\
+\nt{KeywordGetSlot} & ::= &
+        \lex{get\_slot} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordMake} & ::= &
+        \lex{make} \lex{(} \nt{Name} ( \lex{,} \nt{Name} )* \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordMakeEmptyList} & ::= &
+        \lex{make\_empty} [ \lex{(} \lex{)} ] \nt{GoalLanguageBlock}\\
+\nt{KeywordMakeAddList} & ::= &
+        \lex{make\_add} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordMakeEmptyArray} & ::= &
+        \lex{make\_empty} \lex{(} \nt{Name} \lex{)} \nt{GoalLanguageBlock}\\
+\nt{KeywordMakeAddArray} & ::= &
+        \lex{make\_add} \lex{(} \nt{Name} \lex{,} \nt{Name} \lex{,} \nt{Name} \lex{)} \nt{GoalLanguageBlock}
+\end{tabular}
+\end{center}
+
+
+\subsection{\TOM\ semantic}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Type definition}
+
+\noindent
+When defining a new type with the \lex{\%typeterm} constructs,
+several access functions have to be defined:
+\begin{itemize}
+\item the \lex{implement} construct describes how the new type is 
+  implemented. The target language part written between braces
+  (\lex{'\{'} and \lex{'\}'}) is never parsed. It is used by
+  the compiler to declare some functions and variables.
+
+\item the \lex{get\_fun\_sym(t)} construct corresponds to a
+  function (parametrised by a term variable) that should return the
+  root symbol of a given term (the term referenced by the term
+  variable \texttt{t} in this example). 
+
+\item the \lex{cmp\_fun\_sym(s1,s2)} construct corresponds to a
+  predicate (parametrised by two symbol variables).
+  This predicate should return \texttt{true} if the symbols are
+  ``equal''. The \texttt{true} value should correspond to the 
+  builtin \texttt{true} value of the considered target language.
+  (\texttt{true} in \Java, and something different from \texttt{0} in
+  \Clang\ for example). 
+
+\item the \lex{get\_subterm(t,n)} construct corresponds to a
+  function (parametrised by a term variable and an integer).
+  This function should return the \texttt{n-th} subterm of the
+  term~\texttt{t}. This never called with and integer paramter that
+  does not correspond to the arity of the root symbol of the
+  considered term (i.e. we alway have $0 \leq n < arity$).
+
+\item the \lex{equals(t1,t2)} construct corresponds to a
+  predicate (parametrised by two term variables).
+  This predicate should return \texttt{true} if the terms are
+  ``equal''. The \texttt{true} value should correspond to the 
+  builtin \texttt{true} value of the considered target language.
+  This last optional predicate is only used to compile non-linear 
+  left-handsides. It is not needed, if the specification does not
+  contain such patterns.
+\end{itemize}
+
+
+\noindent
+When defining a new type with the \lex{\%typelist} construct,
+several other access functions have to be defined:
+\begin{itemize}
+\item the \lex{get\_head(l)} function is parametrised by a list
+  variable and should return the first element of the considered list.
+
+\item the \lex{get\_tail(l)} function is parametrised by a list
+  variable and should return the tail of the considered list.
+
+\item the \lex{is\_empty(l)} constructs corresponds to a
+  predicate parametrised by a list variable.
+  This predicate should return \texttt{true} if the considered list
+  contains no element.
+\end{itemize}
+
+\noindent
+When defining a new type with the \lex{\%typearray} construct,
+the two different access functions have to be defined:
+\begin{itemize}
+\item the \lex{get\_element(l,n)} construct is parametrised by a list
+  variable and an integer. This should correspond to a function that
+  return the \texttt{n-th} element of the considered list~\texttt{l}.
+
+\item the \lex{get\_size(l)} constructs corresponds to a function
+  that returns the size of the considered list.
+  By convention, an empty list contains \texttt{0} element.
+\end{itemize}
+
+\subsubsection{Operator definition}
+
+\noindent
+When defining a new symbol with the \lex{\%op} construct, the user
+should specify how the symbol is implemented. This is done by the
+\lex{fsym} construct.
+The expression between braces should correspond (modulo the
+\lex{cmp\_fun\_sym} predicate) to the expression returned by the
+function \lex{get\_fun\_sym} applied to a term rooted by the
+considered symbol.  
+When defining a symbol, is it also possible to specify a
+\lex{make} construct. This function is parametrised by several 
+term variables (i.e. that should correspond to the arity of the
+symbol). A call to this \lex{make} function should return a term
+rooted by the considered symbol, where each subterm correspond to the
+terms given in arguments to the function.
+
+\noindent
+As mentioned in the syntax definition, it is also possible to name
+each field of a constructor symbol by using the
+\texttt{Type f(name1:Type, name2:Type2)} syntax.  
+Adopting this programming style has two main advantages:
+\begin{itemize}
+\item when writing a pattern, this allows you write \texttt{f[name2=a]}
+  instead of \texttt{f(\_,a)}. One benefit is that you can modify the
+  signature (adding a field for example) without necessary having to
+  modify every pattern that occurs in the program.
+
+\item you may also specialize the \lex{get\_subterm} access
+function for a given constructor. This can be done with the
+\lex{get\_slot} construct.
+\end{itemize}
+
+\smallskip\noindent
+When defining a new symbol with the \lex{\%oplist} construct,
+the user has to specify how the symbol is implemented. 
+The user has also to specify how a list can be built (this is no
+longer optional as in the \lex{\%op} construct):
+\begin{itemize}
+\item the \lex{make\_empty()} construct should return an empty
+  list.
+
+\item the \lex{make\_add(l,e)} construct corresponds to a function
+  parametrised by a list variable and a term variable. This function
+  should return a new list~\texttt{l'} where the element~\texttt{e}
+  has been inserted at the head of the list~\texttt{l}
+  (i.e. \lex{equals(get\_head(l'),e)} and
+  \lex{equals(get\_tail(l'),l)} should be \texttt{true}).
+\end{itemize}
+
+\noindent
+When defining a new symbol with the \lex{\%oparray} construct,
+the user has to specify how the symbol is implemented. 
+The user has also to specify how a list can be built (this is no 
+longer optional as in the \lex{\%op} construct):
+\begin{itemize}
+\item the \lex{make\_empty(n)} construct should return a list of
+  size~\texttt{n}.  
+
+\item the \lex{make\_add(l,e,n)} construct corresponds to a
+  function parametrised by a list variable, a term variable and an
+  integer. This function should return a list~\texttt{l'} such that
+  the element~\texttt{e} is at the \texttt{n-th} position.
+\end{itemize}
+
+\subsubsection{Match definition}
+
+In order to match patterns against a list of subjects, \TOM\ provides
+the \lex{\%match} construct.
+This constructs contains two parts:
+\begin{itemize}
+\item a list of \nt{MatchArgument}: this is a list of (target
+  language) variables that reference the terms to be matched.
+\item a list of \nt{PatternAction}: this is a list of pairs
+  (pattern,action), where an action is a set of target language
+  instructions.  
+\end{itemize}
+
+The \lex{\%match} construct is evaluated in the following way:
+\begin{itemize}
+\item given a list of ground terms (referenced by the list of target
+  language variables), the execution control is transfered to the
+  first \nt{PatternAction} whose patterns match the list of ground
+  terms.
+\item given a \nt{PatternAction}, the list of free variables is
+  instantiated and the associated semantic action is executed.
+  If the execution control is transfered outside the
+  \lex{\%match} instruction (by a \texttt{goto}, \texttt{break} or
+  \texttt{return} for example), the matching process is finished.
+  Otherwise, it is continued as follows:
+  \begin{itemize}
+  \item if the considered matching theory may return several matches
+    (list-matching for instance), for each match, the list of free
+    variables is instantiated and the associated semantic action is
+    executed.
+  \item when all matches have been computed (there is at most one match
+    in the syntactic theory), the execution control is transfered to
+    the next \nt{PatternAction} whose patterns match the list of
+    ground terms. 
+  \end{itemize}
+
+\item when there is no more \nt{PatternAction} whose patterns
+  match the list of ground terms, the \lex{\%match} instruction is
+  finished, and the execution control is transfered to the next
+  instruction. 
+\end{itemize}
+
+\noindent
+\textbf{Note:} the behaviour is not determined if a semantic action
+modifies a target language variable which is an argument of a
+\lex{\%match} instruction under evaluation.
+
+\subsubsection{Rule definition}
+
+The \lex{\%rule} construct is composed of a list of rewrite rules
+(the left-hand side is a term and the right-hand side is a term).
+All these rules should begin with the same root symbol. The \TOM\
+compiler should generate a function (with one argument) whose name
+correspond to the name of this unique root symbol.
+Given a ground term, applying this function returns the instanciated
+right-hand side of the first rule whose pattern matches the considered 
+subject.
+When no rule can be applied (i.e. no pattern matches the subject),
+the given ground term, rooted by the root symbol of the rewrite system
+is returned.
