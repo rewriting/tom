@@ -3,23 +3,24 @@ import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
 import adt.localsearch.*;
+import adt.localsearch.types.*;
 
 public class LocalSearch {
   
 
-  private TermFactory factory;
+  private Factory factory;
   private GenericTraversal traversal;
 
 // ------------------------------------------------------------  
-  %include { adt/localsearch/term.tom }
+  %include { localsearch.tom }
 // ------------------------------------------------------------  
  
-  public LocalSearch(TermFactory factory) {
+  public LocalSearch(Factory factory) {
     this.factory = factory;
     this.traversal = new GenericTraversal();
   }
 
-  public final TermFactory getTermFactory() {
+  public final Factory getLocalsearchFactory() {
       return factory;
   }
   
@@ -129,7 +130,7 @@ public class LocalSearch {
 
   public boolean satisfySet(Tuple x, TupleList tl, IntList il) {
     %match(TupleList tl, IntList il) {
-      concTuple(c,l1*), concInt(i(rhs),l2*) -> { return satisfy(x,c,rhs) && satisfySet(x,l1,l2); }
+      concTuple(c,l1*), concInteg(i(rhs),l2*) -> { return satisfy(x,c,rhs) && satisfySet(x,l1,l2); }
       (), () -> { return true; } 
     }
     return false;
@@ -173,7 +174,7 @@ public class LocalSearch {
     Csop query = `state(empty(),
                         -10,
                         concTuple(vector(10,30,10,20),vector(5,20,20,10),vector(20,10,27,40),vector(0,10,10,20)),
-						concInt(i(50),i(45),i(70),i(40)),
+						concInteg(i(50),i(45),i(70),i(40)),
 						vector(40,70,80,100),
 						concTuple(),
 						concTuple());
@@ -182,7 +183,7 @@ public class LocalSearch {
   }
   
   public final static void main(String[] args) {
-    LocalSearch test = new LocalSearch(new TermFactory(new PureFactory()));
+    LocalSearch test = new LocalSearch(new Factory(new PureFactory()));
     
     
     test.run();
