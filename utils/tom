@@ -39,7 +39,7 @@ fi
 # set TOM_LIB location
 TOM_LIB="${TOM_HOME}/lib"
 TOM_JAR=`echo $TOM_LIB/*.jar | tr ' ' ':'`
-EXTERNAL_JAR=`apigen-config`
+EXTERNAL_JAR=
 JAVACMD=java
 
 

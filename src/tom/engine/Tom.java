@@ -92,7 +92,7 @@ public class Tom {
   
   private static String usage =
     "Tom usage:"
-    + "\n\tjava jtom.Tom [options] input[.t] [... input[.t]]"
+    + "\n\ttom [options] input[.t] [... input[.t]]"
     + "\nOptions:"
     + "\n\t--help \t\t| -h:\tShow this help"
     + "\n\t--cCode \t| -c:\tGenerate C code"
