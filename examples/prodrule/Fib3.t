@@ -149,7 +149,7 @@ public class Fib3 {
 
   public boolean occursFib(ArrayList s, int value) {
     %match(Space s) {
-      concElement(S1*, Fib[arg=n], S2*) -> {
+      concElement(_*, Fib[arg=n], _*) -> {
         if(`n == value) {
           return true;
         }

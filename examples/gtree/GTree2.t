@@ -66,15 +66,15 @@ public class GTree2 {
 
   public Tree evalFunction(Tree tree) {
     %match(Tree tree) {
-      supT(nil(),x) -> { return x; }
-      supT(x,nil()) -> { return x; }
+      supT(nil(),x) -> { return `x; }
+      supT(x,nil()) -> { return `x; }
 
       supT(node(l1,root1,r1),node(l2,root2,r2)) -> {
-        int max = (root1>root2)?root1:root2;
+        int max = `(root1>root2)?`root1:`root2;
         return `node(supT(l1,l2),max,supT(r1,r2));
       }
 
-      ackT(x@nil()) -> { return x; }
+      ackT(x@nil()) -> { return `x; }
       ackT(node(l1,root1,r1)) -> {
         return `node(ackT(l1),ack(2,root1),ackT(r1));
       }
@@ -117,9 +117,9 @@ public class GTree2 {
   
   public int ack(int t1, int t2) {
       %match(int t1, int t2) {
-        0, x -> { return x+1; }
-        p, 0 -> { return p+1; }
-        p, x -> { return ack(p-1,ack(p,x-1)); }
+        0, x -> { return `x+1; }
+        p, 0 -> { return `p+1; }
+        p, x -> { return ack(`p-1,ack(`p,`x-1)); }
       }
     }
   

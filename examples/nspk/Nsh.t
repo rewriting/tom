@@ -404,7 +404,7 @@ public class Nsh {
               E,
               concAgent(D1*,agent(y,WAIT(),N(y,x)),D2*),
               intru@intruder(w,_,_),
-              concMessage(M1*,msg(w,y,K(y),N(n1,n3),N(_,_),A(v)),M2*)) -> {
+              concMessage(M1*,msg(w,y,K(y),N(n1,n3),N(_,_),A(_)),M2*)) -> {
               if(`x==`n3 && `y==`n1) {
                 State state = `state(
                   E,
@@ -449,7 +449,7 @@ public class Nsh {
             state(
               E, D,
               intruder(w,l,ll),
-              concMessage(M1*,message@msg(z,x,K(y),N(n1,n3),N(n2,n4),A(v)),M2*)) -> {
+              concMessage(M1*,message@msg(z,_,K(y),N(_,_),N(_,_),A(_)),M2*)) -> {
               if(`w!=`z && `w!=`y) {
                 State state = `state(
                   E, D,
@@ -467,7 +467,7 @@ public class Nsh {
 
             state(
               E, D,
-              intru@intruder(w,l,concMessage(_*,msg(x,y,K(z),N(n1,n3),N(n2,n4),A(v)),_*)),
+              intru@intruder(w,_,concMessage(_*,msg(_,_,K(z),N(n1,n3),N(n2,n4),A(v)),_*)),
               M) -> {
               if(sizeMessage(`M) < maxMessagesInNetwork) {
                 ListAgent subjectList = `concAgent(E*,D*);
@@ -496,7 +496,7 @@ public class Nsh {
 
             state(
               E, D,
-              intru@intruder(w,listNonce,ll),
+              intru@intruder(w,listNonce,_),
               M) -> {
               if(sizeMessage(`M) < maxMessagesInNetwork) {
                 ListAgent subjectED = `concAgent(E*,D*);
@@ -522,8 +522,8 @@ public class Nsh {
               //------------------------------
               // attack on the receiver
             state(
-              pool1@concAgent(_*,agent(x,COMMIT(),N(x,y)),_*),
-              D,intruder(w,l,ll),M) -> {
+              concAgent(_*,agent(x,COMMIT(),N(x,y)),_*),
+              D,intruder(w,_,_),_) -> {
               if(`y!=`w &&
                  !existAgent(`agent(y,WAIT(),N(y,x)),`D) &&
                  !existAgent(`agent(y,COMMIT(),N(y,x)),`D) ) {
@@ -537,8 +537,8 @@ public class Nsh {
               // attack on the sender
             state(
               E,
-              pool1@concAgent(_*,agent(y,COMMIT(),N(y,x)),_*),
-              intruder(w,l,ll),M) -> {
+              concAgent(_*,agent(y,COMMIT(),N(y,x)),_*),
+              intruder(w,_,_),_) -> {
               if(`x!=`w && !existAgent(`agent(x,COMMIT(),N(x,y)),`E) ) {
                 State state = `ATTACK();
                 c.add(state);

@@ -63,7 +63,7 @@ public class domtomTest {
       Node root = null;
       %match(TDocument dom) {
         DocumentNode[docElem=r] -> {
-          root = r;
+          root = `r;
         }
       }
       System.out.println("ElementNode : "+root);

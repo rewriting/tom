@@ -52,7 +52,7 @@ public class PolyAdvanced1 {
         res2 =`mult(a2, differentiate(a1, var));
         return `plus(res1,res2);
       }
-      X(), var | Y(), var | a(), var | b(), var | c(), var
+      X(), _ | Y(), _ | a(), _ | b(), _ | c(), _
             -> { return `zero(); }
 
       _ , _ -> { System.out.println("No match for: " + poly +" , "+variable); }

@@ -63,7 +63,7 @@ exception Result of peano
 let rec plus (t1,t2)= 
   try(
   %match (peano t1 , peano t2 ) {
-    x, zero() -> { raise (Result(x)) }
+    x, zero() -> { raise (Result(`x)) }
     x, suc(y) -> { raise (Result(`suc(plus(x,y)))) }
   };
   assert false

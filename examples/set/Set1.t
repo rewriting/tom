@@ -124,8 +124,8 @@ public class Set1 {
   public int card(JGSet t) {
     %match(JGSet t) {
       emptyJGSet()    -> { return 0; }
-      singleton(x) -> { return 1; }
-      branch(l, r) -> {return card(`l) + card(`r);}
+      singleton(_)    -> { return 1; }
+      branch(l, r)    -> {return card(`l) + card(`r);}
     }
     return 0;
   }
@@ -185,9 +185,9 @@ public class Set1 {
         public ATerm apply(ATerm t) {
           %match(JGSet t) {
             emptyJGSet() -> {return t;}
-            singleton(x) -> {return t;}
-            branch(emptyJGSet(), s@singleton(x)) -> {return `s;}
-            branch(s@singleton(x), emptyJGSet()) -> {return `s;}
+            singleton(_) -> {return t;}
+            branch(emptyJGSet(), s@singleton(_)) -> {return `s;}
+            branch(s@singleton(_), emptyJGSet()) -> {return `s;}
             branch(e@emptyJGSet(), emptyJGSet()) -> {return `e;}
             branch(l1, l2) -> {return `branch(reworkJGSet(l1), reworkJGSet(l2));}
             _ -> { return traversal.genericTraversal(t,this); }
@@ -204,11 +204,11 @@ public class Set1 {
   
   private JGSet union(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptyJGSet(), x -> {
+      emptyJGSet(), _ -> {
         return m2;
       }
 
-      x, emptyJGSet() -> {
+      _, emptyJGSet() -> {
         return m1;
       }
 
@@ -230,8 +230,8 @@ public class Set1 {
   
   private JGSet intersection(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptyJGSet(), x |
-        x, emptyJGSet() -> { 
+      emptyJGSet(), _ |
+        _, emptyJGSet() -> { 
         return `emptyJGSet();
       }
       
@@ -254,8 +254,8 @@ public class Set1 {
   
   public JGSet restriction(JGSet m1, JGSet m2, int level) {
     %match(JGSet m1, JGSet m2) {
-      emptyJGSet(), x |
-      x, emptyJGSet() -> { 
+      emptyJGSet(), _ |
+      _, emptyJGSet() -> { 
         return `emptyJGSet();
       }
       
@@ -298,8 +298,8 @@ public class Set1 {
           r1 = `remove(elt, r, level+1);
         }
         %match(JGSet l1, JGSet r1) {
-          emptyJGSet(), singleton(x) -> {return r1;}
-          singleton(x), emptyJGSet() -> {return l1;}
+          emptyJGSet(), singleton(_) -> {return r1;}
+          singleton(_), emptyJGSet() -> {return l1;}
           _, _ -> {return `branch(l1, r1);}
         }
       }

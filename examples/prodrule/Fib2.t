@@ -123,7 +123,7 @@ public class Fib2 {
 
   public boolean occursFib(Space s, int value) {
     %match(Space s) {
-      concElement(S1*, Fib[arg=n], S2*) -> {
+      concElement(_*, Fib[arg=n], _*) -> {
         if(`n == value) {
           return true;
         }

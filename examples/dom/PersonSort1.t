@@ -74,7 +74,7 @@ public class PersonSort1 {
   
   private int compare(Node t1, Node t2) {
     %match(TNode t1, TNode t2) {
-      <_ Age=a1></_>, <_ Age=a2></_> -> { return a1.compareTo(a2); }
+      <_ Age=a1></_>, <_ Age=a2></_> -> { return `a1.compareTo(`a2); }
     }
     return 0;
   }

@@ -79,7 +79,7 @@ public class Tree1 {
   public int card(Tree t) {
     %match(Tree t) {
       emptyTree() -> { return 0; }
-      node(color,a,y,b) -> { return 1 + card(`a) + card(`b); }
+      node(_,a,_,b) -> { return 1 + card(`a) + card(`b); }
     }
     return 0;
   }

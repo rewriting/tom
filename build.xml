@@ -645,6 +645,7 @@
     <ant dir="${examples}" target="clean"/>
     <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
+      <property name="optimize" value="on"/>
     </ant>
   </target>
 
