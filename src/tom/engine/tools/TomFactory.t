@@ -86,21 +86,16 @@ public class TomFactory extends TomBase {
         System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbol(tomName);
         if(tomSymbol != null) {
-          TomType type = tomSymbol.getTypesToType().getCodomain();
-          System.out.println("type = " + type);
-          %match(TomType type) {
-            TomTypeAlone("String") -> {
-              Option info = ast().makeOriginTracking(Constants.TEXT_NODE,"-1","??");
-              term = `Appl( ast().makeOption(info),
-                            Name(Constants.TEXT_NODE),concTomTerm(term));
-              System.out.println("metaEncodeXmlAppl = " + term);
-            }
+          if(isStringOperator(tomSymbol)) {
+            Option info = ast().makeOriginTracking(Constants.TEXT_NODE,"-1","??");
+            term = `Appl( ast().makeOption(info),
+                          Name(Constants.TEXT_NODE),concTomTerm(term));
+            System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
       }
     }
     return term;
   }
-
   
 }

@@ -190,6 +190,8 @@ public class TomExpander extends TomBase implements TomTask {
                     return `BuildList(name,args);
                   } else if(isArrayOperator(tomSymbol)) {
                     return `BuildArray(name,args);
+                  } else if(isStringOperator(tomSymbol)) {
+                    return `BuildVariable(name);
                   } else {
                     return `BuildTerm(name,args);
                   }
@@ -333,7 +335,17 @@ public class TomExpander extends TomBase implements TomTask {
         return `concTomTerm(newBackQuoteAppl,newTail*);
       }
 
-     label2:concTomTerm(
+      concTomTerm(
+        BuildVariable(name),
+        TargetLanguageToTomTerm(ITL("*")),
+        tail*
+        ) -> {
+        TomTerm term = `VariableStar(emptyOption(),name,TomTypeAlone("unknown type"));
+        TomList newTail = parseBackQuoteXMLAppl(tail);
+        return `concTomTerm(term,newTail*);
+      }
+
+      label2:concTomTerm(
         TargetLanguageToTomTerm(ITL("<")),
         BuildVariable[astName=name],
         Attributes*,
@@ -444,6 +456,15 @@ public class TomExpander extends TomBase implements TomTask {
         TomTerm attributeNode = `BackQuoteAppl(emptyOption(),
                                                Name(Constants.ATTRIBUTE_NODE),
                                                args);
+        list = `manyTomList(attributeNode,list);
+      }
+
+      concTomTerm(
+        X1*,BuildVariable(name),
+        TargetLanguageToTomTerm(ITL("*")),
+        X2*
+        ) -> {
+        TomTerm attributeNode = `VariableStar(emptyOption(),name,TomTypeAlone("unknown type"));
         list = `manyTomList(attributeNode,list);
       }
     }

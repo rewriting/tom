@@ -337,6 +337,17 @@ public class TomBase {
     }
   }
 
+  protected boolean isStringOperator(TomSymbol subject) {
+    if(subject==null) { return false; }
+    TomType type = subject.getTypesToType().getCodomain();
+    %match(TomType type) {
+      TomTypeAlone("String") -> {
+        return true;
+      }
+    }
+    return false;
+  }
+  
   protected TomList tomListMap(TomList subject, Replace1 replace) {
     TomList res = subject;
     try {

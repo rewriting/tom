@@ -818,8 +818,7 @@ boolean XMLTermList(LinkedList list) throws TomException: /* in TOM mode */
   TomTerm term;
 }
 {
-  term = AnnotedTerm() { list.add(term); }
-  ( <TOM_COMMA> {text += ",";} term = AnnotedTerm() { list.add(term); } )*
+  ( term = AnnotedTerm() { list.add(term); } )*
   { return false; }
 }
 
