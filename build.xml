@@ -25,6 +25,7 @@
 	<property name="utils" location="utils"/>
 	<property name="lib" location="lib"/>
 	<property name="concurrent.lib" value="${lib}/concurrent.jar"/>
+	<property name="junit.lib" value="${lib}/junit.jar"/>
 
 	<!-- for stable -->
 	<property name="stable.src"   location="stable"/>
@@ -252,6 +253,7 @@
 		<copy todir="${stable.lib}" file="${apigenjar}"/>
 		<copy todir="${stable.lib}" file="${vastoadtjar}"/>
 		<copy todir="${stable.lib}" file="${concurrent.lib}"/>
+		<copy todir="${stable.lib}" file="${junit.lib}"/>
 	</target>
 
 	<target name="dist.src" 
@@ -303,6 +305,7 @@
 		<copy todir="${src.lib}" file="${apigenjar}"/>
 		<copy todir="${src.lib}" file="${vastoadtjar}"/>
 		<copy todir="${src.lib}" file="${concurrent.lib}"/>
+		<copy todir="${src.lib}" file="${junit.lib}"/>
 	</target>
 
 	<target name="dist.all" 
