@@ -727,6 +727,7 @@
         <include name="${structure}/README"/>
         <include name="${structure}/*.t"/>
         <include name="${structure}/*.adt"/>
+        <include name="${structure}/customStruct.tom"/>
 
         <include name="${tutorial}/README"/>
         <include name="${tutorial}/*.t"/>
