@@ -1,12 +1,14 @@
-# $Id: configure.in,v 1.54 2004/02/20 21:45:14 reilles Exp $
+# $Id: configure.in,v 1.55 2004/02/24 14:33:26 moreau Exp $
 
-AC_INIT(configure.in)
+AC_INIT
+AC_CONFIG_SRCDIR([configure.in])
 AM_INIT_AUTOMAKE(jtom,2.0alpha)
+AC_PREREQ(2.57)
 
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.54 2004/02/20 21:45:14 reilles Exp $)
+AC_REVISION($Id: configure.in,v 1.55 2004/02/24 14:33:26 moreau Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -42,7 +44,7 @@ AC_PACKAGE_REQUIRE(apigen, adt-to-tom,
 ADTTOTOM=${APIGEN}/bin/adt-to-tom
 AC_SUBST(ADTTOTOM)
 
-AC_OUTPUT( \
+AC_CONFIG_FILES([\
 	Makefile \
 	README \
 	config/Makefile \
@@ -59,6 +61,8 @@ AC_OUTPUT( \
 	src/jtom/parser/Makefile \
 	src/jtom/backend/Makefile \
 	src/jtom/runtime/Makefile \
+	src/jtom/runtime/mapping/Makefile \
+	src/jtom/runtime/mapping/c/Makefile \
 	src/jtom/runtime/strategies/Makefile \
 	src/jtom/runtime/set/Makefile \
 	src/jtom/runtime/xml/Makefile \
@@ -104,4 +108,5 @@ AC_OUTPUT( \
 	examples/GTree/Makefile \
 	examples/Nspk/Makefile \
 	examples/Xml/Makefile \
-)
+])
+AC_OUTPUT

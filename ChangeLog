@@ -1,3 +1,10 @@
+2004-02-23  pem  <pem@polly.loria.fr>
+
+	* src/jtom/compiler/TomKernelCompiler.t: 
+	  - introduced the Let(...) construction
+	  - updated syntactic and list matching algorithm
+	  - simplified the kernel a lot
+
 2004-02-10  pem  <pem@polly.loria.fr>
 
 	* src/adt/TomSignature.adt: updated to DoubleBackQuote(args:TomList)
