@@ -138,10 +138,12 @@ public class TomMainParser extends TomGenericPlugin {
 	    } 
 	}
 	catch (TokenStreamException e){
+	    e.printStackTrace();
 	    environment().messageError(TomMessage.getString("TokenStreamException"), new Object[]{e.getMessage()}, 
 					   currentFile,  getLineFromTomParser());
 	}
 	catch (RecognitionException e){
+	    e.printStackTrace();
 	    environment().messageError(TomMessage.getString("RecognitionException"), new Object[]{e.getMessage()}, 
 					   currentFile, getLineFromTomParser());
 	}
