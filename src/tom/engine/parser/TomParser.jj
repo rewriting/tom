@@ -36,6 +36,15 @@ package jtom.parser;
 import java.io.*;
 import java.util.*;
 import java.text.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
+import apigen.gen.tom.java.*;
+import apigen.gen.tom.c.*;
+
+//import vas.Vas;
+//import vas.types.Entries;
+
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.types.instruction.RuleSet;
@@ -56,7 +65,7 @@ public class TomParser extends TomTask {
   private String currentFile;
   private LinkedList debuggedStructureList;
   private String text="";
-  private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
+  private boolean debugMode = false,javaCode = false, cCode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
   
    public TomParser(TomBuffer input, TomEnvironment environment, File importList[], int includeOffSet, 
   							String fileName)  {
@@ -98,6 +107,8 @@ public class TomParser extends TomTask {
     debugMemory = getInput().isDebugMemory();
     pretty = getInput().isPretty();
     noWarning = getInput().isNoWarning();
+    javaCode = getInput().isJCode();
+    cCode = getInput().isCCode();
   }
   
   public void process() {
@@ -228,6 +239,7 @@ TOKEN :
   | < OPERATOR:            "%op" > : TOM
   | < OPERATOR_LIST:       "%oplist" > : TOM
   | < OPERATOR_ARRAY:      "%oparray" > : TOM
+  | < VAS_SIGNATURE:       "%vas" > : TOM
 }
 
 /* WHITE SPACE */
@@ -499,6 +511,7 @@ void BlockList(LinkedList blockList) throws TomException : /* in DEFAULT mode */
       MatchConstruct(blockList)
     | RuleConstruct(blockList)
     | BackQuoteTerm(blockList)
+    | Signature(blockList)
     | IncludeConstruct(blockList)
     | LocalVariableConstruct(blockList)
     | Operator(blockList)
@@ -506,7 +519,7 @@ void BlockList(LinkedList blockList) throws TomException : /* in DEFAULT mode */
     | OperatorArray(blockList)
     | TypeTerm(blockList)     
     | TypeList(blockList)     
-    | TypeArray(blockList)    
+    | TypeArray(blockList)
     | <LBRACE> BlockList(blockList) <RBRACE>
     | <OTHER>
   )*
@@ -1250,6 +1263,89 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
       list.add(term);
     }
  }
+
+void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
+{
+	TargetLanguage vasTL;
+	String vasCode;
+	String fileName;
+  TomTerm astTom;
+  InputStream input;
+  File file;
+  byte inputBuffer[];
+  TomParser tomParser;
+  LinkedList blockList = new LinkedList();
+}
+{
+	<VAS_SIGNATURE> /* switch to TOM mode */
+    {
+      addPreviousCode(list);
+    }
+  vasTL = GoalLanguageBlock(list)
+    {
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      vasCode = vasTL.getCode().trim();
+      try{
+      	
+				//System.out.println(vasCode);
+				Class vasClass = Class.forName("vas.Vas");
+				Constructor vasConstructor = vasClass.getConstructor(new Class[]{});
+				Object vas = vasConstructor.newInstance(new Class[]{}); // an instance of Vas
+				Class[] params = {Class.forName("java.io.InputStream")};
+				Method runMethod = vasClass.getMethod("run", params);
+				Object[] realParams =  {new ByteArrayInputStream(vasCode.getBytes())};
+				Object resultFromVas = runMethod.invoke(vas, realParams);
+        
+        OutputStream output = new FileOutputStream(".generatedFromVas.adt");
+	      Writer writer = new BufferedWriter(new OutputStreamWriter(output));
+	      writer.write(resultFromVas.toString());
+	      writer.flush();
+	      writer.close();
+	      
+	      if(javaCode) {
+		      String[] par = {"--input", ".generatedFromVas.adt", "--javagen",
+		      	"--output", ".", "--name", "api"};
+		      apigen.gen.tom.java.Main.main(par);
+		    } else if (cCode) {
+		    	String[] par = {"--input", ".generatedFromVas.adt", "--cGen",
+		      	"--output", ".", "--name", "api"};
+		    	apigen.gen.tom.c.Main.main(par);
+		    }
+	      
+        //System.out.println("Intermediate result: "+resultFromVas);
+        
+        //Entries entries =  vas.run(new ByteArrayInputStream(vasCode.getBytes()));
+      } catch (ClassNotFoundException e) {
+				System.out.println("You need vas-to-adt to use the %signature construct");
+      } catch (NoSuchMethodException e) {
+				System.out.println("You need vas-to-adt to use the %signature construct");
+      } catch (Exception e) {
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+      }
+      
+      fileName = "api.tom";
+      file = new File(fileName);
+    	try {
+        	// to get the length of the file
+ 	    	inputBuffer = new byte[(int)file.length()+1];
+ 	    	input       = new FileInputStream(file);
+ 	    	input.read(inputBuffer);
+     
+ 	    	tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName, includedFiles);
+ 	      tomParser.testIncludedFiles(fileName);
+ 	      astTom = tomParser.startParsing();
+ 	      astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
+ 	      list.add(astTom);
+ 	    } catch (TokenMgrError error) {
+ 	      String msg = "TokenMgrError in file '" + fileName + "' generated from file '"+currentFile+"'"+ error.getMessage();
+ 	      throw new TomException(msg);
+ 	    } catch (java.io.IOException e2) {
+ 	      String msg = "IOException occurs reading " + fileName + " at line "+getLine();
+ 	      throw new TomException(msg);
+ 	    }
+    }
+  }
 
 void LocalVariableConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
 {}
@@ -2166,4 +2262,3 @@ Declaration KeywordMakeAddArray(String name, String listType, String elementType
        ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
 }
-
