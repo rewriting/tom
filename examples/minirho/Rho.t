@@ -82,7 +82,7 @@ package minirho;
 						}		
 						//delta
 						app(struct(A,B),C) -> { 
-						    return `struct(app(A,C),app(B,C));
+							return `struct(app(A,C),app(B,C));
 						}
 						//ToSubstVar
 						appC(match(X@var[],A),B) -> {
@@ -185,7 +185,19 @@ package minirho;
 						    return `and(dk,concConstraint(X*,and(g,concConstraint(c*,d*))));
 						}
 						//NGood
-						
+//  						l:match(app1@app[],app2@app[]) -> {
+//  							//On peut peut-etre optimiser ici: construire la liste de filtrage en meme tps que l'on teste
+//  							//1. on teste si le symbole de tete est une constante
+//  							Constraint isConstant = `matchH(app1,app2);
+//  							//head is constant? --> headIsConstant
+//  							isConstant = headIsConstant(isConstant);
+// 							Constraint isConstant){
+//  								matchH[] -> {
+//  									break l;}
+//  							}
+//  							//2. on calcule le resultat a retourner.
+//  							return normalize(co,computeMatch);
+//  						}
 
 						//ShareMatch A Enrichir
 						appSc(phi,match(B,C)) -> {
@@ -193,17 +205,16 @@ package minirho;
 						}
 						//ShareAnd for all types of "and"
 						appSc(phi,and(x,C)) -> {
-						    Replace2 r = new Replace2(){
-							    public ATerm apply(ATerm t,Object o){
-								Constraint c = (Constraint)t;
-								%match(Constraint c){
-								    x -> {
-									return `appSc((Constraint)o,x);
-								    }
-								}
-							    }
-							};
-						    return `and(x,(ListConstraint)traversal.genericTraversal(C,r,phi));
+
+							Replace2 r = new Replace2(){
+									public ATerm apply(ATerm t,Object o){
+										Constraint c = (Constraint)t;
+										%match(Constraint c){
+											y -> {return `appSc((Constraint)o,y);}
+										}
+									}
+								};
+							return `and(x,(ListConstraint)traversal.genericTraversal(C,r,phi));
 						}
 						//two rules for dealing with the ands
 						and(l,(X*,and(l,(C*)),Y*)) -> {
@@ -233,12 +244,19 @@ package minirho;
 //try to normalize
 	 public  ATerm normalize(ATerm form, Replace1 r){
 		 ATerm res = null;
-		 while(res != form){
-//		 System.out.println("|--> " + printInfix(res));
-			 res = form;
-			 form = r.apply(form);
+		 if ( r  == reductionRules) {//juste pour l'affichage
+			 while(res != form){
+				 res = form;
+				 form = r.apply(form);
+				 System.out.println("|--> " + form);
+			 }
 		 }
-		 System.out.println("|--> " + printInfix(res));
+		 else {
+			 while(res != form){
+				 res = form;
+				 form = r.apply(form);
+			 }
+		 }
 		 return res;
 	 }
 
@@ -285,8 +303,10 @@ package minirho;
 						 matchH(app(t1@app[],A),app(t2@app[],B)) -> {
 							 return `matchH(t1,t2);
 						 }
-						 matchH(app(f@const[],A),app(f,B)) -> {
-							 return `match(A,B);
+						 matchH(app(const[na=n1],A),app(const[na=n2],B)) -> {
+							 if (n1 != n2){ 
+								 return `match(A,B);
+							 }
 						 }
 					 }
 				 }
@@ -311,6 +331,9 @@ package minirho;
 	 //auxilary function for the decomposition of the constructors
 	 public Constraint headIsConstant(Constraint c){
 		 return (Constraint)normalize(c,headisConstant);
+	 }
+	 public Constraint headIsNotConstant(Constraint c){
+		 return (Constraint)normalize(c,head_is_not_Constant);
 	 }
 
 	 public void run(){
@@ -342,7 +365,6 @@ package minirho;
 		 }
 		 else  return printInfixCons((Constraint)t);
 	 }
-
 	 public String printInfixTerm(RTerm r){
 		 %match(RTerm r) {
 			 var(s) -> {return s.toUpperCase();}
