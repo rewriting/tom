@@ -532,7 +532,9 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeEmptyList(Name(opname), tlCode@TL[], _) -> {
-        buildMakeEmptyList(deep, opname, tlCode);
+        //System.out.println("symbol = " + getSymbol(opname));
+        TomType codomain = getSymbolCodomain(getSymbol(opname));
+        buildMakeEmptyList(deep, opname, codomain, tlCode);
         return;
       }
 
@@ -560,7 +562,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       MakeEmptyArray(Name(opname),
                      Variable(option1,Name(name1), Type(ASTTomType(type1),_)),
                      tlCode@TL[], _) -> {
-        buildMakeEmptyArray(deep, opname, name1, tlCode);
+        TomType codomain = getSymbolCodomain(getSymbol(opname));
+        buildMakeEmptyArray(deep, opname, codomain, name1, tlCode);
         return;
       }
 
@@ -713,7 +716,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, String name1, String type,
 TomType tlType, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildMakeEmptyList(int deep, String opname, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildMakeEmptyList(int deep, String opname, TomType codomain, TargetLanguage tlCode) throws IOException;
   protected abstract void buildMakeAddList(int deep, String opname, String name1,
 String name2, TomType tlType1, TomType tlType2, TomType fullEltType,
 TomType fullListType, TargetLanguage tlCode) throws IOException;
@@ -721,7 +724,7 @@ TomType fullListType, TargetLanguage tlCode) throws IOException;
 String type1, TomType tlType1, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, String name1, String type,
 TomType tlType, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildMakeEmptyArray(int deep, String opname, String name1, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildMakeEmptyArray(int deep, String opname, TomType codomain,String name1, TargetLanguage tlCode) throws IOException;
   protected abstract void buildMakeAddArray(int deep, String opname, String name1, String name2, TomType tlType1,
 TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTypeTermDecl(int deep, TomList declList) throws IOException;

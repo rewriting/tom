@@ -410,7 +410,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   }
 
   protected void buildIsEmptyDecl(int deep, String name1, String type,
-TomType tlType, TargetLanguage tlCode) throws IOException {
+                                  TomType tlType, TargetLanguage tlCode) throws IOException {
     String argType;
     if(strictType) {
       argType = getTLCode(tlType);
@@ -425,8 +425,14 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
                                    tlCode));
   }
 
-  protected void buildMakeEmptyList(int deep, String opname, TargetLanguage tlCode) throws IOException {
-    String returnType = getTLType(getUniversalType());
+  protected void buildMakeEmptyList(int deep, String opname, TomType codomain, TargetLanguage tlCode) throws IOException {
+    String returnType;
+    if(strictType) {
+      returnType = getTLType(codomain);
+    } else {
+      returnType = getTLType(getUniversalType());
+    }
+
     generateTargetLanguage(deep,
                            genDecl(returnType,
                                    "tom_make_empty", opname,
@@ -495,8 +501,15 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
                                    tlCode));
   }
 
-  protected void buildMakeEmptyArray(int deep, String opname, String name1, TargetLanguage tlCode) throws IOException {
-    generateTargetLanguage(deep, genDecl(getTLType(getUniversalType()), "tom_make_empty", opname,
+  protected void buildMakeEmptyArray(int deep, String opname, TomType codomain,String name1, TargetLanguage tlCode) throws IOException {
+    String returnType;
+    if(strictType) {
+      returnType = getTLType(codomain);
+    } else {
+      returnType = getTLType(getUniversalType());
+    }
+
+    generateTargetLanguage(deep, genDecl(returnType, "tom_make_empty", opname,
                                              new String[] {
                                                getTLType(symbolTable().getIntType()), name1,
                                              },
