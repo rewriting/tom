@@ -7,6 +7,8 @@ header{
     import jtom.adt.tomsignature.*;
     import jtom.adt.tomsignature.types.*;
 
+    import tom.platform.*;
+
     import java.lang.reflect.*;
     import java.io.*;
     import java.text.*;
@@ -82,8 +84,8 @@ options{
         return currentFile;
     }
     
-    public TomServer getServer(){
-        return TomServer.getInstance();
+    public PluginPlatform getPluginPlatform(){
+        return PluginPlatform.getInstance();
     }
 
     private final TomSignatureFactory getTomSignatureFactory(){
@@ -95,7 +97,7 @@ options{
     }
     
     private TomEnvironment environment() {
-//        return getServer().getEnvironment();
+//        return getPluginPlatform().getEnvironment();
         return TomEnvironment.getInstance();
     }
     

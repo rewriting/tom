@@ -230,7 +230,7 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected void buildGetFunctionSymbolDecl(int deep, String type, String name,
 TomType tlType, TargetLanguage tlCode) throws IOException {
     String args[];
-    if( ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if( ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       TomType argType = getUniversalType();
       if(symbolTable().isBuiltinType(type)) {
         argType = symbolTable().getBuiltinType(type);
@@ -258,7 +258,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
     
     TomType returnType = symbolTable().getBoolType();
     String argType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -284,7 +284,7 @@ TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
     TomType returnType = l.getHead();
     
     String argType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -336,7 +336,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   protected void buildGetHeadDecl(int deep, String name1, String suffix, TomType domain, TomType codomain, TargetLanguage tlCode) 
     throws IOException {
     String returnType,argType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       returnType = getTLCode(codomain);
       argType = getTLCode(domain);
     } else {
@@ -353,7 +353,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   protected void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) 
     throws IOException {
     String returnType, argType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       returnType = getTLCode(tlType);
       argType = getTLCode(tlType);
     } else {
@@ -370,7 +370,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
   protected void buildIsEmptyDecl(int deep, String name1, String type,
                                   TomType tlType, TargetLanguage tlCode) throws IOException {
     String argType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -385,7 +385,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
 
   protected void buildMakeEmptyList(int deep, String opname, TomType codomain, TargetLanguage tlCode) throws IOException {
     String returnType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       returnType = getTLType(codomain);
     } else {
       returnType = getTLType(getUniversalType());
@@ -402,7 +402,7 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
 String name2, TomType tlType1, TomType tlType2, TomType fullEltType,
 TomType fullListType, TargetLanguage tlCode) throws IOException {
     String returnType, argListType,argEltType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       argEltType = getTLCode(tlType1);
       argListType = getTLCode(tlType2);
       returnType = argListType;
@@ -426,7 +426,7 @@ TomType fullListType, TargetLanguage tlCode) throws IOException {
   protected void buildGetElementDecl(int deep, String name1, String name2,
 String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
     String returnType, argType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       returnType = getTLType(getUniversalType());
       argType = getTLCode(tlType1);
     } else {
@@ -446,7 +446,7 @@ String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
   protected void buildGetSizeDecl(int deep, String name1, String type,
 TomType tlType, TargetLanguage tlCode) throws IOException {
     String argType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       argType = getTLCode(tlType);
     } else {
       argType = getTLType(getUniversalType());
@@ -461,7 +461,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
 
   protected void buildMakeEmptyArray(int deep, String opname, TomType codomain,String name1, TargetLanguage tlCode) throws IOException {
     String returnType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       returnType = getTLType(codomain);
     } else {
       returnType = getTLType(getUniversalType());
@@ -477,7 +477,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
   protected void buildMakeAddArray(int deep, String opname, String name1, String name2, TomType tlType1,
 TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException {
     String returnType, argListType,argEltType;
-    if(! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue()) {
+    if(! ((Boolean)getPluginPlatform().getOptionValue("lazyType")).booleanValue()) {
       argEltType  = getTLCode(tlType1);
       argListType = getTLCode(tlType2);
       returnType  = argListType;

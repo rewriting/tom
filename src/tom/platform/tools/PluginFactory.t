@@ -90,7 +90,7 @@ public class PluginFactory implements Plugin {
     return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
   }
 
-  private OptionManager getOM() { return TomServer.getInstance().getOptionManager(); }
+  private OptionManager getOM() { return PluginPlatform.getInstance().getOptionManager(); }
 
   public PluginFactory(String name, String xmlFile) {
     allDeclaredOptions = `emptyPlatformOptionList();

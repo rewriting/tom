@@ -26,15 +26,17 @@
 package jtom.verifier;
 
 import jtom.*;
+import jtom.tools.*;
+import jtom.adt.tomsignature.types.*;
 
 import aterm.*;
 import java.util.*;
 import java.util.logging.*;
+
 import tom.library.traversal.*;
-import jtom.adt.tomsignature.types.*;
 import tom.platform.adt.platformoption.*;
 import tom.platform.adt.platformoption.types.*;
-import jtom.TomMessage;
+
 
 /**
  * The TomVerifier plugin.
@@ -55,7 +57,7 @@ public class TomVerifier extends TomGenericPlugin {
     if(isActivated()) {
       try {
 	long startChrono = System.currentTimeMillis();
-	boolean verbose = getServer().getOptionBooleanValue("verbose");
+	boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
 
 	TomTerm extractTerm = `emptyTerm();
 	// here the extraction stuff
@@ -80,7 +82,7 @@ public class TomVerifier extends TomGenericPlugin {
 	  e.printStackTrace();
       }
     } else {
-      boolean verbose = getServer().getOptionBooleanValue("verbose");
+      boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
 	    
       if(verbose)
 	  System.out.println("The verifier is not activated and thus WILL NOT RUN.");
@@ -93,7 +95,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   private boolean isActivated() {
-    return getServer().getOptionBooleanValue("verify");
+    return getPluginPlatform().getOptionBooleanValue("verify");
   }
 
 

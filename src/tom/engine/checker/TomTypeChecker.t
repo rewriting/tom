@@ -46,6 +46,6 @@ public class TomTypeChecker extends TomChecker {
   }
 
   private boolean isActivated() {
-    return !getServer().getOptionBooleanValue("noCheck");
+    return !getPluginPlatform().getOptionBooleanValue("noCheck");
   }
 }

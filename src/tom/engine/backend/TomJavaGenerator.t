@@ -35,7 +35,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
    
   public TomJavaGenerator(OutputCode output) {
     super(output);
-    if(((Boolean)getServer().getOptionValue("static")).booleanValue()) {
+    if(((Boolean)getPluginPlatform().getOptionValue("static")).booleanValue()) {
       this.modifier += "static " ;
     }
     this.modifier += "public " ;

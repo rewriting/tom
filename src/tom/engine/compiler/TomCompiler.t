@@ -34,8 +34,8 @@ public class TomCompiler extends TomGenericPlugin {
   public void run() {
     try {
       long startChrono = System.currentTimeMillis();
-      boolean verbose      = getServer().getOptionBooleanValue("verbose");
-      boolean intermediate = getServer().getOptionBooleanValue("intermediate");
+      boolean verbose      = getPluginPlatform().getOptionBooleanValue("verbose");
+      boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
 
       TomTerm preCompiledTerm = preProcessing( (TomTerm)getTerm() );
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
@@ -111,7 +111,7 @@ public class TomCompiler extends TomGenericPlugin {
             Match(SubjectList(l1),PatternList(l2), matchOptionList)  -> {
               TomList patternList = `l2;
               Option orgTrack = findOriginTracking(`matchOptionList);
-              if(((Boolean)getServer().getOptionValue("debug")).booleanValue()) {
+              if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()) {
                 debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
               }
               TomList newPatternList = empty();
@@ -181,7 +181,7 @@ public class TomCompiler extends TomGenericPlugin {
 
             RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
               TomRuleList ruleList = `rl;
-              if(((Boolean)getServer().getOptionValue("debug")).booleanValue()) {
+              if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()) {
                 debugKey = `orgTrack.getFileName().getString() + `orgTrack.getLine();
               }
               TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
@@ -213,7 +213,7 @@ public class TomCompiler extends TomGenericPlugin {
                               option) -> {
                     TomTerm newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
                     Instruction rhsInst = `IfThenElse(TrueTL(),Return(newRhs),Nop());
-                    if(((Boolean)getServer().getOptionValue("debug")).booleanValue()) {
+                    if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()) {
                       TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
                       rhsInst = `UnamedBlock(concInstruction(TargetLanguageToInstruction(tl), rhsInst));
                     }
@@ -244,7 +244,7 @@ public class TomCompiler extends TomGenericPlugin {
                 //}
 
               InstructionList l;
-              if(((Boolean)getServer().getOptionValue("eCode")).booleanValue()) {
+              if(((Boolean)getPluginPlatform().getOptionValue("eCode")).booleanValue()) {
                 l = `concInstruction(
                                      makeFunctionBeginAST,
                                      LocalVariable(),

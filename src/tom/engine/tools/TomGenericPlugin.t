@@ -23,11 +23,13 @@
  *
  **/
 
-package jtom;
+package jtom.tools;
 
 import java.util.logging.*;
 import aterm.*;
+import jtom.*;
 import jtom.adt.tomsignature.types.*;
+import tom.platform.*;
 import tom.platform.adt.platformoption.types.*;
 
 /**
@@ -36,11 +38,11 @@ import tom.platform.adt.platformoption.types.*;
  * most of the time as they provide a default behaviour shared by most plugins.
  * If this behaviour is not the one that is expected though, they should be
  * overridden. Just remember : extending this class is by no means necessary
- * for a plugin, the only constraint is to implement the TomPlugin interface.
+ * for a plugin, the only constraint is to implement the Plugin interface.
  *
  * @author Gr&eacute;gory ANDRIEN
  */
-public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
+public abstract class TomGenericPlugin extends TomBase implements Plugin {
 
   %include{ adt/TomSignature.tom }
   %include{ adt/PlatformOption.tom }
@@ -73,8 +75,8 @@ public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
   public TomGenericPlugin(String name) {
     pluginName = name;
     logger = Logger.getLogger(getClass().getName());
-    errorsAtStart = getServer().getStatusHandler().nbOfErrors();
-    warningsAtStart = getServer().getStatusHandler().nbOfWarnings();
+    errorsAtStart = getPluginPlatform().getStatusHandler().nbOfErrors();
+    warningsAtStart = getPluginPlatform().getStatusHandler().nbOfWarnings();
   }
 
   /**

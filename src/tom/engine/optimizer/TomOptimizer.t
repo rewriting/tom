@@ -29,8 +29,8 @@ public class TomOptimizer extends TomGenericPlugin {
       try {
 	long startChrono = System.currentTimeMillis();
 						
-	boolean verbose      = getServer().getOptionBooleanValue("verbose");
-	boolean intermediate = getServer().getOptionBooleanValue("intermediate");
+	boolean verbose      = getPluginPlatform().getOptionBooleanValue("verbose");
+	boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
 						
 	TomTerm renamedTerm   = renameVariable( (TomTerm)getTerm(), new HashSet() );
 	TomTerm optimizedTerm = optimize(renamedTerm);
@@ -53,7 +53,7 @@ public class TomOptimizer extends TomGenericPlugin {
 	  e.printStackTrace();
       }
     } else {
-      boolean verbose = getServer().getOptionBooleanValue("verbose");
+      boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
 	    
       if(verbose)
 	System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
@@ -66,7 +66,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   private boolean isActivated() {
-    return getServer().getOptionBooleanValue("optimize");
+    return getPluginPlatform().getOptionBooleanValue("optimize");
   }
 
 
@@ -96,7 +96,7 @@ public class TomOptimizer extends TomGenericPlugin {
             }
           }
         } else if(subject instanceof Instruction) {
-          boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+          boolean verbose = ((Boolean)getPluginPlatform().getOptionValue("verbose")).booleanValue();
           %match(Instruction subject) {
               /*
                * TODO

@@ -32,6 +32,7 @@ import aterm.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
+import tom.platform.*;
 import tom.platform.adt.platformoption.*;
 import tom.library.traversal.*;
 import jtom.exception.TomRuntimeException;
@@ -78,12 +79,12 @@ public class TomBase {
     }
   }
 
-  public TomServer getServer() {
-    return TomServer.getInstance();
+  public PluginPlatform getPluginPlatform() {
+    return PluginPlatform.getInstance();
   }
 
   public void putOptionValue(Object key, Object value) {
-      getServer().putOptionValue(key, value);
+      getPluginPlatform().putOptionValue(key, value);
   }
 
   public GenericTraversal traversal() {

@@ -121,7 +121,7 @@ public class PluginPlatform {
 
       instance.statusHandler = new StatusHandler();
       Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);
-      instance.logger = Logger.getLogger(loggerRadical+".PluginPlatform","jtom.PluginPlatformResources");
+      instance.logger = Logger.getLogger(loggerRadical+".PluginPlatform","tom.platform.PluginPlatformResources");
 	
       return instance;
     } else {
@@ -138,7 +138,7 @@ public class PluginPlatform {
     instance.optionManager = optionManager;
     instance.statusHandler = new StatusHandler();
     Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);
-    instance.logger = Logger.getLogger(loggerRadical+".PluginPlatform","jtom.PluginPlatformResources");
+    instance.logger = Logger.getLogger(loggerRadical+".PluginPlatform","tom.platform.PluginPlatformResources");
   }
 
   /**

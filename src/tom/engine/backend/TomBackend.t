@@ -29,19 +29,19 @@ public class TomBackend extends TomGenericPlugin {
     if(isActivated() == true) {
       try {
 	long startChrono = System.currentTimeMillis();
-	boolean verbose = getServer().getOptionBooleanValue("verbose");
+	boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
 			
 	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
 			
 	OutputCode output = new OutputCode(writer, defaultDeep);
 			
-	if( getServer().getOptionBooleanValue("jCode") ) {
+	if( getPluginPlatform().getOptionBooleanValue("jCode") ) {
 	  generator = new TomJavaGenerator(output);
-	} else if( getServer().getOptionBooleanValue("cCode") ) {
+	} else if( getPluginPlatform().getOptionBooleanValue("cCode") ) {
 	  generator = new TomCGenerator(output);
-	} else if( getServer().getOptionBooleanValue("eCode") ) {
+	} else if( getPluginPlatform().getOptionBooleanValue("eCode") ) {
 	  generator = new TomEiffelGenerator(output);
-	} else if( getServer().getOptionBooleanValue("camlCode") ) {
+	} else if( getPluginPlatform().getOptionBooleanValue("camlCode") ) {
 	  generator = new TomCamlGenerator(output);
 	}
 			
@@ -63,7 +63,7 @@ public class TomBackend extends TomGenericPlugin {
 	  e.printStackTrace();
       }
     } else { // backend desactivated
-      boolean verbose = getServer().getOptionBooleanValue("verbose");
+      boolean verbose = getPluginPlatform().getOptionBooleanValue("verbose");
 		
       if(verbose) {
 	System.out.println("The backend is not activated and thus WILL NOT RUN.");
@@ -117,6 +117,6 @@ public class TomBackend extends TomGenericPlugin {
     }
 
   private boolean isActivated() {
-    return !getServer().getOptionBooleanValue("noOutput");
+    return !getPluginPlatform().getOptionBooleanValue("noOutput");
   }
 }

@@ -26,6 +26,7 @@
 package jtom.starter;
 
 import jtom.*;
+import jtom.tools.*;
 import aterm.*;
 
 /**

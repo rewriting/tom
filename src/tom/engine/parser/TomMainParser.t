@@ -111,10 +111,10 @@ public class TomMainParser extends TomGenericPlugin {
 
       long startChrono = System.currentTimeMillis();
 	    
-      boolean verbose      = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-      boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
-      boolean java         = ((Boolean)getServer().getOptionValue("jCode")).booleanValue();
-      boolean debug        = ((Boolean)getServer().getOptionValue("debug")).booleanValue();
+      boolean verbose      = ((Boolean)getPluginPlatform().getOptionValue("verbose")).booleanValue();
+      boolean intermediate = ((Boolean)getPluginPlatform().getOptionValue("intermediate")).booleanValue();
+      boolean java         = ((Boolean)getPluginPlatform().getOptionValue("jCode")).booleanValue();
+      boolean debug        = ((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue();
 	    
       if(java){
 	  TomJavaParser javaParser = TomJavaParser.createParser(currentFile);

@@ -221,25 +221,19 @@
          options="-I ${src.mapping}">
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
-      <include name="**/runtime/**/*.t"/> 
-      <include name="**/TomBase.t"/>
+      <include name="jtom/*.t"/> 
       <include name="**/Verifier.t"/>
       <include name="**/TomBackQuoteParser.t"/> 
-      <include name="**/TomServer.t"/>
-      <include name="**/PluginFactory.t"/>
     </tom>
 
     <tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
          destdir="${src.gen}" 
          options="-I ${src.mapping} --noDeclaration">
-      <exclude name="**/TomBase.t"/>
+      <exclude name="jtom/*.t"/>
       <exclude name="**/TomParser.t"/>
       <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
-      <exclude name="**/TomServer.t"/>
-      <exclude name="**/PluginFactory.t"/>
-      <exclude name="**/runtime/**/*.t"/> 
       <exclude name="**/tomparse.g.t"/>
       <exclude name="**/targetparse.g.t"/>
       <exclude name="**/bqparse.g.t"/>
@@ -847,30 +841,23 @@
 						srcdir="${src.src}" 
             destdir="${destination}/gen" 
             options="-I ${src.mapping}">
-      <include name="**/runtime/**/*.t"/> 
-      <include name="**/TomBase.t"/>
+      <include name="tom/library/**/*.t"/> 
+      <include name="tom/platform/**/*.t"/> 
+      <include name="jtom/*.t"/> 
       <include name="**/Verifier.t"/>
-      <include name="**/TomBackQuoteParser.t"/>
-      <include name="**/TomServer.t"/>
-      <include name="**/TomOptionManager.t"/>
-      <include name="**/PluginFactory.t"/>
+      <include name="**/TomBackQuoteParser.t"/> 
     </tomsrc>
     <tomsrc config="${src.configfile}"
 						srcdir="${src.src}" 
             destdir="${destination}/gen" 
             options="-I ${src.mapping} --noDeclaration">
-      <exclude name="**/TomBase.t"/>
+      <exclude name="jtom/*.t"/>
       <exclude name="**/TomParser.t"/>
       <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
-      <exclude name="**/TomServer.t"/>
-      <exclude name="**/TomOptionManager.t"/>
-      <exclude name="**/PluginFactory.t"/>
-      <exclude name="**/runtime/**/*.t"/> 
       <exclude name="**/tomparse.g.t"/>
       <exclude name="**/targetparse.g.t"/>
       <exclude name="**/bqparse.g.t"/>
-      <exclude name="**/TomMainParser.t"/>
     </tomsrc>
 
     <!-- builds parser -->

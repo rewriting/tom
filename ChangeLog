@@ -1,3 +1,20 @@
+2004-08-11  pem  <pem@polly.loria.fr>
+  * big refactoring: introduced tom directory
+  * please, update your applications
+  *
+  * tom
+  *  |--- library
+  *  |        |--- adt         (datatype definitions)
+  *  |        |--- mapping     (predefined mapping)
+  *  |               |--- adt  (generated mapping)
+  *  |        |--- set         (to handle sets)
+  *  |        |--- strategies  (Antoine's master thesis)
+  *  |        |--- traversal   (generic traversal)
+  *  |        |--- xml         (xml tools)
+  *  |        
+  *  |--- platform             (the Tom Plugin Platform, known as Tom server)
+  *           |--- adt     
+
 2004-05-07  julien guyon  <julien.guyon@loria.fr>
 	* bootinstall of version bumped to 3.0
   * new Design with plugins

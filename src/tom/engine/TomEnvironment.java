@@ -34,6 +34,8 @@ import jtom.exception.*;
 
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
+
+import tom.platform.*;
 import tom.platform.adt.platformoption.*;
 import tom.platform.adt.platformoption.types.*;
 
@@ -109,7 +111,7 @@ public class TomEnvironment {
   public PlatformOptionFactory getPlatformOptionFactory() { return platformOptionFactory; }
 
   /**
-   * Part of the Singleton pattern. The unique instance of the TomServer.
+   * Part of the Singleton pattern. The unique instance of the PluginPlatform.
    */
   private static TomEnvironment instance = null;
     
@@ -119,15 +121,15 @@ public class TomEnvironment {
   protected TomEnvironment(){}
     
   /**
-   * Part of the Singleton pattern. Returns the instance of the TomServer if it has been initialized before,
+   * Part of the Singleton pattern. Returns the instance of the PluginPlatform if it has been initialized before,
    * otherwise it throws a TomRuntimeException.
    * 
-   * @return the instance of the TomServer
-   * @throws TomRuntimeException if the TomServer hasn't been initialized before the call
+   * @return the instance of the PluginPlatform
+   * @throws TomRuntimeException if the PluginPlatform hasn't been initialized before the call
    */
   public static TomEnvironment getInstance() {
     if(instance == null) {
-      throw new TomRuntimeException(TomMessage.getString("GetInitializedTomServerInstance"));
+      throw new TomRuntimeException(TomMessage.getString("GetInitializedPluginPlatformInstance"));
     }
     return instance;
   }
@@ -221,16 +223,16 @@ public class TomEnvironment {
     // computes the input and output suffixes
     // well, it would be better in the future if we let the generator append the output suffix itself
     // so that's only temporary
-    if ( getServer().getOptionBooleanValue("jCode") ) {
+    if ( getPluginPlatform().getOptionBooleanValue("jCode") ) {
       inputSuffix = ".t";
       outputSuffix = ".java";
-    } else if ( getServer().getOptionBooleanValue("cCode") ) {
+    } else if ( getPluginPlatform().getOptionBooleanValue("cCode") ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.c";
-    } else if ( getServer().getOptionBooleanValue("camlCode") ) {
+    } else if ( getPluginPlatform().getOptionBooleanValue("camlCode") ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.ml";
-    } else if ( getServer().getOptionBooleanValue("eCode") ) {
+    } else if ( getPluginPlatform().getOptionBooleanValue("eCode") ) {
       inputSuffix = ".t";
       outputSuffix = ".e";
     } else { // we should never ever be here normally...
@@ -239,7 +241,7 @@ public class TomEnvironment {
     }
 
     // fills the local user import list
-    String imports = getServer().getOptionStringValue("import");
+    String imports = getPluginPlatform().getOptionStringValue("import");
     StringTokenizer st = new StringTokenizer(imports, ":"); // paths are separated by ':'
     while( st.hasMoreTokens() ) {
       String next = st.nextToken();
@@ -249,14 +251,14 @@ public class TomEnvironment {
     setUserImportList(localUserImportList);
 
     // for Eclipse...
-    if ( getServer().getOptionBooleanValue("eclipse") )
+    if ( getPluginPlatform().getOptionBooleanValue("eclipse") )
       setEclipseMode(true);
 
     // computes destdir
-    localDestDir = getServer().getOptionStringValue("destdir");
+    localDestDir = getPluginPlatform().getOptionStringValue("destdir");
     setDestDir(localDestDir);
             
-    String commandLineUserOutputFile = getServer().getOptionStringValue("output");
+    String commandLineUserOutputFile = getPluginPlatform().getOptionStringValue("output");
     if ( commandLineUserOutputFile.length() > 0 ) {
       setUserOutputFile( commandLineUserOutputFile );
     }
@@ -266,8 +268,8 @@ public class TomEnvironment {
     return symbolTable;
   }
 
-  public TomServer getServer() {
-    return TomServer.getInstance();
+  public PluginPlatform getPluginPlatform() {
+    return PluginPlatform.getInstance();
   }
 
 //     public TomAlertList getErrors() {
@@ -296,7 +298,7 @@ public class TomEnvironment {
 
   public void printAlertMessage(String taskName) {
     if(!isEclipseMode()) {
-      TomStatusHandler status = getServer().getStatusHandler();
+      StatusHandler status = getPluginPlatform().getStatusHandler();
       if(status.hasError()) {
 	System.out.println(MessageFormat.format( TomMessage.getString("TaskErrorMessage"),
 						 new Object[]{ taskName, 

@@ -19,6 +19,8 @@ header{
     import jtom.exception.*;
     import jtom.tools.*;
 
+    import tom.platform.*;
+
     import antlr.*;
 }
 
@@ -65,12 +67,12 @@ options{
         return tsf();
     }
     
-    public TomServer getServer(){
-        return TomServer.getInstance();
+    public PluginPlatform getPluginPlatform(){
+        return PluginPlatform.getInstance();
     }
     
     private TomEnvironment environment() {
-       // return getServer().getEnvironment();
+       // return getPluginPlatform().getEnvironment();
         return TomEnvironment.getInstance();
     }
 
@@ -173,7 +175,7 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
                     optionList
                 );
                 
-                if(((Boolean)getServer().getOptionValue("debug")).booleanValue()){
+                if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()){
                     debuggedStructureList = (TomList) debuggedStructureList.append(result);
                 }
                 
@@ -243,13 +245,13 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
                 pushLine(t.getLine());
                 pushColumn(t.getColumn());
                 
-                if(((Boolean)getServer().getOptionValue("debug")).booleanValue()){
+                if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()){
                     blockList.add(`ITL(
                             "jtom.debug.TomDebugger.debugger.patternSuccess(\""
                             +debugKey
                             +"\");\n")
                     );
-                    if(((Boolean)getServer().getOptionValue("memory")).booleanValue()){
+                    if(((Boolean)getPluginPlatform().getOptionValue("memory")).booleanValue()){
                             blockList.add(
                                 `ITL("jtom.debug.TomDebugger.debugger.emptyStack();\n")
                             );
@@ -380,7 +382,7 @@ ruleConstruct [Option orgTrack] returns [Instruction result]
 
             result = `RuleSet(ruleList,orgTrack);
 
-            if(((Boolean)getServer().getOptionValue("debug")).booleanValue()){
+            if(((Boolean)getPluginPlatform().getOptionValue("debug")).booleanValue()){
                 debuggedStructureList = (TomList) debuggedStructureList.append(result);
             }
             

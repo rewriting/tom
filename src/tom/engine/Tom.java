@@ -26,6 +26,7 @@
 package jtom;
 
 import java.util.logging.*;
+import jtom.tools.*;
 import tom.platform.*;
 
 /**
@@ -69,9 +70,9 @@ public class Tom {
 //       System.out.println("No log output"); 
 //     }
 
-    OptionManager om = new PlatformOptionManager();
+    OptionManager om = new TomOptionManager();
 
-    return TomServer.exec(args, om, "jtom");
+    return PluginPlatform.exec(args, om, "jtom");
   }
 
   public static void main(String[] args) {

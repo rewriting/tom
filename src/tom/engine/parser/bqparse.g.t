@@ -4,6 +4,8 @@ header{
     import jtom.*;
     import jtom.adt.tomsignature.*;
     import jtom.adt.tomsignature.types.*;
+
+    import tom.platform.*;
     
     import aterm.*;
     import aterm.pure.*;
@@ -51,12 +53,12 @@ options{
         return tsf();
     }
     
-    public TomServer getServer(){
-        return TomServer.getInstance();
+    public PluginPlatform getPluginPlatform(){
+        return PluginPlatform.getInstance();
     }
     
     private TomEnvironment environment() {
-  //      return getServer().getEnvironment();
+  //      return getPluginPlatform().getEnvironment();
         return TomEnvironment.getInstance();
     }
 

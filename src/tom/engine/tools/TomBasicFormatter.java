@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom;
+package jtom.tools;
 
 import java.util.logging.*;
 

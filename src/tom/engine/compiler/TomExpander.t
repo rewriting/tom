@@ -34,8 +34,8 @@ public class TomExpander extends TomGenericPlugin {
   public void run() {
     try {
       long startChrono = System.currentTimeMillis();
-      boolean verbose      = getServer().getOptionBooleanValue("verbose");
-      boolean intermediate = getServer().getOptionBooleanValue("intermediate");
+      boolean verbose      = getPluginPlatform().getOptionBooleanValue("verbose");
+      boolean intermediate = getPluginPlatform().getOptionBooleanValue("intermediate");
 
       TomTerm syntaxExpandedTerm   = expandTomSyntax( (TomTerm)getTerm() );
       

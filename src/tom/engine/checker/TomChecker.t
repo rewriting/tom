@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.logging.*;
 
 import jtom.*;
+import jtom.tools.*;
 import jtom.adt.tomsignature.types.*;
 import tom.library.traversal.Collect1;
 import jtom.xml.Constants;
@@ -118,10 +119,10 @@ abstract public class TomChecker extends TomGenericPlugin //Base
   }
 
   public void initProcess() {
-    verbose    =   getServer().getOptionBooleanValue("verbose");
-    strictType = ! getServer().getOptionBooleanValue("lazyType");
-    warningAll =   getServer().getOptionBooleanValue("Wall");
-    noWarning  =   getServer().getOptionBooleanValue("noWarning");
+    verbose    =   getPluginPlatform().getOptionBooleanValue("verbose");
+    strictType = ! getPluginPlatform().getOptionBooleanValue("lazyType");
+    warningAll =   getPluginPlatform().getOptionBooleanValue("Wall");
+    noWarning  =   getPluginPlatform().getOptionBooleanValue("noWarning");
   } 
     /**
      * Main type checking entry point:
