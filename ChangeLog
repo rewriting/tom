@@ -1,3 +1,9 @@
+2004-04-16  Antoine Reilles  <tonio@bonzai>
+
+	* build.sh
+	  - build.sh sets correct minimal classpath
+	  - tests uses junit
+
 2004-04-12    <pem@bach>
 
 	* src/jtom/optimizer/TomOptimizer.t: 

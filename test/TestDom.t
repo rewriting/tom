@@ -1,8 +1,9 @@
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import javax.xml.parsers.*;
+import junit.framework.TestCase;
 
-public class TestDom {
+public class TestDom extends TestCase {
 	
   private Document dom;
 
@@ -161,12 +162,6 @@ public class TestDom {
 			}
 		}
 		return res;
-	}
-
-	static void  assertTrue(boolean condition) {
-		if(!condition) {
-			throw new RuntimeException("assertion failed.");
-		}
 	}
 
 }

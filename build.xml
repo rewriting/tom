@@ -107,8 +107,6 @@
 			<classpath refid="stable.classpath"/>
 		</javac>
 		<taskdef name="adt" classname="ApigenAntTask" classpathref="stable.classpath"/>
-		<!--<property name="cp.test" refid="tom.classpath"/>
-		<echo>tom classpath : ${cp.test}</echo>-->
 		<taskdef name="tom" classname="TomAntTask">
 			<classpath refid="tom.classpath"/>
 		</taskdef>
@@ -227,8 +225,8 @@
 	</target>
 
 	<target name="inittest">
-		<!-- For this to work, you must add lib/junit.jar to your classpath -->
-		<taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+		<!-- For this to work, you must add lib/junit.jar to your classpath--> 
+		<taskdef name="myjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
 			<classpath refid="tomsrc.classpath"/>
 		</taskdef>
 	</target>
@@ -248,16 +246,18 @@
 			<classpath refid="src.classpath"/>
 			<exclude name="**/error/**"/>
 		</javac>
-		<junit printsummary="yes">
-			<classpath refid="src.classpath"/>
+		<myjunit printsummary="yes">
+			<classpath>
+				<path refid="src.classpath"/>
+				<pathelement location="${test}"/>
+			</classpath>
 			<batchtest>
 				<fileset dir="${test}">
-					<include name="**/*TestArray.java"/>
+					<include name="**/Test*.java"/>
 					<exclude name="**/error/**"/>
 				</fileset>
 			</batchtest>
-			<formatter type="plain"/>
-		</junit>
+		</myjunit>
 	</target>
 
 </project>

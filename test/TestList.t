@@ -1,18 +1,11 @@
 import aterm.*;
 import aterm.pure.*;
+import junit.framework.TestCase;
 
-public class TestList {
+public class TestList extends TestCase {
   private static ATerm ok,fail;
   private ATermFactory factory;
   
-  public static void main(String args[]) {
-    TestList test = new TestList();
-    test.setUp();
-    test.test1();
-    test.test2();
-    test.test3();
-  }
-
   public void setUp() {
     factory = new PureFactory(16);
     ok   = factory.parse("ok");
@@ -145,12 +138,6 @@ public class TestList {
       l(conc(X1*,g(vx@f(x)),X2*,g(vy@f(y)),X3*)) -> { if(`vx==`vy) return factory.parse("pattern3"); }
     }
     return res;
-  }
-
-  static void  assertTrue(boolean condition) {
-    if(!condition) {
-      throw new RuntimeException("assertion failed.");
-    }
   }
   
 }

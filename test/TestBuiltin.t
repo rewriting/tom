@@ -1,25 +1,13 @@
 import aterm.*;
 import aterm.pure.*;
+import junit.framework.TestCase;
 
-public class TestBuiltin {
+public class TestBuiltin extends TestCase {
   private static ATerm ok,fail;
   private static ATerm pattern1,pattern2,pattern3,pattern4,pattern5;
  
   private ATermFactory factory;
   
-  public static void main(String args[]) {
-    TestBuiltin test = new TestBuiltin();
-    test.setUp();
-    test.test1();
-    test.test2();
-    test.test3();
-    test.test4();
-    test.test5();
-    test.test6();
-    test.test7();
-    test.test8();
-  }
-
   public void setUp() {
     factory = new PureFactory(16);
     ok   = factory.parse("ok");
@@ -205,11 +193,6 @@ public class TestBuiltin {
 
   public void test8() {
     assertTrue('b' == matchCharE(`char('b')));
-  }
-  static void  assertTrue(boolean condition) {
-    if(!condition) {
-      throw new RuntimeException("assertion failed.");
-    }
   }
 
 }

@@ -62,11 +62,10 @@ public class TestArray extends TestCase {
     double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
     double3(conc(X*)) -> conc(X*)
   } 
-
-  public TestArray() {
-		super();
+	
+	public void setUp() {
     this.factory = new PureFactory(16);
-  }
+	}
 
   public void testArray1() {
     ATerm ta = factory.makeAppl(factory.makeAFun("a", 0, false));
