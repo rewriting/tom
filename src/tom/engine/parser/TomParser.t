@@ -1378,46 +1378,39 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       vasCode = vasTL.getCode().trim();
-
-        // Generated ADT from VAS Code
+			String destDir = getInput().getDestDir().getPath();
+			
+        // Generated Tom, ADT and API from VAS Code
       Object generatedADTName = null;
       try{
-        Method getInstanceMethod = null, initMethod = null, runMethod = null;
         Class vasClass = Class.forName("vas.Vas");
-				Method methlist[] = vasClass.getDeclaredMethods();
-        for (int i = 0; i < methlist.length; i++) {  
-          Method m = methlist[i];
-          if(m.getName().equals("getInstance")) {
-            getInstanceMethod = m;
-          } else if (m.getName().equals("init")) {
-            initMethod = m;
-					}	else if (m.getName().equals("run")) {
-            runMethod = m; 
-          }
-        }
-				Object vasInstance = getInstanceMethod.invoke(vasClass, new Object[]{});
-        
+				
+				Method execMethod = vasClass.getMethod("externalExec",
+					new Class[]{(new String[]{}).getClass(), 
+					Class.forName("java.io.InputStream"),
+					Class.forName( "java.lang.String")
+				});
+
 				ArrayList vasParams = new ArrayList();
-				vasParams.add("--external");
-				//vasParams.add("--verbose");
+				// vasParams.add("--verbose");
 				vasParams.add("--destdir");
-        String destDir = getInput().getDestDir().getPath();
 				vasParams.add(destDir);
 				packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
         if(!packageName.equals("")) {
           vasParams.add("--package");
           vasParams.add(packageName);
         }
-				Object[] realParams = {(String[]) vasParams.toArray(new String[vasParams.size()])};
-				initMethod.invoke(vasInstance, realParams);
-        Object[] realParams2 =  {new ByteArrayInputStream(vasCode.getBytes()), currentFile};
-        generatedADTName = runMethod.invoke(vasInstance, realParams2);
+				Object[] realParams = {
+											(String[]) vasParams.toArray(new String[vasParams.size()]),
+											new ByteArrayInputStream(vasCode.getBytes()),
+											currentFile};
+				generatedADTName = execMethod.invoke(vasClass, realParams);
       } catch (ClassNotFoundException e) {
         throw new TomException(TomMessage.getString("VasClassNotFound"));
       } catch (Exception e) {
         throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
       }
-
+			  // Check for errors
 			try{
         Class vasEnvironmentClass = Class.forName("vas.VasEnvironment");
 				Method getErrorMethod = vasEnvironmentClass.getMethod("getErrors", new Class[]{});
@@ -1433,7 +1426,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 						currentFile, error.getLine()+initialVasLine, error.getLevel());
 						errors = errors.getTail();
 					}
-					throw new TomException("See next messages");
+					throw new TomException("See next messages for details...");
 				}
 			} catch (ClassNotFoundException e) {
         throw new TomException(TomMessage.getString("VasClassNotFound"));
@@ -1441,19 +1434,12 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
       }
         // Simulate the inclusion of generated Tom file
-      String dir = getInput().getDestDir().getPath();
-      if (packageName != null) {
-        dir = dir + File.separatorChar + packageName;
-      }
-        //if (apiName != null) {
-        //dir = dir + File.separatorChar + apiName;
-        //}
-      String adtFileName = new File((String)generatedADTName).getName();
-      file = new File(dir, adtFileName.substring(0, adtFileName.length()-".adt".length())+".tom");
+      String adtFileName = new File((String)generatedADTName).toString();
+      file = new File(adtFileName.substring(0, adtFileName.length()-".adt".length())+".tom");
       try {
         fileName = file.getCanonicalPath();
       } catch (IOException e) {
-        throw new TomIncludeException(MessageFormat.format(TomMessage.getString(""), new Object[]{fileName, currentFile, e.getMessage()}));
+        throw new TomIncludeException(MessageFormat.format(TomMessage.getString("IOExceptionWithGeneratedTomFile"), new Object[]{fileName, currentFile, e.getMessage()}));
       } 
       includeFile(fileName, list);
     }
