@@ -323,7 +323,7 @@ blockList [LinkedList list] throws TomException
         |   ruleConstruct[list] 
         |   signature[list]
         |   backquoteTerm[list]
-        |   localVariable[list]
+//        |   localVariable[list]
         |   operator[list] 
         |   operatorList[list] 
         |   operatorArray[list] 
@@ -546,7 +546,7 @@ backquoteTerm [LinkedList list]
             list.add(bqTerm);
         }
     ;
-
+/*
 localVariable [LinkedList list]
     :
         t:VARIABLE
@@ -566,7 +566,7 @@ localVariable [LinkedList list]
             pushColumn();
         }
     ;
-
+*/
 operator [LinkedList list] throws TomException
 {
     TargetLanguage code = null;
@@ -857,10 +857,10 @@ OPERATORARRAY
 // do not need to switch lexers
 INCLUDE
     :   "%include" 
-    ;
+    ;/*
 VARIABLE
     :   "%variable" 
-	;
+	;*/
 VAS
     :   "%vas"  
     ;
