@@ -2373,6 +2373,7 @@ public class TomParser extends TomTask implements TomParserConstants {
      Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      OptionList option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetHeadDecl(
+                           symbolTable().getUniversalType(),
                            ast().makeVariable(option,name.image,typeString),
                            ast().reworkTLCode(tlCode, pretty), orgTrack);}
     throw new Error("Missing return statement in function");

@@ -342,23 +342,19 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
                                              tlCode));
   }
 
-  protected void buildGetHeadDecl(int deep, String name1, String type, TomType tlType,TargetLanguage tlCode) 
+  protected void buildGetHeadDecl(int deep, String name1, String suffix, TomType domain, TomType codomain, TargetLanguage tlCode) 
     throws IOException {
     String returnType,argType;
-
-    /*
-     * type is the type of the list-variable, not the type of the head
-     */
     if(strictType) {
-      //returnType = getTLCode(tlType);
-      argType = getTLCode(tlType);
+      returnType = getTLCode(codomain);
+      argType = getTLCode(domain);
     } else {
-      //returnType = getTLType(getUniversalType());
+      returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
     }
-    returnType = getTLType(getUniversalType());
+
     generateTargetLanguage(deep,
-                           genDecl(returnType, "tom_get_head", type,
+                           genDecl(returnType, "tom_get_head", suffix,
                                    new String[] { argType, name1 },
                                    tlCode));
   }

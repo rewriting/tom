@@ -287,10 +287,10 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException {
-    output.write("((" + getTLType(codomain) + ")tom_get_head_" + getTomType(domain) + "(");
-      //output.write("tom_get_head_" + getTomType(domain) + "(");
+    //output.write("((" + getTLType(codomain) + ")tom_get_head_" + getTomType(domain) + "(");
+    output.write("tom_get_head_" + getTomType(domain) + "(");
     generate(deep,var);
-    output.write("))");
+    output.write(")");
   }
 
   protected void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException {

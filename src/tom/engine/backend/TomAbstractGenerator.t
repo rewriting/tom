@@ -491,9 +491,10 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      GetHeadDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
-                  tlCode@TL[], _) -> {
-        `buildGetHeadDecl(deep, name1, type, tlType, tlCode);
+      GetHeadDecl[codomain=Type[tlType=codomain], 
+                  variable=Variable[astName=Name(name1), astType=Type(ASTTomType(suffix),domain@TLType[])],
+                  tlcode=tlCode@TL[]] -> {
+        `buildGetHeadDecl(deep, name1, suffix, domain, codomain, tlCode);
         return;
       }
 
@@ -689,7 +690,7 @@ TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException;
 String name2, String type1, String type2, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTermsEqualDecl(int deep, String name1, String name2,
 String type1, String type2, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildGetHeadDecl(int deep, String name1, String type, TomType tlType,TargetLanguage tlCode) throws IOException;
+  protected abstract void buildGetHeadDecl(int deep, String name1, String suffix, TomType domain, TomType codomain,TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, String name1, String type,
 TomType tlType, TargetLanguage tlCode) throws IOException;

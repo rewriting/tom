@@ -63,7 +63,8 @@ public class TomExpander extends TomTask {
       TomTerm syntaxExpandedTerm = expandTomSyntax(getInput().getTerm());
       tomKernelExpander.updateSymbolTable();
       TomTerm context = `emptyTerm();
-      TomTerm expandedTerm  = expandVariable(context, syntaxExpandedTerm);
+      TomTerm variableExpandedTerm  = expandVariable(context, syntaxExpandedTerm);
+      TomTerm expandedTerm  = updateCodomain(variableExpandedTerm);
       
       if(debugMode) {
         tomKernelExpander.expandMatchPattern(expandedTerm);
@@ -128,6 +129,49 @@ public class TomExpander extends TomTask {
           } else {
             return traversal().genericTraversal(subject,this);
           }
+        } // end apply
+      }; // end new
+
+    return (TomTerm) replace.apply(subject);
+  }
+
+  /*
+   * this post-processing phase replaces untyped (universalType) codomain
+   * by their precise type (according to the symbolTable)
+   */
+  public TomTerm updateCodomain(TomTerm subject) {
+    Replace1 replace = new Replace1() { 
+        public ATerm apply(ATerm subject) {
+          if(subject instanceof Declaration) {
+            %match(Declaration subject) {
+              GetHeadDecl[variable=Variable[astType=domain]] -> {
+                TomSymbol tomSymbol = getSymbol(domain);
+                if(tomSymbol != null) {
+                  TomTypeList codomain = getSymbolDomain(tomSymbol);
+                  //System.out.println("tomSymbol = " + tomSymbol);
+                  //System.out.println("domain    = " + domain);
+                  //System.out.println("codomain  = " + codomain);
+                  
+                  if(codomain.isSingle()) {
+                    Declaration t = (Declaration)subject;
+                    t = t.setCodomain(codomain.getHead());
+                    return t;
+                  } else {
+                    throw new TomRuntimeException(new Throwable("updateCodomain: bad codomain: " + codomain));
+                  }
+                }
+              }
+
+              // default rule
+              _ -> {
+                return traversal().genericTraversal(subject,this);
+              }
+            } // end match
+          } else {
+            // not instance of Declaration
+            return traversal().genericTraversal(subject,this);
+          }
+
         } // end apply
       }; // end new
 

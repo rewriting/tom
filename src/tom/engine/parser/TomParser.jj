@@ -2064,6 +2064,7 @@ Declaration KeywordGetHead(String typeString) throws TomException:
      Option info = ast().makeOriginTracking(name.image,getLine(), currentFile);
      OptionList option = ast().makeOption(info);
      return tsf().makeDeclaration_GetHeadDecl(
+                           symbolTable().getUniversalType(),
                            ast().makeVariable(option,name.image,typeString),
                            ast().reworkTLCode(tlCode, pretty), orgTrack);
    }
