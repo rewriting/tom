@@ -1,6 +1,7 @@
 #! /bin/sh
 
 CLASSPATH=__CLASSES__:__JAVA_ATERM__:__SHARED_OBJECTS__:${CLASSPATH}
+INCLUDE=__INCLUDE__
 
-java -cp $CLASSPATH jtom.Tom $*
+java -cp $CLASSPATH jtom.Tom $INCLUDE $*
 

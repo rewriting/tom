@@ -1,5 +1,5 @@
-import xtom.adt.*;
-import xtom.tools.XTomTools;
+import jtom.runtime.xml.*;
+import jtom.runtime.xml.adt.*;
 import aterm.*;
 import jtom.runtime.*;
 
@@ -7,7 +7,7 @@ public class Birds2 {
   
   %include{ NodeTerm.tom }
     
-  private XTomTools xtools;
+  private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();
   private NodeTermFactory getNodeTermFactory() {
       return xtools.getNodeTermFactory();
@@ -19,7 +19,7 @@ public class Birds2 {
   }
 
   private void run(String filename){
-    xtools = new XTomTools();
+    xtools = new XmlTools();
     ATerm term = xtools.convertXMLToATerm(filename);
     term = replace(term);
       //xtools.printXMLFromATerm(term);
@@ -38,7 +38,7 @@ public class Birds2 {
                       System.out.println("Bingo catched bird");
                     }
 
-		    <Species [Scientific_Name="Gavia adamsii"]>["Yellow-billed Loon."]</Species> -> {
+		    <Species Scientific_Name="Gavia adamsii">"Yellow-billed Loon."</Species> -> {
                       System.out.println("Double bingo catched bird");
                     }
 

@@ -31,6 +31,7 @@ PARSER_BEGIN(TomParser)
 
 package jtom.parser;
 
+import jtom.TomBase;
 import java.io.*;
 import java.util.*;
 import jtom.adt.*;
@@ -76,7 +77,7 @@ public class TomParser implements TomTask {
     this.tomBackQuoteParser = new TomBackQuoteParser(environment);
     includedFiles = alreadyParsedFiles;
   }
-
+  
   private void addError(TomTaskInput taskInput, String msg, String file, int line, int level) {
   	TomError err = tsf().makeTomError_Error(msg,file,line,level);
 	taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
@@ -695,7 +696,9 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   if(annotedName!=null) { optionList.add(annotedName); }
 }
 {
-      // < NODE attributes [ /> | > childs </NODE> ]
+       term = XMLChild()
+         { return term; }
+     | // < NODE attributes [ /> | > childs </NODE> ]
      <XML_START> name=<TOM_IDENTIFIER>
         {
           text +="<"+name.image;
@@ -728,12 +731,12 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
          }
        ) // end choice
          {
+             //ast().makeStringSymbol(symbolTable,name.image,optionList);
            term =  tsf().makeTomTerm_XMLAppl(
              option,
              tsf().makeTomName_Name(name.image),
              ast().makeList(list),
              ast().makeList(list2));
-           System.out.println("XML Term: "+name.image+"===>"+term+"\n");
            return term;
          }
     |  
@@ -888,7 +891,7 @@ TomTerm XMLAttribute() throws TomException:
     {
         // we add the specif value : _
       list.add(tsf().makeTomTerm_Placeholder(ast().makeOption()));
-      list.add(term);
+      list.add(tomBackQuoteParser.encodeXMLAppl(term));
     } ]
     {
       if(list.size() > 1) {
@@ -904,8 +907,7 @@ TomTerm XMLAttribute() throws TomException:
 }
 
 boolean XMLAttributes(LinkedList list) throws TomException:
-{// variable declaration
-  TomTerm leftTerm, rightTerm;
+{
   TomTerm attribute;
 }
 {
@@ -918,20 +920,12 @@ boolean XMLAttributes(LinkedList list) throws TomException:
   <TOM_RBRACKET>
   {
     text +="]";
-    System.out.println("ExplicitMode for attribute");
-    return false;
+     return false;
   }
  | // implicit mode
-  (
-    leftTerm=Term() <TOM_EQUAL>{text+="=";} rightTerm=Term()
-      {
-        System.out.println(leftTerm +"  =  "+rightTerm);
-        list.add(tsf().makeTomTerm_XMLAttribute(leftTerm, rightTerm));
-      }
-  )*
+  ( attribute = XMLAttribute() { list.add(attribute); } )*
   {
-    System.out.println("ImplicitMode for attribute");
-    return true;
+     return true;
   }
 }
 
@@ -968,20 +962,8 @@ TomTerm XMLChild() throws TomException:
 }
 {
   (
-    arg1 = Term()
-    {
-      if(ast().isStringSymbol(symbolTable,arg1)) {
-        list.add(arg1);
-        optionList.add(ast().makeOriginTracking(Constants.TEXT_NODE,getLine(), currentFile));
-        option = ast().makeOption(ast().makeOptionList(optionList));
-        return tsf().makeTomTerm_Appl(option,
-                                      tsf().makeTomName_Name(Constants.TEXT_NODE),
-                                      ast().makeList(list));
-      }
-      
-      return arg1;
-    }
-  | // #TEXT(...)
+      //  arg1 = Term() { return tomBackQuoteParser.encodeXMLAppl(arg1); }
+  // #TEXT(...)
     <XML_TEXT> <TOM_LPAREN> arg1 = TermStringIdentifier() <TOM_RPAREN>
     {
       keyword = Constants.TEXT_NODE;
@@ -1004,7 +986,6 @@ TomTerm XMLChild() throws TomException:
       }
   )
     {
-      System.out.println(text);
       optionList.add(ast().makeOriginTracking(keyword,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
       return tsf().makeTomTerm_Appl(option,
@@ -1026,20 +1007,35 @@ boolean XMLChilds(LinkedList list) throws TomException:
     // explicit
   <TOM_LBRACKET>{text+="[";}
     [
-      term = XMLChild() { list.add(term); }
-      ( <TOM_COMMA> {text += " , ";} term = XMLChild() { list.add(term); } )*
+      ( /*term = XMLChild() | */ term = Term() ) 
+      {
+        term = tomBackQuoteParser.encodeXMLAppl(term);
+        list.add(term);
+      }
+      (
+        <TOM_COMMA> {text += " , ";}
+        ( /* term = XMLChild() | */ term = Term() ) 
+        {
+          term = tomBackQuoteParser.encodeXMLAppl(term);
+          list.add(term);
+        }
+      )*
     ]
   <TOM_RBRACKET>
   {
     text +="]";
-    System.out.println("ExplicitMode for childs");
     return false;
   }
  |
  // implicit mode
-   ( term = XMLChild() { list.add(term); } )*
+   (
+     ( /* term = XMLChild() | */ term = Term() ) 
+        {
+          term = tomBackQuoteParser.encodeXMLAppl(term);
+          list.add(term);
+        }
+    )*
    {
-     System.out.println("ImplicitMode for childs");
      return true;
    }
 }

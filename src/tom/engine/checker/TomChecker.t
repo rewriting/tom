@@ -382,7 +382,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 	        line = findOriginTrackingLine(options);
         	nbFoundArgs++;
         	// TODO assign a type to that argument
-        	System.out.println("Need type verification on XMLAppl");
+        	//System.out.println("Need type verification on XMLAppl");
         	foundTypeMatch.add(extractType(symbolTable().getSymbol(name)));
         }
       }

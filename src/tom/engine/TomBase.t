@@ -32,6 +32,7 @@ import aterm.*;
 import jtom.tools.*;
 import jtom.adt.*;
 import jtom.runtime.*;
+import jtom.xml.*;
 
 //import jtom.runtime.set.SharedSet;
 
@@ -548,4 +549,5 @@ public class TomBase {
     TomError err = `Error(msg,file,line,level);
     taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
   }
+
 }

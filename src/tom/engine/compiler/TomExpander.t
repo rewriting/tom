@@ -26,6 +26,7 @@
 package jtom.compiler;
   
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import jtom.TomBase;
 import jtom.adt.*;
@@ -197,14 +198,11 @@ public class TomExpander extends TomBase implements TomTask {
       }; // end replaceSymbol
     return (TomTerm) replaceSymbol.apply(t);
   }
-  
+
   protected TomTerm expandXMLAppl(OptionList options, String tomName,
                                   TomList attrList, TomList childList) {
-
     boolean implicitAttribute = hasImplicitXMLAttribut(options);
     boolean implicitChild     = hasImplicitXMLChild(options);
-
-    
     
     TomList newAttrList  = `emptyTomList();
     TomList newChildList = `emptyTomList();
@@ -214,32 +212,59 @@ public class TomExpander extends TomBase implements TomTask {
     if(implicitChild) { newChildList = `manyTomList(star,newChildList); }
 
     while(!attrList.isEmpty()) {
-      TomTerm pattern = attrList.getHead();
-      newAttrList = `manyTomList(expandTomSyntax(pattern),newAttrList);
+      TomTerm newPattern = expandTomSyntax(attrList.getHead());
+      newAttrList = `manyTomList(newPattern,newAttrList);
       if(implicitAttribute) { newAttrList = `manyTomList(star,newAttrList); }
       attrList = attrList.getTail();
     }
     newAttrList = (TomList) newAttrList.reverse();
     
     while(!childList.isEmpty()) {
-      TomTerm pattern = childList.getHead();
-      newChildList = `manyTomList(expandTomSyntax(pattern),newChildList);
-      if(implicitChild) { newChildList = `manyTomList(star,newChildList); }
+      TomTerm newPattern = expandTomSyntax(childList.getHead());
+        //System.out.println("newPattern = " + newPattern);
+      
+      newChildList = `manyTomList(newPattern,newChildList);
+      if(implicitChild) {
+        if(newPattern.isVariableStar()) {
+            // remove the previously inserted pattern
+            //System.out.println("newChildList = " + newChildList);
+            //System.out.println("remove the previously inserted pattern");
+          newChildList = newChildList.getTail();
+          if(newChildList.getHead().isUnamedVariableStar()) {
+            // remove the previously inserted star
+            //System.out.println("remove the previously inserted star");
+            newChildList = newChildList.getTail();
+          }
+            // re-insert the pattern
+            //System.out.println("re-insert the pattern");
+          newChildList = `manyTomList(newPattern,newChildList);
+            //System.out.println("newChildList = " + newChildList);
+        } else {
+          newChildList = `manyTomList(star,newChildList);
+        }
+      }
       childList = childList.getTail();
     }
     newChildList = (TomList) newChildList.reverse();
 
-
+      //System.out.println("+++ newAttrList  = " + newAttrList);
+      //System.out.println("+++ newChildList = " + newChildList);
 
     Option emptyOption = ast().makeOption();
 
+      /*
+       * encode the name and put it into the table of symbols
+       */
+    tomName = "\"" + tomName + "\"";
+    ast().makeStringSymbol(symbolTable(),tomName, new LinkedList());
+    
     TomList newArgs = `concTomTerm(
       Appl(Option(options),Name(tomName),empty()),
       Appl(emptyOption,Name(Constants.CONC_TNODE), newAttrList),
       Appl(emptyOption,Name(Constants.CONC_TNODE), newChildList));
     TomTerm result = `Appl(Option(options),Name(Constants.ELEMENT_NODE),newArgs);
-                           
-    System.out.println(result);
+
+      //System.out.println("expand:\n" + result);
     return result;
    
   }

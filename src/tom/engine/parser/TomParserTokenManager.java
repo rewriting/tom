@@ -25,6 +25,7 @@
 */
 
 package jtom.parser;
+import jtom.TomBase;
 import java.io.*;
 import java.util.*;
 import jtom.adt.*;

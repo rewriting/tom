@@ -236,18 +236,6 @@ public class ASTFactory {
     String sort = "String";
     makeSortSymbol(symbolTable, sort, value, optionList);
   } 
-
-  public boolean isStringSymbol(SymbolTable symbolTable, TomTerm term) {
-    if(term.isAppl()) {
-      String key = term.getAstName().getString();
-      TomSymbol symbol = symbolTable.getSymbol(key);
-      if(symbol != null) {
-        String sort = "String";
-        return symbol.getTypesToType().getCodomain().getString().equals(sort);
-      }
-    }
-    return false;
-  }
   
   public void makeStringDecl(List list) {
     String sort = "String";
