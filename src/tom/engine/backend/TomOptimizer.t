@@ -110,13 +110,13 @@ public class TomOptimizer extends TomTask {
 	public ATerm apply(ATerm t) {
 	  if (t instanceof TomTerm) {
 	    %match(TomTerm t) {
-	      CompiledMatch(decls,automata,option) -> {
+	      CompiledMatch(automata,option) -> {
 		numberCompiledMatchFound++;
-		declVarList = traversalCollectDecls(decls);
+		//declVarList = traversalCollectDecls(decls);
 		TomList newAutomata = collectNReplace(automata);
 		//optimDebug("declVarList: \n"+declVarList.toString());
-		TomList newDecls = replaceDeclList(decls);
-		return `CompiledMatch(newDecls,newAutomata,option);
+		//TomList newDecls = replaceDeclList(decls);
+		return `CompiledMatch(newAutomata,option);
 	      }
 	      _ -> {
 		return traversal().genericTraversal(t,this);

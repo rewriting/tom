@@ -31,7 +31,7 @@ public class Action {
     t = t.getDocElem();
     %match(TNode t) {
       <Actions><Action>
-         comp@<Comp Label="busy" Type=#TEXT(type) Index=i />
+         comp@<Comp Label="busy" Type=type Index=i />
          </Action></Actions>
          -> {
            System.out.println("Action 1 Localisee ! " + type + "  " + i);
@@ -51,9 +51,9 @@ public class Action {
     %match(TNode t) {
       <Actions>a</Actions> -> {
         %match(TNode a,TNode a) {
-          <Action><Comp Index=#TEXT(i2) Label=l Type="Wait"/></Action>,
-          <Action><Comp Index=#TEXT(i1) Label=l Type="Send"/></Action> -> {
-            System.out.println("Synchronisation sur le label "+l.getData()+" entre "+i1+"(!) et "+i2+"(?)");				
+          <Action><Comp Index=i2 Label=l Type="Wait"/></Action>,
+          <Action><Comp Index=i1 Label=l Type="Send"/></Action> -> {
+            System.out.println("Synchronisation sur le label "+l +" entre "+i1+"(!) et "+i2+"(?)");				
           }	
         }
       }

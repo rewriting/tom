@@ -84,7 +84,6 @@ public class Tom {
     + "\n\t--debug\t\t\tGenerate debug primitives"
     + "\n\t--verify\t\t\tVerify correctness of match compilation"
     + "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)"
-    + "\n\t--noGoto\t\tDo not generate any goto"
     ;
 
   private static int defaultLineNumber = 1;
@@ -171,10 +170,6 @@ public class Tom {
           taskInput.setCCode(false);
           taskInput.setCamlCode(false);
           taskInput.setOutputSuffix(".e");
-          taskInput.setSupportedGoto(false);
-          taskInput.setSupportedBlock(false);
-        } else if (args[i].equals("--noGoto")) {
-          taskInput.setSupportedGoto(false);
         } else if (
           args[i].equals("--noOutput") || args[i].equals("-o")) {
           taskInput.setPrintOutput(false);
@@ -282,8 +277,6 @@ public class Tom {
           environment,
           new TomKernelCompiler(
             environment,
-            taskInput.isSupportedBlock(),
-            taskInput.isSupportedGoto(),
             taskInput.isDebugMode()));
 
       InputStream input = null;

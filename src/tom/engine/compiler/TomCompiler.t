@@ -42,7 +42,7 @@ import jtom.TomEnvironment;
 public class TomCompiler extends TomTask {
   TomKernelCompiler tomKernelCompiler;
   private String debugKey = null;
-  private boolean supportedBlock = false, debugMode = false, eCode = false;
+  private boolean debugMode = false, eCode = false;
   private int absVarNumber = 0;
   
   public TomCompiler(TomEnvironment environment,
@@ -55,11 +55,10 @@ public class TomCompiler extends TomTask {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-	public void initProcess() {
-		supportedBlock = getInput().isSupportedBlock();
-		debugMode = getInput().isDebugMode();
-		eCode = getInput().isECode();
-	}
+  public void initProcess() {
+    debugMode = getInput().isDebugMode();
+    eCode = getInput().isECode();
+  }
 	
   public void process() {
     try {
@@ -154,19 +153,12 @@ public class TomCompiler extends TomTask {
               
               TomTerm newRhs = preProcessing(`MakeTerm(rhsTerm));
               TomList rhsList = empty();
-              if(supportedBlock) {
-                rhsList = appendInstruction(`OpenBlock(),rhsList);
-              }
               if(debugMode) {
                 TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
                 rhsList = append(`TargetLanguageToTomTerm(tl), rhsList);
               }
               
               rhsList = appendInstruction(`Return(newRhs),rhsList);
-              if(supportedBlock) {
-                rhsList = appendInstruction(`CloseBlock(),rhsList);
-              }
-              
               TomList newRhsList = buildCondition(condList,rhsList);
              
               patternActionList = append(`PatternAction(TermList(matchPatternsList),Tom(newRhsList), option),patternActionList);

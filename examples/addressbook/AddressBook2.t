@@ -41,7 +41,7 @@ public class AddressBook2 {
     return `concPerson(
       person("John","Smith",date(1965,1,18)),
       person("Marie","Muller",date(1986,1,28)),
-      person("Paul","Muller",date(2000,1,29))
+      person("Paul","Muller",date(2000,1,28))
       );
   }
   

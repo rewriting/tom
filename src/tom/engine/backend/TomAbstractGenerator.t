@@ -42,8 +42,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected OutputCode output;
   protected TomTaskInput input;
   protected String debugKey;
-  protected boolean supportedGoto = false, 
-    supportedBlock = false, debugMode = false, strictType = false,
+  protected boolean debugMode = false, strictType = false,
     staticFunction = false, genDecl = false, pretty = false, verbose = false;
 
   private HashMap getSubtermMap = new HashMap();
@@ -55,8 +54,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 	this.output = output;
     this.input = input;
 
-    supportedGoto = input.isSupportedGoto(); 
-    supportedBlock = input.isSupportedBlock();
     debugMode = input.isDebugMode();
     strictType = input.isStrictType();
     staticFunction = input.isStaticFunction();
@@ -708,9 +705,6 @@ public abstract class TomAbstractGenerator extends TomBase {
     boolean generated = hasGeneratedMatch(list);
     boolean defaultPattern = hasDefaultCase(list);
     Option orgTrack = null;
-    if(supportedBlock) {
-      generateInstruction(deep,`OpenBlock());
-    }
     if(debugMode && !generated) {
       orgTrack = findOriginTracking(list);
       debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
@@ -719,9 +713,6 @@ public abstract class TomAbstractGenerator extends TomBase {
     generateList(deep+1,instructionList);
     if(debugMode && !generated && !defaultPattern) {
       output.writeln("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");");
-    }
-    if(supportedBlock) {
-      generateInstruction(deep,`CloseBlock());
     }
   }
 	
