@@ -374,7 +374,7 @@ public class TomCompiler extends TomTask {
         return `UnamedVariableStar(newOptionList,type);
       }
 
-      Variable[option=optionList,astName=name,astType=type] -> {
+      Variable[option=optionList,astName=name,astType=type,constraints=clist] -> {
         Integer multiplicity = (Integer) multiplicityMap.get(name);
         int mult = multiplicity.intValue();
         if(mult > 1) {
@@ -385,7 +385,8 @@ public class TomCompiler extends TomTask {
           path = (TomNumberList) path.append(`RenamedVar(name));
           path = (TomNumberList) path.append(makeNumber(mult));
           OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-          renamedTerm = `Variable(newOptionList,PositionName(path),type,concExpression());
+					// add the constraint renamedVariable = Variable
+          renamedTerm = `Variable(newOptionList,PositionName(path),type,concExpression(EqualTerm(subject,renamedTerm),clist*));
             //System.out.println("renamedTerm = " + renamedTerm);
 
           Expression newEquality = `EqualTerm(subject,renamedTerm);
@@ -394,7 +395,7 @@ public class TomCompiler extends TomTask {
         return renamedTerm;
       }
 
-      VariableStar[option=optionList,astName=name,astType=type] -> {
+      VariableStar[option=optionList,astName=name,astType=type,constraints=clist] -> {
         Integer multiplicity = (Integer)multiplicityMap.get(name);
         int mult = multiplicity.intValue();
         if(mult > 1) {
@@ -405,7 +406,8 @@ public class TomCompiler extends TomTask {
           path = (TomNumberList) path.append(`RenamedVar(name));
           path = appendNumber(mult,path);
           OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-          renamedTerm = `VariableStar(newOptionList,PositionName(path),type,concExpression());
+					// add the constraint renamedVariable = Variable
+          renamedTerm = `VariableStar(newOptionList,PositionName(path),type,concExpression(EqualTerm(subject,renamedTerm),clist*));
 
             //System.out.println("renamedTerm = " + renamedTerm);
 
