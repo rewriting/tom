@@ -66,7 +66,8 @@ public class TomOptimizer extends TomGenericPlugin {
 
   public PlatformOptionList declaredOptions() {
     // activation flag
-    return `concPlatformOption(OptionBoolean("optimize", "O", "Optimized generated code", False()));
+    return TomOptionManager.xmlToOptionList("<options><OptionBoolean name=\"optimize\" altName=\"O\" description=\"Optimized generated code\" valueB=\"false\" /></options>");
+    //return `concPlatformOption(OptionBoolean("optimize", "O", "Optimized generated code", False()));
   }
 
   private boolean isActivated() {

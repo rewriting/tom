@@ -632,20 +632,29 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   public void extractOptionList(TNode node) {
     %match(TNode node) {
       <server>opt@<options></options></server> -> {
-	globalOptions = xmlToOptionList(opt);
+	globalOptions = xmlNodeToOptionList(opt);
       }
     }
   }
 
-  public static PlatformOptionList xmlToOptionList(TNode optionsNode) {
-    return (new TomOptionManager()).nonStaticXmlToOptionList(optionsNode);
+  public static PlatformOptionList xmlToOptionList(String optionsNode) {
+    return (new TomOptionManager()).xmlStringToOptionList(optionsNode);
   }
 
-  private PlatformOptionList nonStaticXmlToOptionList(TNode optionsNode) {
+  private PlatformOptionList xmlStringToOptionList(String nodeText) {
+    XmlTools xtools = new XmlTools();
+    InputStream stream = new ByteArrayInputStream( nodeText.getBytes() );
+
+    TNode node = (TNode)xtools.convertXMLToATerm(stream);
+
+    return xmlNodeToOptionList(node.getDocElem());
+  }
+
+  private PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
     PlatformOptionList list = `emptyPlatformOptionList();
 
     %match(TNode optionsNode) {
-      ElementNode[childList = c] -> { 
+      ElementNode[name=n, childList = c] -> { 	
 	while(!(c.isEmpty())) {
 	  TNode h = c.getHead();
 					
@@ -671,7 +680,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   private PlatformOptionList extractOptionBoolean(TNode optionBooleanNode, PlatformOptionList list) {
     %match(TNode optionBooleanNode) {
-      <OptionBoolean [name = n, altName = an, description = d, valueB = v] /> -> {
+      <OptionBoolean [name = n, altName = an, description = d, valueB = v] /> -> {	
 	%match(String v) {
           ('true') -> { 
 	    list = `concPlatformOption(list*, OptionBoolean(n, an, d, True())); 
