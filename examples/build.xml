@@ -22,6 +22,15 @@
 	<property name="dom" value="Dom"/>
 	<property name="dom.dir" location="${examples.dir}/${dom}" />
 
+	<property name="nspk" value="Nspk"/>
+	<property name="nspk.dir" location="${examples.dir}/${nspk}" />
+
+	<property name="xml" value="Xml"/>
+	<property name="xml.dir" location="${examples.dir}/${xml}" />
+
+	<property name="lsystem" value="Lsystems"/>
+	<property name="lsystem.dir" location="${examples.dir}/${lsystem}" />
+
 	<!-- Define classpath for building stable and source	-->
 	<path id="tom.classpath">
 		<fileset dir="${env.TOM_HOME}/lib">
@@ -131,9 +140,56 @@
 		</javac>
 	</target>
 	
+	<target name="nspk">
+		<!-- build adt -->
+		<adt file="${nspk.dir}/term.adt" 
+				 factory="term" 
+				 package="adt.nsh" 
+				 destdir="${nspk.dir}"/>
+		<!-- build tom -->
+		<tom srcdir="${nspk.dir}" 
+				 destdir="${nspk.dir}" 
+				 options="-I ${env.TOM_HOME}/share/jtom">
+			<include name="**/*.t"/>
+		</tom>
+		<!-- build java source -->
+		<javac srcdir="${nspk.dir}" destdir="${nspk.dir}">
+			<classpath refid="tom.classpath"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
+	
+	<target name="xml">
+		<!-- build tom -->
+		<tom srcdir="${xml.dir}" 
+				 destdir="${xml.dir}" 
+				 options="-I ${env.TOM_HOME}/share/jtom">
+			<include name="**/*.t"/>
+		</tom>
+		<!-- build java source -->
+		<javac srcdir="${xml.dir}" destdir="${xml.dir}">
+			<classpath refid="tom.classpath"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
+	
+	<target name="lsystem">
+		<!-- build tom -->
+		<tom srcdir="${lsystem.dir}" 
+				 destdir="${lsystem.dir}" 
+				 options="-I ${env.TOM_HOME}/share/jtom">
+			<include name="**/*.t"/>
+		</tom>
+		<!-- build java source -->
+		<javac srcdir="${lsystem.dir}" destdir="${lsystem.dir}">
+			<classpath refid="tom.classpath"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
+	
 	<target name="build.examples" 
 					description="Builds the examples (at least some)"
-					depends="addressbook, boulderdash, builtin, dom">
+					depends="addressbook, boulderdash, builtin, dom, nspk, xml">
 	</target>
 	
 	<target name="dist.examples" description="Prepare a
@@ -152,6 +208,14 @@
 
 				<include name="${dom}/*.t"/>
 				<include name="${dom}/*.adt"/>
+
+				<include name="${nspk}/*.t"/>
+				<include name="${nspk}/*.adt"/>
+
+				<include name="${xml}/*.t"/>
+				<include name="${xml}/*.adt"/>
+				<include name="${xml}/*.xml"/>
+				<include name="${xml}/*.html"/>
 
 				<not>
 					<present targetdir="${examples.dir}">
