@@ -1,9 +1,3 @@
-/**
- *
- * The TomTypeChecker plugin.
- *
- */
-
 package jtom.checker;
 
 import aterm.*;
@@ -11,32 +5,35 @@ import jtom.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
 
-public class TomTypeChecker extends TomChecker implements TomPlugin
+/**
+ * The TomTypeChecker plugin.
+ */
+public class TomTypeChecker extends TomChecker //implements TomPlugin
 {
     %include { ../adt/TomSignature.tom }
     %include{ ../adt/Options.tom }
 
-    private TomTerm term;
-    private TomOptionList myOptions;
+//     private TomTerm term;
+//     private TomOptionList myOptions;
 
-    public TomTypeChecker()
-    {
-	myOptions = `emptyTomOptionList();
-    }
+//     public TomTypeChecker()
+//     {
+// 	myOptions = `emptyTomOptionList();
+//     }
 
-    public void setInput(ATerm term)
-    {
-	if (term instanceof TomTerm)
-	    this.term = (TomTerm)term;
-	else
-	    environment().messageError(TomMessage.getString("TomTermExpected"),
-				       "TomTypeChecker", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    }
+//     public void setInput(ATerm term)
+//     {
+// 	if (term instanceof TomTerm)
+// 	    this.term = (TomTerm)term;
+// 	else
+// 	    environment().messageError(TomMessage.getString("TomTermExpected"),
+// 				       "TomTypeChecker", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+//     }
 
-    public ATerm getOutput()
-    {
-	return term;
-    }
+//     public ATerm getOutput()
+//     {
+// 	return term;
+//     }
 
     public void run()
     {
@@ -79,42 +76,42 @@ public class TomTypeChecker extends TomChecker implements TomPlugin
 	    }
     }
 
-    public TomOptionList declareOptions()
-    {
-	return myOptions;
-    }
+//     public TomOptionList declareOptions()
+//     {
+// 	return myOptions;
+//     }
 
-    public TomOptionList requiredOptions()
-    {
-	return `emptyTomOptionList();
-    }
+//     public TomOptionList requiredOptions()
+//     {
+// 	return `emptyTomOptionList();
+//     }
 
-    public void setOption(String optionName, String optionValue)
-    {
- 	%match(TomOptionList myOptions)
- 	    {
-		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			{
-			    %match(String optionValue)
-				{
-				    ('true') ->
-					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-				    ('false') ->
-					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-				}
-			}
-		}
-		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-		}
-		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-		}
-	    }
-    }
+//     public void setOption(String optionName, String optionValue)
+//     {
+//  	%match(TomOptionList myOptions)
+//  	    {
+// 		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
+// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
+// 			{
+// 			    %match(String optionValue)
+// 				{
+// 				    ('true') ->
+// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
+// 				    ('false') ->
+// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
+// 				}
+// 			}
+// 		}
+// 		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
+// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
+// 			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+// 		}
+// 		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
+// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
+// 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+// 		}
+// 	    }
+//     }
 
     private boolean amIActivated()
     {

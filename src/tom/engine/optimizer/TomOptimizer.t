@@ -1,9 +1,3 @@
-/**
- *
- * The TomOptimizer plugin.
- *
- */
-
 package jtom.optimizer;
 
 import jtom.*;
@@ -15,13 +9,16 @@ import jtom.tools.*;
 import jtom.TomMessage;
 import jtom.runtime.*;
 
-public class TomOptimizer extends TomBase implements TomPlugin
+/**
+ * The TomOptimizer plugin.
+ */
+public class TomOptimizer extends TomGenericPlugin //Base implements TomPlugin
 {
     %include{ ../adt/TomSignature.tom }
     %include{ ../adt/Options.tom }
 
-    private TomTerm term;
-    private TomOptionList myOptions;
+//     private TomTerm term;
+//     private TomOptionList myOptions;
 
     public static final String OPTIMIZED_SUFFIX = ".tfix.optimized"; // was previously in TomTaskInput
 
@@ -31,19 +28,19 @@ public class TomOptimizer extends TomBase implements TomPlugin
 				);
     }
 
-    public void setInput(ATerm term)
-    {
-	if (term instanceof TomTerm)
-	    this.term = (TomTerm)term;
-	else
-	    environment().messageError(TomMessage.getString("TomTermExpected"),
-				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    }
+//     public void setInput(ATerm term)
+//     {
+// 	if (term instanceof TomTerm)
+// 	    this.term = (TomTerm)term;
+// 	else
+// 	    environment().messageError(TomMessage.getString("TomTermExpected"),
+// 				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+//     }
 
-    public ATerm getOutput()
-    {
-	return term;
-    }
+//     public ATerm getOutput()
+//     {
+// 	return term;
+//     }
 
     public void run()
     {
@@ -91,42 +88,42 @@ public class TomOptimizer extends TomBase implements TomPlugin
 	    }
     }
 
-    public TomOptionList declareOptions()
-    {
-	return myOptions;
-    }
+//     public TomOptionList declareOptions()
+//     {
+// 	return myOptions;
+//     }
 
-    public TomOptionList requiredOptions()
-    {
-	return `emptyTomOptionList();
-    }
+//     public TomOptionList requiredOptions()
+//     {
+// 	return `emptyTomOptionList();
+//     }
 
-    public void setOption(String optionName, String optionValue)
-    {
- 	%match(TomOptionList myOptions)
- 	    {
-		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			{
-			    %match(String optionValue)
-				{
-				    ('true') ->
-					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-				    ('false') ->
-					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-				}
-			}
-		}
-		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-		}
-		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-		}
-	    }
-    }
+//     public void setOption(String optionName, String optionValue)
+//     {
+//  	%match(TomOptionList myOptions)
+//  	    {
+// 		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
+// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
+// 			{
+// 			    %match(String optionValue)
+// 				{
+// 				    ('true') ->
+// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
+// 				    ('false') ->
+// 					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
+// 				}
+// 			}
+// 		}
+// 		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
+// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
+// 			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+// 		}
+// 		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
+// 		    -> { if(n.equals(optionName)||alt.equals(optionName))
+// 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+// 		}
+// 	    }
+//     }
 
     private boolean amIActivated()
     {

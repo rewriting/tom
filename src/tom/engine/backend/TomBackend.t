@@ -1,9 +1,3 @@
-/**
- *
- * The TomBackend plugin.
- *
- */
-
 package jtom.backend;
 
 import java.io.*;
@@ -14,13 +8,16 @@ import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
 import jtom.tools.*;
 
-public class TomBackend extends TomBase implements TomPlugin
+/**
+ * The TomBackend plugin.
+ */
+public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 {
     %include { ../adt/TomSignature.tom }
     %include{ ../adt/Options.tom }
 
-    private TomTerm term;
-    private TomOptionList myOptions;
+//     private TomTerm term;
+//     private TomOptionList myOptions;
 
     private final static int defaultDeep = 2;
     private TomAbstractGenerator generator;
@@ -36,19 +33,19 @@ public class TomBackend extends TomBase implements TomPlugin
 				OptionBoolean("camlCode", "", "Generate Caml code", False()));
     }
 
-    public void setInput(ATerm term)
-    {
-	if (term instanceof TomTerm)
-	    this.term = (TomTerm)term;
-	else
-	    environment().messageError(TomMessage.getString("TomTermExpected"),
-				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    }
+//     public void setInput(ATerm term)
+//     {
+// 	if (term instanceof TomTerm)
+// 	    this.term = (TomTerm)term;
+// 	else
+// 	    environment().messageError(TomMessage.getString("TomTermExpected"),
+// 				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+//     }
 
-    public ATerm getOutput()
-    {
-	return term;
-    }
+//     public ATerm getOutput()
+//     {
+// 	return term;
+//     }
 
     public void run()
     {
@@ -125,15 +122,15 @@ public class TomBackend extends TomBase implements TomPlugin
 	    }
     }
 
-    public TomOptionList declareOptions()
-    {
-	return myOptions;
-    }
+//     public TomOptionList declareOptions()
+//     {
+// 	return myOptions;
+//     }
 
-    public TomOptionList requiredOptions()
-    {
-	return `emptyTomOptionList();
-    }
+//     public TomOptionList requiredOptions()
+//     {
+// 	return `emptyTomOptionList();
+//     }
 
     public void setOption(String optionName, String optionValue)
     {

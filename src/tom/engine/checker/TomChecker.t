@@ -37,7 +37,8 @@ import jtom.xml.Constants;
 import jtom.exception.*;
 import jtom.TomMessage;
 
-abstract public class TomChecker extends TomBase {
+abstract public class TomChecker extends TomGenericPlugin //Base 
+{
   
     // ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
