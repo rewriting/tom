@@ -35,7 +35,7 @@ import jtom.exception.TomRuntimeException;
 public class TomFactory extends TomBase {
 
 // ------------------------------------------------------------
-  %include { ../../adt/TomSignature.tom }
+  %include { ../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
   public TomFactory() {
