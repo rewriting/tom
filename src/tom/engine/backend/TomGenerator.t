@@ -699,7 +699,7 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      Assign(var@VariableStar(option1,name1,
+      Assign(var@VariableStar(Option(list),name1,
                               Type(TomType(type),tlType@TLType[])),exp) -> {
         out.indent(deep);
         generate(out,deep,var);
@@ -710,6 +710,13 @@ public class TomGenerator extends TomBase {
         }
         generateExpression(out,deep,exp);
         out.writeln(";");
+        if(Flags.debugMode && !list.isEmptyOptionList()) {
+          out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+          generate(out,deep,var);
+          out.write("\", ");
+          generate(out,deep,var); // generateExpression(out,deep,exp);
+          out.write(");\n");
+        }
         return;
       }
 

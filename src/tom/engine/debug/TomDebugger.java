@@ -106,7 +106,7 @@ public class TomDebugger {
   private void showMainMenu() {
     try {
       String str = "";
-      System.out.print("? to see the available command list>:");
+      System.out.print("? for command list>:");
       str = in.readLine();
       configure(str);
     } catch (IOException e) {
@@ -128,7 +128,7 @@ public class TomDebugger {
       System.out.println("\t more    | m\t:Show patterns of a specific available structure");
       System.out.println("\t list    | l\t:List defined breakpoint");
     } else if (str.equals("run")     || str.equals("R")) {
-      System.out.println(debuggedStructureKeySet);
+        //System.out.println(debuggedStructureKeySet);
       return;
     } else if (str.equals("failure") || str.equals("F")) {
       nextFailure = true;
@@ -150,7 +150,7 @@ public class TomDebugger {
     } else if (str.equals("list")    || str.equals("l")) {
       showBreakpoint();
     } else {
-      System.out.println("Unknow command: please enter `?` to know the available commands");
+      System.out.println("Unknow command: please enter `?` to list available commands");
     }
     showMainMenu();
     return;
@@ -162,7 +162,7 @@ public class TomDebugger {
     }
     try {
       String str = "";
-      System.out.print("? to see the available command list>:");
+      System.out.print("? for command list>:");
       str = in.readLine();
       processMenu2(str);
     } catch (IOException e) {
@@ -186,7 +186,7 @@ public class TomDebugger {
     } else if (str.equals("subst") || str.equals("S")) {
       showSubsts();
     } else {
-      System.out.println("Unknow command: please enter `?` to know the available commands");
+      System.out.println("Unknow command: please enter `?` to list available commands");
     }
     showMenu2();
   }
@@ -195,7 +195,7 @@ public class TomDebugger {
     String str ="";
     try {
       while(true) {
-        System.out.print("Enter relative configuration file name ("+debugFileExtension+"):");
+        System.out.print("Configuration file name ("+debugFileExtension+"):");
         str = in.readLine();
         if (str.equals("")) {
           continue;
@@ -227,7 +227,7 @@ public class TomDebugger {
   }
 
   private void loadConfigurationFromFile() {
-    System.out.println("Enter relative configuration file name ("+debugFileExtension+") in:");
+    System.out.println("Configuration file name ("+debugFileExtension+") in:");
     try {
       File path = new File(".");
       String[] list = path.list(filter(debugFileExtension));
@@ -244,7 +244,7 @@ public class TomDebugger {
         File file = new File(str);
         if(! file.exists()) {
           System.out.println("Not a valid filename: "+str);
-          System.out.print("Enter relative configuration file name ("+debugFileExtension+"):");
+          System.out.print("Configuration file name ("+debugFileExtension+"):");
           continue;
         }
         BufferedReader fileIn = new BufferedReader(new FileReader(str));
@@ -344,7 +344,7 @@ public class TomDebugger {
         return;
       }
       while (str != null) {
-        System.out.print(">Enter structure line number (0 to exit):");
+        System.out.print("\t>Structure line number (0 to exit):");
         str = in.readLine();
         try {
           input = Integer.parseInt(str, 10);
@@ -418,7 +418,7 @@ public class TomDebugger {
         return;
       }
       while (str != null) {
-        System.out.print(">Enter structure line number (0 to exit, `all` to have them all):");
+        System.out.print("\t>Structure line number (0 to exit, `all` for all):");
         str = in.readLine();
         if (str.equals("all")) {
             // TODO
@@ -452,7 +452,7 @@ public class TomDebugger {
             ((TomDebugStructure)mapKeyDebugStructure.get(key)).watchPatternList = set;
             debuggedStructureKeySet.add(key);
           } else {
-            System.out.println("Not a valid line number, please use info command to ensure valid entry");
+            System.out.println("Not a valid line number, please use first `info` command to ensure valid entry");
           }
         }
       }
@@ -469,7 +469,7 @@ public class TomDebugger {
       String str = "";
       int input = 0;
       while (str != null) {
-        System.out.print(">Enter Pattern Number (0 to exit, `all` to have them all):");
+        System.out.print("\t\t>Pattern Number (0 to exit, `all` for all):");
         str = in.readLine();
         if (str.equals("all")) {
           for (int i=1; i<=nbPatterns;i++) {
@@ -504,7 +504,7 @@ public class TomDebugger {
     try {
       String str = "";
       while (str != null) {
-        System.out.print(">Enter term handler to activate:");
+        System.out.print(">Term handler name to activate:");
         str = in.readLine();
         if(str.equals("exit"))
           return;

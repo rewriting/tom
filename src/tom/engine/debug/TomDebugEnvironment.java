@@ -35,7 +35,7 @@ public class TomDebugEnvironment {
   private TomDebugStructure debugStructure;
   private BufferedReader in;
   private ArrayList subjects;
-  private ArrayList substitutions;
+  private Map substitutions;
   private int step = 0;
   private String lastPatternResult = null;
   private String totalMatchResult = null;
@@ -50,11 +50,11 @@ public class TomDebugEnvironment {
     this.debugStructure = struct;
     this.failureLookup = failureLookup;
     this.subjects = new ArrayList();
-    this.substitutions = new ArrayList();
+    this.substitutions = new LinkedHashMap();
     this.in = new BufferedReader(new InputStreamReader(System.in));
     totalMatchResult = FAILURE;
     if(!failureLookup) {
-      System.out.println("\tEntering "+struct.type+" declared in "+struct.fileName+" at line "+struct.line);
+      System.out.println("\n\tEntering "+struct.type+" declared in "+struct.fileName+" at line "+struct.line);
     }
   }
 
@@ -93,7 +93,7 @@ public class TomDebugEnvironment {
     nextLookup = false;
     if(failureLookup) {return;}
     if(debugStructure.watchPatternList.contains(new Integer(getStep()))) {      
-      System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation declared line "+debugStructure.patternLine[getStep()-1]);
+      System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation (declared line "+debugStructure.patternLine[getStep()-1]+" in "+debugStructure.fileName+")");
       lastPatternResult = FAILURE;
       substitutions.clear();
       debugBreak();
@@ -140,7 +140,8 @@ public class TomDebugEnvironment {
     if(subjects.size() == debugStructure.nbSubjects.intValue()) {
       System.out.println("Here is(are) the subject(s):");
       showSubjects();
-      debugBreak();
+      System.out.println();
+        //debugBreak();
     }
   }
 
@@ -154,11 +155,12 @@ public class TomDebugEnvironment {
   }
   
   public void addSubstitution(String name, Object trm) {
-    substitutions.add(new Substitution(name, trm));
+    substitutions.put(name, new Substitution(name, trm));
   }
   
   public void showSubsts() {
-    Iterator it = substitutions.iterator();
+    Collection c = substitutions.values();
+    Iterator it = c.iterator();
     Substitution s;
     while(it.hasNext()) {
       s = (Substitution)it.next();
@@ -180,7 +182,7 @@ public class TomDebugEnvironment {
     }
     try {
       String str = "";
-      System.out.print("? to see the available command list>:");
+      System.out.print("? for command list>:");
       str = in.readLine();
       processBreak(str);
     } catch (IOException e) {
@@ -215,7 +217,7 @@ public class TomDebugEnvironment {
     } else if (str.equals("subst") || str.equals("S")) {
       showSubsts();
     } else {
-      System.out.println("Unknow command: please enter `?` to know the available commands");
+      System.out.println("Unknow command: please enter `?` to list available commands");
     }
     debugBreak();
   }
