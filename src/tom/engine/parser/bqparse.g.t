@@ -980,8 +980,15 @@ BQ_WS	:	(	' '
 			)
 			{ newline(); }
 		)
-        
-	;
+    ;
+
+XML_SKIP
+    :
+        "<?" ( ~('>') )* '>'
+        {
+            $setType(Token.SKIP);
+        }
+    ;
 
 
 
