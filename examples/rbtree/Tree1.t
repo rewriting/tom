@@ -23,7 +23,7 @@ public class Tree1 {
 
   private Tree makeBlack(Tree t) {
     if(!t.getColor().isB()) {
-      t = `t.setColor(B());        
+      t = `(t.setColor(B())); 
     }
     return t;
   }

@@ -5,7 +5,7 @@ import aterm.*;
 
 public class PersonSort {
   %include{ TNode.tom }
-//  %include{ charlist.tom }
+  //%include{ charlist.tom }
          
   private XmlTools xtools;
   private Factory getTNodeFactory() {
