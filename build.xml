@@ -219,6 +219,7 @@
       <include name="**/NewTomBackQuoteParser.t"/> 
       <include name="**/TomServer.t"/>
       <include name="**/TomOptionManager.t"/>
+      <include name="**/PluginFactory.t"/>
     </tom>
     <tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
@@ -231,6 +232,7 @@
       <exclude name="**/NewTomBackQuoteParser.t"/>
       <exclude name="**/TomServer.t"/>
       <exclude name="**/TomOptionManager.t"/>
+      <exclude name="**/PluginFactory.t"/>
       <exclude name="**/runtime/**/*.t"/> 
       <exclude name="**/tomparse.g.t"/>
       <exclude name="**/targetparse.g.t"/>
@@ -852,6 +854,7 @@
       <include name="**/TomBackQuoteParser.t"/>
       <include name="**/TomServer.t"/>
       <include name="**/TomOptionManager.t"/>
+      <include name="**/PluginFactory.t"/>
     </tomsrc>
     <tomsrc config="${src.configfile}"
 						srcdir="${src.src}" 
@@ -863,6 +866,7 @@
       <exclude name="**/TomBackQuoteParser.t"/>
       <exclude name="**/TomServer.t"/>
       <exclude name="**/TomOptionManager.t"/>
+      <exclude name="**/PluginFactory.t"/>
       <exclude name="**/runtime/**/*.t"/> 
       <exclude name="**/tomparse.g.t"/>
       <exclude name="**/targetparse.g.t"/>

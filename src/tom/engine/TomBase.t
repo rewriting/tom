@@ -52,6 +52,18 @@ public class TomBase {
     return environment().getASTFactory();
   }
 
+  protected OptionsFactory getOptionsFactory() {
+    return environment().getOptionsFactory();
+  }
+
+  protected TomSignatureFactory tsf() {
+    return environment().getTomSignatureFactory();
+  }
+
+  protected final TomSignatureFactory getTomSignatureFactory() {
+    return tsf();
+  }
+
   protected TomEnvironment environment() {
     return getServer().getEnvironment();
   }
@@ -64,20 +76,8 @@ public class TomBase {
       getServer().putOptionValue(key, value);
   }
 
-  protected OptionsFactory getOptionsFactory() {
-    return environment().getOptionsFactory();
-  }
-
-    protected TomSignatureFactory tsf() {
-			return environment().getTomSignatureFactory();
-    }
-
     public GenericTraversal traversal() {
 			return this.traversal;
-    }
-
-    protected final TomSignatureFactory getTomSignatureFactory() {
-			return tsf();
     }
 
     protected SymbolTable symbolTable() {

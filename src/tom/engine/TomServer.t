@@ -66,6 +66,13 @@ public class TomServer {
   public TomEnvironment getEnvironment() { return environment; }
 
   /**
+   * An accessor method.
+   * 
+   * @return an OptionManager
+   */
+  public OptionManager getOptionManager() { return optionManager; }
+
+  /**
    * Part of the Singleton pattern. The unique instance of the TomServer.
    */
   private static TomServer instance = null;

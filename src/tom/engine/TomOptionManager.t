@@ -5,7 +5,7 @@ import java.io.*;
 
 import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;
-import jtom.adt.tomsignature.*;
+
 import jtom.adt.options.*;
 import jtom.adt.options.types.*;
 
@@ -23,7 +23,7 @@ import aterm.pure.*;
  *
  * @author Gr&eacute;gory ANDRIEN
  */
-public class TomOptionManager extends TomBase implements OptionManager, TomPluginOptions {
+public class TomOptionManager implements OptionManager, TomPluginOptions {
   
   %include{ adt/TNode.tom }
   %include{ adt/Options.tom }
@@ -72,6 +72,12 @@ public class TomOptionManager extends TomBase implements OptionManager, TomPlugi
     XmlTools xtools = new XmlTools();
     return xtools.getTNodeFactory();
   }
+
+  private OptionsFactory getOptionsFactory() {
+    return new OptionsFactory(new PureFactory());
+  }
+
+  private TomEnvironment environment() { return TomServer.getInstance().getEnvironment(); }
 
   public TomOptionManager() {
     optionOwners = new HashMap();
@@ -329,13 +335,22 @@ public class TomOptionManager extends TomBase implements OptionManager, TomPlugi
             TomOption h = helpList.getHead();
             %match(TomOption h)
             {
-              OptionBoolean(n, a, d, False()) -> // display only flags that are not activated by default
+              OptionBoolean(n, a, d, False()) ->
               {
                 String s;
                 if(a.length() > 0)
                   s = "\n\t--"+n+" \t| -"+a+" : \t"+d;
                 else
                   s = "\n\t--"+n+" \t \t : \t"+d;
+                buffy.append(s);
+              }
+              OptionBoolean(n, a, d, True()) ->
+              {
+                String s;
+                if(a.length() > 0)
+                  s = "\n\t--"+n+" \t| -"+a+" : \t"+d+" (activated by default)";
+                else
+                  s = "\n\t--"+n+" \t \t : \t"+d+" (activated by default)";
                 buffy.append(s);
               }
               OptionInteger[name=n, altName=a, description=d, attrName=at] ->
