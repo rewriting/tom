@@ -315,8 +315,6 @@ public class TomCompiler extends TomBase {
         TomList conditionList = cons(generatedTest,empty());
         return conditionList;
       }
-
-
       
       _ -> {
         System.out.println("buildCondition strange term: " + condList);
@@ -541,7 +539,9 @@ public class TomCompiler extends TomBase {
                 break matchBlock;
               }
 
-              BuildTerm(Name(tomName),_) | FunctionCall(Name(tomName),_) -> {
+              BuildTerm(Name(tomName),_) |
+              BuildList(Name(tomName),_) |
+              FunctionCall(Name(tomName),_) -> {
                 TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
                 TomType tomType = getSymbolCodomain(tomSymbol);
                 TomTerm variable = `Variable(option(),PositionName(append(makeNumber(index),path)),tomType);

@@ -354,8 +354,9 @@ public class TomExpander extends TomBase {
             TomList newCondList = empty();
             while(!condList.isEmpty()) {
               TomTerm cond = condList.getHead();
-              newCondList = append(expandVariable(`Tom(varList),cond),newCondList);
-              collectVariable(set,cond);
+              TomTerm newCond = expandVariable(`Tom(varList),cond);
+              newCondList = append(newCond,newCondList);
+              collectVariable(set,newCond);
               varList = ast().makeList(set);
               condList = condList.getTail();
             }
