@@ -11,7 +11,7 @@ The compiler is made up of stages, each of which can be seen as a
 process that transforms the AST into a new one. After the last transformation,
 the AST reprents a program closed to an imperative program.
 The last stage of the compiler is a generation phase that transform
-the AST into a concrete program written in \C\ or \Java, depending 
+the AST into a concrete program written in \Clang\ or \Java, depending 
 on the chosen target language.
 
 %\subsection{How \TOM\ is implemented}
@@ -34,11 +34,11 @@ This parts contains three components:
 
 Because \TOM\ is language independant, parsing a \TOM\ program is not
 so easy. A solution could consists in implementing a specialized
-parser for each supported target language (one for \C+\TOM, and
+parser for each supported target language (one for \Clang+\TOM, and
 another one for \Java+\TOM), but for simplicity, and to keep the \TOM\
 system as simple as possible, we decided to implement a common parser,
 slightly specialised for each considered target language. 
-When considering \C\ and \Java, we noticed that it is only needed to
+When considering \Clang\ and \Java, we noticed that it is only needed to
 know how to recognize a string, a comment and a block to be able to
 make the difference between a target language construct and a \TOM
 construct.
@@ -73,7 +73,7 @@ input \TOM\ program (this is roughly a list of interleaved target
 language constructs and \TOM\ constructs).
 The goal of the compiler consists in transforming this AST into a
 ``simpler one'': an AST that can be easilly translated into an
-imperative program (a \C\ or a \Java\ program for example).
+imperative program (a \Clang\ or a \Java\ program for example).
 
 The kernel of the compiler contains a procedure that transforms a set
 of patterns into a automaton that implements a matching algorithm
@@ -91,7 +91,7 @@ be reused.
 The back-end takes the last form of AST as input and generates a
 concrete program written in the target language. This stage consists
 in translating abstract instructions (like \texttt{IfThenElse}) into
-concrete instructions (like \texttt{if(cond) \{ instList \}}) in \C\
+concrete instructions (like \texttt{if(cond) \{ instList \}}) in \Clang\
 or \Java.  
 With such an approach, allows us to easily add a new back-end for any 
 new supported target language.

@@ -1,31 +1,35 @@
 \documentclass[a4paper]{article}
 \usepackage{fullpage}
 
+\usepackage{alltt}
 \usepackage{verbatim}
-%\usepackage{program}
+\usepackage{color}
 
-\newcommand{\TOM}{\textsf{TOM}}
-\newcommand{\JTOM}{\textsf{JTOM}}
-\newcommand{\C}{\textsf{C}}
+\newcommand{\TOM}{\textsc{Tom}}
+\newcommand{\JTOM}{\textsc{JTom}}
+\newcommand{\Clang}{\textsf{C}}
 \newcommand{\Cplusplus}{\textsf{C++}}
 \newcommand{\Java}{\textsf{Java}}
 \newcommand{\Eiffel}{\textsf{Eiffel}}
 
-\title{\TOM\ Reference Manual}
-\author{...}
+\newcommand{\alt}{$\mid$}
+\newcommand{\lex}[1]{\textcolor{blue}{\texttt{#1}}}
+\newcommand{\nt}[1]{\textcolor{magenta}{\textit{#1}}}
+
+\title{\TOM\ Language Reference}
+\author{Pierre-Etienne Moreau\\(with Julien Guyon and Christophe Ringeissen)}
 \date{}
 
 \begin{document}
 \maketitle
 
 \tableofcontents
-\newpage
 
 %\input introduction
 
-\input system
+\input{system.tex}
 
-\input language
+\input{language.tex}
 
 %\input library
 
