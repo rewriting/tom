@@ -69,7 +69,7 @@ public class PluginPlatform {
   /** List of generated object cleared before each run */
   private List lastGeneratedObjects;
 
-  /** List of generated object cleared before each run */
+  /** List of generated alert cleared before each run */
   private RuntimeAlert lastRunAlert;
   
   /** Class Pluginplatform constructor */
@@ -95,7 +95,7 @@ public class PluginPlatform {
   public int run() {
     // intialize run instances
     lastGeneratedObjects = new ArrayList();
-    //lastRunAlert = new RuntimeAlert();
+    lastRunAlert = new RuntimeAlert();
     // for each input we call the sequence of plug-ins
     for(int i=0; i < inputToCompileList.size(); i++) {
       Object input = inputToCompileList.get(i);
@@ -166,6 +166,10 @@ public class PluginPlatform {
   /** return the alerts generated during last run */
   public RuntimeAlert getLastRunAlert() {
     return lastRunAlert;
+  }
+  
+  public RuntimeAlert getAlertForInput(String filePath) {
+  	return statusHandler.getAlertForInput(filePath);
   }
 
   /** logger accessor in case of logging needs*/

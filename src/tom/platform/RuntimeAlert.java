@@ -26,6 +26,7 @@
 package tom.platform;
 
 import aterm.pure.*;
+import java.util.logging.*;
 
 import tom.platform.adt.platformalert.*;
 import tom.platform.adt.platformalert.types.*;
@@ -46,18 +47,6 @@ public class RuntimeAlert {
     nbErrors = 0;
     nbWarnings = 0;
   }
-  
-  /*  public void addWarning(String message, String file, int line) {
-    Alert entry = platformErrorFactory.makeErrorEntry_Warning(message, file, line);
-    warnings = platformAlertFactory.append(warnings, entry);
-    nbWarnings++;
-  }
-  
-  public void addError(String message, String file, int line) {
-    Alert entry = platformErrorFactory.makeAlert_Error(message, file, line);
-    errors = platformErrorFactory.append(errors, entry);
-    nbErrors++;
-    }*/
 
   public void addWarning(String message, String file, int line) {
     Alert entry = platformAlertFactory.makeAlert_Warning(message, file, line);
@@ -104,6 +93,17 @@ public class RuntimeAlert {
       warnings = platformAlertFactory.concat(warnings, newErrors.getWarnings());
       nbWarnings += newErrors.getNbWarnings();
     }
+  }
+
+  /**
+   * @param record
+   */
+  public void add(PlatformLogRecord record) {
+  	if(record.getLevel() == Level.SEVERE) {
+  		addError(record.getMessage(), record.getFilePath(), record.getLine());
+  	} else if(record.getLevel() == Level.WARNING) {
+  		addWarning(record.getMessage(), record.getFilePath(), record.getLine());
+  	}
   }
 
 } //class RuntimeAlert

@@ -64,7 +64,8 @@
 
 	<!-- Aircube bundle -->
 	<property name="bundle.temp.dir" value="bundle"/>
-	<property name="aircubebundle" value="aircube-bundle.jar"/>
+	<property name="aircubebundlesrc" value="aircube-bundle-src.jar"/>
+	<property name="aircubebundlestable" value="aircube-bundle-stable.jar"/>
 
 	<!-- for bootstrap -->
 	<property name="bootstrap.dir" location="${src.src}/bootstrap" />
@@ -992,39 +993,29 @@
 	</target>
 	
 	<target name="bundle.src" depends="dist.src">
-		<mkdir dir="${bundle.tmp.dir}"/>
-		<unjar src="${sharedobject.lib}" dest="${bundle.tmp.dir}"/>
-		<!-- <unjar src="${jjtraveler.lib}" dest="${bundle.tmp.dir}"/> -->
-		<unjar src="${aterm.lib}" dest="${bundle.tmp.dir}"/>
-		<unjar src="${apigen.lib}" dest="${bundle.tmp.dir}"/>
-		<unjar src="${vastoadt.lib}" dest="${bundle.tmp.dir}"/>
-		<unjar src="${concurrent.lib}" dest="${bundle.tmp.dir}"/>
-		<unjar src="${src.lib}/tom-library-${DSTAMP}.jar" dest="${bundle.tmp.dir}"/>
-		<unjar src="${src.lib}/TomSignature-${DSTAMP}.jar" dest="${bundle.tmp.dir}"/>
-		<unjar src="${src.lib}/plugin-platform-${DSTAMP}.jar" dest="${bundle.tmp.dir}"/>
-		<unjar src="${src.lib}/jtom-${DSTAMP}.jar" dest="${bundle.tmp.dir}"/>
-		
-		<jar destfile="${aircubebundle}" basedir="${bundle.tmp.dir}"></jar>
-		<delete dir="${bundle.tmp.dir}"/>
-	</target>
-	
-	<target name="bundle.stable" depends="dist.stable">
-		<mkdir dir="${bundle.tmp.dir}"/>
-		<unjar src="${sharedobject.lib}" dest="${bundle.tmp.dir}"/>
-		<!-- <unjar src="${jjtraveler.lib}" dest="${bundle.tmp.dir}"/> -->
-		<unjar src="${aterm.lib}" dest="${bundle.tmp.dir}"/>
-		<unjar src="${apigen.lib}" dest="${bundle.tmp.dir}"/>
-		<unjar src="${vastoadt.lib}" dest="${bundle.tmp.dir}"/>
-		<unjar src="${concurrent.lib}" dest="${bundle.tmp.dir}"/>
-		<unjar src="${stable.dist.lib}/tom-library.jar" dest="${bundle.tmp.dir}"/>
-		<unjar src="${stable.dist.lib}/TomSignature.jar" dest="${bundle.tmp.dir}"/>
-		<unjar src="${stable.dist.lib}/plugin-platform.jar" dest="${bundle.tmp.dir}"/>
-		<unjar src="${stable.dist.lib}/jtom.jar" dest="${bundle.tmp.dir}"/>
-		
-		<jar destfile="${aircubebundle}" basedir="${bundle.tmp.dir}"></jar>
-		<delete dir="${bundle.tmp.dir}"/>
+		<mkdir dir="${bundle.temp.dir}"/>
+		<unjar dest="${bundle.temp.dir}">
+		  <fileset dir="${src.dist.lib}">
+			  <filename name="*.jar"/>
+      </fileset>
+		</unjar>
+		<delete dir="${bundle.temp.dir}/META-INF"/>
+		<jar destfile="${aircubebundlesrc}" basedir="${bundle.temp.dir}"></jar>
+		<delete dir="${bundle.temp.dir}"/>
 	</target>
 
+	<target name="bundle.stable" depends="dist.stable">
+		<mkdir dir="${bundle.temp.dir}"/>
+		<unjar dest="${bundle.temp.dir}">
+		  <fileset dir="${stable.dist.lib}">
+			  <filename name="*.jar"/>
+      </fileset>
+		</unjar>
+		<delete dir="${bundle.temp.dir}/META-INF"/>
+		<jar destfile="${aircubebundlestable}" basedir="${bundle.temp.dir}"></jar>
+		<delete dir="${bundle.temp.dir}"/>
+	</target>
+	
 	<!--
 		<target name="tags">
 		<exec>

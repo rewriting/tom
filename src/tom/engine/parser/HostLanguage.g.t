@@ -426,16 +426,23 @@ signature [LinkedList list] throws TomException
     }
     vasParams.add("--package");
     vasParams.add(subPackageName);
-    generatedADTName = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode));
-    //System.out.println(generatedADTName);
+    Object[] vasCallResult = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode)); 
+    if(vasCallResult == null) {
+    	throw new TomException(TomMessage.getMessage("VasFailure"));
+    }
+    for(int i=0;i<vasCallResult.length;i++) 
+    	System.out.println("Vas res"+vasCallResult[i]);
+    generatedADTName = (String)vasCallResult[0];
+    System.out.println("Vas has generated "+generatedADTName);
     // Check for errors
     //TODO
-    
+    if(generatedADTName == null) {
+    	throw new TomException(TomMessage.getMessage("VasFailure"));
+    }
     // Simulate the inclusion of generated Tom file
     String adtFileName = new File(generatedADTName).toString();
     try {
       file = new File(adtFileName.substring(0,adtFileName.length()-".adt".length())+".tom");
-      
       fileName = file.getCanonicalPath();
     } catch (IOException e) {
       throw new TomIncludeException(TomMessage.getMessage("IOExceptionWithGeneratedTomFile",

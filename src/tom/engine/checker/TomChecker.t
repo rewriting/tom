@@ -32,6 +32,9 @@ import java.util.logging.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.exception.*;
+import jtom.TomMessage;
+import tom.platform.PlatformLogRecord;
+
 
 abstract public class TomChecker extends TomGenericPlugin {
   
@@ -173,10 +176,11 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected void messageError(int errorLine, String structInfo, String msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    getLogger().log(Level.SEVERE, "DetailedMessage",
+    getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage("DetailedMessage",
                     new Object[]{fileName, new Integer(errorLine),
                                  structInfo, new Integer(structDeclLine),
-                                 MessageFormat.format(msg,msgArgs)});
+                                 MessageFormat.format(msg,msgArgs)}),
+																 fileName, errorLine));
   }
   
   protected void messageWarning(int errorLine, String msg, Object[] msgArg) {
@@ -187,10 +191,11 @@ abstract public class TomChecker extends TomGenericPlugin {
   protected void messageWarning(int errorLine, String structInfo, String msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    getLogger().log(Level.WARNING, "DetailedMessage",
+    getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("DetailedMessage",
                     new Object[]{fileName, new Integer(errorLine),
                                  structInfo, new Integer(structDeclLine),
-                                 MessageFormat.format(msg,msgArgs)});
+                                 MessageFormat.format(msg,msgArgs)}),
+																 fileName, errorLine));
   }
   
 }  //Class TomChecker
