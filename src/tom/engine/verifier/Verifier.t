@@ -257,6 +257,26 @@ public class Verifier extends TomBase {
   // need to be reworked : this IS a BAD way to do it !
 	protected TermList apply_termRules(Term trm) {
 		%match(Term trm) {
+			subterm(s,t@subterm[],index) -> {
+				// first reduce the argument
+				TermList reduced = apply_termRules(`t);
+				TermList res = `concTerm(trm);
+				while(!reduced.isEmpty()) {
+					Term head = reduced.getHead();
+					if (head.isTau()) {
+						TermList hl = apply_termRules(head);
+						while(!hl.isEmpty()) {
+							Term h = hl.getHead();
+							res = `concTerm(res*,subterm(s,h,index));						
+							hl = hl.getTail();
+						}
+					} else {
+						res = `concTerm(res*,subterm(s,head,index));
+					}
+					reduced = reduced.getTail();
+				}
+				return `concTerm(res*);
+			}
 			subterm(s,tau(t),index) -> {
 				// we shall test if term t has symbol s 
 				String term = t + "pos" + index;
