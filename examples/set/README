@@ -1,6 +1,6 @@
 This is the Jean Goubault implementation of set
 
-*  adt-to-tom -n Set --input Set.adt --package adt --javagen
+*  adt-to-tom -n Set --input Set.adt --nojar --package adt --javagen
 
 * jtom Set1.t
 * javac Set1.java
