@@ -183,10 +183,15 @@ public class ArrayBeadSort {
 
   public void generateNumber(boolean space[][], int max) {
     int y=0;
-    for(int i=1 ; i<=max ; i++) {
-      addInteger(space,i,y);
+   for(int i=1 ; i<=max/2 ; i++) {
+      addInteger(space,i*2,y);
+      y++;
+    } 
+for(int i=1 ; i<=max/2 ; i++) {
+      addInteger(space,1+i*2,y);
       y++;
     }
+
   }
   
 }
