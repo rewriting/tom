@@ -3,10 +3,14 @@
 
 SUBDIRS = jtom
 
-JARFILE    = jtom-${VERSION}.jar
-data_DATA  = ${JARFILE} 
-CLEANFILES = ${JARFILE}
+JARFILE        = jtom.jar
+JARVERSIONFILE = jtom${VERSION}.jar
+data_DATA  = $(JARFILE) $(JARVERSIONFILE)
+CLEANFILES = ${JARFILE} ${JARVERSIONFILE}
 
-${JARFILE}:
-	jar cf ${JARFILE} \
-	`cd ${top_builddir}/stable && find . -name '*.class'`
+${JARFILE}: ${JARVERSIONFILE}
+	cp ${JARVERSIONFILE} ${JARFILE}
+
+${JARVERSIONFILE}:
+	 jar cf ${JARVERSIONFILE} \
+	`cd ${top_builddir}/stable/ && find . -name '*.class'`
