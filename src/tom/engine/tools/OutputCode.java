@@ -32,6 +32,7 @@ public class OutputCode {
   private int lineCounter = 1;
   protected boolean cCode = false, pretty = false;
 	private int defaultDeep;
+	private boolean singleline = false;
 
   public OutputCode(Writer file, 
 										boolean cCode, 
@@ -46,7 +47,15 @@ public class OutputCode {
   public OutputCode() {
     this.file = new StringWriter();
   }
-
+	
+	public void setSingleLine() {
+		this.singleline = true;
+	}
+	
+	public void unsetSingleLine() {
+		this.singleline = false;
+	}
+	
   public Writer getFile() {
     return file;
   }
@@ -89,8 +98,10 @@ public class OutputCode {
   }
 
   protected void internalWriteln() throws IOException {
-    file.write('\n');
+    if(!singleline) {
+		file.write('\n');
     lineCounter++;
+		}
   }
 
   public void writeln() throws IOException {
@@ -110,28 +121,30 @@ public class OutputCode {
   }
 
   public void write(int deep,String s, int line, int length) throws IOException {
-    if (!pretty) {
+		if (!singleline) {
+			if(lineCounter > line && !pretty) {
+				if(cCode) {
+					String s1 = "\n#line "+line+"\n";
+          // writeln(deep,s);
+					s = s1+s;
+				} else {
+					s = s.replace('\n', ' ');
+          //System.out.println("Warning: Synchronization issue: Line: " + line + " versus LineCounter:" + lineCounter);
+					length = 0;
+				}
+			}
+			while(lineCounter < line) {
+				internalWriteln();
+			}
+			lineCounter+= length;
+		}
+
+		if (singleline && !pretty) {
 			s = s.replace('\n', ' ');
 			s = s.replace('\r', ' ');
 			s = s.replace('\t', ' ');
 		}
-		if(lineCounter > line && !pretty) {
-      if(cCode) {
-        String s1 = "\n#line "+line+"\n";
-          // writeln(deep,s);
-        s = s1+s;
-      } else {
-        s = s.replace('\n', ' ');
-          //System.out.println("Warning: Synchronization issue: Line: " + line + " versus LineCounter:" + lineCounter);
-        length = 0;
-      }
-    }
-    
-    while(lineCounter < line) {
-      internalWriteln();
-    }
     write(deep,s);
-    lineCounter+= length;
   } 
 
   public void close() {
