@@ -1,15 +1,12 @@
 2004-10-30  pem  <pem@becky.local>
 
 	* src/jtom/compiler/TomExpander.t: removed BackQuoteXML
-
 	* src/jtom/backend/TomBackend.t: removed Eiffel backend
 
 2004-10-29  pem  <pem@becky.local>
 
 	* src/jtom/adt/TomInstruction.adt: introduced TypedAction
-
 	* src/jtom/adt/TomTerm.adt: introduced Pattern and PatternInstruction
-	
 
 2004-10-18  pem  <pem@becky.loria.fr>
 
