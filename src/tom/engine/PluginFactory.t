@@ -65,8 +65,8 @@ public class PluginFactory implements TomPlugin {
     allDeclaredOptions = `emptyTomOptionList();
     allRequiredOptions = `emptyTomOptionList();
     flagOwners = new HashMap();
-    List classPaths = new Vector();
-    List plugins = new Vector();
+    List classPaths = new ArrayList();
+    List plugins = new ArrayList();
 
     fillClassPathsList(classPaths, xmlFile);
     
@@ -81,14 +81,14 @@ public class PluginFactory implements TomPlugin {
           plugins.add(instance);
         } else {
           environment().messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
-                                   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+                                   "PluginFactory", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
         }
       } catch(ClassNotFoundException cnfe) { 
         environment().messageWarning(TomMessage.getString("ClassNotFound"),new Object[]{path},
-                                   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+                                   "PluginFactory", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
       } catch(Exception e) { 
         environment().messageError(TomMessage.getString("InstantiationError"),
-                                 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+                                 "PluginFactory", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
       }
     }
 

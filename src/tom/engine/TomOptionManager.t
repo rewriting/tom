@@ -74,7 +74,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
   }
 
   private OptionsFactory getOptionsFactory() {
-    return new OptionsFactory(new PureFactory());
+    return environment().getOptionsFactory();
   }
 
   private TomEnvironment environment() { return TomServer.getInstance().getEnvironment(); }
@@ -87,7 +87,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
   }
 
   public void setPlugins(List plugins) {
-    owners = new Vector();
+    owners = new ArrayList();
     owners.add(this);
     owners.addAll(plugins);
 
@@ -191,26 +191,6 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     }
     
     return inputFiles;
-  }
-
-  /**
-   *
-   *
-   * @param optionName the name of the option we're looking information about
-   * @return
-   */
-  private TomPluginOptions getOptionsOwner(String optionName) {
-    return (TomPluginOptions)optionOwners.get(optionName);
-  }
-
-  /**
-   *
-   *
-   * @param optionName the name of the option we're looking information about
-   * @return
-   */
-  private String getOptionsType(String optionName) {
-    return (String)optionTypes.get(optionName);
   }
 
   /**
@@ -493,7 +473,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    */
   private String[] processArguments(String[] argumentList)
   {
-    List inputFiles = new Vector();
+    List inputFiles = new ArrayList();
     StringBuffer imports = new StringBuffer();
     boolean outputEncountered = false;
     boolean destdirEncountered = false;
@@ -548,8 +528,8 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
                     else destdirEncountered = true;
                   }
 
-		String type = getOptionsType(s);
-		TomPluginOptions plugin = getOptionsOwner(s);
+		String type = (String)optionTypes.get(s);
+		TomPluginOptions plugin = (TomPluginOptions)optionOwners.get(s);
 
                 if(type == null || plugin == null) // option not found
                   {

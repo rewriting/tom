@@ -108,7 +108,7 @@ public class TomServer {
     if(instance == null) {
         instance = new TomServer();
         
-	instance.instances = new Vector();
+	instance.instances = new ArrayList();
         instance.tNodeFactory = new TNodeFactory(new PureFactory());
         instance.environment = new TomEnvironment();
 	instance.optionManager = new TomOptionManager();
@@ -125,7 +125,7 @@ public class TomServer {
    * Reinitializes the TomServer instance.
    */
   public static void clear() {
-    instance.instances = new Vector();
+    instance.instances = new ArrayList();
     instance.environment = new TomEnvironment();
     instance.optionManager = new TomOptionManager();
   }
@@ -210,7 +210,7 @@ public class TomServer {
   private List parseConfigFile(String xmlConfigurationFile) {
     // parses configuration file...
     XmlTools xtools = new XmlTools();
-    List classPaths = new Vector();
+    List classPaths = new ArrayList();
     TNode node = (TNode)xtools.convertXMLToATerm(xmlConfigurationFile);
 
     if( node == null ) {
