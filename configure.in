@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.10 2003/03/16 17:52:17 moreau Exp $
+# $Id: configure.in,v 1.11 2003/03/18 10:59:42 jurgenv Exp $
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(jtom,1.2beta)
@@ -7,7 +7,7 @@ AC_PREREQ(2.13)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.10 2003/03/16 17:52:17 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.11 2003/03/18 10:59:42 jurgenv Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -32,14 +32,14 @@ dnl Checks for library functions
 dnl Require Shared-Object library
 AC_PACKAGE_REQUIRE(shared-objects, shared-objects-config,
    [  --with-shared-objects=DIR Shared-Objects-library is in DIR])
-SHARED_OBJECTS="${SHARED_OBJECTS}/share/shared-objects-1.1.jar"
+SHARED_OBJECTS=`shared-objects-config`
 AC_SUBST(SHARED_OBJECTS)
 
 dnl Require ATerm Java library
 AC_PACKAGE_REQUIRE(aterm-java, aterm-java-config,
    [  --with-aterm-java=DIR   ATerm-javalibrary is in DIR])
 dnl ATERM_JAVA is not allowed in Makefile.am's
-JAVA_ATERM="${ATERM_JAVA}/share/aterm-1.2beta.jar:${ATERM_JAVA}/share/jjtraveler-1.3.jar"
+JAVA_ATERM="`aterm-java-config`:${ATERM_JAVA}/share/jjtraveler-1.3.jar"
 AC_SUBST(JAVA_ATERM)
 
 AC_OUTPUT( \
