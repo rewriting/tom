@@ -49,8 +49,8 @@ class NewBQParser extends Parser;
 
 }
 
-//Handle any code between '(' and ')'
-//called recursively to take care of the imbricated parenthesis
+// Handle any code between '(' and ')'
+// called recursively to take care of the imbricated parenthesis
 bqCode [LinkedList list]
     :
         (
@@ -62,6 +62,7 @@ bqCode [LinkedList list]
         )*
     ;
 
+// tokens allowed between parenthesis in backquote term
 any [LinkedList list]
     :
         c:BQ_COMMA {list.add(c);}
@@ -71,8 +72,8 @@ any [LinkedList list]
     |   str:BQ_STRING {list.add(str);}
     ;
 
-//Handle (...)
-//We already read the '(' token in the tom parser
+// Handle (...)
+// We already read the '(' token in the tom parser
 bqTarget [LinkedList list] returns [TomTerm result]
 { 
     result = null;
@@ -92,6 +93,8 @@ bqTarget [LinkedList list] returns [TomTerm result]
         }
     ;
 
+// tokens in target language
+// after an ID, must return to the target parser
 targetCode returns [Token result]
 {
     result = null;
@@ -106,8 +109,8 @@ targetCode returns [Token result]
     |   a:ANY {result = a;}
     ;
 
-//Handle ID* | ID(...) | ID
-//we Already read the ID token in the Tom Parser
+// Handle ID* | ID(...) | ID
+// we Already read the ID token in the Tom Parser
 bqTargetAppl [LinkedList list] returns [TomTerm result]
 {
     result = null;
@@ -139,17 +142,21 @@ bqTargetAppl [LinkedList list] returns [TomTerm result]
         |   
             (   t=targetCode
                 {
+                    // we have read a token that should have been read
+                    // by the target parser. Catch the token and put it
+                    // in the target code StringBuffer
                     addTargetCode(t);
 
                     result = tomBQ().buildBackQuoteAppl(list,currentFile());
 
+                    // update position for target code
                     pushLine(t.getLine());
                     pushColumn(t.getColumn());
                 }
             )?
         )
         {
-            //returns to the Tom parser
+            //return to the Tom parser
             selector().pop();
         }
     ;

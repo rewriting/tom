@@ -82,11 +82,12 @@ public class TomMainParser extends TomGenericPlugin implements TomPlugin {
 	    boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
 	    boolean java = ((Boolean)getServer().getOptionValue("jCode")).booleanValue();
 	    boolean debug = ((Boolean)getServer().getOptionValue("debug")).booleanValue();
-	    
+	    /*
 	    %match(TomTerm term){
 		FileName(n) -> { currentFile = n; }
-	    }
+		}*/
 
+	    
 	    if(java){
 		TomJavaParser javaParser = TomJavaParser.createParser(currentFile);
 		String packageName = javaParser.JavaPackageDeclaration();
@@ -164,6 +165,9 @@ public class TomMainParser extends TomGenericPlugin implements TomPlugin {
 	return parser.getLine();
     }
 
+    public void setInput(ATerm term){
+	this.currentFile = ((AFun) term).getName();
+    }
 
     
 }
