@@ -1,5 +1,12 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE users SYSTEM "uc4.dtd" >
+
+<!DOCTYPE users [
+  <!ELEMENT users   (user_tuple*)>
+  <!ELEMENT user_tuple (userid, name, rating?)>
+  <!ELEMENT userid  (#PCDATA)>
+  <!ELEMENT name    (#PCDATA)>
+  <!ELEMENT rating  (#PCDATA)>
+]>
 
 <users>
   <user_tuple>
