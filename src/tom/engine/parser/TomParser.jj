@@ -713,6 +713,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   environment.getStatistics().numberRuleBlocsRecognized++;
   TomTerm lhs, rhs;
+  TomTerm pattern, subject;
   ArrayList ruleList = new ArrayList();
   ArrayList listOfLhs = new ArrayList();
   ArrayList condList = new ArrayList();
@@ -731,8 +732,8 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     [ ( <TOM_ALTERNATIVE> lhs = Term() { listOfLhs.add(lhs); } )+ ]
     <TOM_ARROW> rhs = PlainTerm(null)
     [ (
-      <TOM_WHERE> lhs = Term() <TOM_COLON> <TOM_EQUAL> rhs = Term()
-      { condList.add(tsf().makeTomTerm_MatchingCondition(lhs,rhs)); }
+      <TOM_WHERE> pattern = Term() <TOM_COLON> <TOM_EQUAL> subject = Term()
+      { condList.add(tsf().makeTomTerm_MatchingCondition(pattern,subject)); }
     )+ ]
     
     {
@@ -747,6 +748,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
                        orgTrack));
       }
       listOfLhs.clear();
+      condList.clear();
     }
   )*
     <TOM_RBRACE>

@@ -150,7 +150,7 @@ public class TomCompiler extends TomBase {
               if(Flags.supportedBlock) {
                 rhsList = appendInstruction(`CloseBlock(),rhsList);
               }
-
+              
               TomTerm newCondRhs = buildMatchingCondition(condList,rhsList);
              
               patternActionList = append(`PatternAction(TermList(matchPatternsList),newCondRhs),patternActionList);
@@ -267,24 +267,36 @@ public class TomCompiler extends TomBase {
   private TomTerm buildMatchingCondition(TomList condList, TomList actionList) {
     %match(TomList condList) {
       Empty() -> { return `Tom(actionList); }
-      Cons(MatchingCondition[lhs=pattern, rhs=subject],tail) -> {
-        TomTerm action = buildMatchingCondition(tail,actionList);
+      Cons(MatchingCondition[lhs=pattern,
+                             rhs=subject@Appl(Option(optionList),Name(tomName),l)],
+           tail) -> {
+
+        System.out.println("buildMatchingCondition:\n\tlhs = " + pattern + "\n\trhs = " + subject);
+
+        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+        TomType subjectType = getSymbolCodomain(tomSymbol);
+        
+        TomList newActionList = cons(buildMatchingCondition(tail,actionList),empty());
 
         TomList path = empty();
         path = append(`RuleVar(),path);
         TomTerm newSubject = pass2_1(`MakeTerm(subject));
 
-        TomTerm introducedVariable = null;
+        TomTerm introducedVariable = `Variable(option(),PositionName(path),subjectType);
           // introducedVariable = subject
           // Declare and Assign 
                 
         TomTerm generatedPatternAction =
-          `PatternAction(TermList(cons(pattern,empty())),action);        
+          `PatternAction(TermList(cons(pattern,empty())),Tom(newActionList));        
 
         TomTerm generatedMatch =
           `Match(option(),
                  SubjectList(cons(introducedVariable,empty())),
                  PatternList(cons(generatedPatternAction,empty())));
+
+
+        System.out.println("buildMatchingCondition: generatedMatch =\n\t" + generatedMatch);
+
         
         return generatedMatch;
       }

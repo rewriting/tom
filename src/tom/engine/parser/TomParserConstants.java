@@ -70,27 +70,28 @@ public interface TomParserConstants {
   int TOM_UNDERSCORE = 57;
   int TOM_MINUS = 58;
   int TOM_STAR = 59;
-  int TOM_MAKE = 60;
-  int TOM_MAKE_EMPTY = 61;
-  int TOM_MAKE_INSERT = 62;
-  int TOM_MAKE_APPEND = 63;
-  int TOM_IMPLEMENT = 64;
-  int TOM_FSYM = 65;
-  int TOM_GET_SLOT = 66;
-  int TOM_IS_FSYM = 67;
-  int TOM_GET_SUBTERM = 68;
-  int TOM_GET_FUN_SYM = 69;
-  int TOM_CMP_FUN_SYM = 70;
-  int TOM_EQUALS = 71;
-  int TOM_GET_HEAD = 72;
-  int TOM_GET_TAIL = 73;
-  int TOM_IS_EMPTY = 74;
-  int TOM_GET_ELEMENT = 75;
-  int TOM_GET_SIZE = 76;
-  int TOM_INTEGER = 77;
-  int TOM_IDENTIFIER = 78;
-  int TOM_LETTER = 79;
-  int TOM_DIGIT = 80;
+  int TOM_WHERE = 60;
+  int TOM_MAKE = 61;
+  int TOM_MAKE_EMPTY = 62;
+  int TOM_MAKE_INSERT = 63;
+  int TOM_MAKE_APPEND = 64;
+  int TOM_IMPLEMENT = 65;
+  int TOM_FSYM = 66;
+  int TOM_GET_SLOT = 67;
+  int TOM_IS_FSYM = 68;
+  int TOM_GET_SUBTERM = 69;
+  int TOM_GET_FUN_SYM = 70;
+  int TOM_CMP_FUN_SYM = 71;
+  int TOM_EQUALS = 72;
+  int TOM_GET_HEAD = 73;
+  int TOM_GET_TAIL = 74;
+  int TOM_IS_EMPTY = 75;
+  int TOM_GET_ELEMENT = 76;
+  int TOM_GET_SIZE = 77;
+  int TOM_INTEGER = 78;
+  int TOM_IDENTIFIER = 79;
+  int TOM_LETTER = 80;
+  int TOM_DIGIT = 81;
 
   int DEFAULT = 0;
   int IN_SINGLE_LINE_COMMENT = 1;
@@ -162,6 +163,7 @@ public interface TomParserConstants {
     "\"_\"",
     "\"-\"",
     "\"*\"",
+    "\"where\"",
     "\"make\"",
     "\"make_empty\"",
     "\"make_insert\"",

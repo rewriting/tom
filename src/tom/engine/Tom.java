@@ -311,7 +311,7 @@ public class Tom {
         startChrono();
         TomTerm simpleCheckedTerm = tomCompiler.pass2_1(expandedTerm);
         
-        compiledTerm = tomCompiler.pass2_2(simpleCheckedTerm);
+        compiledTerm = tomCompiler.compileMatching(simpleCheckedTerm);
           //System.out.println("pass2 =\n" + compiledTerm);
         compiledTerm = tomCompiler.pass3(compiledTerm);
           //System.out.println("pass3 =\n" + compiledTerm);
