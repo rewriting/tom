@@ -36,6 +36,7 @@ package jtom.parser;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 import java.text.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -65,6 +66,8 @@ public class TomParser
   private LinkedList debuggedStructureList;
   private String text="";
 
+  private Logger logger;
+
   public static TomParser createParser(String fileName) throws FileNotFoundException, IOException {
     return createParser(fileName,new HashSet(), new HashSet());
   }
@@ -93,6 +96,8 @@ public class TomParser
     this.includedFileSet = new HashSet(includedFileSet);
     testIncludedFile(fileName, includedFileSet);
     alreadyParsedFileSet = alreadyParsedFiles;
+
+    logger = Logger.getLogger( getClass().getName() );
   }
 
 
@@ -200,15 +205,17 @@ public class TomParser
     fileName = fileName.trim();
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
-		if(fileName.equals("")) {
-			String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"), new Object[]{new Integer(getLine()), currentFile});
-      throw new TomIncludeException(msg);
-		}
+    if(fileName.equals("")) {
+	String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"), 
+					  new Object[]{new Integer(getLine()), currentFile});
+	throw new TomIncludeException(msg);
+    }
     try {
       file = new File(fileName);
       if(file.isAbsolute()) {
         if (!file.exists()) {
-          String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine())});
+          String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), 
+					    new Object[]{fileName, new Integer(getLine())});
           throw new TomIncludeException(msg);
         }
       } else {
@@ -226,24 +233,29 @@ public class TomParser
             found = file.exists();
           }
           if(!found) {
-            String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
+            String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), 
+					      new Object[]{fileName, new Integer(getLine()), currentFile});
             throw new TomIncludeException(msg);
           }
         }
       }
       fileAbsoluteName = file.getAbsolutePath();
       if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
-        String msg = MessageFormat.format(TomMessage.getString("IncludedFileCycle"), new Object[]{fileName, new Integer(getLine()), currentFile});
+        String msg = MessageFormat.format(TomMessage.getString("IncludedFileCycle"), 
+					  new Object[]{fileName, new Integer(getLine()), currentFile});
           throw new TomIncludeException(msg);
       }
 
 			// if trying to include a file twice, but not in a cycle : discard
       if(TomParser.testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
-				if(!environment().isSilentDiscardImport(fileName)) {
-					environment().messageWarning(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile}, fileName,getLine());
-				}
-				return;
-// 				String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
+	  if(!environment().isSilentDiscardImport(fileName)) {
+	      logger.log( Level.WARNING,
+			  "IncludedFileAlreadyParsed", 
+			  new Object[]{currentFile, new Integer(getLine()), fileName} );
+	  }
+	  return;
+// 	  String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), 
+// 					    new Object[]{fileName, new Integer(getLine()), currentFile});
 //         throw new TomIncludeException(msg);
       }
        
@@ -255,7 +267,9 @@ public class TomParser
       if(e instanceof TomIncludeException) {
         throw (TomIncludeException)e;
       }
-      String msg = MessageFormat.format(TomMessage.getString("ErrorWhileIncludindFile"), new Object[]{e.getClass(), fileAbsoluteName, currentFile, new Integer(getLine()), e.getMessage()});
+      String msg = MessageFormat.format(TomMessage.getString("ErrorWhileIncludingFile"), 
+					new Object[]{e.getClass(), fileAbsoluteName, currentFile, 
+						     new Integer(getLine()), e.getMessage()});
       throw new TomException(msg);
     }
   }
@@ -1034,12 +1048,18 @@ TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomExcep
             /*throw new TomException("Error on closing XML pattern: expecting '"+ expected.substring(1) +"' but got '"+found.substring(1)+ "' at line "+getLine());
             return null;*/
             // TODO find the orgTrack of the match
-            environment().messageError(getLine(),
-                     currentFile,
-                     "match",
-                     getLine(),
-                     TomMessage.getString("MalformedXMLTerm"), 
-                     new Object[]{expected.substring(1), found.substring(1)});
+            logger.log( Level.SEVERE,
+			"MalformedXMLTerm",
+			new Object[]{currentFile, new Integer(getLine()), 
+				     "match", new Integer(getLine()),
+				     expected.substring(1), found.substring(1)} );
+
+// 		environment().messageError(getLine(),
+//                      currentFile,
+//                      "match",
+//                      getLine(),
+//                      TomMessage.getString("MalformedXMLTerm"), 
+//                      new Object[]{expected.substring(1), found.substring(1)});
           }
           if(implicit) {
               /*
@@ -1310,19 +1330,19 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
       try{
         Class vasClass = Class.forName("vas.Vas");
 				
-				Method execMethod = vasClass.getMethod(
-					"externalExec",
-					new Class[]{(new String[]{}).getClass(), 
-											Class.forName("java.io.InputStream"),
-											Class.forName( "java.lang.String")
-					});
-
-				ArrayList vasParams = new ArrayList();
-				// vasParams.add("--verbose");
-				vasParams.add("--destdir");
-				vasParams.add(destDir);
-				
-				packageName = environment().getPackagePath().replace(File.separatorChar, '.');
+	Method execMethod = vasClass.getMethod(
+					       "externalExec",
+					       new Class[]{(new String[]{}).getClass(), 
+							   Class.forName("java.io.InputStream"),
+							   Class.forName( "java.lang.String")
+					       });
+	
+	ArrayList vasParams = new ArrayList();
+	// vasParams.add("--verbose");
+	vasParams.add("--destdir");
+	vasParams.add(destDir);
+	
+	packageName = environment().getPackagePath().replace(File.separatorChar, '.');
 
         String inputFileNameWithoutExtension = environment().getRawFileName().toLowerCase();
 
@@ -1335,11 +1355,11 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         vasParams.add("--package");
         vasParams.add(subPackageName);
 
-				Object[] realParams = {
-											(String[]) vasParams.toArray(new String[vasParams.size()]),
-											new ByteArrayInputStream(vasCode.getBytes()),
-											currentFile};
-				generatedADTName = execMethod.invoke(vasClass, realParams);
+	Object[] realParams = {
+	    (String[]) vasParams.toArray(new String[vasParams.size()]),
+	    new ByteArrayInputStream(vasCode.getBytes()),
+	    currentFile};
+	generatedADTName = execMethod.invoke(vasClass, realParams);
       } catch (ClassNotFoundException e) {
         throw new TomException(TomMessage.getString("VasClassNotFound"));
       } catch (InvocationTargetException e) {
@@ -1351,29 +1371,37 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
       }
 			  // Check for errors
-			try{
+      try{
         Class vasEnvironmentClass = Class.forName("vas.VasEnvironment");
-				Method getErrorMethod = vasEnvironmentClass.getMethod("getErrors", new Class[]{});
-				Method getInstanceMethod = vasEnvironmentClass.getMethod("getInstance", new Class[]{});
+	Method getErrorMethod = vasEnvironmentClass.getMethod("getErrors", new Class[]{});
+	Method getInstanceMethod = vasEnvironmentClass.getMethod("getInstance", new Class[]{});
+	
+	Object vasEnvInstance = getInstanceMethod.invoke(vasEnvironmentClass, new Object[]{});
+	TomAlertList alerts = (TomAlertList)(getErrorMethod.invoke(vasEnvInstance, new Object[]{}));
+	TomAlert alert;
+	if(!alerts.isEmpty()) {
+	    while(!alerts.isEmpty()) {
+		alert = alerts.getHead();
+		if(alert.isError()) {
+		    logger.log( Level.SEVERE,
+				"SimpleMessage",
+				new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
 
-				Object vasEnvInstance = getInstanceMethod.invoke(vasEnvironmentClass, new Object[]{});
-				TomAlertList alerts = (TomAlertList)(getErrorMethod.invoke(vasEnvInstance, new Object[]{}));
-				TomAlert alert;
-				if(!alerts.isEmpty()) {
-					while(!alerts.isEmpty()) {
-						alert = alerts.getHead();
-            if(alert.isError()) {
-              environment().messageError(alert.getMessage(),
-                                                        currentFile, alert.getLine()+initialVasLine);
-            } else {
-              environment().messageWarning(alert.getMessage(),
-                                                          currentFile, alert.getLine()+initialVasLine);
-            }
-						alerts = alerts.getTail();
-					}
-					throw new TomException("See next messages for details...");
-				}
-			} catch (ClassNotFoundException e) {
+//               environment().messageError(alert.getMessage(),
+// 					 currentFile, alert.getLine()+initialVasLine);
+		} else {
+		    logger.log( Level.WARNING,
+				"SimpleMessage",
+				new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
+
+// 		    environment().messageWarning(alert.getMessage(),
+// 						 currentFile, alert.getLine()+initialVasLine);
+		}
+		alerts = alerts.getTail();
+	    }
+	    throw new TomException("See next messages for details...");
+	}
+      } catch (ClassNotFoundException e) {
         throw new TomException(TomMessage.getString("VasClassNotFound"));
       } catch (Exception e) {
         throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
@@ -1384,7 +1412,8 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
       try {
         fileName = file.getCanonicalPath();
       } catch (IOException e) {
-        throw new TomIncludeException(MessageFormat.format(TomMessage.getString("IOExceptionWithGeneratedTomFile"), new Object[]{fileName, currentFile, e.getMessage()}));
+        throw new TomIncludeException(MessageFormat.format(TomMessage.getString("IOExceptionWithGeneratedTomFile"),
+							   new Object[]{fileName, currentFile, e.getMessage()}));
       } 
       includeFile(fileName, list);
     }
@@ -1535,6 +1564,7 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
             if(slotNameList.indexOf(astName) != -1) {
               String detailedMsg = MessageFormat.format(TomMessage.getString("RepeatedSlotName"), new Object[]{stringSlotName});
               String msg = MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{new Integer(ot.getLine()), "%op "+type.image, new Integer(ot.getLine()), currentFile, detailedMsg});
+	      // TODO: fix this ; MainErrorMessage only has 3 parameters, there are 5 here... what was actually meant ?
               throw new TomException(msg);
             }
           }
@@ -1558,12 +1588,17 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
           mapNameDecl.put(sName,attribute);
         }
         else {
-          environment().messageWarning(attribute.getOrgTrack().getLine(),
-                                       currentFile,
-                                       "%op "+type.image,
-                                       ot.getLine(),
-                                       TomMessage.getString("WarningTwoSameSlotDecl"), 
-                                       new Object[]{sName.getString()});
+	    logger.log( Level.WARNING,
+			"WarningTwoSameSlotDecl",
+			new Object[]{currentFile, new Integer(attribute.getOrgTrack().getLine()),
+				     "%op "+type.image, new Integer(ot.getLine()), sName.getString()} );
+
+//           environment().messageWarning(attribute.getOrgTrack().getLine(),
+//                                        currentFile,
+//                                        "%op "+type.image,
+//                                        ot.getLine(),
+//                                        TomMessage.getString("WarningTwoSameSlotDecl"), 
+//                                        new Object[]{sName.getString()});
         }
       }
     | attribute = KeywordIsFsym(astName, type.image)  { options.add(attribute); }
@@ -1581,12 +1616,20 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
         } else {
           Declaration decl = (Declaration)mapNameDecl.get(name1);
           if(decl == null) {
-             environment().messageWarning(ot.getLine(), 
-                         currentFile,
-                         "%op "+type.image, 
-                         ot.getLine(), 
-                         TomMessage.getString("WarningMissingSlotDecl"),
-                                          new Object[]{name1.getString()});
+	    
+	      //System.out.println("!!!!! 1 PASSAGE !!!!!");
+
+	    logger.log( Level.WARNING,
+			"WarningMissingSlotDecl",
+			new Object[]{currentFile, new Integer(ot.getLine()),
+				     "%op "+type.image, new Integer(ot.getLine()), name1.getString()} );             
+
+// 	      environment().messageWarning(ot.getLine(), 
+//                          currentFile,
+//                          "%op "+type.image, 
+//                          ot.getLine(), 
+//                          TomMessage.getString("WarningMissingSlotDecl"),
+//                                           new Object[]{name1.getString()});
             decl = emptyDeclaration;
           }
           else {
@@ -1601,11 +1644,16 @@ void Operator(LinkedList list) throws TomException : /* in DEFAULT mode */
         Iterator it = mapNameDecl.keySet().iterator();
         while(it.hasNext()) {
            TomName remainingSlot = (TomName) it.next();
-           environment().messageWarning(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
-                     currentFile,
-                     "%op "+type.image,
-                     ot.getLine(),
-                                        TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()});
+	    logger.log( Level.WARNING,
+			"WarningIncompatibleSlotDecl",
+			new Object[]{currentFile, new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
+				     "%op "+type.image, new Integer(ot.getLine()), remainingSlot.getString()} );
+
+//          environment().messageWarning(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
+// 					currentFile,
+// 					"%op "+type.image,
+// 					ot.getLine(),
+//                                      TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()});
         }
       }
       

@@ -29,6 +29,7 @@ import jtom.*;
 
 import aterm.*;
 import java.util.*;
+import java.util.logging.*;
 import jtom.runtime.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
@@ -79,9 +80,9 @@ public class TomVerifier extends TomGenericPlugin {
       }
       catch (Exception e) 
 	  {
-	      environment().messageError("Exception occured in TomVerifierExtract: " + e.getMessage(),
-					 environment().getInputFile().getName(), 
-					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	      getLogger().log( Level.SEVERE,
+			       "ExceptionMessage",
+			       new Object[]{environment().getInputFile().getName(), "TomVerifier", e.getMessage()} );
 	      e.printStackTrace();
 	  }
     }

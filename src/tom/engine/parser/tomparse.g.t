@@ -7,6 +7,7 @@ header{
     package jtom.parser;
 
     import java.util.*;
+    import java.util.logging.*;
     import java.text.*;
 
     import aterm.*;
@@ -41,6 +42,8 @@ options{
     private NewTargetParser targetparser;
     protected NewBQParser bqparser;
 
+    private Logger logger;
+
     private StringBuffer text = new StringBuffer("");
     
     private int lastLine; 
@@ -52,6 +55,8 @@ options{
         this.targetparser = target;
         this.debuggedStructureList = `emptyTomList();
         this.bqparser = new NewBQParser(state,this);
+
+	logger = Logger.getLogger(getClass().getName());
     }
 
 
@@ -837,12 +842,17 @@ operator returns [Declaration result] throws TomException
                     mapNameDecl.put(sName,attribute);
                 }
                 else {
-                    environment().messageWarning(attribute.getOrgTrack().getLine(),
-                        currentFile(),
-                        "%op "+type.getText(),
-                        ot.getLine(),
-                        TomMessage.getString("WarningTwoSameSlotDecl"), 
-                        new Object[]{sName.getString()});
+		    logger.log( Level.WARNING,
+				"WarningTwoSameSlotDecl",
+				new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
+					     "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} );
+
+//                     environment().messageWarning(attribute.getOrgTrack().getLine(),
+//                         currentFile(),
+//                         "%op "+type.getText(),
+//                         ot.getLine(),
+//                         TomMessage.getString("WarningTwoSameSlotDecl"), 
+//                         new Object[]{sName.getString()});
                 }
             }
 
@@ -860,12 +870,18 @@ operator returns [Declaration result] throws TomException
                 } else {
                     Declaration decl = (Declaration)mapNameDecl.get(name1);
                     if(decl == null) {
-                        environment().messageWarning(ot.getLine(), 
-                            currentFile(),
-                            "%op "+type.getText(), 
-                            ot.getLine(), 
-                            TomMessage.getString("WarningMissingSlotDecl"),
-                            new Object[]{name1.getString()});
+
+			logger.log( Level.WARNING,
+				    "WarningMissingSlotDecl",
+				    new Object[]{currentFile(), new Integer(ot.getLine()),
+						 "%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} );
+
+//                         environment().messageWarning(ot.getLine(), 
+//                             currentFile(),
+//                             "%op "+type.getText(), 
+//                             ot.getLine(), 
+//                             TomMessage.getString("WarningMissingSlotDecl"),
+//                             new Object[]{name1.getString()});
                         decl = emptyDeclaration;
                     }
                     else {
@@ -880,11 +896,18 @@ operator returns [Declaration result] throws TomException
                 Iterator it = mapNameDecl.keySet().iterator();
                 while(it.hasNext()) {
                     TomName remainingSlot = (TomName) it.next();
-                    environment().messageWarning(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
-                        currentFile(),
-                        "%op "+type.getText(),
-                        ot.getLine(),
-                        TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()});
+
+		    logger.log( Level.WARNING,
+				"WarningIncompatibleSlotDecl",
+				new Object[]{currentFile(), 
+					     new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
+					     "%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} );
+
+//                     environment().messageWarning(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine(),
+//                         currentFile(),
+//                         "%op "+type.getText(),
+//                         ot.getLine(),
+//                         TomMessage.getString("WarningIncompatibleSlotDecl"), new Object[]{remainingSlot.getString()});
                 }
             }
             

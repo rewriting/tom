@@ -41,11 +41,17 @@ public class Tom {
 
   public static int exec(String[] args) {
     Handler ch = new ConsoleHandler();
-    ch.setLevel(Level.WARNING); // by default, will be changed by options like verbose or noWarning
+    ch.setLevel(Level.ALL); // by default, print everything that the logger sends
     ch.setFormatter( new TomBasicFormatter() );
 
     rootLogger = Logger.getLogger("jtom", "jtom.TomMessageResources");
-    rootLogger.setLevel(Level.ALL);
+    rootLogger.setLevel(Level.WARNING);
+    /* 
+     * IMPORTANT : the rootLogger's level can be lowered but shouldn't be risen
+     * indeed, if it is higher than Level.WARNING, the TomStatusHandler won't see warnings
+     * that's why the noWarning option will be handled by changing the ConsoleHandler's level
+     * while the verbose option will lower the rootLogger's level to Level.INFO
+     */
     rootLogger.setUseParentHandlers(false);
     rootLogger.addHandler(ch);
 

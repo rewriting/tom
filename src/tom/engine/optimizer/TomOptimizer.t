@@ -5,6 +5,7 @@ import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
 import aterm.*;
 import java.util.*;
+import java.util.logging.*;
 import jtom.tools.*;
 import jtom.TomMessage;
 import jtom.runtime.*;
@@ -51,9 +52,10 @@ public class TomOptimizer extends TomGenericPlugin {
       }
       catch (Exception e) 
 	  {
-	      environment().messageError("Exception occurs in TomOptimizer: "
-					 +e.getMessage(), environment().getInputFile().getName(), 
-					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	      getLogger().log( Level.SEVERE,
+			       "ExceptionMessage",
+			       new Object[]{environment().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
+
 	      e.printStackTrace();
 	  }
     }
@@ -113,11 +115,17 @@ public class TomOptimizer extends TomGenericPlugin {
               int mult = list.size();
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
-                environment().messageWarning(
-                                             TomMessage.getString("UnusedVariable"),
-                                             new Object[]{`extractRealName(tomName)},
-                                             orgTrack.getFileName().getString(),
-                                             orgTrack.getLine());
+                
+		getLogger().log( Level.WARNING,
+				 "UnusedVariable",
+				 new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+					      `extractRealName(tomName)} );
+
+// 		environment().messageWarning(
+//                                              TomMessage.getString("UnusedVariable"),
+//                                              new Object[]{`extractRealName(tomName)},
+//                                              orgTrack.getFileName().getString(),
+//                                              orgTrack.getLine());
 
                 if(verbose) {
                   System.out.println(mult + " -> remove:     " + `extractRealName(tomName));
@@ -152,11 +160,17 @@ public class TomOptimizer extends TomGenericPlugin {
 
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
-                environment().messageWarning(
-                                             TomMessage.getString("UnusedVariable"),
-                                             new Object[]{`extractRealName(tomName)},
-                                             orgTrack.getFileName().getString(),
-                                             orgTrack.getLine());
+
+		getLogger().log( Level.WARNING,
+				 "UnusedVariable",
+				 new Object[]{orgTrack.getFileName().getString(), new Integer(orgTrack.getLine()),
+					      `extractRealName(tomName)} );
+
+//                 environment().messageWarning(
+//                                              TomMessage.getString("UnusedVariable"),
+//                                              new Object[]{`extractRealName(tomName)},
+//                                              orgTrack.getFileName().getString(),
+//                                              orgTrack.getLine());
                 if(verbose) {
                   System.out.println(mult + " -> remove:     " + `extractRealName(tomName));
                 }

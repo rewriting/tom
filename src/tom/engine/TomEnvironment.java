@@ -360,59 +360,59 @@ public class TomEnvironment
 	}
     }
 
-    public void messageError(int errorLine,
-			     String fileName,
-			     String structInfo,
-			     int structInfoLine,
-			     String msg,
-			     Object[] msgArg) {
-	String formatedMessage = 
-	    MessageFormat.format(
-				 TomMessage.getString("DetailErrorMessage"), 
-				 new Object[]{
-				     structInfo, 
-				     new Integer(structInfoLine), 
-				     MessageFormat.format(msg, msgArg)
-				 });
-	messageError(formatedMessage,fileName, errorLine);
-    }
+//     public void messageError(int errorLine,
+// 			     String fileName,
+// 			     String structInfo,
+// 			     int structInfoLine,
+// 			     String msg,
+// 			     Object[] msgArg) {
+// 	String formatedMessage = 
+// 	    MessageFormat.format(
+// 				 TomMessage.getString("DetailErrorMessage"), 
+// 				 new Object[]{
+// 				     structInfo, 
+// 				     new Integer(structInfoLine), 
+// 				     MessageFormat.format(msg, msgArg)
+// 				 });
+// 	messageError(formatedMessage,fileName, errorLine);
+//     }
          
     
-    public void messageError(String msg, Object[] args, String fileName, int errorLine) {
-	String formatedMessage = MessageFormat.format(msg, args);
-	messageError(formatedMessage,fileName, errorLine);
-    }
+//     public void messageError(String msg, Object[] args, String fileName, int errorLine) {
+// 	String formatedMessage = MessageFormat.format(msg, args);
+// 	messageError(formatedMessage,fileName, errorLine);
+//     }
   
-    public void messageError(String formatedMessage, String file, int line) {
-	TomAlert err = getTomSignatureFactory().makeTomAlert_Error(formatedMessage,file,line);
-	setErrors(getTomSignatureFactory().makeTomAlertList(err, getErrors()));
-    }
+//     public void messageError(String formatedMessage, String file, int line) {
+// 	TomAlert err = getTomSignatureFactory().makeTomAlert_Error(formatedMessage,file,line);
+// 	setErrors(getTomSignatureFactory().makeTomAlertList(err, getErrors()));
+//     }
 
-    public void messageWarning(int warningLine,
-			       String fileName,
-			       String structInfo,
-			       int structInfoLine,
-			       String msg,
-			       Object[] msgArg) {
-	String formatedMessage = 
-	    MessageFormat.format(TomMessage.getString("DetailWarningMessage"), 
-				 new Object[]{
-				     structInfo, 
-				     new Integer(structInfoLine), 
-				     MessageFormat.format(msg, msgArg)
-				 });
-	messageWarning(formatedMessage,fileName, warningLine);
-    }
+//     public void messageWarning(int warningLine,
+// 			       String fileName,
+// 			       String structInfo,
+// 			       int structInfoLine,
+// 			       String msg,
+// 			       Object[] msgArg) {
+// 	String formatedMessage = 
+// 	    MessageFormat.format(TomMessage.getString("DetailWarningMessage"), 
+// 				 new Object[]{
+// 				     structInfo, 
+// 				     new Integer(structInfoLine), 
+// 				     MessageFormat.format(msg, msgArg)
+// 				 });
+// 	messageWarning(formatedMessage,fileName, warningLine);
+//     }
 
-    public void messageWarning(String msg, Object[] args, String fileName, int errorLine) {
-	String formatedMessage = MessageFormat.format(msg, args);
-	messageWarning(formatedMessage,fileName, errorLine);
-    }
+//     public void messageWarning(String msg, Object[] args, String fileName, int errorLine) {
+// 	String formatedMessage = MessageFormat.format(msg, args);
+// 	messageWarning(formatedMessage,fileName, errorLine);
+//     }
 
-    public void messageWarning(String formatedMessage, String file, int line) {
-	TomAlert err = getTomSignatureFactory().makeTomAlert_Warning(formatedMessage,file,line);
-	setWarnings(getTomSignatureFactory().makeTomAlertList(err, getWarnings()));
-    }
+//     public void messageWarning(String formatedMessage, String file, int line) {
+// 	TomAlert err = getTomSignatureFactory().makeTomAlert_Warning(formatedMessage,file,line);
+// 	setWarnings(getTomSignatureFactory().makeTomAlertList(err, getWarnings()));
+//     }
 
 //////////////////// THIS IS WHERE THE OLD TOMTASKINPUT BEGINS /////////////////////////////////
 

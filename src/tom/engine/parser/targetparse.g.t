@@ -11,6 +11,7 @@ header{
     import java.io.*;
     import java.text.*;
     import java.util.*;
+    import java.util.logging.*;
 
     import aterm.*;
     import aterm.pure.*;    
@@ -42,6 +43,8 @@ options{
     private HashSet includedFileSet = null;
     private HashSet alreadyParsedFileSet = null;
 
+    private Logger logger;
+
     // the parser for tom constructs
     NewTomParser tomparser; 
 
@@ -62,6 +65,8 @@ options{
         this.includedFileSet = includedFiles;
         this.alreadyParsedFileSet = alreadyParsedFiles;
         
+	logger = Logger.getLogger(getClass().getName());
+
         // then create the Tom mode parser
         tomparser = new NewTomParser(getInputState(),this);
         bqparser = tomparser.bqparser;
@@ -227,9 +232,12 @@ options{
 			// if trying to include a file twice, but not in a cycle : discard
             if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
                 if(!environment().isSilentDiscardImport(fileName)) {
-					environment().messageWarning(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile}, fileName,getLine());
-				}
-				return;
+		    
+		    logger.log( Level.WARNING,
+				"IncludedFileAlreadyParsed", 
+				new Object[]{currentFile, new Integer(getLine()), fileName} );
+		}
+		return;
                 // 				String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
                 //         throw new TomIncludeException(msg);
             }
@@ -454,13 +462,20 @@ signature [LinkedList list] throws TomException
 					while(!alerts.isEmpty()) {
 						alert = alerts.getHead();
                         if(alert.isError()) {
-                            environment().messageError(
-                                alert.getMessage(),
-                                currentFile,alert.getLine()+initialVasLine
-                            );
+			    logger.log(Level.SEVERE,
+				       "SimpleMessage",
+				       new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
+
+//                             environment().messageError(
+//                                 alert.getMessage(),
+//                                 currentFile,alert.getLine()+initialVasLine);
                         } else {
-                            environment().messageWarning(alert.getMessage(),
-                                currentFile, alert.getLine()+initialVasLine);
+			    logger.log(Level.WARNING,
+				       "SimpleMessage",
+				       new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
+
+//                             environment().messageWarning(alert.getMessage(),
+//                                 currentFile, alert.getLine()+initialVasLine);
                         }
 						alerts = alerts.getTail();
 					}
