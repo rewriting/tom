@@ -47,7 +47,7 @@ public class PersonSortAge {
     
   private void sort(Node subject) {
     %match(TNode subject) {
-      r @ <_>p1@<_ Age=a1></_> p2@<_ Age=a2></_></_> -> {
+      r @ <_>p1@<Person Age=a1></Person> p2@<_ Age=a2></_></_> -> {
         if(a1.compareTo(a2) > 0) {
           r.replaceChild(p2.cloneNode(true),p1);
           r.replaceChild(p1,p2);

@@ -5,7 +5,6 @@ import aterm.*;
 
 public class PersonSort {
   %include{ TNode.tom }
-  //%include{ charlist.tom }
          
   private XmlTools xtools;
   private Factory getTNodeFactory() {
@@ -15,13 +14,13 @@ public class PersonSort {
   public static void main (String args[]) {
     PersonSort person = new PersonSort();
     person.run("person.xml");
-  }
+  } 
 
  private void run(String filename){
     xtools = new XmlTools();
     TNode term = (TNode)xtools.convertXMLToATerm(filename);
     
-//    searchJu(term.getDocElem());
+    searchJu(term.getDocElem());
     term = sort(term.getDocElem());
     xtools.printXMLFromATerm(term);
   }
@@ -42,20 +41,19 @@ public class PersonSort {
     %match(TNode t1, TNode t2) {
       <Person Age=a1><FirstName>#TEXT(n1)</FirstName></Person>,
       <Person Age=a2><FirstName>#TEXT(n2)</FirstName></Person>
-      -> { return n1.compareTo(n2); }
+      -> { return a1.compareTo(a2); }
     }
     return 0;
   }
 
-/*
+
   private void searchJu(TNode subject) {
     %match(TNode subject) {
-      <Persons><Person><FirstName>#TEXT((_*,"J","u",X*))</FirstName></Person></Persons> -> {
-        //<_><_><_>#TEXT((_*,"J","u",X*))</_></_></_> -> {
+      <Persons><Person><FirstName>#TEXT((_*,'Ju',X*))</FirstName></Person></Persons> -> {
         System.out.println("Hello Mr Ju" + `X); 
       }
     }
   }
-  */
+  
 }
 
