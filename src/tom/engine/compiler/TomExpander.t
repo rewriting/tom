@@ -28,14 +28,7 @@ package jtom.compiler;
 import java.util.HashSet;
 
 import jtom.TomBase;
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.SlotList;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomType;
+import jtom.adt.*;
 import jtom.runtime.Replace1;
 import aterm.ATerm;
 

@@ -29,19 +29,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import jtom.TomBase;
-import jtom.adt.Declaration;
-import jtom.adt.Expression;
-import jtom.adt.Instruction;
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.Position;
-import jtom.adt.SlotList;
-import jtom.adt.TargetLanguage;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomType;
+import jtom.adt.*;
 import jtom.tools.Flags;
 import jtom.tools.OutputCode;
 import jtom.tools.SingleLineOutputCode;
@@ -847,7 +835,7 @@ public class TomGenerator extends TomBase {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         OptionList optionList = tomSymbol.getOption().getOptionList();
         SlotList slotList = tomSymbol.getSlotList();
-        TomList l = getSymbolDomain(tomSymbol);
+        TomTypeList l = getSymbolDomain(tomSymbol);
         TomType type1 = getSymbolCodomain(tomSymbol);
         String name1 = tomSymbol.getAstName().getString();
 
@@ -883,7 +871,7 @@ public class TomGenerator extends TomBase {
             if(!l.isEmpty()) {
               out.writeOpenBrace();
               while (!l.isEmpty()) {
-                out.write(getTLType(l.getHead().getAstType()));
+                out.write(getTLType(l.getHead()));
                   //out.writeUnderscore();
                   //out.write(argno);
                 argno++;
@@ -914,7 +902,7 @@ public class TomGenerator extends TomBase {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         OptionList optionList = tomSymbol.getOption().getOptionList();
         SlotList slotList = tomSymbol.getSlotList();        
-        TomList l = getSymbolDomain(tomSymbol);
+        TomTypeList l = getSymbolDomain(tomSymbol);
         TomType type1 = getSymbolCodomain(tomSymbol);
         String name1 = tomSymbol.getAstName().getString();
         
@@ -929,7 +917,7 @@ public class TomGenerator extends TomBase {
             if(!l.isEmpty()) {
               out.writeOpenBrace();
               while (!l.isEmpty()) {
-                out.write(getTLType(l.getHead().getAstType()));
+                out.write(getTLType(l.getHead()));
                 out.writeUnderscore();
                 out.write(argno);
                 argno++;
@@ -960,7 +948,7 @@ public class TomGenerator extends TomBase {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         OptionList optionList = tomSymbol.getOption().getOptionList();
         SlotList slotList = tomSymbol.getSlotList();
-        TomList l = getSymbolDomain(tomSymbol);
+        TomTypeList l = getSymbolDomain(tomSymbol);
         TomType type1 = getSymbolCodomain(tomSymbol);
         String name1 = tomSymbol.getAstName().getString();
         
@@ -976,7 +964,7 @@ public class TomGenerator extends TomBase {
             if(!l.isEmpty()) {
               out.writeOpenBrace();
               while (!l.isEmpty()) {
-                out.write(getTLType(l.getHead().getAstType()));
+                out.write(getTLType(l.getHead()));
                 out.writeUnderscore();
                 out.write(argno);
                 argno++;
@@ -1065,14 +1053,14 @@ public class TomGenerator extends TomBase {
                   tlCode=tlCode@TL[]] -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String opname = tomSymbol.getAstName().getString();
-        TomList typesList = tomSymbol.getTypesToType().getTomList();
+        TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
         
         int slotIndex = getSlotIndex(tomSymbol.getSlotList(),slotName);
-        TomList l = typesList;
+        TomTypeList l = typesList;
         for(int index = 0; !l.isEmpty() && index<slotIndex ; index++) {
           l = l.getTail();
         }
-        TomType returnType = l.getHead().getAstType();
+        TomType returnType = l.getHead();
         
 	String argType;
 	  if(Flags.strictType) {

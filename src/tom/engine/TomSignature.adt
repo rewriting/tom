@@ -56,7 +56,7 @@ constructor(TargetLanguage,TL,TL(<code(str)>,<start(Position)>,<end(Position)>))
 constructor(TargetLanguage,ITL,ITL(<code(str)>)),
 constructor(Position,Position,Position(<line(int)>,<column(int)>)),
 constructor(TomType,Type,Type(<tomType(TomType)>,<tlType(TomType)>)),
-constructor(TomType,TypesToType,TypesToType(<tomList(TomList)>,<codomain(TomType)>)),
+constructor(TomType,TypesToType,TypesToType(<domain(TomTypeList)>,<codomain(TomType)>)),
 constructor(TomType,TomType,TomType(<string(str)>)),
 constructor(TomType,TomTypeAlone,TomTypeAlone(<string(str)>)),
 constructor(TomType,TLType,TLType(<tl(TargetLanguage)>)),
@@ -141,6 +141,7 @@ constructor(TomSymbolTable,Table,Table(<entryList(TomEntryList)>)),
 constructor(TomEntry,Entry,Entry(<strName(str)>,<astSymbol(TomSymbol)>)),
 constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>)),
 
+list(TomTypeList,TomType),
 list(OptionList,Option),
 list(SlotList,PairNameDecl),
 list(TomEntryList, TomEntry)

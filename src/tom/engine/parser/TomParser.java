@@ -36,21 +36,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import jtom.adt.Declaration;
-import jtom.adt.Option;
-import jtom.adt.PairNameDecl;
-import jtom.adt.Position;
-import jtom.adt.SlotList;
-import jtom.adt.TargetLanguage;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomSignatureFactory;
-import jtom.adt.TomStructureTable;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomTerm_Match;
-import jtom.adt.TomTerm_RuleSet;
-import jtom.adt.TomType;
+import jtom.adt.*;
 import jtom.exception.TomException;
 import jtom.tools.ASTFactory;
 import jtom.tools.Flags;
@@ -846,7 +832,7 @@ public class TomParser implements TomParserConstants {
   final public void Operator(ArrayList list) throws ParseException, TomException {
   Token type, name, typeArg, slotName;
   ArrayList blockList = new ArrayList();
-  ArrayList types = new ArrayList();
+  TomTypeList types = tsf().makeTomTypeList();
   ArrayList options = new ArrayList();
   ArrayList nameList = new ArrayList();
   Map mapNameDecl = new HashMap();
@@ -878,7 +864,7 @@ public class TomParser implements TomParserConstants {
       typeArg = jj_consume_token(TOM_IDENTIFIER);
         setSlotDecl.add(stringSlotName);
         nameList.add(ast().makeName(stringSlotName));
-        types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+        types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
       label_11:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -908,7 +894,7 @@ public class TomParser implements TomParserConstants {
             }
           }
           nameList.add(ast().makeName(stringSlotName));
-          types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+          types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
       }
       jj_consume_token(TOM_RPAREN);
       break;
@@ -993,7 +979,7 @@ public class TomParser implements TomParserConstants {
   final public void OperatorList(ArrayList list) throws ParseException, TomException {
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
-  ArrayList types = new ArrayList();
+  TomTypeList types = tsf().makeTomTypeList();
   SlotList slotList = tsf().makeSlotList();
   ArrayList options = new ArrayList();
   TomSymbol astSymbol;
@@ -1010,7 +996,7 @@ public class TomParser implements TomParserConstants {
     typeArg = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_STAR);
     jj_consume_token(TOM_RPAREN);
-      types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+      types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
     jj_consume_token(TOM_LBRACE);
     tlFsym = KeywordFsym();
     label_13:
@@ -1056,7 +1042,7 @@ public class TomParser implements TomParserConstants {
   final public void OperatorArray(ArrayList list) throws ParseException, TomException {
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
-  ArrayList types = new ArrayList();
+  TomTypeList types = tsf().makeTomTypeList();
   SlotList slotList = tsf().makeSlotList();
   ArrayList options = new ArrayList();
   TomName astName;
@@ -1073,7 +1059,7 @@ public class TomParser implements TomParserConstants {
     typeArg = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_STAR);
     jj_consume_token(TOM_RPAREN);
-           types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+           types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
     jj_consume_token(TOM_LBRACE);
     tlFsym = KeywordFsym();
     label_14:
@@ -1622,7 +1608,7 @@ public class TomParser implements TomParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public Declaration KeywordMake(String opname, TomType returnType, ArrayList types) throws ParseException, TomException {
+  final public Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) throws ParseException, TomException {
   Token typeArg;
   Token nameArg;
   ArrayList args = new ArrayList();
@@ -1632,7 +1618,7 @@ public class TomParser implements TomParserConstants {
   TomType type;
   TomName name;
   Option orgTrack;
-  int nbTypes = types.size();
+  int nbTypes = types.getLength();
     jj_consume_token(TOM_MAKE);
        orgTrack = ast().makeOriginTracking("make", getLine(), currentFile);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1649,7 +1635,7 @@ public class TomParser implements TomParserConstants {
            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occured at line "+getLine()+"\n Parsing aborted");
            System.exit(1);
          }
-         type = (TomType)types.get(index++);
+         type = (TomType)types.elementAt(index++);
          name = tsf().makeTomName_Name(nameArg.image);
          Option info1 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
          Option option1 = ast().makeOption(info1);
@@ -1670,7 +1656,7 @@ public class TomParser implements TomParserConstants {
             System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
             System.exit(1);
           }
-          type = (TomType)types.get(index++);
+          type = (TomType)types.elementAt(index++);
           name = tsf().makeTomName_Name(nameArg.image);
           Option info2 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
           Option option2 = ast().makeOption(info2);
@@ -1832,6 +1818,22 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_AT)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3_6() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1860,22 +1862,6 @@ public class TomParser implements TomParserConstants {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_STAR)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_AT)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

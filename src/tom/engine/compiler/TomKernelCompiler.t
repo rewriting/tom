@@ -32,16 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import jtom.TomBase;
-import jtom.adt.Expression;
-import jtom.adt.Instruction;
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.TargetLanguage;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomType;
+import jtom.adt.*;
 import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
 import jtom.tools.Flags;
@@ -424,7 +415,7 @@ public class TomKernelCompiler extends TomBase {
         Appl(Option(optionList),Name(tomName),termArgs) -> {
           TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
           TomName termNameAST = tomSymbol.getAstName();
-          TomList termTypeList = tomSymbol.getTypesToType().getTomList();
+          TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
           TomType termType = tomSymbol.getTypesToType().getCodomain();
           OptionList termOptionList = tomSymbol.getOption().getOptionList();
           
@@ -438,7 +429,7 @@ public class TomKernelCompiler extends TomBase {
           int indexSubterm = 0;
           TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType); 
           while(!termTypeList.isEmpty()) {
-            TomType subtermType = termTypeList.getHead().getAstType();
+            TomType subtermType = termTypeList.getHead();
             TomList newPath = append(makeNumber(indexSubterm+1),path);
             TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType);
             TomTerm declaration    = `Declaration(newVariableAST);

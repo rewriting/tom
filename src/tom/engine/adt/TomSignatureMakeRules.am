@@ -161,6 +161,7 @@ TomEntry.java TomEntryImpl.java\
 TomEntry_EntryImpl.java TomEntry_Entry.java\
 TomStructureTable.java TomStructureTableImpl.java\
 TomStructureTable_StructTableImpl.java TomStructureTable_StructTable.java\
+TomTypeList.java TomTypeListImpl.java\
 OptionList.java OptionListImpl.java\
 SlotList.java SlotListImpl.java\
 TomEntryList.java TomEntryListImpl.java

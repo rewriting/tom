@@ -30,15 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import jtom.TomBase;
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.SlotList;
-import jtom.adt.TargetLanguage;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomType;
+import jtom.adt.*;
 import jtom.runtime.Replace1;
 import jtom.runtime.Replace2;
 import aterm.ATerm;
@@ -211,7 +203,7 @@ public class TomKernelExpander extends TomBase {
 
           //System.out.println("listOperator: " + symb);
           
-          TomTerm domainType = typeList.getHead();
+          TomType domainType = typeList.getHead();
           while(!subjectList.isEmpty()) {
             TomTerm subterm = subjectList.getHead();
 
@@ -224,7 +216,7 @@ public class TomKernelExpander extends TomBase {
                 }
                 
                 _ -> {
-                  list.add(expandVariable(domainType, subterm));
+                  list.add(expandVariable(`TomTypeToTomTerm(domainType), subterm));
                   break matchBlock;
                 }
               }
@@ -233,7 +225,7 @@ public class TomKernelExpander extends TomBase {
           }
         } else {
           while(!subjectList.isEmpty()) {
-            list.add(expandVariable(typeList.getHead(), subjectList.getHead()));
+            list.add(expandVariable(`TomTypeToTomTerm(typeList.getHead()), subjectList.getHead()));
             subjectList = subjectList.getTail();
             typeList    = typeList.getTail();
           }

@@ -40,6 +40,7 @@ import jtom.adt.TomSignatureFactory;
 import jtom.adt.TomSymbol;
 import jtom.adt.TomTerm;
 import jtom.adt.TomType;
+import jtom.adt.TomTypeList;
 import aterm.ATerm;
 
 public class ASTFactory {
@@ -118,10 +119,10 @@ public class ASTFactory {
     return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type));  
   }
 
-  public TomSymbol makeSymbol(String symbolName, String resultType, ArrayList typeList, SlotList slotList,
+  public TomSymbol makeSymbol(String symbolName, String resultType, TomTypeList typeList, SlotList slotList,
                               ArrayList optionList, TargetLanguage glFsym) {
     TomName name = tsf().makeTomName_Name(symbolName);
-    TomType typesToType =  tsf().makeTomType_TypesToType(makeList(typeList), tsf().makeTomType_TomTypeAlone(resultType));
+    TomType typesToType =  tsf().makeTomType_TypesToType(typeList, tsf().makeTomType_TomTypeAlone(resultType));
     Option options = makeOption(makeOptionList(optionList));
     return tsf().makeTomSymbol_Symbol(name,typesToType,slotList,options,glFsym);
   }
@@ -177,7 +178,7 @@ public class ASTFactory {
   public void makeIntegerSymbol(SymbolTable symbolTable,
                                 String value, ArrayList optionList) {
     String resultType = "int";
-    ArrayList typeList = new ArrayList();
+    TomTypeList typeList = tsf().makeTomTypeList();
     TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
     SlotList slotList = tsf().makeSlotList();
     TomSymbol astSymbol = makeSymbol(value,resultType,typeList,slotList,optionList,tlFsym);
@@ -213,7 +214,7 @@ public class ASTFactory {
   public void makeStringSymbol(SymbolTable symbolTable,
                                String value, ArrayList optionList) {
     String resultType = "string";
-    ArrayList typeList = new ArrayList();
+    TomTypeList typeList = tsf().makeTomTypeList();
     TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
     SlotList slotList = tsf().makeSlotList();
     TomSymbol astSymbol = makeSymbol(value,resultType,typeList,slotList,optionList,tlFsym);

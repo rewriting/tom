@@ -30,16 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import jtom.TomBase;
-import jtom.adt.Expression;
-import jtom.adt.Instruction;
-import jtom.adt.Option;
-import jtom.adt.OptionList;
-import jtom.adt.TargetLanguage;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomType;
+import jtom.adt.*;
 import jtom.runtime.Replace1;
 import jtom.tools.Flags;
 import aterm.ATerm;
@@ -97,7 +88,7 @@ public class TomCompiler extends TomBase {
         }
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomName name = tomSymbol.getAstName();
-        TomList typesList = tomSymbol.getTypesToType().getTomList();        
+        TomTypeList typesList = tomSymbol.getTypesToType().getDomain();        
         TomList path = empty();
         TomList matchArgumentsList = empty();
         TomList patternActionList  = empty();
@@ -107,7 +98,7 @@ public class TomCompiler extends TomBase {
         path = append(`RuleVar(),path);
         
         while(!typesList.isEmpty()) {
-          TomType subtermType = typesList.getHead().getAstType();
+          TomType subtermType = typesList.getHead();
           variable = `Variable(option(),PositionName(append(makeNumber(index),path)),subtermType);
           matchArgumentsList = append(variable,matchArgumentsList);
           typesList = typesList.getTail();

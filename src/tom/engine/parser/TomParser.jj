@@ -42,21 +42,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import jtom.adt.Declaration;
-import jtom.adt.Option;
-import jtom.adt.PairNameDecl;
-import jtom.adt.Position;
-import jtom.adt.SlotList;
-import jtom.adt.TargetLanguage;
-import jtom.adt.TomList;
-import jtom.adt.TomName;
-import jtom.adt.TomSignatureFactory;
-import jtom.adt.TomStructureTable;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomTerm;
-import jtom.adt.TomTerm_Match;
-import jtom.adt.TomTerm_RuleSet;
-import jtom.adt.TomType;
+import jtom.adt.*;
 import jtom.exception.TomException;
 import jtom.tools.ASTFactory;
 import jtom.tools.Flags;
@@ -902,7 +888,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
 {
   Token type, name, typeArg, slotName;
   ArrayList blockList = new ArrayList();
-  ArrayList types = new ArrayList();
+  TomTypeList types = tsf().makeTomTypeList();
   ArrayList options = new ArrayList();
   ArrayList nameList = new ArrayList();
   Map mapNameDecl = new HashMap();
@@ -934,7 +920,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
       {
         setSlotDecl.add(stringSlotName);
         nameList.add(ast().makeName(stringSlotName)); 
-        types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+        types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
       }
       ( <TOM_COMMA>
         { stringSlotName = ""; }
@@ -952,7 +938,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
             }
           }
           nameList.add(ast().makeName(stringSlotName));
-	  types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+	  types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
         }
       )*
       <TOM_RPAREN> ]
@@ -1016,7 +1002,7 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
-  ArrayList types = new ArrayList();
+  TomTypeList types = tsf().makeTomTypeList();
   SlotList slotList = tsf().makeSlotList();
   ArrayList options = new ArrayList();
   TomSymbol astSymbol;
@@ -1033,7 +1019,7 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
     { options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
     {
-      types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+      types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
     }
   <TOM_LBRACE>
     tlFsym = KeywordFsym()
@@ -1057,7 +1043,7 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
-  ArrayList types = new ArrayList();
+  TomTypeList types = tsf().makeTomTypeList();
   SlotList slotList = tsf().makeSlotList();
   ArrayList options = new ArrayList();
   TomName astName;
@@ -1074,7 +1060,7 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
     { options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
          { 
- 	   types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+ 	   types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
          }
   <TOM_LBRACE>
     tlFsym = KeywordFsym()
@@ -1543,7 +1529,7 @@ Declaration KeywordGetSlot(TomName astName, String typeString) throws TomExcepti
    }
 }
 
-Declaration KeywordMake(String opname, TomType returnType, ArrayList types) throws TomException:
+Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) throws TomException:
 {
   Token typeArg;
   Token nameArg;
@@ -1554,7 +1540,7 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
   TomType type;
   TomName name;
   Option orgTrack;
-  int nbTypes = types.size();
+  int nbTypes = types.getLength();
 }
 {
   <TOM_MAKE>
@@ -1569,7 +1555,7 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occured at line "+getLine()+"\n Parsing aborted");
            System.exit(1);
          }
-         type = (TomType)types.get(index++);
+         type = (TomType)types.elementAt(index++);
          name = tsf().makeTomName_Name(nameArg.image);  
          Option info1 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
          Option option1 = ast().makeOption(info1);
@@ -1581,7 +1567,7 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
             System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted");
             System.exit(1);
           }
-          type = (TomType)types.get(index++);
+          type = (TomType)types.elementAt(index++);
           name = tsf().makeTomName_Name(nameArg.image); 
           Option info2 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
           Option option2 = ast().makeOption(info2);

@@ -195,12 +195,12 @@ public class TomBase {
     }
   }   
 
-  protected TomList getSymbolDomain(TomSymbol symbol) {
+  protected TomTypeList getSymbolDomain(TomSymbol symbol) {
     if(symbol!=null) {
-      return symbol.getTypesToType().getTomList();
+      return symbol.getTypesToType().getDomain();
     } else {
         //System.out.println("getSymbolDomain: symbol = " + symbol);
-      return empty();
+      return tsf().makeTomTypeList();
     }
   }
 

@@ -520,7 +520,7 @@ public class TomChecker extends TomBase {
     OptionList optionList = tomSymbol.getOption().getOptionList();
       // We save first the origin tracking of the symbol declaration
     currentTomStructureOrgTrack = findOriginTracking(optionList);
-    TomList l = getSymbolDomain(tomSymbol);
+    TomTypeList l = getSymbolDomain(tomSymbol);
     TomType type = getSymbolCodomain(tomSymbol);
     String name = tomSymbol.getAstName().getString();
     Integer line  = findOriginTrackingLine(optionList);
@@ -555,16 +555,12 @@ public class TomChecker extends TomBase {
     messageError(line,s);
   }
   
-  private void verifySymbolArguments(TomList args, String symbName, Integer symbLine) {
-    TomTerm type;
+  private void verifySymbolArguments(TomTypeList args, String symbName, Integer symbLine) {
+    TomType type;
     int nbArgs = 0;
     while(!args.isEmpty()) {
       type = args.getHead();
-      %match(TomTerm type) {
-        TomTypeToTomTerm(type1) -> {
-          verifyTypeExist(type1.getString(), nbArgs, symbName, symbLine);
-        }
-      }
+      verifyTypeExist(type.getString(), nbArgs, symbName, symbLine);
       nbArgs++;
       args = args.getTail();
     }
@@ -811,9 +807,9 @@ public class TomChecker extends TomBase {
           argsList =  argsList.getTail();
         }
 
-        TomList l = getSymbolDomain(symbol);
+        TomTypeList l = getSymbolDomain(symbol);
         if (!listOrArray) {
-          int nbExpectedArgs = length(l);
+          int nbExpectedArgs = l.getLength();
             // We test the number of args vs its definition
           if (nbExpectedArgs != nbFoundArgs) {
             Integer line = findOriginTrackingLine(name,optionList);
@@ -821,7 +817,7 @@ public class TomChecker extends TomBase {
             return;
           }        
           for( int slot = 0; slot < nbExpectedArgs; slot++ ) {
-            String s = getTomType(l.getHead().getAstType());
+            String s = getTomType(l.getHead());
             if ( (foundType.get(slot) != s) && (foundType.get(slot) != null))
             {
               Integer line = findOriginTrackingLine((OptionList) optionMap.get(new Integer(slot)));
@@ -831,7 +827,7 @@ public class TomChecker extends TomBase {
           }
         } else {
             // We worry only about returned type
-          String s = getTomType(l.getHead().getAstType());
+          String s = getTomType(l.getHead());
           for( int slot = 0; slot <foundType.size() ; slot++ ) {
             if ( (foundType.get(slot) != s) && (foundType.get(slot) != null)) {
               Integer line = findOriginTrackingLine((OptionList) optionMap.get(new Integer(slot)));
@@ -864,7 +860,7 @@ public class TomChecker extends TomBase {
           //in case of oparray or oplist, the number of arguments is not tested
         if ( !isListOperator(symbol) &&  !isArrayOperator(symbol) ) {
             // We test the number of args vs its definition
-          int nbExpectedArgs = length(getSymbolDomain(symbol));
+          int nbExpectedArgs = getSymbolDomain(symbol).getLength();
           int nbFoundArgs = length(argsList);
           if (nbExpectedArgs != nbFoundArgs) {
             Integer line = findOriginTrackingLine(name,optionList);
