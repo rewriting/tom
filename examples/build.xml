@@ -5,6 +5,7 @@
   </description>
 
   <property environment="env" />
+	<property name="tom.home" value="${env.TOM_HOME}"/>
   <!-- some used directory location -->
   <property name="examples.dir" location="."/>
   <property name="examples.dist" location="dist"/>
@@ -78,7 +79,7 @@
   <property name="xml.dir" location="${examples.dir}/${xml}" />
 
   <target name="testdistexist">
-    <available file="${env.TOM_HOME}/lib" type="dir" property="distexist"/>
+    <available file="${tom.home}/lib" type="dir" property="distexist"/>
   </target>
 
 									
@@ -87,7 +88,7 @@
     <mkdir dir="${examples.gen}"/>
     <!-- Define classpath for building stable and source  -->
     <path id="tom.classpath">
-      <fileset dir="${env.TOM_HOME}/lib">
+      <fileset dir="${tom.home}/lib">
         <include name="*.jar"/>
       </fileset>
     </path>
@@ -154,7 +155,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
 				 <include name="${addressbook}/**/*.t"/>
 			<exclude name="**/AddressBookVas.t"/>
     </tom>
@@ -174,7 +175,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${apireach}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -193,7 +194,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${boulderdash}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -221,7 +222,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${builtin}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -237,7 +238,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
 				 <include name="${cell}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -259,7 +260,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${dom}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -279,12 +280,12 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom --lazyType">
+         options="-I ${tom.home}/share/jtom --lazyType">
       <include name="${expression}/**/Record.t"/>
     </tom>
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${expression}/**/RecordStrict.t"/>
     </tom>
     <!-- build java source -->
@@ -303,7 +304,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${gtree}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -317,7 +318,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${list}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -331,7 +332,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${lsystem}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -350,7 +351,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${nspk}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -369,7 +370,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${peano}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -388,7 +389,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${pnspk}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -407,7 +408,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${poly}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -421,7 +422,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${pqueens}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -440,7 +441,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${rbtree}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -459,7 +460,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${set}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -473,7 +474,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${vas}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -487,7 +488,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${env.TOM_HOME}/share/jtom">
+         options="-I ${tom.home}/share/jtom">
       <include name="${xml}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -667,5 +668,10 @@
 		</fail>
 	</target>
 
+	<target name="all" depends="clean">
+		<antcall target="junit"/>
+		<antcall target="clean"/>
+		<antcall target="dist.examples"/>
+	</target>
 
 </project>
