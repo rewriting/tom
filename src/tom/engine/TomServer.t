@@ -161,10 +161,9 @@ public class TomServer {
 		 argumentList[--i]);
     }
 
-//     if( environment.hasError() ) {
-//       environment.printErrorMessage();
-//       return null;
-//     }
+     if( statusHandler.hasError() ) {
+       return null;
+     }
 
     try {
       File file = new File(xmlConfigurationFile);
@@ -181,10 +180,9 @@ public class TomServer {
 		 "ConfigFileNotSpecified");
     }
 
-//     if( environment.hasError() ) {
-//       environment.printErrorMessage();
-//       return null;
-//     }
+     if( statusHandler.hasError() ) {
+       return null;
+     }
 
     return xmlConfigurationFile;
   }
@@ -240,7 +238,6 @@ public class TomServer {
   
     if( classPaths == null ) {
       // method parseConfigFile encountered an error
-//       environment.printErrorMessage();
       return 1;
     }
   
@@ -273,14 +270,9 @@ public class TomServer {
 
     String[] inputFiles = optionManager.optionManagement(argumentList);
   
-//     if( environment.hasError() ) {
-//       environment.printAlertMessage("TomServer");
-//       //displayHelp();
-//       // it is kind of hard to display the help message outside of the option
-//       // manager, cause the method isn't part of its interface
-//       // I guess we'd better only print the help when the user requests it
-//       return 1;
-//     }
+     if( statusHandler.hasError() ) {
+       return 1;
+     }
 
     for(int i = 0; i < inputFiles.length; i++) {
 
