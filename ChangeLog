@@ -1,3 +1,7 @@
+2004-10-14  pem  <pem@polly.loria.fr>
+
+	* src/jtom/checker/TomChecker.t: fixed TOM-54
+
 2004-10-10  pem  <pem@becky.local>
 
 	* src/jtom/parser/BackQuoteLanguage.g.t: simplify the parser

@@ -85,7 +85,7 @@ public class TomFactory extends TomBase {
     %match(TomTerm term) {
       Appl[nameList=(Name(tomName))] -> {
           //System.out.println("tomName = " + tomName);
-        TomSymbol tomSymbol = symbolTable.getSymbol(`tomName);
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         if(tomSymbol != null) {
           if(isStringOperator(tomSymbol)) {
             Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,Name("??"));

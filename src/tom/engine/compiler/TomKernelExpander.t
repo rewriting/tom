@@ -52,12 +52,12 @@ public class TomKernelExpander extends TomBase {
     return symbolTable;
   }
 
-  protected TomSymbol getSymbol(String tomName) {
-    return getSymbol(tomName, getSymbolTable());
+  protected TomSymbol getSymbolFromName(String tomName) {
+    return getSymbolFromName(tomName, getSymbolTable());
   }
   
-  protected TomSymbol getSymbol(TomType tomType) {
-    return getSymbol(tomType, getSymbolTable());
+  protected TomSymbol getSymbolFromType(TomType tomType) {
+    return getSymbolFromType(tomType, getSymbolTable());
   }
   // ------------------------------------------------------------
   %include { adt/TomSignature.tom } 
@@ -110,7 +110,7 @@ public class TomKernelExpander extends TomBase {
                         Term(rhs),
                         condList,
                         option)  -> { 
-              TomSymbol tomSymbol = getSymbol(`tomName);
+              TomSymbol tomSymbol = getSymbolFromName(`tomName);
               TomType symbolType = getSymbolCodomain(tomSymbol);
               TomTerm newLhs = `Term(expandVariable(contextSubject,lhs));
               TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
@@ -135,8 +135,8 @@ public class TomKernelExpander extends TomBase {
           %match(TomTerm contextSubject, Instruction subject) {
             Tom(varList), MatchingCondition[lhs=lhs@Appl[nameList=(Name(lhsName),_*)],
                                             rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
-               TomSymbol lhsSymbol = getSymbol(`lhsName);
-               TomSymbol rhsSymbol = getSymbol(`rhsName);
+               TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
+               TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
                TomType type;
               
                if(lhsSymbol != null) {
@@ -156,8 +156,8 @@ public class TomKernelExpander extends TomBase {
             
             Tom(varList), EqualityCondition[lhs=lhs@Appl[nameList=(Name(lhsName))],
                                             rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
-               TomSymbol lhsSymbol = getSymbol(`lhsName);
-               TomSymbol rhsSymbol = getSymbol(`rhsName);
+               TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
+               TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
                TomType type;
               
                if(lhsSymbol != null) {
@@ -194,14 +194,14 @@ public class TomKernelExpander extends TomBase {
                TomSymbol tomSymbol = null;
                if(`tomName.equals("")) {
                  if(contextSubject.hasAstType()) {
-                   tomSymbol = getSymbol(contextSubject.getAstType());
+                   tomSymbol = getSymbolFromType(contextSubject.getAstType());
                    `nameList = `concTomName(tomSymbol.getAstName());
                    if(tomSymbol==null) {
-                     throw new TomRuntimeException("no symbol found for type '" + contextSubject.getAstType() + "'");
+                     throw new TomRuntimeException("No symbol found for type '" + contextSubject.getAstType() + "'");
                    } 
                  }
                } else {
-                 tomSymbol = getSymbol(`tomName);
+                 tomSymbol = getSymbolFromName(`tomName);
                }
 
                if(tomSymbol != null) {
@@ -429,7 +429,7 @@ public class TomKernelExpander extends TomBase {
     while(it.hasNext()) {
       String tomName = (String)it.next();
       TomTerm emptyContext = `emptyTerm();
-      TomSymbol tomSymbol = getSymbol(tomName);
+      TomSymbol tomSymbol = getSymbolFromName(tomName);
       tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
       getSymbolTable().putSymbol(tomName,tomSymbol);
     }

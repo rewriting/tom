@@ -531,13 +531,13 @@ public class TomBase {
     throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
   }
 
-  protected TomSymbol getSymbol(String tomName, SymbolTable symbolTable) {
-    return symbolTable.getSymbol(tomName);
+  protected TomSymbol getSymbolFromName(String tomName, SymbolTable symbolTable) {
+    return symbolTable.getSymbolFromName(tomName);
   }
 
   
-  protected TomSymbol getSymbol(TomType tomType, SymbolTable symbolTable) {
-    SymbolList list = symbolTable.getSymbol(tomType);
+  protected TomSymbol getSymbolFromType(TomType tomType, SymbolTable symbolTable) {
+    SymbolList list = symbolTable.getSymbolFromType(tomType);
     SymbolList filteredList = `emptySymbolList();
     // Not necessary since checker ensure the uniqueness of the symbol
     while(!list.isEmpty()) {
@@ -553,7 +553,7 @@ public class TomBase {
   protected TomType getTermType(TomTerm t, SymbolTable symbolTable){
     %match(TomTerm t) {
 	    Appl[nameList=(Name(tomName),_*)] -> {
-        TomSymbol tomSymbol = symbolTable.getSymbol(`tomName);
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(`tomName);
         return tomSymbol.getTypesToType().getCodomain();
 	    }
 

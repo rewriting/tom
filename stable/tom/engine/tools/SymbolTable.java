@@ -120,12 +120,12 @@ public class SymbolTable {
     TomType result = (TomType) mapTypeName.put(name,astType);
   }
 
-  public TomSymbol getSymbol(String name) {
+  public TomSymbol getSymbolFromName(String name) {
     TomSymbol res = (TomSymbol)mapSymbolName.get(name);
     return res;
   }
 
-  public SymbolList getSymbol(TomType type) {
+  public SymbolList getSymbolFromType(TomType type) {
     SymbolList res = tsf().makeSymbolList();
     Iterator it = mapSymbolName.values().iterator();
     while(it.hasNext()) {
@@ -245,7 +245,7 @@ public class SymbolTable {
     Iterator it = keySymbolIterator();
     while(it.hasNext()) {
       String name = (String)it.next();
-      TomSymbol symbol = getSymbol(name);
+      TomSymbol symbol = getSymbolFromName(name);
       TomEntry entry = tsf().makeTomEntry_Entry(name,symbol);
       list = tsf().makeTomEntryList(entry,list);
     }

@@ -109,7 +109,7 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   }
 
   protected void buildSymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
       // inspect the optionList
@@ -154,7 +154,7 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   }
 
   protected void buildEqualFunctionSymbol(int deep, TomType type, TomTerm exp, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     TomName termNameAST = tomSymbol.getAstName();
     OptionList termOptionList = tomSymbol.getOption();
     
@@ -317,7 +317,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
 
   protected void buildIsFsymDecl(int deep, String tomName, String name1,
                                  TomType tlType, TargetLanguage tlCode) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     
     TomType returnType = getSymbolTable().getBoolType();
@@ -336,7 +336,7 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
 
   protected void buildGetSlotDecl(int deep, String tomName, String name1,
 TomType tlType, TargetLanguage tlCode, TomName slotName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     String opname = tomSymbol.getAstName().getString();
     TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
     

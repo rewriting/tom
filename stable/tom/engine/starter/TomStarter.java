@@ -29,6 +29,7 @@ import java.util.logging.*;
 import jtom.*;
 import jtom.tools.*;
 import aterm.*;
+import tom.platform.RuntimeAlert;
 
 /**
  * The TomStarter "plugin". Only here to initialize the TomStreamManager
@@ -51,7 +52,7 @@ public class TomStarter extends TomGenericPlugin {
    * inherited from plugin interface
    * arg[0] should contain the input file name
    */
-  public void setArgs(Object[] arg) {
+  public RuntimeAlert setArgs(Object[] arg) {
     if (arg[0] instanceof String) {
       fileName = (String)arg[0];  
     } else {
@@ -59,17 +60,19 @@ public class TomStarter extends TomGenericPlugin {
                       new Object[]{"VasStarter", "[String]",
                                    getArgumentArrayString(arg)});
     }
+    return new RuntimeAlert();
   }
 
   /**
    * inherited from plugin interface
    * Create the VasStreamManager as input for next plugin
    */
-  public void run() {
-    TomStreamManager streamManager = new TomStreamManager();
-    streamManager.initializeFromOptionManager(getOptionManager());
-    streamManager.prepareForInputFile(fileName);
-    argToRelay = new Object[]{streamManager};
+  public RuntimeAlert run() {
+    TomStreamManager localStreamManager = new TomStreamManager();
+    localStreamManager.initializeFromOptionManager(getOptionManager());
+    localStreamManager.prepareForInputFile(fileName);
+    argToRelay = new Object[]{localStreamManager};
+    return new RuntimeAlert();
   }
   
   /**

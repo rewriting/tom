@@ -156,12 +156,12 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     return streamManager.getSymbolTable(); 
   }
 
-  protected TomSymbol getSymbol(String tomName) {
-    return getSymbol(tomName, streamManager.getSymbolTable());
+  protected TomSymbol getSymbolFromName(String tomName) {
+    return getSymbolFromName(tomName, streamManager.getSymbolTable());
   }
   
-  protected TomSymbol getSymbol(TomType tomType) {
-    return getSymbol(tomType, streamManager.getSymbolTable());
+  protected TomSymbol getSymbolFromType(TomType tomType) {
+    return getSymbolFromType(tomType, streamManager.getSymbolTable());
   }
   
   protected TomType getTermType(TomTerm t) {

@@ -106,7 +106,7 @@ public class TomParserPlugin extends TomGenericPlugin {
    * inherited from plugin interface
    * arg[0] should contain the StreamManager from which we can get the input
    */
-  public void setArgs(Object[] arg){
+  public RuntimeAlert setArgs(Object[] arg){
     if (arg[0] instanceof TomStreamManager) {
       setStreamManager((TomStreamManager)arg[0]);
 	    currentFileName = getStreamManager().getInputFile().getAbsolutePath();  
@@ -115,15 +115,15 @@ public class TomParserPlugin extends TomGenericPlugin {
                       new Object[]{"TomParserPlugin", "[TomStreamManager]",
                                    getArgumentArrayString(arg)});
     }
+    return new RuntimeAlert();
   }
 
   /**
    * inherited from plugin interface
    * Parse the input ans set the "Working" TomTerm to be compiled.
    */
-  public void run() {
-    int errorsAtStart = getStatusHandler().nbOfErrors();
-    int warningsAtStart = getStatusHandler().nbOfWarnings();
+  public RuntimeAlert run() {
+    RuntimeAlert result = new RuntimeAlert();
     long startChrono = System.currentTimeMillis();
     boolean intermediate = ((Boolean)getOptionManager().getOptionValue("intermediate")).booleanValue();
     boolean java         = ((Boolean)getOptionManager().getOptionValue("jCode")).booleanValue();
@@ -150,29 +150,32 @@ public class TomParserPlugin extends TomGenericPlugin {
       e.printStackTrace();
       getLogger().log(Level.SEVERE, "TokenStreamException",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()} );
-      return;
+      return result;
+      //return result.addError(e.getMessage(), currentFileName, getLineFromTomParser());
     } catch (RecognitionException e){
       e.printStackTrace();
       getLogger().log(Level.SEVERE, "RecognitionException",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()});
-      return;
+      return result;
+      //return result.addError(e.getMessage(), currentFileName, getLineFromTomParser());
     } catch (TomIncludeException e) {
       getLogger().log(Level.SEVERE, "SimpleMessage",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()});
-      return;
+      return result;
+      //return result.addError(e.getMessage(), currentFileName, getLineFromTomParser());
     } catch (TomException e) {
       getLogger().log(Level.SEVERE, "SimpleMessage",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()});
-      return;
+      return result;
     } catch (FileNotFoundException e) {
       getLogger().log(Level.SEVERE, "FileNotFound",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), currentFileName}); 
-      return;
+      return result;
     } catch (Exception e) {
       getLogger().log(Level.SEVERE, "ExceptionMessage", 
                       new Object[]{getClass().getName(), currentFileName, e.getMessage()});
       e.printStackTrace();
-      return;
+      return result;
     }
     // Some extra stuff
     if(eclipse) {
@@ -191,6 +194,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
                            + DEBUG_TABLE_SUFFIX, parser.getStructTable());
     }
+    return result;
   }
   
   /**

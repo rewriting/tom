@@ -174,7 +174,7 @@ public class TomExpander extends TomGenericPlugin {
           if(subject instanceof Declaration) {
             %match(Declaration subject) {
               GetHeadDecl[variable=Variable[astType=domain]] -> {
-                TomSymbol tomSymbol = getSymbol(`domain);
+                TomSymbol tomSymbol = getSymbolFromType(`domain);
                 if(tomSymbol != null) {
                   TomTypeList codomain = getSymbolDomain(tomSymbol);
                   //System.out.println("tomSymbol = " + tomSymbol);
@@ -216,7 +216,7 @@ public class TomExpander extends TomGenericPlugin {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
               appl@Appl[nameList=(Name(tomName),_*),args=args] -> {
-                TomSymbol tomSymbol = getSymbol(`tomName);
+                TomSymbol tomSymbol = getSymbolFromName(`tomName);
                 //System.out.println("appl = " + subject);
                 if(tomSymbol != null) {
                   if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
@@ -260,7 +260,7 @@ public class TomExpander extends TomGenericPlugin {
           /*
            * ensure that the argument contains at least 1 character and 2 single quotes
            */
-          TomSymbol tomSymbol = getSymbol(`tomName);
+          TomSymbol tomSymbol = getSymbolFromName(`tomName);
           TomType termType = tomSymbol.getTypesToType().getCodomain();
           String type = termType.getTomType().getString();
           if(symbolTable().isCharType(type) && `tomName.length()>3) {
@@ -276,7 +276,7 @@ public class TomExpander extends TomGenericPlugin {
                 TomTerm newHead = head.setNameList(`concTomName(Name(newName)));
                 newArgs = `manyTomList(newHead,newArgs);
                 //System.out.println("newHead = " + newHead);
-                //System.out.println("newSymb = " + getSymbol(newName));
+                //System.out.println("newSymb = " + getSymbolFromName(newName));
               }
               return newArgs;
             } else {
@@ -294,7 +294,7 @@ public class TomExpander extends TomGenericPlugin {
   }
 
   protected TomTerm expandRecordAppl(OptionList option, NameList nameList, TomList args, ConstraintList constraints) {
-    TomSymbol tomSymbol = getSymbol(nameList.getHead().getString());
+    TomSymbol tomSymbol = getSymbolFromName(nameList.getHead().getString());
     SlotList slotList = tomSymbol.getSlotList();
     TomList subtermList = empty();
       // For each slotName (from tomSymbol)
@@ -335,7 +335,7 @@ public class TomExpander extends TomGenericPlugin {
           if(t instanceof TomTerm) {
             %match(TomTerm t) {
               BackQuoteAppl[option=optionList,astName=name@Name(tomName),args=l] -> {
-                TomSymbol tomSymbol = getSymbol(`tomName);
+                TomSymbol tomSymbol = getSymbolFromName(`tomName);
                 TomList args  = (TomList) traversal().genericTraversal(`l,this);
                 
                 //System.out.println("BackQuoteTerm: " + `tomName);

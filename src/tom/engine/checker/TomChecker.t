@@ -218,7 +218,7 @@ abstract public class TomChecker extends TomGenericPlugin {
               methodName = `name1;
             }
           }
-          TomType typeRhs = getSymbolCodomain(getSymbol(methodName));
+          TomType typeRhs = getSymbolCodomain(getSymbolFromName(methodName));
           Iterator it = variableLhs.iterator();
           while(it.hasNext()) {
             TomTerm term = (TomTerm)it.next();
@@ -314,9 +314,9 @@ abstract public class TomChecker extends TomGenericPlugin {
         `verifyTypeDecl(TYPE_ARRAY, tomName, tomList, orgTrack);
       }
         // Symbols
-      SymbolDecl(Name(tomName))      -> { `verifySymbol(CONSTRUCTOR, getSymbol(tomName)); }
-      ArraySymbolDecl(Name(tomName)) -> { `verifySymbol(OP_ARRAY, getSymbol(tomName)); }
-      ListSymbolDecl(Name(tomName))  -> { `verifySymbol(OP_LIST, getSymbol(tomName)); }
+      SymbolDecl(Name(tomName))      -> { `verifySymbol(CONSTRUCTOR, getSymbolFromName(tomName)); }
+      ArraySymbolDecl(Name(tomName)) -> { `verifySymbol(OP_ARRAY, getSymbolFromName(tomName)); }
+      ListSymbolDecl(Name(tomName))  -> { `verifySymbol(OP_LIST, getSymbolFromName(tomName)); }
     
     }
   } //verifyDeclaration
@@ -735,7 +735,7 @@ abstract public class TomChecker extends TomGenericPlugin {
                      new Object[]{headSymbolName, currentHeadSymbolName}); 
       }
     }
-    symbol = getSymbol(currentHeadSymbolName);
+    symbol = getSymbolFromName(currentHeadSymbolName);
     lhsType = getSymbolCodomain(symbol);
       // analyse the term
     validateTerm(lhs, lhsType, isListOperator(symbol)||isArrayOperator(symbol), true, false);
@@ -771,7 +771,7 @@ abstract public class TomChecker extends TomGenericPlugin {
       return;
     }
     
-    TomSymbol symbol = getSymbol(lhsHeadSymbolName);
+    TomSymbol symbol = getSymbolFromName(lhsHeadSymbolName);
     TomType lhsType = getSymbolCodomain(symbol);
     TermDescription termDesc = validateTerm(rhs, lhsType, isListOperator(symbol)||isArrayOperator(symbol), true, true);
     TomType rhsType = termDesc.tomType;
@@ -825,7 +825,7 @@ abstract public class TomChecker extends TomGenericPlugin {
           type = expectedType;     
           termName = `nameList.getHead().getString();
           boolean listOp = (isListOperator(symbol) || isArrayOperator(symbol));
-          if (listOp) {
+          if(listOp) {
               // whatever the arity is, we continue recursively and there is only one element in the Domain
             validateListOperatorArgs(args, symbol.getTypesToType().getDomain().getHead(),permissive);
           } else {
@@ -879,7 +879,7 @@ abstract public class TomChecker extends TomGenericPlugin {
             // ensureValidDisjunction(nameList); ??????????
           termClass = XML_APPL;
           decLine = findOriginTrackingLine(`options);
-          type = getSymbolCodomain(getSymbol(Constants.ELEMENT_NODE));
+          type = getSymbolCodomain(getSymbolFromName(Constants.ELEMENT_NODE));
           termName = Constants.ELEMENT_NODE;
           
           TomList args = `childList;
@@ -888,7 +888,7 @@ abstract public class TomChecker extends TomGenericPlugin {
            *   TomType TNodeType = symbolTable().getType(Constants.TNODE);
            * because TNodeType should be a TomTypeAlone and not an expanded type
            */
-          TomType TNodeType = getSymbolCodomain(symbolTable().getSymbol(Constants.ELEMENT_NODE));
+          TomType TNodeType = getSymbolCodomain(symbolTable().getSymbolFromName(Constants.ELEMENT_NODE));
           //System.out.println("TNodeType = " + TNodeType);
           while(!args.isEmpty()) {
             // repeat analyse with associated expected type and control arity
@@ -1023,24 +1023,24 @@ abstract public class TomChecker extends TomGenericPlugin {
               // TODO
           } else {
             return new TermDescription(APPL, `str, findOriginTrackingLine(`options), 
-                                       getSymbolCodomain(getSymbol(`str)));
+                                       getSymbolCodomain(getSymbolFromName(`str)));
           }
         }
         Appl[option=options, nameList=(Name(name), _*)] -> {
           return new TermDescription(APPL_DISJUNCTION, `name, findOriginTrackingLine(`options), 
-                                     getSymbolCodomain(getSymbol(`name)));
+                                     getSymbolCodomain(getSymbolFromName(`name)));
         }
         RecordAppl[option=options,nameList=(Name(name))] ->{
           return new TermDescription(RECORD_APPL, `name, findOriginTrackingLine(`options), 
-                                     getSymbolCodomain(getSymbol(`name)));
+                                     getSymbolCodomain(getSymbolFromName(`name)));
         }
         RecordAppl[option=options,nameList=(Name(name), _*)] ->{
           return new TermDescription(RECORD_APPL_DISJUNCTION, `name, findOriginTrackingLine(`options), 
-                                     getSymbolCodomain(getSymbol(`name)));
+                                     getSymbolCodomain(getSymbolFromName(`name)));
         }
         XMLAppl[option=options] -> {
           return new TermDescription(XML_APPL, Constants.ELEMENT_NODE, findOriginTrackingLine(`options), 
-                                     getSymbolCodomain(getSymbol(Constants.ELEMENT_NODE)));
+                                     getSymbolCodomain(getSymbolFromName(Constants.ELEMENT_NODE)));
         }
         Placeholder[option=options] -> {
           return new TermDescription(PLACE_HOLDER, "_", findOriginTrackingLine(`options),  null);
@@ -1060,7 +1060,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   }
   
   private TomSymbol ensureValideUnamedList(TomType expectedType, int decLine) {
-    SymbolList symbolList = symbolTable().getSymbol(expectedType);
+    SymbolList symbolList = symbolTable().getSymbolFromType(expectedType);
     SymbolList filteredList = `emptySymbolList();
     %match(SymbolList symbolList) {
       (_*, symbol , _*) -> {  // for each symbol
@@ -1097,7 +1097,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     
     if(nameList.isSingle()) { // Valid but has is a good type
       String res = nameList.getHead().getString();
-      symbol  =  getSymbol(res);
+      symbol  =  getSymbolFromName(res);
       if (symbol == null ) {
         if((constructor || !emptyChilds)) {
             // this correspond to aterm like 'unknown()' or unknown(s1, s2, ...)
@@ -1142,7 +1142,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     boolean first = true; // the first symbol give the expected type
     %match(NameList nameList) {
       (_*, Name(dijName), _*) -> { // for each SymbolName
-        symbol =  getSymbol(`dijName);
+        symbol =  getSymbolFromName(`dijName);
         if (symbol == null) {
             // In disjunction we can only have known symbols
           messageError(decLine,
@@ -1187,7 +1187,7 @@ abstract public class TomChecker extends TomGenericPlugin {
   private TomSymbol ensureValidRecordDisjunction(NameList nameList, TomType expectedType, int decLine, boolean topLevel) {
     if(nameList.isSingle()) { // Valid but has is a good type
       String res = nameList.getHead().getString();
-      TomSymbol symbol =  getSymbol(res);
+      TomSymbol symbol =  getSymbolFromName(res);
       if (symbol == null ) { // this correspond to: unknown[]
           // it is not correct to use Record an unknown symbols
         messageError(decLine,
@@ -1211,7 +1211,7 @@ abstract public class TomChecker extends TomGenericPlugin {
      * RECORDS CONCERNS
      */
   private void verifyRecordStructure(OptionList option, String tomName, TomList slotTermPairs, int decLine)  {
-    TomSymbol symbol = getSymbol(tomName);
+    TomSymbol symbol = getSymbolFromName(tomName);
     if(symbol != null) {
       SlotList slotList = symbol.getSlotList();
         // constants have an emptySlotList
@@ -1274,12 +1274,12 @@ abstract public class TomChecker extends TomGenericPlugin {
         // Now analyses associated term 
       SlotList listOfSlots = slotList;
       TomTypeList listOfTypes = typeList;
-      TomList listOfPair = pairList;
       while(!listOfSlots.isEmpty()) {
-      TomName slotName = listOfSlots.getHead().getSlotName();
-      TomType expectedType = listOfTypes.getHead();
-      if(!slotName.isEmptyName()) {
-            // look for a same name (from record)
+        TomList listOfPair = pairList;
+        TomName slotName = listOfSlots.getHead().getSlotName();
+        TomType expectedType = listOfTypes.getHead();
+        if(!slotName.isEmptyName()) {
+          // look for a same name (from record)
           whileBlock: {
             while(!listOfPair.isEmpty()) {
               TomTerm pairSlotTerm = listOfPair.getHead();

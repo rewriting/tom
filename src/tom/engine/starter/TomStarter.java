@@ -68,10 +68,10 @@ public class TomStarter extends TomGenericPlugin {
    * Create the VasStreamManager as input for next plugin
    */
   public RuntimeAlert run() {
-    TomStreamManager streamManager = new TomStreamManager();
-    streamManager.initializeFromOptionManager(getOptionManager());
-    streamManager.prepareForInputFile(fileName);
-    argToRelay = new Object[]{streamManager};
+    TomStreamManager localStreamManager = new TomStreamManager();
+    localStreamManager.initializeFromOptionManager(getOptionManager());
+    localStreamManager.prepareForInputFile(fileName);
+    argToRelay = new Object[]{localStreamManager};
     return new RuntimeAlert();
   }
   

@@ -62,7 +62,7 @@ public class TomCGenerator extends TomImperativeGenerator {
   }
 
   protected void buildSymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
     TomTypeList l = getSymbolDomain(tomSymbol);
@@ -125,7 +125,7 @@ public class TomCGenerator extends TomImperativeGenerator {
 
 
   protected void buildArraySymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();        
     TomTypeList l = getSymbolDomain(tomSymbol);
@@ -165,7 +165,7 @@ public class TomCGenerator extends TomImperativeGenerator {
 
 
   protected void buildListSymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
     TomTypeList l = getSymbolDomain(tomSymbol);

@@ -68,7 +68,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   }
 
   protected void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException {
-        TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
+        TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(tomName);
         String glType = getTLType(getSymbolCodomain(tomSymbol));
         String name = tomSymbol.getAstName().getString();
         output.write(deep,name + "(");

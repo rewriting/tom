@@ -124,7 +124,7 @@ public class TomCompiler extends TomGenericPlugin {
             }    
 
             BuildReducedTerm(Appl[nameList=(name@Name(tomName)),args=termArgs]) -> {
-              TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
+              TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
               TomList newTermArgs = (TomList) traversal().genericTraversal(`termArgs,replace_preProcessing_makeTerm);
               if(tomSymbol==null || isDefinedSymbol(tomSymbol)) {
                 return `FunctionCall(name,newTermArgs);
@@ -218,7 +218,7 @@ public class TomCompiler extends TomGenericPlugin {
               if(((Boolean)getOptionManager().getOptionValue("debug")).booleanValue()) {
                 debugKey = `orgTrack.getFileName().getString() + `orgTrack.getLine();
               }
-              TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
+              TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
               TomName name = tomSymbol.getAstName();
               TomTypeList typesList = tomSymbol.getTypesToType().getDomain();        
               TomNumberList path = tsf().makeTomNumberList();
@@ -472,7 +472,7 @@ public class TomCompiler extends TomGenericPlugin {
     %match(TomTerm subject) {
       Appl[nameList=(Name(tomName),_*), args=arguments] -> {
         TomList args = `arguments;
-        TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
+        TomSymbol tomSymbol = symbolTable().getSymbolFromName(`tomName);
         
         TomList newArgs = empty();
         if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
@@ -487,7 +487,7 @@ public class TomCompiler extends TomGenericPlugin {
                  */
 
                   //System.out.println("Abstract: " + appl);
-                TomSymbol tomSymbol2 = symbolTable().getSymbol(`tomName2);
+                TomSymbol tomSymbol2 = symbolTable().getSymbolFromName(`tomName2);
                 if(isListOperator(tomSymbol2) || isArrayOperator(tomSymbol2)) {
                   TomType type2 = tomSymbol2.getTypesToType().getCodomain();
                   abstractedPattern.add(`appl);

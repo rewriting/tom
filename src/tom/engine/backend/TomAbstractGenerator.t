@@ -51,12 +51,12 @@ public abstract class TomAbstractGenerator extends TomBase {
     return symbolTable;
   }
   
-  protected TomSymbol getSymbol(String tomName) {
-    return getSymbol(tomName, symbolTable);
+  protected TomSymbol getSymbolFromName(String tomName) {
+    return getSymbolFromName(tomName, symbolTable);
   }
 
-  protected TomSymbol getSymbol(TomType tomType) {
-    return getSymbol(tomType, symbolTable);
+  protected TomSymbol getSymbolFromType(TomType tomType) {
+    return getSymbolFromType(tomType, symbolTable);
   }
 
   protected TomType getTermType(TomTerm t) {
@@ -509,6 +509,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       
       CheckStampDecl(Variable[astName=Name(name), 
                               astType=Type(ASTTomType(type),tlType@TLType[])], 
+                     //astType=Type((type),tlType@TLType[])], 
                      tlCode, _) -> {
         //optionManager.setOptionValue("stamp",Boolean.TRUE);
         `buildCheckStampDecl(deep, type, name, tlType, tlCode);
@@ -586,8 +587,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeEmptyList(Name(opname), tlCode@TL[], _) -> {
-        //System.out.println("symbol = " + getSymbol(opname));
-        TomType codomain = `getSymbolCodomain(getSymbol(opname));
+        //System.out.println("symbol = " + getSymbolFromName(opname));
+        TomType codomain = `getSymbolCodomain(getSymbolFromName(opname));
         `buildMakeEmptyList(deep, opname, codomain, tlCode);
         return;
       }
@@ -616,7 +617,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       MakeEmptyArray(Name(opname),
                      Variable[astName=Name(name)],
                      tlCode@TL[], _) -> {
-        TomType codomain = `getSymbolCodomain(getSymbol(opname));
+        TomType codomain = `getSymbolCodomain(getSymbolFromName(opname));
         `buildMakeEmptyArray(deep, opname, codomain, name, tlCode);
         return;
       }

@@ -284,7 +284,7 @@ public class ASTFactory {
   public TomSymbol updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
     if(term.isAppl() || term.isRecordAppl()) {
       String key = term.getNameList().getHead().getString();
-      TomSymbol symbol = symbolTable.getSymbol(key);
+      TomSymbol symbol = symbolTable.getSymbolFromName(key);
       if (symbol != null) {
         OptionList optionList = symbol.getOption();
         optionList = (OptionList) optionList.append(tsf().makeOption_DefinedSymbol());
@@ -347,7 +347,7 @@ public class ASTFactory {
       TomName astName = term.getAstName();
       if(astName.isName()) {
         String tomName = astName.getString();
-        TomSymbol tomSymbol = symbolTable.getSymbol(tomName);
+        TomSymbol tomSymbol = symbolTable.getSymbolFromName(tomName);
         if(tomSymbol != null) {
           TomType type = tomSymbol.getTypesToType().getCodomain();
             //System.out.println("type = " + type);

@@ -1053,66 +1053,6 @@ get_implementation(t) {t}
   get_slot(tail,t) { t.getTail()}
   make(e,l) {getTomOptionFactory().makeConstraintList(e,l)}
 }
-%typeterm TomAlert{
-  implement { jtom.adt.tomsignature.types.TomAlert}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomOptionFactory().getPureFactory().makeList()) == getTomOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomAlert)t.setAnnotation(getTomOptionFactory().getPureFactory().makeList(),getTomOptionFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
-}
-
-%op TomAlert Error(message:String, file:String, line:int) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isError()}
-  get_slot(message,t) { t.getMessage()}
-  get_slot(file,t) { t.getFile()}
-  get_slot(line,t) { t.getLine()}
-  make(t0, t1, t2) { getTomOptionFactory().makeTomAlert_Error(t0, t1, t2)}
-}
-
-%op TomAlert Warning(message:String, file:String, line:int) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isWarning()}
-  get_slot(message,t) { t.getMessage()}
-  get_slot(file,t) { t.getFile()}
-  get_slot(line,t) { t.getLine()}
-  make(t0, t1, t2) { getTomOptionFactory().makeTomAlert_Warning(t0, t1, t2)}
-}
-
-%typelist TomAlertList{
-  implement { jtom.adt.tomsignature.types.TomAlertList}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  equals(t1,t2) {t1.equals(t2)}
-  get_head(l) {l.getHead()}
-  get_tail(l) {l.getTail()}
-  is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomOptionFactory().getPureFactory().makeList()) == getTomOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomAlertList)t.setAnnotation(getTomOptionFactory().getPureFactory().makeList(),getTomOptionFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
-}
-
-%oplist TomAlertList concTomAlert(TomAlert*) {
-  fsym { null }
-  is_fsym(t) {(t!= null) && t.isSortTomAlertList()}
-  make_empty() {getTomOptionFactory().makeTomAlertList()}
-  make_insert(e,l) {getTomOptionFactory().makeTomAlertList(e,l)}
-}
-%op TomAlertList emptyTomAlertList{
-  fsym { null }
-  is_fsym(t) { (t!= null) && t.isEmpty()}
-  make() {getTomOptionFactory().makeTomAlertList()}
-}
-%op TomAlertList manyTomAlertList(head:TomAlert, tail:TomAlertList) {
-  fsym { null }
-  is_fsym(t) { (t!= null) && t.isMany()}
-  get_slot(head,t) { t.getHead()}
-  get_slot(tail,t) { t.getTail()}
-  make(e,l) {getTomOptionFactory().makeTomAlertList(e,l)}
-}
 %typeterm Option{
   implement { jtom.adt.tomsignature.types.Option}
   get_fun_sym(t) {null}

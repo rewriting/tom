@@ -160,7 +160,7 @@ public class TomKernelCompiler extends TomBase {
       manyTomList(subjectVar@(BuildTerm|FunctionCall)(Name(tomName),_),tail) -> {
         body = collectVariableFromSubjectList(`tail,index+1,path,body);
 
-        TomSymbol tomSymbol = getSymbolTable().getSymbol(`tomName);
+        TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`tomName);
         TomType tomType = getSymbolCodomain(tomSymbol);
         TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType, concConstraint());
         Expression source = `TomTermToExpression(subjectVar);
@@ -229,7 +229,7 @@ public class TomKernelCompiler extends TomBase {
       
       manyTomList(currentTerm@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=termArgs,constraints=constraints],termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,`termTail,rootpath,indexTerm+1);
-        TomSymbol tomSymbol = getSymbolTable().getSymbol(`tomName);
+        TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`tomName);
         TomType codomain = tomSymbol.getTypesToType().getCodomain();
         
           // SUCCES
@@ -329,7 +329,7 @@ public class TomKernelCompiler extends TomBase {
         Instruction subAction = genListMatchingAutomata(p,`termTail,indexTerm+1,true);
 
         subAction = `genSyntacticMatchingAutomata(subAction,concTomTerm(term),p.path,indexTerm);
-        TomSymbol tomSymbol = getSymbolTable().getSymbol(`tomName);
+        TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`tomName);
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
         TomTerm var =  `Variable(option(),PositionName(newPath),termType,concConstraint());
@@ -513,7 +513,7 @@ public class TomKernelCompiler extends TomBase {
         Instruction subAction = genArrayMatchingAutomata(p,`termTail,indexTerm+1,true);
 
         subAction = `genSyntacticMatchingAutomata(subAction,concTomTerm(term),p.path,indexTerm);
-        TomSymbol tomSymbol = getSymbolTable().getSymbol(`tomName);
+        TomSymbol tomSymbol = getSymbolTable().getSymbolFromName(`tomName);
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
         TomTerm var =  `Variable(option(),PositionName(newPath),termType,concConstraint());
