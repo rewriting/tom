@@ -221,8 +221,7 @@ public class TomCompiler extends TomTask {
             %match(TomTerm elt) {
               PatternAction(TermList(termList),Tom(actionList), option) -> {
                 TomList newTermList = empty();
-                TomList newActionList = actionList;
-
+                TomList newActionList = tomListMap(actionList,replace_preProcessing);
                   /* generate equality checks */
                 ArrayList equalityCheck = new ArrayList();
                 TomList renamedTermList = linearizePattern(termList,equalityCheck);
