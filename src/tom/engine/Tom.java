@@ -303,7 +303,7 @@ public class Tom {
     }
   
     if(taskInput.isAtermStat()) {
-      System.out.println("\nStatistics:\n" + tomSignatureFactory);
+      System.out.println("\nStatistics:\n" + tomSignatureFactory.getPureFactory());
     }
   }
 } // class Tom
