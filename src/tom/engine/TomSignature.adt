@@ -85,7 +85,6 @@ constructor(TomTerm,MakeFunctionBegin,MakeFunctionBegin(<astName(TomName)>,<subj
 constructor(TomTerm,MakeFunctionEnd,MakeFunctionEnd),
 constructor(TomTerm,Appl,Appl(<option(Option)>,<astName(TomName)>,<args(TomList)>)),
 constructor(TomTerm,XMLAppl,XMLAppl(<option(Option)>,<astName(TomName)>,<attrList(TomList)>,<childList(TomList)>)),
-constructor(TomTerm,XMLAttribute,XMLAttribute(<field(TomTerm)>,<value(TomTerm)>)),
 constructor(TomTerm,BackQuoteAppl,BackQuoteAppl(<option(Option)>,<astName(TomName)>,<args(TomList)>)),
 constructor(TomTerm,Composite,Composite(<args(TomList)>)),
 constructor(TomTerm,RecordAppl,RecordAppl(<option(Option)>,<astName(TomName)>,<args(TomList)>)),
