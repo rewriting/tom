@@ -348,16 +348,9 @@ public class TomCompiler extends TomTask {
     TomTerm renamedTerm = subject;
     
     %match(TomTerm subject) {
-      UnamedVariable[option=optionList,astType=type,constraints=constraint] -> {
-        //OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxMultiplicityMap,equalityCheck);
-        ConstraintList newConstraintList = `renameVariableInConstraintList(constraint,multiplicityMap,maxMultiplicityMap,equalityCheck);
-        return `UnamedVariable(optionList,type,newConstraintList);
-      }
-      
-      UnamedVariableStar[option=optionList,astType=type,constraints=constraint] -> {
-        //OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxMultiplicityMap,equalityCheck);
-        ConstraintList newConstraintList = `renameVariableInConstraintList(constraint,multiplicityMap,maxMultiplicityMap,equalityCheck);
-        return `UnamedVariableStar(optionList,type,newConstraintList);
+      var@(UnamedVariable|UnamedVariableStar)[constraints=constraints] -> {
+        ConstraintList newConstraintList = `renameVariableInConstraintList(constraints,multiplicityMap,maxMultiplicityMap,equalityCheck);
+        return var.setConstraints(newConstraintList);
       }
 
 			Variable[option=optionList,astName=name,astType=type,constraints=clist] -> {
