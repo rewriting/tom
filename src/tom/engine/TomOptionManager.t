@@ -156,15 +156,18 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   public Object getOptionValue(String name) {
     PlatformOption option = getOptionFromName(name);
-    %match(PlatformOption option) {
-      PluginOption[value=BooleanValue(True())]  -> { return new Boolean(true); }
-      PluginOption[value=BooleanValue(False())] -> { return new Boolean(false); }
-      PluginOption[value=IntegerValue(value)]   -> { return new Integer(`value); }
-      PluginOption[value=StringValue(value)]    -> { return `value; }
+    if(option != null) {
+      %match(PlatformOption option) {
+        PluginOption[value=BooleanValue(True())]  -> { return new Boolean(true); }
+        PluginOption[value=BooleanValue(False())] -> { return new Boolean(false); }
+        PluginOption[value=IntegerValue(value)]   -> { return new Integer(`value); }
+        PluginOption[value=StringValue(value)]    -> { return `value; }
+      }
+    } else {
+      getLogger().log(Level.SEVERE,"OptionNotFound",name);
+      throw new RuntimeException();
     }
-    
-    getLogger().log(Level.SEVERE,"OptionNotFound",name);
-    throw new RuntimeException();
+    return null;
   }
 
   /**
@@ -254,20 +257,18 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
       getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
-      throw new RuntimeException();
     }
     return option;
   }
-
+  
   private PlatformOption setOptionFromName(String name, PlatformOption option) {
     return (PlatformOption)mapNameToOption.put(getCanonicalName(name),option);
   }
-
+  
   private OptionOwner getOptionOwnerFromName(String name) {
     OptionOwner plugin = (OptionOwner)mapNameToOptionOwner.get(getCanonicalName(name));
     if(plugin == null) {
       getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
-      throw new RuntimeException();
     }
     return plugin;
   }
@@ -339,12 +340,17 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 
       concPlatformOption(PluginOption[name=name,value=value],tail*) -> {
         PlatformOption option = getOptionFromName(`name);
-        PlatformValue localValue = option.getValue();
-        if(`value != localValue) {
+        if(option !=null) {
+          PlatformValue localValue = option.getValue();
+          if(`value != localValue) {
+            getLogger().log(Level.SEVERE, "IncorrectOptionValue", new Object[]{`name,`value,getOptionValue(`name)});
+            return false;
+          } else {
+            return checkOptionDependency(`tail*);
+          }
+        } else {
           getLogger().log(Level.SEVERE, "IncorrectOptionValue", new Object[]{`name,`value,getOptionValue(`name)});
           return false;
-        } else {
-          return checkOptionDependency(`tail*);
         }
       }
     }
@@ -387,8 +393,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
             return null;
           }
           if( argument.equals("X") ) {
-            // if we're here, the PluginPlatform has already handled the "-X" option
-            // and all errors that might occur
             // just skip it,along with its argument
             i++;
             continue;
@@ -413,11 +417,12 @@ public class TomOptionManager implements OptionManager, OptionOwner {
             }
           }
 
-          OptionOwner plugin = getOptionOwnerFromName(argument);
           PlatformOption option = getOptionFromName(argument);
+          OptionOwner plugin = getOptionOwnerFromName(argument);
 
           if(option == null || plugin == null) {// option not found
             getLogger().log(Level.SEVERE, "InvalidOption", argumentList[i]);
+            displayHelp();
             return null;
           } else {
             %match(PlatformOption option) {

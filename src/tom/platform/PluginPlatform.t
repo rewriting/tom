@@ -96,7 +96,6 @@ public class PluginPlatform {
     for(int i = 0; i < inputToCompileList.size(); i++) {
       // for each input
       Object arg = inputToCompileList.get(i);
-      System.out.println("Compiling: "+arg);
       getLogger().log(Level.FINER, "NowCompiling", arg);
       // runs the modules
       Iterator it = pluginsList.iterator();

@@ -61,7 +61,6 @@ public class Tom {
   }
   
   public static int exec(String[] commandLine) {
-    System.out.println("Tom Compiler "+Tom.VERSION+" 2000-2004 tom.loria.fr\n");
     try {
       initializeLogging();
     } catch(Exception e) {
@@ -71,10 +70,11 @@ public class Tom {
       return 1;
     }
     PluginPlatform platform =
-      PluginPlatformFactory.getInstance().create(commandLine, Tom.LOG_RADICAL); 
+      PluginPlatformFactory.getInstance().create(commandLine,Tom.LOG_RADICAL); 
     if(platform == null) {
       return 1;
     }
+    System.out.println("Tom Compiler "+Tom.VERSION+" 2000-2004 tom.loria.fr\n");
     return platform.run();
   }
    
