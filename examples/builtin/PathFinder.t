@@ -5,18 +5,16 @@ public class PathFinder {
   public final static void main(String[] args) {
     PathFinder test = new PathFinder();
     
-    //test.f("hello");
+    test.f("hello");
+
     String s = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
-    //System.out.println(test.f2(s));
-    test.f2(s);
+    //test.f2(s);
   }
 
-  /*
-  public void f(String s) {
-    Character l = `Char('l');
-    Character o = `Char('o');
+    
+  public String f(String s) {
     %match(String s) {
-      ("he",X1*,x@Char('l'),y@Char('o'),_*) -> {
+      ("he",X1*,x@"l",y@"o",_*) -> {
         System.out.println("X1   = " + X1);
         System.out.println("char = " + x);
         System.out.println("char = " + y);
@@ -25,7 +23,7 @@ public class PathFinder {
       _        -> { return "unknown"; }
     }
   }
-  */
+  
 
   /*
   public String f2(String s) {
@@ -43,7 +41,7 @@ public class PathFinder {
     %match(String s) {
       
       (X1*,"b",X2*,"b",X3*,"b",X4*,"b",X5*,"b",X6*,"b",X7*) -> {
-      System.out.println(X1 + " " + X2 + " " + X3 + " " + X4 + " " + X5 + " " + X6 + " " + X7);
+      System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
       }
       //(X*,"b",_*,"b",_*,"b",_*,"b",_*,"b",_*,"b",_*) -> {
       // System.out.println("bingo " + cpt++);

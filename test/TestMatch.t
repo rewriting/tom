@@ -148,7 +148,7 @@ public class TestMatch {
     ATerm res = fail;
     %match(E t) {
       h(l(conc(X1*,x,y,X2*)),y)                -> { return pattern1; }
-      h(l(conc(X1*,x,X2*)),l(conc(Y1*,y,X2*))) -> { if(!X2.isEmpty())
+      h(l(conc(X1*,x,X2*)),l(conc(Y1*,y,X2*))) -> { if(!`X2.isEmpty())
                                                       return pattern2; }
       l(conc(X1*,Y1*,X2*,l(conc(Y1*)),X3*))    -> { return pattern3; }
     }

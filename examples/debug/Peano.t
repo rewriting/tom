@@ -23,7 +23,7 @@ public class Peano {
     is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
   }
   
-  %op term suc(pred:term) {
+  %op term suc(term) {
     fsym { fsuc }
     make(t) { factory.makeAppl(fsuc,t) }
   }
@@ -51,11 +51,15 @@ public class Peano {
     test.run();
   }
 
+  private ATerm id(ATerm t) {
+    return t;
+  }
+  
   public ATerm plus1(ATerm t1, ATerm t2) {
     System.out.println("entering plus1 function");
     %match(term t1, term t2) {
       x,zero()   -> { return x; }
-      x,suc(y) -> { return suc(plus1(x,y)); }
+      x,suc(y) -> { return `suc(plus1(x,y)); }
     }
     return null;
   }
@@ -84,7 +88,7 @@ public class Peano {
   public int peano2int(ATerm N) {
     %match(term N) {
       zero() -> { return 0; }
-      suc(x) -> {return 1+peano2int(x); }
+      suc(x) -> {return `1+peano2int(x); }
     }
     return 0;
   }

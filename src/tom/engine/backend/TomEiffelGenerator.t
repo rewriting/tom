@@ -141,6 +141,10 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     }
   }
 
+  protected void buildExpCast(int deep, TomType tlType, Expression exp) throws IOException {
+    generateExpression(deep,exp);
+  }
+
   protected void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
     System.out.println("buildLet code not yet implemented");
@@ -217,6 +221,31 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		output.writeln(deep+1,";");
 		output.writeln(deep,"end;");
 	}
+
+    protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException {
+    output.write("tom_get_head_" + getTomType(domain) + "(");
+    generate(deep,var);
+    output.write(")");
+  }
+
+  protected void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException {
+    output.write("tom_get_element_" + getTomType(domain) + "(");
+    generate(deep,varName);
+    output.write(",");
+    generate(deep,varIndex);
+    output.write(")");
+  }
+
+    protected void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException {
+    String s = (String)getSubtermMap.get(domain);
+    if(s == null) {
+      s = "tom_get_subterm_" + getTomType(domain) + "(";
+      getSubtermMap.put(domain,s);
+    }
+    output.write(s);
+    generate(deep,exp);
+    output.write(", " + number + ")");
+  }
 
 	protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
     String args[];

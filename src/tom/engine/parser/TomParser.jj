@@ -1044,7 +1044,8 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
         }
     
   // #TEXT(...)
-  | <XML_TEXT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
+//  | <XML_TEXT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
+       | <XML_TEXT> <TOM_LPAREN> arg1 = PlainTerm(null) <TOM_RPAREN>
     {
       keyword = Constants.TEXT_NODE;
       list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));

@@ -56,7 +56,8 @@ public class TomOptimizer extends TomTask {
       boolean verbose = getInput().isVerbose();
       if(verbose) { startChrono = System.currentTimeMillis();}
       
-      TomTerm optimizedTerm = optimize(getInput().getTerm());
+      TomTerm renamedTerm = getInput().getTerm();
+      TomTerm optimizedTerm = optimize(renamedTerm);
       
       if(verbose) {
         System.out.println("TOM optimization phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
@@ -112,18 +113,18 @@ public class TomOptimizer extends TomTask {
                              "Variable `{0}` is never used",
                              new Object[]{name},
                              TomCheckerMessage.TOM_WARNING);
-                System.out.println(name + " --> " + mult + ": remove");
+                System.out.println(mult + " -> remove:     " + name);
                 return optimizeInstruction(body); 
               } else if(mult == 1) {
                 if(expConstantInBody(exp,body)) {
-                  System.out.println(name + " --> " + mult + ": inline");
+                  System.out.println(mult + " -> inline:     " + name);
                   return optimizeInstruction(inlineInstruction(var,exp,body));
                 } else {
-                  System.out.println(name + " --> " + mult + ": cannot inline");
+                  System.out.println(mult + " -> no inline:  " + name);
                 }
               } else {
                   /* do nothing: traversal */
-                System.out.println(name + " --> " + mult + ": do nothing");
+                System.out.println(mult + " -> do nothing: " + name);
               }
             }
 

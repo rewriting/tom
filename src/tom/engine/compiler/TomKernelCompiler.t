@@ -244,7 +244,7 @@ public class TomKernelCompiler extends TomBase {
         return buildAnnotedLet(optionList, source, var, subAction);
       }
       
-      manyTomList(term@Appl(optionList,nameList@(Name(tomName),_*),termArgs),termTail) -> {
+      manyTomList(currentTerm@Appl(optionList,nameList@(Name(tomName),_*),termArgs),termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
@@ -296,7 +296,7 @@ public class TomKernelCompiler extends TomBase {
           automataInstruction = buildLet(annotedVariable,`TomTermToExpression(subjectVariableAST),automataInstruction);
         }
         
-        Expression cond = `expandDisjunction(EqualFunctionSymbol(subjectVariableAST,term));
+        Expression cond = `expandDisjunction(EqualFunctionSymbol(termType,subjectVariableAST,currentTerm));
         Instruction test = `IfThenElse(cond,automataInstruction,Nop());
         return test;
       }
@@ -345,7 +345,7 @@ public class TomKernelCompiler extends TomBase {
         Instruction subAction = genListMatchingAutomata(p,termTail,indexTerm+1);
      
         Instruction body = `UnamedBlock(concInstruction(Assign(p.subjectListName,GetTail(Ref(p.subjectListName))),subAction));
-        Expression source = `GetHead(Ref(p.subjectListName));
+        Expression source = `GetHead(termType,Ref(p.subjectListName));
         Instruction let = buildAnnotedLet(optionList, source, var, body);
         Instruction test = `IfThenElse(Not(IsEmptyList(Ref(p.subjectListName))),
                                        let, Nop());
@@ -425,7 +425,8 @@ public class TomKernelCompiler extends TomBase {
         TomTerm var =  `Variable(option(),PositionName(newPath),termType,concConstraint());
 
         Instruction body = `UnamedBlock(concInstruction(Assign(p.subjectListName,GetTail(Ref(p.subjectListName))),subAction));
-        Expression source = `GetHead(Ref(p.subjectListName));
+        Expression source = `GetHead(termType,Ref(p.subjectListName));
+        //Instruction let = buildAnnotedLet(optionList, source, var, body);
         //Instruction let = `Let(var, source, body);
         Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyList(Ref(p.subjectListName))),
@@ -478,7 +479,7 @@ public class TomKernelCompiler extends TomBase {
         Instruction subAction = genArrayMatchingAutomata(p,termTail,indexTerm+1);
 
         Instruction body = `UnamedBlock(concInstruction(Increment(p.subjectListIndex),subAction));
-        Expression source = `GetElement(p.subjectListName,p.subjectListIndex);
+        Expression source = `GetElement(termType,p.subjectListName,p.subjectListIndex);
         Instruction let = buildAnnotedLet(optionList, source, var, body);
         Instruction test = `IfThenElse(Not(IsEmptyArray(Ref(p.subjectListName),Ref(p.subjectListIndex))),
                                        let, Nop());
@@ -563,7 +564,8 @@ public class TomKernelCompiler extends TomBase {
         TomTerm var =  `Variable(option(),PositionName(newPath),termType,concConstraint());
 
         Instruction body = `UnamedBlock(concInstruction(Increment(p.subjectListIndex),subAction));
-        Expression source = `GetElement(p.subjectListName,p.subjectListIndex);
+        Expression source = `GetElement(termType,p.subjectListName,p.subjectListIndex);
+        //Instruction let = buildAnnotedLet(optionList, source, var, body);
         //Instruction let = `Let(var, source, body);
         Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyArray(Ref(p.subjectListName),Ref(p.subjectListIndex))),
@@ -598,11 +600,11 @@ public class TomKernelCompiler extends TomBase {
             // Do not assign the subterm: skip the subterm 
           return body;
         } else {
-          TomType subtermType    = termTypeList.getHead();
+          TomType subtermType = termTypeList.getHead();
           Expression getSubtermAST;
           TomName slotName = getSlotName(tomSymbol, indexSubterm);
           if(slotName == null) {
-            getSubtermAST = `GetSubterm(subjectVariableAST,makeNumber(indexSubterm));
+            getSubtermAST = `GetSubterm(subtermType,subjectVariableAST,makeNumber(indexSubterm));
           } else {
             getSubtermAST = `GetSlot(termNameAST,slotName.getString(),subjectVariableAST);
           }
@@ -619,10 +621,10 @@ public class TomKernelCompiler extends TomBase {
   private Expression expandDisjunction(Expression exp) {
     Expression cond = `FalseTL();
     %match(Expression exp) {
-      EqualFunctionSymbol(var@Variable[],Appl(option,nameList,l)) -> {
+      EqualFunctionSymbol(termType,exp1,Appl(option,nameList,l)) -> {
         while(!nameList.isEmpty()) {
           TomName name = nameList.getHead();
-          Expression check = `EqualFunctionSymbol(var,Appl(option,concTomName(name),l));
+          Expression check = `EqualFunctionSymbol(termType,exp1,Appl(option,concTomName(name),l));
           cond = `Or(check,cond);
           nameList = nameList.getTail();
         }

@@ -53,8 +53,8 @@ struct term *suc(struct term *x) {
 
 struct term *plus(struct term *t1, struct term *t2) {
   %match(term t1, term t2) {
-    x,zero()   -> { return(x); }
-    x,suc(y) -> { return(suc(plus(x,y))); }
+    x,zero()   -> { return `(x); }
+    x,suc(y) -> { return (suc(plus(`x,`y))); }
   }
 }
 
@@ -62,14 +62,14 @@ struct term *fib(struct term *t) {
   %match(term t) {
     zero()        -> { return(suc(zero)); }
     suc(zero())   -> { return(suc(zero)); }
-    suc(suc(x)) -> { return(plus(fib(x),fib(suc(x)))); }
+    suc(suc(x)) -> { return(plus(fib(`x),fib(suc(`x)))); }
   }
 }
 
 int count(struct term *t) {
   %match(term t) {
     zero()        -> { return 0; }
-    suc(x)   -> { return 1 + count(x); }
+    suc(x)   -> { return 1 + count(`x); }
   }
 }
 

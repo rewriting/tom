@@ -111,14 +111,14 @@ public class Array {
   public ArrayList sort1(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
-        String xname = ((ATermAppl)x).getName();
-        String yname = ((ATermAppl)y).getName();
+        String xname = ((ATermAppl)`x).getName();
+        String yname = ((ATermAppl)`y).getName();
         if(xname.compareTo(yname) > 0) {
-          ArrayList result = X1;
-          result.add(y);
-          result.addAll(X2);
-          result.add(x);
-          result.addAll(X3);
+          ArrayList result = `X1;
+          result.add(`y);
+          result.addAll(`X2);
+          result.add(`x);
+          result.addAll(`X3);
           return sort1(result);
         }
       }
@@ -131,10 +131,10 @@ public class Array {
   public ArrayList double1(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,x,X3*) -> {
-        ArrayList result = X1;
-        result.addAll(X2);
-        result.add(x);
-        result.addAll(X3);
+        ArrayList result = `X1;
+        result.addAll(`X2);
+        result.add(`x);
+        result.addAll(`X3);
         return double1(result);
       }
       
@@ -145,8 +145,8 @@ public class Array {
   public ArrayList sort2(ArrayList l) {
     %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
-        String xname = ((ATermAppl)x).getName();
-        String yname = ((ATermAppl)y).getName();
+        String xname = ((ATermAppl)`x).getName();
+        String yname = ((ATermAppl)`y).getName();
         if(xname.compareTo(yname) > 0) {
           return `sort2(conc(X1*,y,X2*,x,X3*));
         }

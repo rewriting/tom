@@ -72,16 +72,16 @@ public class List {
   public ATermList sort1(ATermList l) {
     %match(L l) {
       conc(X1*,x,X2*,y,X3*) -> {
-        String xname = ((ATermAppl)x).getName();
-        String yname = ((ATermAppl)y).getName();
+        String xname = ((ATermAppl)`x).getName();
+        String yname = ((ATermAppl)`y).getName();
         
         if(xname.compareTo(yname) > 0) {
           return sort1(
-            X1
-            .append(y)
-            .concat(X2)
-            .append(x)
-            .concat(X3)
+            `X1
+            .append(`y)
+            .concat(`X2)
+            .append(`x)
+            .concat(`X3)
             );
         }
       }
@@ -94,10 +94,10 @@ public class List {
     %match(L l) {
       conc(X1*,x,X2*,x,X3*) -> {
         return double1(
-          X1
-          .concat(X2)
-          .append(x)
-          .concat(X3)
+          `X1
+          .concat(`X2)
+          .append(`x)
+          .concat(`X3)
           );
       }
       
@@ -108,8 +108,8 @@ public class List {
   public ATermList sort2(ATermList l) {
     %match(L l) {
       conc(X1*,x,y,X2*) -> {
-        String xname = ((ATermAppl)x).getName();
-        String yname = ((ATermAppl)y).getName();
+        String xname = ((ATermAppl)`x).getName();
+        String yname = ((ATermAppl)`y).getName();
         if(xname.compareTo(yname) > 0) {
           return `sort2(conc(X1*,y,x,X2*));
         }

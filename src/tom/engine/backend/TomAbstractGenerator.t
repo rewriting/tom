@@ -48,11 +48,11 @@ public abstract class TomAbstractGenerator extends TomBase {
     super(environment);
 	  this.output = output;
     this.input = input;
-		this.debugMode = input.isDebugMode();
-		this.strictType = input.isStrictType();
-		this.staticFunction = input.isStaticFunction();
-		this.genDecl = input.isGenDecl();
-		this.pretty = input.isPretty();
+    this.debugMode = input.isDebugMode();
+    this.strictType = input.isStrictType();
+    this.staticFunction = input.isStaticFunction();
+    this.genDecl = input.isGenDecl();
+    this.pretty = input.isPretty();
   }
 
 // ------------------------------------------------------------
@@ -204,36 +204,29 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      EqualFunctionSymbol(var@Variable[astType=type1],
+      EqualFunctionSymbol(type, exp,
                           Appl(option,(Name(tomName)),l)) -> { // needs to be checked
-        buildExpEqualFunctionVarAppl(deep, var, type1, tomName);
-        return;
-      }
-      
-      EqualFunctionSymbol(var1@Variable[astType=type1],var2) -> {
-          //System.out.println("EqualFunctionSymbol(...," + var2 + ")");
-        String s = var2.toString();
-        buildExpEqualFunctionVarVar(deep, type1, var1, s);
+        buildEqualFunctionSymbol(deep, type, exp, tomName);
         return;
       }
 
-      EqualTerm(var1@Variable[astType=type1],var2) -> {
-        buildExpEqualTermVar(deep, type1, var1, var2);
+      EqualTerm(exp1,exp2) -> {
+        buildExpEqualTerm(deep, getTermType(exp1), exp1, exp2);
         return;
       }
 
-      EqualTerm(var1@VariableStar[astType=type1],var2) -> {
-        buildExpEqualTermVarStar(deep, type1, var1, var2);
+      IsFsym(Name(opname), exp) -> {
+        buildExpIsFsym(deep, opname, exp);
         return;
       }
 
-      IsFsym(Name(opname), var@Variable[option=option1,astName=PositionName(l1),astType=type1]) -> {
-        buildExpIsFsym(deep, opname, var);
+      Cast(Type(_,tlType@TLType[]),exp) -> {
+        buildExpCast(deep, tlType, exp);
         return;
       }
 
-      GetSubterm(var@Variable[option=option1,astName=PositionName(l1),astType=type1],Number(number)) -> {
-        buildExpGetSubterm(deep, var, type1, number);
+      GetSubterm(codomain, exp, Number(number)) -> {
+        buildExpGetSubterm(deep, getTermType(exp), codomain, exp, number);
         return;
       }
 
@@ -242,8 +235,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetHead(var@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1])) -> {
-        buildExpGetHead(deep, type1, var);
+      GetHead(codomain,exp) -> {
+        buildExpGetHead(deep, getTermType(exp), codomain, exp);
         return;
       }
 
@@ -257,40 +250,17 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetElement( varName@Variable[option=option1,astName=PositionName(l1),astType=type1],
-                  varIndex@Variable[option=option2,astName=PositionName(l2),astType=type2]) -> {
-        buildExpGetElement(deep, type1, varName, varIndex);
+      GetElement(codomain, varName, varIndex) -> {
+        buildExpGetElement(deep,getTermType(varName),codomain, varName, varIndex);
         return;
       }
 
-      GetSliceList(Name(name),
-                   varBegin@Variable[option=option1,astName=PositionName(l1),astType=type1],
-                   varEnd@Ref(Variable[option=option2,astName=PositionName(l2),astType=type2])) -> {
-        
+      GetSliceList(Name(name), varBegin, varEnd) -> {
         buildExpGetSliceList(deep, name, varBegin, varEnd);
         return;
       }
 
-      GetSliceArray(Name(name),
-                    varArray@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1]),
-                    varBegin@Ref(Variable[option=option2,astName=PositionName(l2),astType=type2]),
-                    expEnd) -> {
-        buildExpGetSliceArray(deep, name, varArray, varBegin, expEnd);
-        return;
-      }
-
-      GetSliceArray(Name(name),
-                    varArray@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1]),
-                    varBegin@Variable[option=option2,astName=PositionName(l2),astType=type2],
-                    expEnd) -> {
-        buildExpGetSliceArray(deep, name, varArray, varBegin, expEnd);
-        return;
-      }
-
-      GetSliceArray(Name(name),
-                    varArray@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1]),
-                    varBegin@Ref(Variable[option=option2,astName=PositionName(l2),astType=type2]),
-                    expEnd) -> {
+      GetSliceArray(Name(name),varArray,varBegin,expEnd) -> {
         buildExpGetSliceArray(deep, name, varArray, varBegin, expEnd);
         return;
       }
@@ -692,17 +662,16 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpFalse(int deep) throws IOException;
   protected abstract void buildExpEmptyList(int deep, TomType type1, TomTerm var) throws IOException;
   protected abstract void buildExpEmptyArray(int deep, TomType type1, TomTerm varIndex, TomTerm varArray) throws IOException;
-  protected abstract void buildExpEqualFunctionVarAppl(int deep, TomTerm var, TomType type1, String tomName) throws IOException;
-  protected abstract void buildExpEqualFunctionVarVar(int deep, TomType type1, TomTerm var1, String var2) throws IOException;
-  protected abstract void buildExpEqualTermVar(int deep, TomType type1, TomTerm var1,TomTerm var2) throws IOException;
-  protected abstract void buildExpEqualTermVarStar(int deep, TomType type1, TomTerm var1, TomTerm var2) throws IOException;
+  protected abstract void buildEqualFunctionSymbol(int deep, TomType type1, TomTerm var, String tomName) throws IOException;
+  protected abstract void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2) throws IOException;
   protected abstract void buildExpIsFsym(int deep, String opname, TomTerm var) throws IOException;
-  protected abstract void buildExpGetSubterm(int deep, TomTerm var, TomType type1, int number) throws IOException;
-  protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm var) throws IOException;
-  protected abstract void buildExpGetHead(int deep, TomType type1, TomTerm var) throws IOException;
+  protected abstract void buildExpCast(int deep, TomType type, Expression exp) throws IOException;
+  protected abstract void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException;
+  protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm exp) throws IOException;
+  protected abstract void buildExpGetHead(int deep, TomType doamin, TomType codomain, TomTerm var) throws IOException;
   protected abstract void buildExpGetTail(int deep, TomType type1, TomTerm var) throws IOException;
   protected abstract void buildExpGetSize(int deep, TomType type1, TomTerm var) throws IOException;
-  protected abstract void buildExpGetElement(int deep, TomType type1, TomTerm varName, TomTerm varIndex) throws IOException;
+  protected abstract void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
   protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd) throws IOException;
   protected abstract void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd) throws IOException;
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException ;

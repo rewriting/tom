@@ -63,24 +63,28 @@ public class List {
     System.out.println("res = " + res);
   }
 
+  private ATerm id(ATerm t) {
+    return t;
+  }
+
   public ATermList sort2(ATermList l) {
     %match(L l) {
-      /*
+      
       conc(X1*,x,y,X2*) -> {
-        String xname = ((ATermAppl)x).getName();
-        String yname = ((ATermAppl)y).getName();
+        String xname = ((ATermAppl) `x).getName();
+        String yname = ((ATermAppl) `(y)).getName();
         if(xname.compareTo(yname) > 0) {
           return `sort2(conc(X1*,y,x,X2*));
         }
       }
-      */
+        /*
       conc(X1*,f(x),X2*) -> {
         if(x == `a()) {
           System.out.println("bingo");
           return l;
         }
       }
-
+*/
 
       _ -> { return l; }
     }

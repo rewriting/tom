@@ -72,9 +72,13 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     while(!argList.isEmpty()) {
       TomTerm elt = argList.getHead();
 
+        //System.out.println("elt = " + elt);
+      
       matchBlock: {
         %match(TomTerm elt) {
           VariableStar[] |
+          ExpressionToTomTerm(GetSliceList[]) |
+          Ref(Variable[]) |
           Composite(concTomTerm(VariableStar[])) |  
           Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
           Composite(concTomTerm(Variable[])) |
@@ -114,7 +118,14 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 			
 			matchBlock: {
 				%match(TomTerm elt) {
-					Composite(concTomTerm(VariableStar[])) | VariableStar[] -> {
+          VariableStar[] |
+          ExpressionToTomTerm(GetSliceArray[]) |
+          Ref(Variable[]) |
+          Composite(concTomTerm(VariableStar[])) |  
+          Composite(concTomTerm(ExpressionToTomTerm(GetSliceArray[]))) |
+          Composite(concTomTerm(Variable[])) |
+          Composite(concTomTerm(Ref(Variable[]))) 
+                                      -> {
 						output.write("tom_append_array_" + name + "(");
 						generate(deep,elt);
 						output.write(",");
@@ -197,11 +208,17 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     generate(deep,term);
   }
 
+  protected void buildExpCast(int deep, TomType tlType, Expression exp) throws IOException {
+    output.write("((" + getTLCode(tlType) + ")");
+    generateExpression(deep,exp);
+    output.write(")");
+  }
+  
   protected void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
     output.write(deep,"{" + getTLCode(tlType) + " ");
     generate(deep,var);
-    output.write(" = (" + getTLCode(tlType) + ") ");
+    output.write(deep,"=");
     generateExpression(deep,exp);
     output.writeln(";");
 
@@ -222,20 +239,20 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     buildLet(deep,var,list,type,tlType,exp,body);
   }
 
-	protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
-		output.indent(deep);
-		generate(deep,var);
-		output.write(" = (" + getTLCode(tlType) + ") ");
-		generateExpression(deep,exp);
-		output.writeln(";");
-		if(debugMode && !list.isEmpty()) {
-			output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
-			generate(deep,var);
-			output.write("\", ");
-			generate(deep,var); // generateExpression(out,deep,exp);
-			output.writeln(");");
-		}
-	}
+  protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
+    output.indent(deep);
+    generate(deep,var);
+    output.write(" = (" + getTLCode(tlType) + ") ");
+    generateExpression(deep,exp);
+    output.writeln(";");
+    if(debugMode && !list.isEmpty()) {
+      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      generate(deep,var);
+      output.write("\", ");
+      generate(deep,var); // generateExpression(out,deep,exp);
+      output.writeln(");");
+    }
+  }
 
   protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
     output.writeln("{");
@@ -275,6 +292,32 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 		output.writeln(deep,";");
   }
 
+  protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException {
+    output.write("((" + getTLType(codomain) + ")tom_get_head_" + getTomType(domain) + "(");
+    generate(deep,var);
+    output.write("))");
+  }
+
+  protected void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException {
+    TomType type = `TypesToType(concTomType(domain),codomain);
+    String s = (String)getSubtermMap.get(type);
+    if(s == null) {
+      s = "((" + getTLType(codomain) + ")tom_get_subterm_" + getTomType(domain) + "(";
+      getSubtermMap.put(type,s);
+    }
+    output.write(s);
+    generate(deep,exp);
+    output.write(", " + number + "))");
+  }
+
+  protected void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException {
+    output.write("((" + getTLType(codomain) + ")tom_get_element_" + getTomType(domain) + "(");
+    generate(deep,varName);
+    output.write(",");
+    generate(deep,varIndex);
+    output.write("))");
+  }
+  
 protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
     String args[];
     if(strictType) {

@@ -154,7 +154,13 @@ public class TomBase {
   }
 
   protected String getTLType(TomType type) {
-    return getTLCode(type.getTlType());
+    %match(TomType type) {
+      TLType[]  -> { return getTLCode(type); }
+      Type[tlType=tlType] -> { return getTLCode(tlType); }
+      _ -> {
+        throw new TomRuntimeException(new Throwable("getTLType error on term: " + type));
+      }
+    }
   }
 
   protected String getTLCode(TomType type) {
@@ -225,10 +231,9 @@ public class TomBase {
 		throw new TomRuntimeException(new Throwable("getSymbolCode error on term: " + symbol));
       }
     }
-  }
+  } 
 
   protected TomType getTermType(TomTerm t){
-      //%variable
     %match(TomTerm t) {
       Appl(option, (Name(tomName),_*), subterms) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
@@ -238,8 +243,13 @@ public class TomBase {
       Variable[astType=type] |
       VariableStar[astType=type] |
       UnamedVariable[astType=type] |
-      UnamedVariableStar[astType=type] -> { return type; }
+      UnamedVariableStar[astType=type]
+        -> { return type; }
 
+      ExpressionToTomTerm(GetSubterm[variable=term]) |
+      Ref(term)
+        -> { return getTermType(term); }
+      
       _ -> {
         System.out.println("getTermType error on term: " + t);
         throw new TomRuntimeException(new Throwable("getTermType error on term: " + t));

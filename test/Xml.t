@@ -71,7 +71,7 @@ public class Xml {
     %match(TNode list) {
       <IntegerList>[<(Int|Integer)>(#TEXT(s1))</(Int|Integer)>,
                     <(Integer|Int)>(#TEXT(s2))</(Integer|Int)>]</IntegerList> -> {
-        if(s1.compareTo(s2) > 0) { return false; }
+        if(`s1.compareTo(`s2) > 0) { return false; }
       }
     }
     return true;    
@@ -83,7 +83,7 @@ public class Xml {
                             n1@<_ []>#TEXT(s1)</_>,
                             n2@<(Integer|Int) []>#TEXT(s2)</(Integer|Int)>,
                             X2*)</IntegerList> -> {
-        if(s1.compareTo(s2) < 0) {
+        if(`s1.compareTo(`s2) < 0) {
           return `xml(swapElements(<IntegerList attr*>X1* n2 n1 X2*</IntegerList>));
         }
       }
@@ -96,7 +96,7 @@ public class Xml {
     %match(TNode list) {
       <IntegerList>
          <(Integer|Int)>(#TEXT(s1))</(Integer|Int)>
-      </IntegerList> -> { res.add(s1); }
+      </IntegerList> -> { res.add(`s1); }
     }
     return res;
   }
