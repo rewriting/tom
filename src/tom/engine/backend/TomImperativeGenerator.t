@@ -198,9 +198,9 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 	}
 	
 	protected void buildExpNot(int deep, Expression exp) {
-		out.write("!(");
-		generateExpression(out,deep,exp);
-		out.write(")");
+		output.write("!(");
+		generateExpression(deep,exp);
+		output.write(")");
 	}
 
   protected abstract void buildExpTrue(int deep);

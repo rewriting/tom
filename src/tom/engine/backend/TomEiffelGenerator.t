@@ -54,50 +54,50 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 // ------------------------------------------------------------
 
  	protected void buildTerm(int deep, String name, TomList argList) {
-		out.write("tom_make_");
-		out.write(name);
+		output.write("tom_make_");
+		output.write(name);
 		if(argList.isEmpty()) { // strange ?
 		} else {
-			out.writeOpenBrace();
+			output.writeOpenBrace();
 			while(!argList.isEmpty()) {
-				generate(out,deep,argList.getHead());
+				generate(deep,argList.getHead());
 				argList = argList.getTail();
 				if(!argList.isEmpty()) {
-              out.writeComa();
+              output.writeComa();
 				}
 			}
-			out.writeCloseBrace();
+			output.writeCloseBrace();
 		}
 	}
 
 	protected void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType) {
-		generate(out,deep,var);
-		out.write(deep,": " + getTLCode(tlType));
-		out.writeln(";");
+		generate(deep,var);
+		output.write(deep,": " + getTLCode(tlType));
+		output.writeln(";");
 	}
 	
 	protected void buildDeclarationStar(int deep, TomTerm var, String name, String type, TomType tlType) {
-		generate(out,deep,var);
-		out.write(deep,": " + getTLCode(tlType));
-		out.writeln(";");
+		generate(deep,var);
+		output.write(deep,": " + getTLCode(tlType));
+		output.writeln(";");
 	}
 
 	protected void buildFunctionBegin(int deep, String tomName, TomList varList) {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String glType = getTLType(getSymbolCodomain(tomSymbol));
         String name = tomSymbol.getAstName().getString();
-				out.write(deep,name + "(");
+				output.write(deep,name + "(");
 				while(!varList.isEmpty()) {
           TomTerm localVar = varList.getHead();
           matchBlock: {
             %match(TomTerm localVar) {
               v@Variable(option2,name2,type2) -> {
                 if(cCode || jCode) {
-                  out.write(deep,getTLType(type2) + " ");
-                  generate(out,deep,v);
+                  output.write(deep,getTLType(type2) + " ");
+                  generate(deep,v);
                 } else if(eCode) {
-                  generate(out,deep,v);
-                  out.write(deep,": " + getTLType(type2));
+                  generate(deep,v);
+                  output.write(deep,": " + getTLType(type2));
                 }
                 break matchBlock;
               }
@@ -110,39 +110,39 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
           varList = varList.getTail();
           if(!varList.isEmpty()) {
             if(cCode || jCode) {
-              out.write(deep,", ");
+              output.write(deep,", ");
             } else if(eCode) {
-              out.write(deep,"; ");
+              output.write(deep,"; ");
             }
           }
         }
-				out.writeln(deep,"): " + glType + " is");
-				out.writeln(deep,"local ");
+				output.writeln(deep,"): " + glType + " is");
+				output.writeln(deep,"local ");
 				//out.writeln(deep,"return null;");
 	}
 	
 	protected void buildFunctionEnd(int deep) {
-			out.writeln(deep,"end;");
+			output.writeln(deep,"end;");
 	}
 	
 	protected void buildExpNot(int deep, Expression exp) {
-		out.write("not ");
-		generateExpression(out,deep,exp);
+		output.write("not ");
+		generateExpression(deep,exp);
 	}
 
   protected void buildExpTrue(int deep) {
-		out.write(" true ");
+		output.write(" true ");
   }
   
   protected void buildExpFalse(int deep) {
-		out.write(" false ");
+		output.write(" false ");
   }
 
   protected void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType) {
-    out.indent(deep);
-    generate(out,deep,var);
+    output.indent(deep);
+    generate(deep,var);
 		if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
-			out.write(" := ");
+			output.write(" := ");
 		} else {
 			//out.write(" ?= ");
 			String assignSign = " := ";
@@ -151,24 +151,24 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 					assignSign = " ?= ";
 				}
 			}
-			out.write(assignSign);
+			output.write(assignSign);
 		}
     generateExpression(deep,exp);
-    out.writeln(";");
+    output.writeln(";");
     if(debugMode && !list.isEmpty()) {
-      out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
-      generate(out,deep,var);
-      out.write("\", ");
-      generate(out,deep,var); // generateExpression(out,deep,exp);
-      out.write(");\n");
+      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      generate(deep,var);
+      output.write("\", ");
+      generate(deep,var); // generateExpression(out,deep,exp);
+      output.write(");\n");
     }
   }
 	
 	protected void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType) {
-    out.indent(deep);
+    output.indent(deep);
     generate(deep,var);
 		if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
-			out.write(" := ");
+			output.write(" := ");
 		} else {
 			//out.write(" ?= ");
 			String assignSign = " := ";
@@ -177,16 +177,16 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 					assignSign = " ?= ";
 				}
 			}
-			out.write(assignSign);
+			output.write(assignSign);
     }
-    generateExpression(out,deep,exp);
-    out.writeln(";");
+    generateExpression(deep,exp);
+    output.writeln(";");
     if (debugMode) {
-      out.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
-      generateExpression(out,deep,exp);
-      out.write("\",");
-      generateExpression(out,deep,exp);
-      out.writeln(");");
+      output.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
+      generateExpression(deep,exp);
+      output.write("\",");
+      generateExpression(deep,exp);
+      output.writeln(");");
     }
   }
 
@@ -196,31 +196,31 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   }
 
   protected void buildIfThenElse(int deep, Expression exp, TomList succesList) {
-		out.write(deep,"if "); generateExpression(deep,exp); out.writeln(" then ");
+		output.write(deep,"if "); generateExpression(deep,exp); output.writeln(" then ");
 		generateList(deep+1,succesList);
-		out.writeln(deep,"end;");
+		output.writeln(deep,"end;");
   }
 
   protected void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) {
-		out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
-		generateList(out,deep+1,succesList);
-		out.writeln(deep," else ");
-		generateList(out,deep+1,failureList);
-		out.writeln(deep,"end;");
+		output.write(deep,"if "); generateExpression(deep,exp); output.writeln(" then ");
+		generateList(deep+1,succesList);
+		output.writeln(deep," else ");
+		generateList(deep+1,failureList);
+		output.writeln(deep,"end;");
   }
 
   protected void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp) {
-    out.indent(deep);
+    output.indent(deep);
     generate(deep,var);
-		out.write(" := ");
+		output.write(" := ");
     generateExpression(deep,exp);
-    out.writeln(";");
+    output.writeln(";");
     if(debugMode && !list.isEmpty()) {
-      out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
       generate(deep,var);
-      out.write("\", ");
+      output.write("\", ");
       generate(deep,var); // generateExpression(out,deep,exp);
-      out.write(");\n");
+      output.write(");\n");
     }
   }
 
@@ -230,11 +230,11 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   }
 
   protected void buildReturn(int deep, Expression exp) {
-		out.writeln(deep,"if Result = Void then");
-		out.write(deep+1,"Result := ");
-		generate(out,deep+1,exp);
-		out.writeln(deep+1,";");
-		out.writeln(deep,"end;");
+		output.writeln(deep,"if Result = Void then");
+		output.write(deep+1,"Result := ");
+		generate(deep+1,exp);
+		output.writeln(deep+1,";");
+		output.writeln(deep,"end;");
 	}
 
 	protected void buildGetSubtermDecl(int deep, String name1, String name2, TomType type1, TomType tlType1, TomType tlType2) {
