@@ -27,15 +27,19 @@ package tom.platform;
 
 import java.util.logging.*;
 
-public class BasicFormatter extends Formatter {
+public class PlatformFormatter extends Formatter {
   
   public String format(LogRecord record) {
-    if(record instanceof PlatformLogRecord) {
-    	PlatformLogRecord plr  = (PlatformLogRecord)record;
-    	return plr.getFilePath()+":"+plr.getLine()+":"+plr.getMessage()+"\n";
+    Level level = record.getLevel();
+    String levelString;
+    if(level.equals(Level.SEVERE)) { 
+      // SEVERE logs are labelled as errors
+      levelString = "ERROR:";
     } else {
-    	return formatMessage(record)+"\n";
+      // use the Level's name: for WARNING,CONFIG,FINE,FINER,FINEST... 
+      levelString = level.toString().toUpperCase()+ ":";
     }
+    return "Platform_"+levelString+formatMessage(record)+"\n";
   }
 
-} // class BasicFormatter
+} // class PlatformFormatter

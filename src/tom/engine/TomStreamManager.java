@@ -337,7 +337,6 @@ public class TomStreamManager {
         return file;
       }
     }
-    System.out.println(fileName+" not found");
     return null;
   }
 } //class TomStreamManager

@@ -181,8 +181,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
     getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage("DetailedMessage",
-                    new Object[]{fileName, new Integer(errorLine),
-                                 structInfo, new Integer(structDeclLine),
+                    new Object[]{structInfo, new Integer(structDeclLine),
                                  MessageFormat.format(msg,msgArgs)}),
 																 fileName, errorLine));
   }
@@ -196,8 +195,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
     getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("DetailedMessage",
-                    new Object[]{fileName, new Integer(errorLine),
-                                 structInfo, new Integer(structDeclLine),
+                    new Object[]{structInfo, new Integer(structDeclLine),
                                  MessageFormat.format(msg,msgArgs)}),
 																 fileName, errorLine));
   }

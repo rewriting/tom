@@ -30,13 +30,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.logging.Level;
 
 import jtom.TomMessage;
 import jtom.TomStreamManager;
 import jtom.exception.TomException;
-import jtom.exception.TomIncludeException;
 import jtom.tools.TomGenericPlugin;
 import jtom.tools.Tools;
 import tom.platform.OptionManager;
@@ -145,45 +146,38 @@ public class TomParserPlugin extends TomGenericPlugin {
       parser = newParser(currentFileName, getOptionManager(), getStreamManager());
       // parsing
       setWorkingTerm(parser.input());
-      
+      // verbose
       getLogger().log(Level.INFO, "TomParsingPhase",
                       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
-      //printAlertMessage(errorsAtStart, warningsAtStart);
     } catch (TokenStreamException e) {
-      e.printStackTrace();
-      getLogger().log(new PlatformLogRecord(Level.SEVERE,TomMessage.getMessage("TokenStreamException",
-                      new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()}),
+    	StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
+      								TomMessage.getMessage("TokenStreamException",sw.toString()),
 											currentFileName, getLineFromTomParser()));
       return;
-      //return result.addError(e.getMessage(), currentFileName, getLineFromTomParser());
     } catch (RecognitionException e){
-      e.printStackTrace();
-      getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage("RecognitionException",
-                      new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()}),
+    	StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      getLogger().log(new PlatformLogRecord(Level.SEVERE,
+      								TomMessage.getMessage("RecognitionException", sw.toString()),
                       currentFileName, getLineFromTomParser()));
       return;
-      //return result.addError(e.getMessage(), currentFileName, getLineFromTomParser());
-    } catch (TomIncludeException e) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage("SimpleMessage",
-                      new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()}),
-                      currentFileName, getLineFromTomParser()));
-      return;
-      //return result.addError(e.getMessage(), currentFileName, getLineFromTomParser());
     } catch (TomException e) {
-    	 getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage("SimpleMessage",
-          new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()}),
+    	 getLogger().log(new PlatformLogRecord(Level.SEVERE, e.getMessage(),
           currentFileName, getLineFromTomParser()));
       return;
     } catch (FileNotFoundException e) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage("FileNotFound",
-                      new Object[]{currentFileName, new Integer(getLineFromTomParser() ), currentFileName}),
-						          currentFileName, getLineFromTomParser())); 
+      getLogger().log(Level.SEVERE, TomMessage.getMessage("FileNotFound",currentFileName)); 
       return;
     } catch (Exception e) {
-      getLogger().log(new PlatformLogRecord(Level.SEVERE, TomMessage.getMessage("ExceptionMessage", 
-                      new Object[]{getClass().getName(), currentFileName, e.getMessage()}),
-						          currentFileName, getLineFromTomParser())); 
-      e.printStackTrace();
+    	StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      getLogger().log(Level.SEVERE, "ExceptionMessage", 
+                      new Object[]{getClass().getName(), currentFileName, sw.toString()});
       return;
     }
     // Some extra stuff

@@ -624,7 +624,7 @@ BQ_STAR        :    '*'   ;
 //XML Tokens
 XML_EQUAL   :   '=' ;
 XML_START_ENDING    : "</" ;
-XML_CLOSE_SINGLETON : "/>" ;
+XML_CLOSE_SINGLETON : "/>" ;	
 XML_START   :   '<';
 XML_CLOSE   :   '>' ;
 DOUBLE_QUOTE:   '\"';

@@ -23,15 +23,10 @@ header{/*
  *
  **/
 
-
-/*
- * this file contains the lexer and parser for
- * tom constructs
- */
-
 package jtom.parser;
 
 }
+
 {
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,6 +62,7 @@ import jtom.tools.SymbolTable;
 import jtom.tools.TomFactory;
 import jtom.xml.Constants;
 import tom.platform.OptionManager;
+import tom.platform.PlatformLogRecord;
 import aterm.*;
 import antlr.TokenStreamSelector;
 }
@@ -144,15 +140,7 @@ options{
     private int getLine(){
         return tomlexer.getLine();
     }
-    /*
-    public void pushLine(int line){
-        targetparser.pushLine(line);
-    }
 
-    public void pushColumn(int column){
-        targetparser.pushColumn(column);
-    }
-*/
     public void updatePosition(int i, int j){
         targetparser.updatePosition(i,j);
     }
@@ -223,8 +211,6 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
                 }
                 
                 // update for new target block...
-                //pushLine(t.getLine());
-                //pushColumn(t.getColumn());
                 updatePosition(t.getLine(),t.getColumn());
                 
                 // Match is finished : pop the tomlexer and return in
@@ -286,8 +272,6 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
             ARROW t:LBRACE
             {
                 // update for new target block
-//                pushLine(t.getLine());
-  //              pushColumn(t.getColumn());
                 updatePosition(t.getLine(),t.getColumn());
                 
                 if(debugMode){
@@ -422,8 +406,6 @@ ruleConstruct [Option orgTrack] returns [Instruction result] throws TomException
         {
             
             // update for new target block...
-//            pushLine(t.getLine());
-  //          pushColumn(t.getColumn());
             updatePosition(t.getLine(),t.getColumn());
 
             result = `RuleSet(ruleList,orgTrack);
@@ -611,14 +593,11 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                             found += "|"+closingNameList.getHead().getString();
                             closingNameList = closingNameList.getTail();
                         }
-                        //throw new TomException("Error on closing XML pattern: expecting '"+ expected.substring(1) +"' but got '"+found.substring(1)+ "' at line "+getLine());
-                        // return null;
                         // TODO find the orgTrack of the match
-                        getLogger().log( Level.SEVERE,
-                            "MalformedXMLTerm",
+                        String msg = TomMessage.getMessage("MalformedXMLTerm",
                             new Object[]{currentFile(), new Integer(getLine()), 
-                                "match", new Integer(getLine()),
-                                expected.substring(1), found.substring(1)} );
+                            "match", expected.substring(1), found.substring(1)} );
+                        throw new TomException();
                     }
                     if(implicit) {
                         // Special case when XMLChilds() is reduced to a singleton
@@ -1295,9 +1274,11 @@ operator returns [Declaration result] throws TomException
                     mapNameDecl.put(sName,attribute);
                 }
                 else {
-                  getLogger().log( Level.WARNING, "WarningTwoSameSlotDecl",
+                  getLogger().log(new PlatformLogRecord(Level.WARNING,
+                  		TomMessage.getMessage("WarningTwoSameSlotDecl",
                               new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
-                                           "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} );
+                                           "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} ),
+																					 currentFile(), getLine()));
                 }
             }
         
@@ -1315,11 +1296,10 @@ operator returns [Declaration result] throws TomException
                 } else {
                     Declaration decl = (Declaration)mapNameDecl.get(name1);
                     if(decl == null) {
-
-			getLogger().log( Level.WARNING,
-				    "WarningMissingSlotDecl",
-				    new Object[]{currentFile(), new Integer(ot.getLine()),
-						 "%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} );
+                    	getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningMissingSlotDecl",
+                    			new Object[]{currentFile(), new Integer(ot.getLine()),
+                    			"%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} ),
+													currentFile(), getLine()));
                         decl = emptyDeclaration;
                     }
                     else {
@@ -1334,12 +1314,11 @@ operator returns [Declaration result] throws TomException
                 Iterator it = mapNameDecl.keySet().iterator();
                 while(it.hasNext()) {
                     TomName remainingSlot = (TomName) it.next();
-
-		    getLogger().log( Level.WARNING,
-				"WarningIncompatibleSlotDecl",
-				new Object[]{currentFile(), 
-					     new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
-					     "%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} );
+                    getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("WarningIncompatibleSlotDecl",
+                    		new Object[]{currentFile(), 
+                    		new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
+												"%op "+type.getText(), new Integer(ot.getLine()), remainingSlot.getString()} ),
+												currentFile(), getLine()));
                 }
             }
             
@@ -1348,8 +1327,6 @@ operator returns [Declaration result] throws TomException
 
             result = `SymbolDecl(astName);
 
-//            pushLine(t.getLine());
-  //          pushColumn(t.getColumn());
             updatePosition(t.getLine(),t.getColumn());
 
             selector().pop(); 
@@ -1402,8 +1379,6 @@ operatorList returns [Declaration result] throws TomException
 
             result = `ListSymbolDecl(Name(name.getText()));
 
-//            pushLine(t.getLine());
-  //          pushColumn(t.getColumn());
             updatePosition(t.getLine(),t.getColumn());
 
             selector().pop(); 
@@ -1448,8 +1423,6 @@ operatorArray returns [Declaration result] throws TomException
 
             result = `ArraySymbolDecl(Name(name.getText()));
 
-//            pushLine(t.getLine());
-  //          pushColumn(t.getColumn());
             updatePosition(t.getLine(),t.getColumn());
 
             selector().pop(); 
@@ -1501,8 +1474,6 @@ typeTerm returns [Declaration result] throws TomException
 
             result = `TypeTermDecl(Name(type.getText()),blockList,ot);
 
-//            pushLine(t.getLine());
-  //          pushColumn(t.getColumn());
             updatePosition(t.getLine(),t.getColumn());
 
             selector().pop();
@@ -1561,9 +1532,6 @@ typeList returns [Declaration result] throws TomException
 
             result = `TypeListDecl(Name(type.getText()),blockList,ot);
 
-//            pushLine(t.getLine());
-  //          pushColumn(t.getColumn());
-
             updatePosition(t.getLine(),t.getColumn());
 
             selector().pop();
@@ -1619,8 +1587,6 @@ typeArray returns [Declaration result] throws TomException
 
             result = `TypeArrayDecl(Name(type.getText()),blockList,ot);
             
-//            pushLine(t.getLine());
-  //          pushColumn(t.getColumn());
             updatePosition(t.getLine(),t.getColumn());
 
         selector().pop();
@@ -2066,8 +2032,6 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                 RPAREN )?
             l:LBRACE
             {
-//                pushLine(l.getLine());
-  //              pushColumn(l.getColumn());
                 updatePosition(t.getLine(),t.getColumn());
 
                 selector().push("targetlexer");

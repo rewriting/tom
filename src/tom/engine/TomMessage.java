@@ -52,6 +52,14 @@ public class TomMessage {
     }
   }
   
+  public static String getMessage(String key, Object detail) {
+    try {
+      return MessageFormat.format(resourceBundle.getString(key), new Object[]{detail});
+    } catch (MissingResourceException e) {
+      return "!" + key + "!";
+    }
+  }
+  
   public static String getMessage(String key, Object[] details) {
     try {
       return MessageFormat.format(resourceBundle.getString(key), details);

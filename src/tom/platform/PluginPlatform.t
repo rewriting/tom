@@ -90,6 +90,9 @@ public class PluginPlatform {
    * </ul>
    */
   public int run() {
+  	boolean globalSuccess = true;
+  	int globalNbOfErrors = 0;
+  	int globalNbOfWarnings = 0;
     // intialize run instances
     lastGeneratedObjects = new ArrayList();
     // for each input we call the sequence of plug-ins
@@ -105,16 +108,22 @@ public class PluginPlatform {
       while(it.hasNext()) {
         Plugin plugin = (Plugin)it.next();
         plugin.setArgs(pluginArg);
-        if(statusHandler.hasError()) {
+				if(statusHandler.hasError()) {
           getLogger().log(Level.SEVERE, "SettingArgError");
           success = false;
+          globalSuccess = false;
+          globalNbOfErrors += statusHandler.nbOfErrors();
+        	globalNbOfWarnings += statusHandler.nbOfWarnings();
           break;
         }
         plugin.run();
         if(statusHandler.hasError()) {
-          success = false;
           getLogger().log(Level.SEVERE, "ProcessingError",
                           new Object[]{plugin.getClass().getName(), initArgument});
+          success = false;
+          globalSuccess = false;
+          globalNbOfErrors += statusHandler.nbOfErrors();
+        	globalNbOfWarnings += statusHandler.nbOfWarnings();
           break;
         }
         pluginArg = plugin.getArgs();
@@ -123,23 +132,18 @@ public class PluginPlatform {
         // save the first element of last plugin getArg response
         // this shall correspond to a generated file name
         lastGeneratedObjects.add(pluginArg[0]);
-      } 
-      //else { 
-      //break;
-      //}
+      	globalNbOfWarnings += statusHandler.nbOfWarnings();
+      }
     }
-    
-    int nbOfErrors   = statusHandler.nbOfErrors();
-    int nbOfWarnings = statusHandler.nbOfWarnings();
 
-    if(statusHandler.hasError()) {
+    if(!globalSuccess) {
       // this is the highest possible level > will be printed no matter what 
-      getLogger().log(Level.SEVERE, "PluginPlatformTaskErrorMessage",
-                      new Integer(nbOfErrors));
+      getLogger().log(Level.SEVERE, "RunErrorMessage",
+                      new Integer(globalNbOfErrors));
       return 1;
-    } else if( statusHandler.hasWarning() ) {
-      getLogger().log(Level.INFO, "PluginPlatformTaskWarningMessage",
-                      new Integer(nbOfWarnings));
+    } else if(globalNbOfWarnings>0) {
+      getLogger().log(Level.INFO, "RunWarningMessage",
+                      new Integer(globalNbOfWarnings));
       return 0;
     }
     return 0;

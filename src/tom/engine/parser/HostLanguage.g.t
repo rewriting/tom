@@ -45,6 +45,7 @@ import jtom.tools.SymbolTable;
 import aterm.*;
 import antlr.TokenStreamSelector;
 import tom.platform.OptionManager;
+import tom.platform.PlatformLogRecord	;
 import vas.Vas;
 }
 class HostParser extends Parser;
@@ -85,8 +86,8 @@ options{
   private int currentLine = 1;
   private int currentColumn = 1;
   
-  public HostParser(TokenStreamSelector selector,String currentFile,
-                    HashSet includedFiles,HashSet alreadyParsedFiles, 
+  public HostParser(TokenStreamSelector selector, String currentFile,
+                    HashSet includedFiles, HashSet alreadyParsedFiles, 
                     OptionManager optionManager, TomStreamManager streamManager){
     this(selector);
     this.selector = selector;
@@ -210,7 +211,7 @@ options{
     fileName = fileName.replace('/',File.separatorChar);
     fileName = fileName.replace('\\',File.separatorChar);
 		if(fileName.equals("")) {
-			String msg = TomMessage.getMessage("EmptyIncludedFile", new Object[]{new Integer(getLine()), currentFile});
+			String msg = TomMessage.getMessage("MissingIncludedFile", new Object[]{currentFile, new Integer(getLine())});
       throw new TomIncludeException(msg);
 		}
     
@@ -226,7 +227,7 @@ options{
     }
     
     if(file == null) {
-      String msg = TomMessage.getMessage("IncludedFileNotFound", new Object[]{fileName, new Integer(getLine()), currentFile});
+      String msg = TomMessage.getMessage("IncludedFileNotFound", new Object[]{fileName, currentFile, new Integer(getLine()), currentFile});
       throw new TomIncludeException(msg);
     }
     try {
@@ -239,15 +240,8 @@ options{
 			// if trying to include a file twice, but not in a cycle : discard
       if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
         if(!getStreamManager().isSilentDiscardImport(fileName)) {
-          getLogger().log( 
-                          Level.WARNING,
-                          "IncludedFileAlreadyParsed", 
-                          new Object[]{
-                            currentFile, 
-                            new Integer(getLine()), 
-                            fileName
-                          } 
-                          );
+          getLogger().log(new PlatformLogRecord(Level.WARNING, TomMessage.getMessage("IncludedFileAlreadyParsed", 
+                          currentFile), fileName, getLine()));
         }
         return;
       }
@@ -260,14 +254,17 @@ options{
       if(e instanceof TomIncludeException) {
         throw (TomIncludeException)e;
       }
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
       String msg = TomMessage.getMessage("ErrorWhileIncludingFile",
                                          new Object[]{e.getClass(),
                                                       fileName,
                                                       currentFile,
                                                       new Integer(getLine()),
-                                                      e.getMessage()
+																											sw.toString()
                                          });
-    throw new TomException(msg);
+      throw new TomException(msg);
     }
   }
 
@@ -427,14 +424,14 @@ signature [LinkedList list] throws TomException
     vasParams.add(subPackageName);
     Object[] vasCallResult = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode)); 
     if(vasCallResult == null) {
-    	throw new TomException(TomMessage.getMessage("VasFailure"));
+    	throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
     }
     
     generatedADTName = (String)vasCallResult[0];
     // Check for errors
     //TODO
     if(generatedADTName == null) {
-    	throw new TomException(TomMessage.getMessage("VasFailure"));
+    	throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
     }
     // Simulate the inclusion of generated Tom file
     String adtFileName = new File(generatedADTName).toString();
@@ -442,11 +439,14 @@ signature [LinkedList list] throws TomException
       file = new File(adtFileName.substring(0,adtFileName.length()-".adt".length())+".tom");
       fileName = file.getCanonicalPath();
     } catch (IOException e) {
-      throw new TomIncludeException(TomMessage.getMessage("IOExceptionWithGeneratedTomFile",
+      throw new TomException(TomMessage.getMessage("IOExceptionWithGeneratedTomFile",
                                                           new Object[]{fileName, currentFile, e.getMessage()}));
     } catch (Exception e) {
-      throw new TomIncludeException(TomMessage.getMessage("ExceptionWithGeneratedTomFile",
-                                                          new Object[]{adtFileName, currentFile, e.getMessage()}));
+    	StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      e.printStackTrace(pw);
+      throw new TomException(TomMessage.getMessage("ExceptionWithGeneratedTomFile",
+                                                          new Object[]{adtFileName, currentFile, sw.toString()}));
     }
     
     includeFile(fileName, list);

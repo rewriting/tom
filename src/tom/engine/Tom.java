@@ -76,7 +76,6 @@ public class Tom {
     } catch(Exception e) {
       System.err.println(TomMessage.getMessage("LoggingInitializationFailure",
                                                new Object[]{e.getMessage()}));
-      //e.printStackTrace();
       return 1;
     }
     PluginPlatform platform =

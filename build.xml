@@ -175,7 +175,6 @@
 
 	<!-- compile tom files in src.src with tom.stable -->
 	<target name="buildtom" depends="initTaskDef, buildadt">
-
 		<!--  compile in static mode -->
 		<tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
@@ -183,7 +182,6 @@
 				 options="--static -I ${src.mapping}">
 			<include name="**/OptionParser.t"/>
 		</tom>
-
 		<!--  compile in standard mode -->
 		<tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
@@ -193,11 +191,10 @@
 			<include name="tom/library/**/*.t"/> 
 			<include name="tom/platform/**/*.t"/> 
 			<include name="jtom/*.t"/> 
-			<include name="jtom/parser/*.g.t"/>			
+			<exclude name="jtom/parser/*.g.t"/>			
 			<include name="**/Verifier.t"/>
 			<exclude name="**/OptionParser.t"/>
 		</tom>
-
 		<!--  compile without declaration -->
 		<tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
@@ -207,14 +204,33 @@
 			<exclude name="jtom/*.t"/>
 			<exclude name="jtom/parser/*.g.t"/>
 		</tom>
+		<!-- Specific stuff for parser generation -->
+		<tom config="${stable.configfile}"
+				 srcdir="${src.src}"
+				 outputfile="${src.gen}/jtom/parser/TomLanguage.g"
+				 options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+			<include name="**/TomLanguage.g.t"/>  
+		</tom>
+		<tom config="${stable.configfile}"
+				 srcdir="${src.src}"
+				 outputfile="${src.gen}/jtom/parser/HostLanguage.g"
+				 options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+			<include name="**/HostLanguage.g.t"/>  
+		</tom>
+		<tom config="${stable.configfile}"
+				 srcdir="${src.src}"
+				 outputfile="${src.gen}/jtom/parser/BackQuoteLanguage.g"
+				 options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+			<include name="**/BackQuoteLanguage.g.t"/>  
+		</tom>
 
-		<!--  rename *.g.java file -->
+		<!--  rename *.g.java file
 		<move todir="${src.gen}/jtom/parser" includeemptydirs="false">
 			<fileset dir="${src.gen}/jtom/parser">
 				<include name="**/*.g.java"/>
 			</fileset>
 			<mapper type="glob" from="*.g.java" to="*.g"/>
-		</move>
+		</move> -->
 
 	</target>
 
