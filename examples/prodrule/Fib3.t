@@ -107,15 +107,16 @@ class Fib3 {
     Fib3 test = new Fib3(new Factory(new PureFactory(16)));
     test.run();
   }
-
+				
   public ArrayList rec(ArrayList s) {
     %match(Space s) {
-      concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
+	    concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
         if( `(n>2 && !occursFib(S1*,n-1) && !occursFib(S2*,n-1)) ) {
+          //if( `n>2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1))  {
           //  if( `n>2 && !`occursFib(S1*,n-1) && !`occursFib(S2*,n-1) ) {
           return `concElement(Fib(n-1,Undef),s*);
         }
-      }
+	    }
     }
     return s;
   }

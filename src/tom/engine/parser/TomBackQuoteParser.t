@@ -52,25 +52,25 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
 
   %op Token LPAREN(image:String) {
     fsym { }
-    is_fsym(t) { (t!=null) && (t.kind == TOM_LPAREN || t.image.equals("(")) }
+    is_fsym(t) { (t!=null) && (t.kind == BQ_LPAREN || t.image.equals("(")) }
     get_slot(image,t) { t.image }
   }
 
   %op Token RPAREN(image:String) {
     fsym { }
-    is_fsym(t) { (t!=null) && t.kind == TOM_RPAREN }
+    is_fsym(t) { (t!=null) && t.kind == BQ_RPAREN }
     get_slot(image,t) { t.image }
   }
 
   %op Token IDENT(image:String) {
     fsym { }
-    is_fsym(t) { (t!=null) && t.kind == TOM_IDENTIFIER }
+    is_fsym(t) { (t!=null) && t.kind == BQ_IDENTIFIER }
     get_slot(image,t) { t.image }
   }
   
   %op Token COMMA(image:String) {
     fsym { }
-    is_fsym(t) { (t!=null) && t.kind == TOM_COMMA }
+    is_fsym(t) { (t!=null) && t.kind == BQ_COMMA }
     get_slot(image,t) { t.image }
   }
 

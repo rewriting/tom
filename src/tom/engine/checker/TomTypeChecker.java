@@ -45,7 +45,7 @@ public class TomTypeChecker extends TomChecker {
         System.out.println("TOM type Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
     } catch (Exception e) {
-      messageError("Exception occurs in TomTypeChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      environment().messageError("Exception occurs in TomTypeChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
       return;
     }

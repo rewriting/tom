@@ -254,8 +254,6 @@ public class Tom {
 
         // For the moment debug is only available for Java as target language
       getInput().setDebugMode(getInput().isJCode() && getInput().isDebugMode());
-
-      
         /*
          * compute destDir:
          */
@@ -439,7 +437,6 @@ public class Tom {
     for(Iterator it = tom.inputFileList.iterator() ; it.hasNext() ; ) {
       String inputFileName = (String)it.next();
       tom.run(inputFileName);
-
       if(Tom.environment().hasError()) {
         return 1;
       }

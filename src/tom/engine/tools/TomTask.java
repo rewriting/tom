@@ -83,30 +83,4 @@ public abstract class TomTask extends TomBase {
     return name;
   }
 
-  public void messageError(int errorLine,
-                           String fileName,
-                           String structInfo,
-                           int line,
-                           String msg,
-                           Object[] msgArg) {
-    environment().messageError(errorLine, fileName, structInfo, line, msg, msgArg);
-  }
-         
-  public void messageWarning(int warningLine,
-                             String fileName,
-                             String structInfo,
-                             int line,
-                             String msg,
-                             Object[] msgArg) {
-    environment().messageWarning(warningLine, fileName, structInfo, line, msg, msgArg);
-  }
-
-  public void messageError(String msg, String fileName, int line) {
-    environment().messageError(msg,fileName,line);
-  }
-  
-  public void messageWarning(String msg, String fileName, int line) {
-    environment().messageWarning(msg,fileName,line);
-  }
-
 }

@@ -62,7 +62,7 @@ public class TomOptimizer extends TomTask {
       environment().setTerm(optimizedTerm);
       
     } catch (Exception e) {
-      messageError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      environment().messageError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       e.printStackTrace();
       return;
     }
@@ -106,7 +106,7 @@ public class TomOptimizer extends TomTask {
 
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
-                messageWarning(orgTrack.getLine(),
+                environment().messageWarning(orgTrack.getLine(),
                              orgTrack.getFileName().getString(),
                              orgTrack.getAstName().getString(),
                              orgTrack.getLine(),
@@ -145,7 +145,7 @@ public class TomOptimizer extends TomTask {
 
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
-                messageWarning(orgTrack.getLine(),
+                environment().messageWarning(orgTrack.getLine(),
                              orgTrack.getFileName().getString(),
                              orgTrack.getAstName().getString(),
                              orgTrack.getLine(),

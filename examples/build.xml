@@ -587,11 +587,18 @@
 
   </target>
     
+<!--
   <target name="examples" 
           description="Builds the examples (at least some)"
 					depends="addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, xml, vas">
+-->
+  <target name="examples" 
+          description="Builds the examples (at least some)"
+					depends="vas, xml, set, rbtree, propp, prodrule,
+          addressbook, apireach, boulderdash, builtin, dom,
+					expression, gtree, list, nspk, peano, pnspk, poly, pqueens">
   </target>
   
   <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">

@@ -151,6 +151,12 @@ public class TomFactory extends TomBase {
         TomTerm subList = buildList(name,`tail);
         return `BuildConsList(name,head,subList);
       }
+
+      manyTomList(head@TargetLanguageToTomTerm[],tail) -> {
+	  TomTerm subList = buildList(name,`tail);
+	  return subList;
+      }
+
     }
 
     throw new TomRuntimeException("buildList strange term: " + args);
@@ -181,6 +187,12 @@ public class TomFactory extends TomBase {
         TomTerm subList = buildArray(name,`tail,size+1);
         return `BuildConsArray(name,head,subList);
       }
+
+      manyTomList(head@TargetLanguageToTomTerm[],tail) -> {
+	TomTerm subList = buildArray(name,`tail,size);
+	return subList;
+      }
+
     }
 
     throw new TomRuntimeException("buildArray strange term: " + args);

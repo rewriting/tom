@@ -407,7 +407,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   public void generateTargetLanguage(int deep, TargetLanguage subject) throws IOException {
     %match(TargetLanguage subject) {
       TL(t,TextPosition[line=startLine], TextPosition[line=endLine]) -> {
-        output.write(" ");
+	  // output.write(" ");
         output.write(`t, `startLine, `endLine - `startLine);
         return;
       }

@@ -26,10 +26,11 @@ TOM - To One Matching Compiler
   Licensing
   ---------
 
-  This software is licensed under the GNU General Public License
+  The Tom compiler is licensed under the GNU General Public License
   (GNU GPL, available at <http://www.gnu.org/licenses/>). 
-  The predefined mappings ($TOM_HOME/share/jtom) are licensed under
-  the BSD License.
+
+  The predefined mappings ($TOM_HOME/share/jtom), the runtime library,
+  and the examples are licensed under the BSD License.
   
 
   Thanks for using Tom.

@@ -1311,7 +1311,7 @@ abstract public class TomChecker extends TomTask {
   private void messageError(int errorLine, String structInfo, String msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    messageError(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
+    environment().messageError(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
   }
 
   private void messageWarning(int errorLine, String msg, Object[] msgArg) {
@@ -1322,7 +1322,7 @@ abstract public class TomChecker extends TomTask {
   private void messageWarning(int errorLine, String structInfo, String msg, Object[] msgArgs) {
     String fileName = currentTomStructureOrgTrack.getFileName().getString();
     int structDeclLine = currentTomStructureOrgTrack.getLine();
-    messageWarning(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
+    environment().messageWarning(errorLine, fileName, structInfo, structDeclLine, msg, msgArgs);
   }
   
   
@@ -1343,7 +1343,7 @@ abstract public class TomChecker extends TomTask {
 
   private void ensureOriginTrackingLine(int line) {
     if(line < 0) {
-      messageError("findOriginTrackingLine:  not found", getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      environment().messageError("findOriginTrackingLine:  not found", getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       System.out.println("findOriginTrackingLine: not found ");
     }
   }

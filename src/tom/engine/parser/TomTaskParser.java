@@ -88,7 +88,7 @@ public class TomTaskParser extends TomTask {
     } catch (ParseException e) {
       TomEnvironment.getInstance().messageError(TomMessage.getString("ParseException"), new Object[]{fileName, e.getMessage()}, fileName, parser.getLine());
     } catch (Exception e) {
-      e.printStackTrace();
+      //e.printStackTrace();
       TomEnvironment.getInstance().messageError(TomMessage.getString("UnhandledException"), new Object[]{fileName, e.getMessage()}, fileName, TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     }
   }
