@@ -3,7 +3,10 @@
 #
 
 javadir         = ${prefix}/classes/jtom/runtime/strategies
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+
+runtimedir 	= $(top_srcdir)/src/jtom/runtime
+CONCURRENT_JAR  = $(runtimedir)/concurrent.jar:${prefix}/share/concurrent.jar
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):${CONCURRENT_JAR}:$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/strategies
 
