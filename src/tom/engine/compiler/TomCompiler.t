@@ -69,7 +69,7 @@ public class TomCompiler extends TomTask {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.compiledSuffix, compiledTerm);
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.compiledSuffix, compiledTerm);
       }
       environment().setTerm(compiledTerm);
       

@@ -463,6 +463,13 @@ public class TomTaskInput {
     //System.out.println("getInputFileNameWithoutSuffix = " + res);
     return res;
   }
+  
+  public String getOutputFileNameWithoutSuffix() {
+    String inputFileName = getOutputFile().getPath();
+    String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
+    //System.out.println("getInputFileNameWithoutSuffix = " + res);
+    return res;
+  }
 
   public void setOutputFile(String sOutputFile) {
     try {

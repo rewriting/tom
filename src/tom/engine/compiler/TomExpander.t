@@ -69,8 +69,8 @@ public class TomExpander extends TomTask {
         System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedSuffix, expandedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.expandedSuffix, expandedTerm);
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
       }
       environment().setTerm(expandedTerm);
       
