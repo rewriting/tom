@@ -1,3 +1,8 @@
+2003-03-20    <jurgenv@cwi.nl>
+	* Removed dependency on shared-objects. The aterm-java-config
+          script takes care of this recursive dependency now. This is
+          a try-out of this mechanism.
+
 2003-03-18    <jurgenv@cwi.nl>
 	* The names of the jarfiles for shared-objects and aterm-java are
           now found automatically using shared-objects-config and 
