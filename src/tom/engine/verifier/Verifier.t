@@ -221,17 +221,60 @@ public class Verifier extends TomBase {
 		System.out.println("The tree: " + tree);
 		return tree;
 	}
+
+/**
+ * The axioms the mapping has to verify
+ */
 	
 	protected Seq build_dedterm(Term sp) {
 		// TODO : implement the \mapequiv relation
-		System.out.println("Calling dedterm with: " + sp);
-		return `dedterm(concTerm(sp,tau("TODO")));
+		TermList ded = `concTerm(sp);
+		%match(Term sp) {
+			appSubsT[] -> { 
+				TermList follow = apply_termRules(replaceVarsInTerm(sp));
+				ded = `concTerm(ded*,follow*); 
+			}
+		}
+
+		System.out.println("dedterm gives : " + ded);
+		return `dedterm(concTerm(ded*));
 	}
-	
+
 	protected Seq build_dedexpr(Expr sp) {
 		// TODO : implement the \mapequiv relation
-		System.out.println("Calling dedexpr with: " + sp);
-		return `dedexpr(concExpr(sp,true));
+		ExprList ded = `concExpr(sp);
+		%match(Expr sp) {
+			appSubsE[] -> { 
+				ExprList follow = apply_exprRules(replaceVarsInExpr(sp));
+				ded = `concExpr(ded*,follow*); 
+			}
+		}
+
+		System.out.println("dedexpr gives: " + ded);
+		return `dedexpr(concExpr(ded*,true));
+	}
+
+  // need to be reworked : this IS a BAD way to do it !
+	protected TermList apply_termRules(Term trm) {
+		%match(Term trm) {
+			subterm(s,tau(t),index) -> {
+				// we shall test if term t has symbol s 
+				String term = t + "pos" + index;
+				return `concTerm(trm,tau(term));
+			}
+			slot(s,tau(t),slotName) -> {
+				// we shall test if term t has symbol s 
+				String term = t + "slot" + slotName;
+				return `concTerm(trm,tau(term));
+			}
+			_ -> { return `concTerm(trm); }
+		}
+	}
+
+	protected ExprList apply_exprRules(Expr ex) {
+		%match(Expr ex) {
+			_ -> { return `concExpr(ex); }
+		}
 	}
 
 	protected DerivTree apply_rules(Deriv post, SubstRef outsubst) {
@@ -295,6 +338,11 @@ public class Verifier extends TomBase {
 		}
 	}
 
+/**
+ * To replace undefsubst in tree by the computed value
+ * which leads to axiom
+ */
+
 	Replace2 replace_undefsubs = new Replace2() {
 			public ATerm apply(ATerm subject, Object arg1) {
 				if (subject instanceof SubstitutionList) {
@@ -335,10 +383,10 @@ public class Verifier extends TomBase {
 			public ATerm apply(ATerm subject, Object arg1) {
 				if (subject instanceof Term) {
 					%match(Term subject) {
-						vtot(var(name)) -> {
+						vtot(v@var(name)) -> {
 							Map map = (Map) arg1;
-							if (map.containsKey(name)) {
-								return (Term)map.get(name);
+							if (map.containsKey(v)) {
+								return (Term)map.get(v);
 							}
 							return (Term)subject;
 						}
@@ -380,6 +428,7 @@ public class Verifier extends TomBase {
 			_ -> { return null; }
 		}
 	}
+
 }
 
 
