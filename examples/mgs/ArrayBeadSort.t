@@ -24,8 +24,6 @@ public class ArrayBeadSort {
     make { null }
   }
 
-  private static Integer one = new Integer(1);
-
     /*
      * create a bead such that "north"  is the immediate north of the bead
      * (Resp. "south")
@@ -35,39 +33,33 @@ public class ArrayBeadSort {
     Position south = (beadSouth!=null)?beadSouth.getPos():null;
     
     if(north==null && south!=null) {
-      return `bead(getNorthPosition(south),one);
+      return `bead(getNorthPosition(south),1);
     } else if(north!=null && south==null) {
-      return `bead(getSouthPosition(north),one);
+      return `bead(getSouthPosition(north),1);
     } else if(north==null && south==null) {
-      return `bead(makeOrigin(),one);
-    } else if(north.getX().intValue()!=south.getX().intValue() ||
-              (north.getY().intValue()-south.getY().intValue()) != 2) {
+      return `bead(makeOrigin(),1);
+    } else if(north.getX()!=south.getX() || (north.getY()-south.getY()) != 2) {
       System.out.println("north and south are not compatible: " + north + " <--> " + south);
     }
-    return `bead(getSouthPosition(north),one);
+    return `bead(getSouthPosition(north),1);
   }
 
   private Position makeOrigin() {
-    Integer zero = new Integer(0);
-    return `pos(zero,zero);
+    return `pos(0,0);
   }
   
   private Position getNorthPosition(Position p) {
-    Integer x = p.getX();
-    Integer y = new Integer(p.getY().intValue() + 1);
-    return `pos(x,y);
+    return `pos(p.getX(),p.getY()+1);
   }
   
   private Position getSouthPosition(Position p) {
-    Integer x = p.getX();
-    Integer y = new Integer(p.getY().intValue() - 1);
-    return `pos(x,y);
+    return `pos(p.getX(),p.getY()-1);
   }
 
   private Bead getNorthBead(Bead b) {
     Position p = getNorthPosition(b.getPos());
-    int x = p.getX().intValue();
-    int y = p.getY().intValue();
+    int x = p.getX();
+    int y = p.getY();
     if(x>=0 && y>=0 && space[x][y]) {
       return (Bead) `bead(p,b.getValue());
     } else {
@@ -77,8 +69,8 @@ public class ArrayBeadSort {
   
   private Bead getSouthBead(Bead b) {
     Position p = getSouthPosition(b.getPos());
-    int x = p.getX().intValue();
-    int y = p.getY().intValue();
+    int x = p.getX();
+    int y = p.getY();
     if(x>=0 && y>=0 && space[x][y]) {
       return (Bead) `bead(p,b.getValue());
     } else {
@@ -87,7 +79,7 @@ public class ArrayBeadSort {
   }
 
   private boolean onGround(Bead b) {
-    return b.getPos().getY().intValue() <= 0;
+    return b.getPos().getY() <= 0;
   }
   
   public ArrayBeadSort(MgsADTFactory factory) {
@@ -137,9 +129,7 @@ public class ArrayBeadSort {
     for(int x=0 ; x<SIZE ; x++) {
       for(int y=0 ; y<SIZE ; y++) {
         if(space[x][y]) {
-          Integer X = new Integer(x);
-          Integer Y = new Integer(y);
-          Bead b = `bead(pos(X,Y),one);
+          Bead b = `bead(pos(x,y),1);
           boolean f = gravity(newSpace,b);
           fire = fire || f ;
         }
@@ -156,8 +146,8 @@ public class ArrayBeadSort {
       beadNS[s=empty()] -> {
         if(!onGround(b)) {
           Bead newBead = `beadNS(b,empty());
-          int x = newBead.getPos().getX().intValue();
-          int y = newBead.getPos().getY().intValue();
+          int x = newBead.getPos().getX();
+          int y = newBead.getPos().getY();
           newSpace[x][y] =true;
           
           //System.out.println(b + " --> " + newBead);
@@ -166,7 +156,7 @@ public class ArrayBeadSort {
       }
 
       bead[pos=pos(X,Y)] -> {
-        newSpace[X.intValue()][Y.intValue()] = true;
+        newSpace[X][Y] = true;
         return false;
       }
     }
@@ -182,14 +172,14 @@ public class ArrayBeadSort {
   public void generateNumber(boolean space[][], int max) {
     int y=0;
    for(int i=1 ; i<=max/2 ; i++) {
-      addInteger(space,i*2,y);
-      y++;
-    } 
-for(int i=1 ; i<=max/2 ; i++) {
-      addInteger(space,1+i*2,y);
-      y++;
-    }
-
+     addInteger(space,i*2,y);
+     y++;
+   } 
+   for(int i=1 ; i<=max/2 ; i++) {
+     addInteger(space,1+i*2,y);
+     y++;
+   }
+   
   }
   
 }

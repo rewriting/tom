@@ -14,7 +14,7 @@ public class BoulderDash {
 
   %op Bead beadRock(n:Bead, s:Bead, e:Bead, w:Bead) {
     fsym { }
-    is_fsym(t) { (t!=null) && t.isBead() && t.getValue().equals(rock) && !marked.contains(t) }
+    is_fsym(t) { (t!=null) && t.isBead() && t.getValue() == rock && !marked.contains(t) }
     get_slot(n,t) { getNorthBead(t) }
     get_slot(s,t) { getSouthBead(t) }
     get_slot(e,t) { getEastBead(t) }
@@ -28,31 +28,24 @@ public class BoulderDash {
   }
 
 
-  private static Integer rock   = new Integer(1);
-  private static Integer ground = new Integer(2);
+  private static int undefined = 0;
+  private static int rock      = 1;
+  private static int ground    = 2;
 
   private Position getNorthPosition(Position p) {
-    Integer x = p.getX();
-    Integer y = new Integer(p.getY().intValue() + 1);
-    return `pos(x,y);
+    return `pos(p.getX(),p.getY()+1);
   }
 
   private Position getSouthPosition(Position p) {
-    Integer x = p.getX();
-    Integer y = new Integer(p.getY().intValue() - 1);
-    return `pos(x,y);
+    return `pos(p.getX(),p.getY()-1);
   }
 
   private Position getEastPosition(Position p) {
-    Integer x = new Integer(p.getX().intValue() + 1);
-    Integer y = p.getY();
-    return `pos(x,y);
+    return `pos(p.getX()+1,p.getY());
   }
 
   private Position getWestPosition(Position p) {
-    Integer x = new Integer(p.getX().intValue() - 1);
-    Integer y = p.getY();
-    return `pos(x,y);
+    return `pos(p.getX()-1,p.getY());
   }
 
   private Bead getNorthBead(Bead b) {
@@ -103,19 +96,23 @@ public class BoulderDash {
     Iterator it = space.values().iterator();
     while(it.hasNext()) {
       Bead b = (Bead) it.next();
-      int x = b.getPos().getX().intValue();
-      int y = b.getPos().getY().intValue();
-      if(x>xmax) xmax = x;
-      if(y>ymax) ymax = y;
+      %match(Bead b) {
+        bead(pos(x,y),_) -> {
+          if(x>xmax) xmax = x;
+          if(y>ymax) ymax = y;
+        }
+      }
     }
-    Integer array[][] = new Integer[xmax+1][ymax+1];
 
+    int[][] array = new int[xmax+1][ymax+1];
     it = space.values().iterator();
     while(it.hasNext()) {
       Bead b = (Bead) it.next();
-      int x = b.getPos().getX().intValue();
-      int y = b.getPos().getY().intValue();
-      array[x][y] = b.getValue();
+      %match(Bead b) {
+        bead(pos(x,y),value) -> {
+          array[x][y] = value;
+        }
+      }
     }
 
     String s = "";
@@ -125,12 +122,12 @@ public class BoulderDash {
     for(int y=ymax ; y>=0 ; y--) {
       String line = "";
       for(int x=0 ; x<=xmax ; x++) {
-        if(array[x][y] == null) {
+        if(array[x][y] == undefined) {
           line += " ";
         } else
-          if(array[x][y].equals(ground)) {
+          if(array[x][y] == ground) {
             line += "X";
-          } else if(array[x][y].equals(rock)) {
+          } else if(array[x][y] == rock) {
             line += "O";
           } 
       }
@@ -212,10 +209,8 @@ public class BoulderDash {
     return false;
   }
 
-  private void putBead(HashMap space, int x, int y, Integer beadType) {
-    Integer X = new Integer(x);
-    Integer Y = new Integer(y);
-    Position p = `pos(X,Y);
+  private void putBead(HashMap space, int x, int y, int beadType) {
+    Position p = `pos(x,y);
     space.put(p, `bead(p,beadType));
   }
 

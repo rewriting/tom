@@ -49,16 +49,11 @@ public class BeadSort {
   }
   
   private Position getNorthPosition(Position p) {
-      //int x = p.getX();
-      //int y = p.getY()+ 1;
-      //return `pos(x,y);
       return `pos(p.getX(),p.getY()+1);
   }
   
   private Position getSouthPosition(Position p) {
-    int x = p.getX();
-    int y = p.getY() - 1;
-    return `pos(x,y);
+    return `pos(p.getX(),p.getY()-1);
   }
 
   private Bead getNorthBead(Bead b) {
