@@ -41,11 +41,14 @@ import jtom.adt.*;
 
 
 public class Tom {
-  private static String version = "1.3beta";
+  private static String version =
+  "jtom 1.3beta\n\n" +
+  "Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
+  "                         Nancy, France.\n";
   
   private static void usage() {
     if(Flags.version) {
-      System.out.println("jtom " + version);
+      System.out.println(version);
       System.exit(0);
     }
     System.out.println("Tom usage:");
