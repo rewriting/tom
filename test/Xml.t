@@ -63,8 +63,8 @@ public class Xml {
 
   boolean checkSortedInteger(TNode list) {
     %match(TNode list) {
-      <IntegerList []>[<Integer []>#TEXT(s1)</Integer>,
-                       <Integer []>#TEXT(s2)</Integer>]</IntegerList> -> {
+      <IntegerList>[<Integer>(#TEXT(s1))</Integer>,
+                    <Integer>(#TEXT(s2))</Integer>]</IntegerList> -> {
         if(s1.compareTo(s2) > 0) { return false; }
       }
     }
@@ -73,10 +73,10 @@ public class Xml {
 
   TNode swapElements(TNode list) {
     %match(TNode list) {
-      <IntegerList attr*>X1*
-                         n1@<Integer []>#TEXT(s1)</Integer>
-                         n2@<Integer []>#TEXT(s2)</Integer>
-                         X2*</IntegerList> -> {
+      <IntegerList (attr*)>(X1*,
+                            n1@<Integer []>#TEXT(s1)</Integer>,
+                            n2@<Integer []>#TEXT(s2)</Integer>,
+                            X2*)</IntegerList> -> {
         if(s1.compareTo(s2) < 0) {
           return ``swapElements(<IntegerList attr*>X1* n2 n1 X2*</IntegerList>);
         }
@@ -88,7 +88,7 @@ public class Xml {
   LinkedList extractElements(TNode list) {
     LinkedList res = new LinkedList();
     %match(TNode list) {
-      <IntegerList> [<Integer>#TEXT(s1)</Integer>] </IntegerList> -> { res.add(s1); }
+      <IntegerList> <Integer>(#TEXT(s1))</Integer> </IntegerList> -> { res.add(s1); }
     }
     return res;
   }
