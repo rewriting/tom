@@ -587,5 +587,20 @@ public class TomBase {
     }
     return false;
   }
-
+  
+    // findOriginTracking(_) return the option containing OriginTracking information
+  protected Option findOriginTracking(OptionList optionList) {
+    if(optionList.isEmptyOptionList()) return ast().makeOption();
+    while(!optionList.isEmptyOptionList()) {
+      Option subject = optionList.getHead();
+      %match(Option subject) {
+        orgTrack@OriginTracking[] -> {
+          return orgTrack;
+        }
+      }
+      optionList = optionList.getTail();
+    }
+    System.out.println("findOriginTracking:  not found"+optionList);
+    System.exit(1);return null;
+  }
 }

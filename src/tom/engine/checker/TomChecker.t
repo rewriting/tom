@@ -766,7 +766,7 @@ public class TomChecker extends TomBase {
     %match( TomTerm pairSlotName ) {
       PairSlotAppl(Name(name), Appl[option=Option(list)]) -> {
         Integer line = findOriginTrackingLine(list);
-        System.out.println("\n *** Same slot names can not be used several times: See method "+methodName+ "' -  Line : "+line);
+        System.out.println("\n *** Same slot names can not be used several times: See method '"+methodName+ "' -  Line : "+line);
         System.out.println(" *** Repeated slot Name : '"+name+"'");
       }
     }
@@ -1127,21 +1127,6 @@ public class TomChecker extends TomBase {
       %match(Option subject) {
         OriginTracking[line=line] -> {
           return line;
-        }
-      }
-      optionList = optionList.getTail();
-    }
-    System.out.println("findOriginTrackingLine:  not found");
-    System.exit(1);return null;
-  }
-
-    // findOriginTracking(_) return the option containing OriginTracking information
-  private Option findOriginTracking(OptionList optionList) {
-    while(!optionList.isEmptyOptionList()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        orgTrack@OriginTracking[] -> {
-          return orgTrack;
         }
       }
       optionList = optionList.getTail();

@@ -255,8 +255,8 @@ public class TomExpander extends TomBase {
           TomTypeToTomTerm(type@Type(tomType,glType)) , appl@Appl(Option(optionList),name@Name(strName),Empty()) -> {
             //debugPrintln("expandVariable.1: Type(" + tomType + "," + glType + ")");
             //debugPrintln("appl = " + appl);
-                
-            Option option = `Option(replaceAnnotedName(optionList,type));
+            Option orgTrack = findOriginTracking(optionList);
+            Option option = `Option(replaceAnnotedName(optionList,type,orgTrack));
               // create a constant or a variable
             TomSymbol tomSymbol = getSymbol(strName);
             if(tomSymbol != null) {
@@ -270,8 +270,8 @@ public class TomExpander extends TomBase {
           Variable(option1,name1,type1) , appl@Appl(Option(optionList),name@Name(strName),Empty()) -> {
             //debugPrintln("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
             //debugPrintln("appl = " + appl);
-                
-            Option option = `Option(replaceAnnotedName(optionList,type1));
+            Option orgTrack = findOriginTracking(optionList);
+            Option option = `Option(replaceAnnotedName(optionList,type1,orgTrack));
               // under a match construct
               // create a constant or a variable
             TomSymbol tomSymbol = getSymbol(strName);
@@ -283,19 +283,21 @@ public class TomExpander extends TomBase {
             }
           } 
 
-          TomTypeToTomTerm(type@Type(tomType,glType)) , Placeholder(Option(optionList)) -> {
-            Option option = `Option(replaceAnnotedName(optionList,type));
+          TomTypeToTomTerm(type@Type(tomType,glType)) ,p@Placeholder(Option(optionList)) -> {
+            Option orgTrack = findOriginTracking(optionList);
+            Option option = `Option(replaceAnnotedName(optionList,type,orgTrack));
               // create an unamed variable
             return `UnamedVariable(option,type);
           } 
               
-          Variable(option1,name1,type1) , Placeholder(Option(optionList)) -> {
-            Option option = `Option(replaceAnnotedName(optionList,type1));
+          Variable(option1,name1,type1) , p@Placeholder(Option(optionList)) -> {
+            Option orgTrack = findOriginTracking(optionList);
+            Option option = `Option(replaceAnnotedName(optionList,type1,orgTrack));
               // create an unamed variable
             return `UnamedVariable(option,type1);
           } 
               
-          context, Appl(Option(optionList),name@Name(tomName),l) -> {
+          context, appl@Appl(Option(optionList),name@Name(tomName),l) -> {
             //debugPrintln("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
             //debugPrintln("\tcontext = " + context);
                 
@@ -304,7 +306,8 @@ public class TomExpander extends TomBase {
             if(tomSymbol != null) {
               TomList subterm = expandVariableList(tomSymbol, l);
                 //System.out.println("***** expandVariable.6: expandVariableList = " + subterm);
-              Option option = `Option(replaceAnnotedName(optionList,getSymbolCodomain(tomSymbol)));
+              Option orgTrack = findOriginTracking(optionList);
+              Option option = `Option(replaceAnnotedName(optionList,getSymbolCodomain(tomSymbol),orgTrack));
               return `Appl(option,name,subterm);
             }
           }
@@ -484,17 +487,17 @@ public class TomExpander extends TomBase {
     return null;
   }
 
-  private OptionList replaceAnnotedName(OptionList subjectList, TomType type) {
+  private OptionList replaceAnnotedName(OptionList subjectList, TomType type, Option orgTrack) {
     //%variable
     %match(OptionList subjectList) {
       EmptyOptionList() -> { return subjectList; }
       ConsOptionList(TomNameToOption(name@Name[]),l)   -> {
         return `ConsOptionList(
-          TomTermToOption(Variable(ast().makeOption(),name,type)),
-          replaceAnnotedName(l,type));
+          TomTermToOption(Variable(ast().makeOption(orgTrack),name,type)),
+          replaceAnnotedName(l,type,orgTrack));
       }
       ConsOptionList(t,l) -> {
-        return `ConsOptionList(t,replaceAnnotedName(l,type));
+        return `ConsOptionList(t,replaceAnnotedName(l,type, orgTrack));
       }
     }
     return null;
