@@ -211,6 +211,7 @@
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
       <include name="**/LatexOutput.t"/>
+      <include name="**/ZenonOutput.t"/>
       <include name="**/StatOutput.t"/>
     </tom>
     <!--  compile without declaration -->
@@ -362,7 +363,7 @@
     </fail>
     <!-- "tom README and INSTALL" -->
     <copy todir="${dest}" file="README"/>
-    <copy todir="${dest}" file="INSTALL"/>
+		<copy todir="${dest}" file="${share}/INSTALL"/>
     <copy todir="${dest}" file="NEWS"/>
     <copy todir="${dest}" file="AUTHORS"/>
     <!-- tom doc -->
@@ -951,6 +952,7 @@
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
       <include name="**/LatexOutput.t"/>
+      <include name="**/ZenonOutput.t"/>
       <include name="**/StatOutput.t"/>
     </tomsrc>
 
