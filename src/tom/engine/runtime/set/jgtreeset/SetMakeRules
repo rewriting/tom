@@ -4,6 +4,7 @@ SetAPI0=\
 JGTreeSet.java JGTreeSetImpl.java\
 JGTreeSet_EmptySetImpl.java JGTreeSet_EmptySet.java\
 JGTreeSet_SingletonImpl.java JGTreeSet_Singleton.java\
+JGTreeSet_PairImpl.java JGTreeSet_Pair.java\
 JGTreeSet_BranchImpl.java JGTreeSet_Branch.java
 
 SetAPI=\

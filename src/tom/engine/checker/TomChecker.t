@@ -73,8 +73,8 @@ public class TomChecker extends TomBase {
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
-              Match(SubjectList(matchArgsList), PatternList(patternActionList), orgTrack) -> {  
-                currentTomStructureOrgTrack = orgTrack;
+              Match(SubjectList(matchArgsList), PatternList(patternActionList), Option(list)) -> {  
+                currentTomStructureOrgTrack = findOriginTracking(list);
                 verifyMatch(matchArgsList, patternActionList);
                 return true;
               }
@@ -117,8 +117,8 @@ public class TomChecker extends TomBase {
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
-              Match(_, PatternList(list), orgTrack) -> {  
-                currentTomStructureOrgTrack = orgTrack;
+              Match(_, PatternList(list), Option(oplist)) -> {  
+                currentTomStructureOrgTrack = findOriginTracking(oplist);
                 verifyMatchVariable(list);
                 return false;
               }
