@@ -1,7 +1,0 @@
-#! /bin/sh
-
-CLASSPATH=__CLASSES__:__JAVA_ATERM__:${CLASSPATH}
-INCLUDE=__INCLUDE__
-
-java -cp $CLASSPATH jtom.Tom $INCLUDE $*
-
