@@ -79,7 +79,7 @@ public class Tom {
      */
   private List inputFileList;
   
-  public final static String VERSION = "2.0rc5";
+  public final static String VERSION = "2.0";
   
   public static String usage =
     "\nTom usage:"

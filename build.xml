@@ -17,7 +17,7 @@
   <property name="build.sysclasspath" value="ignore" />
   <property name="nowarnings" value="false" />  
   <!-- current version of TOM -->
-  <property name="version" value="2.0rc5"/>
+  <property name="version" value="2.0"/>
   
   <!-- some used directory location -->
   <property name="test"           location="test"/>
@@ -621,7 +621,8 @@
     </ant>
 
     <echo>Test tom-source in examples with optimizer</echo>
-    <ant dir="${examples}" target="all">
+    <ant dir="${examples}" target="clean"/>
+    <ant dir="${examples}" target="junit">
       <property name="tom.home" location="${src.dist}"/>
       <property name="optimize" value="on"/>
     </ant>

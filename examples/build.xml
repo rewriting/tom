@@ -5,7 +5,7 @@
   </description>
 
   <!-- current version of TOM -->
-  <property name="version" value="2.0rc5"/>
+  <property name="version" value="2.0"/>
 
   <property name="nowarnings" value="false"/>
   <property name="optimize" value="off"/>
