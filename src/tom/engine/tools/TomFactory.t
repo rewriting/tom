@@ -38,8 +38,8 @@ public class TomFactory extends TomBase {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-  public TomFactory(jtom.TomEnvironment environment) {
-    super(environment);
+  public TomFactory() {
+    super();
   }
   
   public String encodeXMLString(SymbolTable symbolTable, String name) {

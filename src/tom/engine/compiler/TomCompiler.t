@@ -45,11 +45,10 @@ public class TomCompiler extends TomTask {
   private boolean debugMode = false, eCode = false;
   private int absVarNumber = 0;
   
-  public TomCompiler(TomEnvironment environment, TomTaskInput taskInput,
-                     TomKernelCompiler tomKernelCompiler) {
-    super("Tom Compiler", environment,taskInput);
-    this.tomKernelCompiler = tomKernelCompiler;
-    this.tomFactory = new TomFactory(environment);
+  public TomCompiler() {
+    super("Tom Compiler");
+    this.tomKernelCompiler = new TomKernelCompiler();
+    this.tomFactory = new TomFactory();
   }
   
 // ------------------------------------------------------------
@@ -75,7 +74,7 @@ public class TomCompiler extends TomTask {
         System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.compiledSuffix, compiledTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().compiledSuffix, compiledTerm);
       }
       getInput().setTerm(compiledTerm);
       

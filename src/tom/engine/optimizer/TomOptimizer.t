@@ -41,8 +41,8 @@ public class TomOptimizer extends TomTask {
   %include { ../adt/TomSignature.tom }
   // ------------------------------------------------------------
 		
-  public TomOptimizer(TomEnvironment tomEnvironment,TomTaskInput taskInput) {
-    super("Tom Optimizer", tomEnvironment,taskInput);
+  public TomOptimizer() {
+    super("Tom Optimizer");
   }
 
   public void initProcess() {

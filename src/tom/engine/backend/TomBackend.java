@@ -41,8 +41,8 @@ public class TomBackend extends TomTask {
   private final static int defaultDeep = 2;
   private TomAbstractGenerator generator;
   private Writer writer;
-  public TomBackend(TomEnvironment environment, TomTaskInput taskInput) {
-    super("Tom Generator", environment, taskInput);
+  public TomBackend() {
+    super("Tom Generator");
   }
 
   public void initProcess() {
@@ -54,17 +54,14 @@ public class TomBackend extends TomTask {
         new OutputStreamWriter(
           new FileOutputStream(getInput().getOutputFile())
           ));
-      OutputCode output = new OutputCode(writer, 
-                                         getInput().isCCode(), 
-                                         pretty, 
-                                         defaultDeep);
+      OutputCode output = new OutputCode(writer, defaultDeep);
         // give the "good" generator
       if (getInput().isCCode()) {
-        generator = new TomCGenerator (environment(),  getInput(), output);
+        generator = new TomCGenerator (output);
       } else if (getInput().isJCode()) {
-        generator = new TomJavaGenerator (environment(), getInput(), output);
+        generator = new TomJavaGenerator (output);
       } else if (getInput().isCamlCode()) {
-        generator = new TomCamlGenerator (environment(), getInput(), output);
+        generator = new TomCamlGenerator (output);
       }
     } catch (Exception e) {
       addError("Exception occurs in TomBackend Init: "+e.getMessage(), 

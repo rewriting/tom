@@ -1,3 +1,9 @@
+2004-04-29  pem  <pem@polly.loria.fr>
+
+	* src/jtom/Tom.java:  is now a singleton
+	* src/jtom/tools/TomTaskInput.java: is now a singleton
+	* src/jtom/TomEnvironment.java: is now a singleton
+
 2004-04-20  pem  <pem@polly.loria.fr>
 
 	* bootinstall

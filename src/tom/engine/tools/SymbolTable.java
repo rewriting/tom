@@ -42,41 +42,39 @@ public class SymbolTable {
   private final static String TYPE_BOOL      = "bool";
   private final static String TYPE_UNIVERSAL = "universal";
 
-  private boolean cCode = false, jCode = true, eCode =false, camlCode = false;
-  private Map mapSymbolName = new HashMap();
-  private Map mapTypeName = new HashMap();
+  private Map mapSymbolName = null;
+  private Map mapTypeName = null;
   private ASTFactory astFactory;
-  public SymbolTable(ASTFactory astFactory, boolean cCode, boolean jCode, boolean eCode, boolean camlCode) {
+  public SymbolTable(ASTFactory astFactory) {
     this.astFactory = astFactory;
-    this.cCode = cCode;
-    this.jCode = jCode;
-    this.eCode = eCode;
-    this.camlCode = camlCode;
-    init();
   }
-  private void init() {
-    if(cCode) {
+
+  public void init() {
+    mapSymbolName = new HashMap();
+    mapTypeName = new HashMap();
+
+    if(getInput().isCCode()) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"int"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"char*"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"void*"));
-    } else if(jCode) {
+    } else if(getInput().isJCode()) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"boolean"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"double"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"Object"));
-    } else if(eCode) {
+    } else if(getInput().isECode()) {
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"CHARACTER"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"BOOLEAN"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"INTEGER"));
       putType(TYPE_DOUBLE, ast().makeType(TYPE_DOUBLE,"DOUBLE"));
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"STRING"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"ANY"));
-    } else if(camlCode) { // this is really bad, will need to be improved
+    } else if(getInput().isCamlCode()) { // this is really bad, will need to be improved
       putType(TYPE_CHAR, ast().makeType(TYPE_CHAR,"char"));
       putType(TYPE_BOOL, ast().makeType(TYPE_BOOL,"bool"));
       putType(TYPE_INT, ast().makeType(TYPE_INT,"int"));
@@ -84,6 +82,10 @@ public class SymbolTable {
       putType(TYPE_STRING, ast().makeType(TYPE_STRING,"String"));
       putType(TYPE_UNIVERSAL, ast().makeType(TYPE_UNIVERSAL,"None"));
     }
+  }
+
+  private TomTaskInput getInput() {
+    return TomTaskInput.getInstance();
   }
 
   public void regenerateFromTerm(TomSymbolTable symbTable) {

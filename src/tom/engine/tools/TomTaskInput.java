@@ -27,6 +27,7 @@ package jtom.tools;
 
 import java.util.ArrayList;
 import java.util.List;
+import jtom.exception.TomRuntimeException;
 import java.io.*;
 
 import jtom.adt.tomsignature.types.*;
@@ -34,6 +35,35 @@ import jtom.adt.tomsignature.types.*;
 public class TomTaskInput {
   private TomTerm term;
   private TomErrorList errors;
+
+  /*
+   * Singleton pattern
+   */
+  private static TomTaskInput instance = null;
+  protected TomTaskInput() {
+    // exisits to defeat instantiation
+  }
+
+  public static TomTaskInput getInstance() {
+    if(instance == null) {
+      throw new TomRuntimeException(new Throwable("cannot get the instance of an unitialized TomTaskInput"));
+    }
+    return instance;
+  }
+
+  public static TomTaskInput create(TomErrorList errors) {
+    if(instance == null) {
+      instance = new TomTaskInput();
+      instance.errors = errors;
+      return instance;
+    } else {
+      throw new TomRuntimeException(new Throwable("cannot create two instances of TomTaskInput"));
+    }
+  }
+
+  /*
+   * list of import paths
+   */
   private List importList;
 
     /* 
@@ -60,28 +90,16 @@ public class TomTaskInput {
      */
   private String packagePath = ""; 
 
-    /*
-     * tomHome
-     * absolute path where Tom is installed (empty by default) 
-     */
-  private File tomHome = null;
-
   private String inputSuffix = ".t";
   private String outputSuffix = ".java";
-
-  public final static String 
-  parsedSuffix    = ".tfix.parsed",
-    expandedSuffix  = ".tfix.expanded",
-    compiledSuffix  = ".tfix.compiled",
-    optimizedSuffix  = ".tfix.optimized",
-    verifExtractionSuffix = ".tfix.verif",
-    parsedTableSuffix = ".tfix.parsed.table",
-    expandedTableSuffix = ".tfix.expanded.table",
-    debugTableSuffix = ".tfix.debug.table";
-  
-  public TomTaskInput(TomErrorList list) {
-    this.errors = list;
-  }
+  public final static String parsedSuffix    = ".tfix.parsed";
+  public final static String expandedSuffix  = ".tfix.expanded";
+  public final static String compiledSuffix  = ".tfix.compiled";
+  public final static String optimizedSuffix  = ".tfix.optimized";
+  public final static String verifExtractionSuffix = ".tfix.verif";
+  public final static String parsedTableSuffix = ".tfix.parsed.table";
+  public final static String expandedTableSuffix = ".tfix.expanded.table";
+  public final static String debugTableSuffix = ".tfix.debug.table";
   
   private boolean needDebugExpansion = false, 
     verbose = false, // a verbose mode (Show duration for each phase)
@@ -117,7 +135,7 @@ public class TomTaskInput {
   private final static int C      = 2;
   private final static int CAML   = 3;
   private final static int EIFFEL = 4;
-  int language = JAVA;
+  private int language = JAVA;
   
   public void setTerm(TomTerm term) {
     this.term = term;

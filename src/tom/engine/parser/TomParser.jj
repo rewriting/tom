@@ -63,20 +63,16 @@ public class TomParser extends TomTask {
   
   
   public TomParser(TomBuffer input,
-                   TomEnvironment environment,
-                   TomTaskInput taskInput,
                    int includeOffSet, 
                    String fileName) {
-    this(input, environment, taskInput,includeOffSet, fileName, new HashSet());
+    this(input, includeOffSet, fileName, new HashSet());
   }
   
   private TomParser(TomBuffer input,
-                    TomEnvironment environment,
-                    TomTaskInput taskInput,
                     int includeOffSet, 
                     String fileName,
                     HashSet alreadyParsedFiles) {
-    super("Tom Parser", environment, taskInput);
+    super("Tom Parser");
     jj_input_stream = new JavaCharStream(input, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
     token = new Token();
@@ -90,8 +86,8 @@ public class TomParser extends TomTask {
     this.orgTrack = makePosition(1,1);
     this.currentFile = fileName;
     this.debuggedStructureList = new LinkedList();
-    this.tomBackQuoteParser = new TomBackQuoteParser(environment);
-    this.tomFactory = new TomFactory(environment);
+    this.tomBackQuoteParser = new TomBackQuoteParser();
+    this.tomFactory = new TomFactory();
     includedFiles = alreadyParsedFiles;
   }
   
@@ -126,7 +122,7 @@ public class TomParser extends TomTask {
         InputStream input = new FileInputStream(file);
         input.read(inputBuffer);
 
-        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment(), getInput(), 0, currentFile, new HashSet());
+        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),0, currentFile, new HashSet());
         tomParser.token_source.SwitchTo(JAVA);
         String packageName = tomParser.JavaPackageDeclaration();
         // Update taskInput
@@ -142,16 +138,16 @@ public class TomParser extends TomTask {
   			System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
   		}
   		if(eclipseMode) {
-  			String fileName = getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix;
+  			String fileName = getInput().getInputFileNameWithoutSuffix() + getInput().parsedTableSuffix;
   			Tools.generateOutput(fileName, symbolTable().toTerm());
   		}
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedSuffix, parsedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().parsedSuffix, parsedTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().parsedTableSuffix, symbolTable().toTerm());
       }
         
       if(getInput().isDebugMode()) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.debugTableSuffix, getStructTable());	
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().debugTableSuffix, getStructTable());	
       }
         
   		// Update taskInput
@@ -1476,7 +1472,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
  		    	input       = new FileInputStream(file);
  	    		input.read(inputBuffer);
      	
- 	   	 		tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(), getInput(), 0, fileName, includedFiles);
+ 	   	 		tomParser   = new TomParser(new TomBuffer(inputBuffer),0, fileName, includedFiles);
  	   	   	tomParser.testIncludedFiles(fileName);
  	   	   	astTom = tomParser.startParsing();
  	      	astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
@@ -1543,7 +1539,7 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
         input       = new FileInputStream(file);
         input.read(inputBuffer);
         
-        tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(), getInput(), 0, fileName, includedFiles);
+        tomParser   = new TomParser(new TomBuffer(inputBuffer),0, fileName, includedFiles);
         tomParser.testIncludedFiles(fileName);
         astTom = tomParser.startParsing();
         astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());

@@ -39,11 +39,10 @@ public class TomExpander extends TomTask {
   private TomKernelExpander tomKernelExpander;
   private TomFactory tomFactory;
   
-  public TomExpander(TomEnvironment environment,TomTaskInput taskInput,
-                     TomKernelExpander tomKernelExpander) {
-    super("Tom Expander", environment,taskInput);
-    this.tomKernelExpander = tomKernelExpander;
-    this.tomFactory = new TomFactory(environment);
+  public TomExpander() {
+    super("Tom Expander");
+    this.tomKernelExpander = new TomKernelExpander();
+    this.tomFactory = new TomFactory();
   }
 
 // ------------------------------------------------------------
@@ -71,8 +70,8 @@ public class TomExpander extends TomTask {
         System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
       if(intermediate) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedSuffix, expandedTerm);
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().expandedSuffix, expandedTerm);
+        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + getInput().expandedTableSuffix, symbolTable().toTerm());
       }
       getInput().setTerm(expandedTerm);
       

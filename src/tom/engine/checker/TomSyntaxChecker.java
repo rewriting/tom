@@ -31,8 +31,8 @@ import jtom.tools.TomTaskInput;
 
 public class TomSyntaxChecker extends TomChecker {
 
-  public TomSyntaxChecker(TomEnvironment env,TomTaskInput taskInput) {
-  	super("Tom SyntaxChecker", env,taskInput);
+  public TomSyntaxChecker() {
+  	super("Tom SyntaxChecker");
   }
   
   /**

@@ -27,21 +27,45 @@ package jtom;
 
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
+import jtom.exception.TomRuntimeException;
 
 public class TomEnvironment {
-
 	private ASTFactory astFactory;
 	private Factory tomSignatureFactory;
 	private SymbolTable symbolTable;
 
-	public TomEnvironment(
-		Factory tomSignatureFactory,
-		ASTFactory astFactory,
-		SymbolTable symbolTable) {
-		this.tomSignatureFactory = tomSignatureFactory;
-		this.astFactory = astFactory;
-		this.symbolTable = symbolTable;
-	}
+  /*
+   * Singleton pattern
+   */
+  private static TomEnvironment instance = null;
+  protected TomEnvironment() {
+    // exisits to defeat instantiation
+  }
+
+  public static TomEnvironment getInstance() {
+    if(instance == null) {
+      throw new TomRuntimeException(new Throwable("cannot get the instance of an unitialized TomEnvironment"));
+    }
+    return instance;
+  }
+
+  public static TomEnvironment create(Factory tomSignatureFactory,
+                                      ASTFactory astFactory,
+                                      SymbolTable symbolTable) {
+    if(instance == null) {
+      instance = new TomEnvironment();
+      instance.tomSignatureFactory = tomSignatureFactory;
+      instance.astFactory = astFactory;
+      instance.symbolTable = symbolTable;
+      return instance;
+    } else {
+      throw new TomRuntimeException(new Throwable("cannot create two instances of TomEnvironment"));
+    }
+  }
+
+  public void init() {
+    symbolTable.init();
+  }
 
 	public ASTFactory getASTFactory() {
 		return astFactory;

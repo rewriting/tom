@@ -32,12 +32,8 @@ import aterm.*;
 import jtom.exception.TomRuntimeException;
 
 public class TomKernelCompiler extends TomBase {
-
-  private boolean debugMode = false;
-
-  public TomKernelCompiler(jtom.TomEnvironment environment, boolean debugMode) {
-    super(environment);
-    this.debugMode = debugMode;
+  public TomKernelCompiler() {
+    super();
   }
 
 // ------------------------------------------------------------
@@ -69,7 +65,7 @@ public class TomKernelCompiler extends TomBase {
             Match(SubjectList(l1),PatternList(l2), optionList)  -> {
               boolean generatedMatch = false;
               String currentDebugKey = "noDebug";
-              if(debugMode) {
+              if(getInput().isDebugMode()) {
                 generatedMatch = hasGeneratedMatch(`optionList);
                 Option orgTrack = findOriginTracking(`optionList);
                 currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
@@ -93,7 +89,7 @@ public class TomKernelCompiler extends TomBase {
                 TomTerm pa = `l2.getHead();
                 defaultPA = hasDefaultCase(pa.getOption());
                 patternList = pa.getTermList().getTomList();
-                if (debugMode && defaultPA) {
+                if (getInput().isDebugMode() && defaultPA) {
                     // replace success by leaving structure
                   TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
                   actionInst = `UnamedBlock(concInstruction(pa.getAction(),TargetLanguageToInstruction(tl)));
@@ -190,7 +186,7 @@ public class TomKernelCompiler extends TomBase {
       manyTomList(Automata(optionList,patternList,numberList,instruction),l)  -> {
         InstructionList newList = automataListCompileMatchingList(`l, generatedMatch);
 
-        if(!generatedMatch && debugMode) {
+        if(!generatedMatch && getInput().isDebugMode()) {
           String debugKey = getDebug(`optionList);
           Instruction tl1 = `TargetLanguageToInstruction(ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+debugKey+"\");\n"));
           Instruction tl2 = `TargetLanguageToInstruction(ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+debugKey+"\");\n"));

@@ -37,12 +37,12 @@ public class TomVerifierExtract extends TomTask {
   %include { ../adt/TomSignature.tom }
     // ------------------------------------------------------------
 
-  public TomVerifierExtract(TomEnvironment tomEnvironment, TomTaskInput taskInput) { 
-    super("Tom verifier", tomEnvironment, taskInput);
+  public TomVerifierExtract() { 
+    super("Tom verifier");
   }
 	
-  public TomVerifierExtract(String name, TomEnvironment tomEnvironment,TomTaskInput taskInput) {
-    super(name, tomEnvironment,taskInput);
+  public TomVerifierExtract(String name) {
+    super(name);
   }
 
   protected void process() {
@@ -60,7 +60,7 @@ public class TomVerifierExtract extends TomTask {
       }
         // put extrated data in a file
       Tools.generateOutput(
-        getInput().getInputFileNameWithoutSuffix() + TomTaskInput.verifExtractionSuffix, 
+                           getInput().getInputFileNameWithoutSuffix() + getInput().verifExtractionSuffix, 
         extractTerm);
     } catch (Exception e) {
       addError("Exception occured in TomVerifierExtract: "+ e.getMessage(), 

@@ -34,8 +34,8 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
   
   private HashMap nameToDecLineMap;
 	
-  public TomBackQuoteParser(jtom.TomEnvironment environment) {
-    super(environment);
+  public TomBackQuoteParser() {
+    super();
   }
   
 // ------------------------------------------------------------

@@ -31,8 +31,8 @@ import jtom.tools.TomTaskInput;
 
 public class TomTypeChecker extends TomChecker {
 
-  public TomTypeChecker(TomEnvironment env, TomTaskInput taskInput) {
-  	super("Tom TypeChecker", env, taskInput);	
+  public TomTypeChecker() {
+  	super("Tom TypeChecker");	
   }
 	
   public void process() {
