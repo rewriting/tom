@@ -21,8 +21,13 @@ public class NodeKindTester extends NodeTester
   public static final int ATTRIBUTE_NODE = org.w3c.dom.Node.ATTRIBUTE_NODE;
   public static final int PROCESSING_INSTRUCTION_NODE = org.w3c.dom.Node.PROCESSING_INSTRUCTION_NODE;
   public static final int TEXT_NODE = org.w3c.dom.Node.TEXT_NODE;
-  public static final int ANY_NODE = 100;
-  public static final int OTHER_NODE = 101;
+  public static final int ANY_NODE = DOCUMENT_NODE + 100;
+  public static final int OTHER_NODE = DOCUMENT_NODE + 101;
+
+  public static final int DEFAULT_NODE = DOCUMENT_NODE + 1000;
+
+
+  public static final int 
 
 
   public NodeKindTester(int nodekind) 
@@ -41,7 +46,9 @@ public class NodeKindTester extends NodeTester
   {
 	name="";
 	type=null;
-	nodeKind = ANY_NODE;
+	// by default, attribute axis selects attributes node, all others axes select elements bay defaut. 
+	// the default node kind is called the PRINCIPAL NODE KIND for AXIS
+	nodeKind = DEFAULT_NODE;  // 
   }
    
   /**
@@ -75,10 +82,20 @@ public class NodeKindTester extends NodeTester
    */
   public boolean doTest(Node node) 
   {
+
+	// if the nodetest is ANYNODE, OK
 	if (nodeKind==ANY_NODE) {
 	  return true; 
 	}
 	
+
+	// default node test
+	if (nodeKind == DEFAULT_NODE) {  // Default, select by axis
+	  // OK return true because this kind is created by PathOperator
+	  return true;
+	}
+
+	// ELEMENT NodeTest
 	if (nodeKind == ELEMENT_NODE && node.getNodeType()==ELEMENT_NODE) {
 	  if (name.compareTo("")==0) {
 		if ((type== null) || (type instanceof XQueryAnyAtomicType)) {
@@ -92,6 +109,8 @@ public class NodeKindTester extends NodeTester
 		
 	  }
 	}
+
+	
 
 	if (nodeKind == node.getNodeType()) {
 	  return true;
@@ -174,11 +193,17 @@ public class NodeKindTester extends NodeTester
    * @return NodeKindTester
    * @roseuid 410FB0FC01E5
    */
-public static NodeKindTester createAnyNodeNodeKindTester() 
-{
-  return new NodeKindTester(ANY_NODE); 
+  public static NodeKindTester createAnyNodeNodeKindTester() 
+  {
+	return new NodeKindTester(ANY_NODE); 
   }
-   
+
+  // called only by PathOperator
+  public static NodeKindTester createDefaultNodeKindTester() 
+  {
+	return new NodeKindTester(DEFAULT_NODE); 
+  }
+  
   /**
    * @param name
    * @return NodeKindTester

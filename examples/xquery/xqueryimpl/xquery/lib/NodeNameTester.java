@@ -8,6 +8,11 @@ import org.w3c.dom.*;
 import xquery.lib.data.type.String;
 import xquery.lib.data.Item;
 
+// wild card can be implemented in this class
+// *
+// prefix:*
+// *:localname:  any namespace, 
+
 public class NodeNameTester extends NodeTester 
 {
   private String name;

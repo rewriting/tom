@@ -16,6 +16,14 @@ public abstract class PathOperator
   protected NodeTester tester;
   protected PathOperator nextOperator;
   protected PathAxe axe;
+
+  public PathOperator(PathAxe axe, NodePredicate filter, PathOperator nextOperator) {
+	this.axe=axe;
+	this.filter=filter; 
+	this.nextOperator=nextOperator; 
+	this.tester = NodeKindTester.createDefaultNodeKindTester(); 
+  }
+
   
   /**
    * @roseuid 4110B63102BE
