@@ -52,7 +52,7 @@ public class TomParser extends TomTask implements TomParserConstants {
   private String currentFile = "", currentPath = "";
   private LinkedList debuggedStructureList;
   private String text="";
-  private boolean debugMode = false,javaCode = false, cCode = false,
+  private boolean debugMode = false,javaCode = false, cCode = false, eclipseMode = false,
         xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
 
 
@@ -99,6 +99,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     javaCode = getInput().isJCode();
     cCode = getInput().isCCode();
     currentPath = getInput().getResourceParentPathLocation();
+    eclipseMode = getInput().isEclipseMode();
   }
 
   public void process() {
@@ -111,6 +112,9 @@ public class TomParser extends TomTask implements TomParserConstants {
 
                 if(verbose) {
                         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+                }
+                if(eclipseMode) {
+                        Tools.generateOutput("."+getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
                 }
         if(intermediate) {
             Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
@@ -2804,14 +2808,14 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_48() {
-    if (jj_3R_32()) return true;
-    return false;
-  }
-
   final private boolean jj_3_9() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_EQUAL)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_48() {
+    if (jj_3R_32()) return true;
     return false;
   }
 

@@ -59,7 +59,7 @@ public class TomParser extends TomTask {
   private String currentFile = "", currentPath = "";
   private LinkedList debuggedStructureList;
   private String text="";
-  private boolean debugMode = false,javaCode = false, cCode = false,
+  private boolean debugMode = false,javaCode = false, cCode = false, eclipseMode = false,
   	xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
   
   
@@ -106,6 +106,7 @@ public class TomParser extends TomTask {
     javaCode = getInput().isJCode();
     cCode = getInput().isCCode();
     currentPath = getInput().getResourceParentPathLocation();
+    eclipseMode = getInput().isEclipseMode();
   }
   
   public void process() {
@@ -118,6 +119,9 @@ public class TomParser extends TomTask {
   		
   		if(verbose) {
   			System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+  		}
+  		if(eclipseMode) {
+  			Tools.generateOutput("."+getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
   		}
         if(intermediate) {
             Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
