@@ -105,7 +105,8 @@ public class PluginPlatform {
       Object[] arg = new Object[]{input};
       Object initArgument = input;
       boolean success = true;
-      getLogger().log(Level.FINER, "NowCompiling", arg);
+      statusHandler.clear();
+      getLogger().log(Level.FINER, "NowCompiling", input);
       // runs the modules
       Iterator it = pluginsList.iterator();
       while(it.hasNext()) {
@@ -119,7 +120,8 @@ public class PluginPlatform {
         plugin.run();
         if(statusHandler.hasError()) {
           success = false;
-          getLogger().log(Level.SEVERE, "ProcessingError", new Object[]{plugin.getClass().getName(), initArgument});
+          getLogger().log(Level.SEVERE, "ProcessingError",
+                          new Object[]{plugin.getClass().getName(), initArgument});
           break;
         }
         arg = plugin.getArgs();
@@ -136,10 +138,12 @@ public class PluginPlatform {
 
     if(statusHandler.hasError()) {
       // this is the highest possible level > will be printed no matter what 
-      getLogger().log(Level.SEVERE, "PluginPlatformTaskErrorMessage", new Integer(nbOfErrors));
+      getLogger().log(Level.SEVERE, "PluginPlatformTaskErrorMessage",
+                      new Integer(nbOfErrors));
       return 1;
     } else if( statusHandler.hasWarning() ) {
-      getLogger().log(Level.INFO, "PluginPlatformTaskWarningMessage", new Integer(nbOfWarnings));
+      getLogger().log(Level.INFO, "PluginPlatformTaskWarningMessage",
+                      new Integer(nbOfWarnings));
       return 0;
     }
     return 0;

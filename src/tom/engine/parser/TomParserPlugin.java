@@ -147,12 +147,12 @@ public class TomParserPlugin extends TomGenericPlugin {
       //printAlertMessage(errorsAtStart, warningsAtStart);
     }
     catch (TokenStreamException e){
-      //e.printStackTrace();
+      e.printStackTrace();
       getLogger().log(Level.SEVERE, "TokenStreamException",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()} );
       return;
     } catch (RecognitionException e){
-      //e.printStackTrace();
+      e.printStackTrace();
       getLogger().log(Level.SEVERE, "RecognitionException",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()});
       return;

@@ -30,10 +30,16 @@ import java.util.logging.*;
 
 public class StatusHandler extends Handler {
 
-  // Map between a log level and the cardinality of published logrecord
+  /** Map between a log level and the cardinality of published logrecord */
   private Map levelStats;
   
+  /** Constructor */
   public StatusHandler() {
+    levelStats = new HashMap();
+  }
+  
+  /** Clear all previous records */
+  public void clear() {
     levelStats = new HashMap();
   }
   
