@@ -1,0 +1,179 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This manual describes the functionality provided by \TOM. 
+This tool is a Pattern Matching Preprocessor that can be used to
+intregrate term rewriting facilities in an imperative language such as
+\C\ and \Java.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Using \TOM}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This section explains the basics of using \TOM. 
+
+\subsection{Installing \TOM}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In order to run \TOM, you need a Java Development Kit (JDK)
+%\TOM\ is written in \JTOM\ (\TOM\ $+$ \Java), 
+
+\subsection{Programming in \TOM}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\TOM\ is a multi-languages Pattern Matching Preprocesor. It currently
+supports a least two languages (called ``target languages''): \C\ and \Java.
+A \TOM\ program can be seen a \Java\ program (resp. a \C\ program)
+that contains some \TOM\ constructs. As consequence, any \Java\ or \C\
+program is a valid \TOM\ program. 
+
+\TOM\ provides several constructs for specifying algebraic data types
+and associated pattern matching operations, and produces as output the
+same code with all such constructs translated into the target language.
+As an example, we consider the algebraic specification of Naturals,
+using the Peano axiomatisation:
+% and will we show how to make this
+% specification executable using \TOM: 
+
+$$
+Nat = 0 \mid suc(Nat) \mid plus(Nat,Nat)
+$$
+with the two following rewrite rules:
+$$
+\begin{array}{lcl}
+  plus(x,0)      & \rightarrow & x\\
+  plus(x,suc(y)) & \rightarrow & suc(plus(x,y))
+\end{array}
+$$
+(where $x$ and $y$ are variables of sort~$Nat$)
+
+\medskip
+Suppose that we want to write a \C\ program that makes this
+specification executable. 
+Using \TOM, the program could look like:
+
+\begin{verbatimwrite}{program.txt}
+  %typeterm Nat
+  %op Nat zero
+  %op Nat suc(Nat)
+  %op Nat plus(Nat,Nat)
+
+  %rule {
+     plus(x,0)      -> x
+     plus(x,suc(y)) -> suc(plus(x,y))
+  }
+
+  int main() {
+    ...
+    result = plus( suc(suc(zero)) , suc(zero) )
+    ...
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+
+In fact, this previous part of program is not complete. As we can
+notice, we need to provide a term data structure to represent the
+objects we want to rewrite.
+To achieve this goal, we can either use and external term library such
+as the ATerm library, either we have to explicitly describe how a term
+is represented in memory.
+In \C\, this can be done as follow:
+\begin{verbatimwrite}{program.txt}
+  struct term {
+    int symbol;
+    int arity;
+    struct term **subterm;
+  };
+
+  #define ZERO 0
+  #define SUC 1
+  #define PLUS 2
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+Then, we can provide some function to build a term:
+
+\begin{verbatimwrite}{program.txt}
+  struct term symbol_zero = {ZERO, 0, NULL};
+  struct term *zero = &symbol_zero;
+
+  struct term *suc(struct term *x) {
+    struct term *res;
+    res = malloc(sizeof(struct term));
+    res->symbol = SUC;
+    res->arity = 1;
+    res->subterm = (struct term **) malloc(1 * sizeof(struct term *));
+    res->subterm[0] = x;
+    return(res);
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+Using this term representation, the \C\ expressions 
+\texttt{suc(suc(suc(zero)))} and \texttt{suc(suc(zero))} build the
+naturals~3 and~2.
+But, we still have to ``explain'' to \TOM\ how to access to our term
+representation: for each data type defined in \TOM, we have to specify
+how this data type is implemented, how to access to the function
+symbol, how to access to a subterm, and how to compare two function symbols.
+Then, for each constructor of this data type, we also have to specify
+how the constructor is represented in memory, and how to build such a constructor.
+This can be done in the following way:
+
+\begin{verbatimwrite}{program.txt}
+  %typeterm Nat {
+    implement { struct term* }
+    get_fun_sym(t)      { t->symbol }
+    cmp_fun_sym(s1,s2)  { s1 == s2 }
+    get_subterm(t, n)   { t->subterm[n] }
+  }
+  %op term zero {
+    fsym { ZERO }
+    make { zero } 
+  }
+  %op term suc(term) {
+    fsym    { SUC }
+    make(t) { suc(t) }
+  }
+  %op term plus(term,term) {
+    fsym { PLUS }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+Given the previous specification, \TOM\ will generate a \C\ function
+\texttt{struct term *plus(struct term *t1, struct term *t2)} that
+implements the corresponding rewrite system. In this example, $plus$ is
+a defined symbol: this explains why we do not have to specify how to
+build such a symbol.
+
+Instead of using the \texttt{\%rule} construct, another alternative
+could have consisted in using the \texttt{\%match} construct. 
+This more primite construct may remind the \texttt{switch-case}
+\C~instruction. It can be used as follow:
+
+\begin{verbatimwrite}{program.txt}
+  struct term *plus(struct term *t1, struct term *t2) {
+    %match(term t1, term t2) {
+      x,zero   -> { return x; }
+      x,suc(y) -> { return suc(plus(x,y)); }
+    }
+  }
+\end{verbatimwrite}
+\programboxed{program.txt}
+
+The \texttt{plus} function is now explicitly defined by the user, and
+the \texttt{\%match} construct is now replaced by several \C\
+instructions (and not a function definition). Another difference,
+wrt. the \texttt{\%rule} construct, is related to the right-hand side
+of each rule: 
+\begin{itemize}
+\item when using \texttt{\%rule}, the right-hand side is a
+  term built on the algebraic data type
+\item when using \texttt{\%match}, the right-hand side is a list of
+  target language instructions. In the second rule of our example, we
+  explicitly call the \C\ functions \texttt{plus} and \texttt{suc} and
+  we return the resulting term, but we can imagine a program that
+  performs input/output or side effects that cannot be easilly
+  expressed in a pure algebraic specification formalism. 
+\end{itemize}
