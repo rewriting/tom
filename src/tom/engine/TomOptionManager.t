@@ -630,28 +630,38 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * @param node the node containing the XML file
    */
   public void extractOptionList(TNode node) {
-    globalOptions = `emptyPlatformOptionList();
     %match(TNode node) {
       <server>opt@<options></options></server> -> {
-	%match(TNode opt) {
-	  ElementNode[childList = c] -> { 
-	    while(!(c.isEmpty())) {
-	      TNode h = c.getHead();
+	globalOptions = xmlToOptionList(opt);
+      }
+    }
+  }
+
+  public static PlatformOptionList xmlToOptionList(TNode optionsNode) {
+    return (new TomOptionManager()).nonStaticXmlToOptionList(optionsNode);
+  }
+
+  private PlatformOptionList nonStaticXmlToOptionList(TNode optionsNode) {
+    PlatformOptionList list = `emptyPlatformOptionList();
+
+    %match(TNode optionsNode) {
+      ElementNode[childList = c] -> { 
+	while(!(c.isEmpty())) {
+	  TNode h = c.getHead();
 					
-	      %match(TNode h) {
-                 ob@ElementNode[name="OptionBoolean"] -> { extractOptionBoolean(ob); }
+	  %match(TNode h) {
+	    ob@ElementNode[name="OptionBoolean"] -> { list = extractOptionBoolean(ob, list); }
 					    
-                 oi@ElementNode[name="OptionInteger"] -> { extractOptionInteger(oi); }
+	    oi@ElementNode[name="OptionInteger"] -> { list = extractOptionInteger(oi, list); }
 					    
-                 os@ElementNode[name="OptionString"] -> { extractOptionString(os); }
-	      }
-					
-	      c = c.getTail();
-	    }
+	    os@ElementNode[name="OptionString"]  -> { list = extractOptionString(os, list); }
 	  }
+					
+	  c = c.getTail();
 	}
       }
     }
+    return list;
   }
 
   /**
@@ -659,19 +669,20 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * 
    * @param optionBooleanNode the node containing the option
    */
-  private void extractOptionBoolean(TNode optionBooleanNode) {
+  private PlatformOptionList extractOptionBoolean(TNode optionBooleanNode, PlatformOptionList list) {
     %match(TNode optionBooleanNode) {
       <OptionBoolean [name = n, altName = an, description = d, valueB = v] /> -> {
 	%match(String v) {
           ('true') -> { 
-	    globalOptions = `concPlatformOption(globalOptions*, OptionBoolean(n, an, d, True())); 
+	    list = `concPlatformOption(list*, OptionBoolean(n, an, d, True())); 
 	  }
 	  ('false') -> { 
-	    globalOptions = `concPlatformOption(globalOptions*, OptionBoolean(n, an, d, False())); 
+	    list = `concPlatformOption(list*, OptionBoolean(n, an, d, False())); 
 	  }
         }
       }
     }
+    return list;
   }
 
   /**
@@ -679,12 +690,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * 
    * @param optionIntegerNode the node containing the option
    */
-  private void extractOptionInteger(TNode optionIntegerNode) {
+  private PlatformOptionList extractOptionInteger(TNode optionIntegerNode, PlatformOptionList list) {
     %match(TNode optionIntegerNode) {
       <OptionInteger [name = n, altName = an, description = d, valueI = v, attrName = at] /> -> {
-        globalOptions = `concPlatformOption(OptionInteger(n, an, d, Integer.parseInt(v), at), globalOptions*);
+        list = `concPlatformOption(list*, OptionInteger(n, an, d, Integer.parseInt(v), at));
       }
     }
+    return list;
   }
 
   /**
@@ -692,12 +704,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * 
    * @param optionStringNode the node containing the option
    */
-  private void extractOptionString(TNode optionStringNode) {
+  private PlatformOptionList extractOptionString(TNode optionStringNode, PlatformOptionList list) {
     %match(TNode optionStringNode) {
       <OptionString [name = n, altName = an, description = d, valueS = v, attrName = at] /> -> {
-        globalOptions = `concPlatformOption(OptionString(n, an, d, v, at), globalOptions*);
+        list = `concPlatformOption(list*, OptionString(n, an, d, v, at));
       }
     }
+    return list;
   }
 
 }

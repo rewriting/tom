@@ -68,13 +68,12 @@ public class TomBase {
   protected TomEnvironment environment() {
     try {
       return TomEnvironment.getInstance();
-    } catch(TomRuntimeException tre) { // TODO: UGLY solution, should be changed
+    } catch(TomRuntimeException tre) {
 	TomEnvironment.create();
 	// this is done to handle the first call to TomEnvironment
 	// because the plugins extend TomBase
 	// and so there are calls to TomEnvironment.getInstance()
 	// when they are instantiated by the Server
-	// that's why it's done here and not in the Starter
 	return TomEnvironment.getInstance();
     }
   }
