@@ -39,6 +39,8 @@ import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
+import java.util.*;
+
 public class Rewrite3 {
   private termFactory factory;
   private TravelerFactory travelerFactory;
@@ -66,41 +68,74 @@ public class Rewrite3 {
   }
 
   public void run() {
-    //Term subject = `g(c,c);
-    Term subject = `f(g(g(a,b),g(c,c)));
-    VisitableVisitor rule = new RewriteSystem();
+    //VisitableVisitor rule = new RewriteSystemFail();
 
-    System.out.println("subject = " + subject);
-    System.out.println("occurs  = " + occurs(rule, subject));
+    try {
+      Collection collection = new HashSet();
+      VisitableVisitor rule = new RewriteSystem(collection);
+      Term subject = `f(g(g(a,b),g(a,b)));
+      travelerFactory.Try(travelerFactory.BottomUp(rule)).visit(subject);
+      System.out.println("collect : " + collection);
+      
+      collection.clear();
+      subject = `f(g(g(a,b),g(c,b)));
+      travelerFactory.Try(travelerFactory.BottomUp(rule)).visit(subject);
+      System.out.println("collect : " + collection);
+    } catch (VisitFailure e) {
+      System.out.println("reduction failed");
+    }
+
+
+    System.out.println("occursTerm: " + occursTerm(`g(c,c), `f(g(g(a,b),g(a,b))) ));
+    System.out.println("occursTerm: " + occursTerm(`g(c,c), `f(g(g(a,b),g(c,c))) ));
 
   }
   
-  private boolean occurs(VisitableVisitor rule, Term subject) {
-    VisitableVisitor onceBottomUp = travelerFactory.OnceBottomUp(rule);
-    try {
-      onceBottomUp.visit(subject);
-      return true;
-    } catch(VisitFailure e) {
-      return false;
-    }
+  public void collect(Collection collection, VisitableVisitor rule, ATerm subject) {
+
   }
 
   class RewriteSystem extends strategy.term.termVisitableFwd {
-    public RewriteSystem() {
+    Collection collection;
+    public RewriteSystem(Collection c) {
       super(new tom.library.strategy.mutraveler.Fail());
+      this.collection = c;
     }
     
     public Term visit_Term(Term arg) throws VisitFailure { 
+      //System.out.println("arg = " + arg);
       %match(Term arg) {
-        t@g(c(),c()) -> { return `t; }
+        g(x,b()) -> { collection.add(`x); }
       }
-      throw new VisitFailure();
+
+      return arg;
+      //throw new VisitFailure();
     }
-    
-
-
   }
 
+
+  /*
+   * Library
+   */
+  
+  private boolean occursTerm(final ATerm groundTerm, ATerm subject) {
+    VisitableVisitor rule = new tom.library.strategy.mutraveler.VoidVisitor() {
+        public void voidVisit(jjtraveler.Visitable subject) throws VisitFailure {
+          if(groundTerm == subject) {
+            throw new VisitFailure(); 
+          }
+        }
+      };
+  
+    VisitableVisitor bottomUp = travelerFactory.BottomUp(rule);
+    try {
+      bottomUp.visit(subject);
+      return false;
+    } catch(VisitFailure e) {
+      return true;
+    }
+  }
+ 
 
 }
 
