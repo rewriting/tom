@@ -116,6 +116,39 @@ public class TomTypeChecker extends TomChecker {
       }; // end new
     traversal().genericCollect(expandedTerm, collectAndVerify);
   } //checkTypeInference
+
+  /* 
+   * Collect unknown (not in symbol table) appls without ()
+   */
+  private void collectUnknownsAppls(ArrayList unknownsApplsInWhen, TomList guards) {
+    Collect1 collectAndVerify = new Collect1() {  
+        public boolean apply(ATerm term) {
+          if(term instanceof TomTerm) {
+             { jtom.adt.tomsignature.types.TomTerm tom_match2_1=(( jtom.adt.tomsignature.types.TomTerm)term); if(tom_is_fun_sym_Appl(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm app=tom_match2_1; { jtom.adt.tomsignature.types.OptionList tom_match2_1_1=tom_get_slot_Appl_option(tom_match2_1); { jtom.adt.tomsignature.types.TomList tom_match2_1_3=tom_get_slot_Appl_args(tom_match2_1); { jtom.adt.tomsignature.types.OptionList opts=tom_match2_1_1; if(tom_is_fun_sym_concTomTerm(tom_match2_1_3) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match2_1_3_list1=tom_match2_1_3; if(tom_is_empty_TomList(tom_match2_1_3_list1)) {
+
+                boolean isConstructor = false;
+                 { jtom.adt.tomsignature.types.OptionList tom_match3_1=(( jtom.adt.tomsignature.types.OptionList)opts); if(tom_is_fun_sym_concOption(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match3_1_list1=tom_match3_1; { jtom.adt.tomsignature.types.OptionList tom_match3_1_begin1=tom_match3_1_list1; { jtom.adt.tomsignature.types.OptionList tom_match3_1_end1=tom_match3_1_list1;{ while (!(tom_is_empty_OptionList(tom_match3_1_end1))) {tom_match3_1_list1=tom_match3_1_end1;{ { jtom.adt.tomsignature.types.Option tom_match3_1_2=tom_get_head_OptionList(tom_match3_1_list1);tom_match3_1_list1=tom_get_tail_OptionList(tom_match3_1_list1); if(tom_is_fun_sym_Constructor(tom_match3_1_2) ||  false ) {
+
+                    isConstructor = true;
+                   }}tom_match3_1_end1=tom_get_tail_OptionList(tom_match3_1_end1);} }tom_match3_1_list1=tom_match3_1_begin1;}}}} }}
+
+                if(!isConstructor) {
+                  if((symbolTable().getSymbolFromName(getName(app)))==null) {
+                    messageError(findOriginTrackingLine(app.getOption()),
+                                 TomMessage.getMessage("UnknownVariableInWhen"),
+                                 new Object[]{getName(app)});
+                  }
+                  // else, it's actually app()
+                } // else, it's a unknown (ie : java) function
+                return true;
+               }} }}}}} }}
+
+          } 
+          return true;
+        }// end apply
+      }; // end new
+    traversal().genericCollect(guards, collectAndVerify);
+  }
   
   private void verifyMatchVariable(PatternInstructionList patternInstructionList) {
     while(!patternInstructionList.isEmpty()) {
@@ -123,8 +156,14 @@ public class TomTypeChecker extends TomChecker {
       Pattern pattern = pa.getPattern();
         // collect variables
       ArrayList variableList = new ArrayList();
-      collectVariable(variableList, pattern);      
+      collectVariable(variableList, pattern);
       verifyVariableTypeListCoherence(variableList);
+      // verify variables in WHEN instruction
+      ArrayList unknownsApplsInWhen = new ArrayList();
+      // collect unknown variables
+      collectUnknownsAppls(unknownsApplsInWhen, pattern.getGuards());
+      //System.out.println("vars in guard "+unknownsApplsInWhen);
+
       patternInstructionList = patternInstructionList.getTail();
     }
   } //verifyMatchVariable
@@ -132,7 +171,7 @@ public class TomTypeChecker extends TomChecker {
   /**
    * The notion of conditional rewrite rule can be generalised with a sequence of conditions
    * as in lhs -> rhs where P1:=C1 ... where Pn:=Cn if Qj==Dj 
-   * (i) Var(Pi) inter (var(lhs) U var(P1) U ... U var(Pi-1)) = vide
+   * (i) Var(Pi) inter (var(lhs) U var(P1) U ... U var(Pi-1)) = empty
    * => introduced variables in Pi are "fresh"
    * (ii) var(ci) included in (var(lhs) U var(P1) U ... U var(Pi-1))
    * no new fresh variables in Ci
@@ -160,10 +199,10 @@ public class TomTypeChecker extends TomChecker {
         break;
       }
       
-       { jtom.adt.tomsignature.types.InstructionList tom_match2_1=(( jtom.adt.tomsignature.types.InstructionList)condList); if(tom_is_fun_sym_concInstruction(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.InstructionList tom_match2_1_list1=tom_match2_1; { jtom.adt.tomsignature.types.InstructionList tom_match2_1_begin1=tom_match2_1_list1; { jtom.adt.tomsignature.types.InstructionList tom_match2_1_end1=tom_match2_1_list1;{ while (!(tom_is_empty_InstructionList(tom_match2_1_end1))) {tom_match2_1_list1=tom_match2_1_end1;{ { jtom.adt.tomsignature.types.Instruction cond=tom_get_head_InstructionList(tom_match2_1_list1);tom_match2_1_list1=tom_get_tail_InstructionList(tom_match2_1_list1);
+       { jtom.adt.tomsignature.types.InstructionList tom_match4_1=(( jtom.adt.tomsignature.types.InstructionList)condList); if(tom_is_fun_sym_concInstruction(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.InstructionList tom_match4_1_list1=tom_match4_1; { jtom.adt.tomsignature.types.InstructionList tom_match4_1_begin1=tom_match4_1_list1; { jtom.adt.tomsignature.types.InstructionList tom_match4_1_end1=tom_match4_1_list1;{ while (!(tom_is_empty_InstructionList(tom_match4_1_end1))) {tom_match4_1_list1=tom_match4_1_end1;{ { jtom.adt.tomsignature.types.Instruction cond=tom_get_head_InstructionList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_InstructionList(tom_match4_1_list1);
 
           Instruction condition = cond ;
-           { jtom.adt.tomsignature.types.Instruction tom_match3_1=(( jtom.adt.tomsignature.types.Instruction)condition); if(tom_is_fun_sym_MatchingCondition(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match3_1_1=tom_get_slot_MatchingCondition_lhs(tom_match3_1); { jtom.adt.tomsignature.types.TomTerm tom_match3_1_2=tom_get_slot_MatchingCondition_rhs(tom_match3_1); { jtom.adt.tomsignature.types.TomTerm lhs=tom_match3_1_1; { jtom.adt.tomsignature.types.TomTerm p=lhs; { jtom.adt.tomsignature.types.TomTerm rhs=tom_match3_1_2; { jtom.adt.tomsignature.types.TomTerm c=rhs;
+           { jtom.adt.tomsignature.types.Instruction tom_match5_1=(( jtom.adt.tomsignature.types.Instruction)condition); if(tom_is_fun_sym_MatchingCondition(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match5_1_1=tom_get_slot_MatchingCondition_lhs(tom_match5_1); { jtom.adt.tomsignature.types.TomTerm tom_match5_1_2=tom_get_slot_MatchingCondition_rhs(tom_match5_1); { jtom.adt.tomsignature.types.TomTerm lhs=tom_match5_1_1; { jtom.adt.tomsignature.types.TomTerm p=lhs; { jtom.adt.tomsignature.types.TomTerm rhs=tom_match5_1_2; { jtom.adt.tomsignature.types.TomTerm c=rhs;
 
               // (i)
               ArrayList pVar = new ArrayList();
@@ -185,7 +224,7 @@ public class TomTypeChecker extends TomChecker {
                 // there are some coherence issues: same name but not same type
                 break;
               }
-            }}}}}} } if(tom_is_fun_sym_TypedEqualityCondition(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match3_1_2=tom_get_slot_TypedEqualityCondition_lhs(tom_match3_1); { jtom.adt.tomsignature.types.TomTerm tom_match3_1_3=tom_get_slot_TypedEqualityCondition_rhs(tom_match3_1); { jtom.adt.tomsignature.types.TomTerm lhs=tom_match3_1_2; { jtom.adt.tomsignature.types.TomTerm p=lhs; { jtom.adt.tomsignature.types.TomTerm rhs=tom_match3_1_3; { jtom.adt.tomsignature.types.TomTerm c=rhs;
+            }}}}}} } if(tom_is_fun_sym_TypedEqualityCondition(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match5_1_2=tom_get_slot_TypedEqualityCondition_lhs(tom_match5_1); { jtom.adt.tomsignature.types.TomTerm tom_match5_1_3=tom_get_slot_TypedEqualityCondition_rhs(tom_match5_1); { jtom.adt.tomsignature.types.TomTerm lhs=tom_match5_1_2; { jtom.adt.tomsignature.types.TomTerm p=lhs; { jtom.adt.tomsignature.types.TomTerm rhs=tom_match5_1_3; { jtom.adt.tomsignature.types.TomTerm c=rhs;
 
                // (iv)
               ArrayList pVar = new ArrayList();
@@ -209,7 +248,7 @@ public class TomTypeChecker extends TomChecker {
               }
             }}}}}} }}
 
-        }tom_match2_1_end1=tom_get_tail_InstructionList(tom_match2_1_end1);} }tom_match2_1_list1=tom_match2_1_begin1;}}}} }}
+        }tom_match4_1_end1=tom_get_tail_InstructionList(tom_match4_1_end1);} }tom_match4_1_list1=tom_match4_1_begin1;}}}} }}
 
       
       // (iii)

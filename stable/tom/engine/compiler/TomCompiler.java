@@ -527,37 +527,65 @@ public class TomCompiler extends TomGenericPlugin {
     HashSet constraintVariable = new HashSet();
     collectVariable(patternVariable,subjectList);
     collectVariable(constraintVariable,constraint);
-    patternVariable.retainAll(constraintVariable);
+    //patternVariable.retainAll(constraintVariable);
+
+    TomList variableList = intersection(getAstFactory().makeList(patternVariable),getAstFactory().makeList(constraintVariable));
+    //System.out.println("variableList = " + variableList);
+
     //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);
-    TomList newSubjectList = (TomList) replace_attachConstraint.apply(subjectList,patternVariable,constraint); 
+    TomList newSubjectList = (TomList) replace_attachConstraint.apply(subjectList,variableList,constraint); 
 
     //System.out.println("newSubjectList = " + newSubjectList);
 
     return newSubjectList;
   }
 
+  private TomList intersection(TomList patternVariable, TomList constraintVariable) {
+     { jtom.adt.tomsignature.types.TomList tom_match10_1=(( jtom.adt.tomsignature.types.TomList)patternVariable); { jtom.adt.tomsignature.types.TomList tom_match10_2=(( jtom.adt.tomsignature.types.TomList)constraintVariable); if(tom_is_fun_sym_concTomTerm(tom_match10_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match10_1_list1=tom_match10_1; { jtom.adt.tomsignature.types.TomList tom_match10_1_begin1=tom_match10_1_list1; { jtom.adt.tomsignature.types.TomList tom_match10_1_end1=tom_match10_1_list1;{ while (!(tom_is_empty_TomList(tom_match10_1_end1))) {tom_match10_1_list1=tom_match10_1_end1;{ { jtom.adt.tomsignature.types.TomList PV1=tom_get_slice_concTomTerm(tom_match10_1_begin1,tom_match10_1_end1); { jtom.adt.tomsignature.types.TomTerm tom_match10_1_2=tom_get_head_TomList(tom_match10_1_list1);tom_match10_1_list1=tom_get_tail_TomList(tom_match10_1_list1); if(tom_is_fun_sym_Variable(tom_match10_1_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match10_1_2; { jtom.adt.tomsignature.types.TomName tom_match10_1_2_2=tom_get_slot_Variable_astName(tom_match10_1_2); { jtom.adt.tomsignature.types.TomName name=tom_match10_1_2_2; { jtom.adt.tomsignature.types.TomList PV2=tom_match10_1_list1; if(tom_is_fun_sym_concTomTerm(tom_match10_2) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match10_2_list1=tom_match10_2; { jtom.adt.tomsignature.types.TomList tom_match10_2_begin1=tom_match10_2_list1; { jtom.adt.tomsignature.types.TomList tom_match10_2_end1=tom_match10_2_list1;{ while (!(tom_is_empty_TomList(tom_match10_2_end1))) {tom_match10_2_list1=tom_match10_2_end1;{ { jtom.adt.tomsignature.types.TomList CV1=tom_get_slice_concTomTerm(tom_match10_2_begin1,tom_match10_2_end1); { jtom.adt.tomsignature.types.TomTerm tom_match10_2_2=tom_get_head_TomList(tom_match10_2_list1);tom_match10_2_list1=tom_get_tail_TomList(tom_match10_2_list1); if(tom_is_fun_sym_Variable(tom_match10_2_2) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match10_2_2_2=tom_get_slot_Variable_astName(tom_match10_2_2); { jtom.adt.tomsignature.types.TomName tom_renamedvar_name_1=tom_match10_2_2_2; if(tom_terms_equal_TomName(name, tom_renamedvar_name_1)) { { jtom.adt.tomsignature.types.TomList CV2=tom_match10_2_list1;
+
+        TomList inter = intersection(tom_append_list_concTomTerm(PV1,tom_append_list_concTomTerm(PV2,tom_empty_list_concTomTerm())),tom_append_list_concTomTerm(CV1,tom_append_list_concTomTerm(CV2,tom_empty_list_concTomTerm())));
+        return tom_cons_list_concTomTerm(var,tom_append_list_concTomTerm(inter,tom_empty_list_concTomTerm()));
+      } }}} }}}tom_match10_2_end1=tom_get_tail_TomList(tom_match10_2_end1);} }tom_match10_2_list1=tom_match10_2_begin1;}}}} }}}}} }}}tom_match10_1_end1=tom_get_tail_TomList(tom_match10_1_end1);} }tom_match10_1_list1=tom_match10_1_begin1;}}}} } if(tom_is_fun_sym_concTomTerm(tom_match10_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match10_1_list1=tom_match10_1; { jtom.adt.tomsignature.types.TomList tom_match10_1_begin1=tom_match10_1_list1; { jtom.adt.tomsignature.types.TomList tom_match10_1_end1=tom_match10_1_list1;{ while (!(tom_is_empty_TomList(tom_match10_1_end1))) {tom_match10_1_list1=tom_match10_1_end1;{ { jtom.adt.tomsignature.types.TomList PV1=tom_get_slice_concTomTerm(tom_match10_1_begin1,tom_match10_1_end1); { jtom.adt.tomsignature.types.TomTerm tom_match10_1_2=tom_get_head_TomList(tom_match10_1_list1);tom_match10_1_list1=tom_get_tail_TomList(tom_match10_1_list1); if(tom_is_fun_sym_VariableStar(tom_match10_1_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match10_1_2; { jtom.adt.tomsignature.types.TomName tom_match10_1_2_2=tom_get_slot_VariableStar_astName(tom_match10_1_2); { jtom.adt.tomsignature.types.TomName name=tom_match10_1_2_2; { jtom.adt.tomsignature.types.TomList PV2=tom_match10_1_list1; if(tom_is_fun_sym_concTomTerm(tom_match10_2) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match10_2_list1=tom_match10_2; { jtom.adt.tomsignature.types.TomList tom_match10_2_begin1=tom_match10_2_list1; { jtom.adt.tomsignature.types.TomList tom_match10_2_end1=tom_match10_2_list1;{ while (!(tom_is_empty_TomList(tom_match10_2_end1))) {tom_match10_2_list1=tom_match10_2_end1;{ { jtom.adt.tomsignature.types.TomList CV1=tom_get_slice_concTomTerm(tom_match10_2_begin1,tom_match10_2_end1); { jtom.adt.tomsignature.types.TomTerm tom_match10_2_2=tom_get_head_TomList(tom_match10_2_list1);tom_match10_2_list1=tom_get_tail_TomList(tom_match10_2_list1); if(tom_is_fun_sym_VariableStar(tom_match10_2_2) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match10_2_2_2=tom_get_slot_VariableStar_astName(tom_match10_2_2); { jtom.adt.tomsignature.types.TomName tom_renamedvar_name_1=tom_match10_2_2_2; if(tom_terms_equal_TomName(name, tom_renamedvar_name_1)) { { jtom.adt.tomsignature.types.TomList CV2=tom_match10_2_list1;
+
+        TomList inter = intersection(tom_append_list_concTomTerm(PV1,tom_append_list_concTomTerm(PV2,tom_empty_list_concTomTerm())),tom_append_list_concTomTerm(CV1,tom_append_list_concTomTerm(CV2,tom_empty_list_concTomTerm())));
+        return tom_cons_list_concTomTerm(var,tom_append_list_concTomTerm(inter,tom_empty_list_concTomTerm()));
+      } }}} }}}tom_match10_2_end1=tom_get_tail_TomList(tom_match10_2_end1);} }tom_match10_2_list1=tom_match10_2_begin1;}}}} }}}}} }}}tom_match10_1_end1=tom_get_tail_TomList(tom_match10_1_end1);} }tom_match10_1_list1=tom_match10_1_begin1;}}}} }}}
+
+    return tom_empty_list_concTomTerm();
+  }
+
+  private TomList remove(TomList list, TomTerm element) {
+     { jtom.adt.tomsignature.types.TomList tom_match11_1=(( jtom.adt.tomsignature.types.TomList)list); { jtom.adt.tomsignature.types.TomTerm tom_match11_2=(( jtom.adt.tomsignature.types.TomTerm)element); if(tom_is_fun_sym_concTomTerm(tom_match11_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match11_1_list1=tom_match11_1; { jtom.adt.tomsignature.types.TomList tom_match11_1_begin1=tom_match11_1_list1; { jtom.adt.tomsignature.types.TomList tom_match11_1_end1=tom_match11_1_list1;{ while (!(tom_is_empty_TomList(tom_match11_1_end1))) {tom_match11_1_list1=tom_match11_1_end1;{ { jtom.adt.tomsignature.types.TomList C1=tom_get_slice_concTomTerm(tom_match11_1_begin1,tom_match11_1_end1); { jtom.adt.tomsignature.types.TomTerm x=tom_get_head_TomList(tom_match11_1_list1);tom_match11_1_list1=tom_get_tail_TomList(tom_match11_1_list1); { jtom.adt.tomsignature.types.TomList C2=tom_match11_1_list1; { jtom.adt.tomsignature.types.TomTerm tom_renamedvar_x_1=tom_match11_2; if(tom_terms_equal_TomTerm(x, tom_renamedvar_x_1)) {
+
+        return tom_append_list_concTomTerm(C1,tom_append_list_concTomTerm(C2,tom_empty_list_concTomTerm()));
+       }}}}}tom_match11_1_end1=tom_get_tail_TomList(tom_match11_1_end1);} }tom_match11_1_list1=tom_match11_1_begin1;}}}} }}}
+
+    return list;
+  }
+
+
   protected Replace3 replace_attachConstraint = new Replace3() { 
       public ATerm apply(ATerm subject, Object arg1, Object arg2) {
-        Set variableSet = (Set) arg1;
+        TomList variableList = (TomList) arg1;
         TomTerm constraint = (TomTerm) arg2;
 
         if(subject instanceof TomTerm) {
-           { jtom.adt.tomsignature.types.TomTerm tom_match10_1=(( jtom.adt.tomsignature.types.TomTerm)subject); if(tom_is_fun_sym_VariableStar(tom_match10_1) || tom_is_fun_sym_Variable(tom_match10_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match10_1; { jtom.adt.tomsignature.types.ConstraintList tom_match10_1_4=tom_get_slot_Variable_constraints(tom_match10_1); { jtom.adt.tomsignature.types.ConstraintList constraintList=tom_match10_1_4;
+           { jtom.adt.tomsignature.types.TomTerm tom_match12_1=(( jtom.adt.tomsignature.types.TomTerm)subject); if(tom_is_fun_sym_VariableStar(tom_match12_1) || tom_is_fun_sym_Variable(tom_match12_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match12_1; { jtom.adt.tomsignature.types.ConstraintList tom_match12_1_4=tom_get_slot_Variable_constraints(tom_match12_1); { jtom.adt.tomsignature.types.ConstraintList constraintList=tom_match12_1_4;
 
               //System.out.println("var = " + var);
-              //System.out.println("set1 = " + variableSet);
-              variableSet.remove(var);
-              //System.out.println("set2 = " + variableSet);
+              //System.out.println("set1 = " + variableList);
+              variableList = remove(variableList,var);
+              //System.out.println("set2 = " + variableList);
 
-              if(variableSet.isEmpty()) {
+              if(variableList.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(tom_make_Ensure(preProcessing(tom_make_BuildReducedTerm(constraint))));
                 return var.setConstraints(newConstraintList);
               }
               //return var;
-            }}} } if(tom_is_fun_sym_Appl(tom_match10_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm appl=tom_match10_1; { jtom.adt.tomsignature.types.ConstraintList tom_match10_1_4=tom_get_slot_Appl_constraints(tom_match10_1); { jtom.adt.tomsignature.types.ConstraintList constraintList=tom_match10_1_4;
+            }}} } if(tom_is_fun_sym_Appl(tom_match12_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm appl=tom_match12_1; { jtom.adt.tomsignature.types.ConstraintList tom_match12_1_4=tom_get_slot_Appl_constraints(tom_match12_1); { jtom.adt.tomsignature.types.ConstraintList constraintList=tom_match12_1_4;
 
 
-              if(variableSet.isEmpty()) {
+              if(variableList.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(tom_make_Ensure(preProcessing(tom_make_BuildReducedTerm(constraint))));
                 return appl.setConstraints(newConstraintList);
               }
@@ -566,7 +594,7 @@ public class TomCompiler extends TomGenericPlugin {
 
         }
 
-        return traversal().genericTraversal(subject,this,variableSet,constraint);
+        return traversal().genericTraversal(subject,this,variableList,constraint);
       } // end apply
     }; // end new
 
