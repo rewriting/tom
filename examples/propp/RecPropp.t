@@ -2,23 +2,24 @@
 
 import aterm.*;
 import aterm.pure.*;
-import adt.propp.*;
+import adt.propp.term.*;
+import adt.propp.term.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
 public class RecPropp extends Propp {
 
-	private TermFactory factory;
+	private Factory factory;
 
 	// ------------------------------------------------------------  
-	%include { adt/propp/term.tom }
+	%include { term.tom }
 	// ------------------------------------------------------------  
 
 	public RecPropp() {
-		this(new TermFactory(new PureFactory()));
+		this(new Factory(new PureFactory()));
 	}
 		
-	public RecPropp(TermFactory factory) {
+	public RecPropp(Factory factory) {
 		this.factory = factory;
 	}
 
@@ -153,7 +154,7 @@ public class RecPropp extends Propp {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		RecPropp test = new RecPropp(new TermFactory(new PureFactory()));
+		RecPropp test = new RecPropp(new Factory(new PureFactory()));
 
 		String query ="";
 		try {

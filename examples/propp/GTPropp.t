@@ -4,25 +4,26 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
-import adt.propp.*;
+import adt.propp.term.*;
+import adt.propp.term.types.*;
 import java.io.*;
 import antlr.CommonAST;
 
 public class GTPropp extends Propp {
 
-	private TermFactory factory;
+	private Factory factory;
 	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------  
-	%include { adt/propp/term.tom }
+	%include { term.tom }
 	// ------------------------------------------------------------  
 
 	public GTPropp() {
-		this(new TermFactory(new PureFactory()));
+		this(new Factory(new PureFactory()));
 		this.traversal = new GenericTraversal();
 	}
 		
-	public GTPropp(TermFactory factory) {
+	public GTPropp(Factory factory) {
 		this.factory = factory;
 		this.traversal = new GenericTraversal();
 	}
@@ -150,7 +151,7 @@ public class GTPropp extends Propp {
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		GTPropp test = new GTPropp(new TermFactory(new PureFactory()));
+		GTPropp test = new GTPropp(new Factory(new PureFactory()));
 
 		String query ="";
 		try {
