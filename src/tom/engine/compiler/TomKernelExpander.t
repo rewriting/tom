@@ -255,17 +255,13 @@ public class TomKernelExpander extends TomBase {
               HashSet set = new HashSet();
               collectVariable(set,newSubjectList);
               TomList varList = getAstFactory().makeList(set);
-
               //System.out.println("varList = " + varList);
-
                while(!`guardList.isEmpty()) {
-                 list.add(expandVariable(`Tom(varList), `guardList.getHead()));
+                 list.add(replaceInstantiatedVariable(`varList, `guardList.getHead()));
                  `guardList = `guardList.getTail();
                }
                TomList newGuardList = getAstFactory().makeList(list);
-
                //System.out.println("newGuardList = " + newGuardList);
-
                return `Pattern(newSubjectList,newGuardList);
              }
           } // end match
