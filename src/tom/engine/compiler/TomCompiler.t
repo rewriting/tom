@@ -348,14 +348,14 @@ public class TomCompiler extends TomTask {
     TomTerm renamedTerm = subject;
     
     %match(TomTerm subject) {
-      UnamedVariable[option=optionList,astType=type] -> {
+      UnamedVariable[option=optionList,astType=type,constraints=constraint] -> {
         OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        return `UnamedVariable(newOptionList,type);
+        return `UnamedVariable(newOptionList,type,constraint);
       }
       
-      UnamedVariableStar[option=optionList,astType=type] -> {
+      UnamedVariableStar[option=optionList,astType=type,constraints=constraint] -> {
         OptionList newOptionList = `renameVariableInOptionList(optionList,multiplicityMap,maxmultiplicityMap,equalityCheck);
-        return `UnamedVariableStar(newOptionList,type);
+        return `UnamedVariableStar(newOptionList,type,constraint);
       }
 
 			Variable[option=optionList,astName=name,astType=type,constraints=clist] -> {

@@ -238,7 +238,7 @@ public class TomKernelCompiler extends TomBase {
       } 
       
       manyTomList(var@Variable[option=optionList, astType=termType],termTail) |
-      manyTomList(var@UnamedVariable(optionList, termType),termTail) -> {
+      manyTomList(var@UnamedVariable[option=optionList,astType=termType],termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
         Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType, concConstraint()));
         return buildLet(var, source, subAction);
@@ -332,7 +332,7 @@ public class TomKernelCompiler extends TomBase {
       }
         
       manyTomList(var@Variable[option=optionList, astType=termType],termTail) |
-      manyTomList(var@UnamedVariable(optionList, termType),termTail) -> {
+      manyTomList(var@UnamedVariable[option=optionList,astType=termType],termTail) -> {
         /*
          * generate:
          * ---------
@@ -353,7 +353,7 @@ public class TomKernelCompiler extends TomBase {
       }
         
       manyTomList(var@VariableStar[option=optionList, astType=termType],termTail) |
-      manyTomList(var@UnamedVariableStar(optionList, termType),termTail) -> {
+      manyTomList(var@UnamedVariableStar[option=optionList,astType=termType],termTail) -> {
         if(termTail.isEmpty()) {
           /*
            * generate:
@@ -464,7 +464,7 @@ public class TomKernelCompiler extends TomBase {
       }
 
       manyTomList(var@Variable[option=optionList,astType=termType],termTail) |
-      manyTomList(var@UnamedVariable(optionList, termType),termTail) -> {
+      manyTomList(var@UnamedVariable[option=optionList,astType=termType],termTail) -> {
           /*
            * generate:
            * ---------
@@ -485,7 +485,7 @@ public class TomKernelCompiler extends TomBase {
       }
       
       manyTomList(var@VariableStar[option=optionList,astType=termType],termTail) |
-      manyTomList(var@UnamedVariableStar(optionList, termType),termTail) -> {
+      manyTomList(var@UnamedVariableStar[option=optionList,astType=termType],termTail) -> {
         if(termTail.isEmpty()) {
             /*
              * generate:

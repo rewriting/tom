@@ -116,6 +116,17 @@ public class ASTFactory {
     return list;
   }
 
+  public ConstraintList makeConstraintList(List argumentList) {
+    ConstraintList list = tsf().makeConstraintList();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)argumentList.get(i);
+      Constraint term;
+			term = (Constraint)elt;
+      list = tsf().makeConstraintList(term,list);
+    }
+    return list;
+  }
+
   public NameList makeNameList(List argumentList) {
     NameList list = tsf().makeNameList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
@@ -146,8 +157,16 @@ public class ASTFactory {
     return tsf().makeTomTerm_VariableStar(option, name, type, tsf().makeConstraintList());  
   }
 
-  public TomTerm makeUnamedVariableStar(OptionList option, String type) {
-    return tsf().makeTomTerm_UnamedVariableStar(option, tsf().makeTomType_TomTypeAlone(type));  
+  public TomTerm makeVariableStar(OptionList option, String name, String type, ConstraintList constraintList) {
+    return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), constraintList);  
+  }
+
+  public TomTerm makeVariableStar(OptionList option, TomName name, TomType type, ConstraintList constraintList) {
+    return tsf().makeTomTerm_VariableStar(option, name, type, constraintList);  
+  }
+
+  public TomTerm makeUnamedVariableStar(OptionList option, String type, ConstraintList constraintList) {
+    return tsf().makeTomTerm_UnamedVariableStar(option, tsf().makeTomType_TomTypeAlone(type),constraintList);  
   }
 
   public TomSymbol makeSymbol(String symbolName, String resultType, TomTypeList typeList, SlotList slotList,
@@ -170,6 +189,25 @@ public class ASTFactory {
     return list;
   }
 
+  public ConstraintList makeConstraint() {
+    return tsf().makeConstraintList();
+  }
+
+  public ConstraintList makeConstraint(Constraint arg) {
+    ConstraintList list = tsf().makeConstraintList();
+    if(arg!= null) {
+      list = tsf().makeConstraintList(arg,list);
+    }
+    return list;
+  }
+
+	public Constraint makeAssignTo(TomName name) {
+		return tsf().makeConstraint_AssignTo(tsf().makeTomTerm_Variable(makeOption(),
+					name,
+					tsf().makeTomType_TomTypeAlone("unknown type"),
+					tsf().makeConstraintList()));
+	}
+	
   public OptionList makeOption(Option arg, Option info) {
     OptionList list = tsf().makeOptionList();
     if(arg!= null) {

@@ -147,18 +147,18 @@ public class TomKernelExpander extends TomBase {
             }
           } 
 
-          TomTypeToTomTerm(type@Type(tomType,glType)) ,p@Placeholder(optionList) -> {
+          TomTypeToTomTerm(type@Type(tomType,glType)) ,p@Placeholder[option=optionList,constraints=constraint] -> {
             Option orgTrack = findOriginTracking(optionList);
             OptionList option = `replaceAnnotedName(optionList,type,orgTrack);
               // create an unamed variable
-            return `UnamedVariable(option,type);
+            return `UnamedVariable(option,type,constraint);
           } 
               
-          Variable[option=option1,astName=name1,astType=type1] , p@Placeholder(optionList) -> {
+          Variable[option=option1,astName=name1,astType=type1] , p@Placeholder[option=optionList,constraints=constraint] -> {
             Option orgTrack = findOriginTracking(optionList);
             OptionList option = `replaceAnnotedName(optionList,type1,orgTrack);
               // create an unamed variable
-            return `UnamedVariable(option,type1);
+            return `UnamedVariable(option,type1,constraint);
           } 
 
           context, appl@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=l] -> {
@@ -269,18 +269,18 @@ public class TomKernelExpander extends TomBase {
               //System.out.println("subterm:\n" + subterm);
             matchBlock: {
               %match(TomTerm subterm) {
-                VariableStar(optionList,name,_) -> {
+                VariableStar[option=optionList,astName=name,constraints=constraint] -> {
                   Option orgTrack = findOriginTracking(optionList);
                   OptionList option = `replaceAnnotedName(optionList,codomainType,orgTrack);
-                  list.add(`VariableStar(option,name,codomainType,concConstraint()));
+                  list.add(`VariableStar(option,name,codomainType,constraint));
                     //System.out.println("*** break: " + subterm);
                   break matchBlock;
                 }
                 
-                UnamedVariableStar(optionList,_) -> {
+                UnamedVariableStar[option=optionList,constraints=constraint] -> {
                   Option orgTrack = findOriginTracking(optionList);
                   OptionList option = `replaceAnnotedName(optionList,codomainType,orgTrack);
-                  list.add(`UnamedVariableStar(option,codomainType));
+                  list.add(`UnamedVariableStar(option,codomainType,constraint));
                   break matchBlock;
                 }
                 

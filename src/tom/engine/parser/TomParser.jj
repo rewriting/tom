@@ -726,10 +726,11 @@ NameList HeadSymbolList(LinkedList optionList)  throws TomException:
   }
 }
 
-TomTerm UnamedVariableStarOrVariableStar(LinkedList optionList)  throws TomException:
+TomTerm UnamedVariableStarOrVariableStar(LinkedList optionList, LinkedList constraintList)  throws TomException:
 {
   Token name;
   OptionList option;
+  ConstraintList constraint;
 }
 { // X* | _*
   (name = <TOM_IDENTIFIER> | name = <TOM_UNDERSCORE>) <TOM_STAR>
@@ -737,17 +738,19 @@ TomTerm UnamedVariableStarOrVariableStar(LinkedList optionList)  throws TomExcep
       text += name.image + "*";
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
+      constraint = ast().makeConstraintList(constraintList);
       if(name.kind == TOM_UNDERSCORE) {
-        return ast().makeUnamedVariableStar(option,"unknown type");
+        return ast().makeUnamedVariableStar(option,"unknown type",constraint);
       } else {
-        return ast().makeVariableStar(option,name.image,"unknown type");
+        return ast().makeVariableStar(option,name.image,"unknown type",constraint);
       }
     }
 }
 
-TomTerm Placeholder(LinkedList optionList) throws TomException:
+TomTerm Placeholder(LinkedList optionList, LinkedList constraintList) throws TomException:
 {
   OptionList option;
+  ConstraintList constraint;
 }
 { // _
   <TOM_UNDERSCORE>
@@ -755,7 +758,8 @@ TomTerm Placeholder(LinkedList optionList) throws TomException:
       text += "_";
       optionList.add(ast().makeOriginTracking("_",getLine(), currentFile));
       option = ast().makeOptionList(optionList);
-      return tsf().makeTomTerm_Placeholder(option);
+      constraint = ast().makeConstraintList(constraintList);
+      return tsf().makeTomTerm_Placeholder(option, constraint);
     }
 }
 
@@ -765,19 +769,20 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   Token name;
   TomTerm term;
   LinkedList optionList = new LinkedList();
+  LinkedList constraintList = new LinkedList();
   NameList nameList = null;
   boolean implicit = false;
   boolean withArgs = false;
-  Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
-  if(annotedName!=null) { optionList.add(annotedName); }
+  Constraint annotedName = (astAnnotedName==null)?null:ast().makeAssignTo(astAnnotedName);
+  if(annotedName!=null) { constraintList.add(annotedName); }
 }
 {
-    term = XMLTerm(optionList) { return term; }
+    term = XMLTerm(optionList, constraintList) { return term; }
   | // X* | _*
     LOOKAHEAD(2)
-    term = UnamedVariableStarOrVariableStar(optionList) {return term; }
+    term = UnamedVariableStarOrVariableStar(optionList, constraintList) {return term; }
   | // _
-    term = Placeholder(optionList) {return term; }
+    term = Placeholder(optionList, constraintList) {return term; }
   | // f(a,...) | f[slot=a,...]
     (
       LOOKAHEAD(3)
@@ -792,16 +797,16 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
           optionList.add(tsf().makeOption_Constructor(nameList));
         }
         if(implicit) {
-          return tsf().makeTomTerm_RecordAppl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
+          return tsf().makeTomTerm_RecordAppl(ast().makeOptionList(optionList),nameList,ast().makeList(list),ast().makeConstraintList(constraintList));
         } else {
-          return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),tsf().makeConstraintList());
+          return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),ast().makeConstraintList(constraintList));
         }
       }
     | implicit = ExplicitTermList(list)
       {
         nameList = tsf().makeNameList(tsf().makeTomName_Name(""));
         optionList.add(ast().makeOriginTracking("",getLine(), currentFile));
-        return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),tsf().makeConstraintList());
+        return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list),ast().makeConstraintList(constraintList));
       }
     )
       
@@ -969,7 +974,7 @@ NameList XMLNameList(LinkedList optionList, boolean needOrgTrack) throws TomExce
     }
 }
 
-TomTerm XMLTerm(LinkedList optionList) throws TomException:
+TomTerm XMLTerm(LinkedList optionList,LinkedList constraintList) throws TomException:
 {
   TomTerm term;
   TomTerm arg1;
@@ -981,6 +986,7 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
   NameList nameList;
   NameList closingNameList;
   OptionList option;
+  ConstraintList constraint;
 }
 {
   (
@@ -1047,7 +1053,8 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
             option,
             nameList,
             ast().makeList(list),
-            ast().makeList(childs));
+            ast().makeList(childs),
+						ast().makeConstraintList(constraintList));
           return term;
         }
     
@@ -1078,10 +1085,12 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
     {
       optionList.add(ast().makeOriginTracking(keyword,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
+      constraint = ast().makeConstraintList(constraintList);
       nameList = tsf().makeNameList(tsf().makeTomName_Name(keyword));
       return tsf().makeTomTerm_RecordAppl(option,
                                     nameList,
-                                    ast().makeList(list));
+                                    ast().makeList(list),
+																		constraint);
 
     }
 }
@@ -1172,14 +1181,16 @@ TomTerm XMLAttribute() throws TomException:
   Token id,anno1,anno2;
   String name;
   OptionList option;
+  ConstraintList constraint;
   LinkedList optionList = new LinkedList();
+  LinkedList constraintList = new LinkedList();
   LinkedList optionListAnno2 = new LinkedList();
   NameList nameList;
 }
 {
     // _* | X*
   LOOKAHEAD(2)
-  term = UnamedVariableStarOrVariableStar(optionList) { return term; }
+  term = UnamedVariableStarOrVariableStar(optionList,constraintList) { return term; }
   |
   ( // name = [anno2@](String|Identifier)
     LOOKAHEAD(2)
@@ -1206,7 +1217,7 @@ TomTerm XMLAttribute() throws TomException:
       optionList.add(tsf().makeTomName_Name(anno1.image));
     }
     ]
-    termName = Placeholder(optionList) <TOM_EQUAL> {text+="=";}
+    termName = Placeholder(optionList,constraintList) <TOM_EQUAL> {text+="=";}
     [
       LOOKAHEAD(2)
     anno2 = <TOM_IDENTIFIER> <TOM_AT>
@@ -1220,17 +1231,19 @@ TomTerm XMLAttribute() throws TomException:
     {
       list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_NAME),termName));
         // we add the specif value : _
-      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_SPECIFIED),tsf().makeTomTerm_Placeholder(ast().makeOption())));
+      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_SPECIFIED),tsf().makeTomTerm_Placeholder(ast().makeOption(),ast().makeConstraint())));
         //list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
         // no longer necessary ot metaEncode Strings in attributes
       list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_VALUE),term));
       optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
+      constraint = ast().makeConstraintList(constraintList);
       
       nameList = tsf().makeNameList(tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE));
       return tsf().makeTomTerm_RecordAppl(option,
                                     nameList,
-                                    ast().makeList(list));
+                                    ast().makeList(list),
+																		constraint);
     }
 }
 

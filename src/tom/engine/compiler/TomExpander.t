@@ -114,13 +114,13 @@ public class TomExpander extends TomTask {
                 return t;
               }
 
-              RecordAppl(option,nameList,args) -> {
+              RecordAppl[option=option,nameList=nameList,args=args] -> {
                 return expandRecordAppl(option,nameList,args);
               }
 
-              XMLAppl(optionList,nameList,list1,list2) -> {
+              XMLAppl[option=optionList,nameList=nameList,attrList=list1,childList=list2,constraints=constraint] -> {
                 //System.out.println("expandXML in:\n" + subject);
-                return expandXMLAppl(optionList, nameList, list1, list2);
+                return expandXMLAppl(optionList, nameList, list1, list2,constraint);
               }
               
               _ -> {
@@ -289,7 +289,7 @@ public class TomExpander extends TomTask {
       }
       
       if(newSubterm == null) {
-        newSubterm = `Placeholder(emptyOption());
+        newSubterm = `Placeholder(emptyOption(),concConstraint());
       }
       subtermList = append(newSubterm,subtermList);
       slotList = slotList.getTail();
@@ -388,14 +388,14 @@ public class TomExpander extends TomTask {
 
   
   protected TomTerm expandXMLAppl(OptionList optionList, NameList nameList,
-                                  TomList attrList, TomList childList) {
+                                  TomList attrList, TomList childList, ConstraintList constraint) {
     boolean implicitAttribute = hasImplicitXMLAttribut(optionList);
     boolean implicitChild     = hasImplicitXMLChild(optionList);
     
     TomList newAttrList  = `emptyTomList();
     TomList newChildList = `emptyTomList();
 
-    TomTerm star = ast().makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type");
+    TomTerm star = ast().makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",constraint);
     if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
     if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 
@@ -459,7 +459,7 @@ public class TomExpander extends TomTask {
     TomTerm xmlHead;
 
     if(newNameList.isEmpty()){
-      xmlHead = `Placeholder(emptyOption());
+      xmlHead = `Placeholder(emptyOption(),concConstraint());
     } else { 
       xmlHead = `Appl(convertOriginTracking(newNameList.getHead().getString(),optionList),newNameList,empty(),concConstraint());
     }
@@ -469,7 +469,7 @@ public class TomExpander extends TomTask {
       PairSlotAppl(Name(Constants.SLOT_ATTRLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList,concConstraint())),
       PairSlotAppl(Name(Constants.SLOT_CHILDLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList,concConstraint())));
     
-    TomTerm result = `expandTomSyntax(RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs));
+    TomTerm result = `expandTomSyntax(RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs,constraint));
 
 
       //System.out.println("expandXML out:\n" + result);

@@ -859,7 +859,7 @@ abstract public class TomChecker extends TomTask {
           break matchblock;
         }
 				
-        rec@RecordAppl(options,nameList, pairSlotAppls) ->{
+        rec@RecordAppl[option=options,nameList=nameList,args=pairSlotAppls] ->{
           if(permissive) {
             messageError(findOriginTrackingLine(`options), TomCheckerMessage.IncorrectRuleRHSClass, 
                          new Object[]{getName(`rec)+"[...]"}, TomCheckerMessage.TOM_ERROR);
