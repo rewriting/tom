@@ -3,40 +3,33 @@ package jtom.adt;
 abstract public class TomType_TypeImpl
 extends TomType
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  TomType_TypeImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_tomType = 0;
   private static int index_tlType = 1;
   public shared.SharedObject duplicate() {
-    TomType_Type clone = new TomType_Type();
+    TomType_Type clone = new TomType_Type(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof TomType_Type) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeTomType_Type(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("Type(<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public TomType fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      TomType tmp = getStaticTomSignatureFactory().makeTomType_Type(TomType.fromTerm( (aterm.ATerm) children.get(0)), TomType.fromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isType()
   {
     return true;

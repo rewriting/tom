@@ -6,33 +6,117 @@ implements aterm.ATerm
 {
   protected aterm.ATerm term = null;
 
-  abstract protected aterm.ATerm getPattern();
+  TomSignatureFactory factory = null;
 
-  public aterm.ATerm toTerm() {
-    if(term == null) {
-      java.util.List args = new java.util.LinkedList();
-      for(int i = 0; i<getArity() ; i++) {
-        args.add(((TomSignatureConstructor) getArgument(i)).toTerm());
-      }
-      setTerm(getFactory().make(getPattern(), args));
-    }
-    return term;
+  public TomSignatureConstructor(TomSignatureFactory factory) {
+    super(factory);
+    this.factory = factory;
   }
 
+  abstract public aterm.ATerm toTerm();
   public String toString() {
     return toTerm().toString();
   }
-
   protected void setTerm(aterm.ATerm term) {
    this.term = term;
   }
-
   public TomSignatureFactory getTomSignatureFactory() {
-    return (TomSignatureFactory) getFactory();
+    return factory;
+  }
+  public boolean isSortDeclaration() {
+    return false;
   }
 
-  static protected TomSignatureFactory getStaticTomSignatureFactory() {
-    return (TomSignatureFactory) getStaticFactory();
+  public boolean isSortOption() {
+    return false;
+  }
+
+  public boolean isSortExpression() {
+    return false;
+  }
+
+  public boolean isSortTargetLanguage() {
+    return false;
+  }
+
+  public boolean isSortPosition() {
+    return false;
+  }
+
+  public boolean isSortTomType() {
+    return false;
+  }
+
+  public boolean isSortTomName() {
+    return false;
+  }
+
+  public boolean isSortTomTerm() {
+    return false;
+  }
+
+  public boolean isSortTomNumber() {
+    return false;
+  }
+
+  public boolean isSortTomRule() {
+    return false;
+  }
+
+  public boolean isSortInstruction() {
+    return false;
+  }
+
+  public boolean isSortTomSymbol() {
+    return false;
+  }
+
+  public boolean isSortPairNameDecl() {
+    return false;
+  }
+
+  public boolean isSortTomSymbolTable() {
+    return false;
+  }
+
+  public boolean isSortTomEntry() {
+    return false;
+  }
+
+  public boolean isSortTomStructureTable() {
+    return false;
+  }
+
+  public boolean isSortXMLTerm() {
+    return false;
+  }
+
+  public boolean isSortTomList() {
+    return false;
+  }
+
+  public boolean isSortTomNumberList() {
+    return false;
+  }
+
+  public boolean isSortTomRuleList() {
+    return false;
+  }
+
+  public boolean isSortTomTypeList() {
+    return false;
+  }
+
+  public boolean isSortOptionList() {
+    return false;
+  }
+
+  public boolean isSortSlotList() {
+    return false;
+  }
+
+  public boolean isSortTomEntryList() {
+    return false;
   }
 
 }

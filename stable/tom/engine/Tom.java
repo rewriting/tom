@@ -29,8 +29,6 @@ import java.util.*;
 import java.io.*;
 
 import aterm.*;
-import aterm.pure.*;
-
 import jtom.tools.*;
 import jtom.compiler.*;
 import jtom.checker.*;
@@ -42,8 +40,8 @@ import jtom.adt.*;
 
 public class Tom {
   private static String version =
-  "jtom 1.3beta\n\n" +
-  "Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
+  "\njtom 1.3gamma\n" +
+  "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
   "                         Nancy, France.\n";
   
   private static void usage() {
@@ -74,6 +72,7 @@ public class Tom {
     System.out.println("\t--optimize \t| -O:\tOptimized generated code");
     System.out.println("\t--static\t\tGenerate static functions");
     System.out.println("\t--debug\t\t\tGenerate debug primitives");
+    System.out.println("\t--memory\t\tAdd memory management while debugging (not correct with list matching)");
     System.exit(0);
   }
 
@@ -144,6 +143,8 @@ public class Tom {
 	    Flags.staticFunction = true;
           } else if(args[i].equals("--debug")) {
 	    Flags.debugMode = true;
+          } else if(args[i].equals("--memory")) {
+	    Flags.debugMemory = true;
           } else if(args[i].equals("--help") || args[i].equals("-h")) {
 	    usage();
           } else {
@@ -194,9 +195,6 @@ public class Tom {
       System.out.println("Tom Parser:  File " + inputFileName + " not found.");
       System.out.println("No file generated.");
       return;
-    } catch(IOException e) {
-      System.out.println("No file generated.");
-      throw new InternalError("read error");
     }
         
     TomTerm parsedTerm   = null;
@@ -231,7 +229,9 @@ public class Tom {
         startChrono();
         tomChecker.checkSyntax(parsedTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM syntax checking phase " + getChrono());
+        if(Flags.verbose) {
+          System.out.println("TOM syntax checking phase " + getChrono());
+        }
         int nbError = tomChecker.getNumberFoundError();
         if(nbError > 0 ) {
           for(int i=0 ; i<nbError ; i++) {
@@ -251,15 +251,21 @@ public class Tom {
         TomTerm context = null;
         expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
         tomChecker.checkVariableCoherence(expandedTerm);
+        if(Flags.debugMode) {
+          expandedTerm  = tomKernelExpander.expandMatchPattern(expandedTerm);
+        }
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM expansion phase " + getChrono());
+        if(Flags.verbose) {
+          System.out.println("TOM expansion phase " + getChrono());
+        }
         if(Flags.intermediate) {
           generateOutput(fileName + expandedSuffix,expandedTerm);
           generateOutput(fileName + expandedTableSuffix,symbolTable.toTerm());
         }
 
-        if (Flags.debugMode)
+        if (Flags.debugMode) {
           generateOutput(fileName + debugMatchTableSuffix, tomParser.getStructTable());
+        }
                 
         if(Flags.demo) {
           statistics.initInfoParser();
@@ -296,20 +302,17 @@ public class Tom {
         if(Flags.doOnlyCompile) {
           ATerm fromFileExpandTerm = null;
           fromFileExpandTerm = tomSignatureFactory.readFromFile(input);
-          expandedTerm = (TomTerm) TomTerm.fromTerm(fromFileExpandTerm);
+          expandedTerm = tomSignatureFactory.TomTermFromTerm(fromFileExpandTerm);
           try {
             input = new FileInputStream(inputFileName+".table");
           } catch (FileNotFoundException e) {
             System.out.println("Tom Compiler:  File " + inputFileName + " not found.");
             System.out.println("No file generated.");
             return;
-          } catch(IOException e) {
-            System.out.println("No file generated.");
-            throw new InternalError("read error");
           }
           ATerm fromFileSymblTable = null;
           fromFileSymblTable = tomSignatureFactory.readFromFile(input);
-          TomSymbolTable symbTable = (TomSymbolTable) TomSymbolTable.fromTerm(fromFileSymblTable);
+          TomSymbolTable symbTable = tomSignatureFactory.TomSymbolTableFromTerm(fromFileSymblTable);
           symbolTable.regenerateFromTerm(symbTable);
         }
 
@@ -323,8 +326,12 @@ public class Tom {
         compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
           //System.out.println("postProcessing =\n" + compiledTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM compilation phase " + getChrono());
-        if(Flags.intermediate) generateOutput(fileName + compiledSuffix,compiledTerm);
+        if(Flags.verbose) {
+          System.out.println("TOM compilation phase " + getChrono());
+        }
+        if(Flags.intermediate) {
+          generateOutput(fileName + compiledSuffix,compiledTerm);
+        }
 
         if (Flags.doOptimization) {
           TomOptimizer tomOptimizer = new TomOptimizer(environment);
@@ -344,7 +351,9 @@ public class Tom {
         tomGenerator.generate(out,defaultDeep,compiledTerm);
         writer.close();
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM generation phase " + getChrono());
+        if(Flags.verbose) {
+          System.out.println("TOM generation phase " + getChrono());
+        }
         if(Flags.demo) {
           statistics.initInfoCompiler();
           statistics.initInfoGenerator();

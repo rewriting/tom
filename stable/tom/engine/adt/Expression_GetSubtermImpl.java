@@ -3,46 +3,39 @@ package jtom.adt;
 abstract public class Expression_GetSubtermImpl
 extends Expression
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Expression_GetSubtermImpl(TomSignatureFactory factory) {
+    super(factory);
   }
-  private static int index_term = 0;
+  private static int index_variable = 0;
   private static int index_number = 1;
   public shared.SharedObject duplicate() {
-    Expression_GetSubterm clone = new Expression_GetSubterm();
+    Expression_GetSubterm clone = new Expression_GetSubterm(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Expression_GetSubterm) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeExpression_GetSubterm(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("GetSubterm(<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Expression fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Expression tmp = getStaticTomSignatureFactory().makeExpression_GetSubterm(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isGetSubterm()
   {
     return true;
   }
 
-  public boolean hasTerm()
+  public boolean hasVariable()
   {
     return true;
   }
@@ -52,22 +45,22 @@ extends Expression
     return true;
   }
 
-  public TomTerm getTerm()
+  public TomTerm getVariable()
   {
-    return (TomTerm) this.getArgument(index_term) ;
+    return (TomTerm) this.getArgument(index_variable) ;
   }
 
-  public Expression setTerm(TomTerm _term)
+  public Expression setVariable(TomTerm _variable)
   {
-    return (Expression) super.setArgument(_term, index_term);
+    return (Expression) super.setArgument(_variable, index_variable);
   }
 
-  public TomTerm getNumber()
+  public TomNumber getNumber()
   {
-    return (TomTerm) this.getArgument(index_number) ;
+    return (TomNumber) this.getArgument(index_number) ;
   }
 
-  public Expression setNumber(TomTerm _number)
+  public Expression setNumber(TomNumber _number)
   {
     return (Expression) super.setArgument(_number, index_number);
   }
@@ -80,8 +73,8 @@ extends Expression
         }
         break;
       case 1:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 1 of a Expression_GetSubterm should have type TomTerm");
+        if (! (arg instanceof TomNumber)) { 
+          throw new RuntimeException("Argument 1 of a Expression_GetSubterm should have type TomNumber");
         }
         break;
       default: throw new RuntimeException("Expression_GetSubterm does not have an argument at " + i );

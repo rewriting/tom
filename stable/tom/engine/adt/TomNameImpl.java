@@ -6,37 +6,15 @@ import java.io.IOException;
 
 abstract public class TomNameImpl extends TomSignatureConstructor
 {
-  public static TomName fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static TomName fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  TomNameImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(TomName peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static TomName fromTerm(aterm.ATerm trm)
-  {
-    TomName tmp;
-    if ((tmp = TomName_Name.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomName_PositionName.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomName_EmptyName.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a TomName: " + trm);
+  public boolean isSortTomName()  {
+    return true;
   }
 
   public boolean isName()
@@ -74,16 +52,15 @@ abstract public class TomNameImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomName has no String");
   }
 
-  public TomList getNumberList()
+  public TomNumberList getNumberList()
   {
      throw new RuntimeException("This TomName has no NumberList");
   }
 
-  public TomName setNumberList(TomList _numberList)
+  public TomName setNumberList(TomNumberList _numberList)
   {
      throw new RuntimeException("This TomName has no NumberList");
   }
-
 
 }
 

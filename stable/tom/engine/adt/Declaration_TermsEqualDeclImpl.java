@@ -3,42 +3,35 @@ package jtom.adt;
 abstract public class Declaration_TermsEqualDeclImpl
 extends Declaration
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Declaration_TermsEqualDeclImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_termArg1 = 0;
   private static int index_termArg2 = 1;
   private static int index_tlCode = 2;
   private static int index_orgTrack = 3;
   public shared.SharedObject duplicate() {
-    Declaration_TermsEqualDecl clone = new Declaration_TermsEqualDecl();
+    Declaration_TermsEqualDecl clone = new Declaration_TermsEqualDecl(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Declaration_TermsEqualDecl) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeDeclaration_TermsEqualDecl(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("TermsEqualDecl(<term>,<term>,<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Declaration fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_TermsEqualDecl(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(2)), Option.fromTerm( (aterm.ATerm) children.get(3)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isTermsEqualDecl()
   {
     return true;

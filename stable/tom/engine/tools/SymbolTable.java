@@ -25,11 +25,11 @@
 
 package jtom.tools;
 
-import java.util.*;
-import java.io.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-import aterm.*;
-import aterm.pure.*;
 import jtom.adt.*;
 
 public class SymbolTable {
@@ -44,24 +44,27 @@ public class SymbolTable {
     if(Flags.cCode) {
       putType("bool", ast().makeType("bool","int"));
       putType("int", ast().makeType("int","int"));
+      putType("string", ast().makeType("string","char*"));
       putType("universal", ast().makeType("universal","void*"));
     } else if(Flags.jCode) {
       putType("bool", ast().makeType("bool","boolean"));
       putType("int", ast().makeType("int","int"));
+      putType("string", ast().makeType("string","String"));
       putType("universal", ast().makeType("universal","Object"));
     } else if(Flags.eCode) {
       putType("bool", ast().makeType("bool","BOOLEAN"));
       putType("int", ast().makeType("int","INTEGER"));
+      putType("string", ast().makeType("string","STRING"));
       putType("universal", ast().makeType("universal","ANY"));
     }
   }
 
   public void regenerateFromTerm(TomSymbolTable symbTable) {
     TomEntryList list =  symbTable.getEntryList();
-    while(!list.isEmptyEntryList()) {
-      TomEntry symb = list.getHeadEntryList();
+    while(!list.isEmpty()) {
+      TomEntry symb = list.getHead();
       putSymbol(symb.getStrName(), symb.getAstSymbol());
-      list = list.getTailEntryList();
+      list = list.getTail();
     }
   }
   protected ASTFactory ast() {
@@ -70,13 +73,6 @@ public class SymbolTable {
 
   protected TomSignatureFactory tsf() {
     return ast().tsf();
-  }
-
-  private void put(Map map, String name, TomTerm term) {
-    TomTerm result = (TomTerm) map.put(name,term);
-    if(result != null && result == term) {
-      System.out.println("Warning: multiple definition of '" + name + "'");
-    }
   }
 
   public void putSymbol(String name, TomSymbol astSymbol) {
@@ -105,21 +101,21 @@ public class SymbolTable {
 
   public void fromTerm(TomSymbolTable table) {
     TomEntryList list = table.getEntryList();
-    while(!list.isEmptyEntryList()) {
-      TomEntry entry = list.getHeadEntryList();
+    while(!list.isEmpty()) {
+      TomEntry entry = list.getHead();
       putSymbol(entry.getStrName(),entry.getAstSymbol());
-      list = list.getTailEntryList();
+      list = list.getTail();
     }
   }
 
   public TomSymbolTable toTerm() {
-    TomEntryList list = tsf().makeTomEntryList_EmptyEntryList();
+    TomEntryList list = tsf().makeTomEntryList();
     Iterator it = keySymbolIterator();
     while(it.hasNext()) {
       String name = (String)it.next();
       TomSymbol symbol = getSymbol(name);
       TomEntry entry = tsf().makeTomEntry_Entry(name,symbol);
-      list = tsf().makeTomEntryList_ConsEntryList(entry,list);
+      list = tsf().makeTomEntryList(entry,list);
     }
     return tsf().makeTomSymbolTable_Table(list);
   }

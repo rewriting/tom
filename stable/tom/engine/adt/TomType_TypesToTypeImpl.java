@@ -3,46 +3,39 @@ package jtom.adt;
 abstract public class TomType_TypesToTypeImpl
 extends TomType
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  TomType_TypesToTypeImpl(TomSignatureFactory factory) {
+    super(factory);
   }
-  private static int index_list = 0;
+  private static int index_domain = 0;
   private static int index_codomain = 1;
   public shared.SharedObject duplicate() {
-    TomType_TypesToType clone = new TomType_TypesToType();
+    TomType_TypesToType clone = new TomType_TypesToType(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof TomType_TypesToType) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeTomType_TypesToType(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("TypesToType(<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public TomType fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      TomType tmp = getStaticTomSignatureFactory().makeTomType_TypesToType(TomList.fromTerm( (aterm.ATerm) children.get(0)), TomType.fromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isTypesToType()
   {
     return true;
   }
 
-  public boolean hasList()
+  public boolean hasDomain()
   {
     return true;
   }
@@ -52,14 +45,14 @@ extends TomType
     return true;
   }
 
-  public TomList getList()
+  public TomTypeList getDomain()
   {
-    return (TomList) this.getArgument(index_list) ;
+    return (TomTypeList) this.getArgument(index_domain) ;
   }
 
-  public TomType setList(TomList _list)
+  public TomType setDomain(TomTypeList _domain)
   {
-    return (TomType) super.setArgument(_list, index_list);
+    return (TomType) super.setArgument(_domain, index_domain);
   }
 
   public TomType getCodomain()
@@ -75,8 +68,8 @@ extends TomType
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
-        if (! (arg instanceof TomList)) { 
-          throw new RuntimeException("Argument 0 of a TomType_TypesToType should have type TomList");
+        if (! (arg instanceof TomTypeList)) { 
+          throw new RuntimeException("Argument 0 of a TomType_TypesToType should have type TomTypeList");
         }
         break;
       case 1:

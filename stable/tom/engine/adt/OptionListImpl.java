@@ -4,77 +4,86 @@ import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
 
-abstract public class OptionListImpl extends TomSignatureConstructor
+abstract public class OptionListImpl extends aterm.pure.ATermListImpl
 {
-  public static OptionList fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
+  protected TomSignatureFactory factory = null;
+  OptionListImpl(TomSignatureFactory factory) {
+     super(factory);
+     this.factory = factory;
   }
-  public static OptionList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
-  }
-  public boolean isEqual(OptionList peer)
-  {
-    return term.isEqual(peer.toTerm());
-  }
-  public static OptionList fromTerm(aterm.ATerm trm)
-  {
-    OptionList tmp;
-    if ((tmp = OptionList_EmptyOptionList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = OptionList_ConsOptionList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a OptionList: " + trm);
-  }
-
-  public boolean isEmptyOptionList()
-  {
-    return false;
-  }
-
-  public boolean isConsOptionList()
-  {
-    return false;
-  }
-
-  public boolean hasHead()
-  {
-    return false;
-  }
-
-  public boolean hasTail()
-  {
-    return false;
-  }
-
-  public Option getHead()
-  {
-     throw new RuntimeException("This OptionList has no Head");
-  }
-
-  public OptionList setHead(Option _head)
-  {
-     throw new RuntimeException("This OptionList has no Head");
-  }
-
-  public OptionList getTail()
-  {
-     throw new RuntimeException("This OptionList has no Tail");
-  }
-
-  public OptionList setTail(OptionList _tail)
-  {
-     throw new RuntimeException("This OptionList has no Tail");
-  }
-
-
+  public TomSignatureFactory getTomSignatureFactory(){
+    return factory;
 }
+  protected aterm.ATerm term = null;
+  public aterm.ATerm toTerm()
+  {
+    if (this.term == null) {
+      OptionList reversed = (OptionList)this.reverse();
+      aterm.ATermList tmp = getTomSignatureFactory().makeList();
+      for (; !reversed.isEmpty(); reversed = reversed.getTail()) {
+         aterm.ATerm elem = reversed.getHead().toTerm();
+         tmp = getTomSignatureFactory().makeList(elem, tmp);
+      }
+      this.term = tmp;
+    }
+    return this.term;
+  }
+  public String toString() {
+    return toTerm().toString();
+  }
+  public Option getHead() {
+    return (Option) getFirst();
+  }
+  public OptionList getTail() {
+    return (OptionList) getNext();
+  }
+  public boolean isSortOptionList()  {
+    return true;
+  }
 
+  public boolean isEmpty() {
+    return this == TomSignatureFactory.emptyOptionList;
+  }
+  public boolean isMany() {
+    return !isEmpty();
+  }
+  public boolean hasHead() {
+    return !isEmpty();
+  }
+  public boolean hasTail() {
+    return !isEmpty();
+  }
+  public boolean equivalent(shared.SharedObject peer) {
+	 if (peer instanceof OptionList) {
+	 	return super.equivalent(peer);
+	 }
+	 else {
+      return false;
+	 }
+  }
+  public shared.SharedObject duplicate() {
+	 OptionList clone = new OptionList(factory);
+	 clone.init(hashCode(), getAnnotations(), getFirst(), getNext());
+	 return clone;
+  }
+  public aterm.ATermList getEmpty() {
+    return (aterm.ATermList)getTomSignatureFactory().makeOptionList();
+  }
+
+  public aterm.ATermList insert(aterm.ATerm head) {
+    return (aterm.ATermList)getTomSignatureFactory().makeOptionList((Option) head, (OptionList) this);
+  }
+
+  public OptionList insert(Option head) {
+    return getTomSignatureFactory().makeOptionList(head, (OptionList) this);
+  }
+  public aterm.ATermList reverse() {
+  	 OptionListImpl cur = this;
+  	 OptionListImpl reverse = (OptionListImpl) getTomSignatureFactory().makeOptionList();
+  	 while(!cur.isEmpty()){
+  	   reverse = (OptionListImpl)reverse.insert((aterm.ATerm) cur.getHead());
+  	   cur = cur.getTail();
+  	 }
+  	 return reverse;
+  }
+}

@@ -3,39 +3,32 @@ package jtom.adt;
 abstract public class Declaration_ListSymbolDeclImpl
 extends Declaration
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Declaration_ListSymbolDeclImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_astName = 0;
   public shared.SharedObject duplicate() {
-    Declaration_ListSymbolDecl clone = new Declaration_ListSymbolDecl();
+    Declaration_ListSymbolDecl clone = new Declaration_ListSymbolDecl(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Declaration_ListSymbolDecl) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeDeclaration_ListSymbolDecl(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("ListSymbolDecl(<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Declaration fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_ListSymbolDecl(TomName.fromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isListSymbolDecl()
   {
     return true;

@@ -25,9 +25,6 @@ Declaration_SymbolDeclImpl.java Declaration_SymbolDecl.java\
 Declaration_ListSymbolDeclImpl.java Declaration_ListSymbolDecl.java\
 Declaration_ArraySymbolDeclImpl.java Declaration_ArraySymbolDecl.java\
 Declaration_EmptyDeclarationImpl.java Declaration_EmptyDeclaration.java\
-OptionList.java OptionListImpl.java\
-OptionList_EmptyOptionListImpl.java OptionList_EmptyOptionList.java\
-OptionList_ConsOptionListImpl.java OptionList_ConsOptionList.java\
 Option.java OptionImpl.java\
 Option_DeclarationToOptionImpl.java Option_DeclarationToOption.java\
 Option_TomNameToOptionImpl.java Option_TomNameToOption.java\
@@ -35,9 +32,11 @@ Option_TomTermToOptionImpl.java Option_TomTermToOption.java\
 Option_OptionImpl.java Option_Option.java\
 Option_DefinedSymbolImpl.java Option_DefinedSymbol.java\
 Option_GeneratedMatchImpl.java Option_GeneratedMatch.java\
+Option_WithDefaultProductionImpl.java Option_WithDefaultProduction.java\
 Option_OriginTrackingImpl.java Option_OriginTracking.java\
 Option_ConstructorImpl.java Option_Constructor.java\
 Option_OriginalTextImpl.java Option_OriginalText.java\
+Option_XMLPositionImpl.java Option_XMLPosition.java\
 Expression.java ExpressionImpl.java\
 Expression_TomTermToExpressionImpl.java Expression_TomTermToExpression.java\
 Expression_NotImpl.java Expression_Not.java\
@@ -50,10 +49,10 @@ Expression_EqualFunctionSymbolImpl.java Expression_EqualFunctionSymbol.java\
 Expression_EqualTermImpl.java Expression_EqualTerm.java\
 Expression_GetSubtermImpl.java Expression_GetSubterm.java\
 Expression_IsFsymImpl.java Expression_IsFsym.java\
-Expression_GetSlotImpl.java Expression_GetSlot.java
+Expression_GetSlotImpl.java Expression_GetSlot.java\
+Expression_GetHeadImpl.java Expression_GetHead.java
 
 TomSignatureAPI1=\
-Expression_GetHeadImpl.java Expression_GetHead.java\
 Expression_GetTailImpl.java Expression_GetTail.java\
 Expression_GetSizeImpl.java Expression_GetSize.java\
 Expression_GetElementImpl.java Expression_GetElement.java\
@@ -75,9 +74,6 @@ TomName.java TomNameImpl.java\
 TomName_NameImpl.java TomName_Name.java\
 TomName_PositionNameImpl.java TomName_PositionName.java\
 TomName_EmptyNameImpl.java TomName_EmptyName.java\
-TomList.java TomListImpl.java\
-TomList_EmptyImpl.java TomList_Empty.java\
-TomList_ConsImpl.java TomList_Cons.java\
 TomTerm.java TomTermImpl.java\
 TomTerm_TargetLanguageToTomTermImpl.java TomTerm_TargetLanguageToTomTerm.java\
 TomTerm_TomTypeToTomTermImpl.java TomTerm_TomTypeToTomTerm.java\
@@ -87,6 +83,7 @@ TomTerm_DeclarationToTomTermImpl.java TomTerm_DeclarationToTomTerm.java\
 TomTerm_OptionToTomTermImpl.java TomTerm_OptionToTomTerm.java\
 TomTerm_ExpressionToTomTermImpl.java TomTerm_ExpressionToTomTerm.java\
 TomTerm_InstructionToTomTermImpl.java TomTerm_InstructionToTomTerm.java\
+TomTerm_TomRuleToTomTermImpl.java TomTerm_TomRuleToTomTerm.java\
 TomTerm_TomImpl.java TomTerm_Tom.java\
 TomTerm_TomIncludeImpl.java TomTerm_TomInclude.java\
 TomTerm_MakeTermImpl.java TomTerm_MakeTerm.java\
@@ -101,14 +98,14 @@ TomTerm_MatchImpl.java TomTerm_Match.java\
 TomTerm_MatchingConditionImpl.java TomTerm_MatchingCondition.java\
 TomTerm_EqualityConditionImpl.java TomTerm_EqualityCondition.java\
 TomTerm_RuleSetImpl.java TomTerm_RuleSet.java\
-TomTerm_RewriteRuleImpl.java TomTerm_RewriteRule.java\
-TomTerm_SubjectListImpl.java TomTerm_SubjectList.java
-
-TomSignatureAPI2=\
+TomTerm_SubjectListImpl.java TomTerm_SubjectList.java\
 TomTerm_PatternListImpl.java TomTerm_PatternList.java\
 TomTerm_TermListImpl.java TomTerm_TermList.java\
 TomTerm_TermImpl.java TomTerm_Term.java\
-TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
+TomTerm_PatternActionImpl.java TomTerm_PatternAction.java
+
+TomSignatureAPI2=\
+TomTerm_DefaultPatternActionImpl.java TomTerm_DefaultPatternAction.java\
 TomTerm_TLVarImpl.java TomTerm_TLVar.java\
 TomTerm_DeclarationImpl.java TomTerm_Declaration.java\
 TomTerm_VariableImpl.java TomTerm_Variable.java\
@@ -127,16 +124,23 @@ TomTerm_CompiledMatchImpl.java TomTerm_CompiledMatch.java\
 TomTerm_CompiledPatternImpl.java TomTerm_CompiledPattern.java\
 TomTerm_AssignedVariableImpl.java TomTerm_AssignedVariable.java\
 TomTerm_AutomataImpl.java TomTerm_Automata.java\
-TomTerm_MatchNumberImpl.java TomTerm_MatchNumber.java\
-TomTerm_PatternNumberImpl.java TomTerm_PatternNumber.java\
-TomTerm_ListNumberImpl.java TomTerm_ListNumber.java\
-TomTerm_IndexNumberImpl.java TomTerm_IndexNumber.java\
-TomTerm_AbsVarImpl.java TomTerm_AbsVar.java\
-TomTerm_RenamedVarImpl.java TomTerm_RenamedVar.java\
-TomTerm_RuleVarImpl.java TomTerm_RuleVar.java\
-TomTerm_NumberImpl.java TomTerm_Number.java\
-TomTerm_BeginImpl.java TomTerm_Begin.java\
-TomTerm_EndImpl.java TomTerm_End.java\
+TomTerm_DefaultAutomataImpl.java TomTerm_DefaultAutomata.java\
+TomTerm_MatchXMLImpl.java TomTerm_MatchXML.java\
+TomTerm_BackQuoteXMLImpl.java TomTerm_BackQuoteXML.java\
+TomTerm_XMLTermToTomTermImpl.java TomTerm_XMLTermToTomTerm.java\
+TomNumber.java TomNumberImpl.java\
+TomNumber_MatchNumberImpl.java TomNumber_MatchNumber.java\
+TomNumber_PatternNumberImpl.java TomNumber_PatternNumber.java\
+TomNumber_ListNumberImpl.java TomNumber_ListNumber.java\
+TomNumber_IndexNumberImpl.java TomNumber_IndexNumber.java\
+TomNumber_BeginImpl.java TomNumber_Begin.java\
+TomNumber_EndImpl.java TomNumber_End.java\
+TomNumber_NumberImpl.java TomNumber_Number.java\
+TomNumber_AbsVarImpl.java TomNumber_AbsVar.java\
+TomNumber_RenamedVarImpl.java TomNumber_RenamedVar.java\
+TomNumber_RuleVarImpl.java TomNumber_RuleVar.java\
+TomRule.java TomRuleImpl.java\
+TomRule_RewriteRuleImpl.java TomRule_RewriteRule.java\
 Instruction.java InstructionImpl.java\
 Instruction_IfThenElseImpl.java Instruction_IfThenElse.java\
 Instruction_DoWhileImpl.java Instruction_DoWhile.java\
@@ -150,23 +154,30 @@ Instruction_OpenBlockImpl.java Instruction_OpenBlock.java\
 Instruction_CloseBlockImpl.java Instruction_CloseBlock.java\
 Instruction_NamedBlockImpl.java Instruction_NamedBlock.java\
 TomSymbol.java TomSymbolImpl.java\
-TomSymbol_SymbolImpl.java TomSymbol_Symbol.java\
-SlotList.java SlotListImpl.java\
-SlotList_EmptySlotListImpl.java SlotList_EmptySlotList.java\
-SlotList_ConsSlotListImpl.java SlotList_ConsSlotList.java\
-PairNameDecl.java PairNameDeclImpl.java
+TomSymbol_SymbolImpl.java TomSymbol_Symbol.java
 
 TomSignatureAPI3=\
+PairNameDecl.java PairNameDeclImpl.java\
 PairNameDecl_SlotImpl.java PairNameDecl_Slot.java\
 TomSymbolTable.java TomSymbolTableImpl.java\
 TomSymbolTable_TableImpl.java TomSymbolTable_Table.java\
-TomEntryList.java TomEntryListImpl.java\
-TomEntryList_EmptyEntryListImpl.java TomEntryList_EmptyEntryList.java\
-TomEntryList_ConsEntryListImpl.java TomEntryList_ConsEntryList.java\
 TomEntry.java TomEntryImpl.java\
 TomEntry_EntryImpl.java TomEntry_Entry.java\
 TomStructureTable.java TomStructureTableImpl.java\
-TomStructureTable_StructTableImpl.java TomStructureTable_StructTable.java
+TomStructureTable_StructTableImpl.java TomStructureTable_StructTable.java\
+XMLTerm.java XMLTermImpl.java\
+XMLTerm_ElementImpl.java XMLTerm_Element.java\
+XMLTerm_AttributeImpl.java XMLTerm_Attribute.java\
+XMLTerm_ReservedWordImpl.java XMLTerm_ReservedWord.java\
+XMLTerm_XMLPlaceholderImpl.java XMLTerm_XMLPlaceholder.java\
+XMLTerm_XMLVariableImpl.java XMLTerm_XMLVariable.java\
+TomList.java TomListImpl.java\
+TomNumberList.java TomNumberListImpl.java\
+TomRuleList.java TomRuleListImpl.java\
+TomTypeList.java TomTypeListImpl.java\
+OptionList.java OptionListImpl.java\
+SlotList.java SlotListImpl.java\
+TomEntryList.java TomEntryListImpl.java
 
 TomSignatureAPI=\
 TomSignatureFactory.java TomSignatureConstructor.java\

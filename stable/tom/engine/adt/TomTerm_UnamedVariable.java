@@ -3,5 +3,8 @@ package jtom.adt;
 public class TomTerm_UnamedVariable
 extends TomTerm_UnamedVariableImpl
 {
+  TomTerm_UnamedVariable(TomSignatureFactory factory) {
+    super(factory);
+  }
 
 }

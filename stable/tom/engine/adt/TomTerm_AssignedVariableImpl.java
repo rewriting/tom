@@ -3,48 +3,32 @@ package jtom.adt;
 abstract public class TomTerm_AssignedVariableImpl
 extends TomTerm
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  TomTerm_AssignedVariableImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_varName = 0;
   private static int index_source = 1;
   private static int index_nbUse = 2;
+  private static int index_usedInDoWhile = 3;
+  private static int index_removable = 4;
   public shared.SharedObject duplicate() {
-    TomTerm_AssignedVariable clone = new TomTerm_AssignedVariable();
+    TomTerm_AssignedVariable clone = new TomTerm_AssignedVariable(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof TomTerm_AssignedVariable) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeTomTerm_AssignedVariable(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("AssignedVariable(<str>,<term>,<int>)");
-  }
-
-  static public TomTerm fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_AssignedVariable((String) children.get(0), Expression.fromTerm( (aterm.ATerm) children.get(1)), (Integer) children.get(2));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public aterm.ATerm toTerm() {
-    if(term == null) {
-      java.util.List args = new java.util.LinkedList();
-      args.add(((aterm.ATermAppl) getArgument(0)).getAFun().getName());
-      args.add(((TomSignatureConstructor) getArgument(1)).toTerm());
-      args.add(new Integer(((aterm.ATermInt) getArgument(2)).getInt()));
-      setTerm(getFactory().make(getPattern(), args));
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
     }
     return term;
   }
@@ -65,6 +49,16 @@ extends TomTerm
   }
 
   public boolean hasNbUse()
+  {
+    return true;
+  }
+
+  public boolean hasUsedInDoWhile()
+  {
+    return true;
+  }
+
+  public boolean hasRemovable()
   {
     return true;
   }
@@ -99,6 +93,26 @@ extends TomTerm
     return (TomTerm) super.setArgument(getFactory().makeInt(_nbUse.intValue()), index_nbUse);
   }
 
+  public Expression getUsedInDoWhile()
+  {
+    return (Expression) this.getArgument(index_usedInDoWhile) ;
+  }
+
+  public TomTerm setUsedInDoWhile(Expression _usedInDoWhile)
+  {
+    return (TomTerm) super.setArgument(_usedInDoWhile, index_usedInDoWhile);
+  }
+
+  public Expression getRemovable()
+  {
+    return (Expression) this.getArgument(index_removable) ;
+  }
+
+  public TomTerm setRemovable(Expression _removable)
+  {
+    return (TomTerm) super.setArgument(_removable, index_removable);
+  }
+
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
@@ -114,6 +128,16 @@ extends TomTerm
       case 2:
         if (! (arg instanceof aterm.ATermInt)) { 
           throw new RuntimeException("Argument 2 of a TomTerm_AssignedVariable should have type int");
+        }
+        break;
+      case 3:
+        if (! (arg instanceof Expression)) { 
+          throw new RuntimeException("Argument 3 of a TomTerm_AssignedVariable should have type Expression");
+        }
+        break;
+      case 4:
+        if (! (arg instanceof Expression)) { 
+          throw new RuntimeException("Argument 4 of a TomTerm_AssignedVariable should have type Expression");
         }
         break;
       default: throw new RuntimeException("TomTerm_AssignedVariable does not have an argument at " + i );

@@ -4,77 +4,86 @@ import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
 
-abstract public class TomEntryListImpl extends TomSignatureConstructor
+abstract public class TomEntryListImpl extends aterm.pure.ATermListImpl
 {
-  public static TomEntryList fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
+  protected TomSignatureFactory factory = null;
+  TomEntryListImpl(TomSignatureFactory factory) {
+     super(factory);
+     this.factory = factory;
   }
-  public static TomEntryList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
-  }
-  public boolean isEqual(TomEntryList peer)
-  {
-    return term.isEqual(peer.toTerm());
-  }
-  public static TomEntryList fromTerm(aterm.ATerm trm)
-  {
-    TomEntryList tmp;
-    if ((tmp = TomEntryList_EmptyEntryList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomEntryList_ConsEntryList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a TomEntryList: " + trm);
-  }
-
-  public boolean isEmptyEntryList()
-  {
-    return false;
-  }
-
-  public boolean isConsEntryList()
-  {
-    return false;
-  }
-
-  public boolean hasHeadEntryList()
-  {
-    return false;
-  }
-
-  public boolean hasTailEntryList()
-  {
-    return false;
-  }
-
-  public TomEntry getHeadEntryList()
-  {
-     throw new RuntimeException("This TomEntryList has no HeadEntryList");
-  }
-
-  public TomEntryList setHeadEntryList(TomEntry _headEntryList)
-  {
-     throw new RuntimeException("This TomEntryList has no HeadEntryList");
-  }
-
-  public TomEntryList getTailEntryList()
-  {
-     throw new RuntimeException("This TomEntryList has no TailEntryList");
-  }
-
-  public TomEntryList setTailEntryList(TomEntryList _tailEntryList)
-  {
-     throw new RuntimeException("This TomEntryList has no TailEntryList");
-  }
-
-
+  public TomSignatureFactory getTomSignatureFactory(){
+    return factory;
 }
+  protected aterm.ATerm term = null;
+  public aterm.ATerm toTerm()
+  {
+    if (this.term == null) {
+      TomEntryList reversed = (TomEntryList)this.reverse();
+      aterm.ATermList tmp = getTomSignatureFactory().makeList();
+      for (; !reversed.isEmpty(); reversed = reversed.getTail()) {
+         aterm.ATerm elem = reversed.getHead().toTerm();
+         tmp = getTomSignatureFactory().makeList(elem, tmp);
+      }
+      this.term = tmp;
+    }
+    return this.term;
+  }
+  public String toString() {
+    return toTerm().toString();
+  }
+  public TomEntry getHead() {
+    return (TomEntry) getFirst();
+  }
+  public TomEntryList getTail() {
+    return (TomEntryList) getNext();
+  }
+  public boolean isSortTomEntryList()  {
+    return true;
+  }
 
+  public boolean isEmpty() {
+    return this == TomSignatureFactory.emptyTomEntryList;
+  }
+  public boolean isMany() {
+    return !isEmpty();
+  }
+  public boolean hasHead() {
+    return !isEmpty();
+  }
+  public boolean hasTail() {
+    return !isEmpty();
+  }
+  public boolean equivalent(shared.SharedObject peer) {
+	 if (peer instanceof TomEntryList) {
+	 	return super.equivalent(peer);
+	 }
+	 else {
+      return false;
+	 }
+  }
+  public shared.SharedObject duplicate() {
+	 TomEntryList clone = new TomEntryList(factory);
+	 clone.init(hashCode(), getAnnotations(), getFirst(), getNext());
+	 return clone;
+  }
+  public aterm.ATermList getEmpty() {
+    return (aterm.ATermList)getTomSignatureFactory().makeTomEntryList();
+  }
+
+  public aterm.ATermList insert(aterm.ATerm head) {
+    return (aterm.ATermList)getTomSignatureFactory().makeTomEntryList((TomEntry) head, (TomEntryList) this);
+  }
+
+  public TomEntryList insert(TomEntry head) {
+    return getTomSignatureFactory().makeTomEntryList(head, (TomEntryList) this);
+  }
+  public aterm.ATermList reverse() {
+  	 TomEntryListImpl cur = this;
+  	 TomEntryListImpl reverse = (TomEntryListImpl) getTomSignatureFactory().makeTomEntryList();
+  	 while(!cur.isEmpty()){
+  	   reverse = (TomEntryListImpl)reverse.insert((aterm.ATerm) cur.getHead());
+  	   cur = cur.getTail();
+  	 }
+  	 return reverse;
+  }
+}

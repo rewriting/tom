@@ -1,7 +1,10 @@
 package jtom.adt;
 
-abstract public class TomEntryList
+public class TomEntryList
 extends TomEntryListImpl
 {
+  TomEntryList(TomSignatureFactory factory) {
+    super(factory);
+  }
 
 }

@@ -3,38 +3,31 @@ package jtom.adt;
 abstract public class Expression_TrueTLImpl
 extends Expression
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Expression_TrueTLImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   public shared.SharedObject duplicate() {
-    Expression_TrueTL clone = new Expression_TrueTL();
+    Expression_TrueTL clone = new Expression_TrueTL(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Expression_TrueTL) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeExpression_TrueTL(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("TrueTL");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Expression fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Expression tmp = getStaticTomSignatureFactory().makeExpression_TrueTL();
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isTrueTL()
   {
     return true;

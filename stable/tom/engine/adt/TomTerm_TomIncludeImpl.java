@@ -3,57 +3,50 @@ package jtom.adt;
 abstract public class TomTerm_TomIncludeImpl
 extends TomTerm
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  TomTerm_TomIncludeImpl(TomSignatureFactory factory) {
+    super(factory);
   }
-  private static int index_list = 0;
+  private static int index_tomList = 0;
   public shared.SharedObject duplicate() {
-    TomTerm_TomInclude clone = new TomTerm_TomInclude();
+    TomTerm_TomInclude clone = new TomTerm_TomInclude(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof TomTerm_TomInclude) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeTomTerm_TomInclude(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("TomInclude(<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public TomTerm fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_TomInclude(TomList.fromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isTomInclude()
   {
     return true;
   }
 
-  public boolean hasList()
+  public boolean hasTomList()
   {
     return true;
   }
 
-  public TomList getList()
+  public TomList getTomList()
   {
-    return (TomList) this.getArgument(index_list) ;
+    return (TomList) this.getArgument(index_tomList) ;
   }
 
-  public TomTerm setList(TomList _list)
+  public TomTerm setTomList(TomList _tomList)
   {
-    return (TomTerm) super.setArgument(_list, index_list);
+    return (TomTerm) super.setArgument(_tomList, index_tomList);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {

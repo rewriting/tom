@@ -1,7 +1,10 @@
 package jtom.adt;
 
-abstract public class SlotList
+public class SlotList
 extends SlotListImpl
 {
+  SlotList(TomSignatureFactory factory) {
+    super(factory);
+  }
 
 }

@@ -3,40 +3,33 @@ package jtom.adt;
 abstract public class Expression_IsFsymImpl
 extends Expression
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Expression_IsFsymImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_astName = 0;
-  private static int index_term = 1;
+  private static int index_variable = 1;
   public shared.SharedObject duplicate() {
-    Expression_IsFsym clone = new Expression_IsFsym();
+    Expression_IsFsym clone = new Expression_IsFsym(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Expression_IsFsym) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeExpression_IsFsym(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("IsFsym(<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Expression fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Expression tmp = getStaticTomSignatureFactory().makeExpression_IsFsym(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isIsFsym()
   {
     return true;
@@ -47,7 +40,7 @@ extends Expression
     return true;
   }
 
-  public boolean hasTerm()
+  public boolean hasVariable()
   {
     return true;
   }
@@ -62,14 +55,14 @@ extends Expression
     return (Expression) super.setArgument(_astName, index_astName);
   }
 
-  public TomTerm getTerm()
+  public TomTerm getVariable()
   {
-    return (TomTerm) this.getArgument(index_term) ;
+    return (TomTerm) this.getArgument(index_variable) ;
   }
 
-  public Expression setTerm(TomTerm _term)
+  public Expression setVariable(TomTerm _variable)
   {
-    return (Expression) super.setArgument(_term, index_term);
+    return (Expression) super.setArgument(_variable, index_variable);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {

@@ -1,7 +1,10 @@
 package jtom.adt;
 
-abstract public class OptionList
+public class OptionList
 extends OptionListImpl
 {
+  OptionList(TomSignatureFactory factory) {
+    super(factory);
+  }
 
 }

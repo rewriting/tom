@@ -6,33 +6,15 @@ import java.io.IOException;
 
 abstract public class TargetLanguageImpl extends TomSignatureConstructor
 {
-  public static TargetLanguage fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static TargetLanguage fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  TargetLanguageImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(TargetLanguage peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static TargetLanguage fromTerm(aterm.ATerm trm)
-  {
-    TargetLanguage tmp;
-    if ((tmp = TargetLanguage_TL.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TargetLanguage_ITL.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a TargetLanguage: " + trm);
+  public boolean isSortTargetLanguage()  {
+    return true;
   }
 
   public boolean isTL()
@@ -89,7 +71,6 @@ abstract public class TargetLanguageImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TargetLanguage has no End");
   }
-
 
 }
 

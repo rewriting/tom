@@ -6,49 +6,15 @@ import java.io.IOException;
 
 abstract public class TomTypeImpl extends TomSignatureConstructor
 {
-  public static TomType fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static TomType fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  TomTypeImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(TomType peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static TomType fromTerm(aterm.ATerm trm)
-  {
-    TomType tmp;
-    if ((tmp = TomType_Type.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomType_TypesToType.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomType_TomType.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomType_TomTypeAlone.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomType_TLType.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomType_EmptyType.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a TomType: " + trm);
+  public boolean isSortTomType()  {
+    return true;
   }
 
   public boolean isType()
@@ -91,7 +57,7 @@ abstract public class TomTypeImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasList()
+  public boolean hasDomain()
   {
     return false;
   }
@@ -131,14 +97,14 @@ abstract public class TomTypeImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomType has no TlType");
   }
 
-  public TomList getList()
+  public TomTypeList getDomain()
   {
-     throw new RuntimeException("This TomType has no List");
+     throw new RuntimeException("This TomType has no Domain");
   }
 
-  public TomType setList(TomList _list)
+  public TomType setDomain(TomTypeList _domain)
   {
-     throw new RuntimeException("This TomType has no List");
+     throw new RuntimeException("This TomType has no Domain");
   }
 
   public TomType getCodomain()
@@ -170,7 +136,6 @@ abstract public class TomTypeImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomType has no Tl");
   }
-
 
 }
 

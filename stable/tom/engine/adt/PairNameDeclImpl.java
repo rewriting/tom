@@ -6,29 +6,15 @@ import java.io.IOException;
 
 abstract public class PairNameDeclImpl extends TomSignatureConstructor
 {
-  public static PairNameDecl fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static PairNameDecl fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  PairNameDeclImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(PairNameDecl peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static PairNameDecl fromTerm(aterm.ATerm trm)
-  {
-    PairNameDecl tmp;
-    if ((tmp = PairNameDecl_Slot.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a PairNameDecl: " + trm);
+  public boolean isSortPairNameDecl()  {
+    return true;
   }
 
   public boolean isSlot()
@@ -65,7 +51,6 @@ abstract public class PairNameDeclImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This PairNameDecl has no SlotDecl");
   }
-
 
 }
 

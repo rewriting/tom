@@ -4,77 +4,86 @@ import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
 
-abstract public class SlotListImpl extends TomSignatureConstructor
+abstract public class SlotListImpl extends aterm.pure.ATermListImpl
 {
-  public static SlotList fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
+  protected TomSignatureFactory factory = null;
+  SlotListImpl(TomSignatureFactory factory) {
+     super(factory);
+     this.factory = factory;
   }
-  public static SlotList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
-  }
-  public boolean isEqual(SlotList peer)
-  {
-    return term.isEqual(peer.toTerm());
-  }
-  public static SlotList fromTerm(aterm.ATerm trm)
-  {
-    SlotList tmp;
-    if ((tmp = SlotList_EmptySlotList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = SlotList_ConsSlotList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a SlotList: " + trm);
-  }
-
-  public boolean isEmptySlotList()
-  {
-    return false;
-  }
-
-  public boolean isConsSlotList()
-  {
-    return false;
-  }
-
-  public boolean hasHeadSlotList()
-  {
-    return false;
-  }
-
-  public boolean hasTailSlotList()
-  {
-    return false;
-  }
-
-  public PairNameDecl getHeadSlotList()
-  {
-     throw new RuntimeException("This SlotList has no HeadSlotList");
-  }
-
-  public SlotList setHeadSlotList(PairNameDecl _headSlotList)
-  {
-     throw new RuntimeException("This SlotList has no HeadSlotList");
-  }
-
-  public SlotList getTailSlotList()
-  {
-     throw new RuntimeException("This SlotList has no TailSlotList");
-  }
-
-  public SlotList setTailSlotList(SlotList _tailSlotList)
-  {
-     throw new RuntimeException("This SlotList has no TailSlotList");
-  }
-
-
+  public TomSignatureFactory getTomSignatureFactory(){
+    return factory;
 }
+  protected aterm.ATerm term = null;
+  public aterm.ATerm toTerm()
+  {
+    if (this.term == null) {
+      SlotList reversed = (SlotList)this.reverse();
+      aterm.ATermList tmp = getTomSignatureFactory().makeList();
+      for (; !reversed.isEmpty(); reversed = reversed.getTail()) {
+         aterm.ATerm elem = reversed.getHead().toTerm();
+         tmp = getTomSignatureFactory().makeList(elem, tmp);
+      }
+      this.term = tmp;
+    }
+    return this.term;
+  }
+  public String toString() {
+    return toTerm().toString();
+  }
+  public PairNameDecl getHead() {
+    return (PairNameDecl) getFirst();
+  }
+  public SlotList getTail() {
+    return (SlotList) getNext();
+  }
+  public boolean isSortSlotList()  {
+    return true;
+  }
 
+  public boolean isEmpty() {
+    return this == TomSignatureFactory.emptySlotList;
+  }
+  public boolean isMany() {
+    return !isEmpty();
+  }
+  public boolean hasHead() {
+    return !isEmpty();
+  }
+  public boolean hasTail() {
+    return !isEmpty();
+  }
+  public boolean equivalent(shared.SharedObject peer) {
+	 if (peer instanceof SlotList) {
+	 	return super.equivalent(peer);
+	 }
+	 else {
+      return false;
+	 }
+  }
+  public shared.SharedObject duplicate() {
+	 SlotList clone = new SlotList(factory);
+	 clone.init(hashCode(), getAnnotations(), getFirst(), getNext());
+	 return clone;
+  }
+  public aterm.ATermList getEmpty() {
+    return (aterm.ATermList)getTomSignatureFactory().makeSlotList();
+  }
+
+  public aterm.ATermList insert(aterm.ATerm head) {
+    return (aterm.ATermList)getTomSignatureFactory().makeSlotList((PairNameDecl) head, (SlotList) this);
+  }
+
+  public SlotList insert(PairNameDecl head) {
+    return getTomSignatureFactory().makeSlotList(head, (SlotList) this);
+  }
+  public aterm.ATermList reverse() {
+  	 SlotListImpl cur = this;
+  	 SlotListImpl reverse = (SlotListImpl) getTomSignatureFactory().makeSlotList();
+  	 while(!cur.isEmpty()){
+  	   reverse = (SlotListImpl)reverse.insert((aterm.ATerm) cur.getHead());
+  	   cur = cur.getTail();
+  	 }
+  	 return reverse;
+  }
+}

@@ -3,38 +3,31 @@ package jtom.adt;
 abstract public class Declaration_EmptyDeclarationImpl
 extends Declaration
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Declaration_EmptyDeclarationImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   public shared.SharedObject duplicate() {
-    Declaration_EmptyDeclaration clone = new Declaration_EmptyDeclaration();
+    Declaration_EmptyDeclaration clone = new Declaration_EmptyDeclaration(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Declaration_EmptyDeclaration) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeDeclaration_EmptyDeclaration(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("EmptyDeclaration");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Declaration fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_EmptyDeclaration();
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isEmptyDeclaration()
   {
     return true;

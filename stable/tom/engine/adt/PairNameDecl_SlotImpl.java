@@ -3,40 +3,33 @@ package jtom.adt;
 abstract public class PairNameDecl_SlotImpl
 extends PairNameDecl
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  PairNameDecl_SlotImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_slotName = 0;
   private static int index_slotDecl = 1;
   public shared.SharedObject duplicate() {
-    PairNameDecl_Slot clone = new PairNameDecl_Slot();
+    PairNameDecl_Slot clone = new PairNameDecl_Slot(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof PairNameDecl_Slot) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makePairNameDecl_Slot(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("Slot(<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public PairNameDecl fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      PairNameDecl tmp = getStaticTomSignatureFactory().makePairNameDecl_Slot(TomName.fromTerm( (aterm.ATerm) children.get(0)), Declaration.fromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isSlot()
   {
     return true;

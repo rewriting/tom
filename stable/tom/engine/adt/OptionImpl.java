@@ -6,61 +6,15 @@ import java.io.IOException;
 
 abstract public class OptionImpl extends TomSignatureConstructor
 {
-  public static Option fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static Option fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  OptionImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(Option peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static Option fromTerm(aterm.ATerm trm)
-  {
-    Option tmp;
-    if ((tmp = Option_DeclarationToOption.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Option_TomNameToOption.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Option_TomTermToOption.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Option_Option.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Option_DefinedSymbol.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Option_GeneratedMatch.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Option_OriginTracking.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Option_Constructor.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Option_OriginalText.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a Option: " + trm);
+  public boolean isSortOption()  {
+    return true;
   }
 
   public boolean isDeclarationToOption()
@@ -93,6 +47,11 @@ abstract public class OptionImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isWithDefaultProduction()
+  {
+    return false;
+  }
+
   public boolean isOriginTracking()
   {
     return false;
@@ -104,6 +63,11 @@ abstract public class OptionImpl extends TomSignatureConstructor
   }
 
   public boolean isOriginalText()
+  {
+    return false;
+  }
+
+  public boolean isXMLPosition()
   {
     return false;
   }
@@ -134,6 +98,11 @@ abstract public class OptionImpl extends TomSignatureConstructor
   }
 
   public boolean hasFileName()
+  {
+    return false;
+  }
+
+  public boolean hasPlace()
   {
     return false;
   }
@@ -198,6 +167,15 @@ abstract public class OptionImpl extends TomSignatureConstructor
      throw new RuntimeException("This Option has no FileName");
   }
 
+  public String getPlace()
+  {
+     throw new RuntimeException("This Option has no Place");
+  }
+
+  public Option setPlace(String _place)
+  {
+     throw new RuntimeException("This Option has no Place");
+  }
 
 }
 

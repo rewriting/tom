@@ -1,7 +1,10 @@
 package jtom.adt;
 
-abstract public class TomStructureTable
+public abstract class TomStructureTable
 extends TomStructureTableImpl
 {
+  TomStructureTable(TomSignatureFactory factory) {
+    super(factory);
+  }
 
 }

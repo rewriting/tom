@@ -3,39 +3,32 @@ package jtom.adt;
 abstract public class Option_TomTermToOptionImpl
 extends Option
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Option_TomTermToOptionImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_astTerm = 0;
   public shared.SharedObject duplicate() {
-    Option_TomTermToOption clone = new Option_TomTermToOption();
+    Option_TomTermToOption clone = new Option_TomTermToOption(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Option_TomTermToOption) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeOption_TomTermToOption(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("TomTermToOption(<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Option fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Option tmp = getStaticTomSignatureFactory().makeOption_TomTermToOption(TomTerm.fromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isTomTermToOption()
   {
     return true;

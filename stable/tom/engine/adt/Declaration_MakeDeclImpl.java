@@ -3,10 +3,8 @@ package jtom.adt;
 abstract public class Declaration_MakeDeclImpl
 extends Declaration
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Declaration_MakeDeclImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_astName = 0;
   private static int index_astType = 1;
@@ -14,32 +12,27 @@ extends Declaration
   private static int index_tlCode = 3;
   private static int index_orgTrack = 4;
   public shared.SharedObject duplicate() {
-    Declaration_MakeDecl clone = new Declaration_MakeDecl();
+    Declaration_MakeDecl clone = new Declaration_MakeDecl(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Declaration_MakeDecl) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeDeclaration_MakeDecl(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("MakeDecl(<term>,<term>,<term>,<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Declaration fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_MakeDecl(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomType.fromTerm( (aterm.ATerm) children.get(1)), TomList.fromTerm( (aterm.ATerm) children.get(2)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(3)), Option.fromTerm( (aterm.ATerm) children.get(4)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isMakeDecl()
   {
     return true;

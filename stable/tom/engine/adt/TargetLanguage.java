@@ -1,7 +1,10 @@
 package jtom.adt;
 
-abstract public class TargetLanguage
+public abstract class TargetLanguage
 extends TargetLanguageImpl
 {
+  TargetLanguage(TomSignatureFactory factory) {
+    super(factory);
+  }
 
 }

@@ -3,41 +3,34 @@ package jtom.adt;
 abstract public class Instruction_IfThenElseImpl
 extends Instruction
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Instruction_IfThenElseImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_condition = 0;
   private static int index_succesList = 1;
   private static int index_failureList = 2;
   public shared.SharedObject duplicate() {
-    Instruction_IfThenElse clone = new Instruction_IfThenElse();
+    Instruction_IfThenElse clone = new Instruction_IfThenElse(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Instruction_IfThenElse) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeInstruction_IfThenElse(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("IfThenElse(<term>,<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Instruction fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Instruction tmp = getStaticTomSignatureFactory().makeInstruction_IfThenElse(Expression.fromTerm( (aterm.ATerm) children.get(0)), TomList.fromTerm( (aterm.ATerm) children.get(1)), TomList.fromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isIfThenElse()
   {
     return true;

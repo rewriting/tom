@@ -6,97 +6,15 @@ import java.io.IOException;
 
 abstract public class ExpressionImpl extends TomSignatureConstructor
 {
-  public static Expression fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static Expression fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  ExpressionImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(Expression peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static Expression fromTerm(aterm.ATerm trm)
-  {
-    Expression tmp;
-    if ((tmp = Expression_TomTermToExpression.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_Not.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_And.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_TrueTL.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_FalseTL.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_IsEmptyList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_IsEmptyArray.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_EqualFunctionSymbol.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_EqualTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_GetSubterm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_IsFsym.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_GetSlot.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_GetHead.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_GetTail.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_GetSize.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_GetElement.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_GetSliceList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Expression_GetSliceArray.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a Expression: " + trm);
+  public boolean isSortExpression()  {
+    return true;
   }
 
   public boolean isTomTermToExpression()
@@ -219,7 +137,7 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasTerm()
+  public boolean hasVariable()
   {
     return false;
   }
@@ -314,22 +232,22 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
      throw new RuntimeException("This Expression has no Kid2");
   }
 
-  public TomTerm getTerm()
+  public TomTerm getVariable()
   {
-     throw new RuntimeException("This Expression has no Term");
+     throw new RuntimeException("This Expression has no Variable");
   }
 
-  public Expression setTerm(TomTerm _term)
+  public Expression setVariable(TomTerm _variable)
   {
-     throw new RuntimeException("This Expression has no Term");
+     throw new RuntimeException("This Expression has no Variable");
   }
 
-  public TomTerm getNumber()
+  public TomNumber getNumber()
   {
      throw new RuntimeException("This Expression has no Number");
   }
 
-  public Expression setNumber(TomTerm _number)
+  public Expression setNumber(TomNumber _number)
   {
      throw new RuntimeException("This Expression has no Number");
   }
@@ -383,7 +301,6 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This Expression has no SubjectListName");
   }
-
 
 }
 

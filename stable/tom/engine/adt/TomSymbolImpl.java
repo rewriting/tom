@@ -6,29 +6,15 @@ import java.io.IOException;
 
 abstract public class TomSymbolImpl extends TomSignatureConstructor
 {
-  public static TomSymbol fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static TomSymbol fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  TomSymbolImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(TomSymbol peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static TomSymbol fromTerm(aterm.ATerm trm)
-  {
-    TomSymbol tmp;
-    if ((tmp = TomSymbol_Symbol.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a TomSymbol: " + trm);
+  public boolean isSortTomSymbol()  {
+    return true;
   }
 
   public boolean isSymbol()
@@ -110,7 +96,6 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomSymbol has no TlCode");
   }
-
 
 }
 

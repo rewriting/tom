@@ -26,27 +26,43 @@
 
 package jtom.debug;
   
-import java.util.*;
-import java.io.*;
-import java.lang.Integer;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
-import aterm.*;
-import aterm.pure.*;
-
-import jtom.runtime.*;
-
-import jtom.*;
-import jtom.tools.*;
-import jtom.adt.*;
-
-import jtom.debug.TomDebugEnvironment;
-import jtom.debug.TermHandler;
+import jtom.adt.Option;
+import jtom.adt.OptionList;
+import jtom.adt.TomList;
+import jtom.adt.TomSignatureFactory;
+import jtom.adt.TomStructureTable;
+import jtom.adt.TomTerm;
 
 public class TomDebugger {
   public static TomDebugger debugger = null;
   static boolean testingMode = false;
   static String debugFileExtension = ".jdbg";
   static String debugTableSuffix = ".tfix.debug.table";
+
   BufferedReader in;
   Map mapKeyDebugStructure;
   Set debuggedStructureKeySet;
@@ -54,6 +70,7 @@ public class TomDebugger {
   Stack environment;
   boolean nextFailure = false;
   ArrayList termHandlerList;
+  ArrayList activeTermHandlerList;
   
   public TomDebugger(String[] fileName) {
     this(fileName, false);
@@ -63,15 +80,16 @@ public class TomDebugger {
     this(new String[]{fileName}, false);
   }
   
-  public TomDebugger(String[] fileName, boolean testingMode) {
-    this.testingMode = testingMode;
-    this.debugger = this;
+  public TomDebugger(String[] fileName, boolean testingModeArg) {
+    testingMode = testingModeArg;
+    debugger = this;
     this.baseFileName = new String[fileName.length];
     this.in = new BufferedReader(new InputStreamReader(System.in));
     this.debuggedStructureKeySet = new HashSet();
     this.environment = new Stack();
     this.mapKeyDebugStructure = new HashMap();
     this.termHandlerList = new ArrayList();
+    this.activeTermHandlerList = new ArrayList();
     TomStructureTable table = null;
     File file = null;
     InputStream input = null;
@@ -83,7 +101,8 @@ public class TomDebugger {
         baseFileName[i] = name.substring(0, name.length() - (debugTableSuffix.length()))+".t";
         input = new FileInputStream(file);
         TomSignatureFactory tsf = new TomSignatureFactory(10);
-        table = TomStructureTable.fromTextFile(input);
+        table = tsf.TomStructureTableFromFile(input);
+        System.out.println("Analysing "+baseFileName[i]+"...");
         analyseStructure(table);
       } catch (FileNotFoundException e) {
         e.printStackTrace();
@@ -95,7 +114,10 @@ public class TomDebugger {
         System.exit(1);
       }
     }
-     
+  }
+
+  public void start() {
+    System.out.println("Starting debugger!!!!\n");
     showAvailableStructure();
     showMainMenu();
   }
@@ -112,43 +134,63 @@ public class TomDebugger {
     } catch (IOException e) {
     }
   }
-
-    private void configure(String str) {
+  
+  private void configure(String str) {
     if(str.equals("?")) {
       System.out.println("\nFollowing commands are allowed:");
       System.out.println("\t ?\t\t:Show this help");
-      System.out.println("\t info    | i\t:Show information on structure that can be debugged");
-      System.out.println("\t run     | R\t:Exit debugger configuration, jump to next breakpoint");
-      System.out.println("\t failure | F\t:Exit debugger configuration and run the program");
-      System.out.println("\t save    | S\t:Save configuration");
+      System.out.println("\t save    | s\t:Save configuration");
       System.out.println("\t load    | L\t:Load configuration from file");
-      System.out.println("\t breakpt | b\t:Define breakpoint for Match-Rule structures");
-      System.out.println("\t clear   | c\t:Clear breakpoint list");
-      System.out.println("\t term    | t\t:Define Term pattern handler to be activated");
+      System.out.println("\t info    | i\t:Show information on structure that can be debugged");
       System.out.println("\t more    | m\t:Show patterns of a specific available structure");
-      System.out.println("\t list    | l\t:List defined breakpoint");
-    } else if (str.equals("run")     || str.equals("R")) {
+      System.out.println("\t breakpt | b\t:Define breakpoint for Match-Rule structures");
+      System.out.println("\t handler | h\t:Show activable Term pattern handler");
+      System.out.println("\t term    | t\t:Define Term pattern handler to be activated");
+      System.out.println("\t listb   | lb\t:List defined breakpoint");
+      System.out.println("\t listh   | lh\t:List defined breakpoint");
+      System.out.println("\t clear   | c\t:Clear breakpoint and active term handler lists");
+      System.out.println("\t removeb | RB\t:Remove a defined breakpoint");
+      System.out.println("\t removeh | RH\t:Remove an activated Handler");
+      System.out.println("\t run     | r\t:Exit debugger configuration, jump to next defined breakpoint");
+      System.out.println("\t failure | f\t:Exit debugger configuration, jump to next Match failure");
+      System.out.println("\t stack   | S\t:Show Environment Stack");
+      System.out.println("\t cl\t\t:Clear screen (unix system)");
+    } else if (str.equals("run")     || str.equals("r")) {
         //System.out.println(debuggedStructureKeySet);
       return;
-    } else if (str.equals("failure") || str.equals("F")) {
+    } else if (str.equals("failure") || str.equals("f")) {
       nextFailure = true;
       return;
     } else if (str.equals("info")    || str.equals("i")) {
       showAvailableStructure();
-    } else if (str.equals("save")    || str.equals("S")) {
+    } else if (str.equals("save")    || str.equals("s")) {
       saveConfigurationToFile();
     } else if (str.equals("load")    || str.equals("L")) {
       loadConfigurationFromFile();
     } else if (str.equals("breakpt") || str.equals("b")) {
-      defineStructWatcher();
+      defineBreakpoint();
+    } else if (str.equals("handler") || str.equals("h")) {
+      showHandlers();
     } else if (str.equals("clear")   || str.equals("c")) {
+      System.out.println("...Clearing all defined breakpoints and terms handlers\n");
       debuggedStructureKeySet.clear();
+      activeTermHandlerList.clear();
     } else if (str.equals("term")    || str.equals("t")) {
-      defineTermWatcher();
+      defineActineTermHandler();
     } else if (str.equals("more")    || str.equals("m")) {
       showStructureDetails();
-    } else if (str.equals("list")    || str.equals("l")) {
+    } else if (str.equals("listb")    || str.equals("lb")) {
       showBreakpoint();
+    } else if (str.equals("listh")    || str.equals("lh")) {
+      showActiveHandlers();
+    } else if (str.equals("removeb")  || str.equals("RB")) {
+      removeBreakpoint();
+    } else if (str.equals("removeh")  || str.equals("RH")) {
+      removeActiveHandler();
+    } else if (str.equals("stack")   || str.equals("S")) {
+      showStack();
+    } else if (str.equals("cl")) {
+      clscrn();
     } else {
       System.out.println("Unknow command: please enter `?` to list available commands");
     }
@@ -190,12 +232,18 @@ public class TomDebugger {
     }
     showMenu2();
   }
+
+  private void clscrn(){
+    for (int i=0; i<100; i++) {
+      System.out.println("");
+    }
+  }
   
   private void saveConfigurationToFile() {
     String str ="";
     try {
       while(true) {
-        System.out.print("Configuration file name ("+debugFileExtension+"):");
+        System.out.print("Enter file name ("+debugFileExtension+"):");
         str = in.readLine();
         if (str.equals("")) {
           continue;
@@ -227,7 +275,7 @@ public class TomDebugger {
   }
 
   private void loadConfigurationFromFile() {
-    System.out.println("Configuration file name ("+debugFileExtension+") in:");
+    System.out.println("Choose configuration file name ("+debugFileExtension+") in:");
     try {
       File path = new File(".");
       String[] list = path.list(filter(debugFileExtension));
@@ -303,53 +351,49 @@ public class TomDebugger {
         s2.toLowerCase());
     }
   }
+
+  public void showStack() {
+    if(environment.isEmpty()) {
+      System.out.println("Empty environment");
+      return;
+    }
+    int max =  (10 > environment.size()) ? environment.size() : 10;
+    for(int i=0;i<max;i++) {
+      System.out.println(i+": "+environment.elementAt(i));
+    }
+  }
   
   private void showAvailableStructure() {
     TomDebugStructure struct;
     Collection structList = mapKeyDebugStructure.values();
     Iterator it = structList.iterator();
-    System.out.println("Valid structures to be debugged and their corresponding maximum allowed pattern numbers:");
+    if (it.hasNext()) {
+      System.out.println("Valid structures to be debugged and their corresponding maximum allowed pattern numbers:");
+    } else {
+      System.out.println("No structure to debug");
+      return;
+    }
     while(it.hasNext()) {
       struct = (TomDebugStructure)it.next();
-      System.out.println("\t- "+struct.type+" declared in "+struct.fileName+" at line "+struct.line+" with "+struct.nbPatterns+" patterns");
+      System.out.println("\t- `"+struct.type+"` declared in `"+struct.fileName+"` at line "+struct.line+" with "+struct.nbPatterns+" patterns");
     }
   }
-  
-  private void showBreakpoint() {
-   TomDebugStructure struct;
-   Collection structList = mapKeyDebugStructure.values();
-   Iterator it = structList.iterator();
-   System.out.println("Structures and their corresponding debugged pattern numbers:");
-   while(it.hasNext()) {
-     struct = (TomDebugStructure)it.next();
-     if (struct.watchPatternList != null) {
-       Integer[] tab = (Integer[])((struct.watchPatternList).toArray(new Integer[]{}));
-       Arrays.sort(tab);
-       System.out.println(tab.length);
-       System.out.println("\t- "+struct.type+" declared in "+struct.fileName+" at line "+struct.line+" with "+struct.nbPatterns+" patterns");
-       for(int i=0;i<tab.length;i++) {
-         System.out.println("\t\t-Pattern "+tab[i]+" at line "+struct.patternLine[tab[i].intValue()-1]);
-         System.out.println(struct.patternText[tab[i].intValue()-1]);
-       }
-     }
-   }
-  }
-  
+    
   private void showStructureDetails() {
      try {
       String str = "";
       int input = 0;
-      String fileName = getFileName();
+      String fileName = getFileName("");
       if (fileName == null) {
         return;
       }
       while (str != null) {
-        System.out.print("\t>Structure line number (0 to exit):");
+        System.out.print("\t>Enter structure line number in "+fileName+" (0:exit):");
         str = in.readLine();
         try {
           input = Integer.parseInt(str, 10);
         }catch (NumberFormatException e) {
-          System.out.println("Not a valid number");
+          System.out.println("Not a number");
           continue;
         }
         if (input == 0) {
@@ -358,6 +402,8 @@ public class TomDebugger {
         } else {
           String key = fileName+input;
           if (mapKeyDebugStructure.keySet().contains(key)) {
+            clscrn();
+            System.out.println("Details of structure declared line "+input+" in file "+fileName+"\n");
             showPatterns(key);
           } else {
             System.out.println("Not a valid line number, please use first `info` command to ensure valid entry");
@@ -367,66 +413,48 @@ public class TomDebugger {
     } catch (IOException e) {
     }
   }
-  private String getFileName() {
-    String str = "";
-    int input = 0;
-    if(baseFileName.length == 1) {
-      return baseFileName[0];
-    }
-    try {
-      while (true) {
-        System.out.println(">Choose base original file name:(0 to exit)");
-        for(int i=0;i<baseFileName.length;i++) {
-          System.out.println((i+1)+")\t"+baseFileName[i]);
-        }
-        str = in.readLine();
-        try {
-          input = Integer.parseInt(str, 10);
-        }catch (NumberFormatException e) {
-          System.out.println("Not a valid number");
-          continue;
-        }
-        if(input == 0) {
-          return null;
-        } else if ((input-1) >= baseFileName.length) {
-          System.out.println("Not a valid number");
-          continue;
-        } else {
-          return baseFileName[input-1];
-        }
-      }
-    } catch (IOException e) {
-      return null;
-    }
-  }
-  
-  private void showPatterns(String key) {
-    TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
-    for(int i=0;i<struct.nbPatterns.intValue();i++){
-      System.out.println("Pattern declared line: "+struct.patternLine[i]);
-      System.out.println(struct.patternText[i]);
-      System.out.println("--------------------------------------------------------------------------------");
-    }
-  }
-  
-  private void defineStructWatcher() {
+
+  private void defineBreakpoint() {
+    System.out.println("\nA breakpoint is defined by: the file name, the structure line number and the pattern number (optional)");
     try {
       String str = "";
       int input = 0;
-      String fileName = getFileName();
+        // getting a file Name
+      String fileName = getFileName("All files means defining all possible breakpoints");
       if (fileName == null) {
         return;
       }
+      if (str.equals("AllFiles")) {
+          // All files means all possible breakpoints
+        System.out.println("...Defining breakpoints for all couple of Structure/Pattern in all files ");
+        Collection structList = mapKeyDebugStructure.values();
+        TomDebugStructure struct;
+        Iterator it = structList.iterator();
+        while(it.hasNext()) {
+          struct = (TomDebugStructure)it.next();
+          HashSet set = new HashSet();
+          for (int i=1; i<=struct.nbPatterns.intValue();i++) {
+            set.add(new Integer(i));
+          }
+          struct.watchPatternList = set;
+          debuggedStructureKeySet.add(struct.key);
+        }
+        return;
+      }
+        // we get a file name
       while (str != null) {
-        System.out.print("\t>Structure line number (0 to exit, `all` for all):");
+        System.out.print("\n\t>Enter a structure line number in "+fileName+" (0:exit, `all`:all):");
         str = in.readLine();
         if (str.equals("all")) {
-            // TODO
+          System.out.println("... Adding all possible breakpoints for structures in file "+fileName+"\n");
           Collection structList = mapKeyDebugStructure.values();
           TomDebugStructure struct;
           Iterator it = structList.iterator();
           while(it.hasNext()) {
             struct = (TomDebugStructure)it.next();
+            if(!(struct.key).startsWith(fileName)) {
+              continue;
+            }
             HashSet set = new HashSet();
             for (int i=1; i<=struct.nbPatterns.intValue();i++) {
               set.add(new Integer(i));
@@ -439,7 +467,7 @@ public class TomDebugger {
         try {
           input = Integer.parseInt(str, 10);
         }catch (NumberFormatException e) {
-          System.out.println("Not a valid number");
+          System.out.println("Not a number");
           continue;
         }
         if (input == 0) {
@@ -452,7 +480,7 @@ public class TomDebugger {
             ((TomDebugStructure)mapKeyDebugStructure.get(key)).watchPatternList = set;
             debuggedStructureKeySet.add(key);
           } else {
-            System.out.println("Not a valid line number, please use first `info` command to ensure valid entry");
+            System.out.println("Not a valid line number, please exit and use `info` command to see valid entry");
           }
         }
       }
@@ -469,9 +497,10 @@ public class TomDebugger {
       String str = "";
       int input = 0;
       while (str != null) {
-        System.out.print("\t\t>Pattern Number (0 to exit, `all` for all):");
+        System.out.print("\t\t>Complete breakpoint with pattern number (0:exit, `all`:all):");
         str = in.readLine();
         if (str.equals("all")) {
+          System.out.println("... Adding breakpoints for all patterns of structure line "+line+" in file "+fileName);
           for (int i=1; i<=nbPatterns;i++) {
             result.add(new Integer(i));
           }
@@ -481,13 +510,13 @@ public class TomDebugger {
           try {
             input = Integer.parseInt(str, 10);
           }catch (NumberFormatException e) {
-            System.out.println("Not a valid number");
+            System.out.println("Not a number");
             continue;
           }
           if (input == 0) {
             return result;
           } else {
-            if (input <= nbPatterns) {
+            if ( input <= nbPatterns && input > 0) {
               result.add(new Integer(input));
             } else {
               System.out.println("Not a valid pattern number: this structure has only "+nbPatterns+" patterns");
@@ -499,39 +528,301 @@ public class TomDebugger {
     }
     return result;
   }
-
-  private void defineTermWatcher() {
+  
+  private void showBreakpoint() {
+    TomDebugStructure struct;
+    if(debuggedStructureKeySet.isEmpty()) {
+      System.out.println("No breakpoints");
+      return;
+    } else {
+      clscrn();
+      System.out.println("\nList of yet defined breakpoint(s):\n");
+      Iterator it = debuggedStructureKeySet.iterator();
+      while(it.hasNext()) {
+        struct = (TomDebugStructure)mapKeyDebugStructure.get((String)it.next());
+        Integer[] tab = (Integer[])((struct.watchPatternList).toArray(new Integer[]{}));
+        Arrays.sort(tab);
+        System.out.println("- "+struct.type+" declared in "+struct.fileName+" at line "+struct.line+" with "+struct.nbPatterns+" patterns");
+        if(tab.length == 0) {
+          System.out.println("\t- No patterns are used for this breakpoint");
+        }
+        for(int i=0;i<tab.length;i++) {
+          System.out.println("\t-Pattern "+tab[i]+" at line "+struct.patternLine[tab[i].intValue()-1]+":");
+          System.out.println("\t=>\t "+struct.patternText[tab[i].intValue()-1]);
+        }
+        System.out.println();
+      }
+    }
+  }
+  
+  private void removeBreakpoint() {
+    try {
+      String str = "", str2 = "";
+      int input = 0;
+      String fileName = getFileName("All files means removing all breakpoints");
+      if (fileName == null) {
+        return;
+      }
+      if (str.equals("AllFiles")) {
+        System.out.println("...Clearing all breakpoints in all files");
+        debuggedStructureKeySet.clear();
+        return;
+      }        
+      while (str != null) {
+        System.out.print("\t>Enter structure line number (0:exit, `all`:all):");
+        str = in.readLine();
+        if (str.equals("all")) {
+          System.out.println("...Clearing all breakpoints in file "+fileName+"\n");
+          TomDebugStructure struct;
+          String key;
+          Iterator it = debuggedStructureKeySet.iterator();
+          ArrayList listOfKey = new ArrayList();
+          while(it.hasNext()) {
+            key = (String)it.next();
+            if(key.startsWith(fileName)) {
+              listOfKey.add(key);
+                //struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
+                //struct.watchPatternList = null;
+            }
+          }
+          for(int i=0;i<listOfKey.size();i++) {
+            debuggedStructureKeySet.remove(listOfKey.get(i));
+          }
+          return;
+        }
+        try {
+          input = Integer.parseInt(str, 10);
+        }catch (NumberFormatException e) {
+          System.out.println("Not a number");
+          continue;
+        }
+        if (input == 0) {
+          System.out.println();
+          return;
+        } else {
+          String key = fileName+input;
+          
+          if (mapKeyDebugStructure.keySet().contains(key)) {
+            TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);;
+              // obtain pattern number
+            if(struct.watchPatternList.isEmpty()) {
+              System.out.println("Removing breakpoint on structure (No pattern were associated to this breakpoint)\n");
+              debuggedStructureKeySet.remove(key);
+              continue;
+            }
+            while (str2 != null) {
+              System.out.print("\t>Pattern  number (0:exit, `all`:all):");
+              str2 = in.readLine();
+              if(str2.equals("all")) {
+                struct.watchPatternList = null;
+                debuggedStructureKeySet.remove(key);
+              }
+              try {
+                input = Integer.parseInt(str2, 10);
+              }catch (NumberFormatException e) {
+                System.out.println("Not a number");
+                continue;
+              }
+              if (input == 0) {
+                System.out.println();
+                break;
+              } else {
+                if (true == struct.watchPatternList.remove(new Integer(input))) {
+                  if (struct.watchPatternList.isEmpty()) {
+                    struct.watchPatternList = null;
+                    debuggedStructureKeySet.remove(key);
+                  }
+                } else {
+                   System.out.println("No breakpoint on pattern number "+input);
+                }
+              }
+            }
+          } else {
+            System.out.println("Not a valid line number, please use first `list` command to see breakpoint list");
+          }
+        }
+      }
+     } catch (IOException e) {
+     }
+  }
+  
+  private String getFileName(String message) {
+    if(baseFileName.length == 1) {
+      return baseFileName[0];
+    }
+    String str = "";
+    int input = 0;
+    boolean emptyMessage = message.equals("");
+      
+      try {
+        while (true) {
+        System.out.println(">Choose base original file name to be used:(0:exit)");
+        int i = 0;
+        for(;i<baseFileName.length;i++) {
+          System.out.println((i+1)+")\t"+baseFileName[i]);
+        }
+        if (!emptyMessage) {
+          System.out.println((i+1)+")\t All files ("+message+")");
+        }
+        str = in.readLine();
+        try {
+          input = Integer.parseInt(str, 10);
+        }catch (NumberFormatException e) {
+          System.out.println("Not a number");
+          continue;
+        }
+        if(input == 0) {
+          return null;
+        } else if ((input-1) == baseFileName.length && !emptyMessage) {
+          return new String("AllFiles");
+        } else if ((input-1) > baseFileName.length || input < 0) {
+          System.out.println("Number out of range");
+          continue;
+        } else {
+          return baseFileName[input-1];
+        }
+      }
+    } catch (IOException e) {
+      return null;
+    }
+  }
+  
+  private void showPatterns(String key) {
+    TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
+    for(int i=0;i<struct.nbPatterns.intValue();i++){
+      System.out.println("Pattern declared line: "+struct.patternLine[i]);
+      System.out.println("=>\t"+struct.patternText[i]);
+      System.out.println("--------------------------------------------------------------------------------");
+    }
+  }
+  
+  private void showActiveHandlers() {
+    int nbHandler = activeTermHandlerList.size();
+    if(nbHandler>0) {
+      System.out.println("Here is the list of active term handler");
+    } else {
+      System.out.println("No active term handler");
+      return;
+    }
+    for(int i=0;i<nbHandler;i++) {
+      System.out.println((i+1)+") "+ ((TermHandler)activeTermHandlerList.get(i)).getHandlerName());
+    }
+  }
+  
+  private void showHandlers() {
+    int nbHandler = termHandlerList.size();
+    if(nbHandler>0) {
+      System.out.println("Here is the list of registered term handler");
+    } else {
+      System.out.println("No registered term handler");
+      return;
+    }
+    for(int i=0;i<nbHandler;i++) {
+      System.out.println((i+1)+") "+ ((TermHandler)termHandlerList.get(i)).getHandlerName());
+    }
+  }
+  
+  private void removeActiveHandler() {
     try {
       String str = "";
+      int input = 0;
+      int nbHandler = 0;
       while (str != null) {
-        System.out.print(">Term handler name to activate:");
-        str = in.readLine();
-        if(str.equals("exit"))
+        showActiveHandlers();
+        nbHandler = activeTermHandlerList.size();
+        if (nbHandler == 0) {
+          System.out.println("No more term handler to desactivate...\n");
           return;
-        else {
+        }
+        System.out.print(">Term handler to desactivate (0:exit, `all`:all):");
+        str = in.readLine();
+        if (str.equals("all")){
+          activeTermHandlerList.clear();
+          return;
+        } else {
             // TODO: Segregate activated Handler
-
-
-          
+          try {
+            input = Integer.parseInt(str, 10);
+          }catch (NumberFormatException e) {
+            System.out.println("Not a number");
+            continue;
+          }
+          if(input == 0) {
+            return ;
+          } else if ((input-1) >= nbHandler || input<0) {
+            System.out.println("Not a valid number");
+            continue;
+          } else {
+            activeTermHandlerList.remove(input-1);
+          }
         }
       }
     } catch (IOException e) {
     }
   }
-
-  private void showSubjects() {
-    if (!environment.empty())
-      ((TomDebugEnvironment)environment.peek()).showSubjects();
+  
+  private void defineActineTermHandler() {
+    showHandlers();
+    int nbHandler = termHandlerList.size();
+    if (nbHandler == 0) {
+      return;
+    }
+    try {
+      String str = "";
+      int input = 0;
+      while (str != null) {
+        System.out.print(">Term handler to activate (0:exit, `all`:all):");
+        str = in.readLine();
+        if (str.equals("all")){
+          //for(int i=0;i<termHandlerList.size();i++) {
+          //  activeTermHandlerList.add(termHandlerList.get(i));            
+          //}
+          activeTermHandlerList = (ArrayList) termHandlerList.clone();
+          return;
+        } else {
+            // TODO: Segregate activated Handler
+          try {
+            input = Integer.parseInt(str, 10);
+          }catch (NumberFormatException e) {
+            System.out.println("Not a number");
+            continue;
+          }
+          if(input == 0) {
+            return ;
+          } else if ((input-1) >= nbHandler || input<0) {
+            System.out.println("Not a valid number");
+            continue;
+          } else {
+            activeTermHandlerList.add(termHandlerList.get(input-1));
+          }
+        }
+      }
+    } catch (IOException e) {
+    }
   }
-
+  
+  private void showSubjects() {
+    if (!environment.empty()) {
+      ((TomDebugEnvironment)environment.peek()).showSubjects();
+    } else {
+      System.out.println("Empty environment");
+    }
+  }
+  
   private void showPatterns() {
-    if (!environment.empty())
+    if (!environment.empty()) {
       ((TomDebugEnvironment)environment.peek()).showPatterns();
+    } else {
+      System.out.println("Empty environment");
+    }
   }
   
   private void showSubsts() {
-    if (!environment.empty())
+    if (!environment.empty()) {
       ((TomDebugEnvironment)environment.peek()).showSubsts();
+    } else {
+      System.out.println("Empty environment");
+    }
   }
   
     //////////////////////
@@ -544,11 +835,12 @@ public class TomDebugger {
   }
   
   public void registerHandler(TermHandler th) {
+    System.out.println("Registering handler: "+th.getHandlerName());
     termHandlerList.add(th);
   }
 
   private boolean evalCondition(String key) {
-    return (debuggedStructureKeySet.contains(key) || nextFailure);
+    return (debuggedStructureKeySet.contains(key) /*|| nextFailure*/);
   }
   
   public void enteringStructure(String key) {
@@ -557,14 +849,9 @@ public class TomDebugger {
     }
   }
   
-  public void leavingStructure(String key) {
+  public void enteringDefaultPattern(String key) {
     if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
-      int status = ((TomDebugEnvironment)(environment.peek())).leaving();
-      environment.pop();
-      if (status == -1) {
-        nextFailure = false;
-        showMainMenu();
-      }
+      ((TomDebugEnvironment)(environment.peek())).enteringDefaultPattern();
     }
   }
   
@@ -573,13 +860,7 @@ public class TomDebugger {
       ((TomDebugEnvironment)(environment.peek())).enteringPattern();
     }
   }
-  
-  public void leavingPattern(String key) {
-    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
-      ((TomDebugEnvironment)(environment.peek())).leavingPattern();
-    }
-  }
-  
+
   public void linearizationFail(String key) {
     if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
       ((TomDebugEnvironment)(environment.peek())).linearizationFail();
@@ -591,17 +872,33 @@ public class TomDebugger {
       ((TomDebugEnvironment)(environment.peek())).patternSuccess();
     }
   }
+  
+  public void leavingPattern(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      ((TomDebugEnvironment)(environment.peek())).leavingPattern();
+    }
+  }
+
+  public void leavingStructure(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      int status = ((TomDebugEnvironment)(environment.peek())).leaving();
+      environment.pop();
+      if (status == -1 && nextFailure) {
+        nextFailure = false;
+        showMainMenu();
+      }
+    }
+  }
+  
+  public void termCreation(Object trm) {
+    for(int i=0;i<activeTermHandlerList.size();i++) {
+      ((TermHandler)(activeTermHandlerList.get(i))).testTerm(trm);
+    }
+  }
 
   public void breakOnPattern(String id) {
     System.out.println("The breakpoint link to pattern `"+id+"` has been reached");
     showMenu2();
-    
-  }
-
-  public void termCreation(Object trm) {
-    for(int i=0;i<termHandlerList.size();i++) {
-      ((TermHandler)(termHandlerList.get(i))).testTerm(trm);
-    }
   }
   
   public void specifySubject(String key, String name, Object trm) {
@@ -627,9 +924,9 @@ public class TomDebugger {
         String fileName = orgTrack.getFileName().getString();
         Integer line = orgTrack.getLine();
         String key = fileName+line;
-        TomList paList = struct.getPatternList().getList();
+        TomList paList = struct.getPatternList().getTomList();
         Integer nbPatterns =  evalListSize(paList);
-        Integer nbSubjects = evalListSize(struct.getSubjectList().getList());
+        Integer nbSubjects = evalListSize(struct.getSubjectList().getTomList());
         String[] patternText = new String[nbPatterns.intValue()];
         Integer[] patternLine = new Integer[nbPatterns.intValue()];
         int i=0;
@@ -648,10 +945,9 @@ public class TomDebugger {
         String fileName = struct.getOrgTrack().getFileName().getString();
         Integer line = struct.getOrgTrack().getLine();
         String key = fileName+line;
-        TomList paList = struct.getList();
+        TomList paList = struct.getTomList();
         Integer nbPatterns =  evalListSize(paList);
-        System.out.println(struct.getList().getHead().getLhs().getTerm().getArgs());
-        Integer nbSubjects = evalListSize(struct.getList().getHead().getLhs().getTerm().getArgs());
+        Integer nbSubjects = evalListSize(struct.getTomList().getHead().getLhs().getTomTerm().getArgs());
         String[] patternText = new String[nbPatterns.intValue()];
         Integer[] patternLine = new Integer[nbPatterns.intValue()];
         int i=0;
@@ -685,7 +981,7 @@ public class TomDebugger {
   
   private Integer extractPatternLine(OptionList list) {
     Option op;
-    while(!list.isEmptyOptionList()) {
+    while(!list.isEmpty()) {
       op = list.getHead();
       if(op.isOriginTracking()) {
         return op.getLine();
@@ -697,9 +993,9 @@ public class TomDebugger {
 
   private String extractPatternText(OptionList list) {
     Option op;
-    while(!list.isEmptyOptionList()) {
+    while(!list.isEmpty()) {
       op = list.getHead();
-      if(op.isTomNameToOption()) {
+      if(op.isOriginalText()) {
         return op.getAstName().getString();
       }
       list = list.getTail();

@@ -3,44 +3,28 @@ package jtom.adt;
 abstract public class TomName_NameImpl
 extends TomName
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  TomName_NameImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_string = 0;
   public shared.SharedObject duplicate() {
-    TomName_Name clone = new TomName_Name();
+    TomName_Name clone = new TomName_Name(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof TomName_Name) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeTomName_Name(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("Name(<str>)");
-  }
-
-  static public TomName fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      TomName tmp = getStaticTomSignatureFactory().makeTomName_Name((String) children.get(0));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public aterm.ATerm toTerm() {
-    if(term == null) {
-      java.util.List args = new java.util.LinkedList();
-      args.add(((aterm.ATermAppl) getArgument(0)).getAFun().getName());
-      setTerm(getFactory().make(getPattern(), args));
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
     }
     return term;
   }

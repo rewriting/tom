@@ -3,38 +3,31 @@ package jtom.adt;
 abstract public class TomTerm_LocalVariableImpl
 extends TomTerm
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  TomTerm_LocalVariableImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   public shared.SharedObject duplicate() {
-    TomTerm_LocalVariable clone = new TomTerm_LocalVariable();
+    TomTerm_LocalVariable clone = new TomTerm_LocalVariable(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof TomTerm_LocalVariable) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeTomTerm_LocalVariable(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("LocalVariable");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public TomTerm fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_LocalVariable();
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isLocalVariable()
   {
     return true;

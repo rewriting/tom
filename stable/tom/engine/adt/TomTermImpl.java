@@ -6,249 +6,15 @@ import java.io.IOException;
 
 abstract public class TomTermImpl extends TomSignatureConstructor
 {
-  public static TomTerm fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static TomTerm fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  TomTermImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(TomTerm peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static TomTerm fromTerm(aterm.ATerm trm)
-  {
-    TomTerm tmp;
-    if ((tmp = TomTerm_TargetLanguageToTomTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_TomTypeToTomTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_TomNameToTomTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_TomSymbolToTomTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_DeclarationToTomTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_OptionToTomTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_ExpressionToTomTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_InstructionToTomTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Tom.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_TomInclude.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_MakeTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BackQuoteTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_FunctionCall.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_MakeFunctionBegin.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_MakeFunctionEnd.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Appl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_RecordAppl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_PairSlotAppl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Match.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_MatchingCondition.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_EqualityCondition.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_RuleSet.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_RewriteRule.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_SubjectList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_PatternList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_TermList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Term.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_PatternAction.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_TLVar.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Declaration.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Variable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_VariableStar.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Placeholder.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_UnamedVariable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_DotTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_LocalVariable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_EndLocalVariable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildVariable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildArray.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildBuiltin.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_CompiledMatch.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_CompiledPattern.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_AssignedVariable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Automata.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_MatchNumber.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_PatternNumber.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_ListNumber.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_IndexNumber.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_AbsVar.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_RenamedVar.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_RuleVar.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Number.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Begin.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_End.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a TomTerm: " + trm);
+  public boolean isSortTomTerm()  {
+    return true;
   }
 
   public boolean isTargetLanguageToTomTerm()
@@ -287,6 +53,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean isInstructionToTomTerm()
+  {
+    return false;
+  }
+
+  public boolean isTomRuleToTomTerm()
   {
     return false;
   }
@@ -361,11 +132,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isRewriteRule()
-  {
-    return false;
-  }
-
   public boolean isSubjectList()
   {
     return false;
@@ -387,6 +153,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean isPatternAction()
+  {
+    return false;
+  }
+
+  public boolean isDefaultPatternAction()
   {
     return false;
   }
@@ -481,52 +252,22 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isMatchNumber()
+  public boolean isDefaultAutomata()
   {
     return false;
   }
 
-  public boolean isPatternNumber()
+  public boolean isMatchXML()
   {
     return false;
   }
 
-  public boolean isListNumber()
+  public boolean isBackQuoteXML()
   {
     return false;
   }
 
-  public boolean isIndexNumber()
-  {
-    return false;
-  }
-
-  public boolean isAbsVar()
-  {
-    return false;
-  }
-
-  public boolean isRenamedVar()
-  {
-    return false;
-  }
-
-  public boolean isRuleVar()
-  {
-    return false;
-  }
-
-  public boolean isNumber()
-  {
-    return false;
-  }
-
-  public boolean isBegin()
-  {
-    return false;
-  }
-
-  public boolean isEnd()
+  public boolean isXMLTermToTomTerm()
   {
     return false;
   }
@@ -571,7 +312,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasList()
+  public boolean hasAstTomRule()
+  {
+    return false;
+  }
+
+  public boolean hasTomList()
   {
     return false;
   }
@@ -581,7 +327,7 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasTerm()
+  public boolean hasTomTerm()
   {
     return false;
   }
@@ -631,12 +377,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasOrgTrack()
+  public boolean hasRuleList()
   {
     return false;
   }
 
-  public boolean hasCondList()
+  public boolean hasOrgTrack()
   {
     return false;
   }
@@ -691,17 +437,32 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean hasUsedInDoWhile()
+  {
+    return false;
+  }
+
+  public boolean hasRemovable()
+  {
+    return false;
+  }
+
   public boolean hasNumberList()
   {
     return false;
   }
 
-  public boolean hasNumber()
+  public boolean hasDebugName()
   {
     return false;
   }
 
-  public boolean hasInteger()
+  public boolean hasDocName()
+  {
+    return false;
+  }
+
+  public boolean hasXmlTerm()
   {
     return false;
   }
@@ -786,14 +547,24 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no AstInstruction");
   }
 
-  public TomList getList()
+  public TomRule getAstTomRule()
   {
-     throw new RuntimeException("This TomTerm has no List");
+     throw new RuntimeException("This TomTerm has no AstTomRule");
   }
 
-  public TomTerm setList(TomList _list)
+  public TomTerm setAstTomRule(TomRule _astTomRule)
   {
-     throw new RuntimeException("This TomTerm has no List");
+     throw new RuntimeException("This TomTerm has no AstTomRule");
+  }
+
+  public TomList getTomList()
+  {
+     throw new RuntimeException("This TomTerm has no TomList");
+  }
+
+  public TomTerm setTomList(TomList _tomList)
+  {
+     throw new RuntimeException("This TomTerm has no TomList");
   }
 
   public TomTerm getKid1()
@@ -806,14 +577,14 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Kid1");
   }
 
-  public TomTerm getTerm()
+  public TomTerm getTomTerm()
   {
-     throw new RuntimeException("This TomTerm has no Term");
+     throw new RuntimeException("This TomTerm has no TomTerm");
   }
 
-  public TomTerm setTerm(TomTerm _term)
+  public TomTerm setTomTerm(TomTerm _tomTerm)
   {
-     throw new RuntimeException("This TomTerm has no Term");
+     throw new RuntimeException("This TomTerm has no TomTerm");
   }
 
   public Option getOption()
@@ -906,6 +677,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Rhs");
   }
 
+  public TomRuleList getRuleList()
+  {
+     throw new RuntimeException("This TomTerm has no RuleList");
+  }
+
+  public TomTerm setRuleList(TomRuleList _ruleList)
+  {
+     throw new RuntimeException("This TomTerm has no RuleList");
+  }
+
   public Option getOrgTrack()
   {
      throw new RuntimeException("This TomTerm has no OrgTrack");
@@ -914,16 +695,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setOrgTrack(Option _orgTrack)
   {
      throw new RuntimeException("This TomTerm has no OrgTrack");
-  }
-
-  public TomList getCondList()
-  {
-     throw new RuntimeException("This TomTerm has no CondList");
-  }
-
-  public TomTerm setCondList(TomList _condList)
-  {
-     throw new RuntimeException("This TomTerm has no CondList");
   }
 
   public TomTerm getTermList()
@@ -1026,36 +797,65 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no NbUse");
   }
 
-  public TomList getNumberList()
+  public Expression getUsedInDoWhile()
+  {
+     throw new RuntimeException("This TomTerm has no UsedInDoWhile");
+  }
+
+  public TomTerm setUsedInDoWhile(Expression _usedInDoWhile)
+  {
+     throw new RuntimeException("This TomTerm has no UsedInDoWhile");
+  }
+
+  public Expression getRemovable()
+  {
+     throw new RuntimeException("This TomTerm has no Removable");
+  }
+
+  public TomTerm setRemovable(Expression _removable)
+  {
+     throw new RuntimeException("This TomTerm has no Removable");
+  }
+
+  public TomNumberList getNumberList()
   {
      throw new RuntimeException("This TomTerm has no NumberList");
   }
 
-  public TomTerm setNumberList(TomList _numberList)
+  public TomTerm setNumberList(TomNumberList _numberList)
   {
      throw new RuntimeException("This TomTerm has no NumberList");
   }
 
-  public TomTerm getNumber()
+  public TomName getDebugName()
   {
-     throw new RuntimeException("This TomTerm has no Number");
+     throw new RuntimeException("This TomTerm has no DebugName");
   }
 
-  public TomTerm setNumber(TomTerm _number)
+  public TomTerm setDebugName(TomName _debugName)
   {
-     throw new RuntimeException("This TomTerm has no Number");
+     throw new RuntimeException("This TomTerm has no DebugName");
   }
 
-  public Integer getInteger()
+  public String getDocName()
   {
-     throw new RuntimeException("This TomTerm has no Integer");
+     throw new RuntimeException("This TomTerm has no DocName");
   }
 
-  public TomTerm setInteger(Integer _integer)
+  public TomTerm setDocName(String _docName)
   {
-     throw new RuntimeException("This TomTerm has no Integer");
+     throw new RuntimeException("This TomTerm has no DocName");
   }
 
+  public XMLTerm getXmlTerm()
+  {
+     throw new RuntimeException("This TomTerm has no XmlTerm");
+  }
+
+  public TomTerm setXmlTerm(XMLTerm _xmlTerm)
+  {
+     throw new RuntimeException("This TomTerm has no XmlTerm");
+  }
 
 }
 

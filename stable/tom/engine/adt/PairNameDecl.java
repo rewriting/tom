@@ -1,7 +1,10 @@
 package jtom.adt;
 
-abstract public class PairNameDecl
+public abstract class PairNameDecl
 extends PairNameDeclImpl
 {
+  PairNameDecl(TomSignatureFactory factory) {
+    super(factory);
+  }
 
 }

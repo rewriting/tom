@@ -3,48 +3,30 @@ package jtom.adt;
 abstract public class Expression_GetSlotImpl
 extends Expression
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Expression_GetSlotImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_astName = 0;
   private static int index_slotNameString = 1;
-  private static int index_term = 2;
+  private static int index_variable = 2;
   public shared.SharedObject duplicate() {
-    Expression_GetSlot clone = new Expression_GetSlot();
+    Expression_GetSlot clone = new Expression_GetSlot(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Expression_GetSlot) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeExpression_GetSlot(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("GetSlot(<term>,<str>,<term>)");
-  }
-
-  static public Expression fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Expression tmp = getStaticTomSignatureFactory().makeExpression_GetSlot(TomName.fromTerm( (aterm.ATerm) children.get(0)), (String) children.get(1), TomTerm.fromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public aterm.ATerm toTerm() {
-    if(term == null) {
-      java.util.List args = new java.util.LinkedList();
-      args.add(((TomSignatureConstructor) getArgument(0)).toTerm());
-      args.add(((aterm.ATermAppl) getArgument(1)).getAFun().getName());
-      args.add(((TomSignatureConstructor) getArgument(2)).toTerm());
-      setTerm(getFactory().make(getPattern(), args));
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
     }
     return term;
   }
@@ -64,7 +46,7 @@ extends Expression
     return true;
   }
 
-  public boolean hasTerm()
+  public boolean hasVariable()
   {
     return true;
   }
@@ -89,14 +71,14 @@ extends Expression
     return (Expression) super.setArgument(getFactory().makeAppl(getFactory().makeAFun(_slotNameString, 0, true)), index_slotNameString);
   }
 
-  public TomTerm getTerm()
+  public TomTerm getVariable()
   {
-    return (TomTerm) this.getArgument(index_term) ;
+    return (TomTerm) this.getArgument(index_variable) ;
   }
 
-  public Expression setTerm(TomTerm _term)
+  public Expression setVariable(TomTerm _variable)
   {
-    return (Expression) super.setArgument(_term, index_term);
+    return (Expression) super.setArgument(_variable, index_variable);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {

@@ -6,29 +6,15 @@ import java.io.IOException;
 
 abstract public class PositionImpl extends TomSignatureConstructor
 {
-  public static Position fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static Position fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  PositionImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(Position peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static Position fromTerm(aterm.ATerm trm)
-  {
-    Position tmp;
-    if ((tmp = Position_Position.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a Position: " + trm);
+  public boolean isSortPosition()  {
+    return true;
   }
 
   public boolean isPosition()
@@ -65,7 +51,6 @@ abstract public class PositionImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This Position has no Column");
   }
-
 
 }
 

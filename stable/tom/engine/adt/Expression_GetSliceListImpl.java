@@ -3,41 +3,34 @@ package jtom.adt;
 abstract public class Expression_GetSliceListImpl
 extends Expression
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Expression_GetSliceListImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_astName = 0;
   private static int index_variableBeginAST = 1;
   private static int index_variableEndAST = 2;
   public shared.SharedObject duplicate() {
-    Expression_GetSliceList clone = new Expression_GetSliceList();
+    Expression_GetSliceList clone = new Expression_GetSliceList(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Expression_GetSliceList) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeExpression_GetSliceList(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("GetSliceList(<term>,<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Expression fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Expression tmp = getStaticTomSignatureFactory().makeExpression_GetSliceList(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isGetSliceList()
   {
     return true;

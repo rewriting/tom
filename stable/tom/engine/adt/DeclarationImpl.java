@@ -6,117 +6,15 @@ import java.io.IOException;
 
 abstract public class DeclarationImpl extends TomSignatureConstructor
 {
-  public static Declaration fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static Declaration fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  DeclarationImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(Declaration peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static Declaration fromTerm(aterm.ATerm trm)
-  {
-    Declaration tmp;
-    if ((tmp = Declaration_TypeTermDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_TypeListDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_TypeArrayDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_GetFunctionSymbolDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_GetSubtermDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_IsFsymDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_GetSlotDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_CompareFunctionSymbolDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_TermsEqualDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_GetHeadDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_GetTailDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_IsEmptyDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_MakeEmptyList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_MakeAddList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_GetElementDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_GetSizeDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_MakeEmptyArray.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_MakeAddArray.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_MakeDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_SymbolDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_ListSymbolDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_ArraySymbolDecl.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Declaration_EmptyDeclaration.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a Declaration: " + trm);
+  public boolean isSortDeclaration()  {
+    return true;
   }
 
   public boolean isTypeTermDecl()
@@ -259,12 +157,7 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasNumberArg()
-  {
-    return false;
-  }
-
-  public boolean hasTerm()
+  public boolean hasVariable()
   {
     return false;
   }
@@ -389,24 +282,14 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
      throw new RuntimeException("This Declaration has no TlCode");
   }
 
-  public TomTerm getNumberArg()
+  public TomTerm getVariable()
   {
-     throw new RuntimeException("This Declaration has no NumberArg");
+     throw new RuntimeException("This Declaration has no Variable");
   }
 
-  public Declaration setNumberArg(TomTerm _numberArg)
+  public Declaration setVariable(TomTerm _variable)
   {
-     throw new RuntimeException("This Declaration has no NumberArg");
-  }
-
-  public TomTerm getTerm()
-  {
-     throw new RuntimeException("This Declaration has no Term");
-  }
-
-  public Declaration setTerm(TomTerm _term)
-  {
-     throw new RuntimeException("This Declaration has no Term");
+     throw new RuntimeException("This Declaration has no Variable");
   }
 
   public TomName getSlotName()
@@ -548,7 +431,6 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This Declaration has no Args");
   }
-
 
 }
 

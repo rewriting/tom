@@ -3,38 +3,31 @@ package jtom.adt;
 abstract public class Option_GeneratedMatchImpl
 extends Option
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Option_GeneratedMatchImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   public shared.SharedObject duplicate() {
-    Option_GeneratedMatch clone = new Option_GeneratedMatch();
+    Option_GeneratedMatch clone = new Option_GeneratedMatch(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Option_GeneratedMatch) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeOption_GeneratedMatch(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("GeneratedMatch");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Option fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Option tmp = getStaticTomSignatureFactory().makeOption_GeneratedMatch();
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isGeneratedMatch()
   {
     return true;

@@ -1,7 +1,10 @@
 package jtom.adt;
 
-abstract public class TomTerm
+public abstract class TomTerm
 extends TomTermImpl
 {
+  TomTerm(TomSignatureFactory factory) {
+    super(factory);
+  }
 
 }

@@ -1,0 +1,89 @@
+package jtom.adt;
+
+import aterm.*;
+import java.io.InputStream;
+import java.io.IOException;
+
+abstract public class TomTypeListImpl extends aterm.pure.ATermListImpl
+{
+  protected TomSignatureFactory factory = null;
+  TomTypeListImpl(TomSignatureFactory factory) {
+     super(factory);
+     this.factory = factory;
+  }
+  public TomSignatureFactory getTomSignatureFactory(){
+    return factory;
+}
+  protected aterm.ATerm term = null;
+  public aterm.ATerm toTerm()
+  {
+    if (this.term == null) {
+      TomTypeList reversed = (TomTypeList)this.reverse();
+      aterm.ATermList tmp = getTomSignatureFactory().makeList();
+      for (; !reversed.isEmpty(); reversed = reversed.getTail()) {
+         aterm.ATerm elem = reversed.getHead().toTerm();
+         tmp = getTomSignatureFactory().makeList(elem, tmp);
+      }
+      this.term = tmp;
+    }
+    return this.term;
+  }
+  public String toString() {
+    return toTerm().toString();
+  }
+  public TomType getHead() {
+    return (TomType) getFirst();
+  }
+  public TomTypeList getTail() {
+    return (TomTypeList) getNext();
+  }
+  public boolean isSortTomTypeList()  {
+    return true;
+  }
+
+  public boolean isEmpty() {
+    return this == TomSignatureFactory.emptyTomTypeList;
+  }
+  public boolean isMany() {
+    return !isEmpty();
+  }
+  public boolean hasHead() {
+    return !isEmpty();
+  }
+  public boolean hasTail() {
+    return !isEmpty();
+  }
+  public boolean equivalent(shared.SharedObject peer) {
+	 if (peer instanceof TomTypeList) {
+	 	return super.equivalent(peer);
+	 }
+	 else {
+      return false;
+	 }
+  }
+  public shared.SharedObject duplicate() {
+	 TomTypeList clone = new TomTypeList(factory);
+	 clone.init(hashCode(), getAnnotations(), getFirst(), getNext());
+	 return clone;
+  }
+  public aterm.ATermList getEmpty() {
+    return (aterm.ATermList)getTomSignatureFactory().makeTomTypeList();
+  }
+
+  public aterm.ATermList insert(aterm.ATerm head) {
+    return (aterm.ATermList)getTomSignatureFactory().makeTomTypeList((TomType) head, (TomTypeList) this);
+  }
+
+  public TomTypeList insert(TomType head) {
+    return getTomSignatureFactory().makeTomTypeList(head, (TomTypeList) this);
+  }
+  public aterm.ATermList reverse() {
+  	 TomTypeListImpl cur = this;
+  	 TomTypeListImpl reverse = (TomTypeListImpl) getTomSignatureFactory().makeTomTypeList();
+  	 while(!cur.isEmpty()){
+  	   reverse = (TomTypeListImpl)reverse.insert((aterm.ATerm) cur.getHead());
+  	   cur = cur.getTail();
+  	 }
+  	 return reverse;
+  }
+}

@@ -6,69 +6,15 @@ import java.io.IOException;
 
 abstract public class InstructionImpl extends TomSignatureConstructor
 {
-  public static Instruction fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static Instruction fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  InstructionImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(Instruction peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static Instruction fromTerm(aterm.ATerm trm)
-  {
-    Instruction tmp;
-    if ((tmp = Instruction_IfThenElse.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_DoWhile.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_Assign.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_AssignMatchSubject.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_Increment.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_Action.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_ExitAction.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_Return.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_OpenBlock.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_CloseBlock.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = Instruction_NamedBlock.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a Instruction: " + trm);
+  public boolean isSortInstruction()  {
+    return true;
   }
 
   public boolean isIfThenElse()
@@ -226,12 +172,12 @@ abstract public class InstructionImpl extends TomSignatureConstructor
      throw new RuntimeException("This Instruction has no Source");
   }
 
-  public TomList getNumberList()
+  public TomNumberList getNumberList()
   {
      throw new RuntimeException("This Instruction has no NumberList");
   }
 
-  public Instruction setNumberList(TomList _numberList)
+  public Instruction setNumberList(TomNumberList _numberList)
   {
      throw new RuntimeException("This Instruction has no NumberList");
   }
@@ -245,7 +191,6 @@ abstract public class InstructionImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This Instruction has no BlockName");
   }
-
 
 }
 

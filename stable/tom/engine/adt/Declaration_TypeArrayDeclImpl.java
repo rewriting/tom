@@ -3,41 +3,34 @@ package jtom.adt;
 abstract public class Declaration_TypeArrayDeclImpl
 extends Declaration
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  Declaration_TypeArrayDeclImpl(TomSignatureFactory factory) {
+    super(factory);
   }
   private static int index_astName = 0;
   private static int index_keywordList = 1;
   private static int index_orgTrack = 2;
   public shared.SharedObject duplicate() {
-    Declaration_TypeArrayDecl clone = new Declaration_TypeArrayDecl();
+    Declaration_TypeArrayDecl clone = new Declaration_TypeArrayDecl(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof Declaration_TypeArrayDecl) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeDeclaration_TypeArrayDecl(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("TypeArrayDecl(<term>,<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public Declaration fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_TypeArrayDecl(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomList.fromTerm( (aterm.ATerm) children.get(1)), Option.fromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isTypeArrayDecl()
   {
     return true;

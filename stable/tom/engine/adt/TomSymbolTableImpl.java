@@ -6,29 +6,15 @@ import java.io.IOException;
 
 abstract public class TomSymbolTableImpl extends TomSignatureConstructor
 {
-  public static TomSymbolTable fromString(String str)
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
-    return fromTerm(trm);
-  }
-  public static TomSymbolTable fromTextFile(InputStream stream) throws aterm.ParseError, IOException
-  {
-    aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
-    return fromTerm(trm);
+  TomSymbolTableImpl(TomSignatureFactory factory) {
+     super(factory);
   }
   public boolean isEqual(TomSymbolTable peer)
   {
     return term.isEqual(peer.toTerm());
   }
-  public static TomSymbolTable fromTerm(aterm.ATerm trm)
-  {
-    TomSymbolTable tmp;
-    if ((tmp = TomSymbolTable_Table.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-
-    throw new RuntimeException("This is not a TomSymbolTable: " + trm);
+  public boolean isSortTomSymbolTable()  {
+    return true;
   }
 
   public boolean isTable()
@@ -50,7 +36,6 @@ abstract public class TomSymbolTableImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomSymbolTable has no EntryList");
   }
-
 
 }
 

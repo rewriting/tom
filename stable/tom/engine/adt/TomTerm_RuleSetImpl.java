@@ -3,46 +3,39 @@ package jtom.adt;
 abstract public class TomTerm_RuleSetImpl
 extends TomTerm
 {
-  static private aterm.ATerm pattern = null;
-
-  protected aterm.ATerm getPattern() {
-    return pattern;
+  TomTerm_RuleSetImpl(TomSignatureFactory factory) {
+    super(factory);
   }
-  private static int index_list = 0;
+  private static int index_ruleList = 0;
   private static int index_orgTrack = 1;
   public shared.SharedObject duplicate() {
-    TomTerm_RuleSet clone = new TomTerm_RuleSet();
+    TomTerm_RuleSet clone = new TomTerm_RuleSet(factory);
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
+  public boolean equivalent(shared.SharedObject peer) {
+    if (peer instanceof TomTerm_RuleSet) {
+      return super.equivalent(peer);
+    }
+    return false;
+  }
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
     return getTomSignatureFactory().makeTomTerm_RuleSet(fun, i_args, annos);
   }
-  static public void initializePattern()
-  {
-    pattern = getStaticFactory().parse("RuleSet(<term>,<term>)");
+  public aterm.ATerm toTerm() {
+    if (term == null) {
+      term = getTomSignatureFactory().toTerm(this);
+    }
+    return term;
   }
 
-  static public TomTerm fromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(pattern);
-
-    if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_RuleSet(TomList.fromTerm( (aterm.ATerm) children.get(0)), Option.fromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
   public boolean isRuleSet()
   {
     return true;
   }
 
-  public boolean hasList()
+  public boolean hasRuleList()
   {
     return true;
   }
@@ -52,14 +45,14 @@ extends TomTerm
     return true;
   }
 
-  public TomList getList()
+  public TomRuleList getRuleList()
   {
-    return (TomList) this.getArgument(index_list) ;
+    return (TomRuleList) this.getArgument(index_ruleList) ;
   }
 
-  public TomTerm setList(TomList _list)
+  public TomTerm setRuleList(TomRuleList _ruleList)
   {
-    return (TomTerm) super.setArgument(_list, index_list);
+    return (TomTerm) super.setArgument(_ruleList, index_ruleList);
   }
 
   public Option getOrgTrack()
@@ -75,8 +68,8 @@ extends TomTerm
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
-        if (! (arg instanceof TomList)) { 
-          throw new RuntimeException("Argument 0 of a TomTerm_RuleSet should have type TomList");
+        if (! (arg instanceof TomRuleList)) { 
+          throw new RuntimeException("Argument 0 of a TomTerm_RuleSet should have type TomRuleList");
         }
         break;
       case 1:

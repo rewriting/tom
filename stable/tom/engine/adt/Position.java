@@ -1,7 +1,10 @@
 package jtom.adt;
 
-abstract public class Position
+public abstract class Position
 extends PositionImpl
 {
+  Position(TomSignatureFactory factory) {
+    super(factory);
+  }
 
 }
