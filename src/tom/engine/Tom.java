@@ -219,9 +219,9 @@ public class Tom {
         startChrono();
         expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
         tomExpander.updateSymbol();
-        
         TomTerm context = null;
         expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
+        tomChecker.checkVariableCoherence(expandedTerm);
         stopChrono();
         if(Flags.verbose) System.out.println("TOM expansion phase " + getChrono());
         if(Flags.intermediate) {

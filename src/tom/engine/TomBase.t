@@ -437,6 +437,75 @@ public class TomBase {
     return res;
   } 
 
+    // ------------------------------------------------------------
+  protected void collectVariable(final Collection collection, TomTerm subject) throws TomException {
+    Collect collect = new Collect() { 
+        public boolean apply(ATerm t) throws TomException {
+            //%variable
+          if(t instanceof TomTerm) {
+            TomTerm annotedVariable = null;
+            %match(TomTerm t) { 
+              Variable[option=Option(optionList)] -> {
+                collection.add(t);
+                annotedVariable = getAnnotedVariable(optionList);
+                if(annotedVariable!=null) {
+                  collection.add(annotedVariable);
+                }
+                return false;
+              }
+              
+              VariableStar[option=Option(optionList)] -> {
+                collection.add(t);
+                annotedVariable = getAnnotedVariable(optionList);
+                if(annotedVariable!=null) {
+                  collection.add(annotedVariable);
+                }
+                return false;
+              }
+              
+              UnamedVariable[option=Option(optionList)] -> {
+                annotedVariable = getAnnotedVariable(optionList);
+                if(annotedVariable!=null) {
+                  collection.add(annotedVariable);
+                }
+                return false;
+              }
+              
+                // to collect annoted nodes but avoid collect variables in optionSymbol
+              Appl[option=Option(optionList), args=subterms] -> {
+                collectVariable(collection,`Tom(subterms));
+                annotedVariable = getAnnotedVariable(optionList);
+                if(annotedVariable!=null) {
+                  collection.add(annotedVariable);
+                }
+                return false;
+              }
+              
+              _ -> { return true; }
+            }
+          } else {
+            return true;
+          }
+        } // end apply
+      }; // end new
+    
+    genericCollect(subject, collect); 
+  }
+
+  protected TomTerm getAnnotedVariable(OptionList subjectList) {
+      //%variable
+    while(!subjectList.isEmptyOptionList()) {
+      Option subject = subjectList.getHead();
+      %match(Option subject) {
+        TomTermToOption(var@Variable(option,name,type)) -> {
+          return var;
+        }
+      }
+      subjectList = subjectList.getTail();
+    }
+    return null;
+  }
+  
   protected Declaration getIsFsymDecl(OptionList optionList) {
     //%variable
     while(!optionList.isEmptyOptionList()) {

@@ -630,6 +630,7 @@ public class TomParser implements TomParserConstants {
   ArrayList options = new ArrayList();
   ArrayList nameList = new ArrayList();
   Map mapNameDecl = new HashMap();
+  Set setSlotDecl = new HashSet();
   TomName astName;
   TomSymbol astSymbol;
   String stringSlotName;
@@ -654,6 +655,7 @@ public class TomParser implements TomParserConstants {
         ;
       }
       typeArg = jj_consume_token(TOM_IDENTIFIER);
+        setSlotDecl.add(stringSlotName);
         nameList.add(ast().makeName(stringSlotName));
         types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
       label_8:
@@ -676,6 +678,14 @@ public class TomParser implements TomParserConstants {
           ;
         }
         typeArg = jj_consume_token(TOM_IDENTIFIER);
+          if (!stringSlotName.equals("")) {
+            if (!setSlotDecl.contains(stringSlotName)) {
+              setSlotDecl.add(stringSlotName);
+            }
+            else {
+              System.out.println("*** Warning *** Repeated slot  '"+stringSlotName+"' in operator declaration line: "+getLine());
+            }
+          }
           nameList.add(ast().makeName(stringSlotName));
           types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
       }

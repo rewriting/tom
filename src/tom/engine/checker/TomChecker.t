@@ -97,8 +97,144 @@ public class TomChecker extends TomBase {
       }; // end new
     genericCollect(parsedTerm, collectAndVerify);
   }
+  
+  public void checkVariableCoherence(TomTerm expandedTerm) throws TomException {
+    if(!Flags.doCheck) return;
+    Collect collectAndVerify = new Collect() 
+      {  
+        public boolean apply(ATerm term) throws TomException {
+          if(term instanceof TomTerm) {
+            %match(TomTerm term) {
+              Match(orgTrack, _, PatternList(list)) -> {  
+                currentTomStructureOrgTrack = orgTrack;
+                verifyMatchVariable(list);
+                return true;
+              }
+              RuleSet(orgTrack, list) -> {
+                currentTomStructureOrgTrack = orgTrack;
+                verifyRuleVariable(list);
+                return false;
+              }
+              _ -> { return true; }
+            }
+          } else {
+            return true;
+          }
+        }// end apply
+      }; // end new
+    genericCollect(expandedTerm, collectAndVerify);
+  }
 
-  public void permissiveVerify(TomTerm term) throws TomException {
+  private void verifyMatchVariable(TomList patternList) throws TomException {
+    while(!patternList.isEmpty()) {
+      TomTerm patterns = patternList.getHead().getTermList();
+        // collect variables
+      ArrayList variableList = new ArrayList();
+      collectVariable(variableList, patterns);
+      verifyVariableType(variableList);
+      patternList = patternList.getTail();
+    }
+  }
+
+  private void verifyRuleVariable(TomList list) throws TomException {
+    while(!list.isEmpty()) {
+      TomTerm rewriteRule = list.getHead();
+      TomTerm lhs = rewriteRule.getLhs();
+      TomTerm rhs = rewriteRule.getRhs();
+      Option orgTrack = rewriteRule.getOrgTrack();
+      
+      ArrayList variableLhs = new ArrayList();
+      collectVariable(variableLhs, lhs);
+      HashSet lhsSet = verifyVariableType(variableLhs);
+
+      ArrayList variableRhs = new ArrayList();
+      collectVariable(variableRhs, rhs);
+      HashSet rhsSet = verifyVariableType(variableRhs);
+      
+      if( !lhsSet.containsAll(rhsSet) ) {
+        Iterator it = lhsSet.iterator();
+        while(it.hasNext()) {
+          rhsSet.remove(it.next());
+        }
+        messageRuleErrorUnknownVariable(rhsSet, orgTrack);
+      }
+        // case of rhs is a single variable
+      %match (TomTerm rhs) {
+        Term(Variable(_, Name(name), Type[])) -> {
+          String methodName = "";
+          %match(TomTerm lhs) {
+            Term(Appl[astName=Name(name1)]) -> {
+              methodName = name1;
+            }
+            Term(RecordAppl[astName=Name(name1)]) -> {
+              methodName = name1;
+            }
+          }
+          TomType typeRhs = getSymbolCodomain(symbolTable().getSymbol(methodName));
+          Iterator it = variableLhs.iterator();
+          while(it.hasNext()) {
+            TomTerm term = (TomTerm)it.next();
+            if(term.getAstName().getString() == name) {
+              TomType typeLhs = term.getAstType();
+              if(typeLhs != typeRhs) {
+                messageRuleErrorBadRhsVariable(name, typeRhs.getTomType().getString(), typeLhs.getTomType().getString(), orgTrack);
+              }
+            }
+          }
+        }
+      }
+      list = list.getTail();
+    }
+  }
+  
+  private HashSet verifyVariableType(ArrayList list) throws TomException {
+      // compute multiplicities
+    HashSet set = new HashSet();
+    HashMap multiplicityMap = new HashMap();
+    Iterator it = list.iterator();
+    while(it.hasNext()) {
+      TomTerm variable = (TomTerm)it.next();
+      TomName name = variable.getAstName();
+      
+      if(set.contains(name)) {
+        TomTerm var = (TomTerm)multiplicityMap.get(name);
+        TomType type = var.getAstType();
+        TomType type2 = variable.getAstType();
+        if(!(type==type2)) {
+          System.out.println(variable);
+          messageErrorIncoherentVariable(name.getString(), type.getTomType().getString(), type2.getTomType().getString(), variable.getOption().getOptionList()); 
+        }
+      } else {
+        multiplicityMap.put(name, variable);
+        set.add(name);
+      }
+    }
+    return set;
+  }
+  
+  private void messageErrorIncoherentVariable(String name, String type, String type2, OptionList option) throws TomException {
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(option);
+    String s = "Bad variable type for '"+name+"': it has both type '"+type+"' and '"+type2+"' in structure declared line "+declLine;
+    messageError(line,s);
+  }
+  
+  private void messageRuleErrorUnknownVariable(Collection variableCollectionRhs, Option rewriteRuleOrgTrack) throws TomException {
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(rewriteRuleOrgTrack);
+    String s = "Unknown variable(s) " +variableCollectionRhs+ " used in right part of %rule declared line "+declLine;
+    messageError(line,s);
+  }
+  
+  private void messageRuleErrorBadRhsVariable(String name, String type, String type2, Option rewriteRuleOrgTrack) throws TomException {
+    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
+    Integer line = findOriginTrackingLine(rewriteRuleOrgTrack);
+    
+    String s = "Alone variable '"+name+"' has type '"+type+"' instead of type '"+type2+"' in right part of %rule declared line "+declLine;
+    messageError(line,s);
+  }
+
+  private void permissiveVerify(TomTerm term) throws TomException {
     Collect permissiveCollectAndVerify = new Collect() 
       {  
         public boolean apply(ATerm term) throws TomException {
@@ -174,7 +310,8 @@ public class TomChecker extends TomBase {
           nbFoundArgs++;
           foundTypeMatch.add(extractType(symbolTable().getSymbol(name)));
         }
-        Placeholder[] -> {
+        Placeholder[option=Option(list)] -> {
+          line = findOriginTrackingLine(list);
           nbFoundArgs++;
           foundTypeMatch.add((TomTerm) null);
         }
@@ -821,7 +958,6 @@ public class TomChecker extends TomBase {
               ast().updateDefinedSymbol(symbolTable(),lhs);
             }
             verifyRhsRuleStructure(rhs);
-            verifyRuleVariable(lhs,rhs,orgTrack);
             break matchBlock;
           }
           _             -> {
@@ -952,102 +1088,7 @@ public class TomChecker extends TomBase {
     String s = "Single list variable '"+name+"*' is not allowed in right hand side of structure %rule declared line " +declLine;
     messageError(line,s);
   }
-  
-    // We test the non existence of variables from the right part of '->' in the left part of '->'.
-  private void verifyRuleVariable(TomTerm lhs, TomTerm rhs, Option rewriteRuleOrgTrack) throws TomException {
-      // We extract variable informations of the left part.
-    Collection variableCollectionLhs = new HashSet();
-    collectVariable(variableCollectionLhs, lhs);
-    Collection variableCollectionRhs = new HashSet();
-    collectVariable(variableCollectionRhs, rhs);
-    if( !variableCollectionLhs.containsAll(variableCollectionRhs) ) {
-      Iterator it = variableCollectionLhs.iterator();
-      while(it.hasNext()) {
-        variableCollectionRhs.remove(it.next());
-      }
-      messageRuleErrorUnknownVariable(variableCollectionRhs, rewriteRuleOrgTrack);
-    }
-  }
-  
-  private void messageRuleErrorUnknownVariable(Collection variableCollectionRhs, Option rewriteRuleOrgTrack) throws TomException {
-    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
-    Integer line = findOriginTrackingLine(rewriteRuleOrgTrack);
-    String s = "Unknown variable(s) " +variableCollectionRhs+ " used on right part of %rule declared line "+declLine;
-    messageError(line,s);
-  }
-  
-  private void collectVariable(final Collection collection, TomTerm subject) throws TomException {
-    Collect collect = new Collect() { 
-        public boolean apply(ATerm t) throws TomException {
-            //%variable
-          if(t instanceof TomTerm) {
-            String annotedVariable = null;
-              //System.out.println(t);
-            %match(TomTerm t) { 
-                // to collect annoted nodes but avoid collect variables in optionSymbol
-              appl@Appl(Option(optionList), Name(name), subterms) -> {
-                if( subterms.isEmpty() && !hasConstructor(optionList) && symbolTable().getSymbol(name)==null) 
-                  collection.add(name);
-                annotedVariable = getAnnotedVariable(optionList);
-                if(annotedVariable!=null) {
-                  collection.add(annotedVariable);
-                }
-                return true;
-              }
-              RecordAppl(Option(optionList),Name(tomName),pairs) -> {
-                annotedVariable = getAnnotedVariable(optionList);
-                if(annotedVariable!=null) {
-                  collection.add(annotedVariable);
-                }
-                return true;
-              }
-              VariableStar[option=Option(optionList)] -> {
-                collection.add(t);
-                annotedVariable = getAnnotedVariable(optionList);
-                if(annotedVariable!=null) {
-                  collection.add(annotedVariable);
-                }
-                return false;
-              }
-              Placeholder[option=Option(optionList)] -> {
-                annotedVariable = getAnnotedVariable(optionList);
-                if(annotedVariable!=null) {
-                  collection.add(annotedVariable);
-                }
-                return false;
-              }
-              _ -> { return true; }
-            }
-          } else {
-            return true;
-          }
-        } // end apply
-      }; // end new
     
-    genericCollect(subject, collect); 
-  }
-  
-  private String getAnnotedVariable(OptionList subjectList) {
-    while(!subjectList.isEmptyOptionList()) {
-      Option subject = subjectList.getHead();
-      %match(Option subject) {
-        TomNameToOption(Name(name1)) -> {
-          return name1;
-        }
-      }
-      subjectList = subjectList.getTail();
-    }
-    return null;
-  }
-  
-  private void messageRuleErrorUnknownVariable(String name, Integer line) {
-    Integer declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
-    System.out.println("\n *** Variables used on right part of rule have to be declared in left part of rule declared line "+declLine);
-    System.out.println("Variable '"+name+"' not decared - Line : "+line);
-    Flags.findErrors = true;
-  }
-
-  
     /////////////
     // GLOBALS //
     /////////////
