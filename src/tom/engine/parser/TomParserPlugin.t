@@ -55,7 +55,12 @@ public class TomParserPlugin extends TomGenericPlugin {
   }
 
   public void setTerm(ATerm term) {
-    fileName = ((AFun)term).getName();
+    if (term instanceof AFun) {
+      fileName = ((AFun)term).getName();  
+    } else {
+      getLogger().log(Level.SEVERE,
+		      "TomParserPlugin: A AFun object was expected.");
+    }
   }
 
   public void run() {
