@@ -188,6 +188,7 @@
          options="-I ${stable.mapping}">
       <include name="**/runtime/**/*.t"/> 
       <include name="**/TomBase.t"/>
+      <include name="**/Verifier.t"/>
       <include name="**/TomBackQuoteParser.t"/> 
     </tom>
     <tom srcdir="${src.src}" 
@@ -195,6 +196,7 @@
          options="-I ${stable.mapping} --noDeclaration">
       <exclude name="**/TomBase.t"/>
       <exclude name="**/TomParser.t"/>
+      <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
       <exclude name="**/runtime/**/*.t"/> 
     </tom>
@@ -695,6 +697,7 @@
             options="-I ${src.mapping}">
       <include name="**/runtime/**/*.t"/> 
       <include name="**/TomBase.t"/>
+      <include name="**/Verifier.t"/>
       <include name="**/TomBackQuoteParser.t"/> 
     </tomsrc>
     <tomsrc srcdir="${src.src}" 
@@ -702,6 +705,7 @@
             options="-I ${src.mapping} --noDeclaration">
       <exclude name="**/TomBase.t"/>
       <exclude name="**/TomParser.t"/>
+      <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
       <exclude name="**/runtime/**/*.t"/> 
     </tomsrc>

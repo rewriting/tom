@@ -35,9 +35,9 @@ import jtom.TomMessage;
 
 public class TomVerifierExtract extends TomTask {
 
-    // ------------------------------------------------------------
+	// ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
-    // ------------------------------------------------------------
+	// ------------------------------------------------------------
 
   public TomVerifierExtract() { 
     super("Tom verifier");
@@ -54,8 +54,9 @@ public class TomVerifierExtract extends TomTask {
       if(verbose) { startChrono = System.currentTimeMillis(); }
         // I may use my own datatype
       TomTerm extractTerm = `emptyTerm();
-        // here the extraction stuff
-      Collection matchSet = collectMatch(environment().getTerm());
+			// here the extraction stuff
+      
+			Collection matchSet = collectMatch(environment().getTerm());
 			// System.out.println("Extracted : " + matchSet);
 
 			Collection purified = purify(matchSet);
@@ -145,4 +146,5 @@ public class TomVerifierExtract extends TomTask {
 	private Instruction simplify_il(Instruction subject) {
 		return (Instruction) replace_simplify_il.apply(subject);
 	}
+
 }
