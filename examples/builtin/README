@@ -3,6 +3,8 @@
 *  adt-to-java --input term.adt --jtom --package adt --output adt
 
 * jtom ApiString.t
+* jtom ApiInteger.t
 * javac ApiString.java
+* javac ApiInteger.java
 * java ApiString
-
+* java ApiInteger
