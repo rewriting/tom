@@ -48,19 +48,11 @@ public class Tom {
 	  //Necessary structure
   private TomTask initialTask;
   private TomTaskInput taskInput;
-  private TomSignatureFactory tomSignatureFactory;
+	private TomSignatureFactory tomSignatureFactory;
   private TomEnvironment environment;
-  private SymbolTable  symbolTable;
-    // potential tasks to be connected together to form the compiler chain
-  private TomParser tomParser;
-  private TomTypeChecker typeChecker;
-  private TomSyntaxChecker syntaxChecker;
-  private TomExpander expander;
-  private TomKernelExpander kernelExpander;
-  private TomKernelCompiler kernelCompiler;
-  private TomCompiler compiler;
-  private TomOptimizer optimizer;
-  private TomGenerator generator;
+      // potential tasks to be connected together to form the compiler chain
+    
+	private TomParser tomParser; 
   
   private static String version =
   "\njtom 1.4beta\n" +
@@ -122,7 +114,7 @@ public class Tom {
 	private void initializeStructure() {
 			// create basic structures
 		ASTFactory astFactory = new ASTFactory(tomSignatureFactory);
-		symbolTable  = new SymbolTable(astFactory, taskInput.isCCode(), 
+		SymbolTable symbolTable  = new SymbolTable(astFactory, taskInput.isCCode(), 
 														taskInput.isJCode(),
 														taskInput.isECode());
 		environment = new TomEnvironment(tomSignatureFactory,
@@ -240,6 +232,11 @@ public class Tom {
   private void createTaskChainFromInput() {
   	if(taskInput != null) {
 			String fileName  = taskInput.getInputFileName();
+			TomExpander expander = new TomExpander(environment, new TomKernelExpander(environment));
+			TomSyntaxChecker syntaxChecker = new TomSyntaxChecker(environment);
+			TomTypeChecker typeChecker = new TomTypeChecker(environment);
+			TomCompiler compiler = new TomCompiler(environment, new TomKernelCompiler(environment, taskInput.isSupportedBlock(), taskInput.isSupportedGoto(), taskInput.isDebugMode()));
+
 			InputStream input = null;
 		  	// Create the Chain of responsability    
 			if(taskInput.isDoParse() && taskInput.isDoExpand()) {
@@ -278,24 +275,18 @@ public class Tom {
 			  tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,fileName);
 				  // This is the initial task
 		  	initialTask = tomParser;
+				
 			  if(taskInput.isDoCheck()) {
-				syntaxChecker = new TomSyntaxChecker(environment);
-				tomParser.addTask(syntaxChecker);
-			  }
- 	     
-		  	expander = new TomExpander(environment, new TomKernelExpander(environment));
-		  	if(taskInput.isDoCheck()) {
-				syntaxChecker.addTask(expander);
-				typeChecker = new TomTypeChecker(environment);
-				expander.addTask(typeChecker);
+				  tomParser.addTask(syntaxChecker);
+			    syntaxChecker.addTask(expander);
+  			  expander.addTask(typeChecker);
 		  	} else {
-				tomParser.addTask(expander);
+				  tomParser.addTask(expander);
 		  	}
 			} //DoParse() && DoExpand
 			
 			if(taskInput.isDoCompile()) {
 					// We need a compiler
-		  	compiler = new TomCompiler(environment, new TomKernelCompiler(environment, taskInput.isSupportedBlock(), taskInput.isSupportedGoto(), taskInput.isDebugMode()));
 			  if(taskInput.isDoOnlyCompile()) {
 				ATerm fromFileExpandTerm = null;
 				TomTerm expandedTerm = null; 
@@ -306,7 +297,7 @@ public class Tom {
 				  ATerm fromFileSymblTable = null;
 				  fromFileSymblTable = tomSignatureFactory.getPureFactory().readFromFile(input);
 				  TomSymbolTable symbTable = tomSignatureFactory.TomSymbolTableFromTerm(fromFileSymblTable);
-				  symbolTable.regenerateFromTerm(symbTable);
+					environment.getSymbolTable().regenerateFromTerm(symbTable);
 				} catch (FileNotFoundException e) {
 				  String s = "File `" + fileName + "` not found.";
 				  System.out.println(s);
@@ -330,17 +321,16 @@ public class Tom {
 			  } else {
 					if(taskInput.isDoCheck()) {
 					  typeChecker.addTask(compiler);
-					}
-					else {
+					} else {
 				  	expander.addTask(compiler);
 					}
 			  }
 			} //DoCompile
 			
 			if(taskInput.isPrintOutput()) {
-		  	generator = new TomGenerator(environment);
+		  	TomGenerator generator = new TomGenerator(environment);
 		  	if (taskInput.isDoOptimization()) {
-					optimizer = new TomOptimizer(environment);
+					TomOptimizer optimizer = new TomOptimizer(environment);
 					compiler.addTask(optimizer);
 					optimizer.addTask(generator);
 		  	} else {

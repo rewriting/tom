@@ -21,7 +21,6 @@ public class GTree1 {
 
   public void run(int n) {
     Tree query = `supT(node(nil,3,nil),ackT(node(nil,2,nil)));
-
     long startChrono = System.currentTimeMillis();
     Tree res         = eval(query);
     long stopChrono  = System.currentTimeMillis();
