@@ -38,248 +38,430 @@ import jtom.adt.*;
 
 public class TomOptimizer extends TomBase {
 
-    public TomOptimizer(jtom.TomEnvironment environment) {
-	super(environment);
-	numberMatchFound = 0;
-	numberVarFound = 0;
-    }
-
-// ------------------------------------------------------------
+  public TomOptimizer(jtom.TomEnvironment environment) {
+    super(environment);
+    numberMatchFound = 0;
+    numberVarFound = 0;
+  }
+  
+  // ------------------------------------------------------------
   %include { Tom.signature }
-// ------------------------------------------------------------
+  // ------------------------------------------------------------
     
-    private final boolean debug = true;
+  private final boolean debug = true;
 
-    private void optimDebug(String s) {
-	if (debug)
-	    System.out.println(s);
-    }
+  private void optimDebug(String s) {
+    if (debug)
+      System.out.println(s);
+  }
 
-    private int numberMatchFound;
-    private int numberVarFound;
+  private int numberMatchFound;
+  private int numberVarFound;
 
-    public TomTerm optimize(TomTerm subject) {
-	TomTerm optimizedTerm;
-	optimizedTerm = optimize_pass_1(subject);
-	return optimizedTerm;
+  public TomTerm optimize(TomTerm subject) {
+    TomTerm optimizedTerm;
+    optimizedTerm = optimize_pass_1(subject);
+    return optimizedTerm;
   }
 
 
-    private TomTerm optimize_pass_1(TomTerm subject) {
-	optimDebug("Starting pass 1 of the optimizer");
-	ArrayList varList = new ArrayList();
-	collectCompiledMatch(subject, varList);
-	System.out.println("Nb match :"+numberMatchFound);
-	System.out.println("Nb TOM var found :"+numberVarFound);
-	System.out.println("Nb var in list :"+varList.size());
-	System.out.println(varList);
-	//return replaceCompiledMatch(subject, varList);
-	return subject;
-    }
+  private TomTerm optimize_pass_1(TomTerm subject) {
+    //optimDebug("Starting pass 1 of the optimizer");
+    ArrayList varList = new ArrayList();
+    collectCompiledMatch(subject, varList,"");
+    /*
+    System.out.println("Nb match :"+numberMatchFound);
+    System.out.println("Nb TOM var found :"+numberVarFound);
+    System.out.println("Nb var in list :"+varList.size());
+    System.out.println(varList);*/
+    // Some list manipulations
+    /*  System.out.println(empty());
+       Integer deux = new Integer(2);
+       System.out.println(l);
+      System.out.println(cons(`Number(deux),empty()));
+       // System.out.println(cons(`Number(deux),null)); -> fails
+       System.out.println(cons(null,cons(`Number(deux),empty())));
+    */
+    return replaceCompiledMatch(subject, varList);
+    //return subject;
+  }
 
-    private void collectCompiledMatch(TomTerm subject, final Collection list) {
-	//optimDebug("Entering collectCompiledMatch");
-	Collect1 collect = new Collect1() {
-		public boolean apply(ATerm t) {
-		    if (!(t instanceof TomTerm))
-			return true; // To avoid ClassCastException when trying to match 
-		                     // something not a TomTerm !
-		    %match(TomTerm t) {
-			CompiledMatch(decl,automata) -> {
-			    collectVariable((TomList) decl, list, "");
-			    collectVariable((TomList) automata, list, "");
-			    numberMatchFound++;
-			    return true; //we can find another match inside a match
-			}
-			_ -> {return true;}
-		    } //match
-		}
-	    };
-	traversal().genericCollect(subject, collect);
-    }
-
-    private void collectVariable(TomList subject, final Collection list, final String blockName) {
-	//optimDebug("Entering collectVariable");
- 
-	// Actually we can't handle non-TOM variables: they could be used ouside TOM
-	
-	Collect1 collect = new Collect1() {
-		public boolean apply(ATerm t) {
-		    if (t instanceof TomTerm) {
-			%match(TomTerm t) {
-			    Variable[astName=PositionName(l1)] -> {
-				Iterator iter = list.iterator();
-				String name1 = blockName+":tom"+numberListToIdentifier(l1);
-				while (iter.hasNext()) {
-				    AssignedVariable av = (AssignedVariable) iter.next();
-				    if (av.name().equals(name1))
-					av.addOneUse();
-				}
-				return false; // no need to go deeper in a Variable
-			    }
-			    CompiledMatch[] -> {return false;} // the next CompiledMatch will be examined
-			                                       // from collectCompiledMatch
-			    _ -> {return true;}
-			}
-		    } else if (t instanceof Instruction) {
-			%match(Instruction t) {
-			    Assign(Variable[astName=PositionName(l1)],source) -> {
-				AssignedVariable av = new AssignedVariable(blockName+":tom"+numberListToIdentifier(l1),source);
-				if (!list.contains(av)) {
-				    list.add(av);
-				    numberVarFound++;
-				}
-				return true;	// we go deeper to search in the 'source'		    
-			    }
-			    NamedBlock(name,instList) -> {
-				collectVariable(instList,list,name);
-				return true;
-			    }
-			    _ -> {return true;}
-			} //match
-		    } else {
-			return true;
-		    } //if
-		} //apply
-	    };
-	traversal().genericCollect(subject, collect);
-    }
-
-    private TomTerm replaceCompiledMatch(TomTerm subject, final Collection varList) {
-	optimDebug("Entering replaceCompiledMatch");
-	Replace1 replace = new Replace1() {
-		public ATerm apply(ATerm t) {
-		    if (t instanceof TomTerm) {
-			%match(TomTerm t) {
-			    CompiledMatch(decl,automata) -> {
-				System.out.println("Match found");
-				TomList newDecl = replaceUselessVar(decl, varList, "");
-				TomList newAutomata = replaceUselessVar(automata, varList, "");
-				return `CompiledMatch(newDecl, newAutomata); 
-			    }
-			    _ -> {return traversal().genericTraversal(t,this);}
-			}
-		    } else {
-			return traversal().genericTraversal(t,this);
-		    }
-		} //apply 
-	    };
-	return (TomTerm) replace.apply(subject);
-    }
-
-    private TomList replaceUselessVar(TomList subject, final Collection varList, final String blockName) {
-	optimDebug("Entering replaceUselessVar");
-	Replace1 replace = new Replace1() {
-		public ATerm apply(ATerm t) {
-		    optimDebug("We're in apply");
-		    if (t instanceof TomTerm) {
-			%match(TomTerm t) {
-			    InstructionToTomTerm(Assign(Variable[astName=PositionName(l1)],_)) -> {
-			      
-			    Iterator iter = varList.iterator();
-			    String name1 = blockName+":tom"+numberListToIdentifier(l1);
-			    optimDebug("Assignement of "+name1+" found");
-			    while (iter.hasNext()) {
-				AssignedVariable av = (AssignedVariable) iter.next();
-				if (av.name().equals(name1)) {
-				    optimDebug("Var "+name1+" found");
-				    if (av.numberOfUse()<=1) {
-					System.out.println(av.numberOfUse());
-					String emptyStr = "";
-					optimDebug("Removing var "+name1);
-					return `TargetLanguageToTomTerm(ITL(emptyStr)) ;
-				    }
-				}
-			    }	
-			    System.err.println("The variable wasn't added to the list when collecting...");
-			    System.exit(1);
-			    return null;
-			}
-			Variable[astName=PositionName(l1)] -> {
-			    Iterator iter = varList.iterator();
-			    String name1 = blockName+":tom"+numberListToIdentifier(l1);
-			    while (iter.hasNext()) {
-				AssignedVariable av = (AssignedVariable) iter.next();
-				if (av.name().equals(name1)) {
-				    if (av.numberOfUse()==1) {
-					return `ExpressionToTomTerm(av.source());
-				    } else if (av.numberOfUse()==0) {
-					System.err.println("By construction, the variable should be used at least one time...");
-					System.exit(1);
-					return null;
-				    }
-				}
-			    }	
-			    System.err.println("The variable wasn't added to the list when collecting...");
-			    System.exit(1);
-			    return null;
-			}
-
-			_ -> {return t;}
-			} //match
-		    } else if (t instanceof Instruction) {
-			%match(Instruction t) {
-			    
-			    NamedBlock(name,instList) -> {
-				return replaceUselessVar(instList,varList,name);
-			    }
-			    _ -> {return t;}
-			} //match
-		    } else {
-			return  t;
-		    }
-		} //apply
-	    };
-	return (TomList) traversal().genericTraversal(subject, replace);
-    }
-
-    private class AssignedVariable {
-	
-	/* 
-	 * private variables to give only read 
-	 * access with the homonymous methods 
-	 */
-	private Expression source;
-	private String name;
-	private int numberOfUse;
-
-	public AssignedVariable (String name, Expression source) {
-	    this.source = source;
-	    this.name = name;
-	    numberOfUse = -1; // because collect will find the variable again in the same Assign 
-	}
-
-	public Expression source() {
-	    return source;
-	}
-
-	public String name() {
-	    return name;
-	}
-
-	public int numberOfUse() {
-	    return numberOfUse();
-	}
-
-	public void addOneUse() {
-	    numberOfUse++;
-	}
-
-	public boolean equals(Object o) {
-	    if (o==null)
+  private void collectCompiledMatch(TomTerm subject, final Collection list, final String blockName) {
+    //optimDebug("Entering collectCompiledMatch");
+    Collect1 collect = new Collect1() {
+	public boolean apply(ATerm t) {
+	  if (t instanceof TomTerm) {
+	    %match(TomTerm t) {
+	      CompiledMatch(decl,automata) -> {
+		collectVariableDecl((TomList) decl, list);
+		collectVariableAuto((TomList) automata, list, blockName);
+		numberMatchFound++;
 		return false;
-	    if (o instanceof AssignedVariable) {
-		AssignedVariable av = (AssignedVariable) o;
-		return (this.name.equals(av.name()));
+	      }
+	      _ -> {return true;}
+	    } //match
+	  } else 
+	    return true;
+	}//apply
+      };
+    traversal().genericCollect(subject, collect);
+  }
+
+
+  private void collectVariableDecl(TomList subject, final Collection list) {
+    Collect1 collect = new Collect1() {
+	public boolean apply(ATerm t) {
+	  if (t instanceof Instruction) {
+	    %match(Instruction t) {
+	      Assign(Variable[astName=PositionName(l1)],source) -> {
+		if (length(l1) != 2) {
+		  System.err.println("Such variable should have only 2 number id :"+t);
+		  System.exit(1);
+		}
+		AssignedVariable av = 
+		  new AssignedVariable(":tom"+numberListToIdentifier(l1),source,0);
+		if (!list.contains(av)) {
+		  list.add(av);
+		  numberVarFound++;
+		} else {
+		  System.err.println("By construction a variable cannot be assigned twice : "+t);
+		  System.exit(1);
+		}
+		return false;		    
+	      }
+	      _ -> { return true; }
+	    } // match
+	  } else
+	    return true;
+	} //apply
+      };
+    traversal().genericCollect(subject, collect);
+  }
+
+  private void collectVariableAuto(TomList subject, final Collection list, final String blockName) {
+    //optimDebug("Entering collectVariableAuto");
+ 
+    // Actually we can't handle non-TOM variables: they could be used outside TOM
+	
+    Collect1 collect = new Collect1() {
+	public boolean apply(ATerm t) {
+	  if (t instanceof TomTerm) {
+	    %match(TomTerm t) {
+	      Declaration(Variable[astName=PositionName(l1)]) -> { 
+		if (l1.getHead().isRenamedVar()) {
+		  AssignedVariable av = 
+		    new AssignedVariable(blockName+":tom"+numberListToIdentifier(l1),
+					 null,-1);
+		  if (!list.contains(av)) {
+		    list.add(av);
+		    numberVarFound++;
+		  }
+		}
+		return false;
+	      }
+	      Variable[astName=PositionName(l1)] -> {
+		String name1 = ":tom"+numberListToIdentifier(l1);
+		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
+		  name1 = blockName+name1;
+		Iterator iter = list.iterator();
+		while (iter.hasNext()) {
+		  AssignedVariable av = (AssignedVariable) iter.next();
+		  if (av.name.equals(name1)) {
+		    av.numberOfUse++;
+		    return false;
+		  } 
+		}
+		System.err.println("Variable used never assigned : "+ name1);
+		System.exit(1);
+		return false; // no need to go deeper in a Variable
+	      }
+	      CompiledMatch[] -> {
+		collectCompiledMatch((TomTerm)t,list,blockName);
+		return false;
+	      }
+	      _ -> {return true;}
 	    }
-	    return false;
-	}
+	  } else if (t instanceof Instruction) {
+	    %match(Instruction t) {
+	      Assign(Variable[astName=PositionName(l1)],source) -> {
+		if (length(l1) <= 2) {
+		  System.err.println("Such variable should be find in decl of a CompiledMatch :"+t);
+		  System.exit(1);
+		}
+		AssignedVariable av = 
+		  new AssignedVariable(blockName+":tom"+numberListToIdentifier(l1),
+				       source,-1);
+		if (!list.contains(av)) {
+		  list.add(av);
+		  numberVarFound++;
+		} else {
+		  System.err.println("By construction a variable cannot be assigned twice :"+t);
+		  System.exit(1);
+		}
+		return true;	// we go deeper to search in the 'source'		    
+	      }
+	      NamedBlock(name,instList) -> {
+		//optimDebug("Entering block '"+name+"'");
+		collectVariableAuto(instList,list,name);
+		//optimDebug("Exiting block '"+name+"'");
+		return false;
+	      }
+	      _ -> {return true;}
+	    } //match
+	  } else {
+	    return true;
+	  } //if
+	} //apply
+      };
+    traversal().genericCollect(subject, collect);
+  }
 
-	public String toString() {
-	    return "Var '"+name+"' used "+numberOfUse+" times";
-	}
+  private void printTerm(ATerm s) {
+    String str = s.toString();
+    int index = str.indexOf("(");
+    if (index>=0)
+      System.out.println(str.substring(0,index));
+    else
+      System.out.println(str);
+  }
 
-    } // class AssignedVariable
+  private TomTerm replaceCompiledMatch(TomTerm subject, final Collection varList) {
+    //optimDebug("Entering replaceCompiledMatch");
+    Replace1 replace = new Replace1() {
+	public ATerm apply(ATerm t) {
+	  if (t instanceof TomTerm) {
+	    %match(TomTerm t) {
+	      CompiledMatch(decl,automata) -> {
+		//System.out.println("Match found");
+		TomList newDecl = replaceUselessVarDecl(decl, varList);
+		TomList newAutomata = replaceUselessVarAuto(automata, varList, "");
+		return `CompiledMatch(newDecl, newAutomata); 
+	      }
+	      _ -> {return traversal().genericTraversal(t,this);}
+	    }
+	  } else {
+	    return traversal().genericTraversal(t,this);
+	  }
+	} //apply 
+      };
+    return (TomTerm) replace.apply(subject);
+  }
+
+  private TomList replaceUselessVarDecl(TomList subject, final Collection varList) {
+    //optimDebug("Entering replaceUselessVarDecl");
+    Replace1 replace = new Replace1() {
+	public ATerm apply(ATerm t) {
+	  if (t instanceof Instruction) {
+	    %match(Instruction t) {
+	      Assign(Variable[astName=PositionName(l1)],source) -> {
+		if (length(l1) != 2) {
+		  System.err.println("Such variable should have only 2 number id :"+t);
+		  System.exit(1);
+		}	      
+		String name1 = ":tom"+numberListToIdentifier(l1);
+		//optimDebug("Assignement of "+name1+" found");
+		Iterator iter = varList.iterator();
+		while (iter.hasNext()) {
+		  AssignedVariable av = (AssignedVariable) iter.next();
+		  if (av.name.equals(name1)) {
+		    //optimDebug("Var "+name1+" found");
+		    if (av.numberOfUse==0) { // TO CHANGE TO <= 1 when replacing in 'Equal' work
+		      //System.out.println(av.numberOfUse);
+		      //optimDebug("Removing assignement of var "+name1);
+		      return `Action(empty());
+		    } else 
+		      return t;
+		  }
+		}	
+		System.err.println("The variable wasn't added to the list when collecting...");
+		System.exit(1);
+		return null;
+	      }
+	      _ -> { return traversal().genericTraversal(t, this);}
+	    }
+	  } else if (t instanceof TomTerm) {
+	    %match(TomTerm t) {
+	      Declaration(Variable[astName=PositionName(l1)]) -> {
+		Iterator iter = varList.iterator();
+		String name1 = ":tom"+numberListToIdentifier(l1);
+		//optimDebug("Declaration of "+name1+" found");
+		while (iter.hasNext()) {
+		  AssignedVariable av = (AssignedVariable) iter.next();
+		  if (av.name.equals(name1)) {
+		    if (av.numberOfUse==0) { // var is unused : no need to be declared
+		      //optimDebug("Removing declaration of "+name1);
+		      return `InstructionToTomTerm(Action(empty()));
+		    } else {
+		      return t;
+		    }
+		  }
+		}	
+		System.err.println("The variable wasn't added to the list when collecting...");
+		System.exit(1);
+		return null;
+		}
+	      _ -> { return traversal().genericTraversal(t, this);}
+	    }
+	  } else
+	    return traversal().genericTraversal(t,this);
+	}
+      };
+    return (TomList) traversal().genericTraversal(subject, replace);
+  }
+
+  private TomList replaceUselessVarAuto(TomList subject, final Collection varList, final String blockName) {
+    //optimDebug("Entering replaceUselessVarAuto");
+    Replace1 replace = new Replace1() {
+	public ATerm apply(ATerm t) {
+	  //optimDebug("Starting apply on a :");
+	  //printTerm(t);
+	  if (t instanceof TomTerm) {
+	    %match(TomTerm t) {
+	      Declaration(Variable[astName=PositionName(l1)]) -> {
+		Iterator iter = varList.iterator();
+		String name1 = ":tom"+numberListToIdentifier(l1);
+		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
+		  name1 = blockName+name1;
+		//optimDebug("Declaration of "+name1+" found");
+		while (iter.hasNext()) {
+		  AssignedVariable av = (AssignedVariable) iter.next();
+		  if (av.name.equals(name1)) {
+		    if (av.numberOfUse==1) { // var is used 1 time : it will be removed
+		      //optimDebug("Removing declaration of "+name1);
+		      return `InstructionToTomTerm(Action(empty()));
+		    } else {
+		      return t;
+		    }
+		  }
+		}	
+		System.err.println("The variable wasn't added to the list when collecting...");
+		System.exit(1);
+		return null;
+	      }
+	      /*Variable[astName=PositionName(l1)] -> {
+		Iterator iter = varList.iterator();
+		String name1 = ":tom"+numberListToIdentifier(l1);
+		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
+		  name1 = blockName+name1;
+		while (iter.hasNext()) {
+		  AssignedVariable av = (AssignedVariable) iter.next();
+		  if (av.name.equals(name1)) {
+		    if (av.numberOfUse==1) {
+		      return `ExpressionToTomTerm(av.source);
+		    } else if (av.numberOfUse==0) {
+		      System.err.println("By construction, the variable should be used at least one time...");
+		      System.exit(1);
+		      return null;
+		    } else {
+		      return t;
+		    }
+		  }
+		}	
+		System.err.println("The variable wasn't added to the list when collecting...");
+		System.exit(1);
+		return null;
+		}*/
+	      CompiledMatch[] -> {
+		return replaceCompiledMatch((TomTerm) t, varList);
+	      }
+	      _ -> {return traversal().genericTraversal(t, this);}
+	    } //match
+	  } else if (t instanceof Instruction) {
+	    %match(Instruction t) {
+	      Assign(var@Variable[astName=PositionName(l1)],source) -> {
+		if (length(l1) <= 2) {
+		  System.err.println("Such variable should be find in decl of a CompiledMatch :"+t);
+		  System.exit(1);
+		}	      
+		String name1 = ":tom"+numberListToIdentifier(l1);
+		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
+		  name1 = blockName+name1;
+		//optimDebug("Assignement of "+name1+" found");
+		Iterator iter = varList.iterator();
+		while (iter.hasNext()) {
+		  AssignedVariable av = (AssignedVariable) iter.next();
+		  if (av.name.equals(name1)) {
+		    //optimDebug("Var "+name1+" found");
+		    if (av.numberOfUse<=1) {
+		      //System.out.println(av.numberOfUse);
+		      //optimDebug("Removing assignement of var "+name1);
+		      return `Action(empty());
+		    } else {
+		      Expression expr = (Expression) traversal().genericTraversal(source, this);
+			return `Assign(var, expr);
+		    } 
+		  }
+		}	
+		System.err.println("The variable wasn't added to the list when collecting...");
+		System.exit(1);
+		return null;
+	      }
+	      Assign(var,TomTermToExpression(Variable[astName=PositionName(l1)])) -> {     
+		String name1 = ":tom"+numberListToIdentifier(l1);
+		if (length(l1) > 2) // the var isn't a 'decl' var : we have to add the blockname
+		  name1 = blockName+name1;
+		Iterator iter = varList.iterator();
+		while (iter.hasNext()) {
+		  AssignedVariable av = (AssignedVariable) iter.next();
+		  if (av.name.equals(name1)) {
+		    if (av.numberOfUse<=1) {
+		      return `Assign(var,av.source);
+		    } else {
+		      return t;
+		    } 
+		  }
+		}	
+		System.err.println("The variable wasn't added to the list when collecting...");
+		System.exit(1);
+		return null;
+	      }
+	      NamedBlock(name,instList) -> {
+		//optimDebug("Entering block '"+name+"'");
+		TomList newInstList = replaceUselessVarAuto(instList,varList,name);
+		//optimDebug("Exiting block '"+name+"'");
+		return `NamedBlock(name,newInstList);
+	      }
+	      _ -> {return traversal().genericTraversal(t, this);}
+	    } //match
+	  } else {
+	    return  traversal().genericTraversal(t, this);
+	  }
+	} //apply
+      };
+    return (TomList) traversal().genericTraversal(subject, replace);
+  }
+
+  private class AssignedVariable {
+	
+    /* 
+     * private variables to give only read 
+     * access with the homonymous methods 
+     */
+    private Expression source;
+    private String name;
+    private int numberOfUse;
+
+    public AssignedVariable (String name, Expression source, int init) {
+      this.source = source;
+      this.name = name;
+      this.numberOfUse = init;
+    }
+
+    public boolean equals(Object o) {
+      if (o==null)
+	return false;
+      if (o instanceof AssignedVariable) {
+	AssignedVariable av = (AssignedVariable) o;
+	return this.name.equals(av.name);
+      }
+      return false;
+    }
+
+    public String toString() {
+      return "Var '"+name+"' used "+numberOfUse+" times";
+    }
+
+  } // class AssignedVariable
 
 
 } //Class TomOptimizer
