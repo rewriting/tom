@@ -18,6 +18,9 @@ JARFILE_TNODE   = TNode-$(VERSION).jar
 JARFILE_SET     = set-$(VERSION).jar
 data_DATA       = ${JARFILE_TS} ${JARFILE_TNODE} ${JARFILE_SET}
 
+adtdir          = $(datadir)/jtom
+adt_DATA        = TomSignature.tom TNode.tom set.tom
+
 bootinstall:
 	$(mkinstalldirs) $(stabledir)
 	cp -f ${JARFILE_TS} ${JARFILE_TNODE} ${JARFILE_SET} $(stabledir)
