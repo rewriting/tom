@@ -38,6 +38,7 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import jtom.TomEnvironment;
@@ -1406,10 +1407,13 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 											currentFile};
 				generatedADTName = execMethod.invoke(vasClass, realParams);
       } catch (ClassNotFoundException e) {
-				e.printStackTrace();
         throw new TomException(TomMessage.getString("VasClassNotFound"));
+      } catch (InvocationTargetException e) {
+				System.out.println("vas problem " +e);
+				System.out.println("vas problen cause " +e.getCause());
+				System.out.println("vas problen target exception " +e.getTargetException());
+        throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
       } catch (Exception e) {
-				e.printStackTrace();
         throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
       }
 			  // Check for errors
