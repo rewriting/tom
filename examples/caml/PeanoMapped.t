@@ -29,42 +29,53 @@
 
 (* vim: set filetype=ocaml : *)
 
-open Peanotype ;;
 exception Erreur of string ;;
 
-%typeterm term {
-  implement { mlpeano }
-  get_fun_sym (t) { get_sym (t)} 
-  cmp_fun_sym (t1,t2) {t1=t2} 
-  get_subterm (t,n) {get_sub n t} 
-  equals(t1,t2) {t1=t2}
+%include { caml/metal.tom }
+
+type peano =
+    Zero 
+  | Suc of peano ;;
+
+let fzero = get_fun_sym(Zero)
+and fsuc  = get_fun_sym(Suc(Zero));;
+
+%typeterm peano {
+  implement { peano }
+  get_fun_sym(t) { get_fun_sym (t) } 
+  cmp_fun_sym (t1,t2) { t1=t2 } 
+  get_subterm (t,n) { get_subterm t n } 
+  equals(t1,t2) { t1=t2 }
 }
   
-%op term zero {
-  fsym { fzero }
+%op peano zero {
+  fsym { fzero  }
+  make { Zero }
 }
 
-%op term suc(term) {
+%op peano suc(pred:peano) {
   fsym { fsuc }
+  get_slot(pred,t) { get_subterm t 0 }
+  make(t) { Suc t }
 }
 
+exception Result of peano
 let rec plus (t1,t2)= 
-  let res = ref None in (
-  %match (term t1 , term t2 ) {
-    x,zero    -> {res := Some x}
-    x, suc(y) -> {res := Some (`suc(plus(x,y)))}
-  };	
-    
-  match !res with 
-	      None -> raise (Erreur "rien n'a filtre")
-      | Some r -> r
-  ;
-  )
-;;
+  try(
+  %match (peano t1 , peano t2 ) {
+    x, zero() -> { raise (Result(x)) }
+    x, suc(y) -> { raise (Result(`suc(plus(x,y)))) }
+  };
+  assert false
+  ) with Result r -> r;;    
       
 let rec make_peano = function
     0 -> Zero
   | n -> Suc (make_peano (n-1))
+
+let rec string_of_peano = function
+    Zero -> "Zero"
+  | Suc n -> "Suc(" ^ (string_of_peano n) ^")"
 
 let run (n) =
   let n'  = make_peano (n) in
