@@ -79,14 +79,16 @@ public class TomCompiler extends TomBase {
         return `Tom(tomListMap(l,replace_pass2_1));
       }
        
-      MakeTerm(Variable[astName=name]) -> {
+      MakeTerm(var@Variable[astName=name]) -> {
         statistics().numberMakeTermReplaced++;
-        return `BuildVariable(name);
+          //return `BuildVariable(name);
+        return var;
       }
       
-      MakeTerm(VariableStar[astName=name]) -> {
+      MakeTerm(var@VariableStar[astName=name]) -> {
         statistics().numberMakeTermReplaced++;
-        return `BuildVariableStar(name);
+          //return `BuildVariableStar(name);
+        return var;
       }
 
       MakeTerm(Appl(Option(optionList),name@Name(tomName),termArgs)) -> {
@@ -151,9 +153,9 @@ public class TomCompiler extends TomBase {
                 rhsList = appendInstruction(`CloseBlock(),rhsList);
               }
               
-              TomTerm newCondRhs = buildMatchingCondition(condList,rhsList);
+              TomList newRhsList = buildCondition(condList,rhsList);
              
-              patternActionList = append(`PatternAction(TermList(matchPatternsList),newCondRhs),patternActionList);
+              patternActionList = append(`PatternAction(TermList(matchPatternsList),Tom(newRhsList)),patternActionList);
             }
           } 
           ruleList = ruleList.getTail();
@@ -241,6 +243,11 @@ public class TomCompiler extends TomBase {
               
               _ -> {
                 System.out.println("pass2_1: strange PatternAction: " + elt);
+
+                System.out.println("termList = " + elt.getTermList());
+                System.out.println("tom      = " + elt.getTom());
+
+                
                 System.exit(1);
               }
             }
@@ -264,47 +271,59 @@ public class TomCompiler extends TomBase {
     }
   }
 
-  private TomTerm buildMatchingCondition(TomList condList, TomList actionList) {
+  private TomList buildCondition(TomList condList, TomList actionList) {
     %match(TomList condList) {
-      Empty() -> { return `Tom(actionList); }
-      Cons(MatchingCondition[lhs=pattern,
-                             rhs=subject@Appl(Option(optionList),Name(tomName),l)],
-           tail) -> {
-
-        System.out.println("buildMatchingCondition:\n\tlhs = " + pattern + "\n\trhs = " + subject);
-
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        TomType subjectType = getSymbolCodomain(tomSymbol);
+      Empty() -> { return actionList; }
         
-        TomList newActionList = cons(buildMatchingCondition(tail,actionList),empty());
-
+      Cons(MatchingCondition[lhs=pattern,rhs=subject], tail) -> {
+        TomType subjectType = getTermType(pattern);
         TomList path = empty();
         path = append(`RuleVar(),path);
         TomTerm newSubject = pass2_1(`MakeTerm(subject));
-
-        TomTerm introducedVariable = `Variable(option(),PositionName(path),subjectType);
+    
+          //TomTerm introducedVariable = `Variable(option(),PositionName(path),subjectType);
+        TomTerm introducedVariable = newSubject;
+        
           // introducedVariable = subject
           // Declare and Assign 
-                
+
+        TomList newActionList = buildCondition(tail,actionList);
+
         TomTerm generatedPatternAction =
           `PatternAction(TermList(cons(pattern,empty())),Tom(newActionList));        
-
+        
         TomTerm generatedMatch =
           `Match(option(),
                  SubjectList(cons(introducedVariable,empty())),
                  PatternList(cons(generatedPatternAction,empty())));
+    
+    
+          //System.out.println("buildCondition: generatedMatch =\n\t" + generatedMatch);
+        TomList conditionList = cons(generatedMatch,empty());
+    
+        return conditionList;
 
-
-        System.out.println("buildMatchingCondition: generatedMatch =\n\t" + generatedMatch);
-
-        
-        return generatedMatch;
       }
-    }
 
-    System.out.println("buildMatchingCondition strange term: " + condList);
-    System.exit(1);
-    return null;
+      Cons(EqualityCondition[lhs=pattern,rhs=subject], tail) -> {
+        TomTerm newPattern = pass2_1(`MakeTerm(pattern));
+        TomTerm newSubject = pass2_1(`MakeTerm(subject));
+        Expression equality = `EqualTerm(newPattern,newSubject);
+        TomList newActionList = buildCondition(tail,actionList);
+        TomTerm generatedTest = `InstructionToTomTerm(IfThenElse(equality,newActionList,empty()));
+        TomList conditionList = cons(generatedTest,empty());
+        return conditionList;
+      }
+
+
+      
+      _ -> {
+        System.out.println("buildCondition strange term: " + condList);
+        System.exit(1);
+        return null;
+      }
+        
+    }
   }
   
   private TomTerm renameVariable(TomTerm subject,
@@ -512,13 +531,30 @@ public class TomCompiler extends TomBase {
 
         while(!l1.isEmpty()) {
           TomTerm tlVariable = l1.getHead();
-          %match(TomTerm tlVariable) { 
-            Variable(option,_,variableType) -> {
-              TomTerm variable = `Variable(option,PositionName(append(makeNumber(index),path)),variableType);
-              matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
-              matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+          matchBlock: {
+            %match(TomTerm tlVariable) { 
+              Variable(option,_,variableType) -> {
+                TomTerm variable = `Variable(option,PositionName(append(makeNumber(index),path)),variableType);
+                matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
+                matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+                break matchBlock;
+              }
+
+              BuildTerm(Name(tomName),_) | FunctionCall(Name(tomName),_) -> {
+                TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+                TomType tomType = getSymbolCodomain(tomSymbol);
+                TomTerm variable = `Variable(option(),PositionName(append(makeNumber(index),path)),tomType);
+                matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
+                matchAssignementList = appendInstruction(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
+                break matchBlock;
+              }
+
+              _ -> {
+                System.out.println("compileMatching: stange term: " + tlVariable);
+                break matchBlock;
+              }
             }
-          } 
+          } // end matchBlock
           index++;
           l1 = l1.getTail();
         }

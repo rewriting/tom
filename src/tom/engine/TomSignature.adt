@@ -127,6 +127,7 @@
   [TomTerm,PairSlotAppl,PairSlotAppl(<slotName(TomName)>,<appl(TomTerm)>) ],
   [TomTerm,Match,Match(<option(Option)>,<subjectList(TomTerm)>,<patternList(TomTerm)>) ],
   [TomTerm,MatchingCondition,MatchingCondition(<lhs(TomTerm)>,<rhs(TomTerm)>) ],
+  [TomTerm,EqualityCondition,EqualityCondition(<lhs(TomTerm)>,<rhs(TomTerm)>) ],
   [TomTerm,RuleSet,RuleSet(<option(Option)>, <list(TomList)>) ],
   [TomTerm,RewriteRule,
 	RewriteRule(<lhs(TomTerm)>, <rhs(TomTerm)>, <condList(TomList)>, <orgTrack(Option)>) ],

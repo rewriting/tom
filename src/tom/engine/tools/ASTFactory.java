@@ -55,10 +55,11 @@ public class ASTFactory {
     }
   }
 
-  public TomList makeList(ArrayList argumentList) {
+  public TomList makeList(Collection c) {
     TomList list = tsf().makeTomList_Empty();
-    for(int i=argumentList.size()-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)argumentList.get(i);
+    Iterator it = c.iterator();
+    while(it.hasNext()) {
+      ATerm elt = (ATerm) it.next();
       TomTerm term;
       if(elt instanceof TargetLanguage) {
         term = tsf().makeTomTerm_TargetLanguageToTomTerm((TargetLanguage)elt);

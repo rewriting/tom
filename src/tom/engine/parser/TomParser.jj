@@ -322,6 +322,7 @@ TOKEN :
 | < TOM_MINUS:       "-" >
 | < TOM_STAR:        "*" >
 | < TOM_WHERE:       "where" >
+| < TOM_IF:          "if" >
 | < TOM_MAKE:        "make" >
 | < TOM_MAKE_EMPTY:  "make_empty" >
 | < TOM_MAKE_INSERT: "make_insert" >
@@ -734,6 +735,8 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
     [ (
       <TOM_WHERE> pattern = Term() <TOM_COLON> <TOM_EQUAL> subject = Term()
       { condList.add(tsf().makeTomTerm_MatchingCondition(pattern,subject)); }
+    | <TOM_IF> pattern = Term() <TOM_EQUAL> <TOM_EQUAL> subject = Term()
+      { condList.add(tsf().makeTomTerm_EqualityCondition(pattern,subject)); }
     )+ ]
     
     {

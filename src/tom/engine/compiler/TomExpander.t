@@ -280,12 +280,44 @@ public class TomExpander extends TomBase {
             return `Match(option,newSubjectList,newPatternList);
           }
 
-          context, MatchingCondition[lhs=lhs,rhs=rhs@Appl(Option(optionList),Name(tomName),l)] -> {
-            TomSymbol tomSymbol = getSymbol(tomName);
-            TomType symbolType = getSymbolCodomain(tomSymbol);
-            TomTerm newLhs = `expandVariable(TomTypeToTomTerm(symbolType),lhs);
-            TomTerm newRhs = `expandVariable(TomTypeToTomTerm(symbolType),rhs);
+          Tom(varList), MatchingCondition[lhs=lhs@Appl[astName=Name(lhsName)],
+                                          rhs=rhs@Appl[astName=Name(rhsName)]] -> {
+            TomSymbol lhsSymbol = getSymbol(lhsName);
+            TomSymbol rhsSymbol = getSymbol(rhsName);
+            TomType type;
+
+            if(lhsSymbol != null) {
+              type = getSymbolCodomain(lhsSymbol);
+            } else if(rhsSymbol != null) {
+              type = getSymbolCodomain(rhsSymbol);
+            } else {
+                // both lhs and rhs are variables
+                // since lhs is a fresh variable, we look for rhs
+              type = getTypeFromVariableList(`Name(rhsName),varList);
+            }
+
+            TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+            TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
             return `MatchingCondition(newLhs,newRhs);
+          }
+
+          Tom(varList), EqualityCondition[lhs=lhs@Appl[astName=Name(lhsName)],
+                                          rhs=rhs@Appl[astName=Name(rhsName)]] -> {
+            TomSymbol lhsSymbol = getSymbol(lhsName);
+            TomSymbol rhsSymbol = getSymbol(rhsName);
+            TomType type;
+
+            if(lhsSymbol != null) {
+              type = getSymbolCodomain(lhsSymbol);
+            } else if(rhsSymbol != null) {
+              type = getSymbolCodomain(rhsSymbol);
+            } else {
+                // both lhs and rhs are variables
+              type = getTypeFromVariableList(`Name(lhsName),varList);
+            }
+            TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+            TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
+            return `EqualityCondition(newLhs,newRhs);
           }
 
           context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
@@ -297,9 +329,17 @@ public class TomExpander extends TomBase {
             TomType symbolType = getSymbolCodomain(tomSymbol);
             TomTerm newLhs = `Term(expandVariable(context,lhs));
             TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
+
+              // build the list of variables that occur in the lhs
+            HashSet set = new HashSet();
+            collectVariable(set,newLhs);
+            TomList varList = ast().makeList(set);
             TomList newCondList = empty();
             while(!condList.isEmpty()) {
-              newCondList = append(expandVariable(context, condList.getHead()),newCondList);
+              TomTerm cond = condList.getHead();
+              newCondList = append(expandVariable(`Tom(varList),cond),newCondList);
+              collectVariable(set,cond);
+              varList = ast().makeList(set);
               condList = condList.getTail();
             }
 
@@ -410,6 +450,24 @@ public class TomExpander extends TomBase {
     return tomType;
   }
 
+  private TomType getTypeFromVariableList(TomName name, TomList list) {
+    %match(TomList list) {
+      Empty() -> {
+        System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
+        System.exit(1);
+      }
+
+      Cons(Variable[astName=varName,astType=Type[tomType=tomType]],tail) -> {
+        if(varName == name) {
+          return tomType;
+        } else {
+          return getTypeFromVariableList(name,tail);
+        }
+      }
+    }
+    return null;
+  }
+  
     /*
      * TODO: X1*,name@Name(_),X2* -> { return name; }
      */

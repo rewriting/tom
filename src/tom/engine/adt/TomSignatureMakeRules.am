@@ -97,14 +97,15 @@ TomTerm_RecordApplImpl.java TomTerm_RecordAppl.java\
 TomTerm_PairSlotApplImpl.java TomTerm_PairSlotAppl.java\
 TomTerm_MatchImpl.java TomTerm_Match.java\
 TomTerm_MatchingConditionImpl.java TomTerm_MatchingCondition.java\
+TomTerm_EqualityConditionImpl.java TomTerm_EqualityCondition.java\
 TomTerm_RuleSetImpl.java TomTerm_RuleSet.java\
 TomTerm_RewriteRuleImpl.java TomTerm_RewriteRule.java\
 TomTerm_SubjectListImpl.java TomTerm_SubjectList.java\
 TomTerm_PatternListImpl.java TomTerm_PatternList.java\
-TomTerm_TermListImpl.java TomTerm_TermList.java\
-TomTerm_TermImpl.java TomTerm_Term.java
+TomTerm_TermListImpl.java TomTerm_TermList.java
 
 TomSignatureAPI2=\
+TomTerm_TermImpl.java TomTerm_Term.java\
 TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
 TomTerm_TLVarImpl.java TomTerm_TLVar.java\
 TomTerm_DeclarationImpl.java TomTerm_Declaration.java\
@@ -153,10 +154,10 @@ PairNameDecl.java PairNameDeclImpl.java\
 PairNameDecl_SlotImpl.java PairNameDecl_Slot.java\
 TomSymbolTable.java TomSymbolTableImpl.java\
 TomSymbolTable_TableImpl.java TomSymbolTable_Table.java\
-TomEntryList.java TomEntryListImpl.java\
-TomEntryList_EmptyEntryListImpl.java TomEntryList_EmptyEntryList.java
+TomEntryList.java TomEntryListImpl.java
 
 TomSignatureAPI3=\
+TomEntryList_EmptyEntryListImpl.java TomEntryList_EmptyEntryList.java\
 TomEntryList_ConsEntryListImpl.java TomEntryList_ConsEntryList.java\
 TomEntry.java TomEntryImpl.java\
 TomEntry_EntryImpl.java TomEntry_Entry.java

@@ -151,6 +151,7 @@ public class TomChecker extends TomBase {
       TomTerm rewriteRule = list.getHead();
       TomTerm lhs = rewriteRule.getLhs();
       TomTerm rhs = rewriteRule.getRhs();
+      TomList condList = rewriteRule.getCondList();
       Option orgTrack = rewriteRule.getOrgTrack();
       
       ArrayList variableLhs = new ArrayList();
@@ -160,6 +161,15 @@ public class TomChecker extends TomBase {
       ArrayList variableRhs = new ArrayList();
       collectVariable(variableRhs, rhs);
       HashSet rhsSet = verifyVariableType(variableRhs);
+
+      ArrayList variableCond = new ArrayList();
+      collectVariable(variableCond, `Tom(condList));
+      HashSet condSet = verifyVariableType(variableCond);
+            
+      lhsSet.addAll(condSet);
+      if(!condSet.isEmpty()) {
+        System.out.println("Warning: improve verifyRuleVariable for matchingCondition");
+      }
       
       if( !lhsSet.containsAll(rhsSet) ) {
         Iterator it = lhsSet.iterator();
@@ -947,7 +957,7 @@ public class TomChecker extends TomBase {
     ////////////////////////////////
     /* for each rewrite rule we make test on: 
      * Rhs shall have no underscore, be a var*?, be a record?
-     * Each Lhs shall start with the same prodction name
+     * Each Lhs shall start with the same production name
      * This symbol name shall not be already declared
      * Lhs and Rhs shall have the same return type
      * Used variable on rhs shall be coherent and declared on lhs
@@ -968,6 +978,7 @@ public class TomChecker extends TomBase {
               ast().updateDefinedSymbol(symbolTable(),lhs);
             }
             verifyRhsRuleStructure(rhs);
+              // TODO: verify the list of conditions
             break matchBlock;
           }
           _             -> {
