@@ -33,13 +33,13 @@ import jtom.adt.TomList;
 import jtom.adt.TomName;
 import jtom.adt.TomNumberList;
 import jtom.adt.TomTerm;
-import jtom.adt.TomType;
 import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.Tools;
 import aterm.ATerm;
+import jtom.exception.TomRuntimeException;
 
 public class TomOptimizer extends TomBase implements TomTask {
 
@@ -95,7 +95,7 @@ public class TomOptimizer extends TomBase implements TomTask {
 
   private void exitWithMesg(String mesg) {
     System.out.println(mesg);
-    System.exit(1);
+    throw new TomRuntimeException(new Throwable(mesg));
   }
 
   public TomTerm optimize(TomTerm subject) {

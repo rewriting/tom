@@ -26,14 +26,12 @@
 
 package jtom.parser;
 
-import jtom.TomBase;
 import java.io.*;
 import java.util.*;
 import jtom.adt.*;
 import jtom.exception.*;
 import jtom.tools.*;
 import jtom.xml.Constants;
-import java.lang.reflect.Constructor;
 import java.lang.Throwable;
 
 public class TomParser implements TomTask, TomParserConstants {
@@ -2277,6 +2275,24 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
+  final private boolean jj_3_3() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_STAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3_4() {
     if (jj_scan_token(TOM_UNDERSCORE)) return true;
     if (jj_scan_token(TOM_STAR)) return true;
@@ -2304,24 +2320,6 @@ public class TomParser implements TomTask, TomParserConstants {
   final private boolean jj_3_5() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_AT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_STAR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_7() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 

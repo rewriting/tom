@@ -36,6 +36,7 @@ import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.Tools;
 import aterm.ATerm;
+import jtom.exception.TomRuntimeException;
 
 public class TomCompiler extends TomBase implements TomTask {
   private TomTask nextTask;
@@ -104,7 +105,9 @@ public class TomCompiler extends TomBase implements TomTask {
   }
 
   Replace1 replace_preProcessing = new Replace1() {
-      public ATerm apply(ATerm t) { return preProcessing((TomTerm)t); }
+      public ATerm apply(ATerm t)  { 
+      	return preProcessing((TomTerm)t);
+      }
     };
   
   Replace1 replace_preProcessing_makeTerm = new Replace1() {
@@ -274,10 +277,10 @@ public class TomCompiler extends TomBase implements TomTask {
               }
               
               _ -> {
-                System.out.println("preProcessingeuuu: strange PatternAction: " + elt);
+                System.out.println("preProcessing: strange PatternAction: " + elt);
                   //System.out.println("termList = " + elt.getTermList());
                   //System.out.println("tom      = " + elt.getTom()); 
-                System.exit(1);
+		          throw new TomRuntimeException(new Throwable("preProcessing: strange PatternAction: " + elt));
               }
             }
           } // end matchBlock
@@ -348,8 +351,7 @@ public class TomCompiler extends TomBase implements TomTask {
       
       _ -> {
         System.out.println("buildCondition strange term: " + condList);
-        System.exit(1);
-        return null;
+        throw new TomRuntimeException(new Throwable("buildCondition strange term: " + condList));
       }
         
     }
@@ -484,7 +486,7 @@ public class TomCompiler extends TomBase implements TomTask {
   
   private TomTerm abstractPattern(TomTerm subject,
                                   ArrayList abstractedPattern,
-                                  ArrayList introducedVariable) {
+                                  ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(TomTerm subject) {
       Appl[option=option, astName=name@Name(tomName), args=args] -> {
@@ -529,7 +531,7 @@ public class TomCompiler extends TomBase implements TomTask {
 
   private TomList abstractPatternList(TomList subjectList,
                                       ArrayList abstractedPattern,
-                                      ArrayList introducedVariable) {
+                                      ArrayList introducedVariable)  {
     TomList newList = empty();
     while(!subjectList.isEmpty()) {
       TomTerm elt = subjectList.getHead();

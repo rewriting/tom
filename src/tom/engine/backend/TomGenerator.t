@@ -53,7 +53,7 @@ import jtom.tools.TomTask;
 import jtom.tools.OutputCode;
 import jtom.tools.SingleLineOutputCode;
 import jtom.tools.TomTaskInput;
-
+import jtom.exception.TomRuntimeException;
 
 public class TomGenerator extends TomBase implements TomTask {
   
@@ -388,7 +388,7 @@ public class TomGenerator extends TomBase implements TomTask {
               }
               _ -> {
                 System.out.println("MakeFunction: strange term: " + localVar);
-                System.exit(1);
+                throw new TomRuntimeException(new Throwable("MakeFunction: strange term: " + localVar));
               }
             }
           }
@@ -444,7 +444,7 @@ public class TomGenerator extends TomBase implements TomTask {
 
       t -> {
         System.out.println("Cannot generate code for: " + t);
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for: " + t));
       }
     }
   }
@@ -655,7 +655,7 @@ public class TomGenerator extends TomBase implements TomTask {
 
       t -> {
         System.out.println("Cannot generate code for expression: " + t);
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for expression: " + t));
       }
     }
   }
@@ -746,7 +746,7 @@ public class TomGenerator extends TomBase implements TomTask {
           out.writeln("}");
         } else if(eCode) {
           System.out.println("NamedBlock: Eiffel code not yet implemented");
-            //System.exit(1);
+          throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
         }  
         return;
       }
@@ -834,7 +834,7 @@ public class TomGenerator extends TomBase implements TomTask {
           out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
         } else if(eCode) {
           System.out.println("ExitAction: Eiffel code not yet implemented");
-            //System.exit(1);
+          throw new TomRuntimeException(new Throwable("ExitAction: Eiffel code not yet implemented"));
         }
         return;
       }
@@ -860,7 +860,7 @@ public class TomGenerator extends TomBase implements TomTask {
       
       t -> {
         System.out.println("Cannot generate code for instruction: " + t);
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for instruction: " + t));
       }
     }
   }
@@ -892,8 +892,8 @@ public class TomGenerator extends TomBase implements TomTask {
       }
 
       t -> {
-        System.out.println("Cannot generate code for: " + t);
-        System.exit(1);
+        System.out.println("Cannot generate code for TL: " + t);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for TL: " + t));
       }
     }
   }
@@ -913,7 +913,7 @@ public class TomGenerator extends TomBase implements TomTask {
 
       t -> {
         System.out.println("Cannot generate code for option: " + t);
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for option: " + t));
       }
     }
   }
@@ -1441,7 +1441,7 @@ public class TomGenerator extends TomBase implements TomTask {
 
       t -> {
         System.out.println("Cannot generate code for declaration: " + t);
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("Cannot generate code for declaration: " + t));
       }
     }
   }
@@ -1532,14 +1532,14 @@ public class TomGenerator extends TomBase implements TomTask {
   }
 
   
-  private TargetLanguage genDeclMake(String opname, TomType returnType, TomList argList, TargetLanguage tlCode) {
+  private TargetLanguage genDeclMake(String opname, TomType returnType, 
+  						TomList argList, TargetLanguage tlCode) {
     //%variable
     String s = "";
     if(!genDecl) { return null; }
 
     if(cCode) {
         //System.out.println("genDeclMake: not yet implemented for C");
-        //System.exit(1);
       s = "#define tom_make_" + opname + "(";
       while(!argList.isEmpty()) {
         TomTerm arg = argList.getHead();
@@ -1552,7 +1552,7 @@ public class TomGenerator extends TomBase implements TomTask {
             
             _ -> {
               System.out.println("genDeclMake: strange term: " + arg);
-              System.exit(1);
+              throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
             }
           }
         }
@@ -1580,7 +1580,7 @@ public class TomGenerator extends TomBase implements TomTask {
             
             _ -> {
               System.out.println("genDeclMake: strange term: " + arg);
-              System.exit(1);
+              throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
             }
           }
         }
@@ -1614,7 +1614,7 @@ public class TomGenerator extends TomBase implements TomTask {
             
             _ -> {
               System.out.println("genDeclMake: strange term: " + arg);
-              System.exit(1);
+              throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
             }
           }
         }

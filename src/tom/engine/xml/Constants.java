@@ -26,9 +26,6 @@
 
 package jtom.xml;
 
-import java.io.*;
-import aterm.*;
-
 public class Constants {
   public final static String TEXT_NODE      = "TextNode";
   public final static String COMMENT_NODE   = "CommentNode";

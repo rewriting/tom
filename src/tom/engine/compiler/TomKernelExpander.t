@@ -34,6 +34,7 @@ import jtom.adt.*;
 import jtom.runtime.Replace1;
 import jtom.runtime.Replace2;
 import aterm.ATerm;
+import jtom.exception.TomRuntimeException;
 
 public class TomKernelExpander extends TomBase {
 
@@ -244,10 +245,9 @@ public class TomKernelExpander extends TomBase {
 
       _ -> {
         System.out.println("expandVariableList: strange case: '" + subject + "'");
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("expandVariableList: strange case: '" + subject + "'"));
       }
     }
-    return null;
   }
 
     /*
@@ -347,8 +347,7 @@ public class TomKernelExpander extends TomBase {
       }
       _ -> {
         System.out.println("Strange Match in expandMatchPattern"+match);
-        System.exit(1);
-        return null;
+		throw new TomRuntimeException(new Throwable("Strange Match in expandMatchPattern"+match));
       }
     }
   }

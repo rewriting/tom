@@ -29,6 +29,7 @@ import java.io.*;
 import jtom.runtime.xml.adt.*;
 import aterm.*;
 import aterm.pure.*;
+import jtom.exception.TomRuntimeException;
 
 public class ATermToXML {
   
@@ -91,7 +92,7 @@ public class ATermToXML {
 	  write(" SYSTEM \"");
 	else {
 	  System.out.println("Problem in DocumentTypeNode");
-	  System.exit(1);
+	  throw new TomRuntimeException(new Throwable("Problem in DocumentTypeNode"));
 	}
 	write(systemId+"\"");
 	if (!internalSubset.equals("UNDEF")) 
@@ -159,14 +160,16 @@ public class ATermToXML {
    
   private void write(String s) {
     try {
-      if (out != null)
-	out.write(s.getBytes());
-      if (writer != null)
-	writer.write(s);
+      if (out != null) {
+		out.write(s.getBytes());
+		}
+      if (writer != null) {
+		writer.write(s);
+	  }
     } catch (IOException e) {
       System.err.println(e.getMessage());
       e.printStackTrace();
-      System.exit(1);
+      throw new TomRuntimeException(new Throwable(e.getMessage()));
     }
   }
 

@@ -32,6 +32,7 @@ import aterm.pure.*;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
+import jtom.exception.TomRuntimeException;
 
 public class XMLToATerm {
   
@@ -125,7 +126,6 @@ public class XMLToATerm {
 	
   public TNode xmlToATerm(Node node) {
     if ( node == null ) { // Nothing to do
-      //System.out.println("\n\nFound a null node\n\n");
       return null;
     }
     node.normalize();
@@ -146,6 +146,7 @@ public class XMLToATerm {
     case Node.DOCUMENT_FRAGMENT_NODE:
       //The node is a DocumentFragment.
       System.out.println("We shouldn't find DocumentFragment in a freshly-parsed document");
+      throw new TomRuntimeException(new Throwable("We shouldn't find DocumentFragment in a freshly-parsed document"));
       //break;
     case Node.DOCUMENT_NODE:
       //The node is a Document.
@@ -180,10 +181,8 @@ public class XMLToATerm {
       //break;
     default : 
       System.err.println("The type of Node is unknown");
-      System.exit(1);
+      throw new TomRuntimeException(new Throwable("The type of Node is unknown"));
     } // switch
-    System.err.println("We should not be here");
-    return null;
   }
 
   private TNode makeDocumentNode (Document doc){

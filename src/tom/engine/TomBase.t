@@ -32,7 +32,8 @@ import aterm.*;
 import jtom.tools.*;
 import jtom.adt.*;
 import jtom.runtime.*;
-import jtom.xml.*;
+import jtom.exception.TomRuntimeException;
+import java.lang.Throwable;
 
 //import jtom.runtime.set.SharedSet;
 
@@ -172,10 +173,9 @@ public class TomBase {
       EmptyType() -> {return null;}
       _ -> {
         System.out.println("getTomType error on term: " + type);
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("getTomType error on term: " + type));
       }
     }
-    return null;
   }
 
   protected String getTLType(TomType type) {
@@ -188,10 +188,9 @@ public class TomBase {
       TLType(ITL[code=tlType]) -> { return tlType; }
       _ -> {
         System.out.println("getTLCode error on term: " + type);
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("getTLCode error on term: " + type));
       }
     }
-    return null;
   }
 
   protected TomSymbol getSymbol(String tomName) {
@@ -224,13 +223,12 @@ public class TomBase {
       Symbol[tlCode=ITL[code=tlCode]] -> { return tlCode; }
       _ -> {
         System.out.println("getSymbolCode error on term: " + symbol);
-        System.exit(1);
+		throw new TomRuntimeException(new Throwable("getSymbolCode error on term: " + symbol));
       }
     }
-    return null;
   }
 
-  protected TomType getTermType(TomTerm t) {
+  protected TomType getTermType(TomTerm t){
       //%variable
     %match(TomTerm t) {
       Appl(option, Name(tomName),subterms) -> {
@@ -245,10 +243,9 @@ public class TomBase {
 
       _ -> {
         System.out.println("getTermType error on term: " + t);
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("getTermType error on term: " + t));
       }
     }
-    return null;
   }
 
   private HashMap numberListToIdentifierMap = new HashMap();
@@ -306,10 +303,9 @@ public class TomBase {
       
       _ -> {
         System.out.println("isListOperator: strange case: '" + subject + "'");
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("isListOperator: strange case: '" + subject + "'"));
       }
     }
-    return false;
   }
 
   protected boolean isArrayOperator(TomSymbol subject) {
@@ -332,10 +328,9 @@ public class TomBase {
       
       _ -> {
         System.out.println("isArrayOperator: strange case: '" + subject + "'");
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("isArrayOperator: strange case: '" + subject + "'"));
       }
     }
-    return false;
   }
 
   protected TomList tomListMap(TomList subject, Replace1 replace) {
@@ -347,9 +342,9 @@ public class TomBase {
         res = cons(term,list);
       }
     } catch(Exception e) {
-      System.out.println("tomListMap error: " + e);
-      e.printStackTrace();
-      System.exit(0);
+		System.out.println("tomListMap error: " + e);
+      	e.printStackTrace();
+	  	throw new TomRuntimeException(new Throwable("tomListMap error: " + e));
     }
     return res;
   }
@@ -487,7 +482,7 @@ public class TomBase {
     }
     if(slotList.isEmpty()) {
       System.out.println("getSlotName: bad index error");
-      System.exit(0);
+	  throw new TomRuntimeException(new Throwable("getSlotName: bad index error"));
     }
 
     Declaration decl = slotList.getHead().getSlotDecl();
@@ -541,8 +536,7 @@ public class TomBase {
       optionList = optionList.getTail();
     }
     System.out.println("findOriginTracking:  not found" + optionList);
-      //System.exit(1);
-    return null;
+    throw new TomRuntimeException(new Throwable("findOriginTracking:  not found" + optionList));
   }
    
   protected void addError(TomTaskInput taskInput, String msg, String file, int line, int level) {

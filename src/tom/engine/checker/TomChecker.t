@@ -40,7 +40,6 @@ import jtom.adt.Declaration;
 import jtom.adt.Option;
 import jtom.adt.OptionList;
 import jtom.adt.SlotList;
-import jtom.adt.TargetLanguage;
 import jtom.adt.TomList;
 import jtom.adt.TomName;
 import jtom.adt.TomRule;
@@ -56,7 +55,6 @@ import jtom.TomEnvironment;
 import jtom.tools.TomTaskInput;
 
 abstract class TomChecker extends TomBase implements TomTask {
-  
   
   protected Option currentTomStructureOrgTrack;
   private int nullInteger = -1;
@@ -727,7 +725,7 @@ abstract class TomChecker extends TomBase implements TomTask {
     // RECORDS CONCERNS //
     //////////////////////
   
-  private void verifyRecordStructure(OptionList option, String tomName, TomList args) {
+  private void verifyRecordStructure(OptionList option, String tomName, TomList args)  {
     TomSymbol symbol = symbolTable().getSymbol(tomName);
     if(symbol != null) {
       SlotList slotList = symbol.getSlotList();

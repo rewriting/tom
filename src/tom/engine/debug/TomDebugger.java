@@ -25,6 +25,8 @@
 */
 
 package jtom.debug;
+
+import jtom.exception.TomRuntimeException;
   
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -109,11 +111,15 @@ public class TomDebugger {
       } catch (FileNotFoundException e) {
         e.printStackTrace();
         System.out.println("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found.");
-        System.exit(1);
+		    throw new TomRuntimeException(new Throwable("Fail to create debugger: File " + baseFileName[i]+debugTableSuffix+" not found."));
       } catch (Exception e) {
         e.printStackTrace();
         System.out.println("Exception during reading "+baseFileName[i]+debugTableSuffix);
-        System.exit(1);
+				try {
+  				input.close();
+				} catch(IOException e2) {
+  				throw new RuntimeException("in.close() failed");
+				}
       }
     }
   }
@@ -966,7 +972,7 @@ public class TomDebugger {
         
       } else {
         System.out.println("Corrupt debug term");
-        System.exit(1);
+		    throw new TomRuntimeException(new Throwable("Corrupt debug term"));
       } 
       list = list.getTail();
     }

@@ -36,7 +36,7 @@ import jtom.adt.*;
 import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
 import aterm.ATerm;
-//import jtom.TomEnvironment;
+import jtom.exception.TomRuntimeException;
 
 public class TomKernelCompiler extends TomBase {
 
@@ -243,7 +243,7 @@ public class TomKernelCompiler extends TomBase {
             //System.out.println("actionList = " + actionList);
           if(patternList==null || actionList==null) {
             System.out.println("TomKernelCompiler: null value");
-            System.exit(1);
+			throw new TomRuntimeException(new Throwable("TomKernelCompiler: null value"));
           }
           
             // compile nested match constructs
@@ -502,7 +502,7 @@ public class TomKernelCompiler extends TomBase {
         
         _ -> {
           System.out.println("GenTermMatchingAutomata strange term: " + term);
-          System.exit(1);
+          throw new TomRuntimeException(new Throwable("GenTermMatchingAutomata strange term: " + term));
         }
       }
     } // end matchBlock 
@@ -685,7 +685,7 @@ public class TomKernelCompiler extends TomBase {
         
         _ -> {
           System.out.println("GenListMatchingAutomata strange termList: " + termList);
-          System.exit(1);
+          throw new TomRuntimeException(new Throwable("GenListMatchingAutomata strange termList: " + termList));
         }
       }
     } // end matchBlock
@@ -728,7 +728,7 @@ public class TomKernelCompiler extends TomBase {
           }
           _ -> {
             System.out.println("GenArrayMatchingAutomata strange subjectListName: " + subjectListName);
-            System.exit(1);
+            throw new TomRuntimeException(new Throwable("GenArrayMatchingAutomata strange subjectListName: " + subjectListName));
           }
         }
       }
@@ -885,7 +885,7 @@ public class TomKernelCompiler extends TomBase {
         
         _ -> {
           System.out.println("GenArrayMatchingAutomata strange termList: " + termList);
-          System.exit(1);
+		  throw new TomRuntimeException(new Throwable("GenArrayMatchingAutomata strange termList: " + termList));
         }
       }
     } // end matchBlock
@@ -1049,7 +1049,7 @@ public class TomKernelCompiler extends TomBase {
       res = (TomTerm) replace.apply(subject);
     } catch(Exception e) {
       System.out.println("removeDeclaration: error");
-      System.exit(0);
+      throw new TomRuntimeException(new Throwable("removeDeclaration: error"));
     }
     return res;
   }

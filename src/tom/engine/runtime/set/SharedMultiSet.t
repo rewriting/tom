@@ -349,7 +349,6 @@ public class SharedMultiSet extends ATermSet {
           return `branch(l, override(elt, multiplicity, r, lev));
         }
       }
-        //_ -> {System.out.println("Strange Tree:"+t+" from  "+t.getClass());System.exit(1);}
     }
     return null;
   }

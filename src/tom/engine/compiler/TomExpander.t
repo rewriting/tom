@@ -37,6 +37,7 @@ import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.Tools;
 import jtom.xml.Constants;
+import jtom.exception.TomRuntimeException;
 
 public class TomExpander extends TomBase implements TomTask {
   private TomTask nextTask;
@@ -405,7 +406,7 @@ public class TomExpander extends TomBase implements TomTask {
     %match(TomName name,TomList list) {
       _,emptyTomList() -> {
         System.out.println("getTypeFromVariableList. Stange case '" + name + "' not found");
-        System.exit(1);
+        throw new TomRuntimeException(new Throwable("getTypeFromVariableList. Stange case '" + name + "' not found"));
       }
 
       varName, manyTomList(Variable[astName=varName,astType=type@Type[]],tail) -> { return type; }
