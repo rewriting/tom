@@ -62,11 +62,11 @@ public class TomBase {
 	return TomServer.getInstance();
     }
 
-    protected jtom.adt.options.Factory getOptionsFactory() {
+    protected OptionsFactory getOptionsFactory() {
 	return getServer().getOptionsFactory();
     }
 
-    protected jtom.adt.tomsignature.Factory tsf() {
+    protected TomSignatureFactory tsf() {
 	return getServer().getTomSignatureFactory();
     }
 
@@ -74,7 +74,7 @@ public class TomBase {
 	return this.traversal;
     }
 
-    protected final jtom.adt.tomsignature.Factory getTomSignatureFactory() {
+    protected final TomSignatureFactory getTomSignatureFactory() {
 	return tsf();
     }
 

@@ -43,7 +43,7 @@ import java.lang.reflect.Method;
 
 import jtom.*;
 import aterm.*;
-import jtom.adt.tomsignature.Factory;
+import jtom.adt.tomsignature.TomSignatureFactory;
 import jtom.adt.tomsignature.types.*;
 import jtom.exception.*;
 import jtom.tools.*;
@@ -101,10 +101,10 @@ public class TomParser
 	return TomServer.getInstance();
     }
   
-  protected Factory tsf() {
+  protected TomSignatureFactory tsf() {
     return environment().getTomSignatureFactory();
   }
-  protected final Factory getTomSignatureFactory() {
+  protected final TomSignatureFactory getTomSignatureFactory() {
     return tsf();
   }
   

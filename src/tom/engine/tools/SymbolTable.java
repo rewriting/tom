@@ -106,7 +106,7 @@ public class SymbolTable {
     return astFactory;
   }
 
-  protected Factory tsf() {
+  protected TomSignatureFactory tsf() {
     return ast().tsf();
   }
 

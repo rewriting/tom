@@ -42,16 +42,16 @@ public class TomServer implements TomPluginOptions
     private Vector services;
 
     private ASTFactory astFactory;
-    private jtom.adt.tnode.TNodeFactory tNodeFactory;
-    private jtom.adt.tomsignature.Factory tomSignatureFactory;
-    private jtom.adt.options.Factory optionsFactory;
+    private TNodeFactory tNodeFactory;
+    private TomSignatureFactory tomSignatureFactory;
+    private OptionsFactory optionsFactory;
 
     private TomEnvironment environment;
 
     public ASTFactory getASTFactory() { return astFactory; }  
-    public jtom.adt.tnode.TNodeFactory getTNodeFactory() { return tNodeFactory; }
-    public jtom.adt.tomsignature.Factory getTomSignatureFactory() { return tomSignatureFactory; }
-    public jtom.adt.options.Factory getOptionsFactory() { return optionsFactory; }
+    public TNodeFactory getTNodeFactory() { return tNodeFactory; }
+    public TomSignatureFactory getTomSignatureFactory() { return tomSignatureFactory; }
+    public OptionsFactory getOptionsFactory() { return optionsFactory; }
 
     public TomEnvironment getEnvironment() { return environment; }
 
@@ -83,9 +83,9 @@ public class TomServer implements TomPluginOptions
 		instance.instances = new Vector();
 		instance.services = new Vector();
 
-		instance.tNodeFactory = new jtom.adt.tnode.TNodeFactory(new PureFactory());
-		instance.optionsFactory = new jtom.adt.options.Factory(new PureFactory());
-		instance.tomSignatureFactory = new jtom.adt.tomsignature.Factory(new PureFactory());
+		instance.tNodeFactory = new TNodeFactory(new PureFactory());
+		instance.optionsFactory = new OptionsFactory(new PureFactory());
+		instance.tomSignatureFactory = new TomSignatureFactory(new PureFactory());
 		instance.astFactory = new ASTFactory(instance.tomSignatureFactory);
 		
 		SymbolTable symbolTable = new SymbolTable(instance.astFactory);

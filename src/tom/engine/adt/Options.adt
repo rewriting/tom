@@ -1,10 +1,13 @@
 [
-constructor(TomOption,OptionBoolean,OptionBoolean(<name(str)>,<altName(str)>,<description(str)>,<valueB(TomBoolean)>)),
-constructor(TomOption,OptionInteger,OptionInteger(<name(str)>,<altName(str)>,<description(str)>,<valueI(int)>,<attrName(str)>)),
-constructor(TomOption,OptionString,OptionString(<name(str)>,<altName(str)>,<description(str)>,<valueS(str)>,<attrName(str)>)),
-
-constructor(TomBoolean,True,True),
-constructor(TomBoolean,False,False),
-
-list(TomOptionList,TomOption)
+  modulentry(Name("Options"),[],
+  [
+  constructor(TomOption,OptionBoolean,OptionBoolean(<name(str)>,<altName(str)>,<description(str)>,<valueB(TomBoolean)>)),
+  constructor(TomOption,OptionInteger,OptionInteger(<name(str)>,<altName(str)>,<description(str)>,<valueI(int)>,<attrName(str)>)),
+  constructor(TomOption,OptionString,OptionString(<name(str)>,<altName(str)>,<description(str)>,<valueS(str)>,<attrName(str)>)),
+  
+  constructor(TomBoolean,True,True),
+  constructor(TomBoolean,False,False),
+  
+  list(TomOptionList,TomOption)
+  ])
 ]

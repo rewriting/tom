@@ -184,7 +184,7 @@ public class TomEnvironment
 	return getServer().getASTFactory();
     }
 
-    public Factory getTomSignatureFactory() {
+    public TomSignatureFactory getTomSignatureFactory() {
 	return getServer().getTomSignatureFactory();
     }
 

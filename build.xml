@@ -228,8 +228,8 @@
 
   <!-- compile adt's -->
   <target name="buildadt" depends="initTaskDef, prepare.src">
+	 	     <!--factory="TomSignature"-->
     <adt file="${src.adt}/TomSignature.adt" 
-         factory="TomSignature" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
          <!--factory="TNode" -->
@@ -240,8 +240,8 @@
     <adt file="${src.adt}/Set.adt" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
+         <!--factory="Options" -->
     <adt file="${src.adt}/Options.adt" 
-         factory="Options" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
     <copy todir="${src.mapping}">
