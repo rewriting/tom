@@ -58,8 +58,6 @@ public class TomCompiler extends TomBase {
      * rename non-linear patterns
      */
 
-  private static int matchNumber = 0;
-
   private Option option() {
     return ast().makeOption();
   }
@@ -408,7 +406,7 @@ public class TomCompiler extends TomBase {
     return newList;
   }
 
-  
+  private static int absVarNumber = 0;
   private TomTerm abstractPattern(TomTerm subject,
                                   ArrayList abstractedPattern,
                                   ArrayList introducedVariable) {
@@ -430,7 +428,10 @@ public class TomCompiler extends TomBase {
                 abstractedPattern.add(appl);
 
                 TomList path = empty();
-                path = append(`AbsVar(makeNumber(introducedVariable.size())),path);
+                  //path = append(`AbsVar(makeNumber(introducedVariable.size())),path);
+                absVarNumber++;
+                path = append(`AbsVar(makeNumber(absVarNumber)),path);
+                  
                 TomTerm newVariable = `Variable(option(),PositionName(path),type2);
 
                   //System.out.println("newVariable = " + newVariable);

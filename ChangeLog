@@ -1,3 +1,8 @@
+2003-05-06    <pem@bach>
+
+        * generate unique AbsVar to allow abstraction in nested match
+          constructs
+
 2003-04-23    <pem@bach>
 
         * release 1.2 under GPL license
