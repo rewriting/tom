@@ -1,4 +1,4 @@
- /*
+/*
   
     TOM - To One Matching Compiler
 
@@ -20,6 +20,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
     Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+    Julien Guyon
 
 */
 
@@ -32,36 +33,64 @@ import java.lang.Integer;
 import aterm.*;
 import aterm.pure.*;
 
+import jtom.runtime.*;
+
 import jtom.*;
 import jtom.tools.*;
 import jtom.adt.*;
 
+import jtom.debug.TomDebugEnvironment;
+
 public class TomDebugger {
-  int matchNumber, patternNumber;
   BufferedReader in;
   public static TomDebugger debug = null;
-  HashSet patternSet;
-  Map mapMatchPattern;
-  ArrayList currentSubject, currentPattern, substitutions;
-  boolean echoMode = false;
-  boolean subst = true;
-  String[] patterns;
-  int nbPatterns = 0;
+
+  Map mapKeyDebugStructure;
+  Set debugStructureKeySet;
   
-  public TomDebugger() {
-    matchNumber=0;
-    patternNumber=0;
+  boolean subst = true;
+  String[] watchPatterns;
+  int nbPatterns = 0;
+
+  String baseFileName;
+
+  Stack environment;
+  
+  public TomDebugger(String structureFileName) {
+    TomStructureTable table = null;
+    InputStream input = null;
+    try {
+      input = new FileInputStream(structureFileName+".tfix.debug.table");
+      TomSignatureFactory tsf = new TomSignatureFactory(10);
+      table = TomStructureTable.fromTextFile(input);
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+      System.out.println("Fail to create debugger: File " + structureFileName + ".tfix.debug.table not found.");
+      System.exit(1);
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.out.println("Exception during reading "+structureFileName+".tfix.debug.table");
+      System.exit(1);
+    }
+
     this.debug = this;
-    in = new BufferedReader(new InputStreamReader(System.in));
-    mapMatchPattern = new HashMap();
-    patternSet = new HashSet();
-    patterns = new String[100];
-    currentSubject = new ArrayList();
-    currentPattern = new ArrayList();
-    substitutions = new ArrayList();
+    this.baseFileName = structureFileName;
+    this.in = new BufferedReader(new InputStreamReader(System.in));
+    
+    mapKeyDebugStructure = new HashMap();
+    analyseStructure(table);
+
+    debugStructureKeySet = new HashSet();
+
+    watchPatterns = new String[100];
+    environment = new Stack();
+
     start();
   }
   
+    //////////////////////////////
+    // User Interface procedure //
+    //////////////////////////////
   private void start() {
     try {
       String str = "";
@@ -71,105 +100,23 @@ public class TomDebugger {
     } catch (IOException e) {
     }
   }
-  
-  private void debugBreak() {
-    try {
-      String str = "";
-      System.out.print(">:");
-      str = in.readLine();
-      processBreak(str);
-    } catch (IOException e) {
-    }
-  }  
 
-  private void processBreak(String str) {
+    private void process(String str) {
     if(str.equals("?")) {
-      System.out.println("\nFollowing commands are allowed:\n\t?: show this help\n\tnext: jump to next breakpoint\n\tsubject: show the current subject list\n\tpattern: show the current subject list\n\tsubst: show ths substitution done");
-    } else if (str.equals("n") || str.equals("")) {
-      return;
-    } else if (str.equals("subject")) {
-      showSubjectList();
-    } else if (str.equals("pattern")) {
-      showPatternList();
-    } else {
-      System.out.println("Unknow command: please enter `?` to know the available commands");
-    }
-    debugBreak();
-  }
-  
-  private void defineMatchWatcher() {
-    try {
-      String str = "";
-      int input = 0;
-      while (str != null) {
-        System.out.print(">Enter Match Number:");
-        str = in.readLine();
-        try {
-          input = Integer.parseInt(str, 10);
-        }catch (NumberFormatException e) {
-          System.out.println("Not a valid number");
-          continue;
-        }
-        if (input == 0) {
-          System.out.println();
-          return;
-        } else {
-          HashSet list = definePatternWatcher();
-          mapMatchPattern.put(new Integer(input), list);
-        }
-      }
-    } catch (IOException e) {
-    }
-  }
-  
-  private HashSet definePatternWatcher() {
-    HashSet result = new HashSet();
-    try {
-      String str = "";
-      int input = 0;
-      while (str != null) {
-        System.out.print(">Enter Pattern Number:");
-        str = in.readLine();
-        try {
-          input = Integer.parseInt(str, 10);
-        }catch (NumberFormatException e) {
-          System.out.println("Not a valid number");
-          continue;
-        }
-        if (input == 0) {
-          return result;
-        } else {
-          result.add(new Integer(input));
-        }
-      }
-    } catch (IOException e) {
-    }
-    return result;
-  }
-
-  private void defineTermWatcher() {
-    try {
-      String str = "";
-      while (str != null) {
-        System.out.print(">Enter term Pattern:");
-        str = in.readLine();
-        if(str.equals("exit"))
-          return;
-        else {
-          patterns[nbPatterns] = str;
-          nbPatterns++;
-        }
-      }
-    } catch (IOException e) {
-    }
-  }
-  
-  private void process(String str) {
-    if(str.equals("?")) {
-      System.out.println("\nFollowing commands are allowed:\n\t?:show this help\n\trun: exit debugger configuration and run the program\n\ts: save configuration\n\tl: load configuration from file\n\tm: define breakpoint for Match structure\n\tt: define Term pattern to be watch\n\tsubstOff: do not show substitution");
+      System.out.println("\nFollowing commands are allowed:\n\t?:show this help\n\tinfo: Show information on structure that can be debugged\n\trun: exit debugger configuration and run the program\n\ts: save configuration\n\tl: load configuration from file\n\tm: define breakpoint for Match structure\n\tt: define Term pattern to be watch\n\tsubstOff: do not show substitution");
     } else if (str.equals("run")) {
-      System.out.println();
+      System.out.println(debugStructureKeySet);
       return;
+    } else if (str.equals("info")) {
+      TomDebugStructure struct;
+      System.out.println("Valid structures to be debugged:");
+      Collection structList = mapKeyDebugStructure.values();
+      Iterator it = structList.iterator();
+      while(it.hasNext()) {
+        struct = (TomDebugStructure)it.next();
+        System.out.println("\t- "+struct.type+" declared in "+struct.fileName+" at line "+struct.line+" with "+struct.nbPatterns+" patterns");
+      }
+      System.out.println("\nHere are the corresponding maximum allowed pattern numbers (0 is not a valid entry)");
     } else if (str.equals("s")) {
       System.out.println("Function not yet defined");
     } else if (str.equals("l")) {
@@ -187,87 +134,281 @@ public class TomDebugger {
     return ;
   }
 
-  public void enteringMatch(int mNumber) {
-    Integer key = new Integer(mNumber);
-    if(mapMatchPattern.containsKey(key)) {
-      currentSubject.clear();
-      currentPattern.clear(); // Add automatically or by the hand??
-      matchNumber = mNumber;
-      patternSet = (HashSet)mapMatchPattern.get(key);
-      System.out.println("\tEntering Match number "+ matchNumber);
-        //debugBreak();
-      echoMode = true;
-    } else {echoMode = false;}
-  }
-  
-  public void enteringPattern(int pNumber) {
-    if(patternSet.contains(new Integer(pNumber))) {
-      substitutions.clear();
-      patternNumber = pNumber;
-      System.out.println("\t\tEntering Pattern number "+ patternNumber);
-      echoMode = true;
-      debugBreak();
-    } else {echoMode = false;}
-  }
-
-  public void patternFail() {
-    if (echoMode) {
-      System.out.println("\t\tPattern number "+ patternNumber+" fails");
-      debugBreak();
+    private void defineMatchWatcher() {
+    try {
+      String str = "";
+      int input = 0;
+      while (str != null) {
+        System.out.print(">Enter structure line number:");
+        str = in.readLine();
+        try {
+          input = Integer.parseInt(str, 10);
+        }catch (NumberFormatException e) {
+          System.out.println("Not a valid number");
+          continue;
+        }
+        if (input == 0) {
+          System.out.println();
+          return;
+        } else {
+          String key = baseFileName+".t"+input;
+          if (mapKeyDebugStructure.keySet().contains(key)) {
+            HashSet list = definePatternWatcher(input);
+            ((TomDebugStructure)mapKeyDebugStructure.get(key)).watchPatternList = list;
+            debugStructureKeySet.add(key);
+          } else {
+            System.out.println("Not a valid line number, please use info command to ensure valid entry");
+          }
+        }
+      }
+    } catch (IOException e) {
     }
   }
   
-  public void patternSuccess() {
-    if (echoMode) {
-      System.out.println("\t\tPattern number "+ patternNumber+" succeeds");
-      debugBreak();
+  private HashSet definePatternWatcher(int line) {
+    HashSet result = new HashSet();
+    String key = baseFileName+".t"+line;
+    TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
+    int nbPatterns = struct.nbPatterns.intValue();
+    try {
+      String str = "";
+      int input = 0;
+      while (str != null) {
+        System.out.print(">Enter Pattern Number:");
+        str = in.readLine();
+        if (str.equals("all")) {
+          
+          for (int i=1; i<=nbPatterns;i++) {
+            result.add(new Integer(i));
+          }
+          return result;
+        }
+        else {
+          try {
+            input = Integer.parseInt(str, 10);
+          }catch (NumberFormatException e) {
+            System.out.println("Not a valid number");
+            continue;
+          }
+          if (input == 0) {
+            return result;
+          } else {
+            if (input <= nbPatterns) {
+              result.add(new Integer(input));
+            } else {
+              System.out.println("Not a valid pattern number: this structure has only "+nbPatterns+" patterns");
+            }
+          }
+        }
+      }
+    } catch (IOException e) {
+    }
+    return result;
+  }
+
+  private void defineTermWatcher() {
+    try {
+      String str = "";
+      while (str != null) {
+        System.out.print(">Enter term Pattern:");
+        str = in.readLine();
+        if(str.equals("exit"))
+          return;
+        else {
+          watchPatterns[nbPatterns] = str;
+          nbPatterns++;
+        }
+      }
+    } catch (IOException e) {
+    }
+  }
+  
+  private void debugBreak() {
+    try {
+      String str = "";
+      System.out.print(">:");
+      str = in.readLine();
+      processBreak(str);
+    } catch (IOException e) {
+    }
+  }  
+
+  private void processBreak(String str) {
+    if(str.equals("?")) {
+      System.out.println("\nFollowing commands are allowed:\n\t?: show this help\n\tnext: jump to next breakpoint\n\tsubject: show the current subject list\n\tpattern: show the current pattern list\n\tsubst: show the already done substitution(s)");
+    } else if (str.equals("n") || str.equals("")) {
+      return;
+    } else if (str.equals("subject")) {
+      showSubjectList();
+    } else if (str.equals("pattern")) {
+      showPattern();
+    } else {
+      System.out.println("Unknow command: please enter `?` to know the available commands");
+    }
+    debugBreak();
+  }
+
+    //////////////////////
+    // Debug Primitives //
+    //////////////////////
+  
+  public void enteringMatch(String key) {
+    if(debugStructureKeySet.contains(key)) {
+      environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key))); 
+    }
+  }
+  
+  public void enteringRule(String key) {
+    if(debugStructureKeySet.contains(key)) {
+      environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key)));
+    }
+  }
+  
+  public void leavingMatch(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      environment.pop();
+      System.out.println("\tLeaving Match");
     }
   }
 
-  public void termCreation(ATerm trm) {
+  public void leavingRule(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      environment.pop();
+      System.out.println("\tLeaving Match");
+    }
+  }
+  
+  public void enteringPattern(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      ((TomDebugEnvironment)(environment.peek())).enteringPattern();
+    }
+  }
+  
+  public void patternFail(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      ((TomDebugEnvironment)(environment.peek())).patternFail();
+    }
+  }
+  
+  public void patternSuccess(String key) {
+    if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
+      ((TomDebugEnvironment)(environment.peek())).patternSuccess();
+    }
+  }
+
+  public void termCreation(Object trm) {
     java.util.List children;
       //System.out.println("\t\tTested Term: "+trm);
     for(int i = 0; i <nbPatterns; i++ ) {
-        //System.out.println("\t\t\tvs pattern: "+patterns[i]);
-      children = null;
-      children = trm.match(patterns[i]);
-      if (children != null) {
-        System.out.println("A term corresponding to patterm "+patterns[i]+" has been created");
-        debugBreak();
+      if (trm instanceof ATerm) {
+          //System.out.println("\t\t\tvs pattern: "+patterns[i]);
+        children = null;
+        children = ((ATerm)trm).match(watchPatterns[i]);
+        if (children != null) {
+          System.out.println("A term corresponding to patterm "+watchPatterns[i]+" has been created");
+          debugBreak();
+        }
+      } else {
+        System.out.println("No able to compare with pattern: Not an ATerm");
       }
     }
   }
-
-  public void specifySubject(ATerm trm) {
-    currentSubject.add(trm);
+  
+  public void specifySubject(String key, ATerm trm) {
+    if (!environment.empty())
+    ((TomDebugEnvironment)environment.peek()).addSubject(trm);
   }
 
-  public void specifyPattern(ATerm trm) {
-    currentPattern.add(trm);
-  }
-
-  public void substitution(ATerm trm) {
-    substitutions.add(trm);
+  public void addSubstitution(ATerm trm) {
+    if (!environment.empty())
+      ((TomDebugEnvironment)environment.peek()).addSubstitution(trm);
   }
   
   private void showSubjectList() {
-    Iterator it = currentSubject.iterator();
-    while(it.hasNext()) {
-      System.out.println(it.next());
-    }
+    if (!environment.empty())
+      ((TomDebugEnvironment)environment.peek()).showSubjectList();
   }
 
-  private void showPatternList() {
-    Iterator it = currentSubject.iterator();
-    while(it.hasNext()) {
-      System.out.println(it.next());
-    }
+  private void showPattern() {
+    if (!environment.empty())
+      ((TomDebugEnvironment)environment.peek()).showPattern();
   }
   
   private void showSubst() {
-    Iterator it = substitutions.iterator();
-    while(it.hasNext()) {
-      System.out.println(it.next());
+    if (!environment.empty())
+      ((TomDebugEnvironment)environment.peek()).showSubst();
+  }
+  
+  private void analyseStructure(TomStructureTable trm) {
+    TomList list = trm.getStructList();
+    while (!list.isEmpty()) {
+      TomTerm struct = list.getHead();
+      if (struct.isMatch()) {
+        String fileName = struct.getOrgTrack().getFileName().getString();
+        Integer line = struct.getOrgTrack().getLine();
+        String key = fileName+line;
+        TomList paList = struct.getPatternList().getList();
+        Integer nbPatterns =  evalPatternNumber(paList);
+        String[] patternText = new String[nbPatterns.intValue()];
+        int i=0;
+        while(!paList.isEmpty()) {
+          TomTerm pa = paList.getHead();
+          patternText[i++] = pa.getOrgText().getString();
+          paList = paList.getTail();
+        }
+
+        mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Match", fileName, line, nbPatterns, patternText));
+      } else if (struct.isRuleSet()) {
+        String fileName = struct.getOrgTrack().getFileName().getString();
+        Integer line = struct.getOrgTrack().getLine();
+        String key = fileName+line;
+        TomList paList = struct.getList();
+        Integer nbPatterns =  evalPatternNumber(paList);
+        String[] patternText = new String[nbPatterns.intValue()];
+        int i=0;
+        while(!paList.isEmpty()) {
+          TomTerm pa = paList.getHead();
+          patternText[i++] = pa.getOrgText().getString();
+          paList = paList.getTail();
+        }
+        mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Rule", fileName, line, nbPatterns, patternText));
+      } else {
+        System.out.println("Corrupt debug term");
+        System.exit(1);
+      } 
+      list = list.getTail();
     }
   }
+  
+  private Integer evalPatternNumber(TomList list) {
+    int nbPattern = 0;
+    while(!list.isEmpty()) {
+      nbPattern++;
+      list = list.getTail();
+    }
+    return new Integer(nbPattern);
+  }
 } //Class TomDebugger
+
+class TomDebugStructure {
+  String[] patternText;
+  HashSet watchPatternList;
+  Integer nbPatterns;
+  String fileName;
+  Integer line;
+  String key;
+  String type;
+
+  TomDebugStructure(String key, String type, String fileName, Integer line, Integer nbPatterns, String[] patternText){
+    this.key = key;
+    this.type = type;
+    this.fileName = fileName;
+    this.line = line;
+    this.nbPatterns = nbPatterns;
+    this.patternText = patternText;
+  }
+
+  public String toString() {
+    return type+fileName+line+watchPatternList;
+  }
+}

@@ -44,11 +44,12 @@ public class Tom {
   private static String version = "1.2";
   
   private static void usage() {
+    if(Flags.version) {
+      System.out.println("jtom " + version);
+      System.exit(0);
+    }
     System.out.println("Tom usage:");
     System.out.println("\tjava jtom.Tom [options] inputfile");
-    if(Flags.version) {
-      System.out.println("\tversion " + version);
-    }
     System.out.println("Options:");
     System.out.println("\t--help | -h:\t\tShow this help");
     System.out.println("\t--cCode | -c:\t\tGenerate C code");
@@ -69,6 +70,7 @@ public class Tom {
     System.out.println("\t--atermStat | -s:\tPrint internal ATerm statistics");
     System.out.println("\t--optimize | -O:\tOptimized generated code");
     System.out.println("\t--static:\t\tGenerate static functions");
+    System.out.println("\t--debug:\t\tGenerate debug primitives");
     System.exit(0);
   }
 
@@ -82,7 +84,8 @@ public class Tom {
     String optimizedSuffix  = ".tfix.optimized";
     String parsedTableSuffix = ".tfix.parsed.table";
     String expandedTableSuffix = ".tfix.expanded.table";
-
+    String debugMatchTableSuffix = ".tfix.debug.table";
+    
     List importList = new ArrayList();    
     
     if(args.length >= 1) {
@@ -136,6 +139,8 @@ public class Tom {
 	    Flags.doOptimization = true;
           } else if(args[i].equals("--static")) {
 	    Flags.staticFunction = true;
+          } else if(args[i].equals("--debug")) {
+	    Flags.debugMode = true;
           } else if(args[i].equals("--help") || args[i].equals("-h")) {
 	    usage();
           } else {
@@ -237,7 +242,7 @@ public class Tom {
 	TomExpander tomExpander = new TomExpander(environment,tomKernelExpander);
         startChrono();
         expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
-        tomKernelExpander.updateSymbol();
+        tomKernelExpander.updateSymbolTable();
         TomTerm context = null;
         expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
         tomChecker.checkVariableCoherence(expandedTerm);
@@ -248,6 +253,9 @@ public class Tom {
           generateOutput(fileName + expandedTableSuffix,symbolTable.toTerm());
         }
 
+        if (Flags.debugMode)
+          generateOutput(fileName + debugMatchTableSuffix, tomParser.getStructTable());
+                
         if(Flags.demo) {
           statistics.initInfoParser();
           statistics.initInfoChecker();
@@ -303,9 +311,9 @@ public class Tom {
         TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(environment);
         TomCompiler tomCompiler = new TomCompiler(environment,tomKernelCompiler);
         startChrono();
-        TomTerm simpleCheckedTerm = tomCompiler.preProcessing(expandedTerm);
+        compiledTerm = tomCompiler.preProcessing(expandedTerm);
         
-        compiledTerm = tomKernelCompiler.compileMatching(simpleCheckedTerm);
+        compiledTerm = tomKernelCompiler.compileMatching(compiledTerm);
           //System.out.println("pass2 =\n" + compiledTerm);
         compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
           //System.out.println("postProcessing =\n" + compiledTerm);

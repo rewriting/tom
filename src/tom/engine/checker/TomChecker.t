@@ -73,7 +73,7 @@ public class TomChecker extends TomBase {
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
-              Match(orgTrack, SubjectList(matchArgsList), PatternList(patternActionList)) -> {  
+              Match(SubjectList(matchArgsList), PatternList(patternActionList), orgTrack) -> {  
                 currentTomStructureOrgTrack = orgTrack;
                 verifyMatch(matchArgsList, patternActionList);
                 return true;
@@ -90,7 +90,7 @@ public class TomChecker extends TomBase {
                 verifyRecordStructure(options, name, args);
                 return true;
               }
-              RuleSet(orgTrack, list) -> {
+              RuleSet(list, orgTrack) -> {
                 currentTomStructureOrgTrack = orgTrack;
                 verifyRule(list);
                 return false;
@@ -117,12 +117,12 @@ public class TomChecker extends TomBase {
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
-              Match(orgTrack, _, PatternList(list)) -> {  
+              Match(_, PatternList(list), orgTrack) -> {  
                 currentTomStructureOrgTrack = orgTrack;
                 verifyMatchVariable(list);
                 return false;
               }
-              RuleSet(orgTrack, list) -> {
+              RuleSet(list, orgTrack) -> {
                 currentTomStructureOrgTrack = orgTrack;
                 verifyRuleVariable(list);
                 return false;
@@ -940,7 +940,7 @@ public class TomChecker extends TomBase {
       currentRule = ruleList.getHead();
       matchBlock: {
         %match(TomTerm currentRule) {
-          RewriteRule(Term(lhs),Term(rhs),condList,orgTrack) -> {
+          RewriteRule(Term(lhs),Term(rhs),condList,orgTrack, _) -> {
             statistics().numberRulesTested++;
             name = verifyLhsRuleAndConstructorEgality(lhs, name, i);
             if(i == 0) {

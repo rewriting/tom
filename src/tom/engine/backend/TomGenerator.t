@@ -37,6 +37,8 @@ import jtom.adt.*;
 
 public class TomGenerator extends TomBase {
 
+  private String myDebugKey = null;
+  
   public TomGenerator(jtom.TomEnvironment environment) {
     super(environment);
   }
@@ -185,12 +187,20 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      CompiledMatch(matchDeclarationList, namedBlockList) -> {
+      CompiledMatch(matchDeclarationList, namedBlockList, option) -> {
+        boolean debug = Flags.jCode && Flags.debugMode && option.isOriginTracking();
         if(Flags.supportedBlock) {
           generateInstruction(out,deep,`OpenBlock());
         }
+        if(debug) {
+          myDebugKey = option.getFileName().getString() + option.getLine().toString();
+          out.write("jtom.debug.TomDebugger.debug.entering"+option.getAstName().getString()+"(\""+myDebugKey+"\");\n");
+        }
         generateList(out,deep+1,matchDeclarationList);
         generateList(out,deep+1,namedBlockList);
+        if(debug) {
+          out.write("jtom.debug.TomDebugger.debug.leaving"+option.getAstName().getString()+"(\""+myDebugKey+"\");\n");
+        }
         if(Flags.supportedBlock) {
           generateInstruction(out,deep,`CloseBlock());
         }
@@ -592,6 +602,36 @@ public class TomGenerator extends TomBase {
         return;
       }
       
+      AssignMatchSubject(var@Variable(option1,name1,
+                                      Type(tomType@TomType(type),tlType@TLType[])),exp) -> {
+        out.indent(deep);
+        generate(out,deep,var);
+        if(Flags.cCode || Flags.jCode) {
+          out.write(" = (" + getTLCode(tlType) + ") ");
+        } else if(Flags.eCode) {
+          if(isBoolType(type) || isIntType(type)) {
+            out.write(" := ");
+          } else {
+              //out.write(" ?= ");
+            String assignSign = " := ";
+            %match(Expression exp) {
+              GetSubterm[] -> {
+                assignSign = " ?= ";
+              }
+            }
+            out.write(assignSign);
+          }
+        }
+        generateExpression(out,deep,exp);
+        out.writeln(";");
+        if (Flags.jCode && Flags.debugMode) {
+          out.write("jtom.debug.TomDebugger.debug.specifySubject(\""+myDebugKey+"\",");
+          generateExpression(out,deep,exp);
+          out.write(");");
+        }
+        return;
+      }
+      
       NamedBlock(blockName,instList) -> {
         if(Flags.cCode) {
           out.writeln("{");
@@ -599,6 +639,8 @@ public class TomGenerator extends TomBase {
           out.writeln("}" + blockName +  ":;");
         } else if(Flags.jCode) {
           out.writeln(blockName + ": {");
+          if (Flags.debugMode)
+            out.write("jtom.debug.TomDebugger.debug.enteringPattern(\""+myDebugKey+"\");");
           generateList(out,deep+1,instList);
           out.writeln("}");
         } else if(Flags.eCode) {

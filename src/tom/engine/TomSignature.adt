@@ -57,6 +57,7 @@
   [Option,DefinedSymbol ,DefinedSymbol ],
   [Option,OriginTracking,OriginTracking(<astName(TomName)>, <line(int)>,<fileName(TomName)>) ],
   [Option,Constructor,Constructor(<astName(TomName)>) ],
+  [Option,OriginalText, OriginalText(<astName(TomName)>)],
 
   [Expression,TomTermToExpression, TomTermToExpression(<astTerm(TomTerm)>) ],
   [Expression,Not,Not(<arg(Expression)>) ],
@@ -125,17 +126,17 @@
   [TomTerm,RecordAppl,
     RecordAppl(<option(Option)>, <astName(TomName)>, <args(TomList)>) ],
   [TomTerm,PairSlotAppl,PairSlotAppl(<slotName(TomName)>,<appl(TomTerm)>) ],
-  [TomTerm,Match,Match(<option(Option)>,<subjectList(TomTerm)>,<patternList(TomTerm)>) ],
+  [TomTerm,Match,Match(<subjectList(TomTerm)>,<patternList(TomTerm)>, <orgTrack(Option)>) ],
   [TomTerm,MatchingCondition,MatchingCondition(<lhs(TomTerm)>,<rhs(TomTerm)>) ],
   [TomTerm,EqualityCondition,EqualityCondition(<lhs(TomTerm)>,<rhs(TomTerm)>) ],
-  [TomTerm,RuleSet,RuleSetT(<option(Option)>, <list(TomList)>) ],
+  [TomTerm,RuleSet,RuleSet(<list(TomList)>, <orgTrack(Option)>) ],
   [TomTerm,RewriteRule,
-	RewriteRule(<lhs(TomTerm)>, <rhs(TomTerm)>, <condList(TomList)>, <orgTrack(Option)>) ],
+	RewriteRule(<lhs(TomTerm)>, <rhs(TomTerm)>, <condList(TomList)>, <orgTrack(Option)>, <orgText(TomName)>) ],
   [TomTerm,SubjectList,SubjectList(<list(TomList)>) ],
   [TomTerm,PatternList,PatternList(<list(TomList)>) ],
   [TomTerm,TermList,TermList(<list(TomList)>) ],
   [TomTerm,Term,Term(<kid1(TomTerm)>) ],
-  [TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<tom(TomTerm)>) ],
+  [TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<tom(TomTerm)>, <orgText(TomName)>) ],
   [TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>) ],
   [TomTerm,Declaration,Declaration(<kid1(TomTerm)>) ],
   [TomTerm,Variable,
@@ -154,7 +155,7 @@
   [TomTerm,BuildList,BuildList(<astName(TomName)>,<args(TomList)>) ],
   [TomTerm,BuildArray,BuildArray(<astName(TomName)>,<args(TomList)>) ],
   [TomTerm,BuildBuiltin,BuildBuiltin(<astName(TomName)>) ],
-  [TomTerm,CompiledMatch,CompiledMatch(<decls(TomList)>,<automataList(TomList)>) ],
+  [TomTerm,CompiledMatch,CompiledMatch(<decls(TomList)>,<automataList(TomList)>,<option(Option)>)],
   [TomTerm,CompiledPattern,CompiledPattern(<instList(TomList)>) ],
   [TomTerm,AssignedVariable,AssignedVariable(<varName(str)>,<source(Expression)>,<nbUse(int)>) ],
 
@@ -175,6 +176,7 @@
     IfThenElse(<condition(Expression)>,<succesList(TomList)>,<failureList(TomList)>) ],
   [Instruction,DoWhile,DoWhile(<instList(TomList)>,<condition(Expression)>) ],
   [Instruction,Assign,Assign(<kid1(TomTerm)>,<source(Expression)>) ],
+  [Instruction,AssignMatchSubject,AssignMatchSubject(<kid1(TomTerm)>,<source(Expression)>) ],
   [Instruction,Increment,Increment(<kid1(TomTerm)>) ],
   [Instruction,Action,Action(<instList(TomList)>) ],
   [Instruction,ExitAction,ExitAction(<numberList(TomList)>) ],
@@ -197,5 +199,7 @@
   [TomSymbolTable,Table,Table(<entryList(TomEntryList)>) ],
   [TomEntryList,EmptyEntryList, []],
   [TomEntryList,ConsEntryList, [<headEntryList(TomEntry)>,<[tailEntryList(TomEntryList)]>]],
-  [TomEntry,Entry,Entry(<strName(str)>, <astSymbol(TomSymbol)>) ]
+  [TomEntry,Entry,Entry(<strName(str)>, <astSymbol(TomSymbol)>) ],
+
+  [TomStructureTable, StructTable, StructTable(<structList(TomList)>)]
 ]

@@ -56,7 +56,9 @@ public class TomParser {
   private File importList[];
   private static HashSet includedFiles = new HashSet();
   private String currentFile;
-
+  private ArrayList debuggedStructureList;
+  private String text="";
+  
   public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, String fileName) {
     this(input);
     this.tomBuffer = input;
@@ -66,6 +68,7 @@ public class TomParser {
     this.includeOffSet = includeOffSet;
     this.orgTrack = makePosition(1,1);
     this.currentFile = fileName;
+    this.debuggedStructureList = new ArrayList();
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
@@ -141,7 +144,11 @@ public class TomParser {
     Position newOriginTracking = makePosition(token.beginLine,token.beginColumn);
     return tsf().makeTargetLanguage_TL(code, orgTrack, newOriginTracking); 
   }
-
+  
+  public TomStructureTable getStructTable() {
+    TomList list = ast().makeList(debuggedStructureList);
+    return tsf().makeTomStructureTable_StructTable(list);
+  }
 }
 
 PARSER_END(TomParser)
@@ -445,10 +452,13 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   <TOM_LBRACE> ( PatternAction(patternActionList) )* <TOM_RBRACE> /* we are in TOM mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      list.add(tsf().makeTomTerm_Match(
-                 orgTrack,
-                 tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
-                 tsf().makeTomTerm_PatternList( ast().makeList(patternActionList))));
+
+      TomTerm_Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
+                                                    tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
+                                                    orgTrack);
+      list.add(match);
+      if (Flags.debugMode)
+        debuggedStructureList.add(match);
     }
 }
 
@@ -462,14 +472,13 @@ void PatternAction(ArrayList list) throws TomException: /* in TOM mode */
   TargetLanguage tlCode;
 }
 {
-  MatchPatterns(matchPatternsList)
+  MatchPatterns(matchPatternsList, "")
     { listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
       matchPatternsList.clear(); }
-  [ ( <TOM_ALTERNATIVE> MatchPatterns(matchPatternsList) 
+  [ ( <TOM_ALTERNATIVE> {text += " | ";} MatchPatterns(matchPatternsList, text) 
     { listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
       matchPatternsList.clear(); }
     )+ ]
- 
   <TOM_ARROW>
     tlCode = GoalLanguageBlock(blockList)
   {
@@ -478,7 +487,8 @@ void PatternAction(ArrayList list) throws TomException: /* in TOM mode */
       TomList patterns = (TomList)listOfMatchPatternsList.get(i);
       list.add(tsf().makeTomTerm_PatternAction(
                  tsf().makeTomTerm_TermList(patterns),
-                 tsf().makeTomTerm_Tom(ast().makeList(blockList))));
+                 tsf().makeTomTerm_Tom(ast().makeList(blockList)),
+                 tsf().makeTomName_Name(text)));
     }
   }
 }
@@ -501,13 +511,14 @@ void MatchArgument(ArrayList list) throws TomException: /* in TOM mode */
   }
 }
 
-void MatchPatterns(ArrayList list) throws TomException: /* in TOM mode */
+void MatchPatterns(ArrayList list, String orgText) throws TomException: /* in TOM mode */
 {
   TomTerm term;
+  text = orgText;
 }
 {
   term=Term() { list.add(term); }
-    ( <TOM_COMMA> term=Term() { list.add(term); } )*
+    ( <TOM_COMMA> {text += ",";} term=Term() { list.add(term); } )*
 }
 
 
@@ -525,16 +536,19 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     // f[left=a,...]
     LOOKAHEAD(2)
     name = <TOM_IDENTIFIER> <TOM_LBRACKET>
-      {optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
-    [ slotName = <TOM_IDENTIFIER> <TOM_EQUAL> term = Term()
+      {optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+       text += name.image +"[";
+      }
+    [ slotName = <TOM_IDENTIFIER> <TOM_EQUAL> {text += slotName.image + "=";} term = Term()
       { list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term)); }
-      ( <TOM_COMMA>
-        slotName = <TOM_IDENTIFIER> <TOM_EQUAL>  term = Term()
+      ( <TOM_COMMA> {text += ",";}
+        slotName = <TOM_IDENTIFIER> <TOM_EQUAL> {text += slotName.image + "=";} term = Term()
         { list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term)); }
       )*
     ]
     <TOM_RBRACKET>
     {
+      text += "]";
       if(annotedName!=null) { optionList.add(annotedName); }
       option = ast().makeOption(ast().makeOptionList(optionList));
       return tsf().makeTomTerm_RecordAppl(
@@ -546,6 +560,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     LOOKAHEAD(2)
     name = <TOM_IDENTIFIER> <TOM_STAR>
     {
+      text += name.image+"*";
       if(annotedName!=null) { optionList.add(annotedName); }
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
@@ -553,14 +568,17 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     }
   | // f(a,...), x. g()
     name = <TOM_IDENTIFIER>
-      {optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
-    [ <TOM_LPAREN>
+      {optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      text += name.image;
+      }
+    [ <TOM_LPAREN> {text += "(";}
       [
       term = DotTerm()               { list.add(term); }
-      ( <TOM_COMMA> term = DotTerm() { list.add(term); } )*
+      ( <TOM_COMMA> {text += " , ";} term = DotTerm() { list.add(term); } )*
       ]
       <TOM_RPAREN>
       {
+        text += ")";
         if(list.isEmpty()) {
  	  // check if it is a constant
           optionList.add(tsf().makeOption_Constructor(tsf().makeTomName_Name(name.image)));
@@ -578,6 +596,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   | // _
     <TOM_UNDERSCORE>
     {
+      text += "_";
       if(annotedName!=null) { optionList.add(annotedName); }
       optionList.add(ast().makeOriginTracking("_",getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
@@ -586,6 +605,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   | // integer
     name = <TOM_INTEGER>
     {
+      text += name.image;
       if(annotedName!=null) { optionList.add(annotedName); }
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
@@ -626,7 +646,7 @@ TomTerm DotTerm() throws TomException: /* in TOM mode */
   TomTerm dotterm = null;
 }
 {
-  term = Term() [ <TOM_DOT> dotterm = Term()  ]
+  term = Term() [ <TOM_DOT> {text += ".";} dotterm = Term()  ]
     {
       if(dotterm != null) {
         return tsf().makeTomTerm_DotTerm(term,dotterm);
@@ -698,7 +718,8 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
       inputBuffer = new byte[(int)file.length()+1];
       input       = new FileInputStream(file);
       input.read(inputBuffer);
-      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, Integer.valueOf(getLine()).intValue(), fileName.image);
+      
+      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName.image);
       astTom = tomParser.startParsing();
       astTom = tsf().makeTomTerm_TomInclude(astTom.getList());
       list.add(astTom);
@@ -722,18 +743,20 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   ArrayList condList = new ArrayList();
   ArrayList nameTypeInRule = new ArrayList();
   Option orgTrackRuleSet;
+  TomName orgText;
 }
 {
   <RULE> /* switch to TOM mode */
     {
       list.add(makeTL(savePosAndExtract()));
       orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine(), currentFile);
+      text = "";
     }
   <TOM_LBRACE> 
   (
     lhs = Term() { listOfLhs.add(lhs); }
-    [ ( <TOM_ALTERNATIVE> lhs = Term() { listOfLhs.add(lhs); } )+ ]
-    <TOM_ARROW> rhs = PlainTerm(null)
+    [ ( <TOM_ALTERNATIVE> {text += " | ";} lhs = Term() { listOfLhs.add(lhs); } )+ ]
+    <TOM_ARROW> {orgText = tsf().makeTomName_Name(text);} rhs = PlainTerm(null)
     [ (
       <TOM_WHERE> pattern = Term() <TOM_COLON> <TOM_EQUAL> subject = Term()
       { condList.add(tsf().makeTomTerm_MatchingCondition(pattern,subject)); }
@@ -750,16 +773,21 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
                        tsf().makeTomTerm_Term(term),
                        tsf().makeTomTerm_Term(rhs),
                        ast().makeList(condList),
-                       orgTrack));
+                       orgTrack,
+                       orgText));
       }
       listOfLhs.clear();
       condList.clear();
+      text="";
     }
   )*
     <TOM_RBRACE>
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTomTerm_RuleSet(orgTrackRuleSet,ast().makeList(ruleList)));
+    TomTerm_RuleSet rule = tsf().makeTomTerm_RuleSet(ast().makeList(ruleList), orgTrackRuleSet);
+    list.add(rule);
+    if (Flags.debugMode)
+      debuggedStructureList.add(rule);
   }
 }
 

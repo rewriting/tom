@@ -78,13 +78,11 @@ public class TomKernelCompiler extends TomBase {
        
       MakeTerm(var@Variable[astName=name]) -> {
         statistics().numberMakeTermReplaced++;
-          //return `BuildVariable(name);
         return var;
-      }
-      
+      }    
+
       MakeTerm(var@VariableStar[astName=name]) -> {
         statistics().numberMakeTermReplaced++;
-          //return `BuildVariableStar(name);
         return var;
       }
 
@@ -131,7 +129,7 @@ public class TomKernelCompiler extends TomBase {
         return `Tom(tomListMap(l,replace_compileMatching));
       }
       
-      Match(optionMatch,SubjectList(l1),PatternList(l2)) -> {
+      Match(SubjectList(l1),PatternList(l2), optionMatch) -> {
         statistics().numberMatchCompiledIntoAutomaton++;
 
         TomList termList, actionList;
@@ -240,7 +238,7 @@ public class TomKernelCompiler extends TomBase {
            */
 
         TomList astAutomataList = automataListCompileMatchingList(automataList);
-        return `CompiledMatch(matchDeclarationList,astAutomataList);
+        return `CompiledMatch(matchDeclarationList,astAutomataList, optionMatch);
       }
 
         // default rule

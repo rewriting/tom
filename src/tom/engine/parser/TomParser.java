@@ -50,6 +50,8 @@ public class TomParser implements TomParserConstants {
   private File importList[];
   private static HashSet includedFiles = new HashSet();
   private String currentFile;
+  private ArrayList debuggedStructureList;
+  private String text="";
 
   public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, String fileName) {
     this(input);
@@ -60,6 +62,7 @@ public class TomParser implements TomParserConstants {
     this.includeOffSet = includeOffSet;
     this.orgTrack = makePosition(1,1);
     this.currentFile = fileName;
+    this.debuggedStructureList = new ArrayList();
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
@@ -134,6 +137,11 @@ public class TomParser implements TomParserConstants {
   private TargetLanguage makeTL(String code) {
     Position newOriginTracking = makePosition(token.beginLine,token.beginColumn);
     return tsf().makeTargetLanguage_TL(code, orgTrack, newOriginTracking);
+  }
+
+  public TomStructureTable getStructTable() {
+    TomList list = ast().makeList(debuggedStructureList);
+    return tsf().makeTomStructureTable_StructTable(list);
   }
 
 /************************************************
@@ -270,10 +278,13 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      list.add(tsf().makeTomTerm_Match(
-                 orgTrack,
-                 tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
-                 tsf().makeTomTerm_PatternList( ast().makeList(patternActionList))));
+
+      TomTerm_Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
+                                                    tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
+                                                    orgTrack);
+      list.add(match);
+      if (Flags.debugMode)
+        debuggedStructureList.add(match);
   }
 
   final public void PatternAction(ArrayList list) throws ParseException, TomException {
@@ -283,7 +294,7 @@ public class TomParser implements TomParserConstants {
   ArrayList blockList = new ArrayList();
   String string;
   TargetLanguage tlCode;
-    MatchPatterns(matchPatternsList);
+    MatchPatterns(matchPatternsList, "");
       listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
       matchPatternsList.clear();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -291,7 +302,8 @@ public class TomParser implements TomParserConstants {
       label_3:
       while (true) {
         jj_consume_token(TOM_ALTERNATIVE);
-        MatchPatterns(matchPatternsList);
+                         text += " | ";
+        MatchPatterns(matchPatternsList, text);
       listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
       matchPatternsList.clear();
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -315,7 +327,8 @@ public class TomParser implements TomParserConstants {
       TomList patterns = (TomList)listOfMatchPatternsList.get(i);
       list.add(tsf().makeTomTerm_PatternAction(
                  tsf().makeTomTerm_TermList(patterns),
-                 tsf().makeTomTerm_Tom(ast().makeList(blockList))));
+                 tsf().makeTomTerm_Tom(ast().makeList(blockList)),
+                 tsf().makeTomName_Name(text)));
     }
   }
 
@@ -345,8 +358,9 @@ public class TomParser implements TomParserConstants {
                    tsf().makeTomType_TomTypeAlone(type.image)));
   }
 
-  final public void MatchPatterns(ArrayList list) throws ParseException, TomException {
+  final public void MatchPatterns(ArrayList list, String orgText) throws ParseException, TomException {
   TomTerm term;
+  text = orgText;
     term = Term();
                 list.add(term);
     label_5:
@@ -360,8 +374,9 @@ public class TomParser implements TomParserConstants {
         break label_5;
       }
       jj_consume_token(TOM_COMMA);
+                   text += ",";
       term = Term();
-                                list.add(term);
+                                               list.add(term);
     }
   }
 
@@ -376,10 +391,12 @@ public class TomParser implements TomParserConstants {
       name = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_LBRACKET);
        optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+       text += name.image +"[";
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_IDENTIFIER:
         slotName = jj_consume_token(TOM_IDENTIFIER);
         jj_consume_token(TOM_EQUAL);
+                                               text += slotName.image + "=";
         term = Term();
         list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term));
         label_6:
@@ -393,8 +410,10 @@ public class TomParser implements TomParserConstants {
             break label_6;
           }
           jj_consume_token(TOM_COMMA);
+                     text += ",";
           slotName = jj_consume_token(TOM_IDENTIFIER);
           jj_consume_token(TOM_EQUAL);
+                                                 text += slotName.image + "=";
           term = Term();
           list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term));
         }
@@ -404,6 +423,7 @@ public class TomParser implements TomParserConstants {
         ;
       }
       jj_consume_token(TOM_RBRACKET);
+      text += "]";
       if(annotedName!=null) { optionList.add(annotedName); }
       option = ast().makeOption(ast().makeOptionList(optionList));
       {if (true) return tsf().makeTomTerm_RecordAppl(
@@ -413,6 +433,7 @@ public class TomParser implements TomParserConstants {
     } else if (jj_2_2(2)) {
       name = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_STAR);
+      text += name.image+"*";
       if(annotedName!=null) { optionList.add(annotedName); }
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
@@ -423,9 +444,11 @@ public class TomParser implements TomParserConstants {
         // f(a,...), x. g()
             name = jj_consume_token(TOM_IDENTIFIER);
        optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      text += name.image;
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_LPAREN:
           jj_consume_token(TOM_LPAREN);
+                    text += "(";
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case TOM_UNDERSCORE:
           case TOM_INTEGER:
@@ -443,8 +466,9 @@ public class TomParser implements TomParserConstants {
                 break label_7;
               }
               jj_consume_token(TOM_COMMA);
+                     text += " , ";
               term = DotTerm();
-                                       list.add(term);
+                                                        list.add(term);
             }
             break;
           default:
@@ -452,6 +476,7 @@ public class TomParser implements TomParserConstants {
             ;
           }
           jj_consume_token(TOM_RPAREN);
+        text += ")";
         if(list.isEmpty()) {
           // check if it is a constant
           optionList.add(tsf().makeOption_Constructor(tsf().makeTomName_Name(name.image)));
@@ -470,6 +495,7 @@ public class TomParser implements TomParserConstants {
         break;
       case TOM_UNDERSCORE:
         jj_consume_token(TOM_UNDERSCORE);
+      text += "_";
       if(annotedName!=null) { optionList.add(annotedName); }
       optionList.add(ast().makeOriginTracking("_",getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
@@ -478,6 +504,7 @@ public class TomParser implements TomParserConstants {
       case TOM_INTEGER:
         // integer
             name = jj_consume_token(TOM_INTEGER);
+      text += name.image;
       if(annotedName!=null) { optionList.add(annotedName); }
       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
       option = ast().makeOption(ast().makeOptionList(optionList));
@@ -532,6 +559,7 @@ public class TomParser implements TomParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_DOT:
       jj_consume_token(TOM_DOT);
+                             text += ".";
       dotterm = Term();
       break;
     default:
@@ -592,7 +620,8 @@ public class TomParser implements TomParserConstants {
       inputBuffer = new byte[(int)file.length()+1];
       input       = new FileInputStream(file);
       input.read(inputBuffer);
-      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, Integer.valueOf(getLine()).intValue(), fileName.image);
+
+      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName.image);
       astTom = tomParser.startParsing();
       astTom = tsf().makeTomTerm_TomInclude(astTom.getList());
       list.add(astTom);
@@ -614,9 +643,11 @@ public class TomParser implements TomParserConstants {
   ArrayList condList = new ArrayList();
   ArrayList nameTypeInRule = new ArrayList();
   Option orgTrackRuleSet;
+  TomName orgText;
     jj_consume_token(RULE);
       list.add(makeTL(savePosAndExtract()));
       orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine(), currentFile);
+      text = "";
     jj_consume_token(TOM_LBRACE);
     label_8:
     while (true) {
@@ -637,8 +668,9 @@ public class TomParser implements TomParserConstants {
         label_9:
         while (true) {
           jj_consume_token(TOM_ALTERNATIVE);
+                           text += " | ";
           lhs = Term();
-                                         listOfLhs.add(lhs);
+                                                          listOfLhs.add(lhs);
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case TOM_ALTERNATIVE:
             ;
@@ -654,6 +686,7 @@ public class TomParser implements TomParserConstants {
         ;
       }
       jj_consume_token(TOM_ARROW);
+                 orgText = tsf().makeTomName_Name(text);
       rhs = PlainTerm(null);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_WHERE:
@@ -705,14 +738,19 @@ public class TomParser implements TomParserConstants {
                        tsf().makeTomTerm_Term(term),
                        tsf().makeTomTerm_Term(rhs),
                        ast().makeList(condList),
-                       orgTrack));
+                       orgTrack,
+                       orgText));
       }
       listOfLhs.clear();
       condList.clear();
+      text="";
     }
     jj_consume_token(TOM_RBRACE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTomTerm_RuleSet(orgTrackRuleSet,ast().makeList(ruleList)));
+    TomTerm_RuleSet rule = tsf().makeTomTerm_RuleSet(ast().makeList(ruleList), orgTrackRuleSet);
+    list.add(rule);
+    if (Flags.debugMode)
+      debuggedStructureList.add(rule);
   }
 
 /*
@@ -1696,10 +1734,10 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
-  final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1712,18 +1750,18 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
+  final private boolean jj_3_5() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_RPAREN)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
 
-  final private boolean jj_3_1() {
+  final private boolean jj_3_4() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1736,10 +1774,10 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_5() {
+  final private boolean jj_3_1() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

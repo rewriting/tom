@@ -92,13 +92,13 @@ public class TomOptimizer extends TomBase {
 	public ATerm apply(ATerm t) {
 	  if (t instanceof TomTerm) {
 	    %match(TomTerm t) {
-	      CompiledMatch(decls,automata) -> {
+	      CompiledMatch(decls,automata,option) -> {
 		numberCompiledMatchFound++;
 		declVarList = traversalCollectDecls(decls);
 		TomList newAutomata = collectNReplace(automata);
 		//optimDebug("declVarList: \n"+declVarList.toString());
 		TomList newDecls = replaceDeclList(decls);
-		return `CompiledMatch(newDecls,newAutomata);
+		return `CompiledMatch(newDecls,newAutomata,option);
 	      }
 	      _ -> {
 		return traversal().genericTraversal(t,this);

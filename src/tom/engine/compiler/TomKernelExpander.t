@@ -66,7 +66,7 @@ public class TomKernelExpander extends TomBase {
                   return type;
                 } else {
                   return subject; // useful for TomTypeAlone("unknown type")
-                    }
+                }
               }
             }
           }
@@ -159,11 +159,11 @@ public class TomKernelExpander extends TomBase {
             return `TermList(ast().makeList(list));
           }
               
-          context, Match(option,tomSubjectList,patternList) -> {
+          context, Match(tomSubjectList,patternList, option) -> {
             //debugPrintln("expandVariable.10: Match(" + tomSubjectList + "," + patternList + ")");
             TomTerm newSubjectList = expandVariable(context,tomSubjectList);
             TomTerm newPatternList = expandVariable(newSubjectList,patternList);
-            return `Match(option,newSubjectList,newPatternList);
+            return `Match(newSubjectList,newPatternList, option);
           }
               
             // default rule
@@ -244,12 +244,12 @@ public class TomKernelExpander extends TomBase {
   }
 
     /*
-     * updateSymbol is called after the expansion phase
+     * updateSymbol is called after a first syntax expansion phase
      * this phase updates the symbolTable according to the typeTable
      * this is performed by recursively traversing each symbol
      * each TomTypeAlone is replace by the corresponding TomType
      */
-  public void updateSymbol() {
+  public void updateSymbolTable() {
     Iterator it = symbolTable().keySymbolIterator();
     while(it.hasNext()) {
       String tomName = (String)it.next();
