@@ -85,7 +85,7 @@ public class List2 {
   }
 
   public void run() {
-    ArrayList l    = `conc(a,b,c,a,b,c,a);
+    ArrayList l    = `conc(a,b,c,a,b,c,a,c);
     ArrayList res1 = swapSort(l);
     ArrayList res2 = removeDouble(res1);
     System.out.println(" l       = " + l);
