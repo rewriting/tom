@@ -173,6 +173,7 @@ public class TomCompiler extends TomTask {
                       ArrayList abstractedPattern  = new ArrayList();
                       ArrayList introducedVariable = new ArrayList();
                       newTermList = abstractPatternList(renamedTermList, abstractedPattern, introducedVariable);
+
                       if(abstractedPattern.size() > 0) {
                           /* generate a new match construct */
                       
@@ -497,22 +498,29 @@ public class TomCompiler extends TomTask {
             TomTerm newElt = elt;
             %match(TomTerm elt) {
               appl@Appl[nameList=(Name(tomName2),_*)] -> {
+                /*
+                 * we no longer abstract syntactic subterm
+                 * they are compiled by the TomKernelCompiler
+                 */
+
                   //System.out.println("Abstract: " + appl);
                 TomSymbol tomSymbol2 = symbolTable().getSymbol(tomName2);
-                TomType type2 = tomSymbol2.getTypesToType().getCodomain();
-                abstractedPattern.add(appl);
-
-                TomNumberList path = tsf().makeTomNumberList();
-                  //path = append(`AbsVar(makeNumber(introducedVariable.size())),path);
-                absVarNumber++;
-                path = (TomNumberList) path.append(`AbsVar(makeNumber(absVarNumber)));
+                if(isListOperator(tomSymbol2) || isArrayOperator(tomSymbol2)) {
+                  TomType type2 = tomSymbol2.getTypesToType().getCodomain();
+                  abstractedPattern.add(appl);
                   
-                TomTerm newVariable = `Variable(option(),PositionName(path),type2);
-
+                  TomNumberList path = tsf().makeTomNumberList();
+                  //path = append(`AbsVar(makeNumber(introducedVariable.size())),path);
+                  absVarNumber++;
+                  path = (TomNumberList) path.append(`AbsVar(makeNumber(absVarNumber)));
+                  
+                  TomTerm newVariable = `Variable(option(),PositionName(path),type2);
+                  
                   //System.out.println("newVariable = " + newVariable);
-                                
-                introducedVariable.add(newVariable);
-                newElt = newVariable;
+                  
+                  introducedVariable.add(newVariable);
+                  newElt = newVariable;
+                }
               }
             }
             newArgs = append(newElt,newArgs);
