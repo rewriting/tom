@@ -1,8 +1,8 @@
 * term.adt describes the abstract data-type
 
-*  adt-to-java --input MgsADT.adt --jtom --package adt --output adt
+*  adt-to-java --input data.adt --jtom --package adt.address --output adt/address
 
-* jtom BeadSort.t
-* javac BeadSort.java
-* java BeadSort
+* jtom AddressBook.t
+* javac AddressBook.java
+* java AddressBook
 
