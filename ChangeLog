@@ -1,3 +1,15 @@
+2004-02-10  pem  <pem@polly.loria.fr>
+
+	* src/adt/TomSignature.adt: updated to DoubleBackQuote(args:TomList)
+
+	* src/jtom/parser/TomParser.jj: extended `xml(arg1,...) to support extra arguments
+
+	* src/jtom/compiler/TomExpander.t: extended the TomExpander to support various XML mappings
+	  - XML patterns are built using RecordAppl instead of Appl
+	  - adapted sortAttribute to RecordAppl
+	  - concatenate a "context" variable to each XML nodes
+
+	
 2004-01-29    <pem@bach>
 
 	* src/jtom/compiler/TomExpander.t: anonymous XML nodes are allowed
