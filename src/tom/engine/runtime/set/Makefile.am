@@ -2,39 +2,15 @@
 #    TOM - To One Matching Compiler
 #
 
-SETADT_SRC	=$(top_srcdir)/src/adt/Set-${VERSION}.jar$:{prefix}/share/Set-${VERSION}.jar:$(top_srcdir)/stable/adt/Set-${VERSION}.jar
-
 javadir         = ${prefix}/classes/jtom/runtime/set
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SETADT_SRC):$$CLASSPATH
-
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/set
+
+TOMSOURCES      = SharedSet.t SharedMultiSet.t ATermSet.t
 BOOTSOURCES	= SharedSet.java SharedMultiSet.java ATermSet.java
 java_JAVA       = $(BOOTSOURCES)
+CLEANFILES 	= $(TOMSOURCES:.t=.java) tomjava.stamp
+EXTRA_DIST 	= $(BOOTSOURCES) $(TOMSOURCES)
+BUILT_SOURCES   = tomjava.stamp $(BOOTSOURCES)
 
-JAVAROOT        = ${top_builddir}/src/
-
-CLEANFILES 	= SharedSet.java SharedMultiSet.java ATermSet.java
-EXTRA_DIST 	= $(BOOTSOURCES) SharedSet.t SharedMultiSet.t ATermSet.t
-
-BUILT_SOURCES   = SharedSet.java SharedMultiSet.java ATermSet.java
-
-bootinstall :
-	$(mkinstalldirs) $(stabledir)
-	cp -f $(BOOTSOURCES) $(stabledir)
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-           (cd $$subdir ; $(MAKE) $@ ;) \
-	done
-
-# we use the last installed compiler to compile the current compiler
 TOMFLAGS = 
-TOM = ${top_builddir}/utils/jtom
-
-ATermSet.java : ATermSet.t $(JAVAROOT)/adt/Set.tom
-	$(TOM) $(TOMFLAGS) $<
-
-SharedSet.java : SharedSet.t $(JAVAROOT)/adt/Set.tom
-	$(TOM) $(TOMFLAGS) --noDeclaration $<
-
-SharedMultiSet.java : SharedMultiSet.t $(JAVAROOT)/adt/Set.tom
-	$(TOM) $(TOMFLAGS) --noDeclaration $<
-
+include $(top_srcdir)/src/make_rules

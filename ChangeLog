@@ -1,3 +1,9 @@
+2004-03-15    <pem@bach>
+
+	* src/jtom/Tom.java: allows Tom to compile several files 
+
+	* improved Makefiles
+	
 2004-03-10  pem  <pem@polly.loria.fr>
 
 	* bootinstall

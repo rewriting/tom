@@ -2,7 +2,7 @@ import aterm.*;
 import aterm.pure.*;
 
 // Necessary import to debug the TOM program
-import jtom.debug.TomDebugger;
+//import jtom.debug.TomDebugger;
 
 public class Peano {
 
@@ -28,7 +28,6 @@ public class Peano {
     make(t) { factory.makeAppl(fsuc,t) }
   }
 
-
   public Peano(ATermFactory factory) {
     this.factory = factory;
 
@@ -45,8 +44,8 @@ public class Peano {
   
   public final static void main(String[] args) {
       // this is a way to initialize debugger
-    TomDebugger debug = new TomDebugger("Peano");
-    debug.start();
+      //TomDebugger debug = new TomDebugger("Peano");
+      //debug.start();
       // continue as without special debug need
     Peano test = new Peano(new PureFactory(16));
     test.run();

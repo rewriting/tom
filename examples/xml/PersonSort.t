@@ -10,7 +10,7 @@ public class PersonSort {
   private Factory getTNodeFactory() {
       return xtools.getTNodeFactory();
   }
- 
+  
   public static void main (String args[]) {
     PersonSort person = new PersonSort();
     person.run("person.xml");
@@ -23,7 +23,7 @@ public class PersonSort {
     term = sort(term.getDocElem());
     xtools.printXMLFromATerm(term);
   }
-  
+   
   private TNode sort(TNode subject) {
     %match(TNode subject) {
      <Persons>(X1*,p1,X2*,p2,X3*)</Persons> -> {
@@ -33,14 +33,14 @@ public class PersonSort {
       }
       
       _ -> { return subject; }     
-    }
+    } 
   }
   	 
   private int compare(TNode t1, TNode t2) {
     %match(TNode t1, TNode t2) {
       <Person Age=a1><FirstName>#TEXT(n1)</FirstName></Person>,
       <Person Age=a2><FirstName>#TEXT(n2)</FirstName></Person>
-      -> { return a1.compareTo(a2); }
+      -> { return n1.compareTo(n2); }
     }
     return 0;
   }

@@ -13,7 +13,7 @@ public class JLstring {
     Character l = `Char('l');
     Character o = `Char('o');
     %match(String s) {
-      (X1*,x@Char('l'),y@Char('o'),_*) -> {
+      ("he",X1*,x@Char('l'),y@Char('o'),_*) -> {
         System.out.println("X1   = " + X1);
         System.out.println("char = " + x);
         System.out.println("char = " + y);

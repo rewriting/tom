@@ -2,10 +2,10 @@
 #    TOM - To One Matching Compiler
 #
 SUBDIRS		= strategies set xml mapping
-javadir         = ${prefix}/classes/jtom/runtime
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$$CLASSPATH
 
+javadir         = ${prefix}/classes/jtom/runtime
 stabledir 	= $(top_srcdir)/stable/jtom/runtime
+
 BOOTSOURCES	= GenericTraversal.java\
 		  CollectReach.java\
 		  Collect.java Collect1.java Collect2.java Collect3.java Collect4.java\
@@ -16,11 +16,4 @@ java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES) ${JARFILE}
 data_DATA       = ${JARFILE}
 
-JAVAROOT        = ${top_builddir}/src
-
-bootinstall :
-	$(mkinstalldirs) $(stabledir)
-	cp -f $(BOOTSOURCES) $(stabledir)
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-           (cd $$subdir ; $(MAKE) $@ ;) \
-	done
+include $(top_srcdir)/src/make_rules

@@ -3,9 +3,6 @@
 #
 
 SUBDIRS         = c caml
-#javadir         = ${prefix}/classes/jtom/runtime/mapping
-#JAVAROOT        = ${top_builddir}/stable/
-
 MAPPING 	= dom.tom char.tom double.tom int.tom string.tom
 EXTRA_DIST 	= ${MAPPING}
 #CLEANFILES 	= 

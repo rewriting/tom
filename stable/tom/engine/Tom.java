@@ -60,7 +60,7 @@ public class Tom {
 
   private static String usage =
     "Tom usage:"
-    + "\n\tjava jtom.Tom [options] inputfile[.t]"
+    + "\n\tjava jtom.Tom [options] input[.t] [... input[.t]]"
     + "\nOptions:"
     + "\n\t--help \t\t| -h:\tShow this help"
     + "\n\t--cCode \t| -c:\tGenerate C code"
@@ -449,8 +449,29 @@ public class Tom {
   }
 
   public static void main(String args[]) {
-    Tom tomCompiler = new Tom(args);
-    tomCompiler.run();
+    List options = new ArrayList();
+    List files = new ArrayList();
+    for(int i=0 ; i < args.length ; i++) {
+      if(args[i].charAt(0) == '-') {
+        options.add(args[i]);
+        if(args[i].equals("--import") || args[i].equals("-I")) {
+          options.add(args[++i]);
+        }
+      } else {
+        files.add(args[i]);
+      }
+    }
+
+    String newArgs[] = new String[options.size()+1];
+    int lastArgs=0;
+    for(Iterator it = options.iterator() ; it.hasNext() ; ) {
+      newArgs[lastArgs++] = (String)it.next();
+    }
+    for(Iterator it = files.iterator() ; it.hasNext() ; ) {
+      newArgs[lastArgs] = (String)it.next();
+      Tom tomCompiler = new Tom(newArgs);
+      tomCompiler.run();
+    }
   }
 
 } // class Tom

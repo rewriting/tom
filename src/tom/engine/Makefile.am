@@ -4,62 +4,56 @@
 
 SUBDIRS         = runtime tools exception xml parser checker compiler backend debug verifier
 
-TSADT_SRC	= ${top_srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar:${top_srcdir}/stable/adt/TomSignature-${VERSION}.jar
-
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(TSADT_SRC):$$CLASSPATH
-
 javadir         = ${prefix}/classes/jtom
-
 stabledir 	= $(top_srcdir)/stable/jtom
-BOOTSOURCES	= Tom.java TomBase.java TomEnvironment.java
+
+TOMSOURCES      = TomBase.t
+BOOTSOURCES	= $(TOMSOURCES:.t=.java) Tom.java TomEnvironment.java
 java_JAVA       = $(BOOTSOURCES)
+EXTRA_DIST 	= $(BOOTSOURCES) $(TOMSOURCES) make_rules
+CLEANFILES 	= $(TOMSOURCES:.t=.java) tomjava.stamp
+BUILT_SOURCES   = tomjava.stamp $(BOOTSOURCES)
 
-JAVAROOT        = ${top_builddir}/src
-EXTRA_DIST 	= $(BOOTSOURCES) TomBase.t
-CLEANFILES 	= TomBase.java
-BUILT_SOURCES   = TomBase.java
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-bootinstall:
-	$(mkinstalldirs) $(stabledir)
-	cp -f $(BOOTSOURCES) $(stabledir)
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-           (cd $$subdir ; $(MAKE) $@ ;) \
-	done
-
-TomBase.java: TomBase.t $(JAVAROOT)/adt/TomSignature.tom
-	$(TOM) $(TOMFLAGS) $<
-
-# we use the last installed compiler to compile the current compiler
 TOMFLAGS = --noWarning
-TOM = ${top_builddir}/utils/jtom
+include $(top_srcdir)/src/make_rules
 
-%.java : %.t
-	$(TOM) $(TOMFLAGS) $*
+bootstep:
+	@echo "cleaning phase"
+	@$(MAKE) clean  >> $(BOOTSTRAPLOG)
+	@echo "building phase"
+	@$(MAKE) >> $(BOOTSTRAPLOG)
+	@echo "installing phase"
+	@$(MAKE) install >> $(BOOTSTRAPLOG)
+
+BOOTSTRAPDIR     = ../jtom
+BOOTSTRAPDIRCOPY = ../tmp/jtom.bootstrap
+BOOTSTRAPLOG     = ../tmp/bootstrap.log
+
+bootstrap:
+	@rm -f $(BOOTSTRAPLOG)
+	@rm -rf $(BOOTSTRAPDIRCOPY)  > $(BOOTSTRAPLOG)
+
+	@echo
+	@echo "BOOTSTRAPPING PHASE 1"
+	@echo
+	@$(MAKE) bootstep
+
+	@echo
+	@echo "BOOTSTRAPPING PHASE 2"
+	@echo
+	@$(MAKE) bootstep 
+	@echo "copying phase"
+	@$(INSTALL) -d $(BOOTSTRAPDIR) $(BOOTSTRAPDIRCOPY) >> $(BOOTSTRAPLOG)
+	@cp -rp $(BOOTSTRAPDIR)/* $(BOOTSTRAPDIRCOPY)/  >> $(BOOTSTRAPLOG)
+
+	@echo
+	@echo "BOOTSTRAPPING PHASE 3"
+	@echo
+	@$(MAKE) bootstep
+
+	@echo
+	@echo "BOOTSTRAPPING CHECK"
+	@echo "-------------------"
+	@diff -r $(BOOTSTRAPDIR) $(BOOTSTRAPDIRCOPY)
+	@rm -rf $(BOOTSTRAPDIRCOPY)
+

@@ -12,7 +12,7 @@ public class AddressBook {
   private HashSet book;
   
   %include { data.tom }
- 
+  
   public AddressBook(Factory factory) {
     this.factory = factory;
   }

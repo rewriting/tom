@@ -2,32 +2,17 @@
 #    TOM - To One Matching Compiler
 #
 
-TSADT_SRC	= ${top_srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar:${top_srcdir}/stable/adt/TomSignature-${VERSION}.jar
-
 javadir         = ${prefix}/classes/jtom/tools
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(TSADT_SRC):$$CLASSPATH
-
 stabledir 	= $(top_srcdir)/stable/jtom/tools
-BOOTSOURCES	= Tools.java OutputCode.java \
-		  ASTFactory.java TomFactory.java\
+
+TOMSOURCES      = TomFactory.t
+BOOTSOURCES	= $(TOMSOURCES:.t=.java)\
+		  Tools.java OutputCode.java ASTFactory.java \
                   SymbolTable.java TomTask.java TomTaskInput.java
-
-
 java_JAVA       = $(BOOTSOURCES)
-EXTRA_DIST      = $(BOOTSOURCES) TomFactory.t
-JAVAROOT        = ${top_builddir}/src
-
-CLEANFILES      = TomFactory.java
-BUILT_SOURCES   = TomFactory.java
-
-bootinstall :
-	$(mkinstalldirs) $(stabledir)
-	cp -f $(BOOTSOURCES) $(stabledir)
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-           (cd $$subdir ; $(MAKE) $@ ;) \
-	done
+EXTRA_DIST      = $(BOOTSOURCES) $(TOMSOURCES)
+CLEANFILES      = $(TOMSOURCES:.t=.java) tomjava.stamp
+BUILT_SOURCES   = tomjava.stamp $(BOOTSOURCES)
 
 TOMFLAGS = --noDeclaration
-TOM = ${top_builddir}/utils/jtom
-TomFactory.java: TomFactory.t $(JAVAROOT)/adt/TomSignature.tom
-	$(TOM) $(TOMFLAGS) $<
+include $(top_srcdir)/src/make_rules

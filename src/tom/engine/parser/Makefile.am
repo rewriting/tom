@@ -2,15 +2,14 @@
 #    TOM - To One Matching Compiler
 #
 
-TSADT_SRC	= ${top_srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar:${top_srcdir}/stable/adt/TomSignature-${VERSION}.jar
-
+JAVACC          = @JAVACC@
 javadir         = ${prefix}/classes/jtom/parser
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(TSADT_SRC):$$CLASSPATH
-
 stabledir 	= $(top_srcdir)/stable/jtom/parser
-BOOTSOURCES	= JavaCharStream.java\
-		  TomBuffer.java\
-		  TomBackQuoteParser.java
+
+TOMSOURCES      = TomBackQuoteParser.t 
+BOOTSOURCES	= $(TOMSOURCES:.t=.java)\
+		  JavaCharStream.java\
+		  TomBuffer.java
 
 generated_java  = Token.java\
 		  ParseException.java\
@@ -21,30 +20,15 @@ generated_java  = Token.java\
 
 java_JAVA       = $(BOOTSOURCES) $(generated_java)
 
-JAVAROOT        = ${top_builddir}/src
-
-JAVACC          = @JAVACC@
-
-CLEANFILES 	= TomBackQuoteParser.java 
-#$(generated_java)
+CLEANFILES 	= $(TOMSOURCES:.t=.java) tomjava.stamp
 
 $(generated_java): TomParser.jj
 	$(JAVACC) $<
 	@touch Token.java ParseException.java TokenMgrError.java
 
-EXTRA_DIST 	= $(BOOTSOURCES) $(generated_java) TomParser.jj TomBackQuoteParser.t 
+EXTRA_DIST 	= $(BOOTSOURCES) $(generated_java) $(TOMSOURCES) TomParser.jj
 
-BUILT_SOURCES   = TomBackQuoteParser.java 
+BUILT_SOURCES   = tomjava.stamp $(TOMSOURCES:.t=.java)
 
-bootinstall :
-	$(mkinstalldirs) $(stabledir)
-	cp -f $(BOOTSOURCES) $(generated_java) $(stabledir)
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-           (cd $$subdir ; $(MAKE) $@ ;) \
-	done
-
-# we use the last installed compiler to compile the current compiler
 TOMFLAGS = 
-TOM = ${top_builddir}/utils/jtom
-TomBackQuoteParser.java: TomBackQuoteParser.t $(JAVAROOT)/adt/TomSignature.tom
-	$(TOM) $(TOMFLAGS) $<
+include $(top_srcdir)/src/make_rules

@@ -5,11 +5,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 
-public class PersonSort1 {
+public class PersonSort1 { 
   private Document dom;  
 
   %include{ dom.tom }
-    
 
   public static void main (String args[]) {
     PersonSort1 person = new PersonSort1();
@@ -41,7 +40,6 @@ public class PersonSort1 {
       _ -> { return subject; }     
     }
   }
-
   
   private int compare(Node t1, Node t2) {
     %match(TNode t1, TNode t2) {

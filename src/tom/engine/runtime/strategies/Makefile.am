@@ -3,11 +3,6 @@
 #
 
 javadir         = ${prefix}/classes/jtom/runtime/strategies
-
-runtimedir 	= $(top_srcdir)/src/jtom/runtime
-CONCURRENT_JAR  = $(runtimedir)/concurrent.jar:${prefix}/share/concurrent.jar
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):${CONCURRENT_JAR}:$$CLASSPATH
-
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/strategies
 
 BOOTSOURCES	= Strat.java StratList.java RunnerGroup.java\
@@ -17,12 +12,5 @@ BOOTSOURCES	= Strat.java StratList.java RunnerGroup.java\
 
 java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES)
-JAVAROOT        = ${top_builddir}/src/
 
-
-bootinstall :
-	$(mkinstalldirs) $(stabledir)
-	cp -f $(BOOTSOURCES) $(stabledir)
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-           (cd $$subdir ; $(MAKE) $@ ;) \
-	done
+include $(top_srcdir)/src/make_rules
