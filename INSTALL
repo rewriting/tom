@@ -44,3 +44,14 @@ Assume Tom is installed in /usr/local/jtom. The following sets up the environmen
   setenv TOM_HOME /usr/local/jtom
   set path=( $path $TOM_HOME/bin )
 
+We also suggest you to define a TOM_LIB variable and update your CLASSPATH:
+
+(bash)
+  TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
+  export TOM_HOME=/usr/local/jtom
+  export CLASSPATH=${TOM_LIB}:${CLASSPATH}
+
+(csh)
+  set TOM_LIB=`echo ${TOM_HOME}/lib/*.jar | tr ' ' ':'`
+  setenv CLASSPATH $TOM_LIB:$CLASSPATH
+
