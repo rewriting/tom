@@ -72,7 +72,7 @@ public class TomTaskParser extends TomTask {
       }
         
       if(getInput().isDebugMode()) {
-        Tools.generateOutput(getInput().getInputFileNameWithoutSuffix() + TomTaskInput.debugTableSuffix, parser.getStructTable());  
+        Tools.generateOutput(getInput().getOutputFileNameWithoutSuffix() + TomTaskInput.debugTableSuffix, parser.getStructTable());  
       }
         
       // Update environment
