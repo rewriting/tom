@@ -36,15 +36,15 @@ public class TomServer implements TomPluginOptions
     public final static String VERSION = "3.0alpha";
     
     /**
-     * The Vector containing a reference to the plugins. 
+     * The Vector containing a reference to the plugins.
      * It also has a reference to the TomServer (for option management purposes).
      */
     private Vector instances;
     
     /**
-     * A Vector of TomOptionList objects indicating what services can be provided by each plugin. 
-     * The mapping between plugins and services is done so : a plugin in the instances Vector shares the 
-     * same index as the services it provides in the services Vector. 
+     * A Vector of TomOptionList objects indicating what services can be provided by each plugin.
+     * The mapping between plugins and services is done so : a plugin in the instances Vector shares the
+     * same index as the services it provides in the services Vector.
      */
     private Vector services;
 	
@@ -119,11 +119,11 @@ public class TomServer implements TomPluginOptions
     protected TomServer(){}
     
     /**
-     * Part of the Singleton pattern. Returns the instance of the TomServer if it has been initialized before, 
+     * Part of the Singleton pattern. Returns the instance of the TomServer if it has been initialized before,
      * otherwise it throws a TomRuntimeException.
      * 
      * @return the instance of the TomServer
-     * @throws TomRuntimeException if the TomServer hasn't been initialized before the call  
+     * @throws TomRuntimeException if the TomServer hasn't been initialized before the call
      */
     public static TomServer getInstance()
     {
@@ -135,7 +135,7 @@ public class TomServer implements TomPluginOptions
     }
 
     /**
-     * Part of the Singleton pattern. Initializes the TomServer in case it hasn't been done before, 
+     * Part of the Singleton pattern. Initializes the TomServer in case it hasn't been done before,
      * otherwise it reinitializes it.
      * 
      * @return the instance of the TomServer
@@ -188,8 +188,7 @@ public class TomServer implements TomPluginOptions
     }
 
     /**
-     * This method analyzes the command line and determines which configuration file should be used : 
-     * the default one or a custom one.
+     * This method analyzes the command line and determines which configuration file should be used.
      * 
      * @param argumentList the command line
      * @return a String containing the path to the configuration file to be used
@@ -257,7 +256,7 @@ public class TomServer implements TomPluginOptions
     }
 
     /**
-     * This method parses the configuration and extracts the global options as well as 
+     * This method parses the configuration and extracts the global options as well as
      * the class paths of the plugins that are going to be used.
      * 
      * @param xmlConfigurationFile the name of the XML configuration file to be parsed
@@ -291,9 +290,9 @@ public class TomServer implements TomPluginOptions
     /**
      * This method does the following :
      * <ul>
-     * <li>a first call to declareOptions() on the TomServer and each plugin, in order to determine 
+     * <li>a first call to declareOptions() on the TomServer and each plugin, in order to determine
      * which options exist and their default values ;</li>
-     * <li>a call to processArguments() in order to read the command line and set the options to 
+     * <li>a call to processArguments() in order to read the command line and set the options to
      * their actual values ;</li>
      * <li>a second call to declareOptions() in order to collect the options' real value ;</li>
      * <li>it then tells the environment to set some values right ;</li>
@@ -488,7 +487,7 @@ public class TomServer implements TomPluginOptions
      * and the instance of the plugin who declared it.
      * 
      * @param optionName the name of the option we're looking information about
-     * @return a Vector containing a String indicating the type of the option ("boolean", 
+     * @return a Vector containing a String indicating the type of the option ("boolean",
      * "integer" or "string"), along with a reference to the plugin declaring the option. 
      */
     public Vector aboutThisOption(String optionName)

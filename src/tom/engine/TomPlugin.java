@@ -4,7 +4,7 @@ import aterm.*;
 
 /**
  * This interface must be implemented by all Tom plugins.
- * It provides methods to access options (inherited from the 
+ * It provides methods to access options (inherited from the
  * TomPluginOptions interface) as well as methods to run
  * the compilation (one to "feed" the plugin, another one
  * to run it and a third one to retrieve the processed term).
