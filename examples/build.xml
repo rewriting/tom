@@ -12,6 +12,7 @@
 
   <property name="nowarnings" value="false"/>
   <property name="optimize" value="off"/>
+  <property name="pretty" value="off"/>
   <property name="visitable" value="off"/>
   <property name="stamp" value="off"/>
   <property name="mutraveler" value="jjtraveler"/>
@@ -841,6 +842,7 @@
          destdir="${examples.gen}" 
          nowarn="${nowarnings}"
          optimize="${optimize}"
+         pretty="${pretty}"
 				 stamp="off" 
          options="-I ${tom.home}/share/jtom">
 <!-- stamp not yet ready for apigen list -->
