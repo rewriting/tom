@@ -34,7 +34,8 @@ import aterm.pure.PureFactory;
 import poly.expression.*;
 import poly.expression.types.*;
 
-import jjtraveler.TravelerFactory;
+import tom.library.strategy.mutraveler.TravelerFactory;
+import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 
 public class PolyTraveler1 {
@@ -80,7 +81,7 @@ public class PolyTraveler1 {
     }
 
     public SimplifyPlus() {
-      super(new jjtraveler.Identity());
+      super(new Identity());
     }
 
     public poly.expression.types.Expression visit_Expression_Plus(poly.expression.types.expression.Plus arg) { //throws jjtraveler.VisitFailure {

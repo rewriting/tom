@@ -16,7 +16,7 @@
 	<property name="build.sysclasspath" value="ignore" />
 
 	<!-- current version of TOM -->
-	<property name="version" value="2.1rc3"/>
+	<property name="version" value="2.1rc2"/>
 	
 	<!-- some used directory location -->
 	<property name="test"           location="test"/>
@@ -190,7 +190,6 @@
 				 srcdir="${src.src}" 
 				 destdir="${src.gen}" 
 				 options="-I ${src.mapping}">
-			<include name="jjtraveler/*.t"/> 
 			<include name="tom/library/**/*.t"/> 
 			<include name="tom/platform/**/*.t"/> 
 			<include name="jtom/*.t"/> 
@@ -313,7 +312,6 @@
 			<classpath refid="src.classpath"/>
 			<include name="tom/**/*.java"/>
 			<include name="jtom/**/*.java"/>
-			<include name="jjtraveler/**/*.java"/>
 		</javac>
 	</target>
 	
@@ -375,7 +373,6 @@
 		  <fileset dir="${stable.lib}"> 
 				<include name="*.jar"/>
 				<exclude name="junit.jar"/>
-				<exclude name="jjtraveler.jar"/>
 				<exclude name="ant.jar"/>
 			</fileset>
 		</copy>
@@ -383,10 +380,12 @@
 		<!-- tom library -->
 		<jar jarfile="${stable.dist.lib}/mutraveler.jar">
 			<fileset dir="${stable.build}" 
-							 includes="jjtraveler/**/*.class"/>
+							 includes="tom/library/strategy/mutraveler/**/*.class"/>
 		</jar>
 		<jar jarfile="${stable.dist.lib}/tom-library.jar">
-			<fileset dir="${stable.build}" includes="tom/library/**/*.class"/>
+			<fileset dir="${stable.build}" 
+							 includes="tom/library/**/*.class"
+							 excludes="tom/library/strategy/mutraveler/**/*.class"/>
 		</jar>
 		<jar jarfile="${stable.dist.lib}/plugin-platform.jar">
 			<fileset dir="${stable.build}" includes="tom/platform/**/*.class"/>
@@ -465,7 +464,6 @@
 		  <fileset dir="${src.lib}"> 
 				<include name="*.jar"/>
 				<exclude name="junit.jar"/>
-				<exclude name="jjtraveler.jar"/>
 				<exclude name="ant.jar"/>
 			</fileset>
 		</copy>
@@ -488,7 +486,7 @@
 		</jar>
 		<jar jarfile="${src.dist.lib}/mutraveler-${DSTAMP}.jar">
 			<fileset dir="${src.build}" 
-							 includes="jjtraveler/**/*.class"/>
+							 includes="tom/library/strategy/mutraveler/**/*.class"/>
 		</jar>
 
 		<jar jarfile="${src.dist.lib}/tom-library-${DSTAMP}.jar">
@@ -907,7 +905,6 @@
 						srcdir="${src.src}" 
 						destdir="${destination}/gen" 
 						options="-I ${src.mapping}">
-			<include name="jjtraveler/*.t"/> 
 			<include name="tom/library/**/*.t"/> 
 			<include name="tom/platform/**/*.t"/> 
 			<include name="jtom/*.t"/> 
@@ -972,8 +969,6 @@
 			<classpath refid="src.classpath"/>
 			<include name="tom/**/*.java"/>
 			<include name="jtom/**/*.java"/>
-			<include name="jjtraveler/**/*.java"/>
-
 		</javac>
 	</target>
 
@@ -998,9 +993,6 @@
 		</copy>
 		<copy todir="${stable.mapping}" overwrite="true">
 			<fileset dir="${src.mapping}" includes="**/*.tom"/>
-		</copy>
-		<copy todir="${stable.src}/jjtraveler" overwrite="true">
-			<fileset dir="${src.src}/jjtraveler" includes="**/*.java"/>
 		</copy>
 
 		<mkdir dir="${stable.src}/jtom/adt"/>

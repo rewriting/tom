@@ -9,9 +9,9 @@
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.Expression)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.Expression)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op Expression TomTermToExpression(astTerm:TomTerm) {
@@ -195,9 +195,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.Instruction)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.Instruction)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op Instruction TomTermToInstruction(tom:TomTerm) {
@@ -420,9 +420,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.InstructionList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.InstructionList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist InstructionList concInstruction(Instruction*) {
@@ -449,9 +449,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TargetLanguage)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TargetLanguage)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TargetLanguage TL(code:String, start:Position, end:Position) {
@@ -483,9 +483,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.Position)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.Position)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op Position TextPosition(line:int, column:int) {
@@ -502,9 +502,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomType)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomType)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TomType Type(tomType:TomType, tlType:TomType) {
@@ -556,9 +556,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomRule)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomRule)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TomRule RewriteRule(lhs:TomTerm, rhs:TomTerm, condList:InstructionList, option:OptionList) {
@@ -577,9 +577,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomSymbol)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomSymbol)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TomSymbol emptySymbol {
@@ -605,9 +605,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.PairNameDecl)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.PairNameDecl)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op PairNameDecl Slot(slotName:TomName, slotDecl:Declaration) {
@@ -624,9 +624,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomSymbolTable)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomSymbolTable)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TomSymbolTable Table(entryList:TomEntryList) {
@@ -642,9 +642,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomEntry)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomEntry)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TomEntry Entry(strName:String, astSymbol:TomSymbol) {
@@ -661,9 +661,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomStructureTable)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomStructureTable)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TomStructureTable StructTable(structList:TomList) {
@@ -681,9 +681,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomRuleList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomRuleList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist TomRuleList concTomRule(TomRule*) {
@@ -712,9 +712,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomTypeList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomTypeList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist TomTypeList concTomType(TomType*) {
@@ -743,9 +743,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.SlotList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.SlotList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist SlotList concPairNameDecl(PairNameDecl*) {
@@ -774,9 +774,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomEntryList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomEntryList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist TomEntryList concTomEntry(TomEntry*) {
@@ -805,9 +805,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.SymbolList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.SymbolList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist SymbolList concTomSymbol(TomSymbol*) {
@@ -836,9 +836,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.NameList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.NameList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist NameList concTomName(TomName*) {
@@ -865,9 +865,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomName)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomName)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TomName Name(string:String) {
@@ -896,9 +896,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomNumber)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomNumber)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TomNumber MatchNumber(number:TomNumber) {
@@ -978,9 +978,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomNumberList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomNumberList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist TomNumberList concTomNumber(TomNumber*) {
@@ -1007,9 +1007,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.Option)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.Option)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op Option DeclarationToOption(astDeclaration:Declaration) {
@@ -1108,9 +1108,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.OptionList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.OptionList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist OptionList concOption(Option*) {
@@ -1137,9 +1137,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.Constraint)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.Constraint)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op Constraint Equal(variable:TomTerm) {
@@ -1164,9 +1164,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.ConstraintList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.ConstraintList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist ConstraintList concConstraint(Constraint*) {
@@ -1193,9 +1193,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomTerm)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomTerm)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op TomTerm Appl(option:OptionList, nameList:NameList, args:TomList, constraints:ConstraintList) {
@@ -1509,9 +1509,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.PatternInstruction)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.PatternInstruction)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op PatternInstruction PatternInstruction(pattern:Pattern, action:Instruction, option:OptionList) {
@@ -1529,9 +1529,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.Pattern)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.Pattern)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op Pattern Pattern(tomList:TomList) {
@@ -1549,9 +1549,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.PatternInstructionList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.PatternInstructionList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist PatternInstructionList concPatternInstruction(PatternInstruction*) {
@@ -1580,9 +1580,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.PatternList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.PatternList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist PatternList concPattern(Pattern*) {
@@ -1611,9 +1611,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.TomList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomList)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist TomList concTomTerm(TomTerm*) {
@@ -1640,9 +1640,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(jtom.adt.tomsignature.types.Declaration)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getTomDeclarationFactory().getPureFactory().makeList()) == getTomDeclarationFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.Declaration)t.setAnnotation(getTomDeclarationFactory().getPureFactory().makeList(),getTomDeclarationFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op Declaration TypeTermDecl(astName:TomName, keywordList:TomList, orgTrack:Option) {

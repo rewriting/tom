@@ -8,67 +8,67 @@
 
   %op VisitableVisitor Identity {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.Identity) }
-    make() { new jjtraveler.Identity() }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Identity) }
+    make() { new tom.library.strategy.mutraveler.Identity() }
   }
 
   %op VisitableVisitor Fail {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.Fail) }
-    make() { new jjtraveler.Fail() }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Fail) }
+    make() { new tom.library.strategy.mutraveler.Fail() }
   }
 
   %op VisitableVisitor Not(VisitableVisitor) {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.Not) }
-    make(v) { new jjtraveler.Not((VisitableVisitor)v) }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Not) }
+    make(v) { new tom.library.strategy.mutraveler.Not((VisitableVisitor)v) }
   }
 
   %op VisitableVisitor Sequence(VisitableVisitor, VisitableVisitor) {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.Sequence) }
-    make(first,then) { new jjtraveler.Sequence((VisitableVisitor)first,(VisitableVisitor)then) }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Sequence) }
+    make(first,then) { new tom.library.strategy.mutraveler.Sequence((VisitableVisitor)first,(VisitableVisitor)then) }
   }
 
   %op VisitableVisitor Choice(VisitableVisitor, VisitableVisitor) {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.Choice) }
-    make(first,then) { new jjtraveler.Choice((VisitableVisitor)first,(VisitableVisitor)then) }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Choice) }
+    make(first,then) { new tom.library.strategy.mutraveler.Choice((VisitableVisitor)first,(VisitableVisitor)then) }
   }
 
   %op VisitableVisitor All(VisitableVisitor) {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.All) }
-    make(v) { new jjtraveler.All((VisitableVisitor)v) }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.All) }
+    make(v) { new tom.library.strategy.mutraveler.All((VisitableVisitor)v) }
   }
 
   %op VisitableVisitor One(VisitableVisitor) {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.One) }
-    make(v) { new jjtraveler.One((VisitableVisitor)v) }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.One) }
+    make(v) { new tom.library.strategy.mutraveler.One((VisitableVisitor)v) }
   }
 
   %op VisitableVisitor Some(VisitableVisitor) {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.Some) }
-    make(v) { new jjtraveler.Some((VisitableVisitor)v) }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Some) }
+    make(v) { new tom.library.strategy.mutraveler.Some((VisitableVisitor)v) }
   }
 
   %op VisitableVisitor IfThenElse(VisitableVisitor, VisitableVisitor, VisitableVisitor) {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.IfThenElse) }
-    make(condition,trueCase,falseCase) { new jjtraveler.IfThenElse((VisitableVisitor)condition,(VisitableVisitor)trueCase,(VisitableVisitor)falseCase) }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.IfThenElse) }
+    make(condition,trueCase,falseCase) { new tom.library.strategy.mutraveler.IfThenElse((VisitableVisitor)condition,(VisitableVisitor)trueCase,(VisitableVisitor)falseCase) }
   }
 
   %op VisitableVisitor MuVar(String) {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.MuVar) }
-    make(name) { new jjtraveler.MuVar(name) }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.MuVar) }
+    make(name) { new tom.library.strategy.mutraveler.MuVar(name) }
   }
 
   %op VisitableVisitor Pselect(int, int, VisitableVisitor, VisitableVisitor) {
     fsym {}
-    is_fsym(t) { (t instanceof jjtraveler.Pselect) }
-    make(p,q,first,then) { new jjtraveler.Pselect(p,q,(VisitableVisitor)first,(VisitableVisitor)then) }
+    is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Pselect) }
+    make(p,q,first,then) { new tom.library.strategy.mutraveler.Pselect(p,q,(VisitableVisitor)first,(VisitableVisitor)then) }
   }
 

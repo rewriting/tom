@@ -34,8 +34,9 @@ import aterm.pure.PureFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import jjtraveler.TravelerFactory;
+import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
 public class Rewrite1 {
   private Factory factory;
@@ -75,7 +76,7 @@ public class Rewrite1 {
       System.out.println("bottomUp      = " + bottomUp.visit(subject));
       System.out.println("innermost     = " + innermost.visit(subject));
       System.out.println("innermostSlow = " + innermostSlow.visit(subject));
-    } catch (jjtraveler.VisitFailure e) {
+    } catch (VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 
@@ -83,16 +84,16 @@ public class Rewrite1 {
   
   class RewriteSystem extends strategy.term.VisitableFwd {
     public RewriteSystem() {
-      super(new jjtraveler.Fail());
+      super(new tom.library.strategy.mutraveler.Fail());
     }
     
-    public Term visit_Term(Term arg) throws jjtraveler.VisitFailure { 
+    public Term visit_Term(Term arg) throws VisitFailure { 
       %match(Term arg) {
         a() -> { return `b(); }
         b() -> { return `c(); }
         g(c(),c()) -> { return `c(); }
       }
-      throw new jjtraveler.VisitFailure();
+      throw new VisitFailure();
     }
     
 

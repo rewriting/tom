@@ -35,8 +35,9 @@ import aterm.pure.PureFactory;
 import strategy.proba2.state.*;
 import strategy.proba2.state.types.*;
 
-import jjtraveler.TravelerFactory;
+import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
 public class Proba2 {
   private StateFactory factory;
@@ -99,7 +100,7 @@ public class Proba2 {
       System.out.println("subject       = " + subject);
       State s = (State) transit.visit(subject);
       System.out.println("s = " + s);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 
@@ -109,17 +110,17 @@ public class Proba2 {
     State s1;
     State s2;
     public Transition(State s1, State s2) { 
-      super(new jjtraveler.Fail()); 
+      super(new tom.library.strategy.mutraveler.Fail()); 
       this.s1 = s1;
       this.s2 = s2;
     }
 
-    public State visit_State(State state) throws jjtraveler.VisitFailure { 
+    public State visit_State(State state) throws VisitFailure { 
       if(state == s1) {
         System.out.println(s1 + " -> " + s2); 
         return s2; 
       }
-      throw new jjtraveler.VisitFailure();
+      throw new VisitFailure();
     }
   }
 

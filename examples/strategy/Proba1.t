@@ -35,8 +35,9 @@ import aterm.pure.PureFactory;
 import strategy.proba1.piece.*;
 import strategy.proba1.piece.types.*;
 
-import jjtraveler.TravelerFactory;
+import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
 public class Proba1 {
   private PieceFactory factory;
@@ -66,7 +67,7 @@ public class Proba1 {
   }
 
   public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-    return jjtraveler.MuVar.mu(var,v);
+    return tom.library.strategy.mutraveler.MuVar.mu(var,v);
   }
 
   public final static void main(String[] args) {
@@ -94,7 +95,7 @@ public class Proba1 {
         }
       }
       System.out.println("pile = " + pile + " face = " + face);
-    } catch (jjtraveler.VisitFailure e) {
+    } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 
@@ -102,27 +103,27 @@ public class Proba1 {
   
   class PileSystem extends strategy.proba1.piece.PieceVisitableFwd {
     public PileSystem() {
-      super(new jjtraveler.Fail());
+      super(new tom.library.strategy.mutraveler.Fail());
     }
     
-    public Piece visit_Piece(Piece arg) throws jjtraveler.VisitFailure { 
+    public Piece visit_Piece(Piece arg) throws VisitFailure { 
       %match(Piece arg) {
         nothing() -> { return `pile(); }
       }
-      throw new jjtraveler.VisitFailure();
+      throw new VisitFailure();
     }
   }
 
   class FaceSystem extends strategy.proba1.piece.PieceVisitableFwd {
     public FaceSystem() {
-      super(new jjtraveler.Fail());
+      super(new tom.library.strategy.mutraveler.Fail());
     }
     
-    public Piece visit_Piece(Piece arg) throws jjtraveler.VisitFailure { 
+    public Piece visit_Piece(Piece arg) throws VisitFailure { 
       %match(Piece arg) {
         nothing() -> { return `face(); }
       }
-      throw new jjtraveler.VisitFailure();
+      throw new VisitFailure();
     }
   }
 

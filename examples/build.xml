@@ -14,6 +14,7 @@
   <property name="optimize" value="off"/>
   <property name="visitable" value="off"/>
   <property name="stamp" value="off"/>
+  <property name="mutraveler" value="jjtraveler"/>
 
   <property environment="env" />
   <property name="tom.home" value="${env.TOM_HOME}"/>

@@ -34,8 +34,9 @@ import aterm.pure.PureFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import jjtraveler.TravelerFactory;
+import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
+import jjtraveler.VisitFailure;
 
 public class Rewrite2 {
   private Factory factory;
@@ -54,7 +55,7 @@ public class Rewrite2 {
   %include { mutraveler.tom }
 
   public VisitableVisitor mu(VisitableVisitor var, VisitableVisitor v) {
-    return jjtraveler.MuVar.mu(var,v);
+    return tom.library.strategy.mutraveler.MuVar.mu(var,v);
   }
 
   public final static void main(String[] args) {
@@ -75,7 +76,7 @@ public class Rewrite2 {
       System.out.println("onceBottomUp  = " + onceBottomUp.visit(subject));
       System.out.println("innermostSlow = " + innermostSlow.visit(subject));
       System.out.println("innermost     = " + innermost.visit(subject));
-    } catch (jjtraveler.VisitFailure e) {
+    } catch(VisitFailure e) {
       System.out.println("reduction failed on: " + subject);
     }
 
@@ -84,16 +85,16 @@ public class Rewrite2 {
   
   class RewriteSystem extends strategy.term.VisitableFwd {
     public RewriteSystem() {
-      super(new jjtraveler.Fail());
+      super(new tom.library.strategy.mutraveler.Fail());
     }
     
-    public Term visit_Term(Term arg) throws jjtraveler.VisitFailure { 
+    public Term visit_Term(Term arg) throws VisitFailure { 
       %match(Term arg) {
         a() -> { return `b(); }
         b() -> { return `c(); }
         g(c(),c()) -> { return `c(); }
       }
-      throw new jjtraveler.VisitFailure();
+      throw new VisitFailure();
     }
     
 

@@ -9,9 +9,9 @@
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformOption)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformOption)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op PlatformOption PluginOption(name:String, altName:String, description:String, value:PlatformValue, attrName:String) {
@@ -31,9 +31,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformValue)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformValue)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op PlatformValue BooleanValue(booleanValue:PlatformBoolean) {
@@ -63,9 +63,9 @@ get_implementation(t) {t}
   cmp_fun_sym(s1,s2) { false}
   get_subterm(t,n) {null}
   equals(t1,t2) {t1.equals(t2)}
-check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformBoolean)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformBoolean)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %op PlatformBoolean True {
@@ -88,9 +88,9 @@ get_implementation(t) {t}
   get_head(l) {l.getHead()}
   get_tail(l) {l.getTail()}
   is_empty(l) {l.isEmpty()}
-check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformOptionList)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
-get_implementation(t) {t}
+  check_stamp(t) {if(t.getAnnotation(getPlatformOptionFactory().getPureFactory().makeList()) == getPlatformOptionFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(tom.platform.adt.platformoption.types.PlatformOptionList)t.setAnnotation(getPlatformOptionFactory().getPureFactory().makeList(),getPlatformOptionFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
 }
 
 %oplist PlatformOptionList concPlatformOption(PlatformOption*) {

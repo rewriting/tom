@@ -36,7 +36,8 @@ import aterm.pure.*;
 import java.io.*;
 import java.util.*;
 
-import jjtraveler.TravelerFactory;
+import tom.library.strategy.mutraveler.TravelerFactory;
+import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 
 import propp.seq.*;
@@ -115,7 +116,7 @@ class SPropp extends Propp1 {
 
 	class CalculusRules extends propp.seq.VisitableFwd {
 		public CalculusRules() {
-			super(new jjtraveler.Identity());
+			super(new Identity());
 		}
 		
 		public Proof visit_Proof(Proof subject) throws jjtraveler.VisitFailure {
