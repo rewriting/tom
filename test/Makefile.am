@@ -17,6 +17,7 @@ source_java     = Peano.t \
 		  TestList.t \
 		  TestBuiltin.t \
 		  Xml.t \
+		  XmlDom.t \
 		  TestDom.t \
 		  Record.t
 
