@@ -1,0 +1,12 @@
+[ 
+  [Color, R, R],
+  [Color, B, B],
+  [Tree, emptyTree, emptyTree],
+  [Tree, node, node(<color(Color)>,<lhs(Tree)>,<value(term)>,<rhs(Tree)>)],
+
+  [Element, f, f(<elt(Element)>)],
+  [Element, e1, e1],
+  [Element, e2, e2],
+  [Element, e3, e3]
+
+]

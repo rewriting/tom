@@ -1,0 +1,6 @@
+*  adt-to-java --input tree.adt --jtom --package adt --output adt
+
+* jtom --import adt Tree1.t
+* javac Tree1.java
+* java Tree1
+
