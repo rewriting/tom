@@ -11,6 +11,7 @@ and tom_is_empty_TomList l = l = [] ;;
 let rec tom_make_empty_conc () = []
 and tom_make_insert_conc (e, l) = e::l 
 and tom_insert_list_conc (l1,l2)= l1 @ l2
+
 and tom_get_slice_conc (beginning, ending) = 
   if beginning = ending 
   then [] 

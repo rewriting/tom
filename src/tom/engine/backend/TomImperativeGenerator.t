@@ -55,7 +55,8 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
    * the method implementations are here common to C and Java
    */
 
-  protected void buildInstructionSequence() throws IOException {
+  protected void buildInstructionSequence(int deep, Instruction instruction) throws IOException {
+    generateInstruction(deep, instruction);
     return;
   }
 
@@ -65,38 +66,39 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 	
 	protected void buildList(int deep, String name, TomList argList) throws IOException {
-          TomSymbol tomSymbol = symbolTable().getSymbol(name);
-          String listType = getTLType(getSymbolCodomain(tomSymbol));
-          int size = 0;
-          while(!argList.isEmpty()) {
-            TomTerm elt = argList.getHead();
-            
-            matchBlock: {
-              %match(TomTerm elt) {
-                Composite(concTomTerm(VariableStar[])) | VariableStar[] |
-                  Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
-                  Composite(concTomTerm(Variable[])) -> {
-                  output.write("tom_insert_list_" + name + "(");
-                  generate(deep,elt);
-                  output.write(",");
-                  break matchBlock;
-                }
-                _ -> {
-                  output.write("tom_make_insert_" + name + "(");
-                  generate(deep,elt);
-                  output.write(",");
-                  break matchBlock;
-                }
-              }
-            } // end matchBlock
-            
-            argList = argList.getTail();
-            size++;
+    TomSymbol tomSymbol = symbolTable().getSymbol(name);
+    String listType = getTLType(getSymbolCodomain(tomSymbol));
+    int size = 0;
+    while(!argList.isEmpty()) {
+      TomTerm elt = argList.getHead();
+      
+      matchBlock: {
+        %match(TomTerm elt) {
+          Composite(concTomTerm(VariableStar[])) | VariableStar[] |
+          Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) |
+          Composite(concTomTerm(Variable[])) -> {
+            output.write("tom_insert_list_" + name + "(");
+            generate(deep,elt);
+            output.write(",");
+            break matchBlock;
           }
-          output.write("(" + listType + ") tom_make_empty_" + name + "()");
-          for(int i=0; i<size; i++) {
-            output.write(")");
+          
+          _ -> {
+            output.write("tom_make_insert_" + name + "(");
+            generate(deep,elt);
+            output.write(",");
+            break matchBlock;
           }
+        }
+      } // end matchBlock
+            
+      argList = argList.getTail();
+      size++;
+    }
+    output.write("tom_make_empty_" + name + "()");
+    for(int i=0; i<size; i++) {
+      output.write(")");
+    }
 	} 
 
 	protected void buildArray(int deep, String name, TomList argList) throws IOException {
@@ -188,6 +190,10 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 		output.write(")");
 	}
 
+  protected void buildRef(int deep, TomTerm term) throws IOException {
+    generate(deep,term);
+  }
+
   protected void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
 
@@ -253,6 +259,14 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 		output.writeln(deep,"}");
   }
 
+  protected void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException {
+    output.writeln(deep,"do {");
+    generateInstruction(deep+1,succes);
+    output.write(deep,"} while(");
+    generateExpression(deep,exp);
+    output.writeln(");");
+  }
+
   protected void buildReturn(int deep, TomTerm exp) throws IOException {
 		output.write(deep,"return ");
 		generate(deep,exp);
@@ -312,148 +326,137 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
 	return `TL(s, tlCode.getStart(), tlCode.getEnd());
 }
 
-protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
+  protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
 		//%variable
-	String s = "";
-	if(!genDecl) {
-          return `ITL("");
-        }
+    String s = "";
+    if(!genDecl) {
+      return `ITL("");
+    }
 
-	String tomType = getTomType(listType);
-	String glType = getTLType(listType);
-	String tlEltType = getTLType(eltType);
+    String tomType = getTomType(listType);
+    String glType = getTLType(listType);
+    String tlEltType = getTLType(eltType);
 
-	String utype = glType;
-	if(!strictType) {
-		utype = getTLType(getUniversalType());
-	}
+    String utype = glType;
+    if(!strictType) {
+      utype = getTLType(getUniversalType());
+    }
 		
-	String listCast = "(" + glType + ")";
-	String eltCast = "(" + getTLType(eltType) + ")";
-	String make_empty = listCast +  "tom_make_empty_" + name;
-	String is_empty = "tom_is_empty_" + tomType;
-	String make_insert = listCast + "tom_make_insert_" + name;
-	String get_head = eltCast + "tom_get_head_" + tomType;
-	String get_tail = listCast + "tom_get_tail_" + tomType;
-	String reverse = listCast + "tom_reverse_" + name;
+    String listCast = "(" + glType + ")";
+    String eltCast = "(" + getTLType(eltType) + ")";
+    String is_empty = "tom_is_empty_" + tomType;
+    String term_equal = "tom_terms_equal_" + tomType;
+    String make_insert = listCast + "tom_make_insert_" + name;
+    String make_empty = listCast + "tom_make_empty_" + name;
+    String get_head = eltCast + "tom_get_head_" + tomType;
+    String get_tail = listCast + "tom_get_tail_" + tomType;
+    String get_slice = listCast + "tom_get_slice_" + name;
 
-	s+= modifier + utype + " tom_reverse_" + name + "(" + utype + " l) {\n"; 
-	s+= "   " + glType + " result = " + make_empty + "();\n"; 
-	s+= "    while(!" + is_empty + "(l) ) {\n"; 
-	s+= "      result = " + make_insert + "(" + get_head + "(l),result);\n";    
-	s+= "      l = " + get_tail + "(l);\n";  
-	s+= "    }\n";
-	s+= "    return result;\n";
-	s+= "  }\n";
-	s+= "\n";
-
-	s+= modifier + utype + " tom_insert_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n";
-	s+= "   if(" + is_empty + "(l1)) {\n";
-	s+= "    return l2;\n";  
-	s+= "   } else if(" + is_empty + "(l2)) {\n";
-	s+= "    return l1;\n";  
-	s+= "   } else if(" + is_empty + "(" + get_tail + "(l1))) {\n";  
-	s+= "    return " + make_insert + "(" + get_head + "(l1),l2);\n";
-	s+= "   } else { \n";  
-	s+= "    return " + make_insert + "(" + get_head + "(l1),tom_insert_list_" + name +  "(" + get_tail + "(l1),l2));\n";
-	s+= "   }\n";
-	s+= "  }\n";
-	s+= "\n";
+    s+= modifier + utype + " tom_insert_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n";
+    s+= "   if(" + is_empty + "(l1)) {\n";
+    s+= "    return l2;\n";  
+    s+= "   } else if(" + is_empty + "(l2)) {\n";
+    s+= "    return l1;\n";  
+    s+= "   } else if(" + is_empty + "(" + get_tail + "(l1))) {\n";  
+    s+= "    return " + make_insert + "(" + get_head + "(l1),l2);\n";
+    s+= "   } else { \n";  
+    s+= "    return " + make_insert + "(" + get_head + "(l1),tom_insert_list_" + name +  "(" + get_tail + "(l1),l2));\n";
+    s+= "   }\n";
+    s+= "  }\n";
+    s+= "\n";
     
-	s+= modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end) {\n"; 
-	s+= "   " + glType + " result = " + make_empty + "();\n"; 
-	s+= "    while(!tom_terms_equal_" + tomType + "(begin,end)) {\n";
-	s+= "      result = " + make_insert + "(" + get_head + "(begin),result);\n";
-	s+= "      begin = " + get_tail + "(begin);\n";
-	s+="     }\n";
-	s+= "    result = " + reverse + "(result);\n";
-	s+= "    return result;\n";
-	s+= "  }\n";
-
+    s+= modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end) {\n"; 
+    s+= "   if(" + term_equal + "(begin,end)) {\n";
+    s+= "     return " +  make_empty + "();\n";
+    s+= "   } else {\n";
+    s+= "     return " +  make_insert + "(" + get_head + "(begin)," + 
+      get_slice + "(" + get_tail + "(begin),end));\n";
+    s+= "   }\n";
+    s+= "  }\n";
+    s+= "\n";
 		//If necessary we remove \n code depending on --pretty option
-	return ast().reworkTLCode(`ITL(s), pretty);
-}
+    return ast().reworkTLCode(`ITL(s), pretty);
+  }
 
-protected TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
-	//%variable
-	String s = "";
-	if(!genDecl) {
-          return `ITL("");
-        }
+  protected TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
+    String s = "";
+    if(!genDecl) {
+      return `ITL("");
+    }
 
-	String tomType = getTomType(listType);
-	String glType = getTLType(listType);
-	String tlEltType = getTLType(eltType);
-	String utype = glType;
-	if(!strictType) {
-		utype =  getTLType(getUniversalType());
-	}
+    String tomType = getTomType(listType);
+    String glType = getTLType(listType);
+    String tlEltType = getTLType(eltType);
+    String utype = glType;
+    if(!strictType) {
+      utype =  getTLType(getUniversalType());
+    }
 		
-	String listCast = "(" + glType + ")";
-	String eltCast = "(" + getTLType(eltType) + ")";
-	String make_empty = listCast + "tom_make_empty_" + name;
-	String make_append = listCast + "tom_make_append_" + name;
-	String get_element = eltCast + "tom_get_element_" + tomType;
+    String listCast = "(" + glType + ")";
+    String eltCast = "(" + getTLType(eltType) + ")";
+    String make_empty = listCast + "tom_make_empty_" + name;
+    String make_append = listCast + "tom_make_append_" + name;
+    String get_element = eltCast + "tom_get_element_" + tomType;
     
-	s = modifier + utype + " tom_get_slice_" + name +  "(" + utype + " subject, int begin, int end) {\n";
-	s+= "   " + glType + " result = " + make_empty + "(end - begin);\n";
-	s+= "    while( begin != end ) {\n";
-	s+= "      result = " + make_append + "(" + get_element + "(subject, begin),result);\n";
-	s+= "      begin++;\n";
-	s+="     }\n";
-	s+= "    return result;\n";
-	s+= "  }\n";
-	s+= "\n";
+    s = modifier + utype + " tom_get_slice_" + name +  "(" + utype + " subject, int begin, int end) {\n";
+    s+= "   " + glType + " result = " + make_empty + "(end - begin);\n";
+    s+= "    while( begin != end ) {\n";
+    s+= "      result = " + make_append + "(" + get_element + "(subject, begin),result);\n";
+    s+= "      begin++;\n";
+    s+="     }\n";
+    s+= "    return result;\n";
+    s+= "  }\n";
+    s+= "\n";
     
-	s+= modifier + utype + " tom_append_array_" + name +  "(" + utype + " l2, " + utype + " l1) {\n";
-	s+= "    int size1 = tom_get_size_" + tomType + "(l1);\n";
-	s+= "    int size2 = tom_get_size_" + tomType + "(l2);\n";
-	s+= "    int index;\n";
-	s+= "   " + glType + " result = " + make_empty + "(size1+size2);\n";
+    s+= modifier + utype + " tom_append_array_" + name +  "(" + utype + " l2, " + utype + " l1) {\n";
+    s+= "    int size1 = tom_get_size_" + tomType + "(l1);\n";
+    s+= "    int size2 = tom_get_size_" + tomType + "(l2);\n";
+    s+= "    int index;\n";
+    s+= "   " + glType + " result = " + make_empty + "(size1+size2);\n";
 
-	s+= "    index=size1;\n";
-	s+= "    while(index > 0) {\n";
-	s+= "      result = " + make_append + "(" + get_element + "(l1,(size1-index)),result);\n";
-	s+= "      index--;\n";
-	s+= "    }\n";
+    s+= "    index=size1;\n";
+    s+= "    while(index > 0) {\n";
+    s+= "      result = " + make_append + "(" + get_element + "(l1,(size1-index)),result);\n";
+    s+= "      index--;\n";
+    s+= "    }\n";
 
-	s+= "    index=size2;\n";
-	s+= "    while(index > 0) {\n";
-	s+= "      result = " + make_append + "(" + get_element + "(l2,(size2-index)),result);\n";
-	s+= "      index--;\n";
-	s+= "    }\n";
+    s+= "    index=size2;\n";
+    s+= "    while(index > 0) {\n";
+    s+= "      result = " + make_append + "(" + get_element + "(l2,(size2-index)),result);\n";
+    s+= "      index--;\n";
+    s+= "    }\n";
    
-	s+= "    return result;\n";
-	s+= "  }\n";
+    s+= "    return result;\n";
+    s+= "  }\n";
 
-	//If necessary we remove \n code depending on --pretty option
-	return ast().reworkTLCode(`ITL(s), pretty);
-}
+    //If necessary we remove \n code depending on --pretty option
+    return ast().reworkTLCode(`ITL(s), pretty);
+  }
 
-protected TargetLanguage genDecl(String returnType,
-                                 String declName,
-                                 String suffix,
-                                 String args[],
-                                 TargetLanguage tlCode) {
-	String s = "";
-	if(!genDecl) {
-          return `ITL("");
-        }
-	s = modifier + returnType + " " + declName + "_" + suffix + "(";
-	for(int i=0 ; i<args.length ; ) {
-		s+= args[i] + " " + args[i+1];
-		i+=2;
-		if(i<args.length) {
-			s+= ", ";
-		}
-	} 
-	s += ") { return " + tlCode.getCode() + "; }";
-	if(tlCode.isTL()) {
-		return `TL(s, tlCode.getStart(), tlCode.getEnd());
-	} else {
-		return `ITL(s); // pas de \n donc pas besoin de reworkTL
-	}
-}
+  protected TargetLanguage genDecl(String returnType,
+                                   String declName,
+                                   String suffix,
+                                   String args[],
+                                   TargetLanguage tlCode) {
+    String s = "";
+    if(!genDecl) {
+      return `ITL("");
+    }
+    s = modifier + returnType + " " + declName + "_" + suffix + "(";
+    for(int i=0 ; i<args.length ; ) {
+      s+= args[i] + " " + args[i+1];
+      i+=2;
+      if(i<args.length) {
+        s+= ", ";
+      }
+    } 
+    s += ") { return " + tlCode.getCode() + "; }";
+    if(tlCode.isTL()) {
+      return `TL(s, tlCode.getStart(), tlCode.getEnd());
+    } else {
+      return `ITL(s); // pas de \n donc pas besoin de reworkTL
+    }
+  }
 
   
 } // class TomImperativeGenerator

@@ -102,6 +102,7 @@ constructor(TomTerm,Term,Term(<tomTerm(TomTerm)>)),
 constructor(TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<action(Instruction)>,<option(OptionList)>)),
 constructor(TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>)),
 constructor(TomTerm,Variable,Variable(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>)),
+constructor(TomTerm,Ref,Ref(<tomTerm(TomTerm)>)),
 
 constructor(TomTerm,MakeTerm,MakeTerm(<kid1(TomTerm)>)),
 constructor(TomTerm,FunctionCall,FunctionCall(<astName(TomName)>,<args(TomList)>)),

@@ -50,7 +50,10 @@ public class TomCamlGenerator extends TomImperativeGenerator {
      * the implementation of methods are here for caml 
      */
 
-  protected void buildInstructionSequence() throws IOException {
+  protected void buildInstructionSequence(int deep, Instruction instruction) throws IOException {
+    //output.write("(");
+    generateInstruction(deep,instruction);
+    //output.writeln(");");
     output.writeln(";");
     return;
   }
@@ -60,12 +63,23 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     return;
   }
 
+	protected void buildExpNot(int deep, Expression exp) throws IOException {
+		output.write("not(");
+		generateExpression(deep,exp);
+		output.write(")");
+	}
+
+  protected void buildRef(int deep, TomTerm term) throws IOException {
+    output.write("!");
+    generate(deep,term);
+  }
+
   protected void buildLet(int deep, TomTerm var, OptionList list,
                           String type, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
 
     output.indent(deep);
-    output.writeln("let");
+    output.write("let ");
     generate(deep,var);
     output.write(" = ");
     generateExpression(deep,exp);
@@ -78,7 +92,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
                           Expression exp, Instruction body) throws IOException {
 
     output.indent(deep);
-    output.writeln("let");
+    output.write("let ");
     generate(deep,var);
     output.write(" = ref ");
     generateExpression(deep,exp);
@@ -86,12 +100,18 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generateInstruction(deep,body);
   }
 
+	protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
+		output.indent(deep);
+		generate(deep,var);
+		output.write(" := ");
+		generateExpression(deep,exp);
+	}
+
   protected void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException {
-    output.write(deep,"if ("); 
+    output.write(deep,"if "); 
     generateExpression(deep,exp); 
-    output.writeln(") then");
+    output.writeln(" then ");
     generateInstruction(deep+1,succes);
-    output.writeln(deep,"(* else () *) ");
   }
 
   protected void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {
@@ -103,6 +123,17 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generateInstruction(deep+1,failure);
     output.writeln(deep," (* endif *)");
   }
+
+  protected void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException {
+    output.writeln(deep,"let tom_internal_cond = ref true in\n");
+    output.writeln(deep,"while !tom_internal_cond do\n");
+    generateInstruction(deep+1,succes);
+    output.writeln(deep+1,"; tom_internal_cond := ");
+    generateExpression(deep,exp);
+    output.writeln();
+    output.writeln(deep,"done");
+  }
+
 
   protected TargetLanguage genDecl(String returnType,
                                    String declName,
@@ -166,6 +197,39 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
+  protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
+    String s = "";
+    if(!genDecl) {
+      return `ITL("");
+    }
+
+    String tomType = getTomType(listType);
+    String is_empty    = "tom_is_empty_" + tomType;
+    String term_equal  = "tom_terms_equal_" + tomType;
+    String make_insert = "tom_make_insert_" + name;
+    String make_empty  = "tom_make_empty_" + name;
+    String get_head    = "tom_get_head_" + tomType;
+    String get_tail    = "tom_get_tail_" + tomType;
+    String get_slice   = "tom_get_slice_" + name;
+    
+    s+= "let tom_insert_list_" + name +  "(l1,l2) =\n";
+    s+= "   if " + is_empty + "(l1) then l2\n";
+    s+= "   else if " + is_empty + "(l2) then l1\n";
+    s+= "        else if " + is_empty + "(" + get_tail + "(l1)) then \n";  
+    s+= "         " + make_insert + "(" + get_head + "(l1),l2)\n";
+    s+= "             else \n";  
+    s+= "              " + make_insert + "(" + get_head + "(l1),tom_insert_list_" + name +  "(" + get_tail + "(l1),l2))\n";
+    s+= "\n";
+    
+    s+=  "let tom_get_slice_" + name + "(beginning, ending) =\n"; 
+    s+= "   if " + term_equal + "(beginning,ending) then " + make_empty + "()\n";
+    s+= "   else " +  make_insert + "(" + get_head + "(beginning)," + 
+      get_slice + "(" + get_tail + "(beginning),ending))\n";
+    s+= "\n";
+		//If necessary we remove \n code depending on --pretty option
+    return ast().reworkTLCode(`ITL(s), pretty);
+  }
+  
   protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {
     output.write(deep,"let ");
     generate(deep,var);
@@ -181,18 +245,25 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.write(" false ");
   }
 
-  protected void buildUnamedBlock(int deep, TomList instList) throws IOException {
-    output.writeln("(");
-    generateList(deep+1,instList);
-    output.writeln(")");
+  protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
+    if(instList.isSingle()) {
+      output.writeln("(");
+      generateInstruction(deep,instList.getHead());
+      output.writeln(")");
+    } else {
+      output.writeln("(");
+      while(!instList.isEmpty()) {
+        generateInstruction(deep+1,instList.getHead());
+        output.writeln(";");
+        instList = instList.getTail();
+      }
+      output.writeln(")");
+    }
   }
 
   protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
     System.out.println(" Named block not supported in Caml: ");
-      // no named blocks in caml : ignore the name
-    output.writeln("(");
-    generateInstructionList(deep+1,instList);
-    output.writeln(")");
+    buildUnamedBlock(deep,instList);
   }
 
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {

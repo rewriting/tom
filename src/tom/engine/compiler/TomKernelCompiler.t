@@ -132,7 +132,7 @@ public class TomKernelCompiler extends TomBase {
                  * return the compiled Match construction
                  */
               InstructionList astAutomataList = automataListCompileMatchingList(automataList, generatedMatch);
-              Instruction astAutomata = collectVariableFromSubjectList(l1,1,rootpath,`UnamedBlock(astAutomataList));
+              Instruction astAutomata = collectVariableFromSubjectList(l1,1,rootpath,`AbstractBlock(astAutomataList));
               return `CompiledMatch(astAutomata, optionList);
             }
               
@@ -161,7 +161,8 @@ public class TomKernelCompiler extends TomBase {
       manyTomList(subjectVar@Variable(option,_,variableType),tail) -> {
         body = collectVariableFromSubjectList(tail,index+1,path,body);
         TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType);
-        return `Let(variable,TomTermToExpression(subjectVar),body);
+        // the UnamedBlock encapsulation is needed for Caml
+        return `Let(variable,TomTermToExpression(subjectVar),UnamedBlock(concInstruction(body)));
       }
 
       manyTomList(subjectVar@(BuildTerm|BuildList|FunctionCall)(Name(tomName),_),tail) -> {
@@ -266,7 +267,7 @@ public class TomKernelCompiler extends TomBase {
                                                            newSubjectVariableAST),
                                                          termArgs,indexSubterm);
           automataInstruction = `LetRef(newSubjectVariableAST,
-                                     TomTermToExpression(subjectVariableAST),
+                                        TomTermToExpression(subjectVariableAST),
                                      automata);
         } else if(isArrayOperator(tomSymbol)) {
           int indexSubterm = 1;
@@ -324,7 +325,7 @@ public class TomKernelCompiler extends TomBase {
          *   ...
          * }
          */
-        Instruction test = `IfThenElse(IsEmptyList(p.subjectListName),
+        Instruction test = `IfThenElse(IsEmptyList(Ref(p.subjectListName)),
                                        p.action,
                                        Nop());
         return test;
@@ -337,16 +338,16 @@ public class TomKernelCompiler extends TomBase {
          * ---------
          * if(!IS_EMPTY_TomList(subjectList)) {
          *   Let TomTerm x_j = (TomTerm) GET_HEAD_TomList(subjectList);
-         *   subjectList =  (TomList) GET_TAIL_TomList(subjectList);
+         *   subjectList = (TomList) GET_TAIL_TomList(subjectList);
          *   ...
          * }
          */
         Instruction subAction = genListMatchingAutomata(p,termTail,indexTerm+1);
      
-        Instruction body = `UnamedBlock(concInstruction(Assign(p.subjectListName,GetTail(p.subjectListName)),subAction));
-        Expression source = `GetHead(p.subjectListName);
+        Instruction body = `UnamedBlock(concInstruction(Assign(p.subjectListName,GetTail(Ref(p.subjectListName))),subAction));
+        Expression source = `GetHead(Ref(p.subjectListName));
         Instruction let = buildAnnotedLet(optionList, source, var, body);
-        Instruction test = `IfThenElse(Not(IsEmptyList(p.subjectListName)),
+        Instruction test = `IfThenElse(Not(IsEmptyList(Ref(p.subjectListName))),
                                        let, Nop());
         return test;
       }
@@ -360,7 +361,7 @@ public class TomKernelCompiler extends TomBase {
            * Let E_n = subjectList;
            * ...
            */
-          Expression source = `TomTermToExpression(p.subjectListName);
+          Expression source = `TomTermToExpression(Ref(p.subjectListName));
           Instruction let = buildAnnotedLet(optionList, source, var, p.action);
           return  let;
         } else {
@@ -384,20 +385,20 @@ public class TomKernelCompiler extends TomBase {
           TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType);
           TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),termType);
 
-          Expression source = `GetSliceList(p.symbol.getAstName(),variableBeginAST,variableEndAST);
+          Expression source = `GetSliceList(p.symbol.getAstName(),Ref(variableBeginAST),Ref(variableEndAST));
           Instruction let = buildAnnotedLet(optionList, source, var, subAction);
-          Instruction test1 = `IfThenElse(Not(IsEmptyList(variableEndAST)),
-                                          Assign(variableEndAST,GetTail(variableEndAST)),
+          Instruction test1 = `IfThenElse(Not(IsEmptyList(Ref(variableEndAST))),
+                                          Assign(variableEndAST,GetTail(Ref(variableEndAST))),
                                           Nop());
-          Instruction assign = `Assign(p.subjectListName,TomTermToExpression(variableEndAST));
+          Instruction assign = `Assign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)));
           Instruction doWhile = `DoWhile(UnamedBlock(concInstruction(let,test1,assign)),
-                                         Not(IsEmptyList(p.subjectListName)));
+                                         Not(IsEmptyList(Ref(p.subjectListName))));
          
           Instruction letEnd = `LetRef(variableEndAST,
-                                         TomTermToExpression(p.subjectListName),
+                                       TomTermToExpression(Ref(p.subjectListName)),
                                          doWhile);
           Instruction letBegin = `LetRef(variableBeginAST,
-                                         TomTermToExpression(p.subjectListName),
+                                         TomTermToExpression(Ref(p.subjectListName)),
                                          letEnd);
           return letBegin;
         }
@@ -427,7 +428,7 @@ public class TomKernelCompiler extends TomBase {
          *   ...
          * }
          */
-        Expression cond = `IsEmptyArray(p.subjectListName,p.subjectListIndex);
+        Expression cond = `IsEmptyArray(Ref(p.subjectListName),Ref(p.subjectListIndex));
         Instruction test = `IfThenElse(cond, p.action, Nop());
         return test;
       }
@@ -444,11 +445,10 @@ public class TomKernelCompiler extends TomBase {
            * }
            */
         Instruction subAction = genArrayMatchingAutomata(p,termTail,indexTerm+1);
-        InstructionList bodyList = `concInstruction(Increment(p.subjectListIndex),subAction);
-        Instruction body = `UnamedBlock(bodyList);
+        Instruction body = `UnamedBlock(concInstruction(Increment(p.subjectListIndex),subAction));
         Expression source = `GetElement(p.subjectListName,p.subjectListIndex);
         Instruction let = buildAnnotedLet(optionList, source, var, body);
-        Instruction test = `IfThenElse(Not(IsEmptyArray(p.subjectListName,p.subjectListIndex)),
+        Instruction test = `IfThenElse(Not(IsEmptyArray(Ref(p.subjectListName),Ref(p.subjectListIndex))),
                                        let, Nop());
         return test;
       }
@@ -462,11 +462,11 @@ public class TomKernelCompiler extends TomBase {
              * Let E_n = GET_SLICE_L(subjectList,subjectIndex,GET_SIZE_L(subjectList));
              * ...
              */
-          Expression source = `GetSliceArray(
-            p.symbol.getAstName(),p.subjectListName,
-            p.subjectListIndex,
-            ExpressionToTomTerm(GetSize(p.subjectListName))
-            );
+          Expression source = `GetSliceArray(p.symbol.getAstName(),
+                                             Ref(p.subjectListName),
+                                             Ref(p.subjectListIndex),
+                                             ExpressionToTomTerm(GetSize(p.subjectListName))
+                                             );
           Instruction let = buildAnnotedLet(optionList, source, var, p.action);
           return let;
         } else {
@@ -491,19 +491,20 @@ public class TomKernelCompiler extends TomBase {
           TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),symbolTable().getIntType());
 
           Expression source = `GetSliceArray(p.symbol.getAstName(),
-                                             p.subjectListName,variableBeginAST,
-                                             variableEndAST);
+                                             Ref(p.subjectListName),
+                                             Ref(variableBeginAST),
+                                             Ref(variableEndAST));
 
           Instruction let = buildAnnotedLet(optionList, source, var, subAction);
           Instruction increment = `Increment(variableEndAST);
           Instruction assign = `Assign(p.subjectListIndex,TomTermToExpression(variableEndAST));
           Instruction doWhile = `DoWhile(UnamedBlock(concInstruction(let,increment,assign)),
-                                         Not(IsEmptyArray(p.subjectListName, p.subjectListIndex)));
+                                         Not(IsEmptyArray(Ref(p.subjectListName), Ref(p.subjectListIndex))));
           Instruction letEnd = `LetRef(variableEndAST,
-                                         TomTermToExpression(p.subjectListIndex),
+                                       TomTermToExpression(Ref(p.subjectListIndex)),
                                          doWhile);
           Instruction letBegin = `LetRef(variableBeginAST,
-                                         TomTermToExpression(p.subjectListIndex),
+                                         TomTermToExpression(Ref(p.subjectListIndex)),
                                          letEnd);
           return letBegin;
         }

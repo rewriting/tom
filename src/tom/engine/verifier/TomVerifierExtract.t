@@ -28,11 +28,8 @@ package jtom.verifier;
 import aterm.*;
 
 import jtom.tools.*;
-import java.util.*;
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.tomsignature.*;
-import jtom.exception.*;
 
 public class TomVerifierExtract extends TomTask {
 

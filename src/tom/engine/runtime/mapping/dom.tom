@@ -68,7 +68,6 @@ public static java.util.ArrayList tom_mapping_newTNodeList() {
 	return new java.util.ArrayList();
 }
 
-
 %include { int.tom }
 %include { string.tom }
 

@@ -76,6 +76,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
      
+      Ref(term) -> {
+        buildRef(deep, term);
+        return;
+      }
+
       BuildVariable(Name(name)) -> {
         output.write(name);
         return;
@@ -189,12 +194,12 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      IsEmptyList(var@Variable[astType=type1]) -> {
+      IsEmptyList(var@Ref(Variable[astType=type1])) -> {
         buildExpEmptyList(deep, type1, var);
         return;
       }
 
-      IsEmptyArray(varArray@Variable[astType=type1], varIndex@Variable[]) -> {
+      IsEmptyArray(varArray@Ref(Variable[astType=type1]), varIndex@Ref(Variable[])) -> {
         buildExpEmptyArray(deep, type1, varIndex, varArray);
         return;
       }
@@ -237,12 +242,12 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetHead(var@Variable(option1,PositionName(l1),type1)) -> {
+      GetHead(var@Ref(Variable(option1,PositionName(l1),type1))) -> {
         buildExpGetHead(deep, type1, var);
         return;
       }
 
-      GetTail(var@Variable(option1,PositionName(l1),type1)) -> {
+      GetTail(var@Ref(Variable(option1,PositionName(l1),type1))) -> {
         buildExpGetTail(deep, type1, var);
         return;
       }
@@ -259,16 +264,16 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       GetSliceList(Name(name),
-                   varBegin@Variable(option1,PositionName(l1),type1),
-                   varEnd@Variable(option2,PositionName(l2),type2)) -> {
+                   varBegin@Ref(Variable(option1,PositionName(l1),type1)),
+                   varEnd@Ref(Variable(option2,PositionName(l2),type2))) -> {
         
         buildExpGetSliceList(deep, name, varBegin, varEnd);
         return;
       }
 
       GetSliceArray(Name(name),
-                    varArray@Variable(option1,PositionName(l1),type1),
-                    varBegin@Variable(option2,PositionName(l2),type2),
+                    varArray@Ref(Variable(option1,PositionName(l1),type1)),
+                    varBegin@Ref(Variable(option2,PositionName(l2),type2)),
                     expEnd) -> {
         buildExpGetSliceArray(deep, name, varArray, varBegin, expEnd);
         return;
@@ -401,8 +406,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       
       CompiledPattern(instruction) -> {
-        generateInstruction(deep, instruction);
-        buildInstructionSequence();
+        buildInstructionSequence(deep,instruction);
         return;
       }
       
@@ -651,9 +655,10 @@ public abstract class TomAbstractGenerator extends TomBase {
  
 	// ------------------------------------------------------------
   
-  protected abstract void buildInstructionSequence() throws IOException;
+  protected abstract void buildInstructionSequence(int deep, Instruction instruction) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList) throws IOException;
+  protected abstract void buildRef(int deep, TomTerm term) throws IOException;
   protected abstract void buildList(int deep, String name, TomList argList) throws IOException;
   protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;

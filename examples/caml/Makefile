@@ -24,8 +24,11 @@ tompeano: peanotype.cmo tomExtension.cmo PeanoSimple1.tom.cmo
 List1.cmo: List1.ml
 	ocamlc -c List1.ml
 
+List1.tom.cmo: List1.tom.ml
+	ocamlc -c List1.tom.ml
+
 list: tomExtension.cmo tomList.cmo List1.cmo
 	ocamlc -o list tomExtension.cmo tomList.cmo List1.cmo
 
-tomlist: tomExtension.cmo List1.tom.cmo
-	ocamlc -o list tomExtension.cmo List1.tom.cmo
+tomlist: tomExtension.cmo tomList.cmo List1.tom.cmo
+	ocamlc -o tomlist tomExtension.cmo tomList.cmo List1.tom.cmo

@@ -37,7 +37,6 @@ import jtom.tools.TomTask;
 import jtom.runtime.Collect1;
 import jtom.xml.Constants;
 import jtom.exception.*;
-import jtom.runtime.set.SharedSet;
 
 abstract public class TomChecker extends TomTask {
 	

@@ -402,7 +402,7 @@ public class TomParser extends TomTask implements TomParserConstants {
         optionList.add(tsf().makeOption_OriginalText(tsf().makeTomName_Name(patternText)));
         list.add(tsf().makeTomTerm_PatternAction(
                    tsf().makeTomTerm_TermList(patterns),
-                   tsf().makeInstruction_UnamedBlock(ast().makeInstructionList(blockList)),
+                   tsf().makeInstruction_AbstractBlock(ast().makeInstructionList(blockList)),
                    ast().makeOptionList(optionList)));
       }
   }

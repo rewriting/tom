@@ -64,7 +64,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 
 //------------------------------------------------------------
  
-  protected abstract void buildInstructionSequence() throws IOException;
+  protected abstract void buildRef(int deep, TomTerm term) throws IOException;
+  protected abstract void buildInstructionSequence(int deep, Instruction instruction) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildList(int deep, String name, TomList argList) throws IOException;
   protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
@@ -84,7 +85,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 	protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
 	protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
 TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
-
+  protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
 
   /*
    * Implementation of functions whose definition is
@@ -255,15 +256,6 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
     generate(deep,expEnd);
     output.write(")");
   }
-
-  protected void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException {
-    output.writeln(deep,"do {");
-    generateInstruction(deep+1,succes);
-    output.write(deep,"} while(");
-    generateExpression(deep,exp);
-	output.writeln(");");
-  }
-  
 
   protected void buildIncrement(int deep, TomTerm var) throws IOException {
     generate(deep,var);
