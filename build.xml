@@ -203,6 +203,7 @@
 				 srcdir="${src.src}" 
 				 destdir="${src.gen}" 
 				 options="-I ${src.mapping}">
+			<include name="jjtraveler/*.t"/> 
 			<include name="tom/library/**/*.t"/> 
 			<include name="tom/platform/**/*.t"/> 
 			<include name="jtom/*.t"/> 
