@@ -146,7 +146,7 @@
 
   [TomTerm,RuleSet,RuleSet(<option(Option)>, <list(TomList)>) ],
 
-  [TomTerm,RewriteRule,RewriteRule(<lhs(TomTerm)>, <rhs(TomTerm)>) ],
+  [TomTerm,RewriteRule,RewriteRule(<lhs(TomTerm)>, <rhs(TomTerm)>,<orgTrack(Option)>) ],
 
   [TomTerm,SubjectList,SubjectList(<list(TomList)>) ],
 

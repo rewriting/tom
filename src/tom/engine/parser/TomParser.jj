@@ -721,10 +721,12 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   (
     lhs = Term() <TOM_ARROW> rhs = PlainTerm(null)
     {
+      Option orgTrack2 = ast().makeOriginTracking("Rule",getLine());
       environment.getStatistics().numberRuleRulesRecognized++;
       ruleList.add(tsf().makeTomTerm_RewriteRule(
                      tsf().makeTomTerm_Term(lhs),
-                     tsf().makeTomTerm_Term(rhs)));
+                     tsf().makeTomTerm_Term(rhs),
+                     orgTrack2));
     }
   )*
     <TOM_RBRACE>
@@ -1364,6 +1366,7 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
   TomType type;
   TomName name;
   Option orgTrack;
+  int nbTypes = types.size();
 }
 {
   <TOM_MAKE>
@@ -1374,6 +1377,10 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
         <TOM_LPAREN>
       nameArg = <TOM_IDENTIFIER>
        {
+         if( index>=nbTypes ) {
+           System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occurs at line "+getLine()+"\n Parsing aborted");
+           System.exit(1);
+         }
          type = (TomType)types.get(index++);
          name = tsf().makeTomName_Name(nameArg.image);  
          Option info1 = ast().makeOriginTracking(nameArg.image,getLine());
@@ -1382,6 +1389,10 @@ Declaration KeywordMake(String opname, TomType returnType, ArrayList types) thro
        }
       ( <TOM_COMMA> nameArg = <TOM_IDENTIFIER>
         {
+          if( index>=nbTypes ) {
+            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occurs at line "+getLine()+"\n Parsing aborted");
+            System.exit(1);
+          }
           type = (TomType)types.get(index++);
           name = tsf().makeTomName_Name(nameArg.image); 
           Option info2 = ast().makeOriginTracking(nameArg.image,getLine());

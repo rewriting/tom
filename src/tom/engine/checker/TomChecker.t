@@ -366,14 +366,14 @@ public class TomChecker extends TomBase {
           }
             */
           
-          context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),Term(rhs)) -> { 
+          context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),Term(rhs), orgTrack) -> { 
             //debugPrintln("pass1.13: Rule(" + lhs + "," + rhs + ")");
             TomSymbol tomSymbol = getSymbol(tomName);
             if(tomSymbol != null) {
               TomType symbolType = getSymbolCodomain(tomSymbol);
               TomTerm newLhs = `Term(pass1(context,lhs));
               TomTerm newRhs = `Term(pass1(TomTypeToTomTerm(symbolType),rhs));
-              return `RewriteRule(newLhs,newRhs);
+              return `RewriteRule(newLhs,newRhs,orgTrack);
             } else {
                 //verifier().messageRuleSymbolError(tomName, optionList);
             }
