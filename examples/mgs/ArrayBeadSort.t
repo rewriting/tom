@@ -3,11 +3,12 @@ import aterm.pure.*;
 import java.util.*;
 import adt.*;
 
-public class BeadSort {
+public class ArrayBeadSort {
   private TermFactory factory;
 
-  private HashMap space;
-  private HashMap newSpace;
+  private static int SIZE = 50;
+  private boolean[][] space;
+  private boolean[][] newSpace;
 
   %include { term.t }
 
@@ -66,18 +67,32 @@ public class BeadSort {
   }
 
   private Bead getNorthBead(Bead b) {
-    return (Bead) space.get(getNorthPosition(b.getPos()));
+    Position p = getNorthPosition(b.getPos());
+    int x = p.getX().intValue();
+    int y = p.getY().intValue();
+    if(x>=0 && y>=0 && space[x][y]) {
+      return (Bead) `bead(p,b.getValue());
+    } else {
+      return null;
+    }
   }
   
   private Bead getSouthBead(Bead b) {
-    return (Bead) space.get(getSouthPosition(b.getPos()));
+    Position p = getSouthPosition(b.getPos());
+    int x = p.getX().intValue();
+    int y = p.getY().intValue();
+    if(x>=0 && y>=0 && space[x][y]) {
+      return (Bead) `bead(p,b.getValue());
+    } else {
+      return null;
+    }
   }
 
   private boolean onGround(Bead b) {
     return b.getPos().getY().intValue() <= 0;
   }
   
-  public BeadSort(TermFactory factory) {
+  public ArrayBeadSort(TermFactory factory) {
     this.factory = factory;
   }
 
@@ -87,23 +102,27 @@ public class BeadSort {
 
 
   public final static void main(String[] args) {
-    BeadSort test = new BeadSort(new TermFactory(16));
+    ArrayBeadSort test = new ArrayBeadSort(new TermFactory(16));
     test.run();
   }
 
   public String toString() {
     String s = "";
-    Iterator it = space.values().iterator();
-    while(it.hasNext()) {
-      Bead b = (Bead) it.next();
-      s += b + "\n";
+    for(int y=SIZE-1 ; y>=0 ; y--) {
+      String line = "";
+      for(int x=0 ; x<SIZE ; x++) {
+        line += (space[x][y])?"X":" ";
+      }
+      if(line.trim().length()>0) {
+        s += line + "\n";
+      }
     }
     return s;
   }
 
   public void run() {
-    space = new HashMap();
-    generateNumber(space,3 );
+    space = new boolean[SIZE][SIZE];
+    generateNumber(space,20);
 
     boolean fire = true;
     while(fire) {
@@ -116,47 +135,53 @@ public class BeadSort {
 
   public boolean oneStep() {
     boolean fire = false;
-    newSpace = new HashMap();
-    Iterator it = space.values().iterator();
-    while(it.hasNext()) {
-      Bead b = (Bead) it.next();
-      boolean f = gravity(newSpace,b);
-      fire = fire || f ;
+    newSpace = new boolean[SIZE][SIZE];
+    for(int x=0 ; x<SIZE ; x++) {
+      for(int y=0 ; y<SIZE ; y++) {
+        if(space[x][y]) {
+          Integer X = new Integer(x);
+          Integer Y = new Integer(y);
+          Bead b = `bead(pos(X,Y),one);
+          boolean f = gravity(newSpace,b);
+          fire = fire || f ;
+        }
+      }
     }
+
     space=newSpace;
     return fire;
   }
 
     // return true if fire a rule
-  public boolean gravity(HashMap newSpace, Bead b) {
+  public boolean gravity(boolean newSpace[][], Bead b) {
     %match(Bead b) {
       beadNS[s=empty()] -> {
         if(!onGround(b)) {
           Bead newBead = `beadNS(b,empty());
-          newSpace.put(newBead.getPos(),newBead);
-          System.out.println(b + " --> " + newBead);
+          int x = newBead.getPos().getX().intValue();
+          int y = newBead.getPos().getY().intValue();
+          newSpace[x][y] =true;
+          
+          //System.out.println(b + " --> " + newBead);
           return true;
         }
       }
 
-      bead[pos=p] -> {
-        newSpace.put(p,b);
+      bead[pos=pos(X,Y)] -> {
+        newSpace[X.intValue()][Y.intValue()] = true;
         return false;
       }
     }
     return false;
   }
 
-  public void addInteger(HashMap space, int n, int y) {
+  public void addInteger(boolean space[][], int n, int y) {
     for(int i=0 ; i<n ; i++) {
-      Integer X = new Integer(i);
-      Integer Y = new Integer(y);
-      Position p = `pos(X,Y);
-      space.put(p, `bead(p,one));
+      space[i][y] = true;
     }
   }
 
-  public void generateNumber(HashMap space, int max) {
+  public void generateNumber(boolean space[][], int max) {
     int y=0;
     for(int i=1 ; i<=max ; i++) {
       addInteger(space,i,y);
