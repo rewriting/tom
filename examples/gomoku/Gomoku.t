@@ -153,8 +153,10 @@ class Gomoku {
       // 4 -> winning
       // xxxx_
       concPawnList(_*,concPawn(_*,pawn(c),pawn(c),pawn(c),pawn(c),empty(x,y),_*),_*) -> {
+    // `board.analyse(concPawn(_*,pawn(c),pawn(c),pawn(c),pawn(c),value(x,y,value1),_*));
         //if(`c == patternColor)
         `board.addValue(x,y,value1);
+
       }
       // xxx_x
       concPawnList(_*,concPawn(_*,pawn(c),pawn(c),pawn(c),empty(x,y),pawn(c),_*),_*) -> {

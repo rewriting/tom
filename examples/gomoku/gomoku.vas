@@ -1,0 +1,10 @@
+module gomoku
+imports int
+public
+  sorts Pawn PawnList PawnListList
+      
+abstract syntax
+  pawn(color:Int) -> Pawn
+  empty(x:Int,y:Int) -> Pawn
+  concPawn(Pawn*) -> PawnList
+  concPlateList(PawnList*) -> PawnListList
