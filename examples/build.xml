@@ -884,7 +884,6 @@
               <exclude name="gen/**/*"/>
             </fileset>
           </batchtest>
-					<formatter type="plain"/>
         </tomjunit>
 
         <fail if="tests.failed">

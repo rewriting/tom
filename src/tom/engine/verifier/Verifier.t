@@ -61,6 +61,7 @@ public class Verifier extends TomBase {
 			vtot(var:Variable)                       -> Term
 			repr(term:String)                       -> Term
 			subterm(symbol:Symbol,t:Term,index:Int) -> Term
+			slot(symbol:Symbol,t:Term,name:String)  -> Term
 
 			true                                    -> Expr
 			false                                   -> Expr
@@ -100,7 +101,7 @@ public class Verifier extends TomBase {
 				return `build_TermFromExpression(expr);
 			}
 			_ -> {
-				System.out.println("I don't know how to handle this: " + tomterm);
+				System.out.println("build_TermFromTomTerm don't know how to handle this: " + tomterm);
 				return `repr("foirade");
 			}
 		}
@@ -112,32 +113,44 @@ public class Verifier extends TomBase {
 				// we will need to find the head symbol
 				return `subterm(fsymbol("empty"),vtot(var(name.toString())),index);
 			}
+			GetSlot(codomain,Name(symbolName),slotName,Variable[astName=name]) -> {
+				return `slot(fsymbol(symbolName),vtot(var(name.toString())),slotName);
+			}
 			TomTermToExpression(Variable[astName=name]) -> {
 				return `vtot(var(name.toString()));
 			}
 			_ -> {
-				System.out.println("I don't know how to handle this: " + expression);
+				System.out.println("build_TermFromExpression don't know how to handle this: " + expression);
 				return `repr("");
 			}
 		}
 	}
 	
+	public String extract_Name(NameList nl) {
+		%match(NameList nl) {
+			(Name(name)) -> {
+				return `name;
+			}
+		}
+		return nl.toString();
+	}
+
 	public Expr build_ExprFromExpression(Expression expression) {
 		%match(Expression expression) {
 			TrueTL()  -> { return `true(); }
 			FalseTL() -> { return `false(); }
 			EqualFunctionSymbol(type,Variable[astName=name],Appl[nameList=symbolName]) -> {
-				return `isfsym(vtot(var(name.toString())),fsymbol(symbolName.toString()));
+				return `isfsym(vtot(var(name.toString())),fsymbol(extract_Name(symbolName)));
 			}
 			EqualFunctionSymbol(type,term1,Appl[nameList=symbolName]) -> {
-				return `isfsym(build_TermFromTomTerm(term1),fsymbol(symbolName.toString()));
+				return `isfsym(build_TermFromTomTerm(term1),fsymbol(extract_Name(symbolName)));
 			}
 			EqualTerm(type,t1,t2) -> {
 				// TODO, later
 				return `false();
 			}
 			_ -> {
-				System.out.println("I don't know how to handle this: " + expression);
+				System.out.println("build_ExprFromExpression don't know how to handle this: " + expression);
 				return `false();
 			}
 		}
@@ -147,6 +160,9 @@ public class Verifier extends TomBase {
 		%match(Instruction automata) {
 			TargetLanguageToInstruction(_) -> { 
 				// This should be an action
+				return `accept(); 
+			}
+			Return[] -> {
 				return `accept(); 
 			}
 			IfThenElse(cond,ift,iff) -> {
@@ -169,7 +185,7 @@ public class Verifier extends TomBase {
 				return `refuse();
 			}
 			_ -> {
-				System.out.println("I don't know how to handle this : " + automata);
+				System.out.println("build_InstrFromAutomata don't know how to handle this : " + automata);
 				return `refuse();
 			}
 		}
@@ -178,9 +194,11 @@ public class Verifier extends TomBase {
 	public DerivTree build_tree(Instruction automata) {
 		DerivTree tree = null;
 
-		Environment startfrom = `env(concSubstitution(),build_InstrFromAutomata(automata));
+		Environment startfrom = `env(concSubstitution(),
+																 build_InstrFromAutomata(automata));
 
-		System.out.println("Build derivation tree for : " + automata);
+		System.out.println("Build derivation tree for: " + automata);
+		System.out.println("The environment: " + startfrom);
 
 		return tree;
 	}
