@@ -98,5 +98,39 @@ public class TomEnvironment {
     errors = list;
   }
 
+  public boolean checkNoErrors(String taskName, boolean eclipseMode, boolean warningAll, boolean noWarning) {
+    boolean res = true; 
+    TomErrorList errors = getErrors();
+      //System.out.println(errors);
+    int nbTotalError = errors.getLength();
+    int nbWarning = 0, nbError=0;
+    if(nbTotalError > 0 ) {
+      while(!errors.isEmpty()) {
+        TomError error = errors.getHead();
+        if (error.getLevel() == 1) {
+          nbWarning++;
+          if (/*!noWarning || */warningAll && !eclipseMode) {
+            System.out.println(error.getMessage());
+          }
+        } else if (error.getLevel() == 0) {
+          if(!eclipseMode){
+            System.out.println(error.getMessage());
+          }
+          res = false;
+          nbError++;
+        }
+        errors= errors.getTail();
+      }
+      if (nbError>0 && !eclipseMode) {
+        String msg = taskName+":  Encountered " + nbError + " errors and "+ nbWarning+" warnings.";
+        msg += "No file generated.";
+        System.out.println(msg);
+      } else if (nbWarning>0 && !eclipseMode && !noWarning) {
+        String msg = taskName+":  Encountered "+ nbWarning+" warnings.";
+        System.out.println(msg);
+      }
+    }
+    return res;
+  }
 
 }

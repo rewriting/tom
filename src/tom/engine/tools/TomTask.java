@@ -67,17 +67,16 @@ public abstract class TomTask extends TomBase {
   }
 	
   public boolean checkNoErrors() {
-    boolean res = true; 
-    TomErrorList errors = environment().getErrors();
+    return environment().checkNoErrors(name, getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning());
       //System.out.println(errors);
-    int nbTotalError = errors.getLength();
+    /*int nbTotalError = errors.getLength();
     int nbWarning = 0, nbError=0;
     if(nbTotalError > 0 ) {
       while(!errors.isEmpty()) {
         TomError error = errors.getHead();
         if (error.getLevel() == 1) {
           nbWarning++;
-          if (/*!getInput().isNoWarning() || */getInput().isWarningAll() && !getInput().isEclipseMode()) {
+          if (getInput().isWarningAll() && !getInput().isEclipseMode()) {
             System.out.println(error.getMessage());
           }
         } else if (error.getLevel() == 0) {
@@ -98,7 +97,7 @@ public abstract class TomTask extends TomBase {
         System.out.println(msg);
       }
     }
-    return res;
+    return res;*/
   }
 	
   public void finishProcess() {

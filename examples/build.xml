@@ -85,7 +85,6 @@
   <target name="init" if="examples.build">
     <mkdir dir="${examples.build}"/>
     <mkdir dir="${examples.gen}"/>
-    <mkdir dir="."/>
     <!-- Define classpath for building stable and source  -->
     <path id="tom.classpath">
       <fileset dir="${env.TOM_HOME}/lib">
