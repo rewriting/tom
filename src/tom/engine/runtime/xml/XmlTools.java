@@ -68,6 +68,10 @@ public class XmlTools {
     return x2a.convertToNode(filename);
   }
 
+  public Node convertToNode(InputStream is) {
+    return x2a.convertToNode(is);
+  }
+
   public Collection getNodes(TNode n) {
     return x2a.getNodes(n);
   }
@@ -77,6 +81,11 @@ public class XmlTools {
     return x2a.getATerm();
   }
 
+  public ATerm convertXMLToATerm(InputStream is) {
+    x2a.convert(is);
+    return x2a.getATerm();
+  }
+  
   public void printXMLFromATerm(ATerm t) {
     a2x.setWriter(null);
     a2x.setOutputStream(System.out);

@@ -71,6 +71,11 @@ public class XMLToATerm {
     convert(filename);
   }
 
+  public XMLToATerm(InputStream is) {
+    this();
+    convert(is);
+  }
+
   public XMLToATerm(Factory factory,String filename) {
     this(factory);
     convert(filename);
@@ -82,6 +87,10 @@ public class XMLToATerm {
 
   public void convert(String filename) {
     nodeTerm = xmlToATerm(convertToNode(filename));
+  }
+
+  public void convert(InputStream is) {
+    nodeTerm = xmlToATerm(convertToNode(is));
   } 
  
   public void convert(Node node) {
@@ -92,6 +101,27 @@ public class XMLToATerm {
     try {
       DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
       return db.parse(filename);
+    } catch (SAXException e) {
+      System.err.println(e.getMessage());
+      e.printStackTrace();
+    } catch (IOException e) {
+      System.err.println(e.getMessage());
+      e.printStackTrace();
+    } catch (ParserConfigurationException e) {
+      System.err.println(e.getMessage());
+      e.printStackTrace();
+    } catch (FactoryConfigurationError e) {
+      System.err.println(e.getMessage());
+      e.printStackTrace();
+    }
+    System.out.println("We shouldn't be there...");
+    return null;
+  }
+
+    public Node convertToNode(InputStream is) {
+    try {
+      DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      return db.parse(is);
     } catch (SAXException e) {
       System.err.println(e.getMessage());
       e.printStackTrace();
