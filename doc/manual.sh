@@ -3,7 +3,7 @@
 #default is to generate all
 
 usage () {
-        echo "Usage: $name [ -html (HTML cersion only) | -dvips (DVI and PS only) | -all ] " 1>&2
+        echo "Usage: $name [ -html (HTML version only) | -dvips (DVI and PS only) | -all ] " 1>&2
 	exit
 }
 
