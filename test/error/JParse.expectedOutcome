@@ -1,0 +1,5 @@
+Parsing exception catched in file `JParse.t`
+Encountered "}" at line 1, column 10.
+Was expecting:
+    <TOM_IDENTIFIER> ...
+    
