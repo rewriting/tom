@@ -46,5 +46,11 @@
 #(16)
 [a,d,(-a,-c),(-b,-d),(b,c)]
 
-#deMorgan kills canonical
+#deMorgan versus canonical
 [(-(a,b),[a,b]),a,-a,b,-b]
+
+# big example
+# [[(a,b),-a,-b],[(c,[(a,b),-a]),-b,-c]]
+
+# more big example, that does not pass (but the three parts pass separately)
+# [ [(a,b),-a,-b] , [(c,[(a,b),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
