@@ -24,7 +24,9 @@
 */
 
 package jtom.backend;
-  
+ 
+import aterm.*;
+
 import java.io.FileOutputStream;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
