@@ -9,6 +9,8 @@
 
 #4 KO
 [ < a ; [ b , c ] > , d , ( - d , < [ a , b ] ; c > ) ]
+# localSearch: proof = false in 511580 ms
+# proofSearch: proof = false in 113146 ms
 
 #5
 [ < [ < [ d , e , a ]; f > , < - d ; [ - e , - f , b ] > ] ; c > ,
