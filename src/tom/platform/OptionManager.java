@@ -26,16 +26,14 @@
 package tom.platform;
 
 import java.util.*;
+import tom.platform.adt.platformoption.types.PlatformOptionList;
 
 /**
  * Manage the list of option of different plugin but also global option
  * declared in xml configfile
- *
- * @author Gr&eacute;gory ANDRIEN
  */
-
 public interface OptionManager {
-
+  
   /**
    * An optionManager can be initialized with the intermediate of a
    * ConfigurationManager and a commandLine string
@@ -48,7 +46,11 @@ public interface OptionManager {
    */
   public int initialize(ConfigurationManager confManager,String[] commandLine);
   
-    
+  /**
+   * set the global PlatformOptionList   
+   */
+  public void setGlobalOptionList(PlatformOptionList optionList);
+
   /**
    *
    * The Option manager is the only able to extract the input file name list 

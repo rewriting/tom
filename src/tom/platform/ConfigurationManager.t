@@ -75,9 +75,6 @@ public class ConfigurationManager {
   /** The plugins instance list*/
   private List pluginsList;
 
-  /** The global options */    
-  private PlatformOptionList globalOptions;
-
   /** The OptionManager */
   private OptionManager optionManager;
   
@@ -123,11 +120,6 @@ public class ConfigurationManager {
   /** Accessor method */
   public OptionManager  getOptionManager() {
     return optionManager;
-  }
-  
-  /** Accessor method */
-  public PlatformOptionList getGlobalOptionList() {
-    return globalOptions;
   }
   
   /** 
@@ -205,7 +197,6 @@ public class ConfigurationManager {
   private int createOptionManager(TNode node) {
     %match(TNode node) {
       <platform><optionmanager class=omclass>opt@<options></options></optionmanager></platform> -> {
-        globalOptions = OptionParser.xmlNodeToOptionList(`opt);
         try {
           Object omInstance = Class.forName(omclass).newInstance();
           if(omInstance instanceof OptionManager) {
@@ -225,6 +216,8 @@ public class ConfigurationManager {
           optionManager = null;
           return 1;
         }
+        PlatformOptionList globalOptions = OptionParser.xmlNodeToOptionList(`opt);
+        optionManager.setGlobalOptionList(globalOptions);
         return 0;
       }
     }

@@ -82,6 +82,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     mapNameToOption = new HashMap();
     mapShortNameToName = new HashMap();
     inputFileList = new ArrayList();
+    globalOptions = `emptyPlatformOptionList();
   }
 
   /**
@@ -94,15 +95,22 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * </ul>
    */
   public int initialize(ConfigurationManager confManager, String[] commandLine) {
-    List optionOwnerList = new ArrayList(confManager.getPluginsList());
+    List pluginList = confManager.getPluginsList();
+    List optionOwnerList = new ArrayList(pluginList);
     optionOwnerList.add(this);
-    this.globalOptions = confManager.getGlobalOptionList();    
-    collectOptions(optionOwnerList, confManager.getPluginsList());
+    collectOptions(optionOwnerList, pluginList);
     this.inputFileList = processArguments(commandLine);
     if(this.inputFileList == null) {
       return 1;
     }
     return checkAllOptionsDepedencies(optionOwnerList);
+  }
+  
+  /**
+   * Inherited from OptionManager interface
+   */
+  public void setGlobalOptionList(PlatformOptionList globalOptions) {
+    this.globalOptions = globalOptions;
   }
 
   /**

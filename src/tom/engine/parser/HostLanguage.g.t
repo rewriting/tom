@@ -45,7 +45,8 @@ import jtom.tools.SymbolTable;
 import aterm.*;
 import antlr.TokenStreamSelector;
 import tom.platform.OptionManager;
-import tom.platform.PlatformLogRecord	;
+import tom.platform.PluginPlatform;
+import tom.platform.PlatformLogRecord;
 import vas.Vas;
 }
 class HostParser extends Parser;
@@ -422,14 +423,17 @@ signature [LinkedList list] throws TomException
     }
     vasParams.add("--package");
     vasParams.add(subPackageName);
-    Object[] vasCallResult = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode)); 
-    if(vasCallResult == null) {
-    	throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
-    }
-    
-    generatedADTName = (String)vasCallResult[0];
-    // Check for errors
-    //TODO
+    PluginPlatform vasPlatform = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode));
+		if(vasPlatform == null) {
+			throw new TomException(TomMessage.getMessage("VasPlatformFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
+		}
+		int vasResult = vasPlatform.run();
+		if(vasResult != 0) {
+			//System.out.println(platform.getAlertForInput().toString());
+			throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
+		}
+		
+		generatedADTName = (String)vasPlatform.getLastGeneratedObjects().get(0);
     if(generatedADTName == null) {
     	throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
     }
