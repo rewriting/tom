@@ -57,9 +57,6 @@ public class PluginPlatform {
   /** The List of reference to plugins. */
   private List pluginsList;
     
-  /** The option manager */
-  private OptionManager optionManager;
-	
   /** The status handler */
   private StatusHandler statusHandler;
 
@@ -73,10 +70,8 @@ public class PluginPlatform {
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
     statusHandler = new StatusHandler();
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
-    inputToCompileList = new ArrayList();
     pluginsList = confManager.getPluginsList();
-    optionManager = confManager.getOptionManager();
-    inputToCompileList = optionManager.getInputToCompileList();
+    inputToCompileList = confManager.getOptionManager().getInputToCompileList();
   }
   
   /**

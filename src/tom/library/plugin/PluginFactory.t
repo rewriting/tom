@@ -221,7 +221,7 @@ public class PluginFactory implements Plugin {
   /**
    * From OptionOwner interface inherited from Plugin interface
    */
-  public void setOption(String optionName, Object optionValue) {
+  public void optionChanged(String optionName, Object optionValue) {
     getOM().setOptionValue(optionName, optionValue);
     
     if(optionValue.equals(Boolean.TRUE)) {

@@ -212,27 +212,8 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * @param optionName the option's name
    * @param optionValue the option's value
    */
-  public void setOption(String optionName, Object optionValue) {
-    setOptionValue(optionName, optionValue);
+  public void optionChanged(String optionName, Object optionValue) {
   }
-
-  /*public void printAlertMessage(int errorsAtStart, int warningsAtStart) {
-    if(!getOptionBooleanValue("eclipse")) {
-      
-      int nbOfErrors   = statusHandler.nbOfErrors()   - errorsAtStart;
-      int nbOfWarnings = statusHandler.nbOfWarnings() - warningsAtStart;
-
-      if( nbOfErrors > 0 ) {
-        getLogger().log( Level.SEVERE, "TaskErrorMessage",
-                    new Object[]{pluginName, 
-                                 new Integer(nbOfErrors), 
-                                 new Integer(nbOfWarnings)});
-      } else if( nbOfWarnings > 0 ) {
-        getLogger().log( Level.INFO, "TaskWarningMessage",
-                    new Object[]{pluginName, new Integer(nbOfWarnings)});
-      }
-    }
-    }*/
 
   private void findStatusHandler() {
     Handler[] handlers = Logger.getLogger(Tom.LOG_RADICAL).getHandlers();
