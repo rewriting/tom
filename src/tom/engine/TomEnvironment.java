@@ -149,9 +149,9 @@ public class TomEnvironment
     if(instance == null) {
       instance = new TomEnvironment();
 
-      instance.tomSignatureFactory = TomSignatureFactory.getInstance(PureFactorySingleton.getInstance());
+      instance.tomSignatureFactory = TomSignatureFactory.getInstance(SingletonFactory.getInstance());
       instance.astFactory = new ASTFactory(instance.tomSignatureFactory);
-      instance.optionsFactory = OptionsFactory.getInstance(PureFactorySingleton.getInstance());
+      instance.optionsFactory = OptionsFactory.getInstance(SingletonFactory.getInstance());
 		
       instance.symbolTable = new SymbolTable(instance.astFactory);
 
@@ -184,6 +184,14 @@ public class TomEnvironment
     instance.symbolTable.init();
     instance.errors = instance.tomSignatureFactory.makeTomAlertList();
     instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
+		instance.destDir = null;
+		instance.inputFile = null;
+		instance.outputFile = null;
+		instance.userOutputFile = null;
+		instance.packagePath = null;
+		instance.eclipseMode = false;
+		instance.inputSuffix = ".t";
+		instance.outputSuffix = ".java";
   }
 
     public void updateEnvironment(String localInputFileName) // updateInputOutputFiles + init

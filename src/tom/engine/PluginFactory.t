@@ -9,7 +9,6 @@ import jtom.adt.options.*;
 import jtom.adt.options.types.*;
 
 import jtom.runtime.xml.*;
-import jtom.tools.PureFactorySingleton;
 
 import aterm.*;
 import aterm.pure.*;
@@ -56,7 +55,7 @@ public class PluginFactory implements TomPlugin {
   }
 
   private OptionsFactory getOptionsFactory() {
-    return OptionsFactory.getInstance(PureFactorySingleton.getInstance());
+    return OptionsFactory.getInstance(SingletonFactory.getInstance());
   }
 
   private OptionManager getOM() { return TomServer.getInstance().getOptionManager(); }

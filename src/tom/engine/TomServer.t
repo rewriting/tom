@@ -10,8 +10,6 @@ import jtom.exception.*;
 
 import jtom.runtime.xml.*;
 
-import jtom.tools.*;
-
 import aterm.*;
 import aterm.pure.*;
 
@@ -109,7 +107,7 @@ public class TomServer {
       instance = new TomServer();
         
       instance.instances = new ArrayList();
-      instance.tNodeFactory = TNodeFactory.getInstance(PureFactorySingleton.getInstance());
+      instance.tNodeFactory = TNodeFactory.getInstance(SingletonFactory.getInstance());
       instance.environment = TomEnvironment.create();
       instance.optionManager = new TomOptionManager();
 	
@@ -294,7 +292,7 @@ public class TomServer {
     for(int i = 0; i < inputFiles.length; i++) {
       environment.updateEnvironment(inputFiles[i]);
       //System.out.println(inputFiles[i]);
-      ATerm term = (PureFactorySingleton.getInstance()).makeAFun(inputFiles[i],0,false);
+      ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
       
       // runs the modules
       it = instances.iterator();

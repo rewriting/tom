@@ -41,7 +41,6 @@ import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;
 import aterm.*;
 import aterm.pure.*;
-import jtom.tools.PureFactorySingleton;
 import jtom.exception.TomRuntimeException;
 
 public class ATermToXML {
@@ -57,7 +56,7 @@ public class ATermToXML {
   }
 
   public ATermToXML () {
-    factory = TNodeFactory.getInstance(PureFactorySingleton.getInstance());
+    factory = TNodeFactory.getInstance(SingletonFactory.getInstance());
   }
 
   public ATermToXML (TNodeFactory factory) {
