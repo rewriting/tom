@@ -47,7 +47,7 @@ import tom.platform.PluginPlatformFactory;
 public class Tom {
   
   /** The current version of the TOM compiler. */
-  public final static String VERSION = "2.1-rc3 (src)";
+  public final static String VERSION = "2.1";
   
   /** Log radical string*/
   public final static String LOG_RADICAL = "jtom";

@@ -1,8 +1,8 @@
-Tom 2.1 release candidate announcement
---------------------------------------
+Tom 2.1 announcement
+--------------------
 
 It is my great privilege and pleasure to announce the availability of
-Tom version 2.1-rc2.
+Tom version 2.1.
 
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into C and Java.

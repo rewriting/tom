@@ -388,7 +388,7 @@ public class TomTask extends MatchingTask {
 
 	/**
 	 * If true, generates  protected functions instead of private
-	 * @param protected if true generates  protected functions instead of private
+	 * @param flag if true generates  protected functions instead of private
 	 */
 	public void setProtected(boolean flag) {
 		this.protectedFlag = flag;

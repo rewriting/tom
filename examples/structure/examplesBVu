@@ -1,15 +1,14 @@
 #1 
 [ < [ a , b ] ; c > , < - a ; [ - b , - c ] > ]
-# proofSearch : proof = true in 962 ms
+# proofSearch : proof = true in 164 ms
    
 #2
-[ < [ a , ( b , - a ) ] ; ( c , d ) > , ( e , < - b ; - c >) , - d ]
-# seems to be false
-# localSearch: >512Mo
+[ < [ a , ( b , - a ) ] ; ( c , d ) > , -e, ( e , < - b ; - c >) , - d ]
+# localSearch: true in 5584 ms
 
 #3 
 [ - a , < a ; d ; - b > , < b ; e ; - c > , c , < - d ; - e > ]
-# localSearch: >512Mo
+# localSearch: proof = true in 1033501 ms
 # proofSearch: >512Mo
 
 #4 
@@ -19,7 +18,7 @@
 
 #4 bis
 [ < a ; [ b , c ] > , d , ( - d , < [ -a , -b ] ; -c > ) ]
-# localSearch: proof = true in 40482 ms
+# localSearch: proof = true in 1103 ms
 # proofSearch: proof = true in 61035 ms
 
 #5
@@ -28,7 +27,7 @@
 
 #6
 [ < c ; [ - a , d ]  > , ( a , b ) , e , < - e ; [ - c , ( - b , - d ) ] > ]
-# localSearch: >512Mo
+# localSearch: >1024Mo
 
 # simple example for BVu
 [a,[< a ; [c,- a] >,< - a ; - c >]]

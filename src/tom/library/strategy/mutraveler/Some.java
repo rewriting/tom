@@ -15,8 +15,6 @@ import jjtraveler.VisitFailure;
  * Note that side-effects of failing visits to children are not
  * undone.
  *
- * @author Arie van Deursen. Based on One.java
- * @date December 2002.
  */
 
 public class Some extends AbstractVisitableVisitor {

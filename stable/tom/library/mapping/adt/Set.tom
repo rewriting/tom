@@ -14,17 +14,12 @@
   get_implementation(t) {t}
 }
 
-%op JGTreeSet emptySet {
+%op JGTreeSet branch(left:JGTreeSet, right:JGTreeSet) {
   fsym {}
-  is_fsym(t) { (t!= null) && t.isEmptySet()}
-  make() { getSetFactory().makeJGTreeSet_EmptySet()}
-}
-
-%op JGTreeSet singleton(value:ATerm) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isSingleton()}
-  get_slot(value,t) { t.getValue()}
-  make(t0) { getSetFactory().makeJGTreeSet_Singleton(t0)}
+  is_fsym(t) { (t!= null) && t.isBranch()}
+  get_slot(left,t) { t.getLeft()}
+  get_slot(right,t) { t.getRight()}
+  make(t0, t1) { getSetFactory().makeJGTreeSet_Branch(t0, t1)}
 }
 
 %op JGTreeSet pair(value:ATerm, multiplicity:int) {
@@ -35,11 +30,16 @@
   make(t0, t1) { getSetFactory().makeJGTreeSet_Pair(t0, t1)}
 }
 
-%op JGTreeSet branch(left:JGTreeSet, right:JGTreeSet) {
+%op JGTreeSet singleton(value:ATerm) {
   fsym {}
-  is_fsym(t) { (t!= null) && t.isBranch()}
-  get_slot(left,t) { t.getLeft()}
-  get_slot(right,t) { t.getRight()}
-  make(t0, t1) { getSetFactory().makeJGTreeSet_Branch(t0, t1)}
+  is_fsym(t) { (t!= null) && t.isSingleton()}
+  get_slot(value,t) { t.getValue()}
+  make(t0) { getSetFactory().makeJGTreeSet_Singleton(t0)}
+}
+
+%op JGTreeSet emptySet {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isEmptySet()}
+  make() { getSetFactory().makeJGTreeSet_EmptySet()}
 }
 
