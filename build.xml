@@ -166,8 +166,14 @@
   <!-- builds and defines the custom tasks -->
   <!-- tasks for building src -->
   <target name="initTaskDef" depends="stable">
-    <taskdef name="adt" classname="jtom.tools.ant.ApigenTask" classpathref="tom.classpath"/>
-    <taskdef name="tom" classname="jtom.tools.ant.TomTask">
+		<fail unless="javaccdir" 
+					message="javaccdir has to be specified in the local.properties file">
+		</fail>
+    <taskdef name="adt" 
+						 classname="jtom.tools.ant.ApigenTask" 
+						 classpathref="tom.classpath"/>
+    <taskdef name="tom" 
+						 classname="jtom.tools.ant.TomTask">
       <classpath refid="tom.classpath"/>
     </taskdef>
   </target>
@@ -313,6 +319,10 @@
 
   <target name="dist.common" 
           description="Prepare common part of distribution">
+		<fail unless="tomdocdir"
+					message="You have to specify tomdocdir in your local.properties
+					file in order to build distributions">
+		</fail>
     <!-- "tom README and INSTALL" -->
     
 		<copy todir="${dest}" file="README"/>
