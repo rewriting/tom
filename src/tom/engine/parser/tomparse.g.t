@@ -25,6 +25,7 @@ class NewTomParser extends Parser;
 
 options{
     k=1; // the lookahead value during parsing
+    defaultErrorHandler = false;
 }
 
 
@@ -1486,10 +1487,6 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                                 Name(typeArg.getText()),
                                 type,emptyConstraintList()
                             ));
-                        
-                        //args = `concTomTerm(
-                        //    Variable(option1,Name(typeArg.getText()),type,emptyConstraintList() )
-                        //);
                     }
                     ( 
                         COMMA nameArg:ID
@@ -1507,10 +1504,6 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                                     Name(nameArg.getText()),
                                     type,emptyConstraintList()
                                 ));
-                            
-                         //   args = `concTomTerm(
-                           //     Variable(option2,Name(nameArg.getText()),type,emptyConstraintList() )
-                           // );
                         }
                     )*
                 )? 

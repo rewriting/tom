@@ -20,21 +20,12 @@ public class TomMainParser extends TomGenericPlugin implements TomPlugin {
     %include {  ../adt/TomSignature.tom }
     %include{ Options.tom }
     
-    //  private TomTerm term;
-    // private TomOptionList myOptions;
-    /*
-    private HashSet includedFileSet;
-    private HashSet alreadyParsedFileSet;
-    */
     public static final String PARSED_SUFFIX = ".tfix.parsed"; // was previously in TomTaskInput
     public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table"; // was previously in TomTaskInput
     public static final String DEBUG_TABLE_SUFFIX = ".tfix.debug.table"; // was previously in TomTaskInput
 
     protected static String currentFile;
     
-    // a selector to choose the lexer to use
-    //  protected static TokenStreamSelector selector = new TokenStreamSelector();
-
     private NewTargetParser parser = null;
     
     public TomMainParser(){
@@ -47,42 +38,19 @@ public class TomMainParser extends TomGenericPlugin implements TomPlugin {
     }
 
     
-
     protected static NewTargetParser newParser(String fileName) throws FileNotFoundException,IOException{
 	//	try{
 	HashSet includedFiles = new HashSet();
 	HashSet alreadyParsedFiles = new HashSet();
 	
 	return newParser(fileName,includedFiles,alreadyParsedFiles);
-	    
-	    /*  DataInputStream input = new DataInputStream(new FileInputStream(new File(currentFile)));
-	    
-	    // a selector to choose the lexer to use
-	    TokenStreamSelector selector = new TokenStreamSelector();
-
-	    // create a lexer for target mode
-	    NewTargetLexer targetlexer = new NewTargetLexer(input);
-	    // create a lexer for tom mode
-	    NewTomLexer tomlexer = new NewTomLexer(targetlexer.getInputState());
-	    // create a lexer for backquote mode
-	    NewBQLexer bqlexer = new NewBQLexer(targetlexer.getInputState());
-	    
-	    // notify selector about various lexers
-	    selector.addInputStream(targetlexer,"targetlexer");
-	    selector.addInputStream(tomlexer, "tomlexer");
-	    selector.addInputStream(bqlexer, "bqlexer");
-	    selector.select("targetlexer");
-	    
-	    // create the parser for target mode
-	    // also create other parsers
-	    return new NewTargetParser(selector,includedFiles,alreadyParsedFiles);*/
-	    //}
-	
     }
 
+    //create new parsers
     protected static NewTargetParser newParser(String fileName,HashSet includedFiles,HashSet alreadyParsedFiles) 
 	throws FileNotFoundException,IOException {
 	
+	// The input Stream
 	DataInputStream input = new DataInputStream(new FileInputStream(new File(fileName)));
 	    
 	// a selector to choose the lexer to use
@@ -102,29 +70,8 @@ public class TomMainParser extends TomGenericPlugin implements TomPlugin {
 	selector.select("targetlexer");
 	
 	// create the parser for target mode
-	// also create other parsers
+	// also create tom parser and backquote parser
 	return new NewTargetParser(selector,fileName,includedFiles,alreadyParsedFiles);
-    }
-
-    public TomTerm startParsing() throws TomException{
-	try{
-	    return parser.input();
-	}
-	catch(TokenStreamException e){
-	    environment().messageError(TomMessage.getString("TokenStreamException"), new Object[]{e.getMessage()}, 
-				       currentFile,  getLineFromTomParser());
-	}
-	catch(antlr.RecognitionException e){
-	    environment().messageError(TomMessage.getString("RecognitionException"), new Object[]{e.getMessage()}, 
-				       currentFile,  getLineFromTomParser());
-	}
-	return null;
-    }
-
-
-    private static boolean testIncludedFile(String currentFile, HashSet fileSet) {
-	// !(true) if the set did not already contain the specified element.
-	return !fileSet.add(currentFile);
     }
     
     public void run(){
@@ -183,26 +130,24 @@ public class TomMainParser extends TomGenericPlugin implements TomPlugin {
 		environment().clearWarnings();
 	    } 
 	}
-	
- 	/*catch (TokenMgrError e){
-	    environment().messageError(TomMessage.getString("TokenMgrError"), new Object[]{e.getMessage()}, 
-				       currentFile,  getLineFromTomParser(parser));
-				       } */
-	
-	/*	catch (TomIncludeException e){
-	    environment().messageError(e.getMessage(), currentFile,  getLineFromTomParser(parser));
-	    }*/
-	/* 	catch (TomException e){
-	    environment().messageError(e.getMessage(), currentFile,  getLineFromTomParser(parser));
-	    }*/
+	catch (TokenStreamException e){
+	    environment().messageError(TomMessage.getString("TokenStreamException"), new Object[]{e.getMessage()}, 
+					   currentFile,  getLineFromTomParser());
+	}
+	catch (RecognitionException e){
+	    environment().messageError(TomMessage.getString("RecognitionException"), new Object[]{e.getMessage()}, 
+					   currentFile, getLineFromTomParser());
+	}
+	catch (TomIncludeException e){
+	    environment().messageError(e.getMessage(), currentFile,  getLineFromTomParser());
+	}
+	catch (TomException e){
+	    environment().messageError(e.getMessage(), currentFile,  getLineFromTomParser());
+	}
  	catch (FileNotFoundException e){
 	    environment().messageError(TomMessage.getString("FileNotFound"), new Object[]{currentFile}, 
 				       currentFile, getLineFromTomParser());
-	} /*
- 	catch (ParseException e){
-	    environment().messageError(TomMessage.getString("ParseException"), new Object[]{e.getMessage()}, 
-				       currentFile, getLineFromTomParser(parser));
-				       } */
+	} 
 	catch (Exception e){
 	    e.printStackTrace();
 	    environment().messageError(TomMessage.getString("UnhandledException"), 

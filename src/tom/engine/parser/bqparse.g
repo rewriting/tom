@@ -60,7 +60,7 @@ bqCode [LinkedList list]
             bqCode[list] 
             r:BQ_RPAREN {list.add(r);}
         |   any[list]
-        |   t:ANY {list.add(t);p("-----"+t);}
+        |   t:ANY {list.add(t);}
         )*
     ;
 
@@ -100,7 +100,7 @@ targetCode returns [Token result]
     |   str:BQ_STRING {result = str;}
     |   r:BQ_RPAREN {result = r;}
     |   m:BQ_MINUS {result = m;}
-    |   a:ANY {result = a;p(a.toString());}
+    |   a:ANY {result = a;}
     ;
 
 bqTargetAppl [LinkedList list] returns [TomTerm result]

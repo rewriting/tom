@@ -23,6 +23,10 @@ header{
 
 class NewTargetParser extends Parser;
 
+options{
+    defaultErrorHandler = false;
+}
+
 
 {
     //--------------------------
@@ -71,27 +75,6 @@ class NewTargetParser extends Parser;
         return currentFile;
     }
     
-/*
-    public void init(){
-        tomparser = new NewTomParser(getInputState(),this);
-    }*/
-
-
-
-/*
-    public static NewTargetParser createTargetParser(TokenStreamSelector selector){
-        NewTargetParser targetparser = new NewTargetParser(selector);
-//        this(selector);
-        tomparser = NewTomParser.createNewTomParser(this.getInputState(),this);
-    }*/
-/*
-    public NewTargetParser(TokenStreamSelector selector){
-        super(selector);
-//        this.filename = filename;
-        symbolTable().init();
-        tomparser = new NewTomParser(getInputState(),this);
-    }*/
-
     public TomServer getServer(){
         return TomServer.getInstance();
     }
