@@ -143,12 +143,12 @@
 	<target name="check.newer.adt">
 		<condition property="newer.adt">
 			<or>
-				<not><available file="${src.adt}/jtom/adt/"/></not>
-				<not><available file="${src.adt}/jtom/adt/"/></not>
-				<not><available file="${src.adt}/jtom/adt/"/></not>
-				<uptodate targetfile="${src.adt}/TomSignature.adt" srcfile="${src.adt}/jtom/adt/"/>
-				<uptodate targetfile="${src.adt}/TNode.adt" srcfile="${src.adt}/jtom/adt/"/>
-				<uptodate targetfile="${src.adt}/Set.adt" srcfile="${src.adt}/jtom/adt/"/>
+				<not><available file="${src.adt}/TomSignature.tom"/></not>
+				<not><available file="${src.adt}/TNode.tom"/></not>
+				<not><available file="${src.adt}/Set.tom"/></not>
+				<uptodate targetfile="${src.adt}/TomSignature.adt" srcfile="${src.adt}/TomSignature.tom"/>
+				<uptodate targetfile="${src.adt}/TNode.adt" srcfile="${src.adt}/TNode.tom"/>
+				<uptodate targetfile="${src.adt}/Set.adt" srcfile="${src.adt}/Set.tom"/>
 			</or>
 		</condition>
 	</target>
@@ -158,15 +158,20 @@
 		<adt file="${src.adt}/TomSignature.adt" 
 				 factory="TomSignature" 
 				 package="jtom.adt" 
-				 destdir="${src.adt}"/>
+				 destdir="${src.src}"/>
 		<adt file="${src.adt}/TNode.adt" 
 				 factory="TNode" 
 				 package="jtom.adt" 
-				 destdir="${src.adt}"/>
+				 destdir="${src.src}"/>
 		<adt file="${src.adt}/Set.adt" 
 				 factory="Set" 
 				 package="jtom.adt" 
-				 destdir="${src.adt}"/>
+				 destdir="${src.src}"/>
+    <move todir="${src.adt}">
+      <fileset dir="${src.src}">
+        <include name="*.tom"/>
+      </fileset>
+    </move>
 	</target>
 
 	<target name="buildsrc" description="compile the TOM development sources" depends="preparesrc">
