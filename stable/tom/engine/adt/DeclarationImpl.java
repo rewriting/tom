@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class DeclarationImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
   }
   public boolean isEqual(Declaration peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortDeclaration()  {
     return true;
@@ -240,202 +238,202 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
 
   public TomName getAstName()
   {
-     throw new RuntimeException("This Declaration has no AstName");
+     throw new UnsupportedOperationException("This Declaration has no AstName");
   }
 
   public Declaration setAstName(TomName _astName)
   {
-     throw new RuntimeException("This Declaration has no AstName");
+     throw new IllegalArgumentException("Illegal argument: " + _astName);
   }
 
   public TomList getKeywordList()
   {
-     throw new RuntimeException("This Declaration has no KeywordList");
+     throw new UnsupportedOperationException("This Declaration has no KeywordList");
   }
 
   public Declaration setKeywordList(TomList _keywordList)
   {
-     throw new RuntimeException("This Declaration has no KeywordList");
+     throw new IllegalArgumentException("Illegal argument: " + _keywordList);
   }
 
   public Option getOrgTrack()
   {
-     throw new RuntimeException("This Declaration has no OrgTrack");
+     throw new UnsupportedOperationException("This Declaration has no OrgTrack");
   }
 
   public Declaration setOrgTrack(Option _orgTrack)
   {
-     throw new RuntimeException("This Declaration has no OrgTrack");
+     throw new IllegalArgumentException("Illegal argument: " + _orgTrack);
   }
 
   public TomTerm getTermArg()
   {
-     throw new RuntimeException("This Declaration has no TermArg");
+     throw new UnsupportedOperationException("This Declaration has no TermArg");
   }
 
   public Declaration setTermArg(TomTerm _termArg)
   {
-     throw new RuntimeException("This Declaration has no TermArg");
+     throw new IllegalArgumentException("Illegal argument: " + _termArg);
   }
 
   public TargetLanguage getTlCode()
   {
-     throw new RuntimeException("This Declaration has no TlCode");
+     throw new UnsupportedOperationException("This Declaration has no TlCode");
   }
 
   public Declaration setTlCode(TargetLanguage _tlCode)
   {
-     throw new RuntimeException("This Declaration has no TlCode");
+     throw new IllegalArgumentException("Illegal argument: " + _tlCode);
   }
 
   public TomTerm getVariable()
   {
-     throw new RuntimeException("This Declaration has no Variable");
+     throw new UnsupportedOperationException("This Declaration has no Variable");
   }
 
   public Declaration setVariable(TomTerm _variable)
   {
-     throw new RuntimeException("This Declaration has no Variable");
+     throw new IllegalArgumentException("Illegal argument: " + _variable);
   }
 
   public TomName getSlotName()
   {
-     throw new RuntimeException("This Declaration has no SlotName");
+     throw new UnsupportedOperationException("This Declaration has no SlotName");
   }
 
   public Declaration setSlotName(TomName _slotName)
   {
-     throw new RuntimeException("This Declaration has no SlotName");
+     throw new IllegalArgumentException("Illegal argument: " + _slotName);
   }
 
   public TomTerm getSymbolArg1()
   {
-     throw new RuntimeException("This Declaration has no SymbolArg1");
+     throw new UnsupportedOperationException("This Declaration has no SymbolArg1");
   }
 
   public Declaration setSymbolArg1(TomTerm _symbolArg1)
   {
-     throw new RuntimeException("This Declaration has no SymbolArg1");
+     throw new IllegalArgumentException("Illegal argument: " + _symbolArg1);
   }
 
   public TomTerm getSymbolArg2()
   {
-     throw new RuntimeException("This Declaration has no SymbolArg2");
+     throw new UnsupportedOperationException("This Declaration has no SymbolArg2");
   }
 
   public Declaration setSymbolArg2(TomTerm _symbolArg2)
   {
-     throw new RuntimeException("This Declaration has no SymbolArg2");
+     throw new IllegalArgumentException("Illegal argument: " + _symbolArg2);
   }
 
   public TomTerm getTermArg1()
   {
-     throw new RuntimeException("This Declaration has no TermArg1");
+     throw new UnsupportedOperationException("This Declaration has no TermArg1");
   }
 
   public Declaration setTermArg1(TomTerm _termArg1)
   {
-     throw new RuntimeException("This Declaration has no TermArg1");
+     throw new IllegalArgumentException("Illegal argument: " + _termArg1);
   }
 
   public TomTerm getTermArg2()
   {
-     throw new RuntimeException("This Declaration has no TermArg2");
+     throw new UnsupportedOperationException("This Declaration has no TermArg2");
   }
 
   public Declaration setTermArg2(TomTerm _termArg2)
   {
-     throw new RuntimeException("This Declaration has no TermArg2");
+     throw new IllegalArgumentException("Illegal argument: " + _termArg2);
   }
 
   public TomTerm getVar()
   {
-     throw new RuntimeException("This Declaration has no Var");
+     throw new UnsupportedOperationException("This Declaration has no Var");
   }
 
   public Declaration setVar(TomTerm _var)
   {
-     throw new RuntimeException("This Declaration has no Var");
+     throw new IllegalArgumentException("Illegal argument: " + _var);
   }
 
   public TargetLanguage getTlcode()
   {
-     throw new RuntimeException("This Declaration has no Tlcode");
+     throw new UnsupportedOperationException("This Declaration has no Tlcode");
   }
 
   public Declaration setTlcode(TargetLanguage _tlcode)
   {
-     throw new RuntimeException("This Declaration has no Tlcode");
+     throw new IllegalArgumentException("Illegal argument: " + _tlcode);
   }
 
   public TomTerm getVarElt()
   {
-     throw new RuntimeException("This Declaration has no VarElt");
+     throw new UnsupportedOperationException("This Declaration has no VarElt");
   }
 
   public Declaration setVarElt(TomTerm _varElt)
   {
-     throw new RuntimeException("This Declaration has no VarElt");
+     throw new IllegalArgumentException("Illegal argument: " + _varElt);
   }
 
   public TomTerm getVarList()
   {
-     throw new RuntimeException("This Declaration has no VarList");
+     throw new UnsupportedOperationException("This Declaration has no VarList");
   }
 
   public Declaration setVarList(TomTerm _varList)
   {
-     throw new RuntimeException("This Declaration has no VarList");
+     throw new IllegalArgumentException("Illegal argument: " + _varList);
   }
 
   public TomTerm getKid1()
   {
-     throw new RuntimeException("This Declaration has no Kid1");
+     throw new UnsupportedOperationException("This Declaration has no Kid1");
   }
 
   public Declaration setKid1(TomTerm _kid1)
   {
-     throw new RuntimeException("This Declaration has no Kid1");
+     throw new IllegalArgumentException("Illegal argument: " + _kid1);
   }
 
   public TomTerm getKid2()
   {
-     throw new RuntimeException("This Declaration has no Kid2");
+     throw new UnsupportedOperationException("This Declaration has no Kid2");
   }
 
   public Declaration setKid2(TomTerm _kid2)
   {
-     throw new RuntimeException("This Declaration has no Kid2");
+     throw new IllegalArgumentException("Illegal argument: " + _kid2);
   }
 
   public TomTerm getVarSize()
   {
-     throw new RuntimeException("This Declaration has no VarSize");
+     throw new UnsupportedOperationException("This Declaration has no VarSize");
   }
 
   public Declaration setVarSize(TomTerm _varSize)
   {
-     throw new RuntimeException("This Declaration has no VarSize");
+     throw new IllegalArgumentException("Illegal argument: " + _varSize);
   }
 
   public TomType getAstType()
   {
-     throw new RuntimeException("This Declaration has no AstType");
+     throw new UnsupportedOperationException("This Declaration has no AstType");
   }
 
   public Declaration setAstType(TomType _astType)
   {
-     throw new RuntimeException("This Declaration has no AstType");
+     throw new IllegalArgumentException("Illegal argument: " + _astType);
   }
 
   public TomList getArgs()
   {
-     throw new RuntimeException("This Declaration has no Args");
+     throw new UnsupportedOperationException("This Declaration has no Args");
   }
 
   public Declaration setArgs(TomList _args)
   {
-     throw new RuntimeException("This Declaration has no Args");
+     throw new IllegalArgumentException("Illegal argument: " + _args);
   }
 
 }

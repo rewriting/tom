@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class InstructionImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class InstructionImpl extends TomSignatureConstructor
   }
   public boolean isEqual(Instruction peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortInstruction()  {
     return true;
@@ -120,82 +118,82 @@ abstract public class InstructionImpl extends TomSignatureConstructor
 
   public Expression getCondition()
   {
-     throw new RuntimeException("This Instruction has no Condition");
+     throw new UnsupportedOperationException("This Instruction has no Condition");
   }
 
   public Instruction setCondition(Expression _condition)
   {
-     throw new RuntimeException("This Instruction has no Condition");
+     throw new IllegalArgumentException("Illegal argument: " + _condition);
   }
 
   public TomList getSuccesList()
   {
-     throw new RuntimeException("This Instruction has no SuccesList");
+     throw new UnsupportedOperationException("This Instruction has no SuccesList");
   }
 
   public Instruction setSuccesList(TomList _succesList)
   {
-     throw new RuntimeException("This Instruction has no SuccesList");
+     throw new IllegalArgumentException("Illegal argument: " + _succesList);
   }
 
   public TomList getFailureList()
   {
-     throw new RuntimeException("This Instruction has no FailureList");
+     throw new UnsupportedOperationException("This Instruction has no FailureList");
   }
 
   public Instruction setFailureList(TomList _failureList)
   {
-     throw new RuntimeException("This Instruction has no FailureList");
+     throw new IllegalArgumentException("Illegal argument: " + _failureList);
   }
 
   public TomList getInstList()
   {
-     throw new RuntimeException("This Instruction has no InstList");
+     throw new UnsupportedOperationException("This Instruction has no InstList");
   }
 
   public Instruction setInstList(TomList _instList)
   {
-     throw new RuntimeException("This Instruction has no InstList");
+     throw new IllegalArgumentException("Illegal argument: " + _instList);
   }
 
   public TomTerm getKid1()
   {
-     throw new RuntimeException("This Instruction has no Kid1");
+     throw new UnsupportedOperationException("This Instruction has no Kid1");
   }
 
   public Instruction setKid1(TomTerm _kid1)
   {
-     throw new RuntimeException("This Instruction has no Kid1");
+     throw new IllegalArgumentException("Illegal argument: " + _kid1);
   }
 
   public Expression getSource()
   {
-     throw new RuntimeException("This Instruction has no Source");
+     throw new UnsupportedOperationException("This Instruction has no Source");
   }
 
   public Instruction setSource(Expression _source)
   {
-     throw new RuntimeException("This Instruction has no Source");
+     throw new IllegalArgumentException("Illegal argument: " + _source);
   }
 
   public TomNumberList getNumberList()
   {
-     throw new RuntimeException("This Instruction has no NumberList");
+     throw new UnsupportedOperationException("This Instruction has no NumberList");
   }
 
   public Instruction setNumberList(TomNumberList _numberList)
   {
-     throw new RuntimeException("This Instruction has no NumberList");
+     throw new IllegalArgumentException("Illegal argument: " + _numberList);
   }
 
   public String getBlockName()
   {
-     throw new RuntimeException("This Instruction has no BlockName");
+     throw new UnsupportedOperationException("This Instruction has no BlockName");
   }
 
   public Instruction setBlockName(String _blockName)
   {
-     throw new RuntimeException("This Instruction has no BlockName");
+     throw new IllegalArgumentException("Illegal argument: " + _blockName);
   }
 
 }

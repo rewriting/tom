@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TomNameImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class TomNameImpl extends TomSignatureConstructor
   }
   public boolean isEqual(TomName peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortTomName()  {
     return true;
@@ -50,22 +48,22 @@ abstract public class TomNameImpl extends TomSignatureConstructor
 
   public String getString()
   {
-     throw new RuntimeException("This TomName has no String");
+     throw new UnsupportedOperationException("This TomName has no String");
   }
 
   public TomName setString(String _string)
   {
-     throw new RuntimeException("This TomName has no String");
+     throw new IllegalArgumentException("Illegal argument: " + _string);
   }
 
   public TomNumberList getNumberList()
   {
-     throw new RuntimeException("This TomName has no NumberList");
+     throw new UnsupportedOperationException("This TomName has no NumberList");
   }
 
   public TomName setNumberList(TomNumberList _numberList)
   {
-     throw new RuntimeException("This TomName has no NumberList");
+     throw new IllegalArgumentException("Illegal argument: " + _numberList);
   }
 
 }

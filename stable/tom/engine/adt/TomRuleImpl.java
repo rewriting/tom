@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TomRuleImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class TomRuleImpl extends TomSignatureConstructor
   }
   public boolean isEqual(TomRule peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortTomRule()  {
     return true;
@@ -50,42 +48,42 @@ abstract public class TomRuleImpl extends TomSignatureConstructor
 
   public TomTerm getLhs()
   {
-     throw new RuntimeException("This TomRule has no Lhs");
+     throw new UnsupportedOperationException("This TomRule has no Lhs");
   }
 
   public TomRule setLhs(TomTerm _lhs)
   {
-     throw new RuntimeException("This TomRule has no Lhs");
+     throw new IllegalArgumentException("Illegal argument: " + _lhs);
   }
 
   public TomTerm getRhs()
   {
-     throw new RuntimeException("This TomRule has no Rhs");
+     throw new UnsupportedOperationException("This TomRule has no Rhs");
   }
 
   public TomRule setRhs(TomTerm _rhs)
   {
-     throw new RuntimeException("This TomRule has no Rhs");
+     throw new IllegalArgumentException("Illegal argument: " + _rhs);
   }
 
   public TomList getCondList()
   {
-     throw new RuntimeException("This TomRule has no CondList");
+     throw new UnsupportedOperationException("This TomRule has no CondList");
   }
 
   public TomRule setCondList(TomList _condList)
   {
-     throw new RuntimeException("This TomRule has no CondList");
+     throw new IllegalArgumentException("Illegal argument: " + _condList);
   }
 
   public Option getOption()
   {
-     throw new RuntimeException("This TomRule has no Option");
+     throw new UnsupportedOperationException("This TomRule has no Option");
   }
 
   public TomRule setOption(Option _option)
   {
-     throw new RuntimeException("This TomRule has no Option");
+     throw new IllegalArgumentException("Illegal argument: " + _option);
   }
 
 }

@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TomSymbolImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
   }
   public boolean isEqual(TomSymbol peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortTomSymbol()  {
     return true;
@@ -55,52 +53,52 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
 
   public TomName getAstName()
   {
-     throw new RuntimeException("This TomSymbol has no AstName");
+     throw new UnsupportedOperationException("This TomSymbol has no AstName");
   }
 
   public TomSymbol setAstName(TomName _astName)
   {
-     throw new RuntimeException("This TomSymbol has no AstName");
+     throw new IllegalArgumentException("Illegal argument: " + _astName);
   }
 
   public TomType getTypesToType()
   {
-     throw new RuntimeException("This TomSymbol has no TypesToType");
+     throw new UnsupportedOperationException("This TomSymbol has no TypesToType");
   }
 
   public TomSymbol setTypesToType(TomType _typesToType)
   {
-     throw new RuntimeException("This TomSymbol has no TypesToType");
+     throw new IllegalArgumentException("Illegal argument: " + _typesToType);
   }
 
   public SlotList getSlotList()
   {
-     throw new RuntimeException("This TomSymbol has no SlotList");
+     throw new UnsupportedOperationException("This TomSymbol has no SlotList");
   }
 
   public TomSymbol setSlotList(SlotList _slotList)
   {
-     throw new RuntimeException("This TomSymbol has no SlotList");
+     throw new IllegalArgumentException("Illegal argument: " + _slotList);
   }
 
   public Option getOption()
   {
-     throw new RuntimeException("This TomSymbol has no Option");
+     throw new UnsupportedOperationException("This TomSymbol has no Option");
   }
 
   public TomSymbol setOption(Option _option)
   {
-     throw new RuntimeException("This TomSymbol has no Option");
+     throw new IllegalArgumentException("Illegal argument: " + _option);
   }
 
   public TargetLanguage getTlCode()
   {
-     throw new RuntimeException("This TomSymbol has no TlCode");
+     throw new UnsupportedOperationException("This TomSymbol has no TlCode");
   }
 
   public TomSymbol setTlCode(TargetLanguage _tlCode)
   {
-     throw new RuntimeException("This TomSymbol has no TlCode");
+     throw new IllegalArgumentException("Illegal argument: " + _tlCode);
   }
 
 }

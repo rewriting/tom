@@ -41,6 +41,7 @@ import jtom.compiler.*;
 import jtom.parser.*;
 import jtom.tools.*;
 import aterm.ATerm;
+import aterm.pure.PureFactory;
 
 
 public class Tom {
@@ -58,7 +59,7 @@ public class Tom {
   private TomGenerator generator;
   
   private static String version =
-  "\njtom 1.3\n" +
+  "\njtom 1.4alpha\n" +
   "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
   "                         Nancy, France.\n";
   
@@ -202,13 +203,13 @@ public class Tom {
     taskInput.setOutputFileName(taskInput.inputFileName+taskInput.outputSuffix);
     
       // basic structures
-    TomSignatureFactory tomSignatureFactory = new TomSignatureFactory();
+    TomSignatureFactory tomSignatureFactory = new TomSignatureFactory(new PureFactory());
     ASTFactory   astFactory   = new ASTFactory(tomSignatureFactory);
     SymbolTable  symbolTable  = new SymbolTable(astFactory, taskInput.isCCode(), taskInput.isJCode(),taskInput.isECode());
     TomEnvironment environment = new TomEnvironment(tomSignatureFactory,
 						    astFactory,
 						    symbolTable);
-      // Create the Chain of respomsability    
+      // Create the Chain of responsability    
     if(taskInput.isDoParse() && taskInput.isDoExpand()) {
       byte inputBuffer[] = null;
       File fileList[] = new File[importList.size()];
@@ -261,12 +262,12 @@ public class Tom {
         ATerm fromFileExpandTerm = null;
         TomTerm expandedTerm = null; 
         try {
-          fromFileExpandTerm = tomSignatureFactory.readFromFile(input);
+          fromFileExpandTerm = tomSignatureFactory.getPureFactory().readFromFile(input);
           expandedTerm = tomSignatureFactory.TomTermFromTerm(fromFileExpandTerm);
           input = new FileInputStream(inputFileName+".table");
           
           ATerm fromFileSymblTable = null;
-          fromFileSymblTable = tomSignatureFactory.readFromFile(input);
+          fromFileSymblTable = tomSignatureFactory.getPureFactory().readFromFile(input);
           TomSymbolTable symbTable = tomSignatureFactory.TomSymbolTableFromTerm(fromFileSymblTable);
           symbolTable.regenerateFromTerm(symbTable);
         } catch (FileNotFoundException e) {
@@ -302,7 +303,7 @@ public class Tom {
     }
   
     if(taskInput.isAtermStat()) {
-      System.out.println("\nStatistics:\n" + tomSignatureFactory);
+      System.out.println("\nStatistics:\n" + tomSignatureFactory.getPureFactory());
     }
   }
 } // class Tom

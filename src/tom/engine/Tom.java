@@ -209,7 +209,7 @@ public class Tom {
     TomEnvironment environment = new TomEnvironment(tomSignatureFactory,
 						    astFactory,
 						    symbolTable);
-      // Create the Chain of respomsability    
+      // Create the Chain of responsability    
     if(taskInput.isDoParse() && taskInput.isDoExpand()) {
       byte inputBuffer[] = null;
       File fileList[] = new File[importList.size()];

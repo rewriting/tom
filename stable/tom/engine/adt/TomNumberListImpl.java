@@ -1,20 +1,18 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TomNumberListImpl extends aterm.pure.ATermListImpl
 {
-  protected void init (int hashCode, aterm.ATermList annos, aterm.ATerm first,	aterm.ATermList next) {
+  protected void init (int hashCode, aterm.ATermList annos, aterm.ATerm first, aterm.ATermList next) {
     super.init(hashCode, annos, first, next);
   }
   protected void initHashCode(aterm.ATermList annos, aterm.ATerm first, aterm.ATermList next) {
     super.initHashCode(annos, first, next);
   }
   protected TomSignatureFactory factory = null;
-  TomNumberListImpl(TomSignatureFactory factory) {
-     super(factory);
+ TomNumberListImpl(TomSignatureFactory factory) {
+     super(factory.getPureFactory());
      this.factory = factory;
   }
   public TomSignatureFactory getTomSignatureFactory(){
@@ -25,10 +23,10 @@ abstract public class TomNumberListImpl extends aterm.pure.ATermListImpl
   {
     if (this.term == null) {
       TomNumberList reversed = (TomNumberList)this.reverse();
-      aterm.ATermList tmp = getTomSignatureFactory().makeList();
+      aterm.ATermList tmp = getTomSignatureFactory().getPureFactory().makeList();
       for (; !reversed.isEmpty(); reversed = reversed.getTail()) {
          aterm.ATerm elem = reversed.getHead().toTerm();
-         tmp = getTomSignatureFactory().makeList(elem, tmp);
+         tmp = getTomSignatureFactory().getPureFactory().makeList(elem, tmp);
       }
       this.term = tmp;
     }
@@ -48,7 +46,7 @@ abstract public class TomNumberListImpl extends aterm.pure.ATermListImpl
   }
 
   public boolean isEmpty() {
-    return this == TomSignatureFactory.emptyTomNumberList;
+    return this == getTomSignatureFactory().makeTomNumberList();
   }
   public boolean isMany() {
     return !isEmpty();

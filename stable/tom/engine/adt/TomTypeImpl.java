@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TomTypeImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class TomTypeImpl extends TomSignatureConstructor
   }
   public boolean isEqual(TomType peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortTomType()  {
     return true;
@@ -85,62 +83,62 @@ abstract public class TomTypeImpl extends TomSignatureConstructor
 
   public TomType getTomType()
   {
-     throw new RuntimeException("This TomType has no TomType");
+     throw new UnsupportedOperationException("This TomType has no TomType");
   }
 
   public TomType setTomType(TomType _tomType)
   {
-     throw new RuntimeException("This TomType has no TomType");
+     throw new IllegalArgumentException("Illegal argument: " + _tomType);
   }
 
   public TomType getTlType()
   {
-     throw new RuntimeException("This TomType has no TlType");
+     throw new UnsupportedOperationException("This TomType has no TlType");
   }
 
   public TomType setTlType(TomType _tlType)
   {
-     throw new RuntimeException("This TomType has no TlType");
+     throw new IllegalArgumentException("Illegal argument: " + _tlType);
   }
 
   public TomTypeList getDomain()
   {
-     throw new RuntimeException("This TomType has no Domain");
+     throw new UnsupportedOperationException("This TomType has no Domain");
   }
 
   public TomType setDomain(TomTypeList _domain)
   {
-     throw new RuntimeException("This TomType has no Domain");
+     throw new IllegalArgumentException("Illegal argument: " + _domain);
   }
 
   public TomType getCodomain()
   {
-     throw new RuntimeException("This TomType has no Codomain");
+     throw new UnsupportedOperationException("This TomType has no Codomain");
   }
 
   public TomType setCodomain(TomType _codomain)
   {
-     throw new RuntimeException("This TomType has no Codomain");
+     throw new IllegalArgumentException("Illegal argument: " + _codomain);
   }
 
   public String getString()
   {
-     throw new RuntimeException("This TomType has no String");
+     throw new UnsupportedOperationException("This TomType has no String");
   }
 
   public TomType setString(String _string)
   {
-     throw new RuntimeException("This TomType has no String");
+     throw new IllegalArgumentException("Illegal argument: " + _string);
   }
 
   public TargetLanguage getTl()
   {
-     throw new RuntimeException("This TomType has no Tl");
+     throw new UnsupportedOperationException("This TomType has no Tl");
   }
 
   public TomType setTl(TargetLanguage _tl)
   {
-     throw new RuntimeException("This TomType has no Tl");
+     throw new IllegalArgumentException("Illegal argument: " + _tl);
   }
 
 }

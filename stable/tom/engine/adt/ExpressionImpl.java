@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class ExpressionImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
   }
   public boolean isEqual(Expression peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortExpression()  {
     return true;
@@ -180,132 +178,132 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
 
   public TomTerm getAstTerm()
   {
-     throw new RuntimeException("This Expression has no AstTerm");
+     throw new UnsupportedOperationException("This Expression has no AstTerm");
   }
 
   public Expression setAstTerm(TomTerm _astTerm)
   {
-     throw new RuntimeException("This Expression has no AstTerm");
+     throw new IllegalArgumentException("Illegal argument: " + _astTerm);
   }
 
   public Expression getArg()
   {
-     throw new RuntimeException("This Expression has no Arg");
+     throw new UnsupportedOperationException("This Expression has no Arg");
   }
 
   public Expression setArg(Expression _arg)
   {
-     throw new RuntimeException("This Expression has no Arg");
+     throw new IllegalArgumentException("Illegal argument: " + _arg);
   }
 
   public Expression getArg1()
   {
-     throw new RuntimeException("This Expression has no Arg1");
+     throw new UnsupportedOperationException("This Expression has no Arg1");
   }
 
   public Expression setArg1(Expression _arg1)
   {
-     throw new RuntimeException("This Expression has no Arg1");
+     throw new IllegalArgumentException("Illegal argument: " + _arg1);
   }
 
   public Expression getArg2()
   {
-     throw new RuntimeException("This Expression has no Arg2");
+     throw new UnsupportedOperationException("This Expression has no Arg2");
   }
 
   public Expression setArg2(Expression _arg2)
   {
-     throw new RuntimeException("This Expression has no Arg2");
+     throw new IllegalArgumentException("Illegal argument: " + _arg2);
   }
 
   public TomTerm getKid1()
   {
-     throw new RuntimeException("This Expression has no Kid1");
+     throw new UnsupportedOperationException("This Expression has no Kid1");
   }
 
   public Expression setKid1(TomTerm _kid1)
   {
-     throw new RuntimeException("This Expression has no Kid1");
+     throw new IllegalArgumentException("Illegal argument: " + _kid1);
   }
 
   public TomTerm getKid2()
   {
-     throw new RuntimeException("This Expression has no Kid2");
+     throw new UnsupportedOperationException("This Expression has no Kid2");
   }
 
   public Expression setKid2(TomTerm _kid2)
   {
-     throw new RuntimeException("This Expression has no Kid2");
+     throw new IllegalArgumentException("Illegal argument: " + _kid2);
   }
 
   public TomTerm getVariable()
   {
-     throw new RuntimeException("This Expression has no Variable");
+     throw new UnsupportedOperationException("This Expression has no Variable");
   }
 
   public Expression setVariable(TomTerm _variable)
   {
-     throw new RuntimeException("This Expression has no Variable");
+     throw new IllegalArgumentException("Illegal argument: " + _variable);
   }
 
   public TomNumber getNumber()
   {
-     throw new RuntimeException("This Expression has no Number");
+     throw new UnsupportedOperationException("This Expression has no Number");
   }
 
   public Expression setNumber(TomNumber _number)
   {
-     throw new RuntimeException("This Expression has no Number");
+     throw new IllegalArgumentException("Illegal argument: " + _number);
   }
 
   public TomName getAstName()
   {
-     throw new RuntimeException("This Expression has no AstName");
+     throw new UnsupportedOperationException("This Expression has no AstName");
   }
 
   public Expression setAstName(TomName _astName)
   {
-     throw new RuntimeException("This Expression has no AstName");
+     throw new IllegalArgumentException("Illegal argument: " + _astName);
   }
 
   public String getSlotNameString()
   {
-     throw new RuntimeException("This Expression has no SlotNameString");
+     throw new UnsupportedOperationException("This Expression has no SlotNameString");
   }
 
   public Expression setSlotNameString(String _slotNameString)
   {
-     throw new RuntimeException("This Expression has no SlotNameString");
+     throw new IllegalArgumentException("Illegal argument: " + _slotNameString);
   }
 
   public TomTerm getVariableBeginAST()
   {
-     throw new RuntimeException("This Expression has no VariableBeginAST");
+     throw new UnsupportedOperationException("This Expression has no VariableBeginAST");
   }
 
   public Expression setVariableBeginAST(TomTerm _variableBeginAST)
   {
-     throw new RuntimeException("This Expression has no VariableBeginAST");
+     throw new IllegalArgumentException("Illegal argument: " + _variableBeginAST);
   }
 
   public TomTerm getVariableEndAST()
   {
-     throw new RuntimeException("This Expression has no VariableEndAST");
+     throw new UnsupportedOperationException("This Expression has no VariableEndAST");
   }
 
   public Expression setVariableEndAST(TomTerm _variableEndAST)
   {
-     throw new RuntimeException("This Expression has no VariableEndAST");
+     throw new IllegalArgumentException("Illegal argument: " + _variableEndAST);
   }
 
   public TomTerm getSubjectListName()
   {
-     throw new RuntimeException("This Expression has no SubjectListName");
+     throw new UnsupportedOperationException("This Expression has no SubjectListName");
   }
 
   public Expression setSubjectListName(TomTerm _subjectListName)
   {
-     throw new RuntimeException("This Expression has no SubjectListName");
+     throw new IllegalArgumentException("Illegal argument: " + _subjectListName);
   }
 
 }

@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TargetLanguageImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class TargetLanguageImpl extends TomSignatureConstructor
   }
   public boolean isEqual(TargetLanguage peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortTargetLanguage()  {
     return true;
@@ -50,32 +48,32 @@ abstract public class TargetLanguageImpl extends TomSignatureConstructor
 
   public String getCode()
   {
-     throw new RuntimeException("This TargetLanguage has no Code");
+     throw new UnsupportedOperationException("This TargetLanguage has no Code");
   }
 
   public TargetLanguage setCode(String _code)
   {
-     throw new RuntimeException("This TargetLanguage has no Code");
+     throw new IllegalArgumentException("Illegal argument: " + _code);
   }
 
   public Position getStart()
   {
-     throw new RuntimeException("This TargetLanguage has no Start");
+     throw new UnsupportedOperationException("This TargetLanguage has no Start");
   }
 
   public TargetLanguage setStart(Position _start)
   {
-     throw new RuntimeException("This TargetLanguage has no Start");
+     throw new IllegalArgumentException("Illegal argument: " + _start);
   }
 
   public Position getEnd()
   {
-     throw new RuntimeException("This TargetLanguage has no End");
+     throw new UnsupportedOperationException("This TargetLanguage has no End");
   }
 
   public TargetLanguage setEnd(Position _end)
   {
-     throw new RuntimeException("This TargetLanguage has no End");
+     throw new IllegalArgumentException("Illegal argument: " + _end);
   }
 
 }

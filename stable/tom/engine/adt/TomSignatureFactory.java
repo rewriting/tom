@@ -2,8 +2,9 @@ package jtom.adt;
 
 import aterm.*;
 import aterm.pure.PureFactory;
-public class TomSignatureFactory extends PureFactory
+public class TomSignatureFactory
 {
+  private PureFactory factory;
   private aterm.AFun funDeclaration_TypeTermDecl;
   private Declaration protoDeclaration_TypeTermDecl;
   private aterm.ATerm patternDeclaration_TypeTermDecl;
@@ -440,674 +441,680 @@ public class TomSignatureFactory extends PureFactory
   private XMLTerm protoXMLTerm_XMLVariable;
   private aterm.ATerm patternXMLTerm_XMLVariable;
   private TomList protoTomList;
+  private aterm.ATerm patternTomListMany;
   private TomNumberList protoTomNumberList;
+  private aterm.ATerm patternTomNumberListMany;
   private TomRuleList protoTomRuleList;
+  private aterm.ATerm patternTomRuleListMany;
   private TomTypeList protoTomTypeList;
+  private aterm.ATerm patternTomTypeListMany;
   private OptionList protoOptionList;
+  private aterm.ATerm patternOptionListMany;
   private SlotList protoSlotList;
+  private aterm.ATerm patternSlotListMany;
   private TomEntryList protoTomEntryList;
-  static protected TomList emptyTomList;
-  static protected TomNumberList emptyTomNumberList;
-  static protected TomRuleList emptyTomRuleList;
-  static protected TomTypeList emptyTomTypeList;
-  static protected OptionList emptyOptionList;
-  static protected SlotList emptySlotList;
-  static protected TomEntryList emptyTomEntryList;
-  public TomSignatureFactory()
+  private aterm.ATerm patternTomEntryListMany;
+  private TomList emptyTomList;
+  private TomNumberList emptyTomNumberList;
+  private TomRuleList emptyTomRuleList;
+  private TomTypeList emptyTomTypeList;
+  private OptionList emptyOptionList;
+  private SlotList emptySlotList;
+  private TomEntryList emptyTomEntryList;
+  public TomSignatureFactory(PureFactory factory)
   {
-     super();
+     this.factory = factory;
      initialize();
   }
-  public TomSignatureFactory(int logSize)
+  public PureFactory getPureFactory()
   {
-     super(logSize);
-     initialize();
+    return factory;
   }
   private void initialize()
   {
 
-    patternDeclaration_TypeTermDecl = parse("TypeTermDecl(<term>,<term>,<term>)");
-    funDeclaration_TypeTermDecl = makeAFun("_Declaration_TypeTermDecl", 3, false);
+    patternDeclaration_TypeTermDecl = factory.parse("TypeTermDecl(<term>,<term>,<term>)");
+    funDeclaration_TypeTermDecl = factory.makeAFun("_Declaration_TypeTermDecl", 3, false);
     protoDeclaration_TypeTermDecl = new Declaration_TypeTermDecl(this);
 
-    patternDeclaration_TypeListDecl = parse("TypeListDecl(<term>,<term>,<term>)");
-    funDeclaration_TypeListDecl = makeAFun("_Declaration_TypeListDecl", 3, false);
+    patternDeclaration_TypeListDecl = factory.parse("TypeListDecl(<term>,<term>,<term>)");
+    funDeclaration_TypeListDecl = factory.makeAFun("_Declaration_TypeListDecl", 3, false);
     protoDeclaration_TypeListDecl = new Declaration_TypeListDecl(this);
 
-    patternDeclaration_TypeArrayDecl = parse("TypeArrayDecl(<term>,<term>,<term>)");
-    funDeclaration_TypeArrayDecl = makeAFun("_Declaration_TypeArrayDecl", 3, false);
+    patternDeclaration_TypeArrayDecl = factory.parse("TypeArrayDecl(<term>,<term>,<term>)");
+    funDeclaration_TypeArrayDecl = factory.makeAFun("_Declaration_TypeArrayDecl", 3, false);
     protoDeclaration_TypeArrayDecl = new Declaration_TypeArrayDecl(this);
 
-    patternDeclaration_GetFunctionSymbolDecl = parse("GetFunctionSymbolDecl(<term>,<term>,<term>)");
-    funDeclaration_GetFunctionSymbolDecl = makeAFun("_Declaration_GetFunctionSymbolDecl", 3, false);
+    patternDeclaration_GetFunctionSymbolDecl = factory.parse("GetFunctionSymbolDecl(<term>,<term>,<term>)");
+    funDeclaration_GetFunctionSymbolDecl = factory.makeAFun("_Declaration_GetFunctionSymbolDecl", 3, false);
     protoDeclaration_GetFunctionSymbolDecl = new Declaration_GetFunctionSymbolDecl(this);
 
-    patternDeclaration_GetSubtermDecl = parse("GetSubtermDecl(<term>,<term>,<term>,<term>)");
-    funDeclaration_GetSubtermDecl = makeAFun("_Declaration_GetSubtermDecl", 4, false);
+    patternDeclaration_GetSubtermDecl = factory.parse("GetSubtermDecl(<term>,<term>,<term>,<term>)");
+    funDeclaration_GetSubtermDecl = factory.makeAFun("_Declaration_GetSubtermDecl", 4, false);
     protoDeclaration_GetSubtermDecl = new Declaration_GetSubtermDecl(this);
 
-    patternDeclaration_IsFsymDecl = parse("IsFsymDecl(<term>,<term>,<term>,<term>)");
-    funDeclaration_IsFsymDecl = makeAFun("_Declaration_IsFsymDecl", 4, false);
+    patternDeclaration_IsFsymDecl = factory.parse("IsFsymDecl(<term>,<term>,<term>,<term>)");
+    funDeclaration_IsFsymDecl = factory.makeAFun("_Declaration_IsFsymDecl", 4, false);
     protoDeclaration_IsFsymDecl = new Declaration_IsFsymDecl(this);
 
-    patternDeclaration_GetSlotDecl = parse("GetSlotDecl(<term>,<term>,<term>,<term>,<term>)");
-    funDeclaration_GetSlotDecl = makeAFun("_Declaration_GetSlotDecl", 5, false);
+    patternDeclaration_GetSlotDecl = factory.parse("GetSlotDecl(<term>,<term>,<term>,<term>,<term>)");
+    funDeclaration_GetSlotDecl = factory.makeAFun("_Declaration_GetSlotDecl", 5, false);
     protoDeclaration_GetSlotDecl = new Declaration_GetSlotDecl(this);
 
-    patternDeclaration_CompareFunctionSymbolDecl = parse("CompareFunctionSymbolDecl(<term>,<term>,<term>,<term>)");
-    funDeclaration_CompareFunctionSymbolDecl = makeAFun("_Declaration_CompareFunctionSymbolDecl", 4, false);
+    patternDeclaration_CompareFunctionSymbolDecl = factory.parse("CompareFunctionSymbolDecl(<term>,<term>,<term>,<term>)");
+    funDeclaration_CompareFunctionSymbolDecl = factory.makeAFun("_Declaration_CompareFunctionSymbolDecl", 4, false);
     protoDeclaration_CompareFunctionSymbolDecl = new Declaration_CompareFunctionSymbolDecl(this);
 
-    patternDeclaration_TermsEqualDecl = parse("TermsEqualDecl(<term>,<term>,<term>,<term>)");
-    funDeclaration_TermsEqualDecl = makeAFun("_Declaration_TermsEqualDecl", 4, false);
+    patternDeclaration_TermsEqualDecl = factory.parse("TermsEqualDecl(<term>,<term>,<term>,<term>)");
+    funDeclaration_TermsEqualDecl = factory.makeAFun("_Declaration_TermsEqualDecl", 4, false);
     protoDeclaration_TermsEqualDecl = new Declaration_TermsEqualDecl(this);
 
-    patternDeclaration_GetHeadDecl = parse("GetHeadDecl(<term>,<term>,<term>)");
-    funDeclaration_GetHeadDecl = makeAFun("_Declaration_GetHeadDecl", 3, false);
+    patternDeclaration_GetHeadDecl = factory.parse("GetHeadDecl(<term>,<term>,<term>)");
+    funDeclaration_GetHeadDecl = factory.makeAFun("_Declaration_GetHeadDecl", 3, false);
     protoDeclaration_GetHeadDecl = new Declaration_GetHeadDecl(this);
 
-    patternDeclaration_GetTailDecl = parse("GetTailDecl(<term>,<term>,<term>)");
-    funDeclaration_GetTailDecl = makeAFun("_Declaration_GetTailDecl", 3, false);
+    patternDeclaration_GetTailDecl = factory.parse("GetTailDecl(<term>,<term>,<term>)");
+    funDeclaration_GetTailDecl = factory.makeAFun("_Declaration_GetTailDecl", 3, false);
     protoDeclaration_GetTailDecl = new Declaration_GetTailDecl(this);
 
-    patternDeclaration_IsEmptyDecl = parse("IsEmptyDecl(<term>,<term>,<term>)");
-    funDeclaration_IsEmptyDecl = makeAFun("_Declaration_IsEmptyDecl", 3, false);
+    patternDeclaration_IsEmptyDecl = factory.parse("IsEmptyDecl(<term>,<term>,<term>)");
+    funDeclaration_IsEmptyDecl = factory.makeAFun("_Declaration_IsEmptyDecl", 3, false);
     protoDeclaration_IsEmptyDecl = new Declaration_IsEmptyDecl(this);
 
-    patternDeclaration_MakeEmptyList = parse("MakeEmptyList(<term>,<term>,<term>)");
-    funDeclaration_MakeEmptyList = makeAFun("_Declaration_MakeEmptyList", 3, false);
+    patternDeclaration_MakeEmptyList = factory.parse("MakeEmptyList(<term>,<term>,<term>)");
+    funDeclaration_MakeEmptyList = factory.makeAFun("_Declaration_MakeEmptyList", 3, false);
     protoDeclaration_MakeEmptyList = new Declaration_MakeEmptyList(this);
 
-    patternDeclaration_MakeAddList = parse("MakeAddList(<term>,<term>,<term>,<term>,<term>)");
-    funDeclaration_MakeAddList = makeAFun("_Declaration_MakeAddList", 5, false);
+    patternDeclaration_MakeAddList = factory.parse("MakeAddList(<term>,<term>,<term>,<term>,<term>)");
+    funDeclaration_MakeAddList = factory.makeAFun("_Declaration_MakeAddList", 5, false);
     protoDeclaration_MakeAddList = new Declaration_MakeAddList(this);
 
-    patternDeclaration_GetElementDecl = parse("GetElementDecl(<term>,<term>,<term>,<term>)");
-    funDeclaration_GetElementDecl = makeAFun("_Declaration_GetElementDecl", 4, false);
+    patternDeclaration_GetElementDecl = factory.parse("GetElementDecl(<term>,<term>,<term>,<term>)");
+    funDeclaration_GetElementDecl = factory.makeAFun("_Declaration_GetElementDecl", 4, false);
     protoDeclaration_GetElementDecl = new Declaration_GetElementDecl(this);
 
-    patternDeclaration_GetSizeDecl = parse("GetSizeDecl(<term>,<term>,<term>)");
-    funDeclaration_GetSizeDecl = makeAFun("_Declaration_GetSizeDecl", 3, false);
+    patternDeclaration_GetSizeDecl = factory.parse("GetSizeDecl(<term>,<term>,<term>)");
+    funDeclaration_GetSizeDecl = factory.makeAFun("_Declaration_GetSizeDecl", 3, false);
     protoDeclaration_GetSizeDecl = new Declaration_GetSizeDecl(this);
 
-    patternDeclaration_MakeEmptyArray = parse("MakeEmptyArray(<term>,<term>,<term>,<term>)");
-    funDeclaration_MakeEmptyArray = makeAFun("_Declaration_MakeEmptyArray", 4, false);
+    patternDeclaration_MakeEmptyArray = factory.parse("MakeEmptyArray(<term>,<term>,<term>,<term>)");
+    funDeclaration_MakeEmptyArray = factory.makeAFun("_Declaration_MakeEmptyArray", 4, false);
     protoDeclaration_MakeEmptyArray = new Declaration_MakeEmptyArray(this);
 
-    patternDeclaration_MakeAddArray = parse("MakeAddArray(<term>,<term>,<term>,<term>,<term>)");
-    funDeclaration_MakeAddArray = makeAFun("_Declaration_MakeAddArray", 5, false);
+    patternDeclaration_MakeAddArray = factory.parse("MakeAddArray(<term>,<term>,<term>,<term>,<term>)");
+    funDeclaration_MakeAddArray = factory.makeAFun("_Declaration_MakeAddArray", 5, false);
     protoDeclaration_MakeAddArray = new Declaration_MakeAddArray(this);
 
-    patternDeclaration_MakeDecl = parse("MakeDecl(<term>,<term>,<term>,<term>,<term>)");
-    funDeclaration_MakeDecl = makeAFun("_Declaration_MakeDecl", 5, false);
+    patternDeclaration_MakeDecl = factory.parse("MakeDecl(<term>,<term>,<term>,<term>,<term>)");
+    funDeclaration_MakeDecl = factory.makeAFun("_Declaration_MakeDecl", 5, false);
     protoDeclaration_MakeDecl = new Declaration_MakeDecl(this);
 
-    patternDeclaration_SymbolDecl = parse("SymbolDecl(<term>)");
-    funDeclaration_SymbolDecl = makeAFun("_Declaration_SymbolDecl", 1, false);
+    patternDeclaration_SymbolDecl = factory.parse("SymbolDecl(<term>)");
+    funDeclaration_SymbolDecl = factory.makeAFun("_Declaration_SymbolDecl", 1, false);
     protoDeclaration_SymbolDecl = new Declaration_SymbolDecl(this);
 
-    patternDeclaration_ListSymbolDecl = parse("ListSymbolDecl(<term>)");
-    funDeclaration_ListSymbolDecl = makeAFun("_Declaration_ListSymbolDecl", 1, false);
+    patternDeclaration_ListSymbolDecl = factory.parse("ListSymbolDecl(<term>)");
+    funDeclaration_ListSymbolDecl = factory.makeAFun("_Declaration_ListSymbolDecl", 1, false);
     protoDeclaration_ListSymbolDecl = new Declaration_ListSymbolDecl(this);
 
-    patternDeclaration_ArraySymbolDecl = parse("ArraySymbolDecl(<term>)");
-    funDeclaration_ArraySymbolDecl = makeAFun("_Declaration_ArraySymbolDecl", 1, false);
+    patternDeclaration_ArraySymbolDecl = factory.parse("ArraySymbolDecl(<term>)");
+    funDeclaration_ArraySymbolDecl = factory.makeAFun("_Declaration_ArraySymbolDecl", 1, false);
     protoDeclaration_ArraySymbolDecl = new Declaration_ArraySymbolDecl(this);
 
-    patternDeclaration_EmptyDeclaration = parse("EmptyDeclaration");
-    funDeclaration_EmptyDeclaration = makeAFun("_Declaration_EmptyDeclaration", 0, false);
+    patternDeclaration_EmptyDeclaration = factory.parse("EmptyDeclaration");
+    funDeclaration_EmptyDeclaration = factory.makeAFun("_Declaration_EmptyDeclaration", 0, false);
     protoDeclaration_EmptyDeclaration = new Declaration_EmptyDeclaration(this);
 
 
-    patternOption_DeclarationToOption = parse("DeclarationToOption(<term>)");
-    funOption_DeclarationToOption = makeAFun("_Option_DeclarationToOption", 1, false);
+    patternOption_DeclarationToOption = factory.parse("DeclarationToOption(<term>)");
+    funOption_DeclarationToOption = factory.makeAFun("_Option_DeclarationToOption", 1, false);
     protoOption_DeclarationToOption = new Option_DeclarationToOption(this);
 
-    patternOption_TomNameToOption = parse("TomNameToOption(<term>)");
-    funOption_TomNameToOption = makeAFun("_Option_TomNameToOption", 1, false);
+    patternOption_TomNameToOption = factory.parse("TomNameToOption(<term>)");
+    funOption_TomNameToOption = factory.makeAFun("_Option_TomNameToOption", 1, false);
     protoOption_TomNameToOption = new Option_TomNameToOption(this);
 
-    patternOption_TomTermToOption = parse("TomTermToOption(<term>)");
-    funOption_TomTermToOption = makeAFun("_Option_TomTermToOption", 1, false);
+    patternOption_TomTermToOption = factory.parse("TomTermToOption(<term>)");
+    funOption_TomTermToOption = factory.makeAFun("_Option_TomTermToOption", 1, false);
     protoOption_TomTermToOption = new Option_TomTermToOption(this);
 
-    patternOption_Option = parse("Option(<term>)");
-    funOption_Option = makeAFun("_Option_Option", 1, false);
+    patternOption_Option = factory.parse("Option(<term>)");
+    funOption_Option = factory.makeAFun("_Option_Option", 1, false);
     protoOption_Option = new Option_Option(this);
 
-    patternOption_DefinedSymbol = parse("DefinedSymbol");
-    funOption_DefinedSymbol = makeAFun("_Option_DefinedSymbol", 0, false);
+    patternOption_DefinedSymbol = factory.parse("DefinedSymbol");
+    funOption_DefinedSymbol = factory.makeAFun("_Option_DefinedSymbol", 0, false);
     protoOption_DefinedSymbol = new Option_DefinedSymbol(this);
 
-    patternOption_GeneratedMatch = parse("GeneratedMatch");
-    funOption_GeneratedMatch = makeAFun("_Option_GeneratedMatch", 0, false);
+    patternOption_GeneratedMatch = factory.parse("GeneratedMatch");
+    funOption_GeneratedMatch = factory.makeAFun("_Option_GeneratedMatch", 0, false);
     protoOption_GeneratedMatch = new Option_GeneratedMatch(this);
 
-    patternOption_WithDefaultProduction = parse("WithDefaultProduction");
-    funOption_WithDefaultProduction = makeAFun("_Option_WithDefaultProduction", 0, false);
+    patternOption_WithDefaultProduction = factory.parse("WithDefaultProduction");
+    funOption_WithDefaultProduction = factory.makeAFun("_Option_WithDefaultProduction", 0, false);
     protoOption_WithDefaultProduction = new Option_WithDefaultProduction(this);
 
-    patternOption_OriginTracking = parse("OriginTracking(<term>,<int>,<term>)");
-    funOption_OriginTracking = makeAFun("_Option_OriginTracking", 3, false);
+    patternOption_OriginTracking = factory.parse("OriginTracking(<term>,<int>,<term>)");
+    funOption_OriginTracking = factory.makeAFun("_Option_OriginTracking", 3, false);
     protoOption_OriginTracking = new Option_OriginTracking(this);
 
-    patternOption_Constructor = parse("Constructor(<term>)");
-    funOption_Constructor = makeAFun("_Option_Constructor", 1, false);
+    patternOption_Constructor = factory.parse("Constructor(<term>)");
+    funOption_Constructor = factory.makeAFun("_Option_Constructor", 1, false);
     protoOption_Constructor = new Option_Constructor(this);
 
-    patternOption_OriginalText = parse("OriginalText(<term>)");
-    funOption_OriginalText = makeAFun("_Option_OriginalText", 1, false);
+    patternOption_OriginalText = factory.parse("OriginalText(<term>)");
+    funOption_OriginalText = factory.makeAFun("_Option_OriginalText", 1, false);
     protoOption_OriginalText = new Option_OriginalText(this);
 
-    patternOption_XMLPosition = parse("XMLPosition(<str>)");
-    funOption_XMLPosition = makeAFun("_Option_XMLPosition", 1, false);
+    patternOption_XMLPosition = factory.parse("XMLPosition(<str>)");
+    funOption_XMLPosition = factory.makeAFun("_Option_XMLPosition", 1, false);
     protoOption_XMLPosition = new Option_XMLPosition(this);
 
 
-    patternExpression_TomTermToExpression = parse("TomTermToExpression(<term>)");
-    funExpression_TomTermToExpression = makeAFun("_Expression_TomTermToExpression", 1, false);
+    patternExpression_TomTermToExpression = factory.parse("TomTermToExpression(<term>)");
+    funExpression_TomTermToExpression = factory.makeAFun("_Expression_TomTermToExpression", 1, false);
     protoExpression_TomTermToExpression = new Expression_TomTermToExpression(this);
 
-    patternExpression_Not = parse("Not(<term>)");
-    funExpression_Not = makeAFun("_Expression_Not", 1, false);
+    patternExpression_Not = factory.parse("Not(<term>)");
+    funExpression_Not = factory.makeAFun("_Expression_Not", 1, false);
     protoExpression_Not = new Expression_Not(this);
 
-    patternExpression_And = parse("And(<term>,<term>)");
-    funExpression_And = makeAFun("_Expression_And", 2, false);
+    patternExpression_And = factory.parse("And(<term>,<term>)");
+    funExpression_And = factory.makeAFun("_Expression_And", 2, false);
     protoExpression_And = new Expression_And(this);
 
-    patternExpression_TrueTL = parse("TrueTL");
-    funExpression_TrueTL = makeAFun("_Expression_TrueTL", 0, false);
+    patternExpression_TrueTL = factory.parse("TrueTL");
+    funExpression_TrueTL = factory.makeAFun("_Expression_TrueTL", 0, false);
     protoExpression_TrueTL = new Expression_TrueTL(this);
 
-    patternExpression_FalseTL = parse("FalseTL");
-    funExpression_FalseTL = makeAFun("_Expression_FalseTL", 0, false);
+    patternExpression_FalseTL = factory.parse("FalseTL");
+    funExpression_FalseTL = factory.makeAFun("_Expression_FalseTL", 0, false);
     protoExpression_FalseTL = new Expression_FalseTL(this);
 
-    patternExpression_IsEmptyList = parse("IsEmptyList(<term>)");
-    funExpression_IsEmptyList = makeAFun("_Expression_IsEmptyList", 1, false);
+    patternExpression_IsEmptyList = factory.parse("IsEmptyList(<term>)");
+    funExpression_IsEmptyList = factory.makeAFun("_Expression_IsEmptyList", 1, false);
     protoExpression_IsEmptyList = new Expression_IsEmptyList(this);
 
-    patternExpression_IsEmptyArray = parse("IsEmptyArray(<term>,<term>)");
-    funExpression_IsEmptyArray = makeAFun("_Expression_IsEmptyArray", 2, false);
+    patternExpression_IsEmptyArray = factory.parse("IsEmptyArray(<term>,<term>)");
+    funExpression_IsEmptyArray = factory.makeAFun("_Expression_IsEmptyArray", 2, false);
     protoExpression_IsEmptyArray = new Expression_IsEmptyArray(this);
 
-    patternExpression_EqualFunctionSymbol = parse("EqualFunctionSymbol(<term>,<term>)");
-    funExpression_EqualFunctionSymbol = makeAFun("_Expression_EqualFunctionSymbol", 2, false);
+    patternExpression_EqualFunctionSymbol = factory.parse("EqualFunctionSymbol(<term>,<term>)");
+    funExpression_EqualFunctionSymbol = factory.makeAFun("_Expression_EqualFunctionSymbol", 2, false);
     protoExpression_EqualFunctionSymbol = new Expression_EqualFunctionSymbol(this);
 
-    patternExpression_EqualTerm = parse("EqualTerm(<term>,<term>)");
-    funExpression_EqualTerm = makeAFun("_Expression_EqualTerm", 2, false);
+    patternExpression_EqualTerm = factory.parse("EqualTerm(<term>,<term>)");
+    funExpression_EqualTerm = factory.makeAFun("_Expression_EqualTerm", 2, false);
     protoExpression_EqualTerm = new Expression_EqualTerm(this);
 
-    patternExpression_GetSubterm = parse("GetSubterm(<term>,<term>)");
-    funExpression_GetSubterm = makeAFun("_Expression_GetSubterm", 2, false);
+    patternExpression_GetSubterm = factory.parse("GetSubterm(<term>,<term>)");
+    funExpression_GetSubterm = factory.makeAFun("_Expression_GetSubterm", 2, false);
     protoExpression_GetSubterm = new Expression_GetSubterm(this);
 
-    patternExpression_IsFsym = parse("IsFsym(<term>,<term>)");
-    funExpression_IsFsym = makeAFun("_Expression_IsFsym", 2, false);
+    patternExpression_IsFsym = factory.parse("IsFsym(<term>,<term>)");
+    funExpression_IsFsym = factory.makeAFun("_Expression_IsFsym", 2, false);
     protoExpression_IsFsym = new Expression_IsFsym(this);
 
-    patternExpression_GetSlot = parse("GetSlot(<term>,<str>,<term>)");
-    funExpression_GetSlot = makeAFun("_Expression_GetSlot", 3, false);
+    patternExpression_GetSlot = factory.parse("GetSlot(<term>,<str>,<term>)");
+    funExpression_GetSlot = factory.makeAFun("_Expression_GetSlot", 3, false);
     protoExpression_GetSlot = new Expression_GetSlot(this);
 
-    patternExpression_GetHead = parse("GetHead(<term>)");
-    funExpression_GetHead = makeAFun("_Expression_GetHead", 1, false);
+    patternExpression_GetHead = factory.parse("GetHead(<term>)");
+    funExpression_GetHead = factory.makeAFun("_Expression_GetHead", 1, false);
     protoExpression_GetHead = new Expression_GetHead(this);
 
-    patternExpression_GetTail = parse("GetTail(<term>)");
-    funExpression_GetTail = makeAFun("_Expression_GetTail", 1, false);
+    patternExpression_GetTail = factory.parse("GetTail(<term>)");
+    funExpression_GetTail = factory.makeAFun("_Expression_GetTail", 1, false);
     protoExpression_GetTail = new Expression_GetTail(this);
 
-    patternExpression_GetSize = parse("GetSize(<term>)");
-    funExpression_GetSize = makeAFun("_Expression_GetSize", 1, false);
+    patternExpression_GetSize = factory.parse("GetSize(<term>)");
+    funExpression_GetSize = factory.makeAFun("_Expression_GetSize", 1, false);
     protoExpression_GetSize = new Expression_GetSize(this);
 
-    patternExpression_GetElement = parse("GetElement(<term>,<term>)");
-    funExpression_GetElement = makeAFun("_Expression_GetElement", 2, false);
+    patternExpression_GetElement = factory.parse("GetElement(<term>,<term>)");
+    funExpression_GetElement = factory.makeAFun("_Expression_GetElement", 2, false);
     protoExpression_GetElement = new Expression_GetElement(this);
 
-    patternExpression_GetSliceList = parse("GetSliceList(<term>,<term>,<term>)");
-    funExpression_GetSliceList = makeAFun("_Expression_GetSliceList", 3, false);
+    patternExpression_GetSliceList = factory.parse("GetSliceList(<term>,<term>,<term>)");
+    funExpression_GetSliceList = factory.makeAFun("_Expression_GetSliceList", 3, false);
     protoExpression_GetSliceList = new Expression_GetSliceList(this);
 
-    patternExpression_GetSliceArray = parse("GetSliceArray(<term>,<term>,<term>,<term>)");
-    funExpression_GetSliceArray = makeAFun("_Expression_GetSliceArray", 4, false);
+    patternExpression_GetSliceArray = factory.parse("GetSliceArray(<term>,<term>,<term>,<term>)");
+    funExpression_GetSliceArray = factory.makeAFun("_Expression_GetSliceArray", 4, false);
     protoExpression_GetSliceArray = new Expression_GetSliceArray(this);
 
 
-    patternTargetLanguage_TL = parse("TL(<str>,<term>,<term>)");
-    funTargetLanguage_TL = makeAFun("_TargetLanguage_TL", 3, false);
+    patternTargetLanguage_TL = factory.parse("TL(<str>,<term>,<term>)");
+    funTargetLanguage_TL = factory.makeAFun("_TargetLanguage_TL", 3, false);
     protoTargetLanguage_TL = new TargetLanguage_TL(this);
 
-    patternTargetLanguage_ITL = parse("ITL(<str>)");
-    funTargetLanguage_ITL = makeAFun("_TargetLanguage_ITL", 1, false);
+    patternTargetLanguage_ITL = factory.parse("ITL(<str>)");
+    funTargetLanguage_ITL = factory.makeAFun("_TargetLanguage_ITL", 1, false);
     protoTargetLanguage_ITL = new TargetLanguage_ITL(this);
 
 
-    patternPosition_Position = parse("Position(<int>,<int>)");
-    funPosition_Position = makeAFun("_Position_Position", 2, false);
+    patternPosition_Position = factory.parse("Position(<int>,<int>)");
+    funPosition_Position = factory.makeAFun("_Position_Position", 2, false);
     protoPosition_Position = new Position_Position(this);
 
 
-    patternTomType_Type = parse("Type(<term>,<term>)");
-    funTomType_Type = makeAFun("_TomType_Type", 2, false);
+    patternTomType_Type = factory.parse("Type(<term>,<term>)");
+    funTomType_Type = factory.makeAFun("_TomType_Type", 2, false);
     protoTomType_Type = new TomType_Type(this);
 
-    patternTomType_TypesToType = parse("TypesToType(<term>,<term>)");
-    funTomType_TypesToType = makeAFun("_TomType_TypesToType", 2, false);
+    patternTomType_TypesToType = factory.parse("TypesToType(<term>,<term>)");
+    funTomType_TypesToType = factory.makeAFun("_TomType_TypesToType", 2, false);
     protoTomType_TypesToType = new TomType_TypesToType(this);
 
-    patternTomType_TomType = parse("TomType(<str>)");
-    funTomType_TomType = makeAFun("_TomType_TomType", 1, false);
+    patternTomType_TomType = factory.parse("TomType(<str>)");
+    funTomType_TomType = factory.makeAFun("_TomType_TomType", 1, false);
     protoTomType_TomType = new TomType_TomType(this);
 
-    patternTomType_TomTypeAlone = parse("TomTypeAlone(<str>)");
-    funTomType_TomTypeAlone = makeAFun("_TomType_TomTypeAlone", 1, false);
+    patternTomType_TomTypeAlone = factory.parse("TomTypeAlone(<str>)");
+    funTomType_TomTypeAlone = factory.makeAFun("_TomType_TomTypeAlone", 1, false);
     protoTomType_TomTypeAlone = new TomType_TomTypeAlone(this);
 
-    patternTomType_TLType = parse("TLType(<term>)");
-    funTomType_TLType = makeAFun("_TomType_TLType", 1, false);
+    patternTomType_TLType = factory.parse("TLType(<term>)");
+    funTomType_TLType = factory.makeAFun("_TomType_TLType", 1, false);
     protoTomType_TLType = new TomType_TLType(this);
 
-    patternTomType_EmptyType = parse("EmptyType");
-    funTomType_EmptyType = makeAFun("_TomType_EmptyType", 0, false);
+    patternTomType_EmptyType = factory.parse("EmptyType");
+    funTomType_EmptyType = factory.makeAFun("_TomType_EmptyType", 0, false);
     protoTomType_EmptyType = new TomType_EmptyType(this);
 
 
-    patternTomName_Name = parse("Name(<str>)");
-    funTomName_Name = makeAFun("_TomName_Name", 1, false);
+    patternTomName_Name = factory.parse("Name(<str>)");
+    funTomName_Name = factory.makeAFun("_TomName_Name", 1, false);
     protoTomName_Name = new TomName_Name(this);
 
-    patternTomName_PositionName = parse("PositionName(<term>)");
-    funTomName_PositionName = makeAFun("_TomName_PositionName", 1, false);
+    patternTomName_PositionName = factory.parse("PositionName(<term>)");
+    funTomName_PositionName = factory.makeAFun("_TomName_PositionName", 1, false);
     protoTomName_PositionName = new TomName_PositionName(this);
 
-    patternTomName_EmptyName = parse("EmptyName");
-    funTomName_EmptyName = makeAFun("_TomName_EmptyName", 0, false);
+    patternTomName_EmptyName = factory.parse("EmptyName");
+    funTomName_EmptyName = factory.makeAFun("_TomName_EmptyName", 0, false);
     protoTomName_EmptyName = new TomName_EmptyName(this);
 
 
-    patternTomTerm_TargetLanguageToTomTerm = parse("TargetLanguageToTomTerm(<term>)");
-    funTomTerm_TargetLanguageToTomTerm = makeAFun("_TomTerm_TargetLanguageToTomTerm", 1, false);
+    patternTomTerm_TargetLanguageToTomTerm = factory.parse("TargetLanguageToTomTerm(<term>)");
+    funTomTerm_TargetLanguageToTomTerm = factory.makeAFun("_TomTerm_TargetLanguageToTomTerm", 1, false);
     protoTomTerm_TargetLanguageToTomTerm = new TomTerm_TargetLanguageToTomTerm(this);
 
-    patternTomTerm_TomTypeToTomTerm = parse("TomTypeToTomTerm(<term>)");
-    funTomTerm_TomTypeToTomTerm = makeAFun("_TomTerm_TomTypeToTomTerm", 1, false);
+    patternTomTerm_TomTypeToTomTerm = factory.parse("TomTypeToTomTerm(<term>)");
+    funTomTerm_TomTypeToTomTerm = factory.makeAFun("_TomTerm_TomTypeToTomTerm", 1, false);
     protoTomTerm_TomTypeToTomTerm = new TomTerm_TomTypeToTomTerm(this);
 
-    patternTomTerm_TomNameToTomTerm = parse("TomNameToTomTerm(<term>)");
-    funTomTerm_TomNameToTomTerm = makeAFun("_TomTerm_TomNameToTomTerm", 1, false);
+    patternTomTerm_TomNameToTomTerm = factory.parse("TomNameToTomTerm(<term>)");
+    funTomTerm_TomNameToTomTerm = factory.makeAFun("_TomTerm_TomNameToTomTerm", 1, false);
     protoTomTerm_TomNameToTomTerm = new TomTerm_TomNameToTomTerm(this);
 
-    patternTomTerm_TomSymbolToTomTerm = parse("TomSymbolToTomTerm(<term>)");
-    funTomTerm_TomSymbolToTomTerm = makeAFun("_TomTerm_TomSymbolToTomTerm", 1, false);
+    patternTomTerm_TomSymbolToTomTerm = factory.parse("TomSymbolToTomTerm(<term>)");
+    funTomTerm_TomSymbolToTomTerm = factory.makeAFun("_TomTerm_TomSymbolToTomTerm", 1, false);
     protoTomTerm_TomSymbolToTomTerm = new TomTerm_TomSymbolToTomTerm(this);
 
-    patternTomTerm_DeclarationToTomTerm = parse("DeclarationToTomTerm(<term>)");
-    funTomTerm_DeclarationToTomTerm = makeAFun("_TomTerm_DeclarationToTomTerm", 1, false);
+    patternTomTerm_DeclarationToTomTerm = factory.parse("DeclarationToTomTerm(<term>)");
+    funTomTerm_DeclarationToTomTerm = factory.makeAFun("_TomTerm_DeclarationToTomTerm", 1, false);
     protoTomTerm_DeclarationToTomTerm = new TomTerm_DeclarationToTomTerm(this);
 
-    patternTomTerm_OptionToTomTerm = parse("OptionToTomTerm(<term>)");
-    funTomTerm_OptionToTomTerm = makeAFun("_TomTerm_OptionToTomTerm", 1, false);
+    patternTomTerm_OptionToTomTerm = factory.parse("OptionToTomTerm(<term>)");
+    funTomTerm_OptionToTomTerm = factory.makeAFun("_TomTerm_OptionToTomTerm", 1, false);
     protoTomTerm_OptionToTomTerm = new TomTerm_OptionToTomTerm(this);
 
-    patternTomTerm_ExpressionToTomTerm = parse("ExpressionToTomTerm(<term>)");
-    funTomTerm_ExpressionToTomTerm = makeAFun("_TomTerm_ExpressionToTomTerm", 1, false);
+    patternTomTerm_ExpressionToTomTerm = factory.parse("ExpressionToTomTerm(<term>)");
+    funTomTerm_ExpressionToTomTerm = factory.makeAFun("_TomTerm_ExpressionToTomTerm", 1, false);
     protoTomTerm_ExpressionToTomTerm = new TomTerm_ExpressionToTomTerm(this);
 
-    patternTomTerm_InstructionToTomTerm = parse("InstructionToTomTerm(<term>)");
-    funTomTerm_InstructionToTomTerm = makeAFun("_TomTerm_InstructionToTomTerm", 1, false);
+    patternTomTerm_InstructionToTomTerm = factory.parse("InstructionToTomTerm(<term>)");
+    funTomTerm_InstructionToTomTerm = factory.makeAFun("_TomTerm_InstructionToTomTerm", 1, false);
     protoTomTerm_InstructionToTomTerm = new TomTerm_InstructionToTomTerm(this);
 
-    patternTomTerm_Tom = parse("Tom(<term>)");
-    funTomTerm_Tom = makeAFun("_TomTerm_Tom", 1, false);
+    patternTomTerm_Tom = factory.parse("Tom(<term>)");
+    funTomTerm_Tom = factory.makeAFun("_TomTerm_Tom", 1, false);
     protoTomTerm_Tom = new TomTerm_Tom(this);
 
-    patternTomTerm_TomInclude = parse("TomInclude(<term>)");
-    funTomTerm_TomInclude = makeAFun("_TomTerm_TomInclude", 1, false);
+    patternTomTerm_TomInclude = factory.parse("TomInclude(<term>)");
+    funTomTerm_TomInclude = factory.makeAFun("_TomTerm_TomInclude", 1, false);
     protoTomTerm_TomInclude = new TomTerm_TomInclude(this);
 
-    patternTomTerm_MakeTerm = parse("MakeTerm(<term>)");
-    funTomTerm_MakeTerm = makeAFun("_TomTerm_MakeTerm", 1, false);
+    patternTomTerm_MakeTerm = factory.parse("MakeTerm(<term>)");
+    funTomTerm_MakeTerm = factory.makeAFun("_TomTerm_MakeTerm", 1, false);
     protoTomTerm_MakeTerm = new TomTerm_MakeTerm(this);
 
-    patternTomTerm_FunctionCall = parse("FunctionCall(<term>,<term>)");
-    funTomTerm_FunctionCall = makeAFun("_TomTerm_FunctionCall", 2, false);
+    patternTomTerm_FunctionCall = factory.parse("FunctionCall(<term>,<term>)");
+    funTomTerm_FunctionCall = factory.makeAFun("_TomTerm_FunctionCall", 2, false);
     protoTomTerm_FunctionCall = new TomTerm_FunctionCall(this);
 
-    patternTomTerm_MakeFunctionBegin = parse("MakeFunctionBegin(<term>,<term>)");
-    funTomTerm_MakeFunctionBegin = makeAFun("_TomTerm_MakeFunctionBegin", 2, false);
+    patternTomTerm_MakeFunctionBegin = factory.parse("MakeFunctionBegin(<term>,<term>)");
+    funTomTerm_MakeFunctionBegin = factory.makeAFun("_TomTerm_MakeFunctionBegin", 2, false);
     protoTomTerm_MakeFunctionBegin = new TomTerm_MakeFunctionBegin(this);
 
-    patternTomTerm_MakeFunctionEnd = parse("MakeFunctionEnd");
-    funTomTerm_MakeFunctionEnd = makeAFun("_TomTerm_MakeFunctionEnd", 0, false);
+    patternTomTerm_MakeFunctionEnd = factory.parse("MakeFunctionEnd");
+    funTomTerm_MakeFunctionEnd = factory.makeAFun("_TomTerm_MakeFunctionEnd", 0, false);
     protoTomTerm_MakeFunctionEnd = new TomTerm_MakeFunctionEnd(this);
 
-    patternTomTerm_Appl = parse("Appl(<term>,<term>,<term>)");
-    funTomTerm_Appl = makeAFun("_TomTerm_Appl", 3, false);
+    patternTomTerm_Appl = factory.parse("Appl(<term>,<term>,<term>)");
+    funTomTerm_Appl = factory.makeAFun("_TomTerm_Appl", 3, false);
     protoTomTerm_Appl = new TomTerm_Appl(this);
 
-    patternTomTerm_BackQuoteAppl = parse("BackQuoteAppl(<term>,<term>,<term>)");
-    funTomTerm_BackQuoteAppl = makeAFun("_TomTerm_BackQuoteAppl", 3, false);
+    patternTomTerm_BackQuoteAppl = factory.parse("BackQuoteAppl(<term>,<term>,<term>)");
+    funTomTerm_BackQuoteAppl = factory.makeAFun("_TomTerm_BackQuoteAppl", 3, false);
     protoTomTerm_BackQuoteAppl = new TomTerm_BackQuoteAppl(this);
 
-    patternTomTerm_Composite = parse("Composite(<term>)");
-    funTomTerm_Composite = makeAFun("_TomTerm_Composite", 1, false);
+    patternTomTerm_Composite = factory.parse("Composite(<term>)");
+    funTomTerm_Composite = factory.makeAFun("_TomTerm_Composite", 1, false);
     protoTomTerm_Composite = new TomTerm_Composite(this);
 
-    patternTomTerm_RecordAppl = parse("RecordAppl(<term>,<term>,<term>)");
-    funTomTerm_RecordAppl = makeAFun("_TomTerm_RecordAppl", 3, false);
+    patternTomTerm_RecordAppl = factory.parse("RecordAppl(<term>,<term>,<term>)");
+    funTomTerm_RecordAppl = factory.makeAFun("_TomTerm_RecordAppl", 3, false);
     protoTomTerm_RecordAppl = new TomTerm_RecordAppl(this);
 
-    patternTomTerm_PairSlotAppl = parse("PairSlotAppl(<term>,<term>)");
-    funTomTerm_PairSlotAppl = makeAFun("_TomTerm_PairSlotAppl", 2, false);
+    patternTomTerm_PairSlotAppl = factory.parse("PairSlotAppl(<term>,<term>)");
+    funTomTerm_PairSlotAppl = factory.makeAFun("_TomTerm_PairSlotAppl", 2, false);
     protoTomTerm_PairSlotAppl = new TomTerm_PairSlotAppl(this);
 
-    patternTomTerm_Match = parse("Match(<term>,<term>,<term>)");
-    funTomTerm_Match = makeAFun("_TomTerm_Match", 3, false);
+    patternTomTerm_Match = factory.parse("Match(<term>,<term>,<term>)");
+    funTomTerm_Match = factory.makeAFun("_TomTerm_Match", 3, false);
     protoTomTerm_Match = new TomTerm_Match(this);
 
-    patternTomTerm_MatchingCondition = parse("MatchingCondition(<term>,<term>)");
-    funTomTerm_MatchingCondition = makeAFun("_TomTerm_MatchingCondition", 2, false);
+    patternTomTerm_MatchingCondition = factory.parse("MatchingCondition(<term>,<term>)");
+    funTomTerm_MatchingCondition = factory.makeAFun("_TomTerm_MatchingCondition", 2, false);
     protoTomTerm_MatchingCondition = new TomTerm_MatchingCondition(this);
 
-    patternTomTerm_EqualityCondition = parse("EqualityCondition(<term>,<term>)");
-    funTomTerm_EqualityCondition = makeAFun("_TomTerm_EqualityCondition", 2, false);
+    patternTomTerm_EqualityCondition = factory.parse("EqualityCondition(<term>,<term>)");
+    funTomTerm_EqualityCondition = factory.makeAFun("_TomTerm_EqualityCondition", 2, false);
     protoTomTerm_EqualityCondition = new TomTerm_EqualityCondition(this);
 
-    patternTomTerm_RuleSet = parse("RuleSet(<term>,<term>)");
-    funTomTerm_RuleSet = makeAFun("_TomTerm_RuleSet", 2, false);
+    patternTomTerm_RuleSet = factory.parse("RuleSet(<term>,<term>)");
+    funTomTerm_RuleSet = factory.makeAFun("_TomTerm_RuleSet", 2, false);
     protoTomTerm_RuleSet = new TomTerm_RuleSet(this);
 
-    patternTomTerm_SubjectList = parse("SubjectList(<term>)");
-    funTomTerm_SubjectList = makeAFun("_TomTerm_SubjectList", 1, false);
+    patternTomTerm_SubjectList = factory.parse("SubjectList(<term>)");
+    funTomTerm_SubjectList = factory.makeAFun("_TomTerm_SubjectList", 1, false);
     protoTomTerm_SubjectList = new TomTerm_SubjectList(this);
 
-    patternTomTerm_PatternList = parse("PatternList(<term>)");
-    funTomTerm_PatternList = makeAFun("_TomTerm_PatternList", 1, false);
+    patternTomTerm_PatternList = factory.parse("PatternList(<term>)");
+    funTomTerm_PatternList = factory.makeAFun("_TomTerm_PatternList", 1, false);
     protoTomTerm_PatternList = new TomTerm_PatternList(this);
 
-    patternTomTerm_TermList = parse("TermList(<term>)");
-    funTomTerm_TermList = makeAFun("_TomTerm_TermList", 1, false);
+    patternTomTerm_TermList = factory.parse("TermList(<term>)");
+    funTomTerm_TermList = factory.makeAFun("_TomTerm_TermList", 1, false);
     protoTomTerm_TermList = new TomTerm_TermList(this);
 
-    patternTomTerm_Term = parse("Term(<term>)");
-    funTomTerm_Term = makeAFun("_TomTerm_Term", 1, false);
+    patternTomTerm_Term = factory.parse("Term(<term>)");
+    funTomTerm_Term = factory.makeAFun("_TomTerm_Term", 1, false);
     protoTomTerm_Term = new TomTerm_Term(this);
 
-    patternTomTerm_PatternAction = parse("PatternAction(<term>,<term>,<term>)");
-    funTomTerm_PatternAction = makeAFun("_TomTerm_PatternAction", 3, false);
+    patternTomTerm_PatternAction = factory.parse("PatternAction(<term>,<term>,<term>)");
+    funTomTerm_PatternAction = factory.makeAFun("_TomTerm_PatternAction", 3, false);
     protoTomTerm_PatternAction = new TomTerm_PatternAction(this);
 
-    patternTomTerm_DefaultPatternAction = parse("DefaultPatternAction(<term>,<term>,<term>)");
-    funTomTerm_DefaultPatternAction = makeAFun("_TomTerm_DefaultPatternAction", 3, false);
+    patternTomTerm_DefaultPatternAction = factory.parse("DefaultPatternAction(<term>,<term>,<term>)");
+    funTomTerm_DefaultPatternAction = factory.makeAFun("_TomTerm_DefaultPatternAction", 3, false);
     protoTomTerm_DefaultPatternAction = new TomTerm_DefaultPatternAction(this);
 
-    patternTomTerm_TLVar = parse("TLVar(<str>,<term>)");
-    funTomTerm_TLVar = makeAFun("_TomTerm_TLVar", 2, false);
+    patternTomTerm_TLVar = factory.parse("TLVar(<str>,<term>)");
+    funTomTerm_TLVar = factory.makeAFun("_TomTerm_TLVar", 2, false);
     protoTomTerm_TLVar = new TomTerm_TLVar(this);
 
-    patternTomTerm_Declaration = parse("Declaration(<term>)");
-    funTomTerm_Declaration = makeAFun("_TomTerm_Declaration", 1, false);
+    patternTomTerm_Declaration = factory.parse("Declaration(<term>)");
+    funTomTerm_Declaration = factory.makeAFun("_TomTerm_Declaration", 1, false);
     protoTomTerm_Declaration = new TomTerm_Declaration(this);
 
-    patternTomTerm_Variable = parse("Variable(<term>,<term>,<term>)");
-    funTomTerm_Variable = makeAFun("_TomTerm_Variable", 3, false);
+    patternTomTerm_Variable = factory.parse("Variable(<term>,<term>,<term>)");
+    funTomTerm_Variable = factory.makeAFun("_TomTerm_Variable", 3, false);
     protoTomTerm_Variable = new TomTerm_Variable(this);
 
-    patternTomTerm_VariableStar = parse("VariableStar(<term>,<term>,<term>)");
-    funTomTerm_VariableStar = makeAFun("_TomTerm_VariableStar", 3, false);
+    patternTomTerm_VariableStar = factory.parse("VariableStar(<term>,<term>,<term>)");
+    funTomTerm_VariableStar = factory.makeAFun("_TomTerm_VariableStar", 3, false);
     protoTomTerm_VariableStar = new TomTerm_VariableStar(this);
 
-    patternTomTerm_Placeholder = parse("Placeholder(<term>)");
-    funTomTerm_Placeholder = makeAFun("_TomTerm_Placeholder", 1, false);
+    patternTomTerm_Placeholder = factory.parse("Placeholder(<term>)");
+    funTomTerm_Placeholder = factory.makeAFun("_TomTerm_Placeholder", 1, false);
     protoTomTerm_Placeholder = new TomTerm_Placeholder(this);
 
-    patternTomTerm_UnamedVariable = parse("UnamedVariable(<term>,<term>)");
-    funTomTerm_UnamedVariable = makeAFun("_TomTerm_UnamedVariable", 2, false);
+    patternTomTerm_UnamedVariable = factory.parse("UnamedVariable(<term>,<term>)");
+    funTomTerm_UnamedVariable = factory.makeAFun("_TomTerm_UnamedVariable", 2, false);
     protoTomTerm_UnamedVariable = new TomTerm_UnamedVariable(this);
 
-    patternTomTerm_LocalVariable = parse("LocalVariable");
-    funTomTerm_LocalVariable = makeAFun("_TomTerm_LocalVariable", 0, false);
+    patternTomTerm_LocalVariable = factory.parse("LocalVariable");
+    funTomTerm_LocalVariable = factory.makeAFun("_TomTerm_LocalVariable", 0, false);
     protoTomTerm_LocalVariable = new TomTerm_LocalVariable(this);
 
-    patternTomTerm_EndLocalVariable = parse("EndLocalVariable");
-    funTomTerm_EndLocalVariable = makeAFun("_TomTerm_EndLocalVariable", 0, false);
+    patternTomTerm_EndLocalVariable = factory.parse("EndLocalVariable");
+    funTomTerm_EndLocalVariable = factory.makeAFun("_TomTerm_EndLocalVariable", 0, false);
     protoTomTerm_EndLocalVariable = new TomTerm_EndLocalVariable(this);
 
-    patternTomTerm_BuildVariable = parse("BuildVariable(<term>)");
-    funTomTerm_BuildVariable = makeAFun("_TomTerm_BuildVariable", 1, false);
+    patternTomTerm_BuildVariable = factory.parse("BuildVariable(<term>)");
+    funTomTerm_BuildVariable = factory.makeAFun("_TomTerm_BuildVariable", 1, false);
     protoTomTerm_BuildVariable = new TomTerm_BuildVariable(this);
 
-    patternTomTerm_BuildTerm = parse("BuildTerm(<term>,<term>)");
-    funTomTerm_BuildTerm = makeAFun("_TomTerm_BuildTerm", 2, false);
+    patternTomTerm_BuildTerm = factory.parse("BuildTerm(<term>,<term>)");
+    funTomTerm_BuildTerm = factory.makeAFun("_TomTerm_BuildTerm", 2, false);
     protoTomTerm_BuildTerm = new TomTerm_BuildTerm(this);
 
-    patternTomTerm_BuildList = parse("BuildList(<term>,<term>)");
-    funTomTerm_BuildList = makeAFun("_TomTerm_BuildList", 2, false);
+    patternTomTerm_BuildList = factory.parse("BuildList(<term>,<term>)");
+    funTomTerm_BuildList = factory.makeAFun("_TomTerm_BuildList", 2, false);
     protoTomTerm_BuildList = new TomTerm_BuildList(this);
 
-    patternTomTerm_BuildArray = parse("BuildArray(<term>,<term>)");
-    funTomTerm_BuildArray = makeAFun("_TomTerm_BuildArray", 2, false);
+    patternTomTerm_BuildArray = factory.parse("BuildArray(<term>,<term>)");
+    funTomTerm_BuildArray = factory.makeAFun("_TomTerm_BuildArray", 2, false);
     protoTomTerm_BuildArray = new TomTerm_BuildArray(this);
 
-    patternTomTerm_CompiledMatch = parse("CompiledMatch(<term>,<term>,<term>)");
-    funTomTerm_CompiledMatch = makeAFun("_TomTerm_CompiledMatch", 3, false);
+    patternTomTerm_CompiledMatch = factory.parse("CompiledMatch(<term>,<term>,<term>)");
+    funTomTerm_CompiledMatch = factory.makeAFun("_TomTerm_CompiledMatch", 3, false);
     protoTomTerm_CompiledMatch = new TomTerm_CompiledMatch(this);
 
-    patternTomTerm_CompiledPattern = parse("CompiledPattern(<term>)");
-    funTomTerm_CompiledPattern = makeAFun("_TomTerm_CompiledPattern", 1, false);
+    patternTomTerm_CompiledPattern = factory.parse("CompiledPattern(<term>)");
+    funTomTerm_CompiledPattern = factory.makeAFun("_TomTerm_CompiledPattern", 1, false);
     protoTomTerm_CompiledPattern = new TomTerm_CompiledPattern(this);
 
-    patternTomTerm_AssignedVariable = parse("AssignedVariable(<str>,<term>,<int>,<term>,<term>)");
-    funTomTerm_AssignedVariable = makeAFun("_TomTerm_AssignedVariable", 5, false);
+    patternTomTerm_AssignedVariable = factory.parse("AssignedVariable(<str>,<term>,<int>,<term>,<term>)");
+    funTomTerm_AssignedVariable = factory.makeAFun("_TomTerm_AssignedVariable", 5, false);
     protoTomTerm_AssignedVariable = new TomTerm_AssignedVariable(this);
 
-    patternTomTerm_Automata = parse("Automata(<term>,<term>,<term>)");
-    funTomTerm_Automata = makeAFun("_TomTerm_Automata", 3, false);
+    patternTomTerm_Automata = factory.parse("Automata(<term>,<term>,<term>)");
+    funTomTerm_Automata = factory.makeAFun("_TomTerm_Automata", 3, false);
     protoTomTerm_Automata = new TomTerm_Automata(this);
 
-    patternTomTerm_DefaultAutomata = parse("DefaultAutomata(<term>,<term>,<term>)");
-    funTomTerm_DefaultAutomata = makeAFun("_TomTerm_DefaultAutomata", 3, false);
+    patternTomTerm_DefaultAutomata = factory.parse("DefaultAutomata(<term>,<term>,<term>)");
+    funTomTerm_DefaultAutomata = factory.makeAFun("_TomTerm_DefaultAutomata", 3, false);
     protoTomTerm_DefaultAutomata = new TomTerm_DefaultAutomata(this);
 
-    patternTomTerm_MatchXML = parse("MatchXML(<str>,<term>,<term>)");
-    funTomTerm_MatchXML = makeAFun("_TomTerm_MatchXML", 3, false);
+    patternTomTerm_MatchXML = factory.parse("MatchXML(<str>,<term>,<term>)");
+    funTomTerm_MatchXML = factory.makeAFun("_TomTerm_MatchXML", 3, false);
     protoTomTerm_MatchXML = new TomTerm_MatchXML(this);
 
-    patternTomTerm_BackQuoteXML = parse("BackQuoteXML(<term>,<term>)");
-    funTomTerm_BackQuoteXML = makeAFun("_TomTerm_BackQuoteXML", 2, false);
+    patternTomTerm_BackQuoteXML = factory.parse("BackQuoteXML(<term>,<term>)");
+    funTomTerm_BackQuoteXML = factory.makeAFun("_TomTerm_BackQuoteXML", 2, false);
     protoTomTerm_BackQuoteXML = new TomTerm_BackQuoteXML(this);
 
-    patternTomTerm_XMLTermToTomTerm = parse("XMLTermToTomTerm(<term>)");
-    funTomTerm_XMLTermToTomTerm = makeAFun("_TomTerm_XMLTermToTomTerm", 1, false);
+    patternTomTerm_XMLTermToTomTerm = factory.parse("XMLTermToTomTerm(<term>)");
+    funTomTerm_XMLTermToTomTerm = factory.makeAFun("_TomTerm_XMLTermToTomTerm", 1, false);
     protoTomTerm_XMLTermToTomTerm = new TomTerm_XMLTermToTomTerm(this);
 
 
-    patternTomNumber_MatchNumber = parse("MatchNumber(<term>)");
-    funTomNumber_MatchNumber = makeAFun("_TomNumber_MatchNumber", 1, false);
+    patternTomNumber_MatchNumber = factory.parse("MatchNumber(<term>)");
+    funTomNumber_MatchNumber = factory.makeAFun("_TomNumber_MatchNumber", 1, false);
     protoTomNumber_MatchNumber = new TomNumber_MatchNumber(this);
 
-    patternTomNumber_PatternNumber = parse("PatternNumber(<term>)");
-    funTomNumber_PatternNumber = makeAFun("_TomNumber_PatternNumber", 1, false);
+    patternTomNumber_PatternNumber = factory.parse("PatternNumber(<term>)");
+    funTomNumber_PatternNumber = factory.makeAFun("_TomNumber_PatternNumber", 1, false);
     protoTomNumber_PatternNumber = new TomNumber_PatternNumber(this);
 
-    patternTomNumber_ListNumber = parse("ListNumber(<term>)");
-    funTomNumber_ListNumber = makeAFun("_TomNumber_ListNumber", 1, false);
+    patternTomNumber_ListNumber = factory.parse("ListNumber(<term>)");
+    funTomNumber_ListNumber = factory.makeAFun("_TomNumber_ListNumber", 1, false);
     protoTomNumber_ListNumber = new TomNumber_ListNumber(this);
 
-    patternTomNumber_IndexNumber = parse("IndexNumber(<term>)");
-    funTomNumber_IndexNumber = makeAFun("_TomNumber_IndexNumber", 1, false);
+    patternTomNumber_IndexNumber = factory.parse("IndexNumber(<term>)");
+    funTomNumber_IndexNumber = factory.makeAFun("_TomNumber_IndexNumber", 1, false);
     protoTomNumber_IndexNumber = new TomNumber_IndexNumber(this);
 
-    patternTomNumber_Begin = parse("Begin(<term>)");
-    funTomNumber_Begin = makeAFun("_TomNumber_Begin", 1, false);
+    patternTomNumber_Begin = factory.parse("Begin(<term>)");
+    funTomNumber_Begin = factory.makeAFun("_TomNumber_Begin", 1, false);
     protoTomNumber_Begin = new TomNumber_Begin(this);
 
-    patternTomNumber_End = parse("End(<term>)");
-    funTomNumber_End = makeAFun("_TomNumber_End", 1, false);
+    patternTomNumber_End = factory.parse("End(<term>)");
+    funTomNumber_End = factory.makeAFun("_TomNumber_End", 1, false);
     protoTomNumber_End = new TomNumber_End(this);
 
-    patternTomNumber_Number = parse("Number(<int>)");
-    funTomNumber_Number = makeAFun("_TomNumber_Number", 1, false);
+    patternTomNumber_Number = factory.parse("Number(<int>)");
+    funTomNumber_Number = factory.makeAFun("_TomNumber_Number", 1, false);
     protoTomNumber_Number = new TomNumber_Number(this);
 
-    patternTomNumber_AbsVar = parse("AbsVar(<term>)");
-    funTomNumber_AbsVar = makeAFun("_TomNumber_AbsVar", 1, false);
+    patternTomNumber_AbsVar = factory.parse("AbsVar(<term>)");
+    funTomNumber_AbsVar = factory.makeAFun("_TomNumber_AbsVar", 1, false);
     protoTomNumber_AbsVar = new TomNumber_AbsVar(this);
 
-    patternTomNumber_RenamedVar = parse("RenamedVar(<term>)");
-    funTomNumber_RenamedVar = makeAFun("_TomNumber_RenamedVar", 1, false);
+    patternTomNumber_RenamedVar = factory.parse("RenamedVar(<term>)");
+    funTomNumber_RenamedVar = factory.makeAFun("_TomNumber_RenamedVar", 1, false);
     protoTomNumber_RenamedVar = new TomNumber_RenamedVar(this);
 
-    patternTomNumber_RuleVar = parse("RuleVar");
-    funTomNumber_RuleVar = makeAFun("_TomNumber_RuleVar", 0, false);
+    patternTomNumber_RuleVar = factory.parse("RuleVar");
+    funTomNumber_RuleVar = factory.makeAFun("_TomNumber_RuleVar", 0, false);
     protoTomNumber_RuleVar = new TomNumber_RuleVar(this);
 
 
-    patternTomRule_RewriteRule = parse("RewriteRule(<term>,<term>,<term>,<term>)");
-    funTomRule_RewriteRule = makeAFun("_TomRule_RewriteRule", 4, false);
+    patternTomRule_RewriteRule = factory.parse("RewriteRule(<term>,<term>,<term>,<term>)");
+    funTomRule_RewriteRule = factory.makeAFun("_TomRule_RewriteRule", 4, false);
     protoTomRule_RewriteRule = new TomRule_RewriteRule(this);
 
 
-    patternInstruction_IfThenElse = parse("IfThenElse(<term>,<term>,<term>)");
-    funInstruction_IfThenElse = makeAFun("_Instruction_IfThenElse", 3, false);
+    patternInstruction_IfThenElse = factory.parse("IfThenElse(<term>,<term>,<term>)");
+    funInstruction_IfThenElse = factory.makeAFun("_Instruction_IfThenElse", 3, false);
     protoInstruction_IfThenElse = new Instruction_IfThenElse(this);
 
-    patternInstruction_DoWhile = parse("DoWhile(<term>,<term>)");
-    funInstruction_DoWhile = makeAFun("_Instruction_DoWhile", 2, false);
+    patternInstruction_DoWhile = factory.parse("DoWhile(<term>,<term>)");
+    funInstruction_DoWhile = factory.makeAFun("_Instruction_DoWhile", 2, false);
     protoInstruction_DoWhile = new Instruction_DoWhile(this);
 
-    patternInstruction_Assign = parse("Assign(<term>,<term>)");
-    funInstruction_Assign = makeAFun("_Instruction_Assign", 2, false);
+    patternInstruction_Assign = factory.parse("Assign(<term>,<term>)");
+    funInstruction_Assign = factory.makeAFun("_Instruction_Assign", 2, false);
     protoInstruction_Assign = new Instruction_Assign(this);
 
-    patternInstruction_AssignMatchSubject = parse("AssignMatchSubject(<term>,<term>)");
-    funInstruction_AssignMatchSubject = makeAFun("_Instruction_AssignMatchSubject", 2, false);
+    patternInstruction_AssignMatchSubject = factory.parse("AssignMatchSubject(<term>,<term>)");
+    funInstruction_AssignMatchSubject = factory.makeAFun("_Instruction_AssignMatchSubject", 2, false);
     protoInstruction_AssignMatchSubject = new Instruction_AssignMatchSubject(this);
 
-    patternInstruction_Increment = parse("Increment(<term>)");
-    funInstruction_Increment = makeAFun("_Instruction_Increment", 1, false);
+    patternInstruction_Increment = factory.parse("Increment(<term>)");
+    funInstruction_Increment = factory.makeAFun("_Instruction_Increment", 1, false);
     protoInstruction_Increment = new Instruction_Increment(this);
 
-    patternInstruction_Action = parse("Action(<term>)");
-    funInstruction_Action = makeAFun("_Instruction_Action", 1, false);
+    patternInstruction_Action = factory.parse("Action(<term>)");
+    funInstruction_Action = factory.makeAFun("_Instruction_Action", 1, false);
     protoInstruction_Action = new Instruction_Action(this);
 
-    patternInstruction_ExitAction = parse("ExitAction(<term>)");
-    funInstruction_ExitAction = makeAFun("_Instruction_ExitAction", 1, false);
+    patternInstruction_ExitAction = factory.parse("ExitAction(<term>)");
+    funInstruction_ExitAction = factory.makeAFun("_Instruction_ExitAction", 1, false);
     protoInstruction_ExitAction = new Instruction_ExitAction(this);
 
-    patternInstruction_Return = parse("Return(<term>)");
-    funInstruction_Return = makeAFun("_Instruction_Return", 1, false);
+    patternInstruction_Return = factory.parse("Return(<term>)");
+    funInstruction_Return = factory.makeAFun("_Instruction_Return", 1, false);
     protoInstruction_Return = new Instruction_Return(this);
 
-    patternInstruction_OpenBlock = parse("OpenBlock");
-    funInstruction_OpenBlock = makeAFun("_Instruction_OpenBlock", 0, false);
+    patternInstruction_OpenBlock = factory.parse("OpenBlock");
+    funInstruction_OpenBlock = factory.makeAFun("_Instruction_OpenBlock", 0, false);
     protoInstruction_OpenBlock = new Instruction_OpenBlock(this);
 
-    patternInstruction_CloseBlock = parse("CloseBlock");
-    funInstruction_CloseBlock = makeAFun("_Instruction_CloseBlock", 0, false);
+    patternInstruction_CloseBlock = factory.parse("CloseBlock");
+    funInstruction_CloseBlock = factory.makeAFun("_Instruction_CloseBlock", 0, false);
     protoInstruction_CloseBlock = new Instruction_CloseBlock(this);
 
-    patternInstruction_NamedBlock = parse("NamedBlock(<str>,<term>)");
-    funInstruction_NamedBlock = makeAFun("_Instruction_NamedBlock", 2, false);
+    patternInstruction_NamedBlock = factory.parse("NamedBlock(<str>,<term>)");
+    funInstruction_NamedBlock = factory.makeAFun("_Instruction_NamedBlock", 2, false);
     protoInstruction_NamedBlock = new Instruction_NamedBlock(this);
 
 
-    patternTomSymbol_Symbol = parse("Symbol(<term>,<term>,<term>,<term>,<term>)");
-    funTomSymbol_Symbol = makeAFun("_TomSymbol_Symbol", 5, false);
+    patternTomSymbol_Symbol = factory.parse("Symbol(<term>,<term>,<term>,<term>,<term>)");
+    funTomSymbol_Symbol = factory.makeAFun("_TomSymbol_Symbol", 5, false);
     protoTomSymbol_Symbol = new TomSymbol_Symbol(this);
 
 
-    patternPairNameDecl_Slot = parse("Slot(<term>,<term>)");
-    funPairNameDecl_Slot = makeAFun("_PairNameDecl_Slot", 2, false);
+    patternPairNameDecl_Slot = factory.parse("Slot(<term>,<term>)");
+    funPairNameDecl_Slot = factory.makeAFun("_PairNameDecl_Slot", 2, false);
     protoPairNameDecl_Slot = new PairNameDecl_Slot(this);
 
 
-    patternTomSymbolTable_Table = parse("Table(<term>)");
-    funTomSymbolTable_Table = makeAFun("_TomSymbolTable_Table", 1, false);
+    patternTomSymbolTable_Table = factory.parse("Table(<term>)");
+    funTomSymbolTable_Table = factory.makeAFun("_TomSymbolTable_Table", 1, false);
     protoTomSymbolTable_Table = new TomSymbolTable_Table(this);
 
 
-    patternTomEntry_Entry = parse("Entry(<str>,<term>)");
-    funTomEntry_Entry = makeAFun("_TomEntry_Entry", 2, false);
+    patternTomEntry_Entry = factory.parse("Entry(<str>,<term>)");
+    funTomEntry_Entry = factory.makeAFun("_TomEntry_Entry", 2, false);
     protoTomEntry_Entry = new TomEntry_Entry(this);
 
 
-    patternTomStructureTable_StructTable = parse("StructTable(<term>)");
-    funTomStructureTable_StructTable = makeAFun("_TomStructureTable_StructTable", 1, false);
+    patternTomStructureTable_StructTable = factory.parse("StructTable(<term>)");
+    funTomStructureTable_StructTable = factory.makeAFun("_TomStructureTable_StructTable", 1, false);
     protoTomStructureTable_StructTable = new TomStructureTable_StructTable(this);
 
 
-    patternXMLTerm_Element = parse("Element(<term>,<term>,<term>)");
-    funXMLTerm_Element = makeAFun("_XMLTerm_Element", 3, false);
+    patternXMLTerm_Element = factory.parse("Element(<term>,<term>,<term>)");
+    funXMLTerm_Element = factory.makeAFun("_XMLTerm_Element", 3, false);
     protoXMLTerm_Element = new XMLTerm_Element(this);
 
-    patternXMLTerm_Attribute = parse("Attribute(<term>,<term>,<term>)");
-    funXMLTerm_Attribute = makeAFun("_XMLTerm_Attribute", 3, false);
+    patternXMLTerm_Attribute = factory.parse("Attribute(<term>,<term>,<term>)");
+    funXMLTerm_Attribute = factory.makeAFun("_XMLTerm_Attribute", 3, false);
     protoXMLTerm_Attribute = new XMLTerm_Attribute(this);
 
-    patternXMLTerm_ReservedWord = parse("ReservedWord(<term>,<term>,<term>)");
-    funXMLTerm_ReservedWord = makeAFun("_XMLTerm_ReservedWord", 3, false);
+    patternXMLTerm_ReservedWord = factory.parse("ReservedWord(<term>,<term>,<term>)");
+    funXMLTerm_ReservedWord = factory.makeAFun("_XMLTerm_ReservedWord", 3, false);
     protoXMLTerm_ReservedWord = new XMLTerm_ReservedWord(this);
 
-    patternXMLTerm_XMLPlaceholder = parse("XMLPlaceholder(<term>)");
-    funXMLTerm_XMLPlaceholder = makeAFun("_XMLTerm_XMLPlaceholder", 1, false);
+    patternXMLTerm_XMLPlaceholder = factory.parse("XMLPlaceholder(<term>)");
+    funXMLTerm_XMLPlaceholder = factory.makeAFun("_XMLTerm_XMLPlaceholder", 1, false);
     protoXMLTerm_XMLPlaceholder = new XMLTerm_XMLPlaceholder(this);
 
-    patternXMLTerm_XMLVariable = parse("XMLVariable(<term>,<term>)");
-    funXMLTerm_XMLVariable = makeAFun("_XMLTerm_XMLVariable", 2, false);
+    patternXMLTerm_XMLVariable = factory.parse("XMLVariable(<term>,<term>)");
+    funXMLTerm_XMLVariable = factory.makeAFun("_XMLTerm_XMLVariable", 2, false);
     protoXMLTerm_XMLVariable = new XMLTerm_XMLVariable(this);
 
     protoTomList = new TomList(this);
     protoTomList.init(84, null, null, null);
-    emptyTomList = (TomList) build(protoTomList);
+    emptyTomList = (TomList) factory.build(protoTomList);
     emptyTomList.init(84, emptyTomList, null, null);
 
     protoTomNumberList = new TomNumberList(this);
     protoTomNumberList.init(126, null, null, null);
-    emptyTomNumberList = (TomNumberList) build(protoTomNumberList);
+    emptyTomNumberList = (TomNumberList) factory.build(protoTomNumberList);
     emptyTomNumberList.init(126, emptyTomNumberList, null, null);
 
     protoTomRuleList = new TomRuleList(this);
     protoTomRuleList.init(168, null, null, null);
-    emptyTomRuleList = (TomRuleList) build(protoTomRuleList);
+    emptyTomRuleList = (TomRuleList) factory.build(protoTomRuleList);
     emptyTomRuleList.init(168, emptyTomRuleList, null, null);
 
     protoTomTypeList = new TomTypeList(this);
     protoTomTypeList.init(210, null, null, null);
-    emptyTomTypeList = (TomTypeList) build(protoTomTypeList);
+    emptyTomTypeList = (TomTypeList) factory.build(protoTomTypeList);
     emptyTomTypeList.init(210, emptyTomTypeList, null, null);
 
     protoOptionList = new OptionList(this);
     protoOptionList.init(252, null, null, null);
-    emptyOptionList = (OptionList) build(protoOptionList);
+    emptyOptionList = (OptionList) factory.build(protoOptionList);
     emptyOptionList.init(252, emptyOptionList, null, null);
 
     protoSlotList = new SlotList(this);
     protoSlotList.init(294, null, null, null);
-    emptySlotList = (SlotList) build(protoSlotList);
+    emptySlotList = (SlotList) factory.build(protoSlotList);
     emptySlotList.init(294, emptySlotList, null, null);
 
     protoTomEntryList = new TomEntryList(this);
     protoTomEntryList.init(336, null, null, null);
-    emptyTomEntryList = (TomEntryList) build(protoTomEntryList);
+    emptyTomEntryList = (TomEntryList) factory.build(protoTomEntryList);
     emptyTomEntryList.init(336, emptyTomEntryList, null, null);
 
   }
   protected Declaration_TypeTermDecl makeDeclaration_TypeTermDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_TypeTermDecl) {
       protoDeclaration_TypeTermDecl.initHashCode(annos,fun,args);
-      return (Declaration_TypeTermDecl) build(protoDeclaration_TypeTermDecl);
+      return (Declaration_TypeTermDecl) factory.build(protoDeclaration_TypeTermDecl);
     }
   }
 
   public Declaration_TypeTermDecl makeDeclaration_TypeTermDecl(TomName _astName, TomList _keywordList, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _keywordList, _orgTrack};
-    return makeDeclaration_TypeTermDecl( funDeclaration_TypeTermDecl, args, getEmpty());
+    return makeDeclaration_TypeTermDecl(funDeclaration_TypeTermDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_TypeTermDeclFromTerm(aterm.ATerm trm)
@@ -1124,22 +1131,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_TypeTermDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternDeclaration_TypeTermDecl, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getKeywordList()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_TypeTermDecl, args);
   }
 
   protected Declaration_TypeListDecl makeDeclaration_TypeListDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_TypeListDecl) {
       protoDeclaration_TypeListDecl.initHashCode(annos,fun,args);
-      return (Declaration_TypeListDecl) build(protoDeclaration_TypeListDecl);
+      return (Declaration_TypeListDecl) factory.build(protoDeclaration_TypeListDecl);
     }
   }
 
   public Declaration_TypeListDecl makeDeclaration_TypeListDecl(TomName _astName, TomList _keywordList, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _keywordList, _orgTrack};
-    return makeDeclaration_TypeListDecl( funDeclaration_TypeListDecl, args, getEmpty());
+    return makeDeclaration_TypeListDecl(funDeclaration_TypeListDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_TypeListDeclFromTerm(aterm.ATerm trm)
@@ -1156,22 +1160,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_TypeListDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternDeclaration_TypeListDecl, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getKeywordList()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_TypeListDecl, args);
   }
 
   protected Declaration_TypeArrayDecl makeDeclaration_TypeArrayDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_TypeArrayDecl) {
       protoDeclaration_TypeArrayDecl.initHashCode(annos,fun,args);
-      return (Declaration_TypeArrayDecl) build(protoDeclaration_TypeArrayDecl);
+      return (Declaration_TypeArrayDecl) factory.build(protoDeclaration_TypeArrayDecl);
     }
   }
 
   public Declaration_TypeArrayDecl makeDeclaration_TypeArrayDecl(TomName _astName, TomList _keywordList, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _keywordList, _orgTrack};
-    return makeDeclaration_TypeArrayDecl( funDeclaration_TypeArrayDecl, args, getEmpty());
+    return makeDeclaration_TypeArrayDecl(funDeclaration_TypeArrayDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_TypeArrayDeclFromTerm(aterm.ATerm trm)
@@ -1188,22 +1189,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_TypeArrayDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternDeclaration_TypeArrayDecl, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getKeywordList()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_TypeArrayDecl, args);
   }
 
   protected Declaration_GetFunctionSymbolDecl makeDeclaration_GetFunctionSymbolDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_GetFunctionSymbolDecl) {
       protoDeclaration_GetFunctionSymbolDecl.initHashCode(annos,fun,args);
-      return (Declaration_GetFunctionSymbolDecl) build(protoDeclaration_GetFunctionSymbolDecl);
+      return (Declaration_GetFunctionSymbolDecl) factory.build(protoDeclaration_GetFunctionSymbolDecl);
     }
   }
 
   public Declaration_GetFunctionSymbolDecl makeDeclaration_GetFunctionSymbolDecl(TomTerm _termArg, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termArg, _tlCode, _orgTrack};
-    return makeDeclaration_GetFunctionSymbolDecl( funDeclaration_GetFunctionSymbolDecl, args, getEmpty());
+    return makeDeclaration_GetFunctionSymbolDecl(funDeclaration_GetFunctionSymbolDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_GetFunctionSymbolDeclFromTerm(aterm.ATerm trm)
@@ -1220,22 +1218,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_GetFunctionSymbolDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternDeclaration_GetFunctionSymbolDecl, args);
+    args.add((arg.getTermArg()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_GetFunctionSymbolDecl, args);
   }
 
   protected Declaration_GetSubtermDecl makeDeclaration_GetSubtermDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_GetSubtermDecl) {
       protoDeclaration_GetSubtermDecl.initHashCode(annos,fun,args);
-      return (Declaration_GetSubtermDecl) build(protoDeclaration_GetSubtermDecl);
+      return (Declaration_GetSubtermDecl) factory.build(protoDeclaration_GetSubtermDecl);
     }
   }
 
   public Declaration_GetSubtermDecl makeDeclaration_GetSubtermDecl(TomTerm _termArg, TomTerm _variable, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termArg, _variable, _tlCode, _orgTrack};
-    return makeDeclaration_GetSubtermDecl( funDeclaration_GetSubtermDecl, args, getEmpty());
+    return makeDeclaration_GetSubtermDecl(funDeclaration_GetSubtermDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_GetSubtermDeclFromTerm(aterm.ATerm trm)
@@ -1252,23 +1247,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_GetSubtermDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(2)).toTerm());
-    args.add(((Option)arg.getArgument(3)).toTerm());
-    return make(patternDeclaration_GetSubtermDecl, args);
+    args.add((arg.getTermArg()).toTerm());    args.add((arg.getVariable()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_GetSubtermDecl, args);
   }
 
   protected Declaration_IsFsymDecl makeDeclaration_IsFsymDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_IsFsymDecl) {
       protoDeclaration_IsFsymDecl.initHashCode(annos,fun,args);
-      return (Declaration_IsFsymDecl) build(protoDeclaration_IsFsymDecl);
+      return (Declaration_IsFsymDecl) factory.build(protoDeclaration_IsFsymDecl);
     }
   }
 
   public Declaration_IsFsymDecl makeDeclaration_IsFsymDecl(TomName _astName, TomTerm _variable, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _variable, _tlCode, _orgTrack};
-    return makeDeclaration_IsFsymDecl( funDeclaration_IsFsymDecl, args, getEmpty());
+    return makeDeclaration_IsFsymDecl(funDeclaration_IsFsymDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_IsFsymDeclFromTerm(aterm.ATerm trm)
@@ -1285,23 +1276,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_IsFsymDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(2)).toTerm());
-    args.add(((Option)arg.getArgument(3)).toTerm());
-    return make(patternDeclaration_IsFsymDecl, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getVariable()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_IsFsymDecl, args);
   }
 
   protected Declaration_GetSlotDecl makeDeclaration_GetSlotDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_GetSlotDecl) {
       protoDeclaration_GetSlotDecl.initHashCode(annos,fun,args);
-      return (Declaration_GetSlotDecl) build(protoDeclaration_GetSlotDecl);
+      return (Declaration_GetSlotDecl) factory.build(protoDeclaration_GetSlotDecl);
     }
   }
 
   public Declaration_GetSlotDecl makeDeclaration_GetSlotDecl(TomName _astName, TomName _slotName, TomTerm _variable, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _slotName, _variable, _tlCode, _orgTrack};
-    return makeDeclaration_GetSlotDecl( funDeclaration_GetSlotDecl, args, getEmpty());
+    return makeDeclaration_GetSlotDecl(funDeclaration_GetSlotDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_GetSlotDeclFromTerm(aterm.ATerm trm)
@@ -1318,24 +1305,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_GetSlotDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomName)arg.getArgument(1)).toTerm());
-    args.add(((TomTerm)arg.getArgument(2)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(3)).toTerm());
-    args.add(((Option)arg.getArgument(4)).toTerm());
-    return make(patternDeclaration_GetSlotDecl, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getSlotName()).toTerm());    args.add((arg.getVariable()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_GetSlotDecl, args);
   }
 
   protected Declaration_CompareFunctionSymbolDecl makeDeclaration_CompareFunctionSymbolDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_CompareFunctionSymbolDecl) {
       protoDeclaration_CompareFunctionSymbolDecl.initHashCode(annos,fun,args);
-      return (Declaration_CompareFunctionSymbolDecl) build(protoDeclaration_CompareFunctionSymbolDecl);
+      return (Declaration_CompareFunctionSymbolDecl) factory.build(protoDeclaration_CompareFunctionSymbolDecl);
     }
   }
 
   public Declaration_CompareFunctionSymbolDecl makeDeclaration_CompareFunctionSymbolDecl(TomTerm _symbolArg1, TomTerm _symbolArg2, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_symbolArg1, _symbolArg2, _tlCode, _orgTrack};
-    return makeDeclaration_CompareFunctionSymbolDecl( funDeclaration_CompareFunctionSymbolDecl, args, getEmpty());
+    return makeDeclaration_CompareFunctionSymbolDecl(funDeclaration_CompareFunctionSymbolDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_CompareFunctionSymbolDeclFromTerm(aterm.ATerm trm)
@@ -1352,23 +1334,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_CompareFunctionSymbolDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(2)).toTerm());
-    args.add(((Option)arg.getArgument(3)).toTerm());
-    return make(patternDeclaration_CompareFunctionSymbolDecl, args);
+    args.add((arg.getSymbolArg1()).toTerm());    args.add((arg.getSymbolArg2()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_CompareFunctionSymbolDecl, args);
   }
 
   protected Declaration_TermsEqualDecl makeDeclaration_TermsEqualDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_TermsEqualDecl) {
       protoDeclaration_TermsEqualDecl.initHashCode(annos,fun,args);
-      return (Declaration_TermsEqualDecl) build(protoDeclaration_TermsEqualDecl);
+      return (Declaration_TermsEqualDecl) factory.build(protoDeclaration_TermsEqualDecl);
     }
   }
 
   public Declaration_TermsEqualDecl makeDeclaration_TermsEqualDecl(TomTerm _termArg1, TomTerm _termArg2, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termArg1, _termArg2, _tlCode, _orgTrack};
-    return makeDeclaration_TermsEqualDecl( funDeclaration_TermsEqualDecl, args, getEmpty());
+    return makeDeclaration_TermsEqualDecl(funDeclaration_TermsEqualDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_TermsEqualDeclFromTerm(aterm.ATerm trm)
@@ -1385,23 +1363,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_TermsEqualDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(2)).toTerm());
-    args.add(((Option)arg.getArgument(3)).toTerm());
-    return make(patternDeclaration_TermsEqualDecl, args);
+    args.add((arg.getTermArg1()).toTerm());    args.add((arg.getTermArg2()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_TermsEqualDecl, args);
   }
 
   protected Declaration_GetHeadDecl makeDeclaration_GetHeadDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_GetHeadDecl) {
       protoDeclaration_GetHeadDecl.initHashCode(annos,fun,args);
-      return (Declaration_GetHeadDecl) build(protoDeclaration_GetHeadDecl);
+      return (Declaration_GetHeadDecl) factory.build(protoDeclaration_GetHeadDecl);
     }
   }
 
   public Declaration_GetHeadDecl makeDeclaration_GetHeadDecl(TomTerm _var, TargetLanguage _tlcode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode, _orgTrack};
-    return makeDeclaration_GetHeadDecl( funDeclaration_GetHeadDecl, args, getEmpty());
+    return makeDeclaration_GetHeadDecl(funDeclaration_GetHeadDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_GetHeadDeclFromTerm(aterm.ATerm trm)
@@ -1418,22 +1392,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_GetHeadDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternDeclaration_GetHeadDecl, args);
+    args.add((arg.getVar()).toTerm());    args.add((arg.getTlcode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_GetHeadDecl, args);
   }
 
   protected Declaration_GetTailDecl makeDeclaration_GetTailDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_GetTailDecl) {
       protoDeclaration_GetTailDecl.initHashCode(annos,fun,args);
-      return (Declaration_GetTailDecl) build(protoDeclaration_GetTailDecl);
+      return (Declaration_GetTailDecl) factory.build(protoDeclaration_GetTailDecl);
     }
   }
 
   public Declaration_GetTailDecl makeDeclaration_GetTailDecl(TomTerm _var, TargetLanguage _tlcode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode, _orgTrack};
-    return makeDeclaration_GetTailDecl( funDeclaration_GetTailDecl, args, getEmpty());
+    return makeDeclaration_GetTailDecl(funDeclaration_GetTailDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_GetTailDeclFromTerm(aterm.ATerm trm)
@@ -1450,22 +1421,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_GetTailDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternDeclaration_GetTailDecl, args);
+    args.add((arg.getVar()).toTerm());    args.add((arg.getTlcode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_GetTailDecl, args);
   }
 
   protected Declaration_IsEmptyDecl makeDeclaration_IsEmptyDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_IsEmptyDecl) {
       protoDeclaration_IsEmptyDecl.initHashCode(annos,fun,args);
-      return (Declaration_IsEmptyDecl) build(protoDeclaration_IsEmptyDecl);
+      return (Declaration_IsEmptyDecl) factory.build(protoDeclaration_IsEmptyDecl);
     }
   }
 
   public Declaration_IsEmptyDecl makeDeclaration_IsEmptyDecl(TomTerm _var, TargetLanguage _tlcode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode, _orgTrack};
-    return makeDeclaration_IsEmptyDecl( funDeclaration_IsEmptyDecl, args, getEmpty());
+    return makeDeclaration_IsEmptyDecl(funDeclaration_IsEmptyDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_IsEmptyDeclFromTerm(aterm.ATerm trm)
@@ -1482,22 +1450,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_IsEmptyDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternDeclaration_IsEmptyDecl, args);
+    args.add((arg.getVar()).toTerm());    args.add((arg.getTlcode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_IsEmptyDecl, args);
   }
 
   protected Declaration_MakeEmptyList makeDeclaration_MakeEmptyList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_MakeEmptyList) {
       protoDeclaration_MakeEmptyList.initHashCode(annos,fun,args);
-      return (Declaration_MakeEmptyList) build(protoDeclaration_MakeEmptyList);
+      return (Declaration_MakeEmptyList) factory.build(protoDeclaration_MakeEmptyList);
     }
   }
 
   public Declaration_MakeEmptyList makeDeclaration_MakeEmptyList(TomName _astName, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _tlCode, _orgTrack};
-    return makeDeclaration_MakeEmptyList( funDeclaration_MakeEmptyList, args, getEmpty());
+    return makeDeclaration_MakeEmptyList(funDeclaration_MakeEmptyList, args, factory.getEmpty());
   }
 
   public Declaration Declaration_MakeEmptyListFromTerm(aterm.ATerm trm)
@@ -1514,22 +1479,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_MakeEmptyListImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternDeclaration_MakeEmptyList, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_MakeEmptyList, args);
   }
 
   protected Declaration_MakeAddList makeDeclaration_MakeAddList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_MakeAddList) {
       protoDeclaration_MakeAddList.initHashCode(annos,fun,args);
-      return (Declaration_MakeAddList) build(protoDeclaration_MakeAddList);
+      return (Declaration_MakeAddList) factory.build(protoDeclaration_MakeAddList);
     }
   }
 
   public Declaration_MakeAddList makeDeclaration_MakeAddList(TomName _astName, TomTerm _varElt, TomTerm _varList, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode, _orgTrack};
-    return makeDeclaration_MakeAddList( funDeclaration_MakeAddList, args, getEmpty());
+    return makeDeclaration_MakeAddList(funDeclaration_MakeAddList, args, factory.getEmpty());
   }
 
   public Declaration Declaration_MakeAddListFromTerm(aterm.ATerm trm)
@@ -1546,24 +1508,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_MakeAddListImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TomTerm)arg.getArgument(2)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(3)).toTerm());
-    args.add(((Option)arg.getArgument(4)).toTerm());
-    return make(patternDeclaration_MakeAddList, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getVarElt()).toTerm());    args.add((arg.getVarList()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_MakeAddList, args);
   }
 
   protected Declaration_GetElementDecl makeDeclaration_GetElementDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_GetElementDecl) {
       protoDeclaration_GetElementDecl.initHashCode(annos,fun,args);
-      return (Declaration_GetElementDecl) build(protoDeclaration_GetElementDecl);
+      return (Declaration_GetElementDecl) factory.build(protoDeclaration_GetElementDecl);
     }
   }
 
   public Declaration_GetElementDecl makeDeclaration_GetElementDecl(TomTerm _kid1, TomTerm _kid2, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2, _tlCode, _orgTrack};
-    return makeDeclaration_GetElementDecl( funDeclaration_GetElementDecl, args, getEmpty());
+    return makeDeclaration_GetElementDecl(funDeclaration_GetElementDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_GetElementDeclFromTerm(aterm.ATerm trm)
@@ -1580,23 +1537,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_GetElementDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(2)).toTerm());
-    args.add(((Option)arg.getArgument(3)).toTerm());
-    return make(patternDeclaration_GetElementDecl, args);
+    args.add((arg.getKid1()).toTerm());    args.add((arg.getKid2()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_GetElementDecl, args);
   }
 
   protected Declaration_GetSizeDecl makeDeclaration_GetSizeDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_GetSizeDecl) {
       protoDeclaration_GetSizeDecl.initHashCode(annos,fun,args);
-      return (Declaration_GetSizeDecl) build(protoDeclaration_GetSizeDecl);
+      return (Declaration_GetSizeDecl) factory.build(protoDeclaration_GetSizeDecl);
     }
   }
 
   public Declaration_GetSizeDecl makeDeclaration_GetSizeDecl(TomTerm _kid1, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _tlCode, _orgTrack};
-    return makeDeclaration_GetSizeDecl( funDeclaration_GetSizeDecl, args, getEmpty());
+    return makeDeclaration_GetSizeDecl(funDeclaration_GetSizeDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_GetSizeDeclFromTerm(aterm.ATerm trm)
@@ -1613,22 +1566,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_GetSizeDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternDeclaration_GetSizeDecl, args);
+    args.add((arg.getKid1()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_GetSizeDecl, args);
   }
 
   protected Declaration_MakeEmptyArray makeDeclaration_MakeEmptyArray(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_MakeEmptyArray) {
       protoDeclaration_MakeEmptyArray.initHashCode(annos,fun,args);
-      return (Declaration_MakeEmptyArray) build(protoDeclaration_MakeEmptyArray);
+      return (Declaration_MakeEmptyArray) factory.build(protoDeclaration_MakeEmptyArray);
     }
   }
 
   public Declaration_MakeEmptyArray makeDeclaration_MakeEmptyArray(TomName _astName, TomTerm _varSize, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varSize, _tlCode, _orgTrack};
-    return makeDeclaration_MakeEmptyArray( funDeclaration_MakeEmptyArray, args, getEmpty());
+    return makeDeclaration_MakeEmptyArray(funDeclaration_MakeEmptyArray, args, factory.getEmpty());
   }
 
   public Declaration Declaration_MakeEmptyArrayFromTerm(aterm.ATerm trm)
@@ -1645,23 +1595,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_MakeEmptyArrayImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(2)).toTerm());
-    args.add(((Option)arg.getArgument(3)).toTerm());
-    return make(patternDeclaration_MakeEmptyArray, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getVarSize()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_MakeEmptyArray, args);
   }
 
   protected Declaration_MakeAddArray makeDeclaration_MakeAddArray(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_MakeAddArray) {
       protoDeclaration_MakeAddArray.initHashCode(annos,fun,args);
-      return (Declaration_MakeAddArray) build(protoDeclaration_MakeAddArray);
+      return (Declaration_MakeAddArray) factory.build(protoDeclaration_MakeAddArray);
     }
   }
 
   public Declaration_MakeAddArray makeDeclaration_MakeAddArray(TomName _astName, TomTerm _varElt, TomTerm _varList, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode, _orgTrack};
-    return makeDeclaration_MakeAddArray( funDeclaration_MakeAddArray, args, getEmpty());
+    return makeDeclaration_MakeAddArray(funDeclaration_MakeAddArray, args, factory.getEmpty());
   }
 
   public Declaration Declaration_MakeAddArrayFromTerm(aterm.ATerm trm)
@@ -1678,24 +1624,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_MakeAddArrayImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TomTerm)arg.getArgument(2)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(3)).toTerm());
-    args.add(((Option)arg.getArgument(4)).toTerm());
-    return make(patternDeclaration_MakeAddArray, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getVarElt()).toTerm());    args.add((arg.getVarList()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_MakeAddArray, args);
   }
 
   protected Declaration_MakeDecl makeDeclaration_MakeDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_MakeDecl) {
       protoDeclaration_MakeDecl.initHashCode(annos,fun,args);
-      return (Declaration_MakeDecl) build(protoDeclaration_MakeDecl);
+      return (Declaration_MakeDecl) factory.build(protoDeclaration_MakeDecl);
     }
   }
 
   public Declaration_MakeDecl makeDeclaration_MakeDecl(TomName _astName, TomType _astType, TomList _args, TargetLanguage _tlCode, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _astType, _args, _tlCode, _orgTrack};
-    return makeDeclaration_MakeDecl( funDeclaration_MakeDecl, args, getEmpty());
+    return makeDeclaration_MakeDecl(funDeclaration_MakeDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_MakeDeclFromTerm(aterm.ATerm trm)
@@ -1712,24 +1653,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_MakeDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomType)arg.getArgument(1)).toTerm());
-    args.add(((TomList)arg.getArgument(2)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(3)).toTerm());
-    args.add(((Option)arg.getArgument(4)).toTerm());
-    return make(patternDeclaration_MakeDecl, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getAstType()).toTerm());    args.add((arg.getArgs()).toTerm());    args.add((arg.getTlCode()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternDeclaration_MakeDecl, args);
   }
 
   protected Declaration_SymbolDecl makeDeclaration_SymbolDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_SymbolDecl) {
       protoDeclaration_SymbolDecl.initHashCode(annos,fun,args);
-      return (Declaration_SymbolDecl) build(protoDeclaration_SymbolDecl);
+      return (Declaration_SymbolDecl) factory.build(protoDeclaration_SymbolDecl);
     }
   }
 
   public Declaration_SymbolDecl makeDeclaration_SymbolDecl(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeDeclaration_SymbolDecl( funDeclaration_SymbolDecl, args, getEmpty());
+    return makeDeclaration_SymbolDecl(funDeclaration_SymbolDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_SymbolDeclFromTerm(aterm.ATerm trm)
@@ -1746,20 +1682,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_SymbolDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternDeclaration_SymbolDecl, args);
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternDeclaration_SymbolDecl, args);
   }
 
   protected Declaration_ListSymbolDecl makeDeclaration_ListSymbolDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_ListSymbolDecl) {
       protoDeclaration_ListSymbolDecl.initHashCode(annos,fun,args);
-      return (Declaration_ListSymbolDecl) build(protoDeclaration_ListSymbolDecl);
+      return (Declaration_ListSymbolDecl) factory.build(protoDeclaration_ListSymbolDecl);
     }
   }
 
   public Declaration_ListSymbolDecl makeDeclaration_ListSymbolDecl(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeDeclaration_ListSymbolDecl( funDeclaration_ListSymbolDecl, args, getEmpty());
+    return makeDeclaration_ListSymbolDecl(funDeclaration_ListSymbolDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_ListSymbolDeclFromTerm(aterm.ATerm trm)
@@ -1776,20 +1711,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_ListSymbolDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternDeclaration_ListSymbolDecl, args);
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternDeclaration_ListSymbolDecl, args);
   }
 
   protected Declaration_ArraySymbolDecl makeDeclaration_ArraySymbolDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_ArraySymbolDecl) {
       protoDeclaration_ArraySymbolDecl.initHashCode(annos,fun,args);
-      return (Declaration_ArraySymbolDecl) build(protoDeclaration_ArraySymbolDecl);
+      return (Declaration_ArraySymbolDecl) factory.build(protoDeclaration_ArraySymbolDecl);
     }
   }
 
   public Declaration_ArraySymbolDecl makeDeclaration_ArraySymbolDecl(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeDeclaration_ArraySymbolDecl( funDeclaration_ArraySymbolDecl, args, getEmpty());
+    return makeDeclaration_ArraySymbolDecl(funDeclaration_ArraySymbolDecl, args, factory.getEmpty());
   }
 
   public Declaration Declaration_ArraySymbolDeclFromTerm(aterm.ATerm trm)
@@ -1806,20 +1740,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_ArraySymbolDeclImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternDeclaration_ArraySymbolDecl, args);
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternDeclaration_ArraySymbolDecl, args);
   }
 
   protected Declaration_EmptyDeclaration makeDeclaration_EmptyDeclaration(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoDeclaration_EmptyDeclaration) {
       protoDeclaration_EmptyDeclaration.initHashCode(annos,fun,args);
-      return (Declaration_EmptyDeclaration) build(protoDeclaration_EmptyDeclaration);
+      return (Declaration_EmptyDeclaration) factory.build(protoDeclaration_EmptyDeclaration);
     }
   }
 
   public Declaration_EmptyDeclaration makeDeclaration_EmptyDeclaration() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeDeclaration_EmptyDeclaration( funDeclaration_EmptyDeclaration, args, getEmpty());
+    return makeDeclaration_EmptyDeclaration(funDeclaration_EmptyDeclaration, args, factory.getEmpty());
   }
 
   public Declaration Declaration_EmptyDeclarationFromTerm(aterm.ATerm trm)
@@ -1836,19 +1769,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Declaration_EmptyDeclarationImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternDeclaration_EmptyDeclaration, args);
+    return factory.make(patternDeclaration_EmptyDeclaration, args);
   }
 
   protected Option_DeclarationToOption makeOption_DeclarationToOption(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_DeclarationToOption) {
       protoOption_DeclarationToOption.initHashCode(annos,fun,args);
-      return (Option_DeclarationToOption) build(protoOption_DeclarationToOption);
+      return (Option_DeclarationToOption) factory.build(protoOption_DeclarationToOption);
     }
   }
 
   public Option_DeclarationToOption makeOption_DeclarationToOption(Declaration _astDeclaration) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astDeclaration};
-    return makeOption_DeclarationToOption( funOption_DeclarationToOption, args, getEmpty());
+    return makeOption_DeclarationToOption(funOption_DeclarationToOption, args, factory.getEmpty());
   }
 
   public Option Option_DeclarationToOptionFromTerm(aterm.ATerm trm)
@@ -1865,20 +1798,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_DeclarationToOptionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Declaration)arg.getArgument(0)).toTerm());
-    return make(patternOption_DeclarationToOption, args);
+    args.add((arg.getAstDeclaration()).toTerm());    return factory.make(patternOption_DeclarationToOption, args);
   }
 
   protected Option_TomNameToOption makeOption_TomNameToOption(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_TomNameToOption) {
       protoOption_TomNameToOption.initHashCode(annos,fun,args);
-      return (Option_TomNameToOption) build(protoOption_TomNameToOption);
+      return (Option_TomNameToOption) factory.build(protoOption_TomNameToOption);
     }
   }
 
   public Option_TomNameToOption makeOption_TomNameToOption(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeOption_TomNameToOption( funOption_TomNameToOption, args, getEmpty());
+    return makeOption_TomNameToOption(funOption_TomNameToOption, args, factory.getEmpty());
   }
 
   public Option Option_TomNameToOptionFromTerm(aterm.ATerm trm)
@@ -1895,20 +1827,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_TomNameToOptionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternOption_TomNameToOption, args);
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternOption_TomNameToOption, args);
   }
 
   protected Option_TomTermToOption makeOption_TomTermToOption(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_TomTermToOption) {
       protoOption_TomTermToOption.initHashCode(annos,fun,args);
-      return (Option_TomTermToOption) build(protoOption_TomTermToOption);
+      return (Option_TomTermToOption) factory.build(protoOption_TomTermToOption);
     }
   }
 
   public Option_TomTermToOption makeOption_TomTermToOption(TomTerm _astTerm) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astTerm};
-    return makeOption_TomTermToOption( funOption_TomTermToOption, args, getEmpty());
+    return makeOption_TomTermToOption(funOption_TomTermToOption, args, factory.getEmpty());
   }
 
   public Option Option_TomTermToOptionFromTerm(aterm.ATerm trm)
@@ -1925,20 +1856,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_TomTermToOptionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternOption_TomTermToOption, args);
+    args.add((arg.getAstTerm()).toTerm());    return factory.make(patternOption_TomTermToOption, args);
   }
 
   protected Option_Option makeOption_Option(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_Option) {
       protoOption_Option.initHashCode(annos,fun,args);
-      return (Option_Option) build(protoOption_Option);
+      return (Option_Option) factory.build(protoOption_Option);
     }
   }
 
   public Option_Option makeOption_Option(OptionList _optionList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_optionList};
-    return makeOption_Option( funOption_Option, args, getEmpty());
+    return makeOption_Option(funOption_Option, args, factory.getEmpty());
   }
 
   public Option Option_OptionFromTerm(aterm.ATerm trm)
@@ -1955,20 +1885,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_OptionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((OptionList)arg.getArgument(0)).toTerm());
-    return make(patternOption_Option, args);
+    args.add((arg.getOptionList()).toTerm());    return factory.make(patternOption_Option, args);
   }
 
   protected Option_DefinedSymbol makeOption_DefinedSymbol(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_DefinedSymbol) {
       protoOption_DefinedSymbol.initHashCode(annos,fun,args);
-      return (Option_DefinedSymbol) build(protoOption_DefinedSymbol);
+      return (Option_DefinedSymbol) factory.build(protoOption_DefinedSymbol);
     }
   }
 
   public Option_DefinedSymbol makeOption_DefinedSymbol() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeOption_DefinedSymbol( funOption_DefinedSymbol, args, getEmpty());
+    return makeOption_DefinedSymbol(funOption_DefinedSymbol, args, factory.getEmpty());
   }
 
   public Option Option_DefinedSymbolFromTerm(aterm.ATerm trm)
@@ -1985,19 +1914,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_DefinedSymbolImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternOption_DefinedSymbol, args);
+    return factory.make(patternOption_DefinedSymbol, args);
   }
 
   protected Option_GeneratedMatch makeOption_GeneratedMatch(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_GeneratedMatch) {
       protoOption_GeneratedMatch.initHashCode(annos,fun,args);
-      return (Option_GeneratedMatch) build(protoOption_GeneratedMatch);
+      return (Option_GeneratedMatch) factory.build(protoOption_GeneratedMatch);
     }
   }
 
   public Option_GeneratedMatch makeOption_GeneratedMatch() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeOption_GeneratedMatch( funOption_GeneratedMatch, args, getEmpty());
+    return makeOption_GeneratedMatch(funOption_GeneratedMatch, args, factory.getEmpty());
   }
 
   public Option Option_GeneratedMatchFromTerm(aterm.ATerm trm)
@@ -2014,19 +1943,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_GeneratedMatchImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternOption_GeneratedMatch, args);
+    return factory.make(patternOption_GeneratedMatch, args);
   }
 
   protected Option_WithDefaultProduction makeOption_WithDefaultProduction(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_WithDefaultProduction) {
       protoOption_WithDefaultProduction.initHashCode(annos,fun,args);
-      return (Option_WithDefaultProduction) build(protoOption_WithDefaultProduction);
+      return (Option_WithDefaultProduction) factory.build(protoOption_WithDefaultProduction);
     }
   }
 
   public Option_WithDefaultProduction makeOption_WithDefaultProduction() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeOption_WithDefaultProduction( funOption_WithDefaultProduction, args, getEmpty());
+    return makeOption_WithDefaultProduction(funOption_WithDefaultProduction, args, factory.getEmpty());
   }
 
   public Option Option_WithDefaultProductionFromTerm(aterm.ATerm trm)
@@ -2043,19 +1972,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_WithDefaultProductionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternOption_WithDefaultProduction, args);
+    return factory.make(patternOption_WithDefaultProduction, args);
   }
 
   protected Option_OriginTracking makeOption_OriginTracking(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_OriginTracking) {
       protoOption_OriginTracking.initHashCode(annos,fun,args);
-      return (Option_OriginTracking) build(protoOption_OriginTracking);
+      return (Option_OriginTracking) factory.build(protoOption_OriginTracking);
     }
   }
 
   public Option_OriginTracking makeOption_OriginTracking(TomName _astName, int _line, TomName _fileName) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, makeInt(_line), _fileName};
-    return makeOption_OriginTracking( funOption_OriginTracking, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, factory.makeInt(_line), _fileName};
+    return makeOption_OriginTracking(funOption_OriginTracking, args, factory.getEmpty());
   }
 
   public Option Option_OriginTrackingFromTerm(aterm.ATerm trm)
@@ -2072,22 +2001,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_OriginTrackingImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(new Integer(((aterm.ATermInt)arg.getArgument(1)).getInt()));
-    args.add(((TomName)arg.getArgument(2)).toTerm());
-    return make(patternOption_OriginTracking, args);
+    args.add((arg.getAstName()).toTerm());    args.add(new Integer(arg.getLine()));    args.add((arg.getFileName()).toTerm());    return factory.make(patternOption_OriginTracking, args);
   }
 
   protected Option_Constructor makeOption_Constructor(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_Constructor) {
       protoOption_Constructor.initHashCode(annos,fun,args);
-      return (Option_Constructor) build(protoOption_Constructor);
+      return (Option_Constructor) factory.build(protoOption_Constructor);
     }
   }
 
   public Option_Constructor makeOption_Constructor(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeOption_Constructor( funOption_Constructor, args, getEmpty());
+    return makeOption_Constructor(funOption_Constructor, args, factory.getEmpty());
   }
 
   public Option Option_ConstructorFromTerm(aterm.ATerm trm)
@@ -2104,20 +2030,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_ConstructorImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternOption_Constructor, args);
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternOption_Constructor, args);
   }
 
   protected Option_OriginalText makeOption_OriginalText(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_OriginalText) {
       protoOption_OriginalText.initHashCode(annos,fun,args);
-      return (Option_OriginalText) build(protoOption_OriginalText);
+      return (Option_OriginalText) factory.build(protoOption_OriginalText);
     }
   }
 
   public Option_OriginalText makeOption_OriginalText(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeOption_OriginalText( funOption_OriginalText, args, getEmpty());
+    return makeOption_OriginalText(funOption_OriginalText, args, factory.getEmpty());
   }
 
   public Option Option_OriginalTextFromTerm(aterm.ATerm trm)
@@ -2134,20 +2059,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_OriginalTextImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternOption_OriginalText, args);
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternOption_OriginalText, args);
   }
 
   protected Option_XMLPosition makeOption_XMLPosition(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoOption_XMLPosition) {
       protoOption_XMLPosition.initHashCode(annos,fun,args);
-      return (Option_XMLPosition) build(protoOption_XMLPosition);
+      return (Option_XMLPosition) factory.build(protoOption_XMLPosition);
     }
   }
 
   public Option_XMLPosition makeOption_XMLPosition(String _place) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_place, 0, true))};
-    return makeOption_XMLPosition( funOption_XMLPosition, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_place, 0, true))};
+    return makeOption_XMLPosition(funOption_XMLPosition, args, factory.getEmpty());
   }
 
   public Option Option_XMLPositionFromTerm(aterm.ATerm trm)
@@ -2164,20 +2088,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Option_XMLPositionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    return make(patternOption_XMLPosition, args);
+    args.add(arg.getPlace());    return factory.make(patternOption_XMLPosition, args);
   }
 
   protected Expression_TomTermToExpression makeExpression_TomTermToExpression(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_TomTermToExpression) {
       protoExpression_TomTermToExpression.initHashCode(annos,fun,args);
-      return (Expression_TomTermToExpression) build(protoExpression_TomTermToExpression);
+      return (Expression_TomTermToExpression) factory.build(protoExpression_TomTermToExpression);
     }
   }
 
   public Expression_TomTermToExpression makeExpression_TomTermToExpression(TomTerm _astTerm) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astTerm};
-    return makeExpression_TomTermToExpression( funExpression_TomTermToExpression, args, getEmpty());
+    return makeExpression_TomTermToExpression(funExpression_TomTermToExpression, args, factory.getEmpty());
   }
 
   public Expression Expression_TomTermToExpressionFromTerm(aterm.ATerm trm)
@@ -2194,20 +2117,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_TomTermToExpressionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternExpression_TomTermToExpression, args);
+    args.add((arg.getAstTerm()).toTerm());    return factory.make(patternExpression_TomTermToExpression, args);
   }
 
   protected Expression_Not makeExpression_Not(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_Not) {
       protoExpression_Not.initHashCode(annos,fun,args);
-      return (Expression_Not) build(protoExpression_Not);
+      return (Expression_Not) factory.build(protoExpression_Not);
     }
   }
 
   public Expression_Not makeExpression_Not(Expression _arg) {
     aterm.ATerm[] args = new aterm.ATerm[] {_arg};
-    return makeExpression_Not( funExpression_Not, args, getEmpty());
+    return makeExpression_Not(funExpression_Not, args, factory.getEmpty());
   }
 
   public Expression Expression_NotFromTerm(aterm.ATerm trm)
@@ -2224,20 +2146,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_NotImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Expression)arg.getArgument(0)).toTerm());
-    return make(patternExpression_Not, args);
+    args.add((arg.getArg()).toTerm());    return factory.make(patternExpression_Not, args);
   }
 
   protected Expression_And makeExpression_And(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_And) {
       protoExpression_And.initHashCode(annos,fun,args);
-      return (Expression_And) build(protoExpression_And);
+      return (Expression_And) factory.build(protoExpression_And);
     }
   }
 
   public Expression_And makeExpression_And(Expression _arg1, Expression _arg2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_arg1, _arg2};
-    return makeExpression_And( funExpression_And, args, getEmpty());
+    return makeExpression_And(funExpression_And, args, factory.getEmpty());
   }
 
   public Expression Expression_AndFromTerm(aterm.ATerm trm)
@@ -2254,21 +2175,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_AndImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Expression)arg.getArgument(0)).toTerm());
-    args.add(((Expression)arg.getArgument(1)).toTerm());
-    return make(patternExpression_And, args);
+    args.add((arg.getArg1()).toTerm());    args.add((arg.getArg2()).toTerm());    return factory.make(patternExpression_And, args);
   }
 
   protected Expression_TrueTL makeExpression_TrueTL(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_TrueTL) {
       protoExpression_TrueTL.initHashCode(annos,fun,args);
-      return (Expression_TrueTL) build(protoExpression_TrueTL);
+      return (Expression_TrueTL) factory.build(protoExpression_TrueTL);
     }
   }
 
   public Expression_TrueTL makeExpression_TrueTL() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeExpression_TrueTL( funExpression_TrueTL, args, getEmpty());
+    return makeExpression_TrueTL(funExpression_TrueTL, args, factory.getEmpty());
   }
 
   public Expression Expression_TrueTLFromTerm(aterm.ATerm trm)
@@ -2285,19 +2204,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_TrueTLImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternExpression_TrueTL, args);
+    return factory.make(patternExpression_TrueTL, args);
   }
 
   protected Expression_FalseTL makeExpression_FalseTL(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_FalseTL) {
       protoExpression_FalseTL.initHashCode(annos,fun,args);
-      return (Expression_FalseTL) build(protoExpression_FalseTL);
+      return (Expression_FalseTL) factory.build(protoExpression_FalseTL);
     }
   }
 
   public Expression_FalseTL makeExpression_FalseTL() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeExpression_FalseTL( funExpression_FalseTL, args, getEmpty());
+    return makeExpression_FalseTL(funExpression_FalseTL, args, factory.getEmpty());
   }
 
   public Expression Expression_FalseTLFromTerm(aterm.ATerm trm)
@@ -2314,19 +2233,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_FalseTLImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternExpression_FalseTL, args);
+    return factory.make(patternExpression_FalseTL, args);
   }
 
   protected Expression_IsEmptyList makeExpression_IsEmptyList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_IsEmptyList) {
       protoExpression_IsEmptyList.initHashCode(annos,fun,args);
-      return (Expression_IsEmptyList) build(protoExpression_IsEmptyList);
+      return (Expression_IsEmptyList) factory.build(protoExpression_IsEmptyList);
     }
   }
 
   public Expression_IsEmptyList makeExpression_IsEmptyList(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeExpression_IsEmptyList( funExpression_IsEmptyList, args, getEmpty());
+    return makeExpression_IsEmptyList(funExpression_IsEmptyList, args, factory.getEmpty());
   }
 
   public Expression Expression_IsEmptyListFromTerm(aterm.ATerm trm)
@@ -2343,20 +2262,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_IsEmptyListImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternExpression_IsEmptyList, args);
+    args.add((arg.getKid1()).toTerm());    return factory.make(patternExpression_IsEmptyList, args);
   }
 
   protected Expression_IsEmptyArray makeExpression_IsEmptyArray(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_IsEmptyArray) {
       protoExpression_IsEmptyArray.initHashCode(annos,fun,args);
-      return (Expression_IsEmptyArray) build(protoExpression_IsEmptyArray);
+      return (Expression_IsEmptyArray) factory.build(protoExpression_IsEmptyArray);
     }
   }
 
   public Expression_IsEmptyArray makeExpression_IsEmptyArray(TomTerm _kid1, TomTerm _kid2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2};
-    return makeExpression_IsEmptyArray( funExpression_IsEmptyArray, args, getEmpty());
+    return makeExpression_IsEmptyArray(funExpression_IsEmptyArray, args, factory.getEmpty());
   }
 
   public Expression Expression_IsEmptyArrayFromTerm(aterm.ATerm trm)
@@ -2373,21 +2291,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_IsEmptyArrayImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternExpression_IsEmptyArray, args);
+    args.add((arg.getKid1()).toTerm());    args.add((arg.getKid2()).toTerm());    return factory.make(patternExpression_IsEmptyArray, args);
   }
 
   protected Expression_EqualFunctionSymbol makeExpression_EqualFunctionSymbol(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_EqualFunctionSymbol) {
       protoExpression_EqualFunctionSymbol.initHashCode(annos,fun,args);
-      return (Expression_EqualFunctionSymbol) build(protoExpression_EqualFunctionSymbol);
+      return (Expression_EqualFunctionSymbol) factory.build(protoExpression_EqualFunctionSymbol);
     }
   }
 
   public Expression_EqualFunctionSymbol makeExpression_EqualFunctionSymbol(TomTerm _kid1, TomTerm _kid2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2};
-    return makeExpression_EqualFunctionSymbol( funExpression_EqualFunctionSymbol, args, getEmpty());
+    return makeExpression_EqualFunctionSymbol(funExpression_EqualFunctionSymbol, args, factory.getEmpty());
   }
 
   public Expression Expression_EqualFunctionSymbolFromTerm(aterm.ATerm trm)
@@ -2404,21 +2320,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_EqualFunctionSymbolImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternExpression_EqualFunctionSymbol, args);
+    args.add((arg.getKid1()).toTerm());    args.add((arg.getKid2()).toTerm());    return factory.make(patternExpression_EqualFunctionSymbol, args);
   }
 
   protected Expression_EqualTerm makeExpression_EqualTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_EqualTerm) {
       protoExpression_EqualTerm.initHashCode(annos,fun,args);
-      return (Expression_EqualTerm) build(protoExpression_EqualTerm);
+      return (Expression_EqualTerm) factory.build(protoExpression_EqualTerm);
     }
   }
 
   public Expression_EqualTerm makeExpression_EqualTerm(TomTerm _kid1, TomTerm _kid2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2};
-    return makeExpression_EqualTerm( funExpression_EqualTerm, args, getEmpty());
+    return makeExpression_EqualTerm(funExpression_EqualTerm, args, factory.getEmpty());
   }
 
   public Expression Expression_EqualTermFromTerm(aterm.ATerm trm)
@@ -2435,21 +2349,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_EqualTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternExpression_EqualTerm, args);
+    args.add((arg.getKid1()).toTerm());    args.add((arg.getKid2()).toTerm());    return factory.make(patternExpression_EqualTerm, args);
   }
 
   protected Expression_GetSubterm makeExpression_GetSubterm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_GetSubterm) {
       protoExpression_GetSubterm.initHashCode(annos,fun,args);
-      return (Expression_GetSubterm) build(protoExpression_GetSubterm);
+      return (Expression_GetSubterm) factory.build(protoExpression_GetSubterm);
     }
   }
 
   public Expression_GetSubterm makeExpression_GetSubterm(TomTerm _variable, TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_variable, _number};
-    return makeExpression_GetSubterm( funExpression_GetSubterm, args, getEmpty());
+    return makeExpression_GetSubterm(funExpression_GetSubterm, args, factory.getEmpty());
   }
 
   public Expression Expression_GetSubtermFromTerm(aterm.ATerm trm)
@@ -2466,21 +2378,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_GetSubtermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomNumber)arg.getArgument(1)).toTerm());
-    return make(patternExpression_GetSubterm, args);
+    args.add((arg.getVariable()).toTerm());    args.add((arg.getNumber()).toTerm());    return factory.make(patternExpression_GetSubterm, args);
   }
 
   protected Expression_IsFsym makeExpression_IsFsym(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_IsFsym) {
       protoExpression_IsFsym.initHashCode(annos,fun,args);
-      return (Expression_IsFsym) build(protoExpression_IsFsym);
+      return (Expression_IsFsym) factory.build(protoExpression_IsFsym);
     }
   }
 
   public Expression_IsFsym makeExpression_IsFsym(TomName _astName, TomTerm _variable) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _variable};
-    return makeExpression_IsFsym( funExpression_IsFsym, args, getEmpty());
+    return makeExpression_IsFsym(funExpression_IsFsym, args, factory.getEmpty());
   }
 
   public Expression Expression_IsFsymFromTerm(aterm.ATerm trm)
@@ -2497,21 +2407,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_IsFsymImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternExpression_IsFsym, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getVariable()).toTerm());    return factory.make(patternExpression_IsFsym, args);
   }
 
   protected Expression_GetSlot makeExpression_GetSlot(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_GetSlot) {
       protoExpression_GetSlot.initHashCode(annos,fun,args);
-      return (Expression_GetSlot) build(protoExpression_GetSlot);
+      return (Expression_GetSlot) factory.build(protoExpression_GetSlot);
     }
   }
 
   public Expression_GetSlot makeExpression_GetSlot(TomName _astName, String _slotNameString, TomTerm _variable) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, makeAppl(makeAFun(_slotNameString, 0, true)), _variable};
-    return makeExpression_GetSlot( funExpression_GetSlot, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, factory.makeAppl(factory.makeAFun(_slotNameString, 0, true)), _variable};
+    return makeExpression_GetSlot(funExpression_GetSlot, args, factory.getEmpty());
   }
 
   public Expression Expression_GetSlotFromTerm(aterm.ATerm trm)
@@ -2528,22 +2436,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_GetSlotImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((aterm.ATermAppl)arg.getArgument(1)).getAFun().getName());
-    args.add(((TomTerm)arg.getArgument(2)).toTerm());
-    return make(patternExpression_GetSlot, args);
+    args.add((arg.getAstName()).toTerm());    args.add(arg.getSlotNameString());    args.add((arg.getVariable()).toTerm());    return factory.make(patternExpression_GetSlot, args);
   }
 
   protected Expression_GetHead makeExpression_GetHead(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_GetHead) {
       protoExpression_GetHead.initHashCode(annos,fun,args);
-      return (Expression_GetHead) build(protoExpression_GetHead);
+      return (Expression_GetHead) factory.build(protoExpression_GetHead);
     }
   }
 
   public Expression_GetHead makeExpression_GetHead(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeExpression_GetHead( funExpression_GetHead, args, getEmpty());
+    return makeExpression_GetHead(funExpression_GetHead, args, factory.getEmpty());
   }
 
   public Expression Expression_GetHeadFromTerm(aterm.ATerm trm)
@@ -2560,20 +2465,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_GetHeadImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternExpression_GetHead, args);
+    args.add((arg.getKid1()).toTerm());    return factory.make(patternExpression_GetHead, args);
   }
 
   protected Expression_GetTail makeExpression_GetTail(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_GetTail) {
       protoExpression_GetTail.initHashCode(annos,fun,args);
-      return (Expression_GetTail) build(protoExpression_GetTail);
+      return (Expression_GetTail) factory.build(protoExpression_GetTail);
     }
   }
 
   public Expression_GetTail makeExpression_GetTail(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeExpression_GetTail( funExpression_GetTail, args, getEmpty());
+    return makeExpression_GetTail(funExpression_GetTail, args, factory.getEmpty());
   }
 
   public Expression Expression_GetTailFromTerm(aterm.ATerm trm)
@@ -2590,20 +2494,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_GetTailImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternExpression_GetTail, args);
+    args.add((arg.getKid1()).toTerm());    return factory.make(patternExpression_GetTail, args);
   }
 
   protected Expression_GetSize makeExpression_GetSize(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_GetSize) {
       protoExpression_GetSize.initHashCode(annos,fun,args);
-      return (Expression_GetSize) build(protoExpression_GetSize);
+      return (Expression_GetSize) factory.build(protoExpression_GetSize);
     }
   }
 
   public Expression_GetSize makeExpression_GetSize(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeExpression_GetSize( funExpression_GetSize, args, getEmpty());
+    return makeExpression_GetSize(funExpression_GetSize, args, factory.getEmpty());
   }
 
   public Expression Expression_GetSizeFromTerm(aterm.ATerm trm)
@@ -2620,20 +2523,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_GetSizeImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternExpression_GetSize, args);
+    args.add((arg.getKid1()).toTerm());    return factory.make(patternExpression_GetSize, args);
   }
 
   protected Expression_GetElement makeExpression_GetElement(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_GetElement) {
       protoExpression_GetElement.initHashCode(annos,fun,args);
-      return (Expression_GetElement) build(protoExpression_GetElement);
+      return (Expression_GetElement) factory.build(protoExpression_GetElement);
     }
   }
 
   public Expression_GetElement makeExpression_GetElement(TomTerm _kid1, TomTerm _kid2) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2};
-    return makeExpression_GetElement( funExpression_GetElement, args, getEmpty());
+    return makeExpression_GetElement(funExpression_GetElement, args, factory.getEmpty());
   }
 
   public Expression Expression_GetElementFromTerm(aterm.ATerm trm)
@@ -2650,21 +2552,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_GetElementImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternExpression_GetElement, args);
+    args.add((arg.getKid1()).toTerm());    args.add((arg.getKid2()).toTerm());    return factory.make(patternExpression_GetElement, args);
   }
 
   protected Expression_GetSliceList makeExpression_GetSliceList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_GetSliceList) {
       protoExpression_GetSliceList.initHashCode(annos,fun,args);
-      return (Expression_GetSliceList) build(protoExpression_GetSliceList);
+      return (Expression_GetSliceList) factory.build(protoExpression_GetSliceList);
     }
   }
 
   public Expression_GetSliceList makeExpression_GetSliceList(TomName _astName, TomTerm _variableBeginAST, TomTerm _variableEndAST) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _variableBeginAST, _variableEndAST};
-    return makeExpression_GetSliceList( funExpression_GetSliceList, args, getEmpty());
+    return makeExpression_GetSliceList(funExpression_GetSliceList, args, factory.getEmpty());
   }
 
   public Expression Expression_GetSliceListFromTerm(aterm.ATerm trm)
@@ -2681,22 +2581,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_GetSliceListImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TomTerm)arg.getArgument(2)).toTerm());
-    return make(patternExpression_GetSliceList, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getVariableBeginAST()).toTerm());    args.add((arg.getVariableEndAST()).toTerm());    return factory.make(patternExpression_GetSliceList, args);
   }
 
   protected Expression_GetSliceArray makeExpression_GetSliceArray(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoExpression_GetSliceArray) {
       protoExpression_GetSliceArray.initHashCode(annos,fun,args);
-      return (Expression_GetSliceArray) build(protoExpression_GetSliceArray);
+      return (Expression_GetSliceArray) factory.build(protoExpression_GetSliceArray);
     }
   }
 
   public Expression_GetSliceArray makeExpression_GetSliceArray(TomName _astName, TomTerm _subjectListName, TomTerm _variableBeginAST, TomTerm _variableEndAST) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _subjectListName, _variableBeginAST, _variableEndAST};
-    return makeExpression_GetSliceArray( funExpression_GetSliceArray, args, getEmpty());
+    return makeExpression_GetSliceArray(funExpression_GetSliceArray, args, factory.getEmpty());
   }
 
   public Expression Expression_GetSliceArrayFromTerm(aterm.ATerm trm)
@@ -2713,23 +2610,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Expression_GetSliceArrayImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TomTerm)arg.getArgument(2)).toTerm());
-    args.add(((TomTerm)arg.getArgument(3)).toTerm());
-    return make(patternExpression_GetSliceArray, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getSubjectListName()).toTerm());    args.add((arg.getVariableBeginAST()).toTerm());    args.add((arg.getVariableEndAST()).toTerm());    return factory.make(patternExpression_GetSliceArray, args);
   }
 
   protected TargetLanguage_TL makeTargetLanguage_TL(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTargetLanguage_TL) {
       protoTargetLanguage_TL.initHashCode(annos,fun,args);
-      return (TargetLanguage_TL) build(protoTargetLanguage_TL);
+      return (TargetLanguage_TL) factory.build(protoTargetLanguage_TL);
     }
   }
 
   public TargetLanguage_TL makeTargetLanguage_TL(String _code, Position _start, Position _end) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_code, 0, true)), _start, _end};
-    return makeTargetLanguage_TL( funTargetLanguage_TL, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_code, 0, true)), _start, _end};
+    return makeTargetLanguage_TL(funTargetLanguage_TL, args, factory.getEmpty());
   }
 
   public TargetLanguage TargetLanguage_TLFromTerm(aterm.ATerm trm)
@@ -2746,22 +2639,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TargetLanguage_TLImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    args.add(((Position)arg.getArgument(1)).toTerm());
-    args.add(((Position)arg.getArgument(2)).toTerm());
-    return make(patternTargetLanguage_TL, args);
+    args.add(arg.getCode());    args.add((arg.getStart()).toTerm());    args.add((arg.getEnd()).toTerm());    return factory.make(patternTargetLanguage_TL, args);
   }
 
   protected TargetLanguage_ITL makeTargetLanguage_ITL(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTargetLanguage_ITL) {
       protoTargetLanguage_ITL.initHashCode(annos,fun,args);
-      return (TargetLanguage_ITL) build(protoTargetLanguage_ITL);
+      return (TargetLanguage_ITL) factory.build(protoTargetLanguage_ITL);
     }
   }
 
   public TargetLanguage_ITL makeTargetLanguage_ITL(String _code) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_code, 0, true))};
-    return makeTargetLanguage_ITL( funTargetLanguage_ITL, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_code, 0, true))};
+    return makeTargetLanguage_ITL(funTargetLanguage_ITL, args, factory.getEmpty());
   }
 
   public TargetLanguage TargetLanguage_ITLFromTerm(aterm.ATerm trm)
@@ -2778,20 +2668,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TargetLanguage_ITLImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    return make(patternTargetLanguage_ITL, args);
+    args.add(arg.getCode());    return factory.make(patternTargetLanguage_ITL, args);
   }
 
   protected Position_Position makePosition_Position(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoPosition_Position) {
       protoPosition_Position.initHashCode(annos,fun,args);
-      return (Position_Position) build(protoPosition_Position);
+      return (Position_Position) factory.build(protoPosition_Position);
     }
   }
 
   public Position_Position makePosition_Position(int _line, int _column) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeInt(_line), makeInt(_column)};
-    return makePosition_Position( funPosition_Position, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeInt(_line), factory.makeInt(_column)};
+    return makePosition_Position(funPosition_Position, args, factory.getEmpty());
   }
 
   public Position Position_PositionFromTerm(aterm.ATerm trm)
@@ -2808,21 +2697,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Position_PositionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(new Integer(((aterm.ATermInt)arg.getArgument(0)).getInt()));
-    args.add(new Integer(((aterm.ATermInt)arg.getArgument(1)).getInt()));
-    return make(patternPosition_Position, args);
+    args.add(new Integer(arg.getLine()));    args.add(new Integer(arg.getColumn()));    return factory.make(patternPosition_Position, args);
   }
 
   protected TomType_Type makeTomType_Type(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomType_Type) {
       protoTomType_Type.initHashCode(annos,fun,args);
-      return (TomType_Type) build(protoTomType_Type);
+      return (TomType_Type) factory.build(protoTomType_Type);
     }
   }
 
   public TomType_Type makeTomType_Type(TomType _tomType, TomType _tlType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomType, _tlType};
-    return makeTomType_Type( funTomType_Type, args, getEmpty());
+    return makeTomType_Type(funTomType_Type, args, factory.getEmpty());
   }
 
   public TomType TomType_TypeFromTerm(aterm.ATerm trm)
@@ -2839,21 +2726,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomType_TypeImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomType)arg.getArgument(0)).toTerm());
-    args.add(((TomType)arg.getArgument(1)).toTerm());
-    return make(patternTomType_Type, args);
+    args.add((arg.getTomType()).toTerm());    args.add((arg.getTlType()).toTerm());    return factory.make(patternTomType_Type, args);
   }
 
   protected TomType_TypesToType makeTomType_TypesToType(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomType_TypesToType) {
       protoTomType_TypesToType.initHashCode(annos,fun,args);
-      return (TomType_TypesToType) build(protoTomType_TypesToType);
+      return (TomType_TypesToType) factory.build(protoTomType_TypesToType);
     }
   }
 
   public TomType_TypesToType makeTomType_TypesToType(TomTypeList _domain, TomType _codomain) {
     aterm.ATerm[] args = new aterm.ATerm[] {_domain, _codomain};
-    return makeTomType_TypesToType( funTomType_TypesToType, args, getEmpty());
+    return makeTomType_TypesToType(funTomType_TypesToType, args, factory.getEmpty());
   }
 
   public TomType TomType_TypesToTypeFromTerm(aterm.ATerm trm)
@@ -2870,21 +2755,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomType_TypesToTypeImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTypeList)arg.getArgument(0)).toTerm());
-    args.add(((TomType)arg.getArgument(1)).toTerm());
-    return make(patternTomType_TypesToType, args);
+    args.add((arg.getDomain()).toTerm());    args.add((arg.getCodomain()).toTerm());    return factory.make(patternTomType_TypesToType, args);
   }
 
   protected TomType_TomType makeTomType_TomType(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomType_TomType) {
       protoTomType_TomType.initHashCode(annos,fun,args);
-      return (TomType_TomType) build(protoTomType_TomType);
+      return (TomType_TomType) factory.build(protoTomType_TomType);
     }
   }
 
   public TomType_TomType makeTomType_TomType(String _string) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_string, 0, true))};
-    return makeTomType_TomType( funTomType_TomType, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_string, 0, true))};
+    return makeTomType_TomType(funTomType_TomType, args, factory.getEmpty());
   }
 
   public TomType TomType_TomTypeFromTerm(aterm.ATerm trm)
@@ -2901,20 +2784,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomType_TomTypeImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    return make(patternTomType_TomType, args);
+    args.add(arg.getString());    return factory.make(patternTomType_TomType, args);
   }
 
   protected TomType_TomTypeAlone makeTomType_TomTypeAlone(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomType_TomTypeAlone) {
       protoTomType_TomTypeAlone.initHashCode(annos,fun,args);
-      return (TomType_TomTypeAlone) build(protoTomType_TomTypeAlone);
+      return (TomType_TomTypeAlone) factory.build(protoTomType_TomTypeAlone);
     }
   }
 
   public TomType_TomTypeAlone makeTomType_TomTypeAlone(String _string) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_string, 0, true))};
-    return makeTomType_TomTypeAlone( funTomType_TomTypeAlone, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_string, 0, true))};
+    return makeTomType_TomTypeAlone(funTomType_TomTypeAlone, args, factory.getEmpty());
   }
 
   public TomType TomType_TomTypeAloneFromTerm(aterm.ATerm trm)
@@ -2931,20 +2813,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomType_TomTypeAloneImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    return make(patternTomType_TomTypeAlone, args);
+    args.add(arg.getString());    return factory.make(patternTomType_TomTypeAlone, args);
   }
 
   protected TomType_TLType makeTomType_TLType(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomType_TLType) {
       protoTomType_TLType.initHashCode(annos,fun,args);
-      return (TomType_TLType) build(protoTomType_TLType);
+      return (TomType_TLType) factory.build(protoTomType_TLType);
     }
   }
 
   public TomType_TLType makeTomType_TLType(TargetLanguage _tl) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tl};
-    return makeTomType_TLType( funTomType_TLType, args, getEmpty());
+    return makeTomType_TLType(funTomType_TLType, args, factory.getEmpty());
   }
 
   public TomType TomType_TLTypeFromTerm(aterm.ATerm trm)
@@ -2961,20 +2842,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomType_TLTypeImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TargetLanguage)arg.getArgument(0)).toTerm());
-    return make(patternTomType_TLType, args);
+    args.add((arg.getTl()).toTerm());    return factory.make(patternTomType_TLType, args);
   }
 
   protected TomType_EmptyType makeTomType_EmptyType(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomType_EmptyType) {
       protoTomType_EmptyType.initHashCode(annos,fun,args);
-      return (TomType_EmptyType) build(protoTomType_EmptyType);
+      return (TomType_EmptyType) factory.build(protoTomType_EmptyType);
     }
   }
 
   public TomType_EmptyType makeTomType_EmptyType() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomType_EmptyType( funTomType_EmptyType, args, getEmpty());
+    return makeTomType_EmptyType(funTomType_EmptyType, args, factory.getEmpty());
   }
 
   public TomType TomType_EmptyTypeFromTerm(aterm.ATerm trm)
@@ -2991,19 +2871,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomType_EmptyTypeImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternTomType_EmptyType, args);
+    return factory.make(patternTomType_EmptyType, args);
   }
 
   protected TomName_Name makeTomName_Name(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomName_Name) {
       protoTomName_Name.initHashCode(annos,fun,args);
-      return (TomName_Name) build(protoTomName_Name);
+      return (TomName_Name) factory.build(protoTomName_Name);
     }
   }
 
   public TomName_Name makeTomName_Name(String _string) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_string, 0, true))};
-    return makeTomName_Name( funTomName_Name, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_string, 0, true))};
+    return makeTomName_Name(funTomName_Name, args, factory.getEmpty());
   }
 
   public TomName TomName_NameFromTerm(aterm.ATerm trm)
@@ -3020,20 +2900,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomName_NameImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    return make(patternTomName_Name, args);
+    args.add(arg.getString());    return factory.make(patternTomName_Name, args);
   }
 
   protected TomName_PositionName makeTomName_PositionName(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomName_PositionName) {
       protoTomName_PositionName.initHashCode(annos,fun,args);
-      return (TomName_PositionName) build(protoTomName_PositionName);
+      return (TomName_PositionName) factory.build(protoTomName_PositionName);
     }
   }
 
   public TomName_PositionName makeTomName_PositionName(TomNumberList _numberList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_numberList};
-    return makeTomName_PositionName( funTomName_PositionName, args, getEmpty());
+    return makeTomName_PositionName(funTomName_PositionName, args, factory.getEmpty());
   }
 
   public TomName TomName_PositionNameFromTerm(aterm.ATerm trm)
@@ -3050,20 +2929,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomName_PositionNameImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumberList)arg.getArgument(0)).toTerm());
-    return make(patternTomName_PositionName, args);
+    args.add((arg.getNumberList()).toTerm());    return factory.make(patternTomName_PositionName, args);
   }
 
   protected TomName_EmptyName makeTomName_EmptyName(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomName_EmptyName) {
       protoTomName_EmptyName.initHashCode(annos,fun,args);
-      return (TomName_EmptyName) build(protoTomName_EmptyName);
+      return (TomName_EmptyName) factory.build(protoTomName_EmptyName);
     }
   }
 
   public TomName_EmptyName makeTomName_EmptyName() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomName_EmptyName( funTomName_EmptyName, args, getEmpty());
+    return makeTomName_EmptyName(funTomName_EmptyName, args, factory.getEmpty());
   }
 
   public TomName TomName_EmptyNameFromTerm(aterm.ATerm trm)
@@ -3080,19 +2958,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomName_EmptyNameImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternTomName_EmptyName, args);
+    return factory.make(patternTomName_EmptyName, args);
   }
 
   protected TomTerm_TargetLanguageToTomTerm makeTomTerm_TargetLanguageToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_TargetLanguageToTomTerm) {
       protoTomTerm_TargetLanguageToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_TargetLanguageToTomTerm) build(protoTomTerm_TargetLanguageToTomTerm);
+      return (TomTerm_TargetLanguageToTomTerm) factory.build(protoTomTerm_TargetLanguageToTomTerm);
     }
   }
 
   public TomTerm_TargetLanguageToTomTerm makeTomTerm_TargetLanguageToTomTerm(TargetLanguage _tl) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tl};
-    return makeTomTerm_TargetLanguageToTomTerm( funTomTerm_TargetLanguageToTomTerm, args, getEmpty());
+    return makeTomTerm_TargetLanguageToTomTerm(funTomTerm_TargetLanguageToTomTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_TargetLanguageToTomTermFromTerm(aterm.ATerm trm)
@@ -3109,20 +2987,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_TargetLanguageToTomTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TargetLanguage)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_TargetLanguageToTomTerm, args);
+    args.add((arg.getTl()).toTerm());    return factory.make(patternTomTerm_TargetLanguageToTomTerm, args);
   }
 
   protected TomTerm_TomTypeToTomTerm makeTomTerm_TomTypeToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_TomTypeToTomTerm) {
       protoTomTerm_TomTypeToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_TomTypeToTomTerm) build(protoTomTerm_TomTypeToTomTerm);
+      return (TomTerm_TomTypeToTomTerm) factory.build(protoTomTerm_TomTypeToTomTerm);
     }
   }
 
   public TomTerm_TomTypeToTomTerm makeTomTerm_TomTypeToTomTerm(TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astType};
-    return makeTomTerm_TomTypeToTomTerm( funTomTerm_TomTypeToTomTerm, args, getEmpty());
+    return makeTomTerm_TomTypeToTomTerm(funTomTerm_TomTypeToTomTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_TomTypeToTomTermFromTerm(aterm.ATerm trm)
@@ -3139,20 +3016,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_TomTypeToTomTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomType)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_TomTypeToTomTerm, args);
+    args.add((arg.getAstType()).toTerm());    return factory.make(patternTomTerm_TomTypeToTomTerm, args);
   }
 
   protected TomTerm_TomNameToTomTerm makeTomTerm_TomNameToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_TomNameToTomTerm) {
       protoTomTerm_TomNameToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_TomNameToTomTerm) build(protoTomTerm_TomNameToTomTerm);
+      return (TomTerm_TomNameToTomTerm) factory.build(protoTomTerm_TomNameToTomTerm);
     }
   }
 
   public TomTerm_TomNameToTomTerm makeTomTerm_TomNameToTomTerm(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeTomTerm_TomNameToTomTerm( funTomTerm_TomNameToTomTerm, args, getEmpty());
+    return makeTomTerm_TomNameToTomTerm(funTomTerm_TomNameToTomTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_TomNameToTomTermFromTerm(aterm.ATerm trm)
@@ -3169,20 +3045,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_TomNameToTomTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_TomNameToTomTerm, args);
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternTomTerm_TomNameToTomTerm, args);
   }
 
   protected TomTerm_TomSymbolToTomTerm makeTomTerm_TomSymbolToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_TomSymbolToTomTerm) {
       protoTomTerm_TomSymbolToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_TomSymbolToTomTerm) build(protoTomTerm_TomSymbolToTomTerm);
+      return (TomTerm_TomSymbolToTomTerm) factory.build(protoTomTerm_TomSymbolToTomTerm);
     }
   }
 
   public TomTerm_TomSymbolToTomTerm makeTomTerm_TomSymbolToTomTerm(TomSymbol _astSymbol) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astSymbol};
-    return makeTomTerm_TomSymbolToTomTerm( funTomTerm_TomSymbolToTomTerm, args, getEmpty());
+    return makeTomTerm_TomSymbolToTomTerm(funTomTerm_TomSymbolToTomTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_TomSymbolToTomTermFromTerm(aterm.ATerm trm)
@@ -3199,20 +3074,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_TomSymbolToTomTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomSymbol)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_TomSymbolToTomTerm, args);
+    args.add((arg.getAstSymbol()).toTerm());    return factory.make(patternTomTerm_TomSymbolToTomTerm, args);
   }
 
   protected TomTerm_DeclarationToTomTerm makeTomTerm_DeclarationToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_DeclarationToTomTerm) {
       protoTomTerm_DeclarationToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_DeclarationToTomTerm) build(protoTomTerm_DeclarationToTomTerm);
+      return (TomTerm_DeclarationToTomTerm) factory.build(protoTomTerm_DeclarationToTomTerm);
     }
   }
 
   public TomTerm_DeclarationToTomTerm makeTomTerm_DeclarationToTomTerm(Declaration _astDeclaration) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astDeclaration};
-    return makeTomTerm_DeclarationToTomTerm( funTomTerm_DeclarationToTomTerm, args, getEmpty());
+    return makeTomTerm_DeclarationToTomTerm(funTomTerm_DeclarationToTomTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_DeclarationToTomTermFromTerm(aterm.ATerm trm)
@@ -3229,20 +3103,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_DeclarationToTomTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Declaration)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_DeclarationToTomTerm, args);
+    args.add((arg.getAstDeclaration()).toTerm());    return factory.make(patternTomTerm_DeclarationToTomTerm, args);
   }
 
   protected TomTerm_OptionToTomTerm makeTomTerm_OptionToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_OptionToTomTerm) {
       protoTomTerm_OptionToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_OptionToTomTerm) build(protoTomTerm_OptionToTomTerm);
+      return (TomTerm_OptionToTomTerm) factory.build(protoTomTerm_OptionToTomTerm);
     }
   }
 
   public TomTerm_OptionToTomTerm makeTomTerm_OptionToTomTerm(Option _astOption) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astOption};
-    return makeTomTerm_OptionToTomTerm( funTomTerm_OptionToTomTerm, args, getEmpty());
+    return makeTomTerm_OptionToTomTerm(funTomTerm_OptionToTomTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_OptionToTomTermFromTerm(aterm.ATerm trm)
@@ -3259,20 +3132,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_OptionToTomTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Option)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_OptionToTomTerm, args);
+    args.add((arg.getAstOption()).toTerm());    return factory.make(patternTomTerm_OptionToTomTerm, args);
   }
 
   protected TomTerm_ExpressionToTomTerm makeTomTerm_ExpressionToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_ExpressionToTomTerm) {
       protoTomTerm_ExpressionToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_ExpressionToTomTerm) build(protoTomTerm_ExpressionToTomTerm);
+      return (TomTerm_ExpressionToTomTerm) factory.build(protoTomTerm_ExpressionToTomTerm);
     }
   }
 
   public TomTerm_ExpressionToTomTerm makeTomTerm_ExpressionToTomTerm(Expression _astExpression) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astExpression};
-    return makeTomTerm_ExpressionToTomTerm( funTomTerm_ExpressionToTomTerm, args, getEmpty());
+    return makeTomTerm_ExpressionToTomTerm(funTomTerm_ExpressionToTomTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_ExpressionToTomTermFromTerm(aterm.ATerm trm)
@@ -3289,20 +3161,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_ExpressionToTomTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Expression)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_ExpressionToTomTerm, args);
+    args.add((arg.getAstExpression()).toTerm());    return factory.make(patternTomTerm_ExpressionToTomTerm, args);
   }
 
   protected TomTerm_InstructionToTomTerm makeTomTerm_InstructionToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_InstructionToTomTerm) {
       protoTomTerm_InstructionToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_InstructionToTomTerm) build(protoTomTerm_InstructionToTomTerm);
+      return (TomTerm_InstructionToTomTerm) factory.build(protoTomTerm_InstructionToTomTerm);
     }
   }
 
   public TomTerm_InstructionToTomTerm makeTomTerm_InstructionToTomTerm(Instruction _astInstruction) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astInstruction};
-    return makeTomTerm_InstructionToTomTerm( funTomTerm_InstructionToTomTerm, args, getEmpty());
+    return makeTomTerm_InstructionToTomTerm(funTomTerm_InstructionToTomTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_InstructionToTomTermFromTerm(aterm.ATerm trm)
@@ -3319,20 +3190,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_InstructionToTomTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Instruction)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_InstructionToTomTerm, args);
+    args.add((arg.getAstInstruction()).toTerm());    return factory.make(patternTomTerm_InstructionToTomTerm, args);
   }
 
   protected TomTerm_Tom makeTomTerm_Tom(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Tom) {
       protoTomTerm_Tom.initHashCode(annos,fun,args);
-      return (TomTerm_Tom) build(protoTomTerm_Tom);
+      return (TomTerm_Tom) factory.build(protoTomTerm_Tom);
     }
   }
 
   public TomTerm_Tom makeTomTerm_Tom(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_Tom( funTomTerm_Tom, args, getEmpty());
+    return makeTomTerm_Tom(funTomTerm_Tom, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_TomFromTerm(aterm.ATerm trm)
@@ -3349,20 +3219,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_TomImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_Tom, args);
+    args.add((arg.getTomList()).toTerm());    return factory.make(patternTomTerm_Tom, args);
   }
 
   protected TomTerm_TomInclude makeTomTerm_TomInclude(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_TomInclude) {
       protoTomTerm_TomInclude.initHashCode(annos,fun,args);
-      return (TomTerm_TomInclude) build(protoTomTerm_TomInclude);
+      return (TomTerm_TomInclude) factory.build(protoTomTerm_TomInclude);
     }
   }
 
   public TomTerm_TomInclude makeTomTerm_TomInclude(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_TomInclude( funTomTerm_TomInclude, args, getEmpty());
+    return makeTomTerm_TomInclude(funTomTerm_TomInclude, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_TomIncludeFromTerm(aterm.ATerm trm)
@@ -3379,20 +3248,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_TomIncludeImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_TomInclude, args);
+    args.add((arg.getTomList()).toTerm());    return factory.make(patternTomTerm_TomInclude, args);
   }
 
   protected TomTerm_MakeTerm makeTomTerm_MakeTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_MakeTerm) {
       protoTomTerm_MakeTerm.initHashCode(annos,fun,args);
-      return (TomTerm_MakeTerm) build(protoTomTerm_MakeTerm);
+      return (TomTerm_MakeTerm) factory.build(protoTomTerm_MakeTerm);
     }
   }
 
   public TomTerm_MakeTerm makeTomTerm_MakeTerm(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeTomTerm_MakeTerm( funTomTerm_MakeTerm, args, getEmpty());
+    return makeTomTerm_MakeTerm(funTomTerm_MakeTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_MakeTermFromTerm(aterm.ATerm trm)
@@ -3409,20 +3277,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_MakeTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_MakeTerm, args);
+    args.add((arg.getKid1()).toTerm());    return factory.make(patternTomTerm_MakeTerm, args);
   }
 
   protected TomTerm_FunctionCall makeTomTerm_FunctionCall(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_FunctionCall) {
       protoTomTerm_FunctionCall.initHashCode(annos,fun,args);
-      return (TomTerm_FunctionCall) build(protoTomTerm_FunctionCall);
+      return (TomTerm_FunctionCall) factory.build(protoTomTerm_FunctionCall);
     }
   }
 
   public TomTerm_FunctionCall makeTomTerm_FunctionCall(TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args};
-    return makeTomTerm_FunctionCall( funTomTerm_FunctionCall, args, getEmpty());
+    return makeTomTerm_FunctionCall(funTomTerm_FunctionCall, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_FunctionCallFromTerm(aterm.ATerm trm)
@@ -3439,21 +3306,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_FunctionCallImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_FunctionCall, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_FunctionCall, args);
   }
 
   protected TomTerm_MakeFunctionBegin makeTomTerm_MakeFunctionBegin(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_MakeFunctionBegin) {
       protoTomTerm_MakeFunctionBegin.initHashCode(annos,fun,args);
-      return (TomTerm_MakeFunctionBegin) build(protoTomTerm_MakeFunctionBegin);
+      return (TomTerm_MakeFunctionBegin) factory.build(protoTomTerm_MakeFunctionBegin);
     }
   }
 
   public TomTerm_MakeFunctionBegin makeTomTerm_MakeFunctionBegin(TomName _astName, TomTerm _subjectListAST) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _subjectListAST};
-    return makeTomTerm_MakeFunctionBegin( funTomTerm_MakeFunctionBegin, args, getEmpty());
+    return makeTomTerm_MakeFunctionBegin(funTomTerm_MakeFunctionBegin, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_MakeFunctionBeginFromTerm(aterm.ATerm trm)
@@ -3470,21 +3335,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_MakeFunctionBeginImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_MakeFunctionBegin, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getSubjectListAST()).toTerm());    return factory.make(patternTomTerm_MakeFunctionBegin, args);
   }
 
   protected TomTerm_MakeFunctionEnd makeTomTerm_MakeFunctionEnd(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_MakeFunctionEnd) {
       protoTomTerm_MakeFunctionEnd.initHashCode(annos,fun,args);
-      return (TomTerm_MakeFunctionEnd) build(protoTomTerm_MakeFunctionEnd);
+      return (TomTerm_MakeFunctionEnd) factory.build(protoTomTerm_MakeFunctionEnd);
     }
   }
 
   public TomTerm_MakeFunctionEnd makeTomTerm_MakeFunctionEnd() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomTerm_MakeFunctionEnd( funTomTerm_MakeFunctionEnd, args, getEmpty());
+    return makeTomTerm_MakeFunctionEnd(funTomTerm_MakeFunctionEnd, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_MakeFunctionEndFromTerm(aterm.ATerm trm)
@@ -3501,19 +3364,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_MakeFunctionEndImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternTomTerm_MakeFunctionEnd, args);
+    return factory.make(patternTomTerm_MakeFunctionEnd, args);
   }
 
   protected TomTerm_Appl makeTomTerm_Appl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Appl) {
       protoTomTerm_Appl.initHashCode(annos,fun,args);
-      return (TomTerm_Appl) build(protoTomTerm_Appl);
+      return (TomTerm_Appl) factory.build(protoTomTerm_Appl);
     }
   }
 
   public TomTerm_Appl makeTomTerm_Appl(Option _option, TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _args};
-    return makeTomTerm_Appl( funTomTerm_Appl, args, getEmpty());
+    return makeTomTerm_Appl(funTomTerm_Appl, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_ApplFromTerm(aterm.ATerm trm)
@@ -3530,22 +3393,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_ApplImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Option)arg.getArgument(0)).toTerm());
-    args.add(((TomName)arg.getArgument(1)).toTerm());
-    args.add(((TomList)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_Appl, args);
+    args.add((arg.getOption()).toTerm());    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_Appl, args);
   }
 
   protected TomTerm_BackQuoteAppl makeTomTerm_BackQuoteAppl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_BackQuoteAppl) {
       protoTomTerm_BackQuoteAppl.initHashCode(annos,fun,args);
-      return (TomTerm_BackQuoteAppl) build(protoTomTerm_BackQuoteAppl);
+      return (TomTerm_BackQuoteAppl) factory.build(protoTomTerm_BackQuoteAppl);
     }
   }
 
   public TomTerm_BackQuoteAppl makeTomTerm_BackQuoteAppl(Option _option, TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _args};
-    return makeTomTerm_BackQuoteAppl( funTomTerm_BackQuoteAppl, args, getEmpty());
+    return makeTomTerm_BackQuoteAppl(funTomTerm_BackQuoteAppl, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_BackQuoteApplFromTerm(aterm.ATerm trm)
@@ -3562,22 +3422,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_BackQuoteApplImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Option)arg.getArgument(0)).toTerm());
-    args.add(((TomName)arg.getArgument(1)).toTerm());
-    args.add(((TomList)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_BackQuoteAppl, args);
+    args.add((arg.getOption()).toTerm());    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_BackQuoteAppl, args);
   }
 
   protected TomTerm_Composite makeTomTerm_Composite(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Composite) {
       protoTomTerm_Composite.initHashCode(annos,fun,args);
-      return (TomTerm_Composite) build(protoTomTerm_Composite);
+      return (TomTerm_Composite) factory.build(protoTomTerm_Composite);
     }
   }
 
   public TomTerm_Composite makeTomTerm_Composite(TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_args};
-    return makeTomTerm_Composite( funTomTerm_Composite, args, getEmpty());
+    return makeTomTerm_Composite(funTomTerm_Composite, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_CompositeFromTerm(aterm.ATerm trm)
@@ -3594,20 +3451,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_CompositeImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_Composite, args);
+    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_Composite, args);
   }
 
   protected TomTerm_RecordAppl makeTomTerm_RecordAppl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_RecordAppl) {
       protoTomTerm_RecordAppl.initHashCode(annos,fun,args);
-      return (TomTerm_RecordAppl) build(protoTomTerm_RecordAppl);
+      return (TomTerm_RecordAppl) factory.build(protoTomTerm_RecordAppl);
     }
   }
 
   public TomTerm_RecordAppl makeTomTerm_RecordAppl(Option _option, TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _args};
-    return makeTomTerm_RecordAppl( funTomTerm_RecordAppl, args, getEmpty());
+    return makeTomTerm_RecordAppl(funTomTerm_RecordAppl, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_RecordApplFromTerm(aterm.ATerm trm)
@@ -3624,22 +3480,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_RecordApplImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Option)arg.getArgument(0)).toTerm());
-    args.add(((TomName)arg.getArgument(1)).toTerm());
-    args.add(((TomList)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_RecordAppl, args);
+    args.add((arg.getOption()).toTerm());    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_RecordAppl, args);
   }
 
   protected TomTerm_PairSlotAppl makeTomTerm_PairSlotAppl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_PairSlotAppl) {
       protoTomTerm_PairSlotAppl.initHashCode(annos,fun,args);
-      return (TomTerm_PairSlotAppl) build(protoTomTerm_PairSlotAppl);
+      return (TomTerm_PairSlotAppl) factory.build(protoTomTerm_PairSlotAppl);
     }
   }
 
   public TomTerm_PairSlotAppl makeTomTerm_PairSlotAppl(TomName _slotName, TomTerm _appl) {
     aterm.ATerm[] args = new aterm.ATerm[] {_slotName, _appl};
-    return makeTomTerm_PairSlotAppl( funTomTerm_PairSlotAppl, args, getEmpty());
+    return makeTomTerm_PairSlotAppl(funTomTerm_PairSlotAppl, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_PairSlotApplFromTerm(aterm.ATerm trm)
@@ -3656,21 +3509,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_PairSlotApplImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_PairSlotAppl, args);
+    args.add((arg.getSlotName()).toTerm());    args.add((arg.getAppl()).toTerm());    return factory.make(patternTomTerm_PairSlotAppl, args);
   }
 
   protected TomTerm_Match makeTomTerm_Match(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Match) {
       protoTomTerm_Match.initHashCode(annos,fun,args);
-      return (TomTerm_Match) build(protoTomTerm_Match);
+      return (TomTerm_Match) factory.build(protoTomTerm_Match);
     }
   }
 
   public TomTerm_Match makeTomTerm_Match(TomTerm _subjectList, TomTerm _patternList, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_subjectList, _patternList, _option};
-    return makeTomTerm_Match( funTomTerm_Match, args, getEmpty());
+    return makeTomTerm_Match(funTomTerm_Match, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_MatchFromTerm(aterm.ATerm trm)
@@ -3687,22 +3538,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_MatchImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_Match, args);
+    args.add((arg.getSubjectList()).toTerm());    args.add((arg.getPatternList()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_Match, args);
   }
 
   protected TomTerm_MatchingCondition makeTomTerm_MatchingCondition(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_MatchingCondition) {
       protoTomTerm_MatchingCondition.initHashCode(annos,fun,args);
-      return (TomTerm_MatchingCondition) build(protoTomTerm_MatchingCondition);
+      return (TomTerm_MatchingCondition) factory.build(protoTomTerm_MatchingCondition);
     }
   }
 
   public TomTerm_MatchingCondition makeTomTerm_MatchingCondition(TomTerm _lhs, TomTerm _rhs) {
     aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs};
-    return makeTomTerm_MatchingCondition( funTomTerm_MatchingCondition, args, getEmpty());
+    return makeTomTerm_MatchingCondition(funTomTerm_MatchingCondition, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_MatchingConditionFromTerm(aterm.ATerm trm)
@@ -3719,21 +3567,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_MatchingConditionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_MatchingCondition, args);
+    args.add((arg.getLhs()).toTerm());    args.add((arg.getRhs()).toTerm());    return factory.make(patternTomTerm_MatchingCondition, args);
   }
 
   protected TomTerm_EqualityCondition makeTomTerm_EqualityCondition(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_EqualityCondition) {
       protoTomTerm_EqualityCondition.initHashCode(annos,fun,args);
-      return (TomTerm_EqualityCondition) build(protoTomTerm_EqualityCondition);
+      return (TomTerm_EqualityCondition) factory.build(protoTomTerm_EqualityCondition);
     }
   }
 
   public TomTerm_EqualityCondition makeTomTerm_EqualityCondition(TomTerm _lhs, TomTerm _rhs) {
     aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs};
-    return makeTomTerm_EqualityCondition( funTomTerm_EqualityCondition, args, getEmpty());
+    return makeTomTerm_EqualityCondition(funTomTerm_EqualityCondition, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_EqualityConditionFromTerm(aterm.ATerm trm)
@@ -3750,21 +3596,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_EqualityConditionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_EqualityCondition, args);
+    args.add((arg.getLhs()).toTerm());    args.add((arg.getRhs()).toTerm());    return factory.make(patternTomTerm_EqualityCondition, args);
   }
 
   protected TomTerm_RuleSet makeTomTerm_RuleSet(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_RuleSet) {
       protoTomTerm_RuleSet.initHashCode(annos,fun,args);
-      return (TomTerm_RuleSet) build(protoTomTerm_RuleSet);
+      return (TomTerm_RuleSet) factory.build(protoTomTerm_RuleSet);
     }
   }
 
   public TomTerm_RuleSet makeTomTerm_RuleSet(TomRuleList _ruleList, Option _orgTrack) {
     aterm.ATerm[] args = new aterm.ATerm[] {_ruleList, _orgTrack};
-    return makeTomTerm_RuleSet( funTomTerm_RuleSet, args, getEmpty());
+    return makeTomTerm_RuleSet(funTomTerm_RuleSet, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_RuleSetFromTerm(aterm.ATerm trm)
@@ -3781,21 +3625,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_RuleSetImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomRuleList)arg.getArgument(0)).toTerm());
-    args.add(((Option)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_RuleSet, args);
+    args.add((arg.getRuleList()).toTerm());    args.add((arg.getOrgTrack()).toTerm());    return factory.make(patternTomTerm_RuleSet, args);
   }
 
   protected TomTerm_SubjectList makeTomTerm_SubjectList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_SubjectList) {
       protoTomTerm_SubjectList.initHashCode(annos,fun,args);
-      return (TomTerm_SubjectList) build(protoTomTerm_SubjectList);
+      return (TomTerm_SubjectList) factory.build(protoTomTerm_SubjectList);
     }
   }
 
   public TomTerm_SubjectList makeTomTerm_SubjectList(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_SubjectList( funTomTerm_SubjectList, args, getEmpty());
+    return makeTomTerm_SubjectList(funTomTerm_SubjectList, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_SubjectListFromTerm(aterm.ATerm trm)
@@ -3812,20 +3654,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_SubjectListImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_SubjectList, args);
+    args.add((arg.getTomList()).toTerm());    return factory.make(patternTomTerm_SubjectList, args);
   }
 
   protected TomTerm_PatternList makeTomTerm_PatternList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_PatternList) {
       protoTomTerm_PatternList.initHashCode(annos,fun,args);
-      return (TomTerm_PatternList) build(protoTomTerm_PatternList);
+      return (TomTerm_PatternList) factory.build(protoTomTerm_PatternList);
     }
   }
 
   public TomTerm_PatternList makeTomTerm_PatternList(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_PatternList( funTomTerm_PatternList, args, getEmpty());
+    return makeTomTerm_PatternList(funTomTerm_PatternList, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_PatternListFromTerm(aterm.ATerm trm)
@@ -3842,20 +3683,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_PatternListImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_PatternList, args);
+    args.add((arg.getTomList()).toTerm());    return factory.make(patternTomTerm_PatternList, args);
   }
 
   protected TomTerm_TermList makeTomTerm_TermList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_TermList) {
       protoTomTerm_TermList.initHashCode(annos,fun,args);
-      return (TomTerm_TermList) build(protoTomTerm_TermList);
+      return (TomTerm_TermList) factory.build(protoTomTerm_TermList);
     }
   }
 
   public TomTerm_TermList makeTomTerm_TermList(TomList _tomList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomList};
-    return makeTomTerm_TermList( funTomTerm_TermList, args, getEmpty());
+    return makeTomTerm_TermList(funTomTerm_TermList, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_TermListFromTerm(aterm.ATerm trm)
@@ -3872,20 +3712,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_TermListImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_TermList, args);
+    args.add((arg.getTomList()).toTerm());    return factory.make(patternTomTerm_TermList, args);
   }
 
   protected TomTerm_Term makeTomTerm_Term(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Term) {
       protoTomTerm_Term.initHashCode(annos,fun,args);
-      return (TomTerm_Term) build(protoTomTerm_Term);
+      return (TomTerm_Term) factory.build(protoTomTerm_Term);
     }
   }
 
   public TomTerm_Term makeTomTerm_Term(TomTerm _tomTerm) {
     aterm.ATerm[] args = new aterm.ATerm[] {_tomTerm};
-    return makeTomTerm_Term( funTomTerm_Term, args, getEmpty());
+    return makeTomTerm_Term(funTomTerm_Term, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_TermFromTerm(aterm.ATerm trm)
@@ -3902,20 +3741,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_TermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_Term, args);
+    args.add((arg.getTomTerm()).toTerm());    return factory.make(patternTomTerm_Term, args);
   }
 
   protected TomTerm_PatternAction makeTomTerm_PatternAction(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_PatternAction) {
       protoTomTerm_PatternAction.initHashCode(annos,fun,args);
-      return (TomTerm_PatternAction) build(protoTomTerm_PatternAction);
+      return (TomTerm_PatternAction) factory.build(protoTomTerm_PatternAction);
     }
   }
 
   public TomTerm_PatternAction makeTomTerm_PatternAction(TomTerm _termList, TomTerm _tom, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termList, _tom, _option};
-    return makeTomTerm_PatternAction( funTomTerm_PatternAction, args, getEmpty());
+    return makeTomTerm_PatternAction(funTomTerm_PatternAction, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_PatternActionFromTerm(aterm.ATerm trm)
@@ -3932,22 +3770,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_PatternActionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_PatternAction, args);
+    args.add((arg.getTermList()).toTerm());    args.add((arg.getTom()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_PatternAction, args);
   }
 
   protected TomTerm_DefaultPatternAction makeTomTerm_DefaultPatternAction(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_DefaultPatternAction) {
       protoTomTerm_DefaultPatternAction.initHashCode(annos,fun,args);
-      return (TomTerm_DefaultPatternAction) build(protoTomTerm_DefaultPatternAction);
+      return (TomTerm_DefaultPatternAction) factory.build(protoTomTerm_DefaultPatternAction);
     }
   }
 
   public TomTerm_DefaultPatternAction makeTomTerm_DefaultPatternAction(TomTerm _termList, TomTerm _tom, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_termList, _tom, _option};
-    return makeTomTerm_DefaultPatternAction( funTomTerm_DefaultPatternAction, args, getEmpty());
+    return makeTomTerm_DefaultPatternAction(funTomTerm_DefaultPatternAction, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_DefaultPatternActionFromTerm(aterm.ATerm trm)
@@ -3964,22 +3799,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_DefaultPatternActionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_DefaultPatternAction, args);
+    args.add((arg.getTermList()).toTerm());    args.add((arg.getTom()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_DefaultPatternAction, args);
   }
 
   protected TomTerm_TLVar makeTomTerm_TLVar(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_TLVar) {
       protoTomTerm_TLVar.initHashCode(annos,fun,args);
-      return (TomTerm_TLVar) build(protoTomTerm_TLVar);
+      return (TomTerm_TLVar) factory.build(protoTomTerm_TLVar);
     }
   }
 
   public TomTerm_TLVar makeTomTerm_TLVar(String _strName, TomType _astType) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_strName, 0, true)), _astType};
-    return makeTomTerm_TLVar( funTomTerm_TLVar, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_strName, 0, true)), _astType};
+    return makeTomTerm_TLVar(funTomTerm_TLVar, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_TLVarFromTerm(aterm.ATerm trm)
@@ -3996,21 +3828,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_TLVarImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    args.add(((TomType)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_TLVar, args);
+    args.add(arg.getStrName());    args.add((arg.getAstType()).toTerm());    return factory.make(patternTomTerm_TLVar, args);
   }
 
   protected TomTerm_Declaration makeTomTerm_Declaration(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Declaration) {
       protoTomTerm_Declaration.initHashCode(annos,fun,args);
-      return (TomTerm_Declaration) build(protoTomTerm_Declaration);
+      return (TomTerm_Declaration) factory.build(protoTomTerm_Declaration);
     }
   }
 
   public TomTerm_Declaration makeTomTerm_Declaration(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeTomTerm_Declaration( funTomTerm_Declaration, args, getEmpty());
+    return makeTomTerm_Declaration(funTomTerm_Declaration, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_DeclarationFromTerm(aterm.ATerm trm)
@@ -4027,20 +3857,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_DeclarationImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_Declaration, args);
+    args.add((arg.getKid1()).toTerm());    return factory.make(patternTomTerm_Declaration, args);
   }
 
   protected TomTerm_Variable makeTomTerm_Variable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Variable) {
       protoTomTerm_Variable.initHashCode(annos,fun,args);
-      return (TomTerm_Variable) build(protoTomTerm_Variable);
+      return (TomTerm_Variable) factory.build(protoTomTerm_Variable);
     }
   }
 
   public TomTerm_Variable makeTomTerm_Variable(Option _option, TomName _astName, TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _astType};
-    return makeTomTerm_Variable( funTomTerm_Variable, args, getEmpty());
+    return makeTomTerm_Variable(funTomTerm_Variable, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_VariableFromTerm(aterm.ATerm trm)
@@ -4057,22 +3886,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_VariableImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Option)arg.getArgument(0)).toTerm());
-    args.add(((TomName)arg.getArgument(1)).toTerm());
-    args.add(((TomType)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_Variable, args);
+    args.add((arg.getOption()).toTerm());    args.add((arg.getAstName()).toTerm());    args.add((arg.getAstType()).toTerm());    return factory.make(patternTomTerm_Variable, args);
   }
 
   protected TomTerm_VariableStar makeTomTerm_VariableStar(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_VariableStar) {
       protoTomTerm_VariableStar.initHashCode(annos,fun,args);
-      return (TomTerm_VariableStar) build(protoTomTerm_VariableStar);
+      return (TomTerm_VariableStar) factory.build(protoTomTerm_VariableStar);
     }
   }
 
   public TomTerm_VariableStar makeTomTerm_VariableStar(Option _option, TomName _astName, TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astName, _astType};
-    return makeTomTerm_VariableStar( funTomTerm_VariableStar, args, getEmpty());
+    return makeTomTerm_VariableStar(funTomTerm_VariableStar, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_VariableStarFromTerm(aterm.ATerm trm)
@@ -4089,22 +3915,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_VariableStarImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Option)arg.getArgument(0)).toTerm());
-    args.add(((TomName)arg.getArgument(1)).toTerm());
-    args.add(((TomType)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_VariableStar, args);
+    args.add((arg.getOption()).toTerm());    args.add((arg.getAstName()).toTerm());    args.add((arg.getAstType()).toTerm());    return factory.make(patternTomTerm_VariableStar, args);
   }
 
   protected TomTerm_Placeholder makeTomTerm_Placeholder(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Placeholder) {
       protoTomTerm_Placeholder.initHashCode(annos,fun,args);
-      return (TomTerm_Placeholder) build(protoTomTerm_Placeholder);
+      return (TomTerm_Placeholder) factory.build(protoTomTerm_Placeholder);
     }
   }
 
   public TomTerm_Placeholder makeTomTerm_Placeholder(Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option};
-    return makeTomTerm_Placeholder( funTomTerm_Placeholder, args, getEmpty());
+    return makeTomTerm_Placeholder(funTomTerm_Placeholder, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_PlaceholderFromTerm(aterm.ATerm trm)
@@ -4121,20 +3944,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_PlaceholderImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Option)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_Placeholder, args);
+    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_Placeholder, args);
   }
 
   protected TomTerm_UnamedVariable makeTomTerm_UnamedVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_UnamedVariable) {
       protoTomTerm_UnamedVariable.initHashCode(annos,fun,args);
-      return (TomTerm_UnamedVariable) build(protoTomTerm_UnamedVariable);
+      return (TomTerm_UnamedVariable) factory.build(protoTomTerm_UnamedVariable);
     }
   }
 
   public TomTerm_UnamedVariable makeTomTerm_UnamedVariable(Option _option, TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option, _astType};
-    return makeTomTerm_UnamedVariable( funTomTerm_UnamedVariable, args, getEmpty());
+    return makeTomTerm_UnamedVariable(funTomTerm_UnamedVariable, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_UnamedVariableFromTerm(aterm.ATerm trm)
@@ -4151,21 +3973,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_UnamedVariableImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Option)arg.getArgument(0)).toTerm());
-    args.add(((TomType)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_UnamedVariable, args);
+    args.add((arg.getOption()).toTerm());    args.add((arg.getAstType()).toTerm());    return factory.make(patternTomTerm_UnamedVariable, args);
   }
 
   protected TomTerm_LocalVariable makeTomTerm_LocalVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_LocalVariable) {
       protoTomTerm_LocalVariable.initHashCode(annos,fun,args);
-      return (TomTerm_LocalVariable) build(protoTomTerm_LocalVariable);
+      return (TomTerm_LocalVariable) factory.build(protoTomTerm_LocalVariable);
     }
   }
 
   public TomTerm_LocalVariable makeTomTerm_LocalVariable() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomTerm_LocalVariable( funTomTerm_LocalVariable, args, getEmpty());
+    return makeTomTerm_LocalVariable(funTomTerm_LocalVariable, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_LocalVariableFromTerm(aterm.ATerm trm)
@@ -4182,19 +4002,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_LocalVariableImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternTomTerm_LocalVariable, args);
+    return factory.make(patternTomTerm_LocalVariable, args);
   }
 
   protected TomTerm_EndLocalVariable makeTomTerm_EndLocalVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_EndLocalVariable) {
       protoTomTerm_EndLocalVariable.initHashCode(annos,fun,args);
-      return (TomTerm_EndLocalVariable) build(protoTomTerm_EndLocalVariable);
+      return (TomTerm_EndLocalVariable) factory.build(protoTomTerm_EndLocalVariable);
     }
   }
 
   public TomTerm_EndLocalVariable makeTomTerm_EndLocalVariable() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomTerm_EndLocalVariable( funTomTerm_EndLocalVariable, args, getEmpty());
+    return makeTomTerm_EndLocalVariable(funTomTerm_EndLocalVariable, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_EndLocalVariableFromTerm(aterm.ATerm trm)
@@ -4211,19 +4031,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_EndLocalVariableImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternTomTerm_EndLocalVariable, args);
+    return factory.make(patternTomTerm_EndLocalVariable, args);
   }
 
   protected TomTerm_BuildVariable makeTomTerm_BuildVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_BuildVariable) {
       protoTomTerm_BuildVariable.initHashCode(annos,fun,args);
-      return (TomTerm_BuildVariable) build(protoTomTerm_BuildVariable);
+      return (TomTerm_BuildVariable) factory.build(protoTomTerm_BuildVariable);
     }
   }
 
   public TomTerm_BuildVariable makeTomTerm_BuildVariable(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeTomTerm_BuildVariable( funTomTerm_BuildVariable, args, getEmpty());
+    return makeTomTerm_BuildVariable(funTomTerm_BuildVariable, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_BuildVariableFromTerm(aterm.ATerm trm)
@@ -4240,20 +4060,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_BuildVariableImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_BuildVariable, args);
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternTomTerm_BuildVariable, args);
   }
 
   protected TomTerm_BuildTerm makeTomTerm_BuildTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_BuildTerm) {
       protoTomTerm_BuildTerm.initHashCode(annos,fun,args);
-      return (TomTerm_BuildTerm) build(protoTomTerm_BuildTerm);
+      return (TomTerm_BuildTerm) factory.build(protoTomTerm_BuildTerm);
     }
   }
 
   public TomTerm_BuildTerm makeTomTerm_BuildTerm(TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args};
-    return makeTomTerm_BuildTerm( funTomTerm_BuildTerm, args, getEmpty());
+    return makeTomTerm_BuildTerm(funTomTerm_BuildTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_BuildTermFromTerm(aterm.ATerm trm)
@@ -4270,21 +4089,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_BuildTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_BuildTerm, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_BuildTerm, args);
   }
 
   protected TomTerm_BuildList makeTomTerm_BuildList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_BuildList) {
       protoTomTerm_BuildList.initHashCode(annos,fun,args);
-      return (TomTerm_BuildList) build(protoTomTerm_BuildList);
+      return (TomTerm_BuildList) factory.build(protoTomTerm_BuildList);
     }
   }
 
   public TomTerm_BuildList makeTomTerm_BuildList(TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args};
-    return makeTomTerm_BuildList( funTomTerm_BuildList, args, getEmpty());
+    return makeTomTerm_BuildList(funTomTerm_BuildList, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_BuildListFromTerm(aterm.ATerm trm)
@@ -4301,21 +4118,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_BuildListImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_BuildList, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_BuildList, args);
   }
 
   protected TomTerm_BuildArray makeTomTerm_BuildArray(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_BuildArray) {
       protoTomTerm_BuildArray.initHashCode(annos,fun,args);
-      return (TomTerm_BuildArray) build(protoTomTerm_BuildArray);
+      return (TomTerm_BuildArray) factory.build(protoTomTerm_BuildArray);
     }
   }
 
   public TomTerm_BuildArray makeTomTerm_BuildArray(TomName _astName, TomList _args) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args};
-    return makeTomTerm_BuildArray( funTomTerm_BuildArray, args, getEmpty());
+    return makeTomTerm_BuildArray(funTomTerm_BuildArray, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_BuildArrayFromTerm(aterm.ATerm trm)
@@ -4332,21 +4147,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_BuildArrayImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_BuildArray, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_BuildArray, args);
   }
 
   protected TomTerm_CompiledMatch makeTomTerm_CompiledMatch(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_CompiledMatch) {
       protoTomTerm_CompiledMatch.initHashCode(annos,fun,args);
-      return (TomTerm_CompiledMatch) build(protoTomTerm_CompiledMatch);
+      return (TomTerm_CompiledMatch) factory.build(protoTomTerm_CompiledMatch);
     }
   }
 
   public TomTerm_CompiledMatch makeTomTerm_CompiledMatch(TomList _decls, TomList _automataList, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_decls, _automataList, _option};
-    return makeTomTerm_CompiledMatch( funTomTerm_CompiledMatch, args, getEmpty());
+    return makeTomTerm_CompiledMatch(funTomTerm_CompiledMatch, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_CompiledMatchFromTerm(aterm.ATerm trm)
@@ -4363,22 +4176,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_CompiledMatchImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_CompiledMatch, args);
+    args.add((arg.getDecls()).toTerm());    args.add((arg.getAutomataList()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_CompiledMatch, args);
   }
 
   protected TomTerm_CompiledPattern makeTomTerm_CompiledPattern(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_CompiledPattern) {
       protoTomTerm_CompiledPattern.initHashCode(annos,fun,args);
-      return (TomTerm_CompiledPattern) build(protoTomTerm_CompiledPattern);
+      return (TomTerm_CompiledPattern) factory.build(protoTomTerm_CompiledPattern);
     }
   }
 
   public TomTerm_CompiledPattern makeTomTerm_CompiledPattern(TomList _instList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_instList};
-    return makeTomTerm_CompiledPattern( funTomTerm_CompiledPattern, args, getEmpty());
+    return makeTomTerm_CompiledPattern(funTomTerm_CompiledPattern, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_CompiledPatternFromTerm(aterm.ATerm trm)
@@ -4395,20 +4205,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_CompiledPatternImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_CompiledPattern, args);
+    args.add((arg.getInstList()).toTerm());    return factory.make(patternTomTerm_CompiledPattern, args);
   }
 
   protected TomTerm_AssignedVariable makeTomTerm_AssignedVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_AssignedVariable) {
       protoTomTerm_AssignedVariable.initHashCode(annos,fun,args);
-      return (TomTerm_AssignedVariable) build(protoTomTerm_AssignedVariable);
+      return (TomTerm_AssignedVariable) factory.build(protoTomTerm_AssignedVariable);
     }
   }
 
   public TomTerm_AssignedVariable makeTomTerm_AssignedVariable(String _varName, Expression _source, int _nbUse, Expression _usedInDoWhile, Expression _removable) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_varName, 0, true)), _source, makeInt(_nbUse), _usedInDoWhile, _removable};
-    return makeTomTerm_AssignedVariable( funTomTerm_AssignedVariable, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_varName, 0, true)), _source, factory.makeInt(_nbUse), _usedInDoWhile, _removable};
+    return makeTomTerm_AssignedVariable(funTomTerm_AssignedVariable, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_AssignedVariableFromTerm(aterm.ATerm trm)
@@ -4425,24 +4234,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_AssignedVariableImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    args.add(((Expression)arg.getArgument(1)).toTerm());
-    args.add(new Integer(((aterm.ATermInt)arg.getArgument(2)).getInt()));
-    args.add(((Expression)arg.getArgument(3)).toTerm());
-    args.add(((Expression)arg.getArgument(4)).toTerm());
-    return make(patternTomTerm_AssignedVariable, args);
+    args.add(arg.getVarName());    args.add((arg.getSource()).toTerm());    args.add(new Integer(arg.getNbUse()));    args.add((arg.getUsedInDoWhile()).toTerm());    args.add((arg.getRemovable()).toTerm());    return factory.make(patternTomTerm_AssignedVariable, args);
   }
 
   protected TomTerm_Automata makeTomTerm_Automata(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Automata) {
       protoTomTerm_Automata.initHashCode(annos,fun,args);
-      return (TomTerm_Automata) build(protoTomTerm_Automata);
+      return (TomTerm_Automata) factory.build(protoTomTerm_Automata);
     }
   }
 
   public TomTerm_Automata makeTomTerm_Automata(TomNumberList _numberList, TomList _instList, TomName _debugName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_numberList, _instList, _debugName};
-    return makeTomTerm_Automata( funTomTerm_Automata, args, getEmpty());
+    return makeTomTerm_Automata(funTomTerm_Automata, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_AutomataFromTerm(aterm.ATerm trm)
@@ -4459,22 +4263,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_AutomataImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumberList)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((TomName)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_Automata, args);
+    args.add((arg.getNumberList()).toTerm());    args.add((arg.getInstList()).toTerm());    args.add((arg.getDebugName()).toTerm());    return factory.make(patternTomTerm_Automata, args);
   }
 
   protected TomTerm_DefaultAutomata makeTomTerm_DefaultAutomata(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_DefaultAutomata) {
       protoTomTerm_DefaultAutomata.initHashCode(annos,fun,args);
-      return (TomTerm_DefaultAutomata) build(protoTomTerm_DefaultAutomata);
+      return (TomTerm_DefaultAutomata) factory.build(protoTomTerm_DefaultAutomata);
     }
   }
 
   public TomTerm_DefaultAutomata makeTomTerm_DefaultAutomata(TomNumberList _numberList, TomList _instList, TomName _debugName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_numberList, _instList, _debugName};
-    return makeTomTerm_DefaultAutomata( funTomTerm_DefaultAutomata, args, getEmpty());
+    return makeTomTerm_DefaultAutomata(funTomTerm_DefaultAutomata, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_DefaultAutomataFromTerm(aterm.ATerm trm)
@@ -4491,22 +4292,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_DefaultAutomataImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumberList)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((TomName)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_DefaultAutomata, args);
+    args.add((arg.getNumberList()).toTerm());    args.add((arg.getInstList()).toTerm());    args.add((arg.getDebugName()).toTerm());    return factory.make(patternTomTerm_DefaultAutomata, args);
   }
 
   protected TomTerm_MatchXML makeTomTerm_MatchXML(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_MatchXML) {
       protoTomTerm_MatchXML.initHashCode(annos,fun,args);
-      return (TomTerm_MatchXML) build(protoTomTerm_MatchXML);
+      return (TomTerm_MatchXML) factory.build(protoTomTerm_MatchXML);
     }
   }
 
   public TomTerm_MatchXML makeTomTerm_MatchXML(String _docName, TomTerm _patternList, Option _option) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_docName, 0, true)), _patternList, _option};
-    return makeTomTerm_MatchXML( funTomTerm_MatchXML, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_docName, 0, true)), _patternList, _option};
+    return makeTomTerm_MatchXML(funTomTerm_MatchXML, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_MatchXMLFromTerm(aterm.ATerm trm)
@@ -4523,22 +4321,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_MatchXMLImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternTomTerm_MatchXML, args);
+    args.add(arg.getDocName());    args.add((arg.getPatternList()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_MatchXML, args);
   }
 
   protected TomTerm_BackQuoteXML makeTomTerm_BackQuoteXML(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_BackQuoteXML) {
       protoTomTerm_BackQuoteXML.initHashCode(annos,fun,args);
-      return (TomTerm_BackQuoteXML) build(protoTomTerm_BackQuoteXML);
+      return (TomTerm_BackQuoteXML) factory.build(protoTomTerm_BackQuoteXML);
     }
   }
 
   public TomTerm_BackQuoteXML makeTomTerm_BackQuoteXML(XMLTerm _xmlTerm, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_xmlTerm, _option};
-    return makeTomTerm_BackQuoteXML( funTomTerm_BackQuoteXML, args, getEmpty());
+    return makeTomTerm_BackQuoteXML(funTomTerm_BackQuoteXML, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_BackQuoteXMLFromTerm(aterm.ATerm trm)
@@ -4555,21 +4350,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_BackQuoteXMLImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((XMLTerm)arg.getArgument(0)).toTerm());
-    args.add(((Option)arg.getArgument(1)).toTerm());
-    return make(patternTomTerm_BackQuoteXML, args);
+    args.add((arg.getXmlTerm()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomTerm_BackQuoteXML, args);
   }
 
   protected TomTerm_XMLTermToTomTerm makeTomTerm_XMLTermToTomTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_XMLTermToTomTerm) {
       protoTomTerm_XMLTermToTomTerm.initHashCode(annos,fun,args);
-      return (TomTerm_XMLTermToTomTerm) build(protoTomTerm_XMLTermToTomTerm);
+      return (TomTerm_XMLTermToTomTerm) factory.build(protoTomTerm_XMLTermToTomTerm);
     }
   }
 
   public TomTerm_XMLTermToTomTerm makeTomTerm_XMLTermToTomTerm(XMLTerm _xmlTerm) {
     aterm.ATerm[] args = new aterm.ATerm[] {_xmlTerm};
-    return makeTomTerm_XMLTermToTomTerm( funTomTerm_XMLTermToTomTerm, args, getEmpty());
+    return makeTomTerm_XMLTermToTomTerm(funTomTerm_XMLTermToTomTerm, args, factory.getEmpty());
   }
 
   public TomTerm TomTerm_XMLTermToTomTermFromTerm(aterm.ATerm trm)
@@ -4586,20 +4379,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomTerm_XMLTermToTomTermImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((XMLTerm)arg.getArgument(0)).toTerm());
-    return make(patternTomTerm_XMLTermToTomTerm, args);
+    args.add((arg.getXmlTerm()).toTerm());    return factory.make(patternTomTerm_XMLTermToTomTerm, args);
   }
 
   protected TomNumber_MatchNumber makeTomNumber_MatchNumber(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_MatchNumber) {
       protoTomNumber_MatchNumber.initHashCode(annos,fun,args);
-      return (TomNumber_MatchNumber) build(protoTomNumber_MatchNumber);
+      return (TomNumber_MatchNumber) factory.build(protoTomNumber_MatchNumber);
     }
   }
 
   public TomNumber_MatchNumber makeTomNumber_MatchNumber(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_MatchNumber( funTomNumber_MatchNumber, args, getEmpty());
+    return makeTomNumber_MatchNumber(funTomNumber_MatchNumber, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_MatchNumberFromTerm(aterm.ATerm trm)
@@ -4616,20 +4408,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_MatchNumberImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumber)arg.getArgument(0)).toTerm());
-    return make(patternTomNumber_MatchNumber, args);
+    args.add((arg.getNumber()).toTerm());    return factory.make(patternTomNumber_MatchNumber, args);
   }
 
   protected TomNumber_PatternNumber makeTomNumber_PatternNumber(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_PatternNumber) {
       protoTomNumber_PatternNumber.initHashCode(annos,fun,args);
-      return (TomNumber_PatternNumber) build(protoTomNumber_PatternNumber);
+      return (TomNumber_PatternNumber) factory.build(protoTomNumber_PatternNumber);
     }
   }
 
   public TomNumber_PatternNumber makeTomNumber_PatternNumber(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_PatternNumber( funTomNumber_PatternNumber, args, getEmpty());
+    return makeTomNumber_PatternNumber(funTomNumber_PatternNumber, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_PatternNumberFromTerm(aterm.ATerm trm)
@@ -4646,20 +4437,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_PatternNumberImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumber)arg.getArgument(0)).toTerm());
-    return make(patternTomNumber_PatternNumber, args);
+    args.add((arg.getNumber()).toTerm());    return factory.make(patternTomNumber_PatternNumber, args);
   }
 
   protected TomNumber_ListNumber makeTomNumber_ListNumber(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_ListNumber) {
       protoTomNumber_ListNumber.initHashCode(annos,fun,args);
-      return (TomNumber_ListNumber) build(protoTomNumber_ListNumber);
+      return (TomNumber_ListNumber) factory.build(protoTomNumber_ListNumber);
     }
   }
 
   public TomNumber_ListNumber makeTomNumber_ListNumber(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_ListNumber( funTomNumber_ListNumber, args, getEmpty());
+    return makeTomNumber_ListNumber(funTomNumber_ListNumber, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_ListNumberFromTerm(aterm.ATerm trm)
@@ -4676,20 +4466,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_ListNumberImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumber)arg.getArgument(0)).toTerm());
-    return make(patternTomNumber_ListNumber, args);
+    args.add((arg.getNumber()).toTerm());    return factory.make(patternTomNumber_ListNumber, args);
   }
 
   protected TomNumber_IndexNumber makeTomNumber_IndexNumber(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_IndexNumber) {
       protoTomNumber_IndexNumber.initHashCode(annos,fun,args);
-      return (TomNumber_IndexNumber) build(protoTomNumber_IndexNumber);
+      return (TomNumber_IndexNumber) factory.build(protoTomNumber_IndexNumber);
     }
   }
 
   public TomNumber_IndexNumber makeTomNumber_IndexNumber(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_IndexNumber( funTomNumber_IndexNumber, args, getEmpty());
+    return makeTomNumber_IndexNumber(funTomNumber_IndexNumber, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_IndexNumberFromTerm(aterm.ATerm trm)
@@ -4706,20 +4495,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_IndexNumberImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumber)arg.getArgument(0)).toTerm());
-    return make(patternTomNumber_IndexNumber, args);
+    args.add((arg.getNumber()).toTerm());    return factory.make(patternTomNumber_IndexNumber, args);
   }
 
   protected TomNumber_Begin makeTomNumber_Begin(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_Begin) {
       protoTomNumber_Begin.initHashCode(annos,fun,args);
-      return (TomNumber_Begin) build(protoTomNumber_Begin);
+      return (TomNumber_Begin) factory.build(protoTomNumber_Begin);
     }
   }
 
   public TomNumber_Begin makeTomNumber_Begin(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_Begin( funTomNumber_Begin, args, getEmpty());
+    return makeTomNumber_Begin(funTomNumber_Begin, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_BeginFromTerm(aterm.ATerm trm)
@@ -4736,20 +4524,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_BeginImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumber)arg.getArgument(0)).toTerm());
-    return make(patternTomNumber_Begin, args);
+    args.add((arg.getNumber()).toTerm());    return factory.make(patternTomNumber_Begin, args);
   }
 
   protected TomNumber_End makeTomNumber_End(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_End) {
       protoTomNumber_End.initHashCode(annos,fun,args);
-      return (TomNumber_End) build(protoTomNumber_End);
+      return (TomNumber_End) factory.build(protoTomNumber_End);
     }
   }
 
   public TomNumber_End makeTomNumber_End(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_End( funTomNumber_End, args, getEmpty());
+    return makeTomNumber_End(funTomNumber_End, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_EndFromTerm(aterm.ATerm trm)
@@ -4766,20 +4553,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_EndImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumber)arg.getArgument(0)).toTerm());
-    return make(patternTomNumber_End, args);
+    args.add((arg.getNumber()).toTerm());    return factory.make(patternTomNumber_End, args);
   }
 
   protected TomNumber_Number makeTomNumber_Number(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_Number) {
       protoTomNumber_Number.initHashCode(annos,fun,args);
-      return (TomNumber_Number) build(protoTomNumber_Number);
+      return (TomNumber_Number) factory.build(protoTomNumber_Number);
     }
   }
 
   public TomNumber_Number makeTomNumber_Number(int _integer) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeInt(_integer)};
-    return makeTomNumber_Number( funTomNumber_Number, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeInt(_integer)};
+    return makeTomNumber_Number(funTomNumber_Number, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_NumberFromTerm(aterm.ATerm trm)
@@ -4796,20 +4582,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_NumberImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(new Integer(((aterm.ATermInt)arg.getArgument(0)).getInt()));
-    return make(patternTomNumber_Number, args);
+    args.add(new Integer(arg.getInteger()));    return factory.make(patternTomNumber_Number, args);
   }
 
   protected TomNumber_AbsVar makeTomNumber_AbsVar(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_AbsVar) {
       protoTomNumber_AbsVar.initHashCode(annos,fun,args);
-      return (TomNumber_AbsVar) build(protoTomNumber_AbsVar);
+      return (TomNumber_AbsVar) factory.build(protoTomNumber_AbsVar);
     }
   }
 
   public TomNumber_AbsVar makeTomNumber_AbsVar(TomNumber _number) {
     aterm.ATerm[] args = new aterm.ATerm[] {_number};
-    return makeTomNumber_AbsVar( funTomNumber_AbsVar, args, getEmpty());
+    return makeTomNumber_AbsVar(funTomNumber_AbsVar, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_AbsVarFromTerm(aterm.ATerm trm)
@@ -4826,20 +4611,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_AbsVarImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumber)arg.getArgument(0)).toTerm());
-    return make(patternTomNumber_AbsVar, args);
+    args.add((arg.getNumber()).toTerm());    return factory.make(patternTomNumber_AbsVar, args);
   }
 
   protected TomNumber_RenamedVar makeTomNumber_RenamedVar(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_RenamedVar) {
       protoTomNumber_RenamedVar.initHashCode(annos,fun,args);
-      return (TomNumber_RenamedVar) build(protoTomNumber_RenamedVar);
+      return (TomNumber_RenamedVar) factory.build(protoTomNumber_RenamedVar);
     }
   }
 
   public TomNumber_RenamedVar makeTomNumber_RenamedVar(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
-    return makeTomNumber_RenamedVar( funTomNumber_RenamedVar, args, getEmpty());
+    return makeTomNumber_RenamedVar(funTomNumber_RenamedVar, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_RenamedVarFromTerm(aterm.ATerm trm)
@@ -4856,20 +4640,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_RenamedVarImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    return make(patternTomNumber_RenamedVar, args);
+    args.add((arg.getAstName()).toTerm());    return factory.make(patternTomNumber_RenamedVar, args);
   }
 
   protected TomNumber_RuleVar makeTomNumber_RuleVar(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomNumber_RuleVar) {
       protoTomNumber_RuleVar.initHashCode(annos,fun,args);
-      return (TomNumber_RuleVar) build(protoTomNumber_RuleVar);
+      return (TomNumber_RuleVar) factory.build(protoTomNumber_RuleVar);
     }
   }
 
   public TomNumber_RuleVar makeTomNumber_RuleVar() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeTomNumber_RuleVar( funTomNumber_RuleVar, args, getEmpty());
+    return makeTomNumber_RuleVar(funTomNumber_RuleVar, args, factory.getEmpty());
   }
 
   public TomNumber TomNumber_RuleVarFromTerm(aterm.ATerm trm)
@@ -4886,19 +4669,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomNumber_RuleVarImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternTomNumber_RuleVar, args);
+    return factory.make(patternTomNumber_RuleVar, args);
   }
 
   protected TomRule_RewriteRule makeTomRule_RewriteRule(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomRule_RewriteRule) {
       protoTomRule_RewriteRule.initHashCode(annos,fun,args);
-      return (TomRule_RewriteRule) build(protoTomRule_RewriteRule);
+      return (TomRule_RewriteRule) factory.build(protoTomRule_RewriteRule);
     }
   }
 
   public TomRule_RewriteRule makeTomRule_RewriteRule(TomTerm _lhs, TomTerm _rhs, TomList _condList, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs, _condList, _option};
-    return makeTomRule_RewriteRule( funTomRule_RewriteRule, args, getEmpty());
+    return makeTomRule_RewriteRule(funTomRule_RewriteRule, args, factory.getEmpty());
   }
 
   public TomRule TomRule_RewriteRuleFromTerm(aterm.ATerm trm)
@@ -4915,23 +4698,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomRule_RewriteRuleImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((TomTerm)arg.getArgument(1)).toTerm());
-    args.add(((TomList)arg.getArgument(2)).toTerm());
-    args.add(((Option)arg.getArgument(3)).toTerm());
-    return make(patternTomRule_RewriteRule, args);
+    args.add((arg.getLhs()).toTerm());    args.add((arg.getRhs()).toTerm());    args.add((arg.getCondList()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternTomRule_RewriteRule, args);
   }
 
   protected Instruction_IfThenElse makeInstruction_IfThenElse(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_IfThenElse) {
       protoInstruction_IfThenElse.initHashCode(annos,fun,args);
-      return (Instruction_IfThenElse) build(protoInstruction_IfThenElse);
+      return (Instruction_IfThenElse) factory.build(protoInstruction_IfThenElse);
     }
   }
 
   public Instruction_IfThenElse makeInstruction_IfThenElse(Expression _condition, TomList _succesList, TomList _failureList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_condition, _succesList, _failureList};
-    return makeInstruction_IfThenElse( funInstruction_IfThenElse, args, getEmpty());
+    return makeInstruction_IfThenElse(funInstruction_IfThenElse, args, factory.getEmpty());
   }
 
   public Instruction Instruction_IfThenElseFromTerm(aterm.ATerm trm)
@@ -4948,22 +4727,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_IfThenElseImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Expression)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((TomList)arg.getArgument(2)).toTerm());
-    return make(patternInstruction_IfThenElse, args);
+    args.add((arg.getCondition()).toTerm());    args.add((arg.getSuccesList()).toTerm());    args.add((arg.getFailureList()).toTerm());    return factory.make(patternInstruction_IfThenElse, args);
   }
 
   protected Instruction_DoWhile makeInstruction_DoWhile(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_DoWhile) {
       protoInstruction_DoWhile.initHashCode(annos,fun,args);
-      return (Instruction_DoWhile) build(protoInstruction_DoWhile);
+      return (Instruction_DoWhile) factory.build(protoInstruction_DoWhile);
     }
   }
 
   public Instruction_DoWhile makeInstruction_DoWhile(TomList _instList, Expression _condition) {
     aterm.ATerm[] args = new aterm.ATerm[] {_instList, _condition};
-    return makeInstruction_DoWhile( funInstruction_DoWhile, args, getEmpty());
+    return makeInstruction_DoWhile(funInstruction_DoWhile, args, factory.getEmpty());
   }
 
   public Instruction Instruction_DoWhileFromTerm(aterm.ATerm trm)
@@ -4980,21 +4756,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_DoWhileImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    args.add(((Expression)arg.getArgument(1)).toTerm());
-    return make(patternInstruction_DoWhile, args);
+    args.add((arg.getInstList()).toTerm());    args.add((arg.getCondition()).toTerm());    return factory.make(patternInstruction_DoWhile, args);
   }
 
   protected Instruction_Assign makeInstruction_Assign(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_Assign) {
       protoInstruction_Assign.initHashCode(annos,fun,args);
-      return (Instruction_Assign) build(protoInstruction_Assign);
+      return (Instruction_Assign) factory.build(protoInstruction_Assign);
     }
   }
 
   public Instruction_Assign makeInstruction_Assign(TomTerm _kid1, Expression _source) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _source};
-    return makeInstruction_Assign( funInstruction_Assign, args, getEmpty());
+    return makeInstruction_Assign(funInstruction_Assign, args, factory.getEmpty());
   }
 
   public Instruction Instruction_AssignFromTerm(aterm.ATerm trm)
@@ -5011,21 +4785,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_AssignImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((Expression)arg.getArgument(1)).toTerm());
-    return make(patternInstruction_Assign, args);
+    args.add((arg.getKid1()).toTerm());    args.add((arg.getSource()).toTerm());    return factory.make(patternInstruction_Assign, args);
   }
 
   protected Instruction_AssignMatchSubject makeInstruction_AssignMatchSubject(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_AssignMatchSubject) {
       protoInstruction_AssignMatchSubject.initHashCode(annos,fun,args);
-      return (Instruction_AssignMatchSubject) build(protoInstruction_AssignMatchSubject);
+      return (Instruction_AssignMatchSubject) factory.build(protoInstruction_AssignMatchSubject);
     }
   }
 
   public Instruction_AssignMatchSubject makeInstruction_AssignMatchSubject(TomTerm _kid1, Expression _source) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _source};
-    return makeInstruction_AssignMatchSubject( funInstruction_AssignMatchSubject, args, getEmpty());
+    return makeInstruction_AssignMatchSubject(funInstruction_AssignMatchSubject, args, factory.getEmpty());
   }
 
   public Instruction Instruction_AssignMatchSubjectFromTerm(aterm.ATerm trm)
@@ -5042,21 +4814,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_AssignMatchSubjectImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    args.add(((Expression)arg.getArgument(1)).toTerm());
-    return make(patternInstruction_AssignMatchSubject, args);
+    args.add((arg.getKid1()).toTerm());    args.add((arg.getSource()).toTerm());    return factory.make(patternInstruction_AssignMatchSubject, args);
   }
 
   protected Instruction_Increment makeInstruction_Increment(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_Increment) {
       protoInstruction_Increment.initHashCode(annos,fun,args);
-      return (Instruction_Increment) build(protoInstruction_Increment);
+      return (Instruction_Increment) factory.build(protoInstruction_Increment);
     }
   }
 
   public Instruction_Increment makeInstruction_Increment(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeInstruction_Increment( funInstruction_Increment, args, getEmpty());
+    return makeInstruction_Increment(funInstruction_Increment, args, factory.getEmpty());
   }
 
   public Instruction Instruction_IncrementFromTerm(aterm.ATerm trm)
@@ -5073,20 +4843,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_IncrementImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternInstruction_Increment, args);
+    args.add((arg.getKid1()).toTerm());    return factory.make(patternInstruction_Increment, args);
   }
 
   protected Instruction_Action makeInstruction_Action(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_Action) {
       protoInstruction_Action.initHashCode(annos,fun,args);
-      return (Instruction_Action) build(protoInstruction_Action);
+      return (Instruction_Action) factory.build(protoInstruction_Action);
     }
   }
 
   public Instruction_Action makeInstruction_Action(TomList _instList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_instList};
-    return makeInstruction_Action( funInstruction_Action, args, getEmpty());
+    return makeInstruction_Action(funInstruction_Action, args, factory.getEmpty());
   }
 
   public Instruction Instruction_ActionFromTerm(aterm.ATerm trm)
@@ -5103,20 +4872,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_ActionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    return make(patternInstruction_Action, args);
+    args.add((arg.getInstList()).toTerm());    return factory.make(patternInstruction_Action, args);
   }
 
   protected Instruction_ExitAction makeInstruction_ExitAction(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_ExitAction) {
       protoInstruction_ExitAction.initHashCode(annos,fun,args);
-      return (Instruction_ExitAction) build(protoInstruction_ExitAction);
+      return (Instruction_ExitAction) factory.build(protoInstruction_ExitAction);
     }
   }
 
   public Instruction_ExitAction makeInstruction_ExitAction(TomNumberList _numberList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_numberList};
-    return makeInstruction_ExitAction( funInstruction_ExitAction, args, getEmpty());
+    return makeInstruction_ExitAction(funInstruction_ExitAction, args, factory.getEmpty());
   }
 
   public Instruction Instruction_ExitActionFromTerm(aterm.ATerm trm)
@@ -5133,20 +4901,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_ExitActionImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomNumberList)arg.getArgument(0)).toTerm());
-    return make(patternInstruction_ExitAction, args);
+    args.add((arg.getNumberList()).toTerm());    return factory.make(patternInstruction_ExitAction, args);
   }
 
   protected Instruction_Return makeInstruction_Return(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_Return) {
       protoInstruction_Return.initHashCode(annos,fun,args);
-      return (Instruction_Return) build(protoInstruction_Return);
+      return (Instruction_Return) factory.build(protoInstruction_Return);
     }
   }
 
   public Instruction_Return makeInstruction_Return(TomTerm _kid1) {
     aterm.ATerm[] args = new aterm.ATerm[] {_kid1};
-    return makeInstruction_Return( funInstruction_Return, args, getEmpty());
+    return makeInstruction_Return(funInstruction_Return, args, factory.getEmpty());
   }
 
   public Instruction Instruction_ReturnFromTerm(aterm.ATerm trm)
@@ -5163,20 +4930,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_ReturnImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomTerm)arg.getArgument(0)).toTerm());
-    return make(patternInstruction_Return, args);
+    args.add((arg.getKid1()).toTerm());    return factory.make(patternInstruction_Return, args);
   }
 
   protected Instruction_OpenBlock makeInstruction_OpenBlock(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_OpenBlock) {
       protoInstruction_OpenBlock.initHashCode(annos,fun,args);
-      return (Instruction_OpenBlock) build(protoInstruction_OpenBlock);
+      return (Instruction_OpenBlock) factory.build(protoInstruction_OpenBlock);
     }
   }
 
   public Instruction_OpenBlock makeInstruction_OpenBlock() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeInstruction_OpenBlock( funInstruction_OpenBlock, args, getEmpty());
+    return makeInstruction_OpenBlock(funInstruction_OpenBlock, args, factory.getEmpty());
   }
 
   public Instruction Instruction_OpenBlockFromTerm(aterm.ATerm trm)
@@ -5193,19 +4959,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_OpenBlockImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternInstruction_OpenBlock, args);
+    return factory.make(patternInstruction_OpenBlock, args);
   }
 
   protected Instruction_CloseBlock makeInstruction_CloseBlock(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_CloseBlock) {
       protoInstruction_CloseBlock.initHashCode(annos,fun,args);
-      return (Instruction_CloseBlock) build(protoInstruction_CloseBlock);
+      return (Instruction_CloseBlock) factory.build(protoInstruction_CloseBlock);
     }
   }
 
   public Instruction_CloseBlock makeInstruction_CloseBlock() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeInstruction_CloseBlock( funInstruction_CloseBlock, args, getEmpty());
+    return makeInstruction_CloseBlock(funInstruction_CloseBlock, args, factory.getEmpty());
   }
 
   public Instruction Instruction_CloseBlockFromTerm(aterm.ATerm trm)
@@ -5222,19 +4988,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_CloseBlockImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    return make(patternInstruction_CloseBlock, args);
+    return factory.make(patternInstruction_CloseBlock, args);
   }
 
   protected Instruction_NamedBlock makeInstruction_NamedBlock(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoInstruction_NamedBlock) {
       protoInstruction_NamedBlock.initHashCode(annos,fun,args);
-      return (Instruction_NamedBlock) build(protoInstruction_NamedBlock);
+      return (Instruction_NamedBlock) factory.build(protoInstruction_NamedBlock);
     }
   }
 
   public Instruction_NamedBlock makeInstruction_NamedBlock(String _blockName, TomList _instList) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_blockName, 0, true)), _instList};
-    return makeInstruction_NamedBlock( funInstruction_NamedBlock, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_blockName, 0, true)), _instList};
+    return makeInstruction_NamedBlock(funInstruction_NamedBlock, args, factory.getEmpty());
   }
 
   public Instruction Instruction_NamedBlockFromTerm(aterm.ATerm trm)
@@ -5251,21 +5017,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(Instruction_NamedBlockImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    return make(patternInstruction_NamedBlock, args);
+    args.add(arg.getBlockName());    args.add((arg.getInstList()).toTerm());    return factory.make(patternInstruction_NamedBlock, args);
   }
 
   protected TomSymbol_Symbol makeTomSymbol_Symbol(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomSymbol_Symbol) {
       protoTomSymbol_Symbol.initHashCode(annos,fun,args);
-      return (TomSymbol_Symbol) build(protoTomSymbol_Symbol);
+      return (TomSymbol_Symbol) factory.build(protoTomSymbol_Symbol);
     }
   }
 
   public TomSymbol_Symbol makeTomSymbol_Symbol(TomName _astName, TomType _typesToType, SlotList _slotList, Option _option, TargetLanguage _tlCode) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _typesToType, _slotList, _option, _tlCode};
-    return makeTomSymbol_Symbol( funTomSymbol_Symbol, args, getEmpty());
+    return makeTomSymbol_Symbol(funTomSymbol_Symbol, args, factory.getEmpty());
   }
 
   public TomSymbol TomSymbol_SymbolFromTerm(aterm.ATerm trm)
@@ -5282,24 +5046,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomSymbol_SymbolImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomType)arg.getArgument(1)).toTerm());
-    args.add(((SlotList)arg.getArgument(2)).toTerm());
-    args.add(((Option)arg.getArgument(3)).toTerm());
-    args.add(((TargetLanguage)arg.getArgument(4)).toTerm());
-    return make(patternTomSymbol_Symbol, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getTypesToType()).toTerm());    args.add((arg.getSlotList()).toTerm());    args.add((arg.getOption()).toTerm());    args.add((arg.getTlCode()).toTerm());    return factory.make(patternTomSymbol_Symbol, args);
   }
 
   protected PairNameDecl_Slot makePairNameDecl_Slot(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoPairNameDecl_Slot) {
       protoPairNameDecl_Slot.initHashCode(annos,fun,args);
-      return (PairNameDecl_Slot) build(protoPairNameDecl_Slot);
+      return (PairNameDecl_Slot) factory.build(protoPairNameDecl_Slot);
     }
   }
 
   public PairNameDecl_Slot makePairNameDecl_Slot(TomName _slotName, Declaration _slotDecl) {
     aterm.ATerm[] args = new aterm.ATerm[] {_slotName, _slotDecl};
-    return makePairNameDecl_Slot( funPairNameDecl_Slot, args, getEmpty());
+    return makePairNameDecl_Slot(funPairNameDecl_Slot, args, factory.getEmpty());
   }
 
   public PairNameDecl PairNameDecl_SlotFromTerm(aterm.ATerm trm)
@@ -5316,21 +5075,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(PairNameDecl_SlotImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((Declaration)arg.getArgument(1)).toTerm());
-    return make(patternPairNameDecl_Slot, args);
+    args.add((arg.getSlotName()).toTerm());    args.add((arg.getSlotDecl()).toTerm());    return factory.make(patternPairNameDecl_Slot, args);
   }
 
   protected TomSymbolTable_Table makeTomSymbolTable_Table(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomSymbolTable_Table) {
       protoTomSymbolTable_Table.initHashCode(annos,fun,args);
-      return (TomSymbolTable_Table) build(protoTomSymbolTable_Table);
+      return (TomSymbolTable_Table) factory.build(protoTomSymbolTable_Table);
     }
   }
 
   public TomSymbolTable_Table makeTomSymbolTable_Table(TomEntryList _entryList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_entryList};
-    return makeTomSymbolTable_Table( funTomSymbolTable_Table, args, getEmpty());
+    return makeTomSymbolTable_Table(funTomSymbolTable_Table, args, factory.getEmpty());
   }
 
   public TomSymbolTable TomSymbolTable_TableFromTerm(aterm.ATerm trm)
@@ -5347,20 +5104,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomSymbolTable_TableImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomEntryList)arg.getArgument(0)).toTerm());
-    return make(patternTomSymbolTable_Table, args);
+    args.add((arg.getEntryList()).toTerm());    return factory.make(patternTomSymbolTable_Table, args);
   }
 
   protected TomEntry_Entry makeTomEntry_Entry(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomEntry_Entry) {
       protoTomEntry_Entry.initHashCode(annos,fun,args);
-      return (TomEntry_Entry) build(protoTomEntry_Entry);
+      return (TomEntry_Entry) factory.build(protoTomEntry_Entry);
     }
   }
 
   public TomEntry_Entry makeTomEntry_Entry(String _strName, TomSymbol _astSymbol) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_strName, 0, true)), _astSymbol};
-    return makeTomEntry_Entry( funTomEntry_Entry, args, getEmpty());
+    aterm.ATerm[] args = new aterm.ATerm[] {factory.makeAppl(factory.makeAFun(_strName, 0, true)), _astSymbol};
+    return makeTomEntry_Entry(funTomEntry_Entry, args, factory.getEmpty());
   }
 
   public TomEntry TomEntry_EntryFromTerm(aterm.ATerm trm)
@@ -5377,21 +5133,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomEntry_EntryImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((aterm.ATermAppl)arg.getArgument(0)).getAFun().getName());
-    args.add(((TomSymbol)arg.getArgument(1)).toTerm());
-    return make(patternTomEntry_Entry, args);
+    args.add(arg.getStrName());    args.add((arg.getAstSymbol()).toTerm());    return factory.make(patternTomEntry_Entry, args);
   }
 
   protected TomStructureTable_StructTable makeTomStructureTable_StructTable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomStructureTable_StructTable) {
       protoTomStructureTable_StructTable.initHashCode(annos,fun,args);
-      return (TomStructureTable_StructTable) build(protoTomStructureTable_StructTable);
+      return (TomStructureTable_StructTable) factory.build(protoTomStructureTable_StructTable);
     }
   }
 
   public TomStructureTable_StructTable makeTomStructureTable_StructTable(TomList _structList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_structList};
-    return makeTomStructureTable_StructTable( funTomStructureTable_StructTable, args, getEmpty());
+    return makeTomStructureTable_StructTable(funTomStructureTable_StructTable, args, factory.getEmpty());
   }
 
   public TomStructureTable TomStructureTable_StructTableFromTerm(aterm.ATerm trm)
@@ -5408,20 +5162,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(TomStructureTable_StructTableImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomList)arg.getArgument(0)).toTerm());
-    return make(patternTomStructureTable_StructTable, args);
+    args.add((arg.getStructList()).toTerm());    return factory.make(patternTomStructureTable_StructTable, args);
   }
 
   protected XMLTerm_Element makeXMLTerm_Element(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoXMLTerm_Element) {
       protoXMLTerm_Element.initHashCode(annos,fun,args);
-      return (XMLTerm_Element) build(protoXMLTerm_Element);
+      return (XMLTerm_Element) factory.build(protoXMLTerm_Element);
     }
   }
 
   public XMLTerm_Element makeXMLTerm_Element(TomName _astName, TomList _args, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args, _option};
-    return makeXMLTerm_Element( funXMLTerm_Element, args, getEmpty());
+    return makeXMLTerm_Element(funXMLTerm_Element, args, factory.getEmpty());
   }
 
   public XMLTerm XMLTerm_ElementFromTerm(aterm.ATerm trm)
@@ -5438,22 +5191,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(XMLTerm_ElementImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternXMLTerm_Element, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_Element, args);
   }
 
   protected XMLTerm_Attribute makeXMLTerm_Attribute(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoXMLTerm_Attribute) {
       protoXMLTerm_Attribute.initHashCode(annos,fun,args);
-      return (XMLTerm_Attribute) build(protoXMLTerm_Attribute);
+      return (XMLTerm_Attribute) factory.build(protoXMLTerm_Attribute);
     }
   }
 
   public XMLTerm_Attribute makeXMLTerm_Attribute(TomName _astName, TomList _args, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args, _option};
-    return makeXMLTerm_Attribute( funXMLTerm_Attribute, args, getEmpty());
+    return makeXMLTerm_Attribute(funXMLTerm_Attribute, args, factory.getEmpty());
   }
 
   public XMLTerm XMLTerm_AttributeFromTerm(aterm.ATerm trm)
@@ -5470,22 +5220,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(XMLTerm_AttributeImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternXMLTerm_Attribute, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_Attribute, args);
   }
 
   protected XMLTerm_ReservedWord makeXMLTerm_ReservedWord(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoXMLTerm_ReservedWord) {
       protoXMLTerm_ReservedWord.initHashCode(annos,fun,args);
-      return (XMLTerm_ReservedWord) build(protoXMLTerm_ReservedWord);
+      return (XMLTerm_ReservedWord) factory.build(protoXMLTerm_ReservedWord);
     }
   }
 
   public XMLTerm_ReservedWord makeXMLTerm_ReservedWord(TomName _astName, TomList _args, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _args, _option};
-    return makeXMLTerm_ReservedWord( funXMLTerm_ReservedWord, args, getEmpty());
+    return makeXMLTerm_ReservedWord(funXMLTerm_ReservedWord, args, factory.getEmpty());
   }
 
   public XMLTerm XMLTerm_ReservedWordFromTerm(aterm.ATerm trm)
@@ -5502,22 +5249,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(XMLTerm_ReservedWordImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((TomList)arg.getArgument(1)).toTerm());
-    args.add(((Option)arg.getArgument(2)).toTerm());
-    return make(patternXMLTerm_ReservedWord, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_ReservedWord, args);
   }
 
   protected XMLTerm_XMLPlaceholder makeXMLTerm_XMLPlaceholder(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoXMLTerm_XMLPlaceholder) {
       protoXMLTerm_XMLPlaceholder.initHashCode(annos,fun,args);
-      return (XMLTerm_XMLPlaceholder) build(protoXMLTerm_XMLPlaceholder);
+      return (XMLTerm_XMLPlaceholder) factory.build(protoXMLTerm_XMLPlaceholder);
     }
   }
 
   public XMLTerm_XMLPlaceholder makeXMLTerm_XMLPlaceholder(Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_option};
-    return makeXMLTerm_XMLPlaceholder( funXMLTerm_XMLPlaceholder, args, getEmpty());
+    return makeXMLTerm_XMLPlaceholder(funXMLTerm_XMLPlaceholder, args, factory.getEmpty());
   }
 
   public XMLTerm XMLTerm_XMLPlaceholderFromTerm(aterm.ATerm trm)
@@ -5534,20 +5278,19 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(XMLTerm_XMLPlaceholderImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((Option)arg.getArgument(0)).toTerm());
-    return make(patternXMLTerm_XMLPlaceholder, args);
+    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_XMLPlaceholder, args);
   }
 
   protected XMLTerm_XMLVariable makeXMLTerm_XMLVariable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoXMLTerm_XMLVariable) {
       protoXMLTerm_XMLVariable.initHashCode(annos,fun,args);
-      return (XMLTerm_XMLVariable) build(protoXMLTerm_XMLVariable);
+      return (XMLTerm_XMLVariable) factory.build(protoXMLTerm_XMLVariable);
     }
   }
 
   public XMLTerm_XMLVariable makeXMLTerm_XMLVariable(TomName _astName, Option _option) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName, _option};
-    return makeXMLTerm_XMLVariable( funXMLTerm_XMLVariable, args, getEmpty());
+    return makeXMLTerm_XMLVariable(funXMLTerm_XMLVariable, args, factory.getEmpty());
   }
 
   public XMLTerm XMLTerm_XMLVariableFromTerm(aterm.ATerm trm)
@@ -5564,9 +5307,7 @@ public class TomSignatureFactory extends PureFactory
   }
   protected aterm.ATerm toTerm(XMLTerm_XMLVariableImpl arg) {
     java.util.List args = new java.util.LinkedList();
-    args.add(((TomName)arg.getArgument(0)).toTerm());
-    args.add(((Option)arg.getArgument(1)).toTerm());
-    return make(patternXMLTerm_XMLVariable, args);
+    args.add((arg.getAstName()).toTerm());    args.add((arg.getOption()).toTerm());    return factory.make(patternXMLTerm_XMLVariable, args);
   }
 
   public TomList makeTomList() {
@@ -5576,12 +5317,12 @@ public class TomSignatureFactory extends PureFactory
     return (TomList) makeTomList(elem, emptyTomList);
   }
   public TomList makeTomList(TomTerm head, TomList tail) {
-    return (TomList) makeTomList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
+    return (TomList) makeTomList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
   }
   protected TomList makeTomList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomList) {
       protoTomList.initHashCode(annos,head,tail);
-      return (TomList) build(protoTomList);
+      return (TomList) factory.build(protoTomList);
     }
   }
   public TomNumberList makeTomNumberList() {
@@ -5591,12 +5332,12 @@ public class TomSignatureFactory extends PureFactory
     return (TomNumberList) makeTomNumberList(elem, emptyTomNumberList);
   }
   public TomNumberList makeTomNumberList(TomNumber head, TomNumberList tail) {
-    return (TomNumberList) makeTomNumberList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
+    return (TomNumberList) makeTomNumberList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
   }
   protected TomNumberList makeTomNumberList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomNumberList) {
       protoTomNumberList.initHashCode(annos,head,tail);
-      return (TomNumberList) build(protoTomNumberList);
+      return (TomNumberList) factory.build(protoTomNumberList);
     }
   }
   public TomRuleList makeTomRuleList() {
@@ -5606,12 +5347,12 @@ public class TomSignatureFactory extends PureFactory
     return (TomRuleList) makeTomRuleList(elem, emptyTomRuleList);
   }
   public TomRuleList makeTomRuleList(TomRule head, TomRuleList tail) {
-    return (TomRuleList) makeTomRuleList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
+    return (TomRuleList) makeTomRuleList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
   }
   protected TomRuleList makeTomRuleList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomRuleList) {
       protoTomRuleList.initHashCode(annos,head,tail);
-      return (TomRuleList) build(protoTomRuleList);
+      return (TomRuleList) factory.build(protoTomRuleList);
     }
   }
   public TomTypeList makeTomTypeList() {
@@ -5621,12 +5362,12 @@ public class TomSignatureFactory extends PureFactory
     return (TomTypeList) makeTomTypeList(elem, emptyTomTypeList);
   }
   public TomTypeList makeTomTypeList(TomType head, TomTypeList tail) {
-    return (TomTypeList) makeTomTypeList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
+    return (TomTypeList) makeTomTypeList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
   }
   protected TomTypeList makeTomTypeList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomTypeList) {
       protoTomTypeList.initHashCode(annos,head,tail);
-      return (TomTypeList) build(protoTomTypeList);
+      return (TomTypeList) factory.build(protoTomTypeList);
     }
   }
   public OptionList makeOptionList() {
@@ -5636,12 +5377,12 @@ public class TomSignatureFactory extends PureFactory
     return (OptionList) makeOptionList(elem, emptyOptionList);
   }
   public OptionList makeOptionList(Option head, OptionList tail) {
-    return (OptionList) makeOptionList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
+    return (OptionList) makeOptionList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
   }
   protected OptionList makeOptionList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoOptionList) {
       protoOptionList.initHashCode(annos,head,tail);
-      return (OptionList) build(protoOptionList);
+      return (OptionList) factory.build(protoOptionList);
     }
   }
   public SlotList makeSlotList() {
@@ -5651,12 +5392,12 @@ public class TomSignatureFactory extends PureFactory
     return (SlotList) makeSlotList(elem, emptySlotList);
   }
   public SlotList makeSlotList(PairNameDecl head, SlotList tail) {
-    return (SlotList) makeSlotList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
+    return (SlotList) makeSlotList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
   }
   protected SlotList makeSlotList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoSlotList) {
       protoSlotList.initHashCode(annos,head,tail);
-      return (SlotList) build(protoSlotList);
+      return (SlotList) factory.build(protoSlotList);
     }
   }
   public TomEntryList makeTomEntryList() {
@@ -5666,12 +5407,12 @@ public class TomSignatureFactory extends PureFactory
     return (TomEntryList) makeTomEntryList(elem, emptyTomEntryList);
   }
   public TomEntryList makeTomEntryList(TomEntry head, TomEntryList tail) {
-    return (TomEntryList) makeTomEntryList((aterm.ATerm) head, (aterm.ATermList) tail, getEmpty());
+    return (TomEntryList) makeTomEntryList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
   }
   protected TomEntryList makeTomEntryList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
     synchronized (protoTomEntryList) {
       protoTomEntryList.initHashCode(annos,head,tail);
-      return (TomEntryList) build(protoTomEntryList);
+      return (TomEntryList) factory.build(protoTomEntryList);
     }
   }
   public Declaration DeclarationFromTerm(aterm.ATerm trm)
@@ -6643,194 +6384,194 @@ public class TomSignatureFactory extends PureFactory
   }
   public Declaration DeclarationFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return DeclarationFromTerm(trm);
   }
   public Declaration DeclarationFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return DeclarationFromTerm(readFromFile(stream));
+    return DeclarationFromTerm(factory.readFromFile(stream));
   }
   public Option OptionFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return OptionFromTerm(trm);
   }
   public Option OptionFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return OptionFromTerm(readFromFile(stream));
+    return OptionFromTerm(factory.readFromFile(stream));
   }
   public Expression ExpressionFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return ExpressionFromTerm(trm);
   }
   public Expression ExpressionFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return ExpressionFromTerm(readFromFile(stream));
+    return ExpressionFromTerm(factory.readFromFile(stream));
   }
   public TargetLanguage TargetLanguageFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TargetLanguageFromTerm(trm);
   }
   public TargetLanguage TargetLanguageFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TargetLanguageFromTerm(readFromFile(stream));
+    return TargetLanguageFromTerm(factory.readFromFile(stream));
   }
   public Position PositionFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return PositionFromTerm(trm);
   }
   public Position PositionFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return PositionFromTerm(readFromFile(stream));
+    return PositionFromTerm(factory.readFromFile(stream));
   }
   public TomType TomTypeFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomTypeFromTerm(trm);
   }
   public TomType TomTypeFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomTypeFromTerm(readFromFile(stream));
+    return TomTypeFromTerm(factory.readFromFile(stream));
   }
   public TomName TomNameFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomNameFromTerm(trm);
   }
   public TomName TomNameFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomNameFromTerm(readFromFile(stream));
+    return TomNameFromTerm(factory.readFromFile(stream));
   }
   public TomTerm TomTermFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomTermFromTerm(trm);
   }
   public TomTerm TomTermFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomTermFromTerm(readFromFile(stream));
+    return TomTermFromTerm(factory.readFromFile(stream));
   }
   public TomNumber TomNumberFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomNumberFromTerm(trm);
   }
   public TomNumber TomNumberFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomNumberFromTerm(readFromFile(stream));
+    return TomNumberFromTerm(factory.readFromFile(stream));
   }
   public TomRule TomRuleFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomRuleFromTerm(trm);
   }
   public TomRule TomRuleFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomRuleFromTerm(readFromFile(stream));
+    return TomRuleFromTerm(factory.readFromFile(stream));
   }
   public Instruction InstructionFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return InstructionFromTerm(trm);
   }
   public Instruction InstructionFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return InstructionFromTerm(readFromFile(stream));
+    return InstructionFromTerm(factory.readFromFile(stream));
   }
   public TomSymbol TomSymbolFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomSymbolFromTerm(trm);
   }
   public TomSymbol TomSymbolFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomSymbolFromTerm(readFromFile(stream));
+    return TomSymbolFromTerm(factory.readFromFile(stream));
   }
   public PairNameDecl PairNameDeclFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return PairNameDeclFromTerm(trm);
   }
   public PairNameDecl PairNameDeclFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return PairNameDeclFromTerm(readFromFile(stream));
+    return PairNameDeclFromTerm(factory.readFromFile(stream));
   }
   public TomSymbolTable TomSymbolTableFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomSymbolTableFromTerm(trm);
   }
   public TomSymbolTable TomSymbolTableFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomSymbolTableFromTerm(readFromFile(stream));
+    return TomSymbolTableFromTerm(factory.readFromFile(stream));
   }
   public TomEntry TomEntryFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomEntryFromTerm(trm);
   }
   public TomEntry TomEntryFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomEntryFromTerm(readFromFile(stream));
+    return TomEntryFromTerm(factory.readFromFile(stream));
   }
   public TomStructureTable TomStructureTableFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomStructureTableFromTerm(trm);
   }
   public TomStructureTable TomStructureTableFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomStructureTableFromTerm(readFromFile(stream));
+    return TomStructureTableFromTerm(factory.readFromFile(stream));
   }
   public XMLTerm XMLTermFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return XMLTermFromTerm(trm);
   }
   public XMLTerm XMLTermFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return XMLTermFromTerm(readFromFile(stream));
+    return XMLTermFromTerm(factory.readFromFile(stream));
   }
   public TomList TomListFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomListFromTerm(trm);
   }
   public TomList TomListFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomListFromTerm(readFromFile(stream));
+    return TomListFromTerm(factory.readFromFile(stream));
   }
   public TomNumberList TomNumberListFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomNumberListFromTerm(trm);
   }
   public TomNumberList TomNumberListFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomNumberListFromTerm(readFromFile(stream));
+    return TomNumberListFromTerm(factory.readFromFile(stream));
   }
   public TomRuleList TomRuleListFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomRuleListFromTerm(trm);
   }
   public TomRuleList TomRuleListFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomRuleListFromTerm(readFromFile(stream));
+    return TomRuleListFromTerm(factory.readFromFile(stream));
   }
   public TomTypeList TomTypeListFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomTypeListFromTerm(trm);
   }
   public TomTypeList TomTypeListFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomTypeListFromTerm(readFromFile(stream));
+    return TomTypeListFromTerm(factory.readFromFile(stream));
   }
   public OptionList OptionListFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return OptionListFromTerm(trm);
   }
   public OptionList OptionListFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return OptionListFromTerm(readFromFile(stream));
+    return OptionListFromTerm(factory.readFromFile(stream));
   }
   public SlotList SlotListFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return SlotListFromTerm(trm);
   }
   public SlotList SlotListFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return SlotListFromTerm(readFromFile(stream));
+    return SlotListFromTerm(factory.readFromFile(stream));
   }
   public TomEntryList TomEntryListFromString(String str)
   {
-    aterm.ATerm trm = parse(str);
+    aterm.ATerm trm = factory.parse(str);
     return TomEntryListFromTerm(trm);
   }
   public TomEntryList TomEntryListFromFile(java.io.InputStream stream) throws java.io.IOException {
-    return TomEntryListFromTerm(readFromFile(stream));
+    return TomEntryListFromTerm(factory.readFromFile(stream));
   }
 }

@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TomTermImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
   public boolean isEqual(TomTerm peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortTomTerm()  {
     return true;
@@ -455,372 +453,372 @@ abstract public class TomTermImpl extends TomSignatureConstructor
 
   public TargetLanguage getTl()
   {
-     throw new RuntimeException("This TomTerm has no Tl");
+     throw new UnsupportedOperationException("This TomTerm has no Tl");
   }
 
   public TomTerm setTl(TargetLanguage _tl)
   {
-     throw new RuntimeException("This TomTerm has no Tl");
+     throw new IllegalArgumentException("Illegal argument: " + _tl);
   }
 
   public TomType getAstType()
   {
-     throw new RuntimeException("This TomTerm has no AstType");
+     throw new UnsupportedOperationException("This TomTerm has no AstType");
   }
 
   public TomTerm setAstType(TomType _astType)
   {
-     throw new RuntimeException("This TomTerm has no AstType");
+     throw new IllegalArgumentException("Illegal argument: " + _astType);
   }
 
   public TomName getAstName()
   {
-     throw new RuntimeException("This TomTerm has no AstName");
+     throw new UnsupportedOperationException("This TomTerm has no AstName");
   }
 
   public TomTerm setAstName(TomName _astName)
   {
-     throw new RuntimeException("This TomTerm has no AstName");
+     throw new IllegalArgumentException("Illegal argument: " + _astName);
   }
 
   public TomSymbol getAstSymbol()
   {
-     throw new RuntimeException("This TomTerm has no AstSymbol");
+     throw new UnsupportedOperationException("This TomTerm has no AstSymbol");
   }
 
   public TomTerm setAstSymbol(TomSymbol _astSymbol)
   {
-     throw new RuntimeException("This TomTerm has no AstSymbol");
+     throw new IllegalArgumentException("Illegal argument: " + _astSymbol);
   }
 
   public Declaration getAstDeclaration()
   {
-     throw new RuntimeException("This TomTerm has no AstDeclaration");
+     throw new UnsupportedOperationException("This TomTerm has no AstDeclaration");
   }
 
   public TomTerm setAstDeclaration(Declaration _astDeclaration)
   {
-     throw new RuntimeException("This TomTerm has no AstDeclaration");
+     throw new IllegalArgumentException("Illegal argument: " + _astDeclaration);
   }
 
   public Option getAstOption()
   {
-     throw new RuntimeException("This TomTerm has no AstOption");
+     throw new UnsupportedOperationException("This TomTerm has no AstOption");
   }
 
   public TomTerm setAstOption(Option _astOption)
   {
-     throw new RuntimeException("This TomTerm has no AstOption");
+     throw new IllegalArgumentException("Illegal argument: " + _astOption);
   }
 
   public Expression getAstExpression()
   {
-     throw new RuntimeException("This TomTerm has no AstExpression");
+     throw new UnsupportedOperationException("This TomTerm has no AstExpression");
   }
 
   public TomTerm setAstExpression(Expression _astExpression)
   {
-     throw new RuntimeException("This TomTerm has no AstExpression");
+     throw new IllegalArgumentException("Illegal argument: " + _astExpression);
   }
 
   public Instruction getAstInstruction()
   {
-     throw new RuntimeException("This TomTerm has no AstInstruction");
+     throw new UnsupportedOperationException("This TomTerm has no AstInstruction");
   }
 
   public TomTerm setAstInstruction(Instruction _astInstruction)
   {
-     throw new RuntimeException("This TomTerm has no AstInstruction");
+     throw new IllegalArgumentException("Illegal argument: " + _astInstruction);
   }
 
   public TomList getTomList()
   {
-     throw new RuntimeException("This TomTerm has no TomList");
+     throw new UnsupportedOperationException("This TomTerm has no TomList");
   }
 
   public TomTerm setTomList(TomList _tomList)
   {
-     throw new RuntimeException("This TomTerm has no TomList");
+     throw new IllegalArgumentException("Illegal argument: " + _tomList);
   }
 
   public TomTerm getKid1()
   {
-     throw new RuntimeException("This TomTerm has no Kid1");
+     throw new UnsupportedOperationException("This TomTerm has no Kid1");
   }
 
   public TomTerm setKid1(TomTerm _kid1)
   {
-     throw new RuntimeException("This TomTerm has no Kid1");
+     throw new IllegalArgumentException("Illegal argument: " + _kid1);
   }
 
   public TomList getArgs()
   {
-     throw new RuntimeException("This TomTerm has no Args");
+     throw new UnsupportedOperationException("This TomTerm has no Args");
   }
 
   public TomTerm setArgs(TomList _args)
   {
-     throw new RuntimeException("This TomTerm has no Args");
+     throw new IllegalArgumentException("Illegal argument: " + _args);
   }
 
   public TomTerm getSubjectListAST()
   {
-     throw new RuntimeException("This TomTerm has no SubjectListAST");
+     throw new UnsupportedOperationException("This TomTerm has no SubjectListAST");
   }
 
   public TomTerm setSubjectListAST(TomTerm _subjectListAST)
   {
-     throw new RuntimeException("This TomTerm has no SubjectListAST");
+     throw new IllegalArgumentException("Illegal argument: " + _subjectListAST);
   }
 
   public Option getOption()
   {
-     throw new RuntimeException("This TomTerm has no Option");
+     throw new UnsupportedOperationException("This TomTerm has no Option");
   }
 
   public TomTerm setOption(Option _option)
   {
-     throw new RuntimeException("This TomTerm has no Option");
+     throw new IllegalArgumentException("Illegal argument: " + _option);
   }
 
   public TomName getSlotName()
   {
-     throw new RuntimeException("This TomTerm has no SlotName");
+     throw new UnsupportedOperationException("This TomTerm has no SlotName");
   }
 
   public TomTerm setSlotName(TomName _slotName)
   {
-     throw new RuntimeException("This TomTerm has no SlotName");
+     throw new IllegalArgumentException("Illegal argument: " + _slotName);
   }
 
   public TomTerm getAppl()
   {
-     throw new RuntimeException("This TomTerm has no Appl");
+     throw new UnsupportedOperationException("This TomTerm has no Appl");
   }
 
   public TomTerm setAppl(TomTerm _appl)
   {
-     throw new RuntimeException("This TomTerm has no Appl");
+     throw new IllegalArgumentException("Illegal argument: " + _appl);
   }
 
   public TomTerm getSubjectList()
   {
-     throw new RuntimeException("This TomTerm has no SubjectList");
+     throw new UnsupportedOperationException("This TomTerm has no SubjectList");
   }
 
   public TomTerm setSubjectList(TomTerm _subjectList)
   {
-     throw new RuntimeException("This TomTerm has no SubjectList");
+     throw new IllegalArgumentException("Illegal argument: " + _subjectList);
   }
 
   public TomTerm getPatternList()
   {
-     throw new RuntimeException("This TomTerm has no PatternList");
+     throw new UnsupportedOperationException("This TomTerm has no PatternList");
   }
 
   public TomTerm setPatternList(TomTerm _patternList)
   {
-     throw new RuntimeException("This TomTerm has no PatternList");
+     throw new IllegalArgumentException("Illegal argument: " + _patternList);
   }
 
   public TomTerm getLhs()
   {
-     throw new RuntimeException("This TomTerm has no Lhs");
+     throw new UnsupportedOperationException("This TomTerm has no Lhs");
   }
 
   public TomTerm setLhs(TomTerm _lhs)
   {
-     throw new RuntimeException("This TomTerm has no Lhs");
+     throw new IllegalArgumentException("Illegal argument: " + _lhs);
   }
 
   public TomTerm getRhs()
   {
-     throw new RuntimeException("This TomTerm has no Rhs");
+     throw new UnsupportedOperationException("This TomTerm has no Rhs");
   }
 
   public TomTerm setRhs(TomTerm _rhs)
   {
-     throw new RuntimeException("This TomTerm has no Rhs");
+     throw new IllegalArgumentException("Illegal argument: " + _rhs);
   }
 
   public TomRuleList getRuleList()
   {
-     throw new RuntimeException("This TomTerm has no RuleList");
+     throw new UnsupportedOperationException("This TomTerm has no RuleList");
   }
 
   public TomTerm setRuleList(TomRuleList _ruleList)
   {
-     throw new RuntimeException("This TomTerm has no RuleList");
+     throw new IllegalArgumentException("Illegal argument: " + _ruleList);
   }
 
   public Option getOrgTrack()
   {
-     throw new RuntimeException("This TomTerm has no OrgTrack");
+     throw new UnsupportedOperationException("This TomTerm has no OrgTrack");
   }
 
   public TomTerm setOrgTrack(Option _orgTrack)
   {
-     throw new RuntimeException("This TomTerm has no OrgTrack");
+     throw new IllegalArgumentException("Illegal argument: " + _orgTrack);
   }
 
   public TomTerm getTomTerm()
   {
-     throw new RuntimeException("This TomTerm has no TomTerm");
+     throw new UnsupportedOperationException("This TomTerm has no TomTerm");
   }
 
   public TomTerm setTomTerm(TomTerm _tomTerm)
   {
-     throw new RuntimeException("This TomTerm has no TomTerm");
+     throw new IllegalArgumentException("Illegal argument: " + _tomTerm);
   }
 
   public TomTerm getTermList()
   {
-     throw new RuntimeException("This TomTerm has no TermList");
+     throw new UnsupportedOperationException("This TomTerm has no TermList");
   }
 
   public TomTerm setTermList(TomTerm _termList)
   {
-     throw new RuntimeException("This TomTerm has no TermList");
+     throw new IllegalArgumentException("Illegal argument: " + _termList);
   }
 
   public TomTerm getTom()
   {
-     throw new RuntimeException("This TomTerm has no Tom");
+     throw new UnsupportedOperationException("This TomTerm has no Tom");
   }
 
   public TomTerm setTom(TomTerm _tom)
   {
-     throw new RuntimeException("This TomTerm has no Tom");
+     throw new IllegalArgumentException("Illegal argument: " + _tom);
   }
 
   public String getStrName()
   {
-     throw new RuntimeException("This TomTerm has no StrName");
+     throw new UnsupportedOperationException("This TomTerm has no StrName");
   }
 
   public TomTerm setStrName(String _strName)
   {
-     throw new RuntimeException("This TomTerm has no StrName");
+     throw new IllegalArgumentException("Illegal argument: " + _strName);
   }
 
   public TomList getDecls()
   {
-     throw new RuntimeException("This TomTerm has no Decls");
+     throw new UnsupportedOperationException("This TomTerm has no Decls");
   }
 
   public TomTerm setDecls(TomList _decls)
   {
-     throw new RuntimeException("This TomTerm has no Decls");
+     throw new IllegalArgumentException("Illegal argument: " + _decls);
   }
 
   public TomList getAutomataList()
   {
-     throw new RuntimeException("This TomTerm has no AutomataList");
+     throw new UnsupportedOperationException("This TomTerm has no AutomataList");
   }
 
   public TomTerm setAutomataList(TomList _automataList)
   {
-     throw new RuntimeException("This TomTerm has no AutomataList");
+     throw new IllegalArgumentException("Illegal argument: " + _automataList);
   }
 
   public TomList getInstList()
   {
-     throw new RuntimeException("This TomTerm has no InstList");
+     throw new UnsupportedOperationException("This TomTerm has no InstList");
   }
 
   public TomTerm setInstList(TomList _instList)
   {
-     throw new RuntimeException("This TomTerm has no InstList");
+     throw new IllegalArgumentException("Illegal argument: " + _instList);
   }
 
   public String getVarName()
   {
-     throw new RuntimeException("This TomTerm has no VarName");
+     throw new UnsupportedOperationException("This TomTerm has no VarName");
   }
 
   public TomTerm setVarName(String _varName)
   {
-     throw new RuntimeException("This TomTerm has no VarName");
+     throw new IllegalArgumentException("Illegal argument: " + _varName);
   }
 
   public Expression getSource()
   {
-     throw new RuntimeException("This TomTerm has no Source");
+     throw new UnsupportedOperationException("This TomTerm has no Source");
   }
 
   public TomTerm setSource(Expression _source)
   {
-     throw new RuntimeException("This TomTerm has no Source");
+     throw new IllegalArgumentException("Illegal argument: " + _source);
   }
 
   public int getNbUse()
   {
-     throw new RuntimeException("This TomTerm has no NbUse");
+     throw new UnsupportedOperationException("This TomTerm has no NbUse");
   }
 
   public TomTerm setNbUse(int _nbUse)
   {
-     throw new RuntimeException("This TomTerm has no NbUse");
+     throw new IllegalArgumentException("Illegal argument: " + _nbUse);
   }
 
   public Expression getUsedInDoWhile()
   {
-     throw new RuntimeException("This TomTerm has no UsedInDoWhile");
+     throw new UnsupportedOperationException("This TomTerm has no UsedInDoWhile");
   }
 
   public TomTerm setUsedInDoWhile(Expression _usedInDoWhile)
   {
-     throw new RuntimeException("This TomTerm has no UsedInDoWhile");
+     throw new IllegalArgumentException("Illegal argument: " + _usedInDoWhile);
   }
 
   public Expression getRemovable()
   {
-     throw new RuntimeException("This TomTerm has no Removable");
+     throw new UnsupportedOperationException("This TomTerm has no Removable");
   }
 
   public TomTerm setRemovable(Expression _removable)
   {
-     throw new RuntimeException("This TomTerm has no Removable");
+     throw new IllegalArgumentException("Illegal argument: " + _removable);
   }
 
   public TomNumberList getNumberList()
   {
-     throw new RuntimeException("This TomTerm has no NumberList");
+     throw new UnsupportedOperationException("This TomTerm has no NumberList");
   }
 
   public TomTerm setNumberList(TomNumberList _numberList)
   {
-     throw new RuntimeException("This TomTerm has no NumberList");
+     throw new IllegalArgumentException("Illegal argument: " + _numberList);
   }
 
   public TomName getDebugName()
   {
-     throw new RuntimeException("This TomTerm has no DebugName");
+     throw new UnsupportedOperationException("This TomTerm has no DebugName");
   }
 
   public TomTerm setDebugName(TomName _debugName)
   {
-     throw new RuntimeException("This TomTerm has no DebugName");
+     throw new IllegalArgumentException("Illegal argument: " + _debugName);
   }
 
   public String getDocName()
   {
-     throw new RuntimeException("This TomTerm has no DocName");
+     throw new UnsupportedOperationException("This TomTerm has no DocName");
   }
 
   public TomTerm setDocName(String _docName)
   {
-     throw new RuntimeException("This TomTerm has no DocName");
+     throw new IllegalArgumentException("Illegal argument: " + _docName);
   }
 
   public XMLTerm getXmlTerm()
   {
-     throw new RuntimeException("This TomTerm has no XmlTerm");
+     throw new UnsupportedOperationException("This TomTerm has no XmlTerm");
   }
 
   public TomTerm setXmlTerm(XMLTerm _xmlTerm)
   {
-     throw new RuntimeException("This TomTerm has no XmlTerm");
+     throw new IllegalArgumentException("Illegal argument: " + _xmlTerm);
   }
 
 }

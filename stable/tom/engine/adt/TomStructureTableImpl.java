@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TomStructureTableImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class TomStructureTableImpl extends TomSignatureConstructor
   }
   public boolean isEqual(TomStructureTable peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortTomStructureTable()  {
     return true;
@@ -35,12 +33,12 @@ abstract public class TomStructureTableImpl extends TomSignatureConstructor
 
   public TomList getStructList()
   {
-     throw new RuntimeException("This TomStructureTable has no StructList");
+     throw new UnsupportedOperationException("This TomStructureTable has no StructList");
   }
 
   public TomStructureTable setStructList(TomList _structList)
   {
-     throw new RuntimeException("This TomStructureTable has no StructList");
+     throw new IllegalArgumentException("Illegal argument: " + _structList);
   }
 
 }

@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class PairNameDeclImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class PairNameDeclImpl extends TomSignatureConstructor
   }
   public boolean isEqual(PairNameDecl peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortPairNameDecl()  {
     return true;
@@ -40,22 +38,22 @@ abstract public class PairNameDeclImpl extends TomSignatureConstructor
 
   public TomName getSlotName()
   {
-     throw new RuntimeException("This PairNameDecl has no SlotName");
+     throw new UnsupportedOperationException("This PairNameDecl has no SlotName");
   }
 
   public PairNameDecl setSlotName(TomName _slotName)
   {
-     throw new RuntimeException("This PairNameDecl has no SlotName");
+     throw new IllegalArgumentException("Illegal argument: " + _slotName);
   }
 
   public Declaration getSlotDecl()
   {
-     throw new RuntimeException("This PairNameDecl has no SlotDecl");
+     throw new UnsupportedOperationException("This PairNameDecl has no SlotDecl");
   }
 
   public PairNameDecl setSlotDecl(Declaration _slotDecl)
   {
-     throw new RuntimeException("This PairNameDecl has no SlotDecl");
+     throw new IllegalArgumentException("Illegal argument: " + _slotDecl);
   }
 
 }

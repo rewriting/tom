@@ -1,8 +1,6 @@
 package jtom.runtime.set.jgtreeset;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class JGTreeSetImpl extends SetConstructor
 {
@@ -17,7 +15,7 @@ abstract public class JGTreeSetImpl extends SetConstructor
   }
   public boolean isEqual(JGTreeSet peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortJGTreeSet()  {
     return true;
@@ -65,42 +63,42 @@ abstract public class JGTreeSetImpl extends SetConstructor
 
   public aterm.ATerm getValue()
   {
-     throw new RuntimeException("This JGTreeSet has no Value");
+     throw new UnsupportedOperationException("This JGTreeSet has no Value");
   }
 
   public JGTreeSet setValue(aterm.ATerm _value)
   {
-     throw new RuntimeException("This JGTreeSet has no Value");
+     throw new IllegalArgumentException("Illegal argument: " + _value);
   }
 
   public int getMultiplicity()
   {
-     throw new RuntimeException("This JGTreeSet has no Multiplicity");
+     throw new UnsupportedOperationException("This JGTreeSet has no Multiplicity");
   }
 
   public JGTreeSet setMultiplicity(int _multiplicity)
   {
-     throw new RuntimeException("This JGTreeSet has no Multiplicity");
+     throw new IllegalArgumentException("Illegal argument: " + _multiplicity);
   }
 
   public JGTreeSet getLeft()
   {
-     throw new RuntimeException("This JGTreeSet has no Left");
+     throw new UnsupportedOperationException("This JGTreeSet has no Left");
   }
 
   public JGTreeSet setLeft(JGTreeSet _left)
   {
-     throw new RuntimeException("This JGTreeSet has no Left");
+     throw new IllegalArgumentException("Illegal argument: " + _left);
   }
 
   public JGTreeSet getRight()
   {
-     throw new RuntimeException("This JGTreeSet has no Right");
+     throw new UnsupportedOperationException("This JGTreeSet has no Right");
   }
 
   public JGTreeSet setRight(JGTreeSet _right)
   {
-     throw new RuntimeException("This JGTreeSet has no Right");
+     throw new IllegalArgumentException("Illegal argument: " + _right);
   }
 
 }

@@ -32,7 +32,7 @@
 
 %typelist ATermList{
   implement { aterm.ATermList}
-  get_fun_sym(t) {((t instanceof ATermList)?getTomSignatureFactory().makeAFun("conc",1,false):null)}
+  get_fun_sym(t) {((t instanceof ATermList)?getTomSignatureFactory().getPureFactory().makeAFun("conc",1,false):null)}
   cmp_fun_sym(s1,s2) { s1==s2}
   equals(t1,t2) {t1.equals(t2)}
   get_head(l) {l.getFirst()}

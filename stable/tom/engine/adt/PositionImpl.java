@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class PositionImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class PositionImpl extends TomSignatureConstructor
   }
   public boolean isEqual(Position peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortPosition()  {
     return true;
@@ -40,22 +38,22 @@ abstract public class PositionImpl extends TomSignatureConstructor
 
   public int getLine()
   {
-     throw new RuntimeException("This Position has no Line");
+     throw new UnsupportedOperationException("This Position has no Line");
   }
 
   public Position setLine(int _line)
   {
-     throw new RuntimeException("This Position has no Line");
+     throw new IllegalArgumentException("Illegal argument: " + _line);
   }
 
   public int getColumn()
   {
-     throw new RuntimeException("This Position has no Column");
+     throw new UnsupportedOperationException("This Position has no Column");
   }
 
   public Position setColumn(int _column)
   {
-     throw new RuntimeException("This Position has no Column");
+     throw new IllegalArgumentException("Illegal argument: " + _column);
   }
 
 }

@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class OptionImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class OptionImpl extends TomSignatureConstructor
   }
   public boolean isEqual(Option peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortOption()  {
     return true;
@@ -115,72 +113,72 @@ abstract public class OptionImpl extends TomSignatureConstructor
 
   public Declaration getAstDeclaration()
   {
-     throw new RuntimeException("This Option has no AstDeclaration");
+     throw new UnsupportedOperationException("This Option has no AstDeclaration");
   }
 
   public Option setAstDeclaration(Declaration _astDeclaration)
   {
-     throw new RuntimeException("This Option has no AstDeclaration");
+     throw new IllegalArgumentException("Illegal argument: " + _astDeclaration);
   }
 
   public TomName getAstName()
   {
-     throw new RuntimeException("This Option has no AstName");
+     throw new UnsupportedOperationException("This Option has no AstName");
   }
 
   public Option setAstName(TomName _astName)
   {
-     throw new RuntimeException("This Option has no AstName");
+     throw new IllegalArgumentException("Illegal argument: " + _astName);
   }
 
   public TomTerm getAstTerm()
   {
-     throw new RuntimeException("This Option has no AstTerm");
+     throw new UnsupportedOperationException("This Option has no AstTerm");
   }
 
   public Option setAstTerm(TomTerm _astTerm)
   {
-     throw new RuntimeException("This Option has no AstTerm");
+     throw new IllegalArgumentException("Illegal argument: " + _astTerm);
   }
 
   public OptionList getOptionList()
   {
-     throw new RuntimeException("This Option has no OptionList");
+     throw new UnsupportedOperationException("This Option has no OptionList");
   }
 
   public Option setOptionList(OptionList _optionList)
   {
-     throw new RuntimeException("This Option has no OptionList");
+     throw new IllegalArgumentException("Illegal argument: " + _optionList);
   }
 
   public int getLine()
   {
-     throw new RuntimeException("This Option has no Line");
+     throw new UnsupportedOperationException("This Option has no Line");
   }
 
   public Option setLine(int _line)
   {
-     throw new RuntimeException("This Option has no Line");
+     throw new IllegalArgumentException("Illegal argument: " + _line);
   }
 
   public TomName getFileName()
   {
-     throw new RuntimeException("This Option has no FileName");
+     throw new UnsupportedOperationException("This Option has no FileName");
   }
 
   public Option setFileName(TomName _fileName)
   {
-     throw new RuntimeException("This Option has no FileName");
+     throw new IllegalArgumentException("Illegal argument: " + _fileName);
   }
 
   public String getPlace()
   {
-     throw new RuntimeException("This Option has no Place");
+     throw new UnsupportedOperationException("This Option has no Place");
   }
 
   public Option setPlace(String _place)
   {
-     throw new RuntimeException("This Option has no Place");
+     throw new IllegalArgumentException("Illegal argument: " + _place);
   }
 
 }

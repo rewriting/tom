@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class XMLTermImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class XMLTermImpl extends TomSignatureConstructor
   }
   public boolean isEqual(XMLTerm peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortXMLTerm()  {
     return true;
@@ -65,32 +63,32 @@ abstract public class XMLTermImpl extends TomSignatureConstructor
 
   public TomName getAstName()
   {
-     throw new RuntimeException("This XMLTerm has no AstName");
+     throw new UnsupportedOperationException("This XMLTerm has no AstName");
   }
 
   public XMLTerm setAstName(TomName _astName)
   {
-     throw new RuntimeException("This XMLTerm has no AstName");
+     throw new IllegalArgumentException("Illegal argument: " + _astName);
   }
 
   public TomList getArgs()
   {
-     throw new RuntimeException("This XMLTerm has no Args");
+     throw new UnsupportedOperationException("This XMLTerm has no Args");
   }
 
   public XMLTerm setArgs(TomList _args)
   {
-     throw new RuntimeException("This XMLTerm has no Args");
+     throw new IllegalArgumentException("Illegal argument: " + _args);
   }
 
   public Option getOption()
   {
-     throw new RuntimeException("This XMLTerm has no Option");
+     throw new UnsupportedOperationException("This XMLTerm has no Option");
   }
 
   public XMLTerm setOption(Option _option)
   {
-     throw new RuntimeException("This XMLTerm has no Option");
+     throw new IllegalArgumentException("Illegal argument: " + _option);
   }
 
 }

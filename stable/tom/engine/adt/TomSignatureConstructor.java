@@ -9,7 +9,7 @@ implements aterm.ATerm
   TomSignatureFactory factory = null;
 
   public TomSignatureConstructor(TomSignatureFactory factory) {
-    super(factory);
+    super(factory.getPureFactory());
     this.factory = factory;
   }
 

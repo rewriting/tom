@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TomEntryImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class TomEntryImpl extends TomSignatureConstructor
   }
   public boolean isEqual(TomEntry peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortTomEntry()  {
     return true;
@@ -40,22 +38,22 @@ abstract public class TomEntryImpl extends TomSignatureConstructor
 
   public String getStrName()
   {
-     throw new RuntimeException("This TomEntry has no StrName");
+     throw new UnsupportedOperationException("This TomEntry has no StrName");
   }
 
   public TomEntry setStrName(String _strName)
   {
-     throw new RuntimeException("This TomEntry has no StrName");
+     throw new IllegalArgumentException("Illegal argument: " + _strName);
   }
 
   public TomSymbol getAstSymbol()
   {
-     throw new RuntimeException("This TomEntry has no AstSymbol");
+     throw new UnsupportedOperationException("This TomEntry has no AstSymbol");
   }
 
   public TomEntry setAstSymbol(TomSymbol _astSymbol)
   {
-     throw new RuntimeException("This TomEntry has no AstSymbol");
+     throw new IllegalArgumentException("Illegal argument: " + _astSymbol);
   }
 
 }

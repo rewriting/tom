@@ -1,8 +1,6 @@
 package jtom.adt;
 
 import aterm.*;
-import java.io.InputStream;
-import java.io.IOException;
 
 abstract public class TomSymbolTableImpl extends TomSignatureConstructor
 {
@@ -17,7 +15,7 @@ abstract public class TomSymbolTableImpl extends TomSignatureConstructor
   }
   public boolean isEqual(TomSymbolTable peer)
   {
-    return term.isEqual(peer.toTerm());
+    return super.isEqual(peer);
   }
   public boolean isSortTomSymbolTable()  {
     return true;
@@ -35,12 +33,12 @@ abstract public class TomSymbolTableImpl extends TomSignatureConstructor
 
   public TomEntryList getEntryList()
   {
-     throw new RuntimeException("This TomSymbolTable has no EntryList");
+     throw new UnsupportedOperationException("This TomSymbolTable has no EntryList");
   }
 
   public TomSymbolTable setEntryList(TomEntryList _entryList)
   {
-     throw new RuntimeException("This TomSymbolTable has no EntryList");
+     throw new IllegalArgumentException("Illegal argument: " + _entryList);
   }
 
 }

@@ -169,7 +169,7 @@ public class SharedMultiSet extends ATermSet {
  return t; }}matchlab_match5_pattern3: {  JGTreeSet p = null; if(tom_is_fun_sym_branch(tom_match5_1)) {  JGTreeSet tom_match5_1_1 = null;  JGTreeSet tom_match5_1_2 = null; tom_match5_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match5_1); tom_match5_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match5_1); if(tom_is_fun_sym_emptySet(tom_match5_1_1)) { if(tom_is_fun_sym_pair(tom_match5_1_2)) {  aterm.ATerm tom_match5_1_2_1 = null;  int tom_match5_1_2_2; tom_match5_1_2_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match5_1_2); tom_match5_1_2_2 = ( int) tom_get_slot_pair_multiplicity(tom_match5_1_2); p = ( JGTreeSet) tom_match5_1_2;
  return p; } } }}matchlab_match5_pattern4: {  JGTreeSet p = null; if(tom_is_fun_sym_branch(tom_match5_1)) {  JGTreeSet tom_match5_1_1 = null;  JGTreeSet tom_match5_1_2 = null; tom_match5_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match5_1); tom_match5_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match5_1); if(tom_is_fun_sym_pair(tom_match5_1_1)) {  aterm.ATerm tom_match5_1_1_1 = null;  int tom_match5_1_1_2; tom_match5_1_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match5_1_1); tom_match5_1_1_2 = ( int) tom_get_slot_pair_multiplicity(tom_match5_1_1); p = ( JGTreeSet) tom_match5_1_1; if(tom_is_fun_sym_emptySet(tom_match5_1_2)) {
  return p; } } }}matchlab_match5_pattern5: {  JGTreeSet e = null; if(tom_is_fun_sym_branch(tom_match5_1)) {  JGTreeSet tom_match5_1_1 = null;  JGTreeSet tom_match5_1_2 = null; tom_match5_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match5_1); tom_match5_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match5_1); if(tom_is_fun_sym_emptySet(tom_match5_1_1)) { e = ( JGTreeSet) tom_match5_1_1; if(tom_is_fun_sym_emptySet(tom_match5_1_2)) {
- return e; } } }}matchlab_match5_pattern6: {  JGTreeSet l2 = null;  JGTreeSet l1 = null; if(tom_is_fun_sym_branch(tom_match5_1)) {  JGTreeSet tom_match5_1_1 = null;  JGTreeSet tom_match5_1_2 = null; tom_match5_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match5_1); tom_match5_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match5_1); l1 = ( JGTreeSet) tom_match5_1_1; l2 = ( JGTreeSet) tom_match5_1_2;
+ return e; } } }}matchlab_match5_pattern6: {  JGTreeSet l1 = null;  JGTreeSet l2 = null; if(tom_is_fun_sym_branch(tom_match5_1)) {  JGTreeSet tom_match5_1_1 = null;  JGTreeSet tom_match5_1_2 = null; tom_match5_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match5_1); tom_match5_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match5_1); l1 = ( JGTreeSet) tom_match5_1_1; l2 = ( JGTreeSet) tom_match5_1_2;
  return tom_make_branch(reworkJGTreeSet(l1),reworkJGTreeSet(l2)) ; }}matchlab_match5_pattern7: {
   return traversal.genericTraversal(t,this); } }
  
@@ -191,7 +191,7 @@ public class SharedMultiSet extends ATermSet {
 
  
         return m1;
-       }}matchlab_match6_pattern3: {  int mult;  JGTreeSet x = null;  aterm.ATerm elt = null; if(tom_is_fun_sym_pair(tom_match6_1)) {  aterm.ATerm tom_match6_1_1 = null;  int tom_match6_1_2; tom_match6_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match6_1); tom_match6_1_2 = ( int) tom_get_slot_pair_multiplicity(tom_match6_1); elt = ( aterm.ATerm) tom_match6_1_1; mult = ( int) tom_match6_1_2; x = ( JGTreeSet) tom_match6_2;
+       }}matchlab_match6_pattern3: {  aterm.ATerm elt = null;  JGTreeSet x = null;  int mult; if(tom_is_fun_sym_pair(tom_match6_1)) {  aterm.ATerm tom_match6_1_1 = null;  int tom_match6_1_2; tom_match6_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match6_1); tom_match6_1_2 = ( int) tom_get_slot_pair_multiplicity(tom_match6_1); elt = ( aterm.ATerm) tom_match6_1_1; mult = ( int) tom_match6_1_2; x = ( JGTreeSet) tom_match6_2;
 
  
         return override(elt, mult, x, level);
@@ -200,7 +200,7 @@ public class SharedMultiSet extends ATermSet {
  
           // underride dont worry about multiplicity
         return underride(elt, x, level);
-       }}matchlab_match6_pattern5: {  JGTreeSet l1 = null;  JGTreeSet r1 = null;  JGTreeSet r2 = null;  JGTreeSet l2 = null; if(tom_is_fun_sym_branch(tom_match6_1)) {  JGTreeSet tom_match6_1_1 = null;  JGTreeSet tom_match6_1_2 = null; tom_match6_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match6_1); tom_match6_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match6_1); l1 = ( JGTreeSet) tom_match6_1_1; r1 = ( JGTreeSet) tom_match6_1_2; if(tom_is_fun_sym_branch(tom_match6_2)) {  JGTreeSet tom_match6_2_1 = null;  JGTreeSet tom_match6_2_2 = null; tom_match6_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match6_2); tom_match6_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match6_2); l2 = ( JGTreeSet) tom_match6_2_1; r2 = ( JGTreeSet) tom_match6_2_2;
+       }}matchlab_match6_pattern5: {  JGTreeSet l2 = null;  JGTreeSet l1 = null;  JGTreeSet r2 = null;  JGTreeSet r1 = null; if(tom_is_fun_sym_branch(tom_match6_1)) {  JGTreeSet tom_match6_1_1 = null;  JGTreeSet tom_match6_1_2 = null; tom_match6_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match6_1); tom_match6_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match6_1); l1 = ( JGTreeSet) tom_match6_1_1; r1 = ( JGTreeSet) tom_match6_1_2; if(tom_is_fun_sym_branch(tom_match6_2)) {  JGTreeSet tom_match6_2_1 = null;  JGTreeSet tom_match6_2_2 = null; tom_match6_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match6_2); tom_match6_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match6_2); l2 = ( JGTreeSet) tom_match6_2_1; r2 = ( JGTreeSet) tom_match6_2_2;
 
  
         int l = level+1;
@@ -215,7 +215,7 @@ public class SharedMultiSet extends ATermSet {
 
   
         return tom_make_emptySet() ;
-       }}matchlab_match7_pattern2: {  JGTreeSet x = null; x = ( JGTreeSet) tom_match7_1; if(tom_is_fun_sym_emptySet(tom_match7_2)) {           return tom_make_emptySet() ;        }}matchlab_match7_pattern3: {  int mult;  aterm.ATerm elt = null;  JGTreeSet p = null;  JGTreeSet x = null; if(tom_is_fun_sym_pair(tom_match7_1)) {  aterm.ATerm tom_match7_1_1 = null;  int tom_match7_1_2; tom_match7_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match7_1); tom_match7_1_2 = ( int) tom_get_slot_pair_multiplicity(tom_match7_1); p = ( JGTreeSet) tom_match7_1; elt = ( aterm.ATerm) tom_match7_1_1; mult = ( int) tom_match7_1_2; x = ( JGTreeSet) tom_match7_2;
+       }}matchlab_match7_pattern2: {  JGTreeSet x = null; x = ( JGTreeSet) tom_match7_1; if(tom_is_fun_sym_emptySet(tom_match7_2)) {           return tom_make_emptySet() ;        }}matchlab_match7_pattern3: {  int mult;  JGTreeSet p = null;  aterm.ATerm elt = null;  JGTreeSet x = null; if(tom_is_fun_sym_pair(tom_match7_1)) {  aterm.ATerm tom_match7_1_1 = null;  int tom_match7_1_2; tom_match7_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match7_1); tom_match7_1_2 = ( int) tom_get_slot_pair_multiplicity(tom_match7_1); p = ( JGTreeSet) tom_match7_1; elt = ( aterm.ATerm) tom_match7_1_1; mult = ( int) tom_match7_1_2; x = ( JGTreeSet) tom_match7_2;
 
 
  
@@ -225,7 +225,7 @@ public class SharedMultiSet extends ATermSet {
         } else {
           return tom_make_emptySet() ;
         }
-       }}matchlab_match7_pattern4: {  JGTreeSet p = null;  int mult;  JGTreeSet x = null;  aterm.ATerm elt = null; x = ( JGTreeSet) tom_match7_1; if(tom_is_fun_sym_pair(tom_match7_2)) {  aterm.ATerm tom_match7_2_1 = null;  int tom_match7_2_2; tom_match7_2_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match7_2); tom_match7_2_2 = ( int) tom_get_slot_pair_multiplicity(tom_match7_2); p = ( JGTreeSet) tom_match7_2; elt = ( aterm.ATerm) tom_match7_2_1; mult = ( int) tom_match7_2_2;          if (contains(elt, x, level)) {             /* Warning: we have to choose one of the 2 element: with the lowest multiplicity*/           return p;         } else {           return tom_make_emptySet() ;         }        }}matchlab_match7_pattern5: {  JGTreeSet r2 = null;  JGTreeSet r1 = null;  JGTreeSet l2 = null;  JGTreeSet l1 = null; if(tom_is_fun_sym_branch(tom_match7_1)) {  JGTreeSet tom_match7_1_1 = null;  JGTreeSet tom_match7_1_2 = null; tom_match7_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match7_1); tom_match7_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match7_1); l1 = ( JGTreeSet) tom_match7_1_1; r1 = ( JGTreeSet) tom_match7_1_2; if(tom_is_fun_sym_branch(tom_match7_2)) {  JGTreeSet tom_match7_2_1 = null;  JGTreeSet tom_match7_2_2 = null; tom_match7_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match7_2); tom_match7_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match7_2); l2 = ( JGTreeSet) tom_match7_2_1; r2 = ( JGTreeSet) tom_match7_2_2;
+       }}matchlab_match7_pattern4: {  aterm.ATerm elt = null;  JGTreeSet x = null;  JGTreeSet p = null;  int mult; x = ( JGTreeSet) tom_match7_1; if(tom_is_fun_sym_pair(tom_match7_2)) {  aterm.ATerm tom_match7_2_1 = null;  int tom_match7_2_2; tom_match7_2_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match7_2); tom_match7_2_2 = ( int) tom_get_slot_pair_multiplicity(tom_match7_2); p = ( JGTreeSet) tom_match7_2; elt = ( aterm.ATerm) tom_match7_2_1; mult = ( int) tom_match7_2_2;          if (contains(elt, x, level)) {             /* Warning: we have to choose one of the 2 element: with the lowest multiplicity*/           return p;         } else {           return tom_make_emptySet() ;         }        }}matchlab_match7_pattern5: {  JGTreeSet l1 = null;  JGTreeSet r1 = null;  JGTreeSet r2 = null;  JGTreeSet l2 = null; if(tom_is_fun_sym_branch(tom_match7_1)) {  JGTreeSet tom_match7_1_1 = null;  JGTreeSet tom_match7_1_2 = null; tom_match7_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match7_1); tom_match7_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match7_1); l1 = ( JGTreeSet) tom_match7_1_1; r1 = ( JGTreeSet) tom_match7_1_2; if(tom_is_fun_sym_branch(tom_match7_2)) {  JGTreeSet tom_match7_2_1 = null;  JGTreeSet tom_match7_2_2 = null; tom_match7_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match7_2); tom_match7_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match7_2); l2 = ( JGTreeSet) tom_match7_2_1; r2 = ( JGTreeSet) tom_match7_2_2;
 
  
         int l = level+1;
@@ -253,7 +253,7 @@ public class SharedMultiSet extends ATermSet {
         } else {
           return tom_make_emptySet() ;
         }
-       }}matchlab_match8_pattern5: {  JGTreeSet l2 = null;  JGTreeSet r1 = null;  JGTreeSet r2 = null;  JGTreeSet l1 = null; if(tom_is_fun_sym_branch(tom_match8_1)) {  JGTreeSet tom_match8_1_1 = null;  JGTreeSet tom_match8_1_2 = null; tom_match8_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match8_1); tom_match8_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match8_1); l1 = ( JGTreeSet) tom_match8_1_1; r1 = ( JGTreeSet) tom_match8_1_2; if(tom_is_fun_sym_branch(tom_match8_2)) {  JGTreeSet tom_match8_2_1 = null;  JGTreeSet tom_match8_2_2 = null; tom_match8_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match8_2); tom_match8_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match8_2); l2 = ( JGTreeSet) tom_match8_2_1; r2 = ( JGTreeSet) tom_match8_2_2;
+       }}matchlab_match8_pattern5: {  JGTreeSet l1 = null;  JGTreeSet r1 = null;  JGTreeSet r2 = null;  JGTreeSet l2 = null; if(tom_is_fun_sym_branch(tom_match8_1)) {  JGTreeSet tom_match8_1_1 = null;  JGTreeSet tom_match8_1_2 = null; tom_match8_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match8_1); tom_match8_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match8_1); l1 = ( JGTreeSet) tom_match8_1_1; r1 = ( JGTreeSet) tom_match8_1_2; if(tom_is_fun_sym_branch(tom_match8_2)) {  JGTreeSet tom_match8_2_1 = null;  JGTreeSet tom_match8_2_2 = null; tom_match8_2_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match8_2); tom_match8_2_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match8_2); l2 = ( JGTreeSet) tom_match8_2_1; r2 = ( JGTreeSet) tom_match8_2_2;
 
  
         int l = level+1;
@@ -318,7 +318,7 @@ public class SharedMultiSet extends ATermSet {
      {  JGTreeSet tom_match12_1 = null; tom_match12_1 = ( JGTreeSet) t;matchlab_match12_pattern1: { if(tom_is_fun_sym_emptySet(tom_match12_1)) {
  
         return makePair(elt, multiplicity);
-       }}matchlab_match12_pattern2: {  int mult;  aterm.ATerm x = null; if(tom_is_fun_sym_pair(tom_match12_1)) {  aterm.ATerm tom_match12_1_1 = null;  int tom_match12_1_2; tom_match12_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match12_1); tom_match12_1_2 = ( int) tom_get_slot_pair_multiplicity(tom_match12_1); x = ( aterm.ATerm) tom_match12_1_1; mult = ( int) tom_match12_1_2;
+       }}matchlab_match12_pattern2: {  aterm.ATerm x = null;  int mult; if(tom_is_fun_sym_pair(tom_match12_1)) {  aterm.ATerm tom_match12_1_1 = null;  int tom_match12_1_2; tom_match12_1_1 = ( aterm.ATerm) tom_get_slot_pair_value(tom_match12_1); tom_match12_1_2 = ( int) tom_get_slot_pair_multiplicity(tom_match12_1); x = ( aterm.ATerm) tom_match12_1_1; mult = ( int) tom_match12_1_2;
 
  
         if(x == elt) {  return makePair(elt, mult+multiplicity);}
@@ -371,7 +371,7 @@ public class SharedMultiSet extends ATermSet {
         else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return tom_make_branch(tom_make_emptySet(),underride(elt, t, lev)) ;}
         else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return tom_make_branch(tom_make_singleton(elt),t) ;}
         else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return tom_make_branch(t,tom_make_singleton(elt)) ;}
-       }}matchlab_match13_pattern3: {  JGTreeSet r = null;  JGTreeSet l = null; if(tom_is_fun_sym_branch(tom_match13_1)) {  JGTreeSet tom_match13_1_1 = null;  JGTreeSet tom_match13_1_2 = null; tom_match13_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match13_1); tom_match13_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match13_1); l = ( JGTreeSet) tom_match13_1_1; r = ( JGTreeSet) tom_match13_1_2;
+       }}matchlab_match13_pattern3: {  JGTreeSet l = null;  JGTreeSet r = null; if(tom_is_fun_sym_branch(tom_match13_1)) {  JGTreeSet tom_match13_1_1 = null;  JGTreeSet tom_match13_1_2 = null; tom_match13_1_1 = ( JGTreeSet) tom_get_slot_branch_left(tom_match13_1); tom_match13_1_2 = ( JGTreeSet) tom_get_slot_branch_right(tom_match13_1); l = ( JGTreeSet) tom_match13_1_1; r = ( JGTreeSet) tom_match13_1_2;
 
  
         if (isBitZero(elt, level)) {return tom_make_branch(underride(elt, l, lev),r) ;}
