@@ -1,0 +1,8 @@
+This is the Jean Goubault implementation of set
+
+*  adt-to-java --input set.adt --jtom --package adt --output adt
+
+* jtom --import adt Set1.t
+* javac Set1.java
+* java Set1
+
