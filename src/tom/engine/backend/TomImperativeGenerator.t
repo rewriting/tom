@@ -199,7 +199,6 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
   protected void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
-
     output.write(deep,"{" + getTLCode(tlType) + " ");
     generate(deep,var);
     output.write(" = (" + getTLCode(tlType) + ") ");
