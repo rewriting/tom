@@ -32,7 +32,7 @@ TOM = ${prefix}/bin/jtom
 	$(TOM) $(TOMFLAGS) $*
 
 TomFactory.t: ../adt/TomSignature.tom
-	@touch TomFActory.t
+	@touch TomFactory.t
 
 ../adt/TomSignature.tom: ../TomSignature.adt
 	${ADTTOJAVA} -v -i ../TomSignature.adt -j -p jtom.adt --output ../adt 
