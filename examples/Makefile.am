@@ -2,6 +2,6 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS 	=  Lsystems
+SUBDIRS 	= AddressBook Builtin GTree Nspk Xml 
 DIST_SUBDIRS 	= $(SUBDIRS)
 

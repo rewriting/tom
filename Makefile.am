@@ -4,7 +4,7 @@
 
 SUBDIRS 	= config stable utils test www
 INSTALL_SUBDIRS = $(SUBDIRS) share doc
-DIST_SUBDIRS 	= $(INSTALL_SUBDIRS) src tutorial 
+DIST_SUBDIRS 	= $(INSTALL_SUBDIRS) src tutorial examples
 
 EXTRA_DIST = reconf
 
