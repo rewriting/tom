@@ -133,4 +133,8 @@ implements aterm.ATerm
     return false;
   }
 
+  public boolean isSortSymbolList() {
+    return false;
+  }
+
 }

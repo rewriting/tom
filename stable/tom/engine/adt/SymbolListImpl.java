@@ -1,7 +1,7 @@
 package jtom.adt;
 
 
-abstract public class OptionListImpl extends aterm.pure.ATermListImpl
+abstract public class SymbolListImpl extends aterm.pure.ATermListImpl
 {
   protected void init (int hashCode, aterm.ATermList annos, aterm.ATerm first, aterm.ATermList next) {
     super.init(hashCode, annos, first, next);
@@ -10,7 +10,7 @@ abstract public class OptionListImpl extends aterm.pure.ATermListImpl
     super.initHashCode(annos, first, next);
   }
   protected TomSignatureFactory factory = null;
- OptionListImpl(TomSignatureFactory factory) {
+ SymbolListImpl(TomSignatureFactory factory) {
      super(factory.getPureFactory());
      this.factory = factory;
   }
@@ -21,7 +21,7 @@ abstract public class OptionListImpl extends aterm.pure.ATermListImpl
   public aterm.ATerm toTerm()
   {
     if (this.term == null) {
-      OptionList reversed = (OptionList)this.reverse();
+      SymbolList reversed = (SymbolList)this.reverse();
       aterm.ATermList tmp = getTomSignatureFactory().getPureFactory().makeList();
       for (; !reversed.isEmpty(); reversed = reversed.getTail()) {
          aterm.ATerm elem = reversed.getHead().toTerm();
@@ -34,18 +34,18 @@ abstract public class OptionListImpl extends aterm.pure.ATermListImpl
   public String toString() {
     return toTerm().toString();
   }
-  public Option getHead() {
-    return (Option) getFirst();
+  public TomSymbol getHead() {
+    return (TomSymbol) getFirst();
   }
-  public OptionList getTail() {
-    return (OptionList) getNext();
+  public SymbolList getTail() {
+    return (SymbolList) getNext();
   }
-  public boolean isSortOptionList()  {
+  public boolean isSortSymbolList()  {
     return true;
   }
 
   public boolean isEmpty() {
-    return this == getTomSignatureFactory().makeOptionList();
+    return this == getTomSignatureFactory().makeSymbolList();
   }
   public boolean isMany() {
     return !isEmpty();
@@ -60,7 +60,7 @@ abstract public class OptionListImpl extends aterm.pure.ATermListImpl
     return !isEmpty();
   }
   public boolean equivalent(shared.SharedObject peer) {
-	 if (peer instanceof OptionList) {
+	 if (peer instanceof SymbolList) {
 	 	return super.equivalent(peer);
 	 }
 	 else {
@@ -68,18 +68,18 @@ abstract public class OptionListImpl extends aterm.pure.ATermListImpl
 	 }
   }
   public shared.SharedObject duplicate() {
-	 OptionList clone = new OptionList(factory);
+	 SymbolList clone = new SymbolList(factory);
 	 clone.init(hashCode(), getAnnotations(), getFirst(), getNext());
 	 return clone;
   }
   public aterm.ATermList getEmpty() {
-    return (aterm.ATermList)getTomSignatureFactory().makeOptionList();
+    return (aterm.ATermList)getTomSignatureFactory().makeSymbolList();
   }
 
-  public OptionList insert(Option head) {
-    return getTomSignatureFactory().makeOptionList(head, (OptionList) this);
+  public SymbolList insert(TomSymbol head) {
+    return getTomSignatureFactory().makeSymbolList(head, (SymbolList) this);
   }
   public aterm.ATermList insert(aterm.ATerm head) {
-    return insert((Option) head);
+    return insert((TomSymbol) head);
   }
 }

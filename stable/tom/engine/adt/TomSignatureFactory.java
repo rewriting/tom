@@ -259,6 +259,9 @@ public class TomSignatureFactory
   private aterm.AFun funTomTerm_BackQuoteAppl;
   private TomTerm protoTomTerm_BackQuoteAppl;
   private aterm.ATerm patternTomTerm_BackQuoteAppl;
+  private aterm.AFun funTomTerm_DoubleBackQuote;
+  private TomTerm protoTomTerm_DoubleBackQuote;
+  private aterm.ATerm patternTomTerm_DoubleBackQuote;
   private aterm.AFun funTomTerm_Composite;
   private TomTerm protoTomTerm_Composite;
   private aterm.ATerm patternTomTerm_Composite;
@@ -448,6 +451,8 @@ public class TomSignatureFactory
   private aterm.ATerm patternTomEntryListMany;
   private TomErrorList protoTomErrorList;
   private aterm.ATerm patternTomErrorListMany;
+  private SymbolList protoSymbolList;
+  private aterm.ATerm patternSymbolListMany;
   private TomList emptyTomList;
   private TomNumberList emptyTomNumberList;
   private TomRuleList emptyTomRuleList;
@@ -457,6 +462,7 @@ public class TomSignatureFactory
   private SlotList emptySlotList;
   private TomEntryList emptyTomEntryList;
   private TomErrorList emptyTomErrorList;
+  private SymbolList emptySymbolList;
   public TomSignatureFactory(PureFactory factory)
   {
      this.factory = factory;
@@ -816,6 +822,10 @@ public class TomSignatureFactory
     funTomTerm_BackQuoteAppl = factory.makeAFun("_TomTerm_BackQuoteAppl", 3, false);
     protoTomTerm_BackQuoteAppl = new TomTerm_BackQuoteAppl(this);
 
+    patternTomTerm_DoubleBackQuote = factory.parse("DoubleBackQuote(<term>)");
+    funTomTerm_DoubleBackQuote = factory.makeAFun("_TomTerm_DoubleBackQuote", 1, false);
+    protoTomTerm_DoubleBackQuote = new TomTerm_DoubleBackQuote(this);
+
     patternTomTerm_Composite = factory.parse("Composite(<term>)");
     funTomTerm_Composite = factory.makeAFun("_TomTerm_Composite", 1, false);
     protoTomTerm_Composite = new TomTerm_Composite(this);
@@ -1097,6 +1107,11 @@ public class TomSignatureFactory
     protoTomErrorList.init(420, null, null, null);
     emptyTomErrorList = (TomErrorList) factory.build(protoTomErrorList);
     emptyTomErrorList.init(420, emptyTomErrorList, null, null);
+
+    protoSymbolList = new SymbolList(this);
+    protoSymbolList.init(462, null, null, null);
+    emptySymbolList = (SymbolList) factory.build(protoSymbolList);
+    emptySymbolList.init(462, emptySymbolList, null, null);
 
   }
   protected Declaration_TypeTermDecl makeDeclaration_TypeTermDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -3564,6 +3579,35 @@ public class TomSignatureFactory
     args.add((arg.getOption()).toTerm());    args.add((arg.getAstName()).toTerm());    args.add((arg.getArgs()).toTerm());    return factory.make(patternTomTerm_BackQuoteAppl, args);
   }
 
+  protected TomTerm_DoubleBackQuote makeTomTerm_DoubleBackQuote(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_DoubleBackQuote) {
+      protoTomTerm_DoubleBackQuote.initHashCode(annos,fun,args);
+      return (TomTerm_DoubleBackQuote) factory.build(protoTomTerm_DoubleBackQuote);
+    }
+  }
+
+  public TomTerm_DoubleBackQuote makeTomTerm_DoubleBackQuote(TomTerm _arg) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_arg};
+    return makeTomTerm_DoubleBackQuote(funTomTerm_DoubleBackQuote, args, factory.getEmpty());
+  }
+
+  public TomTerm TomTerm_DoubleBackQuoteFromTerm(aterm.ATerm trm)
+  {
+    java.util.List children = trm.match(patternTomTerm_DoubleBackQuote);
+
+    if (children != null) {
+      TomTerm tmp = makeTomTerm_DoubleBackQuote(TomTermFromTerm( (aterm.ATerm) children.get(0)));
+      return tmp;
+    }
+    else {
+      return null;
+    }
+  }
+  protected aterm.ATerm toTerm(TomTerm_DoubleBackQuoteImpl arg) {
+    java.util.List args = new java.util.LinkedList();
+    args.add((arg.getArg()).toTerm());    return factory.make(patternTomTerm_DoubleBackQuote, args);
+  }
+
   protected TomTerm_Composite makeTomTerm_Composite(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_Composite) {
       protoTomTerm_Composite.initHashCode(annos,fun,args);
@@ -5352,6 +5396,21 @@ public class TomSignatureFactory
       return (TomErrorList) factory.build(protoTomErrorList);
     }
   }
+  public SymbolList makeSymbolList() {
+    return emptySymbolList;
+  }
+  public SymbolList makeSymbolList(TomSymbol elem ) {
+    return (SymbolList) makeSymbolList(elem, emptySymbolList);
+  }
+  public SymbolList makeSymbolList(TomSymbol head, SymbolList tail) {
+    return (SymbolList) makeSymbolList((aterm.ATerm) head, (aterm.ATermList) tail, factory.getEmpty());
+  }
+  protected SymbolList makeSymbolList(aterm.ATerm head, aterm.ATermList tail, aterm.ATermList annos) {
+    synchronized (protoSymbolList) {
+      protoSymbolList.initHashCode(annos,head,tail);
+      return (SymbolList) factory.build(protoSymbolList);
+    }
+  }
   public Declaration DeclarationFromTerm(aterm.ATerm trm)
   {
     Declaration tmp;
@@ -5818,6 +5877,11 @@ public class TomSignatureFactory
     }
 
     tmp = TomTerm_BackQuoteApplFromTerm(trm);
+    if (tmp != null) {
+      return tmp;
+    }
+
+    tmp = TomTerm_DoubleBackQuoteFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }
@@ -6344,6 +6408,26 @@ public class TomSignatureFactory
        throw new RuntimeException("This is not a TomErrorList: " + trm);
      }
   }
+  public SymbolList SymbolListFromTerm(aterm.ATerm trm)
+  {
+     if (trm instanceof aterm.ATermList) {
+        aterm.ATermList list = ((aterm.ATermList) trm).reverse();
+        SymbolList result = makeSymbolList();
+        for (; !list.isEmpty(); list = list.getNext()) {
+          TomSymbol elem = TomSymbolFromTerm(list.getFirst());
+           if (elem != null) {
+             result = makeSymbolList(elem, result);
+           }
+           else {
+             throw new RuntimeException("Invalid element in SymbolList: " + elem);
+           }
+        }
+        return result;
+     }
+     else {
+       throw new RuntimeException("This is not a SymbolList: " + trm);
+     }
+  }
   public Declaration DeclarationFromString(String str)
   {
     aterm.ATerm trm = factory.parse(str);
@@ -6551,5 +6635,13 @@ public class TomSignatureFactory
   }
   public TomErrorList TomErrorListFromFile(java.io.InputStream stream) throws java.io.IOException {
     return TomErrorListFromTerm(factory.readFromFile(stream));
+  }
+  public SymbolList SymbolListFromString(String str)
+  {
+    aterm.ATerm trm = factory.parse(str);
+    return SymbolListFromTerm(trm);
+  }
+  public SymbolList SymbolListFromFile(java.io.InputStream stream) throws java.io.IOException {
+    return SymbolListFromTerm(factory.readFromFile(stream));
   }
 }

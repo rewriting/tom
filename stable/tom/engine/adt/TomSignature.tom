@@ -770,6 +770,13 @@
   make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_BackQuoteAppl(t0, t1, t2)}
 }
 
+%op TomTerm DoubleBackQuote(arg:TomTerm) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isDoubleBackQuote()}
+  get_slot(arg,t) { t.getArg()}
+  make(t0) { getTomSignatureFactory().makeTomTerm_DoubleBackQuote(t0)}
+}
+
 %op TomTerm Composite(args:TomList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isComposite()}
@@ -1533,4 +1540,32 @@
   get_slot(head,t) { t.getHead()}
   get_slot(tail,t) { t.getTail()}
   make(e,l) {getTomSignatureFactory().makeTomErrorList(e,l)}
+}
+%typelist SymbolList{
+  implement { SymbolList}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
+}
+
+%oplist SymbolList concTomSymbol(TomSymbol*) {
+  fsym { null }
+  is_fsym(t) {(t!= null) && t.isSortSymbolList()}
+  make_empty() {getTomSignatureFactory().makeSymbolList()}
+  make_insert(e,l) {getTomSignatureFactory().makeSymbolList(e,l)}
+}
+%op SymbolList emptySymbolList{
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isEmpty()}
+  make() {getTomSignatureFactory().makeSymbolList()}
+}
+%op SymbolList manySymbolList(head:TomSymbol, tail:SymbolList) {
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isMany()}
+  get_slot(head,t) { t.getHead()}
+  get_slot(tail,t) { t.getTail()}
+  make(e,l) {getTomSignatureFactory().makeSymbolList(e,l)}
 }

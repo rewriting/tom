@@ -105,6 +105,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isDoubleBackQuote()
+  {
+    return false;
+  }
+
   public boolean isComposite()
   {
     return false;
@@ -321,6 +326,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasChildList()
+  {
+    return false;
+  }
+
+  public boolean hasArg()
   {
     return false;
   }
@@ -578,6 +588,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setChildList(TomList _childList)
   {
      throw new IllegalArgumentException("Illegal argument: " + _childList);
+  }
+
+  public TomTerm getArg()
+  {
+     throw new UnsupportedOperationException("This TomTerm has no Arg");
+  }
+
+  public TomTerm setArg(TomTerm _arg)
+  {
+     throw new IllegalArgumentException("Illegal argument: " + _arg);
   }
 
   public TomName getSlotName()
