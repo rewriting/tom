@@ -122,7 +122,6 @@ public class TomParser extends TomTask {
   		}
   		if(eclipseMode) {
   			String fileName = currentPath+File.separatorChar+ "."+getInput().getRawFileName() + TomTaskInput.parsedTableSuffix;
-  			System.out.println(fileName);
   			Tools.generateOutput(fileName, symbolTable().toTerm());
   		}
         if(intermediate) {

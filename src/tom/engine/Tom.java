@@ -87,7 +87,6 @@ public class Tom {
     + "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)"
     ;
 
-  private static int defaultLineNumber = 1;
   private static void version() {
     System.out.println(version);
   }
@@ -146,12 +145,12 @@ public class Tom {
     			if (args[i].equals("--version") || args[i].equals("-V")) {
     				version();
     				taskInput.setVersion(true);
-    				addError(version, "", defaultLineNumber, TomCheckerMessage.TOM_WARNING);
+    				addError(version, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_WARNING);
     				return;
     			} else if (args[i].equals("--help") || args[i].equals("-h")) {
     				usage();
     				taskInput.setHelp(true);
-    				addError(usage, "", defaultLineNumber, TomCheckerMessage.TOM_WARNING);
+    				addError(usage, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_WARNING);
     				return;
     			} else if (
     					args[i].equals("--import") || args[i].equals("-I")) {
@@ -224,7 +223,7 @@ public class Tom {
           } else {
             String s = "'" + args[i] + "' is not a valid option";
             System.out.println(s);
-            addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
+            addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
             taskInput.setHelp(true);
             usage();
             return;
@@ -234,7 +233,7 @@ public class Tom {
     } catch (ArrayIndexOutOfBoundsException e) {
     	String s = "'" + args[--i] + "'option is supposed to have something after";
       System.out.println(s);
-      addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
+      addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       taskInput.setHelp(true);
       usage();
       return;
@@ -248,7 +247,7 @@ public class Tom {
       taskInput.setHelp(true);
       usage();
       if (taskInput.isEclipseMode()) {
-        addError("No input file name...", "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
+        addError("No input file name...", "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       }
     }
     if (taskInput.getInputFileName().endsWith(inputSuffix)) {
@@ -315,7 +314,7 @@ public class Tom {
           System.out.println(s);
           System.out.println("No file generated.");
           if (taskInput.isEclipseMode()) {
-            addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
+            addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
           }
           return;
         } catch (IOException e4) {
@@ -323,7 +322,7 @@ public class Tom {
           System.out.println(s);
           System.out.println("No file generated.");
           if (taskInput.isEclipseMode()) {
-            addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
+            addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
           }
           return;
         }
@@ -383,7 +382,7 @@ public class Tom {
             System.out.println(s);
             System.out.println("No file generated.");
             if (taskInput.isEclipseMode()) {
-              addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
+              addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
             }
             return;
           } catch (IOException e4) {
@@ -392,7 +391,7 @@ public class Tom {
             System.out.println(s);
             System.out.println("No file generated.");
             if (taskInput.isEclipseMode()) {
-              addError(s, "", defaultLineNumber, TomCheckerMessage.TOM_ERROR);
+              addError(s, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
             }
             return;
           }

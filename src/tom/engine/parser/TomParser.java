@@ -115,7 +115,6 @@ public class TomParser extends TomTask implements TomParserConstants {
                 }
                 if(eclipseMode) {
                         String fileName = currentPath+File.separatorChar+ "."+getInput().getRawFileName() + TomTaskInput.parsedTableSuffix;
-                        System.out.println(fileName);
                         Tools.generateOutput(fileName, symbolTable().toTerm());
                 }
         if(intermediate) {
@@ -2750,6 +2749,15 @@ public class TomParser extends TomTask implements TomParserConstants {
     finally { jj_save(12, xla); }
   }
 
+  final private boolean jj_3R_33() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_40()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_RBRACKET)) return true;
+    return false;
+  }
+
   final private boolean jj_3_11() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
@@ -3021,15 +3029,6 @@ public class TomParser extends TomTask implements TomParserConstants {
   final private boolean jj_3_12() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_33() {
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_40()) jj_scanpos = xsp;
-    if (jj_scan_token(TOM_RBRACKET)) return true;
     return false;
   }
 

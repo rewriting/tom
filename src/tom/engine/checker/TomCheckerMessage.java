@@ -8,6 +8,8 @@ public final class TomCheckerMessage {
 	public static int TOM_ERROR = 0;
 	public static int TOM_WARNING = 1;
 	
+	public static int DEFAULT_ERROR_LINE_NUMBER = 1; 
+	
 	  // Main messages
 	public static String MainErrorMessage = "-- Error occured line: {0,number,integer} in structure `{1}` declared line: {2,number,integer} in file: `{3}`\n---> {4}\n" ;
 	public static String MainWarningMessage = "-- Warning occured line: {0,number,integer} in structure `{1}` declared line: {2,number,integer} in file: `{3}`\n---> {4}\n" ;

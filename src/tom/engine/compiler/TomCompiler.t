@@ -33,6 +33,7 @@ import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.Tools;
+import jtom.checker.TomCheckerMessage;
 import aterm.*;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
@@ -77,7 +78,7 @@ public class TomCompiler extends TomTask {
       getInput().setTerm(compiledTerm);
       
     } catch (Exception e) {
-      addError("Exception occurs in TomCompiler: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
+      addError("Exception occurs in TomCompiler: "+e.getMessage(), getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }

@@ -35,6 +35,7 @@ import jtom.tools.*;
 import jtom.xml.Constants;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
+import jtom.checker.TomCheckerMessage;
 
 public class TomExpander extends TomTask {
 	
@@ -77,7 +78,7 @@ public class TomExpander extends TomTask {
       getInput().setTerm(expandedTerm);
       
     } catch (Exception e) {
-      addError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
+      addError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }

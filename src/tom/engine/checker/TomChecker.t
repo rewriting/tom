@@ -1346,7 +1346,7 @@ abstract public class TomChecker extends TomTask {
 
   private void ensureOriginTrackingLine(int line) {
     if(line < 0) {
-      addError("findOriginTrackingLine:  not found", getInput().getInputFileName(), 0, TomCheckerMessage.TOM_ERROR);
+      addError("findOriginTrackingLine:  not found", getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       System.out.println("findOriginTrackingLine: not found ");
         //throw new TomRuntimeException(new Throwable("foo"));
 

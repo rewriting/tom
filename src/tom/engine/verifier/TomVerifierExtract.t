@@ -30,6 +30,7 @@ import aterm.*;
 import jtom.tools.*;
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
+import jtom.checker.TomCheckerMessage;
 
 public class TomVerifierExtract extends TomTask {
 
@@ -64,7 +65,7 @@ public class TomVerifierExtract extends TomTask {
         extractTerm);
     } catch (Exception e) {
       addError("Exception occured in TomVerifierExtract: "+ e.getMessage(), 
-               getInput().getInputFileName(), 0, 0);
+               getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }
