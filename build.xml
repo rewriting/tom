@@ -508,8 +508,8 @@
 					 debug="${javacDebugInfo}" 
 					 verbose="${javacVerbose}"
 					 nowarn="${nowarnings}">
-					 <classpath refid="src.classpath"/>
-					 <exclude name="**/error/**"/>
+			<classpath refid="src.classpath"/>
+			<exclude name="**/error/**"/>
 		</javac>
 	</target>
 
@@ -701,7 +701,8 @@
 
     <javac destdir="${destination}/build" 
 					 debug="${javacDebugInfo}"
-					 verbose="${javacVerbose}">
+					 verbose="${javacVerbose}"
+					 nowarn="${nowarnings}">
 			<src path="${src.src}"/>
 			<src path="${destination}/gen"/>
 			<classpath refid="src.classpath"/>

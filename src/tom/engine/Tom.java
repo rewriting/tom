@@ -77,7 +77,7 @@ public class Tom {
     /*
      * list of files given in the command line
      */
-  List inputFileList;
+  private List inputFileList;
   
   public static String version =
     "\njtom 2.0rc3\n"
