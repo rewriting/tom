@@ -7,7 +7,7 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SH
 
 JAVASOURCES     = Tools.java OutputCode.java\
 		  SingleLineOutputCode.java SymbolTable.java\
-                  ASTFactory.java TomTask.java TomTaskInput.java
+                  ASTFactory.java TomTask.java TomTaskInput.java TomFactory.java
 
 java_JAVA       = $(JAVASOURCES)
 EXTRA_DIST      = $(JAVASOURCES)
