@@ -191,30 +191,31 @@ Grammar:
 
 Test:
 	JRule.t
-	  line 89: `_`: Impossible in rule right hand side
-	  line 89: `op1[...]`: Impossible in rule right hand side
-	  line 89: `_`: Impossible in rule right hand side
-	  line 85: `_`: Impossible in rule right hand side
-	  line 85: Bad number of arguments for symbol `op1`: 2 argument(s) required but 1 found
-	  line 85: `_`: Impossible in rule right hand side
-	  line 82: `Disjunction`: Impossible in rule right hand side
-	  line 81: `XML construct a`: Impossible in rule right hand side
-	  line 80: `X*`: Impossible in rule right hand side
-	  line 79: `_*`: Impossible in rule right hand side
-	  line 78: `_`: Impossible in rule right hand side
-	  line 77: The symbol `op2` has type `type1` but type `type2` was required
-	  line 73: The symbol `op3` has type `type2` but type `type1` was required
-	  line 73: Warning: Ambiguous symbol name. Is`op3` a variable or a constructor? Prefer `op3`() if it is a constructor
-	  line 72: Bad number of arguments for symbol `op1`: 2 argument(s) required but 0 found
-	  line 67: Rule head symbol name `op1` expected, but `op2` found
-	  line 66: Unknown symbol `f`: Cant do further analyses
-	  line 62: Rule head symbol `op2` has no `make` method: It is necessary to define one!!
-	  line 58: `Disjunction`: Impossible in rule left hand side (Record)
-	  line 54: `Disjunction`: Impossible in rule left hand side (Appl)
-	  line 50: `XML construct a`: Impossible in rule left hand side
-	  line 46: `_*`: Impossible in rule left hand side
-	  line 42: `X*`: Impossible in rule left hand side
-	  line 38: `_`: Impossible in rule left hand side
+	  line 107: Rule `op4` is repeated
+	  line 101: `_`: Impossible in rule right hand side
+	  line 101: `op1[...]`: Impossible in rule right hand side
+	  line 101: `_`: Impossible in rule right hand side
+	  line 97: `_`: Impossible in rule right hand side
+	  line 97: Bad number of arguments for symbol `op1`: 2 argument(s) required but 1 found
+	  line 97: `_`: Impossible in rule right hand side
+	  line 94: `Disjunction`: Impossible in rule right hand side
+	  line 93: `XML construct a`: Impossible in rule right hand side
+	  line 92: `X*`: Impossible in rule right hand side
+	  line 91: `_*`: Impossible in rule right hand side
+	  line 90: `_`: Impossible in rule right hand side
+	  line 89: The symbol `op5` has type `type2` but type `type1` was required
+	  line 85: The symbol `op4` has type `type1` but type `type2` was required
+	  line 85: Warning: Ambiguous symbol name. Is`op3` a variable or a constructor? Prefer `op3`() if it is a constructor
+	  line 84: Bad number of arguments for symbol `op1`: 2 argument(s) required but 0 found
+	  line 79: Rule head symbol name `op1` expected, but `op2` found
+	  line 78: Unknown symbol `f`: Cant do further analyses
+	  line 74: Rule head symbol `op2` has no `make` method: It is necessary to define one!!
+	  line 70: `Disjunction`: Impossible in rule left hand side (Record)
+	  line 66: `Disjunction`: Impossible in rule left hand side (Appl)
+	  line 62: `XML construct a`: Impossible in rule left hand side
+	  line 58: `_*`: Impossible in rule left hand side
+	  line 54: `X*`: Impossible in rule left hand side
+	  line 50: `_`: Impossible in rule left hand side
 	Tom SyntaxChecker:  Encountered 22 errors and 2 warnings.
 	
 ////////////////////
