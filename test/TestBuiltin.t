@@ -14,6 +14,8 @@ public class TestBuiltin {
     test.test2();
     test.test3();
     test.test4();
+    test.test5();
+    test.test6();
   }
 
   public void setUp() {
@@ -24,6 +26,7 @@ public class TestBuiltin {
 
   %typeint
   %typestring
+  %typedouble
   
   %typeterm E {
     implement { ATerm }
@@ -45,6 +48,12 @@ public class TestBuiltin {
     make(t) { makeInt(t) }
   }
 
+  %op E double(doubleSlot:double) {
+    fsym { factory.makeAFun("double", 1, false) }
+    get_slot(doubleSlot,t) { getDouble(t) }
+    make(t) { makeDouble(t) }
+  }
+
   public ATerm makeString(String t) {
     return factory.makeAppl(factory.makeAFun("string", 1, false),
                             factory.makeAppl(factory.makeAFun(t, 0, true)));
@@ -53,6 +62,11 @@ public class TestBuiltin {
   public ATerm makeInt(int t) {
     return factory.makeAppl(factory.makeAFun("int", 1, false),
                             factory.makeInt(t));
+  }
+
+  public ATerm makeDouble(double t) {
+    return factory.makeAppl(factory.makeAFun("double", 1, false),
+                            factory.makeReal(t));
   }
 
   public String getString(ATerm t) {
@@ -64,6 +78,12 @@ public class TestBuiltin {
   public int getInt(ATerm t) {
     ATermInt subterm = (ATermInt) ((ATermAppl)t).getArgument(0);
     int value = subterm.getInt();
+    return value;
+  }
+
+  public double getDouble(ATerm t) {
+    ATermReal subterm = (ATermReal) ((ATermAppl)t).getArgument(0);
+    double value = subterm.getReal();
     return value;
   }
 
@@ -97,9 +117,25 @@ public class TestBuiltin {
 
   public String matchStringE(ATerm t) {
     %match(E t) {
-        string("Albert") -> { return "Albert"; }
-        string("Roger") -> { return "Roger"; }
+        string("Albert") -> { return `"Albert"; }
+        string("Roger") -> { return `"Roger"; }
         _ -> { return "Unknown"; }
+    }
+  }
+
+  public double matchDouble(double t) {
+    %match(double t) {
+        1.23 -> { return 1.23; }
+        3.14 -> { return 3.14; }
+        _ -> { return 0; }
+    }
+  }
+
+  public double matchDoubleE(ATerm t) {
+    %match(E t) {
+        double(1.23) -> { return `1.23; }
+        double(3.14) -> { return `3.14; }
+        _ -> { return 0; }
     }
   }
 
@@ -117,6 +153,14 @@ public class TestBuiltin {
 
   public void test4() {
     assertTrue("Roger".equals(matchStringE(`string("Roger"))));
+  }
+
+  public void test5() {
+    assertTrue(3.14 == matchDouble(3.14));
+  }
+
+  public void test6() {
+    assertTrue(1.23 == matchDoubleE(`double(1.23)));
   }
 
   static void  assertTrue(boolean condition) {
