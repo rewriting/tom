@@ -10,7 +10,8 @@ extends TomTerm
   }
   private static int index_lhs = 0;
   private static int index_rhs = 1;
-  private static int index_orgTrack = 2;
+  private static int index_condList = 2;
+  private static int index_orgTrack = 3;
   public shared.SharedObject duplicate() {
     TomTerm_RewriteRule clone = new TomTerm_RewriteRule();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -22,7 +23,7 @@ extends TomTerm
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("RewriteRule(<term>,<term>,<term>)");
+    pattern = getStaticFactory().parse("RewriteRule(<term>,<term>,<term>,<term>)");
   }
 
   static public TomTerm fromTerm(aterm.ATerm trm)
@@ -30,7 +31,7 @@ extends TomTerm
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_RewriteRule(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), Option.fromTerm( (aterm.ATerm) children.get(2)));
+      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_RewriteRule(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomList.fromTerm( (aterm.ATerm) children.get(2)), Option.fromTerm( (aterm.ATerm) children.get(3)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -49,6 +50,11 @@ extends TomTerm
   }
 
   public boolean hasRhs()
+  {
+    return true;
+  }
+
+  public boolean hasCondList()
   {
     return true;
   }
@@ -78,6 +84,16 @@ extends TomTerm
     return (TomTerm) super.setArgument(_rhs, index_rhs);
   }
 
+  public TomList getCondList()
+  {
+    return (TomList) this.getArgument(index_condList) ;
+  }
+
+  public TomTerm setCondList(TomList _condList)
+  {
+    return (TomTerm) super.setArgument(_condList, index_condList);
+  }
+
   public Option getOrgTrack()
   {
     return (Option) this.getArgument(index_orgTrack) ;
@@ -101,8 +117,13 @@ extends TomTerm
         }
         break;
       case 2:
+        if (! (arg instanceof TomList)) { 
+          throw new RuntimeException("Argument 2 of a TomTerm_RewriteRule should have type TomList");
+        }
+        break;
+      case 3:
         if (! (arg instanceof Option)) { 
-          throw new RuntimeException("Argument 2 of a TomTerm_RewriteRule should have type Option");
+          throw new RuntimeException("Argument 3 of a TomTerm_RewriteRule should have type Option");
         }
         break;
       default: throw new RuntimeException("TomTerm_RewriteRule does not have an argument at " + i );
@@ -113,6 +134,7 @@ extends TomTerm
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
     int b = 0x9e3779b9;
+    a += (getArgument(3).hashCode() << 24);
     a += (getArgument(2).hashCode() << 16);
     a += (getArgument(1).hashCode() << 8);
     a += (getArgument(0).hashCode() << 0);

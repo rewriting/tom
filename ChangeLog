@@ -1,5 +1,7 @@
 2003-03-26  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
+	* bootinstall
+
 	* src/jtom/runtime/GenericTraversal.java: traversal are now used
 	by composition instead of inheritance
 
@@ -16,7 +18,6 @@
 	* src/jtom/TomSignature.adt: 
 	  - removed BuildVariableStar
 	  - added fileName to OriginTracking
-	
 
 2003-03-20    <jurgenv@cwi.nl>
 	* Removed dependency on shared-objects. The aterm-java-config

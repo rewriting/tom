@@ -10,6 +10,7 @@ extends Option
   }
   private static int index_astName = 0;
   private static int index_line = 1;
+  private static int index_fileName = 2;
   public shared.SharedObject duplicate() {
     Option_OriginTracking clone = new Option_OriginTracking();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -21,7 +22,7 @@ extends Option
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("OriginTracking(<term>,<int>)");
+    pattern = getStaticFactory().parse("OriginTracking(<term>,<int>,<term>)");
   }
 
   static public Option fromTerm(aterm.ATerm trm)
@@ -29,7 +30,7 @@ extends Option
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Option tmp = getStaticTomSignatureFactory().makeOption_OriginTracking(TomName.fromTerm( (aterm.ATerm) children.get(0)), (Integer) children.get(1));
+      Option tmp = getStaticTomSignatureFactory().makeOption_OriginTracking(TomName.fromTerm( (aterm.ATerm) children.get(0)), (Integer) children.get(1), TomName.fromTerm( (aterm.ATerm) children.get(2)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -42,6 +43,7 @@ extends Option
       java.util.List args = new java.util.LinkedList();
       args.add(((TomSignatureConstructor) getArgument(0)).toTerm());
       args.add(new Integer(((aterm.ATermInt) getArgument(1)).getInt()));
+      args.add(((TomSignatureConstructor) getArgument(2)).toTerm());
       setTerm(getFactory().make(getPattern(), args));
     }
     return term;
@@ -58,6 +60,11 @@ extends Option
   }
 
   public boolean hasLine()
+  {
+    return true;
+  }
+
+  public boolean hasFileName()
   {
     return true;
   }
@@ -82,6 +89,16 @@ extends Option
     return (Option) super.setArgument(getFactory().makeInt(_line.intValue()), index_line);
   }
 
+  public TomName getFileName()
+  {
+    return (TomName) this.getArgument(index_fileName) ;
+  }
+
+  public Option setFileName(TomName _fileName)
+  {
+    return (Option) super.setArgument(_fileName, index_fileName);
+  }
+
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
@@ -92,6 +109,11 @@ extends Option
       case 1:
         if (! (arg instanceof aterm.ATermInt)) { 
           throw new RuntimeException("Argument 1 of a Option_OriginTracking should have type int");
+        }
+        break;
+      case 2:
+        if (! (arg instanceof TomName)) { 
+          throw new RuntimeException("Argument 2 of a Option_OriginTracking should have type TomName");
         }
         break;
       default: throw new RuntimeException("Option_OriginTracking does not have an argument at " + i );

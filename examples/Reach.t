@@ -3,9 +3,11 @@ import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
 
-public class Reach extends GenericTraversal {
+public class Reach {
 
   private ATermFactory factory;
+  private GenericTraversal traversal;
+  
   private AFun fa, fs, ff;
   public ATermAppl tzero;
 
@@ -33,7 +35,8 @@ public class Reach extends GenericTraversal {
 
   public Reach(ATermFactory factory) {
     this.factory = factory;
-
+    this.traversal = new GenericTraversal();
+    
     fa = factory.makeAFun("a", 0, false);
     fs = factory.makeAFun("s", 1, false);
     ff = factory.makeAFun("f", 1, false);
@@ -74,7 +77,7 @@ public class Reach extends GenericTraversal {
           return true;
         } // end apply
       }; // end new
-    genericCollectReach(subject, collect, collection); 
+    traversal.genericCollectReach(subject, collect, collection); 
   }
 
   static final int MAXITER = 25;

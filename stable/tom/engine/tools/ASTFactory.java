@@ -55,10 +55,11 @@ public class ASTFactory {
     }
   }
 
-  public TomList makeList(ArrayList argumentList) {
+  public TomList makeList(Collection c) {
+    Object array[] = c.toArray();
     TomList list = tsf().makeTomList_Empty();
-    for(int i=argumentList.size()-1; i>=0 ; i--) {
-      ATerm elt = (ATerm)argumentList.get(i);
+    for(int i=array.length-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)array[i];
       TomTerm term;
       if(elt instanceof TargetLanguage) {
         term = tsf().makeTomTerm_TargetLanguageToTomTerm((TargetLanguage)elt);
@@ -153,8 +154,8 @@ public class ASTFactory {
     return tsf().makeOption_Option(argList);
   }
 
-  public Option makeOriginTracking( String name, String line ) {
-    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), new Integer(line) );
+  public Option makeOriginTracking(String name, String line , String fileName) {
+    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), new Integer(line),tsf().makeTomName_Name( fileName));
   }
   
   public Declaration makeMakeDecl(String opname, TomType returnType, ArrayList argList, TargetLanguage tlcode, Option orgTrack) {

@@ -7,6 +7,7 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SH
 
 stabledir 	= $(top_srcdir)/stable/jtom/runtime
 BOOTSOURCES	= GenericTraversal.java\
+		  CollectReach.java\
 		  Collect.java Collect1.java Collect2.java Collect3.java\
 		  Replace.java Replace1.java Replace2.java Replace3.java
 

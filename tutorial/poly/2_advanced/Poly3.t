@@ -4,11 +4,14 @@ import jtom.runtime.*;
 
 import java.util.*;
 
-public class Poly3 extends GenericTraversal {
+public class Poly3 {
     
   private ATermFactory factory;
+  private GenericTraversal traversal;
+
   public Poly3(ATermFactory factory) {
     this.factory = factory;
+    this.traversal = new GenericTraversal();
   }
 
   %include { Poly.signature }
@@ -36,7 +39,7 @@ public class Poly3 extends GenericTraversal {
             plus(zero,x) | plus(x,zero) |
             mult(one,x)  | mult(x,one)  -> { return x; }
             mult(zero,x) | mult(x,zero) -> { return `zero(); }
-            _ -> { return genericTraversal(t,this); }
+            _ -> { return traversal.genericTraversal(t,this); }
           }
         }
       };

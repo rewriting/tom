@@ -57,8 +57,6 @@ public class Flags {
 
   public static boolean demo = false; // run demonstration interface
 
-  public static boolean findErrors = false; // true if an error is found
-
   public static boolean doCheck = true; // verify after parsing and expansion
   public static boolean strictType = true; // no universal type
   public static boolean genDecl = true; // generate declarations

@@ -42,7 +42,7 @@ public class TomOptimizer extends TomBase {
   }
 
 // ------------------------------------------------------------
-                                                                                                                                                                
+                                                                                                                                                                 
 // ------------------------------------------------------------
 
   public TomTerm optimize(TomTerm subject) {

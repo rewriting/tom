@@ -42,7 +42,7 @@ import jtom.adt.*;
 public class Tom {
   private static String version = "1.2beta";
   
-    private static void usage() {
+  private static void usage() {
     System.out.println("Tom usage:");
     System.out.println("\tjava jtom.Tom [options] inputfile");
     if(Flags.version) {
@@ -219,16 +219,16 @@ public class Tom {
         stopChrono();
         if(Flags.verbose) System.out.println("TOM syntax checking phase " + getChrono());
         int nbError = tomChecker.getNumberFoundError();
-        if(nbError > 0) {
+        if(nbError > 0 ) {
           for(int i=0 ; i<nbError ; i++) {
-              //System.out.println(tomChecker.getMessage(i));
+            System.out.println(tomChecker.getMessage(i));
           }
           
           String msg = "Tom Checker:  Encountered " + nbError +
             " errors during verification phase.";
           throw new CheckErrorException(msg);
         }
-                
+        
 	TomExpander tomExpander = new TomExpander(environment);
         startChrono();
         expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
@@ -273,18 +273,6 @@ public class Tom {
       }
     }
     
-      /*
-       * The compilation process is stopped if an error occured during
-       * parsing or type checking
-       */
-
-    if(Flags.findErrors) {
-      System.out.println("\n*** ERRORS");
-      System.out.println("*** COMPILATION ABORTED");
-      System.out.println("No file generated.");
-      System.exit(0);
-    }
-    
     if(Flags.doCompile) {
       try {
         if(Flags.doOnlyCompile) {
@@ -311,7 +299,7 @@ public class Tom {
         startChrono();
         TomTerm simpleCheckedTerm = tomCompiler.pass2_1(expandedTerm);
         
-        compiledTerm = tomCompiler.pass2_2(simpleCheckedTerm);
+        compiledTerm = tomCompiler.compileMatching(simpleCheckedTerm);
           //System.out.println("pass2 =\n" + compiledTerm);
         compiledTerm = tomCompiler.pass3(compiledTerm);
           //System.out.println("pass3 =\n" + compiledTerm);

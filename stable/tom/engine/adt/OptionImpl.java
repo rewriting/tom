@@ -115,6 +115,11 @@ abstract public class OptionImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean hasFileName()
+  {
+    return false;
+  }
+
   public Declaration getAstDeclaration()
   {
      throw new RuntimeException("This Option has no AstDeclaration");
@@ -163,6 +168,16 @@ abstract public class OptionImpl extends TomSignatureConstructor
   public Option setLine(Integer _line)
   {
      throw new RuntimeException("This Option has no Line");
+  }
+
+  public TomName getFileName()
+  {
+     throw new RuntimeException("This Option has no FileName");
+  }
+
+  public Option setFileName(TomName _fileName)
+  {
+     throw new RuntimeException("This Option has no FileName");
   }
 
 

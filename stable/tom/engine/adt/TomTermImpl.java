@@ -99,6 +99,14 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
+    if ((tmp = TomTerm_MatchingCondition.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_EqualityCondition.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
     if ((tmp = TomTerm_RuleSet.fromTerm(trm)) != null) {
       return tmp;
     }
@@ -164,10 +172,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     }
 
     if ((tmp = TomTerm_BuildVariable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildVariableStar.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -334,6 +338,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isMatchingCondition()
+  {
+    return false;
+  }
+
+  public boolean isEqualityCondition()
+  {
+    return false;
+  }
+
   public boolean isRuleSet()
   {
     return false;
@@ -415,11 +429,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean isBuildVariable()
-  {
-    return false;
-  }
-
-  public boolean isBuildVariableStar()
   {
     return false;
   }
@@ -600,6 +609,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasRhs()
+  {
+    return false;
+  }
+
+  public boolean hasCondList()
   {
     return false;
   }
@@ -857,6 +871,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setRhs(TomTerm _rhs)
   {
      throw new RuntimeException("This TomTerm has no Rhs");
+  }
+
+  public TomList getCondList()
+  {
+     throw new RuntimeException("This TomTerm has no CondList");
+  }
+
+  public TomTerm setCondList(TomList _condList)
+  {
+     throw new RuntimeException("This TomTerm has no CondList");
   }
 
   public Option getOrgTrack()
