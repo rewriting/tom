@@ -117,6 +117,7 @@ options{
     // pop the line number of the current block
     public int popLine(){
         return ((Integer) lines.pop()).intValue();
+        
     }
 
     // pop the column number of the current block
@@ -124,7 +125,7 @@ options{
         return ((Integer) columns.pop()).intValue();
     }
     
-    public void pushLine(){
+    public void pushLine(){ 
         lines.push(new Integer(getLine()));
     }
     
@@ -323,7 +324,6 @@ blockList [LinkedList list] throws TomException
         |   ruleConstruct[list] 
         |   signature[list]
         |   backquoteTerm[list]
-//        |   localVariable[list]
         |   operator[list] 
         |   operatorList[list] 
         |   operatorArray[list] 
@@ -346,10 +346,12 @@ ruleConstruct [LinkedList list] throws TomException
         {     
             // add the target code preceeding the construct
             String textCode = getCode();
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn())
                 );
                 list.add(code);
@@ -375,10 +377,12 @@ matchConstruct [LinkedList list] throws TomException
         t:MATCH 
         {        
             String textCode = getCode();
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn())
                 );
                 list.add(code);
@@ -405,10 +409,12 @@ signature [LinkedList list] throws TomException
             initialVasLine = t.getLine();
 
             String textCode = getCode();
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn())
                 );
                 list.add(code);
@@ -527,10 +533,12 @@ backquoteTerm [LinkedList list]
         t:BACKQUOTE
         {
             String textCode = getCode();
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn())
                 );
                 list.add(code);
@@ -546,27 +554,7 @@ backquoteTerm [LinkedList list]
             list.add(bqTerm);
         }
     ;
-/*
-localVariable [LinkedList list]
-    :
-        t:VARIABLE
-        {
-            String textCode = pureCode(getCode());
-            if(isCorrect(textCode)) {
-                TargetLanguage code = `TL(
-                    textCode,
-                    TextPosition(popLine(),popColumn()),
-                    TextPosition(t.getLine(),t.getColumn()));
-                list.add(`TargetLanguageToTomTerm(code));
-            }
-            
-            list.add(`LocalVariable());
-            
-            pushLine();
-            pushColumn();
-        }
-    ;
-*/
+
 operator [LinkedList list] throws TomException
 {
     TargetLanguage code = null;
@@ -575,10 +563,12 @@ operator [LinkedList list] throws TomException
         t:OPERATOR
         {
             String textCode = pureCode(getCode());
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn()));
                 list.add(`TargetLanguageToTomTerm(code));
             }
@@ -595,11 +585,13 @@ operatorList [LinkedList list] throws TomException
     :
         t:OPERATORLIST 
         {
-	    String textCode = pureCode(getCode());
+            String textCode = pureCode(getCode());
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn()));
                 list.add(`TargetLanguageToTomTerm(code));
             }
@@ -617,10 +609,12 @@ operatorArray [LinkedList list] throws TomException
         t:OPERATORARRAY
         {
             String textCode = pureCode(getCode());
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn()));
                 list.add(`TargetLanguageToTomTerm(code));
             }
@@ -640,10 +634,12 @@ includeConstruct [LinkedList list] throws TomException
         {
             TargetLanguage code = null;
             String textCode = getCode();
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn()));
                 list.add(`TargetLanguageToTomTerm(code));
             }
@@ -677,10 +673,12 @@ typeTerm [LinkedList list] throws TomException
         {
             // addPreviousCode...
             String textCode = getCode();
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(line,column));
                 list.add(code);
             }
@@ -702,10 +700,12 @@ typeList [LinkedList list] throws TomException
         t:TYPELIST
         {
             String textCode = getCode();
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn()));
                 list.add(code);
             }
@@ -724,10 +724,12 @@ typeArray [LinkedList list] throws TomException
         t:TYPEARRAY
         {
             String textCode = getCode();
+            int i = popLine();
+            int j = popColumn();
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
-                    TextPosition(popLine(),popColumn()),
+                    TextPosition(i,j),
                     TextPosition(t.getLine(),t.getColumn()));
                 list.add(code);
             }

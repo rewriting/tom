@@ -1441,6 +1441,7 @@ typeTerm returns [Declaration result] throws TomException
 
             result = `TypeTermDecl(Name(type.getText()),blockList,ot);
 
+            System.out.println("-- end of typeterm");
             pushLine(t.getLine());
             pushColumn(t.getColumn());
             selector().pop();
