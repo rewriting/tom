@@ -82,7 +82,6 @@ public class Tom {
     + "\n\t--static\t\tGenerate static functions"
     + "\n\t--debug\t\t\tGenerate debug primitives"
     + "\n\t--verify\t\t\tVerify correctness of match compilation"
-    + "\n\t--newGen\t\t\tGenerate code using the new generator"
     + "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)";
 
   private static int defaultLineNumber = 1;

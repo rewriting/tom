@@ -80,7 +80,6 @@ public class TomTaskInput {
     atermStat = false, // Shows aterm statistics
     eclipseMode = false, // Eclipse mode for error management
 		doVerify = false, // Compilation correctness verification
-		newGenerator = false, //Use the new generator : will become default !
     help = false, // usage called
     version = false; //version called
   
