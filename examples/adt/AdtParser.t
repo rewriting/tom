@@ -61,9 +61,9 @@ public class AdtParser {
   private Production buildEntry(Entry entry) {
     %match(Entry entry) {
       constructor(sort,opname,syntax) -> { 
-       String stringName = ((ATermAppl)opname).getName();
-       String codomainString = ((ATermAppl)sort).getName();
-       FieldList fieldList = buildFieldList(((ATermAppl)syntax).getArguments());
+       String stringName = ((ATermAppl)`opname).getName();
+       String codomainString = ((ATermAppl)`sort).getName();
+       FieldList fieldList = buildFieldList(((ATermAppl)`syntax).getArguments());
        appendType(codomainString);
        return `Production(stringName, fieldList, VasType(codomainString));
       }
