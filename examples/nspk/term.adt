@@ -19,8 +19,9 @@ constructor(Nonce,N,N(<id1(AgentId)>,<id2(AgentId)>)),
 constructor(Address,A,A(<id(AgentId)>)),
 constructor(Agent,agent,agent(<id(AgentId)>,<state(SWC)>,<nonce(Nonce)>)),
 constructor(Message,msg,msg(<src(AgentId)>,<dst(AgentId)>,<key(Key)>,<nonce1(Nonce)>,<nonce2(Nonce)>,<adr(Address)>)),
-constructor(Intruder,intruder,intruder(<id(AgentId)>,<listNonce(list)>,<listMessage(list)>)),
+constructor(Intruder,intruder,intruder(<id(AgentId)>,<listNonce(ListNonce)>,<listMessage(list)>)),
 constructor(State,state,state(<senders(list)>,<receivers(list)>,<intruder(Intruder)>,<network(list)>)),
 constructor(State,ATTACK,ATTACK),
-constructor(State,ERROR,ERROR)
+constructor(State,ERROR,ERROR),
+list(ListNonce, Nonce)
 ]
