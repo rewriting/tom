@@ -2,9 +2,13 @@
 #    TOM - To One Matching Compiler
 #
 
+TSADT_STABLE=$(top_srcdir)/stable/adt/TomSignature-${VERSION}.jar
+SETADT_STABLE=$(top_srcdir)/stable/adt/set-${VERSION}.jar
+TNODEADT_STABLE=$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
+
 javadir         = ${prefix}/test
 JAVAROOT        = ${top_builddir}/test
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(top_builddir)/src:$(top_builddir)/src/adt:$(top_builddir)/stable:$(top_builddir)/stable/adt:$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(top_builddir)/src:$(top_builddir)/src/adt:$(top_builddir)/stable:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 source_java     = Peano.t\
 		  List.t\
@@ -30,7 +34,7 @@ EXTRA_DIST      = $(source_java) $(source_c)
 %.java.test : %.java Makefile
 	@(echo '#! /bin/sh';\
 	 echo 'set -e';\
-	 echo 'CLASSPATH=${top_builddir}:${top_builddir}/src:${top_builddir}/src/adt:${top_builddir}/stable:..:$(JAVA_ATERM):${SHARED_OBJECTS}:${CLASSPATH}';\
+	 echo 'CLASSPATH=${top_builddir}:${top_builddir}/src:${top_builddir}/src/adt:${top_builddir}/stable:..:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):${SHARED_OBJECTS}:${CLASSPATH}';\
 	 echo 'export CLASSPATH';\
 	 echo "java $* ${srcdir}";\
 	 echo "rm $*.java.test";\
