@@ -143,7 +143,7 @@ public class Tom {
   private void modifyTaskInputFromArgs(String args[]) {
     getInput().setInputSuffix(".t");
     getInput().setOutputSuffix(".java");
-    List importList = new ArrayList();
+    List localUserImportList = new ArrayList();
     String localInputFileName = null;
     String localOutputFileName = null;
     String localDestDir = null;
@@ -169,7 +169,7 @@ public class Tom {
     				addError(usage, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_WARNING);
     				return;
     			} else if(args[i].equals("--import") || args[i].equals("-I")) {
-    				importList.add(new File(args[++i]).getAbsoluteFile());
+    				localUserImportList.add(new File(args[++i]).getAbsoluteFile());
     			} else if (args[i].equals("--cCode") || args[i].equals("-c")) {
     				getInput().setCCode();
             getInput().setInputSuffix(".t");
@@ -294,7 +294,7 @@ public class Tom {
       }
       
         // Setting importList
-      getInput().setImportList(importList);
+      getInput().setUserImportList(localUserImportList);
 
     } catch (ArrayIndexOutOfBoundsException e) {
     	String s = "'" + args[--i] + "'option is supposed to have something after";
@@ -504,6 +504,7 @@ public class Tom {
     }
 
     for(Iterator it = files.iterator() ; it.hasNext() ; ) {
+      
       newArgs[lastArgs] = (String)it.next();
       tom.init(newArgs);
       TomTask initialTask = tom.createTaskChainFromInput();

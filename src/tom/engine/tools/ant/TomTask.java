@@ -427,6 +427,7 @@ public class TomTask extends MatchingTask {
 				cmd_line = cmd_line.trim() + " -I " + file.getParent();
 				cmd_line = cmd_line.trim() + " " + filename;
         String[] cmd = split(cmd_line);
+          //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
         Tom.main(cmd);
       }
             
