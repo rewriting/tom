@@ -9,7 +9,7 @@ implements aterm.ATerm
   SetFactory factory = null;
 
   public SetConstructor(SetFactory factory) {
-    super(factory);
+    super(factory.getPureFactory());
     this.factory = factory;
   }
 

@@ -40,17 +40,9 @@ import jtom.runtime.Collect1;
 public class SharedMultiSet extends ATermSet {
      
   
-    public SharedMultiSet(int logSize) {
+  public SharedMultiSet(PureFactory pureFactory) {
     if (factory==null) {
-      factory = new SetFactory(logSize);
-    }
-    emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
-    this.tree = makeEmptySet();
-  }
-
-  public SharedMultiSet() {
-    if (factory==null) {
-      factory = new SetFactory();
+      factory = new SetFactory(pureFactory);
     }
     emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
     this.tree = makeEmptySet();
