@@ -41,6 +41,15 @@ import tom.library.xml.*;
 import tom.platform.adt.platformoption.*;
 import tom.platform.adt.platformoption.types.*;
 
+/**
+ * This class is a wrapper for the platform XML configuration files.
+ * it extract the plugins information and create an ordered list of
+ * of instances. it extract the Option Management information and based
+ * on it create and initialize the corresponding OptionManager.
+ * The creation of the class is not sfficient since it need to be
+ * initialized with an execution commandLine.
+ *
+ */
 public class ConfigurationManager {
   
   /** Used to analyse xml configuration file*/
@@ -75,15 +84,26 @@ public class ConfigurationManager {
   /** The OptionManager */
   private OptionManager optionManager;
   
+  /** Constructor */
   public ConfigurationManager(String xmlConfigurationFileName) {
     this.xmlConfigurationFileName = xmlConfigurationFileName;
     this.pluginsList = new ArrayList();
   }
   
+  /**
+   * initialize analyse the XML file and extract plugins and option management
+   *
+   * @return  an error code :
+   * <ul>
+   * <li>0 if no error was encountered</li>
+   * <li>1 if something went wrong</li>
+   * </ul>
+   */
   public int initialize(String[] commandLine) {
     XmlTools xtools = new XmlTools();
     TNode configurationNode = (TNode)xtools.convertXMLToATerm(xmlConfigurationFileName);
     if(configurationNode == null) {
+      System.out.println("bad XML");
       getLogger().log(Level.SEVERE, "ConfigFileNotXML", xmlConfigurationFileName);
       return 1;
     }
@@ -96,22 +116,41 @@ public class ConfigurationManager {
     return optionManager.initialize(this, commandLine);
   }
 
+  /** Accessor method */
   public List getPluginsList() {
     return pluginsList;
   }
 
+  /** Accessor method */
   public OptionManager  getOptionManager() {
     return optionManager;
   }
   
+  /** Accessor method */
   public PlatformOptionList getGlobalOptionList() {
     return globalOptions;
   }
   
+  /** 
+   * Initialize the plugins list based on information extracted
+   * from the XML conf file converted in TNode
+   *
+   * @return  an error code :
+   * <ul>
+   * <li>0 if no error was encountered</li>
+   * <li>1 if something went wrong</li>
+   * </ul>
+   */
   private int createPlugins(TNode configurationNode) {
-    List pluginsClassPaths = extractClassPaths(configurationNode);
+    List pluginsClassList = extractClassPaths(configurationNode);
+    if(pluginsClassList.isEmpty()) {
+      System.out.println("NoPluginFound");
+      getLogger().log(Level.SEVERE, "NoPluginFound", xmlConfigurationFileName);
+      pluginsList = null;
+      return 1;
+    }
     // creates an instance of each plugin
-    Iterator classPathIt = pluginsClassPaths.iterator();
+    Iterator classPathIt = pluginsClassList.iterator();
     while(classPathIt.hasNext()) {
       String pluginClass = (String)classPathIt.next();
       try { 
@@ -151,13 +190,19 @@ public class ConfigurationManager {
     }
     return res;
   }
-
-  /**
-   * Extracts the global options from the XML configuration file.
+ 
+   /**
+   * Initialize the option manager based on information extracted
+   * from the XML conf file converted in TNode
    * 
    * @param node the node containing the XML file
+   * @return  an error code :
+   * <ul>
+   * <li>0 if no error was encountered</li>
+   * <li>1 if something went wrong</li>
+   * </ul>
    */
-  public int createOptionManager(TNode node) {
+  private int createOptionManager(TNode node) {
     %match(TNode node) {
       <platform>opt@<optionmanager class=omclass></optionmanager></platform> -> {
         globalOptions = xmlNodeToOptionList(`opt);
@@ -185,7 +230,13 @@ public class ConfigurationManager {
     }
     return 1;
   }
-  
+ 
+  /**
+   * Extracts the global options from the XML configuration file.
+   * 
+   * @param node the node containing the XML file
+   * @return the PlatformOptionList corresponding to the node
+   */
   private PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
     PlatformOptionList list = `emptyPlatformOptionList();
     %match(TNode optionsNode) {
@@ -207,6 +258,7 @@ public class ConfigurationManager {
     return list;
   }
 
+  /** logger accessor in case of logging needs*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());
   }

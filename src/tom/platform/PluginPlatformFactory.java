@@ -33,22 +33,37 @@ import jtom.tools.*;
 import tom.platform.*;
 
 /**
- * 
+ * The PluginPlatform factory is a singleton class that is responsable for the creation
+ * of PluginPlatform based on a commandLine seen as a array of string
  */
 public class PluginPlatformFactory {
 
   /** PluginPlatformFactory message ressource file name */
   private final static String MESSAGERESOURCE = "tom.platform.PluginPlatformResources";
 
-  /** The root logger */
-  private static Logger logger = Logger.getLogger("tom.platform", MESSAGERESOURCE);
+    /** Log radical string*/
+  public final static String LOGGERRADICAL = "tom.platform";
 
+  /** The root logger */
+  private static Logger logger = Logger.getLogger(LOGGERRADICAL, MESSAGERESOURCE);
+  
+  /** the singleton instance*/
   private static PluginPlatformFactory instance = new PluginPlatformFactory();
 
+  /** protection again instanciation */
+  private PluginPlatformFactory() {}
+  
+  /** the singleton accessor*/
   public static PluginPlatformFactory getInstance() {
     return instance;
   }
 
+  /**
+   * Based on an array of string, the create method return a PLuginPlatform or null if
+   * something wrong occurs.
+   * The first argument shall contain a sequence of string -X and configFileName to be 
+   * able to create the PluginPlatform.
+   */
   public PluginPlatform create(String[] commandLine, String logRadical) {
     String confFileName = extractConfigFileName(commandLine);
     if(confFileName == null) {
@@ -84,26 +99,23 @@ public class PluginPlatformFactory {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      getLogger().log(Level.SEVERE, "IncompleteOption", commandLine[--i]);
+      logger.log(Level.SEVERE, "IncompleteOption", commandLine[--i]);
       return null;
     }
     
     if(xmlConfigurationFile==null) { // lack of a configuration file
-      getLogger().log(Level.SEVERE, "ConfigFileNotSpecified");
+      logger.log(Level.SEVERE, "ConfigFileNotSpecified");
       return null;
     }
     
     File file = new File(xmlConfigurationFile);
     if(!file.exists()) { // the last specified configuration file doesn't exist
-      getLogger().log(Level.SEVERE, "ConfigFileNotFound", xmlConfigurationFile);
+      logger.log(Level.SEVERE, "ConfigFileNotFound", xmlConfigurationFile);
       return null;
     }
+    // side effect on the commandLine since config information is no more needed
     commandLine = (String[])commandList.toArray(new String[]{});
     return xmlConfigurationFile;
-  }
-
-  private static Logger getLogger() {
-    return logger;
   }
 
 } // class PluginPlatformFactory

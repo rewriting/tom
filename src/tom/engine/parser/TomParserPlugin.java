@@ -44,13 +44,10 @@ import tom.platform.*;
 
 public class TomParserPlugin extends TomGenericPlugin {
   
-  %include { adt/TomSignature.tom }
-  %include { adt/PlatformOption.tom }
-  
   public static final String PARSED_SUFFIX = ".tfix.parsed";
   public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
   public static final String DEBUG_TABLE_SUFFIX = ".tfix.debug.table";
-  public static final String DECLARED_OPTIONS = "<options><OptionBoolean name='parse' altName='' description='Parser (activated by default)' value='true'/> </options>";
+  public static final String DECLARED_OPTIONS = "<options><boolean name='parse' altName='' description='Parser (activated by default)' value='true'/>x</options>";
   
   private String currentFile;
   
@@ -61,7 +58,7 @@ public class TomParserPlugin extends TomGenericPlugin {
   }
   
   public PlatformOptionList getDeclaredOptionList() {
-    return TomOptionManager.xmlToOptionList(TomParserPlugin.DECLARED_OPTIONS);
+    return OptionParser.xmlToOptionList(TomParserPlugin.DECLARED_OPTIONS);
   }
   
   protected static HostParser newParser(String fileName, OptionManager optionManager) throws FileNotFoundException,IOException{
@@ -188,4 +185,4 @@ public class TomParserPlugin extends TomGenericPlugin {
     }
   }
   
-}
+} //class TomParserPlugin

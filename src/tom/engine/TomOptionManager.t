@@ -49,17 +49,6 @@ import aterm.*;
 import aterm.pure.*;
 
 public class TomOptionManager implements OptionManager, OptionOwner {
-  
-  /** Used to analyse xml configuration file*/
-  %include{ adt/TNode.tom }
-  
-  /**
-   * Accessor method necessary when including adt/TNode.tom 
-   * @return a TNodeFactory
-   */
-  private TNodeFactory getTNodeFactory() {
-    return TNodeFactory.getInstance(SingletonFactory.getInstance());
-  }
 
   %include{ adt/PlatformOption.tom }
   
@@ -71,8 +60,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
   }
 
-  private final static String[] NULL_STRING_ARRAY = new String[0];
-  
   /** The global options */    
   private PlatformOptionList globalOptions;
   
@@ -88,46 +75,23 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   /** the list of input files extract from the commandLine */
   private List inputFileList;
 
-  /** the TomOptionManager logger */
-  private Logger logger = Logger.getLogger(getClass().getName());
-  
-  //private static TomOptionManager instance;
-
+  /** Constructor */
   public TomOptionManager() {
     mapNameToOptionOwner = new HashMap();
     mapNameToOption = new HashMap();
     mapShortNameToName = new HashMap();
     inputFileList = new ArrayList();
   }
-  /*
-  public static TomOptionManager getInstance() {
-    if(instance == null) {
-      throw new RuntimeException();
-    }
-    return instance;
-    }
-  */
-  /**
-   * This method does the following :
-   * <ul>
-   * <li>a first call to getDeclaredOptions() on the PluginPlatform and each
-   * plugin, in order to determine which options exist and their default values
-   * </li>
-   * <li>a call to processArguments() in order to read the command line and set
-   * the options to their actual values</li>
-   * <li>a second call to getDeclaredOptions() in order to collect the options'
-   * real value</li>
-   * <li>eventually, prerequisites are checked.</li>
-   * </ul>
-   * 
-   * @param argumentList the command line
-   * @return an array of String containing the names of the files to compile
-   */
-  /*public int create(ConfigurationManager confManager, String[] commandLine) {
-    instance = new TomOptionManager();
-    return instance.initialize(confManager, commandLine);
-    }*/
 
+  /**
+   * initialize does everything needed
+   *
+   * @return  an error code :
+   * <ul>
+   * <li>0 if no error was encountered</li>
+   * <li>1 if something went wrong</li>
+   * </ul>
+   */
   public int initialize(ConfigurationManager confManager, String[] commandLine) {
     List optionOwnerList = new ArrayList(confManager.getPluginsList());
     optionOwnerList.add(this);
@@ -173,7 +137,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     while(owners.hasNext()) {
       OptionOwner plugin = (OptionOwner)owners.next();
       if(!checkOptionDependency(plugin.getRequiredOptionList())) {
-        logger.log(Level.SEVERE, "PrerequisitesIssue", plugin.getClass().getName());
+        getLogger().log(Level.SEVERE, "PrerequisitesIssue", plugin.getClass().getName());
         return 1;
       }
     }
@@ -194,7 +158,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private PlatformOption getOptionFromName(String name) {
     PlatformOption option = (PlatformOption)mapNameToOption.get(getCanonicalName(name));
     if(option == null) {
-      logger.log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
+      getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
       throw new RuntimeException();
     }
     return option;
@@ -207,7 +171,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   private OptionOwner getOptionOwnerFromName(String name) {
     OptionOwner plugin = (OptionOwner)mapNameToOptionOwner.get(getCanonicalName(name));
     if(plugin == null) {
-      logger.log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
+      getLogger().log(Level.SEVERE,"OptionNotFound",getCanonicalName(name));
       throw new RuntimeException();
     }
     return plugin;
@@ -222,7 +186,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     if(option != null) {
       PlatformOption newOption = option.setValue(value);
       Object replaced = setOptionFromName(name, newOption);
-      logger.log(Level.FINER,"SetValue",new Object[]{name,value,replaced});
+      getLogger().log(Level.FINER,"SetValue",new Object[]{name,value,replaced});
     } else {
       throw new RuntimeException();
     }
@@ -278,7 +242,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       PluginOption[value=StringValue(value)]    -> { return `value; }
     }
     
-    logger.log(Level.SEVERE,"OptionNotFound",name);
+    getLogger().log(Level.SEVERE,"OptionNotFound",name);
     throw new RuntimeException();
   }
   
@@ -336,7 +300,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         PlatformOption option = getOptionFromName(`name);
         PlatformValue localValue = option.getValue();
         if(`value != localValue) {
-          logger.log(Level.SEVERE, "IncorrectOptionValue", new Object[]{`name,`value,getOptionValue(`name)});
+          getLogger().log(Level.SEVERE, "IncorrectOptionValue", new Object[]{`name,`value,getOptionValue(`name)});
           return false;
         } else {
           return checkOptionDependency(`tail*);
@@ -347,26 +311,13 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   }
   
   /**
-   * Extracts the global options from the XML configuration file.
-   * 
-   * @param node the node containing the XML file
-   */
-  /*public void setGlobalOptionList(TNode node) {
-    %match(TNode node) {
-      <server>opt@<options></options></server> -> {
-        globalOptions = xmlNodeToOptionList(`opt);
-       }
-    }
-    }*/
-
-  /**
    * From OptionOwner Interface
    * @return the global options
    */
   public PlatformOptionList getDeclaredOptionList() {
     return globalOptions;
   }
-
+  
   /**
    * From OptionOwner Interface
    * @return the prerequisites
@@ -378,7 +329,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
       prerequisites = `concPlatformOption(PluginOption("jCode", "", "", BooleanValue(True()),""), prerequisites*);
       // for the moment debug is only available for Java as target language
     }
-
+    
     // options destdir and output are incompatible
     if(!((String)getOptionValue("destdir")).equals(".")) {
       prerequisites = `concPlatformOption(PluginOption("output", "", "", StringValue(""), ""), prerequisites*);
@@ -440,7 +391,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if( argument.equals("output") || argument.equals("o") ) {
             if(outputEncountered) {
-              logger.log(Level.SEVERE, "OutputTwice");
+              getLogger().log(Level.SEVERE, "OutputTwice");
               return null;
             } else {
               outputEncountered = true;
@@ -448,7 +399,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           }
           if( argument.equals("destdir") || argument.equals("d") ) {
             if(destdirEncountered) {
-              logger.log(Level.SEVERE, "DestdirTwice");
+              getLogger().log(Level.SEVERE, "DestdirTwice");
               return null;
             } else {
               destdirEncountered = true;
@@ -459,7 +410,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           PlatformOption option = getOptionFromName(argument);
 
           if(option == null || plugin == null) {// option not found
-            logger.log(Level.SEVERE, "InvalidOption", argumentList[i]);
+            getLogger().log(Level.SEVERE, "InvalidOption", argumentList[i]);
             return null;
           } else {
             %match(PlatformOption option) {
@@ -486,7 +437,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         }	
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      logger.log(Level.SEVERE, "IncompleteOption", argumentList[--i]);
+      getLogger().log(Level.SEVERE, "IncompleteOption", argumentList[--i]);
       return null;
     }
     
@@ -495,44 +446,21 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     if(fileList.isEmpty()) {
       displayVersion();
       displayHelp();
-      logger.log(Level.SEVERE, "NoFileToCompile");
+      getLogger().log(Level.SEVERE, "NoFileToCompile");
       return null;
     } else if(fileList.size() > 1 && outputEncountered) {
-      logger.log(Level.SEVERE, "OutputWithMultipleCompilation");
+      getLogger().log(Level.SEVERE, "OutputWithMultipleCompilation");
       return null;
     }
     
     return fileList;
   }
   
-  public static PlatformOptionList xmlToOptionList(String xmlString) {
-    XmlTools xtools = new XmlTools();
-    InputStream stream = new ByteArrayInputStream(xmlString.getBytes());
-    TNode node = (TNode)xtools.convertXMLToATerm(stream);
-    return (new TomOptionManager()).xmlNodeToOptionList(node.getDocElem());
-  }
-  
-  private PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
-    PlatformOptionList list = `emptyPlatformOptionList();
-    %match(TNode optionsNode) {
-      <options>(_*,option,_*)</options> -> {
-        %match(TNode option) {
-          <OptionBoolean [name = n, altName = an, description = d, value = v] /> -> {	
-            PlatformBoolean bool = Boolean.valueOf(`v).booleanValue()?`True():`False();
-            list = `concPlatformOption(list*, PluginOption(n, an, d, BooleanValue(bool), "")); 
-          }
-          <OptionInteger [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
-            list = `concPlatformOption(list*, PluginOption(n, an, d, IntegerValue(Integer.parseInt(v)), at));
-          }
-          <OptionString [name = n, altName = an, description = d, value = v, attrName = at] /> -> {
-            list = `concPlatformOption(list*, PluginOption(n, an, d, StringValue(v), at));
-          }
-        }
-      }
-    }
-    return list;
+  public void setOptionManager(OptionManager om) {}
+
+  /** logger accessor in case of logging needs*/
+  private Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
   }
 
-  public void setOptionManager(OptionManager om) {}
-  
 } // class TomOptionManager.t

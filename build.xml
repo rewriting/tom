@@ -201,6 +201,13 @@
 		<tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
 				 destdir="${src.gen}" 
+				 options="--static -I ${src.mapping}">
+			<include name="**/OptionParser.t"/>
+		</tom>
+
+		<tom config="${stable.configfile}"
+				 srcdir="${src.src}" 
+				 destdir="${src.gen}" 
 				 options="-I ${src.mapping}">
 			<include name="tom/library/**/*.t"/> 
 			<include name="tom/platform/**/*.t"/> 
@@ -214,11 +221,11 @@
 				 options="-I ${src.mapping} --noDeclaration">
 			<include name="jtom/**/*.t"/> 
 			<exclude name="jtom/*.t"/>
-			<exclude name="**/Verifier.t"/>
 			<exclude name="**/TomLanguage.g.t"/>
 			<exclude name="**/HostLanguage.g.t"/>
 			<exclude name="**/BackQuoteLanguage.g.t"/>
 		</tom>
+
 	</target>
 
 	<!-- builds the parser using antlr -->

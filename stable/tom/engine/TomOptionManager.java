@@ -477,7 +477,6 @@ public class TomOptionManager implements OptionManager, OptionOwner {
               destdirEncountered = true;
             }
           }
-
           OptionOwner plugin = getOptionOwnerFromName(s);
           PlatformOption option = getOptionFromName(s);
 

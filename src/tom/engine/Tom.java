@@ -63,26 +63,11 @@ public class Tom {
       e.printStackTrace();
       return 1;
     }
-
+    
     PluginPlatform platform = PluginPlatformFactory.getInstance().create(commandLine, Tom.LOGGERRADICAL); 
     if(platform == null) {
       return 1;
     }
-    /*    String confFileName = extractConfigFileName(commandLine);
-          if(confFileName == null) {
-          return 1;
-          }
-          ConfigurationManager confManager = new ConfigurationManager(confFileName);
-          if(confManager.initialize() == 1) {
-          return 1;
-          }
-          if(TomOptionManager.create(confManager, commandLine) == 1) { 
-          return 1;
-          }
-          PluginPlatform platform =new PluginPlatform(TomOptionManager.getInstance(),
-          confManager,
-          Tom.LOGGERRADICAL);
-    */
     return platform.run();
   }
    
@@ -134,25 +119,21 @@ public class Tom {
     }
   }
   
-  private static void initTomRootLogger(boolean useParentHandler) {
-    //logger = Logger.getLogger(Tom.LOGGERRADICAL, Tom.MESSAGERESOURCE);
-    logger.setUseParentHandlers(useParentHandler);
-    cleanTomRootLogger();
-    /*Status statusHandler = new StatusHandler();
-      Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);*/
-  }
-
   /**
+   * initTomRootLogger set thee useParentHandlers flad and
    * remove all pre-existing handlers that might exist from prior uses
    * especially for multiple invication in the same VM
    */
-  private static void cleanTomRootLogger() {
-    if(logger!=null) { 
-      Handler[] handlers = logger.getHandlers();
-      for(int i = 0; i < handlers.length; i++) {
-        logger.removeHandler(handlers[i]);
-      }
+  private static void initTomRootLogger(boolean useParentHandler) {
+    //logger = Logger.getLogger(Tom.LOGGERRADICAL, Tom.MESSAGERESOURCE);
+    logger.setUseParentHandlers(useParentHandler);
+    Handler[] handlers = logger.getHandlers();
+    for(int i = 0; i < handlers.length; i++) {
+      logger.removeHandler(handlers[i]);
     }
+    /*Status statusHandler = new StatusHandler();
+      Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);
+    */
   }
   
   private static void refreshTopLoggerHandlers() throws InstantiationException,
@@ -172,55 +153,18 @@ public class Tom {
         // search for the global console handler
         consoleHandler = handlers[i];
         handlers[i].setFormatter((Formatter)Class.forName(
-        LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter")).newInstance());
+                                                          LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter")).newInstance());
       }/*else if( handlers[i] instanceof FileHandler ) {
-        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.FileHandler.formatter")).newInstance());
-      } else if( handlers[i] instanceof SocketHandler ) {
-        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.SocketHandler.formatter")).newInstance());
-      } else if( handlers[i] instanceof MemoryHandler ) {
-        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.MemoryHandler.formatter")).newInstance());
-      } else if( handlers[i] instanceof StreamHandler ) {
-        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.StreamHandler.formatter")).newInstance());
-        }*/
+         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.FileHandler.formatter")).newInstance());
+         } else if( handlers[i] instanceof SocketHandler ) {
+         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.SocketHandler.formatter")).newInstance());
+         } else if( handlers[i] instanceof MemoryHandler ) {
+         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.MemoryHandler.formatter")).newInstance());
+         } else if( handlers[i] instanceof StreamHandler ) {
+         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.StreamHandler.formatter")).newInstance());
+         }*/
       //System.out.println("Handler "+handlers[i]+" has formatter "+handlers[i].getFormatter());    
     }
-  }
-  
-  /**
-   * This method analyzes the command line and determines which configuration
-   * file should be used. As the tom scripts already specify a default
-   * configuration file which can be overridden by the user, only the last one
-   * is taken into account
-   * 
-   * @param commandLine the command line
-   * @return a String containing the path to the configuration file to be used
-   */
-  private static String extractConfigFileName(String[] commandLine) {
-    String xmlConfigurationFile = null; 
-    int i=0;
-    try {
-      for(;i< commandLine.length;i++) {
-        if(commandLine[i].equals("-X")) {
-          xmlConfigurationFile = commandLine[++i];
-        }
-      }
-    } catch (ArrayIndexOutOfBoundsException e) {
-      logger.log(Level.SEVERE, "IncompleteOption", commandLine[--i]);
-      return null;
-    }
-    
-    if(xmlConfigurationFile==null) { // lack of a configuration file
-      logger.log(Level.SEVERE, "ConfigFileNotSpecified");
-      return null;
-    }
-    
-    File file = new File(xmlConfigurationFile);
-    if(!file.exists()) { // the last specified configuration file doesn't exist
-      logger.log(Level.SEVERE, "ConfigFileNotFound", xmlConfigurationFile);
-      return null;
-    }
-    
-    return xmlConfigurationFile;
   }
 
 } // class Tom

@@ -12,6 +12,7 @@ import jtom.adt.tomsignature.types.*;
 
 import tom.library.traversal.Replace1;
 import tom.platform.adt.platformoption.types.*;
+import tom.platform.OptionParser;
 
 /**
  * The TomCompiler plugin.
@@ -19,14 +20,14 @@ import tom.platform.adt.platformoption.types.*;
 public class TomCompiler extends TomGenericPlugin {
 
   %include { adt/TomSignature.tom }
-  %include { adt/PlatformOption.tom }
 
+  public static final String COMPILED_SUFFIX = ".tfix.compiled";
+  public static final String DECLARED_OPTIONS = "<options><boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/></options>";
+  
   private TomKernelCompiler tomKernelCompiler = new TomKernelCompiler();
   private TomFactory tomFactory = new TomFactory();
   private int absVarNumber = 0;
-
-  public static final String COMPILED_SUFFIX = ".tfix.compiled";
-
+  
   public TomCompiler() {
     super("TomCompiler");
   }
@@ -63,8 +64,7 @@ public class TomCompiler extends TomGenericPlugin {
   }
   
   public PlatformOptionList getDeclaredOptionList() {
-    String compile = "name=\"compile\" altName=\"\" description=\"Compiler (activated by default)\" value=\"true\"";
-    return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + compile + "/> </options>");
+    return OptionParser.xmlToOptionList(TomCompiler.DECLARED_OPTIONS);
   }
 
   private OptionList option() {
@@ -498,4 +498,4 @@ public class TomCompiler extends TomGenericPlugin {
   }
 
 
-}
+} // class TomCompiler

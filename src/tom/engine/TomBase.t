@@ -39,36 +39,36 @@ import jtom.exception.TomRuntimeException;
 
 public class TomBase {
   %include { adt/TomSignature.tom }
-  %include { adt/PlatformOption.tom }
-
-  private TomList empty;
-  private GenericTraversal traversal;
-
-  public TomBase() {
-    this.empty = getTomSignatureFactory().makeTomList();
-    this.traversal = new GenericTraversal();
-  }
-
-  protected ASTFactory ast() {
-    return environment().getASTFactory();
-  }
-
-  protected TomSignatureFactory tsf() {
-    return environment().getTomSignatureFactory();
-  }
-
   protected final TomSignatureFactory getTomSignatureFactory() {
     return tsf();
   }
 
+  %include { adt/PlatformOption.tom }
   protected final PlatformOptionFactory getPlatformOptionFactory() {
     return environment().getPlatformOptionFactory();
   }
-
+  
+  private TomList empty;
+  private GenericTraversal traversal;
+  
+  public TomBase() {
+    this.empty = getTomSignatureFactory().makeTomList();
+    this.traversal = new GenericTraversal();
+  }
+  
+  protected ASTFactory ast() {
+    return environment().getASTFactory();
+  }
+  
+  protected TomSignatureFactory tsf() {
+    return environment().getTomSignatureFactory();
+  }
+  
   protected TomEnvironment environment() {
     try {
       return TomEnvironment.getInstance();
     } catch(TomRuntimeException tre) {
+      System.out.println("Chouchou");
       TomEnvironment.create();
       // this is done to handle the first call to TomEnvironment
       // because the plugins extend TomBase
@@ -77,7 +77,7 @@ public class TomBase {
       return TomEnvironment.getInstance();
     }
   }
-
+  
   public GenericTraversal traversal() {
     return this.traversal;
   }

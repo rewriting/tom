@@ -48,16 +48,13 @@ import tom.platform.adt.platformoption.types.*;
  */
 public abstract class TomGenericPlugin extends TomBase implements Plugin {
   
-  %include{ adt/PlatformOption.tom }
+  %include { adt/PlatformOption.tom }
 
   /** The name of the plugin. */
   private String pluginName;
 
   /** The term the plugin works on. */
   private TomTerm term;
-
-  /** The plugin's logger. */
-  private Logger logger;
 
   /** the status handler */
   private StatusHandler statusHandler;
@@ -71,7 +68,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * @return the plugin's logger
    */
   protected Logger getLogger() {
-    return logger;
+    return Logger.getLogger(getClass().getName());
   }
 
   /**
@@ -89,7 +86,6 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   /** Constructor method. */
   public TomGenericPlugin(String name) {
     pluginName = name;
-    logger = Logger.getLogger(getClass().getName());
   }
 
   
@@ -104,7 +100,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     if (arg instanceof TomTerm) {
       term = (TomTerm)arg;
     } else {
-      logger.log(Level.SEVERE, "TomTermExpected", pluginName);
+      getLogger().log(Level.SEVERE, "TomTermExpected", pluginName);
     }
   }
 
@@ -141,7 +137,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * @return an empty PlatformOptionList
    */
   public PlatformOptionList getDeclaredOptionList() {
-    return `emptyPlatformOptionList;
+    return `emptyPlatformOptionList();
   }
   
   /**
@@ -176,12 +172,12 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
       int nbOfWarnings = statusHandler.nbOfWarnings() - warningsAtStart;
 
       if( nbOfErrors > 0 ) {
-        logger.log( Level.OFF, "TaskErrorMessage",
+        getLogger().log( Level.OFF, "TaskErrorMessage",
                     new Object[]{ pluginName, 
                                   new Integer(nbOfErrors), 
                                   new Integer(nbOfWarnings) } );
       } else if( nbOfWarnings > 0 ) {
-        logger.log( Level.OFF, "TaskWarningMessage",
+        getLogger().log( Level.OFF, "TaskWarningMessage",
                     new Object[]{ pluginName, new Integer(nbOfWarnings) } );
       }
     }

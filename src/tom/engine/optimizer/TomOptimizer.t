@@ -11,6 +11,7 @@ import java.util.logging.*;
 
 import tom.library.traversal.*;
 import tom.platform.adt.platformoption.types.*;
+import tom.platform.OptionParser;
 
 /**
  * The TomOptimizer plugin.
@@ -18,9 +19,9 @@ import tom.platform.adt.platformoption.types.*;
 public class TomOptimizer extends TomGenericPlugin {
 
   %include{ adt/TomSignature.tom }
-  %include{ adt/PlatformOption.tom }
 
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
+  private static final String DECLARED_OPTIONS = "<options><boolean name='optimize' altName='O' description='Optimized generated code' value='false'/></options>";
 
   public TomOptimizer() {
     super("TomOptimizer");
@@ -32,7 +33,7 @@ public class TomOptimizer extends TomGenericPlugin {
         int errorsAtStart   = getStatusHandler().nbOfErrors();
         int warningsAtStart = getStatusHandler().nbOfWarnings();
         long startChrono = System.currentTimeMillis();
-						
+        
         TomTerm renamedTerm   = renameVariable( (TomTerm)getArg(), new HashSet() );
         TomTerm optimizedTerm = optimize(renamedTerm);
         setArg(optimizedTerm);
@@ -65,8 +66,7 @@ public class TomOptimizer extends TomGenericPlugin {
   }
 
   public PlatformOptionList getDeclaredOptionList() {
-    String optimize = "name=\"optimize\" altName=\"O\" description=\"Optimized generated code\" value=\"false\"";
-    return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + optimize + "/> </options>");
+    return OptionParser.xmlToOptionList(TomOptimizer.DECLARED_OPTIONS);
   }
 
   private boolean isActivated() {
@@ -389,4 +389,4 @@ public class TomOptimizer extends TomGenericPlugin {
     return (Instruction) replace_renameVariable.apply(subject,context); 
   }
 
-}
+} // class TomOptimizer

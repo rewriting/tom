@@ -7,7 +7,9 @@ import aterm.*;
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
 import tom.platform.adt.platformoption.types.*;
+import tom.platform.OptionParser;
 import jtom.tools.*;
+
 
 /**
  * The TomBackend plugin.
@@ -18,6 +20,8 @@ public class TomBackend extends TomGenericPlugin {
   %include { adt/PlatformOption.tom }
 
   private final static int defaultDeep = 2;
+  public static final String DECLARED_OPTIONS = "<options><boolean name='noOutput' altName='' description='Do not generate code' value='false'/><boolean name='jCode' altName='j' description='Generate Java code' value='true'/><boolean name='cCode' altName='c' description='Generate C code' value='false'/><boolean name='eCode' altName='e' description='Generate Eiffel code' value='false'/><boolean name='camlCode' altName='' description='Generate Caml code' value='false'/></options>";
+
   private TomAbstractGenerator generator;
   private Writer writer;
 
@@ -67,56 +71,37 @@ public class TomBackend extends TomGenericPlugin {
   }
   
   public PlatformOptionList getDeclaredOptionList() {
-    String noOutput = "<OptionBoolean name=\"noOutput\" altName=\"\" description=\"Do not generate code\" value=\"false\"/>";
-    String jCode = "<OptionBoolean name=\"jCode\" altName=\"j\" description=\"Generate Java code\" value=\"true\"/>";
-    String cCode = "<OptionBoolean name=\"cCode\" altName=\"c\" description=\"Generate C code\" value=\"false\"/>";
-    String eCode = "<OptionBoolean name=\"eCode\" altName=\"e\" description=\"Generate Eiffel code\" value=\"false\"/>";
-    String camlCode = "<OptionBoolean name=\"camlCode\" altName=\"\" description=\"Generate Caml code\" value=\"false\"/>";
-    return TomOptionManager.xmlToOptionList("<options>" +
-                                            noOutput + " " +
-                                            jCode + " " +
-                                            cCode + " " +
-                                            eCode + " " +
-                                            camlCode + " " +
-                                            "</options>");
+    return OptionParser.xmlToOptionList(TomBackend.DECLARED_OPTIONS);
   }
 
   public void setOption(String optionName, Object optionValue) {
     setOptionValue(optionName, optionValue);
-
-    if(optionValue.equals(Boolean.TRUE)) // no more than 1 type of code can be activated at a time
-	{
-	    if( optionName.equals("jCode") || optionName.equals("j") )
-		{ 
+    
+    if(optionValue.equals(Boolean.TRUE)) {// no more than 1 type of code can be activated at a time
+	    if(optionName.equals("jCode") || optionName.equals("j")) { 
 		    //System.out.println("Java code activated, other codes desactivated");
 		    setOptionValue("cCode", Boolean.FALSE);
 		    setOptionValue("eCode", Boolean.FALSE);
 		    setOptionValue("camlCode", Boolean.FALSE); 
-		}
-	    else if( optionName.equals("cCode") || optionName.equals("c") )
-		{ 
+      } else if(optionName.equals("cCode") || optionName.equals("c")) { 
 		    //System.out.println("C code activated, other codes desactivated");
 		    setOptionValue("jCode", Boolean.FALSE);
 		    setOptionValue("eCode", Boolean.FALSE);
 		    setOptionValue("camlCode", Boolean.FALSE); 
-		}
-	    else if( optionName.equals("eCode") || optionName.equals("e") )
-		{ 
+      } else if(optionName.equals("eCode") || optionName.equals("e")) { 
 		    //System.out.println("Eiffel code activated, other codes desactivated");
 		    setOptionValue("jCode", Boolean.FALSE);
 		    setOptionValue("cCode", Boolean.FALSE);
 		    setOptionValue("camlCode", Boolean.FALSE); 
-		}
-	    else if( optionName.equals("camlCode") )
-		{ 
+      } else if(optionName.equals("camlCode")) { 
 		    //System.out.println("Caml code activated, other codes desactivated");
 		    setOptionValue("jCode", Boolean.FALSE);
 		    setOptionValue("cCode", Boolean.FALSE);
 		    setOptionValue("eCode", Boolean.FALSE); 
-		}
-	}
+      }
     }
-
+  }
+  
   private boolean isActivated() {
     return !getOptionBooleanValue("noOutput");
   }

@@ -6,6 +6,8 @@ import jtom.*;
 import jtom.adt.tomsignature.types.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.library.traversal.Replace1;
+import tom.platform.OptionParser;
+
 import aterm.*;
 import jtom.tools.*;
 import jtom.xml.Constants;
@@ -17,13 +19,13 @@ import jtom.exception.TomRuntimeException;
 public class TomExpander extends TomGenericPlugin {
 
   %include { adt/TomSignature.tom }
-  %include { adt/PlatformOption.tom }
-
-  private TomKernelExpander tomKernelExpander;
-  private TomFactory tomFactory;
 
   public static final String EXPANDED_SUFFIX       = ".tfix.expanded";
   public static final String EXPANDED_TABLE_SUFFIX = ".tfix.expanded.table";
+  public static final String DECLARED_OPTIONS = "<options><boolean name='expand' altName='' description='Expander (activated by default)' value='true'/></options>";
+
+  private TomKernelExpander tomKernelExpander;
+  private TomFactory tomFactory;
   
   public TomExpander() {
     super("TomExpander");
@@ -72,11 +74,8 @@ public class TomExpander extends TomGenericPlugin {
   }
 
   public PlatformOptionList getDeclaredOptionList() {
-    String expand = "name=\"expand\" altName=\"\" description=\"Expander (activated by default)\" value=\"true\"";
-    return TomOptionManager.xmlToOptionList("<options> <OptionBoolean " + expand + "/> </options>");
+    return OptionParser.xmlToOptionList(TomExpander.DECLARED_OPTIONS);
   }
-
-
 
   private TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
     return tomKernelExpander.expandVariable(contextSubject,subject); 
@@ -682,4 +681,4 @@ public class TomExpander extends TomGenericPlugin {
     return list;
   }
 
-}
+} // class TomExpander
