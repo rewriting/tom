@@ -272,7 +272,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
       return `ITL(s);
   }
 
-  protected void TargetLanguage genDeclMake(int deep, String opname, TomType returnType, 
+  protected TargetLanguage genDeclMake(int deep, String opname, TomType returnType, 
                                             TomList argList, TargetLanguage tlCode) throws IOException {
       //%variable
     String s = "";
@@ -309,7 +309,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 			return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
-  protected void TargetLanguage genDeclList(int deep, String name, TomType listType, TomType eltType) throws IOException {
+  protected TargetLanguage genDeclList(int deep, String name, TomType listType, TomType eltType) throws IOException {
       //%variable
     String s = "";
     if(!genDecl) { return null; }
@@ -318,7 +318,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   }
 
 
-  protected void TargetLanguage genDeclArray(int deep, String name, TomType listType, TomType eltType) throws IOException {
+  protected TargetLanguage genDeclArray(int deep, String name, TomType listType, TomType eltType) throws IOException {
 		//%variable
     String s = "";
     if(!genDecl) { return null; }

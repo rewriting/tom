@@ -357,7 +357,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
       return `ITL(s);
 		}
 
-  protected void TargetLanguage genDeclMake(int deep, String opname, TomType returnType, 
+  protected TargetLanguage genDeclMake(int deep, String opname, TomType returnType, 
                                             TomList argList, TargetLanguage tlCode) throws IOException {
 		//%variable
     String s = "";
@@ -395,7 +395,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
-  protected void TargetLanguage genDeclList(int deep, String name, TomType listType, TomType eltType) {
+  protected TargetLanguage genDeclList(int deep, String name, TomType listType, TomType eltType) {
       //%variable
     String s = "";
     if(!genDecl) { return null; }
@@ -465,7 +465,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     return resultTL;
   }
 
-  protected void TargetLanguage genDeclArray(int deep, String name, TomType listType, TomType eltType) {
+  protected TargetLanguage genDeclArray(int deep, String name, TomType listType, TomType eltType) {
       //%variable
     String s = "";
     if(!genDecl) { return null; }
