@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2005, INRIA
+ * Copyright (c) 2004, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -35,26 +35,16 @@ package minirho;
  import tom.library.traversal.*;
  import minirho.rho.rhoterm.*;
  import minirho.rho.rhoterm.types.*;
-
  public class Rho {
 
 	 private rhotermFactory factory;
 	 private GenericTraversal traversal;
 
-
-   public Rho(rhotermFactory factory) {
-     this.factory = factory;
-     this.traversal = new GenericTraversal();
-   }
-  public rhotermFactory getRhotermFactory() {
-    return factory;
-  }
-
 	%vas{
 		 module rhoterm
      imports 
 		 public
-			 sorts RTerm Constraint ListConstraint
+			 sorts RTerm Constraint
 		 abstract syntax
 //TERMS
 			 var(na:String) -> RTerm
@@ -62,49 +52,68 @@ package minirho;
 			 abs(lhs:RTerm,rhs:RTerm) -> RTerm
 			 app(lhs:RTerm,rhs:RTerm) -> RTerm
 			 struct(lhs:RTerm,rhs:RTerm) -> RTerm //structure theorie vide
-			 appC(co:ListConstraint,term:RTerm) -> RTerm
+			 appC(co:Constraint,term:RTerm) -> RTerm
+			 appSt(co:Constraint,term:RTerm) -> RTerm //Substition application on terms
 //CONSTRAINTS
 			 appSc(subst:Constraint,co:Constraint) -> Constraint //Substition application on constraints
 			 match(pa:RTerm,rhs:RTerm) -> Constraint
-			 eq(var:RTerm,rhs:RTerm) -> Constraint
-			 and( Constraint* ) -> ListConstraint
-
-//AUXILARY: not strictly speaking needed: use to check if the head of an application tree is a constructor
-			 matchH(pa:RTerm,rhs:RTerm) -> Constraint
-//			 matchOK(pa:RTerm,rhs:RTerm) -> Constraint
+			 dk -> Label //label by defaut for conjonctions
+			 g -> Label //label for solvable constraints
+			 ng -> Label //label for not solvable constraints
+			 and(lab:Label, constrList:ListConstraint ) -> Constraint
+			 concConstraint( Constraint* ) -> ListConstraint
+//AUXILARY: not strictly speaking needed
+			 matchH(lhs:RTerm,rhs:RTerm) -> Constraint //use to check if the head of an application tree is a constructor
 			 }
 
 //All the reduction rules of the RhoXC-calculus. First, those transforming RTerms. Secondly, those transforming Constraints
 	 Replace1 reductionRules = new Replace1() {
 			 public ATerm apply(ATerm t) {
-				 ListConstraint res;RTerm tmp;
+//				 System.out.println("J'essaye de reduire: " +  t);
 				if (t instanceof RTerm) {// Reduction rules for terms
-					System.out.println("---> je rentre avec  " + t);
 					RTerm term = (RTerm) t;
 					%match(RTerm term){
-
-						/* Garbage collector 
-							 appC(matchKO[],_) -> {return `const("null");}
-							 app(const("null"),A) -> {return `const("null");}
-							 struct(A,const("null")) -> {return `A;}
-							 struct(const("null"),A) -> {return `A;} 
-						*/
-							
+						//Compose
+						appSt(phi,appSt(psi,A)) -> {return `appSt(and(g,concConstraint(phi,appSc(phi,psi))),A);}
 						//rho 
-						app(abs(P,M),N)-> {	
-						    return `appC(and(match(P,N)),M) ;
-						}		
+						app(abs(A,B),C)-> {	return `appC(match(A,C),B) ;}		
 						//delta
-						app(struct(M1,M2),N) -> { 
-							return `struct(app(M1,N),app(M2,N));
-						}
-						//Decompose struct
-						appC((Phi*,match(struct(M1,M2),struct(N1,N2)),Psi*),N) ->{
-							return `appC(and(Phi*,match(M1,N1),match(M2,N2),Psi*),N);
-							
-						}
-						//Decompose F n>0
-						l: appC((Phi*,co@match(app1@app[],app2@app[]),Psi*),N) ->{
+						app(struct(A,B),C) -> { return `struct(app(A,C),app(B,C));}
+						//ToSubstVar
+						appC(match(X@var[],A),B) -> {return `appSt(match(X,A),B);}
+						//ToSubstAnd
+						appC(and(g(),C),A) -> {return `appSt(and(g,C),A);}
+						//Id
+						appC(match(a@const[],a),A) -> {return `A;}
+						//Replace
+						appSt(match(X@var[],A),X) -> {return `A;}
+						appSt(and(g(),(_*,match(X@var[],A),_*)),X) -> {return `A;} 
+						//EliminateVar
+						appSt(match[pa=var(x)],Y@var(y)) -> { if (`x !=  `y) return `Y;}
+						appSt(and(g(),(C*,match[pa=var(x)],D*)),Y@var(y)) -> {if (`x != `y) return `appSt(and(g,concConstraint(C*,D*)),Y);} 
+						//EliminateConst
+						appSt[term=f@const[]] -> {return `f;}
+						//ShareApp
+						appSt(phi,app(B,C)) -> {return `app(appSt(phi,B),appSt(phi,C));}
+						//ShareStruct
+						appSt(phi,struct(A,B)) -> {return `struct(appSt(phi,A),appSt(phi,B));}
+						//ShareAbs
+						appSt(phi,abs(A,B)) -> {return `abs(A,appSt(phi,B));}
+						//ShareAppC
+						appSt(phi,appC(C,A)) -> {return `appC(appSc(phi,C),appSt(phi,A));}
+
+					}
+				}
+				else if(t instanceof Constraint) {//Reduction rules for constraints
+					Constraint co = (Constraint)t;
+					%match(Constraint co){
+						//ComposeS
+						appSc(phi,appSc(psi,theta)) -> {return `appSc(and(g,concConstraint(phi,appSc(phi,psi))),theta);}						
+						//decompose Structure
+						match(struct(A,B),struct(C,D)) -> {return  `and(dk,concConstraint(match(A,C),match(B,D)));}
+						//decompose Constructors
+						l:match(app1@app[],app2@app[]) -> {
+							//On peut peut-etre optimiser ici: construire la liste de filtrage en meme tps que l'on teste
 							//1. on teste si le symbole de tete est une constante
 							Constraint isConstant = `matchH(app1,app2);
 							//head is constant? --> headIsConstant
@@ -113,69 +122,47 @@ package minirho;
 								matchH[] -> {
 									System.out.println("no, still one matchH");
 									break l;}//no ,still one matchH
+								//								_ -> {
+								//								System.out.println("yes!");
+								//	}
 							}
 							//2. on calcule le resultat a retourner.
-							res= `and(co);
-							res = computeMatch(res);
-							tmp = `appC(and(Phi*,res*,Psi*),N);
-							System.out.println("Je sors de decompose");
-							return tmp;
+							//							System.out.println("DANS MA CONTRAINTE J'AI" + co);
+							//					System.out.println("APRES J'AI" + computeMatch.apply(co));
+							return computeMatch.apply(co);
 						}
-						//Decompose F n = 0
-						appC((Phi*,match(f@const[],f),Psi*),N) -> {
-							return `appC(and(Phi*,Psi*),N);
-						}
-						//ToSubst
-						appC((Phi*,match(X@var[],M),Xsi*),N) -> {
-							return `appC(and(Phi*,Xsi*),appC(and(eq(X,M)),N));
-						}
-						//Idem
-						appC((Phi*,m@match(X@var[],M),Tau*,match(X@var[],M),Psi*),N) -> {
-							return 	`appC(and(Phi*,m,Tau*,Psi*),N);
-						}
-						//Id
-						appC((),M) -> { 
-							return `M;
-						}
-						//Replace
-						appC((Phi*,eq(X@var[],M),Psi*),X) -> {
-							return `M;
-						}
-						//VarElim: comme les regles s'appliquent dans l'ordre pas possible d'appliquer Replace
-						appC((Phi*,eq(var[],M),Psi*),Y@var[]) -> {
-							return `Y;
-						}
-						//ConstElim
-						appC((Phi*,eq(var[],M),Psi*),c@const[]) -> {
-							return `c;
-						}
-						//AbsShare: ALPHA-CONVERSION
-						appC((Phi*,e@eq(var[],_),Psi*),abs(P,M)) -> {
-							return `abs(P,appC(and(Phi*,e,Psi*),M));
-						}
-						//AppShare
-						appC((Phi*,e@eq(var[],_),Psi*),app(M,N)) -> {
-							return `app(appC(and(Phi*,e,Psi*),M),appC(and(Phi*,e,Psi*),N));
-						}
-						//StructShare
-						appC((Phi*,e@eq(var[],_),Psi*),struct(M,N)) -> {
-							return `struct(appC(and(Phi*,e,Psi*),M),appC(and(Phi*,e,Psi*),N));
-						}
-						//MatchShare
-						appC(l1@(Phi*,eq(var[],_),Psi*),appC(l2@(Phi1*,match(P,M),Psi1*),N)) -> {
-							 res = mapC(l1,l2);
-							return `appC(res,appC(l1,N));
-						}
-						//Compose
-						appC(l1@(Phi*,e@eq(var[],M),Psi*),appC(l2@(Phi1*,eq(var[],M1),Psi1*),N)) -> {
-							res = mapC(l1,l2);
-							System.out.println("resultat de mapC   "+ res);
-							return `appC(and(l1*,res*),N);
-						}
+						//simplify
+						and(dk(),(X*,match(a@const[],a),Y*)) -> {return `and(dk(),concConstraint(X*,Y*));}
+						and(ng(),(X*,match(a@const[],a),Y*)) -> {return `and(ng(),concConstraint(X*,Y*));}
+						//We suppose the linearity of patterns
+//						and(dk(),c@(match[pa=var[]],match[pa=var[]])) -> {return `and(g,c);} 
+						and(dk(),(X*,c@match[pa=var[]],Y*,d@match[pa=var[]],Z*)) -> {return `and(dk,concConstraint(X*,and(g,concConstraint(c,d)),Y*,Z*));} 
 
+						//the following rule is duplicated because we have to take care of commutativity
+//						and(dk(),c@(match[pa=var[]],and[lab=g()])) -> {return `and(g,c);} 
+						and(dk(),c@(match[pa=var[]],and[lab=g()])) -> {return `and(g,c);} 
 
+						and(dk(),c@(and[lab=g()],match[pa=var[]])) -> {return `and(g,c);} 
+
+						and(dk(),c@(and[lab=g()],and[lab=g()])) -> {return `and(g,c);} 
+						//NGood!!!!!!!!!!!!!!!!: A AJOUTER
+						//ShareMatch A Enrichir
+						appSc(phi,match(B,C)) -> {return `match(B,appSt(phi,C));}
+						//ShareAnd for all types of and
+						appSc(phi,and(x,C)) -> {
+							Replace2 r = new Replace2(){
+									public ATerm apply(ATerm t,Object o){
+										Constraint c = (Constraint)t;
+										%match(Constraint c){
+											x -> {return `appSc((Constraint)o,x);}
+										}
+									}
+								};
+							return `and(x,(ListConstraint)traversal.genericTraversal(C,r,phi));
+						}
+						and(l,(X*,and(l,(C*)),Y*)) -> {return `and(l,concConstraint(X*,C*,Y*));}
+						
 					}
-				
 				}
 				//Particular strategies 
 				if (t instanceof RTerm){
@@ -185,47 +172,55 @@ package minirho;
 						abs(A,B) -> {return `abs((RTerm)apply(A),B);}
 					}
 				}
-				return traversal.genericOneStep(t,this);
+				//PLEASE MODIFY!!!
+//				return traversal.genericOneStep(t,this);
+				return traversal.genericTraversal(t,this);
 			 }
 		 };
-	 private ListConstraint mapC(ListConstraint l1,ListConstraint l2){
-		 ListConstraint tmp;
-		 %match(ListConstraint l2){
-			 () -> {
-				 return `and();
-			 }
-			 (eq(X@var[],M),Phi*) -> {
-				 tmp = mapC(l1,Phi);
-				 return `and(eq(X,appC(l1,M)),tmp*);
-			 }
-			 (match(P,M),Phi*) -> {
-				 tmp = mapC(l1,Phi);
-				 return `and(match(P,appC(l1,M)),tmp*);
-			 }
-				 _ -> {
-					 System.out.println("please extend the function mapC");
-					 System.exit(0);
-				 return `l2;
-				 }
-
-		 }
-	 }
-//	 try to normalize
+	 
+//try to normalize
 	 public  ATerm normalize(ATerm form, Replace1 r){
 		 ATerm res = r.apply(form);
 		 if (res != form) {
-//			 System.out.println("|--> " + res);
+			 System.out.println("|--> " + res);
 			 return normalize(res,r);
 		 }
 		 else {
 			 return res;
 		 }
 	 }
-	 //auxilary function for the decomposition of the constructors
-	 public Constraint headIsConstant(Constraint c){
-		 return (Constraint)normalize(c,headisConstant);
+
+	 public Rho(rhotermFactory factory) {
+		 this.factory = factory;
+		 this.traversal = new GenericTraversal();
 	 }
-	 
+  public rhotermFactory getRhotermFactory() {
+    return factory;
+  }
+
+	 public void run(){
+
+		 RTerm resu;
+		 String s;
+		 System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\n by Germain Faure and ...\n version 0.1 \n ******************************************************************");
+		 Constraint c = `and(dk(),concConstraint(and(dk,concConstraint(match(var("X"),app(abs(var("X"),var("X")),const("a")))))));
+		 System.out.println(normalize(c,reductionRules));
+
+		 while(true){
+			 System.out.print("RomCal>");
+			 s = Clavier.lireLigne();
+			 resu = factory.RTermFromString(s);
+			 System.out.println(" " + printInfix(resu));
+			 printInfix((RTerm)normalize(resu,reductionRules));
+		 }
+
+	 }
+    
+	 public final static void main(String[] args) {
+		 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
+		 rhoEngine.run();
+	 }
+
 	 Replace1 headisConstant = new Replace1() {
 			 public ATerm apply(ATerm t) {
 				 if (t instanceof Constraint){
@@ -241,58 +236,79 @@ package minirho;
 				 return traversal.genericTraversal(t,this);
 			 }
 		 };
-	 ListConstraint computeMatch(ListConstraint t){
-		 System.out.println("je rentre, je rentre");
-		 ListConstraint res,res1,res2,res3,res1b;
-		 %match(ListConstraint t){
-			 (X*,match(app(const[],A),app(const[],B)),Y*) -> {
-				 res = (ListConstraint)computeMatch(Y);							 
-				 res1 = (ListConstraint)computeMatch(X);						
-				 ListConstraint tmp = `and(match(A,B));
-				 return `and(res1*,match(A,B),res*);
-			 }
-			 (X*,match(app(A1,A2),app(B1,B2)),Y*) -> {
-				 res1 = (ListConstraint)computeMatch(Y);
-				 res1b = (ListConstraint)computeMatch(X);
-				 res = `and(match(A1,B1));
-				 res2 = (ListConstraint)computeMatch(res);
-				 res = `and(match(A2,B2));
-				 res3 = (ListConstraint)computeMatch(res);
-				 return `and(res1b*,res2*,res3*,res1*);
-			 }
-			 _ -> {//System.out.println("Please extend computeMatch!");
-				 //System.exit(0);
-			 return t;
-			 }
+	 Replace1  computeMatch = new Replace1(){
+			 public ATerm apply(ATerm t){
+				 if (t instanceof Constraint){
+					 %match(Constraint t){
+						 match(app(const[],A),app(const[],B)) -> {
+							 return `match(A,B);
+						 }
+						 match(app(A1,A2),app(B1,B2)) -> {
+							 return `and(dk(),concConstraint(match(A1,B1),match(A2,B2)));
+						 }
+					 }
+				 }
+				 return traversal.genericTraversal(t,this);
+}};
+//auxilary function for the decomposition of the constructors
+	 public Constraint headIsConstant(Constraint c){
+		 return (Constraint)normalize(c,headisConstant);
+	 }
+	 public String printInfix(ATerm t){
+		 if (t instanceof RTerm){
+			 return printInfixTerm((RTerm)t);
 		 }
+		 else  return printInfixCons((Constraint)t);
 	 }
-	 public void run(){
-		 
-		 RTerm resu;
-		 String s;
-		 System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\n by Germain Faure and ...\n version 0.1 \n ******************************************************************");
-//		 Constraint c = `and(dk(),and(and(dk,and(match(var("X"),app(abs(var("X"),var("X")),const("a")))))));
-		 //	 System.out.println(normalize(c,reductionRules));
 
-		 while(true){
-			 System.out.print("RomCal>");
-			 s = Clavier.lireLigne();
-			 resu = factory.RTermFromString(s);
-			 System.out.println(" " + (resu));
-			 System.out.println((RTerm)normalize(resu,reductionRules));
+	 public String printInfixTerm(RTerm r){
+		 %match(RTerm r) {
+			 var(s) -> {return s.toUpperCase();}
+			 const(s) -> {return s.toLowerCase();}
+			 abs(lhs,rhs) -> {return printInfix(lhs) + " -> "+ printInfix(rhs);}
+			 app(lhs,rhs) -> {return  printInfix(lhs) + "   "+ printInfix(rhs) ;}
+			 struct(lhs,rhs) -> {return printInfix(lhs) + " , "+ printInfix(rhs);}
+			 appC(co, term) -> {return "[" + printInfixCons(co) + "]" + "(" + printInfix(term) + ")";}
+			 appSt(co, term) -> {return "{" + printInfixCons(co) + "}" + "(" + printInfix(term) + ")";}
+			 _ -> {return "please extend printInfix";}
 		 }
-
-	 }
-	 public  String test(String s){
-		 
-		 RTerm resu;
-		 resu = factory.RTermFromString(s);
-		 return ((RTerm)normalize(resu,reductionRules)).toString();
-
-
-	 }
-	 public final static void main(String[] args) {
-		 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
-		  rhoEngine.run();
+	 } 
+	 public  String printInfixCons(Constraint c){
+		 %match(Constraint c){
+			 appSc(subst, co) -> {return "{" + printInfixCons(subst) + "}" + "(" + printInfixCons(co) + ")";}
+			 match(pa,rhs) -> {return printInfix(pa) + " << " + printInfix(rhs);}
+			 matchH(pa,rhs) -> {return printInfix(pa) + " <<H " + printInfix(rhs);}
+			 and(g(),l) -> {
+				 //code mauvais
+				 ListConstraint tmp = l;
+				 String s = "";
+				 while(!(tmp.isEmpty())){
+					 s = s + printInfixCons((Constraint)tmp.getFirst()) + " ^g ";
+					 tmp = (ListConstraint)tmp.getNext();
+				 }
+				 return s.substring(0,s.length() - 4);
+			 }
+			 and(ng(),l) -> {
+				 //code mauvais
+				 ListConstraint tmp = l;
+				 String s = "";
+				 while(!(tmp.isEmpty())){
+					 s = s + printInfixCons((Constraint)tmp.getFirst()) + " ^ng ";
+					 tmp = (ListConstraint)tmp.getNext();
+				 }
+				 return s.substring(0,s.length() - 5);
+			 }
+			 and(dk(),l) -> {
+				 //code mauvais
+				 ListConstraint tmp = l;
+				 String s = "";
+				 while(!(tmp.isEmpty())){
+					 s = s + printInfixCons((Constraint)tmp.getFirst()) + " ^ ";
+					 tmp = (ListConstraint)tmp.getNext();
+				 }
+				 return s.substring(0,s.length() - 3);
+			 }
+			 _ -> {return "please extend printInfixCons";}
+		 }
 	 }
  }
