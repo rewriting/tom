@@ -105,7 +105,6 @@ public class ConfigurationManager {
     XmlTools xtools = new XmlTools();
     TNode configurationNode = (TNode)xtools.convertXMLToATerm(xmlConfigurationFileName);
     if(configurationNode == null) {
-      System.out.println("bad XML");
       getLogger().log(Level.SEVERE, "ConfigFileNotXML", xmlConfigurationFileName);
       return 1;
     }
@@ -147,7 +146,6 @@ public class ConfigurationManager {
     List pluginsClassList = extractClassPaths(configurationNode);
     // if empty list this means there is a problem somewhere
     if(pluginsClassList.isEmpty()) {
-      System.out.println("NoPluginFound");
       getLogger().log(Level.SEVERE, "NoPluginFound", xmlConfigurationFileName);
       pluginsList = null;
       return 1;
@@ -167,8 +165,9 @@ public class ConfigurationManager {
         }
       } catch(ClassNotFoundException cnfe) {
         getLogger().log(Level.WARNING, "ClassNotFound", pluginClass);
+        return 1;
       } catch(Exception e) {
-        e.printStackTrace();
+        //e.printStackTrace();
         getLogger().log(Level.SEVERE, "InstantiationError", pluginClass);
         pluginsList = null;
         return 1;

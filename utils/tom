@@ -74,6 +74,6 @@ if $cygwin; then
   TOM_CONFIG_FILE=`cygpath --windows "$TOM_CONFIG_FILE"`
 fi
 
-echo $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$TOM_HOME jtom.Tom -I $TOM_INC -X $TOM_CONFIG_FILE $TOM_ARGS
+#echo $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$TOM_HOME jtom.Tom -I $TOM_INC -X $TOM_CONFIG_FILE $TOM_ARGS
 
 exec $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$TOM_HOME jtom.Tom -I $TOM_INC -X $TOM_CONFIG_FILE $TOM_ARGS

@@ -134,9 +134,6 @@ public class Tom {
     for(int i = 0; i < handlers.length; i++) {
       logger.removeHandler(handlers[i]);
     }
-    /*Status statusHandler = new StatusHandler();
-      Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);
-    */
   }
   
   private static void refreshTopLoggerHandlers()
