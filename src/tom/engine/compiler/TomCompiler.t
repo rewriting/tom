@@ -25,11 +25,7 @@
 
 package jtom.compiler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
 import jtom.adt.tomsignature.types.*;
@@ -528,17 +524,44 @@ public class TomCompiler extends TomGenericPlugin {
     collectVariable(constraintVariable,constraint);
     //patternVariable.retainAll(constraintVariable);
 
-    TomList variableList = intersection(getAstFactory().makeList(patternVariable),getAstFactory().makeList(constraintVariable));
+    //TomList variableList = intersection(getAstFactory().makeList(patternVariable),getAstFactory().makeList(constraintVariable));
+    Set variableSet = intersection(patternVariable,constraintVariable);
     //System.out.println("variableList = " + variableList);
 
     //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);
-    TomList newSubjectList = (TomList) replace_attachConstraint.apply(subjectList,variableList,constraint); 
+    TomList newSubjectList = (TomList) replace_attachConstraint.apply(subjectList,variableSet,constraint); 
 
     //System.out.println("newSubjectList = " + newSubjectList);
 
     return newSubjectList;
   }
 
+
+  private Set intersection(Set patternVariable, Set constraintVariable) {
+    Set res = new HashSet();
+
+    for(Iterator it1 = patternVariable.iterator(); it1.hasNext() ; ) {
+      TomTerm patternTerm = (TomTerm) it1.next();
+      itBlock: {
+        for(Iterator it2 = constraintVariable.iterator(); it2.hasNext() ; ) {
+          TomTerm constraintTerm = (TomTerm) it2.next();
+          %match(TomTerm patternTerm, TomTerm constraintTerm) {
+            var@Variable[astName=name], Variable[astName=name] -> {
+              res.add(`var);
+              //break itBlock;
+            }
+            var@VariableStar[astName=name], VariableStar[astName=name] -> {
+              res.add(`var);
+              //break itBlock;
+            }
+          }
+        }
+      }
+    }
+    return res;
+  }
+
+  /*
   private TomList intersection(TomList patternVariable, TomList constraintVariable) {
     %match(TomList patternVariable, TomList constraintVariable) {
       concTomTerm(PV1*,var@Variable[astName=name],PV2*), concTomTerm(CV1*,Variable[astName=name],CV2*) -> {
@@ -561,22 +584,22 @@ public class TomCompiler extends TomGenericPlugin {
     }
     return list;
   }
-
+  */
 
   protected Replace3 replace_attachConstraint = new Replace3() { 
       public ATerm apply(ATerm subject, Object arg1, Object arg2) {
-        TomList variableList = (TomList) arg1;
+        Set variableSet = (Set) arg1;
         TomTerm constraint = (TomTerm) arg2;
 
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) {
             var@(Variable|VariableStar)[constraints=constraintList] -> {
               //System.out.println("var = " + var);
-              //System.out.println("set1 = " + variableList);
-              variableList = `remove(variableList,var);
-              //System.out.println("set2 = " + variableList);
+              //System.out.println("set1 = " + variableSet);
+              variableSet.remove(var);
+              //System.out.println("set2 = " + variableSet);
 
-              if(variableList.isEmpty()) {
+              if(variableSet.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
                 return var.setConstraints(newConstraintList);
               }
@@ -584,7 +607,7 @@ public class TomCompiler extends TomGenericPlugin {
             }
 
             appl@Appl[constraints=constraintList] -> {
-              if(variableList.isEmpty()) {
+              if(variableSet.isEmpty()) {
                 ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
                 return appl.setConstraints(newConstraintList);
               }
@@ -593,7 +616,7 @@ public class TomCompiler extends TomGenericPlugin {
           }
         }
 
-        return traversal().genericTraversal(subject,this,variableList,constraint);
+        return traversal().genericTraversal(subject,this,variableSet,constraint);
       } // end apply
     }; // end new
 
