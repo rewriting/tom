@@ -1476,23 +1476,14 @@ public class TomGenerator extends TomTask {
                         TargetLanguage tlCode) {
     String s = "";
     if(!genDecl) { return null; }
-
-    if(cCode) {
-      s = "#define " + declName + "_" + suffix + "(";
-      for(int i=0 ; i<args.length ; ) {
-        s+= args[i+1];
-        i+=2;
-        if(i<args.length) {
-          s+= ", ";
-        }
-      }
-      s += ") (" + tlCode.getCode() +")";
-    } else if(jCode) {
-      String modifier ="public ";
+    String modifier ="";
+    if(cCode || jCode) {
       if(staticFunction) {
-        modifier +="static ";
+        modifier += "static ";
       }
-
+      if(jCode) {
+        modifier += "public ";
+      }
       s = modifier + returnType + " " + declName + "_" + suffix + "(";
       for(int i=0 ; i<args.length ; ) {
         s+= args[i] + " " + args[i+1];
@@ -1525,37 +1516,15 @@ public class TomGenerator extends TomTask {
     //%variable
     String s = "";
     if(!genDecl) { return null; }
-
-    if(cCode) {
-        //System.out.println("genDeclMake: not yet implemented for C");
-      s = "#define tom_make_" + opname + "(";
-      while(!argList.isEmpty()) {
-        TomTerm arg = argList.getHead();
-        matchBlock: {
-          %match(TomTerm arg) {
-            Variable[astName=Name(name)] -> {
-              s += name;
-              break matchBlock;
-            }
-            
-            _ -> {
-              System.out.println("genDeclMake: strange term: " + arg);
-              throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
-            }
-          }
-        }
-        argList = argList.getTail();
-        if(!argList.isEmpty()) {
-          s += ", ";
-        }
-      }
-      s += ") (" + tlCode.getCode() + ")";
-    } else if(jCode) {
-      String modifier ="public ";
+    String modifier = "";
+    if(jCode || cCode) {
       if(staticFunction) {
-        modifier +="static ";
+        modifier += "static ";
       }
-
+      if(jCode) {
+        modifier += "public ";
+      }
+      
       s = modifier + getTLType(returnType) + " tom_make_" + opname + "(";
       while(!argList.isEmpty()) {
         TomTerm arg = argList.getHead();
@@ -1633,13 +1602,14 @@ public class TomGenerator extends TomTask {
     if(eCode) {
       System.out.println("genDeclList: Eiffel code not yet implemented");
     } else if(jCode) {
-      modifier ="public ";
-      if(staticFunction) {
-        modifier +="static ";
-      }
+      modifier = "public ";
       if(!strictType) {
-        utype =  getTLType(getUniversalType());
+        utype = getTLType(getUniversalType());
       }
+    }
+
+    if(staticFunction) {
+      modifier += "static ";
     }
 
     String listCast = "(" + glType + ")";
@@ -1706,14 +1676,15 @@ public class TomGenerator extends TomTask {
       System.out.println("genDeclArray: Eiffel code not yet implemented");
     } else if(jCode) {
       modifier ="public ";
-      if(staticFunction) {
-        modifier +="static ";
-      }
       if(!strictType) {
         utype =  getTLType(getUniversalType());
       }
     }
 
+    if(staticFunction) {
+      modifier += "static ";
+    }
+    
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
     String make_empty = listCast + "tom_make_empty_" + name;
