@@ -1,7 +1,7 @@
 [
-  modulentry(Name("TomExpression"),
-	[Name("TomSignature")],
-	[Type("Expression")],
+  modulentry(name("TomExpression"),
+	[name("TomSignature")],
+	[type("Expression")],
   [
   constructor(Expression,TomTermToExpression,TomTermToExpression(<astTerm(TomTerm)>)),
   constructor(Expression,Not,Not(<arg(Expression)>)),

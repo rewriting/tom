@@ -1,7 +1,7 @@
 [
-  modulentry(Name("TomOption"),
-	[Name("TomSignature")],
-	[Type("Option"),Type("OptionList")],
+  modulentry(name("TomOption"),
+	[name("TomSignature")],
+	[type("Option"),type("OptionList")],
   [
   constructor(Option,DeclarationToOption,DeclarationToOption(<astDeclaration(Declaration)>)),
   constructor(Option,TomNameToOption,TomNameToOption(<astName(TomName)>)),

@@ -1,14 +1,14 @@
 [
   modulentry(
-	Name("TomSignature"),
+	name("TomSignature"),
   [
-	 Name("TomName"),
-	 Name("TomConstraint"),
-	 Name("TomInstruction"),
-	 Name("TomExpression"),
-	 Name("TomDeclaration"),
-	 Name("TomOption"),
-	 Name("TomTerm")
+	 name("TomName"),
+	 name("TomConstraint"),
+	 name("TomInstruction"),
+	 name("TomExpression"),
+	 name("TomDeclaration"),
+	 name("TomOption"),
+	 name("TomTerm")
 	],
   [],
   [

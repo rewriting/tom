@@ -1,7 +1,7 @@
 [
-  modulentry(Name("TomDeclaration"),
-	[Name("TomSignature")],
-	[Type("Declaration")],
+  modulentry(name("TomDeclaration"),
+	[name("TomSignature")],
+	[type("Declaration")],
   [
   constructor(Declaration,TypeTermDecl,TypeTermDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),
   constructor(Declaration,TypeListDecl,TypeListDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),

@@ -1,7 +1,7 @@
 [
-  modulentry(Name("TomTerm"),
-	[Name("TomSignature")],
-	[Type("TomTerm"),Type("TomList")],
+  modulentry(name("TomTerm"),
+	[name("TomSignature")],
+	[type("TomTerm"),type("TomList")],
   [
   constructor(TomTerm,Appl,Appl(<option(OptionList)>,<nameList(NameList)>,<args(TomList)>,<constraints(ConstraintList)>)),
   constructor(TomTerm,XMLAppl,XMLAppl(<option(OptionList)>,<nameList(NameList)>,<attrList(TomList)>,<childList(TomList)>,<constraints(ConstraintList)>)),

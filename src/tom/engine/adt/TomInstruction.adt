@@ -1,7 +1,7 @@
 [
-  modulentry(Name("TomInstruction"),
-	[Name("TomSignature")],
-	[Type("Instruction"),Type("InstructionList")],
+  modulentry(name("TomInstruction"),
+	[name("TomSignature")],
+	[type("Instruction"),type("InstructionList")],
   [
   constructor(Instruction,TomTermToInstruction,TomTermToInstruction(<tom(TomTerm)>)),
   constructor(Instruction,TargetLanguageToInstruction,TargetLanguageToInstruction(<tl(TargetLanguage)>)),

@@ -1,7 +1,7 @@
 [
-  modulentry(Name("TomConstraint"),
-	[Name("TomSignature")],
-	[Type("Constraint"),Type("ConstraintList")],
+  modulentry(name("TomConstraint"),
+	[name("TomSignature")],
+	[type("Constraint"),type("ConstraintList")],
   [
   constructor(Constraint,Equal,Equal(<variable(TomTerm)>)),
   constructor(Constraint,AssignTo,AssignTo(<variable(TomTerm)>)),
