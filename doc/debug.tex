@@ -195,15 +195,15 @@ ideal debugger... What services could be expected from such a debugger?
 
 \subsection{Using the existing debugger of the target language}
 Once \TOM\ has generated the final source code, a first natural
-solution of debugging could be to use a debugger associated with the
+solution of debugging is to use a debugger associated with the
 used target language. Indeed, all the actual managed languages like
-\C, \Java\ or \Eiffel\ have their own debugger. They all
-offer breakpoints and stack analyses support, but, one of the major drawback of such
+\C, \Java\ or \Eiffel\ have their own debugger and they all
+offer breakpoints and stack analyses support.But, one of the major drawback of such
 method is a very low level of abstraction. Another one is the needs
 for the user to understand matching algorithm compiled code:
 this may be first not easy, nor wanted by the user. The user may like
-to debug at the original \TOM\ source code level that is much better structured for pattern
-matching algorithm analyses.
+to debug at the original \TOM\ source code level that is much better
+structured for pattern matching algorithm analyses.
 
 For example, a natural way of debugging a match construct could be to
 put a breakpoint on a patter-action and not somewhere in the if-then-else
@@ -212,6 +212,9 @@ and that the errors come from the way \TOM\ is used to make pattern matching.
 So, the target language debugger could be used to debug comppiled code
 by \TOM\ developers but it appears to be inefficient for debugging
 \TOM\ code.
+
+The debugger shall offer its services at \TOM\ source code level.
+
 
 \subsection{Rewriting rule step by step}
 Given a term (called subject) and a list a pairs pattern-action, the
@@ -233,6 +236,8 @@ is going to be evaluated, stop the evaluation and offer new services like:
   graphical tools
 \item Displaying the list of already done substitutions
 \end{itemize}
+
+
 \subsection{Follow the construction of specific terms}
 The backquote construct can be used to easily create a term.
 
@@ -246,6 +251,7 @@ created. In the other hand, when the result is not the expected one,
 the user may want to understand when and why the result term has been
 partly construct.
 
+
 \subsection{Graphical pretty printer}
 One of the main difficulties in term rewritting is the vizualization
 of a term. Indeed, terms become easily huge and basic textual pretty printer
@@ -258,11 +264,10 @@ for people not able to decode output of classical pretty printer.
 \newpage
 
 \section{How to debug \TOM\ program}
-
 \subsection{Developping a new debugger}
 As we see in the previous section, the debugging of \TOM\ code drive
 us to specify our own debugger. The next subsections shows the
-complexity of such a difficult way. 
+complexity and key questions of such a way. 
 
 \subsubsection{Code instrumentation and multiple
   target languages issues}
@@ -271,55 +276,47 @@ As the control about generated code is limited to compiling \TOM\
 constructs, then our control on general and debugging control is
 limited to this part.One solution is to enriched the generated code so
 that it contains more debugging information, for example the origin
-source code line in evaluation, but also it could be enriched but debugging
+source code line in evaluation, but also it could be enriched with debugging
 primitives... 
 
-The notion of debugging primitives could be either direct call to a
+The notion of debugging primitives could be either direct calls to a
 debugger objet either the generation of events/indirect call that will
-be catched by a debugger. This 2 solution leeds to 2 different approch:
+be catched by an external debugger instance. This 2 solution leeds to 2 different approch:
 \begin{itemize}
 \item The first approch made the debugger part of the program as an
-  internal component and this mean that we will have to create a
+  internal component and this means that we will have to create a
   debugger for each managed languages.
 \item The second one leeds to a external independant debugger
   in an environment where we have communication facilities (to catch
-  the event.). This way we can develop only one debugger and just
+  the event). This way we can develop only one debugger and just
   develop wrappers for each languages. 
 \end{itemize}
 The first approch leeds to an important issue is the sens that in this
 solution we will need to have a debugger instance for each target
 language. So, this approch seems to be impossible if we want to extend
-jtom to more languages. The second approch is the component view using
-a communication facilities that could hide the implementation of the debugger.
+\TOM\ to more languages. The second approch is a component view using
+communication facilities to hide the implementation of the
+debugger. This way is certainly better in term of development costs.
 
 \subsubsection{Initialization of the debugging session}
 
-One of the first issue is link to the fact that \TOM\ does not control
-all the final code. This means that for example in the main function
-of the program, the user will have to do some work to initialize the
-debugger. This intrusion in the user code has to be as ligth as possible.
+Another issue is link to the fact that \TOM\ does not control
+all the final code. This means that the main function
+of the program will have to do some work to initialize the
+debugger. This intrusion in the user code has to be as ligth as
+possible as it will be ask to \TOM\ user to insert it..
 
 For example. in \Java, this could be done by importing the debugging
-library and in the main function the initialization of a dubugger
+library (import jtom.debug.*) and in the main function the initialization of a dubugger
 object.
-In \C, there is a need for including a debug.h file, and maybe to link
-by hand with the library.
+In \C, this could be the includion a tomdebug.h file, and the link with a library.
  
 As each language has its specificity (\C\ allows conditional compiler
 directives), there is some crucial choice to made this initialization
 as simple.
+Again with a unique debugger, the use of wrapper should simplify this point.
 
-
-\subsubsection{User interface}
-For the user interface point of view, a textual interface could be
-sufficient if the debugger offers all necessary services. A graphical user
-interface as TIDE does could be a nice to have but must be seen has a
-new layer uppon the core debugger.
-
-So, the idea is to have a powerfull debugger without graphical
-interface. This could be a finalization of the debugger.
-
-\subsection{Debugging mechanism implementation}
+\subsubsection{Interaction with the debugger and debugging primitives}
 We can simplify the interaction between the program and the debugger
 into 2 categories:
 \begin{itemize}
@@ -334,7 +331,18 @@ but this way we loose one of the most important benefits of \TOM: the
 reuse of user definition. This means that as \TOM\ does, the debugger
 has to be able to manipulate user defined term. This also means that
 we have a generic way of sending/receiving such terms.
-\subsubsection{Interaction with the debugger}
+
+\subsubsection{User interface}
+A textual interface could be sufficient if the debugger offers all
+necessary services. A graphical user interface as TIDE does could be a
+nice to have but must be seen has a new layer uppon the core debugger.
+
+So, the idea is to have a powerfull debugger without graphical
+interface. A graphical user interface could be a finalization of the
+debugger but must not be a crucial point in the implementation choices..
+
+\subsection{Debugging mechanism implementation}
+
 \subsubsection{Debugging match and rule construct}
 
 \subsubsection{Watching terms}
