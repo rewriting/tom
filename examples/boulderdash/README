@@ -1,0 +1,28 @@
+Coordonate system for Java 2D and used Topology:
+
+ 0
+0*------------------------------------>
+ |		N
+ |		
+ |		|
+ |		|
+ |		|
+ |    W --------*-------- E
+ |		|
+ |		|
+ |		|
+ |		
+ |		S
+ |
+ Y
+
+* Term.adt describes the abstract data-type
+*  adt-to-java --input term.adt --jtom --package boulder.adt --output adt/boulder
+
+* jtom BoulderDashCore.t
+* javac *.java
+* java BoulderDash2D or appletviewer BoulderDash2d.java
+
+To run the applet needs to find classes for shared-objects, jjTraveler and ATerm-java... The jar file "boulder.jar" shall be used, see BoulderDashNTom.html .
+
+

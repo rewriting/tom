@@ -1,0 +1,6 @@
+[
+constructor(Position,pos,pos(<x(int)>,<y(int)>)),
+constructor(Bead,bead,bead(<pos(Position)>,<value(int)>))
+]
+ 
+  
