@@ -515,7 +515,7 @@ public abstract class TomAbstractGenerator {
       GetFunctionSymbolDecl(Variable(option,Name(name),
                                      Type(ASTTomType(type),tlType@TLType[])),
                             tlCode, _) -> {
-        buildGetFunctionSymbolDecl(type, name, tlType);
+        buildGetFunctionSymbolDecl(type, name, tlType, tlCode);
         return;
       }
       
@@ -524,14 +524,14 @@ public abstract class TomAbstractGenerator {
                      Variable(option2,Name(name2),
                               Type(ASTTomType(type2),tlType2@TLType[])),
                      tlCode, _) -> {
-        buildGetSubtermDecl(name1, name2, type1, tlType1, tlType2);
+        buildGetSubtermDecl(name1, name2, type1, tlType1, tlType2, tlCode);
         return;
       }
       
       IsFsymDecl(Name(tomName),
 		 Variable(option1,Name(name1), Type(ASTTomType(type1),tlType@TLType[])),
                  tlCode@TL[], _) -> {
-        buildIsFsymDecl(tomName, name1, tlType);
+        buildIsFsymDecl(tomName, name1, tlType, tlCode);
         return;
       }
  
@@ -539,138 +539,44 @@ public abstract class TomAbstractGenerator {
                   slotName=slotName,
                   variable=Variable(option1,Name(name1), Type(ASTTomType(type1),tlType@TLType[])),
                   tlCode=tlCode@TL[]] -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        String opname = tomSymbol.getAstName().getString();
-        TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
-        
-        int slotIndex = getSlotIndex(tomSymbol.getSlotList(),slotName);
-        TomTypeList l = typesList;
-        for(int index = 0; !l.isEmpty() && index<slotIndex ; index++) {
-          l = l.getTail();
-        }
-        TomType returnType = l.getHead();
-        
-	String argType;
-        if(strictType) {
-          argType = getTLCode(tlType);
-        } else {
-          argType = getTLType(getUniversalType());
-        }
-        generateTargetLanguage(out,deep, genDecl(getTLType(returnType),
-                                                 "tom_get_slot", opname  + "_" + slotName.getString(),
-                                                 new String[] { argType, name1 },
-                                                 tlCode));
+        buildGetSlotDecl(tomName, name1, tlType, tlCode);
         return;
       }
 
       CompareFunctionSymbolDecl(Variable(option1,Name(name1), Type(ASTTomType(type1),_)),
                                 Variable(option2,Name(name2), Type(ASTTomType(type2),_)),
                                 tlCode, _) -> {
-        TomType argType1 = getUniversalType();
-        if(isIntType(type1)) {
-          argType1 = getIntType();
-        } else if(isDoubleType(type2)) {
-          argType1 = getDoubleType();
-        }
-        TomType argType2 = getUniversalType();
-        if(isIntType(type2)) {
-          argType2 = getIntType();
-        } else if(isDoubleType(type2)) {
-          argType2 = getDoubleType();
-        }
-        
-        generateTargetLanguage(out,deep, genDecl(getTLType(getBoolType()), "tom_cmp_fun_sym", type1,
-                                                 new String[] {
-                                                   getTLType(argType1), name1,
-                                                   getTLType(argType2), name2
-                                                 },
-                                                 tlCode));
+        buildCompareFunctionSymbolDecl(name1, name2, type1, type2, tlCode);
         return;
       }
 
       TermsEqualDecl(Variable(option1,Name(name1), Type(ASTTomType(type1),_)),
                      Variable(option2,Name(name2), Type(ASTTomType(type2),_)),
                      tlCode, _) -> {
-        TomType argType1 = getUniversalType();
-        if(isIntType(type1)) {
-          argType1 = getIntType();
-        } else if(isDoubleType(type2)) {
-          argType1 = getDoubleType();
-        }
-        TomType argType2 = getUniversalType();
-        if(isIntType(type2)) {
-          argType2 = getIntType();
-        } else if(isDoubleType(type2)) {
-          argType2 = getDoubleType();
-        }
-
-        generateTargetLanguage(out,deep, genDecl(getTLType(getBoolType()), "tom_terms_equal", type1,
-                                                 new String[] {
-                                                   getTLType(argType1), name1,
-                                                   getTLType(argType2), name2
-                                                 },
-                                                 tlCode));
+        buildTermsEqualDecl(name1, name2, type1, type2, tlCode);
         return;
       }
       
       GetHeadDecl(Variable(option1,Name(name1), Type(ASTTomType(type),tlType@TLType[])),
                   tlCode@TL[], _) -> {
-        String argType;
-        if(strictType) {
-          argType = getTLCode(tlType);
-        } else {
-          argType = getTLType(getUniversalType());
-        }
-
-        generateTargetLanguage(out,deep,
-                               genDecl(getTLType(getUniversalType()),
-                                       "tom_get_head", type,
-                                       new String[] { argType, name1 },
-                                       tlCode));
+        buildGetHeadDecl(name1, type, tlType, tlCode);
         return;
       }
 
       GetTailDecl(Variable(option1,Name(name1), Type(ASTTomType(type),tlType@TLType[])),
                   tlCode@TL[], _) -> {
-        String returnType, argType;
-        if(strictType) {
-          returnType = getTLCode(tlType);
-          argType = getTLCode(tlType);
-        } else {
-          returnType = getTLType(getUniversalType());
-          argType = getTLType(getUniversalType());
-        }
-        
-        generateTargetLanguage(out,deep,
-                               genDecl(returnType, "tom_get_tail", type,
-                                       new String[] { argType, name1 },
-                                       tlCode));
+        buildGetTailDecl(name1, type, tlType, tlCode);
         return;
       }
 
       IsEmptyDecl(Variable(option1,Name(name1), Type(ASTTomType(type),tlType@TLType[])),
                   tlCode@TL[], _) -> {
-        String argType;
-        if(strictType) {
-          argType = getTLCode(tlType);
-        } else {
-          argType = getTLType(getUniversalType());
-        }
-
-        generateTargetLanguage(out,deep,
-                               genDecl(getTLType(getBoolType()),
-                                       "tom_is_empty", type,
-                                       new String[] { argType, name1 },
-                                       tlCode));
+        buildIsEmptyDecl(name1, type, tlType, tlCode);
         return;
       }
 
       MakeEmptyList(Name(opname), tlCode@TL[], _) -> {
-        generateTargetLanguage(out,deep,
-                               genDecl(getTLType(getUniversalType()),
-                                       "tom_make_empty", opname,
-                                       new String[] { },
-                                       tlCode));
+        buildMakeEmptyList(opname, tlCode);
         return;
       }
 
@@ -1326,56 +1232,14 @@ public abstract class TomAbstractGenerator {
     out.writeln(" + 1;");
   }
 
+  
   protected abstract void buildExitAction(TomNumberList numberList);
   protected abstract void buildReturn(Expression exp);
   protected abstract void buildSymbolDecl(String tomName);
   protected abstract void buildArraySymbolDecl(String tomName);
+  protected abstract void buildListSymbolDecl(int deep, String tomName);
 
-  protected abstract void buildListSymbolDecl(int deep, String tomName);{
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-    OptionList optionList = tomSymbol.getOption();
-    SlotList slotList = tomSymbol.getSlotList();
-    TomTypeList l = getSymbolDomain(tomSymbol);
-    TomType type1 = getSymbolCodomain(tomSymbol);
-    String name1 = tomSymbol.getAstName().getString();
-    if(cCode) {
-        // TODO: build an abstract declaration
-      int argno=1;
-      out.indent(deep);
-      if(!l.isEmpty()) {
-        out.write(getTLType(type1));
-        out.writeSpace();
-        out.write(name1);
-        if(!l.isEmpty()) {
-          out.writeOpenBrace();
-          while (!l.isEmpty()) {
-            out.write(getTLType(l.getHead()));
-            out.writeUnderscore();
-            out.write(argno);
-            argno++;
-            l = l.getTail() ;
-            if(!l.isEmpty()) {
-              out.writeComa();
-            }
-          }
-          out.writeCloseBrace();
-          out.writeSemiColon();
-        }
-      }
-      out.writeln();
-    } else if(jCode) {
-        // do nothing
-    } else if(eCode) {
-        // do nothing
-    }
-    
-      // inspect the optionList
-    generateOptionList(out, deep, optionList);
-      // inspect the slotlist
-    generateSlotList(out, deep, slotList);
-  }
-
-  protected void buildGetFunctionSymbolDecl(TomType type, String name, TomType tlType) {
+  protected void buildGetFunctionSymbolDecl(TomType type, String name, TomType tlType, TargetLanguage tlCode) {
     String args[];
     if(!strictType) {
       TomType argType = getUniversalType();
@@ -1400,7 +1264,7 @@ public abstract class TomAbstractGenerator {
                                    "tom_get_fun_sym", type,args,tlCode));
   }
 
-  protected abstract void buildGetSubtermDecl(String name1, String name2, TomType type1, TomType tlType1, TomType tlType2) {
+  protected abstract void buildGetSubtermDecl(String name1, String name2, TomType type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) {
     String args[];
     if(strictType || eCode) {
       args = new String[] { getTLCode(tlType1), name1,
@@ -1413,7 +1277,7 @@ public abstract class TomAbstractGenerator {
                                              args, tlCode));
   }
 
-  protected void buildIsFsymDecl(TomName tomName, String name1, TomType tlType) {
+  protected void buildIsFsymDecl(TomName tomName, String name1, TomType tlType, TargetLanguage tlCode) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     String opname = tomSymbol.getAstName().getString();
     
@@ -1431,5 +1295,130 @@ public abstract class TomAbstractGenerator {
                                          tlCode));
   }
 
+  protected void buildGetSlotDecl(String tomName, String name1, TomType tlType, TargetLanguage tlCode) {
+    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    String opname = tomSymbol.getAstName().getString();
+    TomTypeList typesList = tomSymbol.getTypesToType().getDomain();
+    
+    int slotIndex = getSlotIndex(tomSymbol.getSlotList(),slotName);
+    TomTypeList l = typesList;
+    for(int index = 0; !l.isEmpty() && index<slotIndex ; index++) {
+      l = l.getTail();
+    }
+    TomType returnType = l.getHead();
+    
+    String argType;
+    if(strictType) {
+      argType = getTLCode(tlType);
+    } else {
+      argType = getTLType(getUniversalType());
+    }
+    generateTargetLanguage(out,deep, genDecl(getTLType(returnType),
+                                             "tom_get_slot", opname  + "_" + slotName.getString(),
+                                             new String[] { argType, name1 },
+                                             tlCode));
+  }
 
+  protected void  buildCompareFunctionSymbolDecl(String name1, String name2, TomType type1, TomType type2, TargetLanguage tlCode) {
+    TomType argType1 = getUniversalType();
+    if(isIntType(type1)) {
+      argType1 = getIntType();
+    } else if(isDoubleType(type2)) {
+      argType1 = getDoubleType();
+    }
+    TomType argType2 = getUniversalType();
+    if(isIntType(type2)) {
+      argType2 = getIntType();
+    } else if(isDoubleType(type2)) {
+      argType2 = getDoubleType();
+    }
+    
+    generateTargetLanguage(deep, genDecl(getTLType(getBoolType()), "tom_cmp_fun_sym", type1,
+                                         new String[] {
+                                           getTLType(argType1), name1,
+                                           getTLType(argType2), name2
+                                         },
+                                         tlCode));
+  }
+
+  protected void buildTermsEqualDecl(String name1, String name2, TomType type1, TomType type2, TargetLanguage tlCode) {
+    TomType argType1 = getUniversalType();
+    if(isIntType(type1)) {
+      argType1 = getIntType();
+    } else if(isDoubleType(type2)) {
+      argType1 = getDoubleType();
+    }
+    TomType argType2 = getUniversalType();
+    if(isIntType(type2)) {
+      argType2 = getIntType();
+    } else if(isDoubleType(type2)) {
+      argType2 = getDoubleType();
+    }
+    
+    generateTargetLanguage(out,deep, genDecl(getTLType(getBoolType()), "tom_terms_equal", type1,
+                                             new String[] {
+                                               getTLType(argType1), name1,
+                                               getTLType(argType2), name2
+                                             },
+                                             tlCode));
+  }
+
+  protected void buildGetHeadDecl(String name1, TomType type, TomType tlType, TargetLanguage tlCode) {
+    String argType;
+    if(strictType) {
+      argType = getTLCode(tlType);
+    } else {
+      argType = getTLType(getUniversalType());
+    }
+    
+    generateTargetLanguage(deep,
+                           genDecl(getTLType(getUniversalType()),
+                                   "tom_get_head", type,
+                                   new String[] { argType, name1 },
+                                   tlCode));
+  }
+
+  protected void buildGetTailDecl(String name1, TomType type, TomType tlType, TargetLanguage tlCode) {
+    String returnType, argType;
+    if(strictType) {
+      returnType = getTLCode(tlType);
+      argType = getTLCode(tlType);
+    } else {
+      returnType = getTLType(getUniversalType());
+      argType = getTLType(getUniversalType());
+    }
+    
+    generateTargetLanguage(deep,
+                           genDecl(returnType, "tom_get_tail", type,
+                                   new String[] { argType, name1 },
+                                   tlCode));
+  }
+
+  protected void buildIsEmptyDecl(String name1, TomType type, TomType tlType, TargetLanguage tlCode) {
+    String argType;
+    if(strictType) {
+      argType = getTLCode(tlType);
+    } else {
+      argType = getTLType(getUniversalType());
+    }
+    
+    generateTargetLanguage(deep,
+                           genDecl(getTLType(getBoolType()),
+                                   "tom_is_empty", type,
+                                   new String[] { argType, name1 },
+                                   tlCode));
+  }
+
+  protected void buildMakeEmptyList(String opname, TargetLanguage tlCode);
+        generateTargetLanguage(out,deep,
+                               genDecl(getTLType(getUniversalType()),
+                                       "tom_make_empty", opname,
+                                       new String[] { },
+                                       tlCode));
+
+
+
+
+
+  
 } // class TomAbstractGenerator
