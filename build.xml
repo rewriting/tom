@@ -1,184 +1,181 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <project name="Ant for TOM" default="buildstable" basedir=".">
-    <description>
-      Build script using Ant offering checks, dists,
-      installation, and so on.
-      it aims at offering the same functionality as the
-      automake files included in the TOM source
-      distribution.
-      
-      To use this build file, install ant,
-      and just run ant in the current directory.
-      
-      You can modify certain default settings via
-      ant -Ddist="/home/yourdirectory"
-      for the various properties listed below.
-      
-      Author: Julien GUYON, LORIA
-      Created: August 06, 2003.
-    </description>
-    
-    <!-- set local properties for this build -->
-		<property file="local.properties"/>
-
-    <!-- current version of TOM -->
-    <property name="version" value="2.0beta"/>
-    
-    <!-- some used directory location -->
-    <property name="test" location="test"/>
-		<property name="utils" location="utils"/>
-		<property name="lib" location="lib"/>
-
-    <!-- for stable -->
-    <property name="stable.src" location="stable"/>
-  	<property name="stable.adt" location="stable/adt"/>
-    <property name="stable.mapping" location="stable/jtom/runtime/mapping"/>
-    <property name="stable.build" location="stable/build"/>
-      
-   	<!-- for devel (src) -->
-    <property name="src.src" location="src"/>
-  	<property name="src.adt" location="src/adt"/>
-  	<property name="src.mapping" location="src/jtom/runtime/mapping"/>
-    <property name="src.build" location="src/build"/>  	
-
-  		<!-- Property for Javac compilation
-				<property name="javacFailOnError" value="false"/>
-				<property name="javacDebugInfo" value="on"/>
-				<property name="javacSource" value="1.3"/>
-				<property name="javacTarget" value="1.2"/>
-			-->
-  	<property name="javacVerbose" value="false"/>
-  	
-  	<target name="preparesrc">
-  		<mkdir dir="${src.build}"/>
-  	</target>
-  	
-  	<target name="preparestable">
-  		<mkdir dir="${stable.build}"/>
-  	</target>
-
-		<!-- Define classpath for building shable and source	-->  		
-		<path id="stable.classpath">
-			<pathelement location="${atermjavajar}"/>
-			<pathelement location="${sharedobjectjar}"/>
-			<pathelement location="${jjtravelerjar}"/>
-			<pathelement location="${apigenjar}"/>
-			<pathelement location="${utils}"/>
-			<pathelement location="${stable.src}"/>
-			<fileset dir="${stable.adt}"><!-- ADT jar files -->
-				<include name="*.jar"/>
-			</fileset>
-			<fileset dir="${lib}">
-				<include name="*.jar"/>
-			</fileset>
-		</path>
+<project name="Ant for TOM" default="buildstable" basedir=".">
+	<description>
+		Build script using Ant offering checks, dists,
+		installation, and so on.
+		it aims at offering the same functionality as the
+		automake files included in the TOM source
+		distribution.
 		
-		<path id="src.classpath">
-			<pathelement location="${atermjavajar}"/>
-			<pathelement location="${sharedobjectjar}"/>
-			<pathelement location="${jjtravelerjar}"/>
-			<pathelement location="${apigenjar}"/>
-			<fileset dir="${lib}">
-				<include name="*.jar"/>
-			</fileset>
-			<pathelement location="${src.build}"/>
-		</path>
+		To use this build file, install ant,
+		and just run ant in the current directory.
+		
+		You can modify certain default settings via
+		ant -Ddist="/home/yourdirectory"
+		for the various properties listed below.
+		
+		Author: Julien GUYON, LORIA
+		Created: August 06, 2003.
+	</description>
+	
+	<!-- set local properties for this build -->
+	<property file="local.properties"/>
 
-		<!-- builds the custom tasks -->
-		<!-- tasks for building src -->
-		<target name="initTaskDef" depends="buildstable">
-			<javac srcdir="${utils}" destdir="${utils}">
-				<classpath refid="stable.classpath"/>
-			</javac>
-			<taskdef name="adt" classname="ApigenAntTask" classpathref="stable.classpath"/>
-			<taskdef name="tom" classname="TomAntTask">
-				<classpath>
-					<pathelement location="${utils}"/>
-					<pathelement path="${stable.classpath}"/>
-					<pathelement location="${stable.build}"/>
-					<!-- Try to fix things : nested pathelement path=${stable.cp} doesn't work-->
-					<fileset dir="${stable.adt}">
-						<include name="*.jar"/>
-					</fileset>
-					<pathelement location="${atermjavajar}"/>
-					<pathelement location="${sharedobjectjar}"/>
-					<pathelement location="${jjtravelerjar}"/>
-					<pathelement location="${apigenjar}"/>
-				</classpath>
-			</taskdef>
-		</target>
+	<!-- current version of TOM -->
+	<property name="version" value="2.0beta"/>
+	
+	<!-- some used directory location -->
+	<property name="test" location="test"/>
+	<property name="utils" location="utils"/>
+	<property name="lib" location="lib"/>
 
-		<!-- task for running tom.src -->
-		<target name="initsrc" depends="buildsrc">
-			<taskdef name="tomsrc" classname="TomAntTask">
-				<classpath>
-					<pathelement location="${utils}"/>
-					<pathelement path="${src.classpath}"/>
-					<pathelement location="${src.build}"/>
-					<!-- Try to fix things : nested pathelement path=${src.cp} doesn't work-->
-					<pathelement location="${atermjavajar}"/>
-					<pathelement location="${sharedobjectjar}"/>
-					<pathelement location="${jjtravelerjar}"/>
-					<pathelement location="${apigenjar}"/>
-				</classpath>
-			</taskdef>
-		</target>
+	<!-- for stable -->
+	<property name="stable.src" location="stable"/>
+	<property name="stable.adt" location="stable/adt"/>
+	<property name="stable.mapping" location="stable/jtom/runtime/mapping"/>
+	<property name="stable.build" location="stable/build"/>
+	
+	<!-- for devel (src) -->
+	<property name="src.src" location="src"/>
+	<property name="src.adt" location="src/adt"/>
+	<property name="src.mapping" location="src/jtom/runtime/mapping"/>
+	<property name="src.build" location="src/build"/>  	
 
-		<!-- compile tom files in src.src -->
-		<target name="buildtom" depends="initTaskDef, buildadt">
-			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${src.mapping} --noDeclaration">
-				<exclude name="**/TomBase.t"/>
-				<exclude name="**/TomBackQuoteParser.t"/>
-				<exclude name="**/runtime/**/*.t"/>	
-			</tom>
-			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${src.mapping}">
-				<include name="**/runtime/**/*.t"/>	
-				<include name="**/TomBase.t"/>
-				<include name="**/TomBackQuoteParser.t"/>	
-			</tom>
-		</target>
+	<!-- Property for Javac compilation
+			 <property name="javacFailOnError" value="false"/>
+			 <property name="javacDebugInfo" value="on"/>
+			 <property name="javacSource" value="1.3"/>
+			 <property name="javacTarget" value="1.2"/>
+	-->
+	<property name="javacVerbose" value="false"/>
 
-		<!-- builds the parser using javacc -->
-		<target name="buildparser">
-			<javacc 
-			 target="${src.src}/jtom/parser/TomParser.jj"
-			 javacchome="${javaccdir}" /> 
-		</target>
+	<path id="external.classpath">
+		<pathelement location="${atermjavajar}"/>
+		<pathelement location="${sharedobjectjar}"/>
+		<pathelement location="${jjtravelerjar}"/>
+		<pathelement location="${apigenjar}"/>
+	</path>
 
-		<target name="check.newer.adt">
-			<condition property="newer.adt">
-				<or>
-					<not><available file="${src.adt}/jtom/adt/"/></not>
-					<not><available file="${src.adt}/jtom/adt/"/></not>
-					<not><available file="${src.adt}/jtom/adt/"/></not>
-					<uptodate targetfile="${src.adt}/TomSignature.adt" srcfile="${src.adt}/jtom/adt/"/>
-					<uptodate targetfile="${src.adt}/TNode.adt" srcfile="${src.adt}/jtom/adt/"/>
-					<uptodate targetfile="${src.adt}/Set.adt" srcfile="${src.adt}/jtom/adt/"/>
-				</or>
-			</condition>
-		</target>
-  		
-		<!-- compile adt's -->
-		<target name="buildadt" depends="initTaskDef, preparesrc, check.newer.adt" if="newer.adt">
-			<adt file="${src.adt}/TomSignature.adt" 
-					 factory="TomSignature" 
-					 package="jtom.adt" 
-					 destdir="${src.adt}"/>
-			<adt file="${src.adt}/TNode.adt" 
-					 factory="TNode" 
-					 package="jtom.adt" 
-					 destdir="${src.adt}"/>
-			<adt file="${src.adt}/Set.adt" 
-					 factory="Set" 
-					 package="jtom.adt" 
-					 destdir="${src.adt}"/>
+	<!-- Define classpath for building shable and source	-->
+	<path id="stable.classpath">
+		<path refid="external.classpath"/>
+		<pathelement location="${utils}"/>
+		<pathelement location="${stable.src}"/>
+		<fileset dir="${stable.adt}"><!-- ADT jar files -->
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${lib}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<path id="src.classpath">
+		<path refid="external.classpath"/>
+		<fileset dir="${lib}">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="${src.build}"/>
+	</path>
+
+	<path id="tom.classpath">
+		<pathelement location="${utils}"/>
+		<path refid="stable.classpath"/>
+		<fileset dir="${stable.adt}">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="${stable.build}"/>
+	</path>
+
+	<path id="tomsrc.classpath">
+		<pathelement location="${utils}"/>
+		<path refid="src.classpath"/>
+		<pathelement location="${src.build}"/>
+	</path>
+
+	<target name="preparesrc">
+		<mkdir dir="${src.build}"/>
+	</target>
+	
+	<target name="preparestable">
+		<mkdir dir="${stable.build}"/>
+	</target>
+
+	<!-- builds and defines the custom tasks -->
+	<!-- tasks for building src -->
+	<target name="initTaskDef" depends="buildstable">
+		<javac srcdir="${utils}" destdir="${utils}">
+			<classpath refid="stable.classpath"/>
+		</javac>
+		<taskdef name="adt" classname="ApigenAntTask" classpathref="stable.classpath"/>
+		<!--<property name="cp.test" refid="tom.classpath"/>
+		<echo>tom classpath : ${cp.test}</echo>-->
+		<taskdef name="tom" classname="TomAntTask">
+			<classpath refid="tom.classpath"/>
+		</taskdef>
+	</target>
+
+	<!-- define task for running tom.src -->
+	<target name="initsrc" depends="buildsrc">
+		<taskdef name="tomsrc" classname="TomAntTask">
+			<classpath refid="tomsrc.classpath"/>
+		</taskdef>
+	</target>
+
+	<!-- compile tom files in src.src -->
+	<target name="buildtom" depends="initTaskDef, buildadt">
+		<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${src.mapping} --noDeclaration">
+			<exclude name="**/TomBase.t"/>
+			<exclude name="**/TomBackQuoteParser.t"/>
+			<exclude name="**/runtime/**/*.t"/>	
+		</tom>
+		<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${src.mapping}">
+			<include name="**/runtime/**/*.t"/>	
+			<include name="**/TomBase.t"/>
+			<include name="**/TomBackQuoteParser.t"/>	
+		</tom>
+	</target>
+
+	<!-- builds the parser using javacc -->
+	<target name="buildparser">
+		<javacc 
+		 target="${src.src}/jtom/parser/TomParser.jj"
+		 javacchome="${javaccdir}" /> 
+	</target>
+
+	<target name="check.newer.adt">
+		<condition property="newer.adt">
+			<or>
+				<not><available file="${src.adt}/jtom/adt/"/></not>
+				<not><available file="${src.adt}/jtom/adt/"/></not>
+				<not><available file="${src.adt}/jtom/adt/"/></not>
+				<uptodate targetfile="${src.adt}/TomSignature.adt" srcfile="${src.adt}/jtom/adt/"/>
+				<uptodate targetfile="${src.adt}/TNode.adt" srcfile="${src.adt}/jtom/adt/"/>
+				<uptodate targetfile="${src.adt}/Set.adt" srcfile="${src.adt}/jtom/adt/"/>
+			</or>
+		</condition>
+	</target>
+	
+	<!-- compile adt's -->
+	<target name="buildadt" depends="initTaskDef, preparesrc, check.newer.adt" if="newer.adt">
+		<adt file="${src.adt}/TomSignature.adt" 
+				 factory="TomSignature" 
+				 package="jtom.adt" 
+				 destdir="${src.adt}"/>
+		<adt file="${src.adt}/TNode.adt" 
+				 factory="TNode" 
+				 package="jtom.adt" 
+				 destdir="${src.adt}"/>
+		<adt file="${src.adt}/Set.adt" 
+				 factory="Set" 
+				 package="jtom.adt" 
+				 destdir="${src.adt}"/>
 	</target>
 
 	<target name="buildsrc" description="compile the TOM development sources" depends="preparesrc">
 		<antcall target="buildtom"/>
 		<antcall target="buildparser"/>
-		<!--<pathconvert targetos="unix" property="unixpath" refid="src.classpath" />
-    <echo>classpath = ${unixpath}</echo>-->
+		<!--<property name="unixpath" refid="src.classpath" />
+		<echo>classpath = ${unixpath}</echo>-->
 		<javac srcdir="${src.src}" destdir="${src.build}" verbose="${javacVerbose}">
 			<classpath refid="src.classpath"/>
 		</javac>
@@ -187,7 +184,7 @@
 	<target name="buildstable" description="compile the TOM stable sources" depends="preparestable">
 		<tstamp/>
 		<!--<pathconvert targetos="windows" property="windowspath" refid="stable.classpath"/>
-		<echo>classpath = ${windowspath}</echo>-->
+				 <echo>classpath = ${windowspath}</echo>-->
 		<!-- Compile the java code from ${stable} into ${stable} -->
 		<javac srcdir="${stable.src}" destdir="${stable.build}" verbose="${javacVerbose}">
 			<classpath refid="stable.classpath"/>
@@ -230,9 +227,15 @@
 	</target>
 
 	<target name="check" description="Compile and run acceptance tests" depends="initsrc">
-		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.runtime}/mapping">
+		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.mapping} -I ${src.adt}">
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
+			<exclude name="Record.t"/>
+			<exclude name="**/error/**"/>
+		</tomsrc>
+		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.mapping} --lazyType -I ${src.adt}">
+			<include name="Record.t"/>
+			<exclude name="**/error/**"/>
 		</tomsrc>
 	</target>
 
