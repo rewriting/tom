@@ -108,13 +108,13 @@ If you come from the
   Parallel version of the N-Queens problem
   Concept: strategy library, complex mapping
 
-* ProdRule
-  Implementation of Fibonacci in a Production rule style
-  Concept: Production rule, Rete
-
 * Poly
   Compute the derivative of a polynom
   Concept: mapping, apigen, generic traversal, rewrite system  
+
+* ProdRule
+  Implementation of Fibonacci in a Production rule style
+  Concept: Production rule, Rete
 
 * RBTree
   Red-Black Tree algorithm
