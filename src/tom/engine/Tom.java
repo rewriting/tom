@@ -25,7 +25,6 @@
 
 package jtom;
 
-import java.text.MessageFormat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -423,7 +422,7 @@ public class Tom {
     
     if(getInput().isHelp() || getInput().isVersion()) {
         // no need to do further work
-      return 0;
+      return 1;
     } else if(tom.inputFileList.isEmpty()) {
         System.out.println("No file to compile");
         usage();
@@ -442,6 +441,12 @@ public class Tom {
     for(Iterator it = tom.inputFileList.iterator() ; it.hasNext() ; ) {
       String inputFileName = (String)it.next();
       tom.run(inputFileName);
+      if (!Tom.environment().checkNoErrors("Tom.Main", 
+            getInput().isEclipseMode(), 
+            getInput().isWarningAll(), 
+            getInput().isNoWarning())) {
+        return 1;
+      }
     }
     
     if (!Tom.environment().checkNoErrors("Tom.Main", 
@@ -449,8 +454,7 @@ public class Tom {
           getInput().isWarningAll(), 
           getInput().isNoWarning())) {
       return 1;
-    } 
-    else {
+    } else {
       return 0;
     }
   }

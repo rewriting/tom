@@ -131,7 +131,7 @@ public class TomParser {
   }
 
 
-  private int getLine() {
+  public int getLine() {
     return  token.beginLine;
   }
 

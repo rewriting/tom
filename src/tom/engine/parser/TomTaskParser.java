@@ -25,20 +25,11 @@
 
 package jtom.parser;
 
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.tomsignature.types.instruction.RuleSet;
-import jtom.adt.tomsignature.types.instruction.Match;
 import jtom.exception.*;
 import jtom.tools.*;
 import jtom.TomMessage;
-import jtom.xml.Constants;
 
 public class TomTaskParser extends TomTask {
   TomParser parser;
@@ -88,16 +79,16 @@ public class TomTaskParser extends TomTask {
       environment().setTerm(parsedTerm);
       
     } catch (TokenMgrError e) {
-      TomEnvironment.getInstance().addError(TomMessage.getString("TokenMgrError"), new Object[]{fileName, e.getMessage()}, fileName,  TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().addError(TomMessage.getString("TokenMgrError"), new Object[]{fileName, e.getMessage()}, fileName,  parser.getLine(), TomMessage.TOM_ERROR);
     } catch (TomIncludeException e) {
-      TomEnvironment.getInstance().addError(e.getMessage(), fileName,  TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().addError(e.getMessage(), fileName,  parser.getLine(), TomMessage.TOM_ERROR);
     } catch (TomException e) {
-      TomEnvironment.getInstance().addError(e.getMessage(), fileName,  TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().addError(e.getMessage(), fileName,  parser.getLine(), TomMessage.TOM_ERROR);
     } catch (ParseException e) {
-      TomEnvironment.getInstance().addError(TomMessage.getString("TokenMgrError"), new Object[]{fileName, e.getMessage()}, fileName, TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().addError(TomMessage.getString("ParseException"), new Object[]{fileName, e.getMessage()}, fileName, parser.getLine(), TomMessage.TOM_ERROR);
     } catch (Exception e) {
       e.printStackTrace();
-      TomEnvironment.getInstance().addError(TomMessage.getString("UnhandledException"), new Object[]{fileName, e.getMessage()}, fileName, 0, TomMessage.TOM_ERROR);
+      TomEnvironment.getInstance().addError(TomMessage.getString("UnhandledException"), new Object[]{fileName, e.getMessage()}, fileName, TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
     }
   }
 
