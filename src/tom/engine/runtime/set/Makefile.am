@@ -13,7 +13,7 @@ java_JAVA       = $(BOOTSOURCES)
 JAVAROOT        = ${top_builddir}/src/
 
 CLEANFILES 	= SharedSet.java SharedMultiSet.java ATermSet.java
-EXTRA_DIST 	= $(BOOTSOURCES) SharedSet.t SharedMultiSet.t ATermSet.t
+EXTRA_DIST 	= $(BOOTSOURCES) SharedSet.t SharedMultiSet.t ATermSet.t set.adt
 
 BUILT_SOURCES   = SharedSet.java SharedMultiSet.java ATermSet.java
 
