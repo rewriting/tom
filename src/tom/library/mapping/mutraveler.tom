@@ -78,3 +78,10 @@
     make(p,q,first,then) { new tom.library.strategy.mutraveler.Pselect(p,q,(VisitableVisitor)first,(VisitableVisitor)then) }
   }
 
+/*
+  %op VisitableVisitor x() {
+    fsym {}
+    is_fsym(t) { false }
+    make { `MuVar("x") }
+  }
+*/
