@@ -77,7 +77,7 @@ public class TomKernelExpander extends TomBase {
           //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
         
         %match(TomTerm contextSubject, TomTerm subject) {
-          TomTypeToTomTerm(type@Type(tomType,glType)) , appl@Appl(Option(optionList),name@Name(strName),emptyTomList()) -> {
+          TomTypeToTomTerm(type@Type(tomType,glType)) , appl@Appl(Option(optionList),name@Name(strName),l) -> {
               //debugPrintln("expandVariable.1: Type(" + tomType + "," + glType + ")");
             Option orgTrack = findOriginTracking(optionList);
             Option option = `Option(replaceAnnotedName(optionList,type,orgTrack));
@@ -92,8 +92,9 @@ public class TomKernelExpander extends TomBase {
               tomSymbol = getSymbol(strName);
             }
             if(tomSymbol != null) {
-              return `Appl(option,name,emptyTomList());
-            } else {
+              TomList subterm = expandVariableList(tomSymbol, l);
+              return `Appl(option,name,subterm);
+            } else if(l.isEmpty()) {
               return `Variable(option,name,type);
             }
           }
@@ -220,6 +221,7 @@ public class TomKernelExpander extends TomBase {
            */
 
           //System.out.println("listOperator: " + symb);
+          //System.out.println("subjectList: " + subjectList);
           
           TomType domainType = typeList.getHead();
           while(!subjectList.isEmpty()) {

@@ -98,6 +98,18 @@ public class TomFactory extends TomBase {
     return term;
   }
 
+  public boolean isExplicitTermList(LinkedList childs) {
+    if(childs.size() == 1) {
+      TomTerm term = (TomTerm) childs.getFirst();
+      %match(TomTerm term) {
+        Appl[astName=Name(""),args=args] -> {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
   public LinkedList metaEncodeExplicitTermList(SymbolTable symbolTable, TomTerm term) {
     LinkedList list = new LinkedList();
     %match(TomTerm term) {

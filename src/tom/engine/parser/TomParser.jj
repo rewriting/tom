@@ -833,13 +833,14 @@ boolean ExplicitTermList(LinkedList list) throws TomException: /* in TOM mode */
   }
 }
 
+// This corresponds to the implicit notation
 boolean XMLTermList(LinkedList list) throws TomException: /* in TOM mode */
 {
   TomTerm term;
 }
 {
   ( term = AnnotedTerm() { list.add(term); } )*
-  { return false; }
+  { return true; }
 }
 
 boolean ImplicitPairList(LinkedList list) throws TomException: /* in TOM mode */
@@ -957,10 +958,16 @@ TomTerm XMLTerm(TomName astAnnotedName) throws TomException:
             return null;
           }
           if(implicit) {
-            optionList.add(tsf().makeOption_ImplicitXMLChild());
-          } else if(childs.size()==1) {
-              // Case: Appl(...,Name(""),args)
-            childs = tomFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
+              /*
+               * Special case
+               * when XMLChilds() is reduced to a singleton
+               *Appl(...,Name(""),args)
+               */
+            if(tomFactory.isExplicitTermList(childs)) {
+              childs = tomFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
+            } else {
+              optionList.add(tsf().makeOption_ImplicitXMLChild());
+            }
           }
           option = ast().makeOption(ast().makeOptionList(optionList));
           
@@ -1073,9 +1080,9 @@ boolean XMLAttributeList(LinkedList list) throws TomException: /* in TOM mode */
     text+=")";
     return false;
   }
-  |
+    | // XML notation is implicit
   ( term = XMLAttribute() { list.add(term); } )*
-  { return false; }
+  { return true; }
 }
 
 TomTerm XMLAttribute() throws TomException:

@@ -499,9 +499,9 @@ public class TomCompiler extends TomBase implements TomTask {
             TomTerm newElt = elt;
             %match(TomTerm elt) {
               appl@Appl[astName=Name(tomName2)] -> {
+                  //System.out.println("Abstract: " + appl);
                 TomSymbol tomSymbol2 = symbolTable().getSymbol(tomName2);
                 TomType type2 = tomSymbol2.getTypesToType().getCodomain();
-                  //System.out.println("Abstract: " + appl);
                 abstractedPattern.add(appl);
 
                 TomNumberList path = tsf().makeTomNumberList();
