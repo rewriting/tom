@@ -1,5 +1,5 @@
 # Generate API
-adt-to-tom --input seq.adt -n seq --nojar --javagen --package Propp
+adt-to-tom --input seq.adt -n SeqParser --nojar --javagen --package Propp
 # for building api and parser from sdf definition
 sdf2-to-adt -i Sequent.sdf.def -I -o Seauent.sdf.adt
 

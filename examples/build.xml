@@ -442,7 +442,7 @@
          package="${propp}" 
          destdir="${examples.gen}"/>
 		<!-- build parser -->
-		<antlr target="${propp.dir}/seq.g"
+		<antlr target="${propp.dir}/SeqParser.g"
 					 outputdirectory="${examples.gen}/${propp}">
 			<classpath>
 				<fileset dir="${propp.dir}">
@@ -555,7 +555,7 @@
           description="Builds the examples (at least some)"
 					depends="addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, peano, pnspk, poly, pqueens,
-          rbtree, set, xml">
+          propp, rbtree, set, xml">
   </target>
   
   <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">
@@ -698,6 +698,9 @@
 			<classpath>
 				<path refid="tom.classpath"/>
 				<pathelement location="${examples.build}"/>
+      <fileset dir="${examples.build}">
+        <include name="**/*.jar"/>
+      </fileset>
 			</classpath>
 			<batchtest>
 				<fileset dir="${examples.gen}">
