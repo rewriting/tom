@@ -639,8 +639,32 @@ public class TomKernelCompiler extends TomBase {
     if(annotedVariable != null) {
       body = `Let(annotedVariable,source,body);
     }
-    return `Let(dest,source,body);
+		// Take care of constraints
+		%match(TomTerm dest) {
+			(Variable|VariableStar)[constraints=conslist] -> {
+				while(!conslist.isEmpty()) {
+					body = buildConstraint(conslist.getHead(),dest,body);
+					conslist = conslist.getTail();
+				}
+			}
+			Variable[option=option1,astName=name1,astType=type1] -> {
+				dest = `Variable(option1,name1,type1,concConstraint());
+			}
+			VariableStar[option=option1,astName=name1,astType=type1] -> {
+				dest = `VariableStar(option1,name1,type1,concConstraint());
+			}
+		}
+		return `Let(dest,source,body);
   }
+
+	private Instruction buildConstraint(Constraint constr, TomTerm var, Instruction body) {
+		%match(Constraint constr) {
+			Equal(expr) -> {
+        body = `IfThenElse(EqualTerm(var,expr),body,Nop());
+			}
+		}
+		return body;
+	}
 
   private class MatchingParameter {
       /*
