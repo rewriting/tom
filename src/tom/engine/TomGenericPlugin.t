@@ -28,7 +28,7 @@ package jtom;
 import java.util.logging.*;
 import aterm.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.types.*;
 
 /**
  * TomGenericPlugin is an abstract class which provides some code to
@@ -43,7 +43,7 @@ import jtom.adt.options.types.*;
 public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
 
   %include{ adt/TomSignature.tom }
-  %include{ adt/Options.tom }
+  %include{ adt/PlatformOption.tom }
 
   /** The name of the plugin. */
   private String pluginName;
@@ -101,21 +101,21 @@ public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
   public abstract void run();
 
   /**
-   * Returns an empty TomOptionList. By default, the plugin is considered to declare no options.
+   * Returns an empty PlatformOptionList. By default, the plugin is considered to declare no options.
    *
-   * @return an empty TomOptionList
+   * @return an empty PlatformOptionList
    */
-  public TomOptionList declaredOptions() {
-    return `emptyTomOptionList;
+  public PlatformOptionList declaredOptions() {
+    return `emptyPlatformOptionList;
   }
 
   /**
-   * Returns an empty TomOptionList. By default, the plugin is considered to have no prerequisites.
+   * Returns an empty PlatformOptionList. By default, the plugin is considered to have no prerequisites.
    *
-   * @return an empty TomOptionList
+   * @return an empty PlatformOptionList
    */
-  public TomOptionList requiredOptions() {
-    return `emptyTomOptionList();
+  public PlatformOptionList requiredOptions() {
+    return `emptyPlatformOptionList();
   }
 
   /**

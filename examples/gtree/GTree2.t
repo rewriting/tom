@@ -31,7 +31,7 @@ package gtree;
 
 import aterm.*;
 import aterm.pure.*;
-import jtom.runtime.*;
+import tom.library.traversal.*;
 import gtree.term.*;
 import gtree.term.types.*;
 

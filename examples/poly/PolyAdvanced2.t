@@ -31,7 +31,7 @@ package poly;
 
 import aterm.*;
 import aterm.pure.*;
-import jtom.runtime.*;
+import tom.library.traversal.*;
 
 public class PolyAdvanced2 {
     

@@ -38,13 +38,13 @@ import jtom.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.types.*;
 import jtom.exception.*;
 
 public class TomMainParser extends TomGenericPlugin {
 
-    %include {  ../adt/TomSignature.tom }
-    %include{ Options.tom }
+    %include { adt/TomSignature.tom }
+    %include { adt/PlatformOption.tom }
     
     public static final String PARSED_SUFFIX = ".tfix.parsed"; // was previously in TomTaskInput
     public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table"; // was previously in TomTaskInput
@@ -58,8 +58,8 @@ public class TomMainParser extends TomGenericPlugin {
       super("TomMainParser");
     }
 
-    public TomOptionList declaredOptions() {
-    return `concTomOption(OptionBoolean("parse","","",True()) // activation flag
+    public PlatformOptionList declaredOptions() {
+    return `concPlatformOption(OptionBoolean("parse","","",True()) // activation flag
 			  );
     }
 

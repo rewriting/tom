@@ -1,15 +1,15 @@
-import jtom.runtime.xml.*;
-import jtom.adt.tnode.*;
-import jtom.adt.tnode.types.*;
+import tom.library.xml.*;
+import tom.library.adt.tnode.*;
+import tom.library.adt.tnode.types.*;
 import aterm.*;
-import jtom.runtime.*;
+import tom.library.traversal.*;
 import java.util.*;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class TestXml extends TestCase {
   
-  %include{ TNode.tom }
+  %include{ adt/TNode.tom }
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();

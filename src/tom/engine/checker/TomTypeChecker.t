@@ -5,15 +5,15 @@ import java.util.logging.*;
 import aterm.*;
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.types.*;
 
 /**
  * The TomTypeChecker plugin.
  */
 public class TomTypeChecker extends TomChecker {
 
-  %include { ../adt/TomSignature.tom }
-  %include{ ../adt/Options.tom }
+  %include { adt/TomSignature.tom }
+  %include { adt/PlatformOption.tom }
 
   public TomTypeChecker() {
     super("TomTypeChecker");

@@ -29,9 +29,10 @@ import java.util.*;
 import java.util.logging.*;
 import java.io.*;
 
-import jtom.adt.tnode.*;
-import jtom.adt.tnode.types.*;
-import jtom.runtime.xml.*;
+import tom.platform.*; 
+import tom.library.adt.tnode.*;
+import tom.library.adt.tnode.types.*;
+import tom.library.xml.*;
 
 import aterm.*;
 import aterm.pure.*;

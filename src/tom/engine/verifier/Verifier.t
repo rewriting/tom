@@ -30,7 +30,7 @@ import jtom.*;
 import aterm.*;
 import java.util.*;
 import jtom.tools.*;
-import jtom.runtime.*;
+import tom.library.traversal.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.verifier.verifier.il.*;
 import jtom.verifier.verifier.il.types.*;

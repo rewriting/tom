@@ -31,7 +31,7 @@ import java.util.HashSet;
 
 import jtom.TomBase;
 import jtom.adt.tomsignature.types.*;
-import jtom.runtime.Replace2;
+import tom.library.traversal.Replace2;
 import aterm.*;
 import jtom.exception.TomRuntimeException;
 

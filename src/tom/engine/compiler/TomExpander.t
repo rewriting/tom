@@ -4,8 +4,8 @@ import java.util.logging.*;
 
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.types.*;
-import jtom.runtime.Replace1;
+import tom.platform.adt.platformoption.types.*;
+import tom.library.traversal.Replace1;
 import aterm.*;
 import jtom.tools.*;
 import jtom.xml.Constants;
@@ -16,8 +16,8 @@ import jtom.exception.TomRuntimeException;
  */
 public class TomExpander extends TomGenericPlugin {
 
-  %include { ../adt/TomSignature.tom }
-  %include{ ../adt/Options.tom }
+  %include { adt/TomSignature.tom }
+  %include { adt/PlatformOption.tom }
 
   private TomKernelExpander tomKernelExpander;
   private TomFactory tomFactory;
@@ -67,8 +67,8 @@ public class TomExpander extends TomGenericPlugin {
     }
   }
 
-  public TomOptionList declaredOptions() {
-    return `concTomOption(OptionBoolean("expand","","",True()) // activationFlag
+  public PlatformOptionList declaredOptions() {
+    return `concPlatformOption(OptionBoolean("expand","","",True()) // activationFlag
 			  );
   }
 

@@ -23,21 +23,22 @@
  *
  **/
 
-package jtom;
+package tom.platform;
 
 import java.util.*;
 import java.util.logging.*;
 import java.io.*;
 
-import jtom.adt.tnode.*;
-import jtom.adt.tnode.types.*;
+import jtom.*;
+import tom.library.adt.tnode.*;
+import tom.library.adt.tnode.types.*;
 
-import jtom.adt.options.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.*;
+import tom.platform.adt.platformoption.types.*;
 
 import jtom.exception.*;
 
-import jtom.runtime.xml.*;
+import tom.library.xml.*;
 
 import jtom.tools.*;
 
@@ -49,10 +50,10 @@ import aterm.pure.*;
  *
  * @author Gr&eacute;gory ANDRIEN
  */
-public class TomOptionManager implements OptionManager, TomPluginOptions {
+public class PlatformOptionManager implements OptionManager, TomPluginOptions {
   
   %include{ adt/TNode.tom }
-  %include{ adt/Options.tom }
+  %include{ adt/PlatformOption.tom }
 
   /**
    * A list containing the owners of options (which implement TomPluginOptions).
@@ -62,12 +63,12 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
   /**
    * The global options.
    */    
-  private TomOptionList globalOptions;
+  private PlatformOptionList globalOptions;
 
   /**
    * This list is used solely to display the help message.
    */
-  private TomOptionList helpList;
+  private PlatformOptionList helpList;
 
   /**
    * A Map allowing to match option names and plugins.
@@ -92,7 +93,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
   /**
    *
    */
-  private OptionsFactory optionsFactory;
+  private PlatformOptionFactory platformOptionFactory;
 
   /**
    *
@@ -109,18 +110,18 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     return xtools.getTNodeFactory();
   }
 
-  private OptionsFactory getOptionsFactory() {
-    return optionsFactory;
+  private PlatformOptionFactory getPlatformOptionFactory() {
+    return platformOptionFactory;
   }
 
 
-  public TomOptionManager() {
+  public PlatformOptionManager() {
     optionOwners = new HashMap();
     optionTypes = new HashMap();
     optionValues = new HashMap();
     synonyms = new HashMap();
 
-    optionsFactory = OptionsFactory.getInstance(SingletonFactory.getInstance());
+    platformOptionFactory = PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
 
     logger = Logger.getLogger(getClass().getName());
   }
@@ -150,20 +151,20 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    * @return an array of String containing the names of the files to compile
    */
   public String[] optionManagement(String[] argumentList) {
-    helpList = `emptyTomOptionList(); // is initialized here and not in create() cause method isn't static
+    helpList = `emptyPlatformOptionList(); // is initialized here and not in create() cause method isn't static
 
     // collects the options/services provided by each plugin
     Iterator it = owners.iterator();
     while(it.hasNext()) {
       TomPluginOptions plugin = (TomPluginOptions)it.next();
 
-      TomOptionList list = plugin.declaredOptions();
-      helpList = `concTomOption(helpList*, list*);
+      PlatformOptionList list = plugin.declaredOptions();
+      helpList = `concPlatformOption(helpList*, list*);
      
       while(!(list.isEmpty())) {
-	  TomOption option = list.getHead();
+	  PlatformOption option = list.getHead();
 	  
-	  %match(TomOption option) {
+	  %match(PlatformOption option) {
 	      OptionBoolean[name=n, altName=an, valueB=v] 
 		  -> {
 		  optionOwners.put(n, plugin);
@@ -360,8 +361,8 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
 
     while(!(helpList.isEmpty()))
 	{
-            TomOption h = helpList.getHead();
-            %match(TomOption h)
+            PlatformOption h = helpList.getHead();
+            %match(PlatformOption h)
             {
               OptionBoolean(n, a, d, False()) ->
               {
@@ -423,9 +424,9 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    * @param list a list of options that must be found with the right value
    * @return true if every option was found with the right value, false otherwise
    */
-  private boolean arePrerequisitesMet(TomOptionList list) {
+  private boolean arePrerequisitesMet(PlatformOptionList list) {
       while(!(list.isEmpty())) {
-	  TomOption option = list.getHead();
+	  PlatformOption option = list.getHead();
 	  String optionName = option.getName();
 	
 	  if( option.isOptionBoolean() ) {
@@ -468,7 +469,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    * 
    * @return the global options
    */
-  public TomOptionList declaredOptions()
+  public PlatformOptionList declaredOptions()
   {
     return globalOptions;
   }
@@ -477,25 +478,25 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    * 
    * @return the prerequisites
    */
-  public TomOptionList requiredOptions()
+  public PlatformOptionList requiredOptions()
   {
-    TomOptionList prerequisites = `emptyTomOptionList();
+    PlatformOptionList prerequisites = `emptyPlatformOptionList();
 
     if( getOptionBooleanValue("debug") ) {
-      prerequisites = `concTomOption(OptionBoolean("jCode", "", "", True()), prerequisites*);
+      prerequisites = `concPlatformOption(OptionBoolean("jCode", "", "", True()), prerequisites*);
       // for the moment debug is only available for Java as target language
     }
 
     // options destdir and output are incompatible
 
     if( !getOptionStringValue("destdir").equals(".") ) {
-      prerequisites = `concTomOption(OptionString("output", "", "", "", ""), prerequisites*);
+      prerequisites = `concPlatformOption(OptionString("output", "", "", "", ""), prerequisites*);
       // destdir is not set at its default value -> it has been changed
       // -> we want output at its default value
     }
 
     if( !getOptionStringValue("output").equals("") ) {
-      prerequisites = `concTomOption(OptionString("destdir", "", "", ".", ""), prerequisites*);
+      prerequisites = `concPlatformOption(OptionString("destdir", "", "", ".", ""), prerequisites*);
       // output is not set at its default value -> it has been changed
       // -> we want destdir at its default value
     }
@@ -619,7 +620,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    * @param node the node containing the XML file
    */
   public void extractOptionList(TNode node) {
-    globalOptions = `emptyTomOptionList();
+    globalOptions = `emptyPlatformOptionList();
     %match(TNode node) {
       <server>opt@<options></options></server> -> {
 	%match(TNode opt) {
@@ -653,10 +654,10 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
       <OptionBoolean [name = n, altName = an, description = d, valueB = v] /> -> {
 	%match(String v) {
           ('true') -> { 
-	    globalOptions = `concTomOption(globalOptions*, OptionBoolean(n, an, d, True())); 
+	    globalOptions = `concPlatformOption(globalOptions*, OptionBoolean(n, an, d, True())); 
 	  }
 	  ('false') -> { 
-	    globalOptions = `concTomOption(globalOptions*, OptionBoolean(n, an, d, False())); 
+	    globalOptions = `concPlatformOption(globalOptions*, OptionBoolean(n, an, d, False())); 
 	  }
         }
       }
@@ -671,7 +672,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
   private void extractOptionInteger(TNode optionIntegerNode) {
     %match(TNode optionIntegerNode) {
       <OptionInteger [name = n, altName = an, description = d, valueI = v, attrName = at] /> -> {
-        globalOptions = `concTomOption(OptionInteger(n, an, d, Integer.parseInt(v), at), globalOptions*);
+        globalOptions = `concPlatformOption(OptionInteger(n, an, d, Integer.parseInt(v), at), globalOptions*);
       }
     }
   }
@@ -684,7 +685,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
   private void extractOptionString(TNode optionStringNode) {
     %match(TNode optionStringNode) {
       <OptionString [name = n, altName = an, description = d, valueS = v, attrName = at] /> -> {
-        globalOptions = `concTomOption(OptionString(n, an, d, v, at), globalOptions*);
+        globalOptions = `concPlatformOption(OptionString(n, an, d, v, at), globalOptions*);
       }
     }
   }

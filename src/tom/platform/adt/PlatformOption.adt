@@ -1,0 +1,13 @@
+[
+  modulentry(Name("PlatformOption"),[],[],
+  [
+  constructor(PlatformOption,OptionBoolean,OptionBoolean(<name(str)>,<altName(str)>,<description(str)>,<valueB(PlatformBoolean)>)),
+  constructor(PlatformOption,OptionInteger,OptionInteger(<name(str)>,<altName(str)>,<description(str)>,<valueI(int)>,<attrName(str)>)),
+  constructor(PlatformOption,OptionString,OptionString(<name(str)>,<altName(str)>,<description(str)>,<valueS(str)>,<attrName(str)>)),
+  
+  constructor(PlatformBoolean,True,True),
+  constructor(PlatformBoolean,False,False),
+  
+  list(PlatformOptionList,PlatformOption)
+  ])
+]

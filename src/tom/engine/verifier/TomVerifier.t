@@ -30,9 +30,10 @@ import jtom.*;
 import aterm.*;
 import java.util.*;
 import java.util.logging.*;
-import jtom.runtime.*;
+import tom.library.traversal.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.*;
+import tom.platform.adt.platformoption.types.*;
 import jtom.TomMessage;
 
 /**
@@ -40,8 +41,8 @@ import jtom.TomMessage;
  */
 public class TomVerifier extends TomGenericPlugin {
 
-  %include{ ../adt/TomSignature.tom }
-  %include{ ../adt/Options.tom }
+  %include{ adt/TomSignature.tom }
+  %include{ adt/PlatformOption.tom }
 
   protected Verifier verif;
 
@@ -95,8 +96,8 @@ public class TomVerifier extends TomGenericPlugin {
 	}
   }
 
-  public TomOptionList declaredOptions() {
-    return `concTomOption(OptionBoolean("verify", "", "Verify correctness of match compilation", False()) // activation flag
+  public PlatformOptionList declaredOptions() {
+    return `concPlatformOption(OptionBoolean("verify", "", "Verify correctness of match compilation", False()) // activation flag
 			  );
   }
 

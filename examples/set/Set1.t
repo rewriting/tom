@@ -36,8 +36,8 @@ import aterm.pure.*;
 import set.jgset.*;
 import set.jgset.types.*;
 
-import jtom.runtime.GenericTraversal;
-import jtom.runtime.Replace1;
+import tom.library.traversal.GenericTraversal;
+import tom.library.traversal.Replace1;
 import java.io.*;
 
 public class Set1 {

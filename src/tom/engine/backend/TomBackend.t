@@ -6,7 +6,7 @@ import java.util.logging.*;
 import aterm.*;
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.types.*;
 import jtom.tools.*;
 
 /**
@@ -14,8 +14,8 @@ import jtom.tools.*;
  */
 public class TomBackend extends TomGenericPlugin {
 
-  %include { ../adt/TomSignature.tom }
-  %include { ../adt/Options.tom }
+  %include { adt/TomSignature.tom }
+  %include { adt/PlatformOption.tom }
 
   private final static int defaultDeep = 2;
   private TomAbstractGenerator generator;
@@ -77,8 +77,8 @@ public class TomBackend extends TomGenericPlugin {
     }
   }
 
-  public TomOptionList declaredOptions() {
-    return `concTomOption(OptionBoolean("noOutput", "", "Do not generate code", False()), // desactivation flag
+  public PlatformOptionList declaredOptions() {
+    return `concPlatformOption(OptionBoolean("noOutput", "", "Do not generate code", False()), // desactivation flag
 			  OptionBoolean("jCode", "j", "Generate Java code", True()),
 			  OptionBoolean("cCode", "c", "Generate C code", False()),
 			  OptionBoolean("eCode", "e", "Generate Eiffel code", False()),

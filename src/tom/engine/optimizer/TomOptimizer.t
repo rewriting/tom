@@ -2,21 +2,21 @@ package jtom.optimizer;
 
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.types.*;
 import aterm.*;
 import java.util.*;
 import java.util.logging.*;
 import jtom.tools.*;
 import jtom.TomMessage;
-import jtom.runtime.*;
+import tom.library.traversal.*;
 
 /**
  * The TomOptimizer plugin.
  */
 public class TomOptimizer extends TomGenericPlugin {
 
-  %include{ ../adt/TomSignature.tom }
-  %include{ ../adt/Options.tom }
+  %include{ adt/TomSignature.tom }
+  %include{ adt/PlatformOption.tom }
 
   public static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
 
@@ -68,8 +68,8 @@ public class TomOptimizer extends TomGenericPlugin {
 	}
   }
 
-  public TomOptionList declaredOptions() {
-    return `concTomOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
+  public PlatformOptionList declaredOptions() {
+    return `concPlatformOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
 			  );
   }
 

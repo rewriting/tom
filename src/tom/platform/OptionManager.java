@@ -1,7 +1,7 @@
-package jtom;
+package tom.platform;
 
 import java.util.*;
-import jtom.adt.tnode.types.*;
+import tom.library.adt.tnode.types.*;
 
 /**
  *

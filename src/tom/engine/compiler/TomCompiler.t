@@ -4,9 +4,9 @@ import java.util.*;
 import java.util.logging.*;
 
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.types.*;
 
-import jtom.runtime.Replace1;
+import tom.library.traversal.Replace1;
 import jtom.tools.*;
 import jtom.TomMessage;
 import aterm.*;
@@ -18,8 +18,8 @@ import jtom.*;
  */
 public class TomCompiler extends TomGenericPlugin {
 
-  %include { ../adt/TomSignature.tom }
-  %include { ../adt/Options.tom }
+  %include { adt/TomSignature.tom }
+  %include { adt/PlatformOption.tom }
 
   private TomKernelCompiler tomKernelCompiler = new TomKernelCompiler();
   private TomFactory tomFactory = new TomFactory();
@@ -65,8 +65,8 @@ public class TomCompiler extends TomGenericPlugin {
     }
   }
   
-  public TomOptionList declaredOptions() {
-    return `concTomOption(OptionBoolean("compile","","",True()) // activationFlag
+  public PlatformOptionList declaredOptions() {
+    return `concPlatformOption(OptionBoolean("compile","","",True()) // activationFlag
 			  );
   }
 

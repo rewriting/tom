@@ -59,7 +59,8 @@
   <!-- for devel (src) -->
   <property name="src.src"      location="src"/>
   <property name="src.adt"      location="${src.src}/jtom/adt"/>
-  <property name="src.mapping"  location="${src.src}/jtom/runtime/mapping"/>
+  <property name="src.library"  location="${src.src}/tom/library"/>
+  <property name="src.mapping"  location="${src.src}/tom/library/mapping"/>
   <property name="src.gen"      location="${src.src}/gen"/>   
   <property name="src.build"    location="${src.src}/build"/>   
   <property name="src.dist"     location="${src.src}/dist"/>
@@ -158,7 +159,7 @@
     <mkdir dir="${src.doc}"/>
   </target>
 
-  <!-- target debut to help finding properties problems -->
+  <!-- target debug to help finding properties problems -->
   <target name="debug"> 
     <echoproperties/>
   </target>
@@ -208,7 +209,7 @@
       <include name="**/targetparse.g.t"/>  
     </tom>
     <tom config="${stable.configfile}"
-	 srcdir="${src.src}"
+				 srcdir="${src.src}"
          outputfile="${src.gen}/jtom/parser/bqparse.g"
          options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/bqparse.g.t"/>  
@@ -218,14 +219,16 @@
 				 srcdir="${src.src}" 
          destdir="${src.gen}" 
          options="-I ${src.mapping}">
+      <include name="tom/library/**/*.t"/> 
+      <include name="tom/platform/**/*.t"/> 
       <include name="**/runtime/**/*.t"/> 
       <include name="**/TomBase.t"/>
       <include name="**/Verifier.t"/>
       <include name="**/TomBackQuoteParser.t"/> 
       <include name="**/TomServer.t"/>
-      <include name="**/TomOptionManager.t"/>
       <include name="**/PluginFactory.t"/>
     </tom>
+
     <tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
          destdir="${src.gen}" 
@@ -235,7 +238,6 @@
       <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
       <exclude name="**/TomServer.t"/>
-      <exclude name="**/TomOptionManager.t"/>
       <exclude name="**/PluginFactory.t"/>
       <exclude name="**/runtime/**/*.t"/> 
       <exclude name="**/tomparse.g.t"/>
@@ -271,46 +273,29 @@
 
   <!-- compile adt's -->
   <target name="buildadt" depends="initTaskDef, prepare.src">
-	 	     <!--factory="TomSignature"-->
-    <!--<adt file="${src.adt}/TomSignature.adt" 
-         package="jtom.adt" 
-         destdir="${src.gen}"/>
-    <adt file="${src.adt}/TNode.adt" 
-         package="jtom.adt" 
-         destdir="${src.gen}"/>
-    <adt file="${src.adt}/Set.adt" 
-         package="jtom.adt" 
-         destdir="${src.gen}"/>
-    <adt file="${src.adt}/Options.adt" 
-         package="jtom.adt" 
-         destdir="${src.gen}"/>
-		-->
 		<adt srcdir="${src.src}"
-         package="jtom.adt" 
+         package="tom.library.adt" 
 				 destdir="${src.gen}">
-			<include name="jtom/adt/TNode.adt"/>
-			<include name="jtom/adt/Set.adt"/>
-			<include name="jtom/adt/Options.adt"/>
+			<include name="tom/library/adt/*.adt"/>
+		</adt>
+
+		<adt srcdir="${src.src}"
+         package="tom.platform.adt" 
+				 destdir="${src.gen}">
+			<include name="tom/platform/adt/*.adt"/>
 		</adt>
 
 		<adt srcdir="${src.src}"
          package="jtom.adt" 
          factory="tomsignature" 
 				 destdir="${src.gen}">
-			<include name="jtom/adt/TomSignature.adt"/>
-			<include name="jtom/adt/TomAlert.adt"/>
-			<include name="jtom/adt/TomName.adt"/>
-			<include name="jtom/adt/TomConstraint.adt"/>
-			<include name="jtom/adt/TomInstruction.adt"/>
-			<include name="jtom/adt/TomExpression.adt"/>
-			<include name="jtom/adt/TomDeclaration.adt"/>
-			<include name="jtom/adt/TomOption.adt"/>
-			<include name="jtom/adt/TomTerm.adt"/>
+			<include name="jtom/adt/*.adt"/>
 		</adt>
-    <copy todir="${src.mapping}">
-      <fileset dir="${src.gen}/jtom/adt" includes="*.tom">
-        <exclude name="TomSignature.tom"/>
-      </fileset>
+
+    <copy todir="${src.mapping}/adt">
+      <fileset dir="${src.gen}/tom/library/adt" includes="*.tom"/>
+      <fileset dir="${src.gen}/tom/platform/adt" includes="*.tom"/>
+      <fileset dir="${src.gen}/jtom/adt" includes="*.tom"/>
     </copy>
   </target>
 
@@ -327,6 +312,7 @@
       <src path="${src.src}"/>
       <src path="${src.gen}"/>
       <classpath refid="src.classpath"/>
+      <include name="tom/**/*.java"/>
       <include name="jtom/**/*.java"/>
 			<exclude name="jtom/**/Main.java"/>
     </javac>
@@ -463,25 +449,27 @@
     </chmod>
 
     <!-- tom library -->
-    <jar jarfile="${src.lib}/Set-${DSTAMP}.jar">
+		<!--
+			<jar jarfile="${src.lib}/Set-${DSTAMP}.jar">
+			<fileset dir="${src.build}" 
+			includes="tom/library/adt/set/**/*.class"/>
+			</jar>
+		-->
+    <jar jarfile="${src.lib}/tom-library-${DSTAMP}.jar">
       <fileset dir="${src.build}" 
-               includes="jtom/adt/set/**/*.class"/>
-    </jar>
-    <jar jarfile="${src.lib}/TNode-${DSTAMP}.jar">
-      <fileset dir="${src.build}" 
-               includes="jtom/adt/tnode/**/*.class"/>
+               includes="tom/library/**/*.class"/>
     </jar>
     <jar jarfile="${src.lib}/TomSignature-${DSTAMP}.jar">
       <fileset dir="${src.build}" 
                includes="jtom/adt/tomsignature/**/*.class"/>
     </jar>
-    <jar jarfile="${src.lib}/Options-${DSTAMP}.jar">
+    <jar jarfile="${src.lib}/plugin-platform-${DSTAMP}.jar">
       <fileset dir="${src.build}" 
-               includes="jtom/adt/options/**/*.class"/>
+               includes="tom/platform/**/*.class"/>
     </jar>
     <jar jarfile="${src.lib}/jtom-${DSTAMP}.jar">
       <fileset dir="${src.build}" 
-               includes="**/*.class"
+               includes="jtom/**/*.class"
                excludes="jtom/adt/**/*.class"/>
       <fileset dir="${src.src}" 
                includes="**/*.properties"/>
@@ -532,9 +520,11 @@
   <target name="clean.src" description="Purges the generated devel files" depends="clean.bootstrap">
     <delete dir="${src.gen}"/>
     <delete dir="${src.build}"/>
-    <delete file="${src.mapping}/Set.tom"/>
-    <delete file="${src.mapping}/TNode.tom"/>
-    <delete file="${src.mapping}/Options.tom"/>
+		<delete>
+			<fileset dir="${src.mapping}">
+				<include name="adt/*.tom"/>
+			</fileset>
+		</delete>
   </target>
 
   <target name="clean.bootstrap">
@@ -900,6 +890,7 @@
       <src path="${src.src}"/>
       <src path="${destination}/gen"/>
       <classpath refid="src.classpath"/>
+      <include name="tom/**/*.java"/>
       <include name="jtom/**/*.java"/>
       <exclude name="jtom/**/Main.java"/>
     </javac>

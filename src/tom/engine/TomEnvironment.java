@@ -34,8 +34,8 @@ import jtom.exception.*;
 
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.*;
+import tom.platform.adt.platformoption.types.*;
 
 import aterm.*;
 import aterm.pure.*;
@@ -92,7 +92,7 @@ public class TomEnvironment
     /**
      * 
      */
-    private OptionsFactory optionsFactory;
+    private PlatformOptionFactory platformOptionFactory;
 
     /**
      * An accessor method.
@@ -111,9 +111,9 @@ public class TomEnvironment
   /**
    * An accessor method.
    * 
-   * @return an OptionsFactory
+   * @return an PlatformOptionFactory
    */
-  public OptionsFactory getOptionsFactory() { return optionsFactory; }
+  public PlatformOptionFactory getPlatformOptionFactory() { return platformOptionFactory; }
 
   /**
    * Part of the Singleton pattern. The unique instance of the TomServer.
@@ -152,7 +152,7 @@ public class TomEnvironment
 
       instance.tomSignatureFactory = TomSignatureFactory.getInstance(SingletonFactory.getInstance());
       instance.astFactory = new ASTFactory(instance.tomSignatureFactory);
-      instance.optionsFactory = OptionsFactory.getInstance(SingletonFactory.getInstance());
+      instance.platformOptionFactory = PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
 		
       instance.symbolTable = new SymbolTable(instance.astFactory);
 

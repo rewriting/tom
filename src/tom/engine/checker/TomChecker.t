@@ -34,7 +34,7 @@ import java.util.logging.*;
 
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.runtime.Collect1;
+import tom.library.traversal.Collect1;
 import jtom.xml.Constants;
 import jtom.exception.*;
 import jtom.TomMessage;

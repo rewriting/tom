@@ -27,7 +27,7 @@ package jtom.compiler;
   
 import jtom.TomBase;
 import jtom.adt.tomsignature.types.*;
-import jtom.runtime.Replace1;
+import tom.library.traversal.Replace1;
 import aterm.*;
 import jtom.exception.TomRuntimeException;
 

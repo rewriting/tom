@@ -3,13 +3,14 @@ package jtom;
 import java.util.*;
 import java.util.logging.*;
 
-import jtom.adt.tnode.*;
-import jtom.adt.tnode.types.*;
+import tom.library.adt.tnode.*;
+import tom.library.adt.tnode.types.*;
 
-import jtom.adt.options.*;
-import jtom.adt.options.types.*;
+import tom.platform.*;
+import tom.platform.adt.platformoption.*;
+import tom.platform.adt.platformoption.types.*;
 
-import jtom.runtime.xml.*;
+import tom.library.xml.*;
 
 import aterm.*;
 import aterm.pure.*;
@@ -44,10 +45,10 @@ import aterm.pure.*;
 public class PluginFactory implements TomPlugin {
 
   %include{ adt/TNode.tom }
-  %include{ adt/Options.tom }
+  %include{ adt/PlatformOption.tom }
 
-  private TomOptionList allDeclaredOptions;
-  private TomOptionList allRequiredOptions;
+  private PlatformOptionList allDeclaredOptions;
+  private PlatformOptionList allRequiredOptions;
   private Map flagOwners;
   private ATerm termToRelay;
 
@@ -60,16 +61,16 @@ public class PluginFactory implements TomPlugin {
     return (new XmlTools()).getTNodeFactory();
   }
 
-  private OptionsFactory getOptionsFactory() {
-    return OptionsFactory.getInstance(SingletonFactory.getInstance());
+  private PlatformOptionFactory getPlatformOptionFactory() {
+    return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
   }
 
   private OptionManager getOM() { return TomServer.getInstance().getOptionManager(); }
   private TomEnvironment environment() { return TomEnvironment.getInstance(); }
 
   public PluginFactory(String name, String xmlFile) {
-    allDeclaredOptions = `emptyTomOptionList();
-    allRequiredOptions = `emptyTomOptionList();
+    allDeclaredOptions = `emptyPlatformOptionList();
+    allRequiredOptions = `emptyPlatformOptionList();
     flagOwners = new HashMap();
 
     pluginName = name;
@@ -109,13 +110,13 @@ public class PluginFactory implements TomPlugin {
     while( it.hasNext() ) {
       TomPlugin plugin = (TomPlugin)it.next();
 
-      TomOptionList declaredList = plugin.declaredOptions();
-      allDeclaredOptions = `concTomOption(allDeclaredOptions*, declaredList*);
+      PlatformOptionList declaredList = plugin.declaredOptions();
+      allDeclaredOptions = `concPlatformOption(allDeclaredOptions*, declaredList*);
       String flagName = declaredList.getHead().getName();
       flagOwners.put(flagName, plugin);
 
-      TomOptionList requiredList = plugin.requiredOptions();
-      allRequiredOptions = `concTomOption(allRequiredOptions*, requiredList*);
+      PlatformOptionList requiredList = plugin.requiredOptions();
+      allRequiredOptions = `concPlatformOption(allRequiredOptions*, requiredList*);
     }
   }
 
@@ -149,11 +150,11 @@ public class PluginFactory implements TomPlugin {
     }
   }
 
-  public TomOptionList declaredOptions() {
+  public PlatformOptionList declaredOptions() {
     return allDeclaredOptions;
   }
 
-  public TomOptionList requiredOptions() {
+  public PlatformOptionList requiredOptions() {
     Iterator it = flagOwners.keySet().iterator();
 	
     while( it.hasNext() ) { // for all plugins
@@ -165,7 +166,7 @@ public class PluginFactory implements TomPlugin {
 	while( it.hasNext() ) {
 	  String name = (String)it.next();
 	  if( !name.equals(flagName) ) // require that the other aren't
-	    allRequiredOptions = `concTomOption(OptionBoolean(name, "", "", False()), allRequiredOptions*);
+	    allRequiredOptions = `concPlatformOption(OptionBoolean(name, "", "", False()), allRequiredOptions*);
 	}
       }
     }

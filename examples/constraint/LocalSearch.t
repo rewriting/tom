@@ -29,7 +29,7 @@
 
 import aterm.*;
 import aterm.pure.*;
-import jtom.runtime.*;
+import tom.library.traversal.*;
 import adt.localsearch.*;
 import adt.localsearch.types.*;
 

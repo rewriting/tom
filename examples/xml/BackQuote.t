@@ -29,14 +29,14 @@
 
 package xml;
 
-import jtom.runtime.xml.*;
-import jtom.adt.tnode.*;
-import jtom.adt.tnode.types.*;
+import tom.library.xml.*;
+import tom.library.adt.tnode.*;
+import tom.library.adt.tnode.types.*;
 import aterm.*;
 
 public class BackQuote {
   
-  %include{ TNode.tom }
+  %include{ adt/TNode.tom }
     
   private XmlTools xtools;
  

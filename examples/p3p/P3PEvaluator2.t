@@ -29,16 +29,16 @@
 
 package p3p;
 
-import jtom.runtime.xml.*;
-import jtom.adt.tnode.*;
-import jtom.adt.tnode.types.*;
+import tom.library.xml.*;
+import tom.library.adt.tnode.*;
+import tom.library.adt.tnode.types.*;
 import aterm.*;
-import jtom.runtime.*;
+import tom.library.traversal.*;
 import java.util.*;
 
 public class P3PEvaluator2 {
    
-  %include{ TNode.tom }
+  %include{ adt/TNode.tom }
  
   private GenericTraversal traversal;
   public P3PEvaluator2() {

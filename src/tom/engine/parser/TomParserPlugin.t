@@ -30,7 +30,7 @@ import java.io.*;
 import aterm.*;
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.types.*;
 import jtom.exception.*;
 import jtom.tools.*;
 
@@ -40,8 +40,8 @@ import java.util.logging.*;
  * The TomParser plugin.
  */
 public class TomParserPlugin extends TomGenericPlugin {
-  %include { ../adt/TomSignature.tom }
-  %include{ ../adt/Options.tom }
+  %include { adt/TomSignature.tom }
+  %include { adt/PlatformOption.tom }
 
   private TomParser parser;
   private String fileName;
@@ -153,8 +153,8 @@ public class TomParserPlugin extends TomGenericPlugin {
     return parser.getLine();
   }
 
-  public TomOptionList declaredOptions() {
-    return `concTomOption(OptionBoolean("parse","","",True()) // activation flag
+  public PlatformOptionList declaredOptions() {
+    return `concPlatformOption(OptionBoolean("parse","","",True()) // activation flag
 			  );
   }
 }

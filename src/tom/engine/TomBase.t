@@ -32,13 +32,13 @@ import aterm.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.adt.options.*;
-import jtom.runtime.*;
+import tom.platform.adt.platformoption.*;
+import tom.library.traversal.*;
 import jtom.exception.TomRuntimeException;
 
 public class TomBase {
   %include { adt/TomSignature.tom }
-  %include { adt/Options.tom }
+  %include { adt/PlatformOption.tom }
 
   private TomList empty;
   private GenericTraversal traversal;
@@ -52,16 +52,16 @@ public class TomBase {
     return environment().getASTFactory();
   }
 
-  protected OptionsFactory getOptionsFactory() {
-    return environment().getOptionsFactory();
-  }
-
   protected TomSignatureFactory tsf() {
     return environment().getTomSignatureFactory();
   }
 
   protected final TomSignatureFactory getTomSignatureFactory() {
     return tsf();
+  }
+
+  protected final PlatformOptionFactory getPlatformOptionFactory() {
+    return environment().getPlatformOptionFactory();
   }
 
   protected TomEnvironment environment() {
@@ -86,25 +86,25 @@ public class TomBase {
       getServer().putOptionValue(key, value);
   }
 
-    public GenericTraversal traversal() {
-			return this.traversal;
-    }
+  public GenericTraversal traversal() {
+    return this.traversal;
+  }
 
-    protected SymbolTable symbolTable() {
-	return environment().getSymbolTable();
-    }
+  protected SymbolTable symbolTable() {
+    return environment().getSymbolTable();
+  }
 
-    public TomType getUniversalType() {
-	return symbolTable().getUniversalType();
-    }
-
-    protected TomNumber makeNumber(int n) {
-	return tsf().makeTomNumber_Number(n);
-    }
-
-    protected OptionList emptyOption() {
-	return ast().makeOption();
-    }
+  public TomType getUniversalType() {
+    return symbolTable().getUniversalType();
+  }
+  
+  protected TomNumber makeNumber(int n) {
+    return tsf().makeTomNumber_Number(n);
+  }
+  
+  protected OptionList emptyOption() {
+    return ast().makeOption();
+  }
 
     protected TomList empty() {
 	return empty;

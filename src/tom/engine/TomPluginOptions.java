@@ -25,7 +25,7 @@
 
 package jtom;
 
-import jtom.adt.options.types.*;
+import tom.platform.adt.platformoption.types.*;
 
 /**
  * This interface contains the option-related methods of TomPlugin.
@@ -39,7 +39,7 @@ public interface TomPluginOptions {
    *
    * @return the options declared by the plugin
    */
-  public abstract TomOptionList declaredOptions();
+  public abstract PlatformOptionList declaredOptions();
 
   /**
    * Returns a list containing the options the plugin requires in order
@@ -49,7 +49,7 @@ public interface TomPluginOptions {
    *
    * @return the plugin's prerequisites
    */
-  public abstract TomOptionList requiredOptions();
+  public abstract PlatformOptionList requiredOptions();
 
   /**
    * Sets the option whose name is given to the specified value.

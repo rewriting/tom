@@ -31,7 +31,7 @@ package minirho;
 
 import aterm.*;
 import aterm.pure.*;
-import jtom.runtime.*;
+import tom.library.traversal.*;
 import minirho.rho.rhoterm.*;
 import minirho.rho.rhoterm.types.*;
 
