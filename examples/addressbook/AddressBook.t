@@ -2,8 +2,8 @@ package AddressBook;
 
 import aterm.*;
 import aterm.pure.*;
-import adt.address.data.*;
-import adt.address.data.types.*;
+import AddressBook.data.*;
+import AddressBook.data.types.*;
 
 import java.util.Iterator;
 import java.util.HashSet;
@@ -12,7 +12,7 @@ public class AddressBook {
   private Factory factory;
 
   private HashSet book;
-  
+
   %include { data.tom }
   
   public AddressBook(Factory factory) {
@@ -26,7 +26,6 @@ public class AddressBook {
   public final static void main(String[] args) {
     AddressBook test = new AddressBook(new Factory(new PureFactory()));
     test.run();
-    System.out.println("res = " + test.checkHappyBirthday());
   }
   
   public void run() {
@@ -56,23 +55,6 @@ public class AddressBook {
     set.add(`person("Marie","Muller",date(1986,3,26)));
     set.add(`person("Paul","Muller",date(2000,1,27)));
 	}
-
-  public boolean checkHappyBirthday() {
-    book = new HashSet();
-    generatePerson(book);
-    boolean res = true;
-    Iterator it = book.iterator();
-    while(it.hasNext()) {
-      Person p = (Person) it.next();
-      Date d = p.getBirthdate();
-      %match(Person p, Date d) {
-        person(firstname, _ ,date(year,month1,day1)), date(_,month2,day2) -> {
-            //res = res && (month1==month2) && (day1==day2);
-        }  			  
-      }
-    }
-    return res;
-  }
 
 }
 

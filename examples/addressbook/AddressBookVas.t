@@ -2,13 +2,13 @@ package AddressBook;
 
 import aterm.*;
 import aterm.pure.*;
-import person.*;
-import person.types.*;
+import AddressBook.person.*;
+import AddressBook.person.types.*;
 
 public class AddressBookVas {
   private Factory factory;
 
-  %vas ( "--javagen -n person" ) {
+  %vas ( "--javagen -n person -p AddressBook" ) {
       //
       // extension of adt syntax
       //
@@ -20,7 +20,7 @@ public class AddressBookVas {
 
     abstract syntax
       date( day:Int, month:Int, year:Int ) -> Date
-      person( birthdate:Date ,lastname:String, firstname:String) -> Person
+      person(firstname:String,lastname:String, birthdate:Date) -> Person
       concPerson( Person* ) -> PersonList
       bob -> Person
       alice() -> Person
