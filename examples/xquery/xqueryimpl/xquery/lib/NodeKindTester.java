@@ -27,7 +27,6 @@ public class NodeKindTester extends NodeTester
   public static final int DEFAULT_NODE = DOCUMENT_NODE + 1000;
 
 
-  public static final int 
 
 
   public NodeKindTester(int nodekind) 

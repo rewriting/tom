@@ -10,8 +10,12 @@ import xquery.lib.data.type.XQueryTypeException;
 
 
 
-public class PathExpresstion {
+public class PathExpresstion extends Expression{
 
 
-
+  // filter 
+  public Sequence evaluate() 
+  {
+	
+  }
 }
