@@ -607,6 +607,24 @@
 		</ant>
 	</target>
 
+	<target name="examples.stable" 
+					description="Build and test examples with jtom-stable" 
+					depends="dist.stable">
+		<ant dir="${examples}" target="clean"/>
+		<ant dir="${examples}" target="junit">
+			<property name="tom.home" location="${stable.dist}"/>
+		</ant>
+	</target>
+
+	<target name="examples.src" 
+					description="Build and test examples with jtom-source" 
+					depends="dist.src">
+		<ant dir="${examples}" target="clean"/>
+		<ant dir="${examples}" target="junit">
+			<property name="tom.home" location="${stable.src}"/>
+		</ant>
+	</target>
+
 	<target name="fixcrlf">
 		<fixcrlf srcdir="${basedir}"
 						 eol="unix" 
