@@ -23,8 +23,8 @@ import aterm.pure.*;
  *
  * @author Gr&eacute;gory ANDRIEN
  */
-public class TomOptionManager extends TomBase implements TomPluginOptions {
-  %include{ adt/TomSignature.tom }
+public class TomOptionManager extends TomBase implements OptionManager, TomPluginOptions {
+  
   %include{ adt/TNode.tom }
   %include{ adt/Options.tom }
 
@@ -73,66 +73,20 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
     return xtools.getTNodeFactory();
   }
 
-  /**
-   * Part of the Singleton pattern. The unique instance of the TomServer.
-   */
-  private static TomOptionManager instance = null;
-    
-  /**
-   * Part of the Singleton pattern. A protected constructor method, that exists to defeat instantiation.
-   */
-  protected TomOptionManager(){}
-    
-  /**
-   * Part of the Singleton pattern. Returns the instance of the TomServer if it has been initialized before,
-   * otherwise it throws a TomRuntimeException.
-   * 
-   * @return the instance of the TomServer
-   * @throws TomRuntimeException if the TomServer hasn't been initialized before the call
-   */
-  public static TomOptionManager getInstance()
-  {
-    if(instance == null)
-	    {
-        throw new TomRuntimeException(TomMessage.getString("GetInitializedTomOptionManagerInstance"));
-	    }
-    return instance;
+  public TomOptionManager() {
+    optionOwners = new HashMap();
+    optionTypes = new HashMap();
+    optionValues = new HashMap();
+    synonyms = new HashMap();
   }
 
-  /**
-   * Part of the Singleton pattern. Initializes the TomServer in case it hasn't been done before,
-   * otherwise it reinitializes it.
-   * 
-   * @return the instance of the TomServer
-   */
-  public static TomOptionManager create(List plugins) {
-    if(instance == null) {
-        instance = new TomOptionManager();
+  public void setPlugins(List plugins) {
+    owners = new Vector();
+    owners.add(this);
+    owners.addAll(plugins);
 
-        instance.owners = new Vector();
-	instance.owners.add(instance);
-	instance.owners.add(plugins);
-
-	instance.optionOwners = new HashMap();
-	instance.optionTypes = new HashMap();
-	instance.optionValues = new HashMap();
-	instance.synonyms = new HashMap();
-
-        return instance;
-    } else {
-        TomOptionManager.clear();
-        return instance;
-    }
-  }
-
-  /**
-   * Reinitializes the TomServer instance.
-   */
-  public static void clear() {
-    instance.optionOwners = new HashMap();
-    instance.optionTypes = new HashMap();
-    instance.optionValues = new HashMap();
-    instance.synonyms = new HashMap();
+//     for(int i=0; i<owners.size(); i++)
+// 	System.out.println(owners.get(i));
   }
 
   /**
@@ -150,7 +104,7 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
    * @param argumentList the command line
    * @return an array of String containing the names of the files to compile
    */
-  private String[] optionManagement(String[] argumentList) {
+  public String[] optionManagement(String[] argumentList) {
     helpList = `emptyTomOptionList(); // is initialized here and not in create() cause method isn't static
 
     // collects the options/services provided by each plugin
@@ -160,7 +114,7 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
 
       TomOptionList list = plugin.declaredOptions();
       helpList = `concTomOption(helpList*, list*);
-
+     
       while(!(list.isEmpty())) {
 	  TomOption option = list.getHead();
 	  
@@ -211,7 +165,7 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
 	  list = list.getTail();
       }
     }
-
+    
     // set options accordingly to the arguments given in input
     String[] inputFiles = processArguments(argumentList);
 
@@ -239,7 +193,7 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
    * @param optionName the name of the option we're looking information about
    * @return
    */
-  public TomPluginOptions getOptionsOwner(String optionName) {
+  private TomPluginOptions getOptionsOwner(String optionName) {
     return (TomPluginOptions)optionOwners.get(optionName);
   }
 
@@ -249,7 +203,7 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
    * @param optionName the name of the option we're looking information about
    * @return
    */
-  public String getOptionsType(String optionName) {
+  private String getOptionsType(String optionName) {
     return (String)optionTypes.get(optionName);
   }
 
@@ -361,7 +315,7 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
   /**
    * Self-explanatory. Displays an help message indicating how to use the compiler.
    */
-  public void displayHelp()
+  private void displayHelp()
   {
     String beginning = "\nusage :"
 	    + "\n\ttom [options] input[.t] [... input[.t]]"
@@ -416,7 +370,7 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
    * @param list a list of options that must be found with the right value
    * @return true if every option was found with the right value, false otherwise
    */
-  public boolean arePrerequisitesMet(TomOptionList list) {
+  private boolean arePrerequisitesMet(TomOptionList list) {
       while(!(list.isEmpty())) {
 	  TomOption option = list.getHead();
 	  String optionName = option.getName();
@@ -521,7 +475,7 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
    * @param argumentList
    * @return an array containing the name of the input files
    */
-  public String[] processArguments(String[] argumentList)
+  private String[] processArguments(String[] argumentList)
   {
     List inputFiles = new Vector();
     StringBuffer imports = new StringBuffer();
@@ -640,6 +594,7 @@ public class TomOptionManager extends TomBase implements TomPluginOptions {
    */
   public void extractOptionList(TNode node)
   {
+    globalOptions = `emptyTomOptionList();
     %match(TNode node)
     {
       <tom>opt@<options></options></tom> -> {
