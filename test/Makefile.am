@@ -10,16 +10,16 @@ javadir         = ${prefix}/test
 JAVAROOT        = ${top_builddir}/test
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(top_builddir)/src:$(top_builddir)/src/adt:$(top_builddir)/stable:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
-source_java     = Peano.t\
-		  List.t\
-		  Array.t\
-		  TestMatch.t\
-		  TestList.t\
-		  TestBuiltin.t\
-		  Xml.t\
+source_java     = Peano.t \
+		  List.t \
+		  Array.t \
+		  TestMatch.t \
+		  TestList.t \
+		  TestBuiltin.t \
+		  Xml.t \
 		  Record.t
 
-source_c        = cfib1.t\
+source_c        = cfib1.t \
                   loulou.t
 
 check_JAVA      = $(source_java:.t=.java)
@@ -29,7 +29,7 @@ PROGS           = cfib1 loulou
 TESTS           = $(foreach t, ${check_JAVA}, $t.test) \
                   $(PROGS)
 
-EXTRA_DIST      = $(source_java) $(source_c)
+EXTRA_DIST      = $(source_java) $(source_c) $(check_JAVA)
 
 %.java.test : %.java Makefile
 	@(echo '#! /bin/sh';\
@@ -47,7 +47,7 @@ noinst_PROGRAMS         = $(PROGS)
 cfib1_SOURCES           = cfib1.tom.c
 loulou_SOURCES          = loulou.tom.c
 
-BUILT_SOURCES   = $(check_JAVA)\
+BUILT_SOURCES   = $(check_JAVA) \
 		  cfib1.tom.c loulou.tom.c
 
 # we use the last compiled compiler to compile the testsuite

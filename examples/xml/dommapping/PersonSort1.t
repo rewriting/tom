@@ -9,7 +9,7 @@ import java.io.File;
 public class PersonSort1 {
   private Document dom;  
 
-  %include{ DOMTOM.tom }
+  %include{ dom.tom }
     
 
   public static void main (String args[]) {

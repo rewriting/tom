@@ -18,7 +18,7 @@ import javax.xml.parsers.*;
  */
 public class domtomTest {
 
-  %include{DOMTOM.tom}
+  %include{dom.tom}
 
 		
   private Document dom;

@@ -25,7 +25,7 @@ public class PersonSort2 {
    
   private Document dom;
 
-  %include{DOMTOM.tom}
+  %include{dom.tom}
 
  
   public static void main (String args[]) {

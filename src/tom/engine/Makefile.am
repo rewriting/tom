@@ -2,61 +2,64 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS = adt jtom
-JARFILE = jtom-devel.jar
-JARVERSIONFILE = jtom-devel-${VERSION}.jar
-data_DATA  = 
-CLEANFILES = ${JARFILE} ${JARVERSIONFILE}
+SUBDIRS         = runtime tools exception xml parser checker compiler backend debug verifier
 
-EXTRA_DIST = TODO ALGO 
+TSADT_SRC	= ${top_srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar:${top_srcdir}/stable/adt/TomSignature-${VERSION}.jar
 
-bootstep:
-	@cd jtom && $(MAKE) clean
-	@$(MAKE) 
-	@$(MAKE) install
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(TSADT_SRC):$$CLASSPATH
+
+javadir         = ${prefix}/classes/jtom
+
+stabledir 	= $(top_srcdir)/stable/jtom
+BOOTSOURCES	= Tom.java TomBase.java TomEnvironment.java
+java_JAVA       = $(BOOTSOURCES)
+
+JAVAROOT        = ${top_builddir}/src
+EXTRA_DIST 	= $(BOOTSOURCES) TomBase.t
+CLEANFILES 	= TomBase.java
+BUILT_SOURCES   = TomBase.java
 
 
-BOOTSTRAPDIR     = jtom
-BOOTSTRAPDIRCOPY = tmp/jtom.bootstrap
 
-bootstrap:
-	@$(MAKE) clean
-	@cd adt && $(MAKE) install
 
-	@echo
-	@echo "BOOTSTRAPPING PHASE 1"
-	@echo
-	$(MAKE) bootstep
 
-	@echo
-	@echo "BOOTSTRAPPING PHASE 2"
-	@echo
-	@$(MAKE) bootstep
-	@rm -rf $(BOOTSTRAPDIRCOPY)
-	@$(INSTALL) -d $(BOOTSTRAPDIR) $(BOOTSTRAPDIRCOPY)
-	@cp -rp $(BOOTSTRAPDIR)/* $(BOOTSTRAPDIRCOPY)/
 
-	@echo
-	@echo "BOOTSTRAPPING PHASE 3"
-	@echo
-	@$(MAKE) bootstep
 
-	@echo
-	@echo "BOOTSTRAPPING CHECK"
-	@echo "-------------------"
-	@diff -r $(BOOTSTRAPDIR) $(BOOTSTRAPDIRCOPY)
-	@rm -rf $(BOOTSTRAPDIRCOPY)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 bootinstall:
+	$(mkinstalldirs) $(stabledir)
+	cp -f $(BOOTSOURCES) $(stabledir)
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-jar: ${JARFILE}
+TomBase.java: TomBase.t $(JAVAROOT)/adt/TomSignature.tom
+	$(TOM) $(TOMFLAGS) $<
 
-${JARFILE}: ${JARVERSIONFILE}
-	cp ${JARVERSIONFILE} ${JARFILE}
+# we use the last installed compiler to compile the current compiler
+TOMFLAGS = --noWarning
+TOM = ${top_builddir}/utils/jtom
 
-${JARVERSIONFILE}:
-	 jar cf ${JARVERSIONFILE} \
-	`cd ${top_builddir}/src && find . -name '*.class'`
+%.java : %.t
+	$(TOM) $(TOMFLAGS) $*
