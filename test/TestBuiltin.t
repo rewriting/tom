@@ -29,7 +29,6 @@ public class TestBuiltin {
   %include { int.tom }  
   %include { double.tom }  
   %include { string.tom }  
-  %include { char.tom }  
 
   %typeterm E {
     implement { ATerm }
