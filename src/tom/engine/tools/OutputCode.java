@@ -99,7 +99,6 @@ public class OutputCode {
   
   public void writeln() throws IOException {
     if(pretty) {
-      System.out.println("pretty:"+pretty+" singleLine"+singleLine);
       file.write('\n');
     }
   }

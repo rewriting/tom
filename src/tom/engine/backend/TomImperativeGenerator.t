@@ -201,8 +201,8 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
   protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
-		output.write(" = (" + getTLCode(tlType) + ") ");
-		generateExpression(deep,exp);
+    output.write(" = (" + getTLCode(tlType) + ") ");
+    generateExpression(deep,exp);
     output.writeln(";");
     if(debugMode && !list.isEmpty()) {
       output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
@@ -279,20 +279,6 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
 		output.writeln(deep,"}");
   }
 
-  protected void buildAssignVarExp(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp) throws IOException {
-    output.indent(deep);
-    generate(deep,var);
-		output.write(" = (" + getTLCode(tlType) + ") ");
-    generateExpression(deep,exp);
-    output.writeln(";");
-    if(debugMode && !list.isEmpty()) {
-      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
-      generate(deep,var);
-      output.write("\", ");
-      generate(deep,var); // generateExpression(out,deep,exp);
-      output.write(");");
-    }
-  }
   protected abstract void buildExitAction(int deep, TomNumberList numberList) throws IOException;
 
   protected void buildReturn(int deep, TomTerm exp) throws IOException {

@@ -206,21 +206,6 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		output.writeln(deep,"end;");
   }
 
-  protected void buildAssignVarExp(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp) throws IOException {
-    output.indent(deep);
-    generate(deep,var);
-		output.write(" := ");
-    generateExpression(deep,exp);
-    output.writeln(";");
-    if(debugMode && !list.isEmpty()) {
-      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
-      generate(deep,var);
-      output.write("\", ");
-      generate(deep,var); // generateExpression(out,deep,exp);
-      output.writeln(");");
-    }
-  }
-
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
       System.out.println("ExitAction: Eiffel code not yet implemented");
       throw new TomRuntimeException(new Throwable("ExitAction: Eiffel code not yet implemented"));

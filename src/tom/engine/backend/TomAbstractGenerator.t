@@ -350,8 +350,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Assign(var@Variable(list,name1,
-                          Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
+      Assign(var@(Variable|VariableStar)(list,name1,
+                          Type(ASTTomType(type),tlType@TLType[])),exp) -> {
         buildAssignVar(deep, var, list, type, tlType, exp);
         return;
       }
@@ -365,7 +365,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Let(var@Variable(list,name1,Type(tomType@ASTTomType(type),tlType@TLType[])),exp,body) -> {
+      Let(var@(Variable|VariableStar)(list,name1,Type(ASTTomType(type),tlType@TLType[])),exp,body) -> {
         buildLet(deep, var, list, type, tlType, exp, body);
         return;
       }
@@ -399,12 +399,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       DoWhile(succesList,exp) -> {
         buildDoWhile(deep, succesList,exp);
-        return;
-      }
-
-      Assign(var@VariableStar(list,name1,
-                              Type(ASTTomType(type),tlType@TLType[])),exp) -> {
-        buildAssignVarExp(deep, var, list, tlType, exp);
         return;
       }
 
@@ -896,7 +890,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 	output.writeln(");");
   }
   
-  protected abstract void buildAssignVarExp(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp) throws IOException ;
 
   protected void buildIncrement(int deep, TomTerm var) throws IOException {
     generate(deep,var);
