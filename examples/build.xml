@@ -225,7 +225,9 @@
       <include name="${builtin}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+    <javac destdir="${examples.build}">
+			<src path="${examples.dir}"/>
+			<src path="${examples.gen}"/>
       <classpath refid="tom.classpath"/>
       <include name="${builtin}/**/*.java"/>
     </javac>
@@ -544,6 +546,10 @@
         <include name="${caml}/tomExtension.ml"/>
         <include name="${caml}/tomList.ml"/>
 
+        <include name="${cell}/*.t"/>
+        <include name="${cell}/*.java"/>
+        <include name="${cell}/*.gif"/>
+
         <include name="${dom}/README"/>
         <include name="${dom}/*.t"/>
         <include name="${dom}/*.adt"/>
@@ -644,6 +650,10 @@
 			<batchtest>
 				<fileset dir="${examples.gen}">
 					<include name="**/Test*.java"/>
+				</fileset>
+				<fileset dir="${examples.dir}">
+					<include name="**/Test*.java"/>
+					<exclude name="gen/**/*"/>
 				</fileset>
 			</batchtest>
 		</tomjunit>
