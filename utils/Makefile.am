@@ -11,7 +11,7 @@ tom_signature=${TOMSIGNATURE}
 
 
 TSJAR=TomSignature-${VERSION}.jar
-SETJAR=set-${VERSION}.jar
+SETJAR=Set-${VERSION}.jar
 TNODEJAR=TNode-${VERSION}.jar
 
 
