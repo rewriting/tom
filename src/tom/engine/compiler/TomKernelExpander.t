@@ -113,7 +113,6 @@ public class TomKernelExpander extends TomBase {
               TomSymbol tomSymbol = getSymbolFromName(`tomName);
               TomType symbolType = getSymbolCodomain(tomSymbol);
               TomTerm newLhs = `Term(expandVariable(contextSubject,lhs));
-              TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
               // build the list of variables that occur in the lhs
               HashSet set = new HashSet();
               collectVariable(set,newLhs);
@@ -121,40 +120,70 @@ public class TomKernelExpander extends TomBase {
               InstructionList newCondList = `emptyInstructionList();
               while(!`condList.isEmpty()) {
                 Instruction cond = `condList.getHead();
-                Instruction newCond = expandVariableInstruction(`Tom(varList),cond);
+
+                Instruction newCond = replaceInstantiatedVariableInstruction(`varList,cond);
+                newCond = expandVariableInstruction(contextSubject,newCond);
+
                 newCondList = `manyInstructionList(newCond,newCondList);
                 collectVariable(set,newCond); 
                 varList = getAstFactory().makeList(set);
                 `condList = `condList.getTail();
               }
+
+              TomTerm newRhs = replaceInstantiatedVariable(`varList,rhs);
+              newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),newRhs));
               
               return `RewriteRule(newLhs,newRhs,newCondList,option);
             }
           } // end match
         } else if(subject instanceof Instruction) {
           %match(TomTerm contextSubject, Instruction subject) {
-            Tom(varList), MatchingCondition[lhs=lhs@Appl[nameList=(Name(lhsName),_*)],
-                                            rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
+            context, MatchingCondition[lhs=lhs@Appl[nameList=(Name(lhsName))],
+                                       rhs=rhs@Variable[astName=Name(rhsName), astType=type]] -> {
+              // rhs is a variable
+              TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+              return `MatchingCondition(newLhs,rhs);
+            }
+
+            context, MatchingCondition[lhs=lhs@Appl[nameList=(Name(lhsName),_*)],
+                                       rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
                TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
                TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
                TomType type;
-              
+               // rhs is an application
                if(lhsSymbol != null) {
                  type = getSymbolCodomain(lhsSymbol);
                } else if(rhsSymbol != null) {
                  type = getSymbolCodomain(rhsSymbol);
                } else {
-                 // both lhs and rhs are variables
-                 // since lhs is a fresh variable, we look for rhs
-                 type = getTypeFromVariableList(`Name(rhsName),`varList);
+                 // lhs is a variable, but rhs has an unknown top symbol
+                 // since lhs is a fresh variable, we look for rhs type
+                 throw new TomRuntimeException("rhs has an unknown sort: " + `rhsName);
                }
               
                TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
                TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
                return `MatchingCondition(newLhs,newRhs);
-             }
+            }
+
+            context, EqualityCondition[lhs=lhs@Variable[astName=Name(lhsName), astType=type],
+                                       rhs=rhs@Variable[astName=Name(rhsName), astType=type]] -> {
+              return `TypedEqualityCondition(type,lhs,rhs);
+            }
+
+            context, EqualityCondition[lhs=lhs@Variable[astName=Name(lhsName), astType=type],
+                                       rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
+              TomTerm newRhs = `expandVariable(TomTypeToTomTerm(type),rhs);
+              return `TypedEqualityCondition(type,lhs,newRhs);
+            }
+
+            context, EqualityCondition[lhs=lhs@Appl[nameList=(Name(lhsName))],
+                                       rhs=rhs@Variable[astName=Name(rhsName), astType=type]] -> {
+              TomTerm newLhs = `expandVariable(TomTypeToTomTerm(type),lhs);
+              return `TypedEqualityCondition(type,newLhs,rhs);
+            }
             
-            Tom(varList), EqualityCondition[lhs=lhs@Appl[nameList=(Name(lhsName))],
+            context, EqualityCondition[lhs=lhs@Appl[nameList=(Name(lhsName))],
                                             rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
                TomSymbol lhsSymbol = getSymbolFromName(`lhsName);
                TomSymbol rhsSymbol = getSymbolFromName(`rhsName);
@@ -165,8 +194,8 @@ public class TomKernelExpander extends TomBase {
                } else if(rhsSymbol != null) {
                  type = getSymbolCodomain(rhsSymbol);
                } else {
-                 // both lhs and rhs are variables
-                 type = getTypeFromVariableList(`Name(lhsName),`varList);
+                 // lhs and rhs have an unknown top symbol
+                 throw new TomRuntimeException("lhs and rhs have an unknown sort: " + `lhsName + ",  " + `rhsName);
                }
               
                //System.out.println("EqualityCondition type = " + type);
@@ -354,7 +383,10 @@ public class TomKernelExpander extends TomBase {
     return null;
   }
  
-
+  /*
+   * perform type inference of subterms (subjectList) 
+   * under a given operator (subject) 
+   */
   private TomList expandVariableList(TomSymbol subject, TomList subjectList) {
     if(subject == null) {
       throw new TomRuntimeException("expandVariableList: null subject");
@@ -442,6 +474,35 @@ public class TomKernelExpander extends TomBase {
       }
     }
   }
+
+  protected Replace2 replace_replaceInstantiatedVariable = new Replace2() { 
+      public ATerm apply(ATerm subject, Object arg1) {
+        TomList instantiatedVariable = (TomList)arg1;
+
+        if(instantiatedVariable == null) {
+          throw new TomRuntimeException("replaceInstantiatedVariable: null instantiatedVariable");
+        }
+
+        if(subject instanceof TomTerm) {
+          %match(TomList instantiatedVariable, TomTerm subject) {
+            concTomTerm(_*,var@Variable[astName=opNameAST] ,_*), Appl[nameList=(opNameAST),args=concTomTerm()] -> {
+              return var;
+            }
+          }
+        }
+
+        return traversal().genericTraversal(subject,this,instantiatedVariable);
+      } // end apply
+    }; // end new
+
+
+  protected TomTerm replaceInstantiatedVariable(TomList instantiatedVariable, TomTerm subject) {
+    return (TomTerm) replace_replaceInstantiatedVariable.apply(subject,instantiatedVariable); 
+  }
+  protected Instruction replaceInstantiatedVariableInstruction(TomList instantiatedVariable, Instruction subject) {
+    return (Instruction) replace_replaceInstantiatedVariable.apply(subject,instantiatedVariable); 
+  }
+
 
   /*
    * updateSymbol is called after a first syntax expansion phase

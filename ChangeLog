@@ -1,3 +1,11 @@
+2005-03-10  pem  <pem@polly.loria.fr>
+
+	* src/jtom/parser/TomJavaParser.g: 
+	  - allows definition of get_head, get_tail, and is_empty inside %oplist definitions
+	* src/jtom/compiler/TomKernelExpander.t: 
+	  - extend type-infrence algorithm to expand already instantiated
+	    variables under an unknown operator
+
 2004-10-30  pem  <pem@becky.local>
 
 	* src/jtom/compiler/TomExpander.t: removed BackQuoteXML
