@@ -30,6 +30,7 @@
   <property name="examples.build" location="build"/>
 
   <property name="tomconfigfile" location="${tom.home}/Tom.xml"/>
+  <property name="vasconfigfile" location="${tom.home}/Vas.xml"/>
 
   <!-- Examples to build and distribute -->
   <property name="addressbook" value="addressbook"/>
@@ -153,6 +154,9 @@
     <taskdef name="tom" 
              classname="jtom.tools.ant.TomTask"
              classpathref="tom.classpath"/>
+		<taskdef name="vas" 
+						 classname="vas.ant.VasTask" 
+						 classpathref="tom.classpath"/>
     <taskdef name="tomantlr" 
              classname="org.apache.tools.ant.taskdefs.optional.ANTLR">
       <classpath refid="tom.classpath"/>
@@ -825,14 +829,12 @@
   </target>
 
   <target name="structure" depends="init">
-    <!-- build adt -->
-    <adt srcdir="${examples.dir}"
-         factory="term" 
-				 visitable="true"
-         package="${structure}" 
-         destdir="${examples.gen}">
-			<include name="${structure}/**/*.adt"/>
-	</adt>			 
+    <!-- build adt -->		
+		<vas file="${examples.dir}/${structure}/Struct.vas"
+			   options="-X ${vasconfigfile}"
+				 package="${structure}" 
+				 destdir="${examples.gen}">
+		</vas> 
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 

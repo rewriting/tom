@@ -30,7 +30,7 @@
 	<property name="stable.mapping" location="${stable.src}/tom/library/mapping"/>
 	<property name="stable.build"   location="${stable.src}/build"/>
 	<property name="stable.dist"    location="${stable.src}/dist"/>
-	<property name="stable.doc"    location="${stable.src}/doc"/>
+	<property name="stable.doc"     location="${stable.src}/doc"/>
 	<property name="stable.lib"     location="${stable.src}/lib"/>
 
 	<!--some used directory location  for devel -->
@@ -40,7 +40,7 @@
 	<property name="src.gen"      location="${src.src}/gen"/>   
 	<property name="src.build"    location="${src.src}/build"/>   
 	<property name="src.dist"     location="${src.src}/dist"/>
-	<property name="src.doc"     location="${src.src}/doc"/>
+	<property name="src.doc"      location="${src.src}/doc"/>
 	<property name="src.lib"      location="${src.src}/lib"/>
 	
 	<!-- for distribution: top, stable and src -->
@@ -61,8 +61,10 @@
 	<property name="test.build"   location="${test}/build"/>
 
 	<!-- the configuration files -->
-	<property name="src.configfile"     location="${utils}/Tom.src.xml"/>    
-	<property name="stable.configfile"  location="${utils}/Tom.xml"/>    
+	<property name="src.configfile"       location="${utils}/Tom.src.xml"/>    
+	<property name="stable.configfile"    location="${utils}/Tom.xml"/>    
+	<property name="stable.vasconfigfile" location="${stable.lib}/Vas.xml"/>    
+	<property name="src.vasconfigfile"    location="${src.lib}/Vas.xml"/>    
 
 	<!-- Aircube bundle -->
 	<property name="bundle.temp.dir" value="bundle"/>
@@ -292,7 +294,7 @@
 
 		<!-- adt for the verifier -->
 		<vas file="${src.src}/jtom/verifier/il.vas"
-			   options="-X ${stable.lib}/Vas.xml"
+			   options="-X ${stable.vasconfigfile}"
 				 package="jtom.verifier" 
 				 destdir="${src.gen}">
 		</vas>
@@ -356,6 +358,7 @@
 		</antcall>
 		<!-- Tom config file -->
 		<copy tofile="${stable.dist}/Tom.xml" file="${stable.configfile}"/>
+		<copy tofile="${stable.dist}/Vas.xml" file="${stable.vasconfigfile}"/>
 		<!-- "tom binary" -->
 		<copy todir="${stable.dist.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${stable.dist.bin}" file="${utils}/tom.bat"/>
@@ -447,6 +450,7 @@
 		</antcall>
 		<!-- "tom config file" -->
 		<copy tofile="${src.dist}/Tom.xml" file="${src.configfile}"/>
+		<copy tofile="${src.dist}/Vas.xml" file="${src.vasconfigfile}"/>
 		<!-- "tom binary" -->
 		<copy todir="${src.dist.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${src.dist.bin}" file="${utils}/tom"/>
