@@ -279,6 +279,14 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      GetSliceArray(Name(name),
+                    varArray@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1]),
+                    varBegin@Ref(Variable[option=option2,astName=PositionName(l2),astType=type2]),
+                    expEnd) -> {
+        buildExpGetSliceArray(deep, name, varArray, varBegin, expEnd);
+        return;
+      }
+
       TomTermToExpression(t) -> {
         generate(deep,t);
         return;
