@@ -1237,8 +1237,7 @@ operator returns [Declaration result] throws TomException
                 TomName sName = attribute.getSlotName();
                 if (mapNameDecl.get(sName)==null) {
                     mapNameDecl.put(sName,attribute);
-                }
-                else {
+                } else {
                   getLogger().log(new PlatformLogRecord(Level.WARNING,
                   		TomMessage.getMessage("WarningTwoSameSlotDecl",
                               new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
@@ -1327,6 +1326,14 @@ operatorList returns [Declaration result] throws TomException
 
         |   attribute = keywordIsFsym[`Name(name.getText()), type.getText()]
             { options.add(attribute); }
+
+        |   attribute = keywordGetHead[`Name(name.getText()), type.getText()]
+            { options.add(attribute); }
+        |   attribute = keywordGetTail[`Name(name.getText()), type.getText()]
+            { options.add(attribute); }
+        |   attribute = keywordIsEmpty[`Name(name.getText()), type.getText()]
+            { options.add(attribute); }
+
         )*
         t:RBRACE
         { 
@@ -1471,13 +1478,13 @@ typeList returns [Declaration result] throws TomException
             |   attribute = keywordEquals[type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
-            |   attribute = keywordGetHead[type.getText()]
+            |   attribute = keywordGetHead[`EmptyName(), type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
-            |   attribute = keywordGetTail[type.getText()]
+            |   attribute = keywordGetTail[`EmptyName(), type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
-            |   attribute = keywordIsEmpty[type.getText()]
+            |   attribute = keywordIsEmpty[`EmptyName(), type.getText()]
                 {blockList = (TomList) blockList.append(`DeclarationToTomTerm(attribute));}
 
             |   attribute = keywordCheckStamp[type.getText()]
@@ -1681,7 +1688,7 @@ keywordEquals[String type] returns [Declaration result] throws TomException
             }
         )
     ;
-keywordGetHead[String type] returns [Declaration result] throws TomException
+keywordGetHead[TomName opname, String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
@@ -1699,7 +1706,7 @@ keywordGetHead[String type] returns [Declaration result] throws TomException
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
 
-                result = `GetHeadDecl(
+                result = `GetHeadDecl(opname,
                     symbolTable.getUniversalType(),
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
                     tlCode,
@@ -1708,7 +1715,7 @@ keywordGetHead[String type] returns [Declaration result] throws TomException
         )
     ;
 
-keywordGetTail[String type] returns [Declaration result] throws TomException
+keywordGetTail[TomName opname, String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
@@ -1726,7 +1733,7 @@ keywordGetTail[String type] returns [Declaration result] throws TomException
                 TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop();  
 
-                result = `GetTailDecl(
+                result = `GetTailDecl(opname,
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
                     tlCode,
                     ot);
@@ -1734,7 +1741,7 @@ keywordGetTail[String type] returns [Declaration result] throws TomException
         )
     ;
 
-keywordIsEmpty[String type] returns [Declaration result] throws TomException
+keywordIsEmpty[TomName opname, String type] returns [Declaration result] throws TomException
 {
     result = null;
     Option ot = null;
@@ -1752,7 +1759,7 @@ keywordIsEmpty[String type] returns [Declaration result] throws TomException
                 TargetLanguage  tlCode = targetparser.goalLanguage(new LinkedList());
                 selector().pop(); 
 
-                result = `IsEmptyDecl(
+                result = `IsEmptyDecl(opname,
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
                     tlCode,
                     ot); 

@@ -223,13 +223,13 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      IsEmptyList(expList) -> {
-        buildExpEmptyList(deep, getTermType(`expList), `expList);
+      IsEmptyList(opNameAST, expList) -> {
+        buildExpIsEmptyList(deep, opNameAST, getTermType(`expList), `expList);
         return;
       }
 
       IsEmptyArray(expArray, expIndex) -> {
-        buildExpEmptyArray(deep, getTermType(`expArray), `expIndex, `expArray);
+        buildExpIsEmptyArray(deep, getTermType(`expArray), `expIndex, `expArray);
         return;
       }
 
@@ -264,13 +264,13 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetHead(codomain,exp) -> {
-        `buildExpGetHead(deep, getTermType(exp), codomain, exp);
+      GetHead(opNameAST, codomain,exp) -> {
+        `buildExpGetHead(deep, opNameAST, getTermType(exp), codomain, exp);
         return;
       }
 
-      GetTail(exp) -> {
-        buildExpGetTail(deep, getTermType(`exp), `exp);
+      GetTail(opNameAST, exp) -> {
+        buildExpGetTail(deep, opNameAST, getTermType(`exp), `exp);
         return;
       }
 
@@ -574,22 +574,25 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      GetHeadDecl[codomain=Type[tlType=codomain], 
-                  variable=Variable[astName=Name(name1), astType=Type(ASTTomType(suffix),domain@TLType[])],
-                  tlcode=tlCode@TL[]] -> {
-        `buildGetHeadDecl(deep, name1, suffix, domain, codomain, tlCode);
+      GetHeadDecl[opname=opNameAST,
+                  codomain=Type[tlType=codomain], 
+                  variable=Variable[astName=Name(varName), astType=Type(ASTTomType(suffix),domain@TLType[])],
+                  tlCode=tlCode@TL[]] -> {
+        `buildGetHeadDecl(deep, opNameAST, varName, suffix, domain, codomain, tlCode);
         return;
       }
 
-      GetTailDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
-                  tlCode@TL[], _) -> {
-        `buildGetTailDecl(deep, name1, type, tlType, tlCode);
+      GetTailDecl[opname=opNameAST,
+                  variable=Variable[astName=Name(varName), astType=Type(ASTTomType(type),tlType@TLType[])],
+                  tlCode=tlCode@TL[]] -> {
+        `buildGetTailDecl(deep, opNameAST, varName, type, tlType, tlCode);
         return;
       }
 
-      IsEmptyDecl(Variable[astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
-                  tlCode@TL[], _) -> {
-        `buildIsEmptyDecl(deep, name1, type, tlType, tlCode);
+      IsEmptyDecl[opname=opNameAST,
+                  variable=Variable[astName=Name(varName), astType=Type(ASTTomType(type),tlType@TLType[])],
+                  tlCode=tlCode@TL[]] -> {
+        `buildIsEmptyDecl(deep, opNameAST, varName, type, tlType, tlCode);
         return;
       }
 
@@ -741,16 +744,16 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpGreaterThan(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
-  protected abstract void buildExpEmptyList(int deep, TomType type, TomTerm expList) throws IOException;
-  protected abstract void buildExpEmptyArray(int deep, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException;
+  protected abstract void buildExpIsEmptyList(int deep, TomName opName, TomType type, TomTerm expList) throws IOException;
+  protected abstract void buildExpIsEmptyArray(int deep, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException;
   protected abstract void buildEqualFunctionSymbol(int deep, TomType type1, TomTerm var, String tomName) throws IOException;
   protected abstract void buildExpEqualTerm(int deep, TomType type, TomTerm exp1,TomTerm exp2) throws IOException;
   protected abstract void buildExpIsFsym(int deep, String opname, TomTerm var) throws IOException;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp) throws IOException;
   protected abstract void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException;
   protected abstract void buildExpGetSlot(int deep, String opname, String slotName, TomTerm exp) throws IOException;
-  protected abstract void buildExpGetHead(int deep, TomType doamin, TomType codomain, TomTerm var) throws IOException;
-  protected abstract void buildExpGetTail(int deep, TomType type1, TomTerm var) throws IOException;
+  protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
+  protected abstract void buildExpGetTail(int deep, TomName opName, TomType type1, TomTerm var) throws IOException;
   protected abstract void buildExpGetSize(int deep, TomType type1, TomTerm var) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
   protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd) throws IOException;
@@ -788,9 +791,9 @@ public abstract class TomAbstractGenerator extends TomBase {
                                                           String name2, String type1, String type2, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTermsEqualDecl(int deep, String name1, String name2,
                                               String type1, String type2, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildGetHeadDecl(int deep, String name1, String suffix, TomType domain, TomType codomain,TargetLanguage tlCode) throws IOException;
-  protected abstract void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildIsEmptyDecl(int deep, String name1, String type,
+  protected abstract void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain,TargetLanguage tlCode) throws IOException;
+  protected abstract void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, TargetLanguage tlCode) throws IOException;
+  protected abstract void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
                                            TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetElementDecl(int deep, String name1, String name2,
                                               String type1, TomType tlType1, TargetLanguage tlCode) throws IOException;

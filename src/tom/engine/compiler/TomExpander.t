@@ -161,6 +161,18 @@ public class TomExpander extends TomGenericPlugin {
         public ATerm apply(ATerm subject) {
           if(subject instanceof Declaration) {
             %match(Declaration subject) {
+              GetHeadDecl[opname=Name(opName)] -> {
+                TomSymbol tomSymbol = getSymbolFromName(`opName);
+                TomTypeList codomain = getSymbolDomain(tomSymbol);
+                if(codomain.isSingle()) {
+                  Declaration t = (Declaration)subject;
+                  t = t.setCodomain(codomain.getHead());
+                  return t;
+                } else {
+                  throw new TomRuntimeException("updateCodomain: bad codomain: " + codomain);
+                }
+              }
+            
               GetHeadDecl[variable=Variable[astType=domain]] -> {
                 TomSymbol tomSymbol = getSymbolFromType(`domain);
                 if(tomSymbol != null) {
@@ -178,7 +190,7 @@ public class TomExpander extends TomGenericPlugin {
                   }
                 }
               }
-
+            
               // default rule
               _ -> {
                 return traversal().genericTraversal(subject,this);
@@ -188,12 +200,12 @@ public class TomExpander extends TomGenericPlugin {
             // not instance of Declaration
             return traversal().genericTraversal(subject,this);
           }
-
+        
         } // end apply
       }; // end new
-
-    return (TomTerm) replace.apply(subject);
-  }
+  
+  return (TomTerm) replace.apply(subject);
+}
 
   /*
    * replace 'abc' by conc('a','b','c')

@@ -18,9 +18,9 @@ IsFsymDecl(astName:TomName,variable:TomTerm,tlCode:TargetLanguage,orgTrack:Optio
 GetSlotDecl(astName:TomName,slotName:TomName,variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 CompareFunctionSymbolDecl(symbolArg1:TomTerm,symbolArg2:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 TermsEqualDecl(termArg1:TomTerm,termArg2:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
-GetHeadDecl(codomain:TomType,variable:TomTerm,tlcode:TargetLanguage,orgTrack:Option) -> Declaration
-GetTailDecl(variable:TomTerm,tlcode:TargetLanguage,orgTrack:Option) -> Declaration
-IsEmptyDecl(variable:TomTerm,tlcode:TargetLanguage,orgTrack:Option) -> Declaration
+GetHeadDecl(opname:TomName, codomain:TomType,variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
+GetTailDecl(opname:TomName, variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
+IsEmptyDecl(opname:TomName, variable:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 MakeEmptyList(astName:TomName,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 MakeAddList(astName:TomName,varElt:TomTerm,varList:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration
 GetElementDecl(kid1:TomTerm,kid2:TomTerm,tlCode:TargetLanguage,orgTrack:Option) -> Declaration

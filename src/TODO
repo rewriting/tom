@@ -82,13 +82,82 @@ Previsions pour la v2.0
   analyse des patterns XML
   passer de TomParser.jj a TomParser.t
 
+- ajouter un get_head, get_tail, is_empty dans les %oplist
+
 - new API for %op L f(E*)
-  get_it   : L  -> it
-  has_elt  : L  -> Bool
+  get_it   : L      -> it
+  has_elt  : it -> Bool
   get_elt  : it -> E
   get_mult : it -> int
   go_next  : it -> it
   get_all  : it -> L
+
+- exemples
+
+%type Term {
+  implement { ATerm }
+  equals(t1,t2)    { t1.isEqual(t2) } 
+}
+
+%op E f(s1:E, s2:E) {
+  is_fsym(t) { t.fun='f' }
+  get_slot(s1,t) { t.s1 }
+  get_slot(s2,t) { t.s2 }
+  make(s1,s2) { ... }
+}
+
+% ATermList
+%op L f(E*) {
+  get_it(l)      { l }
+  has_elt(it,l)  { it.isEmpty() }
+  get_elt(it,l)  { it.getHead() }
+  get_mult(it,l) { 1 }
+  go_next(it,l)  { it.getTail() }
+  get_all(it,l)  { it }
+
+  make_empty()     { ... }
+  make_insert(e,l) { ... }
+}
+
+% ArrayList
+%op L f(E*) {
+  get_it(l)      { l.listIterator() }
+  has_elt(it,l)  { it.hasNext() }
+  get_elt(it,l)  { l.get(it.nextIndex()) }
+  get_mult(it,l) { 1 }
+  go_next(it,l)  { it.next() }
+  get_all(it,l)  { it.clone, while() { res.add(it.next) } }
+
+* make_empty(n)    { ... }
+* make_append(e,l) { ... }
+}
+
+% Array
+%op L f(E*) {
+  get_it(l)      { 1 }
+  has_elt(it,l)  { it < l.size() }
+  get_elt(it,l)  { l.get(it) }
+  get_mult(it,l) { 1 }
+  go_next(it,l)  { it+1 }
+  get_all(it,l)  { while() { res[i](l[it]) } }
+
+* make_empty(n)    { ... }
+* make_append(e,l) { ... }
+}
+
+% ArrayList
+%op L f(E*) {
+  get_it(l)      { l.iterator() }
+  has_elt(it,l)  { it.hasNext() }
+  get_elt(it,l)  { it.clone.next }
+  get_mult(it,l) { ... }
+  go_next(it,l)  { it.next() }
+  get_all(it,l)  { it.clone, while() { res.add(it.next) } }
+
+  make_empty()     { ... }
+  make_insert(e,l) { ... }
+}
+
 
 ------------------------------------------------------------
 PHASE 1

@@ -85,7 +85,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
   protected abstract void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException;
-  protected abstract void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException;
+  protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
 
   protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
@@ -153,13 +153,16 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
     generateExpression(deep,exp2);
   }
 
-  protected void buildExpEmptyList(int deep, TomType type, TomTerm expList) throws IOException {
-    output.write("tom_is_empty_" + getTomType(type) + "(");
+  protected void buildExpIsEmptyList(int deep, TomName opNameAST, TomType type, TomTerm expList) throws IOException {
+    %match(TomName opNameAST) {
+      EmptyName() -> { output.write("tom_is_empty_" + getTomType(type) + "("); }
+      Name(opName) -> { output.write("tom_is_empty_" + `opName + "_" + getTomType(type) + "("); }
+    }
     generate(deep,expList);
     output.write(")");
   }
 
-  protected void buildExpEmptyArray(int deep, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException {
+  protected void buildExpIsEmptyArray(int deep, TomType type, TomTerm expIndex, TomTerm expArray) throws IOException {
     generate(deep,expIndex);
     output.write(" >= ");
     output.write("tom_get_size_" + getTomType(type) + "(");
@@ -224,8 +227,11 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
       output.writeCloseBrace();
   }
 
-  protected void buildExpGetTail(int deep, TomType type1, TomTerm var) throws IOException {
-    output.write("tom_get_tail_" + getTomType(type1) + "(");
+  protected void buildExpGetTail(int deep, TomName opNameAST, TomType type, TomTerm var) throws IOException {
+    %match(TomName opNameAST) {
+      EmptyName() -> { output.write("tom_get_tail_" + getTomType(type) + "("); }
+      Name(opName) -> { output.write("tom_get_tail_" + `opName + "_" + getTomType(type) + "("); }
+    }
     generate(deep,var); 
     output.write(")");
   }
@@ -411,58 +417,105 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
                                              tlCode));
   }
 
-  protected void buildGetHeadDecl(int deep, String name1, String suffix, TomType domain, TomType codomain, TargetLanguage tlCode) 
+  protected void buildGetHeadDecl(int deep, TomName opNameAST, String varName, String suffix, TomType domain, TomType codomain, TargetLanguage tlCode) 
     throws IOException {
-    String returnType,argType;
-    if(!lazyMode) {
-      returnType = getTLCode(codomain);
-      argType = getTLCode(domain);
-    } else {
-      returnType = getTLType(getUniversalType());
-      argType = getTLType(getUniversalType());
+    String returnType = null;
+    String argType = null;
+    String functionName = "tom_get_head";
+
+    %match(TomName opNameAST) {
+      Name(opName) -> { functionName = functionName + "_" + `opName; }
     }
 
+    if(lazyMode) {
+      returnType = getTLType(getUniversalType());
+      argType = getTLType(getUniversalType());
+    } else {
+      %match(TomName opNameAST) {
+        EmptyName() -> {
+          returnType = getTLCode(codomain);
+          argType = getTLCode(domain);
+        }
+        
+        Name(opName) -> {
+          TomSymbol tomSymbol = getSymbolFromName(`opName);
+          returnType = getTLType(getSymbolCodomain(tomSymbol));
+          argType = getTLType(getSymbolDomain(tomSymbol).getHead());
+        }
+      }
+    }
     generateTargetLanguage(deep,
-                           genDecl(returnType, "tom_get_head", suffix,
-                                   new String[] { argType, name1 },
+                           genDecl(returnType, functionName, suffix,
+                                   new String[] { argType, varName },
                                    tlCode));
   }
 
-  protected void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) 
+  protected void buildGetTailDecl(int deep, TomName opNameAST, String varName, String type, TomType tlType, TargetLanguage tlCode) 
     throws IOException {
-    String returnType, argType;
-    if(!lazyMode) {
-      returnType = getTLCode(tlType);
-      argType = getTLCode(tlType);
-    } else {
+    String returnType = null;
+    String argType = null;
+    String functionName = "tom_get_tail";
+
+    %match(TomName opNameAST) {
+      Name(opName) -> { functionName = functionName + "_" + `opName; }
+    }
+
+    if(lazyMode) {
       returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
+    } else {
+      %match(TomName opNameAST) {
+        EmptyName() -> {
+          returnType = getTLCode(tlType);
+          argType = returnType;
+        }
+        
+        Name(opName) -> {
+          TomSymbol tomSymbol = getSymbolFromName(`opName);
+          returnType = getTLType(getSymbolCodomain(tomSymbol));
+          argType = returnType;
+        }
+      }
     }
-    
+
     generateTargetLanguage(deep,
-                           genDecl(returnType, "tom_get_tail", type,
-                                   new String[] { argType, name1 },
+                           genDecl(returnType, functionName, type,
+                                   new String[] { argType, varName },
                                    tlCode));
   }
 
-  protected void buildIsEmptyDecl(int deep, String name1, String type,
+  protected void buildIsEmptyDecl(int deep, TomName opNameAST, String varName, String type,
                                   TomType tlType, TargetLanguage tlCode) throws IOException {
-    String argType;
-    if(!lazyMode) {
-      argType = getTLCode(tlType);
-    } else {
-      argType = getTLType(getUniversalType());
+    String argType = null;
+    String functionName = "tom_is_empty";
+
+    %match(TomName opNameAST) {
+      Name(opName) -> { functionName = functionName + "_" + `opName; }
     }
-    
+    if(lazyMode) {
+      argType = getTLType(getUniversalType());
+    } else {
+      %match(TomName opNameAST) {
+        EmptyName() -> {
+          argType = getTLCode(tlType);
+        }
+        
+        Name(opName) -> {
+          TomSymbol tomSymbol = getSymbolFromName(`opName);
+          argType = getTLType(getSymbolCodomain(tomSymbol));
+        }
+      }
+    }
+
     generateTargetLanguage(deep,
                            genDecl(getTLType(getSymbolTable().getBoolType()),
-                                   "tom_is_empty", type,
-                                   new String[] { argType, name1 },
+                                   functionName, type,
+                                   new String[] { argType, varName },
                                    tlCode));
   }
 
   protected void buildGetElementDecl(int deep, String name1, String name2,
-String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
+                                     String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
     String returnType, argType;
     if(!lazyMode) {
       returnType = getTLType(getUniversalType());

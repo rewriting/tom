@@ -64,7 +64,7 @@ let erat n = elim (List.rev(genere n)) ;;
 let rec string_of_l l =
   List.fold_right (fun e -> fun r -> string_of_int e ^ " " ^ r) l "" ;;
 
-let r = erat 10000 in
+let r = erat 1000 in
   print_string (string_of_l r ^ "\n") ;;
 
 

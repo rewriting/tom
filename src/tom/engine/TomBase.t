@@ -467,6 +467,27 @@ public class TomBase {
     return false;
   } 
 
+  protected boolean hasGetHead(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,DeclarationToOption(GetHeadDecl[]),_*) -> { return true; }
+    }
+    return false;
+  } 
+
+  protected boolean hasGetTail(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,DeclarationToOption(GetTailDecl[]),_*) -> { return true; }
+    }
+    return false;
+  } 
+
+  protected boolean hasIsEmpty(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,DeclarationToOption(IsEmptyDecl[]),_*) -> { return true; }
+    }
+    return false;
+  } 
+
   protected TomName getSlotName(TomSymbol symbol, int number) {
     SlotList slotList = symbol.getSlotList();
     for(int index = 0; !slotList.isEmpty() && index<number ; index++) {

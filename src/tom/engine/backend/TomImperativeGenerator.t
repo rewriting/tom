@@ -36,6 +36,7 @@ import jtom.adt.tomsignature.types.TomList;
 import jtom.adt.tomsignature.types.TomSymbol;
 import jtom.adt.tomsignature.types.TomTerm;
 import jtom.adt.tomsignature.types.TomType;
+import jtom.adt.tomsignature.types.TomName;
 import jtom.exception.TomRuntimeException;
 import jtom.tools.OutputCode;
 import jtom.tools.SymbolTable;
@@ -276,9 +277,12 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.writeln(deep,";");
   }
 
-  protected void buildExpGetHead(int deep, TomType domain, TomType codomain, TomTerm var) throws IOException {
+  protected void buildExpGetHead(int deep, TomName opNameAST, TomType domain, TomType codomain, TomTerm var) throws IOException {
     //output.write("((" + getTLType(codomain) + ")tom_get_head_" + getTomType(domain) + "(");
-    output.write("tom_get_head_" + getTomType(domain) + "(");
+    %match(TomName opNameAST) {
+      EmptyName() -> { output.write("tom_get_head_" + getTomType(domain) + "("); }
+      Name(opName) -> { output.write("tom_get_head_" + `opName + "_" + getTomType(domain) + "("); }
+    }
     generate(deep,var);
     output.write(")");
   }
