@@ -9,7 +9,7 @@ public class BeadSort {
   private HashMap space;
   private HashMap newSpace;
 
-  %include { MgsADT.t }
+  %include { MgsADT.tom }
 
   %op Bead beadNS(n:Bead, s:Bead) {
     fsym { }

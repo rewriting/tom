@@ -69,8 +69,8 @@ public class LsystemsRuntime {
   public boolean verbose;
   private NodeList root;
   
-  %include { lsystems.signature }
-  %include { extras.t }
+  %include { lsystems.tom }
+  %include { extras.tom }
   
   public void run(MatchLsystems mls,int nbr_it, int angle) {
     run(mls,nbr_it,angle,10);

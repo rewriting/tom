@@ -27,8 +27,8 @@ import lsruntime.adt.*;
 
 public class Lsystems7 implements LsystemsInterface {
   
-  %include { lsystems.signature }
-  %include { extras.t }
+  %include { lsystems.tom }
+  %include { extras.tom }
   
   public Lsystems7(String[] args,LsystemsRuntime runtime) {
     this.runtime = runtime;
