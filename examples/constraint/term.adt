@@ -1,0 +1,7 @@
+[ 
+constructor(Tuple,empty,empty),
+constructor(Tuple,vector,vector(<c1(int)>,<c2(int)>,<c3(int)>,<c4(int)>)),
+constructor(Int,i,i(<value(int)>)),
+list(IntList, Int),
+list(TupleList, Tuple)
+]
