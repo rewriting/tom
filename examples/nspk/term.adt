@@ -25,17 +25,13 @@
  [Message, msg, msg(<src(AgentId)>,<dst(AgentId)>,<key(Key)>,<nonce1(Nonce)>,<nonce2(Nonce)>,<adr(Address)>)], 
 
 
- [Intruder, intruder, intruder(<id(AgentId)>,<listNonce(ListNonce)>,<listMessage(ListMessage)>)], 
+ [Intruder, intruder, intruder(<id(AgentId)>,<listNonce(ListNonce)>,<listMessage(list)>)], 
 
- [State, state, state(<senders(term)>,<receivers(term)>,<intruder(Intruder)>,<network(ListMessage)>)], 
+ [State, state, state(<senders(list)>,<receivers(list)>,<intruder(Intruder)>,<network(list)>)], 
  [State, ATTACK, ATTACK],
  [State, ERROR, ERROR],
 
- [ListMessage, nilListMessage, nilListMessage], 
- [ListMessage, consListMessage, consListMessage(<headListMessage(Message)>,<tailListMessage(ListMessage)>)], 
-
  [ListNonce, nilListNonce, nilListNonce], 
  [ListNonce, consListNonce, consListNonce(<headListNonce(Nonce)>,<tailListNonce(ListNonce)>)]
-
 
 ]

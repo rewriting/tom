@@ -22,6 +22,24 @@
   equals(t1,t2) {t1.equals(t2)}
 }
 
+%typeterm ATerm{
+  implement { ATerm}
+  get_fun_sym(t) {((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null)}
+  cmp_fun_sym(s1,s2) { s1==s2}
+  get_subterm(t,n) {(((ATermAppl)t).getArgument(n))}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%typelist ATermList{
+  implement { ATermList}
+  get_fun_sym(t) {((t instanceof ATermList)?getTermFactory().makeAFun("conc",1,false):null)}
+  cmp_fun_sym(s1,s2) { s1==s2}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getFirst()}
+  get_tail(l) {l.getNext()}
+  is_empty(l) {l.isEmpty()}
+}
+
 %typeterm AgentId{
   implement { AgentId}
   get_fun_sym(t) {null}
@@ -207,7 +225,7 @@
   equals(t1,t2) {t1.equals(t2)}
 }
 
-%op Intruder intruder(id:AgentId, listNonce:ListNonce, listMessage:ListMessage) {
+%op Intruder intruder(id:AgentId, listNonce:ListNonce, listMessage:ATermList) {
   fsym {}
   is_fsym(t) { (t!= null) &&t.isIntruder()}
   get_slot(id,t) { t.getId()}
@@ -224,11 +242,11 @@
   equals(t1,t2) {t1.equals(t2)}
 }
 
-%op State state(senders:ATerm, receivers:ATerm, intruder:Intruder, network:ListMessage) {
+%op State state(senders:ATermList, receivers:ATermList, intruder:Intruder, network:ATermList) {
   fsym {}
   is_fsym(t) { (t!= null) &&t.isState()}
-  get_slot(senders,t) { (ATermList)t.getSenders()}
-  get_slot(receivers,t) { (ATermList)t.getReceivers()}
+  get_slot(senders,t) { t.getSenders()}
+  get_slot(receivers,t) { t.getReceivers()}
   get_slot(intruder,t) { t.getIntruder()}
   get_slot(network,t) { t.getNetwork()}
   make(t0, t1, t2, t3) { getTermFactory().makeState_State(t0, t1, t2, t3)}
@@ -244,28 +262,6 @@
   fsym {}
   is_fsym(t) { (t!= null) &&t.isERROR()}
   make() { getTermFactory().makeState_ERROR()}
-}
-
-%typeterm ListMessage{
-  implement { ListMessage}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
-}
-
-%op ListMessage nilListMessage {
-  fsym {}
-  is_fsym(t) { (t!= null) &&t.isNilListMessage()}
-  make() { getTermFactory().makeListMessage_NilListMessage()}
-}
-
-%op ListMessage consListMessage(headListMessage:Message, tailListMessage:ListMessage) {
-  fsym {}
-  is_fsym(t) { (t!= null) &&t.isConsListMessage()}
-  get_slot(headListMessage,t) { t.getHeadListMessage()}
-  get_slot(tailListMessage,t) { t.getTailListMessage()}
-  make(t0, t1) { getTermFactory().makeListMessage_ConsListMessage(t0, t1)}
 }
 
 %typeterm ListNonce{
