@@ -203,7 +203,7 @@ abstract public class TomChecker extends TomTask {
 			HashSet rhsSet = verifyVariableType(variableRhs);
  	     
 			ArrayList variableCond = new ArrayList();
-			%match(TomList condList) {
+			/*%match(TomList condList) {
 				(_*, cond, _*) -> {
 					%match(TomTerm cond) {
 						matching@MatchingCondition[] -> {
@@ -216,7 +216,7 @@ abstract public class TomChecker extends TomTask {
 						}
 					}
 				}
-			}
+			}*/
 			collectVariable(variableCond, `Tom(condList));
 			HashSet condSet = verifyVariableType(variableCond);
  	     

@@ -86,7 +86,7 @@ public class TomGenerator extends /*TomBase implements*/ TomTask {
         System.out.println("TOM generation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
     } catch (Exception e) {
-    	addError("Exception occurs in TomGenerator"+e.getMessage(), getInput().getInputFileName(), 0, 0);
+    	addError("Exception occurs in TomGenerator: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
       e.printStackTrace();
       return;
     }

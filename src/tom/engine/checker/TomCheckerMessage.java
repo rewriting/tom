@@ -70,6 +70,6 @@ public final class TomCheckerMessage {
 	public static String IncoherentVariable = "Bad variable type for `{0}`: it has both type `{1}` and `{2}`";
 	
 	public static String MultipleRuleDefinition = "Rule `{0}` is repeated";
-
+	public static String MalformedXMLTerm = "Malformed XML pattern: expecting `{0}` but got `{1}`";
 	
 }

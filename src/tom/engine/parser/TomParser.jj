@@ -914,17 +914,20 @@ TomTerm AnnotedTerm() throws TomException: /* in TOM mode */
     }
 }
 
-NameList XMLNameList(LinkedList optionList) throws TomException:
+NameList XMLNameList(LinkedList optionList, boolean needOrgTrack) throws TomException:
 {
   Token name;
   NameList nameList;
+  String XMLName = "";
+  int decLine;
 }
 {
   (
     name=<TOM_IDENTIFIER>
     {
       text += name.image;
-      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      XMLName += name.image;
+      decLine = getLine();
       nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
     }
    |
@@ -932,18 +935,21 @@ NameList XMLNameList(LinkedList optionList) throws TomException:
     name=<TOM_IDENTIFIER>
     {
       text += name.image;
-      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      XMLName += name.image;
+      decLine = getLine();
       nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
     }
     ( <TOM_ALTERNATIVE> name=<TOM_IDENTIFIER>
       {
-        text += "|" + name.image; 
+        text += "|" + name.image;
+        XMLName += "|" + name.image;
         nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
       }
     )+
     <TOM_RPAREN>
    )
     {
+      if(needOrgTrack) {optionList.add(ast().makeOriginTracking(XMLName, decLine, currentFile));}
       return nameList;
     }
 }
@@ -965,7 +971,7 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
   (
     // < NODE attributes [ /> | > childs </NODE> ]
     <XML_START> { text += "<"; }
-     nameList = XMLNameList(optionList)
+     nameList = XMLNameList(optionList, true)
      implicit = XMLAttributeList(list)
         {
           if(implicit) { optionList.add(tsf().makeOption_ImplicitXMLAttribut()); }
@@ -981,12 +987,29 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
        <XML_CLOSE>{text+=">";}
        implicit = XMLChilds(childs)
        <XML_START_ENDING> { text += "</"; }
-       closingNameList = XMLNameList(optionList)
-       <XML_CLOSE> { text += ">"; }
+       closingNameList = XMLNameList(optionList, false)
+       <XML_CLOSE> { text += ">";}
         {
           if(!nameList.equals(closingNameList)) {
-            throw new TomException("Error on closing node");
-            return null;
+            String found="", expected ="";
+          	while(!nameList.isEmpty()) {
+          		expected += "|"+nameList.getHead().getString();
+          		nameList = nameList.getTail();
+          	}
+          	while(!closingNameList.isEmpty()) {
+          		found += "|"+closingNameList.getHead().getString();
+          		closingNameList = closingNameList.getTail();
+          	}
+            /*throw new TomException("Error on closing XML pattern: expecting `"+ expected.substring(1) +"` but got `"+found.substring(1)+ "` at line "+getLine());
+            return null;*/
+            // TODO find the orgTrack of the match
+            messageError(getLine(),
+                     currentFile,
+                     "match",
+                     getLine(),
+                     TomCheckerMessage.MalformedXMLTerm, 
+                     new Object[]{expected.substring(1), found.substring(1)},
+                     TomCheckerMessage.TOM_ERROR);
           }
           if(implicit) {
               /*
@@ -1309,7 +1332,6 @@ void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
     }
   <TOM_LBRACE> 
   (
-      //<TOM_LBRACKET> <TOM_RBRACKET>
     lhs = AnnotedTerm() { listOfLhs.add(lhs); }
     [ ( <TOM_ALTERNATIVE> {text += " | ";} lhs = AnnotedTerm() { listOfLhs.add(lhs); } )+ ]
     <TOM_ARROW> {orgText = tsf().makeTomName_Name(text);} rhs = PlainTerm(null)

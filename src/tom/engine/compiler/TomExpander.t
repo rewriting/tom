@@ -77,7 +77,7 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
 		getInput().setTerm(expandedTerm);
 		
     } catch (Exception e) {
-    	addError("Exception occurs in TomExpander"+e.getMessage(), getInput().getInputFileName(), 0, 0);
+    	addError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
       e.printStackTrace();
       return;
     }
@@ -114,6 +114,7 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
               }
 
               XMLAppl(optionList,nameList,list1,list2) -> {
+								//System.out.println("expandXML in:\n" + subject);
                 return expandXMLAppl(optionList, nameList, list1, list2);
               }
               
@@ -292,7 +293,7 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
       Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList),
       Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList));
     TomTerm result = `Appl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs);
-      //System.out.println("expand:\n" + result);
+      //System.out.println("expandXML out:\n" + result);
     return result;
    
   }
@@ -561,7 +562,7 @@ public class TomExpander extends /*TomBase implements*/ TomTask {
       
     %match(TomTerm contextSubject, TomRule subject) {
 
-      context, RewriteRule(Term(lhs@Appl(optionList,(Name(tomName),_*),_)),
+      context, RewriteRule(Term(lhs@Appl(optionList,(Name(tomName)),_)),
                            Term(rhs),
                            condList,
                            option) -> { 

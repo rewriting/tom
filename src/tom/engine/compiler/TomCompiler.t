@@ -79,7 +79,7 @@ public class TomCompiler extends TomTask {
 			getInput().setTerm(compiledTerm);
       
     } catch (Exception e) {
-    	addError("Exception occurs in TomCompiler"+e.getMessage(), getInput().getInputFileName(), 0, 0);
+    	addError("Exception occurs in TomCompiler: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
       e.printStackTrace();
       return;
     }

@@ -889,27 +889,32 @@ public class TomParser extends TomTask implements TomParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public NameList XMLNameList(LinkedList optionList) throws ParseException, TomException {
+  final public NameList XMLNameList(LinkedList optionList, boolean needOrgTrack) throws ParseException, TomException {
   Token name;
   NameList nameList;
+  String XMLName = "";
+  int decLine;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_IDENTIFIER:
       name = jj_consume_token(TOM_IDENTIFIER);
       text += name.image;
-      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      XMLName += name.image;
+      decLine = getLine();
       nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
       break;
     case TOM_LPAREN:
       jj_consume_token(TOM_LPAREN);
       name = jj_consume_token(TOM_IDENTIFIER);
       text += name.image;
-      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      XMLName += name.image;
+      decLine = getLine();
       nameList = tsf().makeNameList(tsf().makeTomName_Name(name.image));
       label_12:
       while (true) {
         jj_consume_token(TOM_ALTERNATIVE);
         name = jj_consume_token(TOM_IDENTIFIER);
         text += "|" + name.image;
+        XMLName += "|" + name.image;
         nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_ALTERNATIVE:
@@ -927,6 +932,7 @@ public class TomParser extends TomTask implements TomParserConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
+      if(needOrgTrack) {optionList.add(ast().makeOriginTracking(XMLName, decLine, currentFile));}
       {if (true) return nameList;}
     throw new Error("Missing return statement in function");
   }
@@ -946,7 +952,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     case XML_START:
       jj_consume_token(XML_START);
                   text += "<";
-      nameList = XMLNameList(optionList);
+      nameList = XMLNameList(optionList, true);
       implicit = XMLAttributeList(list);
           if(implicit) { optionList.add(tsf().makeOption_ImplicitXMLAttribut()); }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -961,12 +967,29 @@ public class TomParser extends TomTask implements TomParserConstants {
         implicit = XMLChilds(childs);
         jj_consume_token(XML_START_ENDING);
                             text += "</";
-        closingNameList = XMLNameList(optionList);
+        closingNameList = XMLNameList(optionList, false);
         jj_consume_token(XML_CLOSE);
                      text += ">";
           if(!nameList.equals(closingNameList)) {
-            {if (true) throw new TomException("Error on closing node");}
-            {if (true) return null;}
+            String found="", expected ="";
+                while(!nameList.isEmpty()) {
+                        expected += "|"+nameList.getHead().getString();
+                        nameList = nameList.getTail();
+                }
+                while(!closingNameList.isEmpty()) {
+                        found += "|"+closingNameList.getHead().getString();
+                        closingNameList = closingNameList.getTail();
+                }
+            /*throw new TomException("Error on closing XML pattern: expecting `"+ expected.substring(1) +"` but got `"+found.substring(1)+ "` at line "+getLine());
+            return null;*/
+            // TODO find the orgTrack of the match
+            messageError(getLine(),
+                     currentFile,
+                     "match",
+                     getLine(),
+                     TomCheckerMessage.MalformedXMLTerm,
+                     new Object[]{expected.substring(1), found.substring(1)},
+                     TomCheckerMessage.TOM_ERROR);
           }
           if(implicit) {
               /*
@@ -1387,8 +1410,7 @@ public class TomParser extends TomTask implements TomParserConstants {
         jj_la1[39] = jj_gen;
         break label_16;
       }
-      //<TOM_LBRACKET> <TOM_RBRACKET>
-          lhs = AnnotedTerm();
+      lhs = AnnotedTerm();
                           listOfLhs.add(lhs);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_ALTERNATIVE:
@@ -2558,11 +2580,23 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_9() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3_3() {
     if (jj_3R_29()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_2()) jj_scanpos = xsp;
+    return false;
+  }
+
+  final private boolean jj_3_11() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2573,11 +2607,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     jj_scanpos = xsp;
     if (jj_3R_48()) return true;
     }
-    return false;
-  }
-
-  final private boolean jj_3R_52() {
-    if (jj_scan_token(XML_PROC)) return true;
     return false;
   }
 
@@ -2607,17 +2636,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_10() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_51() {
-    if (jj_scan_token(XML_COMMENT)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_41() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2644,11 +2662,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_50() {
-    if (jj_scan_token(XML_TEXT)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_32() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     Token xsp;
@@ -2658,15 +2671,8 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_9() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_11() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
+  final private boolean jj_3_6() {
+    if (jj_3R_31()) return true;
     return false;
   }
 
@@ -2703,11 +2709,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_6() {
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_30() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2724,15 +2725,14 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_49() {
-    if (jj_scan_token(XML_START)) return true;
+  final private boolean jj_3_7() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_EQUAL)) return true;
     return false;
   }
 
-  final private boolean jj_3R_35() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_3R_37()) return true;
-    if (jj_scan_token(TOM_ALTERNATIVE)) return true;
+  final private boolean jj_3R_49() {
+    if (jj_scan_token(XML_START)) return true;
     return false;
   }
 
@@ -2752,6 +2752,18 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_8() {
+    if (jj_3R_30()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_35() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_3R_37()) return true;
+    if (jj_scan_token(TOM_ALTERNATIVE)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_34() {
     if (jj_3R_37()) return true;
     return false;
@@ -2767,19 +2779,29 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3R_52() {
+    if (jj_scan_token(XML_PROC)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_48() {
     if (jj_3R_32()) return true;
     return false;
   }
 
-  final private boolean jj_3_7() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_EQUAL)) return true;
+  final private boolean jj_3R_51() {
+    if (jj_scan_token(XML_COMMENT)) return true;
     return false;
   }
 
   final private boolean jj_3R_40() {
     if (jj_3R_42()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_10() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
@@ -2792,8 +2814,8 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_8() {
-    if (jj_3R_30()) return true;
+  final private boolean jj_3R_50() {
+    if (jj_scan_token(XML_TEXT)) return true;
     return false;
   }
 

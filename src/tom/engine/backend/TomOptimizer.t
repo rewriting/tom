@@ -66,7 +66,7 @@ public class TomOptimizer extends TomTask {
 	  	}
 			getInput().setTerm(optimizedTerm);
     	} catch (Exception e) {
-    		addError("Exception occurs in TomOptimizer"+e.getMessage(), getInput().getInputFileName(), 0, 0);
+    		addError("Exception occurs in TomOptimizer: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
       	e.printStackTrace();
       	return;
     	}

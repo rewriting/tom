@@ -125,8 +125,14 @@ public abstract class TomTask extends TomBase {
 	}
 	
 	public void messageError(int errorLine, String fileName,String structInfo, int structInfoLine, String msg, Object[] msgArg, int level) {
+		String s;
 		msg = MessageFormat.format(msg, msgArg);
-		String s = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+		if (level == TomCheckerMessage.TOM_ERROR) {
+			s = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+		} else {
+			s = MessageFormat.format(TomCheckerMessage.MainWarningMessage, new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+		}
+		
 		if (input.isEclipseMode()) {
 			addError(msg,fileName, errorLine, level);
 		} else {
