@@ -32,14 +32,14 @@
   <property name="tomconfigfile" location="${tom.home}/Tom.xml"/>
 
   <!-- Examples to build and distribute -->
-  <property name="cell" value="cell"/>
-  <property name="cell.dir" location="${examples.dir}/${cell}" />
-
   <property name="addressbook" value="addressbook"/>
   <property name="addressbook.dir" location="${examples.dir}/${addressbook}" />
 
   <property name="apireach" value="apireach"/>
   <property name="apireach.dir" location="${examples.dir}/${apireach}" />
+
+  <property name="appletxml" value="appletxml"/>
+  <property name="appletxml.dir" location="${examples.dir}/${appletxml}" />
 
   <property name="boulderdash" value="boulderdash"/>
   <property name="boulderdash.dir" location="${examples.dir}/${boulderdash}" />
@@ -49,6 +49,9 @@
 
   <property name="caml" value="caml"/>
   <property name="caml.dir" location="${examples.dir}/${caml}" />
+
+  <property name="cell" value="cell"/>
+  <property name="cell.dir" location="${examples.dir}/${cell}" />
 
   <property name="cril" value="cril"/>
   <property name="cril.dir" location="${examples.dir}/${cril}" />
@@ -216,6 +219,26 @@
            nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
       <include name="${apireach}/**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="appletxml" depends="init"> 
+    <!-- build tom -->
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
+         destdir="${examples.gen}"         
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         options="-I ${tom.home}/share/jtom">
+      <include name="${appletxml}/**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac destdir="${examples.build}"
+           nowarn="${nowarnings}">
+      <src path="${examples.dir}"/>
+      <src path="${examples.gen}"/>
+      <classpath refid="tom.classpath"/>
+      <include name="${appletxml}/**/*.java"/>
     </javac>
   </target>
 
@@ -889,7 +912,7 @@
   
 	<target name="examples" 
             description="Builds the examples (at least some)"
-            depends="addressbook, apireach, boulderdash, builtin,
+            depends="addressbook, apireach, appletxml, boulderdash, builtin,
 						caml, cell, dom, expression, gtree, list, 
 						nspk, p3p, peano, pnspk, poly, pqueens,
             prodrule, propp, rbtree, set, tutorial, vas, xml">
@@ -920,6 +943,10 @@
             <include name="${apireach}/README"/>
             <include name="${apireach}/*.t"/>
             <include name="${apireach}/*.adt"/>
+
+            <include name="${appletxml}/README"/>
+            <include name="${appletxml}/*.t"/>
+            <include name="${appletxml}/*.java"/>
 
             <include name="${boulderdash}/README"/>
             <include name="${boulderdash}/*.t"/>

@@ -31,19 +31,19 @@ package appletxml;
 
 import aterm.*;
 
-import jtom.adt.tnode.*;
-import jtom.adt.tnode.types.*;
-import tom.library.traversal.xml.*;
+import tom.library.xml.*;
+import tom.library.adt.tnode.*;
+import tom.library.adt.tnode.types.*;
 
 import java.io.*;
 
 public class TomXMLAnalyser {
 
-  %include{ TNode.tom }
+  %include{ adt/TNode.tom }
   
   private XmlTools xtools;
 
-  private Factory getTNodeFactory() {
+  private TNodeFactory getTNodeFactory() {
     return xtools.getTNodeFactory();
   }
 
