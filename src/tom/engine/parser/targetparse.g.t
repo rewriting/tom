@@ -75,8 +75,12 @@ class NewTargetParser extends Parser;
         return result;
     }
 
+    private String pureCode(String code){
+        return code.replace('\t',' ');
+    }
+
     private boolean isCorrect(String code){
-        return (! code.equals(""));
+        return (! code.equals("") && ! code.matches("\\s*"));
     }
 
     public TomList makeTomList(LinkedList list){
@@ -271,7 +275,7 @@ typeTerm [LinkedList list]
         )
         {
             // addPreviousCode...
-            String textCode = getCode();
+            String textCode = pureCode(getCode());
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
@@ -297,7 +301,7 @@ typeList [LinkedList list]
     :
         t:TYPELIST
         {
-            String textCode = getCode();
+            String textCode = pureCode(getCode());
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
@@ -319,7 +323,7 @@ typeArray [LinkedList list]
     :
         t:TYPEARRAY
         {
-            String textCode = getCode();
+            String textCode = pureCode(getCode());
             if(isCorrect(textCode)) {
                 code = `TL(
                     textCode,
@@ -347,7 +351,7 @@ goalLanguage [LinkedList list] returns [TargetLanguage result]
         t2:RBRACE 
         {
             //code = targetlexer.target.toString();
-            result = `TL(cleanCode(getCode()),
+            result = `TL(cleanCode(pureCode(getCode())),
                 TextPosition(popLine(),popColumn()),
                 TextPosition(t2.getLine(),t2.getColumn())
             );
@@ -363,7 +367,7 @@ targetLanguage [LinkedList list] returns [TargetLanguage result]
         blockList[list] t:RBRACE
         {
             result = `TL(
-                getCode(),
+                pureCode(getCode()),
                 TextPosition(popLine(),popColumn()),
                 TextPosition(t.getLine(),t.getColumn())
             );

@@ -58,6 +58,8 @@ options{
 
     private StringBuffer text = new StringBuffer("");
     
+    private int lastLine; 
+
     public NewTomParser(ParserSharedInputState state, NewTargetParser target, String filename){
         this(state);
         this.filename = filename;
@@ -71,6 +73,10 @@ options{
 
     private void pushColumn(int column){
         targetparser.pushColumn(column);
+    }
+
+    private void setLastLine(int line){
+        lastLine = line;
     }
 
     // creation of a tom variable : doesn't need a rule
@@ -217,16 +223,17 @@ ruleConstruct returns [TomRuleList result]
     TomList listOfLhs = `emptyTomList();
     InstructionList conditionList = `emptyInstructionList();
     TomName orgText = null;
-    int line = 0;
 
     clearText();
 }
     :
         LBRACE
         (
-            {line = ((NewTomLexer) Main.selector.getCurrentStream()).getLine();}
-            lhs = annotedTerm {listOfLhs = `concTomTerm(lhs);}
-            ( ALTERNATIVE {text.append('|');} lhs = annotedTerm() {listOfLhs = `concTomTerm(listOfLhs*,lhs);} )*
+            lhs = annotedTerm 
+            {listOfLhs = `concTomTerm(lhs);}
+            ( ALTERNATIVE {text.append('|');} lhs = annotedTerm() 
+                {listOfLhs = `concTomTerm(listOfLhs*,lhs);} 
+            )*
  
             ARROW {orgText = `Name(text.toString());} rhs = plainTerm[null,0]
             (
@@ -237,6 +244,8 @@ ruleConstruct returns [TomRuleList result]
             )*
             
             {
+                int line = lastLine;
+                //int line = ((NewTomLexer) Main.selector.getCurrentStream()).getLine();
                 Option ot = `OriginTracking(
                     Name("Pattern"),
                     line,
@@ -302,8 +311,6 @@ annotedTerm returns [TomTerm result]
 plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
 {
     result = null;
-    Constraint annotedName = 
-    (astAnnotedName == null)?null:ast().makeAssignTo(astAnnotedName, line, filename);
     LinkedList constraintList = new LinkedList();
     LinkedList optionList = new LinkedList();
     LinkedList secondOptionList = new LinkedList();
@@ -313,6 +320,11 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
     LinkedList list = new LinkedList();
     boolean implicit = false;
     boolean withArgs = false;
+
+    Constraint annotedName = 
+    (astAnnotedName == null)?null:ast().makeAssignTo(astAnnotedName, line, filename);
+    if(annotedName != null)
+        constraintList.add(annotedName);
 }
     :  
         (   // xml is missing
@@ -403,18 +415,24 @@ args [LinkedList list, LinkedList optionList] returns [boolean result]
     :   (
             t1:LPAREN {text.append('(');} 
             ( termList[list] )? 
-            RPAREN {text.append(')');} 
+            t2:RPAREN 
             {
+                setLastLine(t2.getLine());
+                text.append(t2.getText());
+            
                 result = false;
                 optionList.add(`OriginTracking(Name(""),t1.getLine(),Name(filename)));
             }
             
-        |   t2:LBRACKET {text.append('[');} 
+        |   t3:LBRACKET {text.append('[');} 
             ( pairList[list] )? 
-            RBRACKET {text.append(']');}
+            t4:RBRACKET 
             {
+                setLastLine(t4.getLine());
+                text.append(t4.getText());
+                
                 result = true;
-                optionList.add(`OriginTracking(Name(""),t2.getLine(),Name(filename)));
+                optionList.add(`OriginTracking(Name(""),t3.getLine(),Name(filename)));
             }
         )
     ;
@@ -437,7 +455,7 @@ pairList [LinkedList list]
             name:ID EQUAL 
             {
                 text.append(name.getText());
-                {text.append('=');}
+                text.append('=');
             } 
             term = annotedTerm 
             {list.add(`PairSlotAppl(Name(name.getText()),term));}
@@ -474,8 +492,12 @@ variableStar [LinkedList optionList, LinkedList constraintList] returns [TomTerm
                     line = name2.getLine();
                 }
             ) 
-            STAR 
+            t:STAR 
             {
+                text.append(name);
+                text.append(t.getText());
+                setLastLine(t.getLine());
+                
                 optionList.add(`OriginTracking(Name(name),line,Name(filename)));
                 // faire une nouvelle fonction ?
                 options = ast().makeOptionList(optionList);
@@ -506,6 +528,9 @@ placeHolder [LinkedList optionList, LinkedList constraintList] returns [TomTerm 
     :   (
             t:UNDERSCORE 
             {
+                text.append(t.getText());
+                setLastLine(t.getLine());
+
                 optionList.add(
                     `OriginTracking(Name(t.getText()),t.getLine(),Name(filename))
                 );
@@ -523,11 +548,18 @@ headSymbolList [LinkedList optionList] returns [NameList result]
 }
     :  
         (
-            LPAREN 
+            LPAREN {text.append('(');}
             name = headSymbol[optionList] {result = `concTomName(result*,name);}
-            ALTERNATIVE name = headSymbol[optionList] {result = `concTomName(result*,name);}
-            ( ALTERNATIVE name = headSymbol[optionList] {result = `concTomName(result*,name);})* 
-            RPAREN 
+            ALTERNATIVE {text.append('|');}
+            name = headSymbol[optionList] {result = `concTomName(result*,name);}
+            ( 
+                ALTERNATIVE {text.append('|');} 
+                name = headSymbol[optionList] {result = `concTomName(result*,name);})* 
+            t:RPAREN 
+            {
+                text.append(t.getText());
+                setLastLine(t.getLine());                
+            }
         )
     ;
 
@@ -553,6 +585,8 @@ headSymbol [LinkedList optionList] returns [TomName result]
             }
         )
         {
+            
+            setLastLine(line);
             result = `Name(name);
             optionList.add(`OriginTracking(result,line, Name(filename)));
         }
