@@ -1,7 +1,7 @@
 #
 #    TOM - To One Matching Compiler
 #
-SUBDIRS		= strategies set xml
+SUBDIRS		= strategies set xml mapping
 javadir         = ${prefix}/classes/jtom/runtime
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$$CLASSPATH
 

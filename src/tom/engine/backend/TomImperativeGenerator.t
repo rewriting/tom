@@ -2,7 +2,7 @@
   
 TOM - To One Matching Compiler
 
-Copyright (C) 2000-2003 INRIA
+Copyright (C) 2000-2004 INRIA
 Nancy, France.
 
 This program is free software; you can redistribute it and/or modify
@@ -146,7 +146,7 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
 		output.write(")");
 	}
 
-	protected abstract void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException;
+	protected abstract void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException;
 
 	protected void buildDeclarationStar(int deep, TomTerm var, TomName TomName, String type, TomType tlType) throws IOException {
 		output.write(deep,getTLCode(tlType) + " ");
@@ -213,6 +213,29 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
     }
   }
 
+  protected void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, 
+                          Expression exp, Instruction body) throws IOException {
+
+    output.indent(deep);
+    output.writeln("{");
+    buildDeclaration(deep,var,type,tlType);
+    generate(deep,var);
+    output.write(" = (" + getTLCode(tlType) + ") ");
+    generateExpression(deep,exp);
+    output.writeln(";");
+
+    if(debugMode && !list.isEmpty()) {
+      output.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
+      generate(deep,var);
+      output.write("\", ");
+      generate(deep,var); // generateExpression(out,deep,exp);
+      output.writeln(");");
+    }
+    generateInstruction(deep,body);
+    output.writeln("}");
+
+  }
+
 	protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
@@ -229,6 +252,12 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
   }
 
   protected abstract void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException;
+
+  protected void buildUnamedBlock(int deep, TomList instList) throws IOException {
+    output.writeln("{");
+    generateList(deep+1,instList);
+    output.writeln("}");
+  }
 
   protected void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException {
 		output.write(deep,"if("); 
@@ -262,7 +291,6 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
       output.write(");");
     }
   }
-
   protected abstract void buildExitAction(int deep, TomNumberList numberList) throws IOException;
 
   protected void buildReturn(int deep, TomTerm exp) throws IOException {

@@ -2,7 +2,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
+    Copyright (C) 2000-2004 INRIA
 			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
@@ -124,8 +124,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      CompiledMatch(matchDeclarationList, namedBlockList, list) -> {
-        buildCompiledMatch(deep, matchDeclarationList, namedBlockList, list);
+      CompiledMatch(instructionList, list) -> {
+        buildCompiledMatch(deep, instructionList, list);
         return;
       }
 
@@ -160,7 +160,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       Declaration(var@Variable(option1,name1,
                                Type(ASTTomType(type),tlType@TLType[]))) -> {
-        buildDeclaration(deep, var, name1, type, tlType);
+        buildDeclaration(deep, var, type, tlType);
         return;
       }
 
@@ -346,6 +346,9 @@ public abstract class TomAbstractGenerator extends TomBase {
     if(subject==null) { return; }
     
     %match(Instruction subject) {
+      Nop() -> {
+        return;
+      }
 
       Assign(var@Variable(list,name1,
                           Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
@@ -358,12 +361,26 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      Let((UnamedVariable|UnamedVariableStar)[],exp,body) -> {
+        generateInstruction(deep,body);
+      }
+
+      Let(var@Variable(list,name1,Type(tomType@ASTTomType(type),tlType@TLType[])),exp,body) -> {
+        buildLet(deep, var, list, type, tlType, exp, body);
+        return;
+      }
+
       AssignMatchSubject(var@Variable(option1,name1,
                                       Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
         buildAssignMatch(deep, var, type, tlType, exp);
         return;
       }
       
+      UnamedBlock(instList) -> {
+        buildUnamedBlock(deep, instList);
+        return;
+      }
+
       NamedBlock(blockName,instList) -> {
         buildNamedBlock(deep, blockName, instList);
         return;
@@ -398,20 +415,15 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       Action(l) -> {
         generateList(deep, l);
-  /*
-    while(!l.isEmpty()) {
-    generate(deep,l.getHead());
-    l = l.getTail();
-    }
-      //out.writeln("// ACTION: " + l);
-      */
         return;
       }
 
+      /*
       ExitAction(numberList) -> {
         buildExitAction(deep, numberList);
         return;
       }
+      */
 
       Return(exp) -> {
         buildReturn(deep, exp);
@@ -428,8 +440,6 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
     }
   }
-
-      
   
   public void generateTargetLanguage(int deep, TargetLanguage subject)
     throws IOException {
@@ -700,8 +710,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
 
-  protected void buildCompiledMatch(int deep, TomList matchDeclarationList,
-				TomList namedBlockList, OptionList list) throws IOException {
+  protected void buildCompiledMatch(int deep, TomList instructionList, OptionList list) throws IOException {
     boolean generated = hasGeneratedMatch(list);
     boolean defaultPattern = hasDefaultCase(list);
     Option orgTrack = null;
@@ -713,8 +722,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
       output.writeln("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");");
     }
-    generateList(deep+1,matchDeclarationList);
-    generateList(deep+1,namedBlockList);
+    generateList(deep+1,instructionList);
     if(debugMode && !generated && !defaultPattern) {
       output.writeln("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");");
     }
@@ -723,7 +731,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 	
-  protected abstract void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException;
+  protected abstract void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException;
   protected abstract void buildDeclarationStar(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
@@ -873,8 +881,10 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException ;
+  protected abstract void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException ;
+  protected abstract void buildUnamedBlock(int deep, TomList instList) throws IOException ;
   protected abstract void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException ;
   protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) throws IOException ;
 
@@ -1022,24 +1032,29 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
                                              tlCode));
   }
 
-  protected void buildGetHeadDecl(int deep, String name1, String type, TomType tlType,
-TargetLanguage tlCode) throws IOException {
-    String argType;
+  protected void buildGetHeadDecl(int deep, String name1, String type, TomType tlType,TargetLanguage tlCode) 
+    throws IOException {
+    String returnType,argType;
+
+    /*
+     * type is the type of the list-variable, not the type of the head
+     */
     if(strictType) {
+      //returnType = getTLCode(tlType);
       argType = getTLCode(tlType);
     } else {
+      //returnType = getTLType(getUniversalType());
       argType = getTLType(getUniversalType());
     }
-    
+    returnType = getTLType(getUniversalType());
     generateTargetLanguage(deep,
-                           genDecl(getTLType(getUniversalType()),
-                                   "tom_get_head", type,
+                           genDecl(returnType, "tom_get_head", type,
                                    new String[] { argType, name1 },
                                    tlCode));
   }
 
-  protected void buildGetTailDecl(int deep, String name1, String type,
-TomType tlType, TargetLanguage tlCode) throws IOException {
+  protected void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) 
+    throws IOException {
     String returnType, argType;
     if(strictType) {
       returnType = getTLCode(tlType);
@@ -1072,12 +1087,13 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
   }
 
   protected void buildMakeEmptyList(int deep, String opname, TargetLanguage tlCode) throws IOException {
+    String returnType = getTLType(getUniversalType());
     generateTargetLanguage(deep,
-    	                           genDecl(getTLType(getUniversalType()),
-                                       "tom_make_empty", opname,
-                                       new String[] { },
-                                       tlCode));
-}
+                           genDecl(returnType,
+                                   "tom_make_empty", opname,
+                                   new String[] { },
+                                   tlCode));
+  }
 
   protected void buildMakeAddList(int deep, String opname, String name1,
 String name2, TomType tlType1, TomType tlType2, TomType fullEltType,

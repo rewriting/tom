@@ -2,7 +2,7 @@
   
 TOM - To One Matching Compiler
 
-Copyright (C) 2000-2003 INRIA
+Copyright (C) 2000-2004 INRIA
 Nancy, France.
 
 This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-	protected void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException {
+	protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
     
@@ -70,10 +70,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 		output.write(" false ");
   }
 	 
-	protected void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException {
-		output.writeln(blockName + ": {");
-		generateList(deep+1,instList);
-		output.writeln("}");
+  protected void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException {
+    output.writeln(blockName + ": {");
+    generateList(deep+1,instList);
+    output.writeln("}");
   }
 
   protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {

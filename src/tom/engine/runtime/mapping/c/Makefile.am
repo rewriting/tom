@@ -8,15 +8,16 @@ stabledir 	= $(top_srcdir)/stable/adt
 
 JAVAROOT        = ${top_builddir}/src
 
-EXTRA_DIST 	= dom.tom
+MAPPING         = aterm.tom int.tom string.tom
+EXTRA_DIST 	= ${MAPPING}
 CLEANFILES 	= 
 
 adtdir          = $(datadir)/jtom/c
-adt_DATA        = aterm.tom int.tom string.tom
+adt_DATA        = ${MAPPING}
 
 bootinstall:
 	$(mkinstalldirs) $(stabledir)
-	cp -f aterm.tom int.tom string.tom $(stabledir)
+	cp -f ${MAPPING} $(stabledir)
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done

@@ -63,7 +63,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		}
 	}
 
-	protected void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException {
+	protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {
 		generate(deep,var);
 		output.write(deep,": " + getTLCode(tlType));
 		output.writeln(";");
@@ -125,18 +125,18 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
-		if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
-			output.write(" := ");
-		} else {
-			//out.write(" ?= ");
-			String assignSign = " := ";
-			%match(Expression exp) {
-				GetSubterm[] -> {
-					assignSign = " ?= ";
-				}
-			}
-			output.write(assignSign);
-		}
+    if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
+      output.write(" := ");
+    } else {
+      //out.write(" ?= ");
+      String assignSign = " := ";
+      %match(Expression exp) {
+        GetSubterm[] -> {
+          assignSign = " ?= ";
+        }
+      }
+      output.write(assignSign);
+    }
     generateExpression(deep,exp);
     output.writeln(";");
     if(debugMode && !list.isEmpty()) {
@@ -147,6 +147,14 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
       output.writeln(");");
     }
   }
+
+  protected void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, 
+                          Expression exp, Instruction body) throws IOException {
+    System.out.println("buildLet code not yet implemented");
+    throw new TomRuntimeException(new Throwable("buildLet: Eiffel code not yet implemented"));
+  }
+
+
 	
 	protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
@@ -176,6 +184,11 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 
   protected void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException {
 		System.out.println("NamedBlock: Eiffel code not yet implemented");
+		throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
+  }
+
+  protected void buildUnamedBlock(int deep, TomList instList) throws IOException {
+		System.out.println("UnamedBlock: Eiffel code not yet implemented");
 		throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
   }
 

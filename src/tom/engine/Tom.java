@@ -2,7 +2,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
+    Copyright (C) 2000-2004 INRIA
 			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,9 @@ public class Tom {
     + "\n\t--static\t\tGenerate static functions"
     + "\n\t--debug\t\t\tGenerate debug primitives"
     + "\n\t--verify\t\t\tVerify correctness of match compilation"
-    + "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)";
+    + "\n\t--memory\t\tAdd memory management while debugging (not correct with list matching)"
+    + "\n\t--noGoto\t\tDo not generate any goto"
+    ;
 
   private static int defaultLineNumber = 1;
   private static void version() {
@@ -163,6 +165,8 @@ public class Tom {
           taskInput.setOutputSuffix(".e");
           taskInput.setSupportedGoto(false);
           taskInput.setSupportedBlock(false);
+        } else if (args[i].equals("--noGoto")) {
+          taskInput.setSupportedGoto(false);
         } else if (
           args[i].equals("--noOutput") || args[i].equals("-o")) {
           taskInput.setPrintOutput(false);
@@ -402,9 +406,11 @@ public class Tom {
         TomTask generator;
         generator = new TomBackend(environment);
         if (taskInput.isDoOptimization()) {
+          /*
           TomOptimizer optimizer = new TomOptimizer(environment);
           compiler.addTask(optimizer);
           optimizer.addTask(generator);
+          */
         } else {
           compiler.addTask(generator);
         }
