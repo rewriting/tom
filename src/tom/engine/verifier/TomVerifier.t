@@ -71,7 +71,7 @@ public class TomVerifier extends TomGenericPlugin {
 				Iterator it = derivations.iterator();
 				while(it.hasNext()) {
 					System.out.println(
-						output.build_latex_from_tree((DerivTree) it.next()));
+						output.build_latex((DerivTree) it.next()));
 				}
         // verbose
         getLogger().log(Level.INFO, "TomVerificationPhase",

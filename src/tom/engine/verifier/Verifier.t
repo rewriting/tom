@@ -316,16 +316,16 @@ public class Verifier extends TomBase {
 	protected ExprList apply_exprRules(Expr ex) {
 		%match(Expr ex) {
 			eq(tau(tl),tau(tr)) -> {
-				return `concExpr(ex,teq(tau(tl),tau(tr)));
+				return `concExpr(ex,teq(tl,tr));
 			}
 			isfsym(tau(t),symbol) -> {
-				return `concExpr(ex,tisfsym(tau(t),symbol));
+				return `concExpr(ex,tisfsym(t,symbol));
 			}
 			eq(vtot(var(tl)),vtot(var(tr))) -> {
-				return `concExpr(ex,teq(tau(absvar(tl)),tau(absvar(tr))));
+				return `concExpr(ex,teq(absvar(tl),absvar(tr)));
 			}
 			isfsym(vtot(var(t)),symbol) -> {
-				return `concExpr(ex,tisfsym(tau(absvar(t)),symbol));
+				return `concExpr(ex,tisfsym(absvar(t),symbol));
 			}
 			eq(lt,rt) -> {
 				// first reduce the argument
