@@ -36,6 +36,7 @@ import jtom.tools.*;
 
 import jtom.exception.*;
 import jtom.adt.*;
+import jtom.runtime.*;
 
 public class TomExpander extends TomBase {
 
@@ -68,11 +69,11 @@ public class TomExpander extends TomBase {
               }
             
               _ -> {
-                return genericTraversal(subject,this);
+                return traversal().genericTraversal(subject,this);
               }
             } // end match
           } else {
-            return genericTraversal(subject,this);
+            return traversal().genericTraversal(subject,this);
           }
         } // end apply
       }; // end new
@@ -125,7 +126,7 @@ public class TomExpander extends TomBase {
             %match(TomTerm t) {
               Appl[option=Option(optionList),astName=name@Name(tomName),args=l] -> {
                 TomSymbol tomSymbol = getSymbol(tomName);
-                TomList args  = (TomList) genericTraversal(l,this);
+                TomList args  = (TomList) traversal().genericTraversal(l,this);
 
                 if(tomSymbol != null) {
                   if(isListOperator(tomSymbol)) {
@@ -162,7 +163,7 @@ public class TomExpander extends TomBase {
             }
             return t;
           } else {
-            return genericTraversal(t,this);
+            return traversal().genericTraversal(t,this);
           }
         } // end apply
       }; // end replaceSymbol
@@ -194,7 +195,7 @@ public class TomExpander extends TomBase {
               }
             }
           }
-          return genericTraversal(subject,this,contextSubject);
+          return traversal().genericTraversal(subject,this,contextSubject);
         }
 
           //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
@@ -368,7 +369,7 @@ public class TomExpander extends TomBase {
           context, t -> {
             //debugPrintln("expandVariable.11 default: " );
               //System.out.println("expandVariable default:\n\t" + subject );
-            return genericTraversal(subject,this,contextSubject);
+            return traversal().genericTraversal(subject,this,contextSubject);
           }
         } // end match
       } // end apply

@@ -35,6 +35,7 @@ import jtom.*;
 import jtom.tools.*;
 import jtom.exception.*;
 import jtom.adt.*;
+import jtom.runtime.*;
 
 public class TomCompiler extends TomBase {
 
@@ -788,7 +789,7 @@ public class TomCompiler extends TomBase {
         } 
       }; // end new
     
-    genericCollect(subject, collect); 
+    traversal().genericCollect(subject, collect); 
   } 
 
     // ------------------------------------------------------------
@@ -809,7 +810,7 @@ public class TomCompiler extends TomBase {
             other -> {
               System.out.println("removeDeclaration this = " + this);
                 //return other;
-              return (TomTerm) genericTraversal(other,this);
+              return (TomTerm) traversal().genericTraversal(other,this);
             }
           }
         } 

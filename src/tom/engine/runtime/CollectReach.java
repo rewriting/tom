@@ -24,9 +24,11 @@
 */
 package jtom.runtime;
 
-import aterm.*;
+import aterm.ATerm;
+import java.util.Collection;
 
-public interface InterfaceCollect3 {
-  public boolean apply(ATerm t, Object arg1, Object arg2);
+public interface CollectReach {
+  boolean apply(ATerm t, Collection c);
 }
 
+  

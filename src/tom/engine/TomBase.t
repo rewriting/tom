@@ -37,16 +37,18 @@ import jtom.checker.*;
 import jtom.adt.*;
 import jtom.runtime.*;
 
-public class TomBase extends GenericTraversal {
+public class TomBase {
   private TomEnvironment tomEnvironment;
   private TomList empty;
-
+  private GenericTraversal traversal;
+  
   private static List emptyList = new ArrayList();
   protected final static boolean debug = false;
 
   public TomBase(TomEnvironment tomEnvironment) {
     this.tomEnvironment = tomEnvironment;
     this.empty = tsf().makeTomList_Empty();
+    this.traversal = new GenericTraversal();
   }
 
   protected ASTFactory ast() {
@@ -55,6 +57,10 @@ public class TomBase extends GenericTraversal {
 
   protected TomSignatureFactory tsf() {
     return tomEnvironment.getTomSignatureFactory();
+  }
+
+  protected GenericTraversal traversal() {
+    return this.traversal;
   }
 
   protected TomSignatureFactory getTomSignatureFactory() {
@@ -395,7 +401,7 @@ public class TomBase extends GenericTraversal {
         } // end apply
       }; // end new
     
-    genericCollect(subject, collect); 
+    traversal().genericCollect(subject, collect); 
   }
 
   protected TomTerm getAnnotedVariable(OptionList subjectList) {

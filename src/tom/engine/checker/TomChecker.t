@@ -36,6 +36,7 @@ import jtom.*;
 import jtom.tools.*;
 import jtom.exception.*;
 import jtom.adt.*;
+import jtom.runtime.*;
 
 public class TomChecker extends TomBase {
   
@@ -104,7 +105,7 @@ public class TomChecker extends TomBase {
           }
         }// end apply
       }; // end new
-    genericCollect(parsedTerm, collectAndVerify);
+    traversal().genericCollect(parsedTerm, collectAndVerify);
   }
   
   public void checkVariableCoherence(TomTerm expandedTerm) {
@@ -131,7 +132,7 @@ public class TomChecker extends TomBase {
           }
         }// end apply
       }; // end new
-    genericCollect(expandedTerm, collectAndVerify);
+    traversal().genericCollect(expandedTerm, collectAndVerify);
   }
 
   private void verifyMatchVariable(TomList patternList) {
@@ -279,7 +280,7 @@ public class TomChecker extends TomBase {
           }
         }// end apply
       }; // end new
-    genericCollect(term, permissiveCollectAndVerify);
+    traversal().genericCollect(term, permissiveCollectAndVerify);
   }
 
     /////////////////////////////////

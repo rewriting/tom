@@ -42,7 +42,7 @@ import jtom.adt.*;
 public class Tom {
   private static String version = "1.2beta";
   
-    private static void usage() {
+  private static void usage() {
     System.out.println("Tom usage:");
     System.out.println("\tjava jtom.Tom [options] inputfile");
     if(Flags.version) {

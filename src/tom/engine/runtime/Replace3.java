@@ -24,8 +24,10 @@
 */
 package jtom.runtime;
 
-import aterm.*;
+import aterm.ATerm;
 
-public interface InterfaceCollect2 {
-  public boolean apply(ATerm t, Object arg1);
+public abstract class Replace3 extends Replace {
+  abstract public ATerm apply(ATerm t, Object arg1, Object arg2);
 }
+
+  

@@ -32,67 +32,85 @@ import java.util.*;
 public class GenericTraversal {
 
     /*
-     * collects something in table
-     * returns false if no more traversal is needed
-     * returns true  if traversal has to be continued
+     * Traverse a subject and collect
      */
-  private class Collect {
-    boolean apply(ATerm t, Object args[]) {
-      int length = args.length;
-      switch(length) {
-          case 0: return ((Collect1)this).apply(t);
-          case 1: return ((Collect2)this).apply(t, args[0]);
-          case 2: return ((Collect3)this).apply(t, args[0], args[1]);
-          default:
-            System.out.println("Extend Collect.apply to " + length + " arguments");
-            System.exit(1);
+  public void genericCollect(ATerm subject, Collect1 collect) {
+    genericCollectArray(subject, collect, new ATerm[] {});
+  }
+
+  public void genericCollect(ATerm subject, Collect2 collect, Object arg1) {
+    genericCollectArray(subject, collect, new Object[] {arg1});
+  }
+
+  public void genericCollect(ATerm subject, Collect3 collect, Object arg1, Object arg2) {
+    genericCollectArray(subject, collect, new Object[] {arg1,arg2});
+  }
+
+ 
+    /*
+     * Traverse a subject and replace
+     */
+  public ATerm genericTraversal(ATerm subject, Replace1 replace) {
+    return genericTraversalArray(subject, replace, new ATerm[] {});
+  }
+
+  public ATerm genericTraversal(ATerm subject, Replace2 replace, Object arg1) {
+    return genericTraversalArray(subject, replace, new Object[] {arg1});
+  }
+
+  public ATerm genericTraversal(ATerm subject, Replace3 replace, Object arg1, Object arg2) {
+    return genericTraversalArray(subject, replace, new Object[] {arg1,arg2});
+  }
+  
+    /*
+     * Traverse a subject and collect
+     * %all(subject, collect(vTable,subject,f)); 
+     */
+  protected void genericCollectArray(ATerm subject, Collect collect, Object[] args) {
+    try {
+      if(collect.apply(subject,args)) { 
+        if(subject instanceof ATermAppl) { 
+          ATermAppl subjectAppl = (ATermAppl) subject; 
+          for(int i=0 ; i<subjectAppl.getArity() ; i++) {
+            ATerm term = subjectAppl.getArgument(i);
+            genericCollectArray(term,collect,args); 
+          } 
+        } else if(subject instanceof ATermList) { 
+          ATermList subjectList = (ATermList) subject; 
+          while(!subjectList.isEmpty()) { 
+            genericCollectArray(subjectList.getFirst(),collect,args); 
+            subjectList = subjectList.getNext(); 
+          } 
+        } 
       }
-      return false;
+    } catch(Exception e) {
+      e.printStackTrace();
+      System.out.println("Please, extend genericCollectArray");
+      System.exit(0);
     }
-  }
+  } 
 
-  protected abstract class Collect1  extends Collect implements InterfaceCollect1 {
-    abstract public boolean apply(ATerm t);
-  }
-
-  protected abstract class Collect2  extends Collect implements InterfaceCollect2 {
-    abstract public boolean apply(ATerm t, Object arg1);
-  }
-
-  protected abstract class Collect3  extends Collect implements InterfaceCollect3 {
-    abstract public boolean apply(ATerm t, Object arg1, Object arg2);
-  }
-
-  private class Replace {
-    protected ATerm apply(ATerm t, Object[] args) {
-      int length = args.length;
-      switch(length) {
-          case 0: return ((Replace1)this).apply(t);
-          case 1: return ((Replace2)this).apply(t, args[0]);
-          case 2: return ((Replace3)this).apply(t, args[0], args[1]);
-          default:
-            System.out.println("Extend Replace.apply to " + length + " arguments");
-            System.exit(1);
+  protected ATerm genericTraversalArray(ATerm subject, Replace replace, Object[] args) {
+    ATerm res = subject;
+    try {
+      if(subject instanceof ATermAppl) { 
+        res = genericMapterm((ATermAppl) subject, replace, args);
+      } else if(subject instanceof ATermList) {
+        res = genericMap((ATermList) subject, replace, args);
       }
-      return t;
+    } catch(Exception e) {
+      e.printStackTrace();
+      System.out.println("Please, extend genericTraversalArray");
+      System.exit(0);
     }
-  }
+    return res;
+  } 
 
-  protected abstract class Replace1 extends Replace {
-    abstract public ATerm apply(ATerm t);
-  }
-
-  protected abstract class Replace2 extends Replace {
-    abstract public ATerm apply(ATerm t, Object arg1);
-  }
-
-  protected abstract class Replace3 extends Replace {
-    abstract public ATerm apply(ATerm t, Object arg1, Object arg2);
-  }
+ 
     /*
      * Apply a function to each element of a list
      */
-  protected ATermList genericMap(ATermList subject, Replace replace, Object[] args) {
+  private ATermList genericMap(ATermList subject, Replace replace, Object[] args) {
     ATermList res = subject;
     try {
       if(!subject.isEmpty()) {
@@ -110,7 +128,7 @@ public class GenericTraversal {
     /*
      * Apply a function to each subterm of a term
      */
-  protected ATermAppl genericMapterm(ATermAppl subject, Replace replace, Object[] args) {
+  private ATermAppl genericMapterm(ATermAppl subject, Replace replace, Object[] args) {
     try {
       ATerm newSubterm;
       for(int i=0 ; i<subject.getArity() ; i++) {
@@ -126,84 +144,8 @@ public class GenericTraversal {
     return subject;
   }
 
-  protected void genericCollect(ATerm subject, Collect collect) {
-    genericCollect(subject,collect, new ATerm[] {});
-  }
-
-  protected void genericCollect(ATerm subject, Collect collect, Object arg1) {
-    genericCollect(subject, collect, new Object[] {arg1});
-  }
-
-  protected void genericCollect(ATerm subject, Collect collect, Object arg1, Object arg2) {
-    genericCollect(subject, collect, new Object[] {arg1,arg2});
-  }
-
-  
-    /*
-     * Traverse a subject and collect
-     * %all(subject, collect(vTable,subject,f)); 
-     */
-  protected void genericCollect(ATerm subject, Collect collect, Object[] args) {
-    try {
-      if(collect.apply(subject,args)) { 
-        if(subject instanceof ATermAppl) { 
-          ATermAppl subjectAppl = (ATermAppl) subject; 
-          for(int i=0 ; i<subjectAppl.getArity() ; i++) {
-            ATerm term = subjectAppl.getArgument(i);
-            genericCollect(term,collect,args); 
-          } 
-        } else if(subject instanceof ATermList) { 
-          ATermList subjectList = (ATermList) subject; 
-          while(!subjectList.isEmpty()) { 
-            genericCollect(subjectList.getFirst(),collect,args); 
-            subjectList = subjectList.getNext(); 
-          } 
-        } 
-      }
-    } catch(Exception e) {
-      e.printStackTrace();
-      System.out.println("Please, extend genericCollect");
-      System.exit(0);
-    }
-  } 
-
-    /*
-     * Traverse a subject and replace
-     */
-  protected ATerm genericTraversal(ATerm subject, Replace replace) {
-    return genericTraversal(subject,replace, new ATerm[] {});
-  }
-
-  protected ATerm genericTraversal(ATerm subject, Replace replace, Object arg1) {
-    return genericTraversal(subject, replace, new Object[] {arg1});
-  }
-
-  protected ATerm genericTraversal(ATerm subject, Replace replace, Object arg1, Object arg2) {
-    return genericTraversal(subject, replace, new Object[] {arg1,arg2});
-  }
-  
-  protected ATerm genericTraversal(ATerm subject, Replace replace, Object[] args) {
-    ATerm res = subject;
-    try {
-      if(subject instanceof ATermAppl) { 
-        res = genericMapterm((ATermAppl) subject, replace, args);
-      } else if(subject instanceof ATermList) {
-        res = genericMap((ATermList) subject, replace, args);
-      }
-    } catch(Exception e) {
-      e.printStackTrace();
-      System.out.println("Please, extend genericTraversal");
-      System.exit(0);
-    }
-    return res;
-  } 
-
-  protected interface CollectReach {
-    boolean apply(ATerm t, Collection c);
-  }
-
-  
-  protected void genericCollectReach(ATerm subject, CollectReach collect,
+ 
+  public void genericCollectReach(ATerm subject, CollectReach collect,
                                  Collection collection) {
     try {
       if(subject instanceof ATermAppl) {
