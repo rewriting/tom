@@ -27,20 +27,12 @@ package jtom.backend;
  
 import aterm.*;
 
-import java.io.FileOutputStream;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.io.IOException;
-import java.util.HashMap;
+
 
 import jtom.adt.tomsignature.types.*;
-
-import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
-import jtom.tools.SingleLineOutputCode;
-import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
 public class TomJavaGenerator extends TomImperativeGenerator {
@@ -57,7 +49,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-	protected void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType) throws IOException {
+	protected void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException {
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
     

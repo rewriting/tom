@@ -159,23 +159,23 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       Declaration(var@Variable(option1,name1,
                                Type(ASTTomType(type),tlType@TLType[]))) -> {
-        buildDeclaration(var, name1, type, tlType);
+        buildDeclaration(deep, var, name1, type, tlType);
         return;
       }
 
       Declaration(var@VariableStar(option1,name1,
                                    Type(ASTTomType(type),tlType@TLType[]))) -> {
-        buildDeclarationStar(var, name1, type, tlType);
+        buildDeclarationStar(deep, var, name1, type, tlType);
         return;
       }
 
       MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
-        buildFunctionBegin(tomName, varList);
+        buildFunctionBegin(deep, tomName, varList);
         return;
       }
 
       MakeFunctionEnd() -> {
-        buildFunctionEnd();
+        buildFunctionEnd(deep);
         return;
       }
 
@@ -348,7 +348,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       Assign(var@Variable(list,name1,
                           Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
-        buildAssignVar(deep, var, type, tlType);
+        buildAssignVar(deep, var, list, type, tlType, exp);
         return;
       }
 
@@ -386,7 +386,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       Assign(var@VariableStar(list,name1,
                               Type(ASTTomType(type),tlType@TLType[])),exp) -> {
-        buildAssignVarExp(deep, var, tlType, exp);
+        buildAssignVarExp(deep, var, list, tlType, exp);
         return;
       }
 
@@ -690,10 +690,10 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   protected abstract TargetLanguage genDeclArray(String name, TomType listType, TomType eltType);
  
-  protected abstract void buildTerm(int deep, String name, TomList argList);
-  protected abstract void buildList(int deep, String name, TomList argList);
-  protected abstract void buildArray(int deep,String name, TomList argList);
-  protected abstract void buildFunctionCall(int deep, String name, TomList argList);
+  protected abstract void buildTerm(int deep, String name, TomList argList) throws IOException;
+  protected abstract void buildList(int deep, String name, TomList argList) throws IOException;
+  protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
+  protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
 
   protected void buildCompiledMatch(int deep, TomList matchDeclarationList,
 				TomList namedBlockList, OptionList list) throws IOException {
@@ -718,11 +718,11 @@ public abstract class TomAbstractGenerator extends TomBase {
     }
   }
 	
-  protected abstract void buildDeclaration(TomTerm var, TomName name, String type, TomType tlType);
-  protected abstract void buildDeclarationStar(TomTerm var, TomName name, String type, TomType tlType);
-  protected abstract void buildFunctionBegin(String tomName, TomList varList); 
-  protected abstract void buildFunctionEnd();
-  protected abstract void buildExpNot(int deep, Expression exp);
+  protected abstract void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException;
+  protected abstract void buildDeclarationStar(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException;
+  protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
+  protected abstract void buildFunctionEnd(int deep) throws IOException;
+  protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
   
   protected void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException {
     generateExpression(deep,exp1);
@@ -735,9 +735,9 @@ public abstract class TomAbstractGenerator extends TomBase {
     generateExpression(deep,exp2);
   }
 
-  protected abstract void buildExpTrue(int deep);
+  protected abstract void buildExpTrue(int deep) throws IOException;
 
-  protected abstract void buildExpFalse(int deep);
+  protected abstract void buildExpFalse(int deep) throws IOException;
 
   protected void buildExpEmptyList(int deep, TomType type1, TomTerm var) throws IOException {
     output.write("tom_is_empty_" + getTomType(type1) + "(");
@@ -867,7 +867,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     output.write(")");
   }
 
-  protected abstract void buildAssignVar(int deep, TomTerm var, String type, TomType tlType) throws IOException ;
+  protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException ;
   protected abstract void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException ;
   protected abstract void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException ;
@@ -881,7 +881,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 	output.writeln(");");
   }
   
-  protected abstract void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp) throws IOException ;
+  protected abstract void buildAssignVarExp(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp) throws IOException ;
 
   protected void buildIncrement(int deep, TomTerm var) throws IOException {
     generate(deep,var);

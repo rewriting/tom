@@ -27,22 +27,22 @@ package jtom.backend;
  
 import aterm.*;
 
-import java.io.FileOutputStream;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+//import java.io.FileOutputStream;
+//import java.io.BufferedWriter;
+//import java.io.OutputStreamWriter;
+//import java.io.Writer;
 import java.io.IOException;
-import java.util.HashMap;
+//import java.util.HashMap;
 
 import jtom.adt.tomsignature.types.*;
 
-import jtom.tools.TomTask;
+//import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
-
+public abstract class TomImperativeGenerator extends TomAbstractGenerator {
 
 	protected String modifier = "";
   public TomImperativeGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
@@ -153,9 +153,9 @@ import jtom.TomEnvironment;
 		output.write(")");
 	}
 
-	protected abstract void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType);
+	protected abstract void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException;
 
-	protected void buildDeclarationStar(int deep, TomTerm var, String name, String type, TomType tlType)  throws IOException{
+	protected void buildDeclarationStar(int deep, TomTerm var, String name, String type, TomType tlType) throws IOException {
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
 		output.writeln(";");
@@ -205,7 +205,7 @@ import jtom.TomEnvironment;
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
   
-  protected void buildAssignVar(int deep, TomTerm var, String type, TomType tlType) throws IOException {
+  protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		output.write(" = (" + getTLCode(tlType) + ") ");
@@ -255,7 +255,7 @@ import jtom.TomEnvironment;
 		output.writeln(deep,"}");
   }
 
-  protected void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp) throws IOException {
+  protected void buildAssignVarExp(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		output.write(" = (" + getTLCode(tlType) + ") ");
@@ -272,7 +272,7 @@ import jtom.TomEnvironment;
 
   protected abstract void buildExitAction(int deep, TomNumberList numberList) throws IOException;
 
-  protected void buildReturn(int deep, Expression exp) throws IOException {
+  protected void buildReturn(int deep, TomTerm exp) throws IOException {
 		output.write(deep,"return ");
 		generate(deep,exp);
 		output.writeln(deep,";");
@@ -321,7 +321,7 @@ import jtom.TomEnvironment;
     generateSlotList(deep, slotList);
   }
 
-protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2) throws IOException {
+protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
     String args[];
     if(strictType) {
       args = new String[] { getTLCode(tlType1), name1,
@@ -338,7 +338,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
 																	 String declName,
 																	 String suffix,
 																	 String args[],
-																	 TargetLanguage tlCode) throws IOException {
+																	 TargetLanguage tlCode) {
     String s = "";
     if(!genDecl) { return null; }
 		s = modifier + returnType + " " + declName + "_" + suffix + "(";
@@ -356,8 +356,8 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
       return `ITL(s);
 		}
 
-  protected TargetLanguage genDeclMake(int deep, String opname, TomType returnType, 
-                                            TomList argList, TargetLanguage tlCode) throws IOException {
+  protected TargetLanguage genDeclMake(String opname, TomType returnType, 
+                                            TomList argList, TargetLanguage tlCode) {
 		//%variable
     String s = "";
     if(!genDecl) { return null; }
@@ -394,7 +394,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
-  protected TargetLanguage genDeclList(int deep, String name, TomType listType, TomType eltType) {
+  protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
       //%variable
     String s = "";
     if(!genDecl) { return null; }
@@ -464,7 +464,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     return resultTL;
   }
 
-  protected TargetLanguage genDeclArray(int deep, String name, TomType listType, TomType eltType) {
+  protected TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
       //%variable
     String s = "";
     if(!genDecl) { return null; }
