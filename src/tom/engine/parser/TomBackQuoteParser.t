@@ -196,7 +196,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
       
       matchBlock: {
         %match(Token token, Token next) {
-          IDENT(name), LPAREN() -> {
+          IDENT(name), LPAREN[] -> {
             stackName.push(name);
             stackList.push(`concTomTerm(Composite(concTomTerm())));
             token = next;
@@ -216,7 +216,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
             break matchBlock;
           }
           
-          COMMA(), _ -> {
+          COMMA[], _ -> {
             detectVariableStar(stackList);
             addNewComposite(stackList);
             break matchBlock;

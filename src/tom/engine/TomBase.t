@@ -401,9 +401,22 @@ public class TomBase {
     traversal().genericCollect(subject, collect);
   }
 
+  protected boolean isAnnotedVariable(TomTerm t) {
+    %match(TomTerm t) {
+      Appl[option=Option(optionList)] |
+      Variable[option=Option(optionList)] |
+      VariableStar[option=Option(optionList)] |
+      UnamedVariable[option=Option(optionList)] |
+      UnamedVariableStar[option=Option(optionList)] -> {
+        return getAnnotedVariable(optionList)!=null;
+      }
+    }
+    return false;
+  }
+   
   protected TomTerm getAnnotedVariable(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(_*,TomTermToOption(var@Variable(option,name,type)),_*) -> { return var; }
+      concOption(_*,TomTermToOption(var@Variable[]),_*) -> { return var; }
     }
     return null;
   }
@@ -425,7 +438,7 @@ public class TomBase {
 
   protected boolean hasConstructor(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(X1*,Constructor(),X2*) -> { return true; }
+      concOption(X1*,Constructor[],X2*) -> { return true; }
     }
     return false;
   }

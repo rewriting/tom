@@ -265,10 +265,10 @@ public abstract class ATermSet implements Collection {
   /* Simple binary operation skeleton
  private JGTreeSet f(JGTreeSet m1, JGTreeSet m2) {
    %match(JGTreeSet m1, JGTreeSet m2) {
-      emptySet, x -> {
+      emptySet(), x -> {
         return f2(m2);
       }
-      x, emptySet -> {
+      x, emptySet() -> {
         return f1(m1);
       }
       singleton(y) , x -> {
@@ -348,7 +348,7 @@ public abstract class ATermSet implements Collection {
           public boolean apply(ATerm t) {
             if(t instanceof JGTreeSet) {
               %match(JGTreeSet t) {
-                emptySet -> {return false;}
+                emptySet() -> {return false;}
                 singleton(x) -> {
                   res.add(x);
                   return false;

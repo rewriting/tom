@@ -400,33 +400,20 @@ public class TomKernelCompiler extends TomBase {
       //%variable
     matchBlock: {
       %match(TomTerm term) {
-        var@Variable(Option(optionList), _, termType) -> {
+        var@Variable(Option(optionList), _, termType) |
+        var@UnamedVariable(Option(optionList), termType) -> {
           TomTerm annotedVariable = getAnnotedVariable(optionList);
-          Instruction assignement = `Assign(var,TomTermToExpression(Variable(option(),PositionName(path),termType)));
-          result = appendInstruction(assignement,result);
+          Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType));
+          result = appendInstruction(`Assign(var,source),result);
 
           if(annotedVariable != null) {
-            assignement = `Assign(annotedVariable,TomTermToExpression(var)); 
-            result = appendInstruction(assignement,result);
+            result = appendInstruction(`Assign(annotedVariable,source),result);
           }
           if(gsa) {
             result = appendInstruction(`Action(actionList),result);
           }
           
           break matchBlock; 
-        }
-
-        UnamedVariable(Option(optionList), termType) -> {
-          TomTerm annotedVariable = getAnnotedVariable(optionList);
-          if(annotedVariable != null) {
-            Instruction assignement = `Assign(annotedVariable,TomTermToExpression(Variable(option(),PositionName(path),termType)));
-            result = appendInstruction(assignement,result);
-          }
-          if(gsa) {
-            result = appendInstruction(`Action(actionList),result);
-          }
-
-          break matchBlock;
         }
 
         Appl(Option(optionList),Name(tomName),termArgs) -> {
@@ -444,36 +431,8 @@ public class TomKernelCompiler extends TomBase {
           TomList annotedAssignementList = empty();
           
           int indexSubterm = 0;
-          TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType); 
-          while(!termTypeList.isEmpty()) {
-            TomType subtermType    = termTypeList.getHead();
-            TomNumberList newPath  = appendNumber(indexSubterm+1,path);
-            TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType);
-            TomTerm declaration    = `Declaration(newVariableAST);
-            declarationList        = append(declaration,declarationList);
-            
-            Expression getSubtermAST;
+          TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType);
 
-            TomName slotName = getSlotName(tomSymbol, indexSubterm);
-            if(slotName == null) {
-              getSubtermAST = `GetSubterm(subjectVariableAST,makeNumber(indexSubterm));
-            } else {
-              getSubtermAST = `GetSlot(termNameAST,slotName.getString(),subjectVariableAST);
-            }
-            
-            Instruction assignement  = `Assign(newVariableAST,getSubtermAST);
-            assignementList      = appendInstruction(assignement,assignementList);
-            
-            indexSubterm++;
-            termTypeList = termTypeList.getTail();
-          }
-          
-            // generate an assignement for annoted variables
-          if(annotedVariable != null) {
-            Instruction assignement = `Assign(annotedVariable,TomTermToExpression(subjectVariableAST));
-            annotedAssignementList   = appendInstruction(assignement,annotedAssignementList);
-          }
-          
           TomList automataList  = null;
           TomList succesList    = empty();
           
@@ -490,10 +449,53 @@ public class TomKernelCompiler extends TomBase {
                                                     tmpIndexSubterm);
           } else {
             automataList = genMatchingAutomataFromPatternList(termArgs,path,1,actionList,gsa);
+          
+            TomList termArgList = termArgs;
+            while(!termTypeList.isEmpty()) {
+              TomType subtermType    = termTypeList.getHead();
+              TomTerm subtermArg     = termArgList.getHead();
 
+              if(subtermArg == null) {
+                System.out.println("term         = " + term);
+                System.out.println("termTypeList = " + termTypeList);
+                System.out.println("termArgList  = " + termArgList);
+              }
+              
+              if(subtermArg.isUnamedVariable() && !isAnnotedVariable(subtermArg)) {
+                  /* This is an optimisation */
+                  /* Do not assign the subterm: skip the subterm */
+              } else {
+                TomNumberList newPath  = appendNumber(indexSubterm+1,path);
+                TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType);
+                TomTerm declaration    = `Declaration(newVariableAST);
+                declarationList        = append(declaration,declarationList);
+                
+                Expression getSubtermAST;
+                TomName slotName = getSlotName(tomSymbol, indexSubterm);
+                if(slotName == null) {
+                  getSubtermAST = `GetSubterm(subjectVariableAST,makeNumber(indexSubterm));
+                } else {
+                  getSubtermAST = `GetSlot(termNameAST,slotName.getString(),subjectVariableAST);
+                }
+                
+                Instruction assignement = `Assign(newVariableAST,getSubtermAST);
+                assignementList = appendInstruction(assignement,assignementList);
+              }
+              indexSubterm++;
+              termTypeList = termTypeList.getTail();
+              termArgList = termArgList.getTail();
+            }
+            
             succesList = concat(succesList,declarationList);
             succesList = concat(succesList,assignementList);
           }
+          
+            // generate an assignement for annoted variables
+          if(annotedVariable != null) {
+            Instruction assignement = `Assign(annotedVariable,TomTermToExpression(subjectVariableAST));
+            annotedAssignementList = appendInstruction(assignement,annotedAssignementList);
+          }
+          
           succesList = concat(succesList,annotedAssignementList);
           succesList = concat(succesList,automataList);
           
