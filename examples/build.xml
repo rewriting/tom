@@ -156,10 +156,12 @@
 
   <target name="addressbook" depends="init">
     <!-- build adt -->
-    <adt file="${addressbook.dir}/data.adt" 
+    <adt srcdir="${examples.dir}"
          factory="data" 
          package="${addressbook}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${addressbook}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -181,10 +183,12 @@
 
   <target name="apireach" depends="init"> 
     <!-- build adt -->
-    <adt file="${apireach.dir}/reach.adt" 
+    <adt srcdir="${examples.dir}"
          factory="reach" 
          package="${apireach}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${apireach}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -204,10 +208,12 @@
 
   <target name="boulderdash" depends="init">
     <!-- build adt -->
-    <adt file="${boulderdash.dir}/boulder.adt" 
+    <adt srcdir="${examples.dir}"
          factory="boulder" 
          package="${boulderdash}" 
-         destdir="${examples.gen}"/>
+				 destdir="${examples.gen}">
+			<include name="${boulderdash}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -236,10 +242,12 @@
 
   <target name="builtin" depends="init">
     <!-- build adt -->
-    <adt file="${builtin.dir}/term.adt" 
-         factory="term" 
-         package="${builtin}" 
-         destdir="${examples.gen}"/>
+		<adt srcdir="${examples.dir}"
+				 factory="term" 
+				 package="${builtin}" 
+				 destdir="${examples.gen}">
+			<include name="${builtin}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -397,10 +405,12 @@
 
   <target name="gtree" depends="init">
     <!-- build adt -->
-    <adt file="${gtree.dir}/term.adt" 
+    <adt srcdir="${examples.dir}"
          factory="term" 
          package="${gtree}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${gtree}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -458,10 +468,12 @@
 
   <target name="nspk" depends="init">
     <!-- build adt -->
-    <adt file="${nspk.dir}/term.adt" 
+    <adt srcdir="${examples.dir}"
          factory="term" 
          package="${nspk}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${nspk}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -499,10 +511,12 @@
 
   <target name="peano" depends="init">
     <!-- build adt -->
-    <adt file="${peano.dir}/peano.adt" 
+    <adt srcdir="${examples.dir}"
          factory="peano" 
          package="${peano}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${peano}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -522,10 +536,12 @@
 
   <target name="pnspk" depends="init">
     <!-- build adt -->
-    <adt file="${pnspk.dir}/term.adt" 
+    <adt srcdir="${examples.dir}"
          factory="term" 
          package="${pnspk}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${pnspk}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -545,10 +561,12 @@
   
   <target name="poly" depends="init">
     <!-- build adt -->
-    <adt file="${poly.dir}/expression.adt" 
+    <adt srcdir="${examples.dir}"
          factory="expression" 
          package="${poly}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${poly}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -608,10 +626,12 @@
 
   <target name="propp" depends="init">
     <!-- build adt -->
-    <adt file="${propp.dir}/seq.adt" 
+    <adt srcdir="${examples.dir}" 
          factory="seq" 
          package="${propp}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${propp}/**/*.adt"/>
+		</adt>
     <!-- build parser -->
     <tomantlr target="${propp.dir}/SeqParser.g"
               outputdirectory="${examples.gen}/${propp}">
@@ -645,10 +665,12 @@
 
   <target name="rbtree" depends="init">
     <!-- build adt -->
-    <adt file="${rbtree.dir}/tree.adt" 
+    <adt srcdir="${examples.dir}" 
          factory="tree" 
          package="${rbtree}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${rbtree}/**/*.adt"/>
+		</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
@@ -668,10 +690,12 @@
 
   <target name="set" depends="init">
     <!-- build adt -->
-    <adt file="${set.dir}/jgset.adt" 
+    <adt srcdir="${examples.dir}"
          factory="jgset" 
          package="${set}" 
-         destdir="${examples.gen}"/>
+         destdir="${examples.gen}">
+			<include name="${set}/**/*.adt"/>
+	</adt>
     <!-- build tom -->
     <tom config="${tomconfigfile}"
 				 srcdir="${examples.dir}" 
