@@ -32,15 +32,64 @@ package tutorial;
 public class HelloWorld {
   %include { string.tom }
 
+  public final static void main(String[] args) {
+    HelloWorld o = new HelloWorld();
+    System.out.println("Hello " + o.getWord("World"));
+  } 
+
   public String getWord(String t) {
     %match(String t) {
       "World"  -> { return "World";}
       _        -> { return "Unknown"; }
     }
   }
- 
-  public final static void main(String[] args) {
-    HelloWorld o = new HelloWorld();
-    System.out.println("Hello " + o.getWord("World"));
-  } 
+
+  public void revisited(String t) {
+    %match(String t) {
+      (_*,'e',_*) -> { System.out.println("we have found a 'e'"); }
+    }
+
+    %match(String t) {
+      (before*,'e',after*) -> { 
+        System.out.println("we have found a 'e'" +
+                           " after " + `after* +
+                           " but before " + `before*); 
+      }
+    }
+
+    %match(String t) {
+      (before*,'o') -> { /* ... */ }
+    }
+
+    %match(String t) {
+      (before*,'e',_*,'o') -> { /* ... */ }
+    }
+
+    %match(String t) {
+      (_*,'l','l',_*) -> { /* ... */ }
+    }
+
+    %match(String t) {
+      (_*,'ll',_*) -> { /* ... */ }
+    }
+
+  }
+
+  public void re_revisited(String t) {
+    %match(String t) {
+      (x,_*,'ll',_*,y) -> { /* ... */ }
+    }
+
+    %match(String t) {
+      (x,_*,'ll',_*,y) -> { /* ... */ }
+      (x,y,y,x)        -> { /* we have found a palindrome */ }
+    }
+
+    %match(String t) {
+      (_*,'a',_*,'a',_*,'a',_*) -> { /* look for 3 'a' in a string */ }
+      (_*,x@'a',_*,x,_*,x,_*)   -> { /* look for 3 'a' in a string */ }
+    }
+   
+  }
+
 }

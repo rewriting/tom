@@ -62,6 +62,9 @@
   <property name="nspk" value="nspk"/>
   <property name="nspk.dir" location="${examples.dir}/${nspk}" />
 
+  <property name="p3p" value="p3p"/>
+  <property name="p3p.dir" location="${examples.dir}/${p3p}" />
+
   <property name="peano" value="peano"/>
   <property name="peano.dir" location="${examples.dir}/${peano}" />
 
@@ -378,6 +381,22 @@
     </javac>
   </target>
   
+  <target name="p3p" depends="init">
+    <!-- build tom -->
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
+      <include name="${p3p}/**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
+      <classpath refid="tom.classpath"/>
+      <include name="${p3p}/**/*.java"/>
+    </javac>
+  </target>
+
   <target name="peano" depends="init">
     <!-- build adt -->
     <adt file="${peano.dir}/peano.adt" 
@@ -610,14 +629,14 @@
   <target name="examples" 
           description="Builds the examples (at least some)"
 					depends="addressbook, apireach, boulderdash, builtin, dom,
-					expression, gtree, list, nspk, peano, pnspk, poly, pqueens,
+					expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, vas, xml">
 -->
   <target name="examples" 
           description="Builds the examples (at least some)"
 					depends="xml, vas, tutorial, set, rbtree, propp, prodrule,
           addressbook, apireach, boulderdash, builtin, dom,
-					expression, gtree, list, nspk, peano, pnspk, poly, pqueens">
+					expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens">
   </target>
   
   <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">
@@ -683,6 +702,10 @@
         <include name="${nspk}/README"/>
         <include name="${nspk}/*.t"/>
         <include name="${nspk}/*.adt"/>
+
+        <include name="${p3p}/README"/>
+        <include name="${p3p}/*.t"/>
+        <include name="${p3p}/*.xml"/>
 
         <include name="${peano}/README"/>
         <include name="${peano}/*.adt"/>

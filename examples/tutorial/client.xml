@@ -1,0 +1,107 @@
+<RULESET appel="http://www.w3.org/2002/04/APPELv1"
+                        p3p="http://www.w3.org/2000/12/P3Pv1" 
+                        crtdby="W3C" crtdon="2001-02-19T16:21:21+01:00">
+           <RULE behavior="request1">
+             <POLICY>
+               
+               <STATEMENT>
+                 <RECIPIENT connective="non-and">
+                   <ours/>
+                 </RECIPIENT>
+
+               </STATEMENT>
+             </POLICY>
+           </RULE>
+           <RULE behavior="limited1" prompt="yes"
+                       promptmsg="Warning! Service collects data needed for e-commerce
+                                  activities but may share this data with legal
+                                  entities following different practices, public fora,
+                                  or unrelated third parties. Do you want to continue
+                                  (using limited access)?">
+             <POLICY>
+               <STATEMENT>
+                 <PURPOSE connective="and-exact">
+                   <current/>
+                 </PURPOSE>
+                 <RECIPIENT connective="or">
+                   <other-recipient/>
+                   <public/>
+                   <unrelated/>
+                 </RECIPIENT>
+               </STATEMENT>
+             </POLICY>
+           </RULE>
+           <RULE behavior="limited2" prompt="yes"
+                       promptmsg="Warning! Service collects data needed for e-commerce 
+                                  activities but may use it also for marketing,
+                                  tailoring, or 'other' purposes. Do you still
+                                  want to continue (using limited access)?">
+             <POLICY>
+               <STATEMENT>
+                 <PURPOSE>
+                   <current/>
+                 </PURPOSE>
+                 <PURPOSE connective="or">
+                   <contact/>
+                   <tailoring/>
+                   <other-purpose/>
+                 </PURPOSE>
+               </STATEMENT>
+             </POLICY>
+           </RULE>
+           <RULE behavior="request" prompt="yes"
+                       promptmsg="FYI: This site collects healthcare information but
+                                  participates in a seal program. Continue?">
+             <POLICY>
+               <STATEMENT>
+                 <DATA-GROUP>
+                   <DATA ref="#dynamic.clientevents"> </DATA>
+                   <DATA ref="#dynamic.clickstream"/>
+                 </DATA-GROUP>
+               </STATEMENT>
+             </POLICY>
+           </RULE>
+           <RULE behavior="limited3" prompt="yes"
+                       promptmsg="Warning! Site collects healthcare information but does not
+                                  participate in a seal program. Do you want to continue anyway">
+                                  
+             <POLICY>
+               <STATEMENT>
+                 <DATA-GROUP>
+                   <DATA>
+                     <CATEGORIES>
+                       <health/>
+                     </CATEGORIES>
+                   </DATA>
+                 </DATA-GROUP>
+               </STATEMENT>
+             </POLICY>
+           </RULE>
+           <RULE behavior="request">
+             <POLICY>
+               <STATEMENT>
+                 <PURPOSE connective="and-exact">
+                   <current/>
+                 </PURPOSE>
+                 <RECIPIENT connective="or-exact">
+                   <ours/>
+                   <same/>
+                   <delivery/>
+                 </RECIPIENT>
+               </STATEMENT>
+             </POLICY>
+           </RULE>
+           <RULE behavior="limited4" prompt="yes"
+                       promptmsg="Warning! Service does not provide access to identifiable 
+                                  data it collects. Do you want to continue anyway (using 
+                                  limited access)?">
+             <POLICY>
+               <ACCESS>
+                 <none/>
+               </ACCESS>
+             </POLICY>
+           </RULE>
+           <RULE behavior="request" >        
+             <OTHERWISE/>
+           </RULE>
+         </RULESET>

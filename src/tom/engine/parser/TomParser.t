@@ -2495,6 +2495,10 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
            * here we consume the read in advance "*" to remove it from the "previous code"
            */
           tk = getNextToken();
+          /*
+           * we switch to DEFAULT mode to re-assign the oldPos variable
+           */
+          switchToDefaultMode(); /* switch to DEFAULT mode */
         } else {
           /*
            * the backquote-term is a single variable
