@@ -1,0 +1,9 @@
+let get_fun_sym (t) =
+  let x = Obj.repr(t) in 
+  if(Obj.is_block(x)) then Obj.tag(x)
+    else 256 + (Obj.magic(x):int);;
+
+let get_subterm t n =
+  let x = Obj.repr(t) in 
+  assert(Obj.is_block(x) && n>=0 && n<Obj.size(x));
+  Obj.magic(Obj.field x n);;
