@@ -1,9 +1,8 @@
 import aterm.*;
 import aterm.pure.*;
-import java.util.*;
 import jtom.runtime.*;
-import adt.localsearch.term.*;
-import adt.localsearch.term.types.*;
+import adt.localsearch.*;
+import adt.localsearch.types.*;
 
 public class LocalSearch {
   
@@ -12,7 +11,7 @@ public class LocalSearch {
   private GenericTraversal traversal;
 
 // ------------------------------------------------------------  
-  %include { term.tom }
+  %include { localsearch.tom }
 // ------------------------------------------------------------  
  
   public LocalSearch(Factory factory) {
@@ -20,7 +19,7 @@ public class LocalSearch {
     this.traversal = new GenericTraversal();
   }
 
-  public final Factory getTermFactory() {
+  public final Factory getLocalsearchFactory() {
       return factory;
   }
   
