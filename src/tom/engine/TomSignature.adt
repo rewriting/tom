@@ -93,17 +93,21 @@
   [TomType,TLType,TLType(<tl(TargetLanguage)>) ],
   [TomType,EmptyType,EmptyType],
 
+  [TomName,Name,Name(<string(str)>) ],
+  [TomName,PositionName,PositionName(<numberList(TomList)>) ],
+  [TomName,EmptyName,EmptyName],
+
   [TomList,Empty, []],
   [TomList,Cons, [<head(TomTerm)>,<[tail(TomList)]>]],
-
 
   [TomTerm , TargetLanguageToTomTerm , TargetLanguageToTomTerm(<tl(TargetLanguage)>) ],
   [TomTerm , TomTypeToTomTerm , TomTypeToTomTerm( <astType(TomType)> ) ],
   [TomTerm , TomNameToTomTerm , TomNameToTomTerm( <astName(TomName)> ) ],
   [TomTerm , TomSymbolToTomTerm , TomSymbolToTomTerm( <astSymbol(TomSymbol)> ) ],
   [TomTerm , DeclarationToTomTerm , DeclarationToTomTerm(<astDeclaration(Declaration)> ) ],
-  [TomTerm,OptionToTomTerm,OptionToTomTerm(<astOption(Option)>)],
-  [TomTerm,ExpressionToTomTerm,ExpressionToTomTerm(<astExpression(Expression)>)],
+  [TomTerm , OptionToTomTerm,OptionToTomTerm(<astOption(Option)>)],
+  [TomTerm , ExpressionToTomTerm,ExpressionToTomTerm(<astExpression(Expression)>)],
+  [TomTerm , InstructionToTomTerm,InstructionToTomTerm(<astInstruction(Instruction)>)],
 
   [TomTerm,Tom,Tom(<list(TomList)>) ],
   [TomTerm,TomInclude,TomInclude(<list(TomList)>) ],
@@ -112,112 +116,66 @@
 
   [TomTerm,BackQuoteTerm,BackQuoteTerm(<term(TomTerm)>,<option(Option)>) ],
 
+  [TomTerm,FunctionCall,FunctionCall(<astName(TomName)>,<args(TomList)>) ],
+  [TomTerm,MakeFunctionBegin,
+    MakeFunctionBegin(<astName(TomName)>,<subjectListAST(TomTerm)>) ],
+  [TomTerm,MakeFunctionEnd ,MakeFunctionEnd ],
+
+  [TomTerm,Appl,Appl(<option(Option)>, <astName(TomName)>, <args(TomList)>) ],
+  [TomTerm,RecordAppl,
+    RecordAppl(<option(Option)>, <astName(TomName)>, <args(TomList)>) ],
+  [TomTerm,PairSlotAppl,PairSlotAppl(<slotName(TomName)>,<appl(TomTerm)>) ],
+  [TomTerm,Match,Match(<option(Option)>,<subjectList(TomTerm)>,<patternList(TomTerm)>) ],
+  [TomTerm,RuleSet,RuleSet(<option(Option)>, <list(TomList)>) ],
+  [TomTerm,RewriteRule,RewriteRule(<lhs(TomTerm)>, <rhs(TomTerm)>,<orgTrack(Option)>) ],
+  [TomTerm,SubjectList,SubjectList(<list(TomList)>) ],
+  [TomTerm,PatternList,PatternList(<list(TomList)>) ],
+  [TomTerm,TermList,TermList(<list(TomList)>) ],
+  [TomTerm,Term,Term(<kid1(TomTerm)>) ],
+  [TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<tom(TomTerm)>) ],
+  [TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>) ],
+  [TomTerm,Declaration,Declaration(<kid1(TomTerm)>) ],
+  [TomTerm,Variable,
+    Variable(<option(Option)>, <astName(TomName)>, <astType(TomType)>) ],
+  [TomTerm,VariableStar,
+    VariableStar(<option(Option)>, <astName(TomName)>, <astType(TomType)>) ],
+  [TomTerm,Placeholder,Placeholder(<option(Option)>) ],
+  [TomTerm,UnamedVariable,UnamedVariable(<option(Option)>, <astType(TomType)>) ],
+  [TomTerm,DotTerm,DotTerm(<kid1(TomTerm)>, <kid2(TomTerm)>) ],
+
   [TomTerm,LocalVariable ,LocalVariable ],
-
   [TomTerm,EndLocalVariable ,EndLocalVariable ],
-
   [TomTerm,BuildVariable,BuildVariable(<astName(TomName)>) ],
-
   [TomTerm,BuildVariableStar,BuildVariableStar(<astName(TomName)>) ],
-
   [TomTerm,BuildTerm,BuildTerm(<astName(TomName)>,<args(TomList)>) ],
   [TomTerm,BuildList,BuildList(<astName(TomName)>,<args(TomList)>) ],
   [TomTerm,BuildArray,BuildArray(<astName(TomName)>,<args(TomList)>) ],
-
-  [TomTerm,FunctionCall,FunctionCall(<astName(TomName)>,<args(TomList)>) ],
-
-  [TomTerm,Appl,Appl(<option(Option)>, <astName(TomName)>, <args(TomList)>) ],
-
-  [TomTerm,RecordAppl,
-    RecordAppl(<option(Option)>, <astName(TomName)>, <args(TomList)>) ],
-
-  [TomTerm,PairSlotAppl,PairSlotAppl(<slotName(TomName)>,<appl(TomTerm)>) ],
-
-  [TomName,Name,Name(<string(str)>) ],
-  [TomName,PositionName,PositionName(<numberList(TomList)>) ],
-  [TomName,EmptyName,EmptyName],
-
-  [TomTerm,Match,Match(<option(Option)>,<subjectList(TomTerm)>,<patternList(TomTerm)>) ],
-
-  [TomTerm,MakeFunctionBegin,
-    MakeFunctionBegin(<astName(TomName)>,<subjectListAST(TomTerm)>) ],
-
-  [TomTerm,MakeFunctionEnd ,MakeFunctionEnd ],
-
-  [TomTerm,RuleSet,RuleSet(<option(Option)>, <list(TomList)>) ],
-
-  [TomTerm,RewriteRule,RewriteRule(<lhs(TomTerm)>, <rhs(TomTerm)>,<orgTrack(Option)>) ],
-
-  [TomTerm,SubjectList,SubjectList(<list(TomList)>) ],
-
-  [TomTerm,PatternList,PatternList(<list(TomList)>) ],
-
-  [TomTerm,TermList,TermList(<list(TomList)>) ],
-
-  [TomTerm,Term,Term(<kid1(TomTerm)>) ],
-
-  [TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<tom(TomTerm)>) ],
-
-  [TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>) ],
-
-  [TomTerm,Variable,
-    Variable(<option(Option)>, <astName(TomName)>, <astType(TomType)>) ],
-
-  [TomTerm,VariableStar,
-    VariableStar(<option(Option)>, <astName(TomName)>, <astType(TomType)>) ],
-
-  [TomTerm,Placeholder,Placeholder(<option(Option)>) ],
-
-  [TomTerm,UnamedVariable,UnamedVariable(<option(Option)>, <astType(TomType)>) ],
-
   [TomTerm,CompiledMatch,CompiledMatch(<decls(TomList)>,<automataList(TomList)>) ],
 
   [TomTerm,Automata,Automata(<numberList(TomList)>,<instList(TomList)>) ],
 
-  [TomTerm,IfThenElse,
-    IfThenElse(<condition(Expression)>,<succesList(TomList)>,<failureList(TomList)>) ],
-
-  [TomTerm,DoWhile,DoWhile(<instList(TomList)>,<condition(Expression)>) ],
-
-  [TomTerm,Assign,Assign(<kid1(TomTerm)>,<source(Expression)>) ],
-
-  [TomTerm,Declaration,Declaration(<kid1(TomTerm)>) ],
-
+  [TomTerm,MatchNumber,MatchNumber(<number(TomTerm)>) ],
+  [TomTerm,PatternNumber,PatternNumber(<number(TomTerm)>) ],
+  [TomTerm,ListNumber,ListNumber(<number(TomTerm)>) ],
+  [TomTerm,IndexNumber,IndexNumber(<number(TomTerm)>) ],
+  [TomTerm,AbsVar,AbsVar(<number(TomTerm)>) ],
+  [TomTerm,RenamedVar,RenamedVar(<astName(TomName)>) ],
+  [TomTerm,RuleVar,RuleVar() ],
+  [TomTerm,Number,Number(<integer(int)>) ],
   [TomTerm,Begin,Begin(<number(TomTerm)>) ],
-
   [TomTerm,End,End(<number(TomTerm)>) ],
 
-  [TomTerm,MatchNumber,MatchNumber(<number(TomTerm)>) ],
-
-  [TomTerm,PatternNumber,PatternNumber(<number(TomTerm)>) ],
-
-  [TomTerm,ListNumber,ListNumber(<number(TomTerm)>) ],
-
-  [TomTerm,IndexNumber,IndexNumber(<number(TomTerm)>) ],
-
-  [TomTerm,AbsVar,AbsVar(<number(TomTerm)>) ],
-
-  [TomTerm,RenamedVar,RenamedVar(<astName(TomName)>) ],
-
-  [TomTerm,RuleVar,RuleVar() ],
-
-  [TomTerm,Number,Number(<integer(int)>) ],
-  [TomTerm,Increment,Increment(<kid1(TomTerm)>) ],
-
-  [TomTerm,Action,Action(<instList(TomList)>) ],
-
-  [TomTerm,ExitAction,ExitAction(<numberList(TomList)>) ],
-
-  [TomTerm,Return,Return(<kid1(TomTerm)>) ],
-
-  [TomTerm,OpenBlock ,OpenBlock ],
-
-  [TomTerm,CloseBlock ,CloseBlock ],
-
-  [TomTerm,NamedBlock,NamedBlock(<blockName(str)>,<instList(TomList)>) ],
-
-
-  [TomTerm,DotTerm,DotTerm(<kid1(TomTerm)>, <kid2(TomTerm)>) ],
+  [Instruction,IfThenElse,
+    IfThenElse(<condition(Expression)>,<succesList(TomList)>,<failureList(TomList)>) ],
+  [Instruction,DoWhile,DoWhile(<instList(TomList)>,<condition(Expression)>) ],
+  [Instruction,Assign,Assign(<kid1(TomTerm)>,<source(Expression)>) ],
+  [Instruction,Increment,Increment(<kid1(TomTerm)>) ],
+  [Instruction,Action,Action(<instList(TomList)>) ],
+  [Instruction,ExitAction,ExitAction(<numberList(TomList)>) ],
+  [Instruction,Return,Return(<kid1(TomTerm)>) ],
+  [Instruction,OpenBlock ,OpenBlock ],
+  [Instruction,CloseBlock ,CloseBlock ],
+  [Instruction,NamedBlock,NamedBlock(<blockName(str)>,<instList(TomList)>) ],
 
   [TomSymbol,Symbol,
    Symbol(<astName(TomName)>,
@@ -226,12 +184,12 @@
    <option(Option)>,
    <tlCode(TargetLanguage)>) ],
 
+  [SlotList,EmptySlotList, []],
+  [SlotList,ConsSlotList, [<headSlotList(PairNameDecl)>,<[tailSlotList(SlotList)]>]],
+  [PairNameDecl,Slot,Slot(<slotName(TomName)>, <slotDecl(Declaration)>) ],
+
   [TomSymbolTable,Table,Table(<entryList(TomEntryList)>) ],
   [TomEntryList,EmptyEntryList, []],
   [TomEntryList,ConsEntryList, [<headEntryList(TomEntry)>,<[tailEntryList(TomEntryList)]>]],
-  [TomEntry,Entry,Entry(<strName(str)>, <astSymbol(TomSymbol)>) ],
-
-  [SlotList,EmptySlotList, []],
-  [SlotList,ConsSlotList, [<headSlotList(PairNameDecl)>,<[tailSlotList(SlotList)]>]],
-  [PairNameDecl,Slot,Slot(<slotName(TomName)>, <slotDecl(Declaration)>) ]
+  [TomEntry,Entry,Entry(<strName(str)>, <astSymbol(TomSymbol)>) ]
 ]

@@ -182,72 +182,15 @@ public class TomGenerator extends TomBase {
 
       CompiledMatch(matchDeclarationList, namedBlockList) -> {
         if(Flags.supportedBlock) {
-          generate(out,deep,`OpenBlock());
+          generateInstruction(out,deep,`OpenBlock());
         }
         generateList(out,deep+1,matchDeclarationList);
         generateList(out,deep+1,namedBlockList);
         if(Flags.supportedBlock) {
-          generate(out,deep,`CloseBlock());
+          generateInstruction(out,deep,`CloseBlock());
         }
         return;
       }
-      
-      NamedBlock(blockName,instList) -> {
-        if(Flags.cCode) {
-          out.writeln("{");
-          generateList(out,deep+1,instList);
-          out.writeln("}" + blockName +  ":;");
-        } else if(Flags.jCode) {
-          out.writeln(blockName + ": {");
-          generateList(out,deep+1,instList);
-          out.writeln("}");
-        } else if(Flags.eCode) {
-          System.out.println("NamedBlock: Eiffel code not yet implemented");
-            //System.exit(1);
-        }  
-        return;
-      }
-      
-        //IfThenElse(exp,succesList,conc()) -> {
-      IfThenElse(exp,succesList,Empty()) -> {
-        statistics().numberIfThenElseTranformed++;
-        if(Flags.cCode || Flags.jCode) {
-          out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
-          generateList(out,deep+1,succesList);
-          out.writeln(deep,"}");
-        } else if(Flags.eCode) {
-          out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
-          generateList(out,deep+1,succesList);
-          out.writeln(deep,"end;");
-        }
-        return;
-      }
-
-      IfThenElse(exp,succesList,failureList) -> {
-        statistics().numberIfThenElseTranformed++;
-        if(Flags.cCode || Flags.jCode) {
-          out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
-          generateList(out,deep+1,succesList);
-          out.writeln(deep,"} else {");
-          generateList(out,deep+1,failureList);
-          out.writeln(deep,"}");
-        } else if(Flags.eCode) {
-          out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
-          generateList(out,deep+1,succesList);
-          out.writeln(deep," else ");
-          generateList(out,deep+1,failureList);
-          out.writeln(deep,"end;");
-        }
-        return;
-      }
-
-      DoWhile(succesList,exp) -> {
-        out.writeln(deep,"do {");
-        generateList(out,deep+1,succesList);
-        out.write(deep,"} while("); generateExpression(out,deep,exp); out.writeln(");");
-        return;
-      }
-
       Variable(option1,PositionName(l1),type1) -> {
           //System.out.println("Variable(option1,PositionName(l1),type1)");
           //System.out.println("subject = " + subject);
@@ -307,93 +250,6 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      Assign(var@Variable(option1,name1,
-                          Type(tomType@TomType(type),tlType@TLType[])),exp) -> {
-        out.indent(deep);
-        generate(out,deep,var);
-        if(Flags.cCode || Flags.jCode) {
-          out.write(" = (" + getTLCode(tlType) + ") ");
-        } else if(Flags.eCode) {
-          if(isBoolType(type) || isIntType(type)) {
-            out.write(" := ");
-          } else {
-              //out.write(" ?= ");
-            String assignSign = " := ";
-            %match(Expression exp) {
-              GetSubterm[] -> {
-                assignSign = " ?= ";
-              }
-            }
-            out.write(assignSign);
-          }
-        }
-        generateExpression(out,deep,exp);
-        out.writeln(";");
-        return;
-      }
-
-      Assign(var@VariableStar(option1,name1,
-                              Type(TomType(type),tlType@TLType[])),exp) -> {
-        out.indent(deep);
-        generate(out,deep,var);
-        if(Flags.cCode || Flags.jCode) {
-          out.write(" = (" + getTLCode(tlType) + ") ");
-        } else if(Flags.eCode) {
-          out.write(" := ");
-        }
-        generateExpression(out,deep,exp);
-        out.writeln(";");
-        return;
-      }
-
-      Increment(var@Variable[]) -> {
-        generate(out,deep,var);
-        out.write(" = ");
-        generate(out,deep,var);
-        out.writeln(" + 1;");
-        return;
-      }
-
-      Action(l) -> {
-        while(!l.isEmpty()) {
-          generate(out,deep,l.getHead());
-          l = l.getTail();
-        }
-          //out.writeln("// ACTION: " + l);
-        return;
-      }
-
-      ExitAction(numberList) -> {
-        if(Flags.cCode) {
-          out.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
-        } else if(Flags.jCode) {
-          out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
-        } else if(Flags.eCode) {
-          System.out.println("ExitAction: Eiffel code not yet implemented");
-            //System.exit(1);
-        }
-        return;
-      }
-
-      Return(exp) -> {
-        if(Flags.cCode || Flags.jCode) {
-          out.write(deep,"return ");
-          generate(out,deep,exp);
-          out.writeln(deep,";");
-        } else if(Flags.eCode) {
-          out.writeln(deep,"if Result = Void then");
-          out.write(deep+1,"Result := ");
-          generate(out,deep+1,exp);
-          out.writeln(deep+1,";");
-          out.writeln(deep,"end;");
-        }
-        return;
-      }
-
-      OpenBlock  -> { out.writeln(deep,"{"); return; }
-      CloseBlock -> { out.writeln(deep,"}"); return; }
-      EndLocalVariable -> { out.writeln(deep,"do"); return; }
-      
       MakeFunctionBegin(Name(tomName),SubjectList(varList)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String glType = getTLType(getSymbolCodomain(tomSymbol));
@@ -452,6 +308,8 @@ public class TomGenerator extends TomBase {
         return;
       }
 
+      EndLocalVariable -> { out.writeln(deep,"do"); return; }
+      
       TargetLanguageToTomTerm(t) -> {
         generateTargetLanguage(out,deep,t);
         return;
@@ -464,6 +322,11 @@ public class TomGenerator extends TomBase {
 
       ExpressionToTomTerm(t) -> {
         generateExpression(out,deep,t);
+        return;
+      }
+
+      InstructionToTomTerm(t) -> {
+        generateInstruction(out,deep,t);
         return;
       }
 
@@ -686,6 +549,165 @@ public class TomGenerator extends TomBase {
     }
   }
 
+  public void generateInstruction(jtom.tools.OutputCode out, int deep, Instruction subject)
+    throws IOException {
+    if(subject==null) { return; }
+    
+    statistics().numberPartsGoalLanguage++;
+    %match(Instruction subject) {
+
+      Assign(var@Variable(option1,name1,
+                          Type(tomType@TomType(type),tlType@TLType[])),exp) -> {
+        out.indent(deep);
+        generate(out,deep,var);
+        if(Flags.cCode || Flags.jCode) {
+          out.write(" = (" + getTLCode(tlType) + ") ");
+        } else if(Flags.eCode) {
+          if(isBoolType(type) || isIntType(type)) {
+            out.write(" := ");
+          } else {
+              //out.write(" ?= ");
+            String assignSign = " := ";
+            %match(Expression exp) {
+              GetSubterm[] -> {
+                assignSign = " ?= ";
+              }
+            }
+            out.write(assignSign);
+          }
+        }
+        generateExpression(out,deep,exp);
+        out.writeln(";");
+        return;
+      }
+      
+      NamedBlock(blockName,instList) -> {
+        if(Flags.cCode) {
+          out.writeln("{");
+          generateList(out,deep+1,instList);
+          out.writeln("}" + blockName +  ":;");
+        } else if(Flags.jCode) {
+          out.writeln(blockName + ": {");
+          generateList(out,deep+1,instList);
+          out.writeln("}");
+        } else if(Flags.eCode) {
+          System.out.println("NamedBlock: Eiffel code not yet implemented");
+            //System.exit(1);
+        }  
+        return;
+      }
+      
+        //IfThenElse(exp,succesList,conc()) -> {
+      IfThenElse(exp,succesList,Empty()) -> {
+        statistics().numberIfThenElseTranformed++;
+        if(Flags.cCode || Flags.jCode) {
+          out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
+          generateList(out,deep+1,succesList);
+          out.writeln(deep,"}");
+        } else if(Flags.eCode) {
+          out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
+          generateList(out,deep+1,succesList);
+          out.writeln(deep,"end;");
+        }
+        return;
+      }
+
+      IfThenElse(exp,succesList,failureList) -> {
+        statistics().numberIfThenElseTranformed++;
+        if(Flags.cCode || Flags.jCode) {
+          out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
+          generateList(out,deep+1,succesList);
+          out.writeln(deep,"} else {");
+          generateList(out,deep+1,failureList);
+          out.writeln(deep,"}");
+        } else if(Flags.eCode) {
+          out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
+          generateList(out,deep+1,succesList);
+          out.writeln(deep," else ");
+          generateList(out,deep+1,failureList);
+          out.writeln(deep,"end;");
+        }
+        return;
+      }
+
+      DoWhile(succesList,exp) -> {
+        out.writeln(deep,"do {");
+        generateList(out,deep+1,succesList);
+        out.write(deep,"} while("); generateExpression(out,deep,exp); out.writeln(");");
+        return;
+      }
+
+      Assign(var@VariableStar(option1,name1,
+                              Type(TomType(type),tlType@TLType[])),exp) -> {
+        out.indent(deep);
+        generate(out,deep,var);
+        if(Flags.cCode || Flags.jCode) {
+          out.write(" = (" + getTLCode(tlType) + ") ");
+        } else if(Flags.eCode) {
+          out.write(" := ");
+        }
+        generateExpression(out,deep,exp);
+        out.writeln(";");
+        return;
+      }
+
+      Increment(var@Variable[]) -> {
+        generate(out,deep,var);
+        out.write(" = ");
+        generate(out,deep,var);
+        out.writeln(" + 1;");
+        return;
+      }
+
+      Action(l) -> {
+        while(!l.isEmpty()) {
+          generate(out,deep,l.getHead());
+          l = l.getTail();
+        }
+          //out.writeln("// ACTION: " + l);
+        return;
+      }
+
+      ExitAction(numberList) -> {
+        if(Flags.cCode) {
+          out.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
+        } else if(Flags.jCode) {
+          out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
+        } else if(Flags.eCode) {
+          System.out.println("ExitAction: Eiffel code not yet implemented");
+            //System.exit(1);
+        }
+        return;
+      }
+
+      Return(exp) -> {
+        if(Flags.cCode || Flags.jCode) {
+          out.write(deep,"return ");
+          generate(out,deep,exp);
+          out.writeln(deep,";");
+        } else if(Flags.eCode) {
+          out.writeln(deep,"if Result = Void then");
+          out.write(deep+1,"Result := ");
+          generate(out,deep+1,exp);
+          out.writeln(deep+1,";");
+          out.writeln(deep,"end;");
+        }
+        return;
+      }
+
+      OpenBlock  -> { out.writeln(deep,"{"); return; }
+      CloseBlock -> { out.writeln(deep,"}"); return; }
+
+      
+      t -> {
+        System.out.println("Cannot generate code for instruction: " + t);
+        System.exit(1);
+      }
+    }
+  }
+
+      
+  
   public void generateTargetLanguage(jtom.tools.OutputCode out, int deep, TargetLanguage subject)
     throws IOException {
     if(subject==null) { return; }

@@ -104,6 +104,10 @@ public class TomBase {
     }
   }
 
+  protected TomList appendInstruction(Instruction t, TomList l) {
+    return append(`InstructionToTomTerm(t), l);
+  }
+  
   protected TomList append(TomTerm t, TomList l) {
     if(l.isEmpty()) {
       return cons(t,l);
