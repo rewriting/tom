@@ -60,7 +60,7 @@ options{
 
 {
   //--------------------------
-  %include{TomSignature.tom}
+    %include{ adt/TomSignature.tom }
   //--------------------------
   
   // the lexer selector

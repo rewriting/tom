@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: "TomJavaParser.g" -> "TomJavaLexer.java"$
+// $ANTLR 2.7.4: "TomJavaParser.g" -> "TomJavaLexer.java"$
 
 package jtom.parser;
 import antlr.*;
@@ -44,7 +44,6 @@ public TomJavaLexer(LexerSharedInputState state) {
 	caseSensitiveLiterals = true;
 	setCaseSensitive(true);
 	literals = new Hashtable();
-	literals.put(new ANTLRHashString("package", this), new Integer(4));
 }
 
 public Token nextToken() throws TokenStreamException {
@@ -53,38 +52,22 @@ tryAgain:
 	for (;;) {
 		Token _token = null;
 		int _ttype = Token.INVALID_TYPE;
+		setCommitToPath(false);
+		int _m;
+		_m = mark();
 		resetText();
 		try {   // for char stream error handling
 			try {   // for lexical error handling
 				switch ( LA(1)) {
-				case ';':
+				case 'p':
 				{
-					mSEMICOLON(true);
+					mJAVA_PACKAGE(true);
 					theRetToken=_returnToken;
 					break;
 				}
-				case '.':
+				case '"':
 				{
-					mDOT(true);
-					theRetToken=_returnToken;
-					break;
-				}
-				case '$':  case 'A':  case 'B':  case 'C':
-				case 'D':  case 'E':  case 'F':  case 'G':
-				case 'H':  case 'I':  case 'J':  case 'K':
-				case 'L':  case 'M':  case 'N':  case 'O':
-				case 'P':  case 'Q':  case 'R':  case 'S':
-				case 'T':  case 'U':  case 'V':  case 'W':
-				case 'X':  case 'Y':  case 'Z':  case '_':
-				case 'a':  case 'b':  case 'c':  case 'd':
-				case 'e':  case 'f':  case 'g':  case 'h':
-				case 'i':  case 'j':  case 'k':  case 'l':
-				case 'm':  case 'n':  case 'o':  case 'p':
-				case 'q':  case 'r':  case 's':  case 't':
-				case 'u':  case 'v':  case 'w':  case 'x':
-				case 'y':  case 'z':
-				{
-					mID(true);
+					mSTRING(true);
 					theRetToken=_returnToken;
 					break;
 				}
@@ -104,9 +87,19 @@ tryAgain:
 				default:
 				{
 					if (LA(1)==EOF_CHAR) {uponEOF(); _returnToken = makeToken(Token.EOF_TYPE);}
-				else {throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());}
+				else {
+					commit();
+					try {mIGNORE(false);}
+					catch(RecognitionException e) {
+						// catastrophic failure
+						reportError(e);
+						consume();
+					}
+					continue tryAgain;
 				}
 				}
+				}
+				commit();
 				if ( _returnToken==null ) continue tryAgain; // found SKIP token
 				_ttype = _returnToken.getType();
 				_ttype = testLiteralsTable(_ttype);
@@ -114,6 +107,17 @@ tryAgain:
 				return _returnToken;
 			}
 			catch (RecognitionException e) {
+				if ( !getCommitToPath() ) {
+					rewind(_m);
+					resetText();
+					try {mIGNORE(false);}
+					catch(RecognitionException ee) {
+						// horrendous failure: error in filter rule
+						reportError(ee);
+						consume();
+					}
+					continue tryAgain;
+				}
 				throw new TokenStreamRecognitionException(e);
 			}
 		}
@@ -128,74 +132,29 @@ tryAgain:
 	}
 }
 
-	public final void mSEMICOLON(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+	public final void mJAVA_PACKAGE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = SEMICOLON;
+		_ttype = JAVA_PACKAGE;
 		int _saveIndex;
 		
-		match(';');
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mDOT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = DOT;
-		int _saveIndex;
-		
-		match('.');
-		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
-			_token = makeToken(_ttype);
-			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
-		}
-		_returnToken = _token;
-	}
-	
-	public final void mID(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
-		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = ID;
-		int _saveIndex;
-		
-		mLETTER(false);
+		_saveIndex=text.length();
+		match("package");
+		text.setLength(_saveIndex);
 		{
-		_loop9:
+		_loop5:
 		do {
-			switch ( LA(1)) {
-			case '$':  case 'A':  case 'B':  case 'C':
-			case 'D':  case 'E':  case 'F':  case 'G':
-			case 'H':  case 'I':  case 'J':  case 'K':
-			case 'L':  case 'M':  case 'N':  case 'O':
-			case 'P':  case 'Q':  case 'R':  case 'S':
-			case 'T':  case 'U':  case 'V':  case 'W':
-			case 'X':  case 'Y':  case 'Z':  case '_':
-			case 'a':  case 'b':  case 'c':  case 'd':
-			case 'e':  case 'f':  case 'g':  case 'h':
-			case 'i':  case 'j':  case 'k':  case 'l':
-			case 'm':  case 'n':  case 'o':  case 'p':
-			case 'q':  case 'r':  case 's':  case 't':
-			case 'u':  case 'v':  case 'w':  case 'x':
-			case 'y':  case 'z':
-			{
-				mLETTER(false);
-				break;
+			if ((_tokenSet_0.member(LA(1)))) {
+				matchNot(';');
 			}
-			case '0':  case '1':  case '2':  case '3':
-			case '4':  case '5':  case '6':  case '7':
-			case '8':  case '9':
-			{
-				mDIGIT(false);
-				break;
+			else {
+				break _loop5;
 			}
-			default:
-			{
-				break _loop9;
-			}
-			}
+			
 		} while (true);
 		}
+		_saveIndex=text.length();
+		match(';');
+		text.setLength(_saveIndex);
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -203,51 +162,14 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	protected final void mLETTER(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+	protected final void mIGNORE(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = LETTER;
+		_ttype = IGNORE;
 		int _saveIndex;
+		char  c = '\0';
 		
-		{
-		switch ( LA(1)) {
-		case 'a':  case 'b':  case 'c':  case 'd':
-		case 'e':  case 'f':  case 'g':  case 'h':
-		case 'i':  case 'j':  case 'k':  case 'l':
-		case 'm':  case 'n':  case 'o':  case 'p':
-		case 'q':  case 'r':  case 's':  case 't':
-		case 'u':  case 'v':  case 'w':  case 'x':
-		case 'y':  case 'z':
-		{
-			matchRange('a','z');
-			break;
-		}
-		case 'A':  case 'B':  case 'C':  case 'D':
-		case 'E':  case 'F':  case 'G':  case 'H':
-		case 'I':  case 'J':  case 'K':  case 'L':
-		case 'M':  case 'N':  case 'O':  case 'P':
-		case 'Q':  case 'R':  case 'S':  case 'T':
-		case 'U':  case 'V':  case 'W':  case 'X':
-		case 'Y':  case 'Z':
-		{
-			matchRange('A','Z');
-			break;
-		}
-		case '_':
-		{
-			match('_');
-			break;
-		}
-		case '$':
-		{
-			match('$');
-			break;
-		}
-		default:
-		{
-			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
-		}
-		}
-		}
+		c = LA(1);
+		matchNot(EOF_CHAR);
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -255,14 +177,28 @@ tryAgain:
 		_returnToken = _token;
 	}
 	
-	protected final void mDIGIT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+	public final void mSTRING(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
 		int _ttype; Token _token=null; int _begin=text.length();
-		_ttype = DIGIT;
+		_ttype = STRING;
 		int _saveIndex;
 		
+		match('"');
 		{
-		matchRange('0','9');
+		_loop10:
+		do {
+			if ((_tokenSet_1.member(LA(1)))) {
+				{
+				match(_tokenSet_1);
+				}
+			}
+			else {
+				break _loop10;
+			}
+			
+		} while (true);
 		}
+		match('"');
+		_ttype = Token.SKIP;
 		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
 			_token = makeToken(_ttype);
 			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
@@ -358,15 +294,15 @@ tryAgain:
 		
 		match("//");
 		{
-		_loop22:
+		_loop19:
 		do {
-			if ((_tokenSet_0.member(LA(1)))) {
+			if ((_tokenSet_2.member(LA(1)))) {
 				{
-				match(_tokenSet_0);
+				match(_tokenSet_2);
 				}
 			}
 			else {
-				break _loop22;
+				break _loop19;
 			}
 			
 		} while (true);
@@ -412,10 +348,10 @@ tryAgain:
 		
 		}
 		{
-		_loop28:
+		_loop25:
 		do {
 			// nongreedy exit test
-			if ((LA(1)=='*') && (LA(2)=='/')) break _loop28;
+			if ((LA(1)=='*') && (LA(2)=='/')) break _loop25;
 			if ((LA(1)=='\r') && (LA(2)=='\n')) {
 				match('\r');
 				match('\n');
@@ -425,9 +361,9 @@ tryAgain:
 				match('\r');
 				newline();
 			}
-			else if ((_tokenSet_0.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff'))) {
+			else if ((_tokenSet_2.member(LA(1))) && ((LA(2) >= '\u0000' && LA(2) <= '\uffff'))) {
 				{
-				match(_tokenSet_0);
+				match(_tokenSet_2);
 				}
 			}
 			else if ((LA(1)=='\n')) {
@@ -435,7 +371,7 @@ tryAgain:
 				newline();
 			}
 			else {
-				break _loop28;
+				break _loop25;
 			}
 			
 		} while (true);
@@ -451,10 +387,25 @@ tryAgain:
 	
 	private static final long[] mk_tokenSet_0() {
 		long[] data = new long[2048];
-		data[0]=-9217L;
+		data[0]=-576460752303423489L;
 		for (int i = 1; i<=1023; i++) { data[i]=-1L; }
 		return data;
 	}
 	public static final BitSet _tokenSet_0 = new BitSet(mk_tokenSet_0());
+	private static final long[] mk_tokenSet_1() {
+		long[] data = new long[2048];
+		data[0]=-17179878401L;
+		data[1]=-268435457L;
+		for (int i = 2; i<=1023; i++) { data[i]=-1L; }
+		return data;
+	}
+	public static final BitSet _tokenSet_1 = new BitSet(mk_tokenSet_1());
+	private static final long[] mk_tokenSet_2() {
+		long[] data = new long[2048];
+		data[0]=-9217L;
+		for (int i = 1; i<=1023; i++) { data[i]=-1L; }
+		return data;
+	}
+	public static final BitSet _tokenSet_2 = new BitSet(mk_tokenSet_2());
 	
 	}

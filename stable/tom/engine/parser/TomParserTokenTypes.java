@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: "TomLanguage.g" -> "TomParser.java"$
+// $ANTLR 2.7.4: "TomLanguage.g" -> "TomParser.java"$
 
   /*
    * this file contains the lexer and parser for

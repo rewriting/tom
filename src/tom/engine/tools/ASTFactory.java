@@ -253,6 +253,15 @@ public class ASTFactory {
   }
 
     /*
+     * create a long symbol
+     */
+  public void makeLongSymbol(SymbolTable symbolTable,
+                             String value, List optionList) {
+    String sort = "long";
+    makeSortSymbol(symbolTable, sort, value, optionList);
+  }
+
+    /*
      * create a char symbol
      */
   public void makeCharSymbol(SymbolTable symbolTable,

@@ -50,7 +50,7 @@ options{
 }
 
 {
-    %include{TomSignature.tom}
+    %include{ adt/TomSignature.tom }
     
     // the lexer for backquote language
     BackQuoteLexer bqlexer = null;

@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: "TomLanguage.g" -> "TomParser.java"$
+// $ANTLR 2.7.4: "TomLanguage.g" -> "TomParser.java"$
 
   /*
    * this file contains the lexer and parser for
@@ -1298,6 +1298,9 @@ public TomParser(ParserSharedInputState state) {
 			switch(t.getType()){
 			case NUM_INT:
 			ast().makeIntegerSymbol(symbolTable,t.getText(),optionList);
+			break;
+			case NUM_LONG:
+			ast().makeLongSymbol(symbolTable,t.getText(),optionList);
 			break;
 			case CHARACTER:
 			ast().makeCharSymbol(symbolTable,t.getText(),optionList);

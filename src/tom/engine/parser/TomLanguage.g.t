@@ -59,7 +59,7 @@ options{
 
     {
     //--------------------------
-    %include{TomSignature.tom}
+    %include{ adt/TomSignature.tom }
     //--------------------------
         
     public String currentFile(){
@@ -164,7 +164,7 @@ constant returns [Token result]
     result = null;
 }
 	:	(
-            t1:NUM_INT {result = t1;}
+          t1:NUM_INT {result = t1;}
         |	t2:CHARACTER {result = t2;}
         |	t3:STRING {result = t3;}
         |	t4:NUM_FLOAT {result = t4;}
@@ -1180,6 +1180,9 @@ headSymbol [LinkedList optionList] returns [TomName result]
                 switch(t.getType()){
                 case NUM_INT:
                     ast().makeIntegerSymbol(symbolTable,t.getText(),optionList);
+                    break;
+                case NUM_LONG:
+                    ast().makeLongSymbol(symbolTable,t.getText(),optionList);
                     break;
                 case CHARACTER:
                     ast().makeCharSymbol(symbolTable,t.getText(),optionList);

@@ -1,6 +1,18 @@
+2004-10-18  pem  <pem@becky.loria.fr>
+
+	* install antlr 2.7.4
+	* booinstall
+	* src/jtom/parser/TomJavaParser.g: fixed TOM-58
+
 2004-10-14  pem  <pem@polly.loria.fr>
 
 	* src/jtom/checker/TomChecker.t: fixed TOM-54
+
+2004-10-13  pem  <pem@becky.local>
+
+	* src/jtom/parser/TomLanguage.g.t: added 'long' as a builtin type
+	  (written 123l or 123L)
+	* fixed TOM-44
 
 2004-10-10  pem  <pem@becky.local>
 

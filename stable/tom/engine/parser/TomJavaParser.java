@@ -1,4 +1,4 @@
-// $ANTLR 2.7.2: "TomJavaParser.g" -> "TomJavaParser.java"$
+// $ANTLR 2.7.4: "TomJavaParser.g" -> "TomJavaParser.java"$
 
 package jtom.parser;
 import antlr.*;
@@ -53,54 +53,29 @@ public TomJavaParser(ParserSharedInputState state) {
 	public final String  javaPackageDeclaration() throws RecognitionException, TokenStreamException {
 		String result;
 		
+		Token  p = null;
 		
 		result = "";
 		
 		
-		if ((LA(1)==PACKAGE)) {
-			match(PACKAGE);
-			result=javaName();
-			match(SEMICOLON);
+		{
+		switch ( LA(1)) {
+		case JAVA_PACKAGE:
+		{
+			p = LT(1);
+			match(JAVA_PACKAGE);
+			result = p.getText().trim();
+			break;
 		}
-		else if (((LA(1) >= PACKAGE && LA(1) <= ML_COMMENT))) {
-			matchNot(EOF);
+		case EOF:
+		{
+			break;
 		}
-		else if ((LA(1)==EOF)) {
-			match(Token.EOF_TYPE);
-		}
-		else {
+		default:
+		{
 			throw new NoViableAltException(LT(1), getFilename());
 		}
-		
-		return result;
-	}
-	
-	public final String  javaName() throws RecognitionException, TokenStreamException {
-		String result;
-		
-		Token  name = null;
-		Token  sname = null;
-		
-		result = "";
-		
-		
-		name = LT(1);
-		match(ID);
-		result += name.getText();
-		{
-		_loop4:
-		do {
-			if ((LA(1)==DOT)) {
-				match(DOT);
-				sname = LT(1);
-				match(ID);
-				result += "."+sname.getText();
-			}
-			else {
-				break _loop4;
-			}
-			
-		} while (true);
+		}
 		}
 		return result;
 	}
@@ -111,12 +86,9 @@ public TomJavaParser(ParserSharedInputState state) {
 		"EOF",
 		"<2>",
 		"NULL_TREE_LOOKAHEAD",
-		"\"package\"",
-		"SEMICOLON",
-		"ID",
-		"DOT",
-		"LETTER",
-		"DIGIT",
+		"JAVA_PACKAGE",
+		"IGNORE",
+		"STRING",
 		"WS",
 		"COMMENT",
 		"SL_COMMENT",

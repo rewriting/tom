@@ -145,8 +145,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       getLogger().log(Level.INFO, "TomParsingPhase",
                       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
       //printAlertMessage(errorsAtStart, warningsAtStart);
-    }
-    catch (TokenStreamException e){
+    } catch (TokenStreamException e) {
       e.printStackTrace();
       getLogger().log(Level.SEVERE, "TokenStreamException",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()} );

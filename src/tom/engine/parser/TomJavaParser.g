@@ -48,44 +48,26 @@ javaPackageDeclaration returns [String result]
   result = "";
 }
 :
-  PACKAGE result = javaName SEMICOLON
-  | .
-  | EOF
+  (p:JAVA_PACKAGE { result = p.getText().trim(); })?
   ;
-
-javaName returns [String result]
-{
-  result = "";
-}
-:
-  name:ID { result += name.getText(); }
-(
- DOT sname:ID { result += "."+sname.getText(); }
- )*
-  ;
-
-
 
 class TomJavaLexer extends Lexer;
-
-options{
+options {
   k=2;
+  filter=IGNORE;			
+	// charVocabulary = '\3'..'\177';
   charVocabulary='\u0000'..'\uffff';
-}
+} 
 
-tokens{
-  PACKAGE="package";
-}
 
-SEMICOLON: ';' ;
-DOT: '.' ;
+JAVA_PACKAGE: "package"! (~';')* ';'! ;
 
-ID: LETTER ( LETTER | DIGIT )* ;
+protected IGNORE: c:. /*{System.out.println("ignore: " + c);}*/ ;
 
-protected LETTER: ( 'a'..'z' | 'A'..'Z' | '_' | '$' ) ;
-
-protected DIGIT: ( '0'..'9' ) ;
-
+STRING
+	:	'"' (~('"'|'\\'|'\n'|'\r'))* '"'
+{ $setType(Token.SKIP); }
+	;
 
 // white spaces
 WS	:	

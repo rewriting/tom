@@ -17,6 +17,7 @@ public class TestBuiltin extends TestCase {
   }
 
   %include { int.tom }  
+  %include { long.tom }  
   %include { double.tom }  
   %include { string.tom }  
 
@@ -46,6 +47,12 @@ public class TestBuiltin extends TestCase {
     make(t) { makeInt(t) }
   }
 
+  %op E long(longSlot:long) {
+    fsym { factory.makeAFun("long", 1, false) }
+    get_slot(longSlot,t) { getLong(t) }
+    make(t) { makeLong(t) }
+  }
+
   %op E double(doubleSlot:double) {
     fsym { factory.makeAFun("double", 1, false) }
     get_slot(doubleSlot,t) { getDouble(t) }
@@ -67,6 +74,11 @@ public class TestBuiltin extends TestCase {
                             factory.makeInt(t));
   }
 
+  public ATerm makeLong(long t) {
+    return factory.makeAppl(factory.makeAFun("long", 1, false),
+                            factory.makeInt((int)t));
+  }
+
   public ATerm makeDouble(double t) {
     return factory.makeAppl(factory.makeAFun("double", 1, false),
                             factory.makeReal(t));
@@ -81,6 +93,12 @@ public class TestBuiltin extends TestCase {
   public int getInt(ATerm t) {
     ATermInt subterm = (ATermInt) ((ATermAppl)t).getArgument(0);
     int value = subterm.getInt();
+    return value;
+  }
+
+  public long getLong(ATerm t) {
+    ATermInt subterm = (ATermInt) ((ATermAppl)t).getArgument(0);
+    long value = (long)subterm.getInt();
     return value;
   }
 
@@ -112,6 +130,26 @@ public class TestBuiltin extends TestCase {
         int n1 = `n - 1;
         int n2 = `n - 2;
         return fibE(`int(n1)) + fibE(`int(n2)); }
+    }
+    return -1;
+  }
+
+  public long fibLong(long t) {
+    %match(long t) {
+      0l -> { return 1; }
+      1L -> { return 1; }
+      n -> { return fibLong(`n - 1) + fibLong(`n - 2); }
+    }
+  }
+
+  public long fibLongE(ATerm t) {
+    %match(E t) {
+      long(0l) -> { return 1; }
+      long(1L) -> { return 1; }
+      long(n) -> {
+        long n1 = `n - 1;
+        long n2 = `n - 2;
+        return fibLongE(`long(n1)) + fibLongE(`long(n2)); }
     }
     return -1;
   }
@@ -170,14 +208,17 @@ public class TestBuiltin extends TestCase {
   }
 
   public void test2() {
-    assertTrue(89 == `fibE(
-                           int(
-                               10
-                               )
-                           )
-               );
+    assertTrue(89 == `fibE(int(10)));
   }
   
+  public void test3() {
+    assertTrue(89 == fibLong(10));
+  }
+
+  public void test4() {
+    assertTrue(89 == `fibLongE(long(10)));
+  }
+
   public void testMatchString1() {
     assertTrue("Albert".equals(matchString("Albert")));
   }
