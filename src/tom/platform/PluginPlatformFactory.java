@@ -113,7 +113,7 @@ public class PluginPlatformFactory {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      logger.log(Level.SEVERE, "IncompleteOption", commandLine[--i]);
+      logger.log(Level.SEVERE, "IncompleteXOption", commandLine[--i]);
       return null;
     }
     

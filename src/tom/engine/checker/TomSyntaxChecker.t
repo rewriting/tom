@@ -17,7 +17,7 @@ public class TomSyntaxChecker extends TomChecker {
   %include { adt/PlatformOption.tom }
 
   /** the declared options string */
-  public static final String DECLARED_OPTIONS = "<options><boolean name='NoSyntaxCheck' altName='' description='Do not perform syntax checking' value='true'/></options>";
+  public static final String DECLARED_OPTIONS = "<options><boolean name='NoSyntaxCheck' altName='' description='Do not perform syntax checking' value='false'/></options>";
   
   /**
    * inherited from OptionOwner interface (plugin) 
