@@ -310,47 +310,35 @@
   </target>  
 
   <target name="dist.common" 
-          description="Prepare common part of distribution" 
-          depends="prepare.dist.stable,prepare.dist.src">
+          description="Prepare common part of distribution">
     <!-- "tom README and INSTALL" -->
-    <copy todir="${stable.dist}" file="README"/>
-    <copy todir="${stable.dist}" file="INSTALL"/>
-    <copy todir="${stable.dist}" file="NEWS"/>
-    <copy todir="${stable.dist}" file="AUTHORS"/>
-    <copy todir="${src.dist}" file="README"/>
-    <copy todir="${src.dist}" file="INSTALL"/>
-    <copy todir="${src.dist}" file="NEWS"/>
-    <copy todir="${src.dist}" file="AUTHORS"/>
+    
+		<copy todir="${dest}" file="README"/>
+    <copy todir="${dest}" file="INSTALL"/>
+    <copy todir="${dest}" file="NEWS"/>
+    <copy todir="${dest}" file="AUTHORS"/>
     <!-- tom doc -->
-    <copy todir="${stable.doc}">
-      <fileset dir="${tomdocdir}">
-        <include name="**/*.pdf"/>
-      </fileset>
-    </copy>
-    <copy todir="${src.doc}">
+    <copy todir="${dest}/doc">
       <fileset dir="${tomdocdir}">
         <include name="**/*.pdf"/>
       </fileset>
     </copy>
     <!-- external libs -->
-    <copy todir="${stable.lib}" file="${aterm.lib}"/>
-    <copy todir="${stable.lib}" file="${sharedobject.lib}"/>
-    <copy todir="${stable.lib}" file="${jjtraveler.lib}"/>
-    <copy todir="${stable.lib}" file="${apigen.lib}"/>
-    <copy todir="${stable.lib}" file="${vastoadt.lib}"/>
-    <copy todir="${stable.lib}" file="${concurrent.lib}"/>
-    <copy todir="${src.lib}"    file="${aterm.lib}"/>
-    <copy todir="${src.lib}"    file="${sharedobject.lib}"/>
-    <copy todir="${src.lib}"    file="${jjtraveler.lib}"/>
-    <copy todir="${src.lib}"    file="${apigen.lib}"/>
-    <copy todir="${src.lib}"    file="${vastoadt.lib}"/>
-    <copy todir="${src.lib}"    file="${concurrent.lib}"/>
-
+    <copy todir="${dest}/lib" file="${aterm.lib}"/>
+    <copy todir="${dest}/lib" file="${sharedobject.lib}"/>
+    <copy todir="${dest}/lib" file="${jjtraveler.lib}"/>
+    <copy todir="${dest}/lib" file="${apigen.lib}"/>
+    <copy todir="${dest}/lib" file="${vastoadt.lib}"/>
+    <copy todir="${dest}/lib" file="${concurrent.lib}"/>
+    <copy todir="${dest}/lib" file="${antlr.lib}"/>
   </target>
 
   <target name="dist.stable" 
           description="Prepare a distribution ready stable package" 
-          depends="clean.dist.stable, stable, prepare.dist.stable, dist.common">
+          depends="clean.dist.stable, stable, prepare.dist.stable">
+		<antcall target="dist.common">
+			<param name="dest" value="${stable.dist}"/>
+		</antcall>
     <!-- "tom config file" -->
     <copy todir="${stable.dist}" file="${stable.configfile}"/>
     <!-- "tom binary" -->
@@ -414,8 +402,11 @@
 
   <target name="dist.src" 
           description="Prepare a distribution ready source package" 
-          depends="clean.dist.src, src, prepare.dist.src, dist.common">
+          depends="clean.dist.src, src, prepare.dist.src">
     <tstamp/>
+		<antcall target="dist.common">
+			<param name="dest" value="${src.dist}"/>
+		</antcall>
     <!-- "tom config file" -->
     <copy todir="${src.dist}" file="${src.configfile}"/>
     <!-- "tom binary" -->
