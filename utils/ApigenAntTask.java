@@ -25,7 +25,6 @@ Bertrand Tavernier (CRIL Technology)
 	
 */
 
-import apigen.gen.tom.java.Main;
 import java.io.File;
 import java.util.Vector;
 import org.apache.tools.ant.BuildException;
@@ -36,13 +35,9 @@ public class ApigenAntTask extends Task {
 	private String adtFile;
 	private String options;
 	private String location;
-	private String str_package;
+ 	private String str_package = "";
 	private String str_factory;
     
-	public ApigenAntTask() {
-		str_package = "";
-	}
-
 	private String[] split(String str) {
 		try {
 			String res[] = new String[0];
@@ -64,49 +59,48 @@ public class ApigenAntTask extends Task {
 	public void execute() throws BuildException {
 		try {
 			System.out.println("Compiling " + adtFile + "...");
-//             String str_command = "--nojar --javagen -n "+str_factory;
-			String str_command = " --javagen --nojar -n "+str_factory;
+			String str_command = " --javagen --nojar -n "+ str_factory;
 			if(options != null && !options.equals(""))
 				str_command = str_command + " " + options.trim();
 			if(str_command.indexOf("-i") < 0)
 				str_command = str_command + " -i " + adtFile;
 
+			if(str_command.indexOf("-p") < 0 && !str_package.equals("")) {
+				str_command = str_command + " -p " + str_package;
+			}
+			
 			if(str_command.indexOf("-o") < 0)
 				str_command = str_command + " -o " + location;
-
-			if(str_command.indexOf("-p") < 0 && !str_package.equals(""))
-				{
-					str_command = str_command + " -p " + str_package;
-				}
+			
 			String cmd[] = split(str_command);
-			Main.main(cmd);
+			apigen.gen.tom.java.Main.main(cmd);
 		}
 		catch(Exception e){
-				e.printStackTrace();
-				System.out.println("it does not work");
-				throw new BuildException("Adt generation failed");
-			}
+			e.printStackTrace();
+			System.out.println("it does not work");
+			throw new BuildException("Adt generation failed");
+		}
 	}
 
 	public void setFile(File file) {
-			adtFile = file.getAbsolutePath();
-    }
+		adtFile = file.getAbsolutePath();
+	}
 
 	public void setFilename(String name) {
-			adtFile = name;
-    }
+		adtFile = name;
+	}
 
-	public void setPackage(String str_pack) {
-			str_package = str_pack;
-    }
+	public void setPackage(String str_package) {
+		this.str_package = str_package;
+	}
 
 	public void setOptions(String options) {
-			this.options = options;
-    }
+		this.options = options;
+	}
 
 	public void setDestdir(File destinationDir) {
-			location = destinationDir.getAbsolutePath();
-    }
+		location = destinationDir.getAbsolutePath();
+	}
 
 	public void setFactory(String str_factory) {
 		this.str_factory = str_factory;
