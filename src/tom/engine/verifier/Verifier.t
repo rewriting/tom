@@ -48,7 +48,7 @@ public class Verifier extends TomBase {
 		public sorts 
 			Symbol Representation Variable Term Expr Instr 
 			Substitution SubstitutionList Environment
-			Seq
+			Seq TermList ExprList
 			Deriv DerivTree
 
 		abstract syntax
@@ -209,7 +209,14 @@ public class Verifier extends TomBase {
 
 		System.out.println("The derivation: " + startingderiv);
 
-		tree = apply_rules(startingderiv);
+		SubstRef output = new SubstRef();
+		tree = apply_rules(startingderiv,output);
+		// Propagate the computed output substitution
+		SubstitutionList outputsubst = output.get();
+		System.out.println("The substitution: " + outputsubst);
+		if (outputsubst != null) {
+			tree = replaceUndefSubst(tree,outputsubst);
+		}
 
 		System.out.println("The tree: " + tree);
 		return tree;
@@ -225,7 +232,7 @@ public class Verifier extends TomBase {
 		return `dedexpr(concExpr(sp,true));
 	}
 
-	protected DerivTree apply_rules(Deriv post) {
+	protected DerivTree apply_rules(Deriv post, SubstRef outsubst) {
 		%match(Deriv post) {
 			// let rule
 			ebs(env(e,ILLet(x,u,i)),env(concSubstitution(undefsubs()),ip)) -> {
@@ -244,7 +251,7 @@ public class Verifier extends TomBase {
 					env(concSubstitution(e*,is(x,t)),i),
 					env(concSubstitution(undefsubs()),ip)
 					);
-				DerivTree pre = apply_rules(up);
+				DerivTree pre = apply_rules(up,outsubst);
 				return `derivrule("let",post,pre,cond);
 				}
 			// iftrue/iffalse rule
@@ -271,11 +278,12 @@ public class Verifier extends TomBase {
 				}	else {
 					System.out.println("How to conclude with: "+ res);
 				}
-				DerivTree pre = apply_rules(up);
+				DerivTree pre = apply_rules(up,outsubst);
 				return `derivrule(rulename,post,pre,cond);
 			}
 			// axiom !
 			ebs(env(e,accept()),env(concSubstitution(undefsubs()),accept())) -> {
+				outsubst.set(`e);
 				return `derivrule("axiom",post,endderiv(),seq());
 			}
 			_ -> { 
@@ -283,7 +291,39 @@ public class Verifier extends TomBase {
 				return `derivrule("problem",post,endderiv(),seq());
 			}
 		}
+	}
+
+	Replace2 replace_undefsubs = new Replace2() {
+			public ATerm apply(ATerm subject, Object arg1) {
+				if (subject instanceof SubstitutionList) {
+					%match(SubstitutionList subject) {
+						(undefsubs()) -> {
+							return (SubstitutionList)arg1;
+						}
+					}
+				}
+				/* Default case : Traversal */
+				return traversal().genericTraversal(subject,this,arg1);
+			} // end apply
+		};
+
+	private DerivTree replaceUndefSubst(DerivTree subject, 
+																			SubstitutionList subs) {
+		return (DerivTree) replace_undefsubs.apply(subject,subs);
+	}
+
+	private class SubstRef {
+		private SubstitutionList sl;
+		public SubstRef() {
+			sl = null;
 		}
+		public void set(SubstitutionList ssl) {
+			this.sl = ssl;
+		}
+		public SubstitutionList get() {
+			return sl;
+		}
+	}
 
 }
 
