@@ -66,15 +66,28 @@ class Gomoku {
   }
 
   public void computerPlay(int color) {
+    PawnListList hor = board.getHorizontalList();
+    PawnListList reverseHor = mapReverse(hor);
+    PawnListList ver = board.getVerticalList();
+    PawnListList reverseVer = mapReverse(ver);
+    PawnListList dia = board.getDiagonalList();
+    PawnListList reverseDia = mapReverse(dia);
+
     //Search horizontal
-    searchPatterns(board.getHorizontalList(),white);
-    searchPatterns(board.getHorizontalList(),black);
+    searchPatterns(hor,white);
+    //searchPatterns(hor,black);
+    searchPatterns(reverseHor,white);
+    //searchPatterns(reverseHor,black);
     //Search vertical
-    searchPatterns(board.getVerticalList(),white);
-    searchPatterns(board.getVerticalList(),black);
+    searchPatterns(ver,white);
+    //searchPatterns(ver,black);
+    searchPatterns(reverseVer,white);
+    //searchPatterns(reverseVer,black);
     //Search diagonal
-    searchPatterns(board.getDiagonalList(),white);
-    searchPatterns(board.getDiagonalList(),black);
+    searchPatterns(dia,white);
+    //searchPatterns(dia,black);
+    searchPatterns(reverseDia,white);
+    //searchPatterns(reverseDia,black);
 
     Pawn maxEmpty = board.getMaxEmpty();
     int x = maxEmpty.getX();
@@ -106,6 +119,28 @@ class Gomoku {
     }
   }
 
+  private PawnListList mapReverse(PawnListList l) {
+    %match(PawnListList l) {
+      concPawnList() -> { return l; }
+      concPawnList(head,tail*) -> { 
+        PawnListList rtail = mapReverse(`tail);
+        return `concPawnList(reverse(head),rtail*); 
+      }
+    }
+    return null;
+  }
+
+  private PawnList reverse(PawnList l) {
+    %match(PawnList l) {
+      concPawn() -> { return l; }
+      concPawn(head,tail*) -> { 
+        PawnList rtail = reverse(`tail);
+        return `concPawn(rtail*,head); 
+      }
+    }
+    return null;
+  }
+
   private void searchPatterns(PawnListList pl, int patternColor) {
     int value1 = 10000;
     int value2 = 500;
@@ -116,144 +151,107 @@ class Gomoku {
     int value7 = 1;
     %match(PawnListList pl) {
       // 4 -> winning
+      // xxxx_
       concPawnList(_*,concPawn(_*,pawn(c),pawn(c),pawn(c),pawn(c),empty(x,y),_*),_*) -> {
         //if(`c == patternColor)
         `board.addValue(x,y,value1);
-
-          `board.addValue(x,y,value1);
       }
+      // xxx_x
       concPawnList(_*,concPawn(_*,pawn(c),pawn(c),pawn(c),empty(x,y),pawn(c),_*),_*) -> {
         //if(`c == patternColor)
           `board.addValue(x,y,value1);
       }
+      // xx_xx
       concPawnList(_*,concPawn(_*,pawn(c),pawn(c),empty(x,y),pawn(c),pawn(c),_*),_*) -> {
         //if(`c == patternColor)
           `board.addValue(x,y,value1);
       }
-      concPawnList(_*,concPawn(_*,pawn(c),empty(x,y),pawn(c),pawn(c),pawn(c),_*),_*) -> {
-        //if(`c == patternColor)
-          `board.addValue(x,y,value1);
-      }
-      concPawnList(_*,concPawn(_*,empty(x,y),pawn(c),pawn(c),pawn(c),pawn(c),_*),_*) -> {
-        //if(`c == patternColor)
-          `board.addValue(x,y,value1);
-      }
+
       // 3 -> winning
+      // _xxx__
       concPawnList(_*,concPawn(_*,empty[],pawn(c),pawn(c),pawn(c),empty(x,y),empty[],_*),_*) -> {
         //if(`c == patternColor)
           `board.addValue(x,y,value2);
       }
+      // _xx_x_
       concPawnList(_*,concPawn(_*,empty[],pawn(c),pawn(c),empty(x,y),pawn(c),empty[],_*),_*) -> {
         //if(`c == patternColor)
           `board.addValue(x,y,value2);
       }
-      concPawnList(_*,concPawn(_*,empty[],pawn(c),empty(x,y),pawn(c),pawn(c),empty[],_*),_*) -> {
-        //if(`c == patternColor)
-          `board.addValue(x,y,value2);
-      }
-      concPawnList(_*,concPawn(_*,empty[],empty(x,y),pawn(c),pawn(c),pawn(c),empty[],_*),_*) -> {
-        //if(`c == patternColor)
-          `board.addValue(x,y,value2);
-      }
       // 3
+      // __xxx
       concPawnList(_*,concPawn(_*,empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value4);
           `board.addValue(x2,y2,value4);
           //}
       }
+      // _x_xx
       concPawnList(_*,concPawn(_*,empty(x1,y1),pawn(c),empty(x2,y2),pawn(c),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value4);
           `board.addValue(x2,y2,value4);
           //}
       }
+      // _xx_x
       concPawnList(_*,concPawn(_*,empty(x1,y1),pawn(c),pawn(c),empty(x2,y2),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value4);
           `board.addValue(x2,y2,value4);
           //}
       }
+      // _xxx_
       concPawnList(_*,concPawn(_*,empty(x1,y1),pawn(c),pawn(c),pawn(c),empty(x2,y2),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value4);
           `board.addValue(x2,y2,value4);
           //}
       }
+      // x__xx
       concPawnList(_*,concPawn(_*,pawn(c),empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value4);
           `board.addValue(x2,y2,value4);
           //}
       }
+      // x_x_x
       concPawnList(_*,concPawn(_*,pawn(c),empty(x1,y1),pawn(c),empty(x2,y2),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value4);
           `board.addValue(x2,y2,value4);
           //}
       }
-      concPawnList(_*,concPawn(_*,pawn(c),empty(x1,y1),pawn(c),pawn(c),empty(x2,y2),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value4);
-          `board.addValue(x2,y2,value4);
-          //}
-      }
-      concPawnList(_*,concPawn(_*,pawn(c),pawn(c),empty(x1,y1),pawn(c),empty(x2,y2),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value4);
-          `board.addValue(x2,y2,value4);
-          //}
-      }
-      concPawnList(_*,concPawn(_*,pawn(c),pawn(c),empty(x1,y1),empty(x2,y2),pawn(c),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value4);
-          `board.addValue(x2,y2,value4);
-          //}
-      }
-      concPawnList(_*,concPawn(_*,pawn(c),pawn(c),pawn(c),empty(x1,y1),empty(x2,y2),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value4);
-          `board.addValue(x2,y2,value4);
-          //}
-      }
       // 2 in 6
+      // ___xx_
       concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),empty[],_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value3);
           `board.addValue(x2,y2,value3);
           //}
       }
+      // __x_x_
       concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),pawn(c),empty(x2,y2),pawn(c),empty[],_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value3);
           `board.addValue(x2,y2,value3);
           //}
       }
+      // _x__x_
       concPawnList(_*,concPawn(_*,empty[],pawn(c),empty(x1,y1),empty(x2,y2),pawn(c),empty[],_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value3);
           `board.addValue(x2,y2,value3);
           //}
       }
+      // __xx__
       concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),pawn(c),pawn(c),empty(x2,y2),empty[],_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value3);
           `board.addValue(x2,y2,value3);
           //}
       }
-      concPawnList(_*,concPawn(_*,empty[],pawn(c),empty(x1,y1),pawn(c),empty(x2,y2),empty[],_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value3);
-          `board.addValue(x2,y2,value3);
-          //}
-      }
-      concPawnList(_*,concPawn(_*,empty[],pawn(c),pawn(c),empty(x1,y1),empty(x2,y2),empty[],_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value3);
-          `board.addValue(x2,y2,value3);
-          //}
-      }
       // 2 in 5
+      // ___xx
       concPawnList(_*,concPawn(_*,empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(c),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value5);
@@ -261,6 +259,7 @@ class Gomoku {
           `board.addValue(x3,y3,value5);
           //}
       }
+      // __x_x
       concPawnList(_*,concPawn(_*,empty(x1,y1),empty(x2,y2),pawn(c),empty(x3,y3),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value5);
@@ -268,6 +267,7 @@ class Gomoku {
           `board.addValue(x3,y3,value5);
           //}
       }
+      // __xx_
       concPawnList(_*,concPawn(_*,empty(x1,y1),empty(x2,y2),pawn(c),pawn(c),empty(x3,y3),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value5);
@@ -275,6 +275,7 @@ class Gomoku {
           `board.addValue(x3,y3,value5);
           //}
       }
+      // _x__x
       concPawnList(_*,concPawn(_*,empty(x1,y1),pawn(c),empty(x2,y2),empty(x3,y3),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value5);
@@ -282,6 +283,7 @@ class Gomoku {
           `board.addValue(x3,y3,value5);
           //}
       }
+      // _x_x_
       concPawnList(_*,concPawn(_*,empty(x1,y1),pawn(c),empty(x2,y2),pawn(c),empty(x3,y3),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value5);
@@ -289,13 +291,7 @@ class Gomoku {
           `board.addValue(x3,y3,value5);
           //}
       }
-      concPawnList(_*,concPawn(_*,empty(x1,y1),pawn(c),pawn(c),empty(x2,y2),empty(x3,y3),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value5);
-          `board.addValue(x2,y2,value5);
-          `board.addValue(x3,y3,value5);
-          //}
-      }
+      // x___x
       concPawnList(_*,concPawn(_*,pawn(c),empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value5);
@@ -303,28 +299,8 @@ class Gomoku {
           `board.addValue(x3,y3,value5);
           //}
       }
-      concPawnList(_*,concPawn(_*,pawn(c),empty(x1,y1),empty(x2,y2),pawn(c),empty(x3,y3),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value5);
-          `board.addValue(x2,y2,value5);
-          `board.addValue(x3,y3,value5);
-          //}
-      }
-      concPawnList(_*,concPawn(_*,pawn(c),empty(x1,y1),pawn(c),empty(x2,y2),empty(x3,y3),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value5);
-          `board.addValue(x2,y2,value5);
-          `board.addValue(x3,y3,value5);
-          //}
-      }
-      concPawnList(_*,concPawn(_*,pawn(c),pawn(c),empty(x1,y1),empty(x2,y2),empty(x3,y3),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value5);
-          `board.addValue(x2,y2,value5);
-          `board.addValue(x3,y3,value5);
-          //}
-      }
       // 1 in 6
+      // ____x_
       concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(c),empty[],_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value6);
@@ -332,6 +308,7 @@ class Gomoku {
           `board.addValue(x3,y3,value6);
           //}
       }
+      // ___x__
       concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),empty(x2,y2),pawn(c),empty(x3,y3),empty[],_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value6);
@@ -339,21 +316,8 @@ class Gomoku {
           `board.addValue(x3,y3,value6);
           //}
       }
-      concPawnList(_*,concPawn(_*,empty[],empty(x1,y1),pawn(c),empty(x2,y2),empty(x3,y3),empty[],_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value6);
-          `board.addValue(x2,y2,value6);
-          `board.addValue(x3,y3,value6);
-          //}
-      }
-      concPawnList(_*,concPawn(_*,empty[],pawn(c),empty(x1,y1),empty(x2,y2),empty(x3,y3),empty[],_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value6);
-          `board.addValue(x2,y2,value6);
-          `board.addValue(x3,y3,value6);
-          //}
-      }
       //1 in 5
+      // x____
       concPawnList(_*,concPawn(_*,pawn(c),empty(x1,y1),empty(x2,y2),empty(x3,y3),empty(x4,y4),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value7);
@@ -362,6 +326,7 @@ class Gomoku {
           `board.addValue(x4,y4,value7);
           //}
       }
+      // _x___
       concPawnList(_*,concPawn(_*,empty(x1,y1),pawn(c),empty(x2,y2),empty(x3,y3),empty(x4,y4),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value7);
@@ -370,23 +335,8 @@ class Gomoku {
           `board.addValue(x4,y4,value7);
           //}
       }
+      // __x__
       concPawnList(_*,concPawn(_*,empty(x1,y1),empty(x2,y2),pawn(c),empty(x3,y3),empty(x4,y4),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value7);
-          `board.addValue(x2,y2,value7);
-          `board.addValue(x3,y3,value7);
-          `board.addValue(x4,y4,value7);
-          //}
-      }
-      concPawnList(_*,concPawn(_*,empty(x1,y1),empty(x2,y2),empty(x3,y3),pawn(c),empty(x4,y4),_*),_*) -> {
-        //if(`c == patternColor) {
-          `board.addValue(x1,y1,value7);
-          `board.addValue(x2,y2,value7);
-          `board.addValue(x3,y3,value7);
-          `board.addValue(x4,y4,value7);
-          //}
-      }
-      concPawnList(_*,concPawn(_*,empty(x1,y1),empty(x2,y2),empty(x3,y3),empty(x4,y4),pawn(c),_*),_*) -> {
         //if(`c == patternColor) {
           `board.addValue(x1,y1,value7);
           `board.addValue(x2,y2,value7);
