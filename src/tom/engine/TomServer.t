@@ -262,7 +262,7 @@ public class TomServer implements TomPluginOptions
 		    }
 		catch(ClassNotFoundException cnfe) 
 		    { 
-			environment.messageError(TomMessage.getString("ClassNotFound"),new Object[]{path},
+			environment.messageWarning(TomMessage.getString("ClassNotFound"),new Object[]{path},
 						 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
 		    }
 		catch(Exception e) 
