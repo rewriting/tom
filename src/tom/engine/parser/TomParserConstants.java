@@ -121,7 +121,7 @@ public interface TomParserConstants {
     "\"%rule\"",
     "\"%make\"",
     "\"`\"",
-    "\"$`\"",
+    "\"$\"",
     "\"``\"",
     "\"%variable\"",
     "\"%type\"",

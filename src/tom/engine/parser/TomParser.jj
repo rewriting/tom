@@ -889,9 +889,11 @@ void MatchXMLConstruct(ArrayList list) throws TomException: /* in DEFAULT mode *
 	xtomExpand.addTask(currentNextTask);
       } catch (ClassNotFoundException e) {
 	System.out.println("You need xtom to use the %matchXML construct");
+	addTask(null);
       } catch (Exception e) {
 	System.out.println(e.getMessage());
 	e.printStackTrace();
+	addTask(null);
       }
       list.add(matchXML);
       xmlMode = true;
