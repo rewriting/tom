@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE tom [
-  <!ELEMENT tom (plugins,options)>
+<!DOCTYPE server [
+  <!ELEMENT server (plugins,options)>
 
   <!ELEMENT plugins (plugin*)>
 
@@ -38,7 +38,7 @@
     attrName CDATA #REQUIRED>
 ]>
 
-<tom>
+<server>
 
 <plugins>
 
@@ -203,26 +203,4 @@
 
 </options>
 
-<!--
-<backend>
-
-  <generator
-    classpath="jtom.backend.TomJavaGenerator"
-    flag="jCode (maybe specify an OptionBoolean instead)" />
-
-  <generator
-    classpath="jtom.backend.TomCGenerator"
-    flag="cCode" />    
-
-  <generator
-    classpath="jtom.backend.TomCamlGenerator"
-    flag="camlCode" />
-
-  <generator
-    classpath="jtom.backend.TomEiffelGenerator"
-    flag="eCode" />
-
-</backend>
--->
-
-</tom>
+</server>

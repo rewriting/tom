@@ -332,7 +332,7 @@ public class TomServer {
   {
     %match(TNode node)
     {
-      <tom>plug@<plugins></plugins></tom> -> {
+      <server>plug@<plugins></plugins></server> -> {
 		    %match(TNode plug)
          {
            ElementNode[childList = cl] -> // gets the <plugin> nodes

@@ -613,7 +613,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
     globalOptions = `emptyTomOptionList();
     %match(TNode node)
     {
-      <tom>opt@<options></options></tom> -> {
+      <server>opt@<options></options></server> -> {
 		    %match(TNode opt)
          {
            ElementNode[childList = c]
