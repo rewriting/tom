@@ -128,6 +128,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       CompiledPattern(instList) -> {
         generateList(deep, instList);
+        buildInstructionSequence();
         return;
       }
 
@@ -207,10 +208,6 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
     }
   }
-
-
-
-
 
   public void generateExpression(int deep, Expression subject)
     throws IOException {
@@ -353,7 +350,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Assign(UnamedVariable[],exp) | Assign(UnamedVariableStar[],exp) -> {
+      Assign((UnamedVariable|UnamedVariableStar)[],exp) -> {
         return;
       }
 
@@ -447,10 +444,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       Comment(t) -> {
-        output.write("/* ");
-        output.write(deep,t);
-        output.write(" */ ");
-        output.writeln();
+        buildComment(deep,t);
         return;
       }
 
@@ -696,6 +690,8 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   protected abstract TargetLanguage genDeclArray(String name, TomType listType, TomType eltType);
  
+  protected abstract void buildInstructionSequence() throws IOException;
+  protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList) throws IOException;
   protected abstract void buildList(int deep, String name, TomList argList) throws IOException;
   protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;

@@ -46,6 +46,11 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
+  protected void buildComment(int deep, String text) throws IOException {
+    output.writeln("-- " + text);
+    return;
+  }
+
  	protected void buildTerm(int deep, String name, TomList argList) throws IOException {
 		output.write("tom_make_");
 		output.write(name);

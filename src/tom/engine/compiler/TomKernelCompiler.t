@@ -522,7 +522,6 @@ public class TomKernelCompiler extends TomBase {
           Instruction let = buildAnnotedLet(optionList, source, var, `UnamedBlock(p.actionList));
           return  appendInstruction(let,empty());
         } else {
-          TomList subActionList = genListMatchingAutomata(p,termTail,indexTerm+1);
           /*
            * generate:
            * ---------
@@ -537,6 +536,7 @@ public class TomKernelCompiler extends TomBase {
            *   subjectList = end_i;
            * } while( !IS_EMPTY_TomList(subjectList) )
            */
+          TomList subActionList = genListMatchingAutomata(p,termTail,indexTerm+1);
           TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(makeNumber(indexTerm)));
           TomNumberList pathEnd = (TomNumberList) p.path.append(`End(makeNumber(indexTerm)));
           TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType);
@@ -599,7 +599,7 @@ public class TomKernelCompiler extends TomBase {
            * ---------
            * if(!IS_EMPTY_TomList(subjectList,subjectIndex)) {
            *   Let TomTerm x_j = (TomTerm) GET_ELEMENT_L(subjectList,subjectIndex);
-           *   subjectIndex++;;
+           *   subjectIndex++;
            *     ...
            * }
            */

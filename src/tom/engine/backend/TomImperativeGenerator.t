@@ -46,9 +46,21 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-	/*
-	 * the method implementations are here common to C and Java
-	 */
+  /*
+   * the method implementations are here common to C and Java
+   */
+
+  protected void buildInstructionSequence() throws IOException {
+    return;
+  }
+
+  protected void buildComment(int deep, String text) throws IOException {
+    output.writeln("/* " + text + " */");
+    return;
+  }
+          
+
+
  	protected void buildTerm(int deep, String name, TomList argList) throws IOException {
 		output.write("tom_make_");
 		output.write(name);
@@ -466,7 +478,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
   }
 
   protected TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
-      //%variable
+    //%variable
     String s = "";
     if(!genDecl) { return null; }
 

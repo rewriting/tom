@@ -49,25 +49,34 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     /*
      * the implementation of methods are here for caml 
      */
+
+  protected void buildInstructionSequence() throws IOException {
+    output.writeln(";");
+    return;
+  }
+
+  protected void buildComment(int deep, String text) throws IOException {
+    output.writeln("(* " + text + " *)");
+    return;
+  }
+
   protected void buildLet(int deep, TomTerm var, OptionList list,
                           String type, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
 
     output.indent(deep);
-    output.writeln("(let");
+    output.writeln("let");
     generate(deep,var);
     output.write(" = ");
     generateExpression(deep,exp);
-    output.writeln(" in (");
+    output.writeln(" in ");
     generateInstruction(deep,body);
-    output.writeln(" ) ");
-    output.writeln(" ) ");
   }
 
   protected void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException {
-    output.write(deep,"if "); 
+    output.write(deep,"if ("); 
     generateExpression(deep,exp); 
-    output.writeln(" then");
+    output.writeln(") then");
     generateList(deep+1,succesList);
     output.writeln(deep,"(* else () *) ");
   }
@@ -159,7 +168,14 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.write(" false ");
   }
 
+  protected void buildUnamedBlock(int deep, TomList instList) throws IOException {
+    output.writeln("(");
+    generateList(deep+1,instList);
+    output.writeln(")");
+  }
+
   protected void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException {
+    System.out.println(" Named block not supported in Caml: ");
       // no named blocks in caml : ignore the name
     output.writeln("(");
     generateList(deep+1,instList);
