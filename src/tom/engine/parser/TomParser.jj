@@ -121,7 +121,9 @@ public class TomParser extends TomTask {
   			System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
   		}
   		if(eclipseMode) {
-  			Tools.generateOutput("."+getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
+  			String fileName = currentPath+File.separatorChar+ "."+getInput().getRawFileName() + TomTaskInput.parsedTableSuffix;
+  			System.out.println(fileName);
+  			Tools.generateOutput(fileName, symbolTable().toTerm());
   		}
         if(intermediate) {
             Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);

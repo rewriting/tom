@@ -114,7 +114,9 @@ public class TomParser extends TomTask implements TomParserConstants {
                         System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
                 }
                 if(eclipseMode) {
-                        Tools.generateOutput("."+getInput().getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable().toTerm());
+                        String fileName = currentPath+File.separatorChar+ "."+getInput().getRawFileName() + TomTaskInput.parsedTableSuffix;
+                        System.out.println(fileName);
+                        Tools.generateOutput(fileName, symbolTable().toTerm());
                 }
         if(intermediate) {
             Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
@@ -2690,15 +2692,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     finally { jj_save(12, xla); }
   }
 
-  final private boolean jj_3R_33() {
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_40()) jj_scanpos = xsp;
-    if (jj_scan_token(TOM_RBRACKET)) return true;
-    return false;
-  }
-
   final private boolean jj_3_13() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_scan_token(TOM_RPAREN)) return true;
@@ -2808,14 +2801,14 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_9() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_EQUAL)) return true;
+  final private boolean jj_3R_48() {
+    if (jj_3R_32()) return true;
     return false;
   }
 
-  final private boolean jj_3R_48() {
-    if (jj_3R_32()) return true;
+  final private boolean jj_3_9() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_EQUAL)) return true;
     return false;
   }
 
@@ -2970,6 +2963,15 @@ public class TomParser extends TomTask implements TomParserConstants {
 
   final private boolean jj_3R_40() {
     if (jj_3R_42()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_33() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_40()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_RBRACKET)) return true;
     return false;
   }
 

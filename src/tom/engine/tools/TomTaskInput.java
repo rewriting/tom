@@ -37,7 +37,10 @@ public class TomTaskInput {
   private String inputFileName = "",
     baseInputFileName = "",
     outputFileName = "",
-    outputSuffix    = ".java";
+    outputSuffix    = ".java",
+    resourceParentPathLocation = ".",
+		inputSuffix = ".t",
+		rawFileName = "";
   public final static String 
   parsedSuffix    = ".tfix.parsed",
     expandedSuffix  = ".tfix.expanded",
@@ -81,8 +84,6 @@ public class TomTaskInput {
     doVerify = false, // Compilation correctness verification
     help = false, // usage called
     version = false; //version called
-  
-  private String resourceParentPathLocation = ".";
   
   public void setTerm(TomTerm term) {
     this.term = term;
@@ -334,4 +335,20 @@ public class TomTaskInput {
   	this.resourceParentPathLocation = resourceParentPathLocation;
   }
   
+	public String getInputSuffix() {
+		return inputSuffix;
+	}
+  
+	public void setInputSuffix(String inputSuffix) {
+		this.inputSuffix = inputSuffix;
+	}
+
+	public void setRawFileName(String rawFileName) {
+		this.rawFileName = rawFileName;
+	}
+	
+	public String getRawFileName() {
+		return rawFileName;
+	}
+	
 } // class TomTaskInput

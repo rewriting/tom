@@ -306,6 +306,8 @@ public class Tom {
           input = new FileInputStream(fileName);
             // to get the length of the file
           File file = new File(fileName);
+          String rawFile = file.getName();
+          taskInput.setRawFileName(rawFile.substring(0, rawFile.length() - (taskInput.getInputSuffix().length())) );
           inputBuffer = new byte[(int) file.length() + 1];
           input.read(inputBuffer);
         } catch (FileNotFoundException e) {
