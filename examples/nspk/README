@@ -1,6 +1,6 @@
 * term.adt describes the abstract data-type
 
-*  adt-to-java --input term.adt --jtom --package adt --output adt
+*  adt-to-java --input term.adt --jtom --package adt.nsh --output adt/nsh
 
 * jtom Nsh.t
 * javac Nsh.java

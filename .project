@@ -4,35 +4,32 @@
 	<comment></comment>
 	<projects>
 		<project>JJTraveler</project>
+		<project>apigen</project>
 		<project>aterm-java</project>
+		<project>concurrent</project>
 		<project>shared-objects</project>
 	</projects>
 	<buildSpec>
-
-	<buildCommand>
+		<buildCommand>
 			<name>fr.loria.eclipse.jtom.ADTToJavaBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
-
-	   <buildCommand>
+		<buildCommand>
 			<name>fr.loria.eclipse.jtom.TomBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
-
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
-
-    		<buildCommand>
+		<buildCommand>
 			<name>fr.loria.eclipse.jtom.TomBuildAnalyser</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
-
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
