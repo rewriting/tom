@@ -8,7 +8,7 @@ import adt.propp.*;
 import java.io.*;
 import antlr.CommonAST;
 
-public class RecPropp {
+public class RecPropp extends Propp {
 
 	private TermFactory factory;
 	private GenericTraversal traversal;
@@ -18,12 +18,7 @@ public class RecPropp {
 	// ------------------------------------------------------------  
 
 	public RecPropp(TermFactory factory) {
-		this.factory = factory;
-		this.traversal = new GenericTraversal();
-	}
-
-	public final TermFactory getTermFactory() {
-		return factory;
+		super(factory);
 	}
 
 	//{{{ public void run(String query)
@@ -39,21 +34,29 @@ public class RecPropp {
 		//boolean res      = depthSearch2(new HashSet(),initSeq,search);
 		long stopChrono = System.currentTimeMillis();
 
-		System.out.println("Traces = " + traces);
+		// System.out.println("Traces = " + traces);
+		// Process Traces
+
+		System.out.println("Build Proof Term");
+		ListProof proofTerm = buildProofTerm(initSeq,rules_appl);
+		System.out.println("Proof term = " + proofTerm);
+		Collection tex_proofs = new HashSet();
+		%match(ListProof proofTerm) {
+			concProof(_*,p,_*) -> {
+				tex_proofs.add(proofToTex(p));
+			}
+		}
+
+		System.out.println("Build LaTeX");
+		write_proof_latex(tex_proofs,"proof.tex");
+
+		System.out.println("Latex : " + tex_proofs);
 		System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
 
 	}
 	//}}}
 
-	//{{{ public Seq makeQuery(String input)
-	public Sequent makeQuery(String input) {
-
-		Sequent query = factory.SequentFromString(input);
-		return query;
-	}
-	//}}}
-
-	Map traces = new HashMap();
+	Collection rules_appl = new HashSet();
 	Collection result = new HashSet();
 
 	//{{{ public ListSequent Step(Sequent subject)
@@ -63,7 +66,7 @@ public class RecPropp {
 			// {{{	negd
 			seq(concPred(X*),concPred(Y*,neg(Z),R*)) -> {
 				Sequent prod = `seq(concPred(X*,Z),concPred(Y*,R*));
-				//traces.put(subject,`pair(negd,prod));
+				rules_appl.add(`rappl(negd,subject,concSequent(prod)));
 				return Step(prod);
 			}
 			// }}}
@@ -71,7 +74,7 @@ public class RecPropp {
 			//{{{ disjd
 			seq(concPred(X*),concPred(Y*,vee(Z,R),S*)) -> {
 				Sequent prod = `seq(concPred(X*),concPred(Y*,Z,R,S*));
-				//traces.put(subject,`pair(disjd,prod));
+				rules_appl.add(`rappl(disjd,subject,concSequent(prod)));
 				return Step(prod);
 			}
 			//}}}			
@@ -79,7 +82,7 @@ public class RecPropp {
 			//{{{ impd
 			seq(concPred(X*),concPred(S*,impl(Y,Z),R*)) -> {
 				Sequent prod = `seq(concPred(X*,Y),concPred(S*,Z,R*));
-				//traces.put(subject,`pair(impd,prod));
+				rules_appl.add(`rappl(impd,subject,concSequent(prod)));
 				return Step(prod);
 			}
 			//}}}
@@ -87,7 +90,7 @@ public class RecPropp {
 			//{{{ negg
 			seq(concPred(X*,neg(Y),S*),concPred(Z*)) -> {
 				Sequent prod = `seq(concPred(X*,S*),concPred(Y,Z*));
-				//traces.put(subject,`pair(negg,prod));
+				rules_appl.add(`rappl(negg,subject,concSequent(prod)));
 				return Step(prod);
 			}
 			//}}}
@@ -95,7 +98,7 @@ public class RecPropp {
 			//{{{ conjg
 			seq(concPred(X*,wedge(Y,Z),S*),concPred(R*)) -> {
 				Sequent prod = `seq(concPred(X*,Y,Z,S*),concPred(R*));		
-				//traces.put(subject,`pair(conjg,prod));
+				rules_appl.add(`rappl(conjg,subject,concSequent(prod)));
 				return Step(prod);
 			}
 			//}}}
@@ -103,11 +106,10 @@ public class RecPropp {
 			//{{{ disjg
 			seq(concPred(X*,vee(Y,Z),S*),concPred(R*)) -> {
 				Sequent s1 = `seq(concPred(X*,Y,S*),concPred(R*));
-				//traces.put(subject,`pair(disjg,s1));
 				Sequent s2 = `seq(concPred(X*,Z,S*),concPred(R*));
-				//traces.put(subject,`pair(disjg,s2));
 				ListSequent l1 = Step(s1);
 				ListSequent l2 = Step(s2);
+				rules_appl.add(`rappl(disjg,subject,concSequent(s1,s2)));
 				return `concSequent(l1*,l2*);
 			}
 			//}}}
@@ -115,11 +117,10 @@ public class RecPropp {
 			//{{{ conjd
 			seq(concPred(R*),concPred(X*,vee(Y,Z),S*)) -> {
 				Sequent s1 = `seq(concPred(R*),concPred(X*,Y,S*));
-				//traces.put(subject,`pair(conjg,s1));
 				Sequent s2 = `seq(concPred(R*),concPred(X*,Z,S*));
-				//traces.put(subject,`pair(conjg,s2));
 				ListSequent l1 = Step(s1);	
 				ListSequent l2 = Step(s2);	
+				rules_appl.add(`rappl(conjd,subject,concSequent(s1,s2)));
 				return `concSequent(l1*,l2*);
 			}
 			//}}}
@@ -127,11 +128,10 @@ public class RecPropp {
 			//{{{ impg
 			seq(concPred(X*,impl(Y,Z),S*),concPred(R*)) -> {
 				Sequent s1 = `seq(concPred(X*,S*),concPred(R*,Y));
-				//traces.put(subject,`pair(conjg,s1));
 				Sequent s2 = `seq(concPred(X*,Z,S*),concPred(R*));
-				//traces.put(subject,`pair(conjg,s2));
 				ListSequent l1 = Step(s1);
 				ListSequent l2 = Step(s2);
+				rules_appl.add(`rappl(impg,subject,concSequent(s1,s2)));
 				return `concSequent(l1*,l2*);
 			}
 			//}}}
@@ -140,7 +140,7 @@ public class RecPropp {
 			seq(concPred(_*,X,_*),concPred(_*,X,_*)) -> {
 				if (X != `EmptyP()) {
 					Sequent prod = `PROOF();
-					//traces.put(subject,`pair(axiom,prod));
+					rules_appl.add(`rappl(axiom,subject,concSequent()));
 					return `concSequent(prod);
 				}
 			}
@@ -154,7 +154,7 @@ public class RecPropp {
 	//}}}
 
 	//{{{ public final static void main(String[] args)
-	public final static void main(String[] args) {
+	public static void main(String[] args) {
 		RecPropp test = new RecPropp(new TermFactory(new PureFactory()));
 
 		String query ="";

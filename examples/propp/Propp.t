@@ -38,10 +38,10 @@ public class Propp {
 		//boolean res      = depthSearch2(new HashSet(),initSeq,search);
 		long stopChrono = System.currentTimeMillis();
 
-                  //System.out.println("Traces = " + rules_appl);
+		//System.out.println("Traces = " + rules_appl);
 		// Process Traces
 
-                System.out.println("Build Proof Term");
+		System.out.println("Build Proof Term");
 		ListProof proofTerm = buildProofTerm(initSeq,rules_appl);
 		System.out.println("Proof term = " + proofTerm);
 		Collection tex_proofs = new HashSet();
@@ -51,8 +51,8 @@ public class Propp {
 			}
 		}
 
-                System.out.println("Build LaTeX");
-                write_proof_latex(tex_proofs,"proof.tex");
+		System.out.println("Build LaTeX");
+		write_proof_latex(tex_proofs,"proof.tex");
 		System.out.println("Latex : " + tex_proofs);
 		System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
 
@@ -127,7 +127,6 @@ public class Propp {
 	}
 	//}}}
 
-	Map traces = new HashMap();
 	Collection rules_appl = new HashSet();
 	Collection result = new HashSet();
 
@@ -256,17 +255,6 @@ public class Propp {
 	}
 	//}}}
 
-	//{{{ public void add_trace(Sequent subject, Sequent product)
-	public void add_trace(Sequent subject, Sequent product) {
-		if (!(traces.containsKey(subject))) {
-			traces.put(subject,`concSequent(product));
-		} else {
-			ListSequent tmp = (ListSequent)traces.get(subject);
-			traces.put(subject,`concSequent(product,tmp*));
-		}
-	}
-	//}}}
-
 	//{{{ public ListProof buildProofTerm(Sequent goal, Collection trace) {
 	public ListProof buildProofTerm(Sequent goal, Collection trace) {
 		ListProof tmpsol = `concProof();
@@ -330,12 +318,12 @@ public class Propp {
 
 	//{{{ public String listPredToTex(ListPred l)
 	public String listPredToTex(ListPred l) {
-          String latex = "";
-          while(!l.isEmpty()) {
-            latex += " , " + predToTex(l.getHead());
-            l = l.getTail();
-          }
-          return latex;
+		String latex = "";
+		while(!l.isEmpty()) {
+			latex += " , " + predToTex(l.getHead());
+			l = l.getTail();
+		}
+		return latex;
 	}
 	//}}}
 
@@ -368,24 +356,24 @@ public class Propp {
 	public String proofToTex(Proof proof) {
 		String latex = "";
 
-			//{{{ %match(Proof item)
-			%match(Proof proof) {
+		//{{{ %match(Proof item)
+		%match(Proof proof) {
 
-				rule(r,g,concProof()) -> {
-					latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{\\mbox{}}";
-				}
-				
-				rule(r,g,concProof(p)) -> {
-					latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{" + proofToTex(p) + "}";
-				}
-				
-				rule(r,g,concProof(p,pp)) -> {
-					latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{" + proofToTex(p) + " & " + proofToTex(pp) + "}";
-				}
-				
+			rule(r,g,concProof()) -> {
+				latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{\\mbox{}}";
 			}
-			//}}}
-		
+
+			rule(r,g,concProof(p)) -> {
+				latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{" + proofToTex(p) + "}";
+			}
+
+			rule(r,g,concProof(p,pp)) -> {
+				latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{" + proofToTex(p) + " & " + proofToTex(pp) + "}";
+			}
+
+		}
+		//}}}
+
 		return latex;
 	}
 	//}}}
@@ -418,7 +406,7 @@ public class Propp {
 	//}}}
 
 	//{{{ public final static void main(String[] args)
-	public final static void main(String[] args) {
+	public static void main(String[] args) {
 		Propp test = new Propp(new TermFactory(new PureFactory()));
 
 		String query ="";
