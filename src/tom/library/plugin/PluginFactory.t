@@ -63,11 +63,12 @@ import tom.platform.adt.platformoption.types.*;
  *   description CDATA #IMPLIED
  *   classpath CDATA #REQUIRED>
  * ]>
- * Please note that if you put two or more plugins in the set that have their
- * activation flag set to true by default, it will lead to an error if the user
- * doesn't activate manually (i.e. with the command line) one of the plugins.
- * So all the benefit of having an activation flag set to true by default
- * (that is avoiding to set one manually) will be gone.
+ * Please note that if you put two or more plugins in the set that
+ * have their activation flag set to true by default, it will lead to
+ * an error if the user doesn't activate manually (i.e. with the
+ * command line) one of the plugins.  So all the benefit of having an
+ * activation flag set to true by default (that is avoiding to set one
+ * manually) will be gone.
  *
  * @author Gr&eacute;gory ANDRIEN
  */

@@ -191,18 +191,18 @@
       </sequential>
     </macrodef>
     <macrodef name="javacompile">
-			<attribute name="example"/>
-			<sequential>
-				<javac destdir="${examples.build}"
-							 optimize="${optimize}"
-							 nowarn="${nowarnings}">
-					<src path="${examples.dir}"/>
-					<src path="${examples.gen}"/>
-					<classpath refid="tom.classpath"/>
-					<include name="@{example}/**/*.java"/>
-				</javac>
-			</sequential>
-		</macrodef>
+      <attribute name="example"/>
+      <sequential>
+        <javac destdir="${examples.build}"
+               optimize="${optimize}"
+               nowarn="${nowarnings}">
+          <src path="${examples.dir}"/>
+          <src path="${examples.gen}"/>
+          <classpath refid="tom.classpath"/>
+          <include name="@{example}/**/*.java"/>
+        </javac>
+      </sequential>
+    </macrodef>
   </target>
   
   <target name="prepare.examples">
@@ -223,26 +223,26 @@
     <adtcompile example="${addressbook}"
                 factory="data"/>
     <tomcompile example="${addressbook}"/>
-		<javacompile example="${addressbook}"/>
+    <javacompile example="${addressbook}"/>
   </target>
 
   <target name="apireach" depends="init"> 
     <adtcompile example="${apireach}"
                 factory="reach"/>
     <tomcompile example="${apireach}"/>
-		<javacompile example="${apireach}"/>
+    <javacompile example="${apireach}"/>
   </target>
 
   <target name="appletxml" depends="init"> 
     <tomcompile example="${appletxml}"/>
-		<javacompile example="${appletxml}"/>
+    <javacompile example="${appletxml}"/>
   </target>
 
   <target name="boulderdash" depends="init">
     <adtcompile example="${boulderdash}"
                 factory="boulder"/>
     <tomcompile example="${boulderdash}"/>
-		<javacompile example="${boulderdash}"/>
+    <javacompile example="${boulderdash}"/>
     <!-- copy resources in build -->
     <copy todir="${examples.build}/${boulderdash}">
       <fileset dir="${examples.dir}/${boulderdash}">
@@ -256,7 +256,7 @@
     <adtcompile example="${builtin}"
                 factory="term"/>
     <tomcompile example="${builtin}"/>
-		<javacompile example="${builtin}"/>
+    <javacompile example="${builtin}"/>
   </target>
 
   <target name="caml" depends="init">
@@ -300,7 +300,7 @@
 
   <target name="cell" depends="init">
     <tomcompile example="${cell}"/>
-		<javacompile example="${cell}"/>
+    <javacompile example="${cell}"/>
     <!-- copy resources in build -->
     <copy todir="${examples.build}/${cell}">
       <fileset dir="${examples.dir}/${cell}">
@@ -322,7 +322,7 @@
             outputdirectory="${example.gen}/cril/jtom/ddd/data/dbm"
             javacchome="${javaccdir}" />
     <!-- build java source -->
-		<javacompile example="${cril}"/>
+    <javacompile example="${cril}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${cril}">
       <fileset dir="${examples.dir}/${cril}">
@@ -334,7 +334,7 @@
 
   <target name="dom" depends="init">
     <tomcompile example="${dom}"/>
-		<javacompile example="${dom}"/>
+    <javacompile example="${dom}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${dom}">
       <fileset dir="${examples.dir}/${dom}">
@@ -361,43 +361,43 @@
          options="-I ${tom.home}/share/jtom">
       <include name="${expression}/**/RecordStrict.t"/>
     </tom>
-		<javacompile example="${expression}"/>
+    <javacompile example="${expression}"/>
   </target>
 
   <target name="gtree" depends="init">
     <adtcompile example="${gtree}"
                 factory="term"/>
     <tomcompile example="${gtree}"/>
-		<javacompile example="${gtree}"/>
+    <javacompile example="${gtree}"/>
   </target>
 
   <target name="list" depends="init">
     <tomcompile example="${list}"/>
-		<javacompile example="${list}"/>
+    <javacompile example="${list}"/>
   </target>
 
   <target name="lsystem" depends="init">
     <tomcompile example="${lsystem}"/>
-		<javacompile example="${lsystem}"/>
+    <javacompile example="${lsystem}"/>
   </target>
 
   <target name="minirho" depends="init">
     <adtcompile example="${minirho}"
                 factory="term"/>
     <tomcompile example="${minirho}"/>
-		<javacompile example="${minirho}"/>
+    <javacompile example="${minirho}"/>
   </target>
   
   <target name="nspk" depends="init">
     <adtcompile example="${nspk}"
                 factory="term"/>
     <tomcompile example="${nspk}"/>
-		<javacompile example="${nspk}"/>
+    <javacompile example="${nspk}"/>
   </target>
   
   <target name="p3p" depends="init">
     <tomcompile example="${p3p}"/>
-		<javacompile example="${p3p}"/>
+    <javacompile example="${p3p}"/>
     <copy todir="${examples.build}/${p3p}">
       <fileset dir="${examples.dir}/${p3p}">
         <include name="*.xml"/>
@@ -409,31 +409,31 @@
     <adtcompile example="${peano}"
                 factory="${peano}"/>
     <tomcompile example="${peano}"/>
-		<javacompile example="${peano}"/>
+    <javacompile example="${peano}"/>
   </target>
 
   <target name="pnspk" depends="init">
     <adtcompile example="${pnspk}"
                 factory="term"/>
     <tomcompile example="${pnspk}"/>
-		<javacompile example="${pnspk}"/>
+    <javacompile example="${pnspk}"/>
   </target>
   
   <target name="poly" depends="init">
     <adtcompile example="${poly}"
                 factory="expression"/>
     <tomcompile example="${poly}"/>
-		<javacompile example="${poly}"/>
+    <javacompile example="${poly}"/>
   </target>
 
   <target name="pqueens" depends="init">
     <tomcompile example="${pqueens}"/>
-		<javacompile example="${pqueens}"/>
+    <javacompile example="${pqueens}"/>
   </target>
 
   <target name="prodrule" depends="init">
     <tomcompile example="${prodrule}"/>
-		<javacompile example="${prodrule}"/>
+    <javacompile example="${prodrule}"/>
   </target>
 
   <target name="propp" depends="init">
@@ -446,7 +446,7 @@
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <tomcompile example="${propp}"/>
-		<javacompile example="${propp}"/>
+    <javacompile example="${propp}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${propp}">
       <fileset dir="${examples.dir}/${propp}">
@@ -460,21 +460,21 @@
     <adtcompile example="${rbtree}"
                 factory="tree"/>
     <tomcompile example="${rbtree}"/>
-		<javacompile example="${rbtree}"/>
+    <javacompile example="${rbtree}"/>
   </target>
 
   <target name="set" depends="init">
     <adtcompile example="${set}"
                 factory="jgset"/>
     <tomcompile example="${set}"/>
-		<javacompile example="${set}"/>
+    <javacompile example="${set}"/>
   </target>
 
   <target name="strategy" depends="init">
     <adtcompile example="${strategy}"
                 factory="term"/>
     <tomcompile example="${strategy}"/>
-		<javacompile example="${strategy}"/>
+    <javacompile example="${strategy}"/>
   </target>
 
   <target name="structure" depends="init">
@@ -514,7 +514,7 @@
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <!-- build java source -->
-		<javacompile example="${structure}"/>
+    <javacompile example="${structure}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${structure}">
       <fileset dir="${examples.dir}/${structure}">
@@ -525,7 +525,7 @@
 
   <target name="tutorial" depends="init">
     <tomcompile example="${tutorial}"/>
-		<javacompile example="${tutorial}"/>
+    <javacompile example="${tutorial}"/>
   </target>
 
   <target name="vas" depends="init">
@@ -539,12 +539,12 @@
          options="-I ${tom.home}/share/jtom">
       <include name="${vas}/**/*.t"/>
     </tom>
-		<javacompile example="${vas}"/>
+    <javacompile example="${vas}"/>
   </target>
 
   <target name="xml" depends="init">
     <tomcompile example="${xml}"/>
-		<javacompile example="${xml}"/>
+    <javacompile example="${xml}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${xml}">
       <fileset dir="${examples.dir}/${xml}">
@@ -556,7 +556,7 @@
 
   <target name="xquery" depends="init">
     <tomcompile example="${xquery}"/>
-		<javacompile example="${xquery}"/>
+    <javacompile example="${xquery}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${xquery}">
       <fileset dir="${examples.dir}/${xquery}">

@@ -47,6 +47,9 @@ import aterm.ATermAppl;
 import aterm.ATermList;
 import aterm.pure.SingletonFactory;
 
+/**
+ * The TomOptionManager manages options of each plugin in the platform.
+ */
 public class TomOptionManager implements OptionManager, OptionOwner {
 
   %include{ adt/PlatformOption.tom }
@@ -89,6 +92,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   /**
    * initialize does everything needed
    *
+   * @param confManager a configuration manager
+   * @param commandLine the command line, as an array of Strings
    * @return  an error code :
    * <ul>
    * <li>0 if no error was encountered</li>
@@ -106,7 +111,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     }
     return checkAllOptionsDepedencies(optionOwnerList);
   }
-  
+
   /**
    * Inherited from OptionManager interface
    */
@@ -115,7 +120,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   }
 
   /**
-   *
+   * @return the input files list
    */
   public List getInputToCompileList() {
     return inputFileList;
@@ -141,6 +146,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   
   /**
    * Sets an option to the desired value.
+   * @param optionName the name of the option to set
+   * @param optionValue a value for the option to set
    */
   public void setOptionValue(String optionName, Object optionValue) {
     // to implement OptionManager
@@ -173,10 +180,18 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     PlatformOption option = getOptionFromName(name);
     if(option != null) {
       %match(PlatformOption option) {
-        PluginOption[value=BooleanValue(True())]  -> { return new Boolean(true); }
-        PluginOption[value=BooleanValue(False())] -> { return new Boolean(false); }
-        PluginOption[value=IntegerValue(value)]   -> { return new Integer(`value); }
-        PluginOption[value=StringValue(value)]    -> { return `value; }
+        PluginOption[value=BooleanValue(True())]  -> { 
+          return new Boolean(true); 
+        }
+        PluginOption[value=BooleanValue(False())] -> { 
+          return new Boolean(false); 
+        }
+        PluginOption[value=IntegerValue(value)]   -> { 
+          return new Integer(`value); 
+        }
+        PluginOption[value=StringValue(value)]    -> { 
+          return `value; 
+        }
       }
     } else {
       getLogger().log(Level.SEVERE,"OptionNotFound",name);
@@ -220,8 +235,9 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   }
 
   /**
-   * The TomOptionManager does no need to retain the OptionManager since it is
-   * the OptionManager
+   * The TomOptionManager does no need to retain the OptionManager
+   * since it is the OptionManager.
+   * @param om which is not used 
    */
   public void setOptionManager(OptionManager om) {}
   
@@ -251,7 +267,9 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   }
   
   /**
-   * Checks if every plugin's needs are fulfilled
+   * Checks if every plugin's needs are fulfilled.
+   * @param optionownerlist the list of option owners to check
+   * @return 0 if there is no unfulfilled need, 1 otherwise
    */
   private int checkAllOptionsDepedencies(List optionOwnerList) {
     Iterator owners = optionOwnerList.iterator();
@@ -312,8 +330,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    */
   private void displayHelp() {
     String beginning = "\nTom usage :"
-	    + "\n\ttom [options] input[.t] [... input[.t]]"
-	    + "\noptions :";
+      + "\n\ttom [options] input[.t] [... input[.t]]"
+      + "\noptions :";
     StringBuffer buffer = new StringBuffer(beginning);
     buffer.append("\n\t-X <file>:\tDefines an alternate XML configuration file\n");
 
@@ -333,7 +351,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           buffer.append(":\t" + `description);
           buffer.append("\n");
         }
-      }			
+      }     
     }
     System.out.println(buffer.toString());
   }
@@ -349,7 +367,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
   /**
    * Checks if all the options a plugin needs are here.
    * 
-   * @param list a list of options that must be found with the right value
+   * @param requiredOptions a list of options that must be found with
+   * the right value
    * @return true if every option was found with the right value
    */
   private boolean checkOptionDependency(PlatformOptionList requiredOptions) {
@@ -468,8 +487,8 @@ public class TomOptionManager implements OptionManager, OptionOwner {
                 }
               }
             }
-          }     				
-        }	
+          }             
+        } 
       }
     } catch (ArrayIndexOutOfBoundsException e) {
       getLogger().log(Level.SEVERE, "IncompleteOption", argument);
