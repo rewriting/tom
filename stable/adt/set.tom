@@ -1,0 +1,79 @@
+%typeterm String{
+  implement { String}
+  get_fun_sym(t) {t}
+  cmp_fun_sym(s1,s2) { s1.equals(s2)}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%typeterm int{
+  implement { int}
+  get_fun_sym(t) {t}
+  cmp_fun_sym(s1,s2) { (s1 == s2)}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {(t1 == t2)}
+}
+
+%typeterm double{
+  implement { double}
+  get_fun_sym(t) {t}
+  cmp_fun_sym(s1,s2) { (s1 == s2)}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {(t1 == t2)}
+}
+
+%typeterm ATerm{
+  implement { aterm.ATerm}
+  get_fun_sym(t) {((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null)}
+  cmp_fun_sym(s1,s2) { s1==s2}
+  get_subterm(t,n) {(((ATermAppl)t).getArgument(n))}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%typelist ATermList{
+  implement { aterm.ATermList}
+  get_fun_sym(t) {((t instanceof ATermList)?getSetFactory().getPureFactory().makeAFun("conc",1,false):null)}
+  cmp_fun_sym(s1,s2) { s1==s2}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getFirst()}
+  get_tail(l) {l.getNext()}
+  is_empty(l) {l.isEmpty()}
+}
+
+%typeterm JGTreeSet{
+  implement { JGTreeSet}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%op JGTreeSet emptySet {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isEmptySet()}
+  make() { getSetFactory().makeJGTreeSet_EmptySet()}
+}
+
+%op JGTreeSet singleton(value:ATerm) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isSingleton()}
+  get_slot(value,t) { t.getValue()}
+  make(t0) { getSetFactory().makeJGTreeSet_Singleton(t0)}
+}
+
+%op JGTreeSet pair(value:ATerm, multiplicity:int) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isPair()}
+  get_slot(value,t) { t.getValue()}
+  get_slot(multiplicity,t) { t.getMultiplicity()}
+  make(t0, t1) { getSetFactory().makeJGTreeSet_Pair(t0, t1)}
+}
+
+%op JGTreeSet branch(left:JGTreeSet, right:JGTreeSet) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isBranch()}
+  get_slot(left,t) { t.getLeft()}
+  get_slot(right,t) { t.getRight()}
+  make(t0, t1) { getSetFactory().makeJGTreeSet_Branch(t0, t1)}
+}
+
