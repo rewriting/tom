@@ -1,0 +1,7 @@
+
+Operator 'zero' has an unknown return type: 'type2'
+-- Error occured at line: 9
+
+
+Tom Checker:  Encountered errors during verification phase.
+No file generated.

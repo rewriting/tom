@@ -1,0 +1,7 @@
+
+Bad type of argument: Argument 2 of method 'conc' has type 'E' required but type 'L' found in structure declared 77
+-- Error occured at line: 77
+
+
+Tom Checker:  Encountered errors during verification phase.
+No file generated.

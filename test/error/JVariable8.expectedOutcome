@@ -1,0 +1,10 @@
+
+ *** Warning *** possible error in structure Rule declared line 93
+ *** Unknown method 'plus1' : Ensure the type coherence by yourself line : 96
+
+Unknown variable(s) [y] used on right part of %rule declared line 93
+-- Error occured at line: 96
+
+
+Tom Checker:  Encountered errors during verification phase.
+No file generated.

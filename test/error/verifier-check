@@ -1,0 +1,72 @@
+#!/bin/sh
+    
+#default is regression:
+files=`ls *.t 2>/dev/null`
+generation=0
+
+verbose=0
+TOM=`which jtom.src`
+COMPARE=`which diff`
+RM=/bin/rm
+
+for x in "$@"; do
+    case "$x" in
+    -c) shift
+        generation=1
+	rm -f *.expectedOutcome
+        ;;
+    -v) shift
+	verbose=1
+	 echo
+	 echo Using $TOM 
+	 echo And
+	 echo Using $COMPARE to compare results.
+	 echo Assumes these are the right tools to use 
+	 echo
+	;;
+    -*) shift
+        echo "Usage: $name [ -c (Create testReference) | -v (verbose)] " 1>&2
+	exit
+        ;;
+    *)  break
+        ;;
+    esac
+done
+
+Warn () {
+    echo $* >&2
+}
+
+Error () {
+    Warn $*
+    error=1
+}
+
+Notify () {
+    if [ $verbose -gt 0 ] ; then
+	Warn $*
+    else
+	printf "."
+    fi
+    }
+    
+    
+
+for file in $files
+   do
+    base=`basename $file .t` 
+    if [ $generation -eq 1 ]; then
+	$TOM $base > $base.expectedOutcome
+	echo generation for $file
+    else   
+	$TOM $base > $base.out
+	if $COMPARE $base.expectedOutcome $base.out > /dev/null
+	then Notify "Regression test for term $base succeeded"
+	else Error "Regression test for term $base failed"
+	fi
+	$RM -f $base.out
+    fi
+   done
+printf "\n"
+
+

@@ -1,0 +1,221 @@
+////////////////////
+TYPETERM DECLARATION
+////////////////////
+JTypeTermRef.t
+JTypeTerm1.t
+	Missing functions : [get_fun_sym]
+JTypeTerm2.t
+	Missing functions : [cmp_fun_sym]
+JTypeTerm3.t
+	Missing functions : [get_subterm]
+JTypeTerm4.t
+	Missing functions : [get_fun_sym, cmp_fun_sym, get_subterm]
+JTypeTerm5.t
+	OK: missing equals
+JTypeTerm6.t
+	 Repeated macro-functions 'get_fun_sym'
+JTypeTerm7.t
+	Arguments must be linear in declaration 'cmp_fun_sym'
+JTypeTerm8.t
+	Arguments must be linear in declaration 'equals'
+JTypeTerm9.t
+	Multiple definition of type
+
+////////////////////
+TYPEARRAY DECLARATION
+////////////////////
+JTypeArrayRef.t
+JTypeArray1.t
+	Missing functions : [get_fun_sym]
+JTypeArray2.t
+	Missing functions : [cmp_fun_sym]
+JTypeArray3.t
+	Missing functions : [get_element]
+JTypeArray4.t
+	Missing functions : [get_size
+JTypeArray5.t
+	OK: missing equals
+JTypeArray6.t
+	Arguments must be linear in declaration 'cmp_fun_sym'
+JTypeArray7.t
+	Arguments must be linear in declaration 'equals
+JTypeArray8.t
+	Repeated macro-functions 'get_element'
+
+////////////////////
+TYPELIST DECLARATION
+////////////////////
+JTypeListRef.t
+JTypeList1.t
+	Missing functions : [get_fun_sym]
+JTypeList2.t
+	Missing functions : [cmp_fun_sym]
+JTypeList3.t
+	Missing functions : [get_head]
+JTypeList4.t
+	 Missing functions : [get_tail]
+JTypeList5.t
+	Missing functions : [is_empty]
+JTypeList6.t
+	OK: Missing equals
+JTypeList7.t
+	Arguments must be linear in declaration 'cmp_fun_sym'
+JTypeList8.t
+	Arguments must be linear in declaration 'equals'
+JTypeList9.t
+	Repeated macro-functions 'get_head'
+
+////////////////////
+OPERATOR DECLARATION
+////////////////////
+JOperatorRef.t
+JOperator1.t
+	Operator 'zero' has an unknown return type
+JOperator2.t
+	Slot position 1 of operator 'zero' has an unknown type
+JOperator3.t
+	Repeated macro-functions 'make'
+JOperator4.t
+	Arguments must be linear in declaration 'make'
+JOperator5.t
+	Multiple definition of operator
+JOperator6.t
+	OK: Operator defined before type declaration
+JOperator7.t
+	Bad number of arguments in method 'make'
+JOperator8.t
+	GetSlot declaration 'type' is repeated in operator declaration
+JOperator9.t
+	Some GetSlot declaration are incompatible with operator signature
+
+
+////////////////////
+OPARRAY DECLARATION
+////////////////////
+JOpArrayRef.t
+JOpArray1.t
+	Operator 'conc' has an unknown return type
+JOpArray2.t
+	Slot position 1 of operator 'conc' has an unknown type
+JOpArray3.t
+	Missing functions : [make_empty]
+JOpArray4.t
+	Missing functions : [make_append]
+JOpArray5.t
+	Arguments must be linear in declaration 'make_append'
+JOpArray6.t
+	Repeated macro-functions 'make_append'
+
+////////////////////
+OPLIST DECLARATION
+////////////////////
+JOpListRef.t
+JOpList1.t
+	Operator 'conc' has an unknown return type
+JOpList2.t
+	Slot position 1 of operator 'conc' has an unknown type
+JOpList3.t
+	Missing functions : [make_empty]
+JOpList4.t
+	Missing functions : [make_insert]
+JOpList5.t
+	Arguments must be linear in declaration 'make_insert'
+JOpList6.t
+	Repeated macro-functions 'make_empty'
+	
+////////////////////
+MATCH DECLARATION
+////////////////////
+JMatchRef.t
+JMatch1.t
+	Bad number of arguments: 2 argument(s) required but 1 found in %match structure
+JMatch2.t
+	Bad number of arguments: 2 argument(s) required but 3 found in %match structure
+JMatch3.t
+	Single list variable x* : Not allowed in %match structure
+JMatch4.t
+	OK: _ are count
+JMatch5.t
+	Bad type name in signature
+
+
+////////////////////
+RULE DECLARATION
+////////////////////
+JRuleRef.t
+JRule1.t
+	'_' is impossible on top of Rhs
+JRule2.t
+	'_' is impossible on Rhs even in app structure
+JRule3.t
+	Alone placeholder : Not allowed in left hand side
+JRule4.t
+	Single list variable : Not allowed on top of %rule
+JRule5.t
+	Bad number of arguments for method 'fib1':1 arguments are required but 2 are given
+JRule6t
+	Method name 'fib1' expected, but 'fib2' found
+JRule7.t
+	Single list variable fib1* : Not allowed on top of %rule
+JRule8.t
+	Single list variable 'suc*' is not allowed in right hand side of structure %rule
+JRule9.t
+	Alone variable or operator fib1 is not allowed on left hand side of structur %rule
+JRule10.t
+	 Record 'suc[...]' is not allowed on right part of structure %rule
+JRule10.t
+	TODO:lhs var of incorrect type
+
+	
+////////////////////
+RECORD DECLARATION
+////////////////////
+
+JRecord1.t
+	For slot 2 :Type 'term' required but Type 'term1' found
+JRecord2.t
+	Slot Name 'pred1' is incorrect
+JRecord3.t
+	Same slot names can not be used in same method
+JRecord4.t
+	Slot Name 'pred1' is incorrect in comple method
+JRecord5.t
+	Symbol method : 'succ' not found: succ[...]
+JRecord6.t
+	Slot Name 'pred1' is not correct
+JRecord7.t
+	Slot Name 'pred' is not correct: See method 'fib1'
+
+////////////////////
+APPL DECLARATION
+////////////////////
+JAppl1.t
+	Bad number of arguments for method in match
+JAppl2.t
+	OK: zero() in match
+JAppl3.t
+	Bad appl arg number in complex method in match
+JAppl4.t
+	Symbol method : 'succ' not found: succ(...) in match
+JAppl5.t
+	Bad number of arguments for method 'suc':1 arguments are required but 2 are given in rule
+
+
+////////////////////
+VARIABLE DECLARATION
+////////////////////
+JVariable1.t
+	Symbol method : 'x' not found: x()
+JVariable2.t
+	Placeholder is not allowed in list operator
+JVariable3.t
+	Bad type of argument: Argument 2 of method 'conc' has type 'E' required but type 'L' found
+JVariable4.t
+JVariable5.t
+JVariable6.t
+JVariable7.t
+	Variables are correctly extracted	
+JVariable8.t
+	Unknown variable(s) [y] used on right part of %rule
+JVariable9.t
+	TODO: 2 var x with different types

@@ -1,0 +1,7 @@
+
+Operator 'conc' has an unknown return type: 'type'
+-- Error occured at line: 17
+
+
+Tom Checker:  Encountered errors during verification phase.
+No file generated.

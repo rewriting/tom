@@ -1,0 +1,7 @@
+
+Left most symbol name 'fib1' expected, but 'fib2' found in left hand side of structure %rule declared line 93
+-- Error occured at line: 95
+
+
+Tom Checker:  Encountered errors during verification phase.
+No file generated.
