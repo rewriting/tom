@@ -89,6 +89,10 @@ public class TomDebugEnvironment {
   }
 
   public void enteringPattern() {
+    if(getStep() == 0) {
+      System.out.println("Here are the subject(s):");
+      showSubjects();
+    }
     incrementStep();
     nextLookup = false;
     if(failureLookup) {return;}

@@ -40,6 +40,7 @@ import jtom.tools.*;
 import jtom.adt.*;
 
 import jtom.debug.TomDebugEnvironment;
+import jtom.debug.TermHandler;
 
 public class TomDebugger {
   public static TomDebugger debugger = null;
@@ -54,7 +55,8 @@ public class TomDebugger {
   String[] baseFileName;
   Stack environment;
   boolean nextFailure = false;
-
+  ArrayList termHandlerList;
+  
   public TomDebugger(String[] fileName) {
     this(fileName, false);
   }
@@ -68,7 +70,7 @@ public class TomDebugger {
     this.userDefinedPatterns = new String[100];
     this.environment = new Stack();
     this.mapKeyDebugStructure = new LinkedHashMap();
-    
+    this.termHandlerList = new ArrayList();
     TomStructureTable table = null;
     File file = null;
     InputStream input = null;
@@ -152,7 +154,42 @@ public class TomDebugger {
     showMainMenu();
     return;
   }
-
+  
+  private void showMenu2() {
+    if(TomDebugger.testingMode) {
+      return;
+    }
+    try {
+      String str = "";
+      System.out.print("? to see the available command list>:");
+      str = in.readLine();
+      processMenu2(str);
+    } catch (IOException e) {
+      System.out.println("Catching exception:"+e.getStackTrace());
+    }
+  }  
+  
+  private void processMenu2(String str) {
+    if(str.equals("?")) {
+      System.out.println("\nFollowing commands are allowed:");
+      System.out.println("\t?\t\t:Show this help");
+      System.out.println("\tsubject   | s\t:Show the current subject list");
+      System.out.println("\tpattern   | p\t:Show the current pattern list");
+      System.out.println("\tsubst     | S\t:Show the realized substitution(s)");
+    } else if (str.equals("")) {
+      return;
+    }  else if (str.equals("subject") || str.equals("s")) {
+      showSubjects();
+    } else if (str.equals("pattern") || str.equals("p")) {
+      showPatterns();
+    } else if (str.equals("subst") || str.equals("S")) {
+      showSubsts();
+    } else {
+      System.out.println("Unknow command: please enter `?` to know the available commands");
+    }
+    showMenu2();
+  }
+  
   private void saveConfigurationToFile() {
     String str ="";
     try {
@@ -488,9 +525,9 @@ public class TomDebugger {
     } else if (str.equals("n") || str.equals("")) {
       return;
     } else if (str.equals("subject")) {
-      showSubjectList();
+      showSubjects();
     } else if (str.equals("pattern")) {
-      showPattern();
+      showPatterns();
     } else {
       System.out.println("Unknow command: please enter `?` to know the available commands");
     }
@@ -504,6 +541,10 @@ public class TomDebugger {
     if(!environment.empty()) {
       environment.pop();
     }
+  }
+  
+  public void registerHandler(TermHandler th) {
+    termHandlerList.add(th);
   }
 
   private boolean evalCondition(String key) {
@@ -551,7 +592,19 @@ public class TomDebugger {
     }
   }
 
+  public void breakOnPattern(String id) {
+    System.out.println("The breakpoint link to pattern `"+id+"` has been reached");
+    showMenu2();
+    
+  }
+
   public void termCreation(Object trm) {
+    for(int i=0;i<termHandlerList.size();i++) {
+      ((TermHandler)(termHandlerList.get(i))).testTerm(trm);
+    }
+  }
+  
+  public void termCreation2(Object trm) {
     java.util.List children;
     for(int i = 0; i <nbUserDefinedPatterns; i++ ) {
       if (trm instanceof ATerm) {
@@ -567,27 +620,27 @@ public class TomDebugger {
     }
   }
   
-  public void specifySubject(String key, String name, ATerm trm) {
+  public void specifySubject(String key, String name, Object trm) {
     if (!environment.empty())
     ((TomDebugEnvironment)environment.peek()).addSubject(name, trm);
   }
 
-  public void addSubstitution(String key, String name, ATerm trm) {
+  public void addSubstitution(String key, String name, Object trm) {
     if (!environment.empty())
       ((TomDebugEnvironment)environment.peek()).addSubstitution(name, trm);
   }
   
-  private void showSubjectList() {
+  private void showSubjects() {
     if (!environment.empty())
       ((TomDebugEnvironment)environment.peek()).showSubjects();
   }
 
-  private void showPattern() {
+  private void showPatterns() {
     if (!environment.empty())
       ((TomDebugEnvironment)environment.peek()).showPatterns();
   }
   
-  private void showSubst() {
+  private void showSubsts() {
     if (!environment.empty())
       ((TomDebugEnvironment)environment.peek()).showSubsts();
   }

@@ -1455,7 +1455,14 @@ public class TomGenerator extends TomBase {
           s += ", ";
         }
       }
-      s += ") { return " + tlCode.getCode() + "; }";
+      s += ") { ";
+      if (Flags.debugMode) {
+        s += getTLType(returnType)+ "debugVar = " + tlCode.getCode() +";\n";
+        s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
+          s += "return  debugVar;}";
+      } else {
+        s += "return " + tlCode.getCode() + "; }";
+      }
     } else if(Flags.eCode) {
       boolean braces = !argList.isEmpty();
       s = "tom_make_" + opname;
