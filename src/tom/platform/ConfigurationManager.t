@@ -157,7 +157,8 @@ public class ConfigurationManager {
         getLogger().log(Level.WARNING, "ClassNotFound", pluginClass);
         return 1;
       } catch(Exception e) {
-        //e.printStackTrace();
+        // adds the error message. this is too cryptic otherwise
+        e.printStackTrace();
         getLogger().log(Level.SEVERE, "InstantiationError", pluginClass);
         pluginsList = null;
         return 1;

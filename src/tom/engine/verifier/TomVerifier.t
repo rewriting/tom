@@ -58,13 +58,16 @@ public class TomVerifier extends TomGenericPlugin {
   }
 
   void init () {
-    verif = new Verifier();
     output = new LatexOutput(this);
-    zenon = new ZenonOutput(verif);
+    verif = new Verifier();
     stats = new StatOutput(this);
   }
 
   public void run() {
+    verif.setSymbolTable(this.symbolTable());
+    // delay the zenonoutput creation, as it needs the verifiers
+    // symboltable to be properly set
+    zenon = new ZenonOutput(verif);
     if(isActivated()) {
       long startChrono = System.currentTimeMillis();
       try {

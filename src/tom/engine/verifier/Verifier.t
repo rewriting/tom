@@ -30,6 +30,7 @@ import jtom.*;
 import aterm.*;
 import java.util.*;
 import tom.library.traversal.*;
+import jtom.tools.SymbolTable;
 import jtom.adt.tomsignature.types.*;
 import jtom.verifier.il.*;
 import jtom.verifier.il.types.*;
@@ -43,11 +44,20 @@ public class Verifier extends TomBase {
 
 
 	protected jtom.verifier.il.ilFactory factory;
+  private SymbolTable symbolTable;
 
 	public Verifier() {
 		super();
 		factory = ilFactory.getInstance(getTomSignatureFactory().getPureFactory());
 	}
+
+  public void setSymbolTable(SymbolTable symbolTable) {
+    this.symbolTable = symbolTable;
+  }
+
+  public SymbolTable getSymbolTable() {
+    return symbolTable;
+  }
 
 	protected final ilFactory getIlFactory() {
 		return factory;

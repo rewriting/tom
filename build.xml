@@ -200,6 +200,7 @@
          options="--protected -I ${src.mapping}">
       <include name="**/TomBase.t"/>
       <include name="**/Verifier.t"/>
+      <include name="**/TomIlTools.t"/>
     </tom>
 
     <!--  compile in standard mode -->
@@ -338,7 +339,7 @@
          srcdir="${src.src}"
          package="jtom.verifier" 
          destdir="${src.gen}">
-      <include name="jtom/verifier/il.vas"/>
+      <include name="jtom/verifier/*.vas"/>
     </vas>
   </target>
 
@@ -1166,4 +1167,3 @@
   -->
 
 </project>
-

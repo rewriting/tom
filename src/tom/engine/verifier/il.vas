@@ -1,6 +1,6 @@
 module il
 imports
-	
+
 public sorts 
 	Symbol Representation Variable Term Expr Instr 
 	Substitution SubstitutionList Environment
@@ -9,7 +9,7 @@ public sorts
 
 abstract syntax
 	fsymbol(name:String)                                     -> Symbol
-	
+
 	var(name:String)                                         -> Variable
 
 	tau(abst:AbsTerm)                                        -> Term
