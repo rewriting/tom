@@ -129,8 +129,8 @@ public class TomEnvironment {
       while(!errors.isEmpty()) {
         TomAlert error = errors.getHead();
         System.out.println(MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{error.getFile(), new Integer(error.getLine()), error.getMessage()}));
-      }
       errors= errors.getTail();
+      }
     }
   }
 
@@ -140,8 +140,8 @@ public class TomEnvironment {
       while(!warnings.isEmpty()) {
         TomAlert warning = warnings.getHead();
         System.out.println(MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{warning.getFile(), new Integer(warning.getLine()), warning.getMessage()}));
-      }
       warnings= warnings.getTail();
+      }
     }
   }
 

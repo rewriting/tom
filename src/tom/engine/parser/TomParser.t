@@ -1406,8 +1406,10 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 											currentFile};
 				generatedADTName = execMethod.invoke(vasClass, realParams);
       } catch (ClassNotFoundException e) {
+				e.printStackTrace();
         throw new TomException(TomMessage.getString("VasClassNotFound"));
       } catch (Exception e) {
+				e.printStackTrace();
         throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
       }
 			  // Check for errors
