@@ -74,10 +74,14 @@ public class AddressBookVas {
     happyBirthday(book,today);
   }
 
+  // concPerson( Person* ) -> PersonList
+
+
   public void happyBirthday(PersonList book, Date date) {
     %match(PersonList book, Date date) {
-      concPerson(_*, person(firstname, _, date(_, month,day)), _*), 
-        date(_,month,day)   -> {
+      concPerson(_*, person(firstname, _, date(_, month,day)), _*) , date(_,month,day)   -> {
+
+
         System.out.println("Happy birthday " + `firstname);
       }
     }

@@ -228,7 +228,7 @@ public class TestList extends TestCase {
       }
     }
 
-    assertTrue("TestMatch4",nbSol==6);
+    assertTrue("TestMatch5",nbSol==6);
 	}
 
   

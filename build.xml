@@ -799,14 +799,13 @@
     </fail>
   </target>
 
-  <target name="all" description="cleans, build, test all" depends="clean, clean.dist">
+  <target name="all" description="cleans, build, test all" depends="stable.all, src.all">
+  </target>
+
+  <target name="stable.all" description="cleans, build, test all" depends="clean.stable, clean.dist.stable">
     <antcall target="dist.stable"/>
     <antcall target="clean.test"/>
     <antcall target="junit.stable"/>
-
-    <antcall target="dist.src"/>
-    <antcall target="clean.test"/>
-    <antcall target="junit.src"/>
 
     <echo>Test tom-stable in examples</echo>
     <ant dir="${examples}" target="clean"/>
@@ -822,6 +821,12 @@
       <property name="optimize" value="on"/>
       <property name="tomconfigfile" location="${stable.dist}/Tom.xml"/>
     </ant>
+  </target>
+
+  <target name="src.all" description="cleans, build, test junit" depends="clean.src, clean.dist.src">
+    <antcall target="dist.src"/>
+    <antcall target="clean.test"/>
+    <antcall target="junit.src"/>
 
     <echo>Test tom-source in examples</echo>
     <ant dir="${examples}" target="clean"/>
