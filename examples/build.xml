@@ -4,6 +4,9 @@
     This script prepare a bundle of Tom examples
   </description>
 
+  <!-- set local properties for this build -->
+  <property file="../local.properties"/>
+
   <!-- current version of TOM -->
   <property name="version" value="2.0"/>
 
@@ -40,6 +43,9 @@
 
   <property name="caml" value="caml"/>
   <property name="caml.dir" location="${examples.dir}/${caml}" />
+
+  <property name="cril" value="cril"/>
+  <property name="cril.dir" location="${examples.dir}/${cril}" />
 
   <property name="dom" value="dom"/>
   <property name="dom.dir" location="${examples.dir}/${dom}" />
@@ -292,6 +298,42 @@
     </copy>
   </target>
 
+  <target name="cril" depends="init">
+    <!-- build tom -->
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         options="-I ${tom.home}/share/jtom">
+      <include name="${cril}/**/*.t"/>
+    </tom> 
+		<!-- builds the parser using javacc -->
+    <mkdir dir="${example.gen}/cril/jtom/ddd/data/ddd"/>
+    <javacc target="${examples.dir}/cril/jtom/ddd/data/ddd/parser.jj"
+            outputdirectory="${example.gen}/cril/jtom/ddd/data/ddd"
+            javacchome="${javaccdir}" />
+    <mkdir dir="${example.gen}/cril/jtom/ddd/data/dbm"/>
+    <javacc target="${examples.dir}/cril/jtom/ddd/data/dbm/parser.jj"
+            outputdirectory="${example.gen}/cril/jtom/ddd/data/dbm"
+            javacchome="${javaccdir}" />
+    <!-- build java source -->
+    <javac destdir="${examples.build}"
+           nowarn="${nowarnings}">
+      <src path="${examples.dir}"/>
+      <src path="${examples.gen}"/>
+      <classpath refid="tom.classpath"/>
+      <include name="${cril}/**/*.java"/>
+    </javac>
+
+    <!-- copy resourses -->
+    <copy todir="${examples.build}/${cril}">
+      <fileset dir="${examples.dir}/${cril}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+  </target>
+
+
   <target name="dom" depends="init">
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
@@ -332,8 +374,10 @@
       <include name="${expression}/**/RecordStrict.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.dir}" destdir="${examples.build}"
+    <javac destdir="${examples.build}"
            nowarn="${nowarnings}">
+			<src path="${examples.dir}"/>
+			<src path="${examples.gen}"/>
       <classpath refid="tom.classpath"/>
       <include name="${expression}/**/*.java"/>
     </javac>

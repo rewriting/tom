@@ -1,5 +1,4 @@
 /*
- *
  * Copyright (c) 2004, Pierre-Etienne Moreau
  * All rights reserved.
  * 
@@ -26,15 +25,12 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
- **/
+ */
 
-%typelist ATermList {
-  implement { ATermList }
-  get_fun_sym(t) { null /*((t instanceof ATermList)?factory.makeAFun("conc", 1, false):null)*/ }
-  cmp_fun_sym(t1,t2) { false }
-  equals(l1,l2)  { l1==l2 }
-  get_head(l)    { ((ATermList)l).getFirst() }
-  get_tail(l)    { ((ATermList)l).getNext() }
-  is_empty(l)    { ((ATermList)l).isEmpty() }
+%typeterm long {
+  implement           { long }
+  get_fun_sym(t)      { t }
+  cmp_fun_sym(s1,s2)  { (s1==s2) }
+  get_subterm(t, n)   { null }
+  equals(t1,t2)       { (t1==t2) }
 }

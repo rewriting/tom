@@ -35,7 +35,7 @@ public class Jint {
 
   public final static void main(String[] args) {
     Jint test = new Jint();
-    int res = test.fib(10);
+    int  res = test.fib(10);
 
     System.out.println("res = " + res);
   }

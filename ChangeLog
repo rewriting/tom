@@ -1,3 +1,9 @@
+2004-06-25  pem  <pem@polly.loria.fr>
+
+	* src/jtom/tools/SymbolTable.java: 
+	  - added builtin long type
+	  - not yet correctly implement for builtin constants
+	
 2004-06-07  pem  <pem@polly.loria.fr>
 
 	* src/jtom/optimizer/TomOptimizer.t: fixed TOM-43
