@@ -24,7 +24,7 @@
 
 %op type0 op0 {
   fsym { fzero }
-  make(t0) { factory.makeAppl(fzero) }
+  make() { factory.makeAppl(fzero) }
   is_fsym(t) { ((((ATermAppl)t).getAFun()) == fzero)  }
 }
 
@@ -49,7 +49,7 @@
 %match(type1 t1, type1 t2) {
   _     -> {} // Bad number of arguments: 2 argument(s) required but 1 found (line)
   _,_,_ -> {} // Bad number of arguments: 2 argument(s) required but 3 found (line)
-  _*, _ -> {} // Single list variable `_*` is not allowed (line)
-  X*, _ -> {} // Single list variable `X*` is not allowed (line)
+  _*, X* -> {} // Single list variable `_*` is not allowed (line)
+               // Single list variable `X*` is not allowed (line)
   op1[], op0() -> {} // Wrong type for slot 2:Type `type1` required but Type `type0` found (line)
 }

@@ -1,17 +1,11 @@
 -- Error occured line: 54 in structure `Match` declared line: 49 in file: JMatch1.t
 ---> The symbol `op0` has type `type0` but type `type1` was required
 
--- Error occured line: 53 in structure `Match` declared line: 49 in file: JMatch1.t
----> Single list variable `X*` is not allowed
-
--- Error occured line: 53 in structure `Match` declared line: 49 in file: JMatch1.t
----> X* is not allowed in non list symbol 
+-- Error occured line: 52 in structure `Match` declared line: 49 in file: JMatch1.t
+---> Single list variable `X*` is not allowed on top of `match` pattern
 
 -- Error occured line: 52 in structure `Match` declared line: 49 in file: JMatch1.t
----> Single list variable `_*` is not allowed
-
--- Error occured line: 52 in structure `Match` declared line: 49 in file: JMatch1.t
----> _* is not allowed in non list symbol 
+---> Single list variable `_*` is not allowed on top of `match` pattern
 
 -- Error occured line: 51 in structure `Match` declared line: 49 in file: JMatch1.t
 ---> Bad number of arguments: 2 argument(s) required by match signature but 3 found
@@ -22,8 +16,5 @@
 -- Error occured line: 43 in structure `Match` declared line: 43 in file: JMatch1.t
 ---> Variable `t` has an unknown type: `type`
 
--- Error occured line: 27 in structure `%op op0` declared line: 25 in file: JMatch1.t
----> Bad number of arguments in make(...) macro-function: 1 arguments found but 0 expected in symbol definition
-
-Tom SyntaxChecker:  Encountered 9 errors and 1 warnings.
+Tom SyntaxChecker:  Encountered 6 errors and 1 warnings.
 No file generated.
