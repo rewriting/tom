@@ -1,9 +1,9 @@
-public class JLstring {
+public class PathFinder {
 
 %include {charlist.tom}
 
   public final static void main(String[] args) {
-    JLstring test = new JLstring();
+    PathFinder test = new PathFinder();
     
     //test.f("hello");
 
@@ -41,10 +41,10 @@ public class JLstring {
   public void f2(String s) {
     String s2 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
     %match(String s2) {
-      (X1*,x,X2*,x,X3*,x,X4*,x,X5*,x,X6*,x,X7*) -> {
-        if(x.equals("b")) {
+      (X1*,"b",X2*,"b",X3*,"b",X4*,"b",X5*,"b",X6*,"b",X7*) -> {
+        //if(x.equals("b")) {
              System.out.println(X1 + " " + X2+ " " + X3 + " " + X4 + " " + X5 + " " + X6 + " " + X7);
-        }
+             //}
       }
     }
   }

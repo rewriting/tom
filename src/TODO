@@ -1,3 +1,22 @@
+15/03/2004
+----------
+
+- XML
+  possibilite de faire des traversal
+  
+
+- String
+  filtrage trop lent
+	idee1: donner la longueur d'un X* (X*3 capture une sous-liste de longueur 3)
+				 cela permet d'abstraire une sequence de constantes
+	idee2: utiliser des fonctions d'index (aide externe) pour reperer plus rapidement les parties constantes
+				 reperer les 'c' dans X1*,c,X2*,c,X3*
+	idee3: abstraire les memes constantes par des variables identiques et 
+				 tester la non-linearite au moment de l'instanciation
+  idee4: instancier les X* au moment du backquote
+  idee5: introduire des variable avec garde et les traiter au moment de la compilation
+
+
 12/12/2003
 ----------
 
