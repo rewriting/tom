@@ -3,117 +3,6 @@
 %include { double.tom }
 %include { aterm.tom }
 %include { atermlist.tom }
-%typeterm TomName{
-  implement { jtom.adt.tomsignature.types.TomName}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.tomsignature.types.TomName)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
-  get_implementation(t) {t}
-}
-
-%op TomName Name(string:String) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isName()}
-  get_slot(string,t) { t.getString()}
-  make(t0) { getTomNameFactory().makeTomName_Name(t0)}
-}
-
-%op TomName PositionName(numberList:TomNumberList) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isPositionName()}
-  get_slot(numberList,t) { t.getNumberList()}
-  make(t0) { getTomNameFactory().makeTomName_PositionName(t0)}
-}
-
-%op TomName EmptyName {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isEmptyName()}
-  make() { getTomNameFactory().makeTomName_EmptyName()}
-}
-
-%typeterm TomNumber{
-  implement { jtom.adt.tomsignature.types.TomNumber}
-  get_fun_sym(t) {null}
-  cmp_fun_sym(s1,s2) { false}
-  get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
-  check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
-  set_stamp(t) {(jtom.adt.tomsignature.types.TomNumber)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
-  get_implementation(t) {t}
-}
-
-%op TomNumber MatchNumber(number:TomNumber) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isMatchNumber()}
-  get_slot(number,t) { t.getNumber()}
-  make(t0) { getTomNameFactory().makeTomNumber_MatchNumber(t0)}
-}
-
-%op TomNumber PatternNumber(number:TomNumber) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isPatternNumber()}
-  get_slot(number,t) { t.getNumber()}
-  make(t0) { getTomNameFactory().makeTomNumber_PatternNumber(t0)}
-}
-
-%op TomNumber ListNumber(number:TomNumber) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isListNumber()}
-  get_slot(number,t) { t.getNumber()}
-  make(t0) { getTomNameFactory().makeTomNumber_ListNumber(t0)}
-}
-
-%op TomNumber IndexNumber(number:TomNumber) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isIndexNumber()}
-  get_slot(number,t) { t.getNumber()}
-  make(t0) { getTomNameFactory().makeTomNumber_IndexNumber(t0)}
-}
-
-%op TomNumber Begin(number:TomNumber) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isBegin()}
-  get_slot(number,t) { t.getNumber()}
-  make(t0) { getTomNameFactory().makeTomNumber_Begin(t0)}
-}
-
-%op TomNumber End(number:TomNumber) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isEnd()}
-  get_slot(number,t) { t.getNumber()}
-  make(t0) { getTomNameFactory().makeTomNumber_End(t0)}
-}
-
-%op TomNumber Number(integer:int) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isNumber()}
-  get_slot(integer,t) { t.getInteger()}
-  make(t0) { getTomNameFactory().makeTomNumber_Number(t0)}
-}
-
-%op TomNumber AbsVar(number:TomNumber) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isAbsVar()}
-  get_slot(number,t) { t.getNumber()}
-  make(t0) { getTomNameFactory().makeTomNumber_AbsVar(t0)}
-}
-
-%op TomNumber RenamedVar(astName:TomName) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isRenamedVar()}
-  get_slot(astName,t) { t.getAstName()}
-  make(t0) { getTomNameFactory().makeTomNumber_RenamedVar(t0)}
-}
-
-%op TomNumber RuleVar {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isRuleVar()}
-  make() { getTomNameFactory().makeTomNumber_RuleVar()}
-}
-
 %typelist TomNumberList{
   implement { jtom.adt.tomsignature.types.TomNumberList}
   get_fun_sym(t) {null}
@@ -145,3 +34,114 @@
   get_slot(tail,t) { t.getTail()}
   make(e,l) {getTomNameFactory().makeTomNumberList(e,l)}
 }
+%typeterm TomNumber{
+  implement { jtom.adt.tomsignature.types.TomNumber}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+  check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomNumber)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
+}
+
+%op TomNumber RuleVar {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isRuleVar()}
+  make() { getTomNameFactory().makeTomNumber_RuleVar()}
+}
+
+%op TomNumber RenamedVar(astName:TomName) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isRenamedVar()}
+  get_slot(astName,t) { t.getAstName()}
+  make(t0) { getTomNameFactory().makeTomNumber_RenamedVar(t0)}
+}
+
+%op TomNumber AbsVar(number:TomNumber) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isAbsVar()}
+  get_slot(number,t) { t.getNumber()}
+  make(t0) { getTomNameFactory().makeTomNumber_AbsVar(t0)}
+}
+
+%op TomNumber Number(integer:int) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isNumber()}
+  get_slot(integer,t) { t.getInteger()}
+  make(t0) { getTomNameFactory().makeTomNumber_Number(t0)}
+}
+
+%op TomNumber End(number:TomNumber) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isEnd()}
+  get_slot(number,t) { t.getNumber()}
+  make(t0) { getTomNameFactory().makeTomNumber_End(t0)}
+}
+
+%op TomNumber Begin(number:TomNumber) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isBegin()}
+  get_slot(number,t) { t.getNumber()}
+  make(t0) { getTomNameFactory().makeTomNumber_Begin(t0)}
+}
+
+%op TomNumber IndexNumber(number:TomNumber) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isIndexNumber()}
+  get_slot(number,t) { t.getNumber()}
+  make(t0) { getTomNameFactory().makeTomNumber_IndexNumber(t0)}
+}
+
+%op TomNumber ListNumber(number:TomNumber) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isListNumber()}
+  get_slot(number,t) { t.getNumber()}
+  make(t0) { getTomNameFactory().makeTomNumber_ListNumber(t0)}
+}
+
+%op TomNumber PatternNumber(number:TomNumber) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isPatternNumber()}
+  get_slot(number,t) { t.getNumber()}
+  make(t0) { getTomNameFactory().makeTomNumber_PatternNumber(t0)}
+}
+
+%op TomNumber MatchNumber(number:TomNumber) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isMatchNumber()}
+  get_slot(number,t) { t.getNumber()}
+  make(t0) { getTomNameFactory().makeTomNumber_MatchNumber(t0)}
+}
+
+%typeterm TomName{
+  implement { jtom.adt.tomsignature.types.TomName}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+  check_stamp(t) {if(t.getAnnotation(getTomNameFactory().getPureFactory().makeList()) == getTomNameFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(jtom.adt.tomsignature.types.TomName)t.setAnnotation(getTomNameFactory().getPureFactory().makeList(),getTomNameFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
+}
+
+%op TomName EmptyName {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isEmptyName()}
+  make() { getTomNameFactory().makeTomName_EmptyName()}
+}
+
+%op TomName PositionName(numberList:TomNumberList) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isPositionName()}
+  get_slot(numberList,t) { t.getNumberList()}
+  make(t0) { getTomNameFactory().makeTomName_PositionName(t0)}
+}
+
+%op TomName Name(string:String) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isName()}
+  get_slot(string,t) { t.getString()}
+  make(t0) { getTomNameFactory().makeTomName_Name(t0)}
+}
+
