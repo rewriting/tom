@@ -293,6 +293,7 @@
 			<include name="jtom/adt/TomSignature.adt"/>
 			<include name="jtom/adt/TomAlert.adt"/>
 			<include name="jtom/adt/TomName.adt"/>
+			<include name="jtom/adt/TomConstraint.adt"/>
 		</adt>
     <copy todir="${src.mapping}">
       <fileset dir="${src.gen}/jtom/adt" includes="*.tom">
