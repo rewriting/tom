@@ -44,7 +44,7 @@ package minirho;
 
 
 	 private rhotermFactory factory;
-	 private GenericTraversal traversal;
+	 private GenericTraversalAtomic traversal;
 	 private boolean hasBeenSimplified;
 		 //Signature de mon langage, utilise pour les tests.
 	 private RTerm f = null;
@@ -100,7 +100,8 @@ package minirho;
 					RTerm term = (RTerm) t;
 					%match(RTerm term){
 						//rho 
-						app(abs(A,B),C)-> {return `appC(match(A,C),B) ;}		
+						app(abs(A,B),C)-> {setTrueToHasBeenReduced();
+							return `appC(match(A,C),B) ;}		
 					}
 				}
 				//rewrite rules for constraints
@@ -139,7 +140,7 @@ package minirho;
 	}
 	 public Rho(rhotermFactory factory) {
 		 this.factory = factory;
-		 this.traversal = new GenericTraversal();
+		 this.traversal = new GenericTraversalAtomic();
 	 }
 
 	 public RTerm simplifyTerm(RTerm t){
@@ -160,18 +161,24 @@ package minirho;
     return factory;
   }
     public void run(){
-			System.out.println("PREMIERE REDUCTION");
-			RTerm essai = `app(abs(var("X"),abs(var("X"),(appSt(match(app(constr("f"),var("X")),app(constr("f"),constr(2))),var("X"))))),constr(2));
-			System.out.println(simplify(essai));
-
-			System.out.println("DEUXIEME REDUCTION");
-			RTerm essai2 = `abs(var("X"),app(abs(var("X"),appSt(match(app(constr("f"),var("X")),app(constr("f"),constr(2))),var("X"))),constr(2)));
-			System.out.println(simplify(essai2));
-
-			System.out.println("TROISIEME REDUCTION");
-			RTerm essai3 = `app(abs(var("X"),appSt(match(app(constr("f"),var("X")),app(constr("f"),constr(2))),var("X"))),constr(2));
-			System.out.println(simplify(essai3));
-
+			RTerm res;
+			RTerm X = `var("X");
+			RTerm f = `constr("f");
+			RTerm trois = `constr("3");
+			RTerm cinq = `constr("5");
+			System.out.println("1re REDUCTION: (X -> X) 3");
+			res = `app(abs(X,X),trois);
+			System.out.println("J'obtiens: " + simplify(res));
+			System.out.println("2me REDUCTION: f((X->X)3)");
+			res = `app(f,app(abs(X,X),trois));
+			System.out.println("J'obtiens: " + simplify(res));
+			System.out.println("3me REDUCTION: Y -> f((X->X)3)");
+			res = `abs(X,app(f,app(abs(X,X),trois)));
+			System.out.println("J'obtiens: " + simplify(res));
+			System.out.println("4me REDUCTION: (Y -> f((X->X)3))5");
+			res = `app(abs(X,app(f,app(abs(X,X),trois))),cinq);;
+			System.out.println("J'obtiens apres simplify: " + simplify(res));
+			System.out.println("J'obtiens apres normalize: " + normalize(res));
     }
 	 public final static void main(String[] args) {
 		 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
