@@ -160,4 +160,30 @@ public class AdtParser {
     return ("[modulentry(name(\""+inputName+"\"),[],[],"+input+")]");
   }
 
+  private void collectSort(ATerm subject, final HashSet set) {
+    Collect1 collect = new Collect1() { 
+        public boolean apply(ATerm t) {
+          if(t instanceof Entry) {
+            %match(Entry t) {
+              list[sort=sort] -> { 
+                set.add(sort);
+                return false; 
+              }
+
+              constructor[sort=sort] -> { 
+                set.add(sort);
+                return false; 
+              }
+
+            }
+          }
+          return true;
+        } // end apply
+      }; // end new
+    
+    traversal.genericCollect(subject, collect);
+  }
+
+
+
 }
