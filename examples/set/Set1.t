@@ -1,7 +1,8 @@
 import java.util.*;
 
 import aterm.*;
-import adt.*;
+import aterm.pure.*;
+import adt.set.*;
 
 import jtom.runtime.GenericTraversal;
 import jtom.runtime.Replace1;
@@ -49,7 +50,7 @@ public class Set1 {
     1 << 31
   };
   
-  %include { adt/set.tom }
+  %include { adt/set/set.tom }
   
   public Set1(SetFactory factory) {
     this(factory, 31);
@@ -355,15 +356,15 @@ public class Set1 {
   }
 
   private boolean isBitZero(ATerm elt, int position) {
-    return ( (elt.getId() & mask[position]) == 0);
+    return ( (elt.getUniqueIdentifier() & mask[position]) == 0);
   }
   
   private boolean isBitOne(ATerm elt, int position) {
-    return ( (elt.getId() & mask[position]) > 0);
+    return ( (elt.getUniqueIdentifier() & mask[position]) > 0);
   }
   
   public final static void main(String[] args) {
-    SetFactory fact = new SetFactory();
+    SetFactory fact = new SetFactory(new PureFactory());
     Set1 test;
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     int input = 0;
@@ -561,8 +562,8 @@ public class Set1 {
         return 0;
       }
 
-      int ho1 = ((ATerm)o1).getId();
-      int ho2 = ((ATerm)o2).getId();
+      int ho1 = ((ATerm)o1).getUniqueIdentifier();
+      int ho2 = ((ATerm)o2).getUniqueIdentifier();
       
       if(ho1 < ho2) {
         return -1;
