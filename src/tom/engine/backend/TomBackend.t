@@ -53,12 +53,7 @@ public class TomBackend extends TomGenericPlugin {
 	
 	writer.close();
 
-	environment().printAlertMessage("TomBackend"); // TODO: useless soon
-	
-	if(!environment().isEclipseMode()) {
-	    // remove all warning (in command line only)
-	    environment().clearWarnings();
-	}
+	environment().printAlertMessage("TomBackend");
       }
       catch (Exception e) {
 	  getLogger().log( Level.SEVERE,

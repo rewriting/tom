@@ -39,7 +39,8 @@ import aterm.pure.*;
 
 /**
  * The TomServer manages plugins. It parses Tom.xml in order to find which
- * plugins are used and how they are ordered. Then it instantiates them.
+ * plugins are used and how they are ordered. Then it instantiates them,
+ * and runs them.
  *
  * @author Gr&eacute;gory ANDRIEN
  */
@@ -47,20 +48,13 @@ public class TomServer {
 
   %include{ adt/TNode.tom }
     
-  /**
-   * The List containing a reference to the plugins.
-   * It also has a reference to the TomServer (for option management purposes).
-   */
+  /** The List containing a reference to the plugins. */
   private List instances;
     
-  /**
-   * 
-   */
+  /**  */
   private TNodeFactory tNodeFactory;
 
-  /**
-   *
-   */
+  /**  */
   private OptionManager optionManager;
 	
   /**
@@ -77,15 +71,14 @@ public class TomServer {
    */
   public OptionManager getOptionManager() { return optionManager; }
 
-  /**
-   *
-   */
+  /**  */
   private Logger logger;
 
-  /**
-   *
-   */
+  /**  */
   private TomStatusHandler statusHandler;
+
+  /** Accessor method for the status handler. */
+  public TomStatusHandler getStatusHandler() { return statusHandler; }
 
   /**
    * Part of the Singleton pattern. The unique instance of the TomServer.
@@ -131,7 +124,7 @@ public class TomServer {
 	
       return instance;
     } else {
-      TomServer.clear();
+      TomServer.reset(optionManager, loggerRadical);
       return instance;
     }
   }
@@ -139,13 +132,12 @@ public class TomServer {
   /**
    * Reinitializes the TomServer instance.
    */
-  public static void clear() {
+  public static void reset(OptionManager optionManager, String loggerRadical) {
     instance.instances = new ArrayList();
-    try {
-      instance.optionManager = (OptionManager)instance.optionManager.getClass().newInstance();
-    } catch(Exception e) { 
-      System.out.println( "Problem when reinitializing option manager : " + e.getMessage() ); 
-    }
+    instance.optionManager = optionManager;
+    instance.statusHandler = new TomStatusHandler();
+    Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);
+    instance.logger = Logger.getLogger(loggerRadical+".TomServer","jtom.TomServerResources");
   }
 
   /**
@@ -255,15 +247,13 @@ public class TomServer {
   public int run(String[] argumentList) {
     String xmlConfigurationFile = whichConfigFile(argumentList);
 
-    if( xmlConfigurationFile == null ) {
-	    // method whichConfigFile encountered an error
-	    return 1;
+    if( statusHandler.hasError() ) { // method whichConfigFile() encountered an error
+      return 1;
     }
 
     List classPaths = parseConfigFile(xmlConfigurationFile);
   
-    if( classPaths == null ) {
-      // method parseConfigFile encountered an error
+    if( statusHandler.hasError() ) { // method parseConfigFile() encountered an error
       return 1;
     }
   
@@ -290,20 +280,24 @@ public class TomServer {
                    path);
       }
     }
+
+    if( statusHandler.hasError() ) {
+      return 1;
+    }
     
     optionManager.setPlugins(instances);
-
     String[] inputFiles = optionManager.optionManagement(argumentList);
   
-     if( statusHandler.hasError() ) {
-       return 1;
-     }
+    if( statusHandler.hasError() ) {
+      return 1;
+    }
 
-    for(int i = 0; i < inputFiles.length; i++) {
+    for(int i = 0; i < inputFiles.length; i++) { // for each file
       logger.log(Level.FINER,
                  "NowCompiling",
                  inputFiles[i]);
 
+      // creates an ATerm containing the input file name
       ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
       
       // runs the modules
@@ -314,12 +308,12 @@ public class TomServer {
         plugin.run();
         term = plugin.getTerm();
 
-         if( statusHandler.hasError() ) {
-	   logger.log(Level.SEVERE,
-		      "ProcessingError",
-		      inputFiles[i]);
-           break;
-         }
+	if( statusHandler.hasError() ) {
+	  logger.log(Level.SEVERE,
+		     "ProcessingError",
+		     inputFiles[i]);
+	  break;
+	}
       }
     }
 

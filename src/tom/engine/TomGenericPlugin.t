@@ -63,10 +63,18 @@ public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
     return logger;
   }
 
+  /** Number of errors when plugin starts, used in printAlertMessage() */
+  private int errorsAtStart;
+
+  /** Number of errors when plugin starts, used in printAlertMessage() */
+  private int warningsAtStart;
+
   /** Constructor method. */
   public TomGenericPlugin(String name) {
     pluginName = name;
     logger = Logger.getLogger(getClass().getName());
+    errorsAtStart = getServer().getStatusHandler().nbOfErrors();
+    warningsAtStart = getServer().getStatusHandler().nbOfWarnings();
   }
 
   /**

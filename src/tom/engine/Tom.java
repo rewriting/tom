@@ -38,13 +38,9 @@ public class Tom {
    */
   public final static String VERSION = "3.0alpha";
 
-  protected static Logger rootLogger;
+  private static Logger rootLogger;
 
   public static int exec(String[] args) {
-    Handler ch = new ConsoleHandler();
-    ch.setLevel(Level.ALL); // by default, print everything that the logger sends
-    ch.setFormatter( new TomBasicFormatter() );
-
     rootLogger = Logger.getLogger("jtom", "jtom.TomMessageResources");
     rootLogger.setLevel(Level.WARNING);
     /* 
@@ -53,8 +49,18 @@ public class Tom {
      * that's why the noWarning option will be handled by changing the ConsoleHandler's level
      * while the verbose option will lower the rootLogger's level to Level.INFO
      */
+  
     rootLogger.setUseParentHandlers(false);
-    rootLogger.addHandler(ch);
+
+    Handler[] handlers = rootLogger.getHandlers();
+    for(int i = 0; i < handlers.length; i++) { // remove all pre-existing handlers that might exist from prior uses
+      rootLogger.removeHandler(handlers[i]);
+    }
+
+    Handler console = new ConsoleHandler();
+    console.setLevel(Level.ALL); // by default, print everything that the logger sends
+    console.setFormatter( new TomBasicFormatter() );
+    rootLogger.addHandler(console);
 
 //     try{
 //       Handler fh = new FileHandler("log");

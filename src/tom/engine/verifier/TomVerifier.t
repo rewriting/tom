@@ -73,27 +73,18 @@ public class TomVerifier extends TomGenericPlugin {
 	    
 	environment().printAlertMessage("TomVerifier");
 	
-	if(!environment().isEclipseMode())
-	    {
-		// remove all warning (in command line only)
-		environment().clearWarnings();
-	    }
+      } catch (Exception e) {
+	  getLogger().log( Level.SEVERE,
+			   "ExceptionMessage",
+			   new Object[]{environment().getInputFile().getName(), "TomVerifier", e.getMessage()} );
+	  e.printStackTrace();
       }
-      catch (Exception e) 
-	  {
-	      getLogger().log( Level.SEVERE,
-			       "ExceptionMessage",
-			       new Object[]{environment().getInputFile().getName(), "TomVerifier", e.getMessage()} );
-	      e.printStackTrace();
-	  }
-    }
-    else
-	{
-	    boolean verbose = getServer().getOptionBooleanValue("verbose");
+    } else {
+      boolean verbose = getServer().getOptionBooleanValue("verbose");
 	    
-	    if(verbose)
-		System.out.println("The verifier is not activated and thus WILL NOT RUN.");
-	}
+      if(verbose)
+	  System.out.println("The verifier is not activated and thus WILL NOT RUN.");
+    }
   }
 
   public PlatformOptionList declaredOptions() {

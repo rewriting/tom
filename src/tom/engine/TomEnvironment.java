@@ -40,73 +40,66 @@ import tom.platform.adt.platformoption.types.*;
 import aterm.*;
 import aterm.pure.*;
 
-public class TomEnvironment
-{
-    private SymbolTable symbolTable;
-    private TomAlertList errors;
-    private TomAlertList warnings;
+/**
+ *
+ */
+public class TomEnvironment {
 
-    /**
-     * list of import paths
-     */
-    private List userImportList;
-    /**
-     * absolute path where file are generated  
-     */ 
-    private File destDir;
-    /**
-     * absolute name of the input file (with extension) 
-     */
-    private File inputFile;
-    /**
-     * absolute name of the output file (with extension) 
-     */
-    private File outputFile;
-    /**
-     * absolute name of the output file (given in command line) 
-     */
-    private File userOutputFile;
-    /**
-     * relative path which corresponds to the package defined in the input file (empty by default) 
-     */
-    private String packagePath;
-    /**
-     * Eclipse mode for error management
-     */
-    private boolean eclipseMode; 
-    private String inputSuffix;
-    private String outputSuffix;
+  private SymbolTable symbolTable;
 
-    private Collection importsToDiscard;
+//     private TomAlertList errors;
+//     private TomAlertList warnings;
 
-    /**
-     * 
-     */
-    private ASTFactory astFactory;
+  /** List of import paths. */
+  private List userImportList;
 
-    /**
-     * 
-     */
-    private TomSignatureFactory tomSignatureFactory;
+  /** Absolute path where file are generated. */ 
+  private File destDir;
+
+  /** Absolute name of the input file (with extension). */
+  private File inputFile;
+
+  /** Absolute name of the output file (with extension). */
+  private File outputFile;
+
+  /** Absolute name of the output file (given in command line). */
+  private File userOutputFile;
+
+  /** Relative path which corresponds to the package defined in the input file (empty by default) */
+  private String packagePath;
+
+  /** Eclipse mode for error management. */
+  private boolean eclipseMode;
+
+  private String inputSuffix;
+  private String outputSuffix;
+
+  private Collection importsToDiscard;
+
+  /** */
+  private ASTFactory astFactory;
+
+  /** */
+  private TomSignatureFactory tomSignatureFactory;
 
     /**
      * 
      */
     private PlatformOptionFactory platformOptionFactory;
 
-    /**
-     * An accessor method.
-     * 
-     * @return an ASTFactory
-     */
-    public ASTFactory getASTFactory() { return astFactory; }
+  /**
+   * An accessor method.
+   * 
+   * @return an ASTFactory
+   */
+  public ASTFactory getASTFactory() { return astFactory; }
     
-    /**
-     * An accessor method.
-     * 
-     * @return a TomSignatureFactory
-     */
-    public TomSignatureFactory getTomSignatureFactory() { return tomSignatureFactory; }
+  /**
+   * An accessor method.
+   * 
+   * @return a TomSignatureFactory
+   */
+  public TomSignatureFactory getTomSignatureFactory() { return tomSignatureFactory; }
 
   /**
    * An accessor method.
@@ -147,7 +140,6 @@ public class TomEnvironment
    */
   public static TomEnvironment create() {
     if(instance == null) {
-      //System.out.println("first call to create");
       instance = new TomEnvironment();
 
       instance.tomSignatureFactory = TomSignatureFactory.getInstance(SingletonFactory.getInstance());
@@ -156,8 +148,8 @@ public class TomEnvironment
 		
       instance.symbolTable = new SymbolTable(instance.astFactory);
 
-      instance.errors = instance.tomSignatureFactory.makeTomAlertList();
-      instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
+//       instance.errors = instance.tomSignatureFactory.makeTomAlertList();
+//       instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
 
       instance.inputSuffix = ".t";
       instance.outputSuffix = ".java";
@@ -173,7 +165,6 @@ public class TomEnvironment
   
       return instance;
     } else {
-      //System.out.println("subsequent calls to create");
       TomEnvironment.clear();
       return instance;
     }
@@ -184,8 +175,8 @@ public class TomEnvironment
    */
   public static void clear() {
     instance.symbolTable.init();
-    instance.errors = instance.tomSignatureFactory.makeTomAlertList();
-    instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
+//     instance.errors = instance.tomSignatureFactory.makeTomAlertList();
+//     instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
     instance.destDir = null;
     instance.inputFile = null;
     instance.outputFile = null;
@@ -196,225 +187,128 @@ public class TomEnvironment
     instance.outputSuffix = ".java";
   }
 
-    public void updateEnvironment(String localInputFileName) // updateInputOutputFiles + init
-    {
-	symbolTable.init();
-	getTomSignatureFactory().makeTomAlertList();
-	warnings = getTomSignatureFactory().makeTomAlertList();
+  public void updateEnvironment(String localInputFileName) { // updateInputOutputFiles + init
+    symbolTable.init();
+// 	errors = getTomSignatureFactory().makeTomAlertList();
+// 	warnings = getTomSignatureFactory().makeTomAlertList();
 	
-	// compute inputFile:
-	//  - add a suffix if necessary
-	if(!localInputFileName.endsWith(getInputSuffix())) {
-	    localInputFileName += getInputSuffix();
-	}
-	setInputFile(localInputFileName);
+    // compute inputFile:
+    //  - add a suffix if necessary
+    if(!localInputFileName.endsWith(getInputSuffix())) {
+      localInputFileName += getInputSuffix();
+    }
+    setInputFile(localInputFileName);
     	
-	// compute outputFile:
-	//  - either use the given UserOutputFileName
-	//  - either concatenate
-	//    the outputDir
-	//    [the packagePath] will be updated by the parser
-	//    and reuse the inputFileName with a good suffix
-	if(isUserOutputFile()) {
-	    setOutputFile(getUserOutputFile().getPath());
-	} else {
-	    String child = new File(getInputFileNameWithoutSuffix() + getOutputSuffix()).getName();
-	    File out = new File(getDestDir(),child).getAbsoluteFile();
-	    setOutputFile(out.getPath());
-	}
+    // compute outputFile:
+    //  - either use the given UserOutputFileName
+    //  - either concatenate
+    //    the outputDir
+    //    [the packagePath] will be updated by the parser
+    //    and reuse the inputFileName with a good suffix
+    if(isUserOutputFile()) {
+      setOutputFile(getUserOutputFile().getPath());
+    } else {
+      String child = new File(getInputFileNameWithoutSuffix() + getOutputSuffix()).getName();
+      File out = new File(getDestDir(),child).getAbsoluteFile();
+      setOutputFile(out.getPath());
+    }
+  }
+
+  public void initInputFromArgs() { // must find a more appropriate name
+    List localUserImportList = new ArrayList();
+    String localDestDir = null;
+
+    // computes the input and output suffixes
+    // well, it would be better in the future if we let the generator append the output suffix itself
+    // so that's only temporary
+    if ( getServer().getOptionBooleanValue("jCode") ) {
+      inputSuffix = ".t";
+      outputSuffix = ".java";
+    } else if ( getServer().getOptionBooleanValue("cCode") ) {
+      inputSuffix = ".t";
+      outputSuffix = ".tom.c";
+    } else if ( getServer().getOptionBooleanValue("camlCode") ) {
+      inputSuffix = ".t";
+      outputSuffix = ".tom.ml";
+    } else if ( getServer().getOptionBooleanValue("eCode") ) {
+      inputSuffix = ".t";
+      outputSuffix = ".e";
+    } else { // we should never ever be here normally...
+      inputSuffix = ".t";
+      outputSuffix = ".java";
     }
 
-    public void initInputFromArgs() // must find a more appropriate name
-    {
-	List localUserImportList = new ArrayList();
-	String localDestDir = null;
+    // fills the local user import list
+    String imports = getServer().getOptionStringValue("import");
+    StringTokenizer st = new StringTokenizer(imports, ":"); // paths are separated by ':'
+    while( st.hasMoreTokens() ) {
+      String next = st.nextToken();
+      localUserImportList.add(new File(next).getAbsoluteFile());
+    }
+    // Setting importList
+    setUserImportList(localUserImportList);
 
-	// computes the input and output suffixes
-	// well, it would be better in the future if we let the generator append the output suffix itself
-	// so that's only temporary
-	if ( getServer().getOptionBooleanValue("jCode") )
-	    {
-		inputSuffix = ".t";
-		outputSuffix = ".java";
-	    }
-	else if ( getServer().getOptionBooleanValue("cCode") )
-	    {
-		inputSuffix = ".t";
-		outputSuffix = ".tom.c";
-	    }
-	else if ( getServer().getOptionBooleanValue("camlCode") )
-	    {
-		inputSuffix = ".t";
-		outputSuffix = ".tom.ml";
-	    }
-	else if ( getServer().getOptionBooleanValue("eCode") )
-	    {
-		inputSuffix = ".t";
-		outputSuffix = ".e";
-	    }
-	else // we should never ever be here...
-	    {
-		inputSuffix = ".t";
-		outputSuffix = ".java";
-	    }
+    // for Eclipse...
+    if ( getServer().getOptionBooleanValue("eclipse") )
+      setEclipseMode(true);
 
-	// fills the local user import list
-	String imports = getServer().getOptionStringValue("import");
-	StringTokenizer st = new StringTokenizer(imports, ":"); // paths are separated by ':'
-	while( st.hasMoreTokens() )
-	    {
-		String next = st.nextToken();
-		localUserImportList.add(new File(next).getAbsoluteFile());
-	    }
-	// Setting importList
-	setUserImportList(localUserImportList);
-
-	// for Eclipse...
-	if ( getServer().getOptionBooleanValue("eclipse") )
-	    setEclipseMode(true);
-
-	// computes destdir
-	localDestDir = getServer().getOptionStringValue("destdir");
-	setDestDir(localDestDir);
+    // computes destdir
+    localDestDir = getServer().getOptionStringValue("destdir");
+    setDestDir(localDestDir);
             
-	String commandLineUserOutputFile = getServer().getOptionStringValue("output");
-	if ( commandLineUserOutputFile.length() > 0 ) {
-	    setUserOutputFile( commandLineUserOutputFile );
-	}
+    String commandLineUserOutputFile = getServer().getOptionStringValue("output");
+    if ( commandLineUserOutputFile.length() > 0 ) {
+      setUserOutputFile( commandLineUserOutputFile );
     }
+  }
 
-    public SymbolTable getSymbolTable() {
-	return symbolTable;
-    }
+  public SymbolTable getSymbolTable() {
+    return symbolTable;
+  }
 
-    public TomServer getServer()
-    {
-	return TomServer.getInstance();
-    }
+  public TomServer getServer() {
+    return TomServer.getInstance();
+  }
 
-    public TomAlertList getErrors() {
-	return errors;
-    }
-
-    public TomAlertList getWarnings() {
-	return warnings;
-    }
-
-    public void clearErrors() {
-  	errors = getTomSignatureFactory().makeTomAlertList();
-    }
-  
-    public void clearWarnings() {
-  	warnings = getTomSignatureFactory().makeTomAlertList();
-    }
-  
-    private void setErrors(TomAlertList list) {
-	errors = list;
-    }
-
-    public void setWarnings(TomAlertList list) {
-	warnings = list;
-    }
-
-    public boolean hasError() {
-	return getErrors().getLength()>0;
-    }
-
-    public boolean hasWarning() {
-	return getWarnings().getLength()>0;
-    }
-
-    public void printErrorMessage() {
-	if(!isEclipseMode()) {
-	    TomAlertList errorList = getErrors();
-	    while(!errorList.isEmpty()) {
-		TomAlert error = errorList.getHead();
-		System.out.println(MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{error.getFile(), new Integer(error.getLine()), error.getMessage()}));
-		errorList = errorList.getTail();
-	    }
-	}
-    }
-
-    public void printWarningMessage() {
-	if(!isEclipseMode() && !((Boolean)getServer().getOptionValue("noWarning")).booleanValue()) {
-	    TomAlertList warningList = getWarnings();
-	    while(!warningList.isEmpty()) {
-		TomAlert warning = warningList.getHead();
-		System.out.println(MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{warning.getFile(), new Integer(warning.getLine()), warning.getMessage()}));
-		warningList= warningList.getTail();
-	    }
-	}
-    }
-
-    public void printAlertMessage(String taskName) {
-	if(!isEclipseMode()) {
-	    printErrorMessage();
-	    printWarningMessage();
-	    if(hasError()) {
-		System.out.println(MessageFormat.format(TomMessage.getString("TaskErrorMessage"),
-							new Object[]{taskName, new Integer(getErrors().getLength()), new Integer(getWarnings().getLength())}));
-	    } else if(hasWarning()) {
-		System.out.println(MessageFormat.format(TomMessage.getString("TaskWarningMessage"),
-							new Object[]{taskName, new Integer(getWarnings().getLength())}));
-	    }
-	}
-    }
-
-//     public void messageError(int errorLine,
-// 			     String fileName,
-// 			     String structInfo,
-// 			     int structInfoLine,
-// 			     String msg,
-// 			     Object[] msgArg) {
-// 	String formatedMessage = 
-// 	    MessageFormat.format(
-// 				 TomMessage.getString("DetailErrorMessage"), 
-// 				 new Object[]{
-// 				     structInfo, 
-// 				     new Integer(structInfoLine), 
-// 				     MessageFormat.format(msg, msgArg)
-// 				 });
-// 	messageError(formatedMessage,fileName, errorLine);
+//     public TomAlertList getErrors() {
+// 	return errors;
 //     }
-         
-    
-//     public void messageError(String msg, Object[] args, String fileName, int errorLine) {
-// 	String formatedMessage = MessageFormat.format(msg, args);
-// 	messageError(formatedMessage,fileName, errorLine);
+
+//     public TomAlertList getWarnings() {
+// 	return warnings;
+//     }
+
+//     public void clearErrors() {
+//   	errors = getTomSignatureFactory().makeTomAlertList();
 //     }
   
-//     public void messageError(String formatedMessage, String file, int line) {
-// 	TomAlert err = getTomSignatureFactory().makeTomAlert_Error(formatedMessage,file,line);
-// 	setErrors(getTomSignatureFactory().makeTomAlertList(err, getErrors()));
+//     public void clearWarnings() {
+//   	warnings = getTomSignatureFactory().makeTomAlertList();
+//     }
+  
+//     private void setErrors(TomAlertList list) {
+// 	errors = list;
 //     }
 
-//     public void messageWarning(int warningLine,
-// 			       String fileName,
-// 			       String structInfo,
-// 			       int structInfoLine,
-// 			       String msg,
-// 			       Object[] msgArg) {
-// 	String formatedMessage = 
-// 	    MessageFormat.format(TomMessage.getString("DetailWarningMessage"), 
-// 				 new Object[]{
-// 				     structInfo, 
-// 				     new Integer(structInfoLine), 
-// 				     MessageFormat.format(msg, msgArg)
-// 				 });
-// 	messageWarning(formatedMessage,fileName, warningLine);
+//     public void setWarnings(TomAlertList list) {
+// 	warnings = list;
 //     }
 
-//     public void messageWarning(String msg, Object[] args, String fileName, int errorLine) {
-// 	String formatedMessage = MessageFormat.format(msg, args);
-// 	messageWarning(formatedMessage,fileName, errorLine);
-//     }
-
-//     public void messageWarning(String formatedMessage, String file, int line) {
-// 	TomAlert err = getTomSignatureFactory().makeTomAlert_Warning(formatedMessage,file,line);
-// 	setWarnings(getTomSignatureFactory().makeTomAlertList(err, getWarnings()));
-//     }
-
-//////////////////// THIS IS WHERE THE OLD TOMTASKINPUT BEGINS /////////////////////////////////
+  public void printAlertMessage(String taskName) {
+    if(!isEclipseMode()) {
+      TomStatusHandler status = getServer().getStatusHandler();
+      if(status.hasError()) {
+	System.out.println(MessageFormat.format( TomMessage.getString("TaskErrorMessage"),
+						 new Object[]{ taskName, 
+							       new Integer(status.nbOfErrors()), 
+							       new Integer(status.nbOfWarnings()) } ));
+      } else if(status.hasWarning()) {
+	System.out.println(MessageFormat.format( TomMessage.getString("TaskWarningMessage"),
+						 new Object[]{ taskName, 
+							       new Integer(status.nbOfWarnings()) } ));
+      }
+    }
+  }
 
     public String getOutputSuffix() {
 	//System.out.println("getOutputSuffix() : " +outputSuffix);

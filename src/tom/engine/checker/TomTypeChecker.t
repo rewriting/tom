@@ -29,22 +29,18 @@ public class TomTypeChecker extends TomChecker {
           System.out.println("TOM type checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
         }
 
-        environment().printAlertMessage("TomTypeChecker"); // TODO: soon useless
+        environment().printAlertMessage("TomTypeChecker");
 	  
-        if(!environment().isEclipseMode()) {
-          // remove all warning (in command line only)
-          environment().clearWarnings();
-        }
       } catch (Exception e) {
-	  getLogger().log(Level.SEVERE,
-			  "ExceptionMessage",
-			  new Object[]{environment().getInputFile().getName(),"TomTypeChecker",e.getMessage()});
+	  getLogger().log( Level.SEVERE,
+			   "ExceptionMessage",
+			   new Object[]{environment().getInputFile().getName(),"TomTypeChecker",e.getMessage()} );
         e.printStackTrace();
       }
     } else { // type checker desactivated
 	
       if(verbose) {
-		    System.out.println("The type checker is not activated and thus WILL NOT RUN.");
+	System.out.println("The type checker is not activated and thus WILL NOT RUN.");
       }
     }
   }

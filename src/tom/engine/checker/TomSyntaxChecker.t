@@ -29,16 +29,12 @@ public class TomSyntaxChecker extends TomChecker {
           System.out.println("TOM syntax checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
         }
 
-        environment().printAlertMessage("TomSyntaxChecker"); // TODO: soon useless
+        environment().printAlertMessage("TomSyntaxChecker");
         
-        if(!environment().isEclipseMode()) {
-          // remove all warning (in command line only)
-          environment().clearWarnings();
-        }
       } catch (Exception e) {
-	  getLogger().log(Level.SEVERE,
-			  "ExceptionMessage",
-			  new Object[]{environment().getInputFile().getName(),"TomSyntaxChecker",e.getMessage()});
+	getLogger().log( Level.SEVERE,
+			 "ExceptionMessage",
+			 new Object[]{environment().getInputFile().getName(),"TomSyntaxChecker",e.getMessage()} );
         e.printStackTrace();
       }
     } else { // syntax checker desactivated
@@ -46,8 +42,7 @@ public class TomSyntaxChecker extends TomChecker {
         System.out.println("The syntax checker is not activated and thus WILL NOT RUN.");
       }
     }
-	}
-
+  }
 
   private boolean isActivated() {
     return !getServer().getOptionBooleanValue("noCheck");

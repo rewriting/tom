@@ -37,35 +37,27 @@ public class TomOptimizer extends TomGenericPlugin {
 	setTerm(optimizedTerm);
 			
 	if(verbose)			
-	    System.out.println("TOM optimization phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+	  System.out.println("TOM optimization phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
 			
 	if(intermediate)
-	    Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
-				  getTerm() );
+	  Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
+				getTerm() );
 		
 	environment().printAlertMessage("TomOptimizer");
-	if(!environment().isEclipseMode()) 
-	    {
-		// remove all warning (in command line only)
-		environment().clearWarnings();
-	    }
-      }
-      catch (Exception e) 
-	  {
-	      getLogger().log( Level.SEVERE,
-			       "ExceptionMessage",
-			       new Object[]{environment().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
 
-	      e.printStackTrace();
-	  }
-    }
-    else
-	{
-	    boolean verbose = getServer().getOptionBooleanValue("verbose");
+      } catch (Exception e) {
+	  getLogger().log( Level.SEVERE,
+			   "ExceptionMessage",
+			   new Object[]{environment().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
+
+	  e.printStackTrace();
+      }
+    } else {
+      boolean verbose = getServer().getOptionBooleanValue("verbose");
 	    
-	    if(verbose)
-		System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
-	}
+      if(verbose)
+	System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
+    }
   }
 
   public PlatformOptionList declaredOptions() {

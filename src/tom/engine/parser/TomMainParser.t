@@ -104,97 +104,87 @@ public class TomMainParser extends TomGenericPlugin {
 	return new NewTargetParser(selector,fileName,includedFiles,alreadyParsedFiles);
     }
     
-    public void run(){
-	try{
+  public void run() {
+    try {
+	
+      p("-- NEW PARSER --");
+
+      long startChrono = System.currentTimeMillis();
 	    
-	    p("-- NEW PARSER --");
-
-	    long startChrono = System.currentTimeMillis();
+      boolean verbose      = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+      boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
+      boolean java         = ((Boolean)getServer().getOptionValue("jCode")).booleanValue();
+      boolean debug        = ((Boolean)getServer().getOptionValue("debug")).booleanValue();
 	    
-	    boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-	    boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
-	    boolean java = ((Boolean)getServer().getOptionValue("jCode")).booleanValue();
-	    boolean debug = ((Boolean)getServer().getOptionValue("debug")).booleanValue();
-	    /*
-	    %match(TomTerm term){
-		FileName(n) -> { currentFile = n; }
-		}*/
-
-	    
-	    if(java){
-		TomJavaParser javaParser = TomJavaParser.createParser(currentFile);
-		String packageName = javaParser.JavaPackageDeclaration();
-		// Update taskInput
-		environment().setPackagePath(packageName);
-		environment().updateOutputFile();
-	    }
-	    else{
-		environment().setPackagePath("");
-	    }
-	    //createParser();
-	    parser = newParser(currentFile);
-
-	    super.setTerm( parser.input() );
-
-	    if(verbose) 
-		System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-
-	    if(environment().isEclipseMode()){
-		String outputFileName = environment().getInputFile().getParent()+ File.separator + "."
-		    + environment().getRawFileName()+ PARSED_TABLE_SUFFIX;
-		
-		Tools.generateOutput(outputFileName, symbolTable().toTerm());
-	    }
-	    
-	    if(intermediate){
-		System.out.println("intermediate");
-		Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-				     + PARSED_SUFFIX, getTerm());
-		Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-				     + PARSED_TABLE_SUFFIX, symbolTable().toTerm());
-	    }
-        
-	    if(debug)
-		Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-				     + DEBUG_TABLE_SUFFIX, parser.getStructTable());
-        
-	    environment().printAlertMessage("TomParserPlugin"); // TODO: useless soon
-
-	    if(!environment().isEclipseMode()) {
-		// remove all warning (in command line only)
-		environment().clearWarnings();
-	    } 
-	}
-	catch (TokenStreamException e){
-	    e.printStackTrace();
-	    getLogger().log( Level.SEVERE,
-			     "TokenStreamException",
-			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
-	}
-	catch (RecognitionException e){
-	    e.printStackTrace();
-	    getLogger().log( Level.SEVERE,
-			     "RecognitionException",
-			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
-	} catch (TomIncludeException e) {
-	    getLogger().log( Level.SEVERE,
-			     "SimpleMessage",
-			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
-	} catch (TomException e) {
-	    getLogger().log( Level.SEVERE,
-			     "SimpleMessage",
-			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
-	} catch (FileNotFoundException e) {
-	    getLogger().log( Level.SEVERE,
-			     "FileNotFound",
-			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), currentFile} ); 
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    getLogger().log( Level.SEVERE,
-			     "UnhandledException", 
-			     new Object[]{currentFile, e.getMessage()} );
-	}
+      if(java){
+	  TomJavaParser javaParser = TomJavaParser.createParser(currentFile);
+	  String packageName = javaParser.JavaPackageDeclaration();
+	  // Update taskInput
+	  environment().setPackagePath(packageName);
+	  environment().updateOutputFile();
+      }
+      else{
+	  environment().setPackagePath("");
+      }
+      //createParser();
+      parser = newParser(currentFile);
+      
+      super.setTerm( parser.input() );
+      
+      if(verbose) 
+	  System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      
+      if(environment().isEclipseMode()){
+	  String outputFileName = environment().getInputFile().getParent()+ File.separator + "."
+	      + environment().getRawFileName()+ PARSED_TABLE_SUFFIX;
+	  
+	  Tools.generateOutput(outputFileName, symbolTable().toTerm());
+      }
+      
+      if(intermediate){
+	  System.out.println("intermediate");
+	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
+			       + PARSED_SUFFIX, getTerm());
+	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
+			       + PARSED_TABLE_SUFFIX, symbolTable().toTerm());
+      }
+      
+      if(debug)
+	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
+			       + DEBUG_TABLE_SUFFIX, parser.getStructTable());
+      
+      environment().printAlertMessage("TomParserPlugin");
     }
+    catch (TokenStreamException e){
+	e.printStackTrace();
+	getLogger().log( Level.SEVERE,
+			 "TokenStreamException",
+			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+    }
+    catch (RecognitionException e){
+	e.printStackTrace();
+	getLogger().log( Level.SEVERE,
+			 "RecognitionException",
+			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+    } catch (TomIncludeException e) {
+	getLogger().log( Level.SEVERE,
+			 "SimpleMessage",
+			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+    } catch (TomException e) {
+	getLogger().log( Level.SEVERE,
+			 "SimpleMessage",
+			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+    } catch (FileNotFoundException e) {
+	getLogger().log( Level.SEVERE,
+			 "FileNotFound",
+			 new Object[]{currentFile, new Integer( getLineFromTomParser() ), currentFile} ); 
+    } catch (Exception e) {
+	e.printStackTrace();
+	getLogger().log( Level.SEVERE,
+			 "UnhandledException", 
+			 new Object[]{currentFile, e.getMessage()} );
+    }
+  }
 
     private int getLineFromTomParser() {
 	if(parser == null) {

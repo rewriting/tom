@@ -51,12 +51,7 @@ public class TomCompiler extends TomGenericPlugin {
       setTerm(compiledTerm);
 
       environment().printAlertMessage("TomCompiler");
-      if(!environment().isEclipseMode()) {
-        // remove all warning (in command line only)
-        environment().clearWarnings();
-      }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       getLogger().log( Level.SEVERE,
 		       "ExceptionMessage",
 		       new Object[]{environment().getInputFile().getName(), "TomCompiler", e.getMessage()} );
