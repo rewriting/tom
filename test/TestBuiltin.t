@@ -118,7 +118,8 @@ public class TestBuiltin {
   public String matchStringE(ATerm t) {
     %match(E t) {
         string("Albert") -> { return "Albert"; }
-        string("Roger") -> { return "Roger"; }
+        string("Roger")  -> { return "Roger"; }
+        string(_)        -> { return "Unknown"; }
         _ -> { return "Unknown"; }
     }
   }

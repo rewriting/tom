@@ -60,7 +60,7 @@ public class TomBase {
     return this.traversal;
   }
 
-  protected TomSignatureFactory getTomSignatureFactory() {
+  protected final TomSignatureFactory getTomSignatureFactory() {
     return tsf();
   }
   
@@ -423,14 +423,14 @@ public class TomBase {
   
   protected Declaration getIsFsymDecl(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(X1*,DeclarationToOption(decl@IsFsymDecl[]),X2*) -> { return decl; }
+      concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*) -> { return decl; }
     }
     return null;
   }
 
   protected String getDebug(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(X1*,Debug(Name(str)),X2*) -> { return str; }
+      concOption(_*,Debug(Name(str)),_*) -> { return str; }
     }
 
     return null;
@@ -438,28 +438,28 @@ public class TomBase {
 
   protected boolean hasConstructor(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(X1*,Constructor[],X2*) -> { return true; }
+      concOption(_*,Constructor[],_*) -> { return true; }
     }
     return false;
   }
   
   protected boolean hasGeneratedMatch(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(X1*,GeneratedMatch(),X2*) -> { return true; }
+      concOption(_*,GeneratedMatch(),_*) -> { return true; }
     }
     return false;
   }
   
   protected boolean hasDefaultCase(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(X1*,DefaultCase(),X2*) -> { return true; }
+      concOption(_*,DefaultCase(),_*) -> { return true; }
     }
     return false;
   }
 
   protected boolean hasDefinedSymbol(OptionList optionList) {
     %match(OptionList optionList) {
-      concOption(X1*,DefinedSymbol(),X2*) -> { return true; }
+      concOption(_*,DefinedSymbol(),_*) -> { return true; }
     }
     return false;
   }

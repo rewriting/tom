@@ -38,7 +38,9 @@ public class AddressBook {
 
   public void happyBirthday(Person p, Date today) {
     %match(Person p, Date today) {
-      person(firstname,lastname,date(year,month,day)), date(_,month,day) -> {
+        person(firstname,lastname,date(year,month,day)),
+        date(_,month,day) -> {
+        
         System.out.println("Happy Birthday " + firstname );  			  
       }
     }
