@@ -89,10 +89,6 @@ public class TomDebugEnvironment {
   }
 
   public void enteringPattern() {
-    if(getStep() == 0) {
-      System.out.println("Here are the subject(s):");
-      showSubjects();
-    }
     incrementStep();
     nextLookup = false;
     if(failureLookup) {return;}
@@ -141,6 +137,11 @@ public class TomDebugEnvironment {
 
   public void addSubject(String name, Object trm) {
     subjects.add(new Substitution(name, trm));
+    if(subjects.size() == debugStructure.nbSubjects.intValue()) {
+      System.out.println("Here is(are) the subject(s):");
+      showSubjects();
+      debugBreak();
+    }
   }
 
   public void showSubjects() {

@@ -136,7 +136,7 @@
   [TomTerm,SubjectList,SubjectList(<list(TomList)>) ],
   [TomTerm,PatternList,PatternList(<list(TomList)>) ],
   [TomTerm,TermList,TermList(<list(TomList)>) ],
-  [TomTerm,Term,Term(<kid1(TomTerm)>) ],
+  [TomTerm,Term,Term(<term(TomTerm)>) ],
   [TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<tom(TomTerm)>, <option(Option)>) ],
   [TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>) ],
   [TomTerm,Declaration,Declaration(<kid1(TomTerm)>) ],
