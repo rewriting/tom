@@ -406,9 +406,9 @@ public class Tom {
 				TomTask generator;
 				if (taskInput.isNewGenerator()) {
 					generator = new TomBackend(environment);
-					else {
-						generator = new TomGenerator(environment);
-					}
+				} else {
+					generator = new TomGenerator(environment);
+				}
 				if (taskInput.isDoOptimization()) {
 					TomOptimizer optimizer = new TomOptimizer(environment);
 					compiler.addTask(optimizer);

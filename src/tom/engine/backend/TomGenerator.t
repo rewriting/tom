@@ -38,7 +38,6 @@ import jtom.adt.tomsignature.types.*;
 
 import jtom.tools.TomTask;
 import jtom.tools.OutputCode;
-import jtom.tools.SingleLineOutputCode;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
@@ -81,7 +80,7 @@ public class TomGenerator extends TomTask {
       
       Writer writer = new BufferedWriter(new OutputStreamWriter(
                                          new FileOutputStream(getInput().getOutputFileName())));
-      OutputCode out = new OutputCode(writer, cCode, pretty);
+      OutputCode out = new OutputCode(writer, cCode, pretty, defaultDeep);
       generate(out,defaultDeep,getInput().getTerm());
       writer.close();
       if(verbose) {
@@ -114,8 +113,8 @@ public class TomGenerator extends TomTask {
       TomInclude(l) -> {
         if(!pretty) {
           if(jCode) {
-            OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile(), cCode, pretty);
-            generateList(singleLineOutput,deep,l);
+            //OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile(), cCode, pretty);
+            generateList(out,deep,l);
             return;
           }
         }

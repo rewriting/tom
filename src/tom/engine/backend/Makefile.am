@@ -8,15 +8,15 @@ javadir         = ${prefix}/classes/jtom/backend
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(TSADT_SRC):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/backend
-BOOTSOURCES	= TomGenerator.java TomOptimizer.java
+BOOTSOURCES	= TomGenerator.java TomOptimizer.java TomAbstractGenerator.java TomImperativeGenerator.java TomJavaGenerator.java TomCGenerator.java TomEiffelGenerator.java TomBackend.java
 java_JAVA       = $(BOOTSOURCES)
 
 JAVAROOT        = ${top_builddir}/src
 
-CLEANFILES 	= TomGenerator.java TomOptimizer.java
-EXTRA_DIST 	= $(BOOTSOURCES) TomGenerator.t TomOptimizer.t
+CLEANFILES 	= TomGenerator.java TomOptimizer.java TomAbstractGenerator.java TomImperativeGenerator.java TomJavaGenerator.java TomCGenerator.java TomEiffelGenerator.java TomBackend.java
+EXTRA_DIST 	= $(BOOTSOURCES) TomGenerator.t TomOptimizer.t TomAbstractGenerator.t TomImperativeGenerator.t TomJavaGenerator.t TomCGenerator.t TomEiffelGenerator.t TomBackend.t
 
-BUILT_SOURCES   = TomGenerator.java TomOptimizer.java
+BUILT_SOURCES   = TomGenerator.java TomOptimizer.java TomAbstractGenerator.java TomImperativeGenerator.java TomJavaGenerator.java TomCGenerator.java TomEiffelGenerator.java TomBackend.java
 
 bootinstall:
 	$(mkinstalldirs) $(stabledir)
@@ -29,8 +29,5 @@ bootinstall:
 TOMFLAGS = --noDeclaration
 TOM = ${top_builddir}/utils/jtom
 
-TomOptimizer.java: TomOptimizer.t $(JAVAROOT)/adt/TomSignature.tom
-	$(TOM) $(TOMFLAGS) $<
-
-TomGenerator.java: TomGenerator.t $(JAVAROOT)/adt/TomSignature.tom
+%.java: %.t $(JAVAROOT)/adt/TomSignature.tom
 	$(TOM) $(TOMFLAGS) $<
