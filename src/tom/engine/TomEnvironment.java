@@ -70,6 +70,8 @@ public class TomEnvironment
     /**
      * Eclipse mode for error management
      */
+	private Collection importsToDiscard;
+	
     private boolean eclipseMode; 
     private String inputSuffix;
     private String outputSuffix;
@@ -86,6 +88,13 @@ public class TomEnvironment
  	outputSuffix = ".java";
 	userOutputFile = null;
 	eclipseMode = false;
+
+	importsToDiscard = new HashSet();
+	importsToDiscard.add("string.tom");
+	importsToDiscard.add("int.tom");
+	importsToDiscard.add("double.tom");
+	importsToDiscard.add("aterm.tom");
+	importsToDiscard.add("atermlist.tom");
     }
 
     public void init()
@@ -477,4 +486,9 @@ public class TomEnvironment
 	String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
 	return res;
     }
+
+	public boolean isSilentDiscardImport(String fileName) {
+		return importsToDiscard.contains(fileName);
+	}
+
 }
