@@ -17,7 +17,7 @@ import jtom.exception.*;
 
 public class TomMainParser extends TomBase implements TomPlugin {
 
-    %include { TomSignature.tom }
+    %include { ../adt/TomSignature.tom }
     %include{ Options.tom }
     
     //for debugging

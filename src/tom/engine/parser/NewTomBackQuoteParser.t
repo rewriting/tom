@@ -13,7 +13,7 @@ public class NewTomBackQuoteParser
     extends TomBase 
     implements jtom.parser.NewBQParserTokenTypes, jtom.parser.NewTomParserTokenTypes {
  
-    %include{TomSignature.tom}
+    %include{../adt/TomSignature.tom}
 
     %typeterm AntlrToken {
 	implement {antlr.Token}

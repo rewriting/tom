@@ -189,6 +189,19 @@
       <include name="**/TomParser.t"/>  
     </tom>
 
+		<tom config="${stable.configfile}"
+				 srcdir="${src.src}"
+         outputfile="${src.gen}/jtom/parser/tomparse.g"
+         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+      <include name="**/tomparse.g.t"/>  
+    </tom>
+    <tom config="${stable.configfile}"
+	 srcdir="${src.src}"
+         outputfile="${src.gen}/jtom/parser/targetparse.g"
+         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
+      <include name="**/targetparse.g.t"/>  
+    </tom>
+
     <tom config="${stable.configfile}"
 				 srcdir="${src.src}" 
          destdir="${src.gen}" 
@@ -197,6 +210,7 @@
       <include name="**/TomBase.t"/>
       <include name="**/Verifier.t"/>
       <include name="**/TomBackQuoteParser.t"/> 
+      <include name="**/NewTomBackQuoteParser.t"/> 
       <include name="**/TomServer.t"/>
     </tom>
     <tom config="${stable.configfile}"
@@ -207,25 +221,37 @@
       <exclude name="**/TomParser.t"/>
       <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
+      <exclude name="**/NewTomBackQuoteParser.t"/>
       <exclude name="**/TomServer.t"/>
       <exclude name="**/runtime/**/*.t"/> 
       <exclude name="**/tomparse.g.t"/>
       <exclude name="**/targetparse.g.t"/>
-      <exclude name="**/NewTomBackQuoteParser.t"/>
-      <exclude name="**/TomMainParser.t"/>
     </tom>
   </target>
 
   <!-- builds the parser using javacc -->
   <target name="buildparser">
     <mkdir dir="${src.gen}/jtom/parser"/>
-    <javacc target="${src.gen}/jtom/parser/TomParser.jj"
+		<javacc target="${src.gen}/jtom/parser/TomParser.jj"
             outputdirectory="${src.gen}/jtom/parser"
             javacchome="${javaccdir}" />
     <javacc target="${src.src}/jtom/parser/TomJavaParser.jj"
             outputdirectory="${src.gen}/jtom/parser"
             javacchome="${javaccdir}" />
     <delete file="${src.gen}/jtom/parser/JavaCharStream.java"/>
+
+		<antlr target="${src.gen}/jtom/parser/tomparse.g"
+           outputdirectory="${src.gen}/jtom/parser">
+      <classpath refid="stable.classpath"/>
+    </antlr>
+    <antlr target="${src.gen}/jtom/parser/targetparse.g"
+           outputdirectory="${src.gen}/jtom/parser">
+      <classpath refid="stable.classpath"/>
+    </antlr>
+    <antlr target="${src.src}/jtom/parser/bqparse.g"
+              outputdirectory="${src.gen}/jtom/parser">
+      <classpath refid="stable.classpath"/>
+    </antlr>
   </target>
 
   <!-- compile adt's -->
