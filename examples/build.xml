@@ -382,6 +382,7 @@
   </target>
 
   <target name="gomoku" depends="init">
+    <vascompile example="${gomoku}"/>
     <tomcompile example="${gomoku}"/>
     <javacompile example="${gomoku}"/>
   </target>
