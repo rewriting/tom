@@ -8,7 +8,7 @@ import AddressBook.person.types.*;
 public class AddressBookVas {
   private Factory factory;
 
-  %vas ( "--javagen -n person -p AddressBook" ) {
+  %vas {
       //
       // extension of adt syntax
       //
