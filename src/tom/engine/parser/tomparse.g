@@ -153,23 +153,30 @@ signature
 /*
  * The %rule construct
  */
-ruleConstruct
+ruleConstruct 
+{
+    String result = "", a1,a2,a3,a4,a5,a6, pt;
+}
     :
-        {System.out.println("rule begin");}
+        {System.out.println("%rule {");}
         LBRACE
         (
-            annotedTerm() ( ALTERNATIVE annotedTerm() )* ARROW plainTerm()
+            a1 = annotedTerm() {result += a1;}
+            ( ALTERNATIVE a2 = annotedTerm() {result += "|"+a2;} )* 
+            ARROW pt = plainTerm() {result += " -> "+pt; } 
             (
-                WHERE annotedTerm() AFFECT annotedTerm()
-            |   IF annotedTerm() DOUBLEEQ annotedTerm()
+                WHERE a3 = annotedTerm() AFFECT a4 = annotedTerm() {result += "\n where"+a3+":="+a4;}
+            |   IF a5 = annotedTerm() DOUBLEEQ a6 = annotedTerm() {result += "\n if"+a5+"=="+a6;}
             )*
+            {result += "\n";}
         )*
         RBRACE
         {
             /*
              * %rule finished. go back in target parser.
              */
-            Main.selector.pop();System.out.println("rule end");
+            Main.selector.pop();
+            System.out.println(result+"\n}");
         }
     ;
 
@@ -180,7 +187,6 @@ annotedTerm returns [String result]
 {
     result = "";
     String pt = null;
-    System.out.println("--- annotedTerm");
 }
     :   (
             ( 
@@ -193,54 +199,85 @@ annotedTerm returns [String result]
 plainTerm returns [String result]
 {
     result = null;
-    String v = null, p = null, s = null, el = null, il = null,
-    el1 = null, sl = null, el2 = null, il2 = null;
-    System.out.println("--- plainTerm");
+    String v = null, p = null, s = null, sl = null, a = null,
+    sl2 = null, a2 = null;
 }
     :  
         (   // xml is missing
             // var* or _*
             v = variableStar() {result = v;}
+
         |   // _
             p = placeHolder() {result = p;}
+
         |   // for a single constant. 
             // ambiguous with the next rule so :
             {LA(2) != LPAREN && LA(2) != LBRACKET}? 
-            headSymbol() { } 
+            s = headSymbol() { result = s;} 
+
         |   // f(...) or f[...]
-            headSymbol() args()  {System.out.println("--- args or not");  }
-            // (f|g...) 
+            sl = headSymbol() a = args()  
+            {
+                result = sl + a;               
+            }
+
+        |   // (f|g...) 
             // ambiguity with the last rule so use syntactic predicat
             // (headSymbolList()) => headSymbolList()
-        |   (headSymbolList()) => headSymbolList() ((args() ) => args() )?
-            // (...)
-        |   args()
+            (headSymbolList()) => sl2 = headSymbolList() ((args() ) => a2 = args() )?
+            {result = sl2 + a2;}
+            
+        |   // (...)
+            result = args()
         )
     ;
 
-args 
-    {System.out.println("args");}
+args returns [String result]
+{
+    result = null;
+    String tl = null, pl = null;
+}
     :   (
-            LPAREN ( termList() )? RPAREN
-        |   LBRACKET ( pairList() )? RBRACKET
+            LPAREN ( tl = termList() )? RPAREN 
+            {
+                if(tl != null)
+                    result = "("+tl+")";
+                else
+                    result = "()";
+            }
+        |   LBRACKET ( pl = pairList() )? RBRACKET
+            {
+                if(pl != null)
+                    result = "["+pl+"]";
+                else
+                    result = "[]"; 
+            }
         )
     ;
 
-termList
+termList returns [String result]
+{
+    result = null;
+    String a = null;
+}
     :   (
-            annotedTerm() ( COMMA annotedTerm() )*
+            result = annotedTerm() ( COMMA a = annotedTerm() {result += ","+a;})*
         )
     ;
 
-pairList
+pairList  returns [String result]
+{
+    result = null;
+    String a = null, a1 = null, a2 = null;
+}
     :   (
-            annotedTerm EQUAL annotedTerm ( COMMA annotedTerm EQUAL annotedTerm )*
+            result = annotedTerm EQUAL a = annotedTerm {result += "=" + a;}
+            ( COMMA a1 = annotedTerm EQUAL a2 = annotedTerm {result += ","+a1+"="+a2;})*
         )
 ;
           
 variableStar returns [String result]
-{ result = null; 
-    System.out.println("--- variableStar");}
+{ result = null; }
     :   (
             ( 
                 i:ID {result = i.getText();}
@@ -252,7 +289,7 @@ variableStar returns [String result]
 
 placeHolder returns [String result]
 { result = null; 
-    System.out.println("--- placeHolder");}
+}
     :   (
             UNDERSCORE {result = "_";} 
         )
@@ -262,7 +299,6 @@ headSymbolList returns [String result]
 { 
     result = null;
     String s1 = null, s2 = null, s3 = null;
-    System.out.println("--- headSymbolList");
 }
     :  
         (
@@ -276,7 +312,6 @@ headSymbol returns [String result]
 { 
     result = null; 
     String cst = null;
-    System.out.println("--- headSymbol");
 }
     :   (
             i:ID {result = i.getText();}
