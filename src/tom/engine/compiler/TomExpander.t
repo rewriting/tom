@@ -192,8 +192,11 @@ public class TomExpander extends TomTask {
                 //System.out.println("appl = " + subject);
                 if(tomSymbol != null) {
                   if(isListOperator(tomSymbol) || isArrayOperator(tomSymbol)) {
+                    //System.out.println("appl = " + subject);
                     TomList newArgs = expandChar(args);
-                    return appl.setArgs(newArgs);
+                    if(newArgs!=args) {
+                      return appl.setArgs(newArgs);
+                    }
                   }
                 }
               }
