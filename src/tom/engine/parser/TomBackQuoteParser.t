@@ -28,7 +28,6 @@ package jtom.parser;
 import java.util.*;
 import jtom.TomBase;
 import jtom.adt.*;
-import jtom.xml.*;
 import aterm.*;
 
 

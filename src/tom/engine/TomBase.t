@@ -342,8 +342,8 @@ public class TomBase {
         res = cons(term,list);
       }
     } catch(Exception e) {
-		System.out.println("tomListMap error: " + e);
-      	e.printStackTrace();
+			System.out.println("tomListMap error: " + e);
+      e.printStackTrace();
 	  	throw new TomRuntimeException(new Throwable("tomListMap error: " + e));
     }
     return res;

@@ -86,7 +86,7 @@ public class TomParser implements TomTask {
       includedFiles.add(fileName);
     } else {
       String msg = "Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...";
-      System.out.println(msg);
+        //System.out.println(msg);
       throw new TomIncludeException(new Throwable(msg));
     }
   }
@@ -1134,8 +1134,8 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
         list.add(astTom);
       } catch (FileNotFoundException e1) {
         String msg = "Included file `" + fileName + "` not found at line "+getLine()+" from file `"+currentFile+"`";
-        System.out.println(msg);
-        throw new TomException(new Throwable(msg));
+          //System.out.println(msg);
+        throw new TomIncludeException(new Throwable(msg));
       }  catch (java.io.IOException e2) {
         String msg = "IOException occurs reading " + fileName + " at line "+getLine();
         System.out.println(msg);
@@ -1892,7 +1892,7 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
        {
          if( !(nbTypes > 0) ) {
            String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
-           System.out.println(msg);
+             //System.out.println(msg);
            throw new TomException(new Throwable(msg));
          }
          type = (TomType)types.elementAt(index++);
@@ -1905,7 +1905,7 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
         {
           if( index >= nbTypes ) {
             String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
-            System.out.println(msg);
+              //System.out.println(msg);
             throw new TomException(new Throwable(msg));
           }
           type = (TomType)types.elementAt(index++);
@@ -1919,7 +1919,7 @@ Declaration KeywordMake(String opname, TomType returnType, TomTypeList types) th
        {
          if (index<nbTypes) {
            String msg = "Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
-           System.out.println(msg);
+             //System.out.println(msg);
            throw new TomException(new Throwable(msg));
          }
        }

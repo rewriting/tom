@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import jtom.TomBase;
 import jtom.adt.Declaration;
@@ -53,32 +52,69 @@ import jtom.tools.TomTask;
 import aterm.ATerm;
 import jtom.TomEnvironment;
 import jtom.tools.TomTaskInput;
+import jtom.xml.Constants;
+import jtom.exception.TomRuntimeException;
+import java.lang.Throwable;
 
 abstract class TomChecker extends TomBase implements TomTask {
-  
-  protected Option currentTomStructureOrgTrack;
+	// ------------------------------------------------------------
+%include { ../adt/TomSignature.tom }
+	// ------------------------------------------------------------
+	class TermDescription {
+		int termClass, decLine;
+		String name, type;
+		public TermDescription(int termClass, String name, int decLine, String type) {
+			this.termClass = termClass;
+			this.decLine = decLine;
+			this.name = name;
+			this.type = type;
+		}
+	}
+	
+		// TomTask Interface 
+	public void addTask(TomTask task) { this.nextTask = task; }
+	public TomTask getTask() { return nextTask; }
+
+	
+	protected TomTaskInput input;
+	protected TomTask nextTask;
+	protected boolean strictType = false, warningAll = false, noWarning = false;
+  private Option currentTomStructureOrgTrack;
   private int nullInteger = -1;
   private List errorMessage = new ArrayList();
-  protected TomTask nextTask;
-  protected boolean strictType = false, warningAll = false, noWarning = false;
-  TomTaskInput input;
+	private ArrayList alreadyStudiedSymbol =  new ArrayList();
+	private ArrayList alreadyStudiedType =  new ArrayList();  
+  private final static int APPL = 0;
+	private final static int RECORD_APPL = 1;
+	private final static int XML_APPL = 2;
+	private final static int VARIABLE_STAR = 3;
+	private final static int UNAMED_VARIABLE_STAR = 4;
+	private final static int PLACE_HOLDER = 5;
+	private final static String OPERATOR = "%op";
+	private final static String OP_ARRAY = "%oparray";
+	private final static String OP_LIST = "%oplist";
+	private final static String TYPE_TERM = "%typeterm";
+	private final static String TYPE_ARRAY = "%typearray";
+	private final static String TYPE_LIST = "%typelist";
+	
+	private final static String GET_FUN_SYM = "get_fun_sym";
+	private final static String CMP_FUN_SYM = "cmp_fun_sym";
+	private final static String EQUALS = "equals";
+	private final static String GET_SUBTERM = "get_subterm";
+	private final static String GET_ELEMENT = "get_element";
+	private final static String GET_SIZE = "get_size";
+	private final static String GET_HEAD = "get_head";
+	private final static String GET_TAIL = "get_tail";
+	private final static String IS_EMPTY = "is_empty";
+	private final static String MAKE_APPEND = "make_append";
+	private final static String MAKE_EMPTY = "make_empty";
+	private final static String MAKE_INSERT = "make_insert";
+	private final static String MAKE = "make";
   
   public TomChecker(TomEnvironment environment) { 
     super(environment);
   }
-  
-    // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
-    // ------------------------------------------------------------
-  
-  public void addTask(TomTask task) {
-  	this.nextTask = task;
-  }
-  
-  public TomTask getTask() {
-    return nextTask;
-  }
-  
+ 
   public int getNumberFoundError() {
     return errorMessage.size();
   }
@@ -87,39 +123,33 @@ abstract class TomChecker extends TomBase implements TomTask {
     return (String)errorMessage.get(n);
   }
   
-     // Main syntax checking entry point: We check all interesting Tom Structure
-  protected void syntaxCheck(TomTerm parsedTerm) {
+		/** Main syntax checking entry point: We check all interesting Tom Structure */
+  protected void checkSyntax(TomTerm parsedTerm) {
     Collect1 collectAndVerify = new Collect1() {  
-        public boolean apply(ATerm term) {
-          if(term instanceof TomTerm) {
-            %match(TomTerm term) {
+        public boolean apply(ATerm subject) {
+          if(subject instanceof TomTerm) {
+            %match(TomTerm subject) {
+							DeclarationToTomTerm(declaration) -> { verifyDeclaration(declaration); return false; }
               Match(SubjectList(matchArgsList), PatternList(patternActionList), Option(list)) -> {  
                 currentTomStructureOrgTrack = findOriginTracking(list);
-                verifyMatch(matchArgsList, patternActionList);
-                return true;
+                verifyMatch(matchArgsList, patternActionList); return true;
               }
-              DeclarationToTomTerm(declaration) -> {
-                verifyDeclaration(declaration);
-                return false;
-              }
-              Appl(Option(options),Name(name),args) -> {
-                verifyApplStructure(options, name, args);
-                return true;
+							RuleSet(list, orgTrack) -> {
+								currentTomStructureOrgTrack = orgTrack;
+								verifyRule(list); return false;
+							}
+							backquote@BackQuoteAppl[] -> { 
+								permissiveVerify(backquote); return false; 
+							}
+              Appl(Option(options),Name(name),args) -> { 
+              	verifyApplStructure(options, name, args); return true; 
               }
               RecordAppl(Option(options),Name(name),args) ->{
-                verifyRecordStructure(options, name, args);
-                return true;
+                verifyRecordStructure(options, name, args); return true;
               }
-              RuleSet(list, orgTrack) -> {
-                currentTomStructureOrgTrack = orgTrack;
-                verifyRule(list);
-                return false;
-              }
-              backQuoteTerm@BackQuoteAppl(Option(options),Name(name),args) -> {
-                permissiveVerify(backQuoteTerm);
-                return false;
-              }
-
+							XMLAppl(Option(options),Name(name), list1, list2) ->{
+								verifyXMLApplStructure(options, name, list1, list2); return true;
+							}
               _ -> { return true; }
             }
           } else {
@@ -129,277 +159,341 @@ abstract class TomChecker extends TomBase implements TomTask {
       }; // end new
     traversal().genericCollect(parsedTerm, collectAndVerify);   
   }
+
+		/** SYMBOL AND TYPE CONCERNS */
+  private void verifyDeclaration(Declaration declaration) {
+  	
+		%match (Declaration declaration) {
+			SymbolDecl(Name(tomName)) -> {
+				TomSymbol tomSymbol = getSymbol(tomName);
+				verifySymbol(OPERATOR, tomSymbol);
+			}
+			ArraySymbolDecl(Name(tomName)) -> {
+				TomSymbol tomSymbol = getSymbol(tomName);
+				verifySymbol(OP_ARRAY, tomSymbol);
+			}
+			ListSymbolDecl(Name(tomName)) -> {
+				TomSymbol tomSymbol = getSymbol(tomName);
+				verifySymbol(OP_LIST, tomSymbol);
+			}
+			TypeTermDecl(Name(tomName), tomList, orgTrack) -> {
+				currentTomStructureOrgTrack = orgTrack;
+				verifyMultipleDefinitionOfType(tomName,alreadyStudiedType);
+				verifyTypeDecl(TYPE_TERM, tomList);
+			}
+ 	     
+			TypeListDecl(Name(tomName), tomList, orgTrack) -> {
+				currentTomStructureOrgTrack = orgTrack;
+				verifyMultipleDefinitionOfType(tomName,alreadyStudiedType);
+				verifyTypeDecl(TYPE_LIST, tomList);
+			}
+ 	     
+			TypeArrayDecl(Name(tomName), tomList, orgTrack) -> {
+				currentTomStructureOrgTrack = orgTrack;
+				verifyMultipleDefinitionOfType(tomName,alreadyStudiedType);
+				verifyTypeDecl(TYPE_ARRAY, tomList);
+			}
+		}
+	}
+
+		/** TYPE DECLARATION CONCERNS */
+	private void verifyTypeDecl(String declType, TomList listOfDeclaration) {
+		ArrayList verifyList = new ArrayList();
+		verifyList.add(GET_FUN_SYM);
+		verifyList.add(CMP_FUN_SYM);
+		verifyList.add(EQUALS);
+		
+		if(declType == TYPE_TERM)	{
+			verifyList.add(GET_SUBTERM);
+		} else if(declType == TYPE_ARRAY) {
+			verifyList.add(GET_ELEMENT);
+			verifyList.add(GET_SIZE);
+		} else if(declType == TYPE_LIST) {
+			verifyList.add(GET_HEAD);
+			verifyList.add(GET_TAIL);
+			verifyList.add(IS_EMPTY);
+		} else {
+			System.out.println("Invalid verifyTypeDecl parameter: "+declType);return;
+		}
+ 	   
+		while(!listOfDeclaration.isEmpty()) {
+			TomTerm term = listOfDeclaration.getHead();
+			%match (TomTerm term) {
+				DeclarationToTomTerm(GetFunctionSymbolDecl[orgTrack=orgTrack]) -> {
+					checkField(GET_FUN_SYM,verifyList,orgTrack, declType);
+				}
+				DeclarationToTomTerm(CompareFunctionSymbolDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack)) -> {
+					checkFieldAndLinearArgs(CMP_FUN_SYM,verifyList,orgTrack,name1,name2, declType);
+				}
+				DeclarationToTomTerm(TermsEqualDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack)) -> {
+					checkFieldAndLinearArgs(EQUALS,verifyList,orgTrack,name1,name2, declType);
+				}
+					/*Specific to typeterm*/
+				DeclarationToTomTerm(GetSubtermDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack)) -> {
+					checkFieldAndLinearArgs(GET_SUBTERM,verifyList,orgTrack,name1,name2, declType);
+				}
+					/*Specific to typeList*/
+				DeclarationToTomTerm(GetHeadDecl[orgTrack=orgTrack]) -> {
+					checkField(GET_HEAD,verifyList,orgTrack, declType);
+				}
+				DeclarationToTomTerm(GetTailDecl[orgTrack=orgTrack]) -> {
+					checkField(GET_TAIL,verifyList,orgTrack, declType);
+				}
+				DeclarationToTomTerm(IsEmptyDecl[orgTrack=orgTrack]) -> {
+					checkField(IS_EMPTY,verifyList,orgTrack, declType);
+				}
+					/*Specific to typeArray*/
+				DeclarationToTomTerm(GetElementDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack)) -> { 
+					checkFieldAndLinearArgs(GET_ELEMENT,verifyList,orgTrack,name1,name2, declType);
+				}
+				DeclarationToTomTerm(GetSizeDecl[orgTrack=orgTrack]) -> {
+					checkField(GET_SIZE,verifyList,orgTrack, declType);
+				}
+			}
+			listOfDeclaration = listOfDeclaration.getTail();
+		}
+ 	   
+		if(verifyList.contains(EQUALS)) {
+			verifyList.remove(verifyList.indexOf(EQUALS));
+		}    
+		if(!verifyList.isEmpty()) {
+			messageMissingMacroFunctions(declType, verifyList);
+		}
+	}
   
-    // Main type checking entry point: We check all interesting Tom Structure
-  protected void typeCheck(TomTerm expandedTerm) {
-    Collect1 collectAndVerify = new Collect1() 
-      {  
-        public boolean apply(ATerm term) {
-          if(term instanceof TomTerm) {
-            %match(TomTerm term) {
-              Match(_, PatternList(list), Option(oplist)) -> {  
-                currentTomStructureOrgTrack = findOriginTracking(oplist);
-                verifyMatchVariable(list);
-                return false;
-              }
-              RuleSet(list, orgTrack) -> {
-                currentTomStructureOrgTrack = orgTrack;
-                verifyRuleVariable(list);
-                return false;
-              }
-              _ -> { return true; }
-            }
-          } else {
-            return true;
-          }
-        }// end apply
-      }; // end new
-    traversal().genericCollect(expandedTerm, collectAndVerify);
-  }
-  
-  private void verifyMatchVariable(TomList patternList) {
-    while(!patternList.isEmpty()) {
-      TomTerm pa = patternList.getHead();
-      TomTerm patterns = pa.getTermList();
-        // collect variables
-      ArrayList variableList = new ArrayList();
-      collectVariable(variableList, patterns);      
-      verifyVariableType(variableList);
-      patternList = patternList.getTail();
-    }
-  }
-  
-  private void verifyRuleVariable(TomRuleList list) {
-    while(!list.isEmpty()) {
-      TomRule rewriteRule = list.getHead();
-      TomTerm lhs = rewriteRule.getLhs();
-      TomTerm rhs = rewriteRule.getRhs();
-      TomList condList = rewriteRule.getCondList();
-      Option orgTrack = findOriginTracking(rewriteRule.getOption().getOptionList());
-      
-      ArrayList variableLhs = new ArrayList();
-      collectVariable(variableLhs, lhs);
-      HashSet lhsSet = verifyVariableType(variableLhs);
-      
-      ArrayList variableRhs = new ArrayList();
-      collectVariable(variableRhs, rhs);
-      HashSet rhsSet = verifyVariableType(variableRhs);
-      
-      ArrayList variableCond = new ArrayList();
-      collectVariable(variableCond, `Tom(condList));
-      HashSet condSet = verifyVariableType(variableCond);
-      
-      lhsSet.addAll(condSet);
-      if(!condSet.isEmpty()) {
-        System.out.println("Warning: improve verifyRuleVariable for matchingCondition");
-      }
-      
-      if( !lhsSet.containsAll(rhsSet) ) {
-        Iterator it = lhsSet.iterator();
-        while(it.hasNext()) {
-          rhsSet.remove(it.next());
-        }
-        messageRuleErrorUnknownVariable(rhsSet, orgTrack);
-      }
-        // case of rhs is a single variable
-      %match (TomTerm rhs) {
-        Term(Variable[astName=Name(name)]) -> {
-          String methodName = "";
-          %match(TomTerm lhs) {
-            Term(Appl[astName=Name(name1)]) -> {
-              methodName = name1;
-            }
-            Term(RecordAppl[astName=Name(name1)]) -> {
-              methodName = name1;
-            }
-          }
-          TomType typeRhs = getSymbolCodomain(symbolTable().getSymbol(methodName));
-          Iterator it = variableLhs.iterator();
-          while(it.hasNext()) {
-            TomTerm term = (TomTerm)it.next();
-            if(term.getAstName().getString() == name) {
-              TomType typeLhs = term.getAstType();
-              if(typeLhs != typeRhs) {
-                messageRuleErrorBadRhsVariable(name, typeRhs.getTomType().getString(), typeLhs.getTomType().getString(), orgTrack);
-              }
-            }
-          }
-        }
-      }
-      list = list.getTail();
-    }
-  }
-  
-  private HashSet verifyVariableType(ArrayList list) {
-      // compute multiplicities
-    HashSet set = new HashSet();
-    HashMap multiplicityMap = new HashMap();
-    Iterator it = list.iterator();
-    while(it.hasNext()) {
-      TomTerm variable = (TomTerm)it.next();
-      TomName name = variable.getAstName();
-      
-      if(set.contains(name)) {
-        TomTerm var = (TomTerm)multiplicityMap.get(name);
-        TomType type = var.getAstType();
-        TomType type2 = variable.getAstType();
-        if(!(type==type2)) {
-          messageErrorIncoherentVariable(name.getString(), type.getTomType().getString(), type2.getTomType().getString(), variable.getOption().getOptionList()); 
-        }
-      } else {
-        multiplicityMap.put(name, variable);
-        set.add(name);
-      }
-    }
-    return set;
-  }
-  
-  private void messageErrorIncoherentVariable(String name, String type, String type2, OptionList options) {
-    int declLine = currentTomStructureOrgTrack.getLine();
-    int line = findOriginTrackingLine(options);
-    String s = "Bad variable type for '"+name+"': it has both type '"+type+"' and '"+type2+"' in structure declared line "+declLine;
-    messageError(line,s);
-  }
-  
-  private void messageRuleErrorUnknownVariable(Collection variableCollectionRhs, Option rewriteRuleOrgTrack) {
-    int declLine = currentTomStructureOrgTrack.getLine();
-    int line = rewriteRuleOrgTrack.getLine();
-    String s = "Unknown variable(s) " +variableCollectionRhs+ " used in right part of %rule declared line "+declLine;
-    messageError(line,s);
-  }
-  
-  private void messageRuleErrorBadRhsVariable(String name, String type, String type2, Option rewriteRuleOrgTrack) {
-    int declLine = currentTomStructureOrgTrack.getLine();
-    int line = rewriteRuleOrgTrack.getLine();    
-    String s = "Alone variable '"+name+"' has type '"+type+"' instead of type '"+type2+"' in right part of %rule declared line "+declLine;
-    messageError(line,s);
-  }
-  
-  private void permissiveVerify(TomTerm term) {
-    Collect1 permissiveCollectAndVerify = new Collect1() 
-      {  
-        public boolean apply(ATerm term) {
-          if(term instanceof TomTerm) {
-            %match(TomTerm term) {
-              BackQuoteAppl(Option(options),Name(name),args) -> {
-                permissiveVerifyApplStructure(options, name, args);
-                return true;
-              }
-              Appl(Option(options),Name(name),args) -> {
-                permissiveVerifyApplStructure(options, name, args);
-                return true;
-              }
-              RecordAppl[option=Option(options), astName=Name(name)] ->{
-                messageRuleErrorRhsImpossibleRecord(options, name);
-                return true;
-              }
-              Placeholder(Option(orgTrack)) -> {
-                messageRuleErrorRhsImpossiblePlaceholder(orgTrack);
-              }
-              _ -> { return true; }
-            }
-          } else {
-            return true;
-          }
-        }// end apply
-      }; // end new
-    traversal().genericCollect(term, permissiveCollectAndVerify);
-  }
-  
-    //////////////////////////////////////////////////////////////
-    // MATCH VERIFICATION CONCERNS //
-    //////////////////////////////////////////////////////////////
-  
-    // Given a subject list, we test types in match signature
-    // and then number and type of slots found in each pattern
+	private void verifyMultipleDefinitionOfType(String name, ArrayList alreadyStudiedType) {
+		if(alreadyStudiedType.contains(name)) {
+			messageTypeErrorYetDefined(name);
+		} else {
+			alreadyStudiedType.add(name);
+		}
+	}
+ 	 
+	private void messageTypeErrorYetDefined(String name) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		String s = "Multiple definition of type: Type '"+ name +"' is already defined";
+		messageError(declLine, s);
+	}
+ 	 
+		/** SYMBOL DECLARATION CONCERNS */
+	private void verifySymbol(String symbolType, TomSymbol tomSymbol){
+		int nbArgs=0;
+		OptionList optionList = tomSymbol.getOption().getOptionList();
+			// We save first the origin tracking of the symbol declaration
+		currentTomStructureOrgTrack = findOriginTracking(optionList);
+		TomTypeList l = getSymbolDomain(tomSymbol);
+		TomType type = getSymbolCodomain(tomSymbol);
+		String name = tomSymbol.getAstName().getString();
+		int line  = findOriginTrackingLine(optionList);
+		SlotList slotList = tomSymbol.getSlotList();
+		verifyMultipleDefinitionOfSymbol(name, line, alreadyStudiedSymbol);
+		verifySymbolCodomain(type.getString(), name, line);
+		verifySymbolArguments(l, name, line);
+		verifySymbolOptions(symbolType, optionList);
+	}
+ 	 
+	private void verifyMultipleDefinitionOfSymbol(String name, int line, ArrayList alreadyStudiedSymbol) {
+		if(alreadyStudiedSymbol.contains(name)) {
+			messageOperatorErrorYetDefined(name,line);
+		} else {
+			alreadyStudiedSymbol.add(name);
+		}
+	}
+ 	 
+	private void messageOperatorErrorYetDefined(String name, int line) {
+		String s = "Multiple definition of operator: Operator '"+ name +"' is already defined";
+		messageError(line, s);
+	}
+ 	 
+	private void verifySymbolCodomain(String returnTypeName, String symbName, int symbLine) {
+		if (symbolTable().getType(returnTypeName) == null){
+			messageTypeOperatorError(returnTypeName, symbName, symbLine);
+		}
+	}
+ 	 
+	private void messageTypeOperatorError(String type, String name, int line) {
+		String s = "Operator '" + name + "' has an unknown return type: '" + type + "'";
+		messageError(line,s);
+	}
+ 	 
+	private void verifySymbolArguments(TomTypeList args, String symbName, int symbLine) {
+		TomType type;
+		int nbArgs = 0;
+		while(!args.isEmpty()) {
+			type = args.getHead();
+			verifyTypeExist(type.getString(), nbArgs, symbName, symbLine);
+			nbArgs++;
+			args = args.getTail();
+		}
+	}
+ 	 
+	private void verifyTypeExist(String typeName, int slotPosition, String symbName, int symbLine) {
+		if (symbolTable().getType(typeName) == null){
+			messageTypesOperatorError(typeName, slotPosition, symbName, symbLine);
+		}
+	}
+ 	 
+	private void messageTypesOperatorError(String type, int slotPosition, String name, int line) {
+		String s = "Slot "+slotPosition + " in operator '"+ name + "' signature has an unknown type: '" + type + "'";
+		messageError(line,s);
+	}
+ 	 
+	private void verifySymbolOptions(String symbType, OptionList list) {
+		ArrayList verifyList = new ArrayList();
+		boolean foundOpMake = false;
+		if(symbType == OPERATOR){
+		} else if(symbType == OP_ARRAY ) {
+			verifyList.add(MAKE_EMPTY);
+			verifyList.add(MAKE_APPEND);
+		} else if(symbType == OP_LIST) {
+			verifyList.add(MAKE_EMPTY);
+			verifyList.add(MAKE_INSERT); 
+		} else {
+			System.out.println("Invalid verifySymbolOptions parameter: "+symbType);
+		}
+ 	   
+		while(!list.isEmpty()) {
+			Option term = list.getHead();
+			%match(Option term ) {
+					/* for a array symbol */
+				DeclarationToOption(MakeEmptyArray[orgTrack=orgTrack]) -> { 
+					checkField(MAKE_EMPTY,verifyList,orgTrack, symbType);
+				}
+				DeclarationToOption(MakeAddArray[varList=Variable[astName=Name(name1)], varElt=Variable[astName=Name(name2)], orgTrack=orgTrack]) -> {
+					checkFieldAndLinearArgs(MAKE_APPEND, verifyList, orgTrack, name1, name2, symbType);
+				}
+					/*for a List symbol*/
+				DeclarationToOption(MakeEmptyList[orgTrack=orgTrack]) -> {
+					checkField(MAKE_EMPTY,verifyList,orgTrack, symbType);         
+				}
+				DeclarationToOption(MakeAddList[varList=Variable[astName=Name(name1)], varElt=Variable[astName=Name(name2)], orgTrack=orgTrack]) -> {
+					checkFieldAndLinearArgs(MAKE_INSERT, verifyList, orgTrack, name1, name2, symbType);
+				}
+					/*for a symbol*/
+				DeclarationToOption(MakeDecl[args=makeArgsList, orgTrack=orgTrack]) -> {
+					if (!foundOpMake) {
+						foundOpMake = true;
+						verifyMakeDeclArgs(makeArgsList, orgTrack, symbType);
+					} else {
+						messageMacroFunctionRepeated(MAKE, orgTrack, symbType);
+					}
+				}
+				_ -> {      list = list.getTail();}
+			}
+		}
+		if(!verifyList.isEmpty()) {
+			messageMissingMacroFunctions(symbType, verifyList);
+		}
+	}
+	
+	private void verifyMakeDeclArgs(TomList argsList, Option orgTrack, String symbType){
+		// we test the necessity to use different names for each variable-parameter.
+		ArrayList listVar = new ArrayList();
+		while(!argsList.isEmpty()) {
+			TomTerm termVar = argsList.getHead();
+			%match(TomTerm termVar) {
+				Variable[option=Option(listOption), astName=Name(name)] -> {
+					if(listVar.contains(name)) {
+						messageTwoSameNameVariableError("make", name, orgTrack, symbType);
+					} else {
+						listVar.add(name);
+					}
+				}
+			}
+			argsList = argsList.getTail();
+		}
+	}
+	
+	private void checkField(String field, ArrayList findFunctions, Option orgTrack, String declType) {
+		if(findFunctions.contains(field)) {
+			findFunctions.remove(findFunctions.indexOf(field)); 
+		} else {
+			messageMacroFunctionRepeated(field, orgTrack, declType);
+		}
+	}
+ 	 
+	private void checkFieldAndLinearArgs(String field, ArrayList findFunctions, Option orgTrack, String name1, String name2, String declType) {
+		checkField(field,findFunctions, orgTrack, declType);
+		if(name1.equals(name2)) { 
+			messageTwoSameNameVariableError(field, name1, orgTrack, declType);
+		}
+	}
+ 	 
+	private void messageMacroFunctionRepeated(String nameFunction, Option orgTrack, String declType) {
+		int line = orgTrack.getLine(), declLine = currentTomStructureOrgTrack.getLine();
+		String nameDecl = currentTomStructureOrgTrack.getAstName().getString();
+		String s = "Repeated macro-function '"+nameFunction+"' in '"+declType+" "+nameDecl+"' declared line "+declLine;
+		messageError(line, s);
+	}
+ 	 
+	private void messageTwoSameNameVariableError(String nameFunction, String nameVar, Option orgTrack, String declType) {
+		int line = orgTrack.getLine(), declLine = currentTomStructureOrgTrack.getLine();
+		String nameDecl = currentTomStructureOrgTrack.getAstName().getString();
+		String s =  "Arguments must be linear in method '"+nameFunction+"' of '"+declType+" "+nameDecl+"' declared at line "+declLine+" :Variable '"+nameVar+"' is repeated";
+		messageError(line, s);
+	}
+ 	 
+	private void messageMissingMacroFunctions(String nameConstruct, ArrayList list) {
+		int line = currentTomStructureOrgTrack.getLine();
+		String name = currentTomStructureOrgTrack.getAstName().getString();
+		String s = "Missing macro-function(s) "+list+" in '"+nameConstruct+" "+name+"'";
+		messageError(line, s);
+	}
+ 	 
+    /** MATCH VERIFICATION CONCERNS */
+    // Given a MatchConstruct's subject list and pattern-action list
   private void verifyMatch(TomList subjectList, TomList patternList) {
     ArrayList typeMatchArgs = new ArrayList();
-    while( !subjectList.isEmpty() ) {
-      TomTerm term = subjectList.getHead();
-      %match( TomTerm term ) {
-        TLVar(name, TomTypeAlone(type)) -> {
-          if(symbolTable().getType(type) == null) {
-            messageMatchTypeVariableError(name, type);
-          }
-          typeMatchArgs.add(type);
-        }
-      }
-      subjectList = subjectList.getTail();
-    }
-    
-    while(!patternList.isEmpty()) {
-      TomTerm terms = patternList.getHead();
-      verifyMatchPattern(terms, typeMatchArgs);
-      patternList = patternList.getTail();
-    }
+			// From the subjects list(match definition), we test each used type and keep them in memory
+		%match(TomList subjectList) {
+			concTomTerm(_*, TLVar(name, TomTypeAlone(type)), _*) -> {
+				if(symbolTable().getType(type) == null) {
+					messageMatchTypeVariableError(name, type);
+				}
+				typeMatchArgs.add(type);				
+			}
+		}	
+		int nbExpectedArgs = typeMatchArgs.size();
+		// Then control each pattern vs the match definition
+		%match(TomList patternList) {
+			concTomTerm(_*, PatternAction[termList=TermList(terms)], _*) -> {
+				verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
+			}
+		}
   }
+
     // For each Pattern we count and collect type information
     // but also we test that terms are well formed
     // No top variable star are allowed
-  private void verifyMatchPattern(TomTerm pattern, ArrayList typeMatchArgs) {
-    int nbExpectedArgs = typeMatchArgs.size();
-    TomList termList = pattern.getTermList().getTomList();
+  private void verifyMatchPattern(TomList termList, ArrayList typeMatchArgs, int nbExpectedArgs) {
     ArrayList foundTypeMatch = new ArrayList();
     int line = nullInteger;
     int nbFoundArgs = 0;
     
-    while( !termList.isEmpty() ) {
-      TomTerm termAppl = termList.getHead();
-      
-      %match(TomTerm termAppl) {
-        Appl[astName=Name[string=name], option=Option(list)] -> {
-          line = findOriginTrackingLine(list);
-          nbFoundArgs++;
-          foundTypeMatch.add(extractType(symbolTable().getSymbol(name)));
-        }
-        Placeholder[option=Option(list)] -> {
-          line = findOriginTrackingLine(list);
-          nbFoundArgs++;
-          foundTypeMatch.add((TomTerm) null);
-        }
-          // alone stared variable is impossible
-        VariableStar[option=Option(list), astName=Name[string=name]] -> { 
-          line = findOriginTrackingLine(name,list);
-          nbFoundArgs++;
-          foundTypeMatch.add((TomTerm) null);
-          messageMatchErrorVariableStar(name, line); 
-        }
-        UnamedVariableStar[option=Option(list)] -> {
-          line = findOriginTrackingLine(list);
-          nbFoundArgs++;
-          foundTypeMatch.add((TomTerm) null);
-        }
-
-        RecordAppl(Option(options),Name(name),args) ->{
-          line = findOriginTrackingLine(options);
-          nbFoundArgs++;
-          foundTypeMatch.add(extractType(symbolTable().getSymbol(name)));
-        }
-        
-        XMLAppl[option=Option(options), astName=Name(name)] -> {
-	        line = findOriginTrackingLine(options);
-        	nbFoundArgs++;
-        	// TODO assign a type to that argument
-        	//System.out.println("Need type verification on XMLAppl");
-        	foundTypeMatch.add(extractType(symbolTable().getSymbol(name)));
-        }
-      }
-      termList = termList.getTail();
-    }
-      // nb elements in %match subject = nb elements in the pattern-action ?
-    if(nbExpectedArgs != nbFoundArgs) {
-      messageMatchErrorNumberArgument(nbExpectedArgs, nbFoundArgs, line);
-      return;
-    }
-      // we test the type egality between arguments and pattern-action,
-      // if it is not a variable  => type is null
-    if(!strictType) return;
-    for( int slot = 0; slot < nbExpectedArgs; slot++ ) {
-      if ( (foundTypeMatch.get(slot) !=  typeMatchArgs.get(slot)) && (foundTypeMatch.get(slot) != null))
-      { 	
-        messageMatchErrorTypeArgument(slot+1, (String) typeMatchArgs.get(slot), (String) foundTypeMatch.get(slot), line); 
-      }
-    }
+		%match(TomList termList) {
+			concTomTerm(_*, term, _*) -> {
+				line = findOriginTrackingLine(term.getOption().getOptionList());
+				nbFoundArgs++;
+				if(nbFoundArgs > nbExpectedArgs) {
+					messageMatchErrorNumberArgument(nbExpectedArgs, nbFoundArgs, line);
+			 		return;
+				}
+				TermDescription termDesc = analyseTomTerm(term);
+				// Var* and _* are not allowed as top leftmost symbol
+				if(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR) {
+					messageMatchErrorVariableStar(termDesc.name, termDesc.decLine);
+				}
+				// ensure type coherence if strictType
+				if(strictType) {
+					if(termDesc.type != null && !termDesc.type.equals(typeMatchArgs.get(nbFoundArgs-1)) ) {
+						messageMatchErrorTypeArgument(nbFoundArgs, (String)typeMatchArgs.get(nbFoundArgs-1), termDesc.type, termDesc.decLine); 
+					}
+				}
+			}
+		}
+		if(nbFoundArgs < nbExpectedArgs) {
+			messageMatchErrorNumberArgument(nbExpectedArgs, nbFoundArgs, line);
+		}
   }
   
   private void messageMatchErrorNumberArgument(int nbExpectedVar, int nbFoundVar, int line) {
@@ -422,311 +516,169 @@ abstract class TomChecker extends TomBase implements TomTask {
   
   private void messageMatchErrorVariableStar(String nameVariableStar, int line) {
     int declLine = currentTomStructureOrgTrack.getLine();
-    String s = "Single list variable '"+nameVariableStar+"*' is not allowed on left most part of %match structure declared line "+declLine;
+    String s = "Single list variable '"+nameVariableStar+"' is not allowed on left most part of %match structure declared line "+declLine;
     messageError(line,s);
   }
   
-    //////////////////////////////
-    // SYMBOL AND TYPE CONCERNS //
-    //////////////////////////////
+	/** RULE VERIFICATION CONCERNS */
+	// for each rewrite rule  
+	private void verifyRule(TomRuleList ruleList) {
+		int ruleNumber = 0;
+		String name = "Unknown return type";
+		%match(TomRuleList ruleList) {
+			concTomRule(_*, RewriteRule(Term(lhs),Term(rhs),condList,option),_*) -> {
+				//Each Lhs shall start with the same production name
+				name = verifyLhsRuleAndConstructorEgality(lhs, name, ruleNumber);
+				if(ruleNumber == 0) {
+						// update the root of lhs: it becomes a defined symbol
+					ast().updateDefinedSymbol(symbolTable(),lhs);
+				}
+				verifyRhsRuleStructure(rhs);
+				// TODO Lhs and Rhs shall have the same return type
+				ruleNumber++;
+			}
+		}
+	}
   
-  private void verifyDeclaration(Declaration declaration) {
-  	ArrayList alreadyStudiedType =  new ArrayList();  
-  	
-    %match (Declaration declaration) {
-      SymbolDecl(Name(tomName)) -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        verifySymbol("%op", tomSymbol);
-      }
-      ArraySymbolDecl(Name(tomName)) -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        verifySymbol("%oparray", tomSymbol);
-      }
-      ListSymbolDecl(Name(tomName)) -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        verifySymbol("%oplist", tomSymbol);
-      }
-      TypeTermDecl(Name(tomName), tomList, orgTrack) -> {
-	currentTomStructureOrgTrack = orgTrack;
-        verifyMultipleDefinitionOfType(tomName,alreadyStudiedType);
-        verifyTypeDecl("%typeterm", tomList);
-      }
-      
-      TypeListDecl(Name(tomName), tomList, orgTrack) -> {
-	currentTomStructureOrgTrack = orgTrack;
-        verifyMultipleDefinitionOfType(tomName,alreadyStudiedType);
-        verifyTypeDecl("%typelist", tomList);
-      }
-      
-      TypeArrayDecl(Name(tomName), tomList, orgTrack) -> {
-	currentTomStructureOrgTrack = orgTrack;
-        verifyMultipleDefinitionOfType(tomName,alreadyStudiedType);
-        verifyTypeDecl("%typearray", tomList);
-      }
-    }
-  }
-  
-    ///////////////////////////////
-    // TYPE DECLARATION CONCERNS //
-    ///////////////////////////////
-  private void verifyTypeDecl(String declType, TomList listOfDeclaration) {
-    ArrayList verifyList = new ArrayList();
-    verifyList.add("get_fun_sym");
-    verifyList.add("cmp_fun_sym");
-    verifyList.add("equals");
-    if(declType == "%typeterm")
-    {
-      verifyList.add("get_subterm");
-    } else if(declType == "%typearray") {
-      verifyList.add("get_element");
-      verifyList.add("get_size");
-    }
-    else if(declType == "%typelist") {
-      verifyList.add("get_head");
-      verifyList.add("get_tail");
-      verifyList.add("is_empty");
-    }
-    else {
-      System.out.println("Invalid verifyTypeDecl parameter: "+declType);
-      //throw new CheckErrorException();
-    }
-    
-    while(!listOfDeclaration.isEmpty()) {
-      TomTerm term = listOfDeclaration.getHead();
-      %match (TomTerm term) {
-        DeclarationToTomTerm(GetFunctionSymbolDecl[orgTrack=orgTrack]) -> {
-          checkField("get_fun_sym",verifyList,orgTrack, declType);
-        }
-        DeclarationToTomTerm(CompareFunctionSymbolDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack)) -> {
-          checkFieldAndLinearArgs("cmp_fun_sym",verifyList,orgTrack,name1,name2, declType);
-        }
-        DeclarationToTomTerm(TermsEqualDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack)) -> {
-          checkFieldAndLinearArgs("equals",verifyList,orgTrack,name1,name2, declType);
-        }
-          /*Specific to typeterm*/
-        DeclarationToTomTerm(GetSubtermDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack)) -> {
-          checkFieldAndLinearArgs("get_subterm",verifyList,orgTrack,name1,name2, declType);
-        }
-          /*Specific to typeList*/
-        DeclarationToTomTerm(GetHeadDecl[orgTrack=orgTrack]) -> {
-          checkField("get_head",verifyList,orgTrack, declType);
-        }
-        DeclarationToTomTerm(GetTailDecl[orgTrack=orgTrack]) -> {
-          checkField("get_tail",verifyList,orgTrack, declType);
-        }
-        DeclarationToTomTerm(IsEmptyDecl[orgTrack=orgTrack]) -> {
-          checkField("is_empty",verifyList,orgTrack, declType);
-        }
-          /*Specific to typeArray*/
-        DeclarationToTomTerm(GetElementDecl(Variable[astName=Name(name1)],Variable[astName=Name(name2)],_, orgTrack)) -> { 
-          checkFieldAndLinearArgs("get_element",verifyList,orgTrack,name1,name2, declType);
-        }
-        DeclarationToTomTerm(GetSizeDecl[orgTrack=orgTrack]) -> {
-          checkField("get_size",verifyList,orgTrack, declType);
-        }
-      }
-      listOfDeclaration = listOfDeclaration.getTail();
-    }
-    
-    if(verifyList.contains("equals")) {
-      verifyList.remove(verifyList.indexOf("equals"));
-    }    
-    if(!verifyList.isEmpty()) {
-      messageMissingMacroFunctions(declType, verifyList);
-    }
-  }
-  
-  private void verifyMultipleDefinitionOfType(String name, ArrayList alreadyStudiedType) {
-    if(alreadyStudiedType.contains(name)) {
-      messageTypeErrorYetDefined(name);
-    } else {
-      alreadyStudiedType.add(name);
-    }
-  }
-  
-  private void messageTypeErrorYetDefined(String name) {
-    int declLine = currentTomStructureOrgTrack.getLine();
-    String s = "Multiple definition of type: Type '"+ name +"' is already defined";
-    messageError(declLine, s);
-  }
-  
-    /////////////////////////////////
-    // SYMBOL DECLARATION CONCERNS //
-    /////////////////////////////////
-  private void verifySymbol(String symbolType, TomSymbol tomSymbol){
-    int nbArgs=0;
-    OptionList optionList = tomSymbol.getOption().getOptionList();
-      // We save first the origin tracking of the symbol declaration
-    currentTomStructureOrgTrack = findOriginTracking(optionList);
-    TomTypeList l = getSymbolDomain(tomSymbol);
-    TomType type = getSymbolCodomain(tomSymbol);
-    String name = tomSymbol.getAstName().getString();
-    int line  = findOriginTrackingLine(optionList);
-    SlotList slotList = tomSymbol.getSlotList();
-    ArrayList alreadyStudiedSymbol =  new ArrayList();
-    verifyMultipleDefinitionOfSymbol(name, line, alreadyStudiedSymbol);
-    verifySymbolCodomain(type.getString(), name, line);
-    verifySymbolArguments(l, name, line);
-    verifySymbolOptions(symbolType, optionList);
-  }
-  
-  private void verifyMultipleDefinitionOfSymbol(String name, int line, ArrayList alreadyStudiedSymbol) {
-    if(alreadyStudiedSymbol.contains(name)) {
-      messageOperatorErrorYetDefined(name,line);
-    } else {
-      alreadyStudiedSymbol.add(name);
-    }
-  }
-  
-  private void messageOperatorErrorYetDefined(String name, int line) {
-    String s = "Multiple definition of operator: Operator '"+ name +"' is already defined";
-    messageError(line, s);
-  }
-  
-  private void verifySymbolCodomain(String returnTypeName, String symbName, int symbLine) {
-    if (symbolTable().getType(returnTypeName) == null){
-      messageTypeOperatorError(returnTypeName, symbName, symbLine);
-    }
-  }
-  
-  private void messageTypeOperatorError(String type, String name, int line) {
-    String s = "Operator '" + name + "' has an unknown return type: '" + type + "'";
-    messageError(line,s);
-  }
-  
-  private void verifySymbolArguments(TomTypeList args, String symbName, int symbLine) {
-    TomType type;
-    int nbArgs = 0;
-    while(!args.isEmpty()) {
-      type = args.getHead();
-      verifyTypeExist(type.getString(), nbArgs, symbName, symbLine);
-      nbArgs++;
-      args = args.getTail();
-    }
-  }
-  
-  private void verifyTypeExist(String typeName, int slotPosition, String symbName, int symbLine) {
-    if (symbolTable().getType(typeName) == null){
-      messageTypesOperatorError(typeName, slotPosition, symbName, symbLine);
-    }
-  }
-  
-  private void messageTypesOperatorError(String type, int slotPosition, String name, int line) {
-    String s = "Slot "+slotPosition + " in operator '"+ name + "' signature has an unknown type: '" + type + "'";
-    messageError(line,s);
-  }
-  
-  private void verifySymbolOptions(String symbType, OptionList list) {
-    ArrayList verifyList = new ArrayList();
-    boolean foundOpMake = false;
-    if(symbType == "%op"){
-    } else if(symbType == "%oparray" ) {
-      verifyList.add("make_empty");
-      verifyList.add("make_append");
-    }
-    else if(symbType == "%oplist") {
-      verifyList.add("make_empty");
-      verifyList.add("make_insert"); 
-    }
-    else {
-      System.out.println("Invalid verifySymbolOptions parameter: "+symbType);
-      //throw new CheckErrorException();
-    }
-    
-    while(!list.isEmpty()) {
-      Option term = list.getHead();
-      %match(Option term ) {
-          /* for a array symbol */
-        DeclarationToOption(MakeEmptyArray[orgTrack=orgTrack]) -> { 
-          checkField("make_empty",verifyList,orgTrack, symbType);
-        }
-        DeclarationToOption(MakeAddArray[varList=Variable[astName=Name(name1)], varElt=Variable[astName=Name(name2)], orgTrack=orgTrack]) -> {
-          checkFieldAndLinearArgs("make_append", verifyList, orgTrack, name1, name2, symbType);
-        }
-          /*for a List symbol*/
-        DeclarationToOption(MakeEmptyList[orgTrack=orgTrack]) -> {
-          checkField("make_empty",verifyList,orgTrack, symbType);
-          
-        }
-        DeclarationToOption(MakeAddList[varList=Variable[astName=Name(name1)], varElt=Variable[astName=Name(name2)], orgTrack=orgTrack]) -> {
-          checkFieldAndLinearArgs("make_insert", verifyList, orgTrack, name1, name2, symbType);
-        }
-          /*for a symbol*/
-        DeclarationToOption(MakeDecl[args=makeArgsList, orgTrack=orgTrack]) -> {
-          if (!foundOpMake) {
-            foundOpMake = true;
-            verifyMakeDeclArgs(makeArgsList, orgTrack, symbType);
-          }
-          else {messageMacroFunctionRepeated("make", orgTrack, symbType);}
-        }
-        _ -> {      list = list.getTail();}
-      }
-    }
-    if(!verifyList.isEmpty()) {
-      messageMissingMacroFunctions(symbType, verifyList);
-    }
-  }
+	private String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  ruleName, int ruleNumber) {
+		String methodName = "";
+		OptionList options = tsf().makeOptionList();
 
-  private void verifyMakeDeclArgs(TomList argsList, Option orgTrack, String symbType){
-      // we test the necessity to use different names for each variable-parameter.
-    ArrayList listVar = new ArrayList();
-    while(!argsList.isEmpty()) {
-      TomTerm termVar = argsList.getHead();
-      %match(TomTerm termVar) {
-        Variable[option=Option(listOption), astName=Name(name)] -> {
-          if(listVar.contains(name)) {
-            messageTwoSameNameVariableError("make", name, orgTrack, symbType);
-          } else {
-            listVar.add(name);
-          }
-        }
-      }
-      argsList = argsList.getTail();
-    }
-  }
+		%match(TomTerm lhs) {
+			appl@Appl(Option(optionList),Name(name), args) -> {
+				// No alone variable nor simple constructor
+				if( args.isEmpty() && !hasConstructor(optionList)) {
+					int line = findOriginTrackingLine(optionList);
+					messageRuleErrorVariable(name, line);
+				}
+				checkSyntax(appl);
+					// lhs outermost symbol shall have a corresponding make
+				TomSymbol symb = getSymbol(name);
+				if (symb == null) {
+					messageRuleErrorUnknownSymbol(name);
+					return methodName;
+				}
+				if ( !findMakeDeclOrDefSymbol(getSymbol(name).getOption().getOptionList())) {
+					messageNoMakeForSymbol(name, optionList);
+				}
+				options = optionList;
+				methodName = name;
+			}
+			VariableStar[option=Option(optionList), astName=Name(name1)] -> {
+				int line = findOriginTrackingLine(name1,optionList);    
+				messageRuleErrorVariableStar(name1, line);
+				return ruleName;
+			}
 
-  private void checkField(String field, ArrayList findFunctions, Option orgTrack, String declType) {
-    if(findFunctions.contains(field)) {
-      findFunctions.remove(findFunctions.indexOf(field)); 
-    } else {
-      messageMacroFunctionRepeated(field, orgTrack, declType);
-    }
-  }
+			UnamedVariableStar[option=Option(options2)] |
+			Placeholder[option=Option(options2)] -> { 
+				messageRuleErrorLhsImpossiblePlaceHolder(options2);
+				return ruleName;
+			}
+			rec@RecordAppl(Option(optionList),Name(name),args) -> {
+				checkSyntax(rec);
+				options = optionList;
+				methodName = name;
+			}
+		}
+		if ( ruleNumber != 0 && !methodName.equals(ruleName)) {   
+			messageRuleErrorConstructorEgality(methodName, ruleName, options);
+			return ruleName;
+		}
+		return methodName;
+	}
+
+	private void messageRuleErrorUnknownSymbol(String symbolName) {
+		int line = currentTomStructureOrgTrack.getLine();
+		String s = "Symbol '" +symbolName+ "' has no been declared in rule declared line "+line;
+		messageError(line,s); 
+	}
   
-  private void checkFieldAndLinearArgs(String field, ArrayList findFunctions, Option orgTrack, String name1, String name2, String declType) {
-    checkField(field,findFunctions, orgTrack, declType);
-    if(name1.equals(name2)) { 
-      messageTwoSameNameVariableError(field, name1, orgTrack, declType);
-    }
-  }
+	private void messageNoMakeForSymbol(String name, OptionList optionList) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		int line = findOriginTrackingLine(optionList);
+		String s = "Symbol '" +name+ "' has no 'make' method associated in structure declared line "+declLine;
+		messageError(line,s);
+	}
+ 	 
+	private void messageRuleErrorVariable(String nameVariableStar, int line) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		String s = "Alone variable " +nameVariableStar+ " is not allowed on left hand side of structure %rule declared line "+declLine;
+		messageError(line,s);
+	}
+ 	 
+	private void messageRuleErrorVariableStar(String nameVariableStar, int line) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		String s = "Single list variable '" +nameVariableStar+ "*' is not allowed on left hand side of structure %rule declared line "+declLine;
+		messageError(line,s);
+	}
+	
+	private void messageRuleErrorLhsImpossiblePlaceHolder(OptionList optionList) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		int line = findOriginTrackingLine(optionList);
+		String s = "Alone placeholder is not allowed in left hand side of structure %rule declared line " +declLine;
+		messageError(line,s);
+	}
+ 	 
+	private void messageRuleErrorConstructorEgality(String  name, String nameExpected, OptionList optionList) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		int line = findOriginTrackingLine(name, optionList);
+		String s = "Left most symbol name '" + nameExpected + "' expected, but '" + name + "' found in left hand side of structure %rule declared line " +declLine;
+		messageError(line,s);
+	}
+
+	  //Rhs shall have no underscore, be a var* nor _*, nor a RecordAppl
+	private void verifyRhsRuleStructure(TomTerm ruleRhs) {
+		matchBlock: {
+			%match(TomTerm ruleRhs) {
+				appl@Appl(Option(options),Name(name),args) -> {
+					permissiveVerify(appl);
+					break matchBlock;
+				}
+				UnamedVariableStar[option=Option(option)] |
+				Placeholder[option=Option(option)] -> {
+					messageRuleErrorRhsImpossiblePlaceholder(option);
+					break matchBlock;
+				}
+				VariableStar[option=Option(option), astName=Name(name)] -> {
+					messageRuleErrorRhsImpossibleVarStar(option, name);
+					break matchBlock;
+				}
+				RecordAppl(Option(option), Name(tomName), _) -> {
+					messageRuleErrorRhsImpossibleRecord(option, tomName);
+					break matchBlock;
+				}
+				_ -> {
+					System.out.println("Strange rule rhs:\n" + ruleRhs);
+					//throw new CheckErrorException();
+				}
+			}
+		}
+	}
+
+private void messageRuleErrorRhsImpossiblePlaceholder(OptionList optionList) {
+	int line = findOriginTrackingLine(optionList);
+	int declLine = currentTomStructureOrgTrack.getLine();
+	String s = "Placeholder is not allowed on right part of structure %rule declared line "+declLine;
+	messageError(line,s);
+}
   
-  private void messageMacroFunctionRepeated(String nameFunction, Option orgTrack, String declType) {
-    int line = orgTrack.getLine(), declLine = currentTomStructureOrgTrack.getLine();
-    String nameDecl = currentTomStructureOrgTrack.getAstName().getString();
-    String s = "Repeated macro-function '"+nameFunction+"' in '"+declType+" "+nameDecl+"' declared line "+declLine;
-    messageError(line, s);
-  }
-  
-  private void messageTwoSameNameVariableError(String nameFunction, String nameVar, Option orgTrack, String declType) {
-    int line = orgTrack.getLine(), declLine = currentTomStructureOrgTrack.getLine();
-    String nameDecl = currentTomStructureOrgTrack.getAstName().getString();
-    String s =  "Arguments must be linear in method '"+nameFunction+"' of '"+declType+" "+nameDecl+"' declared at line "+declLine+" :Variable '"+nameVar+"' is repeated";
-    messageError(line, s);
-  }
-  
-  private void messageMissingMacroFunctions(String nameConstruct, ArrayList list) {
-    int line = currentTomStructureOrgTrack.getLine();
-    String name = currentTomStructureOrgTrack.getAstName().getString();
-    String s = "Missing macro-function(s) "+list+" in '"+nameConstruct+" "+name+"'";
-    messageError(line, s);
-  }
-  
-    //////////////////////
-    // RECORDS CONCERNS //
-    //////////////////////
-  
+private void messageRuleErrorRhsImpossibleRecord(OptionList optionList, String name) {
+	int line = findOriginTrackingLine(optionList);
+	int declLine = currentTomStructureOrgTrack.getLine();
+	String s = "Record '"+name+"[...]' is not allowed on right part of structure %rule declared line "+declLine;
+	messageError(line,s);
+}
+private void messageRuleErrorRhsImpossibleVarStar(OptionList optionList, String name) {
+	int line = findOriginTrackingLine(optionList);
+	int declLine = currentTomStructureOrgTrack.getLine();
+	String s = "Single list variable '"+name+"*' is not allowed in right hand side of structure %rule declared line " +declLine;
+	messageError(line,s);
+}
+      
+    /** RECORDS CONCERNS */
   private void verifyRecordStructure(OptionList option, String tomName, TomList args)  {
-    TomSymbol symbol = symbolTable().getSymbol(tomName);
+    TomSymbol symbol = getSymbol(tomName);
     if(symbol != null) {
       SlotList slotList = symbol.getSlotList();
         // constants have an emptySlotList
@@ -800,77 +752,86 @@ abstract class TomChecker extends TomBase implements TomTask {
     messageError(line,s);
   }
 
-    //////////////////////
-    // APPL CONCERNS    //
-    //////////////////////
-  
+	 /** XMLAPPL CONCERNS */
+	private void verifyXMLApplStructure(OptionList optionList, String name, TomList attrList, TomList childList) {
+		System.out.println("Need verifyXMLApplStructure");
+	}
+
+    /** APPL CONCERNS */
   private void verifyApplStructure(OptionList optionList, String name, TomList argsList) {
-    TomSymbol symbol = symbolTable().getSymbol(name);
-    if(symbol==null  && (hasConstructor(optionList) || !argsList.isEmpty())) {
-      messageSymbolError(name, optionList);
+    TomSymbol symbol = getSymbol(name);
+    if(symbol==null) {
+			if (hasConstructor(optionList) || !argsList.isEmpty()) {
+					//we dont know the symbol but it is called as a constructor or has children
+	      messageSymbolError(name, optionList);
+			}
     } else {
-      if(!argsList.isEmpty()) {
-          //in case of oparray or oplist, the number of arguments is not tested
-        boolean listOrArray =  (isListOperator(symbol) ||  isArrayOperator(symbol));
+			TomTypeList domain = getSymbolDomain(symbol);
+			int nbExpectedArgs = domain.getLength();
+			boolean listOrArray =  (isListOperator(symbol) ||  isArrayOperator(symbol));
+			
+  		if(argsList.isEmpty()) {
+  			if(nbExpectedArgs>0 && !listOrArray) {
+					  //we know the symbol it is not a list operator 
+					int line = findOriginTrackingLine(name,optionList);
+					messageNumberArgumentsError(nbExpectedArgs, 0, name, line);
+  			} else if (!hasConstructor(optionList)) {
+  				  //we know the symbol but it is not called has a constructor and argsList is empty
+  				  // it is not a string or int or double
+  				String codomain = getTomType(getSymbolCodomain(symbol));
+  				if( !codomain.equals("String") && !codomain.equals("double") &&
+  					!codomain.equals("int")) {
+						int line = findOriginTrackingLine(name,optionList);
+						messageVariableWithConstructorNameError(name, line);
+  				}
+  			}
+  		} else {
+          // in case of oparray or oplist, the number of arguments is not tested
+          // and no _* nor var * are allowed in the other case
+        
         int nbFoundArgs = 0;
         ArrayList foundType = new ArrayList();
-        Map optionMap  = new HashMap();
-          // we shall test also the type of each args
-        while(!argsList.isEmpty()) {
-          TomTerm term = argsList.getHead();
-          %match(TomTerm term) {
-            Appl[option=Option(options),astName=Name[string=name1]] -> {
-              optionMap.put(new Integer(nbFoundArgs), options);
-              nbFoundArgs++;
-              foundType.add(extractType(symbolTable().getSymbol(name1)));
-            }
-            RecordAppl[option=Option(options),astName=Name[string=name1]] -> {
-              optionMap.put(new Integer(nbFoundArgs), options);
-              nbFoundArgs++;
-              foundType.add(extractType(symbolTable().getSymbol(name1)));
-            }
-            
-            VariableStar[] -> {
-              nbFoundArgs++;
-              foundType.add((TomTerm)null);
-            }
-            UnamedVariableStar[] -> {
-              nbFoundArgs++;
-              foundType.add((TomTerm)null);
-            }
-
-            Placeholder[option=Option(options)] -> {
-                nbFoundArgs++;
-                foundType.add((TomTerm)null);
-            }
-          }
-          argsList =  argsList.getTail();
-        }
-
-        TomTypeList l = getSymbolDomain(symbol);
+        ArrayList foundOptionList = new ArrayList();
+        //Map optionMap  = new HashMap();
+          // we shall now test the type of each args
+				%match(TomList argsList) {
+					concTomTerm(_*, term, _*) -> {
+						nbFoundArgs++;
+						TermDescription termDesc = analyseTomTerm(term);
+  						// Var* and _* are not allowed in non list symbol
+						if(!listOrArray &&(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR)) {
+							int line = findOriginTrackingLine(optionList);
+							messageVariableStarInNonListOperator(nbFoundArgs, termDesc.name ,name, line);
+						}
+						foundType.add(termDesc.type);
+						foundOptionList.add(term.getOption().getOptionList());
+					}
+				}
         if (!listOrArray) {
-          int nbExpectedArgs = l.getLength();
             // We test the number of args vs its definition
           if (nbExpectedArgs != nbFoundArgs) {
             int line = findOriginTrackingLine(name,optionList);
             messageNumberArgumentsError(nbExpectedArgs, nbFoundArgs, name, line);
             return;
           }        
-          for( int slot = 0; slot < nbExpectedArgs; slot++ ) {
-            String s = getTomType(l.getHead());
-            if ( (foundType.get(slot) != s) && (foundType.get(slot) != null))
-            {
-              int line = findOriginTrackingLine((OptionList) optionMap.get(new Integer(slot)));
-              messageApplErrorTypeArgument(name, slot+1, s, (String) foundType.get(slot), line); 
-            }
-            l = l.getTail();
+            // and the types
+					nbFoundArgs = 0;
+          %match(TomTypeList domain) {
+          	concTomType(_*, type, _*) -> {
+							String s = getTomType(type);
+							if ( (foundType.get(nbFoundArgs) != s) && (foundType.get(nbFoundArgs) != null)) {
+								int line = findOriginTrackingLine((OptionList)foundOptionList.get(nbFoundArgs));
+								messageApplErrorTypeArgument(name, nbFoundArgs+1, s, (String) foundType.get(nbFoundArgs), line); 
+							}
+							nbFoundArgs++;
+          	}
           }
         } else {
-            // We worry only about returned type
-          String s = getTomType(l.getHead());
+            // We worry only about returned types that should always be the same
+          String s = getTomType(domain.getHead());  
           for( int slot = 0; slot <foundType.size() ; slot++ ) {
             if ( (foundType.get(slot) != s) && (foundType.get(slot) != null)) {
-              int line = findOriginTrackingLine((OptionList) optionMap.get(new Integer(slot)));
+              int line = findOriginTrackingLine((OptionList) foundOptionList.get(slot));
               messageApplErrorTypeArgument(name, slot+1, s, (String) foundType.get(slot), line);
             }
           }
@@ -883,9 +844,45 @@ abstract class TomChecker extends TomBase implements TomTask {
     String s = "Bad type of argument: Argument "+slotNumber+" of method '" + applName + "' has type '"+expectedType+"' required but type '"+givenType+"' found";
     messageError(line,s);
   }
-    
+	
+	private void messageVariableStarInNonListOperator(int slot, String typeStar, String applName, int line) {
+		String s = "Impossible variable star "+typeStar +" as argument "+slot+" of non list operator method '" + applName + "'";
+		messageError(line,s);
+	}
+   
+	private void permissiveVerify(TomTerm term) {
+		 Collect1 permissiveCollectAndVerify = new Collect1() 
+			 {  
+				 public boolean apply(ATerm term) {
+					 if(term instanceof TomTerm) {
+						 %match(TomTerm term) {
+							 BackQuoteAppl(Option(options),Name(name),args) -> {
+								 permissiveVerifyApplStructure(options, name, args);
+								 return true;
+							 }
+							 Appl(Option(options),Name(name),args) -> {
+								 permissiveVerifyApplStructure(options, name, args);
+								 return true;
+							 }
+							 RecordAppl[option=Option(options), astName=Name(name)] ->{
+								 messageRuleErrorRhsImpossibleRecord(options, name);
+								 return true;
+							 }
+							 Placeholder(Option(orgTrack)) -> {
+								 messageRuleErrorRhsImpossiblePlaceholder(orgTrack);
+							 }
+							 _ -> { return true; }
+						 }
+					 } else {
+						 return true;
+					 }
+				 }// end apply
+			 }; // end new
+		 traversal().genericCollect(term, permissiveCollectAndVerify);
+	 }
+	  
   private void permissiveVerifyApplStructure(OptionList optionList, String name, TomList argsList) {
-    TomSymbol symbol = symbolTable().getSymbol(name);
+    TomSymbol symbol = getSymbol(name);
     if(symbol==null && !argsList.isEmpty()) {
       messageWarningSymbol(name, optionList);
     } else {
@@ -917,7 +914,7 @@ abstract class TomChecker extends TomBase implements TomTask {
         DeclarationToOption(MakeDecl[args=makeArgsList, orgTrack=orgTrack]) -> {
           return true;
         }
-        DefinedSymbol -> {return true;}
+        DefinedSymbol() -> {return true;}
         _ -> {list = list.getTail();}
       }
     }
@@ -943,184 +940,157 @@ abstract class TomChecker extends TomBase implements TomTask {
     String s = "Bad number of arguments for method '" + name + "':" + nbArg + " arguments are required but " + nbArg2 + " are given";
     messageError(line,s);
   }
+  
+	private void messageVariableWithConstructorNameError(String name, int line) {
+		String s = "Ambiguous variable name "+ name;
+		messageError(line,s);
+	}
 
-    ////////////////////////////////
-    // RULE VERIFICATION CONCERNS //
-    ////////////////////////////////
-    /* for each rewrite rule we make test on: 
-     * Rhs shall have no underscore, be a var*?, be a record?
-     * Each Lhs shall start with the same production name
-     * This symbol name shall not be already declared
-     * Lhs and Rhs shall have the same return type
-     * Used variable on rhs shall be coherent and declared on lhs
-     */ 
-  private void verifyRule(TomRuleList ruleList) {
-    int i = 0;
-    TomRule currentRule;
-    String name = "Unknown";
-    while(!ruleList.isEmpty()) {
-      currentRule = ruleList.getHead();
-      matchBlock: {
-        %match(TomRule currentRule) {
-          RewriteRule(Term(lhs),Term(rhs),condList,option) -> {
-            name = verifyLhsRuleAndConstructorEgality(lhs, name, i);
-            if(i == 0) {
-                // update the root of lhs: it becomes a defined symbol
-              ast().updateDefinedSymbol(symbolTable(),lhs);
-            }
-            verifyRhsRuleStructure(rhs);
-              // TODO: verify the list of conditions
-            break matchBlock;
-          }
-          _             -> {
-            System.out.println("Strange rule:\n" + currentRule);
-            //throw new CheckErrorException();
-          }
-        }
-      }
-      ruleList = ruleList.getTail();
-      i++;
-    }
-  }
+		/** Main type checking entry point: We check all interesting Tom Structure */
+	protected void checkTypeInference(TomTerm expandedTerm) {
+		Collect1 collectAndVerify = new Collect1() {  
+			public boolean apply(ATerm term) {
+				if(term instanceof TomTerm) {
+					%match(TomTerm term) {
+						Match(_, PatternList(list), Option(oplist)) -> {  
+							currentTomStructureOrgTrack = findOriginTracking(oplist);
+							verifyMatchVariable(list);
+							return false;
+						}
+						RuleSet(list, orgTrack) -> {
+							currentTomStructureOrgTrack = orgTrack;
+							verifyRuleVariable(list);
+							return false;
+						}
+						_ -> { return true; }
+					}
+				} else {
+					return true;
+				}
+			}// end apply
+		}; // end new
+		traversal().genericCollect(expandedTerm, collectAndVerify);
+	}
   
-  private String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  ruleName, int ruleNumber) {
-    String methodName = "";
-    OptionList options = tsf().makeOptionList();
-    %match(TomTerm lhs) {
-      appl@Appl(Option(optionList),Name(name), args) -> {
-        // No alone variable nor simple constructor
-        if( args.isEmpty() && !hasConstructor(optionList)) {
-          int line = findOriginTrackingLine(optionList);
-          messageRuleErrorVariable(name, line);
-        }
-        syntaxCheck(appl);
-          // lhs outermost symbol shall have a corresponding make
-        TomSymbol symb = symbolTable().getSymbol(name);
-        if (symb == null) {
-          messageRuleErrorUnknownSymbol(name);
-          return methodName;
-        }
-        if ( !findMakeDeclOrDefSymbol(symbolTable().getSymbol(name).getOption().getOptionList())) {
-          messageNoMakeForSymbol(name, optionList);
-        }
-        options = optionList;
-        methodName = name;
-      }
-      VariableStar[option=Option(optionList), astName=Name(name1)] -> {
-        int line = findOriginTrackingLine(name1,optionList);    
-        messageRuleErrorVariableStar(name1, line);
-        return ruleName;
-      }
+	private void verifyMatchVariable(TomList patternList) {
+		while(!patternList.isEmpty()) {
+			TomTerm pa = patternList.getHead();
+			TomTerm patterns = pa.getTermList();
+				// collect variables
+			ArrayList variableList = new ArrayList();
+			collectVariable(variableList, patterns);      
+			verifyVariableType(variableList);
+			patternList = patternList.getTail();
+		}
+	}
+  
+	private void verifyRuleVariable(TomRuleList list) {
+		while(!list.isEmpty()) {
+			TomRule rewriteRule = list.getHead();
+			TomTerm lhs = rewriteRule.getLhs();
+			TomTerm rhs = rewriteRule.getRhs();
+			TomList condList = rewriteRule.getCondList();
+			Option orgTrack = findOriginTracking(rewriteRule.getOption().getOptionList());
+ 	     
+			ArrayList variableLhs = new ArrayList();
+			collectVariable(variableLhs, lhs);
+			HashSet lhsSet = verifyVariableType(variableLhs);
+ 	     
+			ArrayList variableRhs = new ArrayList();
+			collectVariable(variableRhs, rhs);
+			HashSet rhsSet = verifyVariableType(variableRhs);
+ 	     
+			ArrayList variableCond = new ArrayList();
+			collectVariable(variableCond, `Tom(condList));
+			HashSet condSet = verifyVariableType(variableCond);
+ 	     
+			lhsSet.addAll(condSet);
+			if(!condSet.isEmpty()) {
+				System.out.println("Warning: improve verifyRuleVariable for matchingCondition");
+			}
+ 	     
+			if( !lhsSet.containsAll(rhsSet) ) {
+				Iterator it = lhsSet.iterator();
+				while(it.hasNext()) {
+					rhsSet.remove(it.next());
+				}
+				messageRuleErrorUnknownVariable(rhsSet, orgTrack);
+			}
+				// case of rhs is a single variable
+			%match (TomTerm rhs) {
+				Term(Variable[astName=Name(name)]) -> {
+					String methodName = "";
+					%match(TomTerm lhs) {
+						Term(Appl[astName=Name(name1)]) -> {
+							methodName = name1;
+						}
+						Term(RecordAppl[astName=Name(name1)]) -> {
+							methodName = name1;
+						}
+					}
+					TomType typeRhs = getSymbolCodomain(getSymbol(methodName));
+					Iterator it = variableLhs.iterator();
+					while(it.hasNext()) {
+						TomTerm term = (TomTerm)it.next();
+						if(term.getAstName().getString() == name) {
+							TomType typeLhs = term.getAstType();
+							if(typeLhs != typeRhs) {
+								messageRuleErrorBadRhsVariable(name, typeRhs.getTomType().getString(), typeLhs.getTomType().getString(), orgTrack);
+							}
+						}
+					}
+				}
+			}
+			list = list.getTail();
+		}
+	}
+  
+	private HashSet verifyVariableType(ArrayList list) {
+			// compute multiplicities
+		HashSet set = new HashSet();
+		HashMap multiplicityMap = new HashMap();
+		Iterator it = list.iterator();
+		while(it.hasNext()) {
+				TomTerm variable = (TomTerm)it.next();
+			TomName name = variable.getAstName();
+   	   
+			if(set.contains(name)) {
+				TomTerm var = (TomTerm)multiplicityMap.get(name);
+				TomType type = var.getAstType();
+				TomType type2 = variable.getAstType();
+				if(!(type==type2)) {
+					messageErrorIncoherentVariable(name.getString(), type.getTomType().getString(), type2.getTomType().getString(), variable.getOption().getOptionList()); 
+				}
+			} else {
+				multiplicityMap.put(name, variable);
+				set.add(name);
+			}
+		}
+	return set;
+	}
+  
+	private void messageErrorIncoherentVariable(String name, String type, String type2, OptionList options) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		int line = findOriginTrackingLine(options);
+		String s = "Bad variable type for '"+name+"': it has both type '"+type+"' and '"+type2+"' in structure declared line "+declLine;
+		messageError(line,s);
+	}
+ 	 
+	private void messageRuleErrorUnknownVariable(Collection variableCollectionRhs, Option rewriteRuleOrgTrack) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		int line = rewriteRuleOrgTrack.getLine();
+		String s = "Unknown variable(s) " +variableCollectionRhs+ " used in right part of %rule declared line "+declLine;
+		messageError(line,s);
+	}
+ 	 
+	private void messageRuleErrorBadRhsVariable(String name, String type, String type2, Option rewriteRuleOrgTrack) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		int line = rewriteRuleOrgTrack.getLine();    
+		String s = "Alone variable '"+name+"' has type '"+type+"' instead of type '"+type2+"' in right part of %rule declared line "+declLine;
+		messageError(line,s);
+	}		
 
-      UnamedVariableStar[option=Option(options2)] |
-      Placeholder[option=Option(options2)] -> { 
-        messageRuleErrorLhsImpossiblePlaceHolder(options2);
-        return ruleName;
-      }
-      rec@RecordAppl(Option(optionList),Name(name),args) -> {
-        syntaxCheck(rec);
-        options = optionList;
-        methodName = name;
-      }
-    }
-    if ( ruleNumber != 0 && !methodName.equals(ruleName)) {   
-      messageRuleErrorConstructorEgality(methodName, ruleName, options);
-      return ruleName;
-    }
-    return methodName;
-  }
-
-  private void messageRuleErrorUnknownSymbol(String symbolName) {
-    int line = currentTomStructureOrgTrack.getLine();
-    String s = "Symbol '" +symbolName+ "' has no been declared in rule declared line "+line;
-    messageError(line,s); 
-  }
-  
-  private void messageNoMakeForSymbol(String name, OptionList optionList) {
-    int declLine = currentTomStructureOrgTrack.getLine();
-    int line = findOriginTrackingLine(optionList);
-    String s = "Symbol '" +name+ "' has no 'make' method associated in structure declared line "+declLine;
-    messageError(line,s);
-  }
-  
-  private void messageRuleErrorVariable(String nameVariableStar, int line) {
-    int declLine = currentTomStructureOrgTrack.getLine();
-    String s = "Alone variable " +nameVariableStar+ " is not allowed on left hand side of structure %rule declared line "+declLine;
-    messageError(line,s);
-  }
-  
-  private void messageRuleErrorVariableStar(String nameVariableStar, int line) {
-    int declLine = currentTomStructureOrgTrack.getLine();
-    String s = "Single list variable '" +nameVariableStar+ "*' is not allowed on left hand side of structure %rule declared line "+declLine;
-    messageError(line,s);
-  }
-
-  private void messageRuleErrorLhsImpossiblePlaceHolder(OptionList optionList) {
-    int declLine = currentTomStructureOrgTrack.getLine();
-    int line = findOriginTrackingLine(optionList);
-    String s = "Alone placeholder is not allowed in left hand side of structure %rule declared line " +declLine;
-    messageError(line,s);
-  }
-  
-  private void messageRuleErrorConstructorEgality(String  name, String nameExpected, OptionList optionList) {
-    int declLine = currentTomStructureOrgTrack.getLine();
-    int line = findOriginTrackingLine(name, optionList);
-    String s = "Left most symbol name '" + nameExpected + "' expected, but '" + name + "' found in left hand side of structure %rule declared line " +declLine;
-    messageError(line,s);
-  }
-  
-  private void verifyRhsRuleStructure(TomTerm ruleRhs) {
-    matchBlock: {
-      %match(TomTerm ruleRhs) {
-        appl@Appl(Option(options),Name(name),args) -> {
-          permissiveVerify(appl);
-          break matchBlock;
-        }
-        UnamedVariableStar[option=Option(option)] |
-        Placeholder[option=Option(option)] -> {
-          messageRuleErrorRhsImpossiblePlaceholder(option);
-          break matchBlock;
-        }
-        VariableStar[option=Option(option), astName=Name(name)] -> {
-          messageRuleErrorRhsImpossibleVarStar(option, name);
-          break matchBlock;
-        }
-        RecordAppl(Option(option), Name(tomName), _) -> {
-          messageRuleErrorRhsImpossibleRecord(option, tomName);
-          break matchBlock;
-        }
-        _ -> {
-          System.out.println("Strange rule rhs:\n" + ruleRhs);
-          //throw new CheckErrorException();
-        }
-      }
-    }
-  }
-
-  private void messageRuleErrorRhsImpossiblePlaceholder(OptionList optionList) {
-    int line = findOriginTrackingLine(optionList);
-    int declLine = currentTomStructureOrgTrack.getLine();
-    String s = "Placeholder is not allowed on right part of structure %rule declared line "+declLine;
-    messageError(line,s);
-  }
-  
-  private void messageRuleErrorRhsImpossibleRecord(OptionList optionList, String name) {
-    int line = findOriginTrackingLine(optionList);
-    int declLine = currentTomStructureOrgTrack.getLine();
-    String s = "Record '"+name+"[...]' is not allowed on right part of structure %rule declared line "+declLine;
-    messageError(line,s);
-  }
-  private void messageRuleErrorRhsImpossibleVarStar(OptionList optionList, String name) {
-    int line = findOriginTrackingLine(optionList);
-    int declLine = currentTomStructureOrgTrack.getLine();
-    String s = "Single list variable '"+name+"*' is not allowed in right hand side of structure %rule declared line " +declLine;
-    messageError(line,s);
-  }
-    
-    /////////////
-    // GLOBALS //
-    /////////////
-  
+    /** GLOBALS */
   private String extractType(TomSymbol symbol) {
     TomType type = getSymbolCodomain(symbol);
     return getTomType(type);
@@ -1131,41 +1101,79 @@ abstract class TomChecker extends TomBase implements TomTask {
     errorMessage.add(s);
     addError(input, msg, currentTomStructureOrgTrack.getFileName().getString(), line, 0);
   }
+    
+	private int findOriginTrackingLine(String name, OptionList optionList) {
+		%match(OptionList optionList) {
+			concOption(_*,OriginTracking[astName=Name[string=str],line=line],_*) -> { if(str.equals(name)) {return line;} }
+		}
+		addError(input, "findOriginTrackingLine:  not found", input.getInputFileName(), 0, 0);
+		System.out.println("findOriginTrackingLine: '" + name + "' not found in " + optionList);
+		return -1;
+	}
   
-    // findOriginTrackingLine(_,_) method returns the line (stocked in optionList)  of object 'name'.
-  private int findOriginTrackingLine(String name, OptionList optionList) {
-    while(!optionList.isEmpty()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        OriginTracking[astName=Name[string=origName],line=line] -> {
-          if(name.equals(origName)) {
-            return line;
-          }
-        }
-      }
-      optionList = optionList.getTail();
-    }
-    addError(input, "findOriginTrackingLine:  not found", input.getInputFileName(), 0, 0);
-    System.out.println("findOriginTrackingLine: '" + name + "' not found in " + optionList);
-    return -1;
-    //throw new CheckErrorException();
-  }
-  
-    // findOriginTrackingLine(_) method returns the first number of line (stocked in optionList).
   private int findOriginTrackingLine(OptionList optionList) {
-    while(!optionList.isEmpty()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        OriginTracking[line=line] -> {
-          return line;
-        }
-      }
-      optionList = optionList.getTail();
-    }
+		%match(OptionList optionList) {
+			concOption(_*,OriginTracking[line=line],_*) -> { return line; }
+		}
     addError(input, "findOriginTrackingLine:  not found", input.getInputFileName(), 0, 0);
     System.out.println("findOriginTrackingLine:  not found");
     return -1;
-    //throw new CheckErrorException();
+  }
+  
+  public TermDescription analyseTomTerm(TomTerm term) {
+  	String termName, type;
+  	int termClass, decLine;
+		matchblock:{
+			%match(TomTerm term) {
+				Appl[option=Option(options), astName=Name(name)] -> {
+					termClass = APPL;
+					decLine = findOriginTrackingLine(options);
+					type = extractType(getSymbol(name));     
+					termName = name;
+					break matchblock;
+				}
+				RecordAppl[option=Option(options),astName=Name(name)] ->{
+					termClass = RECORD_APPL;
+					decLine = findOriginTrackingLine(options);
+					type = extractType(getSymbol(name));     
+					termName = name;
+					break matchblock;
+				}
+				XMLAppl[option=Option(options)] -> {
+					termClass = XML_APPL;
+					decLine = findOriginTrackingLine(options);
+					type = extractType(getSymbol(Constants.ELEMENT_NODE));
+					termName = Constants.ELEMENT_NODE;
+					break matchblock;
+				}
+				Placeholder[option=Option(options)] -> {
+					termClass = PLACE_HOLDER;
+					decLine = findOriginTrackingLine(options);
+					type = null;     
+					termName = "*";
+					break matchblock;
+				}
+				VariableStar[option=Option(options), astName=Name(name)] -> { 
+					termClass = VARIABLE_STAR;
+					decLine = findOriginTrackingLine(options);
+					type = null;     
+					termName = name+"*";
+					break matchblock;
+				}
+				UnamedVariableStar[option=Option(options)] -> {
+					termClass = UNAMED_VARIABLE_STAR;
+					decLine = findOriginTrackingLine(options);
+					type = null;     
+					termName = "_*";
+					break matchblock;
+				}
+				_ -> {
+					System.out.println("Strange term in pattern "+term);
+					throw new TomRuntimeException(new Throwable("Strange Term "+term));
+				}
+			}
+		}
+		return new TermDescription(termClass, termName, decLine, type);	
   }
   
 } //class TomChecker

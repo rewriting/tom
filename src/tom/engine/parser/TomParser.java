@@ -81,7 +81,7 @@ public class TomParser implements TomTask, TomParserConstants {
       includedFiles.add(fileName);
     } else {
       String msg = "Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...";
-      System.out.println(msg);
+        //System.out.println(msg);
       throw new TomIncludeException(new Throwable(msg));
     }
   }
@@ -1123,8 +1123,8 @@ public class TomParser implements TomTask, TomParserConstants {
         list.add(astTom);
       } catch (FileNotFoundException e1) {
         String msg = "Included file `" + fileName + "` not found at line "+getLine()+" from file `"+currentFile+"`";
-        System.out.println(msg);
-        {if (true) throw new TomException(new Throwable(msg));}
+          //System.out.println(msg);
+        {if (true) throw new TomIncludeException(new Throwable(msg));}
       }  catch (java.io.IOException e2) {
         String msg = "IOException occurs reading " + fileName + " at line "+getLine();
         System.out.println(msg);
@@ -2075,7 +2075,7 @@ public class TomParser implements TomTask, TomParserConstants {
           nameArg = jj_consume_token(TOM_IDENTIFIER);
          if( !(nbTypes > 0) ) {
            String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
-           System.out.println(msg);
+             //System.out.println(msg);
            {if (true) throw new TomException(new Throwable(msg));}
          }
          type = (TomType)types.elementAt(index++);
@@ -2097,7 +2097,7 @@ public class TomParser implements TomTask, TomParserConstants {
             nameArg = jj_consume_token(TOM_IDENTIFIER);
           if( index >= nbTypes ) {
             String msg = "Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
-            System.out.println(msg);
+              //System.out.println(msg);
             {if (true) throw new TomException(new Throwable(msg));}
           }
           type = (TomType)types.elementAt(index++);
@@ -2121,7 +2121,7 @@ public class TomParser implements TomTask, TomParserConstants {
     }
          if (index<nbTypes) {
            String msg = "Bad number of arguments in 'make(...)' method: less arguments found than "+nbTypes+" as expected in term definition.\n -- Error occurs at line "+getLine()+"\n Parsing aborted";
-           System.out.println(msg);
+             //System.out.println(msg);
            {if (true) throw new TomException(new Throwable(msg));}
          }
     tlCode = GoalLanguageBlock(blockList);

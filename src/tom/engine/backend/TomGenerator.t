@@ -411,7 +411,7 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
-      MakeFunctionEnd -> {
+      MakeFunctionEnd() -> {
         if(cCode || jCode) {
           out.writeln(deep,"}");
         } else if(eCode) {
@@ -420,7 +420,7 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
-      EndLocalVariable -> { out.writeln(deep,"do"); return; }
+      EndLocalVariable() -> { out.writeln(deep,"do"); return; }
       
       TargetLanguageToTomTerm(t) -> {
         generateTargetLanguage(out,deep,t);
@@ -473,7 +473,7 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
-      TrueTL -> {
+      TrueTL() -> {
         if(cCode) {
           out.write(" 1 ");
         } else if(jCode) {
@@ -484,7 +484,7 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
       
-      FalseTL -> {
+      FalseTL() -> {
         if(cCode) {
           out.write(" 0 ");
         } else if(jCode) {
@@ -854,8 +854,8 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
-      OpenBlock  -> { out.writeln(deep,"{"); return; }
-      CloseBlock -> { out.writeln(deep,"}"); return; }
+      OpenBlock()  -> { out.writeln(deep,"{"); return; }
+      CloseBlock() -> { out.writeln(deep,"}"); return; }
 
       
       t -> {
@@ -908,7 +908,7 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
       OriginTracking[] -> { return; }
-      DefinedSymbol -> { return; }
+      DefinedSymbol() -> { return; }
       Constructor[] -> { return; }
 
       t -> {

@@ -963,7 +963,7 @@ public class TomKernelCompiler extends TomBase {
         return `Tom(traversalReplaceLocalVariableList(list, l));
       } 
       
-      LocalVariable -> {
+      LocalVariable() -> {
           //System.out.println("Replace LocalVariable");
 
         Map map = (Map)list.get(0);
