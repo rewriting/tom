@@ -64,13 +64,14 @@ public class TomFactory extends TomBase {
        * Appl(...,Name("string"),...) becomes
        * Appl(...,Name("\"string\""),...)
        */
+    NameList newNameList = `concTomName();
     %match(TomTerm term) {
-      Appl[nameList=(Name(name))] -> {
-        String tomName = encodeXMLString(symbolTable,name);
-        term = term.setAstName(`Name(tomName));
-          //System.out.println("encodeXMLAppl = " + term);
+      Appl[nameList=(_*,Name(name),_*)] -> {
+        newNameList = (NameList)newNameList.append(`Name(encodeXMLString(symbolTable,name)));
       }
     }
+    term = term.setNameList(newNameList);
+      //System.out.println("encodeXMLAppl = " + term);
     return term;
   }
 

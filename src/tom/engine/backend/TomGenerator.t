@@ -459,6 +459,13 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
+      Or(exp1,exp2) -> {
+        generateExpression(out,deep,exp1);
+        out.write(" || ");
+        generateExpression(out,deep,exp2);
+        return;
+      }
+
       TrueTL() -> {
         if(cCode) {
           out.write(" 1 ");
@@ -497,7 +504,8 @@ public class TomGenerator extends TomBase implements TomTask {
         return;
       }
 
-      EqualFunctionSymbol(var@Variable[astType=type1],Appl(option,(Name(tomName)),l)) -> {
+      EqualFunctionSymbol(var@Variable[astType=type1],
+                          Appl(option,nameList@(Name(tomName)),l)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomName termNameAST = tomSymbol.getAstName();
         OptionList termOptionList = tomSymbol.getOption();

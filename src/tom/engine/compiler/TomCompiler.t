@@ -414,7 +414,7 @@ public class TomCompiler extends TomBase implements TomTask {
         return renamedTerm;
       }
       
-      Appl[option=optionList, nameList=(name), args=args] -> {
+      Appl[option=optionList, nameList=nameList, args=args] -> {
         TomList newArgs = empty();
         while(!args.isEmpty()) {
           TomTerm elt = args.getHead();
@@ -423,7 +423,7 @@ public class TomCompiler extends TomBase implements TomTask {
           args = args.getTail();
         }
         OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-        renamedTerm = `Appl(newOptionList,concTomName(name),newArgs);
+        renamedTerm = `Appl(newOptionList,nameList,newArgs);
         return renamedTerm;
       }
     }
@@ -489,7 +489,7 @@ public class TomCompiler extends TomBase implements TomTask {
                                   ArrayList introducedVariable)  {
     TomTerm abstractedTerm = subject;
     %match(TomTerm subject) {
-      Appl[option=option, nameList=(name@Name(tomName)), args=args] -> {
+      Appl[option=option, nameList=nameList@(Name(tomName),_*), args=args] -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         
         TomList newArgs = empty();
@@ -498,7 +498,7 @@ public class TomCompiler extends TomBase implements TomTask {
             TomTerm elt = args.getHead();
             TomTerm newElt = elt;
             %match(TomTerm elt) {
-              appl@Appl[nameList=(Name(tomName2))] -> {
+              appl@Appl[nameList=(Name(tomName2),_*)] -> {
                   //System.out.println("Abstract: " + appl);
                 TomSymbol tomSymbol2 = symbolTable().getSymbol(tomName2);
                 TomType type2 = tomSymbol2.getTypesToType().getCodomain();
@@ -523,7 +523,7 @@ public class TomCompiler extends TomBase implements TomTask {
         } else {
           newArgs = abstractPatternList(args,abstractedPattern,introducedVariable);
         }
-        abstractedTerm = `Appl(option,concTomName(name),newArgs);
+        abstractedTerm = `Appl(option,nameList,newArgs);
       }
     } // end match
     return abstractedTerm;

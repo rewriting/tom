@@ -928,10 +928,42 @@ TomTerm AnnotedTerm() throws TomException: /* in TOM mode */
     }
 }
 
+NameList XMLNameList(LinkedList optionList) throws TomException:
+{
+  Token name;
+  NameList nameList = tsf().makeNameList();
+}
+{
+  (
+    name=<TOM_IDENTIFIER>
+    {
+      text += name.image;
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+    }
+   |
+    <TOM_LPAREN>
+    name=<TOM_IDENTIFIER>
+    {
+      text += name.image;
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+    }
+    ( <TOM_ALTERNATIVE> name=<TOM_IDENTIFIER>
+      {
+        text += "|" + name.image; 
+        nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
+      }
+    )+
+    <TOM_RPAREN>
+   )
+    {
+      return nameList;
+    }
+}
 
 TomTerm XMLTerm(TomName astAnnotedName) throws TomException:
 {
-  Token name,close;
   TomTerm term;
   TomTerm arg1;
   TomTerm arg2;
@@ -942,17 +974,15 @@ TomTerm XMLTerm(TomName astAnnotedName) throws TomException:
   String keyword = "";
   OptionList option;
   boolean implicit;
-  NameList nameList = tsf().makeNameList();
+  NameList nameList;
+  NameList closingNameList;
   if(annotedName!=null) { optionList.add(annotedName); }
 }
 {
   (
     // < NODE attributes [ /> | > childs </NODE> ]
-     <XML_START> name=<TOM_IDENTIFIER>
-        {
-          text += "<" + name.image;
-          optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
-        }
+    <XML_START> { text += "<"; }
+     nameList = XMLNameList(optionList)
      implicit = XMLAttributeList(list)
         {
           if(implicit) { optionList.add(tsf().makeOption_ImplicitXMLAttribut()); }
@@ -967,10 +997,11 @@ TomTerm XMLTerm(TomName astAnnotedName) throws TomException:
      | // case: > childs  </NODE>
        <XML_CLOSE>{text+=">";}
        implicit = XMLChilds(childs)
-       <XML_START_ENDING> close=<TOM_IDENTIFIER> <XML_CLOSE>
+       <XML_START_ENDING> { text += "</"; }
+       closingNameList = XMLNameList(optionList)
+       <XML_CLOSE> { text += ">"; }
         {
-          text += "</"+ close.image +">";
-          if(!name.image.equals(close.image)) {
+          if(!nameList.equals(closingNameList)) {
             throw new TomException("Error on closing node");
             return null;
           }
@@ -978,7 +1009,7 @@ TomTerm XMLTerm(TomName astAnnotedName) throws TomException:
               /*
                * Special case
                * when XMLChilds() is reduced to a singleton
-               *Appl(...,Name(""),args)
+               * Appl(...,Name(""),args)
                */
             if(tomFactory.isExplicitTermList(childs)) {
               childs = tomFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
@@ -991,7 +1022,6 @@ TomTerm XMLTerm(TomName astAnnotedName) throws TomException:
         }
       ) // end choice
         {
-         nameList = (NameList)nameList.append(tsf().makeTomName_Name(name.image));
           term =  tsf().makeTomTerm_XMLAppl(
             option,
             nameList,
@@ -1025,7 +1055,7 @@ TomTerm XMLTerm(TomName astAnnotedName) throws TomException:
     {
       optionList.add(ast().makeOriginTracking(keyword,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
-      nameList = (NameList)nameList.append(tsf().makeTomName_Name(keyword));
+      nameList = tsf().makeNameList(tsf().makeTomName_Name(keyword));
       return tsf().makeTomTerm_Appl(option,
                                     nameList,
                                     ast().makeList(list));

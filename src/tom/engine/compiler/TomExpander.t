@@ -118,12 +118,12 @@ public class TomExpander extends TomBase implements TomTask {
                 return t;
               }
 
-              RecordAppl(option,(Name(tomName)),args) -> {
-                return expandRecordAppl(option,tomName,args);
+              RecordAppl(option,nameList,args) -> {
+                return expandRecordAppl(option,nameList,args);
               }
 
-              XMLAppl(optionList, (Name(tomName)), list1, list2) -> {
-                return expandXMLAppl(optionList, tomName, list1, list2);
+              XMLAppl(optionList,nameList,list1,list2) -> {
+                return expandXMLAppl(optionList, nameList, list1, list2);
               }
               
               _ -> {
@@ -139,8 +139,8 @@ public class TomExpander extends TomBase implements TomTask {
     return (TomTerm) replace.apply(subject); 
   }
 
-  protected TomTerm expandRecordAppl(OptionList option, String tomName, TomList args) {
-    TomSymbol tomSymbol = getSymbol(tomName);
+  protected TomTerm expandRecordAppl(OptionList option, NameList nameList, TomList args) {
+    TomSymbol tomSymbol = getSymbol(nameList.getHead().getString());
     SlotList slotList = tomSymbol.getSlotList();
     TomList subtermList = empty();
       // For each slotName (from tomSymbol)
@@ -173,7 +173,7 @@ public class TomExpander extends TomBase implements TomTask {
       slotList = slotList.getTail();
     }
     
-    return `Appl(option,concTomName(Name(tomName)),subtermList);
+    return `Appl(option,nameList,subtermList);
   }
 
   protected TomTerm expandBackQuoteAppl(TomTerm t) {
@@ -243,7 +243,8 @@ public class TomExpander extends TomBase implements TomTask {
     return emptyOption();
   }
 
-  protected TomTerm expandXMLAppl(OptionList optionList, String tomName,
+  
+  protected TomTerm expandXMLAppl(OptionList optionList, NameList nameList,
                                   TomList attrList, TomList childList) {
     boolean implicitAttribute = hasImplicitXMLAttribut(optionList);
     boolean implicitChild     = hasImplicitXMLChild(optionList);
@@ -288,10 +289,15 @@ public class TomExpander extends TomBase implements TomTask {
       /*
        * encode the name and put it into the table of symbols
        */
-    tomName = tomFactory.encodeXMLString(symbolTable(),tomName);
-    
+    NameList newNameList = `concTomName();
+    %match(NameList nameList) {
+      (_*,Name(name),_*) -> {
+        newNameList = (NameList)newNameList.append(`Name(tomFactory.encodeXMLString(symbolTable(),name)));
+      }
+    }
+    String tomName = newNameList.getHead().getString();
     TomList newArgs = `concTomTerm(
-      Appl(convertOriginTracking(tomName,optionList),concTomName(Name(tomName)),empty()),
+      Appl(convertOriginTracking(tomName,optionList),newNameList,empty()),
       Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList),
       Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList));
     TomTerm result = `Appl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs);
@@ -505,7 +511,7 @@ public class TomExpander extends TomBase implements TomTask {
         return `RuleSet(newRuleList,orgTrack);
       }
         
-      Tom(varList), MatchingCondition[lhs=lhs@Appl[nameList=(Name(lhsName))],
+      Tom(varList), MatchingCondition[lhs=lhs@Appl[nameList=(Name(lhsName),_*)],
                                       rhs=rhs@Appl[nameList=(Name(rhsName))]] -> {
         TomSymbol lhsSymbol = getSymbol(lhsName);
         TomSymbol rhsSymbol = getSymbol(rhsName);
@@ -564,7 +570,7 @@ public class TomExpander extends TomBase implements TomTask {
       
     %match(TomTerm contextSubject, TomRule subject) {
 
-      context, RewriteRule(Term(lhs@Appl(optionList,(Name(tomName)),_)),
+      context, RewriteRule(Term(lhs@Appl(optionList,(Name(tomName),_*),_)),
                            Term(rhs),
                            condList,
                            option) -> { 

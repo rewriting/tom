@@ -739,7 +739,7 @@ abstract public class TomChecker extends TomBase implements TomTask {
 
 		%match(NameList nameList) {
 			(_*, Name(dijName), _*) -> { // for each SymbolName
-				TomSymbol symbol =  getSymbol(res);
+				TomSymbol symbol =  getSymbol(dijName);
 				if (symbol == null) {
 					messageError(decLine, TomCheckerMessage.UnknownSymbol, new Object[]{dijName});
 					return null;

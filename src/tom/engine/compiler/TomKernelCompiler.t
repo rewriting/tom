@@ -410,7 +410,7 @@ public class TomKernelCompiler extends TomBase {
           break matchBlock; 
         }
 
-        Appl(optionList,(Name(tomName)),termArgs) -> {
+        Appl(optionList,nameList@(Name(tomName),_*),termArgs) -> {
           TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
           TomName termNameAST = tomSymbol.getAstName();
           TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
@@ -493,7 +493,7 @@ public class TomKernelCompiler extends TomBase {
           succesList = concat(succesList,annotedAssignementList);
           succesList = concat(succesList,automataList);
           
-          Expression cond = `EqualFunctionSymbol(subjectVariableAST,term);
+          Expression cond = `expandDisjunction(EqualFunctionSymbol(subjectVariableAST,term));
           Instruction test = `IfThenElse(cond, succesList, empty());
           result = appendInstruction(test,result);
           
@@ -511,6 +511,22 @@ public class TomKernelCompiler extends TomBase {
     return result;
   }
 
+  private Expression expandDisjunction(Expression exp) {
+    Expression cond = `FalseTL();
+    %match(Expression exp) {
+      EqualFunctionSymbol(var@Variable[],
+                          Appl(option,nameList,l)) -> {
+        while(!nameList.isEmpty()) {
+          TomName name = nameList.getHead();
+          Expression check = `EqualFunctionSymbol(var,Appl(option,concTomName(name),l));
+          cond = `Or(check,cond);
+          nameList = nameList.getTail();
+        }
+      }
+    }
+    return cond;
+  }
+  
   private TomList addAnnotedAssignement(OptionList optionList,
                                         Expression source,
                                         TomTerm dest,

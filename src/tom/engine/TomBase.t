@@ -259,7 +259,7 @@ public class TomBase {
   protected TomType getTermType(TomTerm t){
       //%variable
     %match(TomTerm t) {
-      Appl(option, (Name(tomName)), subterms) -> {
+      Appl(option, (Name(tomName),_*), subterms) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         return tomSymbol.getTypesToType().getCodomain();
       }

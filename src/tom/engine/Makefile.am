@@ -33,7 +33,7 @@ adt/TomSignature.tom: TomSignature.adt
 	mv adt/TomSignatureMakeRules adt/TomSignatureMakeRules.am
 
 api:
-	adt-to-java -v -i TomSignature.adt -j -p jtom.adt -o adt -m 'aterm.*'
+	adt-to-java -v -i TomSignature.adt -n TomSignature -j -p jtom.adt -o adt
 	mv adt/TomSignatureMakeRules adt/TomSignatureMakeRules.am
 
 # we use the last installed compiler to compile the current compiler
