@@ -32,13 +32,6 @@ public class Nsh {
     make_insert(e,l) { l.insert(e) }
   }
 
- %typeterm SharedSet {
-  implement { SharedSet }
-  get_fun_sym(t) {((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null)}
-  cmp_fun_sym(s1,s2) { s1==s2}
-  get_subterm(t,n) {(((ATermAppl)t).getArgument(n))}
-  equals(t1,t2) {t1.equals(t2)}
- }
   
   public Nsh(TermFactory factory) {
     this.factory = factory;
@@ -555,4 +548,3 @@ public class Nsh {
 
   
 }
-
