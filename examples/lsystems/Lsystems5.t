@@ -20,6 +20,7 @@
 //package ls_ex;
 
 import aterm.*;
+import aterm.pure.*;
 import java.util.*;
 import java.lang.*;
 import lsruntime.*;
@@ -51,7 +52,7 @@ public class Lsystems5 implements LsystemsInterface {
   public boolean verbose;
   
   public final static void main(String[] args) {
-    Lsystems5 test = new Lsystems5(args,new LsystemsFactory());
+    Lsystems5 test = new Lsystems5(args,new LsystemsFactory(new PureFactory()));
     test.run();
   }
   

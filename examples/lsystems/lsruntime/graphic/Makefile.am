@@ -17,7 +17,7 @@ CLEANFILES      = LsystemsDraw.java
 BUILT_SOURCES   = 
 
 TOMFLAGS = --noWarning --import $(top_srcdir)/examples/Lsystems/lsruntime/adt --import $(top_srcdir)/examples/Lsystems/lsruntime
-TOM = ${prefix}/bin/jtom
+TOM = ${prefix}/bin/jtom.src
 
 %.java : %.t
 	$(TOM) $(TOMFLAGS) $*

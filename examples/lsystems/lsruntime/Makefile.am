@@ -16,6 +16,7 @@ EXTRA_DIST      = $(BOOTSOURCES) LsystemsRuntime.t extras.t
 CLEANFILES      = LsystemsRuntime.java api.stamp
 BUILT_SOURCES   = api.stamp
 
+api: api.stamp
 api.stamp: lsystems.adt
 	$(ADTTOJAVA) -v --input $< --jtom --package lsruntime.adt --output adt
 	mv adt/LsystemsMakeRules adt/LsystemsMakeRules.am

@@ -1,8 +1,10 @@
+import aterm.pure.*;
+import lsruntime.*;
+import lsruntime.adt.*;
+
 import java.util.*;
 import java.lang.*;
 import java.lang.reflect.*;
-import lsruntime.*;
-import lsruntime.adt.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -10,7 +12,7 @@ import javax.swing.*;
 public class RunExamples {
 
   public RunExamples(String[] args) {
-    factory = new LsystemsFactory();
+    factory = new LsystemsFactory(new PureFactory());
     runtime = new LsystemsRuntime(args, factory);
     this.args = args;
   }
@@ -48,7 +50,7 @@ public class RunExamples {
     stats.addActionListener(
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          System.out.println(factory);
+          System.out.println(factory.getPureFactory());
         }
       }
     );
