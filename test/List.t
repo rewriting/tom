@@ -49,6 +49,11 @@ public class List {
     make(l) { double3(l) }
   }
 
+  %op L id(L) {
+    fsym { factory.makeAFun("id", 1, false) }
+    make(l) { l }
+  }
+
   %rule {
     double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
     double3(conc(X*)) -> conc(X*)
@@ -117,7 +122,7 @@ public class List {
   public ATermList double2(ATermList l) {
     %match(L l) {
       (X1*,x,X2*,x,X3*) -> {
-        return `double2(conc(X1*,X2*,x,X3*));
+        return `double2(id( conc(X1*,X2*,x,X3*) ));
       }
       
       _ -> { return l; }
