@@ -845,13 +845,31 @@
          options="-I ${tom.home}/share/jtom">
 <!-- stamp not yet ready for apigen list -->
       <include name="${structure}/**/*.t"/>
+			<exclude name="${structure}/**/StructParser.g.t"/>
 			<!--			<exclude name="${structure}/**/StructureCDT.t"/> -->
     </tom>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+				 stamp="off" 
+         options="-I ${tom.home}/share/jtom"
+				 outputfile="${examples.gen}/${structure}/StructParser.g">
+			<include name="${structure}/**/StructParser.g.t"/>
+    </tom>
+    <!-- build parser -->
+    <mkdir dir="${examples.gen}/${structure}"/>
+    <tomantlr target="${examples.gen}/${structure}/StructParser.g"
+              outputdirectory="${examples.gen}/${structure}">
       <classpath refid="tom.classpath"/>
-      <include name="${structure}/**/*.java"/>
+    </tomantlr>
+    <!-- build java source -->
+    <javac destdir="${examples.build}"
+           nowarn="${nowarnings}">
+			<src path="${examples.dir}"/>
+			<src path="${examples.gen}"/>
+			<classpath refid="tom.classpath"/>
+			<include name="${structure}/**/*.java"/>
     </javac>
   </target>
 

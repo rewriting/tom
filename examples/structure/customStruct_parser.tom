@@ -1,0 +1,149 @@
+%include { string.tom }
+%include { int.tom }
+%include { double.tom }
+%include { aterm.tom }
+%include { atermlist.tom }
+%typeterm Struc{
+  implement { structure.struct.types.Struc}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+  check_stamp(t) {if(t.getAnnotation(getStructFactory().getPureFactory().makeList()) == getStructFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(structure.struct.types.Struc)t.setAnnotation(getStructFactory().getPureFactory().makeList(),getStructFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
+}
+
+%op Struc par(parl:StrucPar) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isPar()}
+  get_slot(parl,t) { t.getParl()}
+  make(t0) { CDT.makePar(t0)}
+}
+
+%op Struc cop(copl:StrucCop) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isCop()}
+  get_slot(copl,t) { t.getCopl()}
+  make(t0) { CDT.makeCop(t0)}
+}
+
+%op Struc neg(a:Struc) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isNeg()}
+  get_slot(a,t) { t.getA()}
+  make(t0) { getStructFactory().makeStruc_Neg(t0)}
+}
+
+%op Struc g {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isG()}
+  make() { getStructFactory().makeStruc_G()}
+}
+
+%op Struc f {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isF()}
+  make() { getStructFactory().makeStruc_F()}
+}
+
+%op Struc e {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isE()}
+  make() { getStructFactory().makeStruc_E()}
+}
+
+%op Struc d {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isD()}
+  make() { getStructFactory().makeStruc_D()}
+}
+
+%op Struc c {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isC()}
+  make() { getStructFactory().makeStruc_C()}
+}
+
+%op Struc b {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isB()}
+  make() { getStructFactory().makeStruc_B()}
+}
+
+%op Struc a {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isA()}
+  make() { getStructFactory().makeStruc_A()}
+}
+
+%op Struc o {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isO()}
+  make() { getStructFactory().makeStruc_O()}
+}
+
+%typelist StrucCop{
+  implement { structure.struct.types.StrucCop}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
+  check_stamp(t) {if(t.getAnnotation(getStructFactory().getPureFactory().makeList()) == getStructFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(structure.struct.types.StrucCop)t.setAnnotation(getStructFactory().getPureFactory().makeList(),getStructFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
+}
+
+%oplist StrucCop concCop(Struc*) {
+  fsym { null }
+  is_fsym(t) {(t!= null) && t.isSortStrucCop()}
+  make_empty() {getStructFactory().makeStrucCop()}
+  make_insert(e,l) {CDT.insertCop(e,l)}
+}
+%op StrucCop emptyStrucCop{
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isEmpty()}
+  make() {getStructFactory().makeStrucCop()}
+}
+
+%op StrucCop manyStrucCop(head:Struc, tail:StrucCop) {
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isMany()}
+  get_slot(head,t) { t.getHead()}
+  get_slot(tail,t) { t.getTail()}
+  make(e,l) {getStructFactory().makeStrucCop(e,l)}
+}
+%typelist StrucPar{
+  implement { structure.struct.types.StrucPar}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
+  check_stamp(t) {if(t.getAnnotation(getStructFactory().getPureFactory().makeList()) == getStructFactory().getPureFactory().makeList())  return; else throw new RuntimeException("bad stamp")}
+  set_stamp(t) {(structure.struct.types.StrucPar)t.setAnnotation(getStructFactory().getPureFactory().makeList(),getStructFactory().getPureFactory().makeList())}
+  get_implementation(t) {t}
+}
+
+%oplist StrucPar concPar(Struc*) {
+  fsym { null }
+  is_fsym(t) {(t!= null) && t.isSortStrucPar()}
+  make_empty() {getStructFactory().makeStrucPar()}
+  make_insert(e,l) { CDT.insertPar(e,l)}
+}
+%op StrucPar emptyStrucPar{
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isEmpty()}
+  make() {getStructFactory().makeStrucPar()}
+}
+
+%op StrucPar manyStrucPar(head:Struc, tail:StrucPar) {
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isMany()}
+  get_slot(head,t) { t.getHead()}
+  get_slot(tail,t) { t.getTail()}
+  make(e,l) {getStructFactory().makeStrucPar(e,l)}
+}
