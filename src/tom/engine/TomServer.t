@@ -376,9 +376,14 @@ public class TomServer implements TomPluginOptions {
 	  %match(TomOption option) {
 	      OptionBoolean[name=n, altName=an, valueB=v] 
 		  -> {
-		  optionValues.put(n, v);
+		  Boolean bool = new Boolean(false); // compulsory initialization
+		  %match(TomBoolean v) {
+		      True() -> { bool = new Boolean(true); }
+		      False() -> { bool = new Boolean(false); }
+		  }
+		  optionValues.put(n, bool);
 		  if( an.length() > 0 )
-		      optionValues.put(an, v);
+		      optionValues.put(an, bool);
 	      }
 
 	      OptionInteger[name=n, altName=an, valueI=v] 
@@ -544,75 +549,9 @@ public class TomServer implements TomPluginOptions {
   }
 
   /**
-   * A mapping method which return both the type of the option whose name is given
-   * and the instance of the plugin who declared it.
-   * 
+   *
+   *
    * @param optionName the name of the option we're looking information about
-   * @return a List containing a String indicating the type of the option ("boolean",
-   * "integer" or "string"), along with a reference to the plugin declaring the option. 
-   */
-  public List aboutThisOption(String optionName)
-  {
-    List pair = new Vector();
-
-    for(int i = 0; i < services.size(); i++)
-	    {
-        TomOptionList ol = (TomOptionList)services.get(i);
-        TomOptionList list = `concTomOption(ol*);
-
-        while(!(list.isEmpty()))
-          {
-            TomOption h = list.getHead();
-            %match(TomOption h)
-            {
-              OptionBoolean[name=n, altName=a] ->
-              {
-                if(n.equals(optionName)||a.equals(optionName))
-                  {
-                    TomPluginOptions plugin = (TomPluginOptions)instances.get(i);
-                    //System.out.println("Option named " +optionName+
-                    //		   " found in " +plugin.getClass().getName());
-                    pair.add("boolean");
-                    pair.add(plugin);
-                    return pair;
-                  }
-              }
-              OptionInteger[name=n, altName=a] ->
-              {
-                if(n.equals(optionName)||a.equals(optionName))
-                  {
-                    TomPluginOptions plugin = (TomPluginOptions)instances.get(i);
-                    //System.out.println("Option named " +optionName+
-                    //		   " found in " +plugin.getClass().getName());
-                    pair.add("integer");
-                    pair.add(plugin);
-                    return pair;
-                  }
-              }
-              OptionString[name=n, altName=a] ->
-              {
-                if(n.equals(optionName)||a.equals(optionName))
-                  {
-                    TomPluginOptions plugin = (TomPluginOptions)instances.get(i);
-                    //System.out.println("Option named " +optionName+
-                    //		   " found in " +plugin.getClass().getName());
-                    pair.add("string");
-                    pair.add(plugin);
-                    return pair;
-                  }
-              }
-            }			
-            list = list.getTail();
-          }
-	    }
-    //System.out.println("Option named " +optionName+ " not found");
-    return null;
-  }
-
-  /**
-   *
-   *
-   * @param optionName
    * @return
    */
   public TomPluginOptions getOptionsOwner(String optionName) {
@@ -622,7 +561,7 @@ public class TomServer implements TomPluginOptions {
   /**
    *
    *
-   * @param optionName
+   * @param optionName the name of the option we're looking information about
    * @return
    */
   public String getOptionsType(String optionName) {
@@ -638,48 +577,15 @@ public class TomServer implements TomPluginOptions {
    */
   public Object getOptionValue(String optionName)
   {
-    for(int i = 0; i < services.size(); i++)
-	    {
-        TomOptionList ol = (TomOptionList)services.get(i);
-        TomOptionList list = `concTomOption(ol*);
+    Object obj = optionValues.get(optionName);
 
-        while(!(list.isEmpty()))
-          {
-            TomOption h = list.getHead();
-            %match(TomOption h)
-            {
-              OptionBoolean[name=n, altName=a, valueB=v] ->
-              {
-                if(n.equals(optionName)||a.equals(optionName))
-                  {
-                    %match(TomBoolean v)
-                    {
-                      True() -> { return new Boolean(true); }
-                      False() -> { return new Boolean(false); }
-                    }
-                  }
-              }
-              OptionInteger[name=n, altName=a, valueI=v] ->
-              {
-                if(n.equals(optionName)||a.equals(optionName))
-                  {
-                    return new Integer(v);
-                  }
-              }
-              OptionString[name=n, altName=a, valueS=v] ->
-              {
-                if(n.equals(optionName)||a.equals(optionName))
-                  {
-                    return v;
-                  }
-              }
-            }			
-            list = list.getTail();
-          }
-	    }
-    environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
-                             "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    return null;
+    if (obj == null) {
+	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	return null;
+    } else {
+	return obj;
+    }
   }
 
   /**
@@ -690,34 +596,21 @@ public class TomServer implements TomPluginOptions {
    */
   public boolean getOptionBooleanValue(String optionName)
   {
-    for(int i = 0; i < services.size(); i++)
-	    {
-        TomOptionList ol = (TomOptionList)services.get(i);
-        TomOptionList list = `concTomOption(ol*);
+    Object obj = optionValues.get(optionName);
 
-        while(!(list.isEmpty()))
-          {
-            TomOption h = list.getHead();
-            %match(TomOption h)
-            {
-              OptionBoolean[name=n, altName=a, valueB=v] ->
-              {
-                if(n.equals(optionName)||a.equals(optionName))
-                  {
-                    %match(TomBoolean v)
-                    {
-                      True() -> { return true; }
-                      False() -> { return false; }
-                    }
-                  }
-              }
-            }			
-            list = list.getTail();
-          }
-	    }
-    environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
-                             "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    return false;
+    if (obj == null) {
+	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	return false;
+    } else {
+	try {
+	    return ((Boolean)obj).booleanValue();
+	} catch (ClassCastException cce) {
+	    environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+				     "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	    return false; // we shouldn't be here if the option is indeed a boolean option, that's why we raise an error
+	}
+    }
   }
     
   /**
@@ -728,30 +621,21 @@ public class TomServer implements TomPluginOptions {
    */
   public int getOptionIntegerValue(String optionName)
   {
-    for(int i = 0; i < services.size(); i++)
-	    {
-        TomOptionList ol = (TomOptionList)services.get(i);
-        TomOptionList list = `concTomOption(ol*);
+    Object obj = optionValues.get(optionName);
 
-        while(!(list.isEmpty()))
-          {
-            TomOption h = list.getHead();
-            %match(TomOption h)
-            {
-              OptionInteger[name=n, altName=a, valueI=v] ->
-              {
-                if(n.equals(optionName)||a.equals(optionName))
-                  {
-                    return v;
-                  }
-              }
-            }			
-            list = list.getTail();
-          }
-	    }
-    environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
-                             "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    return 0;
+    if (obj == null) {
+	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	return 0;
+    } else {
+	try {
+	return ((Integer)obj).intValue();
+	} catch (ClassCastException cce) {
+	    environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+				     "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	    return 0; // we shouldn't be here if the option is indeed an integer option, that's why we raise an error
+	}
+    }
   }
     
   /**
@@ -762,30 +646,21 @@ public class TomServer implements TomPluginOptions {
    */
   public String getOptionStringValue(String optionName)
   {
-    for(int i = 0; i < services.size(); i++)
-	    {
-        TomOptionList ol = (TomOptionList)services.get(i);
-        TomOptionList list = `concTomOption(ol*);
+    Object obj = optionValues.get(optionName);
 
-        while(!(list.isEmpty()))
-          {
-            TomOption h = list.getHead();
-            %match(TomOption h)
-            {
-              OptionString[name=n, altName=a, valueS=v] ->
-              {
-                if(n.equals(optionName)||a.equals(optionName))
-                  {
-                    return v;
-                  }
-              }
-            }			
-            list = list.getTail();
-          }
-	    }
-    environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
-                             "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    return null;
+    if (obj == null) {
+	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	return null;
+    } else {
+	try {
+	return (String)obj;
+	} catch (ClassCastException cce) {
+	    environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+				     "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	    return null; // we shouldn't be here if the option is indeed a string option, that's why we raise an error
+	}
+    }
   }
 
   /**
@@ -1051,7 +926,6 @@ public class TomServer implements TomPluginOptions {
 
 		String type = getOptionsType(s);
 		TomPluginOptions plugin = getOptionsOwner(s);
-                //List about = aboutThisOption(s);
 
                 if(type == null || plugin == null) // option not found
                   {
