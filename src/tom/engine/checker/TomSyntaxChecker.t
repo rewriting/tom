@@ -37,7 +37,7 @@ public class TomSyntaxChecker extends TomChecker// implements TomPlugin
 
     public void run()
     {
-	if(amIActivated() == true)
+      if(isActivated())
 	    {	
 		try
 		    {	
@@ -114,8 +114,7 @@ public class TomSyntaxChecker extends TomChecker// implements TomPlugin
 // 	    }
 //     }
 
-    private boolean amIActivated()
-    {
-	return !getServer().getOptionBooleanValue("noCheck");
-    }
+  private boolean isActivated() {
+    return !getServer().getOptionBooleanValue("noCheck");
+  }
 }

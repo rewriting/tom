@@ -46,7 +46,7 @@ public class TomVerifier extends TomGenericPlugin //Base implements TomPlugin
 
     public void run()
     {
-	if(amIActivated() == true)
+	if(isActivated())
 	    {
 		try
 		    {
@@ -129,7 +129,7 @@ public class TomVerifier extends TomGenericPlugin //Base implements TomPlugin
 // 	    }
 //     }
 
-    private boolean amIActivated()
+    private boolean isActivated()
     {
 	TomOptionList list = `concTomOption(myOptions*);
 	

@@ -14,113 +14,105 @@ import jtom.adt.options.types.*;
  *
  * @author Gr&eacute;gory ANDRIEN
  */
-public abstract class TomGenericPlugin extends TomBase implements TomPlugin
-{
-    %include{ adt/TomSignature.tom }
-    %include{ adt/Options.tom }
+public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
+  %include{ adt/TomSignature.tom }
+  %include{ adt/Options.tom }
 
-    /**
-     * The term the plugin works on.
-     */
-    protected TomTerm term;
+  /**
+   * The term the plugin works on.
+   */
+  protected TomTerm term;
 
-    /**
-     * The options the plugin declares.
-     */
-    protected TomOptionList myOptions;
+  /**
+   * The options the plugin declares.
+   */
+  protected TomOptionList myOptions;
 
-    /**
-     * Constructor method. Initializes the option list.
-     */
-    public TomGenericPlugin()
-    {
-	myOptions = `emptyTomOptionList();
-    }
+  /**
+   * Constructor method. Initializes the option list.
+   */
+  public TomGenericPlugin() {
+    myOptions = `emptyTomOptionList();
+  }
 
-    /**
-     * Puts the input ATerm into the variable "term", after casting it as a TomTerm.
-     * If the cast operation fails, an error will be raised.
-     *
-     * @param term the input ATerm
-     */
-    public void setInput(ATerm term)
-    {
-	if (term instanceof TomTerm)
+  /**
+   * Puts the input ATerm into the variable "term", after casting it as a TomTerm.
+   * If the cast operation fails, an error will be raised.
+   *
+   * @param term the input ATerm
+   */
+  public void setInput(ATerm term) {
+    if (term instanceof TomTerm) {
 	    this.term = (TomTerm)term;
-	else
+    } else {
 	    environment().messageError(TomMessage.getString("TomTermExpected"),
-				       this.getClass().getName(),
-				       TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+                                 this.getClass().getName(),
+                                 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     }
+  }
 
-    /**
-     * Returns the ATerm "term" (which is really a TomTerm).
-     *
-     * @return the ATerm "term"
-     */
-    public ATerm getOutput()
-    {
-	return term;
+  /**
+   * Returns the ATerm "term" (which is really a TomTerm).
+   *
+   * @return the ATerm "term"
+   */
+  public ATerm getOutput() {
+    return term;
+  }
+
+  /**
+   * The run method is not implemented in TomGenericPlugin.
+   * The plugin itself should implement its run method.
+   */
+  public abstract void run();
+
+  /**
+   * Returns the TomOptionList "myOptions".
+   *
+   * @return the TomOptionList "myOptions"
+   */
+  public TomOptionList declaredOptions() {
+    return myOptions;
+  }
+
+  /**
+   * Returns an empty TomOptionList. By default, the plugin is considered to have no prerequisites.
+   *
+   * @return an empty TomOptionList
+   */
+  public TomOptionList requiredOptions() {
+    return `emptyTomOptionList();
+  }
+
+  /**
+   * Sets the specified option to the specified value.
+   * By default, no further work is done. Sometimes though, a plugin might need to do more work
+   * (for instance if altering the value entails a change in another).
+   *
+   * @param optionName the option's name
+   * @param optionValue the option's value
+   */
+  public void setOption(String optionName, String optionValue) {
+    TomOptionList subject = declaredOptions();
+    %match(TomOptionList subject) {
+      concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*) -> { 
+        if(n.equals(optionName)||alt.equals(optionName)) {
+          %match(String optionValue) {
+            ('true') -> { myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
+            ('false') -> { myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
+          }
+        }
+      }
+      concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*) -> { 
+        if(n.equals(optionName)||alt.equals(optionName)) {
+          myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
+        }
+      }
+      concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*) -> { 
+        if(n.equals(optionName)||alt.equals(optionName)) {
+          myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
+        }
+      }
     }
-
-    /**
-     * The run method is not implemented in TomGenericPlugin.
-     * The plugin itself should implement its run method.
-     */
-    public abstract void run();
-
-    /**
-     * Returns the TomOptionList "myOptions".
-     *
-     * @return the TomOptionList "myOptions"
-     */
-    public TomOptionList declareOptions()
-    {
-	return myOptions;
-    }
-
-    /**
-     * Returns an empty TomOptionList. By default, the plugin is considered to have no prerequisites.
-     *
-     * @return an empty TomOptionList
-     */
-    public TomOptionList requiredOptions()
-    {
-	return `emptyTomOptionList();
-    }
-
-    /**
-     * Sets the specified option to the specified value.
-     * By default, no further work is done. Sometimes though, a plugin might need to do more work
-     * (for instance if altering the value entails a change in another).
-     *
-     * @param optionName the option's name
-     * @param optionValue the option's value
-     */
-    public void setOption(String optionName, String optionValue)
-    {
- 	%match(TomOptionList myOptions)
- 	    {
-		concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			{
-			    %match(String optionValue)
-				{
-				    ('true') ->
-					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, True())); }
-				    ('false') ->
-					{ myOptions = `concTomOption(av*, ap*, OptionBoolean(n, alt, desc, False())); }
-				}
-			}
-		}
-		concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-		}
-		concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*)
-		    -> { if(n.equals(optionName)||alt.equals(optionName))
-			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-		}
-	    }
-    }
+  }
 }

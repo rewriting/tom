@@ -59,7 +59,7 @@ public class JLstring {
 
   public void f2(String s) {
     %match(String s) {
-      (X1*,x@'ll',X2*) -> {
+      (X1*,x@'l',X2*) -> {
         System.out.println("X1   = " + `X1);
         System.out.println("char = " + `x);
         System.out.println("X2   = " + `X2);

@@ -49,7 +49,7 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
 
     public void run()
     {
-	if(amIActivated() == true)
+      if(isActivated() == true)
 	    {
 		try
 		    {
@@ -192,26 +192,25 @@ public class TomBackend extends TomGenericPlugin //Base implements TomPlugin
     }
 
 
-    private boolean amIActivated()
-    {
-	TomOptionList list = `concTomOption(myOptions*);
+  private boolean isActivated() {
+    TomOptionList list = `concTomOption(myOptions*);
 	
-	while(!(list.isEmpty()))
+    while(!(list.isEmpty()))
 	    {
-		TomOption h = list.getHead();
-		%match(TomOption h)
+        TomOption h = list.getHead();
+        %match(TomOption h)
 		    {
-			OptionBoolean[name="noOutput", valueB=True()] -> 
+          OptionBoolean[name="noOutput", valueB=True()] -> 
 			    { 
-				return false;
+            return false;
 			    }
-			OptionBoolean[name="noOutput", valueB=False()] -> 
+          OptionBoolean[name="noOutput", valueB=False()] -> 
 			    { 
-				return true;
+            return true;
 			    }
 		    }
-		list = list.getTail();
+        list = list.getTail();
 	    }
-	return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
-    }
+    return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
+  }
 }

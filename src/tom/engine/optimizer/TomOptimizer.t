@@ -44,7 +44,7 @@ public class TomOptimizer extends TomGenericPlugin //Base implements TomPlugin
 
     public void run()
     {
-	if(amIActivated() == true)
+	if(isActivated())
 	    {
 		try
 		    {
@@ -125,28 +125,23 @@ public class TomOptimizer extends TomGenericPlugin //Base implements TomPlugin
 // 	    }
 //     }
 
-    private boolean amIActivated()
-    {
-	TomOptionList list = `concTomOption(myOptions*);
+  private boolean isActivated() {
+    TomOptionList list = `concTomOption(myOptions*);
 
-	while(!(list.isEmpty()))
-	    {
-		TomOption h = list.getHead();
-		%match(TomOption h)
-		    {
-			OptionBoolean[name="optimize", valueB=val] -> 
-			    { 
-				%match(TomBoolean val)
-				    {
-					True() -> { return true; }
-					False() -> { return false; }
-				    }
-			    }
-		    }
-		list = list.getTail();
-	    }
-	return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
+    while(!(list.isEmpty())) {
+      TomOption h = list.getHead();
+      %match(TomOption h) {
+        OptionBoolean[name="optimize", valueB=val] -> { 
+          %match(TomBoolean val) {
+            True() -> { return true; }
+            False() -> { return false; }
+          }
+        }
+      }
+      list = list.getTail();
     }
+    return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
+  }
 
 
     /* 

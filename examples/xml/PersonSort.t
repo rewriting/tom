@@ -69,9 +69,9 @@ public class PersonSort {
   	 
   private int compare(TNode t1, TNode t2) {
     %match(TNode t1, TNode t2) {
-      <Person Age=a1><FirstName>#TEXT(_)</FirstName></Person>,
-      <Person Age=a2><FirstName>#TEXT(_)</FirstName></Person>
-      -> { return `a1.compareTo(`a2); }
+      <Person Age=a1><FirstName>#TEXT(n1)</FirstName></Person>,
+      <Person Age=a2><FirstName>#TEXT(n2)</FirstName></Person>
+      -> { return `n1.compareTo(`n2); }
     }
     return 0;
   }

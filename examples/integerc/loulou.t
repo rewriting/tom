@@ -44,7 +44,7 @@
   fsym { ZERO }
 }
 
-%op Nat suc(Nat) {
+%op Nat suc(p:Nat) {
   fsym { SUC }
 }
 
