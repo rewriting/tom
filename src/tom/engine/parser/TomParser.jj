@@ -777,7 +777,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
           symbol = tsf().makeTomName_Name("");
           optionList.add(ast().makeOriginTracking("",getLine(), currentFile));
         }
-
+        
         
         option = ast().makeOptionList(optionList);
         if(implicit) {
@@ -790,10 +790,7 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     symbol = HeadSymbol(optionList)
     {
       option = ast().makeOptionList(optionList);
-      return tsf().makeTomTerm_Appl(
-        option,
-        symbol,
-        tsf().makeTomList());
+      return tsf().makeTomTerm_Appl(option,symbol,tsf().makeTomList());
     }
 }
 

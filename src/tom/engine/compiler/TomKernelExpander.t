@@ -146,8 +146,7 @@ public class TomKernelExpander extends TomBase {
               OptionList option = `replaceAnnotedName(optionList,getSymbolCodomain(tomSymbol),orgTrack);
               return `Appl(option,name,subterm);
             } else {
-              System.out.println("context = " + context);
-              System.out.println("tomName = '" + tomName + "'");
+                // do nothing
             }
           }
 

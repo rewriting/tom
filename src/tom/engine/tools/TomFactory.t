@@ -80,17 +80,17 @@ public class TomFactory extends TomBase {
        * Appl(...,Name("\"string\""),...) becomes
        * Appl(...,Name("TextNode"),[Appl(...,Name("\"string\""),...)],...)
        */
-    System.out.println("metaEncode: " + term);
+      //System.out.println("metaEncode: " + term);
     %match(TomTerm term) {
       Appl[astName=Name(tomName)] -> {
-        System.out.println("tomName = " + tomName);
+          //System.out.println("tomName = " + tomName);
         TomSymbol tomSymbol = symbolTable.getSymbol(tomName);
         if(tomSymbol != null) {
           if(isStringOperator(tomSymbol)) {
             Option info = ast().makeOriginTracking(Constants.TEXT_NODE,"-1","??");
             term = `Appl( ast().makeOption(info),
                           Name(Constants.TEXT_NODE),concTomTerm(term));
-            System.out.println("metaEncodeXmlAppl = " + term);
+              //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
       }
