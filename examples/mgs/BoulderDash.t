@@ -145,6 +145,7 @@ public class BoulderDash {
     putBead(space,10,6,rock);
     putBead(space,10,7,rock);
     putBead(space,10,8,rock);
+    putBead(space,10,9,rock);
 
     boolean fire = true;
     while(fire) {
@@ -187,6 +188,16 @@ public class BoulderDash {
         marked.add(s);
         return true;
       }
+
+beadRock[s=s@beadRock[w=empty()],w=empty()] -> {
+        Bead newBead = `bead(getWestPosition(getSouthPosition(b.getPos())),b.getValue());
+        putBead(newSpace,newBead);
+        putBead(newSpace,s);
+        marked.add(b);
+        marked.add(s);
+        return true;
+      }
+
 
       bead[pos=p] -> {
         newSpace.put(p,b);
