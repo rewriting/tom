@@ -284,21 +284,21 @@
   <target name="buildadt" depends="initTaskDef, prepare.src">
 
     <vas config="${stable.vasconfigfile}"
-				 srcdir="${src.src}"
-				 package="tom.library.adt" 
+         srcdir="${src.src}"
+         package="tom.library.adt" 
          destdir="${src.gen}">
       <include name="tom/library/adt/*.vas"/>
     </vas>
 
     <vas config="${stable.vasconfigfile}"
-				 srcdir="${src.src}"
+         srcdir="${src.src}"
          package="tom.platform.adt" 
          destdir="${src.gen}">
       <include name="tom/platform/adt/*.vas"/>
     </vas>
 <!--
     <vas config="${stable.vasconfigfile}"
-				 srcdir="${src.src}"
+         srcdir="${src.src}"
          package="jtom.adt" 
          name="tomsignature" 
          destdir="${src.gen}">
@@ -320,10 +320,10 @@
 
     <!-- adt for the verifier -->
     <vas config="${stable.vasconfigfile}"
-				 srcdir="${src.src}"
+         srcdir="${src.src}"
          package="jtom.verifier" 
          destdir="${src.gen}">
-			<include name="jtom/verifier/il.vas"/>
+      <include name="jtom/verifier/il.vas"/>
     </vas>
 
   </target>
@@ -377,7 +377,7 @@
     </fail>
     <!-- "tom README and INSTALL" -->
     <copy todir="${dest}" file="README"/>
-		<copy todir="${dest}" file="${share}/INSTALL"/>
+    <copy todir="${dest}" file="${share}/INSTALL"/>
     <copy todir="${dest}" file="NEWS"/>
     <copy todir="${dest}" file="AUTHORS"/>
     <!-- tom doc -->
@@ -1105,7 +1105,7 @@
     <mkdir dir="${stable.doc}"/>    
     <javadoc destdir="${stable.doc}"
              windowtitle="TOM documentation"
-						 breakiterator="yes">
+             breakiterator="yes">
       <classpath refid="stable.classpath"/>
       <fileset dir="${stable.src}">
         <include name="tom/**/*.java"/>
@@ -1115,19 +1115,19 @@
   </target>
 
   <target name="doc.src" 
-					description="Build javadoc for src"
-					depends="build.src">
+          description="Build javadoc for src"
+          depends="build.src">
     <mkdir dir="${src.doc}"/>   
     <javadoc destdir="${src.doc}"
              windowtitle="TOM documentation"
-						 breakiterator="yes">
+             breakiterator="yes">
       <classpath refid="src.classpath"/>
       <fileset dir="${src.src}">
         <include name="tom/**/*.java"/>
         <include name="jtom/**/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
-				<include name="tom/**/*.java"/>
+        <include name="tom/**/*.java"/>
         <include name="jtom/**/*.java"/>
       </fileset>
     </javadoc>
