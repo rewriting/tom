@@ -3,7 +3,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
+    Copyright (C) 2000-2004 INRIA
 			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
@@ -36,5 +36,13 @@ public class Constants {
   public final static String ATTRIBUTE_NODE = "AttributeNode";
   public final static String ELEMENT_NODE   = "ElementNode";
   public final static String PROCESSING_INSTRUCTION_NODE = "ProcessingInstructionNode";
+
+  public final static String SLOT_NAME      = "name";
+  public final static String SLOT_ATTRLIST  = "attrList";
+  public final static String SLOT_CHILDLIST = "childList";
+  public final static String SLOT_SPECIFIED = "specified";
+  public final static String SLOT_VALUE     = "value";
+  public final static String SLOT_DATA      = "data";
+  public final static String SLOT_TARGET    = "target";
 
 }

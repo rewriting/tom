@@ -26,6 +26,7 @@
 package jtom.runtime.xml;
 
 import java.io.*;
+import java.util.Collection;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -67,11 +68,24 @@ public class XmlTools {
     return x2a.convertToNode(filename);
   }
 
+  public Node convertToNode(InputStream is) {
+    return x2a.convertToNode(is);
+  }
+
+  public Collection getNodes(TNode n) {
+    return x2a.getNodes(n);
+  }
+
   public ATerm convertXMLToATerm(String filename) {
     x2a.convert(filename);
     return x2a.getATerm();
   }
 
+  public ATerm convertXMLToATerm(InputStream is) {
+    x2a.convert(is);
+    return x2a.getATerm();
+  }
+  
   public void printXMLFromATerm(ATerm t) {
     a2x.setWriter(null);
     a2x.setOutputStream(System.out);
@@ -88,6 +102,10 @@ public class XmlTools {
     a2x.setWriter(writer);
     a2x.setOutputStream(null);
     a2x.convert(t);
+  }
+
+  public String xml(TNode t) {
+    return a2x.xml(t);
   }
 
 }

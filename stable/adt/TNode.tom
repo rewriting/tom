@@ -94,12 +94,12 @@
   make(t0, t1, t2) { getTNodeFactory().makeTNode_ElementNode(t0, t1, t2)}
 }
 
-%op TNode AttributeNode(name:String, specified:String, child:TNode) {
+%op TNode AttributeNode(name:String, specified:String, value:String) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isAttributeNode()}
   get_slot(name,t) { t.getName()}
   get_slot(specified,t) { t.getSpecified()}
-  get_slot(child,t) { t.getChild()}
+  get_slot(value,t) { t.getValue()}
   make(t0, t1, t2) { getTNodeFactory().makeTNode_AttributeNode(t0, t1, t2)}
 }
 

@@ -468,10 +468,10 @@
   make(t0, t1, t2) { getTomSignatureFactory().makeExpression_GetSlot(t0, t1, t2)}
 }
 
-%op Expression GetHead(kid1:TomTerm) {
+%op Expression GetHead(variable:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isGetHead()}
-  get_slot(kid1,t) { t.getKid1()}
+  get_slot(variable,t) { t.getVariable()}
   make(t0) { getTomSignatureFactory().makeExpression_GetHead(t0)}
 }
 
@@ -815,10 +815,10 @@
   make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_BackQuoteAppl(t0, t1, t2)}
 }
 
-%op TomTerm DoubleBackQuote(arg:TomTerm) {
+%op TomTerm DoubleBackQuote(args:TomList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isDoubleBackQuote()}
-  get_slot(arg,t) { t.getArg()}
+  get_slot(args,t) { t.getArgs()}
   make(t0) { getTomSignatureFactory().makeTomTerm_DoubleBackQuote(t0)}
 }
 
@@ -924,10 +924,10 @@
   make(t0, t1) { getTomSignatureFactory().makeTomTerm_TLVar(t0, t1)}
 }
 
-%op TomTerm Declaration(kid1:TomTerm) {
+%op TomTerm Declaration(variable:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isDeclaration()}
-  get_slot(kid1,t) { t.getKid1()}
+  get_slot(variable,t) { t.getVariable()}
   make(t0) { getTomSignatureFactory().makeTomTerm_Declaration(t0)}
 }
 
@@ -983,13 +983,12 @@
   make(t0, t1) { getTomSignatureFactory().makeTomTerm_BuildArray(t0, t1)}
 }
 
-%op TomTerm CompiledMatch(decls:TomList, automataList:TomList, option:OptionList) {
+%op TomTerm CompiledMatch(automataList:TomList, option:OptionList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isCompiledMatch()}
-  get_slot(decls,t) { t.getDecls()}
   get_slot(automataList,t) { t.getAutomataList()}
   get_slot(option,t) { t.getOption()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_CompiledMatch(t0, t1, t2)}
+  make(t0, t1) { getTomSignatureFactory().makeTomTerm_CompiledMatch(t0, t1)}
 }
 
 %op TomTerm CompiledPattern(instList:TomList) {
@@ -1139,12 +1138,21 @@
   make(t0, t1) { getTomSignatureFactory().makeInstruction_DoWhile(t0, t1)}
 }
 
-%op Instruction Assign(kid1:TomTerm, source:Expression) {
+%op Instruction Assign(variable:TomTerm, source:Expression) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isAssign()}
-  get_slot(kid1,t) { t.getKid1()}
+  get_slot(variable,t) { t.getVariable()}
   get_slot(source,t) { t.getSource()}
   make(t0, t1) { getTomSignatureFactory().makeInstruction_Assign(t0, t1)}
+}
+
+%op Instruction Let(variable:TomTerm, source:Expression, astInstruction:Instruction) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isLet()}
+  get_slot(variable,t) { t.getVariable()}
+  get_slot(source,t) { t.getSource()}
+  get_slot(astInstruction,t) { t.getAstInstruction()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeInstruction_Let(t0, t1, t2)}
 }
 
 %op Instruction AssignMatchSubject(kid1:TomTerm, source:Expression) {
@@ -1169,13 +1177,6 @@
   make(t0) { getTomSignatureFactory().makeInstruction_Action(t0)}
 }
 
-%op Instruction ExitAction(numberList:TomNumberList) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isExitAction()}
-  get_slot(numberList,t) { t.getNumberList()}
-  make(t0) { getTomSignatureFactory().makeInstruction_ExitAction(t0)}
-}
-
 %op Instruction Return(kid1:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isReturn()}
@@ -1193,6 +1194,19 @@
   fsym {}
   is_fsym(t) { (t!= null) && t.isCloseBlock()}
   make() { getTomSignatureFactory().makeInstruction_CloseBlock()}
+}
+
+%op Instruction Nop {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isNop()}
+  make() { getTomSignatureFactory().makeInstruction_Nop()}
+}
+
+%op Instruction UnamedBlock(instList:TomList) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isUnamedBlock()}
+  get_slot(instList,t) { t.getInstList()}
+  make(t0) { getTomSignatureFactory().makeInstruction_UnamedBlock(t0)}
 }
 
 %op Instruction NamedBlock(blockName:String, instList:TomList) {

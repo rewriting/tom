@@ -34,15 +34,16 @@ import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 
 public class SymbolTable {
-  private boolean cCode = false, jCode = true, eCode =false;
+  private boolean cCode = false, jCode = true, eCode =false, camlCode = false;
   private Map mapSymbolName = new HashMap();
   private Map mapTypeName = new HashMap();
   private ASTFactory astFactory;
-  public SymbolTable(ASTFactory astFactory, boolean cCode, boolean jCode, boolean eCode) {
+  public SymbolTable(ASTFactory astFactory, boolean cCode, boolean jCode, boolean eCode, boolean camlCode) {
     this.astFactory = astFactory;
     this.cCode = cCode;
 	  this.jCode = jCode;
 	  this.eCode = eCode;
+		this.camlCode = camlCode;
     init();
   }
   private void init() {
@@ -64,6 +65,12 @@ public class SymbolTable {
       putType("double", ast().makeType("double","DOUBLE"));
       putType("String", ast().makeType("String","STRING"));
       putType("universal", ast().makeType("universal","ANY"));
+    } else if(camlCode) { // this is really bad, will need to be corrected
+      putType("bool", ast().makeType("bool","bool"));
+      putType("int", ast().makeType("int","int"));
+      putType("double", ast().makeType("double","double"));
+      putType("String", ast().makeType("String","String"));
+      putType("universal", ast().makeType("universal","None"));
     }
   }
 

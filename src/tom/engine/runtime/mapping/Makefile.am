@@ -5,7 +5,7 @@
 SUBDIRS         = c
 javadir         = ${prefix}/classes/jtom
 
-stabledir 	= $(top_srcdir)/stable/adt
+stabledir 	= $(top_srcdir)/stable/jtom/runtime/mapping
 
 JAVAROOT        = ${top_builddir}/src/
 

@@ -1,0 +1,44 @@
+%typeterm ATerm {
+  implement           { ATerm }
+  get_fun_sym(t)      { (void*)ATgetAFun(t) }
+  cmp_fun_sym(s1,s2)  { ATisEqualAFun(s1,s2) }
+  get_subterm(t, n)   { ATgetArgument(t,n) }
+}
+
+%typelist ATermList {
+  implement { ATermList }
+  get_fun_sym(t) { ((ATgetType(t)==AT_LIST)?(void*)ATmakeAFun("conc", 1, ATfalse):NULL) }
+  cmp_fun_sym(t1,t2) { (t1)==(t2) }
+  equals(l1,l2)  { l1==l2 }
+  get_head(l)    { ATgetFirst(l) }
+  get_tail(l)    { ATgetNext(l) }
+  is_empty(l)    { ATisEmpty(l) }
+}
+
+%oplist ATermList conc(ATerm*) {
+  fsym { (void*)ATmakeAFun("conc", 1, ATfalse) }
+  make_empty() { ATempty }
+  make_insert(e,l) { ATinsert(l,e) }
+} 
+
+%typeterm ATermString {
+  implement           { ATermAppl }
+  get_fun_sym(t)      { ATgetName(ATgetAFun(t)) }
+  cmp_fun_sym(s1,s2)  { !strcmp(s1,s2) }
+  get_subterm(t, n)   { NULL }
+}
+
+%typeterm List {
+  implement           { ATermList }
+  get_fun_sym(l)      { (ATisEmpty(l)?(void*)ATmakeAFun("nil", 0, ATfalse):(void*)ATmakeAFun("cons", 2, ATfalse)) }
+  cmp_fun_sym(s1,s2)  { ATisEqualAFun(s1,s2) }
+  get_subterm(l, n)   { ((n==0)?(void*)ATgetFirst(l):(void*)ATgetNext(l)) }
+}
+
+%op List nil {
+  fsym { (void*)ATmakeAFun("nil", 0, ATfalse) }
+}
+
+%op List cons(term,list) {
+  fsym { (void*)ATmakeAFun("cons", 2, ATfalse) }
+}

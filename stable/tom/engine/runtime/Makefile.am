@@ -6,7 +6,7 @@ TSADT_STABLE=$(top_srcdir)/stable/adt/TomSignature-${VERSION}.jar
 SETADT_STABLE=$(top_srcdir)/stable/adt/Set-${VERSION}.jar
 TNODEADT_STABLE=$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
 
-SUBDIRS         = strategies set xml
+SUBDIRS         = strategies set xml mapping
 
 javadir         = ${prefix}/classes/jtom/runtime
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(TSADT_STABLE):$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
