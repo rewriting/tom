@@ -37,7 +37,7 @@ bootstep:
 
 
 BOOTSTRAPDIR     = jtom
-BOOTSTRAPDIRCOPY = /tmp/jtom.bootstrap
+BOOTSTRAPDIRCOPY = tmp/jtom.bootstrap
 
 bootstrap:
 	@echo
@@ -50,7 +50,8 @@ bootstrap:
 	@echo
 	$(MAKE) bootstep
 	rm -rf $(BOOTSTRAPDIRCOPY)
-	cp -rp $(BOOTSTRAPDIR) $(BOOTSTRAPDIRCOPY)
+	$(INSTALL) -d $(BOOTSTRAPDIR) $(BOOTSTRAPDIRCOPY)
+	cp -rp $(BOOTSTRAPDIR)/* $(BOOTSTRAPDIRCOPY)/
 
 	@echo
 	@echo "BOOTSTRAPPING PHASE 3"
@@ -61,7 +62,7 @@ bootstrap:
 	@echo "BOOTSTRAPPING CHECK"
 	@echo "-------------------"
 	diff -r $(BOOTSTRAPDIR) $(BOOTSTRAPDIRCOPY)
-	@rm -rf $(BOOTSTRAPDIRCOPY)
+	rm -rf $(BOOTSTRAPDIRCOPY)
 
 bootinstall:
 	list='$(SUBDIRS)'; for subdir in $$list; do \
