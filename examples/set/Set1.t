@@ -3,7 +3,8 @@ import java.util.*;
 import aterm.*;
 import adt.*;
 
-import jtom.runtime.*;
+import jtom.runtime.GenericTraversal;
+import jtom.runtime.Replace1;
 import java.io.*;
 
 public class Set1 {
@@ -44,23 +45,23 @@ public class Set1 {
     1 << 27,
     1 << 28,
     1 << 29,
-    1 << 30
+    1 << 30,
+    1 << 31
   };
   
   %include { set.t }
   
   public Set1(SetFactory factory) {
-    this.factory = factory;
-    this.comparator = new MyComparator();
-    this.traversal = new GenericTraversal();
-    this.depth = 31;
+    this(factory, 31);
   }
   
   public Set1(SetFactory factory, int depth) {
     this.factory = factory;
     this.comparator = new MyComparator();
     this.traversal = new GenericTraversal();
-    this.depth = depth;
+    if (depth <= 32) {
+      this.depth = depth;
+    } else {this.depth = 32;}
   }
   public SetFactory getSetFactory() {
     return factory;
@@ -96,6 +97,35 @@ public class Set1 {
     return 0;
   }
 
+  public void topRepartition(JGSet t) {
+    %match(JGSet t) {
+      branch(l,r) -> { System.out.println("Left branch: "+card(l)+"\tright branch: "+card(r));return;}
+      _ ->  {System.out.println("topRepartition: No a branch");}
+    }
+  }
+
+    // getHead return the first left inner element found
+  public ATerm getHead(JGSet t) {
+    %match(JGSet t) {
+      emptySet -> {
+        return null;
+      }
+      singleton(x) -> {return x;}
+      branch(l,r) -> {
+        ATerm left = getHead(l);
+        if(left != null) {
+          return left;
+        }
+        return getHead(r);
+      }
+    }
+    return null;
+  }
+
+  public JGSet getTail(JGSet t) {
+    return remove(getHead(t), t);
+  }
+  
   /* Simple binary operation skeleton
  private JGSet f(JGSet m1, JGSet m2) {
    %match(JGSet m1, JGSet m2) {
@@ -227,7 +257,7 @@ public class Set1 {
 
       branch(l, r) -> {
         JGSet l1 = null, r1=null;
-        if( isBitNullAt(elt, level) ) {
+        if( isBitZero(elt, level) ) {
           l1 = remove(elt, l, level+1);
           r1 = r;
         } else {
@@ -256,7 +286,7 @@ public class Set1 {
         if(level == depth) {
           return (member(elt, l, level) || member(elt, r, level));
         }
-        if( isBitNullAt(elt, level)) {
+        if( isBitZero(elt, level)) {
           return member(elt, l, level+1);
         } else {
           return member(elt, r, level+1);
@@ -280,10 +310,10 @@ public class Set1 {
           return `branch(t, singleton(elt));
           
         }
-        else if ( isBitNullAt(elt, level) && isBitNullAt(x, level) )  { return `branch(override(elt, t, lev), emptySet);}
-        else if ( isBit1At(elt, level)  && isBit1At(x, level) )   { return `branch(emptySet, override(elt, t, lev));}
-        else if ( isBitNullAt(elt, level) && isBit1At(x, level) ) { return `branch(singleton(elt), t);}
-        else if ( isBit1At(elt, level)  && isBitNullAt(x, level) ){ return `branch(t, singleton(elt));}
+        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(override(elt, t, lev), emptySet);}
+        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptySet, override(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(singleton(elt), t);}
+        else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, singleton(elt));}
       }
       
       branch(l, r) -> {
@@ -293,7 +323,7 @@ public class Set1 {
             //continue list of element
           return `branch(t, singleton(elt));
         }
-        if (isBitNullAt(elt, level)) {
+        if (isBitZero(elt, level)) {
           return `branch(override(elt, l, lev), r);
         } else {
           return `branch(l, override(elt, r, lev));
@@ -310,109 +340,27 @@ public class Set1 {
 
       singleton(x)   -> {
         if(x == elt) {  return t;}
-        else if ( isBitNullAt(elt, level) && isBitNullAt(x, level) )  { return `branch(underride(elt, t, lev), emptySet);}
-        else if ( isBit1At(elt, level)  && isBit1At(x, level) )   { return `branch(emptySet, underride(elt, t, lev));}
-        else if ( isBitNullAt(elt, level) && isBit1At(x, level) ) { return `branch(singleton(elt), t);}
-        else if ( isBit1At(elt, level)  && isBitNullAt(x, level) ){ return `branch(t, singleton(elt));}
+        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(underride(elt, t, lev), emptySet);}
+        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptySet, underride(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(singleton(elt), t);}
+        else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, singleton(elt));}
       }
 
       branch(l, r) -> {
-        if (isBitNullAt(elt, level)) {return `branch(underride(elt, l, lev), r);}
+        if (isBitZero(elt, level)) {return `branch(underride(elt, l, lev), r);}
         else {return `branch(l, underride(elt, r, lev));}
       }
     }
     return null;
   }
 
-  private boolean isBitNullAt(ATerm elt, int i) {
-    return ( (elt.hashCode() & mask[i]) == 0);
+  private boolean isBitZero(ATerm elt, int position) {
+    return ( (elt.getId() & mask[position]) == 0);
   }
   
-  private boolean isBit1At(ATerm elt, int i) {
-    return ( (elt.hashCode() & mask[i]) > 0);
+  private boolean isBitOne(ATerm elt, int position) {
+    return ( (elt.getId() & mask[position]) > 0);
   }
-    // Execution 
-  public void run(int n) {
-
-    JGSet t1 = `emptySet();
-    JGSet t2 = `emptySet();
-    Element e1 = `e1();
-    Element e2 = `e2();
-    Element e3 = `e3();
-
-    Element array[] = new Element[3*n];
-    array[0] = e1;
-    array[1] = e2;
-    array[2] = e3;
-    for(int i=1 ; i<n ; i++) {
-      Element old_e1 = array[3*i+0-3];
-      Element old_e2 = array[3*i+1-3];
-      Element old_e3 = array[3*i+2-3];
-      array[3*i+0] = `f(old_e1);
-      array[3*i+1] = `f(old_e2);
-      array[3*i+2] = `f(old_e3);
-    }
-    
-      // Adding elements to JGSet t
-    long startChrono = System.currentTimeMillis();
-    for(int i=0 ; i<3*n ; i++) {
-      t1 = add(array[i], t1);
-    }    
-    long stopChrono = System.currentTimeMillis();
-    int size = card(t1);
-    System.out.println("tree size = " + size + " in " + (stopChrono-startChrono) + " ms =>"+t1);
-
-/*      //Adding element to a java Set
-    TreeSet set = new TreeSet(comparator);
-    startChrono = System.currentTimeMillis();
-    for(int i=0 ; i<3*n ; i++) {
-      set.add(array[i]);
-    }    
-    stopChrono = System.currentTimeMillis();
-    System.out.println("set  size = " + set.size() + " in " + (stopChrono-startChrono) + " ms");
-*/
- 
-      // Looking for elements in a JGSet
-    startChrono = System.currentTimeMillis();
-    for(int i=0 ; i<3*n ; i++) {
-      if( member(array[i], t1) == false) System.out.println("Loose an element");
-    }
-    stopChrono = System.currentTimeMillis();
-    System.out.println("found each element of tree size = " + size + " in " + (stopChrono-startChrono) + " ms");
-
-   
-      //Maximal sharing
-    for(int i=0 ; i<3*n ; i++) {
-      t2 = add(array[i], t2);
-    }
-    if (t1 == t2) System.out.println("Maximal sharing");
-
-      //Union and intersection
-    JGSet t3 = union(t1, t2);
-    if (t1 == t3) System.out.println("Simple union OK");
-    JGSet t4 = intersection(t1, t2);
-    if (t4 == t3) System.out.println("Simple intersection OK");
-    
-    JGSet t5 = `emptySet();
-    JGSet t6 = `emptySet();
-    JGSet t7 = `emptySet();
-    for(int i=0 ; i<2*n ; i++) {
-      t5 = add(array[i], t5);
-    }
-    for(int i=n ; i<3*n ; i++) {
-      t6 = add(array[i], t6);
-    }
-    for(int i=n ; i<2*n ; i++) {
-      t7 = add(array[i], t7);
-    }
-    System.out.println("starting complex union");
-    JGSet t8 = union(t5, t6);
-    if (t1 == t8) {System.out.println("Union OK");} else {System.out.println("Complex union failed with \n\tt5:"+t5+" \nand \tt6: "+t6+"\n\tres: "+t8+"\n\tbuilt: "+t1);}
-    JGSet t9 = intersection(t5, t6);
-    if (t7 == t9) {System.out.println("Intersection OK");} else {System.out.println("Complex intersection failed with t5:\t"+t5+"\nt6:\t"+t6+"\nres:\t"+t9+"\nbuilt:\t"+t7);}
-    
-  }
-
   
   public final static void main(String[] args) {
     SetFactory fact = new SetFactory();
@@ -454,14 +402,157 @@ public class Set1 {
     }    
   }
 
+      // Execution 
+  public void run(int n) {
+
+    JGSet t0 = `emptySet();
+    JGSet t1 = `emptySet();
+    JGSet t2 = `emptySet();
+    Element e1 = `e1();
+    Element e2 = `e2();
+    Element e3 = `e3();
+
+    System.out.println("getHead de empty: "+getHead(t0));
+    t0 = add(e1, t0);
+    System.out.println("getHead de t0: "+t0+" = " +getHead(t0));
+    System.out.println("getTail de t0: "+getTail(t0));
+    t0 = add(e2, t0);
+    t0 = add(e3, t0);
+    t0 = add(`f(e1), t0);
+    System.out.println("t0: "+t0);
+    System.out.println("getHead de t0: "+getHead(t0));
+    System.out.println("getTail de t0: "+getTail(t0));
+    
+    Element array[] = new Element[3*n];
+    array[0] = e1;
+    array[1] = e2;
+    array[2] = e3;
+    for(int i=1 ; i<n ; i++) {
+      Element old_e1 = array[3*i+0-3];
+      Element old_e2 = array[3*i+1-3];
+      Element old_e3 = array[3*i+2-3];
+      array[3*i+0] = `f(old_e1);
+      array[3*i+1] = `f(old_e2);
+      array[3*i+2] = `f(old_e3);
+    }
+    
+      // Adding elements to JGSet t
+    long startChrono = System.currentTimeMillis();
+    for(int i=0 ; i<3*n ; i++) {
+      t1 = add(array[i], t1);
+    }    
+    long stopChrono = System.currentTimeMillis();
+    int size = card(t1);
+    System.out.println("JGSet tree size = " + size + " in " + (stopChrono-startChrono) + " ms");
+    topRepartition(t1);
+    
+      //Adding element to a java Set
+    TreeSet set = new TreeSet(comparator);
+    startChrono = System.currentTimeMillis();
+    for(int i=0 ; i<3*n ; i++) {
+      set.add(array[i]);
+    }    
+    stopChrono = System.currentTimeMillis();
+    System.out.println("Java set  size = " + set.size() + " in " + (stopChrono-startChrono) + " ms");
+    
+      // Looking for elements in a JGSet
+    startChrono = System.currentTimeMillis();
+    for(int i=0 ; i<3*n ; i++) {
+      if( member(array[i], t1) == false) System.out.println("Loose an element");
+    }
+    stopChrono = System.currentTimeMillis();
+    System.out.println("Found each element of JGSet size = " + size + " in " + (stopChrono-startChrono) + " ms");
+    
+      // Looking for elements in a java Set
+    startChrono = System.currentTimeMillis();
+    for(int i=0 ; i<3*n ; i++) {
+      if( set.contains(array[i]) == false) System.out.println("Loose an element");
+    }
+    stopChrono = System.currentTimeMillis();
+    System.out.println("Found each element of java Set size = " + size + " in " + (stopChrono-startChrono) + " ms");
+    
+      //Maximal sharing
+    TreeSet set2 = new TreeSet(comparator);
+    for(int i=3*n-1 ; i>=0 ; i--) {
+      t2 = add(array[i], t2);
+      set2.add(array[i]);
+    }
+    if (t1 == t2) System.out.println("Maximal sharing is OK");
+    
+      //Union and intersection
+    startChrono = System.currentTimeMillis();
+    JGSet t3 = union(t1, t2);
+    stopChrono = System.currentTimeMillis();
+    if (t1 == t3) System.out.println("Simple union OK");
+    System.out.println("Simple union for JGSet in " + (stopChrono-startChrono) + " ms");
+
+    startChrono = System.currentTimeMillis();
+    set.addAll(set2);
+    stopChrono = System.currentTimeMillis();
+    System.out.println("Simple union for java Set in " + (stopChrono-startChrono) + " ms");
+
+     
+    startChrono = System.currentTimeMillis();
+    JGSet t4 = intersection(t1, t2);
+    stopChrono = System.currentTimeMillis();
+    if (t1 == t4) System.out.println("Simple intersection OK");
+    System.out.println("Simple intersection for JGSet in " + (stopChrono-startChrono) + " ms");
+
+    startChrono = System.currentTimeMillis();
+    set.containsAll(set2);
+    stopChrono = System.currentTimeMillis();
+    System.out.println("Simple intersection for java Set in " + (stopChrono-startChrono) + " ms");
+    
+    JGSet t5 = `emptySet();
+    JGSet t6 = `emptySet();
+    JGSet t7 = `emptySet();
+    TreeSet set5 = new TreeSet(comparator);
+    TreeSet set6 = new TreeSet(comparator);
+    TreeSet set7 = new TreeSet(comparator);
+    for(int i=0 ; i<2*n ; i++) {
+      t5 = add(array[i], t5);
+      set5.add(array[i]);
+    }
+    for(int i=n ; i<3*n ; i++) {
+      t6 = add(array[i], t6);
+      set6.add(array[i]);
+    }
+    for(int i=n ; i<2*n ; i++) {
+      t7 = add(array[i], t7);
+      set6.add(array[i]);
+    }
+    
+    startChrono = System.currentTimeMillis();
+    JGSet t8 = union(t5, t6);
+    stopChrono = System.currentTimeMillis();
+    if (t1 == t8) {System.out.println("Complex union for JGSet in " + (stopChrono-startChrono) + " ms");} else {System.out.println("Complex union failed with \n\tt5:"+t5+" \nand \tt6: "+t6+"\n\tres: "+t8+"\n\tbuilt: "+t1);}
+
+    startChrono = System.currentTimeMillis();
+    set5.addAll(set6);
+    stopChrono = System.currentTimeMillis();
+    System.out.println("Complex union for java Set in " + (stopChrono-startChrono) + " ms");
+
+
+    startChrono = System.currentTimeMillis();
+    JGSet t9 = intersection(t5, t6);
+    stopChrono = System.currentTimeMillis();
+    if (t7 == t9) {System.out.println("Complex intersection for JGSet in " + (stopChrono-startChrono) + " ms");} else {System.out.println("Complex intersection");}// failed with t5:\t"+t5+"\nt6:\t"+t6+"\nres:\t"+t9+"\nbuilt:\t"+t7);}
+
+    startChrono = System.currentTimeMillis();
+    set5.containsAll(set6);
+    stopChrono = System.currentTimeMillis();
+    System.out.println("Complex intersection for java Set in " + (stopChrono-startChrono) + " ms");
+    
+  }
+
   class MyComparator implements Comparator {
     public int compare(Object o1, Object o2) {
       if(o1==o2) {
         return 0;
       }
 
-      int ho1 = o1.hashCode();
-      int ho2 = o2.hashCode();
+      int ho1 = ((ATerm)o1).getId();
+      int ho2 = ((ATerm)o2).getId();
       
       if(ho1 < ho2) {
         return -1;
