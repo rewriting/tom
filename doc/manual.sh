@@ -26,6 +26,7 @@ if [ $# -ge 1 ]; then
 	hevea -o manual1.html manual.hva manual.tex
 	hacha -o manual.html manual1.html
 	latex manual.tex
+	pdflatex manual.tex
 	dvips manual.dvi -o manual.ps
         ;;
     -*)

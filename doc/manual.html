@@ -19,22 +19,21 @@
  Pierre-Etienne Moreau<BR>
 (with Julien Guyon and Christophe Ringeissen)</B></FONT><BR>
 <FONT SIZE=5><B>
- April 14, 2003</B></FONT></DIV></TD>
+ September 17, 2003</B></FONT></DIV></TD>
 </TR></TABLE></DIV><BR>
 <BR>
 <BR>
 <BR>
 
 <BLOCKQUOTE><DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV>
-This manual also exists in <A HREF="http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/Soft/manual.ps">Postscript</A> or <A HREF="http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/Soft/manual.dvi">dvi</A>.
+This manual also exists in <A HREF="http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/manual/manual.ps">Postscript</A> or <A HREF="http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/manual/manual.pdf">pdf</A>.
 <DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV></BLOCKQUOTE>
-<BLOCKQUOTE><B>Abstract: </B>
-TOM is a Pattern Matching Preprocessor that can be used to
+<B>Abstract:</B>&nbsp;TOM is a Pattern Matching Preprocessor that can be used to
 intregrate term rewriting facilities in an imperative language such as
 <FONT COLOR=purple>C</FONT> and <FONT COLOR=purple>Java</FONT>.<BR>
 <BR>
-Information on TOM is available at <A HREF="http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/">TOM Home Page</A>.
-</BLOCKQUOTE>
+Information on TOM is available at <A HREF="http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/">TOM Home Page</A>.<BR>
+<BR>
 <UL>
 <LI><A HREF="manual1001.html"> Table of Contents</A>
 </UL>
@@ -45,64 +44,65 @@ Installing and using the system</B></FONT></DIV></TD>
 <UL>
 <LI><A HREF="install.html"> Installing and using the system</A>
 <UL>
-<LI><A HREF="install.html#toc1"> Requirements and download</A>
-<LI><A HREF="install.html#toc2"> Installation</A>
-<LI><A HREF="install.html#toc3"> Command line Arguments</A>
-<LI><A HREF="install.html#toc4"> For developpers</A>
+<LI><A HREF="install.html#toc1"> Simple installation procedure</A>
+<LI><A HREF="install.html#toc2"> Requirements and download</A>
+<LI><A HREF="install.html#toc3"> Installation</A>
+<LI><A HREF="install.html#toc4"> Command line Arguments</A>
+<LI><A HREF="install.html#toc5"> For developpers</A>
 </UL>
 </UL>
 <DIV ALIGN=center><TABLE CELLPADDING=10>
-<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc7"><FONT SIZE=6><B>Part&nbsp;II</B></FONT></A><FONT SIZE=6><B><BR>
+<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc8"><FONT SIZE=6><B>Part&nbsp;II</B></FONT></A><FONT SIZE=6><B><BR>
 The system</B></FONT></DIV></TD>
 </TR></TABLE></DIV>
 <UL>
 <LI><A HREF="system.html"> <FONT COLOR=navy>Tom</FONT> core</A>
 <UL>
-<LI><A HREF="system.html#toc5"> Introduction</A>
-<LI><A HREF="system.html#toc6"> The front-end</A>
-<LI><A HREF="system.html#toc7"> The compiler</A>
-<LI><A HREF="system.html#toc8"> The back-end</A>
+<LI><A HREF="system.html#toc6"> Introduction</A>
+<LI><A HREF="system.html#toc7"> The front-end</A>
+<LI><A HREF="system.html#toc8"> The compiler</A>
+<LI><A HREF="system.html#toc9"> The back-end</A>
 </UL>
 </UL>
 <DIV ALIGN=center><TABLE CELLPADDING=10>
-<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc13"><FONT SIZE=6><B>Part&nbsp;III</B></FONT></A><FONT SIZE=6><B><BR>
+<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc14"><FONT SIZE=6><B>Part&nbsp;III</B></FONT></A><FONT SIZE=6><B><BR>
 The language</B></FONT></DIV></TD>
 </TR></TABLE></DIV>
 <UL>
 <LI><A HREF="language.html"> The core language</A>
 <UL>
-<LI><A HREF="language.html#toc9"> Notations</A>
-<LI><A HREF="language.html#toc10"> Lexical conventions</A>
-<LI><A HREF="language.html#toc11"> Names</A>
-<LI><A HREF="language.html#toc12"> <FONT COLOR=navy>Tom</FONT> syntax</A>
-<LI><A HREF="language.html#toc13"> <FONT COLOR=navy>Tom</FONT> semantic</A>
+<LI><A HREF="language.html#toc10"> Notations</A>
+<LI><A HREF="language.html#toc11"> Lexical conventions</A>
+<LI><A HREF="language.html#toc12"> Names</A>
+<LI><A HREF="language.html#toc13"> <FONT COLOR=navy>Tom</FONT> syntax</A>
+<LI><A HREF="language.html#toc14"> <FONT COLOR=navy>Tom</FONT> semantic</A>
 </UL>
 </UL>
 <DIV ALIGN=center><TABLE CELLPADDING=10>
-<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc20"><FONT SIZE=6><B>Part&nbsp;IV</B></FONT></A><FONT SIZE=6><B><BR>
+<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc21"><FONT SIZE=6><B>Part&nbsp;IV</B></FONT></A><FONT SIZE=6><B><BR>
 Libraries</B></FONT></DIV></TD>
 </TR></TABLE></DIV> 
 <UL>
 <LI><A HREF="lib.html"> Runtime libraries</A>
 <UL>
-<LI><A HREF="lib.html#toc14"> Runtime and traversal functions</A>
-<LI><A HREF="lib.html#toc15"> Debug</A>
+<LI><A HREF="lib.html#toc15"> Runtime and traversal functions</A>
+<LI><A HREF="lib.html#toc16"> Debug</A>
 </UL>
 </UL>
 <DIV ALIGN=center><TABLE CELLPADDING=10>
-<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc24"><FONT SIZE=6><B>Part&nbsp;V</B></FONT></A><FONT SIZE=6><B><BR>
+<TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><A NAME="htoc25"><FONT SIZE=6><B>Part&nbsp;V</B></FONT></A><FONT SIZE=6><B><BR>
 Tutorial</B></FONT></DIV></TD>
 </TR></TABLE></DIV>
 <UL>
 <LI><A HREF="tutorial.html"> Tutorial and examples</A>
 <UL>
-<LI><A HREF="tutorial.html#toc16"> Introduction to the ATerm library for Java</A>
-<LI><A HREF="tutorial.html#toc17"> Peano integer</A>
-<LI><A HREF="tutorial.html#toc18"> Integer and Fibonacci</A>
-<LI><A HREF="tutorial.html#toc19"> List</A>
-<LI><A HREF="tutorial.html#toc20"> Apigen and the automatic generation of term representation</A>
-<LI><A HREF="tutorial.html#toc21"> <FONT COLOR=navy>Tom</FONT> runtime and Mathematical expression</A>
-<LI><A HREF="tutorial.html#toc22"> Debugging <FONT COLOR=navy>Tom</FONT></A>
+<LI><A HREF="tutorial.html#toc17"> Introduction to the ATerm library for Java</A>
+<LI><A HREF="tutorial.html#toc18"> Peano integer</A>
+<LI><A HREF="tutorial.html#toc19"> Integer and Fibonacci</A>
+<LI><A HREF="tutorial.html#toc20"> List</A>
+<LI><A HREF="tutorial.html#toc21"> Apigen and the automatic generation of term representation</A>
+<LI><A HREF="tutorial.html#toc22"> <FONT COLOR=navy>Tom</FONT> runtime and Mathematical expression</A>
+<LI><A HREF="tutorial.html#toc23"> Debugging <FONT COLOR=navy>Tom</FONT></A>
 </UL>
 </UL>
 <!--FOOTER-->

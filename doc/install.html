@@ -27,17 +27,46 @@ system.<BR>
 <A NAME="toc1"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
 <TR><TD><A NAME="htoc3"><B><FONT SIZE=5>1.1</FONT></B></A></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Simple installation procedure</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE>
+In order to quickly install the last version of <FONT COLOR=navy>Tom</FONT>, the best thing
+to do is the following:
+<UL><LI><B>
+</B><B>browse the </B><A HREF="http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/"><B>TOM Home Page</B></A><B>
+</B><LI><B>get the last jtom-bundle-verion.jar distribution
+</B><LI><B>get the associated scripts
+</B><LI><B>customize the scripts according to your system
+</B></UL><B>
+</B>
+<A NAME="toc2"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
+<TR><TD><A NAME="htoc4"><B><FONT SIZE=5>1.2</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Requirements and download</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
 The current version of <FONT COLOR=navy>Tom</FONT> is available at <A HREF="http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/">TOM Home Page</A>.
-In this page, you will find the latest release of <FONT COLOR=navy>Tom</FONT>.
-<BR>
-There are 2 kinds of packages:
+In this page, you will find two kinds of releases:
 <UL><LI>
-<FONT COLOR=navy>Tom</FONT> software package;
-<LI>A bundle package with <FONT COLOR=navy>Tom</FONT> software itself and all dependencies
- packages;
+The stable distribution corresponds to major releases of <FONT COLOR=navy>Tom</FONT>;
+<LI>The ``Cutting Edge'' distribution corresponds to the last
+ releases of <FONT COLOR=navy>Tom</FONT>. This is a way for keeping your system in sync with
+ the latest developments. Be warned--the cutting edge is not for
+ everyone! 
+</UL>
+Depending on the distribution, <FONT COLOR=navy>Tom</FONT> is avaible in different formats:
+<UL><LI>
+Releases: is a way to get a major release as a software package;
+<LI>Bundles: is a way to get a major release of <FONT COLOR=navy>Tom</FONT>, including all
+ needed dependencies;
+<LI>Jar distributions: corresponds to compiled stable versions of <FONT COLOR=navy>Tom</FONT>;
+<LI>Jar devel distributions: corresponds to compiled development versions of <FONT COLOR=navy>Tom</FONT>;
+<LI>Daily distribution: is a snapshot of the source control;
+ system. This is a way to get the last version of a package that pass
+ all the regression tests;<BR>
+<BR>
+<LI>CVS distribution: is a way to get the last source version of the
+ system.
 </UL>
 
 <H5>Compiling and runtime tools</H5>
@@ -58,7 +87,7 @@ shared-objects
 <LI>JJTraveler
 <LI>aterm-java
 </UL>
-The following image shows the dependencies order:<BR>
+The following figure shows the dependencies order:<BR>
 <BR>
 <IMG SRC="depgraphjtom.pgn"><BR>
 <BR>
@@ -67,9 +96,9 @@ Such packages are available at:
 <A HREF="http://www.loria.fr/equipes/protheo/SOFTWARES/ELAN/tom/"><FONT COLOR=navy>Tom</FONT> Home Page</A>
 <LI><A HREF="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase">CWI package base Page</A>
 </UL> 
-<A NAME="toc2"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<A NAME="toc3"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc4"><B><FONT SIZE=5>1.2</FONT></B></A></TD>
+<TR><TD><A NAME="htoc5"><B><FONT SIZE=5>1.3</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Installation</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
@@ -78,62 +107,70 @@ instructions.<BR>
 <BR>
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>1.2.1</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>1.3.1</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Installing the bundle package</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
 This is the simplest way to have quickly <FONT COLOR=navy>Tom</FONT> running on your
 computer.
 <UL><LI>
-Untar the package: 
- &gt; tar xzf jtom-bundle-VERSION.tar.gz
-<LI>Download and unpack the required packages:<BR>
-&gt; ./collect.sh
-<LI>Configure, build and install:<BR>
-&gt; ./configure --help gives a complete list of available configuration parameters.<BR>
-&gt; ./configure &lt;&lt;configuration parameters&gt;&gt;<BR>
-&gt; gmake
-</UL>
+Untar the package:
+<PRE>
+  &gt; tar xzf jtom-bundle-VERSION.tar.gz
+</PRE><LI>Download and unpack the required packages:
+<PRE>
+  &gt; ./collect.sh
+</PRE><LI>Configure, build and install:
+<PRE>
+  &gt; ./configure --help gives a complete list of available configuration parameters.
+  &gt; ./configure &lt;&lt;configuration parameters&gt;&gt;
+  &gt; gmake
+</PRE></UL>
 Once all is done, you are ready using <FONT COLOR=navy>Tom</FONT> using jtom command.<BR>
 <BR>
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>1.2.2</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>1.3.2</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Installing <FONT COLOR=navy>Tom</FONT></FONT></B><B><FONT SIZE=4> package</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><BR>
 
 <H5>Installation process</H5>
 <OL type=1><LI>
-Get and install the shared-objects package<BR>
-a. Type `./configure --prefix=&lt;SHARED-DIR&gt;'<BR>
-b. Type `make'<BR>
-c. Type `make install'
-<LI>Get and install the JJTraveler package<BR>
-a. Type `./configure --prefix=&lt;JJT-DIR&gt;'<BR>
-b. Type `make'<BR>
-c. Type `make install'
-<LI>Get and install the aterm-java package<BR>
-a. Type `./configure --prefix=&lt;ATERM-DIR&gt;
---with-JJTraveler=&lt;JJT-DIR&gt; --with-shared-objects=&lt;SHARED-DIR&gt;'<BR>
-b. Type `make'<BR>
-c. Type `make install'<BR>
-<BR>
-<LI>Configure and install <FONT COLOR=navy>Tom</FONT> package:<BR>
-a./configure --prefix=&lt;INSTALLDIR&gt;
---with-shared-objects=&lt;SHARED-DIR&gt; --with-aterm-java=&lt;ATERM-DIR&gt;'<BR>
-b. Type `make' to compile the package.<BR>
-c. Type `make install' to install the package.
-</OL>
-<A NAME="toc3"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+Get and install the shared-objects package
+<PRE>
+ a. Type `./configure --prefix=&lt;SHARED-DIR&gt;'
+ b. Type `make'
+ c. Type `make install'
+</PRE><LI>Get and install the JJTraveler package
+<PRE>
+ a. Type `./configure --prefix=&lt;JJT-DIR&gt;'
+ b. Type `make'
+ c. Type `make install'
+</PRE><LI>Get and install the aterm-java package
+<PRE>
+ a. Type `./configure --prefix=&lt;ATERM-DIR&gt;
+                      --with-JJTraveler=&lt;JJT-DIR&gt; 
+                      --with-shared-objects=&lt;SHARED-DIR&gt;' 
+ b. Type `make'
+ c. Type `make install'
+</PRE><LI>Configure and install <FONT COLOR=navy>Tom</FONT> package:
+<PRE>
+ a. `./configure --prefix=&lt;INSTALLDIR&gt;
+                 --with-shared-objects=&lt;SHARED-DIR&gt; 
+                 --with-aterm-java=&lt;ATERM-DIR&gt;'
+ b. Type `make' to compile the package.
+ c. Type `make install' to install the package.
+</PRE></OL>
+<A NAME="toc4"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc5"><B><FONT SIZE=5>1.3</FONT></B></A></TD>
+<TR><TD><A NAME="htoc6"><B><FONT SIZE=5>1.4</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Command line Arguments</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>1.3.1</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>1.4.1</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>NAME</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
@@ -141,81 +178,84 @@ c. Type `make install' to install the package.
 <BR>
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>1.3.2</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>1.4.2</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>SYNOPSIS</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
- jtom [-hceVvioDCfWldpsO] [-I path] filename[.t]<BR>
+<CODE>        jtom [-hceVvioDCfWldpsO] [-I path] filename[.t]</CODE><BR>
 <BR>
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
-<TR><TD><B><FONT SIZE=4>1.3.3</FONT></B></TD>
+<TR><TD><B><FONT SIZE=4>1.4.3</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>DESCRIPTION</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
 <TABLE BORDER=1 CELLSPACING=0 CELLPADDING=1>
-<TR><TD ALIGN=left NOWRAP>--help | -h</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--help | -h</CODE></TD>
 <TD ALIGN=left NOWRAP>Show the help</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--cCode | -c</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--cCode | -c</CODE></TD>
 <TD ALIGN=left NOWRAP>Generate C code (default is Java)</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--eCode | -e</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--eCode | -e</CODE></TD>
 <TD ALIGN=left NOWRAP>Generate Eiffel code (default is Java)</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--version | -V</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--version | -V</CODE></TD>
 <TD ALIGN=left NOWRAP>Print the version of TOM</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--verbose | -v</TD>
-<TD ALIGN=left NOWRAP>Set verbose mode on: give duration information
-on each compilation passes</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--verbose | -v</CODE></TD>
+<TD ALIGN=left NOWRAP>Set verbose mode on: give duration
+ information on each compilation passes</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--intermediate | -i</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--intermediate | -i</CODE></TD>
 <TD ALIGN=left NOWRAP>Generate intermediate files</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--noOutput | -o</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--noOutput | -o</CODE></TD>
 <TD ALIGN=left NOWRAP>Do not generate code</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--noDeclaration | -D</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--noDeclaration | -D</CODE></TD>
 <TD ALIGN=left NOWRAP>Do not generate code for declarations</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--doCompile | -C</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--doCompile | -C</CODE></TD>
 <TD ALIGN=left NOWRAP>Start after type-checking (used after a
-compilation process with --intermediate option</TD>
+ compilation process with --intermediate option</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--noCheck | -f</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--noCheck | -f</CODE></TD>
 <TD ALIGN=left NOWRAP>Do not realize checking phases</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--noWarning | -W</TD>
-<TD ALIGN=left NOWRAP>Do not print any warning</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--Wall</CODE></TD>
+<TD ALIGN=left NOWRAP>Print all warnings</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--lazyType | -l</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--noWarning</CODE></TD>
+<TD ALIGN=left NOWRAP>Do not print warning</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><CODE>--lazyType | -l</CODE></TD>
 <TD ALIGN=left NOWRAP>Use universal type</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--demo | -d</TD>
-<TD ALIGN=left NOWRAP>Run demo mode</TD>
-</TR>
-<TR><TD ALIGN=left NOWRAP>--import &lt;path&gt; | -I</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--import &lt;path&gt; | -I</CODE></TD>
 <TD ALIGN=left NOWRAP>Path for %include construct to find included files</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--pretty | -p</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--pretty | -p</CODE></TD>
 <TD ALIGN=left NOWRAP>Generate readable code with indentation</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--atermStat | -s</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--atermStat | -s</CODE></TD>
 <TD ALIGN=left NOWRAP>Print internal ATerm statistics</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--optimize | -O</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--optimize | -O</CODE></TD>
 <TD ALIGN=left NOWRAP>Optimized generated code</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--static</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--static</CODE></TD>
 <TD ALIGN=left NOWRAP>Generate static functions</TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP>--debug</TD>
+<TR><TD ALIGN=left NOWRAP><CODE>--debug</CODE></TD>
 <TD ALIGN=left NOWRAP>Generate debug primitives</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><CODE>--memory</CODE></TD>
+<TD ALIGN=left NOWRAP>Add memory management while debugging (not correct with list matching)</TD>
 </TR></TABLE><BR>
-<A NAME="toc4"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<A NAME="toc5"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc6"><B><FONT SIZE=5>1.4</FONT></B></A></TD>
+<TR><TD><A NAME="htoc7"><B><FONT SIZE=5>1.5</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>For developpers</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><A NAME="developpers"></A>
@@ -227,14 +267,14 @@ cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom
 
 <H5><FONT COLOR=navy>Tom</FONT> Architecture</H5>
 In <FONT COLOR=navy>Tom</FONT> directory architecture, 2 main branches can be underlined:
-`stable` and `src`...
-The `stable` branch contains the stable material to build a running
-<FONT COLOR=navy>Tom</FONT> compiler. The `src` branch is used to make new developments.
+`stable' and `src'...
+The `stable' branch contains the stable material to build a running
+<FONT COLOR=navy>Tom</FONT> compiler. The `src' branch is used to make new developments.
 Once in src directory, you can modify the sources. then, 
 <OL type=1><LI>
 Type `make' to build a new system and use jtom.src to use and
  test the new system.
-<LI>At `src` directory level, type `make bootstrap' to bootstrap and
+<LI>At `src' directory level, type `make bootstrap' to bootstrap and
  install a new system.
  If something goes wrong, re-install the stable version:
  `cd ../../stable'; `make install'
@@ -242,19 +282,19 @@ Type `make' to build a new system and use jtom.src to use and
 <LI>If you are happy from the result, type `make bootinstall' to
  make the current version become the stable one. WARNING: this action may be VERY DANGEROUS !!!
 </OL>
-Please send a mail to <A HREF="mailto:pierre-etienne.moreau@loria.fr">pierre-etienne.moreau@loria.fr</A> to propose your
+Please send a mail to <A HREF="mailto:Pierre-Etienne.Moreau@loria.fr">Pierre-Etienne.Moreau@loria.fr</A> to propose your
 suggestions.<BR>
 <BR>
 
 <H5>Additional tools for developments</H5>
 To simplify <FONT COLOR=navy>Tom</FONT> development, an extra package called Apigen is used
 to generate data structures used by <FONT COLOR=navy>Tom</FONT>. All generated files can be
-found in `jtom \adt` directory.
+found in `jtom \adt' directory.
 <BR>
 This package is available at
 <A HREF="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase">CWI package base Page</A>.
 WARNING: We will need to install JUnit to build this package.
-Once TomSignature.adt is modified, `make api` to re-generate <FONT COLOR=navy>Tom</FONT>
+Once TomSignature.adt is modified, `make api' to re-generate <FONT COLOR=navy>Tom</FONT>
 data structures.<BR>
 <BR>
 <HR>

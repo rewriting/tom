@@ -16,7 +16,7 @@
 <HR>
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#0f75ff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc14"><B><FONT SIZE=6>Chapter&nbsp;3</FONT></B></A></TD>
+<TR><TD><A NAME="htoc15"><B><FONT SIZE=6>Chapter&nbsp;3</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=6>The core language</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
@@ -26,9 +26,9 @@ language. It lists the language constructs, and gives their precise
 syntax and informal semantics. It is by no means a tutorial
 introduction to the language: there is not a single example.<BR>
 <BR>
-<A NAME="toc9"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<A NAME="toc10"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc15"><B><FONT SIZE=5>3.1</FONT></B></A></TD>
+<TR><TD><A NAME="htoc16"><B><FONT SIZE=5>3.1</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Notations</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
@@ -42,9 +42,9 @@ enclosed components. Parentheses with a trailing
 plus sign (...)+ denote one or several repetitions of the enclosed
 components. Parentheses (...) denote grouping. <BR>
 <BR>
-<A NAME="toc10"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<A NAME="toc11"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc16"><B><FONT SIZE=5>3.2</FONT></B></A></TD>
+<TR><TD><A NAME="htoc17"><B><FONT SIZE=5>3.2</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Lexical conventions</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
@@ -53,7 +53,7 @@ components. Parentheses (...) denote grouping. <BR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
 <TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Letter</I></FONT> ( <FONT COLOR="#ff00ff"><I>Letter</I></FONT> |<FONT COLOR="#ff00ff"><I>Digit</I></FONT>
- |<FONT COLOR="#0000ff"><TT>.</TT></FONT> |<FONT COLOR="#0000ff"><TT>_</TT></FONT> |<FONT COLOR="#0000ff"><TT>-</TT></FONT> )*</TD>
+ |<FONT COLOR="#0000ff"><TT>_</TT></FONT> |<FONT COLOR="#0000ff"><TT>-</TT></FONT> )*</TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Integer</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
@@ -72,9 +72,9 @@ components. Parentheses (...) denote grouping. <BR>
 <TD ALIGN=left NOWRAP>a character</TD>
 </TR></TABLE>
 </DIV><BR>
-<A NAME="toc11"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<A NAME="toc12"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc17"><B><FONT SIZE=5>3.3</FONT></B></A></TD>
+<TR><TD><A NAME="htoc18"><B><FONT SIZE=5>3.3</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Names</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
@@ -113,9 +113,9 @@ components. Parentheses (...) denote grouping. <BR>
 <TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Identifier</I></FONT></TD>
 </TR></TABLE>
 </DIV><BR>
-<A NAME="toc12"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<A NAME="toc13"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc18"><B><FONT SIZE=5>3.4</FONT></B></A></TD>
+<TR><TD><A NAME="htoc19"><B><FONT SIZE=5>3.4</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5><FONT COLOR=navy>Tom</FONT></FONT></B><B><FONT SIZE=5> syntax</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
@@ -243,11 +243,7 @@ The construct is defined as follow:<BR>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchArguments</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchArgument</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>MatchArgument</I></FONT> )*</TD>
-</TR>
-<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MatchArgument</I></FONT></TD>
-<TD ALIGN=center NOWRAP>::=</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#ff00ff"><I>SubjectName</I></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#ff00ff"><I>SubjectName</I></FONT> ( <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Type</I></FONT> <FONT COLOR="#ff00ff"><I>SubjectName</I></FONT> )*</TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>PatternAction</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
@@ -290,11 +286,23 @@ left-handsides should begin with the same root symbol:<BR>
  <TABLE CELLSPACING=2 CELLPADDING=0>
 <TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>RuleConstruct</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%rule</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT> ( <FONT COLOR="#ff00ff"><I>Term</I></FONT> <FONT COLOR="#0000ff"><TT>-&gt;</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%rule</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT> ( <FONT COLOR="#ff00ff"><I>Rule</I></FONT> )* <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
 </TR>
-<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>MakeConstruct</I></FONT></TD>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Rule</I></FONT></TD>
 <TD ALIGN=center NOWRAP>::=</TD>
-<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>%make</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> <FONT COLOR="#0000ff"><TT>}</TT></FONT></TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>RuleBody</I></FONT> ( <FONT COLOR="#ff00ff"><I>RuleCondition</I></FONT> )*</TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>RuleBody</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>Term</I></FONT> <FONT COLOR="#0000ff"><TT>-&gt;</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP><FONT COLOR="#ff00ff"><I>RuleCondition</I></FONT></TD>
+<TD ALIGN=center NOWRAP>::=</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>where</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> <FONT COLOR="#0000ff"><TT>:=</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT></TD>
+</TR>
+<TR><TD ALIGN=left NOWRAP>&nbsp;</TD>
+<TD ALIGN=center NOWRAP>|</TD>
+<TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>if</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT> <FONT COLOR="#0000ff"><TT>=</TT></FONT> <FONT COLOR="#ff00ff"><I>Term</I></FONT></TD>
 </TR></TABLE>
 </DIV><BR>
 <DIV ALIGN=center>
@@ -454,9 +462,9 @@ left-handsides should begin with the same root symbol:<BR>
 <TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>make_append</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
 </TR></TABLE>
 </DIV><BR>
-<A NAME="toc13"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<A NAME="toc14"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
-<TR><TD><A NAME="htoc19"><B><FONT SIZE=5>3.5</FONT></B></A></TD>
+<TR><TD><A NAME="htoc20"><B><FONT SIZE=5>3.5</FONT></B></A></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5><FONT COLOR=navy>Tom</FONT></FONT></B><B><FONT SIZE=5> semantic</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
@@ -493,7 +501,7 @@ several access functions have to be defined:
  This function should return the <TT>n-th</TT> subterm of the
  term&nbsp;<TT>t</TT>. This never called with and integer paramter that
  does not correspond to the arity of the root symbol of the
- considered term (i.e. we alway have 0 <FONT FACE=symbol>£</FONT> <I>n</I> &lt; <I>arity</I>).<BR>
+ considered term (i.e. we alway have 0 &lt;= <I>n</I> &lt; <I>arity</I>).<BR>
 <BR>
 <LI><A NAME="equals"></A> the <FONT COLOR="#0000ff"><TT>equals(t1,t2)</TT></FONT> construct corresponds to a
  predicate (parametrised by two term variables).
@@ -541,21 +549,27 @@ the int type can be directly used as a term.<BR>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Operator definition</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><A NAME="opdef"></A><BR>
-When defining a new symbol with the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> construct, the user
-should specify how the symbol is implemented. This is done by the
-<FONT COLOR="#0000ff"><TT>fsym</TT></FONT> construct.<A NAME="fsym"></A>
+When defining a new symbol with the <FONT COLOR="#0000ff"><TT>%op</TT></FONT>&nbsp;<I>s</I> construct, the user
+should specify how the symbol&nbsp;<I>s</I> is implemented. This is done by the
+<FONT COLOR="#0000ff"><TT>fsym</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT> implementation_of_s <FONT COLOR="#0000ff"><TT>}</TT></FONT> construct.<A NAME="fsym"></A>
 The expression between braces should correspond (modulo the
 <FONT COLOR="#0000ff"><TT>cmp_fun_sym</TT></FONT> predicate) to the expression returned by the
 function <FONT COLOR="#0000ff"><TT>get_fun_sym</TT></FONT> applied to a term rooted by the
-considered symbol. 
+considered symbol (<I>s</I> in this case). <BR>
+<BR>
+<A NAME="isfsym"></A> 
+The <FONT COLOR="#0000ff"><TT>isfysm(t)</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT> predicate(t) <FONT COLOR="#0000ff"><TT>}</TT></FONT> construct can be
+used to specialize this mechanism. When <FONT COLOR="#0000ff"><TT>isfsym</TT></FONT> is defined, the
+predicate (given between braces) is used to check if a term <I>t</I> is
+rooted by the considered symbol (<I>s</I> in this example). This replaces
+the use of <FONT COLOR="#0000ff"><TT>get_fun_sym</TT></FONT> and <FONT COLOR="#0000ff"><TT>cmp_fun_sym</TT></FONT>.<BR>
+<BR>
 <A NAME="make"></A>When defining a symbol, is it also possible to specify a
 <FONT COLOR="#0000ff"><TT>make</TT></FONT> construct. This function is parametrised by several 
 term variables (i.e. that should correspond to the arity of the
 symbol). A call to this <FONT COLOR="#0000ff"><TT>make</TT></FONT> function should return a term
 rooted by the considered symbol, where each subterm correspond to the
 terms given in arguments to the function.<BR>
-<BR>
-<A NAME="isfsym"></A> Need to write something about isfsym<BR>
 <BR>
 As mentioned in the syntax definition, it is also possible to name
 each field of a constructor symbol by using the
@@ -598,8 +612,9 @@ longer optional as in the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> construct):
  size&nbsp;<TT>n</TT>. <BR>
 <BR>
 <LI><A NAME="append"></A> the <FONT COLOR="#0000ff"><TT>make_append(e,l)</TT></FONT> construct corresponds to a
- function parametrised by a list variable and a term variable.<BR><BR>
-!! Warning..<BR><BR>
+ function parametrised by a list variable and a term variable. <BR>
+<BR>
+<B>Warning: </B>
 This function should return a list&nbsp;<TT>l'</TT> such that
  the element&nbsp;<TT>e</TT> is at the <TT>n-th</TT> position.
 </UL>
@@ -613,7 +628,7 @@ In order to match patterns against a list of subjects, <FONT COLOR=navy>Tom</FON
 the <FONT COLOR="#0000ff"><TT>%match</TT></FONT> construct.
 This constructs contains two parts:
 <UL><LI>
-a list of <FONT COLOR="#ff00ff"><I>MatchArgument</I></FONT>: this is a list of (target
+a <FONT COLOR="#ff00ff"><I>MatchArguments</I></FONT>: this is a list of (target
  language) variables that reference the terms to be matched.
 <LI>a list of <FONT COLOR="#ff00ff"><I>PatternAction</I></FONT>: this is a list of pairs
  (pattern,action), where an action is a set of target language
@@ -657,19 +672,31 @@ modifies a target language variable which is an argument of a
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Rule definition</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE><BR>
-The <FONT COLOR="#0000ff"><TT>%rule</TT></FONT> construct is composed of a list of rewrite rules
-(the left-hand side is a term and the right-hand side is a term).
-All these rules should begin with the same root symbol. The <FONT COLOR=navy>Tom</FONT>
-compiler should generate a function (with one argument) whose name
-correspond to the name of this unique root symbol.
+The <FONT COLOR="#0000ff"><TT>%rule</TT></FONT> construct is composed of a list of conditional
+rewrite rules (the left-hand side is a term and the right-hand side is
+a term). All these rules should begin with the same root symbol. The
+<FONT COLOR=navy>Tom</FONT> compiler should generate a function (with one argument) whose
+name correspond to the name of this unique root symbol.
 Given a ground term, applying this function returns the instanciated
 right-hand side of the first rule whose pattern matches the considered 
-subject.
-When no rule can be applied (i.e. no pattern matches the subject),
-the given ground term, rooted by the root symbol of the rewrite system
-is returned.
+subject and whose conditions are satisfied.
+When no rule can be applied (i.e. no pattern matches the subject, or
+no condition is satisfied), the given ground term, rooted by the root
+symbol of the rewrite system is returned.<BR>
 <BR>
-<BR>
+In Tom, we consider two kinds of conditions:
+<UL><LI>
+an equality condition (<I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> = <I>t</I><SUB><FONT SIZE=2>2</FONT></SUB>) is a pair of ground terms that
+ belong to the same type.
+ The condition is satisfied when the normal forms of the two terms
+ (<I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> and <I>t</I><SUB><FONT SIZE=2>2</FONT></SUB>) are equal modulo the <FONT COLOR="#0000ff"><TT>equals</TT></FONT> predicate defined in
+ the definition of the type associated to <I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> and <I>t</I><SUB><FONT SIZE=2>2</FONT></SUB>.
+<LI>a matching condition (<I>p</I> := <I>t</I>) is a pair of terms where p may
+ contains free variable. The conditon is satisfied if the pattern&nbsp;<I>p</I>
+ can be matched against the normal form of&nbsp;<I>t</I>. In this case, the
+ free variables of&nbsp;<I>p</I> are instantited and can be used in other
+ conditions or the right-hand side of the rule.
+</UL>
 <HR>
 <A HREF="system.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
 <A HREF="manual.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>

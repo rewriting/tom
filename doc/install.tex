@@ -7,15 +7,45 @@
 This part of the manual gives basic information to get and install the
 system.
 
+\section{Simple installation procedure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In order to quickly install the last version of \TOM, the best thing
+to do is the following:
+{\bf
+\begin{itemize}
+\item browse the \ahref{\tompage}{TOM Home Page}
+\item get the last jtom-bundle-verion.jar distribution
+\item get the associated scripts
+\item customize the scripts according to your system
+\end{itemize}
+}
+
 \section{Requirements and download}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The current version of \TOM\ is available at \ahref{\tompage}{TOM Home Page}.
-In this page, you will find the latest release of \TOM.
-\\There are 2 kinds of packages:
+In this page, you will find two kinds of releases:
+
 \begin{itemize}
-\item \TOM\ software package;
-\item A bundle package with \TOM\ software itself and all dependencies
-  packages;
+\item The stable distribution corresponds to major releases of \TOM;
+\item The ``Cutting Edge'' distribution corresponds to the last
+  releases of \TOM. This is a way for keeping your system in sync with
+  the latest developments. Be warned--the cutting edge is not for
+  everyone! 
+\end{itemize}
+
+Depending on the distribution, \TOM\ is avaible in different formats:
+\begin{itemize}
+\item Releases: is a way to get a major release as a software package;
+\item Bundles: is  a way to get a major release of \TOM, including all
+  needed dependencies;
+\item Jar distributions: corresponds to compiled stable versions of \TOM;
+\item Jar devel distributions: corresponds to compiled development versions of \TOM;
+\item Daily distribution: is a snapshot of the source control;
+  system. This is a way to get the last version of a package that pass
+  all the regression tests;
+
+\item CVS distribution: is a way to get the last source version of the
+  system.
 \end{itemize}
 
 \paragraph{Compiling and runtime tools}
@@ -75,23 +105,33 @@ Once all is done, you are ready using \TOM\ using jtom command.
 \paragraph{Installation process}
 \begin{enumerate}
 \item Get and install the shared-objects package
-\\ a. Type `./configure --prefix=<SHARED-DIR>'
-\\ b. Type `make'
-\\ c. Type `make install'
+\begin{verbatim}
+ a. Type `./configure --prefix=<SHARED-DIR>'
+ b. Type `make'
+ c. Type `make install'
+\end{verbatim}
 \item Get and install the JJTraveler package
-\\ a. Type `./configure --prefix=<JJT-DIR>'
-\\ b. Type `make'
-\\ c. Type `make install'
+\begin{verbatim}
+ a. Type `./configure --prefix=<JJT-DIR>'
+ b. Type `make'
+ c. Type `make install'
+\end{verbatim}
 \item Get and install the aterm-java package
-\\ a. Type `./configure --prefix=<ATERM-DIR>
---with-JJTraveler=<JJT-DIR> --with-shared-objects=<SHARED-DIR>' 
-\\ b. Type `make'
-\\ c. Type `make install'
+\begin{verbatim}
+ a. Type `./configure --prefix=<ATERM-DIR>
+                      --with-JJTraveler=<JJT-DIR> 
+                      --with-shared-objects=<SHARED-DIR>' 
+ b. Type `make'
+ c. Type `make install'
+\end{verbatim}
 \item Configure and install \TOM\ package:
-\\ a. `./configure --prefix=<INSTALLDIR>
---with-shared-objects=<SHARED-DIR> --with-aterm-java=<ATERM-DIR>'
-\\ b. Type `make' to compile the package.
-\\ c. Type `make install' to install the package.
+\begin{verbatim}
+ a. `./configure --prefix=<INSTALLDIR>
+                 --with-shared-objects=<SHARED-DIR> 
+                 --with-aterm-java=<ATERM-DIR>'
+ b. Type `make' to compile the package.
+ c. Type `make install' to install the package.
+\end{verbatim}
 \end{enumerate}
 
 
@@ -101,35 +141,35 @@ Once all is done, you are ready using \TOM\ using jtom command.
      jtom - compile \TOM\ file (.t) into specified target languages
 
 \subsection{SYNOPSIS}
-     jtom [-hceVvioDCfWldpsO] [-I path] filename[.t]
+\verb|        jtom [-hceVvioDCfWldpsO] [-I path] filename[.t]|
 
 \subsection{DESCRIPTION}
 \begin{tabular}{|l|l|}
 \hline
---help | -h&            Show the help \\
---cCode | -c&           Generate C code (default is Java)\\
---eCode | -e&           Generate Eiffel code (default is Java)\\
---version | -V&         Print the version of TOM\\
---verbose | -v&         Set verbose mode on: give duration information
-on each compilation passes\\
---intermediate | -i&    Generate intermediate files \\
---noOutput | -o&        Do not generate code \\
---noDeclaration | -D&   Do not generate code for declarations \\
---doCompile | -C&       Start after type-checking (used after a
-compilation process with --intermediate option\\
---noCheck | -f&         Do not realize checking phases \\
---Wall&       Print all warnings \\
---lazyType | -l&        Use universal type \\
---import <path> | -I&   Path for \%include construct to find included files\\
---pretty | -p&          Generate readable code with indentation \\
---atermStat | -s&       Print internal ATerm statistics \\
---optimize | -O&        Optimized generated code \\
---static&               Generate static functions \\
---debug&                Generate debug primitives \\
---memory&               Add memory management while debugging (not correct with list matching)\\
+\verb#--help | -h#&            Show the help \\
+\verb#--cCode | -c#&           Generate C code (default is Java)\\
+\verb#--eCode | -e#&           Generate Eiffel code (default is Java)\\
+\verb#--version | -V#&         Print the version of TOM\\
+\verb#--verbose | -v#&         Set verbose mode on: give duration
+                               information on each compilation passes\\
+\verb#--intermediate | -i#&    Generate intermediate files \\
+\verb#--noOutput | -o#&        Do not generate code \\
+\verb#--noDeclaration | -D#&   Do not generate code for declarations \\
+\verb#--doCompile | -C#&       Start after type-checking (used after a
+                               compilation process with --intermediate option\\
+\verb#--noCheck | -f#&         Do not realize checking phases \\
+\verb#--Wall#&       Print all warnings \\
+\verb#--noWarning#&       Do not print warning \\
+\verb#--lazyType | -l#&        Use universal type \\
+\verb#--import <path> | -I#&   Path for \%include construct to find included files\\
+\verb#--pretty | -p#&          Generate readable code with indentation \\
+\verb#--atermStat | -s#&       Print internal ATerm statistics \\
+\verb#--optimize | -O#&        Optimized generated code \\
+\verb#--static#&               Generate static functions \\
+\verb#--debug#&                Generate debug primitives \\
+\verb#--memory#&               Add memory management while debugging (not correct with list matching)\\
 \hline
 \end{tabular}
-
 
 \section{For developpers}\label{developpers}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
