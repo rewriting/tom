@@ -12,6 +12,7 @@ public class Peano {
     get_fun_sym(t)      { (((ATermAppl)t).getAFun()) }
     cmp_fun_sym(t1,t2)  { t1 == t2 }
     get_subterm(t, n)   { (((ATermAppl)t).getArgument(n)) }
+    equals(t1, t2)      { t1 == t2}
   }
 
   %op term zero {
@@ -35,6 +36,11 @@ public class Peano {
     make(t) { fib2(t) }
   }
 
+  %op term fib5(term) {
+    fsym { factory.makeAFun("fib5" , 1, false) }
+    make(t) { fib2(t) }
+  }
+  
   public Peano(ATermFactory factory) {
     this.factory = factory;
 
@@ -59,6 +65,7 @@ public class Peano {
       assertTrue( peano2int(fib2(N)) == fibint(i) );
       assertTrue( peano2int(fib3(N)) == fibint(i) );
       assertTrue( peano2int(fib4(N)) == fibint(i) );
+      assertTrue( peano2int(fib5(N)) == fibint(i) );
     }
     
   }
@@ -101,20 +108,26 @@ public class Peano {
   }
   
   %rule {
-    fib1(zero())        -> suc(zero)
-    fib1(suc(zero()))   -> suc(zero)
+    fib1(zero())        -> suc(zero())
+    fib1(suc(zero()))   -> suc(zero())
     fib1(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
   }
   
   %rule {
-    fib2(zero())-> suc(zero)
-    fib2(x@suc[pred=zero()]) -> suc(zero)
+    fib5(zero())             -> suc(x) where x:= zero()
+    fib5(x)                  -> x      if x == suc(zero())
+    fib5(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
+  }
+  
+  %rule {
+    fib2(zero())-> suc(zero())
+    fib2(x@suc[pred=zero()]) -> suc(zero())
     fib2(suc(y@suc(x))) -> plus2(fib2(x),fib2(y))
   }
 
   public ATerm fib3(ATerm t) {
     %match(term t) {
-      zero()             -> { return `suc(zero); }
+      zero()             -> { return `suc(zero()); }
       suc[pred=x@zero()] -> { return `suc(x); }
       suc(suc(x))      -> { return plus3(fib3(x),fib3(suc(x))); }
     }
@@ -123,8 +136,8 @@ public class Peano {
 
   public ATerm fib4(ATerm t) {
     %match(term t) {
-      zero()      -> { return `suc(zero); }
-      suc(zero()) -> { return `suc(zero); }
+      zero()      -> { return `suc(zero()); }
+      suc(zero()) -> { return `suc(zero()); }
       suc(suc(x)) -> { return plus3(fib4(x),fib4(suc(x))); }
     }
     return null;

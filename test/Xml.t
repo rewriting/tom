@@ -28,8 +28,8 @@ public class Xml {
     TNode t;
     String x="goo";
     
-      //t = ``xml(<A> <B/> </A>);
-      //t = ``xml(<A at1="foo" at2=x at3=dd("text")/>);
+      //t = `XML(<A> <B/> </A>);
+      //t = `XML(<A at1="foo" at2=x at3=dd("text")/>);
 
     LinkedList elements = new LinkedList();
     LinkedList reverseElements = new LinkedList();
@@ -68,7 +68,7 @@ public class Xml {
 
   boolean checkSortedInteger(TNode list) {
     %match(TNode list) {
-      <IntegerList>[<(Integer|Int)>(#TEXT(s1))</(Integer|Int)>,
+      <IntegerList>[<(Int|Integer)>(#TEXT(s1))</(Int|Integer)>,
                     <(Integer|Int)>(#TEXT(s2))</(Integer|Int)>]</IntegerList> -> {
         if(s1.compareTo(s2) > 0) { return false; }
       }
@@ -93,7 +93,9 @@ public class Xml {
   LinkedList extractElements(TNode list) {
     LinkedList res = new LinkedList();
     %match(TNode list) {
-      <IntegerList> <(Integer|Int)>(#TEXT(s1))</(Integer|Int)> </IntegerList> -> { res.add(s1); }
+      <IntegerList>
+         <(Integer|Int)>(#TEXT(s1))</(Integer|Int)>
+      </IntegerList> -> { res.add(s1); }
     }
     return res;
   }
