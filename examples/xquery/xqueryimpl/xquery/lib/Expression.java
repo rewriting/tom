@@ -4,12 +4,35 @@ package xquery.lib;
 
 import xquery.lib.data.*;
 
+import org.w3c.dom.*;
+
 public class Expression extends AbstractExpression{
 
 
 
   // Expr  -> PathExpr* 
   // eval:  UNION ALL (pathexpr.eval())
+
+  public  Expression(Object child) 
+  {
+	super(child);
+  }
+
+  public  Expression(Object child1, Object child2) 
+  {
+	super(child1,child2);
+  }
+
+  public  Expression(Object child1, Object child2, Object child3) 
+  {
+	super(child1,child2,child3);
+  }
+
+
+  public  Expression(Object child1, Object child2, Object child3, Object child4) 
+  {
+	super(child1,child2,child3,child4);
+  }
   
   protected Expression()
   {
@@ -41,12 +64,19 @@ public class Expression extends AbstractExpression{
   }
 
   
+
+
+  public Sequence evaluate() throws XQueryGeneralException
+  {
+	return evaluate(new Sequence());
+  }
   // return null if one child is null
   // return empty sequence if no result
   // return sequence if do have result
   
 
-  public Sequence evaluate() throws XQueryGeneralException
+  public Sequence evaluate(Sequence initialValue) throws XQueryGeneralException
+
   {
 	// verify child expressions
 	if (!verifyContent()) {
@@ -54,16 +84,18 @@ public class Expression extends AbstractExpression{
 	}
 
 	// default: UNION alls:
-	Sequence s = getInitialValue(); 
+	Sequence s = new Sequence(); 
+	s.addAll(initialValue);
 
-	for (int i=1 ;i < getArity(); i++) { // 0 is initial value
+	for (int i=0 ;i < getArity(); i++) { // 0 is initial value
 	  Object achild = getChild(i);
 	  if ((achild instanceof Sequence)
 		  || (achild instanceof Item)) {
 		s.add(achild); 
 	  }
 	  else if (achild instanceof AbstractExpression) {
-		s.add(achild.evaluate()); 
+		AbstractExpression expr=(AbstractExpression)achild; 
+		s.add(expr.evaluate()); 
 	  }
 
 	  else if (achild instanceof Node) {

@@ -11,14 +11,37 @@ import xquery.lib.data.type.XQueryTypeException;
 
 
 
+
 // need to ajoute one 
 
-public class StepExpresstion extends AbstractExpression {
+public class StepExpression extends AbstractExpression {
+
+  public StepExpression(Object child) 
+  {
+	super(child);
+  }
+
+  public StepExpression(Object child1, Object child2) 
+  {
+	super(child1,child2);
+  }
+
+  public StepExpression(Object child1, Object child2, Object child3) 
+  {
+	super(child1,child2,child3);
+  }
+
+
+  public StepExpression(Object child1, Object child2, Object child3, Object child4) 
+  {
+	super(child1,child2,child3,child4);
+  }
+
 
   // first option; 
   PathOperator pathOperator = null; 
   PathAxe pathAxe = null; 
-  NodeTest nodeTest = null; 
+  NodeTester nodeTest = null; 
 
   // eval:     -> need ajout "sequence" (may be EMPTY)  before 1st part
 
@@ -43,12 +66,12 @@ public class StepExpresstion extends AbstractExpression {
   public StepExpression(Object childExprs[], Object options[]) 
   {
 	super(childExprs); 
-	pathOperator = options[0]; 
-	pathAxe = options[1];
-	nodeTest=options[2];
+	pathOperator = (PathOperator)(options[0]); 
+	pathAxe = (PathAxe)(options[1]);
+	nodeTest= (NodeTester)(options[2]);
   }
 
-  public StepExpression(Object childExprs[], PathOperator pathOperator, PathAxe pathAxe, NodeTest nodeTest) 
+  public StepExpression(Object childExprs[], PathOperator pathOperator, PathAxe pathAxe, NodeTester nodeTest) 
   {
 	super(childExprs); 
 
@@ -81,19 +104,25 @@ public class StepExpresstion extends AbstractExpression {
 	}
 
 	// 1st must be sequence 
-	if (!(getChild(0) instanceof Sequence)) {
+	else if (!(getChild(0) instanceof Sequence)) {
 	  return false; 
 	}
-	// 
-	if ((pathOperator ==null)
+	 
+	else if ((pathOperator ==null)
 		|| (pathAxe==null)
 		|| (nodeTest==null)) {
 	  return false; 
-	}	
+	}
+	else {
+	  return true;
+	}
+
+	
   }
 
   
   protected Sequence doFilter(Sequence inputValue, int childIndex)
+	throws XQueryGeneralException
   {
 	NodePredicateList predicateList = new NodePredicateList();
 
@@ -103,13 +132,22 @@ public class StepExpresstion extends AbstractExpression {
 
 	pathOperator.setPathAxe(pathAxe); 
 	pathOperator.setNodeTest(nodeTest);
-	pathOperator.setNodePredicateList(predicateList);
+	pathOperator.setPredicateList(predicateList);
 
 	return pathOperator.run(inputValue);
   }
   
 
+  
   public Sequence evaluate() 
+	throws XQueryGeneralException
+  {
+	return evaluate(new Sequence());
+  }
+
+
+  public Sequence evaluate(Sequence initValue) 
+	throws XQueryGeneralException
   {
 	// verify child expressions
 	if (!verifyContent()) {
@@ -117,14 +155,15 @@ public class StepExpresstion extends AbstractExpression {
 	}
 
 	
-	Sequence result = getInitialValue(); 
+	Sequence result = new Sequence(); 
+	result.addAll(initValue);
 	
-	Object secondChild = getChild(1); 
-	int childIndex = 1; 
+	Object secondChild = getChild(0); 
+	int childIndex = 0; 
 
 	if (secondChild instanceof AbstractExpression) { // union
 	  result.add(((AbstractExpression)secondChild).evaluate()); 
-	  childIndex = 2;
+	  childIndex = 1;
 	}
 	
 	return doFilter(result, childIndex);

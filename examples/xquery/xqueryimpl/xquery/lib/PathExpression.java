@@ -10,13 +10,61 @@ import xquery.lib.data.type.XQueryTypeException;
 
 
 
-public class PathExpresstion extends Expression{
+public class PathExpression extends AbstractExpression{
 
   // PathExpr -> [Var]
   //          -> [StepExpr*]
 
   // PathExpr -> [Var]
   //          -> [Expr*]
+
+  public PathExpression(Object child) 
+  {
+	super(child);
+  }
+
+  public PathExpression(Object child1, Object child2) 
+  {
+	super(child1,child2);
+  }
+
+  public PathExpression(Object child1, Object child2, Object child3) 
+  {
+	super(child1,child2,child3);
+  }
+
+
+  public PathExpression(Object child1, Object child2, Object child3, Object child4) 
+  {
+	super(child1,child2,child3,child4);
+  }
+
+
+
+  protected PathExpression()
+  {
+	super();  
+  }
+
+
+  public PathExpression(Object childExprs[], Object options[]) 
+  {
+	super(childExprs,options); 
+  }
+
+
+
+  public PathExpression(Object childExprs[]) 
+  {
+	super(childExprs); 
+  }
+  
+
+  public PathExpression(int childCount) 
+  {
+	super(childCount);
+  }
+
 
 
 
@@ -28,24 +76,32 @@ public class PathExpresstion extends Expression{
 	// do something there
 	return true;
   }
-  
+
+
+  public Sequence evaluate() 
+	throws XQueryGeneralException
+  {
+	return evaluate(new Sequence());
+  }  
 
   // filter 1 -> end
-  public Sequence evaluate() 
+  public Sequence evaluate(Sequence initValue) 
+	throws XQueryGeneralException
   {
 	// verify child expressions
 	if (!verifyContent()) {
 	  return null;
 	}
 	
-	Sequence result = getInitialValue(); 
+	Sequence result = new Sequence(); 
+	result.addAll(initValue); 
 	// 
 
-	Object secondChild = getChild(1); 
-	int childIndex = 1; 
+	Object secondChild = getChild(0); 
+	int childIndex = 0; 
 	if (secondChild instanceof AbstractExpression) { // union
 	  result.add(((AbstractExpression)secondChild).evaluate()); 
-	  childIndex = 2; 
+	  childIndex = 1; 
 	}
 
 	return result;
@@ -53,13 +109,16 @@ public class PathExpresstion extends Expression{
   
   
   protected Sequence doFilter(Sequence input, int childIndex)
+	throws XQueryGeneralException
   {
 	// filter; by expression
+	Sequence result = input; 
 	for (int i=childIndex; i< getArity(); i++) {
 	  AbstractExpression expr=(AbstractExpression)getChild(childIndex); 
 	  // assign initial value
-	  expr.setInitialValue(input); 
-	  input=expr.evaluate();
+	  result=expr.evaluate(result);
 	}
+	
+	return result;
   }
 }

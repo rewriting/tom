@@ -4,6 +4,8 @@ package xquery.lib;
 
 import org.w3c.dom.*;
 
+import java.util.*;
+
 import xquery.util.NodeTraversal;
 import xquery.util.Collect1;
 import xquery.util.Collect2;
@@ -12,6 +14,9 @@ import xquery.util.Collect4;
 
 import xquery.lib.data.Sequence;
 import xquery.lib.data.Item;
+import xquery.lib.data.type.*;
+
+
 
 public class SlashSlashOperator extends PathOperator 
 {
@@ -30,9 +35,9 @@ public class SlashSlashOperator extends PathOperator
    * @param nextOperator
    * @roseuid 4110D9B2000B
    */
-  public SlashSlashOperator(NodeTester tester, NodePredicate filter, PathOperator nextOperator) 
+  public SlashSlashOperator(NodeTester tester, NodePredicateList predicateList) 
   {
-	super(tester, filter, nextOperator);
+	super(tester, predicateList);
   }
    
   /**
@@ -42,10 +47,28 @@ public class SlashSlashOperator extends PathOperator
    * @param nextOperator
    * @roseuid 4110B6320125
    */
-  public SlashSlashOperator(PathAxe axe, NodeTester nodetester, NodePredicate nodefilter, PathOperator nextOperator) 
+  public SlashSlashOperator(PathAxe axe, NodeTester nodetester, NodePredicateList predicateList) 
   {
-	super(axe, nodetester, nodefilter, nextOperator);
+	super(axe, nodetester, predicateList);
     
+  }
+
+  public Sequence run(Sequence input) throws XQueryTypeException 
+  {
+	Sequence result = new Sequence();
+	Enumeration enum=input.elements(); 
+	
+	while (enum.hasMoreElements()) {
+	  Object obj=enum.nextElement(); 
+	  if (obj instanceof Node) {
+		result.add(run((Node)obj));
+	  }
+	  else if (obj instanceof Item) {
+		result.add(run(((Item)obj).getNode()));
+	  }
+	}
+	
+	return result;
   }
    
   /**
@@ -57,17 +80,20 @@ public class SlashSlashOperator extends PathOperator
   {
 	NodeTraversal traversal = new NodeTraversal();
 	final Sequence s=new Sequence(); 
+	//	int index=1;   // predicate base 1, not 0
 	
 	Collect1 collect = new Collect1() { 
+		int index=1;
 		public boolean apply(Object t) 
 		{ 
 		  try {
 			if(t instanceof Node) {
 			  Node anode = (Node)t; 
-			  if (doTest(anode)) {
-				s.addAll(runNext(anode));
+			  if (doTest(anode) && doFilter(anode, index)) {
+				s.add(anode);
 				return true;
 			  }
+			  index++;
 			} 
 			return true; 
 		  }
@@ -89,6 +115,12 @@ public class SlashSlashOperator extends PathOperator
    */
   public Sequence run(Item item) 
   {
-    return run(item.getNode());
+	if (item.isNode()) {
+	  return run(item.getNode());
+	}
+	else {
+	  return new Sequence();
+	}
   }
+
 }

@@ -5,7 +5,7 @@ package xquery.lib;
 
 import org.w3c.dom.*;
 
-import xquery.lib.data.type.String;
+import xquery.lib.data.type.*;
 import xquery.lib.data.Item;
 
 // wild card can be implemented in this class
