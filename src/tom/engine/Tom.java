@@ -135,6 +135,7 @@ public class Tom {
     taskInput.setOutputSuffix(".java");
     List importList = new ArrayList();
     String localInputFileName = null;
+    String localOutputFileName = null;
     String localDestDir = null;
     int i =0;
       // Processing the input arguments into taskInput
@@ -224,7 +225,8 @@ public class Tom {
             localDestDir = args[++i];
             //System.out.println("localDestDir = " + localDestDir);
           } else if (args[i].equals("--output") || args[i].equals("-o")) {
-            taskInput.setUserOutputFile(args[++i]);
+            localOutputFileName = args[++i];
+            taskInput.setUserOutputFile(true);
           } else {
             String s = "'" + args[i] + "' is not a valid option";
             System.out.println(s);
@@ -268,14 +270,15 @@ public class Tom {
 
         /*
          * compute outputFile:
-         *  - either use the given outputFileName
+         *  - either use the given localOutputFileName
          *  - either concatenate
          *    the outputDir
          *    [the packagePath] will be updated by the parser
          *    and reuse the inputFileName with a good suffix
          */
-      if(taskInput.getUserOutputFile() != null) {
-        taskInput.setOutputFile(taskInput.getUserOutputFile().getPath());
+      if(taskInput.isUserOutputFile()) {
+        File out = new File(localOutputFileName).getAbsoluteFile();
+        taskInput.setOutputFile(out.getPath());
       } else {
         String child = new File(taskInput.getInputFileNameWithoutSuffix() + taskInput.getOutputSuffix()).getName();
         File out = new File(taskInput.getDestDir(),child).getAbsoluteFile();

@@ -318,7 +318,7 @@
 
 	<target name="dist.all" 
 		      description="Prepare stable and devel distributions" 
-		      depends="dist.stable, dist.src"/>
+		      depends="clean.dist, dist.stable, dist.src"/>
 
 	<target name="clean.stable" description="Purges the generated stable files">
 		<delete dir="${stable.build}"/>
@@ -549,7 +549,7 @@
     <echo> Bootstrap perform successfully!!</echo>
   </target>
 
-	<target name="bootinstall" depends="bootcheck" if="bootstrap.ok">
+	<target name="bootinstall" description="Instrall src tree into stable tree" depends="bootcheck" if="bootstrap.ok">
 		<copy todir="${stable.src}" overwrite="true">
 			<fileset dir="${src.src}">
 				<include name="**/*.java"/>

@@ -55,13 +55,6 @@ public class TomTaskInput {
   private File outputFile;
 
     /*
-     * userOutputFile
-     * absolute name of the output file given by the user (if any)
-     * substitute outputFile when defined
-     */
-  private File userOutputFile;
-
-    /*
      * packagePath
      * relative path which corresponds to the package defined in the input file (empty by default) 
      */
@@ -118,6 +111,8 @@ public class TomTaskInput {
     doVerify = false, // Compilation correctness verification
     help = false, // usage called
     version = false; //version called
+
+  private boolean userOutputFile=false; //to know if the the output file is given by the user 
 
   private final static int JAVA   = 1;
   private final static int C      = 2;
@@ -445,23 +440,18 @@ public class TomTaskInput {
      * between the destDir and the fileName
      */
   public void updateOutputFile() {
-    if(getUserOutputFile() == null || getUserOutputFile().getPath().length() == 0) {
+    if(!isUserOutputFile()) {
       File out = new File(getOutputFile().getParentFile(),getPackagePath());
       setOutputFile(new File(out, getOutputFile().getName()).getPath());
     }
   }
-  
-  public void setUserOutputFile(String sUserOutputFile) {
-    try {
-      this.userOutputFile = new File(sUserOutputFile).getCanonicalFile();
-    } catch (IOException e) {
-      System.out.println("IO Exception using file `" + sUserOutputFile + "`");
-      e.printStackTrace();
-    }
-	}
-	
-	public File getUserOutputFile() {
-		return userOutputFile;
-	}
-  
+
+  public boolean isUserOutputFile() {
+    return userOutputFile;
+  }
+  public void setUserOutputFile(boolean b) {
+    userOutputFile = b;
+  }
+ 
+ 
 } // class TomTaskInput
