@@ -160,7 +160,7 @@
   [TomTerm,BuildBuiltin,BuildBuiltin(<astName(TomName)>) ],
   [TomTerm,CompiledMatch,CompiledMatch(<decls(TomList)>,<automataList(TomList)>,<option(Option)>)],
   [TomTerm,CompiledPattern,CompiledPattern(<instList(TomList)>) ],
-  [TomTerm,AssignedVariable,AssignedVariable(<varName(str)>,<source(Expression)>,<nbUse(int)>) ],
+  [TomTerm,AssignedVariable,AssignedVariable(<varName(str)>,<source(Expression)>,<nbUse(int)>,<usedInDoWhile(Expression)>,<removable(Expression)>) ],
 
   [TomTerm,Automata,Automata(<numberList(TomList)>,<instList(TomList)>, <debugName(TomName)>) ],
   [TomTerm,DefaultAutomata,DefaultAutomata(<numberList(TomList)>,<instList(TomList)>, <debugName(TomName)>) ],
