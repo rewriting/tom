@@ -107,15 +107,15 @@ public class TomStreamManager {
     // well, it would be better in the future if we let the generator append the output suffix itself
     // so that's only temporary
     
-    if ( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
-      inputSuffix = ".t";
-      outputSuffix = ".java";
-    } else if ( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
+    if ( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.c";
     } else if ( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.ml";
+    } else if ( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
+      inputSuffix = ".t";
+      outputSuffix = ".java";
     } else { 
       throw new TomRuntimeException("No code generator selected");
     }
