@@ -57,13 +57,15 @@ package minirho;
 //CONSTRAINTS
 			 appSc(subst:Constraint,co:Constraint) -> Constraint //Substition application on constraints
 			 match(pa:RTerm,rhs:RTerm) -> Constraint
+
 			 dk -> Label //label by defaut for conjonctions
 			 g -> Label //label for solvable constraints
 			 ng -> Label //label for not solvable constraints
 			 and(lab:Label, constrList:ListConstraint ) -> Constraint
 			 concConstraint( Constraint* ) -> ListConstraint
-//AUXILARY: not strictly speaking needed
-			 matchH(lhs:RTerm,rhs:RTerm) -> Constraint //use to check if the head of an application tree is a constructor
+//AUXILARY: not strictly speaking needed: use to check if the head of an application tree is a constructor
+			 matchKO(pa:RTerm,rhs:RTerm) -> Constraint
+			 matchOK(pa:RTerm,rhs:RTerm) -> Constraint
 			 }
 
 //All the reduction rules of the RhoXC-calculus. First, those transforming RTerms. Secondly, those transforming Constraints
@@ -72,10 +74,17 @@ package minirho;
 				if (t instanceof RTerm) {// Reduction rules for terms
 					RTerm term = (RTerm) t;
 					%match(RTerm term){
-						//Compose
-						appSt(phi,appSt(psi,A)) -> {
-						    return `appSt(and(g,concConstraint(phi,appSc(phi,psi))),A);
-						}
+
+// 							appC(matchKO[],_) -> {return `const("null");}
+// 										app(const("null"),A) -> {return `const("null");}
+// 							struct(A,const("null")) -> {return `A;}
+// 							struct(const("null"),A) -> {return `A;}
+
+// 						//Compose
+						//						appSt(phi,appSt(psi,A)) -> {
+// 							return `appSt(and(g,concConstraint(phi,appSc(phi,psi))),A);
+
+// 						}
 						//rho 
 						app(abs(A,B),C)-> {	
 						    return `appC(match(A,C),B) ;
@@ -140,24 +149,66 @@ package minirho;
 				else if(t instanceof Constraint) {//Reduction rules for constraints
 					Constraint co = (Constraint)t;
 					%match(Constraint co){
+
 						//ComposeS
-						appSc(phi,appSc(psi,theta)) -> {
-						    return `appSc(and(g,concConstraint(phi,appSc(phi,psi))),theta);
-						}
+//						appSc(phi,appSc(psi,theta)) -> {
+//						    return `appSc(and(g,concConstraint(phi,appSc(phi,psi))),theta);
+//						}
 						//decompose Structure
 						match(struct(A,B),struct(C,D)) -> {
 						    return  `and(dk,concConstraint(match(A,C),match(B,D)));
 						}
-						//decompose Constructors
-						l:match(app1@app[],app2@app[]) -> {
-							//On peut peut-etre optimiser ici: construire la liste de filtrage en meme tps que l'on teste
+						//decompose Constructors 
+// on groupe les regles Decompose et NGood
+						l:s@match(app1@app[],app2@app[]) -> {
+							//On peut peut-etre optimiser ici: construire la liste de filtrage en meme tps que l'on teste: c pas sur qu'il faille optimiser ne rien creer quand on teste le symbole est peut etre pas mal
+
 							//1. on teste si le symbole de tete est une constante
-							Constraint isConstant = `matchH(app1,app2);
 							//head is constant? --> headIsConstant
-							isConstant = headIsConstant(isConstant);
+							Constraint isConstant = headIsConstant(s);
 							%match(Constraint isConstant){
-								matchH[] -> {
+								match[] -> {
 									break l;
+								}
+								matchKO[] -> {
+//									System.out.println("J'ai trouve un match KO dans la decompose");
+									return `matchKO(app1,app2);
+								}
+							}
+							//2. on calcule le resultat a retourner.
+							return normalize(co,computeMatch);
+						}
+						l:s@match(app1@app[],app2@const[]) -> {
+							//On peut peut-etre optimiser ici: construire la liste de filtrage en meme tps que l'on teste: c pas sur qu'il faille optimiser ne rien creer quand on teste le symbole est peut etre pas mal
+
+							//1. on teste si le symbole de tete est une constante
+							//head is constant? --> headIsConstant
+							Constraint isConstant = headIsConstant(s);
+							%match(Constraint isConstant){
+								match[] -> {
+									break l;
+								}
+								matchKO[] -> {
+//									System.out.println("J'ai trouve un match KO dans la decompose");
+									return `matchKO(app1,app2);
+								}
+							}
+							//2. on calcule le resultat a retourner.
+							return normalize(co,computeMatch);
+						}
+						l:s@match(app1@const[],app2@app[]) -> {
+							//On peut peut-etre optimiser ici: construire la liste de filtrage en meme tps que l'on teste: c pas sur qu'il faille optimiser ne rien creer quand on teste le symbole est peut etre pas mal
+
+							//1. on teste si le symbole de tete est une constante
+							//head is constant? --> headIsConstant
+							Constraint isConstant = headIsConstant(s);
+							%match(Constraint isConstant){
+								match[] -> {
+									break l;
+								}
+								matchKO[] -> {
+//									System.out.println("J'ai trouve un match KO dans la decompose");
+									return `matchKO(app1,app2);
 								}
 							}
 							//2. on calcule le resultat a retourner.
@@ -184,21 +235,6 @@ package minirho;
 						and(dk(),(X*,and(g(),(c*)),Y*,and(g(),(d*)),Z*)) -> {
 						    return `and(dk,concConstraint(X*,and(g,concConstraint(c*,d*))));
 						}
-						//NGood
-//  						l:match(app1@app[],app2@app[]) -> {
-//  							//On peut peut-etre optimiser ici: construire la liste de filtrage en meme tps que l'on teste
-//  							//1. on teste si le symbole de tete est une constante
-//  							Constraint isConstant = `matchH(app1,app2);
-//  							//head is constant? --> headIsConstant
-//  							isConstant = headIsConstant(isConstant);
-// 							Constraint isConstant){
-//  								matchH[] -> {
-//  									break l;}
-//  							}
-//  							//2. on calcule le resultat a retourner.
-//  							return normalize(co,computeMatch);
-//  						}
-
 						//ShareMatch A Enrichir
 						appSc(phi,match(B,C)) -> {
 						    return `match(B,appSt(phi,C));
@@ -227,15 +263,17 @@ package minirho;
 					}
 				}
 				//Particular strategies 
-				if (t instanceof RTerm){
-					RTerm term = (RTerm) t;
-					%match(RTerm term){
-						//do not reduce the right-hand side of an abstraction
-						abs(A,B) -> {
-						    return `abs((RTerm)apply(A),B);
-						}
+ 				if (t instanceof RTerm){
+ 					RTerm term = (RTerm) t;
+ 					%match(RTerm term){
+ 						//do not reduce the right-hand side of an abstraction
+ 						abs(A,B) -> {
+ 						    return `abs((RTerm)apply(A),B);
+ 						}
+						appC(matchKO[],_) ->{
+							return t;}
 					}
-				}
+				}			 				
 				return traversal.genericOneStep(t,this);
 				//				return traversal.genericTraversal(t,this);
 			 }
@@ -248,8 +286,11 @@ package minirho;
 			 while(res != form){
 				 res = form;
 				 form = r.apply(form);
-				 System.out.println("|--> " + form);
+//				 			 System.out.println("|--> " + printNoStuck(form));
 			 }
+			 //		 System.out.println("|--> " + form);
+//			 System.out.println("|--> " + printInfix(form));
+			 System.out.println("|--> " + printNoStuck(form));
 		 }
 		 else {
 			 while(res != form){
@@ -281,38 +322,33 @@ package minirho;
   public rhotermFactory getRhotermFactory() {
     return factory;
   }
-	 Replace1 headisConstant = new Replace1() {
-			 public ATerm apply(ATerm t) {
-				 if (t instanceof Constraint){
-					 %match(Constraint t){
-						 matchH(app(t1@app[],A),app(t2@app[],B)) -> {
-							 return `matchH(t1,t2);
+	 public Constraint headIsConstant(Constraint c){
+					 %match(Constraint c){
+						 match(app(t1@app[],A),app(t2@app[],B)) -> {
+							 return `match(t1,t2);
 						 }
-						 matchH(app(f@const[],A),app(f,B)) -> {
-							 return `match(A,B);
+						 match(app(f@const[],A),app(f,B)) -> {
+							 return `matchOK(A,B);
 						 }
-					 }
-				 }
-				 return traversal.genericTraversal(t,this);
-			 }
-		 };
-	 Replace1 head_is_not_Constant = new Replace1() {
-			 public ATerm apply(ATerm t) {
-				 if (t instanceof Constraint){
-					 %match(Constraint t){
-						 matchH(app(t1@app[],A),app(t2@app[],B)) -> {
-							 return `matchH(t1,t2);
-						 }
-						 matchH(app(const[na=n1],A),app(const[na=n2],B)) -> {
+						 match(app(const[na=n1],A),app(const[na=n2],B)) -> {
 							 if (n1 != n2){ 
-								 return `match(A,B);
+								 return `matchKO(A,B);
 							 }
 						 }
+						 //INCOMPLEEEEEEEEEEEEEEEEEEEEEET
+						 match(A@const[],B) -> {
+
+							 return `matchKO(A,B);
+						 }
+
+						 match(A,B@const[]) -> {
+//							 System.out.println("J'ai trouve un matchKO dans headISConst");
+							 return `matchKO(A,B);
+						 }
+						 _ -> {return c;}
 					 }
-				 }
-				 return traversal.genericTraversal(t,this);
-			 }
-		 };
+	 }
+ 	 
 	 Replace1  computeMatch = new Replace1(){
 			 public ATerm apply(ATerm t){
 				 if (t instanceof Constraint){
@@ -329,12 +365,6 @@ package minirho;
 			 }};
 
 	 //auxilary function for the decomposition of the constructors
-	 public Constraint headIsConstant(Constraint c){
-		 return (Constraint)normalize(c,headisConstant);
-	 }
-	 public Constraint headIsNotConstant(Constraint c){
-		 return (Constraint)normalize(c,head_is_not_Constant);
-	 }
 
 	 public void run(){
 
@@ -370,7 +400,7 @@ package minirho;
 			 var(s) -> {return s.toUpperCase();}
 			 const(s) -> {return s.toLowerCase();}
 			 abs(lhs,rhs) -> {return printInfix(lhs) + " -> "+ printInfix(rhs);}
-			 app(lhs,rhs) -> {return  printInfix(lhs) + "   "+ printInfix(rhs) ;}
+			 app(lhs,rhs) -> {return "(" +  printInfix(lhs) + " )  "+ printInfix(rhs) ;}
 			 struct(lhs,rhs) -> {return printInfix(lhs) + " , "+ printInfix(rhs);}
 			 appC(co, term) -> {return "[" + printInfixCons(co) + "]" + "(" + printInfix(term) + ")";}
 			 appSt(co, term) -> {return "{" + printInfixCons(co) + "}" + "(" + printInfix(term) + ")";}
@@ -381,38 +411,100 @@ package minirho;
 		 %match(Constraint c){
 			 appSc(subst, co) -> {return "{" + printInfixCons(subst) + "}" + "(" + printInfixCons(co) + ")";}
 			 match(pa,rhs) -> {return printInfix(pa) + " << " + printInfix(rhs);}
-//			 matchH(pa,rhs) -> {return printInfix(pa) + " <<H " + printInfix(rhs);}
-			 and(g(),l) -> {
+			 matchKO(pa,rhs) -> {return printInfix(pa) + " <<KO " + printInfix(rhs);}
+ 			 and(g(),l) -> {
+ 				 //code mauvais
+ 				 ListConstraint tmp = l;
+ 				 String s = "";
+ 				 while(!(tmp.isEmpty())){
+ 					 s = s + printInfixCons((Constraint)tmp.getFirst()) + " ^g ";
+ 					 tmp = (ListConstraint)tmp.getNext();
+ 				 }
+ 				 return s.substring(0,s.length() - 4);
+ 			 }
+ 			 and(ng(),l) -> {
 				 //code mauvais
-				 ListConstraint tmp = l;
-				 String s = "";
-				 while(!(tmp.isEmpty())){
-					 s = s + printInfixCons((Constraint)tmp.getFirst()) + " ^g ";
-					 tmp = (ListConstraint)tmp.getNext();
-				 }
-				 return s.substring(0,s.length() - 4);
-			 }
-			 and(ng(),l) -> {
-				 //code mauvais
-				 ListConstraint tmp = l;
-				 String s = "";
-				 while(!(tmp.isEmpty())){
-					 s = s + printInfixCons((Constraint)tmp.getFirst()) + " ^ng ";
-					 tmp = (ListConstraint)tmp.getNext();
-				 }
-				 return s.substring(0,s.length() - 5);
-			 }
+ 				 ListConstraint tmp = l;
+ 				 String s = "";
+ 				 while(!(tmp.isEmpty())){
+ 					 s = s + printInfixCons((Constraint)tmp.getFirst()) + " ^ng ";
+ 					 tmp = (ListConstraint)tmp.getNext();
+ 				 }
+ 				 return s.substring(0,s.length() - 5);
+ 			 }
 			 and(dk(),l) -> {
-				 //code mauvais
-				 ListConstraint tmp = l;
-				 String s = "";
-				 while(!(tmp.isEmpty())){
-					 s = s + printInfixCons((Constraint)tmp.getFirst()) + " ^ ";
-					 tmp = (ListConstraint)tmp.getNext();
-				 }
-				 return s.substring(0,s.length() - 3);
-			 }
-			 _ -> {return "";}
+ 				 //code mauvais
+ 				 ListConstraint tmp = l;
+ 				 String s = "";
+ 				 while(!(tmp.isEmpty())){
+ 					 s = s + printInfixCons((Constraint)tmp.getFirst()) + " ^ ";
+ 					 tmp = (ListConstraint)tmp.getNext();
+ 				 }
+ 				 return s.substring(0,s.length() - 3);
+ 			 }
+		 _ -> {return "";}
 		 }
 	 }
+	 public String printNoStuck(ATerm t){
+		 if (t instanceof RTerm){
+			 return printNoStuckTerm((RTerm)t);
+		 }
+		 else  return printNoStuckCons((Constraint)t);
+	 }
+	 public String printNoStuckTerm(RTerm r){
+		 %match(RTerm r) {
+			 var(s) -> {return s.toUpperCase();}
+			 const(s) -> {return s.toLowerCase();}
+			 abs(lhs,rhs) -> {return printNoStuck(lhs) + " -> "+ printNoStuck(rhs);}
+			 app(lhs,rhs) -> {return  printNoStuck(lhs) + "   "+ printNoStuck(rhs) ;}
+			 struct(lhs,rhs) -> {return printNoStuck(lhs) + " , "+ printNoStuck(rhs);}
+			 appC(matchKO[],_) -> {return "IGNORE";}
+			 appC(co, term)  -> {
+					 return "[" + printNoStuckCons(co) + "]" + "(" + printNoStuck(term) + ")";
+				 
+			 }
+			 appSt(co, term) -> {return "{" + printNoStuckCons(co) + "}" + "(" + printNoStuck(term) + ")";}
+			 _ -> {return "";}
+		 }
+	 } 
+	 public  String printNoStuckCons(Constraint c){
+		 %match(Constraint c){
+			 appSc(subst, co) -> {return "{" + printNoStuckCons(subst) + "}" + "(" + printNoStuckCons(co) + ")";}
+			 match(pa,rhs) -> {return printNoStuck(pa) + " << " + printNoStuck(rhs);}
+ 			 and(g(),l) -> {
+ 				 //code mauvais
+ 				 ListConstraint tmp = l;
+ 				 String s = "";
+ 				 while(!(tmp.isEmpty())){
+ 					 s = s + printNoStuckCons((Constraint)tmp.getFirst()) + " ^g ";
+ 					 tmp = (ListConstraint)tmp.getNext();
+ 				 }
+ 				 return s.substring(0,s.length() - 4);
+ 			 }
+ 			 and(ng(),l) -> {
+				 //code mauvais
+ 				 ListConstraint tmp = l;
+ 				 String s = "";
+ 				 while(!(tmp.isEmpty())){
+ 					 s = s + printNoStuckCons((Constraint)tmp.getFirst()) + " ^ng ";
+ 					 tmp = (ListConstraint)tmp.getNext();
+ 				 }
+ 				 return s.substring(0,s.length() - 5);
+ 			 }
+			 and(dk(),l) -> {
+ 				 //code mauvais
+ 				 ListConstraint tmp = l;
+ 				 String s = "";
+ 				 while(!(tmp.isEmpty())){
+ 					 s = s + printNoStuckCons((Constraint)tmp.getFirst()) + " ^ ";
+ 					 tmp = (ListConstraint)tmp.getNext();
+ 				 }
+ 				 return s.substring(0,s.length() - 3);
+ 			 }
+		 _ -> {return "Please extend printNoStuck";}
+		 }
+	 }
+
  }
+		 
+ 
