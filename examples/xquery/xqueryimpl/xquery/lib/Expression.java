@@ -4,71 +4,68 @@ package xquery.lib;
 
 import xquery.lib.data.*;
 
-public class Expression {
-  protected Object [] childs; 
-  
+public class Expression extends AbstractExpression{
+
+
+
+  // Expr  -> PathExpr* 
+  // eval:  UNION ALL (pathexpr.eval())
   
   protected Expression()
   {
-	this.childs = null; 
-  }
-
-
-
-  public Expression(Object child) 
-  {
-	this.childs = new Object[1];
+	super();  
   }
 
 
   public Expression(Object childExprs[]) 
   {
-	childs = new Object[childExprs.length];
-	for (int i=0;i < childs.length; i++) {
-	  childs[i]=childExprs[i];
-	}
+	super(childExprs); 
   }
   
 
-
-  public boolean setChild(Object child, int position) 
+  public Expression(int childCount) 
   {
-	if (position > objects.length - 1) 
-	  return false;
-	else {
-	  childs[position] = child;
+	super(childCount);
+  }
+
+
+
+  protected boolean verifyContent()
+  {
+	for (int i=0;i < getArity(); i++) {
+	  if (childs[i]==null) {
+		return false; 
+	  }
 	}
+	return true; 
   }
 
-
-  public int getArity() 
-  {
-	return objects.length; 
-  }
-
-
-
-  public Object getChild(int position) 
-  {
-	if (position > objects.length - 1) 
-	  return null;
-	else 
-	  return objects[position];
-  }
-
-
+  
+  // return null if one child is null
+  // return empty sequence if no result
+  // return sequence if do have result
+  
 
   public Sequence evaluate() throws XQueryGeneralException
   {
+	// verify child expressions
+	if (!verifyContent()) {
+	  return null;
+	}
+
 	// default: UNION alls:
-	Sequence s = new Sequence(); 
-	for (int i=0;i < childs.length; i++) {
-	  Object achild = objects[i];
+	Sequence s = getInitialValue(); 
+
+	for (int i=1 ;i < getArity(); i++) { // 0 is initial value
+	  Object achild = getChild(i);
 	  if ((achild instanceof Sequence)
-		  || (achild instanceof Item)
-		  || (achild instanceof Expression)) {
-		s.add(childs[i].evaluate()); 
+		  || (achild instanceof Item)) {
+		s.add(achild); 
 	  }
+	  else if (achild instanceof AbstractExpression) {
+		s.add(achild.evaluate()); 
+	  }
+
 	  else if (achild instanceof Node) {
 		// create Item from this node, evaluate and add to sequence 
 		
@@ -76,9 +73,8 @@ public class Expression {
 	  else if (achild instanceof Atom) {
 		// create Item from this node, evaluate and add to sequence 
 	  }
+
 	}
   }
-
-
 
 }

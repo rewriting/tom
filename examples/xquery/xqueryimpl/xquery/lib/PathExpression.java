@@ -12,8 +12,16 @@ import xquery.lib.data.type.XQueryTypeException;
 
 public class PathExpresstion extends Expression{
 
+  // PathExpr -> [Var]
+  //          -> [StepExpr*]
 
-  // filter 
+  // PathExpr -> [Var]
+  //          -> [Expr*]
+
+
+  
+
+  // filter 1 -> end
   public Sequence evaluate() 
   {
 	
