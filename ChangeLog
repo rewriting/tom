@@ -1,7 +1,15 @@
+2004-09-24  pem  <pem@becky.local>
+
+  * src/jtom/compiler/TomKernelCompiler.t: fixed a major bug in
+	list-matching: the containOnlyVariableStar was correct but not
+	complete
+	Still have to fix the array version.
+	
+
 2004-09-16  pem  <pem@becky.local>
 
   * bootinstall
-  * src/jtom/tools/ant/TomTask.java: added --cadt option
+  * src/jtom/tools/ant/TomTask.java: added --stamp option
 
 2004-09-06  pem  <pem@polly.loria.fr>
 

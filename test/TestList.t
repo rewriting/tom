@@ -100,6 +100,7 @@ public class TestList extends TestCase {
 		for (int i = 0; i<TESTS3.length;i++) {
 			suite.addTest(new TestList("testMatch3",i));
 		}
+    suite.addTest(new TestList("testMatch4"));
 		return suite;
 	}
 
@@ -202,5 +203,20 @@ public class TestList extends TestCase {
     }
     return res;
   }
+
+	public void testMatch4() {
+    int nbSol = 0;
+    ATerm l = factory.parse("[a,b]");
+		%match(L l) {
+      conc(X1*,X2*,X3*) -> {
+        nbSol++;
+				//System.out.println("X1 = " + `X1* + " X2 = " + `X2*+ " X3 = " + `X3*);
+      }
+    }
+
+    assertTrue("TestMatch4",nbSol==6);
+	}
+
+
   
 }

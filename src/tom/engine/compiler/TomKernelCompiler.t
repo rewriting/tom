@@ -364,18 +364,23 @@ public class TomKernelCompiler extends TomBase {
           Instruction loop;
           if(containOnlyVariableStar(`termTail)) {
               /*
+               * this algorithm is buggy
+               *
                * do {
                *   * SUBSTITUTION: E_i
                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);
                *   ...
                *   if(!IS_EMPTY_TomList(end_i) )
                *     end_i = (TomList) GET_TAIL_TomList(end_i);
+               *   else
+               *     end_i = begin_i
                *   subjectList = end_i;
-               * } while( !IS_EMPTY_TomList(end_i) )
+               * } while( end_i != begin_i )
                */
-            Instruction assign1 = `genIsEmptyList(Ref(variableEndAST),Nop(),tailExp);
+            Instruction stopIter = `Assign(variableEndAST,TomTermToExpression(variableBeginAST));
+            Instruction assign1 = `genIsEmptyList(Ref(variableEndAST),stopIter,tailExp);
             Instruction assign2 = `Assign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)));
-            loop = `DoWhile(UnamedBlock(concInstruction(let,assign1,assign2)),Not(IsEmptyList(Ref(variableEndAST))));
+            loop = `DoWhile(UnamedBlock(concInstruction(let,assign1,assign2)),Not(EqualTerm(termType,Ref(variableEndAST),variableBeginAST)));
           } else {
               /*
                * case (X*,y,...)

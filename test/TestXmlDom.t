@@ -60,7 +60,7 @@ public class TestXmlDom extends TestCase {
     %match(TNode list) {
       <IntegerList>[<(Int|Integer)>(#TEXT(s1))</(Int|Integer)>,
                     <(Integer|Int)>(#TEXT(s2))</(Integer|Int)>]</IntegerList> -> {
-				 //if(`s1.compareTo(`s2) > 0) { return false; }
+				 if(`s1.compareTo(`s2) > 0) { System.out.println("testSortedInteger"); }
 				 assertFalse("Expects the matched integers to be ordered",
 										 `s1.compareTo(`s2) > 0);
 			 }
@@ -70,6 +70,7 @@ public class TestXmlDom extends TestCase {
 	public void testSwapElements() {
 		Node list = getXmldoc();
     LinkedList res = extractElements(swapElements(list));
+    if(reverseElements!= res) { System.out.println("testSwapElements"); }
     assertEquals("ExtractElement extract elements in order",
 								 reverseElements, res);
   }
@@ -77,6 +78,7 @@ public class TestXmlDom extends TestCase {
 	public void testExtractElements() {
 		Node list = getXmldoc();
 		LinkedList res = extractElements(list);
+    if(elements!= res) { System.out.println("testExtractElements"); }
 		assertEquals("ExtractElement extract elements in order",
 								 elements, res);
 	}
@@ -100,7 +102,9 @@ public class TestXmlDom extends TestCase {
     %match(TNode list) {
       <IntegerList>
          <(Integer|Int)>(#TEXT(s1))</(Integer|Int)>
-      </IntegerList> -> { res.add(`s1); }
+      </IntegerList> -> { 
+         res.add(`s1); 
+       }
     }
     return res;
   }
@@ -243,6 +247,7 @@ public class TestXmlDom extends TestCase {
 				res++;
 			}
 		}
+    if(15!= res) { System.out.println("testAttributeMatch"); }
 		assertEquals(
 			"XML attibute matching should not depend on the order of the attibutes", 
 			res, 15);
