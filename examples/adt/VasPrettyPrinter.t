@@ -23,17 +23,26 @@ public class VasPrettyPrinter {
     return vasFactory;
   }
   
-  public void print(VasModule module) {
-    //System.out.println(module);
-    %match(VasModule module) {
-      VasModule(VasModuleName(moduleName),
-                concSection(Imports(importList),Public(concGrammar(sortList,_*,grammar,_*)))) -> {
-        System.out.print("module "+`moduleName+
-                         "\nimports "+printImports(`importList)+
-                         "\n\npublic"+
-                         "\nsorts "+printSorts(`sortList)+
-                         "\n\nabstract syntax\n\n"+printGrammar(`grammar));
+  public void print(VasModule module, String path) {
+    try {
+      %match(VasModule module) {
+        VasModule(VasModuleName(moduleName),
+                  concSection(Imports(importList),Public(concGrammar(sortList,_*,grammar,_*)))) -> {
+          PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path+`moduleName+".vas")));
+          String result = "module "+`moduleName+
+            "\nimports "+printImports(`importList)+
+            "\n\npublic"+
+            "\nsorts "+printSorts(`sortList)+
+            "\n\nabstract syntax\n\n"+printGrammar(`grammar);
+          out.write(result,0,result.length());
+          out.flush();
+          out.close();
+        }
       }
+    } catch(IOException e) {
+      System.out.println("io erreur : " + e);
+    } catch(Exception ee) {
+      System.out.println("erreur : " + ee);
     }
   }
 
