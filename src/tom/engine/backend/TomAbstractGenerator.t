@@ -36,6 +36,7 @@ import java.util.HashMap;
 
 import jtom.adt.tomsignature.types.*;
 
+import jtom.TomBase;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
@@ -43,7 +44,7 @@ import jtom.tools.SingleLineOutputCode;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
-public abstract class TomAbstractGenerator {
+public abstract class TomAbstractGenerator extends TomBase {
   
   protected OutputCode output;
   protected TomTaskInput input;
