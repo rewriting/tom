@@ -975,7 +975,6 @@ public class TomParser implements TomTask, TomParserConstants {
   }
 
   final public boolean XMLChilds(LinkedList list) throws ParseException, TomException {
- // variable declaration
   TomTerm term;
   Token name;
   Option option;

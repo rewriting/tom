@@ -256,9 +256,6 @@ public class TomSignatureFactory
   private aterm.AFun funTomTerm_XMLAppl;
   private TomTerm protoTomTerm_XMLAppl;
   private aterm.ATerm patternTomTerm_XMLAppl;
-  private aterm.AFun funTomTerm_XMLAttribute;
-  private TomTerm protoTomTerm_XMLAttribute;
-  private aterm.ATerm patternTomTerm_XMLAttribute;
   private aterm.AFun funTomTerm_BackQuoteAppl;
   private TomTerm protoTomTerm_BackQuoteAppl;
   private aterm.ATerm patternTomTerm_BackQuoteAppl;
@@ -814,10 +811,6 @@ public class TomSignatureFactory
     patternTomTerm_XMLAppl = factory.parse("XMLAppl(<term>,<term>,<term>,<term>)");
     funTomTerm_XMLAppl = factory.makeAFun("_TomTerm_XMLAppl", 4, false);
     protoTomTerm_XMLAppl = new TomTerm_XMLAppl(this);
-
-    patternTomTerm_XMLAttribute = factory.parse("XMLAttribute(<term>,<term>)");
-    funTomTerm_XMLAttribute = factory.makeAFun("_TomTerm_XMLAttribute", 2, false);
-    protoTomTerm_XMLAttribute = new TomTerm_XMLAttribute(this);
 
     patternTomTerm_BackQuoteAppl = factory.parse("BackQuoteAppl(<term>,<term>,<term>)");
     funTomTerm_BackQuoteAppl = factory.makeAFun("_TomTerm_BackQuoteAppl", 3, false);
@@ -3542,35 +3535,6 @@ public class TomSignatureFactory
     args.add((arg.getOption()).toTerm());    args.add((arg.getAstName()).toTerm());    args.add((arg.getAttrList()).toTerm());    args.add((arg.getChildList()).toTerm());    return factory.make(patternTomTerm_XMLAppl, args);
   }
 
-  protected TomTerm_XMLAttribute makeTomTerm_XMLAttribute(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_XMLAttribute) {
-      protoTomTerm_XMLAttribute.initHashCode(annos,fun,args);
-      return (TomTerm_XMLAttribute) factory.build(protoTomTerm_XMLAttribute);
-    }
-  }
-
-  public TomTerm_XMLAttribute makeTomTerm_XMLAttribute(TomTerm _field, TomTerm _value) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_field, _value};
-    return makeTomTerm_XMLAttribute(funTomTerm_XMLAttribute, args, factory.getEmpty());
-  }
-
-  public TomTerm TomTerm_XMLAttributeFromTerm(aterm.ATerm trm)
-  {
-    java.util.List children = trm.match(patternTomTerm_XMLAttribute);
-
-    if (children != null) {
-      TomTerm tmp = makeTomTerm_XMLAttribute(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      return tmp;
-    }
-    else {
-      return null;
-    }
-  }
-  protected aterm.ATerm toTerm(TomTerm_XMLAttributeImpl arg) {
-    java.util.List args = new java.util.LinkedList();
-    args.add((arg.getField()).toTerm());    args.add((arg.getValue()).toTerm());    return factory.make(patternTomTerm_XMLAttribute, args);
-  }
-
   protected TomTerm_BackQuoteAppl makeTomTerm_BackQuoteAppl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomTerm_BackQuoteAppl) {
       protoTomTerm_BackQuoteAppl.initHashCode(annos,fun,args);
@@ -5849,11 +5813,6 @@ public class TomSignatureFactory
     }
 
     tmp = TomTerm_XMLApplFromTerm(trm);
-    if (tmp != null) {
-      return tmp;
-    }
-
-    tmp = TomTerm_XMLAttributeFromTerm(trm);
     if (tmp != null) {
       return tmp;
     }

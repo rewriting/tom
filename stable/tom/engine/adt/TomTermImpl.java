@@ -100,11 +100,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isXMLAttribute()
-  {
-    return false;
-  }
-
   public boolean isBackQuoteAppl()
   {
     return false;
@@ -326,16 +321,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasChildList()
-  {
-    return false;
-  }
-
-  public boolean hasField()
-  {
-    return false;
-  }
-
-  public boolean hasValue()
   {
     return false;
   }
@@ -593,26 +578,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setChildList(TomList _childList)
   {
      throw new IllegalArgumentException("Illegal argument: " + _childList);
-  }
-
-  public TomTerm getField()
-  {
-     throw new UnsupportedOperationException("This TomTerm has no Field");
-  }
-
-  public TomTerm setField(TomTerm _field)
-  {
-     throw new IllegalArgumentException("Illegal argument: " + _field);
-  }
-
-  public TomTerm getValue()
-  {
-     throw new UnsupportedOperationException("This TomTerm has no Value");
-  }
-
-  public TomTerm setValue(TomTerm _value)
-  {
-     throw new IllegalArgumentException("Illegal argument: " + _value);
   }
 
   public TomName getSlotName()

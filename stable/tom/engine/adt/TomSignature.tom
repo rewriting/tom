@@ -761,14 +761,6 @@
   make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_XMLAppl(t0, t1, t2, t3)}
 }
 
-%op TomTerm XMLAttribute(field:TomTerm, value:TomTerm) {
-  fsym {}
-  is_fsym(t) { (t!= null) && t.isXMLAttribute()}
-  get_slot(field,t) { t.getField()}
-  get_slot(value,t) { t.getValue()}
-  make(t0, t1) { getTomSignatureFactory().makeTomTerm_XMLAttribute(t0, t1)}
-}
-
 %op TomTerm BackQuoteAppl(option:Option, astName:TomName, args:TomList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isBackQuoteAppl()}
