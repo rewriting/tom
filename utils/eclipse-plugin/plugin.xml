@@ -16,7 +16,6 @@
 	</runtime>
 	
 	<requires>
-	  <import plugin="org.eclipse"/>
 		<import plugin="org.eclipse.core.resources"/>
 		<import plugin="org.eclipse.ui"/>
 	</requires>
