@@ -47,6 +47,10 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   
   public TomJavaGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
 		super(environment, output, input);
+		if (staticFunction) {
+			this.modifier += "static " ;
+		}
+		this.modifier += "public " ;
   }
 
 // ------------------------------------------------------------

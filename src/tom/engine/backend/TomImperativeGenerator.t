@@ -44,7 +44,8 @@ import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
 public class TomImperativeGenerator extends TomAbstractGenerator {
-  
+
+	protected String modifier = "";
   public TomImperativeGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
 		super(environment, output, input);
   }
@@ -334,121 +335,63 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
                                          args, tlCode));
   }
 
-    protected TargetLanguage genDecl(String returnType,
-                                            String declName,
-                                            String suffix,
-                                            String args[],
-                                            TargetLanguage tlCode) {
+	protected TargetLanguage genDecl(String returnType,
+																	 String declName,
+																	 String suffix,
+																	 String args[],
+																	 TargetLanguage tlCode) {
     String s = "";
     if(!genDecl) { return null; }
-    String modifier ="";
-    if(cCode || jCode) {
-      if(staticFunction) {
-        modifier += "static ";
-      }
-      if(jCode) {
-        modifier += "public ";
-      }
-      s = modifier + returnType + " " + declName + "_" + suffix + "(";
-      for(int i=0 ; i<args.length ; ) {
-        s+= args[i] + " " + args[i+1];
-        i+=2;
-        if(i<args.length) {
-          s+= ", ";
-        }
-      } 
-      s += ") { return " + tlCode.getCode() + "; }";
-    } else if(eCode) {
-      s = declName + "_" + suffix + "(";
-      for(int i=0 ; i<args.length ; ) {
-        s+= args[i+1] + ": " + args[i];
-        i+=2;
-        if(i<args.length) {
-          s+= "; ";
-        }
-      } 
-      s += "): " + returnType + " is do Result := " + tlCode.getCode() + "end;";
-    }
+		s = modifier + returnType + " " + declName + "_" + suffix + "(";
+		for(int i=0 ; i<args.length ; ) {
+			s+= args[i] + " " + args[i+1];
+			i+=2;
+			if(i<args.length) {
+				s+= ", ";
+			}
+		} 
+		s += ") { return " + tlCode.getCode() + "; }";
     if(tlCode.isTL())
       return `TL(s, tlCode.getStart(), tlCode.getEnd());
     else
       return `ITL(s);
-  }
+		}
 
   protected void TargetLanguage genDeclMake(String opname, TomType returnType, 
                                             TomList argList, TargetLanguage tlCode) {
-      //%variable
+		//%variable
     String s = "";
     if(!genDecl) { return null; }
-    String modifier = "";
-    if(jCode || cCode) {
-      if(staticFunction) {
-        modifier += "static ";
-      }
-      if(jCode) {
-        modifier += "public ";
-      }
       
-      s = modifier + getTLType(returnType) + " tom_make_" + opname + "(";
-      while(!argList.isEmpty()) {
-        TomTerm arg = argList.getHead();
-        matchBlock: {
-          %match(TomTerm arg) {
-            Variable(option,Name(name), Type(ASTTomType(type),tlType@TLType[])) -> {
-              s += getTLCode(tlType) + " " + name;
-              break matchBlock;
-            }
+		s = modifier + getTLType(returnType) + " tom_make_" + opname + "(";
+		while(!argList.isEmpty()) {
+			TomTerm arg = argList.getHead();
+			matchBlock: {
+				%match(TomTerm arg) {
+					Variable(option,Name(name), Type(ASTTomType(type),tlType@TLType[])) -> {
+						s += getTLCode(tlType) + " " + name;
+						break matchBlock;
+					}
             
-            _ -> {
-              System.out.println("genDeclMake: strange term: " + arg);
-              throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
-            }
-          }
-        }
-        argList = argList.getTail();
-        if(!argList.isEmpty()) {
-          s += ", ";
-        }
-      }
-      s += ") { ";
-      if (debugMode) {
-        s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
-        s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
-        s += "return  debugVar;\n}";
-      } else {
-        s += "return " + tlCode.getCode() + "; }";
-      }
-    } else if(eCode) {
-      boolean braces = !argList.isEmpty();
-      s = "tom_make_" + opname;
-      if(braces) {
-        s = s + "(";
-      }
-      while(!argList.isEmpty()) {
-        TomTerm arg = argList.getHead();
-        matchBlock: {
-          %match(TomTerm arg) {
-            Variable(option,Name(name), Type(ASTTomType(type),tlType@TLType[])) -> {
-              s += name + ": " + getTLCode(tlType);
-              break matchBlock;
-            }
-            
-            _ -> {
-              System.out.println("genDeclMake: strange term: " + arg);
-              throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
-            }
-          }
-        }
-        argList = argList.getTail();
-        if(!argList.isEmpty()) {
-          s += "; ";
-        }
-      }
-      if(braces) {
-        s = s + ")";
-      }
-      s += ": " + getTLType(returnType) + " is do Result := " + tlCode.getCode() + "end;";
-    }
+					_ -> {
+						System.out.println("genDeclMake: strange term: " + arg);
+						throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
+					}
+				}
+			}
+			argList = argList.getTail();
+			if(!argList.isEmpty()) {
+				s += ", ";
+			}
+		}
+		s += ") { ";
+		if (debugMode) {
+			s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
+			s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
+			s += "return  debugVar;\n}";
+		} else {
+			s += "return " + tlCode.getCode() + "; }";
+		}
     return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
@@ -463,15 +406,11 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 
     String utype = glType;
     String modifier = "";
-    if(eCode) {
-      System.out.println("genDeclList: Eiffel code not yet implemented");
-    } else if(jCode) {
-      modifier = "public ";
-      if(!strictType) {
-        utype = getTLType(getUniversalType());
-      }
+		modifier = "public ";
+		if(!strictType) {
+			utype = getTLType(getUniversalType());
     }
-
+		
     if(staticFunction) {
       modifier += "static ";
     }
@@ -536,19 +475,11 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     String tlEltType = getTLType(eltType);
     String utype = glType;
     String modifier = "";
-    if(eCode) {
-      System.out.println("genDeclArray: Eiffel code not yet implemented");
-    } else if(jCode) {
-      modifier ="public ";
-      if(!strictType) {
-        utype =  getTLType(getUniversalType());
-      }
+		modifier ="public ";
+		if(!strictType) {
+			utype =  getTLType(getUniversalType());
     }
-
-    if(staticFunction) {
-      modifier += "static ";
-    }
-    
+		
     String listCast = "(" + glType + ")";
     String eltCast = "(" + getTLType(eltType) + ")";
     String make_empty = listCast + "tom_make_empty_" + name;

@@ -47,6 +47,9 @@ public class TomCGenerator extends TomImperativeGenerator {
   
   public TomCGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
 		super(environment, output, input);
+		if (staticFunction) {
+			this.modifier += "static " ;
+		}
   }
 
 // ------------------------------------------------------------

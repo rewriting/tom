@@ -250,4 +250,82 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 																				 args, tlCode));
 	}
 	
+	protected TargetLanguage genDecl(String returnType,
+																	 String declName,
+																	 String suffix,
+																	 String args[],
+																	 TargetLanguage tlCode) {
+    String s = "";
+    if(!genDecl) { return null; }
+		s = declName + "_" + suffix + "(";
+		for(int i=0 ; i<args.length ; ) {
+			s+= args[i+1] + ": " + args[i];
+			i+=2;
+			if(i<args.length) {
+				s+= "; ";
+			}
+		} 
+		s += "): " + returnType + " is do Result := " + tlCode.getCode() + "end;";
+    if(tlCode.isTL())
+      return `TL(s, tlCode.getStart(), tlCode.getEnd());
+    else
+      return `ITL(s);
+  }
+
+  protected void TargetLanguage genDeclMake(String opname, TomType returnType, 
+                                            TomList argList, TargetLanguage tlCode) {
+      //%variable
+    String s = "";
+    if(!genDecl) { return null; }
+		boolean braces = !argList.isEmpty();
+		s = "tom_make_" + opname;
+		if(braces) {
+			s = s + "(";
+		}
+		while(!argList.isEmpty()) {
+			TomTerm arg = argList.getHead();
+			matchBlock: {
+				%match(TomTerm arg) {
+					Variable(option,Name(name), Type(ASTTomType(type),tlType@TLType[])) -> {
+						s += name + ": " + getTLCode(tlType);
+						break matchBlock;
+					}
+            
+					_ -> {
+						System.out.println("genDeclMake: strange term: " + arg);
+						throw new TomRuntimeException(new Throwable("genDeclMake: strange term: " + arg));
+					}
+				}
+			}
+			argList = argList.getTail();
+			if(!argList.isEmpty()) {
+				s += "; ";
+			}
+		}
+      if(braces) {
+        s = s + ")";
+      }
+      s += ": " + getTLType(returnType) + " is do Result := " + tlCode.getCode() + "end;";
+			return `TL(s, tlCode.getStart(), tlCode.getEnd());
+  }
+
+  protected void TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
+      //%variable
+    String s = "";
+    if(!genDecl) { return null; }
+		System.out.println("genDeclList: Eiffel code not yet implemented");
+		return null;
+  }
+
+
+  protected void TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
+		//%variable
+    String s = "";
+    if(!genDecl) { return null; }
+		System.out.println("genDeclArray: Eiffel code not yet implemented");
+    return null;
+  }
+
+
+
 }
