@@ -1,0 +1,39 @@
+bugs:
+	- nothing yet
+
+requested features:
+	- finish the dom & tom parsers
+	- finish the clips generator
+	- finish another parsers and generators!
+
+profiling:
+	- fine tuning of access modifiers
+	- final classes, methods, fields, arguments where possible
+	- replace List for arrays where possible??
+	- use jdk1.5 generics
+	
+codestyle:
+	- fine tuning of Exception types and messages
+	- use as much pre- and post-conditions as possible
+	- use the assertion API for internal pre- and post-condition checks
+	- take care of synchronizations for Thread-Safe running
+	- think about converting .properties into .xml
+	- think about merging the .xml files
+
+docs:
+	- changelog
+	- javadocs:
+		* almost everything!!
+		* use yDoc for generating javadocs with UML diagrams.. :)
+	- tutorial:
+		* everything, first version may be based on junit tests?
+	- website:
+		* everything, wiki, mailing lists, bugtracker
+	- technical reports
+
+junit:
+	- tons of unit tests missing
+
+distro:
+	- create installer with izpack
+	- use yGuard for obfuscating the distro??

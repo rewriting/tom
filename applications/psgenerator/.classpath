@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry sourcepath="JRE_SRC2" kind="var" path="JRE_LIB"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commandline"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/tom"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,3 @@
+* checking on multiple defined options using addOption!
+* empty option assumes rest of line is parameters (is this needed?)
+
