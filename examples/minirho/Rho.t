@@ -32,14 +32,19 @@ package minirho;
 
  import aterm.*;
  import aterm.pure.*;
-// import tom.library.traversal.*;
+ import tom.library.traversal.*;
  import minirho.rho.rhoterm.*;
  import minirho.rho.rhoterm.types.*;
 
  public class Rho {
 
+	 private final String AND_G = "g";
+	 private final String AND_NG = "ng";
+	 private final String AND = " ";
+
+
 	 private rhotermFactory factory;
-//	 private GenericTraversal traversal;
+	 private GenericTraversal traversal;
 	 private boolean hasBeenSimplified;
 		 //Signature de mon langage, utilise pour les tests.
 	 private RTerm f = null;
@@ -54,8 +59,8 @@ package minirho;
 			 sorts RTerm Constraint
 
 		 abstract syntax
-			 var(name:String) -> RTerm
-			 constr(name:String) -> RTerm
+			 var(na:String) -> RTerm
+			 constr(na:String) -> RTerm
 
 			 abs(lhs:RTerm,rhs:RTerm) -> RTerm
 			 app(lhs:RTerm,rhs:RTerm) -> RTerm
@@ -68,7 +73,7 @@ package minirho;
 
 //			 matchH(lhs:RTerm,rhs:RTerm) -> Constraint
 			 match(lhs:RTerm,rhs:RTerm) -> Constraint
-			 concListConstraint( Constraint* ) -> ListConstraint
+			 concConstraint( Constraint* ) -> ListConstraint
 			 and(l:String, constr:ListConstraint ) -> Constraint
 			 }
 //
@@ -83,10 +88,58 @@ package minirho;
 //			 concConstraintg( MatchConstraint* ) -> Constraint
 //			 concConstraintng( MatchConstraint* ) -> Constraint
 
+//fonction qui fait un pas de reecriture a n'importe quelle position
+	 public RTerm simplify(RTerm t){
+		 return (RTerm)replace.apply(t);
+	 }
 
+  Replace1 replace = new Replace1() {
+			// Rewrite rules for terms
+      public ATerm apply(ATerm t) {
+				if (t instanceof RTerm) {
+					RTerm term = (RTerm) t;
+					%match(RTerm term){
+						//rho 
+						app(abs(A,B),C)-> {return `appC(match(A,C),B) ;}		
+					}
+				}
+				//rewrite rules for constraints
+				else if(t instanceof Constraint) {
+					Constraint co = (Constraint)t;
+					%match(Constraint co){
+						//decompose Structure
+						match(struct(A,B),struct(C,D)) -> {return  `and(AND,concConstraint(match(A,C),match(B,D)));}
+					}
+				}
+				
+				//2. Strategies to go deeper
+				if (t instanceof RTerm){
+					RTerm term = (RTerm) t;
+					%match(RTerm term){
+						//do not reduce the right-hand side of an abstraction
+						abs(A,B) -> {return `abs((RTerm)apply(A),B);}
+					}
+				}
+				return traversal.genericTraversal(t,this);
+			}
+    };
+
+//on normalise un terme par rapport a un syst de reecri
+	public RTerm normalize(RTerm form){
+		RTerm res = simplify(form);
+			if (res != form) {
+				System.out.println("Resultat intermediaire: " +res);
+				return normalize(res);
+			}
+			else {
+				System.out.println("Resultat intermediaire: " +res);
+				return res;
+			}
+		
+	}
 	 public Rho(rhotermFactory factory) {
 		 this.factory = factory;
-//		 this.traversal = new GenericTraversal();
+		 this.traversal = new GenericTraversal();
 	 }
 
 	 public RTerm simplifyTerm(RTerm t){
@@ -101,21 +154,27 @@ package minirho;
 			 match(app(f@constr(_),A1) , app(f,B1)) -> {return `match(A1,B1);}
 			 _ -> {return c;}
 		 }
-
-
 	 }
 	
   public rhotermFactory getRhotermFactory() {
     return factory;
   }
     public void run(){
-			RTerm essai = `appSt(simplifyConst(match(app(constr("f"),var("X")),app(constr("f"),constr("a")))),var("X"));
-			System.out.println(simplifyTerm(essai));
+			System.out.println("PREMIERE REDUCTION");
+			RTerm essai = `app(abs(var("X"),abs(var("X"),(appSt(match(app(constr("f"),var("X")),app(constr("f"),constr(2))),var("X"))))),constr(2));
+			System.out.println(simplify(essai));
+
+			System.out.println("DEUXIEME REDUCTION");
+			RTerm essai2 = `abs(var("X"),app(abs(var("X"),appSt(match(app(constr("f"),var("X")),app(constr("f"),constr(2))),var("X"))),constr(2)));
+			System.out.println(simplify(essai2));
+
+			System.out.println("TROISIEME REDUCTION");
+			RTerm essai3 = `app(abs(var("X"),appSt(match(app(constr("f"),var("X")),app(constr("f"),constr(2))),var("X"))),constr(2));
+			System.out.println(simplify(essai3));
+
     }
-    public final static void main(String[] args) {
-			Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
-			rhoEngine.run();
-
-
-  }
-}
+	 public final static void main(String[] args) {
+		 Rho rhoEngine = new Rho(rhotermFactory.getInstance(new PureFactory(16)));
+		 rhoEngine.run();
+	 }
+ }
