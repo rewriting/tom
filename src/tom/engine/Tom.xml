@@ -119,12 +119,6 @@
     valueB="false" />
 
   <OptionBoolean
-    name="atermStat"
-    altName="S"
-    description="Print internal ATerm statistics"
-    valueB="false" />
-
-  <OptionBoolean
     name="static"
     altName=""
     description="Generate static functions"
@@ -140,6 +134,12 @@
     name="memory"
     altName=""
     description="Add memory management while debugging (not correct with list matching)"
+    valueB="false" />
+
+  <OptionBoolean
+    name="eclipse"
+    altName=""
+    description="Sets Eclipse mode"
     valueB="false" />
 
   <OptionString

@@ -172,7 +172,7 @@ public class TomEnvironment
 	setUserImportList(localUserImportList);
 
 	// for Eclipse...
-	if ( false ) // TODO : NEEDS TO BE CHANGED !
+	if ( getServer().getOptionBooleanValue("eclipse") )
 	    setEclipseMode(true);
 
 	// computes destdir
