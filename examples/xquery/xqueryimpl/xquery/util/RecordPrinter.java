@@ -12,7 +12,7 @@ import java.util.*;
 public class RecordPrinter {
   public void print(QueryRecord record) 
 
- throws XQueryGeneralException
+	throws XQueryGeneralException
   {
 	
   }

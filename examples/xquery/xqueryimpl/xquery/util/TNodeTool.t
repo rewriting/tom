@@ -103,7 +103,7 @@ public class TNodeTool {
 	}
   }
 
-  public   void printResult(QueryRecordSet queryRecordSet, RecordPrinter printer) 
+  public void printResult(QueryRecordSet queryRecordSet, RecordPrinter printer) 
 	throws XQueryGeneralException
   {
 	Enumeration enum = queryRecordSet.elements(); 
@@ -113,4 +113,53 @@ public class TNodeTool {
 	  
 	}
   }
+
+
+  public boolean endWith(TNode node, String endwith) 
+  {
+	if (node.hasName()) {
+	  String name=node.getName();
+	  int location = name.lastIndexOf(endwith);
+	  if (location==-1) {
+		return false; 
+	  }
+	  else {
+		if ((location + endwith.length()) == name.length()) {
+		  return true;
+		}
+	  }
+	  
+	}
+	return false;
+  }
+
+
+  public boolean contains(TNode node,  String str) 
+  {	
+	boolean result = false; 
+	
+	if (node.isTextNode()) {
+	  String text = node.getData();
+	  if (text.indexOf(str) != -1) {
+		return true; 
+	  }
+	}
+
+	else if (node.hasChildList()) {
+	  TNodeList nodelist= node.getChildList();
+	  int len = nodelist.getLength();
+	  for(int i=0; i<len; i++) {
+		TNode onenode = nodelist.getTNodeAt(i);
+		if (this.contains(onenode, str)) 
+		  return true; 
+	  }
+	}
+	else {
+	  return false;
+	}
+
+	return false;
+  }
+
+
 }
