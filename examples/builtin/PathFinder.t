@@ -29,18 +29,22 @@
 
 package builtin;
 
+import aterm.*;
+
 public class PathFinder {
 
   //%include {charlist.tom}
-  %include {string.tom}
+  %include { string.tom }
+  %include { boolean.tom }
 
   public final static void main(String[] args) {
     PathFinder test = new PathFinder();
     String s1 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
-    test.f2(s1);
+    //test.f2(s1);
+    test.f3(s1);
 
     String s2 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    test.f2(s2);
+    //test.f2(s2);
   }
 
   /*
@@ -79,5 +83,56 @@ public class PathFinder {
       }
     }
     return s;
+  }
+
+  public String f3(String s) {
+    long startChrono;
+    startChrono = System.currentTimeMillis();
+    %match(String s) {
+      (X1*,'b',X2*,'b',X3*,'b',X4*,'b',X5*,'b',X6*,'b',X7*) -> {
+        System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
+      }
+    }
+    System.out.println("Using 'b' : "+(System.currentTimeMillis()-startChrono)+ " ms)");
+
+    startChrono = System.currentTimeMillis();
+    %match(String s) {
+      (X1*,x,X2*,x,X3*,x,X4*,x,X5*,x,X6*,x,X7*) -> {
+        if(equalsChar(`x)) {
+          System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
+        }
+      }
+    }
+    System.out.println("Using java if : "+(System.currentTimeMillis()-startChrono)+ " ms)");
+    startChrono = System.currentTimeMillis();
+    %match(String s) {
+      (X1*,'b',X2*,'b',X3*,'b',X4*,'b',X5*,'b',X6*,'b',X7*) -> {
+        System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
+      }
+    }
+    System.out.println("Using 'b' : "+(System.currentTimeMillis()-startChrono)+ " ms)");
+    startChrono = System.currentTimeMillis();
+    %match(String s) {
+      (X1*,x,X2*,x,X3*,x,X4*,x,X5*,x,X6*,x,X7*) when equalsChar(x) -> {
+        System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
+      }
+    }
+    System.out.println("Using when equalsChar : "+(System.currentTimeMillis()-startChrono)+ " ms)");
+    startChrono = System.currentTimeMillis();
+    %match(String s) {
+      (X1*,a,X2*,b,X3*,c,X4*,d,X5*,e,X6*,f,X7*) when equalsChar(a),equalsVar(a,b),equalsVar(b,c),equalsVar(c,d),equalsVar(d,e),equalsVar(e,f) -> {
+        System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
+      }
+    }
+    System.out.println("Using when equalsChar and equalsVar : "+(System.currentTimeMillis()-startChrono)+ " ms)");
+    return s;
+  }
+
+  private boolean equalsChar(char pattern) {
+    return pattern == 'b';
+  }
+
+  private boolean equalsVar(char pattern,char c) {
+    return (pattern == c);
   }
 }
