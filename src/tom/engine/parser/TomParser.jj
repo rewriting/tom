@@ -180,9 +180,11 @@ PARSER_END(TomParser)
 TOKEN :
 {
     < MATCH:               "%match" > : TOM
+  | < MATCHXML:            "%matchXML" > : TOM
   | < RULE:                "%rule" > : TOM
   | < MAKE_TERM:           "%make" > : TOM
   | < BACKQUOTE_TERM:      "`" > : TOM
+  | < BACKQUOTE_XML:       "``" > : TOM
   | < VARIABLE:            "%variable" > : TOM
   | < TYPE:                "%type" > : TOM
   | < TYPETERM:            "%typeterm" > : TOM
@@ -346,6 +348,8 @@ TOKEN :
 | < TOM_UNDERSCORE:  "_" >
 | < TOM_MINUS:       "-" >
 | < TOM_STAR:        "*" >
+| < TOM_SHARP:       "#" >
+| < TOM_AND:         "&" >
 | < TOM_WHERE:       "where" >
 | < TOM_IF:          "if" >
 | < TOM_MAKE:        "make" >
@@ -447,6 +451,7 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
 {
   (
       MatchConstruct(blockList)          { environment.getStatistics().numberTomBlocsRecognized++; }
+    | MatchXMLConstruct(blockList)       { environment.getStatistics().numberTomBlocsRecognized++; }
     | RuleConstruct(blockList)           { environment.getStatistics().numberTomBlocsRecognized++; }
     | BackQuoteTerm(blockList)           { environment.getStatistics().numberTomBlocsRecognized++; }
     | IncludeConstruct(blockList)        { environment.getStatistics().numberTomBlocsRecognized++; }
@@ -753,6 +758,303 @@ void BackQuoteTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
   }
 }
 
+
+void MatchXMLConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  Token name;
+  String docName = null;
+  ArrayList patternActionList = new ArrayList();
+  ArrayList optionList = new ArrayList();
+}
+{
+  <MATCHXML> /* switch to TOM mode */
+    {
+      list.add(makeTL(savePosAndExtract()));
+      Option orgTrack = ast().makeOriginTracking("MatchXML",getLine(), currentFile);
+      optionList.add(orgTrack);
+      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+    }
+
+  <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
+   {
+     docName = name.image;
+   }
+
+  <TOM_LBRACE> ( XMLPatternAction(patternActionList, debugKey) )* <TOM_RBRACE> /* we are in TOM mode */
+    {
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      Option option = ast().makeOption(ast().makeOptionList(optionList));
+      TomTerm_MatchXML matchXML = tsf().makeTomTerm_MatchXML(
+				  docName,
+				  tsf().makeTomTerm_PatternList(ast().makeList(patternActionList)),
+                                  option);
+      list.add(matchXML);
+      Flags.xmlMode = true;
+      if (Flags.debugMode)
+        debuggedStructureList.add(matchXML);
+    }
+}
+
+void XMLPatternAction(ArrayList list, String debugKey) throws TomException: /* in TOM mode */
+{
+    //environment.getStatistics().numberMatchRulesRecognized++;
+  ArrayList matchPatternsList = new ArrayList();
+  ArrayList listTextPattern = new ArrayList();
+  ArrayList listOrgTrackPattern = new ArrayList();
+  ArrayList listOfMatchPatternsList = new ArrayList();
+  ArrayList blockList = new ArrayList();
+  TargetLanguage tlCode;
+  Option option;
+  text = "";
+}
+{
+  option = XMLMatchPatterns(matchPatternsList)
+    { listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
+      matchPatternsList.clear();
+      listTextPattern.add(text);text = "";
+      listOrgTrackPattern.add(option);
+    }
+  [ ( <TOM_ALTERNATIVE>  XMLMatchPatterns(matchPatternsList) 
+    { listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
+      matchPatternsList.clear();
+      listTextPattern.add(text);text = "";
+      listOrgTrackPattern.add(option);
+    }
+    )+ ]
+  <TOM_ARROW>
+    {
+      if(Flags.debugMode) {
+        blockList.add(tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n"));
+        if(Flags.debugMemory) {
+          blockList.add(tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.emptyStack();\n"));
+        }
+      }
+    }
+  tlCode = GoalLanguageBlock(blockList)
+    {
+      blockList.add(tlCode);
+      TomList patterns;
+      String patternText = "";
+      ArrayList optionList = new ArrayList();
+      for(int i=0 ;  i<listOfMatchPatternsList.size() ; i++) {
+        patterns = (TomList)listOfMatchPatternsList.get(i);
+        patternText = (String)listTextPattern.get(i);
+        optionList.add(listOrgTrackPattern.get(i));
+        optionList.add(tsf().makeOption_OriginalText(tsf().makeTomName_Name(patternText)));
+        option = ast().makeOption(ast().makeOptionList(optionList));;
+        list.add(tsf().makeTomTerm_PatternAction(
+                   tsf().makeTomTerm_TermList(patterns),
+                   tsf().makeTomTerm_Tom(ast().makeList(blockList)),
+                   option));
+      }
+    }
+}
+
+Option XMLMatchPatterns(ArrayList list) throws TomException: /* in TOM mode */
+{
+  XMLTerm term;
+  Option orgTrack;
+} 
+{
+  term=XMLTerm()
+    {
+      list.add(term);
+      orgTrack = ast().makeOriginTracking("XMLPattern",getLine(), currentFile);
+      return orgTrack;}
+}
+
+XMLTerm XMLTerm() throws TomException: /* in TOM mode */
+{
+  Token annotedName = null;
+  XMLTerm term;
+  TomName astAnnotedName = null;
+}
+{
+    // foo@XMLPlainTerm()
+    LOOKAHEAD(2) 
+    annotedName = <TOM_IDENTIFIER> <TOM_AT>
+      { text += annotedName.image+"@";
+      astAnnotedName = tsf().makeTomName_Name(annotedName.image); }
+    term = XMLPlainTerm(astAnnotedName)
+    {
+      return term;
+    }
+  | // XMLPlainTerm()
+    term = XMLPlainTerm(astAnnotedName) 
+      {
+        return term;
+      }
+}
+
+XMLTerm XMLPlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
+{
+  ArrayList list = new ArrayList();
+  Token name, slotName;
+  XMLTerm term;
+  Option option = null;
+  Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
+  ArrayList optionList = new ArrayList();
+}
+{
+  // elem(...) or elem[an_integer](...)
+  LOOKAHEAD(2)
+    name = <TOM_IDENTIFIER>
+      {
+	text += name.image;
+	optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      }
+    [ 
+     <TOM_LBRACKET> slotName = <TOM_IDENTIFIER> <TOM_RBRACKET>
+      {
+	text += "["+slotName.image+"]";
+	optionList.add(tsf().makeOption_XMLPosition(slotName.image));
+      }
+    ]
+     <TOM_LPAREN> 
+      {text += "(";}
+      [
+       term = XMLTerm()               
+	{ list.add(term); }  
+       ( <TOM_COMMA> {text += " , ";} term = XMLTerm() { list.add(term); } )*
+      ]
+     <TOM_RPAREN>
+      {
+        text += ")";
+      }
+    {
+      if(annotedName!=null) { optionList.add(annotedName); }
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      return tsf().makeXMLTerm_Element(
+	      tsf().makeTomName_Name(name.image),
+	      ast().makeList(list), 
+	      option);
+    }
+  | // var
+     term = XMLVariable(astAnnotedName)
+      {	
+	return term;
+      }
+  | // _
+    <TOM_UNDERSCORE>
+    {
+      text += "_";
+      optionList.add(ast().makeOriginTracking("_",getLine(), currentFile));
+      if(annotedName!=null) { optionList.add(annotedName); }
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      return tsf().makeXMLTerm_XMLPlaceholder(option);
+    }
+  | // &attribute(data) | &attribute
+    <TOM_AND> {text += "&";}
+    term = XMLAttribute(astAnnotedName)
+    
+    {
+      return term;
+    }
+    
+  | // #NODE | #ATTRIBUTE | #TEXT | #COMMENT | #PROCESSING-INSTRUCTION
+    <TOM_SHARP> name = <TOM_IDENTIFIER> 
+     [
+     <TOM_LPAREN> 
+         {text += "(";}    
+       term = XMLVariable(astAnnotedName)               
+	{ list.add(term); }
+       ( <TOM_COMMA> {text += " , ";} term = XMLVariable(astAnnotedName) { list.add(term); } )*
+     <TOM_RPAREN>
+     ]
+     {
+       text += "#"+name.image;
+       String rWord = name.image.toUpperCase();
+       optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+       if(annotedName!=null) { optionList.add(annotedName); }
+       option = ast().makeOption(ast().makeOptionList(optionList));
+       return tsf().makeXMLTerm_ReservedWord(tsf().makeTomName_Name(rWord),
+					     ast().makeList(list),
+					     option);
+     }
+}
+
+XMLTerm XMLAttribute(TomName astAnnotedName) throws TomException:
+{
+  Token name;
+  XMLTerm var;
+  Option option = null;
+  Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
+  ArrayList optionList = new ArrayList();
+  ArrayList list = new ArrayList();
+}
+{  
+  <TOM_STAR> // $* to get all the attribute of a node
+    { text += "*";
+      optionList.add(ast().makeOriginTracking("*",getLine(), currentFile));
+    }
+  <TOM_LPAREN> 
+    { text += "(";}
+  var = XMLVariable(astAnnotedName)
+    <TOM_RPAREN>
+  {
+    text += ")";
+    list.add(var);
+    if(annotedName!=null) { optionList.add(annotedName); }
+    option = ast().makeOption(ast().makeOptionList(optionList));
+    return tsf().makeXMLTerm_Attribute(tsf().makeTomName_EmptyName(),
+				       ast().makeList(list),
+				       option);
+   }
+  |
+    name = <TOM_IDENTIFIER>
+    { text += name.image; }
+      <TOM_LPAREN> 
+    { text += "(";}
+    var = XMLVariable(astAnnotedName)
+      <TOM_RPAREN>
+    {
+      text += ")";
+      list.add(var);
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      if(annotedName!=null) { optionList.add(annotedName); }
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      return tsf().makeXMLTerm_Attribute(tsf().makeTomName_Name(name.image),
+					 ast().makeList(list),
+					 option);
+    }
+}
+
+XMLTerm XMLVariable(TomName astAnnotedName) throws TomException:
+{
+  Token name;
+  Option option = null;
+  Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
+  ArrayList optionList = new ArrayList();
+}
+{  
+  name = <TOM_IDENTIFIER>
+  {
+    text += name.image;
+    optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+    if(annotedName!=null) { optionList.add(annotedName); }
+    option = ast().makeOption(ast().makeOptionList(optionList));
+    return tsf().makeXMLTerm_XMLVariable(tsf().makeTomName_Name(name.image),
+					 option);
+  }
+}
+
+void BackQuoteXML(ArrayList list) throws TomException: /* in DEFAULT mode */
+{
+  XMLTerm term;
+  Option orgTrack;
+}
+{
+  <BACKQUOTE_XML> /* switch to TOM mode */
+    {
+      list.add(makeTL(savePosAndExtract()));
+      orgTrack = ast().makeOriginTracking("BackquoteXML",getLine(), currentFile);
+    }
+  term = XMLTerm()
+  {
+    switchToDefaultMode(); /* switch to DEFAULT mode */
+    list.add(tsf().makeTomTerm_BackQuoteXML(term, orgTrack));
+  }
+}
 
 void LocalVariableConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {}

@@ -65,4 +65,6 @@ public class Flags {
 
   public static boolean debugMode = false; // generate debug primitives
   public static boolean debugMemory = false; // generate debug primitives
+
+  public static boolean xmlMode = false; // true if %matchXML is used
 }
