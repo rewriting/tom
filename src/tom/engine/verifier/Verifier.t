@@ -220,7 +220,7 @@ public class Verifier extends TomBase {
             // default rule
             _ -> {
 							return true;
-            }
+						}
           }//end match
         } else { 
 					return true;

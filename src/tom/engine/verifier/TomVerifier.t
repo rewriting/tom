@@ -48,19 +48,19 @@ public class TomVerifier extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS = "<options><boolean name='verify' altName='' description='Verify correctness of match compilation' value='false'/></options>";
 
   protected Verifier verif;
-	protected LatexOutput output;
-	protected StatOutput stats;
+  protected LatexOutput output;
+  protected StatOutput stats;
 
   public TomVerifier() {
     super("TomVerifier");
-		init();
+    init();
   }
 
-	void init () {
+  void init () {
     verif = new Verifier();
-		output = new LatexOutput(this);
-		stats = new StatOutput(this);
-	}
+    output = new LatexOutput(this);
+    stats = new StatOutput(this);
+  }
 
   public void run() {
     if(isActivated()) {
@@ -72,19 +72,19 @@ public class TomVerifier extends TomGenericPlugin {
         Collection purified = purify(matchSet);
         // System.out.println("Purified : " + purified);        
 
-				// removes all associative patterns
-				filterAssociative(purified);
+        // removes all associative patterns
+        filterAssociative(purified);
 
         Collection derivations = getDerivations(purified);
- 				// System.out.println("Derivations : " + derivations);
+        // System.out.println("Derivations : " + derivations);
 
-				// the latex output stuff
- 				String latex = output.build_latex(derivations);
- 				System.out.println(latex);
+        // the latex output stuff
+        String latex = output.build_latex(derivations);
+        System.out.println(latex);
 
-				// the stats output stuff
-//  				String statistics = stats.build_stats(derivations);
-//  				System.out.println(statistics);
+        // the stats output stuff
+//          String statistics = stats.build_stats(derivations);
+//          System.out.println(statistics);
 
         // verbose
         getLogger().log(Level.INFO, "TomVerificationPhase",
@@ -97,7 +97,7 @@ public class TomVerifier extends TomGenericPlugin {
                                       e.getMessage()} );
         e.printStackTrace();
       }
-    } else {	    
+    } else {      
       // Not active plugin
       getLogger().log(Level.INFO, "VerifierInactivated");
     }
@@ -112,7 +112,7 @@ public class TomVerifier extends TomGenericPlugin {
   }
   
   private Collect2 collect_match = new Collect2() {
-	    public boolean apply(ATerm subject, Object astore) {
+      public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
         if (subject instanceof Instruction) {
           %match(Instruction subject) {
@@ -128,7 +128,7 @@ public class TomVerifier extends TomGenericPlugin {
         } else { 
           return true;
         }
-	    }//end apply
+      }//end apply
     }; //end new
   
   public Collection collectMatch(TomTerm subject) {
@@ -141,15 +141,15 @@ public class TomVerifier extends TomGenericPlugin {
     Collection purified = new HashSet();
     Iterator it = subject.iterator();
     while (it.hasNext()) {
-	    Instruction cm = (Instruction)it.next();
-			// simplify the IL automata
-			purified.add((simplify_il(cm)));
+      Instruction cm = (Instruction)it.next();
+      // simplify the IL automata
+      purified.add((simplify_il(cm)));
     }
     return purified;
   }
   
   Replace1 replace_simplify_il = new Replace1() {
-	    public ATerm apply(ATerm subject) {
+      public ATerm apply(ATerm subject) {
         if (subject instanceof Expression) {
           %match(Expression subject) {
             Or(cond,FalseTL()) -> {
@@ -158,198 +158,165 @@ public class TomVerifier extends TomGenericPlugin {
           }
         } // end instanceof Expression
         else if (subject instanceof Instruction) {
-					// the checkstamp should be managed another way 
+          // the checkstamp should be managed another way 
           %match(Instruction subject) {
             IfThenElse(TrueTL(),success,Nop()) -> {
               return traversal().genericTraversal(`success,this);
             }
-						(UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {
-							return traversal().genericTraversal(`inst,this);
-						}
-						(Let|LetRef|LetAssign)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
-							return traversal().genericTraversal(`body,this);
-						}
+            (UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {
+              return traversal().genericTraversal(`inst,this);
+            }
+            (Let|LetRef|LetAssign)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
+              return traversal().genericTraversal(`body,this);
+            }
 
-
-						// We don't want to simplify CompiledPattern this time
-
-// 						CompiledPattern(patterns,inst) -> {
-// 							return traversal().genericTraversal(`inst,this);
-// 						}
-						
+            CompiledPattern(patterns,inst) -> {
+              return traversal().genericTraversal(`inst,this);
+            }
+            
           }
         } // end instanceof Instruction
         /*
          * Default case : Traversal
          */
         return traversal().genericTraversal(subject,this);
-	    }//end apply
+      }//end apply
     };//end new Replace1 simplify_il
-	
+  
   private Instruction simplify_il(Instruction subject) {
     return (Instruction) replace_simplify_il.apply(subject);
   }
   
-	void filterAssociative(Collection c) {
+  void filterAssociative(Collection c) {
     for (Iterator i = c.iterator(); i.hasNext(); )
-			if (containsAssociativeOperator((Instruction) i.next()))
-				i.remove();
-	}
+      if (containsAssociativeOperator((Instruction) i.next()))
+        i.remove();
+  }
 
-	boolean containsAssociativeOperator(Instruction subject) {
+  boolean containsAssociativeOperator(Instruction subject) {
     Collection result = new HashSet();
     traversal().genericCollect(subject,collect_associativeOps,result);
-    return !result.isEmpty();		
-	}
+    return !result.isEmpty();   
+  }
 
   private Collect2 collect_associativeOps = new Collect2() {
-	    public boolean apply(ATerm subject, Object astore) {
+      public boolean apply(ATerm subject, Object astore) {
         Collection store = (Collection)astore;
         if (subject instanceof Instruction) {
           %match(Instruction subject) {
             LetRef[]  -> {
               store.add(subject);
             }
-						WhileDo[] -> {
-							store.add(subject);
-						}
-						DoWhile[] -> {
-							store.add(subject);
-						}
+            WhileDo[] -> {
+              store.add(subject);
+            }
+            DoWhile[] -> {
+              store.add(subject);
+            }
           }//end match
         } 
-				else if (subject instanceof Expression) {
-					%match(Expression subject) {
-						// we filters also patterns containing or() constructs (but we could handle it easily
-						Or(_,_) -> {
-							store.add(subject);
-						}
-					}
-				}
-				return true;
-	    }//end apply
+        else if (subject instanceof Expression) {
+          %match(Expression subject) {
+            // we filters also patterns containing or() constructs (but we could handle it easily
+            Or(_,_) -> {
+              store.add(subject);
+            }
+          }
+        }
+        return true;
+      }//end apply
     }; //end new  
 
   public Collection getDerivations(Collection subject) {
     Collection derivations = new HashSet();
-		Collection patternset = new HashSet();
     Iterator it = subject.iterator();
+    
     while (it.hasNext()) {
-	    Instruction cm = (Instruction)it.next();
-	    %match(Instruction cm) {
+      Instruction cm = (Instruction) it.next();
+			%match(Instruction cm) {
         CompiledMatch(automata, options)  -> {
-					Collection ps = getPatternSet(automata);
-          patternset.addAll(ps);
-//derivations.add(verif.build_tree(automata));
+					derivations.add(verif.build_tree(automata));
         }
-	    }
-    }
-		
-		it = patternset.iterator();
-		while (it.hasNext()) {
-			Instruction automata = (Instruction) it.next();
-			derivations.add(verif.build_tree(automata));
+			}
 		}
-		
     return derivations;
   }
   
-  private Collection getPatternSet(Instruction subject) {
-		Collection set = new HashSet();
-		traversal().genericCollect(subject,collect_compiledPattern,set);
-		return set;
+  public String pattern_to_string(ATerm patternList) {
+    return pattern_to_string((PatternList) patternList);
   }
-  
-  Collect2 collect_compiledPattern = new Collect2() {
-	    public boolean apply(ATerm subject, Object arg) {
-				Collection store = (Collection) arg;
-        if (subject instanceof Instruction) {
-          %match(Instruction subject) {
-            CompiledPattern(patterns,automata) -> {
-							store.add(automata);
-            }
+
+  public String pattern_to_string(PatternList patternList) {
+    String result = "";
+    Pattern h = null;
+    PatternList tail = patternList;
+    if(!tail.isEmpty()) {
+      h = tail.getHead();
+      tail = tail.getTail();
+      result = pattern_to_string(h);
+    }
+
+    while(!tail.isEmpty()) {
+      h = tail.getHead();
+      result = "," + pattern_to_string(h);
+      tail = tail.getTail();
+    }
+    return result;
+  }
+
+  public String pattern_to_string(Pattern pattern) {
+    String result = "";
+    %match(Pattern pattern) {
+      Pattern(tomList) -> {
+        return pattern_to_string(tomList);
+      }
+    }
+    return result;
+  }
+  public String pattern_to_string(TomList tomList) {
+    String result = "";
+    TomTerm h = null;
+    TomList tail = tomList;
+    if(!tail.isEmpty()) {
+      h = tail.getHead();
+      tail = tail.getTail();
+      result = pattern_to_string(h);
+    }
+
+    while(!tail.isEmpty()) {
+      h = tail.getHead();
+      result = "," + pattern_to_string(h);
+      tail = tail.getTail();
+    }
+    return result;
+  }
+  public String pattern_to_string(TomTerm tomTerm) {
+    %match(TomTerm tomTerm) {
+      Appl(_,concTomName(Name(name),_*),childrens,_) -> {
+        if (childrens.isEmpty()) {
+          return name;
+        } else {
+          name = name + "(";
+          TomTerm head = childrens.getHead();
+          name += pattern_to_string(head);
+          TomList tail = childrens.getTail();
+          while(!tail.isEmpty()) {
+            head = tail.getHead();
+            name += "," + pattern_to_string(head);
+            tail = tail.getTail();
           }
-        }// end instanceof Instruction
-        /*
-         * Default case : Traversal
-         */
-        return true;
-	    }//end apply
-    };//end new Collect2
-
-	public String pattern_to_string(ATerm patternList) {
-		return pattern_to_string((PatternList) patternList);
-	}
-	public String pattern_to_string(PatternList patternList) {
-		String result = "";
-		Pattern h = null;
-		PatternList tail = patternList;
-		if(!tail.isEmpty()) {
-			h = tail.getHead();
-			tail = tail.getTail();
-			result = pattern_to_string(h);
-		}
-
-		while(!tail.isEmpty()) {
-			h = tail.getHead();
-			result = "," + pattern_to_string(h);
-			tail = tail.getTail();
-		}
-		return result;
-	}
-	public String pattern_to_string(Pattern pattern) {
-		String result = "";
-		%match(Pattern pattern) {
-			Pattern(tomList) -> {
-				return pattern_to_string(tomList);
-			}
-		}
-		return result;
-	}
-	public String pattern_to_string(TomList tomList) {
-		String result = "";
-		TomTerm h = null;
-		TomList tail = tomList;
-		if(!tail.isEmpty()) {
-			h = tail.getHead();
-			tail = tail.getTail();
-			result = pattern_to_string(h);
-		}
-
-		while(!tail.isEmpty()) {
-			h = tail.getHead();
-			result = "," + pattern_to_string(h);
-			tail = tail.getTail();
-		}
-		return result;
-	}
-	public String pattern_to_string(TomTerm tomTerm) {
-		%match(TomTerm tomTerm) {
-			Appl(_,concTomName(Name(name),_*),childrens,_) -> {
-				if (childrens.isEmpty()) {
-					return name;
-				} else {
-					name = name + "(";
-					TomTerm head = childrens.getHead();
-					name += pattern_to_string(head);
-					TomList tail = childrens.getTail();
-					while(!tail.isEmpty()) {
-						head = tail.getHead();
-						name += "," + pattern_to_string(head);
-						tail = tail.getTail();
-					}
-					name += ")";
-					return name;
-				}
-			}
-			Variable(_,Name(name),_,_) -> {
-				return name;
-			}
-			UnamedVariable[] -> {
-				return "\\_";
-			}
-		}
-		return "StrangePattern" + tomTerm;
-	}
+          name += ")";
+          return name;
+        }
+      }
+      Variable(_,Name(name),_,_) -> {
+        return name;
+      }
+      UnamedVariable[] -> {
+        return "\\_";
+      }
+    }
+    return "StrangePattern" + tomTerm;
+  }
   
 } // class TomVerifier
