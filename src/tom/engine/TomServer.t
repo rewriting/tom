@@ -150,7 +150,9 @@ public class TomServer {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-	System.out.println("incomplete option");
+	logger.log(Level.SEVERE,
+		   TomMessage.getString("IncompleteOption"),
+		   argumentList[--i]);
 //       environment.messageError(TomMessage.getString("IncompleteOption"), 
 //                                new Object[]{argumentList[--i]}, 
 //                                "TomServer", 
@@ -167,7 +169,9 @@ public class TomServer {
       
       if(! file.exists() ) {
         // the case where the specified file doesn't exist is handled here
-	  System.out.println("config file not found");
+	  logger.log(Level.SEVERE,
+		   TomMessage.getString("ConfigFileNotFound"),
+		   xmlConfigurationFile);
 //         environment.messageError(TomMessage.getString("ConfigFileNotFound"), 
 //                                  new Object[]{xmlConfigurationFile}, 
 //                                  "TomServer", 
@@ -175,7 +179,8 @@ public class TomServer {
       }
     } catch(NullPointerException npe) {
       // the lack of a configuration file is handled here
-	System.out.println("config file not specified");
+       logger.log(Level.SEVERE,
+		  TomMessage.getString("ConfigFileNotSpecified"));
 //       environment.messageError(TomMessage.getString("ConfigFileNotSpecified"), 
 //                                "TomServer", 
 //                                TomMessage.DEFAULT_ERROR_LINE_NUMBER);
@@ -204,7 +209,9 @@ public class TomServer {
 
     if( node == null ) {
       // parsing failed
-	System.out.println("config file not xml");
+	logger.log(Level.SEVERE,
+		   TomMessage.getString("ConfigFileNotXML"),
+		   xmlConfigurationFile);
 //       environment.messageError(TomMessage.getString("ConfigFileNotXML"), 
 //                                new Object[]{xmlConfigurationFile}, 
 //                                "TomServer", 
@@ -256,17 +263,21 @@ public class TomServer {
         if(instance instanceof TomPlugin) {
           instances.add(instance);
         } else {
-	  //System.out.println("pas un plugin");
-	    System.out.println("class not a plugin");
+	    logger.log(Level.SEVERE,
+		       TomMessage.getString("ClassNotAPlugin"),
+		       path);
 //           environment.messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
 //                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
         }
       } catch(ClassNotFoundException cnfe) { 
-	  System.out.println("class not found");
+	  logger.log(Level.WARNING,
+		     TomMessage.getString("ClassNotFound"),
+		     path);
 //         environment.messageWarning(TomMessage.getString("ClassNotFound"),new Object[]{path},
 //                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
       } catch(Exception e) { 
-	System.out.println("other error : " + e.getMessage());
+	  logger.log(Level.SEVERE,
+		     TomMessage.getString("InstantiationError"));
 //      environment.messageError(TomMessage.getString("InstantiationError"),
 //                               "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
       }
@@ -286,8 +297,10 @@ public class TomServer {
 //     }
 
     for(int i = 0; i < inputFiles.length; i++) {
-//       environment.updateEnvironment(inputFiles[i]);
-      //System.out.println(inputFiles[i]);
+
+      logger.log(Level.FINER,
+		 "Now compiling : " + inputFiles[i]);
+
       ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
       
       // runs the modules
@@ -295,7 +308,7 @@ public class TomServer {
       while(it.hasNext()) {
         TomPlugin plugin = (TomPlugin)it.next();
         plugin.setInput(term);
-        plugin.run();
+        plugin.run(); // TODO: return code for plugins
         term = plugin.getOutput();
 
 //         if( environment.hasError() ) {
@@ -321,26 +334,24 @@ public class TomServer {
    * @param node the node containing the XML document
    * @param v the List into which class paths will be put
    */
-  private void extractClassPaths(TNode node, List v)
-  {
-    %match(TNode node)
-    {
+  private void extractClassPaths(TNode node, List v) {
+    %match(TNode node) {
       <server>plug@<plugins></plugins></server> -> {
-		    %match(TNode plug)
-         {
-           ElementNode[childList = cl] -> // gets the <plugin> nodes
-           { 
-             while(!(cl.isEmpty())) // for each node...
-               {
-                 TNode pluginNode = cl.getHead();
-                 %match(TNode pluginNode)
-                 {
-		     <plugin [classpath = cp] /> -> { v.add(cp); /*System.out.println(cp);*/ }
-                 }
-                 cl = cl.getTail();
-               }
-           }
-         }
+	%match(TNode plug) {
+	  ElementNode[childList = cl] -> { // gets the <plugin> nodes 
+	    while(!(cl.isEmpty())) { // for each node...
+	      TNode pluginNode = cl.getHead();
+	      %match(TNode pluginNode) {
+		<plugin [classpath = cp] /> -> { 
+		  v.add(cp);
+		  logger.log(Level.FINER,
+			     "Read this classpath from the XML file : " + cp);
+		}
+	      }
+	      cl = cl.getTail();
+	    }
+	  }
+	}
       }
     }
   }
@@ -389,15 +400,5 @@ public class TomServer {
   public void putOptionValue(Object key, Object value) {
     optionManager.putOptionValue(key, value);
   }
-
-//   /**
-//    * Entry point of the class
-//    * 
-//    * @param args the command line
-//    */
-//   public static void main(String args[])
-//   {
-//     exec(args);
-//   }
 
 }

@@ -17,6 +17,21 @@ public class Tom {
   public static int exec(String[] args) {
     rootLogger = Logger.getLogger("jtom");
 
+    rootLogger.setLevel(Level.WARNING);
+    rootLogger.setUseParentHandlers(false);
+
+    Handler ch = new ConsoleHandler();
+    ch.setLevel(Level.FINER);
+
+    rootLogger.addHandler(ch);
+
+//     try{
+//       Handler fh = new FileHandler("log");
+//       rootLogger.addHandler(fh);
+//     } catch(Exception e) { 
+//       System.out.println("No log output"); 
+//     }
+
     OptionManager om = new TomOptionManager();
 
     return TomServer.exec(args, om, "jtom");
