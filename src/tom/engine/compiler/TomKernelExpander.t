@@ -311,14 +311,12 @@ public class TomKernelExpander extends TomBase {
     %match(TomTerm match) {
       Match(subjectList,PatternList(list), option) -> {
         boolean needModification = false;
-        TomTerm pa;
-        Option newOption = option;
         TomList newPatternList = empty();
         while(!list.isEmpty()) {
-          pa = list.getHead();
+          TomTerm pa = list.getHead();
           if( isDefaultPattern(pa.getTermList().getTomList()) ) {
-            newPatternList = cons(`DefaultPatternAction(pa.getTermList(), pa.getTom(), pa.getOption()), newPatternList);
-            newOption = `Option(manyOptionList(WithDefaultProduction, option.getOptionList()));
+            Option newPatternActionOption =  `Option(manyOptionList(DefaultCase(),pa.getOption().getOptionList()));
+            newPatternList = cons(`PatternAction(pa.getTermList(), pa.getTom(), newPatternActionOption), newPatternList);
             needModification = true;
             if(!list.getTail().isEmpty()) {
                 // the default pattern is not the latest one!!
@@ -332,7 +330,8 @@ public class TomKernelExpander extends TomBase {
         }
         if(needModification) {
           newPatternList = reverse(newPatternList);
-          return `Match(subjectList, PatternList(newPatternList), newOption);
+          Option newMatchOption =`Option(manyOptionList(DefaultCase(),option.getOptionList()));
+          return `Match(subjectList, PatternList(newPatternList), newMatchOption);
         } else {
           return match;
         }
@@ -350,7 +349,7 @@ public class TomKernelExpander extends TomBase {
     while(!pList.isEmpty()) {
       term = pList.getHead();
       %match(TomTerm term) {
-        Appl -> {
+        Appl[] -> {
           return false;
         }
       }

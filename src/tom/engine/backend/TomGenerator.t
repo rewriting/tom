@@ -270,7 +270,7 @@ public class TomGenerator extends TomBase implements TomTask {
       
       CompiledMatch(matchDeclarationList, namedBlockList, Option(list)) -> {
         boolean generated = hasGeneratedMatch(list);
-        boolean defaultPattern = hasDefaultProd(list);
+        boolean defaultPattern = hasDefaultCase(list);
         Option orgTrack = null;
         if(supportedBlock) {
           generateInstruction(out,deep,`OpenBlock());
@@ -820,9 +820,9 @@ public class TomGenerator extends TomBase implements TomTask {
 
       ExitAction(numberList) -> {
         if(cCode) {
-          out.writeln(deep,"goto " + numberListToIdentifier(numberList) + ";");
+          out.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
         } else if(jCode) {
-          out.writeln(deep,"break " + numberListToIdentifier(numberList) + ";");
+          out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
         } else if(eCode) {
           System.out.println("ExitAction: Eiffel code not yet implemented");
             //System.exit(1);

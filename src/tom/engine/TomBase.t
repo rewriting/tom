@@ -259,7 +259,6 @@ public class TomBase {
       End(Number(i)) -> { return "end" + i; }
       MatchNumber(Number(i)) -> { return "match" + i; }
       PatternNumber(Number(i)) -> { return "pattern" + i; }
-      PatternLabel(Name(name)) -> { return name; }
       ListNumber(Number(i)) -> { return "list" + i; }
       IndexNumber(Number(i)) -> { return "index" + i; }
       AbsVar(Number(i)) -> { return "absvar" + i; }
@@ -277,9 +276,7 @@ public class TomBase {
       StringBuffer buf = new StringBuffer(30);
       while(!l.isEmpty()) {
         TomNumber elt = l.getHead();
-        if(!elt.isPatternLabel()) {
-          buf.append("_");
-        }
+        buf.append("_");
         buf.append(elementToIdentifier(elt));
         l = l.getTail();
       }
@@ -474,8 +471,8 @@ public class TomBase {
         TomTermToOption(var@Variable(option,name,type)) -> {
           return var;
         }
-        _ -> {subjectList = subjectList.getTail();}
       }
+      subjectList = subjectList.getTail();
     }
     return null;
   }
@@ -492,14 +489,26 @@ public class TomBase {
     return null;
   }
 
+  protected String getDebug(OptionList optionList) {
+    //%variable
+    while(!optionList.isEmpty()) {
+      Option subject = optionList.getHead();
+      %match(Option subject) {
+        Debug(Name(str)) -> { return str; }
+      }
+      optionList = optionList.getTail();
+    }
+    return null;
+  }
+
   protected boolean hasConstructor(OptionList optionList) {
       //%variable
     while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
         Constructor -> { return true; }
-        _ -> {optionList = optionList.getTail();}
       }
+      optionList = optionList.getTail();
     }
     return false;
   }
@@ -510,23 +519,36 @@ public class TomBase {
       Option subject = optionList.getHead();
       %match(Option subject) {
         GeneratedMatch -> { return true; }
-        _ -> {optionList = optionList.getTail();}
       }
+      optionList = optionList.getTail();
     }
     return false;
   }
   
-  protected boolean hasDefaultProd(OptionList optionList) {
+  protected boolean hasDefaultCase(OptionList optionList) {
       //%variable
     while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
-        WithDefaultProduction -> { return true; }
-        _ -> {optionList = optionList.getTail();}
-      }    
+        DefaultCase -> { return true; }
+      }
+      optionList = optionList.getTail();
     }
     return false;
   }
+
+  protected boolean hasDefinedSymbol(OptionList optionList) {
+      //%variable
+    while(!optionList.isEmpty()) {
+      Option subject = optionList.getHead();
+      %match(Option subject) {
+        DefinedSymbol -> { return true; }
+      }
+      optionList = optionList.getTail();
+    }
+    return false;
+  }
+
   protected TomName getSlotName(TomSymbol symbol, int number) {
     //%variable
     SlotList slotList = symbol.getSlotList();
@@ -563,23 +585,12 @@ public class TomBase {
   protected boolean isDefinedSymbol(TomSymbol subject) {
       //%variable
     if(subject==null) {
+      System.out.println("isDefinedSymbol: subject == null");
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol(Name(name1),TypesToType(typeList,type1),_,Option(optionList),tlCode1) -> {
-        while(!optionList.isEmpty()) {
-          Option opt = optionList.getHead();
-          %match(Option opt) {
-            DefinedSymbol  -> { return true; }
-          }
-          optionList = optionList.getTail();
-        }
-        return false;
-      }
-      
-      _ -> {
-        System.out.println("isDefinedSymbol: strange case: '" + subject + "'");
-        System.exit(1);
+      Symbol[option=Option(optionList)] -> {
+        return hasDefinedSymbol(optionList);
       }
     }
     return false;
@@ -587,22 +598,25 @@ public class TomBase {
   
     // findOriginTracking(_) return the option containing OriginTracking information
   protected Option findOriginTracking(OptionList optionList) {
-    if(optionList.isEmpty()) return ast().makeOption();
+    if(optionList.isEmpty()) {
+      return ast().makeOption();
+    }
     while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
         orgTrack@OriginTracking[] -> {
           return orgTrack;
         }
-        _ -> {optionList = optionList.getTail();}
       }
+      optionList = optionList.getTail();
     }
-    System.out.println("findOriginTracking:  not found"+optionList);
-    System.exit(1);return null;
+    System.out.println("findOriginTracking:  not found" + optionList);
+      //System.exit(1);
+    return null;
   }
    
   protected void addError(TomTaskInput taskInput, String msg, String file, int line, int level) {
-  	TomError err = tsf().makeTomError_Error(msg,file,line,level);
-	taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
+    TomError err = `Error(msg,file,line,level);
+    taskInput.setErrors(tsf().makeTomErrorList(err, taskInput.getErrors()));
   }
 }

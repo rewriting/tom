@@ -220,14 +220,13 @@ public class TomKernelCompiler extends TomBase {
            * build a matching automata
            */
         int actionNumber = 0;
-        boolean firstCall=true, defaultPA =false;
+        boolean firstCall=true;
+        boolean defaultPA =false;
         while(!l2.isEmpty()) {
           actionNumber++;
           TomTerm pa = l2.getHead();
-          defaultPA = pa.isDefaultPatternAction();
+          defaultPA = hasDefaultCase(pa.getOption().getOptionList());
           patternList = pa.getTermList().getTomList();
-          TomName label = getLabel(pa.getOption().getOptionList());
-          
           if (debugMode && defaultPA) {
               // replace success by leaving structure
             TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
@@ -261,26 +260,25 @@ public class TomKernelCompiler extends TomBase {
               //System.out.println("*** " + patternsDeclarationList);
           }
 
-          TomNumberList numberList;
-          if(label != null) {
-            System.out.println("label = " + label);
-            path = tsf().makeTomNumberList();
-            numberList = (TomNumberList) path.append(`PatternLabel(label));
-          } else {
-            numberList = (TomNumberList) path.insert(`PatternLabel(Name("matchlab")));
-            numberList = (TomNumberList) numberList.append(`PatternNumber(makeNumber(actionNumber)));
-          }
+
+           TomNumberList numberList = (TomNumberList) path.append(`PatternNumber(makeNumber(actionNumber)));
+         
           TomList instructionList;
           instructionList = genMatchingAutomataFromPatternList(patternList,path,1,actionList,true);
             //firstCall = false;
           TomList declarationInstructionList; 
           declarationInstructionList = concat(patternsDeclarationList,instructionList);
-          TomTerm automata;
-          if(!defaultPA) {
-            automata = `Automata(numberList,declarationInstructionList, Name(currentDebugKey));
-          } else {
-            automata = `DefaultAutomata(numberList,declarationInstructionList, Name(currentDebugKey));
+          OptionList automataOptionList = `concOption(Debug(Name(currentDebugKey)));
+
+          TomName label = getLabel(pa.getOption().getOptionList());
+          if(label != null) {
+            automataOptionList = `manyOptionList(Label(label),automataOptionList);
           }
+          if(defaultPA) {
+            automataOptionList = `manyOptionList(DefaultCase(),automataOptionList);
+          }
+          
+          TomTerm automata = `Automata(Option(automataOptionList),numberList,declarationInstructionList);
             //System.out.println("automata = " + automata);
           
           automataList = append(automata,automataList);
@@ -310,19 +308,28 @@ public class TomKernelCompiler extends TomBase {
         //conc()      -> { return empty(); }
         //conc(Automata(numberList,instList),l*)  -> {
       emptyTomList()      -> { return empty(); }
-      manyTomList(Automata(numberList,instList, Name(dbgKey)),l)  -> {
+      manyTomList(Automata(Option(optionList),numberList,instList),l)  -> {
         TomList newList = automataListCompileMatchingList(l, generatedMatch);
         if(supportedGoto) {
           if(!generatedMatch && debugMode) {
-            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+dbgKey+"\");\n");
+            String debugKey = getDebug(optionList);
+            boolean defaultCase = hasDefaultCase(optionList);
+            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+debugKey+"\");\n");
             instList = `cons(TargetLanguageToTomTerm(tl), instList);
-            tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+dbgKey+"\");\n");
-            TomList list = `cons(TargetLanguageToTomTerm(tl), emptyTomList());
-            instList = concat(instList, list);
+            if(!defaultCase) {
+              tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+debugKey+"\");\n");
+              TomList list = `cons(TargetLanguageToTomTerm(tl), emptyTomList());
+              instList = concat(instList, list);
+            }
           }
-          TomTerm compiledPattern = `CompiledPattern(cons(InstructionToTomTerm(NamedBlock(getBlockName(numberList), instList)),empty()));
 
-          return cons(compiledPattern, newList);
+          Instruction namedBlock = `NamedBlock(getBlockName(numberList), instList);
+          TomName label = getLabel(optionList);
+          if(label != null) {
+            namedBlock = `NamedBlock(label.getString(),cons(InstructionToTomTerm(namedBlock),empty()));
+          }
+          TomList list = cons(`InstructionToTomTerm(namedBlock),empty());
+          return cons(`CompiledPattern(list), newList);
         } else {
           TomList result = empty();
           TomTerm variableAST = getBlockVariable(numberList);
@@ -337,20 +344,6 @@ public class TomKernelCompiler extends TomBase {
           }
           result = cons(`CompiledPattern(result),newList);
           return result;
-        }
-      }
-      manyTomList(DefaultAutomata(numberList,instList, Name(dbgKey)),l)  -> {
-        TomList newList = automataListCompileMatchingList(l, generatedMatch);
-        if(supportedGoto) {
-          if(!generatedMatch && debugMode) {
-            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringDefaultPattern(\""+dbgKey+"\");\n");
-            instList = `cons(TargetLanguageToTomTerm(tl), instList);
-          }
-          TomTerm compiledPattern = `CompiledPattern(cons(InstructionToTomTerm(NamedBlock(getBlockName(numberList), instList)),empty()));
-          return cons(compiledPattern, newList);
-        } else {
-          System.out.println("Default automata not yet defined");
-          System.exit(1);
         }
       }
     }

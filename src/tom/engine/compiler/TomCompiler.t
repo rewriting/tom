@@ -208,12 +208,8 @@ public class TomCompiler extends TomBase implements TomTask {
         return `PatternAction(tl,preProcessing(tom), option);
       }
       
-      DefaultPatternAction(termList, tom, option) -> {
-        return `DefaultPatternAction(termList, preProcessing(tom), option);
-      }
-
-      Match(SubjectList(l1),PatternList(l2), matchOption@Option(list))  -> {
-        Option orgTrack = findOriginTracking(list);
+      Match(SubjectList(l1),PatternList(l2), matchOption@Option(matchOptionList))  -> {
+        Option orgTrack = findOriginTracking(matchOptionList);
         if(debugMode) {
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
         }
@@ -224,8 +220,7 @@ public class TomCompiler extends TomBase implements TomTask {
           
           matchBlock: {
             %match(TomTerm elt) {
-              PatternAction(TermList(termList),Tom(actionList), option) |
-              DefaultPatternAction(TermList(termList),Tom(actionList), option) -> {
+              PatternAction(TermList(termList),Tom(actionList), option) -> {
                 TomList newTermList = empty();
                 TomList newActionList = actionList;
 
@@ -258,20 +253,17 @@ public class TomCompiler extends TomBase implements TomTask {
                     /* generate a new match construct */
 
                   TomTerm generatedPatternAction =
-                    `PatternAction(TermList(ast().makeList(abstractedPattern)),Tom(newActionList), option);        
+                    `PatternAction(TermList(ast().makeList(abstractedPattern)),Tom(newActionList), Option(concOption()));        
                     /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
-                  ArrayList optionList = new ArrayList();
-                  optionList.add(orgTrack);
-                  optionList.add(tsf().makeOption_GeneratedMatch());
-                  Option generatedOptions = ast().makeOption(ast().makeOptionList(optionList));
+                  OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
                   TomTerm generatedMatch =
                     `Match(SubjectList(ast().makeList(introducedVariable)),
                            PatternList(cons(generatedPatternAction,empty())),
-                           generatedOptions);
+                           Option(generatedMatchOptionList));
                     /*System.out.println("Generate new Match"+generatedMatch); */
                   generatedMatch = preProcessing(generatedMatch);
                   newPatternAction =
-                    `PatternAction(TermList(newTermList),Tom(cons(generatedMatch,empty())), option());
+                    `PatternAction(TermList(newTermList),Tom(cons(generatedMatch,empty())), option);
 
                     /*System.out.println("newPatternAction = " + newPatternAction); */
                 }
