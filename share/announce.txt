@@ -1,24 +1,37 @@
-Tom 2.0-rc1 release announcement
---------------------------------
+Tom 2.0 release announcement
+----------------------------
 
 It is my great privilege and pleasure to announce the availability of
-jtom-2.0 Release Candidate-1.
+Tom version 2.0.
 
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into C and Java.
 
-Tom is a pattern matching compiler which is particularly well-suited
-for programming various transformations on trees/terms or XML documents.  
+Tom is a pattern matching compiler developed at INRIA. It is
+particularly  well-suited for programming various transformations on
+trees/terms and XML based documents. Its design follows  our research
+on the efficient compilation of rule based languages (e.g. ELAN,
+developed at INRIA-Loria).
 
-Its design follows our experiences on the efficient compilation of
-rule-based systems. The tool can be seen as a Yacc-like compiler
-translating patterns into executable pattern matching automata.
-Similarly to Yacc, when a match is found, the corresponding semantic
-action (a sequence of instructions written in C or Java) is triggered
-and executed.    
+Tom is a tool implemented in Tom itself. It can be seen as a Yacc-like
+compiler translating patterns into executable pattern matching
+automata. Similarly to Yacc, when a match is found, the corresponding
+semantic action (a sequence of instructions written in C or Java) is
+triggered and executed.    
+Looking from another point of view, Tom is a complex compiler which adds
+powerful constructs to C and Java: non linear syntactic matching,
+associative matching with neutral element (a.k.a. list-matching), XML
+based pattern matching, string matching, and equational rewriting.  
+This offers the possibility to analyze and transform any kind of
+data-structure. Tom can be used for large scale developments and
+applications. It comes with documentation, programming, and debugging
+support. 
 
-This new release contains many improved and new features:
 
+This new release contains many improvements and new features:
+
+  - simple, ant based, installation procedure
+  - Eclipse plug-in, with automatic compilation and error reporting 
   - support for Caml
   - several predefined mappings
   - an optimizer which performs inlining and improves the efficiency
@@ -27,11 +40,11 @@ This new release contains many improved and new features:
     char)  
   - a better XML support (backquote notation, anonymous nodes)
   - a re-designed kernel compiler (with better algorithms)
-  - introduction of constraint to compile non-linear patterns (in a
+  - a constrained based compilation of non-linear patterns (in a 
     more efficient way)  
   - several bugs fixed
 
-Tom is available, in open source, from the Tom web page:
+Tom is available, in open source (GPL/BSD License), from the Tom web page:
 
   http://tom.loria.fr
 
