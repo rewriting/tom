@@ -2,9 +2,9 @@
 #    TOM - To One Matching Compiler
 #
 
-TNODEADT_SRC=$(srcdir)/src/adt/TNode-${VERSION}.jar$:{prefix}/share/TNode-${VERSION}.jar:$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
+TNODEADT_SRC=$(top_srcdir)/src/adt/TNode-${VERSION}.jar$:{prefix}/share/TNode-${VERSION}.jar:$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
 
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(TNODEADT_SRC):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(TNODEADT_SRC):$$CLASSPATH
 
 javadir         = ${prefix}/classes/jtom/runtime/xml
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/xml

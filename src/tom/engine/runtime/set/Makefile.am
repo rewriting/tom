@@ -2,10 +2,10 @@
 #    TOM - To One Matching Compiler
 #
 
-SETADT_SRC=$(srcdir)/src/adt/Set-${VERSION}.jar$:{prefix}/share/Set-${VERSION}.jar:$(top_srcdir)/stable/adt/Set-${VERSION}.jar
+SETADT_SRC	=$(top_srcdir)/src/adt/Set-${VERSION}.jar$:{prefix}/share/Set-${VERSION}.jar:$(top_srcdir)/stable/adt/Set-${VERSION}.jar
 
 javadir         = ${prefix}/classes/jtom/runtime/set
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SHARED_OBJECTS):$(SETADT_SRC):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(SETADT_SRC):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/set
 BOOTSOURCES	= SharedSet.java SharedMultiSet.java ATermSet.java
