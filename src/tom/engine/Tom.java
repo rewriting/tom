@@ -40,7 +40,7 @@ import jtom.exception.*;
 import jtom.adt.*;
 
 public class Tom {
-  private static String version = "1.1";
+  private static String version = "1.2beta";
   
     private static void usage() {
     System.out.println("Tom usage:");
@@ -211,7 +211,6 @@ public class Tom {
         TomVerifier  tomVerifier = new TomVerifier(environment);
         startChrono();
         tomVerifier.verify(parsedTerm);
-        tomParser.updateSymbol();
         stopChrono();
         if(Flags.verbose) System.out.println("TOM verification phase " + getChrono());
 

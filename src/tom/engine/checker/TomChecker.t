@@ -246,7 +246,6 @@ public class TomChecker extends TomBase {
           
           if(subject instanceof TomType) {
             %match(TomType subject) {
-              TypesToType[]         -> { return subject; }
               TomTypeAlone(tomType) -> { return getType(tomType); }
             }
           }
@@ -458,8 +457,10 @@ public class TomChecker extends TomBase {
   }
 
     /*
-     * update the symboleTable by traversing each symbol
-     * called after the expansion phase
+     * updateSymbolPass1 is called after the expansion phase
+     * this phase updates the symbolTable according to the typeTable
+     * this is performed by recursively traversing each symbol
+     * each TomTypeAlone is replace by the corresponding TomType
      */
   public void updateSymbolPass1() {
     try {
@@ -469,7 +470,7 @@ public class TomChecker extends TomBase {
         TomTerm emptyContext = null;
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         tomSymbol = pass1(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
-      symbolTable().putSymbol(tomName,tomSymbol);
+        symbolTable().putSymbol(tomName,tomSymbol);
       }
     } catch(TomException e) {
       System.out.println("updateSymbolPass1 error");

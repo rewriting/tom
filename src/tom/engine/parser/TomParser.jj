@@ -96,10 +96,6 @@ public class TomParser {
     return string;
   }
 
-  public void updateSymbol() {
-    ast().updateSymbol(symbolTable);
-  }
-
   private TomSymbol getSymbol(String name) {
     return symbolTable.getSymbol(name);
   }
