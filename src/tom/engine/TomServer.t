@@ -1,6 +1,7 @@
 package jtom;
 
 import java.util.*;
+import java.util.logging.*;
 import java.io.*;
 
 import jtom.adt.tnode.*;
@@ -22,11 +23,6 @@ import aterm.pure.*;
 public class TomServer {
 
   %include{ adt/TNode.tom }
-
-  /**
-   * The current version of the TOM compiler. 
-   */
-  public final static String VERSION = "3.0alpha";
     
   /**
    * The List containing a reference to the plugins.
@@ -57,6 +53,8 @@ public class TomServer {
    * @return an OptionManager
    */
   public OptionManager getOptionManager() { return optionManager; }
+
+  protected static Logger logger;
 
   /**
    * Part of the Singleton pattern. The unique instance of the TomServer.
@@ -90,13 +88,15 @@ public class TomServer {
    * 
    * @return the instance of the TomServer
    */
-  public static TomServer create() {
+  public static TomServer create(OptionManager optionManager, String loggerRadical) {
     if(instance == null) {
       instance = new TomServer();
         
       instance.instances = new ArrayList();
       instance.tNodeFactory = TNodeFactory.getInstance(SingletonFactory.getInstance());
-      instance.optionManager = new TomOptionManager();
+      instance.optionManager = optionManager;
+
+      instance.logger = Logger.getLogger(loggerRadical+".TomServer");
 	
       return instance;
     } else {
@@ -110,7 +110,10 @@ public class TomServer {
    */
   public static void clear() {
     instance.instances = new ArrayList();
-    instance.optionManager = new TomOptionManager();
+    try {
+    instance.optionManager = (OptionManager)instance.optionManager.getClass().newInstance();
+    } catch(Exception e) { System.out.println( "problem when reinitializing option manager : "
+					       + e.getMessage() ); }
   }
 
   /**
@@ -118,8 +121,8 @@ public class TomServer {
    * @param args
    * @return
    */
-  public static int exec(String args[]) {
-    TomServer server = TomServer.create();
+  public static int exec(String args[], OptionManager optionManager, String loggerRadical) {
+    TomServer server = TomServer.create(optionManager, loggerRadical);
     return server.run(args);
   }
 
@@ -387,14 +390,14 @@ public class TomServer {
     optionManager.putOptionValue(key, value);
   }
 
-  /**
-   * Entry point of the class
-   * 
-   * @param args the command line
-   */
-  public static void main(String args[])
-  {
-    exec(args);
-  }
+//   /**
+//    * Entry point of the class
+//    * 
+//    * @param args the command line
+//    */
+//   public static void main(String args[])
+//   {
+//     exec(args);
+//   }
 
 }

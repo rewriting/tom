@@ -374,7 +374,7 @@ public class TomOptionManager implements OptionManager, TomPluginOptions {
    */
   public void displayVersion()
   {
-    System.out.println("\njtom " + TomServer.VERSION + "\n\n"
+    System.out.println("\njtom " + Tom.VERSION + "\n\n"
                        + "Copyright (C) 2000-2004 INRIA, Nancy, France.\n");
     System.exit(0);
   }
