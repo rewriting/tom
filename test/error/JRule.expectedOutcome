@@ -1,5 +1,3 @@
-[TomNameToOption(Name("x")),ImplicitXMLAttribut,ImplicitXMLChild]
-[ImplicitXMLAttribut,ImplicitXMLChild]
 -- Error occured line: 107 in structure `Rule` declared line: 107 in file: `JRule.t`
 ---> Rule `op4` is repeated
 
@@ -24,7 +22,7 @@
 -- Error occured line: 94 in structure `Rule` declared line: 88 in file: `JRule.t`
 ---> `Disjunction`: Impossible in rule right hand side
 
--- Error occured line: -1 in structure `Rule` declared line: 88 in file: `JRule.t`
+-- Error occured line: 93 in structure `Rule` declared line: 88 in file: `JRule.t`
 ---> `XML construct a`: Impossible in rule right hand side
 
 -- Error occured line: 92 in structure `Rule` declared line: 88 in file: `JRule.t`
@@ -63,7 +61,7 @@
 -- Error occured line: 66 in structure `Rule` declared line: 65 in file: `JRule.t`
 ---> `Disjunction`: Impossible in rule left hand side
 
--- Error occured line: -1 in structure `Rule` declared line: 61 in file: `JRule.t`
+-- Error occured line: 62 in structure `Rule` declared line: 61 in file: `JRule.t`
 ---> `XML construct a`: Impossible in rule left hand side
 
 -- Error occured line: 58 in structure `Rule` declared line: 57 in file: `JRule.t`
