@@ -238,11 +238,11 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     }
   }
 
-  protected TargetLanguage genDeclMake(String opname, TomType returnType, 
+  protected TargetLanguage genDeclMake(String funName, TomType returnType, 
                                        TomList argList, TargetLanguage tlCode) {
     String s = "";
     if(nodeclMode) { return null; }
-    s = "let tom_make_" + opname + "(";
+    s = "let " + funName + "(";
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {

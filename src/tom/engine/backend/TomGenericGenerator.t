@@ -461,46 +461,6 @@ String type1, String type2, TargetLanguage tlCode) throws IOException {
                                    tlCode));
   }
 
-  protected void buildMakeEmptyList(int deep, String opname, TomType codomain, TargetLanguage tlCode) throws IOException {
-    String returnType;
-    if(!lazyMode) {
-      returnType = getTLType(codomain);
-    } else {
-      returnType = getTLType(getUniversalType());
-    }
-
-    generateTargetLanguage(deep,
-                           genDecl(returnType,
-                                   "tom_empty_list", opname,
-                                   new String[] { },
-                                   tlCode));
-  }
-
-  protected void buildMakeAddList(int deep, String opname, String name1,
-String name2, TomType tlType1, TomType tlType2, TomType fullEltType,
-TomType fullListType, TargetLanguage tlCode) throws IOException {
-    String returnType, argListType,argEltType;
-    if(!lazyMode) {
-      argEltType = getTLCode(tlType1);
-      argListType = getTLCode(tlType2);
-      returnType = argListType;
-    } else {
-      argEltType  = getTLType(getUniversalType());
-      argListType = getTLType(getUniversalType());
-      returnType  = argListType;
-    }
-    
-    generateTargetLanguage(deep, genDecl(returnType,
-                                             "tom_cons_list", opname,
-                                             new String[] {
-                                               argEltType, name1,
-                                               argListType, name2
-                                             },
-                                             tlCode));
-    
-    generateTargetLanguage(deep, genDeclList(opname, fullListType,fullEltType));
-  }
-
   protected void buildGetElementDecl(int deep, String name1, String name2,
 String type1, TomType tlType1, TargetLanguage tlCode) throws IOException {
     String returnType, argType;
@@ -535,46 +495,6 @@ TomType tlType, TargetLanguage tlCode) throws IOException {
                                    "tom_get_size", type,
                                    new String[] { argType, name1 },
                                    tlCode));
-  }
-
-  protected void buildMakeEmptyArray(int deep, String opname, TomType codomain,String name1, TargetLanguage tlCode) throws IOException {
-    String returnType;
-    if(!lazyMode) {
-      returnType = getTLType(codomain);
-    } else {
-      returnType = getTLType(getUniversalType());
-    }
-
-    generateTargetLanguage(deep, genDecl(returnType, "tom_empty_array", opname,
-                                             new String[] {
-                                               getTLType(getSymbolTable().getIntType()), name1,
-                                             },
-                                             tlCode));
-  }
-
-  protected void buildMakeAddArray(int deep, String opname, String name1, String name2, TomType tlType1,
-TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException {
-    String returnType, argListType,argEltType;
-    if(!lazyMode) {
-      argEltType  = getTLCode(tlType1);
-      argListType = getTLCode(tlType2);
-      returnType  = argListType;
-      
-    } else {
-      argEltType  = getTLType(getUniversalType());
-      argListType = getTLType(getUniversalType());
-      returnType  = argListType;
-    }
-    
-    generateTargetLanguage(deep,
-                           genDecl(argListType,
-                                   "tom_cons_array", opname,
-                                   new String[] {
-                                     argEltType, name1,
-                                     argListType, name2
-                                   },
-                                   tlCode));
-    generateTargetLanguage(deep, genDeclArray(opname, fullArrayType, fullEltType));
   }
 
   protected void buildTypeTermDecl(int deep, TomList declList) throws IOException {

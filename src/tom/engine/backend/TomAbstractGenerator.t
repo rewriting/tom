@@ -595,17 +595,18 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeEmptyList(Name(opname), tlCode@TL[], _) -> {
-        //System.out.println("symbol = " + getSymbolFromName(opname));
-        TomType codomain = `getSymbolCodomain(getSymbolFromName(opname));
-        `buildMakeEmptyList(deep, opname, codomain, tlCode);
+        TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
+        `generateTargetLanguage(deep, genDeclMake("tom_empty_list_" + opname, returnType, concTomTerm(), tlCode));
         return;
       }
 
       MakeAddList(Name(opname),
-                  Variable[astName=Name(name1), astType=fullEltType@Type[tlType=tlType1@TLType[]]],
-                  Variable[astName=Name(name2), astType=fullListType@Type[tlType=tlType2@TLType[]]],
+                  elt@Variable[astType=fullEltType@Type[tlType=tlType1@TLType[]]],
+                  list@Variable[astType=fullListType@Type[tlType=tlType2@TLType[]]],
                   tlCode@TL[], _) -> {
-        `buildMakeAddList(deep, opname, name1, name2, tlType1, tlType2, fullEltType, fullListType, tlCode);
+        TomType returnType = fullListType;
+        `generateTargetLanguage(deep, genDeclMake("tom_cons_list_" + opname, returnType, concTomTerm(elt,list), tlCode));
+        generateTargetLanguage(deep, genDeclList(opname, fullListType,fullEltType));
         return;
       }
 
@@ -623,23 +624,26 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       
       MakeEmptyArray(Name(opname),
-                     Variable[astName=Name(name)],
+                     Variable[option=option,astName=name,astType=type, constraints=constraints],
                      tlCode@TL[], _) -> {
-        TomType codomain = `getSymbolCodomain(getSymbolFromName(opname));
-        `buildMakeEmptyArray(deep, opname, codomain, name, tlCode);
+        TomType returnType = `getSymbolCodomain(getSymbolFromName(opname));
+        TomTerm newVar = `Variable(option, name, getSymbolTable().getIntType(), constraints);
+        `generateTargetLanguage(deep, genDeclMake("tom_empty_array_" + opname, returnType, concTomTerm(newVar), tlCode));
         return;
       }
 
       MakeAddArray(Name(opname),
-                   Variable[astName=Name(name1), astType=fullEltType@Type[tlType=tlType1@TLType[]]],
-                   Variable[astName=Name(name2), astType=fullArrayType@Type[tlType=tlType2@TLType[]]],
+                   elt@Variable[astType=fullEltType@Type[tlType=tlType1@TLType[]]],
+                   list@Variable[astType=fullArrayType@Type[tlType=tlType2@TLType[]]],
                    tlCode@TL[], _) -> {
-        `buildMakeAddArray(deep, opname, name1, name2, tlType1, tlType2, fullEltType, fullArrayType, tlCode);
+        TomType returnType = fullArrayType;
+        `generateTargetLanguage(deep, genDeclMake("tom_cons_array_" + opname, returnType, concTomTerm(elt,list), tlCode));
+        generateTargetLanguage(deep, genDeclArray(opname, fullArrayType, fullEltType));
         return;
       }
 
       MakeDecl(Name(opname), returnType, argList, tlCode@TL[], _) -> {
-        `generateTargetLanguage(deep, genDeclMake(opname, returnType, argList, tlCode));
+        `generateTargetLanguage(deep, genDeclMake("tom_make_" + opname, returnType, argList, tlCode));
         return;
       }
       
@@ -712,7 +716,7 @@ public abstract class TomAbstractGenerator extends TomBase {
                                             String args[],
                                             TargetLanguage tlCode);
   
-  protected abstract TargetLanguage genDeclMake(String opname, TomType returnType, 
+  protected abstract TargetLanguage genDeclMake(String funName, TomType returnType, 
                                             TomList argList, TargetLanguage tlCode);
   
   protected abstract TargetLanguage genDeclList(String name, TomType listType, TomType eltType);
@@ -789,17 +793,10 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildGetTailDecl(int deep, String name1, String type, TomType tlType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildIsEmptyDecl(int deep, String name1, String type,
                                            TomType tlType, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildMakeEmptyList(int deep, String opname, TomType codomain, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildMakeAddList(int deep, String opname, String name1,
-                                           String name2, TomType tlType1, TomType tlType2, TomType fullEltType,
-                                           TomType fullListType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetElementDecl(int deep, String name1, String name2,
                                               String type1, TomType tlType1, TargetLanguage tlCode) throws IOException;
   protected abstract void buildGetSizeDecl(int deep, String name1, String type,
                                            TomType tlType, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildMakeEmptyArray(int deep, String opname, TomType codomain,String name1, TargetLanguage tlCode) throws IOException;
-  protected abstract void buildMakeAddArray(int deep, String opname, String name1, String name2, TomType tlType1,
-                                            TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCode) throws IOException;
   protected abstract void buildTypeTermDecl(int deep, TomList declList) throws IOException;
   protected abstract void buildTypeListDecl(int deep, TomList declList) throws IOException;
   protected abstract void buildTypeArrayDecl(int deep, TomList declList) throws IOException;

@@ -326,7 +326,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
                                          args, tlCode));
   }
 
-  protected TargetLanguage genDeclMake(String opname, TomType returnType, 
+  protected TargetLanguage genDeclMake(String funName, TomType returnType, 
                                        TomList argList, TargetLanguage tlCode) {
     String s = "";
     String check = "";
@@ -334,7 +334,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       return `ITL("");
     }
 
-    s = modifier + getTLType(returnType) + " tom_make_" + opname + "(";
+    s = modifier + getTLType(returnType) + " " + funName + "(";
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {
@@ -365,13 +365,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
       returnValue = "tom_set_stamp_" + getTomType(returnType) + "(" + returnValue + ")";
     }
-    if (debugMode) {
-      s += "\n"+getTLType(returnType)+ " debugVar = " + returnValue +";\n";
-      s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
-      s += "return  debugVar;\n}";
-    } else {
-      s += "return " + returnValue + "; }";
-    }
+    s += "return " + returnValue + "; }";
     return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
