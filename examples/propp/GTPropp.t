@@ -89,7 +89,6 @@ public class GTPropp extends Propp1 {
 	}
 	//}}}
 
-	Collection rules_appl = new HashSet();
 	Collection result = new HashSet();
 
 	public Proof solve(Proof init) {
