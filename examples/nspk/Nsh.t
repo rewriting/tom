@@ -74,11 +74,6 @@ public class Nsh {
     Collection c1 = new HashSet();
     c1.add(start);
 
-    Collection memory1;
-    Collection memory2;
-    memory1 = c1;
-    memory2 = c1;
-    
     int i = 0;
     while(!c1.isEmpty()) {
       Collection c2 = new HashSet();
@@ -87,21 +82,12 @@ public class Nsh {
         collectOneStep((State)it.next(),c2);
       }
 
-      int c2size = c2.size();
-        //c2.removeAll(memory1);
-        //c2.removeAll(memory2);
-
-        //c2.removeAll(result);
-        //result.addAll(c2);
-            
       System.out.print("iteration " + i + ":");
-      System.out.print("\tc2: " + c2size + " --> " +c2.size());
+      System.out.print("\tc2: " + c2.size());
         //System.out.print("\tresult.size = " + result.size());
       System.out.println();
 
       c1 = c2;
-        //memory2 = memory1;
-        //memory1 = c2;
       if(c2.contains(end)) {
         return true;
       }
