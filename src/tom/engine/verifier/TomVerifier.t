@@ -73,7 +73,7 @@ public class TomVerifier extends TomGenericPlugin {
 	if(verbose)
 	    System.out.println("TOM verification phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
 	    
-	environment().printAlertMessage("TomVerifier");
+	printAlertMessage();
 	
       } catch (Exception e) {
 	  getLogger().log( Level.SEVERE,

@@ -53,7 +53,7 @@ public class TomBackend extends TomGenericPlugin {
 	
 	writer.close();
 
-	environment().printAlertMessage("TomBackend");
+	printAlertMessage();
       }
       catch (Exception e) {
 	  getLogger().log( Level.SEVERE,

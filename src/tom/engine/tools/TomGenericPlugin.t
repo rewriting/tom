@@ -25,10 +25,14 @@
 
 package jtom.tools;
 
+import java.text.*;
 import java.util.logging.*;
+
 import aterm.*;
+
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
+
 import tom.platform.*;
 import tom.platform.adt.platformoption.types.*;
 
@@ -139,4 +143,25 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   public void setOption(String optionName, Object optionValue) {
     putOptionValue(optionName, optionValue);
   }
+
+  public void printAlertMessage() {
+    if(!environment().isEclipseMode()) {
+      StatusHandler status = getPluginPlatform().getStatusHandler();
+
+      int nbOfErrors   = status.nbOfErrors()   - errorsAtStart;
+      int nbOfWarnings = status.nbOfWarnings() - warningsAtStart;
+
+      if( nbOfErrors > 0 ) {
+	System.out.println(MessageFormat.format( TomMessage.getString("TaskErrorMessage"),
+						 new Object[]{ pluginName, 
+							       new Integer(nbOfErrors), 
+							       new Integer(nbOfWarnings) } ));
+      } else if( nbOfWarnings > 0 ) {
+	System.out.println(MessageFormat.format( TomMessage.getString("TaskWarningMessage"),
+						 new Object[]{ pluginName, 
+							       new Integer(nbOfWarnings) } ));
+      }
+    }
+  }
+
 }

@@ -43,7 +43,7 @@ public class TomOptimizer extends TomGenericPlugin {
 	  Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
 				getTerm() );
 		
-	environment().printAlertMessage("TomOptimizer");
+	printAlertMessage();
 
       } catch (Exception e) {
 	  getLogger().log( Level.SEVERE,

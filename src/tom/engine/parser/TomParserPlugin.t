@@ -105,7 +105,7 @@ public class TomParserPlugin extends TomGenericPlugin {
 	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + DEBUG_TABLE_SUFFIX, 
 			       parser.getStructTable());
         
-      environment().printAlertMessage("TomParserPlugin");
+      printAlertMessage();
 
     } catch (TokenMgrError e) {
 	getLogger().log( Level.SEVERE,

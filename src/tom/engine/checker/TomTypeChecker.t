@@ -29,7 +29,7 @@ public class TomTypeChecker extends TomChecker {
           System.out.println("TOM type checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
         }
 
-        environment().printAlertMessage("TomTypeChecker");
+        printAlertMessage();
 	  
       } catch (Exception e) {
 	  getLogger().log( Level.SEVERE,

@@ -153,7 +153,7 @@ public class TomMainParser extends TomGenericPlugin {
 	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
 			       + DEBUG_TABLE_SUFFIX, parser.getStructTable());
       
-      environment().printAlertMessage("TomParserPlugin");
+      printAlertMessage();
     }
     catch (TokenStreamException e){
 	e.printStackTrace();

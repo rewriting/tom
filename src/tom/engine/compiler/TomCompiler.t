@@ -50,7 +50,7 @@ public class TomCompiler extends TomGenericPlugin {
       }
       setTerm(compiledTerm);
 
-      environment().printAlertMessage("TomCompiler");
+      printAlertMessage();
     } catch (Exception e) {
       getLogger().log( Level.SEVERE,
 		       "ExceptionMessage",

@@ -49,9 +49,6 @@ public class TomEnvironment {
 
   private SymbolTable symbolTable;
 
-//     private TomAlertList errors;
-//     private TomAlertList warnings;
-
   /** List of import paths. */
   private List userImportList;
 
@@ -150,9 +147,6 @@ public class TomEnvironment {
 		
       instance.symbolTable = new SymbolTable(instance.astFactory);
 
-//       instance.errors = instance.tomSignatureFactory.makeTomAlertList();
-//       instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
-
       instance.inputSuffix = ".t";
       instance.outputSuffix = ".java";
       instance.userOutputFile = null;
@@ -177,8 +171,6 @@ public class TomEnvironment {
    */
   public static void clear() {
     instance.symbolTable.init();
-//     instance.errors = instance.tomSignatureFactory.makeTomAlertList();
-//     instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
     instance.destDir = null;
     instance.inputFile = null;
     instance.outputFile = null;
@@ -191,8 +183,6 @@ public class TomEnvironment {
 
   public void updateEnvironment(String localInputFileName) { // updateInputOutputFiles + init
     symbolTable.init();
-// 	errors = getTomSignatureFactory().makeTomAlertList();
-// 	warnings = getTomSignatureFactory().makeTomAlertList();
 	
     // compute inputFile:
     //  - add a suffix if necessary
@@ -272,211 +262,171 @@ public class TomEnvironment {
     return PluginPlatform.getInstance();
   }
 
-//     public TomAlertList getErrors() {
-// 	return errors;
-//     }
-
-//     public TomAlertList getWarnings() {
-// 	return warnings;
-//     }
-
-//     public void clearErrors() {
-//   	errors = getTomSignatureFactory().makeTomAlertList();
-//     }
+  public String getOutputSuffix() {
+    //System.out.println("getOutputSuffix() : " +outputSuffix);
+    return outputSuffix;
+  }
   
-//     public void clearWarnings() {
-//   	warnings = getTomSignatureFactory().makeTomAlertList();
-//     }
+  public void setOutputSuffix(String string) {
+    outputSuffix = string;
+  }
+
+  public boolean isEclipseMode() {
+    return eclipseMode;
+  }
   
-//     private void setErrors(TomAlertList list) {
-// 	errors = list;
-//     }
+  public void setEclipseMode(boolean b) {
+    eclipseMode = b;
+  }
 
-//     public void setWarnings(TomAlertList list) {
-// 	warnings = list;
-//     }
+  public void setUserImportList(List list) {
+    userImportList = list;
+  }
 
-  public void printAlertMessage(String taskName) {
-    if(!isEclipseMode()) {
-      StatusHandler status = getPluginPlatform().getStatusHandler();
-      if(status.hasError()) {
-	System.out.println(MessageFormat.format( TomMessage.getString("TaskErrorMessage"),
-						 new Object[]{ taskName, 
-							       new Integer(status.nbOfErrors()), 
-							       new Integer(status.nbOfWarnings()) } ));
-      } else if(status.hasWarning()) {
-	System.out.println(MessageFormat.format( TomMessage.getString("TaskWarningMessage"),
-						 new Object[]{ taskName, 
-							       new Integer(status.nbOfWarnings()) } ));
+  public List getUserImportList() {
+    return userImportList;
+  }
+
+  /**
+   * dynamically compute the list of imported files:
+   *  - user defined imports
+   *  - destDir/packagePath
+   *  - inputFile.getParent
+   *  - TOM_HOME/share/jtom
+   */
+  public List getImportList() {
+    List importList = new ArrayList(getUserImportList().size()+3);
+    for(Iterator it=getUserImportList().iterator() ; it.hasNext() ;) {
+      importList.add(it.next());
+    }
+    try {
+      
+      importList.add(new File(getDestDir(),getPackagePath()).getCanonicalFile());
+      
+      importList.add(getInputFile().getParentFile().getCanonicalFile());
+      String tom_home = System.getProperty("tom.home");
+      if(tom_home != null) {
+	File file = new File(new File(tom_home,"jtom"),"share");
+	importList.add(file.getCanonicalFile());
+	//System.out.println(" extend import list with: " + file.getPath());
       }
+      //System.out.println("importList = " + importList);
+    } catch (IOException e) {
+      System.out.println("IO Exception when computing importList");
+      e.printStackTrace();
+    }
+    return importList;
+  }
+ 
+  public String getInputSuffix() {
+    //System.out.println("getInputSuffix : " +inputSuffix);
+    return inputSuffix;
+  }
+  
+  public void setInputSuffix(String inputSuffix) {
+    this.inputSuffix = inputSuffix;
+  }
+
+  public void setPackagePath(String packagePath) {
+    this.packagePath = packagePath.replace('.',File.separatorChar);
+  }
+  
+  public String getPackagePath() {
+    //System.out.println("getPackagePath : " +packagePath);
+    return packagePath;
+  }
+
+  public void setDestDir(String destDir) {
+    try {
+      this.destDir = new File(destDir).getCanonicalFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + destDir + "`");
+      e.printStackTrace();
+    }
+  }
+  
+  public File getDestDir() {
+    return destDir;
+  }
+
+  public void setInputFile(String sInputFile) {
+    try {
+      this.inputFile = new File(sInputFile).getCanonicalFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + sInputFile + "`");
+      e.printStackTrace();
+    }  
+  }
+  
+  public File getInputFile() {
+    return inputFile;
+  }
+
+  public String getInputFileNameWithoutSuffix() {
+    String inputFileName = getInputFile().getPath();
+    String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
+    //System.out.println("IFNWS : " +res);
+    return res;
+  }
+  
+  public String getOutputFileNameWithoutSuffix() {
+    String outputFileName = getOutputFile().getPath();
+    String res = outputFileName.substring(0, outputFileName.length() - getOutputSuffix().length());
+    //System.out.println("OFNWS : " +res);
+    return res;
+  }
+
+  public void setOutputFile(String sOutputFile) {
+    try {
+      this.outputFile = new File(sOutputFile).getCanonicalFile();
+      this.outputFile.getParentFile().mkdirs();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + sOutputFile + "`");
+      e.printStackTrace();
+    }
+  }
+  
+  public File getOutputFile() {
+    return outputFile;
+  }
+
+  /**
+   * update the outputFile by inserting the packagePath
+   * between the destDir and the fileName
+   */
+  public void updateOutputFile() {
+    if(!isUserOutputFile()) {
+      File out = new File(getOutputFile().getParentFile(),getPackagePath());
+      setOutputFile(new File(out, getOutputFile().getName()).getPath());
     }
   }
 
-    public String getOutputSuffix() {
-	//System.out.println("getOutputSuffix() : " +outputSuffix);
-	return outputSuffix;
-    }
-  
-    public void setOutputSuffix(String string) {
-	outputSuffix = string;
-    }
+  public boolean isUserOutputFile() {
+    return userOutputFile != null;
+  }
 
-    public boolean isEclipseMode() {
-	return eclipseMode;
+  public void setUserOutputFile(String sUserOutputFile) {
+    try {
+      this.userOutputFile = new File(sUserOutputFile).getCanonicalFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + sUserOutputFile + "`");
+      e.printStackTrace();
     }
-    public void setEclipseMode(boolean b) {
-	eclipseMode = b;
-    }
-
-    public void setUserImportList(List list) {
-	userImportList = list;
-    }
-
-    public List getUserImportList() {
-	return userImportList;
-    }
-
-    /**
-     * dynamically compute the list of imported files:
-     *  - user defined imports
-     *  - destDir/packagePath
-     *  - inputFile.getParent
-     *  - TOM_HOME/share/jtom
-     */
-    public List getImportList() {
-	List importList = new ArrayList(getUserImportList().size()+3);
-	for(Iterator it=getUserImportList().iterator() ; it.hasNext() ;) {
-	    importList.add(it.next());
-	}
-	try {
-      
-	    importList.add(new File(getDestDir(),getPackagePath()).getCanonicalFile());
-      
-	    importList.add(getInputFile().getParentFile().getCanonicalFile());
-	    String tom_home = System.getProperty("tom.home");
-	    if(tom_home != null) {
-		File file = new File(new File(tom_home,"jtom"),"share");
-		importList.add(file.getCanonicalFile());
-		//System.out.println(" extend import list with: " + file.getPath());
-	    }
-	    //System.out.println("importList = " + importList);
-	} catch (IOException e) {
-	    System.out.println("IO Exception when computing importList");
-	    e.printStackTrace();
-	}
-	return importList;
-    }
+  }
  
-    public String getInputSuffix() {
-	//System.out.println("getInputSuffix : " +inputSuffix);
-	return inputSuffix;
-    }
+  public File getUserOutputFile() {
+    return userOutputFile;
+  }
   
-    public void setInputSuffix(String inputSuffix) {
-	this.inputSuffix = inputSuffix;
-    }
+  public String getRawFileName() {
+    String inputFileName = getInputFile().getName();
+    String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
+    //System.out.println("Raw file name : " + res);
+    return res;
+  }
 
-    public void setPackagePath(String packagePath) {
-	this.packagePath = packagePath.replace('.',File.separatorChar);
-    }
-  
-    public String getPackagePath() {
-	//System.out.println("getPackagePath : " +packagePath);
-	return packagePath;
-    }
-
-    public void setDestDir(String destDir) {
-	try {
-	    this.destDir = new File(destDir).getCanonicalFile();
-	} catch (IOException e) {
-	    System.out.println("IO Exception using file `" + destDir + "`");
-	    e.printStackTrace();
-	}
-    }
-  
-    public File getDestDir() {
-	return destDir;
-    }
-
-    public void setInputFile(String sInputFile) {
-	try {
-	    this.inputFile = new File(sInputFile).getCanonicalFile();
-	} catch (IOException e) {
-	    System.out.println("IO Exception using file `" + sInputFile + "`");
-	    e.printStackTrace();
-	}
-
-    }
-  
-    public File getInputFile() {
-	return inputFile;
-    }
-
-    public String getInputFileNameWithoutSuffix() {
-	String inputFileName = getInputFile().getPath();
-	String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
-	//System.out.println("IFNWS : " +res);
-	return res;
-    }
-  
-    public String getOutputFileNameWithoutSuffix() {
-	String outputFileName = getOutputFile().getPath();
-	String res = outputFileName.substring(0, outputFileName.length() - getOutputSuffix().length());
-	//System.out.println("OFNWS : " +res);
-	return res;
-    }
-
-    public void setOutputFile(String sOutputFile) {
-	try {
-	    this.outputFile = new File(sOutputFile).getCanonicalFile();
-	    this.outputFile.getParentFile().mkdirs();
-	} catch (IOException e) {
-	    System.out.println("IO Exception using file `" + sOutputFile + "`");
-	    e.printStackTrace();
-	}
-    }
-  
-    public File getOutputFile() {
-	return outputFile;
-    }
-
-    /**
-     * update the outputFile by inserting the packagePath
-     * between the destDir and the fileName
-     */
-    public void updateOutputFile() {
-	if(!isUserOutputFile()) {
-	    File out = new File(getOutputFile().getParentFile(),getPackagePath());
-	    setOutputFile(new File(out, getOutputFile().getName()).getPath());
-	}
-    }
-
-    public boolean isUserOutputFile() {
-	return userOutputFile != null;
-    }
-
-    public void setUserOutputFile(String sUserOutputFile) {
-	try {
-	    this.userOutputFile = new File(sUserOutputFile).getCanonicalFile();
-	} catch (IOException e) {
-	    System.out.println("IO Exception using file `" + sUserOutputFile + "`");
-	    e.printStackTrace();
-	}
-    }
- 
-    public File getUserOutputFile() {
-	return userOutputFile;
-    }
-  
-    public String getRawFileName() {
-  	String inputFileName = getInputFile().getName();
-	String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
-	//System.out.println("Raw file name : " + res);
-	return res;
-    }
-
-	public boolean isSilentDiscardImport(String fileName) {
-		return importsToDiscard.contains(fileName);
-	}
+  public boolean isSilentDiscardImport(String fileName) {
+    return importsToDiscard.contains(fileName);
+  }
 
 }

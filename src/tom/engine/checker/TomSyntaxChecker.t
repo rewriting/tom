@@ -29,7 +29,7 @@ public class TomSyntaxChecker extends TomChecker {
           System.out.println("TOM syntax checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
         }
 
-        environment().printAlertMessage("TomSyntaxChecker");
+        printAlertMessage();
         
       } catch (Exception e) {
 	getLogger().log( Level.SEVERE,
