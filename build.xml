@@ -551,6 +551,19 @@
 		</ant>
 	</target>
 
+	<target name="fixcrlf">
+		<fixcrlf srcdir="${basedir}"
+						 eol="unix" 
+						 eof="remove"
+						 includes="**/build.xml"/>
+		<fixcrlf srcdir="${src.src}"
+						 tab="remove"
+						 tablength="2"
+						 eol="unix"
+						 javafiles="yes"
+						 includes="**/*.java"/>
+	</target>
+
     <!-- compile tom files in src.src with tom.src -->      
   <target name="bootstep" depends="initsrc" if="destination">
 
