@@ -45,7 +45,7 @@ import jtom.exception.TomRuntimeException;
 
 public class ATermToXML {
   
-  %include{ ../../../adt/TNode.tom }
+  %include{ ../../adt/TNode.tom }
 
   private Factory factory = null;
   private OutputStream out = System.out;

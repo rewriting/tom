@@ -40,7 +40,7 @@ import jtom.exception.*;
 abstract public class TomChecker extends TomTask {
 	
     // ------------------------------------------------------------
-  %include { ../../adt/TomSignature.tom }
+  %include { ../adt/TomSignature.tom }
     // ------------------------------------------------------------
 	
   class TermDescription {

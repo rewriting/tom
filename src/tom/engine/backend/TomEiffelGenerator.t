@@ -41,7 +41,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   }
 
 // ------------------------------------------------------------
-  %include { ../../adt/TomSignature.tom }
+  %include { ../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
   protected void buildComment(int deep, String text) throws IOException {

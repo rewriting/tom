@@ -50,7 +50,7 @@ import org.xml.sax.SAXException;
 
 public class XMLToATerm {
   
-  %include{ ../../../adt/TNode.tom }
+  %include{ ../../adt/TNode.tom }
 	
   private Factory factory = null;
   private TNode nodeTerm = null;

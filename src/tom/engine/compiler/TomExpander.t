@@ -47,7 +47,7 @@ public class TomExpander extends TomTask {
   }
 
 // ------------------------------------------------------------
-  %include { ../../adt/TomSignature.tom }
+  %include { ../adt/TomSignature.tom }
 // ------------------------------------------------------------
 		
   public void process() {

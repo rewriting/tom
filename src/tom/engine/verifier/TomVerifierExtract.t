@@ -34,7 +34,7 @@ import jtom.checker.TomCheckerMessage;
 public class TomVerifierExtract extends TomTask {
 
     // ------------------------------------------------------------
-  %include { ../../adt/TomSignature.tom }
+  %include { ../adt/TomSignature.tom }
     // ------------------------------------------------------------
 
   public TomVerifierExtract(TomEnvironment tomEnvironment) { 

@@ -98,7 +98,7 @@ public abstract class ATermSet implements Collection {
     1 << 31
   };
 
-  %include { ../../../adt/Set.tom }
+  %include { ../../adt/Set.tom }
 
   public int hashCode() {
     return tree.getUniqueIdentifier();

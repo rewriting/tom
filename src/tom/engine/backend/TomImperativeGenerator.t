@@ -41,7 +41,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   // ------------------------------------------------------------
-  %include { ../../adt/TomSignature.tom }
+  %include { ../adt/TomSignature.tom }
   // ------------------------------------------------------------
 
 	protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException;

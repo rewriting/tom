@@ -38,7 +38,7 @@ import jtom.runtime.*;
 public class TomOptimizer extends TomTask {
 	
   // ------------------------------------------------------------
-  %include { ../../adt/TomSignature.tom }
+  %include { ../adt/TomSignature.tom }
   // ------------------------------------------------------------
 		
   public TomOptimizer(TomEnvironment tomEnvironment) {

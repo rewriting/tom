@@ -49,7 +49,7 @@ import jtom.runtime.Collect1;
 
 public class SharedSet extends ATermSet {
 
-  %include { ../../../adt/Set.tom }
+  %include { ../../adt/Set.tom }
   
   public SharedSet(PureFactory pureFactory) {
     if (factory==null) {
