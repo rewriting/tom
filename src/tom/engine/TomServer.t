@@ -106,27 +106,26 @@ public class TomServer {
    */
   public static TomServer create() {
     if(instance == null) {
-			instance = new TomServer();
+      instance = new TomServer();
         
-			instance.instances = new ArrayList();
-			instance.tNodeFactory = TNodeFactory.getInstance(PureFactorySingleton.getInstance());
-			instance.environment = new TomEnvironment();
-			instance.optionManager = new TomOptionManager();
-
-			return instance;
-		} else {
-			TomServer.clear();
-			return instance;
-			//throw new TomRuntimeException(TomMessage.getString("TwoTomServerInstance"));
-		}
-	}
+      instance.instances = new ArrayList();
+      instance.tNodeFactory = TNodeFactory.getInstance(PureFactorySingleton.getInstance());
+      instance.environment = TomEnvironment.create();
+      instance.optionManager = new TomOptionManager();
+	
+      return instance;
+    } else {
+      TomServer.clear();
+      return instance;
+    }
+  }
 
   /**
    * Reinitializes the TomServer instance.
    */
   public static void clear() {
     instance.instances = new ArrayList();
-    instance.environment = new TomEnvironment();
+    instance.environment = TomEnvironment.create();
     instance.optionManager = new TomOptionManager();
   }
 

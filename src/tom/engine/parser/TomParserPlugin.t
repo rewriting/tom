@@ -9,6 +9,8 @@ import jtom.adt.options.types.*;
 import jtom.exception.*;
 import jtom.tools.*;
 
+import java.util.logging.*;
+
 /**
  * The TomParser plugin.
  */
@@ -24,7 +26,14 @@ public class TomParserPlugin extends TomGenericPlugin
     public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table"; // was previously in TomTaskInput
     public static final String DEBUG_TABLE_SUFFIX = ".tfix.debug.table"; // was previously in TomTaskInput
 
+    protected static Logger logger;
+
     public TomParserPlugin() {
+	logger = Logger.getLogger("jtom.parser.TomParserPlugin");
+	try {
+	    Handler fh = new FileHandler("mylog.log", 100000, 20);
+	    logger.addHandler(fh);
+	} catch (Exception e) {}
     }
 
     public void setInput(ATerm term)
@@ -58,7 +67,12 @@ public class TomParserPlugin extends TomGenericPlugin
  		this.parser = TomParser.createParser(fileName);
 
  		term = parser.startParsing();
-      
+
+		logger.setLevel(Level.OFF);
+
+		for(int i = 0; i < 1; i++)
+		  logger.log(Level.WARNING, "Here is the parsed term : {0}", term);
+
 		if(verbose) 
 		    System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 
