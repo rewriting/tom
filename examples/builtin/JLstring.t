@@ -1,3 +1,5 @@
+package Builtin;
+
 public class JLstring {
 
 %include {string.tom}

@@ -13,6 +13,8 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 
+package Xml.DomMapping;
+
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;

@@ -1,3 +1,5 @@
+package Builtin;
+
 public class Jint {
 
   %include {int.tom}

@@ -1,3 +1,5 @@
+package GTree;
+
 import aterm.*;
 import aterm.pure.*;
 import jtom.runtime.*;

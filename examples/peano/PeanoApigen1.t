@@ -1,3 +1,5 @@
+package Peano;
+
 import aterm.*;
 import aterm.pure.PureFactory;
 import Peano.peano.*;

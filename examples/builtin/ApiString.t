@@ -1,3 +1,5 @@
+package Builtin;
+
 import aterm.pure.*;
 import aterm.*;
 import Builtin.term.*;

@@ -1,3 +1,5 @@
+package Xml;
+
 import jtom.runtime.xml.*;
 import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;

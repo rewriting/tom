@@ -5,6 +5,8 @@
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 
+package Xml.DomMapping;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import javax.xml.parsers.*;

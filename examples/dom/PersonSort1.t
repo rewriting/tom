@@ -1,3 +1,5 @@
+package Dom;
+
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;

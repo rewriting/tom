@@ -1,3 +1,5 @@
+package Expression;
+
 public class RecordStrict {
 
   %include {int.tom}
