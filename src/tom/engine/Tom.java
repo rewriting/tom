@@ -455,13 +455,10 @@ public class Tom {
     environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
   }
 
-  public void run(TomTask initialTask) {
-    if(initialTask != null && !getInput().isHelp() && !getInput().isVersion()) {
-      initialTask.startProcess();
-      if (getInput().isAtermStat()) {
-        System.out.println("\nStatistics:\n" + tsf().getPureFactory());
-      }
-    }
+  public void run(String inputFileName) {
+    reinit(inputFileName);
+    TomTask initialTask = createTaskChainFromInput();
+    initialTask.startProcess();
   }
 
   public static void main(String args[]) {
@@ -478,10 +475,10 @@ public class Tom {
       tom.addError("cannot specify --output with multiple compilations", "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       return;
     }
+
     for(Iterator it = tom.inputFileList.iterator() ; it.hasNext() ; ) {
-      tom.reinit((String)it.next());
-      TomTask initialTask = tom.createTaskChainFromInput();
-      tom.run(initialTask);
+      String inputFileName = (String)it.next();
+      tom.run(inputFileName);
     }
 
   }
