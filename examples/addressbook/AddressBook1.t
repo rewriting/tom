@@ -41,7 +41,7 @@ public class AddressBook1 {
   private Factory factory;
   private HashSet book;
    
-  %include { data.tom }
+  %include { data/data.tom }
  
   public AddressBook1(Factory factory) {
     this.factory = factory;

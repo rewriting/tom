@@ -49,7 +49,7 @@ public class PolyTraveler1 {
     return factory;
   }
 
-  %include { expression.tom }
+  %include { expression/expression.tom }
     
   public void run() {
     Expression t    = `mult(variable("x"),plus(variable("x"),constant("a")));

@@ -79,7 +79,7 @@ public abstract class TomAbstractGenerator extends TomBase {
     return symbolTable.getUniversalType();
   }
 // ------------------------------------------------------------
-  %include { adt/TomSignature.tom }
+  %include { adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
 
     /*

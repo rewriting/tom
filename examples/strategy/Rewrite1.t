@@ -51,7 +51,7 @@ public class Rewrite1 {
     return factory;
   }
 
-  %include { term.tom }
+  %include { term/term.tom }
   %include { string.tom }
   
   public final static void main(String[] args) {

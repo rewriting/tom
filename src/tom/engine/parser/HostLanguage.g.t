@@ -59,7 +59,7 @@ options{
 
 {
   //--------------------------
-    %include{ adt/TomSignature.tom }
+    %include{ adt/tomsignature/TomSignature.tom }
   //--------------------------
   
   // the lexer selector
@@ -434,9 +434,15 @@ signature [LinkedList list] throws TomException
     	throw new TomException(TomMessage.getMessage("VasFailure", new Object[]{currentFile,new Integer(initialVasLine)}));
     }
     // Simulate the inclusion of generated Tom file
-    String adtFileName = new File(generatedADTName).toString();
+
+    File adtFile = new File(generatedADTName);
+    String adtFileName = adtFile.toString();
     try {
-      file = new File(adtFileName.substring(0,adtFileName.length()-".adt".length())+".tom");
+      String moduleName = adtFile.getName().substring(0,adtFile.getName().length()-".adt".length());
+      String tomFileName = adtFile.getParentFile().getCanonicalPath() + File.separatorChar + moduleName + File.separatorChar + moduleName + ".tom";
+
+      //System.out.println("tomFileName = " + tomFileName);
+      file = new File(tomFileName);
       fileName = file.getCanonicalPath();
     } catch (IOException e) {
       throw new TomException(TomMessage.getMessage("IOExceptionWithGeneratedTomFile",

@@ -86,7 +86,7 @@
 								altName='p'
 								description='Specify package name (optional)'
 								value=''
-								attrName='pack'/>
+								attrName='packageName'/>
 				<string name='output'
 								altName='o'
 								description='Set adt output file name equivalent to intermediate'
@@ -99,9 +99,9 @@
 								attrName='dir'/>
 				<string name='name'
 								altName='n'
-								description='Specify api name'
+								description='Specify apiName'
 								value=''
-								attrName='name'/>
+								attrName='apiName'/>
 				<string name="import"
 								altName="I"
 								description="Path for %include"

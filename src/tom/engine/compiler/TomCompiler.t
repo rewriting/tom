@@ -45,7 +45,7 @@ import aterm.ATerm;
  */
 public class TomCompiler extends TomGenericPlugin {
 
-  %include { adt/TomSignature.tom }
+  %include { adt/tomsignature/TomSignature.tom }
 
   /** some output suffixes */
   public static final String COMPILED_SUFFIX = ".tfix.compiled";

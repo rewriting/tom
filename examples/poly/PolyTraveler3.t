@@ -49,7 +49,7 @@ public class PolyTraveler3 {
     return factory;
   }
 
-  %include { expression.tom }
+  %include { expression/expression.tom }
 
   public final static void main(String[] args) {
     PolyTraveler3 test = new PolyTraveler3(Factory.getInstance(new PureFactory()));

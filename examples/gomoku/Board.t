@@ -9,7 +9,7 @@ import gomoku.gomoku.types.*;
 
 class Board {
 
-  %include { gomoku.tom }
+  %include { gomoku/gomoku.tom }
 
   private final static int black = -1;
   private final static int white = -2;

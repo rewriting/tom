@@ -47,8 +47,8 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
  */
 public class TomBackend extends TomGenericPlugin {
   
-  %include { adt/TomSignature.tom }
-  %include { adt/PlatformOption.tom }
+  %include { adt/tomsignature/TomSignature.tom }
+  %include { adt/platformoption/PlatformOption.tom }
 
   /** the tabulation starting value */
   private final static int defaultDeep = 2;

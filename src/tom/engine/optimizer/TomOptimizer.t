@@ -55,7 +55,7 @@ import aterm.ATerm;
  */
 public class TomOptimizer extends TomGenericPlugin {
 
-  %include{ adt/TomSignature.tom }
+  %include{ adt/tomsignature/TomSignature.tom }
 
   /** some output suffixes */
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";

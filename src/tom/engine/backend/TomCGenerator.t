@@ -46,7 +46,7 @@ public class TomCGenerator extends TomImperativeGenerator {
   }
   
   // ------------------------------------------------------------
-  %include { adt/TomSignature.tom }
+  %include { adt/tomsignature/TomSignature.tom }
   // ------------------------------------------------------------
 
   protected void buildExpTrue(int deep) throws IOException {

@@ -38,7 +38,7 @@ import jtom.verifier.il.types.*;
 public class LatexOutput {
 
 	// ------------------------------------------------------------
-	%include { il.tom }
+	%include { il/il.tom }
 	// ------------------------------------------------------------
 
 	protected jtom.verifier.il.ilFactory factory;

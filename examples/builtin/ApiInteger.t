@@ -38,7 +38,7 @@ public class ApiInteger {
 
   private Factory factory;
   
-  %include { term.tom }
+  %include { term/term.tom }
 
   public ApiInteger(Factory factory) {
     this.factory = factory;

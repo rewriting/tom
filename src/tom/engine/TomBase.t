@@ -43,7 +43,7 @@ import tom.library.traversal.*;
  */
 public class TomBase {
 
-  %include { adt/TomSignature.tom }
+  %include { adt/tomsignature/TomSignature.tom }
 
   public static final TomSignatureFactory getTomSignatureFactory() {
     return TomEnvironment.getInstance().getTomSignatureFactory();
@@ -53,7 +53,7 @@ public class TomBase {
     return TomEnvironment.getInstance().getTomSignatureFactory();
   }
   
-  %include { adt/PlatformOption.tom }
+  %include { adt/platformoption/PlatformOption.tom }
   
   public static final PlatformOptionFactory getPlatformOptionFactory() {
     return TomEnvironment.getInstance().getPlatformOptionFactory();

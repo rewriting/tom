@@ -39,7 +39,7 @@ public class ArrayBeadSort {
   private boolean[][] space;
   private boolean[][] newSpace;
 
-  %include { term.tom }
+  %include { term/term.tom }
 
   %op Bead beadNS(n:Bead, s:Bead) {
     fsym { }

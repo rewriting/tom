@@ -42,7 +42,7 @@ public class RecPropp extends Propp1 {
 	private Factory factory;
 
 	// ------------------------------------------------------------  
-	%include { seq.tom }
+	%include { seq/seq.tom }
 	// ------------------------------------------------------------  
 
 	public RecPropp() {

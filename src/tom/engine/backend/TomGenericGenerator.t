@@ -59,7 +59,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   }
 
 // ------------------------------------------------------------
-  %include { adt/TomSignature.tom }
+  %include { adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
 
   protected abstract TargetLanguage genDecl(String returnType,

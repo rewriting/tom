@@ -38,7 +38,7 @@ public class PeanoApigen2 {
 
   private Factory factory;
 
-  %include { peano.tom }
+  %include { peano/peano.tom }
   
   public PeanoApigen2(Factory factory) {
     this.factory = factory;

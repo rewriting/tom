@@ -38,7 +38,7 @@ import addressbook.data.types.*;
 public class AddressBook2 {
   private Factory factory;
    
-  %include { data.tom }
+  %include { data/data.tom }
  
   public AddressBook2(Factory factory) {
     this.factory = factory;

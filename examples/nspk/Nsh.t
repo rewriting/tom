@@ -42,7 +42,7 @@ public class Nsh {
   private Factory factory;
 
 // ------------------------------------------------------------  
-  %include { term.tom }
+  %include { term/term.tom }
 // ------------------------------------------------------------  
  
   public Nsh(Factory factory) {

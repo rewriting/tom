@@ -56,7 +56,7 @@ public class TestAddressBook extends TestCase {
     test.generatePerson(book);
   }
 
-  %include { data.tom }
+  %include { data/data.tom }
   public Factory getDataFactory() {
     return factory;
   }

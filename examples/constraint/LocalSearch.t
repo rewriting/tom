@@ -40,7 +40,7 @@ public class LocalSearch {
   private GenericTraversal traversal;
 
 // ------------------------------------------------------------  
-  %include { localsearch.tom }
+  %include { term/localsearch.tom }
 // ------------------------------------------------------------  
  
   public LocalSearch(Factory factory) {

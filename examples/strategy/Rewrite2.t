@@ -50,7 +50,7 @@ public class Rewrite2 {
     return factory;
   }
 
-  %include { term.tom }
+  %include { term/term.tom }
   %include { string.tom }
   %include { mutraveler.tom }
 

@@ -46,7 +46,7 @@ import aterm.ATerm;
  */
 public class TomTypeChecker extends TomChecker {
 
-  %include { adt/TomSignature.tom }
+  %include { adt/tomsignature/TomSignature.tom }
 
   /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='noTypeCheck' altName='' description='Do not perform type checking' value='false'/></options>";

@@ -36,7 +36,7 @@ import aterm.*;
 
 public class BackQuote {
   
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
     
   private XmlTools xtools;
  

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Xml {
   
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();

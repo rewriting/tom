@@ -38,7 +38,7 @@ import tom.library.traversal.*;
 
 public class HTMLToLaTeX {
   
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();

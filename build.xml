@@ -295,9 +295,10 @@
       <include name="tom/platform/adt/*.vas"/>
     </vas>
 <!--
-    <vas  config="${stable.vasconfigfile}"
+    <vas config="${stable.vasconfigfile}"
 				 srcdir="${src.src}"
          package="jtom.adt" 
+         factory="tomsignature" 
          destdir="${src.gen}">
       <include name="jtom/adt/*.vas"/>
     </vas>
@@ -310,9 +311,9 @@
     </adt>
 
     <copy todir="${src.mapping}/adt">
-      <fileset dir="${src.gen}/tom/library/adt" includes="*.tom"/>
-      <fileset dir="${src.gen}/tom/platform/adt" includes="*.tom"/>
-      <fileset dir="${src.gen}/jtom/adt" includes="*.tom"/>
+      <fileset dir="${src.gen}/tom/library/adt" includes="**/*.tom"/>
+      <fileset dir="${src.gen}/tom/platform/adt" includes="**/*.tom"/>
+      <fileset dir="${src.gen}/jtom/adt" includes="**/*.tom"/>
     </copy>
 
     <!-- adt for the verifier -->
@@ -434,7 +435,7 @@
     <!-- tom share -->
     <copy todir="${stable.dist.share}/jtom">
       <fileset dir="${stable.mapping}" includes="**/*.tom"/>
-      <fileset dir="${stable.adt}" includes="*.tom">
+      <fileset dir="${stable.adt}" includes="**/*.tom">
         <exclude name="TomSignature.tom"/>
       </fileset>
     </copy>
@@ -540,7 +541,7 @@
     <!-- tom share -->
     <copy todir="${src.dist.share}/jtom">
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
-      <fileset dir="${src.adt}" includes="*.tom">
+      <fileset dir="${src.adt}" includes="**/*.tom">
         <exclude name="TomSignature.tom"/>
       </fileset>
     </copy>

@@ -45,7 +45,7 @@ public class Propp1 {
 	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------
-	%include { seq.tom }
+	%include { seq/seq.tom }
 	// ------------------------------------------------------------
 
 	public Propp1() {

@@ -44,7 +44,7 @@ public class PolyApigen2 {
     return factory;
   }
 
-  %include { expression.tom }
+  %include { expression/expression.tom }
 
   %op Expression differentiate(arg1:Expression, arg2:Expression) {
     fsym { }

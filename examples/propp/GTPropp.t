@@ -45,7 +45,7 @@ public class GTPropp extends Propp1 {
 	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------  
-	%include { seq.tom }
+	%include { seq/seq.tom }
 	// ------------------------------------------------------------  
 
 	public GTPropp() {

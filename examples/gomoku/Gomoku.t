@@ -14,7 +14,7 @@ class Gomoku {
   private final static int black = -1;
   private final static int white = -2;
 
-  %include { gomoku.tom }
+  %include { gomoku/gomoku.tom }
   
   public static Gomoku getGomoku(int size, gomokuFactory factory) {
     Gomoku gomoku = new Gomoku();

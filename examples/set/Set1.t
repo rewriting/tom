@@ -82,7 +82,7 @@ public class Set1 {
     1 << 31
   };
 
-  %include { jgset.tom }
+  %include { jgset/jgset.tom }
 
   public Set1(Factory factory) {
     this(factory, 31);

@@ -41,7 +41,7 @@ public class Tree1 {
   private Factory factory;
   private Comparator comparator;
   
-  %include { tree.tom }
+  %include { tree/tree.tom }
   
   public Tree1(Factory factory) {
     this.factory = factory;

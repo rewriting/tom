@@ -70,20 +70,20 @@ import tom.library.xml.*;
  */
 public class OptionParser {
   
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
   
   /**
-   * Accessor method necessary when including adt/TNode.tom 
+   * Accessor method necessary when including adt/tnode/TNode.tom 
    * @return a TNodeFactory
    */
   private static TNodeFactory getTNodeFactory() {
     return TNodeFactory.getInstance(SingletonFactory.getInstance());
   }
   
-  %include{ adt/PlatformOption.tom }
+  %include{ adt/platformoption/PlatformOption.tom }
   
   /**
-   * Accessor method necessary to include adt/PlatformOption.tom
+   * Accessor method necessary to include adt/platformoption/PlatformOption.tom
    * @return a PlatformOptionFactory
    */
   private static PlatformOptionFactory getPlatformOptionFactory() {

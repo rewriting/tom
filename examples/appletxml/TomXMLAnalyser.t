@@ -39,7 +39,7 @@ import java.io.*;
 
 public class TomXMLAnalyser {
 
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
   
   private XmlTools xtools;
 

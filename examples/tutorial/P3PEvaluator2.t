@@ -38,7 +38,7 @@ import java.util.*;
 
 public class P3PEvaluator2 {
    
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
  
   private GenericTraversal traversal;
   public P3PEvaluator2() {

@@ -36,7 +36,7 @@ import aterm.*;
 
 public class P3PEvaluator1 {
    
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
     
   private XmlTools xtools;
   private TNodeFactory getTNodeFactory() {

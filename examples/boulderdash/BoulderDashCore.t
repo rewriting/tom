@@ -43,7 +43,7 @@ public class BoulderDashCore {
   private HashMap newSpace;
   private static int SIZE = 20;
 
-  %include { boulder.tom }
+  %include { boulder/boulder.tom }
  
   %op Bead beadRock(n:Bead, s:Bead, e:Bead, w:Bead) {
     fsym { }

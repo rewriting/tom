@@ -38,7 +38,7 @@ import jtom.verifier.il.types.*;
 public class ZenonOutput {
 
 	// ------------------------------------------------------------
-	%include { il.tom }
+	%include { il/il.tom }
 	// ------------------------------------------------------------
 
 	protected jtom.verifier.il.ilFactory factory;

@@ -40,7 +40,7 @@ import jtom.xml.Constants;
 public class TomFactory extends TomBase {
 
 // ------------------------------------------------------------
-  %include { adt/TomSignature.tom }
+  %include { adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
 
   public TomFactory() {

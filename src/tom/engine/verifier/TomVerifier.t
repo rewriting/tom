@@ -43,7 +43,7 @@ import jtom.verifier.il.types.*;
  */
 public class TomVerifier extends TomGenericPlugin {
   
-  %include{ adt/TomSignature.tom }
+  %include{ adt/tomsignature/TomSignature.tom }
   
   public static final String DECLARED_OPTIONS = "<options><boolean name='verify' altName='' description='Verify correctness of match compilation' value='false'/></options>";
 

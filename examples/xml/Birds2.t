@@ -37,7 +37,7 @@ import tom.library.traversal.*;
 
 public class Birds2 {
   
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();

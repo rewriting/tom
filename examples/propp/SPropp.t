@@ -51,7 +51,7 @@ class SPropp extends Propp1 {
   private TravelerFactory travelerFactory;
 
 	// ------------------------------------------------------------  
-	%include { seq.tom }
+	%include { seq/seq.tom }
 	// ------------------------------------------------------------  
 
 	public SPropp() {

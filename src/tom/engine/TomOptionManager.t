@@ -52,10 +52,10 @@ import aterm.pure.SingletonFactory;
  */
 public class TomOptionManager implements OptionManager, OptionOwner {
 
-  %include{ adt/PlatformOption.tom }
+  %include{ adt/platformoption/PlatformOption.tom }
   
   /**
-   * Accessor method necessary to include adt/PlatformOption.tom
+   * Accessor method necessary to include adt/platformoption/PlatformOption.tom
    * @return a PlatformOptionFactory
    */
   private PlatformOptionFactory getPlatformOptionFactory() {

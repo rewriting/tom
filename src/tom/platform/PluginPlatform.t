@@ -44,10 +44,10 @@ import tom.library.adt.tnode.*;
 public class PluginPlatform {
 
   /** Used to analyse xml configuration file */
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
 
   /**
-   * Accessor method necessary when including adt/TNode.tom
+   * Accessor method necessary when including adt/tnode/TNode.tom
    * @return a TNodeFactory
    */  
   public TNodeFactory getTNodeFactory() {

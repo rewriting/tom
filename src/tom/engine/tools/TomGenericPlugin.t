@@ -50,7 +50,7 @@ import tom.platform.adt.platformoption.types.PlatformOptionList;
  */
 public abstract class TomGenericPlugin extends TomBase implements Plugin {
   
-  %include { adt/PlatformOption.tom }
+  %include { adt/platformoption/PlatformOption.tom }
 
   /** The name of the plugin. */
   private String pluginName;

@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import jtom.tools.SymbolTable;
+import jtom.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 
 /**
@@ -87,7 +88,7 @@ public class TomStreamManager {
   /**
    * Initializes the TomStreamManager.
    */
-  public void clear() {
+  private void clear() {
     destDir = null;
     inputFile = null;
     outputFile = null;
@@ -106,18 +107,17 @@ public class TomStreamManager {
     // well, it would be better in the future if we let the generator append the output suffix itself
     // so that's only temporary
     
-    if ( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
-      inputSuffix = ".t";
-      outputSuffix = ".java";
-    } else if ( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
+    if ( ((Boolean)optionManager.getOptionValue("cCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.c";
     } else if ( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.ml";
-    } else { // we should never ever be here normally...
+    } else if ( ((Boolean)optionManager.getOptionValue("jCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".java";
+    } else { 
+      throw new TomRuntimeException("No code generator selected");
     }
     
     // fills the local user import list

@@ -56,7 +56,7 @@ public class TestPropp extends TestCase {
     test = new Propp1(factory);
   }
 
-  %include { seq.tom }
+  %include { seq/seq.tom }
 
   public Factory getSeqFactory() {
     return factory;

@@ -75,12 +75,12 @@ import tom.platform.adt.platformoption.types.*;
 
 public class PluginFactory implements Plugin {
   
-  %include{ adt/TNode.tom }
+  %include{ adt/tnode/TNode.tom }
   private TNodeFactory getTNodeFactory() {
     return (new XmlTools()).getTNodeFactory();
   }
 
-  %include{ adt/PlatformOption.tom }
+  %include{ adt/platformoption/PlatformOption.tom }
   private PlatformOptionFactory getPlatformOptionFactory() {
     return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
   }

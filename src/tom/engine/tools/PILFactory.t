@@ -39,7 +39,7 @@ import aterm.ATermList;
 
 public class PILFactory extends TomBase {
   
-  %include{ adt/TomSignature.tom }
+  %include{ adt/tomsignature/TomSignature.tom }
 
   /**
    * level specifies the level of details of the output

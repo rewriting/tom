@@ -45,7 +45,7 @@ public class TomKernelCompiler extends TomBase {
   }
 
 // ------------------------------------------------------------
-  %include { adt/TomSignature.tom }
+  %include { adt/tomsignature/TomSignature.tom }
 // ------------------------------------------------------------
  
   private int matchNumber = 0;

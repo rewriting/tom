@@ -38,7 +38,7 @@ public class ApiString {
 
   private Factory factory;
   
-  %include { term.tom }
+  %include { term/term.tom }
 
   public ApiString(Factory factory) {
     this.factory = factory;

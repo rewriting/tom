@@ -37,8 +37,8 @@ import jtom.verifier.il.types.*;
 public class Verifier extends TomBase {
 
 	// ------------------------------------------------------------
- 	%include { adt/TomSignature.tom }
-	%include { il.tom }
+ 	%include { adt/tomsignature/TomSignature.tom }
+	%include { il/il.tom }
 	// ------------------------------------------------------------
 
 
