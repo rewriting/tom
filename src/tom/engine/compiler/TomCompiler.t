@@ -42,6 +42,7 @@ public class TomCompiler extends TomBase implements TomTask {
   TomKernelCompiler tomKernelCompiler;
   private String debugKey = null;
   private boolean supportedBlock = false, debugMode = false, eCode = false;
+  private int absVarNumber = 0;
   
   public TomCompiler(jtom.TomEnvironment environment,
                      TomKernelCompiler tomKernelCompiler) {
@@ -463,7 +464,6 @@ public class TomCompiler extends TomBase implements TomTask {
     return newList;
   }
   
-  private static int absVarNumber = 0;
   
   private TomTerm abstractPattern(TomTerm subject,
                                   ArrayList abstractedPattern,

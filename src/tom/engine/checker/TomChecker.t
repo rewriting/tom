@@ -57,8 +57,7 @@ import jtom.tools.TomTaskInput;
 
 abstract class TomChecker extends TomBase implements TomTask {
   
-  private ArrayList alreadyStudiedSymbol =  new ArrayList();
-  private ArrayList alreadyStudiedType =  new ArrayList();  
+  
   protected Option currentTomStructureOrgTrack;
   private int nullInteger = -1;
   private List errorMessage = new ArrayList();
@@ -420,6 +419,8 @@ abstract class TomChecker extends TomBase implements TomTask {
     //////////////////////////////
   
   private void verifyDeclaration(Declaration declaration) {
+  	ArrayList alreadyStudiedType =  new ArrayList();  
+  	
     %match (Declaration declaration) {
       SymbolDecl(Name(tomName)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
@@ -435,19 +436,19 @@ abstract class TomChecker extends TomBase implements TomTask {
       }
       TypeTermDecl(Name(tomName), tomList, orgTrack) -> {
 	currentTomStructureOrgTrack = orgTrack;
-        verifyMultipleDefinitionOfType(tomName);
+        verifyMultipleDefinitionOfType(tomName,alreadyStudiedType);
         verifyTypeDecl("%typeterm", tomList);
       }
       
       TypeListDecl(Name(tomName), tomList, orgTrack) -> {
 	currentTomStructureOrgTrack = orgTrack;
-        verifyMultipleDefinitionOfType(tomName);
+        verifyMultipleDefinitionOfType(tomName,alreadyStudiedType);
         verifyTypeDecl("%typelist", tomList);
       }
       
       TypeArrayDecl(Name(tomName), tomList, orgTrack) -> {
 	currentTomStructureOrgTrack = orgTrack;
-        verifyMultipleDefinitionOfType(tomName);
+        verifyMultipleDefinitionOfType(tomName,alreadyStudiedType);
         verifyTypeDecl("%typearray", tomList);
       }
     }
@@ -523,11 +524,10 @@ abstract class TomChecker extends TomBase implements TomTask {
     }
   }
   
-  private void verifyMultipleDefinitionOfType(String name) {
+  private void verifyMultipleDefinitionOfType(String name, ArrayList alreadyStudiedType) {
     if(alreadyStudiedType.contains(name)) {
       messageTypeErrorYetDefined(name);
-    }
-    else {
+    } else {
       alreadyStudiedType.add(name);
     }
   }
@@ -551,17 +551,17 @@ abstract class TomChecker extends TomBase implements TomTask {
     String name = tomSymbol.getAstName().getString();
     int line  = findOriginTrackingLine(optionList);
     SlotList slotList = tomSymbol.getSlotList();
-    verifyMultipleDefinitionOfSymbol(name, line);
+    ArrayList alreadyStudiedSymbol =  new ArrayList();
+    verifyMultipleDefinitionOfSymbol(name, line, alreadyStudiedSymbol);
     verifySymbolCodomain(type.getString(), name, line);
     verifySymbolArguments(l, name, line);
     verifySymbolOptions(symbolType, optionList);
   }
   
-  private void verifyMultipleDefinitionOfSymbol(String name, int line) {
+  private void verifyMultipleDefinitionOfSymbol(String name, int line, ArrayList alreadyStudiedSymbol) {
     if(alreadyStudiedSymbol.contains(name)) {
       messageOperatorErrorYetDefined(name,line);
-    }
-    else {
+    } else {
       alreadyStudiedSymbol.add(name);
     }
   }

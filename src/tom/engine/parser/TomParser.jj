@@ -117,6 +117,11 @@ public class TomParser implements TomTask {
             Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.parsedSuffix, parsedTerm);
             Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.parsedTableSuffix, symbolTable.toTerm());
         }
+        
+        if(input.isDebugMode()) {
+			Tools.generateOutput(input.getBaseInputFileName() + TomTaskInput.debugTableSuffix, getStructTable());	
+		}
+        
   		// Update taskInput
   		input.setTerm(parsedTerm);
   	} catch (TomIncludeException e) {

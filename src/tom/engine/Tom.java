@@ -48,12 +48,10 @@ public class Tom {
 	  //Necessary structure
   private TomTask initialTask;
   private TomTaskInput taskInput;
-	private TomSignatureFactory tomSignatureFactory;
+  private TomSignatureFactory tomSignatureFactory;
   private TomEnvironment environment;
       // potential tasks to be connected together to form the compiler chain
     
-	private TomParser tomParser; 
-  
   private static String version =
   "\njtom 1.4beta\n" +
   "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
@@ -272,7 +270,7 @@ public class Tom {
 					}
 					return;
 		  	}
-			  tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,fileName);
+			TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,fileName);
 				  // This is the initial task
 		  	initialTask = tomParser;
 				
@@ -360,9 +358,6 @@ public class Tom {
 		  initialTask.process(taskInput);
 			if(taskInput.isAtermStat()) {
 				System.out.println("\nStatistics:\n" + tomSignatureFactory.getPureFactory());
-			}
-			if(taskInput.isDebugMode()) {
-				Tools.generateOutput(taskInput.getBaseInputFileName() + TomTaskInput.debugTableSuffix, tomParser.getStructTable());	
 			}
 		}
   }
