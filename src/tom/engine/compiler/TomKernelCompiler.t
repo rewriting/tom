@@ -32,7 +32,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import jtom.TomBase;
-import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;

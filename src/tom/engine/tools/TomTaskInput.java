@@ -28,7 +28,6 @@ package jtom.tools;
 import java.util.ArrayList;
 import java.util.List;
 
-import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 
 public class TomTaskInput {

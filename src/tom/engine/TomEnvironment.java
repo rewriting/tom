@@ -27,7 +27,6 @@ package jtom;
 
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
 
 public class TomEnvironment {
 

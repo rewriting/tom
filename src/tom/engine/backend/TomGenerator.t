@@ -32,9 +32,6 @@ import java.io.Writer;
 import java.io.IOException;
 import java.util.HashMap;
 
-import aterm.*;
-
-import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 
 import jtom.tools.TomTask;

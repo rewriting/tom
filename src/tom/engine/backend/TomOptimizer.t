@@ -25,7 +25,6 @@
 
 package jtom.backend;
 
-import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 
 import jtom.runtime.Collect1;
