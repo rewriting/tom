@@ -1,16 +1,14 @@
 import aterm.*;
-import aterm.pure.*;
-import java.util.*;
 import adt.*;
 
 public class ArrayBeadSort {
-  private TermFactory factory;
+  private MgsADTFactory factory;
 
   private static int SIZE = 50;
   private boolean[][] space;
   private boolean[][] newSpace;
 
-  %include { term.t }
+  %include { MgsADT.t }
 
   %op Bead beadNS(n:Bead, s:Bead) {
     fsym { }
@@ -92,17 +90,17 @@ public class ArrayBeadSort {
     return b.getPos().getY().intValue() <= 0;
   }
   
-  public ArrayBeadSort(TermFactory factory) {
+  public ArrayBeadSort(MgsADTFactory factory) {
     this.factory = factory;
   }
 
-  public TermFactory getTermFactory() {
+  public MgsADTFactory getMgsADTFactory() {
     return factory;
   }
 
 
   public final static void main(String[] args) {
-    ArrayBeadSort test = new ArrayBeadSort(new TermFactory(16));
+    ArrayBeadSort test = new ArrayBeadSort(new MgsADTFactory(16));
     test.run();
   }
 

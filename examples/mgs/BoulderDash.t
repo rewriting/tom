@@ -1,17 +1,16 @@
 import aterm.*;
-import aterm.pure.*;
 import java.util.*;
 import adt.*;
 
 public class BoulderDash {
-  private TermFactory factory;
+  private MgsADTFactory factory;
 
   private HashMap space;
   private HashSet marked;
   private HashMap newSpace;
   private static int SIZE = 20;
 
-  %include { term.t }
+  %include { MgsADT.t }
 
   %op Bead beadRock(n:Bead, s:Bead, e:Bead, w:Bead) {
     fsym { }
@@ -73,17 +72,17 @@ public class BoulderDash {
   }
 
 
-  public BoulderDash(TermFactory factory) {
+  public BoulderDash(MgsADTFactory factory) {
     this.factory = factory;
   }
 
-  public TermFactory getTermFactory() {
+  public MgsADTFactory getMgsADTFactory() {
     return factory;
   }
 
 
   public final static void main(String[] args) {
-    BoulderDash test = new BoulderDash(new TermFactory(16));
+    BoulderDash test = new BoulderDash(new MgsADTFactory(16));
     test.run();
   }
 
