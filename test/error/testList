@@ -171,16 +171,13 @@ Test {
      JMatchRef.t
      JMatch1.t
 	Variable 't' has an unknown type 'type' (Bad type name in signature)
-     JMatch2.t
+	Repeated variable name in Match signature
 	Bad number of arguments: 2 argument(s) required but 1 found in %match structure
-     JMatch2Bis.t
 	Bad number of arguments: 2 argument(s) required but 3 found in %match structure
-     JMatch3.t
 	Single list variable x* : Not allowed in %match structure
-     JMatch3Bis.t
 	Single list variable _* : Not allowed in %match structure
-     JMatch4.t
-	For slot 2 :Type 'type2' required but Type 'type1' found
+	For slot 2 :Type 'type1' required but Type 'type0' found
+
 }
 
 ////////////////////

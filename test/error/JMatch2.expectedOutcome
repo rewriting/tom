@@ -1,6 +1,0 @@
-
-Bad number of arguments: 2 argument(s) required but 1 found in %match structure declared line 16
--- Error occured at line: 17 in file: JMatch2.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.

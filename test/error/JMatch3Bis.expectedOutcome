@@ -1,6 +1,0 @@
-
-Single list variable '_*' is not allowed on left most part of %match structure declared line 16
--- Error occured at line: 17 in file: JMatch3Bis.t
-
-Tom Checker:  Encountered 1 errors during verification phase.
-No file generated.
