@@ -70,7 +70,7 @@ public class TomDebugger {
     this.in = new BufferedReader(new InputStreamReader(System.in));
     this.debuggedStructureKeySet = new HashSet();
     this.environment = new Stack();
-    this.mapKeyDebugStructure = new LinkedHashMap();
+    this.mapKeyDebugStructure = new HashMap();
     this.termHandlerList = new ArrayList();
     TomStructureTable table = null;
     File file = null;
