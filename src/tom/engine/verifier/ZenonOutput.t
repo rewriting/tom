@@ -76,7 +76,8 @@ public class ZenonOutput {
     Iterator it = derivationSet.iterator();
     while(it.hasNext()) {
       DerivTree tree = (DerivTree) it.next();
-      resset.add(build_zenon(tree));  
+      ZSpec spec = build_zenon(tree);
+      resset.add(spec);
     }
     return resset;
   }
@@ -92,14 +93,20 @@ public class ZenonOutput {
     Map conds = new TreeMap();
 
     ZExpr pattern = null;
+    ZExpr negpattern = null;
     ZTerm inputvar = null;
     // theorem to prove
     %match(DerivTree tree) {
-      derivrule(_,ebs(_,env(subsList@subs(is(_,t),_*),accept(positive,_))),_,_) -> {
+      derivrule(_,ebs(_,env(subsList@subs(is(_,t),_*),acc@accept(positive,negative))),_,_) -> {
+        System.out.println("accept: "+acc);
         inputvar = build_zenon_from_term(t);
         pattern = tomiltools.pattern_to_ZExpr(inputvar,
                                               positive,
                                               build_zenon_varmap(subsList, new HashMap()));
+        negpattern = tomiltools.pattern_to_ZExpr(inputvar,
+                                              positive,
+                                              build_zenon_varmap(subsList, new HashMap()));
+        System.out.println("plipli: " + negpattern);
       }
     }
     
@@ -321,6 +328,12 @@ public class ZenonOutput {
         String condname = "" + (conditions.size()+1) + "";
         conditions.put(condname,condition);
         collect_constraints(pre,conditions);
+      }
+      derivrule2(name,post,pre,pre2,condition) -> {
+        String condname = "" + (conditions.size()+1) + "";
+        conditions.put(condname,condition);
+        collect_constraints(pre,conditions);
+        collect_constraints(pre2,conditions);
       }
     }
   }

@@ -216,26 +216,29 @@ public class Verifier extends TomBase {
 
     Environment startingenv = `env(subs(),
                                  build_InstrFromAutomata(automata));
-    Instr localAccept = collect_accept(automata);
+    Collection localAccepts = collect_accept(automata);
 
-    Deriv startingderiv = `ebs(startingenv,
-                               env(subs(undefsubs()),localAccept));
-
-    // System.out.println("The derivation: " + startingderiv);
-
-    Collection tree_list_pre = apply_sem_rules(startingderiv);
-    System.out.println("Trees: " + tree_list_pre);
-    // replace substitutions in trees
+    Iterator iter = localAccepts.iterator();
     Collection tree_list = new HashSet();
-    Iterator it = tree_list_pre.iterator();
-    while(it.hasNext()) {
-      DerivTree tree = (DerivTree) it.next();
-      SubstitutionList outputsubst = collect_subst(tree);
-      tree = replaceUndefSubst(tree,outputsubst);
-      tree_list.add(tree);
+    while(iter.hasNext()) {
+        Instr localAccept = (Instr) iter.next();
+
+        Deriv startingderiv = `ebs(startingenv,
+                                   env(subs(undefsubs()),localAccept));
+
+        // System.out.println("The derivation: " + startingderiv);
+
+        Collection tree_list_pre = apply_sem_rules(startingderiv);
+        // replace substitutions in trees
+        Iterator it = tree_list_pre.iterator();
+        while(it.hasNext()) {
+            DerivTree tree = (DerivTree) it.next();
+            SubstitutionList outputsubst = collect_subst(tree);
+            tree = replaceUndefSubst(tree,outputsubst);
+            tree_list.add(tree);
+        }
     }
 
-    // System.out.println("The trees: " + tree_list);
     return tree_list;
   }
   
@@ -285,10 +288,10 @@ public class Verifier extends TomBase {
       }//end apply
     }; //end new
   
-  public Instr collect_accept(Instruction subject) {
+  public Collection collect_accept(Instruction subject) {
     Collection result = new HashSet();
     traversal().genericCollect(subject,collect_accept,result);
-    return (Instr) result.iterator().next();
+    return result;
   }
   
 
@@ -432,7 +435,6 @@ public class Verifier extends TomBase {
       ebs(env(e,sequence(semicolon(h,t*))),env(subs(undefsubs()),ip)) -> {
         if(instruction_contains(`h,ip)) {
           // continue the derivation
-          System.out.println("une branche");
           Deriv up = `ebs(env(e,h),env(subs(undefsubs()),ip));
           Collection pre_list = apply_sem_rules(up);
 
@@ -442,7 +444,6 @@ public class Verifier extends TomBase {
             c.add(`derivrule("seqa",post,pre,seq()));
           }
         } else {
-          System.out.println("une autre branche");
           Deriv up = `ebs(env(e,h),env(subs(undefsubs()),refuse()));
           Collection pre_list = apply_sem_rules(up);
 

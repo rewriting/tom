@@ -82,7 +82,7 @@ public class TomVerifier extends TomGenericPlugin {
         filterAssociative(purified);
 
         Collection derivations = getDerivations(purified);
-        // System.out.println("Derivations : " + derivations);
+        //System.out.println("Derivations : " + derivations);
 
         // the latex output stuff
         // String latex = output.build_latex(derivations);
