@@ -111,20 +111,38 @@ public class TomVerifierExtract extends TomTask {
 			Instruction cp = (Instruction)it.next();
 			%match(Instruction cp) {
 				CompiledPattern(patternList, automata)  -> {
-					%match(TomList patternList) {
-						(_*,pattern,_*) -> {
-							Instruction ilcode = extractCorrespondingIL(pattern, automata);
-							purified.add(`CompiledPattern(concTomTerm(pattern),ilcode));
-						}
-					}
+					// simplify the IL automata
+					purified.add(`CompiledPattern(patternList,simplify_il(automata)));
 				}
 			}
 		}
 		return purified;
 	}
 
-	public Instruction extractCorrespondingIL(TomTerm pattern, Instruction automata) {
-		return automata;
+	Replace1 replace_simplify_il = new Replace1() {
+			public ATerm apply(ATerm subject) {
+				if (subject instanceof Expression) {
+					%match(Expression subject) {
+						Or(cond,FalseTL()) -> {
+							return traversal().genericTraversal(`cond,this);
+						}
+					}
+				} // end instanceof Expression
+				else if (subject instanceof Instruction) {
+					%match(Instruction subject) {
+						IfThenElse(TrueTL(),success,Nop()) -> {
+							return traversal().genericTraversal(`success,this);
+						}
+					}
+				} // end instanceof Instruction
+				/*
+				 * Default case : Traversal
+				 */
+				return traversal().genericTraversal(subject,this);
+			}//end apply
+		};//end new Replace1 simplify_il
+	
+	private Instruction simplify_il(Instruction subject) {
+		return (Instruction) replace_simplify_il.apply(subject);
 	}
-
 }
