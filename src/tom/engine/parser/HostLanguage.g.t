@@ -557,27 +557,22 @@ backquoteTerm [LinkedList list]
     :
         t:BACKQUOTE
         {
-            String textCode = getCode();
-/*            int i = popLine();
-            int j = popColumn();
-  */          if(isCorrect(textCode)) {
-                code = `TL(
-                    textCode,
-                    TextPosition(currentLine,currentColumn),
-                    TextPosition(t.getLine(),t.getColumn())
-                );
-                list.add(code);
-            } 
+          String textCode = getCode();
+          if(isCorrect(textCode)) {
+            code = `TL(
+                       textCode,
+                       TextPosition(currentLine,currentColumn),
+                       TextPosition(t.getLine(),t.getColumn())
+                       );
+            list.add(code);
+          } 
             
-            Option ot = `OriginTracking(Name("Backquote"),t.getLine(), Name(currentFile));
-            TomTerm bqTerm = bqparser.beginBackquote();
+          Option ot = `OriginTracking(Name("Backquote"),t.getLine(), Name(currentFile));
+          TomTerm bqTerm = bqparser.beginBackquote();
             
-            // update position for new target block
-            //pushLine();
-            //pushColumn();
-            updatePosition();
-            
-            list.add(bqTerm);
+          // update position for new target block
+          updatePosition();
+          list.add(bqTerm);
         }
     ;
 

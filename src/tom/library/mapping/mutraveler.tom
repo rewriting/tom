@@ -48,6 +48,12 @@
     make(v) { new jjtraveler.One((VisitableVisitor)v) }
   }
 
+  %op VisitableVisitor Some(v:VisitableVisitor) {
+    fsym {}
+    is_fsym(t) { (t instanceof jjtraveler.Some) }
+    make(v) { new jjtraveler.Some((VisitableVisitor)v) }
+  }
+
   %op VisitableVisitor IfThenElse(condition:VisitableVisitor, trueCase:VisitableVisitor, falseCase:VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof jjtraveler.IfThenElse) }
