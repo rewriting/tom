@@ -42,13 +42,12 @@ public class TomDebugEnvironment {
   private boolean failureLookup = false;
   private boolean resultLookup = false;
   private boolean nextLookup = false;
-  
+
   private static String FAILURE = "Failure";
   private static String SUCCESS = "Success";
   
   public TomDebugEnvironment(TomDebugStructure struct, boolean failureLookup ) {
     this.debugStructure = struct;
-    
     this.failureLookup = failureLookup;
     this.subjects = new ArrayList();
     this.substitutions = new ArrayList();
@@ -59,6 +58,10 @@ public class TomDebugEnvironment {
     }
   }
 
+  public String toString() {
+    return debugStructure+debugStructure.type+debugStructure.fileName+debugStructure.line+debugStructure.watchPatternList;
+  }
+  
   public int leaving() {
     int result = -1;// FAILURE
     if(failureLookup) {

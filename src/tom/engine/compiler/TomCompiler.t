@@ -121,7 +121,7 @@ public class TomCompiler extends TomBase {
                 rhsList = appendInstruction(`OpenBlock(),rhsList);
               }
               if(Flags.debugMode) {
-                TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternSuccess(\""+debugKey+"\");\n");
+                TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
                 rhsList = append(`TargetLanguageToTomTerm(tl), rhsList);
               }
               
@@ -197,7 +197,7 @@ public class TomCompiler extends TomBase {
                   }
                   TomList elsePart = empty();
                   if(Flags.debugMode) {
-                    TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.linearizationFail(\""+debugKey+"\");\n");
+                    TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.linearizationFail(\""+debugKey+"\");\n");
                     elsePart   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
                   }
                     

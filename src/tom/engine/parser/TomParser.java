@@ -331,7 +331,7 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_ARROW);
       if(Flags.debugMode) {
-        blockList.add(tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternSuccess(\""+debugKey+"\");\n"));
+        blockList.add(tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n"));
       }
     tlCode = GoalLanguageBlock(blockList);
       blockList.add(tlCode);
@@ -382,7 +382,7 @@ public class TomParser implements TomParserConstants {
   Option orgTrack;
     term = Term();
       list.add(term);
-      orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
+      orgTrack = ast().makeOriginTracking("Pattern",getLine(), currentFile);
     label_5:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {

@@ -494,7 +494,7 @@ void PatternAction(ArrayList list, String debugKey) throws TomException: /* in T
   <TOM_ARROW>
     {
       if(Flags.debugMode) {
-        blockList.add(tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.patternSuccess(\""+debugKey+"\");\n"));
+        blockList.add(tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n"));
       }
     }
   tlCode = GoalLanguageBlock(blockList)

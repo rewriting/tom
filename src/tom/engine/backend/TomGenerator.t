@@ -196,12 +196,12 @@ public class TomGenerator extends TomBase {
         if(Flags.debugMode && !generated) {
           orgTrack = findOriginTracking(list);
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
-          out.write("jtom.debug.TomDebugger.debug.enteringStructure(\""+debugKey+"\");\n");
+          out.write("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");\n");
         }
         generateList(out,deep+1,matchDeclarationList);
         generateList(out,deep+1,namedBlockList);
         if(Flags.debugMode && !generated) {
-          out.write("jtom.debug.TomDebugger.debug.leavingStructure(\""+debugKey+"\");\n");
+          out.write("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
         }
         if(Flags.supportedBlock) {
           generateInstruction(out,deep,`CloseBlock());
@@ -602,7 +602,7 @@ public class TomGenerator extends TomBase {
         generateExpression(out,deep,exp);
         out.writeln(";");
         if(Flags.debugMode && !list.isEmptyOptionList()) {
-          out.write("jtom.debug.TomDebugger.debug.addSubstitution(\""+debugKey+"\",\"");
+          out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
           generate(out,deep,var);
           out.write("\", ");
           generate(out,deep,var); // generateExpression(out,deep,exp);
@@ -634,7 +634,7 @@ public class TomGenerator extends TomBase {
         generateExpression(out,deep,exp);
         out.writeln(";");
         if (Flags.debugMode) {
-          out.write("jtom.debug.TomDebugger.debug.specifySubject(\""+debugKey+"\",\"");
+          out.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
           generateExpression(out,deep,exp);
           out.writeln("\",");
           generateExpression(out,deep,exp);

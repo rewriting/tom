@@ -269,9 +269,9 @@ public class TomKernelCompiler extends TomBase {
         TomList newList = automataListCompileMatchingList(l, generatedMatch);
         if(Flags.supportedGoto) {
           if(!generatedMatch && Flags.debugMode) {
-            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.enteringPattern(\""+debugKey+"\");\n");
+            TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+debugKey+"\");\n");
             instList = `cons(TargetLanguageToTomTerm(tl), instList);
-            tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debug.leavingPattern(\""+debugKey+"\");\n");
+            tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+debugKey+"\");\n");
             TomList list = `cons(TargetLanguageToTomTerm(tl), Empty());
             instList = concat(instList, list);
           }
