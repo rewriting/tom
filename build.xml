@@ -625,7 +625,7 @@
 					depends="dist.src">
 		<ant dir="${examples}" target="clean"/>
 		<ant dir="${examples}" target="junit">
-			<property name="tom.home" location="${stable.src}"/>
+			<property name="tom.home" location="${src.dist}"/>
 		</ant>
 	</target>
 
