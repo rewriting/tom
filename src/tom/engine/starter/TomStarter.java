@@ -1,7 +1,6 @@
 package jtom.starter;
 
 import jtom.*;
-
 import aterm.*;
 
 /**
@@ -9,24 +8,28 @@ import aterm.*;
  */
 public class TomStarter extends TomGenericPlugin {
 
-	ATerm termToRelay;
-	String fileName = null;
+  ATerm termToRelay;
+  String fileName = null;
 
-	public void setInput(ATerm term) {
-		termToRelay = term;
-		fileName = ((AFun)term).getName();
-	}
+  public TomStarter() {
+    super("TomStarter");
+  }
 
-	public ATerm getOutput() {
-		return termToRelay;
-	}
+  public void setTerm(ATerm term) {
+    termToRelay = term;
+    fileName = ((AFun)term).getName();
+  }
 
-	public void run() {
-		// We need here to create the environment : 
-		// We need to be sure we don't have side effects with the environment singleton
-		TomEnvironment env = TomEnvironment.create();
-		env.initInputFromArgs();
-		env.updateEnvironment(fileName);
-	}
+  public ATerm getTerm() {
+    return termToRelay;
+  }
+
+  public void run() {
+    // We need here to create the environment : 
+    // We need to be sure we don't have side effects with the environment singleton
+    TomEnvironment env = TomEnvironment.create();
+    env.initInputFromArgs();
+    env.updateEnvironment(fileName);
+  }
 
 }

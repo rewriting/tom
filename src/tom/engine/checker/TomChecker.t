@@ -104,27 +104,22 @@ abstract public class TomChecker extends TomGenericPlugin //Base
   private ArrayList alreadyStudiedRule =  new ArrayList();
   private Option currentTomStructureOrgTrack;
     
-    public TomChecker(String name) {
-	//    super(name);
-    }
+  public TomChecker(String name) {
+    super(name);
+  }
 
-    public TomChecker()
-    {
-    }
-
-    protected void reinit()
-    {
-	alreadyStudiedTypes =  new ArrayList();
-	alreadyStudiedSymbols =  new ArrayList();
-	alreadyStudiedRule =  new ArrayList();
-	currentTomStructureOrgTrack = null;
-    }
+  protected void reinit() {
+    alreadyStudiedTypes   = new ArrayList();
+    alreadyStudiedSymbols = new ArrayList();
+    alreadyStudiedRule    = new ArrayList();
+    currentTomStructureOrgTrack = null;
+  }
 
   public void initProcess() {
-    verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-    strictType = ! ((Boolean)getServer().getOptionValue("lazyType")).booleanValue();
-    warningAll = ((Boolean)getServer().getOptionValue("Wall")).booleanValue();
-    noWarning = ((Boolean)getServer().getOptionValue("noWarning")).booleanValue();
+    verbose    =   getServer().getOptionBooleanValue("verbose");
+    strictType = ! getServer().getOptionBooleanValue("lazyType");
+    warningAll =   getServer().getOptionBooleanValue("Wall");
+    noWarning  =   getServer().getOptionBooleanValue("noWarning");
   } 
     /**
      * Main type checking entry point:

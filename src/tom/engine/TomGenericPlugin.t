@@ -1,5 +1,6 @@
 package jtom;
 
+import java.util.logging.*;
 import aterm.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
@@ -15,18 +16,32 @@ import jtom.adt.options.types.*;
  * @author Gr&eacute;gory ANDRIEN
  */
 public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
+
   %include{ adt/TomSignature.tom }
   %include{ adt/Options.tom }
 
-  /**
-   * The term the plugin works on.
-   */
-  protected TomTerm term;
+  /** The name of the plugin. */
+  private String pluginName;
+
+  /** The term the plugin works on. */
+  private TomTerm term;
+
+  /** The plugin's logger. */
+  private Logger logger;
 
   /**
-   * Constructor method. Does nothing for the time being.
+   * An accessor method, so that the plugin can see its logger.
+   *
+   * @return the plugin's logger
    */
-  public TomGenericPlugin() {
+  protected Logger getLogger() {
+    return logger;
+  }
+
+  /** Constructor method. */
+  public TomGenericPlugin(String name) {
+    pluginName = name;
+    logger = Logger.getLogger(getClass().getName());
   }
 
   /**
@@ -35,13 +50,13 @@ public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
    *
    * @param term the input ATerm
    */
-  public void setInput(ATerm term) {
+  public void setTerm(ATerm term) {
     if (term instanceof TomTerm) {
-	    this.term = (TomTerm)term;
+      this.term = (TomTerm)term;
     } else {
-	    environment().messageError(TomMessage.getString("TomTermExpected"),
-                                 this.getClass().getName(),
-                                 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      logger.log(Level.SEVERE,
+		 "TomTermExpected",
+		 pluginName);
     }
   }
 
@@ -50,7 +65,7 @@ public abstract class TomGenericPlugin extends TomBase implements TomPlugin {
    *
    * @return the ATerm "term"
    */
-  public ATerm getOutput() {
+  public ATerm getTerm() {
     return term;
   }
 

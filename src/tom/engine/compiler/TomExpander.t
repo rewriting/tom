@@ -8,69 +8,68 @@ import aterm.*;
 import jtom.tools.*;
 import jtom.xml.Constants;
 import jtom.exception.TomRuntimeException;
-import jtom.TomMessage;
 
 /**
  * The TomExpander plugin.
  */
-public class TomExpander extends TomGenericPlugin
-{
-    %include { ../adt/TomSignature.tom }
-    %include{ ../adt/Options.tom }
+public class TomExpander extends TomGenericPlugin {
 
-    private TomKernelExpander tomKernelExpander;
-    private TomFactory tomFactory;
+  %include { ../adt/TomSignature.tom }
+  %include{ ../adt/Options.tom }
 
-    public static final String EXPANDED_SUFFIX = ".tfix.expanded"; // was previously in TomTaskInput
-    public static final String EXPANDED_TABLE_SUFFIX = ".tfix.expanded.table"; // was previously in TomTaskInput
+  private TomKernelExpander tomKernelExpander;
+  private TomFactory tomFactory;
+
+  public static final String EXPANDED_SUFFIX       = ".tfix.expanded";
+  public static final String EXPANDED_TABLE_SUFFIX = ".tfix.expanded.table";
   
-    public TomExpander()
-    {
-	tomKernelExpander = new TomKernelExpander();
-	tomFactory = new TomFactory();
-    }
+  public TomExpander() {
+    super("TomExpander");
+    tomKernelExpander = new TomKernelExpander();
+    tomFactory = new TomFactory();
+  }
 
-    public void run()
-    {
-	try
-	    {
-		long startChrono = System.currentTimeMillis();
-		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-		boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
+  public void run() {
+    try {
+      long startChrono = System.currentTimeMillis();
+      boolean verbose      = getServer().getOptionBooleanValue("verbose");
+      boolean intermediate = getServer().getOptionBooleanValue("intermediate");
 
-		TomTerm syntaxExpandedTerm   = expandTomSyntax(term);
-		tomKernelExpander.updateSymbolTable();
-		TomTerm context = `emptyTerm();
-		TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
-		TomTerm stringExpandedTerm   = expandString(variableExpandedTerm);
-		TomTerm expandedTerm         = updateCodomain(stringExpandedTerm);
-		term = expandedTerm;
+      TomTerm syntaxExpandedTerm   = expandTomSyntax( (TomTerm)getTerm() );
+      
+      tomKernelExpander.updateSymbolTable();
+      TomTerm context = `emptyTerm();
+      
+      TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
+      TomTerm stringExpandedTerm   = expandString(variableExpandedTerm);
+      TomTerm expandedTerm         = updateCodomain(stringExpandedTerm);
 
-		if(verbose)
-		    System.out.println("TOM expanding phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+      setTerm(expandedTerm);
+
+      if(verbose)
+	System.out.println("TOM expanding phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
 		
-		if(intermediate)
-		    {
-			Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
-					     + EXPANDED_SUFFIX, expandedTerm);
-			Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
-					     + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
-		    }
-	    }
-	catch (Exception e) 
-	    {
-		environment().messageError("Exception occurs in TomExpander: "
-					   +e.getMessage(), environment().getInputFile().getName(),
-					   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-		e.printStackTrace();
-	    }
+      if(intermediate)
+	  {
+	      Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
+				   + EXPANDED_SUFFIX, expandedTerm);
+	      Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
+				   + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
+	  }
     }
+    catch (Exception e) 
+	{
+	    environment().messageError("Exception occurs in TomExpander: "
+				       +e.getMessage(), environment().getInputFile().getName(),
+				       TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	    e.printStackTrace();
+	}
+  }
 
-     public TomOptionList declaredOptions()
-     {
- 	return `concTomOption(OptionBoolean("expand","","",True()) // activationFlag
-				);
-     }
+  public TomOptionList declaredOptions() {
+    return `concTomOption(OptionBoolean("expand","","",True()) // activationFlag
+			  );
+  }
 
 
 

@@ -12,75 +12,73 @@ import jtom.TomMessage;
 /**
  * The TomVerifier plugin.
  */
-public class TomVerifier extends TomGenericPlugin
-{
-    %include{ ../adt/TomSignature.tom }
-    %include{ ../adt/Options.tom }
+public class TomVerifier extends TomGenericPlugin {
 
-    protected Verifier verif;
+  %include{ ../adt/TomSignature.tom }
+  %include{ ../adt/Options.tom }
 
-    public TomVerifier()
-    {
-	verif = new Verifier();
-    }
+  protected Verifier verif;
 
-    public void run()
-    {
-	if(isActivated())
-	    {
-		try
-		    {
-			long startChrono = System.currentTimeMillis();
-			boolean verbose = getServer().getOptionBooleanValue("verbose");
+  public TomVerifier() {
+    super("TomVerifier");
+    verif = new Verifier();
+  }
 
-			TomTerm extractTerm = `emptyTerm();
-			// here the extraction stuff
+  public void run() {
+    if(isActivated()) {
+      try {
+	long startChrono = System.currentTimeMillis();
+	boolean verbose = getServer().getOptionBooleanValue("verbose");
+
+	TomTerm extractTerm = `emptyTerm();
+	// here the extraction stuff
 			
-			Collection matchSet = collectMatch(term);
-			// System.out.println("Extracted : " + matchSet);
+	Collection matchSet = collectMatch( (TomTerm)getTerm() );
+	// System.out.println("Extracted : " + matchSet);
 		
-			Collection purified = purify(matchSet);
-			// System.out.println("Purified : " + purified);
+	Collection purified = purify(matchSet);
+	// System.out.println("Purified : " + purified);
 			
-			Collection derivations = getDerivations(purified);
+	Collection derivations = getDerivations(purified);
 
-			if(verbose)
-			    System.out.println("TOM verification phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+	if(verbose)
+	    System.out.println("TOM verification phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
 	    
-			environment().printAlertMessage("TomVerifier");
-		
-			if(!environment().isEclipseMode())
-			    {
-				// remove all warning (in command line only)
-				environment().clearWarnings();
-			    }
-		    }
-		catch (Exception e) 
-		    {
-			environment().messageError("Exception occured in TomVerifierExtract: " + e.getMessage(),
-						   environment().getInputFile().getName(), 
-						   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-			e.printStackTrace();
-		    }
-	    }
-	else
+	environment().printAlertMessage("TomVerifier");
+	
+	if(!environment().isEclipseMode())
 	    {
-		boolean verbose = getServer().getOptionBooleanValue("verbose");
-
-		if(verbose)
-		    System.out.println("The verifier is not activated and thus WILL NOT RUN.");
+		// remove all warning (in command line only)
+		environment().clearWarnings();
 	    }
+      }
+      catch (Exception e) 
+	  {
+	      environment().messageError("Exception occured in TomVerifierExtract: " + e.getMessage(),
+					 environment().getInputFile().getName(), 
+					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	      e.printStackTrace();
+	  }
     }
+    else
+	{
+	    boolean verbose = getServer().getOptionBooleanValue("verbose");
+	    
+	    if(verbose)
+		System.out.println("The verifier is not activated and thus WILL NOT RUN.");
+	}
+  }
 
-     public TomOptionList declaredOptions()
-     {
- 	return `concTomOption(OptionBoolean("verify", "", "Verify correctness of match compilation", False()) // activation flag
-			      );
-     }
+  public TomOptionList declaredOptions() {
+    return `concTomOption(OptionBoolean("verify", "", "Verify correctness of match compilation", False()) // activation flag
+			  );
+  }
 
   private boolean isActivated() {
     return getServer().getOptionBooleanValue("verify");
   }
+
+
 
     private Collect2 collect_match = new Collect2() {
 	    public boolean apply(ATerm subject, Object astore) {

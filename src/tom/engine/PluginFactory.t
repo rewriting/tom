@@ -1,6 +1,7 @@
 package jtom;
 
 import java.util.*;
+import java.util.logging.*;
 
 import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;
@@ -45,10 +46,15 @@ public class PluginFactory implements TomPlugin {
   %include{ adt/TNode.tom }
   %include{ adt/Options.tom }
 
-  TomOptionList allDeclaredOptions;
-  TomOptionList allRequiredOptions;
-  Map flagOwners;
-  ATerm termToRelay;
+  private TomOptionList allDeclaredOptions;
+  private TomOptionList allRequiredOptions;
+  private Map flagOwners;
+  private ATerm termToRelay;
+
+  private String pluginName;
+  private Logger logger;
+
+  protected Logger getLogger() { return logger; }
 
   private TNodeFactory getTNodeFactory() {
     return (new XmlTools()).getTNodeFactory();
@@ -61,10 +67,14 @@ public class PluginFactory implements TomPlugin {
   private OptionManager getOM() { return TomServer.getInstance().getOptionManager(); }
   private TomEnvironment environment() { return TomEnvironment.getInstance(); }
 
-  public PluginFactory(String xmlFile) {
+  public PluginFactory(String name, String xmlFile) {
     allDeclaredOptions = `emptyTomOptionList();
     allRequiredOptions = `emptyTomOptionList();
     flagOwners = new HashMap();
+
+    pluginName = name;
+    logger = Logger.getLogger(getClass().getName());
+
     List classPaths = new ArrayList();
     List plugins = new ArrayList();
 
@@ -80,15 +90,18 @@ public class PluginFactory implements TomPlugin {
         if(instance instanceof TomPlugin) {
           plugins.add(instance);
         } else {
-          environment().messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
-                                   "PluginFactory", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+          logger.log(Level.SEVERE,
+		     "ClassNotAPlugin",
+		     new Object[]{pluginName, path});
         }
       } catch(ClassNotFoundException cnfe) { 
-        environment().messageWarning(TomMessage.getString("ClassNotFound"),new Object[]{path},
-                                   "PluginFactory", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+        logger.log(Level.WARNING,
+		   "ClassNotFound",
+		   new Object[]{pluginName, path}); 
       } catch(Exception e) { 
-        environment().messageError(TomMessage.getString("InstantiationError"),
-                                 "PluginFactory", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+        logger.log(Level.SEVERE,
+		   "InstantiationError",
+		   new Object[]{pluginName, path});
       }
     }
 
@@ -106,11 +119,11 @@ public class PluginFactory implements TomPlugin {
     }
   }
 
-  public void setInput(ATerm term) {
+  public void setTerm(ATerm term) {
     termToRelay = term;
   }
 
-  public ATerm getOutput() {
+  public ATerm getTerm() {
     return termToRelay;
   }
 
@@ -127,9 +140,9 @@ public class PluginFactory implements TomPlugin {
       }
     }
     try{
-      activatedPlugin.setInput(termToRelay);
+      activatedPlugin.setTerm(termToRelay);
       activatedPlugin.run();
-      termToRelay = activatedPlugin.getOutput();
+      termToRelay = activatedPlugin.getTerm();
     } catch(NullPointerException npe) {
       System.out.println("Error : No plugin was activated."); // TODO: when error management has changed, change this
       return;

@@ -8,52 +8,54 @@ import jtom.adt.options.types.*;
 /**
  * The TomSyntaxChecker plugin.
  */
-public class TomSyntaxChecker extends TomChecker
-{
-    %include { ../adt/TomSignature.tom }
-    %include{ ../adt/Options.tom }
+public class TomSyntaxChecker extends TomChecker {
 
-    public void run()
-    {
-      if(isActivated())
+  %include { ../adt/TomSignature.tom }
+  %include{ ../adt/Options.tom }
+
+  public TomSyntaxChecker() {
+    super("TomSyntaxChecker");
+  }
+
+  public void run() {
+    if(isActivated()) {	
+	try
 	    {	
-		try
-		    {	
-			long startChrono = System.currentTimeMillis();
-			boolean verbose = getServer().getOptionBooleanValue("verbose");
+		long startChrono = System.currentTimeMillis();
+		boolean verbose = getServer().getOptionBooleanValue("verbose");
 			
-			reinit();
+		reinit();
+		
+		checkSyntax( (TomTerm)getTerm() );
 			
-			checkSyntax(term);
-			
-			if(verbose)
-			    System.out.println("TOM syntax checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-			
-			environment().printAlertMessage("TomSyntaxChecker");
-			
-			if(!environment().isEclipseMode()) 
-			    {
-				// remove all warning (in command line only)
-				environment().clearWarnings();
-			    }
-		    }
-		catch (Exception e)
+		if(verbose)
+		    System.out.println("TOM syntax checking phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+		
+		environment().printAlertMessage("TomSyntaxChecker");
+		
+		if(!environment().isEclipseMode()) 
 		    {
-			environment().messageError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), 
-						   environment().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-			e.printStackTrace();
+			// remove all warning (in command line only)
+			environment().clearWarnings();
 		    }
 	    }
-	else // syntax checker desactivated
+	catch (Exception e)
 	    {
-		boolean verbose = getServer().getOptionBooleanValue("verbose");
-		
-		if(verbose)
-		    {
-			System.out.println("The syntax checker is not activated and thus WILL NOT RUN.");
-		    }
+		environment().messageError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), 
+					   environment().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+		e.printStackTrace();
 	    }
     }
+    else // syntax checker desactivated
+	{
+	    boolean verbose = getServer().getOptionBooleanValue("verbose");
+	    
+	    if(verbose)
+		{
+		    System.out.println("The syntax checker is not activated and thus WILL NOT RUN.");
+		}
+	}
+  }
 
   private boolean isActivated() {
     return !getServer().getOptionBooleanValue("noCheck");

@@ -15,71 +15,59 @@ import jtom.*;
 /**
  * The TomCompiler plugin.
  */
-public class TomCompiler extends TomGenericPlugin
-{
-    %include { ../adt/TomSignature.tom }
-    %include{ ../adt/Options.tom }
+public class TomCompiler extends TomGenericPlugin {
 
-    private TomKernelCompiler tomKernelCompiler = new TomKernelCompiler();
-    private TomFactory tomFactory = new TomFactory();
-    private int absVarNumber = 0;
+  %include { ../adt/TomSignature.tom }
+  %include { ../adt/Options.tom }
 
-    public static final String COMPILED_SUFFIX = ".tfix.compiled"; // was previously in TomTaskInput
+  private TomKernelCompiler tomKernelCompiler = new TomKernelCompiler();
+  private TomFactory tomFactory = new TomFactory();
+  private int absVarNumber = 0;
 
-    public TomCompiler()
-    {
+  public static final String COMPILED_SUFFIX = ".tfix.compiled";
 
-    }
+  public TomCompiler() {
+    super("TomCompiler");
+  }
 
-//     public void setInput(ATerm term)
-//     {
-// 	if (term instanceof TomTerm)
-// 	    this.term = (TomTerm)term;
-// 	else
-// 	    environment().messageError(TomMessage.getString("TomTermExpected"),
-// 				       "TomCompiler", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-//     }
+  public void run() {
+    try {
+      long startChrono = System.currentTimeMillis();
+      boolean verbose      = getServer().getOptionBooleanValue("verbose");
+      boolean intermediate = getServer().getOptionBooleanValue("intermediate");
 
-//     public ATerm getOutput()
-//     {
-// 	return term;
-//     }
-
-    public void run()
-    {
-	try
-	    {
-		long startChrono = System.currentTimeMillis();
-		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-		boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
-
-		TomTerm preCompiledTerm = preProcessing(term);
-		//System.out.println("preCompiledTerm = \n" + preCompiledTerm);
-		TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
+      TomTerm preCompiledTerm = preProcessing( (TomTerm)getTerm() );
+      //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
+      TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       
-		if(verbose)
-		    System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      if(verbose)
+	System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 
-		if(intermediate)
-		    Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
+      if(intermediate)
+	Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
 
-		term = compiledTerm;
+      setTerm(compiledTerm);
 
-		environment().printAlertMessage("TomCompiler");
-		if(!environment().isEclipseMode()) {
-		    // remove all warning (in command line only)
-		    environment().clearWarnings();
-		}
-	    }
-	catch (Exception e)
-	    {
-		environment().messageError("Exception occurs in TomCompiler: "+e.getMessage(), 
-					   environment().getInputFile().getName(), 
-					   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-		e.printStackTrace();
-	    }
+      environment().printAlertMessage("TomCompiler");
+      if(!environment().isEclipseMode()) {
+	  // remove all warning (in command line only)
+	  environment().clearWarnings();
+      }
     }
+    catch (Exception e) {
+      environment().messageError("Exception occurs in TomCompiler: "+e.getMessage(), 
+				 environment().getInputFile().getName(), 
+				 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      e.printStackTrace();
+    }
+  }
   
+  public TomOptionList declaredOptions() {
+    return `concTomOption(OptionBoolean("compile","","",True()) // activationFlag
+			  );
+  }
+
+
 
   private OptionList option() {
     return ast().makeOption();
@@ -511,9 +499,5 @@ public class TomCompiler extends TomGenericPlugin
     return newList;
   }
 
-    public TomOptionList declaredOptions() {
-	return `concTomOption(OptionBoolean("compile","","",True()) // activationFlag
-			      );
-    }
 
 }

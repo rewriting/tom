@@ -11,20 +11,18 @@ import jtom.tools.*;
 /**
  * The TomBackend plugin.
  */
-public class TomBackend extends TomGenericPlugin
-{
-    %include { ../adt/TomSignature.tom }
-    %include{ ../adt/Options.tom }
+public class TomBackend extends TomGenericPlugin {
 
-    private final static int defaultDeep = 2;
-    private TomAbstractGenerator generator;
-    private Writer writer;
+  %include { ../adt/TomSignature.tom }
+  %include { ../adt/Options.tom }
 
+  private final static int defaultDeep = 2;
+  private TomAbstractGenerator generator;
+  private Writer writer;
 
-    public TomBackend()
-    {
-	
-    }
+  public TomBackend() {
+    super("TomBackend");
+  }
 
     public void run()
     {
@@ -48,7 +46,7 @@ public class TomBackend extends TomGenericPlugin
 			else if( getServer().getOptionBooleanValue("camlCode") )
 			    generator = new TomCamlGenerator(output);
 			
-			generator.generate(defaultDeep, term);
+			generator.generate( defaultDeep, (TomTerm)getTerm() );
 			
 			if(verbose)
 			    System.out.println("TOM generation phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");

@@ -18,14 +18,14 @@ public interface TomPlugin extends TomPluginOptions
      *
      * @param term the input ATerm
      */
-    public abstract void setInput(ATerm term);
+    public abstract void setTerm(ATerm term);
 
     /**
      * Retrieves the output of the plugin.
      *
      * @return the output ATerm
      */
-    public abstract ATerm getOutput();
+    public abstract ATerm getTerm();
 
     /**
      * Runs the plugin.

@@ -12,68 +12,64 @@ import jtom.runtime.*;
 /**
  * The TomOptimizer plugin.
  */
-public class TomOptimizer extends TomGenericPlugin
-{
-    %include{ ../adt/TomSignature.tom }
-    %include{ ../adt/Options.tom }
+public class TomOptimizer extends TomGenericPlugin {
 
-    public static final String OPTIMIZED_SUFFIX = ".tfix.optimized"; // was previously in TomTaskInput
+  %include{ ../adt/TomSignature.tom }
+  %include{ ../adt/Options.tom }
 
-    public TomOptimizer()
-    {
-    }
+  public static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
 
-    public void run()
-    {
-	if(isActivated())
-	    {
-		try
-		    {
-			long startChrono = System.currentTimeMillis();
+  public TomOptimizer() {
+    super("TomOptimizer");
+  }
+
+  public void run() {
+    if(isActivated()) {
+      try {
+	long startChrono = System.currentTimeMillis();
 						
-			boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-			boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
+	boolean verbose      = getServer().getOptionBooleanValue("verbose");
+	boolean intermediate = getServer().getOptionBooleanValue("intermediate");
 						
-			TomTerm renamedTerm = renameVariable(term, new HashSet());
-			TomTerm optimizedTerm = optimize(renamedTerm);
-			term = optimizedTerm;
+	TomTerm renamedTerm   = renameVariable( (TomTerm)getTerm(), new HashSet() );
+	TomTerm optimizedTerm = optimize(renamedTerm);
+	setTerm(optimizedTerm);
 			
-			if(verbose)			
-			    System.out.println("TOM optimization phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+	if(verbose)			
+	    System.out.println("TOM optimization phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
 			
-			if(intermediate)
-			    Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-						 + OPTIMIZED_SUFFIX, term);
+	if(intermediate)
+	    Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
+				  getTerm() );
 		
-			environment().printAlertMessage("TomOptimizer");
-			if(!environment().isEclipseMode()) 
-			    {
-				// remove all warning (in command line only)
-				environment().clearWarnings();
-			    }
-		    }
-		catch (Exception e) 
-		    {
-			environment().messageError("Exception occurs in TomOptimizer: "
-						   +e.getMessage(), environment().getInputFile().getName(), 
-						   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-			e.printStackTrace();
-		    }
-	    }
-	else
+	environment().printAlertMessage("TomOptimizer");
+	if(!environment().isEclipseMode()) 
 	    {
-		boolean verbose = getServer().getOptionBooleanValue("verbose");
-
-		if(verbose)
-		    System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
+		// remove all warning (in command line only)
+		environment().clearWarnings();
 	    }
+      }
+      catch (Exception e) 
+	  {
+	      environment().messageError("Exception occurs in TomOptimizer: "
+					 +e.getMessage(), environment().getInputFile().getName(), 
+					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	      e.printStackTrace();
+	  }
     }
+    else
+	{
+	    boolean verbose = getServer().getOptionBooleanValue("verbose");
+	    
+	    if(verbose)
+		System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
+	}
+  }
 
-     public TomOptionList declaredOptions()
-     {
- 	return `concTomOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
-			      );
-     }
+  public TomOptionList declaredOptions() {
+    return `concTomOption(OptionBoolean("optimize", "O", "Optimized generated code", False()) // activation flag
+			  );
+  }
 
   private boolean isActivated() {
     return getServer().getOptionBooleanValue("optimize");

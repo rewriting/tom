@@ -29,6 +29,7 @@ public class TomMainParser extends TomGenericPlugin {
     private NewTargetParser parser = null;
     
     public TomMainParser(){
+	super("TomMainParser");
     }
 
     public TomOptionList declaredOptions() {
@@ -107,7 +108,7 @@ public class TomMainParser extends TomGenericPlugin {
 	    //createParser();
 	    parser = newParser(currentFile);
 
-	    term = parser.input();
+	    setTerm( parser.input() );
 
 	    if(verbose) 
 		System.out.println("TOM parsing phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
@@ -122,7 +123,7 @@ public class TomMainParser extends TomGenericPlugin {
 	    if(intermediate){
 		System.out.println("intermediate");
 		Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-				     + PARSED_SUFFIX, term);
+				     + PARSED_SUFFIX, getTerm());
 		Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
 				     + PARSED_TABLE_SUFFIX, symbolTable().toTerm());
 	    }
@@ -173,7 +174,7 @@ public class TomMainParser extends TomGenericPlugin {
 	return parser.getLine();
     }
 
-    public void setInput(ATerm term){
+    public void setTerm(ATerm term){
 	this.currentFile = ((AFun) term).getName();
     }
 

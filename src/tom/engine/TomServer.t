@@ -286,9 +286,9 @@ public class TomServer {
       it = instances.iterator();
       while(it.hasNext()) {
         TomPlugin plugin = (TomPlugin)it.next();
-        plugin.setInput(term);
+        plugin.setTerm(term);
         plugin.run();
-        term = plugin.getOutput();
+        term = plugin.getTerm();
 
          if( statusHandler.hasError() ) {
 	   logger.log(Level.SEVERE,
