@@ -68,7 +68,7 @@ public class TomGenerator extends TomBase implements TomTask {
   }
 
 // ------------------------------------------------------------
-  %include { Tom.signature }
+  %include { ../adt/Tom.signature }
 // ------------------------------------------------------------
 
  public void addTask(TomTask task) {

@@ -23,7 +23,7 @@
     Julien Guyon
 
 */
-
+ 
 package jtom.runtime.set;
 
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public abstract class ATermSet implements Collection {
     1 << 31
   };
 
-  %include { set.t }
+  %include { jgtreeset/set.t }
 
   public int hashCode() {
     return tree.getUniqueIdentifier();

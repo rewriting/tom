@@ -23,7 +23,7 @@
     Julien Guyon
 
 */
-
+ 
 package jtom.runtime.set;
 
 import java.util.*;
@@ -38,7 +38,7 @@ import jtom.runtime.Replace1;
 import jtom.runtime.Collect1;
 
 public class SharedSet extends ATermSet {
-  %include { set.t }
+  %include { jgtreeset/set.t }
   
   public SharedSet(PureFactory pureFactory) {
     if (factory==null) {
