@@ -15,6 +15,7 @@
 				 tester la non-linearite au moment de l'instanciation
   idee4: instancier les X* au moment du backquote
   idee5: introduire des variable avec garde et les traiter au moment de la compilation
+  idee6: de-looper le filtrage de X* vers des listes constantes (connues a compile-time)
 
 
 12/12/2003
