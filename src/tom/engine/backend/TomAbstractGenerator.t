@@ -498,115 +498,12 @@ public abstract class TomAbstractGenerator {
         return;
       }
       SymbolDecl(Name(tomName)) -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        OptionList optionList = tomSymbol.getOption();
-        SlotList slotList = tomSymbol.getSlotList();
-        TomTypeList l = getSymbolDomain(tomSymbol);
-        TomType type1 = getSymbolCodomain(tomSymbol);
-        String name1 = tomSymbol.getAstName().getString();
-
-        if(cCode && isDefinedSymbol(tomSymbol)) {
-            // TODO: build an abstract declaration
-          int argno=1;
-            /*
-              String s = "";
-              if(!l.isEmpty()) {
-              s = getTLType(type1) + " " + name1;
-            
-              if(!l.isEmpty()) {
-              s += "(";
-              while (!l.isEmpty()) {
-              s += getTLType(l.getHead()) + " _" + argno;
-              argno++;
-              l = l.getTail() ;
-              if(!l.isEmpty()) {
-              s += ",";
-              }
-              }
-              s += ");";
-              }
-              }
-              generate(out,deep,makeTL(s));
-            */
-
-          out.indent(deep);
-          if(!l.isEmpty()) {
-            out.write(getTLType(type1));
-            out.writeSpace();
-            out.write(name1);
-            if(!l.isEmpty()) {
-              out.writeOpenBrace();
-              while (!l.isEmpty()) {
-                out.write(getTLType(l.getHead()));
-                  //out.writeUnderscore();
-                  //out.write(argno);
-                argno++;
-                l = l.getTail() ;
-                if(!l.isEmpty()) {
-                  out.writeComa();
-                }
-              }
-              out.writeCloseBrace();
-              out.writeSemiColon();
-            }
-          }
-          out.writeln();
-        } else if(jCode) {
-            // do nothing
-        } else if(eCode) {
-            // do nothing
-        }
-
-          // inspect the optionList
-        generateOptionList(out, deep, optionList);
-          // inspect the slotlist
-        generateSlotList(out, deep, slotList);
+        buildSymbolDecl(tomName);
         return ;
       }
       
       ArraySymbolDecl(Name(tomName)) -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        OptionList optionList = tomSymbol.getOption();
-        SlotList slotList = tomSymbol.getSlotList();        
-        TomTypeList l = getSymbolDomain(tomSymbol);
-        TomType type1 = getSymbolCodomain(tomSymbol);
-        String name1 = tomSymbol.getAstName().getString();
-        
-        if(cCode) {
-            // TODO: build an abstract declaration
-          int argno=1;
-          out.indent(deep);
-          if(!l.isEmpty()) {
-            out.write(getTLType(type1));
-            out.writeSpace();
-            out.write(name1);
-            if(!l.isEmpty()) {
-              out.writeOpenBrace();
-              while (!l.isEmpty()) {
-                out.write(getTLType(l.getHead()));
-                out.writeUnderscore();
-                out.write(argno);
-                argno++;
-                l = l.getTail() ;
-                if(!l.isEmpty()) {
-                  out.writeComa();
-                }
-              }
-              out.writeCloseBrace();
-              out.writeSemiColon();
-            }
-          }
-          out.writeln();
-        } else if(jCode) {
-            // do nothing
-        } else if(eCode) {
-            // do nothing
-        }
-
-          // inspect the optionList
-        generateOptionList(out, deep, optionList);
-          // inspect the slotlist
-        generateSlotList(out, deep, slotList);
+        buildArraySymbolDecl(tomName);
         return ;
       }
 
@@ -1362,25 +1259,9 @@ public abstract class TomAbstractGenerator {
     generateExpression(out,deep,exp2);
   }
 
-  protected abstract void buildExpTrue(); {
-    if(cCode) {
-      out.write(" 1 ");
-    } else if(jCode) {
-      out.write(" true ");
-    } else if(eCode) {
-      out.write(" true ");
-    }
-  }
+  protected abstract void buildExpTrue();
 
-  protected abstract void buildExpFalse(); {
-    if(cCode) {
-      out.write(" 0 ");
-    } else if(jCode) {
-      out.write(" false ");
-    } else if(eCode) {
-      out.write(" false ");
-    }
-  }
+  protected abstract void buildExpFalse();
 
   protected void buildExpEmptyList(TomType type1) {
     out.write("tom_is_empty_" + getTomType(type1) + "(");
@@ -1532,6 +1413,10 @@ public abstract class TomAbstractGenerator {
   }
 
   protected abstract void buildExitAction(TomNumberList numberList);
+  protected abstract void buildReturn(Expression exp);
+  protected abstract buildSymbolDecl(String tomName);
+  protected abstract buildArraySymbolDecl(String tomName);
+
 
   protected abstract void buildReturn(Expression exp);
 
