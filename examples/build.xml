@@ -871,6 +871,12 @@
 			<classpath refid="tom.classpath"/>
 			<include name="${structure}/**/*.java"/>
     </javac>
+    <!-- copy resourses -->
+    <copy todir="${examples.build}/${structure}">
+      <fileset dir="${examples.dir}/${structure}">
+        <include name="examples"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="tutorial" depends="init">
