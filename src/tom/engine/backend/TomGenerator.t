@@ -605,7 +605,7 @@ public class TomGenerator extends TomBase {
           out.write("jtom.debug.TomDebugger.debug.addSubstitution(\""+debugKey+"\",\"");
           generate(out,deep,var);
           out.write("\", ");
-          generateExpression(out,deep,exp);
+          generate(out,deep,var); // generateExpression(out,deep,exp);
           out.write(");\n");
         }
         return;

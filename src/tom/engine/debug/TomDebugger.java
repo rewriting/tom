@@ -47,14 +47,12 @@ public class TomDebugger {
 
   Map mapKeyDebugStructure;
   Set debuggedStructureKeySet;
-  
-  boolean subst = true;
   String[] watchPatterns;
   int nbPatterns = 0;
-
   String baseFileName;
-
   Stack environment;
+  boolean nextFailure = false;
+  int nextFailureStatus;
   
   public TomDebugger(String structureFileName) {
     TomStructureTable table = null;
@@ -93,43 +91,45 @@ public class TomDebugger {
       String str = "";
       System.out.print("? to see the available command list>:");
       str = in.readLine();
-      process(str);
+      configure(str);
     } catch (IOException e) {
     }
   }
 
-    private void process(String str) {
+    private void configure(String str) {
     if(str.equals("?")) {
       System.out.println("\nFollowing commands are allowed:");
       System.out.println("\t ?:show this help");
-      System.out.println("\t info: Show information on structure that can be debugged");
-      System.out.println("\t run: exit debugger configuration and run the program");
-      System.out.println("\t save: save configuration");
-      System.out.println("\t load: load configuration from file");
-      System.out.println("\t struct: define breakpoint for Match-Rule structures");
-      System.out.println("\t clear: clear breakpoint list");
-      System.out.println("\t term: define Term pattern to be watch");
-      System.out.println("\t substOff: do not show substitution");
-      System.out.println("\t more: Show patterns of a specific available structure");
+      System.out.println("\t info | i: Show information on structure that can be debugged");
+      System.out.println("\t run | r: exit debugger configuration, jump to next breakpoint");
+      System.out.println("\t nextMatchFailure |n: exit debugger configuration and run the program");
+      System.out.println("\t save | s: save configuration");
+      System.out.println("\t load | l: load configuration from file");
+      System.out.println("\t breakpoint | b: define breakpoint for Match-Rule structures");
+      System.out.println("\t clear | c: clear breakpoint list");
+      System.out.println("\t term | t: define Term pattern to be watch");
+      System.out.println("\t more | m: Show patterns of a specific available structure");
     } else if (str.equals("run")) {
         //System.out.println(debuggedStructureKeySet);
       return;
-    } else if (str.equals("info")) {
+    } else if (str.equals("nextMatchFailure") || str.equals("n")) {
+      nextFailure = true;
+      nextFailureStatus = -1;
+      return;
+    } else if (str.equals("info") || str.equals("i")) {
       showAvailableStructure();
-    } else if (str.equals("save")) {
+    } else if (str.equals("save") || str.equals("s")) {
       System.out.println("Function not yet defined");
-    } else if (str.equals("load")) {
+    } else if (str.equals("load") || str.equals("l")) {
       System.out.println("Function not yet defined");
-    } else if (str.equals("struct")) {
+    } else if (str.equals("breakpoint") || str.equals("b")) {
       defineStructWatcher();
-    } else if (str.equals("clear")) {
+    } else if (str.equals("clear") || str.equals("c")) {
       debuggedStructureKeySet.clear();
-    } else if (str.equals("term")) {
+    } else if (str.equals("term") || str.equals("t")) {
       defineTermWatcher();
-    } else if (str.equals("substOff")) {
-      subst = false;
-    } else if (str.equals("more")) {
-      showMoreDetails();
+    } else if (str.equals("more") || str.equals("m")) {
+      showStructureDetails();
     } else {
       System.out.println("Unknow command: please enter `?` to know the available commands");
     }
@@ -148,7 +148,7 @@ public class TomDebugger {
     }
   }
   
-  private void showMoreDetails() {
+  private void showStructureDetails() {
      try {
       String str = "";
       int input = 0;
@@ -313,29 +313,34 @@ public class TomDebugger {
     //////////////////////
   
   public void enteringMatch(String key) {
-    if(debuggedStructureKeySet.contains(key)) {
-      environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key))); 
+    if(debuggedStructureKeySet.contains(key) || nextFailure) {
+      environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key), nextFailure)); 
     }
   }
   
   public void enteringRule(String key) {
-    if(debuggedStructureKeySet.contains(key)) {
-      environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key)));
+    if(debuggedStructureKeySet.contains(key) || nextFailure) {
+      environment.push(new TomDebugEnvironment((TomDebugStructure)mapKeyDebugStructure.get(key), nextFailure));
     }
   }
   
   public void leavingMatch(String key) {
     if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
-      ((TomDebugEnvironment)(environment.peek())).leaving();
+      int status = ((TomDebugEnvironment)(environment.peek())).leaving();
       environment.pop();
-      System.out.println("\tLeaving Match\n");
-      
+      if(!nextFailure) {
+        System.out.println("\tLeaving Match\n");
+      } else {
+        if (status == -1) {
+          start();
+        }
+      }
     }
   }
 
   public void leavingRule(String key) {
     if(!environment.empty() && ((TomDebugEnvironment)(environment.peek())).getKey().equals(key)) {
-      ((TomDebugEnvironment)(environment.peek())).leaving();
+      int status = ((TomDebugEnvironment)(environment.peek())).leaving();
       environment.pop();
       System.out.println("\tLeaving Rule");
     }

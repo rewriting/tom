@@ -44,24 +44,37 @@ public class TomDebugEnvironment {
   private String totalMatchResult = null;
   private static String FAILURE = "Failure";
   private static String SUCCESS = "Success";
+  private boolean failureLookup;
   
-  public TomDebugEnvironment(TomDebugStructure struct) {
+  public TomDebugEnvironment(TomDebugStructure struct, boolean failureLookup ) {
     this.patternList = struct.watchPatternList;
     this.patternText = struct.patternText;
     this.key = struct.key;
     this.type = struct.type;
     this.fileName = struct.fileName;
     this.line = struct.line;
-    
+    this.failureLookup = failureLookup;
     this.subjects = new ArrayList();
     this.substitutions = new ArrayList();
     this.in = new BufferedReader(new InputStreamReader(System.in));
     totalMatchResult = FAILURE;
-    System.out.println("\tEntering "+struct.type+" declared in "+fileName+" at line "+line);
-
+    if(!failureLookup) {
+      System.out.println("\tEntering "+struct.type+" declared in "+fileName+" at line "+line);
+    }
   }
 
-  public void leaving() {
+  public int leaving() {
+    int result = -1;// FAILURE
+    if(failureLookup) {
+      if(totalMatchResult == SUCCESS) {
+        result = 0;
+      }
+      if(result == -1) {
+         System.out.println(type+" declared in "+fileName+" at line "+line+" completely fails with subject(s)");
+         showSubjects();
+      }
+      return result;
+    }
     System.out.println("\tLeaving "+type+" declared in "+fileName+" at line "+line);
     try {
       String str = "";
@@ -69,19 +82,55 @@ public class TomDebugEnvironment {
       str = in.readLine();
     } catch (IOException e) {
     }
+
+    if(lastPatternResult == SUCCESS) {
+      result = 0;
+    }
+    return result;
+  }
+
+  public void enteringPattern() {
+    if(failureLookup) return;
+    incrementStep();
+    if(patternList.contains(new Integer(getStep()))) {
+      
+      System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation");
+      lastPatternResult = FAILURE;
+      substitutions.clear();
+      debugBreak();
+    }
+  }
+
+  public void leavingPattern() {
+    if(failureLookup) return;
+    if(patternList.contains(new Integer(getStep()))) {
+      System.out.println("\t\t Leaving Pattern number "+ getStep()+" evaluation with "+lastPatternResult);
+      debugBreak();
+    }
+  }
+  
+  public void linearizationFail() {
+    if(failureLookup) return;
+    if(patternList.contains(new Integer(getStep()))) {
+      lastPatternResult = FAILURE;
+      System.out.println("\t\tPattern fails because of linearization issue");
+    }
+  }
+  
+  public void patternSuccess() {
+    if(failureLookup) {
+      totalMatchResult = SUCCESS;
+      return;
+    }
+    if(patternList.contains(new Integer(getStep()))) {
+      lastPatternResult = SUCCESS;
+      System.out.println("\t\tPattern number "+getStep()+" succeeds");
+      debugBreak();
+    }
   }
   
   public String getKey() {
     return key;
-  }
-  
-  private int getStep() {
-    return step;
-  }
-
-  private void incrementStep() {
-    substitutions.clear();
-    step++;
   }
 
   public void addSubject(String name, Object trm) {
@@ -111,43 +160,13 @@ public class TomDebugEnvironment {
   }
 
   public void showPatterns() {
-    System.out.println(patternText[getStep()-1]);
-  }
-
-  public void enteringPattern() {
-    incrementStep();
-    if(patternList.contains(new Integer(getStep()))) {
-      
-      System.out.println("\t\tEntering Pattern number "+ getStep()+ " evaluation");
-      lastPatternResult = FAILURE;
-      substitutions.clear();
-      debugBreak();
+    try {
+      System.out.println(patternText[getStep()-1]);
+    } catch (Exception e) {
     }
   }
   
-  public void leavingPattern() {
-    if(patternList.contains(new Integer(getStep()))) {
-      System.out.println("\t\t Leaving Pattern number "+ getStep()+" evaluation with "+lastPatternResult);
-      debugBreak();
-    }
-  }
-  
-  public void linearizationFail() {
-    if(patternList.contains(new Integer(getStep()))) {
-      lastPatternResult = FAILURE;
-      System.out.println("\t\tPattern fails because of linearization issue");
-    }
-  }
-  
-  public void patternSuccess() {
-    if(patternList.contains(new Integer(getStep()))) {
-      lastPatternResult = SUCCESS;
-      System.out.println("\t\tPattern number "+getStep()+" succeeds");
-      debugBreak();
-    }
-  }
-
-    private void debugBreak() {
+  private void debugBreak() {
     try {
       String str = "";
       System.out.print("? to see the available command list>:");
@@ -179,6 +198,15 @@ public class TomDebugEnvironment {
     debugBreak();
   }
 
+  private int getStep() {
+    return step;
+  }
+
+  private void incrementStep() {
+    substitutions.clear();
+    step++;
+  }
+  
   class Substitution {
     String name;
     Object object;
