@@ -28,7 +28,6 @@ package jtom;
 import java.util.logging.*;
 import java.io.*;
 
-import jtom.tools.*;
 import tom.platform.*;
 
 /**
@@ -66,7 +65,7 @@ public class Tom {
     } catch(Exception e) {
       System.err.println(TomMessage.getMessage("LoggingInitializationFailure",
                                                new Object[]{e.getMessage()}));
-      e.printStackTrace();
+      //e.printStackTrace();
       return 1;
     }
     PluginPlatform platform =
@@ -109,13 +108,13 @@ public class Tom {
            IllegalAccessException {
     String loggingConfigFile=System.getProperty(LOGGING_PROPERTY_FILE);
     if (loggingConfigFile == null) { // default > no custom file is used
-      // create a configuration equivalent to normalLog.properties file
+      // create a config equivalent to defaultlogging.properties file
       initTomRootLogger(false);
       logger.setLevel(Level.WARNING);
       consoleHandler = new ConsoleHandler();
       consoleHandler.setLevel(Level.ALL);
       // by default, print everything that the logger sends
-      consoleHandler.setFormatter(new TomBasicFormatter());
+      consoleHandler.setFormatter(new BasicFormatter());
       logger.addHandler(consoleHandler);
     } else { // custom configuration file for LogManager is used
       LogManager.getLogManager().readConfiguration();

@@ -41,9 +41,13 @@ public class PluginPlatformFactory {
   /** PluginPlatformFactory message ressource file name */
   private final static String MESSAGE_RESOURCE = "tom.platform.PluginPlatformResources";
 
-    /** Log radical string*/
+  /** Log radical string*/
   public final static String LOG_RADICAL = "tom.platform";
-
+  
+  /** "java.util.logging.config.file" */
+  private final static String LOGGING_PROPERTY_FILE =
+    "java.util.logging.config.file";
+  
   /** The root logger */
   private static Logger logger = Logger.getLogger(LOG_RADICAL, MESSAGE_RESOURCE);
   
@@ -52,12 +56,16 @@ public class PluginPlatformFactory {
 
   /** protection again instanciation */
   private PluginPlatformFactory() {
-    logger.setUseParentHandlers(false);
-    Handler consoleHandler = new ConsoleHandler();
-    consoleHandler.setLevel(Level.ALL);
-    // by default, print everything that the logger sends
-    consoleHandler.setFormatter(new BasicFormatter());
-    PluginPlatformFactory.logger.addHandler(consoleHandler);
+    String loggingConfigFile=System.getProperty(LOGGING_PROPERTY_FILE);
+    if (loggingConfigFile == null) { // default > no custom file is used
+      // create a config equivalent to defaultlogging.properties file
+      logger.setUseParentHandlers(false);
+      Handler consoleHandler = new ConsoleHandler();
+      consoleHandler.setLevel(Level.ALL);
+      // by default, print everything that the logger sends
+      consoleHandler.setFormatter(new BasicFormatter());
+      PluginPlatformFactory.logger.addHandler(consoleHandler);
+    }
   }
   
   /** the singleton accessor*/
