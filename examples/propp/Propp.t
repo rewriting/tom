@@ -17,6 +17,10 @@ public class Propp {
 	%include { adt/propp/term.tom }
 	// ------------------------------------------------------------  
 
+	public Propp() {
+		this.factory = new TermFactory(new PureFactory());
+	}
+
 	public Propp(TermFactory factory) {
 		this.factory = factory;
 		this.traversal = new GenericTraversal();

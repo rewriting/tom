@@ -17,6 +17,10 @@ public class RecPropp extends Propp {
 	%include { adt/propp/term.tom }
 	// ------------------------------------------------------------  
 
+	public RecPropp() {
+		super();
+	}
+		
 	public RecPropp(TermFactory factory) {
 		super(factory);
 	}
