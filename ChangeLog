@@ -1,3 +1,6 @@
+2004-03-17 julien <julien.guyon@loria.fr>
+	* Start incorporating Vas and prepare field for other tools integration
+
 2004-03-16  pem  <pem@polly.loria.fr>
 
 	* src/jtom/compiler/TomKernelCompiler.t: 
