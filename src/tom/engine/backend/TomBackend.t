@@ -77,7 +77,11 @@ public class TomBackend extends TomTask {
 							 getInput().getInputFileName(), 0, 0);
       e.printStackTrace();
 		} finally {
-			writer.close();
+			try {
+				writer.close();
+			} catch (IOException e) {
+				System.out.println("TomBackend can t close file: "+e.getMessage());
+			}
 		}
 	}
 	

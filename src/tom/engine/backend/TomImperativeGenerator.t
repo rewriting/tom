@@ -39,11 +39,10 @@ import jtom.adt.tomsignature.types.*;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
-import jtom.tools.SingleLineOutputCode;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
-public class TomImperativeGenerator extends TomAbstractGenerator {
+
 
 	protected String modifier = "";
   public TomImperativeGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
@@ -206,7 +205,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
   protected abstract void buildExpTrue(int deep) throws IOException;
   protected abstract void buildExpFalse(int deep) throws IOException;
   
-  protected void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType) throws IOException {
+  protected void buildAssignVar(int deep, TomTerm var, String type, TomType tlType) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		output.write(" = (" + getTLCode(tlType) + ") ");
@@ -221,7 +220,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     }
   }
 
-	protected void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType) throws IOException {
+	protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		output.write(" = (" + getTLCode(tlType) + ") ");

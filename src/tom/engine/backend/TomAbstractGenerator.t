@@ -99,22 +99,22 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
   
       BuildTerm(Name(name), argList) -> {
-        buildTerm(name,argList);
+        buildTerm(deep, name,argList);
         return;
       }
 
       BuildList(Name(name), argList) -> {
-        buildList(name,argList);
+        buildList(deep, name,argList);
         return;
       }
 
       BuildArray(Name(name), argList) -> {
-        buildArray(name,argList);
+        buildArray(deep, name,argList);
         return;
       }
 
       FunctionCall(Name(name), argList) -> {
-        buildFunctionCall(name,argList);
+        buildFunctionCall(deep, name,argList);
         return;
       }
 
@@ -359,7 +359,7 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       AssignMatchSubject(var@Variable(option1,name1,
                                       Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
-        buildAssignMatch(deep, var, type, tlType);
+        buildAssignMatch(deep, var, type, tlType, exp);
         return;
       }
       
@@ -690,10 +690,10 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   protected abstract TargetLanguage genDeclArray(String name, TomType listType, TomType eltType);
  
-  protected abstract void buildTerm(String name, TomList argList);
-  protected abstract void buildList(String name, TomList argList);
-  protected abstract void buildArray(String name, TomList argList);
-  protected abstract void buildFunctionCall(String name, TomList argList);
+  protected abstract void buildTerm(int deep, String name, TomList argList);
+  protected abstract void buildList(int deep, String name, TomList argList);
+  protected abstract void buildArray(int deep,String name, TomList argList);
+  protected abstract void buildFunctionCall(int deep, String name, TomList argList);
 
   protected void buildCompiledMatch(int deep, TomList matchDeclarationList,
 				TomList namedBlockList, OptionList list) throws IOException {
@@ -868,7 +868,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 
   protected abstract void buildAssignVar(int deep, TomTerm var, String type, TomType tlType) throws IOException ;
-  protected abstract void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType) throws IOException ;
+  protected abstract void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException ;
   protected abstract void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException ;
   protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) throws IOException ;
