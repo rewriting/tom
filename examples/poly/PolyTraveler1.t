@@ -117,12 +117,14 @@ public class PolyTraveler1 {
       super(new jjtraveler.Identity());
     }
 
-    public void visit_Expression_Plus(poly.expression.types.expression.Plus arg) { //throws jjtraveler.VisitFailure {
+    public poly.expression.types.Expression visit_Expression_Plus(poly.expression.types.expression.Plus arg) { //throws jjtraveler.VisitFailure {
       System.out.println("plus = " + arg);
+      return arg;
     }
 
-    public void visit_Expression_Zero(poly.expression.types.expression.Zero arg) { 
+    public poly.expression.types.Expression visit_Expression_Zero(poly.expression.types.expression.Zero arg) { 
       System.out.println("zero = " + arg);
+      return arg;
     }
 
   }

@@ -49,152 +49,64 @@ public class PolyTraveler2 {
 
   %include { expression.tom }
 
-  public Expression differentiate(Expression e, Expression v) {
-    %match(Expression e, Expression v) {
-      // non-linear patterns are allowed
-      variable(v1), variable(v1) -> { return `one(); }
-      
-      plus(a1,a2), vx -> {
-        return `plus(differentiate(a1,vx),
-                     differentiate(a2,vx));
-      }
-      mult(a1,a2), vx -> { 
-        return `plus(mult(a1,differentiate(a2,vx)),
-                     mult(a2,differentiate(a1,vx)));      
-      }
-      exp(a1), vx     -> { return `mult(differentiate(a1,vx),e); }
-    }
-    return `zero();
+  public final static void main(String[] args) {
+    PolyTraveler2 test = new PolyTraveler2(Factory.getInstance(new PureFactory()));
+    test.run();
   }
-    
+
   public void run() {
     Expression var = `variable("X");
-    Expression t = `mult(var,plus(var,constant("a")));
-    Expression res = differentiate(t,var);
-    System.out.println("Derivative form of " + t + " wrt. " + var + " is:\n\t" + res);
-
+    Expression res = `mult(plus(var,zero()),one());
     jjtraveler.Visitor v = new SimplifyPlus();
-    jjtraveler.Visitor bu = new jjtraveler.BottomUp(v);
+    //jjtraveler.Visitor bu = new jjtraveler.BottomUp(v);
+    jjtraveler.Visitor bu = new jjtraveler.OnceBottomUp(v);
     try {
       System.out.println(" bu.visit(" + res + ")");
-      bu.visit(res);
+      res = (Expression)bu.visit(res);
+      System.out.println("Simplified form is " + res);
     } catch (jjtraveler.VisitFailure e) {
       System.out.println("WARNING: VisitFailure: " + e.getMessage());
     }
 
   }
   
-  public final static void main(String[] args) {
-    PolyTraveler2 test = new PolyTraveler2(Factory.getInstance(new PureFactory()));
-    test.run();
-  }
-
-  /*
-    class SimplifyExpression implements jjtraveler.Visitor {
-    private ATerm term;
-
-    public jjtraveler.Visitable visit(jjtraveler.Visitable visitable) throws jjtraveler.VisitFailure {
-    System.out.println("before visit: " + getTerm());
-    ATermAppl t = (ATermAppl)getTerm();
-    matchlab: {
-    %match(term t) {
-    plus(zero(),x) | plus(x,zero()) | mult(one(),x)  | mult(x,one())  -> { 
-    setTerm(x);
-    break matchlab;
-    }
-    mult(zero(),_) | mult(_,zero()) -> { 
-    setTerm(`zero());
-    break matchlab;
-    }
-    //_ -> { 
-    //  System.out.println("failure");
-    //  throw new jjtraveler.VisitFailure(); 
-    //}
-
-    }
-    }
-    System.out.println("after visit: " + getTerm());
-    return visitable;
-    }
-
-    public void setTerm(ATerm t) {
-    term =t;
-    }
-
-    public ATerm getTerm() {
-    return term;
-    }
-    }
-  */
-
-    
-  // simplification
-  public Expression simplify(Expression t) {
-    Expression res = t;
-    block:{
-      %match(Expression t) {
-        exp(zero())    -> { res = `one(); break block; }
-        plus(zero(),x) -> { res = simplify(`x); break block; }
-        plus(x,zero()) -> { res = simplify(`x); break block; }
-        mult(one(),x)  -> { res = simplify(`x); break block; }
-        mult(x,one())  -> { res = simplify(`x); break block; }
-        mult(zero(),_) -> { res = `zero(); break block; }
-        mult(_,zero()) -> { res = `zero(); break block; }
-        plus(x,y)      -> { res = `plus(simplify(x),simplify(y)); break block; }
-        mult(x,y)      -> { res = `mult(simplify(x),simplify(y)); break block; }
-        exp(x)         -> { res = `exp(simplify(x)); break block; }
-      }
-    }
-    if(t != res) res = simplify(res);
-    return res;
-  }
-
-  class SimplifyPlus extends poly.expression.FwdExpression {
-    private Stack stack;
+  class SimplifyPlus extends poly.expression.Fwd {
     public SimplifyPlus() {
-      super(new jjtraveler.Identity());
-      stack = new Stack();
+      //super(new jjtraveler.Identity());
+      super(new jjtraveler.Fail());
     }
-
-    public void push(Expression arg) {
-      stack.push(arg);
+    
+    public poly.expression.types.Expression visit_Expression(poly.expression.types.Expression arg) throws jjtraveler.VisitFailure { 
+      System.out.println("arg = " + arg);
+      %match(Expression arg) {
+        exp(zero())    -> { return `one(); }
+        plus(zero(),x) -> { return `x; }
+        plus(x,zero()) -> { return `x; }
+        mult(one(),x)  -> { return `x; }
+        mult(x,one())  -> { return `x; }
+        mult(zero(),_) -> { return `zero(); }
+        mult(_,zero()) -> { return `zero(); }
+      }
+      System.out.println("default: " + arg);
+      //return arg;
+      //return (poly.expression.types.Expression)any.visit(arg);
+      throw new jjtraveler.VisitFailure();
     }
-
-    public Expression pop() {
-      return (Expression) stack.pop();
+    
+    /*
+   public poly.expression.types.Expression visit_Expression_Variable(poly.expression.types.expression.Variable arg) { 
+     System.out.println("coucou: " + arg);
+      return arg;
     }
+    */
 
-    private void genericBuild(ATerm t) {
-      if(t instanceof ATermAppl) {
-        ATermAppl appl = (ATermAppl) t;
-        for(int i=0 ; i<appl.getArity() ; i++) {
-            ATerm term = subjectAppl.getArgument(i);
-            genericCollectArray(term,collect,args); 
-          } 
-
-    }
-
-    public void visit_Expression(poly.expression.types.Expression arg) { 
-      System.out.println("exp = " + arg);
-      Expression res;
-      block: {
-        %match(Expression arg) {
-          exp(zero())    -> { push(`one()); break block; }
-          plus(zero(),x) -> { push(`x); break block; }
-          plus(x,zero()) -> { push(`x); break block; }
-          mult(one(),x)  -> { push(`x); break block; }
-          mult(x,one())  -> { push(`x); break block; }
-          mult(zero(),_) -> { push(`zero()); break block; }
-          mult(_,zero()) -> { push(`zero()); break block; }
-          t -> { genericBuild(t); break block; }
-        }
-      } // end of block
-    }
 
   }
 
 
 }
+
+ 
 
 
 

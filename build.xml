@@ -763,8 +763,9 @@
 						 includes="**/*.t"/>
 	</target>
 
-	<target name="bootstrap" description="Bootstrap source" depends="bootcheck" if="bootstrap.ok">
-		<echo> ### BOOTSTRAP PERFORM SUCCESSFULLY!!! ###</echo>
+	<target name="bootstrap" description="Bootstrap source"
+					depends="bootcheck" if="bootstrap.ok">
+		<echo message="### BOOTSTRAP PERFORM SUCCESSFULLY!!! ###"/>
 	</target>
 
 	<target name="bootcheck" depends="performbootstrap">
@@ -799,7 +800,7 @@
 				<include name="jtom/parser/BackQuoteParser.class"/>
 			</fileset>
 		</concat>
-		<condition property="bootstrap.ok">
+		<condition property="bootstrap.ok" value="true">
 			<filesmatch file1="${src.src}/bootcheck/version1" 
 									file2="${src.src}/bootcheck/version2"/>
 		</condition>
@@ -857,6 +858,19 @@
 			<include name="**/Verifier.t"/>
 		</tomsrc>
 
+
+		<tomsrc config="${src.configfile}"
+						srcdir="${src.src}" 
+						destdir="${destination}/gen" 
+						options="-I ${src.mapping} --noDeclaration">
+			<include name="jtom/**/*.t"/> 
+			<exclude name="jtom/*.t"/>
+			<exclude name="**/Verifier.t"/>
+			<exclude name="**/TomLanguage.g.t"/>
+			<exclude name="**/HostLanguage.g.t"/>
+			<exclude name="**/BackQuoteLanguage.g.t"/>
+		</tomsrc>
+
 		<tomsrc config="${src.configfile}"
 						srcdir="${src.src}"
 						outputfile="${destination}/gen/jtom/parser/TomLanguage.g"
@@ -877,18 +891,6 @@
 		</tomsrc>
 
 
-
-		<tomsrc config="${src.configfile}"
-						srcdir="${src.src}" 
-						destdir="${destination}/gen" 
-						options="-I ${src.mapping} --noDeclaration">
-			<exclude name="jtom/*.t"/>
-			<exclude name="**/Verifier.t"/>
-			<exclude name="**/TomLanguage.g.t"/>
-			<exclude name="**/HostLanguage.g.t"/>
-			<exclude name="**/BackQuoteLanguage.g.t"/>
-
-		</tomsrc>
 
 		<!-- builds parser -->
 		<mkdir dir="${destination}/gen/jtom/parser"/>
@@ -925,7 +927,7 @@
 	<target name="bootinstall" 
 					description="Install src tree into stable tree" 
 					depends="bootcheck"
-					if="bootstrap.ok">
+					if="${bootstrap.ok}">
 		<copy todir="${stable.src}" overwrite="true">
 			<fileset dir="${src.src}">
 				<include name="**/*.java"/>
