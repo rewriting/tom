@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<OPTIONS>
+
+  <OptionBoolean>
+    <name>--help</name>
+    <altName>-h</altName>
+    <description>Print this help</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--version</name>
+    <altName>-V</altName>
+    <description>Print version</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--verbose</name>
+    <altName>-v</altName>
+    <description>Set verbose mode on</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--intermediate</name>
+    <altName>-i</altName>
+    <description>Generate intermediate files</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--noOutput</name>
+    <altName></altName>
+    <description>Do not generate code</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--noDeclaration</name>
+    <altName>-D</altName>
+    <description>Do not generate code for declarations</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--doCompile</name>
+    <altName>-C</altName>
+    <description>Start after type-checking</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--noCheck</name>
+    <altName>-f</altName>
+    <description>Do not check correctness</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--Wall</name>
+    <altName></altName>
+    <description>Print all warnings</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--noWarning</name>
+    <altName></altName>
+    <description>Do not print warning</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--lazyType</name>
+    <altName>-l</altName>
+    <description>Use universal type</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--pretty</name>
+    <altName>-p</altName>
+    <description>Generate readable code</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--atermStat</name>
+    <altName>-S</altName>
+    <description>Print internal ATerm statistics</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+  <OptionBoolean>
+    <name>--static</name>
+    <altName></altName>
+    <description>Generate static functions</description>
+    <valueB>0</valueB>
+  </OptionBoolean>
+<!--  <OptionBoolean>
+    <name>debug</name>
+    <altName></altName>
+    <description>Generate debug primitives</description>
+    <valueB>0</valueB>
+  </OptionBoolean> -->
+<!--  <OptionBoolean>
+    <name>memory</name>
+    <altName></altName>
+    <description>Add memory management while debugging (not correct with list matching)</description>
+    <valueB>0</valueB>
+  </OptionBoolean> -->
+
+  <OptionString>
+    <name>--import</name>
+    <altName>-I</altName>
+    <description>Path for %include</description>
+    <valueS><!-- QUELLE VALEUR ICI ? --></valueS>
+    <attrName>path</attrName>
+  </OptionString>
+  <OptionString>
+    <name>--output</name>
+    <altName>-o</altName>
+    <description>Set output file name</description>
+    <valueS><!-- PB : NOM PAR DEFAUT DEPEND DU NOM DU SOURCE --></valueS>
+    <attrName>file</attrName>
+  </OptionString>
+  <OptionString>
+    <name>--destdir</name>
+    <altName>-d</altName>
+    <description>Specify where to place generated files</description>
+    <valueS><!-- PB : DOSSIER PAR DEFAUT EST LE DOSSIER OU SE TROUVE LE SOURCE --></valueS>
+    <attrName>dir</attrName>
+  </OptionString>
+
+</OPTIONS>

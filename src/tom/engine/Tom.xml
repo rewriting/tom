@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<TOM>
+  <plugin>
+    <name>Starter</name>
+    <version></version>
+    <description></description>
+    <classpath>jtom.starter.TomStarter</classpath>
+  </plugin>
+  <plugin>
+    <name>Parser</name>
+    <version></version>
+    <description></description>
+    <classpath>jtom.parser.TomParser2</classpath>
+  </plugin>
+  <plugin>
+    <name>Syntax checker</name>
+    <version></version>
+    <description></description>
+    <classpath>jtom.checker.TomSyntaxChecker2</classpath>
+  </plugin>
+  <plugin>
+    <name>Expander</name>
+    <version></version>
+    <description></description>
+    <classpath>jtom.compiler.TomExpander2</classpath>
+  </plugin>
+  <plugin>
+    <name>Type checker</name>
+    <version></version>
+    <description></description>
+    <classpath>jtom.checker.TomTypeChecker2</classpath>
+  </plugin>
+  <plugin>
+    <name>Compiler</name>
+    <version></version>
+    <description></description>
+    <classpath>jtom.compiler.TomCompiler2</classpath>
+  </plugin>
+  <plugin>
+    <name>Optimizer</name>
+    <version></version>
+    <description></description>
+    <classpath>jtom.optimizer.TomOptimizer2</classpath>
+  </plugin>
+  <plugin>
+    <name>Verifier</name>
+    <version></version>
+    <description></description>
+    <classpath>jtom.verifier.TomVerifier2</classpath>
+  </plugin>
+  <plugin>
+    <name>Backend</name>
+    <version></version>
+    <description></description>
+    <classpath>jtom.backend.TomBackend2</classpath>
+  </plugin>
+</TOM>
