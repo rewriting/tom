@@ -488,9 +488,9 @@ TOKEN :
 | < TOM_IS_EMPTY:    "is_empty" >
 | < TOM_GET_ELEMENT: "get_element" >
 | < TOM_GET_SIZE:    "get_size" >
-| < TOM_INTEGER: <TOM_DIGIT> (<TOM_DIGIT>)* >
+| < TOM_INTEGER: (<MINUS_SIGN>)? <TOM_DIGIT> (<TOM_DIGIT>)* >
 | < TOM_CHAR:  <TOM_QUOTE> (<TOM_LETTER>)+ <TOM_QUOTE>>
-| < TOM_IDENTIFIER: <TOM_LETTER> (<TOM_LETTER>|<TOM_DIGIT>|<TOM_UNDERSCORE>|<TOM_MINUS>)* >
+| < TOM_IDENTIFIER: <TOM_LETTER> (<TOM_LETTER>|<TOM_DIGIT>|<TOM_UNDERSCORE>| (<TOM_MINUS><TOM_LETTER>))* >
 | < TOM_DOUBLE:
         (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
       | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
@@ -498,6 +498,7 @@ TOKEN :
       | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
   >
 | < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+| < #MINUS_SIGN: ["-"] >
 | < #TOM_LETTER:
       [
        "\u0024",

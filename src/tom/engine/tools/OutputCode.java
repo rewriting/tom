@@ -170,13 +170,15 @@ public class OutputCode {
   
   public void indent(int deep) {
     try {
-      if(getInput().isPretty()) {
-        for(int i=0 ; i<deep ; i++) {
-          file.write(' ');
+      if(deep > 0) {
+        if(getInput().isPretty()) {
+          for(int i=0 ; i<deep ; i++) {
+            file.write(' ');
+            file.write(' ');
+          }
+        } else {
           file.write(' ');
         }
-      } else {
-        file.write(' ');
       }
     } catch (IOException e) {
       System.out.println("write error");

@@ -414,7 +414,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       
       ITL(t) -> {
-        output.write(0,`t);
+        output.write(`t);
         return;
       }
 

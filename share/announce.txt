@@ -1,8 +1,8 @@
-Tom 2.0 release announcement
-----------------------------
+Tom 2.0-rc1 release announcement
+--------------------------------
 
 It is my great privilege and pleasure to announce the availability of
-jtom-2.0.
+jtom-2.0 Release Candidate-1.
 
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into C and Java.

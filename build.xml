@@ -236,6 +236,8 @@
 		<!-- "tom README and INSTALL" -->
 		<copy todir="${stable.dist}" file="README"/>
 		<copy todir="${stable.dist}" file="INSTALL"/>
+		<copy todir="${stable.dist}" file="NEWS"/>
+		<copy todir="${stable.dist}" file="AUTHORS"/>
 		<!-- "tom binary" -->
 		<copy todir="${stable.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${stable.bin}" file="${utils}/tom.bat"/>
@@ -305,6 +307,8 @@
 		<!-- "tom README and INSTALL" -->
 		<copy todir="${src.dist}" file="README"/>
 		<copy todir="${src.dist}" file="INSTALL"/>
+		<copy todir="${src.dist}" file="NEWS"/>
+		<copy todir="${src.dist}" file="AUTHORS"/>
 		<!-- "tom binary" -->
 		<copy todir="${src.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${src.bin}" file="${utils}/tom"/>
@@ -670,3 +674,4 @@
 	</target>
 
 </project>
+

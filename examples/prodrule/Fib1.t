@@ -47,7 +47,7 @@ class Fib1 {
       space = compute(rec(space));
     } 
     return space;
-  }
+  } 
 
   public final static void main(String[] args) {
     Fib1 test = new Fib1(new Factory(new PureFactory(16)));
@@ -57,8 +57,8 @@ class Fib1 {
   public Space rec(Space s) {
     %match(Space s) {
       concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
-        if(`n >2 && !occursFib(`concElement(S1*,S2*),`n -1)) {
-          return `manySpace(Fib(n -1,Undef),s);
+        if(`n >2 && !occursFib(`concElement(S1*,S2*),`n-1)) {
+          return `manySpace(Fib(n-1,Undef),s);
         }
       }
     }
@@ -76,7 +76,7 @@ class Fib1 {
               %match(Space t12) {
                 concElement(_*,Fib[arg=n2,val=Nat(v2)] , _*) -> {
                   if(`n2+1 == `n1) {
-                    int modulo = (`v1+`v2)%1000000;
+                    int modulo = `(v1+v2)%1000000;
                     return `manySpace(Fib(n,Nat(modulo)),s12);
                   }
                 }
