@@ -111,11 +111,7 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
-    if ((tmp = TomTerm_Pair.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_SlotName.fromTerm(trm)) != null) {
+    if ((tmp = TomTerm_PairSlotAppl.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -389,12 +385,7 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isPair()
-  {
-    return false;
-  }
-
-  public boolean isSlotName()
+  public boolean isPairSlotAppl()
   {
     return false;
   }
@@ -669,12 +660,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasString()
+  public boolean hasSubjectList()
   {
     return false;
   }
 
-  public boolean hasKid2()
+  public boolean hasPatternList()
   {
     return false;
   }
@@ -760,6 +751,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasBlockName()
+  {
+    return false;
+  }
+
+  public boolean hasString()
+  {
+    return false;
+  }
+
+  public boolean hasKid2()
   {
     return false;
   }
@@ -885,12 +886,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Option");
   }
 
-  public TomTerm getSlotName()
+  public TomName getSlotName()
   {
      throw new RuntimeException("This TomTerm has no SlotName");
   }
 
-  public TomTerm setSlotName(TomTerm _slotName)
+  public TomTerm setSlotName(TomName _slotName)
   {
      throw new RuntimeException("This TomTerm has no SlotName");
   }
@@ -905,24 +906,24 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Appl");
   }
 
-  public String getString()
+  public TomTerm getSubjectList()
   {
-     throw new RuntimeException("This TomTerm has no String");
+     throw new RuntimeException("This TomTerm has no SubjectList");
   }
 
-  public TomTerm setString(String _string)
+  public TomTerm setSubjectList(TomTerm _subjectList)
   {
-     throw new RuntimeException("This TomTerm has no String");
+     throw new RuntimeException("This TomTerm has no SubjectList");
   }
 
-  public TomTerm getKid2()
+  public TomTerm getPatternList()
   {
-     throw new RuntimeException("This TomTerm has no Kid2");
+     throw new RuntimeException("This TomTerm has no PatternList");
   }
 
-  public TomTerm setKid2(TomTerm _kid2)
+  public TomTerm setPatternList(TomTerm _patternList)
   {
-     throw new RuntimeException("This TomTerm has no Kid2");
+     throw new RuntimeException("This TomTerm has no PatternList");
   }
 
   public TomTerm getSubjectListAST()
@@ -1093,6 +1094,26 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setBlockName(String _blockName)
   {
      throw new RuntimeException("This TomTerm has no BlockName");
+  }
+
+  public String getString()
+  {
+     throw new RuntimeException("This TomTerm has no String");
+  }
+
+  public TomTerm setString(String _string)
+  {
+     throw new RuntimeException("This TomTerm has no String");
+  }
+
+  public TomTerm getKid2()
+  {
+     throw new RuntimeException("This TomTerm has no Kid2");
+  }
+
+  public TomTerm setKid2(TomTerm _kid2)
+  {
+     throw new RuntimeException("This TomTerm has no Kid2");
   }
 
 

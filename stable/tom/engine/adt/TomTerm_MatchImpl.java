@@ -11,8 +11,8 @@ extends TomTerm
     return pattern;
   }
   private static int index_option = 0;
-  private static int index_kid1 = 1;
-  private static int index_kid2 = 2;
+  private static int index_subjectList = 1;
+  private static int index_patternList = 2;
 
   public shared.SharedObject duplicate() {
     TomTerm_Match clone = new TomTerm_Match();
@@ -53,12 +53,12 @@ extends TomTerm
     return true;
   }
 
-  public boolean hasKid1()
+  public boolean hasSubjectList()
   {
     return true;
   }
 
-  public boolean hasKid2()
+  public boolean hasPatternList()
   {
     return true;
   }
@@ -74,24 +74,24 @@ extends TomTerm
     return (TomTerm) super.setArgument(_option, index_option);
   }
 
-  public TomTerm getKid1()
+  public TomTerm getSubjectList()
   {
-    return (TomTerm) this.getArgument(index_kid1) ;
+    return (TomTerm) this.getArgument(index_subjectList) ;
   }
 
-  public TomTerm setKid1(TomTerm _kid1)
+  public TomTerm setSubjectList(TomTerm _subjectList)
   {
-    return (TomTerm) super.setArgument(_kid1, index_kid1);
+    return (TomTerm) super.setArgument(_subjectList, index_subjectList);
   }
 
-  public TomTerm getKid2()
+  public TomTerm getPatternList()
   {
-    return (TomTerm) this.getArgument(index_kid2) ;
+    return (TomTerm) this.getArgument(index_patternList) ;
   }
 
-  public TomTerm setKid2(TomTerm _kid2)
+  public TomTerm setPatternList(TomTerm _patternList)
   {
-    return (TomTerm) super.setArgument(_kid2, index_kid2);
+    return (TomTerm) super.setArgument(_patternList, index_patternList);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {

@@ -35,6 +35,10 @@ abstract public class TomNameImpl extends TomSignatureConstructor
       return tmp;
     }
 
+    if ((tmp = TomName_EmptyName.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
 
     throw new RuntimeException("This is not a TomName: " + trm);
   }
@@ -46,6 +50,11 @@ abstract public class TomNameImpl extends TomSignatureConstructor
   }
 
   public boolean isPositionName()
+  {
+    return false;
+  }
+
+  public boolean isEmptyName()
   {
     return false;
   }

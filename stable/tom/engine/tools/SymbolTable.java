@@ -73,16 +73,10 @@ public class SymbolTable {
 
   public void putSymbol(String name, TomSymbol astSymbol) {
     TomSymbol result = (TomSymbol) mapSymbolName.put(name,astSymbol);
-    if(result != null && result == astSymbol) {
-        //System.out.println("Warning: multiple definition of '" + name + "'");
-    }
   }
 
   public void putType(String name, TomType astType) {
     TomType result = (TomType) mapTypeName.put(name,astType);
-    if(result != null && result == astType) {
-      System.out.println("Warning: multiple definition of '" + name + "'");
-    }
   }
 
   public TomSymbol getSymbol(String name) {

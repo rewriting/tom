@@ -5,6 +5,12 @@ import aterm.*;
 
 public class TomSignatureFactory extends PureFactory
 {
+  private aterm.AFun funDeclaration_TypeTermDecl;
+  private Declaration protoDeclaration_TypeTermDecl;
+  private aterm.AFun funDeclaration_TypeListDecl;
+  private Declaration protoDeclaration_TypeListDecl;
+  private aterm.AFun funDeclaration_TypeArrayDecl;
+  private Declaration protoDeclaration_TypeArrayDecl;
   private aterm.AFun funDeclaration_GetFunctionSymbolDecl;
   private Declaration protoDeclaration_GetFunctionSymbolDecl;
   private aterm.AFun funDeclaration_GetSubtermDecl;
@@ -39,6 +45,12 @@ public class TomSignatureFactory extends PureFactory
   private Declaration protoDeclaration_MakeDecl;
   private aterm.AFun funDeclaration_SymbolDecl;
   private Declaration protoDeclaration_SymbolDecl;
+  private aterm.AFun funDeclaration_ListSymbolDecl;
+  private Declaration protoDeclaration_ListSymbolDecl;
+  private aterm.AFun funDeclaration_ArraySymbolDecl;
+  private Declaration protoDeclaration_ArraySymbolDecl;
+  private aterm.AFun funDeclaration_EmptyDeclaration;
+  private Declaration protoDeclaration_EmptyDeclaration;
   private aterm.AFun funOptionList_EmptyOptionList;
   private OptionList protoOptionList_EmptyOptionList;
   private aterm.AFun funOptionList_ConsOptionList;
@@ -57,8 +69,6 @@ public class TomSignatureFactory extends PureFactory
   private Option protoOption_OriginTracking;
   private aterm.AFun funOption_LRParen;
   private Option protoOption_LRParen;
-  private aterm.AFun funOption_SlotList;
-  private Option protoOption_SlotList;
   private aterm.AFun funExpression_TomTermToExpression;
   private Expression protoExpression_TomTermToExpression;
   private aterm.AFun funExpression_Not;
@@ -159,10 +169,8 @@ public class TomSignatureFactory extends PureFactory
   private TomTerm protoTomTerm_Appl;
   private aterm.AFun funTomTerm_RecordAppl;
   private TomTerm protoTomTerm_RecordAppl;
-  private aterm.AFun funTomTerm_Pair;
-  private TomTerm protoTomTerm_Pair;
-  private aterm.AFun funTomTerm_SlotName;
-  private TomTerm protoTomTerm_SlotName;
+  private aterm.AFun funTomTerm_PairSlotAppl;
+  private TomTerm protoTomTerm_PairSlotAppl;
   private aterm.AFun funTomTerm_Match;
   private TomTerm protoTomTerm_Match;
   private aterm.AFun funTomTerm_MakeFunctionBegin;
@@ -247,6 +255,8 @@ public class TomSignatureFactory extends PureFactory
   private TomName protoTomName_Name;
   private aterm.AFun funTomName_PositionName;
   private TomName protoTomName_PositionName;
+  private aterm.AFun funTomName_EmptyName;
+  private TomName protoTomName_EmptyName;
   private aterm.AFun funTomSymbol_Symbol;
   private TomSymbol protoTomSymbol_Symbol;
   private aterm.AFun funTomSymbolTable_Table;
@@ -257,6 +267,12 @@ public class TomSignatureFactory extends PureFactory
   private TomEntryList protoTomEntryList_ConsEntryList;
   private aterm.AFun funTomEntry_Entry;
   private TomEntry protoTomEntry_Entry;
+  private aterm.AFun funSlotList_EmptySlotList;
+  private SlotList protoSlotList_EmptySlotList;
+  private aterm.AFun funSlotList_ConsSlotList;
+  private SlotList protoSlotList_ConsSlotList;
+  private aterm.AFun funPairNameDecl_Slot;
+  private PairNameDecl protoPairNameDecl_Slot;
 
   public TomSignatureFactory()
   {
@@ -274,73 +290,97 @@ public class TomSignatureFactory extends PureFactory
   {
     Declaration.initialize(this);
 
+    Declaration_TypeTermDecl.initializePattern();
+    funDeclaration_TypeTermDecl = makeAFun("Declaration_TypeTermDecl", 3, false);
+    protoDeclaration_TypeTermDecl = new Declaration_TypeTermDecl();
+
+    Declaration_TypeListDecl.initializePattern();
+    funDeclaration_TypeListDecl = makeAFun("Declaration_TypeListDecl", 3, false);
+    protoDeclaration_TypeListDecl = new Declaration_TypeListDecl();
+
+    Declaration_TypeArrayDecl.initializePattern();
+    funDeclaration_TypeArrayDecl = makeAFun("Declaration_TypeArrayDecl", 3, false);
+    protoDeclaration_TypeArrayDecl = new Declaration_TypeArrayDecl();
+
     Declaration_GetFunctionSymbolDecl.initializePattern();
-    funDeclaration_GetFunctionSymbolDecl = makeAFun("Declaration_GetFunctionSymbolDecl", 2, false);
+    funDeclaration_GetFunctionSymbolDecl = makeAFun("Declaration_GetFunctionSymbolDecl", 3, false);
     protoDeclaration_GetFunctionSymbolDecl = new Declaration_GetFunctionSymbolDecl();
 
     Declaration_GetSubtermDecl.initializePattern();
-    funDeclaration_GetSubtermDecl = makeAFun("Declaration_GetSubtermDecl", 3, false);
+    funDeclaration_GetSubtermDecl = makeAFun("Declaration_GetSubtermDecl", 4, false);
     protoDeclaration_GetSubtermDecl = new Declaration_GetSubtermDecl();
 
     Declaration_IsFsymDecl.initializePattern();
-    funDeclaration_IsFsymDecl = makeAFun("Declaration_IsFsymDecl", 3, false);
+    funDeclaration_IsFsymDecl = makeAFun("Declaration_IsFsymDecl", 4, false);
     protoDeclaration_IsFsymDecl = new Declaration_IsFsymDecl();
 
     Declaration_GetSlotDecl.initializePattern();
-    funDeclaration_GetSlotDecl = makeAFun("Declaration_GetSlotDecl", 4, false);
+    funDeclaration_GetSlotDecl = makeAFun("Declaration_GetSlotDecl", 5, false);
     protoDeclaration_GetSlotDecl = new Declaration_GetSlotDecl();
 
     Declaration_CompareFunctionSymbolDecl.initializePattern();
-    funDeclaration_CompareFunctionSymbolDecl = makeAFun("Declaration_CompareFunctionSymbolDecl", 3, false);
+    funDeclaration_CompareFunctionSymbolDecl = makeAFun("Declaration_CompareFunctionSymbolDecl", 4, false);
     protoDeclaration_CompareFunctionSymbolDecl = new Declaration_CompareFunctionSymbolDecl();
 
     Declaration_TermsEqualDecl.initializePattern();
-    funDeclaration_TermsEqualDecl = makeAFun("Declaration_TermsEqualDecl", 3, false);
+    funDeclaration_TermsEqualDecl = makeAFun("Declaration_TermsEqualDecl", 4, false);
     protoDeclaration_TermsEqualDecl = new Declaration_TermsEqualDecl();
 
     Declaration_GetHeadDecl.initializePattern();
-    funDeclaration_GetHeadDecl = makeAFun("Declaration_GetHeadDecl", 2, false);
+    funDeclaration_GetHeadDecl = makeAFun("Declaration_GetHeadDecl", 3, false);
     protoDeclaration_GetHeadDecl = new Declaration_GetHeadDecl();
 
     Declaration_GetTailDecl.initializePattern();
-    funDeclaration_GetTailDecl = makeAFun("Declaration_GetTailDecl", 2, false);
+    funDeclaration_GetTailDecl = makeAFun("Declaration_GetTailDecl", 3, false);
     protoDeclaration_GetTailDecl = new Declaration_GetTailDecl();
 
     Declaration_IsEmptyDecl.initializePattern();
-    funDeclaration_IsEmptyDecl = makeAFun("Declaration_IsEmptyDecl", 2, false);
+    funDeclaration_IsEmptyDecl = makeAFun("Declaration_IsEmptyDecl", 3, false);
     protoDeclaration_IsEmptyDecl = new Declaration_IsEmptyDecl();
 
     Declaration_MakeEmptyList.initializePattern();
-    funDeclaration_MakeEmptyList = makeAFun("Declaration_MakeEmptyList", 2, false);
+    funDeclaration_MakeEmptyList = makeAFun("Declaration_MakeEmptyList", 3, false);
     protoDeclaration_MakeEmptyList = new Declaration_MakeEmptyList();
 
     Declaration_MakeAddList.initializePattern();
-    funDeclaration_MakeAddList = makeAFun("Declaration_MakeAddList", 4, false);
+    funDeclaration_MakeAddList = makeAFun("Declaration_MakeAddList", 5, false);
     protoDeclaration_MakeAddList = new Declaration_MakeAddList();
 
     Declaration_GetElementDecl.initializePattern();
-    funDeclaration_GetElementDecl = makeAFun("Declaration_GetElementDecl", 3, false);
+    funDeclaration_GetElementDecl = makeAFun("Declaration_GetElementDecl", 4, false);
     protoDeclaration_GetElementDecl = new Declaration_GetElementDecl();
 
     Declaration_GetSizeDecl.initializePattern();
-    funDeclaration_GetSizeDecl = makeAFun("Declaration_GetSizeDecl", 2, false);
+    funDeclaration_GetSizeDecl = makeAFun("Declaration_GetSizeDecl", 3, false);
     protoDeclaration_GetSizeDecl = new Declaration_GetSizeDecl();
 
     Declaration_MakeEmptyArray.initializePattern();
-    funDeclaration_MakeEmptyArray = makeAFun("Declaration_MakeEmptyArray", 3, false);
+    funDeclaration_MakeEmptyArray = makeAFun("Declaration_MakeEmptyArray", 4, false);
     protoDeclaration_MakeEmptyArray = new Declaration_MakeEmptyArray();
 
     Declaration_MakeAddArray.initializePattern();
-    funDeclaration_MakeAddArray = makeAFun("Declaration_MakeAddArray", 4, false);
+    funDeclaration_MakeAddArray = makeAFun("Declaration_MakeAddArray", 5, false);
     protoDeclaration_MakeAddArray = new Declaration_MakeAddArray();
 
     Declaration_MakeDecl.initializePattern();
-    funDeclaration_MakeDecl = makeAFun("Declaration_MakeDecl", 4, false);
+    funDeclaration_MakeDecl = makeAFun("Declaration_MakeDecl", 5, false);
     protoDeclaration_MakeDecl = new Declaration_MakeDecl();
 
     Declaration_SymbolDecl.initializePattern();
     funDeclaration_SymbolDecl = makeAFun("Declaration_SymbolDecl", 1, false);
     protoDeclaration_SymbolDecl = new Declaration_SymbolDecl();
+
+    Declaration_ListSymbolDecl.initializePattern();
+    funDeclaration_ListSymbolDecl = makeAFun("Declaration_ListSymbolDecl", 1, false);
+    protoDeclaration_ListSymbolDecl = new Declaration_ListSymbolDecl();
+
+    Declaration_ArraySymbolDecl.initializePattern();
+    funDeclaration_ArraySymbolDecl = makeAFun("Declaration_ArraySymbolDecl", 1, false);
+    protoDeclaration_ArraySymbolDecl = new Declaration_ArraySymbolDecl();
+
+    Declaration_EmptyDeclaration.initializePattern();
+    funDeclaration_EmptyDeclaration = makeAFun("Declaration_EmptyDeclaration", 0, false);
+    protoDeclaration_EmptyDeclaration = new Declaration_EmptyDeclaration();
 
     OptionList.initialize(this);
 
@@ -381,10 +421,6 @@ public class TomSignatureFactory extends PureFactory
     Option_LRParen.initializePattern();
     funOption_LRParen = makeAFun("Option_LRParen", 1, false);
     protoOption_LRParen = new Option_LRParen();
-
-    Option_SlotList.initializePattern();
-    funOption_SlotList = makeAFun("Option_SlotList", 1, false);
-    protoOption_SlotList = new Option_SlotList();
 
     Expression.initialize(this);
 
@@ -598,13 +634,9 @@ public class TomSignatureFactory extends PureFactory
     funTomTerm_RecordAppl = makeAFun("TomTerm_RecordAppl", 3, false);
     protoTomTerm_RecordAppl = new TomTerm_RecordAppl();
 
-    TomTerm_Pair.initializePattern();
-    funTomTerm_Pair = makeAFun("TomTerm_Pair", 2, false);
-    protoTomTerm_Pair = new TomTerm_Pair();
-
-    TomTerm_SlotName.initializePattern();
-    funTomTerm_SlotName = makeAFun("TomTerm_SlotName", 1, false);
-    protoTomTerm_SlotName = new TomTerm_SlotName();
+    TomTerm_PairSlotAppl.initializePattern();
+    funTomTerm_PairSlotAppl = makeAFun("TomTerm_PairSlotAppl", 2, false);
+    protoTomTerm_PairSlotAppl = new TomTerm_PairSlotAppl();
 
     TomTerm_Match.initializePattern();
     funTomTerm_Match = makeAFun("TomTerm_Match", 3, false);
@@ -619,7 +651,7 @@ public class TomSignatureFactory extends PureFactory
     protoTomTerm_MakeFunctionEnd = new TomTerm_MakeFunctionEnd();
 
     TomTerm_RuleSet.initializePattern();
-    funTomTerm_RuleSet = makeAFun("TomTerm_RuleSet", 1, false);
+    funTomTerm_RuleSet = makeAFun("TomTerm_RuleSet", 2, false);
     protoTomTerm_RuleSet = new TomTerm_RuleSet();
 
     TomTerm_RewriteRule.initializePattern();
@@ -776,10 +808,14 @@ public class TomSignatureFactory extends PureFactory
     funTomName_PositionName = makeAFun("TomName_PositionName", 1, false);
     protoTomName_PositionName = new TomName_PositionName();
 
+    TomName_EmptyName.initializePattern();
+    funTomName_EmptyName = makeAFun("TomName_EmptyName", 0, false);
+    protoTomName_EmptyName = new TomName_EmptyName();
+
     TomSymbol.initialize(this);
 
     TomSymbol_Symbol.initializePattern();
-    funTomSymbol_Symbol = makeAFun("TomSymbol_Symbol", 4, false);
+    funTomSymbol_Symbol = makeAFun("TomSymbol_Symbol", 5, false);
     protoTomSymbol_Symbol = new TomSymbol_Symbol();
 
     TomSymbolTable.initialize(this);
@@ -804,6 +840,58 @@ public class TomSignatureFactory extends PureFactory
     funTomEntry_Entry = makeAFun("TomEntry_Entry", 2, false);
     protoTomEntry_Entry = new TomEntry_Entry();
 
+    SlotList.initialize(this);
+
+    SlotList_EmptySlotList.initializePattern();
+    funSlotList_EmptySlotList = makeAFun("SlotList_EmptySlotList", 0, false);
+    protoSlotList_EmptySlotList = new SlotList_EmptySlotList();
+
+    SlotList_ConsSlotList.initializePattern();
+    funSlotList_ConsSlotList = makeAFun("SlotList_ConsSlotList", 2, false);
+    protoSlotList_ConsSlotList = new SlotList_ConsSlotList();
+
+    PairNameDecl.initialize(this);
+
+    PairNameDecl_Slot.initializePattern();
+    funPairNameDecl_Slot = makeAFun("PairNameDecl_Slot", 2, false);
+    protoPairNameDecl_Slot = new PairNameDecl_Slot();
+
+  }
+
+  protected Declaration makeDeclaration_TypeTermDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoDeclaration_TypeTermDecl) {
+      protoDeclaration_TypeTermDecl.initHashCode(annos,fun,args);
+      return (Declaration) build(protoDeclaration_TypeTermDecl);
+    }
+  }
+
+  public Declaration makeDeclaration_TypeTermDecl(TomName _astName, TomList _keywordList, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _keywordList, _orgTrack};
+    return makeDeclaration_TypeTermDecl( funDeclaration_TypeTermDecl, args, empty);
+  }
+
+  protected Declaration makeDeclaration_TypeListDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoDeclaration_TypeListDecl) {
+      protoDeclaration_TypeListDecl.initHashCode(annos,fun,args);
+      return (Declaration) build(protoDeclaration_TypeListDecl);
+    }
+  }
+
+  public Declaration makeDeclaration_TypeListDecl(TomName _astName, TomList _keywordList, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _keywordList, _orgTrack};
+    return makeDeclaration_TypeListDecl( funDeclaration_TypeListDecl, args, empty);
+  }
+
+  protected Declaration makeDeclaration_TypeArrayDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoDeclaration_TypeArrayDecl) {
+      protoDeclaration_TypeArrayDecl.initHashCode(annos,fun,args);
+      return (Declaration) build(protoDeclaration_TypeArrayDecl);
+    }
+  }
+
+  public Declaration makeDeclaration_TypeArrayDecl(TomName _astName, TomList _keywordList, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _keywordList, _orgTrack};
+    return makeDeclaration_TypeArrayDecl( funDeclaration_TypeArrayDecl, args, empty);
   }
 
   protected Declaration makeDeclaration_GetFunctionSymbolDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -813,8 +901,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_GetFunctionSymbolDecl(TomTerm _termArg, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_termArg, _tlCode};
+  public Declaration makeDeclaration_GetFunctionSymbolDecl(TomTerm _termArg, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_termArg, _tlCode, _orgTrack};
     return makeDeclaration_GetFunctionSymbolDecl( funDeclaration_GetFunctionSymbolDecl, args, empty);
   }
 
@@ -825,8 +913,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_GetSubtermDecl(TomTerm _termArg, TomTerm _numberArg, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_termArg, _numberArg, _tlCode};
+  public Declaration makeDeclaration_GetSubtermDecl(TomTerm _termArg, TomTerm _numberArg, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_termArg, _numberArg, _tlCode, _orgTrack};
     return makeDeclaration_GetSubtermDecl( funDeclaration_GetSubtermDecl, args, empty);
   }
 
@@ -837,8 +925,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_IsFsymDecl(TomName _astName, TomTerm _term, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _term, _tlCode};
+  public Declaration makeDeclaration_IsFsymDecl(TomName _astName, TomTerm _term, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _term, _tlCode, _orgTrack};
     return makeDeclaration_IsFsymDecl( funDeclaration_IsFsymDecl, args, empty);
   }
 
@@ -849,8 +937,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_GetSlotDecl(TomName _astName, TomTerm _slotName, TomTerm _term, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _slotName, _term, _tlCode};
+  public Declaration makeDeclaration_GetSlotDecl(TomName _astName, TomName _slotName, TomTerm _term, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _slotName, _term, _tlCode, _orgTrack};
     return makeDeclaration_GetSlotDecl( funDeclaration_GetSlotDecl, args, empty);
   }
 
@@ -861,8 +949,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_CompareFunctionSymbolDecl(TomTerm _symbolArg1, TomTerm _symbolArg2, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_symbolArg1, _symbolArg2, _tlCode};
+  public Declaration makeDeclaration_CompareFunctionSymbolDecl(TomTerm _symbolArg1, TomTerm _symbolArg2, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_symbolArg1, _symbolArg2, _tlCode, _orgTrack};
     return makeDeclaration_CompareFunctionSymbolDecl( funDeclaration_CompareFunctionSymbolDecl, args, empty);
   }
 
@@ -873,8 +961,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_TermsEqualDecl(TomTerm _termArg1, TomTerm _termArg2, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_termArg1, _termArg2, _tlCode};
+  public Declaration makeDeclaration_TermsEqualDecl(TomTerm _termArg1, TomTerm _termArg2, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_termArg1, _termArg2, _tlCode, _orgTrack};
     return makeDeclaration_TermsEqualDecl( funDeclaration_TermsEqualDecl, args, empty);
   }
 
@@ -885,8 +973,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_GetHeadDecl(TomTerm _var, TargetLanguage _tlcode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode};
+  public Declaration makeDeclaration_GetHeadDecl(TomTerm _var, TargetLanguage _tlcode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode, _orgTrack};
     return makeDeclaration_GetHeadDecl( funDeclaration_GetHeadDecl, args, empty);
   }
 
@@ -897,8 +985,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_GetTailDecl(TomTerm _var, TargetLanguage _tlcode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode};
+  public Declaration makeDeclaration_GetTailDecl(TomTerm _var, TargetLanguage _tlcode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode, _orgTrack};
     return makeDeclaration_GetTailDecl( funDeclaration_GetTailDecl, args, empty);
   }
 
@@ -909,8 +997,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_IsEmptyDecl(TomTerm _var, TargetLanguage _tlcode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode};
+  public Declaration makeDeclaration_IsEmptyDecl(TomTerm _var, TargetLanguage _tlcode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_var, _tlcode, _orgTrack};
     return makeDeclaration_IsEmptyDecl( funDeclaration_IsEmptyDecl, args, empty);
   }
 
@@ -921,8 +1009,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_MakeEmptyList(TomName _astName, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _tlCode};
+  public Declaration makeDeclaration_MakeEmptyList(TomName _astName, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _tlCode, _orgTrack};
     return makeDeclaration_MakeEmptyList( funDeclaration_MakeEmptyList, args, empty);
   }
 
@@ -933,8 +1021,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_MakeAddList(TomName _astName, TomTerm _varElt, TomTerm _varList, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode};
+  public Declaration makeDeclaration_MakeAddList(TomName _astName, TomTerm _varElt, TomTerm _varList, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode, _orgTrack};
     return makeDeclaration_MakeAddList( funDeclaration_MakeAddList, args, empty);
   }
 
@@ -945,8 +1033,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_GetElementDecl(TomTerm _kid1, TomTerm _kid2, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2, _tlCode};
+  public Declaration makeDeclaration_GetElementDecl(TomTerm _kid1, TomTerm _kid2, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _kid2, _tlCode, _orgTrack};
     return makeDeclaration_GetElementDecl( funDeclaration_GetElementDecl, args, empty);
   }
 
@@ -957,8 +1045,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_GetSizeDecl(TomTerm _kid1, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _tlCode};
+  public Declaration makeDeclaration_GetSizeDecl(TomTerm _kid1, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_kid1, _tlCode, _orgTrack};
     return makeDeclaration_GetSizeDecl( funDeclaration_GetSizeDecl, args, empty);
   }
 
@@ -969,8 +1057,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_MakeEmptyArray(TomName _astName, TomTerm _varSize, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varSize, _tlCode};
+  public Declaration makeDeclaration_MakeEmptyArray(TomName _astName, TomTerm _varSize, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varSize, _tlCode, _orgTrack};
     return makeDeclaration_MakeEmptyArray( funDeclaration_MakeEmptyArray, args, empty);
   }
 
@@ -981,8 +1069,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_MakeAddArray(TomName _astName, TomTerm _varElt, TomTerm _varList, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode};
+  public Declaration makeDeclaration_MakeAddArray(TomName _astName, TomTerm _varElt, TomTerm _varList, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _varElt, _varList, _tlCode, _orgTrack};
     return makeDeclaration_MakeAddArray( funDeclaration_MakeAddArray, args, empty);
   }
 
@@ -993,8 +1081,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Declaration makeDeclaration_MakeDecl(TomName _astName, TomType _astType, TomList _args, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _astType, _args, _tlCode};
+  public Declaration makeDeclaration_MakeDecl(TomName _astName, TomType _astType, TomList _args, TargetLanguage _tlCode, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _astType, _args, _tlCode, _orgTrack};
     return makeDeclaration_MakeDecl( funDeclaration_MakeDecl, args, empty);
   }
 
@@ -1008,6 +1096,42 @@ public class TomSignatureFactory extends PureFactory
   public Declaration makeDeclaration_SymbolDecl(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
     return makeDeclaration_SymbolDecl( funDeclaration_SymbolDecl, args, empty);
+  }
+
+  protected Declaration makeDeclaration_ListSymbolDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoDeclaration_ListSymbolDecl) {
+      protoDeclaration_ListSymbolDecl.initHashCode(annos,fun,args);
+      return (Declaration) build(protoDeclaration_ListSymbolDecl);
+    }
+  }
+
+  public Declaration makeDeclaration_ListSymbolDecl(TomName _astName) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName};
+    return makeDeclaration_ListSymbolDecl( funDeclaration_ListSymbolDecl, args, empty);
+  }
+
+  protected Declaration makeDeclaration_ArraySymbolDecl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoDeclaration_ArraySymbolDecl) {
+      protoDeclaration_ArraySymbolDecl.initHashCode(annos,fun,args);
+      return (Declaration) build(protoDeclaration_ArraySymbolDecl);
+    }
+  }
+
+  public Declaration makeDeclaration_ArraySymbolDecl(TomName _astName) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName};
+    return makeDeclaration_ArraySymbolDecl( funDeclaration_ArraySymbolDecl, args, empty);
+  }
+
+  protected Declaration makeDeclaration_EmptyDeclaration(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoDeclaration_EmptyDeclaration) {
+      protoDeclaration_EmptyDeclaration.initHashCode(annos,fun,args);
+      return (Declaration) build(protoDeclaration_EmptyDeclaration);
+    }
+  }
+
+  public Declaration makeDeclaration_EmptyDeclaration() {
+    aterm.ATerm[] args = new aterm.ATerm[] {};
+    return makeDeclaration_EmptyDeclaration( funDeclaration_EmptyDeclaration, args, empty);
   }
 
   protected OptionList makeOptionList_EmptyOptionList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -1116,18 +1240,6 @@ public class TomSignatureFactory extends PureFactory
   public Option makeOption_LRParen(TomName _astName) {
     aterm.ATerm[] args = new aterm.ATerm[] {_astName};
     return makeOption_LRParen( funOption_LRParen, args, empty);
-  }
-
-  protected Option makeOption_SlotList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoOption_SlotList) {
-      protoOption_SlotList.initHashCode(annos,fun,args);
-      return (Option) build(protoOption_SlotList);
-    }
-  }
-
-  public Option makeOption_SlotList(TomList _list) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_list};
-    return makeOption_SlotList( funOption_SlotList, args, empty);
   }
 
   protected Expression makeExpression_TomTermToExpression(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -1730,28 +1842,16 @@ public class TomSignatureFactory extends PureFactory
     return makeTomTerm_RecordAppl( funTomTerm_RecordAppl, args, empty);
   }
 
-  protected TomTerm makeTomTerm_Pair(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_Pair) {
-      protoTomTerm_Pair.initHashCode(annos,fun,args);
-      return (TomTerm) build(protoTomTerm_Pair);
+  protected TomTerm makeTomTerm_PairSlotAppl(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_PairSlotAppl) {
+      protoTomTerm_PairSlotAppl.initHashCode(annos,fun,args);
+      return (TomTerm) build(protoTomTerm_PairSlotAppl);
     }
   }
 
-  public TomTerm makeTomTerm_Pair(TomTerm _slotName, TomTerm _appl) {
+  public TomTerm makeTomTerm_PairSlotAppl(TomName _slotName, TomTerm _appl) {
     aterm.ATerm[] args = new aterm.ATerm[] {_slotName, _appl};
-    return makeTomTerm_Pair( funTomTerm_Pair, args, empty);
-  }
-
-  protected TomTerm makeTomTerm_SlotName(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_SlotName) {
-      protoTomTerm_SlotName.initHashCode(annos,fun,args);
-      return (TomTerm) build(protoTomTerm_SlotName);
-    }
-  }
-
-  public TomTerm makeTomTerm_SlotName(String _string) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_string, 0, true))};
-    return makeTomTerm_SlotName( funTomTerm_SlotName, args, empty);
+    return makeTomTerm_PairSlotAppl( funTomTerm_PairSlotAppl, args, empty);
   }
 
   protected TomTerm makeTomTerm_Match(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -1761,8 +1861,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm makeTomTerm_Match(Option _option, TomTerm _kid1, TomTerm _kid2) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_option, _kid1, _kid2};
+  public TomTerm makeTomTerm_Match(Option _option, TomTerm _subjectList, TomTerm _patternList) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_option, _subjectList, _patternList};
     return makeTomTerm_Match( funTomTerm_Match, args, empty);
   }
 
@@ -1797,8 +1897,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm makeTomTerm_RuleSet(TomList _list) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_list};
+  public TomTerm makeTomTerm_RuleSet(Option _option, TomList _list) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_option, _list};
     return makeTomTerm_RuleSet( funTomTerm_RuleSet, args, empty);
   }
 
@@ -2258,6 +2358,18 @@ public class TomSignatureFactory extends PureFactory
     return makeTomName_PositionName( funTomName_PositionName, args, empty);
   }
 
+  protected TomName makeTomName_EmptyName(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomName_EmptyName) {
+      protoTomName_EmptyName.initHashCode(annos,fun,args);
+      return (TomName) build(protoTomName_EmptyName);
+    }
+  }
+
+  public TomName makeTomName_EmptyName() {
+    aterm.ATerm[] args = new aterm.ATerm[] {};
+    return makeTomName_EmptyName( funTomName_EmptyName, args, empty);
+  }
+
   protected TomSymbol makeTomSymbol_Symbol(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
     synchronized (protoTomSymbol_Symbol) {
       protoTomSymbol_Symbol.initHashCode(annos,fun,args);
@@ -2265,8 +2377,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomSymbol makeTomSymbol_Symbol(TomName _astName, TomType _typesToType, Option _option, TargetLanguage _tlCode) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _typesToType, _option, _tlCode};
+  public TomSymbol makeTomSymbol_Symbol(TomName _astName, TomType _typesToType, SlotList _slotList, Option _option, TargetLanguage _tlCode) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _typesToType, _slotList, _option, _tlCode};
     return makeTomSymbol_Symbol( funTomSymbol_Symbol, args, empty);
   }
 
@@ -2316,6 +2428,42 @@ public class TomSignatureFactory extends PureFactory
   public TomEntry makeTomEntry_Entry(String _strName, TomSymbol _astSymbol) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_strName, 0, true)), _astSymbol};
     return makeTomEntry_Entry( funTomEntry_Entry, args, empty);
+  }
+
+  protected SlotList makeSlotList_EmptySlotList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoSlotList_EmptySlotList) {
+      protoSlotList_EmptySlotList.initHashCode(annos,fun,args);
+      return (SlotList) build(protoSlotList_EmptySlotList);
+    }
+  }
+
+  public SlotList makeSlotList_EmptySlotList() {
+    aterm.ATerm[] args = new aterm.ATerm[] {};
+    return makeSlotList_EmptySlotList( funSlotList_EmptySlotList, args, empty);
+  }
+
+  protected SlotList makeSlotList_ConsSlotList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoSlotList_ConsSlotList) {
+      protoSlotList_ConsSlotList.initHashCode(annos,fun,args);
+      return (SlotList) build(protoSlotList_ConsSlotList);
+    }
+  }
+
+  public SlotList makeSlotList_ConsSlotList(PairNameDecl _headSlotList, SlotList _tailSlotList) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_headSlotList, _tailSlotList};
+    return makeSlotList_ConsSlotList( funSlotList_ConsSlotList, args, empty);
+  }
+
+  protected PairNameDecl makePairNameDecl_Slot(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoPairNameDecl_Slot) {
+      protoPairNameDecl_Slot.initHashCode(annos,fun,args);
+      return (PairNameDecl) build(protoPairNameDecl_Slot);
+    }
+  }
+
+  public PairNameDecl makePairNameDecl_Slot(TomName _slotName, Declaration _slotDecl) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_slotName, _slotDecl};
+    return makePairNameDecl_Slot( funPairNameDecl_Slot, args, empty);
   }
 
 }

@@ -31,7 +31,6 @@ import aterm.*;
 import aterm.pure.*;
 import jtom.*;
 import jtom.tools.*;
-import jtom.verifier.*;
 import jtom.exception.*;
 import jtom.adt.*;
 

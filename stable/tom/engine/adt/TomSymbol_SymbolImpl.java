@@ -12,8 +12,9 @@ extends TomSymbol
   }
   private static int index_astName = 0;
   private static int index_typesToType = 1;
-  private static int index_option = 2;
-  private static int index_tlCode = 3;
+  private static int index_slotList = 2;
+  private static int index_option = 3;
+  private static int index_tlCode = 4;
 
   public shared.SharedObject duplicate() {
     TomSymbol_Symbol clone = new TomSymbol_Symbol();
@@ -26,7 +27,7 @@ extends TomSymbol
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("Symbol(<term>,<term>,<term>,<term>)");
+    pattern = getStaticFactory().parse("Symbol(<term>,<term>,<term>,<term>,<term>)");
   }
 
 
@@ -35,7 +36,7 @@ extends TomSymbol
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomSymbol tmp = getStaticTomSignatureFactory().makeTomSymbol_Symbol(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomType.fromTerm( (aterm.ATerm) children.get(1)), Option.fromTerm( (aterm.ATerm) children.get(2)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(3)));
+      TomSymbol tmp = getStaticTomSignatureFactory().makeTomSymbol_Symbol(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomType.fromTerm( (aterm.ATerm) children.get(1)), SlotList.fromTerm( (aterm.ATerm) children.get(2)), Option.fromTerm( (aterm.ATerm) children.get(3)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(4)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -55,6 +56,11 @@ extends TomSymbol
   }
 
   public boolean hasTypesToType()
+  {
+    return true;
+  }
+
+  public boolean hasSlotList()
   {
     return true;
   }
@@ -90,6 +96,16 @@ extends TomSymbol
     return (TomSymbol) super.setArgument(_typesToType, index_typesToType);
   }
 
+  public SlotList getSlotList()
+  {
+    return (SlotList) this.getArgument(index_slotList) ;
+  }
+
+  public TomSymbol setSlotList(SlotList _slotList)
+  {
+    return (TomSymbol) super.setArgument(_slotList, index_slotList);
+  }
+
   public Option getOption()
   {
     return (Option) this.getArgument(index_option) ;
@@ -123,13 +139,18 @@ extends TomSymbol
         }
         break;
       case 2:
-        if (! (arg instanceof Option)) { 
-          throw new RuntimeException("Argument 2 of a TomSymbol_Symbol should have type Option");
+        if (! (arg instanceof SlotList)) { 
+          throw new RuntimeException("Argument 2 of a TomSymbol_Symbol should have type SlotList");
         }
         break;
       case 3:
+        if (! (arg instanceof Option)) { 
+          throw new RuntimeException("Argument 3 of a TomSymbol_Symbol should have type Option");
+        }
+        break;
+      case 4:
         if (! (arg instanceof TargetLanguage)) { 
-          throw new RuntimeException("Argument 3 of a TomSymbol_Symbol should have type TargetLanguage");
+          throw new RuntimeException("Argument 4 of a TomSymbol_Symbol should have type TargetLanguage");
         }
         break;
       default: throw new RuntimeException("TomSymbol_Symbol does not have an argument at " + i );
@@ -141,6 +162,7 @@ extends TomSymbol
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
     int b = 0x9e3779b9;
+    b += (getArgument(4).hashCode() << 0);
     a += (getArgument(3).hashCode() << 24);
     a += (getArgument(2).hashCode() << 16);
     a += (getArgument(1).hashCode() << 8);

@@ -27,6 +27,18 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
   public static Declaration fromTerm(aterm.ATerm trm)
   {
     Declaration tmp;
+    if ((tmp = Declaration_TypeTermDecl.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = Declaration_TypeListDecl.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = Declaration_TypeArrayDecl.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
     if ((tmp = Declaration_GetFunctionSymbolDecl.fromTerm(trm)) != null) {
       return tmp;
     }
@@ -95,10 +107,37 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
       return tmp;
     }
 
+    if ((tmp = Declaration_ListSymbolDecl.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = Declaration_ArraySymbolDecl.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = Declaration_EmptyDeclaration.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
 
     throw new RuntimeException("This is not a Declaration: " + trm);
   }
 
+
+  public boolean isTypeTermDecl()
+  {
+    return false;
+  }
+
+  public boolean isTypeListDecl()
+  {
+    return false;
+  }
+
+  public boolean isTypeArrayDecl()
+  {
+    return false;
+  }
 
   public boolean isGetFunctionSymbolDecl()
   {
@@ -185,6 +224,36 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isListSymbolDecl()
+  {
+    return false;
+  }
+
+  public boolean isArraySymbolDecl()
+  {
+    return false;
+  }
+
+  public boolean isEmptyDeclaration()
+  {
+    return false;
+  }
+
+  public boolean hasAstName()
+  {
+    return false;
+  }
+
+  public boolean hasKeywordList()
+  {
+    return false;
+  }
+
+  public boolean hasOrgTrack()
+  {
+    return false;
+  }
+
   public boolean hasTermArg()
   {
     return false;
@@ -196,11 +265,6 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
   }
 
   public boolean hasNumberArg()
-  {
-    return false;
-  }
-
-  public boolean hasAstName()
   {
     return false;
   }
@@ -281,6 +345,36 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
   }
 
 
+  public TomName getAstName()
+  {
+     throw new RuntimeException("This Declaration has no AstName");
+  }
+
+  public Declaration setAstName(TomName _astName)
+  {
+     throw new RuntimeException("This Declaration has no AstName");
+  }
+
+  public TomList getKeywordList()
+  {
+     throw new RuntimeException("This Declaration has no KeywordList");
+  }
+
+  public Declaration setKeywordList(TomList _keywordList)
+  {
+     throw new RuntimeException("This Declaration has no KeywordList");
+  }
+
+  public Option getOrgTrack()
+  {
+     throw new RuntimeException("This Declaration has no OrgTrack");
+  }
+
+  public Declaration setOrgTrack(Option _orgTrack)
+  {
+     throw new RuntimeException("This Declaration has no OrgTrack");
+  }
+
   public TomTerm getTermArg()
   {
      throw new RuntimeException("This Declaration has no TermArg");
@@ -311,16 +405,6 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
      throw new RuntimeException("This Declaration has no NumberArg");
   }
 
-  public TomName getAstName()
-  {
-     throw new RuntimeException("This Declaration has no AstName");
-  }
-
-  public Declaration setAstName(TomName _astName)
-  {
-     throw new RuntimeException("This Declaration has no AstName");
-  }
-
   public TomTerm getTerm()
   {
      throw new RuntimeException("This Declaration has no Term");
@@ -331,12 +415,12 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
      throw new RuntimeException("This Declaration has no Term");
   }
 
-  public TomTerm getSlotName()
+  public TomName getSlotName()
   {
      throw new RuntimeException("This Declaration has no SlotName");
   }
 
-  public Declaration setSlotName(TomTerm _slotName)
+  public Declaration setSlotName(TomName _slotName)
   {
      throw new RuntimeException("This Declaration has no SlotName");
   }

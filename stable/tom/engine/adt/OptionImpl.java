@@ -55,10 +55,6 @@ abstract public class OptionImpl extends TomSignatureConstructor
       return tmp;
     }
 
-    if ((tmp = Option_SlotList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
 
     throw new RuntimeException("This is not a Option: " + trm);
   }
@@ -99,11 +95,6 @@ abstract public class OptionImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isSlotList()
-  {
-    return false;
-  }
-
   public boolean hasAstDeclaration()
   {
     return false;
@@ -125,11 +116,6 @@ abstract public class OptionImpl extends TomSignatureConstructor
   }
 
   public boolean hasLine()
-  {
-    return false;
-  }
-
-  public boolean hasList()
   {
     return false;
   }
@@ -183,16 +169,6 @@ abstract public class OptionImpl extends TomSignatureConstructor
   public Option setLine(TomTerm _line)
   {
      throw new RuntimeException("This Option has no Line");
-  }
-
-  public TomList getList()
-  {
-     throw new RuntimeException("This Option has no List");
-  }
-
-  public Option setList(TomList _list)
-  {
-     throw new RuntimeException("This Option has no List");
   }
 
 

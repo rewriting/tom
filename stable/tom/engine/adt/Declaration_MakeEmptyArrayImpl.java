@@ -13,6 +13,7 @@ extends Declaration
   private static int index_astName = 0;
   private static int index_varSize = 1;
   private static int index_tlCode = 2;
+  private static int index_orgTrack = 3;
 
   public shared.SharedObject duplicate() {
     Declaration_MakeEmptyArray clone = new Declaration_MakeEmptyArray();
@@ -25,7 +26,7 @@ extends Declaration
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("MakeEmptyArray(<term>,<term>,<term>)");
+    pattern = getStaticFactory().parse("MakeEmptyArray(<term>,<term>,<term>,<term>)");
   }
 
 
@@ -34,7 +35,7 @@ extends Declaration
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_MakeEmptyArray(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(2)));
+      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_MakeEmptyArray(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(2)), Option.fromTerm( (aterm.ATerm) children.get(3)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -59,6 +60,11 @@ extends Declaration
   }
 
   public boolean hasTlCode()
+  {
+    return true;
+  }
+
+  public boolean hasOrgTrack()
   {
     return true;
   }
@@ -94,6 +100,16 @@ extends Declaration
     return (Declaration) super.setArgument(_tlCode, index_tlCode);
   }
 
+  public Option getOrgTrack()
+  {
+    return (Option) this.getArgument(index_orgTrack) ;
+  }
+
+  public Declaration setOrgTrack(Option _orgTrack)
+  {
+    return (Declaration) super.setArgument(_orgTrack, index_orgTrack);
+  }
+
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
@@ -111,6 +127,11 @@ extends Declaration
           throw new RuntimeException("Argument 2 of a Declaration_MakeEmptyArray should have type TargetLanguage");
         }
         break;
+      case 3:
+        if (! (arg instanceof Option)) { 
+          throw new RuntimeException("Argument 3 of a Declaration_MakeEmptyArray should have type Option");
+        }
+        break;
       default: throw new RuntimeException("Declaration_MakeEmptyArray does not have an argument at " + i );
     }
     return super.setArgument(arg, i);
@@ -120,6 +141,7 @@ extends Declaration
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
     int b = 0x9e3779b9;
+    a += (getArgument(3).hashCode() << 24);
     a += (getArgument(2).hashCode() << 16);
     a += (getArgument(1).hashCode() << 8);
     a += (getArgument(0).hashCode() << 0);

@@ -14,6 +14,7 @@ extends Declaration
   private static int index_slotName = 1;
   private static int index_term = 2;
   private static int index_tlCode = 3;
+  private static int index_orgTrack = 4;
 
   public shared.SharedObject duplicate() {
     Declaration_GetSlotDecl clone = new Declaration_GetSlotDecl();
@@ -26,7 +27,7 @@ extends Declaration
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("GetSlotDecl(<term>,<term>,<term>,<term>)");
+    pattern = getStaticFactory().parse("GetSlotDecl(<term>,<term>,<term>,<term>,<term>)");
   }
 
 
@@ -35,7 +36,7 @@ extends Declaration
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetSlotDecl(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(3)));
+      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetSlotDecl(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomName.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(3)), Option.fromTerm( (aterm.ATerm) children.get(4)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -69,6 +70,11 @@ extends Declaration
     return true;
   }
 
+  public boolean hasOrgTrack()
+  {
+    return true;
+  }
+
 
   public TomName getAstName()
   {
@@ -80,12 +86,12 @@ extends Declaration
     return (Declaration) super.setArgument(_astName, index_astName);
   }
 
-  public TomTerm getSlotName()
+  public TomName getSlotName()
   {
-    return (TomTerm) this.getArgument(index_slotName) ;
+    return (TomName) this.getArgument(index_slotName) ;
   }
 
-  public Declaration setSlotName(TomTerm _slotName)
+  public Declaration setSlotName(TomName _slotName)
   {
     return (Declaration) super.setArgument(_slotName, index_slotName);
   }
@@ -110,6 +116,16 @@ extends Declaration
     return (Declaration) super.setArgument(_tlCode, index_tlCode);
   }
 
+  public Option getOrgTrack()
+  {
+    return (Option) this.getArgument(index_orgTrack) ;
+  }
+
+  public Declaration setOrgTrack(Option _orgTrack)
+  {
+    return (Declaration) super.setArgument(_orgTrack, index_orgTrack);
+  }
+
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
@@ -118,8 +134,8 @@ extends Declaration
         }
         break;
       case 1:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 1 of a Declaration_GetSlotDecl should have type TomTerm");
+        if (! (arg instanceof TomName)) { 
+          throw new RuntimeException("Argument 1 of a Declaration_GetSlotDecl should have type TomName");
         }
         break;
       case 2:
@@ -132,6 +148,11 @@ extends Declaration
           throw new RuntimeException("Argument 3 of a Declaration_GetSlotDecl should have type TargetLanguage");
         }
         break;
+      case 4:
+        if (! (arg instanceof Option)) { 
+          throw new RuntimeException("Argument 4 of a Declaration_GetSlotDecl should have type Option");
+        }
+        break;
       default: throw new RuntimeException("Declaration_GetSlotDecl does not have an argument at " + i );
     }
     return super.setArgument(arg, i);
@@ -141,6 +162,7 @@ extends Declaration
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
     int b = 0x9e3779b9;
+    b += (getArgument(4).hashCode() << 0);
     a += (getArgument(3).hashCode() << 24);
     a += (getArgument(2).hashCode() << 16);
     a += (getArgument(1).hashCode() << 8);

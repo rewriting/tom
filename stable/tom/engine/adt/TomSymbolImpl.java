@@ -51,6 +51,11 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean hasSlotList()
+  {
+    return false;
+  }
+
   public boolean hasOption()
   {
     return false;
@@ -80,6 +85,16 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
   public TomSymbol setTypesToType(TomType _typesToType)
   {
      throw new RuntimeException("This TomSymbol has no TypesToType");
+  }
+
+  public SlotList getSlotList()
+  {
+     throw new RuntimeException("This TomSymbol has no SlotList");
+  }
+
+  public TomSymbol setSlotList(SlotList _slotList)
+  {
+     throw new RuntimeException("This TomSymbol has no SlotList");
   }
 
   public Option getOption()

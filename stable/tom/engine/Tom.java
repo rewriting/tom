@@ -40,7 +40,7 @@ import jtom.exception.*;
 import jtom.adt.*;
 
 public class Tom {
-  private static String version = "1.1";
+  private static String version = "1.2beta";
   
     private static void usage() {
     System.out.println("Tom usage:");
@@ -158,8 +158,6 @@ public class Tom {
 						    astFactory,
 						    symbolTable,
 						    statistics);  
-    
-    TomVerifier  tomVerifier = new TomVerifier(environment);
 	
     String inputFileName = "";
 
@@ -200,11 +198,9 @@ public class Tom {
           fileList[index++] = (File)it.next();
         }
         
-        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,tomVerifier,fileList);
-
+        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList);
         startChrono();
         parsedTerm = tomParser.startParsing();
-        tomParser.updateSymbol();
         stopChrono();
         if(Flags.verbose) System.out.println("TOM parsing phase " + getChrono());
         if(Flags.intermediate) {
@@ -212,7 +208,15 @@ public class Tom {
           generateOutput(fileName + parsedTableSuffix,symbolTable.toTerm());
         }
         
-	TomChecker tomChecker = new TomChecker(environment,tomVerifier);
+        TomVerifier  tomVerifier = new TomVerifier(environment);
+        startChrono();
+        tomVerifier.verify(parsedTerm);
+        tomParser.updateSymbol();
+        stopChrono();
+        if(Flags.verbose) System.out.println("TOM verification phase " + getChrono());
+
+        
+	TomChecker tomChecker = new TomChecker(environment);
         startChrono();
         expandedTerm = tomChecker.expand(parsedTerm);
         stopChrono();
@@ -220,7 +224,7 @@ public class Tom {
         if(Flags.intermediate) {
           generateOutput(fileName + expandedSuffix,expandedTerm);
         }
-        
+     
         startChrono();
         TomTerm context = null;
         tomChecker.updateSymbolPass1();
@@ -243,16 +247,21 @@ public class Tom {
         System.out.println("No file generated.");
         return;
       } catch(ParseException e1) {
-        System.out.println(e1.getMessage());
+        System.out.println(e1);
         System.out.println("Tom Parser:  Encountered errors during parsing.");
         System.out.println("No file generated.");
         return;
-	} catch(TomException e2) {
+      } catch(CheckErrorException e2) {
         System.out.println(e2);
+        System.out.println("Tom Verifier:  Encountered errors during verification phase.");
+        System.out.println("No file generated.");
+        return;
+      } catch(TomException e3) {
+        System.out.println(e3);
         System.out.println("Tom:  Encountered errors during compilation.");
         System.out.println("No file generated.");
         return;
-      } catch(IOException e) {
+      } catch(IOException e4) {
         System.out.println("No file generated.");
         throw new InternalError("read error");
       }
@@ -264,7 +273,7 @@ public class Tom {
        */
 
     if(Flags.findErrors) {
-      System.out.println("*** ERRORS");
+      System.out.println("\n*** ERRORS");
       System.out.println("*** COMPILATION ABORTED");
       System.out.println("No file generated.");
       System.exit(0);
@@ -302,7 +311,9 @@ public class Tom {
           statistics.initInfoCompiler();
           statistics.initInfoGenerator();
         }
-
+      } catch(TomException e) {
+        System.out.println(e);
+        System.out.println("No file generated.");
       } catch(IOException e) {
         System.out.println("No file generated.");
         throw new InternalError("read error");
