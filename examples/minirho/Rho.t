@@ -67,7 +67,7 @@ package minirho;
 			 appSc(subst:Constraint,co:Constraint) -> Constraint //Substition application on constraints
 			 match(pa:RTerm,rhs:RTerm) -> Constraint
 			 eq(var:RTerm,rhs:RTerm) -> Constraint
-			 concConstraint( Constraint* ) -> ListConstraint
+			 and( Constraint* ) -> ListConstraint
 
 //AUXILARY: not strictly speaking needed: use to check if the head of an application tree is a constructor
 			 matchH(pa:RTerm,rhs:RTerm) -> Constraint
@@ -92,7 +92,7 @@ package minirho;
 							
 						//rho 
 						app(abs(P,M),N)-> {	
-						    return `appC(concConstraint(match(P,N)),M) ;
+						    return `appC(and(match(P,N)),M) ;
 						}		
 						//delta
 						app(struct(M1,M2),N) -> { 
@@ -100,7 +100,7 @@ package minirho;
 						}
 						//Decompose struct
 						appC((Phi*,match(struct(M1,M2),struct(N1,N2)),Psi*),N) ->{
-							return `appC(concConstraint(Phi*,match(M1,N1),match(M2,N2),Psi*),N);
+							return `appC(and(Phi*,match(M1,N1),match(M2,N2),Psi*),N);
 							
 						}
 						//Decompose F n>0
@@ -115,23 +115,23 @@ package minirho;
 									break l;}//no ,still one matchH
 							}
 							//2. on calcule le resultat a retourner.
-							res= `concConstraint(co);
+							res= `and(co);
 							res = computeMatch(res);
-							tmp = `appC(concConstraint(Phi*,res*,Psi*),N);
+							tmp = `appC(and(Phi*,res*,Psi*),N);
 							System.out.println("Je sors de decompose");
 							return tmp;
 						}
 						//Decompose F n = 0
 						appC((Phi*,match(f@const[],f),Psi*),N) -> {
-							return `appC(concConstraint(Phi*,Psi*),N);
+							return `appC(and(Phi*,Psi*),N);
 						}
 						//ToSubst
 						appC((Phi*,match(X@var[],M),Xsi*),N) -> {
-							return `appC(concConstraint(Phi*,Xsi*),appC(concConstraint(eq(X,M)),N));
+							return `appC(and(Phi*,Xsi*),appC(and(eq(X,M)),N));
 						}
 						//Idem
 						appC((Phi*,m@match(X@var[],M),Tau*,match(X@var[],M),Psi*),N) -> {
-							return 	`appC(concConstraint(Phi*,m,Tau*,Psi*),N);
+							return 	`appC(and(Phi*,m,Tau*,Psi*),N);
 						}
 						//Id
 						appC((),M) -> { 
@@ -151,15 +151,15 @@ package minirho;
 						}
 						//AbsShare: ALPHA-CONVERSION
 						appC((Phi*,e@eq(var[],_),Psi*),abs(P,M)) -> {
-							return `abs(P,appC(concConstraint(Phi*,e,Psi*),M));
+							return `abs(P,appC(and(Phi*,e,Psi*),M));
 						}
 						//AppShare
 						appC((Phi*,e@eq(var[],_),Psi*),app(M,N)) -> {
-							return `app(appC(concConstraint(Phi*,e,Psi*),M),appC(concConstraint(Phi*,e,Psi*),N));
+							return `app(appC(and(Phi*,e,Psi*),M),appC(and(Phi*,e,Psi*),N));
 						}
 						//StructShare
 						appC((Phi*,e@eq(var[],_),Psi*),struct(M,N)) -> {
-							return `struct(appC(concConstraint(Phi*,e,Psi*),M),appC(concConstraint(Phi*,e,Psi*),N));
+							return `struct(appC(and(Phi*,e,Psi*),M),appC(and(Phi*,e,Psi*),N));
 						}
 						//MatchShare
 						appC(l1@(Phi*,eq(var[],_),Psi*),appC(l2@(Phi1*,match(P,M),Psi1*),N)) -> {
@@ -170,7 +170,7 @@ package minirho;
 						appC(l1@(Phi*,e@eq(var[],M),Psi*),appC(l2@(Phi1*,eq(var[],M1),Psi1*),N)) -> {
 							res = mapC(l1,l2);
 							System.out.println("resultat de mapC   "+ res);
-							return `appC(concConstraint(l1*,res*),N);
+							return `appC(and(l1*,res*),N);
 						}
 
 
@@ -192,15 +192,15 @@ package minirho;
 		 ListConstraint tmp;
 		 %match(ListConstraint l2){
 			 () -> {
-				 return `concConstraint();
+				 return `and();
 			 }
 			 (eq(X@var[],M),Phi*) -> {
 				 tmp = mapC(l1,Phi);
-				 return `concConstraint(eq(X,appC(l1,M)),tmp*);
+				 return `and(eq(X,appC(l1,M)),tmp*);
 			 }
 			 (match(P,M),Phi*) -> {
 				 tmp = mapC(l1,Phi);
-				 return `concConstraint(match(P,appC(l1,M)),tmp*);
+				 return `and(match(P,appC(l1,M)),tmp*);
 			 }
 				 _ -> {
 					 System.out.println("please extend the function mapC");
@@ -248,17 +248,17 @@ package minirho;
 			 (X*,match(app(const[],A),app(const[],B)),Y*) -> {
 				 res = (ListConstraint)computeMatch(Y);							 
 				 res1 = (ListConstraint)computeMatch(X);						
-				 ListConstraint tmp = `concConstraint(match(A,B));
-				 return `concConstraint(res1*,match(A,B),res*);
+				 ListConstraint tmp = `and(match(A,B));
+				 return `and(res1*,match(A,B),res*);
 			 }
 			 (X*,match(app(A1,A2),app(B1,B2)),Y*) -> {
 				 res1 = (ListConstraint)computeMatch(Y);
 				 res1b = (ListConstraint)computeMatch(X);
-				 res = `concConstraint(match(A1,B1));
+				 res = `and(match(A1,B1));
 				 res2 = (ListConstraint)computeMatch(res);
-				 res = `concConstraint(match(A2,B2));
+				 res = `and(match(A2,B2));
 				 res3 = (ListConstraint)computeMatch(res);
-				 return `concConstraint(res1b*,res2*,res3*,res1*);
+				 return `and(res1b*,res2*,res3*,res1*);
 			 }
 			 _ -> {//System.out.println("Please extend computeMatch!");
 				 //System.exit(0);
@@ -271,7 +271,7 @@ package minirho;
 		 RTerm resu;
 		 String s;
 		 System.out.println(" ******************************************************************\n RomCal: an implementation of the explicit rho-calculus in Tom\n by Germain Faure and ...\n version 0.1 \n ******************************************************************");
-//		 Constraint c = `and(dk(),concConstraint(and(dk,concConstraint(match(var("X"),app(abs(var("X"),var("X")),const("a")))))));
+//		 Constraint c = `and(dk(),and(and(dk,and(match(var("X"),app(abs(var("X"),var("X")),const("a")))))));
 		 //	 System.out.println(normalize(c,reductionRules));
 
 		 while(true){
