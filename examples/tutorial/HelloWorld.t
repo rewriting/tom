@@ -52,8 +52,8 @@ public class HelloWorld {
     %match(String t) {
       (before*,'e',after*) -> { 
         System.out.println("we have found a 'e'" +
-                           " after " + `after* +
-                           " but before " + `before*); 
+                           " after " + `before* +
+                           " but before " + `after*); 
       }
     }
 
