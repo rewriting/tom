@@ -1,0 +1,12 @@
+module PlatformAlert
+imports
+
+public
+
+sorts Alet AlertList
+
+abstract syntax
+
+  Error(message:str, file:str, line:int) -> Alert
+  Warning(message:str, file:str, line:int) -> Alert
+  concAlert(Alert*) -> AlertList

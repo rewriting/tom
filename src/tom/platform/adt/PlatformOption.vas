@@ -1,0 +1,19 @@
+module PlatformOption
+imports
+
+public
+
+sorts PlatformOption PlatformValue PlatformBoolean PlatformOptionList
+
+abstract syntax
+
+  PluginOption(name:str, altName:str, description:str, value:PlatformValue, attrName:str) -> PlatformOption
+
+  BooleanValue(booleanValue:PlatformBoolean) -> PlatformValue
+  StringValue(stringValue:str) -> PlatformValue
+  IntegerValue(integerValue:int) -> PlatformValue
+
+  True -> PlatformBoolean
+  False -> PlatformBoolean
+
+  concPlatformOption(PlatformOption*) -> PlatformOptionList

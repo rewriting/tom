@@ -279,18 +279,28 @@
 
   <!-- compile adt's -->
   <target name="buildadt" depends="initTaskDef, prepare.src">
-    <adt srcdir="${src.src}"
-         package="tom.library.adt" 
-         destdir="${src.gen}">
-      <include name="tom/library/adt/*.adt"/>
-    </adt>
 
-    <adt srcdir="${src.src}"
+    <vas config="${stable.vasconfigfile}"
+				 srcdir="${src.src}"
+				 package="tom.library.adt" 
+         destdir="${src.gen}">
+      <include name="tom/library/adt/*.vas"/>
+    </vas>
+
+    <vas config="${stable.vasconfigfile}"
+				 srcdir="${src.src}"
          package="tom.platform.adt" 
          destdir="${src.gen}">
-      <include name="tom/platform/adt/*.adt"/>
-    </adt>
-
+      <include name="tom/platform/adt/*.vas"/>
+    </vas>
+<!--
+    <vas  config="${stable.vasconfigfile}"
+				 srcdir="${src.src}"
+         package="jtom.adt" 
+         destdir="${src.gen}">
+      <include name="jtom/adt/*.vas"/>
+    </vas>
+-->
     <adt srcdir="${src.src}"
          package="jtom.adt" 
          factory="tomsignature" 
@@ -305,10 +315,11 @@
     </copy>
 
     <!-- adt for the verifier -->
-    <vas file="${src.src}/jtom/verifier/il.vas"
-				 config="${stable.vasconfigfile}"
+    <vas config="${stable.vasconfigfile}"
+				 srcdir="${src.src}"
          package="jtom.verifier" 
          destdir="${src.gen}">
+			<include name="jtom/verifier/il.vas"/>
     </vas>
 
   </target>

@@ -1,0 +1,12 @@
+module TomConstraint
+imports TomTerm
+
+public
+
+sorts Constraint ConstraintList
+
+abstract syntax
+  Equal(variable:TomTerm) -> Constraint
+  AssignTo(variable:TomTerm) -> Constraint
+
+  concConstraint(Constraint*) -> ConstraintList

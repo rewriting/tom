@@ -190,6 +190,17 @@
         </adt>
       </sequential>
     </macrodef>
+    <macrodef name="vascompile">
+      <attribute name="example"/>
+      <sequential>
+        <vas config="${vasconfigfile}"
+				     srcdir="${examples.dir}"
+             package="@{example}" 
+             destdir="${examples.gen}">
+          <include name="@{example}/**/*.vas"/>
+        </vas>
+      </sequential>
+    </macrodef>
     <macrodef name="javacompile">
       <attribute name="example"/>
       <sequential>
@@ -479,11 +490,15 @@
 
   <target name="structure" depends="init">
     <!-- build adt -->    
-    <vas file="${examples.dir}/${structure}/Struct.vas"
-         config="${vasconfigfile}"
-         package="${structure}" 
+    <vascompile example="${structure}"/>
+<!--
+    <vas config="${vasconfigfile}"
+				 srcdir="${examples.dir}/${structure}/Struct.vas"
+				 package="${structure}" 
          destdir="${examples.gen}">
+				 <include name="${examples.dir}/${structure}/Struct.vas"/>
     </vas> 
+-->
     <!-- build tom -->
     <tom config="${tomconfigfile}"
          srcdir="${examples.dir}" 
