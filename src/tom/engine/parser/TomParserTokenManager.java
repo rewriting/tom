@@ -30,11 +30,6 @@ import java.util.*;
 import java.text.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import apigen.gen.tom.java.*;
-import apigen.gen.tom.c.*;
-//import vas.Vas;
-//import vas.types.Entries;
-
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.types.instruction.RuleSet;

@@ -32,12 +32,6 @@ import java.text.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import apigen.gen.tom.java.*;
-import apigen.gen.tom.c.*;
-
-//import vas.Vas;
-//import vas.types.Entries;
-
 import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.types.instruction.RuleSet;
@@ -55,12 +49,14 @@ public class TomParser extends TomTask implements TomParserConstants {
   private TomFactory tomFactory;
   private File importList[];
   private HashSet includedFiles;
-  private String currentFile;
+  private String currentFile = "", currentPath = "";
   private LinkedList debuggedStructureList;
   private String text="";
-  private boolean debugMode = false,javaCode = false, cCode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
+  private boolean debugMode = false,javaCode = false, cCode = false,
+        xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
 
-   public TomParser(TomBuffer input, TomEnvironment environment, File importList[], int includeOffSet,
+
+  public TomParser(TomBuffer input, TomEnvironment environment, File importList[], int includeOffSet,
                                                         String fileName)  {
           this(input, environment, importList, includeOffSet, fileName, new HashSet());
   }
@@ -102,6 +98,7 @@ public class TomParser extends TomTask implements TomParserConstants {
     noWarning = getInput().isNoWarning();
     javaCode = getInput().isJCode();
     cCode = getInput().isCCode();
+    currentPath = getInput().getResourceParentPathLocation();
   }
 
   public void process() {
@@ -1389,7 +1386,7 @@ public class TomParser extends TomTask implements TomParserConstants {
   TomParser tomParser;
   LinkedList blockList = new LinkedList();
     jj_consume_token(VAS_SIGNATURE);
-      addPreviousCode(list);
+      addPreviousCode(list);{System.out.println("Analysing Vas");}
     jj_consume_token(TOM_LPAREN);
     arguments = jj_consume_token(TOM_STRING);
     jj_consume_token(TOM_RPAREN);
@@ -1397,6 +1394,7 @@ public class TomParser extends TomTask implements TomParserConstants {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       vasCode = vasTL.getCode().trim();
       try{
+        System.out.println("Calling Vas "+arguments.image);
                                 Class vasClass = Class.forName("vas.Vas");
                                 Constructor vasConstructor = vasClass.getConstructor(new Class[]{});
                                 Object vas = vasConstructor.newInstance(new Class[]{}); // an instance of Vas
@@ -1405,25 +1403,36 @@ public class TomParser extends TomTask implements TomParserConstants {
                                 Object[] realParams =  {new ByteArrayInputStream(vasCode.getBytes())};
                                 Object resultFromVas = runMethod.invoke(vas, realParams);
 
-        OutputStream output = new FileOutputStream(".generatedFromVas.adt");
+        fileName = currentPath+File.separatorChar+".generatedFromVas.adt";
+        file = new File(fileName);
+        fileName = file.getCanonicalPath();
+        System.out.println(fileName);
+        OutputStream output = new FileOutputStream(file);
               Writer writer = new BufferedWriter(new OutputStreamWriter(output));
               writer.write(resultFromVas.toString());
               writer.flush();
               writer.close();
-
+              System.out.println(javaCode);
               if(javaCode) {
                 System.out.println("Arguments: "+arguments.image.substring(1, arguments.image.length()-1));
                       String[] par = arguments.image.substring(1, arguments.image.length()-1).split(" ");
-                      String[] finalPar = new String[par.length+2];
+                      String[] finalPar = new String[par.length+4];
                       int i = 0;
                       for(;i<par.length;i++){
                         finalPar[i] = par[i];
 
                       }
                       finalPar[i] = "--input";
-                      finalPar[i+1] = ".generatedFromVas.adt";
+                      finalPar[i+1] = fileName;
+                      finalPar[i+2] = "--output";
+                      finalPar[i+3] = currentPath;
+                      for(i=0;i<finalPar.length;i++){
+                        System.out.println(finalPar[i]);
 
+                      }
+                      System.out.println("currentPath: "+currentPath);
                       apiName = extractApiName(par);
+                      System.out.println("apiName: "+apiName);
                       apigen.gen.tom.java.Main.main(finalPar);
                     } else if (cCode) {
                         String[] par = {"--input", ".generatedFromVas.adt", "--cGen",
@@ -1445,8 +1454,10 @@ public class TomParser extends TomTask implements TomParserConstants {
 
       fileName = apiName+".tom";
       file = new File(fileName);
+      System.out.println(fileName);
         if(file.exists()) {
                 try {
+                      System.out.println("exists");
                         // to get the length of the file
                         inputBuffer = new byte[(int)file.length()+1];
                         input       = new FileInputStream(file);
@@ -2687,18 +2698,18 @@ public class TomParser extends TomTask implements TomParserConstants {
     finally { jj_save(12, xla); }
   }
 
+  final private boolean jj_3_13() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_33() {
     if (jj_scan_token(TOM_LBRACKET)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_40()) jj_scanpos = xsp;
     if (jj_scan_token(TOM_RBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_13() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2754,6 +2765,12 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_12() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_31() {
     if (jj_scan_token(TOM_LBRACKET)) return true;
     Token xsp;
@@ -2799,9 +2816,9 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_9() {
+  final private boolean jj_3_11() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_EQUAL)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
@@ -2810,9 +2827,9 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_12() {
+  final private boolean jj_3_9() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_scan_token(TOM_EQUAL)) return true;
     return false;
   }
 
@@ -2867,12 +2884,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     jj_scanpos = xsp;
     if (jj_3R_28()) return true;
     }
-    return false;
-  }
-
-  final private boolean jj_3_11() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 

@@ -82,6 +82,8 @@ public class TomTaskInput {
     help = false, // usage called
     version = false; //version called
   
+  private String resourceParentPathLocation = ".";
+  
   public void setTerm(TomTerm term) {
     this.term = term;
   }
@@ -324,4 +326,12 @@ public class TomTaskInput {
     inputFileName = string;
   }
 
+  public String getResourceParentPathLocation() {
+  	return resourceParentPathLocation;
+  }
+
+  public void setResourceParentPathLocation(String resourceParentPathLocation) {
+  	this.resourceParentPathLocation = resourceParentPathLocation;
+  }
+  
 } // class TomTaskInput
