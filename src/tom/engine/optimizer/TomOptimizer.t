@@ -33,8 +33,6 @@ import jtom.TomEnvironment;
 import jtom.adt.tomsignature.types.*;
 import jtom.tools.TomTask;
 import jtom.checker.TomCheckerMessage;
-import jtom.xml.Constants;
-import jtom.exception.*;
 import jtom.runtime.*;
 
 public class TomOptimizer extends TomTask {

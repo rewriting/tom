@@ -25,8 +25,6 @@
 
 package jtom.backend;
 
-import aterm.*;
-
 import java.io.IOException;
 
 import jtom.adt.tomsignature.types.*;
