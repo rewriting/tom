@@ -313,14 +313,12 @@
     <copy todir="${stable.lib}" file="${apigen.lib}"/>
     <copy todir="${stable.lib}" file="${vastoadt.lib}"/>
     <copy todir="${stable.lib}" file="${concurrent.lib}"/>
-  	<copy todir="${stable.lib}" file="${antlr.lib}"/>
     <copy todir="${src.lib}"    file="${aterm.lib}"/>
     <copy todir="${src.lib}"    file="${sharedobject.lib}"/>
     <copy todir="${src.lib}"    file="${jjtraveler.lib}"/>
     <copy todir="${src.lib}"    file="${apigen.lib}"/>
     <copy todir="${src.lib}"    file="${vastoadt.lib}"/>
     <copy todir="${src.lib}"    file="${concurrent.lib}"/>
-  	<copy todir="${src.lib}"    file="${antlr.lib}"/>
 
   </target>
 
