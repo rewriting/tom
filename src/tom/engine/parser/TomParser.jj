@@ -2536,7 +2536,7 @@ String JavaName() : /* in JAVA mode */
 }
 {
   <JAVA_IDENTIFIER> { packageName += token.image; }
-  ( LOOKAHEAD(2) <JAVA_DOT> <JAVA_IDENTIFIER> { packageName += token.image; }
+  ( LOOKAHEAD(2) <JAVA_DOT> <JAVA_IDENTIFIER> { packageName += "." + token.image; }
   )*
   {
     return packageName;

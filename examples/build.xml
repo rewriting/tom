@@ -143,19 +143,19 @@
     <!-- build adt -->
     <adt file="${addressbook.dir}/data.adt" 
          factory="data" 
-         package="AddressBook" 
+				 package="${addressbook}" 
          destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom srcdir="${addressbook.dir}" 
+    <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
+				 <include name="${addressbook}/**/*.t"/>
 			<exclude name="**/AddressBookVas.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}">
+		<javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
+			<include name="${addressbook}/**/*.java"/>
     </javac>
   </target>
 
