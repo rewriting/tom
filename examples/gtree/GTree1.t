@@ -1,14 +1,14 @@
 import aterm.*;
-import java.util.*;
+import aterm.pure.*;
 import jtom.runtime.*;
-import adt.*;
+import adt.gtree.*;
 
 public class GTree1 {
 
   private TermFactory factory;
   private GenericTraversal traversal;
   
-  %include { adt/term.tom }
+  %include { adt/gtree/term.tom }
 
   public GTree1(TermFactory factory) {
     this.factory = factory;
@@ -61,7 +61,7 @@ public class GTree1 {
     }
   
   public final static void main(String[] args) {
-    GTree1 test = new GTree1(new TermFactory(16));
+    GTree1 test = new GTree1(new TermFactory(new PureFactory()));
 
     test.run(0);
   }
