@@ -1,105 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-	id="fr.loria.eclipse.jtom"
-	name="Jtom Plug-in"
-	version="1.0.0"
-	provider-name="LORIA"
-	class="fr.loria.eclipse.jtom.JtomPlugin">
+   id="fr.loria.eclipse.jtom"
+   name="Jtom Plug-in"
+   version="1.0.0"
+   provider-name="LORIA"
+   class="fr.loria.eclipse.jtom.JtomPlugin">
 
-	<runtime>
-		<library name="jtom-eclipse.jar"/>
-		<library name="jtom-devel1.4alpha.jar"/>
-		<library name="jjtraveler-0.4.2.jar"/>
-		<library name="aterm-1.5beta.jar"/>
-		<library name="shared-objects-1.4.jar"/>
-		<library name="apigen.jar"/>
-	</runtime>
-	
-	<requires>
-		<import plugin="org.eclipse.core.resources"/>
-		<import plugin="org.eclipse.ui"/>
-	</requires>
+   <runtime>
+      <library name="jtom-eclipse.jar"/>
+      <library name="jtom-devel1.4alpha.jar"/>
+      <library name="jjtraveler-0.4.2.jar"/>
+      <library name="aterm-1.5beta.jar"/>
+      <library name="shared-objects-1.4.jar"/>
+      <library name="apigen.jar"/>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.jdt.core"/>
+   </requires>
 
-	<extension
-			point="org.eclipse.core.resources.builders"
-			id="TomBuilder"
-			name="Tom Builder">
-		<builder hasNature="false"> 
-			<run class="fr.loria.eclipse.jtom.TomBuilder">
-			</run> 
-		</builder> 
-	</extension>
-	
-	<extension
-			point="org.eclipse.core.resources.builders"
-			id="TomBuildAnalyser"
-			name="Tom Builder Analyser">
-		<builder hasNature="false"> 
-			<run class="fr.loria.eclipse.jtom.TomBuildAnalyser">
-			</run> 
-		</builder> 
-	</extension>
-	
-	<extension
-			point="org.eclipse.core.resources.builders"
-			id="ADTToJavaBuilder"
-			name="ADTToJava Builder">
-		<builder hasNature="false"> 
-			<run class="fr.loria.eclipse.jtom.ADTToJavaBuilder">
-			</run> 
-		</builder> 
-	</extension>
-	
-	<extension
-			point="org.eclipse.ui.preferencePages">
-		<page 
-			id="fr.loria.eclipse.jtom.PreferencePage"
-			class="fr.loria.eclipse.jtom.TomPreferencePage"
-			name="Tom Preferences">
-		</page>
-	</extension>
-  
-	<extension
-			point="org.eclipse.ui.propertyPages">
-		<page
-			id="fr.loria.eclipse.jtom.TomPropertyPage"
-			name="Tom Property"
-			objectClass="org.eclipse.core.resources.IFile"
-			class="fr.loria.eclipse.jtom.TomFilePropertyPage"
-			nameFilter="*.t">
-		</page>
-	</extension>
-	
-	<extension
-			point="org.eclipse.ui.propertyPages">
-		<page
-			id="fr.loria.eclipse.jtom.ADTPropertyPage"
-			name="ApiGen Property"
-			objectClass="org.eclipse.core.resources.IFile"
-			class="fr.loria.eclipse.jtom.ADTFilePropertyPage"
-			nameFilter="*.adt">
-		</page>
-	</extension>
-  	<!-- Tom editor-->
-  	<extension
-      		point="org.eclipse.ui.documentProviders">
-   		<provider
-         	extensions="t"
-         	class="fr.loria.eclipse.jtom.editor.TomDocumentProvider"
-         	id="fr.loria.eclipse.jtom.editor.TomDocumentProvider">
-   		</provider>
-	</extension>
-  <extension
-      point="org.eclipse.ui.editors">
-      <!--contributorClass="fr.loria.eclipse.jtom.editor.TomActionContributor"-->
-   <editor
-         name="Tom Editor"
-         icon="icons/Tom.gif"
-         extensions="t"
-         class="fr.loria.eclipse.jtom.editor.TomEditor"
-         id="fr.loria.eclipse.jtom.editor.TomEditor">
-   </editor>
-   
-</extension>
-  
+
+   <extension
+         id="TomBuilder"
+         name="Tom Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="false">
+         <run
+               class="fr.loria.eclipse.jtom.TomBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="TomBuildAnalyser"
+         name="Tom Builder Analyser"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="false">
+         <run
+               class="fr.loria.eclipse.jtom.TomBuildAnalyser">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="ADTToJavaBuilder"
+         name="ADTToJava Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="false">
+         <run
+               class="fr.loria.eclipse.jtom.ADTToJavaBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="Tom Preferences"
+            class="fr.loria.eclipse.jtom.TomPreferencePage"
+            id="fr.loria.eclipse.jtom.PreferencePage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            name="Tom Property"
+            nameFilter="*.t"
+            class="fr.loria.eclipse.jtom.TomFilePropertyPage"
+            id="fr.loria.eclipse.jtom.TomPropertyPage">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            name="ApiGen Property"
+            nameFilter="*.adt"
+            class="fr.loria.eclipse.jtom.ADTFilePropertyPage"
+            id="fr.loria.eclipse.jtom.ADTPropertyPage">
+      </page>
+   </extension>
+<!-- Tom editor-->
+   <extension
+         point="org.eclipse.ui.documentProviders">
+      <provider
+            extensions="t"
+            class="fr.loria.eclipse.jtom.editor.TomDocumentProvider"
+            id="fr.loria.eclipse.jtom.editor.TomDocumentProvider">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+<!--contributorClass="fr.loria.eclipse.jtom.editor.TomActionContributor"-->
+      <editor
+            name="Tom Editor"
+            icon="icons/Tom.gif"
+            extensions="t"
+            class="fr.loria.eclipse.jtom.editor.TomEditor"
+            id="fr.loria.eclipse.jtom.editor.TomEditor">
+      </editor>
+   </extension>
+
+<!-- Tom Pop-up-->
+  <extension point = "org.eclipse.ui.popupMenus">
+     <objectContribution
+        id="fr.loria.eclipse.jtom.TomPopupBuilder"
+        objectClass="org.eclipse.core.resources.IFile"
+	    nameFilter="*.t">
+	    <action id="fr.loria.eclipse.jtom.TomPopupBuilder.Action"
+	       label="Compile..."
+	       menubarPath="additions"
+	       icon="icons/Tom.gif"
+	       class="fr.loria.eclipse.jtom.TomPopupBuilder"	
+	       enablesFor="1">
+	    </action>
+	 </objectContribution>
+  </extension>
 </plugin>
