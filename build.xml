@@ -179,7 +179,6 @@
 	</target>
 
 	<target name="buildsrc" description="compile the TOM development sources" depends="preparesrc">
-		<tstamp/>
 		<antcall target="buildtom"/>
 		<antcall target="buildparser"/>
 		<!--<property name="unixpath" refid="src.classpath" />
@@ -190,7 +189,6 @@
 	</target>
 	
 	<target name="buildstable" description="compile the TOM stable sources" depends="preparestable">
-		<tstamp/>
 		<!-- Compile the java code from ${stable} into ${stable} -->
 		<javac srcdir="${stable.src}" destdir="${stable.build}" verbose="${javacVerbose}">
 			<classpath refid="stable.classpath"/>
@@ -209,19 +207,20 @@
 	</target>
 
 	<target name="distsrc" description="Prepare a distribution ready source package" depends="buildsrc">
-		<jar jarfile="${src.dist}/Set-${version}.jar">
+		<tstamp/>
+		<jar jarfile="${src.dist}/Set-${DSTAMP}.jar">
 			<fileset dir="${src.build}" 
 							 includes="jtom/adt/set/**/*.class"/>
 		</jar>
-		<jar jarfile="${src.dist}/TNode-${version}.jar">
+		<jar jarfile="${src.dist}/TNode-${DSTAMP}.jar">
 			<fileset dir="${src.build}" 
 							 includes="jtom/adt/tnode/**/*.class"/>
 		</jar>
-		<jar jarfile="${src.dist}/TomSignature-${version}.jar">
+		<jar jarfile="${src.dist}/TomSignature-${DSTAMP}.jar">
 			<fileset dir="${src.build}" 
 							 includes="jtom/adt/tomsignature/**/*.class"/>
 		</jar>
-		<jar jarfile="${src.dist}/jtom-${version}.jar">
+		<jar jarfile="${src.dist}/jtom-${DSTAMP}.jar">
 			<fileset dir="${src.build}" 
 							 includes="**/*.class"
 							 excludes="jtom/adt/**/*.class"/>
@@ -325,7 +324,10 @@
 		<antcall target="cleansrc"/>
 		<!-- Build ADT once--> 
 		<antcall target="buildadt"/>
-    
+    <!-- 
+			We will probably use the condition filesmatch instead of a diff : 
+			http://ant.apache.org/manual/CoreTasks/conditions.html 
+		-->
   </target>
 
 </project>
