@@ -51,15 +51,15 @@ public class GenericTraversal {
     }
   }
 
-  protected abstract class Collect1 extends Collect {
+  protected abstract class Collect1  extends Collect implements InterfaceCollect1 {
     abstract public boolean apply(ATerm t);
   }
 
-  protected abstract class Collect2 extends Collect {
+  protected abstract class Collect2  extends Collect implements InterfaceCollect2 {
     abstract public boolean apply(ATerm t, Object arg1);
   }
 
-  protected abstract class Collect3 extends Collect {
+  protected abstract class Collect3  extends Collect implements InterfaceCollect3 {
     abstract public boolean apply(ATerm t, Object arg1, Object arg2);
   }
 
@@ -191,6 +191,7 @@ public class GenericTraversal {
         res = genericMap((ATermList) subject, replace, args);
       }
     } catch(Exception e) {
+      e.printStackTrace();
       System.out.println("Please, extend genericTraversal");
       System.exit(0);
     }

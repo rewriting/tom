@@ -6,7 +6,9 @@ javadir         = ${prefix}/classes/jtom/runtime
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/runtime
-BOOTSOURCES	= GenericTraversal.java
+BOOTSOURCES	= InterfaceCollect1.java InterfaceCollect2.java InterfaceCollect3.java\
+		   GenericTraversal.java
+
 java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES)
 JAVAROOT        = ${top_builddir}/src/
