@@ -67,6 +67,9 @@
   <property name="lsystem" value="lsystems"/>
   <property name="lsystem.dir" location="${examples.dir}/${lsystem}" />
 
+  <property name="minirho" value="minirho"/>
+  <property name="minirho.dir" location="${examples.dir}/${minirho}" />
+
   <property name="nspk" value="nspk"/>
   <property name="nspk.dir" location="${examples.dir}/${nspk}" />
 
@@ -487,6 +490,31 @@
     </javac>
   </target>
 
+  <target name="minirho" depends="init">
+    <!-- build adt -->
+    <adt srcdir="${examples.dir}"
+         factory="term" 
+         package="${minirho}" 
+         destdir="${examples.gen}">
+			<include name="${minirho}/**/*.adt"/>
+		</adt>
+    <!-- build tom -->
+    <tom config="${tomconfigfile}"
+				 srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
+         nowarn="${nowarnings}"
+         optimize="${optimize}"
+         options="-I ${tom.home}/share/jtom">
+      <include name="${minirho}/**/*.t"/>
+    </tom>
+    <!-- build java source -->
+    <javac srcdir="${examples.gen}" destdir="${examples.build}"
+           nowarn="${nowarnings}">
+      <classpath refid="tom.classpath"/>
+      <include name="${minirho}/**/*.java"/>
+    </javac>
+  </target>
+  
   <target name="nspk" depends="init">
     <!-- build adt -->
     <adt srcdir="${examples.dir}"
@@ -826,21 +854,21 @@
     <target name="examples" 
             description="Builds the examples (at least some)"
             depends="addressbook, apireach, boulderdash, builtin, dom,
-            expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens,
+            expression, gtree, list, nspk, minirho, p3p, peano, pnspk, poly, pqueens,
             prodrule, propp, rbtree, set, vas, xml, xquery">
       -->
       <target name="examples" 
               description="Builds the examples (at least some)"
               depends="xml, vas, tutorial, set, rbtree, propp, prodrule,
               addressbook, caml, apireach, boulderdash, builtin, dom,
-              expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens">
+              expression, gtree, list, nspk, minirho, p3p, peano, pnspk, poly, pqueens">
       </target>
 <!--
 <target name="examples" 
               description="Builds the examples (at least some)"
               depends=" vas, set, rbtree, propp, prodrule,
               addressbook, apireach, boulderdash, builtin, 
-              expression, gtree, list, nspk, peano, pnspk, poly, pqueens">
+              expression, gtree, list, nspk, minirho, peano, pnspk, poly, pqueens">
       </target>  
 -->
 			<target name="dist.examples" 
