@@ -101,6 +101,7 @@ abstract public class TomChecker extends TomTask {
 	protected boolean strictType = false, warningAll = false, noWarning = false, verbose = false;
 	private ArrayList alreadyStudiedTypes =  new ArrayList();
 	private ArrayList alreadyStudiedSymbols =  new ArrayList();
+	private ArrayList alreadyStudiedRule =  new ArrayList();
 	private Option currentTomStructureOrgTrack;
 		
   public TomChecker(String name, TomEnvironment tomEnvironment) {
@@ -193,15 +194,29 @@ abstract public class TomChecker extends TomTask {
  	     
 			ArrayList variableLhs = new ArrayList();
 			collectVariable(variableLhs, lhs);
-			//System.out.println("lhs: "+variableLhs);
+			  // System.out.println("lhs: "+variableLhs);
 			HashSet lhsSet = verifyVariableType(variableLhs);
  	     
 			ArrayList variableRhs = new ArrayList();
 			collectVariable(variableRhs, rhs);
-			//System.out.println("rhs: "+variableRhs);
+				// System.out.println("rhs: "+variableRhs);
 			HashSet rhsSet = verifyVariableType(variableRhs);
  	     
 			ArrayList variableCond = new ArrayList();
+			%match(TomList condList) {
+				(_*, cond, _*) -> {
+					%match(TomTerm cond) {
+						matching@MatchingCondition[] -> {
+							System.out.println(matching);
+							collectVariable(variableCond, matching);											
+						}				
+						eq@EqualityCondition[] -> { 
+							System.out.println(eq);
+							collectVariable(variableCond, eq);	
+						}
+					}
+				}
+			}
 			collectVariable(variableCond, `Tom(condList));
 			HashSet condSet = verifyVariableType(variableCond);
  	     
@@ -261,7 +276,7 @@ abstract public class TomChecker extends TomTask {
 			TomTerm variable = (TomTerm)it.next();
 			TomName name = variable.getAstName();
    	   
-			if(set.contains(name)) {
+			if(set.contains(name.getString())) {
 				TomTerm var = (TomTerm)map.get(name);
 				TomType type = var.getAstType();
 				TomType type2 = variable.getAstType();
@@ -273,7 +288,7 @@ abstract public class TomChecker extends TomTask {
 				}
 			} else {
 				map.put(name, variable);
-				set.add(name);
+				set.add(name.getString());
 			}
 		}
 	return set;
@@ -688,7 +703,8 @@ abstract public class TomChecker extends TomTask {
 			if( symbol == null ) {
 				messageError(findOriginTrackingLine(lhs.getOption()),
 															TomCheckerMessage.UnknownSymbol, 
-															new Object[]{currentHeadSymbolName}, TomCheckerMessage.TOM_ERROR);
+															new Object[]{currentHeadSymbolName},
+															TomCheckerMessage.TOM_ERROR);
 					// We can not continue anymore
 				return null;
 			}
@@ -696,9 +712,20 @@ abstract public class TomChecker extends TomTask {
 			if ( !findMakeDecl(symbol.getOption())) {
 				messageError(findOriginTrackingLine(lhs.getOption()),
 															TomCheckerMessage.NoRuleMakeDecl, 
-															new Object[]{currentHeadSymbolName}, TomCheckerMessage.TOM_ERROR);
-			}	
-		} else {
+															new Object[]{currentHeadSymbolName},
+															TomCheckerMessage.TOM_ERROR);
+			}
+			
+			if(alreadyStudiedRule.contains(currentHeadSymbolName)) {
+				messageError(currentTomStructureOrgTrack.getLine(),
+															TomCheckerMessage.MultipleRuleDefinition,
+															new Object[]{currentHeadSymbolName},
+															TomCheckerMessage.TOM_ERROR);
+				return null;
+			} else {
+				alreadyStudiedRule.add(currentHeadSymbolName);
+			}
+		} else { //  ruleNumber > 0
 				// Test constructor equality
 			String newName = getName(lhs);
 			if (!headSymbolName.equals(currentHeadSymbolName)) {
@@ -789,7 +816,7 @@ abstract public class TomChecker extends TomTask {
 					decLine = findOriginTrackingLine(options);
 					termClass = APPL;
 					
-					TomSymbol symbol = ensureValidApplDisjunction(nameList, expectedType, decLine,hasConstructor(options), args.isEmpty(), permissive);
+					TomSymbol symbol = ensureValidApplDisjunction(nameList, expectedType, decLine,hasConstructor(options), args.isEmpty(), permissive, topLevel);
 					if(symbol == null) {
 						break matchblock;
 					}
@@ -828,7 +855,7 @@ abstract public class TomChecker extends TomTask {
 					decLine = findOriginTrackingLine(options);
 					termClass = RECORD_APPL;
 	
-					TomSymbol symbol = ensureValidRecordDisjunction(nameList, expectedType, decLine);
+					TomSymbol symbol = ensureValidRecordDisjunction(nameList, expectedType, decLine, true);
 					if(symbol == null) {
 						break matchblock;
 					}
@@ -973,9 +1000,15 @@ abstract public class TomChecker extends TomTask {
 	public TermDescription analyseTerm(TomTerm term) {
 		matchblock:{
 			%match(TomTerm term) {
-				Appl[option=options, nameList=(Name(name))] -> {
-					return new TermDescription(APPL, name, findOriginTrackingLine(options), 
-																										getSymbolCodomain(getSymbol(name)));
+				Appl[option=options, nameList=(Name(str))] -> {
+					if (str.equals("")) {
+						return new TermDescription(UNAMED_APPL, str, findOriginTrackingLine(options), 
+																																null);
+						// TODO
+					} else {
+							return new TermDescription(APPL, str, findOriginTrackingLine(options), 
+																																	getSymbolCodomain(getSymbol(str)));
+						}
 				}
 				Appl[option=options, nameList=(Name(name), _*)] -> {
 					return new TermDescription(APPL_DISJUNCTION, name, findOriginTrackingLine(options), 
@@ -985,7 +1018,7 @@ abstract public class TomChecker extends TomTask {
 					return new TermDescription(RECORD_APPL, name, findOriginTrackingLine(options), 
 																										getSymbolCodomain(getSymbol(name)));
 				}
-				RecordAppl[option=options,nameList=(Name(name))] ->{
+				RecordAppl[option=options,nameList=(Name(name), _*)] ->{
 					return new TermDescription(RECORD_APPL_DISJUNCTION, name, findOriginTrackingLine(options), 
 																										getSymbolCodomain(getSymbol(name)));
 				}
@@ -1044,8 +1077,7 @@ abstract public class TomChecker extends TomTask {
 	}
 	
 	private TomSymbol ensureValidApplDisjunction(NameList nameList, TomType expectedType, int decLine,
-																													boolean constructor, boolean emptyChilds, boolean permissive) {
-		TomType currentCodomain = null;
+																													boolean constructor, boolean emptyChilds, boolean permissive, boolean topLevel) {
 		TomTypeList domainReference = null, currentDomain = null;
 		TomSymbol symbol = null;
 		
@@ -1078,9 +1110,10 @@ abstract public class TomChecker extends TomTask {
 																	TomCheckerMessage.TOM_WARNING); // only a warning
 					}
 				}
-				currentCodomain = getSymbolCodomain(symbol);
-				if (!ensureSymbolCodomain(currentCodomain, expectedType, TomCheckerMessage.InvalidCodomain, res, decLine)) {
-					return null;
+				if ( strictType  || !topLevel ) {
+					if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomCheckerMessage.InvalidCodomain, res, decLine)) {
+						return null;
+					}
 				}
 			}
 			return symbol;
@@ -1105,9 +1138,10 @@ abstract public class TomChecker extends TomTask {
 																TomCheckerMessage.TOM_ERROR);
 					return null;
 				}
-				currentCodomain = getSymbolCodomain(symbol);
-				if (!ensureSymbolCodomain(currentCodomain, expectedType, TomCheckerMessage.InvalidDisjunctionCodomain, dijName, decLine)) {
-					return null;
+				if ( strictType  || !topLevel ) {
+					if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomCheckerMessage.InvalidDisjunctionCodomain, dijName, decLine)) {
+						return null;
+					}
 				} 
 				currentDomain = getSymbolDomain(symbol);
 				if (first) { // save Domain reference
@@ -1140,7 +1174,7 @@ abstract public class TomChecker extends TomTask {
 		return true;
 	}
 				
-	private TomSymbol ensureValidRecordDisjunction(NameList nameList, TomType expectedType, int decLine) {
+	private TomSymbol ensureValidRecordDisjunction(NameList nameList, TomType expectedType, int decLine, boolean topLevel) {
 		if(nameList.isSingle()) { // Valid but has is a good type
 			String res = nameList.getHead().getString();
 			TomSymbol symbol =  getSymbol(res);
@@ -1152,15 +1186,16 @@ abstract public class TomChecker extends TomTask {
 															TomCheckerMessage.TOM_ERROR);
 				return null;		
 			} else { // known symbol
-					// ensure type correctness
-				TomType currentCodomain = getSymbolCodomain(symbol);
-				if (!ensureSymbolCodomain(currentCodomain, expectedType, TomCheckerMessage.InvalidCodomain, res, decLine)) {
-					return null;
+					// ensure type correctness if necessary
+				if ( strictType  || !topLevel ) {
+					if (!ensureSymbolCodomain(getSymbolCodomain(symbol), expectedType, TomCheckerMessage.InvalidCodomain, res, decLine)) {
+						return null;
+					}
 				}
 			}
 			return symbol;
 		} else {
-			return ensureValidApplDisjunction(nameList, expectedType, decLine, false, false, false);
+			return ensureValidApplDisjunction(nameList, expectedType, decLine, false, false, false, topLevel);
 		}
 	}
 	/**

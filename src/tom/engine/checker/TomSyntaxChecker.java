@@ -47,7 +47,7 @@ public class TomSyntaxChecker extends TomChecker {
 		  	System.out.println("TOM syntax Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  	}
     } catch (Exception e) {
-			addError("Exception occurs in TomSyntaxChecker"+e.getMessage(), getInput().getInputFileName(), 0, 0);
+			addError("Exception occurs in TomSyntaxChecker: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
 			e.printStackTrace();
 			return;
     }
