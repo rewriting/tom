@@ -7,7 +7,7 @@
 	class="fr.loria.eclipse.jtom.JtomPlugin">
 
 	<runtime>
-		<library name="jtom.jar"/>
+		<library name="jtomeclipse.jar"/>
 		<library name="jtom-devel1.4alpha.jar"/>
 		<library name="jjtraveler-0.4.2.jar"/>
 		<library name="aterm-1.5beta.jar"/>
@@ -78,5 +78,26 @@
 			class="fr.loria.eclipse.jtom.ADTFilePropertyPage">
 		</page>
 	</extension>
+  	<!-- Tom editor-->
+  	<extension
+      		point="org.eclipse.ui.documentProviders">
+   		<provider
+         	extensions="t"
+         	class="fr.loria.eclipse.jtom.tomeditor.TomDocumentProvider"
+         	id="fr.loria.eclipse.jtom.tomeditor.TomDocumentProvider">
+   		</provider>
+	</extension>
+  <extension
+      point="org.eclipse.ui.editors">
+      <!--contributorClass="fr.loria.eclipse.jtom.tomeditor.TomActionContributor"-->
+   <editor
+         name="Tom Editor"
+         icon="icons/Tom.gif"
+         extensions="t"
+         class="fr.loria.eclipse.jtom.tomeditor.TomEditor"
+         id="fr.loria.eclipse.jtom.tomeditor.TomEditor">
+   </editor>
+   
+</extension>
   
 </plugin>

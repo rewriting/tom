@@ -6,7 +6,9 @@ This plug-in shall run with:
 
 This material is initialy build on freebsd but should work on other platforms
 
-To run this plug-in, you just need to create the following arborescence in your eclipse's plugins directory:
+To run this plug-in, you just need to create the following
+arborescence in your eclipse's plugins directory: 
+
 ECLIPSE_INSTALL_DIR/plugings
 	fr.loria.eclipse.jtom
 		plugin.xml, 
@@ -16,8 +18,11 @@ ECLIPSE_INSTALL_DIR/plugings
 		    - jjtraveler, 
 		    - shared-objects
 		    - jtom
+		    - apigen
 
-Once restared, in your .project file, you need to add the follwing between the <buildSpec> marker:
+Once restared, in your .project file, you need to add the follwing
+between the <buildSpec> marker: 
+
      <buildSpec>
 	<buildCommand>
 		<name>fr.loria.eclipse.jtom.TomBuilder</name>
@@ -37,13 +42,21 @@ Once restared, in your .project file, you need to add the follwing between the <
 
 Be aware that the order is important...
 
-If you are running eclipse on another platform and the previous method does not work, you can either recompile everything and generate the corresponding jtom JAR file.
+If you are running eclipse on another platform and the previous method
+does not work, you can either recompile everything and generate the
+corresponding jtom JAR file. 
 
-To compile this you need to add to your classpath (from eclipse plugins):
+To compile this you need to add to your classpath (from eclipse
+plugins):
+
    org.eclipse.core.resources_2.1.1/resources.jar
    org.eclipse.ui_2.1.1/ui.jar
-   org.eclipse.swt.gtk_2.1.1/ws/gtk/swt.jar (depends on your platform and available graphical toolkit: mac, motif...)
-   org.eclipse.swt.gtk_2.1.1/ws/gtk/swt-pi.jar (depends on your platform and available graphical toolkit: mac, motif..)
+   org.eclipse.swt.gtk_2.1.1/ws/gtk/swt.jar
+	 (depends on your platform and available graphical toolkit:
+          mac, motif...)  
+   org.eclipse.swt.gtk_2.1.1/ws/gtk/swt-pi.jar
+	 (depends on your platform and available graphical toolkit:
+          mac, motif..)  
    org.eclipse.text_2.1.0/text.jar
    org.eclipse.jface_2.1.1/jface.jar
    org.eclipse.jface.text_2.1.0/jfacetext.jar
@@ -54,6 +67,7 @@ To compile this you need to add to your classpath (from eclipse plugins):
    org.eclipse.core.boot_2.1.1/boot.jar
    org.eclipse.core.runtime_2.1.1/runtime.jar
 
-or create a simple plug-in using eclipse wizard and import the java and xml files of this folder.
+or create a simple plug-in using eclipse wizard and import the java
+and xml files of this folder. 
 
 For each issue, please contact: julien.guyon@loria.fr
