@@ -32,19 +32,17 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.io.IOException;
-import java.util.HashMap;
+
 
 import jtom.adt.tomsignature.types.*;
 
 import jtom.tools.TomTask;
 import jtom.tools.OutputCode;
-import jtom.tools.SingleLineOutputCode;
-import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
 public class TomBackend extends TomTask {
   
-	private final static int defautDeep = 2;
+	private final static int defaultDeep = 2;
 	private TomAbstractGenerator generator;
 	private Writer writer;
   public TomBackend(TomEnvironment environment) {
@@ -57,7 +55,7 @@ public class TomBackend extends TomTask {
 
 	public void initProcess() {
 		try {
-			pretty = getInput().isPretty();
+			boolean pretty = getInput().isPretty();
 			// initialize outputCode
 			writer = new BufferedWriter(
 				new OutputStreamWriter(
@@ -70,9 +68,9 @@ public class TomBackend extends TomTask {
 			
 			// give the "good" generator
 			if (getInput().isCCode()) {
-				generator = new CGenerator (environment, output, getInput());
+				generator = new TomCGenerator (environment(), output, getInput());
 			} else if (getInput().isJCode()) {
-				generator = new JavaGenerator (environment, output, getInput());
+				generator = new TomJavaGenerator (environment(), output, getInput());
 			}
 		} catch (Exception e) {
     	addError("Exception occurs in TomBackend Init: "+e.getMessage(), 
@@ -90,7 +88,7 @@ public class TomBackend extends TomTask {
       if(verbose) {
         startChrono = System.currentTimeMillis();
       }
-      generator.generate(defaultDeep);
+      generator.generate(defaultDeep, getInput().getTerm());
       if(verbose) {
         System.out.println("TOM generation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
@@ -103,8 +101,10 @@ public class TomBackend extends TomTask {
   }
 
 	protected void closeProcess() {
-		writer.close();
-		super();
+		super.closeProcess();
+		try {
+		  writer.close();
+		} catch(IOException e) {}
 	}
 
 }

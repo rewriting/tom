@@ -79,11 +79,9 @@ public abstract class TomAbstractGenerator extends TomBase {
      * Generate the goal language
      */
   
-  private void generate(int deep)
+  private void generate(int deep, TomTerm subject)
     throws IOException {
       //System.out.println("Generate: " + subject);
-      //%variable
-    TomTerm subject = input.getTerm();
 
     %match(TomTerm subject) {
       
@@ -408,7 +406,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         generateList(deep, l);
   /*
     while(!l.isEmpty()) {
-    generate(out,deep,l.getHead());
+    generate(deep,l.getHead());
     l = l.getTail();
     }
       //out.writeln("// ACTION: " + l);
@@ -509,7 +507,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       ListSymbolDecl(Name(tomName)) -> {
-        buildListSymbolDecl(tomName);
+        buildListSymbolDecl(deep, tomName);
         return ;
       }
 
@@ -704,7 +702,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildArray(String name, TomList argList);
   protected abstract void buildFunctionCall(String name, TomList argList);
 
-  protected void buildCompiledMatch() {
+  protected void buildCompiledMatch(TomList matchDeclarationList, TomList namedBlockList, OptionList list) {
     boolean generated = hasGeneratedMatch(list);
     boolean defaultPattern = hasDefaultCase(list);
     Option orgTrack = null;
@@ -714,32 +712,32 @@ public abstract class TomAbstractGenerator extends TomBase {
     if(debugMode && !generated) {
       orgTrack = findOriginTracking(list);
       debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-      out.write("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");\n");
+      output.write("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");\n");
     }
     generateList(out,deep+1,matchDeclarationList);
     generateList(out,deep+1,namedBlockList);
     if(debugMode && !generated && !defaultPattern) {
-      out.write("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
+      output.write("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
     }
     if(supportedBlock) {
       generateInstruction(out,deep,`CloseBlock());
     }
   }
 	
-  protected abstract void buildDeclaration(TomTerm var, String name, String type, TomType tlType);
-  protected abstract void buildDeclarationStar(TomTerm var, String name, String type, TomType tlType);
+  protected abstract void buildDeclaration(TomTerm var, TomName name, String type, TomType tlType);
+  protected abstract void buildDeclarationStar(TomTerm var, TomName name, String type, TomType tlType);
   protected abstract void buildFunctionBegin(String tomName, TomList varList); 
   protected abstract void buildFunctionEnd();
   protected abstract void buildExpNot(Expression exp);
   
   protected void buildExpAnd(Expression exp1, Expression exp2) {
     generateExpression(out,deep,exp1);
-    out.write(" && ");
+    output.write(" && ");
     generateExpression(out,deep,exp2);
   }
   protected void buildExpOr(Expression exp1, Expression exp2) {
     generateExpression(out,deep,exp1);
-    out.write(" || ");
+    output.write(" || ");
     generateExpression(out,deep,exp2);
   }
 
@@ -748,17 +746,17 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpFalse();
 
   protected void buildExpEmptyList(TomType type1) {
-    out.write("tom_is_empty_" + getTomType(type1) + "(");
+    output.write("tom_is_empty_" + getTomType(type1) + "(");
     generate(out,deep,var);
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpEmptyArray(TomType type1, TomTerm varIndex) {
     generate(out,deep,varIndex);
-    out.write(" >= ");
-    out.write("tom_get_size_" + getTomType(type1) + "(");
+    output.write(" >= ");
+    output.write("tom_get_size_" + getTomType(type1) + "(");
     generate(out,deep,varArray);
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpEqualFunctionVarAppl(TomTerm var, TomType type1, String tomName) {
@@ -775,33 +773,33 @@ public abstract class TomAbstractGenerator extends TomBase {
         s = "tom_cmp_fun_sym_" + getTomType(type1) + "(tom_get_fun_sym_" + getTomType(type1) + "(";
         getFunSymMap.put(type1,s);
       }
-      out.write(s);
+      output.write(s);
       generate(out,deep,var);
-      out.write(") , " + getSymbolCode(tomSymbol) + ")");
+      output.write(") , " + getSymbolCode(tomSymbol) + ")");
     }
   }
 
   protected void buildExpEqualFunctionVarVar(TomType type1, TomTerm var2) {
-    out.write("tom_cmp_fun_sym_" + getTomType(type1) + "(");
-    out.write("tom_get_fun_sym_" + getTomType(type1) + "(");
+    output.write("tom_cmp_fun_sym_" + getTomType(type1) + "(");
+    output.write("tom_get_fun_sym_" + getTomType(type1) + "(");
     generate(out,deep,var1);
-    out.write(") , " + var2 + ")");///??????????????????????????????
+    output.write(") , " + var2 + ")");///??????????????????????????????
   }
 
-  protected void buildExpEqualTerm(TomType type1, TomTerm var1,TomTerm var2) {
-    out.write("tom_terms_equal_" + getTomType(type1) + "(");
+  protected void buildExpEqualTermVar(TomType type1, TomTerm var1,TomTerm var2) {
+    output.write("tom_terms_equal_" + getTomType(type1) + "(");
     generate(out,deep,var1);
-    out.write(", ");
+    output.write(", ");
     generate(out,deep,var2);
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpEqualTermVarStar(TomType type1, TomTerm var1, TomTerm var2) {
-    out.write("tom_terms_equal_" + getTomType(type1) + "(");
+    output.write("tom_terms_equal_" + getTomType(type1) + "(");
     generate(out,deep,var1);
-    out.write(", ");
+    output.write(", ");
     generate(out,deep,var2);
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpIsFsym(String opname, TomTerm var) {
@@ -810,9 +808,9 @@ public abstract class TomAbstractGenerator extends TomBase {
       s = "tom_is_fun_sym_" + opname + "(";
       isFsymMap.put(opname,s);
     } 
-    out.write(s);
+    output.write(s);
     generate(out,deep,var);
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpGetSubterm(TomTerm var, TomType type1) {
@@ -821,84 +819,85 @@ public abstract class TomAbstractGenerator extends TomBase {
       s = "tom_get_subterm_" + getTomType(type1) + "(";
       getSubtermMap.put(type1,s);
     } 
-    out.write(s);
+    output.write(s);
     generate(out,deep,var);
-    out.write(", " + number + ")");
+    output.write(", " + number + ")");
   }
 
   protected void buildExpGetSlot(String opname, String slotName, TomTerm var) {
-    out.write("tom_get_slot_" + opname + "_" + slotName + "(");
+    output.write("tom_get_slot_" + opname + "_" + slotName + "(");
     generate(out,deep,var);
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpGetHead(TomType type1, TomTerm var) {
-    out.write("tom_get_head_" + getTomType(type1) + "(");
+    output.write("tom_get_head_" + getTomType(type1) + "(");
     generate(out,deep,var);
-    out.write(")");
+    output.write(")");
   }
   protected void buildExpGetTail(TomType type1, TomTerm var) {
-    out.write("tom_get_tail_" + getTomType(type1) + "(");
+    output.write("tom_get_tail_" + getTomType(type1) + "(");
     generate(out,deep,var); 
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpGetSize(TomType type1, TomTerm var) {
-    out.write("tom_get_size_" + getTomType(type1) + "(");
+    output.write("tom_get_size_" + getTomType(type1) + "(");
     generate(out,deep,var);
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpGetElement(TomType type1, TomTerm varName, TomTerm varIndex) {
-    out.write("tom_get_element_" + getTomType(type1) + "(");
+    output.write("tom_get_element_" + getTomType(type1) + "(");
     generate(out,deep,varName);
-    out.write(",");
+    output.write(",");
     generate(out,deep,varIndex);
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpGetSliceList(String name, TomTerm varBegin, TomTerm varEnd) {
-    out.write("tom_get_slice_" + name + "(");
+    output.write("tom_get_slice_" + name + "(");
     generate(out,deep,varBegin);
-    out.write(",");
+    output.write(",");
     generate(out,deep,varEnd);
-    out.write(")");
+    output.write(")");
   }
 
   protected void buildExpGetSliceArray(String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd) {
-    out.write("tom_get_slice_" + name + "(");
+    output.write("tom_get_slice_" + name + "(");
     generate(out,deep,varArray);
-    out.write(",");
+    output.write(",");
     generate(out,deep,varBegin);
-    out.write(",");
+    output.write(",");
     generate(out,deep,expEnd);
-    out.write(")");
+    output.write(")");
   }
 
-  protected abstract void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType);
-  protected abstract void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType);
+  protected abstract void buildAssignVar(int deep, TomTerm var, String type, TomType tlType);
+  protected abstract void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType);
   protected abstract void buildNamedBlock(String blockName, TomList instList);
   protected abstract void buildIfThenElse(Expression exp, TomList succesList);
   protected abstract void buildIfThenElseWithFailure(Expression exp, TomList succesList, TomList failureList);
 
   protected void buildDoWhile(TomList succesList, Expression exp) {
-    out.writeln(deep,"do {");
+    output.writeln(deep,"do {");
     generateList(deep+1,succesList);
-    out.write(deep,"} while("); generateExpression(out,deep,exp); out.writeln(");");
+    output.write(deep,"} while("); generateExpression(out,deep,exp);
+	output.writeln(");");
   }
   
   protected abstract void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp);
 
   protected void buildIncrement(TomTerm var) {
+    generate(deep,var);
+    output.write(" = ");
     generate(out,deep,var);
-    out.write(" = ");
-    generate(out,deep,var);
-    out.writeln(" + 1;");
+    output.writeln(" + 1;");
   }
 
   
   protected abstract void buildExitAction(TomNumberList numberList);
-  protected abstract void buildReturn(Expression exp);
+  protected abstract void buildReturn(TomTerm exp);
   protected abstract void buildSymbolDecl(String tomName);
   protected abstract void buildArraySymbolDecl(String tomName);
   protected abstract void buildListSymbolDecl(int deep, String tomName);
