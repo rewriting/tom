@@ -1,3 +1,34 @@
+2004-03-03    <pem@bach>
+
+	* src/jtom/compiler/TomKernelExpander.t: 
+	  - major redesign of the expansion phase
+	    (to deal with the Instruction type)
+
+	* src/jtom/compiler/TomKernelCompiler.t: 
+	  - major redesign of matching algorithms 
+	    (by using the Instruction type)
+
+	* src/jtom/parser/TomParser.jj: 
+	  - introduced <TOM_QUOTE> and <TOM_CHAR> (for char)
+	  - removed %typeint, %typedouble and %typestring
+	    (use predefined mapping instead)
+
+	* src/jtom/backend/TomGenericGenerator.t: 
+	  - introduced a new intermediate generator
+	  - between TomAbstractGenerator and TomImperativeGenerator
+
+	* src/adt/TomSignature.adt: re-design of the signature
+	 - new Instruction constructors (which were in TomTerm)
+	   AbstractBlock, UnamedBlock, NamedBlock, RuleSet, Match,
+	   CompiledMatch, CompiledPattern, MatchingCondition,
+	   EqualityCondition, LocalVariable,EndLocalVariable,
+	   MakeFunctionBegin, MakeFunctionEnd
+         - this makes the code simpler and more typed
+	
+	* src/jtom/tools/SymbolTable.java: 
+	  - introduced builtin-types (INT,BOOL,STRING,CHAR,DOUBLE)
+	  - builtin char are now supported
+
 2004-02-26    <pem@bach>
 
 	* bootinstall
