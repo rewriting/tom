@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<tom>
+<!DOCTYPE server [
+  <!ELEMENT server (plugins,options)>
+
+  <!ELEMENT plugins (plugin*)>
+
+  <!ELEMENT plugin EMPTY>
+  <!ATTLIST plugin
+    name CDATA #IMPLIED
+    version CDATA #IMPLIED
+    description CDATA #IMPLIED
+    classpath CDATA #REQUIRED>
+
+  <!ELEMENT options (OptionBoolean*,OptionInteger*,OptionString*)>
+
+  <!ELEMENT OptionBoolean EMPTY>
+  <!ATTLIST OptionBoolean
+    name CDATA #REQUIRED
+    altName CDATA ""
+    description CDATA ""
+    valueB (true|false) #REQUIRED>
+
+  <!ELEMENT OptionInteger EMPTY>
+  <!ATTLIST OptionInteger
+    name CDATA #REQUIRED
+    altName CDATA ""
+    description CDATA ""
+    valueI CDATA #REQUIRED
+    attrName CDATA #REQUIRED>
+
+  <!ELEMENT OptionString EMPTY>
+  <!ATTLIST OptionString
+    name CDATA #REQUIRED
+    altName CDATA ""
+    description CDATA ""
+    valueS CDATA #REQUIRED
+    attrName CDATA #REQUIRED>
+]>
+
+<server>
 
 <plugins>
 
@@ -40,13 +78,11 @@
     description=""
     classpath="jtom.optimizer.TomOptimizer" />
 
-<!-- Verifier not part of stable
   <plugin
     name="Verifier"
     version=""
     description=""
     classpath="jtom.verifier.TomVerifier" />
--->
 
   <plugin
     name="Backend"
@@ -80,12 +116,6 @@
     name="intermediate"
     altName="i"
     description="Generate intermediate files"
-    valueB="false" />
-
-  <OptionBoolean
-    name="noOutput"
-    altName=""
-    description="Do not generate code"
     valueB="false" />
 
   <OptionBoolean
@@ -127,12 +157,6 @@
     valueB="false" />
 
   <OptionBoolean
-    name="atermStat"
-    altName="S"
-    description="Print internal ATerm statistics"
-    valueB="false" />
-
-  <OptionBoolean
     name="static"
     altName=""
     description="Generate static functions"
@@ -153,7 +177,7 @@
   <OptionBoolean
     name="eclipse"
     altName=""
-    description="Eclipse mode"
+    description="Sets Eclipse mode"
     valueB="false" />
 
   <OptionString
@@ -179,24 +203,4 @@
 
 </options>
 
-<backend>
-
-  <generator
-    classpath="jtom.backend.TomJavaGenerator"
-    flag="jCode" /> <!-- maybe specify an OptionBoolean instead -->
-
-  <generator
-    classpath="jtom.backend.TomCGenerator"
-    flag="cCode" />    
-
-  <generator
-    classpath="jtom.backend.TomCamlGenerator"
-    flag="camlCode" />
-
-  <generator
-    classpath="jtom.backend.TomEiffelGenerator"
-    flag="eCode" />
-
-</backend>
-
-</tom>
+</server>

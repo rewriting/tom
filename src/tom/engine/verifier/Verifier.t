@@ -97,7 +97,7 @@ public class Verifier extends TomBase {
 
 	public Verifier() {
 		super();
-		factory = new ilFactory(getTomSignatureFactory().getPureFactory());
+		factory = ilFactory.getInstance(getTomSignatureFactory().getPureFactory());
 	}
 
 	protected final ilFactory getIlFactory() {

@@ -44,6 +44,7 @@ import org.w3c.dom.NodeList;
 
 import aterm.*;
 import aterm.pure.*;
+import jtom.tools.PureFactorySingleton;
 import jtom.adt.tnode.*;
 import jtom.adt.tnode.types.*;
 
@@ -54,7 +55,7 @@ public class XmlTools {
   private TNodeFactory ntf = null;
 
   public XmlTools () {
-    ntf = new TNodeFactory(new PureFactory());
+    ntf = TNodeFactory.getInstance(PureFactorySingleton.getInstance());
     a2x = new ATermToXML(ntf);
     x2a = new XMLToATerm(ntf);
   }
