@@ -19,13 +19,13 @@ public class Array {
   }
 
   %oparray L conc( E* ) {
-    fsym            { factory.makeAFun("conc", 1, false) }
-    make_empty(n)   { new ArrayList(n) }
-    make_add(e,l,n) { myAdd(e,(ArrayList)l,n) }
+    fsym             { factory.makeAFun("conc", 1, false) }
+    make_empty(n)    { new ArrayList(n) }
+    make_append(e,l) { myAdd(e,(ArrayList)l) }
   }
 
-  private ArrayList myAdd(Object e, ArrayList l, int n) {
-    l.add(n,e);
+  private ArrayList myAdd(Object e, ArrayList l) {
+    l.add(e);
     return l;
   }
   
@@ -39,14 +39,17 @@ public class Array {
 
   %op E a {
     fsym { factory.makeAFun("a", 0, false) }
+    make() { factory.makeAppl(factory.makeAFun("a", 0, false)) }
   }
   
   %op E b {
     fsym { factory.makeAFun("b", 0, false) }
+    make() { factory.makeAppl(factory.makeAFun("b", 0, false)) }
   }
 
   %op E c {
     fsym { factory.makeAFun("c", 0, false) }
+    make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
   
   public Array(ATermFactory factory) {
@@ -79,28 +82,17 @@ public class Array {
     res.add(tc);
     
     assertTrue(sort1(l).equals(res));
+    assertTrue(sort2(l).equals(res));
   }
 
   public void testArray2() {
-    ATerm ta = factory.makeAppl(factory.makeAFun("a", 0, false));
-    ATerm tb = factory.makeAppl(factory.makeAFun("b", 0, false));
-    ATerm tc = factory.makeAppl(factory.makeAFun("c", 0, false));
-    ArrayList l = new ArrayList();
-    l.add(ta);
-    l.add(tb);
-    l.add(tc);
-    l.add(ta);
-    l.add(tb);
-    l.add(tc);
-    l.add(ta);
-
-    ArrayList res = new ArrayList();
-    res.add(ta);
-    res.add(tb);
-    res.add(tc);
+    ArrayList l   = `conc(a,b,c,a,b,c,a);
+    ArrayList res = `conc(a,b,c);
     
     assertTrue(double1(sort1(l)).equals(res));
+    assertTrue(double2(sort2(l)).equals(res));
   }
+
 
   public ArrayList sort1(ArrayList l) {
     %match(L l) {
@@ -135,6 +127,32 @@ public class Array {
       _ -> { return l; }
     }
   }
+
+  public ArrayList sort2(ArrayList l) {
+    %match(L l) {
+      conc(X1*,x,X2*,y,X3*) -> {
+        String xname = ((ATermAppl)x).getName();
+        String yname = ((ATermAppl)y).getName();
+        if(xname.compareTo(yname) > 0) {
+          return `sort2(conc(X1*,y,X2*,x,X3*));
+        }
+      }
+        
+      _ -> { return l; }
+    }
+    
+  }
+
+  public ArrayList double2(ArrayList l) {
+    %match(L l) {
+      conc(X1*,x,X2*,x,X3*) -> {
+        return `double2(conc(X1*,X2*,x,X3*));
+      }
+      
+      _ -> { return l; }
+    }
+  }
+
 
   static void  assertTrue(boolean condition) {
     if(!condition) {
