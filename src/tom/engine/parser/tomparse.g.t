@@ -24,7 +24,7 @@ header{
 class NewTomParser extends Parser;
 
 options{
-    k=2; // the lookahead value during parsing
+    k=1; // the lookahead value during parsing
 }
 
 
@@ -167,7 +167,6 @@ matchConstruct [Option ot] returns [Instruction result] throws TomException
             )* 
             t:RBRACE 
             { 
-                p("last rbrace in match");
                 result = `Match(
                     SubjectList(ast().makeList(argumentList)),
                     PatternList(ast().makeList(patternActionList)),
@@ -219,10 +218,9 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
     Option option = null;
 
     clearText();
-    p("begin pattern action");
 }
     :   (
-            ( label:ID COLON )?
+            ( (ID COLON) => label:ID COLON )?
              option = matchPattern[matchPatternList] 
             {
                 listOfMatchPatternList.add(ast().makeList(matchPatternList));
@@ -266,8 +264,6 @@ patternAction [LinkedList list, StringBuffer debugKey] throws TomException
                 selector().push("targetlexer");
                 //                TargetLanguage tlCode = targetparser.goalLanguage(blockList);
                 TargetLanguage tlCode = targetparser.targetLanguage(blockList);
-
-                p("end target in pattern action ");
 
                 
                 // target parser finished : pop the target lexer
@@ -410,8 +406,8 @@ annotedTerm returns [TomTerm result]
     int line = 0;
 }
     :   (
-            ( 
-                name:ID AT 
+	    ( 
+                (ID AT) => name:ID AT 
                 {
                     text.append(name.getText());
                     text.append('@');
@@ -443,9 +439,9 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
         constraintList.add(annotedName);
 }
     :  
-        (   // xml is missing
+    (   // xml is missing
             // var* or _*
-            result = variableStar[optionList,constraintList] 
+            (variableStar[null,null]) => result = variableStar[optionList,constraintList] 
 
         |   // _
             result = placeHolder[optionList,constraintList] 
@@ -489,7 +485,8 @@ plainTerm [TomName astAnnotedName, int line] returns [TomTerm result]
         |   // (f|g...) 
             // ambiguity with the last rule so use syntactic predicat
             // (headSymbolList()) => headSymbolList()
-            (headSymbolList[null]) => nameList = headSymbolList[optionList] 
+            //(headSymbolList[null]) => nameList = headSymbolList[optionList] 
+	    	{LA(3) == ALTERNATIVE}? nameList = headSymbolList[optionList] 
             ( (args[null,null]) => implicit = args[list,secondOptionList] {withArgs = true;})?
             {
                 if(withArgs && list.isEmpty())
@@ -710,14 +707,11 @@ headSymbol [LinkedList optionList] returns [TomName result]
 
 bqTerm returns [TomTerm result]
 {
-p("bqterm");   
-
     String bqCode = null;
     LinkedList blockList = new LinkedList();
     result = null;
 }
     :
-{        p("tombq");}
         (
             l:LPAREN 
             {
@@ -745,6 +739,7 @@ p("bqterm");
 
 operator returns [Declaration result] throws TomException
 {
+
     result=null;
     Option ot = null;
     TomTypeList types = `concTomType();
@@ -757,8 +752,7 @@ operator returns [Declaration result] throws TomException
     Declaration attribute;
     TargetLanguage tlFsym;
 
-
-  Map mapNameDecl = new HashMap();
+    Map mapNameDecl = new HashMap();
 }
     :
         type:ID name:ID 
@@ -771,7 +765,7 @@ operator returns [Declaration result] throws TomException
             LPAREN
             { stringSlotName = ""; }
             (
-                slotName:ID COLON
+               (ID COLON) => slotName:ID COLON
                 { stringSlotName = slotName.getText(); }
             )? 
             typeArg:ID 
@@ -783,7 +777,7 @@ operator returns [Declaration result] throws TomException
                 COMMA
                 { stringSlotName = ""; }
                 (
-                    slotName2:ID COLON
+                    (ID COLON) => slotName2:ID COLON
                     { stringSlotName = slotName2.getText(); }
                 )?
                 typeArg2:ID
@@ -795,7 +789,10 @@ operator returns [Declaration result] throws TomException
                     if (!stringSlotName.equals("")) {
                         if(slotNameList.indexOf(astName) != -1) {
                             String detailedMsg = MessageFormat.format(TomMessage.getString("RepeatedSlotName"), new Object[]{stringSlotName});
-                            String msg = MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg});
+                            String msg = MessageFormat.format(
+                                TomMessage.getString("MainErrorMessage"), 
+                                new Object[]{new Integer(ot.getLine()), "%op "+type.getText(), new Integer(ot.getLine()), currentFile(), detailedMsg}
+                            );
                             //throw new TomException(msg);
                             System.out.println(msg);
                         }
@@ -818,10 +815,10 @@ operator returns [Declaration result] throws TomException
             attribute = keywordMake[name.getText(),`TomTypeAlone(type.getText()),types]
             { options.add(attribute); }
 
-        | attribute = keywordGetSlot[astName,type.getText()]
+        |   attribute = keywordGetSlot[astName,type.getText()]
             { options.add(attribute); }
 
-        | attribute = keywordIsFsym[astName,type.getText()]
+        |   attribute = keywordIsFsym[astName,type.getText()]
             { options.add(attribute); }
         )*
         t:RBRACE
@@ -868,6 +865,7 @@ operator returns [Declaration result] throws TomException
             //slotList treatment end
 
             astSymbol = ast().makeSymbol(name.getText(), type.getText(), types, slotList, options, tlFsym);
+            
             putSymbol(name.getText(),astSymbol);
 
             result = `SymbolDecl(astName);
@@ -1482,9 +1480,16 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                         }
                         Option info1 = `OriginTracking(Name(typeArg.getText()),typeArg.getLine(),Name(currentFile()));  
                         OptionList option1 = `concOption(info1);
-                        args = `concTomTerm(
-                            Variable(option1,Name(typeArg.getText()),type,emptyConstraintList() )
-                        );
+                        
+                        args = (TomList) args.append(`Variable(
+                                option1,
+                                Name(typeArg.getText()),
+                                type,emptyConstraintList()
+                            ));
+                        
+                        //args = `concTomTerm(
+                        //    Variable(option1,Name(typeArg.getText()),type,emptyConstraintList() )
+                        //);
                     }
                     ( 
                         COMMA nameArg:ID
@@ -1496,9 +1501,16 @@ keywordMake [String opname, TomType returnType, TomTypeList types] returns [Decl
                             }
                             Option info2 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),Name(currentFile()));
                             OptionList option2 = `concOption(info2);
-                            args = `concTomTerm(
-                                Variable(option2,Name(nameArg.getText()),type,emptyConstraintList() )
-                            );
+                            
+                            args = (TomList) args.append(`Variable(
+                                    option2,
+                                    Name(nameArg.getText()),
+                                    type,emptyConstraintList()
+                                ));
+                            
+                         //   args = `concTomTerm(
+                           //     Variable(option2,Name(nameArg.getText()),type,emptyConstraintList() )
+                           // );
                         }
                     )*
                 )? 
