@@ -40,11 +40,11 @@ public class Propp {
 
 		System.out.println("Traces = " + rules_appl);
 		// Process Traces
-		ListSequent proofTerm = buildProofTerm(initSeq,rules_appl);
+		ListProof proofTerm = buildProofTerm(initSeq,rules_appl);
 		System.out.println("Proof term = " + proofTerm);
 		Collection tex_proofs = new HashSet();
-		%match(ListSequent proofTerm) {
-			concSequent(_*,p,_*) -> {
+		%match(ListProof proofTerm) {
+			concProof(_*,p,_*) -> {
 				tex_proofs.add(proofToTex(p));
 			}
 		}
@@ -141,7 +141,7 @@ public class Propp {
 						match = true;
 						Sequent prod = `seq(concPred(X*,Z),concPred(Y*,R*));
 						c.add(prod);
-						rules_appl.add(`negd(subject,prod));
+						rules_appl.add(`rappl(negd,subject,concSequent(prod)));
 					}
 					// }}}
 
@@ -150,8 +150,7 @@ public class Propp {
 						match = true;
 						Sequent prod = `seq(concPred(X*),concPred(Y*,Z,R,S*));
 						c.add(prod);
-						//add_trace(subject,`pair(disjd,prod));
-						rules_appl.add(`disjd(subject,prod));
+						rules_appl.add(`rappl(disjd,subject,concSequent(prod)));
 					}
 					//}}}			
 
@@ -160,7 +159,7 @@ public class Propp {
 						match = true;
 						Sequent prod = `seq(concPred(X*,Y),concPred(S*,Z,R*));
 						c.add(prod);
-						rules_appl.add(`impd(subject,prod));
+						rules_appl.add(`rappl(impd,subject,concSequent(prod)));
 					}
 					//}}}
 
@@ -169,7 +168,7 @@ public class Propp {
 						match = true;
 						Sequent prod = `seq(concPred(X*,S*),concPred(Y,Z*));
 						c.add(prod);
-						rules_appl.add(`negg(subject,prod));
+						rules_appl.add(`rappl(negg,subject,concSequent(prod)));
 					}
 					//}}}
 
@@ -178,7 +177,7 @@ public class Propp {
 						match = true;
 						Sequent prod = `seq(concPred(X*,Y,Z,S*),concPred(R*));
 						c.add(prod);
-						rules_appl.add(`conjg(subject,prod));
+						rules_appl.add(`rappl(conjg,subject,concSequent(prod)));
 					}
 					//}}}
 
@@ -190,7 +189,7 @@ public class Propp {
 
 						Sequent prod2 = `seq(concPred(X*,Z,S*),concPred(R*));
 						c.add(prod2);
-						rules_appl.add(`disjg(subject,prod,prod2));
+						rules_appl.add(`rappl(disjg,subject,concSequent(prod,prod2)));
 					}
 					//}}}
 
@@ -202,7 +201,7 @@ public class Propp {
 
 						Sequent prod2 = `seq(concPred(R*),concPred(X*,Z,S*));
 						c.add(prod2);
-						rules_appl.add(`conjd(subject,prod,prod2));
+						rules_appl.add(`rappl(conjd,subject,concSequent(prod,prod2)));
 					}
 					//}}}
 
@@ -214,7 +213,7 @@ public class Propp {
 
 						Sequent prod2 = `seq(concPred(X*,Z,S*),concPred(R*));
 						c.add(prod2);
-						rules_appl.add(`impg(subject,prod,prod2));
+						rules_appl.add(`rappl(impg,subject,concSequent(prod,prod2)));
 					}
 					//}}}
 
@@ -224,7 +223,7 @@ public class Propp {
 							match = true;
 							Sequent prod = `PROOF();
 							c.add(prod);
-							rules_appl.add(`axiom(subject));
+							rules_appl.add(`rappl(axiom,subject,concSequent()));
 						}
 					}
 					//}}}
@@ -234,10 +233,6 @@ public class Propp {
 						match = true;
 						c.add(`PROOF());
 					}
-					//END   -> {
-					//	match = true;
-					//	c.add(`END());
-					//}
 					//}}}
 
 				}// end %match
@@ -268,121 +263,45 @@ public class Propp {
 	}
 	//}}}
 
-	//{{{ public ListSequent buildProofTerm(Sequent goal, Collection trace) {
-	public ListSequent buildProofTerm(Sequent goal, Collection trace) {
-		ListSequent tmpsol = `concSequent();
+	//{{{ public ListProof buildProofTerm(Sequent goal, Collection trace) {
+	public ListProof buildProofTerm(Sequent goal, Collection trace) {
+		ListProof tmpsol = `concProof();
 		Iterator iter = trace.iterator();
 		while (iter.hasNext()) {
-			Sequent item = (Sequent)iter.next();
-			//{{{ %match(Sequent item)
-			%match(Sequent item) {
-				negd(s,p) -> {
+			Trace item = (Trace)iter.next();
+			//{{{ %match(Trace item)
+			%match(Trace item) {
+				rappl(r,s,concSequent(p)) -> {
 					if (s == goal) {
-						ListSequent proof_p = buildProofTerm(p,trace);
-						%match(ListSequent proof_p) {
-							concSequent(_*,elem,_*) -> {
-								tmpsol = `concSequent(negd(goal,elem),tmpsol*);
+						ListProof proof_p = buildProofTerm(p,trace);
+						%match(ListProof proof_p) {
+							concProof(_*,elem,_*) -> {
+								tmpsol = `concProof(rule(r,goal,concProof(elem)),tmpsol*);
 							}
 						}
 					}
 				}
 
-				disjd(s,p) -> {
+				rappl(r,s,concSequent(p,pp)) -> {
 					if (s == goal) {
-					ListSequent proof_p = buildProofTerm(p,trace);
-					%match(ListSequent proof_p) {
-						concSequent(_*,elem,_*) -> {
-							tmpsol = `concSequent(disjd(goal,elem),tmpsol*);
-						}
-					}
-					}
-				}
-
-				impd(s,p) -> {
-					if (s == goal) {
-					ListSequent proof_p = buildProofTerm(p,trace);
-					%match(ListSequent proof_p) {
-						concSequent(_*,elem,_*) -> {
-							tmpsol = `concSequent(impd(goal,elem),tmpsol*);
-						}
-					}
-					}
-				}
-
-				negg(s,p) -> {
-					if (s == goal) {
-					ListSequent proof_p = buildProofTerm(p,trace);
-					%match(ListSequent proof_p) {
-						concSequent(_*,elem,_*) -> {
-							tmpsol = `concSequent(negg(goal,elem),tmpsol*);
-						}
-					}
-					}
-				}
-
-				conjg(s,p) -> {
-					if (s == goal) {
-					ListSequent proof_p = buildProofTerm(p,trace);
-					%match(ListSequent proof_p) {
-						concSequent(_*,elem,_*) -> {
-							tmpsol = `concSequent(conjg(goal,elem),tmpsol*);
-						}
-					}
-					}
-				}
-
-				disjg(s,p,pp) -> {
-					if (s == goal) {
-					ListSequent proof_p = buildProofTerm(p,trace);
-					ListSequent proof_pp = buildProofTerm(pp,trace);
-					%match(ListSequent proof_p) {
-						concSequent(_*,elem,_*) -> {
-							%match(ListSequent proof_pp) {
-								concSequent(_*,elemn,_*) -> {
-									tmpsol = `concSequent(disjg(goal,elem,elemn),tmpsol*);
+						ListProof proof_p = buildProofTerm(p,trace);
+						ListProof proof_pp = buildProofTerm(pp,trace);
+						%match(ListProof proof_p) {
+							concProof(_*,elem,_*) -> {
+								%match(ListProof proof_pp) {
+									concProof(_*,elemn,_*) -> {
+										tmpsol = `concProof(rule(r,goal,concProof(elem,elemn)),tmpsol*);
+									}
 								}
 							}
 						}
 					}
-					}
 				}
-				
-				conjd(s,p,pp) -> {
+
+				rappl(r,s,concSequent()) -> {
 					if (s == goal) {
-					ListSequent proof_p = buildProofTerm(p,trace);
-					ListSequent proof_pp = buildProofTerm(pp,trace);
-					%match(ListSequent proof_p) {
-						concSequent(_*,elem,_*) -> {
-							%match(ListSequent proof_pp) {
-								concSequent(_*,elemn,_*) -> {
-									tmpsol = `concSequent(conjd(goal,elem,elemn),tmpsol*);
-								}
-							}
-						}
+						tmpsol = `concProof(rule(r,s,concProof()),tmpsol*);
 					}
-					}
-				}
-				
-				impg(s,p,pp) -> {
-					if (s == goal) {
-					ListSequent proof_p = buildProofTerm(p,trace);
-					ListSequent proof_pp = buildProofTerm(pp,trace);
-					%match(ListSequent proof_p) {
-						concSequent(_*,elem,_*) -> {
-							%match(ListSequent proof_pp) {
-								concSequent(_*,elemn,_*) -> {
-									tmpsol = `concSequent(impg(goal,elem,elemn),tmpsol*);
-								}
-							}
-						}
-					}
-					}
-				}
-				
-				p@axiom(s) -> {
-					if (s == goal) {
-					tmpsol = `concSequent(p,tmpsol*);
-				}
 				}
 
 			}
@@ -442,48 +361,25 @@ public class Propp {
 	}
 	//}}}
 
-	//{{{ public String proofToTex(Sequent proof)
-	public String proofToTex(Sequent proof) {
+	//{{{ public String proofToTex(Proof proof)
+	public String proofToTex(Proof proof) {
 		String latex = "";
 
-			//{{{ %match(Sequent item)
-			%match(Sequent proof) {
-				negd(s,p) -> {
-					latex = "\\infer[negd]{" + seqToTex(s) + "}{" + proofToTex(p) + "}";
-				}
+			//{{{ %match(Proof item)
+			%match(Proof proof) {
 
-				disjd(s,p) -> {
-					latex = "\\infer[disjd]{" + seqToTex(s) + "}{" + proofToTex(p) + "}";
-				}
-
-				impd(s,p) -> {
-					latex = "\\infer[impd]{" + seqToTex(s) + "}{" + proofToTex(p) + "}";
-				}
-
-				negg(s,p) -> {
-					latex = "\\infer[negg]{" + seqToTex(s) + "}{" + proofToTex(p) + "}";
-				}
-
-				conjg(s,p) -> {
-					latex = "\\infer[conjg]{" + seqToTex(s) + "}{" + proofToTex(p) + "}";
-				}
-
-				disjg(s,p,pp) -> {
-					latex = "\\infer[disjg]{" + seqToTex(s) + "}{" + proofToTex(p) + " & " + proofToTex(pp) + "}";
+				rule(r,g,concProof()) -> {
+					latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{\\mbox{}}";
 				}
 				
-				conjd(s,p,pp) -> {
-					latex = "\\infer[conjd]{" + seqToTex(s) + "}{" + proofToTex(p) + " & " + proofToTex(pp) + "}";
+				rule(r,g,concProof(p)) -> {
+					latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{" + proofToTex(p) + "}";
 				}
 				
-				impg(s,p,pp) -> {
-					latex = "\\infer[impg]{" + seqToTex(s) + "}{" + proofToTex(p) + " & " + proofToTex(pp) + "}";
+				rule(r,g,concProof(p,pp)) -> {
+					latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{" + proofToTex(p) + " & " + proofToTex(pp) + "}";
 				}
 				
-				p@axiom(s) -> {
-					latex = "\\infer[axiom]{" + seqToTex(s) + "}{\\mbox{}}";
-				}
-
 			}
 			//}}}
 		
