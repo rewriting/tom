@@ -56,7 +56,7 @@ public class TomParser implements TomTask, TomParserConstants {
   private Statistics stat;
   private jtom.TomEnvironment environment;
   private File importList[];
-  private static HashSet includedFiles = new HashSet();
+  private HashSet includedFiles = new HashSet();
   private String currentFile;
   private ArrayList debuggedStructureList;
   private String text="";
