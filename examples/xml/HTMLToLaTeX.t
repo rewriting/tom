@@ -249,8 +249,8 @@ public class HTMLToLaTeX {
 		write("}");
 		return false;
 	      }
-	      <div id=label>data*</div> -> {
-		write("\\label{"+label+"}\n");
+	      <div id=id>data*</div> -> {
+		write("\\label{"+id+"}\n");
 		toLaTeX(data);
 		return false;
 	      }

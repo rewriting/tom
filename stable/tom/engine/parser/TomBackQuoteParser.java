@@ -257,25 +257,4 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     return term;
   }
 
-  protected TomTerm encodeXMLAppl(TomTerm term) {
-      //System.out.println("encode term = " + term);
-     {  TomTerm tom_match12_1 = null; tom_match12_1 = ( TomTerm) term;_match12_pattern1: {  String tomName = null; if(tom_is_fun_sym_Appl(tom_match12_1)) {  TomName tom_match12_1_2 = null; tom_match12_1_2 = ( TomName) tom_get_slot_Appl_astName(tom_match12_1); if(tom_is_fun_sym_Name(tom_match12_1_2)) {  String tom_match12_1_2_1 = null; tom_match12_1_2_1 = ( String) tom_get_slot_Name_string(tom_match12_1_2); tomName = ( String) tom_match12_1_2_1;
- 
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-        if(tomSymbol != null) {
-          TomType type = tomSymbol.getTypesToType().getCodomain();
-            //System.out.println("type = " + type);
-          if(isStringType(getTomType(type))) {
-            Option info = tom_make_OriginTracking(tom_make_Name(Constants .TEXT_NODE), - 1,tom_make_Name( "??")) ;
-            term = tom_make_Appl(ast() .makeOption(info),tom_make_Name(Constants .TEXT_NODE),tom_make_insert_concTomTerm(term,( TomList) tom_make_empty_concTomTerm()))
-
- ;
-              //System.out.println("encoded into: " + term);
-          }
-        }
-       } }} }
- 
-    return term;
-  }
-
 } //class TomBackQuoteParser

@@ -834,56 +834,6 @@ TomTerm Term() throws TomException: /* in TOM mode */
       }
 }
 
-TomTerm XMLAttribute() throws TomException:
-{
-  LinkedList list = new LinkedList();
-  TomTerm term;
-  TomTerm rightTerm = null;
-  Option option;
-  LinkedList optionList = new LinkedList();
-}
-{
-  term=Term() { list.add(term); } [ <TOM_EQUAL>{text+="=";} term=Term()
-    {
-        // we add the specif value : _
-      list.add(tsf().makeTomTerm_Placeholder(ast().makeOption()));
-      list.add(tomBackQuoteParser.encodeXMLAppl(term));
-    } ]
-    {
-      if(list.size() > 1) {
-        optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
-        option = ast().makeOption(ast().makeOptionList(optionList));
-        return tsf().makeTomTerm_Appl(option,
-                                      tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE),
-                                      ast().makeList(list));
-      } else {
-        return term;
-      }
-    }
-}
-
-boolean XMLAttributes(LinkedList list) throws TomException:
-{
-  TomTerm attribute;
-}
-{
-    // explicit
-  <TOM_LBRACKET>{text+="[";}
-    [
-      attribute = XMLAttribute() { list.add(attribute); }
-      ( <TOM_COMMA> {text += " , ";} attribute = XMLAttribute() { list.add(attribute); } )*
-    ]
-  <TOM_RBRACKET>
-  {
-    text +="]";
-     return false;
-  }
- | // implicit mode
-  ( attribute = XMLAttribute() { list.add(attribute); } )*
-  {
-     return true;
-  }
-}
 
 TomTerm TermStringIdentifier() throws TomException:
 {
@@ -923,7 +873,7 @@ TomTerm XMLChild() throws TomException:
   TomTerm arg2;
   LinkedList list = new LinkedList();
   LinkedList childs = new LinkedList();
- LinkedList optionList = new LinkedList();
+  LinkedList optionList = new LinkedList();
   String keyword = "";
   Option option;
   boolean implicit;
@@ -933,7 +883,7 @@ TomTerm XMLChild() throws TomException:
     // < NODE attributes [ /> | > childs </NODE> ]
      <XML_START> name=<TOM_IDENTIFIER>
         {
-          text +="<"+name.image;
+          text += "<" + name.image;
           optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
         }
      implicit = XMLAttributes(list) {
@@ -956,14 +906,11 @@ TomTerm XMLChild() throws TomException:
             throw new TomException(new Throwable("Error on closing node"));
             return null;
           }
-          if(implicit) {
-            optionList.add(tsf().makeOption_ImplicitXMLChild());
-          }
+          if(implicit) { optionList.add(tsf().makeOption_ImplicitXMLChild()); }
           option = ast().makeOption(ast().makeOptionList(optionList));
         }
       ) // end choice
         {
-          //ast().makeStringSymbol(symbolTable,name.image,optionList);
           term =  tsf().makeTomTerm_XMLAppl(
             option,
             tsf().makeTomName_Name(name.image),
@@ -1015,10 +962,10 @@ boolean XMLChilds(LinkedList list) throws TomException:
     // explicit
   <TOM_LBRACKET>{text+="[";}
     [
-      term = XMLTerm() { list.add(tomBackQuoteParser.encodeXMLAppl(term)); }
+      term = XMLTerm() { list.add(ast().metaEncodeXMLAppl(symbolTable,term)); }
       (
         <TOM_COMMA> {text += " , ";}
-        term = XMLTerm() { list.add(tomBackQuoteParser.encodeXMLAppl(term)); }
+        term = XMLTerm() { list.add(ast().metaEncodeXMLAppl(symbolTable,term)); }
       )*
     ]
   <TOM_RBRACKET>
@@ -1029,11 +976,69 @@ boolean XMLChilds(LinkedList list) throws TomException:
  |
  // implicit mode
    (
-     term = XMLTerm() { list.add(tomBackQuoteParser.encodeXMLAppl(term)); }
+     term = XMLTerm() { list.add(ast().metaEncodeXMLAppl(symbolTable,term)); }
    )*
    {
      return true;
    }
+}
+
+TomTerm XMLAttribute() throws TomException:
+{
+  LinkedList list = new LinkedList();
+  TomTerm term;
+  TomTerm rightTerm = null;
+  Option option;
+  LinkedList optionList = new LinkedList();
+}
+{
+  term=Term() {
+      /*
+       * encode the name and put it into the table of symbols
+       */
+    list.add(ast().encodeXMLAppl(symbolTable,term));
+  }
+  
+  [ <TOM_EQUAL>{text+="=";} term=Term()
+    {
+        // we add the specif value : _
+      list.add(tsf().makeTomTerm_Placeholder(ast().makeOption()));
+      list.add(ast().metaEncodeXMLAppl(symbolTable,term));
+    } ]
+    {
+      if(list.size() > 1) {
+        optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
+        option = ast().makeOption(ast().makeOptionList(optionList));
+        return tsf().makeTomTerm_Appl(option,
+                                      tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE),
+                                      ast().makeList(list));
+      } else {
+        return term;
+      }
+    }
+}
+
+boolean XMLAttributes(LinkedList list) throws TomException:
+{
+  TomTerm attribute;
+}
+{
+    // explicit
+  <TOM_LBRACKET>{text+="[";}
+    [
+      attribute = XMLAttribute() { list.add(attribute); }
+      ( <TOM_COMMA> {text += " , ";} attribute = XMLAttribute() { list.add(attribute); } )*
+    ]
+  <TOM_RBRACKET>
+  {
+    text +="]";
+     return false;
+  }
+ | // implicit mode
+  ( attribute = XMLAttribute() { list.add(attribute); } )*
+  {
+     return true;
+  }
 }
 
 void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */

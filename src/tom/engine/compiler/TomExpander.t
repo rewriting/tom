@@ -208,8 +208,8 @@ public class TomExpander extends TomBase implements TomTask {
     TomList newChildList = `emptyTomList();
 
     TomTerm star = ast().makeUnamedVariableStar(ast().makeOption(),"unknown type");
-    if(implicitAttribute) { newAttrList = `manyTomList(star,newAttrList); }
-    if(implicitChild) { newChildList = `manyTomList(star,newChildList); }
+    if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
+    if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 
     while(!attrList.isEmpty()) {
       TomTerm newPattern = expandTomSyntax(attrList.getHead());
@@ -246,7 +246,7 @@ public class TomExpander extends TomBase implements TomTask {
     }
     newChildList = (TomList) newChildList.reverse();
 
-    System.out.println("+++ newAttrList  = " + newAttrList);
+      //System.out.println("+++ newAttrList  = " + newAttrList);
       //System.out.println("+++ newChildList = " + newChildList);
 
     Option emptyOption = ast().makeOption();
@@ -254,8 +254,7 @@ public class TomExpander extends TomBase implements TomTask {
       /*
        * encode the name and put it into the table of symbols
        */
-    tomName = "\"" + tomName + "\"";
-    ast().makeStringSymbol(symbolTable(),tomName, new LinkedList());
+    tomName = ast().encodeXMLString(symbolTable(),tomName);
     
     TomList newArgs = `concTomTerm(
       Appl(Option(options),Name(tomName),empty()),

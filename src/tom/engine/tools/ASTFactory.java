@@ -27,6 +27,7 @@ package jtom.tools;
 
 import java.util.*;
 import jtom.adt.*;
+import jtom.xml.*;
 import aterm.ATerm;
 
 public class ASTFactory {
@@ -275,5 +276,58 @@ public class ASTFactory {
     else
       return tsf().makeTomName_EmptyName();
   }
+
+  public String encodeXMLString(SymbolTable symbolTable, String name) {
+    name = "\"" + name + "\"";
+    makeStringSymbol(symbolTable,name, new LinkedList());
+    return name;
+  }
+
+  public TomTerm encodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
+      /*
+       * encode a String into a quoted-string
+       * Appl(...,Name("string"),...) becomes
+       * Appl(...,Name("\"string\""),...)
+       */
+    if(term.isAppl()) {
+      TomName astName = term.getAstName();
+      if(astName.isName()) {
+        String tomName = encodeXMLString(symbolTable,astName.getString());
+        term = term.setAstName(tsf().makeTomName_Name(tomName));
+        System.out.println("encodeXMLAppl = " + term);
+      }
+    }
+      return term;
+  }
+
+  public TomTerm metaEncodeXMLAppl(SymbolTable symbolTable, TomTerm term) {
+      /*
+       * meta-encode a String into a TextNode
+       * Appl(...,Name("\"string\""),...) becomes
+       * Appl(...,Name("TextNode"),[Appl(...,Name("\"string\""),...)],...)
+       */
+    if(term.isAppl()) {
+      TomName astName = term.getAstName();
+      if(astName.isName()) {
+        String tomName = astName.getString();
+        TomSymbol tomSymbol = symbolTable.getSymbol(tomName);
+        if(tomSymbol != null) {
+          TomType type = tomSymbol.getTypesToType().getCodomain();
+            //System.out.println("type = " + type);
+          if(type.isTomTypeAlone() && type.getString().equals("String")) {
+            Option info = makeOriginTracking(Constants.TEXT_NODE,"-1","??");
+            TomList list = tsf().makeTomList();
+            list = tsf().makeTomList(term,list);
+            term = tsf().makeTomTerm_Appl(
+              makeOption(info),
+              tsf().makeTomName_Name(Constants.TEXT_NODE),list);
+              System.out.println("metaEncodeXmlAppl = " + term);
+          }
+        }
+      }
+    }
+    return term;
+  }
+
   
 }
