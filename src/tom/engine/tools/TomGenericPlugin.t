@@ -146,7 +146,6 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   }
 
   public void setStreamManager(TomStreamManager streamManager) {
-    System.out.println("generic plugin set streamManager to"+streamManager);
     this.streamManager = streamManager; 
   }
 
@@ -222,12 +221,12 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
 
       if( nbOfErrors > 0 ) {
         getLogger().log( Level.SEVERE, "TaskErrorMessage",
-                    new Object[]{ pluginName, 
-                                  new Integer(nbOfErrors), 
-                                  new Integer(nbOfWarnings) } );
+                    new Object[]{pluginName, 
+                                 new Integer(nbOfErrors), 
+                                 new Integer(nbOfWarnings)});
       } else if( nbOfWarnings > 0 ) {
         getLogger().log( Level.INFO, "TaskWarningMessage",
-                    new Object[]{ pluginName, new Integer(nbOfWarnings) } );
+                    new Object[]{pluginName, new Integer(nbOfWarnings)});
       }
     }
   }

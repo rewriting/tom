@@ -32,7 +32,8 @@ import aterm.*;
 
 /**
  * The TomStarter "plugin". Only here to initialize the TomStreamManager
- * and to initalize the plugin platform set/getargs process with it
+ * and to initalize the plugin platform set/getargs process with it.
+ * The StreamManager contains also the reference to the SymbolTable.
  */
 public class TomStarter extends TomGenericPlugin {
 
@@ -40,12 +41,12 @@ public class TomStarter extends TomGenericPlugin {
   private Object[] argToRelay;
   /** Saved information during setArgs */
   private String fileName;
-
+  
   /** Constructor*/
   public TomStarter() {
     super("TomStarter");
   }
-
+  
   /**
    * inherited from plugin interface
    * arg[0] should contain the input file name
@@ -71,7 +72,7 @@ public class TomStarter extends TomGenericPlugin {
     argToRelay = new Object[]{streamManager};
   }
   
-    /**
+  /**
    * inherited from plugin interface
    * returns argTorelay initialized during run call
    */

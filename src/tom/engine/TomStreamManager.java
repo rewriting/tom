@@ -88,7 +88,7 @@ public class TomStreamManager {
     inputFile = null;
     outputFile = null;
     userOutputFile = null;
-    packagePath = null;
+    packagePath = "";
     inputSuffix = ".t";
     outputSuffix = ".java";
   }
@@ -200,7 +200,8 @@ public class TomStreamManager {
       importList.add(it.next());
     }
     try {
-      importList.add(new File(getDestDir(),getPackagePath()).getCanonicalFile());
+      File destAndPackage = new File(getDestDir(),getPackagePath());
+      importList.add(destAndPackage.getCanonicalFile());
       importList.add(getInputFile().getParentFile().getCanonicalFile());
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
@@ -217,7 +218,6 @@ public class TomStreamManager {
   }
   
   public String getInputSuffix() {
-    //System.out.println("getInputSuffix : " +inputSuffix);
     return inputSuffix;
   }
   
@@ -227,10 +227,10 @@ public class TomStreamManager {
 
   public void setPackagePath(String packagePath) {
     this.packagePath = packagePath.replace('.',File.separatorChar);
+    updateOutputFileOnPackageChanged();
   }
   
   public String getPackagePath() {
-    //System.out.println("getPackagePath : " +packagePath);
     return packagePath;
   }
 
@@ -292,7 +292,7 @@ public class TomStreamManager {
    * update the outputFile by inserting the packagePath
    * between the destDir and the fileName
    */
-  public void updateOutputFile() {
+  private void updateOutputFileOnPackageChanged() {
     if(!isUserOutputFile()) {
       File out = new File(getOutputFile().getParentFile(),getPackagePath());
       setOutputFile(new File(out, getOutputFile().getName()).getPath());
@@ -325,5 +325,21 @@ public class TomStreamManager {
 
   public boolean isSilentDiscardImport(String fileName) {
     return importsToDiscard.contains(fileName);
+  }
+
+  public File findFile(File parent, String fileName) {
+    File file = new File(parent, fileName);
+    if(file.exists()) {
+      return file;
+    }
+    // Look for importList
+    for(int i=0 ; i<getImportList().size() ; i++) {
+      file = new File((File)getImportList().get(i),fileName);
+      if(file.exists()) {
+        return file;
+      }
+    }
+    System.out.println(fileName+" not found");
+    return null;
   }
 } //class TomStreamManager

@@ -20,46 +20,44 @@ public class TomOptimizer extends TomGenericPlugin {
 
   %include{ adt/TomSignature.tom }
 
+  /** some output suffixes */
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
+
+  /** the declared options string*/
   private static final String DECLARED_OPTIONS = "<options><boolean name='optimize' altName='O' description='Optimized generated code' value='false'/></options>";
 
+  /** Constructor */
   public TomOptimizer() {
     super("TomOptimizer");
   }
-
+  
   public void run() {
     if(isActivated()) {
+      int errorsAtStart   = getStatusHandler().nbOfErrors();
+      int warningsAtStart = getStatusHandler().nbOfWarnings();
+      long startChrono = System.currentTimeMillis();
+      boolean intermediate = getOptionBooleanValue("intermediate");
       try {
-        int errorsAtStart   = getStatusHandler().nbOfErrors();
-        int warningsAtStart = getStatusHandler().nbOfWarnings();
-        long startChrono = System.currentTimeMillis();
-        
         TomTerm renamedTerm   = renameVariable( (TomTerm)getWorkingTerm(), new HashSet() );
         TomTerm optimizedTerm = optimize(renamedTerm);
         setWorkingTerm(optimizedTerm);
-
-        long stopChrono = System.currentTimeMillis();
-			
-        getLogger().log( Level.INFO,
-                         "TomOptimizationPhase",
-                         new Integer((int)(stopChrono-startChrono)) );
-			
-						
-        boolean intermediate = getOptionBooleanValue("intermediate");
-        if(intermediate) {
-          Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
-                                (ATerm)getWorkingTerm() );
-        }
-
-        printAlertMessage(errorsAtStart, warningsAtStart);
-
+        // verbose
+        getLogger().log(Level.INFO, "TomOptimizationPhase",
+                        new Integer((int)(System.currentTimeMillis()-startChrono)) );
+        //printAlertMessage(errorsAtStart, warningsAtStart);
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, "ExceptionMessage",
-                         new Object[]{getStreamManager().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
-
+                         new Object[]{"TomOptimizer", getStreamManager().getInputFile().getName(), e.getMessage()} );
+        
         e.printStackTrace();
+        return;
+      }
+      if(intermediate) {
+        Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
+                             (ATerm)getWorkingTerm() );
       }
     } else {
+      // not active plugin
       getLogger().log(Level.INFO, "The optimizer is not activated and thus WILL NOT RUN.");
     }
   }

@@ -43,7 +43,8 @@ import aterm.*;
 import aterm.pure.*;
 
 /**
- *
+ * The TomEnvironment class is a singleton for accessing all used factory
+ * AST, TomSignature and PlatformOption
  */
 public class TomEnvironment {
   /** Part of the Singleton pattern.
@@ -51,6 +52,7 @@ public class TomEnvironment {
    */
   private static TomEnvironment instance;
   
+  /** the factories */
   private ASTFactory astFactory;
   private TomSignatureFactory   tomSignatureFactory;
   private PlatformOptionFactory platformOptionFactory;

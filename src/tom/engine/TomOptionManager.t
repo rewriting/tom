@@ -427,7 +427,12 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           } else {
             %match(PlatformOption option) {
               PluginOption[value=BooleanValue[]] -> {
-                plugin.setOption(argument, Boolean.TRUE);
+                // this is a boolean flag if set then we put the opposite of current value
+                if(((Boolean)getOptionValue(argument)).booleanValue()) {
+                  plugin.setOption(argument, Boolean.FALSE);
+                } else {
+                  plugin.setOption(argument, Boolean.TRUE);
+                }
               }
 
               PluginOption[value=IntegerValue[]] -> {

@@ -57,40 +57,35 @@ public class TomVerifier extends TomGenericPlugin {
 
   public void run() {
     if(isActivated()) {
+      int errorsAtStart = getStatusHandler().nbOfErrors();
+      int warningsAtStart = getStatusHandler().nbOfWarnings();
+      long startChrono = System.currentTimeMillis();
       try {
-        int errorsAtStart = getStatusHandler().nbOfErrors();
-        int warningsAtStart = getStatusHandler().nbOfWarnings();
-
-        long startChrono = System.currentTimeMillis();
-
-        TomTerm extractTerm = `emptyTerm();
         // here the extraction stuff
-			
         Collection matchSet = collectMatch((TomTerm)getWorkingTerm());
-        // System.out.println("Extracted : " + matchSet);
-		
+        
         Collection purified = purify(matchSet);
         // System.out.println("Purified : " + purified);
-			
+        
         Collection derivations = getDerivations(purified);
-
-        getLogger().log( Level.INFO,
-                         "TomVerificationPhase",
-                         new Integer((int)(System.currentTimeMillis()-startChrono)) );
-	    
-        printAlertMessage(errorsAtStart, warningsAtStart);
-	
+        // verbose
+        getLogger().log(Level.INFO, "TomVerificationPhase",
+                        new Integer((int)(System.currentTimeMillis()-startChrono)));
+        
+        //printAlertMessage(errorsAtStart, warningsAtStart);
       } catch (Exception e) {
-        getLogger().log( Level.SEVERE,
-                         "ExceptionMessage",
-                         new Object[]{getStreamManager().getInputFile().getName(), "TomVerifier", e.getMessage()} );
+        getLogger().log( Level.SEVERE, "ExceptionMessage",
+                         new Object[]{getClass().getName(),
+                                      getStreamManager().getInputFile().getName(),
+                                      e.getMessage()} );
         e.printStackTrace();
       }
     } else {	    
-      getLogger().log(Level.INFO, "The verifier is not activated and thus WILL NOT RUN.");
+      // Not active plugin
+      getLogger().log(Level.INFO, "VerifierInactivated");
     }
   }
-
+  
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TomVerifier.DECLARED_OPTIONS);
   }

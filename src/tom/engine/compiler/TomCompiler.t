@@ -1,3 +1,28 @@
+/*
+ * 
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (C) 2000-2004 INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
+ **/
+
 package jtom.compiler;
 
 import java.util.*;
@@ -21,64 +46,71 @@ public class TomCompiler extends TomGenericPlugin {
 
   %include { adt/TomSignature.tom }
 
+  /** some output suffixes */
   public static final String COMPILED_SUFFIX = ".tfix.compiled";
+  
+  /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options><boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/></options>";
   
-  private TomFactory tomFactory = new TomFactory();
-  private int absVarNumber = 0;
+  /** the tomfactory for creating intermediate terms */
+  private TomFactory tomFactory;
   
+  /** unicity var counter*/
+  private int absVarNumber;
+  
+  /** Constructor*/
   public TomCompiler() {
     super("TomCompiler");
+    this.tomFactory = new TomFactory();
   }
-
+  
   public void run() {
     TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(getStreamManager().getSymbolTable());
+    int errorsAtStart = getStatusHandler().nbOfErrors();
+    int warningsAtStart = getStatusHandler().nbOfWarnings();
+    long startChrono = System.currentTimeMillis();
+    boolean intermediate = getOptionBooleanValue("intermediate");
+    TomTerm compiledTerm = null;
     try {
-      int errorsAtStart = getStatusHandler().nbOfErrors();
-      int warningsAtStart = getStatusHandler().nbOfWarnings();
-      
-      long startChrono = System.currentTimeMillis();
-      boolean intermediate = getOptionBooleanValue("intermediate");
-
-      TomTerm preCompiledTerm = preProcessing( (TomTerm)getWorkingTerm() );
+      // renit absVarNumber to generate reproductable output
+      absVarNumber = 0;
+      TomTerm preCompiledTerm = preProcessing((TomTerm)getWorkingTerm());
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
-      TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
-      
+      compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
+      // verbose
       getLogger().log( Level.INFO, "TomCompilationPhase",
-		       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
+                       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
 
-      if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
-      }
       setWorkingTerm(compiledTerm);
-
-      printAlertMessage(errorsAtStart, warningsAtStart);
+      //printAlertMessage(errorsAtStart, warningsAtStart);
     } catch (Exception e) {
-      getLogger().log( Level.SEVERE,
-		       "ExceptionMessage",
-		       new Object[]{getStreamManager().getInputFile().getName(), "TomCompiler", e.getMessage()} );
-
+      getLogger().log( Level.SEVERE, "ExceptionMessage",
+                       new Object[]{getStreamManager().getInputFile().getName(), "TomCompiler", e.getMessage()} );
       e.printStackTrace();
+      return;
+    }
+    if(intermediate) {
+      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
     }
   }
   
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TomCompiler.DECLARED_OPTIONS);
   }
-
+  
   private OptionList option() {
     return getAstFactory().makeOption();
   }
-
-    /* 
-     * preProcessing:
-     * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
-     *
-     * transforms RuleSet into Function + Match + BuildReducedTerm
-     * abstract list-matching patterns
-     * rename non-linear patterns
-     */
-
+  
+  /* 
+   * preProcessing:
+   * replaces BuildReducedTerm by BuildList, BuildArray or BuildTerm
+   *
+   * transforms RuleSet into Function + Match + BuildReducedTerm
+   * abstract list-matching patterns
+   * rename non-linear patterns
+   */
+  
   Replace1 replace_preProcessing = new Replace1() {
       public ATerm apply(ATerm subject) {
         String debugKey = "";

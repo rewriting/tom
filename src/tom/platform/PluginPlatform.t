@@ -44,7 +44,6 @@ import tom.library.xml.*;
  * It is main role is to run the plugins in the specified order and make some 
  * error management.
  *
- * @author Gr&eacute;gory ANDRIEN
  */
 public class PluginPlatform {
 
@@ -135,10 +134,10 @@ public class PluginPlatform {
 
     if(statusHandler.hasError()) {
       // this is the highest possible level > will be printed no matter what 
-      getLogger().log(Level.SEVERE, "TaskErrorMessage", new Integer(nbOfErrors));
+      getLogger().log(Level.SEVERE, "PluginPlatformTaskErrorMessage", new Integer(nbOfErrors));
       return 1;
     } else if( statusHandler.hasWarning() ) {
-      getLogger().log(Level.INFO, "TaskWarningMessage", new Integer(nbOfWarnings));
+      getLogger().log(Level.INFO, "PluginPlatformTaskWarningMessage", new Integer(nbOfWarnings));
       return 0;
     }
     return 0;

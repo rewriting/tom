@@ -82,9 +82,6 @@
       <boolean name="noDeclaration" altName="D"
 			  		 description="Do not generate code for declarations"
 			  		 value="false"/>
-      <boolean name="noCheck" altName="f"
-		  			 description="Do not check correctness"
-			  		 value="false"/>
       <boolean name="noWarning" altName=""
 			  		 description="Do not print warning"
 			  		 value="false"/>

@@ -1,3 +1,28 @@
+/*
+ * 
+ * TOM - To One Matching Compiler
+ * 
+ * Copyright (C) 2000-2004 INRIA
+ * Nancy, France.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ * 
+ * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
+ *
+ **/
+
 package jtom.compiler;
 
 import java.util.logging.*;
@@ -15,18 +40,25 @@ import jtom.exception.TomRuntimeException;
 
 /**
  * The TomExpander plugin.
+ * Perform syntax expansion and more.
  */
 public class TomExpander extends TomGenericPlugin {
 
   %include { adt/TomSignature.tom }
 
+  /** some output suffixes */
   public static final String EXPANDED_SUFFIX       = ".tfix.expanded";
   public static final String EXPANDED_TABLE_SUFFIX = ".tfix.expanded.table";
+  
+  /** the declared options string */
   public static final String DECLARED_OPTIONS = "<options><boolean name='expand' altName='' description='Expander (activated by default)' value='true'/></options>";
-
+  
+  /** the kernel expander acting at very low level */
   private TomKernelExpander tomKernelExpander;
+  /** the tomfactory for creating intermediate terms */
   private TomFactory tomFactory;
   
+  /** Constructor*/
   public TomExpander() {
     super("TomExpander");
     tomKernelExpander = new TomKernelExpander();
@@ -34,46 +66,43 @@ public class TomExpander extends TomGenericPlugin {
   }
 
   public void run() {
+    int errorsAtStart = getStatusHandler().nbOfErrors();
+    int warningsAtStart = getStatusHandler().nbOfWarnings();
+    long startChrono = System.currentTimeMillis();
+    boolean intermediate = getOptionBooleanValue("intermediate");
+    TomTerm expandedTerm = null;
     try {
       tomKernelExpander.setSymbolTable(getStreamManager().getSymbolTable());
-      int errorsAtStart = getStatusHandler().nbOfErrors();
-      int warningsAtStart = getStatusHandler().nbOfWarnings();
-
-      long startChrono = System.currentTimeMillis();
-      boolean intermediate = getOptionBooleanValue("intermediate");
-
       TomTerm syntaxExpandedTerm   = expandTomSyntax( (TomTerm)getWorkingTerm() );
-      
       tomKernelExpander.updateSymbolTable();
       TomTerm context = `emptyTerm();
       
       TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
       TomTerm stringExpandedTerm   = expandString(variableExpandedTerm);
-      TomTerm expandedTerm         = updateCodomain(stringExpandedTerm);
-
-      setWorkingTerm(expandedTerm);
-
-      getLogger().log( Level.INFO,
-		       "TomExpandingPhase",
-		       new Integer((int)(System.currentTimeMillis()-startChrono)) );
+      expandedTerm         = updateCodomain(stringExpandedTerm);
       
-      if(intermediate) {
-	      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
-                             + EXPANDED_SUFFIX, expandedTerm);
-	      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
-                             + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
-      }
-
-      printAlertMessage(errorsAtStart, warningsAtStart);
+      setWorkingTerm(expandedTerm);
+      // verbose
+      getLogger().log( Level.INFO, "TomExpandingPhase",
+                       new Integer((int)(System.currentTimeMillis()-startChrono)) );
+      //printAlertMessage(errorsAtStart, warningsAtStart);
     } catch (Exception e) {
-	getLogger().log( Level.SEVERE,
-			 "ExceptionMessage",
-			 new Object[]{getStreamManager().getInputFile().getName(), "TomExpander", e.getMessage()} );
-
-	e.printStackTrace();
+      getLogger().log( Level.SEVERE, "ExceptionMessage",
+                       new Object[]{getClass().getName(), getStreamManager().getInputFile().getName(), e.getMessage()} );
+      e.printStackTrace();
+      return;
+    }
+    if(intermediate) {
+      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
+                           + EXPANDED_SUFFIX, expandedTerm);
+      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
+                           + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
     }
   }
-
+  
+  /**
+   * inherited from OptionOwner interface (plugin) 
+   */
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TomExpander.DECLARED_OPTIONS);
   }

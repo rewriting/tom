@@ -44,26 +44,32 @@ import tom.platform.*;
 
 /**
  * The TomParser "plugin"
- * The responsability of the plugin is to parse the input file to be able to
- * do the other phase.
- * it get the input file from the TomStreamManger and parse it
+ * The responsability of the plugin is to parse the input file and create the
+ * corresponding TomTerm.
+ * It get the input file from the TomStreamManger and parse it
  */
 public class TomParserPlugin extends TomGenericPlugin {
   
+  /** some output suffixes */
   public static final String PARSED_SUFFIX = ".tfix.parsed";
   public static final String PARSED_TABLE_SUFFIX = ".tfix.parsed.table";
   public static final String DEBUG_TABLE_SUFFIX = ".tfix.debug.table";
+
+  /** the declared options string*/
   public static final String DECLARED_OPTIONS = "<options><boolean name='parse' altName='' description='Parser (activated by default)' value='true'/></options>";
   
   /** input file name*/
   private String currentFileName;
   
+  /** the main HostParser */
   private HostParser parser = null;
   
+  /** Constructor */
   public TomParserPlugin(){
     super("TomParserPlugin");
   }
-    
+  
+  //creating a new Host parser
   protected static HostParser newParser(String fileName, OptionManager optionManager, TomStreamManager tomStreamManager)
     throws FileNotFoundException,IOException {
     HashSet includedFiles = new HashSet();
@@ -71,7 +77,6 @@ public class TomParserPlugin extends TomGenericPlugin {
     return newParser(fileName,includedFiles,alreadyParsedFiles, optionManager, tomStreamManager);
   }
   
-  //create new parsers
   protected static HostParser newParser(String fileName,HashSet includedFiles,
                                         HashSet alreadyParsedFiles,
                                         OptionManager optionManager,
@@ -97,7 +102,25 @@ public class TomParserPlugin extends TomGenericPlugin {
     return new HostParser(selector,fileName,includedFiles,alreadyParsedFiles, optionManager, tomStreamManager);
   }
 
-  
+  /**
+   * inherited from plugin interface
+   * arg[0] should contain the StreamManager from which we can get the input
+   */
+  public void setArgs(Object[] arg){
+    if (arg[0] instanceof TomStreamManager) {
+      setStreamManager((TomStreamManager)arg[0]);
+	    currentFileName = getStreamManager().getInputFile().getAbsolutePath();  
+    } else {
+      getLogger().log(Level.SEVERE, "InvalidPluginArgument",
+                      new Object[]{"TomParserPlugin", "[TomStreamManager]",
+                                   getArgumentArrayString(arg)});
+    }
+  }
+
+  /**
+   * inherited from plugin interface
+   * Parse the input ans set the "Working" TomTerm to be compiled.
+   */
   public void run() {
     int errorsAtStart = getStatusHandler().nbOfErrors();
     int warningsAtStart = getStatusHandler().nbOfWarnings();
@@ -111,93 +134,80 @@ public class TomParserPlugin extends TomGenericPlugin {
       if(java) {
         TomJavaParser javaParser = TomJavaParser.createParser(currentFileName);
         String packageName = javaParser.javaPackageDeclaration();
-        // Update taskInput
+        // Update streamManager to take into account package information
         getStreamManager().setPackagePath(packageName);
-        getStreamManager().updateOutputFile();
       }
-      else{
-        getStreamManager().setPackagePath("");
-      }
-      // general parsing
+      // getting a parser 
       parser = newParser(currentFileName, getOptionManager(), getStreamManager());
-
+      // parsing
       setWorkingTerm(parser.input());
+      
       getLogger().log(Level.INFO, "TomParsingPhase",
                       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
-      if(eclipse) {
-        String outputFileName = getStreamManager().getInputFile().getParent()+ File.separator + "."
-          + getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
-        
-        Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm());
-      }
-      
-      if(intermediate) {
-        Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
-                             + PARSED_SUFFIX, (ATerm)getWorkingTerm());
-        Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
-                             + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm());
-      }
-      
-      if(debug) {
-        Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
-                             + DEBUG_TABLE_SUFFIX, parser.getStructTable());
-      }
-      printAlertMessage(errorsAtStart, warningsAtStart);
+      //printAlertMessage(errorsAtStart, warningsAtStart);
     }
     catch (TokenStreamException e){
       //e.printStackTrace();
       getLogger().log(Level.SEVERE, "TokenStreamException",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()} );
-    }
-    catch (RecognitionException e){
+      return;
+    } catch (RecognitionException e){
       //e.printStackTrace();
       getLogger().log(Level.SEVERE, "RecognitionException",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()});
+      return;
     } catch (TomIncludeException e) {
       getLogger().log(Level.SEVERE, "SimpleMessage",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()});
+      return;
     } catch (TomException e) {
       getLogger().log(Level.SEVERE, "SimpleMessage",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), e.getMessage()});
+      return;
     } catch (FileNotFoundException e) {
       getLogger().log(Level.SEVERE, "FileNotFound",
                       new Object[]{currentFileName, new Integer(getLineFromTomParser() ), currentFileName}); 
+      return;
     } catch (Exception e) {
+      getLogger().log(Level.SEVERE, "ExceptionMessage", 
+                      new Object[]{getClass().getName(), currentFileName, e.getMessage()});
       e.printStackTrace();
-      getLogger().log(Level.SEVERE, "UnhandledException", 
-                      new Object[]{currentFileName, e.getMessage()});
+      return;
+    }
+    // Some extra stuff
+    if(eclipse) {
+      String outputFileName = getStreamManager().getInputFile().getParent()+
+        File.separator + "."+
+        getStreamManager().getRawFileName()+ PARSED_TABLE_SUFFIX;
+      Tools.generateOutput(outputFileName, getStreamManager().getSymbolTable().toTerm());
+      }
+    if(intermediate) {
+      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
+                           + PARSED_SUFFIX, (ATerm)getWorkingTerm());
+      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
+                           + PARSED_TABLE_SUFFIX, getStreamManager().getSymbolTable().toTerm());
+    }
+    if(debug) {
+      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() 
+                           + DEBUG_TABLE_SUFFIX, parser.getStructTable());
     }
   }
   
+  /**
+   * inherited from OptionOwner interface (plugin) 
+   */
   public PlatformOptionList getDeclaredOptionList() {
     return OptionParser.xmlToOptionList(TomParserPlugin.DECLARED_OPTIONS);
   }
 
+  /**
+   * return the last line number
+   */
   private int getLineFromTomParser() {
     if(parser == null) {
 	    return TomMessage.DEFAULT_ERROR_LINE_NUMBER;
     } 
     return parser.getLine();
-  }
-  
-  public void setArgs(Object[] arg){
-    if (arg[0] instanceof TomStreamManager) {
-      setStreamManager((TomStreamManager)arg[0]);
-	    currentFileName = getStreamManager().getInputFile().getAbsolutePath();  
-    } else {
-      getLogger().log(Level.SEVERE, "InvalidPluginArgument",
-                      new Object[]{"TomParserPlugin", "[TomStreamManager]",
-                                   getArgumentArrayString(arg)});
-    }
-  }
-  
-  /**
-   * inherited from plugin interface
-   * returns an array containing the parsed module and the streamManager
-   * got from setArgs phase
-   */
-  public Object[] getArgs() {
-    return new Object[]{getWorkingTerm(), getStreamManager()};
   }
   
 } //class TomParserPlugin

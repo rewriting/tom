@@ -236,55 +236,45 @@ options{
 			String msg = TomMessage.getMessage("EmptyIncludedFile", new Object[]{new Integer(getLine()), currentFile});
       throw new TomIncludeException(msg);
 		}
-    try {
-      file = new File(fileName);
-      if(file.isAbsolute()) {
-        if (!file.exists()) {
-          String msg = TomMessage.getMessage("IncludedFileNotFound", new Object[]{fileName, new Integer(getLine())});
-          throw new TomIncludeException(msg);
-        }
-      } else {
-        boolean found = false;
-        // try first relative to inputfilename
-        File parent = new File(currentFile).getParentFile();
-        file = new File(parent, fileName).getCanonicalFile();
-        found = file.exists();
-        if(!found) {
-          // Look for importList
-                    
-          for(int i=0 ; !found && i<getStreamManager().getImportList().size() ; i++) {
-            file = new File((File)getStreamManager().getImportList().get(i),fileName).getCanonicalFile();
-
-            found = file.exists();
-          }
-          if(!found) {
-            String msg = TomMessage.getMessage("IncludedFileNotFound", new Object[]{fileName, new Integer(getLine()), currentFile});
-            throw new TomIncludeException(msg);
-          }
-        }
+    
+    file = new File(fileName);
+    if(file.isAbsolute()) {
+      if (!file.exists()) {
+        file = null;
       }
+    } else {
+      // StreamManage rshall find it
+      file = getStreamManager().findFile(new File(currentFile).getParentFile(),
+                                         fileName);
+    }
+    
+    if(file == null) {
+      String msg = TomMessage.getMessage("IncludedFileNotFound", new Object[]{fileName, new Integer(getLine()), currentFile});
+      throw new TomIncludeException(msg);
+    }
+    try {
       fileAbsoluteName = file.getAbsolutePath();
       if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
         String msg = TomMessage.getMessage("IncludedFileCycle", new Object[]{fileName, new Integer(getLine()), currentFile});
         throw new TomIncludeException(msg);
       }
-            
+      
 			// if trying to include a file twice, but not in a cycle : discard
       if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
-        if(!getStreamManager().isSilentDiscardImport(fileName)) {                    
+        if(!getStreamManager().isSilentDiscardImport(fileName)) {
           getLogger().log( 
-                     Level.WARNING,
-                     "IncludedFileAlreadyParsed", 
-                     new Object[]{
-                       currentFile, 
-                       new Integer(getLine()), 
-                       fileName
-                     } 
-                     );
+                          Level.WARNING,
+                          "IncludedFileAlreadyParsed", 
+                          new Object[]{
+                            currentFile, 
+                            new Integer(getLine()), 
+                            fileName
+                          } 
+                          );
         }
         return;
       }
-            
+      
       parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet, getOptionManager(), getStreamManager());
       astTom = parser.input();
       astTom = `TomInclude(astTom.getTomList());
@@ -293,9 +283,9 @@ options{
       if(e instanceof TomIncludeException) {
         throw (TomIncludeException)e;
       }
-      String msg = TomMessage.getMessage("ErrorWhileIncludindFile",
+      String msg = TomMessage.getMessage("ErrorWhileIncludingFile",
                                          new Object[]{e.getClass(),
-                                                      fileAbsoluteName,
+                                                      fileName,
                                                       currentFile,
                                                       new Integer(getLine()),
                                                       e.getMessage()
