@@ -56,31 +56,31 @@ public class TomCGenerator extends TomImperativeGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-	protected void buildDeclaration(TomTerm var, String name, String type, TomType tlType) {
+	protected void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType) {
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
 		output.writeln(";");
 	}
 	
-  protected void buildExpTrue() {
+  protected void buildExpTrue(int deep) {
 		output.write(" 1 ");
   }
   
-  protected void buildExpFalse() {
+  protected void buildExpFalse(int deep) {
 		output.write(" 0 ");
   }
 
-  protected void buildNamedBlock(String blockName, TomList instList) {
+  protected void buildNamedBlock(int deep, String blockName, TomList instList) {
 		output.writeln("{");
 		generateList(deep+1,instList);
 		output.writeln("}" + blockName +  ":;");
   }
 
-  protected void buildExitAction(TomNumberList numberList) {
+  protected void buildExitAction(int deep, TomNumberList numberList) {
 		output.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
   }
 
-	protected void buildSymbolDecl(String tomName) {
+	protected void buildSymbolDecl(int deep, String tomName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
@@ -143,7 +143,7 @@ public class TomCGenerator extends TomImperativeGenerator {
   }
 
 
-  protected void buildArraySymbolDecl(String tomName) {
+  protected void buildArraySymbolDecl(int deep, String tomName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();        

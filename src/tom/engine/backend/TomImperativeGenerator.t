@@ -57,7 +57,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 	/*
 	 * the method implementations are here common to C and Java
 	 */
- 	protected void buildTerm(String name, TomList argList) {
+ 	protected void buildTerm(int deep, String name, TomList argList) {
 		output.write("tom_make_");
 		output.write(name);
 		output.writeOpenBrace();
@@ -71,7 +71,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		output.writeCloseBrace();
 	}
 	
-	protected void buildList(String name, TomList argList) {
+	protected void buildList(int deep, String name, TomList argList) {
 		TomSymbol tomSymbol = symbolTable().getSymbol(name);
 		String listType = getTLType(getSymbolCodomain(tomSymbol));
 		int size = 0;
@@ -106,7 +106,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		}
 	} 
 
-	protected void buildArray(String name, TomList argList) {
+	protected void buildArray(int deep, String name, TomList argList) {
 		TomSymbol tomSymbol = symbolTable().getSymbol(name);
 		String listType = getTLType(getSymbolCodomain(tomSymbol));
 		int size = 0;
@@ -142,7 +142,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		}
 	}
 
-	protected void buildFunctionCall(String name, TomList argList) {
+	protected void buildFunctionCall(int deep, String name, TomList argList) {
 		output.write(name + "(");
 		while(!argList.isEmpty()) {
 			generate(deep,argList.getHead());
@@ -154,15 +154,15 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		output.write(")");
 	}
 
-	protected abstract void buildDeclaration(TomTerm var, String name, String type, TomType tlType);
+	protected abstract void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType);
 
-	protected void buildDeclarationStar(TomTerm var, String name, String type, TomType tlType) {
+	protected void buildDeclarationStar(int deep, TomTerm var, String name, String type, TomType tlType) {
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
 		output.writeln(";");
 	}
 
-	protected void buildFunctionBegin(String tomName, TomList varList) {
+	protected void buildFunctionBegin(int deep, String tomName, TomList varList) {
 		TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
 		String glType = getTLType(getSymbolCodomain(tomSymbol));
 		String name = tomSymbol.getAstName().getString();
@@ -193,18 +193,18 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		//out.writeln(deep,"return null;");
 	}
 	
-	protected void buildFunctionEnd() {
+	protected void buildFunctionEnd(int deep) {
 		output.writeln(deep,"}");
 	}
 	
-	protected void buildExpNot(Expression exp) {
+	protected void buildExpNot(int deep, Expression exp) {
 		out.write("!(");
 		generateExpression(out,deep,exp);
 		out.write(")");
 	}
 
-  protected abstract void buildExpTrue();
-  protected abstract void buildExpFalse();
+  protected abstract void buildExpTrue(int deep);
+  protected abstract void buildExpFalse(int deep);
   
   protected void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType) {
     output.indent(deep);
@@ -236,9 +236,9 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     }
   }
 
-  protected abstract void buildNamedBlock(String blockName, TomList instList);
+  protected abstract void buildNamedBlock(int deep, String blockName, TomList instList);
 
-  protected void buildIfThenElse(Expression exp, TomList succesList) {
+  protected void buildIfThenElse(int deep, Expression exp, TomList succesList) {
 		output.write(deep,"if("); 
 		generateExpression(deep,exp); 
 		output.writeln(") {");
@@ -246,7 +246,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
 		output.writeln(deep,"}");
   }
 
-  protected void buildIfThenElseWithFailure(Expression exp, TomList succesList, TomList failureList) {
+  protected void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) {
 		output.write(deep,"if("); 
 		generateExpression(deep,exp); 
 		output.writeln(") {");
@@ -271,16 +271,16 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     }
   }
 
-  protected abstract void buildExitAction(TomNumberList numberList);
+  protected abstract void buildExitAction(int deep, TomNumberList numberList);
 
-  protected void buildReturn(Expression exp) {
+  protected void buildReturn(int deep, Expression exp) {
 		output.write(deep,"return ");
 		generate(deep,exp);
 		output.writeln(deep,";");
   }
 
 
-	protected void buildSymbolDecl(String tomName) {
+	protected void buildSymbolDecl(int deep, String tomName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
@@ -322,7 +322,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     generateSlotList(deep, slotList);
   }
 
-  protected void buildGetSubtermDecl(String name1, String name2, TomType type1, TomType tlType1, TomType tlType2) {
+  protected void buildGetSubtermDecl(int deep, String name1, String name2, TomType type1, TomType tlType1, TomType tlType2) {
     String args[];
     if(strictType) {
       args = new String[] { getTLCode(tlType1), name1,
@@ -335,7 +335,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
                                          args, tlCode));
   }
 
-	protected TargetLanguage genDecl(String returnType,
+	protected TargetLanguage genDecl(int deep, String returnType,
 																	 String declName,
 																	 String suffix,
 																	 String args[],
@@ -357,7 +357,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
       return `ITL(s);
 		}
 
-  protected void TargetLanguage genDeclMake(String opname, TomType returnType, 
+  protected void TargetLanguage genDeclMake(int deep, String opname, TomType returnType, 
                                             TomList argList, TargetLanguage tlCode) {
 		//%variable
     String s = "";
@@ -395,7 +395,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
-  protected void TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
+  protected void TargetLanguage genDeclList(int deep, String name, TomType listType, TomType eltType) {
       //%variable
     String s = "";
     if(!genDecl) { return null; }
@@ -465,7 +465,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     return resultTL;
   }
 
-  protected void TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
+  protected void TargetLanguage genDeclArray(int deep, String name, TomType listType, TomType eltType) {
       //%variable
     String s = "";
     if(!genDecl) { return null; }
