@@ -36,7 +36,6 @@ import aterm.pure.*;
 import java.io.*;
 import java.util.*;
 
-import tom.library.strategy.mutraveler.TravelerFactory;
 import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 
@@ -48,20 +47,18 @@ import antlr.CommonAST;
 class SPropp extends Propp1 {
 
 	private Factory factory;
-  private TravelerFactory travelerFactory;
 
 	// ------------------------------------------------------------  
 	%include { seq/seq.tom }
+  %include{ mutraveler.tom }
 	// ------------------------------------------------------------  
 
 	public SPropp() {
 		this(Factory.getInstance(SingletonFactory.getInstance()));
-    this.travelerFactory = new TravelerFactory();
 	}
 		
 	public SPropp(Factory factory) {
 		this.factory = factory;
-    this.travelerFactory = new TravelerFactory();
 	}
 	
 	//{{{ public void run(String query)
@@ -99,8 +96,8 @@ class SPropp extends Propp1 {
 
 	public Proof solve(Proof init) {
 
-		VisitableVisitor rule = new CalculusRules();
-		VisitableVisitor bottomUp = travelerFactory.BottomUp(rule);
+		VisitableVisitor myrule = new CalculusRules();
+		VisitableVisitor bottomUp = `BottomUp(myrule);
 
 		Proof res = null;
 		try {

@@ -37,6 +37,8 @@ import jtom.exception.TomRuntimeException;
 import tom.platform.adt.platformoption.*;
 import tom.library.traversal.*;
 
+import jjtraveler.reflective.VisitableVisitor;
+
 /**
  * Base class for most tom files in the compiler.
  * Provides access to the TomSignatureFactory and helper methods.
@@ -44,6 +46,7 @@ import tom.library.traversal.*;
 public class TomBase {
 
   %include { adt/tomsignature/TomSignature.tom }
+  %include{ mutraveler.tom }
 
   public static final TomSignatureFactory getTomSignatureFactory() {
     return TomEnvironment.getInstance().getTomSignatureFactory();

@@ -26,6 +26,7 @@
 package jtom.compiler;
 
 import java.util.logging.Level;
+import java.util.Iterator;
 
 import jtom.adt.tomsignature.types.*;
 import jtom.exception.TomRuntimeException;
@@ -75,7 +76,7 @@ public class TomExpander extends TomGenericPlugin {
     try {
       tomKernelExpander.setSymbolTable(getStreamManager().getSymbolTable());
       TomTerm syntaxExpandedTerm   = expandTomSyntax( (TomTerm)getWorkingTerm() );
-      tomKernelExpander.updateSymbolTable();
+      updateSymbolTable();
       TomTerm context = tom_make_emptyTerm();
       
       TomTerm variableExpandedTerm = expandVariable(context, syntaxExpandedTerm);
@@ -97,6 +98,26 @@ public class TomExpander extends TomGenericPlugin {
                            + EXPANDED_SUFFIX, expandedTerm);
       Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
                            + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
+    }
+  }
+
+  /*
+   * updateSymbol is called after a first syntax expansion phase
+   * this phase updates the symbolTable according to the typeTable
+   * this is performed by recursively traversing each symbol
+   * - backquote are expanded
+   * - each TomTypeAlone is replace by the corresponding TomType
+   */
+  public void updateSymbolTable() {
+    Iterator it = getStreamManager().getSymbolTable().keySymbolIterator();
+    while(it.hasNext()) {
+      String tomName = (String)it.next();
+      TomTerm emptyContext = tom_make_emptyTerm();
+      TomSymbol tomSymbol = getSymbolFromName(tomName);
+      tomSymbol = expandTomSyntax(tom_make_TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+      //System.out.println("symbol = " + tomSymbol);
+      tomSymbol = expandVariable(emptyContext,tom_make_TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
+      getStreamManager().getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
   
@@ -126,7 +147,7 @@ public class TomExpander extends TomGenericPlugin {
 
 
                 TomTerm t = expandBackQuoteAppl(backQuoteTerm);
-                  //System.out.println("t = " + t);
+                //System.out.println("t = " + t);
                 return t;
               } } if(tom_is_fun_sym_RecordAppl(tom_match1_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match1_1_1=tom_get_slot_RecordAppl_option(tom_match1_1); { jtom.adt.tomsignature.types.NameList tom_match1_1_2=tom_get_slot_RecordAppl_nameList(tom_match1_1); { jtom.adt.tomsignature.types.TomList tom_match1_1_3=tom_get_slot_RecordAppl_args(tom_match1_1); { jtom.adt.tomsignature.types.ConstraintList tom_match1_1_4=tom_get_slot_RecordAppl_constraints(tom_match1_1); { jtom.adt.tomsignature.types.OptionList option=tom_match1_1_1; { jtom.adt.tomsignature.types.NameList nameList=tom_match1_1_2; { jtom.adt.tomsignature.types.TomList args=tom_match1_1_3; { jtom.adt.tomsignature.types.ConstraintList constraints=tom_match1_1_4;
 

@@ -34,8 +34,6 @@ import aterm.pure.PureFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import tom.library.strategy.mutraveler.TravelerFactory;
-
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
@@ -43,11 +41,9 @@ import java.util.*;
 
 public class Rewrite3 {
   private termFactory factory;
-  private TravelerFactory travelerFactory;
 
-  public Rewrite3(termFactory factory, TravelerFactory travelerFactory) {
+  public Rewrite3(termFactory factory) {
     this.factory = factory;
-    this.travelerFactory = travelerFactory;
   }
 
   public termFactory getTermFactory() {
@@ -63,7 +59,7 @@ public class Rewrite3 {
   }
 
   public final static void main(String[] args) {
-    Rewrite3 test = new Rewrite3(termFactory.getInstance(new PureFactory()),new TravelerFactory());
+    Rewrite3 test = new Rewrite3(termFactory.getInstance(new PureFactory()));
     test.run();
   }
 
@@ -74,12 +70,12 @@ public class Rewrite3 {
       Collection collection = new HashSet();
       VisitableVisitor rule = new RewriteSystem(collection);
       Term subject = `f(g(g(a,b),g(a,b)));
-      travelerFactory.Try(travelerFactory.BottomUp(rule)).visit(subject);
+      `Try(BottomUp(rule)).visit(subject);
       System.out.println("collect : " + collection);
       
       collection.clear();
       subject = `f(g(g(a,b),g(c,b)));
-      travelerFactory.Try(travelerFactory.BottomUp(rule)).visit(subject);
+      `Try(BottomUp(rule)).visit(subject);
       System.out.println("collect : " + collection);
     } catch (VisitFailure e) {
       System.out.println("reduction failed");
@@ -98,7 +94,7 @@ public class Rewrite3 {
   class RewriteSystem extends strategy.term.termVisitableFwd {
     Collection collection;
     public RewriteSystem(Collection c) {
-      super(new tom.library.strategy.mutraveler.Fail());
+      super(`Fail());
       this.collection = c;
     }
     
@@ -127,7 +123,7 @@ public class Rewrite3 {
         }
       };
   
-    VisitableVisitor bottomUp = travelerFactory.BottomUp(rule);
+    VisitableVisitor bottomUp = `BottomUp(rule);
     try {
       bottomUp.visit(subject);
       return false;

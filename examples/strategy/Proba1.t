@@ -35,13 +35,11 @@ import aterm.pure.PureFactory;
 import strategy.proba1.piece.*;
 import strategy.proba1.piece.types.*;
 
-import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class Proba1 {
   private PieceFactory factory;
-  private TravelerFactory travelerFactory;
 
   public Proba1(PieceFactory factory) {
     this.factory = factory;
@@ -103,7 +101,7 @@ public class Proba1 {
   
   class PileSystem extends strategy.proba1.piece.PieceVisitableFwd {
     public PileSystem() {
-      super(new tom.library.strategy.mutraveler.Fail());
+      super(`Fail());
     }
     
     public Piece visit_Piece(Piece arg) throws VisitFailure { 
@@ -116,7 +114,7 @@ public class Proba1 {
 
   class FaceSystem extends strategy.proba1.piece.PieceVisitableFwd {
     public FaceSystem() {
-      super(new tom.library.strategy.mutraveler.Fail());
+      super(`Fail());
     }
     
     public Piece visit_Piece(Piece arg) throws VisitFailure { 

@@ -35,17 +35,14 @@ import aterm.pure.PureFactory;
 import strategy.proba2.state.*;
 import strategy.proba2.state.types.*;
 
-import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class Proba2 {
   private StateFactory factory;
-  private TravelerFactory travelerFactory;
 
-  public Proba2(StateFactory factory, TravelerFactory travelerFactory) {
+  public Proba2(StateFactory factory) {
     this.factory = factory;
-    this.travelerFactory = travelerFactory;
   }
 
   %vas {
@@ -69,7 +66,7 @@ public class Proba2 {
   }
 
   public final static void main(String[] args) {
-    Proba2 test = new Proba2(StateFactory.getInstance(new PureFactory()),new TravelerFactory());
+    Proba2 test = new Proba2(StateFactory.getInstance(new PureFactory()));
     test.run();
   }
 
@@ -93,7 +90,7 @@ public class Proba2 {
 
     //VisitableVisitor transitC = `Pchoice(concStrat(Pstrat(4,CA),Pstrat(1,CPuits),Pstrat(5,CB)));
 
-    VisitableVisitor transit  = travelerFactory.Repeat(`Choice(transitA,Choice(transitB,transitC)));
+    VisitableVisitor transit  = `Repeat(Choice(transitA,Choice(transitB,transitC)));
     
 
     try {
@@ -110,7 +107,7 @@ public class Proba2 {
     State s1;
     State s2;
     public Transition(State s1, State s2) { 
-      super(new tom.library.strategy.mutraveler.Fail()); 
+      super(`Fail()); 
       this.s1 = s1;
       this.s2 = s2;
     }

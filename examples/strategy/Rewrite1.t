@@ -34,17 +34,14 @@ import aterm.pure.PureFactory;
 import strategy.term.*;
 import strategy.term.types.*;
 
-import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
 public class Rewrite1 {
   private termFactory factory;
-  private TravelerFactory travelerFactory;
 
-  public Rewrite1(termFactory factory, TravelerFactory travelerFactory) {
+  public Rewrite1(termFactory factory) {
     this.factory = factory;
-    this.travelerFactory = travelerFactory;
   }
 
   public termFactory getTermFactory() {
@@ -53,10 +50,10 @@ public class Rewrite1 {
 
   %include { term/term.tom }
   %include { string.tom }
+  %include{ mutraveler.tom }
   
   public final static void main(String[] args) {
-    Rewrite1 test = new Rewrite1(termFactory.getInstance(new PureFactory()), 
-                                 new TravelerFactory());
+    Rewrite1 test = new Rewrite1(termFactory.getInstance(new PureFactory()));
     test.run();
   }
 
@@ -66,11 +63,11 @@ public class Rewrite1 {
 
     VisitableVisitor rule = new RewriteSystem();
     VisitableVisitor ruleId = new RewriteSystemId();
-    VisitableVisitor onceBottomUp = travelerFactory.OnceBottomUp(rule);
-    VisitableVisitor bottomUp = travelerFactory.BottomUp(travelerFactory.Try(rule));
-    VisitableVisitor innermost = travelerFactory.Innermost(rule);
-    VisitableVisitor innermostSlow = `travelerFactory.Repeat(travelerFactory.OnceBottomUp(rule));
-    VisitableVisitor innermostId = travelerFactory.InnermostId(ruleId);
+    VisitableVisitor onceBottomUp = `OnceBottomUp(rule);
+    VisitableVisitor bottomUp = `BottomUp(Try(rule));
+    VisitableVisitor innermost = `Innermost(rule);
+    VisitableVisitor innermostSlow = `Repeat(OnceBottomUp(rule));
+    VisitableVisitor innermostId = `InnermostId(ruleId);
 
     try {
       System.out.println("subject       = " + subject);

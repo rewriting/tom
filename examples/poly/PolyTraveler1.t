@@ -34,7 +34,6 @@ import aterm.pure.PureFactory;
 import poly.expression.*;
 import poly.expression.types.*;
 
-import tom.library.strategy.mutraveler.TravelerFactory;
 import tom.library.strategy.mutraveler.Identity;
 import jjtraveler.reflective.VisitableVisitor;
 
@@ -50,12 +49,13 @@ public class PolyTraveler1 {
   }
 
   %include { expression/expression.tom }
+  %include{ mutraveler.tom }
     
   public void run() {
     Expression t    = `mult(variable("x"),plus(variable("x"),constant("a")));
     VisitableVisitor v = new SimplifyPlus();
     //v.setTerm(t);
-    VisitableVisitor bu = new TravelerFactory().BottomUp(v);
+    VisitableVisitor bu = `BottomUp(v);
     try {
     System.out.println(" bu.visit(" + t + ")");
     bu.visit(t);

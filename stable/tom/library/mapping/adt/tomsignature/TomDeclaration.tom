@@ -1689,34 +1689,34 @@
   make(t0) { getTomDeclarationFactory().makeDeclaration_SymbolDecl(t0)}
 }
 
-%op Declaration MakeDecl(astName:TomName, astType:TomType, args:TomList, tlCode:TargetLanguage, orgTrack:Option) {
+%op Declaration MakeDecl(astName:TomName, astType:TomType, args:TomList, instr:Instruction, orgTrack:Option) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isMakeDecl()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(astType,t) { t.getAstType()}
   get_slot(args,t) { t.getArgs()}
-  get_slot(tlCode,t) { t.getTlCode()}
+  get_slot(instr,t) { t.getInstr()}
   get_slot(orgTrack,t) { t.getOrgTrack()}
   make(t0, t1, t2, t3, t4) { getTomDeclarationFactory().makeDeclaration_MakeDecl(t0, t1, t2, t3, t4)}
 }
 
-%op Declaration MakeAddArray(astName:TomName, varElt:TomTerm, varList:TomTerm, tlCode:TargetLanguage, orgTrack:Option) {
+%op Declaration MakeAddArray(astName:TomName, varElt:TomTerm, varList:TomTerm, instr:Instruction, orgTrack:Option) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isMakeAddArray()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(varElt,t) { t.getVarElt()}
   get_slot(varList,t) { t.getVarList()}
-  get_slot(tlCode,t) { t.getTlCode()}
+  get_slot(instr,t) { t.getInstr()}
   get_slot(orgTrack,t) { t.getOrgTrack()}
   make(t0, t1, t2, t3, t4) { getTomDeclarationFactory().makeDeclaration_MakeAddArray(t0, t1, t2, t3, t4)}
 }
 
-%op Declaration MakeEmptyArray(astName:TomName, varSize:TomTerm, tlCode:TargetLanguage, orgTrack:Option) {
+%op Declaration MakeEmptyArray(astName:TomName, varSize:TomTerm, instr:Instruction, orgTrack:Option) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isMakeEmptyArray()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(varSize,t) { t.getVarSize()}
-  get_slot(tlCode,t) { t.getTlCode()}
+  get_slot(instr,t) { t.getInstr()}
   get_slot(orgTrack,t) { t.getOrgTrack()}
   make(t0, t1, t2, t3) { getTomDeclarationFactory().makeDeclaration_MakeEmptyArray(t0, t1, t2, t3)}
 }
@@ -1740,22 +1740,22 @@
   make(t0, t1, t2, t3) { getTomDeclarationFactory().makeDeclaration_GetElementDecl(t0, t1, t2, t3)}
 }
 
-%op Declaration MakeAddList(astName:TomName, varElt:TomTerm, varList:TomTerm, tlCode:TargetLanguage, orgTrack:Option) {
+%op Declaration MakeAddList(astName:TomName, varElt:TomTerm, varList:TomTerm, instr:Instruction, orgTrack:Option) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isMakeAddList()}
   get_slot(astName,t) { t.getAstName()}
   get_slot(varElt,t) { t.getVarElt()}
   get_slot(varList,t) { t.getVarList()}
-  get_slot(tlCode,t) { t.getTlCode()}
+  get_slot(instr,t) { t.getInstr()}
   get_slot(orgTrack,t) { t.getOrgTrack()}
   make(t0, t1, t2, t3, t4) { getTomDeclarationFactory().makeDeclaration_MakeAddList(t0, t1, t2, t3, t4)}
 }
 
-%op Declaration MakeEmptyList(astName:TomName, tlCode:TargetLanguage, orgTrack:Option) {
+%op Declaration MakeEmptyList(astName:TomName, instr:Instruction, orgTrack:Option) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isMakeEmptyList()}
   get_slot(astName,t) { t.getAstName()}
-  get_slot(tlCode,t) { t.getTlCode()}
+  get_slot(instr,t) { t.getInstr()}
   get_slot(orgTrack,t) { t.getOrgTrack()}
   make(t0, t1, t2) { getTomDeclarationFactory().makeDeclaration_MakeEmptyList(t0, t1, t2)}
 }

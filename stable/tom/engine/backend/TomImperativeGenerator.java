@@ -317,16 +317,15 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
       args = new String[] { getTLType(getUniversalType()), name1,
                             getTLCode(tlType2), name2 };
     }
-    generateTargetLanguage(deep, genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1,
-                                         args, tlCode));
+    genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1, args, tlCode);
   }
 
-  protected TargetLanguage genDeclMake(String funName, TomType returnType, 
-                                       TomList argList, TargetLanguage tlCode) {
+  protected void genDeclMake(String funName, TomType returnType, 
+                             TomList argList, Instruction instr) throws IOException {
     String s = "";
     String check = "";
     if( nodeclMode) {
-      return tom_make_ITL("");
+      return;
     }
 
     s = modifier + getTLType(returnType) + " " + funName + "(";
@@ -356,19 +355,22 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s += ") { ";
     s += check;
 
-    String returnValue = tlCode.getCode();
+    output.write(s);
+    output.write("return ");
     if(((Boolean)optionManager.getOptionValue("stamp")).booleanValue()) {
-      returnValue = "tom_set_stamp_" + getTomType(returnType) + "(" + returnValue + ")";
+      output.write("tom_set_stamp_" + getTomType(returnType) + "(");
+      generateInstruction(0,instr);
+      output.write(")");
+    } else {
+      generateInstruction(0,instr);
     }
-    s += "return " + returnValue + "; }";
-    return tom_make_TL(s,tlCode.getStart(),tlCode.getEnd());
+    output.write("; }");
   }
 
-  protected TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
-    //%variable
+  protected void genDeclList(String name, TomType listType, TomType eltType) throws IOException {
     String s = "";
     if(nodeclMode) {
-      return tom_make_ITL("");
+      return;
     }
 
     String tomType = getTomType(listType);
@@ -413,13 +415,14 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    return getAstFactory().reworkTLCode(tom_make_ITL(s), prettyMode);
+    TargetLanguage itl = getAstFactory().reworkTLCode(tom_make_ITL(s), prettyMode);
+    output.write(itl.getCode()); 
   }
 
-  protected TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
+  protected void genDeclArray(String name, TomType listType, TomType eltType) throws IOException {
     String s = "";
     if(nodeclMode) {
-      return tom_make_ITL("");
+      return;
     }
 
     String tomType = getTomType(listType);
@@ -468,17 +471,18 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
 
     //If necessary we remove \n code depending on pretty option
-    return getAstFactory().reworkTLCode(tom_make_ITL(s), prettyMode);
+    TargetLanguage itl = getAstFactory().reworkTLCode(tom_make_ITL(s), prettyMode);
+    output.write(itl.getCode()); 
   }
 
-  protected TargetLanguage genDecl(String returnType,
-                                   String declName,
-                                   String suffix,
-                                   String args[],
-                                   TargetLanguage tlCode) {
+  protected void genDecl(String returnType,
+                         String declName,
+                         String suffix,
+                         String args[],
+                         TargetLanguage tlCode) throws IOException {
     String s = "";
     if(nodeclMode) {
-      return tom_make_ITL("");
+      return;
     }
     s = modifier + returnType + " " + declName + "_" + suffix + "(";
     for(int i=0 ; i<args.length ; ) {
@@ -490,11 +494,19 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     } 
     String returnValue = getSymbolTable().isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
     s += ") { " + returnValue + "; }";
-    if(tlCode.isTL()) {
-      return tom_make_TL(s,tlCode.getStart(),tlCode.getEnd());
-    } else {
-      return tom_make_ITL(s); // pas de \n donc pas besoin de reworkTL
-    }
+
+     { jtom.adt.tomsignature.types.TargetLanguage tom_match5_1=(( jtom.adt.tomsignature.types.TargetLanguage)tlCode); if(tom_is_fun_sym_TL(tom_match5_1) ||  false ) { { jtom.adt.tomsignature.types.Position tom_match5_1_2=tom_get_slot_TL_start(tom_match5_1); { jtom.adt.tomsignature.types.Position tom_match5_1_3=tom_get_slot_TL_end(tom_match5_1); if(tom_is_fun_sym_TextPosition(tom_match5_1_2) ||  false ) { { int  tom_match5_1_2_1=tom_get_slot_TextPosition_line(tom_match5_1_2); { int  startLine=tom_match5_1_2_1; if(tom_is_fun_sym_TextPosition(tom_match5_1_3) ||  false ) { { int  tom_match5_1_3_1=tom_get_slot_TextPosition_line(tom_match5_1_3); { int  endLine=tom_match5_1_3_1;
+
+        output.write(s, startLine, endLine - startLine);
+        return;
+      }} }}} }}} } if(tom_is_fun_sym_ITL(tom_match5_1) ||  false ) {
+
+  // pas de \n donc pas besoin de reworkTL
+        output.write(s);
+        return;
+       }}
+
+
   }
 
   

@@ -34,7 +34,6 @@ import aterm.pure.PureFactory;
 import poly.expression.*;
 import poly.expression.types.*;
 
-import tom.library.strategy.mutraveler.TravelerFactory;
 import tom.library.strategy.mutraveler.Fail;
 import jjtraveler.reflective.VisitableVisitor;
 
@@ -50,6 +49,7 @@ public class PolyTraveler2 {
   }
 
   %include { expression/expression.tom }
+  %include{ mutraveler.tom }
 
   public final static void main(String[] args) {
     PolyTraveler2 test = new PolyTraveler2(Factory.getInstance(new PureFactory()));
@@ -62,9 +62,8 @@ public class PolyTraveler2 {
     Expression t = `mult(one(),exp(var));
 
     VisitableVisitor v = new SimplifyPlus();
-    TravelerFactory tf = new TravelerFactory();
-    //VisitableVisitor bu = tf.OnceBottomUp(v);
-    VisitableVisitor bu = tf.BottomUp(tf.Try(v));
+    //VisitableVisitor bu = `OnceBottomUp(v);
+    VisitableVisitor bu = `BottomUp(Try(v));
     try {
       System.out.println(" bu.visit(" + t + ")");
       Expression res = (Expression)bu.visit(t);

@@ -310,7 +310,6 @@ public class Verifier extends TomBase {
   }
 
   protected Seq build_dedexpr(Expr sp) {
-    // TODO : implement the \mapequiv relation
     ExprList ded = `concExpr(sp);
     %match(Expr sp) {
       appSubsE[] -> { 
@@ -429,6 +428,16 @@ public class Verifier extends TomBase {
   protected Collection apply_sem_rules(Deriv post) {
     Collection c = new HashSet();
     %match(Deriv post) {
+      ebs(env(e,sequence(semicolon(h,t*))),env(subs(undefsubs()),ip)) -> {
+        if(instruction_contains(`h,ip)) {
+          // continue the derivation
+          System.out.println("une branche");
+
+        } else {
+          System.out.println("une autre branche");
+
+        }
+      }
       // let rule
       ebs(env(e,ILLet(x,u,i)),env(subs(undefsubs()),ip)) -> {
         // build condition
@@ -437,9 +446,9 @@ public class Verifier extends TomBase {
         Term t = null;
         %match(Seq cond) {
           dedterm(concTerm(_*,r)) -> { t = `r; }
-          _ -> { if (t == null) { 
-            System.out.println("build_dedterm has a problem with " + cond);
-          }
+            _ -> { if (t == null) { 
+              System.out.println("build_dedterm has a problem with " + cond);
+            }
           }
         }
         Deriv up = `ebs(
@@ -461,9 +470,9 @@ public class Verifier extends TomBase {
         Expr res = null;
         %match(Seq cond) {
           dedexpr(concExpr(_*,x)) -> { res = `x; }
-          _ -> { if (res == null) { 
-            System.out.println("build_dedexpr has a problem with " + cond);
-          }
+            _ -> { if (res == null) { 
+              System.out.println("build_dedexpr has a problem with " + cond);
+            }
           }
         }
         Deriv up = null;
@@ -496,6 +505,27 @@ public class Verifier extends TomBase {
       }
     }
     return c;
+  }
+
+  protected boolean instruction_contains(Instr i, Instr goal) {
+    Collect3 collect_find = new Collect3() {
+      public boolean apply(ATerm subject, Object astore, Object arg) {
+        Collection c = (Collection) astore;
+        Instr lgoal = (Instr) arg;
+        if (subject instanceof Instr) {
+          if (subject == lgoal) {
+            c.add(lgoal);
+            return false;
+          }
+          return true;
+        } else { 
+          return true;
+        }
+      }//end apply
+    };
+    Collection collect = new HashSet();
+    traversal().genericCollect(i,collect_find,collect,goal);
+    return !collect.isEmpty();
   }
 
   protected DerivTree apply_rules(Deriv post, SubstRef outsubst) {

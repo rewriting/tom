@@ -57,11 +57,6 @@ import jtom.adt.tomsignature.*;
 
 
 import aterm.pure.PureFactory;
-import tom.library.strategy.mutraveler.TravelerFactory;
-import jjtraveler.reflective.VisitableVisitor;
-import jjtraveler.VisitFailure;
-
-import tom.library.strategy.mutraveler.TravelerFactory;
 import jjtraveler.reflective.VisitableVisitor;
 import jjtraveler.VisitFailure;
 
@@ -71,6 +66,7 @@ import jjtraveler.VisitFailure;
 public class TomOptimizer extends TomGenericPlugin {
 
   %include{ adt/tomsignature/TomSignature.tom }
+  %include{ mutraveler.tom }
 
   /** some output suffixes */
   private static final String OPTIMIZED_SUFFIX = ".tfix.optimized";
@@ -83,9 +79,8 @@ public class TomOptimizer extends TomGenericPlugin {
     "</options>";
 
 
-  private TravelerFactory travelerFactory;
-  private  VisitableVisitor optRule1;
-  private  VisitableVisitor optRule2;
+  private VisitableVisitor optRule1;
+  private VisitableVisitor optRule2;
   private VisitableVisitor optStrategy1;
   private VisitableVisitor optStrategy2;
   private VisitableVisitor normRule;
@@ -94,19 +89,20 @@ public class TomOptimizer extends TomGenericPlugin {
   /** Constructor */
   public TomOptimizer() {
     super("TomOptimizer");
-    travelerFactory = new TravelerFactory();
     optRule1 = new RewriteSystem1();
     optRule2 = new RewriteSystem2();
-    optStrategy1 = travelerFactory.InnermostId(optRule1);
-    optStrategy2 = travelerFactory.InnermostId(optRule2);
     
     normRule = new NormExpr();
-    normStrategy = travelerFactory.InnermostId(normRule);
         
   }
   
   public void run() {
     if(getOptionBooleanValue("optimize") || getOptionBooleanValue("optimize2")) {
+      // Initialize strategies
+      optStrategy1 = `InnermostId(optRule1);
+      optStrategy2 = `InnermostId(optRule2);
+      normStrategy = `InnermostId(normRule);
+
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
       try {
@@ -400,7 +396,7 @@ public class TomOptimizer extends TomGenericPlugin {
   public class RewriteSystem1 extends TomSignatureVisitableFwd {
 
     public RewriteSystem1() {
-      super(new tom.library.strategy.mutraveler.Identity());
+      super(`Identity());
     }
 
   public jjtraveler.Visitable visit(jjtraveler.Visitable subject) throws jjtraveler.VisitFailure{
