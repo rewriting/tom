@@ -252,7 +252,8 @@ public class TomVerifier extends TomGenericPlugin {
       Instruction cm = (Instruction) it.next();
       %match(Instruction cm) {
         CompiledMatch(automata, options)  -> {
-          derivations.add(verif.build_tree(automata));
+          Collection trees = verif.build_tree(automata);
+          derivations.addAll(trees);
         }
       }
     }
