@@ -195,6 +195,10 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
+    if ((tmp = TomTerm_CompiledPattern.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
     if ((tmp = TomTerm_Automata.fromTerm(trm)) != null) {
       return tmp;
     }
@@ -458,6 +462,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isCompiledPattern()
+  {
+    return false;
+  }
+
   public boolean isAutomata()
   {
     return false;
@@ -653,12 +662,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasNumberList()
+  public boolean hasInstList()
   {
     return false;
   }
 
-  public boolean hasInstList()
+  public boolean hasNumberList()
   {
     return false;
   }
@@ -953,16 +962,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no AutomataList");
   }
 
-  public TomList getNumberList()
-  {
-     throw new RuntimeException("This TomTerm has no NumberList");
-  }
-
-  public TomTerm setNumberList(TomList _numberList)
-  {
-     throw new RuntimeException("This TomTerm has no NumberList");
-  }
-
   public TomList getInstList()
   {
      throw new RuntimeException("This TomTerm has no InstList");
@@ -971,6 +970,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setInstList(TomList _instList)
   {
      throw new RuntimeException("This TomTerm has no InstList");
+  }
+
+  public TomList getNumberList()
+  {
+     throw new RuntimeException("This TomTerm has no NumberList");
+  }
+
+  public TomTerm setNumberList(TomList _numberList)
+  {
+     throw new RuntimeException("This TomTerm has no NumberList");
   }
 
   public TomTerm getNumber()

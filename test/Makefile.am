@@ -45,7 +45,7 @@ BUILT_SOURCES   = $(check_JAVA)\
 		  cfib1.tom.c loulou.tom.c
 
 # we use the last compiled compiler to compile the testsuite
-TOMFLAGS = --noWarning
+TOMFLAGS = 
 TOMSTABLE = ${top_builddir}/utils/jtom.stable
 TOMSRC = ${top_builddir}/utils/jtom.src
 TOMTEST = $(TOMSRC)

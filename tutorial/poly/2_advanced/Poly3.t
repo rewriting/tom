@@ -24,6 +24,7 @@ public class Poly3 {
       plus(a1,a2), var  -> { return `plus(differentiate(a1, var),
                                           differentiate(a2, var)); }
       mult(a1,a2), var  -> { 
+
         ATermAppl res1, res2;
         res1 =`mult(a1, differentiate(a2, var));
         res2 =`mult(a2, differentiate(a1, var));

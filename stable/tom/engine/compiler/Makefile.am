@@ -5,7 +5,8 @@
 javadir         = ${prefix}/classes/jtom/compiler
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
-JAVASOURCES     = TomExpander.java TomCompiler.java
+JAVASOURCES     = TomKernelExpander.java TomKernelCompiler.java\
+                  TomExpander.java TomCompiler.java
 java_JAVA       = $(JAVASOURCES)
 EXTRA_DIST      = $(JAVASOURCES)
 

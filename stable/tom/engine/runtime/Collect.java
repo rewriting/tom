@@ -39,6 +39,7 @@ class Collect {
         case 0: return ((Collect1)this).apply(t);
         case 1: return ((Collect2)this).apply(t, args[0]);
         case 2: return ((Collect3)this).apply(t, args[0], args[1]);
+        case 3: return ((Collect4)this).apply(t, args[0], args[1], args[2]);    
         default:
           System.out.println("Extend Collect.apply to " + length + " arguments");
           System.exit(1);

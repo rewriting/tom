@@ -1,5 +1,7 @@
 2003-04-23    <pem@bach>
 
+        * release 1.2 under GPL license
+        * bootinstall
 	* src/jtom/compiler/TomKernelCompiler.t: re-introduced CompiledPattern
 
 2003-04-15    <pem@bach>

@@ -40,7 +40,7 @@ import jtom.exception.*;
 import jtom.adt.*;
 
 public class Tom {
-  private static String version = "1.2beta";
+  private static String version = "1.2";
   
   private static void usage() {
     System.out.println("Tom usage:");
@@ -55,17 +55,18 @@ public class Tom {
     System.out.println("\t--version | -V:\t\tPrint version");
     System.out.println("\t--verbose | -v:\t\tSet verbose mode on");
     System.out.println("\t--intermediate | -i:\tGenerate intermediate files");
-    System.out.println("\t--noOutput | -o:\t\tDo not generate code");
+    System.out.println("\t--noOutput | -o:\tDo not generate code");
     System.out.println("\t--noDeclaration | -D:\tDo not generate code for declarations");
     System.out.println("\t--doCompile | -C:\tStart after type-checking");
     System.out.println("\t--noCheck | -f:\t\tDo not verify correctness");
-    System.out.println("\t--noWarning | -W:\tDo not print any warning");
-    System.out.println("\t--lazyType | -l:\t\tUse universal type");
+    System.out.println("\t--Wall:\t\t\tPrint all warnings");
+    System.out.println("\t--noWarning:\tPrint warning before stopping the compilation");
+    System.out.println("\t--lazyType | -l:\tUse universal type");
     System.out.println("\t--demo | -d:\t\tRun demo mode");
     System.out.println("\t--import <path> | -I:\tPath for %include");
     System.out.println("\t--pretty | -p:\t\tGenerate readable code");
     System.out.println("\t--atermStat | -s:\tPrint internal ATerm statistics");
-    System.out.println("\t--optimize | -O:\t\tOptimized generated code");
+    System.out.println("\t--optimize | -O:\tOptimized generated code");
     System.out.println("\t--static:\t\tGenerate static functions");
     System.exit(0);
   }
@@ -111,7 +112,9 @@ public class Tom {
             Flags.doExpand = false;
           } else if(args[i].equals("--intermediate") || args[i].equals("-i")) {
             Flags.intermediate = true;
-          } else if(args[i].equals("--noWarning") || args[i].equals("-W")) {
+          } else if(args[i].equals("--Wall")) {
+            Flags.warningAll = true;
+          } else if(args[i].equals("--noWarning")) {
             Flags.noWarning = true;
           } else if(args[i].equals("--noCheck") || args[i].equals("-f")) {
             Flags.doCheck = false;
@@ -119,7 +122,7 @@ public class Tom {
             Flags.strictType = false;
 	  } else if(args[i].equals("--demo") || args[i].equals("-d")) {
 	    Flags.demo = true;
-            Flags.noWarning = true;
+            Flags.warningAll = false;
 	  } else if(args[i].equals("--noDeclaration") || args[i].equals("-D")) {
 	    Flags.genDecl = false;
 	  } else if(args[i].equals("--import") || args[i].equals("-I")) {
@@ -229,10 +232,11 @@ public class Tom {
           throw new CheckErrorException(msg);
         }
         
-	TomExpander tomExpander = new TomExpander(environment);
+	TomKernelExpander tomKernelExpander = new TomKernelExpander(environment);
+	TomExpander tomExpander = new TomExpander(environment,tomKernelExpander);
         startChrono();
         expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
-        tomExpander.updateSymbol();
+        tomKernelExpander.updateSymbol();
         TomTerm context = null;
         expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
         tomChecker.checkVariableCoherence(expandedTerm);
@@ -295,14 +299,15 @@ public class Tom {
           symbolTable.regenerateFromTerm(symbTable);
         }
 
-        TomCompiler tomCompiler = new TomCompiler(environment);
+        TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(environment);
+        TomCompiler tomCompiler = new TomCompiler(environment,tomKernelCompiler);
         startChrono();
-        TomTerm simpleCheckedTerm = tomCompiler.pass2_1(expandedTerm);
+        TomTerm simpleCheckedTerm = tomCompiler.preProcessing(expandedTerm);
         
-        compiledTerm = tomCompiler.compileMatching(simpleCheckedTerm);
+        compiledTerm = tomKernelCompiler.compileMatching(simpleCheckedTerm);
           //System.out.println("pass2 =\n" + compiledTerm);
-        compiledTerm = tomCompiler.pass3(compiledTerm);
-          //System.out.println("pass3 =\n" + compiledTerm);
+        compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
+          //System.out.println("postProcessing =\n" + compiledTerm);
         stopChrono();
         if(Flags.verbose) System.out.println("TOM compilation phase " + getChrono());
         if(Flags.intermediate) generateOutput(fileName + compiledSuffix,compiledTerm);

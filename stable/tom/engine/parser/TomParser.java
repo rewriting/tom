@@ -1001,7 +1001,9 @@ public class TomParser implements TomParserConstants {
     case TYPE:
       jj_consume_token(TYPE);
       list.add(makeTL(savePosAndExtract()));
-      System.out.println("Warning: %type is obsolete");
+      if(!Flags.noWarning) {
+        System.out.println("Warning: %type is obsolete");
+      }
       break;
     default:
       jj_la1[29] = jj_gen;
@@ -1708,18 +1710,18 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_STAR)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_6() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_RPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_STAR)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1733,7 +1735,7 @@ public class TomParser implements TomParserConstants {
   }
 
   public TomParserTokenManager token_source;
-  JavaCharStream jj_input_stream;
+  ASCII_UCodeESC_CharStream jj_input_stream;
   public Token token, jj_nt;
   private int jj_ntk;
   private Token jj_scanpos, jj_lastpos;
@@ -1750,7 +1752,7 @@ public class TomParser implements TomParserConstants {
   private int jj_gc = 0;
 
   public TomParser(java.io.InputStream stream) {
-    jj_input_stream = new JavaCharStream(stream, 1, 1);
+    jj_input_stream = new ASCII_UCodeESC_CharStream(stream, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
@@ -1770,7 +1772,7 @@ public class TomParser implements TomParserConstants {
   }
 
   public TomParser(java.io.Reader stream) {
-    jj_input_stream = new JavaCharStream(stream, 1, 1);
+    jj_input_stream = new ASCII_UCodeESC_CharStream(stream, 1, 1);
     token_source = new TomParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;

@@ -40,7 +40,7 @@ import jtom.exception.*;
 import jtom.adt.*;
 
 public class Tom {
-  private static String version = "1.2beta";
+  private static String version = "1.2";
   
   private static void usage() {
     System.out.println("Tom usage:");

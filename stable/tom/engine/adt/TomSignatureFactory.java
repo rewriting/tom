@@ -218,6 +218,8 @@ public class TomSignatureFactory extends PureFactory
   private TomTerm protoTomTerm_BuildBuiltin;
   private aterm.AFun funTomTerm_CompiledMatch;
   private TomTerm protoTomTerm_CompiledMatch;
+  private aterm.AFun funTomTerm_CompiledPattern;
+  private TomTerm protoTomTerm_CompiledPattern;
   private aterm.AFun funTomTerm_Automata;
   private TomTerm protoTomTerm_Automata;
   private aterm.AFun funTomTerm_MatchNumber;
@@ -737,6 +739,10 @@ public class TomSignatureFactory extends PureFactory
     TomTerm_CompiledMatch.initializePattern();
     funTomTerm_CompiledMatch = makeAFun("_CompiledMatch", 2, false);
     protoTomTerm_CompiledMatch = new TomTerm_CompiledMatch();
+
+    TomTerm_CompiledPattern.initializePattern();
+    funTomTerm_CompiledPattern = makeAFun("_CompiledPattern", 1, false);
+    protoTomTerm_CompiledPattern = new TomTerm_CompiledPattern();
 
     TomTerm_Automata.initializePattern();
     funTomTerm_Automata = makeAFun("_Automata", 2, false);
@@ -2152,6 +2158,18 @@ public class TomSignatureFactory extends PureFactory
   public TomTerm_CompiledMatch makeTomTerm_CompiledMatch(TomList _decls, TomList _automataList) {
     aterm.ATerm[] args = new aterm.ATerm[] {_decls, _automataList};
     return makeTomTerm_CompiledMatch( funTomTerm_CompiledMatch, args, empty);
+  }
+
+  protected TomTerm_CompiledPattern makeTomTerm_CompiledPattern(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_CompiledPattern) {
+      protoTomTerm_CompiledPattern.initHashCode(annos,fun,args);
+      return (TomTerm_CompiledPattern) build(protoTomTerm_CompiledPattern);
+    }
+  }
+
+  public TomTerm_CompiledPattern makeTomTerm_CompiledPattern(TomList _instList) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_instList};
+    return makeTomTerm_CompiledPattern( funTomTerm_CompiledPattern, args, empty);
   }
 
   protected TomTerm_Automata makeTomTerm_Automata(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {

@@ -46,6 +46,9 @@ public class GenericTraversal {
     genericCollectArray(subject, collect, new Object[] {arg1,arg2});
   }
 
+  public void genericCollect(ATerm subject, Collect4 collect, Object arg1, Object arg2, Object arg3) {
+    genericCollectArray(subject, collect, new Object[] {arg1,arg2,arg3});
+  }
  
     /*
      * Traverse a subject and replace

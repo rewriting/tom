@@ -338,6 +338,7 @@ public class TomOptimizer extends TomBase {
 		System.exit(1);
 		return null;
 	      }
+                /*
 	      Variable[astName=PositionName(l1)] -> {
 		Iterator iter = varList.iterator();
 		String name1 = ":tom"+numberListToIdentifier(l1); 
@@ -356,11 +357,14 @@ public class TomOptimizer extends TomBase {
 		      return t; 
 		    } 
 		  } 
-		}	
+		}
 		System.err.println("The variable wasn't added to the list when collecting...");
 		System.exit(1);
 		return null;
 		}
+                */
+
+                
 	      CompiledMatch[] -> {
 		return replaceCompiledMatch((TomTerm) t, varList);
 	      }

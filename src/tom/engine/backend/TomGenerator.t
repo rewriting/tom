@@ -483,7 +483,7 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      GetSlot(Name(opname),slotName, var@Variable(option1,PositionName(l1),type1)) -> {
+      GetSlot(Name(opname),slotName, var@Variable[]) -> {
         out.write("tom_get_slot_" + opname + "_" + slotName + "(");
         generate(out,deep,var);
         out.write(")");
