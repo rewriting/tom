@@ -28,6 +28,7 @@
 
   <!-- some used directory location for stable -->
   <property name="stable.src"     location="stable"/>
+  <property name="stable.gen"     location="${stable.src}/gen"/>   
   <property name="stable.adt"     location="${stable.src}/jtom/adt"/>
   <property name="stable.mapping" location="${stable.src}/tom/library/mapping"/>
   <property name="stable.build"   location="${stable.src}/build"/>
@@ -128,6 +129,7 @@
   
   <target name="prepare.stable">
     <mkdir dir="${stable.build}"/>
+    <mkdir dir="${stable.gen}"/>
   </target>
 
   <target name="prepare.test">
@@ -297,6 +299,11 @@
       <include name="tom/platform/adt/*.vas"/>
     </vas>
 
+    <uptodate property="vascompile.required" 
+              targetfile="${src.gen}/jtom/adt/tomsignature/TomSignature.tom" >
+      <srcfiles dir= "${src.src}/jtom/adt" includes="*.vas"/>
+    </uptodate>
+
 <!--
     <vas config="${stable.vasconfigfile}"
          srcdir="${src.src}"
@@ -356,16 +363,19 @@
   <target name="stable" description="compile the TOM stable sources"
           depends="prepare.stable">
     <copy file="${stable.src}/jtom/Tom.java.in" 
-          tofile="${stable.src}/jtom/Tom.java"/>
-    <replace dir="${stable.src}" token="@TOM_VERSION@" value="${stable.version}">
+          tofile="${stable.gen}/jtom/Tom.java"/>
+    <replace dir="${stable.gen}" token="@TOM_VERSION@" value="${stable.version}">
       <include name="jtom/Tom.java"/>
     </replace>
     <!-- Compile the java code from ${stable} into ${build} -->
-    <javac srcdir="${stable.src}" 
-           destdir="${stable.build}" 
+    <javac destdir="${stable.build}" 
            debug="${javacDebugInfo}"
            verbose="${javacVerbose}"
            nowarn="${nowarnings}">
+      <src path="${stable.src}"/>
+      <src path="${stable.gen}"/>
+      <include name="tom/**/*.java"/>
+      <include name="jtom/**/*.java"/>
       <classpath refid="stable.classpath"/>
     </javac>
   </target>  
@@ -594,6 +604,7 @@
 
   <target name="clean.stable" description="Purges the generated stable files">
     <delete dir="${stable.build}"/>
+    <delete dir="${stable.gen}"/>
     <delete file="${stable.src}/jtom/Tom.java"/>
   </target>
   
