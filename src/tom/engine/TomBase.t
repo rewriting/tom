@@ -1,5 +1,5 @@
 /*
-  
+   
     TOM - To One Matching Compiler
 
     Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)
