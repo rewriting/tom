@@ -1,3 +1,7 @@
+#
+#    TOM - To One Matching Compiler
+#
+
 EXTRA_DIST = jtom.sh.src jtom.vim jtom.bat jtom.sh adt-to-tom.bat adt-to-tom.sh
 
 bin_SCRIPTS = jtom jtom.stable jtom.src

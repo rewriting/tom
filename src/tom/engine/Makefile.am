@@ -7,8 +7,9 @@ SUBDIRS         = runtime tools exception xml parser checker compiler optimizer 
 javadir         = ${prefix}/classes/jtom
 stabledir 	= $(top_srcdir)/stable/jtom
 
-TOMSOURCES      = TomBase.t
-BOOTSOURCES	= $(TOMSOURCES:.t=.java) Tom.java TomEnvironment.java
+TOMSOURCES  = TomBase.t
+JAVASOURCES = Tom.java TomEnvironment.java
+BOOTSOURCES	= $(TOMSOURCES:.t=.java) $(JAVASOURCES)
 java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST 	= $(BOOTSOURCES) $(TOMSOURCES) 
 CLEANFILES 	= $(TOMSOURCES:.t=.java) tomjava.stamp

@@ -5,10 +5,11 @@
 TSADT_STABLE=$(top_srcdir)/stable/adt/TomSignature-${VERSION}.jar
 SETADT_STABLE=$(top_srcdir)/stable/adt/Set-${VERSION}.jar
 TNODEADT_STABLE=$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
+JUNIT_LIB=$(top_srcdir)/lib/junit.jar
 
 javadir         = ${prefix}/test
 JAVAROOT        = ${top_builddir}/test
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(top_builddir)/src:$(top_builddir)/lib/junit.jar:$(top_builddir)/src/adt:$(top_builddir)/stable:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir):$(top_builddir)/src:$(top_builddir)/src/adt:$(top_builddir)/stable:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):$(SHARED_OBJECTS):$(JUNIT_LIB):$$CLASSPATH
 
 source_java     = Peano.t \
 		  List.t \
@@ -38,7 +39,7 @@ EXTRA_DIST      = $(source_java) $(source_c) $(check_JAVA)
 %.java.test : %.java Makefile
 	@(echo '#! /bin/sh';\
 	 echo 'set -e';\
-	 echo 'CLASSPATH=${top_builddir}:${top_builddir}/lib/junit.jar:${top_builddir}/src:${top_builddir}/src/adt:${top_builddir}/stable:..:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):${SHARED_OBJECTS}:${CLASSPATH}';\
+	 echo 'CLASSPATH=${top_builddir}:${top_builddir}/src:${top_builddir}/src/adt:${top_builddir}/stable:..:$(TSADT_STABLE):$(SETADT_STABLE):$(TNODEADT_STABLE):$(JAVA_ATERM):${SHARED_OBJECTS}:${JUNIT_LIB}:${CLASSPATH}';\
 	 echo 'export CLASSPATH';\
 	 echo "java $* ${srcdir}";\
 	 echo "rm $*.java.test";\
@@ -51,14 +52,13 @@ noinst_PROGRAMS         = $(PROGS)
 cfib1_SOURCES           = cfib1.tom.c
 loulou_SOURCES          = loulou.tom.c
 
-BUILT_SOURCES   = $(check_JAVA) \
-		  cfib1.tom.c loulou.tom.c
+BUILT_SOURCES   = $(check_JAVA) cfib1.tom.c loulou.tom.c
 
 # we use the last compiled compiler to compile the testsuite
-TOMFLAGS = -O
+TOMFLAGS  = -O
 TOMSTABLE = ${top_builddir}/utils/jtom.stable
-TOMSRC = ${top_builddir}/utils/jtom.src
-TOMTEST = $(TOMSRC)
+TOMSRC    = ${top_builddir}/utils/jtom.src
+TOMTEST   = $(TOMSRC)
 
 Record.java: Record.t
 	$(TOMTEST) $(TOMFLAGS) --lazyType  Record.t

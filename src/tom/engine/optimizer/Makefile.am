@@ -6,7 +6,8 @@ javadir         = ${prefix}/classes/jtom/optimizer
 stabledir 	= $(top_srcdir)/stable/jtom/optimizer
 
 TOMSOURCES  = TomOptimizer.t
-BOOTSOURCES	= $(TOMSOURCES:.t=.java) 
+JAVASOURCES = 
+BOOTSOURCES	= $(TOMSOURCES:.t=.java) $(JAVASOURCES)
 java_JAVA   = $(BOOTSOURCES)
 CLEANFILES 	= $(TOMSOURCES:.t=.java) tomjava.stamp
 EXTRA_DIST 	= $(BOOTSOURCES) $(TOMSOURCES)

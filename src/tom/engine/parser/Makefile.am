@@ -6,11 +6,9 @@ JAVACC          = @JAVACC@
 javadir         = ${prefix}/classes/jtom/parser
 stabledir 	= $(top_srcdir)/stable/jtom/parser
 
-TOMSOURCES      = TomBackQuoteParser.t 
-BOOTSOURCES	= $(TOMSOURCES:.t=.java)\
-		  JavaCharStream.java\
-		  TomBuffer.java\
-		  $(generated_java)
+TOMSOURCES  = TomBackQuoteParser.t 
+JAVASOURCES = JavaCharStream.java TomBuffer.java
+BOOTSOURCES	= $(TOMSOURCES:.t=.java) $(JAVASOURCES) $(generated_java)
 
 generated_java  = Token.java\
 		  ParseException.java\
