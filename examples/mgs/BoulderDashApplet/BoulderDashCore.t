@@ -1,3 +1,5 @@
+//package BoulderDashApplet;
+
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
@@ -168,7 +170,7 @@ public class BoulderDashCore {
     if(oneStep()) {
       return space;
     } else {
-      return null;
+      return new HashMap();
     }
   }
   
