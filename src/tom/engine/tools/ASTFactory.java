@@ -248,7 +248,6 @@ public class ASTFactory {
      * update the root of lhs: it becomes a defined symbol
      */
   public void updateDefinedSymbol(SymbolTable symbolTable, TomTerm term) {
-      //List result = term.match("Appl(Option(<term>),Name(<term>),<term>)");
     if(term.isAppl() || term.isRecordAppl()) {
       String key = term.getAstName().getString();
       TomSymbol symbol = symbolTable.getSymbol(key);

@@ -521,11 +521,12 @@ abstract class TomChecker extends TomBase implements TomTask {
   }
   
 	/** RULE VERIFICATION CONCERNS */
-	// for each rewrite rule  
 	private void verifyRule(TomRuleList ruleList) {
 		int ruleNumber = 0;
 		String name = "Unknown return type";
-		%match(TomRuleList ruleList) {
+		
+		
+		%match(TomRuleList ruleList) {	// for each rewrite rule
 			concTomRule(_*, RewriteRule(Term(lhs),Term(rhs),condList,option),_*) -> {
 				//Each Lhs shall start with the same production name
 				name = verifyLhsRuleAndConstructorEgality(lhs, name, ruleNumber);
@@ -533,8 +534,8 @@ abstract class TomChecker extends TomBase implements TomTask {
 						// update the root of lhs: it becomes a defined symbol
 					ast().updateDefinedSymbol(symbolTable(),lhs);
 				}
-				verifyRhsRuleStructure(rhs);
-				// TODO Lhs and Rhs shall have the same return type
+				TomType lhsType = getSymbolCodomain(getSymbol(name));
+				verifyRhsRuleStructure(rhs, lhsType);
 				ruleNumber++;
 			}
 		}
@@ -542,17 +543,13 @@ abstract class TomChecker extends TomBase implements TomTask {
   
 	private String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  ruleName, int ruleNumber) {
 		String methodName = "";
-		OptionList options = tsf().makeOptionList();
+		OptionList options = null;
 
 		%match(TomTerm lhs) {
-			appl@Appl(Option(optionList),Name(name), args) -> {
-				// No alone variable nor simple constructor
-				if( args.isEmpty() && !hasConstructor(optionList)) {
-					int line = findOriginTrackingLine(optionList);
-					messageRuleErrorVariable(name, line);
-				}
-				checkSyntax(appl);
-					// lhs outermost symbol shall have a corresponding make
+			Appl[option=Option(optionList), astName=Name(name)] |
+			RecordAppl[option=Option(optionList), astName=Name(name)] -> {
+				checkSyntax(lhs);
+					/* lhs outermost symbol shall have a corresponding make */
 				TomSymbol symb = getSymbol(name);
 				if (symb == null) {
 					messageRuleErrorUnknownSymbol(name);
@@ -564,23 +561,24 @@ abstract class TomChecker extends TomBase implements TomTask {
 				options = optionList;
 				methodName = name;
 			}
+			
 			VariableStar[option=Option(optionList), astName=Name(name1)] -> {
 				int line = findOriginTrackingLine(name1,optionList);    
 				messageRuleErrorVariableStar(name1, line);
 				return ruleName;
 			}
 
-			UnamedVariableStar[option=Option(options2)] |
-			Placeholder[option=Option(options2)] -> { 
-				messageRuleErrorLhsImpossiblePlaceHolder(options2);
+			UnamedVariableStar[option=Option(optionList)] |
+			Placeholder[option=Option(optionList)] -> { 
+				messageRuleErrorLhsImpossiblePlaceHolder(optionList);
 				return ruleName;
 			}
-			rec@RecordAppl(Option(optionList),Name(name),args) -> {
-				checkSyntax(rec);
-				options = optionList;
-				methodName = name;
+			XMLAppl[option=Option(optionList)] -> {
+				messageRuleErrorLhsImpossibleXML(optionList);
+				return ruleName;
 			}
 		}
+		
 		if ( ruleNumber != 0 && !methodName.equals(ruleName)) {   
 			messageRuleErrorConstructorEgality(methodName, ruleName, options);
 			return ruleName;
@@ -590,7 +588,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 
 	private void messageRuleErrorUnknownSymbol(String symbolName) {
 		int line = currentTomStructureOrgTrack.getLine();
-		String s = "Symbol '" +symbolName+ "' has no been declared in rule declared line "+line;
+		String s = "Symbol '" +symbolName+ "' has no been declared: see rule declared line "+line;
 		messageError(line,s); 
 	}
   
@@ -598,12 +596,6 @@ abstract class TomChecker extends TomBase implements TomTask {
 		int declLine = currentTomStructureOrgTrack.getLine();
 		int line = findOriginTrackingLine(optionList);
 		String s = "Symbol '" +name+ "' has no 'make' method associated in structure declared line "+declLine;
-		messageError(line,s);
-	}
- 	 
-	private void messageRuleErrorVariable(String nameVariableStar, int line) {
-		int declLine = currentTomStructureOrgTrack.getLine();
-		String s = "Alone variable " +nameVariableStar+ " is not allowed on left hand side of structure %rule declared line "+declLine;
 		messageError(line,s);
 	}
  	 
@@ -619,6 +611,13 @@ abstract class TomChecker extends TomBase implements TomTask {
 		String s = "Alone placeholder is not allowed in left hand side of structure %rule declared line " +declLine;
 		messageError(line,s);
 	}
+	
+	private void messageRuleErrorLhsImpossibleXML(OptionList optionList) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		int line = findOriginTrackingLine(optionList);
+		String s = "XML is not allowed in left hand side of structure %rule declared line " +declLine;
+		messageError(line,s);		
+	}
  	 
 	private void messageRuleErrorConstructorEgality(String  name, String nameExpected, OptionList optionList) {
 		int declLine = currentTomStructureOrgTrack.getLine();
@@ -628,11 +627,17 @@ abstract class TomChecker extends TomBase implements TomTask {
 	}
 
 	  //Rhs shall have no underscore, be a var* nor _*, nor a RecordAppl
-	private void verifyRhsRuleStructure(TomTerm ruleRhs) {
+	private void verifyRhsRuleStructure(TomTerm ruleRhs, TomType lhsType) {
 		matchBlock: {
 			%match(TomTerm ruleRhs) {
 				appl@Appl(Option(options),Name(name),args) -> {
 					permissiveVerify(appl);
+					TomType rhsType = getSymbolCodomain(getSymbol(name));
+					if(rhsType != null) {
+						if(rhsType != lhsType) {
+							messageRuleErrorBadRhsType(options, lhsType, rhsType);
+						}
+					}
 					break matchBlock;
 				}
 				UnamedVariableStar[option=Option(option)] |
@@ -648,35 +653,52 @@ abstract class TomChecker extends TomBase implements TomTask {
 					messageRuleErrorRhsImpossibleRecord(option, tomName);
 					break matchBlock;
 				}
+				XMLAppl[option=Option(optionList)] -> {
+					messageRuleErrorRhsImpossibleXML(optionList);
+					break matchBlock;
+				}
 				_ -> {
-					System.out.println("Strange rule rhs:\n" + ruleRhs);
-					//throw new CheckErrorException();
+					throw new TomRuntimeException(new Throwable("Strange rule rhs:\n" + ruleRhs));
 				}
 			}
 		}
 	}
-
-private void messageRuleErrorRhsImpossiblePlaceholder(OptionList optionList) {
-	int line = findOriginTrackingLine(optionList);
-	int declLine = currentTomStructureOrgTrack.getLine();
-	String s = "Placeholder is not allowed on right part of structure %rule declared line "+declLine;
-	messageError(line,s);
-}
+	
+	private void messageRuleErrorBadRhsType(OptionList optionList, TomType lhsType, TomType rhsType) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		int line = findOriginTrackingLine(optionList);
+		String s = "Bad right hand side type: `"+rhsType.getString()+"` instead of `"+lhsType.getString()+"` in structure %rule declared line " +declLine;
+		messageError(line,s);	
+	}
+	
+	private void messageRuleErrorRhsImpossibleXML(OptionList optionList) {
+		int declLine = currentTomStructureOrgTrack.getLine();
+		int line = findOriginTrackingLine(optionList);
+		String s = "XML is not allowed in right hand side of structure %rule declared line " +declLine;
+		messageError(line,s);		
+	}
+	private void messageRuleErrorRhsImpossiblePlaceholder(OptionList optionList) {
+		int line = findOriginTrackingLine(optionList);
+		int declLine = currentTomStructureOrgTrack.getLine();
+		String s = "Placeholder is not allowed on right part of structure %rule declared line "+declLine;
+		messageError(line,s);
+	}
   
-private void messageRuleErrorRhsImpossibleRecord(OptionList optionList, String name) {
-	int line = findOriginTrackingLine(optionList);
-	int declLine = currentTomStructureOrgTrack.getLine();
-	String s = "Record '"+name+"[...]' is not allowed on right part of structure %rule declared line "+declLine;
-	messageError(line,s);
-}
-private void messageRuleErrorRhsImpossibleVarStar(OptionList optionList, String name) {
-	int line = findOriginTrackingLine(optionList);
-	int declLine = currentTomStructureOrgTrack.getLine();
-	String s = "Single list variable '"+name+"*' is not allowed in right hand side of structure %rule declared line " +declLine;
-	messageError(line,s);
-}
-      
-    /** RECORDS CONCERNS */
+	private void messageRuleErrorRhsImpossibleRecord(OptionList optionList, String name) {
+		int line = findOriginTrackingLine(optionList);
+		int declLine = currentTomStructureOrgTrack.getLine();
+		String s = "Record '"+name+"[...]' is not allowed on right part of structure %rule declared line "+declLine;
+		messageError(line,s);
+	}
+	
+	private void messageRuleErrorRhsImpossibleVarStar(OptionList optionList, String name) {
+		int line = findOriginTrackingLine(optionList);
+		int declLine = currentTomStructureOrgTrack.getLine();
+		String s = "Single list variable '"+name+"*' is not allowed in right hand side of structure %rule declared line " +declLine;
+		messageError(line,s);
+	}
+ 	     
+ 	   /** RECORDS CONCERNS */
   private void verifyRecordStructure(OptionList option, String tomName, TomList args)  {
     TomSymbol symbol = getSymbol(tomName);
     if(symbol != null) {
@@ -754,6 +776,7 @@ private void messageRuleErrorRhsImpossibleVarStar(OptionList optionList, String 
 
 	 /** XMLAPPL CONCERNS */
 	private void verifyXMLApplStructure(OptionList optionList, String name, TomList attrList, TomList childList) {
+		// TODO Testing XML Appl
 		System.out.println("Need verifyXMLApplStructure");
 	}
 
