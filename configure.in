@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.63 2004/04/03 20:59:17 reilles Exp $
+# $Id: configure.in,v 1.64 2004/04/14 15:56:33 guyon Exp $
 
 AC_INIT
 AC_CONFIG_SRCDIR([configure.in])
@@ -8,7 +8,7 @@ AC_PREREQ(2.57)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.63 2004/04/03 20:59:17 reilles Exp $)
+AC_REVISION($Id: configure.in,v 1.64 2004/04/14 15:56:33 guyon Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -40,6 +40,10 @@ AC_SUBST(JAVA_ATERM)
 dnl Require apigen
 AC_PACKAGE_REQUIRE(apigen, adt-to-tom,
    [  --with-apigen=DIR   apigen is in DIR])
+
+dnl APIGEN_JAVA is not allowed in Makefile.am's
+JAVA_APIGEN=\`${APIGEN}/classes\`
+AC_SUBST(JAVA_APIGEN)
 
 ADTTOTOM=${APIGEN}/bin/adt-to-tom
 AC_SUBST(ADTTOTOM)

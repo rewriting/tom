@@ -1,218 +1,134 @@
-<project name="Ant for TOM" default="stablecompile">
- 	<description>
- 		Build script using Ant offering checks, dists,
-		installation, and so on.
-		it aims at offering the same functionality as the
-		automake files included in the TOM source
-		distribution.
-   
-		To use this build file, install ant,
-		and just run ant in the current directory.
-   
-		You can modify certain default settings via
-		ant -Ddist="/home/yourdirectory"
-		for the various properties listed below.
-   
-		Author: Julien GUYON, LORIA
-		Created: August 06, 2003.
-	</description>
-   
-   	<!-- set global properties for this build -->
+<?xml version="1.0" encoding="UTF-8"?>
+  <project name="Ant for TOM" default="buildstable" basedir=".">
+    <description>
+      Build script using Ant offering checks, dists,
+      installation, and so on.
+      it aims at offering the same functionality as the
+      automake files included in the TOM source
+      distribution.
+      
+      To use this build file, install ant,
+      and just run ant in the current directory.
+      
+      You can modify certain default settings via
+      ant -Ddist="/home/yourdirectory"
+      for the various properties listed below.
+      
+      Author: Julien GUYON, LORIA
+      Created: August 06, 2003.
+    </description>
+    
+    <!-- set local properties for this build -->
+	<property file="local.properties"/>
 
-	<!-- current version of TOM -->
-	<property name="version" value="1.3beta"/>
-	<!-- place to find the src sources -->
-	<property name="src"   location="src/jtom"/>
-	<!-- place to find the stable sources -->
-	<property name="stable"   location="stable"/>
-	<!-- place to find the stable sources -->
-	<property name="test"   location="test"/>
-	
- 	<!-- external dependency: aterm-java.jar,
-		shared-object and JJTraveler. 
-		either put it in your class path, 
-		or define the atermjavajar property -->
-	<property
-		name="atermjavajar"
-		location="/home/.../aterm.jar"
-		/> 
-	<property
-		name="sharedobjectjar"
-		location="/home/.../shared-objects.jar"
-	/>
-	<property
-		name="JJTravelerjar"
-		location="/home/.../jjtraveler.jar"
-	/>
- 
- 	<property
-		name="tomclasspath"
-		location="/home/julien/ELAN/classes"
-	/>
- 	<!-- PARSER  GENERATION -->
- 	<target 
- 		name="Regenerate parser" 
- 		description="Regenerate TOM parser using JavaCC"
- 	>
-		<exec dir="${src}/parser" executable="javacc">
-			<arg line="TomParser.jj"/>
-		</exec>		
- 	</target>
- 
- 	<!-- ADT  GENERATION -->
- 	<target 
- 		name="TOM Api generation"
- 		description="Generate TOM API using Apigen"
- 	>
- 		<exec dir="${src}" executable="adt-to-java">
-			<arg line="-v -i TomSignature.adt -j -p jtom.adt -o adt -m 'aterm.*'"/>
-		</exec>
-		<!--mv adt/TomSignature.t adt/Tom.signature-->
-		<move overwrite="true" file="${src}/adt/TomSignature.t" tofile="${src}/adt/Tom.signature">
-		</move>
- 	</target>
-	<!-- TOM SOURCE  GENERATION -->
- 	<target 
-		name="tomcompile" 
-		description="compile current TOM sources" 
- 	>
- 		<echo >Compiling TomBase</echo>
- 		<java description="Execute Tom using installed jtom.Tom class" fork="true" dir="${src}" classname="jtom.Tom">
-			<classpath>
-				<pathelement path="${classpath}"/>
-				<pathelement path="${tomclasspath}"/>
- 			</classpath>
- 			<arg line="--noWarning -I adt/ TomBase"/>
- 		</java>
- 		
-		<exec dir="${src}" executable="jtom">
-			<arg line="--noWarning -I adt/ TomBase"/>
-		</exec>
-		<echo >Compiling TomGenerator</echo>
-		<exec dir="${src}/backend" executable="jtom">
-			<arg line="--noWarning -I ../adt/ -D TomGenerator"/>
-		</exec>
-		<echo >Compiling TomOptimizer</echo>
-		<exec dir="${src}/backend" executable="jtom">
-			<arg line="--noWarning -I ../adt/ -D TomOptimizer"/>
-		</exec>
-		<echo >Compiling TomChecker</echo>
-		<exec dir="${src}/checker" executable="jtom">
-			<arg line="--noWarning -I ../adt/ -D TomChecker"/>
-		</exec>
-		<echo >Compiling TomCompiler</echo>
-		<exec dir="${src}/compiler" executable="jtom">
-			<arg line="--noWarning -I ../adt/ -D TomCompiler"/>
-		</exec>
-		<echo >Compiling TomExpander</echo>
-		<exec dir="${src}/compiler" executable="jtom">
-			<arg line="--noWarning -I ../adt/ -D TomExpander"/>
-		</exec>
-		<echo >Compiling TomKernelCompiler</echo>
-		<exec dir="${src}/compiler" executable="jtom">
-			<arg line="--noWarning -I ../adt/ -D TomKernelCompiler"/>
-		</exec>
-		<echo >Compiling TomKernelExpander</echo>
-		<exec dir="${src}/compiler" executable="jtom">
-			<arg line="--noWarning -I ../adt/ -D TomKernelExpander"/>
-		</exec>
-		<echo >Compiling ATermSet</echo>
-		<exec dir="${src}/runtime/set" executable="jtom">
-			<arg line="--noWarning -I jgtreeset/ ATermSet"/>
-		</exec>
-		<echo >Compiling SharedMultiSet</echo>
-		<exec dir="${src}/runtime/set" executable="jtom">
-			<arg line="--noWarning -I jgtreeset/ -D SharedMultiSet"/>
-		</exec>
-		<echo >Compiling SharedSet</echo>
-		<exec dir="${src}/runtime/set" executable="jtom">
-			<arg line="--noWarning -I jgtreeset/ -D SharedSet"/>
-		</exec>
-	</target>  
-	
- 	<!-- define Autoconf/Automake targets -->
-	<target 
-		name="configure"
-		if="installdir"
-		description="Configure TOM using Autoconf/Automake tools" 
-	>
-		<echo >Reconf...</echo>
-		<exec executable="${basedir}/reconf">
-		</exec>
-		<echo >Configure</echo>
-		<echoproperties prefix="installdir"/>
-		<exec executable="${basedir}/configure">
-			<arg line="--prefix=${installdir}"/>
-		</exec>
+    <!-- current version of TOM -->
+    <property name="version" value="2.0beta"/>
+    <!-- place to find the stable sources -->
+    <property name="test" location="test"/>
+  	
+    <!-- place to find the stable sources -->
+    <property name="stable.src" location="stable"/>
+  	<property name="stable.build" location="stable/build"/>
+  	<property name="stable.adt" location="stable/adt"/>
+
+   	<!-- place to find the stable sources -->
+    <property name="src.src" location="src"/>
+  	<property name="src.build" location="src/build"/>
+  	<property name="src.adt" location="src/adt"/>
+  	
+  	<property name="src.runtime" location="src/jtom/runtime/"/>
+  	<property name="stable.runtime" location="stable/jtom/runtime/"/>
+
+  		<!--<property name="javacFailOnError" value="false"/>
+	<property name="javacDebugInfo" value="on"/>
+	<property name="javacSource" value="1.3"/>
+	<property name="javacTarget" value="1.2"/>-->
+  	
+  	<property name="javacVerbose" value="false"/>
+
+  	<taskdef name="adt" classname="ApigenAntTask"/>
+  	<taskdef name="tom" classname="TomAntTask"/>
+  	
+  	<target name="preparesrc">
+  		<mkdir dir="${src.build}"/>
+  	</target>
+  	<target name="preparestable">
+  		<mkdir dir="${stable.build}"/>
+  	</target>
+  		
+  	<path id="stable.classpath">
+		<pathelement location="${atermjavajar}"/>
+		<pathelement location="${sharedobjectjar}"/>
+		<pathelement location="${jjtravelerjar}"/>
+		<pathelement location="${apigenjar}"/>
+  		<fileset dir="${src.runtime}">
+  			<include name="*.jar"/>
+  		</fileset>
+  		<fileset dir="${stable.adt}">
+  			<include name="*.jar"/>
+  		</fileset>
+  	</path>
+  	
+  	<path id="src.classpath">
+		<pathelement location="${atermjavajar}"/>
+		<pathelement location="${sharedobjectjar}"/>
+		<pathelement location="${jjtravelerjar}"/>
+		<pathelement location="${apigenjar}"/>
+  		<fileset dir="${src.runtime}">
+  			<include name="*.jar"/>
+  		</fileset>
+  		<!--<fileset dir="${src.adt}">
+  			<include name="*.jar"/>
+  		</fileset>-->
+  	</path>
+
+  	<target name="buildtom" depends="buildadt">
+		<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping --noDeclaration">
+			<exclude name="**/TomBase.t"/>
+			<exclude name="**/TomBackQuoteParser.t"/>
+			<exclude name="**/runtime/**/*.t"/>	
+	  	</tom>
+  		<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping">
+  			<include name="**/runtime/**/*.t"/>	
+  			<include name="**/TomBase.t"/>
+			<include name="**/TomBackQuoteParser.t"/>	
+	  	</tom>
 	</target>
-		
-	<target 
-		name="stablecompile"
-		description="compile the TOM stable sources" 
-	>
+  		
+  	<target name="buildadt" depends="preparesrc">
+		<adt file="${src.adt}/TomSignature.adt" factory="TomSignature" package="jtom.adt" destdir="${src.adt}"/>
+  		<adt file="${src.adt}/TNode.adt" factory="TNode" package="jtom.adt" destdir="${src.adt}"/>
+  		<adt file="${src.adt}/Set.adt" factory="Set" package="jtom.adt" destdir="${src.adt}"/>
+	</target>
+  	
+  	<target name="buildsrc" description="compile the TOM development sources" depends="preparesrc">
+  		<antcall target="buildadt"/>
+  		<antcall target="buildtom"/>
+  		<javac srcdir="${src.src}" destdir="${src.build}" verbose="${javacVerbose}">
+			<classpath refid="src.classpath"/>
+		</javac>
+  	</target>
+	
+  	<target name="buildstable" description="compile the TOM stable sources" depends="preparestable">
 		<tstamp/>
+		<!--<pathconvert targetos="windows" property="windowspath" refid="stable.classpath">
+		</pathconvert>
+		<echo>classpath = ${windowspath}</echo>-->
 		<!-- Compile the java code from ${stable} into ${stable} -->
-		<javac 
-			srcdir="${stable}" 
-			destdir="${stable}"
-		>	
-			<classpath>
-				<pathelement path="${classpath}"/>
-				<pathelement location="${atermjavajar}"/>
-				<pathelement location="${sharedobjectjar}"/>
-				<pathelement location="${JJTravelerjar}"/>
-			</classpath>
+		<javac srcdir="${stable.src}" destdir="${stable.build}" verbose="${javacVerbose}">
+			<classpath refid="stable.classpath"/>
 		</javac>
 	</target>  
- 
- 	<target
-		name="install"
-		depends="stablecompile"
-		description="Installing TOM stable using Autoconf/Automake tools"
-	>
-		<exec dir="${stable}" executable="gmake">
-			<arg line="install"/>
-		</exec>
-	</target>
-	
- 	<target 
-		name="srccompile"
-		depends="tomcompile"
-		description="compile the TOM stable sources" 
-	>
-		<!-- Compile the java code from ${src} into ${src} -->
-		<javac 
-			srcdir="${src}" 
-			destdir="${src}"
-		>	
-			<classpath>
-				<pathelement path="${classpath}"/>
-				<pathelement location="${atermjavajar}"/>
-				<pathelement location="${sharedobjectjar}"/>
-				<pathelement location="${JJTravelerjar}"/>
-			</classpath>
-		</javac>
-	</target>
-  
-	<target
-		name="check"
-		depends="stablecompile"
-		description="Testing TOM src or stable"
-	>
-		<exec dir="${test}" executable="gmake">
-			<arg line="check"/>
-		</exec>
+
+  	<target name="stableclean" description="Purges stable files" >
+  		<delete dir="${stable.build}"/>
 	</target>
 
-<target name="doc">
-</target> 
+  	<target name="srcclean" description="Purges src files" >
+  		<delete dir="${src.build}"/>
+  		<delete dir="${src.adt}/jtom"/>
+		<delete> <fileset dir="${src.adt}" includes="**/*.tom"/></delete>
+	</target>
 
-<target name="stableclean"
-	description="Purges stable files" >
-</target>
 
-<target name="srcclean"
-	description="Purges src files" >
-</target>
-
-</project>
+  </project>

@@ -69,7 +69,7 @@ public class List {
 
   public ATermList sort2(ATermList l) {
     %match(L l) {
-      
+      conc(_*,x,x,y@a(),_* ) -> {}
       conc(X1*,x,y,X2*) -> {
         String xname = ((ATermAppl) `x).getName();
         String yname = ((ATermAppl) `(y)).getName();
