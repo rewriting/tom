@@ -8,7 +8,7 @@ public class PeanoTest {
 
   private PeanoFactory factory;
 
-  %include { Peano.t }
+  %include { Peano.tom }
   
   public PeanoTest(PeanoFactory factory) {
     this.factory = factory;

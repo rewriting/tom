@@ -11,7 +11,7 @@ public class BoulderDash {
   private HashMap newSpace;
   private static int SIZE = 20;
 
-  %include { MgsADT.t }
+  %include { adt/MgsADT.tom }
 
   %op Bead beadRock(n:Bead, s:Bead, e:Bead, w:Bead) {
     fsym { }

@@ -2,7 +2,7 @@
 
 *  adt-to-java --input MgsADT.adt --jtom --package adt --output adt
 
-* jtom --import adt BeadSort.t
+* jtom BeadSort.t
 * javac BeadSort.java
 * java BeadSort
 

@@ -6,7 +6,7 @@ public class ApiString {
 
   private TermFactory factory;
   
-  %include { term.t }
+  %include { adt/term.tom }
   %typeint
 
   public ApiString(TermFactory factory) {

@@ -2,7 +2,7 @@
 
 *  adt-to-java --input term.adt --jtom --package adt --output adt
 
-* jtom --import adt ApiString.t
+* jtom ApiString.t
 * javac ApiString.java
 * java ApiString
 

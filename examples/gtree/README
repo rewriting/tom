@@ -2,7 +2,7 @@
 
 *  adt-to-java --input term.adt --jtom --package adt --output adt
 
-* jtom --import adt GTree.t
+* jtom GTree.t
 * javac Gtree.java
 * java Gtree
 

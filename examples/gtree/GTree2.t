@@ -8,7 +8,7 @@ public class GTree2 {
   private TermFactory factory;
   private GenericTraversal traversal;
   
-  %include { term.tom }
+  %include { adt/term.tom }
 
   public GTree2(TermFactory factory) {
     this.factory = factory;

@@ -8,7 +8,7 @@ public class Tree1 {
   private TreeFactory factory;
   private Comparator comparator;
   
-  %include { tree.t }
+  %include { adt/tree.tom }
   
   public Tree1(TreeFactory factory) {
     this.factory = factory;

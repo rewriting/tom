@@ -11,7 +11,7 @@ public class Nsh {
   private GenericTraversal traversal;
 
 // ------------------------------------------------------------  
-  %include { term.t }
+  %include { adt/term.tom }
 // ------------------------------------------------------------  
 
   public Nsh(TermFactory factory) {

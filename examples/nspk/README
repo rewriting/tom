@@ -2,7 +2,7 @@
 
 *  adt-to-java --input term.adt --jtom --package adt --output adt
 
-* jtom --import adt Nsh.t
+* jtom Nsh.t
 * javac Nsh.java
 * java Nsh
 

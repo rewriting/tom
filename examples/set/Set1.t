@@ -49,7 +49,7 @@ public class Set1 {
     1 << 31
   };
   
-  %include { set.t }
+  %include { adt/set.tom }
   
   public Set1(SetFactory factory) {
     this(factory, 31);

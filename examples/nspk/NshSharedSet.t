@@ -10,7 +10,7 @@ public class NshSharedSet {
   private GenericTraversal traversal;
   private Collection result;
   
-  %include { term.t }
+  %include { adt/term.tom }
 
   %oplist ATermList concAgent( Agent* ) {
     fsym { null }

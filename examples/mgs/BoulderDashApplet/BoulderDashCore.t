@@ -13,7 +13,7 @@ public class BoulderDashCore {
   private HashMap newSpace;
   private static int SIZE = 20;
 
-  %include { term.t }
+  %include { adt/term.tom }
 
   %op Bead beadRock(n:Bead, s:Bead, e:Bead, w:Bead) {
     fsym { }

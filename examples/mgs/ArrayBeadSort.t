@@ -9,7 +9,7 @@ public class ArrayBeadSort {
   private boolean[][] space;
   private boolean[][] newSpace;
 
-  %include { MgsADT.tom }
+  %include { adt/MgsADT.tom }
 
   %op Bead beadNS(n:Bead, s:Bead) {
     fsym { }
