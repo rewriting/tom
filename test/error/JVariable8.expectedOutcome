@@ -1,0 +1,6 @@
+
+Bad variable type for 'x': it has both type 'type2' and 'type1' in structure declared line 24
+-- Error occured at line: 25 in file: JVariable8.t
+
+Tom Checker:  Encountered 1 errors during verification phase.
+No file generated.
