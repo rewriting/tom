@@ -30,6 +30,7 @@
 	<property name="test" location="test"/>
 	<property name="utils" location="utils"/>
 	<property name="lib" location="lib"/>
+	<property name="concurrent.lib" value="${lib}/concurrent.jar"/>
 
 	<!-- for stable -->
 	<property name="stable.src"   location="stable"/>
@@ -168,9 +169,12 @@
 				<not><available file="${src.adt}/TomSignature.tom"/></not>
 				<not><available file="${src.adt}/TNode.tom"/></not>
 				<not><available file="${src.adt}/Set.tom"/></not>
-				<uptodate targetfile="${src.adt}/TomSignature.adt" srcfile="${src.adt}/TomSignature.tom"/>
-				<uptodate targetfile="${src.adt}/TNode.adt" srcfile="${src.adt}/TNode.tom"/>
-				<uptodate targetfile="${src.adt}/Set.adt" srcfile="${src.adt}/Set.tom"/>
+				<uptodate targetfile="${src.adt}/TomSignature.adt" 
+									srcfile="${src.adt}/TomSignature.tom"/>
+				<uptodate targetfile="${src.adt}/TNode.adt" 
+									srcfile="${src.adt}/TNode.tom"/>
+				<uptodate targetfile="${src.adt}/Set.adt" 
+									srcfile="${src.adt}/Set.tom"/>
 			</or>
 		</condition>
 	</target>
@@ -251,6 +255,7 @@
 		<copy todir="${stable.lib}" file="${sharedobjectjar}"/>
 		<copy todir="${stable.lib}" file="${jjtravelerjar}"/>
 		<copy todir="${stable.lib}" file="${apigenjar}"/>
+		<copy todir="${stable.lib}" file="${concurrent.lib}"/>
 	</target>
 
 	<target name="distsrc" 
@@ -300,6 +305,7 @@
 		<copy todir="${src.lib}" file="${sharedobjectjar}"/>
 		<copy todir="${src.lib}" file="${jjtravelerjar}"/>
 		<copy todir="${src.lib}" file="${apigenjar}"/>
+		<copy todir="${src.lib}" file="${concurrent.lib}"/>
 	</target>
 
 	<target name="distall" 

@@ -25,8 +25,14 @@
 	<property name="nspk" value="Nspk"/>
 	<property name="nspk.dir" location="${examples.dir}/${nspk}" />
 
+	<property name="pnspk" value="PNspk"/>
+	<property name="pnspk.dir" location="${examples.dir}/${pnspk}" />
+
 	<property name="xml" value="Xml"/>
 	<property name="xml.dir" location="${examples.dir}/${xml}" />
+
+	<property name="pqueens" value="PQueens"/>
+	<property name="pqueens.dir" location="${examples.dir}/${pqueens}" />
 
 	<property name="lsystem" value="Lsystems"/>
 	<property name="lsystem.dir" location="${examples.dir}/${lsystem}" />
@@ -162,6 +168,25 @@
 		</javac>
 	</target>
 	
+	<target name="pnspk">
+		<!-- build adt -->
+		<adt file="${pnspk.dir}/term.adt" 
+				 factory="term" 
+				 package="adt.pnsh" 
+				 destdir="${pnspk.dir}"/>
+		<!-- build tom -->
+		<tom srcdir="${pnspk.dir}" 
+				 destdir="${pnspk.dir}" 
+				 options="-I ${env.TOM_HOME}/share/jtom">
+			<include name="**/*.t"/>
+		</tom>
+		<!-- build java source -->
+		<javac srcdir="${pnspk.dir}" destdir="${pnspk.dir}">
+			<classpath refid="tom.classpath"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
+	
 	<target name="xml">
 		<!-- build tom -->
 		<tom srcdir="${xml.dir}" 
@@ -171,6 +196,20 @@
 		</tom>
 		<!-- build java source -->
 		<javac srcdir="${xml.dir}" destdir="${xml.dir}">
+			<classpath refid="tom.classpath"/>
+			<include name="**/*.java"/>
+		</javac>
+	</target>
+	
+	<target name="pqueens">
+		<!-- build tom -->
+		<tom srcdir="${pqueens.dir}" 
+				 destdir="${pqueens.dir}" 
+				 options="-I ${env.TOM_HOME}/share/jtom">
+			<include name="**/*.t"/>
+		</tom>
+		<!-- build java source -->
+		<javac srcdir="${pqueens.dir}" destdir="${pqueens.dir}">
 			<classpath refid="tom.classpath"/>
 			<include name="**/*.java"/>
 		</javac>
@@ -211,7 +250,7 @@
 	
 	<target name="build.examples" 
 					description="Builds the examples (at least some)"
-					depends="addressbook, boulderdash, builtin, dom, nspk, xml">
+					depends="addressbook, boulderdash, builtin, dom, nspk, pnspk, xml, pqueens">
 	</target>
 	
 	<target name="dist.examples" description="Prepare a
@@ -234,10 +273,16 @@
 				<include name="${nspk}/*.t"/>
 				<include name="${nspk}/*.adt"/>
 
+				<include name="${pnspk}/*.t"/>
+				<include name="${pnspk}/*.adt"/>
+
 				<include name="${xml}/*.t"/>
 				<include name="${xml}/*.adt"/>
 				<include name="${xml}/*.xml"/>
 				<include name="${xml}/*.html"/>
+
+				<include name="${pqueens}/*.t"/>
+				<include name="${pqueens}/*.tom"/>
 
 				<not>
 					<present targetdir="${examples.dir}">
