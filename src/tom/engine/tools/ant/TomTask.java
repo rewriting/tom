@@ -71,6 +71,7 @@ public class TomTask extends MatchingTask {
   private boolean verbose = false;
   private Path extdirs;
   private boolean nowarn = false;
+	private boolean optimize = false;
 
   protected boolean failOnError = true;
   protected boolean listFiles = false;
@@ -308,11 +309,22 @@ public class TomTask extends MatchingTask {
     return verbose;
   }
 
-
-    /**
-     * If true, enables the -nowarn option.
-     * @param flag if true, enable the -nowarn option
-     */
+	/**
+	 * If true, compiles with optimization enabled.
+	 * @param optimize if true compile with optimization enabled
+	 */
+	public void setOptimize(boolean optimize) {
+		this.optimize = optimize;
+	}
+	
+	public boolean getOptimize() {
+		return optimize;
+	}
+	
+	/**
+	 * If true, enables the -nowarn option.
+	 * @param flag if true, enable the -nowarn option
+	 */
   public void setNowarn(boolean flag) {
     this.nowarn = flag;
   }
@@ -465,6 +477,9 @@ public class TomTask extends MatchingTask {
         if (outputFile != null) {
           cmd_line = cmd_line.trim() + " -o " + outputFile;
         }
+				if (optimize == true) {
+          cmd_line = cmd_line.trim() + " --optimize";
+				}
         cmd_line = cmd_line.trim() + " -I " + file.getParent();
         cmd_line = cmd_line.trim() + " " + filename;
         String[] cmd = split(cmd_line);
