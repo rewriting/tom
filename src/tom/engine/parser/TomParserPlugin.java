@@ -32,12 +32,9 @@ import java.util.logging.*;
 import antlr.*;
 
 import aterm.*;
-import aterm.pure.*;
 
 import jtom.*;
 import jtom.tools.*;
-import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
 import jtom.exception.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.platform.*;

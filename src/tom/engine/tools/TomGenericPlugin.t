@@ -25,13 +25,9 @@
 
 package jtom.tools;
 
-import java.text.*;
 import java.util.logging.*;
 
-import aterm.*;
-
 import jtom.*;
-import jtom.exception.*;
 import jtom.adt.tomsignature.types.*;
 
 import tom.platform.*;

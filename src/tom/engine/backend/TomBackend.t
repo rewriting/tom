@@ -28,8 +28,6 @@ package jtom.backend;
 import java.io.*;
 import java.util.logging.*;
 
-import aterm.*;
-import jtom.*;
 import jtom.adt.tomsignature.types.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.platform.OptionParser;

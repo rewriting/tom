@@ -29,12 +29,10 @@ package jtom.verifier;
 import jtom.*;
 import aterm.*;
 import java.util.*;
-import jtom.tools.*;
 import tom.library.traversal.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.verifier.verifier.il.*;
 import jtom.verifier.verifier.il.types.*;
-import jtom.TomMessage;
 
 public class Verifier extends TomBase {
 

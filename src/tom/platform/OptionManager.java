@@ -26,8 +26,6 @@
 package tom.platform;
 
 import java.util.*;
-import tom.library.adt.tnode.types.TNode;
-import tom.platform.adt.platformoption.types.*;
 
 /**
  * Manage the list of option of different plugin but also global option

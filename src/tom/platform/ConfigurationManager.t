@@ -27,12 +27,10 @@ package tom.platform;
 
 import java.util.*;
 import java.util.logging.*;
-import java.io.*;
 
 
 import aterm.*;
 import aterm.pure.*;
-import jtom.*;
 
 import tom.library.adt.tnode.*;
 import tom.library.adt.tnode.types.*;

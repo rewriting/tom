@@ -36,13 +36,11 @@ header{
 
   import vas.Vas;
 
-  import java.lang.reflect.*;
   import java.io.*;
   import java.util.*;
   import java.util.logging.*;
 
   import aterm.*;
-  import aterm.pure.*;    
   
   import antlr.*;
 }

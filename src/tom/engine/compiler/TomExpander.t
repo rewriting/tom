@@ -27,7 +27,6 @@ package jtom.compiler;
 
 import java.util.logging.*;
 
-import jtom.*;
 import jtom.adt.tomsignature.types.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.library.traversal.Replace1;

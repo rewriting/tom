@@ -25,7 +25,6 @@
 
 header{
 package jtom.parser;
-import antlr.*;
 import java.io.*;
 }
 

@@ -1,6 +1,5 @@
 package jtom.optimizer;
 
-import jtom.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.types.*;
 

@@ -28,16 +28,8 @@ package jtom;
 import java.util.*;
 import java.io.*;
 
-import aterm.*;
-import aterm.pure.*;
-
 import jtom.tools.*;
-import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
 import tom.platform.*;
-import tom.platform.adt.platformoption.*;
-import tom.library.traversal.*;
-import jtom.exception.TomRuntimeException;
 
 public class TomStreamManager {
 

@@ -25,7 +25,6 @@
 
 package jtom.verifier;
 
-import jtom.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.types.*;
 
@@ -34,7 +33,6 @@ import java.util.*;
 import java.util.logging.*;
 
 import tom.library.traversal.*;
-import tom.platform.adt.platformoption.*;
 import tom.platform.adt.platformoption.types.*;
 import tom.platform.OptionParser;
 import tom.platform.RuntimeAlert;

@@ -26,9 +26,9 @@
 package jtom.starter;
 
 import java.util.logging.*;
+
 import jtom.*;
 import jtom.tools.*;
-import aterm.*;
 import tom.platform.RuntimeAlert;
 
 /**

@@ -26,19 +26,12 @@
 
 package jtom.checker;
 
-import aterm.*;
-
-import java.util.*;
 import java.text.MessageFormat;
 import java.util.logging.*;
 
-import jtom.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.types.*;
-import tom.library.traversal.Collect1;
-import jtom.xml.Constants;
 import jtom.exception.*;
-import jtom.TomMessage;
 
 abstract public class TomChecker extends TomGenericPlugin {
   

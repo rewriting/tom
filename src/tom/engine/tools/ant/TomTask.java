@@ -27,7 +27,6 @@ package jtom.tools.ant;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
 import jtom.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;

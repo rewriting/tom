@@ -27,7 +27,6 @@ package jtom.tools;
 
 import java.io.*;
 import tom.platform.*;
-import jtom.*;
 
 public class OutputCode {
   protected Writer file;

@@ -25,21 +25,12 @@
 
 package jtom;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
 
 import jtom.tools.*;
-import jtom.exception.*;
 
 import jtom.adt.tomsignature.*;
-import jtom.adt.tomsignature.types.*;
 
-import tom.platform.*;
 import tom.platform.adt.platformoption.*;
-import tom.platform.adt.platformoption.types.*;
-
-import aterm.*;
 import aterm.pure.*;
 
 /**

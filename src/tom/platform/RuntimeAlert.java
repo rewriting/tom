@@ -25,7 +25,6 @@
 
 package tom.platform;
 
-import aterm.*;
 import aterm.pure.*;
 
 import tom.platform.adt.platformalert.*;

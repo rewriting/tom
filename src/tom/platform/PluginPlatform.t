@@ -25,17 +25,13 @@
 
 package tom.platform;
 
-import java.text.*;
 import java.util.*;
 import java.util.logging.*;
-import java.io.*;
 
 import aterm.*;
 import aterm.pure.*;
 
 import tom.library.adt.tnode.*;
-import tom.library.adt.tnode.types.*;
-import tom.library.xml.*;
 
 /**
  * The PluginPlatform manages plugins defined in an xml configuration file.

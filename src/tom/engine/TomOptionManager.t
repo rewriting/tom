@@ -27,25 +27,14 @@ package jtom;
 
 import java.util.*;
 import java.util.logging.*;
-import java.io.*;
-
-import jtom.*;
-
-import tom.platform.*;
-import tom.library.adt.tnode.*;
-import tom.library.adt.tnode.types.*;
-
-import tom.platform.adt.platformoption.*;
-import tom.platform.adt.platformoption.types.*;
-
-import jtom.exception.*;
-
-import tom.library.xml.*;
-
-import jtom.tools.*;
 
 import aterm.*;
 import aterm.pure.*;
+
+import tom.platform.*;
+
+import tom.platform.adt.platformoption.*;
+import tom.platform.adt.platformoption.types.*;
 
 public class TomOptionManager implements OptionManager, OptionOwner {
 

@@ -30,7 +30,6 @@ import java.util.logging.*;
 
 import aterm.*;
 
-import jtom.*;
 import jtom.tools.*;
 import jtom.exception.TomRuntimeException;
 import jtom.adt.tomsignature.types.*;
