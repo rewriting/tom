@@ -25,7 +25,7 @@
 
 SUBDIRS = jtom
 JARFILE        = jtom-devel.jar
-JARVERSIONFILE = jtom-devel${VERSION}.jar
+JARVERSIONFILE = jtom-devel-${VERSION}.jar
 data_DATA  = $(JARFILE) $(JARVERSIONFILE)
 CLEANFILES = ${JARFILE} ${JARVERSIONFILE}
 

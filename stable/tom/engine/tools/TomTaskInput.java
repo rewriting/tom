@@ -37,19 +37,21 @@ public class TomTaskInput {
   private List importList;
   private String inputFileName = "",
                  baseInputFileName = "",
-                 outputFileName = "";
-  public static String outputSuffix    = ".java",
-                       parsedSuffix    = ".tfix.parsed",
-                       expandedSuffix  = ".tfix.expanded",
-                       compiledSuffix  = ".tfix.compiled",
-                       optimizedSuffix  = ".tfix.optimized",
-                       parsedTableSuffix = ".tfix.parsed.table",
-                       expandedTableSuffix = ".tfix.expanded.table",
-                       debugTableSuffix = ".tfix.debug.table";
+                 outputFileName = "",
+                 outputSuffix    = ".java";
+  public final static String 
+                        parsedSuffix    = ".tfix.parsed",
+                        expandedSuffix  = ".tfix.expanded",
+                        compiledSuffix  = ".tfix.compiled",
+                        optimizedSuffix  = ".tfix.optimized",
+                        parsedTableSuffix = ".tfix.parsed.table",
+                        expandedTableSuffix = ".tfix.expanded.table",
+                        debugTableSuffix = ".tfix.debug.table";
   
   public TomTaskInput(TomErrorList list) {
 		this.importList = new  ArrayList();
 		this.errors = list;
+       
   }
   
   private boolean needDebugExpansion = false, 
@@ -98,6 +100,7 @@ public class TomTaskInput {
   public String getOutputFileName() {
 		return outputFileName;
   }
+  
   public void setOutputFileName(String string) {
 		outputFileName = string;
   }

@@ -242,7 +242,7 @@ public class Tom {
 				taskInput.getBaseInputFileName() + TomTaskInput.expandedSuffix);
 		}
 		taskInput.setOutputFileName(
-			taskInput.getBaseInputFileName() + TomTaskInput.outputSuffix);
+			taskInput.getBaseInputFileName() + taskInput.getOutputSuffix());
 
 		// Setting importList
 		taskInput.setImportList(importList);

@@ -50,7 +50,10 @@ To compile this you need to add to your classpath (from eclipse
 plugins):
 
    org.eclipse.core.resources_2.1.1/resources.jar
-   org.eclipse.ui_2.1.1/ui.jar
+   org.eclipse.core.runtime_2.1.1/runtime.jar
+   org.eclipse.jdt.core_2.1.1/jdtcore.jar
+   org.eclipse.jface_2.1.1/jface.jar
+   org.eclipse.jface.text_2.1.0/jfacetext.jar
    org.eclipse.swt.gtk_2.1.1/ws/gtk/swt.jar
 	 (depends on your platform and available graphical toolkit:
           mac, motif...)  
@@ -58,14 +61,12 @@ plugins):
 	 (depends on your platform and available graphical toolkit:
           mac, motif..)  
    org.eclipse.text_2.1.0/text.jar
-   org.eclipse.jface_2.1.1/jface.jar
-   org.eclipse.jface.text_2.1.0/jfacetext.jar
+   org.eclipse.ui_2.1.1/ui.jar
+   org.eclipse.ui.editors_2.1.0/editors.jar
    org.eclipse.ui.views_2.1.0/views.jar
    org.eclipse.ui.workbench_2.1.1/workbench.jar
    org.eclipse.ui.workbench.texteditor_2.1.0/texteditor.jar
-   org.eclipse.ui.editors_2.1.0/editors.jar
    org.eclipse.core.boot_2.1.1/boot.jar
-   org.eclipse.core.runtime_2.1.1/runtime.jar
 
 or create a simple plug-in using eclipse wizard and import the java
 and xml files of this folder. 
