@@ -84,10 +84,10 @@
   <property name="bootstrap.dir" location="${src.src}/bootstrap" />
 	<!-- Property for Javac compilation
 			 <property name="javacFailOnError" value="false"/>
-			 <property name="javacDebugInfo" value="on"/>
 			 <property name="javacSource" value="1.3"/>
 			 <property name="javacTarget" value="1.2"/>
 	-->
+	<property name="javacDebugInfo" value="on"/>
 	<property name="javacVerbose" value="false"/>
 	
 	
@@ -238,7 +238,9 @@
 		<antcall target="buildparser"/>
 		<!--<property name="unixpath" refid="src.classpath" />
 		<echo>classpath = ${unixpath}</echo>-->
-		<javac destdir="${src.build}" verbose="${javacVerbose}">
+		<javac destdir="${src.build}" 
+					 debug="${javacDebugInfo}" 
+					 verbose="${javacVerbose}">
 			<src path="${src.src}"/>
 			<src path="${src.gen}"/>
 			<classpath refid="src.classpath"/>
@@ -251,6 +253,7 @@
 		<!-- Compile the java code from ${stable} into ${build} -->
 		<javac srcdir="${stable.src}" 
 					 destdir="${stable.build}" 
+					 debug="${javacDebugInfo}"
 					 verbose="${javacVerbose}">
 			<classpath refid="stable.classpath"/>
 		</javac>
@@ -490,9 +493,12 @@
 			<include name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
 		</tomsrc>
-		<javac srcdir="${test.gen}" destdir="${test.build}" verbose="${javacVerbose}">
-			<classpath refid="src.classpath"/>
-			<exclude name="**/error/**"/>
+		<javac srcdir="${test.gen}" 
+					 destdir="${test.build}" 
+					 debug="${javacDebugInfo}" 
+					 verbose="${javacVerbose}">
+					 <classpath refid="src.classpath"/>
+					 <exclude name="**/error/**"/>
 		</javac>
 	</target>
 
@@ -509,7 +515,10 @@
 			<include name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
 		</tom>
-		<javac srcdir="${test.gen}" destdir="${test.build}" verbose="${javacVerbose}">
+		<javac srcdir="${test.gen}" 
+					 destdir="${test.build}" 
+					 debug="${javacDebugInfo}"
+					 verbose="${javacVerbose}">
 			<classpath refid="tom.classpath"/>
 			<exclude name="**/error/**"/>
 		</javac>
@@ -660,7 +669,9 @@
 						javacchome="${javaccdir}" />
 		<delete file="${destination}/gen/jtom/parser/JavaCharStream.java"/>
 
-    <javac destdir="${destination}/build" verbose="${javacVerbose}">
+    <javac destdir="${destination}/build" 
+					 debug="${javacDebugInfo}"
+					 verbose="${javacVerbose}">
 			<src path="${src.src}"/>
 			<src path="${destination}/gen"/>
 			<classpath refid="src.classpath"/>
