@@ -44,14 +44,14 @@
 
   <plugin
     name="Starter"
-    version="Only here to initialize the environment"
-    description=""
+    version=""
+    description="Only here to initialize the environment"
     classpath="jtom.starter.TomStarter" />
 
   <plugin
     name="Parser"
     version=""
-    description=""
+    description="Parser written with ANTLR"
     classpath="jtom.parser.TomParserPlugin" />
 
   <plugin
