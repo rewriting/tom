@@ -1,3 +1,4 @@
+import aterm.pure.*;
 import aterm.*;
 import java.util.*;
 import adt.*;
@@ -40,7 +41,7 @@ public class ApiString {
   }
   
   public final static void main(String[] args) {
-    ApiString test = new ApiString(new TermFactory(16));
+    ApiString test = new ApiString(new TermFactory(new PureFactory()));
     test.run();
   }
   

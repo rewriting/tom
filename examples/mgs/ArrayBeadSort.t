@@ -1,5 +1,6 @@
-import aterm.*;
 import adt.*;
+import aterm.*;
+import aterm.pure.*;
 
 public class ArrayBeadSort {
   private MgsADTFactory factory;
@@ -92,7 +93,7 @@ public class ArrayBeadSort {
 
 
   public final static void main(String[] args) {
-    ArrayBeadSort test = new ArrayBeadSort(new MgsADTFactory(16));
+    ArrayBeadSort test = new ArrayBeadSort(new MgsADTFactory(new PureFactory()));
     test.run();
   }
 

@@ -1,4 +1,5 @@
 import aterm.*;
+import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
 import adt.*;
@@ -492,7 +493,7 @@ public class Nsh {
   private static int fire[] = new int[20];
 
   public final static void main(String[] args) {
-    Nsh test = new Nsh(new TermFactory(16));
+    Nsh test = new Nsh(new TermFactory(new PureFactory()));
     int nbAgent = 1;
     try {
       nbAgent = Integer.parseInt(args[0]);

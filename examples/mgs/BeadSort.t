@@ -1,5 +1,6 @@
-import aterm.*;
 import java.util.*;
+import aterm.*;
+import aterm.pure.*;
 import adt.*;
 
 public class BeadSort {
@@ -78,7 +79,7 @@ public class BeadSort {
 
 
   public final static void main(String[] args) {
-    BeadSort test = new BeadSort(new MgsADTFactory(16));
+    BeadSort test = new BeadSort(new MgsADTFactory(new PureFactory()));
     test.run();
   }
 

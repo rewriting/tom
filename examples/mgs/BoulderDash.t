@@ -1,5 +1,6 @@
-import aterm.*;
 import java.util.*;
+import aterm.*;
+import aterm.pure.*;
 import adt.*;
 
 public class BoulderDash {
@@ -75,7 +76,7 @@ public class BoulderDash {
 
 
   public final static void main(String[] args) {
-    BoulderDash test = new BoulderDash(new MgsADTFactory(16));
+    BoulderDash test = new BoulderDash(new MgsADTFactory(new PureFactory()));
     test.run();
   }
 

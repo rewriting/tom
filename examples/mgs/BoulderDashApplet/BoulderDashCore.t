@@ -77,7 +77,7 @@ public class BoulderDashCore {
 
 
   public final static void main(String[] args) {
-    BoulderDashCore test = new BoulderDashCore(new TermFactory(16));
+    BoulderDashCore test = new BoulderDashCore(new TermFactory(new PureFactory()));
     test.run();
   }
   
