@@ -589,6 +589,12 @@ left-handsides should begin with the same root symbol:<BR>
 <TD ALIGN=left NOWRAP><FONT COLOR="#0000ff"><TT>make_append</TT></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>,</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>)</TT></FONT> <FONT COLOR="#ff00ff"><I>GoalLanguageBlock</I></FONT></TD>
 </TR></TABLE>
 </DIV><BR>
+A last construct of <FONT COLOR=navy>Tom</FONT> is the backquote (<FONT COLOR="#0000ff"><TT>`</TT></FONT>). This construct
+can be used to build an algebraic term. The yntax of this operator is
+not fixed since it depends on the underlaying language. However, a
+backquote term should at least contain a function call or the
+construction of a prefix term: <FONT COLOR="#0000ff"><TT>`</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> ... <FONT COLOR="#0000ff"><TT>)</TT></FONT>.<BR>
+<BR>
 <A NAME="toc14"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
 <TR><TD><A NAME="htoc20"><B><FONT SIZE=5>3.5</FONT></B></A></TD>
@@ -811,7 +817,7 @@ When no rule can be applied (i.e. no pattern matches the subject, or
 no condition is satisfied), the given ground term, rooted by the root
 symbol of the rewrite system is returned.<BR>
 <BR>
-In Tom, we consider two kinds of conditions:
+In <FONT COLOR=navy>Tom</FONT>, we consider two kinds of conditions:
 <UL><LI>
 an equality condition (<I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> = <I>t</I><SUB><FONT SIZE=2>2</FONT></SUB>) is a pair of ground terms that
  belong to the same type.
