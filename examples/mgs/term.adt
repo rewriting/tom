@@ -1,0 +1,6 @@
+[
+
+ [Position, pos, pos(<x(int)>,<y(int)>)],
+
+ [Bead, bead, bead(<pos(Position)>,<value(int)>)]
+]
