@@ -1,3 +1,5 @@
+package Poly;
+
 import aterm.*;
 import aterm.pure.*;
 import jtom.runtime.*;

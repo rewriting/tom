@@ -1,3 +1,5 @@
+package Poly;
+
 import aterm.*;
 
 public class PolyCommon {

@@ -1,3 +1,5 @@
+package Nspk;
+
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;

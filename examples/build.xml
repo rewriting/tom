@@ -113,6 +113,25 @@
         </present>
       </fileset>
     </delete>
+    <delete>
+      <fileset dir="${examples.dir}">
+        <include name="**/*.tom"/>
+        <exclude name="Caml/mapping.tom"/>
+        <exclude name="PQueens/QueensSignature.tom"/>			      
+        <exclude name="PQueens/StratSignature.tom"/>
+      </fileset>
+    </delete>
+    <delete dir="${addressbook.dir}/data"/>
+    <delete dir="${apireach.dir}/reach"/>
+    <delete dir="${boulderdash.dir}/boulder"/>
+    <delete dir="${builtin.dir}/term"/>
+    <delete dir="${gtree.dir}/term"/>
+    <delete dir="${nspk.dir}/term"/>
+    <delete dir="${pnspk.dir}/term"/>
+    <delete dir="${poly.dir}/expression"/>
+    <delete dir="${rbtree.dir}/tree"/>
+    <delete dir="${set.dir}/jgset"/>
+    <delete dir="${peano.dir}/peano"/>
   </target>
 
   <target name="addressbook" depends="init">
@@ -285,7 +304,7 @@
       <include name="**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${nspk.dir}" destdir="${nspk.dir}">
+    <javac srcdir="${nspk.dir}" destdir="${examples.dir}">
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac>
@@ -323,7 +342,7 @@
       <include name="**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${pnspk.dir}" destdir="${pnspk.dir}">
+    <javac srcdir="${pnspk.dir}" destdir="${examples.dir}">
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac>
@@ -342,7 +361,7 @@
       <include name="**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${poly.dir}" destdir="${poly.dir}">
+    <javac srcdir="${poly.dir}" destdir="${examples.dir}">
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac>
@@ -375,7 +394,7 @@
       <include name="**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${rbtree.dir}" destdir="${rbtree.dir}">
+    <javac srcdir="${rbtree.dir}" destdir="${examples.dir}">
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac>
@@ -394,7 +413,7 @@
       <include name="**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${set.dir}" destdir="${set.dir}">
+    <javac srcdir="${set.dir}" destdir="${examples.dir}">
       <classpath refid="tom.classpath"/>
       <include name="**/*.java"/>
     </javac>
