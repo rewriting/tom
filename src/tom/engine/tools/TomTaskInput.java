@@ -60,6 +60,7 @@ public class TomTaskInput {
     debugMode = false, // generate debug primitives
     jCode = true,  // generate Java
     cCode = false, // generate C
+    camlCode = false, // generate Caml
     eCode = false, // generate Eiffel
     supportedGoto  = true, // if the target language has gotos
     supportedBlock = true, // if the target language has blocks
@@ -147,6 +148,13 @@ public class TomTaskInput {
   }
   public void setCCode(boolean b) {
 		cCode = b;
+  }
+
+  public boolean isCamlCode() {
+		return camlCode;
+  }
+  public void setCamlCode(boolean b) {
+		camlCode = b;
   }
   
   public boolean isECode() {

@@ -355,27 +355,27 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
                                          args, tlCode));
   }
 
-	protected TargetLanguage genDecl(int deep, String returnType,
-																	 String declName,
-																	 String suffix,
-																	 String args[],
-																	 TargetLanguage tlCode) {
-    String s = "";
-    if(!genDecl) { return null; }
-		s = modifier + returnType + " " + declName + "_" + suffix + "(";
-		for(int i=0 ; i<args.length ; ) {
-			s+= args[i] + " " + args[i+1];
-			i+=2;
-			if(i<args.length) {
-				s+= ", ";
-			}
-		} 
-		s += ") { return " + tlCode.getCode() + "; }";
-    if(tlCode.isTL())
-      return `TL(s, tlCode.getStart(), tlCode.getEnd());
-    else
-      return `ITL(s);
-		}
+// 	protected TargetLanguage genDecl(int deep, String returnType,
+// 																	 String declName,
+// 																	 String suffix,
+// 																	 String args[],
+// 																	 TargetLanguage tlCode) {
+//     String s = "";
+//     if(!genDecl) { return null; }
+// 		s = modifier + returnType + " " + declName + "_" + suffix + "(";
+// 		for(int i=0 ; i<args.length ; ) {
+// 			s+= args[i] + " " + args[i+1];
+// 			i+=2;
+// 			if(i<args.length) {
+// 				s+= ", ";
+// 			}
+// 		} 
+// 		s += ") { return " + tlCode.getCode() + "; }";
+//     if(tlCode.isTL())
+//       return `TL(s, tlCode.getStart(), tlCode.getEnd());
+//     else
+//       return `ITL(s);
+// 		}
 
   protected TargetLanguage genDeclMake(String opname, TomType returnType, 
                                             TomList argList, TargetLanguage tlCode) {

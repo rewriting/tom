@@ -63,6 +63,8 @@ public class TomBackend extends TomTask {
 				generator = new TomCGenerator (environment(), output, getInput());
 			} else if (getInput().isJCode()) {
 				generator = new TomJavaGenerator (environment(), output, getInput());
+			} else if (getInput().isCamlCode()) {
+				generator = new TomJavaGenerator (environment(), output, getInput());
 			}
 		} catch (Exception e) {
     	addError("Exception occurs in TomBackend Init: "+e.getMessage(), 

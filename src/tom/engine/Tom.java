@@ -65,6 +65,7 @@ public class Tom {
     + "\n\t--help \t\t| -h:\tShow this help"
     + "\n\t--cCode \t| -c:\tGenerate C code"
     + "\n\t--eCode \t| -e:\tGenerate Eiffel code"
+    + "\n\t--camlCode \t\tGenerate Caml code"
     + "\n\t--version \t| -V:\tPrint version"
     + "\n\t--verbose \t| -v:\tSet verbose mode on"
     + "\n\t--intermediate\t| -i:\tGenerate intermediate files"
@@ -124,7 +125,8 @@ public class Tom {
         astFactory,
         taskInput.isCCode(),
         taskInput.isJCode(),
-        taskInput.isECode());
+        taskInput.isECode(),
+				taskInput.isCamlCode());
     environment =
       new TomEnvironment(tomSignatureFactory, astFactory, symbolTable);
   }
@@ -156,12 +158,18 @@ public class Tom {
         } else if (args[i].equals("--cCode") || args[i].equals("-c")) {
           taskInput.setJCode(false);
           taskInput.setECode(false);
+          taskInput.setCamlCode(false);
           taskInput.setCCode(true);
           taskInput.setOutputSuffix(".tom.c");
+        } else if (args[i].equals("--camlCode")) {
+          taskInput.setJCode(false);
+          taskInput.setCamlCode(true);
+          taskInput.setOutputSuffix(".tom.ml");
         } else if (args[i].equals("--eCode") || args[i].equals("-e")) {
           taskInput.setJCode(false);
           taskInput.setECode(true);
           taskInput.setCCode(false);
+          taskInput.setCamlCode(false);
           taskInput.setOutputSuffix(".e");
           taskInput.setSupportedGoto(false);
           taskInput.setSupportedBlock(false);
