@@ -310,7 +310,7 @@
     <adt file="${nspk.dir}/term.adt" 
          factory="term" 
          package="${nspk}" 
-         destdir="${examples.dir}"/>
+         destdir="${examples.gen}"/>
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
@@ -328,18 +328,18 @@
     <!-- build adt -->
     <adt file="${peano.dir}/peano.adt" 
          factory="peano" 
-         package="Peano" 
-         destdir="${examples.dir}"/>
+         package="${peano}" 
+         destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom srcdir="${peano.dir}" 
-         destdir="${peano.dir}" 
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
+      <include name="${peano}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${peano.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
+      <include name="${peano}/**/*.java"/>
     </javac>
   </target>
 
@@ -347,18 +347,18 @@
     <!-- build adt -->
     <adt file="${pnspk.dir}/term.adt" 
          factory="term" 
-         package="PNspk" 
-         destdir="${examples.dir}"/>
+         package="${pnspk}" 
+         destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom srcdir="${pnspk.dir}" 
-         destdir="${pnspk.dir}" 
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
+      <include name="${pnspk}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${pnspk.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
+      <include name="${pnspk}/**/*.java"/>
     </javac>
   </target>
   
@@ -366,32 +366,32 @@
     <!-- build adt -->
     <adt file="${poly.dir}/expression.adt" 
          factory="expression" 
-         package="Poly" 
-         destdir="${examples.dir}"/>
+         package="${poly}" 
+         destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom srcdir="${poly.dir}" 
-         destdir="${poly.dir}" 
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
+      <include name="${poly}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${poly.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
+      <include name="${poly}/**/*.java"/>
     </javac>
   </target>
 
   <target name="pqueens" depends="init">
     <!-- build tom -->
-    <tom srcdir="${pqueens.dir}" 
-         destdir="${pqueens.dir}" 
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
+      <include name="${pqueens}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${pqueens.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
+      <include name="${pqueens}/**/*.java"/>
     </javac>
   </target>
 
@@ -399,18 +399,18 @@
     <!-- build adt -->
     <adt file="${rbtree.dir}/tree.adt" 
          factory="tree" 
-         package="RBTree" 
-         destdir="${examples.dir}"/>
+         package="${rbtree}" 
+         destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom srcdir="${rbtree.dir}" 
-         destdir="${rbtree.dir}" 
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
+      <include name="${rbtree}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${rbtree.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
+      <include name="${rbtree}/**/*.java"/>
     </javac>
   </target>
 
@@ -418,46 +418,46 @@
     <!-- build adt -->
     <adt file="${set.dir}/jgset.adt" 
          factory="jgset" 
-         package="Set" 
-         destdir="${examples.dir}"/>
+         package="${set}" 
+         destdir="${examples.gen}"/>
     <!-- build tom -->
-    <tom srcdir="${set.dir}" 
-         destdir="${set.dir}" 
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
+      <include name="${set}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${set.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
+      <include name="${set}/**/*.java"/>
     </javac>
   </target>
 
   <target name="vas" depends="init">
     <!-- build tom -->
-    <tom srcdir="${vas.dir}" 
-         destdir="${vas.dir}" 
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
+      <include name="${vas}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${vas.dir}" destdir="${vas.dir}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
+      <include name="${vas}/**/*.java"/>
     </javac>
   </target>
 
   <target name="xml" depends="init">
     <!-- build tom -->
-    <tom srcdir="${xml.dir}" 
-         destdir="${xml.dir}" 
+    <tom srcdir="${examples.dir}" 
+         destdir="${examples.gen}" 
          options="-I ${env.TOM_HOME}/share/jtom">
-      <include name="**/*.t"/>
+      <include name="${xml}/**/*.t"/>
     </tom>
     <!-- build java source -->
-    <javac srcdir="${xml.dir}" destdir="${examples.build}">
+    <javac srcdir="${examples.gen}" destdir="${examples.build}">
       <classpath refid="tom.classpath"/>
-      <include name="**/*.java"/>
+      <include name="${xml}/**/*.java"/>
     </javac>
   </target>
   
