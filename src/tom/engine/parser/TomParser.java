@@ -550,6 +550,53 @@ public class TomParser implements TomTask, TomParserConstants {
     throw new Error("Missing return statement in function");
   }
 
+  final public NameList HeadSymbolList(LinkedList optionList) throws ParseException, TomException {
+  TomName name;
+  LinkedList nameList = new LinkedList();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case TOM_INTEGER:
+    case TOM_IDENTIFIER:
+    case TOM_DOUBLE:
+    case TOM_STRING:
+      name = HeadSymbol(optionList);
+                                  nameList.add(name);
+      break;
+    case TOM_LPAREN:
+      jj_consume_token(TOM_LPAREN);
+                   text += "(";
+      name = HeadSymbol(optionList);
+                                     nameList.add(name);
+      jj_consume_token(TOM_ALTERNATIVE);
+                        text += "|";
+      name = HeadSymbol(optionList);
+                                     nameList.add(name);
+      label_6:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case TOM_ALTERNATIVE:
+          ;
+          break;
+        default:
+          jj_la1[8] = jj_gen;
+          break label_6;
+        }
+        jj_consume_token(TOM_ALTERNATIVE);
+                          text += "|";
+        name = HeadSymbol(optionList);
+                                       nameList.add(name);
+      }
+      jj_consume_token(TOM_RPAREN);
+                   text += ")";
+      break;
+    default:
+      jj_la1[9] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    {if (true) return ast().makeNameList(nameList);}
+    throw new Error("Missing return statement in function");
+  }
+
   final public TomTerm UnamedVariableStarOrVariableStar(LinkedList optionList) throws ParseException, TomException {
   Token name;
   OptionList option;
@@ -561,7 +608,7 @@ public class TomParser implements TomTask, TomParserConstants {
       name = jj_consume_token(TOM_UNDERSCORE);
       break;
     default:
-      jj_la1[8] = jj_gen;
+      jj_la1[10] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -594,9 +641,8 @@ public class TomParser implements TomTask, TomParserConstants {
   OptionList option = null;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   LinkedList optionList = new LinkedList();
-  TomName symbol = null;
+  NameList nameList = null;
   boolean implicit;
-  NameList nameList = tsf().makeNameList();
 
   if(annotedName!=null) { optionList.add(annotedName); }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -608,8 +654,8 @@ public class TomParser implements TomTask, TomParserConstants {
                                      {if (true) return term;}
       break;
     default:
-      jj_la1[11] = jj_gen;
-      if (jj_2_3(2)) {
+      jj_la1[12] = jj_gen;
+      if (jj_2_4(2)) {
         term = UnamedVariableStarOrVariableStar(optionList);
                                                          {if (true) return term;}
       } else {
@@ -620,51 +666,42 @@ public class TomParser implements TomTask, TomParserConstants {
                                     {if (true) return term;}
           break;
         default:
-          jj_la1[12] = jj_gen;
-          if (jj_2_4(2)) {
-            if (jj_2_2(2)) {
-              switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-              case TOM_INTEGER:
-              case TOM_IDENTIFIER:
-              case TOM_DOUBLE:
-              case TOM_STRING:
-                symbol = HeadSymbol(optionList);
-                break;
-              default:
-                jj_la1[9] = jj_gen;
+          jj_la1[13] = jj_gen;
+          if (jj_2_5(2)) {
+            if (jj_2_3(2)) {
+              if (jj_2_2(3)) {
+                nameList = HeadSymbolList(optionList);
+              } else {
                 ;
               }
               implicit = ExplicitTermList(list);
             } else {
               switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+              case TOM_LPAREN:
               case TOM_INTEGER:
               case TOM_IDENTIFIER:
               case TOM_DOUBLE:
               case TOM_STRING:
-                symbol = HeadSymbol(optionList);
+                nameList = HeadSymbolList(optionList);
                 implicit = ImplicitPairList(list);
                 break;
               default:
-                jj_la1[10] = jj_gen;
+                jj_la1[11] = jj_gen;
                 jj_consume_token(-1);
                 throw new ParseException();
               }
             }
-        if(!implicit && list.isEmpty()) {
-          // check if it is a constant
-                  if(symbol != null) {
-            optionList.add(tsf().makeOption_Constructor(symbol));
-          } else {
-            // TODO: nothing 
-          }
-        }
-        if(symbol == null) {
-          symbol = tsf().makeTomName_Name("");
+        if(nameList == null) {
+          nameList = tsf().makeNameList(tsf().makeTomName_Name(""));
           optionList.add(ast().makeOriginTracking("",getLine(), currentFile));
+        } else {
+          if(!implicit && list.isEmpty()) {
+              // check if it is a constant
+            optionList.add(tsf().makeOption_Constructor(nameList));
+          }
         }
 
         option = ast().makeOptionList(optionList);
-        nameList = (NameList)nameList.append(symbol);
         if(implicit) {
           {if (true) return tsf().makeTomTerm_RecordAppl(option,nameList,ast().makeList(list));}
         } else {
@@ -672,18 +709,18 @@ public class TomParser implements TomTask, TomParserConstants {
         }
           } else {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case TOM_LPAREN:
             case TOM_INTEGER:
             case TOM_IDENTIFIER:
             case TOM_DOUBLE:
             case TOM_STRING:
               // identifier | integer | double | string
-                  symbol = HeadSymbol(optionList);
+                  nameList = HeadSymbolList(optionList);
       option = ast().makeOptionList(optionList);
-      nameList = (NameList)nameList.append(symbol);
       {if (true) return tsf().makeTomTerm_Appl(option,nameList,tsf().makeTomList());}
               break;
             default:
-              jj_la1[13] = jj_gen;
+              jj_la1[14] = jj_gen;
               jj_consume_token(-1);
               throw new ParseException();
             }
@@ -712,15 +749,15 @@ public class TomParser implements TomTask, TomParserConstants {
     case XML_PROC:
       term = AnnotedTerm();
                              list.add(term);
-      label_6:
+      label_7:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_COMMA:
           ;
           break;
         default:
-          jj_la1[14] = jj_gen;
-          break label_6;
+          jj_la1[15] = jj_gen;
+          break label_7;
         }
         jj_consume_token(TOM_COMMA);
                      text += ",";
@@ -729,7 +766,7 @@ public class TomParser implements TomTask, TomParserConstants {
       }
       break;
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[16] = jj_gen;
       ;
     }
     jj_consume_token(TOM_RBRACKET);
@@ -755,15 +792,15 @@ public class TomParser implements TomTask, TomParserConstants {
     case XML_PROC:
       term = AnnotedTerm();
                              list.add(term);
-      label_7:
+      label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_COMMA:
           ;
           break;
         default:
-          jj_la1[16] = jj_gen;
-          break label_7;
+          jj_la1[17] = jj_gen;
+          break label_8;
         }
         jj_consume_token(TOM_COMMA);
                      text += ",";
@@ -772,7 +809,7 @@ public class TomParser implements TomTask, TomParserConstants {
       }
       break;
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[18] = jj_gen;
       ;
     }
     jj_consume_token(TOM_RPAREN);
@@ -784,7 +821,7 @@ public class TomParser implements TomTask, TomParserConstants {
 // This corresponds to the implicit notation
   final public boolean XMLTermList(LinkedList list) throws ParseException, TomException {
   TomTerm term;
-    label_8:
+    label_9:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_LPAREN:
@@ -800,8 +837,8 @@ public class TomParser implements TomTask, TomParserConstants {
         ;
         break;
       default:
-        jj_la1[18] = jj_gen;
-        break label_8;
+        jj_la1[19] = jj_gen;
+        break label_9;
       }
       term = AnnotedTerm();
                            list.add(term);
@@ -818,15 +855,15 @@ public class TomParser implements TomTask, TomParserConstants {
     case TOM_IDENTIFIER:
       term = PairTerm();
                           list.add(term);
-      label_9:
+      label_10:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_COMMA:
           ;
           break;
         default:
-          jj_la1[19] = jj_gen;
-          break label_9;
+          jj_la1[20] = jj_gen;
+          break label_10;
         }
         jj_consume_token(TOM_COMMA);
                      text += ",";
@@ -835,7 +872,7 @@ public class TomParser implements TomTask, TomParserConstants {
       }
       break;
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[21] = jj_gen;
       ;
     }
     jj_consume_token(TOM_RBRACKET);
@@ -852,15 +889,15 @@ public class TomParser implements TomTask, TomParserConstants {
     case TOM_IDENTIFIER:
       term = PairTerm();
                           list.add(term);
-      label_10:
+      label_11:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_COMMA:
           ;
           break;
         default:
-          jj_la1[21] = jj_gen;
-          break label_10;
+          jj_la1[22] = jj_gen;
+          break label_11;
         }
         jj_consume_token(TOM_COMMA);
                      text += ",";
@@ -869,7 +906,7 @@ public class TomParser implements TomTask, TomParserConstants {
       }
       break;
     default:
-      jj_la1[22] = jj_gen;
+      jj_la1[23] = jj_gen;
       ;
     }
     jj_consume_token(TOM_RPAREN);
@@ -893,7 +930,7 @@ public class TomParser implements TomTask, TomParserConstants {
   Token annotedName = null;
   TomTerm term;
   TomName astAnnotedName = null;
-    if (jj_2_5(2)) {
+    if (jj_2_6(2)) {
       annotedName = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_AT);
       text += annotedName.image+"@";
@@ -961,7 +998,7 @@ public class TomParser implements TomTask, TomParserConstants {
           option = ast().makeOptionList(optionList);
         break;
       default:
-        jj_la1[23] = jj_gen;
+        jj_la1[24] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1001,7 +1038,7 @@ public class TomParser implements TomTask, TomParserConstants {
         list.add(arg2);
       break;
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[25] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1029,7 +1066,7 @@ public class TomParser implements TomTask, TomParserConstants {
                                                     string = true;
       break;
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[26] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1049,12 +1086,9 @@ public class TomParser implements TomTask, TomParserConstants {
   LinkedList childs = new LinkedList();
   Iterator it;
   boolean implicit;
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case TOM_LBRACKET:
+    if (jj_2_7(2)) {
       implicit = ImplicitTermList(childs);
-      break;
-    default:
-      jj_la1[26] = jj_gen;
+    } else {
       //implicit = ExplicitTermList(childs) |
          implicit = XMLTermList(childs);
     }
@@ -1078,7 +1112,7 @@ public class TomParser implements TomTask, TomParserConstants {
       case TOM_IDENTIFIER:
         term = XMLAttribute();
                               list.add(term);
-        label_11:
+        label_12:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case TOM_COMMA:
@@ -1086,7 +1120,7 @@ public class TomParser implements TomTask, TomParserConstants {
             break;
           default:
             jj_la1[27] = jj_gen;
-            break label_11;
+            break label_12;
           }
           jj_consume_token(TOM_COMMA);
                      text += ",";
@@ -1110,7 +1144,7 @@ public class TomParser implements TomTask, TomParserConstants {
       case TOM_IDENTIFIER:
         term = XMLAttribute();
                               list.add(term);
-        label_12:
+        label_13:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case TOM_COMMA:
@@ -1118,7 +1152,7 @@ public class TomParser implements TomTask, TomParserConstants {
             break;
           default:
             jj_la1[29] = jj_gen;
-            break label_12;
+            break label_13;
           }
           jj_consume_token(TOM_COMMA);
                      text += ",";
@@ -1136,7 +1170,7 @@ public class TomParser implements TomTask, TomParserConstants {
       break;
     default:
       jj_la1[32] = jj_gen;
-      label_13:
+      label_14:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_UNDERSCORE:
@@ -1145,7 +1179,7 @@ public class TomParser implements TomTask, TomParserConstants {
           break;
         default:
           jj_la1[31] = jj_gen;
-          break label_13;
+          break label_14;
         }
         term = XMLAttribute();
                             list.add(term);
@@ -1164,14 +1198,14 @@ public class TomParser implements TomTask, TomParserConstants {
   OptionList option;
   LinkedList optionList = new LinkedList();
   NameList nameList = tsf().makeNameList();
-    if (jj_2_7(2)) {
+    if (jj_2_9(2)) {
       term = UnamedVariableStarOrVariableStar(optionList);
                                                         {if (true) return term;}
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_UNDERSCORE:
       case TOM_IDENTIFIER:
-        if (jj_2_6(2)) {
+        if (jj_2_8(2)) {
           id = jj_consume_token(TOM_IDENTIFIER);
           jj_consume_token(TOM_EQUAL);
                                        text+="=";
@@ -1335,7 +1369,7 @@ public class TomParser implements TomTask, TomParserConstants {
       orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine(), currentFile);
       text = "";
     jj_consume_token(TOM_LBRACE);
-    label_14:
+    label_15:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_LPAREN:
@@ -1352,13 +1386,13 @@ public class TomParser implements TomTask, TomParserConstants {
         break;
       default:
         jj_la1[37] = jj_gen;
-        break label_14;
+        break label_15;
       }
       lhs = AnnotedTerm();
                           listOfLhs.add(lhs);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_ALTERNATIVE:
-        label_15:
+        label_16:
         while (true) {
           jj_consume_token(TOM_ALTERNATIVE);
                            text += " | ";
@@ -1370,7 +1404,7 @@ public class TomParser implements TomTask, TomParserConstants {
             break;
           default:
             jj_la1[38] = jj_gen;
-            break label_15;
+            break label_16;
           }
         }
         break;
@@ -1384,7 +1418,7 @@ public class TomParser implements TomTask, TomParserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_WHERE:
       case TOM_IF:
-        label_16:
+        label_17:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case TOM_WHERE:
@@ -1415,7 +1449,7 @@ public class TomParser implements TomTask, TomParserConstants {
             break;
           default:
             jj_la1[41] = jj_gen;
-            break label_16;
+            break label_17;
           }
         }
         break;
@@ -1478,7 +1512,7 @@ public class TomParser implements TomTask, TomParserConstants {
     case TOM_LPAREN:
       jj_consume_token(TOM_LPAREN);
         stringSlotName = "";
-      if (jj_2_8(2)) {
+      if (jj_2_10(2)) {
         slotName = jj_consume_token(TOM_IDENTIFIER);
         jj_consume_token(TOM_COLON);
                                                   stringSlotName = slotName.image;
@@ -1488,7 +1522,7 @@ public class TomParser implements TomTask, TomParserConstants {
       typeArg = jj_consume_token(TOM_IDENTIFIER);
         slotNameList.add(ast().makeName(stringSlotName));
         types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
-      label_17:
+      label_18:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case TOM_COMMA:
@@ -1496,11 +1530,11 @@ public class TomParser implements TomTask, TomParserConstants {
           break;
         default:
           jj_la1[43] = jj_gen;
-          break label_17;
+          break label_18;
         }
         jj_consume_token(TOM_COMMA);
           stringSlotName = "";
-        if (jj_2_9(2)) {
+        if (jj_2_11(2)) {
           slotName = jj_consume_token(TOM_IDENTIFIER);
           jj_consume_token(TOM_COLON);
                                                     stringSlotName = slotName.image;
@@ -1527,7 +1561,7 @@ public class TomParser implements TomTask, TomParserConstants {
     jj_consume_token(TOM_LBRACE);
     tlFsym = KeywordFsym();
       astName   = tsf().makeTomName_Name(name.image);
-    label_18:
+    label_19:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_MAKE:
@@ -1537,7 +1571,7 @@ public class TomParser implements TomTask, TomParserConstants {
         break;
       default:
         jj_la1[45] = jj_gen;
-        break label_18;
+        break label_19;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_MAKE:
@@ -1627,7 +1661,7 @@ public class TomParser implements TomTask, TomParserConstants {
       types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
     jj_consume_token(TOM_LBRACE);
     tlFsym = KeywordFsym();
-    label_19:
+    label_20:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_MAKE_EMPTY:
@@ -1637,7 +1671,7 @@ public class TomParser implements TomTask, TomParserConstants {
         break;
       default:
         jj_la1[47] = jj_gen;
-        break label_19;
+        break label_20;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_MAKE_EMPTY:
@@ -1689,7 +1723,7 @@ public class TomParser implements TomTask, TomParserConstants {
            types = (TomTypeList) types.append(tsf().makeTomType_TomTypeAlone(typeArg.image));
     jj_consume_token(TOM_LBRACE);
     tlFsym = KeywordFsym();
-    label_20:
+    label_21:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_MAKE_EMPTY:
@@ -1699,7 +1733,7 @@ public class TomParser implements TomTask, TomParserConstants {
         break;
       default:
         jj_la1[49] = jj_gen;
-        break label_20;
+        break label_21;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_MAKE_EMPTY:
@@ -1763,7 +1797,7 @@ public class TomParser implements TomTask, TomParserConstants {
       orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);
     jj_consume_token(TOM_LBRACE);
     implement = KeywordImplement();
-    label_21:
+    label_22:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_GET_SUBTERM:
@@ -1774,7 +1808,7 @@ public class TomParser implements TomTask, TomParserConstants {
         break;
       default:
         jj_la1[52] = jj_gen;
-        break label_21;
+        break label_22;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_GET_FUN_SYM:
@@ -1842,7 +1876,7 @@ public class TomParser implements TomTask, TomParserConstants {
       orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);
     jj_consume_token(TOM_LBRACE);
     implement = KeywordImplement();
-    label_22:
+    label_23:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_GET_SUBTERM:
@@ -1856,7 +1890,7 @@ public class TomParser implements TomTask, TomParserConstants {
         break;
       default:
         jj_la1[54] = jj_gen;
-        break label_22;
+        break label_23;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_GET_FUN_SYM:
@@ -1915,7 +1949,7 @@ public class TomParser implements TomTask, TomParserConstants {
      orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);
     jj_consume_token(TOM_LBRACE);
     implement = KeywordImplement();
-    label_23:
+    label_24:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_GET_SUBTERM:
@@ -1928,7 +1962,7 @@ public class TomParser implements TomTask, TomParserConstants {
         break;
       default:
         jj_la1[56] = jj_gen;
-        break label_23;
+        break label_24;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_GET_FUN_SYM:
@@ -2254,7 +2288,7 @@ public class TomParser implements TomTask, TomParserConstants {
        orgTrack = ast().makeOriginTracking("make", getLine(), currentFile);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_LPAREN:
-      if (jj_2_10(2)) {
+      if (jj_2_12(2)) {
         jj_consume_token(TOM_LPAREN);
         jj_consume_token(TOM_RPAREN);
       } else {
@@ -2271,7 +2305,7 @@ public class TomParser implements TomTask, TomParserConstants {
               Option info1 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
               OptionList option1 = ast().makeOption(info1);
               args.add(tsf().makeTomTerm_Variable(option1,name, type));
-          label_24:
+          label_25:
           while (true) {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
             case TOM_COMMA:
@@ -2279,7 +2313,7 @@ public class TomParser implements TomTask, TomParserConstants {
               break;
             default:
               jj_la1[58] = jj_gen;
-              break label_24;
+              break label_25;
             }
             jj_consume_token(TOM_COMMA);
             nameArg = jj_consume_token(TOM_IDENTIFIER);
@@ -2473,20 +2507,18 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(9, xla); }
   }
 
-  final private boolean jj_3R_37() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_39()) {
-    jj_scanpos = xsp;
-    if (jj_3R_40()) {
-    jj_scanpos = xsp;
-    if (jj_3R_41()) {
-    jj_scanpos = xsp;
-    if (jj_3R_42()) return true;
-    }
-    }
-    }
-    return false;
+  final private boolean jj_2_11(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_11(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(10, xla); }
+  }
+
+  final private boolean jj_2_12(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_12(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(11, xla); }
   }
 
   final private boolean jj_3_1() {
@@ -2495,17 +2527,83 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_30() {
-    if (jj_3R_32()) return true;
+  final private boolean jj_3_12() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_5() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_3R_29()) return true;
+    }
+    return false;
+  }
+
+  final private boolean jj_3R_40() {
+    if (jj_3R_43()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_28() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(89)) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(62)) return true;
+    }
+    if (jj_scan_token(TOM_STAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
+    if (jj_3R_30()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_4() {
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_47() {
+    if (jj_scan_token(XML_PROC)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_39() {
+    if (jj_3R_42()) return true;
     return false;
   }
 
   final private boolean jj_3R_38() {
-    if (jj_scan_token(TOM_UNDERSCORE)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_39()) {
+    jj_scanpos = xsp;
+    if (jj_3_4()) {
+    jj_scanpos = xsp;
+    if (jj_3R_40()) {
+    jj_scanpos = xsp;
+    if (jj_3_5()) {
+    jj_scanpos = xsp;
+    if (jj_3R_41()) return true;
+    }
+    }
+    }
+    }
     return false;
   }
 
-  final private boolean jj_3R_29() {
+  final private boolean jj_3R_35() {
+    if (jj_3R_37()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_36() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(89)) {
@@ -2523,157 +2621,148 @@ public class TomParser implements TomTask, TomParserConstants {
 
   final private boolean jj_3_6() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_EQUAL)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
     return false;
   }
 
-  final private boolean jj_3_8() {
+  final private boolean jj_3R_46() {
+    if (jj_scan_token(XML_COMMENT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_37() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_6()) jj_scanpos = xsp;
+    if (jj_3R_38()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_30() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_35()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_RBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_34() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_45() {
+    if (jj_scan_token(XML_TEXT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_32() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_3R_36()) return true;
+    if (jj_scan_token(TOM_ALTERNATIVE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_44() {
+    if (jj_scan_token(XML_START)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_41() {
+    if (jj_3R_26()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_31() {
+    if (jj_3R_36()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_11() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
   final private boolean jj_3R_26() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_30()) jj_scanpos = xsp;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_7() {
-    if (jj_3R_27()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_10() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_25() {
-    if (jj_3R_29()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_28() {
-    if (jj_3R_29()) return true;
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_25()) jj_scanpos = xsp;
-    if (jj_3R_26()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_4() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_2()) {
+    if (jj_3R_31()) {
     jj_scanpos = xsp;
-    if (jj_3R_28()) return true;
+    if (jj_3R_32()) return true;
     }
     return false;
   }
 
   final private boolean jj_3R_42() {
-    if (jj_scan_token(XML_PROC)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_35() {
-    if (jj_3R_38()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_27() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(89)) {
+    if (jj_3R_44()) {
     jj_scanpos = xsp;
-    if (jj_scan_token(62)) return true;
+    if (jj_3R_45()) {
+    jj_scanpos = xsp;
+    if (jj_3R_46()) {
+    jj_scanpos = xsp;
+    if (jj_3R_47()) return true;
     }
-    if (jj_scan_token(TOM_STAR)) return true;
+    }
+    }
     return false;
   }
 
-  final private boolean jj_3_3() {
-    if (jj_3R_27()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_5() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_AT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_41() {
-    if (jj_scan_token(XML_COMMENT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_34() {
-    if (jj_3R_37()) return true;
+  final private boolean jj_3R_43() {
+    if (jj_scan_token(TOM_UNDERSCORE)) return true;
     return false;
   }
 
   final private boolean jj_3R_33() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_34()) {
-    jj_scanpos = xsp;
-    if (jj_3_3()) {
-    jj_scanpos = xsp;
-    if (jj_3R_35()) {
-    jj_scanpos = xsp;
-    if (jj_3_4()) {
-    jj_scanpos = xsp;
-    if (jj_3R_36()) return true;
-    }
-    }
-    }
-    }
+    if (jj_3R_37()) return true;
     return false;
   }
 
-  final private boolean jj_3R_32() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_5()) jj_scanpos = xsp;
-    if (jj_3R_33()) return true;
+  final private boolean jj_3_8() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_EQUAL)) return true;
     return false;
   }
 
-  final private boolean jj_3R_31() {
-    if (jj_scan_token(TOM_LBRACKET)) return true;
+  final private boolean jj_3_10() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
-  final private boolean jj_3R_40() {
-    if (jj_scan_token(XML_TEXT)) return true;
+  final private boolean jj_3_2() {
+    if (jj_3R_26()) return true;
     return false;
   }
 
-  final private boolean jj_3R_39() {
-    if (jj_scan_token(XML_START)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_36() {
-    if (jj_3R_29()) return true;
+  final private boolean jj_3R_29() {
+    if (jj_3R_26()) return true;
+    if (jj_3R_34()) return true;
     return false;
   }
 
   final private boolean jj_3_9() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_2()) jj_scanpos = xsp;
+    if (jj_3R_27()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_27() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_33()) jj_scanpos = xsp;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2701,15 +2790,15 @@ public class TomParser implements TomTask, TomParserConstants {
       jj_la1_0 = new int[] {0x4001fff6,0x4001fff6,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x1,0x1,0x41000000,0x40000,0x40000,0x80000,0x80000,0x0,0x40000000,0x0,0x0,0x0,0x40000000,0x0,0x80000,0x41000000,0x80000,0x41000000,0x41000000,0x80000,0x0,0x80000,0x0,0x0,0x0,0x0,0x4000000,0x80000,0x40000000,0x80000,0x40000000,0x40000000,0x5000000,0x0,0x40000000,0x40000000,0x0,0x41000000,0x40000,0x40000,0x0,0x0,0x0,0x80000,0x1000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x1000000,0x1000000,0x1000000,};
+      jj_la1_1 = new int[] {0x1,0x1,0x41000000,0x40000,0x40000,0x80000,0x80000,0x0,0x40000,0x1000000,0x40000000,0x1000000,0x0,0x40000000,0x1000000,0x80000,0x41000000,0x80000,0x41000000,0x41000000,0x80000,0x0,0x80000,0x0,0x0,0x0,0x0,0x80000,0x40000000,0x80000,0x40000000,0x40000000,0x5000000,0x0,0x40000000,0x40000000,0x0,0x41000000,0x40000,0x40000,0x0,0x0,0x0,0x80000,0x1000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80000,0x1000000,0x1000000,0x1000000,};
    }
    private static void jj_la1_2() {
-      jj_la1_2 = new int[] {0x0,0x0,0x47000000,0x0,0x0,0x0,0x0,0x47000000,0x2000000,0x47000000,0x47000000,0x0,0x0,0x47000000,0x0,0x47000000,0x0,0x47000000,0x47000000,0x0,0x2000000,0x0,0x2000000,0x0,0x0,0x42000000,0x0,0x0,0x2000000,0x0,0x2000000,0x2000000,0x0,0x2000000,0x2000000,0x2000000,0x40,0x47000000,0x0,0x0,0x30,0x30,0x30,0x0,0x0,0x6080,0x6080,0x4300,0x4300,0x4500,0x4500,0x0,0x78000,0x78000,0x3f8000,0x3f8000,0xc78000,0xc78000,0x0,0x0,0x0,0x0,};
+      jj_la1_2 = new int[] {0x0,0x0,0x47000000,0x0,0x0,0x0,0x0,0x47000000,0x0,0x47000000,0x2000000,0x47000000,0x0,0x0,0x47000000,0x0,0x47000000,0x0,0x47000000,0x47000000,0x0,0x2000000,0x0,0x2000000,0x0,0x0,0x42000000,0x0,0x2000000,0x0,0x2000000,0x2000000,0x0,0x2000000,0x2000000,0x2000000,0x40,0x47000000,0x0,0x0,0x30,0x30,0x30,0x0,0x0,0x6080,0x6080,0x4300,0x4300,0x4500,0x4500,0x0,0x78000,0x78000,0x3f8000,0x3f8000,0xc78000,0xc78000,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_3() {
-      jj_la1_3 = new int[] {0x0,0x0,0xe1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xe1,0x0,0x0,0x0,0xe1,0x0,0xe1,0xe1,0x0,0x0,0x0,0x0,0xc,0xe1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xe1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_3 = new int[] {0x0,0x0,0xe1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xe1,0x0,0x0,0x0,0xe1,0x0,0xe1,0xe1,0x0,0x0,0x0,0x0,0xc,0xe1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xe1,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
-  final private JJCalls[] jj_2_rtns = new JJCalls[10];
+  final private JJCalls[] jj_2_rtns = new JJCalls[12];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -2929,7 +3018,7 @@ public class TomParser implements TomTask, TomParserConstants {
 
   final private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 12; i++) {
       JJCalls p = jj_2_rtns[i];
       do {
         if (p.gen > jj_gen) {
@@ -2945,6 +3034,8 @@ public class TomParser implements TomTask, TomParserConstants {
             case 7: jj_3_8(); break;
             case 8: jj_3_9(); break;
             case 9: jj_3_10(); break;
+            case 10: jj_3_11(); break;
+            case 11: jj_3_12(); break;
           }
         }
         p = p.next;

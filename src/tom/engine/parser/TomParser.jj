@@ -711,6 +711,29 @@ TomName HeadSymbol(LinkedList optionList)  throws TomException:
     }
 }
 
+NameList HeadSymbolList(LinkedList optionList)  throws TomException:
+{
+  TomName name;
+  LinkedList nameList = new LinkedList();
+}
+{
+  (
+  name = HeadSymbol(optionList) { nameList.add(name); }
+  |
+    <TOM_LPAREN> { text += "("; }
+    name = HeadSymbol(optionList)  { nameList.add(name); }
+    <TOM_ALTERNATIVE> { text += "|"; }
+    name = HeadSymbol(optionList)  { nameList.add(name); }
+    ( <TOM_ALTERNATIVE> { text += "|"; }
+      name = HeadSymbol(optionList)  { nameList.add(name); }
+    )*
+    <TOM_RPAREN> { text += ")"; }
+  )
+  {
+    return ast().makeNameList(nameList);
+  }
+}
+
 TomTerm UnamedVariableStarOrVariableStar(LinkedList optionList)  throws TomException:
 {
   Token name;
@@ -752,9 +775,8 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
   OptionList option = null;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   LinkedList optionList = new LinkedList();
-  TomName symbol = null;
+  NameList nameList = null;
   boolean implicit;
-  NameList nameList = tsf().makeNameList();
 
   if(annotedName!=null) { optionList.add(annotedName); }
 }
@@ -767,25 +789,21 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     term = Placeholder(optionList) {return term; }
   | // f(a,...) | f[slot=a,...]
     LOOKAHEAD(2)
-    ( LOOKAHEAD(2)
-     ([symbol = HeadSymbol(optionList)] implicit = ExplicitTermList(list)) |
-     ( symbol = HeadSymbol(optionList)  implicit = ImplicitPairList(list)))
+      (LOOKAHEAD(2)
+         [LOOKAHEAD(3) nameList = HeadSymbolList(optionList)] implicit = ExplicitTermList(list)      |
+         nameList = HeadSymbolList(optionList)  implicit = ImplicitPairList(list))
       {
-        if(!implicit && list.isEmpty()) {
- 	  // check if it is a constant
- 	  	  if(symbol != null) {
-            optionList.add(tsf().makeOption_Constructor(symbol));
-          } else {
-            // TODO: nothing 
-          }
-        }
-        if(symbol == null) {
-          symbol = tsf().makeTomName_Name("");
+        if(nameList == null) {
+          nameList = tsf().makeNameList(tsf().makeTomName_Name(""));
           optionList.add(ast().makeOriginTracking("",getLine(), currentFile));
+        } else {
+          if(!implicit && list.isEmpty()) {
+              // check if it is a constant
+            optionList.add(tsf().makeOption_Constructor(nameList));
+          }
         }
         
         option = ast().makeOptionList(optionList);
-        nameList = (NameList)nameList.append(symbol);
         if(implicit) {
           return tsf().makeTomTerm_RecordAppl(option,nameList,ast().makeList(list));
         } else {
@@ -793,10 +811,9 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
         }
       }
   | // identifier | integer | double | string
-    symbol = HeadSymbol(optionList)
+    nameList = HeadSymbolList(optionList)
     {
       option = ast().makeOptionList(optionList);
-      nameList = (NameList)nameList.append(symbol);
       return tsf().makeTomTerm_Appl(option,nameList,tsf().makeTomList());
     }
 }
@@ -1050,7 +1067,8 @@ boolean XMLChilds(LinkedList list) throws TomException:
   boolean implicit;
 }
 {
-  (implicit = ImplicitTermList(childs) |
+  (LOOKAHEAD(2)
+   implicit = ImplicitTermList(childs) |
      //implicit = ExplicitTermList(childs) |
    implicit = XMLTermList(childs) )
     {

@@ -92,7 +92,17 @@ public class ASTFactory {
     }
     return list;
   }
-  
+
+  public NameList makeNameList(List argumentList) {
+    NameList list = tsf().makeNameList();
+    for(int i=argumentList.size()-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)argumentList.get(i);
+      TomName term = (TomName) elt;
+      list = tsf().makeNameList(term,list);
+    }
+    return list;
+  }
+
   public TomTerm makeVariable(String name, String type) {
     return makeVariable(makeOption(), name, type);      
   }

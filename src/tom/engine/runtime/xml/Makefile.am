@@ -32,7 +32,7 @@ XMLToATerm.t: adt/TNode.tom
 	@touch XMLToATerm.t
 
 adt/TNode.tom: TNode.adt
-	${ADTTOJAVA} -v -i TNode.adt -j -p jtom.runtime.xml.adt --output adt 
+	${ADTTOJAVA} -v -i TNode.adt -n TNode -j -p jtom.runtime.xml.adt --output adt 
 	mv adt/TNodeMakeRules adt/TNodeMakeRules.am
 
 TOMFLAGS = --noWarning 

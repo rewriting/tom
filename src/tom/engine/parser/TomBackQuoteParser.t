@@ -110,7 +110,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     OptionList option;
     
     if(isEmptyComposite(args)) {
-      option = ast().makeOption(`Constructor(Name(name)));
+      option = ast().makeOption(`Constructor(concTomName(Name(name))));
       args = `concTomTerm();
     } else {
       option = ast().makeOption();
