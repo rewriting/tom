@@ -548,11 +548,12 @@ backquoteTerm [LinkedList list]
             
             Option ot = `OriginTracking(Name("Backquote"),t.getLine(), Name(currentFile));
             //TomTerm bqTerm = tomparser.bqTerm();
-            TomTerm bqTerm = tomparser.bqTerm();
+            TomTerm bqTerm = bqparser.beginBackquote();
             pushLine();
             pushColumn();
             
             list.add(bqTerm);
+
         }
     ;
 
@@ -827,7 +828,7 @@ options {
 // the following tokens are keywords for tom constructs
 // when read, we switch lexers to tom
 BACKQUOTE
-    :   "`" {selector().push("tomlexer");}
+    :   "`" {selector().push("bqlexer");}
     ;
 RULE
     :   "%rule" {selector().push("tomlexer");}
@@ -952,7 +953,7 @@ WS	:	(	' '
 // comments
 COMMENT 
     :
-        ( SL_COMMENT | t:ML_COMMENT {$setType(t.getType());} )
+        ( SL_COMMENT | t:ML_COMMENT )//{$setType(t.getType());} )
         { $setType(Token.SKIP);}
 	;
 

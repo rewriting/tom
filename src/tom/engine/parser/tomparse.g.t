@@ -1184,6 +1184,7 @@ headSymbol [LinkedList optionList] returns [TomName result]
 //Then the rule calls the backquote parser with 2 cases :
 // 1) (...) -> bqTarget
 // 2) ALL_ID | ALL_ID* | ALL_ID(...) -> bqTargetAppl
+/*
 bqTerm returns [TomTerm result]
 {
     String bqCode = null;
@@ -1218,7 +1219,7 @@ bqTerm returns [TomTerm result]
             }
         )
     ;
-
+*/
 
 
 // Operator Declaration
