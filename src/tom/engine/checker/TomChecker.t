@@ -45,7 +45,7 @@ public class TomChecker extends TomBase {
   private Option currentApplStructureOrgTrack;
   private Integer nullInteger = new Integer(-1);
 
-  private int foundError = 0;
+  private List errorMessage = new ArrayList();
   
   public TomChecker(jtom.TomEnvironment environment) { 
     super(environment);
@@ -56,9 +56,13 @@ public class TomChecker extends TomBase {
     // ------------------------------------------------------------
 
   public int getNumberFoundError() {
-    return foundError;
+    return errorMessage.size();
   }
   
+  public String getMessage(int n) {
+    return (String)errorMessage.get(n);
+  }
+
     // Main entry point: We check all interesting Tom Structure
   public void checkSyntax(TomTerm parsedTerm) {
     if(!Flags.doCheck) return;
@@ -1123,8 +1127,9 @@ public class TomChecker extends TomBase {
   
   private void messageError(Integer line, String msg) {
     if(!Flags.doCheck) return;
-    String s = "\n"+msg+"\n-- Error occured at line: " + line + "\n"; 
-    foundError++;
+    String s = "\n"+msg+"\n-- Error occured at line: " + line + "\n";
+    errorMessage.add(s);
+    System.out.println(s);
   }
   // findOriginTrackingLine(_) method returns the first number of line (stocked in optionList).
   private Integer findOriginTrackingLine(OptionList optionList) {

@@ -218,11 +218,15 @@ public class Tom {
         tomChecker.checkSyntax(parsedTerm);
         stopChrono();
         if(Flags.verbose) System.out.println("TOM syntax checking phase " + getChrono());
-        if(tomChecker.getNumberFoundError() > 0) {
-          System.out.println("\nTom Checker:  Encountered " +
-                             tomChecker.getNumberFoundError() +
-                             " errors during verification phase.");
-          throw new CheckErrorException();
+        int nbError = tomChecker.getNumberFoundError();
+        if(nbError > 0) {
+          for(int i=0 ; i<nbError ; i++) {
+              //System.out.println(tomChecker.getMessage(i));
+          }
+          
+          String msg = "Tom Checker:  Encountered " + nbError +
+            " errors during verification phase.";
+          throw new CheckErrorException(msg);
         }
                 
 	TomExpander tomExpander = new TomExpander(environment);
