@@ -11,10 +11,16 @@ The binary distribution of Tom consists of the following directory layout:
    +--- lib  // contains Tom jars plus necessary dependencies
    |
    +--- share
+         +--- contrib
+         |
          +--- jtom    // contains predefined mapping
-               +--- c
-               |
-               +--- caml
+         |     +--- adt
+         |     |
+         |     +--- c
+         |     |
+         |     +--- caml
+         |
+         +--- man
 
  Only the bin/ and lib/ directories are required to run Tom.
  To install Tom, choose a directory and copy the distribution file there. 

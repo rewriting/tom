@@ -1,5 +1,25 @@
 This document should be read in reverse order (from bottom to top).
 
+version 2.1:
+  - new parser based on ANTLR
+	- new internal architecture based on plugins
+  - new library for defining traversal strategies
+  - fixed a major bug in list-matching
+  - several bug fixed
+	- new library organization 
+    * tom
+    *  |--- library
+    *  |        |--- adt         (datatype definitions)
+    *  |        |--- mapping     (predefined mapping)
+    *  |               |--- adt  (generated mapping)
+    *  |        |--- set         (to handle sets)
+    *  |        |--- strategies  (Antoine's master thesis)
+    *  |        |--- traversal   (generic traversal)
+    *  |        |--- xml         (xml tools)
+    *  |        
+    *  |--- platform             (the Tom Plugin Platform, known as Tom server)
+    *           |--- adt     
+
 version 2.0:
   - support for Caml
   - introduced several predefined mappings
