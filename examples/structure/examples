@@ -69,8 +69,8 @@
  [ [(a,b),-a,-b] , [(c,[(a,b, [a,d,(-a,-c),(-b,-d),(b,c,[-a,([c,-c],[-b,(a,b)])])] ),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ],
 c,[-a,([c,-c],[-b,(a,b)])])] ),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
 
-# an example for BVu
-[ - a ,[ < a ; < d ; - b > > , [ < b ; < e ; - c > > , c ] ] ]
-
 # simple example for BVu
 [a,[< a ; [c,- a] >,< - a ; - c >]]
+
+# an more complex example for BVu
+[ - a ,[ < a ; < d ; - b > > , [ < b ; < e ; - c > > , c ] ] ]
