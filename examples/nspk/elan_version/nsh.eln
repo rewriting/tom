@@ -30,7 +30,7 @@ operators
    II  : AgentId;
    dai   : AgentId;  //dummy AgentId
  
-   AuthVerif 		: bool 	alias    false:;//true:; // 
+   AuthVerif 		: bool 	alias    true:;//true:; // 
 
    SLEEP  : SWC;
    WAIT   : SWC;
@@ -162,7 +162,7 @@ x+COMMIT+N(x,v) * E <> D <> w#l#ll <> x-->v:K(v)[N(n2,n4),DN,DA] & ls
 end
 
 [initiator_2]
-x+WAIT+N(x,v) * E <> D <> I <> w-->x:K(x)[N(n1,n3),N(n2,n4),A(z)] & ls  =>
+x+WAIT+N(x,v) * E <> D <> w#l#ll <> w-->x:K(x)[N(n1,n3),N(n2,n4),A(z)] & ls  =>
 ERROR
 		if x!=n1 or v!=n3
 		if not(AuthVerif) or v!=z //---- Lowe's correction ----//
@@ -365,7 +365,7 @@ global
     [] sizeMess(nill)   => 0		end
     [] sizeMess(m & ll)  =>  1+ sizeMess(ll)		end 
 
-    [] MaxMessagesInNetwork => 5   end
+    [] MaxMessagesInNetwork => 1   end
 end
 
 //--------------------------------------------------------------
