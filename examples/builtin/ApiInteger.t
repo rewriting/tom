@@ -1,6 +1,7 @@
 import aterm.*;
 import java.util.*;
 import adt.*;
+import aterm.pure.PureFactory;
 
 public class ApiInteger {
 
@@ -39,7 +40,7 @@ public class ApiInteger {
   }
   
   public final static void main(String[] args) {
-    ApiInteger test = new ApiInteger(new TermFactory(16));
+    ApiInteger test = new ApiInteger(new TermFactory(new PureFactory(16)));
     test.run();
   }
   
