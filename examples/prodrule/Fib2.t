@@ -34,7 +34,7 @@ import aterm.pure.*;
 import prodrule.fib2.fib.*;
 import prodrule.fib2.fib.types.*;
 
-class Fib2 {
+public class Fib2 {
   private Factory factory;
 
   %vas {
@@ -59,13 +59,13 @@ class Fib2 {
     return factory;
   }
   
-  public void run() {
+  public int run(int n) {
     long startChrono = System.currentTimeMillis();
     System.out.println("running...");
-    int n = 200;
     Space space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef));
     space = loop(space);
     System.out.println("fib(" + n + ") = " + result(space,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
+    return result(space,n);
   }
   
   public Space loop(Space s) {
@@ -80,7 +80,12 @@ class Fib2 {
 
   public final static void main(String[] args) {
     Fib2 test = new Fib2(new Factory(new PureFactory(16)));
-    test.run();
+    try {
+      test.run(Integer.parseInt(args[0]));
+    } catch (Exception e) {
+      System.out.println("Usage: java Fib <nb>");
+      return;
+    }
   }
 
   public Space rec(Space s) {

@@ -35,12 +35,12 @@ import prodrule.fib5.fib.*;
 import prodrule.fib5.fib.types.*;
 //import java.util.*;
 
-class Fib5 {
-    private Factory factory;
+public class Fib5 {
+  private Factory factory;
 
-    %vas {
-	// extension of adt syntax
-	module fib
+  %vas {
+    // extension of adt syntax
+    module fib
       
 	    public
 	    sorts Element
@@ -52,175 +52,181 @@ class Fib5 {
 	    }
 
     
-    %typelist Space {
-	implement { MyList }
-	get_fun_sym(t)   { ((t instanceof MyList)?factory.getPureFactory().makeAFun("concElement", 1, false):null) }
-	cmp_fun_sym(t1,t2) { t1 == t2 }
-	equals(l1,l2)      { l1.equals(l2) }
-	get_head(l)        { (Element)l.getHead() }
-	get_tail(l)        { (MyList)l.getTail() }
-	is_empty(l)        { l.isEmpty() }
-    }
+  %typelist Space {
+    implement { MyList }
+    get_fun_sym(t)   { ((t instanceof MyList)?factory.getPureFactory().makeAFun("concElement", 1, false):null) }
+    cmp_fun_sym(t1,t2) { t1 == t2 }
+    equals(l1,l2)      { l1.equals(l2) }
+    get_head(l)        { (Element)l.getHead() }
+    get_tail(l)        { (MyList)l.getTail() }
+    is_empty(l)        { l.isEmpty() }
+  }
 
-    %oplist Space concElement( Element* ) {
-	fsym             { factory.getPureFactory().makeAFun("concElement", 1, false) }
-	make_empty()     { new MyList() }
-	make_insert(e,l) { new MyList(e,l) }
-    }
+  %oplist Space concElement( Element* ) {
+    fsym             { factory.getPureFactory().makeAFun("concElement", 1, false) }
+    make_empty()     { new MyList() }
+    make_insert(e,l) { new MyList(e,l) }
+  }
       
-    public Fib5(Factory factory) {
-	this.factory = factory;
-    } 
+  public Fib5(Factory factory) {
+    this.factory = factory;
+  } 
 
-    public Factory getFibFactory() {
-	return factory;
-    }
+  public Factory getFibFactory() {
+    return factory;
+  }
   
-    private static boolean opt = true;
-    private static int fire=0;
-    private MyList WM = new MyList();
-    public void run() {
-	long startChrono = System.currentTimeMillis();
-	System.out.println("running...");
-	int n = 400;
-	WM = WM.add(`Fib(0,Nat(1)));
-	WM = WM.add(`Fib(1,Nat(1)));
-	WM = WM.add(`Fib(n,Undef));
-	loop(WM);
-	System.out.println("fib(" + n + ") = " + result(n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
-	System.out.println("fire = " + fire);
-    } 
+  private static boolean opt = true;
+  private static int fire=0;
+  private MyList WM = new MyList();
+  public int run(int n) {
+    long startChrono = System.currentTimeMillis();
+    System.out.println("running...");
+    WM = WM.add(`Fib(0,Nat(1)));
+    WM = WM.add(`Fib(1,Nat(1)));
+    WM = WM.add(`Fib(n,Undef));
+    loop(WM);
+    System.out.println("fib(" + n + ") = " + result(n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
+    System.out.println("fire = " + fire);
+    return result(n);
+  } 
   
-    public void loop(MyList WM) {
-	boolean modified = true;
-	while(modified) {
+  public void loop(MyList WM) {
+    boolean modified = true;
+    while(modified) {
 	    modified = modified && (rec() || compute());
 	    //System.out.println("WM (" + fire + ") = "+ WM);
-	} 
-    }
+    } 
+  }
 
-    public final static void main(String[] args) {
-	Fib5 test = new Fib5(new Factory(new PureFactory(16)));
-	test.run();
-    }
+  public final static void main(String[] args) {
+    Fib5 test = new Fib5(new Factory(new PureFactory(16)));
 
-    public boolean rec() {
-	%match(Space WM) {
+    try {
+      test.run(Integer.parseInt(args[0]));
+    } catch (Exception e) {
+      System.out.println("Usage: java Fib <nb>");
+      return;
+    }
+  }
+
+  public boolean rec() {
+    %match(Space WM) {
 	    concElement(_*, Fib[arg=n,val=Undef()], _*) -> {
-		if(`n >2 && !`occursFib(n-1)) {
-		    WM = WM.add(`Fib(n-1,Undef));
-		    fire++;
-		    return true;
-		}
+        if(`n >2 && !`occursFib(n-1)) {
+          WM = WM.add(`Fib(n-1,Undef));
+          fire++;
+          return true;
+        }
 	    }
-	}
-	return false;
     }
+    return false;
+  }
 
-    public boolean compute() {
-	%match(Space WM) {
+  public boolean compute() {
+    %match(Space WM) {
 	    concElement(_*, f@Fib[arg=n,val=Undef()], _*) -> {
-		%match(Space WM) {
-		    concElement(_*, f1@Fib[arg=n1,val=Nat(v1)], _*, f2@Fib[arg=n2,val=Nat(v2)], _*) -> {
-			//if(`(f!=f1 && f!=f2)) {
-			    if(`(n1+1==n && n2+2==n) || `(n2+1==n && n1+2==n)) {
-				int modulo = (`v1+`v2)%1000000;
-				WM = WM.remove(`f);
-				WM = WM.add(`Fib(n,Nat(modulo)));
-				if(opt) {
-				    WM = WM.remove(`(n2+2==n)?`f2:`f1);
-				}
-				fire++;
-				return true;
-			    }
-			    //}
+        %match(Space WM) {
+          concElement(_*, f1@Fib[arg=n1,val=Nat(v1)], _*, f2@Fib[arg=n2,val=Nat(v2)], _*) -> {
+            //if(`(f!=f1 && f!=f2)) {
+            if(`(n1+1==n && n2+2==n) || `(n2+1==n && n1+2==n)) {
+              int modulo = (`v1+`v2)%1000000;
+              WM = WM.remove(`f);
+              WM = WM.add(`Fib(n,Nat(modulo)));
+              if(opt) {
+                WM = WM.remove(`(n2+2==n)?`f2:`f1);
+              }
+              fire++;
+              return true;
+            }
+            //}
 
-		    }
-		}
+          }
+        }
 	    }
-	}
-	return false;
     }
+    return false;
+  }
 
-    public boolean occursFib(int value) {
-	%match(Space WM) {
+  public boolean occursFib(int value) {
+    %match(Space WM) {
 	    concElement(_*, Fib[arg=n], _*) -> {
-		if(`n == value) {
-		    return true;
-		}
+        if(`n == value) {
+          return true;
+        }
 	    }
-	}
-	return false;
     }
+    return false;
+  }
 
-    public int result(int value) {
-	%match(Space WM) {
+  public int result(int value) {
+    %match(Space WM) {
 	    concElement(_*, Fib[arg=n, val=Nat(v)], _*) -> {
-		if(`n == value) {
-		    return `v;
-		}
+        if(`n == value) {
+          return `v;
+        }
 	    }
-	}
-	return 0;
     }
+    return 0;
+  }
 
     
 }
 
 class MyList {
-    private Element head;
-    private MyList tail;
+  private Element head;
+  private MyList tail;
 
-    public Element getHead() {
-	return head;
-    }
+  public Element getHead() {
+    return head;
+  }
 
-    public MyList getTail() {
-	return tail;
-    }
+  public MyList getTail() {
+    return tail;
+  }
 
-    public MyList(Element head,MyList tail) {
-	this.head = head;
-	this.tail = tail;
-    }
+  public MyList(Element head,MyList tail) {
+    this.head = head;
+    this.tail = tail;
+  }
 
-    public MyList() {
-	this.head = null;
-	this.tail = null;
-    }
+  public MyList() {
+    this.head = null;
+    this.tail = null;
+  }
 
-    public boolean isEmpty() {
-	return head==null && tail==null;
-    }
+  public boolean isEmpty() {
+    return head==null && tail==null;
+  }
 
-    public int size() {
-	if(isEmpty()) {
+  public int size() {
+    if(isEmpty()) {
 	    return 0;
-	} else {
+    } else {
 	    return 1+getTail().size();
-	}
     }
+  }
 
-    public MyList add(Element e) {
-	return new MyList(e,this);
-    }
+  public MyList add(Element e) {
+    return new MyList(e,this);
+  }
 
-    public MyList remove(Element e) {
-	if(isEmpty()) {
+  public MyList remove(Element e) {
+    if(isEmpty()) {
 	    return this;
-	} else if(head==e) {
+    } else if(head==e) {
 	    return tail;
-	} else {
+    } else {
 	    return new MyList(head,tail.remove(e));
-	}
     }
+  }
 
-    public String toString() {
-	if(isEmpty()) {
+  public String toString() {
+    if(isEmpty()) {
 	    return "nil";
-	} else {
+    } else {
 	    return head + "." + tail.toString();
-	}
     }
+  }
 
 }

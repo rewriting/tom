@@ -35,7 +35,7 @@ import prodrule.fib3.fib.*;
 import prodrule.fib3.fib.types.*;
 import java.util.*;
 
-class Fib3 {
+public class Fib3 {
   private Factory factory;
 
   %vas {
@@ -84,13 +84,13 @@ class Fib3 {
     return factory;
   }
   
-  public void run() {
+  public int run(int n) {
     long startChrono = System.currentTimeMillis();
     System.out.println("running...");
-    int n = 200;
     ArrayList space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef));
     space = loop(space);
     System.out.println("fib(" + n + ") = " + result(space,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");
+    return result(space,n);
   }
   
   public ArrayList loop(ArrayList s) {
@@ -105,7 +105,12 @@ class Fib3 {
 
   public final static void main(String[] args) {
     Fib3 test = new Fib3(new Factory(new PureFactory(16)));
-    test.run();
+    try {
+      test.run(Integer.parseInt(args[0]));
+    } catch (Exception e) {
+      System.out.println("Usage: java Fib <nb>");
+      return;
+    }
   }
 				
   public ArrayList rec(ArrayList s) {
