@@ -1,4 +1,4 @@
-/*
+ /*
   
     TOM - To One Matching Compiler
 
@@ -20,30 +20,43 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
     Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
+    Christophe Mayer            ESIAL Student
+    Julien Guyon
 
 */
 
-package jtom.tools;
+package jtom.checker;
 
-import java.io.*;
+import jtom.TomEnvironment;
+import jtom.tools.TomTaskInput;
 
-public final class SingleLineOutputCode extends OutputCode {
 
-  public SingleLineOutputCode(Writer file, boolean cCode, boolean pretty) {
-    super(file, cCode, pretty);
+public class TomTypeChecker extends TomChecker {
+
+  public TomTypeChecker(TomEnvironment env) {
+  	super(env);	
   }
 
-  protected void internalWriteln() throws IOException {
+  public void process(TomTaskInput input) {
+    try {
+	  strictType = input.isStrictType();
+	  warningAll = input.isWarningAll();
+	  noWarning = input.isNoWarning();
+	  long startChrono = 0;
+	  boolean verbose = input.isVerbose();
+	  if(verbose) {
+		startChrono = System.currentTimeMillis();
+	  }
+      typeCheck(input.getTerm());
+	  if(verbose) {
+	    System.out.println("TOM type Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+	  }
+    } catch (Exception e) {
+		e.printStackTrace();
+    }
+    if(nextTask != null) {
+      nextTask.process(input);
+    }
   }
 
-  public void writeln(String s) throws IOException {
-    write(s);
-    writeln();
-  }
-  
-  public void write(int deep,String s, int line, int length) throws IOException {
-    String s2 = s.replace('\n', ' ');
-    s2 = s2.replace('\t', ' ');
-    writeln(s2);
-  }
-}
+} // Class TomSyntaxChecker

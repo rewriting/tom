@@ -39,6 +39,7 @@ import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import aterm.ATerm;
+import jtom.Tom;
 
 public class TomOptimizer extends TomBase implements TomTask {
 
@@ -61,10 +62,21 @@ public class TomOptimizer extends TomBase implements TomTask {
   }
   public void process(TomTaskInput input) {
     try {
-	  System.out.println("Processing TomOptimizer Task");
+	  long startChrono = 0;
+	  boolean verbose = input.isVerbose(), intermediate = input.isIntermediate();
+	  if(verbose) {
+		startChrono = System.currentTimeMillis();
+	  }
 	  TomTerm optimizedTerm = optimize(input.getTerm());
+	  if(verbose) {
+		System.out.println("TOM optimization phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+	  } 
+      if(intermediate) {
+          //Tom.generateOutput(input.inputFileName + input.optimizedSuffix, optimizedTerm);
+	  }
 	  input.setTerm(optimizedTerm);
     } catch (Exception e) {
+      e.printStackTrace();
     }
     if(nextTask != null) {
       nextTask.process(input);

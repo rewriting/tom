@@ -30,9 +30,12 @@ import java.io.*;
 public class OutputCode {
   protected Writer file;
   private int lineCounter = 1;
+  protected boolean cCode = false, pretty = false;
 
-  public OutputCode(Writer file) {
+  public OutputCode(Writer file, boolean cCode, boolean pretty) {
     this.file = file;
+	this.cCode = cCode;
+	this.pretty = pretty;
   }
 
   public OutputCode() {
@@ -92,7 +95,7 @@ public class OutputCode {
   }
 
   public void writeln() throws IOException {
-    if(Flags.pretty) {
+    if(pretty) {
       internalWriteln();
     }
   }
@@ -108,8 +111,8 @@ public class OutputCode {
   }
 
   public void write(int deep,String s, int line, int length) throws IOException {
-    if(lineCounter > line && !Flags.pretty) {
-      if(Flags.cCode)
+    if(lineCounter > line && !pretty) {
+      if(cCode)
       {
         String s1 = "\n#line "+line+"\n";
           // writeln(deep,s);
@@ -156,7 +159,7 @@ public class OutputCode {
 
   public void indent(int deep) {
     try {
-      if(Flags.pretty) {
+      if(pretty) {
         for(int i=0 ; i<deep ; i++) {
           file.write(' ');
           file.write(' ');

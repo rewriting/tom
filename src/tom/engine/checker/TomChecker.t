@@ -50,21 +50,21 @@ import jtom.adt.TomTerm;
 import jtom.adt.TomType;
 import jtom.adt.TomTypeList;
 import jtom.runtime.Collect1;
-import jtom.tools.Flags;
 import jtom.tools.TomTask;
-import jtom.tools.TomTaskInput;
 import aterm.ATerm;
+import jtom.TomEnvironment;
 
-public class TomChecker extends TomBase implements TomTask {
+abstract class TomChecker extends TomBase implements TomTask {
   
   private ArrayList alreadyStudiedSymbol =  new ArrayList();
   private ArrayList alreadyStudiedType =  new ArrayList();  
-  private Option currentTomStructureOrgTrack;
+  protected Option currentTomStructureOrgTrack;
   private int nullInteger = -1;
   private List errorMessage = new ArrayList();
-  private TomTask nextTask;
+  protected TomTask nextTask;
+  protected boolean strictType = false, warningAll = false, noWarning = false;
   
-  public TomChecker(jtom.TomEnvironment environment) { 
+  public TomChecker(TomEnvironment environment) { 
     super(environment);
   }
   
@@ -74,24 +74,6 @@ public class TomChecker extends TomBase implements TomTask {
 
     public void addTask(TomTask task) {
   	this.nextTask = task;
-  }
-  
-  public void process(TomTaskInput input) {
-  	try {
-  	  if (input.needSyntaxChecking()) {
-  	    System.out.println("Processing TomSyntaxChecking Task");
-  	  	checkSyntax(input.getTerm());
-  	  	input.needSyntaxChecking(false);
-  	  } else if (input.needTypeChecking()) {
-  	    System.out.println("Processing TomTypeChecking Task");
-  	  	checkVariableCoherence(input.getTerm());
-  	  	input.needTypeChecking(false);
-  	  }
-  	} catch (Exception e) {
-  	}
-    if(nextTask != null) {
-      nextTask.process(input);
-    }
   }
   
   public TomTask getTask() {
@@ -106,9 +88,8 @@ public class TomChecker extends TomBase implements TomTask {
     return (String)errorMessage.get(n);
   }
 
-    // Main syntax checking entry point: We check all interesting Tom Structure
-  public void checkSyntax(TomTerm parsedTerm) {
-    if(!Flags.doCheck) return;
+     // Main syntax checking entry point: We check all interesting Tom Structure
+  protected void syntaxCheck(TomTerm parsedTerm) {
     Collect1 collectAndVerify = new Collect1() {  
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
@@ -151,8 +132,7 @@ public class TomChecker extends TomBase implements TomTask {
   }
   
     // Main type checking entry point: We check all interesting Tom Structure
-  public void checkVariableCoherence(TomTerm expandedTerm) {
-    if(!Flags.doCheck) return;
+  protected void typeCheck(TomTerm expandedTerm) {
     Collect1 collectAndVerify = new Collect1() 
       {  
         public boolean apply(ATerm term) {
@@ -401,7 +381,7 @@ public class TomChecker extends TomBase implements TomTask {
     }
       // we test the type egality between arguments and pattern-action,
       // if it is not a variable  => type is null
-    if(!Flags.strictType) return;
+    if(!strictType) return;
     for( int slot = 0; slot < nbExpectedArgs; slot++ ) {
       if ( (foundTypeMatch.get(slot) !=  typeMatchArgs.get(slot)) && (foundTypeMatch.get(slot) != null))
       { 	
@@ -939,7 +919,7 @@ public class TomChecker extends TomBase implements TomTask {
   }
   
   private void messageWarningSymbol(String name, OptionList optionList) {
-    if(!Flags.warningAll || Flags.noWarning) return;
+    if(!warningAll || noWarning) return;
     String nameDecl = currentTomStructureOrgTrack.getAstName().getString();
     int declLine = currentTomStructureOrgTrack.getLine();
     int line = findOriginTrackingLine(name, optionList);
@@ -1002,7 +982,7 @@ public class TomChecker extends TomBase implements TomTask {
           int line = findOriginTrackingLine(optionList);
           messageRuleErrorVariable(name, line);
         }
-        checkSyntax(appl);
+        syntaxCheck(appl);
           // lhs outermost symbol shall have a corresponding make
         TomSymbol symb = symbolTable().getSymbol(name);
         if (symb == null) {
@@ -1025,7 +1005,7 @@ public class TomChecker extends TomBase implements TomTask {
         return ruleName;
       }
       rec@RecordAppl(Option(optionList),Name(name),args) -> {
-        checkSyntax(rec);
+        syntaxCheck(rec);
         options = optionList;
         methodName = name;
       }
@@ -1133,7 +1113,6 @@ public class TomChecker extends TomBase implements TomTask {
   }
 
   private void messageError(int line, String msg) {
-    if(!Flags.doCheck) return;
     String s = "\n"+msg+"\n-- Error occured at line: " + line +" in file: "+currentTomStructureOrgTrack.getFileName().getString()+"\n";
     errorMessage.add(s);
   }

@@ -6,7 +6,7 @@ javadir         = ${prefix}/classes/jtom/tools
 CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SHARED_OBJECTS):$$CLASSPATH
 
 stabledir 	= $(top_srcdir)/stable/jtom/tools
-BOOTSOURCES	= Flags.java OutputCode.java SingleLineOutputCode.java ASTFactory.java \
+BOOTSOURCES	= OutputCode.java SingleLineOutputCode.java ASTFactory.java \
                   SymbolTable.java Statistics.java TomTask.java TomTaskInput.java
 java_JAVA       = $(BOOTSOURCES)
 EXTRA_DIST      = $(BOOTSOURCES)

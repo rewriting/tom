@@ -49,7 +49,6 @@ import jtom.adt.TomSymbol;
 import jtom.adt.TomTerm;
 import jtom.adt.TomType;
 import jtom.adt.TomTypeList;
-import jtom.tools.Flags;
 import jtom.tools.TomTask;
 import jtom.tools.OutputCode;
 import jtom.tools.SingleLineOutputCode;
@@ -60,6 +59,9 @@ public class TomGenerator extends TomBase implements TomTask {
   
   private TomTask nextTask;
   private String debugKey = null;
+  private boolean cCode = false, eCode = false, jCode = false, supportedGoto = false, 
+  	supportedBlock = false, debugMode = false, strictType = false, staticFunction = false, 
+  	genDecl = false, pretty = false;
   
   public TomGenerator(jtom.TomEnvironment environment) {
     super(environment);
@@ -74,14 +76,32 @@ public class TomGenerator extends TomBase implements TomTask {
   }
   public void process(TomTaskInput input) {
     try {
-      System.out.println("Processing TomGenerator Task");
+      cCode = input.isCCode();
+      eCode = input.isECode();
+      jCode = input.isJCode();
+      supportedGoto = input.isSupportedGoto(); 
+      supportedBlock = input.isSupportedBlock();
+      debugMode = input.isDebugMode();
+      strictType = input.isStrictType();
+      staticFunction = input.isStaticFunction();
+      genDecl = input.isGenDecl();
+      pretty = input.isPretty();
+      long startChrono = 0;
+      boolean verbose = input.isVerbose();
+      if(verbose) {
+        startChrono = System.currentTimeMillis();
+      }
       int defaultDeep = 2;
       Writer writer = new BufferedWriter(new OutputStreamWriter(
-          new FileOutputStream(input.getOutputFileName())));
-      OutputCode out = new OutputCode(writer);
+                                           new FileOutputStream(input.getOutputFileName())));
+      OutputCode out = new OutputCode(writer, cCode, pretty);
       generate(out,defaultDeep,input.getTerm());
       writer.close();
+      if(verbose) {
+        System.out.println("TOM generation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      }
     } catch (Exception e) {
+      e.printStackTrace();
     }
     if(nextTask != null) {
       nextTask.process(input);
@@ -95,7 +115,7 @@ public class TomGenerator extends TomBase implements TomTask {
      * Generate the goal language
      */
   
-  public void generate(jtom.tools.OutputCode out, int deep, TomTerm subject)
+  private void generate(jtom.tools.OutputCode out, int deep, TomTerm subject)
     throws IOException {
       //System.out.println("Generate: " + subject);
       //%variable
@@ -110,8 +130,8 @@ public class TomGenerator extends TomBase implements TomTask {
       }
 
       TomInclude(l) -> {
-        if (Flags.jCode) {
-          OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile());
+        if (jCode) {
+          OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile(), cCode, pretty);
           generateList(singleLineOutput,deep,l);
         } else {
           generateList(out,deep,l);
@@ -144,7 +164,7 @@ public class TomGenerator extends TomBase implements TomTask {
       BuildTerm(Name(name), argList) -> {
         out.write("tom_make_");
         out.write(name);
-        if(Flags.eCode && argList.isEmpty()) {
+        if(eCode && argList.isEmpty()) {
         } else {
           out.writeOpenBrace();
           while(!argList.isEmpty()) {
@@ -235,20 +255,20 @@ public class TomGenerator extends TomBase implements TomTask {
         boolean generated = hasGeneratedMatch(list);
         boolean defaultPattern = hasDefaultProd(list);
         Option orgTrack = null;
-        if(Flags.supportedBlock) {
+        if(supportedBlock) {
           generateInstruction(out,deep,`OpenBlock());
         }
-        if(Flags.debugMode && !generated) {
+        if(debugMode && !generated) {
           orgTrack = findOriginTracking(list);
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
           out.write("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");\n");
         }
         generateList(out,deep+1,matchDeclarationList);
         generateList(out,deep+1,namedBlockList);
-        if(Flags.debugMode && !generated && !defaultPattern) {
+        if(debugMode && !generated && !defaultPattern) {
           out.write("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");\n");
         }
-        if(Flags.supportedBlock) {
+        if(supportedBlock) {
           generateInstruction(out,deep,`CloseBlock());
         }
         return;
@@ -289,15 +309,15 @@ public class TomGenerator extends TomBase implements TomTask {
 
       Declaration(var@Variable(option1,name1,
                                  Type(TomType(type),tlType@TLType[]))) -> {
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write(deep,getTLCode(tlType) + " ");
           generate(out,deep,var);
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           generate(out,deep,var);
           out.write(deep,": " + getTLCode(tlType));
         }
         
-        if(Flags.jCode &&
+        if(jCode &&
            !isBoolType(type) &&
            !isIntType(type) &&
            !isDoubleType(type)) {
@@ -310,10 +330,10 @@ public class TomGenerator extends TomBase implements TomTask {
 
       Declaration(var@VariableStar(option1,name1,
                                    Type(TomType(type),tlType@TLType[]))) -> {
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write(deep,getTLCode(tlType) + " ");
           generate(out,deep,var);
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           generate(out,deep,var);
           out.write(deep,": " + getTLCode(tlType));
         }
@@ -326,9 +346,9 @@ public class TomGenerator extends TomBase implements TomTask {
         String glType = getTLType(getSymbolCodomain(tomSymbol));
         String name = tomSymbol.getAstName().getString();
         
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write(deep,glType + " " + name + "(");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.write(deep,name + "(");
         }
         while(!varList.isEmpty()) {
@@ -336,10 +356,10 @@ public class TomGenerator extends TomBase implements TomTask {
           matchBlock: {
             %match(TomTerm localVar) {
               v@Variable(option2,name2,type2) -> {
-                if(Flags.cCode || Flags.jCode) {
+                if(cCode || jCode) {
                   out.write(deep,getTLType(type2) + " ");
                   generate(out,deep,v);
-                } else if(Flags.eCode) {
+                } else if(eCode) {
                   generate(out,deep,v);
                   out.write(deep,": " + getTLType(type2));
                 }
@@ -353,16 +373,16 @@ public class TomGenerator extends TomBase implements TomTask {
           }
           varList = varList.getTail();
           if(!varList.isEmpty()) {
-            if(Flags.cCode || Flags.jCode) {
+            if(cCode || jCode) {
               out.write(deep,", ");
-            } else if(Flags.eCode) {
+            } else if(eCode) {
               out.write(deep,"; ");
             }
           }
         }
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.writeln(deep,") {");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.writeln(deep,"): " + glType + " is");
           out.writeln(deep,"local ");
         }
@@ -371,9 +391,9 @@ public class TomGenerator extends TomBase implements TomTask {
       }
 
       MakeFunctionEnd -> {
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.writeln(deep,"}");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.writeln(deep,"end;");
         }
         return;
@@ -415,11 +435,11 @@ public class TomGenerator extends TomBase implements TomTask {
     statistics().numberPartsGoalLanguage++;
     %match(Expression subject) {
       Not(exp) -> {
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write("!(");
           generateExpression(out,deep,exp);
           out.write(")");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.write("not ");
           generateExpression(out,deep,exp);
         }
@@ -434,22 +454,22 @@ public class TomGenerator extends TomBase implements TomTask {
       }
 
       TrueTL -> {
-        if(Flags.cCode) {
+        if(cCode) {
           out.write(" 1 ");
-        } else if(Flags.jCode) {
+        } else if(jCode) {
           out.write(" true ");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.write(" true ");
         }
         return;
       }
       
       FalseTL -> {
-        if(Flags.cCode) {
+        if(cCode) {
           out.write(" 0 ");
-        } else if(Flags.jCode) {
+        } else if(jCode) {
           out.write(" false ");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.write(" false ");
         }
         return;
@@ -631,9 +651,9 @@ public class TomGenerator extends TomBase implements TomTask {
                           Type(tomType@TomType(type),tlType@TLType[])),exp) -> {
         out.indent(deep);
         generate(out,deep,var);
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write(" = (" + getTLCode(tlType) + ") ");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
             out.write(" := ");
           } else {
@@ -649,7 +669,7 @@ public class TomGenerator extends TomBase implements TomTask {
         }
         generateExpression(out,deep,exp);
         out.writeln(";");
-        if(Flags.debugMode && !list.isEmpty()) {
+        if(debugMode && !list.isEmpty()) {
           out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
           generate(out,deep,var);
           out.write("\", ");
@@ -663,9 +683,9 @@ public class TomGenerator extends TomBase implements TomTask {
                                       Type(tomType@TomType(type),tlType@TLType[])),exp) -> {
         out.indent(deep);
         generate(out,deep,var);
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write(" = (" + getTLCode(tlType) + ") ");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
             out.write(" := ");
           } else {
@@ -681,7 +701,7 @@ public class TomGenerator extends TomBase implements TomTask {
         }
         generateExpression(out,deep,exp);
         out.writeln(";");
-        if (Flags.debugMode) {
+        if (debugMode) {
           out.write("jtom.debug.TomDebugger.debugger.specifySubject(\""+debugKey+"\",\"");
           generateExpression(out,deep,exp);
           out.write("\",");
@@ -692,15 +712,15 @@ public class TomGenerator extends TomBase implements TomTask {
       }
       
       NamedBlock(blockName,instList) -> {
-        if(Flags.cCode) {
+        if(cCode) {
           out.writeln("{");
           generateList(out,deep+1,instList);
           out.writeln("}" + blockName +  ":;");
-        } else if(Flags.jCode) {
+        } else if(jCode) {
           out.writeln(blockName + ": {");
           generateList(out,deep+1,instList);
           out.writeln("}");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           System.out.println("NamedBlock: Eiffel code not yet implemented");
             //System.exit(1);
         }  
@@ -710,11 +730,11 @@ public class TomGenerator extends TomBase implements TomTask {
         //IfThenElse(exp,succesList,conc()) -> {
       IfThenElse(exp,succesList,emptyTomList()) -> {
         statistics().numberIfThenElseTranformed++;
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
           generateList(out,deep+1,succesList);
           out.writeln(deep,"}");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
           generateList(out,deep+1,succesList);
           out.writeln(deep,"end;");
@@ -724,13 +744,13 @@ public class TomGenerator extends TomBase implements TomTask {
 
       IfThenElse(exp,succesList,failureList) -> {
         statistics().numberIfThenElseTranformed++;
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write(deep,"if("); generateExpression(out,deep,exp); out.writeln(") {");
           generateList(out,deep+1,succesList);
           out.writeln(deep,"} else {");
           generateList(out,deep+1,failureList);
           out.writeln(deep,"}");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.write(deep,"if "); generateExpression(out,deep,exp); out.writeln(" then ");
           generateList(out,deep+1,succesList);
           out.writeln(deep," else ");
@@ -751,14 +771,14 @@ public class TomGenerator extends TomBase implements TomTask {
                               Type(TomType(type),tlType@TLType[])),exp) -> {
         out.indent(deep);
         generate(out,deep,var);
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write(" = (" + getTLCode(tlType) + ") ");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.write(" := ");
         }
         generateExpression(out,deep,exp);
         out.writeln(";");
-        if(Flags.debugMode && !list.isEmpty()) {
+        if(debugMode && !list.isEmpty()) {
           out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
           generate(out,deep,var);
           out.write("\", ");
@@ -786,11 +806,11 @@ public class TomGenerator extends TomBase implements TomTask {
       }
 
       ExitAction(numberList) -> {
-        if(Flags.cCode) {
+        if(cCode) {
           out.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
-        } else if(Flags.jCode) {
+        } else if(jCode) {
           out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           System.out.println("ExitAction: Eiffel code not yet implemented");
             //System.exit(1);
         }
@@ -798,11 +818,11 @@ public class TomGenerator extends TomBase implements TomTask {
       }
 
       Return(exp) -> {
-        if(Flags.cCode || Flags.jCode) {
+        if(cCode || jCode) {
           out.write(deep,"return ");
           generate(out,deep,exp);
           out.writeln(deep,";");
-        } else if(Flags.eCode) {
+        } else if(eCode) {
           out.writeln(deep,"if Result = Void then");
           out.write(deep+1,"Result := ");
           generate(out,deep+1,exp);
@@ -887,7 +907,7 @@ public class TomGenerator extends TomBase implements TomTask {
         TomType type1 = getSymbolCodomain(tomSymbol);
         String name1 = tomSymbol.getAstName().getString();
 
-        if(Flags.cCode && isDefinedSymbol(tomSymbol)) {
+        if(cCode && isDefinedSymbol(tomSymbol)) {
             // TODO: build an abstract declaration
           int argno=1;
             /*
@@ -933,9 +953,9 @@ public class TomGenerator extends TomBase implements TomTask {
             }
           }
           out.writeln();
-        } else if(Flags.jCode) {
+        } else if(jCode) {
             // do nothing
-        } else if(Flags.eCode) {
+        } else if(eCode) {
             // do nothing
         }
 
@@ -954,7 +974,7 @@ public class TomGenerator extends TomBase implements TomTask {
         TomType type1 = getSymbolCodomain(tomSymbol);
         String name1 = tomSymbol.getAstName().getString();
         
-        if(Flags.cCode) {
+        if(cCode) {
             // TODO: build an abstract declaration
           int argno=1;
           out.indent(deep);
@@ -979,9 +999,9 @@ public class TomGenerator extends TomBase implements TomTask {
             }
           }
           out.writeln();
-        } else if(Flags.jCode) {
+        } else if(jCode) {
             // do nothing
-        } else if(Flags.eCode) {
+        } else if(eCode) {
             // do nothing
         }
 
@@ -1001,7 +1021,7 @@ public class TomGenerator extends TomBase implements TomTask {
         String name1 = tomSymbol.getAstName().getString();
         
         
-        if(Flags.cCode) {
+        if(cCode) {
             // TODO: build an abstract declaration
           int argno=1;
           out.indent(deep);
@@ -1026,9 +1046,9 @@ public class TomGenerator extends TomBase implements TomTask {
             }
           }
           out.writeln();
-        } else if(Flags.jCode) {
+        } else if(jCode) {
             // do nothing
-        } else if(Flags.eCode) {
+        } else if(eCode) {
             // do nothing
         }
 
@@ -1043,7 +1063,7 @@ public class TomGenerator extends TomBase implements TomTask {
                                      Type(TomType(type),tlType@TLType[])),
                             tlCode, _) -> {
         String args[];
-        if(!Flags.strictType) {
+        if(!strictType) {
           TomType argType = getUniversalType();
           if(isIntType(type)) {
             argType = getIntType();
@@ -1073,7 +1093,7 @@ public class TomGenerator extends TomBase implements TomTask {
                               Type(TomType(type2),tlType2@TLType[])),
                      tlCode, _) -> {
         String args[];
-        if(Flags.strictType || Flags.eCode) {
+        if(strictType || eCode) {
           args = new String[] { getTLCode(tlType1), name1,
                                 getTLCode(tlType2), name2 };
         } else {
@@ -1093,7 +1113,7 @@ public class TomGenerator extends TomBase implements TomTask {
 
 	  TomType returnType = getBoolType();
 	  String argType;
-	  if(Flags.strictType) {
+	  if(strictType) {
 	      argType = getTLCode(tlType);
 	  } else {
 	      argType = getTLType(getUniversalType());
@@ -1122,7 +1142,7 @@ public class TomGenerator extends TomBase implements TomTask {
         TomType returnType = l.getHead();
         
 	String argType;
-	  if(Flags.strictType) {
+	  if(strictType) {
 	      argType = getTLCode(tlType);
 	  } else {
 	      argType = getTLType(getUniversalType());
@@ -1187,7 +1207,7 @@ public class TomGenerator extends TomBase implements TomTask {
       GetHeadDecl(Variable(option1,Name(name1), Type(TomType(type),tlType@TLType[])),
                   tlCode@TL[], _) -> {
         String argType;
-        if(Flags.strictType) {
+        if(strictType) {
           argType = getTLCode(tlType);
         } else {
           argType = getTLType(getUniversalType());
@@ -1204,7 +1224,7 @@ public class TomGenerator extends TomBase implements TomTask {
       GetTailDecl(Variable(option1,Name(name1), Type(TomType(type),tlType@TLType[])),
                   tlCode@TL[], _) -> {
         String returnType, argType;
-        if(Flags.strictType) {
+        if(strictType) {
           returnType = getTLCode(tlType);
           argType = getTLCode(tlType);
         } else {
@@ -1222,7 +1242,7 @@ public class TomGenerator extends TomBase implements TomTask {
       IsEmptyDecl(Variable(option1,Name(name1), Type(TomType(type),tlType@TLType[])),
                   tlCode@TL[], _) -> {
         String argType;
-        if(Flags.strictType) {
+        if(strictType) {
           argType = getTLCode(tlType);
         } else {
           argType = getTLType(getUniversalType());
@@ -1250,7 +1270,7 @@ public class TomGenerator extends TomBase implements TomTask {
                   Variable(option2,Name(name2), fullListType@Type(TomType(type2),tlType2@TLType[])),
                   tlCode@TL[], _) -> {
         String returnType, argListType,argEltType;
-        if(Flags.strictType) {
+        if(strictType) {
           argEltType = getTLCode(tlType1);
           argListType = getTLCode(tlType2);
           returnType = argListType;
@@ -1276,7 +1296,7 @@ public class TomGenerator extends TomBase implements TomTask {
                      Variable(option2,Name(name2), Type(TomType(type2),tlType2@TLType[])),
                      tlCode@TL[], _) -> {
         String returnType, argType;
-        if(Flags.strictType) {
+        if(strictType) {
           returnType = getTLType(getUniversalType());
           argType = getTLCode(tlType1);
         } else {
@@ -1297,7 +1317,7 @@ public class TomGenerator extends TomBase implements TomTask {
       GetSizeDecl(Variable(option1,Name(name1), Type(TomType(type),tlType@TLType[])),
                   tlCode@TL[], _) -> {
         String argType;
-        if(Flags.strictType) {
+        if(strictType) {
           argType = getTLCode(tlType);
         } else {
           argType = getTLType(getUniversalType());
@@ -1328,7 +1348,7 @@ public class TomGenerator extends TomBase implements TomTask {
                   tlCode@TL[], _) -> {
 
         String returnType, argListType,argEltType;
-        if(Flags.strictType) {
+        if(strictType) {
           argEltType  = getTLCode(tlType1);
           argListType = getTLCode(tlType2);
           returnType  = argListType;
@@ -1440,9 +1460,9 @@ public class TomGenerator extends TomBase implements TomTask {
                         String args[],
                         TargetLanguage tlCode) {
     String s = "";
-    if(!Flags.genDecl) { return null; }
+    if(!genDecl) { return null; }
 
-    if(Flags.cCode) {
+    if(cCode) {
       s = "#define " + declName + "_" + suffix + "(";
       for(int i=0 ; i<args.length ; ) {
         s+= args[i+1];
@@ -1452,9 +1472,9 @@ public class TomGenerator extends TomBase implements TomTask {
         }
       }
       s += ") (" + tlCode.getCode() +")";
-    } else if(Flags.jCode) {
+    } else if(jCode) {
       String modifier ="public ";
-      if(Flags.staticFunction) {
+      if(staticFunction) {
         modifier +="static ";
       }
 
@@ -1467,7 +1487,7 @@ public class TomGenerator extends TomBase implements TomTask {
         }
       } 
       s += ") { return " + tlCode.getCode() + "; }";
-    } else if(Flags.eCode) {
+    } else if(eCode) {
       s = declName + "_" + suffix + "(";
       for(int i=0 ; i<args.length ; ) {
         s+= args[i+1] + ": " + args[i];
@@ -1488,9 +1508,9 @@ public class TomGenerator extends TomBase implements TomTask {
   private TargetLanguage genDeclMake(String opname, TomType returnType, TomList argList, TargetLanguage tlCode) {
     //%variable
     String s = "";
-    if(!Flags.genDecl) { return null; }
+    if(!genDecl) { return null; }
 
-    if(Flags.cCode) {
+    if(cCode) {
         //System.out.println("genDeclMake: not yet implemented for C");
         //System.exit(1);
       s = "#define tom_make_" + opname + "(";
@@ -1515,9 +1535,9 @@ public class TomGenerator extends TomBase implements TomTask {
         }
       }
       s += ") (" + tlCode.getCode() + ")";
-    } else if(Flags.jCode) {
+    } else if(jCode) {
       String modifier ="public ";
-      if(Flags.staticFunction) {
+      if(staticFunction) {
         modifier +="static ";
       }
 
@@ -1543,14 +1563,14 @@ public class TomGenerator extends TomBase implements TomTask {
         }
       }
       s += ") { ";
-      if (Flags.debugMode) {
+      if (debugMode) {
         s += "\n"+getTLType(returnType)+ " debugVar = " + tlCode.getCode() +";\n";
         s += "jtom.debug.TomDebugger.debugger.termCreation(debugVar);\n";
         s += "return  debugVar;\n}";
       } else {
         s += "return " + tlCode.getCode() + "; }";
       }
-    } else if(Flags.eCode) {
+    } else if(eCode) {
       boolean braces = !argList.isEmpty();
       s = "tom_make_" + opname;
       if(braces) {
@@ -1587,7 +1607,7 @@ public class TomGenerator extends TomBase implements TomTask {
   private TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
     //%variable
     String s = "";
-    if(!Flags.genDecl) { return null; }
+    if(!genDecl) { return null; }
 
     String tomType = getTomType(listType);
     String glType = getTLType(listType);
@@ -1595,14 +1615,14 @@ public class TomGenerator extends TomBase implements TomTask {
 
     String utype = glType;
     String modifier = "";
-    if(Flags.eCode) {
+    if(eCode) {
       System.out.println("genDeclList: Eiffel code not yet implemented");
-    } else if(Flags.jCode) {
+    } else if(jCode) {
       modifier ="public ";
-      if(Flags.staticFunction) {
+      if(staticFunction) {
         modifier +="static ";
       }
-      if(!Flags.strictType) {
+      if(!strictType) {
         utype =  getTLType(getUniversalType());
       }
     }
@@ -1653,28 +1673,28 @@ public class TomGenerator extends TomBase implements TomTask {
     
     TargetLanguage resultTL = `ITL(s);
       //If necessary we remove \n code depending on --pretty option
-    resultTL = ast().reworkTLCode(resultTL);
+    resultTL = ast().reworkTLCode(resultTL, pretty);
     return resultTL;
   }
 
   private TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
     //%variable
     String s = "";
-    if(!Flags.genDecl) { return null; }
+    if(!genDecl) { return null; }
 
     String tomType = getTomType(listType);
     String glType = getTLType(listType);
     String tlEltType = getTLType(eltType);
     String utype = glType;
     String modifier = "";
-    if(Flags.eCode) {
+    if(eCode) {
       System.out.println("genDeclArray: Eiffel code not yet implemented");
-    } else if(Flags.jCode) {
+    } else if(jCode) {
       modifier ="public ";
-      if(Flags.staticFunction) {
+      if(staticFunction) {
         modifier +="static ";
       }
-      if(!Flags.strictType) {
+      if(!strictType) {
         utype =  getTLType(getUniversalType());
       }
     }
@@ -1719,7 +1739,7 @@ public class TomGenerator extends TomBase implements TomTask {
 
     TargetLanguage resultTL = `ITL(s);
       //If necessary we remove \n code depending on --pretty option
-    resultTL = ast().reworkTLCode(resultTL);
+    resultTL = ast().reworkTLCode(resultTL, pretty);
     return resultTL;
   }
   

@@ -33,6 +33,7 @@ import jtom.runtime.Replace1;
 import aterm.ATerm;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
+import jtom.Tom;
 
 public class TomExpander extends TomBase implements TomTask {
   private TomTask nextTask;
@@ -53,13 +54,29 @@ public class TomExpander extends TomBase implements TomTask {
   }
   public void process(TomTaskInput input) {
   	try {
-  	  System.out.println("Processing TomExpander Task");
-      TomTerm syntaxExpandedTerm = expandTomSyntax(input.getTerm());
+	  long startChrono = 0;
+	  boolean verbose = input.isVerbose(), intermediate = input.isIntermediate(), debugMode = input.isDebugMode();
+	  if(verbose) {
+		startChrono = System.currentTimeMillis();
+	  }
+	  TomTerm syntaxExpandedTerm = expandTomSyntax(input.getTerm());
       tomKernelExpander.updateSymbolTable();
       TomTerm context = null;
       TomTerm expandedTerm  = expandVariable(context, syntaxExpandedTerm);
+      if(debugMode) {
+        tomKernelExpander.expandMatchPattern(expandedTerm);
+        //generateOutput(input.inputFileName + input.debugTableSuffix, tomParser.getStructTable());
+      }
+	  if(verbose) {
+		System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+	  }
+      if(intermediate) {
+          //Tom.generateOutput(input.inputFileName + input.expandedSuffix, expandedTerm);
+          //Tom.generateOutput(input.inputFileName + input.expandedTableSuffix, symbolTable().toTerm());
+	  }
       input.setTerm(expandedTerm);
     } catch (Exception e) {
+      e.printStackTrace();
     }
     if(nextTask != null) {
       nextTask.process(input);

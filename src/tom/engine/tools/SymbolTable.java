@@ -33,27 +33,31 @@ import java.util.Set;
 import jtom.adt.*;
 
 public class SymbolTable {
+  private boolean cCode = false, jCode = true, eCode =false;
   private Map mapSymbolName = new HashMap();
   private Map mapTypeName = new HashMap();
   private ASTFactory astFactory;
-  public SymbolTable(ASTFactory astFactory) {
+  public SymbolTable(ASTFactory astFactory, boolean cCode, boolean jCode, boolean eCode) {
     this.astFactory = astFactory;
+    this.cCode = cCode;
+	this.jCode = jCode;
+	this.eCode = eCode;
     init();
   }
   private void init() {
-    if(Flags.cCode) {
+    if(cCode) {
       putType("bool", ast().makeType("bool","int"));
       putType("int", ast().makeType("int","int"));
       putType("double", ast().makeType("double","double"));
       putType("String", ast().makeType("String","char*"));
       putType("universal", ast().makeType("universal","void*"));
-    } else if(Flags.jCode) {
+    } else if(jCode) {
       putType("bool", ast().makeType("bool","boolean"));
       putType("int", ast().makeType("int","int"));
       putType("double", ast().makeType("double","double"));
       putType("String", ast().makeType("String","String"));
       putType("universal", ast().makeType("universal","Object"));
-    } else if(Flags.eCode) {
+    } else if(eCode) {
       putType("bool", ast().makeType("bool","BOOLEAN"));
       putType("int", ast().makeType("int","INTEGER"));
       putType("double", ast().makeType("double","DOUBLE"));

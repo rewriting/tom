@@ -37,11 +37,11 @@ import java.util.Set;
 import jtom.adt.*;
 import jtom.exception.TomException;
 import jtom.tools.ASTFactory;
-import jtom.tools.Flags;
 import jtom.tools.SymbolTable;
 import jtom.tools.Statistics;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
+import jtom.Tom;
 
 public class TomParserTokenManager implements TomParserConstants
 {

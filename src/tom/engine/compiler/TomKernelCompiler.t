@@ -35,13 +35,19 @@ import jtom.TomBase;
 import jtom.adt.*;
 import jtom.runtime.Collect1;
 import jtom.runtime.Replace1;
-import jtom.tools.Flags;
 import aterm.ATerm;
+//import jtom.TomEnvironment;
 
 public class TomKernelCompiler extends TomBase {
 
-  public TomKernelCompiler(jtom.TomEnvironment environment) {
+  private boolean supportedBlock = false, supportedGoto = false, debugMode = false;
+
+  public TomKernelCompiler(jtom.TomEnvironment environment, boolean supportedBlock, boolean supportedGoto, 
+  											boolean debugMode) {
     super(environment);
+    this.supportedBlock = supportedBlock;
+    this.supportedGoto = supportedGoto;
+    this.debugMode = debugMode;
   }
 
 // ------------------------------------------------------------
@@ -140,7 +146,7 @@ public class TomKernelCompiler extends TomBase {
         statistics().numberMatchCompiledIntoAutomaton++;
         boolean generatedMatch = false;
         String currentDebugKey = "noDebug";
-        if(Flags.debugMode) {
+        if(debugMode) {
           generatedMatch = hasGeneratedMatch(optionList);
           Option orgTrack = findOriginTracking(optionList);
           currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
@@ -214,7 +220,7 @@ public class TomKernelCompiler extends TomBase {
           defaultPA = pa.isDefaultPatternAction();
           patternList = pa.getTermList().getTomList();
           
-          if (Flags.debugMode && defaultPA) {
+          if (debugMode && defaultPA) {
               // replace success by leaving structure
             TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
             TomList tail = pa.getTom().getTomList().getTail();
@@ -290,8 +296,8 @@ public class TomKernelCompiler extends TomBase {
       emptyTomList()      -> { return empty(); }
       manyTomList(Automata(numberList,instList, Name(dbgKey)),l)  -> {
         TomList newList = automataListCompileMatchingList(l, generatedMatch);
-        if(Flags.supportedGoto) {
-          if(!generatedMatch && Flags.debugMode) {
+        if(supportedGoto) {
+          if(!generatedMatch && debugMode) {
             TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+dbgKey+"\");\n");
             instList = `cons(TargetLanguageToTomTerm(tl), instList);
             tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+dbgKey+"\");\n");
@@ -306,11 +312,11 @@ public class TomKernelCompiler extends TomBase {
           TomTerm variableAST = getBlockVariable(numberList);
           result = append(`Declaration(variableAST),result);
           result = appendInstruction(`Assign(variableAST, TrueTL()),result);
-          if(Flags.supportedBlock) { // Test
+          if(supportedBlock) { // Test
             result = appendInstruction(`OpenBlock(),result);
           }
           result = concat(result,instList);
-          if(Flags.supportedBlock) { // Test
+          if(supportedBlock) { // Test
             result = appendInstruction(`CloseBlock(),result);
           }
           result = cons(`CompiledPattern(result),newList);
@@ -319,8 +325,8 @@ public class TomKernelCompiler extends TomBase {
       }
       manyTomList(DefaultAutomata(numberList,instList, Name(dbgKey)),l)  -> {
         TomList newList = automataListCompileMatchingList(l, generatedMatch);
-        if(Flags.supportedGoto) {
-          if(!generatedMatch && Flags.debugMode) {
+        if(supportedGoto) {
+          if(!generatedMatch && debugMode) {
             TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.enteringDefaultPattern(\""+dbgKey+"\");\n");
             instList = `cons(TargetLanguageToTomTerm(tl), instList);
           }
@@ -934,14 +940,14 @@ public class TomKernelCompiler extends TomBase {
             Instruction doWhile = `DoWhile(doList,cond);
             
             TomList tmpResult = empty();
-            if(Flags.supportedBlock) {
+            if(supportedBlock) {
               tmpResult = appendInstruction(`OpenBlock(),tmpResult);
             }
             tmpResult = concat(tmpResult,declarationList);
             tmpResult = concat(tmpResult,result);
             tmpResult = concat(tmpResult,assignementList);
             tmpResult = appendInstruction(doWhile,tmpResult);
-            if(Flags.supportedBlock) {
+            if(supportedBlock) {
               tmpResult = appendInstruction(`CloseBlock(),tmpResult);
             }
             result = tmpResult;

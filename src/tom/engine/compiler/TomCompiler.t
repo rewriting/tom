@@ -45,45 +45,62 @@ import jtom.adt.TomTerm;
 import jtom.adt.TomType;
 import jtom.adt.TomTypeList;
 import jtom.runtime.Replace1;
-import jtom.tools.Flags;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import aterm.ATerm;
+import jtom.Tom;
 
 public class TomCompiler extends TomBase implements TomTask {
   private TomTask nextTask;
   TomKernelCompiler tomKernelCompiler;
   private String debugKey = null;
+  private boolean supportedBlock = false, debugMode = false, eCode = false;
+  
   public TomCompiler(jtom.TomEnvironment environment,
                      TomKernelCompiler tomKernelCompiler) {
     super(environment);
     this.tomKernelCompiler = tomKernelCompiler;
   }
-
+  
 // ------------------------------------------------------------
   %include { Tom.signature }
 // ------------------------------------------------------------
-
+  
   public void addTask(TomTask task) {
-  	this.nextTask = task;
+    this.nextTask = task;
   }
   public void process(TomTaskInput input) {
-  	try {
-  	  System.out.println("Processing TomCompiler Task");
-  	  TomTerm preCompiledTerm = preProcessing(input.getTerm());
-  	  TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
+    try {
+      supportedBlock = input.isSupportedBlock();
+      debugMode = input.isDebugMode();
+      eCode = input.isECode();
+      long startChrono = 0;
+      boolean verbose = input.isVerbose(), intermediate = input.isIntermediate();
+      if(verbose) {
+        startChrono = System.currentTimeMillis();
+      }
+      TomTerm preCompiledTerm = preProcessing(input.getTerm());
+      TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
       compiledTerm = tomKernelCompiler.postProcessing(compiledTerm);
+      if(verbose) {
+        System.out.println("TOM compilation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      }
+      if(intermediate) {
+          //Tom.generateOutput(input.inputFileName + input.compiledSuffix, compiledTerm);
+      }
       input.setTerm(compiledTerm);
     } catch (Exception e) {
+      e.printStackTrace();
     }
     if(nextTask != null) {
       nextTask.process(input);
     }
   }
-  
+    
   public TomTask getTask() {
   	return nextTask;
   }
+  
     /* 
      * preProcessing:
      *
@@ -107,7 +124,7 @@ public class TomCompiler extends TomBase implements TomTask {
       }
     }; 
 
-  public TomTerm preProcessing(TomTerm subject) {
+  private TomTerm preProcessing(TomTerm subject) {
       //%variable
       //System.out.println("preProcessing subject: " + subject);
 
@@ -119,7 +136,7 @@ public class TomCompiler extends TomBase implements TomTask {
       RuleSet(ruleList@manyTomRuleList(
                 RewriteRule[lhs=Term(Appl[astName=Name(tomName)])],tail), orgTrack) -> {
         statistics().numberRuleSetsTransformed++;
-        if(Flags.debugMode) {
+        if(debugMode) {
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
         }
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
@@ -151,16 +168,16 @@ public class TomCompiler extends TomBase implements TomTask {
               
               TomTerm newRhs = preProcessing(`MakeTerm(rhsTerm));
               TomList rhsList = empty();
-              if(Flags.supportedBlock) {
+              if(supportedBlock) {
                 rhsList = appendInstruction(`OpenBlock(),rhsList);
               }
-              if(Flags.debugMode) {
+              if(debugMode) {
                 TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
                 rhsList = append(`TargetLanguageToTomTerm(tl), rhsList);
               }
               
               rhsList = appendInstruction(`Return(newRhs),rhsList);
-              if(Flags.supportedBlock) {
+              if(supportedBlock) {
                 rhsList = appendInstruction(`CloseBlock(),rhsList);
               }
               
@@ -183,7 +200,7 @@ public class TomCompiler extends TomBase implements TomTask {
                                   generatedOptions);
         Instruction buildAST = `Return(BuildTerm(name,tomListMap(matchArgumentsList,replace_preProcessing_makeTerm)));
         TomList l = empty();
-        if(Flags.eCode) {
+        if(eCode) {
           l = append(makeFunctionBeginAST,l);
           l = append(`LocalVariable(),l);
           l = append(`EndLocalVariable(),l);
@@ -209,7 +226,7 @@ public class TomCompiler extends TomBase implements TomTask {
 
       Match(SubjectList(l1),PatternList(l2), matchOption@Option(list))  -> {
         Option orgTrack = findOriginTracking(list);
-        if(Flags.debugMode) {
+        if(debugMode) {
           debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
         }
         TomList newPatternList = empty();
@@ -235,7 +252,7 @@ public class TomCompiler extends TomBase implements TomTask {
                     cond = `And(equality,cond);
                   }
                   TomList elsePart = empty();
-                  if(Flags.debugMode) {
+                  if(debugMode) {
                     TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.linearizationFail(\""+debugKey+"\");\n");
                     elsePart   = `cons(InstructionToTomTerm(Action(cons(TargetLanguageToTomTerm(tl), empty()))), empty());
                   }
@@ -525,7 +542,4 @@ public class TomCompiler extends TomBase implements TomTask {
     return newList;
   }
   
-} // end of class
-  
-                  
-    
+  } //class TomCompiler
