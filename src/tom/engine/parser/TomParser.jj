@@ -141,19 +141,16 @@ public class TomParser extends TomTask {
   		environment().setTerm(parsedTerm);
       
     } catch (TokenMgrError e) {
-  	  String msg = "Parsing exception catched in file '"+currentFile+"'\n" + e.getMessage();
-      addError(msg, currentFile,  getLine(), TomMessage.TOM_ERROR);
+      addError(TomMessage.getString("TokenMgrError"), new Object[]{currentFile, e.getMessage()}, currentFile,  getLine(), TomMessage.TOM_ERROR);
   	} catch (TomIncludeException e) {
   	  addError(e.getMessage(), currentFile,  getLine(), TomMessage.TOM_ERROR);
   	} catch (TomException e) {
   	  addError(e.getMessage(), currentFile,  getLine(), TomMessage.TOM_ERROR);
     } catch (ParseException e) {
-  	  String msg = "Parsing exception catched in file '"+currentFile+"'\n" + e.getMessage();
-      addError(msg, currentFile, getLine(), TomMessage.TOM_ERROR);
+      addError(TomMessage.getString("TokenMgrError"), new Object[]{currentFile, e.getMessage()}, currentFile, getLine(), TomMessage.TOM_ERROR);
   	} catch (Exception e) {
-  	  String msg = "Unhandled exception occurs during parsing: "+e.getMessage();
       e.printStackTrace();
-  	  addError(msg, currentFile, 0, TomMessage.TOM_ERROR);
+  	  addError(TomMessage.getString("UnhandledException"), new Object[]{currentFile, e.getMessage()}, currentFile, 0, TomMessage.TOM_ERROR);
   	}
   }
   
@@ -238,7 +235,7 @@ public class TomParser extends TomTask {
       file = new File(fileName);
       if(file.isAbsolute()) {
         if (!file.exists()) {
-	      	String msg = "Included file '" + fileName + "' not found at line "+getLine()+" in file '"+currentFile+"'";
+	      	String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
   	      throw new TomIncludeException(msg);
   	    }
       } else {
@@ -255,18 +252,18 @@ public class TomParser extends TomTask {
     	      found = file.exists();
     	    }
        	  if(!found) {
-       	 		String msg = "Included file '" + fileName + "' not found at line "+getLine()+" in file '"+currentFile+"'";
-          	throw new TomIncludeException(msg);
+       	 		String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
+            throw new TomIncludeException(msg);
         	}
         }
       }
       fileAbsoluteName = file.getAbsolutePath();
       if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
-        String msg = "Included file '" + fileAbsoluteName + "' found at line "+getLine()+" in file '"+currentFile+"' forms a cycle";
-        throw new TomIncludeException(msg);
+        String msg = MessageFormat.format(TomMessage.getString("IncludedFileCycle"), new Object[]{fileName, new Integer(getLine()), currentFile});
+  	      throw new TomIncludeException(msg);
       }
       if(TomParser.testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {  	
-      	String msg = "Included file '" + fileAbsoluteName + "' found at line "+getLine()+" in file '"+currentFile+"' has already been parsed";
+      	String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
         throw new TomIncludeException(msg);
       }
         // to get the length of the file
@@ -278,18 +275,12 @@ public class TomParser extends TomTask {
       astTom = tomParser.startParsing();     
       astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
       list.add(astTom);
-    } catch (TokenMgrError e) {
-      String msg = "TokenMgrError occurs in file '" + fileAbsoluteName + "' included in file '"+currentFile+"' at line "+getLine()+" " + e.getMessage();
-      throw new TomException(msg);
-    } catch (ParseException e) {
-      String msg = "ParseException occurs in file '" + fileAbsoluteName + "' included in file '"+currentFile+"' at line "+getLine()+" " + e.getMessage();
-      throw new TomIncludeException(msg);
-    }  catch (IOException e) {
-      String msg = "IOException occurs in parsing file '" + fileAbsoluteName + "' included in file '"+currentFile+"' at line "+getLine()+" " + e.getMessage();
+    } catch (Exception e) {
+      if(e instanceof TomIncludeException) {throw (TomIncludeException)e;}
+      String msg = MessageFormat.format(TomMessage.getString("ErrorWhileIncludindFile"), new Object[]{e.getClass(), fileAbsoluteName, currentFile, new Integer(getLine()), e.getMessage()});
       throw new TomException(msg);
     }
 	}
-
 }
 
 PARSER_END(TomParser)
@@ -1423,7 +1414,7 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
           }
         }
       } catch (TokenMgrError error) {
-        throw new TomException("Invalid backquote term started line "+firstTokenLine+": EOF encountered ");
+        throw new TomException(MessageFormat.format(TomMessage.getString("InvalidBackQuoteTerm"), new Object[]{new Integer(firstTokenLine)}));
       }  
     }
  }
@@ -1470,12 +1461,9 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         Object[] realParams2 =  {new ByteArrayInputStream(vasCode.getBytes())};
         generatedADTName = runMethod.invoke(vasInstance, realParams2);
       } catch (ClassNotFoundException e) {
-        String msg = "You need vas-to-adt to use the %vas construct";
-        System.out.println(e.getMessage());
-        throw new TomException(msg);
+        throw new TomException(TomMessage.getString("VasClassNotFound"));
       } catch (Exception e) {
-        System.out.println(e.getMessage());
-        e.printStackTrace();
+        throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
       }
         // Generated API and Tom File from generated ADT file
       try{
@@ -1503,12 +1491,9 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
           mainMethod.invoke(apigenClass, new Object[]{apigenParamList.toArray(new String[]{})});
         }
       } catch (ClassNotFoundException e) {
-        String msg = "You need apigen to use the %vas construct";
-        System.out.println(e.getMessage());
-        throw new TomException(msg);
+        throw new TomException(TomMessage.getString("ApigenClassNotFound"));
       } catch (Exception e) {
-        System.out.println(e.getMessage());
-        e.printStackTrace();
+        throw new TomException(MessageFormat.format(TomMessage.getString("ApigenInvocationIssue"), new Object[]{e.getMessage()}));
       }
 
 				// Simulate the inclusion of generated Tom file
@@ -1524,8 +1509,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
       try {
         fileName = file.getCanonicalPath();
 	    } catch (IOException e) {
-	    	String msg = "Included file '" + fileName + "' not found at line "+getLine()+" in file '"+currentFile+"' caused an IOException";
-        throw new TomIncludeException(msg);
+        throw new TomIncludeException(MessageFormat.format(TomMessage.getString(""), new Object[]{fileName, currentFile, e.getMessage()}));
 	    } 
 	    includeFile(fileName, list);
     }

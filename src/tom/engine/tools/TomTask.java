@@ -111,5 +111,10 @@ public abstract class TomTask extends TomBase {
     TomError err = tsf().makeTomError_Error(msg,file,line,level);
     environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
   }
+  
+  public void addError(String msg, Object[] args, String file, int line, int level) {
+    TomError err = tsf().makeTomError_Error(MessageFormat.format(msg, args), file, line, level);
+    environment().setErrors(tsf().makeTomErrorList(err, environment().getErrors()));
+  }
 		
 }
