@@ -9,8 +9,8 @@ STYLESDIR = ${WWWDIR}/styles
 STYLES = mainstyle.css
 
 www:
-	cp ${STYLES} ${STYLESDIR}
-	chmod 666 ${STYLESDIR}/*.css
+	chmod 666 ${STYLES}
+	scp ${STYLES} ${LORIAUSER}@loria.loria.fr:${STYLESDIR}
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
         done
