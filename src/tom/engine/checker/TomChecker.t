@@ -964,13 +964,18 @@ public class TomChecker extends TomBase {
     OptionList options = tsf().makeOptionList_EmptyOptionList();
     %match(TomTerm lhs) {
       appl@Appl(Option(optionList),Name(name), args) -> {
-        // No alone variable noor simple constructor
+        // No alone variable nor simple constructor
         if( args.isEmpty() && !hasConstructor(optionList)) {
           Integer line = findOriginTrackingLine(optionList);
           messageRuleErrorVariable(name, line);
         }
         checkSyntax(appl);
           // lhs outermost symbol shall have a corresponding make
+        TomSymbol symb = symbolTable().getSymbol(name);
+        if (symb == null) {
+          messageRuleErrorUnknownSymbol(name);
+          return methodName;
+        }
         if ( !findMakeDeclOrDefSymbol(symbolTable().getSymbol(name).getOption().getOptionList())) {
           messageNoMakeForSymbol(name, optionList);
         }
@@ -997,6 +1002,12 @@ public class TomChecker extends TomBase {
     return methodName;
   }
 
+  private void messageRuleErrorUnknownSymbol(String symbolName) {
+    Integer line = currentTomStructureOrgTrack.getLine();
+    String s = "Symbol '" +symbolName+ "' has no been declared in rule declared line "+line;
+    messageError(line,s); 
+  }
+  
   private void messageNoMakeForSymbol(String name, OptionList optionList) {
     Integer declLine = currentTomStructureOrgTrack.getLine();
     Integer line = findOriginTrackingLine(optionList);
