@@ -4,14 +4,18 @@ Main author and developer:
 
 Main contributors:
     Julien Guyon              e-mail: Julien.Guyon@loria.fr
+		Anne-Claire Lonchamp			e-mail: Anne-Claire.Lonchamp@loria.fr
     Antoine Reilles           e-mail: Antoine.Reilles@loria.fr
+    Bertrand Tavernier        CRIL Technology
 
 Other contributors:
-    Gregory Andrien           ESIAL's student
-    Guillaume Darmont         e-mail: Guillaume.Darmont@free.fr
-    Pierre Henninger          ESIAL's student
-    Stephane Hrvatin          e-mail: watin@free.fr
-    Christophe Ringeissen     e-mail: Christophe.Ringeissen@loria.fr
-    Bertrand Tavernier        CRIL Technology
-    Marian Vittek             e-mail: vittek@guma.ii.fmph.uniba.sk
+    Gregory Andrien           Plugin-Platform
+		Mark van den Brand				Discussions
+    Guillaume Darmont         XML extension
+    Stephane Hrvatin          Antlr based parser
+    Christophe Ringeissen     Initial design of Tom
+		Jurgen Vinju							Many discussions and ApiGen integration
+		Patrick Viry							Discussions and backquote notation
+    Eelco Visser							Discussions and %match construct
+    Marian Vittek             Initial design of Tom
 
