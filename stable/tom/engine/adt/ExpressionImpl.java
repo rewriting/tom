@@ -39,11 +39,11 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
       return tmp;
     }
 
-    if ((tmp = Expression_TrueGL.fromTerm(trm)) != null) {
+    if ((tmp = Expression_TrueTL.fromTerm(trm)) != null) {
       return tmp;
     }
 
-    if ((tmp = Expression_FalseGL.fromTerm(trm)) != null) {
+    if ((tmp = Expression_FalseTL.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -119,12 +119,12 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isTrueGL()
+  public boolean isTrueTL()
   {
     return false;
   }
 
-  public boolean isFalseGL()
+  public boolean isFalseTL()
   {
     return false;
   }

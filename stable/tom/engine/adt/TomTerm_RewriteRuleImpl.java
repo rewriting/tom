@@ -12,6 +12,7 @@ extends TomTerm
   }
   private static int index_lhs = 0;
   private static int index_rhs = 1;
+  private static int index_orgTrack = 2;
 
   public shared.SharedObject duplicate() {
     TomTerm_RewriteRule clone = new TomTerm_RewriteRule();
@@ -24,7 +25,7 @@ extends TomTerm
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("RewriteRule(<term>,<term>)");
+    pattern = getStaticFactory().parse("RewriteRule(<term>,<term>,<term>)");
   }
 
 
@@ -33,7 +34,7 @@ extends TomTerm
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_RewriteRule(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)));
+      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_RewriteRule(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), Option.fromTerm( (aterm.ATerm) children.get(2)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -53,6 +54,11 @@ extends TomTerm
   }
 
   public boolean hasRhs()
+  {
+    return true;
+  }
+
+  public boolean hasOrgTrack()
   {
     return true;
   }
@@ -78,6 +84,16 @@ extends TomTerm
     return (TomTerm) super.setArgument(_rhs, index_rhs);
   }
 
+  public Option getOrgTrack()
+  {
+    return (Option) this.getArgument(index_orgTrack) ;
+  }
+
+  public TomTerm setOrgTrack(Option _orgTrack)
+  {
+    return (TomTerm) super.setArgument(_orgTrack, index_orgTrack);
+  }
+
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
@@ -90,6 +106,11 @@ extends TomTerm
           throw new RuntimeException("Argument 1 of a TomTerm_RewriteRule should have type TomTerm");
         }
         break;
+      case 2:
+        if (! (arg instanceof Option)) { 
+          throw new RuntimeException("Argument 2 of a TomTerm_RewriteRule should have type Option");
+        }
+        break;
       default: throw new RuntimeException("TomTerm_RewriteRule does not have an argument at " + i );
     }
     return super.setArgument(arg, i);
@@ -99,6 +120,7 @@ extends TomTerm
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
     int b = 0x9e3779b9;
+    a += (getArgument(2).hashCode() << 16);
     a += (getArgument(1).hashCode() << 8);
     a += (getArgument(0).hashCode() << 0);
 

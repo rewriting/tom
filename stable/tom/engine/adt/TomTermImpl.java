@@ -155,7 +155,7 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
-    if ((tmp = TomTerm_GLVar.fromTerm(trm)) != null) {
+    if ((tmp = TomTerm_TLVar.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -264,10 +264,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     }
 
     if ((tmp = TomTerm_NamedBlock.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Line.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -440,7 +436,7 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isGLVar()
+  public boolean isTLVar()
   {
     return false;
   }
@@ -580,11 +576,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isLine()
-  {
-    return false;
-  }
-
   public boolean isDotTerm()
   {
     return false;
@@ -685,6 +676,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean hasOrgTrack()
+  {
+    return false;
+  }
+
   public boolean hasTermList()
   {
     return false;
@@ -751,11 +747,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasBlockName()
-  {
-    return false;
-  }
-
-  public boolean hasString()
   {
     return false;
   }
@@ -956,6 +947,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Rhs");
   }
 
+  public Option getOrgTrack()
+  {
+     throw new RuntimeException("This TomTerm has no OrgTrack");
+  }
+
+  public TomTerm setOrgTrack(Option _orgTrack)
+  {
+     throw new RuntimeException("This TomTerm has no OrgTrack");
+  }
+
   public TomTerm getTermList()
   {
      throw new RuntimeException("This TomTerm has no TermList");
@@ -1094,16 +1095,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setBlockName(String _blockName)
   {
      throw new RuntimeException("This TomTerm has no BlockName");
-  }
-
-  public String getString()
-  {
-     throw new RuntimeException("This TomTerm has no String");
-  }
-
-  public TomTerm setString(String _string)
-  {
-     throw new RuntimeException("This TomTerm has no String");
   }
 
   public TomTerm getKid2()

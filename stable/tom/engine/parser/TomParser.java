@@ -302,7 +302,7 @@ public class TomParser implements TomParserConstants {
   Token type,name;
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
-        list.add(tsf().makeTomTerm_GLVar(
+        list.add(tsf().makeTomTerm_TLVar(
                    name.image,
                    tsf().makeTomType_TomTypeAlone(type.image)));
   }
@@ -607,10 +607,12 @@ public class TomParser implements TomParserConstants {
       lhs = Term();
       jj_consume_token(TOM_ARROW);
       rhs = PlainTerm(null);
+      Option orgTrack2 = ast().makeOriginTracking("Rule",getLine());
       environment.getStatistics().numberRuleRulesRecognized++;
       ruleList.add(tsf().makeTomTerm_RewriteRule(
                      tsf().makeTomTerm_Term(lhs),
-                     tsf().makeTomTerm_Term(rhs)));
+                     tsf().makeTomTerm_Term(rhs),
+                     orgTrack2));
     }
     jj_consume_token(TOM_RBRACE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
@@ -1372,6 +1374,7 @@ public class TomParser implements TomParserConstants {
   TomType type;
   TomName name;
   Option orgTrack;
+  int nbTypes = types.size();
     jj_consume_token(TOM_MAKE);
        orgTrack = ast().makeOriginTracking("make", getLine());
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1384,6 +1387,10 @@ public class TomParser implements TomParserConstants {
         case TOM_LPAREN:
           jj_consume_token(TOM_LPAREN);
           nameArg = jj_consume_token(TOM_IDENTIFIER);
+         if( index>=nbTypes ) {
+           System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occurs at line "+getLine()+"\n Parsing aborted");
+           System.exit(1);
+         }
          type = (TomType)types.get(index++);
          name = tsf().makeTomName_Name(nameArg.image);
          Option info1 = ast().makeOriginTracking(nameArg.image,getLine());
@@ -1401,6 +1408,10 @@ public class TomParser implements TomParserConstants {
             }
             jj_consume_token(TOM_COMMA);
             nameArg = jj_consume_token(TOM_IDENTIFIER);
+          if( index>=nbTypes ) {
+            System.out.println(" Bad number of arguments in 'make(...)' method: more arguments found than "+nbTypes+" as expected in term definition.\n Error occurs at line "+getLine()+"\n Parsing aborted");
+            System.exit(1);
+          }
           type = (TomType)types.get(index++);
           name = tsf().makeTomName_Name(nameArg.image);
           Option info2 = ast().makeOriginTracking(nameArg.image,getLine());
@@ -1559,26 +1570,10 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
-  final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_COLON)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_2() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_STAR)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_3() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_AT)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1591,10 +1586,10 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_1() {
+  final private boolean jj_3_3() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1603,6 +1598,22 @@ public class TomParser implements TomParserConstants {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_4() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

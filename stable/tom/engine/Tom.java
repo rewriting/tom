@@ -35,7 +35,7 @@ import jtom.tools.*;
 import jtom.compiler.*;
 import jtom.checker.*;
 import jtom.parser.*;
-import jtom.verifier.*;
+import jtom.backend.*;
 import jtom.exception.*;
 import jtom.adt.*;
 
@@ -57,7 +57,7 @@ public class Tom {
     System.out.println("\t--doCompile: start after type-checking");
     System.out.println("\t--intermediate: generate intermediate files");
     System.out.println("\t--version: print version");
-    System.out.println("\t--noVerify: do not verify correctness");
+    System.out.println("\t--noCheck: do not verify correctness");
     System.out.println("\t--noWarning: do not print nay warning");
     System.out.println("\t--lazyType: use universal type");
     System.out.println("\t--demo: run demo mode");
@@ -103,15 +103,15 @@ public class Tom {
             Flags.supportedBlock = false;
             outputSuffix = ".e";
           } else if(args[i].equals("--doCompile")) {
+            Flags.doOnlyCompile = true;
             Flags.doParse = false;
             Flags.doExpand = false;
-            Flags.doCheck = false;
           } else if(args[i].equals("--intermediate")) {
             Flags.intermediate = true;
           } else if(args[i].equals("--noWarning")) {
             Flags.noWarning = true;
-          } else if(args[i].equals("--noVerify")) {
-            Flags.doVerify = false;
+          } else if(args[i].equals("--noCheck")) {
+            Flags.doCheck = false;
           } else if(args[i].equals("--strictType")) {
             System.out.println("Warning: --strictType is now set by default");
             Flags.strictType = true;
@@ -163,7 +163,7 @@ public class Tom {
 
     if(Flags.doParse) {
       inputFileName = fileName + inputSuffix;
-    } else if(Flags.doCompile) {
+    } else if(Flags.doOnlyCompile) {
       inputFileName = fileName + checkedSuffix;
     }
 
@@ -184,7 +184,7 @@ public class Tom {
     TomTerm checkedTerm  = null;
     TomTerm compiledTerm = null;
 
-    if(Flags.doParse && Flags.doExpand && Flags.doCheck) {
+    if(Flags.doParse && Flags.doExpand) {
       try {
           // to get the length of the file
         File file = new File(inputFileName);
@@ -208,26 +208,26 @@ public class Tom {
           generateOutput(fileName + parsedTableSuffix,symbolTable.toTerm());
         }
         
-        TomVerifier  tomVerifier = new TomVerifier(environment);
+        TomChecker  tomChecker = new TomChecker(environment);
         startChrono();
-        tomVerifier.verify(parsedTerm);
+        tomChecker.checkSyntax(parsedTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM verification phase " + getChrono());
+        if(Flags.verbose) System.out.println("TOM syntax checking phase " + getChrono());
 
         
-	TomChecker tomChecker = new TomChecker(environment);
+	TomExpander tomExpander = new TomExpander(environment);
         startChrono();
-        expandedTerm = tomChecker.expand(parsedTerm);
+        expandedTerm = tomExpander.expandSyntax(parsedTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM expansion phase " + getChrono());
+        if(Flags.verbose) System.out.println("TOM syntax expansion phase " + getChrono());
         if(Flags.intermediate) {
           generateOutput(fileName + expandedSuffix,expandedTerm);
         }
      
         startChrono();
         TomTerm context = null;
-        tomChecker.updateSymbolPass1();
-        checkedTerm  = tomChecker.pass1(context, expandedTerm);
+        tomExpander.updateSymbol();
+        checkedTerm  = tomExpander.pass1(context, expandedTerm);
         stopChrono();
         if(Flags.verbose) System.out.println("TOM checking phase " + getChrono());
         if(Flags.intermediate) {
@@ -252,7 +252,7 @@ public class Tom {
         return;
       } catch(CheckErrorException e2) {
         System.out.println(e2);
-        System.out.println("\nTom Verifier:  Encountered errors during verification phase.");
+        System.out.println("\nTom Checker:  Encountered errors during verification phase.");
         System.out.println("No file generated.");
         return;
       } catch(TomException e3) {
@@ -280,7 +280,7 @@ public class Tom {
     
     if(Flags.doCompile) {
       try {
-        if(!Flags.doCheck) {
+        if(Flags.doOnlyCompile) {
           checkedTerm = (TomTerm) tomSignatureFactory.readFromTextFile(input);
         }
 
@@ -296,7 +296,7 @@ public class Tom {
         if(Flags.verbose) System.out.println("TOM compilation phase " + getChrono());
         if(Flags.intermediate) generateOutput(fileName + compiledSuffix,compiledTerm);
 
-	TomGenerator tomGenerator = new TomGenerator(environment);
+	jtom.backend.TomGenerator tomGenerator = new jtom.backend.TomGenerator(environment);
         startChrono();
         int defaultDeep = 2;
         Writer writer = new BufferedWriter(new OutputStreamWriter(

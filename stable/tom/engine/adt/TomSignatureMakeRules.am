@@ -40,8 +40,8 @@ Expression.java ExpressionImpl.java \
 Expression_TomTermToExpressionImpl.java Expression_TomTermToExpression.java\
 Expression_NotImpl.java Expression_Not.java\
 Expression_AndImpl.java Expression_And.java\
-Expression_TrueGLImpl.java Expression_TrueGL.java\
-Expression_FalseGLImpl.java Expression_FalseGL.java\
+Expression_TrueTLImpl.java Expression_TrueTL.java\
+Expression_FalseTLImpl.java Expression_FalseTL.java\
 Expression_IsEmptyListImpl.java Expression_IsEmptyList.java\
 Expression_IsEmptyArrayImpl.java Expression_IsEmptyArray.java\
 Expression_EqualFunctionSymbolImpl.java Expression_EqualFunctionSymbol.java\
@@ -107,7 +107,7 @@ TomTerm_TermListImpl.java TomTerm_TermList.java
 TomSignatureAPI2=\
 TomTerm_TermImpl.java TomTerm_Term.java\
 TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
-TomTerm_GLVarImpl.java TomTerm_GLVar.java\
+TomTerm_TLVarImpl.java TomTerm_TLVar.java\
 TomTerm_VariableImpl.java TomTerm_Variable.java\
 TomTerm_VariableStarImpl.java TomTerm_VariableStar.java\
 TomTerm_PlaceholderImpl.java TomTerm_Placeholder.java\
@@ -135,7 +135,6 @@ TomTerm_ReturnImpl.java TomTerm_Return.java\
 TomTerm_OpenBlockImpl.java TomTerm_OpenBlock.java\
 TomTerm_CloseBlockImpl.java TomTerm_CloseBlock.java\
 TomTerm_NamedBlockImpl.java TomTerm_NamedBlock.java\
-TomTerm_LineImpl.java TomTerm_Line.java\
 TomTerm_DotTermImpl.java TomTerm_DotTerm.java\
 TomName.java TomNameImpl.java \
 TomName_NameImpl.java TomName_Name.java\

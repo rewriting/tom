@@ -75,10 +75,10 @@ public class TomSignatureFactory extends PureFactory
   private Expression protoExpression_Not;
   private aterm.AFun funExpression_And;
   private Expression protoExpression_And;
-  private aterm.AFun funExpression_TrueGL;
-  private Expression protoExpression_TrueGL;
-  private aterm.AFun funExpression_FalseGL;
-  private Expression protoExpression_FalseGL;
+  private aterm.AFun funExpression_TrueTL;
+  private Expression protoExpression_TrueTL;
+  private aterm.AFun funExpression_FalseTL;
+  private Expression protoExpression_FalseTL;
   private aterm.AFun funExpression_IsEmptyList;
   private Expression protoExpression_IsEmptyList;
   private aterm.AFun funExpression_IsEmptyArray;
@@ -191,8 +191,8 @@ public class TomSignatureFactory extends PureFactory
   private TomTerm protoTomTerm_Term;
   private aterm.AFun funTomTerm_PatternAction;
   private TomTerm protoTomTerm_PatternAction;
-  private aterm.AFun funTomTerm_GLVar;
-  private TomTerm protoTomTerm_GLVar;
+  private aterm.AFun funTomTerm_TLVar;
+  private TomTerm protoTomTerm_TLVar;
   private aterm.AFun funTomTerm_Variable;
   private TomTerm protoTomTerm_Variable;
   private aterm.AFun funTomTerm_VariableStar;
@@ -247,8 +247,6 @@ public class TomSignatureFactory extends PureFactory
   private TomTerm protoTomTerm_CloseBlock;
   private aterm.AFun funTomTerm_NamedBlock;
   private TomTerm protoTomTerm_NamedBlock;
-  private aterm.AFun funTomTerm_Line;
-  private TomTerm protoTomTerm_Line;
   private aterm.AFun funTomTerm_DotTerm;
   private TomTerm protoTomTerm_DotTerm;
   private aterm.AFun funTomName_Name;
@@ -436,13 +434,13 @@ public class TomSignatureFactory extends PureFactory
     funExpression_And = makeAFun("Expression_And", 2, false);
     protoExpression_And = new Expression_And();
 
-    Expression_TrueGL.initializePattern();
-    funExpression_TrueGL = makeAFun("Expression_TrueGL", 0, false);
-    protoExpression_TrueGL = new Expression_TrueGL();
+    Expression_TrueTL.initializePattern();
+    funExpression_TrueTL = makeAFun("Expression_TrueTL", 0, false);
+    protoExpression_TrueTL = new Expression_TrueTL();
 
-    Expression_FalseGL.initializePattern();
-    funExpression_FalseGL = makeAFun("Expression_FalseGL", 0, false);
-    protoExpression_FalseGL = new Expression_FalseGL();
+    Expression_FalseTL.initializePattern();
+    funExpression_FalseTL = makeAFun("Expression_FalseTL", 0, false);
+    protoExpression_FalseTL = new Expression_FalseTL();
 
     Expression_IsEmptyList.initializePattern();
     funExpression_IsEmptyList = makeAFun("Expression_IsEmptyList", 1, false);
@@ -655,7 +653,7 @@ public class TomSignatureFactory extends PureFactory
     protoTomTerm_RuleSet = new TomTerm_RuleSet();
 
     TomTerm_RewriteRule.initializePattern();
-    funTomTerm_RewriteRule = makeAFun("TomTerm_RewriteRule", 2, false);
+    funTomTerm_RewriteRule = makeAFun("TomTerm_RewriteRule", 3, false);
     protoTomTerm_RewriteRule = new TomTerm_RewriteRule();
 
     TomTerm_SubjectList.initializePattern();
@@ -678,9 +676,9 @@ public class TomSignatureFactory extends PureFactory
     funTomTerm_PatternAction = makeAFun("TomTerm_PatternAction", 2, false);
     protoTomTerm_PatternAction = new TomTerm_PatternAction();
 
-    TomTerm_GLVar.initializePattern();
-    funTomTerm_GLVar = makeAFun("TomTerm_GLVar", 2, false);
-    protoTomTerm_GLVar = new TomTerm_GLVar();
+    TomTerm_TLVar.initializePattern();
+    funTomTerm_TLVar = makeAFun("TomTerm_TLVar", 2, false);
+    protoTomTerm_TLVar = new TomTerm_TLVar();
 
     TomTerm_Variable.initializePattern();
     funTomTerm_Variable = makeAFun("TomTerm_Variable", 3, false);
@@ -789,10 +787,6 @@ public class TomSignatureFactory extends PureFactory
     TomTerm_NamedBlock.initializePattern();
     funTomTerm_NamedBlock = makeAFun("TomTerm_NamedBlock", 2, false);
     protoTomTerm_NamedBlock = new TomTerm_NamedBlock();
-
-    TomTerm_Line.initializePattern();
-    funTomTerm_Line = makeAFun("TomTerm_Line", 1, false);
-    protoTomTerm_Line = new TomTerm_Line();
 
     TomTerm_DotTerm.initializePattern();
     funTomTerm_DotTerm = makeAFun("TomTerm_DotTerm", 2, false);
@@ -1225,8 +1219,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public Option makeOption_OriginTracking(TomName _astName, TomTerm _line) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_astName, _line};
+  public Option makeOption_OriginTracking(TomName _astName, Integer _line) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_astName, makeInt(_line.intValue())};
     return makeOption_OriginTracking( funOption_OriginTracking, args, empty);
   }
 
@@ -1278,28 +1272,28 @@ public class TomSignatureFactory extends PureFactory
     return makeExpression_And( funExpression_And, args, empty);
   }
 
-  protected Expression makeExpression_TrueGL(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoExpression_TrueGL) {
-      protoExpression_TrueGL.initHashCode(annos,fun,args);
-      return (Expression) build(protoExpression_TrueGL);
+  protected Expression makeExpression_TrueTL(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoExpression_TrueTL) {
+      protoExpression_TrueTL.initHashCode(annos,fun,args);
+      return (Expression) build(protoExpression_TrueTL);
     }
   }
 
-  public Expression makeExpression_TrueGL() {
+  public Expression makeExpression_TrueTL() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeExpression_TrueGL( funExpression_TrueGL, args, empty);
+    return makeExpression_TrueTL( funExpression_TrueTL, args, empty);
   }
 
-  protected Expression makeExpression_FalseGL(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoExpression_FalseGL) {
-      protoExpression_FalseGL.initHashCode(annos,fun,args);
-      return (Expression) build(protoExpression_FalseGL);
+  protected Expression makeExpression_FalseTL(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoExpression_FalseTL) {
+      protoExpression_FalseTL.initHashCode(annos,fun,args);
+      return (Expression) build(protoExpression_FalseTL);
     }
   }
 
-  public Expression makeExpression_FalseGL() {
+  public Expression makeExpression_FalseTL() {
     aterm.ATerm[] args = new aterm.ATerm[] {};
-    return makeExpression_FalseGL( funExpression_FalseGL, args, empty);
+    return makeExpression_FalseTL( funExpression_FalseTL, args, empty);
   }
 
   protected Expression makeExpression_IsEmptyList(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -1909,8 +1903,8 @@ public class TomSignatureFactory extends PureFactory
     }
   }
 
-  public TomTerm makeTomTerm_RewriteRule(TomTerm _lhs, TomTerm _rhs) {
-    aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs};
+  public TomTerm makeTomTerm_RewriteRule(TomTerm _lhs, TomTerm _rhs, Option _orgTrack) {
+    aterm.ATerm[] args = new aterm.ATerm[] {_lhs, _rhs, _orgTrack};
     return makeTomTerm_RewriteRule( funTomTerm_RewriteRule, args, empty);
   }
 
@@ -1974,16 +1968,16 @@ public class TomSignatureFactory extends PureFactory
     return makeTomTerm_PatternAction( funTomTerm_PatternAction, args, empty);
   }
 
-  protected TomTerm makeTomTerm_GLVar(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_GLVar) {
-      protoTomTerm_GLVar.initHashCode(annos,fun,args);
-      return (TomTerm) build(protoTomTerm_GLVar);
+  protected TomTerm makeTomTerm_TLVar(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
+    synchronized (protoTomTerm_TLVar) {
+      protoTomTerm_TLVar.initHashCode(annos,fun,args);
+      return (TomTerm) build(protoTomTerm_TLVar);
     }
   }
 
-  public TomTerm makeTomTerm_GLVar(String _strName, TomType _astType) {
+  public TomTerm makeTomTerm_TLVar(String _strName, TomType _astType) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_strName, 0, true)), _astType};
-    return makeTomTerm_GLVar( funTomTerm_GLVar, args, empty);
+    return makeTomTerm_TLVar( funTomTerm_TLVar, args, empty);
   }
 
   protected TomTerm makeTomTerm_Variable(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
@@ -2308,18 +2302,6 @@ public class TomSignatureFactory extends PureFactory
   public TomTerm makeTomTerm_NamedBlock(String _blockName, TomList _instList) {
     aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_blockName, 0, true)), _instList};
     return makeTomTerm_NamedBlock( funTomTerm_NamedBlock, args, empty);
-  }
-
-  protected TomTerm makeTomTerm_Line(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {
-    synchronized (protoTomTerm_Line) {
-      protoTomTerm_Line.initHashCode(annos,fun,args);
-      return (TomTerm) build(protoTomTerm_Line);
-    }
-  }
-
-  public TomTerm makeTomTerm_Line(String _string) {
-    aterm.ATerm[] args = new aterm.ATerm[] {makeAppl(makeAFun(_string, 0, true))};
-    return makeTomTerm_Line( funTomTerm_Line, args, empty);
   }
 
   protected TomTerm makeTomTerm_DotTerm(aterm.AFun fun, aterm.ATerm[] args, aterm.ATermList annos) {

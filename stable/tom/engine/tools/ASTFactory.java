@@ -154,7 +154,7 @@ public class ASTFactory {
   }
 
   public Option makeOriginTracking( String name, String line ) {
-    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), tsf().makeTomTerm_Line(line));
+    return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), new Integer(line) );
   }
 
   public Option makeLRParen( String name ) {
