@@ -822,7 +822,7 @@ public class TomCompiler extends TomBase {
       return false;
     }
     %match(TomSymbol subject) {
-      Symbol(Name(name1),TypesToType(typeList,type1),Option(optionList),tlCode1) -> {
+      Symbol(Name(name1),TypesToType(typeList,type1),_,Option(optionList),tlCode1) -> {
         while(!optionList.isEmptyOptionList()) {
           Option opt = optionList.getHead();
           %match(Option opt) {
@@ -932,11 +932,12 @@ public class TomCompiler extends TomBase {
             declarationList      = append(declaration,declarationList);
             
             Expression getSubtermAST;
-            TomTerm slotName       = getSlotName(termOptionList, indexSubterm);
+
+            TomName slotName = getSlotName(tomSymbol, indexSubterm);
             if(slotName == null) {
-              getSubtermAST      = `GetSubterm( subjectVariableAST,makeNumber(indexSubterm));
+              getSubtermAST = `GetSubterm(subjectVariableAST,makeNumber(indexSubterm));
             } else {
-              getSubtermAST = `GetSlot(termNameAST,slotName.getString(), subjectVariableAST);
+              getSubtermAST = `GetSlot(termNameAST,slotName.getString(),subjectVariableAST);
             }
             
             TomTerm assignement  = `Assign(newVariableAST,getSubtermAST);

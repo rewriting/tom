@@ -506,10 +506,10 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
     LOOKAHEAD(2)
     name = <TOM_IDENTIFIER> <TOM_LBRACKET>
     [ slotName = <TOM_IDENTIFIER> <TOM_EQUAL> term = Term()
-      { list.add(tsf().makeTomTerm_Pair(tsf().makeTomTerm_SlotName(slotName.image),term)); }
+      { list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term)); }
       ( <TOM_COMMA>
         slotName = <TOM_IDENTIFIER> <TOM_EQUAL>  term = Term()
-        { list.add(tsf().makeTomTerm_Pair(tsf().makeTomTerm_SlotName(slotName.image),term)); }
+        { list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term)); }
       )*
     ]
     <TOM_RBRACKET>
@@ -748,12 +748,15 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
   ArrayList options = new ArrayList();
-  ArrayList slotList = new ArrayList();
+  ArrayList nameList = new ArrayList();
+  Map mapNameDecl = new HashMap();
   TomName astName;
   TomSymbol astSymbol;
   String stringSlotName;
   TargetLanguage tlFsym;
   Declaration attribute;
+  TomType tomType;
+  SlotList slotList = tsf().makeSlotList_EmptySlotList();
 }
 {
   <OPERATOR> /* switch to TOM mode */
@@ -768,45 +771,59 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
 
       { stringSlotName = ""; }
       [ LOOKAHEAD(2)
-        slotName = <TOM_IDENTIFIER> <TOM_COLON>
-        { stringSlotName = slotName.image; }
+        slotName = <TOM_IDENTIFIER> <TOM_COLON> { stringSlotName = slotName.image; }
       ]
-      { slotList.add(tsf().makeTomTerm_SlotName(stringSlotName)); }
-      
       typeArg = <TOM_IDENTIFIER>
-      {   
-	  types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+      {
+        nameList.add(ast().makeName(stringSlotName)); 
+        types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
       }
       ( <TOM_COMMA>
         { stringSlotName = ""; }
         [ LOOKAHEAD(2)
-          slotName = <TOM_IDENTIFIER> <TOM_COLON>
-          { stringSlotName = slotName.image; }
+          slotName = <TOM_IDENTIFIER> <TOM_COLON> { stringSlotName = slotName.image; }
         ]
-        { slotList.add(tsf().makeTomTerm_SlotName(stringSlotName)); }
         typeArg = <TOM_IDENTIFIER>
-        { types.add(tsf().makeTomType_TomTypeAlone(typeArg.image)); } )*
+        {
+          nameList.add(ast().makeName(stringSlotName));
+	  types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+        }
+      )*
       <TOM_RPAREN> ]
 
   <TOM_LBRACE>
     tlFsym = KeywordFsym()
     {
       nameMethod = name.image;				
-      if(!slotList.isEmpty()) {
-        options.add(ast().makeSlotList(slotList));
-      }
       astName   = tsf().makeTomName_Name(name.image);
     }
     ( 
       attribute = KeywordMake(name.image,tsf().makeTomType_TomTypeAlone(type.image),types)  { options.add(attribute); }
-    | attribute = KeywordGetSlot(astName, type.image)  { options.add(attribute); }
+    | attribute = KeywordGetSlot(astName, type.image)  { mapNameDecl.put(attribute.getSlotName(),attribute); }
     | attribute = KeywordIsFsym(astName, type.image)  { options.add(attribute); }
     )*
   <TOM_RBRACE>
     {
       nameMethod = name.image;
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
+
+      for(int i=nameList.size()-1; i>=0 ; i--) {
+        TomName name1 = (TomName)nameList.get(i);
+        PairNameDecl pair = null;
+        Declaration emptyDeclaration = tsf().makeDeclaration_EmptyDeclaration();
+        if(name1.isEmptyName()) {
+          pair = tsf().makePairNameDecl_Slot(name1,emptyDeclaration);
+        } else {
+          Declaration decl = (Declaration)mapNameDecl.get(name1);
+          if(decl == null) {
+            decl = emptyDeclaration;
+          }
+          pair = tsf().makePairNameDecl_Slot(name1,decl);
+        }
+        slotList = tsf().makeSlotList_ConsSlotList(pair,slotList);
+      }
+      
+      astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_SymbolDecl(astName));
       putSymbol(name.image,astSymbol);
     }
@@ -817,6 +834,7 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
+  SlotList slotList = tsf().makeSlotList_EmptySlotList();
   ArrayList options = new ArrayList();
   TomSymbol astSymbol;
   TomName astName;
@@ -844,7 +862,8 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astName   = tsf().makeTomName_Name(name.image);
-      astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
+      slotList =tsf().makeSlotList_ConsSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_ListSymbolDecl(astName));
       putSymbol(name.image,astSymbol);
     }
@@ -855,6 +874,7 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
+  SlotList slotList = tsf().makeSlotList_EmptySlotList();
   ArrayList options = new ArrayList();
   TomName astName;
   TomSymbol astSymbol;
@@ -882,7 +902,8 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astName   = tsf().makeTomName_Name(name.image);
-      astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
+      slotList =tsf().makeSlotList_ConsSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_ArraySymbolDecl(astName));
       putSymbol(name.image,astSymbol);
     }
@@ -1318,7 +1339,7 @@ Declaration KeywordGetSlot(TomName astName, String typeString) throws TomExcepti
        Option option = ast().makeOption(info);
        return tsf().makeDeclaration_GetSlotDecl(
          astName,
-         tsf().makeTomTerm_SlotName(slotName.image),
+         tsf().makeTomName_Name(slotName.image),
          ast().makeVariable(option,name.image,typeString),
          tlCode, orgTrack);
    }

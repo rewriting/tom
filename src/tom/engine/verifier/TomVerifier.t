@@ -73,6 +73,9 @@ public class TomVerifier extends TomBase {
                 verifyDeclaration(declaration);
                 return false;
               }
+//              BackQuoteTerm[term=t] -> {
+//                System.out.println("Found a backquoteTerm");
+//              }
               _ -> { return true; }
             }
           } else {
@@ -86,13 +89,16 @@ public class TomVerifier extends TomBase {
     /////////////////////////////////
     // MATCH VERIFICATION CONCERNS //
     /////////////////////////////////
-    // Given a subject list, we test number and type of slots found in each pattern
+    // Given a subject list, we test types in match signature and then number and type of slots found in each pattern
   private void verifyMatch(TomList subjectList, TomList patternList) throws TomException {
     ArrayList typeMatchArgs = new ArrayList();
     while( !subjectList.isEmpty() ) {
       TomTerm term = subjectList.getHead();
       %match( TomTerm term ) {
-        GLVar[astType=TomTypeAlone(type)] -> {
+        GLVar(name, TomTypeAlone(type)) -> {
+          if(symbolTable().getType(type) == null) {
+            messageMatchTypeVariableError(name, type);
+          }
           typeMatchArgs.add(type);
         }
       }
@@ -119,7 +125,7 @@ public class TomVerifier extends TomBase {
       TomTerm termAppl = termList.getHead();
       
       %match(TomTerm termAppl) {
-        Appl[option=Option(list), astName=Name[string=name]] -> {
+        Appl[astName=Name[string=name], option=Option(list)] -> {
             //  we test the validity of the current Appl structure
           testApplStructure(termAppl);
           line = findOriginTrackingLine(list);
@@ -135,9 +141,9 @@ public class TomVerifier extends TomBase {
           line = findOriginTrackingLine(name,list);
           messageMatchErrorVariableStar(name, line); 
         }
-        record@RecordAppl(Option(options),Name(name),args) ->{
+        RecordAppl(Option(options),Name(name),args) ->{
             //  we test the validity of the current record structure
-          testRecordStructure(record, options, name, args);
+          testRecordStructure(options, name, args);
           line = findOriginTrackingLine(options);
           nbFoundArgs++;
           foundTypeMatch.add(extractType(symbolTable().getSymbol(name)));
@@ -179,14 +185,15 @@ public class TomVerifier extends TomBase {
       matchBlock: {
         %match(TomTerm currentRule) {
           RewriteRule(Term(lhs),Term(rhs)) -> {
+            statistics().numberRulesTested++;
             if(i == 0) {
                 // update the root of lhs: it becomes a defined symbol
               ast().updateDefinedSymbol(symbolTable(),lhs);
             }
-            verifyNoUnderscoreAndStructureRuleRhs(rhs, true);
+            verifyRhsRuleStructure(rhs, true);
             nameAndType = verifyLhsRuleTypeAndConstructorEgality(lhs, nameAndType, i);
-            verifyLhsAndRhsRuleTypeEgality(rhs, lhs, (String)nameAndType.get(1));
             verifyRuleVariable(lhs,rhs);
+            verifyLhsAndRhsRuleTypeEgality(rhs, lhs, (String)nameAndType.get(1));
             break matchBlock;
           }
           _             -> {
@@ -200,14 +207,14 @@ public class TomVerifier extends TomBase {
     }
   }
   
-  private void verifyNoUnderscoreAndStructureRuleRhs(TomTerm ruleRhs, boolean firstLevel) throws TomException {
+  private void verifyRhsRuleStructure(TomTerm ruleRhs, boolean firstLevel) throws TomException {
     matchBlock: {
       %match(TomTerm ruleRhs) {
         Appl[args=argsList] -> {
           testApplStructureRhsRule(ruleRhs);
           while(!argsList.isEmpty()) {
             TomTerm oneArgs = argsList.getHead();
-            verifyNoUnderscoreAndStructureRuleRhs(oneArgs, false);
+            verifyRhsRuleStructure(oneArgs, false);
             argsList = argsList.getTail();
           }
           break matchBlock;
@@ -248,7 +255,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     %match(TomTerm lhs) {
       Appl[option=Option(optionList),astName=Name[string=name]] -> {
         testApplStructure(lhs);
-        TomType term = typeOut(symbolTable().getSymbol(name));
+        TomType term = getSymbolCodomain(symbolTable().getSymbol(name));
         %match(TomType term) {
           TomTypeAlone[string=t] -> { 
             if ( ruleNumber == 0 ) { 
@@ -259,7 +266,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
             } else { 
                 /* We test type and name constructor egality */
               if ( ( t != nameType.get(1) ) || ( name != nameType.get(0) ) ) {
-                messageErrorRuleTypeAndConstructorEgality(name, (String)nameType.get(0), t, (String)nameType.get(1), optionList);
+                messageRuleErrorTypeAndConstructorEgality(name, (String)nameType.get(0), t, (String)nameType.get(1), optionList);
               }
             }
           }
@@ -270,14 +277,14 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
       }
       VariableStar[option=Option(optionList), astName=Name[string=name1]] -> { 
         String line = findOriginTrackingLine(name1,optionList);
-        messageErrorRuleVariableStar(name1, line); 
+        messageRuleErrorVariableStar(name1, line); 
       }
       Placeholder[option=Option(t)] -> { 
         messageRuleErrorLhsImpossiblePlaceHolder(t); 
       }
       RecordAppl(Option(optionList),Name(name),args) -> {
         testRecordStructure(lhs);
-        TomType term = typeOut(symbolTable().getSymbol(name));
+        TomType term = getSymbolCodomain(symbolTable().getSymbol(name));
         %match(TomType term) {
           TomTypeAlone[string=t] -> { 
             if ( ruleNumber == 0 ) { 
@@ -288,7 +295,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
             } else { 
                 /* We test type and name constructor egality */
               if ( ( t != nameType.get(1) ) || ( name != nameType.get(0) ) ) {
-                messageErrorRuleTypeAndConstructorEgality(name, (String)nameType.get(0), t, (String)nameType.get(1), optionList);
+                messageRuleErrorTypeAndConstructorEgality(name, (String)nameType.get(0), t, (String)nameType.get(1), optionList);
               }
             }
           }
@@ -331,29 +338,28 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
       WE TEST ONLY APPL BECAUSE VAR* AND _ ARE ALREADY CATCH BEFORE
     */
   private void verifyLhsAndRhsRuleTypeEgality(TomTerm rhs, TomTerm lhs, String typeNameOfRule) {
-    statistics().numberRulesTested++;
-    String foundTypeName = "Not found?";
+    String foundTypeName = "Not found";
     %match(TomTerm rhs) {
-      Appl[option=Option(list),astName=Name[string=name1]] -> {
-          /*
-            We look the type of the resulted object of this Appl.
-            If resulted object has no type, typeOut returns EmptyType) (for example
-            if it is a variable).
-          */
-        TomType term = typeOut(symbolTable().getSymbol(name1));
+      Appl(Option(options),Name(name1),argsList) -> {
+          // We look the type of the resulted object of this Appl.
+          //  If resulted object has no type, getSymbolCodomain returns EmptyType) (for example
+          //  if it is a variable).
+        TomType term = getSymbolCodomain(symbolTable().getSymbol(name1));
         %match(TomType term) {
           TomTypeAlone[string=t] -> { foundTypeName = t;}
-          
           EmptyType() -> { 
-              //  we look if an object with name 'name1' exists in lhs and we set its type.
-            TomType typeFind = findTypeOf(name1, lhs);
-            %match(TomType typeFind) {
-              TomTypeAlone[string=t] -> {  foundTypeName = t;}
+              // We look if a variable with name 'name1' exists in lhs and we get its type.
+            if ( !argsList.isEmpty() ) { // it s a variable
+              TomType type = findTypeOf(name1, lhs);
+              System.out.println("findTypeof("+name1+") returns "+type);
+              %match(TomType type) {
+                TomTypeAlone[string=t] -> {  foundTypeName = t;}
+              }
             }
           }
         }
         if ( foundTypeName != typeNameOfRule ) {
-          messageRuleErrorTypeEgality(name1, foundTypeName, typeNameOfRule, list);
+          messageRuleErrorTypeEgality(name1, foundTypeName, typeNameOfRule, options);
         }
       }
     } 
@@ -596,7 +602,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
   }
 
   private void verifyMakeDeclArgs(TomList argsList, int nbMakeArgs, Option orgTrack, String symbType) throws TomException {
-      // we test the necessity to use different names for each variable-paremeter.
+      // we test the necessity to use different names for each variable-parameter.
     ArrayList listVar = new ArrayList();
     int nbArgsFound =0;
     while(!argsList.isEmpty()) {
@@ -624,12 +630,12 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     ////////////////////
   private void testTerm(TomTerm term) throws TomException {
     %match(TomTerm term) {
-      Appl[] -> {
-        testApplStructure(term);
+      Appl(Option(options),Name(name),argsList) -> {
+        testApplStructure(options, name, argsList);
         return;
       }
-      RecordAppl[] -> {
-        testRecordStructure(term);
+      RecordAppl(Option(options),Name(name),argsList) -> {
+        testRecordStructure(options, name, argsList);
         return;
       }
       _ -> {
@@ -646,15 +652,15 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     */
   private void testApplStructure(TomTerm termAppl) throws TomException {
     %match(TomTerm termAppl) {
-      Appl(Option(list),Name[string=name],argsList) -> {
-          testApplStructure(list, name, argsList);
+      Appl(Option(options),Name(name),argsList) -> {
+          testApplStructure(options, name, argsList);
       }
     }
   }
   private void testApplStructureRhsRule(TomTerm termAppl) throws TomException {
     %match(TomTerm termAppl) {
-      Appl(Option(list),Name[string=name],argsList) -> {
-          testApplStructureRhsRule(list, name, argsList);
+      Appl(Option(options),Name(name),argsList) -> {
+          testApplStructureRhsRule(options, name, argsList);
       }
     }
   }
@@ -668,7 +674,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
       messageSymbolError(name, list);
     } else {
         // we extract the needed types for the arguments of this Appl.
-      TomList infoTypeIn = typeIn(symbol);
+      TomList infoTypeIn = getSymbolDomain(symbol);
       arrayOrList = ( isListOperator(symbol) ||  isArrayOperator(symbol) );
         // if arguments are given
       if(!argsList.isEmpty()) {
@@ -690,7 +696,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
           %match(TomTerm term) {
             Appl[astName=Name[string=name1]] -> {
               testApplStructure(term);
-              tabTypeOut[i] = typeOut(symbolTable().getSymbol(name1));
+              tabTypeOut[i] = getSymbolCodomain(symbolTable().getSymbol(name1));
               tabNameOut[i] = name1;
             }
               // If it is an '_' : type and name have no importance
@@ -711,9 +717,9 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
                 messageErrorVariableStar(name1,name,line);
               }
             }
-            record@RecordAppl(Option(options),Name(name2),args) ->{
-              testRecordStructure(record, options, name2, args);
-              tabTypeOut[i] = typeOut(symbolTable().getSymbol(name2));
+            RecordAppl(Option(options),Name(name2),args) ->{
+              testRecordStructure(options, name2, args);
+              tabTypeOut[i] = getSymbolCodomain(symbolTable().getSymbol(name2));
               tabNameOut[i] = name;
             }
           }
@@ -752,11 +758,12 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     boolean arrayOrList = false;
     TomSymbol symbol = symbolTable().getSymbol(name);
     if(symbol==null && argsList.isEmpty() ) {
+        // it is a variable
     } else if( symbol==null && !argsList.isEmpty() ) {
         //System.out.println("Warning: Rhs of rule contains a function call? ensure it is correct"+name);
     } else {
         // we extract the needed types for the arguments of this Appl.
-      TomList infoTypeIn = typeIn(symbol);
+      TomList infoTypeIn = getSymbolDomain(symbol);
       arrayOrList = ( isListOperator(symbol) ||  isArrayOperator(symbol) );
         // if arguments are given
       if(!argsList.isEmpty()) {
@@ -778,7 +785,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
           %match(TomTerm term) {
             Appl[astName=Name[string=name1]] -> {
               testApplStructure(term);
-              tabTypeOut[i] = typeOut(symbolTable().getSymbol(name1));
+              tabTypeOut[i] = getSymbolCodomain(symbolTable().getSymbol(name1));
               tabNameOut[i] = name1;
             }
               // If it is an '_' : type and name have no importance
@@ -799,9 +806,9 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
                 messageErrorVariableStar(name1,name,line);
               }
             }
-            record@RecordAppl(Option(options),Name(name2),args) ->{
-              testRecordStructure(record, options, name2, args);
-              tabTypeOut[i] = typeOut(symbolTable().getSymbol(name2));
+            RecordAppl(Option(options),Name(name2),args) ->{
+              testRecordStructure(options, name2, args);
+              tabTypeOut[i] = getSymbolCodomain(symbolTable().getSymbol(name2));
               tabNameOut[i] = name;
             }
           }
@@ -836,18 +843,18 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
 
   private void testRecordStructure(TomTerm record) throws TomException {
     %match (TomTerm record) {
-      rec@RecordAppl(Option(options),Name(name),args) -> {testRecordStructure(rec, options, name, args); }
+      RecordAppl(Option(options),Name(name),args) -> {testRecordStructure(options, name, args); }
     }
   }
-  private void testRecordStructure(TomTerm record, OptionList option, String tomName, TomList args) throws TomException {
+  private void testRecordStructure(OptionList option, String tomName, TomList args) throws TomException {
     TomSymbol symbol = symbolTable().getSymbol(tomName);
     if(symbol != null) {
-      TomList slotList = getSlotList(symbol.getOption().getOptionList());
-      if( slotList == null ) {
-        messageBracketError(record);
+      SlotList slotList = symbol.getSlotList();
+        // list operator and constants have an emptySlotList
+        // the length of the slotList corresponds to the arity of the operator
+      if(slotList.isEmptySlotList()) {
+        messageBracketError(tomName, option);
       }
-        // System.out.println("Name:"+tomName+"\n slotList:"+slotList+"\n args:"+args);
-      testNumberAndRepeatedSlotName(args,slotList);
       testPairSlotNameAndTerm(args,slotList);
     } else {
       messageSymbolError(tomName, option);
@@ -855,89 +862,24 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
   }
   
   
-    /*
-      We test the existence of a slot, contained in pairSlotName.
-      pairSlotName is one slot given in argument.
-      slotList is the list of possible slots.
-    */
-  private void testPairSlotNameAndTerm(TomList listPair, TomList declaredSlotNamesList) throws TomException {
-    boolean findSlotNameEquivalent;
-    int nbDeclaredSlotName, i;
-    TomTerm testedPair, associatedTerm;
-    String testedSlotName;
-    ArrayList declaredSlotNames = new ArrayList();
-
-    while( !declaredSlotNamesList.isEmpty() ) {
-      TomTerm oneSlot = declaredSlotNamesList.getHead();
-      declaredSlotNames.add(oneSlot.getString());
-      declaredSlotNamesList = declaredSlotNamesList.getTail();
-    }
-    nbDeclaredSlotName = declaredSlotNames.size();
+    // We test the existence of slotName contained in pairSlotAppl. and then the associated term
+  private void testPairSlotNameAndTerm(TomList listPair, SlotList slotList) throws TomException {
+    ArrayList slotIndex = new ArrayList();
     while( !listPair.isEmpty() ) {
-      testedPair = listPair.getHead();
-      
-      testedSlotName = testedPair.getSlotName().getString();
-      findSlotNameEquivalent =false;
-      for(i = 0;i<nbDeclaredSlotName;i++) {
-        if ( testedSlotName == declaredSlotNames.get(i) ) { findSlotNameEquivalent = true; break;}
-      } 
-        // if slotName is unknown we generate a message which propose all possible slots for this case
-      if(!findSlotNameEquivalent) {
-        messageSlotNameError(testedPair, declaredSlotNames); 
-      }
-        // At the end we test the term associated to this slot
-      associatedTerm = testedPair.getAppl();
-      testTerm(associatedTerm);
-      listPair = listPair.getTail();
-    }
-  }
-  
-    /*
-      testNumberAndRepeatedSlotName is used in 'expand' method of TomChecker.t.
-      1. We test the fact that on slotName can be use only one time in a same level.
-      2. We test the number of slotName which must be less or egal that the arguments number
-      of concerned constructor.
-      slotList is the list of possible slotName.
-      pairSlotList is the list of PairSlotName given in arguments 
-    */
-  private void testNumberAndRepeatedSlotName(TomList pairList, TomList declaredSlotNameList) {
-      // we generate formated list of declared slotNames and testedSlotNames
-    ArrayList declaredSlotNames = new ArrayList();
-    ArrayList testedSlotNames = new ArrayList();
-    while( !declaredSlotNameList.isEmpty() ) {
-      TomTerm oneSlot = declaredSlotNameList.getHead();
-      declaredSlotNames.add(oneSlot.getString());
-      declaredSlotNameList = declaredSlotNameList.getTail();
-    }
-      // We memorize the first slotName in order to have information about line
-    TomTerm pairSlotName = null;
-    if(!pairList.isEmpty()) {
-      pairSlotName = pairList.getHead();
-    }
-    
-    while( !pairList.isEmpty() ) {
-      TomTerm onePair = pairList.getHead();
-      testedSlotNames.add(onePair.getSlotName().getString());
-      pairList = pairList.getTail();
-    }
-    
-      // The list of given slotNames must be less or egal in dimension than the list of possible slotNames
-    if(testedSlotNames.size() > declaredSlotNames.size()) {
-      messageSlotNumberError(pairSlotName, declaredSlotNames.size(), testedSlotNames.size());
-    } else {
-      int index = testedSlotNames.size(); 
-        // foundSlots contains the list of already verified slotNames
-      ArrayList foundSlots = new ArrayList();
-        // We test all given slotNames
-      while( index != 0 ) {
-        String nameSlot = (String) testedSlotNames.get(index - 1);
-        if( foundSlots.contains(nameSlot) ) {
-          messageSlotRepeatedError(pairSlotName,nameSlot);
-        } else {
-          foundSlots.add(nameSlot);
+      TomTerm pair = listPair.getHead();
+      TomName name = pair.getSlotName();
+      int index = getSlotIndex(slotList,name.getString());
+      Integer index2 = new Integer(index);
+      if(index < 0) {
+        messageSlotNameError(pair,slotList); 
+      } else {
+        if(slotIndex.contains(index2)) {
+          messageSlotRepeatedError(pair,name.getString());
         }
-        index--;
+        slotIndex.add(index2);
+        testTerm(pair.getAppl());
       }
+      listPair = listPair.getTail();
     }
   }
   
@@ -949,6 +891,11 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
      * Error messages which generate immediatly an exit
      ********************************/
    // Link directly to Match structure
+  private void messageMatchTypeVariableError(String name, String type) throws TomException {
+    String lineDecl = findOriginTrackingLine(currentTomStructureOrgTrack);
+    String s = "Variable '" + name + "' has a wrong type:  '" + type + "' in %match construct declared line "+lineDecl;
+    messageError(lineDecl,s);
+  }
   private void messageMatchErrorVariableStar(String nameVariableStar, String line) throws TomException {
     String lineDecl = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Single list variable "+nameVariableStar+"* : Not allowed in %match structure declared line "+lineDecl;
@@ -960,9 +907,9 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     messageError(line,s);
   }
 
-   // Link directly to Match structure  
+   // Link directly to Rule structure  
    // this one could be parameter with string %rule or %match
-  private void messageErrorRuleVariableStar(String nameVariableStar, String line) throws TomException {
+  private void messageRuleErrorVariableStar(String nameVariableStar, String line) throws TomException {
     String lineDecl = findOriginTrackingLine(currentTomStructureOrgTrack);
     String s = "Single list variable " +nameVariableStar+ "* : Not allowed in %rule declared line "+lineDecl;
     messageError(line,s);
@@ -978,8 +925,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
 
 
   private void messageNumberArgumentsError(int nbArg, int nbArg2, String name, String line) throws TomException {
-    String s = "Bad number of arguments for method '" + name + "':" +
-      nbArg + " arguments are required but " + nbArg2 + " are given";
+    String s = "Bad number of arguments for method '" + name + "':" + nbArg + " arguments are required but " + nbArg2 + " are given";
     messageError(line,s);
   }	
   
@@ -1027,15 +973,9 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     messageError(line,s);
   }
   
-  private void messageBracketError(TomTerm subject) throws TomException {
-    String s = "[] are not allowed in lists, arrays and constants:";
-    String line = "";
-    %match(TomTerm subject) {
-      RecordAppl[option=Option(list),astName=Name[string=name]] -> {
-        line = findOriginTrackingLine(name,list);
-        s += "'"  + name + "'";
-      }
-    }
+  private void messageBracketError(String name, OptionList optionList) throws TomException {
+    String line = findOriginTrackingLine(name,optionList);
+    String s = "[] are not allowed on lists or arrays nor constants, see: "+name;
     messageError(line,s);
   }
   
@@ -1048,13 +988,12 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     Flags.findErrors = true;
   }
   
-  private void messageErrorRuleTypeAndConstructorEgality(String  name, String nameExpected, String type, String typeExpected, OptionList optionList) {
+  private void messageRuleErrorTypeAndConstructorEgality(String  name, String nameExpected, String type, String typeExpected, OptionList optionList) {
     String line = findOriginTrackingLine(name, optionList);
     System.out.println("\n *** Error in %rule before '->' - Line : "+line);
     System.out.println(" *** '" + nameExpected + "' of type '" + typeExpected +
                        "' is expected, but '" + name + "' of type '" + type +
                        "' is given");
-    System.out.println("This should be a warning only !!!");
     Flags.findErrors = true;
   }
   
@@ -1118,7 +1057,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
   private void messageSlotRepeatedError(TomTerm pairSlotName, String name) {
     System.out.println("\n"+" *** Same slot names can not be used in same method");
     %match( TomTerm pairSlotName ) {
-      Pair[appl=Appl[option=Option(list)]] -> {
+      PairSlotAppl[appl=Appl[option=Option(list)]] -> {
         String line = findOriginTrackingLine(list);
         System.out.println(" *** Slot Name : '"+name+"' - Line : "+line);
       }
@@ -1126,26 +1065,20 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     Flags.findErrors = true;
   }
   
-  private void messageSlotNameError(TomTerm pairSlotName, ArrayList listOfPossibleSlot) {
+  private void messageSlotNameError(TomTerm pairSlotName, SlotList slotList) {
+    ArrayList listOfPossibleSlot = new ArrayList();
+    while ( !slotList.isEmptySlotList() ) {
+      TomName name = slotList.getHeadSlotList().getSlotName();
+      if ( !name.isEmptyName()) listOfPossibleSlot.add(name.getString());
+      slotList = slotList.getTailSlotList();
+    }
     %match( TomTerm pairSlotName ) {
-      Pair[slotName=SlotName(name),appl=Appl[option=Option(list)]] -> {
+      PairSlotAppl[slotName=Name(name),appl=Appl[option=Option(list)]] -> {
         String line = findOriginTrackingLine(list);
         System.out.println("\n"+" *** Slot Name '" + name + "' is strange"+" -  Line : "+line);
       }
     }
     System.out.println(" *** Possible Slot Names are : "+listOfPossibleSlot);
-    System.out.println("pairSlotName = " + pairSlotName);
-    Flags.findErrors = true;
-  }
-  
-  private void messageSlotNumberError(TomTerm pairSlotName, int nbSlot, int nbPair) {
-    System.out.println("\n"+" *** Bad number of Slot Name");
-    %match( TomTerm pairSlotName ) {
-      Pair[appl=Appl[option=Option(list)]] -> {
-        String line = findOriginTrackingLine(list);
-        System.out.println(" *** "+nbSlot+" are possible, but "+nbPair+" are given"+" - Line : "+line);
-      }
-    }
     Flags.findErrors = true;
   }
   
@@ -1165,8 +1098,8 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     if(Flags.noWarning) return;
     String declLine = findOriginTrackingLine(currentTomStructureOrgTrack);
     String line = findOriginTrackingLine(name, optionList);
-    System.out.println(" *** Warning *** Error in right part of %rule declared line "+declLine);
-    System.out.println(" *** Type '" + typeExpected + "' expected but '" + name + "' found: Ensure the type coherence by yourself line : " + line);
+    System.out.println(" *** Warning *** possible error in right part of %rule declared line "+declLine);
+    System.out.println(" *** Type '" + typeExpected + "' expected but symbol '" + name + "' found: Ensure the type coherence by yourself line : " + line);
   }  
   
     // Link directly to Type structure
@@ -1184,7 +1117,8 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
 
   private void messageTypeArgumentMethodError( String name, TomType oneIn, TomType oneOut, String oneOutName, int numArg, String line) {
     if(Flags.noWarning) return;
-    System.out.println("\n"+" *** Warning *** Bad method arument type");
+    System.out.println("\n"+" *** Warning *** Bad method argument type");
+    System.out.println(oneOut);
     String out = oneOut.getTomType().getString();
     String in  = oneIn.getTomType().getString();
     System.out.println(" *** '" + oneOutName + "' returns an object of type '" + out + "' but type '" + in + "' is required");
@@ -1222,7 +1156,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     while(!optionList.isEmptyOptionList()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
-        orgTrack@OriginTracking[line=Line[string=line]] -> {
+        orgTrack@OriginTracking[] -> {
           return orgTrack;
         }
       }
@@ -1232,7 +1166,6 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     System.exit(1);return null;
   }
 
-    // findOriginTrackingLine(_) method returns the first number of line (stocked in option)
   private String findOriginTrackingLine(Option option) {
     return option.getLine().getString();
   }
@@ -1247,30 +1180,32 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     return empty();
   } 
   
-    /*
-      We extract informations about variables (i.e. for object as symbolTable().getSymbol(_) == null)
-      which appear in term. 
-      term has an Appl structure.
-      nameVariable and lineVariable stock informations about these variables.
-      For a same index, we have informations about same variable.
-    */
   private void extractVariable(TomTerm term, ArrayList nameVariable, ArrayList lineVariable) {
     %match(TomTerm term) {
       Appl[option=Option(optionList),astName=Name[string=name1],args=l] -> {
+        extractAnnotedVariable(optionList, nameVariable, lineVariable);
           // If l != [] then name1 could not be a variable.
         if ( symbolTable().getSymbol(name1)==null && l.isEmpty() ) { 
           nameVariable.add(name1);
           lineVariable.add(findOriginTrackingLine(name1,optionList));
         }
-        extractAnnotedVariable(optionList, nameVariable, lineVariable);
-          // we extract variables of arguments of this Appl struture.
-        extractVariableList(l, nameVariable, lineVariable);
+        else {
+            // we extract variables of arguments of this Appl struture.
+          extractVariableList(l, nameVariable, lineVariable);
+        }        
         return;
       }
       RecordAppl(Option(optionList),Name(tomName),pair) -> {
         extractAnnotedVariable(optionList, nameVariable, lineVariable);
           // we extract variables of arguments of this Appl struture.
         extractVariablePair(pair, nameVariable, lineVariable);        
+      }
+      Placeholder[option=Option(optionList)] -> {
+        extractAnnotedVariable(optionList, nameVariable, lineVariable);
+      }
+        // alone stared variable is impossible
+      VariableStar[option=Option(optionList)] -> { 
+        extractAnnotedVariable(optionList, nameVariable, lineVariable);
       }
       _ -> { return; }
     }
@@ -1282,18 +1217,15 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
       %match(Option subject) {
         TomNameToOption(Name(name1)) -> {
           nameVariable.add(name1);
-          lineVariable.add("Tchou tchou unknown");
+          lineVariable.add("No position info for Annotations");
+          break;
         }
       }
       options = options.getTail();
     }
   }
   
-    /*
-      this method completes extractVariable.
-      It applies extractVariable on each term of termList.
-      We transmit nameVariable and lineVariable in order to stock informations about these variables.
-    */
+    // It applies extractVariable on each term of termList.
   private void extractVariableList(TomList termList, ArrayList nameVariable, ArrayList lineVariable){
     while( !termList.isEmpty() ) {
       TomTerm term = termList.getHead(); 	
@@ -1301,6 +1233,7 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
       termList = termList.getTail();
     }
   }
+  
   private void extractVariablePair(TomList pairList, ArrayList nameVariable, ArrayList lineVariable){
     while( !pairList.isEmpty() ) {
       TomTerm pair = pairList.getHead(); 	
@@ -1309,53 +1242,26 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
     }
   }
   
-    /*
-      term is an element extract of SymbolTable.
-      We returns the result TomType of concerned element.
-    */
-  private String extractType(TomSymbol term) {
-    %match(TomSymbol term) {
-      s@Symbol[typesToType=TypesToType(_,t)] -> {
-        return getTomType(t);
-      }
-    }
-    return null;
+    // We returns the result TomType of concerned element.
+  private String extractType(TomSymbol symbol) {
+    TomType type = getSymbolCodomain(symbol);
+    return getTomType(type);
   }
-  
-    /*
-      term is an element extract of SymbolTable.
-      typeIn returns the type structure of arguments for concerned element.
-    */
-  private TomList typeIn( TomSymbol term ) {
-    %match(TomSymbol term) {
-      Symbol[typesToType=TypesToType(list,_)] -> { return list; }
-    }
-    return empty();
-  }
-
-    /*
-      term is an element extract of SymbolTable.
-      typeOut returns the result type structure of concerned element.
-    */
-  private TomType typeOut(TomSymbol term ) {
-    %match(TomSymbol term) {
-      Symbol[typesToType=TypesToType(_,t)] -> { return t; }
-    }
-    return `EmptyType();
-  } 
 
     /*
       findTypeOf is used in 'testRuleTypeEgality' method of TomVerifier.t.
-      we look if an object with name 'name' exists in 'inTerm' which has an Appl Structure.
-      and we returns its type. This is used when we have any information about type of 'name' object.
-      So we are obliged to deduce the type thanks to the structure in which this object is used.
-      If 'name' is used in 'inTerm' structure : it is an arguments.
+      we look if an object with name 'name' exists in 'inTerm' which has an Appl/Record Structure.
+      and we returns its type.
     */		
   private TomType findTypeOf(String name, TomTerm inTerm) {
       // if no type for 'name' is found, we return EmptyType
     TomType type = `EmptyType();
     %match( TomTerm inTerm ) {
-      Appl[astName=Name[string=name1],args=list] -> {
+      Appl(Option(options),Name(name1),list) -> {
+          // first we look for the annotations
+        type = findAnnotatedTypeof(name, options, name1);
+        if ( !type.isEmptyType() ) return type;
+          // else we continue
         TomList typeList = empty();
         int numArg = 0;
         boolean find = false;
@@ -1371,28 +1277,70 @@ NB : another test, in order to forbid alone variables in the left part of '->', 
         }
           // if 'name' is an argument, we search the needed argument type thanks to the memorized position.
         if(find) {
-          typeList = typeIn(symbolTable().getSymbol(name1));
-          for(int i = 1; i < numArg; i++ ) {
-            typeList = typeList.getTail();
-          }
-          type = typeList.getHead().getAstType();
+          type = findTypeAtPosition(name1, numArg);
         } else {
             // if 'name' is not an argument, we look if 'name' is an argument of methods given in argument.
           for(TomList l=list ; !l.isEmpty() && !find; l=l.getTail()) {
             TomTerm t = l.getHead();
             type = findTypeOf(name, t);
-            find = true;
-            %match(TomType type) {
-                // no type for 'name' found
-              EmptyType() -> { find = false; }
-            }
+              /*find = true;
+                %match(TomType type) {
+                  // no type for 'name' found
+                  EmptyType() -> { find = false; }
+                  }
+              */
           }
         }
       }
-      RecordAppl[] -> {
-        System.out.println("findTypeOf called on record\n"+name+" : "+ inTerm);
+      RecordAppl(Option(options),Name(name1),list) -> {
+          // first we look for the annotations
+        type = findAnnotatedTypeof(name, options, name1);
+        if ( !type.isEmptyType() ) return type;
+          // else we continue
+        System.out.println("findTypeOf called on record"+inTerm);
       }
     }
     return type;
   }
+  
+  private TomType findTypeAtPosition(String symbolName, int position) {
+    TomList typeList = getSymbolDomain(symbolTable().getSymbol(symbolName));
+    for(int i = 1; i < position; i++ ) {
+      typeList = typeList.getTail();
+    }
+    return typeList.getHead().getAstType();
+  }
+  
+  private TomType findTypeAtSlotName(String symbolName, TomName slotName) {
+    TomList slotNameTypeList = symbolTable().getSymbol(symbolName).getTypesToType().getList();
+    while( !slotNameTypeList.isEmpty() ) {
+      TomTerm testedSlotNameType = slotNameTypeList.getHead();
+      %match(TomTerm testedSlotNameType, TomName slotName) {
+          TomTypeToTomTerm(type), Name(name1) -> {
+//          if(name.equals(name1)) {
+//            return type;
+//          }
+        }
+      }
+      slotNameTypeList = slotNameTypeList.getTail();
+    }
+    return `EmptyType();
+  }
+  
+  private TomType findAnnotatedTypeof(String name, OptionList options, String symbolName) {
+    while(!options.isEmptyOptionList()) {
+      Option subject = options.getHead();
+      %match(Option subject) {
+        TomNameToOption(Name(annotatedName)) -> {
+          if(annotatedName == name){
+            return getSymbolCodomain(symbolTable().getSymbol(symbolName));
+          }
+          else { break; }
+        }
+      }
+      options = options.getTail();
+    }
+    return null;
+  }
+  
 }

@@ -12,7 +12,7 @@
   [Declaration,IsFsymDecl,
    IsFsymDecl(<astName(TomName)>, <term(TomTerm)>, <tlCode(TargetLanguage)>,<orgTrack(Option)>) ],
   [Declaration,GetSlotDecl,
-   GetSlotDecl(<astName(TomName)>, <slotName(TomTerm)>, <term(TomTerm)>,
+   GetSlotDecl(<astName(TomName)>, <slotName(TomName)>, <term(TomTerm)>,
    <tlCode(TargetLanguage)>, <orgTrack(Option)>) ],
   [Declaration,CompareFunctionSymbolDecl,
    CompareFunctionSymbolDecl(<symbolArg1(TomTerm)>,<symbolArg2(TomTerm)>,
@@ -45,6 +45,7 @@
    ListSymbolDecl(<astName(TomName)>) ],
   [Declaration,ArraySymbolDecl,
    ArraySymbolDecl(<astName(TomName)>) ],		
+  [Declaration,EmptyDeclaration,EmptyDeclaration ],		
 
   [OptionList,EmptyOptionList, []],
   [OptionList,ConsOptionList, [<head(Option)>,<[tail(OptionList)]>]],
@@ -56,7 +57,6 @@
   [Option,DefinedSymbol ,DefinedSymbol ],
   [Option,OriginTracking,OriginTracking(<astName(TomName)>, <line(TomTerm)>) ],
   [Option,LRParen,LRParen(<astName(TomName)>) ],
-  [Option,SlotList,SlotList(<list(TomList)>) ],
 
   [Expression,TomTermToExpression, TomTermToExpression(<astTerm(TomTerm)>) ],
   [Expression,Not,Not(<arg(Expression)>) ],
@@ -131,11 +131,11 @@
   [TomTerm,RecordAppl,
     RecordAppl(<option(Option)>, <astName(TomName)>, <args(TomList)>) ],
 
-  [TomTerm,Pair,Pair(<slotName(TomTerm)>,<appl(TomTerm)>) ],
+  [TomTerm,PairSlotAppl,PairSlotAppl(<slotName(TomName)>,<appl(TomTerm)>) ],
 
   [TomName,Name,Name(<string(str)>) ],
-
-  [TomTerm,SlotName,SlotName(<string(str)>) ],
+  [TomName,PositionName,PositionName(<numberList(TomList)>) ],
+  [TomName,EmptyName,EmptyName],
 
   [TomTerm,Match,Match(<option(Option)>,<subjectList(TomTerm)>,<patternList(TomTerm)>) ],
 
@@ -183,8 +183,6 @@
 
   [TomTerm,Declaration,Declaration(<kid1(TomTerm)>) ],
 
-  [TomName,PositionName,PositionName(<numberList(TomList)>) ],
-
   [TomTerm,Begin,Begin(<number(TomTerm)>) ],
 
   [TomTerm,End,End(<number(TomTerm)>) ],
@@ -224,12 +222,18 @@
   [TomTerm,DotTerm,DotTerm(<kid1(TomTerm)>, <kid2(TomTerm)>) ],
 
   [TomSymbol,Symbol,
-   Symbol(<astName(TomName)>, <typesToType(TomType)>, <option(Option)>,
+   Symbol(<astName(TomName)>,
+   <typesToType(TomType)>, 
+   <slotList(SlotList)>, 
+   <option(Option)>,
    <tlCode(TargetLanguage)>) ],
 
   [TomSymbolTable,Table,Table(<entryList(TomEntryList)>) ],
   [TomEntryList,EmptyEntryList, []],
   [TomEntryList,ConsEntryList, [<headEntryList(TomEntry)>,<[tailEntryList(TomEntryList)]>]],
-  [TomEntry,Entry,Entry(<strName(str)>, <astSymbol(TomSymbol)>) ]
+  [TomEntry,Entry,Entry(<strName(str)>, <astSymbol(TomSymbol)>) ],
 
+  [SlotList,EmptySlotList, []],
+  [SlotList,ConsSlotList, [<headSlotList(PairNameDecl)>,<[tailSlotList(SlotList)]>]],
+  [PairNameDecl,Slot,Slot(<slotName(TomName)>, <slotDecl(Declaration)>) ]
 ]

@@ -68,6 +68,8 @@ public class ASTFactory {
         term = tsf().makeTomTerm_DeclarationToTomTerm((Declaration)elt);
       } else if(elt instanceof Expression) {
         term = tsf().makeTomTerm_ExpressionToTomTerm((Expression)elt);
+      } else if(elt instanceof TomName) {
+        term = tsf().makeTomTerm_TomNameToTomTerm((TomName)elt);
       } else {
         term = (TomTerm)elt;
       }
@@ -117,19 +119,12 @@ public class ASTFactory {
     return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type));  
   }
 
-  public TomSymbol makeSymbol(String symbolName, String resultType, ArrayList typeList, String glString) {
-    TomName name = tsf().makeTomName_Name(symbolName);
-    TomType typesToType =  tsf().makeTomType_TypesToType(makeList(typeList), tsf().makeTomType_TomTypeAlone(resultType));
-    Option options = makeOption();
-    TargetLanguage code = tsf().makeTargetLanguage_ITL(glString);
-    return tsf().makeTomSymbol_Symbol(name,typesToType,options,code);
-  }
-
-  public TomSymbol makeSymbol(String symbolName, String resultType, ArrayList typeList, ArrayList optionList, TargetLanguage glFsym) {
+  public TomSymbol makeSymbol(String symbolName, String resultType, ArrayList typeList, SlotList slotList,
+                              ArrayList optionList, TargetLanguage glFsym) {
     TomName name = tsf().makeTomName_Name(symbolName);
     TomType typesToType =  tsf().makeTomType_TypesToType(makeList(typeList), tsf().makeTomType_TomTypeAlone(resultType));
     Option options = makeOption(makeOptionList(optionList));
-    return tsf().makeTomSymbol_Symbol(name,typesToType,options,glFsym);
+    return tsf().makeTomSymbol_Symbol(name,typesToType,slotList,options,glFsym);
   }
 
   public Option makeOption() {
@@ -156,14 +151,6 @@ public class ASTFactory {
 
   public Option makeOption(OptionList argList) {   
     return tsf().makeOption_Option(argList);
-  }
-
-  public Option makeSlotList(ArrayList argList) {
-    if(argList.isEmpty()) {
-      return null;
-    } else {
-      return tsf().makeOption_SlotList(makeList(argList));
-    }
   }
 
   public Option makeOriginTracking( String name, String line ) {
@@ -197,8 +184,8 @@ public class ASTFactory {
     String resultType = "int";
     ArrayList typeList = new ArrayList();
     TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
-
-    TomSymbol astSymbol = makeSymbol(value,resultType,typeList,optionList,tlFsym);
+    SlotList slotList = tsf().makeSlotList_EmptySlotList();
+    TomSymbol astSymbol = makeSymbol(value,resultType,typeList,slotList,optionList,tlFsym);
     symbolTable.putSymbol(value,astSymbol);
   }
 
@@ -237,6 +224,7 @@ public class ASTFactory {
       TomName name     = symbol.getAstName();
       TomList typeList = symbol.getTypesToType().getList();
       TomType type     = symbol.getTypesToType().getCodomain();
+      SlotList slotList = symbol.getSlotList();
       Option  options  = symbol.getOption();
       TargetLanguage tlcode   = symbol.getTlCode();
 
@@ -256,7 +244,7 @@ public class ASTFactory {
       }
 
       TomType typesToType = tsf().makeTomType_TypesToType(makeList(newTypeList), newType);
-      TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,typesToType,options,tlcode);
+      TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,typesToType,slotList,options,tlcode);
       symbolTable.putSymbol((String)key,newSymbol);
     }
   }
@@ -274,9 +262,9 @@ public class ASTFactory {
         TomType type       = symbol.getTypesToType();
         OptionList optionList = symbol.getOption().getOptionList();
         TargetLanguage tlcode     = symbol.getTlCode();
-        
+        SlotList slotList = symbol.getSlotList();
         optionList = append(tsf().makeOption_DefinedSymbol(),optionList);
-        TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,type,makeOption(optionList),tlcode);
+        TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,type,slotList, makeOption(optionList),tlcode);
         symbolTable.putSymbol(key,newSymbol);
       }
       else {
@@ -294,5 +282,10 @@ public class ASTFactory {
     } else
       return code;
   }
-  
+  public TomName makeName(String slotName) {
+    if(slotName.length()>0)
+      return tsf().makeTomName_Name(slotName);
+    else
+      return tsf().makeTomName_EmptyName();
+  }
 }

@@ -111,7 +111,7 @@ public class TomBase {
       return cons(l.getHead(), append(t,l.getTail()));
     }
   }
-
+  
   protected TomList concat(TomList l1, TomList l2) {
     if(l1.isEmpty()) {
       return l2;
@@ -152,6 +152,7 @@ public class TomBase {
       TomType(s) -> {return s;}
       TomTypeAlone(s) -> {return s;}
       Type(TomType(s),_) -> {return s;}
+      EmptyType() -> {return null;}
       _ -> {System.out.println("getTomType error on term: " + type);
       System.exit(1);
       }
@@ -177,14 +178,19 @@ public class TomBase {
 
   
   protected TomType getSymbolCodomain(TomSymbol symbol) {
-    return symbol.getTypesToType().getCodomain();
-  }
+    if(symbol!=null) {
+      return symbol.getTypesToType().getCodomain();
+    } else {
+        //System.out.println("getSymbolCodomain: symbol = " + symbol);
+      return `EmptyType();
+    }
+  }   
 
   protected TomList getSymbolDomain(TomSymbol symbol) {
     if(symbol!=null) {
       return symbol.getTypesToType().getList();
     } else {
-      System.out.println("getSymbolDomain: symbol = " + symbol);
+        //System.out.println("getSymbolDomain: symbol = " + symbol);
       return empty();
     }
   }
@@ -455,89 +461,43 @@ public class TomBase {
     return null;
   }
 
-  protected TomList getSlotList(OptionList optionList) {
+  protected TomName getSlotName(TomSymbol symbol, int number) {
     //%variable
-    while(!optionList.isEmptyOptionList()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        SlotList(l) -> { return l; }
-      }
-      optionList = optionList.getTail();
+    SlotList slotList = symbol.getSlotList();
+    for(int index = 0; !slotList.isEmptySlotList() && index<number ; index++) {
+      slotList = slotList.getTailSlotList();
     }
-    return null;
-  }
+    if(slotList.isEmptySlotList()) {
+      System.out.println("getSlotName: bad index error");
+      System.exit(0);
+    }
 
-
-  protected TomTerm getSlotName(OptionList optionList, int number) {
-    //%variable
-    TomList slotList = getSlotList(optionList);
-      /*
-    if(slotList == null) {
-      System.out.println("slotList == null");
-    } else {
-      System.out.println("number = " + number);
-        //System.out.println("length = " + slotList.getLength());
-    }
-      */
-
-    if(slotList == null) {
-      return null;
-    }
-      //System.out.println("slotList = " + slotList);
-    for(int index = 0; !slotList.isEmpty() && index<number ; index++) {
-      slotList = slotList.getTail();
-    }
-    if(slotList.isEmpty()) {
-      return null;
-    }
-    
-    TomTerm slotNameAST = slotList.getHead();    
-    
-      //System.out.println("slotNameAST = " + slotNameAST);
-
-    while(!optionList.isEmptyOptionList()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        DeclarationToOption(GetSlotDecl[slotName=name]) -> {
-            //System.out.println("name = " + name);
-          if(slotNameAST.equals(name)) {
-            return name; 
-          }
-        }
-      }
-      optionList = optionList.getTail();
+    Declaration decl = slotList.getHeadSlotList().getSlotDecl();
+    %match(Declaration decl) {
+      GetSlotDecl[slotName=name] -> { return name; }
     }
     return null;
   }
   
-  protected int getSlotIndex(OptionList optionList, String slotName) {
+  protected int getSlotIndex(SlotList slotList, String slotName) {
     //%variable
-    int index = -1;
-    TomList slotList = getSlotList(optionList);
-
-      //System.out.println("slotList = " + slotList);
-      //System.out.println("slotName = " + slotName);
-    
-    if(slotList == null) {
-      return index;
-    }
-
-
-    if(slotList.isEmpty()) {
+    if(slotList.isEmptySlotList()) {
       System.out.println("getSlotIndex: strange");
+      return -1;
     }
-    index = 0;
-    while(!slotList.isEmpty()) {
-      String name = slotList.getHead().getString();
+
+    int index = 0;
+    while(!slotList.isEmptySlotList()) {
+      String name = slotList.getHeadSlotList().getSlotName().getString();
         // System.out.println("index = " + index + " name = " + name);
       if(slotName.equals(name)) {
         return index; 
       }
-      slotList = slotList.getTail();
+      slotList = slotList.getTailSlotList();
       index++;
     }
     System.out.println("Warning: slot '" + slotName + "' not found");
-    return index;
+    return -1;
   }
 
     // findOriginTrackingLine(_,_) method returns the line (stocked in optionList)  of object 'name'.

@@ -720,7 +720,6 @@ public class TomGenerator extends TomBase {
       }
       OriginTracking[] -> { return; }
       DefinedSymbol -> { return; }
-      SlotList(_) -> { return; }
       LRParen[] -> { return; }
 
       t -> {
@@ -736,9 +735,13 @@ public class TomGenerator extends TomBase {
     
     statistics().numberPartsGoalLanguage++;
     %match(Declaration subject) {
+      EmptyDeclaration() -> {
+        return;
+      }
       SymbolDecl(Name(tomName)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         OptionList optionList = tomSymbol.getOption().getOptionList();
+        SlotList slotList = tomSymbol.getSlotList();
         TomList l = getSymbolDomain(tomSymbol);
         TomType type1 = getSymbolCodomain(tomSymbol);
         String name1 = tomSymbol.getAstName().getString();
@@ -797,12 +800,15 @@ public class TomGenerator extends TomBase {
 
           // inspect the optionList
         generateOptionList(out, deep, optionList);
+          // inspect the slotlist
+        generateSlotList(out, deep, slotList);
         return ;
       }
       
       ArraySymbolDecl(Name(tomName)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         OptionList optionList = tomSymbol.getOption().getOptionList();
+        SlotList slotList = tomSymbol.getSlotList();        
         TomList l = getSymbolDomain(tomSymbol);
         TomType type1 = getSymbolCodomain(tomSymbol);
         String name1 = tomSymbol.getAstName().getString();
@@ -840,15 +846,19 @@ public class TomGenerator extends TomBase {
 
           // inspect the optionList
         generateOptionList(out, deep, optionList);
+          // inspect the slotlist
+        generateSlotList(out, deep, slotList);
         return ;
             }
 
       ListSymbolDecl(Name(tomName)) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         OptionList optionList = tomSymbol.getOption().getOptionList();
+        SlotList slotList = tomSymbol.getSlotList();
         TomList l = getSymbolDomain(tomSymbol);
         TomType type1 = getSymbolCodomain(tomSymbol);
         String name1 = tomSymbol.getAstName().getString();
+        
         
         if(Flags.cCode) {
             // TODO: build an abstract declaration
@@ -883,6 +893,8 @@ public class TomGenerator extends TomBase {
 
           // inspect the optionList
         generateOptionList(out, deep, optionList);
+          // inspect the slotlist
+        generateSlotList(out, deep, slotList);
         return ;
       }
 
@@ -944,15 +956,14 @@ public class TomGenerator extends TomBase {
       }
  
       GetSlotDecl[astName=Name(tomName),
-                  slotName=SlotName(slotName),
+                  slotName=Name(slotName),
                   term=Variable(option1,Name(name1), Type(TomType(type1),tlType@TLType[])),
                   tlCode=tlCode@TL[]] -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String opname = tomSymbol.getAstName().getString();
         TomList typesList = tomSymbol.getTypesToType().getList();
-        OptionList optionList = tomSymbol.getOption().getOptionList();
         
-        int slotIndex = getSlotIndex(optionList,slotName);
+        int slotIndex = getSlotIndex(tomSymbol.getSlotList(),slotName);
         TomList l = typesList;
         for(int index = 0; !l.isEmpty() && index<slotIndex ; index++) {
           l = l.getTail();
@@ -1242,6 +1253,14 @@ public class TomGenerator extends TomBase {
     generateOptionList(out,deep,l);
   }
 
+  public void generateSlotList(OutputCode out, int deep, SlotList slotList)
+    throws IOException {
+    while ( !slotList.isEmptySlotList() ) {
+      generateDeclaration(out, deep, slotList.getHeadSlotList().getSlotDecl());
+      slotList = slotList.getTailSlotList();
+    }
+  }
+  
   // ------------------------------------------------------------
   private TargetLanguage genDecl(String returnType,
                         String declName,

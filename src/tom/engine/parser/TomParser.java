@@ -346,7 +346,7 @@ public class TomParser implements TomParserConstants {
         slotName = jj_consume_token(TOM_IDENTIFIER);
         jj_consume_token(TOM_EQUAL);
         term = Term();
-        list.add(tsf().makeTomTerm_Pair(tsf().makeTomTerm_SlotName(slotName.image),term));
+        list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term));
         label_5:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -361,7 +361,7 @@ public class TomParser implements TomParserConstants {
           slotName = jj_consume_token(TOM_IDENTIFIER);
           jj_consume_token(TOM_EQUAL);
           term = Term();
-          list.add(tsf().makeTomTerm_Pair(tsf().makeTomTerm_SlotName(slotName.image),term));
+          list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(slotName.image),term));
         }
         break;
       default:
@@ -629,12 +629,15 @@ public class TomParser implements TomParserConstants {
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
   ArrayList options = new ArrayList();
-  ArrayList slotList = new ArrayList();
+  ArrayList nameList = new ArrayList();
+  Map mapNameDecl = new HashMap();
   TomName astName;
   TomSymbol astSymbol;
   String stringSlotName;
   TargetLanguage tlFsym;
   Declaration attribute;
+  TomType tomType;
+  SlotList slotList = tsf().makeSlotList_EmptySlotList();
     jj_consume_token(OPERATOR);
       list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
@@ -647,13 +650,13 @@ public class TomParser implements TomParserConstants {
       if (jj_2_4(2)) {
         slotName = jj_consume_token(TOM_IDENTIFIER);
         jj_consume_token(TOM_COLON);
-          stringSlotName = slotName.image;
+                                                  stringSlotName = slotName.image;
       } else {
         ;
       }
-        slotList.add(tsf().makeTomTerm_SlotName(stringSlotName));
       typeArg = jj_consume_token(TOM_IDENTIFIER);
-          types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
+        nameList.add(ast().makeName(stringSlotName));
+        types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
       label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -669,12 +672,12 @@ public class TomParser implements TomParserConstants {
         if (jj_2_5(2)) {
           slotName = jj_consume_token(TOM_IDENTIFIER);
           jj_consume_token(TOM_COLON);
-            stringSlotName = slotName.image;
+                                                    stringSlotName = slotName.image;
         } else {
           ;
         }
-          slotList.add(tsf().makeTomTerm_SlotName(stringSlotName));
         typeArg = jj_consume_token(TOM_IDENTIFIER);
+          nameList.add(ast().makeName(stringSlotName));
           types.add(tsf().makeTomType_TomTypeAlone(typeArg.image));
       }
       jj_consume_token(TOM_RPAREN);
@@ -686,9 +689,6 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_LBRACE);
     tlFsym = KeywordFsym();
       nameMethod = name.image;
-      if(!slotList.isEmpty()) {
-        options.add(ast().makeSlotList(slotList));
-      }
       astName   = tsf().makeTomName_Name(name.image);
     label_9:
     while (true) {
@@ -709,7 +709,7 @@ public class TomParser implements TomParserConstants {
         break;
       case TOM_GET_SLOT:
         attribute = KeywordGetSlot(astName, type.image);
-                                                         options.add(attribute);
+                                                         mapNameDecl.put(attribute.getSlotName(),attribute);
         break;
       case TOM_IS_FSYM:
         attribute = KeywordIsFsym(astName, type.image);
@@ -724,7 +724,24 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       nameMethod = name.image;
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
+
+      for(int i=nameList.size()-1; i>=0 ; i--) {
+        TomName name1 = (TomName)nameList.get(i);
+        PairNameDecl pair = null;
+        Declaration emptyDeclaration = tsf().makeDeclaration_EmptyDeclaration();
+        if(name1.isEmptyName()) {
+          pair = tsf().makePairNameDecl_Slot(name1,emptyDeclaration);
+        } else {
+          Declaration decl = (Declaration)mapNameDecl.get(name1);
+          if(decl == null) {
+            decl = emptyDeclaration;
+          }
+          pair = tsf().makePairNameDecl_Slot(name1,decl);
+        }
+        slotList = tsf().makeSlotList_ConsSlotList(pair,slotList);
+      }
+
+      astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_SymbolDecl(astName));
       putSymbol(name.image,astSymbol);
   }
@@ -733,6 +750,7 @@ public class TomParser implements TomParserConstants {
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
+  SlotList slotList = tsf().makeSlotList_EmptySlotList();
   ArrayList options = new ArrayList();
   TomSymbol astSymbol;
   TomName astName;
@@ -779,7 +797,8 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astName   = tsf().makeTomName_Name(name.image);
-      astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
+      slotList =tsf().makeSlotList_ConsSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_ListSymbolDecl(astName));
       putSymbol(name.image,astSymbol);
   }
@@ -788,6 +807,7 @@ public class TomParser implements TomParserConstants {
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
+  SlotList slotList = tsf().makeSlotList_EmptySlotList();
   ArrayList options = new ArrayList();
   TomName astName;
   TomSymbol astSymbol;
@@ -834,7 +854,8 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astName   = tsf().makeTomName_Name(name.image);
-      astSymbol = ast().makeSymbol(name.image, type.image, types, options, tlFsym);
+      slotList =tsf().makeSlotList_ConsSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_ArraySymbolDecl(astName));
       putSymbol(name.image,astSymbol);
   }
@@ -1327,7 +1348,7 @@ public class TomParser implements TomParserConstants {
        Option option = ast().makeOption(info);
        {if (true) return tsf().makeDeclaration_GetSlotDecl(
          astName,
-         tsf().makeTomTerm_SlotName(slotName.image),
+         tsf().makeTomName_Name(slotName.image),
          ast().makeVariable(option,name.image,typeString),
          tlCode, orgTrack);}
     throw new Error("Missing return statement in function");
@@ -1538,14 +1559,6 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_COLON)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_1() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1563,6 +1576,14 @@ public class TomParser implements TomParserConstants {
   }
 
   final private boolean jj_3_5() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_COLON)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_4() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_COLON)) return true;

@@ -126,8 +126,8 @@ public class TomChecker extends TomBase {
                 return expandBackQuoteTerm(t);
               }
             
-              t@RecordAppl(option,Name(tomName),args) -> {
-                return expandRecordAppl(t,option,tomName,args);
+              RecordAppl(option,Name(tomName),args) -> {
+                return expandRecordAppl(option,tomName,args);
               }
             
               _ -> {
@@ -144,27 +144,24 @@ public class TomChecker extends TomBase {
     return (TomTerm) replace.apply(subject); 
   }
 
-  private TomTerm expandRecordAppl(TomTerm subject, Option option, String tomName, TomList args)
+  private TomTerm expandRecordAppl(Option option, String tomName, TomList args)
     throws TomException {
     TomSymbol tomSymbol = getSymbol(tomName);
-    TomList slotList = getSymbolSlotList(tomSymbol);
+    SlotList slotList = tomSymbol.getSlotList();
     TomList subtermList = empty();
       // For each slotName (from tomSymbol)
-    TomList slotListBis = empty();
-    TomList slotListTer = empty();
-    slotListBis = slotList;
-    while(!slotList.isEmpty()) {
-      TomTerm slotName = slotList.getHead();
+    while(!slotList.isEmptySlotList()) {
+      TomName slotName = slotList.getHeadSlotList().getSlotName();
         //debugPrintln("\tslotName  = " + slotName);
       TomList pairList = args;
       TomTerm newSubterm = null;
-      if(slotName.getString().length() > 0) {
+      if(!slotName.isEmptyName()) {
           // look for a same name (from record)
         whileBlock: {
           while(newSubterm==null && !pairList.isEmpty()) {
             TomTerm pairSlotName = pairList.getHead();
-            %match(TomTerm slotName, TomTerm pairSlotName) {
-              SlotName[string=name], Pair(SlotName[string=name],slotSubterm) -> {
+            %match(TomName slotName, TomTerm pairSlotName) {
+              Name[string=name], PairSlotAppl(Name[string=name],slotSubterm) -> {
                   // bingo
                 statistics().numberSlotsExpanded++;
                 newSubterm = expand(slotSubterm);
@@ -180,7 +177,7 @@ public class TomChecker extends TomBase {
         newSubterm = `Placeholder(ast().makeOption());
       }
       subtermList = append(newSubterm,subtermList);
-      slotList = slotList.getTail();
+      slotList = slotList.getTailSlotList();
     }
     
     return `Appl(option,Name(tomName),subtermList);
@@ -313,7 +310,7 @@ public class TomChecker extends TomBase {
             if(tomSymbol != null) {
               TomList subterm = pass1List(tomSymbol, l);
                 //System.out.println("***** pass1.6: pass1List = " + subterm);
-              Option option = `Option(replaceAnnotedName(optionList,getSymbolType(tomSymbol)));
+              Option option = `Option(replaceAnnotedName(optionList,getSymbolCodomain(tomSymbol)));
               return `Appl(option,name,subterm);
             }
           }
@@ -374,7 +371,7 @@ public class TomChecker extends TomBase {
             //debugPrintln("pass1.13: Rule(" + lhs + "," + rhs + ")");
             TomSymbol tomSymbol = getSymbol(tomName);
             if(tomSymbol != null) {
-              TomType symbolType = getSymbolType(tomSymbol);
+              TomType symbolType = getSymbolCodomain(tomSymbol);
               TomTerm newLhs = `Term(pass1(context,lhs));
               TomTerm newRhs = `Term(pass1(TomTypeToTomTerm(symbolType),rhs));
               return `RewriteRule(newLhs,newRhs);
@@ -460,10 +457,6 @@ public class TomChecker extends TomBase {
     return null;
   }
 
-  public TomType getSymbolType(TomSymbol symb) {
-    return symb.getTypesToType().getCodomain();
-  }
-
     /*
      * update the symboleTable by traversing each symbol
      * called after the expansion phase
@@ -525,10 +518,6 @@ public class TomChecker extends TomBase {
     return null;
   }
   
-  private TomList getSymbolSlotList(TomSymbol subject) {
-    return getSlotList(subject.getOption().getOptionList());
-  }
-
     /*
       testVariableWithoutParen is used in 'pass1' method of TomChecker.t.
       It is called before to transform Appl into Variable. Indeed when we create an Appl
@@ -551,7 +540,7 @@ public class TomChecker extends TomBase {
       }
     }
   }
-  // messageMatchTypeVariableError is called by 'contest,GlVar' case in 'pass1' method of TomChecker.t.
+
   private void messageMatchTypeVariableError(String name, String type) throws TomException {
     OptionList optionList = optionMatchTypeVariable.getOptionList();
     String line = findOriginTrackingLine("Match", optionList);
