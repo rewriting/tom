@@ -153,9 +153,9 @@ blockList [LinkedList list]
         |   ruleConstruct[list] 
         |   signature()
         |   localVariable()
-        |   operator()
-        |   operatorList()
-        |   operatorArray()
+        |   operator[list] 
+        |   operatorList[list] 
+        |   operatorArray[list] 
         |   includeConstruct()
         |   typeTerm[list] 
         |   typeList[list] 
@@ -243,39 +243,66 @@ localVariable
         }
     ;
 
-operator
+operator [LinkedList list]
+{
+    TargetLanguage code = null;
+}
     :
+        t:OPERATOR
         {
-            System.out.println("target language :"+targetlexer.target);
-            targetlexer.clearTarget();
-        }
-        OPERATOR 
-        {
-            tomparser.operator();
+            String textCode = pureCode(getCode());
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(popLine(),popColumn()),
+                    TextPosition(t.getLine(),t.getColumn()));
+                list.add(`TargetLanguageToTomTerm(code));
+            }
+
+            Declaration operatorDecl = tomparser.operator();
+            list.add(operatorDecl);
         }
     ;
 
-operatorList
+operatorList [LinkedList list]
+{
+    TargetLanguage code = null;
+}
     :
+        t:OPERATORLIST 
         {
-            System.out.println("target language :"+targetlexer.target);
-            targetlexer.clearTarget();
-        }
-        OPERATORLIST 
-        {
-            tomparser.operatorList();
+            String textCode = pureCode(getCode());
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(popLine(),popColumn()),
+                    TextPosition(t.getLine(),t.getColumn()));
+                list.add(`TargetLanguageToTomTerm(code));
+            }
+
+            Declaration operatorListDecl = tomparser.operatorList();
+            list.add(operatorListDecl);
         }
     ;
 
-operatorArray
+operatorArray [LinkedList list]
+{
+    TargetLanguage code = null;
+}
     :
+        t:OPERATORARRAY
         {
-            System.out.println("target language :"+targetlexer.target);
-            targetlexer.clearTarget();
-        }
-        OPERATORARRAY
-        {
-            tomparser.operatorArray();
+            String textCode = pureCode(getCode());
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(popLine(),popColumn()),
+                    TextPosition(t.getLine(),t.getColumn()));
+                list.add(`TargetLanguageToTomTerm(code));
+            }
+
+            Declaration operatorArrayDecl = tomparser.operatorArray();
+            list.add(operatorArrayDecl);
         }
     ;
 
@@ -560,7 +587,10 @@ SL_COMMENT
 		|	'\r'
 		|	'\n'
         )
-        { newline(); }
+        {
+            target.append($getText);
+            newline(); 
+        }
 	;
 
 protected
@@ -581,6 +611,7 @@ ML_COMMENT
         |	~('\n'|'\r')
         )*
         "*/"
+        {target.append($getText);}
 	;
 
 protected 

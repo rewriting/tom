@@ -690,123 +690,357 @@ headSymbol [LinkedList optionList] returns [TomName result]
         }
     ;
 
-operator
+
+
+/*
+ * Operator Declaration
+ */
+
+operator returns [Declaration result]
 {
+    result=null;
     Option ot = null;
-    Declaration result = null;
+    TomList blockList = `emptyTomList();
+    TomList options = `emptyTomList();
+    TomName astName = null;
+    String stringSlotName;
+    Declaration attribute;
 }
     :
         type:ID name:ID 
-        {ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(filename));} 
+        {
+            astName = `Name(name.getText());
+            ot = `OriginTracking(Name(name.getText()),name.getLine(),Name(filename));
+        }
         (
             LPAREN 
-            ( n:ID COLON )? 
+            (
+                slotName:ID COLON
+                {
+                    stringSlotName = slotName.getText();
+                }
+            )? 
             typeArg:ID 
 
-            ( COMMA ( ID COLON )? ID )*
+            ( COMMA ( slotName2:ID COLON )? ID )*
             RPAREN
         )?
-        {
-            result = `SymbolDecl(Name(name.getText()));
-        }
         LBRACE
         keywordFsym()
+        {
+            astName = `Name(name.getText());
+        }
         (
-           keywordMake()  | keywordGetSlot() | keywordIsFsym()
+            attribute = keywordMake[name.getText(), type.getText()]
+            {options = `concTomTerm(options*,DeclarationToTomTerm(attribute));}
+
+        | attribute = keywordGetSlot[astName,type.getText()]
+            {options = `concTomTerm(options*,DeclarationToTomTerm(attribute));}
+
+        | attribute = keywordIsFsym[astName,type.getText()]
+            {options = `concTomTerm(options*,DeclarationToTomTerm(attribute));}
         )*
-        RBRACE 
+        t:RBRACE
         { 
+            result = `SymbolDecl(astName);
+
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
+
             Main.selector.pop(); 
         }
     ;
 
-operatorList
+operatorList returns [Declaration result]
 {
-    Declaration result = null;
+    result = null;
+    Declaration attribute = null;  
 }
     :
-        ID name:ID
-        LPAREN ID STAR RPAREN
+        type:ID name:ID
+        LPAREN typeArg:ID STAR RPAREN
         LBRACE
         keywordFsym()
         (
-            keywordMakeEmptyList()
-        |   keywordMakeAddList()
-        |   keywordIsFsym()
+            attribute = keywordMakeEmptyList[name.getText()]
+
+        |   attribute = keywordMakeAddList[name.getText(),type.getText(),typeArg.getText()]
+
+        |   attribute = keywordIsFsym[`Name(name.getText()), type.getText()]
         )*
-        RBRACE
+        t:RBRACE
         { 
             result = `ListSymbolDecl(Name(name.getText()));
 
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
+
             Main.selector.pop(); 
         }
     ;
 
-operatorArray
+operatorArray returns [Declaration result]
 {
-    Declaration result = null;
+    result = null;
+    Declaration attribute = null;
 }
     :
-        ID name:ID
-        LPAREN ID STAR RPAREN
+        type:ID name:ID
+        LPAREN typeArg:ID STAR RPAREN
         LBRACE
         keywordFsym()
         (
-            keywordMakeEmptyArray()
-        |   keywordMakeAddArray()
-        |   keywordIsFsym()
+            attribute = keywordMakeEmptyArray[name.getText(),type.getText()]
+
+        |   attribute = keywordMakeAddArray[name.getText(),type.getText(),typeArg.getText()]
+
+        |   attribute = keywordIsFsym[`Name(name.getText()),type.getText()]
         )*
-        RBRACE
+        t:RBRACE
         { 
             result = `ArraySymbolDecl(Name(name.getText()));
+
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
 
             Main.selector.pop(); 
         }
     ;
 
-keywordMakeEmptyList
+/*
+ * Type Declaration
+ */
+
+typeTerm returns [Declaration result]
 {
-    LinkedList bList = new LinkedList();
+    result = null;
+    Option ot = null;
+    TomList blockList = `emptyTomList();
+    Declaration attribute = null;
 }
-    :
-        MAKE_EMPTY (LPAREN RPAREN)? 
+    :   (
+            type:ID 
+            { 
+                ot = `OriginTracking(Name(type.getText()), type.getLine(),Name(filename));
+            }
+            LBRACE
+
+            keywordImplement()
+            (
+                attribute = keywordGetFunSym[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordGetSubterm[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordCmpFunSym[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordEquals[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            )*
+            t:RBRACE
+        )
         {
-            Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            result = `TypeTermDecl(Name(type.getText()),blockList,ot);
+
+            // update for new target block...
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
+
+            // pop the tomlexer and go back to the targetparser
             Main.selector.pop();
         }
     ;
 
-keywordMakeAddList
+typeList returns [Declaration result]
 {
-    LinkedList bList = new LinkedList();
+    result = null;
+    Option ot = null;
+    Declaration attribute = null;
+    TomList blockList = `emptyTomList();
 }
-    :
-        MAKE_INSERT LPAREN ID COMMA ID RPAREN
+    :   (
+            type:ID
+            {ot = `OriginTracking(Name(type.getText()),type.getLine(),Name(filename));}
+            LBRACE
+            keywordImplement()
+            (
+                attribute = keywordGetFunSym[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordGetSubterm[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordCmpFunSym[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordEquals[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordGetHead[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordGetTail[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordIsEmpty[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            )*
+            t:RBRACE
+
+        )
         {
-            Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            result = `TypeListDecl(Name(type.getText()),blockList,ot);
+
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
+
             Main.selector.pop();
         }
     ;
 
-keywordMakeEmptyArray
+
+typeArray returns [Declaration result]
+{
+    result=null;
+    Option ot = null;
+    Declaration attribute = null;
+    TomList blockList = `emptyTomList();
+}
+    :   (
+            type:ID
+            {ot = `OriginTracking(Name(type.getText()),type.getLine(),Name(filename));}
+            LBRACE
+            keywordImplement()
+            (                
+                attribute = keywordGetFunSym[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordGetSubterm[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordCmpFunSym[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordEquals[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordGetElement[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+
+            |   attribute = keywordGetSize[type.getText()]
+                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
+            
+            )*
+            t:RBRACE
+        )
+        {
+            result = `TypeArrayDecl(Name(type.getText()),blockList,ot);
+            
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
+
+            Main.selector.pop();
+            
+        }
+    ;
+
+/*
+ * Keywords
+ */
+
+keywordMakeEmptyList[String name] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+}
     :
-        MAKE_EMPTY LPAREN ID RPAREN
+        t:MAKE_EMPTY
+        {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+        (LPAREN RPAREN)?
+        {
+            Main.selector.push("targetlexer");
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            Main.selector.pop();
+            result = `MakeEmptyList(Name(name),tlCode,ot);
+        }
+    ;
+
+keywordMakeAddList[String name, String listType, String elementType] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+}
+    :
+        t:MAKE_INSERT
+        {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+        LPAREN elementName:ID COMMA listName:ID RPAREN
+        {
+            Main.selector.push("targetlexer");
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            Main.selector.pop();
+            
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(filename));  
+            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),Name(filename));
+            OptionList listOption = `concOption(listInfo);
+            OptionList elementOption = `concOption(elementInfo);
+            
+            result = `MakeAddList(Name(name),
+                Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),emptyConstraintList()),
+                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
+                tlCode,ot);
+        }
+    ;
+
+keywordMakeEmptyArray[String name, String listType] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+}
+    :
+        t:MAKE_EMPTY
+        {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+        LPAREN listName:ID RPAREN
         {
             Main.selector.push("targetlexer");
             TargetLanguage tlCode =  targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
+
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(filename));  
+            OptionList listOption = `concOption(listInfo);
+
+            result = `MakeEmptyArray(Name(name),
+                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
+                tlCode,ot);
         }
     ;   
 
-keywordMakeAddArray
+keywordMakeAddArray[String name, String listType, String elementType] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+}
     :
-        MAKE_APPEND LPAREN ID COMMA ID RPAREN
+        t:MAKE_APPEND
+        {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+        LPAREN elementName:ID COMMA listName:ID RPAREN
         {
             Main.selector.push("targetlexer");
             TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
+
+            Option listInfo = `OriginTracking(Name(listName.getText()),listName.getLine(),Name(filename));  
+            Option elementInfo = `OriginTracking(Name(elementName.getText()),elementName.getLine(),Name(filename));
+            OptionList listOption = `concOption(listInfo);
+            OptionList elementOption = `concOption(elementInfo);
+            
+            result = `MakeAddArray(Name(name),
+                Variable(elementOption,Name(elementName.getText()),TomTypeAlone(elementType),emptyConstraintList()),
+                Variable(listOption,Name(listName.getText()),TomTypeAlone(listType),emptyConstraintList()),
+                tlCode,ot);
         }
     ;
 
@@ -819,38 +1053,99 @@ keywordFsym
             Main.selector.pop();
         }
     ;
-
-keywordMake
+keywordMake [String opname, String type] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+    TomList args = `emptyTomList();
+    TargetLanguage tlCode = null;
+}
     :
         (
-            MAKE ( LPAREN ( ID ( COMMA ID )* )? RPAREN )?
+            t:MAKE
+            {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+
+            ( 
+                LPAREN 
+                ( 
+                    typeArg:ID
+                    {
+                        Option info1 = `OriginTracking(Name(typeArg.getText()),typeArg.getLine(),Name(filename));  
+                        OptionList option1 = `concOption(info1);
+                        args = `concTomTerm(
+                            Variable(option1,Name(typeArg.getText()),TomTypeAlone(type),emptyConstraintList() )
+                        );
+                    }
+                    ( 
+                        COMMA nameArg:ID
+                        {                            
+                            Option info2 = `OriginTracking(Name(nameArg.getText()),nameArg.getLine(),Name(filename));
+                            OptionList option2 = `concOption(info2);
+                            args = `concTomTerm(
+                                Variable(option2,Name(nameArg.getText()),TomTypeAlone(type),emptyConstraintList() )
+                            );
+                        }
+                    )*
+                )? 
+                RPAREN )?
             LBRACE
             {
                 Main.selector.push("targetlexer");
-                TargetLanguage tlCode = targetparser.targetLanguage(new LinkedList());
+                tlCode = targetparser.targetLanguage(new LinkedList());
                 Main.selector.pop();
+                result = `MakeDecl(Name(opname),TomTypeAlone(type),args,tlCode,ot);
             }
            
         )
     ;
  
-keywordGetSlot
+keywordGetSlot [TomName astName, String type] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+    TargetLanguage tlCode = null;
+}
     :
-        GET_SLOT LPAREN ID COMMA ID RPAREN
-        {
-            Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
-            Main.selector.pop();
-        }
+        (
+            t:GET_SLOT
+            {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+            LPAREN slotName:ID COMMA name:ID RPAREN
+            {                
+                Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(filename));
+                OptionList option = `concOption(info);
+                
+                Main.selector.push("targetlexer");
+                tlCode = targetparser.goalLanguage(new LinkedList());
+                Main.selector.pop(); 
+
+                result = `GetSlotDecl(astName,
+                    Name(slotName.getText()),
+                    Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    tlCode, ot);
+            }
+        )
     ;
 
-keywordIsFsym
+keywordIsFsym [TomName astName, String type] returns [Declaration result]
+{
+    result = null;
+    Option ot = null;
+    TargetLanguage tlCode = null;
+}
     :
-        IS_FSYM LPAREN ID RPAREN
-       {
+        t:IS_FSYM
+        {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
+        LPAREN name:ID RPAREN
+        {
             Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
+            tlCode = targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
+
+            Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(filename));
+            OptionList option = `concOption(info);
+            result = `IsFsymDecl(astName,
+                Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
+                tlCode,ot);
         }
     ;
 
@@ -894,10 +1189,10 @@ keywordGetSubterm[String type] returns [Declaration result]
         (
             t:GET_SUBTERM 
             {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
-            LPAREN i1:ID COMMA i2:ID RPAREN
+            LPAREN name1:ID COMMA name2:ID RPAREN
             {
-                Option info1 = `OriginTracking(Name(i1.getText()),i1.getLine(),Name(filename));
-                Option info2 = `OriginTracking(Name(i2.getText()),i2.getLine(),Name(filename));
+                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(filename));
+                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(filename));
                 OptionList option1 = `concOption(info1);
                 OptionList option2 = `concOption(info2);
                 
@@ -906,8 +1201,8 @@ keywordGetSubterm[String type] returns [Declaration result]
                 Main.selector.pop(); 
 
                 result = `GetSubtermDecl(
-                    Variable(option1,Name(i1.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    Variable(option2,Name(i2.getText()),TomTypeAlone("int"),emptyConstraintList()),
+                    Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option2,Name(name2.getText()),TomTypeAlone("int"),emptyConstraintList()),
                     tlCode, ot);
             }
         )
@@ -924,10 +1219,10 @@ keywordCmpFunSym [String type] returns [Declaration result]
         (
             t:CMP_FUN_SYM 
             { ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
-            LPAREN i1:ID COMMA i2:ID RPAREN
+            LPAREN name1:ID COMMA name2:ID RPAREN
             {
-                Option info1 = `OriginTracking(Name(i1.getText()),i1.getLine(),Name(filename));
-                Option info2 = `OriginTracking(Name(i2.getText()),i2.getLine(),Name(filename));
+                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(filename));
+                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(filename));
                 OptionList option1 = `concOption(info1);
                 OptionList option2 = `concOption(info2);
                 
@@ -936,8 +1231,8 @@ keywordCmpFunSym [String type] returns [Declaration result]
                 Main.selector.pop(); 
 
                 result = `CompareFunctionSymbolDecl(
-                    Variable(option1,Name(i1.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    Variable(option2,Name(i2.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option2,Name(name2.getText()),TomTypeAlone(type),emptyConstraintList()),
                     tlCode, ot);
             }
         )
@@ -953,10 +1248,10 @@ keywordEquals[String type] returns [Declaration result]
         (
             t:EQUALS 
             {ot = `OriginTracking(Name(t.getText()),t.getLine(),Name(filename));}
-            LPAREN i1:ID COMMA i2:ID RPAREN
+            LPAREN name1:ID COMMA name2:ID RPAREN
             {
-                Option info1 = `OriginTracking(Name(i1.getText()),i1.getLine(),Name(filename));
-                Option info2 = `OriginTracking(Name(i2.getText()),i2.getLine(),Name(filename));
+                Option info1 = `OriginTracking(Name(name1.getText()),name1.getLine(),Name(filename));
+                Option info2 = `OriginTracking(Name(name2.getText()),name2.getLine(),Name(filename));
                 OptionList option1 = `concOption(info1);
                 OptionList option2 = `concOption(info2);
                 
@@ -965,8 +1260,8 @@ keywordEquals[String type] returns [Declaration result]
                 Main.selector.pop();  
                 
                 result = `TermsEqualDecl(
-                    Variable(option1,Name(i1.getText()),TomTypeAlone(type),emptyConstraintList()),
-                    Variable(option2,Name(i2.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option1,Name(name1.getText()),TomTypeAlone(type),emptyConstraintList()),
+                    Variable(option2,Name(name2.getText()),TomTypeAlone(type),emptyConstraintList()),
                     tlCode, ot);
             }
         )
@@ -1119,143 +1414,6 @@ keywordGetSize[String type] returns [Declaration result]
                     tlCode,ot);
             }
         )
-    ;
-
-typeTerm returns [Declaration result]
-{
-    result = null;
-    Option ot = null;
-    TomList blockList = `emptyTomList();
-    Declaration attribute = null;
-}
-    :   (
-            type:ID 
-            { 
-                ot = `OriginTracking(Name(type.getText()), type.getLine(),Name(filename));
-            }
-            LBRACE
-
-            keywordImplement()
-            (
-                attribute = keywordGetFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetSubterm[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordCmpFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordEquals[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            )*
-            t:RBRACE
-        )
-        {
-            result = `TypeTermDecl(Name(type.getText()),blockList,ot);
-
-            // update for new target block...
-            pushLine(t.getLine());
-            pushColumn(t.getColumn());
-
-            // pop the tomlexer and go back to the targetparser
-            Main.selector.pop();
-        }
-    ;
-
-typeList returns [Declaration result]
-{
-    result = null;
-    Option ot = null;
-    Declaration attribute = null;
-    TomList blockList = `emptyTomList();
-}
-    :   (
-            type:ID
-            {ot = `OriginTracking(Name(type.getText()),type.getLine(),Name(filename));}
-            LBRACE
-            keywordImplement()
-            (
-                attribute = keywordGetFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetSubterm[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordCmpFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordEquals[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetHead[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetTail[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordIsEmpty[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            )*
-            t:RBRACE
-
-        )
-        {
-            result = `TypeListDecl(Name(type.getText()),blockList,ot);
-
-            pushLine(t.getLine());
-            pushColumn(t.getColumn());
-
-            Main.selector.pop();
-        }
-    ;
-
-
-typeArray returns [Declaration result]
-{
-    result=null;
-    Option ot = null;
-    Declaration attribute = null;
-    TomList blockList = `emptyTomList();
-}
-    :   (
-            type:ID
-            {ot = `OriginTracking(Name(type.getText()),type.getLine(),Name(filename));}
-            LBRACE
-            keywordImplement()
-            (                
-                attribute = keywordGetFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetSubterm[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordCmpFunSym[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordEquals[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetElement[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-
-            |   attribute = keywordGetSize[type.getText()]
-                {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
-            
-            )*
-            t:RBRACE
-        )
-        {
-            result = `TypeArrayDecl(Name(type.getText()),blockList,ot);
-            
-            pushLine(t.getLine());
-            pushColumn(t.getColumn());
-
-            Main.selector.pop();
-            
-        }
     ;
 
 
