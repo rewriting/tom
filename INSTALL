@@ -22,19 +22,23 @@ The binary distribution of Tom consists of the following directory layout:
 
 Setup
 =====
-Before you can run Tom there is some additional set up you will need to do: 
+Before you can run Tom there is some additional set up you will need
+to do:
   - Add the bin directory to your path.
-  - Set the TOM_HOME environment variable to the directory where you installed Tom.
+  - Set the TOM_HOME environment variable to the directory where you
+    installed Tom.
 
 Windows
 -------
-Assume Tom is installed in c:\jtom\. The following sets up the environment:
+Assume Tom is installed in c:\jtom\. The following sets up the
+environment:
   set TOM_HOME=c:\jtom
   set PATH=%PATH%;%TOM_HOME%\bin
 
 Unix
 ----
-Assume Tom is installed in /usr/local/jtom. The following sets up the environment:
+Assume Tom is installed in /usr/local/jtom. The following sets up the
+environment:
 
 (bash)
   export TOM_HOME=/usr/local/jtom

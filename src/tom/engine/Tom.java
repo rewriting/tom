@@ -454,31 +454,45 @@ public class Tom {
   }
 
   public static void main(String args[]) {
+		exec(args);
+	}
+
+	public static int exec(String args[]) {
     Tom tom = Tom.getInstance();
     tom.init(args);
     
     if(getInput().isHelp() || getInput().isVersion()) {
         // no need to do further work
-      return;
+      return 0;
     } else if(tom.inputFileList.isEmpty()) {
       System.out.println("No file to compile");
       usage();
       tom.addError(TomCheckerMessage.NoFileToCompile, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
-      return;
+      return 1;
     } else if(tom.inputFileList.size()>1 && getInput().getUserOutputFile() != null) {
       System.out.println("Cannot specify --output with multiple compilations");
       usage();
       tom.addError(TomCheckerMessage.OutputWithMultipleCompilation, "", TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
-      return;
+      return 1;
     }
 
     if(!tom.environment().checkNoErrors("Tom::main", getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning()))
-      return;
+      return 1;
     
     for(Iterator it = tom.inputFileList.iterator() ; it.hasNext() ; ) {
       String inputFileName = (String)it.next();
       tom.run(inputFileName);
     }
+		
+		if (!tom.environment().checkNoErrors("Tom::main", 
+					getInput().isEclipseMode(), 
+					getInput().isWarningAll(), 
+					getInput().isNoWarning())) {
+			return 1;
+		} 
+		else {
+			return 0;
+		}
   }
 
   public TomErrorList getErrors() {
