@@ -131,7 +131,7 @@ public class UC1_11
 	%match (TNode book) {
 	  <bib>(_*, node, _*)</bib> -> 
 	   {
-		 result = result + createBook(node) + "\n"; 
+		 result = result + createBook(`node) + "\n"; 
 	   }
 	}
 	result = result + "</results>\n";	
@@ -147,13 +147,13 @@ public class UC1_11
 	   {
 		 if (hasAuthor(book)) {
 		   result = createCascadeXML("<book>",
-									 createXML("<title>", title,"</title>",2) 
+									 createXML("<title>", `title,"</title>",2) 
 									 + createAuthor(book), 
 									 "</book>", 1);
 		 }
 		 else if (hasEditor(book)) {
 		   result= createCascadeXML("<reference>",
-									createXML("<title>", title,"</title>",2) 
+									createXML("<title>", `title,"</title>",2) 
 									+ createEditor(book), 
 									"</reference>", 1);
 		 }
@@ -198,7 +198,7 @@ public class UC1_11
 	%match (TNode book) {
 	  <book><title>#TEXT(title)</title><editor><affiliation>#TEXT(affl)</affiliation></editor></book> -> 
 	   {
-		 result=result + createXML("<affiliation>", affl, "</affiliation>",2) ;
+		 result=result + createXML("<affiliation>", `affl, "</affiliation>",2) ;
 	   }
 	}	
 	return result; 
@@ -217,7 +217,7 @@ public class UC1_11
 	  <book><title>#TEXT(title)</title>author<publisher></publisher><price></price></book> -> 
 	   {
 		 xtools = new XmlTools();
-		 xtools.printXMLFromATerm(author);
+		 xtools.printXMLFromATerm(`author);
 		 result=result + outArray.toString();
 		 
  		 outArray.reset();

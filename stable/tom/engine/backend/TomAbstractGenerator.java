@@ -196,12 +196,12 @@ public abstract class TomAbstractGenerator extends TomBase {
  // needs to be checked
         buildEqualFunctionSymbol(deep, type, exp, tomName);
         return;
-       }}} }} }} }} }}}}}} } if(tom_is_fun_sym_EqualTerm(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match2_1_1=tom_get_slot_EqualTerm_kid1(tom_match2_1); { jtom.adt.tomsignature.types.TomTerm tom_match2_1_2=tom_get_slot_EqualTerm_kid2(tom_match2_1); { jtom.adt.tomsignature.types.TomTerm exp1=tom_match2_1_1; { jtom.adt.tomsignature.types.TomTerm exp2=tom_match2_1_2;
+       }}} }} }} }} }}}}}} } if(tom_is_fun_sym_EqualTerm(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomType tom_match2_1_1=tom_get_slot_EqualTerm_tomType(tom_match2_1); { jtom.adt.tomsignature.types.TomTerm tom_match2_1_2=tom_get_slot_EqualTerm_kid1(tom_match2_1); { jtom.adt.tomsignature.types.TomTerm tom_match2_1_3=tom_get_slot_EqualTerm_kid2(tom_match2_1); { jtom.adt.tomsignature.types.TomType type=tom_match2_1_1; { jtom.adt.tomsignature.types.TomTerm exp1=tom_match2_1_2; { jtom.adt.tomsignature.types.TomTerm exp2=tom_match2_1_3;buildExpEqualTerm(deep, type, exp1, exp2)
 
 
-        buildExpEqualTerm(deep, getTermType(exp1), exp1, exp2);
+;
         return;
-      }}}} } if(tom_is_fun_sym_IsFsym(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match2_1_1=tom_get_slot_IsFsym_astName(tom_match2_1); { jtom.adt.tomsignature.types.TomTerm tom_match2_1_2=tom_get_slot_IsFsym_variable(tom_match2_1); if(tom_is_fun_sym_Name(tom_match2_1_1) ||  false ) { { String  tom_match2_1_1_1=tom_get_slot_Name_string(tom_match2_1_1); { String  opname=tom_match2_1_1_1; { jtom.adt.tomsignature.types.TomTerm exp=tom_match2_1_2;
+      }}}}}} } if(tom_is_fun_sym_IsFsym(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomName tom_match2_1_1=tom_get_slot_IsFsym_astName(tom_match2_1); { jtom.adt.tomsignature.types.TomTerm tom_match2_1_2=tom_get_slot_IsFsym_variable(tom_match2_1); if(tom_is_fun_sym_Name(tom_match2_1_1) ||  false ) { { String  tom_match2_1_1_1=tom_get_slot_Name_string(tom_match2_1_1); { String  opname=tom_match2_1_1_1; { jtom.adt.tomsignature.types.TomTerm exp=tom_match2_1_2;
 
 
         buildExpIsFsym(deep, opname, exp);
@@ -375,17 +375,24 @@ public abstract class TomAbstractGenerator extends TomBase {
 
 ;
         return;
-      }}}} } if(tom_is_fun_sym_Action(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match3_1_1=tom_get_slot_Action_instTomList(tom_match3_1); { jtom.adt.tomsignature.types.TomList l=tom_match3_1_1;generateList(deep, l)
+      }}}} } if(tom_is_fun_sym_Return(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match3_1_1=tom_get_slot_Return_kid1(tom_match3_1); { jtom.adt.tomsignature.types.TomTerm exp=tom_match3_1_1;buildReturn(deep, exp)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ;
         return;
-      }} } if(tom_is_fun_sym_Return(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match3_1_1=tom_get_slot_Return_kid1(tom_match3_1); { jtom.adt.tomsignature.types.TomTerm exp=tom_match3_1_1;buildReturn(deep, exp)
-
-
-;
-        return;
-      }} } if(tom_is_fun_sym_CompiledMatch(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Instruction tom_match3_1_1=tom_get_slot_CompiledMatch_automataInst(tom_match3_1); { jtom.adt.tomsignature.types.OptionList tom_match3_1_2=tom_get_slot_CompiledMatch_option(tom_match3_1); { jtom.adt.tomsignature.types.Instruction instruction=tom_match3_1_1; { jtom.adt.tomsignature.types.OptionList list=tom_match3_1_2;buildCompiledMatch(deep, instruction, list)
+      }} } if(tom_is_fun_sym_CompiledMatch(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Instruction tom_match3_1_1=tom_get_slot_CompiledMatch_automataInst(tom_match3_1); { jtom.adt.tomsignature.types.OptionList tom_match3_1_2=tom_get_slot_CompiledMatch_option(tom_match3_1); { jtom.adt.tomsignature.types.Instruction instruction=tom_match3_1_1; { jtom.adt.tomsignature.types.OptionList list=tom_match3_1_2;buildCompiledMatch(deep, instruction)
 
 
 ;
@@ -655,7 +662,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
 
-  protected abstract void buildCompiledMatch(int deep, Instruction instruction, OptionList list) throws IOException;
+  protected abstract void buildCompiledMatch(int deep, Instruction instruction) throws IOException;
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpOr(int deep, Expression exp1, Expression exp2) throws IOException;
   protected abstract void buildExpTrue(int deep) throws IOException;

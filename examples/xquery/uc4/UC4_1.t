@@ -113,7 +113,7 @@ public class UC4_1
 	%match (TNode book) {
 	  <items>(_*, item, _*)</items> -> 
 	   {
-		 a.add(createItem(item, date));
+		 a.add(createItem(`item, date));
 		 //System.out.println(book.text());
      System.out.println(book);
 	   }
@@ -127,7 +127,7 @@ public class UC4_1
   private Date getDate(String s) {
 	%match (String s) {
 	  (year*, 'a', month* ,'a',day*) -> {
-		System.out.println(year); 
+		System.out.println(`year); 
 	  }
 	}
 	return null;

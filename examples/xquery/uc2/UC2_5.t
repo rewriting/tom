@@ -98,7 +98,7 @@ public class UC2_5
 	  <book>(_*, node, _*)</book> -> 
 	   {
 		 //		 xtools = new XmlTools();
-		 result = result + createBook(node); 
+		 result = result + createBook(`node); 
 		 //		 xtools.printXMLFromATerm(node);
 	   }
 	}
@@ -127,13 +127,13 @@ public class UC2_5
 	   <section><title>#TEXT(title)</title></section> -> 
 	   {
 		 int figcount=countFigure(node);
-		 result = result + "<section title=\"" + title + "\" figcount=\"" + figcount + "\"/>" + "\n"; 
+		 result = result + "<section title=\"" + `title + "\" figcount=\"" + figcount + "\"/>" + "\n"; 
 	   }
 
 	  <section>nestedsection@<section>anything*</section></section> -> 
 	   {
 		 //		 System.out.println("get :" + getTitle(node));
-		 result = result + createBook(nestedsection);
+		 result = result + createBook(`nestedsection);
 	   }
 	}
 	//	System.out.println("deo hieu the nao");

@@ -113,7 +113,7 @@ public class UC1_8
 	%match (TNode book) {
 	  <book><title>#TEXT(title)</title><or></or></book> -> 
 					{
-					result = result + title + "\n";
+					result = result + `title + "\n";
 					}
 	}
 	return result;

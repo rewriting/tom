@@ -119,8 +119,8 @@ public class UC1_6
 	%match (TNode booklist) {
 	  <bib>(_*, book,_*)</bib> ->
 	   {
-		 if (bookHasAuthor(book)) {
-		   result = result + createBook(book);
+		 if (bookHasAuthor(`book)) {
+		   result = result + createBook(`book);
 		 }
 	   }
 	}
@@ -150,7 +150,7 @@ public class UC1_6
 	   {
 		 result = createCascadeXML("<book>", 
 								 createXML("<title>", 
-										   thetitle, 
+										   `thetitle, 
 										   "</title>", 
 										   2) + 
 								 createAuthor(book) , 
@@ -171,8 +171,8 @@ public class UC1_6
 		 counter++; 
 		 if (counter<=2) {
 		   result = result + createCascadeXML("<author>", 
-											  createXML("<last>", lastname, "</last>", 3) +
-											  createXML("<first>", firstname, "</first>", 3), 
+											  createXML("<last>", `lastname, "</last>", 3) +
+											  createXML("<first>", `firstname, "</first>", 3), 
 											  "</author>",
 											  2);
 		 }

@@ -66,8 +66,8 @@ public class UC1 {
 	%match (TNode booklist) {
 	  <bib>book</bib> ->
 	   {
-		 if (bookMatch(book)) {
-		   printBook(book);
+		 if (bookMatch(`book)) {
+		   printBook(`book);
 		 }
 	   }
 	}
@@ -78,7 +78,7 @@ public class UC1 {
 	%match (TNode book) {
 	  <book year=theyear><publisher>#TEXT(thepublisher)</publisher></book> ->
 		 {
-		   if ((Integer.parseInt(theyear) > 1991) && (thepublisher=="Addison-Wesley")) {
+		   if ((Integer.parseInt(`theyear) > 1991) && (`thepublisher=="Addison-Wesley")) {
 			 return true; 
 		   }
 		 }
@@ -95,10 +95,10 @@ public class UC1 {
 // 		 xtools = new XmlTools();
 // 		 xtools.printXMLFromATerm(a);
 		 System.out.print("<book year = \"");
-		 System.out.print(theyear);
+		 System.out.print(`theyear);
 		 System.out.println("\">");
 		 System.out.print("  <title>");
-		 System.out.print(thetitle);
+		 System.out.print(`thetitle);
 		 System.out.println("</title>");
 		 System.out.println("</book>");
 		 // how to create a TNode avec `xml with some variable like theyear and thetitle 

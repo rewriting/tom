@@ -135,7 +135,7 @@ public class UC2_6
 	  <book>(_*, node, _*)</book> -> 
 	   {
 		 //		 xtools = new XmlTools();
-		 result = result + createBook(node); 
+		 result = result + createBook(`node); 
 		 //		 xtools.printXMLFromATerm(node);
 	   }
 	}
@@ -164,8 +164,8 @@ public class UC2_6
 	   <section id=id difficulty=diffi><title>#TEXT(title)</title>anything*</section> -> 
 	   {
 		 int figcount=countFigure(node);
-		 result = result  + "\n"+ createCascadeXML("<section id=\"" + id + "\" difficulty=\"" + diffi + "\">",
-											createXML("<title>", title, "</title>",2) + "\n" 
+		 result = result  + "\n"+ createCascadeXML("<section id=\"" + `id + "\" difficulty=\"" + `diffi + "\">",
+											createXML("<title>", `title, "</title>",2) + "\n" 
 											+ createXML("<figcount>", "" + figcount, "</figcount>",2)
 											+ createBook(`xml(<hehe> anything* </hehe>)),
 											"</section>",
@@ -177,7 +177,7 @@ public class UC2_6
 	   {
 		 int figcount=countFigure(node);
 		 result = result  + "\n"+ createCascadeXML("<section>",
-											createXML("<title>", title, "</title>",2) + "\n" 
+											createXML("<title>", `title, "</title>",2) + "\n" 
 											+ createXML("<figcount>", "" + figcount, "</figcount>",2)
 											+ createBook(`xml(<hehe> anything* </hehe>)),
 											"</section>",
@@ -187,7 +187,7 @@ public class UC2_6
 
 	  <hehe>nestedsection@<section>anything*</section></hehe> -> 
 	   {
-		 result = result + createBook(nestedsection);
+		 result = result + createBook(`nestedsection);
 	   }
 
 	}

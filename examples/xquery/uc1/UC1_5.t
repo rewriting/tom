@@ -103,7 +103,7 @@ public class UC1_5 {
 	%match (TNode booklist) {
 	  <bib>(_*, book,_*)</bib> ->
 	   {
-  		 printBook(book, reviewlist);  
+  		 printBook(`book, reviewlist);  
 	
 	   }
 	}
@@ -114,13 +114,13 @@ public class UC1_5 {
   {	
 	%match (TNode book) {
 	  <book><title>#TEXT(thetitle)</title><price>#TEXT(theprice)</price></book> -> {
-		 if (bookHasReview(thetitle, reviewlist)) {
+		 if (bookHasReview(`thetitle, reviewlist)) {
 		   System.out.println("<book-with-prices>");
 		   System.out.print("  <title>");
-		   System.out.print(thetitle);
+		   System.out.print(`thetitle);
 		   System.out.println("</title>");
 		   
-		   printPrice(thetitle, reviewlist, theprice); 
+		   `printPrice(thetitle, reviewlist, theprice); 
 		   System.out.println("</book-with-prices>\n");
 		 }
 	   }
@@ -132,7 +132,7 @@ public class UC1_5 {
 
 	%match (TNode reviewlist) {
 	  <reviews><entry><title>#TEXT(thetitle)</title></entry></reviews> ->{
-		 if (thetitle == title) {
+		 if (`thetitle == title) {
 		   return true; 
 		 }
 	   }
@@ -145,10 +145,10 @@ public class UC1_5 {
 
 	%match (TNode reviewlist) {
 	  <reviews><entry><title>#TEXT(thetitle)</title><price>#TEXT(theprice)</price></entry></reviews> ->{
-		 if (thetitle == title) {
+		 if (`thetitle == title) {
 		   //		 System.out.println("  <author>");
 		   System.out.print("  <price-bstore2>");
-		   System.out.print(theprice);
+		   System.out.print(`theprice);
 		   System.out.println("</price-bstore2>");
 		   System.out.print("  <price-bstore1>");
 		   System.out.print(price1);

@@ -79,7 +79,7 @@ public class UC1_2 {
 	%match (TNode booklist) {
 	  <bib>book@<book></book></bib> ->
 	   {
-		 printBook(book);  
+		 `printBook(book);  
 	   }
 	}
 	System.out.println("</results>");
@@ -93,15 +93,15 @@ public class UC1_2 {
 	  </book> -> {
 		 System.out.println("<result>");
 		 System.out.print("  <title>");
-		 System.out.print(thetitle);
+		 System.out.print(`thetitle);
 		 System.out.println("  </title>");
 
 		 System.out.println("  <author>");
 		 System.out.print("    <last>");
-		 System.out.print(lastname);
+		 System.out.print(`lastname);
 		 System.out.println("</last>");
 		 System.out.print("    <first>");
-		 System.out.print(firstname);
+		 System.out.print(`firstname);
 		 System.out.println("</first>");		 
 		 System.out.println("  </author>");
 		 //		 xtools = new XmlTools();

@@ -107,19 +107,8 @@ TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
     generateSlotList(deep, slotList);
   }
 
-  protected void buildCompiledMatch(int deep, Instruction instruction, OptionList list) throws IOException {
-    boolean generated = hasGeneratedMatch(list);
-    boolean defaultPattern = hasDefaultCase(list);
-    Option orgTrack = null;
-    if(getInput().isDebugMode() && !generated) {
-      orgTrack = findOriginTracking(list);
-      debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-      output.writeln("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");");
-    }
+  protected void buildCompiledMatch(int deep, Instruction instruction) throws IOException {
     generateInstruction(deep+1,instruction);
-    if(getInput().isDebugMode() && !generated && !defaultPattern) {
-      output.writeln("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");");
-    }
   }
   
   protected void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException {

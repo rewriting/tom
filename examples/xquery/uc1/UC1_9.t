@@ -99,7 +99,7 @@ public class UC1_9
 	  <chapter>(_*, node, _*)</chapter> -> 
 	   {
 		 //		 xtools = new XmlTools();
-		 result = result + createBook(node); 
+		 result = result + createBook(`node); 
 		 //		 xtools.printXMLFromATerm(node);
 	   }
 	}
@@ -114,15 +114,15 @@ public class UC1_9
 	%match (TNode node) {
 	  <title>#TEXT(title)</title> -> 
 	   {
-		 if (title.indexOf("XML") >=0) 
-		   result = createXML("<title>",title,"</title>",2)  + "\n"; 
+		 if (`title.indexOf("XML") >=0) 
+		   result = createXML("<title>",`title,"</title>",2)  + "\n"; 
 	   }
 	   <section><title>#TEXT(title)</title></section> -> {
-		 if (title.indexOf("XML") >=0) 
-		   result =  createXML("<title>",title,"</title>",2) + "\n";
+		 if (`title.indexOf("XML") >=0) 
+		   result =  createXML("<title>",`title,"</title>",2) + "\n";
 	   }
 	   <section><section>other</section></section> -> {
-		 result = result + createBook(other);
+		 result = result + createBook(`other);
 	   }
 	   _ -> {
 		 result = result ;

@@ -63,14 +63,6 @@ public class TomKernelCompiler extends TomBase {
         if(subject instanceof Instruction) {
            { jtom.adt.tomsignature.types.Instruction tom_match2_1=(( jtom.adt.tomsignature.types.Instruction)subject);{ if(tom_is_fun_sym_Match(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match2_1_1=tom_get_slot_Match_subjectList(tom_match2_1); { jtom.adt.tomsignature.types.TomTerm tom_match2_1_2=tom_get_slot_Match_astPatternList(tom_match2_1); { jtom.adt.tomsignature.types.OptionList tom_match2_1_3=tom_get_slot_Match_option(tom_match2_1); if(tom_is_fun_sym_SubjectList(tom_match2_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match2_1_1_1=tom_get_slot_SubjectList_tomList(tom_match2_1_1); { jtom.adt.tomsignature.types.TomList l1=tom_match2_1_1_1; if(tom_is_fun_sym_PatternList(tom_match2_1_2) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match2_1_2_1=tom_get_slot_PatternList_tomList(tom_match2_1_2); { jtom.adt.tomsignature.types.TomList l2=tom_match2_1_2_1; { jtom.adt.tomsignature.types.OptionList optionList=tom_match2_1_3;
 
-              boolean generatedMatch = false;
-              String currentDebugKey = "noDebug";
-              if(getInput().isDebugMode()) {
-                generatedMatch = hasGeneratedMatch(optionList);
-                Option orgTrack = findOriginTracking(optionList);
-                currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
-              }
-                
               TomList patternList = null;
               Instruction actionInst = null;
               TomList automataList = empty();
@@ -83,19 +75,11 @@ public class TomKernelCompiler extends TomBase {
                  * build a matching automata
                  */
               int actionNumber = 0;
-              boolean defaultPA =false;
               while(!l2.isEmpty()) {
                 actionNumber++;
                 TomTerm pa = l2.getHead();
-                defaultPA = hasDefaultCase(pa.getOption());
                 patternList = pa.getTermList().getTomList();
-                if (getInput().isDebugMode() && defaultPA) {
-                    // replace success by leaving structure
-                  TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
-                  actionInst = tom_make_UnamedBlock(tom_cons_list_concInstruction(pa.getAction(),tom_cons_list_concInstruction(tom_make_TargetLanguageToInstruction(tl),tom_empty_list_concInstruction())));
-                } else {
-                  actionInst = pa.getAction();
-                }
+                actionInst = pa.getAction();
                 if(patternList==null || actionInst==null) {
                   System.out.println("TomKernelCompiler: null value");
                   throw new TomRuntimeException("TomKernelCompiler: null value");
@@ -108,13 +92,10 @@ public class TomKernelCompiler extends TomBase {
                 actionInst = (Instruction) this.apply(actionInst);
                 Instruction matchingAutomata = genSyntacticMatchingAutomata(actionInst,
                                                                             patternList,rootpath,1);
-                OptionList automataOptionList = tom_cons_list_concOption(tom_make_Debug(tom_make_Name(currentDebugKey)),tom_empty_list_concOption());
+                OptionList automataOptionList = tom_empty_list_concOption();
                 TomName label = getLabel(pa.getOption());
                 if(label != null) {
                   automataOptionList = tom_make_manyOptionList(tom_make_Label(label),automataOptionList);
-                }
-                if(defaultPA) {
-                  automataOptionList = tom_make_manyOptionList(tom_make_DefaultCase(),automataOptionList);
                 }
                 TomNumberList numberList = (TomNumberList) rootpath.append(tom_make_PatternNumber(makeNumber(actionNumber)));
                 TomTerm automata = tom_make_Automata(automataOptionList,patternList,numberList,matchingAutomata);
@@ -127,7 +108,7 @@ public class TomKernelCompiler extends TomBase {
                 /*
                  * return the compiled Match construction
                  */
-              InstructionList astAutomataList = automataListCompileMatchingList(automataList, generatedMatch);
+              InstructionList astAutomataList = automataListCompileMatchingList(automataList);
               Instruction astAutomata = collectVariableFromSubjectList(l1,1,rootpath,tom_make_AbstractBlock(astAutomataList));
               return tom_make_CompiledMatch(astAutomata, optionList);
             }}} }}} }}}} }
@@ -180,23 +161,11 @@ public class TomKernelCompiler extends TomBase {
     /*
      * build a list of instructions from a list of automata
      */
-  private InstructionList automataListCompileMatchingList(TomList automataList, boolean generatedMatch) {
+  private InstructionList automataListCompileMatchingList(TomList automataList) {
      { jtom.adt.tomsignature.types.TomList tom_match4_1=(( jtom.adt.tomsignature.types.TomList)automataList);{ if(tom_is_fun_sym_emptyTomList(tom_match4_1) ||  false ) {
  return tom_make_emptyInstructionList();  } if(tom_is_fun_sym_manyTomList(tom_match4_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match4_1_1=tom_get_slot_manyTomList_head(tom_match4_1); { jtom.adt.tomsignature.types.TomList tom_match4_1_2=tom_get_slot_manyTomList_tail(tom_match4_1); if(tom_is_fun_sym_Automata(tom_match4_1_1) ||  false ) { { jtom.adt.tomsignature.types.OptionList tom_match4_1_1_1=tom_get_slot_Automata_option(tom_match4_1_1); { jtom.adt.tomsignature.types.TomList tom_match4_1_1_2=tom_get_slot_Automata_patternList(tom_match4_1_1); { jtom.adt.tomsignature.types.TomNumberList tom_match4_1_1_3=tom_get_slot_Automata_numberList(tom_match4_1_1); { jtom.adt.tomsignature.types.Instruction tom_match4_1_1_4=tom_get_slot_Automata_inst(tom_match4_1_1); { jtom.adt.tomsignature.types.OptionList optionList=tom_match4_1_1_1; { jtom.adt.tomsignature.types.TomList patternList=tom_match4_1_1_2; { jtom.adt.tomsignature.types.TomNumberList numberList=tom_match4_1_1_3; { jtom.adt.tomsignature.types.Instruction instruction=tom_match4_1_1_4; { jtom.adt.tomsignature.types.TomList l=tom_match4_1_2;
 
-        InstructionList newList = automataListCompileMatchingList(l, generatedMatch);
-
-        if(!generatedMatch && getInput().isDebugMode()) {
-          String debugKey = getDebug(optionList);
-          Instruction tl1 = tom_make_TargetLanguageToInstruction(tom_make_ITL("jtom.debug.TomDebugger.debugger.enteringPattern(\""+debugKey+"\");\n"));
-          Instruction tl2 = tom_make_TargetLanguageToInstruction(tom_make_ITL("jtom.debug.TomDebugger.debugger.leavingPattern(\""+debugKey+"\");\n"));
-          if(!hasDefaultCase(optionList)) {
-            instruction = tom_make_UnamedBlock(tom_cons_list_concInstruction(tl1,tom_cons_list_concInstruction(instruction,tom_cons_list_concInstruction(tl2,tom_empty_list_concInstruction()))));
-          } else {
-            instruction = tom_make_UnamedBlock(tom_cons_list_concInstruction(tl1,tom_cons_list_concInstruction(instruction,tom_empty_list_concInstruction())));
-          }
-        }
-         
+        InstructionList newList = automataListCompileMatchingList(l);
         if(getLabel(optionList) != null) {
             /*
              * if a label is assigned to a pattern (label:pattern -> action)
@@ -800,7 +769,7 @@ public class TomKernelCompiler extends TomBase {
 
           //System.out.println("constraint: " + source + " EqualTo " + var);
         Instruction subBody = compileConstraint(var,source,body);
-        return buildConstraint(tail,source,tom_make_IfThenElse(tom_make_EqualTerm(var,tom_make_ExpressionToTomTerm(source)),subBody,tom_make_Nop()));
+        return buildConstraint(tail,source,tom_make_IfThenElse(tom_make_EqualTerm(getTermType(var),var,tom_make_ExpressionToTomTerm(source)),subBody,tom_make_Nop()));
       }}} }} }} } if(tom_is_fun_sym_concConstraint(tom_match12_1) ||  false ) { { jtom.adt.tomsignature.types.ConstraintList tom_match12_1_list1=tom_match12_1; if(!(tom_is_empty_ConstraintList(tom_match12_1_list1))) { { jtom.adt.tomsignature.types.Constraint tom_match12_1_1=tom_get_head_ConstraintList(tom_match12_1_list1);tom_match12_1_list1=tom_get_tail_ConstraintList(tom_match12_1_list1); if(tom_is_fun_sym_AssignTo(tom_match12_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match12_1_1_1=tom_get_slot_AssignTo_variable(tom_match12_1_1); if(tom_is_fun_sym_VariableStar(tom_match12_1_1_1) || tom_is_fun_sym_Variable(tom_match12_1_1_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm var=tom_match12_1_1_1; { jtom.adt.tomsignature.types.ConstraintList tail=tom_match12_1_list1;
 
 

@@ -119,7 +119,7 @@ public class UC2_1
 	  <book>(_*, node, _*)</book> -> 
 	   {
 		 //	xtools = new XmlTools();
-		 result = result + createNode(node, true); 
+		 result = result + createNode(`node, true); 
 		 //		 xtools.printXMLFromATerm(node);
 	   }
 	}
@@ -156,16 +156,16 @@ public class UC2_1
 		 }
 		 <section id=ids></section> -> 
 			{
-			  result = "<section id = \"" + ids + "\"" + "\n"; 
+			  result = "<section id = \"" + `ids + "\"" + "\n"; 
 			}
 		 
 		 <section difficulty=diffi></section> -> 
 			{
-			  result = "<section difficulty = \"" + diffi + "\">"+ "\n"; 
+			  result = "<section difficulty = \"" + `diffi + "\">"+ "\n"; 
 			}
 		 <section id=ids  difficulty=diffi></section> -> 
 			{
-			  result = "<section id = \"" + ids + "\"" + "difficulty = \"" + diffi + "\">"+ "\n"; 
+			  result = "<section id = \"" + `ids + "\"" + "difficulty = \"" + `diffi + "\">"+ "\n"; 
 			}
 	  }
 
@@ -176,11 +176,11 @@ public class UC2_1
 	  <title>#TEXT(title)</title> -> 
 	   {
 		 if (!firstRun)
-		   result = result +  createXML("<title>",title,"</title>",2) + "\n";
+		   result = result +  createXML("<title>",`title,"</title>",2) + "\n";
 	   }
 	   
 	   <section>(_*, section, _*)</section> -> {
-		 result = result +  createNode(section,false);
+		 result = result +  createNode(`section,false);
 	   }
 	}
 	

@@ -80,7 +80,7 @@ public class UC1_3 {
 	%match (TNode booklist) {
 	  <bib>(_*, book,_*)</bib> ->
 	   {
-		 printBook(book);  
+		 printBook(`book);  
 	   }
 	}
 	System.out.println("</results>");
@@ -94,7 +94,7 @@ public class UC1_3 {
 	  <book><title>#TEXT(thetitle)</title></book> -> {
 		 System.out.println("<result>");		 
 		 System.out.print("  <title>");
-		 System.out.print(thetitle);
+		 System.out.print(`thetitle);
 		 System.out.println("  </title>");
 		 
 		 printAuthor(book); 
@@ -110,10 +110,10 @@ public class UC1_3 {
 	  <book><author><last>#TEXT(lastname)</last><first>#TEXT(firstname)</first></author></book> -> {
 		 System.out.println("  <author>");
 		 System.out.print("    <last>");
-		 System.out.print(lastname);
+		 System.out.print(`lastname);
 		 System.out.println("</last>");
 		 System.out.print("    <first>");
-		 System.out.print(firstname);
+		 System.out.print(`firstname);
 		 System.out.println("</first>");		 
 		 System.out.println("  </author>");
 	   }

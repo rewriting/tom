@@ -86,7 +86,7 @@ public class UC3_2
 	%match (TNode book) {
 	  <report><section><section_title>#TEXT(sectiontitle)</section_title><section_content><incision>everything*</incision></section_content></section></report> -> 
 	   {
-		 if (sectiontitle=="Procedure") {
+		 if (`sectiontitle=="Procedure") {
 		   if (count<2) {
 			 TNode n = `xml(<tmp> everything* </tmp>); 
 			 result = result + getInstrument(n) + "\n";
@@ -106,7 +106,7 @@ public class UC3_2
 	%match (TNode n) {
 	  <tmp><instrument>#TEXT(instrument)</instrument></tmp> -> 
 	   {
-		 return createXML("<instrument>",instrument,"</instrument>",0);
+		 return createXML("<instrument>",`instrument,"</instrument>",0);
 	   }
 	}
 	return "";

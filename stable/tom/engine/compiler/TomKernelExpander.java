@@ -166,7 +166,7 @@ public class TomKernelExpander extends TomBase {
                //System.out.println("lhs    = " + lhs);
                //System.out.println("newLhs = " + newLhs);
               
-               return tom_make_EqualityCondition(newLhs,newRhs);
+               return tom_make_TypedEqualityCondition(type,newLhs,newRhs);
               }}} }} }} }}} } }}} }} }} }}} }}} }}} } { jtom.adt.tomsignature.types.TomTerm context=tom_match5_1; if(tom_is_fun_sym_Match(tom_match5_2) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match5_2_1=tom_get_slot_Match_subjectList(tom_match5_2); { jtom.adt.tomsignature.types.TomTerm tom_match5_2_2=tom_get_slot_Match_astPatternList(tom_match5_2); { jtom.adt.tomsignature.types.OptionList tom_match5_2_3=tom_get_slot_Match_option(tom_match5_2); { jtom.adt.tomsignature.types.TomTerm tomSubjectList=tom_match5_2_1; { jtom.adt.tomsignature.types.TomTerm patternList=tom_match5_2_2; { jtom.adt.tomsignature.types.OptionList option=tom_match5_2_3;
 
 
@@ -464,99 +464,5 @@ public class TomKernelExpander extends TomBase {
     return tomType;
   }
 
-
-  /*
-   * Replace pattern with only variables or underscore (UnamedVariables)
-   * By DefaultPattern
-   */
-  public TomTerm expandMatchPattern(TomTerm subject) {
-    Replace1 replace = new Replace1() { 
-        public ATerm apply(ATerm subject) {
-          if(subject instanceof Instruction) {
-             { jtom.adt.tomsignature.types.Instruction tom_match10_1=(( jtom.adt.tomsignature.types.Instruction)subject);{ if(tom_is_fun_sym_Match(tom_match10_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match10_1_1=tom_get_slot_Match_subjectList(tom_match10_1); { jtom.adt.tomsignature.types.TomTerm tom_match10_1_2=tom_get_slot_Match_astPatternList(tom_match10_1); { jtom.adt.tomsignature.types.OptionList tom_match10_1_3=tom_get_slot_Match_option(tom_match10_1); { jtom.adt.tomsignature.types.TomTerm subjectList=tom_match10_1_1; { jtom.adt.tomsignature.types.TomTerm patternList=tom_match10_1_2; { jtom.adt.tomsignature.types.OptionList option=tom_match10_1_3;
-
-                // find other match in PA list
-                TomTerm newPatternList = expandMatchPattern(patternList);
-                return expandPattern(tom_make_Match(subjectList, newPatternList, option)); 
-              }}}}}} }
-
-                return traversal().genericTraversal(subject,this);
-              }}
- // end match
-          } else {
-            return traversal().genericTraversal(subject,this);
-          }
-        } // end apply
-      }; // end new
-    
-    return (TomTerm) replace.apply(subject); 
-  }
-
-  private Instruction expandPattern(Instruction match) {
-     { jtom.adt.tomsignature.types.Instruction tom_match11_1=(( jtom.adt.tomsignature.types.Instruction)match);{ if(tom_is_fun_sym_Match(tom_match11_1) ||  false ) { { jtom.adt.tomsignature.types.TomTerm tom_match11_1_1=tom_get_slot_Match_subjectList(tom_match11_1); { jtom.adt.tomsignature.types.TomTerm tom_match11_1_2=tom_get_slot_Match_astPatternList(tom_match11_1); { jtom.adt.tomsignature.types.OptionList tom_match11_1_3=tom_get_slot_Match_option(tom_match11_1); { jtom.adt.tomsignature.types.TomTerm subjectList=tom_match11_1_1; if(tom_is_fun_sym_PatternList(tom_match11_1_2) ||  false ) { { jtom.adt.tomsignature.types.TomList tom_match11_1_2_1=tom_get_slot_PatternList_tomList(tom_match11_1_2); { jtom.adt.tomsignature.types.TomList list=tom_match11_1_2_1; { jtom.adt.tomsignature.types.OptionList option=tom_match11_1_3;
-
-        boolean needModification = false;
-        TomList newPatternList = empty();
-        while(!list.isEmpty()) {
-          TomTerm pa = list.getHead();
-          if( isDefaultPattern(pa.getTermList().getTomList()) ) {
-            OptionList newPatternActionOption =  tom_make_manyOptionList(tom_make_DefaultCase(),pa.getOption());
-            newPatternList = cons(tom_make_PatternAction(pa.getTermList(), pa.getAction(), newPatternActionOption), newPatternList);
-            needModification = true;
-            if(!list.getTail().isEmpty()) {
-              // the default pattern is not the latest one!!
-              System.out.println("Default pattern issue"+pa.getOption());
-            }
-          } else {
-            // we keep the PA
-            newPatternList = cons(list.getHead(), newPatternList);
-          }
-          list = list.getTail();
-        }
-        if(needModification) {
-          newPatternList = reverse(newPatternList);
-          OptionList newMatchOption =tom_make_manyOptionList(tom_make_DefaultCase(),option);
-          return tom_make_Match(subjectList, tom_make_PatternList(newPatternList), newMatchOption);
-        } else {
-          return match;
-        }
-      }}} }}}}} }
-
-        System.out.println("Strange Match in expandMatchPattern"+match);
-        throw new TomRuntimeException("Strange Match in expandMatchPattern"+match);
-      }}
-
-  }
-
-  private boolean isDefaultPattern(TomList pList) {
-    TomTerm term;
-    while(!pList.isEmpty()) {
-      term = pList.getHead();
-       { jtom.adt.tomsignature.types.TomTerm tom_match12_1=(( jtom.adt.tomsignature.types.TomTerm)term);{ if(tom_is_fun_sym_Appl(tom_match12_1) ||  false ) {
-
-          return false;
-         }}}
-
-      pList = pList.getTail();
-    }
-    
-    ArrayList variableList = new ArrayList();
-    collectVariable(variableList,tom_make_PatternList(pList));
-    
-    // compute multiplicities
-    HashMap multiplicityMap = new HashMap();
-    Iterator it = variableList.iterator();
-    while(it.hasNext()) {
-      TomTerm variable = (TomTerm)it.next();
-      TomName name = variable.getAstName();
-      if(multiplicityMap.containsKey(name)) {
-        Integer value = (Integer)multiplicityMap.get(name);
-        return false;
-      } else {
-        multiplicityMap.put(name, new Integer(1));
-      }
-    }
-    return true;
-  }
   
 } // Class TomKernelExpander

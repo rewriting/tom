@@ -86,7 +86,7 @@ public class UC2_3
 	  <book>(_*, node, _*)</book> -> 
 	   {
 		 //		 xtools = new XmlTools();
-		 figurecount = figurecount + countFigure(node); 
+		 figurecount = figurecount + countFigure(`node); 
 		 //		 xtools.printXMLFromATerm(node);
 	   }
 	}
@@ -99,7 +99,7 @@ public class UC2_3
 	  <book>(_*, node, _*)</book> -> 
 	   {
 		 //		 xtools = new XmlTools();
-		 sectioncount = sectioncount + countSection(node); 
+		 sectioncount = sectioncount + countSection(`node); 
 		 //		 xtools.printXMLFromATerm(node);
 	   }
 	}
@@ -121,7 +121,7 @@ public class UC2_3
 		 result++;
 	   }
 	   <section><section>other</section></section> -> {
-		 result = result + countFigure(other);
+		 result = result + countFigure(`other);
 	   }
 	   _ -> {
 		 result = result ;
@@ -139,7 +139,7 @@ public class UC2_3
 		 result++;
 	   }
 	   <section>nestedsection@<section>other*</section></section> -> {
-		 result = result + countSection(nestedsection);
+		 result = result + countSection(`nestedsection);
 	   }
 	}
 	//	System.out.println("deo hieu the nao");

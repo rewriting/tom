@@ -106,7 +106,7 @@ public class UC1_7
   private TNode sortBook(TNode booklist) {
     %match(TNode booklist) {
      <bib>(X1*,p1,X2*,p2,X3*)</bib> -> {
-		 if(compare(p1,p2) > 0) {
+		 if(compare(`p1,`p2) > 0) {
 		   return sortBook(`xml(<bib>X1* p2 X2* p1 X3*</bib>));
 		 }	
 	   }
@@ -123,7 +123,7 @@ public class UC1_7
 	  <book><title>#TEXT(title1)</title></book>, 
 	  <book><title>#TEXT(title2)</title></book> -> 
 	   { 
-		 return title1.compareTo(title2);
+		 return `title1.compareTo(`title2);
 	   }
     }
     return 0;
@@ -136,10 +136,10 @@ public class UC1_7
 	%match (TNode book) {
 	  <bib><book year=theyear><title>#TEXT(thetitle)</title><publisher>#TEXT("Addison-Wesley")</publisher></book></bib> -> 
 	   {
-		 if (Integer.parseInt(theyear) > 1991) {
-		   result = result + createCascadeXML("<book year=" + theyear+">", 
+		 if (Integer.parseInt(`theyear) > 1991) {
+		   result = result + createCascadeXML("<book year=" + `theyear + ">", 
 											  createXML("<title>", 
-														thetitle, 
+														`thetitle, 
 														"</title>", 
 														2) , 
 											  "</book>", 

@@ -101,7 +101,7 @@ public class UC2_2
 	  <book>(_*, node, _*)</book> -> 
 	   {
 		 //		 xtools = new XmlTools();
-		 result = result + createBook(node); 
+		 result = result + createBook(`node); 
 		 //		 xtools.printXMLFromATerm(node);
 	   }
 	}
@@ -116,17 +116,17 @@ public class UC2_2
 	%match (TNode node) {
 	  <figure height=height width=width><title>#TEXT(title)</title></figure> -> 
 	   {
-		 result = createCascadeXML("<figure height=\"" + height + "\" width=\"" + width + "\">",
-								   createXML("<title>",title,"</title>",3),
+		 result = createCascadeXML("<figure height=\"" + `height + "\" width=\"" + `width + "\">",
+								   createXML("<title>",`title,"</title>",3),
 								   "</figure>",2)  + "\n"; 
 	   }
 	   <section><figure height=height width=width><title>#TEXT(title)</title></figure></section> -> {
-		   result =  createCascadeXML("<figure height=\"" + height + "\" width=\"" + width + "\">",
-							   createXML("<title>",title,"</title>",3),
+		   result =  createCascadeXML("<figure height=\"" + `height + "\" width=\"" + `width + "\">",
+							   createXML("<title>",`title,"</title>",3),
 							   "</>",2) + "\n";
 	   }
 	   <section><section>other</section></section> -> {
-		 result = result + createBook(other);
+		 result = result + createBook(`other);
 	   }
 	   _ -> {
 		 result = result ;

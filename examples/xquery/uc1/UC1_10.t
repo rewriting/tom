@@ -101,14 +101,15 @@ public class UC1_10
 	%match (TNode pricelist) {
 	  <prices><book><title>#TEXT(title)</title><price>#TEXT(price)</price></book></prices> -> 
 	   {
-		 if (entryExiste(title, vecTitle)) {
+		 if(`entryExiste(title, vecTitle)) {
 		   //		   System.out.println("entry existing");
-		   if (Float.parseFloat(price) < getPrice(title, vecPrice, vecTitle))
-			 vecPrice = replacePrice(Float.parseFloat(price), title, vecPrice, vecTitle); 
+		   if(`(Float.parseFloat(price) < getPrice(title, vecPrice, vecTitle))) {
+         vecPrice = `replacePrice(Float.parseFloat(price), title, vecPrice, vecTitle); 
+       }
 		 }
 		 else {
-		   vecTitle.add(title); 
-		   vecPrice.add(Float.valueOf(price));
+		   vecTitle.add(`title); 
+		   vecPrice.add(Float.valueOf(`price));
 		 }
 	   }
 	}
@@ -179,15 +180,15 @@ public class UC1_10
 	%match (TNode node) {
 	  <title>#TEXT(title)</title> -> 
 	   {
-		 if (title.indexOf("XML") >=0) 
-		   result = createXML("<title>",title,"</title>",2)  + "\n"; 
+		 if (`title.indexOf("XML") >=0) 
+		   result = createXML("<title>",`title,"</title>",2)  + "\n"; 
 	   }
 	   <section><title>#TEXT(title)</title></section> -> {
-		 if (title.indexOf("XML") >=0) 
-		   result =  createXML("<title>",title,"</title>",2) + "\n";
+		 if (`title.indexOf("XML") >=0) 
+		   result =  createXML("<title>",`title,"</title>",2) + "\n";
 	   }
 	   <section><section>other</section></section> -> {
-		 result = result + createBook(other);
+		 result = result + createBook(`other);
 	   }
 	   _ -> {
 		 result = result ;

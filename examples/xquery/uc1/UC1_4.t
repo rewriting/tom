@@ -137,9 +137,9 @@ public class UC1_4 {
 	// get distinct author
 	%match (TNode booklist) {
 	  <bib><book><author><last>#TEXT(thelast)</last><first>#TEXT(thefirst)</first></author></book></bib> -> {
-		 if (!entryExiste(thelast, thefirst, lastnamelist, firstnamelist)) {  // not existe,  add to list
-		   lastnamelist.add(thelast); 
-		   firstnamelist.add(thefirst);
+		 if (!`entryExiste(thelast, thefirst, lastnamelist, firstnamelist)) {  // not existe,  add to list
+		   lastnamelist.add(`thelast); 
+		   firstnamelist.add(`thefirst);
 		 }
 	   }
 	}
@@ -182,9 +182,9 @@ public class UC1_4 {
   {
 	%match (TNode booklist) {
 	  <bib><book><title>#TEXT(title)</title><author><last>#TEXT(lastname)</last><first>#TEXT(firstname)</first></author></book></bib> ->{
-		 if ((firstname==first) && (lastname==last)) {
+		 if ((`firstname==first) && (`lastname==last)) {
 		   System.out.print("    <title>");
-		   System.out.print(title);
+		   System.out.print(`title);
 		   System.out.print("</title>\n");
 		 }
 	   }
