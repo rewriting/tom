@@ -17,24 +17,24 @@
   <!ELEMENT OptionBoolean EMPTY>
   <!ATTLIST OptionBoolean
     name CDATA #REQUIRED
-    altName CDATA #IMPLIED
-    description CDATA #IMPLIED
-    valueB (true|false) "false">
+    altName CDATA ""
+    description CDATA ""
+    valueB (true|false) #REQUIRED>
 
   <!ELEMENT OptionInteger EMPTY>
   <!ATTLIST OptionInteger
     name CDATA #REQUIRED
-    altName CDATA #IMPLIED
-    description CDATA #IMPLIED
-    valueI CDATA "0"
+    altName CDATA ""
+    description CDATA ""
+    valueI CDATA #REQUIRED
     attrName CDATA #REQUIRED>
 
   <!ELEMENT OptionString EMPTY>
   <!ATTLIST OptionString
     name CDATA #REQUIRED
-    altName CDATA #IMPLIED
-    description CDATA #IMPLIED
-    valueS CDATA ""
+    altName CDATA ""
+    description CDATA ""
+    valueS CDATA #REQUIRED
     attrName CDATA #REQUIRED>
 ]>
 

@@ -247,7 +247,7 @@ public class TomServer implements TomPluginOptions {
       }
     } catch(NullPointerException npe) {
       // the lack of a configuration file is handled here
-      environment.messageError("A configuration file must be specified with the -X option", 
+      environment.messageError(TomMessage.getString("ConfigFileNotSpecified"), 
                                "TomServer", 
                                TomMessage.DEFAULT_ERROR_LINE_NUMBER);
     }
@@ -499,7 +499,7 @@ public class TomServer implements TomPluginOptions {
         
         if( environment.hasError() ) {
           environment.printAlertMessage(plugin.getClass().toString());
-          environment.messageError("Error while processing file " + inputFiles[i],
+          environment.messageError(TomMessage.getString("ProcessingError"), new Object[]{inputFiles[i]},
                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
           break;
         }
@@ -736,11 +736,8 @@ public class TomServer implements TomPluginOptions {
 	      boolean expectedValue = option.getValueB().isTrue();
 	      boolean actualValue = getOptionBooleanValue(optionName);
 	      if ( actualValue != expectedValue ) {
-		  // TODO : put the message properly in TomMessageResources.properties
-		  // I'm not doing it right away because the messages need to be updated anyway
-		  // (some are obsolete), I'll fix it all at the same time
-		  environment.messageError("Option " +optionName+ " was expected with value "
-					   +expectedValue+ " but " +actualValue+ " was found instead",
+		  environment.messageError(TomMessage.getString("IncorrectOptionValue"),
+					   new Object[]{optionName,Boolean.toString(expectedValue),Boolean.toString(actualValue)},
 					   "TomServer",TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 		  return false;
 	      }
@@ -748,19 +745,17 @@ public class TomServer implements TomPluginOptions {
 	      int expectedValue = option.getValueI();
 	      int actualValue = getOptionIntegerValue(optionName);
 	      if ( actualValue != expectedValue ) {
-		  // TODO : see above...
-		  environment.messageError("Option " +optionName+ " was expected with value "
-					   +expectedValue+ " but " +actualValue+ " was found instead",
+		  environment.messageError(TomMessage.getString("IncorrectOptionValue"),
+					   new Object[]{optionName,Integer.toString(expectedValue),Integer.toString(actualValue)},
 					   "TomServer",TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 		  return false;
 	      }
 	  } else if( option.isOptionString() ) {
 	      String expectedValue = option.getValueS();
 	      String actualValue = getOptionStringValue(optionName);
-	      if ( actualValue != expectedValue ) {
-		  // TODO : see above...
-		  environment.messageError("Option " +optionName+ " was expected with value "
-					   +expectedValue+ " but " +actualValue+ " was found instead",
+	      if ( ! actualValue.equals(expectedValue) ) {
+		  environment.messageError(TomMessage.getString("IncorrectOptionValue"),
+					   new Object[]{optionName,expectedValue,actualValue},
 					   "TomServer",TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 		  return false;
 	      }
