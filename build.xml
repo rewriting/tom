@@ -52,7 +52,7 @@
   <!-- for stable -->
   <property name="stable.src"     location="stable"/>
   <property name="stable.adt"     location="${stable.src}/jtom/adt"/>
-  <property name="stable.mapping" location="${stable.src}/jtom/runtime/mapping"/>
+  <property name="stable.mapping" location="${stable.src}/tom/library/mapping"/>
   <property name="stable.build"   location="${stable.src}/build"/>
   <property name="stable.dist"    location="${stable.src}/dist"/>
   
@@ -308,7 +308,6 @@
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
       <include name="jtom/**/*.java"/>
-			<exclude name="jtom/**/Main.java"/>
     </javac>
   </target>
   
@@ -879,48 +878,51 @@
       <classpath refid="src.classpath"/>
       <include name="tom/**/*.java"/>
       <include name="jtom/**/*.java"/>
-      <exclude name="jtom/**/Main.java"/>
     </javac>
   </target>
 
   <target name="bootinstall" 
-          description="Instrall src tree into stable tree" 
+          description="Install src tree into stable tree" 
           depends="bootcheck"
 					if="bootstrap.ok">
     <copy todir="${stable.src}" overwrite="true">
       <fileset dir="${src.src}">
-        <include name="jtom/**/*.java"/>
-        <exclude name="jtom/adt/**/*.java"/>
-      </fileset>
-      <fileset dir="${bootstrap.dir}/gen">
-        <include name="jtom/**/*.java"/>
-        <exclude name="jtom/adt/**/*.java"/>
-      </fileset>
-      <fileset dir="${src.src}">
+        <include name="**/*.java"/>
 				<include name="**/*.properties"/>
         <include name="**/*.xml"/>
+        <exclude name="**/adt/**/*.java"/>
+        <exclude name="**/bootstrap/**/*"/>
+        <exclude name="**/gen/**/*"/>
+      </fileset>
+      <fileset dir="${src.gen}">
+        <include name="**/*.java"/>
+        <exclude name="**/adt/**/*.java"/>
       </fileset>
     </copy>
-    <jar jarfile="${stable.adt}/Set.jar">
-      <fileset dir="${src.build}" 
-               includes="jtom/adt/set/**/*.class"/>
-    </jar>
-    <jar jarfile="${stable.adt}/TNode.jar">
-      <fileset dir="${src.build}" 
-               includes="jtom/adt/tnode/**/*.class"/>
-    </jar>
-    <jar jarfile="${stable.adt}/TomSignature.jar">
-      <fileset dir="${src.build}" 
-               includes="jtom/adt/tomsignature/**/*.class"/>
-    </jar>
-    <jar jarfile="${stable.adt}/Options.jar">
-      <fileset dir="${src.build}" 
-               includes="jtom/adt/options/**/*.class"/>
-    </jar>
     <copy todir="${stable.mapping}" overwrite="true">
       <fileset dir="${src.mapping}" includes="**/*.tom"/>
     </copy>
+
+    <jar jarfile="${stable.src}/jtom/adt/TomSignature.jar">
+      <fileset dir="${src.build}" 
+               includes="jtom/adt/tomsignature/**/*.class"/>
+    </jar>
+    <mkdir dir="${stable.src}/tom/library/adt"/>
+    <jar jarfile="${stable.src}/tom/library/adt/Set.jar">
+      <fileset dir="${src.build}" 
+               includes="tom/library/adt/set/**/*.class"/>
+    </jar>
+    <jar jarfile="${stable.src}/tom/library/adt/TNode.jar">
+      <fileset dir="${src.build}" 
+               includes="tom/platform/adt/tnode/**/*.class"/>
+    </jar>
+    <mkdir dir="${stable.src}/tom/platform/adt"/>
+    <jar jarfile="${stable.src}/tom/platform/adt/PlatformOption.jar">
+      <fileset dir="${src.build}" 
+               includes="tom/platform/adt/platformoption/**/*.class"/>
+    </jar>
 		<antcall target="clean.bootstrap"/>
+
   </target>
   
   <target name="bundle.src" depends="dist.src">

@@ -27,6 +27,7 @@
 package jtom.parser;
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 import java.text.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -39,6 +40,7 @@ import jtom.exception.*;
 import jtom.tools.*;
 import jtom.TomMessage;
 import jtom.xml.Constants;
+import tom.platform.*;
 
 public class TomParserTokenManager implements TomParserConstants
 {

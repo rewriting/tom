@@ -39,7 +39,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
   }
   
 // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
+  %include { adt/TomSignature.tom }
 // ------------------------------------------------------------
 
   %typeterm Token {

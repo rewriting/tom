@@ -42,7 +42,7 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   }
 
 // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
+  %include { adt/TomSignature.tom }
 // ------------------------------------------------------------
 
   protected void buildExpTrue(int deep) throws IOException {

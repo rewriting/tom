@@ -39,7 +39,7 @@ import jtom.TomMessage;
 public class Verifier extends TomBase {
 
 	// ------------------------------------------------------------
- 	%include { ../adt/TomSignature.tom }
+ 	%include { adt/TomSignature.tom }
 	// ------------------------------------------------------------
 
 	%vas {

@@ -26,6 +26,7 @@
 package jtom.tools;
 
 import java.io.*;
+import tom.platform.*;
 
 public class OutputCode {
   protected Writer file;
@@ -38,8 +39,8 @@ public class OutputCode {
     this.defaultDeep = defaultDeep;
   }
 
-  private jtom.TomServer getServer() {
-    return jtom.TomServer.getInstance();
+  private PluginPlatform getPluginPlatform() {
+    return PluginPlatform.getInstance();
   }
 
   public OutputCode() {
@@ -96,7 +97,7 @@ public class OutputCode {
   }
   
   public void writeln() throws IOException {
-    if(((Boolean)getServer().getOptionValue("pretty")).booleanValue()) {
+    if(((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue()) {
       file.write('\n');
     }
   }
@@ -112,16 +113,16 @@ public class OutputCode {
   }
   
   public void write(String s, int line, int length) throws IOException {
-    if(singleLine>0 && !((Boolean)getServer().getOptionValue("cCode")).booleanValue()) {
+    if(singleLine>0 && !((Boolean)getPluginPlatform().getOptionValue("cCode")).booleanValue()) {
       s = s.replace('\n', ' ');
       s = s.replace('\r', ' ');
       s = s.replace('\t', ' ');
       write(s);
       return;
     }
-    if (!((Boolean)getServer().getOptionValue("pretty")).booleanValue()) {
+    if (!((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue()) {
       if(lineCounter > line) {
-        if(((Boolean)getServer().getOptionValue("cCode")).booleanValue()) {
+        if(((Boolean)getPluginPlatform().getOptionValue("cCode")).booleanValue()) {
           String s1 = "\n#line "+line+"\n";
             // writeln(deep,s);
           s = s1+s;
@@ -170,7 +171,7 @@ public class OutputCode {
   
   public void indent(int deep) {
     try {
-      if(((Boolean)getServer().getOptionValue("pretty")).booleanValue()) {
+      if(((Boolean)getPluginPlatform().getOptionValue("pretty")).booleanValue()) {
         for(int i=0 ; i<deep ; i++) {
           file.write(' ');
           file.write(' ');

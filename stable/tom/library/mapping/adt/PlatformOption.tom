@@ -1,0 +1,93 @@
+%include { string.tom }
+%include { int.tom }
+%include { double.tom }
+%include { aterm.tom }
+%include { atermlist.tom }
+%typeterm PlatformOption{
+  implement { tom.platform.adt.platformoption.types.PlatformOption}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%op PlatformOption OptionBoolean(name:String, altName:String, description:String, valueB:PlatformBoolean) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isOptionBoolean()}
+  get_slot(name,t) { t.getName()}
+  get_slot(altName,t) { t.getAltName()}
+  get_slot(description,t) { t.getDescription()}
+  get_slot(valueB,t) { t.getValueB()}
+  make(t0, t1, t2, t3) { getPlatformOptionFactory().makePlatformOption_OptionBoolean(t0, t1, t2, t3)}
+}
+
+%op PlatformOption OptionInteger(name:String, altName:String, description:String, valueI:int, attrName:String) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isOptionInteger()}
+  get_slot(name,t) { t.getName()}
+  get_slot(altName,t) { t.getAltName()}
+  get_slot(description,t) { t.getDescription()}
+  get_slot(valueI,t) { t.getValueI()}
+  get_slot(attrName,t) { t.getAttrName()}
+  make(t0, t1, t2, t3, t4) { getPlatformOptionFactory().makePlatformOption_OptionInteger(t0, t1, t2, t3, t4)}
+}
+
+%op PlatformOption OptionString(name:String, altName:String, description:String, valueS:String, attrName:String) {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isOptionString()}
+  get_slot(name,t) { t.getName()}
+  get_slot(altName,t) { t.getAltName()}
+  get_slot(description,t) { t.getDescription()}
+  get_slot(valueS,t) { t.getValueS()}
+  get_slot(attrName,t) { t.getAttrName()}
+  make(t0, t1, t2, t3, t4) { getPlatformOptionFactory().makePlatformOption_OptionString(t0, t1, t2, t3, t4)}
+}
+
+%typeterm PlatformBoolean{
+  implement { tom.platform.adt.platformoption.types.PlatformBoolean}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  get_subterm(t,n) {null}
+  equals(t1,t2) {t1.equals(t2)}
+}
+
+%op PlatformBoolean True {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isTrue()}
+  make() { getPlatformOptionFactory().makePlatformBoolean_True()}
+}
+
+%op PlatformBoolean False {
+  fsym {}
+  is_fsym(t) { (t!= null) && t.isFalse()}
+  make() { getPlatformOptionFactory().makePlatformBoolean_False()}
+}
+
+%typelist PlatformOptionList{
+  implement { tom.platform.adt.platformoption.types.PlatformOptionList}
+  get_fun_sym(t) {null}
+  cmp_fun_sym(s1,s2) { false}
+  equals(t1,t2) {t1.equals(t2)}
+  get_head(l) {l.getHead()}
+  get_tail(l) {l.getTail()}
+  is_empty(l) {l.isEmpty()}
+}
+
+%oplist PlatformOptionList concPlatformOption(PlatformOption*) {
+  fsym { null }
+  is_fsym(t) {(t!= null) && t.isSortPlatformOptionList()}
+  make_empty() {getPlatformOptionFactory().makePlatformOptionList()}
+  make_insert(e,l) {getPlatformOptionFactory().makePlatformOptionList(e,l)}
+}
+%op PlatformOptionList emptyPlatformOptionList{
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isEmpty()}
+  make() {getPlatformOptionFactory().makePlatformOptionList()}
+}
+%op PlatformOptionList manyPlatformOptionList(head:PlatformOption, tail:PlatformOptionList) {
+  fsym { null }
+  is_fsym(t) { (t!= null) && t.isMany()}
+  get_slot(head,t) { t.getHead()}
+  get_slot(tail,t) { t.getTail()}
+  make(e,l) {getPlatformOptionFactory().makePlatformOptionList(e,l)}
+}

@@ -44,7 +44,7 @@ abstract public class TomChecker extends TomGenericPlugin //Base
 {
   
     // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
+  %include { adt/TomSignature.tom }
     // ------------------------------------------------------------
   
   class TermDescription {

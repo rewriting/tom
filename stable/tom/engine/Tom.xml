@@ -43,6 +43,12 @@
 <plugins>
 
   <plugin
+    name="Starter"
+    version="Only here to initialize the environment"
+    description=""
+    classpath="jtom.starter.TomStarter" />
+
+  <plugin
     name="Parser"
     version=""
     description=""

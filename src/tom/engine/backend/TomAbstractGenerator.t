@@ -42,7 +42,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 
 // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
+  %include { adt/TomSignature.tom }
 // ------------------------------------------------------------
 
     /*

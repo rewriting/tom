@@ -509,7 +509,7 @@ public class TomTask extends MatchingTask {
         String[] cmd = split(cmd_line);
           //for(int k=0;k<cmd.length;k++) {System.out.println("k: "+cmd[k]);}
         int err = -1;
-        err = TomServer.exec(cmd); // before it was Tom.exec(cmd)
+        err = Tom.exec(cmd);
         if (err != 0) {
           if (failOnError) {
             throw new BuildException("Tom returned: " + err, getLocation());

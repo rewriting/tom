@@ -38,7 +38,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
   }
 
 // ------------------------------------------------------------
-  %include { ../adt/TomSignature.tom }
+  %include { adt/TomSignature.tom }
 // ------------------------------------------------------------
 
     /*

@@ -44,7 +44,7 @@ import aterm.pure.*;
 
 public class ATermToXML {
   
-  %include{ ../adt/TNode.tom }
+  %include{ adt/TNode.tom }
 
   private TNodeFactory factory = null;
   private OutputStream out = System.out;
