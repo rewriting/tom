@@ -6,9 +6,9 @@ TOM - To One Matching Compiler
   What is it? 
   -----------
   
-  Ant is a Java based build tool. In theory it is kind of like "make" 
-  without makes wrinkles and with the full portability of pure java code.
-
+  Tom is a pattern matching compiler, developed at INRIA. It is
+  particularly well-suited for programming various transformations on
+  trees/terms.
 
   The Latest Version
   ------------------
@@ -21,19 +21,19 @@ TOM - To One Matching Compiler
   -------------
 
   Documentation is available in PDF format in the doc/ directory.
-	The HTML version is available at <http://tom.loria.fr/>
+  The HTML version is available at <http://tom.loria.fr/>
 
   Licensing
   ---------
 
   This software is licensed under the GNU General Public License
   (GNU GPL, available at <http://www.gnu.org/licenses/>). 
-	The predefined mappings ($TOM_HOME/share/jtom) are licensed under
+  The predefined mappings ($TOM_HOME/share/jtom) are licensed under
   the BSD License.
   
 
   Thanks for using Tom.
 
-  			 The Tom Project
-  			 <http://tom.loria.fr/>
+         The Tom Project
+         <http://tom.loria.fr/>
 

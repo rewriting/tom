@@ -6,15 +6,15 @@ The binary distribution of Tom consists of the following directory layout:
   jtom
    +--- bin  // contains launcher scripts
    |
-	 +--- doc  // contains documentation
-	 |
+   +--- doc  // contains documentation
+   |
    +--- lib  // contains Tom jars plus necessary dependencies
    |
    +--- share
          +--- jtom    // contains predefined mapping
                +--- c
-							 |
-							 +--- caml
+               |
+               +--- caml
 
  Only the bin/ and lib/ directories are required to run Tom.
  To install Tom, choose a directory and copy the distribution file there. 
@@ -23,8 +23,8 @@ The binary distribution of Tom consists of the following directory layout:
 Setup
 =====
 Before you can run Tom there is some additional set up you will need to do: 
-	-	Add the bin directory to your path.
-	-	Set the TOM_HOME environment variable to the directory where you installed Tom.
+  - Add the bin directory to your path.
+  - Set the TOM_HOME environment variable to the directory where you installed Tom.
 
 Windows
 -------
