@@ -527,7 +527,7 @@
   
   <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">
     <tar tarfile="${examples.dist}/jtom-examples.tar.gz" compression="gzip">
-      <tarfileset dir="${examples.dir}">
+      <tarfileset dir="${examples.dir}" prefix="examples" mode="755">
         <include name="README"/>
         <include name="build.xml"/>
         <include name="build.sh"/>
@@ -589,6 +589,7 @@
         <include name="${nspk}/*.adt"/>
 
         <include name="${peano}/README"/>
+        <include name="${peano}/*.adt"/>
         <include name="${peano}/*.t"/>
 
         <include name="${pnspk}/README"/>
@@ -606,6 +607,7 @@
 
         <include name="${propp}/README"/>
         <include name="${propp}/*.t"/>
+        <include name="${propp}/*.adt"/>
         <include name="${propp}/*.g"/>
         <include name="${propp}/*.sty"/>
         <include name="${propp}/examples"/>
