@@ -158,7 +158,7 @@ public class TomBase {
   protected String getTLCode(TomType type) {
     %match(TomType type) {
       TLType(TL[code=tlType])  -> { return tlType; }
-      TLType(iTL[code=tlType]) -> { return tlType; }
+      TLType(ITL[code=tlType]) -> { return tlType; }
       _ -> {
         System.out.println("getTLType error on term: " + type);
         System.exit(1);
@@ -184,9 +184,8 @@ public class TomBase {
   protected String getSymbolCode(TomSymbol symbol) {
       //%variable
     %match(TomSymbol symbol) {
-      Symbol(name,types,option,TL[code=tlCode])  -> { return tlCode; }
-      Symbol(name,types,option,iTL[code=tlCode]) -> { return tlCode; }
-      
+      Symbol[tlCode=TL[code=tlCode]]  -> { return tlCode; }
+      Symbol[tlCode=ITL[code=tlCode]] -> { return tlCode; }
       _ -> {
         System.out.println("getSymbolCode error on term: " + symbol);
         System.exit(1);

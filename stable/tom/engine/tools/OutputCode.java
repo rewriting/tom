@@ -27,9 +27,10 @@ package jtom.tools;
 
 import java.io.*;
 
-public final class OutputCode {
-  private Writer file;
-  
+public class OutputCode {
+  protected Writer file;
+  private int lineCounter = 0;
+
   public OutputCode(Writer file) {
     this.file = file;
   }
@@ -38,6 +39,10 @@ public final class OutputCode {
     this.file = new StringWriter();
   }
 
+  public Writer getFile() {
+    return file;
+  }
+  
   public void writeSpace() throws IOException {
     file.write(' ');
   }
@@ -64,12 +69,12 @@ public final class OutputCode {
   }
   
   public void write(String s) throws IOException {
-      //try {
+    try {
       file.write(s);
-        //} catch (IOException e) {
-        //System.out.println("write error");
-        //e.printStackTrace();
-        //}
+    } catch (IOException e) {
+      System.out.println("write error");
+      e.printStackTrace();
+    }
   }
 
   public void write(int n) throws IOException {
@@ -81,10 +86,17 @@ public final class OutputCode {
     write(s);
   }
 
-  public void writeln() throws IOException {
+  protected void internalWriteln() throws IOException {
     file.write('\n');
+    lineCounter++;
   }
 
+  public void writeln() throws IOException {
+    if(Flags.pretty) {
+      internalWriteln();
+    }
+  }
+  
   public void writeln(String s) throws IOException {
     write(s);
     writeln();
@@ -94,7 +106,20 @@ public final class OutputCode {
     write(deep,s);
     writeln();
   }
-  
+
+  public void write(int deep,String s, int line, int length) throws IOException {
+    if(lineCounter > line && !Flags.pretty) {
+      System.out.println("Warning: Synchronization issue: Line: " +
+                         line + " versus LineCounter:" + lineCounter);
+    }
+    
+    while(lineCounter < line) {
+      internalWriteln();
+    }
+    write(deep,s);
+    lineCounter+= length;
+  } 
+
   public void close() {
     try {
       file.flush();
@@ -122,8 +147,12 @@ public final class OutputCode {
 
   public void indent(int deep) {
     try {
-      for(int i=0 ; i<deep ; i++) {
-        file.write(' ');
+      if(Flags.pretty) {
+        for(int i=0 ; i<deep ; i++) {
+          file.write(' ');
+          file.write(' ');
+        }
+      } else {
         file.write(' ');
       }
     } catch (IOException e) {

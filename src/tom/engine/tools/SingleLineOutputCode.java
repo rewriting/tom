@@ -29,17 +29,15 @@ import java.io.*;
 
 public final class SingleLineOutputCode extends OutputCode {
 
-  public SingleLineOutputCode(OutputCode out) {
-    super(out.file);
+  public SingleLineOutputCode(Writer file) {
+    super(file);
   }
 
   protected void internalWriteln() throws IOException {
   }
 
   public void writeln(String s) throws IOException {
-    s = s.replace('\n', ' ');
-    s = s.replace('\t', ' ');
-    s = s.trim();
+    s = " " + s.trim();
     write(s);
     writeln();
   }

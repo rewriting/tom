@@ -39,6 +39,10 @@ public class OutputCode {
     this.file = new StringWriter();
   }
 
+  public Writer getFile() {
+    return file;
+  }
+  
   public void writeSpace() throws IOException {
     file.write(' ');
   }
@@ -65,12 +69,12 @@ public class OutputCode {
   }
   
   public void write(String s) throws IOException {
-      try {
+    try {
       file.write(s);
-        } catch (IOException e) {
-        System.out.println("write error");
-        e.printStackTrace();
-        }
+    } catch (IOException e) {
+      System.out.println("write error");
+      e.printStackTrace();
+    }
   }
 
   public void write(int n) throws IOException {
@@ -87,9 +91,8 @@ public class OutputCode {
     lineCounter++;
   }
 
-   public void writeln() throws IOException {
+  public void writeln() throws IOException {
     if(Flags.pretty) {
-      System.out.println("writeln");
       internalWriteln();
     }
   }
@@ -106,14 +109,13 @@ public class OutputCode {
 
   public void write(int deep,String s, int line, int length) throws IOException {
     if(lineCounter > line && !Flags.pretty) {
-      System.out.println("Synchronization issue: Line: "+line +" versus LineCounter:"+ lineCounter);
+      System.out.println("Warning: Synchronization issue: Line: " +
+                         line + " versus LineCounter:" + lineCounter);
     }
     
     while(lineCounter < line) {
-        //write("/* newline : Line: "+line+" Length:"+ length +" LineCounter:"+ lineCounter+"*/");
       internalWriteln();
     }
-      //write("/*" + "Line: " + line + " Length:" + length + "*/");
     write(deep,s);
     lineCounter+= length;
   } 
@@ -145,8 +147,12 @@ public class OutputCode {
 
   public void indent(int deep) {
     try {
-      for(int i=0 ; i<deep ; i++) {
-        file.write(' ');
+      if(Flags.pretty) {
+        for(int i=0 ; i<deep ; i++) {
+          file.write(' ');
+          file.write(' ');
+        }
+      } else {
         file.write(' ');
       }
     } catch (IOException e) {

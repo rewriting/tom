@@ -1,3 +1,13 @@
+2003-01-18    <pem@bach>
+
+        * Tom source and generated code are now synchronized
+	* bootinstall
+	* --pretty flag added for de-synchronization
+	* src/jtom/tools/SingleLineOutputCode.java: 
+	* src/jtom/tools/ASTFactory.java: 
+	  - faster implementation of text formatting
+	* src/jtom/TomSignature.adt: iTL renamed into ITL
+
 2003-01-14  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
 	* src/jtom/TomSignature.adt: 

@@ -35,7 +35,7 @@ extends Declaration
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetSlotDecl(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)), TomTerm.fromTerm( (aterm.ATerm) children.get(3)));
+      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetSlotDecl(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(3)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -100,12 +100,12 @@ extends Declaration
     return (Declaration) super.setArgument(_term, index_term);
   }
 
-  public TomTerm getTlCode()
+  public TargetLanguage getTlCode()
   {
-    return (TomTerm) this.getArgument(index_tlCode) ;
+    return (TargetLanguage) this.getArgument(index_tlCode) ;
   }
 
-  public Declaration setTlCode(TomTerm _tlCode)
+  public Declaration setTlCode(TargetLanguage _tlCode)
   {
     return (Declaration) super.setArgument(_tlCode, index_tlCode);
   }
@@ -128,8 +128,8 @@ extends Declaration
         }
         break;
       case 3:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 3 of a Declaration_GetSlotDecl should have type TomTerm");
+        if (! (arg instanceof TargetLanguage)) { 
+          throw new RuntimeException("Argument 3 of a Declaration_GetSlotDecl should have type TargetLanguage");
         }
         break;
       default: throw new RuntimeException("Declaration_GetSlotDecl does not have an argument at " + i );

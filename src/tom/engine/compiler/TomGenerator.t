@@ -64,12 +64,11 @@ public class TomGenerator extends TomBase {
       }
 
       TomInclude(l) -> {
-        OutputCode singleLineOutput = new SingleLineOutputCode(out);
+        OutputCode singleLineOutput = new SingleLineOutputCode(out.getFile());
         generateList(singleLineOutput,deep,l);
         return;
       }
-
-      
+     
       Line[] -> { return; }
      
       BuildVariable(Name(name)) -> {
@@ -698,7 +697,7 @@ public class TomGenerator extends TomBase {
         return;
       }
       
-      iTL(t) -> {
+      ITL(t) -> {
         statistics().numberPartsCopied++;
         out.write(deep,t);
         return;
@@ -1316,7 +1315,7 @@ public class TomGenerator extends TomBase {
     s+= "    return result;\n";
     s+= "  }\n";
     
-    TargetLanguage resultTL = `iTL(s);
+    TargetLanguage resultTL = `ITL(s);
       //If necessary we remove \n code depending on --pretty option
     resultTL = ast().reworkTLCode(resultTL);
     return resultTL;
@@ -1379,7 +1378,7 @@ public class TomGenerator extends TomBase {
     s+= "    return result;\n";
     s+= "  }\n";
 
-    TargetLanguage resultTL = `iTL(s);
+    TargetLanguage resultTL = `ITL(s);
       //If necessary we remove \n code depending on --pretty option
     resultTL = ast().reworkTLCode(resultTL);
     return resultTL;

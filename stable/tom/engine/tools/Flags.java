@@ -29,6 +29,8 @@ import java.util.*;
 
 public class Flags {
 
+  public static boolean pretty = false; // Synchronize TL code and source code
+  
   public static boolean verbose = false;
   
   public static boolean printOutput = true; // to print the output

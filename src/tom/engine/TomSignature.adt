@@ -74,7 +74,7 @@
 
 
   [TargetLanguage, TL , TL(<code(str)>,<start(Position)>,<end(Position)>) ],
-  [TargetLanguage, iTL , iTL(<code(str)>) ],
+  [TargetLanguage, ITL , ITL(<code(str)>) ],
   [Position, Position , Position(<line(int)>,<column(int)>) ],
 
   [TomType,Type,Type(<tomType(TomType)>,<tlType(TomType)>) ],

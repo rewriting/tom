@@ -10,8 +10,8 @@ extends Declaration
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-  private static int index_kid1 = 0;
-  private static int index_kid2 = 1;
+  private static int index_var = 0;
+  private static int index_tlcode = 1;
 
   public shared.SharedObject duplicate() {
     Declaration_GetHeadDecl clone = new Declaration_GetHeadDecl();
@@ -33,7 +33,7 @@ extends Declaration
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetHeadDecl(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)));
+      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetHeadDecl(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(1)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -47,35 +47,35 @@ extends Declaration
     return true;
   }
 
-  public boolean hasKid1()
+  public boolean hasVar()
   {
     return true;
   }
 
-  public boolean hasKid2()
+  public boolean hasTlcode()
   {
     return true;
   }
 
 
-  public TomTerm getKid1()
+  public TomTerm getVar()
   {
-    return (TomTerm) this.getArgument(index_kid1) ;
+    return (TomTerm) this.getArgument(index_var) ;
   }
 
-  public Declaration setKid1(TomTerm _kid1)
+  public Declaration setVar(TomTerm _var)
   {
-    return (Declaration) super.setArgument(_kid1, index_kid1);
+    return (Declaration) super.setArgument(_var, index_var);
   }
 
-  public TomTerm getKid2()
+  public TargetLanguage getTlcode()
   {
-    return (TomTerm) this.getArgument(index_kid2) ;
+    return (TargetLanguage) this.getArgument(index_tlcode) ;
   }
 
-  public Declaration setKid2(TomTerm _kid2)
+  public Declaration setTlcode(TargetLanguage _tlcode)
   {
-    return (Declaration) super.setArgument(_kid2, index_kid2);
+    return (Declaration) super.setArgument(_tlcode, index_tlcode);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
@@ -86,8 +86,8 @@ extends Declaration
         }
         break;
       case 1:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 1 of a Declaration_GetHeadDecl should have type TomTerm");
+        if (! (arg instanceof TargetLanguage)) { 
+          throw new RuntimeException("Argument 1 of a Declaration_GetHeadDecl should have type TargetLanguage");
         }
         break;
       default: throw new RuntimeException("Declaration_GetHeadDecl does not have an argument at " + i );

@@ -235,12 +235,12 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasKid1()
+  public boolean hasVar()
   {
     return false;
   }
 
-  public boolean hasKid2()
+  public boolean hasTlcode()
   {
     return false;
   }
@@ -255,7 +255,12 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasKid3()
+  public boolean hasKid1()
+  {
+    return false;
+  }
+
+  public boolean hasKid2()
   {
     return false;
   }
@@ -286,12 +291,12 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
      throw new RuntimeException("This Declaration has no TermArg");
   }
 
-  public TomTerm getTlCode()
+  public TargetLanguage getTlCode()
   {
      throw new RuntimeException("This Declaration has no TlCode");
   }
 
-  public Declaration setTlCode(TomTerm _tlCode)
+  public Declaration setTlCode(TargetLanguage _tlCode)
   {
      throw new RuntimeException("This Declaration has no TlCode");
   }
@@ -376,24 +381,24 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
      throw new RuntimeException("This Declaration has no TermArg2");
   }
 
-  public TomTerm getKid1()
+  public TomTerm getVar()
   {
-     throw new RuntimeException("This Declaration has no Kid1");
+     throw new RuntimeException("This Declaration has no Var");
   }
 
-  public Declaration setKid1(TomTerm _kid1)
+  public Declaration setVar(TomTerm _var)
   {
-     throw new RuntimeException("This Declaration has no Kid1");
+     throw new RuntimeException("This Declaration has no Var");
   }
 
-  public TomTerm getKid2()
+  public TargetLanguage getTlcode()
   {
-     throw new RuntimeException("This Declaration has no Kid2");
+     throw new RuntimeException("This Declaration has no Tlcode");
   }
 
-  public Declaration setKid2(TomTerm _kid2)
+  public Declaration setTlcode(TargetLanguage _tlcode)
   {
-     throw new RuntimeException("This Declaration has no Kid2");
+     throw new RuntimeException("This Declaration has no Tlcode");
   }
 
   public TomTerm getVarElt()
@@ -416,14 +421,24 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
      throw new RuntimeException("This Declaration has no VarList");
   }
 
-  public TomTerm getKid3()
+  public TomTerm getKid1()
   {
-     throw new RuntimeException("This Declaration has no Kid3");
+     throw new RuntimeException("This Declaration has no Kid1");
   }
 
-  public Declaration setKid3(TomTerm _kid3)
+  public Declaration setKid1(TomTerm _kid1)
   {
-     throw new RuntimeException("This Declaration has no Kid3");
+     throw new RuntimeException("This Declaration has no Kid1");
+  }
+
+  public TomTerm getKid2()
+  {
+     throw new RuntimeException("This Declaration has no Kid2");
+  }
+
+  public Declaration setKid2(TomTerm _kid2)
+  {
+     throw new RuntimeException("This Declaration has no Kid2");
   }
 
   public TomTerm getVarSize()

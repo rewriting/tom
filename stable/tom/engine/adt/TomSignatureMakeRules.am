@@ -54,6 +54,9 @@ TargetLanguage.java TargetLanguageImpl.java
 
 TomSignatureAPI1=\
 TargetLanguage_TLImpl.java TargetLanguage_TL.java\
+TargetLanguage_ITLImpl.java TargetLanguage_ITL.java\
+Position.java PositionImpl.java \
+Position_PositionImpl.java Position_Position.java\
 TomType.java TomTypeImpl.java \
 TomType_TypeImpl.java TomType_Type.java\
 TomType_TypesToTypeImpl.java TomType_TypesToType.java\
@@ -72,8 +75,8 @@ TomTerm_TomSymbolToTomTermImpl.java TomTerm_TomSymbolToTomTerm.java\
 TomTerm_DeclarationToTomTermImpl.java TomTerm_DeclarationToTomTerm.java\
 TomTerm_OptionToTomTermImpl.java TomTerm_OptionToTomTerm.java\
 TomTerm_ExpressionToTomTermImpl.java TomTerm_ExpressionToTomTerm.java\
-TomTerm_TLCodeImpl.java TomTerm_TLCode.java\
 TomTerm_TomImpl.java TomTerm_Tom.java\
+TomTerm_TomIncludeImpl.java TomTerm_TomInclude.java\
 TomTerm_MakeTermImpl.java TomTerm_MakeTerm.java\
 TomTerm_BackQuoteTermImpl.java TomTerm_BackQuoteTerm.java\
 TomTerm_LocalVariableImpl.java TomTerm_LocalVariable.java\
@@ -99,12 +102,12 @@ TomTerm_TermListImpl.java TomTerm_TermList.java\
 TomTerm_TermImpl.java TomTerm_Term.java\
 TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
 TomTerm_GLVarImpl.java TomTerm_GLVar.java\
-TomTerm_VariableImpl.java TomTerm_Variable.java\
-TomTerm_VariableStarImpl.java TomTerm_VariableStar.java\
-TomTerm_PlaceholderImpl.java TomTerm_Placeholder.java\
-TomTerm_UnamedVariableImpl.java TomTerm_UnamedVariable.java
+TomTerm_VariableImpl.java TomTerm_Variable.java
 
 TomSignatureAPI2=\
+TomTerm_VariableStarImpl.java TomTerm_VariableStar.java\
+TomTerm_PlaceholderImpl.java TomTerm_Placeholder.java\
+TomTerm_UnamedVariableImpl.java TomTerm_UnamedVariable.java\
 TomTerm_CompiledMatchImpl.java TomTerm_CompiledMatch.java\
 TomTerm_AutomataImpl.java TomTerm_Automata.java\
 TomTerm_IfThenElseImpl.java TomTerm_IfThenElse.java\
@@ -132,7 +135,7 @@ TomTerm_LineImpl.java TomTerm_Line.java\
 TomTerm_DotTermImpl.java TomTerm_DotTerm.java\
 TomName.java TomNameImpl.java \
 TomName_NameImpl.java TomName_Name.java\
-TomName_PositionImpl.java TomName_Position.java\
+TomName_PositionNameImpl.java TomName_PositionName.java\
 TomSymbol.java TomSymbolImpl.java \
 TomSymbol_SymbolImpl.java TomSymbol_Symbol.java\
 TomSymbolTable.java TomSymbolTableImpl.java \

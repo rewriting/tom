@@ -92,12 +92,12 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomSymbol has no Option");
   }
 
-  public TomTerm getTlCode()
+  public TargetLanguage getTlCode()
   {
      throw new RuntimeException("This TomSymbol has no TlCode");
   }
 
-  public TomSymbol setTlCode(TomTerm _tlCode)
+  public TomSymbol setTlCode(TargetLanguage _tlCode)
   {
      throw new RuntimeException("This TomSymbol has no TlCode");
   }

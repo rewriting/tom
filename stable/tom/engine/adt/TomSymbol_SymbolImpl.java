@@ -35,7 +35,7 @@ extends TomSymbol
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomSymbol tmp = getStaticTomSignatureFactory().makeTomSymbol_Symbol(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomType.fromTerm( (aterm.ATerm) children.get(1)), Option.fromTerm( (aterm.ATerm) children.get(2)), TomTerm.fromTerm( (aterm.ATerm) children.get(3)));
+      TomSymbol tmp = getStaticTomSignatureFactory().makeTomSymbol_Symbol(TomName.fromTerm( (aterm.ATerm) children.get(0)), TomType.fromTerm( (aterm.ATerm) children.get(1)), Option.fromTerm( (aterm.ATerm) children.get(2)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(3)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -100,12 +100,12 @@ extends TomSymbol
     return (TomSymbol) super.setArgument(_option, index_option);
   }
 
-  public TomTerm getTlCode()
+  public TargetLanguage getTlCode()
   {
-    return (TomTerm) this.getArgument(index_tlCode) ;
+    return (TargetLanguage) this.getArgument(index_tlCode) ;
   }
 
-  public TomSymbol setTlCode(TomTerm _tlCode)
+  public TomSymbol setTlCode(TargetLanguage _tlCode)
   {
     return (TomSymbol) super.setArgument(_tlCode, index_tlCode);
   }
@@ -128,8 +128,8 @@ extends TomSymbol
         }
         break;
       case 3:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 3 of a TomSymbol_Symbol should have type TomTerm");
+        if (! (arg instanceof TargetLanguage)) { 
+          throw new RuntimeException("Argument 3 of a TomSymbol_Symbol should have type TargetLanguage");
         }
         break;
       default: throw new RuntimeException("TomSymbol_Symbol does not have an argument at " + i );

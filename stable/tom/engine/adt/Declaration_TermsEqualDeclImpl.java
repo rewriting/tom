@@ -34,7 +34,7 @@ extends Declaration
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_TermsEqualDecl(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)));
+      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_TermsEqualDecl(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(2)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -84,12 +84,12 @@ extends Declaration
     return (Declaration) super.setArgument(_termArg2, index_termArg2);
   }
 
-  public TomTerm getTlCode()
+  public TargetLanguage getTlCode()
   {
-    return (TomTerm) this.getArgument(index_tlCode) ;
+    return (TargetLanguage) this.getArgument(index_tlCode) ;
   }
 
-  public Declaration setTlCode(TomTerm _tlCode)
+  public Declaration setTlCode(TargetLanguage _tlCode)
   {
     return (Declaration) super.setArgument(_tlCode, index_tlCode);
   }
@@ -107,8 +107,8 @@ extends Declaration
         }
         break;
       case 2:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 2 of a Declaration_TermsEqualDecl should have type TomTerm");
+        if (! (arg instanceof TargetLanguage)) { 
+          throw new RuntimeException("Argument 2 of a Declaration_TermsEqualDecl should have type TargetLanguage");
         }
         break;
       default: throw new RuntimeException("Declaration_TermsEqualDecl does not have an argument at " + i );

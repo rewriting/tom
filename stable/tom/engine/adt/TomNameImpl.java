@@ -31,7 +31,7 @@ abstract public class TomNameImpl extends TomSignatureConstructor
       return tmp;
     }
 
-    if ((tmp = TomName_Position.fromTerm(trm)) != null) {
+    if ((tmp = TomName_PositionName.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -45,7 +45,7 @@ abstract public class TomNameImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isPosition()
+  public boolean isPositionName()
   {
     return false;
   }

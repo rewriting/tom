@@ -12,7 +12,7 @@ extends Declaration
   }
   private static int index_kid1 = 0;
   private static int index_kid2 = 1;
-  private static int index_kid3 = 2;
+  private static int index_tlCode = 2;
 
   public shared.SharedObject duplicate() {
     Declaration_GetElementDecl clone = new Declaration_GetElementDecl();
@@ -34,7 +34,7 @@ extends Declaration
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetElementDecl(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TomTerm.fromTerm( (aterm.ATerm) children.get(2)));
+      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetElementDecl(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(2)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -58,7 +58,7 @@ extends Declaration
     return true;
   }
 
-  public boolean hasKid3()
+  public boolean hasTlCode()
   {
     return true;
   }
@@ -84,14 +84,14 @@ extends Declaration
     return (Declaration) super.setArgument(_kid2, index_kid2);
   }
 
-  public TomTerm getKid3()
+  public TargetLanguage getTlCode()
   {
-    return (TomTerm) this.getArgument(index_kid3) ;
+    return (TargetLanguage) this.getArgument(index_tlCode) ;
   }
 
-  public Declaration setKid3(TomTerm _kid3)
+  public Declaration setTlCode(TargetLanguage _tlCode)
   {
-    return (Declaration) super.setArgument(_kid3, index_kid3);
+    return (Declaration) super.setArgument(_tlCode, index_tlCode);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
@@ -107,8 +107,8 @@ extends Declaration
         }
         break;
       case 2:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 2 of a Declaration_GetElementDecl should have type TomTerm");
+        if (! (arg instanceof TargetLanguage)) { 
+          throw new RuntimeException("Argument 2 of a Declaration_GetElementDecl should have type TargetLanguage");
         }
         break;
       default: throw new RuntimeException("Declaration_GetElementDecl does not have an argument at " + i );

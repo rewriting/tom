@@ -55,11 +55,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
-    if ((tmp = TomTerm_TLCode.fromTerm(trm)) != null) {
+    if ((tmp = TomTerm_Tom.fromTerm(trm)) != null) {
       return tmp;
     }
 
-    if ((tmp = TomTerm_Tom.fromTerm(trm)) != null) {
+    if ((tmp = TomTerm_TomInclude.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -319,12 +319,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isTLCode()
+  public boolean isTom()
   {
     return false;
   }
 
-  public boolean isTom()
+  public boolean isTomInclude()
   {
     return false;
   }

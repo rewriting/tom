@@ -37,8 +37,6 @@ import jtom.adt.*;
 
 public class TomParserTokenManager implements TomParserConstants
 {
-  public  java.io.PrintStream debugStream = System.out;
-  public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }
 private final int jjStopStringLiteralDfa_0(int pos, long active0)
 {
    switch (pos)
@@ -1629,25 +1627,25 @@ static final long[] jjtoSpecial = {
 static final long[] jjtoMore = {
    0x8e008f00000L, 0x0L, 
 };
-private JavaCharStream input_stream;
+private ASCII_UCodeESC_CharStream input_stream;
 private final int[] jjrounds = new int[13];
 private final int[] jjstateSet = new int[26];
 StringBuffer image;
 int jjimageLen;
 int lengthOfMatch;
 protected char curChar;
-public TomParserTokenManager(JavaCharStream stream)
+public TomParserTokenManager(ASCII_UCodeESC_CharStream stream)
 {
-   if (JavaCharStream.staticFlag)
+   if (ASCII_UCodeESC_CharStream.staticFlag)
       throw new Error("ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
    input_stream = stream;
 }
-public TomParserTokenManager(JavaCharStream stream, int lexState)
+public TomParserTokenManager(ASCII_UCodeESC_CharStream stream, int lexState)
 {
    this(stream);
    SwitchTo(lexState);
 }
-public void ReInit(JavaCharStream stream)
+public void ReInit(ASCII_UCodeESC_CharStream stream)
 {
    jjmatchedPos = jjnewStateCnt = 0;
    curLexState = defaultLexState;
@@ -1661,7 +1659,7 @@ private final void ReInitRounds()
    for (i = 13; i-- > 0;)
       jjrounds[i] = 0x80000000;
 }
-public void ReInit(JavaCharStream stream, int lexState)
+public void ReInit(ASCII_UCodeESC_CharStream stream, int lexState)
 {
    ReInit(stream);
    SwitchTo(lexState);

@@ -11,7 +11,7 @@ extends Declaration
     return pattern;
   }
   private static int index_kid1 = 0;
-  private static int index_kid2 = 1;
+  private static int index_tlCode = 1;
 
   public shared.SharedObject duplicate() {
     Declaration_GetSizeDecl clone = new Declaration_GetSizeDecl();
@@ -33,7 +33,7 @@ extends Declaration
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetSizeDecl(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TomTerm.fromTerm( (aterm.ATerm) children.get(1)));
+      Declaration tmp = getStaticTomSignatureFactory().makeDeclaration_GetSizeDecl(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), TargetLanguage.fromTerm( (aterm.ATerm) children.get(1)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -52,7 +52,7 @@ extends Declaration
     return true;
   }
 
-  public boolean hasKid2()
+  public boolean hasTlCode()
   {
     return true;
   }
@@ -68,14 +68,14 @@ extends Declaration
     return (Declaration) super.setArgument(_kid1, index_kid1);
   }
 
-  public TomTerm getKid2()
+  public TargetLanguage getTlCode()
   {
-    return (TomTerm) this.getArgument(index_kid2) ;
+    return (TargetLanguage) this.getArgument(index_tlCode) ;
   }
 
-  public Declaration setKid2(TomTerm _kid2)
+  public Declaration setTlCode(TargetLanguage _tlCode)
   {
-    return (Declaration) super.setArgument(_kid2, index_kid2);
+    return (Declaration) super.setArgument(_tlCode, index_tlCode);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
@@ -86,8 +86,8 @@ extends Declaration
         }
         break;
       case 1:
-        if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 1 of a Declaration_GetSizeDecl should have type TomTerm");
+        if (! (arg instanceof TargetLanguage)) { 
+          throw new RuntimeException("Argument 1 of a Declaration_GetSizeDecl should have type TargetLanguage");
         }
         break;
       default: throw new RuntimeException("Declaration_GetSizeDecl does not have an argument at " + i );
