@@ -23,36 +23,36 @@
 
     <!-- current version of TOM -->
     <property name="version" value="2.0beta"/>
-    <!-- place to find the stable sources -->
+    
+    <!-- some used directory location -->
     <property name="test" location="test"/>
 		<property name="utils" location="utils"/>
 		<property name="lib" location="lib"/>
 
-    <!-- place to find the stable sources -->
+    <!-- for stable -->
     <property name="stable.src" location="stable"/>
-  	<property name="stable.build" location="stable/build"/>
   	<property name="stable.adt" location="stable/adt"/>
-
-   	<!-- place to find the stable sources -->
+    <property name="stable.mapping" location="stable/jtom/runtime/mapping"/>
+    <property name="stable.build" location="stable/build"/>
+      
+   	<!-- for devel (src) -->
     <property name="src.src" location="src"/>
-  	<property name="src.build" location="src/build"/>
   	<property name="src.adt" location="src/adt"/>
-  	
-  	<property name="src.runtime" location="src/jtom/runtime/"/>
-  	<property name="stable.runtime" location="stable/jtom/runtime/"/>
+  	<property name="src.mapping" location="src/jtom/runtime/mapping"/>
+    <property name="src.build" location="src/build"/>  	
 
-  		<!--
+  		<!-- Property for Javac compilation
 				<property name="javacFailOnError" value="false"/>
 				<property name="javacDebugInfo" value="on"/>
 				<property name="javacSource" value="1.3"/>
 				<property name="javacTarget" value="1.2"/>
 			-->
-			
   	<property name="javacVerbose" value="false"/>
   	
   	<target name="preparesrc">
   		<mkdir dir="${src.build}"/>
   	</target>
+  	
   	<target name="preparestable">
   		<mkdir dir="${stable.build}"/>
   	</target>
@@ -63,10 +63,8 @@
 			<pathelement location="${jjtravelerjar}"/>
 			<pathelement location="${apigenjar}"/>
 			<pathelement location="${utils}"/>
-			<fileset dir="${src.runtime}">
-				<include name="*.jar"/>
-			</fileset>
-			<fileset dir="${stable.adt}">
+			<pathelement location="${stable.src}"/>
+			<fileset dir="${stable.adt}"><!-- ADT jar files -->
 				<include name="*.jar"/>
 			</fileset>
 			<fileset dir="${lib}">
@@ -79,19 +77,13 @@
 			<pathelement location="${sharedobjectjar}"/>
 			<pathelement location="${jjtravelerjar}"/>
 			<pathelement location="${apigenjar}"/>
-			<fileset dir="${src.runtime}">
-				<include name="*.jar"/>
-			</fileset>
-			<!--<fileset dir="${src.adt}">
-					 <include name="*.jar"/>
-					 </fileset>-->
 			<fileset dir="${lib}">
 				<include name="*.jar"/>
 			</fileset>
 		</path>
 
 		<!-- builds the custom tasks -->
-		<target name="init" depends="buildstable">
+		<target name="initTaskDef" depends="buildstable">
 			<javac srcdir="${utils}" destdir="${utils}">
 				<classpath refid="stable.classpath"/>
 			</javac>
@@ -128,13 +120,13 @@
 			</taskdef>
 		</target>
 
-		<target name="buildtom" depends="init, buildadt">
-			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping --noDeclaration">
+		<target name="buildtom" depends="initTaskDef, buildadt">
+			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${src.mapping} --noDeclaration">
 				<exclude name="**/TomBase.t"/>
 				<exclude name="**/TomBackQuoteParser.t"/>
 				<exclude name="**/runtime/**/*.t"/>	
 			</tom>
-			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${stable.runtime}/mapping">
+			<tom srcdir="${src.src}" destdir="${src.src}" options="-I ${src.mapping}">
 				<include name="**/runtime/**/*.t"/>	
 				<include name="**/TomBase.t"/>
 				<include name="**/TomBackQuoteParser.t"/>	
@@ -160,7 +152,7 @@
 			</condition>
 		</target>
   		
-		<target name="buildadt" depends="init, preparesrc, check.newer.adt" if="newer.adt">
+		<target name="buildadt" depends="initTaskDef, preparesrc, check.newer.adt" if="newer.adt">
 			<adt 
 			 file="${src.adt}/TomSignature.adt" 
 			 factory="TomSignature" 
@@ -182,6 +174,9 @@
 		<!--<antcall target="buildadt"/>-->
 		<antcall target="buildtom"/>
 		<antcall target="buildparser"/>
+    <pathconvert targetos="windows" property="windowspath" refid="stable.classpath">
+    </pathconvert>
+    <echo>classpath = ${windowspath}</echo>
 		<javac srcdir="${src.src}" destdir="${src.build}" verbose="${javacVerbose}">
 			<classpath refid="src.classpath"/>
 		</javac>
@@ -189,20 +184,20 @@
 	
   	<target name="buildstable" description="compile the TOM stable sources" depends="preparestable">
 		<tstamp/>
-		<!--<pathconvert targetos="windows" property="windowspath" refid="stable.classpath">
+		<pathconvert targetos="windows" property="windowspath" refid="stable.classpath">
 		</pathconvert>
-		<echo>classpath = ${windowspath}</echo>-->
+		<echo>classpath = ${windowspath}</echo>
 		<!-- Compile the java code from ${stable} into ${stable} -->
 		<javac srcdir="${stable.src}" destdir="${stable.build}" verbose="${javacVerbose}">
 			<classpath refid="stable.classpath"/>
 		</javac>
 	</target>  
 
-	<target name="cleanstable" description="Purges stable files" >
+	<target name="cleanstable" description="Purges the generated stable files">
 		<delete dir="${stable.build}"/>
 	</target>
 	
-	<target name="cleansrc" description="Purges src files" >
+	<target name="cleansrc" description="Purges the generated devel files">
 		<delete dir="${src.build}"/>
 		<delete dir="${src.adt}/jtom"/>
 		<delete> <fileset dir="${src.adt}" includes="**/*.tom"/></delete>
