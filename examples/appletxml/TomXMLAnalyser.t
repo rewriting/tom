@@ -78,7 +78,7 @@ public class TomXMLAnalyser {
       <authors domain=thedomain> 
          <author firstname=fnval lastname=lnval />
          </authors> -> {
-         res += fnval+"."+lnval+"@"+thedomain+"\n";
+         res += `fnval+"."+`lnval+"@"+`thedomain+"\n";
        }
     }
     return res;
