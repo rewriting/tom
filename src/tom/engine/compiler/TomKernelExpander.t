@@ -259,11 +259,6 @@ public class TomKernelExpander extends TomBase {
       symbolTable().putSymbol(tomName,tomSymbol);
     }
   }
-  
-  private TomSymbol getSymbol(String tomName) {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-    return tomSymbol;
-  }
 
   private TomType getType(String tomName) {
     TomType tomType = symbolTable().getType(tomName);

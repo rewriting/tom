@@ -182,6 +182,10 @@ public class TomBase {
     return null;
   }
 
+  protected TomSymbol getSymbol(String tomName) {
+    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    return tomSymbol;
+  }
   
   protected TomType getSymbolCodomain(TomSymbol symbol) {
     if(symbol!=null) {

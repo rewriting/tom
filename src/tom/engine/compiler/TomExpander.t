@@ -263,11 +263,6 @@ public class TomExpander extends TomBase {
     } // end match
   }
 
-  private TomSymbol getSymbol(String tomName) {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
-    return tomSymbol;
-  }
-
   private TomType getTypeFromVariableList(TomName name, TomList list) {
 
       //System.out.println("name = " + name);
