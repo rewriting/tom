@@ -282,6 +282,11 @@
     </antlr>
   </target>
 
+  <target name="touchvas" 
+          unless="vascompile.required">
+    <touch file="${src.src}/jtom/adt/TomSignature.vas"/>
+  </target>
+
   <!-- compile adt's -->
   <target name="buildadt" depends="initTaskDef, prepare.src">
 
@@ -303,6 +308,7 @@
               targetfile="${src.gen}/jtom/adt/tomsignature/TomSignature.tom" >
       <srcfiles dir= "${src.src}/jtom/adt" includes="*.vas"/>
     </uptodate>
+    <antcall target="touchvas"/>
 
     <vas config="${stable.vasconfigfile}"
          srcdir="${src.src}"
@@ -334,7 +340,6 @@
          destdir="${src.gen}">
       <include name="jtom/verifier/il.vas"/>
     </vas>
-
   </target>
 
   <target name="build.src" depends="src"/>
