@@ -82,14 +82,17 @@ public class TomBackend extends TomGenericPlugin {
         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile())));
         OutputCode output = new OutputCode(writer, getOptionManager());
         if(getOptionBooleanValue("noOutput")) {
-            throw new TomRuntimeException("Backend activated, but noOutput is set");
+          throw new TomRuntimeException("Backend activated, but noOutput is set");
         } else if(getOptionBooleanValue("cCode")) {
           generator = new TomCGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("camlCode")) {
           generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
+        } else if(getOptionBooleanValue("jCode")) {
+          generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
         } else {
-            generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
+          throw new TomRuntimeException("no selected language for the Backend");
         }
+
         generator.generate(defaultDeep, (TomTerm)getWorkingTerm());
         // verbose
         getLogger().log(Level.INFO, "TomGenerationPhase",
@@ -112,6 +115,21 @@ public class TomBackend extends TomGenericPlugin {
       getLogger().log(Level.INFO,"BackendInactivated");
     }
   }
+
+  public void optionChanged(String optionName, Object optionValue) {
+    //System.out.println("optionChanged: " + optionName + " --> " + optionValue);
+    if(optionName.equals("camlCode") && ((Boolean)optionValue).booleanValue() ) { 
+      setOptionValue("jCode", Boolean.FALSE);        
+      setOptionValue("cCode", Boolean.FALSE);        
+    } else if(optionName.equals("cCode") && ((Boolean)optionValue).booleanValue() ) { 
+      setOptionValue("jCode", Boolean.FALSE);        
+      setOptionValue("camlCode", Boolean.FALSE);        
+    } else if(optionName.equals("jCode") && ((Boolean)optionValue).booleanValue() ) { 
+      setOptionValue("cCode", Boolean.FALSE);        
+      setOptionValue("camlCode", Boolean.FALSE);        
+    }
+  }
+
   
   /**
    * inherited from OptionOwner interface (plugin) 
