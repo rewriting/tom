@@ -183,7 +183,7 @@ public class ASTFactory {
   }
 
   private void makeSortDecl(List list, String sort,
-                            String equality_t1t2) {
+                            String equality_t1t2, int declLine) {
     Declaration getFunSym, getSubterm;
     Declaration cmpFunSym, equals;
     Option option = tsf().makeOption_NoOption();
@@ -193,19 +193,22 @@ public class ASTFactory {
     TomTerm variable_t2 = makeVariable(makeOption(),"t2",sort);
     TomTerm variable_n = makeVariable(makeOption(),"n","int");
     getFunSym = tsf().makeDeclaration_GetFunctionSymbolDecl(
-      variable_t,tsf().makeTargetLanguage_ITL("t"), option);
+      variable_t,tsf().makeTargetLanguage_TL("t", tsf().makePosition_TextPosition(declLine, 1), tsf().makePosition_TextPosition(declLine, 1)), option);
+    
     getSubterm = tsf().makeDeclaration_GetSubtermDecl(
-      variable_t,variable_n,tsf().makeTargetLanguage_ITL("null"), option);
+      variable_t,variable_n,tsf().makeTargetLanguage_TL("null", tsf().makePosition_TextPosition(declLine+1, 1), tsf().makePosition_TextPosition(declLine+1, 1)), option);
+    
     cmpFunSym = tsf().makeDeclaration_CompareFunctionSymbolDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL(equality_t1t2), option);
+      variable_t1,variable_t2,tsf().makeTargetLanguage_TL(equality_t1t2, tsf().makePosition_TextPosition(declLine+2, 1), tsf().makePosition_TextPosition(declLine+2, 1)), option);
     equals = tsf().makeDeclaration_TermsEqualDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL(equality_t1t2), option);
+      variable_t1,variable_t2,tsf().makeTargetLanguage_TL(equality_t1t2,  tsf().makePosition_TextPosition(declLine+3, 1), tsf().makePosition_TextPosition(declLine+3, 1)), option);
+    
     list.add(getFunSym);
     list.add(getSubterm);
     list.add(cmpFunSym);
     list.add(equals);
   }
-  
+
   
     /*
      * create an integer symbol
@@ -216,10 +219,10 @@ public class ASTFactory {
     makeSortSymbol(symbolTable, sort, value, optionList);
   }
 
-  public void makeIntegerDecl(List list) {
+  public void makeIntegerDecl(List list, int declLine) {
     String sort = "int";
     String equality_t1t2 = "(t1 == t2)";
-    makeSortDecl(list,sort,equality_t1t2);
+    makeSortDecl(list,sort,equality_t1t2, declLine);
   }
 
     /*
@@ -231,10 +234,10 @@ public class ASTFactory {
     makeSortSymbol(symbolTable, sort, value, optionList);
   }
 
-  public void makeDoubleDecl(List list) {
+  public void makeDoubleDecl(List list, int declLine) {
     String sort = "double";
     String equality_t1t2 = "(t1 == t2)";
-    makeSortDecl(list,sort,equality_t1t2);
+    makeSortDecl(list,sort,equality_t1t2, declLine);
   }
 
     /*
@@ -246,10 +249,10 @@ public class ASTFactory {
     makeSortSymbol(symbolTable, sort, value, optionList);
   } 
   
-  public void makeStringDecl(List list) {
+  public void makeStringDecl(List list, int declLine) {
     String sort = "String";
     String equality_t1t2 = "t1.equals(t2)";
-    makeSortDecl(list,sort,equality_t1t2);
+    makeSortDecl(list,sort,equality_t1t2, declLine);
   }
   
     /*
@@ -327,12 +330,12 @@ public class ASTFactory {
             Option info = makeOriginTracking(Constants.TEXT_NODE,-1,"??");
             TomList list = tsf().makeTomList();
             list = tsf().makeTomList(term,list);
-						NameList nameList = tsf().makeNameList();
-						nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.TEXT_NODE));
+            NameList nameList = tsf().makeNameList();
+            nameList = (NameList)nameList.append(tsf().makeTomName_Name(Constants.TEXT_NODE));
             term = tsf().makeTomTerm_Appl(
               makeOption(info),
-							nameList,
-							list);
+              nameList,
+              list);
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }

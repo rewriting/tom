@@ -63,7 +63,6 @@ public class TomTaskInput {
     supportedGoto  = true, // if the target language has gotos
     supportedBlock = true, // if the target language has blocks
     doParse   = true, // parse a *.t file
-    doExpand  = true, // expand the AST
     doCompile = true, // compile the AST
     printOutput = true, // print the output file using a TomGenerator instance
     doOnlyCompile = false, // try to start from an intermediate file
@@ -182,13 +181,6 @@ public class TomTaskInput {
 		doCheck = b;
 	}
 	
-	public boolean isDoExpand() {
-		return doExpand;
-	}
-	public void setDoExpand(boolean b) {
-		doExpand = b;
-	}
-
 	public boolean isDoOnlyCompile() {
 		return doOnlyCompile;
 	}

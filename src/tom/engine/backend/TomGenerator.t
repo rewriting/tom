@@ -72,7 +72,7 @@ public class TomGenerator extends TomTask {
 	
   public void process() {
     try {
-			boolean verbose = getInput().isVerbose();
+      boolean verbose = getInput().isVerbose();
       long startChrono = 0;
       if(verbose) {
         startChrono = System.currentTimeMillis();
@@ -88,7 +88,7 @@ public class TomGenerator extends TomTask {
         System.out.println("TOM generation phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
     } catch (Exception e) {
-    	addError("Exception occurs in TomGenerator: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
+      addError("Exception occurs in TomGenerator: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
       e.printStackTrace();
       return;
     }
@@ -1513,10 +1513,7 @@ public class TomGenerator extends TomTask {
       } 
       s += "): " + returnType + " is do Result := " + tlCode.getCode() + "end;";
     }
-    if(tlCode.isTL())
-      return `TL(s, tlCode.getStart(), tlCode.getEnd());
-    else
-      return `ITL(s);
+    return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
   

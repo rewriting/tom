@@ -32,19 +32,11 @@ public final class SingleLineOutputCode extends OutputCode {
   public SingleLineOutputCode(Writer file, boolean cCode, boolean pretty) {
     super(file, cCode, pretty);
   }
-
-  protected void internalWriteln() throws IOException {
-  }
-
-  public void writeln(String s) throws IOException {
-    write(s);
-    writeln();
-  }
   
   public void write(int deep,String s, int line, int length) throws IOException {
     s = s.replace('\n', ' ');
     s = s.replace('\r', ' ');
     s = s.replace('\t', ' ');
-    writeln(s);
+    write(s);
   }
 }

@@ -115,6 +115,7 @@ public class OutputCode {
       if(cCode) {
         String s1 = "\n#line "+line+"\n";
           // writeln(deep,s);
+        length++;
         s = s1+s;
       } else {
         s = s.replace('\n', ' ');
