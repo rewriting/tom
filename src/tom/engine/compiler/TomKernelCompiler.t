@@ -63,7 +63,8 @@ public class TomKernelCompiler extends TomBase {
         if(subject instanceof Instruction) {
           %match(Instruction subject) {
             Match(SubjectList(l1),PatternList(l2), optionList)  -> {
-              TomList patternList = null;
+              OptionList newOptionList = `concOption(TomTermToOption(PatternList(l2)),optionList*);
+							TomList patternList = null;
               Instruction actionInst = null;
               TomList automataList = empty();
               TomNumberList rootpath = tsf().makeTomNumberList();
@@ -110,7 +111,7 @@ public class TomKernelCompiler extends TomBase {
                  */
               InstructionList astAutomataList = automataListCompileMatchingList(automataList);
               Instruction astAutomata = collectVariableFromSubjectList(`l1,1,rootpath,`AbstractBlock(astAutomataList));
-              return `CompiledMatch(astAutomata, optionList);
+              return `CompiledMatch(astAutomata, newOptionList);
             }
               
               // default rule
