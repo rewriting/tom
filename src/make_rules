@@ -24,6 +24,8 @@ bootinstall :
 TSADT_SRC	= ${top_srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar:${top_srcdir}/stable/adt/TomSignature-${VERSION}.jar
 TNODEADT_SRC    =$(top_srcdir)/src/adt/TNode-${VERSION}.jar$:${prefix}/share/TNode-${VERSION}.jar:$(top_srcdir)/stable/adt/TNode-${VERSION}.jar
 SETADT_SRC	=$(top_srcdir)/src/adt/Set-${VERSION}.jar$:${prefix}/share/Set-${VERSION}.jar:$(top_srcdir)/stable/adt/Set-${VERSION}.jar
-CONCURRENT_JAR  = $(top_srcdir)/lib/concurrent.jar:${prefix}/share/concurrent.jar
 
-CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(JAVA_APIGEN):$(SHARED_OBJECTS):$(TSADT_SRC):$(TNODEADT_SRC):$(SETADT_SRC):${CONCURRENT_JAR}:$$CLASSPATH
+LIB_JAR        = `echo $(top_srcdir)/lib/*.jar | tr ' ' ':'`
+
+CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(JAVAROOT)/adt:$(srcdir):$(JAVA_ATERM):$(JAVA_APIGEN):$(SHARED_OBJECTS):$(TSADT_SRC):$(TNODEADT_SRC):$(SETADT_SRC):${LIB_JAR}:$$CLASSPATH
+

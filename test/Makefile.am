@@ -21,8 +21,8 @@ source_java     = Peano.t \
 	    TestXml.t \
 	    TestMatch.t \
 		  TestBuiltin.t\
-	    TestXmlDom.t 
-#		  TestList.t 
+	    TestXmlDom.t \
+		  TestList.t 
 
 source_c        = cfib1.t \
                   loulou.t

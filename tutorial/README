@@ -39,7 +39,7 @@ If you come from the
 * integer
   =======
   - 1_simple:   illustrate how to use builtin-integers in Java
-	        show how to describe addition over Peano integers in C,
+	        			show how to describe addition over Peano integers in C,
                 by defining a simple term data-structure and a Tom mapping 
   - 2_advanced: illustrate a tricky mapping between Peano and builtin integers
                 show how to define a mapping for the C version of the ATerm Library
@@ -48,7 +48,7 @@ If you come from the
   ====
   - 1_simple:   show how to define a mapping for the Java version of
                 the ATerm Library
-		This example introduces the notion of associative
+								This example introduces the notion of associative
                 operator as well as list-matching
 
 * peano

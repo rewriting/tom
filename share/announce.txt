@@ -1,4 +1,4 @@
-TOM 2.0 release announcement
+Tom 2.0 release announcement
 ----------------------------
 
 It is my great privilege and pleasure to announce the availability of
@@ -7,7 +7,7 @@ jtom-2.0.
 This release continues our work on the integration of pattern matching
 and rule based programming facilities into C and Java.
 
-TOM is a pattern matching compiler which is particularly well-suited
+Tom is a pattern matching compiler which is particularly well-suited
 for programming various transformations on trees/terms or XML documents.  
 
 Its design follows our experiences on the efficient compilation of
@@ -19,22 +19,22 @@ and executed.
 
 This new release contains many improved and new features:
 
-		 - support for Caml
-		 - several predefined mappings
-		 - an optimizer which performs inlining and improves the
-		   efficiency of list-matching 
-		 - support for builtin char and builtin string (seen as list of
-		   char) 
-     - a better XML support (backquote notation, anonymous nodes)
-		 - a re-designed kernel compiler (with better algorithms)
-		 - introduction of constraint to compile non-linear patterns (in a
-		   more efficient way) 
-		 - several bugs fixed
+  - support for Caml
+  - several predefined mappings
+  - an optimizer which performs inlining and improves the efficiency
+    of list-matching  
+  - support for builtin char and builtin string (seen as list of
+    char)  
+  - a better XML support (backquote notation, anonymous nodes)
+  - a re-designed kernel compiler (with better algorithms)
+  - introduction of constraint to compile non-linear patterns (in a
+    more efficient way)  
+  - several bugs fixed
 
-TOM is available, in open source, from the TOM web page:
+Tom is available, in open source, from the Tom web page:
 
-    http://tom.loria.fr
+  http://tom.loria.fr
 
 
-    best regards,
-    Tom Team
+  best regards,
+  Tom development team

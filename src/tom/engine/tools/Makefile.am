@@ -2,6 +2,8 @@
 #    TOM - To One Matching Compiler
 #
 
+SUBDIRS         = ant
+
 javadir         = ${prefix}/classes/jtom/tools
 stabledir 	    = $(top_srcdir)/stable/jtom/tools
 

@@ -2,6 +2,8 @@
 #    TOM - To One Matching Compiler
 #
 
+SUBDIRS = ant
+
 javadir         = ${prefix}/classes/jtom/tools
 
 JAVASOURCES     = Tools.java OutputCode.java\
