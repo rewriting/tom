@@ -177,7 +177,6 @@
         </tom>
       </sequential>
     </macrodef>
-    
     <macrodef name="adtcompile">
       <attribute name="example"/>
       <attribute name="factory"/>
@@ -191,7 +190,19 @@
         </adt>
       </sequential>
     </macrodef>
-    
+    <macrodef name="javacompile">
+			<attribute name="example"/>
+			<sequential>
+				<javac destdir="${examples.build}"
+							 optimize="${optimize}"
+							 nowarn="${nowarnings}">
+					<src path="${examples.dir}"/>
+					<src path="${examples.gen}"/>
+					<classpath refid="tom.classpath"/>
+					<include name="@{example}/**/*.java"/>
+				</javac>
+			</sequential>
+		</macrodef>
   </target>
   
   <target name="prepare.examples">
@@ -209,63 +220,29 @@
   </target>
 
   <target name="addressbook" depends="init">
-    <!-- build adt -->
     <adtcompile example="${addressbook}"
                 factory="data"/>
-    <!-- build tom -->
     <tomcompile example="${addressbook}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" 
-           destdir="${examples.build}" 
-           optimize="${optimize}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${addressbook}/**/*.java"/>
-    </javac>
+		<javacompile example="${addressbook}"/>
   </target>
 
   <target name="apireach" depends="init"> 
-    <!-- build adt -->
     <adtcompile example="${apireach}"
                 factory="reach"/>
-    <!-- build tom -->
     <tomcompile example="${apireach}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" 
-           destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${apireach}/**/*.java"/>
-    </javac>
+		<javacompile example="${apireach}"/>
   </target>
 
   <target name="appletxml" depends="init"> 
-    <!-- build tom -->
     <tomcompile example="${appletxml}"/>
-    <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${appletxml}/**/*.java"/>
-    </javac>
+		<javacompile example="${appletxml}"/>
   </target>
 
   <target name="boulderdash" depends="init">
-    <!-- build adt -->
     <adtcompile example="${boulderdash}"
                 factory="boulder"/>
-    <!-- build tom -->
     <tomcompile example="${boulderdash}"/>
-    <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${boulderdash}/**/*.java"/>
-    </javac>
+		<javacompile example="${boulderdash}"/>
     <!-- copy resources in build -->
     <copy todir="${examples.build}/${boulderdash}">
       <fileset dir="${examples.dir}/${boulderdash}">
@@ -276,19 +253,10 @@
   </target>
 
   <target name="builtin" depends="init">
-    <!-- build adt -->
     <adtcompile example="${builtin}"
                 factory="term"/>
-    <!-- build tom -->
     <tomcompile example="${builtin}"/>
-    <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${builtin}/**/*.java"/>
-    </javac>
+		<javacompile example="${builtin}"/>
   </target>
 
   <target name="caml" depends="init">
@@ -331,16 +299,8 @@
   </target>
 
   <target name="cell" depends="init">
-    <!-- build tom -->
     <tomcompile example="${cell}"/>
-    <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${cell}/**/*.java"/>
-    </javac>
+		<javacompile example="${cell}"/>
     <!-- copy resources in build -->
     <copy todir="${examples.build}/${cell}">
       <fileset dir="${examples.dir}/${cell}">
@@ -362,14 +322,7 @@
             outputdirectory="${example.gen}/cril/jtom/ddd/data/dbm"
             javacchome="${javaccdir}" />
     <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${cril}/**/*.java"/>
-    </javac>
-
+		<javacompile example="${cril}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${cril}">
       <fileset dir="${examples.dir}/${cril}">
@@ -380,14 +333,8 @@
 
 
   <target name="dom" depends="init">
-    <!-- build tom -->
     <tomcompile example="${dom}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.dir}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${dom}/**/*.java"/>
-    </javac>
+		<javacompile example="${dom}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${dom}">
       <fileset dir="${examples.dir}/${dom}">
@@ -414,91 +361,43 @@
          options="-I ${tom.home}/share/jtom">
       <include name="${expression}/**/RecordStrict.t"/>
     </tom>
-    <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${expression}/**/*.java"/>
-    </javac>
+		<javacompile example="${expression}"/>
   </target>
 
   <target name="gtree" depends="init">
-    <!-- build adt -->
     <adtcompile example="${gtree}"
                 factory="term"/>
-    <!-- build tom -->
     <tomcompile example="${gtree}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.dir}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${gtree}/**/*.java"/>
-    </javac>
+		<javacompile example="${gtree}"/>
   </target>
 
   <target name="list" depends="init">
-    <!-- build tom -->
     <tomcompile example="${list}"/>
-    <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${list}/**/*.java"/>
-    </javac>
+		<javacompile example="${list}"/>
   </target>
 
   <target name="lsystem" depends="init">
-    <!-- build tom -->
     <tomcompile example="${lsystem}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.dir}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${lsystem}/**/*.java"/>
-    </javac>
+		<javacompile example="${lsystem}"/>
   </target>
 
   <target name="minirho" depends="init">
-    <!-- build adt -->
     <adtcompile example="${minirho}"
                 factory="term"/>
-    <!-- build tom -->
     <tomcompile example="${minirho}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${minirho}/**/*.java"/>
-    </javac>
+		<javacompile example="${minirho}"/>
   </target>
   
   <target name="nspk" depends="init">
-    <!-- build adt -->
     <adtcompile example="${nspk}"
                 factory="term"/>
-    <!-- build tom -->
     <tomcompile example="${nspk}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${nspk}/**/*.java"/>
-    </javac>
+		<javacompile example="${nspk}"/>
   </target>
   
   <target name="p3p" depends="init">
-    <!-- build tom -->
     <tomcompile example="${p3p}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${p3p}/**/*.java"/>
-    </javac>
+		<javacompile example="${p3p}"/>
     <copy todir="${examples.build}/${p3p}">
       <fileset dir="${examples.dir}/${p3p}">
         <include name="*.xml"/>
@@ -507,78 +406,37 @@
   </target>
 
   <target name="peano" depends="init">
-    <!-- build adt -->
     <adtcompile example="${peano}"
                 factory="${peano}"/>
-    <!-- build tom -->
     <tomcompile example="${peano}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" 
-           destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${peano}/**/*.java"/>
-    </javac>
+		<javacompile example="${peano}"/>
   </target>
 
   <target name="pnspk" depends="init">
-    <!-- build adt -->
     <adtcompile example="${pnspk}"
                 factory="term"/>
-    <!-- build tom -->
     <tomcompile example="${pnspk}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" 
-           destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${pnspk}/**/*.java"/>
-    </javac>
+		<javacompile example="${pnspk}"/>
   </target>
   
   <target name="poly" depends="init">
-    <!-- build adt -->
     <adtcompile example="${poly}"
                 factory="expression"/>
-    <!-- build tom -->
     <tomcompile example="${poly}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" 
-           destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${poly}/**/*.java"/>
-    </javac>
+		<javacompile example="${poly}"/>
   </target>
 
   <target name="pqueens" depends="init">
-    <!-- build tom -->
     <tomcompile example="${pqueens}"/>
-    <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${pqueens}/**/*.java"/>
-    </javac>
+		<javacompile example="${pqueens}"/>
   </target>
 
   <target name="prodrule" depends="init">
-    <!-- build tom -->
     <tomcompile example="${prodrule}"/>
-    <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${prodrule}/**/*.java"/>
-    </javac>
+		<javacompile example="${prodrule}"/>
   </target>
 
   <target name="propp" depends="init">
-    <!-- build adt -->
     <adtcompile example="${propp}"
                 factory="seq"/>
     <!-- build parser -->
@@ -587,16 +445,8 @@
               outputdirectory="${examples.gen}/${propp}">
       <classpath refid="tom.classpath"/>
     </tomantlr>
-    <!-- build tom -->
     <tomcompile example="${propp}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath>
-        <path refid="tom.classpath"/>
-      </classpath>
-      <include name="${propp}/**/*.java"/>
-    </javac>
+		<javacompile example="${propp}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${propp}">
       <fileset dir="${examples.dir}/${propp}">
@@ -607,45 +457,24 @@
   </target>
 
   <target name="rbtree" depends="init">
-    <!-- build adt -->
     <adtcompile example="${rbtree}"
                 factory="tree"/>
-    <!-- build tom -->
     <tomcompile example="${rbtree}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${rbtree}/**/*.java"/>
-    </javac>
+		<javacompile example="${rbtree}"/>
   </target>
 
   <target name="set" depends="init">
-    <!-- build adt -->
     <adtcompile example="${set}"
                 factory="jgset"/>
-    <!-- build tom -->
     <tomcompile example="${set}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${set}/**/*.java"/>
-    </javac>
+		<javacompile example="${set}"/>
   </target>
 
   <target name="strategy" depends="init">
-    <!-- build adt -->
     <adtcompile example="${strategy}"
                 factory="term"/>
-    <!-- build tom -->
     <tomcompile example="${strategy}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${strategy}/**/*.java"/>
-    </javac>
+		<javacompile example="${strategy}"/>
   </target>
 
   <target name="structure" depends="init">
@@ -685,13 +514,7 @@
       <classpath refid="tom.classpath"/>
     </tomantlr>
     <!-- build java source -->
-    <javac destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <src path="${examples.dir}"/>
-      <src path="${examples.gen}"/>
-      <classpath refid="tom.classpath"/>
-      <include name="${structure}/**/*.java"/>
-    </javac>
+		<javacompile example="${structure}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${structure}">
       <fileset dir="${examples.dir}/${structure}">
@@ -701,14 +524,8 @@
   </target>
 
   <target name="tutorial" depends="init">
-    <!-- build tom -->
     <tomcompile example="${tutorial}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${tutorial}/**/*.java"/>
-    </javac>
+		<javacompile example="${tutorial}"/>
   </target>
 
   <target name="vas" depends="init">
@@ -722,23 +539,12 @@
          options="-I ${tom.home}/share/jtom">
       <include name="${vas}/**/*.t"/>
     </tom>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${vas}/**/*.java"/>
-    </javac>
+		<javacompile example="${vas}"/>
   </target>
 
   <target name="xml" depends="init">
-    <!-- build tom -->
     <tomcompile example="${xml}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${xml}/**/*.java"/>
-    </javac>
+		<javacompile example="${xml}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${xml}">
       <fileset dir="${examples.dir}/${xml}">
@@ -746,19 +552,11 @@
         <include name="*.html"/>
       </fileset>
     </copy>
-
   </target>
 
   <target name="xquery" depends="init">
-    <!-- build tom -->
     <tomcompile example="${xquery}"/>
-    <!-- build java source -->
-    <javac srcdir="${examples.gen}" 
-           destdir="${examples.build}"
-           nowarn="${nowarnings}">
-      <classpath refid="tom.classpath"/>
-      <include name="${xquery}/**/*.java"/>
-    </javac>
+		<javacompile example="${xquery}"/>
     <!-- copy resources -->
     <copy todir="${examples.build}/${xquery}">
       <fileset dir="${examples.dir}/${xquery}">
