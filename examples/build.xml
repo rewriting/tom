@@ -12,6 +12,7 @@
 
   <property name="nowarnings" value="false"/>
   <property name="optimize" value="off"/>
+  <property name="visitable" value="off"/>
 
   <property environment="env" />
   <property name="tom.home" value="${env.TOM_HOME}"/>
@@ -613,6 +614,7 @@
     <adt srcdir="${examples.dir}"
          factory="expression" 
          package="${poly}" 
+				 visitable="true"
          destdir="${examples.gen}">
 			<include name="${poly}/**/*.adt"/>
 		</adt>
@@ -855,21 +857,21 @@
     <target name="examples" 
             description="Builds the examples (at least some)"
             depends="addressbook, apireach, boulderdash, builtin, dom,
-            expression, gtree, list, nspk, minirho, p3p, peano, pnspk, poly, pqueens,
+            expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens,
             prodrule, propp, rbtree, set, vas, xml, xquery">
       -->
       <target name="examples" 
               description="Builds the examples (at least some)"
               depends="xml, vas, tutorial, set, rbtree, propp, prodrule,
               addressbook, caml, apireach, boulderdash, builtin, dom,
-              expression, gtree, list, nspk, minirho, p3p, peano, pnspk, poly, pqueens">
+              expression, gtree, list, nspk, p3p, peano, pnspk, poly, pqueens">
       </target>
 <!--
 <target name="examples" 
               description="Builds the examples (at least some)"
               depends=" vas, set, rbtree, propp, prodrule,
               addressbook, apireach, boulderdash, builtin, 
-              expression, gtree, list, nspk, minirho, peano, pnspk, poly, pqueens">
+              expression, gtree, list, nspk, peano, pnspk, poly, pqueens">
       </target>  
 -->
 			<target name="dist.examples" 
