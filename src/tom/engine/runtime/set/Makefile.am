@@ -28,12 +28,12 @@ bootinstall :
 TOMFLAGS = 
 TOM = ${prefix}/bin/jtom
 
-ATermSet.java : ATermSet.t $(JAVAROOT)/adt/set.tom
+ATermSet.java : ATermSet.t $(JAVAROOT)/adt/Set.tom
 	$(TOM) $(TOMFLAGS) $<
 
-SharedSet.java : SharedSet.t $(JAVAROOT)/adt/set.tom
+SharedSet.java : SharedSet.t $(JAVAROOT)/adt/Set.tom
 	$(TOM) $(TOMFLAGS) --noDeclaration $<
 
-SharedMultiSet.java : SharedMultiSet.t $(JAVAROOT)/adt/set.tom
+SharedMultiSet.java : SharedMultiSet.t $(JAVAROOT)/adt/Set.tom
 	$(TOM) $(TOMFLAGS) --noDeclaration $<
 
