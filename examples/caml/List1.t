@@ -34,7 +34,7 @@ let rec string_of_int_list = function [] -> "\n"
   | i :: r -> (string_of_int i) ^ " " ^ (string_of_int_list r);;
 
 
-let l1 = [10;9;8;7;6;5;5;6;7;8;9];;
+let l1 = [10;8;7;6;5;5;6;7;8;9];;
 let l2 = swapsort(l1);;
 print_string(string_of_int_list l1);;
 print_string(string_of_int_list l2);;

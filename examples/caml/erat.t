@@ -23,7 +23,7 @@ exception Result of int list
 let rec elim l=
 try(
 %match (list l) {
-  conc(x*,e1,y*,e2,z*) -> { if e1 mod e2 = 0 
+  conc(x*,e1,y*,e2,z*) -> { if `e1 mod `e2 = 0
 			    then raise (Result (elim(`conc (x*,y*,e2,z*)))) } 
 }; l
 )with Result r -> r;;
