@@ -279,7 +279,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
   }
 
 
-	protected buildSymbolDecl(String tomName) {
+	protected void buildSymbolDecl(String tomName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
@@ -293,7 +293,7 @@ public class TomImperativeGenerator extends TomAbstractGenerator {
     generateSlotList(deep, slotList);
   }
 
-  protected buildArraySymbolDecl(String tomName) {
+  protected void buildArraySymbolDecl(String tomName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();        

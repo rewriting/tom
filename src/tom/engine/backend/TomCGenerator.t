@@ -77,7 +77,7 @@ public class TomCGenerator extends TomImperativeGenerator {
 		output.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
   }
 
-	protected buildSymbolDecl(String tomName) {
+	protected void buildSymbolDecl(String tomName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
@@ -140,7 +140,7 @@ public class TomCGenerator extends TomImperativeGenerator {
   }
 
 
-  protected buildArraySymbolDecl(String tomName) {
+  protected void buildArraySymbolDecl(String tomName) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();        

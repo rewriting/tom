@@ -1414,7 +1414,7 @@ public abstract class TomAbstractGenerator {
                                              args, tlCode));
   }
 
-  protected void buildIsFsymDecl(tomName, name1, tlType) {
+  protected void buildIsFsymDecl(TomName tomName, String name1, TomType tlType) {
     TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
     String opname = tomSymbol.getAstName().getString();
     
