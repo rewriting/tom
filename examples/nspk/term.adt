@@ -9,6 +9,8 @@
  [AgentId, alice, alice], 
  [AgentId, bob, bob], 
  [AgentId, devil, devil], 
+ [AgentId, sender, sender(<number(int)>)], 
+ [AgentId, receiver, receiver(<number(int)>)], 
 
  [SWC, SLEEP, SLEEP], 
  [SWC, WAIT, WAIT], 

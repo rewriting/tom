@@ -365,7 +365,7 @@ global
     [] sizeMess(nill)   => 0		end
     [] sizeMess(m & ll)  =>  1+ sizeMess(ll)		end 
 
-    [] MaxMessagesInNetwork => 1   end
+    [] MaxMessagesInNetwork => 5   end
 end
 
 //--------------------------------------------------------------

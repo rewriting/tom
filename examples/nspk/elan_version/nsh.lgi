@@ -8,12 +8,12 @@ LPL nsh description
 // A+SLEEP+N(A,A) * nnl <> B+SLEEP+N(B,B) * nnl <> II#nl#nill <> nill   end
 
 
-// a+SLEEP+N(a,a) * nnl <> b+SLEEP+N(b,b) * nnl <> ii#nl#nill <> nill <> 0 <> 1 <> 0 <> Start  end
-// a+SLEEP+N(a,a) * nnl <> b+SLEEP+N(b,b) * nnl <> ii#nl#nill <> nill <> 0 <> 2 <> 0 <> Start  end
-// a+SLEEP+N(a,a) * e+SLEEP+N(e,e) * nnl <> b+SLEEP+N(b,b) * d+SLEEP+N(d,d) * nnl <> I#nl#nill <> nill <> 0 <> 1 <> 0 <> Start	end
+// a+SLEEP+N(a,a) * nnl <> b+SLEEP+N(b,b) * nnl <> II#nl#nill <> nill end
+// a+SLEEP+N(a,a) * nnl <> b+SLEEP+N(b,b) * nnl <> II#nl#nill <> nill end
+// a+SLEEP+N(a,a) * e+SLEEP+N(e,e) * nnl <> b+SLEEP+N(b,b) * d+SLEEP+N(d,d) * nnl <> II#nl#nill <> nill	end
  
-// a+SLEEP+N(a,a) * nnl <> b+SLEEP+N(b,b) * nnl <> ii#nl#nill <> nill <> 0 <> 3 <> 0 <> Start  end
-// a+SLEEP+N(a,a) * nnl <> b+SLEEP+N(b,b) * nnl <> ii#nl#nill <> nill <> 0 <> 10 <> 0 <> Start  end
+// a+SLEEP+N(a,a) * nnl <> b+SLEEP+N(b,b) * nnl <> II#nl#nill <> nill   end
+// a+SLEEP+N(a,a) * nnl <> b+SLEEP+N(b,b) * nnl <> II#nl#nill <> nill   end
 
 end
 

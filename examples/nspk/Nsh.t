@@ -38,27 +38,77 @@ public class Nsh {
   }
   
   public void run(int size) {
-    ATerm res = null;
 
       // A+SLEEP+N(A,A) * nnl <> B+SLEEP+N(B,B) * nnl <> II#nl#nill <> nill   end
-
-    State initState = `state(
+    State initState1 = `state(
       concAgent(agent(alice,SLEEP,N(alice,alice))),
       concAgent(agent(bob,SLEEP,N(bob,bob))),
       intruder(devil,concNonce(),concMessage()),
       concMessage());
 
-    Collection c = new HashSet();
-    long startChrono = System.currentTimeMillis();
-    res = initState;
-
-
-    collectOneStep(initState,c);
+      // a+SLEEP+N(a,a) * e+SLEEP+N(e,e) * nnl <> b+SLEEP+N(b,b) * d+SLEEP+N(d,d) * nnl <> II#nl#nill <> nill	end
+    State initState2 = `state(
+      concAgent( agent(a,SLEEP,N(a,a)),agent(e,SLEEP,N(e,e)) ),
+      concAgent( agent(b,SLEEP,N(b,b)),agent(d,SLEEP,N(d,d)) ),
+      intruder(devil,concNonce(),concMessage()),
+      concMessage());
     
+    State initState = query(3,3);
+           
+    State search = `ATTACK();
+
+    long startChrono = System.currentTimeMillis();
+    boolean res = reach(initState,search);
     long stopChrono = System.currentTimeMillis();
 
-      //System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
+    System.out.println("res = " + res + " in " + (stopChrono-startChrono) + " ms");
     
+  }
+
+  public State query(int nbSenders, int nbReceivers) {
+    ATermList s = `concAgent();
+    for(int index=0 ; index<nbSenders ; index++) {
+      Integer i = new Integer(index);
+      s = s.insert(`agent(sender(i),SLEEP,N(sender(i),sender(i))));
+    }
+    ATermList r = `concAgent();
+    for(int index=0 ; index<nbReceivers ; index++) {
+      Integer i = new Integer(index);
+      r = r.insert(`agent(receiver(i),SLEEP,N(receiver(i),receiver(i))));
+    }
+    State state =
+      `state(s,r,intruder(devil,concNonce(),concMessage()),concMessage());
+    return state;
+  }
+  
+  static final int MAXITER = 25;
+  public boolean reach(State start, State end) {
+    Collection result = new HashSet();
+    Collection c1 = new HashSet();
+    c1.add(start);
+
+    for(int i=1 ; i<MAXITER ; i++) {
+      Collection c2 = new HashSet();
+      Iterator it = c1.iterator();
+      while(it.hasNext()) {
+        collectOneStep((State)it.next(),c2);
+      }
+
+      System.out.print("iteration " + i + ":");
+      System.out.print("\tc2.size = " + c2.size());
+        //c2.removeAll(result);
+        //System.out.print("\tc2'.size = " + c2.size());
+      System.out.println();
+      c1 = c2;
+      result.addAll(c2);
+
+      if(result.contains(end)) {
+          //System.out.println("result =\n" + result);
+        System.out.println("result.size = " + result.size());
+        return true;
+      }
+    }
+    return false;
   }
 
   public Nonce DN() {
@@ -113,7 +163,6 @@ public class Nsh {
                   dst,I,
                   concMessage(msg(x,y,K(y),N(x,y),DN(),A(x)),M*));
                 c.add(state);
-                System.out.println("state = " + state);
               }
             } 
               // initiator 1
