@@ -104,8 +104,8 @@ public class TomServer implements TomPluginOptions
     public static void clear() {
 	instance.instances = new Vector();
 	instance.services = new Vector();
-     SymbolTable symbolTable = new SymbolTable(instance.astFactory);
-     instance.environment = new TomEnvironment(symbolTable);
+	SymbolTable symbolTable = new SymbolTable(instance.astFactory);
+	instance.environment = new TomEnvironment(symbolTable);
     }
 
     public static int exec(String args[])
@@ -117,29 +117,44 @@ public class TomServer implements TomPluginOptions
     private String whichConfigFile(String[] argumentList)
     {
 	String xmlConfigurationFile = "./jtom/Tom.xml"; // default configuration file
+	int i = 0;
 
-	for(int i = 0; i < argumentList.length; i++)
+	try
 	    {
-		if(argumentList[i].equals("-X")) // tests if argumentList redefines the configuration file
+		for(; i < argumentList.length; i++)
 		    {
-			if (i+1 >= argumentList.length) // argument expected but no more input
-			    {
-				System.out.println("Option -X requires a string attribute.");
-			    }   
-			else
-			    {
-				String fileName = argumentList[i+1];
-				String suffix = fileName.substring(fileName.length() - 4);
-				//System.out.println(suffix);
-				if( suffix.equalsIgnoreCase(".xml") ) // is the suffix valid ?
-				    xmlConfigurationFile = fileName;
-				else throw new TomRuntimeException("The alternate configuration file must be a XML file.");
-			    }
+			if(argumentList[i].equals("-X")) // tests if argumentList redefines the configuration file
+			    xmlConfigurationFile = argumentList[++i];
 		    }
 	    }
+	catch (ArrayIndexOutOfBoundsException e) 
+	    {
+		environment.messageError(TomMessage.getString("IncompleteOption"), 
+					 new Object[]{argumentList[--i]}, 
+					 "TomServer", 
+					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	    }
+
+ 	if( environment.hasError() )
+ 	    {
+		environment.printErrorMessage();
+		displayHelp();
+ 		return null;
+ 	    }
 
 	if(! (new File(xmlConfigurationFile)).exists() )
-	    throw new TomRuntimeException("The configuration file " +xmlConfigurationFile+ " was not found.");
+	    {
+		environment.messageError(TomMessage.getString("ConfigFileNotFound"), 
+					 new Object[]{xmlConfigurationFile}, 
+					 "TomServer", 
+					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	    }
+
+ 	if( environment.hasError() )
+ 	    {
+		environment.printErrorMessage();
+ 		return null;
+ 	    }
 
 	return xmlConfigurationFile;
     }
@@ -148,8 +163,17 @@ public class TomServer implements TomPluginOptions
     {
 	// parses configuration file...
 	XmlTools xtools = new XmlTools();
-	TNode node = (TNode)xtools.convertXMLToATerm(xmlConfigurationFile);
 	Vector classPaths = new Vector();
+	TNode node = (TNode)xtools.convertXMLToATerm(xmlConfigurationFile);
+
+	if( node == null ) // parsing failed
+	    {
+		environment.messageError(TomMessage.getString("ConfigFileNotXML"), 
+					 new Object[]{xmlConfigurationFile}, 
+					 "TomServer", 
+					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+		return null;
+	    }
 
 	// ... to extract global options
 	globalOptions = `emptyTomOptionList();
@@ -192,8 +216,10 @@ public class TomServer implements TomPluginOptions
 		boolean canGoOn = arePrerequisitesMet(plugin.requiredOptions());
 		if (!canGoOn)
 		    {
-			System.out.println(plugin.getClass().getName() + " can't run : prerequisites not met.");
-			System.exit(1);
+			environment.messageError(TomMessage.getString("PrerequisitesIssue"), 
+						 new Object[]{plugin.getClass().getName()},
+						 "TomServer",
+						 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 		    }
 	    }
 
@@ -202,11 +228,18 @@ public class TomServer implements TomPluginOptions
 
     public int run(String[] argumentList)
     {
-	//environment.init();
-
 	String xmlConfigurationFile = whichConfigFile(argumentList);
 
+ 	if( xmlConfigurationFile == null ) // method whichConfigFile encountered an error
+	    return 1;
+ 	    
 	Vector classPaths = parseConfigFile(xmlConfigurationFile);
+
+	if( classPaths == null ) // method parseConfigFile encountered an error
+	    {
+		environment.printErrorMessage();
+		return 1;
+	    }
 
 	// creates an instance of each plugin
 	instances.add(this); // the server is added to allow option declaration and mapping
@@ -214,52 +247,68 @@ public class TomServer implements TomPluginOptions
 	while(it.hasNext())
 	    {
 		Object instance;
+		String path = (String)it.next();
 		try
 		    { 
-			instance = Class.forName((String)it.next()).newInstance();
+			instance = Class.forName(path).newInstance();
 			if(instance instanceof TomPlugin)
 			    instances.add(instance);
-		    
+			else
+			    {
+				System.out.println("pas un plugin");
+				environment.messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
+							 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+			    }
 		    }
-		catch(Exception e){ System.out.println(e.getMessage()); }
+		catch(ClassNotFoundException cnfe) 
+		    { 
+			environment.messageError(TomMessage.getString("ClassNotFound"),new Object[]{path},
+						 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+		    }
+		catch(Exception e) 
+		    { 
+			environment.messageError(TomMessage.getString("InstantiationError"),
+						 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+		    }
+	    }
+
+	if( environment.hasError() )
+	    {
+		environment.printErrorMessage();
+		return 1;
 	    }
 
 	String[] inputFiles = optionManagement(argumentList);
 
-	if(environment.hasError()) // copied from Tom.java
+	if( environment.hasError() )
 	    {
-		environment.printAlertMessage("Tom");
+		environment.printAlertMessage("TomServer");
 		displayHelp();
 		return 1;
 	    }
 
 	for(int i = 0; i < inputFiles.length; i++)
 	    {
-		try
+		environment.updateEnvironment(inputFiles[i]);
+		
+		ATerm term = `FileName(inputFiles[i]);
+		
+		// runs the modules
+		it = instances.iterator();
+		it.next(); // skips the server
+		while(it.hasNext())
 		    {
-			environment.updateEnvironment(inputFiles[i]);
+			TomPlugin plugin = (TomPlugin)it.next();
+			plugin.setInput(term);
+			plugin.run();
+			term = plugin.getOutput();
 			
-			ATerm term = `FileName(inputFiles[i]);
-			
-			// runs the modules
-			it = instances.iterator();
-			it.next(); // skips the server
-			while(it.hasNext())
-			    {
-				TomPlugin plugin = (TomPlugin)it.next();
-				plugin.setInput(term);
-				plugin.run();
-				term = plugin.getOutput();
-			    }
-			
-			if(environment.hasError()) // copied from Tom.java
+			if( environment.hasError() )
 			    return 1;
-
 		    }
-		catch(Exception e){ System.out.println(e.getMessage()); }
 	    }
 
-	if(environment.hasError()) // copied from Tom.java
+	if( environment.hasError() )
 	    return 1;
 	else
 	    return 0;
@@ -269,37 +318,17 @@ public class TomServer implements TomPluginOptions
     {
 	%match(TNode node)
 	    {
-		<TOM>plug@<PLUGINS></PLUGINS></TOM> -> {
+		<tom>plug@<plugins></plugins></tom> -> {
 		    %match(TNode plug)
 			{
 			    ElementNode[childList = cl] -> // gets the <plugin> nodes
 				{ 
 				    while(!(cl.isEmpty())) // for each node...
 					{
-					    TNode h1 = cl.getHead();
-					    %match(TNode h1)
+					    TNode pluginNode = cl.getHead();
+					    %match(TNode pluginNode)
 						{
-						    ElementNode[attrList = al] -> // gets the attribute list 
-							{
-							    while(!(al.isEmpty())) // for each attribute...
-								{
-								    TNode h2 = al.getHead();
-								    %match(TNode h2)
-									{
-									    AttributeNode[name=n, value=val] -> 
-										{ 
-										    if(n.equals("classpath"))
-											{
-											    //System.out.println(val);
-											    v.add(val);
-											    // adds the value of the "classpath"
-											    // attribute to the Vector of class paths
-											}
-										}
-									}
-								    al = al.getTail();
-								}
-							}	
+						    <plugin [classpath = cp] /> -> { v.add(cp);/*System.out.println(cp);*/ }
 						}
 					    cl = cl.getTail();
 					}
@@ -423,7 +452,7 @@ public class TomServer implements TomPluginOptions
 		    }
 	    }
 	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
-			   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return null;
     }
 
@@ -461,7 +490,7 @@ public class TomServer implements TomPluginOptions
 		    }
 	    }
 	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
-			   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return false;
     }
     /**
@@ -494,7 +523,7 @@ public class TomServer implements TomPluginOptions
 		    }
 	    }
 	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
-				   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return 0;
     }
     /**
@@ -527,7 +556,7 @@ public class TomServer implements TomPluginOptions
 		    }
 	    }
 	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
-			   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+				 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return null;
     }
 
@@ -713,8 +742,7 @@ public class TomServer implements TomPluginOptions
     public String[] processArguments(String[] argumentList)
     {
 	Vector inputFiles = new Vector();
-	StringBuffer imports = new StringBuffer(); // temporary
-	boolean importEncountered = false;
+	StringBuffer imports = new StringBuffer();
 	boolean outputEncountered = false;
 	boolean destdirEncountered = false;
 	int i = 0;
@@ -727,7 +755,7 @@ public class TomServer implements TomPluginOptions
 			
 			if(!s.startsWith("-")) // input file name, should never start with '-'
 			    inputFiles.add(s);
-			else // s does start with '-'
+			else // s does start with '-', thus is -or at least should be- an option
 			    {
 				s = s.substring(1); // crops the '-'
 				if(s.startsWith("-")) // if there's another one
@@ -745,16 +773,9 @@ public class TomServer implements TomPluginOptions
 					i++;
 					continue;
 				    }
-			        
 				if( s.equals("import") || s.equals("I") )
 				    {
-					imports.append(argumentList[++i] + ":"); // temporary
-					// 					if(importEncountered)
-					// 					    {
-					// 						environment.messageError(TomMessage.getString("ImportTwice"),
-					// 									   "Tom", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-					// 					    }
-					// 					else importEncountered = true;
+					imports.append(argumentList[++i] + ":");
 				    }
 				if( s.equals("output") || s.equals("o") )
 				    {
@@ -797,32 +818,17 @@ public class TomServer implements TomPluginOptions
 					else if (type.equals("integer"))
 					    {
 						String t = argumentList[++i];
-						if(t.startsWith("-")) // argument expected but option found instead
-						    {
-							System.out.println("Option " +s+ " requires an integer attribute");
-							// may change later :
-							// _ some arguments could start with '-' (i.e. negative integers)
-							// _ if '-' isn't considered a valid start, then this will still
-							//   be considered an error, but will be handled differently
-							//   ( with environment.messageError(...) )
-						    }
-						else
-						    plugin.setOption(s, t);
+						plugin.setOption(s, t);
 					    }
 					else if (type.equals("string")) 
 					    {
-						if ( !( s.equals("import") || s.equals("I") ) ) // temporary
+						if ( !( s.equals("import") || s.equals("I") ) ) // "import" is handled in the end
 						    {
 							String t = argumentList[++i];
-							if(t.startsWith("-")) // argument expected but option found instead
-							    {
-								System.out.println("Option " +s+ " requires a string attribute");
-							    }
-							else
-							    plugin.setOption(s, t);
+							plugin.setOption(s, t);
 						    }
 					    }
-				    }			
+				    }	
 			    }
 		    }
 	    }
@@ -835,7 +841,7 @@ public class TomServer implements TomPluginOptions
 		return (String[])inputFiles.toArray(new String[]{});
 	    }
 
-	setOption("import",imports.toString()); // temporary
+	setOption("import",imports.toString());
 
 	if(inputFiles.isEmpty())
 	    {
@@ -851,7 +857,7 @@ public class TomServer implements TomPluginOptions
     {
 	%match(TNode node)
 	    {
-		<TOM>opt@<OPTIONS></OPTIONS></TOM> -> {
+		<tom>opt@<options></options></tom> -> {
 		    %match(TNode opt)
 			{
 			    ElementNode[childList = c]
@@ -877,102 +883,55 @@ public class TomServer implements TomPluginOptions
 
     private void extractOptionBoolean(TNode optionBooleanNode)
     {
-	String name = "";
-	String altName = "";
-	String description = "";
-	String valueB = "";
-
 	%match(TNode optionBooleanNode)
 	    {
-		ElementNode[attrList = al] -> // gets the attribute list 
+		<OptionBoolean
+		     [name = n,
+		      altName = an,
+		      description = d,
+		      valueB = v] /> ->
 		    {
-			while(!(al.isEmpty())) // for each attribute...
+			%match(String v)
 			    {
-				TNode h = al.getHead();
-				%match(TNode h)
-				    {
-					AttributeNode[name="name", value=val] -> { name = val; } 
-					AttributeNode[name="altName", value=val] -> { altName = val; } 
-					AttributeNode[name="description", value=val] -> { description = val; } 
-					AttributeNode[name="valueB", value=val] -> { valueB = val; } 	
-				    }
-				al = al.getTail();
+				('true') ->
+				    { globalOptions = `concTomOption(globalOptions*, OptionBoolean(n, an, d, True())); }
+				('false') ->
+				    { globalOptions = `concTomOption(globalOptions*, OptionBoolean(n, an, d, False())); }
 			    }
 		    }
 	    }
-	
-	%match(String valueB)
-	    {
-		('true') ->
-		    { globalOptions = `concTomOption(globalOptions*, OptionBoolean(name, altName, description, True())); }
-		('false') ->
-		    { globalOptions = `concTomOption(globalOptions*, OptionBoolean(name, altName, description, False())); }
-	    }
-	//System.out.println(name + "|" + altName + "|" + description + "|" + valueB);
     }
 
     private void extractOptionInteger(TNode optionIntegerNode)
     {
-	String name = "";
-	String altName = "";
-	String description = "";
-	String valueI = "";
-	String attrName = "";
-
 	%match(TNode optionIntegerNode)
 	    {
-		ElementNode[attrList = al] -> // gets the attribute list 
+		<OptionInteger
+		     [name = n,
+		      altName = an,
+		      description = d,
+		      valueI = v,
+		      attrName = at] /> ->
 		    {
-			while(!(al.isEmpty())) // for each attribute...
-			    {
-				TNode h = al.getHead();
-				%match(TNode h)
-				    {
-					AttributeNode[name="name", value=val] -> { name = val; } 
-					AttributeNode[name="altName", value=val] -> { altName = val; } 
-					AttributeNode[name="description", value=val] -> { description = val; } 
-					AttributeNode[name="valueI", value=val] -> { valueI = val; } 	
-					AttributeNode[name="attrName", value=val] -> { attrName = val; } 
-				    }
-				al = al.getTail();
-			    }
+			globalOptions = `concTomOption(OptionInteger(n, an, d, Integer.parseInt(v), at), globalOptions*);
 		    }
 	    }
-
-	globalOptions = `concTomOption(OptionInteger(name, altName, description, Integer.parseInt(valueI), attrName), globalOptions*);
-	//System.out.println(name + "|" + altName + "|" + description + "|" + valueI + "|" + attrName);
     }
 
     private void extractOptionString(TNode optionStringNode)
     {
-	String name = "";
-	String altName = "";
-	String description = "";
-	String valueS = "";
-	String attrName = "";
-
 	%match(TNode optionStringNode)
 	    {
-		ElementNode[attrList = al] -> // gets the attribute list 
+		<OptionString
+		     [name = n,
+		      altName = an,
+		      description = d,
+		      valueS = v,
+		      attrName = at] /> ->
 		    {
-			while(!(al.isEmpty())) // for each attribute...
-			    {
-				TNode h = al.getHead();
-				%match(TNode h)
-				    {
-					AttributeNode[name="name", value=val] -> { name = val; } 
-					AttributeNode[name="altName", value=val] -> { altName = val; } 
-					AttributeNode[name="description", value=val] -> { description = val; } 
-					AttributeNode[name="valueS", value=val] -> { valueS = val; } 	
-					AttributeNode[name="attrName", value=val] -> { attrName = val; } 
-				    }
-				al = al.getTail();
-			    }
+			globalOptions = `concTomOption(OptionString(n, an, d, v, at), globalOptions*);
 		    }
 	    }
-
-	globalOptions = `concTomOption(OptionString(name, altName, description, valueS, attrName), globalOptions*);
-	//System.out.println(name + "|" + altName + "|" + description + "|" + valueS + "|" + attrName);
     }
 
 }
