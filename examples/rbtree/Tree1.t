@@ -133,7 +133,7 @@ public class Tree1 {
       array[3*i+2] = `f(old_e3);
     }
     long stopChrono = System.currentTimeMillis();
-    System.out.println("building " + n + " in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Building " + n + " element in " + (stopChrono-startChrono) + " ms");
       
     startChrono = System.currentTimeMillis();
     for(int i=0 ; i<3*n ; i++) {
@@ -141,7 +141,7 @@ public class Tree1 {
     }    
     stopChrono = System.currentTimeMillis();
     int size = card(t);
-    System.out.println("tree size = " + size + " in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Building Tree of size = " + size + " in " + (stopChrono-startChrono) + " ms");
     
     TreeSet set = new TreeSet(comparator);
     startChrono = System.currentTimeMillis();
@@ -149,7 +149,7 @@ public class Tree1 {
       set.add(array[i]);
     }    
     stopChrono = System.currentTimeMillis();
-    System.out.println("set  size = " + set.size() + " in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Building Set of size = " + set.size() + " in " + (stopChrono-startChrono) + " ms");
 
     ATermList list = factory.getPureFactory().makeList();
     startChrono = System.currentTimeMillis();
@@ -157,7 +157,7 @@ public class Tree1 {
       list = list.insert(array[i]);
     }    
     stopChrono = System.currentTimeMillis();
-    System.out.println("ATlist  size = " + list.getLength() + " in " + (stopChrono-startChrono) + " ms");
+    System.out.println("Building ATlist of size = " + list.getLength() + " in " + (stopChrono-startChrono) + " ms");
 
 
     
