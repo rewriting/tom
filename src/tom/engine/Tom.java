@@ -219,8 +219,6 @@ public class Tom {
             taskInput.setDebugMemory(true);
           } else if (args[i].equals("--eclipse")) {
             taskInput.setEclipseMode(true);
-          } else if (args[i].equals("--path")) {
-            taskInput.setResourceParentPathLocation(args[++i]);
           } else if (args[i].equals("--destdir") || args[i].equals("-d")) {
             localDestDir = args[++i];
             //System.out.println("localDestDir = " + localDestDir);
@@ -477,7 +475,6 @@ public class Tom {
       if(args[i].charAt(0) == '-') {
         options.add(args[i]);
         if(args[i].equals("--import") || args[i].equals("-I") ||
-           args[i].equals("--path") ||
            args[i].equals("--destdir") || args[i].equals("-d") ||
            args[i].equals("--output") || args[i].equals("-o")) {
           options.add(args[++i]);

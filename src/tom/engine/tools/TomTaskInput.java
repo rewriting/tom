@@ -68,7 +68,6 @@ public class TomTaskInput {
 
   private String inputSuffix = ".t";
   private String outputSuffix = ".java";
-  private String resourceParentPathLocation = ".";
 
   public final static String 
   parsedSuffix    = ".tfix.parsed",
@@ -359,14 +358,6 @@ public class TomTaskInput {
     help = b;
   }
 
-  public String getResourceParentPathLocation() {
-  	return resourceParentPathLocation;
-  }
-
-  public void setResourceParentPathLocation(String resourceParentPathLocation) {
-  	this.resourceParentPathLocation = resourceParentPathLocation;
-  }
-  
 	public String getInputSuffix() {
 		return inputSuffix;
 	}
