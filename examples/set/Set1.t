@@ -51,7 +51,7 @@ public class Set1 {
     1 << 31
   };
   
-  %include { Set.tom }
+  %include { jgset.tom }
   
   public Set1(Factory factory) {
     this(factory, 31);
@@ -65,7 +65,7 @@ public class Set1 {
       this.depth = depth;
     } else {this.depth = 32;}
   }
-  public Factory getSetFactory() {
+  public Factory getJgsetFactory() {
     return factory;
   }
 
