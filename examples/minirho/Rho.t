@@ -27,11 +27,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package minirho;
+
 import aterm.*;
 import aterm.pure.*;
 import jtom.runtime.*;
-import adt.rho.rho.*;
-import adt.rho.rho.types.*;
+import minirho.rho.rhoterm.*;
+import minirho.rho.rhoterm.types.*;
 
 public class Rho {
 
@@ -44,14 +46,43 @@ public class Rho {
   private RTerm X = null;
 
     //On suppose la conjonction de contraintes representee par des listes de contraintes (donc assoc). Dans les regles on se rend compte que en fait la commutativite du \land n'est pas utile.
-  %include { rho.tom }
+//   %include { rho.tom }
+
+  %vas {
+    // extension of adt syntax
+    module rhoterm
+      
+    public
+      sorts RTerm Constraint ListConstraint
+      
+    abstract syntax
+      var(name:String) -> RTerm
+      const(name:String) -> RTerm
+
+			abs(lhs:RTerm,rhs:RTerm) -> RTerm
+			app(lhs:RTerm,rhs:RTerm) -> RTerm
+			struct(lhs:RTerm,rhs:RTerm) -> RTerm
+
+			appC(constr:ListConstraint,rterm:RTerm) -> RTerm
+			appSt(constr:ListConstraint,rterm:RTerm) -> RTerm
+			appSc(constr:ListConstraint,constr2:ListConstraint) -> RTerm
+
+			matchH(lhs:RTerm,rhs:RTerm) -> Constraint
+			match(lhs:RTerm,rhs:RTerm) -> Constraint
+// 			matchng(lhs:RTerm,rhs:RTerm) -> Constraint
+// 			matchg(lhs:RTerm,rhs:RTerm) -> Constraint
+			g(constraint:ListConstraint) -> Constraint
+			ng(constraint:ListConstraint) -> Constraint
+			
+			concConstraint( Constraint* ) -> ListConstraint
+   }
 
   public Rho(Factory factory) {
     this.factory = factory;
     this.traversal = new GenericTraversal();
   }
 	
-  public Factory getRhoFactory() {
+  public Factory getRhotermFactory() {
     return factory;
   }
 //UTILISER LES GENERIQUES TRAVERSALES OU/ET REPLACE POUR REDUCTION SOUS-TERME
