@@ -41,11 +41,9 @@ public class TomServer implements TomPluginOptions {
   private List instances;
     
   /**
-   * A List of TomOptionList objects indicating what services can be provided by each plugin.
-   * The mapping between plugins and services is done so : a plugin in the instances List shares the
-   * same index as the services it provides in the services List.
+   * This list is used solely to display the help message.
    */
-  private List services;
+  private TomOptionList helpList;
 
   /**
    * A Map allowing to match option names and plugins
@@ -159,7 +157,6 @@ public class TomServer implements TomPluginOptions {
         instance = new TomServer();
         
 	instance.instances = new Vector();
-        instance.services = new Vector();
 	instance.optionOwners = new HashMap();
 	instance.optionTypes = new HashMap();
 	instance.optionValues = new HashMap();
@@ -185,7 +182,6 @@ public class TomServer implements TomPluginOptions {
    */
   public static void clear() {
     instance.instances = new Vector();
-    instance.services = new Vector();
     instance.optionOwners = new HashMap();
     instance.optionTypes = new HashMap();
     instance.optionValues = new HashMap();
@@ -311,13 +307,15 @@ public class TomServer implements TomPluginOptions {
    * @return an array of String containing the names of the files to compile
    */
   private String[] optionManagement(String[] argumentList) {
+    helpList = `emptyTomOptionList(); // is initialized here and not in create() cause method isn't static
+
     // collects the options/services provided by each plugin
     Iterator it = instances.iterator();
     while(it.hasNext()) {
       TomPluginOptions plugin = (TomPluginOptions)it.next();
 
       TomOptionList list = plugin.declaredOptions();
-      services.add(list);
+      helpList = `concTomOption(helpList*, list*);
 
       while(!(list.isEmpty())) {
 	  TomOption option = list.getHead();
@@ -362,14 +360,12 @@ public class TomServer implements TomPluginOptions {
     String[] inputFiles = processArguments(argumentList);
 
     // regenerates the options/services now that the proper values have been set
-    services.clear();
     it = instances.iterator();
     while(it.hasNext()) {
       TomPluginOptions plugin = (TomPluginOptions)it.next();
       
       TomOptionList list = plugin.declaredOptions();
-      services.add(list);
-
+      
       while(!(list.isEmpty())) {
 	  TomOption option = list.getHead();
 	  
@@ -685,14 +681,9 @@ public class TomServer implements TomPluginOptions {
 
     buffy.append("\n\t-X <file> \t \t : \tDefines an alternate XML configuration file");
 
-    for(int i = 0; i < services.size(); i++)
-	    {
-        TomOptionList ol = (TomOptionList)services.get(i);
-        TomOptionList list = `concTomOption(ol*);
-
-        while(!(list.isEmpty()))
-          {
-            TomOption h = list.getHead();
+    while(!(helpList.isEmpty()))
+	{
+            TomOption h = helpList.getHead();
             %match(TomOption h)
             {
               OptionBoolean(n, a, d, False()) -> // display only flags that are not activated by default
@@ -723,9 +714,8 @@ public class TomServer implements TomPluginOptions {
                 buffy.append(s);
               }
             }			
-            list = list.getTail();
+            helpList = helpList.getTail();
           }
-	    }
 	
     System.out.println(buffy.toString());
     System.exit(0);
@@ -737,32 +727,48 @@ public class TomServer implements TomPluginOptions {
    * @param list a list of options that must be found with the right value
    * @return true if every option was found with the right value, false otherwise
    */
-  public boolean arePrerequisitesMet(TomOptionList list)
-  {
-    while(!(list.isEmpty()))
-	    {
-        TomOption h = list.getHead();
-        boolean optionFound = false;
-
-        for(int i = 0; i < services.size(); i++)
-          {
-            TomOptionList ol = (TomOptionList)services.get(i);
-			
-            %match(TomOptionList ol, TomOption h)
-            {
-              concTomOption(_*,OptionBoolean(name,_,_,val),_*) , OptionBoolean(name,_,_,val) ->
-              { optionFound = true; }
-              concTomOption(_*,OptionInteger(name,_,_,val,_),_*) , OptionInteger(name,_,_,val,_) -> 
-              { optionFound = true; }
-              concTomOption(_*,OptionString(name,_,_,val,_),_*) , OptionString(name,_,_,val,_) -> 
-              { optionFound = true; }
-            }
-          }
-        if(!optionFound)
-          return false;
-        list = list.getTail();
-	    }
-    return true;
+  public boolean arePrerequisitesMet(TomOptionList list) {
+      while(!(list.isEmpty())) {
+	  TomOption option = list.getHead();
+	  String optionName = option.getName();
+	
+	  if( option.isOptionBoolean() ) {
+	      boolean expectedValue = option.getValueB().isTrue();
+	      boolean actualValue = getOptionBooleanValue(optionName);
+	      if ( actualValue != expectedValue ) {
+		  // TODO : put the message properly in TomMessageResources.properties
+		  // I'm not doing it right away because the messages need to be updated anyway
+		  // (some are obsolete), I'll fix it all at the same time
+		  environment.messageError("Option " +optionName+ " was expected with value "
+					   +expectedValue+ " but " +actualValue+ " was found instead",
+					   "TomServer",TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+		  return false;
+	      }
+	  } else if( option.isOptionInteger() ) {
+	      int expectedValue = option.getValueI();
+	      int actualValue = getOptionIntegerValue(optionName);
+	      if ( actualValue != expectedValue ) {
+		  // TODO : see above...
+		  environment.messageError("Option " +optionName+ " was expected with value "
+					   +expectedValue+ " but " +actualValue+ " was found instead",
+					   "TomServer",TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+		  return false;
+	      }
+	  } else if( option.isOptionString() ) {
+	      String expectedValue = option.getValueS();
+	      String actualValue = getOptionStringValue(optionName);
+	      if ( actualValue != expectedValue ) {
+		  // TODO : see above...
+		  environment.messageError("Option " +optionName+ " was expected with value "
+					   +expectedValue+ " but " +actualValue+ " was found instead",
+					   "TomServer",TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+		  return false;
+	      }
+	  }
+        
+	  list = list.getTail();
+      }
+      return true;
   }
 
   /**
