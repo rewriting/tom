@@ -211,6 +211,16 @@ public class TomParser extends TomTask {
     if (code.equals("")) {return ;}
     list.add(makeTL(code));
   }
+  
+  private String extractApiName(String[] par) {
+  	String res = null;
+  	for(int i=0;i<par.length;i++) {
+  		if(par[i].equals("--name") || par[i].equals("-n")) {
+  			return par[++i];
+  		}
+  	}
+  	return res;
+  }
 }
 
 PARSER_END(TomParser)
@@ -1267,8 +1277,8 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
 void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
 	TargetLanguage vasTL;
-	String vasCode;
-	String fileName;
+	String vasCode, fileName, apiName = null;
+	Token arguments;
   TomTerm astTom;
   InputStream input;
   File file;
@@ -1281,13 +1291,14 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
     {
       addPreviousCode(list);
     }
+    <TOM_LPAREN>
+    arguments = <TOM_STRING>
+    <TOM_RPAREN>
   vasTL = GoalLanguageBlock(list)
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       vasCode = vasTL.getCode().trim();
       try{
-      	
-				//System.out.println(vasCode);
 				Class vasClass = Class.forName("vas.Vas");
 				Constructor vasConstructor = vasClass.getConstructor(new Class[]{});
 				Object vas = vasConstructor.newInstance(new Class[]{}); // an instance of Vas
@@ -1303,9 +1314,19 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 	      writer.close();
 	      
 	      if(javaCode) {
-		      String[] par = {"--input", ".generatedFromVas.adt", "--javagen",
-		      	"--output", ".", "--name", "api"};
-		      apigen.gen.tom.java.Main.main(par);
+	        System.out.println("Arguments: "+arguments.image.substring(1, arguments.image.length()-1));
+		      String[] par = arguments.image.substring(1, arguments.image.length()-1).split(" ");
+		      String[] finalPar = new String[par.length+2];
+		      int i = 0;
+		      for(;i<par.length;i++){
+		      	finalPar[i] = par[i];
+		      	
+		      }
+		      finalPar[i] = "--input";
+		      finalPar[i+1] = ".generatedFromVas.adt";
+		      
+		      apiName = extractApiName(par);
+		      apigen.gen.tom.java.Main.main(finalPar);
 		    } else if (cCode) {
 		    	String[] par = {"--input", ".generatedFromVas.adt", "--cGen",
 		      	"--output", ".", "--name", "api"};
@@ -1324,25 +1345,29 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 				e.printStackTrace();
       }
       
-      fileName = "api.tom";
+      fileName = apiName+".tom";
       file = new File(fileName);
-    	try {
-        	// to get the length of the file
- 	    	inputBuffer = new byte[(int)file.length()+1];
- 	    	input       = new FileInputStream(file);
- 	    	input.read(inputBuffer);
-     
- 	    	tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName, includedFiles);
- 	      tomParser.testIncludedFiles(fileName);
- 	      astTom = tomParser.startParsing();
- 	      astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
- 	      list.add(astTom);
- 	    } catch (TokenMgrError error) {
- 	      String msg = "TokenMgrError in file '" + fileName + "' generated from file '"+currentFile+"'"+ error.getMessage();
- 	      throw new TomException(msg);
- 	    } catch (java.io.IOException e2) {
- 	      String msg = "IOException occurs reading " + fileName + " at line "+getLine();
- 	      throw new TomException(msg);
+    	if(file.exists()) {
+	    	try {
+ 	  	     	// to get the length of the file
+ 		    	inputBuffer = new byte[(int)file.length()+1];
+ 		    	input       = new FileInputStream(file);
+ 	    		input.read(inputBuffer);
+     	
+ 	   	 		tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName, includedFiles);
+ 	   	   	tomParser.testIncludedFiles(fileName);
+ 	   	   	astTom = tomParser.startParsing();
+ 	      	astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
+ 	      	list.add(astTom);
+ 	    	} catch (TokenMgrError error) {
+ 	      	String msg = "TokenMgrError in file '" + fileName + "' generated from file '"+currentFile+"'"+ error.getMessage();
+ 	      	throw new TomException(msg);
+ 	    	} catch (java.io.IOException e2) {
+ 	      	String msg = "IOException occurs reading " + fileName + " at line "+getLine();
+ 	      	throw new TomException(msg);
+ 	    	}
+ 	    } else {
+ 	    	System.out.println(fileName+" does not exist");
  	    }
     }
   }
