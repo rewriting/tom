@@ -198,23 +198,23 @@ public class AdtParser {
 
   private String toModular(String input, String inputName) {
     Entries entries = adtFactory.EntriesFromString(input);
-    HashSet set = new HashSet();
-    collectSort(entries, set);
+    HashMap map = new HashMap();
+    collectSort(entries, map);
     //System.out.println("[modulentry(name(\""+inputName+"\"),[],["+hashSetToStr(set)+"],"+input+")]");
-    return ("[modulentry(name(\""+inputName+"\"),[],["+hashSetToStr(set)+"],"+input+")]");
+    return ("[modulentry(name(\""+inputName+"\"),[],["+hashMapToStr(map)+"],"+input+")]");
   }
 
-  private void collectSort(ATerm subject, final HashSet set) {
+  private void collectSort(ATerm subject, final HashMap set) {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
           if(t instanceof Entry) {
             %match(Entry t) {
               list[sort=sort] -> { 
-                set.add(`sort);
+                set.put(`sort,"module");
                 return false; 
               }
               constructor[sort=sort] -> { 
-                set.add(`sort);
+                set.put(`sort,"module");
                 return false; 
               }
             }
@@ -225,8 +225,9 @@ public class AdtParser {
     traversal.genericCollect(subject, collect);
   }
 
-  private String hashSetToStr(HashSet set) {
+  private String hashSetToStr(HashMap map) {
     String result = "";
+    Set set = map.keySet();
     Iterator i = set.iterator();
     if(i.hasNext()) {
       result = result+"type(\""+i.next()+"\")";
