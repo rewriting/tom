@@ -24,6 +24,9 @@
 #
 
 SUBDIRS = jtom
+JARFILE    = jtom-devel${VERSION}.jar
+data_DATA  = ${JARFILE}
+CLEANFILES = ${JARFILE}
 
 EXTRA_DIST = TODO ALGO 
 
@@ -60,8 +63,12 @@ bootstrap:
 	diff -r $(BOOTSTRAPDIR) $(BOOTSTRAPDIRCOPY)
 	@rm -rf $(BOOTSTRAPDIRCOPY)
 
-bootinstall :
+bootinstall:
 	list='$(SUBDIRS)'; for subdir in $$list; do \
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
+
+${JARFILE}:
+	jar cf ${JARFILE} \
+	`cd ${top_builddir}/src && find . -name '*.class'`
 
