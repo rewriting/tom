@@ -194,15 +194,15 @@ public class StepExpression extends AbstractExpression {
 	int childIndex = 0; 
 
 	if (secondChild instanceof AbstractExpression) { // union
-	  System.out.println("first child is an Expression");
+	  //	  System.out.println("first child is an Expression");
 	  
 	  result.add(((AbstractExpression)secondChild).evaluate()); 
 	  childIndex = 1;
 	}
-	else {
-	  System.out.println("Khong phai dau");
+// 	else {
+// 	  System.out.println("Khong phai dau");
 	  
-	}
+// 	}
 
 	//	System.out.println("StepExpr: evaluate: result:" + result.size());
 	result= doFilter(result, childIndex);

@@ -117,6 +117,8 @@ public class PathExpression extends AbstractExpression{
   protected Sequence doFilter(Sequence input, int childIndex)
 	throws XQueryGeneralException
   {
+	SequenceTool st=new SequenceTool(); 
+
 	// filter; by expression
 	Sequence result = new Sequence(); 
 	result.add(input);
@@ -127,15 +129,14 @@ public class PathExpression extends AbstractExpression{
 	  // assign initial value
 	  //Sequence s = expr.evaluate(result);
 	  result = expr.evaluate(result);
-	  System.out.println("i="+i);
-	  System.out.println("PathExpr: doFilter: result:" + result.size());
+// 	  System.out.println("i="+i);
+// 	  System.out.println("PathExpr: doFilter: result:" + result.size());
 	  
 	  if (result==null) {
 		return null; 
 	  }
-	  else {
-		//		result.add(s); 
-	  }
+
+	  result = st.removeDuplicated(result);
 	}
 
 // 	System.out.println("PathExpr: doFilter: result:" + result.size());
