@@ -6,6 +6,12 @@ import java.io.IOException;
 
 abstract public class SlotListImpl extends aterm.pure.ATermListImpl
 {
+  protected void init (int hashCode, aterm.ATermList annos, aterm.ATerm first,	aterm.ATermList next) {
+    super.init(hashCode, annos, first, next);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.ATerm first, aterm.ATermList next) {
+    super.initHashCode(annos, first, next);
+  }
   protected TomSignatureFactory factory = null;
   SlotListImpl(TomSignatureFactory factory) {
      super(factory);
@@ -70,20 +76,10 @@ abstract public class SlotListImpl extends aterm.pure.ATermListImpl
     return (aterm.ATermList)getTomSignatureFactory().makeSlotList();
   }
 
-  public aterm.ATermList insert(aterm.ATerm head) {
-    return (aterm.ATermList)getTomSignatureFactory().makeSlotList((PairNameDecl) head, (SlotList) this);
-  }
-
   public SlotList insert(PairNameDecl head) {
     return getTomSignatureFactory().makeSlotList(head, (SlotList) this);
   }
-  public aterm.ATermList reverse() {
-  	 SlotListImpl cur = this;
-  	 SlotListImpl reverse = (SlotListImpl) getTomSignatureFactory().makeSlotList();
-  	 while(!cur.isEmpty()){
-  	   reverse = (SlotListImpl)reverse.insert((aterm.ATerm) cur.getHead());
-  	   cur = cur.getTail();
-  	 }
-  	 return reverse;
+  public aterm.ATermList insert(aterm.ATerm head) {
+    return insert((PairNameDecl) head);
   }
 }

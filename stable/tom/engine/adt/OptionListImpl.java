@@ -6,6 +6,12 @@ import java.io.IOException;
 
 abstract public class OptionListImpl extends aterm.pure.ATermListImpl
 {
+  protected void init (int hashCode, aterm.ATermList annos, aterm.ATerm first,	aterm.ATermList next) {
+    super.init(hashCode, annos, first, next);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.ATerm first, aterm.ATermList next) {
+    super.initHashCode(annos, first, next);
+  }
   protected TomSignatureFactory factory = null;
   OptionListImpl(TomSignatureFactory factory) {
      super(factory);
@@ -70,20 +76,10 @@ abstract public class OptionListImpl extends aterm.pure.ATermListImpl
     return (aterm.ATermList)getTomSignatureFactory().makeOptionList();
   }
 
-  public aterm.ATermList insert(aterm.ATerm head) {
-    return (aterm.ATermList)getTomSignatureFactory().makeOptionList((Option) head, (OptionList) this);
-  }
-
   public OptionList insert(Option head) {
     return getTomSignatureFactory().makeOptionList(head, (OptionList) this);
   }
-  public aterm.ATermList reverse() {
-  	 OptionListImpl cur = this;
-  	 OptionListImpl reverse = (OptionListImpl) getTomSignatureFactory().makeOptionList();
-  	 while(!cur.isEmpty()){
-  	   reverse = (OptionListImpl)reverse.insert((aterm.ATerm) cur.getHead());
-  	   cur = cur.getTail();
-  	 }
-  	 return reverse;
+  public aterm.ATermList insert(aterm.ATerm head) {
+    return insert((Option) head);
   }
 }

@@ -3,7 +3,13 @@ package jtom.adt;
 abstract public class Declaration_TypeArrayDeclImpl
 extends Declaration
 {
-  Declaration_TypeArrayDeclImpl(TomSignatureFactory factory) {
+  protected void init(int hashCode, aterm.ATermList annos, aterm.AFun fun,	aterm.ATerm[] args) {
+    super.init(hashCode, annos, fun, args);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.AFun fun, aterm.ATerm[] i_args) {
+  	super.initHashCode(annos, fun, i_args);
+  }
+  protected Declaration_TypeArrayDeclImpl(TomSignatureFactory factory) {
     super(factory);
   }
   private static int index_astName = 0;

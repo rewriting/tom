@@ -1130,7 +1130,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_TypeTermDecl(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1163,7 +1162,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_TypeListDecl(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1196,7 +1194,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_TypeArrayDecl(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1229,7 +1226,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_GetFunctionSymbolDecl(TomTermFromTerm( (aterm.ATerm) children.get(0)), TargetLanguageFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1262,7 +1258,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_GetSubtermDecl(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TargetLanguageFromTerm( (aterm.ATerm) children.get(2)), OptionFromTerm( (aterm.ATerm) children.get(3)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1296,7 +1291,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_IsFsymDecl(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TargetLanguageFromTerm( (aterm.ATerm) children.get(2)), OptionFromTerm( (aterm.ATerm) children.get(3)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1330,7 +1324,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_GetSlotDecl(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomNameFromTerm( (aterm.ATerm) children.get(1)), TomTermFromTerm( (aterm.ATerm) children.get(2)), TargetLanguageFromTerm( (aterm.ATerm) children.get(3)), OptionFromTerm( (aterm.ATerm) children.get(4)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1365,7 +1358,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_CompareFunctionSymbolDecl(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TargetLanguageFromTerm( (aterm.ATerm) children.get(2)), OptionFromTerm( (aterm.ATerm) children.get(3)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1399,7 +1391,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_TermsEqualDecl(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TargetLanguageFromTerm( (aterm.ATerm) children.get(2)), OptionFromTerm( (aterm.ATerm) children.get(3)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1433,7 +1424,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_GetHeadDecl(TomTermFromTerm( (aterm.ATerm) children.get(0)), TargetLanguageFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1466,7 +1456,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_GetTailDecl(TomTermFromTerm( (aterm.ATerm) children.get(0)), TargetLanguageFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1499,7 +1488,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_IsEmptyDecl(TomTermFromTerm( (aterm.ATerm) children.get(0)), TargetLanguageFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1532,7 +1520,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_MakeEmptyList(TomNameFromTerm( (aterm.ATerm) children.get(0)), TargetLanguageFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1565,7 +1552,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_MakeAddList(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TomTermFromTerm( (aterm.ATerm) children.get(2)), TargetLanguageFromTerm( (aterm.ATerm) children.get(3)), OptionFromTerm( (aterm.ATerm) children.get(4)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1600,7 +1586,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_GetElementDecl(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TargetLanguageFromTerm( (aterm.ATerm) children.get(2)), OptionFromTerm( (aterm.ATerm) children.get(3)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1634,7 +1619,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_GetSizeDecl(TomTermFromTerm( (aterm.ATerm) children.get(0)), TargetLanguageFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1667,7 +1651,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_MakeEmptyArray(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TargetLanguageFromTerm( (aterm.ATerm) children.get(2)), OptionFromTerm( (aterm.ATerm) children.get(3)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1701,7 +1684,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_MakeAddArray(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TomTermFromTerm( (aterm.ATerm) children.get(2)), TargetLanguageFromTerm( (aterm.ATerm) children.get(3)), OptionFromTerm( (aterm.ATerm) children.get(4)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1736,7 +1718,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_MakeDecl(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTypeFromTerm( (aterm.ATerm) children.get(1)), TomListFromTerm( (aterm.ATerm) children.get(2)), TargetLanguageFromTerm( (aterm.ATerm) children.get(3)), OptionFromTerm( (aterm.ATerm) children.get(4)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1771,7 +1752,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_SymbolDecl(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1802,7 +1782,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_ListSymbolDecl(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1833,7 +1812,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_ArraySymbolDecl(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1864,7 +1842,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Declaration tmp = makeDeclaration_EmptyDeclaration();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1894,7 +1871,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_DeclarationToOption(DeclarationFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1925,7 +1901,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_TomNameToOption(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1956,7 +1931,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_TomTermToOption(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -1987,7 +1961,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_Option(OptionListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2018,7 +1991,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_DefinedSymbol();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2048,7 +2020,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_GeneratedMatch();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2078,7 +2049,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_WithDefaultProduction();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2108,7 +2078,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_OriginTracking(TomNameFromTerm( (aterm.ATerm) children.get(0)), (Integer) children.get(1), TomNameFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2141,7 +2110,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_Constructor(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2172,7 +2140,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_OriginalText(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2203,7 +2170,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Option tmp = makeOption_XMLPosition((String) children.get(0));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2234,7 +2200,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_TomTermToExpression(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2265,7 +2230,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_Not(ExpressionFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2296,7 +2260,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_And(ExpressionFromTerm( (aterm.ATerm) children.get(0)), ExpressionFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2328,7 +2291,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_TrueTL();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2358,7 +2320,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_FalseTL();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2388,7 +2349,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_IsEmptyList(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2419,7 +2379,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_IsEmptyArray(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2451,7 +2410,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_EqualFunctionSymbol(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2483,7 +2441,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_EqualTerm(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2515,7 +2472,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_GetSubterm(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomNumberFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2547,7 +2503,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_IsFsym(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2579,7 +2534,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_GetSlot(TomNameFromTerm( (aterm.ATerm) children.get(0)), (String) children.get(1), TomTermFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2612,7 +2566,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_GetHead(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2643,7 +2596,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_GetTail(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2674,7 +2626,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_GetSize(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2705,7 +2656,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_GetElement(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2737,7 +2687,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_GetSliceList(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TomTermFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2770,7 +2719,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Expression tmp = makeExpression_GetSliceArray(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TomTermFromTerm( (aterm.ATerm) children.get(2)), TomTermFromTerm( (aterm.ATerm) children.get(3)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2804,7 +2752,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TargetLanguage tmp = makeTargetLanguage_TL((String) children.get(0), PositionFromTerm( (aterm.ATerm) children.get(1)), PositionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2837,7 +2784,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TargetLanguage tmp = makeTargetLanguage_ITL((String) children.get(0));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2868,7 +2814,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Position tmp = makePosition_Position((Integer) children.get(0), (Integer) children.get(1));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2900,7 +2845,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomType tmp = makeTomType_Type(TomTypeFromTerm( (aterm.ATerm) children.get(0)), TomTypeFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2932,7 +2876,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomType tmp = makeTomType_TypesToType(TomTypeListFromTerm( (aterm.ATerm) children.get(0)), TomTypeFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2964,7 +2907,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomType tmp = makeTomType_TomType((String) children.get(0));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -2995,7 +2937,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomType tmp = makeTomType_TomTypeAlone((String) children.get(0));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3026,7 +2967,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomType tmp = makeTomType_TLType(TargetLanguageFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3057,7 +2997,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomType tmp = makeTomType_EmptyType();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3087,7 +3026,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomName tmp = makeTomName_Name((String) children.get(0));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3118,7 +3056,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomName tmp = makeTomName_PositionName(TomNumberListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3149,7 +3086,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomName tmp = makeTomName_EmptyName();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3179,7 +3115,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_TargetLanguageToTomTerm(TargetLanguageFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3210,7 +3145,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_TomTypeToTomTerm(TomTypeFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3241,7 +3175,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_TomNameToTomTerm(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3272,7 +3205,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_TomSymbolToTomTerm(TomSymbolFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3303,7 +3235,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_DeclarationToTomTerm(DeclarationFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3334,7 +3265,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_OptionToTomTerm(OptionFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3365,7 +3295,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_ExpressionToTomTerm(ExpressionFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3396,7 +3325,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_InstructionToTomTerm(InstructionFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3427,7 +3355,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_TomRuleToTomTerm(TomRuleFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3458,7 +3385,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_Tom(TomListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3489,7 +3415,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_TomInclude(TomListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3520,7 +3445,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_MakeTerm(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3551,7 +3475,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_BackQuoteTerm(TomTermFromTerm( (aterm.ATerm) children.get(0)), OptionFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3583,7 +3506,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_FunctionCall(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3615,7 +3537,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_MakeFunctionBegin(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3647,7 +3568,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_MakeFunctionEnd();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3677,7 +3597,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_Appl(OptionFromTerm( (aterm.ATerm) children.get(0)), TomNameFromTerm( (aterm.ATerm) children.get(1)), TomListFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3710,7 +3629,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_RecordAppl(OptionFromTerm( (aterm.ATerm) children.get(0)), TomNameFromTerm( (aterm.ATerm) children.get(1)), TomListFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3743,7 +3661,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_PairSlotAppl(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3775,7 +3692,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_Match(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3808,7 +3724,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_MatchingCondition(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3840,7 +3755,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_EqualityCondition(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3872,7 +3786,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_RuleSet(TomRuleListFromTerm( (aterm.ATerm) children.get(0)), OptionFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3904,7 +3817,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_SubjectList(TomListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3935,7 +3847,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_PatternList(TomListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3966,7 +3877,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_TermList(TomListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -3997,7 +3907,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_Term(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4028,7 +3937,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_PatternAction(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4061,7 +3969,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_DefaultPatternAction(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4094,7 +4001,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_TLVar((String) children.get(0), TomTypeFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4126,7 +4032,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_Declaration(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4157,7 +4062,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_Variable(OptionFromTerm( (aterm.ATerm) children.get(0)), TomNameFromTerm( (aterm.ATerm) children.get(1)), TomTypeFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4190,7 +4094,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_VariableStar(OptionFromTerm( (aterm.ATerm) children.get(0)), TomNameFromTerm( (aterm.ATerm) children.get(1)), TomTypeFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4223,7 +4126,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_Placeholder(OptionFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4254,7 +4156,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_UnamedVariable(OptionFromTerm( (aterm.ATerm) children.get(0)), TomTypeFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4286,7 +4187,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_DotTerm(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4318,7 +4218,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_LocalVariable();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4348,7 +4247,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_EndLocalVariable();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4378,7 +4276,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_BuildVariable(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4409,7 +4306,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_BuildTerm(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4441,7 +4337,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_BuildList(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4473,7 +4368,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_BuildArray(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4505,7 +4399,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_BuildBuiltin(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4536,7 +4429,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_CompiledMatch(TomListFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4569,7 +4461,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_CompiledPattern(TomListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4600,7 +4491,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_AssignedVariable((String) children.get(0), ExpressionFromTerm( (aterm.ATerm) children.get(1)), (Integer) children.get(2), ExpressionFromTerm( (aterm.ATerm) children.get(3)), ExpressionFromTerm( (aterm.ATerm) children.get(4)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4635,7 +4525,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_Automata(TomNumberListFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), TomNameFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4668,7 +4557,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_DefaultAutomata(TomNumberListFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), TomNameFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4701,7 +4589,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_MatchXML((String) children.get(0), TomTermFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4734,7 +4621,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_BackQuoteXML(XMLTermFromTerm( (aterm.ATerm) children.get(0)), OptionFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4766,7 +4652,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomTerm tmp = makeTomTerm_XMLTermToTomTerm(XMLTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4797,7 +4682,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_MatchNumber(TomNumberFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4828,7 +4712,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_PatternNumber(TomNumberFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4859,7 +4742,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_ListNumber(TomNumberFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4890,7 +4772,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_IndexNumber(TomNumberFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4921,7 +4802,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_Begin(TomNumberFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4952,7 +4832,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_End(TomNumberFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -4983,7 +4862,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_Number((Integer) children.get(0));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5014,7 +4892,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_AbsVar(TomNumberFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5045,7 +4922,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_RenamedVar(TomNameFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5076,7 +4952,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomNumber tmp = makeTomNumber_RuleVar();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5106,7 +4981,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomRule tmp = makeTomRule_RewriteRule(TomTermFromTerm( (aterm.ATerm) children.get(0)), TomTermFromTerm( (aterm.ATerm) children.get(1)), TomListFromTerm( (aterm.ATerm) children.get(2)), OptionFromTerm( (aterm.ATerm) children.get(3)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5140,7 +5014,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_IfThenElse(ExpressionFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), TomListFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5173,7 +5046,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_DoWhile(TomListFromTerm( (aterm.ATerm) children.get(0)), ExpressionFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5205,7 +5077,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_Assign(TomTermFromTerm( (aterm.ATerm) children.get(0)), ExpressionFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5237,7 +5108,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_AssignMatchSubject(TomTermFromTerm( (aterm.ATerm) children.get(0)), ExpressionFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5269,7 +5139,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_Increment(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5300,7 +5169,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_Action(TomListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5331,7 +5199,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_ExitAction(TomNumberListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5362,7 +5229,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_Return(TomTermFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5393,7 +5259,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_OpenBlock();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5423,7 +5288,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_CloseBlock();
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5453,7 +5317,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       Instruction tmp = makeInstruction_NamedBlock((String) children.get(0), TomListFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5485,7 +5348,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomSymbol tmp = makeTomSymbol_Symbol(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomTypeFromTerm( (aterm.ATerm) children.get(1)), SlotListFromTerm( (aterm.ATerm) children.get(2)), OptionFromTerm( (aterm.ATerm) children.get(3)), TargetLanguageFromTerm( (aterm.ATerm) children.get(4)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5520,7 +5382,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       PairNameDecl tmp = makePairNameDecl_Slot(TomNameFromTerm( (aterm.ATerm) children.get(0)), DeclarationFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5552,7 +5413,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomSymbolTable tmp = makeTomSymbolTable_Table(TomEntryListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5583,7 +5443,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomEntry tmp = makeTomEntry_Entry((String) children.get(0), TomSymbolFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5615,7 +5474,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       TomStructureTable tmp = makeTomStructureTable_StructTable(TomListFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5646,7 +5504,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       XMLTerm tmp = makeXMLTerm_Element(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5679,7 +5536,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       XMLTerm tmp = makeXMLTerm_Attribute(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5712,7 +5568,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       XMLTerm tmp = makeXMLTerm_ReservedWord(TomNameFromTerm( (aterm.ATerm) children.get(0)), TomListFromTerm( (aterm.ATerm) children.get(1)), OptionFromTerm( (aterm.ATerm) children.get(2)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5745,7 +5600,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       XMLTerm tmp = makeXMLTerm_XMLPlaceholder(OptionFromTerm( (aterm.ATerm) children.get(0)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {
@@ -5776,7 +5630,6 @@ public class TomSignatureFactory extends PureFactory
 
     if (children != null) {
       XMLTerm tmp = makeXMLTerm_XMLVariable(TomNameFromTerm( (aterm.ATerm) children.get(0)), OptionFromTerm( (aterm.ATerm) children.get(1)));
-      tmp.setTerm(trm);
       return tmp;
     }
     else {

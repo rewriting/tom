@@ -6,8 +6,14 @@ import java.io.IOException;
 
 abstract public class TomNumberImpl extends TomSignatureConstructor
 {
-  TomNumberImpl(TomSignatureFactory factory) {
+  protected TomNumberImpl(TomSignatureFactory factory) {
      super(factory);
+  }
+  protected void init(int hashCode, aterm.ATermList annos, aterm.AFun fun,	aterm.ATerm[] args) {
+    super.init(hashCode, annos, fun, args);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.AFun fun, aterm.ATerm[] i_args) {
+  	super.initHashCode(annos, fun, i_args);
   }
   public boolean isEqual(TomNumber peer)
   {

@@ -6,6 +6,12 @@ import java.io.IOException;
 
 abstract public class TomTypeListImpl extends aterm.pure.ATermListImpl
 {
+  protected void init (int hashCode, aterm.ATermList annos, aterm.ATerm first,	aterm.ATermList next) {
+    super.init(hashCode, annos, first, next);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.ATerm first, aterm.ATermList next) {
+    super.initHashCode(annos, first, next);
+  }
   protected TomSignatureFactory factory = null;
   TomTypeListImpl(TomSignatureFactory factory) {
      super(factory);
@@ -70,20 +76,10 @@ abstract public class TomTypeListImpl extends aterm.pure.ATermListImpl
     return (aterm.ATermList)getTomSignatureFactory().makeTomTypeList();
   }
 
-  public aterm.ATermList insert(aterm.ATerm head) {
-    return (aterm.ATermList)getTomSignatureFactory().makeTomTypeList((TomType) head, (TomTypeList) this);
-  }
-
   public TomTypeList insert(TomType head) {
     return getTomSignatureFactory().makeTomTypeList(head, (TomTypeList) this);
   }
-  public aterm.ATermList reverse() {
-  	 TomTypeListImpl cur = this;
-  	 TomTypeListImpl reverse = (TomTypeListImpl) getTomSignatureFactory().makeTomTypeList();
-  	 while(!cur.isEmpty()){
-  	   reverse = (TomTypeListImpl)reverse.insert((aterm.ATerm) cur.getHead());
-  	   cur = cur.getTail();
-  	 }
-  	 return reverse;
+  public aterm.ATermList insert(aterm.ATerm head) {
+    return insert((TomType) head);
   }
 }

@@ -3,7 +3,13 @@ package jtom.adt;
 abstract public class Option_ConstructorImpl
 extends Option
 {
-  Option_ConstructorImpl(TomSignatureFactory factory) {
+  protected void init(int hashCode, aterm.ATermList annos, aterm.AFun fun,	aterm.ATerm[] args) {
+    super.init(hashCode, annos, fun, args);
+  }
+  protected void initHashCode(aterm.ATermList annos, aterm.AFun fun, aterm.ATerm[] i_args) {
+  	super.initHashCode(annos, fun, i_args);
+  }
+  protected Option_ConstructorImpl(TomSignatureFactory factory) {
     super(factory);
   }
   private static int index_astName = 0;
