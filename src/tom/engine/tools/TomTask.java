@@ -82,8 +82,10 @@ public abstract class TomTask extends TomBase {
 					if (/*!input.isNoWarning() || */input.isWarningAll() && !input.isEclipseMode()) {
 						System.out.println(error.getMessage());
 					}
-				} else if (error.getLevel() == 0 && !input.isEclipseMode()) {
-					System.out.println(error.getMessage());
+				} else if (error.getLevel() == 0) {
+					if(!input.isEclipseMode()){
+						System.out.println(error.getMessage());
+					}
 					res = false;
 					nbError++;
 				}
@@ -103,7 +105,9 @@ public abstract class TomTask extends TomBase {
 	public void finishProcess() {
 			//	Start next task
 		if(nextTask != null) {
-			input.setErrors(tsf().makeTomErrorList());
+			if(!input.isEclipseMode()) {
+				input.setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
+			} 
 			nextTask.startProcess(input);
 		} /*else { System.out.println("No more tasks"); }*/
 	}
