@@ -129,7 +129,7 @@ public class PrimesT2 {
 
 // ****** erreur ****** y1 au lieu de y
 
-		app(nil, y) 	-> y1
+		app(y2@nil, y3@y) 	-> y1
 
 // ****** erreur ******
 

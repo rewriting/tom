@@ -25,7 +25,7 @@ public class ArrayT5 {
   %oparray L conc( E* ) {
     fsym            { factory.makeAFun("conc", 1, false) }
     make_empty(n)   { new ArrayList(n) }
-    make_add(l,e,n) { myAdd((List)l,e,n) }
+    make_append(l,e) { myAdd((List)l,e) }
   }
 
   private Object myAdd(List l, Object e, int n) {

@@ -35,7 +35,7 @@ public class ListT2 {
   %oplist L conc( E* ) {
     fsym { factory.makeAFun("conc", 1, false) }
     make_empty()  { factory.makeList() }
-    make_add(l,e) { ((ATermList)l).insert((ATerm)e) }
+    make_insert(l,e) { ((ATermList)l).insert((ATerm)e) }
   }
   
   %typeterm E {

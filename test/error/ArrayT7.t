@@ -23,7 +23,7 @@ public class ArrayT7 {
   %oparray L conc( E* ) {
     fsym            { factory.makeAFun("conc", 1, false) }
     //make_empty(n)   { new ArrayList(n) }
-    make_add(l,e,l) { myAdd((List)l,e,n) }
+    make_append(l,l) { myAdd((List)l,e) }
   }
 
 // ****** erreur ******
