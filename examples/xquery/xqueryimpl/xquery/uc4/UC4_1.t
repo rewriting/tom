@@ -1,4 +1,4 @@
-package xquery.uc3;
+package xquery.uc4;
 
 import jtom.runtime.xml.*;
 import jtom.adt.tnode.*;
@@ -13,7 +13,7 @@ import xquery.util.*;
 import java.io.*; 
 
 
-public class UC3_5 {
+public class UC4_1 {
     
   %include {TNode.tom}
   private XmlTools xtools;
@@ -37,7 +37,7 @@ public class UC3_5 {
 
   public static void main(String args[]) 
   {
-	UC3_5 uc = new UC3_5();
+	UC4_1 uc = new UC4_1();
 	String filename;
 
 	if (args.length == 0) {
