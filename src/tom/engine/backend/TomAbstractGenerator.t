@@ -198,8 +198,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      EqualTerm(exp1,exp2) -> {
-        buildExpEqualTerm(deep, getTermType(`exp1), `exp1, `exp2);
+      EqualTerm(type,exp1,exp2) -> {
+        `buildExpEqualTerm(deep, type, exp1, exp2);
         return;
       }
 

@@ -166,7 +166,7 @@ public class TomKernelExpander extends TomBase {
                //System.out.println("lhs    = " + lhs);
                //System.out.println("newLhs = " + newLhs);
               
-               return `EqualityCondition(newLhs,newRhs);
+               return `TypedEqualityCondition(type,newLhs,newRhs);
              }
 
             context, Match(tomSubjectList,patternList, option) -> {

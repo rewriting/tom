@@ -729,7 +729,7 @@ public class TomKernelCompiler extends TomBase {
       concConstraint(Equal(var) ,tail*) -> {
           //System.out.println("constraint: " + source + " EqualTo " + var);
         Instruction subBody = compileConstraint(`var,source,body);
-        return `buildConstraint(tail,source,IfThenElse(EqualTerm(var,ExpressionToTomTerm(source)),subBody,Nop()));
+        return `buildConstraint(tail,source,IfThenElse(EqualTerm(getTermType(var),var,ExpressionToTomTerm(source)),subBody,Nop()));
       }
 
       concConstraint(AssignTo(var@(Variable|VariableStar)[]) ,tail*) -> {

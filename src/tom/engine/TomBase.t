@@ -229,17 +229,18 @@ public class TomBase {
       }
 
       Variable[astType=type] |
-        VariableStar[astType=type] |
-        UnamedVariable[astType=type] |
-        UnamedVariableStar[astType=type] 
+      VariableStar[astType=type] |
+      UnamedVariable[astType=type] |
+      UnamedVariableStar[astType=type] 
         -> { return `type; }
 
       ExpressionToTomTerm(term) |
-        Ref(term)
+      Ref(term)
         -> { return getTermType(`term); }
 
       TargetLanguageToTomTerm(TL[]) |
-        TargetLanguageToTomTerm(ITL[]) 
+      TargetLanguageToTomTerm(ITL[]) |
+      FunctionCall[]
         -> { return `EmptyType(); }
 
       _ -> {

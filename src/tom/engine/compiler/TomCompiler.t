@@ -348,12 +348,12 @@ public class TomCompiler extends TomTask {
         return generatedMatch;
       }
 
-      manyInstructionList(EqualityCondition[lhs=lhs,rhs=rhs], tail) -> {
+      manyInstructionList(TypedEqualityCondition[tomType=type,lhs=lhs,rhs=rhs], tail) -> {
         Instruction newAction = `buildCondition(tail,action);
 
         TomTerm newLhs = preProcessing(`BuildReducedTerm(lhs));
         TomTerm newRhs = preProcessing(`BuildReducedTerm(rhs));
-        Expression equality = `EqualTerm(newLhs,newRhs);
+        Expression equality = `EqualTerm(type,newLhs,newRhs);
         Instruction generatedTest = `IfThenElse(equality,newAction,Nop());
         return generatedTest;
       }
