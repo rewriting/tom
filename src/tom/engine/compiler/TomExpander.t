@@ -232,6 +232,17 @@ public class TomExpander extends TomBase implements TomTask {
     return attrList;
   }
 
+  private Option convertOriginTracking(String name,OptionList optionList) {
+    Option originTracking = findOriginTracking(optionList);
+    %match(Option originTracking) {
+      OriginTracking[line=line, fileName=fileName] -> {
+        return `Option(concOption(OriginTracking(Name(name),line,fileName)));
+      }
+    }
+    System.out.println("Warning: no OriginTracking information");
+    return emptyOption();
+  }
+
   protected TomTerm expandXMLAppl(OptionList optionList, String tomName,
                                   TomList attrList, TomList childList) {
     boolean implicitAttribute = hasImplicitXMLAttribut(optionList);
@@ -240,7 +251,7 @@ public class TomExpander extends TomBase implements TomTask {
     TomList newAttrList  = `emptyTomList();
     TomList newChildList = `emptyTomList();
 
-    TomTerm star = ast().makeUnamedVariableStar(emptyOption(),"unknown type");
+    TomTerm star = ast().makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type");
     if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
     if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 
@@ -280,9 +291,9 @@ public class TomExpander extends TomBase implements TomTask {
     tomName = tomFactory.encodeXMLString(symbolTable(),tomName);
     
     TomList newArgs = `concTomTerm(
-      Appl(emptyOption(),Name(tomName),empty()),
-      Appl(emptyOption(),Name(Constants.CONC_TNODE), newAttrList),
-      Appl(emptyOption(),Name(Constants.CONC_TNODE), newChildList));
+      Appl(convertOriginTracking(tomName,optionList),Name(tomName),empty()),
+      Appl(convertOriginTracking("CONC_TNODE",optionList),Name(Constants.CONC_TNODE), newAttrList),
+      Appl(convertOriginTracking("CONC_TNODE",optionList),Name(Constants.CONC_TNODE), newChildList));
     TomTerm result = `Appl(Option(optionList),Name(Constants.ELEMENT_NODE),newArgs);
       //System.out.println("expand:\n" + result);
     return result;

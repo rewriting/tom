@@ -42,7 +42,7 @@ import aterm.ATerm;
 import jtom.TomEnvironment;
 import jtom.tools.TomTaskInput;
 import jtom.xml.Constants;
-import jtom.exception.TomRuntimeException;
+import jtom.exception.*;
 import java.lang.Throwable;
 
 abstract class TomChecker extends TomBase implements TomTask {
@@ -274,6 +274,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 		TomType type = getSymbolCodomain(tomSymbol);
 		String name = tomSymbol.getAstName().getString();
 		int line  = findOriginTrackingLine(optionList);
+                ensureOriginTrackingLine(line);
 		SlotList slotList = tomSymbol.getSlotList();
 		verifyMultipleDefinitionOfSymbol(name, line, alreadyStudiedSymbol);
 		verifySymbolCodomain(type.getString(), name, line);
@@ -462,6 +463,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 		%match(TomList termList) {
 			concTomTerm(_*, term, _*) -> {
 				line = findOriginTrackingLine(term.getOption().getOptionList());
+                                ensureOriginTrackingLine(line);
 				nbFoundArgs++;
 				if(nbFoundArgs > nbExpectedArgs) {
 					messageMatchErrorNumberArgument(nbExpectedArgs, nbFoundArgs, line);
@@ -583,7 +585,8 @@ abstract class TomChecker extends TomBase implements TomTask {
 	private void messageNoMakeForSymbol(String name, OptionList optionList) {
 		int declLine = currentTomStructureOrgTrack.getLine();
 		int line = findOriginTrackingLine(optionList);
-		String s = "Symbol '" +name+ "' has no 'make' method associated in structure declared line "+declLine;
+                ensureOriginTrackingLine(line);
+                String s = "Symbol '" +name+ "' has no 'make' method associated in structure declared line "+declLine;
 		messageError(line,s);
 	}
  	 
@@ -596,6 +599,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 	private void messageRuleErrorLhsImpossiblePlaceHolder(OptionList optionList) {
 		int declLine = currentTomStructureOrgTrack.getLine();
 		int line = findOriginTrackingLine(optionList);
+                ensureOriginTrackingLine(line);
 		String s = "Alone placeholder is not allowed in left hand side of structure %rule declared line " +declLine;
 		messageError(line,s);
 	}
@@ -603,6 +607,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 	private void messageRuleErrorLhsImpossibleXML(OptionList optionList) {
 		int declLine = currentTomStructureOrgTrack.getLine();
 		int line = findOriginTrackingLine(optionList);
+                ensureOriginTrackingLine(line);
 		String s = "XML is not allowed in left hand side of structure %rule declared line " +declLine;
 		messageError(line,s);		
 	}
@@ -610,7 +615,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 	private void messageRuleErrorConstructorEgality(String  name, String nameExpected, OptionList optionList) {
 		int declLine = currentTomStructureOrgTrack.getLine();
 		int line = findOriginTrackingLine(name, optionList);
-		String s = "Left most symbol name '" + nameExpected + "' expected, but '" + name + "' found in left hand side of structure %rule declared line " +declLine;
+                String s = "Left most symbol name '" + nameExpected + "' expected, but '" + name + "' found in left hand side of structure %rule declared line " +declLine;
 		messageError(line,s);
 	}
 
@@ -656,6 +661,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 		if(!warningAll || noWarning) return;
 		int declLine = currentTomStructureOrgTrack.getLine();
 		int line = findOriginTrackingLine(optionList);
+                ensureOriginTrackingLine(line);
 		String rhsTypeName, lhsTypeName;
 		if(rhsType.isEmptyType()) {rhsTypeName = "Not Type Found";} else {rhsTypeName = rhsType.getString();}
 		if(lhsType.isEmptyType()) {lhsTypeName = "Not Type Found";} else {lhsTypeName = lhsType.getString();}
@@ -667,11 +673,13 @@ abstract class TomChecker extends TomBase implements TomTask {
 	private void messageRuleErrorRhsImpossibleXML(OptionList optionList) {
 		int declLine = currentTomStructureOrgTrack.getLine();
 		int line = findOriginTrackingLine(optionList);
+                ensureOriginTrackingLine(line);
 		String s = "XML is not allowed in right hand side of structure %rule declared line " +declLine;
 		messageError(line,s);		
 	}
 	private void messageRuleErrorRhsImpossiblePlaceholder(OptionList optionList) {
 		int line = findOriginTrackingLine(optionList);
+                ensureOriginTrackingLine(line);
 		int declLine = currentTomStructureOrgTrack.getLine();
 		String s = "Placeholder is not allowed on right part of structure %rule declared line "+declLine;
 		messageError(line,s);
@@ -679,6 +687,7 @@ abstract class TomChecker extends TomBase implements TomTask {
   
 	private void messageRuleErrorRhsImpossibleRecord(OptionList optionList, String name) {
 		int line = findOriginTrackingLine(optionList);
+                ensureOriginTrackingLine(line);
 		int declLine = currentTomStructureOrgTrack.getLine();
 		String s = "Record '"+name+"[...]' is not allowed on right part of structure %rule declared line "+declLine;
 		messageError(line,s);
@@ -686,6 +695,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 	
 	private void messageRuleErrorRhsImpossibleVarStar(OptionList optionList, String name) {
 		int line = findOriginTrackingLine(optionList);
+                ensureOriginTrackingLine(line);
 		int declLine = currentTomStructureOrgTrack.getLine();
 		String s = "Single list variable '"+name+"*' is not allowed in right hand side of structure %rule declared line " +declLine;
 		messageError(line,s);
@@ -743,6 +753,7 @@ abstract class TomChecker extends TomBase implements TomTask {
     %match( TomTerm pairSlotName ) {
       PairSlotAppl[slotName=Name(name),appl=Appl[option=Option(list)]] -> {
         line = findOriginTrackingLine(list);
+        ensureOriginTrackingLine(line);
         s += "Slot Name '" + name + "' is not correct: See method '"+methodName+ "' -  Line : "+line;
       }
     }
@@ -754,6 +765,7 @@ abstract class TomChecker extends TomBase implements TomTask {
     %match( TomTerm pairSlotName ) {
       PairSlotAppl(Name(name), Appl[option=Option(list)]) -> {
         int line = findOriginTrackingLine(list);
+        ensureOriginTrackingLine(line);
         String s = "Same slot names can not be used several times: See method '"+methodName+ "' -  Line : "+line;
         s += "Repeated slot Name : '"+name+"'";
         messageError(line, s);
@@ -823,6 +835,7 @@ abstract class TomChecker extends TomBase implements TomTask {
               // Var* and _* are not allowed in non list symbol
             if(!listOrArray &&(termDesc.termClass == UNAMED_VARIABLE_STAR || termDesc.termClass == VARIABLE_STAR)) {
               int line = findOriginTrackingLine(optionList);
+              ensureOriginTrackingLine(line);
               messageVariableStarInNonListOperator(nbFoundArgs, termDesc.name ,name, line);
             }
             foundType.add(termDesc.type);
@@ -843,6 +856,7 @@ abstract class TomChecker extends TomBase implements TomTask {
               String s = getTomType(type);
               if ( (foundType.get(nbFoundArgs) != s) && (foundType.get(nbFoundArgs) != null)) {
                 int line = findOriginTrackingLine((OptionList)foundOptionList.get(nbFoundArgs));
+                ensureOriginTrackingLine(line);
                 messageApplErrorTypeArgument(name, nbFoundArgs+1, s, (String) foundType.get(nbFoundArgs), line); 
               }
               nbFoundArgs++;
@@ -854,6 +868,7 @@ abstract class TomChecker extends TomBase implements TomTask {
           for( int slot = 0; slot <foundType.size() ; slot++ ) {
             if ( (foundType.get(slot) != s) && (foundType.get(slot) != null)) {
               int line = findOriginTrackingLine((OptionList) foundOptionList.get(slot));
+              ensureOriginTrackingLine(line);
               messageApplErrorTypeArgument(name, slot+1, s, (String) foundType.get(slot), line);
             }
           }
@@ -1094,6 +1109,7 @@ abstract class TomChecker extends TomBase implements TomTask {
 	private void messageErrorIncoherentVariable(String name, String type, String type2, OptionList options) {
 		int declLine = currentTomStructureOrgTrack.getLine();
 		int line = findOriginTrackingLine(options);
+                ensureOriginTrackingLine(line);
 		String s = "Bad variable type for '"+name+"': it has both type '"+type+"' and '"+type2+"' in structure declared line "+declLine;
 		messageError(line,s);
 	}
@@ -1124,78 +1140,85 @@ abstract class TomChecker extends TomBase implements TomTask {
     addError(input, msg, currentTomStructureOrgTrack.getFileName().getString(), line, 0);
   }
     
-	private int findOriginTrackingLine(String name, OptionList optionList) {
-		%match(OptionList optionList) {
-			concOption(_*,OriginTracking[astName=Name[string=str],line=line],_*) -> { if(str.equals(name)) {return line;} }
-		}
-		addError(input, "findOriginTrackingLine:  not found", input.getInputFileName(), 0, 0);
-		System.out.println("findOriginTrackingLine: '" + name + "' not found in " + optionList);
-		return -1;
-	}
-  
-  private int findOriginTrackingLine(OptionList optionList) {
-		%match(OptionList optionList) {
-			concOption(_*,OriginTracking[line=line],_*) -> { return line; }
-		}
+  private int findOriginTrackingLine(String name, OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,OriginTracking[astName=Name[string=str],line=line],_*) -> { if(str.equals(name)) {return line;} }
+    }
     addError(input, "findOriginTrackingLine:  not found", input.getInputFileName(), 0, 0);
-    System.out.println("findOriginTrackingLine:  not found");
+    System.out.println("findOriginTrackingLine: '" + name + "' not found in " + optionList);
     return -1;
   }
   
+  private int findOriginTrackingLine(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,OriginTracking[line=line],_*) -> { return line; }
+    }
+    return -1;
+  }
+
+  private void ensureOriginTrackingLine(int line) {
+    if(line < 0) {
+      addError(input, "findOriginTrackingLine:  not found", input.getInputFileName(), 0, 0);
+      System.out.println("findOriginTrackingLine: not found ");
+        //throw new TomRuntimeException(new Throwable("foo"));
+
+    }
+  }
+  
   public TermDescription analyseTomTerm(TomTerm term) {
-  	String termName, type;
-  	int termClass, decLine;
-		matchblock:{
-			%match(TomTerm term) {
-				Appl[option=Option(options), astName=Name(name)] -> {
-					termClass = APPL;
-					decLine = findOriginTrackingLine(options);
-					type = extractType(getSymbol(name));     
-					termName = name;
-					break matchblock;
-				}
-				RecordAppl[option=Option(options),astName=Name(name)] ->{
-					termClass = RECORD_APPL;
-					decLine = findOriginTrackingLine(options);
-					type = extractType(getSymbol(name));     
-					termName = name;
-					break matchblock;
-				}
-				XMLAppl[option=Option(options)] -> {
-					termClass = XML_APPL;
-					decLine = findOriginTrackingLine(options);
-					type = extractType(getSymbol(Constants.ELEMENT_NODE));
-					termName = Constants.ELEMENT_NODE;
-					break matchblock;
-				}
-				Placeholder[option=Option(options)] -> {
-					termClass = PLACE_HOLDER;
-					decLine = findOriginTrackingLine(options);
-					type = null;     
-					termName = "*";
-					break matchblock;
-				}
-				VariableStar[option=Option(options), astName=Name(name)] -> { 
-					termClass = VARIABLE_STAR;
-					decLine = findOriginTrackingLine(options);
-					type = null;     
-					termName = name+"*";
-					break matchblock;
-				}
-				UnamedVariableStar[option=Option(options)] -> {
-					termClass = UNAMED_VARIABLE_STAR;
-					decLine = findOriginTrackingLine(options);
-					type = null;     
-					termName = "_*";
-					break matchblock;
-				}
-				_ -> {
-					System.out.println("Strange term in pattern "+term);
-					throw new TomRuntimeException(new Throwable("Strange Term "+term));
-				}
-			}
-		}
-		return new TermDescription(termClass, termName, decLine, type);	
+    String termName, type;
+    int termClass, decLine;
+    matchblock:{
+      %match(TomTerm term) {
+        Appl[option=Option(options), astName=Name(name)] -> {
+          termClass = APPL;
+          decLine = findOriginTrackingLine(options);
+          type = extractType(getSymbol(name));     
+          termName = name;
+          break matchblock;
+        }
+        RecordAppl[option=Option(options),astName=Name(name)] ->{
+          termClass = RECORD_APPL;
+          decLine = findOriginTrackingLine(options);
+          type = extractType(getSymbol(name));     
+          termName = name;
+          break matchblock;
+        }
+        XMLAppl[option=Option(options)] -> {
+          termClass = XML_APPL;
+          decLine = findOriginTrackingLine(options);
+          type = extractType(getSymbol(Constants.ELEMENT_NODE));
+          termName = Constants.ELEMENT_NODE;
+          break matchblock;
+        }
+        Placeholder[option=Option(options)] -> {
+          termClass = PLACE_HOLDER;
+          decLine = findOriginTrackingLine(options);
+          type = null;     
+          termName = "*";
+          break matchblock;
+        }
+        VariableStar[option=Option(options), astName=Name(name)] -> { 
+          termClass = VARIABLE_STAR;
+          decLine = findOriginTrackingLine(options);
+          type = null;     
+          termName = name+"*";
+          break matchblock;
+        }
+        UnamedVariableStar[option=Option(options)] -> {
+          termClass = UNAMED_VARIABLE_STAR;
+          decLine = findOriginTrackingLine(options);
+          type = null;     
+          termName = "_*";
+          break matchblock;
+        }
+        _ -> {
+          System.out.println("Strange term in pattern "+term);
+          throw new TomRuntimeException(new Throwable("Strange Term "+term));
+        }
+      }
+    }
+    return new TermDescription(termClass, termName, decLine, type);	
   }
   
 } //class TomChecker
