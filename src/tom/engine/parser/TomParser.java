@@ -19,7 +19,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-
+    
     Pierre-Etienne Moreau	e-mail: Pierre-Etienne.Moreau@loria.fr
 
 */
@@ -45,14 +45,20 @@ public class TomParser implements TomTask, TomParserConstants {
   private jtom.TomEnvironment environment;
   private TomDollar tomDollar;
   private File importList[];
-  private HashSet includedFiles = new HashSet();
+  private HashSet includedFiles;
   private String currentFile;
   private ArrayList debuggedStructureList;
   private String text="";
   private TomTask nextTask;
   private boolean debugMode = false, xmlMode = false, debugMemory = false, noWarning = false, pretty = false;
 
-  public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet, String fileName) {
+   public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet,
+                                                        String fileName)  {
+          this(input, environment, importList, includeOffSet, fileName, new HashSet());
+  }
+
+  public TomParser(TomBuffer input, jtom.TomEnvironment environment, File importList[], int includeOffSet,
+                                                        String fileName, HashSet alreadyParsedFiles) {
     this(input);
     this.tomBuffer = input;
     this.stat = environment.getStatistics();
@@ -64,11 +70,15 @@ public class TomParser implements TomTask, TomParserConstants {
     this.currentFile = fileName;
     this.debuggedStructureList = new ArrayList();
     this.tomDollar = new TomDollar(environment);
+    includedFiles = alreadyParsedFiles;
+  }
+
+  private void testIncludedFiles(String fileName) throws TomIncludeException {
     if(!includedFiles.contains(fileName)) {
       includedFiles.add(fileName);
     } else {
-      System.out.println("Re-entering included file forms a cycle. Breaking the parsing...");
-        return;
+      System.out.println("Re-entering included file `"+fileName+"` in `"+currentFile+"` forms a cycle. Breaking the parsing...");
+      throw new TomIncludeException("Re-entering included file `"+fileName+" `forms a cycle. Breaking the parsing...");
     }
   }
 
@@ -98,9 +108,18 @@ public class TomParser implements TomTask, TomParserConstants {
         }
                 // Update taskInput
                 input.setTerm(parsedTerm);
+        } catch (TomIncludeException e) {
+          //System.out.println(e.getMessage());
+          return;
         } catch (TomException e) {
+          //System.out.println(e.getMessage());
+          return;
+        } catch (ParseException e) {
+          System.out.println("Parsing exception catched in file `"+currentFile+"`");
+          System.out.println(e.getMessage());
           return;
         } catch (Exception e) {
+          System.out.println("Unhandled exception occurs during parsing.");
           e.printStackTrace();
           return;
         }
@@ -1090,7 +1109,7 @@ public class TomParser implements TomTask, TomParserConstants {
     list.add(tsf().makeTomTerm_LocalVariable());
   }
 
-  final public void IncludeConstruct(ArrayList list) throws ParseException, TomException {
+  final public void IncludeConstruct(ArrayList list) throws ParseException, TomException, TomIncludeException {
   Token fileName;
   Token fileExt = null;
   String fullFileName = "";
@@ -1135,20 +1154,18 @@ public class TomParser implements TomTask, TomParserConstants {
       input       = new FileInputStream(file);
       input.read(inputBuffer);
 
-      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fullFileName);
+      tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fullFileName, includedFiles);
+      tomParser.testIncludedFiles(fullFileName);
       astTom = tomParser.startParsing();
       astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
       list.add(astTom);
-        //TomList includeList = astTom.getList();
-        //while(!includeList.isEmpty()) {
-        //list.add(includeList.getHead());
-        //includeList = includeList.getTail();
-        //}
     } catch (FileNotFoundException e1) {
-      {if (true) throw new TomException("Included file " + fullFileName + " not found at line "+getLine());}
+      System.out.println("Included file `" + fullFileName + "` not found at line "+getLine()+" from file `"+currentFile+"`");
+      {if (true) throw new TomException();}
     }  catch (java.io.IOException e2) {
+      System.out.println("IOException occurs reading " + fullFileName + " at line "+getLine());
       e2.printStackTrace();
-      {if (true) return;}
+      {if (true) throw new TomException();}
     }
   }
 
@@ -2291,20 +2308,32 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
-  final private boolean jj_3R_23() {
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_LBRACKET)) return true;
     return false;
   }
 
-  final private boolean jj_3_8() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_STAR)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_23() {
+    if (jj_scan_token(TOM_LBRACKET)) return true;
     return false;
   }
 
   final private boolean jj_3_6() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_8() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2332,18 +2361,6 @@ public class TomParser implements TomTask, TomParserConstants {
   final private boolean jj_3_7() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_STAR)) return true;
     return false;
   }
 

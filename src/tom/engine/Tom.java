@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -242,6 +243,7 @@ public class Tom {
         while(it.hasNext()) {
           fileList[index++] = (File)it.next();
         }
+        
         tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,inputFileName);
         initialTask = tomParser;
         

@@ -53,6 +53,7 @@ import jtom.runtime.Collect1;
 import jtom.tools.TomTask;
 import aterm.ATerm;
 import jtom.TomEnvironment;
+import jtom.exception.CheckErrorException;
 
 abstract class TomChecker extends TomBase implements TomTask {
   
@@ -71,13 +72,13 @@ abstract class TomChecker extends TomBase implements TomTask {
     // ------------------------------------------------------------
   %include { Tom.signature }
     // ------------------------------------------------------------
-
-    public void addTask(TomTask task) {
+  
+  public void addTask(TomTask task) {
   	this.nextTask = task;
   }
   
   public TomTask getTask() {
-  	return nextTask;
+    return nextTask;
   }
   
   public int getNumberFoundError() {
@@ -87,7 +88,7 @@ abstract class TomChecker extends TomBase implements TomTask {
   public String getMessage(int n) {
     return (String)errorMessage.get(n);
   }
-
+  
      // Main syntax checking entry point: We check all interesting Tom Structure
   protected void syntaxCheck(TomTerm parsedTerm) {
     Collect1 collectAndVerify = new Collect1() {  
@@ -157,7 +158,7 @@ abstract class TomChecker extends TomBase implements TomTask {
       }; // end new
     traversal().genericCollect(expandedTerm, collectAndVerify);
   }
-
+  
   private void verifyMatchVariable(TomList patternList) {
     while(!patternList.isEmpty()) {
       TomTerm pa = patternList.getHead();
@@ -169,7 +170,7 @@ abstract class TomChecker extends TomBase implements TomTask {
       patternList = patternList.getTail();
     }
   }
-
+  
   private void verifyRuleVariable(TomRuleList list) {
     while(!list.isEmpty()) {
       TomRule rewriteRule = list.getHead();
@@ -181,15 +182,15 @@ abstract class TomChecker extends TomBase implements TomTask {
       ArrayList variableLhs = new ArrayList();
       collectVariable(variableLhs, lhs);
       HashSet lhsSet = verifyVariableType(variableLhs);
-
+      
       ArrayList variableRhs = new ArrayList();
       collectVariable(variableRhs, rhs);
       HashSet rhsSet = verifyVariableType(variableRhs);
-
+      
       ArrayList variableCond = new ArrayList();
       collectVariable(variableCond, `Tom(condList));
       HashSet condSet = verifyVariableType(variableCond);
-            
+      
       lhsSet.addAll(condSet);
       if(!condSet.isEmpty()) {
         System.out.println("Warning: improve verifyRuleVariable for matchingCondition");
@@ -275,7 +276,7 @@ abstract class TomChecker extends TomBase implements TomTask {
     String s = "Alone variable '"+name+"' has type '"+type+"' instead of type '"+type2+"' in right part of %rule declared line "+declLine;
     messageError(line,s);
   }
-
+  
   private void permissiveVerify(TomTerm term) {
     Collect1 permissiveCollectAndVerify = new Collect1() 
       {  
@@ -306,7 +307,7 @@ abstract class TomChecker extends TomBase implements TomTask {
       }; // end new
     traversal().genericCollect(term, permissiveCollectAndVerify);
   }
-
+  
     /////////////////////////////////
     // MATCH VERIFICATION CONCERNS //
     /////////////////////////////////
@@ -475,7 +476,7 @@ abstract class TomChecker extends TomBase implements TomTask {
     }
     else {
       System.out.println("Invalid verifyTypeDecl parameter: "+declType);
-      System.exit(1);
+      //throw new CheckErrorException();
     }
     
     while(!listOfDeclaration.isEmpty()) {
@@ -527,20 +528,21 @@ abstract class TomChecker extends TomBase implements TomTask {
     if(alreadyStudiedType.contains(name)) {
       messageTypeErrorYetDefined(name);
     }
-    else
+    else {
       alreadyStudiedType.add(name);
+    }
   }
-
+  
   private void messageTypeErrorYetDefined(String name) {
     int declLine = currentTomStructureOrgTrack.getLine();
     String s = "Multiple definition of type: Type '"+ name +"' is already defined";
     messageError(declLine, s);
   }
-
+  
     /////////////////////////////////
     // SYMBOL DECLARATION CONCERNS //
     /////////////////////////////////
-  private void verifySymbol(String symbolType, TomSymbol tomSymbol) {
+  private void verifySymbol(String symbolType, TomSymbol tomSymbol){
     int nbArgs=0;
     OptionList optionList = tomSymbol.getOption().getOptionList();
       // We save first the origin tracking of the symbol declaration
@@ -560,8 +562,9 @@ abstract class TomChecker extends TomBase implements TomTask {
     if(alreadyStudiedSymbol.contains(name)) {
       messageOperatorErrorYetDefined(name,line);
     }
-    else
+    else {
       alreadyStudiedSymbol.add(name);
+    }
   }
   
   private void messageOperatorErrorYetDefined(String name, int line) {
@@ -617,7 +620,7 @@ abstract class TomChecker extends TomBase implements TomTask {
     }
     else {
       System.out.println("Invalid verifySymbolOptions parameter: "+symbType);
-      System.exit(1);
+      //throw new CheckErrorException();
     }
     
     while(!list.isEmpty()) {
@@ -654,7 +657,7 @@ abstract class TomChecker extends TomBase implements TomTask {
     }
   }
 
-  private void verifyMakeDeclArgs(TomList argsList, Option orgTrack, String symbType) {
+  private void verifyMakeDeclArgs(TomList argsList, Option orgTrack, String symbType){
       // we test the necessity to use different names for each variable-parameter.
     ArrayList listVar = new ArrayList();
     while(!argsList.isEmpty()) {
@@ -769,7 +772,6 @@ abstract class TomChecker extends TomBase implements TomTask {
   }
   
   private void messageSlotRepeatedError(TomTerm pairSlotName, String methodName) {
-    
     %match( TomTerm pairSlotName ) {
       PairSlotAppl(Name(name), Appl[option=Option(list)]) -> {
         int line = findOriginTrackingLine(list);
@@ -963,7 +965,7 @@ abstract class TomChecker extends TomBase implements TomTask {
           }
           _             -> {
             System.out.println("Strange rule:\n" + currentRule);
-            System.exit(1);
+            //throw new CheckErrorException();
           }
         }
       }
@@ -1077,7 +1079,7 @@ abstract class TomChecker extends TomBase implements TomTask {
         }
         _ -> {
           System.out.println("Strange rule rhs:\n" + ruleRhs);
-          System.exit(1);
+          //throw new CheckErrorException();
         }
       }
     }
@@ -1130,10 +1132,9 @@ abstract class TomChecker extends TomBase implements TomTask {
       }
       optionList = optionList.getTail();
     }
-    System.out.println("findOriginTrackingLine: '" + name + "' not found in "
-                       + optionList);
-    System.exit(1);
-    return 0;
+    System.out.println("findOriginTrackingLine: '" + name + "' not found in " + optionList);
+    return -1;
+    //throw new CheckErrorException();
   }
   
     // findOriginTrackingLine(_) method returns the first number of line (stocked in optionList).
@@ -1148,8 +1149,8 @@ abstract class TomChecker extends TomBase implements TomTask {
       optionList = optionList.getTail();
     }
     System.out.println("findOriginTrackingLine:  not found");
-    System.exit(1);
-    return 0;
+    return -1;
+    //throw new CheckErrorException();
   }
   
 } //class TomChecker
