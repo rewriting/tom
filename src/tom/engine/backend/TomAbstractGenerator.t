@@ -1191,5 +1191,10 @@ TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCo
     }
   }
 
+  private abstract TargetLanguage genDecl(String returnType,
+																					String declName,
+																					String suffix,
+																					String args[],
+																					TargetLanguage tlCode);
   
 } // class TomAbstractGenerator

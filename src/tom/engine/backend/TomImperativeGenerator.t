@@ -518,9 +518,32 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     s+= "  }\n";
 
     TargetLanguage resultTL = `ITL(s);
-      //If necessary we remove \n code depending on --pretty option
+		//If necessary we remove \n code depending on --pretty option
     resultTL = ast().reworkTLCode(resultTL, pretty);
     return resultTL;
   }
+
+  private TargetLanguage genDecl(String returnType,
+                        String declName,
+                        String suffix,
+                        String args[],
+                        TargetLanguage tlCode) {
+    String s = "";
+    if(!genDecl) { return null; }
+		s = modifier + returnType + " " + declName + "_" + suffix + "(";
+		for(int i=0 ; i<args.length ; ) {
+			s+= args[i] + " " + args[i+1];
+			i+=2;
+			if(i<args.length) {
+				s+= ", ";
+			}
+		} 
+		s += ") { return " + tlCode.getCode() + "; }";
+    if(tlCode.isTL())
+      return `TL(s, tlCode.getStart(), tlCode.getEnd());
+    else
+      return `ITL(s);
+  }
+
   
 } // class TomImperativeGenerator

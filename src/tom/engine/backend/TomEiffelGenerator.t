@@ -326,6 +326,26 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     return null;
   }
 
-
+  private TargetLanguage genDecl(String returnType,
+                        String declName,
+                        String suffix,
+                        String args[],
+                        TargetLanguage tlCode) {
+    String s = "";
+    if(!genDecl) { return null; }
+		s = declName + "_" + suffix + "(";
+		for(int i=0 ; i<args.length ; ) {
+			s+= args[i+1] + ": " + args[i];
+			i+=2;
+			if(i<args.length) {
+				s+= "; ";
+			}
+		} 
+		s += "): " + returnType + " is do Result := " + tlCode.getCode() + "end;";
+    if(tlCode.isTL())
+      return `TL(s, tlCode.getStart(), tlCode.getEnd());
+    else
+      return `ITL(s);
+  }
 
 }
