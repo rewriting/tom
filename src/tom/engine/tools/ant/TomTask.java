@@ -51,7 +51,7 @@ import org.apache.tools.ant.util.SourceFileScanner;
  * <li>verbose</li>
  * <li>failonerror</li>
  * <li>stamp</li>
- * <li>wall</li>
+ * <li>nowarn</li>
  * </ul>
  * Of these arguments, the <b>config</b> and <b>sourcedir</b> are
  * required. Either <b>destdir</b> or <b>outputfile</b> have to be set.
@@ -77,7 +77,7 @@ public class TomTask extends MatchingTask {
   private boolean verbose = false;
   private boolean stamp = false;
   private Path extdirs;
-  private boolean warnall = false;
+  private boolean nowarn = false;
   private boolean optimize = false;
   private boolean pretty = false;
   
@@ -385,19 +385,19 @@ public class TomTask extends MatchingTask {
 		return pretty;
 	}
 	/**
-	 * If true, enables the --wall option.
-	 * @param flag if true, enable the --wall option
+	 * If true, disable the --wall option.
+	 * @param flag if true, disable the --wall option
 	 */
-  public void setWall(boolean flag) {
-    this.warnall = flag;
+  public void setNowarn(boolean flag) {
+    this.nowarn = flag;
   }
 
   /**
    * Should the --wall option be used.
    * @return true if the --wall option should be used
    */
-  public boolean getWall() {
-    return warnall;
+  public boolean getNowarn() {
+    return nowarn;
   }
 
   /**
@@ -560,7 +560,7 @@ public class TomTask extends MatchingTask {
       if(stamp == true) {
         cmd_line = cmd_line.trim() + " --stamp";
       }
-      if(warnall == true) {
+      if(nowarn == false) {
         cmd_line = cmd_line.trim() + " --wall";
       }
       for (int i = 0; i < compileList.length; i++) {
