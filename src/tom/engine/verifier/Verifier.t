@@ -65,6 +65,8 @@ public class Verifier extends TomBase {
 			false                                   -> Expr
 			isfsym(t:Term,symbol:Symbol)            -> Expr
 			eq(lt:Term,rt:Term)                     -> Expr
+			tisfsym(t:Term,symbol:Symbol)            -> Expr
+			teq(lt:Term,rt:Term)                     -> Expr
 
 			accept                                  -> Instr
 			refuse                                  -> Instr
@@ -277,23 +279,93 @@ public class Verifier extends TomBase {
 				}
 				return `concTerm(res*);
 			}
+			slot(s,t@slot[],slotName) -> {
+				// first reduce the argument
+				TermList reduced = apply_termRules(`t);
+				TermList res = `concTerm(trm);
+				while(!reduced.isEmpty()) {
+					Term head = reduced.getHead();
+					if (head.isTau()) {
+						TermList hl = apply_termRules(head);
+						while(!hl.isEmpty()) {
+							Term h = hl.getHead();
+							res = `concTerm(res*,slot(s,h,slotName));						
+							hl = hl.getTail();
+						}
+					} else {
+						res = `concTerm(res*,slot(s,head,slotName));
+					}
+					reduced = reduced.getTail();
+				}
+				return `concTerm(res*);
+			}
 			subterm(s,tau(t),index) -> {
 				// we shall test if term t has symbol s 
-				String term = t + "pos" + index;
+				String term = t + "_pos_" + index;
 				return `concTerm(trm,tau(term));
 			}
 			slot(s,tau(t),slotName) -> {
 				// we shall test if term t has symbol s 
-				String term = t + "slot" + slotName;
+				String term = t + "_slot_" + slotName;
 				return `concTerm(trm,tau(term));
 			}
-			_ -> { return `concTerm(trm); }
+			subterm(s,vtot(var(t)),index) -> {
+				// we shall test if term t has symbol s 
+				String term = t + "_pos_" + index;
+				return `concTerm(trm,tau(term));
+			}
+			slot(s,vtot(var(t)),slotName) -> {
+				// we shall test if term t has symbol s 
+				String term = t + "_slot_" + slotName;
+				return `concTerm(trm,tau(term));
+			}
+			_ -> { 
+				System.out.println("apply TermRules : nothing applies to:" + trm);
+				return `concTerm(trm); }
 		}
 	}
 
 	protected ExprList apply_exprRules(Expr ex) {
 		%match(Expr ex) {
-			_ -> { return `concExpr(ex); }
+			eq(tau(tl),tau(tr)) -> {
+				return `concExpr(ex,teq(tau(tl),tau(tr)));
+			}
+			isfsym(tau(t),symbol) -> {
+				return `concExpr(ex,tisfsym(tau(t),symbol));
+			}
+			eq(vtot(var(tl)),vtot(var(tr))) -> {
+				return `concExpr(ex,teq(tau(tl),tau(tr)));
+			}
+			isfsym(vtot(var(t)),symbol) -> {
+				return `concExpr(ex,tisfsym(tau(t),symbol));
+			}
+			eq(lt,rt) -> {
+				// first reduce the argument
+				Term reducedl = ((TermList)apply_termRules(`lt).reverse()).getHead();
+				Term reducedr = ((TermList)apply_termRules(`rt).reverse()).getHead();
+
+				ExprList taill = `apply_exprRules(eq(reducedl,reducedr));
+				ExprList res = `concExpr(ex,taill*);
+			}
+			isfsym(t,symbol) -> {
+				// first reduce the argument
+				TermList reduced = apply_termRules(`t);
+				ExprList res = `concExpr(ex);
+				while(!reduced.isEmpty()) {
+					Term head = reduced.getHead();
+					res = `concExpr(res*,isfsym(head,symbol));
+					reduced = reduced.getTail();
+				}
+				%match(ExprList res) {
+					concExpr(hl*,tail) -> {
+						ExprList taill = `apply_exprRules(tail);
+						return `concExpr(hl*,taill*);
+					}
+				}
+			}
+			_ -> { 
+				System.out.println("apply ExprRules : nothing applies to:" + ex);
+				return `concExpr(ex); }
 		}
 	}
 
