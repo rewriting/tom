@@ -109,7 +109,11 @@ public class TomExpander extends TomBase implements TomTask {
               RecordAppl(option,Name(tomName),args) -> {
                 return expandRecordAppl(option,tomName,args);
               }
-            
+
+              XMLAppl(Option(optionList), Name(tomName), list1, list2) -> {
+                return expandXMLAppl(optionList, tomName, list1, list2);
+              }
+              
               _ -> {
                 return traversal().genericTraversal(subject,this);
               }
@@ -193,6 +197,52 @@ public class TomExpander extends TomBase implements TomTask {
     return (TomTerm) replaceSymbol.apply(t);
   }
   
+  protected TomTerm expandXMLAppl(OptionList options, String tomName,
+                                  TomList attrList, TomList childList) {
+
+    boolean implicitAttribute = hasImplicitXMLAttribut(options);
+    boolean implicitChild     = hasImplicitXMLChild(options);
+
+    
+    
+    TomList newAttrList  = `emptyTomList();
+    TomList newChildList = `emptyTomList();
+
+    TomTerm star = ast().makeUnamedVariableStar(ast().makeOption(),"unknown type");
+    if(implicitAttribute) { newAttrList = `manyTomList(star,newAttrList); }
+    if(implicitChild) { newChildList = `manyTomList(star,newChildList); }
+
+    while(!attrList.isEmpty()) {
+      TomTerm pattern = attrList.getHead();
+      newAttrList = `manyTomList(expandTomSyntax(pattern),newAttrList);
+      if(implicitAttribute) { newAttrList = `manyTomList(star,newAttrList); }
+      attrList = attrList.getTail();
+    }
+    newAttrList = (TomList) newAttrList.reverse();
+    
+    while(!childList.isEmpty()) {
+      TomTerm pattern = childList.getHead();
+      newChildList = `manyTomList(expandTomSyntax(pattern),newChildList);
+      if(implicitChild) { newChildList = `manyTomList(star,newChildList); }
+      childList = childList.getTail();
+    }
+    newChildList = (TomList) newChildList.reverse();
+
+
+
+    Option emptyOption = ast().makeOption();
+
+    TomList newArgs = `concTomTerm(
+      Appl(Option(options),Name(tomName),empty()),
+      Appl(emptyOption,Name(Tools.CONC_TNODE), newAttrList),
+      Appl(emptyOption,Name(Tools.CONC_TNODE), newChildList));
+    TomTerm result = `Appl(Option(options),Name(Tools.ELEMENT_NODE),newArgs);
+                           
+    System.out.println(result);
+    return result;
+   
+  }
+
     /*
      * At Tom expander level, we worry only about RewriteRule and
      *  their condlist
@@ -343,3 +393,6 @@ public class TomExpander extends TomBase implements TomTask {
   }
  
 } // Class TomExpander
+
+
+  

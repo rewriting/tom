@@ -464,6 +464,20 @@ public class TomBase {
     return false;
   }
 
+  protected boolean hasImplicitXMLAttribut(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,ImplicitXMLAttribut(),_*) -> { return true; }
+    }
+    return false;
+  }
+
+  protected boolean hasImplicitXMLChild(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(_*,ImplicitXMLChild(),_*) -> { return true; }
+    }
+    return false;
+  } 
+  
   protected TomName getSlotName(TomSymbol symbol, int number) {
     //%variable
     SlotList slotList = symbol.getSlotList();

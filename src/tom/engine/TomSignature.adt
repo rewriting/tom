@@ -148,18 +148,6 @@ constructor(TomEntry,Entry,Entry(<strName(str)>,<astSymbol(TomSymbol)>)),
 constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>)),
 constructor(TomError,Error,Error(<message(str)>,<file(str)>,<line(int)>,<level(int)>)),
 
-constructor(TomTerm,MatchXML,MatchXML(<docName(str)>,<patternList(TomTerm)>,<option(Option)>)),
-constructor(TomTerm,BackQuoteXML,BackQuoteXML(<xmlTerm(XMLTerm)>,<option(Option)>)),
-constructor(TomTerm,XMLTermToTomTerm,XMLTermToTomTerm(<xmlTerm(XMLTerm)>)),
-
-constructor(Option,XMLPosition,XMLPosition(<place(str)>)),
-
-constructor(XMLTerm,Element,Element(<astName(TomName)>,<args(TomList)>,<option(Option)>)),
-constructor(XMLTerm,Attribute,Attribute(<astName(TomName)>,<args(TomList)>,<option(Option)>)),
-constructor(XMLTerm,ReservedWord,ReservedWord(<astName(TomName)>,<args(TomList)>,<option(Option)>)),
-constructor(XMLTerm,XMLPlaceholder,XMLPlaceholder(<option(Option)>)),
-constructor(XMLTerm,XMLVariable,XMLVariable(<astName(TomName)>,<option(Option)>)),
-
 list(TomList,TomTerm),
 list(TomNumberList,TomNumber),
 list(TomRuleList,TomRule),
