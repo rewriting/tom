@@ -144,6 +144,12 @@ public class TomParser implements TomParserConstants {
     return tsf().makeTomStructureTable_StructTable(list);
   }
 
+  private void addPreviousCode(ArrayList list) {
+    String code = savePosAndExtract();
+    if (code.equals("")) {return ;}
+    list.add(makeTL(code));
+  }
+
 /************************************************
  * THE TOM GRAMMAR SPECIFICATION STARTS HERE *
  ************************************************/
@@ -257,7 +263,7 @@ public class TomParser implements TomParserConstants {
   ArrayList patternActionList = new ArrayList();
   ArrayList optionList = new ArrayList();
     jj_consume_token(MATCH);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
       optionList.add(orgTrack);
       String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
@@ -604,7 +610,7 @@ public class TomParser implements TomParserConstants {
   TomTerm term;
   Option orgTrack;
     jj_consume_token(BACKQUOTE_TERM);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
     term = Term();
     switchToDefaultMode(); /* switch to DEFAULT mode */
@@ -613,7 +619,7 @@ public class TomParser implements TomParserConstants {
 
   final public void LocalVariableConstruct(ArrayList list) throws ParseException, TomException {
     jj_consume_token(VARIABLE);
-    list.add(makeTL(savePosAndExtract()));
+    addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(tsf().makeTomTerm_LocalVariable());
   }
@@ -626,7 +632,8 @@ public class TomParser implements TomParserConstants {
   byte inputBuffer[];
   TomParser tomParser;
     jj_consume_token(INCLUDE);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
+
     jj_consume_token(TOM_LBRACE);
     fileName = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RBRACE);
@@ -640,7 +647,6 @@ public class TomParser implements TomParserConstants {
           found = file.exists();
         }
       }
-        //System.out.println("file = " + file);
 
         // to get the length of the file
       inputBuffer = new byte[(int)file.length()+1];
@@ -651,6 +657,11 @@ public class TomParser implements TomParserConstants {
       astTom = tomParser.startParsing();
       astTom = tsf().makeTomTerm_TomInclude(astTom.getList());
       list.add(astTom);
+        //TomList includeList = astTom.getList();
+        //while(!includeList.isEmpty()) {
+        //list.add(includeList.getHead());
+        //includeList = includeList.getTail();
+        //}
     } catch (FileNotFoundException e1) {
       System.out.println("Included file " + fileName.image + " not found at line "+getLine());
       //e1.printStackTrace();
@@ -671,7 +682,7 @@ public class TomParser implements TomParserConstants {
   Option orgTrackRuleSet;
   TomName orgText;
     jj_consume_token(RULE);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine(), currentFile);
       text = "";
     jj_consume_token(TOM_LBRACE);
@@ -802,7 +813,8 @@ public class TomParser implements TomParserConstants {
   TomType tomType;
   SlotList slotList = tsf().makeSlotList_EmptySlotList();
     jj_consume_token(OPERATOR);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
+
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
          options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
@@ -943,7 +955,8 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlFsym;
   Declaration attribute;
     jj_consume_token(OPERATOR_LIST);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
+
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
       options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
@@ -1005,7 +1018,8 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlFsym;
   Declaration attribute;
     jj_consume_token(OPERATOR_ARRAY);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
+
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
       options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
@@ -1072,11 +1086,12 @@ public class TomParser implements TomParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TYPETERM:
       jj_consume_token(TYPETERM);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
+
       break;
     case TYPE:
       jj_consume_token(TYPE);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       if(!Flags.noWarning) {
         System.out.println("Warning: %type is obsolete");
       }
@@ -1136,7 +1151,7 @@ public class TomParser implements TomParserConstants {
 
   final public void TypeInt(ArrayList list) throws ParseException, TomException {
     jj_consume_token(TYPEINT);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       switchToDefaultMode(); /* switch to DEFAULT mode */
       ast().makeIntegerDecl(list);
   }
@@ -1150,7 +1165,8 @@ public class TomParser implements TomParserConstants {
   Option orgTrack;
   TomName name;
     jj_consume_token(TYPELIST);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
+
     type = jj_consume_token(TOM_IDENTIFIER);
       orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);
     jj_consume_token(TOM_LBRACE);
@@ -1223,7 +1239,8 @@ public class TomParser implements TomParserConstants {
   Option orgTrack;
   TomName name;
     jj_consume_token(TYPEARRAY);
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
+
     type = jj_consume_token(TOM_IDENTIFIER);
      orgTrack = ast().makeOriginTracking(type.image,getLine(), currentFile);
     jj_consume_token(TOM_LBRACE);
@@ -1762,6 +1779,22 @@ public class TomParser implements TomParserConstants {
     return retval;
   }
 
+  final private boolean jj_3_2() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_STAR)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3_5() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1782,22 +1815,6 @@ public class TomParser implements TomParserConstants {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_AT)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_STAR)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
