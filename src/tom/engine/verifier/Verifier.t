@@ -80,7 +80,6 @@ public class Verifier extends TomBase {
 			endderiv                                -> DerivTree
 			derivrule(name:String,post:Deriv,pre:DerivTree,cond:Seq) -> DerivTree
 
-			// to be completed
 			seq()                                   -> Seq
 			tau(term:String)                        -> Term
 			appSubsT(subs:SubstitutionList,t:Term)  -> Term
@@ -170,7 +169,7 @@ public class Verifier extends TomBase {
 				return `accept(); 
 			}
 			Return[] -> {
-				return `accept(); 
+				return `accept();
 			}
 			IfThenElse(cond,ift,iff) -> {
 				return `ITE(build_ExprFromExpression(cond),
@@ -205,7 +204,8 @@ public class Verifier extends TomBase {
 		Environment startingenv = `env(concSubstitution(),
 																 build_InstrFromAutomata(automata));
 
-		Deriv startingderiv = `ebs(startingenv,env(concSubstitution(undefsubs()),accept));
+		Deriv startingderiv = `ebs(startingenv,
+															 env(concSubstitution(undefsubs()),accept));
 
 		System.out.println("The derivation: " + startingderiv);
 
@@ -224,11 +224,13 @@ public class Verifier extends TomBase {
 	
 	protected Seq build_dedterm(Term sp) {
 		// TODO : implement the \mapequiv relation
+		System.out.println("Calling dedterm with: " + sp);
 		return `dedterm(concTerm(sp,tau("TODO")));
 	}
 	
 	protected Seq build_dedexpr(Expr sp) {
 		// TODO : implement the \mapequiv relation
+		System.out.println("Calling dedexpr with: " + sp);
 		return `dedexpr(concExpr(sp,true));
 	}
 
@@ -325,6 +327,59 @@ public class Verifier extends TomBase {
 		}
 	}
 
+/**
+ * These functions deals with substitution application
+ */
+
+	Replace2 replace_VarbyTerm = new Replace2() {
+			public ATerm apply(ATerm subject, Object arg1) {
+				if (subject instanceof Term) {
+					%match(Term subject) {
+						vtot(var(name)) -> {
+							Map map = (Map) arg1;
+							if (map.containsKey(name)) {
+								return (Term)map.get(name);
+							}
+							return (Term)subject;
+						}
+					}
+				}
+				/* Default case : Traversal */
+				return traversal().genericTraversal(subject,this,arg1);
+			} // end apply
+		};
+
+	public Term replaceVarsInTerm(Term subject) {
+		%match(Term subject) {
+			appSubsT(sl,term) -> {
+				Map map = build_varmap(sl, new HashMap());
+				return (Term) replace_VarbyTerm.apply(term,map);
+			}
+		}
+		return subject;
+	}
+
+	public Expr replaceVarsInExpr(Expr subject) {
+		%match(Expr subject) {
+			appSubsE(sl,term) -> {
+				Map map = build_varmap(sl, new HashMap());
+				return (Expr) replace_VarbyTerm.apply(term,map);
+			}
+		}
+		return subject;
+	}
+
+	private Map build_varmap(SubstitutionList sl, Map map) {
+		%match(SubstitutionList sl) {
+			()                -> { return map; }
+			(undefsubs(),t*)  -> { return build_varmap(`t,map);}
+			(is(v,term),t*)   -> { 
+				map.put(`v,`term);
+				return build_varmap(`t,map);
+			}
+			_ -> { return null; }
+		}
+	}
 }
 
 
