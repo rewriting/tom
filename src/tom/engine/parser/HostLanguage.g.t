@@ -47,17 +47,17 @@ options{
   private HashSet includedFileSet = null;
   private HashSet alreadyParsedFileSet = null;
   
-  private Logger logger;
-  
   // the parser for tom constructs
   TomParser tomparser; 
   
   // the lexer for target language
   HostLexer targetlexer = null;
 
-  OptionManager optionManager;
-
   BackQuoteParser bqparser;
+
+  OptionManager optionManager;
+  
+  TomStreamManager streamManager;
   
   // locations of target language blocks
   
@@ -68,29 +68,32 @@ options{
     Stack lines = new Stack();
     Stack columns = new Stack();
   */
+
   public HostParser(TokenStreamSelector selector,String currentFile,
                     HashSet includedFiles,HashSet alreadyParsedFiles, 
-                    OptionManager optionManager){
+                    OptionManager optionManager, TomStreamManager streamManager){
     this(selector);
     this.selector = selector;
     this.currentFile = currentFile;
+    this.optionManager = optionManager;
+    this.streamManager = streamManager;        
     this.targetlexer = (HostLexer) selector.getStream("targetlexer");
     targetlexer.setParser(this);
     this.includedFileSet = new HashSet(includedFiles);
-    testIncludedFile(currentFile, includedFileSet);
-      
     this.alreadyParsedFileSet = alreadyParsedFiles;
-      
-    logger = Logger.getLogger(getClass().getName());
-      
+
+    testIncludedFile(currentFile, includedFileSet);
     // then create the Tom mode parser
     tomparser = new TomParser(getInputState(),this, optionManager);
     bqparser = tomparser.bqparser;
-    this.optionManager = optionManager;
   } 
 
   private OptionManager getOptionManager() {
     return optionManager;
+  }
+
+  private TomStreamManager getStreamManager() {
+    return streamManager;
   }
     
   public TokenStreamSelector getSelector(){
@@ -102,25 +105,21 @@ options{
   }
     
   private final TomSignatureFactory getTomSignatureFactory(){
-    return TomBase.getTomSignatureFactory();
+    return TomEnvironment.getInstance().getTomSignatureFactory();
   }
     
   private TomSignatureFactory tsf(){
-    return TomBase.getTomSignatureFactory();
+    return TomEnvironment.getInstance().getTomSignatureFactory();
   }
-    
-  private TomEnvironment environment() {
-    return TomEnvironment.getInstance();
-  }
-    
+  
   private jtom.tools.ASTFactory ast() {
-    return TomBase.getAstFactory();
+    return TomEnvironment.getInstance().getAstFactory();
   }
-    
-  private SymbolTable symbolTable() {
-    return environment().getSymbolTable();
+  
+  public SymbolTable getSymbolTable() {
+    return getStreamManager().getSymbolTable();
   }
-
+  
   public TomStructureTable getStructTable() {
     return tomparser.getStructTable();
   }
@@ -253,8 +252,8 @@ options{
         if(!found) {
           // Look for importList
                     
-          for(int i=0 ; !found && i<environment().getImportList().size() ; i++) {
-            file = new File((File)environment().getImportList().get(i),fileName).getCanonicalFile();
+          for(int i=0 ; !found && i<getStreamManager().getImportList().size() ; i++) {
+            file = new File((File)getStreamManager().getImportList().get(i),fileName).getCanonicalFile();
 
             found = file.exists();
           }
@@ -272,8 +271,8 @@ options{
             
 			// if trying to include a file twice, but not in a cycle : discard
       if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
-        if(!environment().isSilentDiscardImport(fileName)) {                    
-          logger.log( 
+        if(!getStreamManager().isSilentDiscardImport(fileName)) {                    
+          getLogger().log( 
                      Level.WARNING,
                      "IncludedFileAlreadyParsed", 
                      new Object[]{
@@ -286,7 +285,7 @@ options{
         return;
       }
             
-      parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet, getOptionManager());
+      parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet, getOptionManager(), getStreamManager());
       astTom = parser.input();
       astTom = `TomInclude(astTom.getTomList());
       list.add(astTom);
@@ -312,6 +311,10 @@ options{
     
   void p(String s){
     System.out.println(s);
+  }
+  
+  private Logger getLogger() {
+    return Logger.getLogger(getClass().getName());
   }
 } 
 
@@ -451,14 +454,14 @@ signature [LinkedList list] throws TomException
   vasTL = goalLanguage[blockList]
   {
     vasCode = vasTL.getCode().trim();
-    String destDir = environment().getDestDir().getPath();
+    String destDir = getStreamManager().getDestDir().getPath();
     // Generated Tom, ADT and API from VAS Code
     String generatedADTName = null;
     ArrayList vasParams = new ArrayList();
     vasParams.add("--destdir");
     vasParams.add(destDir);
-    packageName = environment().getPackagePath().replace(File.separatorChar, '.');
-    String inputFileNameWithoutExtension = environment().getRawFileName().toLowerCase();
+    packageName = getStreamManager().getPackagePath().replace(File.separatorChar, '.');
+    String inputFileNameWithoutExtension = getStreamManager().getRawFileName().toLowerCase();
     String subPackageName = "";
     if(packageName.equals("")) {
       subPackageName = inputFileNameWithoutExtension;

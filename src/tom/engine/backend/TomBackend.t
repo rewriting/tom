@@ -38,18 +38,18 @@ public class TomBackend extends TomGenericPlugin {
         int warningsAtStart = getStatusHandler().nbOfWarnings();
         
         long startChrono = System.currentTimeMillis();
-        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
+        writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getStreamManager().getOutputFile())));
         
         OutputCode output = new OutputCode(writer, defaultDeep, getOptionManager());
         
         if(getOptionBooleanValue("jCode")) {
-          generator = new TomJavaGenerator(output, getOptionManager());
+          generator = new TomJavaGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("cCode")) {
-          generator = new TomCGenerator(output, getOptionManager());
+          generator = new TomCGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("eCode")) {
-          generator = new TomEiffelGenerator(output, getOptionManager());
+          generator = new TomEiffelGenerator(output, getOptionManager(), symbolTable());
         } else if(getOptionBooleanValue("camlCode")) {
-          generator = new TomCamlGenerator(output, getOptionManager());
+          generator = new TomCamlGenerator(output, getOptionManager(), symbolTable());
         }
         
         generator.generate(defaultDeep, (TomTerm)getWorkingTerm());
@@ -58,12 +58,12 @@ public class TomBackend extends TomGenericPlugin {
                          new Integer((int)(System.currentTimeMillis()-startChrono)) );
         
         writer.close();
-        generatedFileName = environment().getOutputFile().getAbsolutePath();
+        generatedFileName = getStreamManager().getOutputFile().getAbsolutePath();
         printAlertMessage(errorsAtStart, warningsAtStart);
       }
       catch (Exception e) {
         getLogger().log( Level.SEVERE, "ExceptionMessage",
-                         new Object[]{environment().getInputFile().getName(), "TomBackend", e.getMessage()} );
+                         new Object[]{getStreamManager().getInputFile().getName(), "TomBackend", e.getMessage()} );
         
         e.printStackTrace();
       }

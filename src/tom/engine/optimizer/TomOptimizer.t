@@ -47,16 +47,15 @@ public class TomOptimizer extends TomGenericPlugin {
 						
         boolean intermediate = getOptionBooleanValue("intermediate");
         if(intermediate) {
-          Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
+          Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
                                 (ATerm)getWorkingTerm() );
         }
 
         printAlertMessage(errorsAtStart, warningsAtStart);
 
       } catch (Exception e) {
-        getLogger().log( Level.SEVERE,
-                         "ExceptionMessage",
-                         new Object[]{environment().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
+        getLogger().log( Level.SEVERE, "ExceptionMessage",
+                         new Object[]{getStreamManager().getInputFile().getName(), "TomOptimizer", e.getMessage()} );
 
         e.printStackTrace();
       }

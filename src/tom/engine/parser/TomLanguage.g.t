@@ -46,8 +46,6 @@ options{
     protected BackQuoteParser bqparser;
     private TomLexer tomlexer;
 
-    private Logger logger;
-
     private StringBuffer text = new StringBuffer("");
     
     private int lastLine; 
@@ -59,7 +57,10 @@ options{
     private boolean debugMode;
     private boolean debugMemoryMode;    
 
-    public TomParser(ParserSharedInputState state, HostParser target, OptionManager optionManager){
+    private SymbolTable symbolTable;
+
+    public TomParser(ParserSharedInputState state, HostParser target,
+                     OptionManager optionManager){
         this(state);
         this.targetparser = target;
         this.debuggedStructureList = `emptyTomList();
@@ -68,17 +69,13 @@ options{
         this.tomlexer = (TomLexer) selector().getStream("tomlexer");
         this.debugMode = ((Boolean)optionManager.getOptionValue("debug")).booleanValue();
         this.debugMemoryMode = ((Boolean)optionManager.getOptionValue("memory")).booleanValue();
-        logger = Logger.getLogger(getClass().getName());
+        this.symbolTable = target.getSymbolTable();
     }
     
     private final TomSignatureFactory getTomSignatureFactory(){
         return tsf();
     }
     
-    private TomEnvironment environment() {
-        return TomEnvironment.getInstance();
-    }
-
     private TomSignatureFactory tsf(){
         return TomBase.getTomSignatureFactory();
     }
@@ -88,15 +85,11 @@ options{
     }
 
     private void putType(String name, TomType type) {
-        symbolTable().putType(name,type);
+        symbolTable.putType(name,type);
     }
 
     private void putSymbol(String name, TomSymbol symbol) {
-        symbolTable().putSymbol(name,symbol);
-    }
-
-    private SymbolTable symbolTable() {
-        return environment().getSymbolTable();
+        symbolTable.putSymbol(name,symbol);
     }
     
     public TomStructureTable getStructTable() {
@@ -135,6 +128,10 @@ options{
         return targetparser.getSelector();
     }
     
+    private Logger getLogger() {
+      return Logger.getLogger(getClass().getName());
+    }
+
 }
 
 constant returns [Token result]
@@ -572,7 +569,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                         //throw new TomException("Error on closing XML pattern: expecting '"+ expected.substring(1) +"' but got '"+found.substring(1)+ "' at line "+getLine());
                         // return null;
                         // TODO find the orgTrack of the match
-                        logger.log( Level.SEVERE,
+                        getLogger().log( Level.SEVERE,
                             "MalformedXMLTerm",
                             new Object[]{currentFile(), new Integer(getLine()), 
                                 "match", new Integer(getLine()),
@@ -583,7 +580,7 @@ xmlTerm [LinkedList optionList, LinkedList constraintList] returns [TomTerm resu
                         // when XMLChilds() is reduced to a singleton
                         // Appl(...,Name(""),args)
                         if(tomFactory.isExplicitTermList(childs)) {
-                            childs = tomFactory.metaEncodeExplicitTermList(symbolTable(), (TomTerm)childs.getFirst());
+                            childs = tomFactory.metaEncodeExplicitTermList(symbolTable, (TomTerm)childs.getFirst());
                         } else {
                             optionList.add(`ImplicitXMLChild());
                         }
@@ -730,7 +727,7 @@ xmlAttribute returns [TomTerm result] throws TomException
             )?
             term = unamedVariableOrTermStringIdentifier[optionListAnno2]
             {
-                name = tomFactory.encodeXMLString(symbolTable(),id.getText());
+                name = tomFactory.encodeXMLString(symbolTable,id.getText());
                 nameList = `concTomName(Name(name));
                 termName = `Appl(ast().makeOption(),nameList,concTomTerm(),concConstraint());
             }
@@ -760,7 +757,7 @@ xmlAttribute returns [TomTerm result] throws TomException
                 list.add(`PairSlotAppl(Name(Constants.SLOT_NAME),termName));
                 // we add the specif value : _
                 list.add(`PairSlotAppl(Name(Constants.SLOT_SPECIFIED),Placeholder(ast().makeOption(),ast().makeConstraint())));
-                //list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
+                //list.add(tomFactory.metaEncodeXMLAppl(symbolTable,term));
                 // no longer necessary ot metaEncode Strings in attributes
                 list.add(`PairSlotAppl(Name(Constants.SLOT_VALUE),term));
                 optionList.add(`OriginTracking(Name(Constants.ATTRIBUTE_NODE),getLine(),Name( currentFile())));
@@ -860,7 +857,7 @@ termStringIdentifier [LinkedList options] returns [TomTerm result] throws TomExc
                 text.append(nameString.getText());
                 optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),Name(currentFile())));
                 option = ast().makeOptionList(optionList);
-                ast().makeStringSymbol(symbolTable(),nameString.getText(),optionList);
+                ast().makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
             }
         )
@@ -901,7 +898,7 @@ unamedVariableOrTermStringIdentifier [LinkedList options] returns [TomTerm resul
                 text.append(nameString.getText());
                 optionList.add(`OriginTracking(Name(nameString.getText()),nameString.getLine(),Name(currentFile())));
                 option = ast().makeOptionList(optionList);
-                ast().makeStringSymbol(symbolTable(),nameString.getText(),optionList);
+                ast().makeStringSymbol(symbolTable,nameString.getText(),optionList);
                 nameList = `concTomName(Name(nameString.getText()));
                 result = `Appl(option,nameList,concTomTerm(),concConstraint());
             }
@@ -949,7 +946,7 @@ xmlChilds [LinkedList list] returns [boolean result] throws TomException
         {
             it = childs.iterator();
             while(it.hasNext()) {
-                list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),(TomTerm)it.next()));
+                list.add(tomFactory.metaEncodeXMLAppl(symbolTable,(TomTerm)it.next()));
             }
         }
     ;
@@ -1157,16 +1154,16 @@ headSymbol [LinkedList optionList] returns [TomName result]
             if (t != null){
                 switch(t.getType()){
                 case NUM_INT:
-                    ast().makeIntegerSymbol(symbolTable(),t.getText(),optionList);
+                    ast().makeIntegerSymbol(symbolTable,t.getText(),optionList);
                     break;
                 case CHARACTER:
-                    ast().makeCharSymbol(symbolTable(),t.getText(),optionList);
+                    ast().makeCharSymbol(symbolTable,t.getText(),optionList);
                     break;
                 case NUM_DOUBLE:
-                    ast().makeDoubleSymbol(symbolTable(),t.getText(),optionList);
+                    ast().makeDoubleSymbol(symbolTable,t.getText(),optionList);
                     break;
                 case STRING:
-                    ast().makeStringSymbol(symbolTable(),t.getText(),optionList);
+                    ast().makeStringSymbol(symbolTable,t.getText(),optionList);
                     break;
                 default:
                 }
@@ -1250,7 +1247,7 @@ operator returns [Declaration result] throws TomException
                     mapNameDecl.put(sName,attribute);
                 }
                 else {
-                  logger.log( Level.WARNING, "WarningTwoSameSlotDecl",
+                  getLogger().log( Level.WARNING, "WarningTwoSameSlotDecl",
                               new Object[]{currentFile(), new Integer(attribute.getOrgTrack().getLine()),
                                            "%op "+type.getText(), new Integer(ot.getLine()), sName.getString()} );
                 }
@@ -1271,7 +1268,7 @@ operator returns [Declaration result] throws TomException
                     Declaration decl = (Declaration)mapNameDecl.get(name1);
                     if(decl == null) {
 
-			logger.log( Level.WARNING,
+			getLogger().log( Level.WARNING,
 				    "WarningMissingSlotDecl",
 				    new Object[]{currentFile(), new Integer(ot.getLine()),
 						 "%op "+type.getText(), new Integer(ot.getLine()), name1.getString()} );
@@ -1290,7 +1287,7 @@ operator returns [Declaration result] throws TomException
                 while(it.hasNext()) {
                     TomName remainingSlot = (TomName) it.next();
 
-		    logger.log( Level.WARNING,
+		    getLogger().log( Level.WARNING,
 				"WarningIncompatibleSlotDecl",
 				new Object[]{currentFile(), 
 					     new Integer(((Declaration)mapNameDecl.get(remainingSlot)).getOrgTrack().getLine()),
@@ -1724,7 +1721,7 @@ keywordGetHead[String type] returns [Declaration result] throws TomException
                 selector().pop();  
 
                 result = `GetHeadDecl(
-                    symbolTable().getUniversalType(),
+                    symbolTable.getUniversalType(),
                     Variable(option,Name(name.getText()),TomTypeAlone(type),emptyConstraintList()),
                     tlCode,
                     ot);

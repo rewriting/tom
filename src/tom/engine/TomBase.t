@@ -30,6 +30,7 @@ import java.util.*;
 import aterm.*;
 import aterm.pure.*;
 
+import jtom.*;
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
@@ -40,27 +41,23 @@ import jtom.exception.TomRuntimeException;
 
 public class TomBase {
 
-  private static TomSignatureFactory tomSignatureFactory = TomSignatureFactory.getInstance(SingletonFactory.getInstance());
-  private static ASTFactory astFactory = new ASTFactory(TomBase.tomSignatureFactory);
-  private static PlatformOptionFactory platformOptionFactory = PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
-
   %include { adt/TomSignature.tom }
-  public static final TomSignatureFactory getTomSignatureFactory() {
-    return TomBase.tomSignatureFactory;
-  }
 
+  public static final TomSignatureFactory getTomSignatureFactory() {
+    return TomEnvironment.getInstance().getTomSignatureFactory();
+  }
+  /** shortcut */
+  protected static TomSignatureFactory tsf() {
+    return TomEnvironment.getInstance().getTomSignatureFactory();
+  }
+  
   %include { adt/PlatformOption.tom }
   public static final PlatformOptionFactory getPlatformOptionFactory() {
-    return TomBase.platformOptionFactory;
+    return TomEnvironment.getInstance().getPlatformOptionFactory();
   }
   
   public static final ASTFactory getAstFactory() {
-    return TomBase.astFactory;
-  }
-
-  /** shortcut */
-  protected static TomSignatureFactory tsf() {
-    return TomBase.tomSignatureFactory;
+    return TomEnvironment.getInstance().getAstFactory();
   }
   
   private TomList empty;
@@ -77,14 +74,6 @@ public class TomBase {
   
   public GenericTraversal traversal() {
     return this.traversal;
-  }
-
-  protected SymbolTable symbolTable() {
-    return environment().getSymbolTable();
-  }
-
-  public TomType getUniversalType() {
-    return symbolTable().getUniversalType();
   }
   
   protected TomNumber makeNumber(int n) {
@@ -145,10 +134,6 @@ public class TomBase {
     }
   }
 
-  // ------------------------------------------------------------
-    
-  // ------------------------------------------------------------
-
   protected String getTomType(TomType type) {
     %match(TomType type) {
 	    ASTTomType(s) -> {return `s;}
@@ -183,25 +168,6 @@ public class TomBase {
     }
   }
 
-  protected TomSymbol getSymbol(String tomName) {
-    return symbolTable().getSymbol(tomName);
-  }
-
-
-  protected TomSymbol getSymbol(TomType tomType) {
-    SymbolList list = symbolTable().getSymbol(tomType);
-    SymbolList filteredList = `emptySymbolList();
-    // Not necessary since checker ensure the uniqueness of the symbol
-    while(!list.isEmpty()) {
-	    TomSymbol head = list.getHead();
-	    if(isArrayOperator(head) || isListOperator(head)) {
-        filteredList = `manySymbolList(head,filteredList);
-	    }
-	    list = list.getTail();
-    }
-    return filteredList.getHead();
-  }
-
   protected TomType getSymbolCodomain(TomSymbol symbol) {
     if(symbol!=null) {
 	    return symbol.getTypesToType().getCodomain();
@@ -228,56 +194,6 @@ public class TomBase {
 	    _ -> {
         System.out.println("getSymbolCode error on term: " + symbol);
         throw new TomRuntimeException("getSymbolCode error on term: " + symbol);
-	    }
-    }
-  } 
-
-  protected TomType getTermType(TomTerm t){
-    %match(TomTerm t) {
-	    Appl[nameList=(Name(tomName),_*)] -> {
-        TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
-        return tomSymbol.getTypesToType().getCodomain();
-	    }
-
-	    Variable[astType=type] |
-        VariableStar[astType=type] |
-        UnamedVariable[astType=type] |
-        UnamedVariableStar[astType=type] 
-        -> { return `type; }
-
-	    ExpressionToTomTerm(term) |
-        Ref(term)
-        -> { return getTermType(`term); }
-
-	    TargetLanguageToTomTerm(TL[]) |
-        TargetLanguageToTomTerm(ITL[]) |
-        FunctionCall[]
-        -> { return `EmptyType(); }
-
-	    _ -> {
-        System.out.println("getTermType error on term: " + t);
-        throw new TomRuntimeException("getTermType error on term: " + t);
-	    }
-    }
-  }
-
-  protected TomType getTermType(Expression t){
-    %match(Expression t) {
-	    GetSubterm[codomain=type] |
-        GetHead[codomain=type] |
-        GetSlot[codomain=type] |
-        GetElement[codomain=type]
-        -> { return `type; }
-
-	    TomTermToExpression(term) |
-        GetTail[variable=term] |
-        GetSliceList[variableBeginAST=term] |
-        GetSliceArray[subjectListName=term]
-        -> { return getTermType(`term); }
-
-	    _ -> {
-        System.out.println("getTermType error on term: " + t);
-        throw new TomRuntimeException("getTermType error on term: " + t);
 	    }
     }
   }
@@ -615,4 +531,72 @@ public class TomBase {
     throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
   }
 
+  protected TomSymbol getSymbol(String tomName, SymbolTable symbolTable) {
+    return symbolTable.getSymbol(tomName);
+  }
+
+  
+  protected TomSymbol getSymbol(TomType tomType, SymbolTable symbolTable) {
+    SymbolList list = symbolTable.getSymbol(tomType);
+    SymbolList filteredList = `emptySymbolList();
+    // Not necessary since checker ensure the uniqueness of the symbol
+    while(!list.isEmpty()) {
+	    TomSymbol head = list.getHead();
+	    if(isArrayOperator(head) || isListOperator(head)) {
+        filteredList = `manySymbolList(head,filteredList);
+	    }
+	    list = list.getTail();
+    }
+    return filteredList.getHead();
+  }
+
+  protected TomType getTermType(TomTerm t, SymbolTable symbolTable){
+    %match(TomTerm t) {
+	    Appl[nameList=(Name(tomName),_*)] -> {
+        TomSymbol tomSymbol = symbolTable.getSymbol(`tomName);
+        return tomSymbol.getTypesToType().getCodomain();
+	    }
+
+	    Variable[astType=type] |
+        VariableStar[astType=type] |
+        UnamedVariable[astType=type] |
+        UnamedVariableStar[astType=type] 
+        -> { return `type; }
+
+	    ExpressionToTomTerm(term) |
+        Ref(term)
+        -> { return getTermType(`term, symbolTable); }
+
+	    TargetLanguageToTomTerm(TL[]) |
+        TargetLanguageToTomTerm(ITL[]) |
+        FunctionCall[]
+        -> { return `EmptyType(); }
+
+	    _ -> {
+        System.out.println("getTermType error on term: " + t);
+        throw new TomRuntimeException("getTermType error on term: " + t);
+	    }
+    }
+  }
+  
+  protected TomType getTermType(Expression t, SymbolTable symbolTable){
+    %match(Expression t) {
+	    GetSubterm[codomain=type] |
+        GetHead[codomain=type] |
+        GetSlot[codomain=type] |
+        GetElement[codomain=type]
+        -> { return `type; }
+
+	    TomTermToExpression(term) |
+        GetTail[variable=term] |
+        GetSliceList[variableBeginAST=term] |
+        GetSliceArray[subjectListName=term]
+        -> { return getTermType(`term, symbolTable); }
+
+	    _ -> {
+        System.out.println("getTermType error on term: " + t);
+        throw new TomRuntimeException("getTermType error on term: " + t);
+	    }
+    }
+  }
 } // class TomBase

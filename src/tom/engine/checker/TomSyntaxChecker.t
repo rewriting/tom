@@ -36,7 +36,7 @@ public class TomSyntaxChecker extends TomChecker {
         printAlertMessage(errorsAtStart, warningsAtStart);
       } catch (Exception e) {
         getLogger().log( Level.SEVERE, "ExceptionMessage",
-                         new Object[]{environment().getInputFile().getName(),"TomSyntaxChecker",e.getMessage()} );
+                         new Object[]{getStreamManager().getInputFile().getName(),"TomSyntaxChecker",e.getMessage()} );
         e.printStackTrace();
       }
     } else { // syntax checker desactivated

@@ -83,7 +83,7 @@ public class TomVerifier extends TomGenericPlugin {
       } catch (Exception e) {
         getLogger().log( Level.SEVERE,
                          "ExceptionMessage",
-                         new Object[]{environment().getInputFile().getName(), "TomVerifier", e.getMessage()} );
+                         new Object[]{getStreamManager().getInputFile().getName(), "TomVerifier", e.getMessage()} );
         e.printStackTrace();
       }
     } else {	    

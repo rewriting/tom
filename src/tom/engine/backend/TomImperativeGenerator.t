@@ -28,7 +28,7 @@ package jtom.backend;
 import java.io.IOException;
 
 import jtom.adt.tomsignature.types.*;
-import jtom.tools.OutputCode;
+import jtom.tools.*;
 import jtom.exception.TomRuntimeException;
  
 import tom.platform.OptionManager;
@@ -40,8 +40,9 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   protected boolean debugMode;
   protected boolean prettyMode;
 
-  public TomImperativeGenerator(OutputCode output, OptionManager optionManager) {
-    super(output, optionManager);
+  public TomImperativeGenerator(OutputCode output, OptionManager optionManager,
+                                SymbolTable symbolTable) {
+    super(output, optionManager, symbolTable);
     nodeclMode = ((Boolean)optionManager.getOptionValue("noDeclaration")).booleanValue();
     prettyMode = ((Boolean)optionManager.getOptionValue("pretty")).booleanValue();
     debugMode = ((Boolean)optionManager.getOptionValue("debug")).booleanValue();
@@ -138,7 +139,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 
   protected void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
     String glType = getTLType(getSymbolCodomain(tomSymbol));
     String name = tomSymbol.getAstName().getString();
     
@@ -490,7 +491,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
         s+= ", ";
       }
     } 
-    String returnValue = symbolTable().isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
+    String returnValue = getSymbolTable().isVoidType(returnType)?tlCode.getCode():"return " + tlCode.getCode();
     s += ") { " + returnValue + "; }";
     if(tlCode.isTL()) {
       return `TL(s, tlCode.getStart(), tlCode.getEnd());

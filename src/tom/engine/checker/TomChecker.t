@@ -1357,8 +1357,9 @@ abstract public class TomChecker extends TomGenericPlugin {
     if(line < 0) {
       getLogger().log(Level.SEVERE,
 		      "FindOTL",
-		      environment().getInputFile().getName());
+		      getStreamManager().getInputFile().getName());
       //System.out.println("findOriginTrackingLine: not found ");
     }
   }
+
 }  //Class TomChecker

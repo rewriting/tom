@@ -29,15 +29,16 @@ import java.io.IOException;
 
 import jtom.adt.tomsignature.types.*;
 
-import jtom.tools.OutputCode;
+import jtom.tools.*;
 import jtom.exception.TomRuntimeException;
 
 import tom.platform.OptionManager;
 
 public class TomEiffelGenerator extends TomImperativeGenerator {
   
-  public TomEiffelGenerator(OutputCode output, OptionManager optionManager) {
-    super(output, optionManager);
+  public TomEiffelGenerator(OutputCode output, OptionManager optionManager,
+                       SymbolTable symbolTable) {
+    super(output, optionManager, symbolTable);
   }
   
   // ------------------------------------------------------------
@@ -67,7 +68,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   }
 
   protected void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException {
-        TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+        TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
         String glType = getTLType(getSymbolCodomain(tomSymbol));
         String name = tomSymbol.getAstName().getString();
         output.write(deep,name + "(");
@@ -156,7 +157,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
   protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
-    if(symbolTable().isBoolType(type) || symbolTable().isIntType(type) || symbolTable().isDoubleType(type)) {
+    if(getSymbolTable().isBoolType(type) || getSymbolTable().isIntType(type) || getSymbolTable().isDoubleType(type)) {
                   output.write(" := ");
     } else {
         //out.write(" ?= ");

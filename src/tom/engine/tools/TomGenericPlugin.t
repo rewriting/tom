@@ -31,6 +31,7 @@ import java.util.logging.*;
 import aterm.*;
 
 import jtom.*;
+import jtom.exception.*;
 import jtom.adt.tomsignature.types.*;
 
 import tom.platform.*;
@@ -43,8 +44,6 @@ import tom.platform.adt.platformoption.types.*;
  * If this behaviour is not the one that is expected though, they should be
  * overridden. Just remember : extending this class is by no means necessary
  * for a plugin, the only constraint is to implement the Plugin interface.
- *
- * @author Gr&eacute;gory ANDRIEN
  */
 public abstract class TomGenericPlugin extends TomBase implements Plugin {
   
@@ -56,6 +55,9 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   /** The term the plugin works on. */
   private TomTerm term;
 
+  /** The streamanager */
+  protected TomStreamManager streamManager;
+  
   /** the status handler */
   private StatusHandler statusHandler;
 
@@ -97,10 +99,11 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * @param term the input Object
    */
   public void setArgs(Object[] arg) {
-    if (arg[0] instanceof TomTerm) {
+    if (arg[0] instanceof TomTerm && arg[1] instanceof TomStreamManager) {
       term = (TomTerm)arg[0];
+      streamManager = (TomStreamManager)arg[1];
     } else {
-      getLogger().log(Level.SEVERE, "TomTermExpected", pluginName);
+      getLogger().log(Level.SEVERE, "InvalidPluginArgument", new Object[]{"[TomTerm, TomStreamManager]", getArgumentArrayString(arg)});
     }
   }
 
@@ -126,7 +129,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * @return the Object "term"
    */
   public Object[] getArgs() {
-    return new Object[]{term};
+    return new Object[]{term, streamManager};
   }
   
   /**
@@ -138,6 +141,35 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     return term;
   }
 
+  public TomStreamManager getStreamManager() {
+    return streamManager; 
+  }
+
+  public void setStreamManager(TomStreamManager streamManager) {
+    System.out.println("generic plugin set streamManager to"+streamManager);
+    this.streamManager = streamManager; 
+  }
+
+  public SymbolTable symbolTable() {
+    return streamManager.getSymbolTable(); 
+  }
+
+  protected TomSymbol getSymbol(String tomName) {
+    return getSymbol(tomName, streamManager.getSymbolTable());
+  }
+  
+  protected TomSymbol getSymbol(TomType tomType) {
+    return getSymbol(tomType, streamManager.getSymbolTable());
+  }
+  
+  protected TomType getTermType(TomTerm t) {
+    return  getTermType(t, streamManager.getSymbolTable());
+  }
+  
+  protected TomType getUniversalType() {
+    return streamManager.getSymbolTable().getUniversalType();
+  }
+  
   /**
    * From Plugin interface 
    * The setOptionManager save the reference to the OM.
@@ -183,7 +215,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   }
 
   public void printAlertMessage(int errorsAtStart, int warningsAtStart) {
-    if(!environment().isEclipseMode()) {
+    if(!getOptionBooleanValue("eclipse")) {
       
       int nbOfErrors   = statusHandler.nbOfErrors()   - errorsAtStart;
       int nbOfWarnings = statusHandler.nbOfWarnings() - warningsAtStart;
@@ -252,4 +284,12 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
     return (String) getOptionValue(optionName);
   }
 
+  public String getArgumentArrayString(Object[] arg) {
+    String argString = "[";
+    for(int i=0;i<arg.length;i++) {
+      argString += arg[i].getClass().getName();
+    }
+    return argString+"]";
+  }
+  
 } // class TomGenericPlugin

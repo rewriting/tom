@@ -28,14 +28,15 @@ package jtom.backend;
 import java.io.IOException;
 
 import jtom.adt.tomsignature.types.*;
-import jtom.tools.OutputCode;
+import jtom.tools.*;
 
 import tom.platform.OptionManager;
 
 public class TomCGenerator extends TomImperativeGenerator {
   
-  public TomCGenerator(OutputCode output, OptionManager optionManager) {
-    super(output, optionManager);
+  public TomCGenerator(OutputCode output, OptionManager optionManager,
+                       SymbolTable symbolTable) {
+    super(output, optionManager, symbolTable);
   }
   
   // ------------------------------------------------------------
@@ -61,7 +62,7 @@ public class TomCGenerator extends TomImperativeGenerator {
   }
 
   protected void buildSymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
     TomTypeList l = getSymbolDomain(tomSymbol);
@@ -124,7 +125,7 @@ public class TomCGenerator extends TomImperativeGenerator {
 
 
   protected void buildArraySymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();        
     TomTypeList l = getSymbolDomain(tomSymbol);
@@ -164,7 +165,7 @@ public class TomCGenerator extends TomImperativeGenerator {
 
 
   protected void buildListSymbolDecl(int deep, String tomName) throws IOException {
-    TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
+    TomSymbol tomSymbol = getSymbolTable().getSymbol(tomName);
     OptionList optionList = tomSymbol.getOption();
     SlotList slotList = tomSymbol.getSlotList();
     TomTypeList l = getSymbolDomain(tomSymbol);

@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashSet;
 
+import jtom.tools.*;
 import jtom.TomBase;
 import jtom.adt.tomsignature.types.*;
 import tom.library.traversal.Replace2;
@@ -37,10 +38,27 @@ import jtom.exception.TomRuntimeException;
 
 public class TomKernelExpander extends TomBase {
 
+  private SymbolTable symbolTable;
+  
   public TomKernelExpander() {
     super();
   }
 
+  public void setSymbolTable(SymbolTable symbolTable) {
+    this.symbolTable = symbolTable;
+  }
+
+  private SymbolTable getSymbolTable() {
+    return symbolTable;
+  }
+
+  protected TomSymbol getSymbol(String tomName) {
+    return getSymbol(tomName, getSymbolTable());
+  }
+  
+  protected TomSymbol getSymbol(TomType tomType) {
+    return getSymbol(tomType, getSymbolTable());
+  }
   // ------------------------------------------------------------
   %include { adt/TomSignature.tom } 
   // ------------------------------------------------------------
@@ -407,18 +425,18 @@ public class TomKernelExpander extends TomBase {
    * each TomTypeAlone is replace by the corresponding TomType
    */
   public void updateSymbolTable() {
-    Iterator it = symbolTable().keySymbolIterator();
+    Iterator it = getSymbolTable().keySymbolIterator();
     while(it.hasNext()) {
       String tomName = (String)it.next();
       TomTerm emptyContext = `emptyTerm();
       TomSymbol tomSymbol = getSymbol(tomName);
       tomSymbol = expandVariable(emptyContext,`TomSymbolToTomTerm(tomSymbol)).getAstSymbol();
-      symbolTable().putSymbol(tomName,tomSymbol);
+      getSymbolTable().putSymbol(tomName,tomSymbol);
     }
   }
 
   private TomType getType(String tomName) {
-    TomType tomType = symbolTable().getType(tomName);
+    TomType tomType = getSymbolTable().getType(tomName);
     return tomType;
   }
 

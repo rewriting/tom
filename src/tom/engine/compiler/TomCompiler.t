@@ -24,7 +24,6 @@ public class TomCompiler extends TomGenericPlugin {
   public static final String COMPILED_SUFFIX = ".tfix.compiled";
   public static final String DECLARED_OPTIONS = "<options><boolean name='compile' altName='' description='Compiler (activated by default)' value='true'/></options>";
   
-  private TomKernelCompiler tomKernelCompiler = new TomKernelCompiler();
   private TomFactory tomFactory = new TomFactory();
   private int absVarNumber = 0;
   
@@ -33,23 +32,23 @@ public class TomCompiler extends TomGenericPlugin {
   }
 
   public void run() {
+    TomKernelCompiler tomKernelCompiler = new TomKernelCompiler(getStreamManager().getSymbolTable());
     try {
       int errorsAtStart = getStatusHandler().nbOfErrors();
       int warningsAtStart = getStatusHandler().nbOfWarnings();
-
+      
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
 
       TomTerm preCompiledTerm = preProcessing( (TomTerm)getWorkingTerm() );
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
-
-      getLogger().log( Level.INFO,
-		       "TomCompilationPhase",
+      
+      getLogger().log( Level.INFO, "TomCompilationPhase",
 		       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
 
       if(intermediate) {
-        Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
+        Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
       }
       setWorkingTerm(compiledTerm);
 
@@ -57,7 +56,7 @@ public class TomCompiler extends TomGenericPlugin {
     } catch (Exception e) {
       getLogger().log( Level.SEVERE,
 		       "ExceptionMessage",
-		       new Object[]{environment().getInputFile().getName(), "TomCompiler", e.getMessage()} );
+		       new Object[]{getStreamManager().getInputFile().getName(), "TomCompiler", e.getMessage()} );
 
       e.printStackTrace();
     }

@@ -28,15 +28,16 @@ package jtom.backend;
 import java.io.IOException;
 
 import jtom.adt.tomsignature.types.*;
-import jtom.tools.OutputCode;
+import jtom.tools.*;
 import jtom.exception.TomRuntimeException;
 
 import tom.platform.OptionManager;
 
 public class TomCamlGenerator extends TomImperativeGenerator {
 
-  public TomCamlGenerator(OutputCode output, OptionManager optionManager) {
-    super(output, optionManager);
+  public TomCamlGenerator(OutputCode output, OptionManager optionManager,
+                       SymbolTable symbolTable) {
+    super(output, optionManager, symbolTable);
   }
   
   // ------------------------------------------------------------

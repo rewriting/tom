@@ -29,14 +29,15 @@ import java.io.IOException;
 
 
 import jtom.adt.tomsignature.types.*;
-import jtom.tools.OutputCode;
+import jtom.tools.*;
 
 import tom.platform.OptionManager;
 
 public class TomJavaGenerator extends TomImperativeGenerator {
    
-  public TomJavaGenerator(OutputCode output, OptionManager optionManager) {
-    super(output, optionManager);
+  public TomJavaGenerator(OutputCode output, OptionManager optionManager,
+                       SymbolTable symbolTable) {
+    super(output, optionManager, symbolTable);
     this.modifier += "public " ;
   }
 

@@ -29,7 +29,7 @@ import java.io.IOException;
 
 import jtom.adt.tomsignature.types.*;
 import jtom.TomBase;
-import jtom.tools.OutputCode;
+import jtom.tools.*;
 import jtom.exception.TomRuntimeException;
 import tom.platform.OptionManager;
  
@@ -38,12 +38,34 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected OutputCode output;
   protected String debugKey;
   protected OptionManager optionManager;
-  public TomAbstractGenerator(OutputCode output, OptionManager optionManager) {
-    super();
+  protected SymbolTable symbolTable;
+
+  public TomAbstractGenerator(OutputCode output, OptionManager optionManager,
+                              SymbolTable symbolTable) {
+    this.symbolTable = symbolTable;
     this.optionManager = optionManager;
     this.output = output;
   }
+  
+  protected SymbolTable getSymbolTable() {
+    return symbolTable;
+  }
+  
+  protected TomSymbol getSymbol(String tomName) {
+    return getSymbol(tomName, symbolTable);
+  }
 
+  protected TomSymbol getSymbol(TomType tomType) {
+    return getSymbol(tomType, symbolTable);
+  }
+
+  protected TomType getTermType(TomTerm t) {
+    return  getTermType(t, symbolTable);
+  }
+
+  protected TomType getUniversalType() {
+    return symbolTable.getUniversalType();
+  }
 // ------------------------------------------------------------
   %include { adt/TomSignature.tom }
 // ------------------------------------------------------------

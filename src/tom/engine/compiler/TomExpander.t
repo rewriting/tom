@@ -35,6 +35,7 @@ public class TomExpander extends TomGenericPlugin {
 
   public void run() {
     try {
+      tomKernelExpander.setSymbolTable(getStreamManager().getSymbolTable());
       int errorsAtStart = getStatusHandler().nbOfErrors();
       int warningsAtStart = getStatusHandler().nbOfWarnings();
 
@@ -57,9 +58,9 @@ public class TomExpander extends TomGenericPlugin {
 		       new Integer((int)(System.currentTimeMillis()-startChrono)) );
       
       if(intermediate) {
-	      Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
+	      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
                              + EXPANDED_SUFFIX, expandedTerm);
-	      Tools.generateOutput(environment().getOutputFileNameWithoutSuffix()
+	      Tools.generateOutput(getStreamManager().getOutputFileNameWithoutSuffix()
                              + EXPANDED_TABLE_SUFFIX, symbolTable().toTerm());
       }
 
@@ -67,7 +68,7 @@ public class TomExpander extends TomGenericPlugin {
     } catch (Exception e) {
 	getLogger().log( Level.SEVERE,
 			 "ExceptionMessage",
-			 new Object[]{environment().getInputFile().getName(), "TomExpander", e.getMessage()} );
+			 new Object[]{getStreamManager().getInputFile().getName(), "TomExpander", e.getMessage()} );
 
 	e.printStackTrace();
     }
