@@ -1,0 +1,41 @@
+[
+ [AgentId, a, a], 
+ [AgentId, b, b], 
+ [AgentId, c, c], 
+ [AgentId, d, d], 
+ [AgentId, e, e], 
+ [AgentId, alice, alice], 
+ [AgentId, bob, bob], 
+ [AgentId, devil, devil], 
+
+ [SWC, SLEEP, SLEEP], 
+ [SWC, WAIT, WAIT], 
+ [SWC, COMMIT, COMMIT], 
+
+ [Key, K, K(<id(AgentId)>)], 
+
+ [Nonce, N, N(<id1(AgentId)>,<id2(AgentId)>)], 
+ [Nonce, DN, DN], 
+
+ [Address, A, A(<id(AgentId)>)], 
+ [Address, DA, DA], 
+
+ [Agent, agent, agent(<id(AgentId)>,<state(SWC)>,<nonce(Nonce)>)], 
+
+ [Message, msg, msg(<src(AgentId)>,<dst(AgentId)>,<key(Key)>,<nonce1(Nonce)>,<nonce2(Nonce)>,<adr(Address)>)], 
+
+
+ [Intruder, intruder, intruder(<id(AgentId)>,<listNonce(ListNonce)>,<listMessage(ListMessage)>)], 
+
+ [State, state, state(<senders(term)>,<receivers(term)>,<intruder(Intruder)>,<network(ListMessage)>)], 
+ [State, ATTACK, ATTACK],
+ [State, ERROR, ERROR],
+
+ [ListMessage, nilListMessage, nilListMessage], 
+ [ListMessage, consListMessage, consListMessage(<headListMessage(Message)>,<tailListMessage(ListMessage)>)], 
+
+ [ListNonce, nilListNonce, nilListNonce], 
+ [ListNonce, consListNonce, consListNonce(<headListNonce(Nonce)>,<tailListNonce(ListNonce)>)]
+
+
+]

@@ -3,7 +3,6 @@ LPL nsh description
    result of sort state
    import nsh
    start with (attStrat) query
-   //start with (com) query
 
 
 // A+SLEEP+N(A,A) * nnl <> B+SLEEP+N(B,B) * nnl <> II#nl#nill <> nill   end

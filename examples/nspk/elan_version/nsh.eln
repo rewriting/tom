@@ -76,17 +76,12 @@ operators
 
    elemIA(@)   : (listAgent) Agent ;
 
-   COMMIT	:  message;
-   INTERCEPT(@)	: (message) message;
-   DECRYPT(@)	: (list[Nonce]) message;
-
 end
 
 //---------------------------------------------------------------//
 
 stratop
  global 
-   com        : < state -> state > 		bs;
    attStrat   : < state -> state > 		bs;
    extAgent   : < Agent -> Agent >  		bs;
 end
@@ -395,24 +390,6 @@ end
 
 strategies for state 
 implicit 
-    []com => 
-		repeat*(
-		        dk(
-                           attack_1,
-                           attack_2,
-
-                           intruder_1,
-                           intruder_2,
-                           intruder_3,
-                           intruder_4,
-
-                           initiator_1,  // In -> Net
-                           responder_1,  // Net -> Rec -> Net
-                           initiator_2,  // Net -> In -> Net
-                           responder_2   // Net -> Rec 
-			)
-		) end
-
     []attStrat => 
 	dc one(
 		repeat*(
