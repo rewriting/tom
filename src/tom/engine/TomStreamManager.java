@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import jtom.tools.SymbolTable;
+import jtom.exception.TomRuntimeException;
 import tom.platform.OptionManager;
 
 /**
@@ -115,9 +116,8 @@ public class TomStreamManager {
     } else if ( ((Boolean)optionManager.getOptionValue("camlCode")).booleanValue() ) {
       inputSuffix = ".t";
       outputSuffix = ".tom.ml";
-    } else { // we should never ever be here normally...
-      inputSuffix = ".t";
-      outputSuffix = ".java";
+    } else { 
+      throw new TomRuntimeException("No code generator selected");
     }
     
     // fills the local user import list
