@@ -156,6 +156,7 @@
   [TomTerm,BuildBuiltin,BuildBuiltin(<astName(TomName)>) ],
   [TomTerm,CompiledMatch,CompiledMatch(<decls(TomList)>,<automataList(TomList)>) ],
   [TomTerm,CompiledPattern,CompiledPattern(<instList(TomList)>) ],
+  [TomTerm,AssignedVariable,AssignedVariable(<varName(str)>,<source(Expression)>,<nbUse(int)>) ],
 
   [TomTerm,Automata,Automata(<numberList(TomList)>,<instList(TomList)>) ],
 
