@@ -1,0 +1,6 @@
+[
+constructor(Name,lastname,lastname(<string(str)>)),
+constructor(Name,firstname,firstname(<string(str)>)),
+constructor(Date,date,date(<year(int)>,<month(int)>,<day(int)>)),
+constructor(Person,person,person(<firstname(Name)>,<lastname(Name)>,<birthdate(Date)>))
+]
