@@ -77,10 +77,10 @@ public class TomStatusHandler extends Handler {
   public void setFilter(Filter newFilter) {
   }
 
-  public Formatter getFormatter() {
+  public java.util.logging.Formatter getFormatter() {
     return null;
   }
-  public void setFormatter(Formatter newFormatter) {
+  public void setFormatter(java.util.logging.Formatter newFormatter) {
   }
 
   public Level getLevel() {
