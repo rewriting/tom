@@ -17,7 +17,7 @@
 	<property name="build.sysclasspath" value="ignore" />
 	<property name="nowarnings" value="false" />  
 	<!-- current version of TOM -->
-	<property name="version" value="2.1 - under development"/>
+	<property name="version" value="2.1-underdevelopment"/>
 	
 	<!-- some used directory location -->
 	<property name="test"           location="test"/>
@@ -346,7 +346,7 @@
 			<param name="dest" value="${stable.dist}"/>
 		</antcall>
 		<!-- "tom config file" -->
-		<copy todir="${stable.dist}" file="${stable.configfile}"/>
+		<copy tofile="${stable.dist}/Tom.xml" file="${stable.configfile}"/>
 		<!-- "tom binary" -->
 		<copy todir="${stable.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${stable.bin}" file="${utils}/tom.bat"/>
@@ -428,13 +428,11 @@
 			<param name="dest" value="${src.dist}"/>
 		</antcall>
 		<!-- "tom config file" -->
-		<copy todir="${src.dist}" file="${src.configfile}"/>
+		<copy tofile="${src.dist}/Tom.xml" file="${src.configfile}"/>
 		<!-- "tom binary" -->
 		<copy todir="${src.bin}" file="${utils}/javac-tom"/>
 		<copy todir="${src.bin}" file="${utils}/tom"/>
 		<copy todir="${src.bin}" file="${utils}/tom.src"/>
-		<copy todir="${src.dist}" file="${src.configfile}"/>
-		<copy todir="${src.dist}" file="${stable.configfile}"/>
 		<copy todir="${src.bin}">
 			<fileset dir="${utils}">
 				<include name="adt-to-tom.*"/>
@@ -718,7 +716,7 @@
 		<ant dir="${examples}" target="clean"/>
 		<ant dir="${examples}" target="junit">
 			<property name="tom.home" location="${src.dist}"/>
-			<property name="tomconfigfile" location="${src.dist}/Tom.src.xml"/>
+			<property name="tomconfigfile" location="${src.dist}/Tom.xml"/>
 		</ant>
 
 		<echo>Test tom-source in examples with optimizer</echo>
@@ -726,7 +724,7 @@
 		<ant dir="${examples}" target="junit">
 			<property name="tom.home" location="${src.dist}"/>
 			<property name="optimize" value="on"/>
-			<property name="tomconfigfile" location="${src.dist}/Tom.src.xml"/>
+			<property name="tomconfigfile" location="${src.dist}/Tom.xml"/>
 		</ant>
 	</target>
 

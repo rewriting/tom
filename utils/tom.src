@@ -50,7 +50,7 @@ else
 fi
 
 TOM_INC="${TOM_SRC_HOME}/share/jtom"
-TOM_CONFIG_FILE="${TOM_SRC_HOME}/Tom.src.xml"
+TOM_CONFIG_FILE="${TOM_SRC_HOME}/Tom.xml"
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then

@@ -37,7 +37,7 @@ import tom.platform.*;
 public class Tom {
   
   /** The current version of the TOM compiler. */
-  public final static String VERSION = "2.1 - under development";
+  public final static String VERSION = "2.1 - Under development";
   
   /** Log radical string*/
   public final static String LOGGERRADICAL = "jtom";

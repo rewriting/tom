@@ -1,24 +1,24 @@
 header{
-    package jtom.parser;
+  package jtom.parser;
+  
+  import jtom.*;
+  import jtom.exception.*;
+  import jtom.tools.*;
+  import jtom.adt.tomsignature.*;
+  import jtom.adt.tomsignature.types.*;
+  
+  import tom.platform.*;
+  
+  import java.lang.reflect.*;
+  import java.io.*;
+  import java.text.*;
+  import java.util.*;
+  import java.util.logging.*;
 
-    import jtom.*;
-    import jtom.exception.*;
-    import jtom.tools.*;
-    import jtom.adt.tomsignature.*;
-    import jtom.adt.tomsignature.types.*;
-
-    import tom.platform.*;
-
-    import java.lang.reflect.*;
-    import java.io.*;
-    import java.text.*;
-    import java.util.*;
-    import java.util.logging.*;
-
-    import aterm.*;
-    import aterm.pure.*;    
-
-    import antlr.*;
+  import aterm.*;
+  import aterm.pure.*;    
+  
+  import antlr.*;
 }
 
 
@@ -67,260 +67,260 @@ options{
     Stack lines = new Stack();
     Stack columns = new Stack();
   */
-    public HostParser(TokenStreamSelector selector,String currentFile,
-                      HashSet includedFiles,HashSet alreadyParsedFiles, 
-                      OptionManager optionManager){
-      this(selector);
-      this.selector = selector;
-      this.currentFile = currentFile;
-      this.targetlexer = (HostLexer) selector.getStream("targetlexer");
-      targetlexer.setParser(this);
-      this.includedFileSet = new HashSet(includedFiles);
-      testIncludedFile(currentFile, includedFileSet);
+  public HostParser(TokenStreamSelector selector,String currentFile,
+                    HashSet includedFiles,HashSet alreadyParsedFiles, 
+                    OptionManager optionManager){
+    this(selector);
+    this.selector = selector;
+    this.currentFile = currentFile;
+    this.targetlexer = (HostLexer) selector.getStream("targetlexer");
+    targetlexer.setParser(this);
+    this.includedFileSet = new HashSet(includedFiles);
+    testIncludedFile(currentFile, includedFileSet);
       
-      this.alreadyParsedFileSet = alreadyParsedFiles;
+    this.alreadyParsedFileSet = alreadyParsedFiles;
       
-      logger = Logger.getLogger(getClass().getName());
+    logger = Logger.getLogger(getClass().getName());
       
-      // then create the Tom mode parser
-      tomparser = new TomParser(getInputState(),this, optionManager);
-      bqparser = tomparser.bqparser;
-      this.optionManager = optionManager;
-    } 
+    // then create the Tom mode parser
+    tomparser = new TomParser(getInputState(),this, optionManager);
+    bqparser = tomparser.bqparser;
+    this.optionManager = optionManager;
+  } 
 
-    private OptionManager getOptionManager() {
-      return optionManager;
-    }
+  private OptionManager getOptionManager() {
+    return optionManager;
+  }
     
-    public TokenStreamSelector getSelector(){
-      return selector;
-    }
+  public TokenStreamSelector getSelector(){
+    return selector;
+  }
     
-    public String getCurrentFile(){
-      return currentFile;
-    }
+  public String getCurrentFile(){
+    return currentFile;
+  }
     
-    private final TomSignatureFactory getTomSignatureFactory(){
-        return TomBase.getTomSignatureFactory();
-    }
+  private final TomSignatureFactory getTomSignatureFactory(){
+    return TomBase.getTomSignatureFactory();
+  }
     
-    private TomSignatureFactory tsf(){
-        return TomBase.getTomSignatureFactory();
-    }
+  private TomSignatureFactory tsf(){
+    return TomBase.getTomSignatureFactory();
+  }
     
-    private TomEnvironment environment() {
-        return TomEnvironment.getInstance();
-    }
+  private TomEnvironment environment() {
+    return TomEnvironment.getInstance();
+  }
     
-    private jtom.tools.ASTFactory ast() {
-        return TomBase.getAstFactory();
-    }
+  private jtom.tools.ASTFactory ast() {
+    return TomBase.getAstFactory();
+  }
     
-    private SymbolTable symbolTable() {
-        return environment().getSymbolTable();
-    }
+  private SymbolTable symbolTable() {
+    return environment().getSymbolTable();
+  }
 
-    public TomStructureTable getStructTable() {
-        return tomparser.getStructTable();
-    }
-/*
-    // pop the line number of the current block
-    public int popLine(){
-        return ((Integer) lines.pop()).intValue();
+  public TomStructureTable getStructTable() {
+    return tomparser.getStructTable();
+  }
+  /*
+  // pop the line number of the current block
+  public int popLine(){
+  return ((Integer) lines.pop()).intValue();
         
-    }
+  }
 
-    // pop the column number of the current block
-    public int popColumn(){
-        return ((Integer) columns.pop()).intValue();
-    }
+  // pop the column number of the current block
+  public int popColumn(){
+  return ((Integer) columns.pop()).intValue();
+  }
     
-    public void pushLine(){ 
-        lines.push(new Integer(getLine()));
-        p("--push "+lines);
-    }
+  public void pushLine(){ 
+  lines.push(new Integer(getLine()));
+  p("--push "+lines);
+  }
     
-    public void pushColumn(){
-        columns.push(new Integer(getColumn()));
-    }
+  public void pushColumn(){
+  columns.push(new Integer(getColumn()));
+  }
     
-    // push the line number of the next block
-    public void pushLine(int line){
-        lines.push(new Integer(line));
-        p("--push "+lines);
-    }
+  // push the line number of the next block
+  public void pushLine(int line){
+  lines.push(new Integer(line));
+  p("--push "+lines);
+  }
 
-    // push the column number of the next block
-    public void pushColumn(int column){
-        columns.push(new Integer(column));
-    }*/
-/*
+  // push the column number of the next block
+  public void pushColumn(int column){
+  columns.push(new Integer(column));
+  }*/
+  /*
     public void setCurrentLine(int i){
-        currentLine = i;
+    currentLine = i;
     }
 
     public void setCurrentColumn(int i){
-        currentColumn = i;
+    currentColumn = i;
     }
-*/
-    public void updatePosition(){
-        updatePosition(getLine(),getColumn());
-    }
+  */
+  public void updatePosition(){
+    updatePosition(getLine(),getColumn());
+  }
     
-    public void updatePosition(int i, int j){
-        currentLine = i;
-        currentColumn = j;
-    }
+  public void updatePosition(int i, int j){
+    currentLine = i;
+    currentColumn = j;
+  }
     
-    public int currentLine(){
-        return currentLine;
-    }
+  public int currentLine(){
+    return currentLine;
+  }
 
-    public int currentColumn(){
-        return currentColumn;
-    }
+  public int currentColumn(){
+    return currentColumn;
+  }
 
-    // remove braces of a code block
-    private String cleanCode(String code){
-        return code.substring(code.indexOf('{')+1,code.lastIndexOf('}'));
-    }
+  // remove braces of a code block
+  private String cleanCode(String code){
+    return code.substring(code.indexOf('{')+1,code.lastIndexOf('}'));
+  }
     
-    // remove the last right-brace of a code block
-    private String removeLastBrace(String code){
-        return code.substring(0,code.lastIndexOf("}"));
-    }
+  // remove the last right-brace of a code block
+  private String removeLastBrace(String code){
+    return code.substring(0,code.lastIndexOf("}"));
+  }
 
-    // returns the current goal language code
-    private String getCode(){
-        String result = targetlexer.target.toString();
-        targetlexer.clearTarget();
-        return result;
-    }
+  // returns the current goal language code
+  private String getCode(){
+    String result = targetlexer.target.toString();
+    targetlexer.clearTarget();
+    return result;
+  }
 
-    // add a token in the target code buffer
-    public void addTargetCode(Token t){
-        targetlexer.target.append(t.getText());
-    }
+  // add a token in the target code buffer
+  public void addTargetCode(Token t){
+    targetlexer.target.append(t.getText());
+  }
 
-    private String pureCode(String code){
-        return code.replace('\t',' ');
-    }
+  private String pureCode(String code){
+    return code.replace('\t',' ');
+  }
 
-    private boolean isCorrect(String code){
-        return (! code.equals("") && ! code.matches("\\s*"));
-    }
+  private boolean isCorrect(String code){
+    return (! code.equals("") && ! code.matches("\\s*"));
+  }
 
-    // returns the current line number
-    public int getLine(){
-        return targetlexer.getLine();
-    }
+  // returns the current line number
+  public int getLine(){
+    return targetlexer.getLine();
+  }
     
-    // returns the current column number
-    public int getColumn(){
-        return targetlexer.getColumn();
-    }
+  // returns the current column number
+  public int getColumn(){
+    return targetlexer.getColumn();
+  }
 
-    private void includeFile(String fileName, LinkedList list) 
+  private void includeFile(String fileName, LinkedList list) 
     throws TomException, TomIncludeException {
-        TomTerm astTom;
-        InputStream input;
-        byte inputBuffer[];
-        //  TomParser tomParser;
-        HostParser parser = null;
-        File file;
-        String fileAbsoluteName = "";
-        fileName = fileName.trim();
-        fileName = fileName.replace('/',File.separatorChar);
-        fileName = fileName.replace('\\',File.separatorChar);
+    TomTerm astTom;
+    InputStream input;
+    byte inputBuffer[];
+    //  TomParser tomParser;
+    HostParser parser = null;
+    File file;
+    String fileAbsoluteName = "";
+    fileName = fileName.trim();
+    fileName = fileName.replace('/',File.separatorChar);
+    fileName = fileName.replace('\\',File.separatorChar);
 		if(fileName.equals("")) {
 			String msg = MessageFormat.format(TomMessage.getString("EmptyIncludedFile"), new Object[]{new Integer(getLine()), currentFile});
-            throw new TomIncludeException(msg);
+      throw new TomIncludeException(msg);
 		}
-        try {
-            file = new File(fileName);
-            if(file.isAbsolute()) {
-                if (!file.exists()) {
-                    String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine())});
-                    throw new TomIncludeException(msg);
-                }
-            } else {
-                boolean found = false;
-                // try first relative to inputfilename
-                File parent = new File(currentFile).getParentFile();
-                file = new File(parent, fileName).getCanonicalFile();
-                found = file.exists();
-                if(!found) {
-                    // Look for importList
+    try {
+      file = new File(fileName);
+      if(file.isAbsolute()) {
+        if (!file.exists()) {
+          String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine())});
+          throw new TomIncludeException(msg);
+        }
+      } else {
+        boolean found = false;
+        // try first relative to inputfilename
+        File parent = new File(currentFile).getParentFile();
+        file = new File(parent, fileName).getCanonicalFile();
+        found = file.exists();
+        if(!found) {
+          // Look for importList
                     
-                    for(int i=0 ; !found && i<environment().getImportList().size() ; i++) {
-                        file = new File((File)environment().getImportList().get(i),fileName).getCanonicalFile();
+          for(int i=0 ; !found && i<environment().getImportList().size() ; i++) {
+            file = new File((File)environment().getImportList().get(i),fileName).getCanonicalFile();
 
-                        found = file.exists();
-                    }
-                    if(!found) {
-                        String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
-                        throw new TomIncludeException(msg);
-                    }
-                }
-            }
-            fileAbsoluteName = file.getAbsolutePath();
-            if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
-                String msg = MessageFormat.format(
-                    TomMessage.getString("IncludedFileCycle"), 
-                    new Object[]{fileName, new Integer(getLine()), currentFile}
-                );
-                throw new TomIncludeException(msg);
-            }
+            found = file.exists();
+          }
+          if(!found) {
+            String msg = MessageFormat.format(TomMessage.getString("IncludedFileNotFound"), new Object[]{fileName, new Integer(getLine()), currentFile});
+            throw new TomIncludeException(msg);
+          }
+        }
+      }
+      fileAbsoluteName = file.getAbsolutePath();
+      if(testIncludedFile(fileAbsoluteName, includedFileSet)) {
+        String msg = MessageFormat.format(
+                                          TomMessage.getString("IncludedFileCycle"), 
+                                          new Object[]{fileName, new Integer(getLine()), currentFile}
+                                          );
+        throw new TomIncludeException(msg);
+      }
             
 			// if trying to include a file twice, but not in a cycle : discard
-            if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
-                if(!environment().isSilentDiscardImport(fileName)) {                    
-                    logger.log( 
-                        Level.WARNING,
-                        "IncludedFileAlreadyParsed", 
-                        new Object[]{
-                            currentFile, 
-                            new Integer(getLine()), 
-                            fileName
-                        } 
-                    );
-                }
-                return;
-                // 		    		String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
-                //         throw new TomIncludeException(msg);
-            }
-            
-            parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet, getOptionManager());
-            astTom = parser.input();
-            astTom = `TomInclude(astTom.getTomList());
-            list.add(astTom);
-        } catch (Exception e) {
-            if(e instanceof TomIncludeException) {
-                throw (TomIncludeException)e;
-            }
-            String msg = MessageFormat.format(
-                TomMessage.getString("ErrorWhileIncludindFile"), 
-                new Object[]{
-                    e.getClass(), 
-                    fileAbsoluteName, 
-                    currentFile, 
-                    new Integer(getLine()), 
-                    e.getMessage()
-                }
-            );
-
-            throw new TomException(msg);
+      if(testIncludedFile(fileAbsoluteName, alreadyParsedFileSet)) {    
+        if(!environment().isSilentDiscardImport(fileName)) {                    
+          logger.log( 
+                     Level.WARNING,
+                     "IncludedFileAlreadyParsed", 
+                     new Object[]{
+                       currentFile, 
+                       new Integer(getLine()), 
+                       fileName
+                     } 
+                     );
         }
-    }
+        return;
+        // 		    		String msg = MessageFormat.format(TomMessage.getString("IncludedFileAlreadyParsed"), new Object[]{fileName, new Integer(getLine()), currentFile});
+        //         throw new TomIncludeException(msg);
+      }
+            
+      parser = TomParserPlugin.newParser(fileAbsoluteName,includedFileSet,alreadyParsedFileSet, getOptionManager());
+      astTom = parser.input();
+      astTom = `TomInclude(astTom.getTomList());
+      list.add(astTom);
+    } catch (Exception e) {
+      if(e instanceof TomIncludeException) {
+        throw (TomIncludeException)e;
+      }
+      String msg = MessageFormat.format(
+                                        TomMessage.getString("ErrorWhileIncludindFile"), 
+                                        new Object[]{
+                                          e.getClass(), 
+                                          fileAbsoluteName, 
+                                          currentFile, 
+                                          new Integer(getLine()), 
+                                          e.getMessage()
+                                        }
+                                        );
 
-    private boolean testIncludedFile(String fileName, HashSet fileSet) {
-        // !(true) if the set did not already contain the specified element.
-        return !fileSet.add(fileName);
+      throw new TomException(msg);
     }
+  }
+
+  private boolean testIncludedFile(String fileName, HashSet fileSet) {
+    // !(true) if the set did not already contain the specified element.
+    return !fileSet.add(fileName);
+  }
     
-    void p(String s){
-        System.out.println(s);
-    }
+  void p(String s){
+    System.out.println(s);
+  }
 } 
 
 
@@ -434,134 +434,131 @@ matchConstruct [LinkedList list] throws TomException
 
 signature [LinkedList list] throws TomException
 {
-    int initialVasLine;
-    TargetLanguage vasTL = null, code = null;
-    LinkedList blockList = new LinkedList();
-    String vasCode = null, fileName = "", apiName = null, packageName = "";
-    File file = null;
+  int initialVasLine;
+  TargetLanguage vasTL = null, code = null;
+  LinkedList blockList = new LinkedList();
+  String vasCode = null, fileName = "", apiName = null, packageName = "";
+  File file = null;
 }
-    :
-        t:VAS 
-        {   
-            initialVasLine = t.getLine();
-
-            String textCode = getCode();
-/*            int i = popLine();
-            int j = popColumn();
-  */          if(isCorrect(textCode)) {
-                code = `TL(
-                    textCode,
-                    TextPosition(currentLine,currentColumn),
-                    TextPosition(t.getLine(),t.getColumn())
-                );
-                list.add(code);
-            } 
-        }
-        vasTL = goalLanguage[blockList]
-        {
-            vasCode = vasTL.getCode().trim();
-			String destDir = environment().getDestDir().getPath();
-
-            // Generated Tom, ADT and API from VAS Code
-            Object generatedADTName = null;
-
-            try{
-                Class vasClass = Class.forName("vas.Vas");
-				
-				Method execMethod = vasClass.getMethod(
-					"externalExec",
-					new Class[]{(new String[]{}).getClass(), 
-                        Class.forName("java.io.InputStream"),
-                        Class.forName( "java.lang.String")
-					}
-                );
-                
-                ArrayList vasParams = new ArrayList();
-				vasParams.add("--destdir");
-				vasParams.add(destDir);
-				
-				packageName = environment().getPackagePath().replace(File.separatorChar, '.');
-                String inputFileNameWithoutExtension = environment().getRawFileName().toLowerCase();
-
-                String subPackageName = "";
-                if(packageName.equals("")) {
-                    subPackageName = inputFileNameWithoutExtension;
-                } else {
-                    subPackageName = packageName + "." + inputFileNameWithoutExtension;
-                }
-                vasParams.add("--package");
-                vasParams.add(subPackageName);
-
-                Object[] realParams = {
-                    (String[]) vasParams.toArray(new String[vasParams.size()]),
-                    new ByteArrayInputStream(vasCode.getBytes()),
-                    currentFile
-                };
-				generatedADTName = execMethod.invoke(vasClass, realParams);
-            }
-            
-            catch (ClassNotFoundException e) {
-                throw new TomException(TomMessage.getString("VasClassNotFound"));
-            } catch (InvocationTargetException e) {
-				System.out.println("vas problem " +e);
-				System.out.println("vas problen cause " +e.getCause());
-				System.out.println("vas problen target exception " +e.getTargetException());
-                throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
-            } catch (Exception e) {
-                throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
-            }
-
-            // Check for errors
-            try{
-                Class vasEnvironmentClass = Class.forName("vas.VasEnvironment");
-				Method getErrorMethod = vasEnvironmentClass.getMethod("getErrors", new Class[]{});
-				Method getInstanceMethod = vasEnvironmentClass.getMethod("getInstance", new Class[]{});
-                
-				Object vasEnvInstance = getInstanceMethod.invoke(vasEnvironmentClass, new Object[]{});
-				TomAlertList alerts = (TomAlertList)(getErrorMethod.invoke(vasEnvInstance, new Object[]{}));
-				TomAlert alert;
-                
-                if(!alerts.isEmpty()) {
-					while(!alerts.isEmpty()) {
-						alert = alerts.getHead();
-                        if(alert.isError()) {
-                            logger.log(Level.SEVERE,
-                                "SimpleMessage",
-                                new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-                        } 
-                        else {
-                            logger.log(Level.WARNING,
-                                "SimpleMessage",
-                                new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-                        }
-						alerts = alerts.getTail();
-					}
-					throw new TomException("See next messages for details...");
-				}
-			} catch (ClassNotFoundException e) {
-                throw new TomException(TomMessage.getString("VasClassNotFound"));
-            } catch (Exception e) {
-                throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
-            }
-
-            // Simulate the inclusion of generated Tom file
-            String adtFileName = new File((String)generatedADTName).toString();
-            file = new File(adtFileName.substring(0,adtFileName.length()-".adt".length())+".tom");
-
-            try {
-                fileName = file.getCanonicalPath();
-            } catch (IOException e) {
-                throw new TomIncludeException(MessageFormat.format(TomMessage.getString("IOExceptionWithGeneratedTomFile"), new Object[]{fileName, currentFile, e.getMessage()}));
-            } 
-            includeFile(fileName, list);
-
-            // the vas construct is over : a new target block begins
-            //pushLine();
-            //pushColumn();
-            updatePosition();
-        }
+:
+  t:VAS 
+  {   
+    initialVasLine = t.getLine();
+  
+    String textCode = getCode();
+    /*            int i = popLine();
+                  int j = popColumn();
+    */
+    if(isCorrect(textCode)) {
+      code = `TL(textCode,
+                 TextPosition(currentLine,currentColumn),
+                 TextPosition(t.getLine(),t.getColumn()));
+      list.add(code);
+    } 
+  }
+  vasTL = goalLanguage[blockList]
+  {
+    vasCode = vasTL.getCode().trim();
+    String destDir = environment().getDestDir().getPath();
+    // Generated Tom, ADT and API from VAS Code
+    Object generatedADTName = null;
     
-    ;
+    try{
+      Class vasClass = Class.forName("vas.Vas");
+      
+      Method execMethod = vasClass.getMethod("externalExec",
+                                             new Class[]{(new String[]{}).getClass(), 
+                                                         Class.forName("java.io.InputStream"),
+                                                         Class.forName( "java.lang.String")
+                                             }
+                                             );
+      
+      ArrayList vasParams = new ArrayList();
+      vasParams.add("--visitable");
+      vasParams.add("--destdir");
+      vasParams.add(destDir);
+      
+      packageName = environment().getPackagePath().replace(File.separatorChar, '.');
+      String inputFileNameWithoutExtension = environment().getRawFileName().toLowerCase();
+      
+      String subPackageName = "";
+      if(packageName.equals("")) {
+        subPackageName = inputFileNameWithoutExtension;
+      } else {
+        subPackageName = packageName + "." + inputFileNameWithoutExtension;
+      }
+      vasParams.add("--package");
+      vasParams.add(subPackageName);
+      
+      Object[] realParams = {
+        (String[]) vasParams.toArray(new String[vasParams.size()]),
+        new ByteArrayInputStream(vasCode.getBytes()),
+        currentFile
+      };
+      generatedADTName = execMethod.invoke(vasClass, realParams);
+    }
+    
+    catch (ClassNotFoundException e) {
+      throw new TomException(TomMessage.getString("VasClassNotFound"));
+    } catch (InvocationTargetException e) {
+      System.out.println("vas problem " +e);
+      System.out.println("vas problen cause " +e.getCause());
+      System.out.println("vas problen target exception " +e.getTargetException());
+      throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
+    } catch (Exception e) {
+      throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
+    }
+    
+    // Check for errors
+    try{
+      Class vasEnvironmentClass = Class.forName("vas.VasEnvironment");
+      Method getErrorMethod = vasEnvironmentClass.getMethod("getErrors", new Class[]{});
+      Method getInstanceMethod = vasEnvironmentClass.getMethod("getInstance", new Class[]{});
+      
+      Object vasEnvInstance = getInstanceMethod.invoke(vasEnvironmentClass, new Object[]{});
+      TomAlertList alerts = (TomAlertList)(getErrorMethod.invoke(vasEnvInstance, new Object[]{}));
+      TomAlert alert;
+      
+      if(!alerts.isEmpty()) {
+        while(!alerts.isEmpty()) {
+          alert = alerts.getHead();
+          if(alert.isError()) {
+            logger.log(Level.SEVERE, "SimpleMessage",
+                       new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
+          } 
+          else {
+            logger.log(Level.WARNING, "SimpleMessage",
+                       new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
+          }
+          alerts = alerts.getTail();
+        }
+        throw new TomException("See next messages for details...");
+      }
+    } catch (ClassNotFoundException e) {
+      throw new TomException(TomMessage.getString("VasClassNotFound"));
+    } catch (Exception e) {
+      throw new TomException(MessageFormat.format(TomMessage.getString("VasInvocationIssue"), new Object[]{e.getMessage()}));
+    }
+    
+    // Simulate the inclusion of generated Tom file
+    String adtFileName = new File((String)generatedADTName).toString();
+    file = new File(adtFileName.substring(0,adtFileName.length()-".adt".length())+".tom");
+    
+    try {
+      fileName = file.getCanonicalPath();
+    } catch (IOException e) {
+      throw new TomIncludeException(MessageFormat.format(TomMessage.getString("IOExceptionWithGeneratedTomFile"),
+                                                         new Object[]{fileName, currentFile, e.getMessage()}));
+    } 
+    includeFile(fileName, list);
+    
+    // the vas construct is over : a new target block begins
+    //pushLine();
+    //pushColumn();
+    updatePosition();
+  }
+
+;
 
 backquoteTerm [LinkedList list]
 {
