@@ -1,3 +1,37 @@
+2003-04-15    <pem@bach>
+
+	* src/jtom/tools/Flags.java: 
+	  - replaced --noWarning by --Wall
+	  - removed -W
+	  - replaced Flags.noWarning by Flags.warning
+
+	* TomExpander split into TomExpander + TomKernelExpander
+	* TomExpander transforms: 
+	  - BackQuoteTerm   
+	  - RecordAppl
+	  - RewriteRule
+	  - MatchingCondition
+	  - Equality Condition
+	* TomKernelExpander transforms:
+	  - TomType
+	  - Appl
+	  - PlaceHolder
+	  - Variable
+	  - Match
+	
+	* TomCompiler split into TomCompiler + TomKernelCompiler
+        * pass2_1 renamed into preProcessing
+        * pass3 renamed into postProcessing
+        * TomCompiler transforms:
+	  - RewriteRule
+	  - MatchingCondition
+	  - Equality Condition
+	  - Abstraction of list matching
+	  - Linearization
+	* TomKernelCompiler deals with:
+	  - MakeTerm
+	  - Match
+	
 2003-03-30  Jurgen Vinju   <jurgenv@cwi.nl>
 	* Used backquotes to delay calling aterm-java-config script to after
    	  configure phase. Otherwise autobundle can't configure all packages
@@ -40,6 +74,9 @@
 
 2003-03-16    <pem@bach>
 
+	* src/jtom/compiler/TomExpander.t: 
+          - support for integer in backQuotedTerm
+	
 	* src/jtom/parser/TomParser.jj: 
 	  - disjunction of patterns are now allowed
 	    the corresponding semantic action is dupplicated

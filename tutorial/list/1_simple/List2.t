@@ -31,9 +31,6 @@ public class List2 {
   
   private ArrayList myEmpty(int n) {
     ArrayList res = new ArrayList(n);
-      //for(int i=0; i<n; i++) {
-      //res.add(null);
-      //}
     return res;
   }
   
@@ -66,16 +63,15 @@ public class List2 {
         String xname = x.getName();
         String yname = y.getName();
         if(xname.compareTo(yname) > 0) {
-            
-          ArrayList result = X1;
-          result.add(y);
-          result.addAll(X2);
-          result.add(x);
-          result.addAll(X3);
-          return swapSort( result );
-            
-            //return `swapSort(conc(X1*,y,X2*,x,X3*));
-          
+            /*
+              ArrayList result = X1;
+              result.add(y);
+              result.addAll(X2);
+              result.add(x);
+              result.addAll(X3);
+              return swapSort( result );
+            */
+          return `swapSort(conc(X1*,y,X2*,x,X3*));
         }
       }
 

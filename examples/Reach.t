@@ -42,10 +42,10 @@ public class Reach {
     ff = factory.makeAFun("f", 1, false);
   }
 
-  public void run() {
+  public void run(int size) {
     ATerm subject = `f(a);
 
-    ATerm number = int2peano(15);
+    ATerm number = int2peano(size);
     ATerm search = `f(number);
 
     System.out.println("subject = " + subject);
@@ -110,8 +110,16 @@ public class Reach {
   }
   
   public final static void main(String[] args) {
-    Reach test = new Reach(new PureFactory(16));
-    test.run();
+    Reach test = new Reach(new PureFactory());
+    int size;
+    try {
+      size = Integer.parseInt(args[0]);
+    } catch (Exception e) {
+      System.out.println("Usage: java Reach <size>");
+      return;
+    }
+    
+    test.run(size);
   }
 
   public ATerm int2peano(int n) {

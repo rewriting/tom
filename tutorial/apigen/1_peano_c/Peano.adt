@@ -1,1 +1,4 @@
-[ [ Nat , cons-zero , cons-zero ] , [ Nat , cons-suc , cons-suc ( < pred ( Nat ) > ) ] ]
+[ 
+  [ Nat , cons-zero , cons-zero ] , 
+  [ Nat , cons-suc , cons-suc(<pred(Nat)>) ] 
+]

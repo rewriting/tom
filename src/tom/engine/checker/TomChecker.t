@@ -287,7 +287,8 @@ public class TomChecker extends TomBase {
     // MATCH VERIFICATION CONCERNS //
     /////////////////////////////////
   
-    // Given a subject list, we test types in match signature and then number and type of slots found in each pattern
+    // Given a subject list, we test types in match signature
+    // and then number and type of slots found in each pattern
   private void verifyMatch(TomList subjectList, TomList patternList) {
     ArrayList typeMatchArgs = new ArrayList();
     while( !subjectList.isEmpty() ) {
@@ -310,7 +311,8 @@ public class TomChecker extends TomBase {
       patternList = patternList.getTail();
     }
   }
-    // For each Pattern we count and collect type information but also we test that terms are well formed
+    // For each Pattern we count and collect type information
+    // but also we test that terms are well formed
     // No top variable star are allowed
   private void verifyMatchPattern(TomTerm pattern, ArrayList typeMatchArgs) {
     int nbExpectedArgs = typeMatchArgs.size();
@@ -348,12 +350,13 @@ public class TomChecker extends TomBase {
       }
       termList = termList.getTail();
     }
-      //  nb elements in %match subject = nb elements in the pattern-action ?
+      // nb elements in %match subject = nb elements in the pattern-action ?
     if(nbExpectedArgs != nbFoundArgs) {
       messageMatchErrorNumberArgument(nbExpectedArgs, nbFoundArgs, line);
       return;
     }
-      // we test the type egality between arguments and pattern-action, if it is not a variable  => type is null
+      // we test the type egality between arguments and pattern-action,
+      // if it is not a variable  => type is null
     for( int slot = 0; slot < nbExpectedArgs; slot++ ) {
       if ( (foundTypeMatch.get(slot) !=  typeMatchArgs.get(slot)) && (foundTypeMatch.get(slot) != null))
       { 	
@@ -369,7 +372,7 @@ public class TomChecker extends TomBase {
   }
   
   private void messageMatchErrorTypeArgument(int slotNumber, String expectedType, String givenType, Integer line) {
-    if(Flags.noWarning) return;
+    if(!Flags.warning) return;
     Integer declLine = currentTomStructureOrgTrack.getLine();
     String s =  "Bad type for slot "+ slotNumber +" :Type '"+expectedType+"' required but Type '"+givenType+"' found in %match declared line "+declLine;
     messageError(line, s);
@@ -709,7 +712,8 @@ public class TomChecker extends TomBase {
     }
   }
   
-    // We test the existence of slotName contained in pairSlotAppl. and then the associated term
+    // We test the existence of slotName contained in pairSlotAppl
+    // and then the associated term
   private void verifyRecordSlots(TomList listPair, SlotList slotList, String methodName) {
     ArrayList slotIndex = new ArrayList();
     while( !listPair.isEmpty() ) {
@@ -899,7 +903,7 @@ public class TomChecker extends TomBase {
   }
   
   private void messageWarningSymbol(String name, OptionList optionList) {
-    if(Flags.noWarning) return;
+    if(!Flags.warning) return;
     String nameDecl = currentTomStructureOrgTrack.getAstName().getString();
     Integer declLine = currentTomStructureOrgTrack.getLine();
     Integer line = findOriginTrackingLine(name, optionList);
@@ -1117,4 +1121,4 @@ public class TomChecker extends TomBase {
     System.exit(1);return null;
   }
   
-} //class verify
+} //class TomChecker

@@ -19,8 +19,10 @@ public class Poly3 {
     // Simplified version of differentiate
   public ATermAppl differentiate(ATermAppl poly, ATermAppl variable) {
     %match(term poly, term variable) {
-      X(), X() | Y(), Y()          -> { return `one(); }
-      plus(a1,a2), var  -> { return `plus(differentiate(a1, var),differentiate(a2, var)); }
+      X(), X() |
+      Y(), Y()          -> { return `one(); }
+      plus(a1,a2), var  -> { return `plus(differentiate(a1, var),
+                                          differentiate(a2, var)); }
       mult(a1,a2), var  -> { 
         ATermAppl res1, res2;
         res1 =`mult(a1, differentiate(a2, var));
