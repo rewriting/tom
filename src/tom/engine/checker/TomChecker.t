@@ -647,10 +647,6 @@ public class TomChecker extends TomBase {
     }
   }
 
-  private void messageErrorVariableStar(String nameVariableStar, String nameMethod ,Integer line) {
-    String s = "List variable '" + nameVariableStar + "' cannot be used in '" + nameMethod + "'";
-    messageError(line,s);
-  }
   private void checkField(String field, ArrayList findFunctions, Option orgTrack, String declType) {
     if(findFunctions.contains(field)) {
       findFunctions.remove(findFunctions.indexOf(field)); 

@@ -71,7 +71,7 @@ public class SharedSet extends ATermSet {
         } // Apply
       }; //new
     
-    SharedSet.traversal.genericCollect(tree, collect);
+    ATermSet.traversal.genericCollect(tree, collect);
     ATerm[] result = new ATerm[res.size()];
     for(int i=0;i<res.size();i++) {
       result[i] = (ATerm) (((ArrayList)res).get(i));

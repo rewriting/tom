@@ -48,13 +48,7 @@ public class TomOptimizer extends TomBase {
 
   // ------------------------------------------------------------
     
-  private final boolean debug = true;
-
-  private void optimDebug(String s) {
-    if (debug)
-      System.out.println(s);
-  }
-
+ 
   private void exitWithMesg(String mesg) {
     System.out.println(mesg);
     System.exit(1);
@@ -377,7 +371,6 @@ public class TomOptimizer extends TomBase {
 	      }
 	      // the 'FalseTL, FalseTL' can't exists
 	      _ -> {
-		optimDebug("in rest of match: "+t.toString());
 		exitWithMesg("We should find only AssignedVariable");
 		return null;
 	      }

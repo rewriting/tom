@@ -699,7 +699,7 @@ public class TomDemo extends JFrame{
     buttonPanel.add(createExitButton());
 
       /* Progress bar */
-    progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100) {
+    progressBar = new JProgressBar(SwingConstants.HORIZONTAL, 0, 100) {
         public Dimension getPreferredSize() {
           return new Dimension(300, super.getPreferredSize().height);
         }

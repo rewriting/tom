@@ -30,13 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import jtom.adt.TomEntry;
-import jtom.adt.TomEntryList;
-import jtom.adt.TomSignatureFactory;
-import jtom.adt.TomSymbol;
-import jtom.adt.TomSymbolTable;
-import jtom.adt.TomTerm;
-import jtom.adt.TomType;
+import jtom.adt.*;
 
 public class SymbolTable {
   private Map mapSymbolName = new HashMap();
@@ -79,13 +73,6 @@ public class SymbolTable {
 
   protected TomSignatureFactory tsf() {
     return ast().tsf();
-  }
-
-  private void put(Map map, String name, TomTerm term) {
-    TomTerm result = (TomTerm) map.put(name,term);
-    if(result != null && result == term) {
-      System.out.println("Warning: multiple definition of '" + name + "'");
-    }
   }
 
   public void putSymbol(String name, TomSymbol astSymbol) {
