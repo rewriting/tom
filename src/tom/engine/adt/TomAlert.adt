@@ -1,0 +1,8 @@
+[
+  modulentry(Name("TomAlert"),[],[Type("TomAlert")],
+  [
+    constructor(TomAlert,Error,Error(<message(str)>,<file(str)>,<line(int)>)),
+    constructor(TomAlert,Warning,Warning(<message(str)>,<file(str)>,<line(int)>)),
+    list(TomAlertList, TomAlert)
+  ])
+]

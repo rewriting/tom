@@ -274,11 +274,23 @@
          destdir="${src.gen}"/>
     <adt file="${src.adt}/Options.adt" 
          package="jtom.adt" 
-         destdir="${src.gen}"/>-->
+         destdir="${src.gen}"/>
+		-->
 		<adt srcdir="${src.src}"
          package="jtom.adt" 
-         destdir="${src.gen}">
-			<include name="jtom/adt/*.adt"/>
+				 destdir="${src.gen}">
+			<include name="jtom/adt/TNode.adt"/>
+			<include name="jtom/adt/Set.adt"/>
+			<include name="jtom/adt/Options.adt"/>
+		</adt>
+
+		<adt srcdir="${src.src}"
+         package="jtom.adt" 
+         factory="tomsignature" 
+				 destdir="${src.gen}">
+			<include name="jtom/adt/TomSignature.adt"/>
+			<include name="jtom/adt/TomAlert.adt"/>
+			<include name="jtom/adt/TomName.adt"/>
 		</adt>
     <copy todir="${src.mapping}">
       <fileset dir="${src.gen}/jtom/adt" includes="*.tom">

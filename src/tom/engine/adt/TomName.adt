@@ -1,0 +1,20 @@
+[
+  modulentry(Name("TomName"),[],[Type("TomName"), Type("TomNumber")],
+  [
+    constructor(TomName,Name,Name(<string(str)>)),
+    constructor(TomName,PositionName,PositionName(<numberList(TomNumberList)>)),
+    constructor(TomName,EmptyName,EmptyName),
+
+    constructor(TomNumber,MatchNumber,MatchNumber(<number(TomNumber)>)),
+    constructor(TomNumber,PatternNumber,PatternNumber(<number(TomNumber)>)),
+    constructor(TomNumber,ListNumber,ListNumber(<number(TomNumber)>)),
+    constructor(TomNumber,IndexNumber,IndexNumber(<number(TomNumber)>)),
+    constructor(TomNumber,Begin,Begin(<number(TomNumber)>)),
+    constructor(TomNumber,End,End(<number(TomNumber)>)),
+    constructor(TomNumber,Number,Number(<integer(int)>)),
+    constructor(TomNumber,AbsVar,AbsVar(<number(TomNumber)>)),
+    constructor(TomNumber,RenamedVar,RenamedVar(<astName(TomName)>)),
+    constructor(TomNumber,RuleVar,RuleVar),
+    list(TomNumberList,TomNumber)
+  ])
+]

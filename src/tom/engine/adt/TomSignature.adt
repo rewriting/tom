@@ -1,5 +1,8 @@
 [
-  modulentry(Name("TomSignature"),[],[],
+  modulentry(
+	Name("TomSignature"),
+  [Name("TomAlert"), Name("TomName")],
+  [],
   [
   constructor(Declaration,TypeTermDecl,TypeTermDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),
   constructor(Declaration,TypeListDecl,TypeListDecl(<astName(TomName)>,<keywordList(TomList)>,<orgTrack(Option)>)),
@@ -72,10 +75,7 @@
   constructor(TomType,TLType,TLType(<tl(TargetLanguage)>)),
   constructor(TomType,EmptyType,EmptyType),
   
-  constructor(TomName,Name,Name(<string(str)>)),
-  constructor(TomName,PositionName,PositionName(<numberList(TomNumberList)>)),
-  constructor(TomName,EmptyName,EmptyName),
-  
+ 
   constructor(TomTerm,Appl,Appl(<option(OptionList)>,<nameList(NameList)>,<args(TomList)>,<constraints(ConstraintList)>)),
   constructor(TomTerm,XMLAppl,XMLAppl(<option(OptionList)>,<nameList(NameList)>,<attrList(TomList)>,<childList(TomList)>,<constraints(ConstraintList)>)),
   constructor(TomTerm,VariableStar,VariableStar(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>,<constraints(ConstraintList)>)),
@@ -124,17 +124,7 @@
   
   constructor(TomTerm,FileName,FileName(<name(str)>)),
   
-  constructor(TomNumber,MatchNumber,MatchNumber(<number(TomNumber)>)),
-  constructor(TomNumber,PatternNumber,PatternNumber(<number(TomNumber)>)),
-  constructor(TomNumber,ListNumber,ListNumber(<number(TomNumber)>)),
-  constructor(TomNumber,IndexNumber,IndexNumber(<number(TomNumber)>)),
-  constructor(TomNumber,Begin,Begin(<number(TomNumber)>)),
-  constructor(TomNumber,End,End(<number(TomNumber)>)),
-  constructor(TomNumber,Number,Number(<integer(int)>)),
-  constructor(TomNumber,AbsVar,AbsVar(<number(TomNumber)>)),
-  constructor(TomNumber,RenamedVar,RenamedVar(<astName(TomName)>)),
-  constructor(TomNumber,RuleVar,RuleVar),
-  
+ 
   constructor(TomRule,RewriteRule,RewriteRule(<lhs(TomTerm)>,<rhs(TomTerm)>,<condList(InstructionList)>,<option(OptionList)>)),
   
   constructor(Instruction,TomTermToInstruction,TomTermToInstruction(<tom(TomTerm)>)),
@@ -173,21 +163,16 @@
   constructor(TomEntry,Entry,Entry(<strName(str)>,<astSymbol(TomSymbol)>)),
   constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>)),
   
-  constructor(TomAlert,Error,Error(<message(str)>,<file(str)>,<line(int)>)),
-  constructor(TomAlert,Warning,Warning(<message(str)>,<file(str)>,<line(int)>)),
-  
   constructor(Constraint,Equal,Equal(<variable(TomTerm)>)),
   constructor(Constraint,AssignTo,AssignTo(<variable(TomTerm)>)),
   
   list(TomList,TomTerm),
-  list(TomNumberList,TomNumber),
   list(TomRuleList,TomRule),
   list(TomTypeList,TomType),
   list(OptionList,Option),
   list(InstructionList,Instruction),
   list(SlotList,PairNameDecl),
   list(TomEntryList, TomEntry),
-  list(TomAlertList, TomAlert),
   list(SymbolList, TomSymbol),
   list(NameList, TomName),
   list(ConstraintList, Constraint)
