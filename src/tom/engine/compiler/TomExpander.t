@@ -80,7 +80,7 @@ public class TomExpander extends TomBase {
         }
       }
     } catch(Exception e) {
-      System.out.println("genericMaptermContext error: " + e);
+      System.out.println("genericMaptermContext error: " + e + subject);
       e.printStackTrace();
       System.exit(0);
     }

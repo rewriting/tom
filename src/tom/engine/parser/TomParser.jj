@@ -49,7 +49,6 @@ public class TomParser {
   private int oldPos=0;
   private int oldLine=0;
   private Position orgTrack;
-  private String nameMethod;
   private TomBuffer tomBuffer;
   private SymbolTable symbolTable;
   private jtom.TomEnvironment environment;
@@ -61,7 +60,7 @@ public class TomParser {
     this.symbolTable = environment.getSymbolTable();
     this.environment = environment;
     this.importList = importList;
-    orgTrack = makePosition(0,0);
+    orgTrack = makePosition(1,1);
   }
 	
   public jtom.TomEnvironment environment() { 
@@ -794,7 +793,6 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
   <TOM_LBRACE>
     tlFsym = KeywordFsym()
     {
-      nameMethod = name.image;				
       astName   = tsf().makeTomName_Name(name.image);
     }
     ( 
@@ -804,7 +802,6 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
     )*
   <TOM_RBRACE>
     {
-      nameMethod = name.image;
       switchToDefaultMode(); /* switch to DEFAULT mode */
 
       for(int i=nameList.size()-1; i>=0 ; i--) {

@@ -43,7 +43,6 @@ public class TomParser implements TomParserConstants {
   private int oldPos=0;
   private int oldLine=0;
   private Position orgTrack;
-  private String nameMethod;
   private TomBuffer tomBuffer;
   private SymbolTable symbolTable;
   private jtom.TomEnvironment environment;
@@ -55,7 +54,7 @@ public class TomParser implements TomParserConstants {
     this.symbolTable = environment.getSymbolTable();
     this.environment = environment;
     this.importList = importList;
-    orgTrack = makePosition(0,0);
+    orgTrack = makePosition(1,1);
   }
 
   public jtom.TomEnvironment environment() {
@@ -688,7 +687,6 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_LBRACE);
     tlFsym = KeywordFsym();
-      nameMethod = name.image;
       astName   = tsf().makeTomName_Name(name.image);
     label_9:
     while (true) {
@@ -722,7 +720,6 @@ public class TomParser implements TomParserConstants {
       }
     }
     jj_consume_token(TOM_RBRACE);
-      nameMethod = name.image;
       switchToDefaultMode(); /* switch to DEFAULT mode */
 
       for(int i=nameList.size()-1; i>=0 ; i--) {
@@ -1578,18 +1575,18 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_RPAREN)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_3() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_AT)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
