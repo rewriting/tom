@@ -2,7 +2,7 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
-import adt.*;
+import adt.nsh.*;
 
 public class Nsh {
   private static boolean authVerif = true;
@@ -11,9 +11,9 @@ public class Nsh {
   private GenericTraversal traversal;
 
 // ------------------------------------------------------------  
-  %include { adt/term.tom }
+  %include { adt/nsh/term.tom }
 // ------------------------------------------------------------  
-
+ 
   public Nsh(TermFactory factory) {
     this.factory = factory;
     this.traversal = new GenericTraversal();
@@ -495,6 +495,7 @@ public class Nsh {
   public final static void main(String[] args) {
     Nsh test = new Nsh(new TermFactory(new PureFactory()));
     int nbAgent = 1;
+    //System.out.println("agent = " + `paul());
     try {
       nbAgent = Integer.parseInt(args[0]);
       maxMessagesInNetwork = Integer.parseInt(args[1]);
