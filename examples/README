@@ -2,9 +2,9 @@ Tom is a language extension which adds pattern matching facilities to
 C, Java or Caml. Therefore, Tom is a multi-purpose programming
 language. 
 
-Depending on your backgroung, Tom can be seen as:
+Depending on your background, Tom can be seen as:
  - a language to perform transformation of XML documents
- - a preprocessor which helps to describe a discrimitation tree over a
+ - a preprocessor which helps to describe a discrimination tree over a
    complex data-structure
  - a tool to manipulate Abstract Syntax Trees
  - a backend for Rewrite Rule based languages
@@ -13,7 +13,7 @@ Depending on your backgroung, Tom can be seen as:
 * How to start with Tom?
 ------------------------
 If you come from the 
- - algrebraic programming community
+ - algebraic programming community
    => start with:
       - Vas
       - AddressBook
@@ -43,7 +43,7 @@ If you come from the
   generates a concrete implementation for such an abstract data-type.
   In addition, ApiGen (adt-to-tom) automatically generates a mapping
   for Tom.
-  This system is usefull to manipulate Abstract Syntax Trees since it
+  This system is useful to manipulate Abstract Syntax Trees since it
   offers an efficient implementation (based on ATerms).
   The implementation supports maximal memory sharing, strong static
   typing as well as parsers and pretty-printers. 
@@ -56,10 +56,10 @@ If you come from the
 
 * ApiReach
   Compute reachable terms (wrt. a rewrite system)
-  Concept: apigen, complex generic traveral
+  Concept: apigen, complex generic traversal
 
 * BoulderDash
-  Cimulate how rocks go down in the boulder-dash game	
+  Simulate how rocks go down in the boulder-dash game	
   Concept: apigen, virtual mapping 
 
 * Builtin
@@ -109,7 +109,7 @@ If you come from the
   Concept: simple mapping, apigen, Tom notation 
 
 * Poly
-  Compute the differentiate form of a polynom
+  Compute the derivative of a polynom
   Concept: mapping, apigen, generic traversal, rewrite system  
 
 * RBTree
