@@ -1,0 +1,128 @@
+<project name="Ant for TOM" default="stablecompile">
+ 	<description>
+ 		Build script using Ant offering checks, dists,
+		installation, and so on.
+		it aims at offering the same functionality as the
+		automake files included in the TOM source
+		distribution.
+   
+		To use this build file, install ant,
+		and just run ant in the current directory.
+   
+		You can modify certain default settings via
+		ant -Ddist="/home/yourdirectory"
+		for the various properties listed below.
+   
+		Author: Julien GUYON, LORIA
+		Created: August 06, 2003.
+	</description>
+   
+   	<!-- set global properties for this build -->
+
+	<!-- current version of TOM -->
+	<property name="version" value="1.3beta"/>
+	<!-- place to find the src sources -->
+	<property name="src"   location="src/jtom"/>
+	<!-- place to find the stable sources -->
+	<property name="stable"   location="stable"/>
+	<!-- place to find the stable sources -->
+	<property name="test"   location="test"/>
+ 
+ 	<!-- external dependency: aterm-java.jar,
+		shared-object and JJTraveler. 
+		either put it in your class path, 
+		or define the atermjavajar property -->
+	<property
+		name="atermjavajar"
+		location="/home/julien/ELAN/share/aterm-1.3.2.jar"
+		/> 
+	<property
+		name="sharedobjectjar"
+		location="/home/julien/ELAN/share/shared-objects-1.3.jar"
+	/>
+	<property
+		name="JJTravelerjar"
+		location="/home/julien/ELAN/share/jjtraveler-0.4.2.jar"
+	/>
+ 
+ 	<!-- define targets -->
+	<target 
+		name="stablecompile"  
+		description="compile the TOM stable sources" 
+	>
+		<!-- Compile the java code from ${stable} into ${stable} -->
+		<javac 
+			srcdir="${stable}" 
+			destdir="${stable}"
+		>	
+			<classpath>
+				<pathelement path="${classpath}"/>
+				<pathelement location="${atermjavajar}"/>
+				<pathelement location="${sharedobjectjar}"/>
+				<pathelement location="${JJTravelerjar}"/>
+			</classpath>
+		</javac>
+	</target>  
+ 
+ 	<target 
+		name="srccompile"
+		depends="tomcompile"
+		description="compile the TOM stable sources" 
+	>
+		<!-- Compile the java code from ${stable} into ${stable} -->
+		<javac 
+			srcdir="${src}" 
+			destdir="${src}"
+		>	
+			<classpath>
+				<pathelement path="${classpath}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target 
+		name="tomcompile" 
+		description="compile current TOM sources" 
+  >
+	<exec dir="${src}" executable="jtom">
+		<arg line="--noWarning --import adt/"/>
+	</exec>
+	</target>  
+  
+	<target
+		name="check"
+		depends="stablecompile"
+		description="Testing TOM src or stable"
+	>
+		<exec dir="${test}" executable="gmake">
+			<arg line="check"/>
+		</exec>
+	</target>
+
+<target name="doc">
+</target> 
+
+<target name="stableclean"
+	description="Purges stable files" >
+</target>
+
+<target name="srcclean"
+	description="Purges src files" >
+</target>
+
+<!-- to run this task, make sure you install
+     jdepend version 2.6, and include jdepend.jar
+     in your classpath 
+<target name="jdepend"
+        depends="jar"
+        description="compute package dependencies" >
+
+  <jdepend classpathref="base.path">
+    <sourcespath>
+        <pathelement location="${dist}"/>
+    </sourcespath>
+  </jdepend>
+</target>
+-->
+
+</project>
