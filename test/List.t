@@ -44,14 +44,15 @@ public class List {
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
   
-  %rule {
-    double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
-    double3(conc(X*)) -> conc(X*)
-  } 
   %op L double3(L) {
     fsym { factory.makeAFun("double3", 1, false) }
     make(l) { double3(l) }
   }
+
+  %rule {
+    double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
+    double3(conc(X*)) -> conc(X*)
+  } 
 
   public List(ATermFactory factory) {
     this.factory = factory;
@@ -123,6 +124,22 @@ public class List {
     }
   }
 
+  public ATermList double4(ATermList l) {
+    %match(L l) {
+      conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*)); }
+      _ -> { return l; }
+    }
+  }
+
+  public ATermList double5(ATermList l) {
+    %match(L l) {
+      conc(X1*,x@a,X2*,x@a,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
+      conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
+      conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
+      _ -> { return l; }
+    }
+  }
+
   public void testList1() {
     ATerm ta = factory.makeAppl(factory.makeAFun("a", 0, false));
     ATerm tb = factory.makeAppl(factory.makeAFun("b", 0, false));
@@ -146,8 +163,11 @@ public class List {
     ATermList res = `conc(a,b,c);
     
     assertTrue(double1(sort1(l)) == res);
+
     assertTrue(double2(sort2(l)) == res);
     assertTrue(double3(sort2(l)) == res);
+    assertTrue(double4(sort2(l)) == res);
+    assertTrue(double5(sort2(l)) == res);
 
 
       //System.out.println("l        = " + l);

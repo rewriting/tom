@@ -52,7 +52,17 @@ public class Array {
     fsym { factory.makeAFun("c", 0, false) }
     make() { factory.makeAppl(factory.makeAFun("c", 0, false)) }
   }
-  
+
+  %op L double3(L) {
+    fsym { factory.makeAFun("double3", 1, false) }
+    make(l) { double3(l) }
+  }
+
+  %rule {
+    double3(conc(X1*,x,X2*,x,X3*)) -> double3(conc(X1*,X2*,x,X3*))
+    double3(conc(X*)) -> conc(X*)
+  } 
+
   public Array(ATermFactory factory) {
     this.factory = factory;
   }
@@ -92,6 +102,9 @@ public class Array {
     
     assertTrue(double1(sort1(l)).equals(res));
     assertTrue(double2(sort2(l)).equals(res));
+    assertTrue(double3(sort2(l)).equals(res));
+    assertTrue(double4(sort2(l)).equals(res));
+    assertTrue(double5(sort2(l)).equals(res));
   }
 
 
@@ -154,6 +167,22 @@ public class Array {
     }
   }
 
+
+  public ArrayList double4(ArrayList l) {
+    %match(L l) {
+      conc(X1*,x@_,X2@_*,x,X3@_*) -> { return `double4(conc(X1*,X2*,x,X3*)); }
+      _ -> { return l; }
+    }
+  }
+
+  public ArrayList double5(ArrayList l) {
+    %match(L l) {
+      conc(X1*,x@a,X2*,x@a,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
+      conc(X1*,x@_,X2*,x@_,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
+      conc(X1*,x@y,X2*,y@x,X3*) -> { return `double5(conc(X1*,X2*,x,X3*)); }
+      _ -> { return l; }
+    }
+  }
 
   static void  assertTrue(boolean condition) {
     if(!condition) {
