@@ -20,7 +20,7 @@ public class TNodeQualifier {
   }
   
   
-  public Sequence qualify(TNode node) 
+  public Sequence qualify(Object node) 
   {
 	Sequence result = new Sequence(); 
 	result.add(node);
@@ -28,3 +28,4 @@ public class TNodeQualifier {
   }
   
 }
+

@@ -12,18 +12,23 @@ import xquery.util.*;
 import java.io.*; 
 
 
-public class UC1_3_2 {
+public class UC1_4_2 {
     
   %include {TNode.tom}
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();
   TNodeTool tnodetool=new TNodeTool(); 
-
+  SequenceTool sequencetool = new SequenceTool();
 
   private TNode _xmlDocument01 = null;
 		
-  private TNode _b = null;
+  private Sequence _a = null;
 
+  private Object _last = null;
+  private Object _first = null; 
+  
+
+  
   QueryRecordSet _queryRecordSet01 = new QueryRecordSet (); 
 
   private Factory getTNodeFactory() 
@@ -33,7 +38,7 @@ public class UC1_3_2 {
 
   public static void main(String args[]) 
   {
-	UC1_3_2 uc = new UC1_3_2();
+	UC1_4_2 uc = new UC1_4_2();
 	String filename01;
 	String filename02;
 
@@ -55,7 +60,7 @@ public class UC1_3_2 {
 	_xmlDocument01 = (TNode)xtools.convertXMLToATerm(filename01); 
 	
 	try {
-	  executeQuery(_xmlDocument01);
+	  executeQuery(_xmlDocument01.getDocElem());
 	}
 	catch (XQueryGeneralException e) {
 	  System.out.println("ERROR: xquery exception error");	  
@@ -68,19 +73,69 @@ public class UC1_3_2 {
 	throws XQueryGeneralException
   {
 
-	Sequence bSequence = _collectData01(documentNode01.getDocElem());
-	
-
+	_a = _collectData01(documentNode01);
 	System.out.println("<results>");
-  
- 	_forLetWhere01(bSequence, _queryRecordSet01);
-	//	System.out.println(bSequence);
 	
-	//	_order01(_queryRecordSet01);
-	_return01(_queryRecordSet01);
-
+	
+	_forLetWhereOrderReturn01();
+	// System.out.println(lastSequence.size());
+// 	System.out.println(lastSequence);
+	
+ 	
 	System.out.println("</results>");
 
+  }
+
+  private void _forLetWhereOrderReturn01() 
+	throws XQueryGeneralException
+  {
+	Sequence lastSequence = _distinctValue01(_a); 
+	_forLetWhere01(lastSequence, _queryRecordSet01);
+	//	System.out.println(bSequence);
+	
+ 	_order01(_queryRecordSet01);
+	
+	_return01(_queryRecordSet01);
+	
+  }
+
+
+
+  private void _order01(QueryRecordSet queryRecordSet) 
+	throws XQueryGeneralException
+  {
+ 	class _Comparator_order01 implements Comparator {
+	  public int compare(Object o1, Object o2) {
+		String last1 = (String)(((QueryRecord)o1).getField(0));
+		String last2 =(String)(((QueryRecord)o2).getField(0));
+		int result =last1.compareTo(last2);
+		if (result ==0) {
+		  String first1 = (String)(((QueryRecord)o1).getField(1));
+		  String first2 =(String)(((QueryRecord)o2).getField(1));
+		  return first1.compareTo(first2);
+		}
+		else {
+		  return result;
+		}
+	  }
+ 	}
+
+	sequencetool.sort(queryRecordSet, new _Comparator_order01());
+  }
+  
+
+  private void _order02(QueryRecordSet queryRecordSet) 
+	throws XQueryGeneralException
+  {
+ 	class _Comparator_order01 implements Comparator {
+	  public int compare(Object o1, Object o2) {
+		String node1 = (String)(((QueryRecord)o1).getField(1));
+		String node2 =(String)(((QueryRecord)o2).getField(1));
+		return node1.compareTo(node2);
+	  }
+ 	}
+
+	sequencetool.sort(queryRecordSet, new _Comparator_order01());
   }
 
 
@@ -93,22 +148,125 @@ public class UC1_3_2 {
 	  {
 		System.out.println("<result>");
 		
-		TNode b=(TNode)(record.getField(0)); 
+		_last=(String)(record.getField(0)); 
+		_first=(String)(record.getField(1)); 
 		
-		%match (TNode b) {
-		  <_>title@<title></title></_> -> {
-			 xtools.printXMLFromATerm(title);
-			 System.out.println();
-		   }
+		System.out.println("<last>"+ _last + "</last>");
+		System.out.println("<first>"+ _first + "</first>");
+		
+		
+		this._forLetWhereOrderReturn02(); 
+
+
+		System.out.println("</result>");
+	  }
+
+	  private TNode _b = null; 
+	  private TNode _ba = null;
+
+	  QueryRecordSet _queryRecordSet02 = new QueryRecordSet(); 
+
+
+	  private void _forLetWhereOrderReturn02() 
+		throws XQueryGeneralException
+	  {
+		_queryRecordSet02 = new QueryRecordSet(); 
+		Sequence bSequence = this._collectData01(_xmlDocument01.getDocElem());
+		
+		//System.out.println(bSequence);
+		
+		
+		this._forLetWhere01(bSequence, this._queryRecordSet02);
+		//System.out.println(bSequence);
+		
+		this._return02(this._queryRecordSet02);
+	  }
+	  
+
+	  private void _forLetWhere01(Sequence sequence, QueryRecordSet queryRecordSet) 
+		  throws XQueryGeneralException
+	  {
+		
+		class _TNodeTester_forLetWhere01 extends TNodeTester {
+		  public boolean doTest(Object obj) 
+		  {
+			%match (TNode obj) {
+			  <_><author><last>#TEXT(tlast)</last><first>#TEXT(tfirst)</first></author></_> -> {
+				 if ((tlast==_last) && (tfirst.compareTo(_first)==0)) {
+				   
+				   return true;
+				 }
+			   }
+			}
+			return false;
+		  }
 		}
 
-		%match (TNode b) {
-		  <_>author@<author></author></_> -> {
-			 xtools.printXMLFromATerm(author);
-			 System.out.println();
-		   }
+		_TNodeTester_forLetWhere01 tester = new _TNodeTester_forLetWhere01();
+		Enumeration enum = sequence.elements(); 
+		
+		while (enum.hasMoreElements()) {
+		  TNode itemtuple = (TNode)(enum.nextElement());  
+		  _b = itemtuple; 
+		  
+		  if (tester.doTest(_b)) {
+			QueryRecord r = new QueryRecord(1);
+			r.setField(_b,0); 
+			queryRecordSet.add(r);
+		  }
 		}
-		System.out.println("</result>");
+	  }
+
+
+	  private void _return02(QueryRecordSet recordset) 
+		throws XQueryGeneralException
+	  {
+		class _RecordPrinter01_return02 extends RecordPrinter {
+		  public void  print(QueryRecord record)
+			throws XQueryGeneralException
+		  {
+			TNode b=(TNode)(record.getField(0)); 
+			%match (TNode b) {
+			  <book>title@<title></title></book> -> {
+				 xtools.printXMLFromATerm(title);
+				 System.out.println();				 
+			   }
+			}
+			
+			
+		  }
+		}
+		
+		tnodetool.printResult(recordset, new _RecordPrinter01_return02()); 
+	  }
+
+	  protected Sequence _collectData01(TNode subject) { 
+		class _TNodeTester_collectData01 extends TNodeTester{
+		  public boolean doTest(Object obj) {
+			%match (TNode obj) {
+			  <bib><book></book></bib> -> {
+				 return true; 
+			   }
+			}
+			
+			return false;
+		  }
+		}
+		
+		class _TNodeQualifier_collectData01 extends TNodeQualifier{
+		    public Sequence qualify(Object node) 
+		  {
+			Sequence result = new Sequence(); 
+			%match (TNode node) {
+			  <bib>book@<book></book></bib> -> {
+				 result.add(book); 
+			   }
+			}
+			return result;
+		  }
+		}
+
+		return tnodetool.collectData2(subject, new _TNodeTester_collectData01(), new _TNodeQualifier_collectData01());	
 	  }
 	}
   
@@ -117,57 +275,158 @@ public class UC1_3_2 {
   }
 
 
-
   private void _forLetWhere01(Sequence sequence, QueryRecordSet queryRecordSet) 
 	throws XQueryGeneralException
   {
 	
-	TNodeTester tester = new TNodeTester();
+	Enumeration enum = sequence.elements(); 
+	
+	while (enum.hasMoreElements()) {
+	  Object itemtuple = enum.nextElement();  
+	  _last = itemtuple; 
+	  
+	  Sequence firstSequence = _distinctValue02(_a);
+	  _forLetWhere02(firstSequence, queryRecordSet);
+	}
+  }
+
+
+  private void _forLetWhere02(Sequence sequence, QueryRecordSet queryRecordSet) 
+	throws XQueryGeneralException
+  {
 	
 	Enumeration enum = sequence.elements(); 
 	
 	while (enum.hasMoreElements()) {
-	  TNode itemtuple = (TNode)(enum.nextElement());
+	  Object itemtuple = enum.nextElement();  
+	  _first = itemtuple; 
 	  
-	  _b = itemtuple; 
-	  if (tester.doTest(_b)) {
-		QueryRecord record = new QueryRecord(1); 
-		record.setField(_b, 0);
-		queryRecordSet.add(record);
+	  QueryRecord record = new QueryRecord(2);
+	  record.setField(_last,0);
+	  record.setField(_first,1);
+	  queryRecordSet.add(record);
+	}
+  }
+
+
+  private Sequence _distinctValue02(Sequence seq) 
+	throws XQueryGeneralException
+  {
+	class Comparator01_distinctValue02 implements Comparator {
+	  public int compare(Object obj1, Object obj2) 
+	  {
+		%match (TNode obj1, TNode obj2) {
+		  <_><first>#TEXT(thefirst1)</first></_>, <_><first>#TEXT(thefirst2)</first></_> -> {
+			 return thefirst1.compareTo(thefirst2); 
+			 
+		   }
+		}
+		return 0; 
 	  }
 	}
 
+
+	class TNodeTester01_distinctValue02 extends TNodeTester {
+	  public boolean doTest(Object obj)
+	  {
+		%match (TNode obj) {
+		  <_><last>#TEXT(thelast)</last></_> -> {
+			 if (thelast == _last) {
+			   return true;
+			 }
+		   }
+		}
+		return false;
+	  }
+	}
+
+
+	class TNodeQualifier01_distinctValue02 extends TNodeQualifier {
+	  public Sequence qualify(Object node) {
+		Sequence seq = new Sequence(); 
+		%match (TNode node) {
+		  <_><first>#TEXT(thefirst)</first></_> -> {
+			 seq.add(thefirst); 
+		   }
+		}
+		return seq;
+	  }
+	}
+
+	seq=tnodetool.distinctValues(seq, 
+							new Comparator01_distinctValue02(), 
+							new TNodeTester01_distinctValue02(),
+							new TNodeQualifier01_distinctValue02());
+
+	return seq; 
   }
-  
+
+
+
+  private Sequence _distinctValue01(Sequence seq) 
+	throws XQueryGeneralException
+  {
+	class Comparator01_distinctValue01 implements Comparator {
+	  public int compare(Object obj1, Object obj2) 
+	  {
+		%match (TNode obj1, TNode obj2) {
+		  <_><last>#TEXT(thelast1)</last></_>, <_><last>#TEXT(thelast2)</last></_> -> {
+			 return thelast1.compareTo(thelast2); 
+			 
+		   }
+		}
+		return 0; 
+	  }
+	}
+
+	class TNodeTester01_distinctValue01 extends TNodeTester 
+	{
+	  
+	  public boolean doTest(TNode obj)
+	  {
+		%match (TNode obj) {
+		  <_><last></last></_> -> {
+			 return true; 
+		   }
+		}
+		return false;
+	  }
+	}
+
+	class TNodeQualifier01_distinctValue01 extends TNodeQualifier {
+	  public Sequence qualify(Object node) {
+		Sequence seq = new Sequence(); 
+		%match (TNode node) {
+		  <_><last>#TEXT(thelast)</last></_> -> {
+			 seq.add(thelast); 
+		   }
+		}
+		return seq;
+	  }
+	}
+
+	seq= tnodetool.distinctValues(seq, 
+							new Comparator01_distinctValue01(), 
+							new TNodeTester01_distinctValue01(),
+							new TNodeQualifier01_distinctValue01());
+	return seq;
+  }
+
 
   protected Sequence _collectData01(TNode subject) { 
 	class _TNodeTester_collectData01 extends TNodeTester{
 	  public boolean doTest(Object obj) {
 		%match (TNode obj) {
-		  <bib><book></book></bib> -> {
-			 return true;
-			 
-		 }
+		  <author></author> -> {
+			 return true; 
+		   }
 		}
 		
 		return false;
 	  }
 	}
 	
-	class TNodeQualifier_collectData01 extends TNodeQualifier {
-	  public Sequence qualify(TNode node) 
-	  {
-		Sequence seq=new Sequence(); 
-		%match (TNode node) {
-		  <bib>book@<book></book></bib> -> {
-			 seq.add(book);
-		   }
-		}
-		return seq;
-	  }
-	}
-	
-	return tnodetool.collectData2(subject, new _TNodeTester_collectData01(), new TNodeQualifier_collectData01());	
+	return tnodetool.collectData(subject, new _TNodeTester_collectData01(), new TNodeQualifier());	
   }
 
 

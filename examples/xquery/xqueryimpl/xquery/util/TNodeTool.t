@@ -51,6 +51,36 @@ public class TNodeTool {
     return sequence;
   }
 
+  
+  public Sequence distinctValues(Sequence seq, Comparator comparator, TNodeTester tester, TNodeQualifier qualifier)
+	throws XQueryGeneralException
+  {
+
+	SequenceTool sequencetool = new SequenceTool (); 
+	Sequence output = new Sequence(); 
+	Enumeration enum = seq.elements(); 
+	
+	while (enum.hasMoreElements()) {
+	  Object obj = (enum.nextElement());
+
+	  //System.out.println(obj);
+	  
+
+	  if (tester.doTest(obj)) {
+		if (!sequencetool.contain(output, obj, comparator)) {
+		  output.add(obj);
+		}
+	  }
+	}
+
+	Sequence result =  new Sequence(); 
+	enum = output.elements();
+	while (enum.hasMoreElements()) {
+	  TNode obj = (TNode)(enum.nextElement());
+	  result.addAll(qualifier.qualify(obj));
+	}
+	return result;
+  }
 
   public   Sequence collectData2(TNode subject,final TNodeTester tester,final TNodeQualifier qualifier) 
   {

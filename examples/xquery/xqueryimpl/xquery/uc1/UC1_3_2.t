@@ -155,7 +155,7 @@ public class UC1_3_2 {
 	}
 	
 	class TNodeQualifier_collectData01 extends TNodeQualifier {
-	  public Sequence qualify(TNode node) 
+	  public Sequence qualify(Object node) 
 	  {
 		Sequence seq=new Sequence(); 
 		%match (TNode node) {

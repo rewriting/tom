@@ -28,10 +28,20 @@ public class SequenceTool {
 	queryRecordSet.addAll(recordArray);
   }
 
-  public Sequence distinctValues(Sequence seq)
+  
+  public boolean contain(Sequence seq, Object obj, Comparator comparator) 
   {
-	return seq;
+	Enumeration enum = seq.elements(); 
+	
+	while (enum.hasMoreElements()) {
+	  if (comparator.compare(enum.nextElement(), obj) ==0 ) {
+		return true; 
+	  }
+	}
+	return false; 
   }
+
+
 
   public  boolean empty(Sequence seq) 
   {
