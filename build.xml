@@ -113,6 +113,11 @@
 		<mkdir dir="${stable.dist}"/>
 	</target>
 
+	<target name="prepare.test">
+		<mkdir dir="${test.gen}"/>
+		<mkdir dir="${test.build}"/>
+	</target>
+
 	<target name="prepare.dist.stable">
 		<mkdir dir="${stable.bin}"/>
 		<mkdir dir="${stable.lib}"/>
@@ -442,7 +447,7 @@
 		</taskdef>
 	</target>
 	
-	<target name="test" description="Compile and run acceptance tests" depends="initsrc">
+	<target name="test" description="Compile and run acceptance tests" depends="initsrc, prepare.test">
 		<mkdir dir="${test.gen}"/>
 		<mkdir dir="${test.build}"/>
 		<tomsrc srcdir="${test}" destdir="${test.gen}" options="-I ${src.mapping} -I ${src.adt}">
