@@ -102,15 +102,16 @@ Test {
 
      JOperator2.t
 	Warning: GetSlot declaration `get_slot(slot2,...)` is missing. SlotName will not be considered
-	GetSlot declaration 'type' is repeated in operator declaration
-	Some GetSlot declaration are incompatible with operator signature
-	Repeated slot  's1' in operator declaration
+	Warning: GetSlot declaration 'type' is repeated in operator declaration
+	Warning: Some GetSlot declaration are incompatible with operator signature
 
      JOperator3.t
 	Bad number of arguments in method 'make'
 
      JOperator4.t
 	Multiple definition of operator
+     JOperator5.t	
+	Repeated slot  's1' in operator declaration
 
 }
 
