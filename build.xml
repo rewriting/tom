@@ -590,7 +590,7 @@
   </target>
 
   <target name="clean" description="Cleans everything in the project"
-          depends="clean.stable, clean.src, clean.test">
+          depends="clean.stable, clean.src, clean.test, clean.doc">
     <ant dir="${examples}" target="clean"/>
   </target> 
 
@@ -1098,7 +1098,7 @@
         <include name="jtom/**/*.java"/>
       </fileset>
       <fileset dir="${src.gen}">
-        <include name="tom/**/*.java"/>
+				<include name="tom/**/*.java"/>
         <include name="jtom/**/*.java"/>
       </fileset>
     </javadoc>

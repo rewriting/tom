@@ -65,6 +65,9 @@ public class TomExpander extends TomGenericPlugin {
     tomFactory = new TomFactory();
   }
 
+  /**
+   * The run() method performs expansion for tom syntax, variables,...
+   */
   public void run() {
     long startChrono = System.currentTimeMillis();
     boolean intermediate = getOptionBooleanValue("intermediate");
