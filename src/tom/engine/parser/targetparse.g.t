@@ -312,7 +312,8 @@ blockList [LinkedList list] throws TomException
         |   includeConstruct[list]
         |   typeTerm[list] 
         |   typeList[list] 
-        |   typeArray[list] 
+        |   typeArray[list]
+        |   STRING
         |   LBRACE blockList[list] RBRACE 
         )*
     ;
@@ -861,7 +862,54 @@ RBRACE
         {
             target.append($getText);
         }  
-    ; 
+    ;
+
+STRING
+	:	'"' (ESC|~('"'|'\\'|'\n'|'\r'))* '"'
+        {
+            target.append($getText);
+        } 
+	;
+
+protected
+ESC
+	:	'\\'
+		(	'n'
+		|	'r'
+		|	't'
+		|	'b'
+		|	'f'
+		|	'"'
+		|	'\''
+		|	'\\'
+		|	('u')+ HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+		|	'0'..'3'
+			(
+				options {
+					warnWhenFollowAmbig = false;
+				}
+			:	'0'..'7'
+				(
+					options {
+						warnWhenFollowAmbig = false;
+					}
+				:	'0'..'7'
+				)?
+			)?
+		|	'4'..'7'
+			(
+				options {
+					warnWhenFollowAmbig = false;
+				}
+			:	'0'..'7'
+			)?
+		)
+	;
+
+protected
+HEX_DIGIT
+	:	('0'..'9'|'A'..'F'|'a'..'f')
+	;
 
 // tokens to skip : white spaces
 WS	:	(	' '
@@ -879,13 +927,6 @@ WS	:	(	' '
             $setType(Token.SKIP);
         }
     ;
-
-
-
-protected
-HEX_DIGIT
-	:	('0'..'9'|'A'..'F'|'a'..'f')
-	;
 
 // comments
 COMMENT 
