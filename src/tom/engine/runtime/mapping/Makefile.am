@@ -7,7 +7,7 @@ SUBDIRS         = c caml
 javadir         = ${prefix}/classes/jtom
 stabledir 	= $(top_srcdir)/stable/jtom/runtime/mapping
 
-BOOTSOURCES 	= dom.tom charlist.tom int.tom double.tom string.tom char.tom
+BOOTSOURCES 	= dom.tom charlist.tom int.tom double.tom string.tom char.tom aterm.tom atermlist.tom
 EXTRA_DIST 	= ${BOOTSOURCES}
 CLEANFILES 	= 
 

@@ -1,19 +1,6 @@
-%typeterm String{
-  implement { String}
-  get_fun_sym(t) {t}
-  cmp_fun_sym(s1,s2) { s1.equals(s2)}
-  get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
-}
-
-%typeterm int{
-  implement { int}
-  get_fun_sym(t) {t}
-  cmp_fun_sym(s1,s2) { (s1 == s2)}
-  get_subterm(t,n) {null}
-  equals(t1,t2) {(t1 == t2)}
-}
-
+%include { string.tom }
+%include { int.tom }
+%include { double.tom }
 %typeterm ATerm{
   implement { aterm.ATerm}
   get_fun_sym(t) {((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null)}
@@ -666,14 +653,15 @@
   make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_Appl(t0, t1, t2, t3)}
 }
 
-%op TomTerm XMLAppl(option:OptionList, nameList:NameList, attrList:TomList, childList:TomList) {
+%op TomTerm XMLAppl(option:OptionList, nameList:NameList, attrList:TomList, childList:TomList, constraints:ConstraintList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isXMLAppl()}
   get_slot(option,t) { t.getOption()}
   get_slot(nameList,t) { t.getNameList()}
   get_slot(attrList,t) { t.getAttrList()}
   get_slot(childList,t) { t.getChildList()}
-  make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_XMLAppl(t0, t1, t2, t3)}
+  get_slot(constraints,t) { t.getConstraints()}
+  make(t0, t1, t2, t3, t4) { getTomSignatureFactory().makeTomTerm_XMLAppl(t0, t1, t2, t3, t4)}
 }
 
 %op TomTerm VariableStar(option:OptionList, astName:TomName, astType:TomType, constraints:ConstraintList) {
@@ -686,27 +674,30 @@
   make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_VariableStar(t0, t1, t2, t3)}
 }
 
-%op TomTerm Placeholder(option:OptionList) {
+%op TomTerm Placeholder(option:OptionList, constraints:ConstraintList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isPlaceholder()}
   get_slot(option,t) { t.getOption()}
-  make(t0) { getTomSignatureFactory().makeTomTerm_Placeholder(t0)}
+  get_slot(constraints,t) { t.getConstraints()}
+  make(t0, t1) { getTomSignatureFactory().makeTomTerm_Placeholder(t0, t1)}
 }
 
-%op TomTerm UnamedVariable(option:OptionList, astType:TomType) {
+%op TomTerm UnamedVariable(option:OptionList, astType:TomType, constraints:ConstraintList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isUnamedVariable()}
   get_slot(option,t) { t.getOption()}
   get_slot(astType,t) { t.getAstType()}
-  make(t0, t1) { getTomSignatureFactory().makeTomTerm_UnamedVariable(t0, t1)}
+  get_slot(constraints,t) { t.getConstraints()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_UnamedVariable(t0, t1, t2)}
 }
 
-%op TomTerm UnamedVariableStar(option:OptionList, astType:TomType) {
+%op TomTerm UnamedVariableStar(option:OptionList, astType:TomType, constraints:ConstraintList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isUnamedVariableStar()}
   get_slot(option,t) { t.getOption()}
   get_slot(astType,t) { t.getAstType()}
-  make(t0, t1) { getTomSignatureFactory().makeTomTerm_UnamedVariableStar(t0, t1)}
+  get_slot(constraints,t) { t.getConstraints()}
+  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_UnamedVariableStar(t0, t1, t2)}
 }
 
 %op TomTerm emptyTerm {
@@ -801,13 +792,14 @@
   make(t0) { getTomSignatureFactory().makeTomTerm_Composite(t0)}
 }
 
-%op TomTerm RecordAppl(option:OptionList, nameList:NameList, args:TomList) {
+%op TomTerm RecordAppl(option:OptionList, nameList:NameList, args:TomList, constraints:ConstraintList) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isRecordAppl()}
   get_slot(option,t) { t.getOption()}
   get_slot(nameList,t) { t.getNameList()}
   get_slot(args,t) { t.getArgs()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeTomTerm_RecordAppl(t0, t1, t2)}
+  get_slot(constraints,t) { t.getConstraints()}
+  make(t0, t1, t2, t3) { getTomSignatureFactory().makeTomTerm_RecordAppl(t0, t1, t2, t3)}
 }
 
 %op TomTerm PairSlotAppl(slotName:TomName, appl:TomTerm) {
@@ -1348,10 +1340,10 @@
   equals(t1,t2) {t1.equals(t2)}
 }
 
-%op Constraint Equal(kid:TomTerm) {
+%op Constraint Equal(variable:TomTerm) {
   fsym {}
   is_fsym(t) { (t!= null) && t.isEqual()}
-  get_slot(kid,t) { t.getKid()}
+  get_slot(variable,t) { t.getVariable()}
   make(t0) { getTomSignatureFactory().makeConstraint_Equal(t0)}
 }
 

@@ -1,3 +1,16 @@
+2004-04-09  pem  <pem@polly.loria.fr>
+
+	* bootinstall
+	* added aterm.tom and atermlist.tom mappings
+
+2004-04-08  pem  <pem@polly.loria.fr>
+
+	* src/jtom/compiler/TomKernelExpander.t: 
+	  - fix a major bug in the Type Expander
+	  - merge TomExpander.variableExpand with TomKernelExpander.variableExpand
+
+	* src/jtom/runtime/mapping/dom.tom: fix a bug in the sorting algorithm for attributes
+
 2004-04-07  pem  <pem@polly.loria.fr>
 
 	* annoted variables and non-linear variable are compiled into constraints

@@ -3,7 +3,7 @@
 #
 
 SUBDIRS         = c caml
-MAPPING 	= dom.tom char.tom double.tom int.tom string.tom
+MAPPING 	= dom.tom char.tom double.tom int.tom string.tom aterm.tom atermlist.tom
 EXTRA_DIST 	= ${MAPPING}
 #CLEANFILES 	= 
 

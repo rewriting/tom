@@ -1,17 +1,18 @@
 public class PathFinder {
 
-%include {charlist.tom}
+  //%include {charlist.tom}
+  %include {string.tom}
 
   public final static void main(String[] args) {
     PathFinder test = new PathFinder();
-    
-    test.f("hello");
+    String s1 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
+    test.f2(s1);
 
-    String s = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
-    test.f2(s);
+    String s2 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    //test.f2(s2);
   }
 
-    
+  /*
   public String f(String s) {
     %match(String s) {
       ("he",X1*,x@"l",y@"o",_*) -> {
@@ -23,27 +24,29 @@ public class PathFinder {
       _        -> { return "unknown"; }
     }
   }
-  
-
-  /*
+  */
+ 
+ /* 
   public String f2(String s) {
     %match(String s) {
-      (X1*,"b",X2*) -> {
-        return `concString("b",f2(concString(X1*,X2*)));
+      (_*,"b",X2*,"b",_*) -> {
+        System.out.println("Yeah: found double 'b' around " + `X2*);
+        
       }
-      _ -> { return s; }
+     
     }
+    return s;
   }
 */
   
   int cpt=0;
   public String f2(String s) {
     %match(String s) {
-      (X1*,"b",X2*,"b",X3*,"b",X4*,"b",X5*,"b",X6*,"b",X7*) -> {
+      //(X1*,"ab",X2*,"b",X3*,"b",X4*,"b",X5*,"b",X6*,"b",X7*) -> {
+      (X1*,'ab',X2*,'b',X3*,'b',X4*,'b',X5*,'b',X6*,'b',X7*) -> {
         System.out.println(`X1 + " " + `X2 + " " + `X3 + " " + `X4 + " " + `X5 + " " + `X6 + " " + `X7);
       }
     }
     return s;
   }
-  
 }

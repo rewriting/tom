@@ -1,6 +1,6 @@
 public class JLstring {
 
-%include {charlist.tom}
+%include {string.tom}
 
   public final static void main(String[] args) {
     JLstring test = new JLstring();
@@ -26,25 +26,12 @@ public class JLstring {
   }
   */
 
-  /*
   public void f2(String s) {
     %match(String s) {
-      (X1*,x@"l",x@"l",X2*) -> {
+      (X1*,x@'ll',X2*) -> {
         System.out.println("X1   = " + X1);
         System.out.println("char = " + x);
         System.out.println("X2   = " + X2);
-      }
-    }
-  }
-  */
-
-  public void f2(String s) {
-    String s2 = "aaaabaaaabaaaabaaaabaaaabaaaabaaaabaaabaa";
-    %match(String s2) {
-      (X1*,x,X2*,x,X3*,x,X4*,x,X5*,x,X6*,x,X7*) -> {
-        if(x.equals("b")) {
-             System.out.println(X1 + " " + X2+ " " + X3 + " " + X4 + " " + X5 + " " + X6 + " " + X7);
-        }
       }
     }
   }

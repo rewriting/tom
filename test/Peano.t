@@ -15,6 +15,14 @@ public class Peano {
     equals(t1, t2)      { t1 == t2}
   }
 
+  %typeterm appl {
+    implement { ATermAppl }
+    get_fun_sym(t)      { (t.getAFun()) }
+    cmp_fun_sym(t1,t2)  { t1 == t2 }
+    get_subterm(t, n)   { (t.getArgument(n)) }
+    equals(t1, t2)      { t1 == t2}
+  }
+
   %op term zero {
     fsym { fzero }
     make { factory.makeAppl(fzero) }
@@ -46,6 +54,16 @@ public class Peano {
     make(t) { fib2(t) }
   }
   
+  %op appl term2appl(term) {
+    fsym { factory.makeAFun("term2appl" , 1, false) }
+    make(t) { factory.makeAppl(factory.makeAFun("term2appl",1,false),t) }
+  }
+
+  %op term appl2term(appl) {
+    fsym { factory.makeAFun("appl2term" , 1, false) }
+    make(t) { appl2term(t) }
+  }
+
   public Peano(ATermFactory factory) {
     this.factory = factory;
 
@@ -121,6 +139,7 @@ public class Peano {
   }
   
   %rule {
+    //    fib5(zero())      -> suc(appl2term(term2appl(x))) where x:= zero()
     fib5(zero())      -> suc(x) where x:= zero()
     fib5(x)           -> x      if x == suc(zero())
     fib5(suc(suc(x))) -> plus1(fib1(x),fib1(suc(x)))
@@ -130,6 +149,10 @@ public class Peano {
     fib2(zero())-> suc(zero())
     fib2(x@suc[pred=zero()]) -> suc(zero())
     fib2(suc(y@suc(x))) -> plus2(fib2(x),fib2(y))
+  }
+
+  %rule {
+    appl2term(term2appl(x)) -> x
   }
 
   public ATerm fib3(ATerm t) {
