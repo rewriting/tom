@@ -1281,118 +1281,6 @@ TomTerm XMLAttribute() throws TomException:
     }
 }
 
-  /*
-   * The goal of this function is to parse a backquoted term
-   * There are 4 cases:
-   *   `(...)
-   *   `identifier(...)
-   *   `identifier
-   *   `identifier*
-   * 
-   */
-void BackQuoteTermOld(LinkedList list) throws TomException: /* in DEFAULT mode */
-{
-  TomTerm term;
-  Option ot;
-  Token tk, nextTk;
-  int parenLevel = 0, lastTokenLine = 0, firstTokenLine = 0;
-  boolean backQuoteMode = false;
-  LinkedList tokenList = new LinkedList();
-  HashMap tokenToDecLineMap = new HashMap();
-}
-{
-  <BACKQUOTE_TERM> /* switch to TOM mode */
-  {
-    addPreviousCode(list);
-    firstTokenLine = getLine();
-    ot = `OriginTracking(Name("Backquote"),getLine(),Name( currentFile));
-  }
-    (
-      tk=<TOM_LPAREN> { tokenList.add(tk); 
-			parenLevel++; 
-			backQuoteMode = true;
-                      }
-    | tk=<TOM_IDENTIFIER> { tokenList.add(tk);
-                            tokenToDecLineMap.put(tk, new Integer(getLine()));
-                            switchToDefaultMode(); /* switch to DEFAULT mode */
-                          }
-    )
-    {
-      try {
-        nextTk = getToken(1);
-	//System.out.println("getToken(1).kind = " + nextTk.kind + " --> '" + nextTk.image + "'");
-        if(backQuoteMode || nextTk.image.equals("(")) {
-            /*
-             * cases:
-             *   `(...)
-             *   `identifier(...)
-             *
-             * nextTk has been tokenized in either in Tom mode, either in Default mode
-             * this is why we test nextTk.image.equals("(")
-             * the first tk may be tokenized in Default mode
-             * since this token cannot be pushed back and re-tokenized in Tom mode
-             * we have to analyse the image and not only the kind
-             * (also in TomBackQuoteParser.t)
-             */
-          switchToTomMode(); /* switch to TOM mode */
-          backQuoteMode = true;
-          while(backQuoteMode) {
-            tk = getNextToken();
-	    //System.out.println("tk.kind = " + tk.kind + " --> '" + tk.image + "'");
-            tokenList.add(tk);
-            lastTokenLine = getLine();
-            if(tk.kind == TOM_LPAREN || tk.image.equals("(")) { 
-              parenLevel++;
-            } else if(tk.kind == TOM_RPAREN) {
-              parenLevel--;
-              if(parenLevel==0) {
-                backQuoteMode = false;
-              }
-            } else if (tk.kind == TOM_IDENTIFIER) {
-              tokenToDecLineMap.put(tk, new Integer(lastTokenLine));
-            }
-          }
-          term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
-                
-          if(term.isComposite() && term.getArgs().isSingle()) {
-            TomTerm backQuoteTerm = term.getArgs().getHead(); 
-            if(backQuoteTerm.getAstName().getString().equals("xml")) {
-              TomList args = backQuoteTerm.getArgs();
-              term = `DoubleBackQuote(args);
-            } 
-          } 
-          list.add(term);
-          switchToDefaultMode(); /* switch to DEFAULT mode */
-        } else {
-            /*
-             * we are in DEFAULT mode
-             * nextTk has been tokenized in Default mode
-             */
-          if(nextTk.image.equals("*")) {
-              /*
-               * the backquote-term is a single variable-star
-               */
-            term = tomBackQuoteParser.buildVariableStar(tk.image,lastTokenLine,currentFile);
-            list.add(term);
-              /*
-               * here we consume the "*" and we go to default mode to
-               * remove the "*" from the "previous code"
-               */
-            tk = getNextToken();
-            switchToDefaultMode(); /* switch to DEFAULT mode */
-          } else {
-            /*
-             * the backquote-term is a single variable
-             */
-          term = tomBackQuoteParser.buildBackQuoteAppl(tk.image,lastTokenLine,currentFile);
-          list.add(term);
-          }
-        }
-      } catch (TokenMgrError error) {
-        throw new TomException(MessageFormat.format(TomMessage.getString("InvalidBackQuoteTerm"), new Object[]{new Integer(firstTokenLine)}));
-      }  
-    }
- }
 
 void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
 {
@@ -2504,6 +2392,8 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
             }
           } else if (tk.kind == BQ_IDENTIFIER) {
             tokenToDecLineMap.put(tk, new Integer(lastTokenLine));
+          } else if (tk.kind == EOF) {
+            throw new TomException(MessageFormat.format(TomMessage.getString("BraceExpected"), new Object[]{new Integer(firstTokenLine)}));
           }
         }
         term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
