@@ -2,8 +2,8 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003  LORIA (CNRST, INPL, INRIA, UHP, U-Nancy 2)
-			     Nancy, France.
+    Copyright (C) 2000-2003 INRIA
+			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@ package jtom.runtime.xml;
 
 import java.io.*;
 import jtom.runtime.xml.adt.*;
+import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Collection;
 import aterm.*;
 import aterm.pure.*;
 import javax.xml.parsers.*;
@@ -41,7 +44,12 @@ public class XMLToATerm {
   private TNodeFactory nodesFactory = null;
   private TNode nodeTerm = null;
   private boolean deleteWhiteSpaceNodes = false;
+  private Hashtable ht_Nodes = new Hashtable();
   
+  protected Collection getNodes(TNode key) {
+    return (Collection)ht_Nodes.get(key);
+  }
+
   public void setDeletingWhiteSpaceNodes(boolean b_d) {
     deleteWhiteSpaceNodes=b_d;
   }
@@ -214,7 +222,14 @@ public class XMLToATerm {
     attrList = sortAttributeList(attrList);
       //System.out.println("sorted attrList = " + attrList);
     TNodeList childList = nodeListToAterm(elem.getChildNodes());
-    return `ElementNode(elem.getNodeName(),attrList,childList);
+    TNode result = `ElementNode(elem.getNodeName(),attrList,childList);
+    Collection curCol = (Collection)ht_Nodes.get(elem);
+    if (curCol==null) {
+      curCol = new ArrayList();
+    }
+    curCol.add(elem);
+    ht_Nodes.put(result,curCol);
+    return result;
   }
 
   public TNodeList sortAttributeList(TNodeList attrList) {

@@ -1294,10 +1294,8 @@ public class TomParser extends TomTask implements TomParserConstants {
         TomTerm backQuoteTerm = term.getArgs().getHead();
         if(backQuoteTerm.getAstName().getString().equals("XML") && backQuoteTerm.getArgs().isSingle()) {
           term = tsf().makeTomTerm_DoubleBackQuote(backQuoteTerm.getArgs().getHead());
-          System.out.println("term = " + term);
         }
-      }
-      if(backQuote != null) {
+      } else if(backQuote != null) {
         term = tsf().makeTomTerm_DoubleBackQuote(term);
       }
       list.add(term);
@@ -2545,12 +2543,6 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_10() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3_1() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
@@ -2579,6 +2571,12 @@ public class TomParser extends TomTask implements TomParserConstants {
     }
     }
     }
+    return false;
+  }
+
+  final private boolean jj_3_10() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
@@ -2739,25 +2737,19 @@ public class TomParser extends TomTask implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3R_47() {
+    if (jj_scan_token(XML_COMMENT)) return true;
+    return false;
+  }
+
   final private boolean jj_3_11() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
-  final private boolean jj_3R_47() {
-    if (jj_scan_token(XML_COMMENT)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_34() {
     if (jj_3R_38()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_12() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -2774,6 +2766,12 @@ public class TomParser extends TomTask implements TomParserConstants {
   final private boolean jj_3R_30() {
     if (jj_3R_27()) return true;
     if (jj_3R_35()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_12() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 

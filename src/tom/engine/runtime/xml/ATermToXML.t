@@ -2,8 +2,8 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003  LORIA (CNRST, INPL, INRIA, UHP, U-Nancy 2)
-			     Nancy, France.
+    Copyright (C) 2000-2003 INRIA
+			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -73,6 +73,13 @@ public class ATermToXML {
     } else {
       System.out.println("ATermToXML can only convert TNode to XML");
     }
+  }
+
+  public String xml(TNode n) {
+	StringWriter str_res = new StringWriter();
+	setWriter(str_res);
+	atermToXML(n);
+	return str_res.toString();
   }
 
   public void atermToXML(TNode n) {
