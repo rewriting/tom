@@ -191,7 +191,7 @@ public class TomKernelCompiler extends TomBase {
               }
 
               _ -> {
-                System.out.println("compileMatching: stange term: " + tlVariable);
+                System.out.println("compileMatching: strange term: " + tlVariable);
                 break matchBlock;
               }
             }

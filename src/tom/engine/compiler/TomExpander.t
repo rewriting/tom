@@ -140,6 +140,14 @@ public class TomExpander extends TomBase implements TomTask {
     
     return `Appl(option,Name(tomName),subtermList);
   }
+
+  private boolean isBuiltinOperator(TomSymbol subject) {
+    if(subject==null) {
+      return false;
+    }
+    String type = getTomType(getSymbolCodomain(subject));
+    return isIntType(type) || isDoubleType(type) || isStringType(type);
+  }
   
   protected TomTerm expandBackQuoteTerm(TomTerm t) {
     Replace1 replaceSymbol = new Replace1() {
@@ -155,9 +163,7 @@ public class TomExpander extends TomBase implements TomTask {
                     return `BuildList(name,args);
                   } else if(isArrayOperator(tomSymbol)) {
                     return `BuildArray(name,args);
-                  } else if(isIntegerOperator(tomSymbol)) {
-                    return `BuildBuiltin(name);
-                  } else if(isStringOperator(tomSymbol)) {
+                  } else if(isBuiltinOperator(tomSymbol)) {
                     return `BuildBuiltin(name);
                   } else {
                     return `BuildTerm(name,args);

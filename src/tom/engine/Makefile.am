@@ -20,8 +20,8 @@ EXTRA_DIST 	= $(BOOTSOURCES) TomBase.t TomSignature.adt
 CLEANFILES 	= TomBase.java
 BUILT_SOURCES   = TomBase.java
 
-install:
-	cp -rf $(BUTTONSDIR) ${javadir}
+#install:
+#	cp -rf $(BUTTONSDIR) ${javadir}
 
 bootinstall:
 	$(mkinstalldirs) $(stabledir)

@@ -44,16 +44,19 @@ public class SymbolTable {
     if(Flags.cCode) {
       putType("bool", ast().makeType("bool","int"));
       putType("int", ast().makeType("int","int"));
+      putType("double", ast().makeType("double","double"));
       putType("String", ast().makeType("String","char*"));
       putType("universal", ast().makeType("universal","void*"));
     } else if(Flags.jCode) {
       putType("bool", ast().makeType("bool","boolean"));
       putType("int", ast().makeType("int","int"));
+      putType("double", ast().makeType("double","double"));
       putType("String", ast().makeType("String","String"));
       putType("universal", ast().makeType("universal","Object"));
     } else if(Flags.eCode) {
       putType("bool", ast().makeType("bool","BOOLEAN"));
       putType("int", ast().makeType("int","INTEGER"));
+      putType("double", ast().makeType("double","DOUBLE"));
       putType("String", ast().makeType("String","STRING"));
       putType("universal", ast().makeType("universal","ANY"));
     }
