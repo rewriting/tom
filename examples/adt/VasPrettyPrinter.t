@@ -34,15 +34,16 @@ public class VasPrettyPrinter {
             "\n\npublic"+
             "\nsorts "+printSorts(`sortList)+
             "\n\nabstract syntax\n\n"+printGrammar(`grammar);
+          System.out.println(result);
           out.write(result,0,result.length());
           out.flush();
           out.close();
         }
       }
     } catch(IOException e) {
-      System.out.println("io erreur : " + e);
+      System.err.println("IO Erreur : " + e);
     } catch(Exception ee) {
-      System.out.println("erreur : " + ee);
+      System.err.println("Erreur : " + ee);
     }
   }
 

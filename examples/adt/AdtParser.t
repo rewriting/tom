@@ -16,7 +16,11 @@ public class AdtParser {
   private AdtFactory adtFactory;
   private VasFactory vasFactory;
   private GenericTraversal traversal;
-
+  private HashMap moduleToDefinedSorts;
+  private HashMap moduleToImportedModules;
+  //private HashMap sortToModules;
+  private ArrayList builtinSortsList;
+  
   %include {Adt.tom}
   %include {Vas.tom}
 
@@ -34,7 +38,17 @@ public class AdtParser {
   public AdtParser(AdtFactory adtFactory, VasFactory vasFactory, GenericTraversal traversal) {
     this.adtFactory = adtFactory;
     this.vasFactory = vasFactory;
-    this.traversal = traversal;
+    this.traversal = traversal;    
+    moduleToDefinedSorts = new HashMap();
+    moduleToImportedModules = new HashMap();
+    //sortToModules = new HashMap();
+    builtinSortsList = new ArrayList();
+    builtinSortsList.add("str");
+    builtinSortsList.add("term");
+    builtinSortsList.add("int");
+    builtinSortsList.add("real");
+    builtinSortsList.add("char");
+    builtinSortsList.add("list");
   }
   
   private final AdtFactory getAdtFactory() {
@@ -59,65 +73,74 @@ public class AdtParser {
       String name = file.getName();
       parse(adt,name.substring(0,name.lastIndexOf('.')),path.substring(0,path.length()-name.length()));
     } catch(IOException e) {
-      System.out.println("io erreur : " + e);
+      System.err.println("IO erreur : " + e);
     } catch(Exception ee) {
-      System.out.println("erreur : " + ee);
+      System.err.println("Erreur : " + ee);
     }
   }
 
   private void appendType(String typeString, VasTypeList sortList) {
     %match(VasTypeList sortList) {
-      concVasType() -> {
-        // Warning !
-        sortList = sortList.append(`VasType(typeString));
-      }
       concVasType(_*,VasType(typename),_*) -> {
-        if(`typename != typeString) {
-          sortList = sortList.append(`VasType(typeString));
+        if(`typename == typeString) {
+          return;
         }
       }
     }
+    // Warning !
+    System.err.println("Warning : Missing sort "+typeString+" in definition");
+    sortList = sortList.append(`VasType(typeString));
   }
 
-  private Production buildEntry(Entry entry, VasTypeList sortList) throws Exception {
+  private Production buildEntry(Entry entry, VasTypeList sortList, String moduleName) throws Exception {
     %match(Entry entry) {
       constructor(sort,opname,syntax) -> { 
         String stringName = ((ATermAppl)`opname).getName();
         String codomainString = ((ATermAppl)`sort).getName();
-        FieldList fieldList = buildFieldList(((ATermAppl)`syntax).getArguments());
+        FieldList fieldList = buildFieldList(((ATermAppl)`syntax).getArguments(),moduleName);
         appendType(codomainString, sortList);
-        return `Production(stringName, fieldList, VasType(codomainString));
+        return `Production(stringName, fieldList, VasType(typeToVasConverter(codomainString)));
       }
       list(sort,elemsort) -> {
         String codomainString = ((ATermAppl)`sort).getName();
         appendType(codomainString, sortList);
         String elemCodomainString = ((ATermAppl)`elemsort).getName();
+        if(!sortIsDefined(elemCodomainString,moduleName)) {
+          throw new Exception("Unknown argument sort "+elemCodomainString);
+        }
         return `Production("conc"+elemCodomainString,
-                           concField(StaredField(VasType(elemCodomainString))),
+                           concField(StaredField(VasType(typeToVasConverter(elemCodomainString)))),
                            VasType(codomainString));
       }
       namedList(opname,sort,elemsort) -> {
         String codomainString = ((ATermAppl)`sort).getName();
         appendType(codomainString, sortList);
         String elemCodomainString = ((ATermAppl)`elemsort).getName();
+        if(!sortIsDefined(elemCodomainString,moduleName)) {
+          throw new Exception("Unknown argument sort "+elemCodomainString);
+        }
         return `Production(opname,
                            concField(StaredField(VasType(elemCodomainString))),
-                           VasType(codomainString));
+                           VasType(typeToVasConverter(codomainString)));
       }
       _ -> {
-        throw new Exception("bad entry");
+        throw new Exception("Bad Entry");
       }
     }
   }
 
-  private FieldList buildFieldList(ATermList subtermList) {
+  private FieldList buildFieldList(ATermList subtermList, String moduleName) throws Exception {
     if(subtermList.isEmpty()) {
       return `concField();
     } else {
       ATermPlaceholder arg = (ATermPlaceholder) subtermList.getFirst();
       String argname = ((ATermAppl)arg.getPlaceholder()).getName();
       String argtype = ((ATermAppl)((ATermAppl)arg.getPlaceholder()).getArgument(0)).getName();
-      return `manyFieldList(NamedField(argname,VasType(argtype)), buildFieldList(subtermList.getNext()));
+      if(!sortIsDefined(argtype,moduleName)) {
+        throw new Exception("Unknown argument sort "+argtype);
+      }
+      return `manyFieldList(NamedField(argname,VasType(typeToVasConverter(argtype))),
+                            buildFieldList(subtermList.getNext(),moduleName));
     }
     /*
       FieldList res = `concField();
@@ -131,12 +154,15 @@ public class AdtParser {
     */
   }
 
-  private ImportList buildImports(ATermList imports) {
+  private ImportList buildImports(ATermList imports) throws Exception {
     if(imports.isEmpty()) {
       return `concImportedVasModule();
     } else {
       AdtModuleName name = (AdtModuleName)imports.getFirst();
       String nameName = name.getName();
+      if(!moduleToDefinedSorts.containsKey(nameName)) {
+        throw new Exception("Unknown module "+nameName);
+      }
       return buildImports(imports.getNext()).append(`Import(VasModuleName(nameName)));
     }
   }
@@ -151,11 +177,11 @@ public class AdtParser {
       modulentry[importedModule=imports] -> {
         importList = buildImports(`imports);
       }
-      modulentry[definedSorts=sorts] -> {
-        sortList = buildSorts(`sorts);
+      modulentry[modulename=moduleName,definedSorts=sorts] -> {
+        sortList = buildSorts(`sorts,`moduleName.getName());
       }
-      modulentry(_,_,_,concEntry(_*,entry,_*)) -> {
-        Production prod =  buildEntry(`entry, sortList);
+      modulentry(moduleName,_,_,concEntry(_*,entry,_*)) -> {
+        Production prod =  buildEntry(`entry, sortList,`moduleName.getName());
         prodList = prodList.append(prod);
       }
     }
@@ -164,28 +190,36 @@ public class AdtParser {
                                   Public(concGrammar(Sorts(sortList),Grammar(prodList)))));
   };  
 
-  private VasTypeList buildSorts(ATermList sorts) {
+  private VasTypeList buildSorts(ATermList sorts, String moduleName) throws Exception {
     if(sorts.isEmpty()) {
       return `concVasType();
     } else {
       AdtType type = (AdtType)sorts.getFirst();
       String typeName = type.getName();
-      return buildSorts(sorts.getNext()).append(`VasType(typeName));
+      ArrayList moduleSorts = (ArrayList)moduleToDefinedSorts.get(moduleName);
+      if((moduleSorts.contains(typeName))||(builtinSortsList.contains(typeName))) {
+        return buildSorts(sorts.getNext(),moduleName).append(`VasType(typeToVasConverter(typeName)));
+      } else {
+        throw new Exception("Unknown type "+typeName);
+      }
     }
   }
 
-  private void collectImport(ATerm subject, final HashMap map) {
+  private void collectImport(ATerm subject, final HashMap map, final String modulename) {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
-          if(t instanceof AdtModules) {
-            %match(AdtModules t) {
-              concAdtModule(_*,module@modulentry[modulename=moduleName],_*) -> { 
-                HashSet set = new HashSet();
-                listSort(`module,set);
-                map.put(`moduleName,set);
+          if(t instanceof Imports) {
+            %match(Imports t) {
+              concAdtModuleName(_*,name[name=moduleName],_*) -> { 
+                if(map.containsKey(modulename)) {
+                  ((ArrayList)map.get(modulename)).add(`moduleName.toString());
+                } else {
+                  ArrayList list = new ArrayList();
+                  list.add(`moduleName.toString());
+                  map.put(modulename,list);
+                }
                 return false; 
               }
-
             }
           }
           return true;
@@ -198,14 +232,35 @@ public class AdtParser {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
           if(t instanceof Entry) {
-
             %match(Entry t) {
-              list[sort=sort] -> { 
-                map.put(`sort,modulename);
-                return false; 
+              namedList[sort=sort] -> { 
+                if(map.containsKey(modulename)) {
+                  ((ArrayList)map.get(modulename)).add(`sort.toString());
+                } else {
+                  ArrayList list = new ArrayList();
+                  list.add(`sort.toString());
+                  map.put(modulename,list);
+                }
+                return false;
               }
-              constructor[sort=sort] -> { 
-                map.put(`sort,modulename);
+              list[sort=sort] -> { 
+                if(map.containsKey(modulename)) {
+                  ((ArrayList)map.get(modulename)).add(`sort.toString());
+                } else {
+                  ArrayList list = new ArrayList();
+                  list.add(`sort.toString());
+                  map.put(modulename,list);
+                }
+                return false;
+              }
+              constructor[sort=sort] -> {
+                if(map.containsKey(modulename)) {
+                  ((ArrayList)map.get(modulename)).add(`sort.toString());
+                } else {
+                  ArrayList list = new ArrayList();
+                  list.add(`sort.toString());
+                  map.put(modulename,list);
+                }
                 return false; 
               }
             }
@@ -214,13 +269,17 @@ public class AdtParser {
         } // end apply
       }; // end new
     traversal.genericCollect(subject, collect);
-  }  
+  }
 
   private void listSort(ATerm subject, final HashSet set) {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
           if(t instanceof Entry) {
             %match(Entry t) {
+              namedList[sort=sort] -> { 
+                set.add(`sort);
+                return false;
+              }
               list[sort=sort] -> { 
                 set.add(`sort);
                 return false;
@@ -235,22 +294,18 @@ public class AdtParser {
         } // end apply
       }; // end new
     traversal.genericCollect(subject, collect);
-  }
+    }
 
   private void  modularAdtToVas(String input, String path) throws Exception {
-    /*************************************************************************************************************/
+    System.out.println(input);
     ProductionList prodList = `concProduction();
     ImportList importList = `concImportedVasModule();
     VasTypeList sortList = `concVasType();
     AdtModules modules = adtFactory.AdtModulesFromString(input);
-
-    HashMap sortMap = new HashMap();
-    HashMap importMap = new HashMap();
-    collectImport(modules, importMap);
-
     %match(AdtModules modules) {
       concAdtModule(_*,module@modulentry[modulename=moduleName],_*) -> {
-        collectSort(`module, sortMap, `moduleName.getName());
+        collectImport(modules, moduleToImportedModules, `moduleName.getName());
+        collectSort(`module, moduleToDefinedSorts, `moduleName.getName());
         prettyPrint(`buildModule(module, prodList, importList, sortList), path);
       }
     }
@@ -281,6 +336,20 @@ public class AdtParser {
     return result;
   }
 
+  private boolean sortIsDefined(String sort, String moduleName) {
+    if((((ArrayList)moduleToDefinedSorts.get(moduleName)).contains(sort))||(builtinSortsList.contains(sort))) {
+      return true;
+    } else {
+      Iterator i = ((ArrayList)moduleToImportedModules.get(moduleName)).iterator();
+      while(i.hasNext()) {
+        if(((ArrayList)i.next()).contains(sort)) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
   private String toModular(String input, String inputName) {
     Entries entries = adtFactory.EntriesFromString(input);
     HashSet set = new HashSet();
@@ -288,4 +357,14 @@ public class AdtParser {
     return ("[modulentry(name(\""+inputName+"\"),[],["+setToStr(set)+"],"+input+")]");
   }
 
+  private String typeToVasConverter(String type) {
+    %match(String type) {
+      "str"  -> { return "String"; }
+      "term" -> { return "ATerm"; }
+      "int"  -> { return "Int"; }
+      "real" -> { return "Real"; }
+      "char" -> { return "Char"; }
+      _      -> { return type; }
+    }
+  }
 }
