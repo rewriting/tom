@@ -772,6 +772,15 @@ public class TomKernelCompiler extends TomBase {
         return `buildConstraint(tail,source,Let(var,source,subBody));
       }
 
+      concConstraint(Ensure(exp) ,tail*) -> {
+        //System.out.println("constraint: " + source + " Ensure " + exp);
+        //Instruction subBody = compileConstraint(`exp,source,body);
+        TomType type = getSymbolTable().getBoolType();
+        Expression equality = `EqualTerm(type,ExpressionToTomTerm(TrueTL()),exp);
+        Instruction generatedTest = `IfThenElse(equality,body,Nop());
+        return `buildConstraint(tail,source,generatedTest);
+      }
+
       concConstraint(head,tail*) -> {
         throw new TomRuntimeException("buildConstraint: unknown constraint: " + `head);
       }

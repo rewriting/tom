@@ -284,7 +284,7 @@ public class TomVerifier extends TomGenericPlugin {
   public String pattern_to_string(Pattern pattern) {
     String result = "";
     %match(Pattern pattern) {
-      Pattern(tomList) -> {
+      Pattern(tomList, guards) -> {
         return pattern_to_string(tomList);
       }
     }

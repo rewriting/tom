@@ -89,7 +89,7 @@ public class TomIlTools extends TomBase {
 
   public ZExpr pattern_to_ZExpr(ZTerm input, Pattern pattern, Map map) {
     %match(Pattern pattern) {
-      Pattern(tomList) -> {
+      Pattern(tomList,guards) -> {
           return pattern_to_ZExpr(input, tomList, map);
       }
     }

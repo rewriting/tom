@@ -37,8 +37,9 @@ import java.util.logging.Logger;
 
 import jtom.TomBase;
 import jtom.TomMessage;
+import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.TomSignatureFactory;
-import jtom.adt.tomsignature.types.Constraint;
+/*import jtom.adt.tomsignature.types.Constraint;
 import jtom.adt.tomsignature.types.ConstraintList;
 import jtom.adt.tomsignature.types.Declaration;
 import jtom.adt.tomsignature.types.Instruction;
@@ -56,7 +57,7 @@ import jtom.adt.tomsignature.types.TomStructureTable;
 import jtom.adt.tomsignature.types.TomSymbol;
 import jtom.adt.tomsignature.types.TomTerm;
 import jtom.adt.tomsignature.types.TomType;
-import jtom.adt.tomsignature.types.TomTypeList;
+import jtom.adt.tomsignature.types.TomTypeList;*/
 import jtom.exception.TomException;
 import jtom.tools.SymbolTable;
 import jtom.tools.TomFactory;
@@ -227,6 +228,8 @@ patternInstruction [LinkedList list] throws TomException
     LinkedList listOrgTrackPattern = new LinkedList();
     LinkedList blockList = new LinkedList();
 
+    LinkedList matchGuardsList = new LinkedList();
+
     Option option = null;
 
     clearText();
@@ -251,6 +254,10 @@ patternInstruction [LinkedList list] throws TomException
                     listOrgTrackPattern.add(option);
                 }
             )* 
+            {
+                matchGuardsList.clear();
+            }
+            ( WHEN matchGuards[matchGuardsList] )?
             ARROW t:LBRACE
             {
                 // update for new target block
@@ -273,6 +280,10 @@ patternInstruction [LinkedList list] throws TomException
 
                 TomList patterns = null;
                 String patternText = null;
+                /*
+                 * The following loop splits disjuntions of patterns
+                 * into several PatternInstructions
+                 */
                 for(int i=0 ;  i<listOfMatchPatternList.size() ; i++) {
                     patterns = (TomList) listOfMatchPatternList.get(i);
                     patternText = (String) listTextPattern.get(i);
@@ -285,9 +296,11 @@ patternInstruction [LinkedList list] throws TomException
                         (Option) listOrgTrackPattern.get(i),
                         OriginalText(Name(patternText))
                     );
-                    
+
+                    //System.out.println("pattern = " + `Pattern(patterns,ast().makeList(matchGuardsList)));
+
                     list.add(`PatternInstruction(
-                            Pattern(patterns),
+                            Pattern(patterns,ast().makeList(matchGuardsList)),
                             RawAction(AbstractBlock(ast().makeInstructionList(blockList))),
                             optionList)
                     );
@@ -314,6 +327,21 @@ matchPattern [LinkedList list] returns [Option result] throws TomException
         )
     ;
 
+matchGuards [LinkedList list] throws TomException
+{
+    TomTerm term = null;
+}
+    :   (
+             term = annotedTerm 
+            {
+                list.add(term);
+            }
+            ( 
+                COMMA {text.append('\n');}  
+                term = annotedTerm {list.add(term);}
+            )*
+        )
+    ;
 
 
 // The %rule construct
@@ -2142,6 +2170,7 @@ tokens {
     STAMP = "stamp";
     GET_ELEMENT = "get_element";
     GET_SIZE = "get_size";
+    WHEN = "when";
 }
 
 LBRACE      :   '{' ;

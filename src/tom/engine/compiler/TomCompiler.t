@@ -27,7 +27,9 @@ package jtom.compiler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import jtom.adt.tomsignature.types.*;
@@ -36,6 +38,7 @@ import jtom.tools.TomFactory;
 import jtom.tools.TomGenericPlugin;
 import jtom.tools.Tools;
 import tom.library.traversal.Replace1;
+import tom.library.traversal.Replace3;
 import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
@@ -147,23 +150,35 @@ public class TomCompiler extends TomGenericPlugin {
               
                 matchBlock: {
                   %match(PatternInstruction elt) {
-                    PatternInstruction(Pattern(termList),actionInst, option) -> {
+                    PatternInstruction(Pattern(termList,guardList),actionInst, option) -> {
                       TomList newTermList = empty();
                       /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
                       TomList renamedTermList = linearizePattern(`termList,equalityCheck);
-                      newPatternInstruction = `PatternInstruction(Pattern(renamedTermList),actionInst, option);        
-                    
+                      newPatternInstruction = `PatternInstruction(Pattern(renamedTermList,guardList),actionInst, option);        
+                      /* attach guards to variables or applications*/
+                      TomList constrainedTermList = renamedTermList;
+                      TomList l = `guardList;
+                      while(!l.isEmpty()) {
+                        TomTerm guard = l.getHead();
+                        //System.out.println("try to attach "+guard+" to "+constrainedTermList);
+                        constrainedTermList = attachConstraint(constrainedTermList,guard);
+                        l = l.getTail();
+                      }
+                      TomList emptyGuardList = `empty();
+                      newPatternInstruction = `PatternInstruction(Pattern(constrainedTermList,emptyGuardList),actionInst, option);        
+
                       /* abstract patterns */
                       ArrayList abstractedPattern  = new ArrayList();
                       ArrayList introducedVariable = new ArrayList();
                       newTermList = abstractPatternList(renamedTermList, abstractedPattern, introducedVariable);
 
+                      /* newPatternInstruction is overwritten when abstraction is performed */
                       if(abstractedPattern.size() > 0) {
                         /* generate a new match construct */
                       
                         PatternInstruction generatedPatternInstruction =
-                          `PatternInstruction(Pattern(getAstFactory().makeList(abstractedPattern)),actionInst, concOption());        
+                          `PatternInstruction(Pattern(getAstFactory().makeList(abstractedPattern),emptyGuardList),actionInst, concOption());        
                         /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
                         OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
                         Instruction generatedMatch =
@@ -173,7 +188,7 @@ public class TomCompiler extends TomGenericPlugin {
                         /*System.out.println("Generate new Match"+generatedMatch); */
                         generatedMatch = preProcessingInstruction(generatedMatch);
                         newPatternInstruction =
-                          `PatternInstruction(Pattern(newTermList),generatedMatch, option);
+                          `PatternInstruction(Pattern(newTermList,emptyGuardList),generatedMatch, option);
                       
                         /*System.out.println("newPatternInstruction = " + newPatternInstruction); */
                       }
@@ -232,8 +247,9 @@ public class TomCompiler extends TomGenericPlugin {
                     TomTerm newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
                     Instruction rhsInst = `IfThenElse(TrueTL(),Return(newRhs),Nop());
                     Instruction newRhsInst = `buildCondition(condList,rhsInst);
-                  
-                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(Pattern(matchPatternsList),newRhsInst, option));
+                    TomList guardList = empty();
+
+                    patternInstructionList = (PatternInstructionList) patternInstructionList.append(`PatternInstruction(Pattern(matchPatternsList,guardList),newRhsInst, option));
                     //hasDefaultCase = hasDefaultCase || (isDefaultCase(matchPatternsList) && condList.isEmpty());
                   }
                 } 
@@ -328,8 +344,9 @@ public class TomCompiler extends TomGenericPlugin {
         path = (TomNumberList) path.append(`RuleVar());
         TomTerm newSubject = preProcessing(`BuildReducedTerm(subject));
         TomTerm introducedVariable = newSubject;
+        TomList guardList = empty();
         PatternInstruction generatedPatternInstruction =
-          `PatternInstruction(Pattern(cons(pattern,empty())),newAction, option());        
+          `PatternInstruction(Pattern(cons(pattern,empty()),guardList),newAction, option());        
 
           // Warning: The options are not good
         Instruction generatedMatch =
@@ -502,6 +519,55 @@ public class TomCompiler extends TomGenericPlugin {
     }
     return newList;
   }
+
+  private TomList attachConstraint(TomList subjectList,
+                                   TomTerm constraint) {
+    HashSet patternVariable = new HashSet();
+    HashSet constraintVariable = new HashSet();
+    collectVariable(patternVariable,subjectList);
+    collectVariable(constraintVariable,constraint);
+    patternVariable.retainAll(constraintVariable);
+    //System.out.println("attach constraint "+subjectList+" "+patternVariable+" "+constraint);
+    TomList newSubjectList = (TomList) replace_attachConstraint.apply(subjectList,patternVariable,constraint); 
+
+    //System.out.println("newSubjectList = " + newSubjectList);
+
+    return newSubjectList;
+  }
+
+  protected Replace3 replace_attachConstraint = new Replace3() { 
+      public ATerm apply(ATerm subject, Object arg1, Object arg2) {
+        Set variableSet = (Set) arg1;
+        TomTerm constraint = (TomTerm) arg2;
+
+        if(subject instanceof TomTerm) {
+          %match(TomTerm subject) {
+            var@(Variable|VariableStar)[constraints=constraintList] -> {
+              //System.out.println("var = " + var);
+              //System.out.println("set1 = " + variableSet);
+              variableSet.remove(`var);
+              //System.out.println("set2 = " + variableSet);
+
+              if(variableSet.isEmpty()) {
+                ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
+                return var.setConstraints(newConstraintList);
+              }
+              //return var;
+            }
+
+            appl@Appl[constraints=constraintList] -> {
+              if(variableSet.isEmpty()) {
+                ConstraintList newConstraintList = (ConstraintList)constraintList.append(`Ensure(preProcessing(BuildReducedTerm(constraint))));
+                return appl.setConstraints(newConstraintList);
+              }
+              //return appl;
+            }
+          }
+        }
+
+        return traversal().genericTraversal(subject,this,variableSet,constraint);
+      } // end apply
+    }; // end new
 
 
 } // class TomCompiler

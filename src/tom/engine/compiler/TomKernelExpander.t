@@ -237,7 +237,7 @@ public class TomKernelExpander extends TomBase {
           } // end match
         } else if(subject instanceof Pattern) {
           %match(TomTerm contextSubject, Pattern subject) {
-            SubjectList(l1), Pattern(subjectList) -> {
+            SubjectList(l1), Pattern(subjectList, guardList) -> {
                //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
                 
                // process a list of subterms
@@ -247,7 +247,26 @@ public class TomKernelExpander extends TomBase {
                  `subjectList = `subjectList.getTail();
                  `l1 = `l1.getTail();
                }
-               return `Pattern(getAstFactory().makeList(list));
+               TomList newSubjectList = getAstFactory().makeList(list);
+
+               // process a list of guards
+               list.clear();
+              // build the list of variables that occur in the lhs
+              HashSet set = new HashSet();
+              collectVariable(set,newSubjectList);
+              TomList varList = getAstFactory().makeList(set);
+
+              //System.out.println("varList = " + varList);
+
+               while(!`guardList.isEmpty()) {
+                 list.add(expandVariable(`Tom(varList), `guardList.getHead()));
+                 `guardList = `guardList.getTail();
+               }
+               TomList newGuardList = getAstFactory().makeList(list);
+
+               //System.out.println("newGuardList = " + newGuardList);
+
+               return `Pattern(newSubjectList,newGuardList);
              }
           } // end match
         } else if(subject instanceof TomTerm) {
@@ -291,8 +310,22 @@ public class TomKernelExpander extends TomBase {
                        return `Appl(option,nameList,subterm,newConstraints);
                      }
                    }
+                   Tom(concTomTerm(_*,var@Variable[astName=Name(varName)],_*)) -> {
+                     ConstraintList newConstraints = expandVariableConstraintList(`contextSubject,`constraints);
+                     if(`l.isEmpty()  && !hasConstructor(`option) && `tomName==`varName) {
+                       return var;
+                     } else {
+                       TomList subterm = expandVariableList(`emptySymbol(), `l);
+                       return `Appl(option,nameList,subterm,newConstraints);
+                     }
+                   }
+
                    _ -> {
                      // do nothing
+                     
+                     //System.out.println("contextSubject = " + contextSubject);
+                     //System.out.println("subject        = " + subject);
+
                    }
                  }
                }

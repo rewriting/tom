@@ -1,3 +1,12 @@
+2005-03-11  Anne-Claire Lonchamp  <lonchamp@sawyer.loria.fr>
+
+	* src/jtom/compiler/TomCompiler.t: 
+	  - introduce the Ensure constraint
+	  - attach this constraint to the last instantiated variable (of the pattern) occuring in this constraint
+	* src/jtom/compiler/TomKernelCompiler.t: 
+	  - generate IfThenElse for the ensure constraint
+
+
 2005-03-10  pem  <pem@polly.loria.fr>
 
 	* src/jtom/parser/TomJavaParser.g: 

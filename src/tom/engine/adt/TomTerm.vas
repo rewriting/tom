@@ -45,7 +45,7 @@ BuildAppendArray(astName:TomName,headTerm:TomTerm,tailTerm:TomTerm) -> TomTerm
 TomInclude(tomList:TomList) -> TomTerm
 Automata(option:OptionList,patternList:TomList,numberList:TomNumberList,inst:Instruction) -> TomTerm
 PatternInstruction(pattern:Pattern,action:Instruction,option:OptionList) -> PatternInstruction
-Pattern(tomList:TomList) -> Pattern
+Pattern(tomList:TomList,guards:TomList) -> Pattern
 concPatternInstruction(PatternInstruction*) -> PatternInstructionList
 concPattern(Pattern*) -> PatternList
 concTomTerm(TomTerm*) -> TomList

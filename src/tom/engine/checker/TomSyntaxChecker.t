@@ -558,7 +558,7 @@ public class TomSyntaxChecker extends TomChecker {
     int nbExpectedArgs = typeMatchArgs.size();
     // we now compare pattern to its definition
     %match(PatternInstructionList patternInstructionList) {
-      concPatternInstruction(_*, PatternInstruction[pattern=Pattern(terms)], _*) -> {
+      concPatternInstruction(_*, PatternInstruction[pattern=Pattern(terms,guards)], _*) -> {
         // control each pattern vs the match definition
         `verifyMatchPattern(terms, typeMatchArgs, nbExpectedArgs);
       }
