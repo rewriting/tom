@@ -81,7 +81,7 @@ public class TomIlTools extends TomBase {
 
     while(!tail.isEmpty()) {
       h = tail.getHead();
-      result = `zand(result,pattern_to_ZExpr(input, h,map));
+      result = `zor(result,pattern_to_ZExpr(input, h,map));
       tail = tail.getTail();
     }
     return result;
@@ -98,9 +98,14 @@ public class TomIlTools extends TomBase {
   
   public ZExpr pattern_to_ZExpr(ZTerm input, TomList tomList, Map map) {
     /* for each TomTerm: builds a zeq : pattern = first var in map */
-    ZExpr res = `ztrue();
+    ZExpr res = null;
     TomTerm h = null;
     TomList tail = tomList;    
+    if(!tail.isEmpty()) {
+      h = tail.getHead();
+      tail = tail.getTail();
+      res = `zeq(tomTerm_to_ZTerm(h,map),input);
+    }
     while(!tail.isEmpty()) {
       h = tail.getHead();
       tail = tail.getTail();

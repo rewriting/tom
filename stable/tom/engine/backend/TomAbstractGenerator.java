@@ -192,9 +192,9 @@ public abstract class TomAbstractGenerator extends TomBase {
   }
 
   public void generateExpression(int deep, Expression subject) throws IOException {
-     { jtom.adt.tomsignature.types.Expression tom_match2_1=(( jtom.adt.tomsignature.types.Expression)subject); if(tom_is_fun_sym_Not(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match2_1_1=tom_get_slot_Not_arg(tom_match2_1); { jtom.adt.tomsignature.types.Expression exp=tom_match2_1_1;
+     { jtom.adt.tomsignature.types.Expression tom_match2_1=(( jtom.adt.tomsignature.types.Expression)subject); if(tom_is_fun_sym_Negation(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match2_1_1=tom_get_slot_Negation_arg(tom_match2_1); { jtom.adt.tomsignature.types.Expression exp=tom_match2_1_1;
 
-        buildExpNot(deep, exp);
+        buildExpNegation(deep, exp);
         return;
       }} } if(tom_is_fun_sym_And(tom_match2_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match2_1_1=tom_get_slot_And_arg1(tom_match2_1); { jtom.adt.tomsignature.types.Expression tom_match2_1_2=tom_get_slot_And_arg2(tom_match2_1); { jtom.adt.tomsignature.types.Expression exp1=tom_match2_1_1; { jtom.adt.tomsignature.types.Expression exp2=tom_match2_1_2;
 
@@ -386,17 +386,17 @@ public abstract class TomAbstractGenerator extends TomBase {
 
 ;
         return;
-      }}}} } if(tom_is_fun_sym_IfThenElse(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_IfThenElse_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_IfThenElse_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_IfThenElse_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression exp=tom_match3_1_1; { jtom.adt.tomsignature.types.Instruction succesList=tom_match3_1_2; if(tom_is_fun_sym_Nop(tom_match3_1_3) ||  false ) {buildIfThenElse(deep,exp,succesList)
+      }}}} } if(tom_is_fun_sym_If(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_If_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_If_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_If_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression exp=tom_match3_1_1; { jtom.adt.tomsignature.types.Instruction succesList=tom_match3_1_2; if(tom_is_fun_sym_Nop(tom_match3_1_3) ||  false ) {buildIf(deep,exp,succesList)
 
 
 ;
         return;
-       }}}}}} } if(tom_is_fun_sym_IfThenElse(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_IfThenElse_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_IfThenElse_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_IfThenElse_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression exp=tom_match3_1_1; if(tom_is_fun_sym_Nop(tom_match3_1_2) ||  false ) { { jtom.adt.tomsignature.types.Instruction failureList=tom_match3_1_3;buildIfThenElse(deep,tom_make_Not(exp),failureList)
+       }}}}}} } if(tom_is_fun_sym_If(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_If_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_If_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_If_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression exp=tom_match3_1_1; if(tom_is_fun_sym_Nop(tom_match3_1_2) ||  false ) { { jtom.adt.tomsignature.types.Instruction failureList=tom_match3_1_3;buildIf(deep,tom_make_Negation(exp),failureList)
 
 
 ;
         return;
-      } }}}}} } if(tom_is_fun_sym_IfThenElse(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_IfThenElse_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_IfThenElse_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_IfThenElse_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression exp=tom_match3_1_1; { jtom.adt.tomsignature.types.Instruction succesList=tom_match3_1_2; { jtom.adt.tomsignature.types.Instruction failureList=tom_match3_1_3;buildIfThenElseWithFailure(deep,exp,succesList,failureList)
+      } }}}}} } if(tom_is_fun_sym_If(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_If_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_If_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_If_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression exp=tom_match3_1_1; { jtom.adt.tomsignature.types.Instruction succesList=tom_match3_1_2; { jtom.adt.tomsignature.types.Instruction failureList=tom_match3_1_3;buildIfWithFailure(deep,exp,succesList,failureList)
 
 
 ;
@@ -736,7 +736,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
-  protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
+  protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
 
   protected abstract void buildCompiledMatch(int deep, Instruction instruction) throws IOException;
   protected abstract void buildExpAnd(int deep, Expression exp1, Expression exp2) throws IOException;
@@ -764,8 +764,8 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException ;
   protected abstract void buildUnamedBlock(int deep, InstructionList instList) throws IOException ;
-  protected abstract void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException ;
-  protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
+  protected abstract void buildIf(int deep, Expression exp, Instruction succes) throws IOException ;
+  protected abstract void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
   protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException;
   protected abstract void buildAddOne(int deep, TomTerm var) throws IOException;

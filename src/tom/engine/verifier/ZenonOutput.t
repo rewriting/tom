@@ -98,15 +98,13 @@ public class ZenonOutput {
     // theorem to prove
     %match(DerivTree tree) {
       derivrule(_,ebs(_,env(subsList@subs(is(_,t),_*),acc@accept(positive,negative))),_,_) -> {
-        System.out.println("accept: "+acc);
         inputvar = build_zenon_from_term(t);
         pattern = tomiltools.pattern_to_ZExpr(inputvar,
                                               positive,
                                               build_zenon_varmap(subsList, new HashMap()));
         negpattern = tomiltools.pattern_to_ZExpr(inputvar,
-                                              positive,
+                                              negative,
                                               build_zenon_varmap(subsList, new HashMap()));
-        System.out.println("plipli: " + negpattern);
       }
     }
     
@@ -129,7 +127,11 @@ public class ZenonOutput {
     }
     ZExpr theorem = null;
     if (pattern != null && constraints != null) {
-      theorem = `zequiv(pattern,constraints);
+      if(negpattern != null) {
+        theorem = `zequiv(zand(pattern,znot(negpattern)),constraints);
+      } else {
+        theorem = `zequiv(pattern,constraints);
+      }
       // System.out.println(theorem);
     }
 

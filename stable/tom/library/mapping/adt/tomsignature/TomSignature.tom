@@ -178,11 +178,11 @@
   make(t0, t1) { getTomSignatureFactory().makeExpression_And(t0, t1)}
 }
 
-%op Expression Not(arg:Expression) {
+%op Expression Negation(arg:Expression) {
   fsym {}
-  is_fsym(t) { (t!= null) && t.isNot()}
+  is_fsym(t) { (t!= null) && t.isNegation()}
   get_slot(arg,t) { t.getArg()}
-  make(t0) { getTomSignatureFactory().makeExpression_Not(t0)}
+  make(t0) { getTomSignatureFactory().makeExpression_Negation(t0)}
 }
 
 %op Expression TomTermToExpression(astTerm:TomTerm) {
@@ -392,13 +392,13 @@
   make(t0, t1) { getTomSignatureFactory().makeInstruction_DoWhile(t0, t1)}
 }
 
-%op Instruction IfThenElse(condition:Expression, succesInst:Instruction, failureInst:Instruction) {
+%op Instruction If(condition:Expression, succesInst:Instruction, failureInst:Instruction) {
   fsym {}
-  is_fsym(t) { (t!= null) && t.isIfThenElse()}
+  is_fsym(t) { (t!= null) && t.isIf()}
   get_slot(condition,t) { t.getCondition()}
   get_slot(succesInst,t) { t.getSuccesInst()}
   get_slot(failureInst,t) { t.getFailureInst()}
-  make(t0, t1, t2) { getTomSignatureFactory().makeInstruction_IfThenElse(t0, t1, t2)}
+  make(t0, t1, t2) { getTomSignatureFactory().makeInstruction_If(t0, t1, t2)}
 }
 
 %op Instruction TargetLanguageToInstruction(tl:TargetLanguage) {

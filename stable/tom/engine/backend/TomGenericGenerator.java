@@ -83,7 +83,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
-  protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
+  protected abstract void buildExpNegation(int deep, Expression exp) throws IOException;
   protected abstract void buildExpGetSubterm(int deep, TomType domain, TomType codomain, TomTerm exp, int number) throws IOException;
   protected abstract void buildExpGetHead(int deep, TomName opName, TomType domain, TomType codomain, TomTerm var) throws IOException;
   protected abstract void buildExpGetElement(int deep, TomType domain, TomType codomain, TomTerm varName, TomTerm varIndex) throws IOException;
@@ -98,8 +98,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException ;
   protected abstract void buildUnamedBlock(int deep, InstructionList instList) throws IOException ;
-  protected abstract void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException ;
-  protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
+  protected abstract void buildIf(int deep, Expression exp, Instruction succes) throws IOException ;
+  protected abstract void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
   protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
 TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;

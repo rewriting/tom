@@ -142,12 +142,12 @@ public class PILFactory extends TomBase {
 
 
           return "while "+ prettyPrint(condition)+"do\n\t " + prettyPrint(doInst).replaceAll("\n","\n\t");
-        }}}} } if(tom_is_fun_sym_IfThenElse(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_IfThenElse_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_IfThenElse_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_IfThenElse_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression cond=tom_match3_1_1; { jtom.adt.tomsignature.types.Instruction success=tom_match3_1_2; if(tom_is_fun_sym_Nop(tom_match3_1_3) ||  false ) {
+        }}}} } if(tom_is_fun_sym_If(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_If_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_If_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_If_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression cond=tom_match3_1_1; { jtom.adt.tomsignature.types.Instruction success=tom_match3_1_2; if(tom_is_fun_sym_Nop(tom_match3_1_3) ||  false ) {
 
 
 
           return  "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success).replaceAll("\n","\n\t"); 
-         }}}}}} } if(tom_is_fun_sym_IfThenElse(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_IfThenElse_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_IfThenElse_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_IfThenElse_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression cond=tom_match3_1_1; { jtom.adt.tomsignature.types.Instruction success=tom_match3_1_2; { jtom.adt.tomsignature.types.Instruction failure=tom_match3_1_3;
+         }}}}}} } if(tom_is_fun_sym_If(tom_match3_1) ||  false ) { { jtom.adt.tomsignature.types.Expression tom_match3_1_1=tom_get_slot_If_condition(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_2=tom_get_slot_If_succesInst(tom_match3_1); { jtom.adt.tomsignature.types.Instruction tom_match3_1_3=tom_get_slot_If_failureInst(tom_match3_1); { jtom.adt.tomsignature.types.Expression cond=tom_match3_1_1; { jtom.adt.tomsignature.types.Instruction success=tom_match3_1_2; { jtom.adt.tomsignature.types.Instruction failure=tom_match3_1_3;
 
 
           return "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(failure).replaceAll("\n","\n\t")+"\n";

@@ -22,6 +22,7 @@ abstract syntax
   zforall(var:ZTerm,aztype:ZType,expr:ZExpr)  -> ZExpr
   zexists(var:ZTerm,aztype:ZType,expr:ZExpr)  -> ZExpr
   zand(lte:ZExpr,rte:ZExpr)                   -> ZExpr
+  zor(lte:ZExpr,rte:ZExpr)                   -> ZExpr
   znot(nex:ZExpr)                             -> ZExpr
   zequiv(lte:ZExpr,rte:ZExpr)                 -> ZExpr
   

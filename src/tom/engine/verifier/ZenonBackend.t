@@ -111,6 +111,9 @@ public class ZenonBackend {
       zand(l,r) -> {
         return "("+genZExpr(`l)+") /\\ ("+genZExpr(`r)+")";
       }
+      zor(l,r) -> {
+        return "("+genZExpr(`l)+") \\/ ("+genZExpr(`r)+")";
+      }
       znot(e) -> { return "~("+genZExpr(`e)+")"; }
       zequiv(l,r) -> {
         return "("+genZExpr(`l)+") <-> ("+genZExpr(`r)+")";

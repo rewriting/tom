@@ -241,7 +241,7 @@ public class TomCompiler extends TomGenericPlugin {
 
 
                     TomTerm newRhs = preProcessing(tom_make_BuildReducedTerm(rhsTerm));
-                    Instruction rhsInst = tom_make_IfThenElse(tom_make_TrueTL(),tom_make_Return(newRhs),tom_make_Nop());
+                    Instruction rhsInst = tom_make_If(tom_make_TrueTL(),tom_make_Return(newRhs),tom_make_Nop());
                     Instruction newRhsInst = buildCondition(condList,rhsInst);
                     TomList guardList = empty();
 
@@ -359,7 +359,7 @@ public class TomCompiler extends TomGenericPlugin {
         TomTerm newLhs = preProcessing(tom_make_BuildReducedTerm(lhs));
         TomTerm newRhs = preProcessing(tom_make_BuildReducedTerm(rhs));
         Expression equality = tom_make_EqualTerm(type,newLhs,newRhs);
-        Instruction generatedTest = tom_make_IfThenElse(equality,newAction,tom_make_Nop());
+        Instruction generatedTest = tom_make_If(equality,newAction,tom_make_Nop());
         return generatedTest;
       }}}}}}} }}} }
 
