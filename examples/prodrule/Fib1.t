@@ -62,7 +62,7 @@ class Fib1 {
   public void run() {
     long startChrono = System.currentTimeMillis();
     System.out.println("running...");
-    int n = 200;
+    int n = 100;
     Space space = `concElement(Fib(0,Nat(1)) , Fib(1,Nat(1)) , Fib(n,Undef));
     space = loop(space);
     System.out.println("fib(" + n + ") = " + result(space,n) + " (in " + (System.currentTimeMillis()-startChrono)+ " ms)");

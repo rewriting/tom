@@ -99,10 +99,15 @@ class Fib2 {
       concElement(S1*, Fib[arg=n,val=Undef], S2*) -> {
         Space s12 = `concElement(S1*,S2*);
         %match(Space s12) {
-          concElement(_*, Fib[arg=n1,val=Nat(v1)], _*, Fib[arg=n2,val=Nat(v2)], _*) -> {
-            if( `(n1+1==n && n2+2==n) || `(n2+1==n && n1+2==n) ) {
-              int modulo = (`v1+`v2)%1000000;
-              return `manySpace(Fib(n,Nat(modulo)),s12);
+          concElement(T1*, fibn1@Fib[arg=n1,val=Nat(v1)], T2*, fibn2@Fib[arg=n2,val=Nat(v2)], T3*) -> {
+            if( `(n1+1==n && n2+2==n) ) {
+              int modulo = `(v1+v2)%1000000;
+              //return `concElement(T1*,T2*,T3*,Fib(n,Nat(modulo)),fibn1);
+              return `concElement(s12*,Fib(n,Nat(modulo)));
+            } else if( `(n2+1==n && n1+2==n) ) {
+              int modulo = `(v1+v2)%1000000;
+              //return `concElement(T1*,T2*,T3*,Fib(n,Nat(modulo)),fibn2);
+              return `concElement(s12*,Fib(n,Nat(modulo)));
             }
           }
         }

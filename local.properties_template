@@ -1,14 +1,6 @@
-#external dependency: aterm-java.jar, shared-object and JJTraveler.
-#Either put it in your classpath, or define the each property
-#This file should be initialized by a script
+# This file predefines some proporties:
+# - where JavaCC is
+# - where jtom-doc is
 
-atermjavajar    = {ATERMPATH}/aterm-1.6.jar
-sharedobjectjar = {SHAREDPATH}/shared-objects-1.4.jar
-jjtravelerjar   = {JJTRAVELERPATH}/jjtraveler-0.4.2.jar
-apigenjar       = {APIGENPATH}/apigen-2.0.jar
-vastoadtjar     = {VASTOADT}/vas-to-adt-0.1.jar
 javaccdir       = {JAVACCPATH}/java/javacc-3.2
-
-referencepdf    = {JTOMDOCPATH}/reference/reference.pdf
-guidepdf        = {JTOMDOCPATH}/guide/guide.pdf
-tutorialpdf     = {JTOMDOCPATH}/tutorial/tutorial.pdf
+tomdocdir       = {JTOMDOCPATH}/

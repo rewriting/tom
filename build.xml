@@ -318,9 +318,11 @@
 		<copy todir="${stable.lib}" file="${vastoadt.lib}"/>
 		<copy todir="${stable.lib}" file="${concurrent.lib}"/>
 		<!-- tom doc -->
-		<copy todir="${stable.doc}" file="${referencepdf}"/>
-		<copy todir="${stable.doc}" file="${guidepdf}"/>
-		<copy todir="${stable.doc}" file="${tutorialpdf}"/>
+		<copy todir="${stable.doc}">
+			<fileset dir="${tomdocdir}">
+				<include name="**/*.pdf"/>
+			</fileset>
+		</copy>
 		<!-- prepare tar file -->
 		<tar tarfile="${dist}/jtom-${version}.tar.gz" compression="gzip">
 			<tarfileset dir="${stable.dist}" prefix="jtom-${version}" mode="755">
