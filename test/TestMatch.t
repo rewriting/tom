@@ -78,18 +78,46 @@ public class TestMatch extends TestCase {
   %op E h(E,E) {
     fsym { factory.makeAFun("h", 2, false) }
   }
-  
+
+	static class TestData {
+		String question;
+		String answer;
+		public TestData(String question, String answer) {
+			this.question = question;
+			this.answer = answer;
+		}
+	}
+
+	static class TestData2 {
+		String question1;
+		String question2;
+		String answer;
+		public TestData2(String question1, String question2, String answer) {
+			this.question1 = question1;
+			this.question2 = question2;
+			this.answer = answer;
+		}
+	}
+
   public void test1() {
-    assertTrue(pattern1 == match1(factory.parse("g(a,a)")));
-    assertTrue(fail     == match1(factory.parse("g(a,b)")));
+		TestData[] TEST = new TestData[] {
+			new TestData("g(a,a)"                     ,"pattern1"), 
+			new TestData("g(a,b)"                     ,"fail    "),
+			new TestData("h(f(b),f(b))"               ,"pattern2"),
+			new TestData("h(f(a),f(b))"               ,"fail    "),
+			new TestData("h(f(f(g(a,b))),g(b,g(a,b)))","pattern3"),
+			new TestData("h(f(f(g(a,b))),g(b,g(b,b)))","fail    "),
+			new TestData("h(b,g(b,b))"                ,"pattern4"),
+			new TestData("h(a,g(b,b))"                ,"fail    ") 
+		};
 
-    assertTrue(pattern2 == match1(factory.parse("h(f(b),f(b))")));
-    assertTrue(fail     == match1(factory.parse("h(f(a),f(b))")));
-
-    assertTrue(pattern3 == match1(factory.parse("h(f(f(g(a,b))),g(b,g(a,b)))")));
-    assertTrue(fail     == match1(factory.parse("h(f(f(g(a,b))),g(b,g(b,b)))")));
-    assertTrue(pattern4 == match1(factory.parse("h(b,g(b,b))")));
-    assertTrue(fail     == match1(factory.parse("h(a,g(b,b))")));
+		for (int i=0; i<TEST.length;i++) {
+			assertSame(
+				"TestMatch1 expected "+TEST[i].answer+" for match1("+TEST[i].question+")",
+				match1(factory.parse(TEST[i].question)),
+				factory.parse(TEST[i].answer)
+				);
+		}
   }
 
   public ATerm match1(ATerm t) {
@@ -104,16 +132,20 @@ public class TestMatch extends TestCase {
   }
       
   public void test2() {
-    assertTrue(pattern1 == match2(factory.parse("g(a,b)"),
-                                  factory.parse("f(a)")));
-    assertTrue(fail     == match2(factory.parse("g(b,b)"),
-                                  factory.parse("f(a)")));
+		TestData2[] TEST = new TestData2[] {
+			new TestData2("g(a,b)"      ,"f(a)","pattern1 "), 
+			new TestData2("g(b,b)"      ,"f(a)","fail     "),
+			new TestData2("g(f(a),f(a))","f(a)","pattern2 "),
+			new TestData2("g(f(b),f(a))","f(a)","fail     ")
+		};
 
-    assertTrue(pattern2 == match2(factory.parse("g(f(a),f(a))"),
-                                  factory.parse("f(a)")));
-    assertTrue(fail     == match2(factory.parse("g(f(b),f(a))"),
-                                  factory.parse("f(a)")));
-
+		for (int i=0; i<TEST.length;i++) {
+			assertSame(
+				"TestMatch2 expected "+TEST[i].answer+" for match2("+TEST[i].question1+","+TEST[i].question2+")",
+				match2(factory.parse(TEST[i].question1),factory.parse(TEST[i].question2)),
+				factory.parse(TEST[i].answer)
+				);
+		}
   }
 
   public ATerm match2(ATerm t1, ATerm t2) {
@@ -126,13 +158,23 @@ public class TestMatch extends TestCase {
   }
 
   public void test3() {
-    assertTrue(pattern1 == match3(factory.parse("h(l([a,b,a,b]),a)")));
-    assertTrue(fail     == match3(factory.parse("h(l([a,b,a,b]),l([a,a,b,a]))")));
-    assertTrue(pattern2 == match3(factory.parse("h(l([a,b,a,b]),l([a,a,b,a,b]))")));
-    assertTrue(fail     == match3(factory.parse("l([b,b,l([a]),a,l([a,c]),b,c])")));
-    assertTrue(pattern3 == match3(factory.parse("l([a,b,l([a]),a,l([a,c]),b,c])")));
-    assertTrue(fail     == match3(factory.parse("l([a,b,l([c]),a,b,l([a,c]),b,c])")));
-    assertTrue(pattern3 == match3(factory.parse("l([a,b,l([c]),a,c,l([a,c]),b,c])")));
+		TestData[] TEST = new TestData[] {
+			new TestData("h(l([a,b,a,b]),a)"               ,"pattern1"), 
+			new TestData("h(l([a,b,a,b]),l([a,a,b,a]))"    ,"fail    "),
+			new TestData("h(l([a,b,a,b]),l([a,a,b,a,b]))"  ,"pattern2"),
+			new TestData("l([b,b,l([a]),a,l([a,c]),b,c])"  ,"fail    "),
+			new TestData("l([a,b,l([a]),a,l([a,c]),b,c])"  ,"pattern3"),
+			new TestData("l([a,b,l([c]),a,b,l([a,c]),b,c])","fail    "),
+			new TestData("l([a,b,l([c]),a,c,l([a,c]),b,c])","pattern3")
+		};
+
+		for (int i=0; i<TEST.length;i++) {
+			assertSame(
+				"TestMatch3 expected "+TEST[i].answer+" for match3("+TEST[i].question+")",
+				match3(factory.parse(TEST[i].question)),
+				factory.parse(TEST[i].answer)
+				);
+		}
   }
   
   public ATerm match3(ATerm t) {
@@ -146,18 +188,25 @@ public class TestMatch extends TestCase {
     return res;
   }
     
-  public void test4() {
-    assertTrue(pattern1 == match4(factory.parse("h(a, l([a,b,f(b),a]))")));
-    assertTrue(fail     == match4(factory.parse("h(a, l([a,b,f(a),b]))")));
+	public void test4() {
+		TestData[] TEST = new TestData[] {
+			new TestData("h(a, l([a,b,f(b),a]))",     "pattern1"), 
+			new TestData("h(a, l([a,b,f(a),b]))",     "fail    "),
+			new TestData("h(b, l([a,b,f(a),a]))",     "pattern2"),
+			new TestData("h(b, l([b,b,f(a),b]))",     "fail    "),
+			new TestData("h(c, l([a,f(a),f(a),a]))",  "pattern3"),
+			new TestData("h(c, l([a,f(a),f(b),a]))",  "fail    "),
+			new TestData("h(d, l([f(a),f(b),f(a)]))", "pattern4"),
+		  new TestData("h(d, l([a,f(a),f(b),a]))",  "fail    ")
+		};
 
-    assertTrue(pattern2 == match4(factory.parse("h(b, l([a,b,f(a),a]))")));
-    assertTrue(fail     == match4(factory.parse("h(b, l([b,b,f(a),b]))")));
-
-    assertTrue(pattern3 == match4(factory.parse("h(c, l([a,f(a),f(a),a]))")));
-    assertTrue(fail     == match4(factory.parse("h(c, l([a,f(a),f(b),a]))")));
-
-    assertTrue(pattern4 == match4(factory.parse("h(d, l([f(a),f(b),f(a)]))")));
-    assertTrue(fail     == match4(factory.parse("h(d, l([a,f(a),f(b),a]))")));
+		for (int i=0; i<TEST.length;i++) {
+			assertSame(
+				"TestMatch4 expected "+TEST[i].answer+" for match4("+TEST[i].question+")",
+				match4(factory.parse(TEST[i].question)),
+				factory.parse(TEST[i].answer)
+				);
+		}
   }
   
   public ATerm match4(ATerm t) {

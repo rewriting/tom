@@ -10,7 +10,6 @@ public class TestDom extends TestCase {
 	%include{dom.tom}
 
 	public void setUp() {
-		String file = "file.xml";
 		try {
 		dom = DocumentBuilderFactory
 			.newInstance()

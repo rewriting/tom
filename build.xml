@@ -231,14 +231,13 @@
 	<target name="cleanall" description="Cleans everything in the project" depends="cleanstable, cleansrc, cleantest">
 	</target>	
 		
-	<target name="inittest">
-		<!-- For this to work, you must add lib/junit.jar to your classpath--> 
-		<taskdef name="myjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+	<target name="initjunit">
+		<taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
 			<classpath refid="tomsrc.classpath"/>
 		</taskdef>
 	</target>
 	
-	<target name="check" description="Compile and run acceptance tests" depends="initsrc, inittest">
+	<target name="buildtest" description="Compile and run acceptance tests" depends="initsrc">
 		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.mapping} -I ${src.adt}">
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
@@ -253,7 +252,10 @@
 			<classpath refid="src.classpath"/>
 			<exclude name="**/error/**"/>
 		</javac>
-		<myjunit printsummary="yes">
+	</target>
+
+	<target name="junit" description="Runs junit acceptance tests" depends="buildtest, initjunit">
+		<tomjunit printsummary="yes">
 			<classpath>
 				<path refid="src.classpath"/>
 				<pathelement location="${test}"/>
@@ -264,7 +266,7 @@
 					<exclude name="**/error/**"/>
 				</fileset>
 			</batchtest>
-		</myjunit>
+		</tomjunit>
 	</target>
 
     <target name="boostrap">

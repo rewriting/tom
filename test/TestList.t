@@ -1,16 +1,24 @@
 import aterm.*;
 import aterm.pure.*;
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestList extends TestCase {
   private static ATerm ok,fail;
   private ATermFactory factory;
-  
+	private int testNumber;
+
   public void setUp() {
     factory = new PureFactory(16);
     ok   = factory.parse("ok");
-    fail = factory.parse("fail");
+    fail   = factory.parse("fail");
   }
+	
+	public TestList(String testMethodName,int testNumber) {
+		super(testMethodName);
+		this.testNumber = testNumber;
+	}
 
   %typelist L {
     implement { ATermList }
@@ -63,25 +71,56 @@ public class TestList extends TestCase {
   %op E h(E,E) {
     fsym { factory.makeAFun("h", 2, false) }
   }
-  
-  public void test1() {
-    assertTrue(factory.parse("pattern1") == match1(factory.parse("[f(a)]")));
-    assertTrue(factory.parse("pattern2") == match1(factory.parse("[a,b,f(a)]")));
-    assertTrue(factory.parse("pattern3") == match1(factory.parse("[a,f(a),b,f(b)]")));
-    assertTrue(factory.parse("pattern3") == match1(factory.parse("[a,f(a),f(b)]")));
-    assertTrue(factory.parse("pattern3") == match1(factory.parse("[f(a),f(b)]")));
-    assertTrue(factory.parse("pattern4") == match1(factory.parse("[a,f(a),b,f(b),c]")));
-    assertTrue(factory.parse("pattern4") == match1(factory.parse("[a,f(a),f(b),c]")));
-    assertTrue(factory.parse("pattern4") == match1(factory.parse("[f(a),f(b),c]")));
-    assertTrue(factory.parse("pattern5") == match1(factory.parse("[f(b),f(b)]")));
-    assertTrue(factory.parse("pattern5") == match1(factory.parse("[f(b),f(b),c]")));
-    assertTrue(factory.parse("pattern5") == match1(factory.parse("[f(b),a,f(b)]")));
-    assertTrue(factory.parse("pattern5") == match1(factory.parse("[f(b),a,f(b),c]")));
-    assertTrue(factory.parse("pattern6") == match1(factory.parse("[f(c),f(b)]")));
-    assertTrue(fail                      == match1(factory.parse("[f(a),f(c),a,f(c)]")));
-    assertTrue(factory.parse("pattern6") == match1(factory.parse("[f(a),f(c),a,f(c),f(c)]")));
-    assertTrue(factory.parse("pattern7") == match1(factory.parse("[]")));
-  }
+
+	static class TestData {
+		String question;
+		String answer;
+		public TestData(String question, String answer) {
+			this.question = question;
+			this.answer = answer;
+		}
+	}
+
+	public static Test suite() {
+		TestSuite suite = new TestSuite();
+		for (int i = 0; i<TESTS1.length;i++) {
+			suite.addTest(new TestList("testMatch1",i));
+		}
+		for (int i = 0; i<TESTS2.length;i++) {
+			suite.addTest(new TestList("testMatch2",i));
+		}
+		for (int i = 0; i<TESTS3.length;i++) {
+			suite.addTest(new TestList("testMatch3",i));
+		}
+		return suite;
+	}
+
+	public void testMatch1() {
+		TestData td = TESTS1[this.testNumber];
+		assertSame(
+			"TestMatch1 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
+			match1(factory.parse(td.question)), 
+			factory.parse(td.answer));
+	}
+
+	private static final TestData[] TESTS1 = new TestData[] {
+		new TestData("[f(a)]","pattern1"                   ),
+		new TestData("[a,b,f(a)]","pattern2"               ),
+		new TestData("[a,f(a),b,f(b)]","pattern3"          ),
+		new TestData("[a,f(a),f(b)]","pattern3"            ),
+		new TestData("[f(a),f(b)]","pattern3"              ),
+		new TestData("[a,f(a),b,f(b),c]","pattern4"        ),
+		new TestData("[a,f(a),f(b),c]","pattern4"          ),     
+		new TestData("[f(a),f(b),c]","pattern4"            ),
+		new TestData("[f(b),f(b)]","pattern5"              ),
+		new TestData("[f(b),f(b),c]","pattern5"            ),
+		new TestData("[f(b),a,f(b)]","pattern5"            ),
+		new TestData("[f(b),a,f(b),c]","pattern5"          ),
+		new TestData("[f(c),f(b)]","pattern6"              ),
+		new TestData("[f(a),f(c),a,f(c)]","fail"           ),
+		new TestData("[f(a),f(c),a,f(c),f(c)]","pattern6"  ),
+		new TestData("[]","pattern7"                       )
+	};
 
   public ATerm match1(ATerm t) {
     ATerm res = fail;
@@ -98,18 +137,26 @@ public class TestList extends TestCase {
     return res;
   }
 
-  public void test2() {
-    assertTrue(factory.parse("pattern1") == match2(factory.parse("h(a,l([f(a)]))")));
-    assertTrue(factory.parse("pattern2") == match2(factory.parse("h(l([f(a)]),a)")));
-    assertTrue(factory.parse("pattern3") == match2(factory.parse("h(l([a,b,a,b]),a)")));
-    assertTrue(fail                      == match2(factory.parse("h(l([a,b,a,b]),l([a,a,b,a]))")));
-    assertTrue(factory.parse("pattern4") == match2(factory.parse("h(l([a,b,a,b]),l([a,a,b,a,b]))")));
-    assertTrue(fail                      == match2(factory.parse("l([b,b,l([a]),a,l([a,c]),b,c])")));
-    assertTrue(factory.parse("pattern5") == match2(factory.parse("l([a,b,l([a]),a,l([a,c]),b,c])")));
-    assertTrue(fail                      == match2(factory.parse("l([a,b,l([c]),a,b,l([a,c]),b,c])")));
-    assertTrue(factory.parse("pattern5") == match2(factory.parse("l([a,b,l([c]),a,c,l([a,c]),b,c])")));
-  }
+	public void testMatch2() {
+		TestData td = TESTS2[this.testNumber];
+		assertSame(
+			"TestMatch2 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
+			match2(factory.parse(td.question)), 
+			factory.parse(td.answer));
+	}
 
+	private static final TestData[] TESTS2 = new TestData[] {
+		new TestData("h(a,l([f(a)]))"                  , "pattern1"),
+		new TestData("h(l([f(a)]),a)"                  , "pattern2"),
+		new TestData("h(l([a,b,a,b]),a)"               , "pattern3"),
+		new TestData("h(l([a,b,a,b]),l([a,a,b,a]))"    , "fail"    ),     
+		new TestData("h(l([a,b,a,b]),l([a,a,b,a,b]))"  , "pattern4"),
+		new TestData("l([b,b,l([a]),a,l([a,c]),b,c])"  , "fail"    ),     
+		new TestData("l([a,b,l([a]),a,l([a,c]),b,c])"  , "pattern5"),
+		new TestData("l([a,b,l([c]),a,b,l([a,c]),b,c])", "fail"    ),         
+		new TestData("l([a,b,l([c]),a,c,l([a,c]),b,c])", "pattern5")
+	};                                                            
+                                                                
   public ATerm match2(ATerm t) {
     ATerm res = fail;
     %match(E t) {
@@ -117,23 +164,31 @@ public class TestList extends TestCase {
       h(l(conc(f(a()))),a())                   -> { return factory.parse("pattern2"); }
       h(l(conc(X1*,x,y,X2*)),z)                -> { if(`y==`z) return factory.parse("pattern3"); }
       h(l(conc(X1*,x,X2*)),l(conc(Y1*,y,Y2*))) -> { if(`X2==`Y2 && !`X2.isEmpty())
-                                                      return factory.parse("pattern4"); }
+					return factory.parse("pattern4"); }
       l(conc(X1*,Y1*,X2*,l(conc(Y2*)),X3*))    -> { if(`Y1==`Y2) return factory.parse("pattern5"); }
     }
     return res;
   }
 
-  public void test3() {
-    assertTrue(factory.parse("pattern1") == match3(factory.parse("l([f(a)])")));
-    assertTrue(factory.parse("pattern2") == match3(factory.parse("l([f(a),f(b),f(a),f(c)])")));
-    assertTrue(factory.parse("pattern3") == match3(factory.parse("l([g(f(a)),f(b),g(f(a)),f(c)])")));
-  }
+	public void testMatch3() {
+		TestData td = TESTS3[this.testNumber];
+		assertSame(
+			"TestMatch3 : "+this.testNumber+" expected "+td.answer+" for term "+td.question +"",
+			match3(factory.parse(td.question)), 
+			factory.parse(td.answer));
+	}
+
+	private static final TestData[] TESTS3 = new TestData[] {
+		new TestData("l([f(a)])"                     , "pattern1"),
+		new TestData("l([f(a),f(b),f(a),f(c)])"      , "pattern2"),
+		new TestData("l([g(f(a)),f(b),g(f(a)),f(c)])", "pattern3"),
+	};                                                            
 
   public ATerm match3(ATerm t) {
     ATerm res = fail;
     %match(E t) {
       l(vl@conc(x))                        -> { if(`vl==factory.parse("[f(a)]"))
-                                                 return factory.parse("pattern1"); }
+					return factory.parse("pattern1"); }
       l(conc(X1*,vx@f(x),X2*,vy@f(y),X3*)) -> { if(`vx==`vy) return factory.parse("pattern2"); }
       l(conc(X1*,g(vx@f(x)),X2*,g(vy@f(y)),X3*)) -> { if(`vx==`vy) return factory.parse("pattern3"); }
     }
