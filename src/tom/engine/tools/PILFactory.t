@@ -35,6 +35,7 @@ import jtom.tools.TomGenericPlugin;
 import tom.library.traversal.Collect2;
 import tom.library.traversal.Replace1;
 import aterm.ATerm;
+import aterm.ATermList;
 
 public class PILFactory extends TomBase {
   
@@ -72,25 +73,18 @@ public class PILFactory extends TomBase {
         // removes options
         if (subject instanceof OptionList) {
           return `concOption();
-        }
-        else if (subject instanceof Option) {
+        } else if (subject instanceof Option) {
           return `noOption();
-        }
-
-        // removes TargetLanguage
-        else if (subject instanceof TargetLanguage) {
+        } else if (subject instanceof TargetLanguage) {
+          // removes TargetLanguage
           return `noTL();
-        }
-
-        // removes Type
-        else if (subject instanceof TomType) {
+        } else if (subject instanceof TomType) {
+          // removes Type
           %match(TomType subject) {
             Type[] -> { return `EmptyType();}
           }
-        }
-
+        } else if (subject instanceof Expression) {
         // clean Expressions
-        else if (subject instanceof Expression) {
           %match(Expression subject) {
             Cast[source=e]          -> { return this.apply(`e); }
             Or[arg1=e,arg2=FalseTL()] -> { return this.apply(`e); }
@@ -127,13 +121,24 @@ public class PILFactory extends TomBase {
         IfThenElse(cond,success,failure) -> {
           return "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success) + "\n\telse " + prettyPrint(failure) + "\n";
         }
+
+        AbstractBlock(list) -> {
+          return prettyPrint(list);
+        }
+
       }
-    }
-    else if (subject instanceof TomTerm) {
+    } else if (subject instanceof TomTerm) {
       %match(TomTerm subject) {
         Variable[astName=Name(name)] -> {
           return `name;
         }
+      }
+    } else if(subject instanceof ATermList) {
+      ATermList list = (ATermList)subject;
+      if(list.isEmpty()) {
+        return "";
+      } else {
+        return prettyPrint(list.getFirst()) + " " + prettyPrint(list.getNext());
       }
     }
     return subject.toString();
