@@ -1,4 +1,5 @@
 2003-08-22  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+	* bumped to 1.3delta
         * bootinstall
 	* src/jtom/parser/TomParser.jj: removed old backquote and dotTerm parser
 	* src/jtom/tools/ASTFactory.java: removed previous dollar/backquote parser
