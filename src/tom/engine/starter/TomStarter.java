@@ -35,26 +35,26 @@ import aterm.*;
  */
 public class TomStarter extends TomGenericPlugin {
 
-  private ATerm termToRelay;
+  private Object argToRelay;
   private String fileName = null;
 
   public TomStarter() {
     super("TomStarter");
   }
 
-  public void setTerm(ATerm term) {
-    termToRelay = term;
+  public void setArg(Object arg) {
+    argToRelay = arg;
 
-    if (term instanceof AFun) {
-      fileName = ((AFun)term).getName();  
+    if (arg instanceof String) {
+      fileName = (String)arg;  
     } else {
       getLogger().log(Level.SEVERE,
-		      "TomStarter: A AFun object was expected.");
+		      "TomStarter: A String was expected.");
     }
   }
 
-  public ATerm getTerm() {
-    return termToRelay;
+  public Object getArg() {
+    return argToRelay;
   }
 
   public void run() {

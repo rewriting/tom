@@ -64,7 +64,7 @@ public class TomVerifier extends TomGenericPlugin {
 	TomTerm extractTerm = `emptyTerm();
 	// here the extraction stuff
 			
-	Collection matchSet = collectMatch( (TomTerm)getTerm() );
+	Collection matchSet = collectMatch( (TomTerm)getArg() );
 	// System.out.println("Extracted : " + matchSet);
 		
 	Collection purified = purify(matchSet);

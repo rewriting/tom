@@ -54,12 +54,12 @@ public class TomParserPlugin extends TomGenericPlugin {
     super("TomParserPlugin");
   }
 
-  public void setTerm(ATerm term) {
-    if (term instanceof AFun) {
-      fileName = ((AFun)term).getName();  
+  public void setArg(Object arg) {
+    if (arg instanceof String) {
+      fileName = (String)arg;  
     } else {
       getLogger().log(Level.SEVERE,
-		      "TomParserPlugin: A AFun object was expected.");
+		      "TomParserPlugin: A String was expected.");
     }
   }
 
@@ -88,7 +88,7 @@ public class TomParserPlugin extends TomGenericPlugin {
 
       this.parser = TomParser.createParser(fileName);
       TomTerm parsedTerm = parser.startParsing();
-      super.setTerm(parsedTerm);
+      super.setArg(parsedTerm);
 
       getLogger().log( Level.INFO,
 		       "TomParsingPhase",
@@ -103,7 +103,7 @@ public class TomParserPlugin extends TomGenericPlugin {
 
       if(intermediate) {
 	Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + PARSED_SUFFIX, 
-			     getTerm());
+			     (ATerm)getArg());
 	Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + PARSED_TABLE_SUFFIX, 
 			     symbolTable().toTerm());
       }

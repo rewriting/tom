@@ -76,14 +76,14 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   }
 
   /**
-   * Puts the input ATerm into the variable "term", after casting it as a TomTerm.
+   * Puts the input Object into the variable "term", after casting it as a TomTerm.
    * If the cast operation fails, an error will be raised.
    *
-   * @param term the input ATerm
+   * @param term the input Object
    */
-  public void setTerm(ATerm term) {
-    if (term instanceof TomTerm) {
-      this.term = (TomTerm)term;
+  public void setArg(Object arg) {
+    if (arg instanceof TomTerm) {
+      term = (TomTerm)arg;
     } else {
       logger.log(Level.SEVERE,
 		 "TomTermExpected",
@@ -92,11 +92,11 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
   }
 
   /**
-   * Returns the ATerm "term" (which is really a TomTerm).
+   * Returns the Object "term" (which is really a TomTerm).
    *
-   * @return the ATerm "term"
+   * @return the Object "term"
    */
-  public ATerm getTerm() {
+  public Object getArg() {
     return term;
   }
 

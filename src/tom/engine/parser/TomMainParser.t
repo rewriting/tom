@@ -132,7 +132,7 @@ public class TomMainParser extends TomGenericPlugin {
       //createParser();
       parser = newParser(currentFile);
       
-      super.setTerm( parser.input() );
+      super.setArg( parser.input() );
       
       getLogger().log( Level.INFO,
 		       "TomParsingPhase",
@@ -148,7 +148,7 @@ public class TomMainParser extends TomGenericPlugin {
       if(intermediate){
 	  System.out.println("intermediate");
 	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-			       + PARSED_SUFFIX, getTerm());
+			       + PARSED_SUFFIX, (ATerm)getArg());
 	  Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
 			       + PARSED_TABLE_SUFFIX, symbolTable().toTerm());
       }
@@ -197,14 +197,13 @@ public class TomMainParser extends TomGenericPlugin {
 	return parser.getLine();
     }
 
-    public void setTerm(ATerm term){
-	if (term instanceof AFun) {
-	    currentFile = ((AFun)term).getName();  
+    public void setArg(Object arg){
+	if (arg instanceof String) {
+	    currentFile = (String)arg;  
 	} else {
 	    getLogger().log(Level.SEVERE,
-			    "TomParserPlugin: A AFun object was expected.");
+			    "TomParserPlugin: A String was expected.");
 	}
-	//	this.currentFile = ((AFun) term).getName();
     }
 
     

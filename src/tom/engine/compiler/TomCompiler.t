@@ -39,7 +39,7 @@ public class TomCompiler extends TomGenericPlugin {
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
 
-      TomTerm preCompiledTerm = preProcessing( (TomTerm)getTerm() );
+      TomTerm preCompiledTerm = preProcessing( (TomTerm)getArg() );
       //System.out.println("preCompiledTerm = \n" + preCompiledTerm);
       TomTerm compiledTerm = tomKernelCompiler.compileMatching(preCompiledTerm);
 
@@ -50,7 +50,7 @@ public class TomCompiler extends TomGenericPlugin {
       if(intermediate) {
         Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() + COMPILED_SUFFIX, compiledTerm);
       }
-      setTerm(compiledTerm);
+      setArg(compiledTerm);
 
       printAlertMessage(errorsAtStart, warningsAtStart);
     } catch (Exception e) {

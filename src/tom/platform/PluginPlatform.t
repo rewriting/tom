@@ -271,26 +271,25 @@ public class PluginPlatform {
       return 1;
     }
     
-    String[] inputFiles = optionManager.initOptionManagement(instances,argumentList);
+    Object[] inputArgs = optionManager.initOptionManagement(instances,argumentList);
   
     if(statusHandler.hasError()) {
       return 1;
     }
 
-    for(int i = 0; i < inputFiles.length; i++) { // for each file
-      logger.log(Level.FINER, "NowCompiling", inputFiles[i]);
+    for(int i = 0; i < inputArgs.length; i++) { // for each file
+      Object arg = inputArgs[i];
 
-      // creates an ATerm containing the input file name
-      ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
+      logger.log(Level.FINER, "NowCompiling", arg);
       
       // runs the modules
       for(Iterator it = instances.iterator(); it.hasNext(); ) {
         Plugin plugin = (Plugin)it.next();
-        plugin.setTerm(term);
+        plugin.setArg(arg);
         plugin.run();
-        term = plugin.getTerm();
+        arg = plugin.getArg();
         if(statusHandler.hasError()) {
-          logger.log(Level.SEVERE, "ProcessingError", inputFiles[i]);
+          logger.log(Level.SEVERE, "ProcessingError", inputArgs[i]);
           break;
         }
       }

@@ -47,7 +47,7 @@ public class TomBackend extends TomGenericPlugin {
 	  generator = new TomCamlGenerator(output);
 	}
 			
-	generator.generate( defaultDeep, (TomTerm)getTerm() );
+	generator.generate( defaultDeep, (TomTerm)getArg() );
 	
 	getLogger().log( Level.INFO,
 			 "TomGenerationPhase",

@@ -41,16 +41,16 @@ public interface Plugin extends OptionOwner
     /**
      * Sets the input of the plugin.
      *
-     * @param term the input ATerm
+     * @param arg the input argument
      */
-    public abstract void setTerm(ATerm term);
+    public abstract void setArg(Object arg);
 
     /**
      * Retrieves the output of the plugin.
      *
-     * @return the output ATerm
+     * @return the output argument
      */
-    public abstract ATerm getTerm();
+    public abstract Object getArg();
 
     /**
      * Runs the plugin.
