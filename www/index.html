@@ -1,372 +1,1 @@
-<?xml version="1.0"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-
-<head>
-<title>TOM: A Pattern Matching Compiler for Multiple Target Languages</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
-<meta name="description" content="TOM: A Pattern Matching Compiler"/>
-<meta name="keywords" content="tom, pattern, matching, compiler,
-            rewriting, programming language, program transformation,
-            pattern matching"/>
-<link href="styles/mainstyle.css" rel="stylesheet" type="text/css" />
-</head>
-
-<body>
-<div id="logo">
-<a href="index.html"><img src="images/tom_logo.jpg" alt="TOM : To One
-Maching compiler" title="Tom home page" /></a> 
-</div>
-
-<div id="title">
-<h1>A Pattern Matching Compiler for Multiple Target Languages</h1>
-</div>
-
-<div id="page">
-<div id="text">
-<h1>Jtom: a (Java) To One Matching compiler</h1>
-
-<div id="description">
-<dl>
-  <dd>
-       TOM is a pattern matching compiler,
-       developed at <a href="http://www.inria.fr">INRIA</a>,
-       is particularly well-suited
-       for programming various transformations on trees/terms.  
-       Its design follows
-       our research on rule based languages (<a href="http://www.loria.fr/ELAN/R3">R3</a>), and our experiences
-       on the efficient compilation of
-       <a href="http://www.loria.fr/ELAN">ELAN</a>, developed by the
-       <a href="http://www.loria.fr/equipes/protheo">Protheo</a> group. 
-       The tool can be seen as a Yacc-like compiler translating
-       patterns into executable pattern matching automata.   
-       Similarly to Yacc, when a match is found, the corresponding
-       semantic action (a sequence of instructions written in C or
-       Java) is triggered and executed.    
-       </dd>
-</dl>
-</div><!--description-->
-
-<div id="news">
-<h2>News</h2>
-  <ul>
-  <li> [2003-12-10] Jtom 1.5 released
-  <li> [2003-11-24] Creation of the <em>tom-users</em> mailing list.
-  <li> [2003-10-20] XML pattern matching facilities have been integrated into Tom.</li>
-  <li> [2003-09-25] Eclipse plugin released</li>  
-  <li> A nice application of Tom:  <a
-       href="examples/boulder/boulder.html">BoulderDash</a></li>     
-  </ul>
-</div><!-- news -->
-
-<div id="publications">
-<h2>Publications</h2>
-<ul>
-  <li>Pierre-Etienne Moreau, Christophe Ringeissen and Marian Vittek.
-       <a href="http://www.loria.fr/~moreau/Papiers/MoreauRV-LDTA2000.ps.gz">
-       <strong>A Pattern Matching Compiler</strong>.
-       </a>
-       <em>In D. Parigot and M. G. J. van den Brand, editors, 1st
-       International Workshop on Language Descriptions, Tools and
-       Applications</em>, 
-       Genova (Italy), volume 44 of ENTCS. April 2001.
-       <br/>
-  </li>
-  <li>Pierre-Etienne Moreau, Christophe Ringeissen and Marian Vittek.
-       <a href="http://www.loria.fr/~moreau/Papiers/MoreauRV-CC2003.ps.gz">
-       <strong>A Pattern Matching Compiler for Multiple Target Languages.</strong>
-       </a>
-       <em>In G. Hedin, editor, 12th Conference on Compiler Construction</em>,
-       Warsaw (Poland), volume 2622 of LNCS, pages 61-76. Springer-Verlag, May 2003.</li>
-</ul>
-</div><!-- publications -->
-
-
-<div id="doc">
-<h2>Documentation</h2>
-<ul>
-  <li> To subscribe to the mailing-list of TOM, send email to 
-       <a href="mailto:sympa@loria.fr">sympa@loria.fr</a>, 
-       with <br/>
-       <em>SUBSCRIBE tom-users [Firstname] [Name]</em> in the
-       subject of the message. 
-       <br/>
-       To unsubscribe, send an email with <em>SIGNOFF tom-users</em>
-       in the subject.
-  <li> A full <a href="doc/manual/manual.html"> online documentation </a>
-       with installation instructions, language description and
-       tutorial</li>
-  <li> A short <a href="doc/eclipse/overview.html">Eclipse plug-in tutorial</a>
-  </li>
-</ul>
-
-</div><!-- doc -->
-
-
-<div id="tool">
-<h2>Principles</h2>
-<dl>
-<dd>
-TOM is a non-intrusive pattern matching compiler. Its design follows
-our experiences on the efficient compilation of
-<a href="http://www.loria.fr/ELAN">rule-based systems</a>.
-The tool can be seen as a Yacc-like compiler translating  
-patterns into executable pattern matching automata. Similarly to Yacc,
-when a match is found, the corresponding <span style="font-style:
-italic;">semantic action</span> (a sequence of instructions written in
-an imperative language) is triggered and executed.<br/>  
-In a way, we can say that TOM translates a <span style="font-style:
-italic;">declarative-imperative</span> function -- defined by pattern
-matching and imperative instructions -- into a <span
-style="font-style: italic;">fully imperative</span> function. The 
-resulting function can be integrated to an application written in a
-classical language such as C, Java and Eiffel, called the <span
- style="font-style: italic;">target language</span>.
-The different advantages of the approach<br/> implemented by TOM are:<br/>
-<br/>
-<ul>
-  <li>Efficiency: The gain of efficiency follows from the compilation
-       of matching as implemented in TOM.
-       </li>
-</ul>
-<ul>
-  <li>Flexibility: When trying to integrate a black-box tool in an
-       existing system, one of the main bottlenecks comes from data 
-       conversion and the flexibility offered to the user. One of the
-       main originalities of our system is its independence of term
-       representation. The programmer can use (or re-use) his own data
-       structures for terms/trees and then execute matching upon those data
-       structures. We propose to access terms using only a simple <span
-       style="font-style: italic;">Application Programming Interface</span>
-       (API) defined by the user.
-  </li>
-</ul>
-<ul>
-  <li>Generality: TOM is able to consider multiple target
-       languages (C, Java, and Eiffel). TOM is implemented in TOM itself
-       as a series of AST transformations. The code generation is performed at
-       the very end, depending on the target language we are interested in.
-       Hence, the target language is really a parameter of TOM.
-  </li>
-</ul>
-<ul>
-  <li>Expressivity: TOM supports non-linear patterns and equational
-       matching like modern rule-based programming languages. Currently, we
-       have implemented pattern matching with list operators. This form of
-       associative matching with neutral element is very useful for practical
-       applications. The main difference with standard (syntactic) matching is
-       that a single variable may have multiple&nbsp; assignments.
-       </li>
-</ul>
-<span style="font-weight: bold;"><br/></span>
-TOM does not really define a new language: it is rather a
-language extension which adds new matching primitives to an existing
-imperative language. <br/>
-From an implementation point of view, it is a compiler which accepts
-different <span style="font-style: italic;">native languages</span>.
-The compilation process consists of translating new matching constructs
-into the underlying native language. Since the native language and the
-target language are identical and only introduced constructs are
-expanded, the presented tool can also be seen as a kind of preprocessor.<br/>
-On the other hand, the support of multiple target languages, and the
-fact that the input program has to be completely parsed before the
-transformation process can begin, make us consider TOM as a compiler.<br/>
-<br/>
-For expository reasons, we assume that TOM only adds one new construct:
-<span style="color: rgb(255, 0, 0);">%match</span>. This construct is
-similar to the <span style="font-style: italic;">match</span>
-primitive found in ML and related languages: given a term (called
-subject) and a list of pairs: pattern-action, the <span
- style="font-style: italic;">match</span> primitive selects a pattern
-that matches the subject and performs the associated action. This
-construct may thus be seen as an etension of the classical switch/case
-construct. The main difference is that the discrimination occurs on a <span
- style="font-style: italic;">term</span> and not on atomic values like
-characters or integers: the patterns are used to discriminate and
-retrieve information from an algebraic data structure.<br/>
-<br/>
-</dd>
-</dl>
-</div><!-- tool -->
-
-<div id="download">
-<h2>Downloads</h2>
-
-This section contains stable distributions of Jtom.
-
-<div id="eclipse">
-<h3>Eclipse plugin</h3>
-<dl>
-  Just unzip the valid archive in the "plugins" directory of your Eclipse install directory:<BR>
-  <dd> [2003-12-11] <a href="soft/release-1.5/fr.loria.eclipse.jtom_1.5.3.zip">fr.loria.eclipse.jtom_1.5.3.zip</a> for Eclipse  <B>3.0M5</B>
-  </dd>
-  <dd> [2003-12-11] <a href="soft/release-1.5/fr.loria.eclipse.jtom_1.5.2.zip">fr.loria.eclipse.jtom_1.5.2.zip</a> for Eclipse <B>2.1.1</B> and <B>2.1.2</B>
-  </dd>
-
-  <dd> [2003-09-25] <a href="soft/release-1.4/jtom-eclipse-1.4.zip">jtom-eclipse-1.4.zip</a> Older version for Eclipse 2.1.1 and 2.1.2.
-  </dd>
-<BR>
-<a href="doc/eclipse/overview.html">Eclipse plug-in documentation</a>
-
-</dl>
-</div>
-
-<div id="release">
-<h3>Releases</h3>
-<dl>
-  <dd> [2003-12-10] <a href="soft/release-1.5/jtom-1.5.tar.gz">jtom-1.5.tar.gz</a>: Version 1.5 released</dd>
-  <dd> [2003-09-25] <a href="soft/release-1.4/jtom-1.4.tar.gz">jtom-1.4.tar.gz</a>: Version 1.4 released</dd>
-  <dd> [2003-08-26] <a href="soft/release-1.3/jtom-1.3.tar.gz">jtom-1.3.tar.gz</a>: Version 1.3 released</dd>
-  <dd> [2003-04-24] <a href="soft/release-1.2/jtom-1.2.tar.gz">jtom-1.2.tar.gz</a>: Version 1.2 released</dd>
-  <dd> [2003-01-23] <a href="soft/release-1.1/jtom-1.1.tar.gz">jtom-1.1.tar.gz</a>: Version 1.1 released</dd>
-  <dd> [2002-11-21] <a href="soft/release-1.0/jtom-1.0.tar.gz">jtom-1.0.tar.gz</a>: Version 1.0 released</dd>
-  <dd> <a href="releases.html"> old releases </a></dd>
-</dl>	
-</div>
-
-<div id="bundle">
-<h3>Bundles</h3>
-<dl>
-  <dd> [2003-08-26] <a href="soft/release-1.3/jtom-bundle-1.3.tar.gz">jtom-bundle-1.3.tar.gz</a>: This package contains a self-content bundle of jtom-1.3</dd>
-  <dd> [2003-04-24]  <a href="soft/release-1.2/jtom-bundle-1.2.tar.gz">jtom-bundle-1.2.tar.gz</a>: This package contains a self-content bundle of jtom-1.2</dd>
-  <dd> [2003-02-03]  <a href="soft/release-1.1/jtom-bundle-1.1.tar.gz">jtom-bundle-1.1.tar.gz</a>: This package contains a self-content bundle of jtom-1.1</dd>
-  <dd> [2002-11-21]  <a href="soft/release-1.0/jtom-bundle-1.0.tar.gz">jtom-bundle-1.0.tar.gz</a>: This package contains a self-content bundle of jtom-1.0</dd>
-</dl>
-</div>
-
-<div id="jar">
-<h3>Jar distribution</h3>
-<dl>
-  <dd> [2003-12-10] <a href="soft/release-1.5/jtom-bundle-1.5.jar">jtom-bundle-1.5.jar</a></dd>
-  <dd> [2003-09-25] <a href="soft/release-1.4/jtom-bundle-1.4.jar">jtom-bundle-1.4.jar</a></dd>
-</dl>
-</div>
-
-<div id="Scripts_for_bundle_jar_files">
-<h3>Scripts for bundle jar files</h3>
-<dl>
-  <dd>[2003-12-10] Windows:
-       <a href="soft/release-1.5/jtom.bat">jtom.bat</a> --
-       <a href="soft/release-1.5/adt-to-tom.bat">adt-to-tom.bat</a></dd>
-  <dd>[2003-12-10] Unix:
-       <a href="soft/release-1.5/jtom.sh">jtom.sh</a> --
-       <a href="soft/release-1.5/adt-to-tom.sh">adt-to-tom.sh</a></dd>
-</dl>
-</div>
-
-</div><!-- download -->
-
-<div id="CE">
-<h2>The Cutting Edge</h2>
-
-Jtom is under constant development between releases. For people who
-want to be on the cutting edge, there are several easy mechanisms for
-keeping your system in sync with the latest developments. Be
-warned--the cutting edge is not for everyone!
-
-<div id="CE_eclipse"><!-- 'CE' stands for "Cutting Edge" -->
-<h3>Eclipse plugin</h3>
-<dl>
-  <dd> [2003-12-04] <a href="soft/unstable/fr.loria.eclipse.jtom_1.5.1.zip">fr.loria.eclipse.jtom_1.5.1.zip</a></dd>
-</dl>
-</div>
-
-<div id="CE_jar">
-<h3>Jar devel distribution</h3>
-<dl>
-  <dd> [2003-12-18] <a href="soft/unstable/jtom-bundle-1.6alpha.jar">jtom-bundle-1.6alpha.jar</a></dd>
-</dl>
-</div>
-
-<div id="CE_daily">
-<h3>Daily distribution</h3>
-<dl>
-  <dd>Another way to get the last version of jtom is to download the
-       <a
-       href="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/DailyDistributions">daily distribution</a> (at CWI):
-       <ul>
-	 <li>jtom</li>
-	 <li>aterm-java</li>
-	 <li>shared-objects</li>
-	 <li>JJTraveler</li>
-	 <li>apigen</li>
-       </ul>
-  </dd>
-</dl>
-</div>
-
-<div id="CE_cvs">
-<h3>CVS distribution</h3>
-<dl>
-  <dd>jtom is available by anonymous cvs:<br/>
-       <div id="cvspath">cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom</div>
-       </dd>
-  <dd> some cvs snapshots are also available:
-       <a href="soft/daily/jtom-cvs.tgz">jtom-cvs.tgz</a>,
-       <a href="soft/daily/JJTraveler-cvs.tgz">JJTraveler-cvs.tgz</a>,
-       <a href="soft/daily/aterm-java-cvs.tgz">aterm-java-cvs.tgz</a>, and
-       <a href="soft/daily/shared-objects-cvs.tgz">shared-objects-cvs.tgz</a>
-       </dd>
-</dl>
-</div>
-
-</div><!-- The cutting Edge -->
-</div><!-- text -->
-</div><!-- page -->
-
-<div id="TOM_menus"> 
-  <div id="menu_main_page"> 
-    <div id="titre_menu"> 
-      <h2><a href="index.html">TOM Main page</a></h2>
-    </div>
-    <ul>
-      <li> <a href="index.html#news">News</a> </li>
-      <li> <a href="index.html#publications">Publications</a> </li>
-      <li> <a href="index.html#tool">Principles</a> </li>
-      <li> <a href="index.html#download">Downloads</a> </li>
-      <li> <a href="index.html#CE">The Cutting Edge</a> </li>
-    </ul>
-  </div>
-  <div id="menu_doc"> 
-    <div id="titre_menu2"> 
-      <h2><a href="index.html#doc">Documentation</a></h2>
-    </div>
-    <ul>
-      <li> <a href="doc/manual/manual.html">TOM Online documentation</a> </li>
-      <li> <a href="doc/eclipse/overview.html">Eclipse plug-in tutorial</a> </li>
-    </ul>
-  </div>
-  <div id="menu_links"> 
-    <h2>Ressources</h2>
-    <ul>
-      <li> <a href="examples/boulder/boulder.html">TOM's BoulderDash</a> </li>
-    </ul>
-  </div>
-</div>
-<!-- TOM_menus -->
-
-
-<div id="footer">
-<br/>
-Last modified : December, 10th 2003<br/>
-Email : <a href="mailto:Pierre-Etienne.Moreau@loria.fr">Pierre-Etienne.Moreau@loria.fr</a><br/>
-Valid <a href="http://validator.w3.org/check/referer" title="Check page validity">XHTML 1.1</a> and <a href="http://jigsaw.w3.org/css-validator/validator?uri=http://tom.loria.fr/styles/mainstyle.css" title="Check CSS Style Validity">CSS2</a> Page.
-</div><!-- footer -->
-
-<!-- Begin Nedstat Basic code -->
-<!-- Title: TOM -->
-<!-- URL: http://tom.loria.fr -->
-<script type="JavaScript" src="http://m1.nedstatbasic.net/basic.js"></script>
-<script type="JavaScript">
-<!--
-nedstatbasic("AB7a5w5616+f3nV30WzHpD/ihr7w", 0);
-// -->
-</script>
-<div id="stats">
-<a href="http://v1.nedstatbasic.net/stats?AB7a5w5616+f3nV30WzHpD/ihr7w">
-<img src="http://m1.nedstatbasic.net/n?id=AB7a5w5616+f3nV30WzHpD/ihr7w" width="18" height="18" alt="Statistics"/>
-</a>
-</div>
-<!-- End Nedstat Basic code -->
-</body>
-</html>
+<?xml version="1.0"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><title>TOM: A Pattern Matching Compiler for Multiple Target Languages</title><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/><meta name="description" content="TOM: A Pattern Matching Compiler"/><meta name="keywords" content="tom, pattern, matching, compiler,            rewriting, programming language, program transformation,            pattern matching"/><link href="styles/mainstyle.css" rel="stylesheet" type="text/css" /></head><body><div id="logo"><a href="index.html"><img src="images/tom_logo.jpg" alt="TOM : To OneMaching compiler" title="Tom home page" /></a> </div> <div id="title"><h1>A Pattern Matching Compiler for Multiple Target Languages</h1></div><div id="page"><div id="text"><h2> sdfsdf </h2><h1>Jtom: a (Java) To One Matching compiler</h1><div id="description"><dl>  <dd>       TOM is a pattern matching compiler,       developed at <a href="http://www.inria.fr">INRIA</a>,       is particularly well-suited       for programming various transformations on trees/terms.         Its design follows       our research on rule based languages (<a href="http://www.loria.fr/ELAN/R3">R3</a>), and our experiences       on the efficient compilation of       <a href="http://www.loria.fr/ELAN">ELAN</a>, developed by the       <a href="http://www.loria.fr/equipes/protheo">Protheo</a> group.        The tool can be seen as a Yacc-like compiler translating       patterns into executable pattern matching automata.          Similarly to Yacc, when a match is found, the corresponding       semantic action (a sequence of instructions written in C or       Java) is triggered and executed.           </dd></dl></div><!--description--><div id="news"><h2>News</h2>  <ul>  <li> [2004-01-06] premilinary TOM tutorial  <li> [2003-12-22] TOM reference manual.  <li> [2003-12-10] Jtom 1.5 released.  <li> [2003-11-24] Creation of the <em>tom-users</em> mailing list.  <li> [2003-10-20] XML pattern matching facilities have been integrated into Tom.</li>  <li> A nice application of Tom:  <a       href="examples/boulder/boulder.html">BoulderDash</a></li>       </ul></div><!-- news --><div id="publications"><h2>Publications</h2><ul>  <li>Pierre-Etienne Moreau, Christophe Ringeissen and Marian Vittek.       <a href="http://www.loria.fr/~moreau/Papiers/MoreauRV-LDTA2000.ps.gz">       <strong>A Pattern Matching Compiler</strong>.       </a>       <em>In D. Parigot and M. G. J. van den Brand, editors, 1st       International Workshop on Language Descriptions, Tools and       Applications</em>,        Genova (Italy), volume 44 of ENTCS. April 2001.       <br/>  </li>  <li>Pierre-Etienne Moreau, Christophe Ringeissen and Marian Vittek.       <a href="http://www.loria.fr/~moreau/Papiers/MoreauRV-CC2003.ps.gz">       <strong>A Pattern Matching Compiler for Multiple Target Languages.</strong>       </a>       <em>In G. Hedin, editor, 12th Conference on Compiler Construction</em>,       Warsaw (Poland), volume 2622 of LNCS, pages 61-76. Springer-Verlag, May 2003.</li></ul></div><!-- publications --><div id="doc"><h2>Documentation</h2><ul>  <li> To subscribe to the mailing-list of TOM, send email to        <a href="mailto:sympa@loria.fr">sympa@loria.fr</a>,        with <br/>       <em>SUBSCRIBE tom-users [Firstname] [Name]</em> in the       subject of the message.        <br/>       To unsubscribe, send an email with <em>SIGNOFF tom-users</em>       in the subject.  <li> The TOM <a href="doc/reference/reference.html">reference manual</a>       which describes the language</li>  <li> The TOM <a href="doc/tutorial/tutorial.html">tutorial</a>       which describes the language</li>       <li> A full <a href="doc/manual/manual.html"> online documentation </a>       with installation instructions, language description and       tutorial</li>  <li> A short <a href="doc/eclipse/overview.html">Eclipse plug-in tutorial</a>  </li></ul></div><!-- doc --><div id="tool"><h2>Principles</h2><dl><dd>TOM is a non-intrusive pattern matching compiler. Its design followsour experiences on the efficient compilation of<a href="http://www.loria.fr/ELAN">rule-based systems</a>.The tool can be seen as a Yacc-like compiler translating  patterns into executable pattern matching automata. Similarly to Yacc,when a match is found, the corresponding <span style="font-style:italic;">semantic action</span> (a sequence of instructions written inan imperative language) is triggered and executed.<br/>  In a way, we can say that TOM translates a <span style="font-style:italic;">declarative-imperative</span> function -- defined by patternmatching and imperative instructions -- into a <spanstyle="font-style: italic;">fully imperative</span> function. The resulting function can be integrated to an application written in aclassical language such as C, Java and Eiffel, called the <span style="font-style: italic;">target language</span>.The different advantages of the approach<br/> implemented by TOM are:<br/><br/><ul>  <li>Efficiency: The gain of efficiency follows from the compilation       of matching as implemented in TOM.       </li></ul><ul>  <li>Flexibility: When trying to integrate a black-box tool in an       existing system, one of the main bottlenecks comes from data        conversion and the flexibility offered to the user. One of the       main originalities of our system is its independence of term       representation. The programmer can use (or re-use) his own data       structures for terms/trees and then execute matching upon those data       structures. We propose to access terms using only a simple <span       style="font-style: italic;">Application Programming Interface</span>       (API) defined by the user.  </li></ul><ul>  <li>Generality: TOM is able to consider multiple target       languages (C, Java, and Eiffel). TOM is implemented in TOM itself       as a series of AST transformations. The code generation is performed at       the very end, depending on the target language we are interested in.       Hence, the target language is really a parameter of TOM.  </li></ul><ul>  <li>Expressivity: TOM supports non-linear patterns and equational       matching like modern rule-based programming languages. Currently, we       have implemented pattern matching with list operators. This form of       associative matching with neutral element is very useful for practical       applications. The main difference with standard (syntactic) matching is       that a single variable may have multiple&nbsp; assignments.       </li></ul><span style="font-weight: bold;"><br/></span>TOM does not really define a new language: it is rather alanguage extension which adds new matching primitives to an existingimperative language. <br/>From an implementation point of view, it is a compiler which acceptsdifferent <span style="font-style: italic;">native languages</span>.The compilation process consists of translating new matching constructsinto the underlying native language. Since the native language and thetarget language are identical and only introduced constructs areexpanded, the presented tool can also be seen as a kind of preprocessor.<br/>On the other hand, the support of multiple target languages, and thefact that the input program has to be completely parsed before thetransformation process can begin, make us consider TOM as a compiler.<br/><br/>For expository reasons, we assume that TOM only adds one new construct:<span style="color: rgb(255, 0, 0);">%match</span>. This construct issimilar to the <span style="font-style: italic;">match</span>primitive found in ML and related languages: given a term (calledsubject) and a list of pairs: pattern-action, the <span style="font-style: italic;">match</span> primitive selects a patternthat matches the subject and performs the associated action. Thisconstruct may thus be seen as an etension of the classical switch/caseconstruct. The main difference is that the discrimination occurs on a <span style="font-style: italic;">term</span> and not on atomic values likecharacters or integers: the patterns are used to discriminate andretrieve information from an algebraic data structure.<br/><br/></dd></dl></div><!-- tool --><div id="download"><h2>Downloads</h2>This section contains stable distributions of Jtom.<div id="eclipse"><h3>Eclipse plugin</h3><dl>  Just unzip the valid archive in the "plugins" directory of your Eclipse install directory:<BR>  <dd> [2003-12-11] <a href="soft/release-1.5/fr.loria.eclipse.jtom_1.5.3.zip">fr.loria.eclipse.jtom_1.5.3.zip</a> for Eclipse  <B>3.0M5</B>  </dd>  <dd> [2003-12-11] <a href="soft/release-1.5/fr.loria.eclipse.jtom_1.5.2.zip">fr.loria.eclipse.jtom_1.5.2.zip</a> for Eclipse <B>2.1.1</B> and <B>2.1.2</B>  </dd>  <dd> [2003-09-25] <a href="soft/release-1.4/jtom-eclipse-1.4.zip">jtom-eclipse-1.4.zip</a> Older version for Eclipse 2.1.1 and 2.1.2.  </dd><BR><a href="doc/eclipse/overview.html">Eclipse plug-in documentation</a></dl></div><div id="release"><h3>Releases</h3><dl>  <dd> [2003-12-10] <a href="soft/release-1.5/jtom-1.5.tar.gz">jtom-1.5.tar.gz</a>: Version 1.5 released</dd>  <dd> [2003-09-25] <a href="soft/release-1.4/jtom-1.4.tar.gz">jtom-1.4.tar.gz</a>: Version 1.4 released</dd>  <dd> [2003-08-26] <a href="soft/release-1.3/jtom-1.3.tar.gz">jtom-1.3.tar.gz</a>: Version 1.3 released</dd>  <dd> [2003-04-24] <a href="soft/release-1.2/jtom-1.2.tar.gz">jtom-1.2.tar.gz</a>: Version 1.2 released</dd>  <dd> [2003-01-23] <a href="soft/release-1.1/jtom-1.1.tar.gz">jtom-1.1.tar.gz</a>: Version 1.1 released</dd>  <dd> [2002-11-21] <a href="soft/release-1.0/jtom-1.0.tar.gz">jtom-1.0.tar.gz</a>: Version 1.0 released</dd>  <dd> <a href="releases.html"> old releases </a></dd></dl>	</div><div id="bundle"><h3>Bundles</h3><dl>  <dd> [2003-08-26] <a href="soft/release-1.3/jtom-bundle-1.3.tar.gz">jtom-bundle-1.3.tar.gz</a>: This package contains a self-content bundle of jtom-1.3</dd>  <dd> [2003-04-24]  <a href="soft/release-1.2/jtom-bundle-1.2.tar.gz">jtom-bundle-1.2.tar.gz</a>: This package contains a self-content bundle of jtom-1.2</dd>  <dd> [2003-02-03]  <a href="soft/release-1.1/jtom-bundle-1.1.tar.gz">jtom-bundle-1.1.tar.gz</a>: This package contains a self-content bundle of jtom-1.1</dd>  <dd> [2002-11-21]  <a href="soft/release-1.0/jtom-bundle-1.0.tar.gz">jtom-bundle-1.0.tar.gz</a>: This package contains a self-content bundle of jtom-1.0</dd></dl></div><div id="jar"><h3>Jar distribution</h3><dl>  <dd> [2003-12-10] <a href="soft/release-1.5/jtom-bundle-1.5.jar">jtom-bundle-1.5.jar</a></dd>  <dd> [2003-09-25] <a href="soft/release-1.4/jtom-bundle-1.4.jar">jtom-bundle-1.4.jar</a></dd></dl></div><div id="Scripts_for_bundle_jar_files"><h3>Scripts for bundle jar files</h3><dl>  <dd>[2003-12-10] Windows:       <a href="soft/release-1.5/jtom.bat">jtom.bat</a> --       <a href="soft/release-1.5/adt-to-tom.bat">adt-to-tom.bat</a></dd>  <dd>[2003-12-10] Unix:       <a href="soft/release-1.5/jtom.sh">jtom.sh</a> --       <a href="soft/release-1.5/adt-to-tom.sh">adt-to-tom.sh</a></dd></dl></div></div><!-- download --><div id="CE"><h2>The Cutting Edge</h2>Jtom is under constant development between releases. For people whowant to be on the cutting edge, there are several easy mechanisms forkeeping your system in sync with the latest developments. Bewarned--the cutting edge is not for everyone!<div id="CE_eclipse"><!-- 'CE' stands for "Cutting Edge" --><h3>Eclipse plugin</h3><dl>  <dd> [2003-12-04] <a href="soft/unstable/fr.loria.eclipse.jtom_1.5.1.zip">fr.loria.eclipse.jtom_1.5.1.zip</a></dd></dl></div><div id="CE_jar"><h3>Jar devel distribution</h3><dl>  <dd> [2003-12-19] <a href="soft/unstable/jtom-bundle-1.6alpha.jar">jtom-bundle-1.6alpha.jar</a></dd></dl></div><div id="CE_daily"><h3>Daily distribution</h3><dl>  <dd>Another way to get the last version of jtom is to download the       <a       href="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/DailyDistributions">daily distribution</a> (at CWI):       <ul>	 <li>jtom</li>	 <li>aterm-java</li>	 <li>shared-objects</li>	 <li>JJTraveler</li>	 <li>apigen</li>       </ul>  </dd></dl></div><div id="CE_cvs"><h3>CVS distribution</h3><dl>  <dd>jtom is available by anonymous cvs:<br/>       <div id="cvspath">cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom</div>       </dd>  <dd> some cvs snapshots are also available:       <a href="soft/daily/jtom-cvs.tgz">jtom-cvs.tgz</a>,       <a href="soft/daily/JJTraveler-cvs.tgz">JJTraveler-cvs.tgz</a>,       <a href="soft/daily/aterm-java-cvs.tgz">aterm-java-cvs.tgz</a>, and       <a href="soft/daily/shared-objects-cvs.tgz">shared-objects-cvs.tgz</a>       </dd></dl></div></div><!-- The cutting Edge --></div><!-- text --></div><!-- page --><div id="TOM_menus">   <div id="menu_main_page">     <div id="titre_menu">       <h2><a href="index.html">TOM Main page</a></h2>    </div>    <ul>      <li> <a href="index.html#news">News</a> </li>      <li> <a href="index.html#publications">Publications</a> </li>      <li> <a href="index.html#tool">Principles</a> </li>      <li> <a href="index.html#download">Downloads</a> </li>      <li> <a href="index.html#CE">The Cutting Edge</a> </li>    </ul>  </div>  <div id="menu_doc">     <div id="titre_menu2">       <h2><a href="index.html#doc">Documentation</a></h2>    </div>    <ul>      <li> <a href="doc/reference/reference.html">TOM reference manual</a> </li>      <li> <a href="doc/tutorial/tutorial.html">TOM tutorial</a> </li>      <li> <a href="doc/manual/manual.html">TOM documentation</a> </li>      <li> <a href="doc/eclipse/overview.html">Eclipse plug-in tutorial</a> </li>    </ul>  </div>  <div id="menu_links">     <h2>Ressources</h2>    <ul>      <li> <a href="examples/boulder/boulder.html">TOM's BoulderDash</a> </li>    </ul>  </div></div><!-- TOM_menus --><div id="footer"><br/>Last modified : December, 10th 2003<br/>Email : <a href="mailto:Pierre-Etienne.Moreau@loria.fr">Pierre-Etienne.Moreau@loria.fr</a><br/>Valid <a href="http://validator.w3.org/check/referer" title="Check page validity">XHTML 1.1</a> and <a href="http://jigsaw.w3.org/css-validator/validator?uri=http://tom.loria.fr/styles/mainstyle.css" title="Check CSS Style Validity">CSS2</a> Page.</div><!-- footer --><!-- Begin Nedstat Basic code --><!-- Title: TOM --><!-- URL: http://tom.loria.fr --><script type="JavaScript" src="http://m1.nedstatbasic.net/basic.js"></script><script type="JavaScript"><!--nedstatbasic("AB7a5w5616+f3nV30WzHpD/ihr7w", 0);// --></script><div id="stats"><a href="http://v1.nedstatbasic.net/stats?AB7a5w5616+f3nV30WzHpD/ihr7w"><img src="http://m1.nedstatbasic.net/n?id=AB7a5w5616+f3nV30WzHpD/ihr7w" width="18" height="18" alt="Statistics"/></a></div><!-- End Nedstat Basic code --></body></html>
