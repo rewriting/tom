@@ -63,7 +63,7 @@ public class TomVerifierExtract extends TomTask {
 			System.out.println("Purified : " + purified);
 			
 			if(verbose) {
-        System.out.println("TOM Verifier first extraction phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+        System.out.println("TOM Verifier extraction phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
       }
 			// put extrated data in a file
       Tools.generateOutput(
@@ -83,7 +83,7 @@ public class TomVerifierExtract extends TomTask {
 				Collection store = (Collection)astore;
 				if (subject instanceof Instruction) {
 					%match(Instruction subject) {
-            CompiledPattern(pattern, automata)  -> {
+            CompiledMatch(automata, (_*,TomTermToOption(PatternList(_)),_*))  -> {
 							store.add(subject);
 						}
 
@@ -111,9 +111,9 @@ public class TomVerifierExtract extends TomTask {
 		while (it.hasNext()) {
 			Instruction cp = (Instruction)it.next();
 			%match(Instruction cp) {
-				CompiledPattern(patternList, automata)  -> {
+				CompiledMatch(automata, options)  -> {
 					// simplify the IL automata
-					purified.add(`CompiledPattern(patternList,simplify_il(automata)));
+					purified.add(`CompiledMatch(simplify_il(automata),options));
 				}
 			}
 		}

@@ -179,13 +179,13 @@
 
     <tom srcdir="${src.src}"
          outputfile="${src.gen}/jtom/parser/TomParser.jj"
-         options="-I ${stable.mapping} -I ${src.gen}/jtom/adt">
+         options="-I ${src.mapping} -I ${src.gen}/jtom/adt">
       <include name="**/TomParser.t"/>  
     </tom>
 
     <tom srcdir="${src.src}" 
          destdir="${src.gen}" 
-         options="-I ${stable.mapping}">
+         options="-I ${src.mapping}">
       <include name="**/runtime/**/*.t"/> 
       <include name="**/TomBase.t"/>
       <include name="**/Verifier.t"/>
@@ -193,7 +193,7 @@
     </tom>
     <tom srcdir="${src.src}" 
          destdir="${src.gen}" 
-         options="-I ${stable.mapping} --noDeclaration">
+         options="-I ${src.mapping} --noDeclaration">
       <exclude name="**/TomBase.t"/>
       <exclude name="**/TomParser.t"/>
       <exclude name="**/Verifier.t"/>
