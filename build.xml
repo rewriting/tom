@@ -80,6 +80,9 @@
   <property name="test.gen"     location="${test}/gen"/>    
   <property name="test.build"   location="${test}/build"/>
 
+  <property name="src.configfile"     location="${src.src}/jtom/Tom.xml"/>    
+  <property name="stable.configfile"  location="${stable.src}/jtom/Tom.xml"/>    
+
   <!-- for bootstrap -->
   <property name="bootstrap.dir" location="${src.src}/bootstrap" />
   <!-- Properties for Javac compilation
@@ -191,7 +194,6 @@
       <include name="**/Verifier.t"/>
       <include name="**/TomBackQuoteParser.t"/> 
       <include name="**/TomServer.t"/>
-      <include name="**/starter/TomStarter.t"/>
       <exclude name="**/tomparse.g.t"/>
       <exclude name="**/targetparse.g.t"/>
     </tom>
@@ -203,7 +205,6 @@
       <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
       <exclude name="**/TomServer.t"/>
-      <exclude name="**/starter/TomStarter.t"/>
       <exclude name="**/runtime/**/*.t"/> 
       <exclude name="**/tomparse.g.t"/>
       <exclude name="**/targetparse.g.t"/>
@@ -260,7 +261,6 @@
 			<exclude name="jtom/**/Main.java"/>
     </javac>
     <copy todir="${src.build}/jtom" file="${src.src}/jtom/Tom.xml"/>
-    <copy todir="${src.build}/jtom/starter" file="${src.src}/jtom/starter/Options.xml"/>
   </target>
   
   <target name="build.stable" depends="stable"/>
@@ -380,6 +380,8 @@
           description="Prepare a distribution ready source package" 
           depends="clean.dist.src, src, prepare.dist.src, dist.common">
     <tstamp/>
+    <!-- "tom config file" -->
+    <copy todir="${src.dist}" file="${src.src}/jtom/Tom.xml"/>
     <!-- "tom binary" -->
     <copy todir="${src.bin}" file="${utils}/javac-tom"/>
     <copy todir="${src.bin}" file="${utils}/tom"/>
@@ -504,14 +506,16 @@
   <target name="test" description="Compile and run acceptance tests" depends="initsrc, prepare.test">
     <mkdir dir="${test.gen}"/>
     <mkdir dir="${test.build}"/>
-    <tomsrc srcdir="${test}" destdir="${test.gen}" options="-I ${src.mapping} -I ${src.adt}">
+    <tomsrc config="${src.configfile}" srcdir="${test}"
+    destdir="${test.gen}" options="-I ${src.mapping} --verbose -I ${src.adt}">
       <exclude name="cfib1.t"/>
       <exclude name="loulou.t"/>
       <exclude name="Record.t"/>
       <exclude name="TestRecord.t"/>
       <exclude name="**/error/**"/>
     </tomsrc>
-    <tomsrc srcdir="${test}" destdir="${test.gen}" options="-I ${src.mapping} --lazyType -I ${src.adt}">
+    <tomsrc config="${src.configfile}" srcdir="${test}"
+      destdir="${test.gen}" options="-I ${src.mapping} -I ${src.adt} --lazyType --verbose">
       <include name="Record.t"/>
       <include name="TestRecord.t"/>
       <exclude name="**/error/**"/>
@@ -712,7 +716,6 @@
       <include name="**/Verifier.t"/>
       <include name="**/TomBackQuoteParser.t"/>
       <include name="**/TomServer.t"/>
-      <include name="**/starter/TomStarter.t"/>
     </tomsrc>
     <tomsrc srcdir="${src.src}" 
             destdir="${destination}/gen" 
@@ -722,7 +725,6 @@
       <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
       <exclude name="**/TomServer.t"/>
-      <exclude name="**/starter/TomStarter.t"/>
       <exclude name="**/runtime/**/*.t"/> 
     </tomsrc>
 
