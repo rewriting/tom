@@ -118,6 +118,17 @@ public class TomKernelCompiler extends TomBase {
     }
   }
 
+  private TomName getLabel(OptionList list) {
+    while(!list.isEmpty()) {
+      Option subject = list.getHead();
+      %match(Option subject) {
+        Label(name@Name[]) -> { return name; }
+        _ -> { list = list.getTail(); }
+      }
+    }
+    return null;
+  }
+  
     /* 
      * compileMatching:
      *
@@ -215,6 +226,7 @@ public class TomKernelCompiler extends TomBase {
           TomTerm pa = l2.getHead();
           defaultPA = pa.isDefaultPatternAction();
           patternList = pa.getTermList().getTomList();
+          TomName label = getLabel(pa.getOption().getOptionList());
           
           if (debugMode && defaultPA) {
               // replace success by leaving structure
@@ -248,8 +260,16 @@ public class TomKernelCompiler extends TomBase {
             patternsDeclarationList = append(`Declaration(tmpsubject),patternsDeclarationList);
               //System.out.println("*** " + patternsDeclarationList);
           }
-          
-          TomNumberList numberList = (TomNumberList) path.append(`PatternNumber(makeNumber(actionNumber)));
+
+          TomNumberList numberList;
+          if(label != null) {
+            System.out.println("label = " + label);
+            path = tsf().makeTomNumberList();
+            numberList = (TomNumberList) path.append(`PatternLabel(label));
+          } else {
+            numberList = (TomNumberList) path.insert(`PatternLabel(Name("matchlab")));
+            numberList = (TomNumberList) numberList.append(`PatternNumber(makeNumber(actionNumber)));
+          }
           TomList instructionList;
           instructionList = genMatchingAutomataFromPatternList(patternList,path,1,actionList,true);
             //firstCall = false;
@@ -338,12 +358,12 @@ public class TomKernelCompiler extends TomBase {
   }
 
   private String getBlockName(TomNumberList numberList) {
-    String name = "matchlab" + numberListToIdentifier(numberList);
+    String name = numberListToIdentifier(numberList);
     return name;
   }
 
   private TomTerm getBlockVariable(TomNumberList numberList) {
-    String name = "matchlab" + numberListToIdentifier(numberList);
+    String name = numberListToIdentifier(numberList);
     return `Variable(option(),Name(name),getBoolType());
   }
   
@@ -354,10 +374,10 @@ public class TomKernelCompiler extends TomBase {
      */
 
   TomList genMatchingAutomataFromPatternList(TomList termList,
-                                                   TomNumberList path,
-                                                   int indexTerm,
-                                                   TomList actionList,
-                                                   boolean gsa) {
+                                             TomNumberList path,
+                                             int indexTerm,
+                                             TomList actionList,
+                                             boolean gsa) {
     TomList result = empty();
       //%variable
     if(termList.isEmpty()) {

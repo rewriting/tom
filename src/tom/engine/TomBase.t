@@ -259,6 +259,7 @@ public class TomBase {
       End(Number(i)) -> { return "end" + i; }
       MatchNumber(Number(i)) -> { return "match" + i; }
       PatternNumber(Number(i)) -> { return "pattern" + i; }
+      PatternLabel(Name(name)) -> { return name; }
       ListNumber(Number(i)) -> { return "list" + i; }
       IndexNumber(Number(i)) -> { return "index" + i; }
       AbsVar(Number(i)) -> { return "absvar" + i; }
@@ -275,7 +276,11 @@ public class TomBase {
       TomNumberList key = l;
       StringBuffer buf = new StringBuffer(30);
       while(!l.isEmpty()) {
-        buf.append("_" + elementToIdentifier(l.getHead()));
+        TomNumber elt = l.getHead();
+        if(!elt.isPatternLabel()) {
+          buf.append("_");
+        }
+        buf.append(elementToIdentifier(elt));
         l = l.getTail();
       }
       res = buf.toString();

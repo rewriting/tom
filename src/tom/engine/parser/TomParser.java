@@ -372,7 +372,14 @@ public class TomParser implements TomTask, TomParserConstants {
   ArrayList blockList = new ArrayList();
   TargetLanguage tlCode;
   Option option;
-  text = "";
+  Token label = null;
+  text = null;
+    if (jj_2_1(2)) {
+      label = jj_consume_token(TOM_IDENTIFIER);
+      jj_consume_token(TOM_COLON);
+    } else {
+      ;
+    }
     option = MatchPatterns(matchPatternsList);
       listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
       matchPatternsList.clear();
@@ -414,6 +421,9 @@ public class TomParser implements TomTask, TomParserConstants {
       TomList patterns;
       String patternText = "";
       ArrayList optionList = new ArrayList();
+      if(label != null) {
+        optionList.add(tsf().makeOption_Label(tsf().makeTomName_Name(label.image)));
+      }
       for(int i=0 ;  i<listOfMatchPatternsList.size() ; i++) {
         patterns = (TomList)listOfMatchPatternsList.get(i);
         patternText = (String)listTextPattern.get(i);
@@ -485,7 +495,7 @@ public class TomParser implements TomTask, TomParserConstants {
   Option option = null;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   ArrayList optionList = new ArrayList();
-    if (jj_2_1(2)) {
+    if (jj_2_2(2)) {
       name = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_LBRACKET);
        optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
@@ -528,7 +538,7 @@ public class TomParser implements TomTask, TomParserConstants {
         option,
         tsf().makeTomName_Name(name.image),
         ast().makeList(list));}
-    } else if (jj_2_2(2)) {
+    } else if (jj_2_3(2)) {
       name = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_STAR);
       text += name.image+"*";
@@ -656,7 +666,7 @@ public class TomParser implements TomTask, TomParserConstants {
   Token annotedName = null;
   TomTerm term;
   TomName astAnnotedName = null;
-    if (jj_2_3(2)) {
+    if (jj_2_4(2)) {
       annotedName = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_AT);
         text += annotedName.image+"@";
@@ -851,7 +861,7 @@ public class TomParser implements TomTask, TomParserConstants {
   Token annotedName = null;
   XMLTerm term;
   TomName astAnnotedName = null;
-    if (jj_2_4(2)) {
+    if (jj_2_5(2)) {
       annotedName = jj_consume_token(TOM_IDENTIFIER);
       jj_consume_token(TOM_AT);
         text += annotedName.image+"@";
@@ -884,7 +894,7 @@ public class TomParser implements TomTask, TomParserConstants {
   Option option = null;
   Option annotedName = (astAnnotedName==null)?null:tsf().makeOption_TomNameToOption(astAnnotedName);
   ArrayList optionList = new ArrayList();
-    if (jj_2_5(2)) {
+    if (jj_2_6(2)) {
       name = jj_consume_token(TOM_IDENTIFIER);
         text += name.image;
         optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
@@ -1299,7 +1309,7 @@ public class TomParser implements TomTask, TomParserConstants {
     case TOM_LPAREN:
       jj_consume_token(TOM_LPAREN);
         stringSlotName = "";
-      if (jj_2_6(2)) {
+      if (jj_2_7(2)) {
         slotName = jj_consume_token(TOM_IDENTIFIER);
         jj_consume_token(TOM_COLON);
                                                   stringSlotName = slotName.image;
@@ -1322,7 +1332,7 @@ public class TomParser implements TomTask, TomParserConstants {
         }
         jj_consume_token(TOM_COMMA);
           stringSlotName = "";
-        if (jj_2_7(2)) {
+        if (jj_2_8(2)) {
           slotName = jj_consume_token(TOM_IDENTIFIER);
           jj_consume_token(TOM_COLON);
                                                     stringSlotName = slotName.image;
@@ -2075,7 +2085,7 @@ public class TomParser implements TomTask, TomParserConstants {
        orgTrack = ast().makeOriginTracking("make", getLine(), currentFile);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TOM_LPAREN:
-      if (jj_2_8(2)) {
+      if (jj_2_9(2)) {
         jj_consume_token(TOM_LPAREN);
         jj_consume_token(TOM_RPAREN);
       } else {
@@ -2284,40 +2294,32 @@ public class TomParser implements TomTask, TomParserConstants {
     finally { jj_save(7, xla); }
   }
 
-  final private boolean jj_3_3() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_AT)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_5() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_23()) jj_scanpos = xsp;
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_4() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_AT)) return true;
-    return false;
+  final private boolean jj_2_9(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_9(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(8, xla); }
   }
 
   final private boolean jj_3_1() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
   final private boolean jj_3_2() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_3() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_STAR)) return true;
     return false;
   }
 
-  final private boolean jj_3_7() {
+  final private boolean jj_3_8() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
     return false;
@@ -2328,15 +2330,36 @@ public class TomParser implements TomTask, TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_6() {
+  final private boolean jj_3_9() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_7() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
     return false;
   }
 
-  final private boolean jj_3_8() {
+  final private boolean jj_3_4() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_23()) jj_scanpos = xsp;
     if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_5() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_AT)) return true;
     return false;
   }
 
@@ -2367,7 +2390,7 @@ public class TomParser implements TomTask, TomParserConstants {
    private static void jj_la1_2() {
       jj_la1_2 = new int[] {0x0,0x0,0x11c00000,0x0,0x0,0x0,0x0,0x0,0x800000,0x0,0x11c00000,0x0,0x11c00000,0x11c00000,0x800006,0x0,0x0,0x800006,0x0,0x0,0x800006,0x0,0x0,0x800006,0x800001,0x0,0x11c00000,0x0,0x0,0x18,0x18,0x18,0x0,0x0,0x1820,0x1820,0x10c0,0x10c0,0x1140,0x1140,0x0,0x1e000,0x1e000,0xfe000,0xfe000,0x31e000,0x31e000,0x0,0x0,0x0,0x0,};
    }
-  final private JJCalls[] jj_2_rtns = new JJCalls[8];
+  final private JJCalls[] jj_2_rtns = new JJCalls[9];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -2584,7 +2607,7 @@ public class TomParser implements TomTask, TomParserConstants {
 
   final private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
       JJCalls p = jj_2_rtns[i];
       do {
         if (p.gen > jj_gen) {
@@ -2598,6 +2621,7 @@ public class TomParser implements TomTask, TomParserConstants {
             case 5: jj_3_6(); break;
             case 6: jj_3_7(); break;
             case 7: jj_3_8(); break;
+            case 8: jj_3_9(); break;
           }
         }
         p = p.next;

@@ -819,9 +819,9 @@ public class TomGenerator extends TomBase implements TomTask {
 
       ExitAction(numberList) -> {
         if(cCode) {
-          out.writeln(deep,"goto matchlab" + numberListToIdentifier(numberList) + ";");
+          out.writeln(deep,"goto " + numberListToIdentifier(numberList) + ";");
         } else if(jCode) {
-          out.writeln(deep,"break matchlab" + numberListToIdentifier(numberList) + ";");
+          out.writeln(deep,"break " + numberListToIdentifier(numberList) + ";");
         } else if(eCode) {
           System.out.println("ExitAction: Eiffel code not yet implemented");
             //System.exit(1);

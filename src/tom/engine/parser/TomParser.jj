@@ -561,9 +561,12 @@ void PatternAction(ArrayList list, String debugKey) throws TomException: /* in T
   ArrayList blockList = new ArrayList();
   TargetLanguage tlCode;
   Option option;
-  text = "";
+  Token label = null;
+  text = null;
 }
 {
+
+  [ LOOKAHEAD(2) label=<TOM_IDENTIFIER> <TOM_COLON> ]
   option = MatchPatterns(matchPatternsList)
     { listOfMatchPatternsList.add(ast().makeList(matchPatternsList));
       matchPatternsList.clear();
@@ -592,6 +595,9 @@ void PatternAction(ArrayList list, String debugKey) throws TomException: /* in T
       TomList patterns;
       String patternText = "";
       ArrayList optionList = new ArrayList();
+      if(label != null) {
+        optionList.add(tsf().makeOption_Label(tsf().makeTomName_Name(label.image)));
+      }
       for(int i=0 ;  i<listOfMatchPatternsList.size() ; i++) {
         patterns = (TomList)listOfMatchPatternsList.get(i);
         patternText = (String)listTextPattern.get(i);
