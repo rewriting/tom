@@ -27,19 +27,12 @@ package jtom.backend;
  
 import aterm.*;
 
-import java.io.FileOutputStream;
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.io.IOException;
-import java.util.HashMap;
 
 import jtom.adt.tomsignature.types.*;
 
-import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
-import jtom.tools.SingleLineOutputCode;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
 
@@ -70,13 +63,13 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		}
 	}
 
-	protected void buildDeclaration(int deep, TomTerm var, String name, String type, TomType tlType) throws IOException {
+	protected void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException {
 		generate(deep,var);
 		output.write(deep,": " + getTLCode(tlType));
 		output.writeln(";");
 	}
 	
-	protected void buildDeclarationStar(int deep, TomTerm var, String name, String type, TomType tlType) throws IOException {
+	protected void buildDeclarationStar(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException {
 		generate(deep,var);
 		output.write(deep,": " + getTLCode(tlType));
 		output.writeln(";");
@@ -92,13 +85,8 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
           matchBlock: {
             %match(TomTerm localVar) {
               v@Variable(option2,name2,type2) -> {
-                if(cCode || jCode) {
-                  output.write(deep,getTLType(type2) + " ");
-                  generate(deep,v);
-                } else if(eCode) {
                   generate(deep,v);
                   output.write(deep,": " + getTLType(type2));
-                }
                 break matchBlock;
               }
               _ -> {
@@ -109,11 +97,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
           }
           varList = varList.getTail();
           if(!varList.isEmpty()) {
-            if(cCode || jCode) {
-              output.write(deep,", ");
-            } else if(eCode) {
               output.write(deep,"; ");
-            }
           }
         }
 				output.writeln(deep,"): " + glType + " is");
@@ -138,7 +122,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		output.write(" false ");
   }
 
-  protected void buildAssignVar(int deep, TomTerm var, TomType type, TomType tlType) throws IOException {
+  protected void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
@@ -164,7 +148,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     }
   }
 	
-	protected void buildAssignMatch(int deep, TomTerm var, TomType type, TomType tlType) throws IOException {
+	protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
@@ -209,7 +193,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		output.writeln(deep,"end;");
   }
 
-  protected void buildAssignVarExp(int deep, TomTerm var, TomType tlType, Expression exp) throws IOException {
+  protected void buildAssignVarExp(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp) throws IOException {
     output.indent(deep);
     generate(deep,var);
 		output.write(" := ");
@@ -224,12 +208,12 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     }
   }
 
-  protected void buildExitActionint(int deep, TomNumberList numberList) throws IOException {
+  protected void buildExitAction(int deep, TomNumberList numberList) throws IOException {
       System.out.println("ExitAction: Eiffel code not yet implemented");
       throw new TomRuntimeException(new Throwable("ExitAction: Eiffel code not yet implemented"));
   }
 
-  protected void buildReturn(int deep, Expression exp) throws IOException {
+  protected void buildReturn(int deep, TomTerm exp) throws IOException {
 		output.writeln(deep,"if Result = Void then");
 		output.write(deep+1,"Result := ");
 		generate(deep+1,exp);
@@ -237,7 +221,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		output.writeln(deep,"end;");
 	}
 
-	protected void buildGetSubtermDecl(int deep, String name1, String name2, TomType type1, TomType tlType1, TomType tlType2) throws IOException {
+	protected void buildGetSubtermDecl(int deep, String name1, String name2, String type1, TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException {
     String args[];
     if(strictType) {
       args = new String[] { getTLCode(tlType1), name1,
@@ -254,7 +238,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 																	 String declName,
 																	 String suffix,
 																	 String args[],
-																	 TargetLanguage tlCode) throws IOException {
+																	 TargetLanguage tlCode) {
     String s = "";
     if(!genDecl) { return null; }
 		s = declName + "_" + suffix + "(";
@@ -326,7 +310,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     return null;
   }
 
-  private TargetLanguage genDecl(String returnType,
+  protected TargetLanguage genDecl(String returnType,
                         String declName,
                         String suffix,
                         String args[],

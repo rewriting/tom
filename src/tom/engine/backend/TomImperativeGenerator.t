@@ -155,7 +155,7 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
 
 	protected abstract void buildDeclaration(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException;
 
-	protected void buildDeclarationStar(int deep, TomTerm var, String name, String type, TomType tlType) throws IOException {
+	protected void buildDeclarationStar(int deep, TomTerm var, TomName TomName, String type, TomType tlType) throws IOException {
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
 		output.writeln(";");
@@ -523,7 +523,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     return resultTL;
   }
 
-  private TargetLanguage genDecl(String returnType,
+  protected TargetLanguage genDecl(String returnType,
                         String declName,
                         String suffix,
                         String args[],
