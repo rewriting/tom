@@ -65,6 +65,10 @@ public class ASTFactory implements TomParserConstants {
         term = tsf().makeTomTerm_ExpressionToTomTerm((Expression)elt);
       } else if(elt instanceof TomName) {
         term = tsf().makeTomTerm_TomNameToTomTerm((TomName)elt);
+      } else if(elt instanceof XMLTerm) {
+        term = tsf().makeTomTerm_XMLTermToTomTerm((XMLTerm)elt);
+      } else if(elt instanceof Instruction) {
+        term = tsf().makeTomTerm_InstructionToTomTerm((Instruction)elt);
       } else {
         term = (TomTerm)elt;
       }
