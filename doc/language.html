@@ -590,10 +590,13 @@ left-handsides should begin with the same root symbol:<BR>
 </TR></TABLE>
 </DIV><BR>
 A last construct of <FONT COLOR=navy>Tom</FONT> is the backquote (<FONT COLOR="#0000ff"><TT>`</TT></FONT>). This construct
-can be used to build an algebraic term. The yntax of this operator is
-not fixed since it depends on the underlaying language. However, a
-backquote term should at least contain a function call or the
-construction of a prefix term: <FONT COLOR="#0000ff"><TT>`</TT></FONT> <FONT COLOR="#ff00ff"><I>Name</I></FONT> <FONT COLOR="#0000ff"><TT>(</TT></FONT> ... <FONT COLOR="#0000ff"><TT>)</TT></FONT>.<BR>
+can be used to build an algebraic term. The syntax of this operator is
+not fixed since it depends on the underlying language. <BR>
+<BR>
+However, a backquote term should at least contain a function call or the
+construction of a prefix term: <FONT COLOR="#0000ff"><TT>`</TT></FONT><FONT COLOR="#ff00ff"><I>Name</I></FONT><FONT COLOR="#0000ff"><TT>(</TT></FONT> ... <FONT COLOR="#0000ff"><TT>)</TT></FONT>.<BR>
+<BR>
+For building an XML term, the expression should begin with <FONT COLOR="#0000ff"><TT>`</TT></FONT><FONT COLOR="#ff00ff"><I>xml</I></FONT><FONT COLOR="#0000ff"><TT>(</TT></FONT> ... <FONT COLOR="#0000ff"><TT>)</TT></FONT>.<BR>
 <BR>
 <A NAME="toc14"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
@@ -607,7 +610,7 @@ construction of a prefix term: <FONT COLOR="#0000ff"><TT>`</TT></FONT> <FONT COL
 <TR><TD><B><FONT SIZE=4>3.5.1</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Type definition</FONT></B></TD>
 </TR></TABLE></DIV></TD>
-</TR></TABLE><A NAME="typedef"></A><BR>
+</TR></TABLE><A NAME="typedef"></A>
 When defining a new type with the <FONT COLOR="#0000ff"><TT>%typeterm</TT></FONT> constructs,
 several access functions have to be defined:
 <UL><LI>
@@ -681,7 +684,7 @@ the int type can be directly used as a term.<BR>
 <TR><TD><B><FONT SIZE=4>3.5.2</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Operator definition</FONT></B></TD>
 </TR></TABLE></DIV></TD>
-</TR></TABLE><A NAME="opdef"></A><BR>
+</TR></TABLE><A NAME="opdef"></A>
 When defining a new symbol with the <FONT COLOR="#0000ff"><TT>%op</TT></FONT>&nbsp;<I>s</I> construct, the user
 should specify how the symbol&nbsp;<I>s</I> is implemented. This is done by the
 <FONT COLOR="#0000ff"><TT>fsym</TT></FONT> <FONT COLOR="#0000ff"><TT>{</TT></FONT> implementation_of_s <FONT COLOR="#0000ff"><TT>}</TT></FONT> construct.<A NAME="fsym"></A>
@@ -756,7 +759,7 @@ This function should return a list&nbsp;<TT>l'</TT> such that
 <TR><TD><B><FONT SIZE=4>3.5.3</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Match definition</FONT></B></TD>
 </TR></TABLE></DIV></TD>
-</TR></TABLE><BR>
+</TR></TABLE>
 In order to match patterns against a list of subjects, <FONT COLOR=navy>Tom</FONT> provides
 the <FONT COLOR="#0000ff"><TT>%match</TT></FONT> construct.
 This constructs contains two parts:
@@ -804,7 +807,7 @@ modifies a target language variable which is an argument of a
 <TR><TD><B><FONT SIZE=4>3.5.4</FONT></B></TD>
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Rule definition</FONT></B></TD>
 </TR></TABLE></DIV></TD>
-</TR></TABLE><BR>
+</TR></TABLE>
 The <FONT COLOR="#0000ff"><TT>%rule</TT></FONT> construct is composed of a list of conditional
 rewrite rules (the left-hand side is a term and the right-hand side is
 a term). All these rules should begin with the same root symbol. The
@@ -830,6 +833,94 @@ an equality condition (<I>t</I><SUB><FONT SIZE=2>1</FONT></SUB> = <I>t</I><SUB><
  free variables of&nbsp;<I>p</I> are instantited and can be used in other
  conditions or the right-hand side of the rule.
 </UL>
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>3.5.5</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>Pattern definition</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE>
+A pattern is a term which could contain variables. These variables
+will be instantiated by the matching procedure.
+In <FONT COLOR=navy>Tom</FONT>, the variables do not have to be declared: their type is
+inferred automatically, depending on the context in which the appear.<BR>
+<BR>
+As described previously, <FONT COLOR=navy>Tom</FONT> offers several mechanisms to simplify
+the definition of a pattern:
+<UL><LI>
+standard notation: a pattern can be defined using a classical
+ prefix term notation. 
+ To make a distinction between variables and constants, it is
+ recommended to explicitly write the empty list of arguments:
+ for example, <FONT COLOR="#0000ff"><TT>x()</TT></FONT>, denotes the constant <FONT COLOR="#0000ff"><TT>x</TT></FONT>. In this case,
+ the corresponding <FONT COLOR=navy>Tom</FONT> operator (<FONT COLOR="#0000ff"><TT>%op x</TT></FONT>) have been declared.
+ For simplicity, it is also possible to use the notation <FONT COLOR="#0000ff"><TT>x</TT></FONT>, but
+ note that the status of <FONT COLOR="#0000ff"><TT>x</TT></FONT> depends on the existence of a <FONT COLOR=navy>Tom</FONT>
+ operator or not: <FONT COLOR="#0000ff"><TT>x</TT></FONT> is a constant if <FONT COLOR="#0000ff"><TT>%op x</TT></FONT> is defined,
+ otherwise it is a variable.<BR>
+<BR>
+<LI>unamed variable: the <FONT COLOR="#0000ff"><TT>_</TT></FONT> notation denotes an anonymous
+ variable. It can be used everywhere a variable name can be used. It
+ is useful when the instance of the variable does not need to be
+ used.
+ Similarly, the <FONT COLOR="#0000ff"><TT>_*</TT></FONT> notation can be used to denote an anonymous
+ list-variable. This last notation can improve the efficiency of
+ list-matching because the instances of anonymous list-variables do not
+ need to be built. <BR>
+<BR>
+<LI>annoted variable: the <FONT COLOR="#0000ff"><TT>@</TT></FONT> operator allows to give a variable
+ name to a subterm. In <FONT COLOR="#0000ff"><TT>f(x@g(_))</TT></FONT> for example, <FONT COLOR="#0000ff"><TT>x</TT></FONT> is a
+ variable that will be instantiated by the instance of the subterm
+ <FONT COLOR="#0000ff"><TT>g(_)</TT></FONT>. The variable
+ <FONT COLOR="#0000ff"><TT>x</TT></FONT> can then be used as any other variable.<BR>
+<BR>
+<LI>implicit notation: the <FONT COLOR="#0000ff"><TT>%op</TT></FONT> allows to give name to
+ arguments. Assuming that the operator <FONT COLOR="#0000ff"><TT>f</TT></FONT> has two arguments,
+ named <FONT COLOR="#0000ff"><TT>arg1</TT></FONT> and <FONT COLOR="#0000ff"><TT>arg2</TT></FONT>, then you can write the pattern
+ <FONT COLOR="#0000ff"><TT>f[arg1=a()]</TT></FONT> which is equivalent to <FONT COLOR="#0000ff"><TT>f(a(),_)</TT></FONT>. This
+ notation can be interesting when using constructors with many
+ subterms. <BR>
+<BR>
+<LI>unamed list operator: it is not rare that given a list-sort,
+ only one list-operator is defined. It this case, when there is no
+ ambiguity, the name of the operator can be omitted.
+ Considering the <FONT COLOR="#0000ff"><TT>conc</TT></FONT> list-operator for example, to improve the
+ readability, the pattern <FONT COLOR="#0000ff"><TT>conc(_*,x,_*)</TT></FONT> can be written
+ <FONT COLOR="#0000ff"><TT>(_*,x,_*)</TT></FONT>.<BR>
+<BR>
+<LI>symbol disjunction notation: to factorize the definition of
+ pattern which have common subterms, it is possible to describe a
+ family of patterns using a disjunction of symbols.
+ The pattern <FONT COLOR="#0000ff"><TT>(f|g)(a,b)</TT></FONT> correspond to the disjunction
+ <FONT COLOR="#0000ff"><TT>f(a,b)</TT></FONT> or <FONT COLOR="#0000ff"><TT>g(a,b)</TT></FONT>. To be allowed in a disjunction, the
+ constructor should have the same signature (arity, domain and
+ codomain). The disjunction notation can be used with the implicit
+ notation: <FONT COLOR="#0000ff"><TT>(f|g)[arg1=a()]</TT></FONT>.</UL>
+<TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+<TR><TD BGCOLOR="#0000ff"><DIV ALIGN=center><TABLE>
+<TR><TD><B><FONT SIZE=4>3.5.6</FONT></B></TD>
+<TD WIDTH="100%" ALIGN=center><B><FONT SIZE=4>XML pattern</FONT></B></TD>
+</TR></TABLE></DIV></TD>
+</TR></TABLE>
+there exist several ways to define an XML pattern. The simplest one
+ consist in using the ``standard '' XML notation. 
+ In <FONT COLOR=navy>Tom</FONT>, we have decided to compile XML pattern matching by using
+ associative list-matching. Thus, to precisely describe XML patterns,
+ we need to introduce extra list-variables which should capture the
+ context. This can be done by using anonymous list-variables
+ <FONT COLOR="#0000ff"><TT>_*</TT></FONT>.
+ However, to simplify the definition of XML patterns we have also
+ introduced an implicit notation which automatically adds these
+ variables.
+ An XML term is a term of sort <FONT COLOR="#0000ff"><TT>TNode</TT></FONT>. As described in the ADT
+ file, an <FONT COLOR="#0000ff"><TT>ElementNode</TT></FONT> has 3 subterms: a name, a list of
+ attributes and a list a subterms.
+<UL><LI>
+ explicit notation: <BR>
+<BR>
+<LI>implicit notation:<BR>
+<BR>
+<LI>prefix notation:
+ </UL>
 <HR>
 <A HREF="system.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
 <A HREF="manual.html"><IMG SRC ="contents_motif.gif" ALT="Up"></A>

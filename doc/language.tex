@@ -308,17 +308,19 @@ left-handsides should begin with the same root symbol:
 \end{center}
 
 A last construct of \TOM\ is the backquote (\lex{`}). This construct
-can be used to build an algebraic term. The yntax of this operator is
-not fixed since it depends on the underlaying language. However, a
-backquote term should at least contain a function call or the
-construction of a prefix term: \lex{`} \nt{Name} \lex{(} ... \lex{)}.
+can be used to build an algebraic term. The syntax of this operator is
+not fixed since it depends on the underlying language. 
 
+However, a backquote term should at least contain a function call or the
+construction of a prefix term: \lex{`}\nt{Name}\lex{(} ... \lex{)}.
+
+For building an XML term, the expression should begin with \lex{`}\nt{xml}\lex{(} ... \lex{)}.
 
 \section{\TOM\ semantic}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Type definition}\label{typedef}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \noindent
 When defining a new type with the \lex{\%typeterm} constructs,
 several access functions have to be defined:
@@ -393,7 +395,7 @@ When introducing integer type with the \lex{\%typeint} construct, then
 the int type can be directly used as a term.
 
 \subsection{Operator definition}\label{opdef}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \noindent
 When defining a new symbol with the \lex{\%op}~$s$ construct, the user
 should specify how the symbol~$s$ is implemented. This is done by the
@@ -469,7 +471,7 @@ This function should return a list~\texttt{l'} such that
 \end{itemize}
 
 \subsection{Match definition}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 In order to match patterns against a list of subjects, \TOM\ provides
 the \lex{\%match} construct.
 This constructs contains two parts:
@@ -516,7 +518,7 @@ modifies a target language variable which is an argument of a
 \lex{\%match} instruction under evaluation.
 
 \subsection{Rule definition}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The \lex{\%rule} construct is composed of a list of conditional
 rewrite rules (the left-hand side is a term and the right-hand side is
 a term). All these rules should begin with the same root symbol. The
@@ -542,4 +544,91 @@ In \TOM, we consider two kinds of conditions:
   free variables of~$p$ are instantited and can be used in other
   conditions or the right-hand side of the rule.
 \end{itemize}
+
+
+\subsection{Pattern definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A pattern is a term which could contain variables. These variables
+will be instantiated by the matching procedure.
+In \TOM, the variables do not have to be declared: their type is
+inferred automatically, depending on the context in which the appear.
+
+As described previously, \TOM\ offers several mechanisms to simplify
+the definition of a pattern:
+\begin{itemize}
+\item standard notation: a pattern can be defined using a classical
+  prefix term notation.  
+  To make a distinction between variables and constants, it is
+  recommended to explicitly write the empty list of arguments:
+  for example, \lex{x()}, denotes the constant \lex{x}. In this case,
+  the corresponding \TOM\ operator (\lex{\%op x}) have been declared.
+  For simplicity, it is also possible to use the notation \lex{x}, but
+  note that the status of \lex{x} depends on the existence of a \TOM\
+  operator or not: \lex{x} is a constant if \lex{\%op x} is defined,
+  otherwise it is a variable.
+
+\item unamed variable: the \lex{\_} notation denotes an anonymous
+  variable. It can be used everywhere a variable name can be used. It
+  is useful when the instance of the variable does not need to be
+  used.
+  Similarly, the \lex{\_*} notation can be used to denote an anonymous
+  list-variable. This last notation can improve the efficiency of
+  list-matching because the instances of anonymous list-variables do not
+  need to be built. 
+
+\item annoted variable: the \lex{@} operator allows to give a variable
+  name to a subterm. In \lex{f(x@g(\_))} for example, \lex{x} is a
+  variable that will be instantiated by the instance of the subterm
+  \lex{g(\_)}. The variable
+  \lex{x} can then be used as any other variable.
+
+\item implicit notation: the \lex{\%op} allows to give name to
+  arguments. Assuming that the operator \lex{f} has two arguments,
+  named \lex{arg1} and \lex{arg2}, then you can write the pattern
+  \lex{f[arg1=a()]} which is equivalent to \lex{f(a(),\_)}. This
+  notation can be interesting when using constructors with many
+  subterms. 
+
+\item unamed list operator: it is not rare that given a list-sort,
+  only one list-operator is defined. It this case, when there is no
+  ambiguity, the name of the operator can be omitted.
+  Considering the \lex{conc} list-operator for example, to improve the
+  readability, the pattern \lex{conc(\_*,x,\_*)} can be written
+  \lex{(\_*,x,\_*)}.
+
+\item symbol disjunction notation: to factorize the definition of
+  pattern which have common subterms, it is possible to describe a
+  family of patterns using a disjunction of symbols.
+  The pattern \lex{(f|g)(a,b)} correspond to the disjunction
+  \lex{f(a,b)} or \lex{g(a,b)}. To be allowed in a disjunction, the
+  constructor should have the same signature (arity, domain and
+  codomain). The disjunction notation can be used with the implicit
+  notation: \lex{(f|g)[arg1=a()]}.
+
+\end{itemize}
+
+ 
+\subsection{XML pattern}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  there exist several ways to define an XML pattern. The simplest one
+  consist in using the ``standard '' XML notation. 
+  In \TOM, we have decided to compile XML pattern matching by using
+  associative list-matching. Thus, to precisely describe XML patterns,
+  we need to introduce extra list-variables which should capture the
+  context. This can be done by using anonymous list-variables
+  \lex{\_*}.
+  However, to simplify the definition of XML patterns we have also
+  introduced an implicit notation which automatically adds these
+  variables.
+  An XML term is a term of sort \lex{TNode}. As described in the ADT
+  file, an \lex{ElementNode} has 3 subterms: a name, a list of
+  attributes and a list a subterms.
+
+  \begin{itemize}
+  \item explicit notation: 
+
+  \item implicit notation:
+
+  \item prefix notation:
+  \end{itemize}
 
