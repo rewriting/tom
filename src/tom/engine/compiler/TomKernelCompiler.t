@@ -42,8 +42,10 @@ public class TomKernelCompiler extends TomBase {
 
   private boolean supportedBlock = false, supportedGoto = false, debugMode = false;
 
-  public TomKernelCompiler(jtom.TomEnvironment environment, boolean supportedBlock, boolean supportedGoto, 
-  											boolean debugMode) {
+  public TomKernelCompiler(jtom.TomEnvironment environment,
+                           boolean supportedBlock,
+                           boolean supportedGoto, 
+                           boolean debugMode) {
     super(environment);
     this.supportedBlock = supportedBlock;
     this.supportedGoto = supportedGoto;
@@ -53,14 +55,14 @@ public class TomKernelCompiler extends TomBase {
 // ------------------------------------------------------------
   %include { ../adt/TomSignature.tom }
 // ------------------------------------------------------------
-
+ 
     /* 
      * preProcessing:
      *
      * replaces MakeTerm
      */
 
-  private static int matchNumber = 0;
+  private int matchNumber = 0;
 
   private Option option() {
     return ast().makeOption();

@@ -298,8 +298,8 @@ public class TomBase {
           %match(Option opt) {
             DeclarationToOption(MakeEmptyList[]) -> { return true; }
             DeclarationToOption(MakeAddList[])   -> { return true; }
-            _ -> {optionList = optionList.getTail();}
           }
+          optionList = optionList.getTail();
         }
         return false;
       }
@@ -324,8 +324,8 @@ public class TomBase {
           %match(Option opt) {
             DeclarationToOption(MakeEmptyArray[]) -> { return true; }
             DeclarationToOption(MakeAddArray[])   -> { return true; }
-            _ -> {optionList = optionList.getTail();}
           }
+          optionList = optionList.getTail();
         }
         return false;
       }
@@ -409,142 +409,52 @@ public class TomBase {
     traversal().genericCollect(subject, collect);
   }
 
-  protected void collectVariable(final HashSet set, TomTerm subject) {
-    Collect1 collect = new Collect1() { 
-        public boolean apply(ATerm t) {
-            //%variable
-          if(t instanceof TomTerm) {
-            TomTerm annotedVariable = null;
-            %match(TomTerm t) { 
-              Variable[option=Option(optionList)] -> {
-                set.add(t);
-                annotedVariable = getAnnotedVariable(optionList);
-                if(annotedVariable!=null) {
-                  set.add(annotedVariable);
-                }
-                return false;
-              }
-              
-              VariableStar[option=Option(optionList)] -> {
-                set.add(t);
-                annotedVariable = getAnnotedVariable(optionList);
-                if(annotedVariable!=null) {
-                  set.add(annotedVariable);
-                }
-                return false;
-              }
-              
-              UnamedVariable[option=Option(optionList)] -> {
-                annotedVariable = getAnnotedVariable(optionList);
-                if(annotedVariable!=null) {
-                  set.add(annotedVariable);
-                }
-                return false;
-              }
-              
-                // to collect annoted nodes but avoid collect variables in optionSymbol
-              Appl[option=Option(optionList), args=subterms] -> {
-                collectVariable(set,`Tom(subterms));
-                annotedVariable = getAnnotedVariable(optionList);
-                if(annotedVariable!=null) {
-                  set.add(annotedVariable);
-                }
-                return false;
-              }
-              
-              _ -> { return true; }
-            }
-          } else {
-            return true;
-          }
-        } // end apply
-      }; // end new
-    
-    traversal().genericCollect(subject, collect);
-  }
-
-  protected TomTerm getAnnotedVariable(OptionList subjectList) {
-      //%variable
-    while(!subjectList.isEmpty()) {
-      Option subject = subjectList.getHead();
-      %match(Option subject) {
-        TomTermToOption(var@Variable(option,name,type)) -> {
-          return var;
-        }
-      }
-      subjectList = subjectList.getTail();
+  protected TomTerm getAnnotedVariable(OptionList optionList) {
+    %match(OptionList optionList) {
+      concOption(X1*,TomTermToOption(var@Variable(option,name,type)),X2*) -> { return var; }
     }
     return null;
   }
   
   protected Declaration getIsFsymDecl(OptionList optionList) {
-    //%variable
-    while(!optionList.isEmpty()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        DeclarationToOption(decl@IsFsymDecl[]) -> { return decl; }
-      }
-      optionList = optionList.getTail();
+    %match(OptionList optionList) {
+      concOption(X1*,DeclarationToOption(decl@IsFsymDecl[]),X2*) -> { return decl; }
     }
     return null;
   }
 
   protected String getDebug(OptionList optionList) {
-    //%variable
-    while(!optionList.isEmpty()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        Debug(Name(str)) -> { return str; }
-      }
-      optionList = optionList.getTail();
+    %match(OptionList optionList) {
+      concOption(X1*,Debug(Name(str)),X2*) -> { return str; }
     }
+
     return null;
   }
 
   protected boolean hasConstructor(OptionList optionList) {
-      //%variable
-    while(!optionList.isEmpty()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        Constructor -> { return true; }
-      }
-      optionList = optionList.getTail();
+    %match(OptionList optionList) {
+      concOption(X1*,Constructor(),X2*) -> { return true; }
     }
     return false;
   }
   
   protected boolean hasGeneratedMatch(OptionList optionList) {
-      //%variable
-    while(!optionList.isEmpty()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        GeneratedMatch -> { return true; }
-      }
-      optionList = optionList.getTail();
+    %match(OptionList optionList) {
+      concOption(X1*,GeneratedMatch(),X2*) -> { return true; }
     }
     return false;
   }
   
   protected boolean hasDefaultCase(OptionList optionList) {
-      //%variable
-    while(!optionList.isEmpty()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        DefaultCase -> { return true; }
-      }
-      optionList = optionList.getTail();
+    %match(OptionList optionList) {
+      concOption(X1*,DefaultCase(),X2*) -> { return true; }
     }
     return false;
   }
 
   protected boolean hasDefinedSymbol(OptionList optionList) {
-      //%variable
-    while(!optionList.isEmpty()) {
-      Option subject = optionList.getHead();
-      %match(Option subject) {
-        DefinedSymbol -> { return true; }
-      }
-      optionList = optionList.getTail();
+    %match(OptionList optionList) {
+      concOption(X1*,DefinedSymbol(),X2*) -> { return true; }
     }
     return false;
   }

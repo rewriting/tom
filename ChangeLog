@@ -1,3 +1,7 @@
+2003-09-15  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* user defined labels a are allowed in patterns
+
 2003-09-11  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
         * complex paths allowed in %include contructs
