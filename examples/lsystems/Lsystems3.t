@@ -24,9 +24,9 @@ import java.lang.*;
 import lsruntime.*;
 import lsruntime.adt.*;
 
-public class Lsystems3 implements LsystemsInterface {
+public class Lsystems3 implements LsystemsInterface { 
   
-  %include { lsruntime/lsystems.tom }
+  %include { lsruntime/adt/lsystems.tom }
   %include { lsruntime/extras.tom }
   
   public Lsystems3(String[] args,LsystemsRuntime runtime) {
@@ -86,95 +86,95 @@ public class Lsystems3 implements LsystemsInterface {
 
 */
       // r < r > r -> l
-      r,concNode(I1*,r,head*),concNode(I2*,r,tail*) -> {
+      label1 : r,concNode(I1*,r,head*),concNode(I2*,r,tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern1;
+          break label1;
         } else if ( !runtime.UCD(I2,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern1;
+          break label1;
         } else {
           return `concNode(l);
         }
       }
       // r < r > l -> r
-      r,concNode(I1*,r,head*),concNode(I2*,l,tail*) -> {
+      label2: r,concNode(I1*,r,head*),concNode(I2*,l,tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern2;
+          break label2;
         } else if ( !runtime.UCD(I2,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern2;
+          break label2;
         } else {
           return `concNode(r);
         }
       }
       // r < l > r -> r
-      l,concNode(I1*,r,head*),concNode(I2*,r,tail*) -> {
+      label3: l,concNode(I1*,r,head*),concNode(I2*,r,tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern3;
+          break label3;
         } else if ( !runtime.UCD(I2,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern3;
+          break label3;
         } else {
           return `concNode(r);
         }
       }
       // r < l > l -> lFl
-      l,concNode(I1*,r,head*),concNode(I2*,l,tail*) -> {
+      label4: l,concNode(I1*,r,head*),concNode(I2*,l,tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern4;
+          break label4;
         } else if ( !runtime.UCD(I2,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern4;
+          break label4;
         } else {
           return `concNode(l,F,l);
         }
       }
       // r < l > r -> l
-      r,concNode(I1*,l,head*),concNode(I2*,r,tail*) -> {
+      label5: r,concNode(I1*,l,head*),concNode(I2*,r,tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern5;
+          break label5;
         } else if ( !runtime.UCD(I2,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern5;
+          break label5;
         } else {
           return `concNode(l);
         }
       }
       // l < r > l -> l[-FlFl]
-      r,concNode(I1*,l,head*),concNode(I2*,l,tail*) -> {
+      label6: r,concNode(I1*,l,head*),concNode(I2*,l,tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern6;
+          break label6;
         } else if ( !runtime.UCD(I2,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern6;
+          break label6;
         } else {
           return `concNode(l,SubList(concNode(Left,F,l,F,l)));
         }
       }
-      l,concNode(I1*,l,head*),concNode(I2*,r,tail*) -> {
+      label7: l,concNode(I1*,l,head*),concNode(I2*,r,tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern7;
+          break label7;
         } else if ( !runtime.UCD(I2,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern7;
+          break label7;
         } else {
           return `concNode(l);
         }
       }
-      l,concNode(I1*,l,head*),concNode(I2*,l,tail*) -> {
+      label8: l,concNode(I1*,l,head*),concNode(I2*,l,tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern8;
+          break label8;
         } else if ( !runtime.UCD(I2,extign) ) {
           runtime.iter++;
-          break matchlab_match1_pattern8;
+          break label8;
         } else {
           return `concNode(r);
         }

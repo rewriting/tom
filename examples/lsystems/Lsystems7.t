@@ -27,7 +27,7 @@ import lsruntime.adt.*;
 
 public class Lsystems7 implements LsystemsInterface {
   
-  %include { lsruntime/lsystems.tom }
+  %include { lsruntime/adt/lsystems.tom }
   %include { lsruntime/extras.tom }
   
   public Lsystems7(String[] args,LsystemsRuntime runtime) {

@@ -69,7 +69,7 @@ public class LsystemsRuntime {
   public boolean verbose;
   private NodeList root;
   
-  %include { lsystems.tom }
+  %include { adt/lsystems.tom }
   %include { extras.tom }
   
   public void run(MatchLsystems mls,int nbr_it, int angle) {

@@ -33,7 +33,7 @@ import lsruntime.adt.*;
 
 public class LsystemsDraw  extends JComponent {
 
-  %include { ../lsystems.tom }
+  %include { ../adt/lsystems.tom }
   %include { ../extras.tom }
   
   private LsystemsFactory factory;

@@ -17,16 +17,16 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA  02111-1307, USA.
  */
-
+ 
 import aterm.*;
 import java.util.*;
 import java.lang.*;
-import lsruntime.*;
+import lsruntime.*; 
 import lsruntime.adt.*;
 
 public class Lsystems2 implements LsystemsInterface {
   
-  %include { lsruntime/lsystems.tom }
+  %include { lsruntime/adt/lsystems.tom }
   %include { lsruntime/extras.tom }
   
   public Lsystems2(String[] args,LsystemsRuntime runtime) {
