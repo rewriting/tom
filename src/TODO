@@ -12,7 +12,7 @@ Previsions pour la v2.0
   possibilite de passer les tests et de bootstrapper
   voir comment integrer javacc
   optimiser la lecture des fichiers en lisant le buffer
-  revoir le Tom editor
+  revoir le Tom editor et utiliser une compilation "incrementale" pour decouvrir la definition des operateurs...
   ameliorer la fenetre de selection des properties (Tom et ADT)
   warning ADT file not found
   completion Tom
