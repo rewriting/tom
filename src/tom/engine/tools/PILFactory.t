@@ -145,11 +145,11 @@ public class PILFactory extends TomBase {
         }
   
 
-        IfThenElse(cond,success,Nop()) -> {
+        If(cond,success,Nop()) -> {
           return  "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success).replaceAll("\n","\n\t"); 
         }
 
-        IfThenElse(cond,success,failure) -> {
+        If(cond,success,failure) -> {
           return "if " + prettyPrint(cond) + " then \n\t" + prettyPrint(success).replaceAll("\n","\n\t") + "\n\telse " + prettyPrint(failure).replaceAll("\n","\n\t")+"\n";
         }
 

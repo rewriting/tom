@@ -282,7 +282,7 @@ public class TomKernelCompiler extends TomBase {
         automataInstruction = compileConstraint(`currentTerm,`TomTermToExpression(subjectVariableAST),automataInstruction);
 
         Expression cond = `expandDisjunction(EqualFunctionSymbol(codomain,subjectVariableAST,currentTerm));
-        Instruction test = `IfThenElse(cond,automataInstruction,Nop());
+        Instruction test = `If(cond,automataInstruction,Nop());
         return test;
       }
       
@@ -390,7 +390,7 @@ public class TomKernelCompiler extends TomBase {
             Instruction stopIter = `Assign(variableEndAST,TomTermToExpression(variableBeginAST));
             Instruction assign1 = `genCheckEmptyList(p.symbol, Ref(variableEndAST),stopIter,tailExp);
             Instruction assign2 = `Assign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)));
-            loop = `DoWhile(UnamedBlock(concInstruction(let,assign1,assign2)),Not(EqualTerm(termType,Ref(variableEndAST),variableBeginAST)));
+            loop = `DoWhile(UnamedBlock(concInstruction(let,assign1,assign2)),Negation(EqualTerm(termType,Ref(variableEndAST),variableBeginAST)));
           } else {
               /*
                * case (X*,y,...)
@@ -411,7 +411,7 @@ public class TomKernelCompiler extends TomBase {
 
             Instruction assign1 = tailExp;
             Instruction letAssign = `LetAssign(p.subjectListName,TomTermToExpression(Ref(variableEndAST)),UnamedBlock(concInstruction(let,assign1)));
-            loop = `WhileDo(Not(genIsEmptyList(p.symbol,Ref(variableEndAST))),letAssign);
+            loop = `WhileDo(Negation(genIsEmptyList(p.symbol,Ref(variableEndAST))),letAssign);
             loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListName,TomTermToExpression(variableBeginAST),Nop())));
           }
 
@@ -456,7 +456,7 @@ public class TomKernelCompiler extends TomBase {
        *   ...
        * }
        */
-    return `IfThenElse(genIsEmptyList(tomSymbol, Ref(subjectListName)),succes,failure);
+    return `If(genIsEmptyList(tomSymbol, Ref(subjectListName)),succes,failure);
   }
 
 
@@ -602,7 +602,7 @@ public class TomKernelCompiler extends TomBase {
             Instruction assign = `Assign(p.subjectListIndex,TomTermToExpression(Ref(variableEndAST)));
             
             loop = `DoWhile(UnamedBlock(concInstruction(let,increment,assign)),
-                            Not(GreaterThan(TomTermToExpression(Ref(p.subjectListIndex)),GetSize(Ref(p.subjectListName)))));
+                            Negation(GreaterThan(TomTermToExpression(Ref(p.subjectListIndex)),GetSize(Ref(p.subjectListName)))));
             loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListIndex,TomTermToExpression(variableBeginAST),Nop())));
           } else {
             /*
@@ -616,7 +616,7 @@ public class TomKernelCompiler extends TomBase {
              * subjectIndex = begin_i
              */
             Instruction letAssign = `LetAssign(p.subjectListIndex,TomTermToExpression(Ref(variableEndAST)),UnamedBlock(concInstruction(let,increment)));
-            loop = `WhileDo(Not(IsEmptyArray(Ref(p.subjectListName), Ref(variableEndAST))),
+            loop = `WhileDo(Negation(IsEmptyArray(Ref(p.subjectListName), Ref(variableEndAST))),
                             letAssign);
             loop = `UnamedBlock(concInstruction(loop,LetAssign(p.subjectListIndex,TomTermToExpression(variableBeginAST),Nop())));
           }
@@ -648,7 +648,7 @@ public class TomKernelCompiler extends TomBase {
        *   ...
        * }
        */
-    return `IfThenElse(IsEmptyArray(Ref(subjectListName),Ref(subjectListIndex)),succes,failure);
+    return `If(IsEmptyArray(Ref(subjectListName),Ref(subjectListIndex)),succes,failure);
   }
 
 
@@ -768,7 +768,7 @@ public class TomKernelCompiler extends TomBase {
       concConstraint(Equal(var) ,tail*) -> {
           //System.out.println("constraint: " + source + " EqualTo " + var);
         Instruction subBody = compileConstraint(`var,source,body);
-        return `buildConstraint(tail,source,IfThenElse(EqualTerm(getTermType(var, getSymbolTable()),var,ExpressionToTomTerm(source)),subBody,Nop()));
+        return `buildConstraint(tail,source,If(EqualTerm(getTermType(var, getSymbolTable()),var,ExpressionToTomTerm(source)),subBody,Nop()));
       }
 
       concConstraint(AssignTo(var@(Variable|VariableStar)[]) ,tail*) -> {
@@ -782,7 +782,7 @@ public class TomKernelCompiler extends TomBase {
         //Instruction subBody = compileConstraint(`exp,source,body);
         TomType type = getSymbolTable().getBooleanType();
         Expression equality = `EqualTerm(type,ExpressionToTomTerm(TrueTL()),exp);
-        Instruction generatedTest = `IfThenElse(equality,body,Nop());
+        Instruction generatedTest = `If(equality,body,Nop());
         return `buildConstraint(tail,source,generatedTest);
       }
 

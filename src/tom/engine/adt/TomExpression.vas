@@ -7,7 +7,7 @@ sorts Expression
 abstract syntax
 
 TomTermToExpression(astTerm:TomTerm) -> Expression
-Not(arg:Expression) -> Expression
+Negation(arg:Expression) -> Expression
 And(arg1:Expression,arg2:Expression) -> Expression
 Or(arg1:Expression,arg2:Expression) -> Expression
 GreaterThan(arg1:Expression,arg2:Expression) -> Expression

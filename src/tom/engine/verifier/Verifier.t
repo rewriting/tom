@@ -170,7 +170,7 @@ public class Verifier extends TomBase {
         return `accept(positivePatterns,negativePatterns);
       }
 
-      IfThenElse(cond,ift,iff) -> {
+      If(cond,ift,iff) -> {
         return `ITE(build_ExprFromExpression(cond),
                     build_InstrFromAutomata(ift),
                     build_InstrFromAutomata(iff));

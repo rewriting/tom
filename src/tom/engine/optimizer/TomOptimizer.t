@@ -526,22 +526,22 @@ public class TomOptimizer extends TomGenericPlugin {
 
           /* Fusion de 2 blocs If gardés par la même condition */
 
-          AbstractBlock(concInstruction(X1*,IfThenElse(cond1,success1,failure1),IfThenElse(cond2,success2,failure2),X2*)) -> 
+          AbstractBlock(concInstruction(X1*,If(cond1,success1,failure1),If(cond2,success2,failure2),X2*)) -> 
             {
               if(compare(cond1,cond2)){
-                return `AbstractBlock(concInstruction(X1*,IfThenElse(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));}
+                return `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(success1,success2)),AbstractBlock(concInstruction(failure1,failure2))),X2*));}
                
             }
 
 
           /* On veut rapprocher deux blocs qui sont gardés par la même condition par permutation : règle d'entrelacement */
 
-          AbstractBlock(concInstruction(X1*,IfThenElse(cond1,suc1,fail1),X2*,IfThenElse(cond2,suc2,fail2),IfThenElse(cond3,suc3,fail3),X3*)) -> 
+          AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),X2*,If(cond2,suc2,fail2),If(cond3,suc3,fail3),X3*)) -> 
             {
               if(compare(cond1,cond3)){
                 Expression incompatible = (Expression) normStrategy.visit(`And(cond2,cond3));
                 if(incompatible==`FalseTL()){
-                  return  `AbstractBlock(concInstruction(X1*,IfThenElse(cond1,suc1,fail1),X2*,IfThenElse(cond3,AbstractBlock(concInstruction(fail2,suc3)),AbstractBlock(concInstruction(IfThenElse(cond2,suc2,Nop()),fail3))),X3*));
+                  return  `AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),X2*,If(cond3,AbstractBlock(concInstruction(fail2,suc3)),AbstractBlock(concInstruction(If(cond2,suc2,Nop()),fail3))),X3*));
                 }
               }
 
@@ -550,31 +550,31 @@ public class TomOptimizer extends TomGenericPlugin {
 
           /* on entrelace deux blocs incompatibles */
 
-          AbstractBlock(concInstruction(X1*,IfThenElse(cond1,suc1,fail1),IfThenElse(cond2,suc2,fail2),X2*)) -> 
+          AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),If(cond2,suc2,fail2),X2*)) -> 
             {
                 Expression incompatible = (Expression) normStrategy.visit(`And(cond1,cond2));
                 if(incompatible==`FalseTL()){
-                  return  `AbstractBlock(concInstruction(X1*,IfThenElse(cond1,AbstractBlock(concInstruction(suc1,fail2)),AbstractBlock(concInstruction(fail1,IfThenElse(cond2,suc2,Nop())))),X2*));
+                  return  `AbstractBlock(concInstruction(X1*,If(cond1,AbstractBlock(concInstruction(suc1,fail2)),AbstractBlock(concInstruction(fail1,If(cond2,suc2,Nop())))),X2*));
                 }
             }
 
           /* Simplification de l'imbrication de 2 blocs cond incompatibles */
 
-          IfThenElse(cond,suc,IfThenElse(cond2,suc2,Nop())) -> 
+          If(cond,suc,If(cond2,suc2,Nop())) -> 
             { 
               Expression incompatible = (Expression) normStrategy.visit(`And(cond,cond2));
               if(incompatible==`FalseTL()){
-                  return  `AbstractBlock(concInstruction( IfThenElse(cond,suc,Nop()),IfThenElse(cond2,suc2,Nop())));
+                  return  `AbstractBlock(concInstruction( If(cond,suc,Nop()),If(cond2,suc2,Nop())));
                 }
             }
 
           
           /* Permutation d'un bloc cond et d'un bloc let contigus */
           /*
-          AbstractBlock(concInstruction(X1*,IfThenElse(cond1,suc1,fail1),X2*,Let(var,term,body),IfThenElse(cond2,suc2,fail2),X3*)) -> 
+          AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),X2*,Let(var,term,body),If(cond2,suc2,fail2),X3*)) -> 
             {
               if(compare(cond1,cond2)){
-                return  `AbstractBlock(concInstruction(X1*,IfThenElse(cond1,suc1,fail1),X2*,IfThenElse(cond2,suc2,fail2),Let(var,term,body),X3*));
+                return  `AbstractBlock(concInstruction(X1*,If(cond1,suc1,fail1),X2*,If(cond2,suc2,fail2),Let(var,term,body),X3*));
               }
             }
           */

@@ -179,7 +179,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.writeln(deep,"}");
   }
   
-  protected void buildExpNot(int deep, Expression exp) throws IOException {
+  protected void buildExpNegation(int deep, Expression exp) throws IOException {
     output.write("!(");
     generateExpression(deep,exp);
     output.write(")");
@@ -237,7 +237,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.writeln("}");
   }
 
-  protected void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException {
+  protected void buildIf(int deep, Expression exp, Instruction succes) throws IOException {
     output.write(deep,"if("); 
     generateExpression(deep,exp); 
     output.writeln(") {");
@@ -245,7 +245,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.writeln(deep,"}");
   }
 
-  protected void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {
+  protected void buildIfWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {
     output.write(deep,"if("); 
     generateExpression(deep,exp); 
     output.writeln(") {");

@@ -177,7 +177,7 @@ public class TomVerifier extends TomGenericPlugin {
         else if (subject instanceof Instruction) {
           // the checkstamp should be managed another way 
           %match(Instruction subject) {
-            IfThenElse(TrueTL(),success,Nop()) -> {
+            If(TrueTL(),success,Nop()) -> {
               return traversal().genericTraversal(`success,this);
             }
             (UnamedBlock|AbstractBlock)(concInstruction(CheckStamp[],inst)) -> {

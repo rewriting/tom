@@ -8,7 +8,7 @@ abstract syntax
 
 TomTermToInstruction(tom:TomTerm) -> Instruction
 TargetLanguageToInstruction(tl:TargetLanguage) -> Instruction
-IfThenElse(condition:Expression,succesInst:Instruction,failureInst:Instruction) -> Instruction
+If(condition:Expression,succesInst:Instruction,failureInst:Instruction) -> Instruction
 DoWhile(doInst:Instruction,condition:Expression) -> Instruction
 WhileDo(condition:Expression,doInst:Instruction) -> Instruction
 Assign(variable:TomTerm,source:Expression) -> Instruction

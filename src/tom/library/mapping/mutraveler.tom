@@ -18,7 +18,7 @@
     make() { new tom.library.strategy.mutraveler.Fail() }
   }
 
-  %op VisitableVisitor Negation(VisitableVisitor) {
+  %op VisitableVisitor Not(VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.Not) }
     make(v) { new tom.library.strategy.mutraveler.Not((VisitableVisitor)v) }
@@ -60,7 +60,7 @@
     make(v) { new tom.library.strategy.mutraveler.Some((VisitableVisitor)v) }
   }
 
-  %op VisitableVisitor Select(VisitableVisitor, VisitableVisitor, VisitableVisitor) {
+  %op VisitableVisitor IfThenElse(VisitableVisitor, VisitableVisitor, VisitableVisitor) {
     fsym {}
     is_fsym(t) { (t instanceof tom.library.strategy.mutraveler.IfThenElse) }
     make(condition,trueCase,falseCase) { new tom.library.strategy.mutraveler.IfThenElse((VisitableVisitor)condition,(VisitableVisitor)trueCase,(VisitableVisitor)falseCase) }

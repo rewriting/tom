@@ -241,7 +241,7 @@ public class TomCompiler extends TomGenericPlugin {
                               condList,
                               option) -> {
                     TomTerm newRhs = preProcessing(`BuildReducedTerm(rhsTerm));
-                    Instruction rhsInst = `IfThenElse(TrueTL(),Return(newRhs),Nop());
+                    Instruction rhsInst = `If(TrueTL(),Return(newRhs),Nop());
                     Instruction newRhsInst = `buildCondition(condList,rhsInst);
                     TomList guardList = empty();
 
@@ -358,7 +358,7 @@ public class TomCompiler extends TomGenericPlugin {
         TomTerm newLhs = preProcessing(`BuildReducedTerm(lhs));
         TomTerm newRhs = preProcessing(`BuildReducedTerm(rhs));
         Expression equality = `EqualTerm(type,newLhs,newRhs);
-        Instruction generatedTest = `IfThenElse(equality,newAction,Nop());
+        Instruction generatedTest = `If(equality,newAction,Nop());
         return generatedTest;
       }
       
