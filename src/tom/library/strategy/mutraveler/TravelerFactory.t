@@ -28,10 +28,15 @@ public class TravelerFactory {
     return `mu(x(),Sequence(All(x()),Choice(Sequence(v,x()),Identity)));
   }
 
+  public VisitableVisitor InnermostId(VisitableVisitor v) {
+    return `mu(x(),Sequence(All(x()),ChoiceOnId(v,x())));
+  }
+
   public VisitableVisitor Repeat(VisitableVisitor v) {
     return `mu(x(),Choice(Sequence(v,x()),Identity()));
   }
 
+  
   /*
   public VisitableVisitor Pchoice(VisitableVisitor v) {
     return `mu(x(),Choice(Sequence(v,x()),Identity()));
