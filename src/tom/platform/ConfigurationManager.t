@@ -80,7 +80,7 @@ public class ConfigurationManager {
   
   /**
    * Basic Constructor
-   * @return a configurationManager that needs to be initialized
+   * constructing a configurationManager that needs to be initialized
    */
   public ConfigurationManager(String xmlConfigurationFileName) {
     this.xmlConfigurationFileName = xmlConfigurationFileName;

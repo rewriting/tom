@@ -1048,7 +1048,7 @@
     <delete dir="${bundle.temp.dir}"/>
   </target>
 
-  <target name="stable.doc">
+  <target name="doc.stable" description="Build javadoc for stable">
     <mkdir dir="${stable.doc}"/>    
     <javadoc destdir="${stable.doc}"
              windowtitle="TOM documentation">
@@ -1060,7 +1060,9 @@
     </javadoc>
   </target>
 
-  <target name="src.doc" depends="build.src">
+  <target name="doc.src" 
+					description="Build javadoc for src"
+					depends="build.src">
     <mkdir dir="${src.doc}"/>   
     <javadoc destdir="${src.doc}"
              windowtitle="TOM documentation">

@@ -99,7 +99,7 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    * Puts the input Object into the variable "term", after casting it as a
    * TomTerm. If the cast operation fails, an error will be raised.
    *
-   * @param term the input Object
+   * @param arg the input Object
    */
   public void setArgs(Object[] arg) {
     if (arg[0] instanceof TomTerm && arg[1] instanceof TomStreamManager) {

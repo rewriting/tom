@@ -52,7 +52,7 @@ public class P3PEvaluator2 {
  
   public static void main (String args[]) {
     P3PEvaluator2 P3PEvaluator2 = new P3PEvaluator2();
-    P3PEvaluator2.run("server.xml","client.xml");
+    P3PEvaluator2.run("p3p/server.xml","p3p/client.xml");
   }
 
   private void run(String polfile,String clientfile){

@@ -76,7 +76,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
 
   /**
    * Basic Constructor
-   * @return a configurationManager that needs to be initialized
+   * constructing a configurationManager that needs to be initialized
    */
   public TomOptionManager() {
     mapNameToOwner = new HashMap();
@@ -166,7 +166,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
    * Returns the value of an option. Returns an Object which is a Boolean,
    * a String or an Integer depending on what the option type is.
    * 
-   * @param optionName the name of the option whose value is seeked
+   * @param name the name of the option whose value is seeked
    * @return an Object containing the option's value
    */
   public Object getOptionValue(String name) {

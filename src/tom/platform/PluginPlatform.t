@@ -77,7 +77,6 @@ public class PluginPlatform {
   /**
    * The main method which runs the PluginPlatform.
    * 
-   * @param argumentList the command line
    * @return an error code :
    * <ul>
    * <li>0 if no error was encountered</li>

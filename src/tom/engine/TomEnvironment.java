@@ -37,7 +37,8 @@ import aterm.pure.SingletonFactory;
  * AST, TomSignature and PlatformOption
  */
 public class TomEnvironment {
-  /** Part of the Singleton pattern.
+  /** 
+   * Part of the Singleton pattern.
    * The unique instance of the TomEnvironment
    */
   private static TomEnvironment instance;
@@ -58,8 +59,8 @@ public class TomEnvironment {
   }
   
   /**
-   * Part of the Singleton pattern
-   * Returns the instance of the TomEnvironment
+   * Part of the Singleton pattern, get the instance or create it.
+   * @return the instance of the TomEnvironment
    */
   public static TomEnvironment getInstance() {
     if(instance == null) {
@@ -68,15 +69,26 @@ public class TomEnvironment {
     return instance;
   }
   
-  /** Accessors*/
+  /** 
+   * Accessor for astFactory
+   * @return the environments astFactory
+   */
   public ASTFactory getAstFactory() {
     return astFactory;
   }
-  
+
+  /** 
+   * Accessor for tomSignatureFactory
+   * @return the environments tomSignatureFactory
+   */  
   public TomSignatureFactory getTomSignatureFactory() {
     return tomSignatureFactory;
   }
   
+  /** 
+   * Accessor for platformOptionFactory
+   * @return the environments platformOptionFactory
+   */
   public PlatformOptionFactory getPlatformOptionFactory() {
     return platformOptionFactory;
   }

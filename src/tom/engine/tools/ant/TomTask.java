@@ -177,9 +177,9 @@ public class TomTask extends MatchingTask {
   }
 
   /**
-   * Set the destination directory into which the Tom source
-   * files should be compiled.
-   * @param destDir the destination directory
+   * Set the output file into which the Tom source
+   * file should be compiled.
+   * @param outputFile the destination file
    */
   public void setOutputFile(File outputFile) {
     this.outputFile = outputFile;

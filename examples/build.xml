@@ -594,6 +594,11 @@
       <classpath refid="tom.classpath"/>
       <include name="${p3p}/**/*.java"/>
     </javac>
+    <copy todir="${examples.build}/${p3p}">
+      <fileset dir="${examples.dir}/${p3p}">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
   </target>
 
   <target name="peano" depends="init">

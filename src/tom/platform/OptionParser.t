@@ -40,30 +40,32 @@ import tom.library.xml.*;
 /**
  * Helper class to parse OptionOwner options following this DTD
  *
- * <!ELEMENT options (boolean*,integer*,string*)>
+ * <PRE><CODE>
+ * < !ELEMENT options (boolean*,integer*,string*) >
  *
- * <!ELEMENT boolean EMPTY>
- * <!ATTLIST boolean
+ * < !ELEMENT boolean EMPTY >
+ * < !ATTLIST boolean
  *   name CDATA #REQUIRED
  *   altName CDATA ""
  *   description CDATA ""
- *   value (true|false) #REQUIRED>
+ *   value (true|false) #REQUIRED >
  *
- * <!ELEMENT integer EMPTY>
- * <!ATTLIST integer
- *   name CDATA #REQUIRED
- *   altName CDATA ""
- *   description CDATA ""
- *   value CDATA #REQUIRED
- *   attrName CDATA #REQUIRED>
- *
- * <!ELEMENT string EMPTY>
- * <!ATTLIST string
+ * < !ELEMENT integer EMPTY >
+ * < !ATTLIST integer
  *   name CDATA #REQUIRED
  *   altName CDATA ""
  *   description CDATA ""
  *   value CDATA #REQUIRED
- *   attrName CDATA #REQUIRED>
+ *   attrName CDATA #REQUIRED >
+ *
+ * < !ELEMENT string EMPTY >
+ * < !ATTLIST string
+ *   name CDATA #REQUIRED
+ *   altName CDATA ""
+ *   description CDATA ""
+ *   value CDATA #REQUIRED
+ *   attrName CDATA #REQUIRED >
+ * </CODE></PRE>
  */
 public class OptionParser {
   
