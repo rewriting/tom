@@ -117,11 +117,19 @@ public class ASTFactory {
     return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type));  
   }
 
+  public Position emptyPosition() {
+    return  makePosition(0,0);
+  }
+
+  public Position makePosition(int line, int column) {
+    return  tsf().makePosition_Position(new Integer(line), new Integer(column));
+  }
+
   public TomSymbol makeSymbol(String symbolName, String resultType, ArrayList typeList, String glString) {
     TomName name = tsf().makeTomName_Name(symbolName);
     TomType typesToType =  tsf().makeTomType_TypesToType(makeList(typeList), tsf().makeTomType_TomTypeAlone(resultType));
     Option options = makeOption();
-    TargetLanguage code = tsf().makeTargetLanguage_TL(glString, tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")),new Integer(0));
+    TargetLanguage code = tsf().makeTargetLanguage_TL(glString, emptyPosition(), emptyPosition());
     return tsf().makeTomSymbol_Symbol(name,typesToType,options,code);
   }
 
@@ -180,7 +188,7 @@ public class ASTFactory {
   }
 
   public TomType makeType(String typeNameTom, String typeNametGL) {
-    return makeType(typeNameTom,tsf().makeTargetLanguage_TL(typeNametGL, tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
+    return makeType(typeNameTom,tsf().makeTargetLanguage_TL(typeNametGL, emptyPosition(), emptyPosition()));
   }
 
   public TomType makeType(String typeNameTom, TargetLanguage tlType) {
@@ -196,7 +204,7 @@ public class ASTFactory {
                                 String value, ArrayList optionList) {
     String resultType = "int";
     ArrayList typeList = new ArrayList();
-    TargetLanguage tlFsym = tsf().makeTargetLanguage_TL(value, tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")),new Integer(0));
+    TargetLanguage tlFsym = tsf().makeTargetLanguage_TL(value, emptyPosition(), emptyPosition());
 
     TomSymbol astSymbol = makeSymbol(value,resultType,typeList,optionList,tlFsym);
     symbolTable.putSymbol(value,astSymbol);
@@ -212,13 +220,13 @@ public class ASTFactory {
     TomTerm variable_t2 = makeVariable(option,"t2",typeString);
     TomTerm variable_n = makeVariable(option,"n",typeString);
     getFunSym = tsf().makeDeclaration_GetFunctionSymbolDecl(
-      variable_t,tsf().makeTargetLanguage_TL("t", tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
+      variable_t,tsf().makeTargetLanguage_TL("t", emptyPosition(), emptyPosition()));
     getSubterm = tsf().makeDeclaration_GetSubtermDecl(
-      variable_t,variable_n,tsf().makeTargetLanguage_TL("null", tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
+      variable_t,variable_n,tsf().makeTargetLanguage_TL("null", emptyPosition(), emptyPosition()));
     cmpFunSym = tsf().makeDeclaration_CompareFunctionSymbolDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_TL("t1==t2", tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
+      variable_t1,variable_t2,tsf().makeTargetLanguage_TL("t1==t2", emptyPosition(), emptyPosition()));
     equals = tsf().makeDeclaration_TermsEqualDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_TL("t1==t2", tsf().makeOption_OriginTracking(tsf().makeTomName_Name("Line"), tsf().makeTomTerm_Line("0")), new Integer(0)));
+      variable_t1,variable_t2,tsf().makeTargetLanguage_TL("t1==t2", emptyPosition(), emptyPosition()));
     list.add(getFunSym);
     list.add(getSubterm);
     list.add(cmpFunSym);

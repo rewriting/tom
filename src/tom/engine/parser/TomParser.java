@@ -42,7 +42,9 @@ import jtom.adt.*;
 public class TomParser implements TomParserConstants {
 
   private int oldPos=0;
+  private int oldLine=0;
   private int nbArg=0;
+  private Position orgTrack;
   private String nameMethod;
   private TomBuffer tomBuffer;
   private TomVerifier tomVerifier;
@@ -57,6 +59,7 @@ public class TomParser implements TomParserConstants {
     this.tomVerifier = tomVerifier;
     this.environment = environment;
     this.importList = importList;
+    orgTrack = ast().emptyPosition();
   }
 
   public jtom.TomEnvironment environment() {
@@ -121,6 +124,14 @@ public class TomParser implements TomParserConstants {
 
   private void switchToDefaultMode() {
     token_source.SwitchTo(DEFAULT);
+    oldPos = getPos() + token.image.length();
+    oldLine = Integer.valueOf( getLine() ).intValue();
+    orgTrack = ast().makePosition(token.beginLine,token.beginColumn);
+  }
+
+  private TargetLanguage makeTL(String code) {
+    Position newOriginTracking = ast().makePosition(token.beginLine,token.beginColumn);
+    return tsf().makeTargetLanguage_TL(code, orgTrack, newOriginTracking);
   }
 
 /************************************************
@@ -133,7 +144,7 @@ public class TomParser implements TomParserConstants {
     BlockList(blockList);
       verifier().testTypeOperator();
       upToEOF = tomBuffer.extractBuffer(oldPos,getPos());
-      blockList.add(tsf().makeTargetLanguage_TL(upToEOF));
+      blockList.add(makeTL(upToEOF));
       parseTree = tsf().makeTomTerm_Tom(ast().makeList(blockList));
     jj_consume_token(0);
       {if (true) return parseTree;}
@@ -236,7 +247,7 @@ public class TomParser implements TomParserConstants {
   ArrayList matchArgumentsList = new ArrayList();
   ArrayList patternActionList = new ArrayList();
     jj_consume_token(MATCH);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
     jj_consume_token(TOM_LPAREN);
     MatchArguments(matchArgumentsList);
     jj_consume_token(TOM_RPAREN);
@@ -257,7 +268,7 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      oldPos = getPos() + token.image.length();
+        //oldPos = getPos() + token.image.length();
       Option info = ast().makeOriginTracking("Match",getLine());
       Option option = ast().makeOption(info);
       list.add(tsf().makeTomTerm_Match(
@@ -512,18 +523,18 @@ public class TomParser implements TomParserConstants {
   final public void BackQuoteTerm(ArrayList list) throws ParseException, TomException {
   TomTerm term;
     jj_consume_token(BACKQUOTE_TERM);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
     term = Term();
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    oldPos = getPos() + token.image.length();
+      //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_BackQuoteTerm(term));
   }
 
   final public void LocalVariableConstruct(ArrayList list) throws ParseException, TomException {
     jj_consume_token(VARIABLE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
-    oldPos = getPos() + token.image.length();
+    list.add(makeTL(savePosAndExtract()));
+          //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_LocalVariable());
   }
 
@@ -535,12 +546,12 @@ public class TomParser implements TomParserConstants {
   byte inputBuffer[];
   TomParser tomParser;
     jj_consume_token(INCLUDE);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
     jj_consume_token(TOM_LBRACE);
     fileName = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_RBRACE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    oldPos = getPos() + token.image.length();
+      //oldPos = getPos() + token.image.length();
     try {
 
 
@@ -590,7 +601,7 @@ public class TomParser implements TomParserConstants {
   int ruleNumber=0;
   ArrayList nameTypeInRule = new ArrayList();
     jj_consume_token(RULE);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
     jj_consume_token(TOM_LBRACE);
     label_7:
     while (true) {
@@ -623,7 +634,7 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    oldPos = getPos() + token.image.length();
+      //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_RuleSet(ast().makeList(ruleList)));
     verifier().testMakeDefine(ruleList);
   }
@@ -646,7 +657,7 @@ public class TomParser implements TomParserConstants {
   Declaration attribute;
   nbArg = 0;
     jj_consume_token(OPERATOR);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -738,7 +749,7 @@ public class TomParser implements TomParserConstants {
       verifier().testOperator(ast().makeOptionList(options));
       nameMethod = name.image;
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      oldPos = getPos() + token.image.length();
+        //oldPos = getPos() + token.image.length();
       verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine()));
       verifier().testOperatorYetDefined(name.image);
@@ -757,7 +768,7 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlFsym;
   Declaration attribute;
     jj_consume_token(OPERATOR_LIST);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_LPAREN);
@@ -797,7 +808,7 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       verifier().testOperatorList(ast().makeOptionList(options));
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      oldPos = getPos() + token.image.length();
+        //oldPos = getPos() + token.image.length();
       verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine()));
       verifier().testOperatorYetDefined(name.image);
@@ -817,7 +828,7 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlFsym;
   Declaration attribute;
     jj_consume_token(OPERATOR_ARRAY);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
     name = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_LPAREN);
@@ -857,7 +868,7 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       verifier().testOperatorArray(ast().makeOptionList(options));
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      oldPos = getPos() + token.image.length();
+        //oldPos = getPos() + token.image.length();
       verifier().addTypeOperator(type.image,getLine(),name.image);
       options.add(ast().makeOriginTracking(name.image,getLine()));
       verifier().testOperatorYetDefined(name.image);
@@ -881,11 +892,11 @@ public class TomParser implements TomParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case TYPETERM:
       jj_consume_token(TYPETERM);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
       break;
     case TYPE:
       jj_consume_token(TYPE);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
       System.out.println("Warning: %type is obsolete");
       break;
     default:
@@ -934,8 +945,7 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      oldPos = getPos() + token.image.length();
-
+        //oldPos = getPos() + token.image.length();
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
       list.addAll(blockList);
@@ -945,8 +955,8 @@ public class TomParser implements TomParserConstants {
   final public void TypeInt(ArrayList list) throws ParseException, TomException {
     jj_consume_token(TYPEINT);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
-      oldPos = getPos() + token.image.length();
+      list.add(makeTL(savePosAndExtract()));
+        //oldPos = getPos() + token.image.length();
       ast().makeIntegerDecl(list);
   }
 
@@ -957,7 +967,7 @@ public class TomParser implements TomParserConstants {
   Declaration attribute;
   TomType astType;
     jj_consume_token(TYPELIST);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_LBRACE);
     implement = KeywordImplement();
@@ -1014,7 +1024,7 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      oldPos = getPos() + token.image.length();
+        //oldPos = getPos() + token.image.length();
 
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
@@ -1029,7 +1039,7 @@ public class TomParser implements TomParserConstants {
   Declaration attribute;
   TomType astType;
     jj_consume_token(TYPEARRAY);
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract()));
+      list.add(makeTL(savePosAndExtract()));
     type = jj_consume_token(TOM_IDENTIFIER);
     jj_consume_token(TOM_LBRACE);
     implement = KeywordImplement();
@@ -1081,7 +1091,7 @@ public class TomParser implements TomParserConstants {
     }
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      oldPos = getPos() + token.image.length();
+        //oldPos = getPos() + token.image.length();
 
       astType = ast().makeType(type.image,implement);
       putType(type.image,astType);
@@ -1095,11 +1105,13 @@ public class TomParser implements TomParserConstants {
   final public TargetLanguage GoalLanguageBlock(ArrayList blockList) throws ParseException, TomException {
     jj_consume_token(TOM_LBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      oldPos = getPos() + token.image.length();
+        //oldPos = getPos() + token.image.length();
+
     BlockList(blockList);
     jj_consume_token(RBRACE);
       switchToTomMode(); /* switch to TOM mode */
-      {if (true) return tsf().makeTargetLanguage_TL(savePosAndExtract());}
+      TargetLanguage tlb = makeTL(savePosAndExtract());
+      {if (true) return tlb;}
     throw new Error("Missing return statement in function");
   }
 
@@ -1128,7 +1140,7 @@ public class TomParser implements TomParserConstants {
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetFunctionSymbolDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1150,7 +1162,7 @@ public class TomParser implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_GetSubtermDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,"int"),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1172,7 +1184,7 @@ public class TomParser implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_CompareFunctionSymbolDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,typeString),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1194,7 +1206,7 @@ public class TomParser implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_TermsEqualDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,typeString),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1211,7 +1223,7 @@ public class TomParser implements TomParserConstants {
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetHeadDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1228,7 +1240,7 @@ public class TomParser implements TomParserConstants {
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetTailDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1245,7 +1257,7 @@ public class TomParser implements TomParserConstants {
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_IsEmptyDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1267,7 +1279,7 @@ public class TomParser implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_GetElementDecl(
                            ast().makeVariable(option1,name1.image,typeString),
                            ast().makeVariable(option2,name2.image,"int"),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1284,7 +1296,7 @@ public class TomParser implements TomParserConstants {
      Option option = ast().makeOption(info);
      {if (true) return tsf().makeDeclaration_GetSizeDecl(
                            ast().makeVariable(option,name.image,typeString),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1311,7 +1323,7 @@ public class TomParser implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_IsFsymDecl(
                            astName,
                            ast().makeVariable(option,name.image,typeString),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1332,8 +1344,7 @@ public class TomParser implements TomParserConstants {
          astName,
          tsf().makeTomTerm_SlotName(slotName.image),
          ast().makeVariable(option,name.image,typeString),
-         tsf().makeTomTerm_TLCode(tlCode)
-         );}
+         tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1420,7 +1431,7 @@ public class TomParser implements TomParserConstants {
     tlCode = GoalLanguageBlock(blockList);
      {if (true) return tsf().makeDeclaration_MakeEmptyList(
                            tsf().makeTomName_Name(name),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1443,8 +1454,7 @@ public class TomParser implements TomParserConstants {
        tsf().makeTomName_Name(name),
        ast().makeVariable(elementOption,elementName.image,elementType),
        ast().makeVariable(listOption,listName.image,listType),
-       tsf().makeTomTerm_TLCode(tlCode)
-       );}
+       tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1462,7 +1472,7 @@ public class TomParser implements TomParserConstants {
      {if (true) return tsf().makeDeclaration_MakeEmptyArray(
                            tsf().makeTomName_Name(name),
                            ast().makeVariable(listOption,listName.image,listType),
-                           tsf().makeTomTerm_TLCode(tlCode));}
+                           tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1485,7 +1495,7 @@ public class TomParser implements TomParserConstants {
        tsf().makeTomName_Name(name),
        ast().makeVariable(elementOption,elementName.image,elementType),
        ast().makeVariable(listOption,listName.image,listType),
-       tsf().makeTomTerm_TLCode(tlCode));}
+       tlCode);}
     throw new Error("Missing return statement in function");
   }
 
@@ -1555,6 +1565,14 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_6() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
   final private boolean jj_3_5() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
@@ -1567,14 +1585,6 @@ public class TomParser implements TomParserConstants {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_LBRACKET)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
-  final private boolean jj_3_6() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_RPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }

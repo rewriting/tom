@@ -97,27 +97,19 @@ public final class OutputCode {
     writeln();
   }
 
-  public void write(int deep,String s, String Line, Integer length) throws IOException {
-    int line = Integer.valueOf(Line).intValue();
-    if (line == lineCounter) {
-      write(0, "/*" + "Line: "+line+" Length:"+ length.intValue()+"*/");
-      write(deep,s);
-      lineCounter+= length.intValue();
-    } else if (line > lineCounter) {
-      int diff = line - lineCounter;
-      for(int i=0;i<diff;i++) {
-        write("/* newline : Line: "+line+" Length:"+ length.intValue()+" LineCounter:"+ lineCounter+"*/");
-        writeln();
-      }
-      write(deep,s);
-      lineCounter+= length.intValue();
-    } else{
+  public void write(int deep,String s, int line, int length) throws IOException {
+    if(lineCounter > line) {
       System.out.println("Synchronization issue:"+s);
-      write(deep,s);
+    }
+    
+    while(lineCounter < line) {
+      write("/* newline : Line: "+line+" Length:"+ length +" LineCounter:"+ lineCounter+"*/");
       writeln();
     }
-//    write(deep,s);
-//   writeln();
+
+    write(0, "/*" + "Line: " + line + " Length:" + length + "*/");
+    write(deep,s);
+    lineCounter+= length;
   } 
 
   public void close() {

@@ -50,7 +50,7 @@ public class TomParser {
   private int oldPos=0;
   private int oldLine=0;
   private int nbArg=0;
-  private Option orgTrack;
+  private Position orgTrack;
   private String nameMethod;
   private TomBuffer tomBuffer;
   private TomVerifier tomVerifier;
@@ -65,7 +65,7 @@ public class TomParser {
     this.tomVerifier = tomVerifier;	
     this.environment = environment;
     this.importList = importList;
-    orgTrack = ast().makeOriginTracking("Line","0");
+    orgTrack = ast().emptyPosition();
   }
 	
   public jtom.TomEnvironment environment() { 
@@ -132,7 +132,12 @@ public class TomParser {
     token_source.SwitchTo(DEFAULT);
     oldPos = getPos() + token.image.length();
     oldLine = Integer.valueOf( getLine() ).intValue();
-    orgTrack = ast().makeOriginTracking("Line",getLine());
+    orgTrack = ast().makePosition(token.beginLine,token.beginColumn);
+  }
+
+  private TargetLanguage makeTL(String code) {
+    Position newOriginTracking = ast().makePosition(token.beginLine,token.beginColumn);
+    return tsf().makeTargetLanguage_TL(code, orgTrack, newOriginTracking); 
   }
 
 }
@@ -388,7 +393,7 @@ TomTerm startParsing() throws TomException : /* in DEFAULT mode */
     {
       verifier().testTypeOperator();
       upToEOF = tomBuffer.extractBuffer(oldPos,getPos());
-      blockList.add(tsf().makeTargetLanguage_TL(upToEOF, orgTrack, new Integer(token.beginLine - oldLine )));
+      blockList.add(makeTL(upToEOF));
       parseTree = tsf().makeTomTerm_Tom(ast().makeList(blockList));
     }
   <EOF>
@@ -427,7 +432,7 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <MATCH> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack, new Integer(token.beginLine - oldLine )));
+      list.add(makeTL(savePosAndExtract()));
     }
 
   <TOM_LPAREN> MatchArguments(matchArgumentsList) <TOM_RPAREN>
@@ -626,7 +631,7 @@ void BackQuoteTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <BACKQUOTE_TERM> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack, new Integer(token.beginLine - oldLine ) ));
+      list.add(makeTL(savePosAndExtract()));
     }
   term = Term()
   {
@@ -643,7 +648,7 @@ void LocalVariableConstruct(ArrayList list) throws TomException: /* in DEFAULT m
   <VARIABLE> /* switch to TOM mode */
   {
     switchToDefaultMode(); /* switch to DEFAULT mode */
-    list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine )));
+    list.add(makeTL(savePosAndExtract()));
           //oldPos = getPos() + token.image.length();
     list.add(tsf().makeTomTerm_LocalVariable());
   }
@@ -661,7 +666,7 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
 {
   <INCLUDE> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine )));
+      list.add(makeTL(savePosAndExtract()));
     }
   <TOM_LBRACE> fileName = <TOM_IDENTIFIER> <TOM_RBRACE>
   {
@@ -721,7 +726,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <RULE> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine)));
+      list.add(makeTL(savePosAndExtract()));
     }
   <TOM_LBRACE> 
   (
@@ -774,7 +779,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
 {
   <OPERATOR> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine)));
+      list.add(makeTL(savePosAndExtract()));
     }
   
   type = <TOM_IDENTIFIER>
@@ -850,7 +855,7 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <OPERATOR_LIST> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine)));
+      list.add(makeTL(savePosAndExtract()));
     }
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
@@ -893,7 +898,7 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <OPERATOR_ARRAY> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine)));
+      list.add(makeTL(savePosAndExtract()));
     }
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
          <TOM_LPAREN> typeArg = <TOM_IDENTIFIER> <TOM_STAR> <TOM_RPAREN>
@@ -940,12 +945,12 @@ void TypeTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
   (
     <TYPETERM> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine)));
+      list.add(makeTL(savePosAndExtract()));
     }
   | 
     <TYPE> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine)));
+      list.add(makeTL(savePosAndExtract()));
       System.out.println("Warning: %type is obsolete");
     }
   )  
@@ -975,7 +980,7 @@ void TypeInt(ArrayList list) throws TomException: /* in DEFAULT mode */
   <TYPEINT> /* switch to TOM mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine)));
+      list.add(makeTL(savePosAndExtract()));
         //oldPos = getPos() + token.image.length();
       ast().makeIntegerDecl(list);
     }
@@ -992,7 +997,7 @@ void TypeList(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <TYPELIST> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine)));
+      list.add(makeTL(savePosAndExtract()));
     }
   
   type=<TOM_IDENTIFIER>
@@ -1030,7 +1035,7 @@ void TypeArray(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <TYPEARRAY> /* switch to TOM mode */
     {
-      list.add(tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine)));
+      list.add(makeTL(savePosAndExtract()));
     }
   
   type=<TOM_IDENTIFIER>
@@ -1073,8 +1078,7 @@ TargetLanguage GoalLanguageBlock(ArrayList blockList) throws TomException:
     <RBRACE> /* we are in DEFAULT mode */
     {
       switchToTomMode(); /* switch to TOM mode */
-      TargetLanguage tlb = tsf().makeTargetLanguage_TL(savePosAndExtract(), orgTrack,  new Integer(token.beginLine - oldLine));
-        //orgTrack = ast().makeOriginTracking("Line",getLine());
+      TargetLanguage tlb = makeTL(savePosAndExtract());
       return tlb;
     }
 }

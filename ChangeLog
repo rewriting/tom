@@ -1,3 +1,9 @@
+2003-01-14  Pierre-Etienne Moreau  <pem@escher.loria.fr>
+
+	* src/jtom/TomSignature.adt: 
+	  - TomName Position renamed into PositionName 
+	  - Position type added for origin tracking
+
 2003-01-10  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
 	* src/jtom/parser/TomParser.jj: 

@@ -70,7 +70,7 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      BuildVariable(Position(l1)) -> {
+      BuildVariable(PositionName(l1)) -> {
         out.write("tom" + numberListToIdentifier(l1));
           //out.write("tom");
           //numberListToIdentifier(out,l1);
@@ -240,8 +240,8 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      Variable(option1,Position(l1),type1) -> {
-          //System.out.println("Variable(option1,Position(l1),type1)");
+      Variable(option1,PositionName(l1),type1) -> {
+          //System.out.println("Variable(option1,PositionName(l1),type1)");
           //System.out.println("subject = " + subject);
           //System.out.println("l1      = " + l1);
 
@@ -258,7 +258,7 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      VariableStar(option1,Position(l1),type1) -> {
+      VariableStar(option1,PositionName(l1),type1) -> {
         out.write("tom" + numberListToIdentifier(l1));
         return;  
       }
@@ -577,7 +577,7 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      IsFsym(Name(opname), var@Variable(option1,Position(l1),type1)) -> {
+      IsFsym(Name(opname), var@Variable(option1,PositionName(l1),type1)) -> {
         String s = (String)isFsymMap.get(opname);
         if(s == null) {
           s = "tom_is_fun_sym_" + opname + "(";
@@ -589,7 +589,7 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      GetSubterm(var@Variable(option1,Position(l1),type1),Number(number)) -> {
+      GetSubterm(var@Variable(option1,PositionName(l1),type1),Number(number)) -> {
         String s = (String)getSubtermMap.get(type1);
         if(s == null) {
           s = "tom_get_subterm_" + getTomType(type1) + "(";
@@ -601,36 +601,36 @@ public class TomGenerator extends TomBase {
         return;
       }
 
-      GetSlot(Name(opname),slotName, var@Variable(option1,Position(l1),type1)) -> {
+      GetSlot(Name(opname),slotName, var@Variable(option1,PositionName(l1),type1)) -> {
         out.write("tom_get_slot_" + opname + "_" + slotName + "(");
         generate(out,deep,var);
         out.write(")");
         return;
       }
 
-      GetHead(var@Variable(option1,Position(l1),type1)) -> {
+      GetHead(var@Variable(option1,PositionName(l1),type1)) -> {
         out.write("tom_get_head_" + getTomType(type1) + "(");
         generate(out,deep,var);
         out.write(")");
         return;
       }
 
-      GetTail(var@Variable(option1,Position(l1),type1)) -> {
+      GetTail(var@Variable(option1,PositionName(l1),type1)) -> {
         out.write("tom_get_tail_" + getTomType(type1) + "(");
         generate(out,deep,var); 
         out.write(")");
         return;
       }
 
-      GetSize(var@Variable(option1,Position(l1),type1)) -> {
+      GetSize(var@Variable(option1,PositionName(l1),type1)) -> {
         out.write("tom_get_size_" + getTomType(type1) + "(");
         generate(out,deep,var);
         out.write(")");
         return;
       }
 
-      GetElement( varName@Variable(option1,Position(l1),type1),
-                 varIndex@Variable(option2,Position(l2),type2)) -> {
+      GetElement( varName@Variable(option1,PositionName(l1),type1),
+                 varIndex@Variable(option2,PositionName(l2),type2)) -> {
         out.write("tom_get_element_" + getTomType(type1) + "(");
         generate(out,deep,varName);
         out.write(",");
@@ -640,8 +640,8 @@ public class TomGenerator extends TomBase {
       }
 
       GetSliceList(Name(name),
-                   varBegin@Variable(option1,Position(l1),type1),
-                     varEnd@Variable(option2,Position(l2),type2)) -> {
+                   varBegin@Variable(option1,PositionName(l1),type1),
+                     varEnd@Variable(option2,PositionName(l2),type2)) -> {
         
         out.write("tom_get_slice_" + name + "(");
         generate(out,deep,varBegin);
@@ -652,8 +652,8 @@ public class TomGenerator extends TomBase {
       }
 
       GetSliceArray(Name(name),
-                    varArray@Variable(option1,Position(l1),type1),
-                    varBegin@Variable(option2,Position(l2),type2),
+                    varArray@Variable(option1,PositionName(l1),type1),
+                    varBegin@Variable(option2,PositionName(l2),type2),
                     expEnd) -> {
         
         out.write("tom_get_slice_" + name + "(");
@@ -681,12 +681,11 @@ public class TomGenerator extends TomBase {
   public void generateTargetLanguage(jtom.tools.OutputCode out, int deep, TargetLanguage subject)
     throws IOException {
     if(subject==null) { return; }
-    
     statistics().numberPartsGoalLanguage++;
     %match(TargetLanguage subject) {
-      TL(t,OriginTracking(Name(origName),Line(line)), length) -> {
+      TL(t,Position[line=startLine], Position[line=endLine]) -> {
         statistics().numberPartsCopied++;
-        out.write(deep,t, line, length);
+        out.write(deep,t, startLine.intValue(), endLine.intValue()-startLine.intValue());
         return;
       }
 
@@ -791,7 +790,7 @@ public class TomGenerator extends TomBase {
 
       GetFunctionSymbolDecl(Variable(option,Name(name),
                                      Type(TomType(type),TLType(TL[code=glType]))),
-                            TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+                            tlCode@TL[]) -> {
         String args[];
         if(!Flags.strictType) {
           args = new String[] { getTLType(getUniversalType()), name };
@@ -802,7 +801,7 @@ public class TomGenerator extends TomBase {
         TomType returnType = isIntType(type)?getIntType():getUniversalType();
         generateTargetLanguage(out,deep,
                                genDecl(getTLType(returnType),
-                                       "tom_get_fun_sym", type,args,tlCode, TLLine, TLLength));
+                                       "tom_get_fun_sym", type,args,tlCode));
         return;
       }
       
@@ -810,7 +809,7 @@ public class TomGenerator extends TomBase {
                               Type(TomType(type1),TLType(TL[code=glType1]))), 
                      Variable(option2,Name(name2),
                               Type(TomType(type2),TLType(TL[code=glType2]))),
-                     TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+                     tlCode@TL[]) -> {
         String args[];
         if(Flags.strictType || Flags.eCode) {
           args = new String[] { glType1, name1,
@@ -821,13 +820,13 @@ public class TomGenerator extends TomBase {
         }
         generateTargetLanguage(out,deep, genDecl(getTLType(getUniversalType()), "tom_get_subterm", type1,
                                    args,
-                                   tlCode, TLLine, TLLength));
+                                   tlCode));
         return;
       }
 
       IsFsymDecl(Name(tomName),
 		 Variable(option1,Name(name1), Type(TomType(type1),TLType(TL[code=glType1]))),
-                 TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+                 tlCode@TL[]) -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String opname = tomSymbol.getAstName().getString();
 
@@ -842,14 +841,14 @@ public class TomGenerator extends TomBase {
 	  generateTargetLanguage(out,deep, genDecl(getTLType(returnType),
 				     "tom_is_fun_sym", opname,
 				     new String[] { argType, name1 },
-				     tlCode, TLLine, TLLength));
+				     tlCode));
 	  return;
       }
  
       GetSlotDecl[astName=Name(tomName),
                   slotName=SlotName(slotName),
                   term=Variable(option1,Name(name1), Type(TomType(type1),TLType(TL[code=glType1]))), 
-                  tlCode=TL[code=tlCode, line=TLLine, length=TLLength]] -> {
+                  tlCode=tlCode@TL[]] -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String opname = tomSymbol.getAstName().getString();
         TomList typesList = tomSymbol.getTypesToType().getList();
@@ -871,13 +870,13 @@ public class TomGenerator extends TomBase {
         generateTargetLanguage(out,deep, genDecl(getTLType(returnType),
                                    "tom_get_slot", opname  + "_" + slotName,
                                    new String[] { argType, name1 },
-                                   tlCode, TLLine, TLLength));
+                                   tlCode));
         return;
       }
 
       CompareFunctionSymbolDecl(Variable(option1,Name(name1), Type(TomType(type1),_)),
                                 Variable(option2,Name(name2), Type(TomType(type2),_)),
-                                TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+                                tlCode@TL[]) -> {
         TomType argType1 = (isIntType(type1))?getIntType():getUniversalType();
         TomType argType2 = (isIntType(type2))?getIntType():getUniversalType();
         generateTargetLanguage(out,deep, genDecl(getTLType(getBoolType()), "tom_cmp_fun_sym", type1,
@@ -885,13 +884,13 @@ public class TomGenerator extends TomBase {
                                      getTLType(argType1), name1,
                                      getTLType(argType2), name2
                                    },
-                                   tlCode, TLLine, TLLength));
+                                   tlCode));
         return;
       }
 
       TermsEqualDecl(Variable(option1,Name(name1), Type(TomType(type1),_)),
                      Variable(option2,Name(name2), Type(TomType(type2),_)),
-                     TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+                     tlCode@TL[]) -> {
         TomType argType1 = (isIntType(type1))?getIntType():getUniversalType();
         TomType argType2 = (isIntType(type2))?getIntType():getUniversalType();
 
@@ -900,11 +899,12 @@ public class TomGenerator extends TomBase {
                                      getTLType(argType1), name1,
                                      getTLType(argType2), name2
                                    },
-                                   tlCode, TLLine, TLLength));
+                                   tlCode));
         return;
       }
       
-      GetHeadDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))), TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+      GetHeadDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))),
+                  tlCode@TL[]) -> {
         String argType;
         if(Flags.strictType) {
           argType = tlType;
@@ -916,11 +916,12 @@ public class TomGenerator extends TomBase {
                                genDecl(getTLType(getUniversalType()),
                                        "tom_get_head", type,
                                        new String[] { argType, name1 },
-                                       tlCode, TLLine, TLLength));
+                                       tlCode));
         return;
       }
 
-      GetTailDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))), TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+      GetTailDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))),
+                  tlCode@TL[]) -> {
         String returnType, argType;
         if(Flags.strictType) {
           returnType = tlType;
@@ -933,11 +934,12 @@ public class TomGenerator extends TomBase {
         generateTargetLanguage(out,deep,
                                genDecl(returnType, "tom_get_tail", type,
                                        new String[] { argType, name1 },
-                                       tlCode, TLLine, TLLength));
+                                       tlCode));
         return;
       }
 
-      IsEmptyDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))), TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+      IsEmptyDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))),
+                  tlCode@TL[]) -> {
         String argType;
         if(Flags.strictType) {
           argType = tlType;
@@ -949,23 +951,23 @@ public class TomGenerator extends TomBase {
                                genDecl(getTLType(getBoolType()),
                                        "tom_is_empty", type,
                                        new String[] { argType, name1 },
-                                       tlCode, TLLine, TLLength));
+                                       tlCode));
         return;
       }
 
-      MakeEmptyList(Name(opname), TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+      MakeEmptyList(Name(opname), tlCode@TL[]) -> {
         generateTargetLanguage(out,deep,
                                genDecl(getTLType(getUniversalType()),
                                        "tom_make_empty", opname,
                                        new String[] { },
-                                       tlCode, TLLine, TLLength));
+                                       tlCode));
         return;
       }
 
       MakeAddList(Name(opname),
                   Variable(option1,Name(name1), fullEltType@Type(TomType(type1),TLType(TL[code=tlType1]))),
                   Variable(option2,Name(name2), fullListType@Type(TomType(type2),TLType(TL[code=tlType2]))),
-                  TL[code=tlCode, line=TLLine, length=TLLength]) -> {
+                  tlCode@TL[]) -> {
         String returnType, argListType,argEltType;
         if(Flags.strictType) {
           argEltType = tlType1;
@@ -983,7 +985,7 @@ public class TomGenerator extends TomBase {
                                                    argEltType, name1,
                                                    argListType, name2
                                                  },
-                                                 tlCode, TLLine, TLLength));
+                                                 tlCode));
         
         generateTargetLanguage(out,deep, genDeclList(opname, fullListType,fullEltType));
         return;
@@ -991,7 +993,7 @@ public class TomGenerator extends TomBase {
 
       GetElementDecl(Variable(option1,Name(name1), Type(TomType(type1),TLType(TL[code=tlType1]))),
                      Variable(option2,Name(name2), Type(TomType(type2),TLType(TL[code=tlType2]))),
-                     TL[code=tlCode]) -> {
+                     tlCode@TL[]) -> {
         String returnType, argType;
         if(Flags.strictType) {
           returnType = getTLType(getUniversalType());
@@ -1012,7 +1014,7 @@ public class TomGenerator extends TomBase {
       }
       
       GetSizeDecl(Variable(option1,Name(name1), Type(TomType(type),TLType(TL[code=tlType]))),
-                  TL[code=tlCode]) -> {
+                  tlCode@TL[]) -> {
         String argType;
         if(Flags.strictType) {
           argType = tlType;
@@ -1030,7 +1032,7 @@ public class TomGenerator extends TomBase {
       
       MakeEmptyArray(Name(opname),
                      Variable(option1,Name(name1), Type(TomType(type1),_)),
-                     TL[code=tlCode]) -> {
+                     tlCode@TL[]) -> {
         generateTargetLanguage(out,deep, genDecl(getTLType(getUniversalType()), "tom_make_empty", opname,
                                    new String[] {
                                      getTLType(getIntType()), name1,
@@ -1042,7 +1044,7 @@ public class TomGenerator extends TomBase {
       MakeAddArray(Name(opname),
                   Variable(option1,Name(name1), fullEltType@Type(TomType(type1),TLType(TL[code=tlType1]))),
                   Variable(option2,Name(name2), fullArrayType@Type(TomType(type2),TLType(TL[code=tlType2]))),
-                  TL[code=tlCode]) -> {
+                  tlCode@TL[]) -> {
 
         String returnType, argListType,argEltType;
         if(Flags.strictType) {
@@ -1064,11 +1066,11 @@ public class TomGenerator extends TomBase {
                                          argListType, name2
                                        },
                                        tlCode));
-        generateTargetLanguage(out,deep, genDeclArray(opname, fullArrayType,fullEltType));
+        generateTargetLanguage(out,deep, genDeclArray(opname, fullArrayType, fullEltType));
         return;
       }
 
-      MakeDecl(Name(opname), returnType, argList, TL[code=tlCode]) -> {
+      MakeDecl(Name(opname), returnType, argList, tlCode@TL[]) -> {
         generateTargetLanguage(out,deep, genDeclMake(opname, returnType, argList, tlCode));
         return;
       }
@@ -1111,7 +1113,7 @@ public class TomGenerator extends TomBase {
                         String declName,
                         String suffix,
                         String args[],
-                        String tlCode) {
+                        TargetLanguage tlCode) {
     String s = "";
     if(!Flags.genDecl) { return null; }
 
@@ -1124,7 +1126,7 @@ public class TomGenerator extends TomBase {
           s+= ", ";
         }
       }
-      s += ") (" + tlCode +")";
+      s += ") (" + tlCode.getCode() +")";
     } else if(Flags.jCode) {
       s = "public " + returnType + " " + declName + "_" + suffix + "(";
       for(int i=0 ; i<args.length ; ) {
@@ -1134,7 +1136,7 @@ public class TomGenerator extends TomBase {
           s+= ", ";
         }
       } 
-      s += ") { return " + tlCode + "; }";
+      s += ") { return " + tlCode.getCode() + "; }";
     } else if(Flags.eCode) {
       s = declName + "_" + suffix + "(";
       for(int i=0 ; i<args.length ; ) {
@@ -1144,58 +1146,13 @@ public class TomGenerator extends TomBase {
           s+= "; ";
         }
       } 
-      s += "): " + returnType + " is do Result := " + tlCode + "end;";
+      s += "): " + returnType + " is do Result := " + tlCode.getCode() + "end;";
     }
-    Option ojulien = ast().makeOriginTracking("Line", "0");
-    Integer i = new Integer(0);
-    return `TL(s, ojulien, i);
+    return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
 
-    private TargetLanguage genDecl(String returnType,
-                        String declName,
-                        String suffix,
-                        String args[],
-                        String tlCode,
-                        Option option,
-                        Integer len) {
-    String s = "";
-    if(!Flags.genDecl) { return null; }
-
-    if(Flags.cCode) {
-      s = "#define " + declName + "_" + suffix + "(";
-      for(int i=0 ; i<args.length ; ) {
-        s+= args[i+1];
-        i+=2;
-        if(i<args.length) {
-          s+= ", ";
-        }
-      }
-      s += ") (" + tlCode +")";
-    } else if(Flags.jCode) {
-      s = "public " + returnType + " " + declName + "_" + suffix + "(";
-      for(int i=0 ; i<args.length ; ) {
-        s+= args[i] + " " + args[i+1];
-        i+=2;
-        if(i<args.length) {
-          s+= ", ";
-        }
-      } 
-      s += ") { return " + tlCode + "; }";
-    } else if(Flags.eCode) {
-      s = declName + "_" + suffix + "(";
-      for(int i=0 ; i<args.length ; ) {
-        s+= args[i+1] + ": " + args[i];
-        i+=2;
-        if(i<args.length) {
-          s+= "; ";
-        }
-      } 
-      s += "): " + returnType + " is do Result := " + tlCode + "end;";
-    }
-    return `TL(s, option, len);
-  }
   
-  private TargetLanguage genDeclMake(String opname, TomType returnType, TomList argList, String tlCode) {
+  private TargetLanguage genDeclMake(String opname, TomType returnType, TomList argList, TargetLanguage tlCode) {
     //%variable
     String s = "";
     if(!Flags.genDecl) { return null; }
@@ -1224,7 +1181,7 @@ public class TomGenerator extends TomBase {
           s += ", ";
         }
       }
-      s += ") (" + tlCode + ")";
+      s += ") (" + tlCode.getCode() + ")";
     } else if(Flags.jCode) {
       s = "public " + getTLType(returnType) + " tom_make_" + opname + "(";
       while(!argList.isEmpty()) {
@@ -1247,7 +1204,7 @@ public class TomGenerator extends TomBase {
           s += ", ";
         }
       }
-      s += ") { return " + tlCode + "; }";
+      s += ") { return " + tlCode.getCode() + "; }";
     } else if(Flags.eCode) {
       boolean braces = !argList.isEmpty();
       s = "tom_make_" + opname;
@@ -1277,11 +1234,9 @@ public class TomGenerator extends TomBase {
       if(braces) {
         s = s + ")";
       }
-      s += ": " + getTLType(returnType) + " is do Result := " + tlCode + "end;";
+      s += ": " + getTLType(returnType) + " is do Result := " + tlCode.getCode() + "end;";
     }
-    Option ojulien = ast().makeOriginTracking("Line", "0");
-    Integer i = new Integer(0);
-    return `TL(s, ojulien, i);
+    return `TL(s, tlCode.getStart(), tlCode.getEnd());
   }
   
   private TargetLanguage genDeclList(String name, TomType listType, TomType eltType) {
@@ -1343,9 +1298,8 @@ public class TomGenerator extends TomBase {
     s+= "    return result;\n";
     s+= "  }\n";
     
-    Option ojulien = ast().makeOriginTracking("Line", "0");
-    Integer i = new Integer(0);
-    return `TL(s, ojulien, i);
+    System.out.println("Warning: update position");
+    return `TL(s, ast().emptyPosition(), ast().emptyPosition());
   }
 
   private TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
@@ -1404,9 +1358,9 @@ public class TomGenerator extends TomBase {
    
     s+= "    return result;\n";
     s+= "  }\n";
-    Option ojulien = ast().makeOriginTracking("Line", "0");
-    Integer i = new Integer(0);
-    return `TL(s, ojulien, i);
+
+    System.out.println("Warning: update position");
+    return `TL(s, ast().emptyPosition(), ast().emptyPosition());
   }
   
   private HashMap getSubtermMap = new HashMap();

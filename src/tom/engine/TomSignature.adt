@@ -73,7 +73,8 @@
     GetSliceArray(<astName(TomName)>,<subjectListName(TomTerm)>,<variableBeginAST(TomTerm)>, <variableEndAST(TomTerm)>) ],
 
 
-  [TargetLanguage, TL , TL(<code(str)>,<line(Option)>,<length(int)>) ],
+  [TargetLanguage, TL , TL(<code(str)>,<start(Position)>,<end(Position)>) ],
+  [Position, Position , Position(<line(int)>,<column(int)>) ],
 
   [TomType,Type,Type(<tomType(TomType)>,<tlType(TomType)>) ],
   [TomType,TypesToType,TypesToType(<list(TomList)>,<codomain(TomType)>) ],
@@ -171,7 +172,7 @@
 
   [TomTerm,Declaration,Declaration(<kid1(TomTerm)>) ],
 
-  [TomName,Position,Position(<numberList(TomList)>) ],
+  [TomName,PositionName,PositionName(<numberList(TomList)>) ],
 
   [TomTerm,Begin,Begin(<number(TomTerm)>) ],
 

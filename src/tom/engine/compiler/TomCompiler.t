@@ -127,7 +127,7 @@ public class TomCompiler extends TomBase {
         
         while(!typesList.isEmpty()) {
           TomType subtermType = typesList.getHead().getAstType();
-          variable = `Variable(option(),Position(append(makeNumber(index),path)),subtermType);
+          variable = `Variable(option(),PositionName(append(makeNumber(index),path)),subtermType);
           matchArgumentsList = append(variable,matchArgumentsList);
           typesList = typesList.getTail();
           index++;
@@ -273,7 +273,7 @@ public class TomCompiler extends TomBase {
           TomList path = empty();
           path = append(`RenamedVar(name),path);
           path = append(makeNumber(mult),path);
-          renamedTerm = `Variable(option(),Position(path),type);
+          renamedTerm = `Variable(option(),PositionName(path),type);
 
             //System.out.println("renamedTerm = " + renamedTerm);
 
@@ -293,7 +293,7 @@ public class TomCompiler extends TomBase {
           TomList path = empty();
           path = append(`RenamedVar(name),path);
           path = append(makeNumber(mult),path);
-          renamedTerm = `VariableStar(option(),Position(path),type);
+          renamedTerm = `VariableStar(option(),PositionName(path),type);
 
             //System.out.println("renamedTerm = " + renamedTerm);
 
@@ -389,7 +389,7 @@ public class TomCompiler extends TomBase {
 
                 TomList path = empty();
                 path = append(`AbsVar(makeNumber(introducedVariable.size())),path);
-                TomTerm newVariable = `Variable(option(),Position(path),type2);
+                TomTerm newVariable = `Variable(option(),PositionName(path),type2);
 
                   //System.out.println("newVariable = " + newVariable);
                                 
@@ -464,7 +464,7 @@ public class TomCompiler extends TomBase {
           TomTerm tlVariable = l1.getHead();
           %match(TomTerm tlVariable) { 
             Variable(option,_,variableType) -> {
-              TomTerm variable = `Variable(option,Position(append(makeNumber(index),path)),variableType);
+              TomTerm variable = `Variable(option,PositionName(append(makeNumber(index),path)),variableType);
               matchDeclarationList = append(`Declaration(variable),matchDeclarationList);
               matchAssignementList = append(`Assign(variable,TomTermToExpression(tlVariable)),matchAssignementList);
             }
@@ -880,7 +880,7 @@ public class TomCompiler extends TomBase {
       %match(TomTerm term) {
         var@Variable(Option(optionList), _, termType) -> {
           TomTerm annotedVariable = getAnnotedVariable(optionList);
-          TomTerm assignement = `Assign(var,TomTermToExpression(Variable(option(),Position(path),termType)));
+          TomTerm assignement = `Assign(var,TomTermToExpression(Variable(option(),PositionName(path),termType)));
           result = append(assignement,result);
 
           if(annotedVariable != null) {
@@ -897,7 +897,7 @@ public class TomCompiler extends TomBase {
         UnamedVariable(Option(optionList), termType) -> {
           TomTerm annotedVariable = getAnnotedVariable(optionList);
           if(annotedVariable != null) {
-            TomTerm assignement = `Assign(annotedVariable,TomTermToExpression(Variable(option(),Position(path),termType)));
+            TomTerm assignement = `Assign(annotedVariable,TomTermToExpression(Variable(option(),PositionName(path),termType)));
             result = append(assignement,result);
           }
           if(gsa) {
@@ -922,11 +922,11 @@ public class TomCompiler extends TomBase {
           TomList annotedAssignementList = empty();
           
           int indexSubterm = 0;
-          TomTerm subjectVariableAST =  `Variable(option(),Position(path),termType); 
+          TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType); 
           while(!termTypeList.isEmpty()) {
             TomType subtermType = termTypeList.getHead().getAstType();
             TomList newPath = append(makeNumber(indexSubterm+1),path);
-            TomTerm newVariableAST = `Variable(option(),Position(newPath),subtermType);
+            TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType);
             TomTerm declaration    = `Declaration(newVariableAST);
             declarationList      = append(declaration,declarationList);
             
@@ -1016,7 +1016,7 @@ public class TomCompiler extends TomBase {
       
       %match(TomTerm subjectListName) {
         Variable(option,_, termType) -> {
-          variableListAST = `Variable(option(),Position(pathList),termType);
+          variableListAST = `Variable(option(),PositionName(pathList),termType);
         }
       }
       result = append(`Declaration(variableListAST),result);
@@ -1080,7 +1080,7 @@ public class TomCompiler extends TomBase {
                */
             
             TomList path = append(makeNumber(indexTerm),oldPath);
-            TomTerm variableAST = `Variable(option(),Position(path),termType);
+            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             TomList declarationList = empty();
             TomList assignementList = empty();
@@ -1110,7 +1110,7 @@ public class TomCompiler extends TomBase {
                * }
                */
             TomList path = append(makeNumber(indexTerm),oldPath);
-            TomTerm variableAST = `Variable(option(),Position(path),termType);
+            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             TomList declarationList = empty();
             TomList assignementList = empty();
@@ -1163,7 +1163,7 @@ public class TomCompiler extends TomBase {
             }
             
             TomList path = append(makeNumber(indexTerm),oldPath);
-            TomTerm variableAST = `Variable(option(),Position(path),termType);
+            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             TomTerm assignement = `Assign(var,TomTermToExpression(subjectListName));
             result = concat(append(assignement,result),subList);
             break matchBlock;
@@ -1184,8 +1184,8 @@ public class TomCompiler extends TomBase {
                */
             TomList pathBegin = append(`Begin(makeNumber(indexTerm)),oldPath);
             TomList pathEnd = append(`End(makeNumber(indexTerm)),oldPath);
-            TomTerm variableBeginAST = `Variable(option(),Position(pathBegin),termType);
-            TomTerm variableEndAST   = `Variable(option(),Position(pathEnd),termType);
+            TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType);
+            TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),termType);
             TomList declarationList = empty();
             declarationList = append(`Declaration(variableBeginAST),declarationList);
             declarationList = append(`Declaration(variableEndAST),declarationList);
@@ -1194,7 +1194,7 @@ public class TomCompiler extends TomBase {
             assignementList = append(`Assign(variableEndAST,TomTermToExpression(subjectListName)),assignementList);
             
             TomList path = append(makeNumber(indexTerm),oldPath);
-            TomTerm variableAST = `Variable(option(),Position(path),termType);
+            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             TomList doList = empty();
             doList = append(`Assign(var,GetSliceList(symbol.getAstName(),variableBeginAST,variableEndAST)),doList);
             
@@ -1244,8 +1244,7 @@ public class TomCompiler extends TomBase {
     TomTerm variableListAST = null;
     TomTerm variableIndexAST = null;
     String szero = "0";
-    Integer i = new Integer(0);
-    Expression glZero = `TomTermToExpression(TargetLanguageToTomTerm(TL(szero, option(), i)));
+    Expression glZero = `TomTermToExpression(TargetLanguageToTomTerm(TL(szero, ast().emptyPosition(),ast().emptyPosition())));
     if(indexTerm > 1) {
       variableListAST = subjectListName;
       variableIndexAST = subjectListIndex;
@@ -1256,9 +1255,9 @@ public class TomCompiler extends TomBase {
       matchBlock: {
         %match(TomTerm subjectListName) {
           Variable(option, _, termType) -> {
-            variableListAST = `Variable(option(),Position(pathList),termType);
+            variableListAST = `Variable(option(),PositionName(pathList),termType);
               // TODO: other termType
-            variableIndexAST = `Variable(option(),Position(pathIndex),getIntType());
+            variableIndexAST = `Variable(option(),PositionName(pathIndex),getIntType());
             break matchBlock;
           }
           _ -> {
@@ -1303,7 +1302,7 @@ public class TomCompiler extends TomBase {
                */
             
             TomList path = append(makeNumber(indexTerm),oldPath);
-            TomTerm variableAST = `Variable(option(),Position(path),termType);
+            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             TomList declarationList = empty();
             TomList assignementList = empty();
@@ -1333,7 +1332,7 @@ public class TomCompiler extends TomBase {
                * }
                */
             TomList path = append(makeNumber(indexTerm),oldPath);
-            TomTerm variableAST = `Variable(option(),Position(path),termType);
+            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             TomList declarationList = empty();
             TomList assignementList = empty();
@@ -1390,7 +1389,7 @@ public class TomCompiler extends TomBase {
             }
             
             TomList path = append(makeNumber(indexTerm),oldPath);
-            TomTerm variableAST = `Variable(option(),Position(path),termType);
+            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             
             TomTerm assignement = `Assign(var,GetSliceArray(
                                             symbol.getAstName(),subjectListName,
@@ -1417,8 +1416,8 @@ public class TomCompiler extends TomBase {
             TomList pathBegin = append(`Begin(makeNumber(indexTerm)),oldPath);
             TomList pathEnd = append(`End(makeNumber(indexTerm)),oldPath);
               // TODO: termType
-            TomTerm variableBeginAST = `Variable(option(),Position(pathBegin),getIntType());
-            TomTerm variableEndAST   = `Variable(option(),Position(pathEnd),getIntType());
+            TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),getIntType());
+            TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),getIntType());
             TomList declarationList = empty();
             declarationList = append(`Declaration(variableBeginAST),declarationList);
             declarationList = append(`Declaration(variableEndAST),declarationList);
@@ -1427,7 +1426,7 @@ public class TomCompiler extends TomBase {
             assignementList = append(`Assign(variableEndAST,TomTermToExpression(subjectListIndex)),assignementList);
             
             TomList path = append(makeNumber(indexTerm),oldPath);
-            TomTerm variableAST = `Variable(option(),Position(path),termType);
+            TomTerm variableAST = `Variable(option(),PositionName(path),termType);
             TomList doList = empty();
             doList = append(`Assign(var,
                                     GetSliceArray(symbol.getAstName(),subjectListName,variableBeginAST,
