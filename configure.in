@@ -1,13 +1,13 @@
-# $Id: configure.in,v 1.25 2003/08/23 08:37:24 guyon Exp $
+# $Id: configure.in,v 1.26 2003/08/25 15:49:32 asbin Exp $
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(jtom,1.3gamma)
+AM_INIT_AUTOMAKE(jtom,1.3delta)
 AC_PREREQ(2.13)
 
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.25 2003/08/23 08:37:24 guyon Exp $)
+AC_REVISION($Id: configure.in,v 1.26 2003/08/25 15:49:32 asbin Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
