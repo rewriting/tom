@@ -1,4 +1,0 @@
-[
-constructor(Nat,cons-zero,cons-zero),
-constructor(Nat,cons-suc,cons-suc(<pred(Nat)>))
-]
