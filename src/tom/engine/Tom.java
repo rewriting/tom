@@ -266,7 +266,7 @@ public class Tom {
         if (Flags.debugMode) {
           generateOutput(fileName + debugMatchTableSuffix, tomParser.getStructTable());
         }
-             
+                
         if(Flags.demo) {
           statistics.initInfoParser();
           statistics.initInfoChecker();
@@ -309,7 +309,7 @@ public class Tom {
             System.out.println("Tom Compiler:  File " + inputFileName + " not found.");
             System.out.println("No file generated.");
             return;
-          } 
+          }
           ATerm fromFileSymblTable = null;
           fromFileSymblTable = tomSignatureFactory.readFromFile(input);
           TomSymbolTable symbTable = (TomSymbolTable) TomSymbolTable.fromTerm(fromFileSymblTable);

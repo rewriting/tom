@@ -366,7 +366,7 @@ public abstract class ATermSet implements Collection {
           } // Apply
         }; //new
       
-      ATermSet.this.traversal.genericCollect(tree, collect);
+      ATermSet.traversal.genericCollect(tree, collect);
       ATerm[] result = new ATerm[res.size()];
       for(int i=0;i<res.size();i++) {
         result[i] = (ATerm) (((ArrayList)res).get(i));

@@ -25,12 +25,26 @@
 
 package jtom.backend;
   
-import java.util.*;
-import java.io.*;
+import java.io.IOException;
+import java.util.HashMap;
 
-import jtom.*;
-import jtom.tools.*;
-import jtom.adt.*;
+import jtom.TomBase;
+import jtom.adt.Declaration;
+import jtom.adt.Expression;
+import jtom.adt.Instruction;
+import jtom.adt.Option;
+import jtom.adt.OptionList;
+import jtom.adt.Position;
+import jtom.adt.SlotList;
+import jtom.adt.TargetLanguage;
+import jtom.adt.TomList;
+import jtom.adt.TomName;
+import jtom.adt.TomSymbol;
+import jtom.adt.TomTerm;
+import jtom.adt.TomType;
+import jtom.tools.Flags;
+import jtom.tools.OutputCode;
+import jtom.tools.SingleLineOutputCode;
 
 public class TomGenerator extends TomBase {
 

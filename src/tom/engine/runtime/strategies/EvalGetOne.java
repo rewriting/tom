@@ -1,9 +1,10 @@
 package jtom.runtime.strategies;
 
-import EDU.oswego.cs.dl.util.concurrent.*;
-import aterm.*;
-import java.util.*;
-import jtom.runtime.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import aterm.ATerm;
 
 public class EvalGetOne extends Strat {
     private Strat strat;
