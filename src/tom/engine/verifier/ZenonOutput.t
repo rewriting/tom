@@ -71,17 +71,17 @@ public class ZenonOutput {
 		return zfactory;
 	}
 
-	public String build_zenon(Collection derivationSet) {
-    String result = "";
+	public Collection build_zenon(Collection derivationSet) {
+    Collection resset = new HashSet();
 		Iterator it = derivationSet.iterator();
 		while(it.hasNext()) {
 			DerivTree tree = (DerivTree) it.next();
-			result += build_zenon(tree);	
+			resset.add(build_zenon(tree));	
 		}
-		return result;
+		return resset;
 	}
 
-	public String build_zenon(DerivTree tree) {
+	public ZSpec build_zenon(DerivTree tree) {
 		
 		Map variableset = new HashMap();
 		tree = collect_program_variables(tree,variableset);
@@ -142,13 +142,13 @@ public class ZenonOutput {
                        zby(symbolsAxioms*,subtermAxioms*));
     System.out.println(spec);
 
-    return "";
+    return spec;
 	}
 	
 
-    /**
-     * collects all variable names in the DerivTree, and give a name to _'s
-    */
+  /**
+   * collects all variable names in the DerivTree, and give a name to _'s
+   */
 	DerivTree collect_program_variables(DerivTree tree, Map variables) {
 		return (DerivTree) collect_prog_vars.apply(tree,variables);
 	}

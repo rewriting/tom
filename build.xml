@@ -199,8 +199,8 @@
          destdir="${src.gen}" 
          options="--protected -I ${src.mapping}">
       <include name="**/TomBase.t"/>
-      <include name="**/Verifier.t"/>
-      <include name="**/TomIlTools.t"/>
+      <include name="**/verifier/*.t"/>
+      <exclude name="**/TomVerifier.t"/>
     </tom>
 
     <!--  compile in standard mode -->
@@ -215,9 +215,6 @@
       <include name="jtom/*.t"/> 
       <include name="tom/library/**/*.t"/> 
       <include name="tom/platform/**/*.t"/> 
-      <include name="**/LatexOutput.t"/>
-      <include name="**/ZenonOutput.t"/>
-      <include name="**/StatOutput.t"/>
     </tom>
     <!--  compile without declaration -->
     <tom config="${stable.configfile}"
@@ -226,7 +223,6 @@
          options="-I ${src.mapping} --noDeclaration">
       <exclude name="jtom/*.t"/>
       <exclude name="jtom/parser/*.g.t"/>
-      <exclude name="**/Verifier.t"/>
 
       <include name="jtom/**/*.t"/> 
     </tom>

@@ -84,16 +84,16 @@ public class TomVerifier extends TomGenericPlugin {
         // System.out.println("Derivations : " + derivations);
 
         // the latex output stuff
-//         String latex = output.build_latex(derivations);
-//         System.out.println(latex);
+        // String latex = output.build_latex(derivations);
+        // System.out.println(latex);
 
         // the zenon output stuff
-        String zen = zenon.build_zenon(derivations);
+        Collection zen = zenon.build_zenon(derivations);
         System.out.println(zen);
 
         // the stats output stuff
-//          String statistics = stats.build_stats(derivations);
-//          System.out.println(statistics);
+        // String statistics = stats.build_stats(derivations);
+        // System.out.println(statistics);
 
         // verbose
         getLogger().log(Level.INFO, "TomVerificationPhase",
