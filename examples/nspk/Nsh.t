@@ -9,7 +9,6 @@ public class Nsh {
   private static boolean authVerif = true;
 
   private Factory factory;
-  private GenericTraversal traversal;
 
 // ------------------------------------------------------------  
   %include { term.tom }
@@ -17,7 +16,6 @@ public class Nsh {
  
   public Nsh(Factory factory) {
     this.factory = factory;
-    this.traversal = new GenericTraversal();
   }
 
   public final Factory getTermFactory() {
