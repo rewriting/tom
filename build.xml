@@ -228,12 +228,10 @@
 	</target>
 
 	<target name="cleanstable" description="Purges the generated stable files">
-		<delete dir="${stable.dist}"/>
 		<delete dir="${stable.build}"/>
 	</target>
 	
 	<target name="cleansrc" description="Purges the generated devel files">
-		<delete dir="${src.dist}"/>
 		<delete dir="${src.build}"/>
 		<delete dir="${src.adt}/jtom"/>
 		<delete> <fileset dir="${src.adt}" includes="**/*.tom"/></delete>
@@ -266,7 +264,12 @@
 
 	<target name="cleanall" description="Cleans everything in the project" depends="cleanstable, cleansrc, cleantest">
 	</target>	
-		
+
+	<target name="distclean" description="Mr proper" depends="cleanall">
+		<delete dir="${stable.dist}"/>
+		<delete dir="${src.dist}"/>
+	</target>
+
 	<target name="initjunit">
 		<taskdef name="tomjunit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
 			<classpath refid="tomsrc.classpath"/>
