@@ -29,7 +29,7 @@ public class TomSyntaxChecker extends TomChecker {
         long startChrono = System.currentTimeMillis();
         
         reinit();
-        checkSyntax((TomTerm)getArg());
+        checkSyntax((TomTerm)getWorkingTerm());
         
         getLogger().log(Level.INFO, "TomSyntaxCheckingPhase",
                          new Integer((int)(System.currentTimeMillis()-startChrono)));      

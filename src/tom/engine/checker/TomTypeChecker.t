@@ -27,7 +27,7 @@ public class TomTypeChecker extends TomChecker {
 	int warningsAtStart = getStatusHandler().nbOfWarnings();
 
         long startChrono = System.currentTimeMillis();
-        checkTypeInference( (TomTerm)getArg() );
+        checkTypeInference( (TomTerm)getWorkingTerm() );
 
 	getLogger().log( Level.INFO,
 			 "TomTypeCheckingPhase",

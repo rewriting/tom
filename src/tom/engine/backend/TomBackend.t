@@ -24,6 +24,8 @@ public class TomBackend extends TomGenericPlugin {
 
   private TomAbstractGenerator generator;
   private Writer writer;
+  
+  private String generatedFileName;
 
   public TomBackend() {
     super("TomBackend");
@@ -50,12 +52,13 @@ public class TomBackend extends TomGenericPlugin {
           generator = new TomCamlGenerator(output, getOptionManager());
         }
         
-        generator.generate( defaultDeep, (TomTerm)getArg() );
+        generator.generate(defaultDeep, (TomTerm)getWorkingTerm());
         
         getLogger().log( Level.INFO, "TomGenerationPhase",
                          new Integer((int)(System.currentTimeMillis()-startChrono)) );
         
         writer.close();
+        generatedFileName = environment().getOutputFile().getAbsolutePath();
         printAlertMessage(errorsAtStart, warningsAtStart);
       }
       catch (Exception e) {
@@ -104,4 +107,9 @@ public class TomBackend extends TomGenericPlugin {
   private boolean isActivated() {
     return !getOptionBooleanValue("noOutput");
   }
-}
+  
+  public Object[] getArgs() {
+    return new Object[]{generatedFileName};
+  }
+
+} // class TomBackend

@@ -34,9 +34,9 @@ public class TomOptimizer extends TomGenericPlugin {
         int warningsAtStart = getStatusHandler().nbOfWarnings();
         long startChrono = System.currentTimeMillis();
         
-        TomTerm renamedTerm   = renameVariable( (TomTerm)getArg(), new HashSet() );
+        TomTerm renamedTerm   = renameVariable( (TomTerm)getWorkingTerm(), new HashSet() );
         TomTerm optimizedTerm = optimize(renamedTerm);
-        setArg(optimizedTerm);
+        setWorkingTerm(optimizedTerm);
 
         long stopChrono = System.currentTimeMillis();
 			
@@ -48,7 +48,7 @@ public class TomOptimizer extends TomGenericPlugin {
         boolean intermediate = getOptionBooleanValue("intermediate");
         if(intermediate) {
           Tools.generateOutput( environment().getOutputFileNameWithoutSuffix() + OPTIMIZED_SUFFIX, 
-                                (ATerm)getArg() );
+                                (ATerm)getWorkingTerm() );
         }
 
         printAlertMessage(errorsAtStart, warningsAtStart);

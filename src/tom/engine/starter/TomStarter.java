@@ -35,17 +35,16 @@ import aterm.*;
  */
 public class TomStarter extends TomGenericPlugin {
 
-  private Object argToRelay;
+  private Object[] argToRelay;
   private String fileName = null;
 
   public TomStarter() {
     super("TomStarter");
   }
 
-  public void setArg(Object arg) {
-    argToRelay = arg;
-    if (arg instanceof String) {
-      fileName = (String)arg;  
+  public void setArgs(Object[] arg) {
+    if (arg[0] instanceof String) {
+      fileName = (String)arg[0];  
     } else {
       getLogger().log(Level.SEVERE, "TomStarter: A String was expected.");
     }
@@ -57,10 +56,10 @@ public class TomStarter extends TomGenericPlugin {
     TomEnvironment env = TomEnvironment.getInstance();
     env.initializeFromOptionManager(getOptionManager());
     env.prepareForInputFile(fileName);
-    argToRelay = env.getInputFile().toString();
+    argToRelay = new Object[]{env.getInputFile().toString()};
   }
 
-  public Object getArg() {
+  public Object[] getArgs() {
     return argToRelay;
   }
 

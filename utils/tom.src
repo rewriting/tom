@@ -75,5 +75,6 @@ if $cygwin; then
 fi
 
 #echo $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$TOM_SRC_HOME jtom.Tom -X $TOM_CONFIG_FILE$TOM_ARGS -I $TOM_INC
+
 exec $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$TOM_SRC_HOME jtom.Tom -X $TOM_CONFIG_FILE$TOM_ARGS -I $TOM_INC
 

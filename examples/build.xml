@@ -17,6 +17,7 @@
 
   <property environment="env" />
   <property name="tom.home" value="${env.TOM_HOME}"/>
+	
   <!-- some used directory location -->
   <property name="examples.dir" location="."/>
   <property name="examples.dist" location="dist"/>
@@ -180,8 +181,8 @@
          nowarn="${nowarnings}"
          optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
-      <include name="${addressbook}/**/*.t"/>
-    </tom>
+			<include name="${addressbook}/**/*.t"/>
+		</tom>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" 
            destdir="${examples.build}" 

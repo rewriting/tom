@@ -41,7 +41,7 @@ public class TomExpander extends TomGenericPlugin {
       long startChrono = System.currentTimeMillis();
       boolean intermediate = getOptionBooleanValue("intermediate");
 
-      TomTerm syntaxExpandedTerm   = expandTomSyntax( (TomTerm)getArg() );
+      TomTerm syntaxExpandedTerm   = expandTomSyntax( (TomTerm)getWorkingTerm() );
       
       tomKernelExpander.updateSymbolTable();
       TomTerm context = `emptyTerm();
@@ -50,7 +50,7 @@ public class TomExpander extends TomGenericPlugin {
       TomTerm stringExpandedTerm   = expandString(variableExpandedTerm);
       TomTerm expandedTerm         = updateCodomain(stringExpandedTerm);
 
-      setArg(expandedTerm);
+      setWorkingTerm(expandedTerm);
 
       getLogger().log( Level.INFO,
 		       "TomExpandingPhase",

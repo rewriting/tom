@@ -39,7 +39,7 @@ public interface Plugin extends OptionOwner {
    *
    * @param arg the input argument
    */
-  public void setArg(Object arg);
+  public void setArgs(Object[] arg);
   
   /**
    * Runs the plugin.
@@ -51,6 +51,6 @@ public interface Plugin extends OptionOwner {
    *
    * @return the output argument
    */
-  public Object getArg();
+  public Object[] getArgs();
     
 }

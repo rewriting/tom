@@ -1,5 +1,5 @@
 #!/bin/sh
 
-LOCALCLASSPATH=`echo lib/junit.jar | tr ' ' ':'` 
+LOCALCLASSPATH=`echo stable/lib/junit.jar | tr ' ' ':'` 
 
 CLASSPATH=${LOCALCLASSPATH} ant $*

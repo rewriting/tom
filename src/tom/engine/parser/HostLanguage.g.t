@@ -8,7 +8,9 @@ header{
   import jtom.adt.tomsignature.types.*;
   
   import tom.platform.*;
-  
+
+  import vas.Vas;
+
   import java.lang.reflect.*;
   import java.io.*;
   import java.util.*;
@@ -451,95 +453,39 @@ signature [LinkedList list] throws TomException
     vasCode = vasTL.getCode().trim();
     String destDir = environment().getDestDir().getPath();
     // Generated Tom, ADT and API from VAS Code
-    Object generatedADTName = null;
-    
-    try{
-      Class vasClass = Class.forName("vas.Vas");
-      
-      Method execMethod = vasClass.getMethod("externalExec",
-                                             new Class[]{(new String[]{}).getClass(), 
-                                                         Class.forName("java.io.InputStream"),
-                                                         Class.forName( "java.lang.String")
-                                             }
-                                             );
-      
-      ArrayList vasParams = new ArrayList();
-      vasParams.add("--visitable");
-      vasParams.add("--destdir");
-      vasParams.add(destDir);
-      
-      packageName = environment().getPackagePath().replace(File.separatorChar, '.');
-      String inputFileNameWithoutExtension = environment().getRawFileName().toLowerCase();
-      
-      String subPackageName = "";
-      if(packageName.equals("")) {
-        subPackageName = inputFileNameWithoutExtension;
-      } else {
-        subPackageName = packageName + "." + inputFileNameWithoutExtension;
-      }
-      vasParams.add("--package");
-      vasParams.add(subPackageName);
-      
-      Object[] realParams = {
-        (String[]) vasParams.toArray(new String[vasParams.size()]),
-        new ByteArrayInputStream(vasCode.getBytes()),
-        currentFile
-      };
-      generatedADTName = execMethod.invoke(vasClass, realParams);
+    String generatedADTName = null;
+    ArrayList vasParams = new ArrayList();
+    vasParams.add("--destdir");
+    vasParams.add(destDir);
+    packageName = environment().getPackagePath().replace(File.separatorChar, '.');
+    String inputFileNameWithoutExtension = environment().getRawFileName().toLowerCase();
+    String subPackageName = "";
+    if(packageName.equals("")) {
+      subPackageName = inputFileNameWithoutExtension;
+    } else {
+      subPackageName = packageName + "." + inputFileNameWithoutExtension;
     }
-    
-    catch (ClassNotFoundException e) {
-      throw new TomException(TomMessage.getMessage("VasClassNotFound"));
-    } catch (InvocationTargetException e) {
-      System.out.println("vas problem " +e);
-      System.out.println("vas problen cause " +e.getCause());
-      System.out.println("vas problen target exception " +e.getTargetException());
-      throw new TomException(TomMessage.getMessage("VasInvocationIssue", new Object[]{e.getMessage()}));
-    } catch (Exception e) {
-      throw new TomException(TomMessage.getMessage("VasInvocationIssue", new Object[]{e.getMessage()}));
-    }
-    
+    vasParams.add("--package");
+    vasParams.add(subPackageName);
+    generatedADTName = Vas.streamedCall((String[]) vasParams.toArray(new String[vasParams.size()]), new StringReader(vasCode));
+    //System.out.println(generatedADTName);
     // Check for errors
-    try{
-      Class vasEnvironmentClass = Class.forName("vas.VasEnvironment");
-      Method getErrorMethod = vasEnvironmentClass.getMethod("getErrors", new Class[]{});
-      Method getInstanceMethod = vasEnvironmentClass.getMethod("getInstance", new Class[]{});
-      
-      Object vasEnvInstance = getInstanceMethod.invoke(vasEnvironmentClass, new Object[]{});
-      TomAlertList alerts = (TomAlertList)(getErrorMethod.invoke(vasEnvInstance, new Object[]{}));
-      TomAlert alert;
-      
-      if(!alerts.isEmpty()) {
-        while(!alerts.isEmpty()) {
-          alert = alerts.getHead();
-          if(alert.isError()) {
-            logger.log(Level.SEVERE, "SimpleMessage",
-                       new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-          } 
-          else {
-            logger.log(Level.WARNING, "SimpleMessage",
-                       new Object[]{currentFile, new Integer(alert.getLine()+initialVasLine), alert.getMessage()});
-          }
-          alerts = alerts.getTail();
-        }
-        throw new TomException("See next messages for details...");
-      }
-    } catch (ClassNotFoundException e) {
-      throw new TomException(TomMessage.getMessage("VasClassNotFound"));
-    } catch (Exception e) {
-      throw new TomException(TomMessage.getMessage("VasInvocationIssue" , new Object[]{e.getMessage()}));
-    }
+    //TODO
     
     // Simulate the inclusion of generated Tom file
-    String adtFileName = new File((String)generatedADTName).toString();
-    file = new File(adtFileName.substring(0,adtFileName.length()-".adt".length())+".tom");
-    
+    String adtFileName = new File(generatedADTName).toString();
     try {
+      file = new File(adtFileName.substring(0,adtFileName.length()-".adt".length())+".tom");
+      
       fileName = file.getCanonicalPath();
     } catch (IOException e) {
       throw new TomIncludeException(TomMessage.getMessage("IOExceptionWithGeneratedTomFile",
                                                           new Object[]{fileName, currentFile, e.getMessage()}));
-    } 
+    } catch (Exception e) {
+      throw new TomIncludeException(TomMessage.getMessage("ExceptionWithGeneratedTomFile",
+                                                          new Object[]{adtFileName, currentFile, e.getMessage()}));
+    }
+    
     includeFile(fileName, list);
     
     // the vas construct is over : a new target block begins

@@ -117,7 +117,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       }
       parser = newParser(currentFile, getOptionManager());
       
-      super.setArg(parser.input());
+      setWorkingTerm(parser.input());
       
       getLogger().log(Level.INFO, "TomParsingPhase",
                       new Integer((int)(System.currentTimeMillis()-startChrono)) );      
@@ -132,7 +132,7 @@ public class TomParserPlugin extends TomGenericPlugin {
       if(intermediate) {
         System.out.println("intermediate");
         Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
-                             + PARSED_SUFFIX, (ATerm)getArg());
+                             + PARSED_SUFFIX, (ATerm)getWorkingTerm());
         Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
                              + PARSED_TABLE_SUFFIX, symbolTable().toTerm());
       }
@@ -144,12 +144,12 @@ public class TomParserPlugin extends TomGenericPlugin {
       printAlertMessage(errorsAtStart, warningsAtStart);
     }
     catch (TokenStreamException e){
-      e.printStackTrace();
+      //e.printStackTrace();
       getLogger().log(Level.SEVERE, "TokenStreamException",
                        new Object[]{currentFile, new Integer(getLineFromTomParser() ), e.getMessage()} );
     }
     catch (RecognitionException e){
-      e.printStackTrace();
+      //e.printStackTrace();
       getLogger().log(Level.SEVERE, "RecognitionException",
                       new Object[]{currentFile, new Integer(getLineFromTomParser() ), e.getMessage()});
     } catch (TomIncludeException e) {
@@ -179,9 +179,9 @@ public class TomParserPlugin extends TomGenericPlugin {
     return parser.getLine();
   }
   
-  public void setArg(Object arg){
-    if (arg instanceof String) {
-	    currentFile = (String)arg;  
+  public void setArgs(Object[] arg){
+    if (arg[0] instanceof String) {
+	    currentFile = (String)arg[0];
     } else {
 	    getLogger().log(Level.SEVERE, "TomParserPlugin: A String was expected.");
     }

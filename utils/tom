@@ -1,5 +1,19 @@
 #! /bin/sh
 
+TOM_ARGS=
+JAVA_ARGS=
+while [ $# -gt 0 ]; do
+  case $1 in
+    -D*)
+		JAVA_ARGS=$JAVA_ARGS" "$1
+		;;
+		*)
+		TOM_ARGS=$TOM_ARGS" "$1
+		;;			
+  esac
+  shift
+done
+
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false;
 darwin=false;
@@ -40,7 +54,7 @@ fi
 TOM_LIB="${TOM_HOME}/lib"
 TOM_JAR=`echo $TOM_LIB/*.jar | tr ' ' ':'`
 EXTERNAL_JAR=
-JAVACMD=java
+JAVACMD=java$JAVA_ARGS
 
 
 if [ -z "$LOCALCLASSPATH" ] ; then
@@ -60,5 +74,8 @@ if $cygwin; then
   TOM_CONFIG_FILE=`cygpath --windows "$TOM_CONFIG_FILE"`
 fi
 
-exec "$JAVACMD" $TOM_OPTS -classpath "$LOCALCLASSPATH" -Dtom.home="${TOM_HOME}" jtom.Tom -X $TOM_CONFIG_FILE $TOM_ARGS -I "$TOM_INC" "$@"
+#echo $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$TOM_SRC_HOME jtom.Tom -X $TOM_CONFIG_FILE$TOM_ARGS -I $TOM_INC
+
+exec $JAVACMD -cp $LOCALCLASSPATH -Dtom.home=$TOM_SRC_HOME jtom.Tom -X $TOM_CONFIG_FILE$TOM_ARGS -I $TOM_INC
+
 

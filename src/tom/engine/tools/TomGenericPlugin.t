@@ -96,7 +96,15 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    *
    * @param term the input Object
    */
-  public void setArg(Object arg) {
+  public void setArgs(Object[] arg) {
+    if (arg[0] instanceof TomTerm) {
+      term = (TomTerm)arg[0];
+    } else {
+      getLogger().log(Level.SEVERE, "TomTermExpected", pluginName);
+    }
+  }
+
+  public void setWorkingTerm(Object arg) {
     if (arg instanceof TomTerm) {
       term = (TomTerm)arg;
     } else {
@@ -117,10 +125,19 @@ public abstract class TomGenericPlugin extends TomBase implements Plugin {
    *
    * @return the Object "term"
    */
-  public Object getArg() {
-    return term;
+  public Object[] getArgs() {
+    return new Object[]{term};
   }
   
+  /**
+   * Returns the Object "term"
+   *
+   * @return the Object "term"
+   */
+  public Object getWorkingTerm() {
+    return term;
+  }
+
   /**
    * From Plugin interface 
    * The setOptionManager save the reference to the OM.

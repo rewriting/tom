@@ -370,10 +370,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     boolean outputEncountered = false;
     boolean destdirEncountered = false;
     int i = 0;
-
+    String argument = "";
     try {
       for(; i < argumentList.length; i++) {
-        String argument = argumentList[i];
+        argument = argumentList[i];
 
         if(!argument.startsWith("-")) {
           // input file name, should never start with '-'
@@ -421,7 +421,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
           OptionOwner plugin = getOptionOwnerFromName(argument);
 
           if(option == null || plugin == null) {// option not found
-            getLogger().log(Level.SEVERE, "InvalidOption", argumentList[i]);
+            getLogger().log(Level.SEVERE, "InvalidOption", argument);
             displayHelp();
             return null;
           } else {
@@ -449,7 +449,7 @@ public class TomOptionManager implements OptionManager, OptionOwner {
         }	
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      getLogger().log(Level.SEVERE, "IncompleteOption", argumentList[--i]);
+      getLogger().log(Level.SEVERE, "IncompleteOption", argument);
       return null;
     }
     

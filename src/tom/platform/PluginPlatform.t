@@ -70,13 +70,19 @@ public class PluginPlatform {
 
   /** List of input arg */
   private List inputToCompileList;
+
+  /** List of generated object
+   * cleared before each run
+   */
+  private List generatedObjects;
+  
   /**
    * Class Pluginplatform constructor
    */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
     statusHandler = new StatusHandler();
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
-    
+    inputToCompileList = new ArrayList();
     pluginsList = confManager.getPluginsList();
     optionManager = confManager.getOptionManager();
     inputToCompileList = optionManager.getInputToCompileList();
@@ -93,21 +99,34 @@ public class PluginPlatform {
    * </ul>
    */
   public int run() {
+    generatedObjects = new ArrayList();
     for(int i = 0; i < inputToCompileList.size(); i++) {
       // for each input
-      Object arg = inputToCompileList.get(i);
+      Object input = inputToCompileList.get(i);
+      Object[] arg = new Object[]{input};
+      Object initArgument = input;
+      boolean success = true;
       getLogger().log(Level.FINER, "NowCompiling", arg);
       // runs the modules
       Iterator it = pluginsList.iterator();
       while(it.hasNext()) {
         Plugin plugin = (Plugin)it.next();
-        plugin.setArg(arg);
-        plugin.run();
+        plugin.setArgs(arg);
         if(statusHandler.hasError()) {
-          getLogger().log(Level.SEVERE, "ProcessingError", arg);
+          getLogger().log(Level.SEVERE, "SettingArgError");
+          success = false;
           break;
         }
-        arg = plugin.getArg();
+        plugin.run();
+        if(statusHandler.hasError()) {
+          success = false;
+          getLogger().log(Level.SEVERE, "ProcessingError", new Object[]{plugin.getClass().getName(), initArgument});
+          break;
+        }
+        arg = plugin.getArgs();
+      }
+      if(success) {
+        generatedObjects.add(arg[0]);
       }
     }
     
@@ -116,7 +135,7 @@ public class PluginPlatform {
 
     if(statusHandler.hasError()) {
       // this is the highest possible level > will be printed no matter what 
-      getLogger().log(Level.SEVERE, "TaskErrorMessage", new Object[]{new Integer(nbOfErrors), new Integer(nbOfWarnings)});
+      getLogger().log(Level.SEVERE, "TaskErrorMessage", new Integer(nbOfErrors));
       return 1;
     } else if( statusHandler.hasWarning() ) {
       getLogger().log(Level.INFO, "TaskWarningMessage", new Integer(nbOfWarnings));
@@ -129,8 +148,13 @@ public class PluginPlatform {
    * An accessor method
    * @return the status handler.
    */
-  public StatusHandler getStatusHandler() { return statusHandler; }
+  public StatusHandler getStatusHandler() {
+    return statusHandler;
+  }
 
+  public List getGeneratedObjects() {
+    return generatedObjects;
+  }
   /** logger accessor in case of logging needs*/
   private Logger getLogger() {
     return Logger.getLogger(getClass().getName());

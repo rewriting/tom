@@ -87,7 +87,7 @@ public class PluginFactory implements Plugin {
   private PlatformOptionList allDeclaredOptions;
   private PlatformOptionList allRequiredOptions;
   private Map flagOwners;
-  private Object argToRelay;
+  private Object[] argToRelay;
   private OptionManager optionManager;
   
   private String pluginName;
@@ -151,14 +151,14 @@ public class PluginFactory implements Plugin {
   /**
    * From Plugin interface
    */
-  public void setArg(Object arg) {
+  public void setArgs(Object arg[]) {
     argToRelay = arg;
   }
 
   /**
    * From Plugin interface
    */
-  public Object getArg() {
+  public Object[] getArgs() {
     return argToRelay;
   }
 
@@ -175,9 +175,9 @@ public class PluginFactory implements Plugin {
       }
     }
     try{
-      activatedPlugin.setArg(argToRelay);
+      activatedPlugin.setArgs(argToRelay);
       activatedPlugin.run();
-      argToRelay = activatedPlugin.getArg();
+      argToRelay = activatedPlugin.getArgs();
     } catch(NullPointerException npe) {
       System.out.println("Error : No plugin was activated.");
       // TODO: when error management has changed, change this
