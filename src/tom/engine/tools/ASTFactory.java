@@ -209,7 +209,7 @@ public class ASTFactory {
      */
   public void makeStringSymbol(SymbolTable symbolTable,
                                String value, ArrayList optionList) {
-    String resultType = "string";
+    String resultType = "String";
     TomTypeList typeList = tsf().makeTomTypeList();
     TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
     SlotList slotList = tsf().makeSlotList();
@@ -218,7 +218,7 @@ public class ASTFactory {
   }
 
   public void makeStringDecl(ArrayList list) {
-    String typeString = "string";
+    String typeString = "String";
     Declaration getFunSym, getSubterm;
     Declaration cmpFunSym, equals;
     Option option = makeOption();
@@ -231,9 +231,9 @@ public class ASTFactory {
     getSubterm = tsf().makeDeclaration_GetSubtermDecl(
       variable_t,variable_n,tsf().makeTargetLanguage_ITL("null"), option);
     cmpFunSym = tsf().makeDeclaration_CompareFunctionSymbolDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"), option);
+      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1.equals(t2)"), option);
     equals = tsf().makeDeclaration_TermsEqualDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"), option);
+      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1.equals(t2)"), option);
     list.add(getFunSym);
     list.add(getSubterm);
     list.add(cmpFunSym);

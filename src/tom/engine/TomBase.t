@@ -76,6 +76,10 @@ public class TomBase {
     return type.equals("int");
   }
 
+  protected boolean isStringType(String type) {
+    return type.equals("String");
+  }
+
   protected boolean isBoolType(String type) {
     return type.equals("bool");
   }
@@ -333,6 +337,13 @@ public class TomBase {
       return false;
     }
     return isIntType(getTomType(getSymbolCodomain(subject)));
+  }
+
+  protected boolean isStringOperator(TomSymbol subject) {
+    if(subject==null) {
+      return false;
+    }
+    return isStringType(getTomType(getSymbolCodomain(subject)));
   }
 
   protected TomList tomListMap(TomList subject, Replace1 replace) {
