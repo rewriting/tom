@@ -402,7 +402,7 @@ public class TomExpander extends TomGenericPlugin {
     TomList newAttrList  = `emptyTomList();
     TomList newChildList = `emptyTomList();
 
-    TomTerm star = ast().makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",`concConstraint());
+    TomTerm star = getAstFactory().makeUnamedVariableStar(convertOriginTracking("_*",optionList),"unknown type",`concConstraint());
     if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
     if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 

@@ -45,7 +45,7 @@ public class TomKernelCompiler extends TomBase {
   private int matchNumber = 0;
 
   private OptionList option() {
-    return ast().makeOption();
+    return getAstFactory().makeOption();
   }
 
   private TomName getLabel(OptionList list) {

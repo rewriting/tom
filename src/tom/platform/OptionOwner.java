@@ -59,6 +59,10 @@ public interface OptionOwner {
    */
   public void setOption(String name, Object value);
   
+  /**
+   * Sets the associated OptionManager
+   *
+   */
   public void setOptionManager(OptionManager om);
 
 }

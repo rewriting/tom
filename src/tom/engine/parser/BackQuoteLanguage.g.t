@@ -48,16 +48,16 @@ options{
 
     // --- methods for tom environment ---
 
-    private final TomSignatureFactory getTomSignatureFactory(){
-        return tsf();
+    private final TomSignatureFactory getTomSignatureFactory() {
+        return TomBase.getTomSignatureFactory();
     }
         
     private TomEnvironment environment() {
         return TomEnvironment.getInstance();
     }
 
-    private TomSignatureFactory tsf(){
-        return environment().getTomSignatureFactory();
+    private TomSignatureFactory tsf() {
+        return TomBase.getTomSignatureFactory();
     }
     // --- ---
 

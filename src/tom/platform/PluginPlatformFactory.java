@@ -33,8 +33,8 @@ import jtom.tools.*;
 import tom.platform.*;
 
 /**
- * The PluginPlatform factory is a singleton class that is responsable for the creation
- * of PluginPlatform based on a commandLine seen as a array of string
+ * The PluginPlatform factory is a singleton class that is responsable for the
+ * creation of PluginPlatform based on a commandLine seen as a array of string
  */
 public class PluginPlatformFactory {
 

@@ -38,7 +38,8 @@ import tom.library.xml.*;
 
 
 /**
- * Helper class to parse OptionOwner options
+ * Helper class to parse OptionOwner options following this DTD
+ *
  * <!ELEMENT options (boolean*,integer*,string*)>
  *
  * <!ELEMENT boolean EMPTY>
@@ -86,14 +87,23 @@ public class OptionParser {
     return PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
   }
   
+  /**
+   * An XMLTools for doing the stuff
+   */
   private static XmlTools xtools = new XmlTools();
   
+  /**
+   * @return a PlatformOptionList extracted from the a String
+   */
   public static PlatformOptionList xmlToOptionList(String xmlString) {
     InputStream stream = new ByteArrayInputStream(xmlString.getBytes());
     TNode node = (TNode)xtools.convertXMLToATerm(stream);
     return xmlNodeToOptionList(node.getDocElem());
   }
   
+  /**
+   * @return a PlatformOptionList extracted from a TNode
+   */
   public static PlatformOptionList xmlNodeToOptionList(TNode optionsNode) {
     PlatformOptionList list = `emptyPlatformOptionList();
     %match(TNode optionsNode) {

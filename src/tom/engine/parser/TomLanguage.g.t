@@ -80,11 +80,11 @@ options{
     }
 
     private TomSignatureFactory tsf(){
-        return environment().getTomSignatureFactory();
+        return TomBase.getTomSignatureFactory();
     }
     
     private jtom.tools.ASTFactory ast() {
-        return environment().getASTFactory();
+        return TomBase.getAstFactory();
     }
 
     private void putType(String name, TomType type) {

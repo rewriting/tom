@@ -54,7 +54,8 @@ public class TomStarter extends TomGenericPlugin {
   public void run() {
     // We need here to create the environment : 
     // We need to be sure we don't have side effects with the environment singleton
-    TomEnvironment env = TomEnvironment.create();
+    TomEnvironment env = TomEnvironment.getInstance();
+    env.clear();
     env.initializeFromOptionManager(getOptionManager());
     env.prepareForInputFile(fileName);
   }

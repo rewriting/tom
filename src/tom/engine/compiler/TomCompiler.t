@@ -68,7 +68,7 @@ public class TomCompiler extends TomGenericPlugin {
   }
 
   private OptionList option() {
-    return ast().makeOption();
+    return getAstFactory().makeOption();
   }
 
     /* 
@@ -142,11 +142,11 @@ public class TomCompiler extends TomGenericPlugin {
                         /* generate a new match construct */
                       
                         TomTerm generatedPatternAction =
-                          `PatternAction(TermList(ast().makeList(abstractedPattern)),newActionInst, concOption());        
+                          `PatternAction(TermList(getAstFactory().makeList(abstractedPattern)),newActionInst, concOption());        
                         /* We reconstruct only a list of option with orgTrack and GeneratedMatch*/
                         OptionList generatedMatchOptionList = `concOption(orgTrack,GeneratedMatch());
                         Instruction generatedMatch =
-                          `Match(SubjectList(ast().makeList(introducedVariable)),
+                          `Match(SubjectList(getAstFactory().makeList(introducedVariable)),
                                  PatternList(cons(generatedPatternAction,empty())),
                                  generatedMatchOptionList);
                         /*System.out.println("Generate new Match"+generatedMatch); */
@@ -231,7 +231,7 @@ public class TomCompiler extends TomGenericPlugin {
               ArrayList optionList = new ArrayList();
               optionList.add(`orgTrack);
               //optionList.add(tsf().makeOption_GeneratedMatch());
-              OptionList generatedOptions = ast().makeOptionList(optionList);
+              OptionList generatedOptions = getAstFactory().makeOptionList(optionList);
               Instruction matchAST = `Match(SubjectList(matchArgumentsList),
                                             PatternList(patternActionList),
                                             generatedOptions);
@@ -415,7 +415,7 @@ public class TomCompiler extends TomGenericPlugin {
       list.add(newCstElt);
       constraintList = constraintList.getTail();
     }
-    return ast().makeConstraintList(list);
+    return getAstFactory().makeConstraintList(list);
   }
 
   private TomList linearizePattern(TomList subject, ArrayList equalityCheck) {

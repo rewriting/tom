@@ -356,7 +356,7 @@ public class TomOptimizer extends TomGenericPlugin {
             var@(Variable|VariableStar)[option=option, astName=astName@Name(name)] |
               var@BuildVariable[astName=astName@Name(name)]-> {
               if(context.contains(`astName)) {
-                return `var.setAstName(`Name(ast().makeTomVariableName(name)));
+                return `var.setAstName(`Name(getAstFactory().makeTomVariableName(name)));
               }
             }
           }

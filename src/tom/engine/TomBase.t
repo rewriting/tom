@@ -28,6 +28,7 @@ package jtom;
 import java.util.*;
 
 import aterm.*;
+import aterm.pure.*;
 
 import jtom.tools.*;
 import jtom.adt.tomsignature.*;
@@ -38,14 +39,28 @@ import tom.library.traversal.*;
 import jtom.exception.TomRuntimeException;
 
 public class TomBase {
+
+  private static TomSignatureFactory tomSignatureFactory = TomSignatureFactory.getInstance(SingletonFactory.getInstance());
+  private static ASTFactory astFactory = new ASTFactory(TomBase.tomSignatureFactory);
+  private static PlatformOptionFactory platformOptionFactory = PlatformOptionFactory.getInstance(SingletonFactory.getInstance());
+
   %include { adt/TomSignature.tom }
-  protected final TomSignatureFactory getTomSignatureFactory() {
-    return tsf();
+  public static final TomSignatureFactory getTomSignatureFactory() {
+    return TomBase.tomSignatureFactory;
   }
 
   %include { adt/PlatformOption.tom }
-  protected final PlatformOptionFactory getPlatformOptionFactory() {
-    return environment().getPlatformOptionFactory();
+  public static final PlatformOptionFactory getPlatformOptionFactory() {
+    return TomBase.platformOptionFactory;
+  }
+  
+  public static final ASTFactory getAstFactory() {
+    return TomBase.astFactory;
+  }
+
+  /** shortcut */
+  protected static TomSignatureFactory tsf() {
+    return TomBase.tomSignatureFactory;
   }
   
   private TomList empty;
@@ -55,27 +70,9 @@ public class TomBase {
     this.empty = getTomSignatureFactory().makeTomList();
     this.traversal = new GenericTraversal();
   }
-  
-  protected ASTFactory ast() {
-    return environment().getASTFactory();
-  }
-  
-  protected TomSignatureFactory tsf() {
-    return environment().getTomSignatureFactory();
-  }
-  
+    
   protected TomEnvironment environment() {
-    try {
-      return TomEnvironment.getInstance();
-    } catch(TomRuntimeException tre) {
-      System.out.println("Chouchou");
-      TomEnvironment.create();
-      // this is done to handle the first call to TomEnvironment
-      // because the plugins extend TomBase
-      // and so there are calls to TomEnvironment.getInstance()
-      // when they are instantiated by the Server
-      return TomEnvironment.getInstance();
-    }
+    return TomEnvironment.getInstance();
   }
   
   public GenericTraversal traversal() {
@@ -95,7 +92,7 @@ public class TomBase {
   }
   
   protected OptionList emptyOption() {
-    return ast().makeOption();
+    return getAstFactory().makeOption();
   }
 
   protected TomList empty() {

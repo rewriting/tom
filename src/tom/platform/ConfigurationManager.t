@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  * 
  * Pierre-Etienne Moreau  e-mail: Pierre-Etienne.Moreau@loria.fr
- * Gregory Andrien
  *
  **/
 
@@ -43,11 +42,11 @@ import tom.platform.adt.platformoption.types.*;
 
 /**
  * This class is a wrapper for the platform XML configuration files.
- * it extract the plugins information and create an ordered list of
- * of instances. it extract the Option Management information and based
+ * It extract the plugins information and create an ordered list of
+ * of instances. It extract the Option Management information and based
  * on it create and initialize the corresponding OptionManager.
- * The creation of the class is not sfficient since it need to be
- * initialized with an execution commandLine.
+ * The instantiation of a Configuration is not sfficient since it need to
+ * be initialized with an execution commandLine.
  *
  */
 public class ConfigurationManager {
@@ -146,6 +145,7 @@ public class ConfigurationManager {
    */
   private int createPlugins(TNode configurationNode) {
     List pluginsClassList = extractClassPaths(configurationNode);
+    // if empty list this means there is a problem somewhere
     if(pluginsClassList.isEmpty()) {
       System.out.println("NoPluginFound");
       getLogger().log(Level.SEVERE, "NoPluginFound", xmlConfigurationFileName);
@@ -168,7 +168,7 @@ public class ConfigurationManager {
       } catch(ClassNotFoundException cnfe) {
         getLogger().log(Level.WARNING, "ClassNotFound", pluginClass);
       } catch(Exception e) {
-        //e.printStackTrace();
+        e.printStackTrace();
         getLogger().log(Level.SEVERE, "InstantiationError", pluginClass);
         pluginsList = null;
         return 1;
@@ -178,7 +178,7 @@ public class ConfigurationManager {
   }
   
   /**
-   * Extracts the plugins' class paths from the XML configuration file.
+   * Extracts the plugins' class name from the XML configuration file.
    * 
    * @param node the node containing the XML document
    * @return the List of plugins class path
@@ -239,4 +239,4 @@ public class ConfigurationManager {
     return Logger.getLogger(getClass().getName());
   }
 
-} //class ConfigurationManager
+} // class ConfigurationManager

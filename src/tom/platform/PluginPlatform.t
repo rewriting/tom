@@ -39,8 +39,10 @@ import tom.library.xml.*;
 
 /**
  * The PluginPlatform manages plugins defined in an xml configuration file.
- * (which plugins are used and how they are ordered)
- * Then it instantiates them, and runs them in the specified order.
+ * (which plugins are used and how they are ordered) with the intermediate
+ * of a ConfigurationManager objet
+ * It is main role is to run the plugins in the specified order and make some 
+ * error management.
  *
  * @author Gr&eacute;gory ANDRIEN
  */
@@ -75,11 +77,11 @@ public class PluginPlatform {
    * Class Pluginplatform constructor
    */
   public PluginPlatform(ConfigurationManager confManager, String loggerRadical) {
-    this.pluginsList = confManager.getPluginsList();
-    this.optionManager = confManager.getOptionManager();
-    this.statusHandler = new StatusHandler();
-    this.logger = Logger.getLogger(getClass().getName());
-    this.inputFileList = optionManager.getInputFileList();
+    pluginsList = confManager.getPluginsList();
+    optionManager = confManager.getOptionManager();
+    statusHandler = new StatusHandler();
+    logger = Logger.getLogger(getClass().getName());
+    inputFileList = optionManager.getInputFileList();
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
   }
 
@@ -116,10 +118,10 @@ public class PluginPlatform {
 
     if(statusHandler.hasError()) {
       // this is the highest possible level > will be printed no matter what 
-      logger.log( Level.OFF,  "TaskErrorMessage", new Object[]{ new Integer(nbOfErrors), new Integer(nbOfWarnings) } );
+      logger.log(Level.OFF, "TaskErrorMessage", new Object[]{new Integer(nbOfErrors), new Integer(nbOfWarnings)});
       return 1;
     } else if( statusHandler.hasWarning() ) {
-      logger.log( Level.OFF, "TaskWarningMessage", new Integer(nbOfWarnings) );
+      logger.log(Level.OFF, "TaskWarningMessage", new Integer(nbOfWarnings));
       return 0;
     }
     return 0;
@@ -131,110 +133,4 @@ public class PluginPlatform {
    */
   public StatusHandler getStatusHandler() { return statusHandler; }
 
-	
-  /**
-   * An accessor method.
-   * @return the OptionManager
-   */
-  public OptionManager getOptionManager() { return optionManager; }
-  
-  /**
-   * From OptionManagerAn accessor method.
-   * @return the OptionManager
-   */
-  public void setOptionManager(OptionManager om) {}
-
-  
-  /**
-   * This method analyzes the command line and determines which configuration
-   * file should be used. As the tom scripts already specify a default
-   * configuration file which can be overridden by the user, only the last one
-   * is taken into account (should be remembered if the PluginPlatform is used
-   * outside of the tom script)
-   * 
-   * @param commandLine the command line
-   * @return a String containing the path to the configuration file to be used
-   */
-  /* private String extractConfigFileName(String[] commandLine) {
-    String xmlConfigurationFile = null; 
-    int i=0;
-    try {
-      for(;i< commandLine.length;i++) {
-        if(commandLine[i].equals("-X")) {
-          xmlConfigurationFile = commandLine[++i];
-        }
-      }
-    } catch (ArrayIndexOutOfBoundsException e) {
-      logger.log(Level.SEVERE, "IncompleteOption", commandLine[--i]);
-      return null;
-    }
-    
-    if(xmlConfigurationFile==null) { // lack of a configuration file
-      logger.log(Level.SEVERE, "ConfigFileNotSpecified");
-      return null;
-    }
-    
-    File file = new File(xmlConfigurationFile);
-    if(!file.exists()) { // the last specified configuration file doesn't exist
-      logger.log(Level.SEVERE, "ConfigFileNotFound", xmlConfigurationFile);
-      return null;
-    }
-    
-    return xmlConfigurationFile;
-    }*/
-  
-  /**
-   * This method parses the configuration and extracts the global options as
-   * well as the class paths of the plugins that are going to be used.
-   * 
-   * @param xmlConfigurationFile the name of the XML configuration file
-   * @return a List containing the class paths of the listed plugins
-   */
-  /*  private List analyseConfigFile(String xmlConfigurationFile) {
-    // parses configuration file...
-    XmlTools xtools = new XmlTools();
-    TNode node = (TNode)xtools.convertXMLToATerm(xmlConfigurationFile);
-    if(node == null) {
-      // parsing failed
-      logger.log(Level.SEVERE, "ConfigFileNotXML", xmlConfigurationFile);
-      return null;
-    }
-    // ... to extract global options
-    optionManager.setGlobalOptionList(node.getDocElem());
-    // ... to extract plugin classpaths
-    return extractClassPaths(node.getDocElem());
-    }*/
-    
-  /**
-   * Extracts the plugins' class paths from the XML configuration file.
-   * 
-   * @param node the node containing the XML document
-   * @return the List of plugins class path
-   */
-  /*  private List extractClassPaths(TNode node) {
-    List res = new ArrayList();
-    %match(TNode node) {
-      <server><plugins><plugin [classpath=cp]/></plugins></server> -> {
-         res.add(cp);
-         logger.log(Level.FINER, "ClassPathRead", cp);
-       }
-    }
-    return res;
-    }*/
-  
-  /**
-   * Returns the value of an option. Returns an Object which is a Boolean, a
-   * String or an Integer depending on what the option type is.
-   * 
-   * @param optionName the name of the option whose value is seeked
-   * @return an Object containing the option's value
-   */
-  public Object getOptionValue(String optionName) {
-    return optionManager.getOptionValue(optionName);
-  }
-
-  public void setOptionValue(String key, Object value) {
-    optionManager.setOptionValue(key, value);
-  }
-
-}
+} // class PluginPlatform

@@ -43,7 +43,7 @@ public class TomFactory extends TomBase {
   
   public String encodeXMLString(SymbolTable symbolTable, String name) {
     name = "\"" + name + "\"";
-    ast().makeStringSymbol(symbolTable,name, new LinkedList());
+    getAstFactory().makeStringSymbol(symbolTable,name, new LinkedList());
     return name;
   }
 
@@ -89,7 +89,7 @@ public class TomFactory extends TomBase {
         if(tomSymbol != null) {
           if(isStringOperator(tomSymbol)) {
             Option info = `OriginTracking(Name(Constants.TEXT_NODE),-1,Name("??"));
-            term = `Appl( ast().makeOption(info),
+            term = `Appl( getAstFactory().makeOption(info),
                           concTomName(Name(Constants.TEXT_NODE)),concTomTerm(term),
                           tsf().makeConstraintList());
               //System.out.println("metaEncodeXmlAppl = " + term);

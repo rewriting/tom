@@ -287,7 +287,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
       get_slice + "(" + get_tail + "(beginning),ending))\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    return ast().reworkTLCode(`ITL(s), prettyMode);
+    return getAstFactory().reworkTLCode(`ITL(s), prettyMode);
   }
   
   protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {

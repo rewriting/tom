@@ -99,14 +99,14 @@ public class TomKernelExpander extends TomBase {
               // build the list of variables that occur in the lhs
               HashSet set = new HashSet();
               collectVariable(set,newLhs);
-              TomList varList = ast().makeList(set);
+              TomList varList = getAstFactory().makeList(set);
               InstructionList newCondList = `emptyInstructionList();
               while(!`condList.isEmpty()) {
                 Instruction cond = `condList.getHead();
                 Instruction newCond = expandVariableInstruction(`Tom(varList),cond);
                 newCondList = `manyInstructionList(newCond,newCondList);
                 collectVariable(set,newCond); 
-                varList = ast().makeList(set);
+                varList = getAstFactory().makeList(set);
                 `condList = `condList.getTail();
               }
               
@@ -249,13 +249,13 @@ public class TomKernelExpander extends TomBase {
             context, TLVar(strName,TomTypeAlone(tomType)) -> {
                // create a variable: its type is ensured by checker
                TomType localType = getType(`tomType);
-               OptionList option = ast().makeOption();
+               OptionList option = getAstFactory().makeOption();
                return `Variable(option,Name(strName),localType,concConstraint());
              }
               
             context, TLVar(strName,localType@Type[]) -> {
                // create a variable: its type is ensured by checker
-               OptionList option = ast().makeOption();
+               OptionList option = getAstFactory().makeOption();
                return `Variable(option,Name(strName),localType,concConstraint());
              }
 
@@ -269,7 +269,7 @@ public class TomKernelExpander extends TomBase {
                  `subjectList = `subjectList.getTail();
                  `l1 = `l1.getTail();
                }
-               return `TermList(ast().makeList(list));
+               return `TermList(getAstFactory().makeList(list));
              }
           } // end match
         } // end instanceof TomTerm
@@ -329,7 +329,7 @@ public class TomKernelExpander extends TomBase {
           list.add(expandVariable(`emptyTerm(), subjectList.getHead()));
           subjectList = subjectList.getTail();
         }
-        return ast().makeList(list);
+        return getAstFactory().makeList(list);
       }
 
       symb@Symbol[typesToType=TypesToType(typeList,codomain)] -> {
@@ -389,7 +389,7 @@ public class TomKernelExpander extends TomBase {
           }
         }
        
-        result = ast().makeList(list);
+        result = getAstFactory().makeList(list);
         return result;
       }
 

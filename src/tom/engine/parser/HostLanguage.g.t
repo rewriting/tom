@@ -101,11 +101,11 @@ options{
     }
     
     private final TomSignatureFactory getTomSignatureFactory(){
-        return tsf();
+        return TomBase.getTomSignatureFactory();
     }
     
     private TomSignatureFactory tsf(){
-        return environment().getTomSignatureFactory();
+        return TomBase.getTomSignatureFactory();
     }
     
     private TomEnvironment environment() {
@@ -113,7 +113,7 @@ options{
     }
     
     private jtom.tools.ASTFactory ast() {
-        return environment().getASTFactory();
+        return TomBase.getAstFactory();
     }
     
     private SymbolTable symbolTable() {

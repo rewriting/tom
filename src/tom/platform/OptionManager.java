@@ -39,13 +39,28 @@ import tom.platform.adt.platformoption.types.*;
 public interface OptionManager {
 
   /**
+   * An optionManager can be initialized with the intermediate of a
+   * ConfigurationManager and a commandLine string
    *
-   *
+   * @return an error code :
+   * <ul>
+   * <li>0 if no error was encountered</li>
+   * <li>1 if something went wrong</li>
+   * </ul>
    */
-  public int initialize(ConfigurationManager confManager, String[] commandLine);
+  public int initialize(ConfigurationManager confManager,String[] commandLine);
   
+    
   /**
    *
+   * The Option manager is the only able to extract the input file name list 
+   * in the list of argument. The computation is done during initialization
+   *
+   */
+  public List getInputFileList(); 
+
+  /**
+   * Set the option 'name' to the corresponding value 
    *
    * @param name the option's name
    * @param value the option's value
@@ -53,19 +68,11 @@ public interface OptionManager {
   public void setOptionValue(String name, Object value);
   
   /**
-   *
+   * Get the option 'name' valus 
    *
    * @param optionName the option's name
    * @return the option's value as an Object
    */
   public Object getOptionValue(String optionName);
-  
-  
-  
-  /**
-   * The Option manager is the only able to extract the input file name list 
-   * in the list of argument. The computation is done during initialization
-   */
-  public List getInputFileList(); 
   
 }

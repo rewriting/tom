@@ -46,15 +46,6 @@ import aterm.pure.*;
  *
  */
 public class TomEnvironment {
-
-  /** */
-  private ASTFactory astFactory;
-
-  /** */
-  private TomSignatureFactory tomSignatureFactory;
-
-  /** */
-  private PlatformOptionFactory platformOptionFactory;
   
   /** */
   private SymbolTable symbolTable;
@@ -88,81 +79,59 @@ public class TomEnvironment {
   /**
    * Part of the Singleton pattern. The unique instance of the PluginPlatform.
    */
-  private static TomEnvironment instance = null;
+  private static TomEnvironment instance;
   
   /**
    * Part of the Singleton pattern. A protected constructor method, that exists to defeat instantiation.
    */
-  private TomEnvironment(){}
+  private TomEnvironment(){
+    symbolTable = new SymbolTable(TomBase.getAstFactory());
+    
+    inputSuffix = ".t";
+    outputSuffix = ".java";
+    userOutputFile = null;
+    eclipseMode = false;
+    
+    importsToDiscard = new HashSet();
+    importsToDiscard.add("string.tom");
+    importsToDiscard.add("int.tom");
+    importsToDiscard.add("double.tom");
+    importsToDiscard.add("aterm.tom");
+    importsToDiscard.add("atermlist.tom");
+  }
   
   /**
    * Part of the Singleton pattern. Returns the instance of the PluginPlatform if it has been initialized before,
    * otherwise it throws a TomRuntimeException.
    * 
    * @return the instance of the PluginPlatform
-   * @throws TomRuntimeException if the PluginPlatform hasn't been initialized before the call
    */
   public static TomEnvironment getInstance() {
-    if(instance == null) {
-      throw new TomRuntimeException(TomMessage.getString("GetInitializedPluginPlatformInstance"));
+    if(instance ==null) {
+      instance = new TomEnvironment();
     }
     return instance;
   }
-
-  /**
-   * Part of the Singleton pattern. Initializes the TomEnvironment in case it hasn't been done before,
-   * otherwise it reinitializes it.
-   * 
-   * @return the instance of the TomEnvironment
-   */
-  public static TomEnvironment create() {
-    if(instance == null) {
-      PureFactory pureFactory = SingletonFactory.getInstance();
-      instance = new TomEnvironment();
-      instance.tomSignatureFactory = TomSignatureFactory.getInstance(pureFactory);
-      instance.astFactory = new ASTFactory(instance.tomSignatureFactory);
-      instance.platformOptionFactory = PlatformOptionFactory.getInstance(pureFactory);
-		
-      instance.symbolTable = new SymbolTable(instance.astFactory);
-
-      instance.inputSuffix = ".t";
-      instance.outputSuffix = ".java";
-      instance.userOutputFile = null;
-      instance.eclipseMode = false;
-
-      instance.importsToDiscard = new HashSet();
-      instance.importsToDiscard.add("string.tom");
-      instance.importsToDiscard.add("int.tom");
-      instance.importsToDiscard.add("double.tom");
-      instance.importsToDiscard.add("aterm.tom");
-      instance.importsToDiscard.add("atermlist.tom");
   
-      return instance;
-    } else {
-      TomEnvironment.clear();
-      return instance;
-    }
-  }
-
   /**
    * Reinitializes the TomEnvironment instance.
    */
-  public static void clear() {
+  public void clear() {
     //instance.symbolTable.init();
-    instance.destDir = null;
-    instance.inputFile = null;
-    instance.outputFile = null;
-    instance.userOutputFile = null;
-    instance.packagePath = null;
-    instance.eclipseMode = false;
-    instance.inputSuffix = ".t";
-    instance.outputSuffix = ".java";
+    destDir = null;
+    inputFile = null;
+    outputFile = null;
+    userOutputFile = null;
+    packagePath = null;
+    eclipseMode = false;
+    inputSuffix = ".t";
+    outputSuffix = ".java";
   }
 
   public void initializeFromOptionManager(OptionManager optionManager) {
     List localUserImportList = new ArrayList();
     String localDestDir = null;
-
+    
     symbolTable.init(optionManager);
     // computes the input and output suffixes
     // well, it would be better in the future if we let the generator append the output suffix itself
@@ -184,7 +153,7 @@ public class TomEnvironment {
       inputSuffix = ".t";
       outputSuffix = ".java";
     }
-
+    
     // fills the local user import list
     String imports = (String)optionManager.getOptionValue("import");
     StringTokenizer st = new StringTokenizer(imports, ":"); // paths are separated by ':'
@@ -232,32 +201,10 @@ public class TomEnvironment {
     }
   }
   
-
   /**
    * An accessor method.
    * 
-   * @return an ASTFactory
-   */
-  public ASTFactory getASTFactory() { return astFactory; }
-    
-  /**
-   * An accessor method.
-   * 
-   * @return a TomSignatureFactory
-   */
-  public TomSignatureFactory getTomSignatureFactory() { return tomSignatureFactory; }
-
-  /**
-   * An accessor method.
-   * 
-   * @return an PlatformOptionFactory
-   */
-  public PlatformOptionFactory getPlatformOptionFactory() { return platformOptionFactory; }
-
-  /**
-   * An accessor method.
-   * 
-   * @return an ASTFactory
+   * @return the symbolTable
    */
   public SymbolTable getSymbolTable() { return symbolTable; }
 

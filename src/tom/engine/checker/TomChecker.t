@@ -703,7 +703,7 @@ abstract public class TomChecker extends TomGenericPlugin {
     currentHeadSymbolName = getName(lhs);
     if(ruleNumber == 0) {
         // update the root of lhs: it becomes a defined symbol
-      symbol = ast().updateDefinedSymbol(symbolTable(),lhs);
+      symbol = getAstFactory().updateDefinedSymbol(symbolTable(),lhs);
       if( symbol == null ) {
         messageError(findOriginTrackingLine(lhs.getOption()),
                      TomMessage.getString("UnknownSymbol"), 

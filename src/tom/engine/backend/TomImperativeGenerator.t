@@ -406,7 +406,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
     s+= "\n";
     //If necessary we remove \n code depending on pretty option
-    return ast().reworkTLCode(`ITL(s), prettyMode);
+    return getAstFactory().reworkTLCode(`ITL(s), prettyMode);
   }
 
   protected TargetLanguage genDeclArray(String name, TomType listType, TomType eltType) {
@@ -461,7 +461,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     s+= "  }\n";
 
     //If necessary we remove \n code depending on pretty option
-    return ast().reworkTLCode(`ITL(s), prettyMode);
+    return getAstFactory().reworkTLCode(`ITL(s), prettyMode);
   }
 
   protected TargetLanguage genDecl(String returnType,
