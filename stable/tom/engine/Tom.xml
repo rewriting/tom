@@ -85,12 +85,6 @@
     classpath="jtom.optimizer.TomOptimizer" />
 
   <plugin
-    name="Verifier"
-    version=""
-    description=""
-    classpath="jtom.verifier.TomVerifier" />
-
-  <plugin
     name="Backend"
     version=""
     description=""
@@ -136,12 +130,6 @@
     name="noCheck"
     altName="f"
     description="Do not check correctness"
-    valueB="false" />
-
-  <OptionBoolean
-    name="Wall"
-    altName=""
-    description="Print all warnings"
     valueB="false" />
 
   <OptionBoolean
