@@ -960,7 +960,7 @@ protected
 TARGET
     :
         (   
-            . 
+            .
         )
         {target.append($getText);}
     ;
