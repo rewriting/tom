@@ -190,6 +190,8 @@
       <include name="**/TomBase.t"/>
       <include name="**/Verifier.t"/>
       <include name="**/TomBackQuoteParser.t"/> 
+      <include name="**/TomServer.t"/>
+      <include name="**/starter/TomStarter.t"/>
     </tom>
     <tom srcdir="${src.src}" 
          destdir="${src.gen}" 
@@ -198,6 +200,8 @@
       <exclude name="**/TomParser.t"/>
       <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
+      <exclude name="**/TomServer.t"/>
+      <exclude name="**/starter/TomStarter.t"/>
       <exclude name="**/runtime/**/*.t"/> 
     </tom>
   </target>
@@ -250,6 +254,8 @@
       <classpath refid="src.classpath"/>
       <include name="jtom/**/*.java"/>
     </javac>
+    <copy todir="${src.build}/jtom" file="${src.src}/jtom/Tom.xml"/>
+    <copy todir="${src.build}/jtom/starter" file="${src.src}/jtom/starter/Options.xml"/>
   </target>
   
   <target name="build.stable" depends="stable"/>
@@ -699,7 +705,9 @@
       <include name="**/runtime/**/*.t"/> 
       <include name="**/TomBase.t"/>
       <include name="**/Verifier.t"/>
-      <include name="**/TomBackQuoteParser.t"/> 
+      <include name="**/TomBackQuoteParser.t"/>
+      <include name="**/TomServer.t"/>
+      <include name="**/starter/TomStarter.t"/>
     </tomsrc>
     <tomsrc srcdir="${src.src}" 
             destdir="${destination}/gen" 
@@ -708,6 +716,8 @@
       <exclude name="**/TomParser.t"/>
       <exclude name="**/Verifier.t"/>
       <exclude name="**/TomBackQuoteParser.t"/>
+      <exclude name="**/TomServer.t"/>
+      <exclude name="**/starter/TomStarter.t"/>
       <exclude name="**/runtime/**/*.t"/> 
     </tomsrc>
 
@@ -780,6 +790,7 @@
       <fileset dir="${bootstrap.dir}/build">
       <include name="**/*.class"/></fileset>
     </move>
+
     <!-- compile again src with tomsrc -->
     <delete dir="${bootstrap.dir}"/>
     <mkdir dir="${bootstrap.dir}"/>
