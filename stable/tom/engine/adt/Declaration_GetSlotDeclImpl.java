@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Declaration_GetSlotDeclImpl
+abstract public class Declaration_GetSlotDeclImpl
 extends Declaration
 {
   static private aterm.ATerm pattern = null;
@@ -15,7 +13,6 @@ extends Declaration
   private static int index_term = 2;
   private static int index_tlCode = 3;
   private static int index_orgTrack = 4;
-
   public shared.SharedObject duplicate() {
     Declaration_GetSlotDecl clone = new Declaration_GetSlotDecl();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -30,7 +27,6 @@ extends Declaration
     pattern = getStaticFactory().parse("GetSlotDecl(<term>,<term>,<term>,<term>,<term>)");
   }
 
-
   static public Declaration fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -44,7 +40,6 @@ extends Declaration
       return null;
     }
   }
-
   public boolean isGetSlotDecl()
   {
     return true;
@@ -74,7 +69,6 @@ extends Declaration
   {
     return true;
   }
-
 
   public TomName getAstName()
   {
@@ -157,7 +151,6 @@ extends Declaration
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

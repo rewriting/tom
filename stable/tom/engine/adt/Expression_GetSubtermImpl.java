@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Expression_GetSubtermImpl
+abstract public class Expression_GetSubtermImpl
 extends Expression
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends Expression
   }
   private static int index_term = 0;
   private static int index_number = 1;
-
   public shared.SharedObject duplicate() {
     Expression_GetSubterm clone = new Expression_GetSubterm();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends Expression
     pattern = getStaticFactory().parse("GetSubterm(<term>,<term>)");
   }
 
-
   static public Expression fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends Expression
       return null;
     }
   }
-
   public boolean isGetSubterm()
   {
     return true;
@@ -56,7 +51,6 @@ extends Expression
   {
     return true;
   }
-
 
   public TomTerm getTerm()
   {
@@ -94,7 +88,6 @@ extends Expression
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

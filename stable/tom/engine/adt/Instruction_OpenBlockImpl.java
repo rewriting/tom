@@ -1,37 +1,33 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomTerm_CloseBlockImpl
-extends TomTerm
+abstract public class Instruction_OpenBlockImpl
+extends Instruction
 {
   static private aterm.ATerm pattern = null;
 
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-
   public shared.SharedObject duplicate() {
-    TomTerm_CloseBlock clone = new TomTerm_CloseBlock();
+    Instruction_OpenBlock clone = new Instruction_OpenBlock();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
-    return getTomSignatureFactory().makeTomTerm_CloseBlock(fun, i_args, annos);
+    return getTomSignatureFactory().makeInstruction_OpenBlock(fun, i_args, annos);
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("CloseBlock");
+    pattern = getStaticFactory().parse("OpenBlock");
   }
 
-
-  static public TomTerm fromTerm(aterm.ATerm trm)
+  static public Instruction fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_CloseBlock();
+      Instruction tmp = getStaticTomSignatureFactory().makeInstruction_OpenBlock();
       tmp.setTerm(trm);
       return tmp;
     }
@@ -39,17 +35,14 @@ extends TomTerm
       return null;
     }
   }
-
-  public boolean isCloseBlock()
+  public boolean isOpenBlock()
   {
     return true;
   }
 
-
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
-      throw new RuntimeException("TomTerm_CloseBlock has no arguments");
+      throw new RuntimeException("Instruction_OpenBlock has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

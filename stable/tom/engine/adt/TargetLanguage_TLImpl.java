@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TargetLanguage_TLImpl
+abstract public class TargetLanguage_TLImpl
 extends TargetLanguage
 {
   static private aterm.ATerm pattern = null;
@@ -13,7 +11,6 @@ extends TargetLanguage
   private static int index_code = 0;
   private static int index_start = 1;
   private static int index_end = 2;
-
   public shared.SharedObject duplicate() {
     TargetLanguage_TL clone = new TargetLanguage_TL();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -28,7 +25,6 @@ extends TargetLanguage
     pattern = getStaticFactory().parse("TL(<str>,<term>,<term>)");
   }
 
-
   static public TargetLanguage fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -42,7 +38,6 @@ extends TargetLanguage
       return null;
     }
   }
-
   public aterm.ATerm toTerm() {
     if(term == null) {
       java.util.List args = new java.util.LinkedList();
@@ -73,7 +68,6 @@ extends TargetLanguage
   {
     return true;
   }
-
 
   public String getCode()
   {
@@ -126,5 +120,4 @@ extends TargetLanguage
     }
     return super.setArgument(arg, i);
   }
-
 }

@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Expression_IsFsymImpl
+abstract public class Expression_IsFsymImpl
 extends Expression
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends Expression
   }
   private static int index_astName = 0;
   private static int index_term = 1;
-
   public shared.SharedObject duplicate() {
     Expression_IsFsym clone = new Expression_IsFsym();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends Expression
     pattern = getStaticFactory().parse("IsFsym(<term>,<term>)");
   }
 
-
   static public Expression fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends Expression
       return null;
     }
   }
-
   public boolean isIsFsym()
   {
     return true;
@@ -56,7 +51,6 @@ extends Expression
   {
     return true;
   }
-
 
   public TomName getAstName()
   {
@@ -94,7 +88,6 @@ extends Expression
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomType_TLTypeImpl
+abstract public class TomType_TLTypeImpl
 extends TomType
 {
   static private aterm.ATerm pattern = null;
@@ -11,7 +9,6 @@ extends TomType
     return pattern;
   }
   private static int index_tl = 0;
-
   public shared.SharedObject duplicate() {
     TomType_TLType clone = new TomType_TLType();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -26,7 +23,6 @@ extends TomType
     pattern = getStaticFactory().parse("TLType(<term>)");
   }
 
-
   static public TomType fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -40,7 +36,6 @@ extends TomType
       return null;
     }
   }
-
   public boolean isTLType()
   {
     return true;
@@ -50,7 +45,6 @@ extends TomType
   {
     return true;
   }
-
 
   public TargetLanguage getTl()
   {
@@ -73,7 +67,6 @@ extends TomType
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

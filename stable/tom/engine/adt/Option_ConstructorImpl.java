@@ -1,38 +1,34 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomTerm_ExitActionImpl
-extends TomTerm
+abstract public class Option_ConstructorImpl
+extends Option
 {
   static private aterm.ATerm pattern = null;
 
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-  private static int index_numberList = 0;
-
+  private static int index_astName = 0;
   public shared.SharedObject duplicate() {
-    TomTerm_ExitAction clone = new TomTerm_ExitAction();
+    Option_Constructor clone = new Option_Constructor();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
-    return getTomSignatureFactory().makeTomTerm_ExitAction(fun, i_args, annos);
+    return getTomSignatureFactory().makeOption_Constructor(fun, i_args, annos);
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("ExitAction(<term>)");
+    pattern = getStaticFactory().parse("Constructor(<term>)");
   }
 
-
-  static public TomTerm fromTerm(aterm.ATerm trm)
+  static public Option fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_ExitAction(TomList.fromTerm( (aterm.ATerm) children.get(0)));
+      Option tmp = getStaticTomSignatureFactory().makeOption_Constructor(TomName.fromTerm( (aterm.ATerm) children.get(0)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -40,40 +36,37 @@ extends TomTerm
       return null;
     }
   }
-
-  public boolean isExitAction()
+  public boolean isConstructor()
   {
     return true;
   }
 
-  public boolean hasNumberList()
+  public boolean hasAstName()
   {
     return true;
   }
 
-
-  public TomList getNumberList()
+  public TomName getAstName()
   {
-    return (TomList) this.getArgument(index_numberList) ;
+    return (TomName) this.getArgument(index_astName) ;
   }
 
-  public TomTerm setNumberList(TomList _numberList)
+  public Option setAstName(TomName _astName)
   {
-    return (TomTerm) super.setArgument(_numberList, index_numberList);
+    return (Option) super.setArgument(_astName, index_astName);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
-        if (! (arg instanceof TomList)) { 
-          throw new RuntimeException("Argument 0 of a TomTerm_ExitAction should have type TomList");
+        if (! (arg instanceof TomName)) { 
+          throw new RuntimeException("Argument 0 of a Option_Constructor should have type TomName");
         }
         break;
-      default: throw new RuntimeException("TomTerm_ExitAction does not have an argument at " + i );
+      default: throw new RuntimeException("Option_Constructor does not have an argument at " + i );
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

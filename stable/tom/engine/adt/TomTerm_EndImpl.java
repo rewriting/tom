@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomTerm_EndImpl
+abstract public class TomTerm_EndImpl
 extends TomTerm
 {
   static private aterm.ATerm pattern = null;
@@ -11,7 +9,6 @@ extends TomTerm
     return pattern;
   }
   private static int index_number = 0;
-
   public shared.SharedObject duplicate() {
     TomTerm_End clone = new TomTerm_End();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -26,7 +23,6 @@ extends TomTerm
     pattern = getStaticFactory().parse("End(<term>)");
   }
 
-
   static public TomTerm fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -40,7 +36,6 @@ extends TomTerm
       return null;
     }
   }
-
   public boolean isEnd()
   {
     return true;
@@ -50,7 +45,6 @@ extends TomTerm
   {
     return true;
   }
-
 
   public TomTerm getNumber()
   {
@@ -73,7 +67,6 @@ extends TomTerm
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

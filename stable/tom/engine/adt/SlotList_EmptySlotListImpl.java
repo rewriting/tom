@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class SlotList_EmptySlotListImpl
+abstract public class SlotList_EmptySlotListImpl
 extends SlotList
 {
   static private aterm.ATerm pattern = null;
@@ -10,7 +8,6 @@ extends SlotList
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-
   public shared.SharedObject duplicate() {
     SlotList_EmptySlotList clone = new SlotList_EmptySlotList();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -25,7 +22,6 @@ extends SlotList
     pattern = getStaticFactory().parse("[]");
   }
 
-
   static public SlotList fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -39,17 +35,14 @@ extends SlotList
       return null;
     }
   }
-
   public boolean isEmptySlotList()
   {
     return true;
   }
 
-
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
       throw new RuntimeException("SlotList_EmptySlotList has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

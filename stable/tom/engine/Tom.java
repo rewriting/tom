@@ -49,21 +49,24 @@ public class Tom {
       System.out.println("\tversion " + version);
     }
     System.out.println("Options:");
-    System.out.println("\t--verbose: set verbose mode on");
-    System.out.println("\t--noOutput: do not generate code");
-    System.out.println("\t--atermStat: print internal ATerm statistics");
-    System.out.println("\t--cCode | -c: generate C code");
-    System.out.println("\t--eCode: generate Eiffel code");
-    System.out.println("\t--doCompile: start after type-checking");
-    System.out.println("\t--intermediate: generate intermediate files");
-    System.out.println("\t--version: print version");
-    System.out.println("\t--noCheck: do not verify correctness");
-    System.out.println("\t--noWarning: do not print nay warning");
-    System.out.println("\t--lazyType: use universal type");
-    System.out.println("\t--demo: run demo mode");
-    System.out.println("\t--noDeclaration: do not generate code for declarations");
-    System.out.println("\t--import <path>: path for %include");
-    System.out.println("\t--pretty: generate readable code");
+    System.out.println("\t--help | -h:\t\tShow this help");
+    System.out.println("\t--cCode | -c:\t\tGenerate C code");
+    System.out.println("\t--eCode | -e:\t\tGenerate Eiffel code");
+    System.out.println("\t--version | -V:\t\tPrint version");
+    System.out.println("\t--verbose | -v:\t\tSet verbose mode on");
+    System.out.println("\t--intermediate | -i:\tGenerate intermediate files");
+    System.out.println("\t--noOutput | -o:\t\tDo not generate code");
+    System.out.println("\t--noDeclaration | -D:\tDo not generate code for declarations");
+    System.out.println("\t--doCompile | -C:\tStart after type-checking");
+    System.out.println("\t--noCheck | -f:\t\tDo not verify correctness");
+    System.out.println("\t--noWarning | -W:\tDo not print any warning");
+    System.out.println("\t--lazyType | -l:\t\tUse universal type");
+    System.out.println("\t--demo | -d:\t\tRun demo mode");
+    System.out.println("\t--import <path> | -I:\tPath for %include");
+    System.out.println("\t--pretty | -p:\t\tGenerate readable code");
+    System.out.println("\t--atermStat | -s:\tPrint internal ATerm statistics");
+    System.out.println("\t--optimize | -O:\t\tOptimized generated code");
+    System.out.println("\t--static:\t\tGenerate static functions");
     System.exit(0);
   }
 
@@ -71,63 +74,66 @@ public class Tom {
     String fileName        = "";
     String inputSuffix     = ".t";
     String outputSuffix    = ".java";
-    String compiledSuffix  = ".tfix.compiled";
     String parsedSuffix    = ".tfix.parsed";
     String expandedSuffix  = ".tfix.expanded";
-    String checkedSuffix   = ".tfix.checked";
+    String compiledSuffix  = ".tfix.compiled";
+    String optimizedSuffix  = ".tfix.optimized";
     String parsedTableSuffix = ".tfix.parsed.table";
-    String checkedTableSuffix = ".tfix.checked.table";
+    String expandedTableSuffix = ".tfix.expanded.table";
 
     List importList = new ArrayList();
     
     if(args.length >= 1) {
       for(int i=0; i < args.length; i++) { 
 	if(args[i].charAt(0) == '-') {
-          if(args[i].equals("--version")) {
+          if(args[i].equals("--version") || args[i].equals("-V")) {
             Flags.version = true;
             usage();
-          } else if(args[i].equals("--noOutput")) {
+          } else if(args[i].equals("--noOutput") || args[i].equals("-o")) {
 	    Flags.printOutput = false;
-          } else if(args[i].equals("--verbose")) {
+          } else if(args[i].equals("--verbose") || args[i].equals("-v")) {
 	    Flags.verbose = true;
-          } else if(args[i].equals("--atermStat")) {
+          } else if(args[i].equals("--atermStat") || args[i].equals("-s")) {
 	    Flags.atermStat = true;
           } else if(args[i].equals("--cCode") || args[i].equals("-c")) {
             Flags.jCode = false;
             Flags.cCode = true;
             outputSuffix = ".tom.c";
-          } else if(args[i].equals("--eCode")) {
+          } else if(args[i].equals("--eCode") || args[i].equals("-e")) {
             Flags.eCode = true;
             Flags.jCode = false;
             Flags.supportedGoto = false;
             Flags.supportedBlock = false;
             outputSuffix = ".e";
-          } else if(args[i].equals("--doCompile")) {
+          } else if(args[i].equals("--doCompile") || args[i].equals("-C")) {
             Flags.doOnlyCompile = true;
             Flags.doParse = false;
             Flags.doExpand = false;
-          } else if(args[i].equals("--intermediate")) {
+          } else if(args[i].equals("--intermediate") || args[i].equals("-i")) {
             Flags.intermediate = true;
-          } else if(args[i].equals("--noWarning")) {
+          } else if(args[i].equals("--noWarning") || args[i].equals("-W")) {
             Flags.noWarning = true;
-          } else if(args[i].equals("--noCheck")) {
+          } else if(args[i].equals("--noCheck") || args[i].equals("-f")) {
             Flags.doCheck = false;
-          } else if(args[i].equals("--strictType")) {
-            System.out.println("Warning: --strictType is now set by default");
-            Flags.strictType = true;
-          } else if(args[i].equals("--lazyType")) {
+          } else if(args[i].equals("--lazyType") || args[i].equals("-l")) {
             Flags.strictType = false;
-	  } else if(args[i].equals("--demo")) {
+	  } else if(args[i].equals("--demo") || args[i].equals("-d")) {
 	    Flags.demo = true;
             Flags.noWarning = true;
-	  } else if(args[i].equals("--noDeclaration")) {
+	  } else if(args[i].equals("--noDeclaration") || args[i].equals("-D")) {
 	    Flags.genDecl = false;
-	  } else if(args[i].equals("--import")) {
+	  } else if(args[i].equals("--import") || args[i].equals("-I")) {
             i++;
             File importFile = new File(args[i]);
             importList.add(importFile);
-          } else if(args[i].equals("--pretty")) {
+          } else if(args[i].equals("--pretty") || args[i].equals("-p")) {
 	    Flags.pretty = true;
+          } else if(args[i].equals("--optimize") || args[i].equals("-O")) {
+	    Flags.doOptimization = true;
+          } else if(args[i].equals("--static")) {
+	    Flags.staticFunction = true;
+          } else if(args[i].equals("--help") || args[i].equals("-h")) {
+	    usage();
           } else {
             System.out.println("'" + args[i] + "' is not a valid option");
             usage();
@@ -164,7 +170,7 @@ public class Tom {
     if(Flags.doParse) {
       inputFileName = fileName + inputSuffix;
     } else if(Flags.doOnlyCompile) {
-      inputFileName = fileName + checkedSuffix;
+      inputFileName = fileName + expandedSuffix;
     }
 
     InputStream input;
@@ -181,7 +187,6 @@ public class Tom {
         
     TomTerm parsedTerm   = null;
     TomTerm expandedTerm = null;
-    TomTerm checkedTerm  = null;
     TomTerm compiledTerm = null;
 
     if(Flags.doParse && Flags.doExpand) {
@@ -198,7 +203,7 @@ public class Tom {
           fileList[index++] = (File)it.next();
         }
         
-        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList);
+        TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList,0,inputFileName);
         startChrono();
         parsedTerm = tomParser.startParsing();
         stopChrono();
@@ -213,26 +218,29 @@ public class Tom {
         tomChecker.checkSyntax(parsedTerm);
         stopChrono();
         if(Flags.verbose) System.out.println("TOM syntax checking phase " + getChrono());
-
-        
+        int nbError = tomChecker.getNumberFoundError();
+        if(nbError > 0) {
+          for(int i=0 ; i<nbError ; i++) {
+              //System.out.println(tomChecker.getMessage(i));
+          }
+          
+          String msg = "Tom Checker:  Encountered " + nbError +
+            " errors during verification phase.";
+          throw new CheckErrorException(msg);
+        }
+                
 	TomExpander tomExpander = new TomExpander(environment);
         startChrono();
-        expandedTerm = tomExpander.expandSyntax(parsedTerm);
+        expandedTerm = tomExpander.expandTomSyntax(parsedTerm);
+        tomExpander.updateSymbol();
+        TomTerm context = null;
+        expandedTerm  = tomExpander.expandVariable(context, expandedTerm);
+        tomChecker.checkVariableCoherence(expandedTerm);
         stopChrono();
-        if(Flags.verbose) System.out.println("TOM syntax expansion phase " + getChrono());
+        if(Flags.verbose) System.out.println("TOM expansion phase " + getChrono());
         if(Flags.intermediate) {
           generateOutput(fileName + expandedSuffix,expandedTerm);
-        }
-     
-        startChrono();
-        TomTerm context = null;
-        tomExpander.updateSymbol();
-        checkedTerm  = tomExpander.pass1(context, expandedTerm);
-        stopChrono();
-        if(Flags.verbose) System.out.println("TOM checking phase " + getChrono());
-        if(Flags.intermediate) {
-          generateOutput(fileName + checkedSuffix,checkedTerm);
-          generateOutput(fileName + checkedTableSuffix,symbolTable.toTerm());
+          generateOutput(fileName + expandedTableSuffix,symbolTable.toTerm());
         }
 
         if(Flags.demo) {
@@ -252,7 +260,6 @@ public class Tom {
         return;
       } catch(CheckErrorException e2) {
         System.out.println(e2);
-        System.out.println("\nTom Checker:  Encountered errors during verification phase.");
         System.out.println("No file generated.");
         return;
       } catch(TomException e3) {
@@ -281,12 +288,28 @@ public class Tom {
     if(Flags.doCompile) {
       try {
         if(Flags.doOnlyCompile) {
-          checkedTerm = (TomTerm) tomSignatureFactory.readFromTextFile(input);
+          ATerm fromFileExpandTerm = null;
+          fromFileExpandTerm = tomSignatureFactory.readFromFile(input);
+          expandedTerm = (TomTerm) TomTerm.fromTerm(fromFileExpandTerm);
+          try {
+            input = new FileInputStream(inputFileName+".table");
+          } catch (FileNotFoundException e) {
+            System.out.println("Tom Compiler:  File " + inputFileName + " not found.");
+            System.out.println("No file generated.");
+            return;
+          } catch(IOException e) {
+            System.out.println("No file generated.");
+            throw new InternalError("read error");
+          }
+          ATerm fromFileSymblTable = null;
+          fromFileSymblTable = tomSignatureFactory.readFromFile(input);
+          TomSymbolTable symbTable = (TomSymbolTable) TomSymbolTable.fromTerm(fromFileSymblTable);
+          symbolTable.regenerateFromTerm(symbTable);
         }
 
-	TomCompiler tomCompiler = new TomCompiler(environment);
+        TomCompiler tomCompiler = new TomCompiler(environment);
         startChrono();
-        TomTerm simpleCheckedTerm = tomCompiler.pass2_1(checkedTerm);
+        TomTerm simpleCheckedTerm = tomCompiler.pass2_1(expandedTerm);
         
         compiledTerm = tomCompiler.pass2_2(simpleCheckedTerm);
           //System.out.println("pass2 =\n" + compiledTerm);
@@ -296,7 +319,16 @@ public class Tom {
         if(Flags.verbose) System.out.println("TOM compilation phase " + getChrono());
         if(Flags.intermediate) generateOutput(fileName + compiledSuffix,compiledTerm);
 
-	jtom.backend.TomGenerator tomGenerator = new jtom.backend.TomGenerator(environment);
+        if (Flags.doOptimization) {
+          TomOptimizer tomOptimizer = new TomOptimizer(environment);
+          startChrono();
+          compiledTerm = tomOptimizer.optimize(compiledTerm);
+          stopChrono();
+          if(Flags.verbose) System.out.println("TOM optimization phase " + getChrono());
+          if(Flags.intermediate) generateOutput(fileName + optimizedSuffix,compiledTerm);   
+        }
+        
+	TomGenerator tomGenerator = new TomGenerator(environment);
         startChrono();
         int defaultDeep = 2;
         Writer writer = new BufferedWriter(new OutputStreamWriter(
@@ -310,9 +342,6 @@ public class Tom {
           statistics.initInfoCompiler();
           statistics.initInfoGenerator();
         }
-      } catch(TomException e) {
-        System.out.println(e);
-        System.out.println("No file generated.");
       } catch(IOException e) {
         System.out.println("No file generated.");
         throw new InternalError("read error");

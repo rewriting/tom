@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomSymbolTable_TableImpl
+abstract public class TomSymbolTable_TableImpl
 extends TomSymbolTable
 {
   static private aterm.ATerm pattern = null;
@@ -11,7 +9,6 @@ extends TomSymbolTable
     return pattern;
   }
   private static int index_entryList = 0;
-
   public shared.SharedObject duplicate() {
     TomSymbolTable_Table clone = new TomSymbolTable_Table();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -26,7 +23,6 @@ extends TomSymbolTable
     pattern = getStaticFactory().parse("Table(<term>)");
   }
 
-
   static public TomSymbolTable fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -40,7 +36,6 @@ extends TomSymbolTable
       return null;
     }
   }
-
   public boolean isTable()
   {
     return true;
@@ -50,7 +45,6 @@ extends TomSymbolTable
   {
     return true;
   }
-
 
   public TomEntryList getEntryList()
   {
@@ -73,7 +67,6 @@ extends TomSymbolTable
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

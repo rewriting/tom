@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Declaration_EmptyDeclarationImpl
+abstract public class Declaration_EmptyDeclarationImpl
 extends Declaration
 {
   static private aterm.ATerm pattern = null;
@@ -10,7 +8,6 @@ extends Declaration
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-
   public shared.SharedObject duplicate() {
     Declaration_EmptyDeclaration clone = new Declaration_EmptyDeclaration();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -25,7 +22,6 @@ extends Declaration
     pattern = getStaticFactory().parse("EmptyDeclaration");
   }
 
-
   static public Declaration fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -39,17 +35,14 @@ extends Declaration
       return null;
     }
   }
-
   public boolean isEmptyDeclaration()
   {
     return true;
   }
 
-
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
       throw new RuntimeException("Declaration_EmptyDeclaration has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

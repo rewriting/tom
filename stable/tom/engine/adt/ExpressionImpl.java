@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class ExpressionImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static Expression fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(Expression peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static Expression fromTerm(aterm.ATerm trm)
   {
     Expression tmp;
@@ -102,7 +98,6 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a Expression: " + trm);
   }
-
 
   public boolean isTomTermToExpression()
   {
@@ -259,7 +254,6 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
     return false;
   }
 
-
   public TomTerm getAstTerm()
   {
      throw new RuntimeException("This Expression has no AstTerm");
@@ -389,7 +383,6 @@ abstract public class ExpressionImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This Expression has no SubjectListName");
   }
-
 
 
 }

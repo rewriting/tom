@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomEntryList_ConsEntryListImpl
+abstract public class TomEntryList_ConsEntryListImpl
 extends TomEntryList
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends TomEntryList
   }
   private static int index_headEntryList = 0;
   private static int index_tailEntryList = 1;
-
   public shared.SharedObject duplicate() {
     TomEntryList_ConsEntryList clone = new TomEntryList_ConsEntryList();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends TomEntryList
     pattern = getStaticFactory().parse("[<term>,<list>]");
   }
 
-
   static public TomEntryList fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends TomEntryList
       return null;
     }
   }
-
   public boolean isConsEntryList()
   {
     return true;
@@ -56,7 +51,6 @@ extends TomEntryList
   {
     return true;
   }
-
 
   public TomEntry getHeadEntryList()
   {
@@ -94,7 +88,6 @@ extends TomEntryList
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = getArgument(1).hashCode() + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

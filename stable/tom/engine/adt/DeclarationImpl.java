@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class DeclarationImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static Declaration fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(Declaration peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static Declaration fromTerm(aterm.ATerm trm)
   {
     Declaration tmp;
@@ -122,7 +118,6 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a Declaration: " + trm);
   }
-
 
   public boolean isTypeTermDecl()
   {
@@ -344,7 +339,6 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
     return false;
   }
 
-
   public TomName getAstName()
   {
      throw new RuntimeException("This Declaration has no AstName");
@@ -554,7 +548,6 @@ abstract public class DeclarationImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This Declaration has no Args");
   }
-
 
 
 }

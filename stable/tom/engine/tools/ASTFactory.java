@@ -156,10 +156,6 @@ public class ASTFactory {
   public Option makeOriginTracking( String name, String line ) {
     return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), new Integer(line) );
   }
-
-  public Option makeLRParen( String name ) {
-    return tsf().makeOption_LRParen(tsf().makeTomName_Name(name));
-  }
   
   public Declaration makeMakeDecl(String opname, TomType returnType, ArrayList argList, TargetLanguage tlcode, Option orgTrack) {
     TomName name = tsf().makeTomName_Name(opname);  

@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Declaration_SymbolDeclImpl
+abstract public class Declaration_SymbolDeclImpl
 extends Declaration
 {
   static private aterm.ATerm pattern = null;
@@ -11,7 +9,6 @@ extends Declaration
     return pattern;
   }
   private static int index_astName = 0;
-
   public shared.SharedObject duplicate() {
     Declaration_SymbolDecl clone = new Declaration_SymbolDecl();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -26,7 +23,6 @@ extends Declaration
     pattern = getStaticFactory().parse("SymbolDecl(<term>)");
   }
 
-
   static public Declaration fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -40,7 +36,6 @@ extends Declaration
       return null;
     }
   }
-
   public boolean isSymbolDecl()
   {
     return true;
@@ -50,7 +45,6 @@ extends Declaration
   {
     return true;
   }
-
 
   public TomName getAstName()
   {
@@ -73,7 +67,6 @@ extends Declaration
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomTerm_MatchImpl
+abstract public class TomTerm_MatchImpl
 extends TomTerm
 {
   static private aterm.ATerm pattern = null;
@@ -13,7 +11,6 @@ extends TomTerm
   private static int index_option = 0;
   private static int index_subjectList = 1;
   private static int index_patternList = 2;
-
   public shared.SharedObject duplicate() {
     TomTerm_Match clone = new TomTerm_Match();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -28,7 +25,6 @@ extends TomTerm
     pattern = getStaticFactory().parse("Match(<term>,<term>,<term>)");
   }
 
-
   static public TomTerm fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -42,7 +38,6 @@ extends TomTerm
       return null;
     }
   }
-
   public boolean isMatch()
   {
     return true;
@@ -62,7 +57,6 @@ extends TomTerm
   {
     return true;
   }
-
 
   public Option getOption()
   {
@@ -115,7 +109,6 @@ extends TomTerm
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = getArgument(1).hashCode() + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

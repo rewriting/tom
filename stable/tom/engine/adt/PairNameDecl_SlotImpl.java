@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class PairNameDecl_SlotImpl
+abstract public class PairNameDecl_SlotImpl
 extends PairNameDecl
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends PairNameDecl
   }
   private static int index_slotName = 0;
   private static int index_slotDecl = 1;
-
   public shared.SharedObject duplicate() {
     PairNameDecl_Slot clone = new PairNameDecl_Slot();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends PairNameDecl
     pattern = getStaticFactory().parse("Slot(<term>,<term>)");
   }
 
-
   static public PairNameDecl fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends PairNameDecl
       return null;
     }
   }
-
   public boolean isSlot()
   {
     return true;
@@ -56,7 +51,6 @@ extends PairNameDecl
   {
     return true;
   }
-
 
   public TomName getSlotName()
   {
@@ -94,7 +88,6 @@ extends PairNameDecl
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

@@ -29,7 +29,7 @@ import java.io.*;
 
 public class OutputCode {
   protected Writer file;
-  private int lineCounter = 0;
+  private int lineCounter = 1;
 
   public OutputCode(Writer file) {
     this.file = file;
@@ -109,8 +109,16 @@ public class OutputCode {
 
   public void write(int deep,String s, int line, int length) throws IOException {
     if(lineCounter > line && !Flags.pretty) {
+      if(Flags.cCode)
+      {
+        String s1 = "\n#line "+line+"\n";
+          // writeln(deep,s);
+        s = s1+s;
+      }
+      else {
       System.out.println("Warning: Synchronization issue: Line: " +
-                         line + " versus LineCounter:" + lineCounter);
+                         line + " versus LineCounter:" + lineCounter +s);
+      }
     }
     
     while(lineCounter < line) {

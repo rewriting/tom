@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Position_PositionImpl
+abstract public class Position_PositionImpl
 extends Position
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends Position
   }
   private static int index_line = 0;
   private static int index_column = 1;
-
   public shared.SharedObject duplicate() {
     Position_Position clone = new Position_Position();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends Position
     pattern = getStaticFactory().parse("Position(<int>,<int>)");
   }
 
-
   static public Position fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends Position
       return null;
     }
   }
-
   public aterm.ATerm toTerm() {
     if(term == null) {
       java.util.List args = new java.util.LinkedList();
@@ -66,7 +61,6 @@ extends Position
   {
     return true;
   }
-
 
   public Integer getLine()
   {
@@ -104,5 +98,4 @@ extends Position
     }
     return super.setArgument(arg, i);
   }
-
 }

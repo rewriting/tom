@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Declaration_GetTailDeclImpl
+abstract public class Declaration_GetTailDeclImpl
 extends Declaration
 {
   static private aterm.ATerm pattern = null;
@@ -13,7 +11,6 @@ extends Declaration
   private static int index_var = 0;
   private static int index_tlcode = 1;
   private static int index_orgTrack = 2;
-
   public shared.SharedObject duplicate() {
     Declaration_GetTailDecl clone = new Declaration_GetTailDecl();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -28,7 +25,6 @@ extends Declaration
     pattern = getStaticFactory().parse("GetTailDecl(<term>,<term>,<term>)");
   }
 
-
   static public Declaration fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -42,7 +38,6 @@ extends Declaration
       return null;
     }
   }
-
   public boolean isGetTailDecl()
   {
     return true;
@@ -62,7 +57,6 @@ extends Declaration
   {
     return true;
   }
-
 
   public TomTerm getVar()
   {
@@ -115,7 +109,6 @@ extends Declaration
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

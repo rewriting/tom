@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomSymbol_SymbolImpl
+abstract public class TomSymbol_SymbolImpl
 extends TomSymbol
 {
   static private aterm.ATerm pattern = null;
@@ -15,7 +13,6 @@ extends TomSymbol
   private static int index_slotList = 2;
   private static int index_option = 3;
   private static int index_tlCode = 4;
-
   public shared.SharedObject duplicate() {
     TomSymbol_Symbol clone = new TomSymbol_Symbol();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -30,7 +27,6 @@ extends TomSymbol
     pattern = getStaticFactory().parse("Symbol(<term>,<term>,<term>,<term>,<term>)");
   }
 
-
   static public TomSymbol fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -44,7 +40,6 @@ extends TomSymbol
       return null;
     }
   }
-
   public boolean isSymbol()
   {
     return true;
@@ -74,7 +69,6 @@ extends TomSymbol
   {
     return true;
   }
-
 
   public TomName getAstName()
   {
@@ -157,7 +151,6 @@ extends TomSymbol
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

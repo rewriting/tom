@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Expression_NotImpl
+abstract public class Expression_NotImpl
 extends Expression
 {
   static private aterm.ATerm pattern = null;
@@ -11,7 +9,6 @@ extends Expression
     return pattern;
   }
   private static int index_arg = 0;
-
   public shared.SharedObject duplicate() {
     Expression_Not clone = new Expression_Not();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -26,7 +23,6 @@ extends Expression
     pattern = getStaticFactory().parse("Not(<term>)");
   }
 
-
   static public Expression fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -40,7 +36,6 @@ extends Expression
       return null;
     }
   }
-
   public boolean isNot()
   {
     return true;
@@ -50,7 +45,6 @@ extends Expression
   {
     return true;
   }
-
 
   public Expression getArg()
   {
@@ -73,7 +67,6 @@ extends Expression
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

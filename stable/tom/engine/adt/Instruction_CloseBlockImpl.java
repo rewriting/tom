@@ -1,38 +1,33 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Option_LRParenImpl
-extends Option
+abstract public class Instruction_CloseBlockImpl
+extends Instruction
 {
   static private aterm.ATerm pattern = null;
 
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-  private static int index_astName = 0;
-
   public shared.SharedObject duplicate() {
-    Option_LRParen clone = new Option_LRParen();
+    Instruction_CloseBlock clone = new Instruction_CloseBlock();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
-    return getTomSignatureFactory().makeOption_LRParen(fun, i_args, annos);
+    return getTomSignatureFactory().makeInstruction_CloseBlock(fun, i_args, annos);
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("LRParen(<term>)");
+    pattern = getStaticFactory().parse("CloseBlock");
   }
 
-
-  static public Option fromTerm(aterm.ATerm trm)
+  static public Instruction fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      Option tmp = getStaticTomSignatureFactory().makeOption_LRParen(TomName.fromTerm( (aterm.ATerm) children.get(0)));
+      Instruction tmp = getStaticTomSignatureFactory().makeInstruction_CloseBlock();
       tmp.setTerm(trm);
       return tmp;
     }
@@ -40,45 +35,18 @@ extends Option
       return null;
     }
   }
-
-  public boolean isLRParen()
+  public boolean isCloseBlock()
   {
     return true;
-  }
-
-  public boolean hasAstName()
-  {
-    return true;
-  }
-
-
-  public TomName getAstName()
-  {
-    return (TomName) this.getArgument(index_astName) ;
-  }
-
-  public Option setAstName(TomName _astName)
-  {
-    return (Option) super.setArgument(_astName, index_astName);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
-    switch(i) {
-      case 0:
-        if (! (arg instanceof TomName)) { 
-          throw new RuntimeException("Argument 0 of a Option_LRParen should have type TomName");
-        }
-        break;
-      default: throw new RuntimeException("Option_LRParen does not have an argument at " + i );
-    }
-    return super.setArgument(arg, i);
+      throw new RuntimeException("Instruction_CloseBlock has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
     int b = 0x9e3779b9;
-    a += (getArgument(0).hashCode() << 0);
 
     a -= b; a -= c; a ^= (c >> 13);
     b -= c; b -= a; b ^= (a << 8);

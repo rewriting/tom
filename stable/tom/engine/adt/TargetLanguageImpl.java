@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class TargetLanguageImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class TargetLanguageImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static TargetLanguage fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(TargetLanguage peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static TargetLanguage fromTerm(aterm.ATerm trm)
   {
     TargetLanguage tmp;
@@ -38,7 +34,6 @@ abstract public class TargetLanguageImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a TargetLanguage: " + trm);
   }
-
 
   public boolean isTL()
   {
@@ -64,7 +59,6 @@ abstract public class TargetLanguageImpl extends TomSignatureConstructor
   {
     return false;
   }
-
 
   public String getCode()
   {
@@ -95,7 +89,6 @@ abstract public class TargetLanguageImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TargetLanguage has no End");
   }
-
 
 
 }

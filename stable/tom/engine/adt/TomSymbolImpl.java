@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class TomSymbolImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static TomSymbol fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(TomSymbol peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static TomSymbol fromTerm(aterm.ATerm trm)
   {
     TomSymbol tmp;
@@ -34,7 +30,6 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a TomSymbol: " + trm);
   }
-
 
   public boolean isSymbol()
   {
@@ -65,7 +60,6 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
   {
     return false;
   }
-
 
   public TomName getAstName()
   {
@@ -116,7 +110,6 @@ abstract public class TomSymbolImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomSymbol has no TlCode");
   }
-
 
 
 }

@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomName_PositionNameImpl
+abstract public class TomName_PositionNameImpl
 extends TomName
 {
   static private aterm.ATerm pattern = null;
@@ -11,7 +9,6 @@ extends TomName
     return pattern;
   }
   private static int index_numberList = 0;
-
   public shared.SharedObject duplicate() {
     TomName_PositionName clone = new TomName_PositionName();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -26,7 +23,6 @@ extends TomName
     pattern = getStaticFactory().parse("PositionName(<term>)");
   }
 
-
   static public TomName fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -40,7 +36,6 @@ extends TomName
       return null;
     }
   }
-
   public boolean isPositionName()
   {
     return true;
@@ -50,7 +45,6 @@ extends TomName
   {
     return true;
   }
-
 
   public TomList getNumberList()
   {
@@ -73,7 +67,6 @@ extends TomName
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

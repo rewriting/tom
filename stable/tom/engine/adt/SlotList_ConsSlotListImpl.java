@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class SlotList_ConsSlotListImpl
+abstract public class SlotList_ConsSlotListImpl
 extends SlotList
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends SlotList
   }
   private static int index_headSlotList = 0;
   private static int index_tailSlotList = 1;
-
   public shared.SharedObject duplicate() {
     SlotList_ConsSlotList clone = new SlotList_ConsSlotList();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends SlotList
     pattern = getStaticFactory().parse("[<term>,<list>]");
   }
 
-
   static public SlotList fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends SlotList
       return null;
     }
   }
-
   public boolean isConsSlotList()
   {
     return true;
@@ -56,7 +51,6 @@ extends SlotList
   {
     return true;
   }
-
 
   public PairNameDecl getHeadSlotList()
   {
@@ -94,7 +88,6 @@ extends SlotList
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = getArgument(1).hashCode() + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

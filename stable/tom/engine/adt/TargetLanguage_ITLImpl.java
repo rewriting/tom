@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TargetLanguage_ITLImpl
+abstract public class TargetLanguage_ITLImpl
 extends TargetLanguage
 {
   static private aterm.ATerm pattern = null;
@@ -11,7 +9,6 @@ extends TargetLanguage
     return pattern;
   }
   private static int index_code = 0;
-
   public shared.SharedObject duplicate() {
     TargetLanguage_ITL clone = new TargetLanguage_ITL();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -26,7 +23,6 @@ extends TargetLanguage
     pattern = getStaticFactory().parse("ITL(<str>)");
   }
 
-
   static public TargetLanguage fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -40,7 +36,6 @@ extends TargetLanguage
       return null;
     }
   }
-
   public aterm.ATerm toTerm() {
     if(term == null) {
       java.util.List args = new java.util.LinkedList();
@@ -59,7 +54,6 @@ extends TargetLanguage
   {
     return true;
   }
-
 
   public String getCode()
   {
@@ -82,5 +76,4 @@ extends TargetLanguage
     }
     return super.setArgument(arg, i);
   }
-
 }

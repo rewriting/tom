@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class TomSymbolTableImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class TomSymbolTableImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static TomSymbolTable fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(TomSymbolTable peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static TomSymbolTable fromTerm(aterm.ATerm trm)
   {
     TomSymbolTable tmp;
@@ -35,7 +31,6 @@ abstract public class TomSymbolTableImpl extends TomSignatureConstructor
     throw new RuntimeException("This is not a TomSymbolTable: " + trm);
   }
 
-
   public boolean isTable()
   {
     return false;
@@ -46,7 +41,6 @@ abstract public class TomSymbolTableImpl extends TomSignatureConstructor
     return false;
   }
 
-
   public TomEntryList getEntryList()
   {
      throw new RuntimeException("This TomSymbolTable has no EntryList");
@@ -56,7 +50,6 @@ abstract public class TomSymbolTableImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomSymbolTable has no EntryList");
   }
-
 
 
 }

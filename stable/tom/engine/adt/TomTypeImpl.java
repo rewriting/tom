@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class TomTypeImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class TomTypeImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static TomType fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(TomType peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static TomType fromTerm(aterm.ATerm trm)
   {
     TomType tmp;
@@ -54,7 +50,6 @@ abstract public class TomTypeImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a TomType: " + trm);
   }
-
 
   public boolean isType()
   {
@@ -116,7 +111,6 @@ abstract public class TomTypeImpl extends TomSignatureConstructor
     return false;
   }
 
-
   public TomType getTomType()
   {
      throw new RuntimeException("This TomType has no TomType");
@@ -176,7 +170,6 @@ abstract public class TomTypeImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomType has no Tl");
   }
-
 
 
 }

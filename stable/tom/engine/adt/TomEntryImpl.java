@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class TomEntryImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class TomEntryImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static TomEntry fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(TomEntry peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static TomEntry fromTerm(aterm.ATerm trm)
   {
     TomEntry tmp;
@@ -34,7 +30,6 @@ abstract public class TomEntryImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a TomEntry: " + trm);
   }
-
 
   public boolean isEntry()
   {
@@ -50,7 +45,6 @@ abstract public class TomEntryImpl extends TomSignatureConstructor
   {
     return false;
   }
-
 
   public String getStrName()
   {
@@ -71,7 +65,6 @@ abstract public class TomEntryImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomEntry has no AstSymbol");
   }
-
 
 
 }

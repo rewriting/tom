@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class TomNameImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class TomNameImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static TomName fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(TomName peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static TomName fromTerm(aterm.ATerm trm)
   {
     TomName tmp;
@@ -42,7 +38,6 @@ abstract public class TomNameImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a TomName: " + trm);
   }
-
 
   public boolean isName()
   {
@@ -69,7 +64,6 @@ abstract public class TomNameImpl extends TomSignatureConstructor
     return false;
   }
 
-
   public String getString()
   {
      throw new RuntimeException("This TomName has no String");
@@ -89,7 +83,6 @@ abstract public class TomNameImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomName has no NumberList");
   }
-
 
 
 }

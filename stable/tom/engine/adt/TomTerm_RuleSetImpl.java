@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomTerm_RuleSetImpl
+abstract public class TomTerm_RuleSetImpl
 extends TomTerm
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends TomTerm
   }
   private static int index_option = 0;
   private static int index_list = 1;
-
   public shared.SharedObject duplicate() {
     TomTerm_RuleSet clone = new TomTerm_RuleSet();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends TomTerm
     pattern = getStaticFactory().parse("RuleSet(<term>,<term>)");
   }
 
-
   static public TomTerm fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends TomTerm
       return null;
     }
   }
-
   public boolean isRuleSet()
   {
     return true;
@@ -56,7 +51,6 @@ extends TomTerm
   {
     return true;
   }
-
 
   public Option getOption()
   {
@@ -94,7 +88,6 @@ extends TomTerm
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

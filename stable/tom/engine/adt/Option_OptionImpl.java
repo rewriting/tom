@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Option_OptionImpl
+abstract public class Option_OptionImpl
 extends Option
 {
   static private aterm.ATerm pattern = null;
@@ -11,7 +9,6 @@ extends Option
     return pattern;
   }
   private static int index_optionList = 0;
-
   public shared.SharedObject duplicate() {
     Option_Option clone = new Option_Option();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -26,7 +23,6 @@ extends Option
     pattern = getStaticFactory().parse("Option(<term>)");
   }
 
-
   static public Option fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -40,7 +36,6 @@ extends Option
       return null;
     }
   }
-
   public boolean isOption()
   {
     return true;
@@ -50,7 +45,6 @@ extends Option
   {
     return true;
   }
-
 
   public OptionList getOptionList()
   {
@@ -73,7 +67,6 @@ extends Option
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

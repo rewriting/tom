@@ -43,18 +43,19 @@ public interface TomParserConstants {
   int OPERATOR = 12;
   int OPERATOR_LIST = 13;
   int OPERATOR_ARRAY = 14;
-  int SINGLE_LINE_COMMENT = 24;
-  int FORMAL_COMMENT = 25;
-  int MULTI_LINE_COMMENT = 26;
-  int STRING_LITERAL = 28;
-  int LBRACE = 29;
-  int RBRACE = 30;
-  int OTHER = 31;
-  int TOM_SINGLE_LINE_COMMENT = 40;
-  int TOM_FORMAL_COMMENT = 41;
-  int TOM_MULTI_LINE_COMMENT = 42;
-  int TOM_ARROW = 44;
-  int TOM_DOUBLE_ARROW = 45;
+  int SINGLE_LINE_COMMENT = 23;
+  int FORMAL_COMMENT = 24;
+  int MULTI_LINE_COMMENT = 25;
+  int STRING_LITERAL = 27;
+  int LBRACE = 28;
+  int RBRACE = 29;
+  int OTHER = 30;
+  int TOM_SINGLE_LINE_COMMENT = 39;
+  int TOM_FORMAL_COMMENT = 40;
+  int TOM_MULTI_LINE_COMMENT = 41;
+  int TOM_ARROW = 43;
+  int TOM_DOUBLE_ARROW = 44;
+  int TOM_ALTERNATIVE = 45;
   int TOM_COMMA = 46;
   int TOM_COLON = 47;
   int TOM_EQUAL = 48;
@@ -122,13 +123,12 @@ public interface TomParserConstants {
     "\"\\r\"",
     "\"\\f\"",
     "\"//\"",
-    "\"--\"",
-    "<token of kind 22>",
+    "<token of kind 21>",
     "\"/*\"",
     "<SINGLE_LINE_COMMENT>",
     "\"*/\"",
     "\"*/\"",
-    "<token of kind 27>",
+    "<token of kind 26>",
     "<STRING_LITERAL>",
     "\"{\"",
     "\"}\"",
@@ -139,14 +139,15 @@ public interface TomParserConstants {
     "\"\\r\"",
     "\"\\f\"",
     "\"//\"",
-    "<token of kind 38>",
+    "<token of kind 37>",
     "\"/*\"",
     "<TOM_SINGLE_LINE_COMMENT>",
     "\"*/\"",
     "\"*/\"",
-    "<token of kind 43>",
+    "<token of kind 42>",
     "\"->\"",
     "\"=>\"",
+    "\"|\"",
     "\",\"",
     "\":\"",
     "\"=\"",

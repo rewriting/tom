@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Expression_FalseTLImpl
+abstract public class Expression_FalseTLImpl
 extends Expression
 {
   static private aterm.ATerm pattern = null;
@@ -10,7 +8,6 @@ extends Expression
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-
   public shared.SharedObject duplicate() {
     Expression_FalseTL clone = new Expression_FalseTL();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -25,7 +22,6 @@ extends Expression
     pattern = getStaticFactory().parse("FalseTL");
   }
 
-
   static public Expression fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -39,17 +35,14 @@ extends Expression
       return null;
     }
   }
-
   public boolean isFalseTL()
   {
     return true;
   }
 
-
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
       throw new RuntimeException("Expression_FalseTL has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

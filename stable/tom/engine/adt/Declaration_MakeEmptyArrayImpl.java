@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Declaration_MakeEmptyArrayImpl
+abstract public class Declaration_MakeEmptyArrayImpl
 extends Declaration
 {
   static private aterm.ATerm pattern = null;
@@ -14,7 +12,6 @@ extends Declaration
   private static int index_varSize = 1;
   private static int index_tlCode = 2;
   private static int index_orgTrack = 3;
-
   public shared.SharedObject duplicate() {
     Declaration_MakeEmptyArray clone = new Declaration_MakeEmptyArray();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -29,7 +26,6 @@ extends Declaration
     pattern = getStaticFactory().parse("MakeEmptyArray(<term>,<term>,<term>,<term>)");
   }
 
-
   static public Declaration fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -43,7 +39,6 @@ extends Declaration
       return null;
     }
   }
-
   public boolean isMakeEmptyArray()
   {
     return true;
@@ -68,7 +63,6 @@ extends Declaration
   {
     return true;
   }
-
 
   public TomName getAstName()
   {
@@ -136,7 +130,6 @@ extends Declaration
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

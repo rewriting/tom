@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Expression_GetSliceArrayImpl
+abstract public class Expression_GetSliceArrayImpl
 extends Expression
 {
   static private aterm.ATerm pattern = null;
@@ -14,7 +12,6 @@ extends Expression
   private static int index_subjectListName = 1;
   private static int index_variableBeginAST = 2;
   private static int index_variableEndAST = 3;
-
   public shared.SharedObject duplicate() {
     Expression_GetSliceArray clone = new Expression_GetSliceArray();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -29,7 +26,6 @@ extends Expression
     pattern = getStaticFactory().parse("GetSliceArray(<term>,<term>,<term>,<term>)");
   }
 
-
   static public Expression fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -43,7 +39,6 @@ extends Expression
       return null;
     }
   }
-
   public boolean isGetSliceArray()
   {
     return true;
@@ -68,7 +63,6 @@ extends Expression
   {
     return true;
   }
-
 
   public TomName getAstName()
   {
@@ -136,7 +130,6 @@ extends Expression
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomEntry_EntryImpl
+abstract public class TomEntry_EntryImpl
 extends TomEntry
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends TomEntry
   }
   private static int index_strName = 0;
   private static int index_astSymbol = 1;
-
   public shared.SharedObject duplicate() {
     TomEntry_Entry clone = new TomEntry_Entry();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends TomEntry
     pattern = getStaticFactory().parse("Entry(<str>,<term>)");
   }
 
-
   static public TomEntry fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends TomEntry
       return null;
     }
   }
-
   public aterm.ATerm toTerm() {
     if(term == null) {
       java.util.List args = new java.util.LinkedList();
@@ -66,7 +61,6 @@ extends TomEntry
   {
     return true;
   }
-
 
   public String getStrName()
   {
@@ -104,5 +98,4 @@ extends TomEntry
     }
     return super.setArgument(arg, i);
   }
-
 }

@@ -56,6 +56,14 @@ public class SymbolTable {
     }
   }
 
+  public void regenerateFromTerm(TomSymbolTable symbTable) {
+    TomEntryList list =  symbTable.getEntryList();
+    while(!list.isEmptyEntryList()) {
+      TomEntry symb = list.getHeadEntryList();
+      putSymbol(symb.getStrName(), symb.getAstSymbol());
+      list = list.getTailEntryList();
+    }
+  }
   protected ASTFactory ast() {
     return astFactory;
   }

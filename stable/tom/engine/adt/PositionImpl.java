@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class PositionImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class PositionImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static Position fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(Position peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static Position fromTerm(aterm.ATerm trm)
   {
     Position tmp;
@@ -34,7 +30,6 @@ abstract public class PositionImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a Position: " + trm);
   }
-
 
   public boolean isPosition()
   {
@@ -50,7 +45,6 @@ abstract public class PositionImpl extends TomSignatureConstructor
   {
     return false;
   }
-
 
   public Integer getLine()
   {
@@ -71,7 +65,6 @@ abstract public class PositionImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This Position has no Column");
   }
-
 
 
 }

@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class TomEntryListImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class TomEntryListImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static TomEntryList fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(TomEntryList peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static TomEntryList fromTerm(aterm.ATerm trm)
   {
     TomEntryList tmp;
@@ -38,7 +34,6 @@ abstract public class TomEntryListImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a TomEntryList: " + trm);
   }
-
 
   public boolean isEmptyEntryList()
   {
@@ -60,7 +55,6 @@ abstract public class TomEntryListImpl extends TomSignatureConstructor
     return false;
   }
 
-
   public TomEntry getHeadEntryList()
   {
      throw new RuntimeException("This TomEntryList has no HeadEntryList");
@@ -80,7 +74,6 @@ abstract public class TomEntryListImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomEntryList has no TailEntryList");
   }
-
 
 
 }

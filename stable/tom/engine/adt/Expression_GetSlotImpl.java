@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Expression_GetSlotImpl
+abstract public class Expression_GetSlotImpl
 extends Expression
 {
   static private aterm.ATerm pattern = null;
@@ -13,7 +11,6 @@ extends Expression
   private static int index_astName = 0;
   private static int index_slotNameString = 1;
   private static int index_term = 2;
-
   public shared.SharedObject duplicate() {
     Expression_GetSlot clone = new Expression_GetSlot();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -28,7 +25,6 @@ extends Expression
     pattern = getStaticFactory().parse("GetSlot(<term>,<str>,<term>)");
   }
 
-
   static public Expression fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -42,7 +38,6 @@ extends Expression
       return null;
     }
   }
-
   public aterm.ATerm toTerm() {
     if(term == null) {
       java.util.List args = new java.util.LinkedList();
@@ -73,7 +68,6 @@ extends Expression
   {
     return true;
   }
-
 
   public TomName getAstName()
   {
@@ -126,5 +120,4 @@ extends Expression
     }
     return super.setArgument(arg, i);
   }
-
 }

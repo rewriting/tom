@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class PairNameDeclImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class PairNameDeclImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static PairNameDecl fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(PairNameDecl peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static PairNameDecl fromTerm(aterm.ATerm trm)
   {
     PairNameDecl tmp;
@@ -34,7 +30,6 @@ abstract public class PairNameDeclImpl extends TomSignatureConstructor
 
     throw new RuntimeException("This is not a PairNameDecl: " + trm);
   }
-
 
   public boolean isSlot()
   {
@@ -50,7 +45,6 @@ abstract public class PairNameDeclImpl extends TomSignatureConstructor
   {
     return false;
   }
-
 
   public TomName getSlotName()
   {
@@ -71,7 +65,6 @@ abstract public class PairNameDeclImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This PairNameDecl has no SlotDecl");
   }
-
 
 
 }

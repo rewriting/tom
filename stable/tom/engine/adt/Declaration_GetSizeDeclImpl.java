@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Declaration_GetSizeDeclImpl
+abstract public class Declaration_GetSizeDeclImpl
 extends Declaration
 {
   static private aterm.ATerm pattern = null;
@@ -13,7 +11,6 @@ extends Declaration
   private static int index_kid1 = 0;
   private static int index_tlCode = 1;
   private static int index_orgTrack = 2;
-
   public shared.SharedObject duplicate() {
     Declaration_GetSizeDecl clone = new Declaration_GetSizeDecl();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -28,7 +25,6 @@ extends Declaration
     pattern = getStaticFactory().parse("GetSizeDecl(<term>,<term>,<term>)");
   }
 
-
   static public Declaration fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -42,7 +38,6 @@ extends Declaration
       return null;
     }
   }
-
   public boolean isGetSizeDecl()
   {
     return true;
@@ -62,7 +57,6 @@ extends Declaration
   {
     return true;
   }
-
 
   public TomTerm getKid1()
   {
@@ -115,7 +109,6 @@ extends Declaration
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

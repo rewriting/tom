@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Option_OriginTrackingImpl
+abstract public class Option_OriginTrackingImpl
 extends Option
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends Option
   }
   private static int index_astName = 0;
   private static int index_line = 1;
-
   public shared.SharedObject duplicate() {
     Option_OriginTracking clone = new Option_OriginTracking();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends Option
     pattern = getStaticFactory().parse("OriginTracking(<term>,<int>)");
   }
 
-
   static public Option fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends Option
       return null;
     }
   }
-
   public aterm.ATerm toTerm() {
     if(term == null) {
       java.util.List args = new java.util.LinkedList();
@@ -66,7 +61,6 @@ extends Option
   {
     return true;
   }
-
 
   public TomName getAstName()
   {
@@ -104,5 +98,4 @@ extends Option
     }
     return super.setArgument(arg, i);
   }
-
 }

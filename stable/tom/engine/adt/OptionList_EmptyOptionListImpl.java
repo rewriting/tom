@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class OptionList_EmptyOptionListImpl
+abstract public class OptionList_EmptyOptionListImpl
 extends OptionList
 {
   static private aterm.ATerm pattern = null;
@@ -10,7 +8,6 @@ extends OptionList
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-
   public shared.SharedObject duplicate() {
     OptionList_EmptyOptionList clone = new OptionList_EmptyOptionList();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -25,7 +22,6 @@ extends OptionList
     pattern = getStaticFactory().parse("[]");
   }
 
-
   static public OptionList fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -39,17 +35,14 @@ extends OptionList
       return null;
     }
   }
-
   public boolean isEmptyOptionList()
   {
     return true;
   }
 
-
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
       throw new RuntimeException("OptionList_EmptyOptionList has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

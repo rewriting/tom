@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class TomTermImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static TomTerm fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(TomTerm peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static TomTerm fromTerm(aterm.ATerm trm)
   {
     TomTerm tmp;
@@ -55,6 +51,10 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
+    if ((tmp = TomTerm_InstructionToTomTerm.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
     if ((tmp = TomTerm_Tom.fromTerm(trm)) != null) {
       return tmp;
     }
@@ -71,35 +71,15 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
-    if ((tmp = TomTerm_LocalVariable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_EndLocalVariable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildVariable.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildVariableStar.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildTerm.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildList.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_BuildArray.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
     if ((tmp = TomTerm_FunctionCall.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_MakeFunctionBegin.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_MakeFunctionEnd.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -116,14 +96,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     }
 
     if ((tmp = TomTerm_Match.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_MakeFunctionBegin.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_MakeFunctionEnd.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -159,6 +131,10 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
+    if ((tmp = TomTerm_Declaration.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
     if ((tmp = TomTerm_Variable.fromTerm(trm)) != null) {
       return tmp;
     }
@@ -175,35 +151,47 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
+    if ((tmp = TomTerm_DotTerm.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_LocalVariable.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_EndLocalVariable.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_BuildVariable.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_BuildVariableStar.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_BuildTerm.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_BuildList.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_BuildArray.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
+    if ((tmp = TomTerm_BuildBuiltin.fromTerm(trm)) != null) {
+      return tmp;
+    }
+
     if ((tmp = TomTerm_CompiledMatch.fromTerm(trm)) != null) {
       return tmp;
     }
 
     if ((tmp = TomTerm_Automata.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_IfThenElse.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_DoWhile.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Assign.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Declaration.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Begin.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_End.fromTerm(trm)) != null) {
       return tmp;
     }
 
@@ -239,42 +227,17 @@ abstract public class TomTermImpl extends TomSignatureConstructor
       return tmp;
     }
 
-    if ((tmp = TomTerm_Increment.fromTerm(trm)) != null) {
+    if ((tmp = TomTerm_Begin.fromTerm(trm)) != null) {
       return tmp;
     }
 
-    if ((tmp = TomTerm_Action.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_ExitAction.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_Return.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_OpenBlock.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_CloseBlock.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_NamedBlock.fromTerm(trm)) != null) {
-      return tmp;
-    }
-
-    if ((tmp = TomTerm_DotTerm.fromTerm(trm)) != null) {
+    if ((tmp = TomTerm_End.fromTerm(trm)) != null) {
       return tmp;
     }
 
 
     throw new RuntimeException("This is not a TomTerm: " + trm);
   }
-
 
   public boolean isTargetLanguageToTomTerm()
   {
@@ -311,6 +274,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isInstructionToTomTerm()
+  {
+    return false;
+  }
+
   public boolean isTom()
   {
     return false;
@@ -331,42 +299,17 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isLocalVariable()
-  {
-    return false;
-  }
-
-  public boolean isEndLocalVariable()
-  {
-    return false;
-  }
-
-  public boolean isBuildVariable()
-  {
-    return false;
-  }
-
-  public boolean isBuildVariableStar()
-  {
-    return false;
-  }
-
-  public boolean isBuildTerm()
-  {
-    return false;
-  }
-
-  public boolean isBuildList()
-  {
-    return false;
-  }
-
-  public boolean isBuildArray()
-  {
-    return false;
-  }
-
   public boolean isFunctionCall()
+  {
+    return false;
+  }
+
+  public boolean isMakeFunctionBegin()
+  {
+    return false;
+  }
+
+  public boolean isMakeFunctionEnd()
   {
     return false;
   }
@@ -387,16 +330,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean isMatch()
-  {
-    return false;
-  }
-
-  public boolean isMakeFunctionBegin()
-  {
-    return false;
-  }
-
-  public boolean isMakeFunctionEnd()
   {
     return false;
   }
@@ -441,6 +374,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isDeclaration()
+  {
+    return false;
+  }
+
   public boolean isVariable()
   {
     return false;
@@ -461,42 +399,57 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean isDotTerm()
+  {
+    return false;
+  }
+
+  public boolean isLocalVariable()
+  {
+    return false;
+  }
+
+  public boolean isEndLocalVariable()
+  {
+    return false;
+  }
+
+  public boolean isBuildVariable()
+  {
+    return false;
+  }
+
+  public boolean isBuildVariableStar()
+  {
+    return false;
+  }
+
+  public boolean isBuildTerm()
+  {
+    return false;
+  }
+
+  public boolean isBuildList()
+  {
+    return false;
+  }
+
+  public boolean isBuildArray()
+  {
+    return false;
+  }
+
+  public boolean isBuildBuiltin()
+  {
+    return false;
+  }
+
   public boolean isCompiledMatch()
   {
     return false;
   }
 
   public boolean isAutomata()
-  {
-    return false;
-  }
-
-  public boolean isIfThenElse()
-  {
-    return false;
-  }
-
-  public boolean isDoWhile()
-  {
-    return false;
-  }
-
-  public boolean isAssign()
-  {
-    return false;
-  }
-
-  public boolean isDeclaration()
-  {
-    return false;
-  }
-
-  public boolean isBegin()
-  {
-    return false;
-  }
-
-  public boolean isEnd()
   {
     return false;
   }
@@ -541,42 +494,12 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isIncrement()
+  public boolean isBegin()
   {
     return false;
   }
 
-  public boolean isAction()
-  {
-    return false;
-  }
-
-  public boolean isExitAction()
-  {
-    return false;
-  }
-
-  public boolean isReturn()
-  {
-    return false;
-  }
-
-  public boolean isOpenBlock()
-  {
-    return false;
-  }
-
-  public boolean isCloseBlock()
-  {
-    return false;
-  }
-
-  public boolean isNamedBlock()
-  {
-    return false;
-  }
-
-  public boolean isDotTerm()
+  public boolean isEnd()
   {
     return false;
   }
@@ -616,6 +539,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean hasAstInstruction()
+  {
+    return false;
+  }
+
   public boolean hasList()
   {
     return false;
@@ -641,6 +569,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean hasSubjectListAST()
+  {
+    return false;
+  }
+
   public boolean hasSlotName()
   {
     return false;
@@ -657,11 +590,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   }
 
   public boolean hasPatternList()
-  {
-    return false;
-  }
-
-  public boolean hasSubjectListAST()
   {
     return false;
   }
@@ -696,6 +624,11 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
+  public boolean hasKid2()
+  {
+    return false;
+  }
+
   public boolean hasDecls()
   {
     return false;
@@ -716,26 +649,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean hasCondition()
-  {
-    return false;
-  }
-
-  public boolean hasSuccesList()
-  {
-    return false;
-  }
-
-  public boolean hasFailureList()
-  {
-    return false;
-  }
-
-  public boolean hasSource()
-  {
-    return false;
-  }
-
   public boolean hasNumber()
   {
     return false;
@@ -745,17 +658,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   {
     return false;
   }
-
-  public boolean hasBlockName()
-  {
-    return false;
-  }
-
-  public boolean hasKid2()
-  {
-    return false;
-  }
-
 
   public TargetLanguage getTl()
   {
@@ -827,6 +729,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no AstExpression");
   }
 
+  public Instruction getAstInstruction()
+  {
+     throw new RuntimeException("This TomTerm has no AstInstruction");
+  }
+
+  public TomTerm setAstInstruction(Instruction _astInstruction)
+  {
+     throw new RuntimeException("This TomTerm has no AstInstruction");
+  }
+
   public TomList getList()
   {
      throw new RuntimeException("This TomTerm has no List");
@@ -877,6 +789,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no Args");
   }
 
+  public TomTerm getSubjectListAST()
+  {
+     throw new RuntimeException("This TomTerm has no SubjectListAST");
+  }
+
+  public TomTerm setSubjectListAST(TomTerm _subjectListAST)
+  {
+     throw new RuntimeException("This TomTerm has no SubjectListAST");
+  }
+
   public TomName getSlotName()
   {
      throw new RuntimeException("This TomTerm has no SlotName");
@@ -915,16 +837,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   public TomTerm setPatternList(TomTerm _patternList)
   {
      throw new RuntimeException("This TomTerm has no PatternList");
-  }
-
-  public TomTerm getSubjectListAST()
-  {
-     throw new RuntimeException("This TomTerm has no SubjectListAST");
-  }
-
-  public TomTerm setSubjectListAST(TomTerm _subjectListAST)
-  {
-     throw new RuntimeException("This TomTerm has no SubjectListAST");
   }
 
   public TomTerm getLhs()
@@ -987,6 +899,16 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no StrName");
   }
 
+  public TomTerm getKid2()
+  {
+     throw new RuntimeException("This TomTerm has no Kid2");
+  }
+
+  public TomTerm setKid2(TomTerm _kid2)
+  {
+     throw new RuntimeException("This TomTerm has no Kid2");
+  }
+
   public TomList getDecls()
   {
      throw new RuntimeException("This TomTerm has no Decls");
@@ -1027,46 +949,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
      throw new RuntimeException("This TomTerm has no InstList");
   }
 
-  public Expression getCondition()
-  {
-     throw new RuntimeException("This TomTerm has no Condition");
-  }
-
-  public TomTerm setCondition(Expression _condition)
-  {
-     throw new RuntimeException("This TomTerm has no Condition");
-  }
-
-  public TomList getSuccesList()
-  {
-     throw new RuntimeException("This TomTerm has no SuccesList");
-  }
-
-  public TomTerm setSuccesList(TomList _succesList)
-  {
-     throw new RuntimeException("This TomTerm has no SuccesList");
-  }
-
-  public TomList getFailureList()
-  {
-     throw new RuntimeException("This TomTerm has no FailureList");
-  }
-
-  public TomTerm setFailureList(TomList _failureList)
-  {
-     throw new RuntimeException("This TomTerm has no FailureList");
-  }
-
-  public Expression getSource()
-  {
-     throw new RuntimeException("This TomTerm has no Source");
-  }
-
-  public TomTerm setSource(Expression _source)
-  {
-     throw new RuntimeException("This TomTerm has no Source");
-  }
-
   public TomTerm getNumber()
   {
      throw new RuntimeException("This TomTerm has no Number");
@@ -1086,27 +968,6 @@ abstract public class TomTermImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This TomTerm has no Integer");
   }
-
-  public String getBlockName()
-  {
-     throw new RuntimeException("This TomTerm has no BlockName");
-  }
-
-  public TomTerm setBlockName(String _blockName)
-  {
-     throw new RuntimeException("This TomTerm has no BlockName");
-  }
-
-  public TomTerm getKid2()
-  {
-     throw new RuntimeException("This TomTerm has no Kid2");
-  }
-
-  public TomTerm setKid2(TomTerm _kid2)
-  {
-     throw new RuntimeException("This TomTerm has no Kid2");
-  }
-
 
 
 }

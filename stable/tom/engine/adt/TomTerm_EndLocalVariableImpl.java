@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomTerm_EndLocalVariableImpl
+abstract public class TomTerm_EndLocalVariableImpl
 extends TomTerm
 {
   static private aterm.ATerm pattern = null;
@@ -10,7 +8,6 @@ extends TomTerm
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-
   public shared.SharedObject duplicate() {
     TomTerm_EndLocalVariable clone = new TomTerm_EndLocalVariable();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -25,7 +22,6 @@ extends TomTerm
     pattern = getStaticFactory().parse("EndLocalVariable");
   }
 
-
   static public TomTerm fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -39,17 +35,14 @@ extends TomTerm
       return null;
     }
   }
-
   public boolean isEndLocalVariable()
   {
     return true;
   }
 
-
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
       throw new RuntimeException("TomTerm_EndLocalVariable has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

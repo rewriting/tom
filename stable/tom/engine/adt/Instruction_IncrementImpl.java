@@ -1,9 +1,7 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomTerm_ReturnImpl
-extends TomTerm
+abstract public class Instruction_IncrementImpl
+extends Instruction
 {
   static private aterm.ATerm pattern = null;
 
@@ -11,28 +9,26 @@ extends TomTerm
     return pattern;
   }
   private static int index_kid1 = 0;
-
   public shared.SharedObject duplicate() {
-    TomTerm_Return clone = new TomTerm_Return();
+    Instruction_Increment clone = new Instruction_Increment();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
-    return getTomSignatureFactory().makeTomTerm_Return(fun, i_args, annos);
+    return getTomSignatureFactory().makeInstruction_Increment(fun, i_args, annos);
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("Return(<term>)");
+    pattern = getStaticFactory().parse("Increment(<term>)");
   }
 
-
-  static public TomTerm fromTerm(aterm.ATerm trm)
+  static public Instruction fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_Return(TomTerm.fromTerm( (aterm.ATerm) children.get(0)));
+      Instruction tmp = getStaticTomSignatureFactory().makeInstruction_Increment(TomTerm.fromTerm( (aterm.ATerm) children.get(0)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -40,8 +36,7 @@ extends TomTerm
       return null;
     }
   }
-
-  public boolean isReturn()
+  public boolean isIncrement()
   {
     return true;
   }
@@ -51,29 +46,27 @@ extends TomTerm
     return true;
   }
 
-
   public TomTerm getKid1()
   {
     return (TomTerm) this.getArgument(index_kid1) ;
   }
 
-  public TomTerm setKid1(TomTerm _kid1)
+  public Instruction setKid1(TomTerm _kid1)
   {
-    return (TomTerm) super.setArgument(_kid1, index_kid1);
+    return (Instruction) super.setArgument(_kid1, index_kid1);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
         if (! (arg instanceof TomTerm)) { 
-          throw new RuntimeException("Argument 0 of a TomTerm_Return should have type TomTerm");
+          throw new RuntimeException("Argument 0 of a Instruction_Increment should have type TomTerm");
         }
         break;
-      default: throw new RuntimeException("TomTerm_Return does not have an argument at " + i );
+      default: throw new RuntimeException("Instruction_Increment does not have an argument at " + i );
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

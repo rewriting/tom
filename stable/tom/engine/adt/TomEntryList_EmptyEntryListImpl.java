@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomEntryList_EmptyEntryListImpl
+abstract public class TomEntryList_EmptyEntryListImpl
 extends TomEntryList
 {
   static private aterm.ATerm pattern = null;
@@ -10,7 +8,6 @@ extends TomEntryList
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-
   public shared.SharedObject duplicate() {
     TomEntryList_EmptyEntryList clone = new TomEntryList_EmptyEntryList();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -25,7 +22,6 @@ extends TomEntryList
     pattern = getStaticFactory().parse("[]");
   }
 
-
   static public TomEntryList fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -39,17 +35,14 @@ extends TomEntryList
       return null;
     }
   }
-
   public boolean isEmptyEntryList()
   {
     return true;
   }
 
-
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
       throw new RuntimeException("TomEntryList_EmptyEntryList has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

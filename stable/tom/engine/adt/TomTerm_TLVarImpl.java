@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomTerm_TLVarImpl
+abstract public class TomTerm_TLVarImpl
 extends TomTerm
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends TomTerm
   }
   private static int index_strName = 0;
   private static int index_astType = 1;
-
   public shared.SharedObject duplicate() {
     TomTerm_TLVar clone = new TomTerm_TLVar();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends TomTerm
     pattern = getStaticFactory().parse("TLVar(<str>,<term>)");
   }
 
-
   static public TomTerm fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends TomTerm
       return null;
     }
   }
-
   public aterm.ATerm toTerm() {
     if(term == null) {
       java.util.List args = new java.util.LinkedList();
@@ -66,7 +61,6 @@ extends TomTerm
   {
     return true;
   }
-
 
   public String getStrName()
   {
@@ -104,5 +98,4 @@ extends TomTerm
     }
     return super.setArgument(arg, i);
   }
-
 }

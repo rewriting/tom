@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomType_TypesToTypeImpl
+abstract public class TomType_TypesToTypeImpl
 extends TomType
 {
   static private aterm.ATerm pattern = null;
@@ -12,7 +10,6 @@ extends TomType
   }
   private static int index_list = 0;
   private static int index_codomain = 1;
-
   public shared.SharedObject duplicate() {
     TomType_TypesToType clone = new TomType_TypesToType();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -27,7 +24,6 @@ extends TomType
     pattern = getStaticFactory().parse("TypesToType(<term>,<term>)");
   }
 
-
   static public TomType fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -41,7 +37,6 @@ extends TomType
       return null;
     }
   }
-
   public boolean isTypesToType()
   {
     return true;
@@ -56,7 +51,6 @@ extends TomType
   {
     return true;
   }
-
 
   public TomList getList()
   {
@@ -94,7 +88,6 @@ extends TomType
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = getArgument(1).hashCode() + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

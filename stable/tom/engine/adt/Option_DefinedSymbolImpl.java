@@ -1,8 +1,6 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class Option_DefinedSymbolImpl
+abstract public class Option_DefinedSymbolImpl
 extends Option
 {
   static private aterm.ATerm pattern = null;
@@ -10,7 +8,6 @@ extends Option
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-
   public shared.SharedObject duplicate() {
     Option_DefinedSymbol clone = new Option_DefinedSymbol();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
@@ -25,7 +22,6 @@ extends Option
     pattern = getStaticFactory().parse("DefinedSymbol");
   }
 
-
   static public Option fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
@@ -39,17 +35,14 @@ extends Option
       return null;
     }
   }
-
   public boolean isDefinedSymbol()
   {
     return true;
   }
 
-
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
       throw new RuntimeException("Option_DefinedSymbol has no arguments");
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;

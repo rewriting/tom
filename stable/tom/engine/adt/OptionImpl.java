@@ -1,9 +1,8 @@
 package jtom.adt;
 
+import aterm.*;
 import java.io.InputStream;
 import java.io.IOException;
-import aterm.*;
-
 
 abstract public class OptionImpl extends TomSignatureConstructor
 {
@@ -12,18 +11,15 @@ abstract public class OptionImpl extends TomSignatureConstructor
     aterm.ATerm trm = getStaticTomSignatureFactory().parse(str);
     return fromTerm(trm);
   }
-
   static Option fromTextFile(InputStream stream) throws aterm.ParseError, IOException
   {
     aterm.ATerm trm = getStaticTomSignatureFactory().readFromTextFile(stream);
     return fromTerm(trm);
   }
-
   public boolean isEqual(Option peer)
   {
     return term.isEqual(peer.toTerm());
   }
-
   public static Option fromTerm(aterm.ATerm trm)
   {
     Option tmp;
@@ -51,14 +47,13 @@ abstract public class OptionImpl extends TomSignatureConstructor
       return tmp;
     }
 
-    if ((tmp = Option_LRParen.fromTerm(trm)) != null) {
+    if ((tmp = Option_Constructor.fromTerm(trm)) != null) {
       return tmp;
     }
 
 
     throw new RuntimeException("This is not a Option: " + trm);
   }
-
 
   public boolean isDeclarationToOption()
   {
@@ -90,7 +85,7 @@ abstract public class OptionImpl extends TomSignatureConstructor
     return false;
   }
 
-  public boolean isLRParen()
+  public boolean isConstructor()
   {
     return false;
   }
@@ -119,7 +114,6 @@ abstract public class OptionImpl extends TomSignatureConstructor
   {
     return false;
   }
-
 
   public Declaration getAstDeclaration()
   {
@@ -170,7 +164,6 @@ abstract public class OptionImpl extends TomSignatureConstructor
   {
      throw new RuntimeException("This Option has no Line");
   }
-
 
 
 }

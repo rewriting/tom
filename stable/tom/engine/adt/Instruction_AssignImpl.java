@@ -1,39 +1,35 @@
 package jtom.adt;
 
-import aterm.*;
-
-public class TomTerm_DoWhileImpl
-extends TomTerm
+abstract public class Instruction_AssignImpl
+extends Instruction
 {
   static private aterm.ATerm pattern = null;
 
   protected aterm.ATerm getPattern() {
     return pattern;
   }
-  private static int index_instList = 0;
-  private static int index_condition = 1;
-
+  private static int index_kid1 = 0;
+  private static int index_source = 1;
   public shared.SharedObject duplicate() {
-    TomTerm_DoWhile clone = new TomTerm_DoWhile();
+    Instruction_Assign clone = new Instruction_Assign();
      clone.init(hashCode(), getAnnotations(), getAFun(), getArgumentArray());
     return clone;
   }
 
   protected aterm.ATermAppl make(aterm.AFun fun, aterm.ATerm[] i_args, aterm.ATermList annos) {
-    return getTomSignatureFactory().makeTomTerm_DoWhile(fun, i_args, annos);
+    return getTomSignatureFactory().makeInstruction_Assign(fun, i_args, annos);
   }
   static public void initializePattern()
   {
-    pattern = getStaticFactory().parse("DoWhile(<term>,<term>)");
+    pattern = getStaticFactory().parse("Assign(<term>,<term>)");
   }
 
-
-  static public TomTerm fromTerm(aterm.ATerm trm)
+  static public Instruction fromTerm(aterm.ATerm trm)
   {
     java.util.List children = trm.match(pattern);
 
     if (children != null) {
-      TomTerm tmp = getStaticTomSignatureFactory().makeTomTerm_DoWhile(TomList.fromTerm( (aterm.ATerm) children.get(0)), Expression.fromTerm( (aterm.ATerm) children.get(1)));
+      Instruction tmp = getStaticTomSignatureFactory().makeInstruction_Assign(TomTerm.fromTerm( (aterm.ATerm) children.get(0)), Expression.fromTerm( (aterm.ATerm) children.get(1)));
       tmp.setTerm(trm);
       return tmp;
     }
@@ -41,60 +37,57 @@ extends TomTerm
       return null;
     }
   }
-
-  public boolean isDoWhile()
+  public boolean isAssign()
   {
     return true;
   }
 
-  public boolean hasInstList()
+  public boolean hasKid1()
   {
     return true;
   }
 
-  public boolean hasCondition()
+  public boolean hasSource()
   {
     return true;
   }
 
-
-  public TomList getInstList()
+  public TomTerm getKid1()
   {
-    return (TomList) this.getArgument(index_instList) ;
+    return (TomTerm) this.getArgument(index_kid1) ;
   }
 
-  public TomTerm setInstList(TomList _instList)
+  public Instruction setKid1(TomTerm _kid1)
   {
-    return (TomTerm) super.setArgument(_instList, index_instList);
+    return (Instruction) super.setArgument(_kid1, index_kid1);
   }
 
-  public Expression getCondition()
+  public Expression getSource()
   {
-    return (Expression) this.getArgument(index_condition) ;
+    return (Expression) this.getArgument(index_source) ;
   }
 
-  public TomTerm setCondition(Expression _condition)
+  public Instruction setSource(Expression _source)
   {
-    return (TomTerm) super.setArgument(_condition, index_condition);
+    return (Instruction) super.setArgument(_source, index_source);
   }
 
   public aterm.ATermAppl setArgument(aterm.ATerm arg, int i) {
     switch(i) {
       case 0:
-        if (! (arg instanceof TomList)) { 
-          throw new RuntimeException("Argument 0 of a TomTerm_DoWhile should have type TomList");
+        if (! (arg instanceof TomTerm)) { 
+          throw new RuntimeException("Argument 0 of a Instruction_Assign should have type TomTerm");
         }
         break;
       case 1:
         if (! (arg instanceof Expression)) { 
-          throw new RuntimeException("Argument 1 of a TomTerm_DoWhile should have type Expression");
+          throw new RuntimeException("Argument 1 of a Instruction_Assign should have type Expression");
         }
         break;
-      default: throw new RuntimeException("TomTerm_DoWhile does not have an argument at " + i );
+      default: throw new RuntimeException("Instruction_Assign does not have an argument at " + i );
     }
     return super.setArgument(arg, i);
   }
-
   protected int hashFunction() {
     int c = 0 + (getAnnotations().hashCode()<<8);
     int a = 0x9e3779b9;
