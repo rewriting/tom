@@ -1061,11 +1061,11 @@ public class TomGenerator extends TomBase {
  
       GetSlotDecl[astName=Name(tomName),
                   slotName=slotName,
-                  term=Variable(option1,Name(name1), Type(TomType(type1),tlType@TLType[])),
+                  variable=Variable(option1,Name(name1), Type(TomType(type1),tlType@TLType[])),
                   tlCode=tlCode@TL[]] -> {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String opname = tomSymbol.getAstName().getString();
-        TomList typesList = tomSymbol.getTypesToType().getList();
+        TomList typesList = tomSymbol.getTypesToType().getTomList();
         
         int slotIndex = getSlotIndex(tomSymbol.getSlotList(),slotName);
         TomList l = typesList;

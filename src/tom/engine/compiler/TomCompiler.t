@@ -97,7 +97,7 @@ public class TomCompiler extends TomBase {
         }
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomName name = tomSymbol.getAstName();
-        TomList typesList = tomSymbol.getTypesToType().getList();        
+        TomList typesList = tomSymbol.getTypesToType().getTomList();        
         TomList path = empty();
         TomList matchArgumentsList = empty();
         TomList patternActionList  = empty();

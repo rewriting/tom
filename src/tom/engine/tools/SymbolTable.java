@@ -67,10 +67,10 @@ public class SymbolTable {
 
   public void regenerateFromTerm(TomSymbolTable symbTable) {
     TomEntryList list =  symbTable.getEntryList();
-    while(!list.isEmptyEntryList()) {
-      TomEntry symb = list.getHeadEntryList();
+    while(!list.isEmpty()) {
+      TomEntry symb = list.getHead();
       putSymbol(symb.getStrName(), symb.getAstSymbol());
-      list = list.getTailEntryList();
+      list = list.getTail();
     }
   }
   protected ASTFactory ast() {
@@ -114,21 +114,21 @@ public class SymbolTable {
 
   public void fromTerm(TomSymbolTable table) {
     TomEntryList list = table.getEntryList();
-    while(!list.isEmptyEntryList()) {
-      TomEntry entry = list.getHeadEntryList();
+    while(!list.isEmpty()) {
+      TomEntry entry = list.getHead();
       putSymbol(entry.getStrName(),entry.getAstSymbol());
-      list = list.getTailEntryList();
+      list = list.getTail();
     }
   }
 
   public TomSymbolTable toTerm() {
-    TomEntryList list = tsf().makeTomEntryList_EmptyEntryList();
+    TomEntryList list = tsf().makeTomEntryList();
     Iterator it = keySymbolIterator();
     while(it.hasNext()) {
       String name = (String)it.next();
       TomSymbol symbol = getSymbol(name);
       TomEntry entry = tsf().makeTomEntry_Entry(name,symbol);
-      list = tsf().makeTomEntryList_ConsEntryList(entry,list);
+      list = tsf().makeTomEntryList(entry,list);
     }
     return tsf().makeTomSymbolTable_Table(list);
   }

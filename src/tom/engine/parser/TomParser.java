@@ -700,7 +700,7 @@ public class TomParser implements TomParserConstants {
 
       tomParser   = new TomParser(new TomBuffer(inputBuffer),environment(),importList, 0, fileName.image);
       astTom = tomParser.startParsing();
-      astTom = tsf().makeTomTerm_TomInclude(astTom.getList());
+      astTom = tsf().makeTomTerm_TomInclude(astTom.getTomList());
       list.add(astTom);
         //TomList includeList = astTom.getList();
         //while(!includeList.isEmpty()) {

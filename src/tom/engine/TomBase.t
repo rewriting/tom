@@ -197,7 +197,7 @@ public class TomBase {
 
   protected TomList getSymbolDomain(TomSymbol symbol) {
     if(symbol!=null) {
-      return symbol.getTypesToType().getList();
+      return symbol.getTypesToType().getTomList();
     } else {
         //System.out.println("getSymbolDomain: symbol = " + symbol);
       return empty();

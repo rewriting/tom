@@ -924,9 +924,9 @@ public class TomDebugger {
         String fileName = orgTrack.getFileName().getString();
         Integer line = orgTrack.getLine();
         String key = fileName+line;
-        TomList paList = struct.getPatternList().getList();
+        TomList paList = struct.getPatternList().getTomList();
         Integer nbPatterns =  evalListSize(paList);
-        Integer nbSubjects = evalListSize(struct.getSubjectList().getList());
+        Integer nbSubjects = evalListSize(struct.getSubjectList().getTomList());
         String[] patternText = new String[nbPatterns.intValue()];
         Integer[] patternLine = new Integer[nbPatterns.intValue()];
         int i=0;
@@ -945,9 +945,9 @@ public class TomDebugger {
         String fileName = struct.getOrgTrack().getFileName().getString();
         Integer line = struct.getOrgTrack().getLine();
         String key = fileName+line;
-        TomList paList = struct.getList();
+        TomList paList = struct.getTomList();
         Integer nbPatterns =  evalListSize(paList);
-        Integer nbSubjects = evalListSize(struct.getList().getHead().getLhs().getTerm().getArgs());
+        Integer nbSubjects = evalListSize(struct.getTomList().getHead().getLhs().getTomTerm().getArgs());
         String[] patternText = new String[nbPatterns.intValue()];
         Integer[] patternLine = new Integer[nbPatterns.intValue()];
         int i=0;

@@ -257,7 +257,7 @@ public class TomChecker extends TomBase {
         public boolean apply(ATerm term) {
           if(term instanceof TomTerm) {
             %match(TomTerm term) {
-              BackQuoteTerm[term=t] -> {
+              BackQuoteTerm[tomTerm=t] -> {
                   // is it possible
                 permissiveVerify(t);
               }
@@ -315,7 +315,7 @@ public class TomChecker extends TomBase {
     // No top variable star are allowed
   private void verifyMatchPattern(TomTerm pattern, ArrayList typeMatchArgs) {
     int nbExpectedArgs = typeMatchArgs.size();
-    TomList termList = pattern.getTermList().getList();
+    TomList termList = pattern.getTermList().getTomList();
     ArrayList foundTypeMatch = new ArrayList();
     Integer line = nullInteger;
     int nbFoundArgs = 0;

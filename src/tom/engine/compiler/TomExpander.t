@@ -64,7 +64,7 @@ public class TomExpander extends TomBase {
         public ATerm apply(ATerm subject) {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
-              BackQuoteTerm[term=t] -> {
+              BackQuoteTerm[tomTerm=t] -> {
                 return expandBackQuoteTerm(t);
               }
             

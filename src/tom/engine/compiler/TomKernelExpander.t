@@ -326,7 +326,7 @@ public class TomKernelExpander extends TomBase {
         TomList newPatternList = empty();
         while(!list.isEmpty()) {
           pa = list.getHead();
-          if( isDefaultPattern(pa.getTermList().getList()) ) {
+          if( isDefaultPattern(pa.getTermList().getTomList()) ) {
             newPatternList = cons(`DefaultPatternAction(pa.getTermList(), pa.getTom(), pa.getOption()), newPatternList);
             newOption = `Option(ConsOptionList(WithDefaultProduction, option.getOptionList()));
             needModification = true;

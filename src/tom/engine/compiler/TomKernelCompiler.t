@@ -221,15 +221,15 @@ public class TomKernelCompiler extends TomBase {
           actionNumber++;
           TomTerm pa = l2.getHead();
           defaultPA = pa.isDefaultPatternAction();
-          patternList = pa.getTermList().getList();
+          patternList = pa.getTermList().getTomList();
           
           if (Flags.debugMode && defaultPA) {
               // replace success by leaving structure
             TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+currentDebugKey+"\");\njtom.debug.TomDebugger.debugger.leavingStructure(\""+currentDebugKey+"\");\n");
-            TomList tail = pa.getTom().getList().getTail();
+            TomList tail = pa.getTom().getTomList().getTail();
             actionList = `Cons(TargetLanguageToTomTerm(tl), tail);
           } else {
-            actionList = pa.getTom().getList();
+            actionList = pa.getTom().getTomList();
           }
           
           
@@ -424,7 +424,7 @@ public class TomKernelCompiler extends TomBase {
         Appl(Option(optionList),Name(tomName),termArgs) -> {
           TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
           TomName termNameAST = tomSymbol.getAstName();
-          TomList termTypeList = tomSymbol.getTypesToType().getList();
+          TomList termTypeList = tomSymbol.getTypesToType().getTomList();
           TomType termType = tomSymbol.getTypesToType().getCodomain();
           OptionList termOptionList = tomSymbol.getOption().getOptionList();
           
