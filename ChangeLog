@@ -1,3 +1,8 @@
+2003-03-30  Jurgen Vinju   <jurgenv@cwi.nl>
+	* Used backquotes to delay calling aterm-java-config script to after
+   	  configure phase. Otherwise autobundle can't configure all packages
+   	  before building them.
+
 2003-03-26  Pierre-Etienne Moreau  <pem@escher.loria.fr>
 
 	* bootinstall
