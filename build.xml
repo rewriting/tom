@@ -30,8 +30,8 @@
 	<property name="stable.src"     location="stable"/>
 	<property name="stable.adt"     location="${stable.src}/jtom/adt"/>
 	<property name="stable.mapping" location="${stable.src}/jtom/runtime/mapping"/>
-	<property name="stable.build" location="${stable.src}/build"/>
-	<property name="stable.dist"  location="${stable.src}/dist"/>
+	<property name="stable.build"   location="${stable.src}/build"/>
+	<property name="stable.dist"    location="${stable.src}/dist"/>
 	
 	<!-- for devel (src) -->
 	<property name="src.src"      location="src"/>
@@ -45,10 +45,12 @@
 	<property name="stable.bin"   location="${stable.dist}/bin"/>
 	<property name="stable.lib"   location="${stable.dist}/lib"/>
 	<property name="stable.share" location="${stable.dist}/share/jtom"/>
+	<property name="stable.doc"   location="${stable.dist}/doc"/>
 
 	<property name="src.bin"      location="${src.dist}/bin"/>
 	<property name="src.lib"      location="${src.dist}/lib"/>
 	<property name="src.share"    location="${src.dist}/share/jtom"/>
+	<property name="src.doc"      location="${src.dist}/doc"/>
 
   <!-- for bootstrap -->
   <property name="bootstep.folder" location="${src.src}/bootstrap" />
@@ -111,12 +113,14 @@
 		<mkdir dir="${stable.bin}"/>
 		<mkdir dir="${stable.lib}"/>
 		<mkdir dir="${stable.share}"/>
+		<mkdir dir="${stable.doc}"/>
 	</target>
 
 	<target name="prepare.dist.src">
 		<mkdir dir="${src.bin}"/>
 		<mkdir dir="${src.lib}"/>
 		<mkdir dir="${src.share}"/>
+		<mkdir dir="${src.doc}"/>
 	</target>
 
 	<!-- target debut to help finding properties problems -->
@@ -251,6 +255,10 @@
 		<copy todir="${stable.lib}" file="${apigenjar}"/>
 		<copy todir="${stable.lib}" file="${vastoadtjar}"/>
 		<copy todir="${stable.lib}" file="${concurrent.lib}"/>
+		<!-- tom doc -->
+		<copy todir="${stable.doc}" file="${referencepdf}"/>
+		<copy todir="${stable.doc}" file="${guidepdf}"/>
+		<copy todir="${stable.doc}" file="${tutorialpdf}"/>
 		<!-- prepare tar file -->
 		<mkdir dir="${stable.dist}/jtom-${version}"/>
 		<copy todir="${stable.dist}/jtom-${version}">
@@ -324,6 +332,10 @@
 		<copy todir="${src.lib}" file="${apigenjar}"/>
 		<copy todir="${src.lib}" file="${vastoadtjar}"/>
 		<copy todir="${src.lib}" file="${concurrent.lib}"/>
+		<!-- tom doc -->
+		<copy todir="${src.doc}" file="${referencepdf}"/>
+		<copy todir="${src.doc}" file="${guidepdf}"/>
+		<copy todir="${src.doc}" file="${tutorialpdf}"/>
 		<!-- prepare tar file -->
 		<mkdir dir="${src.dist}/jtom-${DSTAMP}"/>
 		<copy todir="${src.dist}/jtom-${DSTAMP}">

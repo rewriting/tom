@@ -41,8 +41,6 @@ import jtom.TomEnvironment;
 public class TomCompiler extends TomTask {
   TomKernelCompiler tomKernelCompiler;
   private TomFactory tomFactory;
-  private String debugKey = null;
-  private boolean debugMode = false, eCode = false;
   private int absVarNumber = 0;
   
   public TomCompiler() {
@@ -56,8 +54,6 @@ public class TomCompiler extends TomTask {
 // ------------------------------------------------------------
 
   public void initProcess() {
-    debugMode = getInput().isDebugMode();
-    eCode = getInput().isECode();
   }
 	
   public void process() {
@@ -103,6 +99,7 @@ public class TomCompiler extends TomTask {
 
   Replace1 replace_preProcessing = new Replace1() {
       public ATerm apply(ATerm subject) {
+        String debugKey = "";
         if(subject instanceof TomTerm) {
           %match(TomTerm subject) {
             MakeTerm(var@(Variable|VariableStar)[]) -> {
@@ -131,7 +128,7 @@ public class TomCompiler extends TomTask {
             Match(SubjectList(l1),PatternList(l2), matchOptionList)  -> {
               TomList patternList = `l2;
               Option orgTrack = findOriginTracking(`matchOptionList);
-              if(debugMode) {
+              if(getInput().isDebugMode()) {
                 debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
               }
               TomList newPatternList = empty();
@@ -201,7 +198,7 @@ public class TomCompiler extends TomTask {
 
             RuleSet(rl@manyTomRuleList(RewriteRule[lhs=Term(Appl[nameList=(Name(tomName))])],_), orgTrack) -> {
               TomRuleList ruleList = `rl;
-              if(debugMode) {
+              if(getInput().isDebugMode()) {
                 debugKey = `orgTrack.getFileName().getString() + `orgTrack.getLine();
               }
               TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
@@ -234,7 +231,7 @@ public class TomCompiler extends TomTask {
                   
                     TomTerm newRhs = preProcessing(`MakeTerm(rhsTerm));
                     Instruction rhsInst = `Return(newRhs);
-                    if(debugMode) {
+                    if(getInput().isDebugMode()) {
                       TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.patternSuccess(\""+debugKey+"\");\n");
                       rhsInst = `UnamedBlock(concInstruction(TargetLanguageToInstruction(tl), rhsInst));
                     }
@@ -265,7 +262,7 @@ public class TomCompiler extends TomTask {
               }
 
               InstructionList l;
-              if(eCode) {
+              if(getInput().isECode()) {
                 l = `concInstruction(
                                      makeFunctionBeginAST,
                                      LocalVariable(),
