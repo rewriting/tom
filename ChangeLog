@@ -1,3 +1,10 @@
+2003-08-14    <pem@bach>
+
+	* bootstrap with the new apigen and aterm-java design
+	* bootinstall
+	* runtime/strategies added to stable
+	* bumped to 1.3gamma
+	
 2003-08-12    <pem@bach>
 	* src/jtom/TomSignature.adt: 
 	  - TomTypeList introduced
@@ -6,6 +13,7 @@
 	  - TomList implemented as a list
 
 	* src/jtom/TomBase.t: introduced apigen list-operators
+        * XML stuff added
 
 2003-08-05  Pierre-Etienne Moreau  <pem@escher.loria.fr>
         * convert ADT files to new style

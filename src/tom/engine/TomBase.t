@@ -33,8 +33,7 @@ import jtom.tools.*;
 import jtom.adt.*;
 import jtom.runtime.*;
 
-import jtom.runtime.set.SharedSet;
-//import jtom.runtime.set.jgtreeset.*;
+//import jtom.runtime.set.SharedSet;
 
 public class TomBase {
   private TomEnvironment tomEnvironment;
@@ -407,7 +406,7 @@ public class TomBase {
     traversal().genericCollect(subject, collect);
   }
 
-  protected void collectVariable(final SharedSet set, TomTerm subject) {
+  protected void collectVariable(final HashSet set, TomTerm subject) {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
             //%variable
