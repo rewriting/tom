@@ -36,7 +36,7 @@ public class TomServer implements TomPluginOptions
     %include{ adt/TNode.tom }
     %include{ adt/Options.tom }
 
-    public final static String VERSION = "2.1alpha";
+    public final static String VERSION = "3.0alpha";
     
     private Vector instances;
     private Vector services;
