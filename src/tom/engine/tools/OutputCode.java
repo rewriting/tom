@@ -31,11 +31,16 @@ public class OutputCode {
   protected Writer file;
   private int lineCounter = 1;
   protected boolean cCode = false, pretty = false;
+	private int defaultDeep;
 
-  public OutputCode(Writer file, boolean cCode, boolean pretty) {
+  public OutputCode(Writer file, 
+										boolean cCode, 
+										boolean pretty, 
+										int defaultDeep) {
     this.file = file;
     this.cCode = cCode;
     this.pretty = pretty;
+		this.defaultDeep = defaultDeep;
   }
 
   public OutputCode() {
@@ -105,7 +110,12 @@ public class OutputCode {
   }
 
   public void write(int deep,String s, int line, int length) throws IOException {
-    if(lineCounter > line && !pretty) {
+    if (!pretty) {
+			s = s.replace('\n', ' ');
+			s = s.replace('\r', ' ');
+			s = s.replace('\t', ' ');
+		}
+		if(lineCounter > line && !pretty) {
       if(cCode) {
         String s1 = "\n#line "+line+"\n";
           // writeln(deep,s);
