@@ -191,7 +191,7 @@
       <attribute name="factory"/>
       <sequential>
         <adt srcdir="${examples.dir}"
-             factory="@{factory}" 
+             name="@{factory}" 
              package="@{example}" 
              visitable="${visitable}"
              destdir="${examples.gen}">

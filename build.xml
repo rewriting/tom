@@ -298,14 +298,14 @@
     <vas config="${stable.vasconfigfile}"
 				 srcdir="${src.src}"
          package="jtom.adt" 
-         factory="tomsignature" 
+         name="tomsignature" 
          destdir="${src.gen}">
       <include name="jtom/adt/*.vas"/>
     </vas>
 -->
     <adt srcdir="${src.src}"
          package="jtom.adt" 
-         factory="tomsignature" 
+         name="tomsignature" 
          destdir="${src.gen}">
       <include name="jtom/adt/*.adt"/>
     </adt>
@@ -803,6 +803,7 @@
   <target name="examples" 
           description="Build and test examples with jtom-source" 
           depends="examples.src"/>
+
   <target name="examples.src" 
           depends="dist.src">
     <ant dir="${examples}" target="clean"/>
