@@ -1546,10 +1546,17 @@ public class TomParser implements TomParserConstants {
                                 vasParams.add("--destdir");
                                 vasParams.add(destDir);
                                 packageName = getInput().getPackagePath().replace(File.separatorChar, '.');
-        if(!packageName.equals("")) {
-          vasParams.add("--package");
-          vasParams.add(packageName);
+        String inputFileName = getInput().getInputFile().getName();
+        String inputFileNameWithoutExtension = inputFileName.substring(0, inputFileName.length() - getInput().getInputSuffix().length()).toLowerCase();
+        String subPackageName = "";
+        if(packageName.equals("")) {
+          subPackageName = inputFileNameWithoutExtension;
+        } else {
+          subPackageName = packageName + "." + inputFileNameWithoutExtension;
         }
+        vasParams.add("--package");
+        vasParams.add(subPackageName);
+
                                 Object[] realParams = {
                                                                                         (String[]) vasParams.toArray(new String[vasParams.size()]),
                                                                                         new ByteArrayInputStream(vasCode.getBytes()),
@@ -2986,16 +2993,16 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_13() {
+    if (jj_scan_token(TOM_LPAREN)) return true;
+    if (jj_scan_token(TOM_RPAREN)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_35() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_3R_37()) return true;
     if (jj_scan_token(TOM_ALTERNATIVE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_13() {
-    if (jj_scan_token(TOM_LPAREN)) return true;
-    if (jj_scan_token(TOM_RPAREN)) return true;
     return false;
   }
 
@@ -3156,6 +3163,12 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
+  final private boolean jj_3_12() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
   final private boolean jj_3_1() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
@@ -3171,12 +3184,6 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_12() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_scan_token(TOM_COLON)) return true;
-    return false;
-  }
-
   final private boolean jj_3_6() {
     if (jj_3R_31()) return true;
     return false;
@@ -3188,14 +3195,14 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_47() {
-    if (jj_scan_token(TOM_UNDERSCORE)) return true;
-    return false;
-  }
-
   final private boolean jj_3_11() {
     if (jj_scan_token(TOM_IDENTIFIER)) return true;
     if (jj_scan_token(TOM_COLON)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_47() {
+    if (jj_scan_token(TOM_UNDERSCORE)) return true;
     return false;
   }
 

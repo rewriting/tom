@@ -31,8 +31,8 @@ package addressbook;
 
 import aterm.*;
 import aterm.pure.*;
-import addressbook.person.*;
-import addressbook.person.types.*;
+import addressbook.addressbookvas.person.*;
+import addressbook.addressbookvas.person.types.*;
 
 public class AddressBookVas {
   private Factory factory;
