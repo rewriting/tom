@@ -22,6 +22,8 @@ Declaration_MakeEmptyArrayImpl.java Declaration_MakeEmptyArray.java\
 Declaration_MakeAddArrayImpl.java Declaration_MakeAddArray.java\
 Declaration_MakeDeclImpl.java Declaration_MakeDecl.java\
 Declaration_SymbolDeclImpl.java Declaration_SymbolDecl.java\
+Declaration_ListSymbolDeclImpl.java Declaration_ListSymbolDecl.java\
+Declaration_ArraySymbolDeclImpl.java Declaration_ArraySymbolDecl.java\
 OptionList.java OptionListImpl.java \
 OptionList_EmptyOptionListImpl.java OptionList_EmptyOptionList.java\
 OptionList_ConsOptionListImpl.java OptionList_ConsOptionList.java\
@@ -48,11 +50,11 @@ Expression_GetSubtermImpl.java Expression_GetSubterm.java\
 Expression_IsFsymImpl.java Expression_IsFsym.java\
 Expression_GetSlotImpl.java Expression_GetSlot.java\
 Expression_GetHeadImpl.java Expression_GetHead.java\
-Expression_GetTailImpl.java Expression_GetTail.java\
-Expression_GetSizeImpl.java Expression_GetSize.java\
-Expression_GetElementImpl.java Expression_GetElement.java
+Expression_GetTailImpl.java Expression_GetTail.java
 
 TomSignatureAPI1=\
+Expression_GetSizeImpl.java Expression_GetSize.java\
+Expression_GetElementImpl.java Expression_GetElement.java\
 Expression_GetSliceListImpl.java Expression_GetSliceList.java\
 Expression_GetSliceArrayImpl.java Expression_GetSliceArray.java\
 TargetLanguage.java TargetLanguageImpl.java \
@@ -100,11 +102,11 @@ TomTerm_MakeFunctionEndImpl.java TomTerm_MakeFunctionEnd.java\
 TomTerm_RuleSetImpl.java TomTerm_RuleSet.java\
 TomTerm_RewriteRuleImpl.java TomTerm_RewriteRule.java\
 TomTerm_SubjectListImpl.java TomTerm_SubjectList.java\
-TomTerm_PatternListImpl.java TomTerm_PatternList.java\
-TomTerm_TermListImpl.java TomTerm_TermList.java\
-TomTerm_TermImpl.java TomTerm_Term.java
+TomTerm_PatternListImpl.java TomTerm_PatternList.java
 
 TomSignatureAPI2=\
+TomTerm_TermListImpl.java TomTerm_TermList.java\
+TomTerm_TermImpl.java TomTerm_Term.java\
 TomTerm_PatternActionImpl.java TomTerm_PatternAction.java\
 TomTerm_GLVarImpl.java TomTerm_GLVar.java\
 TomTerm_VariableImpl.java TomTerm_Variable.java\

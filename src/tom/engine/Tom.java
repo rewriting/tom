@@ -201,7 +201,6 @@ public class Tom {
         TomParser tomParser = new TomParser(new TomBuffer(inputBuffer),environment,fileList);
         startChrono();
         parsedTerm = tomParser.startParsing();
-        tomParser.updateSymbol();
         stopChrono();
         if(Flags.verbose) System.out.println("TOM parsing phase " + getChrono());
         if(Flags.intermediate) {
@@ -222,6 +221,7 @@ public class Tom {
         startChrono();
         try {
           tomVerifier.verify(expandedTerm);
+          tomParser.updateSymbol();
         }
         catch (TomException e) {
           System.out.println("TomVerifier catch:" + e);

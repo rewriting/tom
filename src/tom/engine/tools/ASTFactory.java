@@ -173,10 +173,10 @@ public class ASTFactory {
   public Option makeLRParen( String name ) {
     return tsf().makeOption_LRParen(tsf().makeTomName_Name(name));
   }
-
-  public Declaration makeMakeDecl(String opname, TomType returnType, ArrayList argList, TargetLanguage tlcode) {
+  
+  public Declaration makeMakeDecl(String opname, TomType returnType, ArrayList argList, TargetLanguage tlcode, Option orgTrack) {
     TomName name = tsf().makeTomName_Name(opname);  
-    return tsf().makeDeclaration_MakeDecl(name, returnType, makeList(argList), tlcode);
+    return tsf().makeDeclaration_MakeDecl(name, returnType, makeList(argList), tlcode, orgTrack);
   }
 
   public TomType makeType(String typeNameTom, String typeNametGL) {
@@ -212,13 +212,13 @@ public class ASTFactory {
     TomTerm variable_t2 = makeVariable(option,"t2",typeString);
     TomTerm variable_n = makeVariable(option,"n",typeString);
     getFunSym = tsf().makeDeclaration_GetFunctionSymbolDecl(
-      variable_t,tsf().makeTargetLanguage_ITL("t"));
+      variable_t,tsf().makeTargetLanguage_ITL("t"), option);
     getSubterm = tsf().makeDeclaration_GetSubtermDecl(
-      variable_t,variable_n,tsf().makeTargetLanguage_ITL("null"));
+      variable_t,variable_n,tsf().makeTargetLanguage_ITL("null"), option);
     cmpFunSym = tsf().makeDeclaration_CompareFunctionSymbolDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"));
+      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"), option);
     equals = tsf().makeDeclaration_TermsEqualDecl(
-      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"));
+      variable_t1,variable_t2,tsf().makeTargetLanguage_ITL("t1==t2"), option);
     list.add(getFunSym);
     list.add(getSubterm);
     list.add(cmpFunSym);
@@ -287,15 +287,7 @@ public class ASTFactory {
   public TargetLanguage reworkTLCode(TargetLanguage code) {
     if(!Flags.pretty){
       String tlCode = code.getCode();
-      int len = tlCode.length();
-      int st = 0;
-      while ((st < len) && (tlCode.charAt(st) <= ' ')) {
-        st++;
-      }
-      while ((st < len) && (tlCode.charAt(len - 1) <= ' ')) {
-        len--;
-      }
-      tlCode = tlCode.substring(st, len);
+      tlCode = tlCode.trim();
       tlCode = tlCode.replace('\n', ' ');
       return tsf().makeTargetLanguage_ITL(tlCode);
     } else

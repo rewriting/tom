@@ -382,7 +382,7 @@ public class TomChecker extends TomBase {
           context, Match(option,tomSubjectList,patternList) -> {
             //debugPrintln("pass1.10: Match(" + tomSubjectList + "," + patternList + ")");
             //verifier().testMatchTypeCompatibility(tomSubjectList, patternList);
-            verifier().affectOptionMatchTypeVariable(option);
+            //verifier().affectOptionMatchTypeVariable(option);
             TomTerm newSubjectList = pass1(context,tomSubjectList);
             TomTerm newPatternList = pass1(newSubjectList,patternList);
             return `Match(option,newSubjectList,newPatternList);

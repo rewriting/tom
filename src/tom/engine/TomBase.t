@@ -148,7 +148,15 @@ public class TomBase {
   }
   
   protected String getTomType(TomType type) {
-    return type.getTomType().getString();
+    %match(TomType type) {
+      TomType(s) -> {return s;}
+      TomTypeAlone(s) -> {return s;}
+      Type(TomType(s),_) -> {return s;}
+      _ -> {System.out.println("getTomType error on term: " + type);
+      System.exit(1);
+      }
+    }
+    return null;
   }
 
   protected String getTLType(TomType type) {
@@ -160,7 +168,7 @@ public class TomBase {
       TLType(TL[code=tlType])  -> { return tlType; }
       TLType(ITL[code=tlType]) -> { return tlType; }
       _ -> {
-        System.out.println("getTLType error on term: " + type);
+        System.out.println("getTLCode error on term: " + type);
         System.exit(1);
       }
     }
