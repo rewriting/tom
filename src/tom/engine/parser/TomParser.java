@@ -893,6 +893,7 @@ public class TomParser implements TomParserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_MAKE_EMPTY:
       case TOM_MAKE_INSERT:
+      case TOM_IS_FSYM:
         ;
         break;
       default:
@@ -907,6 +908,10 @@ public class TomParser implements TomParserConstants {
       case TOM_MAKE_INSERT:
         attribute = KeywordMakeAddList(name.image, type.image, typeArg.image);
                                                                                  options.add(attribute);
+        break;
+      case TOM_IS_FSYM:
+        attribute = KeywordIsFsym(tsf().makeTomName_Name(name.image), type.image);
+                                                                                   options.add(attribute);
         break;
       default:
         jj_la1[26] = jj_gen;
@@ -950,6 +955,7 @@ public class TomParser implements TomParserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TOM_MAKE_EMPTY:
       case TOM_MAKE_APPEND:
+      case TOM_IS_FSYM:
         ;
         break;
       default:
@@ -964,6 +970,10 @@ public class TomParser implements TomParserConstants {
       case TOM_MAKE_APPEND:
         attribute = KeywordMakeAddArray(name.image, type.image, typeArg.image);
                                                                                options.add(attribute);
+        break;
+      case TOM_IS_FSYM:
+        attribute = KeywordIsFsym(tsf().makeTomName_Name(name.image), type.image);
+                                                                                   options.add(attribute);
         break;
       default:
         jj_la1[28] = jj_gen;
@@ -1702,18 +1712,18 @@ public class TomParser implements TomParserConstants {
     return false;
   }
 
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TOM_IDENTIFIER)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    if (jj_scan_token(TOM_LBRACKET)) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
-    return false;
-  }
-
   final private boolean jj_3_6() {
     if (jj_scan_token(TOM_LPAREN)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     if (jj_scan_token(TOM_RPAREN)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_scan_token(TOM_IDENTIFIER)) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
+    if (jj_scan_token(TOM_LBRACKET)) return true;
     if (jj_la == 0 && jj_scanpos == jj_lastpos) return false;
     return false;
   }
@@ -1746,7 +1756,7 @@ public class TomParser implements TomParserConstants {
   final private int[] jj_la1 = new int[40];
   final private int[] jj_la1_0 = {0x50007ff6,0x50007ff6,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xc0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
   final private int[] jj_la1_1 = {0x0,0x0,0x2000000,0x2000,0x2000,0x4000,0x4000,0x4000,0x0,0x4000,0x2000000,0x80000,0x2000000,0x2000000,0x40000,0x2000000,0x2000,0x2000,0x30000000,0x30000000,0x30000000,0x4000,0x80000,0x40000000,0x40000000,0x80000000,0x80000000,0x80000000,0x80000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x4000,0x80000,0x80000,0x80000,};
-  final private int[] jj_la1_2 = {0x0,0x0,0x18000,0x0,0x0,0x0,0x0,0x0,0x10000,0x0,0x18000,0x0,0x18000,0x18000,0x0,0x18000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x30,0x30,0x1,0x1,0x2,0x2,0x0,0x3c0,0x3c0,0x1fc0,0x1fc0,0x63c0,0x63c0,0x0,0x0,0x0,0x0,};
+  final private int[] jj_la1_2 = {0x0,0x0,0x18000,0x0,0x0,0x0,0x0,0x0,0x10000,0x0,0x18000,0x0,0x18000,0x18000,0x0,0x18000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x30,0x30,0x21,0x21,0x22,0x22,0x0,0x3c0,0x3c0,0x1fc0,0x1fc0,0x63c0,0x63c0,0x0,0x0,0x0,0x0,};
   final private JJCalls[] jj_2_rtns = new JJCalls[6];
   private boolean jj_rescan = false;
   private int jj_gc = 0;

@@ -1480,16 +1480,21 @@ public class TomGenerator extends TomBase {
     s+= "    return result;\n";
     s+= "  }\n";
     s+= "\n";
-    
+
     s+= modifier + utype + " tom_insert_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n";
-    s+= "   " + glType + " reverse = " + reverse + "(l1);\n";
-    s+= "    while(!" + is_empty + "(reverse) ) {\n";  
-    s+= "      l2 = " + make_insert + "(" + get_head + "(reverse),l2);\n";  
-    s+= "      reverse = " + get_tail + "(reverse);\n";  
-    s+= "    }\n";  
-    s+= "    return l2;\n";
+    s+= "   if(" + is_empty + "(l1)) {\n";
+    s+= "    return l2;\n";  
+    s+= "   } else if(" + is_empty + "(l2)) {\n";
+    s+= "    return l1;\n";  
+    s+= "   } else if(" + is_empty + "(" + get_tail + "(l1))) {\n";  
+    s+= "    return " + make_insert + "(" + get_head + "(l1),l2);\n";
+    s+= "   } else { \n";  
+    s+= "    return " + make_insert + "(" + get_head + "(l1),tom_insert_list_" + name +  "(" + get_tail + "(l1),l2));\n";
+    s+= "   }\n";
     s+= "  }\n";
     s+= "\n";
+
+
     
     s+= modifier + utype + " tom_get_slice_" + name + "(" + utype + " begin, " + utype + " end) {\n"; 
     s+= "   " + glType + " result = " + make_empty + "();\n"; 

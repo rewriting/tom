@@ -913,6 +913,7 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
     ( 
       attribute = KeywordMakeEmptyList(name.image)                             { options.add(attribute); }
     | attribute = KeywordMakeAddList(name.image, type.image, typeArg.image)    { options.add(attribute); }
+    | attribute = KeywordIsFsym(tsf().makeTomName_Name(name.image), type.image)  { options.add(attribute); }
     )*
   <TOM_RBRACE>
     {
@@ -953,6 +954,7 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
     ( 
       attribute = KeywordMakeEmptyArray(name.image, type.image)              { options.add(attribute); }
     | attribute = KeywordMakeAddArray(name.image, type.image, typeArg.image) { options.add(attribute); }
+    | attribute = KeywordIsFsym(tsf().makeTomName_Name(name.image), type.image)  { options.add(attribute); }
     )*
   <TOM_RBRACE>
     {
