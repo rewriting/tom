@@ -2,6 +2,7 @@ package jtom.parser;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 
 import antlr.*;
 
@@ -132,7 +133,8 @@ public class TomMainParser extends TomGenericPlugin {
 		Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
 				     + DEBUG_TABLE_SUFFIX, parser.getStructTable());
         
-	    environment().printAlertMessage("TomParserPlugin");
+	    environment().printAlertMessage("TomParserPlugin"); // TODO: useless soon
+
 	    if(!environment().isEclipseMode()) {
 		// remove all warning (in command line only)
 		environment().clearWarnings();
@@ -140,32 +142,34 @@ public class TomMainParser extends TomGenericPlugin {
 	}
 	catch (TokenStreamException e){
 	    e.printStackTrace();
-	    environment().messageError(TomMessage.getString("TokenStreamException"), new Object[]{e.getMessage()}, 
-					   currentFile,  getLineFromTomParser());
+	    getLogger().log( Level.SEVERE,
+			     "TokenStreamException",
+			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
 	}
 	catch (RecognitionException e){
 	    e.printStackTrace();
-	    environment().messageError(TomMessage.getString("RecognitionException"), new Object[]{e.getMessage()}, 
-					   currentFile, getLineFromTomParser());
-	}
-	catch (TomIncludeException e){
-	    environment().messageError(e.getMessage(), currentFile,  getLineFromTomParser());
-	}
-	catch (TomException e){
-	    environment().messageError(e.getMessage(), currentFile,  getLineFromTomParser());
-	}
- 	catch (FileNotFoundException e){
-	    environment().messageError(TomMessage.getString("FileNotFound"), new Object[]{currentFile}, 
-				       currentFile, getLineFromTomParser());
-	} 
-	catch (Exception e){
+	    getLogger().log( Level.SEVERE,
+			     "RecognitionException",
+			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+	} catch (TomIncludeException e) {
+	    getLogger().log( Level.SEVERE,
+			     "SimpleMessage",
+			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+	} catch (TomException e) {
+	    getLogger().log( Level.SEVERE,
+			     "SimpleMessage",
+			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+	} catch (FileNotFoundException e) {
+	    getLogger().log( Level.SEVERE,
+			     "FileNotFound",
+			     new Object[]{currentFile, new Integer( getLineFromTomParser() ), currentFile} ); 
+	} catch (Exception e) {
 	    e.printStackTrace();
-	    environment().messageError(TomMessage.getString("UnhandledException"), 
-				       new Object[]{currentFile, e.getMessage()}, 
-				       currentFile, TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	    getLogger().log( Level.SEVERE,
+			     "UnhandledException", 
+			     new Object[]{currentFile, e.getMessage()} );
 	}
     }
-
 
     private int getLineFromTomParser() {
 	if(parser == null) {
