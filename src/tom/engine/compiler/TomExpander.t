@@ -751,9 +751,9 @@ public class TomExpander extends TomTask {
         } // end instance of Instruction
 
         ATerm res = traversal().genericTraversal(subject,this,contextSubject);
-          //System.out.println("res1 =\n" + res);
+        //System.out.println("res1 =\n" + res);
         res = tomKernelExpander.replace_expandVariable.apply(res,contextSubject);
-          //System.out.println("res2 =\n" + res);
+        //System.out.println("res2 =\n" + res);
         return res;
       } // end apply
     }; // end replace

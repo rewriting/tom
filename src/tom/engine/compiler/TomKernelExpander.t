@@ -91,10 +91,8 @@ public class TomKernelExpander extends TomBase {
           //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
         
         %match(TomTerm contextSubject, TomTerm subject) {
-          TomTypeToTomTerm(type@Type[]) , Appl[option=optionList,nameList=nameList@(Name(strName),_*),args=l] -> {
+          TomTypeToTomTerm(type@Type[]) , Appl[option=option,nameList=nameList@(Name(strName),_*),args=l,constraints=constraints] -> {
               //debugPrintln("expandVariable.1: Type(" + tomType + "," + glType + ")");
-            Option orgTrack = findOriginTracking(optionList);
-            OptionList option = `replaceAnnotedName(optionList,type,orgTrack);
               // create a constant or a variable
 
               //TomSymbol tomSymbol = getSymbol(strName);
@@ -108,21 +106,24 @@ public class TomKernelExpander extends TomBase {
 
             if(tomSymbol != null) {
               TomList subterm = expandVariableList(tomSymbol, l);
-              return `Appl(option,nameList,subterm,concConstraint());
+              ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),constraints);
+              System.out.println("newConstraints1.1 = " + newConstraints);
+              return `Appl(option,nameList,subterm,newConstraints);
             } else {
-              if(l.isEmpty()  && !hasConstructor(optionList)) {
-                return `Variable(option,nameList.getHead(),type,concConstraint());
+              ConstraintList newConstraints = expandVariableConstraintList(`emptyTerm(),constraints);
+              System.out.println("newConstraints1.2 = " + newConstraints);
+
+              if(l.isEmpty()  && !hasConstructor(option)) {
+                return `Variable(option,nameList.getHead(),type,newConstraints);
               } else {
                 TomList subterm = expandVariableList(`emptySymbol(), l);
-                return `Appl(option,nameList,subterm,concConstraint());
+                return `Appl(option,nameList,subterm,newConstraints);
               }
             }
           }
           
-          Variable[option=option1,astName=name1,astType=type1] , Appl[option=optionList,nameList=nameList@(Name(strName),_*),args=l] -> {
-              //System.out.println("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
-            Option orgTrack = findOriginTracking(optionList);
-            OptionList option = `replaceAnnotedName(optionList,type1,orgTrack);
+          Variable[option=option1,astName=name1,astType=type1] , Appl[option=option,nameList=nameList@(Name(strName),_*),args=l,constraints=constraints] -> {
+             // System.out.println("expandVariable.3: Variable(" + option1 + "," + name1 + "," + type1 + ")");
               // under a match construct
               // create a constant or a variable
               //TomSymbol tomSymbol = getSymbol(strName);
@@ -133,53 +134,65 @@ public class TomKernelExpander extends TomBase {
             } else {
               tomSymbol = getSymbol(strName);
             }
-
+            
+            ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type1),constraints);
+            System.out.println("newConstraints2.1 = " + newConstraints);
             if(tomSymbol != null) {
               TomList subterm = expandVariableList(tomSymbol, l);
-              return `Appl(option,nameList,subterm,concConstraint());
+              return `Appl(option,nameList,subterm,newConstraints);
             } else {
-              if(l.isEmpty()  && !hasConstructor(optionList)) {
-                return `Variable(option,nameList.getHead(),type1,concConstraint());
+              if(l.isEmpty()  && !hasConstructor(option)) {
+                return `Variable(option,nameList.getHead(),type1,newConstraints);
               } else {
                 TomList subterm = expandVariableList(`emptySymbol(), l);
-                return `Appl(option,nameList,subterm,concConstraint());
+                return `Appl(option,nameList,subterm,newConstraints);
               }
             }
           } 
 
-          TomTypeToTomTerm(type@Type(tomType,glType)) ,p@Placeholder[option=optionList,constraints=constraint] -> {
-            Option orgTrack = findOriginTracking(optionList);
-            OptionList option = `replaceAnnotedName(optionList,type,orgTrack);
+          TomTypeToTomTerm(type@Type(tomType,glType)) ,p@Placeholder[option=option,constraints=constraints] -> {
+            ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type),constraints);
               // create an unamed variable
-            return `UnamedVariable(option,type,constraint);
-          } 
-              
-          Variable[option=option1,astName=name1,astType=type1] , p@Placeholder[option=optionList,constraints=constraint] -> {
-            Option orgTrack = findOriginTracking(optionList);
-            OptionList option = `replaceAnnotedName(optionList,type1,orgTrack);
-              // create an unamed variable
-            return `UnamedVariable(option,type1,constraint);
+            return `UnamedVariable(option,type,newConstraints);
           } 
 
-          context, appl@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=l] -> {
-               //System.out.println("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
+          context@TomTypeToTomTerm(type@Type(tomType,glType)), Variable[option=option,astName=astName,astType=TomTypeAlone[],constraints=constraints] -> {
+             // create a variable
+             return `Variable(option,astName,type,expandVariableConstraintList(context,constraints));
+          }
+              
+          Variable[option=option1,astName=name1,astType=type1] , p@Placeholder[option=option,constraints=constraints] -> {
+            ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(type1),constraints);
+              // create an unamed variable
+            return `UnamedVariable(option,type1,newConstraints);
+          } 
+
+          context, appl@Appl[option=optionList,nameList=nameList@(Name(tomName),_*),args=l,constraints=constraints] -> {
+             //System.out.println("expandVariable.6: Appl(Name(" + tomName + ")," + l + ")");
               // create a  symbol
             TomSymbol tomSymbol = getSymbol(tomName);
             if(tomSymbol != null) {
               TomList subterm = expandVariableList(tomSymbol, l);
-                //System.out.println("***** expandVariable.6: expandVariableList = " + subterm);
-              Option orgTrack = findOriginTracking(optionList);
-              OptionList option = `replaceAnnotedName(optionList,getSymbolCodomain(tomSymbol),orgTrack);
-              return `Appl(option,nameList,subterm,concConstraint());
+              ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(getSymbolCodomain(tomSymbol)),constraints);
+              //System.out.println("newConstraints3.1 = " + newConstraints);
+              //System.out.println("***** expandVariable.6: expandVariableList = " + subterm);
+              //System.out.println("***** expandVariable.6: appl        = " + appl);
+              //System.out.println("***** expandVariable.6: constraints = " + constraints);
+              return `Appl(optionList,nameList,subterm,newConstraints);
             } else {
                 // do nothing
+              //System.out.println("***** expandVariable.6: do nothing: " + constraints);
             }
           }
 
-          context, Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType)] -> {
+          context, var@Variable[option=option,astName=Name(strName),astType=TomTypeAlone(tomType),constraints=constraints] -> {
               // create a variable
             TomType localType = getType(tomType);
-            return `Variable(option,Name(strName),localType,concConstraint());
+            if(localType != null) {
+              return `Variable(option,Name(strName),localType,constraints);
+            } else {
+              // do nothing
+            }
           }
           
           context, TLVar(strName,TomTypeAlone(tomType)) -> {
@@ -198,7 +211,7 @@ public class TomKernelExpander extends TomBase {
           }
 
          SubjectList(l1), TermList(subjectList) -> {
-            //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
+             //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
                 
               // process a list of subterms
             ArrayList list = new ArrayList();
@@ -222,6 +235,10 @@ public class TomKernelExpander extends TomBase {
 
   protected TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
     return (TomTerm) replace_expandVariable.apply(subject,contextSubject); 
+  }
+
+  protected ConstraintList expandVariableConstraintList(TomTerm contextSubject, ConstraintList subject) {
+    return (ConstraintList) replace_expandVariable.apply(subject,contextSubject); 
   }
 
   private TomList expandVariableList(TomSymbol subject, TomList subjectList) {
@@ -269,18 +286,16 @@ public class TomKernelExpander extends TomBase {
               //System.out.println("subterm:\n" + subterm);
             matchBlock: {
               %match(TomTerm subterm) {
-                VariableStar[option=optionList,astName=name,constraints=constraint] -> {
-                  Option orgTrack = findOriginTracking(optionList);
-                  OptionList option = `replaceAnnotedName(optionList,codomainType,orgTrack);
-                  list.add(`VariableStar(option,name,codomainType,constraint));
+                VariableStar[option=option,astName=name,constraints=constraints] -> {
+                  ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(codomainType),constraints);
+                  list.add(`VariableStar(option,name,codomainType,newConstraints));
                     //System.out.println("*** break: " + subterm);
                   break matchBlock;
                 }
                 
-                UnamedVariableStar[option=optionList,constraints=constraint] -> {
-                  Option orgTrack = findOriginTracking(optionList);
-                  OptionList option = `replaceAnnotedName(optionList,codomainType,orgTrack);
-                  list.add(`UnamedVariableStar(option,codomainType,constraint));
+                UnamedVariableStar[option=option,constraints=constraints] -> {
+                  ConstraintList newConstraints = expandVariableConstraintList(`TomTypeToTomTerm(codomainType),constraints);
+                  list.add(`UnamedVariableStar(option,codomainType,newConstraints));
                   break matchBlock;
                 }
                 
@@ -333,22 +348,6 @@ public class TomKernelExpander extends TomBase {
     return tomType;
   }
 
-
-  private OptionList replaceAnnotedName(OptionList subjectList, TomType type, Option orgTrack) {
-    //%variable
-    %match(OptionList subjectList) {
-      emptyOptionList() -> { return subjectList; }
-      manyOptionList(TomNameToOption(name@Name[]),l)   -> {
-        return `manyOptionList(
-          TomTermToOption(Variable(ast().makeOption(orgTrack),name,type,concConstraint())),
-          replaceAnnotedName(l,type,orgTrack));
-      }
-      manyOptionList(t,l) -> {
-        return `manyOptionList(t,replaceAnnotedName(l,type, orgTrack));
-      }
-    }
-    return null;
-  }
 
     /*
      * Replace pattern with only variables or underscore (UnamedVariables)
