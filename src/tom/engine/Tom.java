@@ -32,22 +32,25 @@ import jtom.tools.*;
 import tom.platform.*;
 
 /**
- * Main tom project class
+ * Main Tom project class
  */
 public class Tom {
-
-  public final static String LOGGERRADICAL = "jtom";
-  private final static String MESSAGERESOURCE = "jtom.TomMessageResources";
-
+  
   /** The current version of the TOM compiler. */
   public final static String VERSION = "2.1 - under development";
-
+  
+  /** Log radical string*/
+  public final static String LOGGERRADICAL = "jtom";
+  
+  /** Tom message ressource file name string*/
+  private final static String MESSAGERESOURCE = "jtom.TomMessageResources";
+    
   /** The root logger */
-  private static Logger logger;
-
+  private static Logger logger = Logger.getLogger(LOGGERRADICAL, MESSAGERESOURCE);
+  
   /** the console handler that level can be changed dynamically */
   private static Handler consoleHandler = null;
-
+  
   public static void main(String[] args) {
     exec(args);
   }
@@ -56,28 +59,24 @@ public class Tom {
     try {
       initializeLogging();
     } catch(Exception e) {
-      System.err.println("Error during the initialization of Tom : " + e.getMessage());
+      System.err.println("Error during the initialization of Tom: " + e.getMessage());
       e.printStackTrace();
       return 1;
     }
-    
-    String xmlConfigurationFileName = extractConfigFileName(commandLine);
-    if(xmlConfigurationFileName == null) {
+    String confFileName = extractConfigFileName(commandLine);
+    if(confFileName == null) {
       return 1;
     }
-
-    ConfigurationManager confManager = new ConfigurationManager(xmlConfigurationFileName);
+    ConfigurationManager confManager = new ConfigurationManager(confFileName);
     if(confManager.initialize() == 1) {
       return 1;
     }
-
     if(TomOptionManager.create(confManager, commandLine) == 1) { 
       return 1;
     }
-    TomOptionManager optionManager = TomOptionManager.getInstance();
-    
-    PluginPlatform platform = new PluginPlatform(optionManager, confManager, Tom.LOGGERRADICAL);
-            
+    PluginPlatform platform =new PluginPlatform(TomOptionManager.getInstance(),
+                                                confManager,
+                                                Tom.LOGGERRADICAL);
     return platform.run();
   }
    
@@ -98,7 +97,7 @@ public class Tom {
      * ConsoleHandler's level while the verbose option lowers the rootLogger's
      * level to Level.INFO.
      */
-    if(newLevel.intValue() <= Level.WARNING.intValue()) {
+    if(logger != null && newLevel.intValue() <= Level.WARNING.intValue()) {
       logger.setLevel(newLevel);
     } else if(consoleHandler != null) {
       // if we've found a global console handler
@@ -107,8 +106,12 @@ public class Tom {
     }
   }
  
-  private static void initializeLogging() throws IOException, InstantiationException, ClassNotFoundException, IllegalAccessException {
-    String loggingConfigFile = System.getProperty("java.util.logging.config.file");
+  private static void initializeLogging() throws IOException,
+                                                 InstantiationException,
+                                                 ClassNotFoundException,
+                                                 IllegalAccessException {
+    String loggingConfigFile =
+      System.getProperty("java.util.logging.config.file");
     if (loggingConfigFile == null) { // default > no custom file is used
       // create a configuration equivalent to normalLog.properties file
       initTomRootLogger(false);
@@ -119,31 +122,37 @@ public class Tom {
       consoleHandler.setFormatter(new TomBasicFormatter());
       logger.addHandler(consoleHandler);
     } else { // custom configuration file for LogManager is used
-      LogManager.getLogManager().readConfiguration();
+      //LogManager.getLogManager().readConfiguration();
       initTomRootLogger(true);
       refreshTopLoggerHandlers();
     }
   }
   
+  private static void initTomRootLogger(boolean useParentHandler) {
+    //logger = Logger.getLogger(Tom.LOGGERRADICAL, Tom.MESSAGERESOURCE);
+    logger.setUseParentHandlers(useParentHandler);
+    cleanTomRootLogger();
+    /*Status statusHandler = new StatusHandler();
+      Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);*/
+  }
+
+  /**
+   * remove all pre-existing handlers that might exist from prior uses
+   * especially for multiple invication in the same VM
+   */
   private static void cleanTomRootLogger() {
     if(logger!=null) { 
       Handler[] handlers = logger.getHandlers();
       for(int i = 0; i < handlers.length; i++) {
-        // remove all pre-existing handlers that might exist from prior uses
         logger.removeHandler(handlers[i]);
       }
     }
   }
-
-  private static void initTomRootLogger(boolean useParentHandler) {
-    logger = Logger.getLogger(Tom.LOGGERRADICAL, Tom.MESSAGERESOURCE);
-    /*Status statusHandler = new StatusHandler();
-      Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);*/
-    logger.setUseParentHandlers(useParentHandler);
-    cleanTomRootLogger();
-  }
   
-  private static void refreshTopLoggerHandlers() throws InstantiationException, ClassNotFoundException, IllegalAccessException {
+  private static void refreshTopLoggerHandlers() throws InstantiationException,
+                                                        ClassNotFoundException,
+                                                        IllegalAccessException
+  {
     Handler[] handlers = Logger.getLogger("").getHandlers();
     for(int i = 0; i < handlers.length; i++) {
       /*
@@ -208,4 +217,4 @@ public class Tom {
     return xmlConfigurationFile;
   }
 
-}
+} // class Tom
