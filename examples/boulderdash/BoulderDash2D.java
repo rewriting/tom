@@ -1,4 +1,4 @@
-package BoulderDash;
+package boulderdash;
 
 import java.awt.Image;
 import java.awt.MediaTracker;
@@ -25,7 +25,7 @@ import java.net.URL;
 
 import java.util.HashMap;
 
-import BoulderDash.boulder.*;
+import boulderdash.boulder.*;
 import aterm.pure.*;
 
 // BOULDERDASH 2D APPLI BUT ALSO APPLET

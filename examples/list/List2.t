@@ -1,4 +1,4 @@
-package List;
+package list;
 
 import aterm.*;
 import aterm.pure.*;

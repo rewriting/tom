@@ -1,9 +1,9 @@
-package ProdRule;
+package prodrule;
 
 import aterm.*;
 import aterm.pure.*;
-import ProdRule.fib.*;
-import ProdRule.fib.types.*;
+import prodrule.fib.*;
+import prodrule.fib.types.*;
 
 class Fib2 {
   private Factory factory;

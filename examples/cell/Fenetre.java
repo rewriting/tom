@@ -5,7 +5,7 @@
  *	structure de la fenetre d'affichage
  */
 
-package Cell;
+package cell;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -15,27 +15,27 @@ Depending on your background, Tom can be seen as:
 If you come from the 
  - algebraic programming community
    => start with:
-      - Vas
-      - AddressBook
-      - Peano
-      - Poly
-      - ApiReach
+      - vas
+      - addressbook
+      - peano
+      - poly
+      - apireach
 
  - XML community
    => start with
-      - Dom
-      - Xml
+      - dom
+      - xml
 
  - Java programming community
    => start with:
-      - Builtin
-      - Peano
-      - Expression (quite complex)
+      - builtin
+      - peano
+      - expression (quite complex)
 
  - C programming community
    => start with:
-      - IntegerC
-      - Peano
+      - integerc
+      - peano
  
 * Note about ApiGen:
 --------------------
@@ -50,85 +50,85 @@ If you come from the
 
 * Included examples:
 --------------------
-* AddressBook
+* addressbook
   Small implementation of a data-base
   Concepts: apigen, list-matching, vas
 
-* ApiReach
+* apireach
   Compute reachable terms (wrt. a rewrite system)
   Concept: apigen, complex generic traversal
 
-* BoulderDash
+* boulderdash
   Simulate how rocks go down in the boulder-dash game	
   Concept: apigen, virtual mapping 
 
-* Builtin
+* builtin
   Show how to use builtin integer and string  
   Concept: list-matching, string-matching
 
-* Caml
+* caml
   Show how to use Tom with Caml  
   Concept: mapping, list-matching
 
-* Dom
+* dom
   XML manipulation based on DOM
   Concept: XML, list-matching, DOM
 
-* Expression
+* expression
   Simplification of algebraic expressions
   Concept: complex object mapping, lazy-type
 
-* GTree
+* gtree
   Tiny example of tree manipulation
   Concept: apigen
 
-* IntegerC
+* integerc
   Show how to use Tom with C
   Concept: mapping, complex mapping on builtin
   
-* List
+* list
   Introduction to list-matching  
   Concept: list-matching, mapping to the ATerm library 
 
-* Lsystems
+* lsystems
 
-* Nspk
+* nspk
   Verification of the Needham-Schroeder Public-Key protocol
   Concept: apigen, complex list-matching, exploration of a search space
 
-* Peano
+* peano
   Computation with Peano integers
   Concept: simple mapping, apigen, Tom notation 
 
-* PNspk
+* pnspk
   Parallel verification of the Needham-Schroeder Public-Key protocol
   Concept: apigen, parallel exploration of a search space, strategy library 
 
-* PQueens
+* pqueens
   Parallel version of the N-Queens problem
   Concept: strategy library, complex mapping
 
-* Poly
+* poly
   Compute the derivative of a polynom
   Concept: mapping, apigen, generic traversal, rewrite system  
 
-* ProdRule
+* prodrule
   Implementation of Fibonacci in a Production rule style
   Concept: Production rule, Rete
 
-* RBTree
+* rbtree
   Red-Black Tree algorithm
   Concept: apigen, disjunction of patterns
 
-* Set
+* set
   Implementation of Set with maximal sharing
   Concept: apigen, ATerm with unique id
 
-* Vas
+* vas
   Introduction to the VAS abstract syntax
   Concept: vas
 
-* Xml
+* xml
   XML manipulation based on TNode
   Concept: XML, list-matching, TNode
   

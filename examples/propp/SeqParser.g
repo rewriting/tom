@@ -1,5 +1,5 @@
 header {
-package Propp;
+package propp;
 }
 
 //{{{ class SeqParser extends Parser;

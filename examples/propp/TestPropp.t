@@ -1,11 +1,11 @@
-package Propp;
+package propp;
 
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
-import Propp.seq.*;
-import Propp.seq.types.*;
+import propp.seq.*;
+import propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 

@@ -5,7 +5,7 @@
  *	Dessin de l'etat global de l'automate cellulaire 2D.
  */
 
-package Cell;
+package cell;
 
 import java.awt.*;
 import javax.swing.*;

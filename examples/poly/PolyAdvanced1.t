@@ -1,4 +1,4 @@
-package Poly;
+package poly;
 
 import aterm.*;
 import aterm.pure.*;

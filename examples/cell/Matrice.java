@@ -5,7 +5,7 @@
  *	une matrice est un tableau et ses 2 dimensions.
  */
 
-package Cell;
+package cell;
 
 class Matrice
 {

@@ -1,9 +1,9 @@
-package AddressBook;
+package addressbook;
 
 import aterm.*;
 import aterm.pure.*;
-import AddressBook.data.*;
-import AddressBook.data.types.*;
+import addressbook.data.*;
+import addressbook.data.types.*;
 
 
 public class AddressBook2 {

@@ -6,7 +6,7 @@
  * 	la fonction qui gere les transitions est ici.
  */
 
-package Cell;
+package cell;
 
 public abstract class TwoDimCellularAutomaton {
 

@@ -1,10 +1,10 @@
-package GTree;
+package gtree;
 
 import aterm.*;
 import aterm.pure.*;
 import jtom.runtime.*;
-import GTree.term.*;
-import GTree.term.types.*;
+import gtree.term.*;
+import gtree.term.types.*;
 
 public class GTree1 {
 

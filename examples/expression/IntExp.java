@@ -1,4 +1,4 @@
-package Expression;
+package expression;
 
 public class IntExp extends CstExp {
   public int value;

@@ -1,10 +1,10 @@
 /* From Propositional prover by H. Cirstea */
-package Propp;
+package propp;
 
 import aterm.*;
 import aterm.pure.*;
-import Propp.seq.*;
-import Propp.seq.types.*;
+import propp.seq.*;
+import propp.seq.types.*;
 import java.io.*;
 import antlr.CommonAST;
 

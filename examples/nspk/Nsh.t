@@ -1,11 +1,11 @@
-package Nspk;
+package nspk;
 
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
-import Nspk.term.*;
-import Nspk.term.types.*;
+import nspk.term.*;
+import nspk.term.types.*;
 
 public class Nsh {
   private static boolean authVerif = true;

@@ -5,7 +5,7 @@
  * 	classe abstraite que doivent etendre les automates cellulaires
  */
 
-package Cell;
+package cell;
 
 public abstract class CellularAutomaton {
 

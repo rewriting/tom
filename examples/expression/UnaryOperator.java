@@ -1,4 +1,4 @@
-package Expression;
+package expression;
 
 public class UnaryOperator extends Exp {
   public Exp first;

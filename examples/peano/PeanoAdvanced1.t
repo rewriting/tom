@@ -1,4 +1,4 @@
-package Peano;
+package peano;
 
 import aterm.*;
 import aterm.pure.*;

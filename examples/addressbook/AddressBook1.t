@@ -1,9 +1,9 @@
-package AddressBook;
+package addressbook;
 
 import aterm.*;
 import aterm.pure.*;
-import AddressBook.data.*;
-import AddressBook.data.types.*;
+import addressbook.data.*;
+import addressbook.data.types.*;
 
 import java.util.Iterator;
 import java.util.HashSet;

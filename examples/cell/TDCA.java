@@ -5,7 +5,7 @@
  * 	Main class
  */
 
-package Cell;
+package cell;
 
 public class TDCA {
         static ZoneBoutons zb;

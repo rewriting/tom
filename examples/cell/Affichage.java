@@ -5,7 +5,7 @@
  *	gestion de l'affichage
  */
 
-package Cell;
+package cell;
 
 import java.awt.event.*;
 import javax.swing.*;

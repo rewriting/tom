@@ -6,7 +6,7 @@
  *	traçant une parabole.
  */
 
-package Cell;
+package cell;
  
 public class Parabole extends TwoDimCellularAutomaton {
 

@@ -1,4 +1,4 @@
-package BoulderDash;
+package boulderdash;
 
 public class BoulderDashImagesData {
   public static final int NUM_IMAGES = 15;

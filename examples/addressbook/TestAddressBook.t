@@ -1,12 +1,12 @@
-package AddressBook;
+package addressbook;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import aterm.*;
 import aterm.pure.*;
-import AddressBook.data.*;
-import AddressBook.data.types.*;
+import addressbook.data.*;
+import addressbook.data.types.*;
 
 import java.util.Iterator;
 import java.util.HashSet;

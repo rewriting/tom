@@ -1,4 +1,4 @@
-package Expression;
+package expression;
 
 public class BinaryOperator extends Exp {
   public Exp first;

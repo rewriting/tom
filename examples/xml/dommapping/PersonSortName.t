@@ -1,4 +1,4 @@
-package Xml.DomMapping;
+package xml.dommapping;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.*;

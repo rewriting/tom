@@ -1,9 +1,9 @@
-package Poly;
+package poly;
 
 import aterm.*;
 import aterm.pure.*;
-import Poly.expression.*;
-import Poly.expression.types.*;
+import poly.expression.*;
+import poly.expression.types.*;
 
 public class PolyApigen2 {
   private Factory factory;

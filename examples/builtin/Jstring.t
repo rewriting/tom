@@ -1,4 +1,4 @@
-package Builtin;
+package builtin;
 
 public class Jstring {
 

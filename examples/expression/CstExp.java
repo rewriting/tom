@@ -1,4 +1,4 @@
-package Expression;
+package expression;
 
 public class CstExp extends Exp {
     public String getOperator() {

@@ -10,7 +10,7 @@
  *	representants canoniques sont ecrites.
  */
  
-package Cell;
+package cell;
 
 public class LangtonSelf extends TwoDimCellularAutomaton {
 

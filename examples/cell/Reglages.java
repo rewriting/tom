@@ -5,7 +5,7 @@
  *	Contient les valeurs de reglages choisis.
  */
 
-package Cell;
+package cell;
 
 class Reglages
 {

@@ -1,4 +1,4 @@
-package Builtin;
+package builtin;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

@@ -1,9 +1,9 @@
-package Builtin;
+package builtin;
 
 import aterm.pure.*;
 import aterm.*;
-import Builtin.term.*;
-import Builtin.term.types.*;
+import builtin.term.*;
+import builtin.term.types.*;
 
 public class ApiString {
 

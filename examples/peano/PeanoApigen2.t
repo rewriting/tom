@@ -1,9 +1,9 @@
-package Peano;
+package peano;
 
 import aterm.*;
 import aterm.pure.PureFactory;
-import Peano.peano.*;
-import Peano.peano.types.*;
+import peano.peano.*;
+import peano.peano.types.*;
 
 public class PeanoApigen2 {
 

@@ -1,4 +1,4 @@
-package BoulderDash;
+package boulderdash;
 
 import javax.swing.JPanel;
 import java.awt.Image;
@@ -7,7 +7,7 @@ import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import BoulderDash.boulder.types.*;
+import boulderdash.boulder.types.*;
 
 public class JBoulderDashPanel extends JPanel {
   private HashMap space, lastDrawnSpace;

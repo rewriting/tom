@@ -1,4 +1,4 @@
-package Xml;
+package xml;
 
 import jtom.runtime.xml.*;
 import jtom.adt.tnode.*;

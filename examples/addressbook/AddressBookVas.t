@@ -1,9 +1,9 @@
-package AddressBook;
+package addressbook;
 
 import aterm.*;
 import aterm.pure.*;
-import AddressBook.person.*;
-import AddressBook.person.types.*;
+import addressbook.person.*;
+import addressbook.person.types.*;
 
 public class AddressBookVas {
   private Factory factory;

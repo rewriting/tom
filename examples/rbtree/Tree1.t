@@ -1,11 +1,11 @@
-package RBTree;
+package rbtree;
 
 import java.util.*;
 
 import aterm.*;
 import aterm.pure.*;
-import RBTree.tree.*;
-import RBTree.tree.types.*;
+import rbtree.tree.*;
+import rbtree.tree.types.*;
 
 public class Tree1 {
 

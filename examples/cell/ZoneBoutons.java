@@ -5,7 +5,7 @@
  *	structure de la zone de la fenetre contenant les boutons.
  */
 
-package Cell;
+package cell;
 
 import java.awt.*;
 import java.awt.event.*;

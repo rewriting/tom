@@ -1,8 +1,8 @@
-package Builtin;
+package builtin;
 
 import aterm.*;
-import Builtin.term.*;
-import Builtin.term.types.*;
+import builtin.term.*;
+import builtin.term.types.*;
 import aterm.pure.PureFactory;
 
 public class ApiInteger {

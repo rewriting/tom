@@ -1,4 +1,4 @@
-package Expression;
+package expression;
 
 public class StringExp extends CstExp {
   String value;
