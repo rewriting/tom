@@ -34,12 +34,14 @@
 	<property name="stable.adt" location="stable/adt"/>
 	<property name="stable.mapping" location="stable/jtom/runtime/mapping"/>
 	<property name="stable.build" location="stable/build"/>
+	<property name="stable.dist" location="stable/dist"/>
 	
 	<!-- for devel (src) -->
 	<property name="src.src" location="src"/>
 	<property name="src.adt" location="src/adt"/>
 	<property name="src.mapping" location="src/jtom/runtime/mapping"/>
 	<property name="src.build" location="src/build"/>  	
+	<property name="src.dist" location="src/dist"/>  	
 
 	<!-- Property for Javac compilation
 			 <property name="javacFailOnError" value="false"/>
@@ -94,10 +96,12 @@
 
 	<target name="preparesrc">
 		<mkdir dir="${src.build}"/>
+		<mkdir dir="${src.dist}"/>
 	</target>
 	
 	<target name="preparestable">
 		<mkdir dir="${stable.build}"/>
+		<mkdir dir="${stable.dist}"/>
 	</target>
 
 	<!-- builds and defines the custom tasks -->
@@ -193,11 +197,44 @@
 		</javac>
 	</target>  
 
+	<target name="diststable" description="Prepare a distribution ready stable package" depends="buildstable">
+		<copy todir="${stable.dist}">
+			<fileset dir="${stable.src}/adt">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+		<jar jarfile="${stable.dist}/jtom-${version}.jar">
+			<fileset dir="${stable.build}" includes="**/*.class"/>
+		</jar>
+	</target>
+
+	<target name="distsrc" description="Prepare a distribution ready source package" depends="buildsrc">
+		<jar jarfile="${src.dist}/Set-${version}.jar">
+			<fileset dir="${src.build}" 
+							 includes="jtom/adt/set/**/*.class"/>
+		</jar>
+		<jar jarfile="${src.dist}/TNode-${version}.jar">
+			<fileset dir="${src.build}" 
+							 includes="jtom/adt/tnode/**/*.class"/>
+		</jar>
+		<jar jarfile="${src.dist}/TomSignature-${version}.jar">
+			<fileset dir="${src.build}" 
+							 includes="jtom/adt/tomsignature/**/*.class"/>
+		</jar>
+		<jar jarfile="${src.dist}/jtom-${version}.jar">
+			<fileset dir="${src.build}" 
+							 includes="**/*.class"
+							 excludes="jtom/adt/**/*.class"/>
+		</jar>
+	</target>
+
 	<target name="cleanstable" description="Purges the generated stable files">
+		<delete dir="${stable.dist}"/>
 		<delete dir="${stable.build}"/>
 	</target>
 	
 	<target name="cleansrc" description="Purges the generated devel files">
+		<delete dir="${src.dist}"/>
 		<delete dir="${src.build}"/>
 		<delete dir="${src.adt}/jtom"/>
 		<delete> <fileset dir="${src.adt}" includes="**/*.tom"/></delete>
