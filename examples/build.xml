@@ -609,7 +609,7 @@
   
   <target name="examples" 
           description="Builds the examples (at least some)"
-          depends="addressbook, apireach, appletxml, boulderdash, builtin,
+          depends="addressbook, adt, apireach, appletxml, boulderdash, builtin,
           caml, cell, dom, expression, gomoku, gtree, list, 
           nspk, p3p, peano, pnspk, poly, pqueens,
           prodrule, propp, rbtree, set, strategy, strings, structure, 
