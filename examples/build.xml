@@ -682,6 +682,7 @@
 			<include name="${propp}/**/*.adt"/>
 		</adt>
     <!-- build parser -->
+    <mkdir dir="${examples.gen}/${propp}"/>
     <tomantlr target="${propp.dir}/SeqParser.g"
               outputdirectory="${examples.gen}/${propp}">
       <classpath refid="tom.classpath"/>
