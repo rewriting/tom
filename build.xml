@@ -242,10 +242,12 @@
 			<exclude name="cfib1.t"/>
 			<exclude name="loulou.t"/>
 			<exclude name="Record.t"/>
+			<exclude name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
 		</tomsrc>
 		<tomsrc srcdir="${test}" destdir="${test}" options="-I ${src.mapping} --lazyType -I ${src.adt}">
 			<include name="Record.t"/>
+			<include name="TestRecord.t"/>
 			<exclude name="**/error/**"/>
 		</tomsrc>
 		<javac srcdir="${test}" destdir="${test}" verbose="${javacVerbose}">
