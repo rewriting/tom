@@ -843,6 +843,7 @@
          optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
       <include name="${structure}/**/*.t"/>
+			<exclude name="${structure}/**/StructureCDT.t"/>
     </tom>
     <!-- build java source -->
     <javac srcdir="${examples.gen}" destdir="${examples.build}"
