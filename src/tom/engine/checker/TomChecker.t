@@ -599,7 +599,7 @@ public class TomChecker extends TomBase {
       System.exit(1);
     }
     
-    while(!list.isEmptyOptionList()) {
+    while(!list.isEmpty()) {
       Option term = list.getHead();
       %match(Option term ) {
           /* for a array symbol */
@@ -702,7 +702,7 @@ public class TomChecker extends TomBase {
         // constants have an emptySlotList
         // the length of the slotList corresponds to the arity of the operator
         // list operator with [] no allowed
-      if(slotList.isEmptySlotList() || (args.isEmpty() && (isListOperator(symbol) ||  isArrayOperator(symbol)))) {
+      if(slotList.isEmpty() || (args.isEmpty() && (isListOperator(symbol) ||  isArrayOperator(symbol)))) {
         messageBracketError(tomName, option);
       }
       verifyRecordSlots(args,slotList, tomName);
@@ -734,10 +734,10 @@ public class TomChecker extends TomBase {
 
   private void messageSlotNameError(TomTerm pairSlotName, SlotList slotList, String methodName) {
     ArrayList listOfPossibleSlot = new ArrayList();
-    while ( !slotList.isEmptySlotList() ) {
-      TomName name = slotList.getHeadSlotList().getSlotName();
+    while ( !slotList.isEmpty() ) {
+      TomName name = slotList.getHead().getSlotName();
       if ( !name.isEmptyName()) listOfPossibleSlot.add(name.getString());
-      slotList = slotList.getTailSlotList();
+      slotList = slotList.getTail();
     }
     Integer line = nullInteger;
     String s = "";
@@ -882,7 +882,7 @@ public class TomChecker extends TomBase {
   }
 
   private boolean findMakeDeclOrDefSymbol(OptionList list) {
-    while(!list.isEmptyOptionList()) {
+    while(!list.isEmpty()) {
       Option term = list.getHead();
       %match(Option term ) {
         DeclarationToOption(MakeDecl[args=makeArgsList, orgTrack=orgTrack]) -> {
@@ -957,7 +957,7 @@ public class TomChecker extends TomBase {
   
   private String verifyLhsRuleAndConstructorEgality(TomTerm lhs, String  ruleName, int ruleNumber) {
     String methodName = "";
-    OptionList options = tsf().makeOptionList_EmptyOptionList();
+    OptionList options = tsf().makeOptionList();
     %match(TomTerm lhs) {
       appl@Appl(Option(optionList),Name(name), args) -> {
         // No alone variable nor simple constructor
@@ -1101,7 +1101,7 @@ public class TomChecker extends TomBase {
   
     // findOriginTrackingLine(_,_) method returns the line (stocked in optionList)  of object 'name'.
   private Integer findOriginTrackingLine(String name, OptionList optionList) {
-    while(!optionList.isEmptyOptionList()) {
+    while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
         OriginTracking[astName=Name[string=origName],line=line] -> {
@@ -1118,7 +1118,7 @@ public class TomChecker extends TomBase {
   
     // findOriginTrackingLine(_) method returns the first number of line (stocked in optionList).
   private Integer findOriginTrackingLine(OptionList optionList) {
-    while(!optionList.isEmptyOptionList()) {
+    while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
         OriginTracking[line=line] -> {

@@ -89,20 +89,8 @@ public class ASTFactory {
     return list;
   }
 
-  protected OptionList cons(Option t, OptionList l) {
-    return tsf().makeOptionList_ConsOptionList(t,l);
-  }
-
-  protected OptionList append(Option t, OptionList l) {
-    if(l.isEmptyOptionList()) {
-      return cons(t,l);
-    } else {
-      return cons(l.getHead(), append(t,l.getTail()));
-    }
-  }
-
   public OptionList makeOptionList(ArrayList argumentList) {
-    OptionList list = tsf().makeOptionList_EmptyOptionList();
+    OptionList list = tsf().makeOptionList();
     for(int i=argumentList.size()-1; i>=0 ; i--) {
       ATerm elt = (ATerm)argumentList.get(i);
       Option term;
@@ -113,7 +101,7 @@ public class ASTFactory {
       } else {
         term = (Option)elt;
       }
-      list = cons(term,list);
+      list = tsf().makeOptionList(term,list);
     }
     return list;
   }
@@ -139,24 +127,24 @@ public class ASTFactory {
   }
 
   public Option makeOption() {
-    OptionList list = tsf().makeOptionList_EmptyOptionList();
+    OptionList list = tsf().makeOptionList();
     return makeOption(list);
   }
 
   public Option makeOption(Option arg) {
-    OptionList list = tsf().makeOptionList_EmptyOptionList();
+    OptionList list = tsf().makeOptionList();
     if(arg!= null) {
-      list = cons(arg,list);
+      list = tsf().makeOptionList(arg,list);
     }
     return makeOption(list);
   }
 
   public Option makeOption(Option arg, Option info) {
-    OptionList list = tsf().makeOptionList_EmptyOptionList();
+    OptionList list = tsf().makeOptionList();
     if(arg!= null) {
-      list = cons(arg,list);
+      list = tsf().makeOptionList(arg,list);
     }
-    list = cons(info,list);
+    list = tsf().makeOptionList(info,list);
     return makeOption(list);
   }
 
@@ -191,7 +179,7 @@ public class ASTFactory {
     String resultType = "int";
     ArrayList typeList = new ArrayList();
     TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
-    SlotList slotList = tsf().makeSlotList_EmptySlotList();
+    SlotList slotList = tsf().makeSlotList();
     TomSymbol astSymbol = makeSymbol(value,resultType,typeList,slotList,optionList,tlFsym);
     symbolTable.putSymbol(value,astSymbol);
   }
@@ -227,7 +215,7 @@ public class ASTFactory {
     String resultType = "string";
     ArrayList typeList = new ArrayList();
     TargetLanguage tlFsym = tsf().makeTargetLanguage_ITL(value);
-    SlotList slotList = tsf().makeSlotList_EmptySlotList();
+    SlotList slotList = tsf().makeSlotList();
     TomSymbol astSymbol = makeSymbol(value,resultType,typeList,slotList,optionList,tlFsym);
     symbolTable.putSymbol(value,astSymbol);
   }
@@ -265,7 +253,7 @@ public class ASTFactory {
       TomSymbol symbol = symbolTable.getSymbol(key);
       if (symbol != null) {
         OptionList optionList = symbol.getOption().getOptionList();
-        optionList = append(tsf().makeOption_DefinedSymbol(),optionList);
+        optionList = (OptionList)optionList.append(tsf().makeOption_DefinedSymbol());
         symbolTable.putSymbol(key,symbol.setOption(makeOption(optionList)));
       }
     }

@@ -385,7 +385,7 @@ public class TomCompiler extends TomBase {
         }
 
         ArrayList list = new ArrayList();
-        while(!optionList.isEmptyOptionList()) {
+        while(!optionList.isEmpty()) {
           Option optElt = optionList.getHead();
           Option newOptElt = optElt;
           %match(Option optElt) {

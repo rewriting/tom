@@ -90,8 +90,8 @@ public class TomExpander extends TomBase {
     SlotList slotList = tomSymbol.getSlotList();
     TomList subtermList = empty();
       // For each slotName (from tomSymbol)
-    while(!slotList.isEmptySlotList()) {
-      TomName slotName = slotList.getHeadSlotList().getSlotName();
+    while(!slotList.isEmpty()) {
+      TomName slotName = slotList.getHead().getSlotName();
         //debugPrintln("\tslotName  = " + slotName);
       TomList pairList = args;
       TomTerm newSubterm = null;
@@ -117,7 +117,7 @@ public class TomExpander extends TomBase {
         newSubterm = `Placeholder(ast().makeOption());
       }
       subtermList = append(newSubterm,subtermList);
-      slotList = slotList.getTailSlotList();
+      slotList = slotList.getTail();
     }
     
     return `Appl(option,Name(tomName),subtermList);

@@ -913,7 +913,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
   TargetLanguage tlFsym;
   Declaration attribute;
   TomType tomType;
-  SlotList slotList = tsf().makeSlotList_EmptySlotList();
+  SlotList slotList = tsf().makeSlotList();
 }
 {
   <OPERATOR> /* switch to TOM mode */
@@ -996,7 +996,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
           }
           pair = tsf().makePairNameDecl_Slot(name1,decl);
         }
-        slotList = tsf().makeSlotList_ConsSlotList(pair,slotList);
+        slotList = tsf().makeSlotList(pair,slotList);
       }
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
@@ -1017,7 +1017,7 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
-  SlotList slotList = tsf().makeSlotList_EmptySlotList();
+  SlotList slotList = tsf().makeSlotList();
   ArrayList options = new ArrayList();
   TomSymbol astSymbol;
   TomName astName;
@@ -1046,7 +1046,7 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astName   = tsf().makeTomName_Name(name.image);
-      slotList =tsf().makeSlotList_ConsSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      slotList =tsf().makeSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
       astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_ListSymbolDecl(astName));
       putSymbol(name.image,astSymbol);
@@ -1058,7 +1058,7 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
-  SlotList slotList = tsf().makeSlotList_EmptySlotList();
+  SlotList slotList = tsf().makeSlotList();
   ArrayList options = new ArrayList();
   TomName astName;
   TomSymbol astSymbol;
@@ -1087,7 +1087,7 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astName   = tsf().makeTomName_Name(name.image);
-      slotList =tsf().makeSlotList_ConsSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      slotList =tsf().makeSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
       astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_ArraySymbolDecl(astName));
       putSymbol(name.image,astSymbol);

@@ -613,7 +613,7 @@ public class TomGenerator extends TomBase {
         }
         generateExpression(out,deep,exp);
         out.writeln(";");
-        if(Flags.debugMode && !list.isEmptyOptionList()) {
+        if(Flags.debugMode && !list.isEmpty()) {
           out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
           generate(out,deep,var);
           out.write("\", ");
@@ -722,7 +722,7 @@ public class TomGenerator extends TomBase {
         }
         generateExpression(out,deep,exp);
         out.writeln(";");
-        if(Flags.debugMode && !list.isEmptyOptionList()) {
+        if(Flags.debugMode && !list.isEmpty()) {
           out.write("jtom.debug.TomDebugger.debugger.addSubstitution(\""+debugKey+"\",\"");
           generate(out,deep,var);
           out.write("\", ");
@@ -1347,7 +1347,7 @@ public class TomGenerator extends TomBase {
   public void generateOptionList(OutputCode out, int deep, OptionList subject)
     throws IOException {
       //%variable
-    if(subject.isEmptyOptionList()) {
+    if(subject.isEmpty()) {
       return;
     }
 
@@ -1359,9 +1359,9 @@ public class TomGenerator extends TomBase {
 
   public void generateSlotList(OutputCode out, int deep, SlotList slotList)
     throws IOException {
-    while ( !slotList.isEmptySlotList() ) {
-      generateDeclaration(out, deep, slotList.getHeadSlotList().getSlotDecl());
-      slotList = slotList.getTailSlotList();
+    while ( !slotList.isEmpty() ) {
+      generateDeclaration(out, deep, slotList.getHead().getSlotDecl());
+      slotList = slotList.getTail();
     }
   }
   

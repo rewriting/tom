@@ -22,8 +22,6 @@ constructor(Declaration,SymbolDecl,SymbolDecl(<astName(TomName)>)),
 constructor(Declaration,ListSymbolDecl,ListSymbolDecl(<astName(TomName)>)),
 constructor(Declaration,ArraySymbolDecl,ArraySymbolDecl(<astName(TomName)>)),
 constructor(Declaration,EmptyDeclaration,EmptyDeclaration),
-constructor(OptionList,EmptyOptionList,[]),
-constructor(OptionList,ConsOptionList,[<head(Option)>,<[tail(OptionList)]>]),
 constructor(Option,DeclarationToOption,DeclarationToOption(<astDeclaration(Declaration)>)),
 constructor(Option,TomNameToOption,TomNameToOption(<astName(TomName)>)),
 constructor(Option,TomTermToOption,TomTermToOption(<astTerm(TomTerm)>)),
@@ -138,13 +136,13 @@ constructor(Instruction,OpenBlock,OpenBlock),
 constructor(Instruction,CloseBlock,CloseBlock),
 constructor(Instruction,NamedBlock,NamedBlock(<blockName(str)>,<instList(TomList)>)),
 constructor(TomSymbol,Symbol,Symbol(<astName(TomName)>,<typesToType(TomType)>,<slotList(SlotList)>,<option(Option)>,<tlCode(TargetLanguage)>)),
-constructor(SlotList,EmptySlotList,[]),
-constructor(SlotList,ConsSlotList,[<headSlotList(PairNameDecl)>,<[tailSlotList(SlotList)]>]),
 constructor(PairNameDecl,Slot,Slot(<slotName(TomName)>,<slotDecl(Declaration)>)),
 constructor(TomSymbolTable,Table,Table(<entryList(TomEntryList)>)),
-
-list(TomEntryList, TomEntry),
-
 constructor(TomEntry,Entry,Entry(<strName(str)>,<astSymbol(TomSymbol)>)),
-constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>))
+constructor(TomStructureTable,StructTable,StructTable(<structList(TomList)>)),
+
+list(OptionList,Option),
+list(SlotList,PairNameDecl),
+list(TomEntryList, TomEntry)
+
 ]

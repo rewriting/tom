@@ -857,7 +857,7 @@ public class TomParser implements TomParserConstants {
   TargetLanguage tlFsym;
   Declaration attribute;
   TomType tomType;
-  SlotList slotList = tsf().makeSlotList_EmptySlotList();
+  SlotList slotList = tsf().makeSlotList();
     jj_consume_token(OPERATOR);
       addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
 
@@ -975,7 +975,7 @@ public class TomParser implements TomParserConstants {
           }
           pair = tsf().makePairNameDecl_Slot(name1,decl);
         }
-        slotList = tsf().makeSlotList_ConsSlotList(pair,slotList);
+        slotList = tsf().makeSlotList(pair,slotList);
       }
         // Test if there are still declaration in mapNameDecl
       if ( !mapNameDecl.isEmpty()) {
@@ -994,7 +994,7 @@ public class TomParser implements TomParserConstants {
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
-  SlotList slotList = tsf().makeSlotList_EmptySlotList();
+  SlotList slotList = tsf().makeSlotList();
   ArrayList options = new ArrayList();
   TomSymbol astSymbol;
   TomName astName;
@@ -1047,7 +1047,7 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astName   = tsf().makeTomName_Name(name.image);
-      slotList =tsf().makeSlotList_ConsSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      slotList =tsf().makeSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
       astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_ListSymbolDecl(astName));
       putSymbol(name.image,astSymbol);
@@ -1057,7 +1057,7 @@ public class TomParser implements TomParserConstants {
   Token type, name, typeArg;
   ArrayList blockList = new ArrayList();
   ArrayList types = new ArrayList();
-  SlotList slotList = tsf().makeSlotList_EmptySlotList();
+  SlotList slotList = tsf().makeSlotList();
   ArrayList options = new ArrayList();
   TomName astName;
   TomSymbol astSymbol;
@@ -1110,7 +1110,7 @@ public class TomParser implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
       astName   = tsf().makeTomName_Name(name.image);
-      slotList =tsf().makeSlotList_ConsSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
+      slotList =tsf().makeSlotList(tsf().makePairNameDecl_Slot(tsf().makeTomName_EmptyName(), tsf().makeDeclaration_EmptyDeclaration()), slotList);
       astSymbol = ast().makeSymbol(name.image, type.image, types, slotList, options, tlFsym);
       list.add(tsf().makeDeclaration_ArraySymbolDecl(astName));
       putSymbol(name.image,astSymbol);

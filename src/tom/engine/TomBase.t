@@ -279,7 +279,7 @@ public class TomBase {
     }
     %match(TomSymbol subject) {
       Symbol[option=Option(optionList)] -> {
-        while(!optionList.isEmptyOptionList()) {
+        while(!optionList.isEmpty()) {
           Option opt = optionList.getHead();
           %match(Option opt) {
             DeclarationToOption(MakeEmptyList[]) -> { return true; }
@@ -305,7 +305,7 @@ public class TomBase {
     }
     %match(TomSymbol subject) {
       Symbol[option=Option(optionList)] -> {
-        while(!optionList.isEmptyOptionList()) {
+        while(!optionList.isEmpty()) {
           Option opt = optionList.getHead();
           %match(Option opt) {
             DeclarationToOption(MakeEmptyArray[]) -> { return true; }
@@ -458,7 +458,7 @@ public class TomBase {
 
   protected TomTerm getAnnotedVariable(OptionList subjectList) {
       //%variable
-    while(!subjectList.isEmptyOptionList()) {
+    while(!subjectList.isEmpty()) {
       Option subject = subjectList.getHead();
       %match(Option subject) {
         TomTermToOption(var@Variable(option,name,type)) -> {
@@ -472,7 +472,7 @@ public class TomBase {
   
   protected Declaration getIsFsymDecl(OptionList optionList) {
     //%variable
-    while(!optionList.isEmptyOptionList()) {
+    while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
         DeclarationToOption(decl@IsFsymDecl[]) -> { return decl; }
@@ -484,7 +484,7 @@ public class TomBase {
 
   protected boolean hasConstructor(OptionList optionList) {
       //%variable
-    while(!optionList.isEmptyOptionList()) {
+    while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
         Constructor -> { return true; }
@@ -496,7 +496,7 @@ public class TomBase {
   
   protected boolean hasGeneratedMatch(OptionList optionList) {
       //%variable
-    while(!optionList.isEmptyOptionList()) {
+    while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
         GeneratedMatch -> { return true; }
@@ -508,7 +508,7 @@ public class TomBase {
   
   protected boolean hasDefaultProd(OptionList optionList) {
       //%variable
-    while(!optionList.isEmptyOptionList()) {
+    while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
         WithDefaultProduction -> { return true; }
@@ -520,15 +520,15 @@ public class TomBase {
   protected TomName getSlotName(TomSymbol symbol, int number) {
     //%variable
     SlotList slotList = symbol.getSlotList();
-    for(int index = 0; !slotList.isEmptySlotList() && index<number ; index++) {
-      slotList = slotList.getTailSlotList();
+    for(int index = 0; !slotList.isEmpty() && index<number ; index++) {
+      slotList = slotList.getTail();
     }
-    if(slotList.isEmptySlotList()) {
+    if(slotList.isEmpty()) {
       System.out.println("getSlotName: bad index error");
       System.exit(0);
     }
 
-    Declaration decl = slotList.getHeadSlotList().getSlotDecl();
+    Declaration decl = slotList.getHead().getSlotDecl();
     %match(Declaration decl) {
       GetSlotDecl[slotName=name] -> { return name; }
     }
@@ -538,13 +538,13 @@ public class TomBase {
   protected int getSlotIndex(SlotList slotList, TomName slotName) {
     //%variable
     int index = 0;
-    while(!slotList.isEmptySlotList()) {
-      TomName name = slotList.getHeadSlotList().getSlotName();
+    while(!slotList.isEmpty()) {
+      TomName name = slotList.getHead().getSlotName();
         // System.out.println("index = " + index + " name = " + name);
       if(slotName.equals(name)) {
         return index; 
       }
-      slotList = slotList.getTailSlotList();
+      slotList = slotList.getTail();
       index++;
     }
     return -1;
@@ -557,7 +557,7 @@ public class TomBase {
     }
     %match(TomSymbol subject) {
       Symbol(Name(name1),TypesToType(typeList,type1),_,Option(optionList),tlCode1) -> {
-        while(!optionList.isEmptyOptionList()) {
+        while(!optionList.isEmpty()) {
           Option opt = optionList.getHead();
           %match(Option opt) {
             DefinedSymbol  -> { return true; }
@@ -577,8 +577,8 @@ public class TomBase {
   
     // findOriginTracking(_) return the option containing OriginTracking information
   protected Option findOriginTracking(OptionList optionList) {
-    if(optionList.isEmptyOptionList()) return ast().makeOption();
-    while(!optionList.isEmptyOptionList()) {
+    if(optionList.isEmpty()) return ast().makeOption();
+    while(!optionList.isEmpty()) {
       Option subject = optionList.getHead();
       %match(Option subject) {
         orgTrack@OriginTracking[] -> {

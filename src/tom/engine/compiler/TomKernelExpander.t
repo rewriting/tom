@@ -277,14 +277,14 @@ public class TomKernelExpander extends TomBase {
   private OptionList replaceAnnotedName(OptionList subjectList, TomType type, Option orgTrack) {
     //%variable
     %match(OptionList subjectList) {
-      EmptyOptionList() -> { return subjectList; }
-      ConsOptionList(TomNameToOption(name@Name[]),l)   -> {
-        return `ConsOptionList(
+      emptyOptionList() -> { return subjectList; }
+      manyOptionList(TomNameToOption(name@Name[]),l)   -> {
+        return `manyOptionList(
           TomTermToOption(Variable(ast().makeOption(orgTrack),name,type)),
           replaceAnnotedName(l,type,orgTrack));
       }
-      ConsOptionList(t,l) -> {
-        return `ConsOptionList(t,replaceAnnotedName(l,type, orgTrack));
+      manyOptionList(t,l) -> {
+        return `manyOptionList(t,replaceAnnotedName(l,type, orgTrack));
       }
     }
     return null;
@@ -328,7 +328,7 @@ public class TomKernelExpander extends TomBase {
           pa = list.getHead();
           if( isDefaultPattern(pa.getTermList().getTomList()) ) {
             newPatternList = cons(`DefaultPatternAction(pa.getTermList(), pa.getTom(), pa.getOption()), newPatternList);
-            newOption = `Option(ConsOptionList(WithDefaultProduction, option.getOptionList()));
+            newOption = `Option(manyOptionList(WithDefaultProduction, option.getOptionList()));
             needModification = true;
             if(!list.getTail().isEmpty()) {
                 // the default pattern is not the latest one!!

@@ -981,7 +981,7 @@ public class TomDebugger {
   
   private Integer extractPatternLine(OptionList list) {
     Option op;
-    while(!list.isEmptyOptionList()) {
+    while(!list.isEmpty()) {
       op = list.getHead();
       if(op.isOriginTracking()) {
         return op.getLine();
@@ -993,7 +993,7 @@ public class TomDebugger {
 
   private String extractPatternText(OptionList list) {
     Option op;
-    while(!list.isEmptyOptionList()) {
+    while(!list.isEmpty()) {
       op = list.getHead();
       if(op.isOriginalText()) {
         return op.getAstName().getString();
