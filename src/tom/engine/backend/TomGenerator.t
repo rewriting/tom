@@ -996,7 +996,8 @@ public class TomGenerator extends TomBase {
                             tlCode, _) -> {
         String args[];
         if(!Flags.strictType) {
-          args = new String[] { getTLType(getUniversalType()), name };
+          TomType argType = (isIntType(type))?getIntType():getUniversalType();
+          args = new String[] { getTLType(argType), name };
         } else {
           args = new String[] { getTLCode(tlType), name };
         }

@@ -40,8 +40,8 @@ import jtom.adt.*;
 
 public class Tom {
   private static String version =
-  "jtom 1.3beta\n\n" +
-  "Copyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
+  "\njtom 1.3gamma\n" +
+  "\nCopyright (C) 2000-2003  LORIA (CNRS, INPL, INRIA, UHP, U-Nancy 2)\n" +
   "                         Nancy, France.\n";
   
   private static void usage() {
@@ -302,7 +302,7 @@ public class Tom {
         if(Flags.doOnlyCompile) {
           ATerm fromFileExpandTerm = null;
           fromFileExpandTerm = tomSignatureFactory.readFromFile(input);
-          expandedTerm = (TomTerm) TomTermImpl.fromTerm(fromFileExpandTerm);
+          expandedTerm = tomSignatureFactory.TomTermFromTerm(fromFileExpandTerm);
           try {
             input = new FileInputStream(inputFileName+".table");
           } catch (FileNotFoundException e) {
@@ -312,7 +312,7 @@ public class Tom {
           }
           ATerm fromFileSymblTable = null;
           fromFileSymblTable = tomSignatureFactory.readFromFile(input);
-          TomSymbolTable symbTable = (TomSymbolTable) TomSymbolTableImpl.fromTerm(fromFileSymblTable);
+          TomSymbolTable symbTable = tomSignatureFactory.TomSymbolTableFromTerm(fromFileSymblTable);
           symbolTable.regenerateFromTerm(symbTable);
         }
 

@@ -101,7 +101,7 @@ public class TomDebugger {
         baseFileName[i] = name.substring(0, name.length() - (debugTableSuffix.length()))+".t";
         input = new FileInputStream(file);
         TomSignatureFactory tsf = new TomSignatureFactory(10);
-        table = TomStructureTable.fromTextFile(input);
+        table = tsf.TomStructureTableFromFile(input);
         System.out.println("Analysing "+baseFileName[i]+"...");
         analyseStructure(table);
       } catch (FileNotFoundException e) {
