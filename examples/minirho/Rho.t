@@ -38,13 +38,13 @@ package minirho;
 
  public class Rho {
 
-	 private final String AND_G = "g";
-	 private final String AND_NG = "ng";
-	 private final String AND = " ";
+	 private final static String AND_G = "g";
+	 private final static String AND_NG = "ng";
+	 private final static String AND = " ";
 
 
 	 private rhotermFactory factory;
-	 private GenericTraversalAtomic traversal;
+	 private GenericTraversal traversal;
 	 private boolean hasBeenSimplified;
 		 //Signature de mon langage, utilise pour les tests.
 	 private RTerm f = null;
@@ -100,7 +100,7 @@ package minirho;
 					RTerm term = (RTerm) t;
 					%match(RTerm term){
 						//rho 
-						app(abs(A,B),C)-> {setTrueToHasBeenReduced();
+						app(abs(A,B),C)-> {
 							return `appC(match(A,C),B) ;}		
 					}
 				}
@@ -121,7 +121,7 @@ package minirho;
 						abs(A,B) -> {return `abs((RTerm)apply(A),B);}
 					}
 				}
-				return traversal.genericTraversal(t,this);
+				return traversal.genericOneStep(t,this);
 			}
     };
 
@@ -140,7 +140,7 @@ package minirho;
 	}
 	 public Rho(rhotermFactory factory) {
 		 this.factory = factory;
-		 this.traversal = new GenericTraversalAtomic();
+		 this.traversal = new GenericTraversal();
 	 }
 
 	 public RTerm simplifyTerm(RTerm t){

@@ -478,39 +478,25 @@ xmlTerm[TomList context] returns [TomTerm result]
                     XML_START_ENDING ws BQ_ID ws XML_CLOSE ws
                 )
                 {
-                    TomList args = `concTomTerm(
-                        BackQuoteAppl(
-                            emptyOptionList(),
-                            Name(encodeName(id.getText())),
-                            emptyTomList()
-                        ),
-                        BackQuoteAppl(
-                            emptyOptionList(),
-                            Name(Constants.CONC_TNODE),
-                            attributeTomList
-                        ),
-                        BackQuoteAppl(
-                            emptyOptionList(),
-                            Name(Constants.CONC_TNODE),
-                            childrenTomList
-                        )
-                    );
+                  TomList args = `concTomTerm(
+                                              BackQuoteAppl(emptyOptionList(), Name(encodeName(id.getText())),
+                                                            emptyTomList()),
+                                              BackQuoteAppl(emptyOptionList(), Name(Constants.CONC_TNODE),
+                                                            attributeTomList),
+                                              BackQuoteAppl(emptyOptionList(), Name(Constants.CONC_TNODE),
+                                                            childrenTomList)
+                                              );
                     
                     if(context == null){
-                        result = `BackQuoteAppl(
-                            emptyOptionList(),
-                            Name(Constants.ELEMENT_NODE),
-                            args
-                        );
-                    }
-                    else{
-                    result = `BackQuoteAppl(
-                            emptyOptionList(),
-                            Name(Constants.ELEMENT_NODE),
-                            concTomTerm(
-                                context*,
-                                args*)
-                        );
+                      result = `BackQuoteAppl(emptyOptionList(),
+                                              Name(Constants.ELEMENT_NODE),
+                                              args
+                                              );
+                    } else {
+                      result = `BackQuoteAppl(emptyOptionList(),
+                                              Name(Constants.ELEMENT_NODE),
+                                              concTomTerm(context*,args*)
+                                              );
                     }
 
                 }

@@ -69,12 +69,12 @@ public class TomBase {
     try {
       return TomEnvironment.getInstance();
     } catch(TomRuntimeException tre) {
-	TomEnvironment.create();
-	// this is done to handle the first call to TomEnvironment
-	// because the plugins extend TomBase
-	// and so there are calls to TomEnvironment.getInstance()
-	// when they are instantiated by the Server
-	return TomEnvironment.getInstance();
+      TomEnvironment.create();
+      // this is done to handle the first call to TomEnvironment
+      // because the plugins extend TomBase
+      // and so there are calls to TomEnvironment.getInstance()
+      // when they are instantiated by the Server
+      return TomEnvironment.getInstance();
     }
   }
 
@@ -140,197 +140,197 @@ public class TomBase {
     return ast().makeOption();
   }
 
-    protected TomList empty() {
-	return empty;
-    }
+  protected TomList empty() {
+    return empty;
+  }
 
-    protected TomList cons(TomTerm t, TomList l) {
-	if(t!=null) {
+  protected TomList cons(TomTerm t, TomList l) {
+    if(t!=null) {
 	    return tsf().makeTomList(t,l);
-	} else {
+    } else {
 	    System.out.println("cons: Warning t == null");
 	    return l;
-	}
     }
+  }
 
-    protected TomNumberList appendNumber(int n, TomNumberList path) {
-	return (TomNumberList) path.append(makeNumber(n));
-    }
+  protected TomNumberList appendNumber(int n, TomNumberList path) {
+    return (TomNumberList) path.append(makeNumber(n));
+  }
 
-    protected TomList append(TomTerm t, TomList l) {
-	if(l.isEmpty()) {
+  protected TomList append(TomTerm t, TomList l) {
+    if(l.isEmpty()) {
 	    return cons(t,l);
-	} else {
+    } else {
 	    return cons(l.getHead(), append(t,l.getTail()));
-	}
     }
+  }
 
-    protected TomList concat(TomList l1, TomList l2) {
-	if(l1.isEmpty()) {
+  protected TomList concat(TomList l1, TomList l2) {
+    if(l1.isEmpty()) {
 	    return l2;
-	} else {
+    } else {
 	    return cons(l1.getHead(), concat(l1.getTail(),l2));
-	}
     }
+  }
 
-    protected TomList reverse(TomList l) {
-	TomList reverse = empty();
-	while(!l.isEmpty()){
+  protected TomList reverse(TomList l) {
+    TomList reverse = empty();
+    while(!l.isEmpty()){
 	    reverse = cons(l.getHead(),reverse);
 	    l = l.getTail();
-	}
-	return reverse;
     }
+    return reverse;
+  }
 
-    protected int length(TomList l) {
-	if(l.isEmpty()) {
+  protected int length(TomList l) {
+    if(l.isEmpty()) {
 	    return 0;
-	} else {
+    } else {
 	    return 1 + length(l.getTail());
-	}
     }
+  }
 
-    // ------------------------------------------------------------
+  // ------------------------------------------------------------
     
-    // ------------------------------------------------------------
+  // ------------------------------------------------------------
 
-    protected String getTomType(TomType type) {
-	%match(TomType type) {
+  protected String getTomType(TomType type) {
+    %match(TomType type) {
 	    ASTTomType(s) -> {return `s;}
 	    TomTypeAlone(s) -> {return `s;}
 	    Type(ASTTomType(s),_) -> {return `s;}
 	    EmptyType() -> {return null;}
 	    _ -> {
-		System.out.println("getTomType error on term: " + type);
-		throw new TomRuntimeException("getTomType error on term: " + type);
+        System.out.println("getTomType error on term: " + type);
+        throw new TomRuntimeException("getTomType error on term: " + type);
 	    }
-	}
     }
+  }
 
-    protected String getTLType(TomType type) {
-	%match(TomType type) {
+  protected String getTLType(TomType type) {
+    %match(TomType type) {
 	    TLType[]  -> { return getTLCode(type); }
 	    Type[tlType=tlType] -> { return getTLCode(`tlType); }
 	    _ -> {
-		throw new TomRuntimeException("getTLType error on term: " + type);
+        throw new TomRuntimeException("getTLType error on term: " + type);
 	    }
-	}
     }
+  }
 
-    protected String getTLCode(TomType type) {
-	%match(TomType type) {
+  protected String getTLCode(TomType type) {
+    %match(TomType type) {
 	    TLType(TL[code=tlType])  -> { return `tlType; }
 	    TLType(ITL[code=tlType]) -> { return `tlType; }
 	    _ -> {
-		System.out.println("getTLCode error on term: " + type);
-		throw new TomRuntimeException("getTLCode error on term: " + type);
+        System.out.println("getTLCode error on term: " + type);
+        throw new TomRuntimeException("getTLCode error on term: " + type);
 	    }
-	}
     }
+  }
 
-    protected TomSymbol getSymbol(String tomName) {
-	return symbolTable().getSymbol(tomName);
-    }
+  protected TomSymbol getSymbol(String tomName) {
+    return symbolTable().getSymbol(tomName);
+  }
 
 
-    protected TomSymbol getSymbol(TomType tomType) {
-	SymbolList list = symbolTable().getSymbol(tomType);
-	SymbolList filteredList = `emptySymbolList();
-	// Not necessary since checker ensure the uniqueness of the symbol
-	while(!list.isEmpty()) {
+  protected TomSymbol getSymbol(TomType tomType) {
+    SymbolList list = symbolTable().getSymbol(tomType);
+    SymbolList filteredList = `emptySymbolList();
+    // Not necessary since checker ensure the uniqueness of the symbol
+    while(!list.isEmpty()) {
 	    TomSymbol head = list.getHead();
 	    if(isArrayOperator(head) || isListOperator(head)) {
-		filteredList = `manySymbolList(head,filteredList);
+        filteredList = `manySymbolList(head,filteredList);
 	    }
 	    list = list.getTail();
-	}
-	return filteredList.getHead();
     }
+    return filteredList.getHead();
+  }
 
-    protected TomType getSymbolCodomain(TomSymbol symbol) {
-	if(symbol!=null) {
+  protected TomType getSymbolCodomain(TomSymbol symbol) {
+    if(symbol!=null) {
 	    return symbol.getTypesToType().getCodomain();
-	} else {
+    } else {
 	    //System.out.println("getSymbolCodomain: symbol = " + symbol);
 	    return `EmptyType();
-	}
-    }   
+    }
+  }   
 
-    protected TomTypeList getSymbolDomain(TomSymbol symbol) {
-	if(symbol!=null) {
+  protected TomTypeList getSymbolDomain(TomSymbol symbol) {
+    if(symbol!=null) {
 	    return symbol.getTypesToType().getDomain();
-	} else {
+    } else {
 	    //System.out.println("getSymbolDomain: symbol = " + symbol);
 	    return tsf().makeTomTypeList();
-	}
     }
+  }
 
-    protected String getSymbolCode(TomSymbol symbol) {
-	//%variable
-	%match(TomSymbol symbol) {
+  protected String getSymbolCode(TomSymbol symbol) {
+    //%variable
+    %match(TomSymbol symbol) {
 	    Symbol[tlCode=TL[code=tlCode]]  -> { return `tlCode; }
 	    Symbol[tlCode=ITL[code=tlCode]] -> { return `tlCode; }
 	    _ -> {
-		System.out.println("getSymbolCode error on term: " + symbol);
-		throw new TomRuntimeException("getSymbolCode error on term: " + symbol);
+        System.out.println("getSymbolCode error on term: " + symbol);
+        throw new TomRuntimeException("getSymbolCode error on term: " + symbol);
 	    }
-	}
-    } 
+    }
+  } 
 
-    protected TomType getTermType(TomTerm t){
-	%match(TomTerm t) {
+  protected TomType getTermType(TomTerm t){
+    %match(TomTerm t) {
 	    Appl[nameList=(Name(tomName),_*)] -> {
-		TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
-		return tomSymbol.getTypesToType().getCodomain();
+        TomSymbol tomSymbol = symbolTable().getSymbol(`tomName);
+        return tomSymbol.getTypesToType().getCodomain();
 	    }
 
 	    Variable[astType=type] |
-		VariableStar[astType=type] |
-		UnamedVariable[astType=type] |
-		UnamedVariableStar[astType=type] 
-		-> { return `type; }
+        VariableStar[astType=type] |
+        UnamedVariable[astType=type] |
+        UnamedVariableStar[astType=type] 
+        -> { return `type; }
 
 	    ExpressionToTomTerm(term) |
-		Ref(term)
-		-> { return getTermType(`term); }
+        Ref(term)
+        -> { return getTermType(`term); }
 
 	    TargetLanguageToTomTerm(TL[]) |
-		TargetLanguageToTomTerm(ITL[]) |
-		FunctionCall[]
-		-> { return `EmptyType(); }
+        TargetLanguageToTomTerm(ITL[]) |
+        FunctionCall[]
+        -> { return `EmptyType(); }
 
 	    _ -> {
-		System.out.println("getTermType error on term: " + t);
-		throw new TomRuntimeException("getTermType error on term: " + t);
+        System.out.println("getTermType error on term: " + t);
+        throw new TomRuntimeException("getTermType error on term: " + t);
 	    }
-	}
     }
+  }
 
-    protected TomType getTermType(Expression t){
-	%match(Expression t) {
+  protected TomType getTermType(Expression t){
+    %match(Expression t) {
 	    GetSubterm[codomain=type] |
-		GetHead[codomain=type] |
-		GetSlot[codomain=type] |
-		GetElement[codomain=type]
-		-> { return `type; }
+        GetHead[codomain=type] |
+        GetSlot[codomain=type] |
+        GetElement[codomain=type]
+        -> { return `type; }
 
 	    TomTermToExpression(term) |
-		GetTail[variable=term] |
-		GetSliceList[variableBeginAST=term] |
-		GetSliceArray[subjectListName=term]
-		-> { return getTermType(`term); }
+        GetTail[variable=term] |
+        GetSliceList[variableBeginAST=term] |
+        GetSliceArray[subjectListName=term]
+        -> { return getTermType(`term); }
 
 	    _ -> {
-		System.out.println("getTermType error on term: " + t);
-		throw new TomRuntimeException("getTermType error on term: " + t);
+        System.out.println("getTermType error on term: " + t);
+        throw new TomRuntimeException("getTermType error on term: " + t);
 	    }
-	}
     }
+  }
 
-    private HashMap numberListToIdentifierMap = new HashMap();
+  private HashMap numberListToIdentifierMap = new HashMap();
 
-    private String elementToIdentifier(TomNumber subject) {
-	%match(TomNumber subject) {
+  private String elementToIdentifier(TomNumber subject) {
+    %match(TomNumber subject) {
 	    Begin(Number(i)) -> { return "begin" + `i; }
 	    End(Number(i)) -> { return "end" + `i; }
 	    MatchNumber(Number(i)) -> { return "match" + `i; }
@@ -342,322 +342,322 @@ public class TomBase {
 	    RuleVar() -> { return "rulevar"; }
 	    Number(i) -> { return "" + `i; }
 	    _ -> { return subject.toString(); }
-	}
     }
+  }
 
-    protected String numberListToIdentifier(TomNumberList l) {
-	String res = (String)numberListToIdentifierMap.get(l);
-	if(res == null) {
+  protected String numberListToIdentifier(TomNumberList l) {
+    String res = (String)numberListToIdentifierMap.get(l);
+    if(res == null) {
 	    TomNumberList key = l;
 	    StringBuffer buf = new StringBuffer(30);
 	    while(!l.isEmpty()) {
-		TomNumber elt = l.getHead();
-		buf.append("_");
-		buf.append(elementToIdentifier(elt));
-		l = l.getTail();
+        TomNumber elt = l.getHead();
+        buf.append("_");
+        buf.append(elementToIdentifier(elt));
+        l = l.getTail();
 	    }
 	    res = buf.toString();
 	    numberListToIdentifierMap.put(key,res);
-	}
-	return res;
     }
+    return res;
+  }
 
-    protected boolean isListOperator(TomSymbol subject) {
-	if(subject==null) {
+  protected boolean isListOperator(TomSymbol subject) {
+    if(subject==null) {
 	    return false;
-	}
-	%match(TomSymbol subject) {
+    }
+    %match(TomSymbol subject) {
 	    Symbol[option=l] -> {
-		OptionList optionList = `l;
-		while(!optionList.isEmpty()) {
-		    Option opt = optionList.getHead();
-		    %match(Option opt) {
-			DeclarationToOption(MakeEmptyList[]) -> { return true; }
-			DeclarationToOption(MakeAddList[])   -> { return true; }
-		    }
-		    optionList = optionList.getTail();
-		}
-		return false;
+        OptionList optionList = `l;
+        while(!optionList.isEmpty()) {
+          Option opt = optionList.getHead();
+          %match(Option opt) {
+            DeclarationToOption(MakeEmptyList[]) -> { return true; }
+            DeclarationToOption(MakeAddList[])   -> { return true; }
+          }
+          optionList = optionList.getTail();
+        }
+        return false;
 	    }
 
 	    _ -> {
-		System.out.println("isListOperator: strange case: '" + subject + "'");
-		throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
+        System.out.println("isListOperator: strange case: '" + subject + "'");
+        throw new TomRuntimeException("isListOperator: strange case: '" + subject + "'");
 	    }
-	}
     }
+  }
 
-    protected boolean isArrayOperator(TomSymbol subject) {
-	//%variable
-	if(subject==null) {
+  protected boolean isArrayOperator(TomSymbol subject) {
+    //%variable
+    if(subject==null) {
 	    return false;
-	}
-	%match(TomSymbol subject) {
+    }
+    %match(TomSymbol subject) {
 	    Symbol[option=l] -> {
-		OptionList optionList = `l;
-		while(!optionList.isEmpty()) {
-		    Option opt = optionList.getHead();
-		    %match(Option opt) {
-			DeclarationToOption(MakeEmptyArray[]) -> { return true; }
-			DeclarationToOption(MakeAddArray[])   -> { return true; }
-		    }
-		    optionList = optionList.getTail();
-		}
-		return false;
+        OptionList optionList = `l;
+        while(!optionList.isEmpty()) {
+          Option opt = optionList.getHead();
+          %match(Option opt) {
+            DeclarationToOption(MakeEmptyArray[]) -> { return true; }
+            DeclarationToOption(MakeAddArray[])   -> { return true; }
+          }
+          optionList = optionList.getTail();
+        }
+        return false;
 	    }
 
 	    _ -> {
-		System.out.println("isArrayOperator: strange case: '" + subject + "'");
-		throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
+        System.out.println("isArrayOperator: strange case: '" + subject + "'");
+        throw new TomRuntimeException("isArrayOperator: strange case: '" + subject + "'");
 	    }
-	}
     }
+  }
 
-    protected boolean isStringOperator(TomSymbol subject) {
-	if(subject==null) { return false; }
-	TomType type = subject.getTypesToType().getCodomain();
-	%match(TomType type) {
+  protected boolean isStringOperator(TomSymbol subject) {
+    if(subject==null) { return false; }
+    TomType type = subject.getTypesToType().getCodomain();
+    %match(TomType type) {
 	    TomTypeAlone("String") -> {
-		return true;
+        return true;
 	    }
-	}
-	return false;
     }
+    return false;
+  }
 
-    protected TomList tomListMap(TomList subject, Replace1 replace) {
-	TomList res = subject;
-	try {
+  protected TomList tomListMap(TomList subject, Replace1 replace) {
+    TomList res = subject;
+    try {
 	    if(!subject.isEmpty()) {
-		TomTerm term = (TomTerm) replace.apply(subject.getHead());
-		TomList list = tomListMap(subject.getTail(),replace);
-		res = cons(term,list);
+        TomTerm term = (TomTerm) replace.apply(subject.getHead());
+        TomList list = tomListMap(subject.getTail(),replace);
+        res = cons(term,list);
 	    }
-	} catch(Exception e) {
+    } catch(Exception e) {
 	    System.out.println("tomListMap error: " + e);
 	    e.printStackTrace();
 	    throw new TomRuntimeException("tomListMap error: " + e);
-	}
-	return res;
     }
+    return res;
+  }
 
-    protected InstructionList instructionListMap(InstructionList subject, Replace1 replace) {
-	InstructionList res = subject;
-	try {
+  protected InstructionList instructionListMap(InstructionList subject, Replace1 replace) {
+    InstructionList res = subject;
+    try {
 	    if(!subject.isEmpty()) {
-		Instruction term = (Instruction) replace.apply(subject.getHead());
-		InstructionList list = instructionListMap(subject.getTail(),replace);
-		res = `manyInstructionList(term,list);
+        Instruction term = (Instruction) replace.apply(subject.getHead());
+        InstructionList list = instructionListMap(subject.getTail(),replace);
+        res = `manyInstructionList(term,list);
 	    }
-	} catch(Exception e) {
+    } catch(Exception e) {
 	    System.out.println("instructionListMap error: " + e);
 	    e.printStackTrace();
 	    throw new TomRuntimeException("instructionListMap error: " + e);
-	}
-	return res;
     }
-    // ------------------------------------------------------------
-    protected void collectVariable(final Collection collection, ATerm subject) {
-	Collect1 collect = new Collect1() { 
-		public boolean apply(ATerm t) {
-		    if(t instanceof TomTerm) {
-			TomTerm annotedVariable = null;
-			%match(TomTerm t) { 
-			    (Variable|VariableStar)[constraints=constraintList] -> {
-				collection.add(t);
-				annotedVariable = getAssignToVariable(`constraintList);
-				if(annotedVariable!=null) {
-				    collection.add(annotedVariable);
-				}
-				return false;
-			    }
+    return res;
+  }
+  // ------------------------------------------------------------
+  protected void collectVariable(final Collection collection, ATerm subject) {
+    Collect1 collect = new Collect1() { 
+        public boolean apply(ATerm t) {
+          if(t instanceof TomTerm) {
+            TomTerm annotedVariable = null;
+            %match(TomTerm t) { 
+              (Variable|VariableStar)[constraints=constraintList] -> {
+                collection.add(t);
+                annotedVariable = getAssignToVariable(`constraintList);
+                if(annotedVariable!=null) {
+                  collection.add(annotedVariable);
+                }
+                return false;
+              }
+                
+              (UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
+                annotedVariable = getAssignToVariable(`constraintList);
+                if(annotedVariable!=null) {
+                  collection.add(annotedVariable);
+                }
+                return false;
+              }
 
-			    (UnamedVariable|UnamedVariableStar)[constraints=constraintList] -> {
-				annotedVariable = getAssignToVariable(`constraintList);
-				if(annotedVariable!=null) {
-				    collection.add(annotedVariable);
-				}
-				return false;
-			    }
+              // to collect annoted nodes but avoid collect variables in optionSymbol
+              Appl[args=subterms, constraints=constraintList] -> {
+                collectVariable(collection,`Tom(subterms));
+                annotedVariable = getAssignToVariable(`constraintList);
+                if(annotedVariable!=null) {
+                  collection.add(annotedVariable);
+                }
+                return false;
+              }
 
-			    // to collect annoted nodes but avoid collect variables in optionSymbol
-			    Appl[args=subterms, constraints=constraintList] -> {
-				collectVariable(collection,`Tom(subterms));
-				annotedVariable = getAssignToVariable(`constraintList);
-				if(annotedVariable!=null) {
-				    collection.add(annotedVariable);
-				}
-				return false;
-			    }
-
-			    _ -> { return true; }
-			}
-		    } else {
-			return true;
-		    }
-		} // end apply
+              _ -> { return true; }
+            }
+          } else {
+            return true;
+          }
+        } // end apply
 	    }; // end new
 
-	traversal().genericCollect(subject, collect);
-    }
+    traversal().genericCollect(subject, collect);
+  }
 
-    protected Map collectMultiplicity(ATerm subject) {
-	// collect variables
-	ArrayList variableList = new ArrayList();
-	collectVariable(variableList,subject);
-	// compute multiplicities
-	HashMap multiplicityMap = new HashMap();
-	Iterator it = variableList.iterator();
-	while(it.hasNext()) {
+  protected Map collectMultiplicity(ATerm subject) {
+    // collect variables
+    ArrayList variableList = new ArrayList();
+    collectVariable(variableList,subject);
+    // compute multiplicities
+    HashMap multiplicityMap = new HashMap();
+    Iterator it = variableList.iterator();
+    while(it.hasNext()) {
 	    TomTerm variable = (TomTerm)it.next();
 	    TomName name = variable.getAstName();
 	    if(multiplicityMap.containsKey(name)) {
-		Integer value = (Integer)multiplicityMap.get(name);
-		multiplicityMap.put(name, new Integer(1+value.intValue()));
+        Integer value = (Integer)multiplicityMap.get(name);
+        multiplicityMap.put(name, new Integer(1+value.intValue()));
 	    } else {
-		multiplicityMap.put(name, new Integer(1));
+        multiplicityMap.put(name, new Integer(1));
 	    }
-	}
-	return multiplicityMap;
     }
+    return multiplicityMap;
+  }
 
-    protected boolean isAnnotedVariable(TomTerm t) {
-	%match(TomTerm t) {
+  protected boolean isAnnotedVariable(TomTerm t) {
+    %match(TomTerm t) {
 	    Appl[constraints=constraintList] |
-		(Variable|VariableStar)[constraints=constraintList] |
-		(UnamedVariable|UnamedVariableStar)[constraints=constraintList] 
-		-> {
-		return getAssignToVariable(`constraintList)!=null;
+        (Variable|VariableStar)[constraints=constraintList] |
+        (UnamedVariable|UnamedVariableStar)[constraints=constraintList] 
+        -> {
+        return getAssignToVariable(`constraintList)!=null;
 	    }
-	}
-	return false;
     }
+    return false;
+  }
 
-    /*
-      protected TomTerm getAnnotedVariable(ConstraintList constraintList) {
-      %match(ConstraintList constraintList) {
-      concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
-      }
-      return null;
-      }
-    */
+  /*
+    protected TomTerm getAnnotedVariable(ConstraintList constraintList) {
+    %match(ConstraintList constraintList) {
+    concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
+    }
+    return null;
+    }
+  */
 
-    protected TomTerm getAssignToVariable(ConstraintList constraintList) {
-	%match(ConstraintList constraintList) {
+  protected TomTerm getAssignToVariable(ConstraintList constraintList) {
+    %match(ConstraintList constraintList) {
 	    concConstraint(_*,AssignTo(var@Variable[]),_*) -> { return `var; }
-	}
-	return null;
     }
+    return null;
+  }
 
-    protected Declaration getIsFsymDecl(OptionList optionList) {
-	%match(OptionList optionList) {
+  protected Declaration getIsFsymDecl(OptionList optionList) {
+    %match(OptionList optionList) {
 	    concOption(_*,DeclarationToOption(decl@IsFsymDecl[]),_*) -> { return `decl; }
-	}
-	return null;
     }
+    return null;
+  }
 
-    protected String getDebug(OptionList optionList) {
-	%match(OptionList optionList) {
+  protected String getDebug(OptionList optionList) {
+    %match(OptionList optionList) {
 	    concOption(_*,Debug(Name(str)),_*) -> { return `str; }
-	}
-
-	return null;
     }
 
-    protected boolean hasConstructor(OptionList optionList) {
-	%match(OptionList optionList) {
+    return null;
+  }
+
+  protected boolean hasConstructor(OptionList optionList) {
+    %match(OptionList optionList) {
 	    concOption(_*,Constructor[],_*) -> { return true; }
-	}
-	return false;
     }
+    return false;
+  }
 
-    protected boolean hasGeneratedMatch(OptionList optionList) {
-	%match(OptionList optionList) {
+  protected boolean hasGeneratedMatch(OptionList optionList) {
+    %match(OptionList optionList) {
 	    concOption(_*,GeneratedMatch(),_*) -> { return true; }
-	}
-	return false;
     }
+    return false;
+  }
 
-    protected boolean hasDefinedSymbol(OptionList optionList) {
-	%match(OptionList optionList) {
+  protected boolean hasDefinedSymbol(OptionList optionList) {
+    %match(OptionList optionList) {
 	    concOption(_*,DefinedSymbol(),_*) -> { return true; }
-	}
-	return false;
     }
+    return false;
+  }
 
-    protected boolean hasImplicitXMLAttribut(OptionList optionList) {
-	%match(OptionList optionList) {
+  protected boolean hasImplicitXMLAttribut(OptionList optionList) {
+    %match(OptionList optionList) {
 	    concOption(_*,ImplicitXMLAttribut(),_*) -> { return true; }
-	}
-	return false;
     }
+    return false;
+  }
 
-    protected boolean hasImplicitXMLChild(OptionList optionList) {
-	%match(OptionList optionList) {
+  protected boolean hasImplicitXMLChild(OptionList optionList) {
+    %match(OptionList optionList) {
 	    concOption(_*,ImplicitXMLChild(),_*) -> { return true; }
-	}
-	return false;
-    } 
+    }
+    return false;
+  } 
 
-    protected TomName getSlotName(TomSymbol symbol, int number) {
-	SlotList slotList = symbol.getSlotList();
-	for(int index = 0; !slotList.isEmpty() && index<number ; index++) {
+  protected TomName getSlotName(TomSymbol symbol, int number) {
+    SlotList slotList = symbol.getSlotList();
+    for(int index = 0; !slotList.isEmpty() && index<number ; index++) {
 	    slotList = slotList.getTail();
-	}
-	if(slotList.isEmpty()) {
+    }
+    if(slotList.isEmpty()) {
 	    System.out.println("getSlotName: bad index error");
 	    throw new TomRuntimeException("getSlotName: bad index error");
-	}
-
-	Declaration decl = slotList.getHead().getSlotDecl();
-	%match(Declaration decl) {
-	    GetSlotDecl[slotName=name] -> { return `name; }
-	}
-	return null;
     }
 
-    protected int getSlotIndex(SlotList slotList, TomName slotName) {
-	int index = 0;
-	while(!slotList.isEmpty()) {
+    Declaration decl = slotList.getHead().getSlotDecl();
+    %match(Declaration decl) {
+	    GetSlotDecl[slotName=name] -> { return `name; }
+    }
+    return null;
+  }
+
+  protected int getSlotIndex(SlotList slotList, TomName slotName) {
+    int index = 0;
+    while(!slotList.isEmpty()) {
 	    TomName name = slotList.getHead().getSlotName();
 	    // System.out.println("index = " + index + " name = " + name);
 	    if(slotName.equals(name)) {
-		return index; 
+        return index; 
 	    }
 	    slotList = slotList.getTail();
 	    index++;
-	}
-	return -1;
     }
+    return -1;
+  }
 
-    protected boolean isDefinedSymbol(TomSymbol subject) {
-	if(subject==null) {
+  protected boolean isDefinedSymbol(TomSymbol subject) {
+    if(subject==null) {
 	    System.out.println("isDefinedSymbol: subject == null");
 	    return false;
-	}
-	%match(TomSymbol subject) {
-	    Symbol[option=optionList] -> {
-		return hasDefinedSymbol(`optionList);
-	    }
-	}
-	return false;
     }
+    %match(TomSymbol subject) {
+	    Symbol[option=optionList] -> {
+        return hasDefinedSymbol(`optionList);
+	    }
+    }
+    return false;
+  }
 
-    // findOriginTracking(_) return the option containing OriginTracking information
-    protected Option findOriginTracking(OptionList optionList) {
-	if(optionList.isEmpty()) {
+  // findOriginTracking(_) return the option containing OriginTracking information
+  protected Option findOriginTracking(OptionList optionList) {
+    if(optionList.isEmpty()) {
 	    return `noOption();
-	}
-	while(!optionList.isEmpty()) {
+    }
+    while(!optionList.isEmpty()) {
 	    Option subject = optionList.getHead();
 	    %match(Option subject) {
-		orgTrack@OriginTracking[] -> {
-		    return `orgTrack;
-		}
+        orgTrack@OriginTracking[] -> {
+          return `orgTrack;
+        }
 	    }
 	    optionList = optionList.getTail();
-	}
-	System.out.println("findOriginTracking:  not found" + optionList);
-	throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
     }
+    System.out.println("findOriginTracking:  not found" + optionList);
+    throw new TomRuntimeException("findOriginTracking:  not found" + optionList);
+  }
 
 }
