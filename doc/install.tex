@@ -13,7 +13,7 @@ In order to quickly install the last version of \TOM, the best thing
 to do is the following:
 {\bf
 \begin{itemize}
-\item browse the \ahref{\tompage}{TOM Home Page}
+\item browse the \TOM\ web page~\ahref{\tompage}{tom.loria.fr}
 \item get the last jtom-bundle-version.jar distribution
 \item get the associated scripts
 \item customize your CLASSPATH and PATH
@@ -23,7 +23,8 @@ to do is the following:
 
 \section{Requirements and download}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The current version of \TOM\ is available at \ahref{\tompage}{TOM Home Page}.
+The current version of \TOM\ is available from the
+\ahref{\tompage}{TOM web page}.
 In this page, you will find two kinds of releases:
 
 \begin{itemize}
@@ -41,9 +42,9 @@ Depending on the distribution, \TOM\ is avaible in different formats:
   needed dependencies;
 \item Jar distributions: corresponds to compiled stable versions of \TOM;
 \item Jar devel distributions: corresponds to compiled development versions of \TOM;
-\item Daily distribution: is a snapshot of the source control;
-  system. This is a way to get the last version of a package that pass
-  all the regression tests;
+\item Daily distribution: is a snapshot of the source control
+  system. This is a way to get the last version of a package for which
+  all the regression tests succeed;
 
 \item CVS distribution: is a way to get the last source version of the
   system.
@@ -53,7 +54,7 @@ Depending on the distribution, \TOM\ is avaible in different formats:
 \TOM\ is written in Java and \TOM\ itself. You will need a Java
 compiler and interpreter to compile and run \TOM. 
 \\We actually use Sun JDK 1.3.1 and 1.4 tools for development and runtime
-excecution.
+execution.
 \\Some tests have already been realized with gcj
 and Jikes without any particular issues.
 
@@ -66,17 +67,17 @@ and Jikes without any particular issues.
 \end{itemize}
 The following figure shows the dependencies order:
 
-\imgsrc{depgraphjtom.pgn}
+\imgsrc{depgraph-jtom.png}
 
-Such packages are available at:
+Such packages are available from:
 \begin{itemize}
-\item \ahref{\tompage}{\TOM\ Home Page}
-\item \ahref{\packagebase}{CWI package base Page}
+\item \TOM\ web page:~\ahref{\tompage}{tom.loria.fr}
+\item CWI package base Page:~\ahref{\packagebase}{www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase}
 \end{itemize}    
 
 \section{Installation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Depending on the\TOM\ package you download, here is the installation
+Depending on the \TOM\ package you download, here are the installation
 instructions.
 
 \subsection{Installing the bundle package}
@@ -168,7 +169,7 @@ Once all is done, you are ready using \TOM\ using jtom command.
 \verb#--optimize | -O#&        Optimized generated code \\
 \verb#--static#&               Generate static functions \\
 \verb#--debug#&                Generate debug primitives \\
-\verb#--memory#&               Add memory management while debugging (not correct with list matching)\\
+\verb#--memory#&               Add memory management while debugging (not active with list matching)\\
 \hline
 \end{tabular}
 
@@ -178,11 +179,11 @@ Once all is done, you are ready using \TOM\ using jtom command.
 The latest developments of \TOM\ are available from anonymous cvs at:
 \\cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom
 \paragraph{\TOM\ Architecture}
-In \TOM\ directory architecture, 2 main branches can be underlined:
+In \TOM\ directory architecture, two main branches can be underlined:
 `stable' and `src'...
 The `stable' branch contains the stable material to build a running
 \TOM\ compiler. The `src' branch is used to make new developments.
-Once in src directory, you can modify the sources. then, 
+Once in `src' directory, you can modify the sources. then, 
 \begin{enumerate}
 \item Type `make' to build a new system and use jtom.src to use and
   test the new system.
@@ -192,18 +193,15 @@ Once in src directory, you can modify the sources. then,
   `cd ../../stable'; `make install'
   Then, correct the `src' directory
 \item If you are happy from the result, type `make bootinstall' to
-  make the current version become the stable one.   WARNING: this action may be VERY DANGEROUS !!!
+  make the current version become the stable one.   
+  \textbf{Be aware that this action may be dangerous and cause serious
+  problems to your \TOM\ installation!}
 \end{enumerate}
 Please send a mail to \mailto{Pierre-Etienne.Moreau@loria.fr} to propose your
 suggestions.
 
 \paragraph{Additional tools for developments}
-To simplify \TOM\ development, an extra package called Apigen is used
-to generate data structures used by \TOM. All generated files can be
-found in `jtom $\backslash$adt' directory.
-\\This package is available at
-\ahref{\packagebase}{CWI package base Page}.
-WARNING: We will need to install JUnit to build this package.
-Once TomSignature.adt is modified, `make api' to re-generate \TOM\
-data structures.
- 
+To simplify \TOM\ development, an extra package called Apigen 
+(available at \ahref{\packagebase}{CWI package base Page}) 
+is used to generate data structures used by \TOM. All generated files
+can be found in `jtom/adt' directory.

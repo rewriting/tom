@@ -33,7 +33,7 @@ system.<BR>
 In order to quickly install the last version of <FONT COLOR=navy>Tom</FONT>, the best thing
 to do is the following:
 <UL><LI><B>
-</B><B>browse the </B><A HREF="http://tom.loria.fr"><B>TOM Home Page</B></A><B>
+</B><B>browse the <FONT COLOR=navy>Tom</FONT></B><B> web page&nbsp;</B><A HREF="http://tom.loria.fr"><B>tom.loria.fr</B></A><B>
 </B><LI><B>get the last jtom-bundle-version.jar distribution
 </B><LI><B>get the associated scripts
 </B><LI><B>customize your CLASSPATH and PATH
@@ -46,7 +46,8 @@ to do is the following:
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Requirements and download</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
-The current version of <FONT COLOR=navy>Tom</FONT> is available at <A HREF="http://tom.loria.fr">TOM Home Page</A>.
+The current version of <FONT COLOR=navy>Tom</FONT> is available from the
+<A HREF="http://tom.loria.fr">TOM web page</A>.
 In this page, you will find two kinds of releases:
 <UL><LI>
 The stable distribution corresponds to major releases of <FONT COLOR=navy>Tom</FONT>;
@@ -62,9 +63,9 @@ Releases: is a way to get a major release as a software package;
  needed dependencies;
 <LI>Jar distributions: corresponds to compiled stable versions of <FONT COLOR=navy>Tom</FONT>;
 <LI>Jar devel distributions: corresponds to compiled development versions of <FONT COLOR=navy>Tom</FONT>;
-<LI>Daily distribution: is a snapshot of the source control;
- system. This is a way to get the last version of a package that pass
- all the regression tests;<BR>
+<LI>Daily distribution: is a snapshot of the source control
+ system. This is a way to get the last version of a package for which
+ all the regression tests succeed;<BR>
 <BR>
 <LI>CVS distribution: is a way to get the last source version of the
  system.
@@ -75,7 +76,7 @@ Releases: is a way to get a major release as a software package;
 compiler and interpreter to compile and run <FONT COLOR=navy>Tom</FONT>. 
 <BR>
 We actually use Sun JDK 1.3.1 and 1.4 tools for development and runtime
-excecution.
+execution.
 <BR>
 Some tests have already been realized with gcj
 and Jikes without any particular issues.<BR>
@@ -90,12 +91,12 @@ shared-objects
 </UL>
 The following figure shows the dependencies order:<BR>
 <BR>
-<IMG SRC="depgraphjtom.pgn"><BR>
+<IMG SRC="depgraph-jtom.png"><BR>
 <BR>
-Such packages are available at:
+Such packages are available from:
 <UL><LI>
-<A HREF="http://tom.loria.fr"><FONT COLOR=navy>Tom</FONT> Home Page</A>
-<LI><A HREF="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase">CWI package base Page</A>
+<FONT COLOR=navy>Tom</FONT> web page:&nbsp;<A HREF="http://tom.loria.fr">tom.loria.fr</A>
+<LI>CWI package base Page:&nbsp;<A HREF="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase">www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase</A>
 </UL> 
 <A NAME="toc3"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
@@ -103,7 +104,7 @@ Such packages are available at:
 <TD WIDTH="100%" ALIGN=center><B><FONT SIZE=5>Installation</FONT></B></TD>
 </TR></TABLE></DIV></TD>
 </TR></TABLE>
-Depending on the<FONT COLOR=navy>Tom</FONT> package you download, here is the installation
+Depending on the <FONT COLOR=navy>Tom</FONT> package you download, here are the installation
 instructions.<BR>
 <BR>
 <TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
@@ -252,7 +253,7 @@ Get and install the shared-objects package
 <TD ALIGN=left NOWRAP>Generate debug primitives</TD>
 </TR>
 <TR><TD ALIGN=left NOWRAP><CODE>--memory</CODE></TD>
-<TD ALIGN=left NOWRAP>Add memory management while debugging (not correct with list matching)</TD>
+<TD ALIGN=left NOWRAP>Add memory management while debugging (not active with list matching)</TD>
 </TR></TABLE><BR>
 <A NAME="toc5"></A><TABLE CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
 <TR><TD BGCOLOR="#007fff"><DIV ALIGN=center><TABLE>
@@ -267,11 +268,11 @@ The latest developments of <FONT COLOR=navy>Tom</FONT> are available from anonym
 cvs -d :pserver:cvs@cvs-sop.inria.fr:/CVS/aircube checkout jtom
 
 <H5><FONT COLOR=navy>Tom</FONT> Architecture</H5>
-In <FONT COLOR=navy>Tom</FONT> directory architecture, 2 main branches can be underlined:
+In <FONT COLOR=navy>Tom</FONT> directory architecture, two main branches can be underlined:
 `stable' and `src'...
 The `stable' branch contains the stable material to build a running
 <FONT COLOR=navy>Tom</FONT> compiler. The `src' branch is used to make new developments.
-Once in src directory, you can modify the sources. then, 
+Once in `src' directory, you can modify the sources. then, 
 <OL type=1><LI>
 Type `make' to build a new system and use jtom.src to use and
  test the new system.
@@ -281,22 +282,20 @@ Type `make' to build a new system and use jtom.src to use and
  `cd ../../stable'; `make install'
  Then, correct the `src' directory
 <LI>If you are happy from the result, type `make bootinstall' to
- make the current version become the stable one. WARNING: this action may be VERY DANGEROUS !!!
+ make the current version become the stable one. 
+ <B>Be aware that this action may be dangerous and cause serious
+ problems to your <FONT COLOR=navy>Tom</FONT></B><B> installation!</B>
 </OL>
 Please send a mail to <A HREF="mailto:Pierre-Etienne.Moreau@loria.fr">Pierre-Etienne.Moreau@loria.fr</A> to propose your
 suggestions.<BR>
 <BR>
 
 <H5>Additional tools for developments</H5>
-To simplify <FONT COLOR=navy>Tom</FONT> development, an extra package called Apigen is used
-to generate data structures used by <FONT COLOR=navy>Tom</FONT>. All generated files can be
-found in `jtom \adt' directory.
+To simplify <FONT COLOR=navy>Tom</FONT> development, an extra package called Apigen 
+(available at <A HREF="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase">CWI package base Page</A>) 
+is used to generate data structures used by <FONT COLOR=navy>Tom</FONT>. All generated files
+can be found in `jtom/adt' directory.
 <BR>
-This package is available at
-<A HREF="http://www.cwi.nl/htbin/sen1/twiki/bin/view/SEN1/PackageBase">CWI package base Page</A>.
-WARNING: We will need to install JUnit to build this package.
-Once TomSignature.adt is modified, `make api' to re-generate <FONT COLOR=navy>Tom</FONT>
-data structures.<BR>
 <BR>
 <HR>
 <A HREF="manual1001.html"><IMG SRC ="previous_motif.gif" ALT="Previous"></A>
