@@ -149,6 +149,12 @@ public class TomParser {
     TomList list = ast().makeList(debuggedStructureList);
     return tsf().makeTomStructureTable_StructTable(list);
   }
+
+  private void addPreviousCode(ArrayList list) {
+    String code = savePosAndExtract();
+    if (code.equals("")) {return ;}
+    list.add(makeTL(code));
+  }
 }
 
 PARSER_END(TomParser)
@@ -444,7 +450,7 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <MATCH> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
       optionList.add(orgTrack);
       String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
@@ -697,7 +703,7 @@ void BackQuoteTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <BACKQUOTE_TERM> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
     }
   term = Term()
@@ -713,7 +719,7 @@ void LocalVariableConstruct(ArrayList list) throws TomException: /* in DEFAULT m
 {
   <VARIABLE> /* switch to TOM mode */
   {
-    list.add(makeTL(savePosAndExtract()));
+    addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     switchToDefaultMode(); /* switch to DEFAULT mode */
     list.add(tsf().makeTomTerm_LocalVariable());
   }
@@ -731,7 +737,7 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
 {
   <INCLUDE> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     }
   <TOM_LBRACE> fileName = <TOM_IDENTIFIER> <TOM_RBRACE>
   {
@@ -745,7 +751,6 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
           found = file.exists();
         }
       }
-        //System.out.println("file = " + file);
 
         // to get the length of the file
       inputBuffer = new byte[(int)file.length()+1];
@@ -756,6 +761,11 @@ void IncludeConstruct(ArrayList list) throws TomException : /* in DEFAULT mode *
       astTom = tomParser.startParsing();
       astTom = tsf().makeTomTerm_TomInclude(astTom.getList());
       list.add(astTom);
+        //TomList includeList = astTom.getList();
+        //while(!includeList.isEmpty()) {
+        //list.add(includeList.getHead());
+        //includeList = includeList.getTail();
+        //}
     } catch (FileNotFoundException e1) {
       System.out.println("Included file " + fileName.image + " not found at line "+getLine());
       //e1.printStackTrace();
@@ -781,7 +791,7 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <RULE> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       orgTrackRuleSet = ast().makeOriginTracking("Rule",getLine(), currentFile);
       text = "";
     }
@@ -854,7 +864,7 @@ void Operator(ArrayList list) throws TomException : /* in DEFAULT mode */
 {
   <OPERATOR> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     }
   
   type = <TOM_IDENTIFIER>
@@ -963,7 +973,7 @@ void OperatorList(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <OPERATOR_LIST> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     }
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
     { options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
@@ -1004,7 +1014,7 @@ void OperatorArray(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <OPERATOR_ARRAY> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     }
   type = <TOM_IDENTIFIER> name = <TOM_IDENTIFIER>
     { options.add(ast().makeOriginTracking(name.image,getLine(), currentFile));}
@@ -1050,12 +1060,12 @@ void TypeTerm(ArrayList list) throws TomException: /* in DEFAULT mode */
   (
     <TYPETERM> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     }
   | 
     <TYPE> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       if(!Flags.noWarning) {
         System.out.println("Warning: %type is obsolete");
       }
@@ -1086,7 +1096,7 @@ void TypeInt(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <TYPEINT> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       switchToDefaultMode(); /* switch to DEFAULT mode */
       ast().makeIntegerDecl(list);
     }
@@ -1105,7 +1115,7 @@ void TypeList(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <TYPELIST> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     }
   
   type=<TOM_IDENTIFIER>
@@ -1144,7 +1154,7 @@ void TypeArray(ArrayList list) throws TomException: /* in DEFAULT mode */
 {
   <TYPEARRAY> /* switch to TOM mode */
     {
-      list.add(makeTL(savePosAndExtract()));
+      addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
     }
   
   type=<TOM_IDENTIFIER>
