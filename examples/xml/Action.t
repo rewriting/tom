@@ -31,7 +31,7 @@ public class Action {
     %match(TNode t) {
       <Actions><Action>
            //<Comp Label="busy" Type=#TEXT(type) Index=i/>
-         <Comp Index=i Label="busy" Type=#TEXT(type) />
+         <Comp Label="busy" Type=#TEXT(type) Index=i />
          </Action></Actions>
          
          -> {
@@ -48,16 +48,24 @@ public class Action {
   private void test2(ATerm subject) {
     TNode t = (TNode) subject;
     t = t.getDocElem();
-    %match(TNode t,TNode t) {
-      <Actions><Action><Comp Index=#TEXT(i) Label=l Type="Wait"/></Action></Actions>,
-      <Actions><Action><Comp Index=#TEXT(j) Label=l Type="Send"/></Action></Actions>
+    %match(TNode t) {
+      <Actions><Action>
+         <Comp Index=#TEXT(i) Label=l Type="Wait"/>
+         <Comp Index=#TEXT(j) Label=l Type="Send"/>
+      </Action></Actions>
+    | <Actions><Action>
+         <Comp Index=#TEXT(j) Label=l Type="Send"/>
+         <Comp Index=#TEXT(i) Label=l Type="Wait"/>
+      </Action></Actions>
          -> {
            System.out.println("Synchronisation entre "+i+" et "+j+" sur le label "+l.getData());
          }
+
     } // match
     
   }
 
+  
   
 }
 

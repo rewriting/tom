@@ -200,6 +200,23 @@ public class TomExpander extends TomBase implements TomTask {
     return (TomTerm) replaceSymbol.apply(t);
   }
 
+  private TomList sortAttributeList(TomList attrList) {
+    %match(TomList attrList) {
+      concTomTerm() -> { return attrList; }
+      concTomTerm(X1*,
+                e1@Appl[args=manyTomList(Appl[astName=Name(name1)],_)],
+                X2*,
+                e2@Appl[args=manyTomList(Appl[astName=Name(name2)],_)],
+                X3*) -> {
+        if(name1.compareTo(name2) >= 0) {
+            //System.out.println("swap: " + name1 + " <--> " + name2);
+          return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+        }                
+      }
+    }
+    return attrList;
+  }
+
   protected TomTerm expandXMLAppl(OptionList options, String tomName,
                                   TomList attrList, TomList childList) {
     boolean implicitAttribute = hasImplicitXMLAttribut(options);
@@ -212,6 +229,7 @@ public class TomExpander extends TomBase implements TomTask {
     if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
     if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 
+    attrList = sortAttributeList(attrList);
     while(!attrList.isEmpty()) {
       TomTerm newPattern = expandTomSyntax(attrList.getHead());
       newAttrList = `manyTomList(newPattern,newAttrList);
@@ -222,23 +240,17 @@ public class TomExpander extends TomBase implements TomTask {
     
     while(!childList.isEmpty()) {
       TomTerm newPattern = expandTomSyntax(childList.getHead());
-        //System.out.println("newPattern = " + newPattern);
       newChildList = `manyTomList(newPattern,newChildList);
       if(implicitChild) {
         if(newPattern.isVariableStar()) {
             // remove the previously inserted pattern
-            //System.out.println("newChildList = " + newChildList);
-            //System.out.println("remove the previously inserted pattern");
           newChildList = newChildList.getTail();
           if(newChildList.getHead().isUnamedVariableStar()) {
             // remove the previously inserted star
-            //System.out.println("remove the previously inserted star");
             newChildList = newChildList.getTail();
           }
             // re-insert the pattern
-            //System.out.println("re-insert the pattern");
           newChildList = `manyTomList(newPattern,newChildList);
-            //System.out.println("newChildList = " + newChildList);
         } else {
           newChildList = `manyTomList(star,newChildList);
         }
@@ -247,11 +259,7 @@ public class TomExpander extends TomBase implements TomTask {
     }
     newChildList = (TomList) newChildList.reverse();
 
-      //System.out.println("+++ newAttrList  = " + newAttrList);
-      //System.out.println("+++ newChildList = " + newChildList);
-
     Option emptyOption = ast().makeOption();
-
       /*
        * encode the name and put it into the table of symbols
        */
@@ -262,7 +270,6 @@ public class TomExpander extends TomBase implements TomTask {
       Appl(emptyOption,Name(Constants.CONC_TNODE), newAttrList),
       Appl(emptyOption,Name(Constants.CONC_TNODE), newChildList));
     TomTerm result = `Appl(Option(options),Name(Constants.ELEMENT_NODE),newArgs);
-
       //System.out.println("expand:\n" + result);
     return result;
    
