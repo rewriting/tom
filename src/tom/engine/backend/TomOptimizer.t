@@ -218,7 +218,7 @@ public class TomOptimizer extends TomBase {
 		return true;// we go deeper to search in the 'source'	    
 	      }
 	      DoWhile[instList=list] -> {
-		savedInsideDoWhile = insideDoWhile;
+		boolean savedInsideDoWhile = insideDoWhile;
 		insideDoWhile = true;
 		//optimDebug("Entering DoWhile");
 		collectVariables(list);
