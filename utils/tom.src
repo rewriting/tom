@@ -60,4 +60,4 @@ if $cygwin; then
   TOM_CONFIG_FILE=`cygpath --windows "$TOM_CONFIG_FILE"`
 fi
 
-exec "$JAVACMD" $TOM_OPTS -classpath "$LOCALCLASSPATH" -Dtom.home="${TOM_SRC_HOME}" jtom.TomServer -X $TOM_CONFIG_FILE $TOM_ARGS -I "$TOM_INC" "$@"
+exec "$JAVACMD" $TOM_OPTS -classpath "$LOCALCLASSPATH" -Dtom.home="${TOM_SRC_HOME}" jtom.Tom -X $TOM_CONFIG_FILE $TOM_ARGS -I "$TOM_INC" "$@"

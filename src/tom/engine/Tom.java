@@ -15,13 +15,14 @@ public class Tom {
   protected static Logger rootLogger;
 
   public static int exec(String[] args) {
-    rootLogger = Logger.getLogger("jtom");
+    rootLogger = Logger.getLogger("jtom", "jtom.TomMessageResources");
 
     rootLogger.setLevel(Level.WARNING);
     rootLogger.setUseParentHandlers(false);
 
     Handler ch = new ConsoleHandler();
     ch.setLevel(Level.ALL); // that way, all the logs accepted by the logger are printed
+    ch.setFormatter( new TomBasicFormatter() );
 
     rootLogger.addHandler(ch);
 

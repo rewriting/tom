@@ -78,12 +78,10 @@ public class TomServer {
    * @return the instance of the TomServer
    * @throws RuntimeException if the TomServer hasn't been initialized before the call
    */
-  public static TomServer getInstance()
-  {
-    if(instance == null)
-	    {
-        throw new RuntimeException(TomMessage.getString("GetInitializedTomServerInstance"));
-	    }
+  public static TomServer getInstance() {
+    if(instance == null) {
+      throw new RuntimeException("Cannot get the instance of an uninitialized TomServer");
+    }
     return instance;
   }
 
@@ -103,7 +101,7 @@ public class TomServer {
 
       instance.statusHandler = new TomStatusHandler();
       Logger.getLogger(loggerRadical).addHandler(instance.statusHandler);
-      instance.logger = Logger.getLogger(loggerRadical+".TomServer");
+      instance.logger = Logger.getLogger(loggerRadical+".TomServer","jtom.TomServerResources");
 	
       return instance;
     } else {
@@ -118,9 +116,10 @@ public class TomServer {
   public static void clear() {
     instance.instances = new ArrayList();
     try {
-    	instance.optionManager = (OptionManager)instance.optionManager.getClass().newInstance();
-    } catch(Exception e) { System.out.println( "Problem when reinitializing option manager : "
-					       + e.getMessage() ); }
+      instance.optionManager = (OptionManager)instance.optionManager.getClass().newInstance();
+    } catch(Exception e) { 
+      System.out.println( "Problem when reinitializing option manager : " + e.getMessage() ); 
+    }
   }
 
   /**
@@ -157,13 +156,9 @@ public class TomServer {
         }
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-	logger.log(Level.SEVERE,
-		   TomMessage.getString("IncompleteOption"),
-		   argumentList[--i]);
-//       environment.messageError(TomMessage.getString("IncompleteOption"), 
-//                                new Object[]{argumentList[--i]}, 
-//                                "TomServer", 
-//                                TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      logger.log(Level.SEVERE,
+		 "IncompleteOption",
+		 argumentList[--i]);
     }
 
 //     if( environment.hasError() ) {
@@ -176,21 +171,14 @@ public class TomServer {
       
       if(! file.exists() ) {
         // the case where the specified file doesn't exist is handled here
-	  logger.log(Level.SEVERE,
-		   TomMessage.getString("ConfigFileNotFound"),
+	logger.log(Level.SEVERE,
+		   "ConfigFileNotFound",
 		   xmlConfigurationFile);
-//         environment.messageError(TomMessage.getString("ConfigFileNotFound"), 
-//                                  new Object[]{xmlConfigurationFile}, 
-//                                  "TomServer", 
-//                                  TomMessage.DEFAULT_ERROR_LINE_NUMBER);
       }
     } catch(NullPointerException npe) {
       // the lack of a configuration file is handled here
-       logger.log(Level.SEVERE,
-		  TomMessage.getString("ConfigFileNotSpecified"));
-//       environment.messageError(TomMessage.getString("ConfigFileNotSpecified"), 
-//                                "TomServer", 
-//                                TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      logger.log(Level.SEVERE,
+		 "ConfigFileNotSpecified");
     }
 
 //     if( environment.hasError() ) {
@@ -216,13 +204,9 @@ public class TomServer {
 
     if( node == null ) {
       // parsing failed
-	logger.log(Level.SEVERE,
-		   TomMessage.getString("ConfigFileNotXML"),
-		   xmlConfigurationFile);
-//       environment.messageError(TomMessage.getString("ConfigFileNotXML"), 
-//                                new Object[]{xmlConfigurationFile}, 
-//                                "TomServer", 
-//                                TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+      logger.log(Level.SEVERE,
+		 "ConfigFileNotXML",
+		 xmlConfigurationFile);
       return null;
     }
 
@@ -270,23 +254,18 @@ public class TomServer {
         if(instance instanceof TomPlugin) {
           instances.add(instance);
         } else {
-	    logger.log(Level.SEVERE,
-		       TomMessage.getString("ClassNotAPlugin"),
-		       path);
-//           environment.messageError(TomMessage.getString("ClassNotAPlugin"), new Object[]{path},
-//                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	  logger.log(Level.SEVERE,
+		     "ClassNotAPlugin",
+		     path);
         }
       } catch(ClassNotFoundException cnfe) { 
-	  logger.log(Level.WARNING,
-		     TomMessage.getString("ClassNotFound"),
-		     path);
-//         environment.messageWarning(TomMessage.getString("ClassNotFound"),new Object[]{path},
-//                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+	logger.log(Level.WARNING,
+		   "ClassNotFound",
+		   path);
       } catch(Exception e) { 
-	  logger.log(Level.SEVERE,
-		     TomMessage.getString("InstantiationError"));
-//      environment.messageError(TomMessage.getString("InstantiationError"),
-//                               "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER); 
+	logger.log(Level.SEVERE,
+		   "InstantiationError",
+		   path);
       }
     }
     
@@ -305,11 +284,9 @@ public class TomServer {
 
     for(int i = 0; i < inputFiles.length; i++) {
 
-
-	if(logger.isLoggable(Level.FINER)) {
       logger.log(Level.FINER,
-		 "Now compiling : " + inputFiles[i]);
-	}
+		 "NowCompiling",
+		 inputFiles[i]);
 
       ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
       
@@ -322,9 +299,9 @@ public class TomServer {
         term = plugin.getOutput();
 
          if( statusHandler.hasError() ) {
-//           environment.printAlertMessage(plugin.getClass().toString());
-//           environment.messageError(TomMessage.getString("ProcessingError"), new Object[]{inputFiles[i]},
-//                                    "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	   logger.log(Level.SEVERE,
+		      "ProcessingError",
+		      inputFiles[i]);
            break;
          }
       }
@@ -333,7 +310,6 @@ public class TomServer {
     //System.out.println( statusHandler.toString() );
 
     if( statusHandler.hasError() ) {
-//       environment.printAlertMessage("TomServer");
       return 1;
     } else {
       return 0;
@@ -358,7 +334,8 @@ public class TomServer {
 		<plugin [classpath = cp] /> -> { 
 		  v.add(cp);
 		  logger.log(Level.FINER,
-			     "Read this classpath from the XML file : " + cp);
+			     "ClassPathRead",
+			     cp);
 		}
 	      }
 	      cl = cl.getTail();
