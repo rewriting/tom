@@ -157,7 +157,7 @@ public class TomCGenerator extends TomImperativeGenerator {
 		if(!l.isEmpty()) {
 			output.write(getTLType(type1));
 			output.writeSpace();
-			outpput.write(name1);
+			output.write(name1);
 			if(!l.isEmpty()) {
 				output.writeOpenBrace();
 				while (!l.isEmpty()) {
