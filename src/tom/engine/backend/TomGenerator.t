@@ -92,8 +92,9 @@ public class TomGenerator extends TomBase implements TomTask {
         startChrono = System.currentTimeMillis();
       }
       int defaultDeep = 2;
+      
       Writer writer = new BufferedWriter(new OutputStreamWriter(
-                                           new FileOutputStream(input.getOutputFileName())));
+                                         new FileOutputStream(input.getOutputFileName())));
       OutputCode out = new OutputCode(writer, cCode, pretty);
       generate(out,defaultDeep,input.getTerm());
       writer.close();

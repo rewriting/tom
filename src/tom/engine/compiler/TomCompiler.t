@@ -200,6 +200,7 @@ public class TomCompiler extends TomBase implements TomTask {
           l = appendInstruction(buildAST,l);
           l = append(`MakeFunctionEnd(),l);
         }
+  
         return preProcessing(`Tom(l));
       }
       
