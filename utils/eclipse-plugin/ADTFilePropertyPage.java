@@ -140,7 +140,6 @@ public class ADTFilePropertyPage extends PropertyPage {
 			QualifiedName qName = new QualifiedName("ADTCOMMAND", resource.getLocation().toString());
 			resource.setPersistentProperty(qName, commandLineField.getText());
 		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}

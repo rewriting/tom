@@ -8,9 +8,9 @@
 
 	<runtime>
 		<library name="jtom.jar"/>
-		<library name="jtom-devel1.3gamma.jar"/>
+		<library name="jtom-devel1.4alpha.jar"/>
 		<library name="jjtraveler-0.4.2.jar"/>
-		<library name="aterm-1.4.jar"/>
+		<library name="aterm-1.5beta.jar"/>
 		<library name="shared-objects-1.4.jar"/>
 		<library name="apigen.jar"/>
 	</runtime>
@@ -26,6 +26,16 @@
 			name="Tom Builder">
 		<builder hasNature="false"> 
 			<run class="fr.loria.eclipse.jtom.TomBuilder">
+			</run> 
+		</builder> 
+	</extension>
+	
+	<extension
+			point="org.eclipse.core.resources.builders"
+			id="TomBuildAnalyser"
+			name="Tom Builder Analyser">
+		<builder hasNature="false"> 
+			<run class="fr.loria.eclipse.jtom.TomBuildAnalyser">
 			</run> 
 		</builder> 
 	</extension>

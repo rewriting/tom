@@ -1,4 +1,8 @@
-This folder contains the necessary material to run jtom eclipse plugin.
+This folder contains the necessary material to run jtom eclipse plugin. 
+This plug-in shall be used for eclipse java project.
+
+This plug-in shall run with:
+		jtom-devel1.4alpha.jar and upper version only
 
 This material is initialy build on freebsd but should work on other platforms
 
@@ -7,17 +11,27 @@ ECLIPSE_INSTALL_DIR/plugings
 	fr.loria.eclipse.jtom
 		plugin.xml, 
 		jtom.jar
-		All necessary jar files defined in plugin.xml associated to aterm-java, jjtraveler, shared-objects and the last version of jtom.
+		All necessary jar files defined in plugin.xml associated to:
+		    - aterm-java, 
+		    - jjtraveler, 
+		    - shared-objects
+		    - jtom
 
 Once restared, in your .project file, you need to add the follwing between the <buildSpec> marker:
      <buildSpec>
 	<buildCommand>
 		<name>fr.loria.eclipse.jtom.TomBuilder</name>
-			<arguments>
-			</arguments>
+		<arguments>
+		</arguments>
 	</buildCommand>
 	
-	... other buildCommands
+	... javabuilder (and other buildCommands)
+
+	<buildCommand>
+		<name>fr.loria.eclipse.jtom.TomBuildAnalyser</name>
+		<arguments>
+		</arguments>
+	</buildCommand>
 
 	</buildSpec>
 

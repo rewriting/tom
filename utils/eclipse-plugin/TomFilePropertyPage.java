@@ -140,7 +140,6 @@ public class TomFilePropertyPage extends PropertyPage {
 			QualifiedName qName = new QualifiedName("TOMCOMMAND", resource.getLocation().toString());
 			resource.setPersistentProperty(qName, commandLineField.getText());
 		} catch (CoreException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}

@@ -25,7 +25,7 @@ public class JtomPlugin extends AbstractUIPlugin {
 			plugin = this;
 		}
 		try {
-			resourceBundle= ResourceBundle.getBundle("com.loria.eclipse.jtom.JtomPluginResources");
+			resourceBundle= ResourceBundle.getBundle("fr.loria.eclipse.jtom.JtomPluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

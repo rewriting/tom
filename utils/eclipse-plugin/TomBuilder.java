@@ -3,9 +3,12 @@
  */
 package fr.loria.eclipse.jtom;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -22,12 +25,25 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 
 import jtom.Tom;
+import jtom.adt.TomErrorList;
 
 /**
  * @author julien
  */
 public class TomBuilder extends IncrementalProjectBuilder implements IResourceDeltaVisitor, IResourceVisitor {
 
+  private static HashMap errorMap = new HashMap(); 
+  private static TomErrorList errors = null;
+	private static ByteArrayOutputStream outputStream = null;
+	
+	public static HashMap getErrorMap() {
+		return errorMap;
+	}
+	
+	public static void clearErrorMap() {
+		errorMap = new HashMap();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -44,9 +60,81 @@ public class TomBuilder extends IncrementalProjectBuilder implements IResourceDe
 		}
 		return null;
 	}
+	
+	public static ByteArrayOutputStream getLastOutputStream() {
+		 return outputStream;
+	}
+	
+	private void buildTomFile(IResource resource) throws CoreException {
+		FileWriter writer;
+		InputStream input;
+		outputStream = new ByteArrayOutputStream();
+		PrintStream errorStream, oldErrorStream = System.err, oldOutputStream = System.out;
+		
+		if(resource.exists()) {
+			IContainer destinationFolder = resource.getParent();
+			IPath tomFilePath = resource.getLocation();
+			// Create destination IFile and remove it from the workspace if already exists
+			IPath generatedFilePath = tomFilePath.removeFileExtension().addFileExtension("java");
+			File dest = new File(generatedFilePath.toString());
+			if(dest.exists()) {
+				dest.delete();
+			}
+			// get the command line argument			
+			QualifiedName qName = new QualifiedName("TOMCOMMAND", resource.getLocation().toString());
+			String command = resource.getPersistentProperty(qName);
+			if (command == null) {
+				command = "-v";
+			}
+			String commandArgs[] = command.split(" ");
+			String finalCommand[] = new String[commandArgs.length+2];
+			finalCommand[commandArgs.length] = "--eclipse";
+			finalCommand[commandArgs.length+1] = resource.getLocation().toString();
+			for (int i = 0; i<commandArgs.length;i++) {
+				finalCommand[i] = commandArgs[i];
+			}
+			
+			// Execute the TOM command 
+			try {
+				errorStream = new PrintStream(outputStream);
+				System.setErr(errorStream);
+				System.setOut(errorStream);
+				errors = null;
+				Tom tom = new Tom(finalCommand);
+				if(!tom.getErrors().isEmpty()) {
+					System.out.println("Error creating Tom");
+					errors = tom.getErrors();
+					errorMap.put(resource, errors);
+				}
+				tom.run();
+				if(!tom.getErrors().isEmpty()) {
+					System.out.println("Error running Tom");
+					errors = tom.getErrors();
+					errorMap.put(resource, errors);
+				} else {
+					errors = null;
+				}
+				errorStream.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally
+			{
+				System.setErr(oldErrorStream);
+				System.setOut(oldOutputStream);
+			}
+			// refresh folder
+			destinationFolder.refreshLocal(IResource.DEPTH_ONE, null);
+		}
+	}
 
 	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
 		getProject().accept(this /*as a IResourceVisitor*/);
+	}
+
+	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
+		// the visitor (this) does the work.
+		delta.accept(this /*as a IResourceDeltaVisitor*/);
 	}
 	public boolean visit(IResource resource) throws CoreException {
 		IPath path = resource.getFullPath();
@@ -57,62 +145,14 @@ public class TomBuilder extends IncrementalProjectBuilder implements IResourceDe
 		}
 		return true;
 	}
-
-	protected void incrementalBuild(IResourceDelta delta, IProgressMonitor monitor) throws CoreException {
-		// the visitor (this) does the work.
-		delta.accept(this /*as a IResourceDeltaVisitor*/);
-	}
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		// call visit where all the stuff is done 
 		return visit(delta.getResource());
 	}
-	
-	private void buildTomFile(IResource resource) throws CoreException {
-		FileWriter writer;
-		InputStream input;
-		if(resource.exists()) {
-			IContainer destinationFolder = resource.getParent();
-			IPath tomFilePath = resource.getLocation();
 
-			// Create destination IFile and remove it from the workspace 
-			IPath generatedFilePath = tomFilePath.removeFileExtension().addFileExtension("java");
-			File dest = new File(generatedFilePath.toString());
-			if(dest.exists()) {
-				System.out.println("==>deleting "+generatedFilePath.toString());
-				dest.delete();
-			}						
-			QualifiedName qName = new QualifiedName("TOMCOMMAND", resource.getLocation().toString());
-			String command = resource.getPersistentProperty(qName);
-			if (command == null) {
-				command = "-v";
-			}
-			System.out.println("jtom "+command+" "+resource.getLocation().toString());
-			System.out.println("==>Shall generate:"+generatedFilePath);
-			String commandArgs[] = command.split(" ");
-			String finalCommand[] = new String[commandArgs.length+1];
-			finalCommand[commandArgs.length] = resource.getLocation().toString();
-			for (int i = 0; i<commandArgs.length;i++) {
-				finalCommand[i] = commandArgs[i];
-			}
-			try {	
-				Tom tom = new Tom(finalCommand);
-				tom.run();
-			} catch (Exception e) {
-			}
-			
-			String generatedFileName = resource.getName();
-			generatedFileName = generatedFileName.substring(0,
-											generatedFileName.length()-(JtomPlugin.getDefault().getPreferenceStore().getString("FileExtension").length()+1));
-			generatedFileName = generatedFileName.concat(".java");
-			IResource generatedResource = destinationFolder.findMember(generatedFileName);
-			if (generatedResource != null) {
-				generatedResource.setDerived(true);
-				generatedResource.setReadOnly(true);
-			} else {
-				System.out.println(generatedFileName+" do not have been generated");
-			}
-			destinationFolder.refreshLocal(IResource.DEPTH_ONE, null);
-		}
+
+	public static TomErrorList getLastErrors(IResource res) {
+		return (TomErrorList)errorMap.remove(res);
 	}
 
 } // Class TomBuilder
