@@ -105,12 +105,12 @@ public class TomOptimizer extends TomTask {
               int mult = list.size();
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
-                environment().messageWarning(orgTrack.getLine(),
-                             orgTrack.getFileName().getString(),
-                             orgTrack.getAstName().getString(),
-                             orgTrack.getLine(),
-                             TomMessage.getString("UnusedVariable"),
-															 new Object[]{`extractRealName(tomName)});
+                environment().messageWarning(
+                                             TomMessage.getString("UnusedVariable"),
+                                             new Object[]{`extractRealName(tomName)},
+                                             orgTrack.getFileName().getString(),
+                                             orgTrack.getLine());
+
                 if(verbose) {
                   System.out.println(mult + " -> remove:     " + `extractRealName(tomName));
                 }
@@ -144,12 +144,11 @@ public class TomOptimizer extends TomTask {
 
               if(mult == 0) {
                 Option orgTrack = findOriginTracking(`var.getOption());
-                environment().messageWarning(orgTrack.getLine(),
-                             orgTrack.getFileName().getString(),
-                             orgTrack.getAstName().getString(),
-                             orgTrack.getLine(),
-                             "Variable `{0}` is never used",
-                               new Object[]{`extractRealName(tomName)});
+                environment().messageWarning(
+                                             TomMessage.getString("UnusedVariable"),
+                                             new Object[]{`extractRealName(tomName)},
+                                             orgTrack.getFileName().getString(),
+                                             orgTrack.getLine());
                 if(verbose) {
                   System.out.println(mult + " -> remove:     " + `extractRealName(tomName));
                 }

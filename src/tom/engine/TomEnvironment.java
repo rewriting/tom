@@ -203,8 +203,7 @@ public class TomEnvironment {
                            String msg,
                            Object[] msgArg) {
     String formatedMessage = 
-      MessageFormat.format(
-                           TomMessage.getString("DetailWarningMessage"), 
+      MessageFormat.format(TomMessage.getString("DetailWarningMessage"), 
                            new Object[]{
                              structInfo, 
                              new Integer(structInfoLine), 
