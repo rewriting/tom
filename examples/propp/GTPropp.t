@@ -37,7 +37,7 @@ public class GTPropp extends Propp {
 		long stopChrono = System.currentTimeMillis();
 
 		System.out.println("Proof term = " + proofTerm);
-		Collection tex_proofs = new HashSet();
+		ListPair tex_proofs = `concPair();
 		/*
 		%match(ListProof proofTerm) {
 			concProof(_*,p,_*) -> {
@@ -47,7 +47,7 @@ public class GTPropp extends Propp {
 		*/
 		System.out.println("Is input proved ? " + isValid(proofTerm));
 
-		tex_proofs.add(proofToTex(proofTerm));
+		tex_proofs = `concPair(pair(1,proofToTex(proofTerm)));
 
 		System.out.println("Build LaTeX");
 		write_proof_latex(tex_proofs,"proof.tex");

@@ -2,8 +2,6 @@
 
 import aterm.*;
 import aterm.pure.*;
-import java.util.*;
-import jtom.runtime.*;
 import adt.propp.*;
 import java.io.*;
 import antlr.CommonAST;
@@ -41,12 +39,12 @@ public class RecPropp extends Propp {
 		// Process Traces
 
 		System.out.println("Build Proof Term");
-		ListProof proofTerm = buildProofTerm(initSeq,rules_appl);
+		ListProof proofTerm = buildProofTerm(initSeq);
 		System.out.println("Proof term = " + proofTerm);
-		Collection tex_proofs = new HashSet();
+		ListPair tex_proofs = `concPair();
 		%match(ListProof proofTerm) {
 			concProof(_*,p,_*) -> {
-				tex_proofs.add(proofToTex(p));
+				tex_proofs = insertPair(`pair(1,proofToTex(p)),tex_proofs);
 			}
 		}
 
@@ -58,9 +56,6 @@ public class RecPropp extends Propp {
 
 	}
 	//}}}
-
-	Collection rules_appl = new HashSet();
-	Collection result = new HashSet();
 
 	//{{{ public ListSequent Step(Sequent subject)
 	public ListSequent Step(Sequent subject) {
