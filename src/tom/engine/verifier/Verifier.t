@@ -152,6 +152,18 @@ public class Verifier extends TomBase {
 		}
 	}
 
+  public Instr build_InstrFromInstructionList(InstructionList instrlist) {
+    InstrList list = `semicolon();
+    while (!instrlist.isEmpty()) {
+      Instruction i = (Instruction) instrlist.getHead();
+      instrlist = instrlist.getTail();
+      if (!i.isCheckStamp()) {
+        list = `semicolon(list*,build_InstrFromAutomata(i));
+      }
+    }
+    return `sequence(list);
+  }
+
 	public Instr build_InstrFromAutomata(Instruction automata) {
 		%match(Instruction automata) {
 			TypedAction(action,positivePatterns,negativePatterns) -> {
@@ -182,7 +194,10 @@ public class Verifier extends TomBase {
 				return build_InstrFromAutomata(`instr);
 			}
       AbstractBlock(concInstruction(CheckStamp[],instr)) -> {
-          return build_InstrFromAutomata(`instr);
+        return build_InstrFromAutomata(`instr);
+      }
+      AbstractBlock(concInstruction(instrlist*)) -> {
+        return build_InstrFromInstructionList(`instrlist);
       }
 			Nop() -> {
 				// tom uses nop in the iffalse part of ITE

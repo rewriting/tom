@@ -40,90 +40,90 @@ import jtom.verifier.zenon.types.*;
 
 public class ZenonOutput {
 
-	// ------------------------------------------------------------
-	%include { il/il.tom }
+  // ------------------------------------------------------------
+  %include { il/il.tom }
   %include { zenon/Zenon.tom }
-	// ------------------------------------------------------------
+  // ------------------------------------------------------------
 
-	protected jtom.verifier.il.ilFactory factory;
-	protected jtom.verifier.zenon.ZenonFactory zfactory;
+  protected jtom.verifier.il.ilFactory factory;
+  protected jtom.verifier.zenon.ZenonFactory zfactory;
   private GenericTraversal traversal;
-	private Verifier verifier;
+  private Verifier verifier;
   private TomIlTools tomiltools;
 
-	public ZenonOutput(Verifier verifier) {
-		factory = ilFactory.getInstance(SingletonFactory.getInstance());
-		zfactory = ZenonFactory.getInstance(SingletonFactory.getInstance());
+  public ZenonOutput(Verifier verifier) {
+    factory = ilFactory.getInstance(SingletonFactory.getInstance());
+    zfactory = ZenonFactory.getInstance(SingletonFactory.getInstance());
     this.traversal = new GenericTraversal();
-		this.verifier = verifier;
+    this.verifier = verifier;
     this.tomiltools = new TomIlTools(verifier.getSymbolTable());
-	}
+  }
 
   public GenericTraversal traversal() {
     return this.traversal;
   }
   
-	protected final ilFactory getIlFactory() {
-		return factory;
-	}
+  protected final ilFactory getIlFactory() {
+    return factory;
+  }
 
-	protected final ZenonFactory getZenonFactory() {
-		return zfactory;
-	}
+  protected final ZenonFactory getZenonFactory() {
+    return zfactory;
+  }
 
-	public Collection build_zenon(Collection derivationSet) {
+  public Collection build_zenon(Collection derivationSet) {
     Collection resset = new HashSet();
-		Iterator it = derivationSet.iterator();
-		while(it.hasNext()) {
-			DerivTree tree = (DerivTree) it.next();
-			resset.add(build_zenon(tree));	
-		}
-		return resset;
-	}
+    Iterator it = derivationSet.iterator();
+    while(it.hasNext()) {
+      DerivTree tree = (DerivTree) it.next();
+      resset.add(build_zenon(tree));  
+    }
+    return resset;
+  }
 
-	public ZSpec build_zenon(DerivTree tree) {
-		
-		Map variableset = new HashMap();
-		tree = collect_program_variables(tree,variableset);
+  public ZSpec build_zenon(DerivTree tree) {
+    
+    Map variableset = new HashMap();
+    tree = collect_program_variables(tree,variableset);
 
-		// Use a TreeMap to have the conditions sorted
-		Map conditions = new TreeMap();
+    // Use a TreeMap to have the conditions sorted
+    Map conditions = new TreeMap();
     collect_constraints(tree,conditions);            
-		Map conds = new TreeMap();
+    Map conds = new TreeMap();
 
     ZExpr pattern = null;
     ZTerm inputvar = null;
     // theorem to prove
-		%match(DerivTree tree) {
+    %match(DerivTree tree) {
       derivrule(_,ebs(_,env(subsList@subs(is(_,t),_*),accept(positive,_))),_,_) -> {
         inputvar = build_zenon_from_term(t);
         pattern = tomiltools.pattern_to_ZExpr(inputvar,
-                                                    positive,
-                                                    build_zenon_varmap(subsList, new HashMap()));
+                                              positive,
+                                              build_zenon_varmap(subsList, new HashMap()));
       }
-		}
-		
+    }
+    
     ZExpr constraints = `ztrue();
-		// we consider only the interesting conditions : dedexpr
-		Iterator it = conditions.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			Seq value = (Seq) entry.getValue();
-			if (value.isDedexpr()) {
-				conds.put(((String) entry.getKey()),
-									build_zenon_from_Seq(clean_Seq(value)));
-			}
-		}
+    // we consider only the interesting conditions : dedexpr
+    Iterator it = conditions.entrySet().iterator();
+    while (it.hasNext()) {
+      Map.Entry entry = (Map.Entry) it.next();
+      Seq value = (Seq) entry.getValue();
+      if (value.isDedexpr()) {
+        conds.put(((String) entry.getKey()),
+                  build_zenon_from_Seq(clean_Seq(value)));
+      }
+    }
     it = conds.entrySet().iterator();
     while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
+      Map.Entry entry = (Map.Entry) it.next();
       ZExpr value = (ZExpr) entry.getValue();
       constraints = `zand(constraints,value);
     }
     ZExpr theorem = null;
     if (pattern != null && constraints != null) {
       theorem = `zequiv(pattern,constraints);
-      System.out.println(theorem);
+      // System.out.println(theorem);
     }
 
     // now we have to to build the axion list, starting from the
@@ -132,7 +132,7 @@ public class ZenonOutput {
     
     // collects symbols in pattern
     Collection symbols = tomiltools.collectSymbols(pattern);
-    System.out.println("symbols: "+symbols);
+    // System.out.println("symbols: "+symbols);
     // generates the axioms for this set of symbols
     ZAxiomList symbolsAxioms = tomiltools.symbolsDefinition(symbols);
     // generates axioms for all subterm operations
@@ -140,189 +140,189 @@ public class ZenonOutput {
 
     ZSpec spec = `zthm(zforall(inputvar,ztype("T"),theorem),
                        zby(symbolsAxioms*,subtermAxioms*));
-    System.out.println(spec);
+    // System.out.println(spec);
 
     return spec;
-	}
-	
+  }
+  
 
   /**
    * collects all variable names in the DerivTree, and give a name to _'s
    */
-	DerivTree collect_program_variables(DerivTree tree, Map variables) {
-		return (DerivTree) collect_prog_vars.apply(tree,variables);
-	}
-	private Replace2 collect_prog_vars = new Replace2() {
-			public ATerm apply(ATerm subject, Object astore) {
-				Map store = (Map) astore;
-				
-				if (subject instanceof Variable) {
-					%match(Variable subject) {
-						var(name) -> {
-							String newname = name;
-							if (store.containsKey(name)){
-								newname = (String) store.get(name);
-							} else {
-								if (name.startsWith("[") && name.endsWith("]")) {
-									newname = "X_" + store.size();
-								}
-								store.put(name,newname);
-							}
-							return `var(newname);
-						}
-					}
-				}
-				return traversal().genericTraversal(subject,this,astore);
-			}
-		};
+  DerivTree collect_program_variables(DerivTree tree, Map variables) {
+    return (DerivTree) collect_prog_vars.apply(tree,variables);
+  }
+  private Replace2 collect_prog_vars = new Replace2() {
+      public ATerm apply(ATerm subject, Object astore) {
+        Map store = (Map) astore;
+        
+        if (subject instanceof Variable) {
+          %match(Variable subject) {
+            var(name) -> {
+              String newname = name;
+              if (store.containsKey(name)){
+                newname = (String) store.get(name);
+              } else {
+                if (name.startsWith("[") && name.endsWith("]")) {
+                  newname = "X_" + store.size();
+                }
+                store.put(name,newname);
+              }
+              return `var(newname);
+            }
+          }
+        }
+        return traversal().genericTraversal(subject,this,astore);
+      }
+    };
 
 
-	String build_zenon_from_var(Variable variable) {
-		String result = "";
-		%match(Variable variable) {
-			var(name) -> {
-				return " " + name + " ";
-			}
-		}
-		return result;
-	}
+  String build_zenon_from_var(Variable variable) {
+    String result = "";
+    %match(Variable variable) {
+      var(name) -> {
+        return " " + name + " ";
+      }
+    }
+    return result;
+  }
 
-	ZTerm build_zenon_from_term(Term term) {
-		%match(Term term) {
-			tau(absTerm) -> {
-				return build_zenon_from_absterm(`absTerm);
-			}
-			repr(name) -> {
+  ZTerm build_zenon_from_term(Term term) {
+    %match(Term term) {
+      tau(absTerm) -> {
+        return build_zenon_from_absterm(`absTerm);
+      }
+      repr(name) -> {
         return `zvar("Error in build_zenon_from_term repr");
-			}
-			subterm(s,t,index) -> {
+      }
+      subterm(s,t,index) -> {
         return `zvar("Error in build_zenon_from_term subterm");
-			}
-			slot(s,t,name) -> {
+      }
+      slot(s,t,name) -> {
         return `zvar("Error in build_zenon_from_term slot");
-			}
-			appSubsT(subst,t) -> {
+      }
+      appSubsT(subst,t) -> {
         // probleme: la substitution devrait etre appliquee
         return `zvar("Error in build_zenon_from_term appsubsT ");
-			}
-		}
-		return `zvar("match vide dans build_zenon_from_term");
-	}
+      }
+    }
+    return `zvar("match vide dans build_zenon_from_term");
+  }
 
-	ZExpr build_zenon_from_Expr(Expr expr) {
-		%match(Expr expr) {
-			true() -> { return `ztrue();}
-			false() -> { return `zfalse();}
-			isfsym(t,s) -> {
+  ZExpr build_zenon_from_Expr(Expr expr) {
+    %match(Expr expr) {
+      true() -> { return `ztrue();}
+      false() -> { return `zfalse();}
+      isfsym(t,s) -> {
         // this should not occur
         return `zisfsym(zvar("Error in build_zenon_from_Expr"),zsymbol("isfsym"));
-			}
-			eq(lt,rt) -> {
+      }
+      eq(lt,rt) -> {
         // this should not occur
         return `zeq(zvar("Error in build_zenon_from_Expr"),zvar("eq"));
-			}
-			tisfsym(absterm,s) -> {
+      }
+      tisfsym(absterm,s) -> {
         return `zisfsym(build_zenon_from_absterm(absterm),build_zenon_from_symbol(s));
-			}
-			teq(absterml,abstermr) -> {
+      }
+      teq(absterml,abstermr) -> {
         return `zeq(build_zenon_from_absterm(absterml),build_zenon_from_absterm(abstermr));
-			}
-			appSubsE(subslist,e) -> {
+      }
+      appSubsE(subslist,e) -> {
         // this should not occur
         return `zeq(zvar("Error in build_zenon_from_Expr"),zvar("appSubsE"));
-			}
-		}
-		return `zeq(zvar("Error in build_zenon_from_Expr"),zvar("end"));
-	}
+      }
+    }
+    return `zeq(zvar("Error in build_zenon_from_Expr"),zvar("end"));
+  }
 
-	ZSymbol build_zenon_from_symbol(Symbol symb) {
+  ZSymbol build_zenon_from_symbol(Symbol symb) {
     String n = "random";
-		%match(Symbol symb) {
-			fsymbol(name) -> {
+    %match(Symbol symb) {
+      fsymbol(name) -> {
         n = name;
-			}
-		}
-		return `zsymbol(n);
-	}
+      }
+    }
+    return `zsymbol(n);
+  }
 
-	ZExpr build_zenon_from_Seq(Seq seq) {
-		ZExpr result = `ztrue();
-		%match(Seq seq) {
-			seq() -> { /* nothing */ }
-			dedterm(termlist) -> {
-				%match(TermList termlist) {
-					concTerm(X*,tl,tr) -> {
-							result = `zeq(build_zenon_from_term(tl),build_zenon_from_term(tr));
-					}
-				}
-			}
-			dedexpr(exprlist) -> {
-				%match(ExprList exprlist) {
-					concExpr(X*,t,true()) -> {
-							result = build_zenon_from_Expr(`t);
-					}
-				}
-			}
-			dedexpr(exprlist) -> {
-				%match(ExprList exprlist) {
-					concExpr(X*,t,false()) -> {
-							result = `znot(build_zenon_from_Expr(t));
-					}
-				}
-			}
-		}
-		return result;
-	}
+  ZExpr build_zenon_from_Seq(Seq seq) {
+    ZExpr result = `ztrue();
+    %match(Seq seq) {
+      seq() -> { /* nothing */ }
+      dedterm(termlist) -> {
+        %match(TermList termlist) {
+          concTerm(X*,tl,tr) -> {
+              result = `zeq(build_zenon_from_term(tl),build_zenon_from_term(tr));
+          }
+        }
+      }
+      dedexpr(exprlist) -> {
+        %match(ExprList exprlist) {
+          concExpr(X*,t,true()) -> {
+              result = build_zenon_from_Expr(`t);
+          }
+        }
+      }
+      dedexpr(exprlist) -> {
+        %match(ExprList exprlist) {
+          concExpr(X*,t,false()) -> {
+              result = `znot(build_zenon_from_Expr(t));
+          }
+        }
+      }
+    }
+    return result;
+  }
 
-	ZTerm build_zenon_from_absterm(AbsTerm absterm) {
-		%match(AbsTerm absterm) {
-			absvar(var(name)) -> {
-				return `zvar(name);
-			}
-			st(s,t,index) -> {
+  ZTerm build_zenon_from_absterm(AbsTerm absterm) {
+    %match(AbsTerm absterm) {
+      absvar(var(name)) -> {
+        return `zvar(name);
+      }
+      st(s,t,index) -> {
         return `zst(build_zenon_from_absterm(t),index);
-			}
-			sl(s,t,name) -> {
+      }
+      sl(s,t,name) -> {
         return `zsl(build_zenon_from_absterm(t),name);
-			}
-		}
-		return `zvar("Error in build_zenon_from_absterm");
-	}
+      }
+    }
+    return `zvar("Error in build_zenon_from_absterm");
+  }
 
-	Seq clean_Seq(Seq seq) {
-		%match(Seq seq) {
-			seq() -> { return seq; }
-			dedterm(concTerm(_*,t,v)) -> {
+  Seq clean_Seq(Seq seq) {
+    %match(Seq seq) {
+      seq() -> { return seq; }
+      dedterm(concTerm(_*,t,v)) -> {
           return `dedterm(concTerm(t,v));
-			}
+      }
       /* What happen in the "false" case ? */
-			dedexpr(concExpr(_*,t,v)) -> {
-				return `dedexpr(concExpr(t,v));
-			}
-		}
-		return seq;
-	}
+      dedexpr(concExpr(_*,t,v)) -> {
+        return `dedexpr(concExpr(t,v));
+      }
+    }
+    return seq;
+  }
 
   private Map build_zenon_varmap(SubstitutionList sublist, Map map) {
-		%match(SubstitutionList sublist) {
-			()                -> { return map; }
-			(undefsubs(),t*)  -> { return build_zenon_varmap(`t,map);}
-			(is(var(name),term),t*)   -> { 
+    %match(SubstitutionList sublist) {
+      ()                -> { return map; }
+      (undefsubs(),t*)  -> { return build_zenon_varmap(`t,map);}
+      (is(var(name),term),t*)   -> { 
         map.put(`name,build_zenon_from_term(`term));
-				return build_zenon_varmap(`t,map);
-			}
-			_ -> { return null; }
-		}
-	}
+        return build_zenon_varmap(`t,map);
+      }
+      _ -> { return null; }
+    }
+  }
 
-	public void collect_constraints(DerivTree tree, Map conditions) {
-		%match(DerivTree tree) {
-			derivrule(name,post,pre,condition) -> {
-				String condname = "" + (conditions.size()+1) + "";
-				conditions.put(condname,condition);
+  public void collect_constraints(DerivTree tree, Map conditions) {
+    %match(DerivTree tree) {
+      derivrule(name,post,pre,condition) -> {
+        String condname = "" + (conditions.size()+1) + "";
+        conditions.put(condname,condition);
         collect_constraints(pre,conditions);
-			}
-		}
-	}
+      }
+    }
+  }
 
 }

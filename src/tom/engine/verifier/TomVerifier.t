@@ -38,6 +38,7 @@ import tom.platform.OptionParser;
 import tom.platform.adt.platformoption.types.PlatformOptionList;
 import aterm.ATerm;
 import jtom.verifier.il.types.*;
+import jtom.verifier.zenon.types.*;
 /**
  * The TomVerifier plugin.
  */
@@ -89,9 +90,16 @@ public class TomVerifier extends TomGenericPlugin {
 
         // the zenon output stuff
         Collection zen = zenon.build_zenon(derivations);
-        System.out.println(zen);
 
-        // the stats output stuff
+        ZenonBackend back = new ZenonBackend();
+        Iterator zit = zen.iterator();
+        while (zit.hasNext()) {
+          ZSpec sp = (ZSpec) zit.next();
+          String out = back.genZSpec(sp);
+          System.out.println("\n"+out+"\n");          
+        }
+
+        // The stats output stuff
         // String statistics = stats.build_stats(derivations);
         // System.out.println(statistics);
 
@@ -242,12 +250,12 @@ public class TomVerifier extends TomGenericPlugin {
     
     while (it.hasNext()) {
       Instruction cm = (Instruction) it.next();
-			%match(Instruction cm) {
+      %match(Instruction cm) {
         CompiledMatch(automata, options)  -> {
-					derivations.add(verif.build_tree(automata));
+          derivations.add(verif.build_tree(automata));
         }
-			}
-		}
+      }
+    }
     return derivations;
   }
   

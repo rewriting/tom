@@ -97,7 +97,7 @@ public class ZenonBackend {
       ztrue()  -> { return "true";}
       zfalse() -> { return "false";}
       zisfsym(t,s) -> {
-        return "((symb"+genZTerm(`t)+") = "+genZSymbol(`s)+")";
+        return "((symb "+genZTerm(`t)+") = "+genZSymbol(`s)+")";
       }
       zeq(l,r) -> {
         return "("+genZTerm(`l)+" = "+genZTerm(`r)+")";
