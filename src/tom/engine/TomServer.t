@@ -228,12 +228,21 @@ public class TomServer implements TomPluginOptions
  		return null;
  	    }
 
-	// the lack of a configuration file is handled here (if the name is null, the file doesn't exist),
-	// as well as the case where the specified file doesn't exist
-	if(! (new File(xmlConfigurationFile)).exists() )
+	try
 	    {
-		environment.messageError(TomMessage.getString("ConfigFileNotFound"), 
-					 new Object[]{xmlConfigurationFile}, 
+		File file = new File(xmlConfigurationFile);
+		
+		if(! file.exists() ) // the case where the specified file doesn't exist is handled here
+		    {
+			environment.messageError(TomMessage.getString("ConfigFileNotFound"), 
+						 new Object[]{xmlConfigurationFile}, 
+						 "TomServer", 
+						 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+		    }
+	    }
+	catch(NullPointerException npe) // the lack of a configuration file is handled here
+	    {
+		environment.messageError("A configuration file must be specified with the -X option", 
 					 "TomServer", 
 					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	    }

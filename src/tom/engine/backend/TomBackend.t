@@ -141,7 +141,7 @@ public class TomBackend extends TomBase implements TomPlugin
 		
 		if(verbose)
 		    {
-			System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
+			System.out.println("The backend is not activated and thus WILL NOT RUN.");
 			System.out.println("No output !");
 		    }
 	    }
