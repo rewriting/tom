@@ -329,7 +329,8 @@ public class ASTFactory {
             term = tsf().makeTomTerm_Appl(
               makeOption(info),
 							nameList,
-							list);
+							list,
+							tsf().makeConstraintList());
               //System.out.println("metaEncodeXmlAppl = " + term);
           }
         }
@@ -338,5 +339,8 @@ public class ASTFactory {
     return term;
   }
 
+  public String makeTomVariableName(String name) {
+    return "tom_" + name;
+  }
   
 }

@@ -8,9 +8,11 @@ public final class TomCheckerMessage {
 	public static int TOM_ERROR = 0;
 	public static int TOM_WARNING = 1;
 	
+	public static int DEFAULT_ERROR_LINE_NUMBER = 1; 
+	
 	  // Main messages
-	public static String MainErrorMessage = "-- Error occured line: {0,number,integer} in structure `{1}` declared line: {2,number,integer} in file: `{3}`\n---> {4}\n" ;
-	public static String MainWarningMessage = "-- Warning occured line: {0,number,integer} in structure `{1}` declared line: {2,number,integer} in file: `{3}`\n---> {4}\n" ;
+	public static String MainErrorMessage = "{3}:{0,number,integer}:-- Error occured in structure `{1}` declared line: {2,number,integer} \n---> {4}\n" ;
+	public static String MainWarningMessage = "{3}:{0,number,integer}:-- Warning occured in structure `{1}` declared line: {2,number,integer} \n---> {4}\n" ;
 		
 		//Error messages linked to operator and type definitions
 	public static String MultipleSymbolDefinitionError = "Multiple definition of Symbol `{0}`";
