@@ -1,7 +1,7 @@
 #
 #    TOM - To One Matching Compiler
 #
-
+ 
 include TomSignatureMakeRules.am
 
 javadir         = ${prefix}/classes/jtom/adt
