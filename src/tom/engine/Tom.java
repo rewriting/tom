@@ -49,21 +49,21 @@ public class Tom {
       System.out.println("\tversion " + version);
     }
     System.out.println("Options:");
-    System.out.println("\t--verbose: set verbose mode on");
-    System.out.println("\t--noOutput: do not generate code");
-    System.out.println("\t--atermStat: print internal ATerm statistics");
     System.out.println("\t--cCode | -c: generate C code");
     System.out.println("\t--eCode: generate Eiffel code");
-    System.out.println("\t--doCompile: start after type-checking");
-    System.out.println("\t--intermediate: generate intermediate files");
     System.out.println("\t--version: print version");
+    System.out.println("\t--verbose: set verbose mode on");
+    System.out.println("\t--intermediate: generate intermediate files");
+    System.out.println("\t--noOutput: do not generate code");
+    System.out.println("\t--noDeclaration: do not generate code for declarations");
+    System.out.println("\t--doCompile: start after type-checking");
     System.out.println("\t--noCheck: do not verify correctness");
-    System.out.println("\t--noWarning: do not print nay warning");
+    System.out.println("\t--noWarning: do not print any warning");
     System.out.println("\t--lazyType: use universal type");
     System.out.println("\t--demo: run demo mode");
-    System.out.println("\t--noDeclaration: do not generate code for declarations");
     System.out.println("\t--import <path>: path for %include");
     System.out.println("\t--pretty: generate readable code");
+    System.out.println("\t--atermStat: print internal ATerm statistics");
     System.exit(0);
   }
 
@@ -128,6 +128,8 @@ public class Tom {
             importList.add(importFile);
           } else if(args[i].equals("--pretty")) {
 	    Flags.pretty = true;
+          } else if(args[i].equals("--help")) {
+	    usage();
           } else {
             System.out.println("'" + args[i] + "' is not a valid option");
             usage();
