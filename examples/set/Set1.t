@@ -406,22 +406,13 @@ public class Set1 {
   public void run(int n) {
 
     JGSet t0 = `emptySet();
+    JGSet t00 = `emptySet();
     JGSet t1 = `emptySet();
     JGSet t2 = `emptySet();
     Element e1 = `e1();
     Element e2 = `e2();
     Element e3 = `e3();
 
-    System.out.println("getHead de empty: "+getHead(t0));
-    t0 = add(e1, t0);
-    System.out.println("getHead de t0: "+t0+" = " +getHead(t0));
-    System.out.println("getTail de t0: "+getTail(t0));
-    t0 = add(e2, t0);
-    t0 = add(e3, t0);
-    t0 = add(`f(e1), t0);
-    System.out.println("t0: "+t0);
-    System.out.println("getHead de t0: "+getHead(t0));
-    System.out.println("getTail de t0: "+getTail(t0));
     
     Element array[] = new Element[3*n];
     array[0] = e1;
@@ -444,7 +435,26 @@ public class Set1 {
     long stopChrono = System.currentTimeMillis();
     int size = card(t1);
     System.out.println("JGSet tree size = " + size + " in " + (stopChrono-startChrono) + " ms");
+      // Repartition issue
     topRepartition(t1);
+
+      // getHead and Tail
+    System.out.println("getHead de empty: "+getHead(t0));
+    t0 = add(e1, t0);
+    System.out.println("getHead de t0: "+t0+" = " +getHead(t0));
+    System.out.println("getTail de t0: "+getTail(t0));
+
+    startChrono = System.currentTimeMillis();
+    ATerm trm = getHead(t1), trm2 = getHead(t1);
+    stopChrono = System.currentTimeMillis();
+    if (trm == trm2) {System.out.println("getHead is OK");}
+    System.out.println("2 times getHead from tree in: "+ (stopChrono-startChrono) + " ms");
+    
+    startChrono = System.currentTimeMillis();
+    t0 = getTail(t1);
+    stopChrono = System.currentTimeMillis();
+    if (t0 == remove(trm, t1)) {System.out.println("getTail is OK");}
+    System.out.println("getTail from tree in: "+ (stopChrono-startChrono) + " ms");
     
       //Adding element to a java Set
     TreeSet set = new TreeSet(comparator);

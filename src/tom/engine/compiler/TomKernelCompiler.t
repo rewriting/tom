@@ -285,170 +285,6 @@ public class TomKernelCompiler extends TomBase {
     return null;
   }
 
-  
-    /* 
-     * postProcessing: passCompiledTermTransformation
-     *
-     * transform a compiledTerm
-     * 2 phases:
-     *   - collection of Declaration
-     *   - replace LocalVariable and remove Declaration
-     */
-
-  public TomTerm postProcessing(TomTerm subject) {
-    TomTerm res;
-    ArrayList list = new ArrayList();
-    traversalCollectDeclaration(list,subject);
-      //System.out.println("list size = " + list.size());
-    res = traversalReplaceLocalVariable(list,subject);
-    return res;
-  }
-    
-  private TomTerm traversalCollectDeclaration(ArrayList list, TomTerm subject) {
-      //%variable
-    %match(TomTerm subject) {
-      Tom(l) -> {
-        return `Tom(traversalCollectDeclarationList(list, l));
-      } 
-      
-      LocalVariable() -> {
-          //System.out.println("Detect LocalVariable");
-        
-        Collection c = new HashSet();
-        list.add(c);
-        collectDeclaration(c,subject);
-        return null;
-      }
-      
-      t -> {
-          //System.out.println("default: " + t);
-        if(!list.isEmpty()) {
-          Collection c = (Collection) list.get(list.size()-1);
-          collectDeclaration(c,subject);
-        }
-        return t;
-      }
-    }
-  }
-
-  public void collectDeclaration(final Collection collection, TomTerm subject) {
-    Collect1 collect = new Collect1() { 
-        public boolean apply(ATerm t) {
-            //%variable
-          %match(TomTerm t) {
-            Declaration[] -> {
-              collection.add(t);
-              return false;
-            }
-            _ -> { return true; }
-          }
-        } 
-      }; // end new
-    
-    traversal().genericCollect(subject, collect); 
-  } 
-
-  private boolean removeDeclaration = false;
-  private TomTerm traversalReplaceLocalVariable(ArrayList list, TomTerm subject) {
-      //%variable
-    %match(TomTerm subject) {
-      Tom(l) -> {
-        return `Tom(traversalReplaceLocalVariableList(list, l));
-      } 
-      
-      LocalVariable -> {
-          //System.out.println("Replace LocalVariable");
-
-        Map map = (Map)list.get(0);
-        list.remove(0);
-
-        Collection c = map.values();
-        Iterator it = c.iterator();
-        TomList declarationList = empty();
-        while(it.hasNext()) {
-          declarationList = cons((TomTerm)it.next(),declarationList);
-        }
-
-          //System.out.println("declarationList = " + declarationList);
-        removeDeclaration = true;
-        return `Tom(declarationList);
-      }
-
-        //Declaration[] -> {
-        //System.out.println("Remove Declaration");
-        //return MAKE_Tom(empty());
-        //}
-      
-      t -> {
-        TomTerm res = t;
-          //res = removeDeclaration(t);
-        
-        if(removeDeclaration) {
-          res = removeDeclaration(t);
-        }
-        
-          //System.out.println("\ndefault:\nt   = " + t + "\nres = " + res);
-        return res;
-      }
-    }
-  }
-
-    private TomList traversalCollectDeclarationList(ArrayList list,TomList subject) {
-      //%variable
-    if(subject.isEmpty()) {
-      return subject;
-    }
-    TomTerm t = subject.getHead();
-    TomList l = subject.getTail();
-    return cons(traversalCollectDeclaration(list,t),
-                traversalCollectDeclarationList(list,l));
-  }
-
-  private TomList traversalReplaceLocalVariableList(ArrayList list,TomList subject) {
-      //%variable
-    if(subject.isEmpty()) {
-      return subject;
-    }
-    TomTerm t = subject.getHead();
-    TomList l = subject.getTail();
-    return cons(traversalReplaceLocalVariable(list,t),
-                traversalReplaceLocalVariableList(list,l));
-  }
-
-    // ------------------------------------------------------------
-  
-  public TomTerm removeDeclaration(TomTerm subject) {
-    TomTerm res = subject;
-      //System.out.println("*** removeDeclaration");
-                  
-    Replace1 replace = new Replace1() { 
-        public ATerm apply(ATerm t) {
-            //%variable
-          %match(TomTerm t) {
-            Declaration[] -> {
-                //System.out.println("Remove Declaration");
-              return `Tom(empty());
-            }
-
-            other -> {
-              System.out.println("removeDeclaration this = " + this);
-                //return other;
-              return (TomTerm) traversal().genericTraversal(other,this);
-            }
-          }
-        } 
-      }; // end new
-    
-      //return genericReplace(subject, replace);
-    try {
-      res = (TomTerm) replace.apply(subject);
-    } catch(Exception e) {
-      System.out.println("removeDeclaration: error");
-      System.exit(0);
-    }
-    return res;
-  } 
-
   private String getBlockName(TomList numberList) {
     String name = "matchlab" + numberListToIdentifier(numberList);
     return name;
@@ -1081,6 +917,168 @@ public class TomKernelCompiler extends TomBase {
       }
     } // end matchBlock
     return result;
+  }
+
+
+     /* 
+     * postProcessing: passCompiledTermTransformation
+     *
+     * transform a compiledTerm
+     * 2 phases:
+     *   - collection of Declaration
+     *   - replace LocalVariable and remove Declaration
+     */
+
+  public TomTerm postProcessing(TomTerm subject) {
+    TomTerm res;
+    ArrayList list = new ArrayList();
+    traversalCollectDeclaration(list,subject);
+      //System.out.println("list size = " + list.size());
+    res = traversalReplaceLocalVariable(list,subject);
+    return res;
+  }
+    
+  private TomTerm traversalCollectDeclaration(ArrayList list, TomTerm subject) {
+      //%variable
+    %match(TomTerm subject) {
+      Tom(l) -> {
+        return `Tom(traversalCollectDeclarationList(list, l));
+      } 
+      
+      LocalVariable() -> {
+          //System.out.println("Detect LocalVariable");
+        
+        Collection c = new HashSet();
+        list.add(c);
+        collectDeclaration(c,subject);
+        return null;
+      }
+      
+      t -> {
+          //System.out.println("default: " + t);
+        if(!list.isEmpty()) {
+          Collection c = (Collection) list.get(list.size()-1);
+          collectDeclaration(c,subject);
+        }
+        return t;
+      }
+    }
+  }
+
+  public void collectDeclaration(final Collection collection, TomTerm subject) {
+    Collect1 collect = new Collect1() { 
+        public boolean apply(ATerm t) {
+            //%variable
+          %match(TomTerm t) {
+            Declaration[] -> {
+              collection.add(t);
+              return false;
+            }
+            _ -> { return true; }
+          }
+        } 
+      }; // end new
+    
+    traversal().genericCollect(subject, collect); 
+  } 
+
+  private boolean removeDeclaration = false;
+  private TomTerm traversalReplaceLocalVariable(ArrayList list, TomTerm subject) {
+      //%variable
+    %match(TomTerm subject) {
+      Tom(l) -> {
+        return `Tom(traversalReplaceLocalVariableList(list, l));
+      } 
+      
+      LocalVariable -> {
+          //System.out.println("Replace LocalVariable");
+
+        Map map = (Map)list.get(0);
+        list.remove(0);
+
+        Collection c = map.values();
+        Iterator it = c.iterator();
+        TomList declarationList = empty();
+        while(it.hasNext()) {
+          declarationList = cons((TomTerm)it.next(),declarationList);
+        }
+
+          //System.out.println("declarationList = " + declarationList);
+        removeDeclaration = true;
+        return `Tom(declarationList);
+      }
+
+        //Declaration[] -> {
+        //System.out.println("Remove Declaration");
+        //return MAKE_Tom(empty());
+        //}
+      
+      t -> {
+        TomTerm res = t;
+          //res = removeDeclaration(t);
+        
+        if(removeDeclaration) {
+          res = removeDeclaration(t);
+        }
+        
+          //System.out.println("\ndefault:\nt   = " + t + "\nres = " + res);
+        return res;
+      }
+    }
+  }
+
+    private TomList traversalCollectDeclarationList(ArrayList list,TomList subject) {
+      //%variable
+    if(subject.isEmpty()) {
+      return subject;
+    }
+    TomTerm t = subject.getHead();
+    TomList l = subject.getTail();
+    return cons(traversalCollectDeclaration(list,t),
+                traversalCollectDeclarationList(list,l));
+  }
+
+  private TomList traversalReplaceLocalVariableList(ArrayList list,TomList subject) {
+      //%variable
+    if(subject.isEmpty()) {
+      return subject;
+    }
+    TomTerm t = subject.getHead();
+    TomList l = subject.getTail();
+    return cons(traversalReplaceLocalVariable(list,t),
+                traversalReplaceLocalVariableList(list,l));
+  }
+  
+  public TomTerm removeDeclaration(TomTerm subject) {
+    TomTerm res = subject;
+      //System.out.println("*** removeDeclaration");
+                  
+    Replace1 replace = new Replace1() { 
+        public ATerm apply(ATerm t) {
+            //%variable
+          %match(TomTerm t) {
+            Declaration[] -> {
+                //System.out.println("Remove Declaration");
+              return `Tom(empty());
+            }
+
+            other -> {
+              System.out.println("removeDeclaration this = " + this);
+                //return other;
+              return (TomTerm) traversal().genericTraversal(other,this);
+            }
+          }
+        } 
+      }; // end new
+    
+      //return genericReplace(subject, replace);
+    try {
+      res = (TomTerm) replace.apply(subject);
+    } catch(Exception e) {
+      System.out.println("removeDeclaration: error");
+      System.exit(0);
+    }
+    return res;
   }
   
 } // end of class

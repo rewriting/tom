@@ -1,0 +1,5 @@
+[
+  [JGTreeSet, emptySet, emptySet],
+  [JGTreeSet, singleton, singleton(<value(term)>)],
+  [JGTreeSet, branch, branch(<left(JGTreeSet)>, <right(JGTreeSet)>)]
+]

@@ -38,6 +38,8 @@ import jtom.exception.*;
 import jtom.adt.*;
 import jtom.runtime.*;
 
+import jtom.runtime.set.SharedSet;
+
 public class TomChecker extends TomBase {
   
   private ArrayList alreadyStudiedSymbol =  new ArrayList();
@@ -105,7 +107,7 @@ public class TomChecker extends TomBase {
           }
         }// end apply
       }; // end new
-    traversal().genericCollect(parsedTerm, collectAndVerify);
+    traversal().genericCollect(parsedTerm, collectAndVerify);   
   }
   
   public void checkVariableCoherence(TomTerm expandedTerm) {
@@ -141,6 +143,10 @@ public class TomChecker extends TomBase {
         // collect variables
       ArrayList variableList = new ArrayList();
       collectVariable(variableList, patterns);
+        //SharedSet set = new SharedSet(getTomSignatureFactory());
+      collectVariable(set, patterns);
+        //System.out.println("Set="+set.getTreeSet());
+        //System.out.println("Collection="+variableList);      
       verifyVariableType(variableList);
       patternList = patternList.getTail();
     }

@@ -1,0 +1,11 @@
+
+
+SetAPI0=\
+JGTreeSet.java JGTreeSetImpl.java\
+JGTreeSet_EmptySetImpl.java JGTreeSet_EmptySet.java\
+JGTreeSet_SingletonImpl.java JGTreeSet_Singleton.java\
+JGTreeSet_BranchImpl.java JGTreeSet_Branch.java
+
+SetAPI=\
+SetFactory.java SetConstructor.java\
+${SetAPI0} 

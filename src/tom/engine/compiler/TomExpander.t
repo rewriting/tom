@@ -49,10 +49,10 @@ public class TomExpander extends TomBase {
 // ------------------------------------------------------------
 
     /*
-     * The 'expandTomSyntax' phase replaces each 'RecordAppl'
-     * by its expanded term form:
-     *   - unused slots a replaced by placeholders
-     *   - BackQuoteTerm are compiled
+     * The 'expandTomSyntax' phase replaces:
+     * -each 'RecordAppl' by its expanded term form:
+     *   (unused slots a replaced by placeholders)
+     * - each BackQuoteTerm by its compiled form
      */
   
   public TomTerm expandTomSyntax(TomTerm subject) {
@@ -171,6 +171,8 @@ public class TomExpander extends TomBase {
   }
   
     /*
+     * At Tom expander level, we worry only about RewriteRule and
+     *  their condlist
      * replace Name by Symbol
      * replace Name by Variable
      */
@@ -180,8 +182,35 @@ public class TomExpander extends TomBase {
     }
 
       //System.out.println("expandVariable is a tomTerm:\n\t" + subject );
-    
     %match(TomTerm contextSubject, TomTerm subject) {
+
+      context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
+                           Term(rhs),
+                           condList,
+                           orgTrack) -> { 
+          //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
+        TomSymbol tomSymbol = getSymbol(tomName);
+        TomType symbolType = getSymbolCodomain(tomSymbol);
+        TomTerm newLhs = `Term(expandVariable(context,lhs));
+        TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
+        
+          // build the list of variables that occur in the lhs
+        HashSet set = new HashSet();
+        collectVariable(set,newLhs);
+        TomList varList = ast().makeList(set);
+        TomList newCondList = empty();
+        while(!condList.isEmpty()) {
+          TomTerm cond = condList.getHead();
+          TomTerm newCond = expandVariable(`Tom(varList),cond);
+          newCondList = append(newCond,newCondList);
+          collectVariable(set,newCond);
+          varList = ast().makeList(set);
+          condList = condList.getTail();
+        }
+        
+        return `RewriteRule(newLhs,newRhs,newCondList,orgTrack);
+      }
+        
       Tom(varList), MatchingCondition[lhs=lhs@Appl[astName=Name(lhsName)],
                                       rhs=rhs@Appl[astName=Name(rhsName)]] -> {
         TomSymbol lhsSymbol = getSymbol(lhsName);
@@ -227,33 +256,6 @@ public class TomExpander extends TomBase {
           //System.out.println("newLhs = " + newLhs);
         
         return `EqualityCondition(newLhs,newRhs);
-      }
-      
-      context, RewriteRule(Term(lhs@Appl(Option(optionList),Name(tomName),l)),
-                           Term(rhs),
-                           condList,
-                           orgTrack) -> { 
-          //debugPrintln("expandVariable.13: Rule(" + lhs + "," + rhs + ")");
-        TomSymbol tomSymbol = getSymbol(tomName);
-        TomType symbolType = getSymbolCodomain(tomSymbol);
-        TomTerm newLhs = `Term(expandVariable(context,lhs));
-        TomTerm newRhs = `Term(expandVariable(TomTypeToTomTerm(symbolType),rhs));
-        
-          // build the list of variables that occur in the lhs
-        HashSet set = new HashSet();
-        collectVariable(set,newLhs);
-        TomList varList = ast().makeList(set);
-        TomList newCondList = empty();
-        while(!condList.isEmpty()) {
-          TomTerm cond = condList.getHead();
-          TomTerm newCond = expandVariable(`Tom(varList),cond);
-          newCondList = append(newCond,newCondList);
-          collectVariable(set,newCond);
-          varList = ast().makeList(set);
-          condList = condList.getTail();
-        }
-        
-        return `RewriteRule(newLhs,newRhs,newCondList,orgTrack);
       }
       
         // default rule

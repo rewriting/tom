@@ -39,6 +39,7 @@ import jtom.backend.*;
 import jtom.exception.*;
 import jtom.adt.*;
 
+
 public class Tom {
   private static String version = "1.2";
   
@@ -82,7 +83,7 @@ public class Tom {
     String parsedTableSuffix = ".tfix.parsed.table";
     String expandedTableSuffix = ".tfix.expanded.table";
 
-    List importList = new ArrayList();
+    List importList = new ArrayList();    
     
     if(args.length >= 1) {
       for(int i=0; i < args.length; i++) { 

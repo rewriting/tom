@@ -37,6 +37,9 @@ import jtom.checker.*;
 import jtom.adt.*;
 import jtom.runtime.*;
 
+import jtom.runtime.set.SharedSet;
+//import jtom.runtime.set.jgtreeset.*;
+
 public class TomBase {
   private TomEnvironment tomEnvironment;
   private TomList empty;
@@ -400,7 +403,61 @@ public class TomBase {
         } // end apply
       }; // end new
     
-    traversal().genericCollect(subject, collect); 
+    traversal().genericCollect(subject, collect);
+  }
+
+  protected void collectVariable(final SharedSet set, TomTerm subject) {
+    Collect1 collect = new Collect1() { 
+        public boolean apply(ATerm t) {
+            //%variable
+          if(t instanceof TomTerm) {
+            TomTerm annotedVariable = null;
+            %match(TomTerm t) { 
+              Variable[option=Option(optionList)] -> {
+                set.add(t);
+                annotedVariable = getAnnotedVariable(optionList);
+                if(annotedVariable!=null) {
+                  set.add(annotedVariable);
+                }
+                return false;
+              }
+              
+              VariableStar[option=Option(optionList)] -> {
+                set.add(t);
+                annotedVariable = getAnnotedVariable(optionList);
+                if(annotedVariable!=null) {
+                  set.add(annotedVariable);
+                }
+                return false;
+              }
+              
+              UnamedVariable[option=Option(optionList)] -> {
+                annotedVariable = getAnnotedVariable(optionList);
+                if(annotedVariable!=null) {
+                  set.add(annotedVariable);
+                }
+                return false;
+              }
+              
+                // to collect annoted nodes but avoid collect variables in optionSymbol
+              Appl[option=Option(optionList), args=subterms] -> {
+                collectVariable(set,`Tom(subterms));
+                annotedVariable = getAnnotedVariable(optionList);
+                if(annotedVariable!=null) {
+                  set.add(annotedVariable);
+                }
+                return false;
+              }
+              
+              _ -> { return true; }
+            }
+          } else {
+            return true;
+          }
+        } // end apply
+      }; // end new
+    
+    traversal().genericCollect(subject, collect);
   }
 
   protected TomTerm getAnnotedVariable(OptionList subjectList) {

@@ -38,17 +38,13 @@ import jtom.adt.*;
 
 public class TomOptimizer extends TomBase {
 
-  private int numberCompiledMatchFound;
-  private int numberCompiledPatternFound;
-  private int numberVarFound;
-  private int numberVarRemoved;
+  private int numberCompiledMatchFound = 0;
+  private int numberCompiledPatternFound = 0;
+  private int numberVarFound = 0;
+  private int numberVarRemoved = 0;
 
   public TomOptimizer(jtom.TomEnvironment environment) {
     super(environment);
-    numberCompiledMatchFound = 0;
-    numberCompiledPatternFound = 0;
-    numberVarFound = 0;
-    numberVarRemoved = 0;
   }
   
   // ------------------------------------------------------------
