@@ -2,7 +2,7 @@
 #    TOM - To One Matching Compiler
 #
 
-SUBDIRS         = runtime tools exception parser checker compiler backend debug xml verifier
+SUBDIRS         = runtime tools exception xml parser checker compiler backend debug verifier
 
 TSADT_SRC	= ${top_srcdir}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar:${top_srcdir}/stable/adt/TomSignature-${VERSION}.jar
 

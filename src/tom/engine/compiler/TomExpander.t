@@ -2,7 +2,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
+    Copyright (C) 2000-2004 INRIA
 			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
@@ -53,13 +53,13 @@ public class TomExpander extends TomTask {
 // ------------------------------------------------------------
 		
   public void process() {
-  	try {
-		  long startChrono = 0;
-		  boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate(),
-		  						debugMode = getInput().isDebugMode();
-	  	if(verbose) { startChrono = System.currentTimeMillis(); }
-	  	
-	  	TomTerm syntaxExpandedTerm = expandTomSyntax(getInput().getTerm());
+    try {
+      long startChrono = 0;
+      boolean verbose = getInput().isVerbose(), intermediate = getInput().isIntermediate(),
+        debugMode = getInput().isDebugMode();
+      if(verbose) { startChrono = System.currentTimeMillis(); }
+      
+      TomTerm syntaxExpandedTerm = expandTomSyntax(getInput().getTerm());
       tomKernelExpander.updateSymbolTable();
       TomTerm context = `emptyTerm();
       TomTerm expandedTerm  = expandVariable(context, syntaxExpandedTerm);
@@ -67,42 +67,44 @@ public class TomExpander extends TomTask {
       if(debugMode) {
         tomKernelExpander.expandMatchPattern(expandedTerm);
       }
-	  if(verbose) {
-		System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
-	  }
+      if(verbose) {
+        System.out.println("TOM expansion phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
+      }
       if(intermediate) {
-          Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.expandedSuffix, expandedTerm);
-          Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
-	  }
-		getInput().setTerm(expandedTerm);
-		
+        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.expandedSuffix, expandedTerm);
+        Tools.generateOutput(getInput().getBaseInputFileName() + TomTaskInput.expandedTableSuffix, symbolTable().toTerm());
+      }
+      getInput().setTerm(expandedTerm);
+      
     } catch (Exception e) {
-    	addError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
+      addError("Exception occurs in TomExpander: "+e.getMessage(), getInput().getInputFileName(), 0, 0);
       e.printStackTrace();
       return;
     }
   }
   
-    /*
-     * The 'expandTomSyntax' phase replaces:
-     * -each 'RecordAppl' by its expanded term form:
-     *   (unused slots a replaced by placeholders)
-     * - each BackQuoteTerm by its compiled form
-     */
+  /*
+   * The 'expandTomSyntax' phase replaces:
+   * -each 'RecordAppl' by its expanded term form:
+   *   (unused slots a replaced by placeholders)
+   * - each BackQuoteTerm by its compiled form
+   */
   
   public TomTerm expandTomSyntax(TomTerm subject) {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
           if(subject instanceof TomTerm) {
             %match(TomTerm subject) {
-              DoubleBackQuote(backQuoteTerm) -> {
+              DoubleBackQuote(concTomTerm(context*,backQuoteTerm)) -> {
+                if(!context.isEmpty()) {
+                  context = aggregateContext(context);
+                  //System.out.println("context = " + context);
+                }
                 TomTerm t = expandTomSyntax(backQuoteTerm);
-                  //System.out.println("t1 = " + t);
-                t = expandBackQuoteXMLAppl(t);
-                  //System.out.println("t2 = " + t);
+                t = expandBackQuoteXMLAppl(context,t);
                 return t;
               }
-              
+
               backQuoteTerm@BackQuoteAppl[] -> {
                 TomTerm t = expandBackQuoteAppl(backQuoteTerm);
                   //System.out.println("t = " + t);
@@ -114,7 +116,7 @@ public class TomExpander extends TomTask {
               }
 
               XMLAppl(optionList,nameList,list1,list2) -> {
-								//System.out.println("expandXML in:\n" + subject);
+                //System.out.println("expandXML in:\n" + subject);
                 return expandXMLAppl(optionList, nameList, list1, list2);
               }
               
@@ -212,6 +214,14 @@ public class TomExpander extends TomTask {
               return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
             }
           }
+
+          RecordAppl[args=manyTomList(PairSlotAppl(slotName,Appl[nameList=(Name(name1))]),_)],
+          RecordAppl[args=manyTomList(PairSlotAppl(slotName,Appl[nameList=(Name(name2))]),_)] -> {
+            if(name1.compareTo(name2) >= 0) {
+              return `sortAttributeList(concTomTerm(X1*,e2,X2*,e1,X3*));
+            }
+          }
+
           BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name1))],_)],
           BackQuoteAppl[args=manyTomList(Appl[nameList=(Name(name2))],_)] -> {
             if(name1.compareTo(name2) >= 0) {
@@ -222,6 +232,16 @@ public class TomExpander extends TomTask {
       }
     }
     return attrList;
+  }
+
+  private TomList aggregateContext(TomList context) {
+    TomList newContext = `concTomTerm();
+    %match(TomList context) {
+      concTomTerm(_*,Composite(concTomTerm(arg@BackQuoteAppl[])),_*) -> {
+        newContext = `concTomTerm(newContext*,arg);
+      }
+    }
+    return newContext;
   }
 
   private OptionList convertOriginTracking(String name,OptionList optionList) {
@@ -248,7 +268,12 @@ public class TomExpander extends TomTask {
     if(implicitAttribute) { newAttrList  = `manyTomList(star,newAttrList); }
     if(implicitChild)     { newChildList = `manyTomList(star,newChildList); }
 
+    /*
+     * the list of attribute should not be expanded before the sort
+     * the sortAttribute is extended to compare RecordAppl
+     */
     attrList = sortAttributeList(attrList);
+
     while(!attrList.isEmpty()) {
       TomTerm newPattern = expandTomSyntax(attrList.getHead());
       newAttrList = `manyTomList(newPattern,newAttrList);
@@ -256,6 +281,7 @@ public class TomExpander extends TomTask {
       attrList = attrList.getTail();
     }
     newAttrList = (TomList) newAttrList.reverse();
+
     
     while(!childList.isEmpty()) {
       TomTerm newPattern = expandTomSyntax(childList.getHead());
@@ -282,7 +308,6 @@ public class TomExpander extends TomTask {
        * encode the name and put it into the table of symbols
        */
 
-
     NameList newNameList = `concTomName();
     matchBlock: {
       %match(NameList nameList) {
@@ -300,15 +325,22 @@ public class TomExpander extends TomTask {
        * a single "_" is converted into a Placeholder to match
        * any XML node
        */
-    TomTerm xmlHead = (newNameList.isEmpty())?`Placeholder(emptyOption()):`Appl(convertOriginTracking(newNameList.getHead().getString(),optionList),newNameList,empty());
+    TomTerm xmlHead;
 
-    
+    if(newNameList.isEmpty()){
+      xmlHead = `Placeholder(emptyOption());
+    } else { 
+      xmlHead = `Appl(convertOriginTracking(newNameList.getHead().getString(),optionList),newNameList,empty());
+    }
+
     TomList newArgs = `concTomTerm(
-      xmlHead,
-      Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList),
-      Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList));
+      PairSlotAppl(Name(Constants.SLOT_NAME),xmlHead),
+      PairSlotAppl(Name(Constants.SLOT_ATTRLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newAttrList)),
+      PairSlotAppl(Name(Constants.SLOT_CHILDLIST),Appl(convertOriginTracking("CONC_TNODE",optionList),concTomName(Name(Constants.CONC_TNODE)), newChildList)));
     
-    TomTerm result = `Appl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs);
+    TomTerm result = `expandTomSyntax(RecordAppl(optionList,concTomName(Name(Constants.ELEMENT_NODE)),newArgs));
+
+
       //System.out.println("expandXML out:\n" + result);
     return result;
    
@@ -328,13 +360,13 @@ public class TomExpander extends TomTask {
       }
     };
 
-  protected TomTerm expandBackQuoteXMLAppl(TomTerm subject) {
+  protected TomTerm expandBackQuoteXMLAppl(final TomList context,TomTerm subject) {
     Replace1 replaceSymbol = new Replace1() {
         public ATerm apply(ATerm t) {
           if(t instanceof TomTerm) {
             %match(TomTerm t) {
               Composite(list) -> {
-                list = parseBackQuoteXMLAppl(list);
+                list = parseBackQuoteXMLAppl(context,list);
                 list = (TomList) traversal().genericTraversal(list,this);
                 return `Composite(list);
               }
@@ -346,7 +378,7 @@ public class TomExpander extends TomTask {
     return (TomTerm) replaceSymbol.apply(subject);
   }
 
-  private TomList parseBackQuoteXMLAppl(TomList list) {
+  private TomList parseBackQuoteXMLAppl(TomList context,TomList list) {
     %match(TomList list) {
       concTomTerm(
         TargetLanguageToTomTerm(ITL("#TEXT")),
@@ -355,8 +387,8 @@ public class TomExpander extends TomTask {
         TargetLanguageToTomTerm(ITL(")")),
         tail*
         ) -> {
-        TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.TEXT_NODE),concTomTerm(Composite(value*)));
-        TomList newTail = parseBackQuoteXMLAppl(tail);
+        TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.TEXT_NODE),concTomTerm(context*,Composite(value*)));
+        TomList newTail = parseBackQuoteXMLAppl(context,tail);
         return `concTomTerm(newBackQuoteAppl,newTail*);
       }
 
@@ -366,7 +398,7 @@ public class TomExpander extends TomTask {
         tail*
         ) -> {
         TomTerm term = `VariableStar(emptyOption(),name,TomTypeAlone("unknown type"));
-        TomList newTail = parseBackQuoteXMLAppl(tail);
+        TomList newTail = parseBackQuoteXMLAppl(context,tail);
         return `concTomTerm(term,newTail*);
       }
 
@@ -389,14 +421,18 @@ public class TomExpander extends TomTask {
           //System.out.println("Body = " + Body);
         
         TomTerm newName = `BackQuoteAppl(emptyOption(),encodeName(name),empty());
-        TomTerm newAttribute = metaEncodeTNodeList(aggregateXMLAttribute(Attributes));
-        TomTerm newBody = metaEncodeTNodeList(aggregateXMLBody(Body));
-        TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.ELEMENT_NODE),concTomTerm(newName,newAttribute,newBody));
+        TomTerm newAttribute = metaEncodeTNodeList(aggregateXMLAttribute(context,Attributes));
+        TomTerm newBody = metaEncodeTNodeList(aggregateXMLBody(context,Body));
+
+        //System.out.println("newbody = " + newBody);
+        //System.out.println("context = " + context);
+
+        TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.ELEMENT_NODE),concTomTerm(context*,newName,newAttribute,newBody));
           //System.out.println("newBackQuoteAppl1 = " + newBackQuoteAppl);
         newBackQuoteAppl = expandTomSyntax(newBackQuoteAppl);
           //System.out.println("newBackQuoteAppl2 = " + newBackQuoteAppl);
-          //TomList newTail = aggregateXMLBody(tail);
-        TomList newTail = parseBackQuoteXMLAppl(tail);
+          //TomList newTail = aggregateXMLBody(context,tail);
+        TomList newTail = parseBackQuoteXMLAppl(context,tail);
         return `concTomTerm(newBackQuoteAppl,newTail*);
       }
       
@@ -414,14 +450,14 @@ public class TomExpander extends TomTask {
           //System.out.println("Attributes = " + Attributes);
 
         TomTerm newName = `BackQuoteAppl(emptyOption(),encodeName(name),empty());
-        TomTerm newAttribute = metaEncodeTNodeList(aggregateXMLAttribute(Attributes));
+        TomTerm newAttribute = metaEncodeTNodeList(aggregateXMLAttribute(context,Attributes));
         TomTerm newBody = metaEncodeTNodeList(`concTomTerm());
-        TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.ELEMENT_NODE),concTomTerm(newName,newAttribute,newBody));
+        TomTerm newBackQuoteAppl = `BackQuoteAppl(emptyOption(),Name(Constants.ELEMENT_NODE),concTomTerm(context*,newName,newAttribute,newBody));
           //System.out.println("newBackQuoteAppl1 = " + newBackQuoteAppl);
         newBackQuoteAppl = expandTomSyntax(newBackQuoteAppl);
           //System.out.println("newBackQuoteAppl2 = " + newBackQuoteAppl);
-          //TomList newTail = aggregateXMLBody(tail);
-        TomList newTail = parseBackQuoteXMLAppl(tail);
+          //TomList newTail = aggregateXMLBody(context,tail);
+        TomList newTail = parseBackQuoteXMLAppl(context,tail);
         return `concTomTerm(newBackQuoteAppl,newTail*);
 
       }
@@ -431,7 +467,7 @@ public class TomExpander extends TomTask {
       }
 
       concTomTerm(head,tail*) -> {
-        TomList newTail = parseBackQuoteXMLAppl(tail);
+        TomList newTail = parseBackQuoteXMLAppl(context,tail);
         return `concTomTerm(head,newTail*);
       }
 
@@ -456,8 +492,8 @@ public class TomExpander extends TomTask {
     return `BackQuoteAppl(emptyOption(),Name(Constants.CONC_TNODE),list);
   }
   
-  private TomList aggregateXMLBody(TomList subjectList) {
-    TomTerm composite = expandBackQuoteXMLAppl(`Composite(subjectList));
+  private TomList aggregateXMLBody(TomList context, TomList subjectList) {
+    TomTerm composite = expandBackQuoteXMLAppl(context,`Composite(subjectList));
       //System.out.println("composite = " + composite);
     return composite.getArgs();
   }
@@ -466,7 +502,7 @@ public class TomExpander extends TomTask {
     return `Name("\"" + name.getString() + "\"");
   }
   
-  private TomList aggregateXMLAttribute(TomList subjectList) {
+  private TomList aggregateXMLAttribute(TomList context,TomList subjectList) {
     TomList list = `concTomTerm();
     %match(TomList subjectList) {
       concTomTerm(
@@ -478,6 +514,7 @@ public class TomExpander extends TomTask {
         TomTerm newValue = value;
         
         TomList args = `concTomTerm(
+          context*,
           BackQuoteAppl(emptyOption(),encodeName(name),concTomTerm()),
           BackQuoteAppl(emptyOption(),Name("\"true\""),concTomTerm()),
           newValue);

@@ -133,6 +133,7 @@ public class TomParser extends TomTask {
   	  addError(e.getMessage(), currentFile, getLine(), TomCheckerMessage.TOM_ERROR);
   	} catch (Exception e) {
   	  String msg = "Unhandled exception occurs during parsing: "+e.getMessage();
+          e.printStackTrace();
   	  addError(msg, currentFile, 0, TomCheckerMessage.TOM_ERROR);
   	}
   }
@@ -219,7 +220,7 @@ TOKEN :
   | < MAKE_TERM:           "%make" > : TOM
   | < BACKQUOTE_TERM:      "`" > : TOM
   | < VARIABLE:            "%variable" > : TOM
-  | < TYPE:            "%type" > : TOM
+  | < TYPE:                "%type" > : TOM
   | < TYPETERM:            "%typeterm" > : TOM
   | < TYPEINT:             "%typeint" > : TOM
   | < TYPEDOUBLE:          "%typedouble" > : TOM
@@ -771,36 +772,6 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
       }
     )
       
-    /*
-      
-    LOOKAHEAD(2)
-      (LOOKAHEAD(2)
-         [LOOKAHEAD(3) nameList = HeadSymbolList(optionList)] implicit = ExplicitTermList(list)      |
-         nameList = HeadSymbolList(optionList)  implicit = ImplicitPairList(list))
-      {
-        if(nameList == null) {
-          nameList = tsf().makeNameList(tsf().makeTomName_Name(""));
-          optionList.add(ast().makeOriginTracking("",getLine(), currentFile));
-        } else {
-          if(!implicit && list.isEmpty()) {
-              // check if it is a constant
-            optionList.add(tsf().makeOption_Constructor(nameList));
-          }
-        }
-        
-        
-        if(implicit) {
-          return tsf().makeTomTerm_RecordAppl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
-        } else {
-          return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,ast().makeList(list));
-        }
-      }
-  | // identifier | integer | double | string
-    nameList = HeadSymbolList(optionList)
-    {
-      return tsf().makeTomTerm_Appl(ast().makeOptionList(optionList),nameList,tsf().makeTomList());
-    }
-    */
 }
 
 // return true for implicit mode
@@ -1051,13 +1022,13 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
   | <XML_TEXT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
     {
       keyword = Constants.TEXT_NODE;
-      list.add(arg1);
+      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));
     }
   | // #COMMENT(...)
     <XML_COMMENT> <TOM_LPAREN> arg1 = TermStringIdentifier(null) <TOM_RPAREN>
     {
       keyword = Constants.COMMENT_NODE;
-      list.add(arg1);
+      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg1));
     }
   | // #PROCESSING-INSTRUCTION(... , ...)
     <XML_PROC> <TOM_LPAREN>
@@ -1065,15 +1036,15 @@ TomTerm XMLTerm(LinkedList optionList) throws TomException:
     <TOM_RPAREN>
       {
         keyword = Constants.PROCESSING_INSTRUCTION_NODE;
-        list.add(arg1);
-        list.add(arg2);
+        list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_TARGET),arg1));
+        list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_DATA),arg2));
       }
      )
     {
       optionList.add(ast().makeOriginTracking(keyword,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
       nameList = tsf().makeNameList(tsf().makeTomName_Name(keyword));
-      return tsf().makeTomTerm_Appl(option,
+      return tsf().makeTomTerm_RecordAppl(option,
                                     nameList,
                                     ast().makeList(list));
 
@@ -1211,17 +1182,17 @@ TomTerm XMLAttribute() throws TomException:
     term=TermStringIdentifier(optionListAnno2)
   ) 
     {
-      list.add(termName);
+      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_NAME),termName));
         // we add the specif value : _
-      list.add(tsf().makeTomTerm_Placeholder(ast().makeOption()));
+      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_SPECIFIED),tsf().makeTomTerm_Placeholder(ast().makeOption())));
         //list.add(tomFactory.metaEncodeXMLAppl(symbolTable(),term));
         // no longer necessary ot metaEncode Strings in attributes
-      list.add(term);
+      list.add(tsf().makeTomTerm_PairSlotAppl(tsf().makeTomName_Name(Constants.SLOT_VALUE),term));
       optionList.add(ast().makeOriginTracking(Constants.ATTRIBUTE_NODE,getLine(), currentFile));
       option = ast().makeOptionList(optionList);
       
       nameList = tsf().makeNameList(tsf().makeTomName_Name(Constants.ATTRIBUTE_NODE));
-      return tsf().makeTomTerm_Appl(option,
+      return tsf().makeTomTerm_RecordAppl(option,
                                     nameList,
                                     ast().makeList(list));
     }
@@ -1240,18 +1211,18 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
 }
 {
   <BACKQUOTE_TERM> /* switch to TOM mode */
-    { addPreviousCode(list); }
+  { addPreviousCode(list); }
      [ backQuote = <TOM_BACKQUOTE> ]
     {
-   	  firstTokenLine = getLine();
+      firstTokenLine = getLine();
       orgTrack = ast().makeOriginTracking("Backquote",getLine(), currentFile);
       backQuoteMode = true;
       while(backQuoteMode) {
         try {
-	        tk = getNextToken();
-	    } catch (jtom.parser.TokenMgrError Error) {
-	    	throw new TomException("Invalide backquote term started line "+firstTokenLine+": EOF encountered ");
-	    }
+          tk = getNextToken();
+        } catch (jtom.parser.TokenMgrError Error) {
+          throw new TomException("Invalide backquote term started line "+firstTokenLine+": EOF encountered ");
+        }
         tokenList.add(tk);
         if(tk.kind == TOM_LPAREN) { 
           parenLevel++;
@@ -1261,22 +1232,21 @@ void BackQuoteTerm(LinkedList list) throws TomException: /* in DEFAULT mode */
             backQuoteMode = false;
           }
         } else if (tk.kind == TOM_IDENTIFIER) {
-        	tokenToDecLineMap.put(tk, new Integer(getLine()));
-	    }
-		lastTokenLine = getLine();
-	  }
-      switchToDefaultMode(); /* switch to DEFAULT mode */
-        //term = ast().buildBackQuoteTerm(tokenList);
-      term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
-
-      if(term.isComposite() && term.getArgs().isSingle()) {
-        TomTerm backQuoteTerm = term.getArgs().getHead();
-        if(backQuoteTerm.getAstName().getString().equals("xml") && backQuoteTerm.getArgs().isSingle()) {
-          term = tsf().makeTomTerm_DoubleBackQuote(backQuoteTerm.getArgs().getHead());
+          tokenToDecLineMap.put(tk, new Integer(getLine()));
         }
-      } else if(backQuote != null) {
-        term = tsf().makeTomTerm_DoubleBackQuote(term);
+        lastTokenLine = getLine();
       }
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      //term = ast().buildBackQuoteTerm(tokenList);
+      term = tomBackQuoteParser.buildBackQuoteTerm(tokenList, tokenToDecLineMap, currentFile);
+      
+      if(term.isComposite() && term.getArgs().isSingle()) {
+        TomTerm backQuoteTerm = term.getArgs().getHead(); 
+        if(backQuoteTerm.getAstName().getString().equals("xml")) {
+          TomList args = backQuoteTerm.getArgs();
+          term = tsf().makeTomTerm_DoubleBackQuote(args);
+        } 
+      } 
       list.add(term);
     }
  }
@@ -1339,7 +1309,6 @@ void IncludeConstruct(LinkedList list) throws TomException, TomIncludeException 
       }  catch (java.io.IOException e2) {
         String msg = "IOException occurs reading " + fileName + " at line "+getLine();
         System.out.println(msg);
-        e2.printStackTrace();
         throw new TomException(msg);
       }
     }
