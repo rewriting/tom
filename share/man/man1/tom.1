@@ -27,12 +27,17 @@ and
 .BR tom.src .
 
 .TP
-.BI -c,\ --command \ <command>
-Execute the specified command (or directive). See section "Directives" for
-details.
+.BI -X\ <file>
+Defines an alternate XML configuration file
 .TP
-.BI -s,\ --atermStat
-Print internal ATerm statistics
+.BI --noTypeCheck
+Do not perform type checking
+.TP
+.BI -D,\ --noDeclaration
+Do not generate code for declarations
+.TP
+.BI -I,\ --import <path>
+Path for %include
 .TP
 .BI -c,\ --cCode
 Generate C code
@@ -40,32 +45,17 @@ Generate C code
 .BI --camlCode
 Generate Caml code
 .TP
-.BI -e,\ --eCode
-Generate Eiffel code
-.TP
 .BI -d,\ --destdir <directory>
 Specify where to place generated files
 .TP
-.BI -C,\ --doCompile
-Start after type-checking
+.BI --stamp
+Use stamp to simulate concrete ADT
 .TP
 .BI -h,\ --help
 Display the list of all available options and exit.
 .TP
-.BI -I,\ --import <path>
-Path for %include
-.TP
 .BI -i,\ --intermediate
 Generates intermediate files
-.TP
-.BI -l,\ --lazyType
-Use universal type
-.TP
-.BI -f,\ --noCheck
-Do not verify correctness
-.TP
-.BI -D,\ --noDeclaration
-Do not generate code for declarations
 .TP
 .BI --noOutput
 Do not generate code
@@ -85,8 +75,14 @@ Set output file name
 .BI -p,\ --pretty
 Generate readable code
 .TP
+.BI --noSyntaxCheck
+Do not perform syntax checking
+.TP
 .BI --static
 Generate static functions
+.TP
+.BI -l,\ --lazyType
+Use universal type
 .TP
 .BI -v,\ --verbose
 Set verbose mode on
@@ -98,7 +94,7 @@ Print version and exit.
 .SH BUGS
 Report them all...
 
-This page documents TOM version 2.0. 
+This page documents TOM version 2.1-rc2alpha. 
 The homepage for TOM can be found at http://tom.loria.fr.
 
 .SH SEE ALSO

@@ -218,6 +218,14 @@ public class TomVerifier extends TomGenericPlugin {
 						}
           }//end match
         } 
+				else if (subject instanceof Expression) {
+					%match(Expression subject) {
+						// we filters also patterns containing or() constructs (but we could handle it easily
+						Or(_,_) -> {
+							store.add(subject);
+						}
+					}
+				}
 				return true;
 	    }//end apply
     }; //end new  
