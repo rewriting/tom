@@ -1,0 +1,5 @@
+[
+constructor(Nat,zero,zero),
+constructor(Nat,suc,suc(<pred(Nat)>))
+]
+
