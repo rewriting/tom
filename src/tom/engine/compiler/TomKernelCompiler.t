@@ -158,9 +158,9 @@ public class TomKernelCompiler extends TomBase {
   private Instruction collectVariableFromSubjectList(TomList subjectList, int index, TomNumberList path, Instruction body) {
     %match(TomList subjectList) { 
       emptyTomList() -> { return body; }
-      manyTomList(subjectVar@Variable(option,_,variableType),tail) -> {
+      manyTomList(subjectVar@Variable[option=option,astType=variableType],tail) -> {
         body = collectVariableFromSubjectList(tail,index+1,path,body);
-        TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType);
+        TomTerm variable = `Variable(option,PositionName(appendNumber(index,path)),variableType,concExpression());
         // the UnamedBlock encapsulation is needed for Caml
         return `Let(variable,TomTermToExpression(subjectVar),UnamedBlock(concInstruction(body)));
       }
@@ -169,7 +169,7 @@ public class TomKernelCompiler extends TomBase {
         body = collectVariableFromSubjectList(tail,index+1,path,body);
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomType tomType = getSymbolCodomain(tomSymbol);
-        TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType);
+        TomTerm variable = `Variable(option(),PositionName(appendNumber(index,path)),tomType, concExpression());
         return `Let(variable,TomTermToExpression(subjectVar),body);
       }
 
@@ -237,10 +237,10 @@ public class TomKernelCompiler extends TomBase {
         return action;
       } 
       
-      manyTomList(var@Variable(optionList, _, termType),termTail) |
+      manyTomList(var@Variable[option=optionList, astType=termType],termTail) |
       manyTomList(var@UnamedVariable(optionList, termType),termTail) -> {
         Instruction subAction = genSyntacticMatchingAutomata(action,termTail,rootpath,indexTerm+1);
-        Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType));
+        Expression source = `TomTermToExpression(Variable(option(),PositionName(path),termType, concExpression()));
         return buildAnnotedLet(optionList, source, var, subAction);
       }
       
@@ -251,7 +251,7 @@ public class TomKernelCompiler extends TomBase {
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         
         // SUCCES
-        TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType);
+        TomTerm subjectVariableAST =  `Variable(option(),PositionName(path),termType,concExpression());
         Instruction automataInstruction;
         if(isListOperator(tomSymbol)) {
           /*
@@ -260,7 +260,7 @@ public class TomKernelCompiler extends TomBase {
            */
           int indexSubterm = 1;
           TomNumberList newPath = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
-          TomTerm newSubjectVariableAST =  `Variable(option(),PositionName(newPath),termType);
+          TomTerm newSubjectVariableAST =  `Variable(option(),PositionName(newPath),termType,concExpression());
           Instruction automata = genListMatchingAutomata(new MatchingParameter(
                                                            tomSymbol,path,subAction,
                                                            newSubjectVariableAST,
@@ -273,8 +273,8 @@ public class TomKernelCompiler extends TomBase {
           int indexSubterm = 1;
           TomNumberList newPathList = (TomNumberList) path.append(`ListNumber(makeNumber(indexSubterm)));
           TomNumberList newPathIndex = (TomNumberList) path.append(`IndexNumber(makeNumber(indexSubterm)));
-          TomTerm newVariableListAST = `Variable(option(),PositionName(newPathList),termType);
-          TomTerm newVariableIndexAST = `Variable(option(),PositionName(newPathIndex),symbolTable().getIntType());
+          TomTerm newVariableListAST = `Variable(option(),PositionName(newPathList),termType,concExpression());
+          TomTerm newVariableIndexAST = `Variable(option(),PositionName(newPathIndex),symbolTable().getIntType(),concExpression());
           Instruction automata = genArrayMatchingAutomata(new MatchingParameter(
                                                             tomSymbol,path,subAction,
                                                             newVariableListAST, newVariableIndexAST),
@@ -331,7 +331,7 @@ public class TomKernelCompiler extends TomBase {
         return test;
       }
         
-      manyTomList(var@Variable(optionList,_, termType),termTail) |
+      manyTomList(var@Variable[option=optionList, astType=termType],termTail) |
       manyTomList(var@UnamedVariable(optionList, termType),termTail) -> {
         /*
          * generate:
@@ -352,7 +352,7 @@ public class TomKernelCompiler extends TomBase {
         return test;
       }
         
-      manyTomList(var@VariableStar(optionList,_, termType),termTail) |
+      manyTomList(var@VariableStar[option=optionList, astType=termType],termTail) |
       manyTomList(var@UnamedVariableStar(optionList, termType),termTail) -> {
         if(termTail.isEmpty()) {
           /*
@@ -382,8 +382,8 @@ public class TomKernelCompiler extends TomBase {
           Instruction subAction = genListMatchingAutomata(p,termTail,indexTerm+1);
           TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(makeNumber(indexTerm)));
           TomNumberList pathEnd = (TomNumberList) p.path.append(`End(makeNumber(indexTerm)));
-          TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType);
-          TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),termType);
+          TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),termType,concExpression());
+          TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),termType,concExpression());
 
           Expression source = `GetSliceList(p.symbol.getAstName(),Ref(variableBeginAST),Ref(variableEndAST));
           Instruction let = buildAnnotedLet(optionList, source, var, subAction);
@@ -422,7 +422,7 @@ public class TomKernelCompiler extends TomBase {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
-        TomTerm var =  `Variable(option(),PositionName(newPath),termType);
+        TomTerm var =  `Variable(option(),PositionName(newPath),termType,concExpression());
 
         Instruction body = `UnamedBlock(concInstruction(Assign(p.subjectListName,GetTail(Ref(p.subjectListName))),subAction));
         Expression source = `GetHead(Ref(p.subjectListName));
@@ -464,7 +464,7 @@ public class TomKernelCompiler extends TomBase {
         return test;
       }
 
-      manyTomList(var@Variable(optionList,_, termType),termTail) |
+      manyTomList(var@Variable[option=optionList,astType=termType],termTail) |
       manyTomList(var@UnamedVariable(optionList, termType),termTail) -> {
           /*
            * generate:
@@ -485,7 +485,7 @@ public class TomKernelCompiler extends TomBase {
         return test;
       }
       
-      manyTomList(var@VariableStar(optionList,_, termType),termTail) |
+      manyTomList(var@VariableStar[option=optionList,astType=termType],termTail) |
       manyTomList(var@UnamedVariableStar(optionList, termType),termTail) -> {
         if(termTail.isEmpty()) {
             /*
@@ -519,8 +519,8 @@ public class TomKernelCompiler extends TomBase {
           TomNumberList pathBegin = (TomNumberList) p.path.append(`Begin(makeNumber(indexTerm)));
           TomNumberList pathEnd = (TomNumberList) p.path.append(`End(makeNumber(indexTerm)));
             /* TODO: termType */
-          TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),symbolTable().getIntType());
-          TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),symbolTable().getIntType());
+          TomTerm variableBeginAST = `Variable(option(),PositionName(pathBegin),symbolTable().getIntType(),concExpression());
+          TomTerm variableEndAST   = `Variable(option(),PositionName(pathEnd),symbolTable().getIntType(),concExpression());
 
           Expression source = `GetSliceArray(p.symbol.getAstName(),
                                              Ref(p.subjectListName),
@@ -560,7 +560,7 @@ public class TomKernelCompiler extends TomBase {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
-        TomTerm var =  `Variable(option(),PositionName(newPath),termType);
+        TomTerm var =  `Variable(option(),PositionName(newPath),termType,concExpression());
 
         Instruction body = `UnamedBlock(concInstruction(Increment(p.subjectListIndex),subAction));
         Expression source = `GetElement(p.subjectListName,p.subjectListIndex);
@@ -607,7 +607,7 @@ public class TomKernelCompiler extends TomBase {
             getSubtermAST = `GetSlot(termNameAST,slotName.getString(),subjectVariableAST);
           }
           TomNumberList newPath  = appendNumber(indexSubterm+1,path);
-          TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType);
+          TomTerm newVariableAST = `Variable(option(),PositionName(newPath),subtermType,concExpression());
           return `Let(newVariableAST,getSubtermAST,body);
         }
       }

@@ -385,7 +385,7 @@ public class TomExpander extends TomTask {
         TargetLanguageToTomTerm(ITL("*")),
         tail*
         ) -> {
-        TomTerm term = `VariableStar(emptyOption(),name,TomTypeAlone("unknown type"));
+        TomTerm term = `VariableStar(emptyOption(),name,TomTypeAlone("unknown type"),concExpression());
         TomList newTail = parseBackQuoteXMLAppl(context,tail);
         return `concTomTerm(term,newTail*);
       }
@@ -517,7 +517,7 @@ public class TomExpander extends TomTask {
         TargetLanguageToTomTerm(ITL("*")),
         X2*
         ) -> {
-        TomTerm attributeNode = `VariableStar(emptyOption(),name,TomTypeAlone("unknown type"));
+        TomTerm attributeNode = `VariableStar(emptyOption(),name,TomTypeAlone("unknown type"),concExpression());
         list = `manyTomList(attributeNode,list);
       }
     }

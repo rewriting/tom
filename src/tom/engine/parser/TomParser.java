@@ -2468,7 +2468,7 @@ public class TomParser extends TomTask implements TomParserConstants {
               name = tsf().makeTomName_Name(nameArg.image);
               Option info1 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
               OptionList option1 = ast().makeOption(info1);
-              args.add(tsf().makeTomTerm_Variable(option1,name, type));
+              args.add(ast().makeVariable(option1,name, type));
           label_26:
           while (true) {
             switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -2489,7 +2489,7 @@ public class TomParser extends TomTask implements TomParserConstants {
           name = tsf().makeTomName_Name(nameArg.image);
               Option info2 = ast().makeOriginTracking(nameArg.image,getLine(), currentFile);
           OptionList option2 = ast().makeOption(info2);
-          args.add(tsf().makeTomTerm_Variable(option2,name, type));
+          args.add(ast().makeVariable(option2,name, type));
           }
           jj_consume_token(TOM_RPAREN);
           break;

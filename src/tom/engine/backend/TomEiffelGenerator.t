@@ -77,7 +77,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
           TomTerm localVar = varList.getHead();
           matchBlock: {
             %match(TomTerm localVar) {
-              v@Variable(option2,name2,type2) -> {
+              v@Variable[option=option2,astName=name2,astType=type2] -> {
                   generate(deep,v);
                   output.write(deep,": " + getTLType(type2));
                 break matchBlock;
@@ -267,7 +267,7 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 			TomTerm arg = argList.getHead();
 			matchBlock: {
 				%match(TomTerm arg) {
-					Variable(option,Name(name), Type(ASTTomType(type),tlType@TLType[])) -> {
+					Variable[option=option,astName=Name(name), astType=Type(ASTTomType(type),tlType@TLType[])] -> {
 						s += name + ": " + getTLCode(tlType);
 						break matchBlock;
 					}

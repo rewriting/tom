@@ -75,7 +75,7 @@ constructor(TomName,EmptyName,EmptyName),
 
 constructor(TomTerm,Appl,Appl(<option(OptionList)>,<nameList(NameList)>,<args(TomList)>)),
 constructor(TomTerm,XMLAppl,XMLAppl(<option(OptionList)>,<nameList(NameList)>,<attrList(TomList)>,<childList(TomList)>)),
-constructor(TomTerm,VariableStar,VariableStar(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>)),
+constructor(TomTerm,VariableStar,VariableStar(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>,<constraints(ExpressionList)>)),
 constructor(TomTerm,Placeholder,Placeholder(<option(OptionList)>)),
 constructor(TomTerm,UnamedVariable,UnamedVariable(<option(OptionList)>,<astType(TomType)>)),
 constructor(TomTerm,UnamedVariableStar,UnamedVariableStar(<option(OptionList)>,<astType(TomType)>)),
@@ -101,7 +101,7 @@ constructor(TomTerm,TermList,TermList(<tomList(TomList)>)),
 constructor(TomTerm,Term,Term(<tomTerm(TomTerm)>)),
 constructor(TomTerm,PatternAction,PatternAction(<termList(TomTerm)>,<action(Instruction)>,<option(OptionList)>)),
 constructor(TomTerm,TLVar,TLVar(<strName(str)>,<astType(TomType)>)),
-constructor(TomTerm,Variable,Variable(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>)),
+constructor(TomTerm,Variable,Variable(<option(OptionList)>,<astName(TomName)>,<astType(TomType)>,<constraints(ExpressionList)>)),
 constructor(TomTerm,Ref,Ref(<tomTerm(TomTerm)>)),
 
 constructor(TomTerm,MakeTerm,MakeTerm(<kid1(TomTerm)>)),
@@ -173,6 +173,7 @@ list(SlotList,PairNameDecl),
 list(TomEntryList, TomEntry),
 list(TomErrorList, TomError),
 list(SymbolList, TomSymbol),
-list(NameList, TomName)
+list(NameList, TomName),
+list(ExpressionList, Expression)
 
 ]

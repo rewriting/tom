@@ -160,7 +160,7 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
 			TomTerm localVar = varList.getHead();
 			matchBlock: {
 				%match(TomTerm localVar) {
-					v@Variable(option2,name2,type2) -> {
+					v@Variable[option=option2,astName=name2,astType=type2] -> {
 						output.write(deep,getTLType(type2) + " ");
 						generate(deep,v);
 						break matchBlock;
@@ -299,7 +299,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
 		TomTerm arg = argList.getHead();
 		matchBlock: {
 			%match(TomTerm arg) {
-				Variable(option,Name(name), Type(ASTTomType(type),tlType@TLType[])) -> {
+				Variable[option=option,astName=Name(name), astType=Type(ASTTomType(type),tlType@TLType[])] -> {
 					s += getTLCode(tlType) + " " + name;
 					break matchBlock;
 				}

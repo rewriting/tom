@@ -233,7 +233,7 @@ public class TomCompiler extends TomTask {
             
               while(!typesList.isEmpty()) {
                 TomType subtermType = typesList.getHead();
-                variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType);
+                variable = `Variable(option(),PositionName(appendNumber(index,path)),subtermType,concExpression());
                 matchArgumentsList = append(variable,matchArgumentsList);
                 typesList = typesList.getTail();
                 index++;
@@ -387,7 +387,7 @@ public class TomCompiler extends TomTask {
           path = (TomNumberList) path.append(`RenamedVar(name));
           path = (TomNumberList) path.append(makeNumber(mult));
           OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-          renamedTerm = `Variable(newOptionList,PositionName(path),type);
+          renamedTerm = `Variable(newOptionList,PositionName(path),type,concExpression());
             //System.out.println("renamedTerm = " + renamedTerm);
 
           Expression newEquality = `EqualTerm(subject,renamedTerm);
@@ -407,7 +407,7 @@ public class TomCompiler extends TomTask {
           path = (TomNumberList) path.append(`RenamedVar(name));
           path = appendNumber(mult,path);
           OptionList newOptionList = renameVariableInOptionList(optionList,multiplicityMap,equalityCheck);
-          renamedTerm = `VariableStar(newOptionList,PositionName(path),type);
+          renamedTerm = `VariableStar(newOptionList,PositionName(path),type,concExpression());
 
             //System.out.println("renamedTerm = " + renamedTerm);
 
@@ -514,7 +514,7 @@ public class TomCompiler extends TomTask {
                   absVarNumber++;
                   path = (TomNumberList) path.append(`AbsVar(makeNumber(absVarNumber)));
                   
-                  TomTerm newVariable = `Variable(option(),PositionName(path),type2);
+                  TomTerm newVariable = `Variable(option(),PositionName(path),type2,concExpression());
                   
                   //System.out.println("newVariable = " + newVariable);
                   

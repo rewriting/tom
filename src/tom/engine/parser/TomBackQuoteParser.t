@@ -128,7 +128,7 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
                                                        Name(name),
                                                        concTomTerm()),
                                             TargetLanguageToTomTerm(ITL("*"))))) -> {
-        TomTerm term = `VariableStar(option,Name(name),TomTypeAlone("unknown type"));
+        TomTerm term = `VariableStar(option,Name(name),TomTypeAlone("unknown type"),concExpression());
         stackList.pop();
         stackList.push(`concTomTerm(X1*,Composite(concTomTerm(L*,term))));
         return;

@@ -131,11 +131,19 @@ public class ASTFactory {
   }
 
   public TomTerm makeVariable(OptionList option, String name, String type) {
-    return tsf().makeTomTerm_Variable(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type));  
+    return tsf().makeTomTerm_Variable(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeExpressionList());  
+  }
+
+  public TomTerm makeVariable(OptionList option, TomName name, TomType type) {
+    return tsf().makeTomTerm_Variable(option, name, type, tsf().makeExpressionList());  
   }
 
   public TomTerm makeVariableStar(OptionList option, String name, String type) {
-    return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type));  
+    return tsf().makeTomTerm_VariableStar(option, tsf().makeTomName_Name(name), tsf().makeTomType_TomTypeAlone(type), tsf().makeExpressionList());  
+  }
+
+  public TomTerm makeVariableStar(OptionList option, TomName name, TomType type) {
+    return tsf().makeTomTerm_VariableStar(option, name, type, tsf().makeExpressionList());  
   }
 
   public TomTerm makeUnamedVariableStar(OptionList option, String type) {
@@ -171,7 +179,7 @@ public class ASTFactory {
     return list;
   }
 
-   public Option makeOriginTracking(String name, int line , String fileName) {
+	public Option makeOriginTracking(String name, int line , String fileName) {
     return tsf().makeOption_OriginTracking(tsf().makeTomName_Name(name), line, tsf().makeTomName_Name( fileName));
   }
   

@@ -116,7 +116,7 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      Variable(option1,PositionName(l1),type1) -> {
+      Variable[option=option1,astName=PositionName(l1),astType=type1] -> {
           /*
            * sans type: re-definition lorsque %variable est utilise
            * avec type: probleme en cas de filtrage dynamique
@@ -125,17 +125,17 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Variable(option1,Name(name1),type1) -> {
+      Variable[option=option1,astName=Name(name1),astType=type1] -> {
         output.write(name1);
         return;
       }
 
-      VariableStar(option1,PositionName(l1),type1) -> {
+      VariableStar[option=option1,astName=PositionName(l1),astType=type1] -> {
         output.write("tom" + numberListToIdentifier(l1));
         return;  
       }
 
-      VariableStar(option1,Name(name1),type1) -> {
+      VariableStar[option=option1,astName=Name(name1),astType=type1] -> {
         output.write(name1);
         return;
       }
@@ -227,12 +227,12 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      IsFsym(Name(opname), var@Variable(option1,PositionName(l1),type1)) -> {
+      IsFsym(Name(opname), var@Variable[option=option1,astName=PositionName(l1),astType=type1]) -> {
         buildExpIsFsym(deep, opname, var);
         return;
       }
 
-      GetSubterm(var@Variable(option1,PositionName(l1),type1),Number(number)) -> {
+      GetSubterm(var@Variable[option=option1,astName=PositionName(l1),astType=type1],Number(number)) -> {
         buildExpGetSubterm(deep, var, type1, number);
         return;
       }
@@ -242,38 +242,38 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      GetHead(var@Ref(Variable(option1,PositionName(l1),type1))) -> {
+      GetHead(var@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1])) -> {
         buildExpGetHead(deep, type1, var);
         return;
       }
 
-      GetTail(var@Ref(Variable(option1,PositionName(l1),type1))) -> {
+      GetTail(var@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1])) -> {
         buildExpGetTail(deep, type1, var);
         return;
       }
 
-      GetSize(var@Variable(option1,PositionName(l1),type1)) -> {
+      GetSize(var@Variable[option=option1,astName=PositionName(l1),astType=type1]) -> {
         buildExpGetSize(deep, type1, var);
         return;
       }
 
-      GetElement( varName@Variable(option1,PositionName(l1),type1),
-                  varIndex@Variable(option2,PositionName(l2),type2)) -> {
+      GetElement( varName@Variable[option=option1,astName=PositionName(l1),astType=type1],
+                  varIndex@Variable[option=option2,astName=PositionName(l2),astType=type2]) -> {
         buildExpGetElement(deep, type1, varName, varIndex);
         return;
       }
 
       GetSliceList(Name(name),
-                   varBegin@Ref(Variable(option1,PositionName(l1),type1)),
-                   varEnd@Ref(Variable(option2,PositionName(l2),type2))) -> {
+                   varBegin@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1]),
+                   varEnd@Ref(Variable[option=option2,astName=PositionName(l2),astType=type2])) -> {
         
         buildExpGetSliceList(deep, name, varBegin, varEnd);
         return;
       }
 
       GetSliceArray(Name(name),
-                    varArray@Ref(Variable(option1,PositionName(l1),type1)),
-                    varBegin@Ref(Variable(option2,PositionName(l2),type2)),
+                    varArray@Ref(Variable[option=option1,astName=PositionName(l1),astType=type1]),
+                    varBegin@Ref(Variable[option=option2,astName=PositionName(l2),astType=type2]),
                     expEnd) -> {
         buildExpGetSliceArray(deep, name, varArray, varBegin, expEnd);
         return;
@@ -323,14 +323,14 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      Assign(var@(Variable|VariableStar)(option,name1,
-                          Type(ASTTomType(type),tlType@TLType[])),exp) -> {
+      Assign(var@(Variable|VariableStar)[option=option,astName=name1,
+                          astType=Type(ASTTomType(type),tlType@TLType[])],exp) -> {
         buildAssignVar(deep, var, option, type, tlType, exp);
         return;
       }
 
-			AssignMatchSubject(var@Variable(option,name1,
-																			Type(tomType@ASTTomType(type),tlType@TLType[])),exp) -> {
+			AssignMatchSubject(var@Variable[option=option,astName=name1,
+																			astType=Type(tomType@ASTTomType(type),tlType@TLType[])],exp) -> {
 				buildAssignVar(deep, var, option, type, tlType, exp);
 				return;
 			}
@@ -344,12 +344,12 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Let(var@(Variable|VariableStar)(list,name1,Type(ASTTomType(type),tlType@TLType[])),exp,body) -> {
+      Let(var@(Variable|VariableStar)[option=list,astName=name1,astType=Type(ASTTomType(type),tlType@TLType[])],exp,body) -> {
         buildLet(deep, var, list, type, tlType, exp, body);
         return;
       }
 
-      LetRef(var@(Variable|VariableStar)(list,name1,Type(ASTTomType(type),tlType@TLType[])),exp,body) -> {
+      LetRef(var@(Variable|VariableStar)[option=list,astName=name1,astType=Type(ASTTomType(type),tlType@TLType[])],exp,body) -> {
         buildLetRef(deep, var, list, type, tlType, exp, body);
         return;
       }
@@ -468,24 +468,24 @@ public abstract class TomAbstractGenerator extends TomBase {
         return ;
       }
 
-      GetFunctionSymbolDecl(Variable(option,Name(name),
-                                     Type(ASTTomType(type),tlType@TLType[])),
+      GetFunctionSymbolDecl(Variable[option=option,astName=Name(name),
+                                     astType=Type(ASTTomType(type),tlType@TLType[])],
                             tlCode, _) -> {
         buildGetFunctionSymbolDecl(deep, type, name, tlType, tlCode);
         return;
       }
       
-      GetSubtermDecl(Variable(option1,Name(name1),
-                              Type(ASTTomType(type1),tlType1@TLType[])),
-                     Variable(option2,Name(name2),
-                              Type(ASTTomType(type2),tlType2@TLType[])),
+      GetSubtermDecl(Variable[option=option1,astName=Name(name1),
+                              astType=Type(ASTTomType(type1),tlType1@TLType[])],
+                     Variable[option=option2,astName=Name(name2),
+                              astType=Type(ASTTomType(type2),tlType2@TLType[])],
                      tlCode, _) -> {
         buildGetSubtermDecl(deep, name1, name2, type1, tlType1, tlType2, tlCode);
         return;
       }
       
       IsFsymDecl(Name(tomName),
-		   Variable(option1,Name(name1), Type(ASTTomType(type1),tlType@TLType[])),
+		   Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),tlType@TLType[])],
                  tlCode@TL[], _) -> {
         buildIsFsymDecl(deep, tomName, name1, tlType, tlCode);
         return;
@@ -493,39 +493,39 @@ public abstract class TomAbstractGenerator extends TomBase {
  
       GetSlotDecl[astName=Name(tomName),
                   slotName=slotName,
-                  variable=Variable(option1,Name(name1), Type(ASTTomType(type1),tlType@TLType[])),
+                  variable=Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),tlType@TLType[])],
                   tlCode=tlCode@TL[]] -> {
         buildGetSlotDecl(deep, tomName, name1, tlType, tlCode, slotName);
         return;
       }
 
-      CompareFunctionSymbolDecl(Variable(option1,Name(name1), Type(ASTTomType(type1),_)),
-                                Variable(option2,Name(name2), Type(ASTTomType(type2),_)),
+      CompareFunctionSymbolDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),_)],
+                                Variable[option=option2,astName=Name(name2), astType=Type(ASTTomType(type2),_)],
                                 tlCode, _) -> {
         buildCompareFunctionSymbolDecl(deep, name1, name2, type1, type2, tlCode);
         return;
       }
 
-      TermsEqualDecl(Variable(option1,Name(name1), Type(ASTTomType(type1),_)),
-                     Variable(option2,Name(name2), Type(ASTTomType(type2),_)),
+      TermsEqualDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),_)],
+                     Variable[option=option2,astName=Name(name2), astType=Type(ASTTomType(type2),_)],
                      tlCode, _) -> {
         buildTermsEqualDecl(deep, name1, name2, type1, type2, tlCode);
         return;
       }
       
-      GetHeadDecl(Variable(option1,Name(name1), Type(ASTTomType(type),tlType@TLType[])),
+      GetHeadDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
                   tlCode@TL[], _) -> {
         buildGetHeadDecl(deep, name1, type, tlType, tlCode);
         return;
       }
 
-      GetTailDecl(Variable(option1,Name(name1), Type(ASTTomType(type),tlType@TLType[])),
+      GetTailDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
                   tlCode@TL[], _) -> {
         buildGetTailDecl(deep, name1, type, tlType, tlCode);
         return;
       }
 
-      IsEmptyDecl(Variable(option1,Name(name1), Type(ASTTomType(type),tlType@TLType[])),
+      IsEmptyDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
                   tlCode@TL[], _) -> {
         buildIsEmptyDecl(deep, name1, type, tlType, tlCode);
         return;
@@ -539,28 +539,28 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeAddList(Name(opname),
-                  Variable(option1,Name(name1), fullEltType@Type(ASTTomType(type1),tlType1@TLType[])),
-                  Variable(option2,Name(name2), fullListType@Type(ASTTomType(type2),tlType2@TLType[])),
+                  Variable[option=option1,astName=Name(name1), astType=fullEltType@Type(ASTTomType(type1),tlType1@TLType[])],
+                  Variable[option=option2,astName=Name(name2), astType=fullListType@Type(ASTTomType(type2),tlType2@TLType[])],
                   tlCode@TL[], _) -> {
         buildMakeAddList(deep, opname, name1, name2, tlType1, tlType2, fullEltType, fullListType, tlCode);
         return;
       }
 
-      GetElementDecl(Variable(option1,Name(name1), Type(ASTTomType(type1),tlType1@TLType[])),
-                     Variable(option2,Name(name2), Type(ASTTomType(type2),tlType2@TLType[])),
+      GetElementDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),tlType1@TLType[])],
+                     Variable[option=option2,astName=Name(name2), astType=Type(ASTTomType(type2),tlType2@TLType[])],
                      tlCode@TL[], _) -> {
         buildGetElementDecl(deep, name1, name2, type1, tlType1, tlCode);
         return;
       }
       
-      GetSizeDecl(Variable(option1,Name(name1), Type(ASTTomType(type),tlType@TLType[])),
+      GetSizeDecl(Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type),tlType@TLType[])],
                   tlCode@TL[], _) -> {
         buildGetSizeDecl(deep, name1, type, tlType, tlCode);
         return;
       }
       
       MakeEmptyArray(Name(opname),
-                     Variable(option1,Name(name1), Type(ASTTomType(type1),_)),
+                     Variable[option=option1,astName=Name(name1), astType=Type(ASTTomType(type1),_)],
                      tlCode@TL[], _) -> {
         TomType codomain = getSymbolCodomain(getSymbol(opname));
         buildMakeEmptyArray(deep, opname, codomain, name1, tlCode);
@@ -568,8 +568,8 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
 
       MakeAddArray(Name(opname),
-                   Variable(option1,Name(name1), fullEltType@Type(ASTTomType(type1),tlType1@TLType[])),
-                   Variable(option2,Name(name2), fullArrayType@Type(ASTTomType(type2),tlType2@TLType[])),
+                   Variable[option=option1,astName=Name(name1), astType=fullEltType@Type(ASTTomType(type1),tlType1@TLType[])],
+                   Variable[option=option2,astName=Name(name2), astType=fullArrayType@Type(ASTTomType(type2),tlType2@TLType[])],
                    tlCode@TL[], _) -> {
         buildMakeAddArray(deep, opname, name1, name2, tlType1, tlType2, fullEltType, fullArrayType, tlCode);
         return;
