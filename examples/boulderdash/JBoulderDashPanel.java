@@ -5,7 +5,8 @@ import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import adt.boulder.*;
+import adt.boulder.boulder.*;
+import adt.boulder.boulder.types.*;
 
 public class JBoulderDashPanel extends JPanel {
   private HashMap space, lastDrawnSpace;

@@ -2,17 +2,18 @@
 import aterm.*;
 import aterm.pure.*;
 import java.util.*;
-import adt.boulder.*;
+import adt.boulder.boulder.*;
+import adt.boulder.boulder.types.*;
 
 public class BoulderDashCore {
-  private BoulderFactory factory;
+  private Factory factory;
 
   private HashMap space;
   private HashSet marked;
   private HashMap newSpace;
   private static int SIZE = 20;
 
-  %include { adt/boulder/boulder.tom }
+  %include { boulder.tom }
  
   %op Bead beadRock(n:Bead, s:Bead, e:Bead, w:Bead) {
     fsym { }
@@ -66,16 +67,16 @@ public class BoulderDashCore {
   }
 
 
-  public BoulderDashCore(BoulderFactory factory) {
+  public BoulderDashCore(Factory factory) {
     this.factory = factory;
   }
 
-  public BoulderFactory getBoulderFactory() {
+  public Factory getBoulderFactory() {
     return factory;
   }
 
   public final static void main(String[] args) {
-    BoulderDashCore test = new BoulderDashCore(new BoulderFactory(new PureFactory()));
+    BoulderDashCore test = new BoulderDashCore(new Factory(new PureFactory()));
     test.run();
   }
   
