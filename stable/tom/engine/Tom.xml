@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<TOM>
+<tom>
 
-<PLUGINS>
+<plugins>
 
   <plugin
     name="Parser"
@@ -40,11 +40,11 @@
     description=""
     classpath="jtom.optimizer.TomOptimizer" />
 
-<!--  <plugin
+  <plugin
     name="Verifier"
     version=""
     description=""
-    classpath="jtom.verifier.TomVerifier" />-->
+    classpath="jtom.verifier.TomVerifier" />
 
   <plugin
     name="Backend"
@@ -52,9 +52,9 @@
     description=""
     classpath="jtom.backend.TomBackend" />
 
-</PLUGINS>
+</plugins>
 
-<OPTIONS>
+<options>
 
   <OptionBoolean
     name="help"
@@ -175,9 +175,9 @@
     valueS="."
     attrName="dir" />
 
-</OPTIONS>
+</options>
 
-<BACKEND>
+<backend>
 
   <generator
     classpath="jtom.backend.TomJavaGenerator"
@@ -195,6 +195,6 @@
     classpath="jtom.backend.TomEiffelGenerator"
     flag="eCode" />
 
-</BACKEND>
+</backend>
 
-</TOM>
+</tom>

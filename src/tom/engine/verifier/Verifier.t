@@ -44,6 +44,7 @@ public class Verifier extends TomBase {
 
 	%vas {
 		module il
+    imports
 			
 		public sorts 
 			Symbol Representation Variable Term Expr Instr 
@@ -82,7 +83,7 @@ public class Verifier extends TomBase {
 			endderiv                                -> DerivTree
 			derivrule(name:String,post:Deriv,pre:DerivTree,cond:Seq) -> DerivTree
 
-			seq()                                   -> Seq
+			seq                                     -> Seq
 			tau(term:String)                        -> Term
 			appSubsT(subs:SubstitutionList,t:Term)  -> Term
 			appSubsE(subs:SubstitutionList,e:Expr)  -> Expr
@@ -92,14 +93,14 @@ public class Verifier extends TomBase {
 			concExpr(Expr *)                        -> ExprList
 	}
 
-	protected jtom.verifier.verifier.il.Factory factory;
+	protected jtom.verifier.verifier.il.ilFactory factory;
 
 	public Verifier() {
 		super();
-		factory = new Factory(getTomSignatureFactory().getPureFactory());
+		factory = new ilFactory(getTomSignatureFactory().getPureFactory());
 	}
 
-	protected final Factory getIlFactory() {
+	protected final ilFactory getIlFactory() {
 		return factory;
 	}
 

@@ -33,7 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import jtom.*;
 import aterm.*;
-import jtom.adt.tomsignature.Factory;
+import jtom.adt.tomsignature.TomSignatureFactory;
 import jtom.adt.tomsignature.types.*;
 import jtom.exception.*;
 import jtom.tools.*;

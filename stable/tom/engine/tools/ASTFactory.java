@@ -33,13 +33,13 @@ import aterm.ATerm;
 
 public class ASTFactory {
 
-  private Factory tomSignatureFactory;
+  private TomSignatureFactory tomSignatureFactory;
   
-  public ASTFactory(Factory tomSignatureFactory) {
+  public ASTFactory(TomSignatureFactory tomSignatureFactory) {
     this.tomSignatureFactory = tomSignatureFactory;
   }
 
-  protected Factory tsf() {
+  protected TomSignatureFactory tsf() {
     return tomSignatureFactory;
   }
 
