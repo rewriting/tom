@@ -81,8 +81,7 @@ public class ApigenAntTask extends Task {
 			String cmd[] = split(str_command);
 			Main.main(cmd);
 		}
-		catch(Exception e)
-			{
+		catch(Exception e){
 				e.printStackTrace();
 				System.out.println("it does not work");
 				throw new BuildException("Adt generation failed");
@@ -97,13 +96,11 @@ public class ApigenAntTask extends Task {
 			adtFile = name;
     }
 
-	public void setPackage(String str_pack)
-    {
+	public void setPackage(String str_pack) {
 			str_package = str_pack;
     }
 
-	public void setOptions(String options)
-    {
+	public void setOptions(String options) {
 			this.options = options;
     }
 
