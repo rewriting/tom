@@ -63,7 +63,7 @@ public class Birds2 {
 	    if (t instanceof TNode) {
 		%match(TNode t) {
 		    <Species Scientific_Name=scname>#TEXT(data)</Species> -> {
-                      System.out.println("catched birds '" + data + "'");
+                      System.out.println("catched birds '" + `data + "'");
                     }
 
 		    <Species Scientific_Name=scname>#TEXT("Yellow-billed Loon.")</Species> -> {

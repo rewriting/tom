@@ -7,6 +7,8 @@
 	<!-- current version of TOM -->
 	<property name="version" value="2.0rc3"/>
 
+	<property name="optimize" value="off"/>
+
   <property environment="env" />
 	<property name="tom.home" value="${env.TOM_HOME}"/>
   <!-- some used directory location -->
@@ -142,7 +144,8 @@
          destdir="${examples.gen}"/>
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
+         destdir="${examples.gen}"
+				 optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
 				 <include name="${addressbook}/**/*.t"/>
     </tom>
@@ -161,7 +164,8 @@
          destdir="${examples.gen}"/>
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
-         destdir="${examples.gen}" 
+         destdir="${examples.gen}" 				 
+				 optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
       <include name="${apireach}/**/*.t"/>
     </tom>
@@ -181,7 +185,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${boulderdash}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -209,7 +214,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${builtin}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -225,7 +231,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
 				 <include name="${cell}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -247,7 +254,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${dom}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -267,12 +275,14 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom --lazyType">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom --lazyType">
       <include name="${expression}/**/Record.t"/>
     </tom>
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${expression}/**/RecordStrict.t"/>
     </tom>
     <!-- build java source -->
@@ -291,7 +301,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${gtree}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -305,7 +316,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${list}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -319,7 +331,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${lsystem}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -338,7 +351,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${nspk}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -357,7 +371,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${peano}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -376,7 +391,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${pnspk}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -395,7 +411,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${poly}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -409,7 +426,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${pqueens}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -423,7 +441,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
-         options="-O -I ${tom.home}/share/jtom">
+				 optimize="${optimize}"
+				 options="-I ${tom.home}/share/jtom">
       <include name="${prodrule}/**/*.t"/>
     </tom>
     <!-- build java source -->
@@ -441,12 +460,13 @@
          destdir="${examples.gen}"/>
 		<!-- build parser -->
 		<tomantlr target="${propp.dir}/SeqParser.g"
-					 outputdirectory="${examples.gen}/${propp}">
+							outputdirectory="${examples.gen}/${propp}">
 			<classpath refid="tom.classpath"/>
 		</tomantlr>
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
+				 optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
       <include name="${propp}/**/*.t"/>
     </tom>
@@ -475,6 +495,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
+				 optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
       <include name="${rbtree}/**/*.t"/>
     </tom>
@@ -494,6 +515,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
+				 optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
       <include name="${set}/**/*.t"/>
     </tom>
@@ -508,6 +530,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
+				 optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
       <include name="${vas}/**/*.t"/>
     </tom>
@@ -522,6 +545,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 
+				 optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
       <include name="${xml}/**/*.t"/>
     </tom>

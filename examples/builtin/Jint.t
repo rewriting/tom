@@ -44,7 +44,7 @@ public class Jint {
     %match(int t) {
       0 -> { return 1; }
       1 -> { return 1; }
-      n -> { return fib(n-1) + fib(n-2); }
+      n -> { return fib(`n-1) + fib(`n-2); }
     }
   }
 

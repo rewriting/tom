@@ -167,7 +167,7 @@ public class RecPropp extends Propp1 {
 
 			//{{{ axio
 			seq(concPred(_*,X,_*),concPred(_*,X,_*)) -> {
-				if (X != `EmptyP()) {
+				if (`X != `EmptyP()) {
 					Sequent prod = `PROOF();
 					rules_appl.add(`rappl(axiom,subject,concSequent()));
 					return `concSequent(prod);

@@ -266,7 +266,7 @@ public class Propp1 {
 
 					//{{{ axio
 					seq(concPred(_*,X,_*),concPred(_*,X,_*)) -> {
-						if (X != `EmptyP()) {
+						if (`X != `EmptyP()) {
 							match = true;
 							Sequent prod = `PROOF();
 							c.add(prod);
@@ -313,14 +313,14 @@ public class Propp1 {
 			%match(Trace item) {
 
 				rappl(r,s,concSequent()) -> {
-					if (s == goal) {
+					if (`s == goal) {
 						tmpsol = `concProof(rule(r,s,concProof()),tmpsol*);
 					}
 				}
 
 				rappl(r,s,concSequent(p)) -> {
-					if (s == goal) {
-						ListProof proof_p = buildProofTerm(p);
+					if (`s == goal) {
+						ListProof proof_p = buildProofTerm(`p);
 						while(!proof_p.isEmpty()) {
 							tmpsol = `concProof(rule(r,goal,concProof(proof_p.getHead())),tmpsol*);
 							proof_p = proof_p.getTail();
@@ -336,9 +336,9 @@ public class Propp1 {
 				}
 
 				rappl(r,s,concSequent(p,pp)) -> {
-					if (s == goal) {
-						ListProof proof_p = buildProofTerm(p);
-						ListProof proof_pp = buildProofTerm(pp);
+					if (`s == goal) {
+						ListProof proof_p = buildProofTerm(`p);
+						ListProof proof_pp = buildProofTerm(`pp);
             
 						while(!proof_p.isEmpty()) {
 							while(!proof_pp.isEmpty()) {
@@ -375,7 +375,7 @@ public class Propp1 {
 		String latex= "";
 		%match(Sequent s) {
 			seq(l1,l2) -> {
-				latex = listPredToTex(l1) + "\\vdash " + listPredToTex(l2);
+				latex = listPredToTex(`l1) + "\\vdash " + listPredToTex(`l2);
 			}
 		}
 		return latex;
@@ -386,8 +386,8 @@ public class Propp1 {
 	public String listPredToTex(ListPred l) {
 		%match(ListPred l) {
 			concPred()     -> {return "";}
-			concPred(a)    -> {return predToTex(a);}
-			concPred(h,t*) -> {return predToTex(h) + " , " + listPredToTex(t);}
+			concPred(a)    -> {return predToTex(`a);}
+			concPred(h,t*) -> {return predToTex(`h) + " , " + listPredToTex(`t);}
 		}
 		return "";
 	}
@@ -397,22 +397,22 @@ public class Propp1 {
 	public String predToTex(Pred pred) {
 		%match(Pred pred) {
 			neg(p) -> {
-				return "\\neg " + predToTex(p);
+				return "\\neg " + predToTex(`p);
 			}
 			equiv(p1,p2) -> {
-				return predToTex(p1) + "\\lra " + predToTex(p2);
+				return predToTex(`p1) + "\\lra " + predToTex(`p2);
 			}
 			impl(p1,p2) -> {
-				return predToTex(p1) + "\\to " + predToTex(p2);
+				return predToTex(`p1) + "\\to " + predToTex(`p2);
 			}
 			vee(p1,p2) -> {
-				return predToTex(p1) + "\\vee " + predToTex(p2);
+				return predToTex(`p1) + "\\vee " + predToTex(`p2);
 			}
 			wedge(p1,p2) -> {
-				return predToTex(p1) + "\\wedge " + predToTex(p2);
+				return predToTex(`p1) + "\\wedge " + predToTex(`p2);
 			}
 			mark(p) -> {
-				return "\\textcolor{red}{" + predToTex(p) + "}";
+				return "\\textcolor{red}{" + predToTex(`p) + "}";
 			}
 			_ -> {
 				return pred.toString();
@@ -429,20 +429,20 @@ public class Propp1 {
 		%match(Proof proof) {
 
 			rule(r,g,concProof()) -> {
-				latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{\\mbox{}}";
+				latex = "\\infer[\\"+`r.toString()+"]{" + seqToTex(`g) + "}{\\mbox{}}";
 			}
 
 			rule(r,g,concProof(p)) -> {
-				latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{" + proofToTex(p) + "}";
+				latex = "\\infer[\\"+`r.toString()+"]{" + seqToTex(`g) + "}{" + proofToTex(`p) + "}";
 			}
 
 			rule(r,g,concProof(p,pp)) -> {
-				latex = "\\infer[\\"+r.toString()+"]{" + seqToTex(g) + "}{" + proofToTex(p) + " & " + proofToTex(pp) + "}";
+				latex = "\\infer[\\"+`r.toString()+"]{" + seqToTex(`g) + "}{" + proofToTex(`p) + " & " + proofToTex(`pp) + "}";
 			}
 
 			// this is not a valid proof
 			hyp(s) -> {
-				latex = "{\\bf " + seqToTex(s) + "}";
+				latex = "{\\bf " + seqToTex(`s) + "}";
 			}
 
 		}
@@ -530,7 +530,7 @@ public class Propp1 {
 	public int comparePair(Pair p1,Pair p2) {
 		%match(Pair p1,Pair p2) {
 			pair(i,_),pair(j,_) -> {
-				if (i < j) { return -1;}
+				if `(i < j) { return -1;}
 				else {return 1;}
 			}
 		}

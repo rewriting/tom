@@ -130,8 +130,8 @@ public class BoulderDashCore {
       Bead b = (Bead) it.next();
       %match(Bead b) {
         bead(pos(x,y),_) -> {
-          if(x>xmax) xmax = x;
-          if(y>ymax) ymax = y;
+          if(`x>xmax) xmax = `x;
+          if(`y>ymax) ymax = `y;
         }
       }
     }
@@ -142,7 +142,7 @@ public class BoulderDashCore {
       Bead b = (Bead) it.next();
       %match(Bead b) {
         bead(pos(x,y),value) -> {
-          array[x][y] = value;
+          array[`x][`y] = `value;
         }
       }
     }
@@ -211,24 +211,24 @@ public class BoulderDashCore {
       beadRock[s=s@beadRock[e=empty()],e=empty()] -> {
         Bead newBead = `bead(getEastPosition(getSouthPosition(b.getPos())),b.getValue());
         putBead(newSpace,newBead);
-        putBead(newSpace,s);
+        putBead(newSpace,`s);
         marked.add(b);
-        marked.add(s);
+        marked.add(`s);
         return true;
       }
 
       beadRock[s=s@beadRock[w=empty()],w=empty()] -> {
         Bead newBead = `bead(getWestPosition(getSouthPosition(b.getPos())),b.getValue());
         putBead(newSpace,newBead);
-        putBead(newSpace,s);
+        putBead(newSpace,`s);
         marked.add(b);
-        marked.add(s);
+        marked.add(`s);
         return true;
       }
 
 
       bead[pos=p] -> {
-        newSpace.put(p,b);
+        newSpace.put(`p,b);
         return false;
       }
     }

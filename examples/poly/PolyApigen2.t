@@ -70,10 +70,10 @@ public class PolyApigen2 {
     block:{
       %match(Expression t) {
         exp(zero)    -> { res = `one(); break block; }
-        plus(zero,x) -> { res = simplify(x); break block; }
-        plus(x,zero) -> { res = simplify(x); break block; }
-        mult(one,x)  -> { res = simplify(x); break block; }
-        mult(x,one)  -> { res = simplify(x); break block; }
+        plus(zero,x) -> { res = simplify(`x); break block; }
+        plus(x,zero) -> { res = simplify(`x); break block; }
+        mult(one,x)  -> { res = simplify(`x); break block; }
+        mult(x,one)  -> { res = simplify(`x); break block; }
         mult(zero,x) -> { res = `zero(); break block; }
         mult(x,zero) -> { res = `zero(); break block; }
         plus(x,y)    -> { res = `plus(simplify(x),simplify(y)); break block; }

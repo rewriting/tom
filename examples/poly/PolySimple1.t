@@ -75,9 +75,11 @@ public class PolySimple1 {
   }
   %op term plus(term,term) {
     fsym { fplus }
+		make(t1,t2) { plus(t1,t2)}
   }   
   %op term mult(term, term) {
-    fsym { fmult }
+    fsym        { fmult }
+		make(t1,t2) { mult(t1,t2)}
   }
 
     
@@ -109,11 +111,11 @@ public class PolySimple1 {
     %match(term poly) {
       a()             -> { return zero(); }
       X()             -> { return one(); }
-      plus(arg1,arg2) -> { return plus(differentiate(arg1),differentiate(arg2)); }
+      plus(arg1,arg2) -> { return plus(differentiate(`arg1),differentiate(`arg2)); }
       mult(arg1,arg2) -> { 
-        ATerm res1 = mult(arg1, differentiate(arg2));
-        ATerm res2 = mult(arg2, differentiate(arg1));
-        return plus(res1,res2);
+        ATerm res1 = `mult(arg1, differentiate(arg2));
+        ATerm res2 = `mult(arg2, differentiate(arg1));
+        return `plus(res1,res2);
       }
       _ -> { System.out.println("No match for: "+poly); }
 	    

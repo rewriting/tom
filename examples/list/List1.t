@@ -81,8 +81,8 @@ public class List1 {
   public ATermList swapSort(ATermList l) {
     %match(TomList l) {
       conc(X1*,x,X2*,y,X3*) -> {
-        String xname = x.getName();
-        String yname = y.getName();
+        String xname = `x.getName();
+        String yname = `y.getName();
         if(xname.compareTo(yname) > 0) {
           return `swapSort(conc(X1*,y,X2*,x,X3*));
         }

@@ -68,7 +68,7 @@ public class TestAddressBook extends TestCase {
       Date d = p.getBirthdate();
       %match(Person p, Date d) {
         person(firstname, _ ,date(year,month1,day1)), date(_,month2,day2) -> {
-           assertTrue((month1==month2) && (day1==day2));
+           assertTrue((`month1==`month2) && (`day1==`day2));
          }  			  
       }
     }

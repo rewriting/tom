@@ -65,8 +65,8 @@ public class Action {
          comp@<Comp Label="busy" Type=type Index=i />
          </Action></Actions>
          -> {
-           System.out.println("Action 1 Localisee ! " + type + "  " + i);
-           System.out.println("Comp: " + comp);
+           System.out.println("Action 1 Localisee ! " + `type + "  " + `i);
+           System.out.println("Comp: " + `comp);
          }
       
       _ -> {
@@ -84,7 +84,7 @@ public class Action {
         %match(TNode a,TNode a) {
           <Action><Comp Index=i2 Label=l Type="Wait"/></Action>,
           <Action><Comp Index=i1 Label=l Type="Send"/></Action> -> {
-            System.out.println("Synchronisation sur le label "+l +" entre "+i1+"(!) et "+i2+"(?)");				
+            System.out.println("Synchronisation sur le label "+`l +" entre "+`i1+"(!) et "+`i2+"(?)");				
           }	
         }
       }

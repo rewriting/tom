@@ -69,7 +69,7 @@ public class PolyAdvanced3 {
         public ATerm apply(ATerm t) {
           %match(term t) {
             plus(zero,x) | plus(x,zero) |
-            mult(one,x)  | mult(x,one)  -> { return x; }
+            mult(one,x)  | mult(x,one)  -> { return `x; }
             mult(zero,x) | mult(x,zero) -> { return `zero(); }
             _ -> { return traversal.genericTraversal(t,this); }
           }

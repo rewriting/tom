@@ -63,13 +63,13 @@ public class Tree1 {
     %match(Tree t) {
       emptyTree() -> { return false; }
       node(_,a,y,b) -> {
-        int cmp = comparator.compare(x,y);
+        int cmp = comparator.compare(`x,`y);
         if(cmp < 0) {
-          return member(a,x);
+          return `member(a,x);
         } else if(cmp == 0) {
           return true;
         } else {
-          return member(b,x);
+          return `member(b,x);
         }
       }
     }
@@ -79,7 +79,7 @@ public class Tree1 {
   public int card(Tree t) {
     %match(Tree t) {
       emptyTree() -> { return 0; }
-      node(color,a,y,b) -> { return 1 + card(a) + card(b); }
+      node(color,a,y,b) -> { return 1 + card(`a) + card(`b); }
     }
     return 0;
   }
@@ -95,13 +95,13 @@ public class Tree1 {
       }
 
       node(color,a,y,b) -> {
-        int cmp = comparator.compare(x,y);
+        int cmp = comparator.compare(`x,`y);
         if(cmp < 0 ) {
-          return balance(color,ins(a,x),y,b);
+          return `balance(color,ins(a,x),y,b);
         } else if(cmp == 0) {
           return t;
         } else {
-          return balance(color,a,y,ins(b,x));
+          return `balance(color,a,y,ins(b,x));
         }
       }
     }

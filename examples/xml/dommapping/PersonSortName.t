@@ -64,7 +64,7 @@ public class PersonSortName {
   private Node sort(Node subject) {
     %match(TNode subject) {
      <Persons>(X1*,p1,X2*,p2,X3*)</Persons> -> {
-        if(compare(p1,p2) > 0) {
+        if(`compare(p1,p2) > 0) {
           return sort(`xml(dom,<Persons>X1* p2 X2* p1 X3*</Persons>));
         }	
       }
@@ -86,7 +86,7 @@ public class PersonSortName {
     %match(TNode t1, TNode t2) {
       <Person Age=a1><FirstName>#TEXT(n1)</FirstName></Person>,
       <Person Age=a2><FirstName>#TEXT(n2)</FirstName></Person>
-      -> { return n1.compareTo(n2); }
+      -> { return `n1.compareTo(`n2); }
     }
     return 0;
   }

@@ -125,14 +125,14 @@ public class Set1 {
     %match(JGSet t) {
       emptyJGSet()    -> { return 0; }
       singleton(x) -> { return 1; }
-      branch(l, r) -> {return card(l) + card(r);}
+      branch(l, r) -> {return card(`l) + card(`r);}
     }
     return 0;
   }
 
   public void topRepartition(JGSet t) {
     %match(JGSet t) {
-      branch(l,r) -> { System.out.println("Left branch: "+card(l)+"\tright branch: "+card(r));return;}
+      branch(l,r) -> { System.out.println("Left branch: "+card(`l)+"\tright branch: "+card(`r));return;}
       _ ->  {System.out.println("topRepartition: No a branch");}
     }
   }
@@ -143,13 +143,13 @@ public class Set1 {
       emptyJGSet() -> {
         return null;
       }
-      singleton(x) -> {return x;}
+      singleton(x) -> {return `x;}
       branch(l,r) -> {
-        ATerm left = getHead(l);
+        ATerm left = getHead(`l);
         if(left != null) {
           return left;
         }
-        return getHead(r);
+        return getHead(`r);
       }
     }
     return null;
@@ -186,9 +186,9 @@ public class Set1 {
           %match(JGSet t) {
             emptyJGSet() -> {return t;}
             singleton(x) -> {return t;}
-            branch(emptyJGSet(), s@singleton(x)) -> {return s;}
-            branch(s@singleton(x), emptyJGSet()) -> {return s;}
-            branch(e@emptyJGSet(), emptyJGSet()) -> {return e;}
+            branch(emptyJGSet(), s@singleton(x)) -> {return `s;}
+            branch(s@singleton(x), emptyJGSet()) -> {return `s;}
+            branch(e@emptyJGSet(), emptyJGSet()) -> {return `e;}
             branch(l1, l2) -> {return `branch(reworkJGSet(l1), reworkJGSet(l2));}
             _ -> { return traversal.genericTraversal(t,this); }
           }
@@ -213,11 +213,11 @@ public class Set1 {
       }
 
       singleton(y), x -> {
-        return override(y, x, level);
+        return override(`y, `x, level);
       }
 
       x, singleton(y) -> {
-        return underride(y, x, level);
+        return underride(`y, `x, level);
       }
 
       branch(l1, r1), branch(l2, r2) -> {
@@ -237,8 +237,8 @@ public class Set1 {
       
       s@singleton(y), x |
       x, s@singleton(y) -> {
-        if (member(y, x, level)) {
-          return s;
+        if (`member(y, x, level)) {
+          return `s;
         } else {
           return `emptyJGSet();
         }
@@ -260,11 +260,11 @@ public class Set1 {
       }
       
       singleton(y), x -> {
-        return remove(y, x, level);
+        return `remove(y, x, level);
       }
 
       x, singleton(y) -> {
-        if (member(y, x)) {
+        if (`member(y, x)) {
           return m2;
         } else {
           return `emptyJGSet();
@@ -284,18 +284,18 @@ public class Set1 {
       emptyJGSet()     -> {return t;}
 
       singleton(x)   -> {
-        if (x == elt) {return `emptyJGSet();}
+        if (`x == elt) {return `emptyJGSet();}
         else {return t;}
       }
 
       branch(l, r) -> {
         JGSet l1 = null, r1=null;
         if( isBitZero(elt, level) ) {
-          l1 = remove(elt, l, level+1);
-          r1 = r;
+          l1 = `remove(elt, l, level+1);
+          r1 = `r;
         } else {
-          l1 = l;
-          r1 = remove(elt, r, level+1);
+          l1 = `l;
+          r1 = `remove(elt, r, level+1);
         }
         %match(JGSet l1, JGSet r1) {
           emptyJGSet(), singleton(x) -> {return r1;}
@@ -312,17 +312,17 @@ public class Set1 {
       emptyJGSet() -> {return false;}
       
       singleton(x) -> {
-        if(x == elt) return true;
+        if(`x == elt) return true;
       }
       
       branch(l, r) -> {
         if(level == depth) {
-          return (member(elt, l, level) || member(elt, r, level));
+          return (`member(elt, l, level) || `member(elt, r, level));
         }
         if( isBitZero(elt, level)) {
-          return member(elt, l, level+1);
+          return `member(elt, l, level+1);
         } else {
-          return member(elt, r, level+1);
+          return `member(elt, r, level+1);
         }
       }
     }
@@ -335,7 +335,7 @@ public class Set1 {
       emptyJGSet()      -> {return `singleton(elt);}
 
       singleton(x)   -> {
-        if(x == elt) {  return `singleton(elt);}
+        if(`x == elt) {  return `singleton(elt);}
         else if( level >= depth ) {
           System.out.println("Collision!!!!!!!!");
           collisions++;
@@ -343,10 +343,10 @@ public class Set1 {
           return `branch(t, singleton(elt));
           
         }
-        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(override(elt, t, lev), emptyJGSet);}
-        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptyJGSet, override(elt, t, lev));}
-        else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(singleton(elt), t);}
-        else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, singleton(elt));}
+        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(override(elt, t, lev), emptyJGSet);}
+        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptyJGSet, override(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitOne(`x, level) ) { return `branch(singleton(elt), t);}
+        else if ( isBitOne(elt, level)  && isBitZero(`x, level) ){ return `branch(t, singleton(elt));}
       }
       
       branch(l, r) -> {
@@ -372,11 +372,11 @@ public class Set1 {
       emptyJGSet()     -> {return `singleton(elt);}
 
       singleton(x)   -> {
-        if(x == elt) {  return t;}
-        else if ( isBitZero(elt, level) && isBitZero(x, level) )  { return `branch(underride(elt, t, lev), emptyJGSet);}
-        else if ( isBitOne(elt, level)  && isBitOne(x, level) )   { return `branch(emptyJGSet, underride(elt, t, lev));}
-        else if ( isBitZero(elt, level) && isBitOne(x, level) ) { return `branch(singleton(elt), t);}
-        else if ( isBitOne(elt, level)  && isBitZero(x, level) ){ return `branch(t, singleton(elt));}
+        if(`x == elt) {  return t;}
+        else if ( isBitZero(elt, level) && isBitZero(`x, level) )  { return `branch(underride(elt, t, lev), emptyJGSet);}
+        else if ( isBitOne(elt, level)  && isBitOne(`x, level) )   { return `branch(emptyJGSet, underride(elt, t, lev));}
+        else if ( isBitZero(elt, level) && isBitOne(`x, level) ) { return `branch(singleton(elt), t);}
+        else if ( isBitOne(elt, level)  && isBitZero(`x, level) ){ return `branch(t, singleton(elt));}
       }
 
       branch(l, r) -> {

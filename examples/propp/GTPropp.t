@@ -191,7 +191,7 @@ public class GTPropp extends Propp1 {
 
 					//{{{ axio
 					hyp(seq(concPred(L1*,X,L2*),concPred(L3*,X,L4*))) -> {
-						if (X != `EmptyP()) {
+						if (`X != `EmptyP()) {
 							return `rule(
 								axiom,
 								seq(concPred(L1*,mark(X),L2*),concPred(L3*,mark(X),L4*)),
