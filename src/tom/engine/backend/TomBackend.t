@@ -60,7 +60,7 @@ public class TomBackend extends TomBase implements TomPlugin
 		// (doesn't seem to be used anywhere...)
 		
 		writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
-
+    
 		OutputCode output = new OutputCode(writer, defaultDeep);
 
 		while(!(list.isEmpty()))

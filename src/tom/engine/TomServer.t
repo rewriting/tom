@@ -95,43 +95,45 @@ public class TomServer implements TomPluginOptions
 	    }
 	else
 	    {
-		instance.clear();
-		return instance;
-		//throw new TomRuntimeException(TomMessage.getString("TwoTomServerInstance"));
+        instance.clear();
+        return instance;
+        //throw new TomRuntimeException(TomMessage.getString("TwoTomServerInstance"));
 	    }
-    }
+  }
 
-    public static void clear() {
-	instance.instances = new Vector();
-	instance.services = new Vector();
-    }
+  public static void clear() {
+     instance.instances = new Vector();
+     instance.services = new Vector();
+     SymbolTable symbolTable = new SymbolTable(instance.astFactory);
+     instance.environment = new TomEnvironment(symbolTable);
+  }
 
-    public static int exec(String args[])
-    {
-	TomServer server = TomServer.create();
-	return server.run(args);
-    }
+  public static int exec(String args[])
+  {
+    TomServer server = TomServer.create();
+    return server.run(args);
+  }
 
-    public int run(String[] argumentList)
-    {
-	String xmlConfigurationFile = "./jtom/Tom.xml"; // default configuration file
+  public int run(String[] argumentList)
+  {
+    String xmlConfigurationFile = "./jtom/Tom.xml"; // default configuration file
 
-	for(int i = 0; i < argumentList.length; i++)
+    for(int i = 0; i < argumentList.length; i++)
 	    {
-		if(argumentList[i].equals("-X")) // tests if argumentList redefines the configuration file
-		    {
-			if (i+1 >= argumentList.length) // argument expected but no more input
-			    {
-				System.out.println("Option -X requires a string attribute.");
-			    }   
-			else
-			    {
-				String fileName = argumentList[i+1];
-				if( fileName.endsWith(".xml") )
-				    xmlConfigurationFile = fileName;
-				else throw new TomRuntimeException("The alternate configuration file must be a XML file.");
-			    }
-		    }
+        if(argumentList[i].equals("-X")) // tests if argumentList redefines the configuration file
+          {
+            if (i+1 >= argumentList.length) // argument expected but no more input
+              {
+                System.out.println("Option -X requires a string attribute.");
+              }   
+            else
+              {
+                String fileName = argumentList[i+1];
+                if( fileName.endsWith(".xml") )
+                  xmlConfigurationFile = fileName;
+                else throw new TomRuntimeException("The alternate configuration file must be a XML file.");
+              }
+          }
 	    }
 
 	if(! (new File(xmlConfigurationFile)).exists() )
