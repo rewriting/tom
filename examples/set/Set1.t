@@ -2,8 +2,8 @@ import java.util.*;
 
 import aterm.*;
 import aterm.pure.*;
-import adt.jgset.*;
-import adt.jgset.types.*;
+import Set.jgset.*;
+import Set.jgset.types.*;
 
 import jtom.runtime.GenericTraversal;
 import jtom.runtime.Replace1;

@@ -1,7 +1,7 @@
 import aterm.*;
 import aterm.pure.PureFactory;
-import adt.peano.peano.*;
-import adt.peano.peano.types.*;
+import Peano.peano.*;
+import Peano.peano.types.*;
 
 public class PeanoApigen1 {
 

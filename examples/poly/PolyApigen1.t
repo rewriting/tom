@@ -1,7 +1,7 @@
 import aterm.*;
 import aterm.pure.*;
-import adt.poly.expression.*;
-import adt.poly.expression.types.*;
+import Poly.expression.*;
+import Poly.expression.types.*;
 
 public class PolyApigen1 {
   private Factory factory;

@@ -1,8 +1,8 @@
 import aterm.*;
 import aterm.pure.*;
 import jtom.runtime.*;
-import adt.gtree.term.*;
-import adt.gtree.term.types.*;
+import GTree.term.*;
+import GTree.term.types.*;
 
 public class GTree2 {
 

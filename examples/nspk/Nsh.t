@@ -2,8 +2,8 @@ import aterm.*;
 import aterm.pure.*;
 import java.util.*;
 import jtom.runtime.*;
-import adt.nsh.term.*;
-import adt.nsh.term.types.*;
+import Nspk.term.*;
+import Nspk.term.types.*;
 
 public class Nsh {
   private static boolean authVerif = true;

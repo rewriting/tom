@@ -2,8 +2,8 @@ import java.util.*;
 
 import aterm.*;
 import aterm.pure.*;
-import adt.rbtree.tree.*;
-import adt.rbtree.tree.types.*;
+import RBTree.tree.*;
+import RBTree.tree.types.*;
 
 public class Tree1 {
 

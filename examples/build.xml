@@ -70,21 +70,28 @@
   <property name="xml" value="Xml"/>
   <property name="xml.dir" location="${examples.dir}/${xml}" />
 
-  <!-- Define classpath for building stable and source  -->
-  <path id="tom.classpath">
-    <fileset dir="${env.TOM_HOME}/lib">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
+  <target name="testdistexist">
+    <available file="${env.TOM_HOME}/lib" type="dir" property="distexist"/>
+  </target>
+
+									
+  <target name="init">	  
+    <!-- Define classpath for building stable and source  -->
+    <path id="tom.classpath">
+      <fileset dir="${env.TOM_HOME}/lib">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
   
-  <!-- tasks for building -->
-  <taskdef name="adt" 
+    <!-- tasks for building -->
+    <taskdef name="adt" 
            classname="jtom.tools.ant.ApigenTask"
            classpathref="tom.classpath"/>
-  <taskdef name="tom" 
+    <taskdef name="tom" 
            classname="jtom.tools.ant.TomTask"
            classpathref="tom.classpath"/>
-
+  </target>
+  
   <target name="prepare.examples">
     <mkdir dir="${examples.dist}"/>
   </target>
@@ -108,7 +115,7 @@
     </delete>
   </target>
 
-  <target name="addressbook">
+  <target name="addressbook" depends="init">
     <!-- build adt -->
     <adt file="${addressbook.dir}/data.adt" 
          factory="data" 
@@ -128,7 +135,7 @@
     </javac>
   </target>
 
-  <target name="apireach">
+  <target name="apireach" depends="init">
     <!-- build adt -->
     <adt file="${apireach.dir}/reach.adt" 
          factory="reach" 
@@ -147,7 +154,7 @@
     </javac>
   </target>
 
-  <target name="boulderdash">
+  <target name="boulderdash" depends="init">
     <!-- build adt -->
     <adt file="${boulderdash.dir}/boulder.adt" 
          factory="boulder" 
@@ -166,12 +173,12 @@
     </javac>
   </target>
 
-  <target name="builtin">
+  <target name="builtin" depends="init">
     <!-- build adt -->
     <adt file="${builtin.dir}/term.adt" 
          factory="term" 
-         package="adt.builtin" 
-         destdir="${builtin.dir}"/>
+         package="Builtin" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${builtin.dir}" 
          destdir="${builtin.dir}" 
@@ -185,7 +192,7 @@
     </javac>
   </target>
   
-  <target name="dom">
+  <target name="dom" depends="init">
     <!-- build tom -->
     <tom srcdir="${dom.dir}" 
          destdir="${dom.dir}" 
@@ -199,7 +206,7 @@
     </javac>
   </target>
   
-  <target name="expression">
+  <target name="expression" depends="init">
     <!-- build tom -->
     <tom srcdir="${expression.dir}" 
          destdir="${expression.dir}" 
@@ -218,12 +225,12 @@
     </javac>
   </target>
 
-  <target name="gtree">
+  <target name="gtree" depends="init">
     <!-- build adt -->
     <adt file="${gtree.dir}/term.adt" 
          factory="term" 
-         package="adt.gtree" 
-         destdir="${gtree.dir}"/>
+         package="GTree" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${gtree.dir}" 
          destdir="${gtree.dir}" 
@@ -237,7 +244,7 @@
     </javac>
   </target>
 
-  <target name="list">
+  <target name="list" depends="init">
     <!-- build tom -->
     <tom srcdir="${list.dir}" 
          destdir="${list.dir}" 
@@ -251,7 +258,7 @@
     </javac>
   </target>
 
-  <target name="lsystem">
+  <target name="lsystem" depends="init">
     <!-- build tom -->
     <tom srcdir="${lsystem.dir}" 
          destdir="${lsystem.dir}" 
@@ -265,12 +272,12 @@
     </javac>
   </target>
 
-  <target name="nspk">
+  <target name="nspk" depends="init">
     <!-- build adt -->
     <adt file="${nspk.dir}/term.adt" 
          factory="term" 
-         package="adt.nsh" 
-         destdir="${nspk.dir}"/>
+         package="Nspk" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${nspk.dir}" 
          destdir="${nspk.dir}" 
@@ -284,12 +291,12 @@
     </javac>
   </target>
   
-  <target name="peano">
+  <target name="peano" depends="init">
     <!-- build adt -->
     <adt file="${peano.dir}/peano.adt" 
          factory="peano" 
-         package="adt.peano" 
-         destdir="${peano.dir}"/>
+         package="Peano" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${peano.dir}" 
          destdir="${peano.dir}" 
@@ -303,12 +310,12 @@
     </javac>
   </target>
 
-  <target name="pnspk">
+  <target name="pnspk" depends="init">
     <!-- build adt -->
     <adt file="${pnspk.dir}/term.adt" 
          factory="term" 
-         package="adt.pnsh" 
-         destdir="${pnspk.dir}"/>
+         package="PNspk" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${pnspk.dir}" 
          destdir="${pnspk.dir}" 
@@ -322,12 +329,12 @@
     </javac>
   </target>
   
-  <target name="poly">
+  <target name="poly" depends="init">
     <!-- build adt -->
     <adt file="${poly.dir}/expression.adt" 
          factory="expression" 
-         package="adt.poly" 
-         destdir="${poly.dir}"/>
+         package="Poly" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${poly.dir}" 
          destdir="${poly.dir}" 
@@ -341,7 +348,7 @@
     </javac>
   </target>
 
-  <target name="pqueens">
+  <target name="pqueens" depends="init">
     <!-- build tom -->
     <tom srcdir="${pqueens.dir}" 
          destdir="${pqueens.dir}" 
@@ -355,12 +362,12 @@
     </javac>
   </target>
 
-  <target name="rbtree">
+  <target name="rbtree" depends="init">
     <!-- build adt -->
     <adt file="${rbtree.dir}/tree.adt" 
          factory="tree" 
-         package="adt.rbtree" 
-         destdir="${rbtree.dir}"/>
+         package="RBTree" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${rbtree.dir}" 
          destdir="${rbtree.dir}" 
@@ -374,12 +381,12 @@
     </javac>
   </target>
 
-  <target name="set">
+  <target name="set" depends="init">
     <!-- build adt -->
     <adt file="${set.dir}/jgset.adt" 
          factory="jgset" 
-         package="adt" 
-         destdir="${set.dir}"/>
+         package="Set" 
+         destdir="${examples.dir}"/>
     <!-- build tom -->
     <tom srcdir="${set.dir}" 
          destdir="${set.dir}" 
@@ -393,7 +400,7 @@
     </javac>
   </target>
 
-  <target name="vas">
+  <target name="vas" depends="init">
     <!-- build tom -->
     <tom srcdir="${vas.dir}" 
          destdir="${vas.dir}" 
@@ -407,7 +414,7 @@
     </javac>
   </target>
 
-  <target name="xml">
+  <target name="xml" depends="init">
     <!-- build tom -->
     <tom srcdir="${xml.dir}" 
          destdir="${xml.dir}" 
@@ -426,7 +433,7 @@
           description="Builds the examples (at least some)"
           depends="addressbook, apireach, boulderdash, builtin, dom,
 					expression, gtree, list, nspk, peano, pnspk, poly, pqueens,
-          rbtree, set, vas, xml">
+          rbtree, set, xml">
   </target>
   
   <target name="dist.examples" description="Prepare a distribution of examples" depends="prepare.examples">
