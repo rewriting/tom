@@ -1,4 +1,11 @@
-since version 1.0:
+since version 1.1:
+
+version 1.1:
+        - new debbuging facilities:
+          Tom source and the generated code are now synchronized
+	- backquote support for typelist and typearray
+	  make_add renamed into make_insert (for oplist)
+	  make_add renamed into make_append (for oparray)
         - non-linear patterns supported
 	- builtin-integers supported
 	- tutorial
