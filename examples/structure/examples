@@ -55,10 +55,16 @@
 [[(a,b),-a,-b],[(c,[(a,b),-a]),-b,-c]]
 
 # more big example, that does not pass (but the three parts pass separately)
-# [ [(a,b),-a,-b] , [(c,[(a,b),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
+ [ [(a,b),-a,-b] , [(c,[(a,b),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
 
 # a hard example
-# [a,d,(-a,-c),(-b,-d),(b,c,[-a,([c,-c],[-b,(a,b)])])]
+ [a,d,(-a,-c),(-b,-d),(b,c,[-a,([c,-c],[-b,(a,b)])])]
+ [a1,d,(-a1,-c1),(-b1,-d),(b1,c1,[-a2,([c2,-c2],[-b2,(a2,b2)])])]
 
 # a very hard example
-# [ [(a,b),-a,-b] , [(c,[(a,b, [a,d,(-a,-c),(-b,-d),(b,c,[-a,([c,-c],[-b,(a,b)])])] ),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
+ [ [(a,b),-a,-b] , [(c,[(a,b, [a,d,(-a,-c),(-b,-d),(b,c,[-a,([c,-c],[-b,(a,b)])])] ),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
+
+# a very very hard example
+ [ [(a,b),-a,-b] , [(c,[(a,b, [a,d,(-a,-c),(-b,-d),(b,
+ [ [(a,b),-a,-b] , [(c,[(a,b, [a,d,(-a,-c),(-b,-d),(b,c,[-a,([c,-c],[-b,(a,b)])])] ),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ],
+c,[-a,([c,-c],[-b,(a,b)])])] ),-a]),-b,-c] , [(c,[(a,[d,b]),-a]),-d,-b,-c] ]
