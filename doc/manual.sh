@@ -26,7 +26,7 @@ if [ $# -ge 1 ]; then
 	hevea -o manual1.html manual.hva manual.tex
 	hacha -o manual.html manual1.html
 	latex manual.tex
-	dvips manual.dvi >! manual.ps
+	dvips manual.dvi -o manual.ps
         ;;
     -*)
 	usage
@@ -38,5 +38,5 @@ else
     hevea -o manual1.html manual.hva manual.tex
     hacha -o manual.html manual1.html
     latex manual.tex
-    dvips manual.dvi >! manual.ps
+    dvips manual.dvi -o manual.ps
 fi
