@@ -1,0 +1,277 @@
+(* ../zvtov/zvtov tom5.zv *)
+
+Require Import zenon8.
+
+Parameter T S : Set.
+
+Parameter plus : T -> T -> T.
+Parameter fib suc : T -> T.
+Parameter zero : T.
+Parameter symb : T -> S.
+Parameter _1 _2 : T -> T.
+Parameter plus_ fib_ suc_ zero_ : S.
+
+Parameter symb_suc :
+  forall t : T, ((symb t) = suc_) <-> exists x : T, (t = (suc x)).
+
+Parameter symb_fib :
+  forall t : T, ((symb t) = fib_) <-> exists x : T, (t = (fib x)).
+
+Parameter symb_zero :
+  forall t : T, ((symb t) = zero_) <-> (t = zero).
+
+Parameter st1_suc :
+  forall x : T, ((_1 (suc x)) = x).
+
+Parameter st1_fib :
+  forall x : T, ((_1 (fib x)) = x).
+
+Parameter symb_plus :
+  forall t : T, ((symb t) = plus_) <-> exists x : T, exists y : T, (t = (plus x y)).
+
+Parameter st1_plus :
+  forall x : T, forall y : T, ((_1 (plus x y)) = x).
+
+Parameter st2_plus :
+  forall x : T, forall y : T, ((_2 (plus x y)) = y).
+
+Parameter diff_suc_zero : forall x : T, ~((suc x) = zero).
+Parameter diff_suc_fib : forall x : T, forall y : T, ~((suc x) = (fib y)).
+Parameter diff_fib_zero : forall x : T, ~((fib x) = zero).
+
+Parameter diff_plus_suc : forall x : T, forall y : T, forall z : T,
+  ~((suc x) = plus y z).
+Parameter diff_plus_fib : forall x : T, forall y : T, forall z : T,
+  ~((fib x) = plus y z).
+Parameter diff_plus_zero : forall x : T, forall y : T, ~((plus x y) = zero).
+
+%%begin-auto-proof
+%%location: []
+%%name: right
+%%statement
+(*
+ forall t : T,
+      (forall x : T, ~((plus x zero) = t))
+   /\ (forall x : T, forall y : T, ~((plus x (suc y)) = t))
+   /\ (~((fib zero) = t))
+   /\ (~((fib (suc zero)) = t))
+   /\ (exists x : T, ((fib (suc x)) = t))
+  <->
+   ((symb t) = fib_)
+   /\ ((symb (_1 t)) = suc_)
+   /\ ~((symb (_1 (_1 t))) = zero_)
+*)
+
+ forall t : T,
+   ((symb t) = fib_)
+   /\ ((symb (_1 t)) = suc_)
+   /\ ~((symb (_1 (_1 t))) = zero_)
+  ->
+      (forall x : T, ~((plus x zero) = t))
+   /\ (forall x : T, forall y : T, ~((plus x (suc y)) = t))
+   /\ (~((fib zero) = t))
+   /\ (~((fib (suc zero)) = t))
+   /\ (exists x : T, ((fib (suc x)) = t))
+
+Parameter symb_suc :
+  forall t : T, ((symb t) = suc_) <-> exists x : T, (t = (suc x)).
+
+Parameter symb_fib :
+  forall t : T, ((symb t) = fib_) <-> exists x : T, (t = (fib x)).
+
+Parameter symb_zero :
+  forall t : T, ((symb t) = zero_) <-> (t = zero).
+
+Parameter st1_suc :
+  forall x : T, ((_1 (suc x)) = x).
+
+Parameter st1_fib :
+  forall x : T, ((_1 (fib x)) = x).
+
+Parameter symb_plus :
+  forall t : T, ((symb t) = plus_) <-> exists x : T, exists y : T, (t = (plus x y)).
+
+Parameter st1_plus :
+  forall x : T, forall y : T, ((_1 (plus x y)) = x).
+
+Parameter st2_plus :
+  forall x : T, forall y : T, ((_2 (plus x y)) = y).
+
+Parameter diff_suc_zero : forall x : T, ~((suc x) = zero).
+Parameter diff_suc_fib : forall x : T, forall y : T, ~((suc x) = (fib y)).
+Parameter diff_fib_zero : forall x : T, ~((fib x) = zero).
+
+Parameter diff_plus_suc : forall x : T, forall y : T, forall z : T,
+  ~((suc x) = plus y z).
+Parameter diff_plus_fib : forall x : T, forall y : T, forall z : T,
+  ~((fib x) = plus y z).
+Parameter diff_plus_zero : forall x : T, forall y : T, ~((plus x y) = zero).
+
+%%end-auto-proof
+
+%%begin-auto-proof
+%%location: []
+%%name: left_pos
+%%statement
+(*
+ forall t : T,
+      (forall x : T, ~((plus x zero) = t))
+   /\ (forall x : T, forall y : T, ~((plus x (suc y)) = t))
+   /\ (~((fib zero) = t))
+   /\ (~((fib (suc zero)) = t))
+   /\ (exists x : T, ((fib (suc x)) = t))
+  <->
+   ((symb t) = fib_)
+   /\ ((symb (_1 t)) = suc_)
+   /\ ~((symb (_1 (_1 t))) = zero_)
+*)
+
+ forall t : T,
+    (exists x : T, ((fib (suc x)) = t))
+  ->
+   ((symb t) = fib_)
+   /\ ((symb (_1 t)) = suc_)
+
+Parameter symb_suc :
+  forall t : T, ((symb t) = suc_) <-> exists x : T, (t = (suc x)).
+
+Parameter symb_fib :
+  forall t : T, ((symb t) = fib_) <-> exists x : T, (t = (fib x)).
+
+Parameter symb_zero :
+  forall t : T, ((symb t) = zero_) <-> (t = zero).
+
+Parameter st1_suc :
+  forall x : T, ((_1 (suc x)) = x).
+
+Parameter st1_fib :
+  forall x : T, ((_1 (fib x)) = x).
+
+Parameter symb_plus :
+  forall t : T, ((symb t) = plus_) <-> exists x : T, exists y : T, (t = (plus x y)).
+
+Parameter st1_plus :
+  forall x : T, forall y : T, ((_1 (plus x y)) = x).
+
+Parameter st2_plus :
+  forall x : T, forall y : T, ((_2 (plus x y)) = y).
+
+Parameter diff_suc_zero : forall x : T, ~((suc x) = zero).
+Parameter diff_suc_fib : forall x : T, forall y : T, ~((suc x) = (fib y)).
+Parameter diff_fib_zero : forall x : T, ~((fib x) = zero).
+
+Parameter diff_plus_suc : forall x : T, forall y : T, forall z : T,
+  ~((suc x) = plus y z).
+Parameter diff_plus_fib : forall x : T, forall y : T, forall z : T,
+  ~((fib x) = plus y z).
+Parameter diff_plus_zero : forall x : T, forall y : T, ~((plus x y) = zero).
+
+%%end-auto-proof
+
+
+%%begin-auto-proof
+%%location: []
+%%name: left_neg
+%%statement
+(*
+ forall t : T,
+      (forall x : T, ~((plus x zero) = t))
+   /\ (forall x : T, forall y : T, ~((plus x (suc y)) = t))
+   /\ (~((fib zero) = t))
+   /\ (~((fib (suc zero)) = t))
+   /\ (exists x : T, ((fib (suc x)) = t))
+  <->
+   ((symb t) = fib_)
+   /\ ((symb (_1 t)) = suc_)
+   /\ ~((symb (_1 (_1 t))) = zero_)
+*)
+
+ forall t : T,
+      (~((fib (suc zero)) = t))
+   /\ (exists x : T, ((fib (suc x)) = t))
+  ->
+    ~((symb (_1 (_1 t))) = zero_)
+
+Parameter symb_suc :
+  forall t : T, ((symb t) = suc_) <-> exists x : T, (t = (suc x)).
+
+Parameter symb_fib :
+  forall t : T, ((symb t) = fib_) <-> exists x : T, (t = (fib x)).
+
+Parameter symb_zero :
+  forall t : T, ((symb t) = zero_) <-> (t = zero).
+
+Parameter st1_suc :
+  forall x : T, ((_1 (suc x)) = x).
+
+Parameter st1_fib :
+  forall x : T, ((_1 (fib x)) = x).
+
+Parameter symb_plus :
+  forall t : T, ((symb t) = plus_) <-> exists x : T, exists y : T, (t = (plus x y)).
+
+Parameter st1_plus :
+  forall x : T, forall y : T, ((_1 (plus x y)) = x).
+
+Parameter st2_plus :
+  forall x : T, forall y : T, ((_2 (plus x y)) = y).
+
+Parameter diff_suc_zero : forall x : T, ~((suc x) = zero).
+Parameter diff_suc_fib : forall x : T, forall y : T, ~((suc x) = (fib y)).
+Parameter diff_fib_zero : forall x : T, ~((fib x) = zero).
+
+Parameter diff_plus_suc : forall x : T, forall y : T, forall z : T,
+  ~((suc x) = plus y z).
+Parameter diff_plus_fib : forall x : T, forall y : T, forall z : T,
+  ~((fib x) = plus y z).
+Parameter diff_plus_zero : forall x : T, forall y : T, ~((plus x y) = zero).
+
+%%end-auto-proof
+
+
+%%begin-auto-proof
+%%location: []
+%%name: tout
+%%statement
+
+ forall t : T,
+      (forall x : T, ~((plus x zero) = t))
+   /\ (forall x : T, forall y : T, ~((plus x (suc y)) = t))
+   /\ (~((fib zero) = t))
+   /\ (~((fib (suc zero)) = t))
+   /\ (exists x : T, ((fib (suc x)) = t))
+  <->
+   ((symb t) = fib_)
+   /\ ((symb (_1 t)) = suc_)
+   /\ ~((symb (_1 (_1 t))) = zero_)
+
+Parameter right :
+ forall t : T,
+   ((symb t) = fib_)
+   /\ ((symb (_1 t)) = suc_)
+   /\ ~((symb (_1 (_1 t))) = zero_)
+  ->
+      (forall x : T, ~((plus x zero) = t))
+   /\ (forall x : T, forall y : T, ~((plus x (suc y)) = t))
+   /\ (~((fib zero) = t))
+   /\ (~((fib (suc zero)) = t))
+   /\ (exists x : T, ((fib (suc x)) = t))
+.
+
+Parameter left_pos :
+ forall t : T,
+    (exists x : T, ((fib (suc x)) = t))
+  ->
+   ((symb t) = fib_)
+   /\ ((symb (_1 t)) = suc_)
+.
+
+Parameter left_neg :
+ forall t : T,
+      (~((fib (suc zero)) = t))
+   /\ (exists x : T, ((fib (suc x)) = t))
+  ->
+    ~((symb (_1 (_1 t))) = zero_)
+.
+
+%%end-auto-proof
