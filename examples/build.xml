@@ -621,6 +621,7 @@
 
         <include name="${poly}/README"/>
         <include name="${poly}/*.t"/>
+        <include name="${poly}/Poly.signature"/>
         <include name="${poly}/*.adt"/>
         <include name="${poly}/*.java"/>
 
