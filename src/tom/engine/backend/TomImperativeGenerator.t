@@ -34,7 +34,7 @@ import jtom.tools.TomTaskInput;
 import jtom.tools.OutputCode;
 import jtom.exception.TomRuntimeException;
 import jtom.TomEnvironment;
-
+ 
 public abstract class TomImperativeGenerator extends TomAbstractGenerator {
 
 	protected String modifier = "";
@@ -158,8 +158,6 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
 		output.write(")");
 	}
 
-	protected abstract void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException;
-
 	protected void buildDeclarationStar(int deep, TomTerm var, TomName TomName, String type, TomType tlType) throws IOException {
 		output.write(deep,getTLCode(tlType) + " ");
 		generate(deep,var);
@@ -228,11 +226,7 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
   protected void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, 
                           Expression exp, Instruction body) throws IOException {
 
-    output.indent(deep);
-    output.writeln("{");
-
-    //buildDeclaration(deep,var,type,tlType);
-    output.write(deep,getTLCode(tlType) + " ");
+    output.write(deep,"{" + getTLCode(tlType) + " ");
     generate(deep,var);
     output.write(" = (" + getTLCode(tlType) + ") ");
     generateExpression(deep,exp);
@@ -247,7 +241,12 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
     }
     generateInstruction(deep,body);
     output.writeln("}");
+  }
 
+  protected void buildLetRef(int deep, TomTerm var, OptionList list,
+                             String type, TomType tlType, 
+                             Expression exp, Instruction body) throws IOException {
+    buildLet(deep,var,list,type,tlType,exp,body);
   }
 
 	protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
@@ -265,29 +264,29 @@ public abstract class TomImperativeGenerator extends TomAbstractGenerator {
     }
   }
 
-  protected abstract void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException;
+  protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException;
 
-  protected void buildUnamedBlock(int deep, TomList instList) throws IOException {
+  protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
     output.writeln("{");
-    generateList(deep+1,instList);
+    generateInstructionList(deep+1,instList);
     output.writeln("}");
   }
 
-  protected void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException {
+  protected void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException {
 		output.write(deep,"if("); 
 		generateExpression(deep,exp); 
 		output.writeln(") {");
-		generateList(deep+1,succesList);
+		generateInstruction(deep+1,succes);
 		output.writeln(deep,"}");
   }
 
-  protected void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) throws IOException {
+  protected void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {
 		output.write(deep,"if("); 
 		generateExpression(deep,exp); 
 		output.writeln(") {");
-		generateList(deep+1,succesList);
+		generateInstruction(deep+1,succes);
 		output.writeln(deep,"} else {");
-		generateList(deep+1,failureList);
+		generateInstruction(deep+1,failure);
 		output.writeln(deep,"}");
   }
 

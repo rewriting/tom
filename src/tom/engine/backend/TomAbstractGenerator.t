@@ -121,17 +121,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      CompiledMatch(instructionList, list) -> {
-        buildCompiledMatch(deep, instructionList, list);
-        return;
-      }
-
-      CompiledPattern(instList) -> {
-        generateList(deep, instList);
-        buildInstructionSequence();
-        return;
-      }
-
       Variable(option1,PositionName(l1),type1) -> {
           /*
            * sans type: re-definition lorsque %variable est utilise
@@ -153,18 +142,6 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       VariableStar(option1,Name(name1),type1) -> {
         output.write(name1);
-        return;
-      }
-
-      Declaration(var@Variable(option1,name1,
-                               Type(ASTTomType(type),tlType@TLType[]))) -> {
-        buildDeclaration(deep, var, type, tlType);
-        return;
-      }
-
-      Declaration(var@VariableStar(option1,name1,
-                                   Type(ASTTomType(type),tlType@TLType[]))) -> {
-        buildDeclarationStar(deep, var, name1, type, tlType);
         return;
       }
 
@@ -340,6 +317,17 @@ public abstract class TomAbstractGenerator extends TomBase {
     if(subject==null) { return; }
     
     %match(Instruction subject) {
+
+      TargetLanguageToInstruction(t) -> {
+        generateTargetLanguage(deep,t);
+        return;
+      }
+
+      TomTermToInstruction(t) -> {
+        generate(deep,t);
+        return;
+      }
+
       Nop() -> {
         return;
       }
@@ -354,13 +342,18 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      Let((UnamedVariable|UnamedVariableStar)[],exp,body) -> {
+      (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],exp,body) -> {
         generateInstruction(deep,body);
         return;
       }
 
       Let(var@(Variable|VariableStar)(list,name1,Type(ASTTomType(type),tlType@TLType[])),exp,body) -> {
         buildLet(deep, var, list, type, tlType, exp, body);
+        return;
+      }
+
+      LetRef(var@(Variable|VariableStar)(list,name1,Type(ASTTomType(type),tlType@TLType[])),exp,body) -> {
+        buildLetRef(deep, var, list, type, tlType, exp, body);
         return;
       }
 
@@ -381,7 +374,7 @@ public abstract class TomAbstractGenerator extends TomBase {
       }
       
         //IfThenElse(exp,succesList,conc()) -> {
-      IfThenElse(exp,succesList,emptyTomList()) -> {
+      IfThenElse(exp,succesList,Nop()) -> {
         buildIfThenElse(deep, exp,succesList);
         return;
       }
@@ -391,8 +384,8 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      DoWhile(succesList,exp) -> {
-        buildDoWhile(deep, succesList,exp);
+      DoWhile(succes,exp) -> {
+        buildDoWhile(deep, succes,exp);
         return;
       }
 
@@ -420,6 +413,18 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       OpenBlock()  -> { output.writeln(deep,"{"); return; }
       CloseBlock() -> { output.writeln(deep,"}"); return; }
+
+			CompiledMatch(instruction, list) -> {
+				buildCompiledMatch(deep, instruction, list);
+				return;
+			}
+
+			CompiledPattern(instruction) -> {
+				generateInstruction(deep, instruction);
+				buildInstructionSequence();
+				return;
+			}
+
 
       
       t -> {
@@ -641,14 +646,6 @@ public abstract class TomAbstractGenerator extends TomBase {
       generate(deep,subject.getHead());
       subject = subject.getTail();
     }
-    // if(subject.isEmpty()) {
-//       return;
-//     }
-
-//     TomTerm t = subject.getHead();
-//     TomList l = subject.getTail(); 
-//     generate(deep,t);
-//     generateList(deep,l);
   }
   
   public void generateOptionList(int deep, OptionList subject)
@@ -657,16 +654,15 @@ public abstract class TomAbstractGenerator extends TomBase {
       generateOption(deep,subject.getHead());
       subject = subject.getTail();
     }
-
-    // if(subject.isEmpty()) {
-//       return;
-//     }
-
-//     Option t = subject.getHead();
-//     OptionList l = subject.getTail(); 
-//     generateOption(out,deep,t);
-//     generateOptionList(out,deep,l);
   }
+
+	public void generateInstructionList(int deep, InstructionList subject)
+		throws IOException {
+		while(!subject.isEmpty()) {
+			generateInstruction(deep,subject.getHead());
+			subject = subject.getTail();
+		}
+	}
 
   public void generateSlotList(int deep, SlotList slotList)
     throws IOException {
@@ -697,7 +693,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
 
-  protected void buildCompiledMatch(int deep, TomList instructionList, OptionList list) throws IOException {
+  protected void buildCompiledMatch(int deep, Instruction instruction, OptionList list) throws IOException {
     boolean generated = hasGeneratedMatch(list);
     boolean defaultPattern = hasDefaultCase(list);
     Option orgTrack = null;
@@ -706,14 +702,12 @@ public abstract class TomAbstractGenerator extends TomBase {
       debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
       output.writeln("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");");
     }
-    generateList(deep+1,instructionList);
+    generateInstruction(deep+1,instruction);
     if(debugMode && !generated && !defaultPattern) {
       output.writeln("jtom.debug.TomDebugger.debugger.leavingStructure(\""+debugKey+"\");");
     }
   }
 	
-  protected abstract void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException;
-  protected abstract void buildDeclarationStar(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
   protected abstract void buildFunctionEnd(int deep) throws IOException;
   protected abstract void buildExpNot(int deep, Expression exp) throws IOException;
@@ -863,15 +857,16 @@ public abstract class TomAbstractGenerator extends TomBase {
 
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp) throws IOException ;
   protected abstract void buildLet(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp, Instruction body) throws IOException ;
+  protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, String type, TomType tlType, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException ;
-  protected abstract void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException ;
-  protected abstract void buildUnamedBlock(int deep, TomList instList) throws IOException ;
-  protected abstract void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException ;
-  protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) throws IOException ;
+  protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException ;
+  protected abstract void buildUnamedBlock(int deep, InstructionList instList) throws IOException ;
+  protected abstract void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException ;
+  protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
 
-  protected void buildDoWhile(int deep, TomList succesList, Expression exp) throws IOException {
+  protected void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException {
     output.writeln(deep,"do {");
-    generateList(deep+1,succesList);
+    generateInstruction(deep+1,succes);
     output.write(deep,"} while(");
     generateExpression(deep,exp);
 	output.writeln(");");

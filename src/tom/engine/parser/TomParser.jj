@@ -40,7 +40,7 @@ import jtom.TomEnvironment;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.types.tomterm.RuleSet;
-import jtom.adt.tomsignature.types.tomterm.Match;
+import jtom.adt.tomsignature.types.instruction.Match;
 import jtom.exception.*;
 import jtom.tools.*;
 import jtom.checker.TomCheckerMessage;
@@ -537,9 +537,9 @@ void MatchConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
     {
       switchToDefaultMode(); /* switch to DEFAULT mode */
       OptionList option = ast().makeOptionList(optionList);
-      Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
-                                                    tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
-                                                    option);
+      Match match = tsf().makeInstruction_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
+                                                tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
+                                                option);
       list.add(match);
       if (debugMode)
         debuggedStructureList.add(match);
@@ -601,7 +601,7 @@ void PatternAction(LinkedList list, String debugKey) throws TomException: /* in 
         optionList.add(tsf().makeOption_OriginalText(tsf().makeTomName_Name(patternText)));
         list.add(tsf().makeTomTerm_PatternAction(
                    tsf().makeTomTerm_TermList(patterns),
-                   tsf().makeTomTerm_Tom(ast().makeList(blockList)),
+                   tsf().makeInstruction_UnamedBlock(ast().makeInstructionList(blockList)),
                    ast().makeOptionList(optionList)));
       }
     }
@@ -1339,9 +1339,9 @@ void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
     <TOM_ARROW> {orgText = tsf().makeTomName_Name(text);} rhs = PlainTerm(null)
     [ (
       <TOM_WHERE> pattern = AnnotedTerm() <TOM_COLON> <TOM_EQUAL> subject = AnnotedTerm()
-      { condList.add(tsf().makeTomTerm_MatchingCondition(pattern,subject)); }
+      { condList.add(tsf().makeInstruction_MatchingCondition(pattern,subject)); }
     | <TOM_IF> pattern = AnnotedTerm() <TOM_EQUAL> <TOM_EQUAL> subject = AnnotedTerm()
-      { condList.add(tsf().makeTomTerm_EqualityCondition(pattern,subject)); }
+      { condList.add(tsf().makeInstruction_EqualityCondition(pattern,subject)); }
     )+ ]
     
     {
@@ -1355,7 +1355,7 @@ void RuleConstruct(LinkedList list) throws TomException: /* in DEFAULT mode */
           tsf().makeTomRule_RewriteRule(
             tsf().makeTomTerm_Term(term),
             tsf().makeTomTerm_Term(rhs),
-            ast().makeList(condList),
+            ast().makeInstructionList(condList),
             ast().makeOptionList(optionList)));
       }
       listOfLhs.clear();

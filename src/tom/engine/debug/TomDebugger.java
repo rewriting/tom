@@ -922,15 +922,16 @@ public class TomDebugger {
     TomList list = trm.getStructList();
     while (!list.isEmpty()) {
       TomTerm struct = list.getHead();
-      if (struct.isMatch()) {
+      if (false /*struct.isMatch()*/) {
+      	/*
           // The only present option in the list is the orgTack
         Option orgTrack = struct.getOption().getHead();
         String fileName = orgTrack.getFileName().getString();
         int line = orgTrack.getLine();
         String key = fileName+line;
-        TomList paList = struct.getPatternList().getTomList();
+        TomList paList = struct.getPatternList().getInstList();
         int nbPatterns =  paList.getLength();
-        int nbSubjects = struct.getSubjectList().getTomList().getLength();
+        int nbSubjects = struct.getSubjectList().getInstList().getLength();
         String[] patternText = new String[nbPatterns];
         int[] patternLine = new int[nbPatterns];
         int i=0;
@@ -944,7 +945,7 @@ public class TomDebugger {
           paList = paList.getTail();
         }
         mapKeyDebugStructure.put(key, new TomDebugStructure(key, "Match", fileName, line, nbPatterns, nbSubjects, patternText, patternLine));
-        
+        */
       } else if (struct.isRuleSet()) {
         /*String fileName = struct.getOrgTrack().getFileName().getString();
         int line = struct.getOrgTrack().getLine();

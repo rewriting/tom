@@ -2,7 +2,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
+    Copyright (C) 2000-2004 INRIA
 			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,7 @@ public class TomKernelExpander extends TomBase {
      * replace Name by Symbol
      * replace Name by Variable
      */
-  private Replace2 replaceVariable = new Replace2() { 
+  protected Replace2 replace_expandVariable = new Replace2() { 
       public ATerm apply(ATerm subject, Object arg1) {
         TomTerm contextSubject = (TomTerm)arg1;
 
@@ -72,6 +72,16 @@ public class TomKernelExpander extends TomBase {
                 } else {
                   return subject; // useful for TomTypeAlone("unknown type")
                 }
+              }
+            }
+          } else if(subject instanceof Instruction) {
+            %match(TomTerm contextSubject, Instruction subject) {
+              context, Match(tomSubjectList,patternList, option) -> {
+                  //System.out.println("tomSubjectList = " + tomSubjectList);
+                TomTerm newSubjectList = expandVariable(context,tomSubjectList);
+                  //System.out.println("newSubjectList = " + newSubjectList);
+                TomTerm newPatternList = expandVariable(newSubjectList,patternList);
+                return `Match(newSubjectList,newPatternList, option);
               }
             }
           }
@@ -107,8 +117,6 @@ public class TomKernelExpander extends TomBase {
                 return `Appl(option,nameList,subterm);
               }
             }
-
-            
           }
           
           Variable(option1,name1,type1) , Appl(optionList,nameList@(Name(strName),_*),l) -> {
@@ -137,17 +145,6 @@ public class TomKernelExpander extends TomBase {
                 return `Appl(option,nameList,subterm);
               }
             }
-
-              /*
-            if(tomSymbol != null) {
-            	//System.out.println("----->Symbol:"+tomSymbol+ "\n-->args:"+l);
-              TomList subterm = expandVariableList(tomSymbol, l);
-              return `Appl(option,nameList,subterm);
-            } else if(l.isEmpty()) {
-              return `Variable(option,nameList.getHead(),type1);
-            }
-              */
-            
           } 
 
           TomTypeToTomTerm(type@Type(tomType,glType)) ,p@Placeholder(optionList) -> {
@@ -193,7 +190,14 @@ public class TomKernelExpander extends TomBase {
             return `Variable(option,Name(strName),localType);
           }
               
-          SubjectList(l1), TermList(subjectList) -> {
+         context, TLVar(strName,localType@Type[]) -> {
+              //debugPrintln("expandVariable.8: TLVar(" + strName + "," + tomType + ")");
+              // create a variable: its type is ensured by checker
+            OptionList option = ast().makeOption();
+            return `Variable(option,Name(strName),localType);
+          }
+
+         SubjectList(l1), TermList(subjectList) -> {
             //System.out.println("expandVariable.9: "+l1+"(" + subjectList + ")");
                 
               // process a list of subterms
@@ -206,35 +210,26 @@ public class TomKernelExpander extends TomBase {
             return `TermList(ast().makeList(list));
           }
               
-          context, Match(tomSubjectList,patternList, option) -> {
-            //debugPrintln("expandVariable.10: Match(" + tomSubjectList + "," + patternList + ")");
-            TomTerm newSubjectList = expandVariable(context,tomSubjectList);
-            TomTerm newPatternList = expandVariable(newSubjectList,patternList);
-            return `Match(newSubjectList,newPatternList, option);
-          }
-              
             // default rule
           context, t -> {
             //debugPrintln("expandVariable.11 default: " );
-            //System.out.println("expandVariable default:\n\t" + subject );
+            //System.out.println("TomKernelCompiler.expandVariable default:\n\t" + subject );
             return traversal().genericTraversal(subject,this,contextSubject);
           }
         } // end match
       } // end apply
     }; // end new
 
-  public TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
-    return (TomTerm) replaceVariable.apply(subject,contextSubject); 
+  protected TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
+    return (TomTerm) replace_expandVariable.apply(subject,contextSubject); 
   }
 
-  public TomList expandVariableList(TomSymbol subject, TomList subjectList) {
-    //%variable
+  private TomList expandVariableList(TomSymbol subject, TomList subjectList) {
     if(subject == null) {
       throw new TomRuntimeException(new Throwable("expandVariableList: null subject"));
     }
     
     %match(TomSymbol subject) {
-
       emptySymbol() -> {
           /*
            * If the top symbol is unknown, the subterms
@@ -362,9 +357,9 @@ public class TomKernelExpander extends TomBase {
   public TomTerm expandMatchPattern(TomTerm subject) {
     Replace1 replace = new Replace1() { 
         public ATerm apply(ATerm subject) {
-          if(subject instanceof TomTerm) {
-            %match(TomTerm subject) {
-              m@Match(subjectList,patternList, option) -> {
+          if(subject instanceof Instruction) {
+            %match(Instruction subject) {
+              Match(subjectList,patternList, option) -> {
                   // find other match in PA list
                 TomTerm newPatternList = expandMatchPattern(patternList);
                 return expandPattern(`Match(subjectList, newPatternList, option)); 
@@ -382,8 +377,8 @@ public class TomKernelExpander extends TomBase {
     return (TomTerm) replace.apply(subject); 
   }
 
-  private TomTerm expandPattern(TomTerm match) {
-    %match(TomTerm match) {
+  private Instruction expandPattern(Instruction match) {
+    %match(Instruction match) {
       Match(subjectList,PatternList(list), option) -> {
         boolean needModification = false;
         TomList newPatternList = empty();
@@ -391,7 +386,7 @@ public class TomKernelExpander extends TomBase {
           TomTerm pa = list.getHead();
           if( isDefaultPattern(pa.getTermList().getTomList()) ) {
             OptionList newPatternActionOption =  `manyOptionList(DefaultCase(),pa.getOption());
-            newPatternList = cons(`PatternAction(pa.getTermList(), pa.getTom(), newPatternActionOption), newPatternList);
+            newPatternList = cons(`PatternAction(pa.getTermList(), pa.getAction(), newPatternActionOption), newPatternList);
             needModification = true;
             if(!list.getTail().isEmpty()) {
                 // the default pattern is not the latest one!!
@@ -413,7 +408,7 @@ public class TomKernelExpander extends TomBase {
       }
       _ -> {
         System.out.println("Strange Match in expandMatchPattern"+match);
-		throw new TomRuntimeException(new Throwable("Strange Match in expandMatchPattern"+match));
+        throw new TomRuntimeException(new Throwable("Strange Match in expandMatchPattern"+match));
       }
     }
   }

@@ -68,18 +68,6 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		}
 	}
 
-	protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {
-		generate(deep,var);
-		output.write(deep,": " + getTLCode(tlType));
-		output.writeln(";");
-	}
-	
-	protected void buildDeclarationStar(int deep, TomTerm var, TomName name, String type, TomType tlType) throws IOException {
-		generate(deep,var);
-		output.write(deep,": " + getTLCode(tlType));
-		output.writeln(";");
-	}
-
 	protected void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException {
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         String glType = getTLType(getSymbolCodomain(tomSymbol));
@@ -159,6 +147,12 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     throw new TomRuntimeException(new Throwable("buildLet: Eiffel code not yet implemented"));
   }
 
+  protected void buildLetRef(int deep, TomTerm var, OptionList list,
+                             String type, TomType tlType, 
+                             Expression exp, Instruction body) throws IOException {
+    System.out.println("buildLetRef code not yet implemented");
+    throw new TomRuntimeException(new Throwable("buildLetRef: Eiffel code not yet implemented"));
+  }
 
 	
 	protected void buildAssignMatch(int deep, TomTerm var, String type, TomType tlType, Expression exp) throws IOException {
@@ -187,12 +181,12 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     }
   }
 
-  protected void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException {
+  protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
 		System.out.println("NamedBlock: Eiffel code not yet implemented");
 		throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
   }
 
-  protected void buildUnamedBlock(int deep, TomList instList) throws IOException {
+  protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
 		System.out.println("UnamedBlock: Eiffel code not yet implemented");
 		throw new TomRuntimeException(new Throwable("NamedBlock: Eiffel code not yet implemented"));
   }

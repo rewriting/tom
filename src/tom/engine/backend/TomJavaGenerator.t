@@ -36,7 +36,7 @@ import jtom.tools.OutputCode;
 import jtom.TomEnvironment;
 
 public class TomJavaGenerator extends TomImperativeGenerator {
-  
+   
   public TomJavaGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
 		super(environment, output, input);
 		if (staticFunction) {
@@ -49,19 +49,6 @@ public class TomJavaGenerator extends TomImperativeGenerator {
   %include { ../../adt/TomSignature.tom }
 // ------------------------------------------------------------
 
-  protected void buildDeclaration(int deep, TomTerm var, String type, TomType tlType) throws IOException {
-    output.write(deep,getTLCode(tlType) + " ");
-    generate(deep,var);
-    
-    if(!isBoolType(type) &&
-       !isIntType(type) &&
-       !isDoubleType(type)) {
-      output.writeln(" = null;");
-    } else {
-      output.writeln(";");
-    }
-  }
-
   protected void buildExpTrue(int deep) throws IOException {
     output.write(" true ");
   }
@@ -70,9 +57,9 @@ public class TomJavaGenerator extends TomImperativeGenerator {
 		output.write(" false ");
   }
 	 
-  protected void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException {
+  protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
     output.writeln(blockName + ": {");
-    generateList(deep+1,instList);
+    generateInstructionList(deep+1,instList);
     output.writeln("}");
   }
 

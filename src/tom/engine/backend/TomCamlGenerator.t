@@ -73,21 +73,34 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     generateInstruction(deep,body);
   }
 
-  protected void buildIfThenElse(int deep, Expression exp, TomList succesList) throws IOException {
+  protected void buildLetRef(int deep, TomTerm var, OptionList list,
+                          String type, TomType tlType, 
+                          Expression exp, Instruction body) throws IOException {
+
+    output.indent(deep);
+    output.writeln("let");
+    generate(deep,var);
+    output.write(" = ref ");
+    generateExpression(deep,exp);
+    output.writeln(" in ");
+    generateInstruction(deep,body);
+  }
+
+  protected void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException {
     output.write(deep,"if ("); 
     generateExpression(deep,exp); 
     output.writeln(") then");
-    generateList(deep+1,succesList);
+    generateInstruction(deep+1,succes);
     output.writeln(deep,"(* else () *) ");
   }
 
-  protected void buildIfThenElseWithFailure(int deep, Expression exp, TomList succesList, TomList failureList) throws IOException {
+  protected void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException {
     output.write(deep,"if "); 
     generateExpression(deep,exp); 
     output.writeln(" then ");
-    generateList(deep+1,succesList);
+    generateInstruction(deep+1,succes);
     output.writeln(deep," else ");
-    generateList(deep+1,failureList);
+    generateInstruction(deep+1,failure);
     output.writeln(deep," (* endif *)");
   }
 
@@ -174,11 +187,11 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.writeln(")");
   }
 
-  protected void buildNamedBlock(int deep, String blockName, TomList instList) throws IOException {
+  protected void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException {
     System.out.println(" Named block not supported in Caml: ");
       // no named blocks in caml : ignore the name
     output.writeln("(");
-    generateList(deep+1,instList);
+    generateInstructionList(deep+1,instList);
     output.writeln(")");
   }
 

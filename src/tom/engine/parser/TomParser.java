@@ -33,7 +33,7 @@ import jtom.TomEnvironment;
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.tomsignature.types.tomterm.RuleSet;
-import jtom.adt.tomsignature.types.tomterm.Match;
+import jtom.adt.tomsignature.types.instruction.Match;
 import jtom.exception.*;
 import jtom.tools.*;
 import jtom.checker.TomCheckerMessage;
@@ -336,9 +336,9 @@ public class TomParser extends TomTask implements TomParserConstants {
     jj_consume_token(TOM_RBRACE);
       switchToDefaultMode(); /* switch to DEFAULT mode */
       OptionList option = ast().makeOptionList(optionList);
-      Match match = tsf().makeTomTerm_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
-                                                    tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
-                                                    option);
+      Match match = tsf().makeInstruction_Match(tsf().makeTomTerm_SubjectList( ast().makeList(matchArgumentsList)),
+                                                tsf().makeTomTerm_PatternList( ast().makeList(patternActionList)),
+                                                option);
       list.add(match);
       if (debugMode)
         debuggedStructureList.add(match);
@@ -413,7 +413,7 @@ public class TomParser extends TomTask implements TomParserConstants {
         optionList.add(tsf().makeOption_OriginalText(tsf().makeTomName_Name(patternText)));
         list.add(tsf().makeTomTerm_PatternAction(
                    tsf().makeTomTerm_TermList(patterns),
-                   tsf().makeTomTerm_Tom(ast().makeList(blockList)),
+                   tsf().makeInstruction_UnamedBlock(ast().makeInstructionList(blockList)),
                    ast().makeOptionList(optionList)));
       }
   }
@@ -1477,7 +1477,7 @@ public class TomParser extends TomTask implements TomParserConstants {
             jj_consume_token(TOM_COLON);
             jj_consume_token(TOM_EQUAL);
             subject = AnnotedTerm();
-        condList.add(tsf().makeTomTerm_MatchingCondition(pattern,subject));
+        condList.add(tsf().makeInstruction_MatchingCondition(pattern,subject));
             break;
           case TOM_IF:
             jj_consume_token(TOM_IF);
@@ -1485,7 +1485,7 @@ public class TomParser extends TomTask implements TomParserConstants {
             jj_consume_token(TOM_EQUAL);
             jj_consume_token(TOM_EQUAL);
             subject = AnnotedTerm();
-        condList.add(tsf().makeTomTerm_EqualityCondition(pattern,subject));
+        condList.add(tsf().makeInstruction_EqualityCondition(pattern,subject));
             break;
           default:
             jj_la1[42] = jj_gen;
@@ -1517,7 +1517,7 @@ public class TomParser extends TomTask implements TomParserConstants {
           tsf().makeTomRule_RewriteRule(
             tsf().makeTomTerm_Term(term),
             tsf().makeTomTerm_Term(rhs),
-            ast().makeList(condList),
+            ast().makeInstructionList(condList),
             ast().makeOptionList(optionList)));
       }
       listOfLhs.clear();

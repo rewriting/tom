@@ -385,15 +385,30 @@ public class TomBase {
         res = cons(term,list);
       }
     } catch(Exception e) {
-			System.out.println("tomListMap error: " + e);
+      System.out.println("tomListMap error: " + e);
       e.printStackTrace();
-	  	throw new TomRuntimeException(new Throwable("tomListMap error: " + e));
+      throw new TomRuntimeException(new Throwable("tomListMap error: " + e));
     }
     return res;
   }
   
+  protected InstructionList instructionListMap(InstructionList subject, Replace1 replace) {
+    InstructionList res = subject;
+    try {
+      if(!subject.isEmpty()) {
+        Instruction term = (Instruction) replace.apply(subject.getHead());
+        InstructionList list = instructionListMap(subject.getTail(),replace);
+        res = `manyInstructionList(term,list);
+      }
+    } catch(Exception e) {
+      System.out.println("instructionListMap error: " + e);
+      e.printStackTrace();
+      throw new TomRuntimeException(new Throwable("instructionListMap error: " + e));
+    }
+    return res;
+  }
     // ------------------------------------------------------------
-  protected void collectVariable(final Collection collection, TomTerm subject) {
+  protected void collectVariable(final Collection collection, ATerm subject) {
     Collect1 collect = new Collect1() { 
         public boolean apply(ATerm t) {
             //%variable

@@ -2,7 +2,7 @@
   
     TOM - To One Matching Compiler
 
-    Copyright (C) 2000-2003 INRIA
+    Copyright (C) 2000-2004 INRIA
 			    Nancy, France.
 
     This program is free software; you can redistribute it and/or modify
@@ -73,6 +73,28 @@ public class ASTFactory {
         term = (TomTerm)elt;
       }
       list = cons(term,list);
+    }
+    return list;
+  }
+
+  public InstructionList makeInstructionList(Collection c) {
+    Object array[] = c.toArray();
+    InstructionList list = tsf().makeInstructionList();
+    for(int i=array.length-1; i>=0 ; i--) {
+      ATerm elt = (ATerm)array[i];
+      Instruction term;
+      if(elt instanceof TargetLanguage) {
+        term = tsf().makeInstruction_TargetLanguageToInstruction((TargetLanguage)elt);
+      } else if(elt instanceof TomTerm) {
+        term = tsf().makeInstruction_TomTermToInstruction((TomTerm)elt);
+          //System.out.println("term   = " + term);
+      } else if(elt instanceof Instruction) {
+        term = (Instruction)elt;
+      } else {
+        System.out.println("elt   = " + elt);
+        term = (Instruction)elt;
+      }
+      list = tsf().makeInstructionList(term,list);
     }
     return list;
   }
