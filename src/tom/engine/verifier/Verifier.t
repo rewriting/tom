@@ -45,6 +45,7 @@ public class Verifier extends TomBase {
 
   protected jtom.verifier.il.ilFactory factory;
   private SymbolTable symbolTable;
+  private boolean camlsemantics = false;
 
   public Verifier() {
     super();
@@ -57,6 +58,10 @@ public class Verifier extends TomBase {
 
   public SymbolTable getSymbolTable() {
     return symbolTable;
+  }
+
+  public boolean isCamlSemantics() {
+    return camlsemantics;
   }
 
   protected final ilFactory getIlFactory() {
@@ -444,20 +449,27 @@ public class Verifier extends TomBase {
             c.add(`derivrule("seqa",post,pre,seq()));
           }
         } else {
-          Deriv up = `ebs(env(e,h),env(subs(undefsubs()),refuse()));
-          Collection pre_list = apply_sem_rules(up);
-
           // continue the derivation with t
-          up = `ebs(env(e,sequence(t*)),env(subs(undefsubs()),ip));
+          Deriv up = `ebs(env(e,sequence(t*)),env(subs(undefsubs()),ip));
           Collection post_list = apply_sem_rules(up);
 
-          Iterator it = pre_list.iterator();
-          while(it.hasNext()) {
-            DerivTree pre = (DerivTree) it.next();
-            Iterator it2 = post_list.iterator();
-            while(it2.hasNext()) {
-              DerivTree pre2 = (DerivTree) it2.next();
-              c.add(`derivrule2("seqb",post,pre,pre2,seq()));
+          if(camlsemantics) {
+            up = `ebs(env(e,h),env(subs(undefsubs()),refuse()));
+            Collection pre_list = apply_sem_rules(up);
+            Iterator it = pre_list.iterator();
+            while(it.hasNext()) {
+              DerivTree pre = (DerivTree) it.next();
+              Iterator it2 = post_list.iterator();
+              while(it2.hasNext()) {
+                DerivTree pre2 = (DerivTree) it2.next();
+                c.add(`derivrule2("seqb",post,pre,pre2,seq()));
+              }
+            }
+          } else {
+            Iterator it = post_list.iterator();
+            while(it.hasNext()) {
+              DerivTree pre = (DerivTree) it.next();
+              c.add(`derivrule2("seqb",post,endderiv,pre,seq()));
             }
           }
         }

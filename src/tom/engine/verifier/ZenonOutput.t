@@ -127,7 +127,7 @@ public class ZenonOutput {
     }
     ZExpr theorem = null;
     if (pattern != null && constraints != null) {
-      if(negpattern != null) {
+      if(verifier.isCamlSemantics() && negpattern != null) {
         theorem = `zequiv(zand(pattern,znot(negpattern)),constraints);
       } else {
         theorem = `zequiv(pattern,constraints);
