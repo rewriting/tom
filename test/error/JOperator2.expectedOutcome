@@ -1,1 +1,10 @@
+-- Warning occured line: 23 in structure `%op type1` declared line: 18 in file: `JOperator2.t`
+---> Warning: GetSlot declaration `get_slot(type,...)` is repeated. Consider only the first one!!
+
+-- Warning occured line: 14 in structure `%op type1` declared line: 10 in file: `JOperator2.t`
+---> Warning: Incompatible GetSlot declaration: `badslot` does not appears in symbol declaration
+
+-- Warning occured line: 10 in structure `%op type1` declared line: 10 in file: `JOperator2.t`
+---> Warning: GetSlot declaration `get_slot(slot2,...)` is missing. Generic getsubterm macro will be used!!
+
 Tom Parser:  Encountered 3 warnings.

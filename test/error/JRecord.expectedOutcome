@@ -1,13 +1,13 @@
--- Error occured line: 41 in structure `Match` declared line: 32 in file: JRecord1.t
+-- Error occured line: 41 in structure `Match` declared line: 32 in file: `JRecord.t`
 ---> Unknown symbol `opp`
 
--- Error occured line: 37 in structure `Match` declared line: 32 in file: JRecord1.t
+-- Error occured line: 37 in structure `Match` declared line: 32 in file: `JRecord.t`
 ---> Same slot names can not be used several times in symbol `op`: Repeated slot Name : `slot1`
 
--- Error occured line: 35 in structure `Match` declared line: 32 in file: JRecord1.t
+-- Error occured line: 35 in structure `Match` declared line: 32 in file: `JRecord.t`
 ---> [] are not allowed on lists or arrays, see `concList1`
 
--- Error occured line: 33 in structure `Match` declared line: 32 in file: JRecord1.t
+-- Error occured line: 33 in structure `Match` declared line: 32 in file: `JRecord.t`
 ---> Slot Name `badslot` is not correct for symbol `op`. Possible slot names are : [slot1, slot2]
 
 Tom SyntaxChecker:  Encountered 4 errors and 0 warnings.

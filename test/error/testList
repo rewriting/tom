@@ -85,25 +85,25 @@ Grammar:
 		]
 	}
 Test:
-     JOperator1.t
-	line 68: Multiple definition of Symbol `op6`
-	line 50: Bad number of arguments in make(...) macro-function: 1 arguments found but 2 expected in symbol definition
-	line 44: Arguments must be linear in macro-function `make`: Variable `t1` is repeated
-	line 38: Repeated macro-function `make`
-	line 29: Slot 2 of symbol `op2bis` declaration has an unknown type: `wrongtype`
-	line 24: Slot 1 of symbol `op2` declaration has an unknown type: `wrongtype`
-	line 18: Symbol `op1` has an unknown return type: `wrongtype`
+	JOperator1.t
+	  line 68: Multiple definition of Symbol `op6`
+	  line 50: Bad number of arguments in make(...) macro-function: 1 arguments found but 2 expected in symbol definition
+	  line 44: Arguments must be linear in macro-function `make`: Variable `t1` is repeated
+	  line 38: Repeated macro-function `make`
+	  line 29: Slot 2 of symbol `op2bis` declaration has an unknown type: `wrongtype`
+	  line 24: Slot 1 of symbol `op2` declaration has an unknown type: `wrongtype`
+	  line 18: Symbol `op1` has an unknown return type: `wrongtype`
 	Tom SyntaxChecker:  Encountered 6 errors and 0 warnings.
 Operator defined before type8 declaration is OK
 
-     JOperator2.t
-       line 23: Warning: GetSlot declaration `get_slot(type,...)` is repeated. Consider only the first one!!
-       line 14: Warning: Incompatible GetSlot declaration: `badslot` does not appears in symbol declaration
-       line 10: Warning: GetSlot declaration `get_slot(slot2,...)` is missing. Generic getsubterm macro will be used!!
-       Tom Parser:  Encountered 3 warnings.
+	JOperator2.t
+	  line 23: Warning: GetSlot declaration `get_slot(type,...)` is repeated. Consider only the first one!!
+	  line 14: Warning: Incompatible GetSlot declaration: `badslot` does not appears in symbol declaration
+	  line 10: Warning: GetSlot declaration `get_slot(slot2,...)` is missing. Generic getsubterm macro will be used!!
+	Tom Parser:  Encountered 3 warnings.
 
-     JOperator3.t
-	line 10: Repeated slot `s0` in symbol declaration
+	JOperator3.t
+	  line 10: Repeated slot `s0` in symbol declaration
 	Tom Parser:  Encountered 1 errors and 0 warnings.
 
 ////////////////////
@@ -116,15 +116,15 @@ Grammar:
 		make_append(var, var) { ... }
 	}
 Test:
-     JOpArray.t
-       line: 59 Multiple definition of Symbol `concArray7`
-       line: 50 Repeated macro-function `make_append`
-       line: 43  Arguments must be linear in macro-function `make_append`: Variable `e` is repeated
-       line: 35 Missing macro-function(s) [ make_append ]
-       line: 30Missing macro-function(s) [ make_empty ]
-       line: 24 List symbol `concArray2` has an unknown parameter type: `wrongType`
-       line: 18 Symbol `concArray1` has an unknown return type: `wrongType`
-       Tom SyntaxChecker:  Encountered 6 errors and 0 warnings.
+	JOpArray.t
+	  line: 59 Multiple definition of Symbol `concArray7`
+	  line: 50 Repeated macro-function `make_append`
+	  line: 43  Arguments must be linear in macro-function `make_append`: Variable `e` is repeated
+	  line: 35 Missing macro-function(s) [ make_append ]
+	  line: 30Missing macro-function(s) [ make_empty ]
+	  line: 24 List symbol `concArray2` has an unknown parameter type: `wrongType`
+	  line: 18 Symbol `concArray1` has an unknown return type: `wrongType`
+	Tom SyntaxChecker:  Encountered 6 errors and 0 warnings.
 
 ////////////////////
 OPLIST DECLARATION
@@ -137,15 +137,15 @@ Grammar:
 	}
 
 Test:
-     JOpList.t
-       line 58: Multiple definition of Symbol `concList7`
-       line 49: Repeated macro-function `make_empty`
-       line 42: Arguments must be linear in macro-function `make_insert`: Variable `e` is repeated
-       line 34: Missing macro-function(s) [ make_insert ]
-       line 29: Missing macro-function(s) [ make_empty ]
-       line 23: List symbol `concList2` has an unknown parameter type: `wrongtype`
-       line 17: Symbol `concList1` has an unknown return type: `wrongtype`
-       Tom SyntaxChecker:  Encountered 7 errors and 0 warnings.
+	JOpList.t
+	  line 58: Multiple definition of Symbol `concList7`
+	  line 49: Repeated macro-function `make_empty`
+	  line 42: Arguments must be linear in macro-function `make_insert`: Variable `e` is repeated
+	  line 34: Missing macro-function(s) [ make_insert ]
+	  line 29: Missing macro-function(s) [ make_empty ]
+	  line 23: List symbol `concList2` has an unknown parameter type: `wrongtype`
+	  line 17: Symbol `concList1` has an unknown return type: `wrongtype`
+	Tom SyntaxChecker:  Encountered 7 errors and 0 warnings.
 }
 
 
@@ -158,15 +158,15 @@ Grammar:
 	}
 
 Test:
-     JMatch.t
-     line 44: The symbol `op0` has type `type0` but type `type1` was required
-     line 41: Single list variable `X*` is not allowed on top of `match` pattern
-     line 41: Single list variable `_*` is not allowed on top of `match` pattern
-     line 39: Bad number of arguments: 2 argument(s) required by match signature but 3 found
-     line 37: Bad number of arguments: 2 argument(s) required by match signature but 1 found
-     line 33: Repeated variable `t1` in `match` declaration
-     line 30: Variable `t` has an unknown type: `type`
-     Tom SyntaxChecker:  Encountered 6 errors and 1 warnings.
+	JMatch.t
+          line 44: The symbol `op0` has type `type0` but type `type1` was required
+	  line 41: Single list variable `X*` is not allowed on top of `match` pattern
+	  line 41: Single list variable `_*` is not allowed on top of `match` pattern
+	  line 39: Bad number of arguments: 2 argument(s) required by match signature but 3 found
+	  line 37: Bad number of arguments: 2 argument(s) required by match signature but 1 found
+	  line 33: Repeated variable `t1` in `match` declaration
+	  line 30: Variable `t` has an unknown type: `type`
+	Tom SyntaxChecker:  Encountered 6 errors and 1 warnings.
 
 ////////////////////
 RULE DECLARATION
@@ -178,93 +178,73 @@ Grammar:
 	}
 
 Test:
-     JRule.t
-     line 89: `_`: Impossible in rule right hand side
-     line 89: `op1[...]`: Impossible in rule right hand side
-     line 89: `_`: Impossible in rule right hand side
-     line 85: `_`: Impossible in rule right hand side
-     line 85: Bad number of arguments for symbol `op1`: 2 argument(s) required but 1 found
-     line 85: `_`: Impossible in rule right hand side
-     line 82: `Disjunction`: Impossible in rule right hand side
-     line 81: `XML construct a`: Impossible in rule right hand side
-     line 80: `X*`: Impossible in rule right hand side
-     line 79:  `_*`: Impossible in rule right hand side
-     line 78: `_`: Impossible in rule right hand side
-     line 77:  The symbol `op2` has type `type1` but type `type2` was required
-     line 77:  Rule head symbol `op3` has no `make` method: It is necessary to define one!!
-     line 73: Unknown symbol `f`: Cant do further analyses
-     line 73:  The symbol `op3` has type `type2` but type `type1` was required
-     line 73: Warning: Ambiguous symbol name. Is`op3` a variable or a constructor? Prefer `op3`() if it is a constructor
-     line 72: Unknown symbol `f`: Cant do further analyses
-     line 72:  Bad number of arguments for symbol `op1`: 2 argument(s) required but 0 found
-     line 71: Unknown symbol `f`: Cant do further analyses
-     line 67:  Unknown symbol `f`: Cant do further analyses
-     line 67: Rule head symbol name `op1` expected, but `op2` found
-     line 66: Unknown symbol `f`: Cant do further analyses
-     line 62: Unknown symbol `f`: Cant do further analyses
-     line 62: Rule head symbol `op2` has no `make` method: It is necessary to define one!!
-     line 54: `Disjunction`: Impossible in rule left hand side
-     line 50: `XML construct a`: Impossible in rule left hand side
-     line 46: `_*`: Impossible in rule left hand side
-     line 42: `X*`: Impossible in rule left hand side
-     line 38:  `_`: Impossible in rule left hand side
-
-Tom SyntaxChecker:  Encountered 22 errors and 7 warnings.
-
-
-	 `_`: Impossible in rule left hand side
-	  `X*`: Impossible in rule left hand side
-	  `_*`: Impossible in rule left hand side
-	  `XML Construct a`: Impossible in rule left hand side
-	  `Disjunction`: Impossible in rule left hand side
-	  `Disjunction`: Impossible in rule left hand side}
-	  Rule head symbol `op2` has no `make` method: It is necessary to define one!!
-	  Rule head symbol name `op1` expected, but `op2` found
-	  Bad number of arguments for symbol `op1`: 2 argument(s) required but 0 found
-	  The symbol `op3` has type `type2` but type `type1` was required
-	  The symbol `op2` has type `type1` but type `type2` was required
-	  `_`: Impossible in rule right hand side
-	  `_*`: Impossible in rule right hand side
-	  `X*`: Impossible in rule right hand side
-	  `XML construct a`: Impossible in rule right hand side
-	  `Disjunction`: Impossible in rule right hand side
-	   `_`: Impossible in rule right hand side
-	   Bad number of arguments for symbol `op1`: 2 argument(s) required but 1 found
-	   Bad number of arguments for symbol `op1`: 2 argument(s) required but 1 found
-	   `op1[...]`: Impossible in rule right hand side
+	JRule.t
+	  line 89: `_`: Impossible in rule right hand side
+	  line 89: `op1[...]`: Impossible in rule right hand side
+	  line 89: `_`: Impossible in rule right hand side
+	  line 85: `_`: Impossible in rule right hand side
+	  line 85: Bad number of arguments for symbol `op1`: 2 argument(s) required but 1 found
+	  line 85: `_`: Impossible in rule right hand side
+	  line 82: `Disjunction`: Impossible in rule right hand side
+	  line 81: `XML construct a`: Impossible in rule right hand side
+	  line 80: `X*`: Impossible in rule right hand side
+	  line 79: `_*`: Impossible in rule right hand side
+	  line 78: `_`: Impossible in rule right hand side
+	  line 77: The symbol `op2` has type `type1` but type `type2` was required
+	  line 73: The symbol `op3` has type `type2` but type `type1` was required
+	  line 73: Warning: Ambiguous symbol name. Is`op3` a variable or a constructor? Prefer `op3`() if it is a constructor
+	  line 72: Bad number of arguments for symbol `op1`: 2 argument(s) required but 0 found
+	  line 67: Rule head symbol name `op1` expected, but `op2` found
+	  line 66: Unknown symbol `f`: Cant do further analyses
+	  line 62: Rule head symbol `op2` has no `make` method: It is necessary to define one!!
+	  line 58: `Disjunction`: Impossible in rule left hand side (Record)
+	  line 54: `Disjunction`: Impossible in rule left hand side (Appl)
+	  line 50: `XML construct a`: Impossible in rule left hand side
+	  line 46: `_*`: Impossible in rule left hand side
+	  line 42: `X*`: Impossible in rule left hand side
+	  line 38: `_`: Impossible in rule left hand side
+	Tom SyntaxChecker:  Encountered 22 errors and 2 warnings.
 	
 ////////////////////
 RECORD DECLARATION
 ////////////////////
-JRecord1.t
-	Slot Name `badslot` is not correct for symbol `op`. Possible slot names are : [slot1, slot2]
-	[] are not allowed on lists or arrays, see `concList1`
-	Same slot names can not be used several times in symbol `op`: Repeated slot Name : `slot1`
-	Unknown symbol opp
+	JRecord.t
+	  line 41: Unknown symbol `opp`
+	  line 37: Same slot names can not be used several times in symbol `op`: Repeated slot Name : `slot1`
+	  line 35: [] are not allowed on lists or arrays, see `concList1`
+	  line 33: Slot Name `badslot` is not correct for symbol `op`. Possible slot names are : [slot1, slot2]
+	Tom SyntaxChecker:  Encountered 4 errors and 0 warnings.
 
 ////////////////////
 APPL DECLARATION
 ////////////////////
-JAppl1.t
-	Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found
-	Bad number of arguments for symbol `op2`: 2 argument(s) required but 3 found
-	Too many list symbols with returned type `type2`:  concList2 concList3
-	OK: Only one list symbol with returned type `type1`
-	Not able to found a list symbol of type: `type0
-	The symbol op1 has type `type1` but type `type2` was required (x2)
-	_* (&& X*) is not allowed in non list symbol
-	OK: variable opVariable
-	Unknown symbol opErro (line78)
-	Unknown symbol opError2 "opError2()"
-	Warning: Ambiguous symbol name. Is`op0` a variable or a constructor? Prefer `op0`() if it is a constructor
-	The symbol op0 has type `type0` but type `type2` was required
-	The symbol op0 has type `type0` but type `type2` was required
-	The symbol op0 has type `type0` but type `type2` was required "nested Appl"
+	JAppl.t
+	  line 87: Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found
+	  line 85: The symbol `op0` has type `type0` but type `type2` was required
+	  line 82: The symbol `op0` has type `type0` but type `type2` was required
+	  line 82: Warning: Ambiguous symbol name. Is`op0` a variable or a constructor? Prefer `op0`() if it is a constructor
+	  line 80: Unknown symbol `opError2`
+	  line 78: Unknown symbol `opError`
+	  line 74: X* is not allowed in non list symbol
+	  line 74: _* is not allowed in non list symbol
+	  line 72: The symbol `op1` has type `type1` but type `type2` was required
+	  line 72: The symbol `op1` has type `type1` but type `type2` was required
+	  line 70: Not able to found a list symbol of type: `type0`
+	  line 66: Too many list symbols with returned type `type2`:  concList2 concList3
+	  line 64: Bad number of arguments for symbol `op2`: 2 argument(s) required but 3 found
+	  line 62: Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found
+	Tom SyntaxChecker:  Encountered 13 errors and 1 warnings.
 
 ////////////////////
 VARIABLE DECLARATION
 ////////////////////
-JVariable1.t
-	Variables are correctly extracted	
-	Unknown variable(s) [a] used on right part of %rule
-	Bad variable type for 'x': it has both type 'type2' and 'type1'
+	JVariable.t
+	  line 54: Unknown symbol `a`: Cant do further analyses
+	Tom SyntaxChecker:  Encountered 1 warnings.
+	  line 52: Unknown variable(s) `[a]`
+	  line 41: Variable `x` has type `type0` instead of type `type2`
+	  line 41: Variable `x` has type `type0` instead of type `type1`
+	  line 41: Bad variable type for `x`: it has both type `type1` and `type0`
+	  line 41: Bad variable type for `x`: it has both type `type1` and `type2`
+	Tom TypeChecker:  Encountered 5 errors and 0 warnings.
+

@@ -59,32 +59,32 @@
 }
 
 %match(type2 t, type2 u, type1 v, type0 w) {
-  op2(_), _      , _, _  -> {} // Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found (line62)
+  op2(_), _      , _, _  -> {} // Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found (line 62)
   
-  _, op2(_, _, _), _, _  -> {} // Bad number of arguments for symbol `op2`: 2 argument(s) required but 3 found (line64)
+  _, op2(_, _, _), _, _  -> {} // Bad number of arguments for symbol `op2`: 2 argument(s) required but 3 found (line 64)
   
-  _, ()         , _ , _  -> {} // Too many list symbols with returned type `type2`:  concList2 concList3 (line66)
+  _, ()         , _ , _  -> {} // Too many list symbols with returned type `type2`:  concList2 concList3 (line 66)
   
   _, _          ,() , _  -> {} // OK: Only one list symbol with returned type `type1`
   
-  _,   _,   _,        () -> {} // Not able to found a list symbol of type: `type0 (line70)
+  _,   _,   _,        () -> {} // Not able to found a list symbol of type: `type0 (line 70)
   
-  op1(_), op1(_), _ , _  -> {} // The symbol op1 has type `type1` but type `type2` was required (x2) (line72)
+  op1(_), op1(_), _ , _  -> {} // The symbol op1 has type `type1` but type `type2` was required (x2) (line 72)
 
-  op2(_*, X*), op2(_,_), _, _   -> {} // _* ( && X*) is not allowed in non list symbol (line74)
+  op2(_*, X*), op2(_,_), _, _   -> {} // _* ( && X*) is not allowed in non list symbol (line 74)
   
   _, opVariable, _, _   -> {} // OK: variable
   
   _, opError(_,_), _, _   -> {} // Unknown symbol opError (line78)
   
-  _, opError2(), _, _   -> {} // Unknown symbol opError2
+  _, opError2(), _, _   -> {} // Unknown symbol opError2 (line 80)
   
-  _, _, (op0), _   -> {} // Warning: Ambiguous symbol name. Is`op0` a variable or a constructor? Prefer `op0`() if it is a constructor
-    //The symbol op0 has type `type0` but type `type2` was required
+  _, _, (op0), _   -> {} // Warning: Ambiguous symbol name. Is`op0` a variable or a constructor? Prefer `op0`() if it is a constructor (line 82)
+    //The symbol op0 has type `type0` but type `type2` was required (line 82)
 
-  _, _, (op0()), _   -> {} // The symbol op0 has type `type0` but type `type2` was required
+  _, _, (op0()), _   -> {} // The symbol op0 has type `type0` but type `type2` was required (line 85)
 
-  _, _, (op2(_, op2(_, op2(_, op2(oneArgsOnly))))), _   -> {} // The symbol op0 has type `type0` but type `type2` was required
+  _, _, (op2(_, op2(_, op2(_, op2(oneArgsOnly))))), _   -> {} // The symbol op0 has type `type0` but type `type2` was required (line 87)
 
   
 }

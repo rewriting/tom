@@ -1,8 +1,0 @@
--- Error occured line: 42 in structure `Rule` declared line: 36 in file: JVariable1.t
----> Unknown variable(s) `[Name("a")]`
-
--- Error occured line: 33 in structure `Rule` declared line: 32 in file: JVariable1.t
----> Bad variable type for `x`: it has both type `type1` and `type2`
-
-Tom TypeChecker:  Encountered 2 errors and 0 warnings.
-No file generated.

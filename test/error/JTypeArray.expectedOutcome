@@ -1,25 +1,25 @@
--- Error occured line: 77 in structure `%typearray type9` declared line: 77 in file: JTypeArray.t
+-- Error occured line: 77 in structure `%typearray type9` declared line: 77 in file: `JTypeArray.t`
 ---> Multiple definition of Symbol `type9`
 
--- Error occured line: 66 in structure `structure %typearray type8` declared line: 59 in file: JTypeArray.t
+-- Error occured line: 66 in structure `structure %typearray type8` declared line: 59 in file: `JTypeArray.t`
 ---> Repeated macro-function `get_element`
 
--- Error occured line: 54 in structure `%typearray type7` declared line: 50 in file: JTypeArray.t
+-- Error occured line: 54 in structure `%typearray type7` declared line: 50 in file: `JTypeArray.t`
 ---> Arguments must be linear in macro-function `equals`: Variable `l1` is repeated
 
--- Error occured line: 44 in structure `%typearray type6` declared line: 41 in file: JTypeArray.t
+-- Error occured line: 44 in structure `%typearray type6` declared line: 41 in file: `JTypeArray.t`
 ---> Arguments must be linear in macro-function `cmp_fun_sym`: Variable `t1` is repeated
 
--- Error occured line: 25 in structure `%typearray type4` declared line: 25 in file: JTypeArray.t
+-- Error occured line: 25 in structure `%typearray type4` declared line: 25 in file: `JTypeArray.t`
 ---> Missing macro-function(s) [ get_size ]
 
--- Error occured line: 17 in structure `%typearray type3` declared line: 17 in file: JTypeArray.t
+-- Error occured line: 17 in structure `%typearray type3` declared line: 17 in file: `JTypeArray.t`
 ---> Missing macro-function(s) [ get_element ]
 
--- Error occured line: 9 in structure `%typearray type2` declared line: 9 in file: JTypeArray.t
+-- Error occured line: 9 in structure `%typearray type2` declared line: 9 in file: `JTypeArray.t`
 ---> Missing macro-function(s) [ cmp_fun_sym ]
 
--- Error occured line: 1 in structure `%typearray type1` declared line: 1 in file: JTypeArray.t
+-- Error occured line: 1 in structure `%typearray type1` declared line: 1 in file: `JTypeArray.t`
 ---> Missing macro-function(s) [ get_fun_sym ]
 
 Tom SyntaxChecker:  Encountered 8 errors and 0 warnings.

@@ -13,7 +13,7 @@
 -- Error occured line: 37 in structure `Match` declared line: 36 in file: `JMatch.t`
 ---> Bad number of arguments: 2 argument(s) required by match signature but 1 found
 
--- Error occured line: 33 in structure `Match` declared line: 33 in file: `JMatch.t`
+-- Warning occured line: 33 in structure `Match` declared line: 33 in file: `JMatch.t`
 ---> Repeated variable `t1` in `match` declaration
 
 -- Error occured line: 30 in structure `Match` declared line: 30 in file: `JMatch.t`

@@ -1,0 +1,21 @@
+-- Warning occured line: 54 in structure `Rule` declared line: 46 in file: `JVariable.t`
+---> Unknown symbol `a`: Cant do further analyses
+
+Tom SyntaxChecker:  Encountered 1 warnings.
+-- Error occured line: 52 in structure `Rule` declared line: 46 in file: `JVariable.t`
+---> Unknown variable(s) `[a]`
+
+-- Error occured line: 41 in structure `Rule` declared line: 40 in file: `JVariable.t`
+---> Variable `x` has type `type0` instead of type `type2`
+
+-- Error occured line: 41 in structure `Rule` declared line: 40 in file: `JVariable.t`
+---> Variable `x` has type `type0` instead of type `type1`
+
+-- Error occured line: 41 in structure `Rule` declared line: 40 in file: `JVariable.t`
+---> Bad variable type for `x`: it has both type `type1` and `type0`
+
+-- Error occured line: 41 in structure `Rule` declared line: 40 in file: `JVariable.t`
+---> Bad variable type for `x`: it has both type `type1` and `type2`
+
+Tom TypeChecker:  Encountered 5 errors and 0 warnings.
+No file generated.

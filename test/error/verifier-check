@@ -59,7 +59,7 @@ for file in $files
 	$TOM --Wall $base > $base.expectedOutcome
 	echo generation for $file
     else   
-	$TOM $base > $base.out
+	$TOM --Wall $base > $base.out
 	if $COMPARE $base.expectedOutcome $base.out > /dev/null
 	then Notify "Regression test for term $base succeeded"
 	else Error "Regression test for term $base failed"

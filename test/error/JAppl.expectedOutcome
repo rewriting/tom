@@ -1,0 +1,44 @@
+-- Error occured line: 87 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found
+
+-- Error occured line: 85 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> The symbol `op0` has type `type0` but type `type2` was required
+
+-- Error occured line: 82 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> The symbol `op0` has type `type0` but type `type2` was required
+
+-- Warning occured line: 82 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> Warning: Ambiguous symbol name. Is`op0` a variable or a constructor? Prefer `op0`() if it is a constructor
+
+-- Error occured line: 80 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> Unknown symbol `opError2`
+
+-- Error occured line: 78 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> Unknown symbol `opError`
+
+-- Error occured line: 74 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> X* is not allowed in non list symbol 
+
+-- Error occured line: 74 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> _* is not allowed in non list symbol 
+
+-- Error occured line: 72 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> The symbol `op1` has type `type1` but type `type2` was required
+
+-- Error occured line: 72 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> The symbol `op1` has type `type1` but type `type2` was required
+
+-- Error occured line: 70 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> Not able to found a list symbol of type: `type0`
+
+-- Error occured line: 66 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> Too many list symbols with returned type `type2`:  concList2 concList3
+
+-- Error occured line: 64 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> Bad number of arguments for symbol `op2`: 2 argument(s) required but 3 found
+
+-- Error occured line: 62 in structure `Match` declared line: 61 in file: `JAppl.t`
+---> Bad number of arguments for symbol `op2`: 2 argument(s) required but 1 found
+
+Tom SyntaxChecker:  Encountered 13 errors and 1 warnings.
+No file generated.

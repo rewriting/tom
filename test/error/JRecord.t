@@ -30,14 +30,14 @@
 
 
 %match(type1 u, type1 v) { 
-  op[badslot=x], _ -> {} // Slot Name `slot` is not correct for symbol `op`. Possible slot names are : [slot1, slot2]
+  op[badslot=x], _ -> {} // Slot Name `slot` is not correct for symbol `op`. Possible slot names are : [slot1, slot2] (line 33)
 
-  _, concList1[] -> {} // [] are not allowed on lists or arrays, see `concList1`
+  _, concList1[] -> {} // [] are not allowed on lists or arrays, see `concList1`(line 35)
 
-  op[slot1=_, slot1=_], _ -> {} // Same slot names can not be used several times in symbol `op`: Repeated slot Name : `slot1`
+  op[slot1=_, slot1=_], _ -> {} // Same slot names can not be used several times in symbol `op`: Repeated slot Name : `slot1` (line 37)
 
   op[slot1=_, slot2=_], _ -> {}
 
-  opp[slot1=_, slot1=_], _ -> {} // Unknown symbol opp
+  opp[slot1=_, slot1=_], _ -> {} // Unknown symbol opp (line 41)
   
 }
