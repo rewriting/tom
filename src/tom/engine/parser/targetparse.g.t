@@ -1,4 +1,6 @@
 header{
+    import java.util.*;
+
     import aterm.*;
     import aterm.pure.*;
     
@@ -28,6 +30,17 @@ class NewTargetParser extends Parser;
 
     // the file to be parsed
     private String filename;
+    
+    // the parser for tom constructs
+    NewTomParser tomparser; 
+
+    // the lexer
+    NewTargetLexer targetlexer = (NewTargetLexer) Main.selector.getStream("targetlexer");
+    
+    StringBuffer targetLanguage = new StringBuffer("");
+
+    Stack lines = new Stack();
+    Stack columns = new Stack();
 
     public NewTargetParser(TokenStreamSelector selector, String filename){
         this(selector);
@@ -36,35 +49,70 @@ class NewTargetParser extends Parser;
         tomparser = new NewTomParser(getInputState(),this,filename);
     }
 
-    // the parser for tom constructs
-    NewTomParser tomparser; 
+    public int popLine(){
+        return ((Integer) lines.pop()).intValue();
+    }
 
-    // the lexer
-    NewTargetLexer targetlexer = (NewTargetLexer) Main.selector.getStream("targetlexer");
-    
-    
-    StringBuffer targetLanguage = new StringBuffer("");
+    public int popColumn(){
+        return ((Integer) columns.pop()).intValue();
+    }
 
+    public void pushLine(int line){
+        lines.push(new Integer(line));
+    }
+
+    public void pushColumn(int column){
+        columns.push(new Integer(column));
+    }
+    
     private String cleanCode(String code){
         return code.substring(code.indexOf('{')+1,code.lastIndexOf('}'));
     }
 
+    private String getCode(){
+        String result = targetlexer.target.toString();
+        targetlexer.clearTarget();
+        return result;
+    }
+
+    private boolean isCorrect(String code){
+        return (! code.equals(""));
+    }
+
+    private TomList makeTomList(LinkedList list){
+        TomList result = `emptyTomList();
+        for(int i = 0; i < list.size(); i++){
+            result = `concTomTerm(result*,(TomTerm) list.get(i));
+        }
+        return result;
+    }
     
 }
 
 input
+{
+    LinkedList list = new LinkedList();
+    pushLine(1);
+    pushColumn(1);
+}
 	:
-        blockList() 
+        blockList[list] t:EOF
         {
-            System.out.println("------- buffer :\n"+targetlexer.target);
+            list.add(`TargetLanguageToTomTerm(
+                    TL(
+                        getCode(),
+                        TextPosition(popLine(),popColumn()),
+                        TextPosition(t.getLine(),t.getColumn())
+                    )
+                )
+            );
+            TomTerm term = `Tom(makeTomList(list));
+            System.out.println("le terme :"+term);
         }
     ;
 
-blockList //returns [String result]
-/*{
-    result = null;
-}
-  */  :
+blockList [LinkedList list]
+    :
         (
             matchConstruct()
         |   ruleConstruct() 
@@ -74,11 +122,11 @@ blockList //returns [String result]
         |   operatorList()
         |   operatorArray()
         |   includeConstruct()
-        |   typeTerm()
+        |   typeTerm[list] 
         |   typeList()
         |   typeArray()
         |   LBRACE  
-            blockList() 
+            blockList[list]
             RBRACE 
         |   TARGET 
         )*
@@ -176,14 +224,40 @@ includeConstruct
         }
         
     ;
-typeTerm
+typeTerm [LinkedList list]
+{
+    TargetLanguage code = null;
+    int line, column;
+}
     :
         (
-            TYPETERM
-        |   TYPE
+            tt:TYPETERM 
+            {
+                line = tt.getLine();
+                column = tt.getColumn();
+            }
+        |   t:TYPE
+            {
+                line = t.getLine();
+                column = t.getColumn();
+            }
         )
         {
-            tomparser.typeTerm();
+            // addPreviousCode...
+            String textCode = getCode();
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(popLine(),popColumn()),
+                    TextPosition(line,column));
+                list.add(`TargetLanguageToTomTerm(code));
+            }
+            Declaration termdecl = tomparser.typeTerm();
+
+//            list.add(`TargetLanguageToTomTerm(code));
+            list.add(`DeclarationToTomTerm(termdecl));
+
+            
         }
 
     ;
@@ -205,33 +279,40 @@ typeArray
     ;
 
 
-goalLanguage returns [TargetLanguage result]
+goalLanguage [LinkedList list] returns [TargetLanguage result]
 {
-    result = null;
-    String code = null;
+    result =  null;
 }
     :
         t1:LBRACE 
-        blockList 
+        {
+            pushLine(t1.getLine());
+            pushColumn(t1.getColumn());
+        }
+        blockList[list]
         t2:RBRACE 
         {
-            code = targetlexer.target.toString();
-            result = `TL(cleanCode(code),
-                         TextPosition(t1.getLine(),t1.getColumn()),
-                         TextPosition(t2.getLine(),t2.getColumn())
-                        );
+            //code = targetlexer.target.toString();
+            result = `TL(cleanCode(getCode()),
+                TextPosition(popLine(),popColumn()),
+                TextPosition(t2.getLine(),t2.getColumn())
+            );
             targetlexer.clearTarget();
         }
     ;
 
-targetLanguage returns [String result]
+targetLanguage [LinkedList list] returns [TargetLanguage result]
 {
     result = null;
 }
     :
-        blockList() RBRACE
+        blockList[list] t:RBRACE
         {
-            result = targetlexer.target.toString();
+            result = `TL(
+                getCode(),
+                TextPosition(popLine(),popColumn()),
+                TextPosition(t.getLine(),t.getColumn())
+            );
             targetlexer.clearTarget();
      
         }

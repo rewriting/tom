@@ -5,6 +5,8 @@
  */
 
 header{
+    import java.util.*;
+
     import aterm.*;
     import aterm.pure.*;
     
@@ -59,6 +61,14 @@ options{
         this.filename = filename;
         this.targetparser = target;
         symbolTable().init();
+    }
+
+    private void pushLine(int line){
+        targetparser.pushLine(line);
+    }
+
+    private void pushColumn(int column){
+        targetparser.pushColumn(column);
     }
 
     // creation of a tom variable : doesn't need a rule
@@ -138,6 +148,7 @@ patternAction returns [String result]
 {
     result = null;
     String mp = null, mp2 = null;
+    LinkedList bList = new LinkedList();
 }
     :   (
             mp = matchPattern() {result = mp;}
@@ -151,8 +162,9 @@ patternAction returns [String result]
                  * call the target parser
                  */
                 Main.selector.push("targetlexer");
-                TargetLanguage action = targetparser.goalLanguage();
-                result += action;
+                //TargetLanguage action = 
+                targetparser.goalLanguage(new LinkedList());
+//                result += action;
                 /*
                  * target parser finished : pop the target lexer
                  */
@@ -179,12 +191,17 @@ matchPattern returns [String result]
  * vas-to-adt.
  */
 signature
+{
+
+    LinkedList bList = new LinkedList();
+}
     :   
         { 
             /*
              * We didn't switch the lexers ! just have to get target code.
              */
-            TargetLanguage vasCode = targetparser.goalLanguage(); 
+//            TargetLanguage vasCode = 
+            targetparser.goalLanguage(new LinkedList()); 
             }
         // faire les action adequates ici
     ;
@@ -435,21 +452,27 @@ operatorArray
     ;
 
 keywordMakeEmptyList
+{
+    LinkedList bList = new LinkedList();
+}
     :
         MAKE_EMPTY (LPAREN RPAREN)? 
         {
             Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage();
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
         }
     ;
 
 keywordMakeAddList
+{
+    LinkedList bList = new LinkedList();
+}
     :
         MAKE_INSERT LPAREN ID COMMA ID RPAREN
         {
             Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage();
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
         }
     ;
@@ -459,7 +482,7 @@ keywordMakeEmptyArray
         MAKE_EMPTY LPAREN ID RPAREN
         {
             Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage();
+            TargetLanguage tlCode =  targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
         }
     ;   
@@ -469,7 +492,7 @@ keywordMakeAddArray
         MAKE_APPEND LPAREN ID COMMA ID RPAREN
         {
             Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage();
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
         }
     ;
@@ -479,7 +502,7 @@ keywordFsym
         FSYM 
         {
             Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage();
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
         }
     ;
@@ -491,7 +514,7 @@ keywordMake
             LBRACE
             {
                 Main.selector.push("targetlexer");
-                String tlCode = targetparser.targetLanguage();
+                TargetLanguage tlCode = targetparser.targetLanguage(new LinkedList());
                 Main.selector.pop();
             }
            
@@ -503,7 +526,7 @@ keywordGetSlot
         GET_SLOT LPAREN ID COMMA ID RPAREN
         {
             Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage();
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
         }
     ;
@@ -513,20 +536,20 @@ keywordIsFsym
         IS_FSYM LPAREN ID RPAREN
        {
             Main.selector.push("targetlexer");
-            TargetLanguage tlCode = targetparser.goalLanguage();
+            TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
             Main.selector.pop();
         }
     ;
 
 include
-    :   {targetparser.goalLanguage();}
+    :   {targetparser.goalLanguage(new LinkedList());}
     ;
 
 keywordGetFunSym [String type] returns [Declaration result]
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode;
+    TargetLanguage tlCode = null;
 }
     :
         (
@@ -535,7 +558,7 @@ keywordGetFunSym [String type] returns [Declaration result]
             LPAREN name:ID RPAREN
             {
                 Main.selector.push("targetlexer");
-                tlCode = targetparser.goalLanguage();
+                tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop();
 
                 Option info = `OriginTracking(Name(name.getText()),name.getLine(),Name(filename));
@@ -566,7 +589,7 @@ keywordGetSubterm[String type] returns [Declaration result]
                 OptionList option2 = `concOption(info2);
                 
                 Main.selector.push("targetlexer");
-                tlCode = targetparser.goalLanguage();
+                tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop(); 
 
                 result = `GetSubtermDecl(
@@ -596,7 +619,7 @@ keywordCmpFunSym [String type] returns [Declaration result]
                 OptionList option2 = `concOption(info2);
                 
                 Main.selector.push("targetlexer");
-                tlCode = targetparser.goalLanguage();
+                tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop(); 
 
                 result = `CompareFunctionSymbolDecl(
@@ -625,7 +648,7 @@ keywordEquals[String type] returns [Declaration result]
                 OptionList option2 = `concOption(info2);
                 
                 Main.selector.push("targetlexer");
-                tlCode = targetparser.goalLanguage();
+                tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop();  
                 
                 result = `TermsEqualDecl(
@@ -652,7 +675,7 @@ keywordGetHead[String type] returns [Declaration result]
                 OptionList option = `concOption(info);
 
                 Main.selector.push("targetlexer");
-                tlCode = targetparser.goalLanguage();
+                tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop();  
 
                 result = `GetHeadDecl(
@@ -680,7 +703,7 @@ keywordGetTail[String type] returns [Declaration result]
                 OptionList option = `concOption(info);
 
                 Main.selector.push("targetlexer");
-                tlCode = targetparser.goalLanguage();
+                tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop();  
 
                 result = `GetTailDecl(
@@ -707,7 +730,7 @@ keywordIsEmpty[String type] returns [Declaration result]
                 OptionList option = `concOption(info);
 
                 Main.selector.push("targetlexer");
-                tlCode = targetparser.goalLanguage();
+                tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop(); 
 
                 result = `IsEmptyDecl(
@@ -724,7 +747,7 @@ keywordImplement
             IMPLEMENT
             {
                 Main.selector.push("targetlexer");
-                TargetLanguage tlCode = targetparser.goalLanguage();
+                TargetLanguage tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop();  
             }
         )
@@ -748,7 +771,7 @@ keywordGetElement[String type] returns [Declaration result]
                 OptionList option2 = `concOption(info2);
                 
                 Main.selector.push("targetlexer");
-                tlCode = targetparser.goalLanguage();
+                tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop();  
                 
                 result = `GetElementDecl(
@@ -763,7 +786,7 @@ keywordGetSize[String type] returns [Declaration result]
 {
     result = null;
     Option ot = null;
-    TargetLanguage tlCode;
+    TargetLanguage tlCode = null;
 }
     :
         (
@@ -775,7 +798,7 @@ keywordGetSize[String type] returns [Declaration result]
                 OptionList option = `concOption(info);
 
                 Main.selector.push("targetlexer");
-                tlCode = targetparser.goalLanguage();
+                tlCode = targetparser.goalLanguage(new LinkedList());
                 Main.selector.pop();  
 
                 result = `GetSizeDecl(
@@ -785,9 +808,9 @@ keywordGetSize[String type] returns [Declaration result]
         )
     ;
 
-typeTerm
+typeTerm returns [Declaration result]
 {
-    Declaration result = null;
+    result = null;
     Option ot = null;
     TomList blockList = `emptyTomList();
     Declaration attribute = null;
@@ -814,13 +837,17 @@ typeTerm
                 {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
 
             )*
-            RBRACE
-            
+            t:RBRACE
         )
         {
             result = `TypeTermDecl(Name(type.getText()),blockList,ot);
             printRes(result);
 
+            // update for new target block...
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
+
+            // pop the tomlexer and go back to the targetparser
             Main.selector.pop();
         }
     ;
