@@ -149,23 +149,6 @@ public class TomCompiler extends TomTask {
                         /* generate equality checks */
                       ArrayList equalityCheck = new ArrayList();
                       TomList renamedTermList = linearizePattern(termList,equalityCheck);
-											/*if(equalityCheck.size() > 0) {
-                        Expression cond = `TrueTL();
-                        Iterator it = equalityCheck.iterator();
-                        while(it.hasNext()) {
-                          Expression equality = (Expression)it.next();
-                          cond = `And(equality,cond);
-                        }
-                        Instruction elsePart = `Nop();
-                        if(debugMode) {
-                          TargetLanguage tl = tsf().makeTargetLanguage_ITL("jtom.debug.TomDebugger.debugger.linearizationFail(\""+debugKey+"\");\n");
-                          elsePart = `Action(cons(TargetLanguageToTomTerm(tl), empty()));
-                        }
-                      
-                        newActionInst = `IfThenElse(cond,actionInst,elsePart);
-                        newPatternAction = `PatternAction(TermList(renamedTermList),newActionInst, option);        
-                          //System.out.println("\nnewPatternAction = " + newPatternAction);
-                      }*/
 											newPatternAction = `PatternAction(TermList(renamedTermList),actionInst, option);        
                     
                         /* abstract patterns */

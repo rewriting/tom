@@ -426,7 +426,6 @@ public class TomKernelCompiler extends TomBase {
 
         Instruction body = `UnamedBlock(concInstruction(Assign(p.subjectListName,GetTail(Ref(p.subjectListName))),subAction));
         Expression source = `GetHead(Ref(p.subjectListName));
-        //Instruction let = buildAnnotedLet(optionList, source, var, body);
         //Instruction let = `Let(var, source, body);
         Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyList(Ref(p.subjectListName))),
@@ -565,7 +564,6 @@ public class TomKernelCompiler extends TomBase {
 
         Instruction body = `UnamedBlock(concInstruction(Increment(p.subjectListIndex),subAction));
         Expression source = `GetElement(p.subjectListName,p.subjectListIndex);
-        //Instruction let = buildAnnotedLet(optionList, source, var, body);
         //Instruction let = `Let(var, source, body);
         Instruction let = buildLet(var, source, body);
         Instruction test = `IfThenElse(Not(IsEmptyArray(Ref(p.subjectListName),Ref(p.subjectListIndex))),
@@ -651,10 +649,7 @@ public class TomKernelCompiler extends TomBase {
 		// Take care of constraints
 		%match(TomTerm dest) {
 			(Variable|VariableStar)[constraints=conslist] -> {
-				while(!conslist.isEmpty()) {
-					body = buildConstraint(conslist.getHead(),dest,body);
-					conslist = conslist.getTail();
-				}
+				body = buildConstraint(conslist,dest,body);
 			}
 			Variable[option=option1,astName=name1,astType=type1] -> {
 				dest = `Variable(option1,name1,type1,concConstraint());
@@ -666,14 +661,26 @@ public class TomKernelCompiler extends TomBase {
 		return `Let(dest,source,body);
   }
 
-	private Instruction buildConstraint(Constraint constr, TomTerm var, Instruction body) {
-		%match(Constraint constr) {
-			Equal(expr) -> {
-        body = `IfThenElse(EqualTerm(var,expr),body,Nop());
-			}
-		}
+	private Instruction buildConstraint(ConstraintList constr, TomTerm var, Instruction body) {
+		if (constr.isEmpty()) { return body; }
+		Expression cond = contraintToExpression(constr.getHead(),var);
+		constr = constr.getTail();
+		while (!constr.isEmpty()) {
+			cond = `And(cond,contraintToExpression(constr.getHead(),var));
+			constr = constr.getTail();
+		}	
+		body = `IfThenElse(cond,body,Nop());
 		return body;
 	}
+
+private Expression contraintToExpression(Constraint constr, TomTerm var) {
+	%match(Constraint constr) {
+		Equal(expr) -> {
+			return `EqualTerm(var,expr);
+		}
+	}
+	return `TrueTL();
+}
 
   private class MatchingParameter {
       /*
