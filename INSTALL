@@ -7,21 +7,25 @@ The simplest way to install TOM is:
 	 a. Type `./configure --prefix=<INSTALLDIR>'
 	 b. Type `make'
 	 c. Type `make install'
-
-  2. Get and install the aterm-java package
+ 
+  2. Get and install the JJTraveler package
+	 a. Type `./configure --prefix=<INSTALLDIR>'
+	 b. Type `make'
+	 c. Type `make install'
+  3. Get and install the aterm-java package
 	 a. Type `./configure --prefix=<INSTALLDIR>\
-                              --with-shared-objects=<INSTALLDIR>/share/shared-objects-1.0.jar'
+                              --with-shared-objects=<SHARED-OBJECT-INSTALLDIR>'
 	 b. Type `make'
 	 c. Type `make install'
 
-  3. Configure the current package:
+  4. Configure the current package:
 	 `./configure --prefix=<INSTALLDIR>\
-                      --with-shared-objects=<INSTALLDIR>/share/shared-objects-1.1.jar\
-                      --with-aterm-java=<INSTALLDIR>/share/aterm-1.1.jar'
+                      --with-shared-objects=<SHARED-OBJECT-INSTALLDIR>\
+                      --with-aterm-java=<ATERM-JAVA-INSTALLDIR>'
 
-  4. Type `make' to compile the package.
+  5. Type `make' to compile the package.
 
-  5. Type `make install' to install the package.
+  6. Type `make install' to install the package.
 
 Packages are available at:
 --------------------------
