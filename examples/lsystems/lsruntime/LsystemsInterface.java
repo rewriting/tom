@@ -29,4 +29,5 @@ public interface LsystemsInterface {
    */
   LsystemsFactory getLsystemsFactory();
   
+  void run();
 }

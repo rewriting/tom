@@ -12,15 +12,17 @@ import lsruntime.adt.*;
 
 public class LsystemsView extends JFrame {
   
+  private static String titre = "Lsystems";
+  
   private LsystemsDraw myDraw;
   private JScrollPane js;
   
-  public LsystemsView(LsystemsFactory factory, String titre, double angle, int longueur, NodeList root ) {
+  public LsystemsView(LsystemsFactory factory, double angle, int longueur, NodeList root ) {
     super(titre);
     myDraw = new LsystemsDraw(factory,angle,longueur,root);
   }
   
-  public LsystemsView(LsystemsFactory factory, String titre, double angle, NodeList root ) {
+  public LsystemsView(LsystemsFactory factory, double angle, NodeList root ) {
     super(titre);
     myDraw = new LsystemsDraw(factory,angle,10,root);
   }

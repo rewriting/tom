@@ -36,6 +36,11 @@ public class LsystemsDraw  extends JComponent {
   %include { lsystems.signature }
   %include { extras.t }
   
+  private LsystemsFactory factory;
+  public LsystemsFactory getLsystemsFactory() {
+    return factory;
+  }
+  
   public int MAX_WIDTH = 1024;
   public int MAX_HEIGHT = 768;
   public double BORDER = 2.0;

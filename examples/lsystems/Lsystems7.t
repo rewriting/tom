@@ -17,7 +17,6 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA  02111-1307, USA.
  */
-//package ls_ex;
 
 import aterm.*;
 import aterm.pure.*;
@@ -31,12 +30,7 @@ public class Lsystems7 implements LsystemsInterface {
   %include { lsystems.signature }
   %include { extras.t }
   
-  public Lsystems7(String[] args,LsystemsFactory factory) {
-    this(args,factory, new LsystemsRuntime(args,factory));
-  }
-  
-  public Lsystems7(String[] args,LsystemsFactory factory,LsystemsRuntime runtime) {
-    this.factory = factory;
+  public Lsystems7(String[] args,LsystemsRuntime runtime) {
     this.runtime = runtime;
     if(args.length > 0) {
       for(int i=0; i < args.length; i++) { 
@@ -49,24 +43,27 @@ public class Lsystems7 implements LsystemsInterface {
     }
   }
   
+  private LsystemsRuntime runtime;
+  public LsystemsFactory getLsystemsFactory() {
+    return runtime.getLsystemsFactory();
+  }
+ 
   public boolean verbose;
   
   public final static void main(String[] args) {
-    Lsystems7 test = new Lsystems7(args,new LsystemsFactory(new PureFactory()));
+    Lsystems7 test = new Lsystems7(args,new LsystemsRuntime(args,new LsystemsFactory(new PureFactory())));
     test.run();
   }
   
-  private LsystemsRuntime runtime;
-  
   public void run() {
     runtime.run(matchls,n,delta);
-    if (verbose) System.out.println(factory);
+    if (verbose) System.out.println(getLsystemsFactory().getPureFactory());
   }
   
   
 // ------------------------------------------------------------
   
-  private int n = 10;
+  private int n = 8;
   private int delta = 85;
   
   public MatchLsystems matchls = new MatchLsystems() {

@@ -19,10 +19,10 @@
  */
 package lsruntime;
 
-import lsruntime.LsystemsInterface;
 import lsruntime.adt.*;
 import lsruntime.graphic.LsystemsView;
 import aterm.*;
+import aterm.pure.*;
 import java.util.*;
 import java.lang.*;
 
@@ -31,7 +31,11 @@ import java.lang.*;
  * 
  * @author Alexis Saettler (alexis@saettler.org)
  */
-public class LsystemsRuntime implements LsystemsInterface {
+public class LsystemsRuntime {
+  
+  public LsystemsRuntime(String[] args) {
+    this(args,new LsystemsFactory(new PureFactory()));
+  }
   
   public LsystemsRuntime(String[] args,LsystemsFactory factory) {
     this.factory = factory;
@@ -50,6 +54,11 @@ public class LsystemsRuntime implements LsystemsInterface {
       }
     }
 
+  }
+  
+  public LsystemsFactory factory;
+  public LsystemsFactory getLsystemsFactory() {
+    return factory;
   }
   
   public Parameter n;
@@ -89,7 +98,7 @@ public class LsystemsRuntime implements LsystemsInterface {
         System.out.println(root);
       }
     }
-    //if (verbose) System.out.println(factory.toString());
+    if (verbose) System.out.println("\n\n\n");
     if (draw) draw();
     
   }
@@ -145,7 +154,7 @@ public class LsystemsRuntime implements LsystemsInterface {
   }
   
   public void draw() {
-    LsystemsView view = new LsystemsView(getLsystemsFactory(),"Lsystems1",delta.getValue(),longueur.getValue(),root);
+    LsystemsView view = new LsystemsView(getLsystemsFactory(),delta.getValue(),longueur.getValue(),root);
     view.print();
   }
   

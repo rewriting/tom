@@ -17,10 +17,8 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA  02111-1307, USA.
  */
-//package ls_ex;
 
 import aterm.*;
-import aterm.pure.*;
 import java.util.*;
 import java.lang.*;
 import lsruntime.*;
@@ -31,12 +29,7 @@ public class Lsystems2 implements LsystemsInterface {
   %include { lsystems.signature }
   %include { extras.t }
   
-  public Lsystems2(String[] args,LsystemsFactory factory) {
-    this(args,factory, new LsystemsRuntime(args,factory));
-  }
-  
-  public Lsystems2(String[] args,LsystemsFactory factory,LsystemsRuntime runtime) {
-    this.factory = factory;
+  public Lsystems2(String[] args,LsystemsRuntime runtime) {
     this.runtime = runtime;
     if(args.length > 0) {
       for(int i=0; i < args.length; i++) { 
@@ -49,18 +42,21 @@ public class Lsystems2 implements LsystemsInterface {
     }
   }
   
+  private LsystemsRuntime runtime;
+  public LsystemsFactory getLsystemsFactory() {
+    return runtime.getLsystemsFactory();
+  }
+ 
   public boolean verbose;
   
   public final static void main(String[] args) {
-    Lsystems2 test = new Lsystems2(args,new LsystemsFactory(new PureFactory()));
+    Lsystems2 test = new Lsystems2(args,new LsystemsRuntime(args));
     test.run();
   }
   
-  private LsystemsRuntime runtime;
-  
   public void run() {
     runtime.run(matchls,n,delta,longueur);
-    if (verbose) System.out.println(factory);
+    if (verbose) System.out.println(getLsystemsFactory().getPureFactory());
   }
   
   

@@ -12,25 +12,23 @@ import javax.swing.*;
 public class RunExamples {
 
   public RunExamples(String[] args) {
-    factory = new LsystemsFactory(new PureFactory());
-    runtime = new LsystemsRuntime(args, factory);
+    runtime = new LsystemsRuntime(args,new LsystemsFactory(new PureFactory()));
     this.args = args;
   }
   
   public LsystemsRuntime runtime;
-  public LsystemsFactory factory;
   public String[] args;
   
   public void run() {
     
     String[] comment = {
-      "",
-      "Lsystem Stochastic",
-      "",
-      "",
-      "Arbre",
-      "",
-      "Triangle",
+      "Exemple simple",
+      "Lsystem stochastic",
+      "D2L-System context-sensitive",
+      "Lsystem paramétré",
+      "Lsystem param. | Arbre",
+      "Tests context-sensitive",
+      "Lsystems param. | Triangle",
       "Statistique de la Factory"
     };
     
@@ -38,11 +36,11 @@ public class RunExamples {
     jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
     Container container = jframe.getContentPane();
-    container.setLayout(new GridLayout(8, 2));
+    container.setLayout(new GridLayout(9, 2));
     
     for (int i = 1; i < 8; i++) {
       container.add(new JLabel(comment[i-1]));
-      container.add(addbutton("Lsystems"+i));
+      container.add(addbutton(i));
     }
     
     container.add(new JLabel(comment[7]));
@@ -50,42 +48,68 @@ public class RunExamples {
     stats.addActionListener(
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          System.out.println(factory.getPureFactory());
+          System.out.println(runtime.getLsystemsFactory().getPureFactory());
         }
       }
     );
     container.add(stats);
     
+    container.add(new JLabel(""));
+    final JCheckBox check = new JCheckBox("verbose",false);
+    check.addActionListener(
+      new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (check.isSelected()) {
+            runtime.verbose = true;
+          } else {
+            runtime.verbose = false;
+          }
+        }
+      }
+    );
+    container.add(check);
+    
     jframe.pack();
     jframe.setVisible(true);
   }
   
-  public JButton addbutton(String name) {
-    JButton result = new JButton(name);
+  public JButton addbutton(final int testno) {
+    JButton result = new JButton("Lsystems" + testno);
     result.addActionListener(
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          runtest(e.getActionCommand());
+          runtest(e.getActionCommand(),testno);
         }
       }
     );
     return result;
   }
   
-  public void runtest(String name) {
+  public void runtest(String name,int testno) {
+    boolean old_verbose = false;
     try {
       // vive la réflexivité...
       Class classe = Class.forName(name);
-      Class[] paramContruct = {java.lang.String[].class,lsruntime.adt.LsystemsFactory.class, lsruntime.LsystemsRuntime.class};
-      Object[] initargs = {args, factory, runtime};
+      Class[] paramContruct = {java.lang.String[].class, lsruntime.LsystemsRuntime.class};
+      Object[] initargs = {args, runtime};
       Object test = classe.getConstructor(paramContruct).newInstance(initargs);
       
       Class[] paramRun = { };
       Method runtest = classe.getMethod("run",paramRun);
       
       Object[] paramInvoke = { };
+      if (testno == 4 || testno == 6) {
+        old_verbose = runtime.verbose;
+        runtime.verbose = true;
+      }
       runtest.invoke(test, paramInvoke);
-      runtime.draw();
+      if (testno == 4 || testno == 6) {
+        runtime.verbose = old_verbose;
+      }
+      
+      if (testno != 4 && testno != 6) {
+        runtime.draw();
+      }
     } catch (Exception e) {
       System.out.println(e);
     }
