@@ -1,0 +1,32 @@
+TOM 1.4 release announcement
+----------------------------
+
+It is my great privilege and pleasure to announce the availability of
+jtom-1.4.
+
+This release continues our work on the integration of pattern matching
+and rule based programming facilities into C and Java.
+
+TOM is a pattern matching compiler which is particularly well-suited
+for programming various transformations on trees/terms.  
+Its design follows our experiences on the efficient compilation of
+rule-based systems. The tool can be seen as a Yacc-like compiler
+translating patterns into executable pattern matching automata.
+Similarly to Yacc, when a match is found, the corresponding semantic
+action (a sequence of instructions written in C or Java) is triggered
+and executed.    
+
+This new release contains many improved and new features:
+
+     - an Eclipse plugin
+     - an interactive debugger
+     - a generalized backquote construct (for building terms)
+     - an extension for XML transformations
+
+TOM is available, in open source, from the TOM web page:
+
+    http://tom.loria.fr
+
+
+    best regards,
+    Pierre-Etienne Moreau
