@@ -47,74 +47,52 @@ public class TomOptimizer extends TomBase implements TomPlugin
 
     public void run()
     {
-	try
+	if(amIActivated() == true)
 	    {
-		long startChrono = System.currentTimeMillis();
-		TomOptionList list = `concTomOption(myOptions*);
-		boolean willRun = true;
-
-		boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
-		boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
-		
-		while(!(list.isEmpty()))
+		try
 		    {
-			TomOption h = list.getHead();
-			%match(TomOption h)
-			    {
-				OptionBoolean[name="optimize", valueB=val] -> 
-				    { 
-					%match(TomBoolean val)
-					    {
-						True() -> { willRun = true; }
-						False() -> { willRun = false; }
-					    }
-				    }
-			    }
-			list = list.getTail();
-		    }
-		if(willRun)
-		    {
+			long startChrono = System.currentTimeMillis();
+						
+			boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+			boolean intermediate = ((Boolean)getServer().getOptionValue("intermediate")).booleanValue();
+						
 			TomTerm renamedTerm = renameVariable(term, new HashSet());
 			TomTerm optimizedTerm = optimize(renamedTerm);
 			term = optimizedTerm;
+			
 			if(verbose)			
 			    System.out.println("TOM optimization phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+			
 			if(intermediate)
 			    Tools.generateOutput(environment().getOutputFileNameWithoutSuffix() 
 						 + OPTIMIZED_SUFFIX, term);
+		
+			environment().printAlertMessage("TomOptimizer");
+			if(!environment().isEclipseMode()) 
+			    {
+				// remove all warning (in command line only)
+				environment().clearWarnings();
+			    }
 		    }
-		else
+		catch (Exception e) 
 		    {
-			if(verbose)
-			    System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
+			environment().messageError("Exception occurs in TomOptimizer: "
+						   +e.getMessage(), environment().getInputFile().getName(), 
+						   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+			e.printStackTrace();
 		    }
-
-		environment().printAlertMessage("TomOptimizer");
-		if(!environment().isEclipseMode()) {
-		    // remove all warning (in command line only)
-		    environment().clearWarnings();
-		}
 	    }
-	catch (Exception e) 
+	else
 	    {
-		environment().messageError("Exception occurs in TomOptimizer: "
-					   +e.getMessage(), environment().getInputFile().getName(), 
-					   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-		e.printStackTrace();
+		boolean verbose = getServer().getOptionBooleanValue("verbose");
+
+		if(verbose)
+		    System.out.println("The optimizer is not activated and thus WILL NOT RUN.");
 	    }
     }
 
     public TomOptionList declareOptions()
     {
-// 	int i = 0;
-// 	OptionList list = `concOption(myOptions*);
-// 	while(!(list.isEmpty()))
-// 	    {
-// 		i++;
-// 		list = list.getTail();
-// 	    }
-
-// 	System.out.println("1.7. The optimizer declares " +i+ " options.");
 	return myOptions;
     }
 
@@ -149,6 +127,30 @@ public class TomOptimizer extends TomBase implements TomPlugin
 		}
 	    }
     }
+
+    private boolean amIActivated()
+    {
+	TomOptionList list = `concTomOption(myOptions*);
+
+	while(!(list.isEmpty()))
+	    {
+		TomOption h = list.getHead();
+		%match(TomOption h)
+		    {
+			OptionBoolean[name="optimize", valueB=val] -> 
+			    { 
+				%match(TomBoolean val)
+				    {
+					True() -> { return true; }
+					False() -> { return false; }
+				    }
+			    }
+		    }
+		list = list.getTail();
+	    }
+	return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
+    }
+
 
     /* 
      * optimize:

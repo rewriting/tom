@@ -135,6 +135,7 @@ public class TomExpander extends TomBase implements TomPlugin
 	    }
     }
 
+
   private TomTerm expandVariable(TomTerm contextSubject, TomTerm subject) {
     return tomKernelExpander.expandVariable(contextSubject,subject); 
   }

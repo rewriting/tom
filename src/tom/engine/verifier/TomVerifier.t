@@ -49,76 +49,54 @@ public class TomVerifier extends TomBase implements TomPlugin
 
     public void run()
     {
-	try{
-	    long startChrono = System.currentTimeMillis();
-	    TomOptionList list = `concTomOption(myOptions*);
-	    boolean willRun = true;
-	
-	    boolean verbose = ((Boolean)getServer().getOptionValue("verbose")).booleanValue();
+	if(amIActivated() == true)
+	    {
+		try
+		    {
+			long startChrono = System.currentTimeMillis();
+			boolean verbose = getServer().getOptionBooleanValue("verbose");
 
-	    while(!(list.isEmpty()))
-		{
-		    TomOption h = list.getHead();
-		    %match(TomOption h)
-			{
-			    OptionBoolean[name="verify", valueB=val] -> 
-				{ 
-				    %match(TomBoolean val)
-					{
-					    True() -> { willRun = true; }
-					    False() -> { willRun = false; }
-					}
-				}
-			}
+			TomTerm extractTerm = `emptyTerm();
+			// here the extraction stuff
+			
+			Collection matchSet = collectMatch(term);
+			// System.out.println("Extracted : " + matchSet);
+		
+			Collection purified = purify(matchSet);
+			// System.out.println("Purified : " + purified);
+			
+			Collection derivations = getDerivations(purified);
 
-		    list = list.getTail();
-		}
-	    if(willRun)
-		{
-		    TomTerm extractTerm = `emptyTerm();
-		    // here the extraction stuff
-		
-		    Collection matchSet = collectMatch(term);
-		    // System.out.println("Extracted : " + matchSet);
-		
-		    Collection purified = purify(matchSet);
-		    // System.out.println("Purified : " + purified);
-		
-		    Collection derivations = getDerivations(purified);
-
-		    if(verbose)
-			System.out.println("TOM verification phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
-		}
-	    else
-		{
-		    if(verbose)
-			System.out.println("The verifier is not activated and thus WILL NOT RUN.");
-		}
+			if(verbose)
+			    System.out.println("TOM verification phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
 	    
-	    environment().printAlertMessage("TomVerifier");
-		if(!environment().isEclipseMode()) {
-		    // remove all warning (in command line only)
-		    environment().clearWarnings();
-		}
-	}catch (Exception e) {
-	    environment().messageError("Exception occured in TomVerifierExtract: " + e.getMessage(),
-				       environment().getInputFile().getName(), 
-				       TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-	    e.printStackTrace();
-	}
+			environment().printAlertMessage("TomVerifier");
+		
+			if(!environment().isEclipseMode())
+			    {
+				// remove all warning (in command line only)
+				environment().clearWarnings();
+			    }
+		    }
+		catch (Exception e) 
+		    {
+			environment().messageError("Exception occured in TomVerifierExtract: " + e.getMessage(),
+						   environment().getInputFile().getName(), 
+						   TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+			e.printStackTrace();
+		    }
+	    }
+	else
+	    {
+		boolean verbose = getServer().getOptionBooleanValue("verbose");
+
+		if(verbose)
+		    System.out.println("The verifier is not activated and thus WILL NOT RUN.");
+	    }
     }
 
     public TomOptionList declareOptions()
     {
-// 	int i = 0;
-// 	OptionList list = `concOption(myOptions*);
-// 	while(!(list.isEmpty()))
-// 	    {
-// 		i++;
-// 		list = list.getTail();
-// 	    }
-
-	//System.out.println("1.8. The verifier declares " +i+ " options.");
 	return myOptions;
     }
 
@@ -152,6 +130,30 @@ public class TomVerifier extends TomBase implements TomPlugin
 			myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
 		}
 	    }
+    }
+
+    private boolean amIActivated()
+    {
+	TomOptionList list = `concTomOption(myOptions*);
+	
+	while(!(list.isEmpty()))
+	    {
+		TomOption h = list.getHead();
+		%match(TomOption h)
+		    {
+			OptionBoolean[name="verify", valueB=val] -> 
+			    { 
+				%match(TomBoolean val)
+				    {
+					True() -> { return true; }
+					False() -> { return false; }
+				    }
+			    }
+		    }
+		
+		list = list.getTail();
+	    }
+	return false; // there's a problem if we're here so I guess it's better not to activate the plugin (maybe raise an error ?)
     }
 
     private Collect2 collect_match = new Collect2() {

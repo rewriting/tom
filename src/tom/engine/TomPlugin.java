@@ -3,7 +3,7 @@ package jtom;
 import aterm.*;
 
 /**
- * <b>This interface must be implemented by all Tom plugins.</b>
+ * This interface must be implemented by all Tom plugins.
  * It provides methods to access options (inherited from the 
  * TomPluginOptions interface) as well as methods to run
  * the compilation (one to "feed" the plugin, another one
