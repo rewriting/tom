@@ -1,0 +1,1 @@
+echo "__PREFIX__/share/jtom-__VERSION__.jar:__EXTERNAL_JARS__"
