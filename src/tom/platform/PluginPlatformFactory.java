@@ -23,7 +23,7 @@
  *
  **/
 
-package jtom;
+package tom.platform;
 
 import java.util.logging.*;
 import java.io.*;
@@ -71,7 +71,6 @@ public class PluginPlatformFactory {
     }
     ConfigurationManager confManager = new ConfigurationManager(confFileName);
     if(confManager.initialize(commandLine) == 1) {
-      System.out.println("confManager init fail");
       return null;
     }
     return new PluginPlatform(confManager,logRadical);

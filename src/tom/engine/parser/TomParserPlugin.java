@@ -65,8 +65,10 @@ public class TomParserPlugin extends TomGenericPlugin {
   }
   
   //create new parsers
-  protected static HostParser newParser(String fileName,HashSet includedFiles,HashSet alreadyParsedFiles,
-                                        OptionManager optionManager) throws FileNotFoundException,IOException {
+  protected static HostParser newParser(String fileName,HashSet includedFiles,
+                                        HashSet alreadyParsedFiles,
+                                        OptionManager optionManager)
+    throws FileNotFoundException,IOException {
     
     // The input Stream
     DataInputStream input = new DataInputStream(new FileInputStream(new File(fileName)));
@@ -143,26 +145,26 @@ public class TomParserPlugin extends TomGenericPlugin {
     }
     catch (TokenStreamException e){
       e.printStackTrace();
-      getLogger().log( Level.SEVERE, "TokenStreamException",
-                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+      getLogger().log(Level.SEVERE, "TokenStreamException",
+                       new Object[]{currentFile, new Integer(getLineFromTomParser() ), e.getMessage()} );
     }
     catch (RecognitionException e){
       e.printStackTrace();
-      getLogger().log( Level.SEVERE, "RecognitionException",
-                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+      getLogger().log(Level.SEVERE, "RecognitionException",
+                      new Object[]{currentFile, new Integer(getLineFromTomParser() ), e.getMessage()});
     } catch (TomIncludeException e) {
-      getLogger().log( Level.SEVERE, "SimpleMessage",
-                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+      getLogger().log(Level.SEVERE, "SimpleMessage",
+                       new Object[]{currentFile, new Integer(getLineFromTomParser() ), e.getMessage()});
     } catch (TomException e) {
-      getLogger().log( Level.SEVERE, "SimpleMessage",
-                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), e.getMessage()} );
+      getLogger().log(Level.SEVERE, "SimpleMessage",
+                       new Object[]{currentFile, new Integer(getLineFromTomParser() ), e.getMessage()});
     } catch (FileNotFoundException e) {
-      getLogger().log( Level.SEVERE, "FileNotFound",
-                       new Object[]{currentFile, new Integer( getLineFromTomParser() ), currentFile} ); 
+      getLogger().log(Level.SEVERE, "FileNotFound",
+                       new Object[]{currentFile, new Integer(getLineFromTomParser() ), currentFile}); 
     } catch (Exception e) {
       e.printStackTrace();
-      getLogger().log( Level.SEVERE, "UnhandledException", 
-                       new Object[]{currentFile, e.getMessage()} );
+      getLogger().log(Level.SEVERE, "UnhandledException", 
+                       new Object[]{currentFile, e.getMessage()});
     }
   }
   

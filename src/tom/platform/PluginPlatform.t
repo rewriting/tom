@@ -71,8 +71,8 @@ public class PluginPlatform {
   /** The status handler */
   private StatusHandler statusHandler;
 
-  /** List of input file */
-  private List inputFileList;
+  /** List of input arg */
+  private List inputToCompileList;
   /**
    * Class Pluginplatform constructor
    */
@@ -81,7 +81,7 @@ public class PluginPlatform {
     optionManager = confManager.getOptionManager();
     statusHandler = new StatusHandler();
     logger = Logger.getLogger(getClass().getName());
-    inputFileList = optionManager.getInputFileList();
+    inputToCompileList = optionManager.getInputToCompileList();
     Logger.getLogger(loggerRadical).addHandler(this.statusHandler);
   }
 
@@ -96,8 +96,9 @@ public class PluginPlatform {
    * </ul>
    */
   public int run() {
-    for(int i = 0; i < inputFileList.size(); i++) { // for each input file
-      Object arg = inputFileList.get(i);
+    for(int i = 0; i < inputToCompileList.size(); i++) {
+      // for each input
+      Object arg = inputToCompileList.get(i);
       logger.log(Level.FINER, "NowCompiling", arg);
       // runs the modules
       Iterator it = pluginsList.iterator();

@@ -37,7 +37,7 @@ import tom.platform.*;
 public class Tom {
   
   /** The current version of the TOM compiler. */
-  public final static String VERSION = "2.1 - Under development";
+  public final static String VERSION = "2.1 source - Under development";
   
   /** Log radical string*/
   public final static String LOGGERRADICAL = "jtom";
@@ -56,6 +56,7 @@ public class Tom {
   }
   
   public static int exec(String[] commandLine) {
+    System.out.println("Tom Compiler "+Tom.VERSION+" 2000-2004 tom.loria.fr");
     try {
       initializeLogging();
     } catch(Exception e) {
@@ -154,15 +155,15 @@ public class Tom {
         consoleHandler = handlers[i];
         handlers[i].setFormatter((Formatter)Class.forName(
                                                           LogManager.getLogManager().getProperty("java.util.logging.ConsoleHandler.formatter")).newInstance());
-      }/*else if( handlers[i] instanceof FileHandler ) {
-         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.FileHandler.formatter")).newInstance());
-         } else if( handlers[i] instanceof SocketHandler ) {
-         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.SocketHandler.formatter")).newInstance());
-         } else if( handlers[i] instanceof MemoryHandler ) {
-         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.MemoryHandler.formatter")).newInstance());
-         } else if( handlers[i] instanceof StreamHandler ) {
-         handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.StreamHandler.formatter")).newInstance());
-         }*/
+      } else if( handlers[i] instanceof FileHandler ) {
+        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.FileHandler.formatter")).newInstance());
+      } else if( handlers[i] instanceof SocketHandler ) {
+        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.SocketHandler.formatter")).newInstance());
+      } else if( handlers[i] instanceof MemoryHandler ) {
+        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.MemoryHandler.formatter")).newInstance());
+      } else if( handlers[i] instanceof StreamHandler ) {
+        handlers[i].setFormatter((Formatter)Class.forName(LogManager.getLogManager().getProperty("java.util.logging.StreamHandler.formatter")).newInstance());
+      }
       //System.out.println("Handler "+handlers[i]+" has formatter "+handlers[i].getFormatter());    
     }
   }

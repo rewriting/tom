@@ -106,8 +106,10 @@ public class TomOptionManager implements OptionManager, OptionOwner {
     return checkAllOptionsDepedencies(optionOwnerList);
   }
 
-  /** Accessor Method */
-  public List getInputFileList() {
+  /**
+   *
+   */
+  public List getInputToCompileList() {
     return inputFileList;
   }
   

@@ -47,7 +47,7 @@ public class TomStarter extends TomGenericPlugin {
     if (arg instanceof String) {
       fileName = (String)arg;  
     } else {
-      getLogger().log(Level.SEVERE,"TomStarter: A String was expected.");
+      getLogger().log(Level.SEVERE, "TomStarter: A String was expected.");
     }
   }
 
@@ -55,7 +55,6 @@ public class TomStarter extends TomGenericPlugin {
     // We need here to create the environment : 
     // We need to be sure we don't have side effects with the environment singleton
     TomEnvironment env = TomEnvironment.getInstance();
-    env.clear();
     env.initializeFromOptionManager(getOptionManager());
     env.prepareForInputFile(fileName);
   }

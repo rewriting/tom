@@ -55,9 +55,9 @@ public interface OptionManager {
    *
    * The Option manager is the only able to extract the input file name list 
    * in the list of argument. The computation is done during initialization
-   *
+   * It has to convert them in the expected format for the first plugin
    */
-  public List getInputFileList(); 
+  public List getInputToCompileList(); 
 
   /**
    * Set the option 'name' to the corresponding value 

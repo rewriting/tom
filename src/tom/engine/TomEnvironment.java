@@ -101,10 +101,10 @@ public class TomEnvironment {
   }
   
   /**
-   * Part of the Singleton pattern. Returns the instance of the PluginPlatform if it has been initialized before,
-   * otherwise it throws a TomRuntimeException.
+   * Part of the Singleton pattern. Returns the instance of the PluginPlatform
+   * if it has been initialized before,
    * 
-   * @return the instance of the PluginPlatform
+   * @return the instance of the TomEnvironment
    */
   public static TomEnvironment getInstance() {
     if(instance ==null) {
@@ -132,6 +132,7 @@ public class TomEnvironment {
     List localUserImportList = new ArrayList();
     String localDestDir = null;
     
+    clear();
     symbolTable.init(optionManager);
     // computes the input and output suffixes
     // well, it would be better in the future if we let the generator append the output suffix itself
@@ -165,16 +166,15 @@ public class TomEnvironment {
     setUserImportList(localUserImportList);
 
     // for Eclipse...
-    if ( ((Boolean)optionManager.getOptionValue("eclipse")).booleanValue() )
-      setEclipseMode(true);
+      setEclipseMode(((Boolean)optionManager.getOptionValue("eclipse")).booleanValue());
 
     // computes destdir
     localDestDir = (String)optionManager.getOptionValue("destdir");
     setDestDir(localDestDir);
 
     String commandLineUserOutputFile = (String)optionManager.getOptionValue("output");
-    if ( commandLineUserOutputFile.length() > 0 ) {
-      setUserOutputFile( commandLineUserOutputFile );
+    if(commandLineUserOutputFile.length() > 0) {
+      setUserOutputFile(commandLineUserOutputFile);
     }
   }
   
@@ -241,15 +241,13 @@ public class TomEnvironment {
       importList.add(it.next());
     }
     try {
-      
       importList.add(new File(getDestDir(),getPackagePath()).getCanonicalFile());
-      
       importList.add(getInputFile().getParentFile().getCanonicalFile());
       String tom_home = System.getProperty("tom.home");
       if(tom_home != null) {
-	File file = new File(new File(tom_home,"jtom"),"share");
-	importList.add(file.getCanonicalFile());
-	//System.out.println(" extend import list with: " + file.getPath());
+        File file = new File(new File(tom_home,"jtom"),"share");
+        importList.add(file.getCanonicalFile());
+        //System.out.println(" extend import list with: " + file.getPath());
       }
       //System.out.println("importList = " + importList);
     } catch (IOException e) {
@@ -258,7 +256,7 @@ public class TomEnvironment {
     }
     return importList;
   }
- 
+  
   public String getInputSuffix() {
     //System.out.println("getInputSuffix : " +inputSuffix);
     return inputSuffix;

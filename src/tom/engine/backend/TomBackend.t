@@ -36,7 +36,6 @@ public class TomBackend extends TomGenericPlugin {
         int warningsAtStart = getStatusHandler().nbOfWarnings();
         
         long startChrono = System.currentTimeMillis();
-				
         writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
         
         OutputCode output = new OutputCode(writer, defaultDeep, getOptionManager());
