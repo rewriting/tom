@@ -50,7 +50,7 @@ public class TomDebugEnvironment {
     this.debugStructure = struct;
     this.failureLookup = failureLookup;
     this.subjects = new ArrayList();
-    this.substitutions = new LinkedHashMap();
+    this.substitutions = new HashMap();
     this.in = new BufferedReader(new InputStreamReader(System.in));
     totalMatchResult = FAILURE;
     if(!failureLookup) {
