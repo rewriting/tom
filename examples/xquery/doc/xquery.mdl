@@ -18759,7 +18759,7 @@
 		    (object Attribute
 			tool       	"VC++"
 			name       	"Copyright"
-			value      	(value Text "Copyright (C) 1991 - 1999 Rational Software Corporation"))))
+			value      	(value Text "Copyright (c) 1991 - 1999 Rational Software Corporation"))))
 	    (object Attribute
 		tool       	"VC++"
 		name       	"default__Role"

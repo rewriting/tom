@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, INRIA
+ * Copyright (c) 2004-2005, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@
 package peano;
 
 import aterm.*;
-import aterm.pure.PureFactory;
+import aterm.pure.SingletonFactory;
 import peano.peano.*;
 import peano.peano.types.*;
 
@@ -84,7 +84,7 @@ public class PeanoApigen1 {
   }
 
   public final static void main(String[] args) {
-    PeanoApigen1 test = new PeanoApigen1(Factory.getInstance(new PureFactory()));
+    PeanoApigen1 test = new PeanoApigen1(Factory.getInstance(SingletonFactory.getInstance()));
     test.run(10);
   }
 

@@ -13,15 +13,15 @@ trees/terms and XML based documents. Its design follows  our research
 on the efficient compilation of rule based languages (e.g. ELAN,
 developed at INRIA-Loria).
 
-Tom is a tool implemented in Tom itself. It can be seen as a Yacc-like
-compiler translating patterns into executable pattern matching
-automata. Similarly to Yacc, when a match is found, the corresponding
-semantic action (a sequence of instructions written in C or Java) is
-triggered and executed.    
-Looking from another point of view, Tom is a complex compiler which adds
-powerful constructs to C and Java: non linear syntactic matching,
-associative matching with neutral element (a.k.a. list-matching), XML
-based pattern matching, string matching, and equational rewriting.  
+Tom is a tool implemented in Tom itself. Similarly to Yacc, it
+translates patterns into executable pattern matching automata. When a
+match is found, the corresponding semantic action (a sequence of
+instructions written in C or Java) is triggered and executed.    
+
+Tom is a complex compiler which adds powerful constructs to C and
+Java: non linear syntactic matching, associative matching with neutral
+element (a.k.a. list-matching), XML based pattern matching, string
+matching, and equational rewriting.   
 This offers the possibility to analyze and transform any kind of
 data-structure. Tom can be used for large scale developments and
 applications. It comes with documentation, programming, and debugging
@@ -29,10 +29,13 @@ support.
 
 This new release contains many improvements and new features:
 
-  - a re-designed plugin based architecture
+  - a re-designed plugin based architecture, which allows extension
+    and experimentation
   - a new parser based on ANTLR
-  - a library for defining traversal strategies
-  - a new library organization
+  - a library for defining traversal strategies, very useful to
+    perform analysis and transformations
+  - a new organization, which make a clean separation between
+    libraries and kernel
   - several bugs fixed
   
 Tom is available, in open source (GPL/BSD License), from the Tom web page:

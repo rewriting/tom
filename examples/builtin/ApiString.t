@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, INRIA
+ * Copyright (c) 2004-2005, INRIA
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -72,7 +72,7 @@ public class ApiString {
   }
   
   public final static void main(String[] args) {
-    ApiString test = new ApiString(Factory.getInstance(new PureFactory()));
+    ApiString test = new ApiString(Factory.getInstance(SingletonFactory.getInstance()));
     test.run();
   }
   
