@@ -49,7 +49,7 @@ public class Propp1 {
 	// ------------------------------------------------------------
 
 	public Propp1() {
-		this(Factory.getInstance(new PureFactory()));
+		this(Factory.getInstance(SingletonFactory.getInstance()));
 		this.traversal = new GenericTraversal();
 	}
 

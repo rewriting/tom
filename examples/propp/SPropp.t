@@ -32,30 +32,35 @@ package propp;
 
 import aterm.*;
 import aterm.pure.*;
+
+import java.io.*;
 import java.util.*;
-import tom.library.traversal.*;
+
+import jjtraveler.TravelerFactory;
+import jjtraveler.reflective.VisitableVisitor;
+
 import propp.seq.*;
 import propp.seq.types.*;
-import java.io.*;
+
 import antlr.CommonAST;
 
-public class GTPropp extends Propp1 {
+class SPropp extends Propp1 {
 
 	private Factory factory;
-	private GenericTraversal traversal;
+  private TravelerFactory travelerFactory;
 
 	// ------------------------------------------------------------  
 	%include { seq.tom }
 	// ------------------------------------------------------------  
 
-	public GTPropp() {
+	public SPropp() {
 		this(Factory.getInstance(SingletonFactory.getInstance()));
-		this.traversal = new GenericTraversal();
+    this.travelerFactory = new TravelerFactory();
 	}
 		
-	public GTPropp(Factory factory) {
+	public SPropp(Factory factory) {
 		this.factory = factory;
-		this.traversal = new GenericTraversal();
+    this.travelerFactory = new TravelerFactory();
 	}
 	
 	//{{{ public void run(String query)
@@ -92,122 +97,137 @@ public class GTPropp extends Propp1 {
 	Collection result = new HashSet();
 
 	public Proof solve(Proof init) {
-		Proof res = (Proof)replace.apply(init);
+
+		VisitableVisitor rule = new CalculusRules();
+		VisitableVisitor onceBottomUp = travelerFactory.OnceBottomUp(rule);
+
+		Proof res = null;
+		try {
+			res = (Proof)onceBottomUp.visit(init);
+		} catch (jjtraveler.VisitFailure e) {
+			return init;
+		}
 		if (res != init) {
 			res = solve(res);
 		}
 		return res;
 	}
 
-	Replace1 replace = new Replace1() {
-		public ATerm apply(ATerm pt) {
-			if (pt instanceof Proof) {
-				Proof subject = (Proof)pt;
-				%match(Proof subject) {
-
-					// {{{	negd
-					hyp(seq(concPred(X*),concPred(Y*,neg(Z),R*))) -> {
-						Proof prod = `hyp(seq(concPred(X*,Z),concPred(Y*,R*)));
-						return `rule(
-							negd,
-							seq(concPred(X*),concPred(Y*,mark(neg(Z)),R*)),
-							concProof(prod));
-					}
-					// }}}
-
-					//{{{ disjd
-					hyp(seq(concPred(X*),concPred(Y*,vee(Z,R),S*))) -> {
-						Proof prod = `hyp(seq(concPred(X*),concPred(Y*,Z,R,S*)));
-						return `rule(
-							disjd,
-							seq(concPred(X*),concPred(Y*,mark(vee(Z,R)),S*)),
-							concProof(prod));
-					}
-					//}}}			
-
-					//{{{ impd
-					hyp(seq(concPred(X*),concPred(S*,impl(Y,Z),R*))) -> {
-						Proof prod = `hyp(seq(concPred(X*,Y),concPred(S*,Z,R*)));
-						return `rule(
-							impd,
-							seq(concPred(X*),concPred(S*,mark(impl(Y,Z)),R*)),
-							concProof(prod));
-					}
-					//}}}
-
-					//{{{ negg
-					hyp(seq(concPred(X*,neg(Y),S*),concPred(Z*))) -> {
-						Proof prod = `hyp(seq(concPred(X*,S*),concPred(Y,Z*)));
-						return `rule(
-							negg,
-							seq(concPred(X*,mark(neg(Y)),S*),concPred(Z*)),
-							concProof(prod));
-					}
-					//}}}
-
-					//{{{ conjg
-					hyp(seq(concPred(X*,wedge(Y,Z),S*),concPred(R*))) -> {
-						Proof prod = `hyp(seq(concPred(X*,Y,Z,S*),concPred(R*)));
-						return `rule(
-							conjg,
-							seq(concPred(X*,mark(wedge(Y,Z)),S*),concPred(R*)),
-							concProof(prod));
-					}
-					//}}}
-
-					//{{{ disjg
-					hyp(seq(concPred(X*,vee(Y,Z),S*),concPred(R*))) -> {
-						Proof s1 = `hyp(seq(concPred(X*,Y,S*),concPred(R*)));
-						Proof s2 = `hyp(seq(concPred(X*,Z,S*),concPred(R*)));
-						return `rule(
-							disjg,
-							seq(concPred(X*,mark(vee(Y,Z)),S*),concPred(R*)),
-							concProof(s1,s2));
-					}
-					//}}}
-
-					//{{{ conjd
-					hyp(seq(concPred(R*),concPred(X*,wedge(Y,Z),S*))) -> {
-						Proof s1 = `hyp(seq(concPred(R*),concPred(X*,Y,S*)));
-						Proof s2 = `hyp(seq(concPred(R*),concPred(X*,Z,S*)));
-						return `rule(
-							conjd,
-							seq(concPred(R*),concPred(X*,mark(wedge(Y,Z)),S*)),
-							concProof(s1,s2));
-					}
-					//}}}
-
-					//{{{ impg
-					hyp(seq(concPred(X*,impl(Y,Z),S*),concPred(R*))) -> {
-						Proof s1 = `hyp(seq(concPred(X*,S*),concPred(R*,Y)));
-						Proof s2 = `hyp(seq(concPred(X*,Z,S*),concPred(R*)));
-						return `rule(
-							impg,
-							seq(concPred(X*,mark(impl(Y,Z)),S*),concPred(R*)),
-							concProof(s1,s2));
-					}
-					//}}}
-
-					//{{{ axio
-					hyp(seq(concPred(L1*,X,L2*),concPred(L3*,X,L4*))) -> {
-						if (`X != `EmptyP()) {
-							return `rule(
-								axiom,
-								seq(concPred(L1*,mark(X),L2*),concPred(L3*,mark(X),L4*)),
-								concProof());
-						}
-					}
-					//}}}
-
-				}// end %match
-			}
-			return traversal.genericTraversal(pt,this);
+	class CalculusRules extends propp.seq.VisitableFwd {
+		public CalculusRules() {
+			super(new jjtraveler.Fail());
 		}
-	};
+		
+		public Proof visit_Proof(Proof subject) throws jjtraveler.VisitFailure {
+			%match(Proof subject) {
+				hyp(arg) -> {
+					%match(Sequent arg) {
+
+						// {{{	negd
+						seq(concPred(X*),concPred(Y*,neg(Z),R*)) -> {
+							Proof prod = `hyp(seq(concPred(X*,Z),concPred(Y*,R*)));
+							return `rule(
+								negd,
+								seq(concPred(X*),concPred(Y*,mark(neg(Z)),R*)),
+								concProof(prod));
+						}
+						// }}}
+
+						//{{{ disjd
+						seq(concPred(X*),concPred(Y*,vee(Z,R),S*)) -> {
+							Proof prod = `hyp(seq(concPred(X*),concPred(Y*,Z,R,S*)));
+							return `rule(
+								disjd,
+								seq(concPred(X*),concPred(Y*,mark(vee(Z,R)),S*)),
+								concProof(prod));
+						}
+						//}}}			
+
+						//{{{ impd
+						seq(concPred(X*),concPred(S*,impl(Y,Z),R*)) -> {
+							Proof prod = `hyp(seq(concPred(X*,Y),concPred(S*,Z,R*)));
+							return `rule(
+								impd,
+								seq(concPred(X*),concPred(S*,mark(impl(Y,Z)),R*)),
+								concProof(prod));
+						}
+						//}}}
+
+						//{{{ negg
+						seq(concPred(X*,neg(Y),S*),concPred(Z*)) -> {
+							Proof prod = `hyp(seq(concPred(X*,S*),concPred(Y,Z*)));
+							return `rule(
+								negg,
+								seq(concPred(X*,mark(neg(Y)),S*),concPred(Z*)),
+								concProof(prod));
+						}
+						//}}}
+
+						//{{{ conjg
+						seq(concPred(X*,wedge(Y,Z),S*),concPred(R*)) -> {
+							Proof prod = `hyp(seq(concPred(X*,Y,Z,S*),concPred(R*)));
+							return `rule(
+								conjg,
+								seq(concPred(X*,mark(wedge(Y,Z)),S*),concPred(R*)),
+								concProof(prod));
+						}
+						//}}}
+
+						//{{{ disjg
+						seq(concPred(X*,vee(Y,Z),S*),concPred(R*)) -> {
+							Proof s1 = `hyp(seq(concPred(X*,Y,S*),concPred(R*)));
+							Proof s2 = `hyp(seq(concPred(X*,Z,S*),concPred(R*)));
+							return `rule(
+								disjg,
+								seq(concPred(X*,mark(vee(Y,Z)),S*),concPred(R*)),
+								concProof(s1,s2));
+						}
+						//}}}
+
+						//{{{ conjd
+						seq(concPred(R*),concPred(X*,wedge(Y,Z),S*)) -> {
+							Proof s1 = `hyp(seq(concPred(R*),concPred(X*,Y,S*)));
+							Proof s2 = `hyp(seq(concPred(R*),concPred(X*,Z,S*)));
+							return `rule(
+								conjd,
+								seq(concPred(R*),concPred(X*,mark(wedge(Y,Z)),S*)),
+								concProof(s1,s2));
+						}
+						//}}}
+
+						//{{{ impg
+						seq(concPred(X*,impl(Y,Z),S*),concPred(R*)) -> {
+							Proof s1 = `hyp(seq(concPred(X*,S*),concPred(R*,Y)));
+							Proof s2 = `hyp(seq(concPred(X*,Z,S*),concPred(R*)));
+							return `rule(
+								impg,
+								seq(concPred(X*,mark(impl(Y,Z)),S*),concPred(R*)),
+								concProof(s1,s2));
+						}
+						//}}}
+
+						//{{{ axio
+						seq(concPred(L1*,X,L2*),concPred(L3*,X,L4*)) -> {
+							if (`X != `EmptyP()) {
+								return `rule(
+									axiom,
+									seq(concPred(L1*,mark(X),L2*),concPred(L3*,mark(X),L4*)),
+									concProof());
+							}
+						}
+						//}}}
+
+					}// end %match
+				}
+			}
+			throw new jjtraveler.VisitFailure();
+		}
+	}
+ 
 
 	//{{{ public final static void main(String[] args)
 	public static void main(String[] args) {
-		GTPropp test = new GTPropp(Factory.getInstance(SingletonFactory.getInstance()));
+		SPropp test = new SPropp(Factory.getInstance(SingletonFactory.getInstance()));
 
 		String query ="";
 		try {

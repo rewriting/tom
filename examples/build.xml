@@ -682,6 +682,7 @@
     <!-- build adt -->
     <adt srcdir="${examples.dir}" 
          factory="seq" 
+         visitable="true" 
          package="${propp}" 
          destdir="${examples.gen}">
 			<include name="${propp}/**/*.adt"/>

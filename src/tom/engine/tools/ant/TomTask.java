@@ -74,6 +74,7 @@ public class TomTask extends MatchingTask {
   private Path compileSourcepath;
   private boolean depend = false;
   private boolean verbose = false;
+  private boolean visitable = false;
   private Path extdirs;
   private boolean nowarn = false;
   private boolean optimize = false;
@@ -329,12 +330,20 @@ public class TomTask extends MatchingTask {
     this.verbose = verbose;
   }
 
+  public void setVisitable(boolean visitable) {
+    this.visitable = visitable;
+  }
+
     /**
      * Gets the verbose flag.
      * @return the verbose flag
      */
   public boolean getVerbose() {
     return verbose;
+  }
+
+  public boolean getVisitable() {
+    return visitable;
   }
 
 	/**
@@ -517,6 +526,9 @@ public class TomTask extends MatchingTask {
         }
 				if (optimize == true) {
           cmd_line = cmd_line.trim() + " --optimize";
+				}
+				if (visitable == true) {
+          cmd_line = cmd_line.trim() + " --visitable";
 				}
 				if (nowarn == true) {
           cmd_line = cmd_line.trim() + " --noWarning";
