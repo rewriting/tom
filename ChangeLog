@@ -1,3 +1,7 @@
+2004-10-10  pem  <pem@becky.local>
+
+	* src/jtom/parser/BackQuoteLanguage.g.t: simplify the parser
+
 2004-09-24  pem  <pem@becky.local>
 
   * src/jtom/compiler/TomKernelCompiler.t: fixed a major bug in

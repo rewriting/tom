@@ -241,7 +241,7 @@
 			<classpath refid="stable.classpath"/>
 		</antlr>
 		<antlr target="${src.gen}/jtom/parser/BackQuoteLanguage.g"
-					 outputdirectory="${src.gen}/jtom/parser">
+					 outputdirectory="${src.gen}/jtom/parser" trace="no">
 			<classpath refid="stable.classpath"/>
 		</antlr>
 	</target>
