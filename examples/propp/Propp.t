@@ -11,19 +11,17 @@ import antlr.CommonAST;
 public class Propp {
 
 	private TermFactory factory;
-	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------  
 	%include { adt/propp/term.tom }
 	// ------------------------------------------------------------  
 
 	public Propp() {
-		this.factory = new TermFactory(new PureFactory());
+		this(new TermFactory(new PureFactory()));
 	}
 
 	public Propp(TermFactory factory) {
 		this.factory = factory;
-		this.traversal = new GenericTraversal();
 	}
 
 	public final TermFactory getTermFactory() {

@@ -11,18 +11,17 @@ import antlr.CommonAST;
 public class RecPropp extends Propp {
 
 	private TermFactory factory;
-	private GenericTraversal traversal;
 
 	// ------------------------------------------------------------  
 	%include { adt/propp/term.tom }
 	// ------------------------------------------------------------  
 
 	public RecPropp() {
-		super();
+		this(new TermFactory(new PureFactory()));
 	}
 		
 	public RecPropp(TermFactory factory) {
-		super(factory);
+		this.factory = factory;
 	}
 
 	//{{{ public void run(String query)

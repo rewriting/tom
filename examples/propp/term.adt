@@ -27,6 +27,7 @@ constructor(Pred,wedge,wedge(<left(Pred)>,<right(Pred)>)),
 constructor(Pred,neg,neg(<p(Pred)>)),
 
 constructor(Trace,rappl,rappl(<rule(RuleR)>,<subject(Sequent)>,<prod(ListSequent)>)),
+constructor(Proof,hyp,hyp(<seq(Sequent)>)),
 constructor(Proof,rule,rule(<rule(RuleR)>,<goal(Sequent)>,<lemm(ListProof)>)),
 list(ListProof,Proof),
 
