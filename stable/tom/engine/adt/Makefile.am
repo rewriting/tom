@@ -9,7 +9,7 @@ CLASSPATH_ENV   = CLASSPATH=$(JAVAROOT):$(srcdir)/$(JAVAROOT):$(JAVA_ATERM):$(SH
 
 JAVASOURCES     = ${TomSignatureAPI}
 java_JAVA       = $(JAVASOURCES)
-EXTRA_DIST      = $(JAVASOURCES) TomSignatureMakeRules.am
+EXTRA_DIST      = $(JAVASOURCES) Tom.signature TomSignatureMakeRules.am
 
 JAVAROOT        = ${top_builddir}/stable/
 

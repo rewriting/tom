@@ -23,7 +23,7 @@
 
 */
 
-package jtom; 
+package jtom;
   
 import java.util.*;
 
@@ -84,8 +84,16 @@ public class TomBase {
     return type.equals("bool");
   }
 
+  protected boolean isDoubleType(String type) {
+    return type.equals("double");
+  }
+  
   protected TomType getIntType() {
     return symbolTable().getType("int");
+  }
+
+  protected TomType getDoubleType() {
+    return symbolTable().getType("double");
   }
 
   protected TomType getBoolType() {
@@ -97,7 +105,7 @@ public class TomBase {
   }
 
   protected TomNumber makeNumber(int n) {
-    return tsf().makeTomNumber_Number(new Integer(n));
+    return tsf().makeTomNumber_Number(n);
   }
   
   protected TomList empty() {

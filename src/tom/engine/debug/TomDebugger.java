@@ -433,7 +433,7 @@ public class TomDebugger {
         while(it.hasNext()) {
           struct = (TomDebugStructure)it.next();
           HashSet set = new HashSet();
-          for (int i=1; i<=struct.nbPatterns.intValue();i++) {
+          for (int i=1; i<=struct.nbPatterns;i++) {
             set.add(new Integer(i));
           }
           struct.watchPatternList = set;
@@ -456,7 +456,7 @@ public class TomDebugger {
               continue;
             }
             HashSet set = new HashSet();
-            for (int i=1; i<=struct.nbPatterns.intValue();i++) {
+            for (int i=1; i<=struct.nbPatterns;i++) {
               set.add(new Integer(i));
             }
             struct.watchPatternList = set;
@@ -492,7 +492,7 @@ public class TomDebugger {
     HashSet result = new HashSet();
     String key = fileName+line;
     TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
-    int nbPatterns = struct.nbPatterns.intValue();
+    int nbPatterns = struct.nbPatterns;
     try {
       String str = "";
       int input = 0;
@@ -603,7 +603,7 @@ public class TomDebugger {
           String key = fileName+input;
           
           if (mapKeyDebugStructure.keySet().contains(key)) {
-            TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);;
+            TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
               // obtain pattern number
             if(struct.watchPatternList.isEmpty()) {
               System.out.println("Removing breakpoint on structure (No pattern were associated to this breakpoint)\n");
@@ -689,7 +689,7 @@ public class TomDebugger {
   
   private void showPatterns(String key) {
     TomDebugStructure struct = (TomDebugStructure)mapKeyDebugStructure.get(key);
-    for(int i=0;i<struct.nbPatterns.intValue();i++){
+    for(int i=0;i<struct.nbPatterns;i++){
       System.out.println("Pattern declared line: "+struct.patternLine[i]);
       System.out.println("=>\t"+struct.patternText[i]);
       System.out.println("--------------------------------------------------------------------------------");
@@ -922,13 +922,13 @@ public class TomDebugger {
           // The only present option in the list is the orgTack
         Option orgTrack = struct.getOption().getOptionList().getHead();
         String fileName = orgTrack.getFileName().getString();
-        Integer line = orgTrack.getLine();
+        int line = orgTrack.getLine();
         String key = fileName+line;
         TomList paList = struct.getPatternList().getTomList();
-        Integer nbPatterns =  evalListSize(paList);
-        Integer nbSubjects = evalListSize(struct.getSubjectList().getTomList());
-        String[] patternText = new String[nbPatterns.intValue()];
-        Integer[] patternLine = new Integer[nbPatterns.intValue()];
+        int nbPatterns =  paList.getLength();
+        int nbSubjects = struct.getSubjectList().getTomList().getLength();
+        String[] patternText = new String[nbPatterns];
+        int[] patternLine = new int[nbPatterns];
         int i=0;
         TomTerm pa;
         OptionList opList;
@@ -943,13 +943,13 @@ public class TomDebugger {
         
       } else if (struct.isRuleSet()) {
         String fileName = struct.getOrgTrack().getFileName().getString();
-        Integer line = struct.getOrgTrack().getLine();
+        int line = struct.getOrgTrack().getLine();
         String key = fileName+line;
         TomList paList = struct.getTomList();
-        Integer nbPatterns =  evalListSize(paList);
-        Integer nbSubjects = evalListSize(struct.getTomList().getHead().getLhs().getTomTerm().getArgs());
-        String[] patternText = new String[nbPatterns.intValue()];
-        Integer[] patternLine = new Integer[nbPatterns.intValue()];
+        int nbPatterns =  paList.getLength();
+        int nbSubjects = struct.getTomList().getHead().getLhs().getTomTerm().getArgs().getLength();
+        String[] patternText = new String[nbPatterns];
+        int[] patternLine = new int[nbPatterns];
         int i=0;
         TomTerm pa;
         OptionList opList;
@@ -970,16 +970,7 @@ public class TomDebugger {
     }
   }
   
-  private Integer evalListSize(TomList list) {
-    int size = 0;
-    while(!list.isEmpty()) {
-      size++;
-      list = list.getTail();
-    }
-    return new Integer(size);
-  }
-  
-  private Integer extractPatternLine(OptionList list) {
+  private int extractPatternLine(OptionList list) {
     Option op;
     while(!list.isEmpty()) {
       op = list.getHead();
@@ -988,7 +979,7 @@ public class TomDebugger {
       }
       list = list.getTail();
     }
-    return null;
+    return -1;
   }
 
   private String extractPatternText(OptionList list) {
@@ -1004,27 +995,3 @@ public class TomDebugger {
   }
   
 } //Class TomDebugger
-
-class TomDebugStructure {
-  String[] patternText;
-  HashSet watchPatternList;
-  Integer nbPatterns;
-  Integer nbSubjects;
-  Integer[] patternLine;
-  String fileName;
-  Integer line;
-  String key;
-  String type;
-
-  TomDebugStructure(String key, String type, String fileName, Integer line, Integer nbPatterns, Integer nbSubjects, String[] patternText, Integer[] patternLine){
-    this.key = key;
-    this.type = type;
-    this.fileName = fileName;
-    this.line = line;
-    this.nbPatterns = nbPatterns;
-    this.nbSubjects = nbSubjects;
-    this.patternText = patternText;
-    this.patternLine = patternLine;
-  }
-
-} // Class TomDebugStructure

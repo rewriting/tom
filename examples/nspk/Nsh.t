@@ -38,15 +38,11 @@ public class Nsh {
   public State query(int nbSenders, int nbReceivers) {
     ListAgent s = `concAgent();
     for(int index=0 ; index<nbSenders ; index++) {
-        Integer i = new Integer(index);
-        s = s.insert(`agent(sender(i),SLEEP,N(sender(i),sender(i))));
-          //s = `concAgent(agent(sender(i),SLEEP,N(sender(i),sender(i))),s*);
+        s = s.insert(`agent(sender(index),SLEEP,N(sender(index),sender(index))));
     }
     ListAgent r = `concAgent();
     for(int index=0 ; index<nbReceivers ; index++) {
-        Integer i = new Integer(index);
-        r = r.insert(`agent(receiver(i),SLEEP,N(receiver(i),receiver(i))));
-          //r = `concAgent(agent(receiver(i),SLEEP,N(receiver(i),receiver(i))),r*);
+        r = r.insert(`agent(receiver(index),SLEEP,N(receiver(index),receiver(index))));
     }
     State state =
       `state(s,r,intruder(devil,concNonce(),concMessage()),concMessage());
@@ -225,7 +221,7 @@ public class Nsh {
               dst@concAgent(D1*,agent(y,_,_),D2*),
               I,
               M) -> {
-              if(sizeMessage(M) < MaxMessagesInNetwork) {
+              if(sizeMessage(M) < maxMessagesInNetwork) {
                 State state = `state(
                   concAgent(E1*,agent(x,WAIT,N(x,y)),E2*),
                   dst,I,
@@ -240,7 +236,7 @@ public class Nsh {
               D, 
               intru@intruder(w,_,_),
               M) -> {
-              if(sizeMessage(M) < MaxMessagesInNetwork) {
+              if(sizeMessage(M) < maxMessagesInNetwork) {
                 State state = `state(
                   concAgent(E1*,agent(x,WAIT(),N(x,w)),E2*),
                   D,intru,
@@ -390,7 +386,7 @@ public class Nsh {
               E, D,
               intru@intruder(w,l,concMessage(L1*,msg(x,y,K(z),N(n1,n3),N(n2,n4),A(v)),L2*)),
               M) -> {
-              if(sizeMessage(M) < MaxMessagesInNetwork) {
+              if(sizeMessage(M) < maxMessagesInNetwork) {
                 ListAgent subjectList = `concAgent(E*,D*);
                 %match(ListAgent subjectList) {
                   concAgent(A1*,agent(t,_,_),A2*) -> {
@@ -419,7 +415,7 @@ public class Nsh {
               E, D,
               intru@intruder(w,listNonce@concNonce(L1*,resp,L2*),ll),
               M) -> {
-              if(sizeMessage(M) < MaxMessagesInNetwork) {
+              if(sizeMessage(M) < maxMessagesInNetwork) {
                 ListAgent subjectED = `concAgent(E*,D*);
                 %match(ListAgent subjectED,
                        ListAgent subjectED,
@@ -491,7 +487,7 @@ public class Nsh {
   }
 
   
-  private static int MaxMessagesInNetwork = 1;
+  private static int maxMessagesInNetwork = 1;
   private static boolean authVerif = true;
   private static int fire[] = new int[20];
 
@@ -500,7 +496,7 @@ public class Nsh {
     int nbAgent = 1;
     try {
       nbAgent = Integer.parseInt(args[0]);
-      MaxMessagesInNetwork = Integer.parseInt(args[1]);
+      maxMessagesInNetwork = Integer.parseInt(args[1]);
     } catch (Exception e) {
       System.out.println("Usage: java Nsh <nbAgent> <maxMsg>");
       return;

@@ -1,7 +1,6 @@
 import aterm.*;
 import java.util.*;
 import jtom.runtime.*;
-import jtom.runtime.set.*;
 import adt.*;
 
 public class GTree2 {
@@ -10,7 +9,6 @@ public class GTree2 {
   private GenericTraversal traversal;
   
   %include { term.t }
-  %typeint
 
   public GTree2(TermFactory factory) {
     this.factory = factory;
@@ -21,13 +19,8 @@ public class GTree2 {
     return factory;
   }
 
-  Tree inode(Tree l1, int root, Tree r1) {
-    Integer number   = new Integer(root);
-    return `node(l1,number,r1);
-  }
-  
   public void run(int n) {
-    Tree query = `supT(ackT(inode(nil,3,nil)),ackT(inode(nil,2,nil)));
+    Tree query = `supT(ackT(node(nil,3,nil)),ackT(node(nil,2,nil)));
 
     long startChrono = System.currentTimeMillis();
     Tree res         = normalize(query);
@@ -43,13 +36,13 @@ public class GTree2 {
       supT(x,nil) -> { return x; }
 
       supT(node(l1,root1,r1),node(l2,root2,r2)) -> {
-        Integer newInt = (root1.compareTo(root2)<0)?root2:root1;
-        return `node(supT(l1,l2),newInt,supT(r1,r2));
+        int max = (root1>root2)?root1:root2;
+        return `node(supT(l1,l2),max,supT(r1,r2));
       }
 
       ackT(x@nil) -> { return x; }
       ackT(node(l1,root1,r1)) -> {
-        return `inode(ackT(l1),ack(2,root1.intValue()),ackT(r1));
+        return `node(ackT(l1),ack(2,root1),ackT(r1));
       }
         
     }

@@ -136,10 +136,8 @@ public class TomOptimizer extends TomBase implements TomTask {
     %match(TomTerm t) {
       InstructionToTomTerm(AssignMatchSubject(Variable[astName=PositionName(l1)],source)) -> {
 	String name = "tom"+numberListToIdentifier(l1);
-	Integer zero = new Integer(0);
-				//optimDebug("Var "+name+" found in decls");
 	numberVarFound++;
-	return cons(`AssignedVariable(name,source,zero,FalseTL,TrueTL),
+	return cons(`AssignedVariable(name,source,0,FalseTL,TrueTL),
 	traversalCollectDecls(l));
       }
       _ -> { 
@@ -222,7 +220,7 @@ public class TomOptimizer extends TomBase implements TomTask {
 	      Assign(Variable[astName=PositionName(l1)],source) -> {
 		String name = "tom"+numberListToIdentifier(l1);
 		if (!isAssigned(name)) {
-		  Integer minusOne = new Integer(-1);
+		  int minusOne = -1;
 		  //optimDebug("Var "+name+" found in CP");
 		  avList = append(`AssignedVariable(name,source,minusOne,FalseTL,TrueTL),
 		  avList);
@@ -368,14 +366,14 @@ public class TomOptimizer extends TomBase implements TomTask {
 	    %match(TomTerm t) {
 	      AssignedVariable(varName,source,nbUse,TrueTL,FalseTL) -> {
 		if (varName.equals(name)) {
-		  Integer newNbUse = new Integer(nbUse.intValue() + 1);
+		  int newNbUse = nbUse + 1;
 		  return `AssignedVariable(varName, source, newNbUse, TrueTL,FalseTL);
 		} else
 		  return t;
 	      }
 	      AssignedVariable(varName,source,nbUse,TrueTL,TrueTL) -> {
 		if (varName.equals(name)) {
-		  Integer newNbUse = new Integer(nbUse.intValue() + 1);
+		  int newNbUse = nbUse+ 1;
 		  if (inAssign && insideDoWhile) { // the variable is usedInDoWhile and reaffected in DoWhile : it can't be removed
 		    //optimDebug(varName+" has been set unremovable");
 		    return `AssignedVariable(varName, source, newNbUse, TrueTL,FalseTL);
@@ -386,7 +384,7 @@ public class TomOptimizer extends TomBase implements TomTask {
 	      }
 	      AssignedVariable(varName,source,nbUse,FalseTL,TrueTL) -> {
 		if (varName.equals(name)) {
-		  Integer newNbUse = new Integer(nbUse.intValue() + 1);
+		  int newNbUse = nbUse + 1;
 		  if (!inAssign && insideDoWhile) {				
 		    //optimDebug(varName+" has been set 'usedInDoWhile'");
 		    return `AssignedVariable(varName, source, newNbUse, TrueTL,TrueTL);
@@ -417,7 +415,7 @@ public class TomOptimizer extends TomBase implements TomTask {
       %match(TomTerm t) {
 	AssignedVariable[varName=name,nbUse=n,removable=TrueTL] -> {
 	  if (name.equals(varName))
-	    return n.intValue();
+	    return n;
 	}
 	AssignedVariable[removable=FalseTL] -> {
 	  return 2; // 2 or any value that prevent a variable from being removed

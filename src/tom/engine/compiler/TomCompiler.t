@@ -120,7 +120,7 @@ public class TomCompiler extends TomBase implements TomTask {
                 RewriteRule[lhs=Term(Appl[astName=Name(tomName)])],tail), orgTrack) -> {
         statistics().numberRuleSetsTransformed++;
         if(Flags.debugMode) {
-          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
         }
         TomSymbol tomSymbol = symbolTable().getSymbol(tomName);
         TomName name = tomSymbol.getAstName();
@@ -210,7 +210,7 @@ public class TomCompiler extends TomBase implements TomTask {
       Match(SubjectList(l1),PatternList(l2), matchOption@Option(list))  -> {
         Option orgTrack = findOriginTracking(list);
         if(Flags.debugMode) {
-          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
         }
         TomList newPatternList = empty();
         while(!l2.isEmpty()) {
@@ -363,7 +363,7 @@ public class TomCompiler extends TomBase implements TomTask {
     
     %match(TomTerm subject) {
       Variable[astName=name,astType=type] -> {
-        Integer multiplicity = (Integer)multiplicityMap.get(name);
+        Integer multiplicity = (Integer) multiplicityMap.get(name);
         int mult = multiplicity.intValue();
         if(mult > 1) {
           mult = mult-1;

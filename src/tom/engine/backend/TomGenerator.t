@@ -240,7 +240,7 @@ public class TomGenerator extends TomBase implements TomTask {
         }
         if(Flags.debugMode && !generated) {
           orgTrack = findOriginTracking(list);
-          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+          debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
           out.write("jtom.debug.TomDebugger.debugger.enteringStructure(\""+debugKey+"\");\n");
         }
         generateList(out,deep+1,matchDeclarationList);
@@ -297,7 +297,10 @@ public class TomGenerator extends TomBase implements TomTask {
           out.write(deep,": " + getTLCode(tlType));
         }
         
-        if(Flags.jCode && !isBoolType(type) && !isIntType(type)) {
+        if(Flags.jCode &&
+           !isBoolType(type) &&
+           !isIntType(type) &&
+           !isDoubleType(type)) {
           out.writeln(" = null;");
         } else {
           out.writeln(";");
@@ -631,7 +634,7 @@ public class TomGenerator extends TomBase implements TomTask {
         if(Flags.cCode || Flags.jCode) {
           out.write(" = (" + getTLCode(tlType) + ") ");
         } else if(Flags.eCode) {
-          if(isBoolType(type) || isIntType(type)) {
+          if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
             out.write(" := ");
           } else {
               //out.write(" ?= ");
@@ -663,7 +666,7 @@ public class TomGenerator extends TomBase implements TomTask {
         if(Flags.cCode || Flags.jCode) {
           out.write(" = (" + getTLCode(tlType) + ") ");
         } else if(Flags.eCode) {
-          if(isBoolType(type) || isIntType(type)) {
+          if(isBoolType(type) || isIntType(type) || isDoubleType(type)) {
             out.write(" := ");
           } else {
               //out.write(" ?= ");
@@ -829,7 +832,7 @@ public class TomGenerator extends TomBase implements TomTask {
     %match(TargetLanguage subject) {
       TL(t,Position[line=startLine], Position[line=endLine]) -> {
         statistics().numberPartsCopied++;
-        out.write(deep,t, startLine.intValue(), endLine.intValue()-startLine.intValue());
+        out.write(deep,t, startLine, endLine-startLine);
         return;
       }
       
@@ -1041,13 +1044,23 @@ public class TomGenerator extends TomBase implements TomTask {
                             tlCode, _) -> {
         String args[];
         if(!Flags.strictType) {
-          TomType argType = (isIntType(type))?getIntType():getUniversalType();
+          TomType argType = getUniversalType();
+          if(isIntType(type)) {
+            argType = getIntType();
+          } else if(isDoubleType(type)) {
+            argType = getDoubleType();
+          }
           args = new String[] { getTLType(argType), name };
         } else {
           args = new String[] { getTLCode(tlType), name };
         }
 
-        TomType returnType = isIntType(type)?getIntType():getUniversalType();
+        TomType returnType = getUniversalType();
+          if(isIntType(type)) {
+            returnType = getIntType();
+          } else if(isDoubleType(type)) {
+            returnType = getDoubleType();
+          }
         generateTargetLanguage(out,deep,
                                genDecl(getTLType(returnType),
                                        "tom_get_fun_sym", type,args,tlCode));
@@ -1124,8 +1137,19 @@ public class TomGenerator extends TomBase implements TomTask {
       CompareFunctionSymbolDecl(Variable(option1,Name(name1), Type(TomType(type1),_)),
                                 Variable(option2,Name(name2), Type(TomType(type2),_)),
                                 tlCode, _) -> {
-        TomType argType1 = (isIntType(type1))?getIntType():getUniversalType();
-        TomType argType2 = (isIntType(type2))?getIntType():getUniversalType();
+        TomType argType1 = getUniversalType();
+        if(isIntType(type1)) {
+          argType1 = getIntType();
+        } else if(isDoubleType(type2)) {
+          argType1 = getDoubleType();
+        }
+        TomType argType2 = getUniversalType();
+        if(isIntType(type2)) {
+          argType2 = getIntType();
+        } else if(isDoubleType(type2)) {
+          argType2 = getDoubleType();
+        }
+        
         generateTargetLanguage(out,deep, genDecl(getTLType(getBoolType()), "tom_cmp_fun_sym", type1,
                                                  new String[] {
                                                    getTLType(argType1), name1,
@@ -1138,8 +1162,18 @@ public class TomGenerator extends TomBase implements TomTask {
       TermsEqualDecl(Variable(option1,Name(name1), Type(TomType(type1),_)),
                      Variable(option2,Name(name2), Type(TomType(type2),_)),
                      tlCode, _) -> {
-        TomType argType1 = (isIntType(type1))?getIntType():getUniversalType();
-        TomType argType2 = (isIntType(type2))?getIntType():getUniversalType();
+        TomType argType1 = getUniversalType();
+        if(isIntType(type1)) {
+          argType1 = getIntType();
+        } else if(isDoubleType(type2)) {
+          argType1 = getDoubleType();
+        }
+        TomType argType2 = getUniversalType();
+        if(isIntType(type2)) {
+          argType2 = getIntType();
+        } else if(isDoubleType(type2)) {
+          argType2 = getDoubleType();
+        }
 
         generateTargetLanguage(out,deep, genDecl(getTLType(getBoolType()), "tom_terms_equal", type1,
                                                  new String[] {

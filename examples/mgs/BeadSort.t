@@ -24,8 +24,6 @@ public class BeadSort {
     make { null }
   }
 
-  private static Integer one = new Integer(1);
-
     /*
      * create a bead such that "north"  is the immediate north of the bead
      * (Resp. "south")
@@ -35,32 +33,30 @@ public class BeadSort {
     Position south = (beadSouth!=null)?beadSouth.getPos():null;
     
     if(north==null && south!=null) {
-      return `bead(getNorthPosition(south),one);
+      return `bead(getNorthPosition(south),1);
     } else if(north!=null && south==null) {
-      return `bead(getSouthPosition(north),one);
+      return `bead(getSouthPosition(north),1);
     } else if(north==null && south==null) {
-      return `bead(makeOrigin(),one);
-    } else if(north.getX().intValue()!=south.getX().intValue() ||
-              (north.getY().intValue()-south.getY().intValue()) != 2) {
+      return `bead(makeOrigin(),1);
+    } else if(north.getX()!=south.getX() || (north.getY()-south.getY()) != 2) {
       System.out.println("north and south are not compatible: " + north + " <--> " + south);
     }
-    return `bead(getSouthPosition(north),one);
+    return `bead(getSouthPosition(north),1);
   }
 
   private Position makeOrigin() {
-    Integer zero = new Integer(0);
-    return `pos(zero,zero);
+    return `pos(0,0);
   }
   
   private Position getNorthPosition(Position p) {
-    Integer x = p.getX();
-    Integer y = new Integer(p.getY().intValue() + 1);
+    int x = p.getX();
+    int y = p.getY()+ 1;
     return `pos(x,y);
   }
   
   private Position getSouthPosition(Position p) {
-    Integer x = p.getX();
-    Integer y = new Integer(p.getY().intValue() - 1);
+    int x = p.getX();
+    int y = p.getY() - 1;
     return `pos(x,y);
   }
 
@@ -73,7 +69,7 @@ public class BeadSort {
   }
 
   private boolean onGround(Bead b) {
-    return b.getPos().getY().intValue() <= 0;
+    return b.getPos().getY() <= 0;
   }
   
   public BeadSort(MgsADTFactory factory) {
@@ -148,10 +144,8 @@ public class BeadSort {
 
   public void addInteger(HashMap space, int n, int y) {
     for(int i=0 ; i<n ; i++) {
-      Integer X = new Integer(i);
-      Integer Y = new Integer(y);
-      Position p = `pos(X,Y);
-      space.put(p, `bead(p,one));
+      Position p = `pos(i,y);
+      space.put(p, `bead(p,1));
     }
   }
 

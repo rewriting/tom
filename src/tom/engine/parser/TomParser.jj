@@ -169,7 +169,7 @@ public class TomParser implements TomTask {
   }
   
   public Position makePosition(int line, int column) {
-    return  tsf().makePosition_Position(new Integer(line+includeOffSet), new Integer(column));
+    return  tsf().makePosition_Position(line+includeOffSet, column);
   }
   
   private TargetLanguage makeTL(String code) {
@@ -217,6 +217,7 @@ TOKEN :
   | < TYPE:                "%type" > : TOM
   | < TYPETERM:            "%typeterm" > : TOM
   | < TYPEINT:             "%typeint" > : TOM
+  | < TYPEDOUBLE:          "%typedouble" > : TOM
   | < TYPESTRING:          "%typestring" > : TOM
   | < TYPELIST:            "%typelist" > : TOM
   | < TYPEARRAY:           "%typearray" > : TOM
@@ -399,6 +400,13 @@ TOKEN :
 | < TOM_GET_SIZE:    "get_size" >
 | < TOM_INTEGER: <TOM_DIGIT> (<TOM_DIGIT>)* >
 | < TOM_IDENTIFIER: <TOM_LETTER> (<TOM_LETTER>|<TOM_DIGIT>|<TOM_DOT>|<TOM_UNDERSCORE>|<TOM_MINUS>)* >
+| < TOM_DOUBLE:
+        (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
+      | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
+      | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
+      | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
+  >
+| < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
 | < #TOM_LETTER:
       [
        "\u0024",
@@ -489,6 +497,7 @@ void BlockList(ArrayList blockList) throws TomException : /* in DEFAULT mode */
     | OperatorArray(blockList)           { stat.numberTomBlocsRecognized++; }
     | TypeTerm(blockList)                { stat.numberTomBlocsRecognized++; }
     | TypeInt(blockList)                 { stat.numberTomBlocsRecognized++; }
+    | TypeDouble(blockList)              { stat.numberTomBlocsRecognized++; }
     | TypeString(blockList)              { stat.numberTomBlocsRecognized++; }
     | TypeList(blockList)                { stat.numberTomBlocsRecognized++; }
     | TypeArray(blockList)               { stat.numberTomBlocsRecognized++; }
@@ -510,7 +519,7 @@ void MatchConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
       addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       Option orgTrack = ast().makeOriginTracking("Match",getLine(), currentFile);
       optionList.add(orgTrack);
-      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
     }
 
   <TOM_LPAREN> MatchArguments(matchArgumentsList) <TOM_RPAREN>
@@ -711,6 +720,20 @@ TomTerm PlainTerm(TomName astAnnotedName) throws TomException: /* in TOM mode */
         tsf().makeTomName_Name(name.image),
         tsf().makeTomList());
     }
+  | // double
+    name = <TOM_DOUBLE>
+    {
+      text += name.image;
+      if(annotedName!=null) { optionList.add(annotedName); }
+      optionList.add(ast().makeOriginTracking(name.image,getLine(), currentFile));
+      option = ast().makeOption(ast().makeOptionList(optionList));
+      ast().makeDoubleSymbol(symbolTable,name.image,optionList);
+      
+      return tsf().makeTomTerm_Appl(
+        option,
+        tsf().makeTomName_Name(name.image),
+        tsf().makeTomList());
+    }
   | // string
     name = <TOM_STRING>
     {
@@ -800,7 +823,7 @@ void MatchXMLConstruct(ArrayList list) throws TomException: /* in DEFAULT mode *
       list.add(makeTL(savePosAndExtract()));
       Option orgTrack = ast().makeOriginTracking("MatchXML",getLine(), currentFile);
       optionList.add(orgTrack);
-      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine().toString();
+      String debugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
     }
 
   <TOM_LPAREN> name = <TOM_IDENTIFIER> <TOM_RPAREN>
@@ -1470,6 +1493,17 @@ void TypeInt(ArrayList list) throws TomException: /* in DEFAULT mode */
       addPreviousCode(list);//list.add(makeTL(savePosAndExtract()));
       switchToDefaultMode(); /* switch to DEFAULT mode */
       ast().makeIntegerDecl(list);
+    }
+}
+
+void TypeDouble(ArrayList list) throws TomException: /* in DEFAULT mode */
+{}
+{
+  <TYPEDOUBLE> /* switch to TOM mode */
+    {
+      addPreviousCode(list);
+      switchToDefaultMode(); /* switch to DEFAULT mode */
+      ast().makeDoubleDecl(list);
     }
 }
 
