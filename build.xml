@@ -34,7 +34,7 @@
 	<property name="apigen.lib" value="${lib}/apigen.jar"/>
 	<property name="vastoadt.lib" value="${lib}/vas-to-adt.jar"/>
 	
-	<!-- Aircube bundle -->
+ 	<!-- Aircube bundle -->
 	<property name="bundle.dir" value="bundle"/>
 	<property name="aircubebundle" value="aircube-bundle.jar"/>
 
