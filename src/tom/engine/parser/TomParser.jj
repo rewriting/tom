@@ -246,7 +246,6 @@ public class TomParser extends TomTask {
 	        // try first relative to inputfilename
 	      File parent = new File(currentFile).getParentFile();
 	      file = new File(parent, fileName).getCanonicalFile();
-	      System.out.println(file);
 	      found = file.exists();
 	      if(!found) {
 	          // Look for importList
@@ -1478,7 +1477,6 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
         System.out.println(e.getMessage());
         e.printStackTrace();
       }
-
         // Generated API and Tom File from generated ADT file
       try{
         if(getInput().isJCode() && generatedADTName != null) {
@@ -1502,6 +1500,7 @@ void Signature(LinkedList list) throws TomException: /* in DEFAULT mode */
           	apigenParamList.add("--package");
   					apigenParamList.add(packageName);
           }
+          mainMethod.invoke(apigenClass, new Object[]{apigenParamList.toArray(new String[]{})});
         }
       } catch (ClassNotFoundException e) {
         String msg = "You need apigen to use the %vas construct";
