@@ -157,7 +157,7 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     output.write(deep,"let ");
     generate(deep,var);
     System.out.println("buildDeclaration : this is a deprecated code");
-    output.writeln(" = ref None");
+    output.writeln(" = ref None in");
   }
 
   protected void buildExpTrue(int deep) throws IOException {
