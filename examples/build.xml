@@ -152,7 +152,7 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}"
-		         nowarn="${nowarnings}"
+				 nowarn="${nowarnings}"
 				 optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
 				 <include name="${addressbook}/**/*.t"/>
@@ -160,6 +160,7 @@
     <!-- build java source -->
 		<javac srcdir="${examples.gen}" 
            destdir="${examples.build}" 
+					 optimize="${optimize}"
            nowarn="${nowarnings}">
       <classpath refid="tom.classpath"/>
 			<include name="${addressbook}/**/*.java"/>
@@ -175,8 +176,8 @@
     <!-- build tom -->
     <tom srcdir="${examples.dir}" 
          destdir="${examples.gen}" 				 
-		 nowarn="${nowarnings}"
-    	 ptimize="${optimize}"
+				 nowarn="${nowarnings}"
+				 optimize="${optimize}"
          options="-I ${tom.home}/share/jtom">
       <include name="${apireach}/**/*.t"/>
     </tom>
