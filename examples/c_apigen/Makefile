@@ -13,7 +13,7 @@ Peano_dict.o: Peano_dict.c
 	gcc -c -I$(ELANDIR)/include Peano_dict.c
 
 PeanoTest.tom.c: PeanoTest.t Peano.t
-	jtom -c PeanoTest.t
+	jtom --noWarning -c PeanoTest.t
 
 Peano.t: Peano.adt
 	adt-to-c -i Peano.adt -j -v

@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
   ATinit(argc, argv, &bottomOfStack);
   initPeanoApi();
 
-  run(1,10);
+  run(10,10);
   
   return 0;
 }
