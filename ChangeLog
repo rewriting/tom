@@ -41,6 +41,7 @@
 	
 2003-08-20    <pem@bach>
         * bootinstall
+	* added support for double
 	
 2003-08-18    <pem@bach>
 	* %typedouble added

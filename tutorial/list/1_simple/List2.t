@@ -63,7 +63,7 @@ public class List2 {
         String xname = x.getName();
         String yname = y.getName();
         if(xname.compareTo(yname) > 0) {
-            //return `swapSort(conc(X1*,y,X2*,x,X3*));
+            return `swapSort(conc(X1*,y,X2*,x,X3*));
           System.out.println("x -> " + x + "\ty -> " + y);
           
         }

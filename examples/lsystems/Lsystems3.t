@@ -19,8 +19,6 @@
  */
 
 import aterm.*;
-import java.util.*;
-import java.lang.*;
 import lsruntime.*;
 import lsruntime.adt.*;
 

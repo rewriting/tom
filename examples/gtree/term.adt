@@ -5,3 +5,4 @@ constructor(Tree,supT,supT(<arg1(Tree)>,<arg2(Tree)>)),
 constructor(Tree,ackT,ackT(<arg1(Tree)>))
 ]
  
+ 

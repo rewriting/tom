@@ -1,7 +1,6 @@
 import aterm.*;
 import aterm.pure.*;
 import expression.*;
-import java.util.*;
 
 public class PolyApigen1 {
   private ExpressionFactory factory;
@@ -12,7 +11,7 @@ public class PolyApigen1 {
   public ExpressionFactory getExpressionFactory() {
     return factory;
   }
-
+ 
   %include { expression/expression.tom }
 
   public Expression differentiate(Expression e, Expression v) {
@@ -58,7 +57,7 @@ public class PolyApigen1 {
       // a literal string cannot be used in backquoted terms
     String X = "X";
     Expression var = `variable(X);
-    Expression t = var;;
+    Expression t = var;
       // build a tower of exponential
     for(int i=0 ; i<n ; i++) {
       t = `exp(t);
@@ -75,7 +74,7 @@ public class PolyApigen1 {
   }
     
   public final static void main(String[] args) {
-    PolyApigen1 test = new  PolyApigen1(new  ExpressionFactory());
+    PolyApigen1 test = new  PolyApigen1(new  ExpressionFactory(new PureFactory()));
     test.run(2);
   }
 }

@@ -19,8 +19,6 @@
  */
  
 import aterm.*;
-import java.util.*;
-import java.lang.*;
 import lsruntime.*; 
 import lsruntime.adt.*;
 
@@ -85,6 +83,7 @@ public class Lsystems2 implements LsystemsInterface {
           else System.err.println("Erreur : i=" + i);
         }
       }
+           
       return `concNode(token);
     }
   };

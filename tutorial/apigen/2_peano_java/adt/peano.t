@@ -6,24 +6,24 @@
   equals(t1,t2) {t1.equals(t2)}
 }
 
-%typeterm Integer{
-  implement { Integer}
+%typeterm int{
+  implement { int}
   get_fun_sym(t) {t}
-  cmp_fun_sym(s1,s2) { s1.equals(s2)}
+  cmp_fun_sym(s1,s2) { (s1 == s2)}
   get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
+  equals(t1,t2) {(t1 == t2)}
 }
 
-%typeterm Double{
-  implement { Double}
+%typeterm double{
+  implement { double}
   get_fun_sym(t) {t}
-  cmp_fun_sym(s1,s2) { s1.equals(s2)}
+  cmp_fun_sym(s1,s2) { (s1 == s2)}
   get_subterm(t,n) {null}
-  equals(t1,t2) {t1.equals(t2)}
+  equals(t1,t2) {(t1 == t2)}
 }
 
 %typeterm ATerm{
-  implement { ATerm}
+  implement { aterm.ATerm}
   get_fun_sym(t) {((t instanceof ATermAppl)?((ATermAppl)t).getAFun():null)}
   cmp_fun_sym(s1,s2) { s1==s2}
   get_subterm(t,n) {(((ATermAppl)t).getArgument(n))}
@@ -31,7 +31,7 @@
 }
 
 %typelist ATermList{
-  implement { ATermList}
+  implement { aterm.ATermList}
   get_fun_sym(t) {((t instanceof ATermList)?getPeanoFactory().makeAFun("conc",1,false):null)}
   cmp_fun_sym(s1,s2) { s1==s2}
   equals(t1,t2) {t1.equals(t2)}
@@ -50,13 +50,13 @@
 
 %op Nat zero {
   fsym {}
-  is_fsym(t) { (t!= null) &&t.isZero()}
+  is_fsym(t) { (t!= null) && t.isZero()}
   make() { getPeanoFactory().makeNat_Zero()}
 }
 
 %op Nat suc(pred:Nat) {
   fsym {}
-  is_fsym(t) { (t!= null) &&t.isSuc()}
+  is_fsym(t) { (t!= null) && t.isSuc()}
   get_slot(pred,t) { t.getPred()}
   make(t0) { getPeanoFactory().makeNat_Suc(t0)}
 }

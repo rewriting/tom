@@ -113,7 +113,7 @@ struct term *build_msg(struct term *data) {
 %oplist L cons( term* ) {
   fsym          { CONS }
   make_empty()  { NULL }
-  make_add(l,e) { build_list(e,l) }
+  make_insert(l,e) { build_list(e,l) }
 }
 
 void print_term(struct term *tt) {

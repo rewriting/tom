@@ -34,11 +34,11 @@ public class BoulderDashCore {
   private static int ground = 2; //Titanium Wall
 
   private Position getNorthPosition(Position p) {
-    return `pos(p.getX(),p.getY()+1);
+    return `pos(p.getX(),p.getY()-1);
   }
 
   private Position getSouthPosition(Position p) {
-    return `pos(p.getX(),p.getY()-1);
+    return `pos(p.getX(),p.getY()+1);
   }
 
   private Position getEastPosition(Position p) {
@@ -160,7 +160,6 @@ public class BoulderDashCore {
     while(it.hasNext()) {
       Bead b = (Bead) it.next();
       boolean f = gravity(newSpace,b);
-      System.out.println("fire = " + f);
       fire = fire || f ;
     }
     space=newSpace;
@@ -170,15 +169,8 @@ public class BoulderDashCore {
 
   // return true if fire a rule
   public boolean gravity(HashMap newSpace, Bead b) {
-
-    System.out.println("isBead = " + b.isBead());
-    System.out.println("value  = " + b.getValue());
-    System.out.println("south  = " + getSouthBead(b));
-
-    
     %match(Bead b) {
       beadRock[s=empty()] -> {
-        System.out.println("fire ");
         Bead newBead = `bead(getSouthPosition(b.getPos()),b.getValue());
         marked.add(b);
         putBead(newSpace,newBead);
@@ -214,7 +206,8 @@ public class BoulderDashCore {
 
   private void putBead(HashMap space, int x, int y, int beadType) {
     Position p = `pos(x,y);
-    space.put(p, `bead(p,beadType));
+    Bead b = `bead(p,beadType);
+    space.put(p, b);
   }
 
   private void putBead(HashMap space, Bead b) {
@@ -250,7 +243,7 @@ public class BoulderDashCore {
     for(int j=1 ; j<SIZE/2-1 ; j++) {
       for(int i=1 ; i<SIZE-1 ; i++) {
         putBead(space,i,j,rock);
-      }
+       }
     }
   }
 

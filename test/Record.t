@@ -4,7 +4,7 @@ public class Record {
   abstract class Exp {
     public abstract String getOperator();
   }
-  
+   
   class CstExp extends Exp {
     public Object value;
     public CstExp(Object value) {

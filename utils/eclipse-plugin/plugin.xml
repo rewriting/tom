@@ -8,7 +8,7 @@
 
    <runtime>
       <library name="jtom-eclipse.jar"/>
-      <library name="jtom-devel1.4alpha.jar"/>
+      <library name="jtom-devel1.4beta.jar"/>
       <library name="jjtraveler-0.4.2.jar"/>
       <library name="aterm-1.5beta.jar"/>
       <library name="shared-objects-1.4.jar"/>

@@ -84,18 +84,6 @@ feature
     make(t1) { make_fib(t1) }
   }
    
---  %rule {
---    plus(x,zero)     -> x
---    plus(x,suc(y))   -> suc(plus(x,y))
---  }
-
---  %rule {
---    fib(zero)        -> suc(zero)
---    fib(suc(zero))   -> suc(zero)
---    fib(suc(suc(x))) -> plus(fib(x),fib(suc(x)))
---  }
-
-
    plus(t1, t2: TERM): TERM is
       local
 	 %variable

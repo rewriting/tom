@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Record {
+public class Record { 
 
   %typeint
   %typestring
