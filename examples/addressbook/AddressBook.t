@@ -33,7 +33,7 @@ public class AddressBook {
     Iterator it = book.iterator();
     while(it.hasNext()) {
       Person p = (Person) it.next();
-      happyBirthday(p, `date(2004,02,26));
+      happyBirthday(p, `date(2004,3,27));
     }
   }
 
@@ -49,9 +49,9 @@ public class AddressBook {
  }
   
   public void generatePerson(HashSet set) {
-	set.add(`person("John","Smith",date(1965,1,18)));
-	set.add(`person("Marie","Muller",date(1986,2,26)));
-	set.add(`person("Paul","Muller",date(2000,1,29)));
+    set.add(`person("John","Smith",date(1965,3,27)));
+    set.add(`person("Marie","Muller",date(1986,3,26)));
+    set.add(`person("Paul","Muller",date(2000,1,27)));
 	}
 
 }

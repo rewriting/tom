@@ -63,47 +63,28 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     return;
   }
 	
-  protected void buildList(int deep, String name, TomList argList) throws IOException {
-    TomSymbol tomSymbol = symbolTable().getSymbol(name);
-    String listType = getTLType(getSymbolCodomain(tomSymbol));
-    int size = 0;
-    while(!argList.isEmpty()) {
-      TomTerm elt = argList.getHead();
-
-        //System.out.println("elt = " + elt);
-      
-      matchBlock: {
-        %match(TomTerm elt) {
-          VariableStar[] |
-          Ref(VariableStar[]) |
-          Composite(concTomTerm(VariableStar[])) |  
-          Composite(concTomTerm(Ref(VariableStar[]))) |  
-          ExpressionToTomTerm(GetSliceList[]) |
-          Composite(concTomTerm(ExpressionToTomTerm(GetSliceList[]))) 
-            -> {
-            output.write("tom_insert_list_" + name + "(");
-            generate(deep,elt);
-            output.write(",");
-            break matchBlock;
-          }
-          
-          _ -> {
-            output.write("tom_make_insert_" + name + "(");
-            generate(deep,elt);
-            output.write(",");
-            break matchBlock;
-          }
-        }
-      } // end matchBlock
-            
-      argList = argList.getTail();
-      size++;
-    }
+  protected void buildEmptyList(int deep, String name) throws IOException {
     output.write("tom_make_empty_" + name + "()");
-    for(int i=0; i<size; i++) {
-      output.write(")");
-    }
-	} 
+    return;
+  }
+  
+  protected void buildConsList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException {
+    output.write("tom_cons_list_" + name + "(");
+    generate(deep,headTerm);
+    output.write(",");
+    generate(deep,tailTerm);
+    output.write(")");
+    return;
+  }
+  protected void buildAppendList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException {
+    output.write("tom_append_list_" + name + "(");
+    generate(deep,headTerm);
+    output.write(",");
+    generate(deep,tailTerm);
+    output.write(")");
+    return;
+  }
+
 
 	protected void buildArray(int deep, String name, TomList argList) throws IOException {
 		TomSymbol tomSymbol = symbolTable().getSymbol(name);
@@ -248,6 +229,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     }
   }
 
+  protected void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body) throws IOException {
+    buildAssignVar(deep, var, list, exp);
+    generateInstruction(deep,body);
+  }
+
   protected void buildUnamedBlock(int deep, InstructionList instList) throws IOException {
     output.writeln("{");
     generateInstructionList(deep+1,instList);
@@ -278,6 +264,14 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     output.write(deep,"} while(");
     generateExpression(deep,exp);
     output.writeln(");");
+  }
+
+  protected void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException {
+    output.write(deep,"while (");
+    generateExpression(deep,exp);
+    output.writeln(") {");
+    generateInstruction(deep+1,succes);
+    output.writeln(deep,"}");
   }
 
   protected void buildReturn(int deep, TomTerm exp) throws IOException {
@@ -387,13 +381,13 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     String eltCast = "(" + getTLType(eltType) + ")";
     String is_empty = "tom_is_empty_" + tomType;
     String term_equal = "tom_terms_equal_" + tomType;
-    String make_insert = listCast + "tom_make_insert_" + name;
+    String make_insert = listCast + "tom_cons_list_" + name;
     String make_empty = listCast + "tom_make_empty_" + name;
     String get_head = eltCast + "tom_get_head_" + tomType;
     String get_tail = listCast + "tom_get_tail_" + tomType;
     String get_slice = listCast + "tom_get_slice_" + name;
 
-    s+= modifier + utype + " tom_insert_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n";
+    s+= modifier + utype + " tom_append_list_" + name +  "(" + utype + " l1, " + utype + " l2) {\n";
     s+= "   if(" + is_empty + "(l1)) {\n";
     s+= "    return l2;\n";  
     s+= "   } else if(" + is_empty + "(l2)) {\n";
@@ -401,7 +395,7 @@ protected void buildGetSubtermDecl(int deep, String name1, String name2, String 
     s+= "   } else if(" + is_empty + "(" + get_tail + "(l1))) {\n";  
     s+= "    return " + make_insert + "(" + get_head + "(l1),l2);\n";
     s+= "   } else { \n";  
-    s+= "    return " + make_insert + "(" + get_head + "(l1),tom_insert_list_" + name +  "(" + get_tail + "(l1),l2));\n";
+    s+= "    return " + make_insert + "(" + get_head + "(l1),tom_append_list_" + name +  "(" + get_tail + "(l1),l2));\n";
     s+= "   }\n";
     s+= "  }\n";
     s+= "\n";

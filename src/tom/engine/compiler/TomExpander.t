@@ -319,7 +319,7 @@ public class TomExpander extends TomTask {
 
                 if(tomSymbol != null) {
                   if(isListOperator(tomSymbol)) {
-                    return `BuildList(name,args);
+                    return tomFactory.buildList(name,args);
                   } else if(isArrayOperator(tomSymbol)) {
                     return `BuildArray(name,args);
                   } else if(isStringOperator(tomSymbol)) {

@@ -23,9 +23,10 @@ exception Result of int list
 let rec elim l=
 try(
 %match (list l) {
-  conc(x*,e1,y*,e2,z*) -> { if `e1 mod `e2 = 0
-			    then raise (Result (elim(`conc (x*,y*,e2,z*)))) } 
-}; l
+  conc(x*,e1,y*,e2,z*) -> {
+    if `e1 mod `e2 = 0
+	then raise (Result (elim(`conc (x*,y*,e2,z*)))) } 
+  }; l
 )with Result r -> r;;
   
 
@@ -34,7 +35,7 @@ let erat n = elim (genere n) ;;
 let rec string_of_l l =
   List.fold_right (fun e -> fun r -> string_of_int e ^ " " ^ r) l "" ;;
 
-let r = erat 400 in
+let r = erat 300 in
   print_string (string_of_l r ^ "\n") ;;
 
 

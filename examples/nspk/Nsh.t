@@ -273,7 +273,7 @@ public class Nsh {
               dst@concAgent(_*,agent(y,_,_),_*),
               I,
               M) -> {
-              if(sizeMessage(M) < maxMessagesInNetwork) {
+              if(sizeMessage(`M) < maxMessagesInNetwork) {
                 State state = `state(
                   concAgent(E1*,agent(x,WAIT,N(x,y)),E2*),
                   dst,I,
@@ -288,7 +288,7 @@ public class Nsh {
               D, 
               intru@intruder(w,_,_),
               M) -> {
-              if(sizeMessage(M) < maxMessagesInNetwork) {
+              if(sizeMessage(`M) < maxMessagesInNetwork) {
                 State state = `state(
                   concAgent(E1*,agent(x,WAIT(),N(x,w)),E2*),
                   D,intru,
@@ -340,7 +340,7 @@ public class Nsh {
               intru@intruder(w,_,_),
               concMessage(M1*,msg(w,x,K(x),N(n1,n3),N(n2,n4),A(z)),M2*)) -> {
               
-              if(x==n1 && v==n3 && (!authVerif || v==z)) { // lowe
+              if(`x==`n1 && `v==`n3 && (!authVerif || `v==`z)) { // lowe
                 State state = `state(
                   concAgent(E1*,agent(x,COMMIT(),N(x,v)),E2*),
                   D,
@@ -350,7 +350,7 @@ public class Nsh {
                 fire[4]++;
               }
 
-              if(x!=n1 || v!=n3 && (!authVerif || v!=z)) { // lowe
+              if(`x!=`n1 || `v!=`n3 && (!authVerif || `v!=`z)) { // lowe
                 c.add(`ERROR());
                 fire[5]++;
               }
@@ -374,7 +374,7 @@ public class Nsh {
               concAgent(D1*,agent(y,WAIT(),N(y,x)),D2*),
               intru@intruder(w,_,_),
               concMessage(M1*,msg(w,y,K(y),N(n1,n3),N(_,_),A(v)),M2*)) -> {
-              if(x==n3 && y==n1) {
+              if(`x==`n3 && `y==`n1) {
                 State state = `state(
                   E,
                   concAgent(D1*,agent(y,COMMIT(),N(y,x)),D2*),
@@ -400,7 +400,7 @@ public class Nsh {
               E, D,
               intruder(w,l,ll),
               concMessage(M1*,msg(z,_,K(w),N1,N2,_),M2*)) -> {
-              if(w!=z) {
+              if(`w!=`z) {
                 State state = `state(
                   E, D,
                   intruder(w,insertNonce(N1,insertNonce(N2,l)),ll),
@@ -419,7 +419,7 @@ public class Nsh {
               E, D,
               intruder(w,l,ll),
               concMessage(M1*,message@msg(z,x,K(y),N(n1,n3),N(n2,n4),A(v)),M2*)) -> {
-              if(w!=z && w!=y) {
+              if(`w!=`z && `w!=`y) {
                 State state = `state(
                   E, D,
                   intruder(w,l,insertMessage(message,ll)),
@@ -438,12 +438,12 @@ public class Nsh {
               E, D,
               intru@intruder(w,l,concMessage(_*,msg(x,y,K(z),N(n1,n3),N(n2,n4),A(v)),_*)),
               M) -> {
-              if(sizeMessage(M) < maxMessagesInNetwork) {
+              if(sizeMessage(`M) < maxMessagesInNetwork) {
                 ListAgent subjectList = `concAgent(E*,D*);
                 %match(ListAgent subjectList) {
                   concAgent(_*,agent(t,_,_),_*) -> {
                     Message message = `msg(w,t,K(z),N(n1,n3),N(n2,n4),A(v));
-                    if(!existMessage(message,M)) {
+                    if(!existMessage(message,`M)) {
                       State state = `state(E,D,intru,insertMessage(message,M));
                       c.add(state);
                       fire[10]++;
@@ -467,18 +467,16 @@ public class Nsh {
               E, D,
               intru@intruder(w,listNonce,ll),
               M) -> {
-              if(sizeMessage(M) < maxMessagesInNetwork) {
+              if(sizeMessage(`M) < maxMessagesInNetwork) {
                 ListAgent subjectED = `concAgent(E*,D*);
-				ListAgent subjectED2 = subjectED;	
-				ListNonce listNonce2 = listNonce;
                 %match(ListAgent subjectED, ListAgent subjectED,
-                       ListNonce listNonce, ListNonce listNonce) {
+                       ListNonce `listNonce, ListNonce `listNonce) {
                   concAgent(_*,agent(y,_,_),_*),
                   concAgent(_*,agent(xadd,_,_),_*),
                   concNonce(_*,init,_*),
                   concNonce(_*,resp,_*) -> {
                     Message message = `msg(w,y,K(y),resp,init,A(xadd));
-                    if(!existMessage(message,M)) {
+                    if(!existMessage(message,`M)) {
                       State state = `state(E,D,intru,insertMessage(message,M));
                       c.add(state);
                       fire[11]++;
@@ -495,9 +493,9 @@ public class Nsh {
             state(
               pool1@concAgent(_*,agent(x,COMMIT(),N(x,y)),_*),
               D,intruder(w,l,ll),M) -> {
-              if(y!=w &&
-                 !existAgent(`agent(y,WAIT(),N(y,x)),D) &&
-                 !existAgent(`agent(y,COMMIT(),N(y,x)),D) ) {
+              if(`y!=`w &&
+                 !existAgent(`agent(y,WAIT(),N(y,x)),`D) &&
+                 !existAgent(`agent(y,COMMIT(),N(y,x)),`D) ) {
                 State state = `ATTACK();
                 c.add(state);
                 fire[12]++;
@@ -510,7 +508,7 @@ public class Nsh {
               E,
               pool1@concAgent(_*,agent(y,COMMIT(),N(y,x)),_*),
               intruder(w,l,ll),M) -> {
-              if(x!=w && !existAgent(`agent(x,COMMIT(),N(x,y)),E) ) {
+              if(`x!=`w && !existAgent(`agent(x,COMMIT(),N(x,y)),`E) ) {
                 State state = `ATTACK();
                 c.add(state);
                 fire[13]++;

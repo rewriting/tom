@@ -74,8 +74,13 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
      
-      Ref(term) -> {
+      Ref(term@(Variable|VariableStar)[]) -> {
         buildRef(deep, `term);
+        return;
+      }
+
+      Ref(term) -> {
+        generate(deep, `term);
         return;
       }
 
@@ -94,8 +99,18 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      BuildList(Name(name), argList) -> {
-        buildList(deep, `name, `argList);
+      BuildEmptyList(Name(name)) -> {
+        buildEmptyList(deep, `name);
+        return;
+      }
+
+      BuildConsList(Name(name), headTerm, tailTerm) -> {
+        buildConsList(deep, `name, `headTerm, `tailTerm);
+        return;
+      }
+
+      BuildAppendList(Name(name), headTerm, tailTerm) -> {
+        buildAppendList(deep, `name, `headTerm, `tailTerm);
         return;
       }
 
@@ -307,11 +322,6 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
       
-      Assign(var@(Variable|VariableStar)[option=option],exp) -> {
-        `buildAssignVar(deep, var, option, exp);
-        return;
-      }
-
 			AssignMatchSubject(var@Variable[option=option],exp) -> {
 				`buildAssignVar(deep, var, option, exp);
 				return;
@@ -321,7 +331,17 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
-      (Let|LetRef)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
+      Assign(var@(Variable|VariableStar)[option=option],exp) -> {
+        `buildAssignVar(deep, var, option, exp);
+        return;
+      }
+
+      LetAssign(var@(Variable|VariableStar)[option=option],exp,body) -> {
+        `buildLetAssign(deep, var, option, exp, body);
+        return;
+      }
+      
+      (Let|LetRef|LetAssign)((UnamedVariable|UnamedVariableStar)[],_,body) -> {
         `generateInstruction(deep,body);
         return;
       }
@@ -356,6 +376,11 @@ public abstract class TomAbstractGenerator extends TomBase {
         return;
       }
 
+      IfThenElse(exp,Nop(), failureList) -> {
+        `buildIfThenElse(deep, Not(exp),failureList);
+        return;
+      }
+
       IfThenElse(exp,succesList,failureList) -> {
         `buildIfThenElseWithFailure(deep, exp, succesList, failureList);
         return;
@@ -363,6 +388,11 @@ public abstract class TomAbstractGenerator extends TomBase {
 
       DoWhile(succes,exp) -> {
         `buildDoWhile(deep, succes,exp);
+        return;
+      }
+
+      WhileDo(exp,succes) -> {
+        `buildWhileDo(deep, exp, succes);
         return;
       }
 
@@ -641,7 +671,9 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildComment(int deep, String text) throws IOException;
   protected abstract void buildTerm(int deep, String name, TomList argList) throws IOException;
   protected abstract void buildRef(int deep, TomTerm term) throws IOException;
-  protected abstract void buildList(int deep, String name, TomList argList) throws IOException;
+  protected abstract void buildEmptyList(int deep, String name) throws IOException;
+  protected abstract void buildConsList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException;
+  protected abstract void buildAppendList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException;
   protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
@@ -668,6 +700,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildExpGetSliceList(int deep, String name, TomTerm varBegin, TomTerm varEnd) throws IOException;
   protected abstract void buildExpGetSliceArray(int deep, String name, TomTerm varArray, TomTerm varBegin, TomTerm expEnd) throws IOException;
   protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException ;
+  protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildNamedBlock(int deep, String blockName, InstructionList instList) throws IOException ;
@@ -675,6 +708,7 @@ public abstract class TomAbstractGenerator extends TomBase {
   protected abstract void buildIfThenElse(int deep, Expression exp, Instruction succes) throws IOException ;
   protected abstract void buildIfThenElseWithFailure(int deep, Expression exp, Instruction succes, Instruction failure) throws IOException ;
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
+  protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException;
   protected abstract void buildIncrement(int deep, TomTerm var) throws IOException;
   protected abstract void buildReturn(int deep, TomTerm exp) throws IOException ;
   protected abstract void buildSymbolDecl(int deep, String tomName) throws IOException ;

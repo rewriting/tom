@@ -101,6 +101,45 @@ public class TomOptimizer extends TomTask {
                * TODO
                * LetRef x where x is used 0 or 1 ==> eliminate
                */
+            (LetRef|LetAssign)(var@(Variable|VariableStar)[astName=name],exp,body) -> {
+              List list  = computeOccurences(name,body);
+              int mult = list.size();
+
+              if(mult == 0) {
+                Option orgTrack = findOriginTracking(var.getOption());
+                messageError(orgTrack.getLine(),
+                             orgTrack.getFileName().getString(),
+                             orgTrack.getAstName().getString(),
+                             orgTrack.getLine(),
+                             "Variable `{0}` is never used",
+                             new Object[]{name},
+                             TomCheckerMessage.TOM_WARNING);
+                if(verbose) {
+                  System.out.println(mult + " -> remove:     " + name);
+                }
+                return optimizeInstruction(body);
+
+              } else if(mult == 1) {
+                if(expConstantInBody(exp,body)) {
+                  if(verbose) {
+                    System.out.println(mult + " -> inline:     " + name);
+                  }
+                  return optimizeInstruction(inlineInstruction(var,exp,body));
+                } else {
+                  if(verbose) {
+                    System.out.println(mult + " -> no inline:  " + name);
+                      //System.out.println("exp  = " + exp);
+                      //System.out.println("body = " + body);
+                  }
+                }
+
+              } else {
+                  /* do nothing: traversal */
+                if(verbose) {
+                  System.out.println(mult + " -> do nothing: " + name);
+                }
+              }
+            }
             
             Let(var@(Variable|VariableStar)[astName=name],exp,body) -> {
               List list  = computeOccurences(name,body);
@@ -221,6 +260,38 @@ public class TomOptimizer extends TomTask {
     return list;
   }
 
+  private boolean isAssigned(final TomName variableName, ATerm subject) {
+    final List list = new ArrayList();
+    Collect1 collect = new Collect1() { 
+        public boolean apply(ATerm t) {
+          if(t instanceof Instruction) {
+            %match(Instruction t) { 
+              Assign[variable=(Variable|VariableStar)[astName=name]] -> {
+                if(variableName == name) {
+                  list.add(t);
+                  return false;
+                }
+              }
+              
+              LetAssign[variable=(Variable|VariableStar)[astName=name]] -> {
+                if(variableName == name) {
+                  list.add(t);
+                  return false;
+                }
+              }
+
+              _ -> { return true; }
+            }
+          } else {
+            return true;
+          }
+        } // end apply
+      }; // end new
+    
+    traversal().genericCollect(subject, collect);
+    return list.size() > 0;
+  }
+
   private boolean expConstantInBody(Expression exp, Instruction body) {
     boolean res = true;
     HashSet c = new HashSet();
@@ -228,8 +299,9 @@ public class TomOptimizer extends TomTask {
     Iterator it = c.iterator();
     while(res && it.hasNext()) {
       TomName name = (TomName) it.next();
-      List list = computeOccurences(name,body);
-      res = res && (list.size()==0);
+        //List list = computeOccurences(name,body);
+        //res = res && (list.size()==0);
+      res = res && !isAssigned(name,body);
     }
     return res; 
   }

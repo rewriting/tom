@@ -5,7 +5,6 @@ import aterm.*;
 
 public class PersonSort {
   %include{ TNode.tom }
-         
   private XmlTools xtools;
   private Factory getTNodeFactory() {
       return xtools.getTNodeFactory();
@@ -46,7 +45,6 @@ public class PersonSort {
     return 0;
   }
 
-
   private void searchJu(TNode subject) {
     %match(TNode subject) {
       <Persons><Person><FirstName>#TEXT((_*,'Ju',X*))</FirstName></Person></Persons> -> {
@@ -54,6 +52,5 @@ public class PersonSort {
       }
     }
   }
-  
 }
 

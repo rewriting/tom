@@ -32,7 +32,7 @@ import jtom.adt.tomsignature.types.*;
 import jtom.runtime.Replace1;
 import jtom.tools.TomTask;
 import jtom.tools.TomTaskInput;
-import jtom.tools.Tools;
+import jtom.tools.*;
 import jtom.checker.TomCheckerMessage;
 import aterm.*;
 import jtom.exception.TomRuntimeException;
@@ -40,6 +40,7 @@ import jtom.TomEnvironment;
 
 public class TomCompiler extends TomTask {
   TomKernelCompiler tomKernelCompiler;
+  private TomFactory tomFactory;
   private String debugKey = null;
   private boolean debugMode = false, eCode = false;
   private int absVarNumber = 0;
@@ -48,6 +49,7 @@ public class TomCompiler extends TomTask {
                      TomKernelCompiler tomKernelCompiler) {
     super("Tom Compiler", environment);
     this.tomKernelCompiler = tomKernelCompiler;
+    this.tomFactory = new TomFactory(environment);
   }
   
 // ------------------------------------------------------------
@@ -115,7 +117,7 @@ public class TomCompiler extends TomTask {
                 return `FunctionCall(name,newTermArgs);
               } else {
                 if(isListOperator(tomSymbol)) {
-                  return `BuildList(name,newTermArgs);
+                  return tomFactory.buildList(name,newTermArgs);
                 } else if(isArrayOperator(tomSymbol)) {
                   return `BuildArray(name,newTermArgs);
                 } else {
@@ -303,6 +305,7 @@ public class TomCompiler extends TomTask {
       //System.out.println("preProcessing subject: " + subject);
     return (Instruction) replace_preProcessing.apply(subject); 
   }
+
  
   private Instruction buildCondition(InstructionList condList, Instruction action) {
     %match(InstructionList condList) {
@@ -338,7 +341,6 @@ public class TomCompiler extends TomTask {
       }
       
       _ -> {
-        System.out.println("buildCondition strange term: " + condList);
         throw new TomRuntimeException(new Throwable("buildCondition strange term: " + condList));
       }
     }

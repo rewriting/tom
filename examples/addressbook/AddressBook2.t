@@ -24,24 +24,24 @@ public class AddressBook2 {
   
   public void run() {
     PersonList book = generateBook();
-    Date today = `date(2003,1,28);
+    Date today = `date(2003,3,27);
     happyBirthday(book,today);
   }
  
   public void happyBirthday(PersonList book, Date date) {
     %match(PersonList book, Date date) {
-      concPerson(_*, person(fn, ln, date(y,m,d)), _*),
-        date(_,m,d)   -> {
-        System.out.println("Happy birthday " + fn + " " + ln);
+      concPerson(_*, person(firstname, _, date(year,month,day)), _*),
+        date(_,month,day)   -> {
+        System.out.println("Happy birthday " + `firstname);
       }
     }
   }
   
   public PersonList generateBook() {
     return `concPerson(
-      person("John","Smith",date(1965,1,18)),
-      person("Marie","Muller",date(1986,1,28)),
-      person("Paul","Muller",date(2000,1,26))
+      person("John","Smith",date(1965,3,27)),
+      person("Marie","Muller",date(1986,3,28)),
+      person("Paul","Muller",date(2000,1,27))
       );
   }
   

@@ -30,6 +30,7 @@ import jtom.*;
 import java.util.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.xml.*;
+import jtom.exception.TomRuntimeException;
 
 public class TomFactory extends TomBase {
 
@@ -130,5 +131,32 @@ public class TomFactory extends TomBase {
       }
     }
   }
+
+  public TomTerm buildList(TomName name,TomList args) {
+    %match(TomList args) {
+      emptyTomList() -> {
+        return `BuildEmptyList(name);
+      }
+
+      manyTomList(head@VariableStar[],tail) |
+      manyTomList(head@Composite(concTomTerm(VariableStar[])),tail) -> {
+          /*System.out.println("head = " + head);*/
+        TomTerm subList = buildList(name,tail);
+        return `BuildAppendList(name,head,subList);
+      }
+
+      manyTomList(head@BuildTerm[],tail) |
+      manyTomList(head@BuildVariable[],tail) |
+      manyTomList(head@Variable[],tail) |
+      manyTomList(head@Composite(_),tail) -> {
+        TomTerm subList = buildList(name,tail);
+        return `BuildConsList(name,head,subList);
+      }
+    }
+
+    throw new TomRuntimeException(new Throwable("buildList strange term: " + args));
+     
+  }
+
   
 }

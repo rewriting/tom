@@ -1,3 +1,17 @@
+2004-04-12    <pem@bach>
+
+	* src/jtom/optimizer/TomOptimizer.t: 
+	  - improved criteria for inlining
+	  - allow inlining for LetRef and LetAssign
+
+	* src/jtom/backend/TomImperativeGenerator.t: 
+	  - removed buildList (to allow more inlining)
+	  - this is now done in TomExpander and TomFactory
+
+	* src/jtom/compiler/TomKernelCompiler.t: re-designed list-matching
+
+	* src/jtom/backend/TomCamlGenerator.t: improve block management
+
 2004-04-09  pem  <pem@polly.loria.fr>
 
 	* bootinstall

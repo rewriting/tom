@@ -66,7 +66,7 @@ public class TomKernelExpander extends TomBase {
           throw new TomRuntimeException(new Throwable("expandVariable: null contextSubject"));
         }
 
-        //System.out.println("expandVariable:\n\t" + subject );
+          //System.out.println("expandVariable:\n\t" + subject );
         if(subject instanceof Option) {
           %match(Option subject) {
             OriginTracking[] -> { return subject; }
@@ -188,7 +188,11 @@ public class TomKernelExpander extends TomBase {
                TomSymbol tomSymbol;
                if(strName.equals("")) {
                  tomSymbol = getSymbol(type);
-                 nameList = `concTomName(tomSymbol.getAstName());
+                 if(tomSymbol==null) {
+                   throw new TomRuntimeException(new Throwable("no symbol found for type '" + type + "'"));
+                 } else {
+                   nameList = `concTomName(tomSymbol.getAstName());
+                 }
                } else {
                  tomSymbol = getSymbol(strName);
                }

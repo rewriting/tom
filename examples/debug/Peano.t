@@ -36,7 +36,7 @@ public class Peano {
 
   public void run() {
     ATerm N = int2peano(2);
-    assertTrue( peano2int(plus1(N,N)) == 4 );
+    assertTrue( peano2int(plus(N,N)) == 4 );
   }
   
   public final static void main(String[] args) {
@@ -48,14 +48,13 @@ public class Peano {
     return t;
   }
   
-  public ATerm plus1(ATerm t1, ATerm t2) {
+  public ATerm plus(ATerm t1, ATerm t2) {
     %match(term t1, term t2) {
       x@_,y@zero()   -> { return `x; }
       x,suc(y) -> { return `suc(plus1(x,y)); }
     }
     return null;
   }
-
 
   public ATerm suc(ATerm t) {
     return (ATerm)factory.makeAppl(fsuc,t);

@@ -65,7 +65,9 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected abstract void buildRef(int deep, TomTerm term) throws IOException;
   protected abstract void buildInstructionSequence(int deep, Instruction instruction) throws IOException;
   protected abstract void buildComment(int deep, String text) throws IOException;
-  protected abstract void buildList(int deep, String name, TomList argList) throws IOException;
+  protected abstract void buildEmptyList(int deep, String name) throws IOException;
+  protected abstract void buildConsList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException;
+  protected abstract void buildAppendList(int deep, String name, TomTerm headTerm, TomTerm tailTerm) throws IOException;
   protected abstract void buildArray(int deep,String name, TomList argList) throws IOException;
   protected abstract void buildFunctionCall(int deep, String name, TomList argList)  throws IOException;
   protected abstract void buildFunctionBegin(int deep, String tomName, TomList varList) throws IOException; 
@@ -79,6 +81,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 	protected abstract void buildExpTrue(int deep) throws IOException;
 	protected abstract void buildExpFalse(int deep) throws IOException;
 	protected abstract void buildAssignVar(int deep, TomTerm var, OptionList list, Expression exp) throws IOException ;
+  protected abstract void buildLetAssign(int deep, TomTerm var, OptionList list, Expression exp, Instruction body) throws IOException ;
   protected abstract void buildExpCast(int deep, TomType type, Expression exp) throws IOException;
 	protected abstract void buildLet(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
 	protected abstract void buildLetRef(int deep, TomTerm var, OptionList list, TomType tlType, Expression exp, Instruction body) throws IOException ;
@@ -89,6 +92,7 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
 	protected abstract void buildGetSubtermDecl(int deep, String name1, String name2, String type1,
 TomType tlType1, TomType tlType2, TargetLanguage tlCode) throws IOException ;
   protected abstract void buildDoWhile(int deep, Instruction succes, Expression exp) throws IOException;
+  protected abstract void buildWhileDo(int deep, Expression exp, Instruction succes) throws IOException;
 
   /*
    * Implementation of functions whose definition is
@@ -422,7 +426,7 @@ TomType fullListType, TargetLanguage tlCode) throws IOException {
     }
     
     generateTargetLanguage(deep, genDecl(returnType,
-                                             "tom_make_insert", opname,
+                                             "tom_cons_list", opname,
                                              new String[] {
                                                argEltType, name1,
                                                argListType, name2
