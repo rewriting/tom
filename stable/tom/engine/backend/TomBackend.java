@@ -32,7 +32,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.io.IOException;
 
-import jtom.checker.TomCheckerMessage;
+import jtom.TomMessage;
 import jtom.tools.*;
 import jtom.TomEnvironment;
 
@@ -66,7 +66,7 @@ public class TomBackend extends TomTask {
       }
     } catch (Exception e) {
       addError("Exception occurs in TomBackend Init: "+e.getMessage(), 
-               getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+               getInput().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER, TomMessage.TOM_ERROR);
       e.printStackTrace();
     }
   }
@@ -85,8 +85,8 @@ public class TomBackend extends TomTask {
     } catch (Exception e) {
       addError("Exception occurs in TomGenerator: " + e.getMessage(), 
                getInput().getInputFile().getName(), 
-               TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, 
-               TomCheckerMessage.TOM_ERROR);
+               TomMessage.DEFAULT_ERROR_LINE_NUMBER, 
+               TomMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }

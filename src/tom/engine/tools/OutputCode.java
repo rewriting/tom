@@ -111,7 +111,7 @@ public class OutputCode {
     writeln();
   }
   
-  public void write(int deep,String s, int line, int length) throws IOException {
+  public void write(String s, int line, int length) throws IOException {
     if(singleLine>0 && !getInput().isCCode()) {
       s = s.replace('\n', ' ');
       s = s.replace('\r', ' ');
@@ -140,7 +140,7 @@ public class OutputCode {
       }
       lineCounter+= length;
     }
-    write(deep,s);
+    write(s);
   } 
   
   public void close() {
@@ -170,15 +170,13 @@ public class OutputCode {
   
   public void indent(int deep) {
     try {
-      if(deep > 0) {
-        if(getInput().isPretty()) {
-          for(int i=0 ; i<deep ; i++) {
-            file.write(' ');
-            file.write(' ');
-          }
-        } else {
+      if(getInput().isPretty()) {
+        for(int i=0 ; i<deep ; i++) {
+          file.write(' ');
           file.write(' ');
         }
+      } else {
+        file.write(' ');
       }
     } catch (IOException e) {
       System.out.println("write error");

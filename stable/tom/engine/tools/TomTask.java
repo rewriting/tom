@@ -29,7 +29,7 @@ import java.text.MessageFormat;
 
 import jtom.*;
 import jtom.adt.tomsignature.types.*;
-import jtom.checker.TomCheckerMessage;;
+import jtom.TomMessage;
 
 public abstract class TomTask extends TomBase {
 	
@@ -67,47 +67,20 @@ public abstract class TomTask extends TomBase {
   }
 	
   public boolean checkNoErrors() {
-    return environment().checkNoErrors(name, getInput().isEclipseMode(), getInput().isWarningAll(), getInput().isNoWarning());
-      //System.out.println(errors);
-    /*int nbTotalError = errors.getLength();
-    int nbWarning = 0, nbError=0;
-    if(nbTotalError > 0 ) {
-      while(!errors.isEmpty()) {
-        TomError error = errors.getHead();
-        if (error.getLevel() == 1) {
-          nbWarning++;
-          if (getInput().isWarningAll() && !getInput().isEclipseMode()) {
-            System.out.println(error.getMessage());
-          }
-        } else if (error.getLevel() == 0) {
-          if(!getInput().isEclipseMode()){
-            System.out.println(error.getMessage());
-          }
-          res = false;
-          nbError++;
-        }
-        errors= errors.getTail();
-      }
-      if (nbError>0 && !getInput().isEclipseMode()) {
-        String msg = name+":  Encountered " + nbError + " errors and "+ nbWarning+" warnings.";
-        msg += "No file generated.";
-        System.out.println(msg);
-      } else if (nbWarning>0 && !getInput().isEclipseMode() && !getInput().isNoWarning()) {
-        String msg = name+":  Encountered "+ nbWarning+" warnings.";
-        System.out.println(msg);
-      }
-    }
-    return res;*/
+    return environment().checkNoErrors(name,
+    																	 getInput().isEclipseMode(),
+																			 getInput().isWarningAll(),
+																			 getInput().isNoWarning());
   }
 	
   public void finishProcess() {
-      //	Start next task
+      // Start next task
     if(nextTask != null) {
       if(!getInput().isEclipseMode()) {
         environment().setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
       } 
       nextTask.startProcess();
-    } /*else { System.out.println("No more tasks"); }*/
+    }
   }
 	
   public TomTask getTask(){
@@ -121,10 +94,10 @@ public abstract class TomTask extends TomBase {
   public void messageError(int errorLine, String fileName,String structInfo, int structInfoLine, String msg, Object[] msgArg, int level) {
     String s;
     msg = MessageFormat.format(msg, msgArg);
-    if (level == TomCheckerMessage.TOM_ERROR) {
-      s = MessageFormat.format(TomCheckerMessage.MainErrorMessage, new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+    if (level == TomMessage.TOM_ERROR) {
+      s = MessageFormat.format(TomMessage.getString("MainErrorMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
     } else {
-      s = MessageFormat.format(TomCheckerMessage.MainWarningMessage, new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
+      s = MessageFormat.format(TomMessage.getString("MainWarningMessage"), new Object[]{new Integer(errorLine), structInfo, new Integer(structInfoLine), fileName, msg});
     }
 		
     if (getInput().isEclipseMode()) {

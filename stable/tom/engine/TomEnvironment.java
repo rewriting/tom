@@ -98,7 +98,10 @@ public class TomEnvironment {
     errors = list;
   }
 
-  public boolean checkNoErrors(String taskName, boolean eclipseMode, boolean warningAll, boolean noWarning) {
+  public boolean checkNoErrors(String taskName,
+  								boolean eclipseMode,
+									boolean warningAll,
+									boolean noWarning) {
     boolean res = true; 
     TomErrorList errors = getErrors();
       //System.out.println(errors);
@@ -128,6 +131,9 @@ public class TomEnvironment {
       } else if (nbWarning>0 && !eclipseMode && !noWarning) {
         String msg = taskName+":  Encountered "+ nbWarning+" warnings.";
         System.out.println(msg);
+      }
+      if(!eclipseMode) {
+      	setErrors(getTomSignatureFactory().makeTomErrorList());
       }
     }
     return res;

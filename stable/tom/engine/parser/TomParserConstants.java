@@ -99,27 +99,29 @@ public interface TomParserConstants {
   int TOM_IDENTIFIER = 89;
   int TOM_DOUBLE = 90;
   int EXPONENT = 91;
-  int TOM_LETTER = 92;
-  int TOM_DIGIT = 93;
-  int TOM_STRING = 94;
-  int XML_NAME = 95;
-  int XML_START = 96;
-  int XML_START_ENDING = 97;
-  int XML_CLOSE = 98;
-  int XML_CLOSE_SINGLETON = 99;
-  int DOUBLE_QUOTE = 100;
-  int XML_TEXT = 101;
-  int XML_COMMENT = 102;
-  int XML_PROC = 103;
-  int JAVA_SINGLE_LINE_COMMENT = 112;
-  int JAVA_FORMAL_COMMENT = 113;
-  int JAVA_MULTI_LINE_COMMENT = 114;
-  int JAVA_PACKAGE = 116;
-  int JAVA_SEMICOLON = 117;
-  int JAVA_DOT = 118;
-  int JAVA_IDENTIFIER = 119;
-  int JAVA_LETTER = 120;
-  int JAVA_DIGIT = 121;
+  int MINUS_SIGN = 92;
+  int TOM_LETTER = 93;
+  int TOM_DIGIT = 94;
+  int TOM_STRING = 95;
+  int XML_NAME = 96;
+  int XML_START = 97;
+  int XML_START_ENDING = 98;
+  int XML_CLOSE = 99;
+  int XML_CLOSE_SINGLETON = 100;
+  int DOUBLE_QUOTE = 101;
+  int XML_TEXT = 102;
+  int XML_COMMENT = 103;
+  int XML_PROC = 104;
+  int JAVA_SINGLE_LINE_COMMENT = 113;
+  int JAVA_FORMAL_COMMENT = 114;
+  int JAVA_MULTI_LINE_COMMENT = 115;
+  int JAVA_PACKAGE = 117;
+  int JAVA_SEMICOLON = 118;
+  int JAVA_DOT = 119;
+  int JAVA_IDENTIFIER = 120;
+  int JAVA_LETTER = 121;
+  int JAVA_DIGIT = 122;
+  int JAVA_OTHER = 123;
 
   int DEFAULT = 0;
   int IN_SINGLE_LINE_COMMENT = 1;
@@ -227,6 +229,7 @@ public interface TomParserConstants {
     "<TOM_IDENTIFIER>",
     "<TOM_DOUBLE>",
     "<EXPONENT>",
+    "<MINUS_SIGN>",
     "<TOM_LETTER>",
     "<TOM_DIGIT>",
     "<TOM_STRING>",
@@ -245,18 +248,19 @@ public interface TomParserConstants {
     "\"\\r\"",
     "\"\\f\"",
     "\"//\"",
-    "<token of kind 110>",
+    "<token of kind 111>",
     "\"/*\"",
     "<JAVA_SINGLE_LINE_COMMENT>",
     "\"*/\"",
     "\"*/\"",
-    "<token of kind 115>",
+    "<token of kind 116>",
     "\"package\"",
     "\";\"",
     "\".\"",
     "<JAVA_IDENTIFIER>",
     "<JAVA_LETTER>",
     "<JAVA_DIGIT>",
+    "<JAVA_OTHER>",
   };
 
 }
