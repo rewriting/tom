@@ -17,6 +17,7 @@ source_java     = Peano.t \
 		  TestList.t \
 		  TestBuiltin.t \
 		  Xml.t \
+		  TestDom.t \
 		  Record.t
 
 source_c        = cfib1.t \
