@@ -56,7 +56,7 @@ public class TomBackend extends TomGenericPlugin {
   public static final String DECLARED_OPTIONS = 
     "<options>" +
     "<boolean name='noOutput' altName=''  description='Do not generate code' value='false'/>" +
-    "<boolean name='jCode'    altName='j' description='Generate Java code' value='false'/>" + 
+    "<boolean name='jCode'    altName='j' description='Generate Java code' value='true'/>" + 
     "<boolean name='cCode'    altName='c' description='Generate C code' value='false'/>" +
     "<boolean name='camlCode' altName=''  description='Generate Caml code' value='false'/>" + 
     "</options>";
@@ -119,6 +119,12 @@ public class TomBackend extends TomGenericPlugin {
   
   public void setOption(String optionName, Object optionValue) {
     setOptionValue(optionName, optionValue);
+
+
+    System.out.println("setOption: " + optionName + "  " + optionValue);
+    System.out.println(getOptionValue("jCode"));
+    System.out.println(getOptionValue("cCode"));
+    System.out.println(getOptionValue("camlCode"));
     
     if(optionValue.equals(Boolean.TRUE)) {// no more than 1 type of code can be activated at a time
       if(optionName.equals("cCode") || optionName.equals("c")) { 
