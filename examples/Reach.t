@@ -64,7 +64,7 @@ public class Reach extends GenericTraversal {
      * and collect all possible results in a collection
      */
   public void collectOneStep(final Collection collection, ATerm subject) {
-    Collect2 collect = new Collect2() { 
+    CollectReach collect = new CollectReach() { 
         public boolean apply(ATerm t, Collection c) {
           %match(term t) { 
             f(x)    -> { c.add(`f(s(x))); }
@@ -74,7 +74,7 @@ public class Reach extends GenericTraversal {
           return true;
         } // end apply
       }; // end new
-    genericCollect2(subject, collect, collection); 
+    genericCollectReach(subject, collect, collection); 
   }
 
   static final int MAXITER = 25;
