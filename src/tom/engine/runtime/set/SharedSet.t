@@ -53,13 +53,13 @@ public class SharedSet extends ATermSet {
   
   public SharedSet(PureFactory pureFactory) {
     if (factory==null) {
-      factory = new Factory(pureFactory);
+      factory = new SetFactory(pureFactory);
     }
     emptyTree = getSetFactory().makeJGTreeSet_EmptySet();
     this.tree = makeEmptySet();
   }
   
-  private SharedSet(Factory fact, JGTreeSet tree, int count) {
+  private SharedSet(SetFactory fact, JGTreeSet tree, int count) {
     factory = fact;
     this.tree = tree;
     this.count = count;

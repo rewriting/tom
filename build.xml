@@ -236,8 +236,8 @@
     <adt file="${src.adt}/TNode.adt" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
+         <!--factory="Set"--> 
     <adt file="${src.adt}/Set.adt" 
-         factory="Set" 
          package="jtom.adt" 
          destdir="${src.gen}"/>
     <adt file="${src.adt}/Options.adt" 

@@ -61,7 +61,7 @@ public abstract class ATermSet implements Collection {
   protected static GenericTraversal traversal = new GenericTraversal();
 
   static protected JGTreeSet emptyTree;
-  static protected Factory factory = null;
+  static protected SetFactory factory = null;
   static protected int collisions = 0;
   static final protected int[] mask =
   { 1 << 0, 
@@ -104,7 +104,7 @@ public abstract class ATermSet implements Collection {
     return tree.getUniqueIdentifier();
   }
   
-  protected Factory getSetFactory() { 
+  protected SetFactory getSetFactory() { 
     return factory;
   }
   

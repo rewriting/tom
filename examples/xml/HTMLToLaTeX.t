@@ -42,7 +42,7 @@ public class HTMLToLaTeX {
     
   private XmlTools xtools;
   private GenericTraversal traversal = new GenericTraversal();
-  private Factory getTNodeFactory() {
+  private TNodeFactory getTNodeFactory() {
     return xtools.getTNodeFactory();
   }
 

@@ -39,7 +39,7 @@ public class P3PEvaluator1 {
   %include{ TNode.tom }
     
   private XmlTools xtools;
-  private Factory getTNodeFactory() {
+  private TNodeFactory getTNodeFactory() {
       return xtools.getTNodeFactory();
   }
  

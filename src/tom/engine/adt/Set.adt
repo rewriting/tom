@@ -1,6 +1,9 @@
 [
-constructor(JGTreeSet,emptySet,emptySet),
-constructor(JGTreeSet,singleton,singleton(<value(term)>)),
-constructor(JGTreeSet,pair,pair(<value(term)>,<multiplicity(int)>)),
-constructor(JGTreeSet,branch,branch(<left(JGTreeSet)>,<right(JGTreeSet)>))
+  modulentry(Name("Set"),[],
+  [
+  constructor(JGTreeSet,emptySet,emptySet),
+  constructor(JGTreeSet,singleton,singleton(<value(term)>)),
+  constructor(JGTreeSet,pair,pair(<value(term)>,<multiplicity(int)>)),
+  constructor(JGTreeSet,branch,branch(<left(JGTreeSet)>,<right(JGTreeSet)>))
+  ])
 ] 

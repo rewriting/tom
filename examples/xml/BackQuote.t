@@ -40,7 +40,7 @@ public class BackQuote {
     
   private XmlTools xtools;
  
-  private Factory getTNodeFactory() {
+  private TNodeFactory getTNodeFactory() {
       return xtools.getTNodeFactory();
   }
 

@@ -37,7 +37,7 @@ import aterm.*;
 public class PersonSort {
   %include{ TNode.tom }
   private XmlTools xtools;
-  private Factory getTNodeFactory() {
+  private TNodeFactory getTNodeFactory() {
       return xtools.getTNodeFactory();
   }
   
