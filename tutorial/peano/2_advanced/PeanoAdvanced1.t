@@ -1,6 +1,5 @@
 import aterm.*;
 import aterm.pure.*;
-import java.util.*;
 
 public class PeanoAdvanced1 {
   ATermFactory factory;

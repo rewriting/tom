@@ -1,8 +1,6 @@
 import aterm.*;
 import aterm.pure.*;
 
-import java.util.*;
-
 public class PolyAdvanced1 {
     
   private ATermFactory factory;

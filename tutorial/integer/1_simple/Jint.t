@@ -1,7 +1,7 @@
 public class Jint {
 
-  %typeint
-  
+  %include {int.tom}
+
   public final static void main(String[] args) {
     Jint test = new Jint();
     int res = test.fib(10);

@@ -4,7 +4,7 @@
 To use this example:
 
 First,
-*  adt-to-java --input expression.adt --jtom --package expression --output expression
+*  adt-to-tom --input expression.adt --javagen --name expression --nojar
 
 Then, 
 * jtom Poly1.t

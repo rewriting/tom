@@ -1,18 +1,19 @@
 import aterm.*;
-import aterm.pure.*;
-import adt.*;
+import aterm.pure.PureFactory;
+import peano.*;
+import peano.types.*;
 
 public class Peano1 {
 
-  private PeanoFactory factory;
+  private Factory factory;
 
-  %include { adt/peano.tom }
+  %include { peano.tom }
   
-  public Peano1(PeanoFactory factory) {
+  public Peano1(Factory factory) {
     this.factory = factory;
   }
 
-  public PeanoFactory getPeanoFactory() {
+  public Factory getPeanoFactory() {
     return factory;
   }
 
@@ -52,7 +53,7 @@ public class Peano1 {
   }
 
   public final static void main(String[] args) {
-    Peano1 test = new Peano1(new PeanoFactory(new PureFactory()));
+    Peano1 test = new Peano1(new Factory(new PureFactory()));
     test.run(10);
   }
 

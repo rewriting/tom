@@ -2,8 +2,6 @@ import aterm.*;
 import aterm.pure.*;
 import jtom.runtime.*;
 
-import java.util.*;
-
 public class PolyAdvanced2 {
     
   private ATermFactory factory;

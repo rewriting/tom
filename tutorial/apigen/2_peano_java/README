@@ -6,7 +6,7 @@
 * [ Nat, suc, suc(<pred(Nat)>) ] is equivalent to:
    %op Nat suc(pred:Nat) { ...}
 
-*  adt-to-java --input peano.adt --jtom --package adt --output adt
+*  adt-to-tom --input peano.adt --javagen --name peano --nojar
 
 * jtom Peano1.t
 * javac Peano1.java

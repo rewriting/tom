@@ -1,17 +1,18 @@
 import aterm.*;
 import aterm.pure.*;
 import expression.*;
+import expression.types.*;
 
 public class PolyApigen2 {
-  private ExpressionFactory factory;
-  public PolyApigen2(ExpressionFactory factory) {
+  private Factory factory;
+  public PolyApigen2(Factory factory) {
     this.factory = factory;
   }
-  public ExpressionFactory getExpressionFactory() {
+  public Factory getExpressionFactory() {
     return factory;
   }
 
-  %include { expression/expression.tom }
+  %include { expression.tom }
 
   %op Expression differentiate(arg1:Expression, arg2:Expression) {
     fsym { }
@@ -76,7 +77,7 @@ public class PolyApigen2 {
   }
     
   public final static void main(String[] args) {
-    PolyApigen2 test = new  PolyApigen2(new  ExpressionFactory(new PureFactory()));
+    PolyApigen2 test = new  PolyApigen2(new Factory(new PureFactory()));
     test.run(2);
   }
 }
