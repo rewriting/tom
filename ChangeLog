@@ -1,3 +1,6 @@
+2002-12-21    <pem@escher>
+        * jtom uses the cvs-sop CVS server
+
 2002-12-21    <pem@bach>
 
 	* src/jtom/compiler/TomGenerator.t: 
