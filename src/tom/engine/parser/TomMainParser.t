@@ -15,13 +15,13 @@ import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.types.*;
 import jtom.exception.*;
 
-public class TomMainParser extends TomBase implements TomPlugin {
+public class TomMainParser extends TomGenericPlugin implements TomPlugin {
 
     %include {  ../adt/TomSignature.tom }
     %include{ Options.tom }
     
-    private TomTerm term;
-    private TomOptionList myOptions;
+    //  private TomTerm term;
+    // private TomOptionList myOptions;
     /*
     private HashSet includedFileSet;
     private HashSet alreadyParsedFileSet;
@@ -106,62 +106,17 @@ public class TomMainParser extends TomBase implements TomPlugin {
 	return new NewTargetParser(selector,fileName,includedFiles,alreadyParsedFiles);
     }
 
-
-
-
-    /* private void createParser(){
-	try{
-	    this.includedFileSet = new HashSet();
-	    this.alreadyParsedFileSet = new HashSet();
-	    
-	    DataInputStream input = new DataInputStream(new FileInputStream(new File(currentFile)));
-	    
-	    // create a lexer for target mode
-	    NewTargetLexer targetlexer = new NewTargetLexer(input);
-	    // create a lexer for tom mode
-	    NewTomLexer tomlexer = new NewTomLexer(targetlexer.getInputState());
-	    // create a lexer for backquote mode
-	    NewBQLexer bqlexer = new NewBQLexer(targetlexer.getInputState());
-	    
-	    // notify selector about various lexers
-	    selector.addInputStream(targetlexer,"targetlexer");
-	    selector.addInputStream(tomlexer, "tomlexer");
-	    selector.addInputStream(bqlexer, "bqlexer");
-	    selector.select("targetlexer");
-	    
-	    // create the parser for target mode
-	    this.parser = new NewTargetParser(selector);
-	    // create the other parsers
-	    parser.init();
-	}
-	catch(FileNotFoundException e){
-	    environment().messageError(TomMessage.getString("FileNotFound"), 
-				       new Object[]{currentFile}, 
-				       currentFile, 
-				       getLineFromTomParser(parser)
-				       );
-	}
-	catch(IOException e){
-	    e.printStackTrace();
-	    environment().messageError(TomMessage.getString("UnhandledException"), 
-				       new Object[]{currentFile, e.getMessage()}, 
-				       currentFile, 
-				       TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-	}
-
-	}*/
-
     public TomTerm startParsing() throws TomException{
 	try{
 	    return parser.input();
 	}
 	catch(TokenStreamException e){
 	    environment().messageError(TomMessage.getString("TokenStreamException"), new Object[]{e.getMessage()}, 
-				       currentFile,  getLineFromTomParser(parser));
+				       currentFile,  getLineFromTomParser());
 	}
 	catch(antlr.RecognitionException e){
 	    environment().messageError(TomMessage.getString("RecognitionException"), new Object[]{e.getMessage()}, 
-				       currentFile,  getLineFromTomParser(parser));
+				       currentFile,  getLineFromTomParser());
 	}
 	return null;
     }
@@ -170,18 +125,6 @@ public class TomMainParser extends TomBase implements TomPlugin {
     private static boolean testIncludedFile(String currentFile, HashSet fileSet) {
 	// !(true) if the set did not already contain the specified element.
 	return !fileSet.add(currentFile);
-    }
-
-    public void setInput(ATerm term){
-	if (term instanceof TomTerm)
-	    this.term = (TomTerm)term;
-	else
-	    environment().messageError(TomMessage.getString("TomTermExpected"),
-				       "TomParserPlugin", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-    }
-
-    public ATerm getOutput(){
-	return term;
     }
     
     public void run(){
@@ -254,7 +197,7 @@ public class TomMainParser extends TomBase implements TomPlugin {
 	    }*/
  	catch (FileNotFoundException e){
 	    environment().messageError(TomMessage.getString("FileNotFound"), new Object[]{currentFile}, 
-				       currentFile, getLineFromTomParser(parser));
+				       currentFile, getLineFromTomParser());
 	} /*
  	catch (ParseException e){
 	    environment().messageError(TomMessage.getString("ParseException"), new Object[]{e.getMessage()}, 
@@ -269,59 +212,13 @@ public class TomMainParser extends TomBase implements TomPlugin {
     }
 
 
-    private int getLineFromTomParser(NewTargetParser parser) {
+    private int getLineFromTomParser() {
 	if(parser == null) {
 	    return TomMessage.DEFAULT_ERROR_LINE_NUMBER;
 	} 
 	return parser.getLine();
     }
 
-   //  private static int getLineFromTomParser() {
-// 	if(parser == null) {
-// 	    return TomMessage.DEFAULT_ERROR_LINE_NUMBER;
-// 	} 
-// 	return parser.getLine();
-//     }
 
-    public TomOptionList declareOptions(){
-	return myOptions;
-    }
-
-    public TomOptionList requiredOptions(){
-	return `emptyTomOptionList();
-    }
-    
-    public void setOption(String optionName, String optionValue){
-	%match(TomOptionList myOptions){
-	    concTomOption(av*, OptionBoolean(n, alt, desc, val), ap*) -> { 
-		if(n.equals(optionName)||alt.equals(optionName)) {
-		    %match(String optionValue){
-			('true') ->{ 
-			    myOptions = `concTomOption(
-						       av*, 
-						       ap*, 
-						       OptionBoolean(n, alt, desc, True())
-						       ); 
-			}
-			('false') ->{ 
-			    myOptions = `concTomOption(
-						       av*, 
-						       ap*, 
-						       OptionBoolean(n, alt, desc, False())
-						       ); 
-			}
-		    }
-		}
-	    }
-	    concTomOption(av*, OptionInteger(n, alt, desc, val, attr), ap*) -> { 
-		if(n.equals(optionName)||alt.equals(optionName))
-		    myOptions = `concTomOption(av*, ap*, OptionInteger(n, alt, desc, Integer.parseInt(optionValue), attr));
-	    }
-	    concTomOption(av*, OptionString(n, alt, desc, val, attr), ap*) -> { 
-		if(n.equals(optionName)||alt.equals(optionName))
-		    myOptions = `concTomOption(av*, ap*, OptionString(n, alt, desc, optionValue, attr));
-	    }
-	}
-    }
     
 }

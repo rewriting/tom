@@ -170,7 +170,7 @@ class NewTargetParser extends Parser;
     }
 
     public int getLine(){
-        return 0;
+        return targetlexer.getLine();
     }
 
     private void includeFile(String fileName, LinkedList list) 
