@@ -1,6 +1,7 @@
 package jtom.backend;
 
 import java.io.*;
+import java.util.logging.*;
 
 import aterm.*;
 import jtom.*;
@@ -24,68 +25,65 @@ public class TomBackend extends TomGenericPlugin {
     super("TomBackend");
   }
 
-    public void run()
-    {
-      if(isActivated() == true)
-	    {
-		try
-		    {
-			long startChrono = System.currentTimeMillis();
-			boolean verbose = getServer().getOptionBooleanValue("verbose");
+  public void run() {
+    if(isActivated() == true) {
+      try {
+	long startChrono = System.currentTimeMillis();
+	boolean verbose = getServer().getOptionBooleanValue("verbose");
 			
-			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
+	writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(environment().getOutputFile())));
 			
-			OutputCode output = new OutputCode(writer, defaultDeep);
+	OutputCode output = new OutputCode(writer, defaultDeep);
 			
-			if( getServer().getOptionBooleanValue("jCode") )
-			    generator = new TomJavaGenerator(output);
-			else if( getServer().getOptionBooleanValue("cCode") )
-			    generator = new TomCGenerator(output);
-			else if( getServer().getOptionBooleanValue("eCode") )
-			    generator = new TomEiffelGenerator(output);
-			else if( getServer().getOptionBooleanValue("camlCode") )
-			    generator = new TomCamlGenerator(output);
+	if( getServer().getOptionBooleanValue("jCode") ) {
+	  generator = new TomJavaGenerator(output);
+	} else if( getServer().getOptionBooleanValue("cCode") ) {
+	  generator = new TomCGenerator(output);
+	} else if( getServer().getOptionBooleanValue("eCode") ) {
+	  generator = new TomEiffelGenerator(output);
+	} else if( getServer().getOptionBooleanValue("camlCode") ) {
+	  generator = new TomCamlGenerator(output);
+	}
 			
-			generator.generate( defaultDeep, (TomTerm)getTerm() );
+	generator.generate( defaultDeep, (TomTerm)getTerm() );
 			
-			if(verbose)
-			    System.out.println("TOM generation phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+	if(verbose) {
+	  System.out.println("TOM generation phase (" +(System.currentTimeMillis()-startChrono)+ " ms)");
+	}
+	
+	writer.close();
 
-			writer.close();
+	environment().printAlertMessage("TomBackend"); // TODO: useless soon
+	
+	if(!environment().isEclipseMode()) {
+	    // remove all warning (in command line only)
+	    environment().clearWarnings();
+	}
+      }
+      catch (Exception e) {
+	  getLogger().log( Level.SEVERE,
+			   "ExceptionMessage",
+			   new Object[]{environment().getInputFile().getName(), "TomBackend", e.getMessage()} );
 
-			environment().printAlertMessage("TomBackend");
-			if(!environment().isEclipseMode()) {
-			    // remove all warning (in command line only)
-			    environment().clearWarnings();
-			}
-		    }
-		catch (Exception e)
-		    {
-			environment().messageError("Exception occurs in TomBackend Init: "+e.getMessage(), 
-						   environment().getInputFile().getName(), TomMessage.DEFAULT_ERROR_LINE_NUMBER);
-			e.printStackTrace();
-		    }
-	    }
-	else // backend desactivated
-	    {
-		boolean verbose = getServer().getOptionBooleanValue("verbose");
+	  e.printStackTrace();
+      }
+    } else { // backend desactivated
+      boolean verbose = getServer().getOptionBooleanValue("verbose");
 		
-		if(verbose)
-		    {
-			System.out.println("The backend is not activated and thus WILL NOT RUN.");
-			System.out.println("No output !");
-		    }
-	    }
+      if(verbose) {
+	System.out.println("The backend is not activated and thus WILL NOT RUN.");
+	System.out.println("No output !");
+      }
     }
+  }
 
-     public TomOptionList declaredOptions()
-     {
- 	return `concTomOption(OptionBoolean("noOutput", "", "Do not generate code", False()), // desactivation flag
-			      OptionBoolean("jCode", "j", "Generate Java code", True()),
-			      OptionBoolean("cCode", "c", "Generate C code", False()),
-			      OptionBoolean("eCode", "e", "Generate Eiffel code", False()),
-			      OptionBoolean("camlCode", "", "Generate Caml code", False()));
-     }
+  public TomOptionList declaredOptions() {
+    return `concTomOption(OptionBoolean("noOutput", "", "Do not generate code", False()), // desactivation flag
+			  OptionBoolean("jCode", "j", "Generate Java code", True()),
+			  OptionBoolean("cCode", "c", "Generate C code", False()),
+			  OptionBoolean("eCode", "e", "Generate Eiffel code", False()),
+			  OptionBoolean("camlCode", "", "Generate Caml code", False()));
+  }
 
   public void setOption(String optionName, Object optionValue) {
     putOptionValue(optionName, optionValue);
