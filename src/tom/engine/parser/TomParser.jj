@@ -710,7 +710,6 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
   environment.getStatistics().numberRuleBlocsRecognized++;
   TomTerm lhs, rhs;
   ArrayList ruleList = new ArrayList();
-  int ruleNumber=0;
   ArrayList nameTypeInRule = new ArrayList();
   Option orgTrack;
 }
@@ -728,11 +727,6 @@ void RuleConstruct(ArrayList list) throws TomException: /* in DEFAULT mode */
       ruleList.add(tsf().makeTomTerm_RewriteRule(
                      tsf().makeTomTerm_Term(lhs),
                      tsf().makeTomTerm_Term(rhs)));
-        // update the root of lhs: it becomes a defined symbol
-      if(ruleNumber==0) {
-        ast().updateDefinedSymbol(symbolTable,lhs);
-      }
-      ruleNumber++;
     }
   )*
     <TOM_RBRACE>

@@ -34,21 +34,15 @@ import aterm.pure.*;
 import jtom.*;
 import jtom.tools.*;
 
-import jtom.verifier.*;
 import jtom.exception.*;
 import jtom.adt.*;
 
 public class TomChecker extends TomBase {
 
-  private TomVerifier tomVerifier;
-
-  public TomChecker(jtom.TomEnvironment environment, TomVerifier tomVerifier) {
+  private Option optionMatchTypeVariable;
+  
+  public TomChecker(jtom.TomEnvironment environment) {
 	super(environment);
-	this.tomVerifier = tomVerifier;
-  }
-
-  public TomVerifier verifier() {
-    return tomVerifier;
   }
 
   protected interface ReplaceContext {
@@ -153,49 +147,43 @@ public class TomChecker extends TomBase {
   private TomTerm expandRecordAppl(TomTerm subject, Option option, String tomName, TomList args)
     throws TomException {
     TomSymbol tomSymbol = getSymbol(tomName);
-    if(tomSymbol != null) {
-      TomList slotList = getSymbolSlotList(tomSymbol);
-      TomList subtermList = empty();
-        // For each slotName (from tomSymbol)
-      TomList slotListBis = empty();
-      TomList slotListTer = empty();
-      slotListBis = slotList;
-      while(!slotList.isEmpty()) {
-        TomTerm slotName = slotList.getHead();
-          //debugPrintln("\tslotName  = " + slotName);
-        TomList pairList = args;
-        TomTerm newSubterm = null;
-        if(slotName.getString().length() > 0) {
-            // look for a same name (from record)
-          whileBlock: {
-            while(newSubterm==null && !pairList.isEmpty()) {
-              TomTerm pairSlotName = pairList.getHead();
-              %match(TomTerm slotName, TomTerm pairSlotName) {
-                SlotName[string=name], Pair(SlotName[string=name],slotSubterm) -> {
-                    // bingo
-                  statistics().numberSlotsExpanded++;
-                  newSubterm = expand(slotSubterm);
-                  break whileBlock;
-                }
+    TomList slotList = getSymbolSlotList(tomSymbol);
+    TomList subtermList = empty();
+      // For each slotName (from tomSymbol)
+    TomList slotListBis = empty();
+    TomList slotListTer = empty();
+    slotListBis = slotList;
+    while(!slotList.isEmpty()) {
+      TomTerm slotName = slotList.getHead();
+        //debugPrintln("\tslotName  = " + slotName);
+      TomList pairList = args;
+      TomTerm newSubterm = null;
+      if(slotName.getString().length() > 0) {
+          // look for a same name (from record)
+        whileBlock: {
+          while(newSubterm==null && !pairList.isEmpty()) {
+            TomTerm pairSlotName = pairList.getHead();
+            %match(TomTerm slotName, TomTerm pairSlotName) {
+              SlotName[string=name], Pair(SlotName[string=name],slotSubterm) -> {
+                  // bingo
+                statistics().numberSlotsExpanded++;
+                newSubterm = expand(slotSubterm);
+                break whileBlock;
               }
-              pairList = pairList.getTail();
             }
-          } // end whileBlock
-        }
-        
-        if(newSubterm == null) {
-          newSubterm = `Placeholder(ast().makeOption());
-        }
-        subtermList = append(newSubterm,subtermList);
-        slotList = slotList.getTail();
+            pairList = pairList.getTail();
+          }
+        } // end whileBlock
       }
       
-      return `Appl(option,Name(tomName),subtermList);
-    } else {
-      System.out.println("Tchou tchou y a encore du boulot pour les symbol non definis");
-        //verifier().messageSymbolError(tomName, option.getOptionList());
-      return null;
+      if(newSubterm == null) {
+        newSubterm = `Placeholder(ast().makeOption());
+      }
+      subtermList = append(newSubterm,subtermList);
+      slotList = slotList.getTail();
     }
+    
+    return `Appl(option,Name(tomName),subtermList);
   }
   
   private TomTerm expandBackQuoteTerm(TomTerm t) throws TomException {
@@ -282,7 +270,7 @@ public class TomChecker extends TomBase {
               return `Appl(option,name,Empty());
             } else {
               statistics().numberVariablesDetected++;
-              verifier().testVariableWithoutParen(option,strName);
+              testVariableWithoutParen(option,strName);
               return `Variable(option,name,type);
             }
           } 
@@ -299,7 +287,7 @@ public class TomChecker extends TomBase {
               return `Appl(option,name,Empty());
             } else {
               statistics().numberVariablesDetected++;
-              verifier().testVariableWithoutParen(option,strName);
+              testVariableWithoutParen(option,strName);
               return `Variable(option,name,type1);
             }
           } 
@@ -322,16 +310,11 @@ public class TomChecker extends TomBase {
                 
               // create a  symbol
             TomSymbol tomSymbol = getSymbol(tomName);
-                
             if(tomSymbol != null) {
-              //debugPrintln("\ttomSymbol = " + tomSymbol);
               TomList subterm = pass1List(tomSymbol, l);
                 //System.out.println("***** pass1.6: pass1List = " + subterm);
               Option option = `Option(replaceAnnotedName(optionList,getSymbolType(tomSymbol)));
               return `Appl(option,name,subterm);
-            } else {
-              System.out.println("Tchou tchou");
-                //verifier().messageSymbolError(tomName, optionList);
             }
           }
 
@@ -339,7 +322,7 @@ public class TomChecker extends TomBase {
               // create a variable
             TomType localType = getType(tomType);
             if(localType == null) { 
-              verifier().messageMatchTypeVariableError(strName, tomType);
+              messageMatchTypeVariableError(strName, tomType);
             } else {
               return `Variable(option,Name(strName),localType);
             }
@@ -351,7 +334,7 @@ public class TomChecker extends TomBase {
               // create a variable
             TomType localType = getType(tomType);
             if ( localType == null ) { 
-              verifier().messageMatchTypeVariableError(strName, tomType);
+              messageMatchTypeVariableError(strName, tomType);
             } else {
               Option option = ast().makeOption();
               return `Variable(option,Name(strName),localType);
@@ -373,7 +356,7 @@ public class TomChecker extends TomBase {
               
           context, Match(option,tomSubjectList,patternList) -> {
             //debugPrintln("pass1.10: Match(" + tomSubjectList + "," + patternList + ")");
-            verifier().affectOptionMatchTypeVariable(option);
+            optionMatchTypeVariable = option;
             TomTerm newSubjectList = pass1(context,tomSubjectList);
             TomTerm newPatternList = pass1(newSubjectList,patternList);
             return `Match(option,newSubjectList,newPatternList);
@@ -396,7 +379,7 @@ public class TomChecker extends TomBase {
               TomTerm newRhs = `Term(pass1(TomTypeToTomTerm(symbolType),rhs));
               return `RewriteRule(newLhs,newRhs);
             } else {
-              verifier().messageRuleSymbolError(tomName, optionList);
+                //verifier().messageRuleSymbolError(tomName, optionList);
             }
           }
               
@@ -546,4 +529,38 @@ public class TomChecker extends TomBase {
     return getSlotList(subject.getOption().getOptionList());
   }
 
+    /*
+      testVariableWithoutParen is used in 'pass1' method of TomChecker.t.
+      It is called before to transform Appl into Variable. Indeed when we create an Appl
+      in 'PlainTerm' method of TomParser.jj, we do not known if it will be a variable or not.
+      But variable with () is not a recommanded structure for a variable. So we add informations
+      thanks to 'ast().makeLRParen(name.image))' which is added to options in
+      the case of () [in 'PlainTerm' method of TomParser.jj]. When we transform Appl in Variable (when
+      it is necessary), we test if 'LRParen(_)' is in the option structure. 
+    */
+  private void testVariableWithoutParen(Option option, String name) throws TomException {
+    if(!Flags.doVerify) return;
+    
+    OptionList optionList = option.getOptionList();
+    Option lrParen = getLRParen(optionList);
+    if(lrParen!=null) {
+      String nameLrParen = lrParen.getAstName().getString();
+      if(name.equals(nameLrParen)) {
+        String line = findOriginTrackingLine(name, optionList);
+        messageVariableWithParenError(name,line);
+      }
+    }
+  }
+  // messageMatchTypeVariableError is called by 'contest,GlVar' case in 'pass1' method of TomChecker.t.
+  private void messageMatchTypeVariableError(String name, String type) throws TomException {
+    OptionList optionList = optionMatchTypeVariable.getOptionList();
+    String line = findOriginTrackingLine("Match", optionList);
+    String s = "Variable '" + name + "' has a wrong type:  '" + type + "' in %match construct";
+    messageError(line,s);
+  }
+  private void messageVariableWithParenError( String  name, String line ) {
+    if(Flags.noWarning) return;
+    System.out.println("\n *** Warning *** Variable with () is not recommanded");
+    System.out.println(" *** Variable '"+name+"' has () - Line : "+line);
+  }
 }

@@ -315,7 +315,7 @@ public class TomBase {
      * returns true  if traversal has to be continued
      */
   protected interface Collect {
-    boolean apply(ATerm t);
+    boolean apply(ATerm t) throws TomException;
   }
 
   protected interface Replace {
@@ -392,7 +392,7 @@ public class TomBase {
      * Traverse a subject and collect
      * %all(subject, collect(vTable,subject,f)); 
      */
-  protected void genericCollect(ATerm subject, Collect collect) { 
+  protected void genericCollect(ATerm subject, Collect collect) throws TomException {
     if(collect.apply(subject)) { 
       if(subject instanceof ATermAppl) { 
         ATermAppl subjectAppl = (ATermAppl) subject; 
@@ -410,7 +410,7 @@ public class TomBase {
           //System.out.println("genericCollect(subject) with subject instanceof: " + subject.getClass()); 
           //System.exit(1); 
       } 
-    } 
+    }
   } 
 
     /*
@@ -540,6 +540,27 @@ public class TomBase {
     return index;
   }
 
+    // findOriginTrackingLine(_,_) method returns the line (stocked in optionList)  of object 'name'.
+  protected String findOriginTrackingLine(String name, OptionList optionList) {
+    while(!optionList.isEmptyOptionList()) {
+      Option subject = optionList.getHead();
+      %match(Option subject) {
+        OriginTracking[astName=Name[string=origName],line=Line[string=line]] -> {
+          if(name.equals(origName)) {
+            return line;
+          }
+        }
+      }
+      optionList = optionList.getTail();
+    }
+    System.out.println("findOriginTrackingLine: '" + name + "' not found");
+    System.exit(1); return null;
+  }
+  protected void messageError(String line, String msg) throws CheckErrorException {
+    if(!Flags.doVerify) return;
+    String s = "Error occured at line: " + line + "\n-- " + msg; 
+    throw new CheckErrorException(s);
+  }
 
 }
  

@@ -210,19 +210,13 @@ public class Tom {
         
         TomVerifier  tomVerifier = new TomVerifier(environment);
         startChrono();
-        try {
-          tomVerifier.verify(parsedTerm);
-          tomParser.updateSymbol();
-        }
-        catch (TomException e) {
-          System.out.println("TomVerifier catch:" + e);
-          System.exit(1);
-        }
+        tomVerifier.verify(parsedTerm);
+        tomParser.updateSymbol();
         stopChrono();
         if(Flags.verbose) System.out.println("TOM verification phase " + getChrono());
 
         
-	TomChecker tomChecker = new TomChecker(environment,tomVerifier);
+	TomChecker tomChecker = new TomChecker(environment);
         startChrono();
         expandedTerm = tomChecker.expand(parsedTerm);
         stopChrono();
@@ -253,16 +247,21 @@ public class Tom {
         System.out.println("No file generated.");
         return;
       } catch(ParseException e1) {
-        System.out.println(e1.getMessage());
+        System.out.println(e1);
         System.out.println("Tom Parser:  Encountered errors during parsing.");
         System.out.println("No file generated.");
         return;
-	} catch(TomException e2) {
+      } catch(CheckErrorException e2) {
         System.out.println(e2);
+        System.out.println("Tom Verifier:  Encountered errors during verification phase.");
+        System.out.println("No file generated.");
+        return;
+      } catch(TomException e3) {
+        System.out.println(e3);
         System.out.println("Tom:  Encountered errors during compilation.");
         System.out.println("No file generated.");
         return;
-      } catch(IOException e) {
+      } catch(IOException e4) {
         System.out.println("No file generated.");
         throw new InternalError("read error");
       }
@@ -312,7 +311,9 @@ public class Tom {
           statistics.initInfoCompiler();
           statistics.initInfoGenerator();
         }
-
+      } catch(TomException e) {
+        System.out.println(e);
+        System.out.println("No file generated.");
       } catch(IOException e) {
         System.out.println("No file generated.");
         throw new InternalError("read error");

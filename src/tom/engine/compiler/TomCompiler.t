@@ -33,6 +33,7 @@ import aterm.pure.*;
 
 import jtom.*;
 import jtom.tools.*;
+import jtom.exception.*;
 import jtom.adt.*;
 
 public class TomCompiler extends TomBase {
@@ -60,14 +61,14 @@ public class TomCompiler extends TomBase {
     return ast().makeOption();
   }
   
-  public TomTerm pass2_1(TomTerm subject) {
+  public TomTerm pass2_1(TomTerm subject) throws TomException {
       //%variable
       //System.out.println("pass2_1 subject: " + subject);
     Replace replace_pass2_1 = new Replace() {
-        public ATerm apply(ATerm t) { return pass2_1((TomTerm)t); }
+        public ATerm apply(ATerm t) throws TomException { return pass2_1((TomTerm)t); }
       }; 
     Replace replace_pass2_1_makeTerm = new Replace() {
-        public ATerm apply(ATerm t) {
+        public ATerm apply(ATerm t) throws TomException {
           TomTerm subject = (TomTerm)t;
           return pass2_1(`MakeTerm(subject));
         }
@@ -332,7 +333,7 @@ public class TomCompiler extends TomBase {
     return renamedTerm;
   }
 
-  private TomList linearizePattern(TomList subject, ArrayList equalityCheck) {
+  private TomList linearizePattern(TomList subject, ArrayList equalityCheck) throws TomException {
 
       // collect variables
     ArrayList variableList = new ArrayList();
@@ -428,10 +429,10 @@ public class TomCompiler extends TomBase {
      * compiles Match into and automaton
      */
  
-  public TomTerm pass2_2(TomTerm subject) {
+  public TomTerm pass2_2(TomTerm subject) throws TomException {
       //%variable
     Replace replace_pass2_2 = new Replace() {
-        public ATerm apply(ATerm t) { return pass2_2((TomTerm)t); }
+        public ATerm apply(ATerm t) throws TomException { return pass2_2((TomTerm)t); }
       }; 
 
     %match(TomTerm subject) {
@@ -581,7 +582,7 @@ public class TomCompiler extends TomBase {
      *   - replace LocalVariable and remove Declaration
      */
 
-  public TomTerm pass3(TomTerm subject) {
+  public TomTerm pass3(TomTerm subject) throws TomException {
     TomTerm res;
     ArrayList list = new ArrayList();
     traversalCollectDeclaration(list,subject);
@@ -590,7 +591,7 @@ public class TomCompiler extends TomBase {
     return res;
   }
     
-  private TomTerm traversalCollectDeclaration(ArrayList list, TomTerm subject) {
+  private TomTerm traversalCollectDeclaration(ArrayList list, TomTerm subject) throws TomException{
       //%variable
     %match(TomTerm subject) {
       Tom(l) -> {
@@ -618,7 +619,7 @@ public class TomCompiler extends TomBase {
   }
     
 
-  private TomList traversalCollectDeclarationList(ArrayList list,TomList subject) {
+  private TomList traversalCollectDeclarationList(ArrayList list,TomList subject) throws TomException {
       //%variable
     if(subject.isEmpty()) {
       return subject;
@@ -686,9 +687,9 @@ public class TomCompiler extends TomBase {
   }
   
     // ------------------------------------------------------------
-  public void collectVariable(final Collection collection, TomTerm subject) {
+  public void collectVariable(final Collection collection, TomTerm subject) throws TomException {
     Collect collect = new Collect() { 
-        public boolean apply(ATerm t) {
+        public boolean apply(ATerm t) throws TomException {
             //%variable
           if(t instanceof TomTerm) {
             TomTerm annotedVariable = null;
@@ -740,7 +741,7 @@ public class TomCompiler extends TomBase {
     genericCollect(subject, collect); 
   } 
 
-  public void collectDeclaration(final Collection collection, TomTerm subject) {
+  public void collectDeclaration(final Collection collection, TomTerm subject) throws TomException {
     Collect collect = new Collect() { 
         public boolean apply(ATerm t) {
             //%variable

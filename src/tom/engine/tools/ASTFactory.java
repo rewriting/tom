@@ -234,7 +234,6 @@ public class ASTFactory {
       Object key = it.next();
       TomSymbol symbol = symbolTable.getSymbol((String)key);
 
-        //System.out.println("\nsymbol = " + symbol);
       TomName name     = symbol.getAstName();
       TomList typeList = symbol.getTypesToType().getList();
       TomType type     = symbol.getTypesToType().getCodomain();
@@ -258,7 +257,6 @@ public class ASTFactory {
 
       TomType typesToType = tsf().makeTomType_TypesToType(makeList(newTypeList), newType);
       TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,typesToType,options,tlcode);
-        //System.out.println("newSymbol = " + newSymbol);
       symbolTable.putSymbol((String)key,newSymbol);
     }
   }
@@ -271,16 +269,19 @@ public class ASTFactory {
     if(term.isAppl() || term.isRecordAppl()) {
       String key         = term.getAstName().getString();
       TomSymbol symbol   = symbolTable.getSymbol(key);
-        //System.out.println("symbol = " + symbol);
-      TomName name       = symbol.getAstName();
-      TomType type       = symbol.getTypesToType();
-      OptionList optionList = symbol.getOption().getOptionList();
-      TargetLanguage tlcode     = symbol.getTlCode();
-
-      optionList = append(tsf().makeOption_DefinedSymbol(),optionList);
-      TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,type,makeOption(optionList),tlcode);
-        //System.out.println("newSymbol = " + newSymbol);
-      symbolTable.putSymbol(key,newSymbol);
+      if (symbol != null) {
+        TomName name       = symbol.getAstName();
+        TomType type       = symbol.getTypesToType();
+        OptionList optionList = symbol.getOption().getOptionList();
+        TargetLanguage tlcode     = symbol.getTlCode();
+        
+        optionList = append(tsf().makeOption_DefinedSymbol(),optionList);
+        TomSymbol newSymbol = tsf().makeTomSymbol_Symbol(name,type,makeOption(optionList),tlcode);
+        symbolTable.putSymbol(key,newSymbol);
+      }
+      else {
+        System.out.println("updateDefinedSymbol called on not yet defined symbol: "+key);
+      }
     }
   }
 
