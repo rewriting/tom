@@ -165,6 +165,9 @@ public class Verifier extends TomBase {
 											build_TermFromExpression(expr),
 											build_InstrFromAutomata(body));
 			}
+			(Let|LetAssign)(UnamedVariable[],expr,body) -> {
+				return build_InstrFromAutomata(`body);
+			}
 			CompiledPattern(patterns,instr) -> {
 				return build_InstrFromAutomata(`instr);
 			}

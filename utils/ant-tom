@@ -23,7 +23,6 @@ for line in fileinput.input():
 	if (m):
 		filename = m.group("file")
 		tomfile = buildTomFileName(filename)
-		print tomfile
 		if os.path.isfile(tomfile):
 			newline = seekFileName.sub(tomfile+':',line)
 	print newline

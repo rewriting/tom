@@ -196,6 +196,7 @@
 			<include name="jtom/*.t"/> 
 			<exclude name="jtom/parser/*.g.t"/>
 			<include name="**/LatexOutput.t"/>
+			<include name="**/StatOutput.t"/>
 			<include name="**/Verifier.t"/>
 			<exclude name="**/OptionParser.t"/>
 		</tom>
