@@ -95,78 +95,75 @@ public class TomServer implements TomPluginOptions
 	    }
 	else
 	    {
-        instance.clear();
-        return instance;
-        //throw new TomRuntimeException(TomMessage.getString("TwoTomServerInstance"));
+		instance.clear();
+		return instance;
+		//throw new TomRuntimeException(TomMessage.getString("TwoTomServerInstance"));
 	    }
-  }
+    }
 
-  public static void clear() {
-     instance.instances = new Vector();
-     instance.services = new Vector();
+    public static void clear() {
+	instance.instances = new Vector();
+	instance.services = new Vector();
      SymbolTable symbolTable = new SymbolTable(instance.astFactory);
      instance.environment = new TomEnvironment(symbolTable);
-  }
+    }
 
-  public static int exec(String args[])
-  {
-    TomServer server = TomServer.create();
-    return server.run(args);
-  }
+    public static int exec(String args[])
+    {
+	TomServer server = TomServer.create();
+	return server.run(args);
+    }
 
-  public int run(String[] argumentList)
-  {
-    String xmlConfigurationFile = "./jtom/Tom.xml"; // default configuration file
+    private String whichConfigFile(String[] argumentList)
+    {
+	String xmlConfigurationFile = "./jtom/Tom.xml"; // default configuration file
 
-    for(int i = 0; i < argumentList.length; i++)
+	for(int i = 0; i < argumentList.length; i++)
 	    {
-        if(argumentList[i].equals("-X")) // tests if argumentList redefines the configuration file
-          {
-            if (i+1 >= argumentList.length) // argument expected but no more input
-              {
-                System.out.println("Option -X requires a string attribute.");
-              }   
-            else
-              {
-                String fileName = argumentList[i+1];
-                if( fileName.endsWith(".xml") )
-                  xmlConfigurationFile = fileName;
-                else throw new TomRuntimeException("The alternate configuration file must be a XML file.");
-              }
-          }
+		if(argumentList[i].equals("-X")) // tests if argumentList redefines the configuration file
+		    {
+			if (i+1 >= argumentList.length) // argument expected but no more input
+			    {
+				System.out.println("Option -X requires a string attribute.");
+			    }   
+			else
+			    {
+				String fileName = argumentList[i+1];
+				String suffix = fileName.substring(fileName.length() - 4);
+				//System.out.println(suffix);
+				if( suffix.equalsIgnoreCase(".xml") ) // is the suffix valid ?
+				    xmlConfigurationFile = fileName;
+				else throw new TomRuntimeException("The alternate configuration file must be a XML file.");
+			    }
+		    }
 	    }
 
 	if(! (new File(xmlConfigurationFile)).exists() )
 	    throw new TomRuntimeException("The configuration file " +xmlConfigurationFile+ " was not found.");
 
+	return xmlConfigurationFile;
+    }
+
+    private Vector parseConfigFile(String xmlConfigurationFile)
+    {
 	// parses configuration file...
 	XmlTools xtools = new XmlTools();
 	TNode node = (TNode)xtools.convertXMLToATerm(xmlConfigurationFile);
 	Vector classPaths = new Vector();
-	// ... to extract plugin classpaths
-	extractClassPaths(node.getDocElem(), classPaths);
+
 	// ... to extract global options
 	globalOptions = `emptyTomOptionList();
 	extractOptionList(node.getDocElem());
 
-	// creates an instance of each plugin
-	instances.add(this); // the server is added to allow option declaration and mapping
-	Iterator it = classPaths.iterator();
-	while(it.hasNext())
-	    {
-		Object instance;
-		try
-		    { 
-			instance = Class.forName((String)it.next()).newInstance();
-			if(instance instanceof TomPlugin)
-			    instances.add(instance);
-		    
-		    }
-		catch(Exception e){ System.out.println(e.getMessage()); }
-	    }
+	// ... to extract plugin classpaths
+	extractClassPaths(node.getDocElem(), classPaths);
+	return classPaths;
+    }
 
+    private String[] optionManagement(String[] argumentList)
+    {
 	// collects the options/services provided by each plugin
-	it = instances.iterator();
+	Iterator it = instances.iterator();
 	while(it.hasNext())
 	    {
 		TomPluginOptions plugin = (TomPluginOptions)it.next();
@@ -199,6 +196,35 @@ public class TomServer implements TomPluginOptions
 			System.exit(1);
 		    }
 	    }
+
+	return inputFiles;
+    }
+
+    public int run(String[] argumentList)
+    {
+	//environment.init();
+
+	String xmlConfigurationFile = whichConfigFile(argumentList);
+
+	Vector classPaths = parseConfigFile(xmlConfigurationFile);
+
+	// creates an instance of each plugin
+	instances.add(this); // the server is added to allow option declaration and mapping
+	Iterator it = classPaths.iterator();
+	while(it.hasNext())
+	    {
+		Object instance;
+		try
+		    { 
+			instance = Class.forName((String)it.next()).newInstance();
+			if(instance instanceof TomPlugin)
+			    instances.add(instance);
+		    
+		    }
+		catch(Exception e){ System.out.println(e.getMessage()); }
+	    }
+
+	String[] inputFiles = optionManagement(argumentList);
 
 	if(environment.hasError()) // copied from Tom.java
 	    {
@@ -351,7 +377,7 @@ public class TomServer implements TomPluginOptions
     /**
      * Returns the value of an option. Returns an Object which is a Boolean, a String or an Integer
      * depending on what the option type is.
-     * @return An Object containing the option's value, or null if the option wasn't found.
+     * @return An Object containing the option's value.
      */
     public Object getOptionValue(String optionName)
     {
@@ -396,6 +422,8 @@ public class TomServer implements TomPluginOptions
 			list = list.getTail();
 		    }
 	    }
+	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+			   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return null;
     }
 
@@ -432,7 +460,9 @@ public class TomServer implements TomPluginOptions
 			list = list.getTail();
 		    }
 	    }
-	return false; // OPTION WASN'T FOUND ! MUST RAISE AN EXCEPTION LATER !
+	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+			   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	return false;
     }
     /**
      * Returns the value of an integer option.
@@ -463,7 +493,9 @@ public class TomServer implements TomPluginOptions
 			list = list.getTail();
 		    }
 	    }
-	return 0; // OPTION WASN'T FOUND ! MUST RAISE AN EXCEPTION LATER !
+	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+				   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+	return 0;
     }
     /**
      * Returns the value of a string option.
@@ -494,6 +526,8 @@ public class TomServer implements TomPluginOptions
 			list = list.getTail();
 		    }
 	    }
+	environment.messageError(TomMessage.getString("OptionNotFound"), new Object[]{optionName}, 
+			   "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	return null;
     }
 
@@ -727,7 +761,7 @@ public class TomServer implements TomPluginOptions
 					if(outputEncountered)
 					    {
 						environment.messageError(TomMessage.getString("OutputTwice"),
-									 "Tom", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+									 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 					    }
 					else outputEncountered = true;
 				    }
@@ -736,7 +770,7 @@ public class TomServer implements TomPluginOptions
 					if(destdirEncountered)
 					    {
 						environment.messageError(TomMessage.getString("DestdirTwice"),
-									 "Tom", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
+									 "TomServer", TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 					    }
 					else destdirEncountered = true;
 				    }
@@ -747,7 +781,7 @@ public class TomServer implements TomPluginOptions
 				    {
 					environment.messageError(TomMessage.getString("InvalidOption"), 
 								 new Object[]{argumentList[i]},
-								 "Tom", 
+								 "TomServer", 
 								 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 					return (String[])inputFiles.toArray(new String[]{});
 				    }
@@ -796,7 +830,7 @@ public class TomServer implements TomPluginOptions
 	    {
 		environment.messageError(TomMessage.getString("IncompleteOption"), 
 					 new Object[]{argumentList[--i]}, 
-					 "Tom", 
+					 "TomServer", 
 					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 		return (String[])inputFiles.toArray(new String[]{});
 	    }
@@ -806,7 +840,7 @@ public class TomServer implements TomPluginOptions
 	if(inputFiles.isEmpty())
 	    {
 		environment.messageError(TomMessage.getString("NoFileToCompile"), 
-					 "Tom", 
+					 "TomServer", 
 					 TomMessage.DEFAULT_ERROR_LINE_NUMBER);
 	    }
 
