@@ -59,8 +59,8 @@ public class AddressBook3 {
   }
 
   public void happyBirthday(Person p, Date today) { 
-  	%match(Person p, Date today, Person p) {
-  		f@person(firstname,lastname,date(year,month,day)), date(_,month,day), f -> {
+  	%match(Person p, Date today) {
+  		f@person(firstname,lastname,date(year,month,day)), date(_,month,day) -> {
     			System.out.println("Happy Birthday " + firstname );  			  
     	}
   	}

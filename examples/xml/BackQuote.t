@@ -1,14 +1,13 @@
 import jtom.runtime.xml.*;
 import jtom.runtime.xml.adt.*;
 import aterm.*;
-import jtom.runtime.*;
 
 public class BackQuote {
   
   %include{ TNode.tom }
     
   private XmlTools xtools;
-  private GenericTraversal traversal = new GenericTraversal();
+ 
   private TNodeFactory getTNodeFactory() {
       return xtools.getTNodeFactory();
   }

@@ -84,7 +84,7 @@ public class Lsystems3 implements LsystemsInterface {
 
 */
       // r < r > r -> l
-      label1 : r,concNode(I1*,r,head*),concNode(I2*,r,tail*) -> {
+      label1 : r(),concNode(I1*,r(),head*),concNode(I2*,r(),tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
           break label1;
@@ -96,7 +96,7 @@ public class Lsystems3 implements LsystemsInterface {
         }
       }
       // r < r > l -> r
-      label2: r,concNode(I1*,r,head*),concNode(I2*,l,tail*) -> {
+      label2: r(),concNode(I1*,r(),head*),concNode(I2*,l(),tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
           break label2;
@@ -108,7 +108,7 @@ public class Lsystems3 implements LsystemsInterface {
         }
       }
       // r < l > r -> r
-      label3: l,concNode(I1*,r,head*),concNode(I2*,r,tail*) -> {
+      label3: l(),concNode(I1*,r(),head*),concNode(I2*,r(),tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
           break label3;
@@ -120,7 +120,7 @@ public class Lsystems3 implements LsystemsInterface {
         }
       }
       // r < l > l -> lFl
-      label4: l,concNode(I1*,r,head*),concNode(I2*,l,tail*) -> {
+      label4: l(),concNode(I1*,r(),head*),concNode(I2*,l(),tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
           break label4;
@@ -132,7 +132,7 @@ public class Lsystems3 implements LsystemsInterface {
         }
       }
       // r < l > r -> l
-      label5: r,concNode(I1*,l,head*),concNode(I2*,r,tail*) -> {
+      label5: r(),concNode(I1*,l(),head*),concNode(I2*,r(),tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
           break label5;
@@ -144,7 +144,7 @@ public class Lsystems3 implements LsystemsInterface {
         }
       }
       // l < r > l -> l[-FlFl]
-      label6: r,concNode(I1*,l,head*),concNode(I2*,l,tail*) -> {
+      label6: r(),concNode(I1*,l(),head*),concNode(I2*,l(),tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
           break label6;
@@ -155,7 +155,7 @@ public class Lsystems3 implements LsystemsInterface {
           return `concNode(l,SubList(concNode(Left,F,l,F,l)));
         }
       }
-      label7: l,concNode(I1*,l,head*),concNode(I2*,r,tail*) -> {
+      label7: l(),concNode(I1*,l(),head*),concNode(I2*,r(),tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
           break label7;
@@ -166,7 +166,7 @@ public class Lsystems3 implements LsystemsInterface {
           return `concNode(l);
         }
       }
-      label8: l,concNode(I1*,l,head*),concNode(I2*,l,tail*) -> {
+      label8: l(),concNode(I1*,l(),head*),concNode(I2*,l(),tail*) -> {
         if ( !runtime.UCD(I1,extign) ) {
           runtime.iter++;
           break label8;
@@ -178,8 +178,8 @@ public class Lsystems3 implements LsystemsInterface {
         }
       }
 
-      Left,_,_ -> { return `concNode(Right); }
-      Right,_,_ -> { return `concNode(Left); }
+      Left(),_,_ -> { return `concNode(Right); }
+      Right(),_,_ -> { return `concNode(Left); }
     }
     return `concNode(token);
   }
@@ -188,7 +188,7 @@ public class Lsystems3 implements LsystemsInterface {
   public Ignore ign = new Ignore() {
     public boolean apply(ATerm t) {
       %match(Node t) {
-        Right | Left | F -> { return true; }
+        Right() | Left() | F() -> { return true; }
       }
       return false;
     }
@@ -197,7 +197,8 @@ public class Lsystems3 implements LsystemsInterface {
   public Ignore extign = new Ignore() {
     public boolean apply(ATerm t) {
       %match(Node t) {
-        Right | Left | F | SubList[] -> { return true; }
+        (Right|Left|F)() -> { return true; }
+				SubList[]        -> { return true; }
       }
       return false;
     }

@@ -23,10 +23,10 @@ public class AddressBook2 {
   
   public void run() {
     PersonList book = generateBook();
-    Date today = `date(2003,11,6);
+    Date today = `date(2003,9,6);
     happyBirthday(book,today);
   }
-
+ 
   public void happyBirthday(PersonList book, Date date) {
     %match(PersonList book, Date date) {
       concPerson(X1*, person(fn, ln, date(y,m,d)), X2*),

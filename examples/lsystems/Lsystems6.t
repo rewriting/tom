@@ -116,7 +116,8 @@ public class Lsystems6 implements LsystemsInterface {
   public Ignore extign = new Ignore() {
     public boolean apply(ATerm t) {
       %match(Node t) {
-        Right | Left | SubList[] -> { return true; }
+        (Right|Left)() -> { return true; }
+				SubList[] -> { return true; }
       }
       return false;
     }
