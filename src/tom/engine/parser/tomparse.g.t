@@ -77,15 +77,6 @@ options{
     public void variable(){
         // creer la structure ici
     }
-
-    private void printRes(ATerm result){
-        try{
-            Main.writer.write(result+"\n\n");
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
     
     private TomList makeTomList(LinkedList list){
         return targetparser.makeTomList(list);
@@ -1041,10 +1032,11 @@ typeTerm returns [Declaration result]
         }
     ;
 
-typeList
+typeList returns [Declaration result]
 {
+    result = null;
     Option ot = null;
-    Declaration attribute = null, result = null;
+    Declaration attribute = null;
     TomList blockList = `emptyTomList();
 }
     :   (
@@ -1075,20 +1067,25 @@ typeList
                 {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
 
             )*
-            RBRACE
+            t:RBRACE
 
         )
         {
             result = `TypeListDecl(Name(type.getText()),blockList,ot);
 
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
+
             Main.selector.pop();
         }
     ;
 
-typeArray
+
+typeArray returns [Declaration result]
 {
+    result=null;
     Option ot = null;
-    Declaration attribute = null, result = null;
+    Declaration attribute = null;
     TomList blockList = `emptyTomList();
 }
     :   (
@@ -1116,17 +1113,18 @@ typeArray
                 {blockList = `concTomTerm(blockList*,DeclarationToTomTerm(attribute));}
             
             )*
-            RBRACE
+            t:RBRACE
         )
         {
             result = `TypeArrayDecl(Name(type.getText()),blockList,ot);
             
+            pushLine(t.getLine());
+            pushColumn(t.getColumn());
+
             Main.selector.pop();
             
         }
     ;
-
-
 
 
 class NewTomLexer extends Lexer;

@@ -135,8 +135,8 @@ blockList [LinkedList list]
         |   operatorArray()
         |   includeConstruct()
         |   typeTerm[list] 
-        |   typeList()
-        |   typeArray()
+        |   typeList[list] 
+        |   typeArray[list] 
         |   LBRACE  
             blockList[list]
             RBRACE 
@@ -289,22 +289,49 @@ typeTerm [LinkedList list]
 
     ;
 
-typeList
+typeList [LinkedList list]
+{
+    TargetLanguage code = null;
+    int line, column;
+}
     :
-        TYPELIST
+        t:TYPELIST
         {
-             tomparser.typeList();
+            String textCode = getCode();
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(popLine(),popColumn()),
+                    TextPosition(t.getLine(),t.getColumn()));
+                list.add(`TargetLanguageToTomTerm(code));
+            }
+
+            Declaration listdecl = tomparser.typeList();
+            list.add(`DeclarationToTomTerm(listdecl));
         }
     ;
 
-typeArray
+typeArray [LinkedList list]
+{
+    TargetLanguage code = null;
+    int line, column;
+}
     :
-        TYPEARRAY
+        t:TYPEARRAY
         {
-             tomparser.typeArray();
+            String textCode = getCode();
+            if(isCorrect(textCode)) {
+                code = `TL(
+                    textCode,
+                    TextPosition(popLine(),popColumn()),
+                    TextPosition(t.getLine(),t.getColumn()));
+                list.add(`TargetLanguageToTomTerm(code));
+            }
+
+            Declaration arraydecl = tomparser.typeArray();
+            list.add(`DeclarationToTomTerm(arraydecl));
         }
     ;
-
 
 goalLanguage [LinkedList list] returns [TargetLanguage result]
 {
