@@ -32,7 +32,7 @@ public class AddressBook {
     Iterator it = book.iterator();
     while(it.hasNext()) {
     	Person p = (Person) it.next();
-    	happyBirthday(p, `date(2003,9,22));
+    	happyBirthday(p, `date(2003,9,18));
     }
   }
 
@@ -42,14 +42,15 @@ public class AddressBook {
         System.out.println("Happy Birthday " + firstname );  			  
       }
     }
+    
+    
  }
   
   public void generatePerson(HashSet set) {
 	set.add(`person("John","Smith",date(1965,9,18)));
 	set.add(`person("Marie","Muller",date(1986,10,19)));
 	set.add(`person("Paul","Muller",date(2000,9,20)));
-	
-  }
+	}
 
 }
 

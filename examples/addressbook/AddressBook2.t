@@ -5,14 +5,11 @@ import adt.address.*;
 
 public class AddressBook2 {
   private DataFactory factory;
-
-  private PersonList book;
-  
+   
   %include { adt/address/data.tom }
  
   public AddressBook2(DataFactory factory) {
     this.factory = factory;
-    generateBook();
   }
 
   public DataFactory getDataFactory() {
@@ -25,27 +22,26 @@ public class AddressBook2 {
   }
   
   public void run() {
-    	removeDouble();
+  	 PersonList book = generateBook();
+  	 Date today = `date(2003,9,18);
+     happyBirthday(book,today);
   }
 
-  public void removeDouble() {
-  	%match(PersonList book) {
-  		concPerson(X1*, p@person(fn, ln, date(y,m,d)), X2*, person(fn, ln, date(y,m,d)), X3*) -> {
-    			System.out.println("Removing " + fn + " " + ln);
-    			book = `concPerson(X1*, p, X2*, X3*); 
-    	}
-    	emptyPersonList -> {
-    		System.out.println("Empty book");
-    	}
-  	}
- }
+  public void happyBirthday(PersonList book, Date date) {
+  	%match(PersonList book, Date date) {
+  		concPerson(X1*, person(fn, ln, date(y,m,d)), X2*),
+  		date(_,m,d) -> {
+    			System.out.println("Happy birthday " + fn + " " + ln);
+     	}
+   	}
+  }
   
-  public void generateBook() {
- 		book = factory.makePersonList();
-		book = book.insert(`person("John","Smith",date(1965,9,18)));
-		book = book.insert(`person("Marie","Muller",date(1986,10,19)));
-		book = book.insert(`person("Paul","Muller",date(2000,9,20)));
-		book = book.insert(`person("Marie","Muller",date(1986,10,19)));
+  public PersonList generateBook() {
+ 		return `concPerson(
+		  person("John","Smith",date(1965,9,18)),
+		  person("Marie","Muller",date(1986,10,19)),
+		  person("Paul","Muller",date(2000,9,20))
+		);
   }
   
 }
