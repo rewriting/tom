@@ -25,10 +25,10 @@ bootinstall:
            (cd $$subdir ; $(MAKE) $@ ;) \
 	done
 
-TomBase.t: adt/TomSignature.tom
+TomBase.t: adt/TomSignature.tom adt/TomSignatureFactory.java
 	@touch TomBase.t
 
-adt/TomSignature.tom: TomSignature.adt
+adt/TomSignature.tom adt/TomSignatureFactory.java: TomSignature.adt
 	${ADTTOJAVA} -v -i TomSignature.adt -j -p jtom.adt --output adt 
 	mv adt/TomSignatureMakeRules adt/TomSignatureMakeRules.am
 
