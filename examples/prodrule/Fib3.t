@@ -36,11 +36,12 @@ import prodrule.fib3.fib.types.*;
 import java.util.*;
 
 public class Fib3 {
-  private Factory factory;
+  private fibFactory factory;
 
   %vas {
     // extension of adt syntax
     module fib
+    imports
       
     public
       sorts Element
@@ -76,11 +77,11 @@ public class Fib3 {
     return res;
   }
 
-  public Fib3(Factory factory) {
+  public Fib3(fibFactory factory) {
     this.factory = factory;
   } 
 
-  public Factory getFibFactory() {
+  public fibFactory getFibFactory() {
     return factory;
   }
   
@@ -104,7 +105,7 @@ public class Fib3 {
   }
 
   public final static void main(String[] args) {
-    Fib3 test = new Fib3(new Factory(new PureFactory(16)));
+    Fib3 test = new Fib3(new fibFactory(new PureFactory(16)));
     try {
       test.run(Integer.parseInt(args[0]));
     } catch (Exception e) {

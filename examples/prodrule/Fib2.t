@@ -35,11 +35,12 @@ import prodrule.fib2.fib.*;
 import prodrule.fib2.fib.types.*;
 
 public class Fib2 {
-  private Factory factory;
+  private fibFactory factory;
 
   %vas {
     // extension of adt syntax
     module fib
+    imports
       
     public
       sorts Element Space
@@ -51,11 +52,11 @@ public class Fib2 {
       concElement( Element* ) -> Space
    }
 
-  public Fib2(Factory factory) {
+  public Fib2(fibFactory factory) {
     this.factory = factory;
   } 
 
-  public Factory getFibFactory() {
+  public fibFactory getFibFactory() {
     return factory;
   }
   
@@ -79,7 +80,7 @@ public class Fib2 {
   }
 
   public final static void main(String[] args) {
-    Fib2 test = new Fib2(new Factory(new PureFactory(16)));
+    Fib2 test = new Fib2(new fibFactory(new PureFactory(16)));
     try {
       test.run(Integer.parseInt(args[0]));
     } catch (Exception e) {

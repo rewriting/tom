@@ -51,11 +51,11 @@ public class TestFib extends TestCase {
 	}
 
   public void setUp() {
-    fib1 = new Fib1(new prodrule.fib1.fib.Factory(new PureFactory()));
-    fib2 = new Fib2(new prodrule.fib2.fib.Factory(new PureFactory()));
-    fib3 = new Fib3(new prodrule.fib3.fib.Factory(new PureFactory()));
-    fib4 = new Fib4(new prodrule.fib4.fib.Factory(new PureFactory()));
-    fib5 = new Fib5(new prodrule.fib5.fib.Factory(new PureFactory()));
+    fib1 = new Fib1(new prodrule.fib1.fib.fibFactory(new PureFactory()));
+    fib2 = new Fib2(new prodrule.fib2.fib.fibFactory(new PureFactory()));
+    fib3 = new Fib3(new prodrule.fib3.fib.fibFactory(new PureFactory()));
+    fib4 = new Fib4(new prodrule.fib4.fib.fibFactory(new PureFactory()));
+    fib5 = new Fib5(new prodrule.fib5.fib.fibFactory(new PureFactory()));
     n = 50;
   }
 
