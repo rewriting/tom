@@ -5,8 +5,8 @@ options {
 }
 
 {
-    TomParser tomparser = new TomParser(getInputState(),this);
-    TargetLexer targetlexer = (TargetLexer) Main.selector.getStream("targetlexer");
+    NewTomParser tomparser = new NewTomParser(getInputState(),this);
+    NewTargetLexer targetlexer = (NewTargetLexer) Main.selector.getStream("targetlexer");
     
     StringBuffer targetLanguage = new StringBuffer("");
 

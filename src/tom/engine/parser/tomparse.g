@@ -12,11 +12,11 @@ tokens{
 }
 
 {
-    private TargetParser targetparser;
+    private NewTargetParser targetparser;
     
     public StringBuffer match = new StringBuffer("");
 
-    public TomParser(ParserSharedInputState state, TargetParser target){
+    public NewTomParser(ParserSharedInputState state, NewTargetParser target){
         this(state);
         targetparser = target;
     }

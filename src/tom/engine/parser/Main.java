@@ -14,10 +14,10 @@ class Main {
       DataInputStream input = new DataInputStream(System.in);
 
       // create javadoc lexer; attach to same shared input state as java lexer
-      TargetLexer targetlexer = new TargetLexer(input);
+      NewTargetLexer targetlexer = new NewTargetLexer(input);
 
       // attach java lexer to the input stream, which also creates a shared input state object
-      TomLexer tomlexer = new TomLexer(targetlexer.getInputState());
+      NewTomLexer tomlexer = new NewTomLexer(targetlexer.getInputState());
 
 
       // notify selector about various lexers; name them for convenient reference later
@@ -26,7 +26,7 @@ class Main {
       selector.select("targetlexer"); // start with main java lexer
 
       // Create parser attached to selector
-      TargetParser parser = new TargetParser(selector);
+      NewTargetParser parser = new NewTargetParser(selector);
 
       // Pull in one or more int decls with optional javadoc
       parser.input();
