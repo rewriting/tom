@@ -30,6 +30,8 @@ import java.text.*;
 import java.util.*;
 
 import jtom.tools.*;
+import jtom.exception.*;
+
 import jtom.adt.tomsignature.*;
 import jtom.adt.tomsignature.types.*;
 import jtom.adt.options.*;
@@ -113,40 +115,90 @@ public class TomEnvironment
    */
   public OptionsFactory getOptionsFactory() { return optionsFactory; }
 
-    public TomEnvironment() 
-    {
-        tomSignatureFactory = TomSignatureFactory.getInstance(PureFactorySingleton.getInstance());
-        astFactory = new ASTFactory(tomSignatureFactory);
-        optionsFactory = OptionsFactory.getInstance(PureFactorySingleton.getInstance());
+  /**
+   * Part of the Singleton pattern. The unique instance of the TomServer.
+   */
+  private static TomEnvironment instance = null;
+    
+  /**
+   * Part of the Singleton pattern. A protected constructor method, that exists to defeat instantiation.
+   */
+  protected TomEnvironment(){}
+    
+  /**
+   * Part of the Singleton pattern. Returns the instance of the TomServer if it has been initialized before,
+   * otherwise it throws a TomRuntimeException.
+   * 
+   * @return the instance of the TomServer
+   * @throws TomRuntimeException if the TomServer hasn't been initialized before the call
+   */
+  public static TomEnvironment getInstance() {
+    if(instance == null) {
+      throw new TomRuntimeException(TomMessage.getString("GetInitializedTomServerInstance"));
+    }
+    return instance;
+  }
+
+  /**
+   * Part of the Singleton pattern. Initializes the TomEnvironment in case it hasn't been done before,
+   * otherwise it reinitializes it.
+   * 
+   * @return the instance of the TomEnvironment
+   */
+  public static TomEnvironment create() {
+    if(instance == null) {
+      instance = new TomEnvironment();
+
+      instance.tomSignatureFactory = TomSignatureFactory.getInstance(SingletonFactory.getInstance());
+      instance.astFactory = new ASTFactory(instance.tomSignatureFactory);
+      instance.optionsFactory = OptionsFactory.getInstance(SingletonFactory.getInstance());
 		
-        symbolTable = new SymbolTable(astFactory);
+      instance.symbolTable = new SymbolTable(instance.astFactory);
 
-	errors = getTomSignatureFactory().makeTomAlertList();
-	warnings = getTomSignatureFactory().makeTomAlertList();
+      instance.errors = instance.tomSignatureFactory.makeTomAlertList();
+      instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
 
-	inputSuffix = ".t";
- 	outputSuffix = ".java";
-	userOutputFile = null;
-	eclipseMode = false;
+      instance.inputSuffix = ".t";
+      instance.outputSuffix = ".java";
+      instance.userOutputFile = null;
+      instance.eclipseMode = false;
 
-	importsToDiscard = new HashSet();
-	importsToDiscard.add("string.tom");
-	importsToDiscard.add("int.tom");
-	importsToDiscard.add("double.tom");
-	importsToDiscard.add("aterm.tom");
-	importsToDiscard.add("atermlist.tom");
+      instance.importsToDiscard = new HashSet();
+      instance.importsToDiscard.add("string.tom");
+      instance.importsToDiscard.add("int.tom");
+      instance.importsToDiscard.add("double.tom");
+      instance.importsToDiscard.add("aterm.tom");
+      instance.importsToDiscard.add("atermlist.tom");
+  
+      return instance;
+    } else {
+      TomEnvironment.clear();
+      return instance;
     }
+  }
 
-    public void init()
-    {
-	symbolTable.init();
-	errors = getTomSignatureFactory().makeTomAlertList();
-	warnings = getTomSignatureFactory().makeTomAlertList();
-    }
+  /**
+   * Reinitializes the TomEnvironment instance.
+   */
+  public static void clear() {
+    instance.symbolTable.init();
+    instance.errors = instance.tomSignatureFactory.makeTomAlertList();
+    instance.warnings = instance.tomSignatureFactory.makeTomAlertList();
+		instance.destDir = null;
+		instance.inputFile = null;
+		instance.outputFile = null;
+		instance.userOutputFile = null;
+		instance.packagePath = null;
+		instance.eclipseMode = false;
+		instance.inputSuffix = ".t";
+		instance.outputSuffix = ".java";
+  }
 
     public void updateEnvironment(String localInputFileName) // updateInputOutputFiles + init
     {
-	init();
+	symbolTable.init();
+	getTomSignatureFactory().makeTomAlertList();
+	warnings = getTomSignatureFactory().makeTomAlertList();
 	
 	// compute inputFile:
 	//  - add a suffix if necessary

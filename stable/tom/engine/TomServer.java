@@ -10,8 +10,6 @@ import jtom.exception.*;
 
 import jtom.runtime.xml.*;
 
-import jtom.tools.*;
-
 import aterm.*;
 import aterm.pure.*;
 
@@ -106,27 +104,26 @@ public class TomServer {
    */
   public static TomServer create() {
     if(instance == null) {
-			instance = new TomServer();
+      instance = new TomServer();
         
-			instance.instances = new ArrayList();
-			instance.tNodeFactory = TNodeFactory.getInstance(PureFactorySingleton.getInstance());
-			instance.environment = new TomEnvironment();
-			instance.optionManager = new TomOptionManager();
-
-			return instance;
-		} else {
-			TomServer.clear();
-			return instance;
-			//throw new TomRuntimeException(TomMessage.getString("TwoTomServerInstance"));
-		}
-	}
+      instance.instances = new ArrayList();
+      instance.tNodeFactory = TNodeFactory.getInstance(SingletonFactory.getInstance());
+      instance.environment = TomEnvironment.create();
+      instance.optionManager = new TomOptionManager();
+	
+      return instance;
+    } else {
+      TomServer.clear();
+      return instance;
+    }
+  }
 
   /**
    * Reinitializes the TomServer instance.
    */
   public static void clear() {
     instance.instances = new ArrayList();
-    instance.environment = new TomEnvironment();
+    instance.environment = TomEnvironment.create();
     instance.optionManager = new TomOptionManager();
   }
 
@@ -295,7 +292,7 @@ public class TomServer {
     for(int i = 0; i < inputFiles.length; i++) {
       environment.updateEnvironment(inputFiles[i]);
       //System.out.println(inputFiles[i]);
-      ATerm term = (PureFactorySingleton.getInstance()).makeAFun(inputFiles[i],0,false);
+      ATerm term = (SingletonFactory.getInstance()).makeAFun(inputFiles[i],0,false);
       
       // runs the modules
       it = instances.iterator();
