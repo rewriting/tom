@@ -1,27 +1,30 @@
 header{
     package jtom.parser;
     
-    import java.util.*;
-    
     import jtom.adt.tomsignature.*;
     import jtom.adt.tomsignature.types.*;
+
+    import antlr.*;
+
+    import java.util.*;
 }
 
 class NewBQParser extends Parser;
 
 {
-    NewBQLexer bqlexer = (NewBQLexer) TomMainParser.selector.getStream("bqlexer");
+    NewBQLexer bqlexer = null;
 
     NewTomParser tomparser = null;
 
     String currentFile(){
-        return TomMainParser.currentFile;
+        return tomparser.currentFile();
     }
 
     public NewBQParser(ParserSharedInputState state, NewTomParser tomparser){
         this(state);
         this.tomparser = tomparser;
-       // this.filename = tomparser.filename;
+        bqlexer = (NewBQLexer) selector().getStream("bqlexer");
+        // this.filename = tomparser.filename;
     }
 
     private NewTomBackQuoteParser tomBQ(){
@@ -38,6 +41,10 @@ class NewBQParser extends Parser;
 
     private void addTargetCode(Token t){
         tomparser.addTargetCode(t);
+    }
+
+    private TokenStreamSelector selector(){
+        return tomparser.selector();
     }
 
     private void p(String s){
@@ -80,7 +87,7 @@ bqTarget [LinkedList list] returns [TomTerm result]
 
             pushLine(t.getLine());
             pushColumn(t.getColumn());
-            TomMainParser.selector.pop();
+            selector().pop();
         }
     ;
 
@@ -136,7 +143,7 @@ bqTargetAppl [LinkedList list] returns [TomTerm result]
             )?
         )
         {
-            TomMainParser.selector.pop();
+            selector().pop();
         }
     ;
 
