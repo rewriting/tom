@@ -12,7 +12,7 @@ java_JAVA       = $(BOOTSOURCES)
 JAVAROOT        = ${top_builddir}/src/
 
 CLEANFILES 	= TomGenerator.java 
-EXTRA_DIST 	= $(BOOTSOURCES) TomCompiler.t TomGenerator.t
+EXTRA_DIST 	= $(BOOTSOURCES) TomGenerator.t
 
 BUILT_SOURCES   = TomGenerator.java
 
