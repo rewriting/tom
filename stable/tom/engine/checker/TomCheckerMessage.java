@@ -2,7 +2,7 @@
  *   
  * TOM - To One Matching Compiler
  * 
- * Copyright (C) 2000-2004 INRIA
+ * Copyright (C) 2003-2004 INRIA
  * Nancy, France.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -83,14 +83,14 @@ public final class TomCheckerMessage {
 	
 	
 	public static String InvalidVariableStarArgument = "{0} is not allowed in non list symbol ";
-	public static String AmbigousSymbolWithoutConstructor = "Warning: Ambiguous symbol name. Is`{0}` a variable or a constructor? Prefer `{0}`() if it is a constructor";
+	public static String AmbigousSymbolWithoutConstructor = "Warning: Ambiguous symbol name. Is `{0}` a variable or a constructor? Prefer `{0}()` if it is a constructor";
 	  // rule
 	public static String IncorrectRuleLHSClass = "`{0}`: Impossible in rule left hand side";
 	public static String IncorrectRuleRHSClass = "`{0}`: Impossible in rule right hand side";
 	//public static String UnknownRuleSymbol = "Symbol `{0}` has no been declared";
 	public static String DifferentRuleConstructor = "Rule head symbol name `{0}` expected, but `{1}` found";
 	public static String NoRuleMakeDecl = "Rule head symbol `{0}` has no `make` method: It is necessary to define one!!";
-	public static String IncorrectRuleRHSType = "Bad right hand side type: `{0} instead of `{1}`";
+	public static String IncorrectRuleRHSType = "Bad right hand side type: `{0}` instead of `{1}`";
 	public static String UnknownPermissiveSymbol = "Unknown symbol `{0}`: Can't do further analyses";
 	
 	public static String ImpossiblePermissiveAndDisjunction = "Disjunction is not allowed after backquote (`) call";

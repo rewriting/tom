@@ -95,70 +95,70 @@ public class ATermToXML {
   }
 
   public void atermToXML(TNode n) {
-     { TNode tom_match1_1=(( TNode)n);{ if(tom_is_fun_sym_DocumentNode(tom_match1_1) ||  false ) {
+     { TNode tom_match1_1=(( TNode)n);{ if(tom_is_fun_sym_DocumentNode(tom_match1_1) ||  false ) { { TNode tom_match1_1_1=tom_get_slot_DocumentNode_docType(tom_match1_1); { TNode tom_match1_1_2=tom_get_slot_DocumentNode_docElem(tom_match1_1); { TNode docType=tom_match1_1_1; { TNode docElem=tom_match1_1_2;
  
 				write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-				atermToXML(tom_get_slot_DocumentNode_docType(tom_match1_1) );
-				atermToXML(tom_get_slot_DocumentNode_docElem(tom_match1_1) );
+				atermToXML(docType );
+				atermToXML(docElem );
 				write("\n");
 				return;
-       } if(tom_is_fun_sym_DocumentTypeNode(tom_match1_1) ||  false ) { { String  tom_publicId=tom_get_slot_DocumentTypeNode_publicId(tom_match1_1); { String  tom_systemId=tom_get_slot_DocumentTypeNode_systemId(tom_match1_1); { String  tom_internalSubset=tom_get_slot_DocumentTypeNode_internalSubset(tom_match1_1);
+      }}}} } if(tom_is_fun_sym_DocumentTypeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_DocumentTypeNode_name(tom_match1_1); { String  tom_match1_1_2=tom_get_slot_DocumentTypeNode_publicId(tom_match1_1); { String  tom_match1_1_3=tom_get_slot_DocumentTypeNode_systemId(tom_match1_1); { String  tom_match1_1_4=tom_get_slot_DocumentTypeNode_internalSubset(tom_match1_1); { String  name=tom_match1_1_1; { String  publicId=tom_match1_1_2; { String  systemId=tom_match1_1_3; { String  internalSubset=tom_match1_1_4;
  
-				write("<!DOCTYPE "+tom_get_slot_DocumentTypeNode_name(tom_match1_1) );
-				if (!tom_publicId .equals("UNDEF") && !tom_systemId .equals("UNDEF"))
-	  			write(" PUBLIC \""+tom_publicId +"\" \"");
-       	else if (!tom_systemId .equals("UNDEF") && tom_publicId .equals("UNDEF"))
+				write("<!DOCTYPE "+name );
+				if (!publicId .equals("UNDEF") && !systemId .equals("UNDEF"))
+	  			write(" PUBLIC \""+publicId +"\" \"");
+       	else if (!systemId .equals("UNDEF") && publicId .equals("UNDEF"))
 	  			write(" SYSTEM \"");
 				else {
 	  			System.out.println("Problem in DocumentTypeNode");
 	  			throw new TomRuntimeException(new Throwable("Problem in DocumentTypeNode"));
 				}
-				write(tom_systemId +"\"");
-				if (!tom_internalSubset .equals("UNDEF")) 
-	  			write(" ["+tom_internalSubset +"]");
+				write(systemId +"\"");
+				if (!internalSubset .equals("UNDEF")) 
+	  			write(" ["+internalSubset +"]");
 					write(">\n");
 					return;
-      }}} } if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) { { TNodeList tom_match1_1_3=tom_get_slot_ElementNode_childList(tom_match1_1); if(tom_is_fun_sym_concTNode(tom_match1_1_3) ||  false ) { if(tom_is_empty_TNodeList(tom_match1_1_3)) {
+      }}}}}}}} } if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_ElementNode_name(tom_match1_1); { TNodeList tom_match1_1_2=tom_get_slot_ElementNode_attrList(tom_match1_1); { TNodeList tom_match1_1_3=tom_get_slot_ElementNode_childList(tom_match1_1); { String  name=tom_match1_1_1; { TNodeList attrList=tom_match1_1_2; if(tom_is_fun_sym_concTNode(tom_match1_1_3) ||  false ) { { TNodeList tom_match1_1_3_list1=tom_match1_1_3; if(tom_is_empty_TNodeList(tom_match1_1_3_list1)) {
  
-				write("<"+tom_get_slot_ElementNode_name(tom_match1_1) );
-				atermToXMLList(tom_get_slot_ElementNode_attrList(tom_match1_1) );
+				write("<"+name );
+				atermToXMLList(attrList );
 				write("/>");
 				return;
-       } }} } if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) { { String  tom_name=tom_get_slot_ElementNode_name(tom_match1_1);
+       }} }}}}}} } if(tom_is_fun_sym_ElementNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_ElementNode_name(tom_match1_1); { TNodeList tom_match1_1_2=tom_get_slot_ElementNode_attrList(tom_match1_1); { TNodeList tom_match1_1_3=tom_get_slot_ElementNode_childList(tom_match1_1); { String  name=tom_match1_1_1; { TNodeList attrList=tom_match1_1_2; { TNodeList childList=tom_match1_1_3;
  
-				write("<"+tom_name );
-				atermToXMLList(tom_get_slot_ElementNode_attrList(tom_match1_1) );
+				write("<"+name );
+				atermToXMLList(attrList );
 				write(">");
-				atermToXMLList(tom_get_slot_ElementNode_childList(tom_match1_1) );
-				write("</"+tom_name +">");
+				atermToXMLList(childList );
+				write("</"+name +">");
 				return;
-      } } if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) {
+      }}}}}} } if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_AttributeNode_name(tom_match1_1); { String  tom_match1_1_2=tom_get_slot_AttributeNode_specified(tom_match1_1); { String  tom_match1_1_3=tom_get_slot_AttributeNode_value(tom_match1_1); { String  name=tom_match1_1_1; { String  specified=tom_match1_1_2; { String  child=tom_match1_1_3;
  
-				if (tom_get_slot_AttributeNode_specified(tom_match1_1) .equals("true")) {
-	  			write(" " + tom_get_slot_AttributeNode_name(tom_match1_1)  + "=\"" + tom_get_slot_AttributeNode_value(tom_match1_1)  + "\"");
+				if (specified .equals("true")) {
+	  			write(" " + name  + "=\"" + child  + "\"");
 				}
 				return;
-       } if(tom_is_fun_sym_TextNode(tom_match1_1) ||  false ) {
+      }}}}}} } if(tom_is_fun_sym_TextNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_TextNode_data(tom_match1_1); { String  data=tom_match1_1_1;
  
-				write(tom_get_slot_TextNode_data(tom_match1_1) );
+				write(data );
 				return;
-       } if(tom_is_fun_sym_CommentNode(tom_match1_1) ||  false ) {
+      }} } if(tom_is_fun_sym_CommentNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_CommentNode_data(tom_match1_1); { String  data=tom_match1_1_1;
  
-				write("<!-- "+tom_get_slot_CommentNode_data(tom_match1_1) +" -->");
+				write("<!-- "+data +" -->");
 				return;
-       } if(tom_is_fun_sym_CDATASectionNode(tom_match1_1) ||  false ) {
+      }} } if(tom_is_fun_sym_CDATASectionNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_CDATASectionNode_data(tom_match1_1); { String  data=tom_match1_1_1;
  
-				write("<![CDATA["+tom_get_slot_CDATASectionNode_data(tom_match1_1) +"]]>");
+				write("<![CDATA["+data +"]]>");
 				return;
-       } if(tom_is_fun_sym_ProcessingInstructionNode(tom_match1_1) ||  false ) {
+      }} } if(tom_is_fun_sym_ProcessingInstructionNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_ProcessingInstructionNode_target(tom_match1_1); { String  tom_match1_1_2=tom_get_slot_ProcessingInstructionNode_data(tom_match1_1); { String  target=tom_match1_1_1; { String  data=tom_match1_1_2;
  
-				write("<?"+tom_get_slot_ProcessingInstructionNode_target(tom_match1_1) +" "+tom_get_slot_ProcessingInstructionNode_data(tom_match1_1) +"?>");
+				write("<?"+target +" "+data +"?>");
 				return;
-       } if(tom_is_fun_sym_EntityReferenceNode(tom_match1_1) ||  false ) {
+      }}}} } if(tom_is_fun_sym_EntityReferenceNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_EntityReferenceNode_name(tom_match1_1); { TNodeList tom_match1_1_2=tom_get_slot_EntityReferenceNode_childList(tom_match1_1); { String  name=tom_match1_1_1; { TNodeList childList=tom_match1_1_2;
  
-				write("&"+tom_get_slot_EntityReferenceNode_name(tom_match1_1) +";");
+				write("&"+name +";");
 				return;
-       }
+      }}}} }
  
 				System.out.println("Unknown type of TNode : "+n);
       }}

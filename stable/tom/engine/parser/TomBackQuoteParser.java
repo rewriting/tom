@@ -78,11 +78,11 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
     
     TomList list = (TomList) stackList.pop();
 
-     { TomList tom_match1_1=(( TomList)list);{ if(tom_is_fun_sym_concTomTerm(tom_match1_1) ||  false ) { { TomList tom_match1_1_list1=tom_match1_1; { TomList tom_match1_1_begin1=tom_match1_1_list1; { TomList tom_match1_1_end1=tom_match1_1_list1; while (!(tom_is_empty_TomList(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1;{ { TomTerm tom_match1_1_2=tom_get_head_TomList(tom_match1_1_list1); if(tom_is_fun_sym_Composite(tom_match1_1_2) ||  false ) { { TomList tom_match1_1_2_1=tom_get_slot_Composite_args(tom_match1_1_2); if(tom_is_fun_sym_concTomTerm(tom_match1_1_2_1) ||  false ) { if(tom_is_empty_TomList(tom_get_tail_TomList(tom_match1_1_list1))) {
+     { TomList tom_match1_1=(( TomList)list);{ if(tom_is_fun_sym_concTomTerm(tom_match1_1) ||  false ) { { TomList tom_match1_1_list1=tom_match1_1; { TomList tom_match1_1_begin1=tom_match1_1_list1; { TomList tom_match1_1_end1=tom_match1_1_list1; while (!(tom_is_empty_TomList(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1;{ { TomList X1=tom_get_slice_concTomTerm(tom_match1_1_begin1,tom_match1_1_end1); { TomTerm tom_match1_1_2=tom_get_head_TomList(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_TomList(tom_match1_1_list1); if(tom_is_fun_sym_Composite(tom_match1_1_2) ||  false ) { { TomList tom_match1_1_2_1=tom_get_slot_Composite_args(tom_match1_1_2); if(tom_is_fun_sym_concTomTerm(tom_match1_1_2_1) ||  false ) { { TomList tom_match1_1_2_1_list1=tom_match1_1_2_1; { TomList L=tom_match1_1_2_1_list1; if(tom_is_empty_TomList(tom_match1_1_list1)) {
  
-        stackList.push(tom_append_list_concTomTerm(tom_get_slice_concTomTerm(tom_match1_1_begin1,tom_match1_1_end1),tom_cons_list_concTomTerm(tom_make_Composite(tom_append_list_concTomTerm(tom_match1_1_2_1,tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm()))),tom_empty_list_concTomTerm())) );
+        stackList.push(tom_append_list_concTomTerm(X1,tom_cons_list_concTomTerm(tom_make_Composite(tom_append_list_concTomTerm(L,tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm()))),tom_empty_list_concTomTerm())) );
         return;
-       } }} }}tom_match1_1_end1=tom_get_tail_TomList(tom_match1_1_end1);} }}}} }
+       }}} }} }}}tom_match1_1_end1=tom_get_tail_TomList(tom_match1_1_end1);} }}}} }
 
  
         System.out.println("addToLastComposite: error");
@@ -97,10 +97,10 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
   }
 
   private boolean isEmptyComposite(TomList args) {
-     { TomList tom_match2_1=(( TomList)args);{ if(tom_is_fun_sym_concTomTerm(tom_match2_1) ||  false ) { { TomList tom_match2_1_list1=tom_match2_1; if(!(tom_is_empty_TomList(tom_match2_1_list1))) { { TomTerm tom_match2_1_1=tom_get_head_TomList(tom_match2_1_list1); if(tom_is_fun_sym_Composite(tom_match2_1_1) ||  false ) { { TomList tom_match2_1_1_1=tom_get_slot_Composite_args(tom_match2_1_1); if(tom_is_fun_sym_concTomTerm(tom_match2_1_1_1) ||  false ) { if(tom_is_empty_TomList(tom_match2_1_1_1)) { if(tom_is_empty_TomList(tom_get_tail_TomList(tom_match2_1_list1))) {
+     { TomList tom_match2_1=(( TomList)args);{ if(tom_is_fun_sym_concTomTerm(tom_match2_1) ||  false ) { { TomList tom_match2_1_list1=tom_match2_1; if(!(tom_is_empty_TomList(tom_match2_1_list1))) { { TomTerm tom_match2_1_1=tom_get_head_TomList(tom_match2_1_list1);tom_match2_1_list1=tom_get_tail_TomList(tom_match2_1_list1); if(tom_is_fun_sym_Composite(tom_match2_1_1) ||  false ) { { TomList tom_match2_1_1_1=tom_get_slot_Composite_args(tom_match2_1_1); if(tom_is_fun_sym_concTomTerm(tom_match2_1_1_1) ||  false ) { { TomList tom_match2_1_1_1_list1=tom_match2_1_1_1; if(tom_is_empty_TomList(tom_match2_1_1_1_list1)) { if(tom_is_empty_TomList(tom_match2_1_list1)) {
  
         return true;
-       } } }} }} }} }}}
+       } }} }} }} }} }}}
  
     return false;
   }
@@ -122,17 +122,17 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
 
   private void detectVariableStar(Stack stackList) {
     TomList list = (TomList) stackList.peek();
-     { TomList tom_match3_1=(( TomList)list);{ if(tom_is_fun_sym_concTomTerm(tom_match3_1) ||  false ) { { TomList tom_match3_1_list1=tom_match3_1; { TomList tom_match3_1_begin1=tom_match3_1_list1; { TomList tom_match3_1_end1=tom_match3_1_list1; while (!(tom_is_empty_TomList(tom_match3_1_end1))) {tom_match3_1_list1=tom_match3_1_end1;{ { TomTerm tom_match3_1_2=tom_get_head_TomList(tom_match3_1_list1); if(tom_is_fun_sym_Composite(tom_match3_1_2) ||  false ) { { TomList tom_match3_1_2_1=tom_get_slot_Composite_args(tom_match3_1_2); if(tom_is_fun_sym_concTomTerm(tom_match3_1_2_1) ||  false ) { { TomList tom_match3_1_2_1_list1=tom_match3_1_2_1; { TomList tom_match3_1_2_1_begin1=tom_match3_1_2_1_list1; { TomList tom_match3_1_2_1_end1=tom_match3_1_2_1_list1; while (!(tom_is_empty_TomList(tom_match3_1_2_1_end1))) {tom_match3_1_2_1_list1=tom_match3_1_2_1_end1;{ { TomTerm tom_match3_1_2_1_2=tom_get_head_TomList(tom_match3_1_2_1_list1);tom_match3_1_2_1_list1=tom_get_tail_TomList(tom_match3_1_2_1_list1); if(tom_is_fun_sym_BackQuoteAppl(tom_match3_1_2_1_2) ||  false ) { { TomName tom_match3_1_2_1_2_2=tom_get_slot_BackQuoteAppl_astName(tom_match3_1_2_1_2); { TomList tom_match3_1_2_1_2_3=tom_get_slot_BackQuoteAppl_args(tom_match3_1_2_1_2); if(tom_is_fun_sym_Name(tom_match3_1_2_1_2_2) ||  false ) { if(tom_is_fun_sym_concTomTerm(tom_match3_1_2_1_2_3) ||  false ) { if(tom_is_empty_TomList(tom_match3_1_2_1_2_3)) { if(!(tom_is_empty_TomList(tom_match3_1_2_1_list1))) { { TomTerm tom_match3_1_2_1_3=tom_get_head_TomList(tom_match3_1_2_1_list1); if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match3_1_2_1_3) ||  false ) { { TargetLanguage tom_match3_1_2_1_3_1=tom_get_slot_TargetLanguageToTomTerm_tl(tom_match3_1_2_1_3); if(tom_is_fun_sym_ITL(tom_match3_1_2_1_3_1) ||  false ) { if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_get_slot_ITL_code(tom_match3_1_2_1_3_1)) , "*") ||  false ) { if(tom_is_empty_TomList(tom_get_tail_TomList(tom_match3_1_2_1_list1))) { if(tom_is_empty_TomList(tom_get_tail_TomList(tom_match3_1_list1))) {
+     { TomList tom_match3_1=(( TomList)list);{ if(tom_is_fun_sym_concTomTerm(tom_match3_1) ||  false ) { { TomList tom_match3_1_list1=tom_match3_1; { TomList tom_match3_1_begin1=tom_match3_1_list1; { TomList tom_match3_1_end1=tom_match3_1_list1; while (!(tom_is_empty_TomList(tom_match3_1_end1))) {tom_match3_1_list1=tom_match3_1_end1;{ { TomList X1=tom_get_slice_concTomTerm(tom_match3_1_begin1,tom_match3_1_end1); { TomTerm tom_match3_1_2=tom_get_head_TomList(tom_match3_1_list1);tom_match3_1_list1=tom_get_tail_TomList(tom_match3_1_list1); if(tom_is_fun_sym_Composite(tom_match3_1_2) ||  false ) { { TomList tom_match3_1_2_1=tom_get_slot_Composite_args(tom_match3_1_2); if(tom_is_fun_sym_concTomTerm(tom_match3_1_2_1) ||  false ) { { TomList tom_match3_1_2_1_list1=tom_match3_1_2_1; { TomList tom_match3_1_2_1_begin1=tom_match3_1_2_1_list1; { TomList tom_match3_1_2_1_end1=tom_match3_1_2_1_list1; while (!(tom_is_empty_TomList(tom_match3_1_2_1_end1))) {tom_match3_1_2_1_list1=tom_match3_1_2_1_end1;{ { TomList L=tom_get_slice_concTomTerm(tom_match3_1_2_1_begin1,tom_match3_1_2_1_end1); { TomTerm tom_match3_1_2_1_2=tom_get_head_TomList(tom_match3_1_2_1_list1);tom_match3_1_2_1_list1=tom_get_tail_TomList(tom_match3_1_2_1_list1); if(tom_is_fun_sym_BackQuoteAppl(tom_match3_1_2_1_2) ||  false ) { { OptionList tom_match3_1_2_1_2_1=tom_get_slot_BackQuoteAppl_option(tom_match3_1_2_1_2); { TomName tom_match3_1_2_1_2_2=tom_get_slot_BackQuoteAppl_astName(tom_match3_1_2_1_2); { TomList tom_match3_1_2_1_2_3=tom_get_slot_BackQuoteAppl_args(tom_match3_1_2_1_2); { OptionList option=tom_match3_1_2_1_2_1; if(tom_is_fun_sym_Name(tom_match3_1_2_1_2_2) ||  false ) { { String  tom_match3_1_2_1_2_2_1=tom_get_slot_Name_string(tom_match3_1_2_1_2_2); { String  name=tom_match3_1_2_1_2_2_1; if(tom_is_fun_sym_concTomTerm(tom_match3_1_2_1_2_3) ||  false ) { { TomList tom_match3_1_2_1_2_3_list1=tom_match3_1_2_1_2_3; if(tom_is_empty_TomList(tom_match3_1_2_1_2_3_list1)) { if(!(tom_is_empty_TomList(tom_match3_1_2_1_list1))) { { TomTerm tom_match3_1_2_1_3=tom_get_head_TomList(tom_match3_1_2_1_list1);tom_match3_1_2_1_list1=tom_get_tail_TomList(tom_match3_1_2_1_list1); if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match3_1_2_1_3) ||  false ) { { TargetLanguage tom_match3_1_2_1_3_1=tom_get_slot_TargetLanguageToTomTerm_tl(tom_match3_1_2_1_3); if(tom_is_fun_sym_ITL(tom_match3_1_2_1_3_1) ||  false ) { { String  tom_match3_1_2_1_3_1_1=tom_get_slot_ITL_code(tom_match3_1_2_1_3_1); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match3_1_2_1_3_1_1) , "*") ||  false ) { if(tom_is_empty_TomList(tom_match3_1_2_1_list1)) { if(tom_is_empty_TomList(tom_match3_1_list1)) {
 
 
 
 
  
-        TomTerm term = tom_make_VariableStar(tom_get_slot_BackQuoteAppl_option(tom_match3_1_2_1_2),tom_make_Name(tom_get_slot_Name_string(tom_match3_1_2_1_2_2)),tom_make_TomTypeAlone( "unknown type"),tom_empty_list_concConstraint()) ;
+        TomTerm term = tom_make_VariableStar(option,tom_make_Name(name),tom_make_TomTypeAlone( "unknown type"),tom_empty_list_concConstraint()) ;
         stackList.pop();
-        stackList.push(tom_append_list_concTomTerm(tom_get_slice_concTomTerm(tom_match3_1_begin1,tom_match3_1_end1),tom_cons_list_concTomTerm(tom_make_Composite(tom_append_list_concTomTerm(tom_get_slice_concTomTerm(tom_match3_1_2_1_begin1,tom_match3_1_2_1_end1),tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm()))),tom_empty_list_concTomTerm())) );
+        stackList.push(tom_append_list_concTomTerm(X1,tom_cons_list_concTomTerm(tom_make_Composite(tom_append_list_concTomTerm(L,tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm()))),tom_empty_list_concTomTerm())) );
         return;
-       } } } }} }} } } } }}} }}tom_match3_1_2_1_end1=tom_get_tail_TomList(tom_match3_1_2_1_end1);} }}}} }} }}tom_match3_1_end1=tom_get_tail_TomList(tom_match3_1_end1);} }}}} }}}
+       } } }} }} }} } }} }}} }}}}} }}}tom_match3_1_2_1_end1=tom_get_tail_TomList(tom_match3_1_2_1_end1);} }}}} }} }}}tom_match3_1_end1=tom_get_tail_TomList(tom_match3_1_end1);} }}}} }}}
  
   }
 
@@ -140,26 +140,26 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
   private boolean isWellFormed(Stack stackList) {
     int open = 0;
     TomList listComposite = (TomList) stackList.peek();
-     { TomList tom_match4_1=(( TomList)listComposite);{ if(tom_is_fun_sym_concTomTerm(tom_match4_1) ||  false ) { { TomList tom_match4_1_list1=tom_match4_1; { TomList tom_match4_1_begin1=tom_match4_1_list1; { TomList tom_match4_1_end1=tom_match4_1_list1; while (!(tom_is_empty_TomList(tom_match4_1_end1))) {tom_match4_1_list1=tom_match4_1_end1;{ { TomTerm tom_match4_1_2=tom_get_head_TomList(tom_match4_1_list1); if(tom_is_fun_sym_Composite(tom_match4_1_2) ||  false ) { { TomList tom_match4_1_2_1=tom_get_slot_Composite_args(tom_match4_1_2); if(tom_is_fun_sym_concTomTerm(tom_match4_1_2_1) ||  false ) { { TomList tom_list=tom_match4_1_2_1; if(tom_is_empty_TomList(tom_get_tail_TomList(tom_match4_1_list1))) {
+     { TomList tom_match4_1=(( TomList)listComposite);{ if(tom_is_fun_sym_concTomTerm(tom_match4_1) ||  false ) { { TomList tom_match4_1_list1=tom_match4_1; { TomList tom_match4_1_begin1=tom_match4_1_list1; { TomList tom_match4_1_end1=tom_match4_1_list1; while (!(tom_is_empty_TomList(tom_match4_1_end1))) {tom_match4_1_list1=tom_match4_1_end1;{ { TomList X1=tom_get_slice_concTomTerm(tom_match4_1_begin1,tom_match4_1_end1); { TomTerm tom_match4_1_2=tom_get_head_TomList(tom_match4_1_list1);tom_match4_1_list1=tom_get_tail_TomList(tom_match4_1_list1); if(tom_is_fun_sym_Composite(tom_match4_1_2) ||  false ) { { TomList tom_match4_1_2_1=tom_get_slot_Composite_args(tom_match4_1_2); if(tom_is_fun_sym_concTomTerm(tom_match4_1_2_1) ||  false ) { { TomList tom_match4_1_2_1_list1=tom_match4_1_2_1; { TomList list=tom_match4_1_2_1_list1; if(tom_is_empty_TomList(tom_match4_1_list1)) {
  
-        while(!tom_list .isEmpty()) {
-          TomTerm term = tom_list .getHead();
+        while(!list .isEmpty()) {
+          TomTerm term = list .getHead();
           matchBlock: {
-             { TomTerm tom_match5_1=(( TomTerm)term);{ if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match5_1) ||  false ) { { TargetLanguage tom_match5_1_1=tom_get_slot_TargetLanguageToTomTerm_tl(tom_match5_1); if(tom_is_fun_sym_ITL(tom_match5_1_1) ||  false ) { if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_get_slot_ITL_code(tom_match5_1_1)) , "(") ||  false ) {
+             { TomTerm tom_match5_1=(( TomTerm)term);{ if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match5_1) ||  false ) { { TargetLanguage tom_match5_1_1=tom_get_slot_TargetLanguageToTomTerm_tl(tom_match5_1); if(tom_is_fun_sym_ITL(tom_match5_1_1) ||  false ) { { String  tom_match5_1_1_1=tom_get_slot_ITL_code(tom_match5_1_1); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match5_1_1_1) , "(") ||  false ) {
  
                 open++;
                 break matchBlock;
-               } }} } if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match5_1) ||  false ) { { TargetLanguage tom_match5_1_1=tom_get_slot_TargetLanguageToTomTerm_tl(tom_match5_1); if(tom_is_fun_sym_ITL(tom_match5_1_1) ||  false ) { if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_get_slot_ITL_code(tom_match5_1_1)) , ")") ||  false ) {
+               }} }} } if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match5_1) ||  false ) { { TargetLanguage tom_match5_1_1=tom_get_slot_TargetLanguageToTomTerm_tl(tom_match5_1); if(tom_is_fun_sym_ITL(tom_match5_1_1) ||  false ) { { String  tom_match5_1_1_1=tom_get_slot_ITL_code(tom_match5_1_1); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match5_1_1_1) , ")") ||  false ) {
  
                 open--;
                 break matchBlock;
-               } }} }}}
+               }} }} }}}
  
           } // end matchBlock
-          tom_list  = tom_list .getTail();
+          list  = list .getTail();
         }
         return open==0;
-       }} }} }}tom_match4_1_end1=tom_get_tail_TomList(tom_match4_1_end1);} }}}} }
+       }}} }} }}}tom_match4_1_end1=tom_get_tail_TomList(tom_match4_1_end1);} }}}} }
 
  
         System.out.println("isWellFormed: error");
@@ -198,10 +198,10 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
         //System.out.println("next: " + next.image);
       
       matchBlock: {
-         { Token  tom_match6_1=(( Token )token);{ { Token  tom_match6_2=(( Token )next);{ if(tom_is_fun_sym_IDENT(tom_match6_1) ||  false ) { { String  tom_name=tom_get_slot_IDENT_image(tom_match6_1); if(tom_is_fun_sym_LPAREN(tom_match6_2) ||  false ) {
+         { Token  tom_match6_1=(( Token )token);{ { Token  tom_match6_2=(( Token )next);{ if(tom_is_fun_sym_IDENT(tom_match6_1) ||  false ) { { String  tom_match6_1_1=tom_get_slot_IDENT_image(tom_match6_1); { String  name=tom_match6_1_1; if(tom_is_fun_sym_LPAREN(tom_match6_2) ||  false ) {
  
-            stackOption.push(tom_make_OriginTracking(tom_make_Name(tom_name), ( (Integer )nameToDecLineMap .get(token) ) .intValue(),tom_make_Name(currentFileName)) );
-            stackName.push(tom_name );
+            stackOption.push(tom_make_OriginTracking(tom_make_Name(name), ( (Integer )nameToDecLineMap .get(token) ) .intValue(),tom_make_Name(currentFileName)) );
+            stackName.push(name );
             stackList.push(tom_cons_list_concTomTerm(tom_make_Composite(tom_empty_list_concTomTerm()),tom_empty_list_concTomTerm()) );
             token = next;
             if(it.hasNext()) {
@@ -211,24 +211,24 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
               finish = true;
             }
             break matchBlock;
-           }} } if(tom_is_fun_sym_IDENT(tom_match6_1) ||  false ) {
+           }}} } if(tom_is_fun_sym_IDENT(tom_match6_1) ||  false ) { { String  tom_match6_1_1=tom_get_slot_IDENT_image(tom_match6_1); { String  name=tom_match6_1_1;
 
  
-            addToLastComposite(stackList,buildBackQuoteAppl(tom_get_slot_IDENT_image(tom_match6_1) ,((Integer)nameToDecLineMap.get(token)).intValue(),currentFileName));
+            addToLastComposite(stackList,buildBackQuoteAppl(name ,((Integer)nameToDecLineMap.get(token)).intValue(),currentFileName));
             
             break matchBlock;
-           } if(tom_is_fun_sym_COMMA(tom_match6_1) ||  false ) {
+          }} } if(tom_is_fun_sym_COMMA(tom_match6_1) ||  false ) {
 
  
             detectVariableStar(stackList);
             addNewComposite(stackList);
             break matchBlock;
-           } if(tom_is_fun_sym_LPAREN(tom_match6_1) ||  false ) {
+           } if(tom_is_fun_sym_LPAREN(tom_match6_1) ||  false ) { { String  tom_match6_1_1=tom_get_slot_LPAREN_image(tom_match6_1); { String  image=tom_match6_1_1;
 
  
-            addToLastComposite(stackList, tom_make_TargetLanguageToTomTerm(tom_make_ITL(tom_get_slot_LPAREN_image(tom_match6_1))) );
+            addToLastComposite(stackList, tom_make_TargetLanguageToTomTerm(tom_make_ITL(image)) );
             break matchBlock;
-           } if(tom_is_fun_sym_RPAREN(tom_match6_1) ||  false ) {
+          }} } if(tom_is_fun_sym_RPAREN(tom_match6_1) ||  false ) { { String  tom_match6_1_1=tom_get_slot_RPAREN_image(tom_match6_1); { String  image=tom_match6_1_1;
 
  
             if(isWellFormed(stackList)) {
@@ -237,15 +237,15 @@ public class TomBackQuoteParser extends TomBase implements TomParserConstants {
               addToLastComposite(stackList, term);
               break matchBlock;
             } else {
-              addToLastComposite(stackList, tom_make_TargetLanguageToTomTerm(tom_make_ITL(tom_get_slot_RPAREN_image(tom_match6_1))) );
+              addToLastComposite(stackList, tom_make_TargetLanguageToTomTerm(tom_make_ITL(image)) );
               break matchBlock;
             }
-           }
+          }} } { Token  other=tom_match6_1;
 
  
-            addToLastComposite(stackList, tom_make_TargetLanguageToTomTerm(tom_make_ITL(tom_match6_1 .image)) );
+            addToLastComposite(stackList, tom_make_TargetLanguageToTomTerm(tom_make_ITL(other .image)) );
             break matchBlock;
-          }}}}
+          }}}}}
 
  
       } // end matchBlock

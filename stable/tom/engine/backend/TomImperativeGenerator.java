@@ -36,8 +36,8 @@ import jtom.TomEnvironment;
 public abstract class TomImperativeGenerator extends TomGenericGenerator {
 
 	protected String modifier = "";
-  public TomImperativeGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-		super(environment, output, input);
+  public TomImperativeGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
+		super(environment, taskInput, output);
   }
 
   // ------------------------------------------------------------
@@ -64,52 +64,52 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
   }
 	
   protected void buildListOrArray(int deep, TomTerm list) throws IOException {
-     { TomTerm tom_match1_1=(( TomTerm)list);{ if(tom_is_fun_sym_BuildEmptyList(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildEmptyList_astName(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) {
+     { TomTerm tom_match1_1=(( TomTerm)list);{ if(tom_is_fun_sym_BuildEmptyList(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildEmptyList_astName(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) { { String  tom_match1_1_1_1=tom_get_slot_Name_string(tom_match1_1_1); { String  name=tom_match1_1_1_1;
  
-        output.write("tom_empty_list_" + tom_get_slot_Name_string(tom_match1_1_1)  + "()");
+        output.write("tom_empty_list_" + name  + "()");
         return;
-       }} } if(tom_is_fun_sym_BuildConsList(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildConsList_astName(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) {
+      }} }} } if(tom_is_fun_sym_BuildConsList(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildConsList_astName(tom_match1_1); { TomTerm tom_match1_1_2=tom_get_slot_BuildConsList_headTerm(tom_match1_1); { TomTerm tom_match1_1_3=tom_get_slot_BuildConsList_tailTerm(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) { { String  tom_match1_1_1_1=tom_get_slot_Name_string(tom_match1_1_1); { String  name=tom_match1_1_1_1; { TomTerm headTerm=tom_match1_1_2; { TomTerm tailTerm=tom_match1_1_3;
 
  
-        output.write("tom_cons_list_" + tom_get_slot_Name_string(tom_match1_1_1)  + "(");
-        generate(deep,tom_get_slot_BuildConsList_headTerm(tom_match1_1) );
+        output.write("tom_cons_list_" + name  + "(");
+        generate(deep,headTerm );
         output.write(",");
-        generate(deep,tom_get_slot_BuildConsList_tailTerm(tom_match1_1) );
+        generate(deep,tailTerm );
         output.write(")");
         return;
-       }} } if(tom_is_fun_sym_BuildAppendList(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildAppendList_astName(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) {
+      }}}} }}}} } if(tom_is_fun_sym_BuildAppendList(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildAppendList_astName(tom_match1_1); { TomTerm tom_match1_1_2=tom_get_slot_BuildAppendList_headTerm(tom_match1_1); { TomTerm tom_match1_1_3=tom_get_slot_BuildAppendList_tailTerm(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) { { String  tom_match1_1_1_1=tom_get_slot_Name_string(tom_match1_1_1); { String  name=tom_match1_1_1_1; { TomTerm headTerm=tom_match1_1_2; { TomTerm tailTerm=tom_match1_1_3;
 
  
-        output.write("tom_append_list_" + tom_get_slot_Name_string(tom_match1_1_1)  + "(");
-        generate(deep,tom_get_slot_BuildAppendList_headTerm(tom_match1_1) );
+        output.write("tom_append_list_" + name  + "(");
+        generate(deep,headTerm );
         output.write(",");
-        generate(deep,tom_get_slot_BuildAppendList_tailTerm(tom_match1_1) );
+        generate(deep,tailTerm );
         output.write(")");
         return;
-       }} } if(tom_is_fun_sym_BuildEmptyArray(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildEmptyArray_astName(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) {
+      }}}} }}}} } if(tom_is_fun_sym_BuildEmptyArray(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildEmptyArray_astName(tom_match1_1); { int  tom_match1_1_2=tom_get_slot_BuildEmptyArray_size(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) { { String  tom_match1_1_1_1=tom_get_slot_Name_string(tom_match1_1_1); { String  name=tom_match1_1_1_1; { int  size=tom_match1_1_2;
 
  
-        output.write("tom_empty_array_" + tom_get_slot_Name_string(tom_match1_1_1)  + "(" + tom_get_slot_BuildEmptyArray_size(tom_match1_1)  + ")");
+        output.write("tom_empty_array_" + name  + "(" + size  + ")");
         return;
-       }} } if(tom_is_fun_sym_BuildConsArray(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildConsArray_astName(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) {
+      }}} }}} } if(tom_is_fun_sym_BuildConsArray(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildConsArray_astName(tom_match1_1); { TomTerm tom_match1_1_2=tom_get_slot_BuildConsArray_headTerm(tom_match1_1); { TomTerm tom_match1_1_3=tom_get_slot_BuildConsArray_tailTerm(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) { { String  tom_match1_1_1_1=tom_get_slot_Name_string(tom_match1_1_1); { String  name=tom_match1_1_1_1; { TomTerm headTerm=tom_match1_1_2; { TomTerm tailTerm=tom_match1_1_3;
 
  
-        output.write("tom_cons_array_" + tom_get_slot_Name_string(tom_match1_1_1)  + "(");
-        generate(deep,tom_get_slot_BuildConsArray_headTerm(tom_match1_1) );
+        output.write("tom_cons_array_" + name  + "(");
+        generate(deep,headTerm );
         output.write(",");
-        generate(deep,tom_get_slot_BuildConsArray_tailTerm(tom_match1_1) );
+        generate(deep,tailTerm );
         output.write(")");
         return;
-       }} } if(tom_is_fun_sym_BuildAppendArray(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildAppendArray_astName(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) {
+      }}}} }}}} } if(tom_is_fun_sym_BuildAppendArray(tom_match1_1) ||  false ) { { TomName tom_match1_1_1=tom_get_slot_BuildAppendArray_astName(tom_match1_1); { TomTerm tom_match1_1_2=tom_get_slot_BuildAppendArray_headTerm(tom_match1_1); { TomTerm tom_match1_1_3=tom_get_slot_BuildAppendArray_tailTerm(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_1) ||  false ) { { String  tom_match1_1_1_1=tom_get_slot_Name_string(tom_match1_1_1); { String  name=tom_match1_1_1_1; { TomTerm headTerm=tom_match1_1_2; { TomTerm tailTerm=tom_match1_1_3;
 
  
-        output.write("tom_append_array_" + tom_get_slot_Name_string(tom_match1_1_1)  + "(");
-        generate(deep,tom_get_slot_BuildAppendArray_headTerm(tom_match1_1) );
+        output.write("tom_append_array_" + name  + "(");
+        generate(deep,headTerm );
         output.write(",");
-        generate(deep,tom_get_slot_BuildAppendArray_tailTerm(tom_match1_1) );
+        generate(deep,tailTerm );
         output.write(")");
         return;
-       }} }}}
+      }}}} }}}} }}}
  
   }
 
@@ -135,12 +135,12 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     while(!varList.isEmpty()) {
       TomTerm localVar = varList.getHead();
       matchBlock: {
-         { TomTerm tom_match2_1=(( TomTerm)localVar);{ if(tom_is_fun_sym_Variable(tom_match2_1) ||  false ) {
+         { TomTerm tom_match2_1=(( TomTerm)localVar);{ if(tom_is_fun_sym_Variable(tom_match2_1) ||  false ) { { TomTerm v=tom_match2_1; { TomType tom_match2_1_3=tom_get_slot_Variable_astType(tom_match2_1); { TomType type2=tom_match2_1_3;
  
-            output.write(deep,getTLType(tom_get_slot_Variable_astType(tom_match2_1) ) + " ");
-            generate(deep,tom_match2_1 );
+            output.write(deep,getTLType(type2 ) + " ");
+            generate(deep,v );
             break matchBlock;
-           }
+          }}} }
  
             System.out.println("MakeFunction: strange term: " + localVar);
             throw new TomRuntimeException(new Throwable("MakeFunction: strange term: " + localVar));
@@ -318,11 +318,11 @@ public abstract class TomImperativeGenerator extends TomGenericGenerator {
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {
-         { TomTerm tom_match3_1=(( TomTerm)arg);{ if(tom_is_fun_sym_Variable(tom_match3_1) ||  false ) { { TomName tom_match3_1_2=tom_get_slot_Variable_astName(tom_match3_1); { TomType tom_match3_1_3=tom_get_slot_Variable_astType(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_2) ||  false ) { if(tom_is_fun_sym_Type(tom_match3_1_3) ||  false ) { { TomType tom_match3_1_3_2=tom_get_slot_Type_tlType(tom_match3_1_3); if(tom_is_fun_sym_TLType(tom_match3_1_3_2) ||  false ) {
+         { TomTerm tom_match3_1=(( TomTerm)arg);{ if(tom_is_fun_sym_Variable(tom_match3_1) ||  false ) { { TomName tom_match3_1_2=tom_get_slot_Variable_astName(tom_match3_1); { TomType tom_match3_1_3=tom_get_slot_Variable_astType(tom_match3_1); if(tom_is_fun_sym_Name(tom_match3_1_2) ||  false ) { { String  tom_match3_1_2_1=tom_get_slot_Name_string(tom_match3_1_2); { String  name=tom_match3_1_2_1; if(tom_is_fun_sym_Type(tom_match3_1_3) ||  false ) { { TomType tom_match3_1_3_2=tom_get_slot_Type_tlType(tom_match3_1_3); if(tom_is_fun_sym_TLType(tom_match3_1_3_2) ||  false ) { { TomType tlType=tom_match3_1_3_2;
  
-            s += getTLCode(tom_match3_1_3_2 ) + " " + tom_get_slot_Name_string(tom_match3_1_2) ;
+            s += getTLCode(tlType ) + " " + name ;
             break matchBlock;
-           }} } }}} }
+          } }} }}} }}} }
 
  
             System.out.println("genDeclMake: strange term: " + arg);

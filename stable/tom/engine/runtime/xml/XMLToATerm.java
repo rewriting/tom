@@ -283,18 +283,18 @@ public class XMLToATerm {
   }
 
   private TNodeList insertSortedAttribute(TNode elt, TNodeList list) {
-     { TNode tom_match1_1=(( TNode)elt);{ { TNodeList tom_match1_2=(( TNodeList)list);{ if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { if(tom_is_fun_sym_emptyTNodeList(tom_match1_2) ||  false ) {
+     { TNode tom_match1_1=(( TNode)elt);{ { TNodeList tom_match1_2=(( TNodeList)list);{ if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_AttributeNode_name(tom_match1_1); { String  name1=tom_match1_1_1; if(tom_is_fun_sym_emptyTNodeList(tom_match1_2) ||  false ) {
  
         return tom_make_manyTNodeList(elt,list) ;
-       } } if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { if(tom_is_fun_sym_manyTNodeList(tom_match1_2) ||  false ) { { TNode tom_match1_2_1=tom_get_slot_manyTNodeList_head(tom_match1_2); if(tom_is_fun_sym_AttributeNode(tom_match1_2_1) ||  false ) {
+       }}} } if(tom_is_fun_sym_AttributeNode(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_AttributeNode_name(tom_match1_1); { String  name1=tom_match1_1_1; if(tom_is_fun_sym_manyTNodeList(tom_match1_2) ||  false ) { { TNode tom_match1_2_1=tom_get_slot_manyTNodeList_head(tom_match1_2); { TNodeList tom_match1_2_2=tom_get_slot_manyTNodeList_tail(tom_match1_2); if(tom_is_fun_sym_AttributeNode(tom_match1_2_1) ||  false ) { { TNode head=tom_match1_2_1; { String  tom_match1_2_1_1=tom_get_slot_AttributeNode_name(tom_match1_2_1); { String  name2=tom_match1_2_1_1; { TNodeList tail=tom_match1_2_2;
 
  
-        if(tom_get_slot_AttributeNode_name(tom_match1_1) .compareTo(tom_get_slot_AttributeNode_name(tom_match1_2_1) ) >= 0) {
-          return tom_make_manyTNodeList(tom_match1_2_1,insertSortedAttribute(elt,tom_get_slot_manyTNodeList_tail(tom_match1_2))) ;
+        if(name1 .compareTo(name2 ) >= 0) {
+          return tom_make_manyTNodeList(head,insertSortedAttribute(elt,tail)) ;
         } else {
           return tom_make_manyTNodeList(elt,list) ;
         }
-       }} } }}}}}
+      }}}} }}} }}} }}}}}
  
     System.out.println("insertSortedAttribute: Strange case");
     return list;

@@ -36,8 +36,8 @@ import jtom.TomEnvironment;
 public class TomCamlGenerator extends TomImperativeGenerator {
 
   protected String modifier = "";
-  public TomCamlGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-    super(environment, output, input);
+  public TomCamlGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
+    super(environment, taskInput, output);
   }
 
 // ------------------------------------------------------------
@@ -228,12 +228,12 @@ public class TomCamlGenerator extends TomImperativeGenerator {
     while(!argList.isEmpty()) {
       TomTerm arg = argList.getHead();
       matchBlock: {
-         { TomTerm tom_match1_1=(( TomTerm)arg);{ if(tom_is_fun_sym_Variable(tom_match1_1) ||  false ) { { TomName tom_match1_1_2=tom_get_slot_Variable_astName(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_2) ||  false ) {
+         { TomTerm tom_match1_1=(( TomTerm)arg);{ if(tom_is_fun_sym_Variable(tom_match1_1) ||  false ) { { TomName tom_match1_1_2=tom_get_slot_Variable_astName(tom_match1_1); if(tom_is_fun_sym_Name(tom_match1_1_2) ||  false ) { { String  tom_match1_1_2_1=tom_get_slot_Name_string(tom_match1_1_2); { String  name=tom_match1_1_2_1;
 
  
-            s += tom_get_slot_Name_string(tom_match1_1_2) ;
+            s += name ;
             break matchBlock;
-           }} }
+          }} }} }
 
  
             System.out.println("genDeclMake: strange term: " + arg);

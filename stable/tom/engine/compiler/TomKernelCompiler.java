@@ -51,8 +51,8 @@ public class TomKernelCompiler extends TomBase {
   }
 
   private TomName getLabel(OptionList list) {
-     { OptionList tom_match1_1=(( OptionList)list);{ if(tom_is_fun_sym_concOption(tom_match1_1) ||  false ) { { OptionList tom_match1_1_list1=tom_match1_1; { OptionList tom_match1_1_begin1=tom_match1_1_list1; { OptionList tom_match1_1_end1=tom_match1_1_list1; while (!(tom_is_empty_OptionList(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1;{ { Option tom_match1_1_2=tom_get_head_OptionList(tom_match1_1_list1); if(tom_is_fun_sym_Label(tom_match1_1_2) ||  false ) { { TomName tom_match1_1_2_1=tom_get_slot_Label_astName(tom_match1_1_2); if(tom_is_fun_sym_Name(tom_match1_1_2_1) ||  false ) {
-  return tom_match1_1_2_1 ;  }} }}tom_match1_1_end1=tom_get_tail_OptionList(tom_match1_1_end1);} }}}} }}}
+     { OptionList tom_match1_1=(( OptionList)list);{ if(tom_is_fun_sym_concOption(tom_match1_1) ||  false ) { { OptionList tom_match1_1_list1=tom_match1_1; { OptionList tom_match1_1_begin1=tom_match1_1_list1; { OptionList tom_match1_1_end1=tom_match1_1_list1; while (!(tom_is_empty_OptionList(tom_match1_1_end1))) {tom_match1_1_list1=tom_match1_1_end1;{ { Option tom_match1_1_2=tom_get_head_OptionList(tom_match1_1_list1);tom_match1_1_list1=tom_get_tail_OptionList(tom_match1_1_list1); if(tom_is_fun_sym_Label(tom_match1_1_2) ||  false ) { { TomName tom_match1_1_2_1=tom_get_slot_Label_astName(tom_match1_1_2); if(tom_is_fun_sym_Name(tom_match1_1_2_1) ||  false ) { { TomName name=tom_match1_1_2_1;
+  return name ; } }} }}tom_match1_1_end1=tom_get_tail_OptionList(tom_match1_1_end1);} }}}} }}}
  
     return null;
   }
@@ -65,13 +65,13 @@ public class TomKernelCompiler extends TomBase {
   private Replace1 replace_compileMatching = new Replace1() {
       public ATerm apply(ATerm subject) {
         if(subject instanceof Instruction) {
-           { Instruction tom_match2_1=(( Instruction)subject);{ if(tom_is_fun_sym_Match(tom_match2_1) ||  false ) { { TomTerm tom_match2_1_1=tom_get_slot_Match_subjectList(tom_match2_1); { TomTerm tom_match2_1_2=tom_get_slot_Match_astPatternList(tom_match2_1); if(tom_is_fun_sym_SubjectList(tom_match2_1_1) ||  false ) { if(tom_is_fun_sym_PatternList(tom_match2_1_2) ||  false ) { { TomList tom_l2=tom_get_slot_PatternList_tomList(tom_match2_1_2); { OptionList tom_optionList=tom_get_slot_Match_option(tom_match2_1);
+           { Instruction tom_match2_1=(( Instruction)subject);{ if(tom_is_fun_sym_Match(tom_match2_1) ||  false ) { { TomTerm tom_match2_1_1=tom_get_slot_Match_subjectList(tom_match2_1); { TomTerm tom_match2_1_2=tom_get_slot_Match_astPatternList(tom_match2_1); { OptionList tom_match2_1_3=tom_get_slot_Match_option(tom_match2_1); if(tom_is_fun_sym_SubjectList(tom_match2_1_1) ||  false ) { { TomList tom_match2_1_1_1=tom_get_slot_SubjectList_tomList(tom_match2_1_1); { TomList l1=tom_match2_1_1_1; if(tom_is_fun_sym_PatternList(tom_match2_1_2) ||  false ) { { TomList tom_match2_1_2_1=tom_get_slot_PatternList_tomList(tom_match2_1_2); { TomList l2=tom_match2_1_2_1; { OptionList optionList=tom_match2_1_3;
  
               boolean generatedMatch = false;
               String currentDebugKey = "noDebug";
               if(debugMode) {
-                generatedMatch = hasGeneratedMatch(tom_optionList );
-                Option orgTrack = findOriginTracking(tom_optionList );
+                generatedMatch = hasGeneratedMatch(optionList );
+                Option orgTrack = findOriginTracking(optionList );
                 currentDebugKey = orgTrack.getFileName().getString() + orgTrack.getLine();
               }
                 
@@ -88,9 +88,9 @@ public class TomKernelCompiler extends TomBase {
                  */
               int actionNumber = 0;
               boolean defaultPA =false;
-              while(!tom_l2 .isEmpty()) {
+              while(!l2 .isEmpty()) {
                 actionNumber++;
-                TomTerm pa = tom_l2 .getHead();
+                TomTerm pa = l2 .getHead();
                 defaultPA = hasDefaultCase(pa.getOption());
                 patternList = pa.getTermList().getTomList();
                 if (debugMode && defaultPA) {
@@ -125,16 +125,16 @@ public class TomKernelCompiler extends TomBase {
                   //System.out.println("automata = " + automata);
                   
                 automataList = append(automata,automataList);
-                tom_l2  = tom_l2 .getTail();
+                l2  = l2 .getTail();
               }
                 
                 /*
                  * return the compiled Match construction
                  */
               InstructionList astAutomataList = automataListCompileMatchingList(automataList, generatedMatch);
-              Instruction astAutomata = collectVariableFromSubjectList(tom_get_slot_SubjectList_tomList(tom_match2_1_1) ,1,rootpath,tom_make_AbstractBlock(astAutomataList) );
-              return tom_make_CompiledMatch(astAutomata,tom_optionList) ;
-            }} } }}} }
+              Instruction astAutomata = collectVariableFromSubjectList(l1 ,1,rootpath,tom_make_AbstractBlock(astAutomataList) );
+              return tom_make_CompiledMatch(astAutomata,optionList) ;
+            }}} }}} }}}} }
 
 
  
@@ -157,25 +157,25 @@ public class TomKernelCompiler extends TomBase {
      */
   private Instruction collectVariableFromSubjectList(TomList subjectList, int index, TomNumberList path, Instruction body) {
      { TomList tom_match3_1=(( TomList)subjectList);{ if(tom_is_fun_sym_emptyTomList(tom_match3_1) ||  false ) {
-  return body;  } if(tom_is_fun_sym_manyTomList(tom_match3_1) ||  false ) { { TomTerm tom_match3_1_1=tom_get_slot_manyTomList_head(tom_match3_1); if(tom_is_fun_sym_Variable(tom_match3_1_1) ||  false ) { { TomType tom_variableType=tom_get_slot_Variable_astType(tom_match3_1_1);
+  return body;  } if(tom_is_fun_sym_manyTomList(tom_match3_1) ||  false ) { { TomTerm tom_match3_1_1=tom_get_slot_manyTomList_head(tom_match3_1); { TomList tom_match3_1_2=tom_get_slot_manyTomList_tail(tom_match3_1); if(tom_is_fun_sym_Variable(tom_match3_1_1) ||  false ) { { TomTerm subjectVar=tom_match3_1_1; { OptionList tom_match3_1_1_1=tom_get_slot_Variable_option(tom_match3_1_1); { TomType tom_match3_1_1_3=tom_get_slot_Variable_astType(tom_match3_1_1); { OptionList option=tom_match3_1_1_1; { TomType variableType=tom_match3_1_1_3; { TomList tail=tom_match3_1_2;
  
-        body = collectVariableFromSubjectList(tom_get_slot_manyTomList_tail(tom_match3_1) ,index+1,path,body);
-        TomTerm variable = tom_make_Variable(tom_get_slot_Variable_option(tom_match3_1_1),tom_make_PositionName(appendNumber(index,path)),tom_variableType,tom_empty_list_concConstraint()) ;
+        body = collectVariableFromSubjectList(tail ,index+1,path,body);
+        TomTerm variable = tom_make_Variable(option,tom_make_PositionName(appendNumber(index,path)),variableType,tom_empty_list_concConstraint()) ;
           // the UnamedBlock encapsulation is needed for Caml
-        return tom_make_Let(variable,tom_make_Cast(tom_variableType,tom_make_TomTermToExpression(tom_match3_1_1)),tom_make_UnamedBlock(tom_cons_list_concInstruction(body,tom_empty_list_concInstruction()))) ;
-      } }} } if(tom_is_fun_sym_manyTomList(tom_match3_1) ||  false ) { { TomTerm tom_match3_1_1=tom_get_slot_manyTomList_head(tom_match3_1); if(tom_is_fun_sym_FunctionCall(tom_match3_1_1) || tom_is_fun_sym_BuildTerm(tom_match3_1_1) ||  false ) { { TomName tom_match3_1_1_1=tom_get_slot_BuildTerm_astName(tom_match3_1_1); if(tom_is_fun_sym_Name(tom_match3_1_1_1) ||  false ) {
+        return tom_make_Let(variable,tom_make_Cast(variableType,tom_make_TomTermToExpression(subjectVar)),tom_make_UnamedBlock(tom_cons_list_concInstruction(body,tom_empty_list_concInstruction()))) ;
+      }}}}}} }}} } if(tom_is_fun_sym_manyTomList(tom_match3_1) ||  false ) { { TomTerm tom_match3_1_1=tom_get_slot_manyTomList_head(tom_match3_1); { TomList tom_match3_1_2=tom_get_slot_manyTomList_tail(tom_match3_1); if(tom_is_fun_sym_FunctionCall(tom_match3_1_1) || tom_is_fun_sym_BuildTerm(tom_match3_1_1) ||  false ) { { TomTerm subjectVar=tom_match3_1_1; { TomName tom_match3_1_1_1=tom_get_slot_BuildTerm_astName(tom_match3_1_1); if(tom_is_fun_sym_Name(tom_match3_1_1_1) ||  false ) { { String  tom_match3_1_1_1_1=tom_get_slot_Name_string(tom_match3_1_1_1); { String  tomName=tom_match3_1_1_1_1; { TomList tail=tom_match3_1_2;
 
  
-        body = collectVariableFromSubjectList(tom_get_slot_manyTomList_tail(tom_match3_1) ,index+1,path,body);
-        TomSymbol tomSymbol = symbolTable().getSymbol(tom_get_slot_Name_string(tom_match3_1_1_1) );
+        body = collectVariableFromSubjectList(tail ,index+1,path,body);
+        TomSymbol tomSymbol = symbolTable().getSymbol(tomName );
         TomType tomType = getSymbolCodomain(tomSymbol);
         TomTerm variable = tom_make_Variable(option(),tom_make_PositionName(appendNumber(index,path)),tomType,tom_empty_list_concConstraint()) ;
-        return tom_make_Let(variable,tom_make_TomTermToExpression(tom_match3_1_1),body) ;
-       }} }} } if(tom_is_fun_sym_manyTomList(tom_match3_1) ||  false ) {
+        return tom_make_Let(variable,tom_make_TomTermToExpression(subjectVar),body) ;
+      }}} }}} }}} } if(tom_is_fun_sym_manyTomList(tom_match3_1) ||  false ) { { TomTerm tom_match3_1_1=tom_get_slot_manyTomList_head(tom_match3_1); { TomTerm subjectVar=tom_match3_1_1;
 
  
-        throw new TomRuntimeException(new Throwable("collectVariableFromSubjectList: strange term: " + tom_get_slot_manyTomList_head(tom_match3_1) ));
-       }}}
+        throw new TomRuntimeException(new Throwable("collectVariableFromSubjectList: strange term: " + subjectVar ));
+      }} }}}
 
  
     return tom_make_Nop() ;
@@ -186,32 +186,32 @@ public class TomKernelCompiler extends TomBase {
      */
   private InstructionList automataListCompileMatchingList(TomList automataList, boolean generatedMatch) {
      { TomList tom_match4_1=(( TomList)automataList);{ if(tom_is_fun_sym_emptyTomList(tom_match4_1) ||  false ) {
-  return tom_make_emptyInstructionList() ;  } if(tom_is_fun_sym_manyTomList(tom_match4_1) ||  false ) { { TomTerm tom_match4_1_1=tom_get_slot_manyTomList_head(tom_match4_1); if(tom_is_fun_sym_Automata(tom_match4_1_1) ||  false ) { { OptionList tom_optionList=tom_get_slot_Automata_option(tom_match4_1_1); { Instruction tom_instruction=tom_get_slot_Automata_inst(tom_match4_1_1);
+  return tom_make_emptyInstructionList() ;  } if(tom_is_fun_sym_manyTomList(tom_match4_1) ||  false ) { { TomTerm tom_match4_1_1=tom_get_slot_manyTomList_head(tom_match4_1); { TomList tom_match4_1_2=tom_get_slot_manyTomList_tail(tom_match4_1); if(tom_is_fun_sym_Automata(tom_match4_1_1) ||  false ) { { OptionList tom_match4_1_1_1=tom_get_slot_Automata_option(tom_match4_1_1); { TomList tom_match4_1_1_2=tom_get_slot_Automata_patternList(tom_match4_1_1); { TomNumberList tom_match4_1_1_3=tom_get_slot_Automata_numberList(tom_match4_1_1); { Instruction tom_match4_1_1_4=tom_get_slot_Automata_inst(tom_match4_1_1); { OptionList optionList=tom_match4_1_1_1; { TomList patternList=tom_match4_1_1_2; { TomNumberList numberList=tom_match4_1_1_3; { Instruction instruction=tom_match4_1_1_4; { TomList l=tom_match4_1_2;
  
-        InstructionList newList = automataListCompileMatchingList(tom_get_slot_manyTomList_tail(tom_match4_1) , generatedMatch);
+        InstructionList newList = automataListCompileMatchingList(l , generatedMatch);
 
         if(!generatedMatch && debugMode) {
-          String debugKey = getDebug(tom_optionList );
+          String debugKey = getDebug(optionList );
           Instruction tl1 = tom_make_TargetLanguageToInstruction(tom_make_ITL( "jtom.debug.TomDebugger.debugger.enteringPattern(\"" +debugKey + "\");\n")) ;
           Instruction tl2 = tom_make_TargetLanguageToInstruction(tom_make_ITL( "jtom.debug.TomDebugger.debugger.leavingPattern(\"" +debugKey + "\");\n")) ;
-          if(!hasDefaultCase(tom_optionList )) {
-            tom_instruction  = tom_make_UnamedBlock(tom_cons_list_concInstruction(tl1,tom_cons_list_concInstruction(tom_instruction,tom_cons_list_concInstruction(tl2,tom_empty_list_concInstruction())))) ;
+          if(!hasDefaultCase(optionList )) {
+            instruction  = tom_make_UnamedBlock(tom_cons_list_concInstruction(tl1,tom_cons_list_concInstruction(instruction,tom_cons_list_concInstruction(tl2,tom_empty_list_concInstruction())))) ;
           } else {
-            tom_instruction  = tom_make_UnamedBlock(tom_cons_list_concInstruction(tl1,tom_cons_list_concInstruction(tom_instruction,tom_empty_list_concInstruction()))) ;
+            instruction  = tom_make_UnamedBlock(tom_cons_list_concInstruction(tl1,tom_cons_list_concInstruction(instruction,tom_empty_list_concInstruction()))) ;
           }
         }
          
-        if(getLabel(tom_optionList ) != null) {
+        if(getLabel(optionList ) != null) {
             /*
              * if a label is assigned to a pattern (label:pattern -> action)
              * we generate corresponding labeled-block
              */
-          tom_instruction  = tom_make_NamedBlock(getLabel(tom_optionList) .getString(),tom_cons_list_concInstruction(tom_instruction,tom_empty_list_concInstruction()))
+          instruction  = tom_make_NamedBlock(getLabel(optionList) .getString(),tom_cons_list_concInstruction(instruction,tom_empty_list_concInstruction()))
  ;
           					 
         }
-        return tom_cons_list_concInstruction(tom_make_CompiledPattern(tom_get_slot_Automata_patternList(tom_match4_1_1),tom_instruction),tom_append_list_concInstruction(newList,tom_empty_list_concInstruction())) ;
-      }} }} }}}
+        return tom_cons_list_concInstruction(tom_make_CompiledPattern(patternList,instruction),tom_append_list_concInstruction(newList,tom_empty_list_concInstruction())) ;
+      }}}}}}}}} }}} }}}
  
     return null;
   }
@@ -235,18 +235,18 @@ public class TomKernelCompiler extends TomBase {
      { TomList tom_match5_1=(( TomList)termList);{ if(tom_is_fun_sym_emptyTomList(tom_match5_1) ||  false ) {
   
         return action;
-       } if(tom_is_fun_sym_manyTomList(tom_match5_1) ||  false ) { { TomTerm tom_match5_1_1=tom_get_slot_manyTomList_head(tom_match5_1); if(tom_is_fun_sym_Variable(tom_match5_1_1) ||  false ) {
+       } if(tom_is_fun_sym_manyTomList(tom_match5_1) ||  false ) { { TomTerm tom_match5_1_1=tom_get_slot_manyTomList_head(tom_match5_1); { TomList tom_match5_1_2=tom_get_slot_manyTomList_tail(tom_match5_1); if(tom_is_fun_sym_Variable(tom_match5_1_1) ||  false ) { { TomTerm var=tom_match5_1_1; { OptionList tom_match5_1_1_1=tom_get_slot_Variable_option(tom_match5_1_1); { TomType tom_match5_1_1_3=tom_get_slot_Variable_astType(tom_match5_1_1); { ConstraintList tom_match5_1_1_4=tom_get_slot_Variable_constraints(tom_match5_1_1); { OptionList optionList=tom_match5_1_1_1; { TomType termType=tom_match5_1_1_3; { ConstraintList constraints=tom_match5_1_1_4; { TomList termTail=tom_match5_1_2;
 
 
  
-        Instruction subAction = genSyntacticMatchingAutomata(action,tom_get_slot_manyTomList_tail(tom_match5_1) ,rootpath,indexTerm+1);
-        Expression source = tom_make_TomTermToExpression(tom_make_Variable(option(),tom_make_PositionName(path),tom_get_slot_Variable_astType(tom_match5_1_1),tom_empty_list_concConstraint())) ;
-        return buildLet(tom_match5_1_1 , source, subAction);
-       }} } if(tom_is_fun_sym_manyTomList(tom_match5_1) ||  false ) { { TomTerm tom_match5_1_1=tom_get_slot_manyTomList_head(tom_match5_1); if(tom_is_fun_sym_UnamedVariable(tom_match5_1_1) ||  false ) {          Instruction subAction = genSyntacticMatchingAutomata(action,tom_get_slot_manyTomList_tail(tom_match5_1) ,rootpath,indexTerm+1);         Expression source = tom_make_TomTermToExpression(tom_make_Variable(option(),tom_make_PositionName(path),tom_get_slot_UnamedVariable_astType(tom_match5_1_1),tom_empty_list_concConstraint())) ;         return buildLet(tom_match5_1_1 , source, subAction);        }} } if(tom_is_fun_sym_manyTomList(tom_match5_1) ||  false ) { { TomTerm tom_match5_1_1=tom_get_slot_manyTomList_head(tom_match5_1); if(tom_is_fun_sym_Appl(tom_match5_1_1) ||  false ) { { TomTerm tom_currentTerm=tom_match5_1_1; { NameList tom_match5_1_1_2=tom_get_slot_Appl_nameList(tom_match5_1_1); if(tom_is_fun_sym_concTomName(tom_match5_1_1_2) ||  false ) { { NameList tom_match5_1_1_2_list1=tom_match5_1_1_2; if(!(tom_is_empty_NameList(tom_match5_1_1_2_list1))) { { TomName tom_match5_1_1_2_1=tom_get_head_NameList(tom_match5_1_1_2_list1); if(tom_is_fun_sym_Name(tom_match5_1_1_2_1) ||  false ) { { TomList tom_termArgs=tom_get_slot_Appl_args(tom_match5_1_1);
+        Instruction subAction = genSyntacticMatchingAutomata(action,termTail ,rootpath,indexTerm+1);
+        Expression source = tom_make_TomTermToExpression(tom_make_Variable(option(),tom_make_PositionName(path),termType,tom_empty_list_concConstraint())) ;
+        return buildLet(var , source, subAction);
+      }}}}}}}} }}} } if(tom_is_fun_sym_manyTomList(tom_match5_1) ||  false ) { { TomTerm tom_match5_1_1=tom_get_slot_manyTomList_head(tom_match5_1); { TomList tom_match5_1_2=tom_get_slot_manyTomList_tail(tom_match5_1); if(tom_is_fun_sym_UnamedVariable(tom_match5_1_1) ||  false ) { { TomTerm var=tom_match5_1_1; { OptionList tom_match5_1_1_1=tom_get_slot_UnamedVariable_option(tom_match5_1_1); { TomType tom_match5_1_1_2=tom_get_slot_UnamedVariable_astType(tom_match5_1_1); { ConstraintList tom_match5_1_1_3=tom_get_slot_UnamedVariable_constraints(tom_match5_1_1); { OptionList optionList=tom_match5_1_1_1; { TomType termType=tom_match5_1_1_2; { ConstraintList constraints=tom_match5_1_1_3; { TomList termTail=tom_match5_1_2;          Instruction subAction = genSyntacticMatchingAutomata(action,termTail ,rootpath,indexTerm+1);         Expression source = tom_make_TomTermToExpression(tom_make_Variable(option(),tom_make_PositionName(path),termType,tom_empty_list_concConstraint())) ;         return buildLet(var , source, subAction);       }}}}}}}} }}} } if(tom_is_fun_sym_manyTomList(tom_match5_1) ||  false ) { { TomTerm tom_match5_1_1=tom_get_slot_manyTomList_head(tom_match5_1); { TomList tom_match5_1_2=tom_get_slot_manyTomList_tail(tom_match5_1); if(tom_is_fun_sym_Appl(tom_match5_1_1) ||  false ) { { TomTerm currentTerm=tom_match5_1_1; { OptionList tom_match5_1_1_1=tom_get_slot_Appl_option(tom_match5_1_1); { NameList tom_match5_1_1_2=tom_get_slot_Appl_nameList(tom_match5_1_1); { TomList tom_match5_1_1_3=tom_get_slot_Appl_args(tom_match5_1_1); { ConstraintList tom_match5_1_1_4=tom_get_slot_Appl_constraints(tom_match5_1_1); { OptionList optionList=tom_match5_1_1_1; if(tom_is_fun_sym_concTomName(tom_match5_1_1_2) ||  false ) { { NameList nameList=tom_match5_1_1_2; { NameList tom_match5_1_1_2_list1=tom_match5_1_1_2; if(!(tom_is_empty_NameList(tom_match5_1_1_2_list1))) { { TomName tom_match5_1_1_2_1=tom_get_head_NameList(tom_match5_1_1_2_list1);tom_match5_1_1_2_list1=tom_get_tail_NameList(tom_match5_1_1_2_list1); if(tom_is_fun_sym_Name(tom_match5_1_1_2_1) ||  false ) { { String  tom_match5_1_1_2_1_1=tom_get_slot_Name_string(tom_match5_1_1_2_1); { String  tomName=tom_match5_1_1_2_1_1; { TomList termArgs=tom_match5_1_1_3; { ConstraintList constraints=tom_match5_1_1_4; { TomList termTail=tom_match5_1_2;
 
  
-        Instruction subAction = genSyntacticMatchingAutomata(action,tom_get_slot_manyTomList_tail(tom_match5_1) ,rootpath,indexTerm+1);
-        TomSymbol tomSymbol = symbolTable().getSymbol(tom_get_slot_Name_string(tom_match5_1_1_2_1) );
+        Instruction subAction = genSyntacticMatchingAutomata(action,termTail ,rootpath,indexTerm+1);
+        TomSymbol tomSymbol = symbolTable().getSymbol(tomName );
         TomTypeList termTypeList = tomSymbol.getTypesToType().getDomain();
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         
@@ -266,7 +266,7 @@ public class TomKernelCompiler extends TomBase {
                                                            tomSymbol,path,subAction,
                                                            newSubjectVariableAST,
                                                            newSubjectVariableAST),
-                                                         tom_termArgs ,
+                                                         termArgs ,
                                                          indexSubterm,
                                                          ensureNotEmptyList);
           automataInstruction = tom_make_LetRef(newSubjectVariableAST,tom_make_TomTermToExpression(subjectVariableAST),automata)
@@ -282,7 +282,7 @@ public class TomKernelCompiler extends TomBase {
           Instruction automata = genArrayMatchingAutomata(new MatchingParameter(
                                                             tomSymbol,path,subAction,
                                                             newVariableListAST, newVariableIndexAST),
-                                                          tom_termArgs ,
+                                                          termArgs ,
                                                           indexSubterm,
                                                           ensureNotEmptyList);
           Expression glZero = tom_make_TomTermToExpression(tom_make_TargetLanguageToTomTerm(tom_make_ITL( "0"))) ;
@@ -292,8 +292,8 @@ public class TomKernelCompiler extends TomBase {
  ;
         } else {
           int indexSubterm = 0;
-          Instruction automata = genSyntacticMatchingAutomata(subAction,tom_termArgs ,path,indexSubterm+1);
-          automataInstruction = collectSubtermFromSubjectList(tom_termArgs,termTypeList,tomSymbol,subjectVariableAST,indexSubterm,path,automata) ; 
+          Instruction automata = genSyntacticMatchingAutomata(subAction,termArgs ,path,indexSubterm+1);
+          automataInstruction = collectSubtermFromSubjectList(termArgs,termTypeList,tomSymbol,subjectVariableAST,indexSubterm,path,automata) ; 
         }
         
           /* TODO:remove old things
@@ -303,12 +303,12 @@ public class TomKernelCompiler extends TomBase {
              }
           */
 
-        automataInstruction = compileConstraint(tom_currentTerm ,tom_make_TomTermToExpression(subjectVariableAST) ,automataInstruction);
+        automataInstruction = compileConstraint(currentTerm ,tom_make_TomTermToExpression(subjectVariableAST) ,automataInstruction);
 
-        Expression cond = expandDisjunction(tom_make_EqualFunctionSymbol(termType,subjectVariableAST,tom_currentTerm)) ;
+        Expression cond = expandDisjunction(tom_make_EqualFunctionSymbol(termType,subjectVariableAST,currentTerm)) ;
         Instruction test = tom_make_IfThenElse(cond,automataInstruction,tom_make_Nop()) ;
         return test;
-      } }} }} }}} }} }
+      }}}}} }} }}} }}}}}}} }}} }
 
  
         System.out.println("GenSyntacticMatchingAutomata strange term: " + termList);
@@ -335,31 +335,31 @@ public class TomKernelCompiler extends TomBase {
            * just check that the subject is empty
            */
         return genIsEmptyList(p .subjectListName,p .action,tom_make_Nop()) ;
-       } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); if(tom_is_fun_sym_Variable(tom_match6_1_1) ||  false ) {
+       } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); { TomList tom_match6_1_2=tom_get_slot_manyTomList_tail(tom_match6_1); if(tom_is_fun_sym_Variable(tom_match6_1_1) ||  false ) { { TomTerm var=tom_match6_1_1; { TomType tom_match6_1_1_3=tom_get_slot_Variable_astType(tom_match6_1_1); { TomType termType=tom_match6_1_1_3; { TomList termTail=tom_match6_1_2;
 
 
  
           /*
            * get an element and store it
            */
-        Instruction subAction = genListMatchingAutomata(p,tom_get_slot_manyTomList_tail(tom_match6_1) ,indexTerm+1,true);
-        return genGetElementList(p.subjectListName, tom_match6_1_1 , tom_get_slot_Variable_astType(tom_match6_1_1) , subAction, ensureNotEmptyList);
-       }} } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); if(tom_is_fun_sym_UnamedVariable(tom_match6_1_1) ||  false ) {            /*            * get an element and store it            */         Instruction subAction = genListMatchingAutomata(p,tom_get_slot_manyTomList_tail(tom_match6_1) ,indexTerm+1,true);         return genGetElementList(p.subjectListName, tom_match6_1_1 , tom_get_slot_UnamedVariable_astType(tom_match6_1_1) , subAction, ensureNotEmptyList);        }} } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); if(tom_is_fun_sym_Appl(tom_match6_1_1) ||  false ) { { NameList tom_match6_1_1_2=tom_get_slot_Appl_nameList(tom_match6_1_1); if(tom_is_fun_sym_concTomName(tom_match6_1_1_2) ||  false ) { { NameList tom_match6_1_1_2_list1=tom_match6_1_1_2; if(!(tom_is_empty_NameList(tom_match6_1_1_2_list1))) { { TomName tom_match6_1_1_2_1=tom_get_head_NameList(tom_match6_1_1_2_list1); if(tom_is_fun_sym_Name(tom_match6_1_1_2_1) ||  false ) {
+        Instruction subAction = genListMatchingAutomata(p,termTail ,indexTerm+1,true);
+        return genGetElementList(p.subjectListName, var , termType , subAction, ensureNotEmptyList);
+      }}}} }}} } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); { TomList tom_match6_1_2=tom_get_slot_manyTomList_tail(tom_match6_1); if(tom_is_fun_sym_UnamedVariable(tom_match6_1_1) ||  false ) { { TomTerm var=tom_match6_1_1; { TomType tom_match6_1_1_2=tom_get_slot_UnamedVariable_astType(tom_match6_1_1); { TomType termType=tom_match6_1_1_2; { TomList termTail=tom_match6_1_2;            /*            * get an element and store it            */         Instruction subAction = genListMatchingAutomata(p,termTail ,indexTerm+1,true);         return genGetElementList(p.subjectListName, var , termType , subAction, ensureNotEmptyList);       }}}} }}} } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); { TomList tom_match6_1_2=tom_get_slot_manyTomList_tail(tom_match6_1); if(tom_is_fun_sym_Appl(tom_match6_1_1) ||  false ) { { TomTerm term=tom_match6_1_1; { NameList tom_match6_1_1_2=tom_get_slot_Appl_nameList(tom_match6_1_1); if(tom_is_fun_sym_concTomName(tom_match6_1_1_2) ||  false ) { { NameList nameList=tom_match6_1_1_2; { NameList tom_match6_1_1_2_list1=tom_match6_1_1_2; if(!(tom_is_empty_NameList(tom_match6_1_1_2_list1))) { { TomName tom_match6_1_1_2_1=tom_get_head_NameList(tom_match6_1_1_2_list1);tom_match6_1_1_2_list1=tom_get_tail_NameList(tom_match6_1_1_2_list1); if(tom_is_fun_sym_Name(tom_match6_1_1_2_1) ||  false ) { { String  tom_match6_1_1_2_1_1=tom_get_slot_Name_string(tom_match6_1_1_2_1); { String  tomName=tom_match6_1_1_2_1_1; { TomList termTail=tom_match6_1_2;
 
  
           /*
            * get an element
            * perform syntactic matching
            */
-        Instruction subAction = genListMatchingAutomata(p,tom_get_slot_manyTomList_tail(tom_match6_1) ,indexTerm+1,true);
+        Instruction subAction = genListMatchingAutomata(p,termTail ,indexTerm+1,true);
 
-        subAction = genSyntacticMatchingAutomata(subAction,tom_cons_list_concTomTerm(tom_match6_1_1,tom_empty_list_concTomTerm()),p .path,indexTerm) ;
-        TomSymbol tomSymbol = symbolTable().getSymbol(tom_get_slot_Name_string(tom_match6_1_1_2_1) );
+        subAction = genSyntacticMatchingAutomata(subAction,tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm()),p .path,indexTerm) ;
+        TomSymbol tomSymbol = symbolTable().getSymbol(tomName );
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
         TomTerm var =  tom_make_Variable(option(),tom_make_PositionName(newPath),termType,tom_empty_list_concConstraint()) ;
         return genGetElementList(p.subjectListName, var, termType, subAction, ensureNotEmptyList);
-       }} }} }} }} } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); if(tom_is_fun_sym_VariableStar(tom_match6_1_1) ||  false ) { { TomTerm tom_var=tom_match6_1_1; { TomType tom_termType=tom_get_slot_VariableStar_astType(tom_match6_1_1); { TomList tom_termTail=tom_get_slot_manyTomList_tail(tom_match6_1);
+      }}} }} }}} }}} }}} } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); { TomList tom_match6_1_2=tom_get_slot_manyTomList_tail(tom_match6_1); if(tom_is_fun_sym_VariableStar(tom_match6_1_1) ||  false ) { { TomTerm var=tom_match6_1_1; { TomType tom_match6_1_1_3=tom_get_slot_VariableStar_astType(tom_match6_1_1); { TomType termType=tom_match6_1_1_3; { TomList termTail=tom_match6_1_2;
 
 
  
@@ -369,7 +369,7 @@ public class TomKernelCompiler extends TomBase {
            * - tail = only VariableStar or UnamedVariableStar
            * - tail = other
            */
-        if(tom_termTail .isEmpty()) {
+        if(termTail .isEmpty()) {
             /*
              * generate:
              * ---------
@@ -377,7 +377,7 @@ public class TomKernelCompiler extends TomBase {
              * ...
              */
           Expression source = tom_make_TomTermToExpression(tom_make_Ref(p .subjectListName)) ;
-          return buildLet(tom_var , source, p.action);
+          return buildLet(var , source, p.action);
         } else {
             /*
              * generate:
@@ -386,17 +386,17 @@ public class TomKernelCompiler extends TomBase {
              * LetRef end_i   = subjectList;
              * ...
              */
-          Instruction subAction = genListMatchingAutomata(p,tom_termTail ,indexTerm+1,false);
+          Instruction subAction = genListMatchingAutomata(p,termTail ,indexTerm+1,false);
           TomNumberList pathBegin = (TomNumberList) p.path.append(tom_make_Begin(makeNumber(indexTerm)) );
           TomNumberList pathEnd = (TomNumberList) p.path.append(tom_make_End(makeNumber(indexTerm)) );
-          TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),tom_termType,tom_empty_list_concConstraint()) ;
-          TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),tom_termType,tom_empty_list_concConstraint()) ;
+          TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),termType,tom_empty_list_concConstraint()) ;
+          TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),termType,tom_empty_list_concConstraint()) ;
 
           Expression source = tom_make_GetSliceList(p .symbol .getAstName(),variableBeginAST,tom_make_Ref(variableEndAST)) ;
-          Instruction let = buildLet(tom_var , source, subAction);
+          Instruction let = buildLet(var , source, subAction);
           Instruction tailExp = tom_make_Assign(variableEndAST,tom_make_GetTail(tom_make_Ref(variableEndAST))) ;
           Instruction loop;
-          if(containOnlyVariableStar(tom_termTail )) {
+          if(containOnlyVariableStar(termTail )) {
               /*
                * do {
                *   * SUBSTITUTION: E_i
@@ -439,7 +439,7 @@ public class TomKernelCompiler extends TomBase {
  ;
           return letBegin;
         }
-      }}} }} } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match6_1_1) ||  false ) { { TomTerm tom_var=tom_match6_1_1; { TomType tom_termType=tom_get_slot_UnamedVariableStar_astType(tom_match6_1_1); { TomList tom_termTail=tom_get_slot_manyTomList_tail(tom_match6_1);            /*            * 3 cases:            * - tail = emptyList            * - tail = only VariableStar or UnamedVariableStar            * - tail = other            */         if(tom_termTail .isEmpty()) {             /*              * generate:              * ---------              * Let E_n = subjectList;              * ...              */           Expression source = tom_make_TomTermToExpression(tom_make_Ref(p .subjectListName)) ;           return buildLet(tom_var , source, p.action);         } else {             /*              * generate:              * ---------              * Let begin_i = subjectList;              * LetRef end_i   = subjectList;              * ...              */           Instruction subAction = genListMatchingAutomata(p,tom_termTail ,indexTerm+1,false);           TomNumberList pathBegin = (TomNumberList) p.path.append(tom_make_Begin(makeNumber(indexTerm)) );           TomNumberList pathEnd = (TomNumberList) p.path.append(tom_make_End(makeNumber(indexTerm)) );           TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),tom_termType,tom_empty_list_concConstraint()) ;           TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),tom_termType,tom_empty_list_concConstraint()) ;            Expression source = tom_make_GetSliceList(p .symbol .getAstName(),variableBeginAST,tom_make_Ref(variableEndAST)) ;           Instruction let = buildLet(tom_var , source, subAction);           Instruction tailExp = tom_make_Assign(variableEndAST,tom_make_GetTail(tom_make_Ref(variableEndAST))) ;           Instruction loop;           if(containOnlyVariableStar(tom_termTail )) {               /*                * do {                *   * SUBSTITUTION: E_i                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);                *   ...                *   if(!IS_EMPTY_TomList(end_i) )                *     end_i = (TomList) GET_TAIL_TomList(end_i);                *   subjectList = end_i;                * } while( !IS_EMPTY_TomList(end_i) )                */             Instruction assign1 = genIsEmptyList(tom_make_Ref(variableEndAST),tom_make_Nop(),tailExp) ;             Instruction assign2 = tom_make_Assign(p .subjectListName,tom_make_TomTermToExpression(tom_make_Ref(variableEndAST))) ;             loop = tom_make_DoWhile(tom_make_UnamedBlock(tom_cons_list_concInstruction(let,tom_cons_list_concInstruction(assign1,tom_cons_list_concInstruction(assign2,tom_empty_list_concInstruction())))),tom_make_Not(tom_make_IsEmptyList(tom_make_Ref(variableEndAST)))) ;           } else {               /*                * case (X*,y,...)                * no longer necessary to check if the list is not empty                * to extract the 'y'                */                            /*                * while( !IS_EMPTY_TomList(end_i) ) {                *   subjectList = end_i;                *   * SUBSTITUTION: E_i                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);                *   ...                *   end_i = (TomList) GET_TAIL_TomList(end_i);                * }                 */              Instruction assign1 = tailExp;             Instruction letAssign = tom_make_LetAssign(p .subjectListName,tom_make_TomTermToExpression(tom_make_Ref(variableEndAST)),tom_make_UnamedBlock(tom_cons_list_concInstruction(let,tom_cons_list_concInstruction(assign1,tom_empty_list_concInstruction())))) ;             loop = tom_make_WhileDo(tom_make_Not(tom_make_IsEmptyList(tom_make_Ref(variableEndAST))),letAssign) ;           }           Instruction letEnd = tom_make_LetRef(variableEndAST,tom_make_TomTermToExpression(tom_make_Ref(p .subjectListName)),loop) ;           Instruction letBegin = tom_make_Let(variableBeginAST,tom_make_TomTermToExpression(tom_make_Ref(p .subjectListName)),letEnd) ;           return letBegin;         }       }}} }} }
+      }}}} }}} } if(tom_is_fun_sym_manyTomList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_manyTomList_head(tom_match6_1); { TomList tom_match6_1_2=tom_get_slot_manyTomList_tail(tom_match6_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match6_1_1) ||  false ) { { TomTerm var=tom_match6_1_1; { TomType tom_match6_1_1_2=tom_get_slot_UnamedVariableStar_astType(tom_match6_1_1); { TomType termType=tom_match6_1_1_2; { TomList termTail=tom_match6_1_2;            /*            * 3 cases:            * - tail = emptyList            * - tail = only VariableStar or UnamedVariableStar            * - tail = other            */         if(termTail .isEmpty()) {             /*              * generate:              * ---------              * Let E_n = subjectList;              * ...              */           Expression source = tom_make_TomTermToExpression(tom_make_Ref(p .subjectListName)) ;           return buildLet(var , source, p.action);         } else {             /*              * generate:              * ---------              * Let begin_i = subjectList;              * LetRef end_i   = subjectList;              * ...              */           Instruction subAction = genListMatchingAutomata(p,termTail ,indexTerm+1,false);           TomNumberList pathBegin = (TomNumberList) p.path.append(tom_make_Begin(makeNumber(indexTerm)) );           TomNumberList pathEnd = (TomNumberList) p.path.append(tom_make_End(makeNumber(indexTerm)) );           TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),termType,tom_empty_list_concConstraint()) ;           TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),termType,tom_empty_list_concConstraint()) ;            Expression source = tom_make_GetSliceList(p .symbol .getAstName(),variableBeginAST,tom_make_Ref(variableEndAST)) ;           Instruction let = buildLet(var , source, subAction);           Instruction tailExp = tom_make_Assign(variableEndAST,tom_make_GetTail(tom_make_Ref(variableEndAST))) ;           Instruction loop;           if(containOnlyVariableStar(termTail )) {               /*                * do {                *   * SUBSTITUTION: E_i                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);                *   ...                *   if(!IS_EMPTY_TomList(end_i) )                *     end_i = (TomList) GET_TAIL_TomList(end_i);                *   subjectList = end_i;                * } while( !IS_EMPTY_TomList(end_i) )                */             Instruction assign1 = genIsEmptyList(tom_make_Ref(variableEndAST),tom_make_Nop(),tailExp) ;             Instruction assign2 = tom_make_Assign(p .subjectListName,tom_make_TomTermToExpression(tom_make_Ref(variableEndAST))) ;             loop = tom_make_DoWhile(tom_make_UnamedBlock(tom_cons_list_concInstruction(let,tom_cons_list_concInstruction(assign1,tom_cons_list_concInstruction(assign2,tom_empty_list_concInstruction())))),tom_make_Not(tom_make_IsEmptyList(tom_make_Ref(variableEndAST)))) ;           } else {               /*                * case (X*,y,...)                * no longer necessary to check if the list is not empty                * to extract the 'y'                */                            /*                * while( !IS_EMPTY_TomList(end_i) ) {                *   subjectList = end_i;                *   * SUBSTITUTION: E_i                *   TomList E_i = GET_SLICE_TomList(begin_i,end_i);                *   ...                *   end_i = (TomList) GET_TAIL_TomList(end_i);                * }                 */              Instruction assign1 = tailExp;             Instruction letAssign = tom_make_LetAssign(p .subjectListName,tom_make_TomTermToExpression(tom_make_Ref(variableEndAST)),tom_make_UnamedBlock(tom_cons_list_concInstruction(let,tom_cons_list_concInstruction(assign1,tom_empty_list_concInstruction())))) ;             loop = tom_make_WhileDo(tom_make_Not(tom_make_IsEmptyList(tom_make_Ref(variableEndAST))),letAssign) ;           }           Instruction letEnd = tom_make_LetRef(variableEndAST,tom_make_TomTermToExpression(tom_make_Ref(p .subjectListName)),loop) ;           Instruction letBegin = tom_make_Let(variableBeginAST,tom_make_TomTermToExpression(tom_make_Ref(p .subjectListName)),letEnd) ;           return letBegin;         }       }}}} }}} }
 
  
         System.out.println("GenListMatchingAutomata strange termList: " + termList);
@@ -452,12 +452,12 @@ public class TomKernelCompiler extends TomBase {
      { TomList tom_match7_1=(( TomList)termList);{ if(tom_is_fun_sym_emptyTomList(tom_match7_1) ||  false ) {
  
         return true;
-       } if(tom_is_fun_sym_manyTomList(tom_match7_1) ||  false ) { if(tom_is_fun_sym_VariableStar(tom_get_slot_manyTomList_head(tom_match7_1)) ||  false ) {
+       } if(tom_is_fun_sym_manyTomList(tom_match7_1) ||  false ) { { TomTerm tom_match7_1_1=tom_get_slot_manyTomList_head(tom_match7_1); { TomList tom_match7_1_2=tom_get_slot_manyTomList_tail(tom_match7_1); if(tom_is_fun_sym_VariableStar(tom_match7_1_1) ||  false ) { { TomList termTail=tom_match7_1_2;
 
 
  
-        return containOnlyVariableStar(tom_get_slot_manyTomList_tail(tom_match7_1) );
-       } } if(tom_is_fun_sym_manyTomList(tom_match7_1) ||  false ) { if(tom_is_fun_sym_UnamedVariableStar(tom_get_slot_manyTomList_head(tom_match7_1)) ||  false ) {          return containOnlyVariableStar(tom_get_slot_manyTomList_tail(tom_match7_1) );        } }}}
+        return containOnlyVariableStar(termTail );
+      } }}} } if(tom_is_fun_sym_manyTomList(tom_match7_1) ||  false ) { { TomTerm tom_match7_1_1=tom_get_slot_manyTomList_head(tom_match7_1); { TomList tom_match7_1_2=tom_get_slot_manyTomList_tail(tom_match7_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match7_1_1) ||  false ) { { TomList termTail=tom_match7_1_2;          return containOnlyVariableStar(termTail );       } }}} }}}
  
     return false;
   }
@@ -516,32 +516,32 @@ public class TomKernelCompiler extends TomBase {
            * just check that the subject is empty
            */
         return genIsEmptyArray(p .subjectListName,p .subjectListIndex,p .action,tom_make_Nop()) ;
-       } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); if(tom_is_fun_sym_Variable(tom_match8_1_1) ||  false ) {
+       } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); { TomList tom_match8_1_2=tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_Variable(tom_match8_1_1) ||  false ) { { TomTerm var=tom_match8_1_1; { OptionList tom_match8_1_1_1=tom_get_slot_Variable_option(tom_match8_1_1); { TomType tom_match8_1_1_3=tom_get_slot_Variable_astType(tom_match8_1_1); { OptionList optionList=tom_match8_1_1_1; { TomType termType=tom_match8_1_1_3; { TomList termTail=tom_match8_1_2;
 
 
  
           /*
            * get an element and store it
            */
-        Instruction subAction = genArrayMatchingAutomata(p,tom_get_slot_manyTomList_tail(tom_match8_1) ,indexTerm+1,true);
-        return genGetElementArray(p.subjectListName, p.subjectListIndex, tom_match8_1_1 , tom_get_slot_Variable_astType(tom_match8_1_1) , subAction, ensureNotEmptyList);
-       }} } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); if(tom_is_fun_sym_UnamedVariable(tom_match8_1_1) ||  false ) {            /*            * get an element and store it            */         Instruction subAction = genArrayMatchingAutomata(p,tom_get_slot_manyTomList_tail(tom_match8_1) ,indexTerm+1,true);         return genGetElementArray(p.subjectListName, p.subjectListIndex, tom_match8_1_1 , tom_get_slot_UnamedVariable_astType(tom_match8_1_1) , subAction, ensureNotEmptyList);        }} } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); if(tom_is_fun_sym_Appl(tom_match8_1_1) ||  false ) { { NameList tom_match8_1_1_2=tom_get_slot_Appl_nameList(tom_match8_1_1); if(tom_is_fun_sym_concTomName(tom_match8_1_1_2) ||  false ) { { NameList tom_match8_1_1_2_list1=tom_match8_1_1_2; if(!(tom_is_empty_NameList(tom_match8_1_1_2_list1))) { { TomName tom_match8_1_1_2_1=tom_get_head_NameList(tom_match8_1_1_2_list1); if(tom_is_fun_sym_Name(tom_match8_1_1_2_1) ||  false ) {
+        Instruction subAction = genArrayMatchingAutomata(p,termTail ,indexTerm+1,true);
+        return genGetElementArray(p.subjectListName, p.subjectListIndex, var , termType , subAction, ensureNotEmptyList);
+      }}}}}} }}} } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); { TomList tom_match8_1_2=tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_UnamedVariable(tom_match8_1_1) ||  false ) { { TomTerm var=tom_match8_1_1; { OptionList tom_match8_1_1_1=tom_get_slot_UnamedVariable_option(tom_match8_1_1); { TomType tom_match8_1_1_2=tom_get_slot_UnamedVariable_astType(tom_match8_1_1); { OptionList optionList=tom_match8_1_1_1; { TomType termType=tom_match8_1_1_2; { TomList termTail=tom_match8_1_2;            /*            * get an element and store it            */         Instruction subAction = genArrayMatchingAutomata(p,termTail ,indexTerm+1,true);         return genGetElementArray(p.subjectListName, p.subjectListIndex, var , termType , subAction, ensureNotEmptyList);       }}}}}} }}} } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); { TomList tom_match8_1_2=tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_Appl(tom_match8_1_1) ||  false ) { { TomTerm term=tom_match8_1_1; { NameList tom_match8_1_1_2=tom_get_slot_Appl_nameList(tom_match8_1_1); if(tom_is_fun_sym_concTomName(tom_match8_1_1_2) ||  false ) { { NameList nameList=tom_match8_1_1_2; { NameList tom_match8_1_1_2_list1=tom_match8_1_1_2; if(!(tom_is_empty_NameList(tom_match8_1_1_2_list1))) { { TomName tom_match8_1_1_2_1=tom_get_head_NameList(tom_match8_1_1_2_list1);tom_match8_1_1_2_list1=tom_get_tail_NameList(tom_match8_1_1_2_list1); if(tom_is_fun_sym_Name(tom_match8_1_1_2_1) ||  false ) { { String  tom_match8_1_1_2_1_1=tom_get_slot_Name_string(tom_match8_1_1_2_1); { String  tomName=tom_match8_1_1_2_1_1; { TomList termTail=tom_match8_1_2;
 
  
           /*
            * get an element
            * perform syntactic matching
            */
-        Instruction subAction = genArrayMatchingAutomata(p,tom_get_slot_manyTomList_tail(tom_match8_1) ,indexTerm+1,true);
+        Instruction subAction = genArrayMatchingAutomata(p,termTail ,indexTerm+1,true);
 
-        subAction = genSyntacticMatchingAutomata(subAction,tom_cons_list_concTomTerm(tom_match8_1_1,tom_empty_list_concTomTerm()),p .path,indexTerm) ;
-        TomSymbol tomSymbol = symbolTable().getSymbol(tom_get_slot_Name_string(tom_match8_1_1_2_1) );
+        subAction = genSyntacticMatchingAutomata(subAction,tom_cons_list_concTomTerm(term,tom_empty_list_concTomTerm()),p .path,indexTerm) ;
+        TomSymbol tomSymbol = symbolTable().getSymbol(tomName );
         TomType termType = tomSymbol.getTypesToType().getCodomain();
         TomNumberList newPath  = appendNumber(indexTerm,p.path);
         TomTerm var =  tom_make_Variable(option(),tom_make_PositionName(newPath),termType,tom_empty_list_concConstraint()) ;
 
         return genGetElementArray(p.subjectListName, p.subjectListIndex, var, termType, subAction, ensureNotEmptyList);
-       }} }} }} }} } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); if(tom_is_fun_sym_VariableStar(tom_match8_1_1) ||  false ) { { TomTerm tom_var=tom_match8_1_1; { TomList tom_termTail=tom_get_slot_manyTomList_tail(tom_match8_1);
+      }}} }} }}} }}} }}} } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); { TomList tom_match8_1_2=tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_VariableStar(tom_match8_1_1) ||  false ) { { TomTerm var=tom_match8_1_1; { OptionList tom_match8_1_1_1=tom_get_slot_VariableStar_option(tom_match8_1_1); { TomType tom_match8_1_1_3=tom_get_slot_VariableStar_astType(tom_match8_1_1); { OptionList optionList=tom_match8_1_1_1; { TomType termType=tom_match8_1_1_3; { TomList termTail=tom_match8_1_2;
 
 
  
@@ -551,7 +551,7 @@ public class TomKernelCompiler extends TomBase {
            * - tail = only VariableStar or UnamedVariableStar
            * - tail = other
            */
-        if(tom_termTail .isEmpty()) {
+        if(termTail .isEmpty()) {
             /*
              * generate:
              * ---------
@@ -563,7 +563,7 @@ public class TomKernelCompiler extends TomBase {
 
 
  ;
-          Instruction let = buildLet(tom_var , source, p.action);
+          Instruction let = buildLet(var , source, p.action);
           return let;
         } else {
           /*
@@ -573,7 +573,7 @@ public class TomKernelCompiler extends TomBase {
            * int end_i   = subjectIndex;
            * ...
            */
-          Instruction subAction = genArrayMatchingAutomata(p,tom_termTail ,indexTerm+1,false);
+          Instruction subAction = genArrayMatchingAutomata(p,termTail ,indexTerm+1,false);
           TomNumberList pathBegin = (TomNumberList) p.path.append(tom_make_Begin(makeNumber(indexTerm)) );
           TomNumberList pathEnd = (TomNumberList) p.path.append(tom_make_End(makeNumber(indexTerm)) );
           TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),symbolTable() .getIntType(),tom_empty_list_concConstraint()) ;
@@ -584,10 +584,10 @@ public class TomKernelCompiler extends TomBase {
 
  ;
 
-          Instruction let = buildLet(tom_var , source, subAction);
+          Instruction let = buildLet(var , source, subAction);
           Instruction increment = tom_make_Assign(variableEndAST,tom_make_AddOne(tom_make_Ref(variableEndAST))) ;
           Instruction loop;
-          if(containOnlyVariableStar(tom_termTail )) {
+          if(containOnlyVariableStar(termTail )) {
             /*
              * do {
              *   * SUBSTITUTION: E_i
@@ -624,7 +624,7 @@ public class TomKernelCompiler extends TomBase {
  ;
           return letBegin;
         }
-      }} }} } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match8_1_1) ||  false ) { { TomTerm tom_var=tom_match8_1_1; { TomList tom_termTail=tom_get_slot_manyTomList_tail(tom_match8_1);            /*            * 3 cases:            * - tail = emptyList            * - tail = only VariableStar or UnamedVariableStar            * - tail = other            */         if(tom_termTail .isEmpty()) {             /*              * generate:              * ---------              * Let E_n = GET_SLICE_L(subjectList,subjectIndex,GET_SIZE_L(subjectList));              * ...              */           Expression source = tom_make_GetSliceArray(p .symbol .getAstName(),tom_make_Ref(p .subjectListName),tom_make_Ref(p .subjectListIndex),tom_make_ExpressionToTomTerm(tom_make_GetSize(p .subjectListName))) ;           Instruction let = buildLet(tom_var , source, p.action);           return let;         } else {           /*            * generate:            * ---------            * int begin_i = subjectIndex;            * int end_i   = subjectIndex;            * ...            */           Instruction subAction = genArrayMatchingAutomata(p,tom_termTail ,indexTerm+1,false);           TomNumberList pathBegin = (TomNumberList) p.path.append(tom_make_Begin(makeNumber(indexTerm)) );           TomNumberList pathEnd = (TomNumberList) p.path.append(tom_make_End(makeNumber(indexTerm)) );           TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),symbolTable() .getIntType(),tom_empty_list_concConstraint()) ;           TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),symbolTable() .getIntType(),tom_empty_list_concConstraint()) ;            Expression source = tom_make_GetSliceArray(p .symbol .getAstName(),tom_make_Ref(p .subjectListName),variableBeginAST,tom_make_Ref(variableEndAST)) ;            Instruction let = buildLet(tom_var , source, subAction);           Instruction increment = tom_make_Assign(variableEndAST,tom_make_AddOne(tom_make_Ref(variableEndAST))) ;           Instruction loop;           if(containOnlyVariableStar(tom_termTail )) {             /*              * do {              *   * SUBSTITUTION: E_i              *   TomList E_i = GET_SLICE_TomList(subjectList,begin_i,end_i);              *   ...              *   end_i++;              *   subjectIndex = end_i;              * } while( !IS_EMPTY_TomList(subjectList) )              */             Instruction assign = tom_make_Assign(p .subjectListIndex,tom_make_TomTermToExpression(tom_make_Ref(variableEndAST))) ;                          loop = tom_make_DoWhile(tom_make_UnamedBlock(tom_cons_list_concInstruction(let,tom_cons_list_concInstruction(increment,tom_cons_list_concInstruction(assign,tom_empty_list_concInstruction())))),tom_make_Not(tom_make_IsEmptyArray(tom_make_Ref(p .subjectListName),tom_make_Ref(p .subjectListIndex)))) ;           } else {             /*              * while( !IS_EMPTY_TomList(end_isubjectList) ) {              *   * SUBSTITUTION: E_i              *   TomList E_i = GET_SLICE_TomList(subjectList,begin_i,end_i);              *   ...              *   end_i++;              *   subjectIndex = end_i;              * }               */             Instruction letAssign = tom_make_LetAssign(p .subjectListIndex,tom_make_TomTermToExpression(tom_make_Ref(variableEndAST)),tom_make_UnamedBlock(tom_cons_list_concInstruction(let,tom_cons_list_concInstruction(increment,tom_empty_list_concInstruction())))) ;             loop = tom_make_WhileDo(tom_make_Not(tom_make_IsEmptyArray(tom_make_Ref(p .subjectListName),tom_make_Ref(variableEndAST))),letAssign) ;                        }           Instruction letEnd = tom_make_LetRef(variableEndAST,tom_make_TomTermToExpression(tom_make_Ref(p .subjectListIndex)),loop) ;           Instruction letBegin = tom_make_Let(variableBeginAST,tom_make_TomTermToExpression(tom_make_Ref(p .subjectListIndex)),letEnd) ;           return letBegin;         }       }} }} }
+      }}}}}} }}} } if(tom_is_fun_sym_manyTomList(tom_match8_1) ||  false ) { { TomTerm tom_match8_1_1=tom_get_slot_manyTomList_head(tom_match8_1); { TomList tom_match8_1_2=tom_get_slot_manyTomList_tail(tom_match8_1); if(tom_is_fun_sym_UnamedVariableStar(tom_match8_1_1) ||  false ) { { TomTerm var=tom_match8_1_1; { OptionList tom_match8_1_1_1=tom_get_slot_UnamedVariableStar_option(tom_match8_1_1); { TomType tom_match8_1_1_2=tom_get_slot_UnamedVariableStar_astType(tom_match8_1_1); { OptionList optionList=tom_match8_1_1_1; { TomType termType=tom_match8_1_1_2; { TomList termTail=tom_match8_1_2;            /*            * 3 cases:            * - tail = emptyList            * - tail = only VariableStar or UnamedVariableStar            * - tail = other            */         if(termTail .isEmpty()) {             /*              * generate:              * ---------              * Let E_n = GET_SLICE_L(subjectList,subjectIndex,GET_SIZE_L(subjectList));              * ...              */           Expression source = tom_make_GetSliceArray(p .symbol .getAstName(),tom_make_Ref(p .subjectListName),tom_make_Ref(p .subjectListIndex),tom_make_ExpressionToTomTerm(tom_make_GetSize(p .subjectListName))) ;           Instruction let = buildLet(var , source, p.action);           return let;         } else {           /*            * generate:            * ---------            * int begin_i = subjectIndex;            * int end_i   = subjectIndex;            * ...            */           Instruction subAction = genArrayMatchingAutomata(p,termTail ,indexTerm+1,false);           TomNumberList pathBegin = (TomNumberList) p.path.append(tom_make_Begin(makeNumber(indexTerm)) );           TomNumberList pathEnd = (TomNumberList) p.path.append(tom_make_End(makeNumber(indexTerm)) );           TomTerm variableBeginAST = tom_make_Variable(option(),tom_make_PositionName(pathBegin),symbolTable() .getIntType(),tom_empty_list_concConstraint()) ;           TomTerm variableEndAST   = tom_make_Variable(option(),tom_make_PositionName(pathEnd),symbolTable() .getIntType(),tom_empty_list_concConstraint()) ;            Expression source = tom_make_GetSliceArray(p .symbol .getAstName(),tom_make_Ref(p .subjectListName),variableBeginAST,tom_make_Ref(variableEndAST)) ;            Instruction let = buildLet(var , source, subAction);           Instruction increment = tom_make_Assign(variableEndAST,tom_make_AddOne(tom_make_Ref(variableEndAST))) ;           Instruction loop;           if(containOnlyVariableStar(termTail )) {             /*              * do {              *   * SUBSTITUTION: E_i              *   TomList E_i = GET_SLICE_TomList(subjectList,begin_i,end_i);              *   ...              *   end_i++;              *   subjectIndex = end_i;              * } while( !IS_EMPTY_TomList(subjectList) )              */             Instruction assign = tom_make_Assign(p .subjectListIndex,tom_make_TomTermToExpression(tom_make_Ref(variableEndAST))) ;                          loop = tom_make_DoWhile(tom_make_UnamedBlock(tom_cons_list_concInstruction(let,tom_cons_list_concInstruction(increment,tom_cons_list_concInstruction(assign,tom_empty_list_concInstruction())))),tom_make_Not(tom_make_IsEmptyArray(tom_make_Ref(p .subjectListName),tom_make_Ref(p .subjectListIndex)))) ;           } else {             /*              * while( !IS_EMPTY_TomList(end_isubjectList) ) {              *   * SUBSTITUTION: E_i              *   TomList E_i = GET_SLICE_TomList(subjectList,begin_i,end_i);              *   ...              *   end_i++;              *   subjectIndex = end_i;              * }               */             Instruction letAssign = tom_make_LetAssign(p .subjectListIndex,tom_make_TomTermToExpression(tom_make_Ref(variableEndAST)),tom_make_UnamedBlock(tom_cons_list_concInstruction(let,tom_cons_list_concInstruction(increment,tom_empty_list_concInstruction())))) ;             loop = tom_make_WhileDo(tom_make_Not(tom_make_IsEmptyArray(tom_make_Ref(p .subjectListName),tom_make_Ref(variableEndAST))),letAssign) ;                        }           Instruction letEnd = tom_make_LetRef(variableEndAST,tom_make_TomTermToExpression(tom_make_Ref(p .subjectListIndex)),loop) ;           Instruction letBegin = tom_make_Let(variableBeginAST,tom_make_TomTermToExpression(tom_make_Ref(p .subjectListIndex)),letEnd) ;           return letBegin;         }       }}}}}} }}} }
 
 
  
@@ -683,13 +683,13 @@ public class TomKernelCompiler extends TomBase {
                                                     int indexSubterm, TomNumberList path, Instruction body) {
     TomName termNameAST = tomSymbol.getAstName();
      { TomList tom_match9_1=(( TomList)termArgList);{ if(tom_is_fun_sym_emptyTomList(tom_match9_1) ||  false ) {
-  return body;  } if(tom_is_fun_sym_manyTomList(tom_match9_1) ||  false ) { { TomTerm tom_subtermArg=tom_get_slot_manyTomList_head(tom_match9_1);
+  return body;  } if(tom_is_fun_sym_manyTomList(tom_match9_1) ||  false ) { { TomTerm tom_match9_1_1=tom_get_slot_manyTomList_head(tom_match9_1); { TomList tom_match9_1_2=tom_get_slot_manyTomList_tail(tom_match9_1); { TomTerm subtermArg=tom_match9_1_1; { TomList tail=tom_match9_1_2;
 
  
-        body = collectSubtermFromSubjectList(tom_get_slot_manyTomList_tail(tom_match9_1) ,termTypeList.getTail(),
+        body = collectSubtermFromSubjectList(tail ,termTypeList.getTail(),
                                              tomSymbol,subjectVariableAST,
                                              indexSubterm+1,path,body);
-        if(tom_subtermArg .isUnamedVariable() && !isAnnotedVariable(tom_subtermArg )) {
+        if(subtermArg .isUnamedVariable() && !isAnnotedVariable(subtermArg )) {
             // This is an optimisation 
             // Do not assign the subterm: skip the subterm 
           return body;
@@ -706,7 +706,7 @@ public class TomKernelCompiler extends TomBase {
           TomTerm newVariableAST = tom_make_Variable(option(),tom_make_PositionName(newPath),subtermType,tom_empty_list_concConstraint()) ;
           return tom_make_Let(newVariableAST,getSubtermAST,body) ;
         }
-      } }}}
+      }}}} }}}
 
  
     return tom_make_Nop() ;
@@ -714,15 +714,15 @@ public class TomKernelCompiler extends TomBase {
 
   private Expression expandDisjunction(Expression exp) {
     Expression cond = tom_make_FalseTL() ;
-     { Expression tom_match10_1=(( Expression)exp);{ if(tom_is_fun_sym_EqualFunctionSymbol(tom_match10_1) ||  false ) { { TomTerm tom_match10_1_3=tom_get_slot_EqualFunctionSymbol_exp2(tom_match10_1); if(tom_is_fun_sym_Appl(tom_match10_1_3) ||  false ) { { NameList tom_nameList=tom_get_slot_Appl_nameList(tom_match10_1_3);
+     { Expression tom_match10_1=(( Expression)exp);{ if(tom_is_fun_sym_EqualFunctionSymbol(tom_match10_1) ||  false ) { { TomType tom_match10_1_1=tom_get_slot_EqualFunctionSymbol_astType(tom_match10_1); { TomTerm tom_match10_1_2=tom_get_slot_EqualFunctionSymbol_exp1(tom_match10_1); { TomTerm tom_match10_1_3=tom_get_slot_EqualFunctionSymbol_exp2(tom_match10_1); { TomType termType=tom_match10_1_1; { TomTerm exp1=tom_match10_1_2; if(tom_is_fun_sym_Appl(tom_match10_1_3) ||  false ) { { OptionList tom_match10_1_3_1=tom_get_slot_Appl_option(tom_match10_1_3); { NameList tom_match10_1_3_2=tom_get_slot_Appl_nameList(tom_match10_1_3); { TomList tom_match10_1_3_3=tom_get_slot_Appl_args(tom_match10_1_3); { OptionList option=tom_match10_1_3_1; { NameList nameList=tom_match10_1_3_2; { TomList l=tom_match10_1_3_3;
  
-        while(!tom_nameList .isEmpty()) {
-          TomName name = tom_nameList .getHead();
-          Expression check = tom_make_EqualFunctionSymbol(tom_get_slot_EqualFunctionSymbol_astType(tom_match10_1),tom_get_slot_EqualFunctionSymbol_exp1(tom_match10_1),tom_make_Appl(tom_get_slot_Appl_option(tom_match10_1_3),tom_cons_list_concTomName(name,tom_empty_list_concTomName()),tom_get_slot_Appl_args(tom_match10_1_3),tom_empty_list_concConstraint())) ;
+        while(!nameList .isEmpty()) {
+          TomName name = nameList .getHead();
+          Expression check = tom_make_EqualFunctionSymbol(termType,exp1,tom_make_Appl(option,tom_cons_list_concTomName(name,tom_empty_list_concTomName()),l,tom_empty_list_concConstraint())) ;
           cond = tom_make_Or(check,cond) ;
-          tom_nameList  = tom_nameList .getTail();
+          nameList  = nameList .getTail();
         }
-      } }} }}}
+      }}}}}} }}}}}} }}}
  
     return cond;
   }
@@ -736,18 +736,18 @@ public class TomKernelCompiler extends TomBase {
   }
 
 	private Instruction compileConstraint(TomTerm subject, Expression source, Instruction body) {
-     { TomTerm tom_match11_1=(( TomTerm)subject);{ if(tom_is_fun_sym_VariableStar(tom_match11_1) || tom_is_fun_sym_Variable(tom_match11_1) ||  false ) {
+     { TomTerm tom_match11_1=(( TomTerm)subject);{ if(tom_is_fun_sym_VariableStar(tom_match11_1) || tom_is_fun_sym_Variable(tom_match11_1) ||  false ) { { ConstraintList tom_match11_1_4=tom_get_slot_Variable_constraints(tom_match11_1); { ConstraintList constraints=tom_match11_1_4;
  
-				return buildConstraint(tom_get_slot_Variable_constraints(tom_match11_1) ,tom_make_TomTermToExpression(subject) ,body);
-       } if(tom_is_fun_sym_UnamedVariableStar(tom_match11_1) || tom_is_fun_sym_UnamedVariable(tom_match11_1) ||  false ) {
+				return buildConstraint(constraints ,tom_make_TomTermToExpression(subject) ,body);
+      }} } if(tom_is_fun_sym_UnamedVariableStar(tom_match11_1) || tom_is_fun_sym_UnamedVariable(tom_match11_1) ||  false ) { { ConstraintList tom_match11_1_3=tom_get_slot_UnamedVariable_constraints(tom_match11_1); { ConstraintList constraints=tom_match11_1_3;
 
  
-				return buildConstraint(tom_get_slot_UnamedVariable_constraints(tom_match11_1) ,source,body);
-       } if(tom_is_fun_sym_Appl(tom_match11_1) ||  false ) {
+				return buildConstraint(constraints ,source,body);
+      }} } if(tom_is_fun_sym_Appl(tom_match11_1) ||  false ) { { ConstraintList tom_match11_1_4=tom_get_slot_Appl_constraints(tom_match11_1); { ConstraintList constraints=tom_match11_1_4;
 
  
-				return buildConstraint(tom_get_slot_Appl_constraints(tom_match11_1) ,source,body);
-       }
+				return buildConstraint(constraints ,source,body);
+      }} }
 
  
         throw new TomRuntimeException(new Throwable("compileConstraint: strange subject: " + subject));
@@ -756,26 +756,26 @@ public class TomKernelCompiler extends TomBase {
   }
 
 	private Instruction buildConstraint(ConstraintList constraints, Expression source, Instruction body) {
-     { ConstraintList tom_match12_1=(( ConstraintList)constraints);{ if(tom_is_fun_sym_concConstraint(tom_match12_1) ||  false ) { if(tom_is_empty_ConstraintList(tom_match12_1)) {
+     { ConstraintList tom_match12_1=(( ConstraintList)constraints);{ if(tom_is_fun_sym_concConstraint(tom_match12_1) ||  false ) { { ConstraintList tom_match12_1_list1=tom_match12_1; if(tom_is_empty_ConstraintList(tom_match12_1_list1)) {
  
         return body;
-       } } if(tom_is_fun_sym_concConstraint(tom_match12_1) ||  false ) { { ConstraintList tom_match12_1_list1=tom_match12_1; if(!(tom_is_empty_ConstraintList(tom_match12_1_list1))) { { Constraint tom_match12_1_1=tom_get_head_ConstraintList(tom_match12_1_list1); if(tom_is_fun_sym_Equal(tom_match12_1_1) ||  false ) { { TomTerm tom_var=tom_get_slot_Equal_variable(tom_match12_1_1);
+       }} } if(tom_is_fun_sym_concConstraint(tom_match12_1) ||  false ) { { ConstraintList tom_match12_1_list1=tom_match12_1; if(!(tom_is_empty_ConstraintList(tom_match12_1_list1))) { { Constraint tom_match12_1_1=tom_get_head_ConstraintList(tom_match12_1_list1);tom_match12_1_list1=tom_get_tail_ConstraintList(tom_match12_1_list1); if(tom_is_fun_sym_Equal(tom_match12_1_1) ||  false ) { { TomTerm tom_match12_1_1_1=tom_get_slot_Equal_variable(tom_match12_1_1); { TomTerm var=tom_match12_1_1_1; { ConstraintList tail=tom_match12_1_list1;
 
  
           //System.out.println("constraint: " + source + " EqualTo " + var);
-        Instruction subBody = compileConstraint(tom_var ,source,body);
-        return buildConstraint(tom_get_tail_ConstraintList(tom_match12_1_list1),source,tom_make_IfThenElse(tom_make_EqualTerm(tom_var,tom_make_ExpressionToTomTerm(source)),subBody,tom_make_Nop())) ;
-      } }} }} } if(tom_is_fun_sym_concConstraint(tom_match12_1) ||  false ) { { ConstraintList tom_match12_1_list1=tom_match12_1; if(!(tom_is_empty_ConstraintList(tom_match12_1_list1))) { { Constraint tom_match12_1_1=tom_get_head_ConstraintList(tom_match12_1_list1); if(tom_is_fun_sym_AssignTo(tom_match12_1_1) ||  false ) { { TomTerm tom_match12_1_1_1=tom_get_slot_AssignTo_variable(tom_match12_1_1); if(tom_is_fun_sym_VariableStar(tom_match12_1_1_1) || tom_is_fun_sym_Variable(tom_match12_1_1_1) ||  false ) { { TomTerm tom_var=tom_match12_1_1_1;
+        Instruction subBody = compileConstraint(var ,source,body);
+        return buildConstraint(tail,source,tom_make_IfThenElse(tom_make_EqualTerm(var,tom_make_ExpressionToTomTerm(source)),subBody,tom_make_Nop())) ;
+      }}} }} }} } if(tom_is_fun_sym_concConstraint(tom_match12_1) ||  false ) { { ConstraintList tom_match12_1_list1=tom_match12_1; if(!(tom_is_empty_ConstraintList(tom_match12_1_list1))) { { Constraint tom_match12_1_1=tom_get_head_ConstraintList(tom_match12_1_list1);tom_match12_1_list1=tom_get_tail_ConstraintList(tom_match12_1_list1); if(tom_is_fun_sym_AssignTo(tom_match12_1_1) ||  false ) { { TomTerm tom_match12_1_1_1=tom_get_slot_AssignTo_variable(tom_match12_1_1); if(tom_is_fun_sym_VariableStar(tom_match12_1_1_1) || tom_is_fun_sym_Variable(tom_match12_1_1_1) ||  false ) { { TomTerm var=tom_match12_1_1_1; { ConstraintList tail=tom_match12_1_list1;
 
  
           //System.out.println("constraint: " + source + " AssignTo " + var);
-        Instruction subBody = compileConstraint(tom_var ,source,body);
-        return buildConstraint(tom_get_tail_ConstraintList(tom_match12_1_list1),source,tom_make_Let(tom_var,source,subBody)) ;
-      } }} }} }} } if(tom_is_fun_sym_concConstraint(tom_match12_1) ||  false ) { { ConstraintList tom_match12_1_list1=tom_match12_1; if(!(tom_is_empty_ConstraintList(tom_match12_1_list1))) { { Constraint tom_head=tom_get_head_ConstraintList(tom_match12_1_list1);
+        Instruction subBody = compileConstraint(var ,source,body);
+        return buildConstraint(tail,source,tom_make_Let(var,source,subBody)) ;
+      }} }} }} }} } if(tom_is_fun_sym_concConstraint(tom_match12_1) ||  false ) { { ConstraintList tom_match12_1_list1=tom_match12_1; if(!(tom_is_empty_ConstraintList(tom_match12_1_list1))) { { Constraint head=tom_get_head_ConstraintList(tom_match12_1_list1);tom_match12_1_list1=tom_get_tail_ConstraintList(tom_match12_1_list1); { ConstraintList tail=tom_match12_1_list1;
 
  
-        throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraint: " + tom_head ));
-      } }} }}}
+        throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraint: " + head ));
+      }} }} }}}
  
     throw new TomRuntimeException(new Throwable("buildConstraint: unknown constraints: " + constraints));
 	}

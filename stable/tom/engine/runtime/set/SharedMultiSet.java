@@ -71,11 +71,11 @@ public class SharedMultiSet extends ATermSet {
         public boolean apply(ATerm t) {
           if(t instanceof JGTreeSet) {
              { JGTreeSet tom_match1_1=(( JGTreeSet)t);{ if(tom_is_fun_sym_emptySet(tom_match1_1) ||  false ) {
- return false; } if(tom_is_fun_sym_pair(tom_match1_1) ||  false ) {
+ return false; } if(tom_is_fun_sym_pair(tom_match1_1) ||  false ) { { aterm.ATerm tom_match1_1_1=tom_get_slot_pair_value(tom_match1_1); { aterm.ATerm x=tom_match1_1_1;
  
-                res.add(tom_get_slot_pair_value(tom_match1_1) );
+                res.add(x );
                 return false;
-               }
+              }} }
  return true;}}
  
           } else {
@@ -109,9 +109,9 @@ public class SharedMultiSet extends ATermSet {
   
   protected int size(JGTreeSet t) {
      { JGTreeSet tom_match2_1=(( JGTreeSet)t);{ if(tom_is_fun_sym_emptySet(tom_match2_1) ||  false ) {
-  return 0;  } if(tom_is_fun_sym_pair(tom_match2_1) ||  false ) {
-  return 1;  } if(tom_is_fun_sym_branch(tom_match2_1) ||  false ) {
- return size(tom_get_slot_branch_left(tom_match2_1) ) + size(tom_get_slot_branch_right(tom_match2_1) ); }}}
+  return 0;  } if(tom_is_fun_sym_pair(tom_match2_1) ||  false ) { { aterm.ATerm tom_match2_1_1=tom_get_slot_pair_value(tom_match2_1); { aterm.ATerm x=tom_match2_1_1;
+  return 1; }} } if(tom_is_fun_sym_branch(tom_match2_1) ||  false ) { { JGTreeSet tom_match2_1_1=tom_get_slot_branch_left(tom_match2_1); { JGTreeSet tom_match2_1_2=tom_get_slot_branch_right(tom_match2_1); { JGTreeSet l=tom_match2_1_1; { JGTreeSet r=tom_match2_1_2;
+ return size(l ) + size(r );}}}} }}}
  
     return 0;
   }
@@ -122,11 +122,11 @@ public class SharedMultiSet extends ATermSet {
 
   private int multiplicitySize(JGTreeSet t) {
      { JGTreeSet tom_match3_1=(( JGTreeSet)t);{ if(tom_is_fun_sym_emptySet(tom_match3_1) ||  false ) {
-  return 0;  } if(tom_is_fun_sym_pair(tom_match3_1) ||  false ) {
+  return 0;  } if(tom_is_fun_sym_pair(tom_match3_1) ||  false ) { { int  tom_match3_1_2=tom_get_slot_pair_multiplicity(tom_match3_1); { int  m=tom_match3_1_2;
  
-        return tom_get_slot_pair_multiplicity(tom_match3_1) ;
-       } if(tom_is_fun_sym_branch(tom_match3_1) ||  false ) {
- return multiplicitySize(tom_get_slot_branch_left(tom_match3_1) ) + multiplicitySize(tom_get_slot_branch_right(tom_match3_1) ); }}}
+        return m ;
+      }} } if(tom_is_fun_sym_branch(tom_match3_1) ||  false ) { { JGTreeSet tom_match3_1_1=tom_get_slot_branch_left(tom_match3_1); { JGTreeSet tom_match3_1_2=tom_get_slot_branch_right(tom_match3_1); { JGTreeSet l=tom_match3_1_1; { JGTreeSet r=tom_match3_1_2;
+ return multiplicitySize(l ) + multiplicitySize(r );}}}} }}}
  
     return 0;
   }
@@ -135,15 +135,15 @@ public class SharedMultiSet extends ATermSet {
      { JGTreeSet tom_match4_1=(( JGTreeSet)t);{ if(tom_is_fun_sym_emptySet(tom_match4_1) ||  false ) {
  
         return null;
-       } if(tom_is_fun_sym_pair(tom_match4_1) ||  false ) {
- return tom_get_slot_pair_value(tom_match4_1) ; } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) {
+       } if(tom_is_fun_sym_pair(tom_match4_1) ||  false ) { { aterm.ATerm tom_match4_1_1=tom_get_slot_pair_value(tom_match4_1); { aterm.ATerm x=tom_match4_1_1;
+ return x ;}} } if(tom_is_fun_sym_branch(tom_match4_1) ||  false ) { { JGTreeSet tom_match4_1_1=tom_get_slot_branch_left(tom_match4_1); { JGTreeSet tom_match4_1_2=tom_get_slot_branch_right(tom_match4_1); { JGTreeSet l=tom_match4_1_1; { JGTreeSet r=tom_match4_1_2;
  
-        ATerm left = getHead(tom_get_slot_branch_left(tom_match4_1) );
+        ATerm left = getHead(l );
         if(left != null) {
           return left;
         }
-        return getHead(tom_get_slot_branch_right(tom_match4_1) );
-       }}}
+        return getHead(r );
+      }}}} }}}
  
     return null;
   }
@@ -174,11 +174,11 @@ public class SharedMultiSet extends ATermSet {
         public ATerm apply(ATerm t) {
            { JGTreeSet tom_match5_1=(( JGTreeSet)t);{ if(tom_is_fun_sym_emptySet(tom_match5_1) ||  false ) {
  return t; } if(tom_is_fun_sym_pair(tom_match5_1) ||  false ) {
- return t; } if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) { { JGTreeSet tom_match5_1_2=tom_get_slot_branch_right(tom_match5_1); if(tom_is_fun_sym_emptySet(tom_get_slot_branch_left(tom_match5_1)) ||  false ) { if(tom_is_fun_sym_pair(tom_match5_1_2) ||  false ) {
- return tom_match5_1_2 ; } }} } if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) { { JGTreeSet tom_match5_1_1=tom_get_slot_branch_left(tom_match5_1); if(tom_is_fun_sym_pair(tom_match5_1_1) ||  false ) { if(tom_is_fun_sym_emptySet(tom_get_slot_branch_right(tom_match5_1)) ||  false ) {
- return tom_match5_1_1 ; } }} } if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) { { JGTreeSet tom_match5_1_1=tom_get_slot_branch_left(tom_match5_1); if(tom_is_fun_sym_emptySet(tom_match5_1_1) ||  false ) { if(tom_is_fun_sym_emptySet(tom_get_slot_branch_right(tom_match5_1)) ||  false ) {
- return tom_match5_1_1 ; } }} } if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) {
- return tom_make_branch(reworkJGTreeSet(tom_get_slot_branch_left(tom_match5_1)),reworkJGTreeSet(tom_get_slot_branch_right(tom_match5_1))) ; }
+ return t; } if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) { { JGTreeSet tom_match5_1_1=tom_get_slot_branch_left(tom_match5_1); { JGTreeSet tom_match5_1_2=tom_get_slot_branch_right(tom_match5_1); if(tom_is_fun_sym_emptySet(tom_match5_1_1) ||  false ) { if(tom_is_fun_sym_pair(tom_match5_1_2) ||  false ) { { JGTreeSet p=tom_match5_1_2;
+ return p ;} } }}} } if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) { { JGTreeSet tom_match5_1_1=tom_get_slot_branch_left(tom_match5_1); { JGTreeSet tom_match5_1_2=tom_get_slot_branch_right(tom_match5_1); if(tom_is_fun_sym_pair(tom_match5_1_1) ||  false ) { { JGTreeSet p=tom_match5_1_1; if(tom_is_fun_sym_emptySet(tom_match5_1_2) ||  false ) {
+ return p ; }} }}} } if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) { { JGTreeSet tom_match5_1_1=tom_get_slot_branch_left(tom_match5_1); { JGTreeSet tom_match5_1_2=tom_get_slot_branch_right(tom_match5_1); if(tom_is_fun_sym_emptySet(tom_match5_1_1) ||  false ) { { JGTreeSet e=tom_match5_1_1; if(tom_is_fun_sym_emptySet(tom_match5_1_2) ||  false ) {
+ return e ; }} }}} } if(tom_is_fun_sym_branch(tom_match5_1) ||  false ) { { JGTreeSet tom_match5_1_1=tom_get_slot_branch_left(tom_match5_1); { JGTreeSet tom_match5_1_2=tom_get_slot_branch_right(tom_match5_1); { JGTreeSet l1=tom_match5_1_1; { JGTreeSet l2=tom_match5_1_2;
+ return tom_make_branch(reworkJGTreeSet(l1),reworkJGTreeSet(l2)) ;}}}} }
   return traversal.genericTraversal(t,this); }}
  
         }
@@ -192,131 +192,131 @@ public class SharedMultiSet extends ATermSet {
   }
   
   protected JGTreeSet union(JGTreeSet m1, JGTreeSet m2, int level) {
-     { JGTreeSet tom_match6_1=(( JGTreeSet)m1);{ { JGTreeSet tom_match6_2=(( JGTreeSet)m2);{ if(tom_is_fun_sym_emptySet(tom_match6_1) ||  false ) {
+     { JGTreeSet tom_match6_1=(( JGTreeSet)m1);{ { JGTreeSet tom_match6_2=(( JGTreeSet)m2);{ if(tom_is_fun_sym_emptySet(tom_match6_1) ||  false ) { { JGTreeSet x=tom_match6_2;
  
         return m2;
-       } if(tom_is_fun_sym_emptySet(tom_match6_2) ||  false ) {
+      } } { JGTreeSet x=tom_match6_1; if(tom_is_fun_sym_emptySet(tom_match6_2) ||  false ) {
 
  
         return m1;
-       } if(tom_is_fun_sym_pair(tom_match6_1) ||  false ) {
+       }} if(tom_is_fun_sym_pair(tom_match6_1) ||  false ) { { aterm.ATerm tom_match6_1_1=tom_get_slot_pair_value(tom_match6_1); { int  tom_match6_1_2=tom_get_slot_pair_multiplicity(tom_match6_1); { aterm.ATerm elt=tom_match6_1_1; { int  mult=tom_match6_1_2; { JGTreeSet x=tom_match6_2;
 
  
-        return override(tom_get_slot_pair_value(tom_match6_1) , tom_get_slot_pair_multiplicity(tom_match6_1) , tom_match6_2 , level);
-       } if(tom_is_fun_sym_pair(tom_match6_2) ||  false ) {
+        return override(elt , mult , x , level);
+      }}}}} } { JGTreeSet x=tom_match6_1; if(tom_is_fun_sym_pair(tom_match6_2) ||  false ) { { aterm.ATerm tom_match6_2_1=tom_get_slot_pair_value(tom_match6_2); { int  tom_match6_2_2=tom_get_slot_pair_multiplicity(tom_match6_2); { aterm.ATerm elt=tom_match6_2_1; { int  mult=tom_match6_2_2;
 
  
           // underride dont worry about multiplicity
-        return underride(tom_get_slot_pair_value(tom_match6_2) , tom_match6_1 , level);
-       } if(tom_is_fun_sym_branch(tom_match6_1) ||  false ) { if(tom_is_fun_sym_branch(tom_match6_2) ||  false ) {
+        return underride(elt , x , level);
+      }}}} }} if(tom_is_fun_sym_branch(tom_match6_1) ||  false ) { { JGTreeSet tom_match6_1_1=tom_get_slot_branch_left(tom_match6_1); { JGTreeSet tom_match6_1_2=tom_get_slot_branch_right(tom_match6_1); { JGTreeSet l1=tom_match6_1_1; { JGTreeSet r1=tom_match6_1_2; if(tom_is_fun_sym_branch(tom_match6_2) ||  false ) { { JGTreeSet tom_match6_2_1=tom_get_slot_branch_left(tom_match6_2); { JGTreeSet tom_match6_2_2=tom_get_slot_branch_right(tom_match6_2); { JGTreeSet l2=tom_match6_2_1; { JGTreeSet r2=tom_match6_2_2;
 
  
         int l = level+1;
-        return tom_make_branch(union(tom_get_slot_branch_left(tom_match6_1),tom_get_slot_branch_left(tom_match6_2),l),union(tom_get_slot_branch_right(tom_match6_1),tom_get_slot_branch_right(tom_match6_2),l)) ;
-       } }}}}}
+        return tom_make_branch(union(l1,l2,l),union(r1,r2,l)) ;
+      }}}} }}}}} }}}}}
  
     return null;
   }
   
   protected JGTreeSet intersection(JGTreeSet m1, JGTreeSet m2, int level) {
-     { JGTreeSet tom_match7_1=(( JGTreeSet)m1);{ { JGTreeSet tom_match7_2=(( JGTreeSet)m2);{ if(tom_is_fun_sym_emptySet(tom_match7_1) ||  false ) {
+     { JGTreeSet tom_match7_1=(( JGTreeSet)m1);{ { JGTreeSet tom_match7_2=(( JGTreeSet)m2);{ if(tom_is_fun_sym_emptySet(tom_match7_1) ||  false ) { { JGTreeSet x=tom_match7_2;
 
   
         return tom_make_emptySet() ;
-       } if(tom_is_fun_sym_emptySet(tom_match7_2) ||  false ) {           return tom_make_emptySet() ;        } if(tom_is_fun_sym_pair(tom_match7_1) ||  false ) {
+      } } { JGTreeSet x=tom_match7_1; if(tom_is_fun_sym_emptySet(tom_match7_2) ||  false ) {           return tom_make_emptySet() ;        }} if(tom_is_fun_sym_pair(tom_match7_1) ||  false ) { { JGTreeSet p=tom_match7_1; { aterm.ATerm tom_match7_1_1=tom_get_slot_pair_value(tom_match7_1); { int  tom_match7_1_2=tom_get_slot_pair_multiplicity(tom_match7_1); { aterm.ATerm elt=tom_match7_1_1; { int  mult=tom_match7_1_2; { JGTreeSet x=tom_match7_2;
 
 
  
-        if (contains(tom_get_slot_pair_value(tom_match7_1) , tom_match7_2 , level)) {
+        if (contains(elt , x , level)) {
             /* Warning: we have to choose one of the 2 element: with the lowest multiplicity*/
-          return tom_match7_1 ;
+          return p ;
         } else {
           return tom_make_emptySet() ;
         }
-       } if(tom_is_fun_sym_pair(tom_match7_2) ||  false ) {          if (contains(tom_get_slot_pair_value(tom_match7_2) , tom_match7_1 , level)) {             /* Warning: we have to choose one of the 2 element: with the lowest multiplicity*/           return tom_match7_2 ;         } else {           return tom_make_emptySet() ;         }        } if(tom_is_fun_sym_branch(tom_match7_1) ||  false ) { if(tom_is_fun_sym_branch(tom_match7_2) ||  false ) {
+      }}}}}} } { JGTreeSet x=tom_match7_1; if(tom_is_fun_sym_pair(tom_match7_2) ||  false ) { { JGTreeSet p=tom_match7_2; { aterm.ATerm tom_match7_2_1=tom_get_slot_pair_value(tom_match7_2); { int  tom_match7_2_2=tom_get_slot_pair_multiplicity(tom_match7_2); { aterm.ATerm elt=tom_match7_2_1; { int  mult=tom_match7_2_2;          if (contains(elt , x , level)) {             /* Warning: we have to choose one of the 2 element: with the lowest multiplicity*/           return p ;         } else {           return tom_make_emptySet() ;         }       }}}}} }} if(tom_is_fun_sym_branch(tom_match7_1) ||  false ) { { JGTreeSet tom_match7_1_1=tom_get_slot_branch_left(tom_match7_1); { JGTreeSet tom_match7_1_2=tom_get_slot_branch_right(tom_match7_1); { JGTreeSet l1=tom_match7_1_1; { JGTreeSet r1=tom_match7_1_2; if(tom_is_fun_sym_branch(tom_match7_2) ||  false ) { { JGTreeSet tom_match7_2_1=tom_get_slot_branch_left(tom_match7_2); { JGTreeSet tom_match7_2_2=tom_get_slot_branch_right(tom_match7_2); { JGTreeSet l2=tom_match7_2_1; { JGTreeSet r2=tom_match7_2_2;
 
  
         int l = level+1;
-        return tom_make_branch(intersection(tom_get_slot_branch_left(tom_match7_1),tom_get_slot_branch_left(tom_match7_2),l),intersection(tom_get_slot_branch_right(tom_match7_1),tom_get_slot_branch_right(tom_match7_2),l)) ;        
-       } }}}}}
+        return tom_make_branch(intersection(l1,l2,l),intersection(r1,r2,l)) ;        
+      }}}} }}}}} }}}}}
  
     return null;
   }
   
   protected JGTreeSet restriction(JGTreeSet m1, JGTreeSet m2, int level) {
-     { JGTreeSet tom_match8_1=(( JGTreeSet)m1);{ { JGTreeSet tom_match8_2=(( JGTreeSet)m2);{ if(tom_is_fun_sym_emptySet(tom_match8_1) ||  false ) {
+     { JGTreeSet tom_match8_1=(( JGTreeSet)m1);{ { JGTreeSet tom_match8_2=(( JGTreeSet)m2);{ if(tom_is_fun_sym_emptySet(tom_match8_1) ||  false ) { { JGTreeSet x=tom_match8_2;
 
   
         return tom_make_emptySet() ;
-       } if(tom_is_fun_sym_emptySet(tom_match8_2) ||  false ) {           return tom_make_emptySet() ;        } if(tom_is_fun_sym_pair(tom_match8_1) ||  false ) {
+      } } { JGTreeSet x=tom_match8_1; if(tom_is_fun_sym_emptySet(tom_match8_2) ||  false ) {           return tom_make_emptySet() ;        }} if(tom_is_fun_sym_pair(tom_match8_1) ||  false ) { { aterm.ATerm tom_match8_1_1=tom_get_slot_pair_value(tom_match8_1); { aterm.ATerm y=tom_match8_1_1; { JGTreeSet x=tom_match8_2;
 
  
-        return remove(tom_get_slot_pair_value(tom_match8_1) , tom_match8_2 , level);
-       } if(tom_is_fun_sym_pair(tom_match8_2) ||  false ) {
+        return remove(y , x , level);
+      }}} } { JGTreeSet x=tom_match8_1; if(tom_is_fun_sym_pair(tom_match8_2) ||  false ) { { aterm.ATerm tom_match8_2_1=tom_get_slot_pair_value(tom_match8_2); { aterm.ATerm y=tom_match8_2_1;
 
  
-        if (contains(tom_get_slot_pair_value(tom_match8_2) , tom_match8_1 )) {
+        if (contains(y , x )) {
             // Warning: we have to choose one of the 2 element: with the lowest multiplicity
           return m2;
         } else {
           return tom_make_emptySet() ;
         }
-       } if(tom_is_fun_sym_branch(tom_match8_1) ||  false ) { if(tom_is_fun_sym_branch(tom_match8_2) ||  false ) {
+      }} }} if(tom_is_fun_sym_branch(tom_match8_1) ||  false ) { { JGTreeSet tom_match8_1_1=tom_get_slot_branch_left(tom_match8_1); { JGTreeSet tom_match8_1_2=tom_get_slot_branch_right(tom_match8_1); { JGTreeSet l1=tom_match8_1_1; { JGTreeSet r1=tom_match8_1_2; if(tom_is_fun_sym_branch(tom_match8_2) ||  false ) { { JGTreeSet tom_match8_2_1=tom_get_slot_branch_left(tom_match8_2); { JGTreeSet tom_match8_2_2=tom_get_slot_branch_right(tom_match8_2); { JGTreeSet l2=tom_match8_2_1; { JGTreeSet r2=tom_match8_2_2;
 
  
         int l = level+1;
-        return tom_make_branch(restriction(tom_get_slot_branch_left(tom_match8_1),tom_get_slot_branch_left(tom_match8_2),l),restriction(tom_get_slot_branch_right(tom_match8_1),tom_get_slot_branch_right(tom_match8_2),l)) ;
-       } }}}}}
+        return tom_make_branch(restriction(l1,l2,l),restriction(r1,r2,l)) ;
+      }}}} }}}}} }}}}}
  
     return null;
   }
   
   protected JGTreeSet remove(ATerm elt, JGTreeSet t, int level) {
      { JGTreeSet tom_match9_1=(( JGTreeSet)t);{ if(tom_is_fun_sym_emptySet(tom_match9_1) ||  false ) {
- return t; } if(tom_is_fun_sym_pair(tom_match9_1) ||  false ) {
+ return t; } if(tom_is_fun_sym_pair(tom_match9_1) ||  false ) { { aterm.ATerm tom_match9_1_1=tom_get_slot_pair_value(tom_match9_1); { aterm.ATerm x=tom_match9_1_1;
 
  
-        if (tom_get_slot_pair_value(tom_match9_1)  == elt) {return tom_make_emptySet() ;}
+        if (x  == elt) {return tom_make_emptySet() ;}
         else {return t;}
-       } if(tom_is_fun_sym_branch(tom_match9_1) ||  false ) { { JGTreeSet tom_l=tom_get_slot_branch_left(tom_match9_1); { JGTreeSet tom_r=tom_get_slot_branch_right(tom_match9_1);
+      }} } if(tom_is_fun_sym_branch(tom_match9_1) ||  false ) { { JGTreeSet tom_match9_1_1=tom_get_slot_branch_left(tom_match9_1); { JGTreeSet tom_match9_1_2=tom_get_slot_branch_right(tom_match9_1); { JGTreeSet l=tom_match9_1_1; { JGTreeSet r=tom_match9_1_2;
 
  
         JGTreeSet l1 = null, r1=null;
         if( isBitZero(elt, level) ) {
-          l1 = remove(elt, tom_l , level+1);
-          r1 = tom_r ;
+          l1 = remove(elt, l , level+1);
+          r1 = r ;
         } else {
-          l1 = tom_l ;
-          r1 = remove(elt, tom_r , level+1);
+          l1 = l ;
+          r1 = remove(elt, r , level+1);
         }
          { JGTreeSet tom_match10_1=(( JGTreeSet)l1);{ { JGTreeSet tom_match10_2=(( JGTreeSet)r1);{ if(tom_is_fun_sym_emptySet(tom_match10_1) ||  false ) { if(tom_is_fun_sym_pair(tom_match10_2) ||  false ) {
  return r1; } } if(tom_is_fun_sym_pair(tom_match10_1) ||  false ) { if(tom_is_fun_sym_emptySet(tom_match10_2) ||  false ) {
  return l1; } }
  return tom_make_branch(l1,r1) ;}}}}
  
-      }} }}}
+      }}}} }}}
  
     return null;
   }
 
   protected boolean contains(ATerm elt, JGTreeSet t, int level) {
      { JGTreeSet tom_match11_1=(( JGTreeSet)t);{ if(tom_is_fun_sym_emptySet(tom_match11_1) ||  false ) {
- return false; } if(tom_is_fun_sym_pair(tom_match11_1) ||  false ) {
+ return false; } if(tom_is_fun_sym_pair(tom_match11_1) ||  false ) { { aterm.ATerm tom_match11_1_1=tom_get_slot_pair_value(tom_match11_1); { aterm.ATerm x=tom_match11_1_1;
 
  
-        if(tom_get_slot_pair_value(tom_match11_1)  == elt) return true;
-       } if(tom_is_fun_sym_branch(tom_match11_1) ||  false ) { { JGTreeSet tom_l=tom_get_slot_branch_left(tom_match11_1); { JGTreeSet tom_r=tom_get_slot_branch_right(tom_match11_1);
+        if(x  == elt) return true;
+      }} } if(tom_is_fun_sym_branch(tom_match11_1) ||  false ) { { JGTreeSet tom_match11_1_1=tom_get_slot_branch_left(tom_match11_1); { JGTreeSet tom_match11_1_2=tom_get_slot_branch_right(tom_match11_1); { JGTreeSet l=tom_match11_1_1; { JGTreeSet r=tom_match11_1_2;
 
  
         if(level == depth) {
-          return (contains(elt, tom_l , level) || contains(elt, tom_r , level));
+          return (contains(elt, l , level) || contains(elt, r , level));
         }
         if( isBitZero(elt, level)) {
-          return contains(elt, tom_l , level+1);
+          return contains(elt, l , level+1);
         } else {
-          return contains(elt, tom_r , level+1);
+          return contains(elt, r , level+1);
         }
-      }} }}}
+      }}}} }}}
  
     return false;
   }
@@ -326,10 +326,10 @@ public class SharedMultiSet extends ATermSet {
      { JGTreeSet tom_match12_1=(( JGTreeSet)t);{ if(tom_is_fun_sym_emptySet(tom_match12_1) ||  false ) {
  
         return makePair(elt, multiplicity);
-       } if(tom_is_fun_sym_pair(tom_match12_1) ||  false ) { { aterm.ATerm tom_x=tom_get_slot_pair_value(tom_match12_1);
+       } if(tom_is_fun_sym_pair(tom_match12_1) ||  false ) { { aterm.ATerm tom_match12_1_1=tom_get_slot_pair_value(tom_match12_1); { int  tom_match12_1_2=tom_get_slot_pair_multiplicity(tom_match12_1); { aterm.ATerm x=tom_match12_1_1; { int  mult=tom_match12_1_2;
 
  
-        if(tom_x  == elt) {  return makePair(elt, tom_get_slot_pair_multiplicity(tom_match12_1) +multiplicity);}
+        if(x  == elt) {  return makePair(elt, mult +multiplicity);}
         else if( level >= depth ) {
           System.out.println("Collision!!!!!!!!");
           collisions++;
@@ -337,11 +337,11 @@ public class SharedMultiSet extends ATermSet {
           return tom_make_branch(t,tom_make_singleton(elt)) ;
           
         }
-        else if ( isBitZero(elt, level) && isBitZero(tom_x , level) )  { return tom_make_branch(override(elt,multiplicity,t,lev),tom_make_emptySet()) ;}
-        else if ( isBitOne(elt, level)  && isBitOne(tom_x , level) )   { return tom_make_branch(tom_make_emptySet(),override(elt,multiplicity,t,lev)) ;}
-        else if ( isBitZero(elt, level) && isBitOne(tom_x , level) ) { return tom_make_branch(makePair(elt,multiplicity),t) ;}
-        else if ( isBitOne(elt, level)  && isBitZero(tom_x , level) ){ return tom_make_branch(t,makePair(elt,multiplicity)) ;}
-      } } if(tom_is_fun_sym_branch(tom_match12_1) ||  false ) { { JGTreeSet tom_l=tom_get_slot_branch_left(tom_match12_1); { JGTreeSet tom_r=tom_get_slot_branch_right(tom_match12_1);
+        else if ( isBitZero(elt, level) && isBitZero(x , level) )  { return tom_make_branch(override(elt,multiplicity,t,lev),tom_make_emptySet()) ;}
+        else if ( isBitOne(elt, level)  && isBitOne(x , level) )   { return tom_make_branch(tom_make_emptySet(),override(elt,multiplicity,t,lev)) ;}
+        else if ( isBitZero(elt, level) && isBitOne(x , level) ) { return tom_make_branch(makePair(elt,multiplicity),t) ;}
+        else if ( isBitOne(elt, level)  && isBitZero(x , level) ){ return tom_make_branch(t,makePair(elt,multiplicity)) ;}
+      }}}} } if(tom_is_fun_sym_branch(tom_match12_1) ||  false ) { { JGTreeSet tom_match12_1_1=tom_get_slot_branch_left(tom_match12_1); { JGTreeSet tom_match12_1_2=tom_get_slot_branch_right(tom_match12_1); { JGTreeSet l=tom_match12_1_1; { JGTreeSet r=tom_match12_1_2;
 
  
         if(level >= depth) {
@@ -351,11 +351,11 @@ public class SharedMultiSet extends ATermSet {
           return tom_make_branch(t,tom_make_singleton(elt)) ;
         }
         if (isBitZero(elt, level)) {
-          return tom_make_branch(override(elt,multiplicity,tom_l,lev),tom_r) ;
+          return tom_make_branch(override(elt,multiplicity,l,lev),r) ;
         } else {
-          return tom_make_branch(tom_l,override(elt,multiplicity,tom_r,lev)) ;
+          return tom_make_branch(l,override(elt,multiplicity,r,lev)) ;
         }
-      }} }}}
+      }}}} }}}
  
     return null;
   }
@@ -363,10 +363,10 @@ public class SharedMultiSet extends ATermSet {
   protected JGTreeSet underride(ATerm elt, JGTreeSet t, int level) {
     int lev = level+1;
      { JGTreeSet tom_match13_1=(( JGTreeSet)t);{ if(tom_is_fun_sym_emptySet(tom_match13_1) ||  false ) {
- return tom_make_singleton(elt) ; } if(tom_is_fun_sym_singleton(tom_match13_1) ||  false ) { { aterm.ATerm tom_x=tom_get_slot_singleton_value(tom_match13_1);
+ return tom_make_singleton(elt) ; } if(tom_is_fun_sym_singleton(tom_match13_1) ||  false ) { { aterm.ATerm tom_match13_1_1=tom_get_slot_singleton_value(tom_match13_1); { aterm.ATerm x=tom_match13_1_1;
 
  
-        if(tom_x  == elt) {  return t;}
+        if(x  == elt) {  return t;}
         else if( level >= depth ) {
           System.out.println("Collision!!!!!!!!");
           collisions++;
@@ -374,16 +374,16 @@ public class SharedMultiSet extends ATermSet {
           return tom_make_branch(t,tom_make_singleton(elt)) ;
           
         }
-        else if ( isBitZero(elt, level) && isBitZero(tom_x , level) )  { return tom_make_branch(underride(elt,t,lev),tom_make_emptySet()) ;}
-        else if ( isBitOne(elt, level)  && isBitOne(tom_x , level) )   { return tom_make_branch(tom_make_emptySet(),underride(elt,t,lev)) ;}
-        else if ( isBitZero(elt, level) && isBitOne(tom_x , level) ) { return tom_make_branch(tom_make_singleton(elt),t) ;}
-        else if ( isBitOne(elt, level)  && isBitZero(tom_x , level) ){ return tom_make_branch(t,tom_make_singleton(elt)) ;}
-      } } if(tom_is_fun_sym_branch(tom_match13_1) ||  false ) { { JGTreeSet tom_l=tom_get_slot_branch_left(tom_match13_1); { JGTreeSet tom_r=tom_get_slot_branch_right(tom_match13_1);
+        else if ( isBitZero(elt, level) && isBitZero(x , level) )  { return tom_make_branch(underride(elt,t,lev),tom_make_emptySet()) ;}
+        else if ( isBitOne(elt, level)  && isBitOne(x , level) )   { return tom_make_branch(tom_make_emptySet(),underride(elt,t,lev)) ;}
+        else if ( isBitZero(elt, level) && isBitOne(x , level) ) { return tom_make_branch(tom_make_singleton(elt),t) ;}
+        else if ( isBitOne(elt, level)  && isBitZero(x , level) ){ return tom_make_branch(t,tom_make_singleton(elt)) ;}
+      }} } if(tom_is_fun_sym_branch(tom_match13_1) ||  false ) { { JGTreeSet tom_match13_1_1=tom_get_slot_branch_left(tom_match13_1); { JGTreeSet tom_match13_1_2=tom_get_slot_branch_right(tom_match13_1); { JGTreeSet l=tom_match13_1_1; { JGTreeSet r=tom_match13_1_2;
 
  
-        if (isBitZero(elt, level)) {return tom_make_branch(underride(elt,tom_l,lev),tom_r) ;}
-        else {return tom_make_branch(tom_l,underride(elt,tom_r,lev)) ;}
-      }} }}}
+        if (isBitZero(elt, level)) {return tom_make_branch(underride(elt,l,lev),r) ;}
+        else {return tom_make_branch(l,underride(elt,r,lev)) ;}
+      }}}} }}}
  
     return null;
   }

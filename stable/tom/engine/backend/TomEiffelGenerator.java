@@ -36,8 +36,8 @@ import jtom.TomEnvironment;
 
 public class TomEiffelGenerator extends TomImperativeGenerator {
   
-  public TomEiffelGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-		super(environment, output, input);
+  public TomEiffelGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
+		super(environment, taskInput, output);
   }
 
 // ------------------------------------------------------------
@@ -74,12 +74,12 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 				while(!varList.isEmpty()) {
           TomTerm localVar = varList.getHead();
           matchBlock: {
-             { TomTerm tom_match1_1=(( TomTerm)localVar);{ if(tom_is_fun_sym_Variable(tom_match1_1) ||  false ) {
+             { TomTerm tom_match1_1=(( TomTerm)localVar);{ if(tom_is_fun_sym_Variable(tom_match1_1) ||  false ) { { TomTerm v=tom_match1_1; { TomType tom_match1_1_3=tom_get_slot_Variable_astType(tom_match1_1); { TomType type2=tom_match1_1_3;
  
-                  generate(deep,tom_match1_1 );
-                  output.write(deep,": " + getTLType(tom_get_slot_Variable_astType(tom_match1_1) ));
+                  generate(deep,v );
+                  output.write(deep,": " + getTLType(type2 ));
                 break matchBlock;
-               }
+              }}} }
  
                 System.out.println("MakeFunction: strange term: " + localVar);
                 throw new TomRuntimeException(new Throwable("MakeFunction: strange term: " + localVar));
@@ -118,10 +118,10 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
     generate(deep,var);
       //out.write(" ?= ");
     String assignSign = " := ";
-    { if(tom_is_fun_sym_GetSubterm((( Expression)exp)) ||  false ) {
+     { Expression tom_match2_1=(( Expression)exp);{ if(tom_is_fun_sym_GetSubterm(tom_match2_1) ||  false ) {
  
         assignSign = " ?= ";
-       }}
+       }}}
  
       output.write(assignSign);
     generateExpression(deep,exp);
@@ -161,10 +161,10 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		} else {
         //out.write(" ?= ");
       String assignSign = " := ";
-      { if(tom_is_fun_sym_GetSubterm((( Expression)exp)) ||  false ) {
+       { Expression tom_match3_1=(( Expression)exp);{ if(tom_is_fun_sym_GetSubterm(tom_match3_1) ||  false ) {
  
           assignSign = " ?= ";
-         }}
+         }}}
  
       output.write(assignSign);
     }
@@ -289,11 +289,11 @@ public class TomEiffelGenerator extends TomImperativeGenerator {
 		while(!argList.isEmpty()) {
 			TomTerm arg = argList.getHead();
 			matchBlock: {
-				 { TomTerm tom_match4_1=(( TomTerm)arg);{ if(tom_is_fun_sym_Variable(tom_match4_1) ||  false ) { { TomName tom_match4_1_2=tom_get_slot_Variable_astName(tom_match4_1); { TomType tom_match4_1_3=tom_get_slot_Variable_astType(tom_match4_1); if(tom_is_fun_sym_Name(tom_match4_1_2) ||  false ) { if(tom_is_fun_sym_Type(tom_match4_1_3) ||  false ) { { TomType tom_match4_1_3_2=tom_get_slot_Type_tlType(tom_match4_1_3); if(tom_is_fun_sym_TLType(tom_match4_1_3_2) ||  false ) {
+				 { TomTerm tom_match4_1=(( TomTerm)arg);{ if(tom_is_fun_sym_Variable(tom_match4_1) ||  false ) { { TomName tom_match4_1_2=tom_get_slot_Variable_astName(tom_match4_1); { TomType tom_match4_1_3=tom_get_slot_Variable_astType(tom_match4_1); if(tom_is_fun_sym_Name(tom_match4_1_2) ||  false ) { { String  tom_match4_1_2_1=tom_get_slot_Name_string(tom_match4_1_2); { String  name=tom_match4_1_2_1; if(tom_is_fun_sym_Type(tom_match4_1_3) ||  false ) { { TomType tom_match4_1_3_2=tom_get_slot_Type_tlType(tom_match4_1_3); if(tom_is_fun_sym_TLType(tom_match4_1_3_2) ||  false ) { { TomType tlType=tom_match4_1_3_2;
  
-						s += tom_get_slot_Name_string(tom_match4_1_2)  + ": " + getTLCode(tom_match4_1_3_2 );
+						s += name  + ": " + getTLCode(tlType );
 						break matchBlock;
-					 }} } }}} }
+					} }} }}} }}} }
 
  
 						System.out.println("genDeclMake: strange term: " + arg);

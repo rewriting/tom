@@ -141,10 +141,10 @@ public class TomBase {
 	// ------------------------------------------------------------
 
 	protected String getTomType(TomType type) {
-		 { TomType tom_match1_1=(( TomType)type);{ if(tom_is_fun_sym_ASTTomType(tom_match1_1) ||  false ) {
- return tom_get_slot_ASTTomType_string(tom_match1_1) ; } if(tom_is_fun_sym_TomTypeAlone(tom_match1_1) ||  false ) {
- return tom_get_slot_TomTypeAlone_string(tom_match1_1) ; } if(tom_is_fun_sym_Type(tom_match1_1) ||  false ) { { TomType tom_match1_1_1=tom_get_slot_Type_tomType(tom_match1_1); if(tom_is_fun_sym_ASTTomType(tom_match1_1_1) ||  false ) {
- return tom_get_slot_ASTTomType_string(tom_match1_1_1) ; }} } if(tom_is_fun_sym_EmptyType(tom_match1_1) ||  false ) {
+		 { TomType tom_match1_1=(( TomType)type);{ if(tom_is_fun_sym_ASTTomType(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_ASTTomType_string(tom_match1_1); { String  s=tom_match1_1_1;
+ return s ;}} } if(tom_is_fun_sym_TomTypeAlone(tom_match1_1) ||  false ) { { String  tom_match1_1_1=tom_get_slot_TomTypeAlone_string(tom_match1_1); { String  s=tom_match1_1_1;
+ return s ;}} } if(tom_is_fun_sym_Type(tom_match1_1) ||  false ) { { TomType tom_match1_1_1=tom_get_slot_Type_tomType(tom_match1_1); if(tom_is_fun_sym_ASTTomType(tom_match1_1_1) ||  false ) { { String  tom_match1_1_1_1=tom_get_slot_ASTTomType_string(tom_match1_1_1); { String  s=tom_match1_1_1_1;
+ return s ;}} }} } if(tom_is_fun_sym_EmptyType(tom_match1_1) ||  false ) {
  return null; }
  
 				System.out.println("getTomType error on term: " + type);
@@ -155,8 +155,8 @@ public class TomBase {
 
 	protected String getTLType(TomType type) {
 		 { TomType tom_match2_1=(( TomType)type);{ if(tom_is_fun_sym_TLType(tom_match2_1) ||  false ) {
-  return getTLCode(type);  } if(tom_is_fun_sym_Type(tom_match2_1) ||  false ) {
-  return getTLCode(tom_get_slot_Type_tlType(tom_match2_1) );  }
+  return getTLCode(type);  } if(tom_is_fun_sym_Type(tom_match2_1) ||  false ) { { TomType tom_match2_1_2=tom_get_slot_Type_tlType(tom_match2_1); { TomType tlType=tom_match2_1_2;
+  return getTLCode(tlType ); }} }
  
 				throw new TomRuntimeException(new Throwable("getTLType error on term: " + type));
 			}}
@@ -164,9 +164,9 @@ public class TomBase {
 	}
 
 	protected String getTLCode(TomType type) {
-		 { TomType tom_match3_1=(( TomType)type);{ if(tom_is_fun_sym_TLType(tom_match3_1) ||  false ) { { TargetLanguage tom_match3_1_1=tom_get_slot_TLType_tl(tom_match3_1); if(tom_is_fun_sym_TL(tom_match3_1_1) ||  false ) {
-  return tom_get_slot_TL_code(tom_match3_1_1) ;  }} } if(tom_is_fun_sym_TLType(tom_match3_1) ||  false ) { { TargetLanguage tom_match3_1_1=tom_get_slot_TLType_tl(tom_match3_1); if(tom_is_fun_sym_ITL(tom_match3_1_1) ||  false ) {
-  return tom_get_slot_ITL_code(tom_match3_1_1) ;  }} }
+		 { TomType tom_match3_1=(( TomType)type);{ if(tom_is_fun_sym_TLType(tom_match3_1) ||  false ) { { TargetLanguage tom_match3_1_1=tom_get_slot_TLType_tl(tom_match3_1); if(tom_is_fun_sym_TL(tom_match3_1_1) ||  false ) { { String  tom_match3_1_1_1=tom_get_slot_TL_code(tom_match3_1_1); { String  tlType=tom_match3_1_1_1;
+  return tlType ; }} }} } if(tom_is_fun_sym_TLType(tom_match3_1) ||  false ) { { TargetLanguage tom_match3_1_1=tom_get_slot_TLType_tl(tom_match3_1); if(tom_is_fun_sym_ITL(tom_match3_1_1) ||  false ) { { String  tom_match3_1_1_1=tom_get_slot_ITL_code(tom_match3_1_1); { String  tlType=tom_match3_1_1_1;
+  return tlType ; }} }} }
  
 				System.out.println("getTLCode error on term: " + type);
 				throw new TomRuntimeException(new Throwable("getTLCode error on term: " + type));
@@ -213,9 +213,9 @@ public class TomBase {
 
 	protected String getSymbolCode(TomSymbol symbol) {
 		//%variable
-		 { TomSymbol tom_match4_1=(( TomSymbol)symbol);{ if(tom_is_fun_sym_Symbol(tom_match4_1) ||  false ) { { TargetLanguage tom_match4_1_5=tom_get_slot_Symbol_tlCode(tom_match4_1); if(tom_is_fun_sym_TL(tom_match4_1_5) ||  false ) {
-  return tom_get_slot_TL_code(tom_match4_1_5) ;  }} } if(tom_is_fun_sym_Symbol(tom_match4_1) ||  false ) { { TargetLanguage tom_match4_1_5=tom_get_slot_Symbol_tlCode(tom_match4_1); if(tom_is_fun_sym_ITL(tom_match4_1_5) ||  false ) {
-  return tom_get_slot_ITL_code(tom_match4_1_5) ;  }} }
+		 { TomSymbol tom_match4_1=(( TomSymbol)symbol);{ if(tom_is_fun_sym_Symbol(tom_match4_1) ||  false ) { { TargetLanguage tom_match4_1_5=tom_get_slot_Symbol_tlCode(tom_match4_1); if(tom_is_fun_sym_TL(tom_match4_1_5) ||  false ) { { String  tom_match4_1_5_1=tom_get_slot_TL_code(tom_match4_1_5); { String  tlCode=tom_match4_1_5_1;
+  return tlCode ; }} }} } if(tom_is_fun_sym_Symbol(tom_match4_1) ||  false ) { { TargetLanguage tom_match4_1_5=tom_get_slot_Symbol_tlCode(tom_match4_1); if(tom_is_fun_sym_ITL(tom_match4_1_5) ||  false ) { { String  tom_match4_1_5_1=tom_get_slot_ITL_code(tom_match4_1_5); { String  tlCode=tom_match4_1_5_1;
+  return tlCode ; }} }} }
  
 				System.out.println("getSymbolCode error on term: " + symbol);
 				throw new TomRuntimeException(new Throwable("getSymbolCode error on term: " + symbol));
@@ -224,25 +224,25 @@ public class TomBase {
 	} 
 
 	protected TomType getTermType(TomTerm t){
-		 { TomTerm tom_match5_1=(( TomTerm)t);{ if(tom_is_fun_sym_Appl(tom_match5_1) ||  false ) { { NameList tom_match5_1_2=tom_get_slot_Appl_nameList(tom_match5_1); if(tom_is_fun_sym_concTomName(tom_match5_1_2) ||  false ) { { NameList tom_match5_1_2_list1=tom_match5_1_2; if(!(tom_is_empty_NameList(tom_match5_1_2_list1))) { { TomName tom_match5_1_2_1=tom_get_head_NameList(tom_match5_1_2_list1); if(tom_is_fun_sym_Name(tom_match5_1_2_1) ||  false ) {
+		 { TomTerm tom_match5_1=(( TomTerm)t);{ if(tom_is_fun_sym_Appl(tom_match5_1) ||  false ) { { NameList tom_match5_1_2=tom_get_slot_Appl_nameList(tom_match5_1); if(tom_is_fun_sym_concTomName(tom_match5_1_2) ||  false ) { { NameList tom_match5_1_2_list1=tom_match5_1_2; if(!(tom_is_empty_NameList(tom_match5_1_2_list1))) { { TomName tom_match5_1_2_1=tom_get_head_NameList(tom_match5_1_2_list1);tom_match5_1_2_list1=tom_get_tail_NameList(tom_match5_1_2_list1); if(tom_is_fun_sym_Name(tom_match5_1_2_1) ||  false ) { { String  tom_match5_1_2_1_1=tom_get_slot_Name_string(tom_match5_1_2_1); { String  tomName=tom_match5_1_2_1_1;
  
-				TomSymbol tomSymbol = symbolTable().getSymbol(tom_get_slot_Name_string(tom_match5_1_2_1) );
+				TomSymbol tomSymbol = symbolTable().getSymbol(tomName );
 				return tomSymbol.getTypesToType().getCodomain();
-			 }} }} }} } if(tom_is_fun_sym_Variable(tom_match5_1) ||  false ) {
+			}} }} }} }} } if(tom_is_fun_sym_Variable(tom_match5_1) ||  false ) { { TomType tom_match5_1_3=tom_get_slot_Variable_astType(tom_match5_1); { TomType type=tom_match5_1_3;
 
 
 
 
 
-  return tom_get_slot_Variable_astType(tom_match5_1) ;  } if(tom_is_fun_sym_VariableStar(tom_match5_1) ||  false ) {  return tom_get_slot_VariableStar_astType(tom_match5_1) ;  } if(tom_is_fun_sym_UnamedVariable(tom_match5_1) ||  false ) {  return tom_get_slot_UnamedVariable_astType(tom_match5_1) ;  } if(tom_is_fun_sym_UnamedVariableStar(tom_match5_1) ||  false ) {  return tom_get_slot_UnamedVariableStar_astType(tom_match5_1) ;  } if(tom_is_fun_sym_ExpressionToTomTerm(tom_match5_1) ||  false ) {
+  return type ; }} } if(tom_is_fun_sym_VariableStar(tom_match5_1) ||  false ) { { TomType tom_match5_1_3=tom_get_slot_VariableStar_astType(tom_match5_1); { TomType type=tom_match5_1_3;  return type ; }} } if(tom_is_fun_sym_UnamedVariable(tom_match5_1) ||  false ) { { TomType tom_match5_1_2=tom_get_slot_UnamedVariable_astType(tom_match5_1); { TomType type=tom_match5_1_2;  return type ; }} } if(tom_is_fun_sym_UnamedVariableStar(tom_match5_1) ||  false ) { { TomType tom_match5_1_2=tom_get_slot_UnamedVariableStar_astType(tom_match5_1); { TomType type=tom_match5_1_2;  return type ; }} } if(tom_is_fun_sym_ExpressionToTomTerm(tom_match5_1) ||  false ) { { Expression tom_match5_1_1=tom_get_slot_ExpressionToTomTerm_astExpression(tom_match5_1); { Expression term=tom_match5_1_1;
 
 
 
-  return getTermType(tom_get_slot_ExpressionToTomTerm_astExpression(tom_match5_1) );  } if(tom_is_fun_sym_Ref(tom_match5_1) ||  false ) {  return getTermType(tom_get_slot_Ref_tomTerm(tom_match5_1) );  } if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match5_1) ||  false ) { if(tom_is_fun_sym_TL(tom_get_slot_TargetLanguageToTomTerm_tl(tom_match5_1)) ||  false ) {
+  return getTermType(term ); }} } if(tom_is_fun_sym_Ref(tom_match5_1) ||  false ) { { TomTerm tom_match5_1_1=tom_get_slot_Ref_tomTerm(tom_match5_1); { TomTerm term=tom_match5_1_1;  return getTermType(term ); }} } if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match5_1) ||  false ) { { TargetLanguage tom_match5_1_1=tom_get_slot_TargetLanguageToTomTerm_tl(tom_match5_1); if(tom_is_fun_sym_TL(tom_match5_1_1) ||  false ) {
 
 
 
-  return tom_make_EmptyType() ;  } } if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match5_1) ||  false ) { if(tom_is_fun_sym_ITL(tom_get_slot_TargetLanguageToTomTerm_tl(tom_match5_1)) ||  false ) {  return tom_make_EmptyType() ;  } }
+  return tom_make_EmptyType() ;  }} } if(tom_is_fun_sym_TargetLanguageToTomTerm(tom_match5_1) ||  false ) { { TargetLanguage tom_match5_1_1=tom_get_slot_TargetLanguageToTomTerm_tl(tom_match5_1); if(tom_is_fun_sym_ITL(tom_match5_1_1) ||  false ) {  return tom_make_EmptyType() ;  }} }
 
  
 				System.out.println("getTermType error on term: " + t);
@@ -252,18 +252,18 @@ public class TomBase {
 	}
 
 	protected TomType getTermType(Expression t){
-		 { Expression tom_match6_1=(( Expression)t);{ if(tom_is_fun_sym_GetSubterm(tom_match6_1) ||  false ) {
+		 { Expression tom_match6_1=(( Expression)t);{ if(tom_is_fun_sym_GetSubterm(tom_match6_1) ||  false ) { { TomType tom_match6_1_1=tom_get_slot_GetSubterm_codomain(tom_match6_1); { TomType type=tom_match6_1_1;
 
 
 
 
-  return tom_get_slot_GetSubterm_codomain(tom_match6_1) ;  } if(tom_is_fun_sym_GetHead(tom_match6_1) ||  false ) {  return tom_get_slot_GetHead_codomain(tom_match6_1) ;  } if(tom_is_fun_sym_GetSlot(tom_match6_1) ||  false ) {  return tom_get_slot_GetSlot_codomain(tom_match6_1) ;  } if(tom_is_fun_sym_GetElement(tom_match6_1) ||  false ) {  return tom_get_slot_GetElement_codomain(tom_match6_1) ;  } if(tom_is_fun_sym_TomTermToExpression(tom_match6_1) ||  false ) {
+  return type ; }} } if(tom_is_fun_sym_GetHead(tom_match6_1) ||  false ) { { TomType tom_match6_1_1=tom_get_slot_GetHead_codomain(tom_match6_1); { TomType type=tom_match6_1_1;  return type ; }} } if(tom_is_fun_sym_GetSlot(tom_match6_1) ||  false ) { { TomType tom_match6_1_1=tom_get_slot_GetSlot_codomain(tom_match6_1); { TomType type=tom_match6_1_1;  return type ; }} } if(tom_is_fun_sym_GetElement(tom_match6_1) ||  false ) { { TomType tom_match6_1_1=tom_get_slot_GetElement_codomain(tom_match6_1); { TomType type=tom_match6_1_1;  return type ; }} } if(tom_is_fun_sym_TomTermToExpression(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_TomTermToExpression_astTerm(tom_match6_1); { TomTerm term=tom_match6_1_1;
 
 
 
 
 
-  return getTermType(tom_get_slot_TomTermToExpression_astTerm(tom_match6_1) );  } if(tom_is_fun_sym_GetTail(tom_match6_1) ||  false ) {  return getTermType(tom_get_slot_GetTail_variable(tom_match6_1) );  } if(tom_is_fun_sym_GetSliceList(tom_match6_1) ||  false ) {  return getTermType(tom_get_slot_GetSliceList_variableBeginAST(tom_match6_1) );  } if(tom_is_fun_sym_GetSliceArray(tom_match6_1) ||  false ) {  return getTermType(tom_get_slot_GetSliceArray_subjectListName(tom_match6_1) );  }
+  return getTermType(term ); }} } if(tom_is_fun_sym_GetTail(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_1=tom_get_slot_GetTail_variable(tom_match6_1); { TomTerm term=tom_match6_1_1;  return getTermType(term ); }} } if(tom_is_fun_sym_GetSliceList(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_2=tom_get_slot_GetSliceList_variableBeginAST(tom_match6_1); { TomTerm term=tom_match6_1_2;  return getTermType(term ); }} } if(tom_is_fun_sym_GetSliceArray(tom_match6_1) ||  false ) { { TomTerm tom_match6_1_2=tom_get_slot_GetSliceArray_subjectListName(tom_match6_1); { TomTerm term=tom_match6_1_2;  return getTermType(term ); }} }
 
  
 				System.out.println("getTermType error on term: " + t);
@@ -275,17 +275,17 @@ public class TomBase {
 	private HashMap numberListToIdentifierMap = new HashMap();
 
 	private String elementToIdentifier(TomNumber subject) {
-		 { TomNumber tom_match7_1=(( TomNumber)subject);{ if(tom_is_fun_sym_Begin(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_Begin_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) {
-  return "begin" + tom_get_slot_Number_integer(tom_match7_1_1) ;  }} } if(tom_is_fun_sym_End(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_End_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) {
-  return "end" + tom_get_slot_Number_integer(tom_match7_1_1) ;  }} } if(tom_is_fun_sym_MatchNumber(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_MatchNumber_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) {
-  return "match" + tom_get_slot_Number_integer(tom_match7_1_1) ;  }} } if(tom_is_fun_sym_PatternNumber(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_PatternNumber_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) {
-  return "pattern" + tom_get_slot_Number_integer(tom_match7_1_1) ;  }} } if(tom_is_fun_sym_ListNumber(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_ListNumber_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) {
-  return "list" + tom_get_slot_Number_integer(tom_match7_1_1) ;  }} } if(tom_is_fun_sym_IndexNumber(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_IndexNumber_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) {
-  return "index" + tom_get_slot_Number_integer(tom_match7_1_1) ;  }} } if(tom_is_fun_sym_AbsVar(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_AbsVar_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) {
-  return "absvar" + tom_get_slot_Number_integer(tom_match7_1_1) ;  }} } if(tom_is_fun_sym_RenamedVar(tom_match7_1) ||  false ) { { TomName tom_match7_1_1=tom_get_slot_RenamedVar_astName(tom_match7_1); if(tom_is_fun_sym_Name(tom_match7_1_1) ||  false ) {
-  return "renamedvar_" + tom_get_slot_Name_string(tom_match7_1_1) ;  }} } if(tom_is_fun_sym_RuleVar(tom_match7_1) ||  false ) {
-  return "rulevar";  } if(tom_is_fun_sym_Number(tom_match7_1) ||  false ) {
-  return "" + tom_get_slot_Number_integer(tom_match7_1) ;  }
+		 { TomNumber tom_match7_1=(( TomNumber)subject);{ if(tom_is_fun_sym_Begin(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_Begin_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) { { int  tom_match7_1_1_1=tom_get_slot_Number_integer(tom_match7_1_1); { int  i=tom_match7_1_1_1;
+  return "begin" + i ; }} }} } if(tom_is_fun_sym_End(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_End_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) { { int  tom_match7_1_1_1=tom_get_slot_Number_integer(tom_match7_1_1); { int  i=tom_match7_1_1_1;
+  return "end" + i ; }} }} } if(tom_is_fun_sym_MatchNumber(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_MatchNumber_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) { { int  tom_match7_1_1_1=tom_get_slot_Number_integer(tom_match7_1_1); { int  i=tom_match7_1_1_1;
+  return "match" + i ; }} }} } if(tom_is_fun_sym_PatternNumber(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_PatternNumber_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) { { int  tom_match7_1_1_1=tom_get_slot_Number_integer(tom_match7_1_1); { int  i=tom_match7_1_1_1;
+  return "pattern" + i ; }} }} } if(tom_is_fun_sym_ListNumber(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_ListNumber_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) { { int  tom_match7_1_1_1=tom_get_slot_Number_integer(tom_match7_1_1); { int  i=tom_match7_1_1_1;
+  return "list" + i ; }} }} } if(tom_is_fun_sym_IndexNumber(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_IndexNumber_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) { { int  tom_match7_1_1_1=tom_get_slot_Number_integer(tom_match7_1_1); { int  i=tom_match7_1_1_1;
+  return "index" + i ; }} }} } if(tom_is_fun_sym_AbsVar(tom_match7_1) ||  false ) { { TomNumber tom_match7_1_1=tom_get_slot_AbsVar_number(tom_match7_1); if(tom_is_fun_sym_Number(tom_match7_1_1) ||  false ) { { int  tom_match7_1_1_1=tom_get_slot_Number_integer(tom_match7_1_1); { int  i=tom_match7_1_1_1;
+  return "absvar" + i ; }} }} } if(tom_is_fun_sym_RenamedVar(tom_match7_1) ||  false ) { { TomName tom_match7_1_1=tom_get_slot_RenamedVar_astName(tom_match7_1); if(tom_is_fun_sym_Name(tom_match7_1_1) ||  false ) { { String  tom_match7_1_1_1=tom_get_slot_Name_string(tom_match7_1_1); { String  name=tom_match7_1_1_1;
+  return "renamedvar_" + name ; }} }} } if(tom_is_fun_sym_RuleVar(tom_match7_1) ||  false ) {
+  return "rulevar";  } if(tom_is_fun_sym_Number(tom_match7_1) ||  false ) { { int  tom_match7_1_1=tom_get_slot_Number_integer(tom_match7_1); { int  i=tom_match7_1_1;
+  return "" + i ; }} }
   return subject.toString(); }}
  
 	}
@@ -311,19 +311,19 @@ public class TomBase {
 		if(subject==null) {
 			return false;
 		}
-		 { TomSymbol tom_match8_1=(( TomSymbol)subject);{ if(tom_is_fun_sym_Symbol(tom_match8_1) ||  false ) {
+		 { TomSymbol tom_match8_1=(( TomSymbol)subject);{ if(tom_is_fun_sym_Symbol(tom_match8_1) ||  false ) { { OptionList tom_match8_1_4=tom_get_slot_Symbol_option(tom_match8_1); { OptionList l=tom_match8_1_4;
  
-				OptionList optionList = tom_get_slot_Symbol_option(tom_match8_1) ;
+				OptionList optionList = l ;
 				while(!optionList.isEmpty()) {
 					Option opt = optionList.getHead();
-					 { Option tom_match9_1=(( Option)opt);{ if(tom_is_fun_sym_DeclarationToOption(tom_match9_1) ||  false ) { if(tom_is_fun_sym_MakeEmptyList(tom_get_slot_DeclarationToOption_astDeclaration(tom_match9_1)) ||  false ) {
-  return true;  } } if(tom_is_fun_sym_DeclarationToOption(tom_match9_1) ||  false ) { if(tom_is_fun_sym_MakeAddList(tom_get_slot_DeclarationToOption_astDeclaration(tom_match9_1)) ||  false ) {
-  return true;  } }}}
+					 { Option tom_match9_1=(( Option)opt);{ if(tom_is_fun_sym_DeclarationToOption(tom_match9_1) ||  false ) { { Declaration tom_match9_1_1=tom_get_slot_DeclarationToOption_astDeclaration(tom_match9_1); if(tom_is_fun_sym_MakeEmptyList(tom_match9_1_1) ||  false ) {
+  return true;  }} } if(tom_is_fun_sym_DeclarationToOption(tom_match9_1) ||  false ) { { Declaration tom_match9_1_1=tom_get_slot_DeclarationToOption_astDeclaration(tom_match9_1); if(tom_is_fun_sym_MakeAddList(tom_match9_1_1) ||  false ) {
+  return true;  }} }}}
  
 					optionList = optionList.getTail();
 				}
 				return false;
-			 }
+			}} }
 
  
 				System.out.println("isListOperator: strange case: '" + subject + "'");
@@ -337,19 +337,19 @@ public class TomBase {
 		if(subject==null) {
 			return false;
 		}
-		 { TomSymbol tom_match10_1=(( TomSymbol)subject);{ if(tom_is_fun_sym_Symbol(tom_match10_1) ||  false ) {
+		 { TomSymbol tom_match10_1=(( TomSymbol)subject);{ if(tom_is_fun_sym_Symbol(tom_match10_1) ||  false ) { { OptionList tom_match10_1_4=tom_get_slot_Symbol_option(tom_match10_1); { OptionList l=tom_match10_1_4;
  
-				OptionList optionList = tom_get_slot_Symbol_option(tom_match10_1) ;
+				OptionList optionList = l ;
 				while(!optionList.isEmpty()) {
 					Option opt = optionList.getHead();
-					 { Option tom_match11_1=(( Option)opt);{ if(tom_is_fun_sym_DeclarationToOption(tom_match11_1) ||  false ) { if(tom_is_fun_sym_MakeEmptyArray(tom_get_slot_DeclarationToOption_astDeclaration(tom_match11_1)) ||  false ) {
-  return true;  } } if(tom_is_fun_sym_DeclarationToOption(tom_match11_1) ||  false ) { if(tom_is_fun_sym_MakeAddArray(tom_get_slot_DeclarationToOption_astDeclaration(tom_match11_1)) ||  false ) {
-  return true;  } }}}
+					 { Option tom_match11_1=(( Option)opt);{ if(tom_is_fun_sym_DeclarationToOption(tom_match11_1) ||  false ) { { Declaration tom_match11_1_1=tom_get_slot_DeclarationToOption_astDeclaration(tom_match11_1); if(tom_is_fun_sym_MakeEmptyArray(tom_match11_1_1) ||  false ) {
+  return true;  }} } if(tom_is_fun_sym_DeclarationToOption(tom_match11_1) ||  false ) { { Declaration tom_match11_1_1=tom_get_slot_DeclarationToOption_astDeclaration(tom_match11_1); if(tom_is_fun_sym_MakeAddArray(tom_match11_1_1) ||  false ) {
+  return true;  }} }}}
  
 					optionList = optionList.getTail();
 				}
 				return false;
-			 }
+			}} }
 
  
 				System.out.println("isArrayOperator: strange case: '" + subject + "'");
@@ -361,10 +361,10 @@ public class TomBase {
 	protected boolean isStringOperator(TomSymbol subject) {
 		if(subject==null) { return false; }
 		TomType type = subject.getTypesToType().getCodomain();
-		 { TomType tom_match12_1=(( TomType)type);{ if(tom_is_fun_sym_TomTypeAlone(tom_match12_1) ||  false ) { if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_get_slot_TomTypeAlone_string(tom_match12_1)) , "String") ||  false ) {
+		 { TomType tom_match12_1=(( TomType)type);{ if(tom_is_fun_sym_TomTypeAlone(tom_match12_1) ||  false ) { { String  tom_match12_1_1=tom_get_slot_TomTypeAlone_string(tom_match12_1); if(tom_cmp_fun_sym_String(tom_get_fun_sym_String(tom_match12_1_1) , "String") ||  false ) {
  
 				return true;
-			 } }}}
+			 }} }}}
  
 		return false;
 	}
@@ -406,33 +406,33 @@ public class TomBase {
 			public boolean apply(ATerm t) {
 				if(t instanceof TomTerm) {
 					TomTerm annotedVariable = null;
-					 { TomTerm tom_match13_1=(( TomTerm)t);{ if(tom_is_fun_sym_VariableStar(tom_match13_1) || tom_is_fun_sym_Variable(tom_match13_1) ||  false ) {
+					 { TomTerm tom_match13_1=(( TomTerm)t);{ if(tom_is_fun_sym_VariableStar(tom_match13_1) || tom_is_fun_sym_Variable(tom_match13_1) ||  false ) { { ConstraintList tom_match13_1_4=tom_get_slot_Variable_constraints(tom_match13_1); { ConstraintList constraintList=tom_match13_1_4;
  
 							collection.add(t);
-							annotedVariable = getAssignToVariable(tom_get_slot_Variable_constraints(tom_match13_1) );
+							annotedVariable = getAssignToVariable(constraintList );
 							if(annotedVariable!=null) {
 								collection.add(annotedVariable);
 							}
 							return false;
-						 } if(tom_is_fun_sym_UnamedVariableStar(tom_match13_1) || tom_is_fun_sym_UnamedVariable(tom_match13_1) ||  false ) {
+						}} } if(tom_is_fun_sym_UnamedVariableStar(tom_match13_1) || tom_is_fun_sym_UnamedVariable(tom_match13_1) ||  false ) { { ConstraintList tom_match13_1_3=tom_get_slot_UnamedVariable_constraints(tom_match13_1); { ConstraintList constraintList=tom_match13_1_3;
 
  
-							annotedVariable = getAssignToVariable(tom_get_slot_UnamedVariable_constraints(tom_match13_1) );
+							annotedVariable = getAssignToVariable(constraintList );
 							if(annotedVariable!=null) {
 								collection.add(annotedVariable);
 							}
 							return false;
-						 } if(tom_is_fun_sym_Appl(tom_match13_1) ||  false ) {
+						}} } if(tom_is_fun_sym_Appl(tom_match13_1) ||  false ) { { TomList tom_match13_1_3=tom_get_slot_Appl_args(tom_match13_1); { ConstraintList tom_match13_1_4=tom_get_slot_Appl_constraints(tom_match13_1); { TomList subterms=tom_match13_1_3; { ConstraintList constraintList=tom_match13_1_4;
 
 
  
-							collectVariable(collection,tom_make_Tom(tom_get_slot_Appl_args(tom_match13_1)) );
-							annotedVariable = getAssignToVariable(tom_get_slot_Appl_constraints(tom_match13_1) );
+							collectVariable(collection,tom_make_Tom(subterms) );
+							annotedVariable = getAssignToVariable(constraintList );
 							if(annotedVariable!=null) {
 								collection.add(annotedVariable);
 							}
 							return false;
-						 }
+						}}}} }
 
   return true; }}
  
@@ -466,13 +466,13 @@ public class TomBase {
 	}
 
 	protected boolean isAnnotedVariable(TomTerm t) {
-		 { TomTerm tom_match14_1=(( TomTerm)t);{ if(tom_is_fun_sym_Appl(tom_match14_1) ||  false ) {
+		 { TomTerm tom_match14_1=(( TomTerm)t);{ if(tom_is_fun_sym_Appl(tom_match14_1) ||  false ) { { ConstraintList tom_match14_1_4=tom_get_slot_Appl_constraints(tom_match14_1); { ConstraintList constraintList=tom_match14_1_4;
 
 
 
  
-					return getAssignToVariable(tom_get_slot_Appl_constraints(tom_match14_1) )!=null;
-				 } if(tom_is_fun_sym_VariableStar(tom_match14_1) || tom_is_fun_sym_Variable(tom_match14_1) ||  false ) {       return getAssignToVariable(tom_get_slot_Variable_constraints(tom_match14_1) )!=null;      } if(tom_is_fun_sym_UnamedVariableStar(tom_match14_1) || tom_is_fun_sym_UnamedVariable(tom_match14_1) ||  false ) {       return getAssignToVariable(tom_get_slot_UnamedVariable_constraints(tom_match14_1) )!=null;      }}}
+					return getAssignToVariable(constraintList )!=null;
+				}} } if(tom_is_fun_sym_VariableStar(tom_match14_1) || tom_is_fun_sym_Variable(tom_match14_1) ||  false ) { { ConstraintList tom_match14_1_4=tom_get_slot_Variable_constraints(tom_match14_1); { ConstraintList constraintList=tom_match14_1_4;       return getAssignToVariable(constraintList )!=null;     }} } if(tom_is_fun_sym_UnamedVariableStar(tom_match14_1) || tom_is_fun_sym_UnamedVariable(tom_match14_1) ||  false ) { { ConstraintList tom_match14_1_3=tom_get_slot_UnamedVariable_constraints(tom_match14_1); { ConstraintList constraintList=tom_match14_1_3;       return getAssignToVariable(constraintList )!=null;     }} }}}
  
 		return false;
 	}
@@ -487,64 +487,64 @@ public class TomBase {
 	 */
 
 	protected TomTerm getAssignToVariable(ConstraintList constraintList) {
-		 { ConstraintList tom_match15_1=(( ConstraintList)constraintList);{ if(tom_is_fun_sym_concConstraint(tom_match15_1) ||  false ) { { ConstraintList tom_match15_1_list1=tom_match15_1; { ConstraintList tom_match15_1_begin1=tom_match15_1_list1; { ConstraintList tom_match15_1_end1=tom_match15_1_list1; while (!(tom_is_empty_ConstraintList(tom_match15_1_end1))) {tom_match15_1_list1=tom_match15_1_end1;{ { Constraint tom_match15_1_2=tom_get_head_ConstraintList(tom_match15_1_list1); if(tom_is_fun_sym_AssignTo(tom_match15_1_2) ||  false ) { { TomTerm tom_match15_1_2_1=tom_get_slot_AssignTo_variable(tom_match15_1_2); if(tom_is_fun_sym_Variable(tom_match15_1_2_1) ||  false ) {
-  return tom_match15_1_2_1 ;  }} }}tom_match15_1_end1=tom_get_tail_ConstraintList(tom_match15_1_end1);} }}}} }}}
+		 { ConstraintList tom_match15_1=(( ConstraintList)constraintList);{ if(tom_is_fun_sym_concConstraint(tom_match15_1) ||  false ) { { ConstraintList tom_match15_1_list1=tom_match15_1; { ConstraintList tom_match15_1_begin1=tom_match15_1_list1; { ConstraintList tom_match15_1_end1=tom_match15_1_list1; while (!(tom_is_empty_ConstraintList(tom_match15_1_end1))) {tom_match15_1_list1=tom_match15_1_end1;{ { Constraint tom_match15_1_2=tom_get_head_ConstraintList(tom_match15_1_list1);tom_match15_1_list1=tom_get_tail_ConstraintList(tom_match15_1_list1); if(tom_is_fun_sym_AssignTo(tom_match15_1_2) ||  false ) { { TomTerm tom_match15_1_2_1=tom_get_slot_AssignTo_variable(tom_match15_1_2); if(tom_is_fun_sym_Variable(tom_match15_1_2_1) ||  false ) { { TomTerm var=tom_match15_1_2_1;
+  return var ; } }} }}tom_match15_1_end1=tom_get_tail_ConstraintList(tom_match15_1_end1);} }}}} }}}
  
 		return null;
 	}
 
 	protected Declaration getIsFsymDecl(OptionList optionList) {
-		 { OptionList tom_match16_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match16_1) ||  false ) { { OptionList tom_match16_1_list1=tom_match16_1; { OptionList tom_match16_1_begin1=tom_match16_1_list1; { OptionList tom_match16_1_end1=tom_match16_1_list1; while (!(tom_is_empty_OptionList(tom_match16_1_end1))) {tom_match16_1_list1=tom_match16_1_end1;{ { Option tom_match16_1_2=tom_get_head_OptionList(tom_match16_1_list1); if(tom_is_fun_sym_DeclarationToOption(tom_match16_1_2) ||  false ) { { Declaration tom_match16_1_2_1=tom_get_slot_DeclarationToOption_astDeclaration(tom_match16_1_2); if(tom_is_fun_sym_IsFsymDecl(tom_match16_1_2_1) ||  false ) {
-  return tom_match16_1_2_1 ;  }} }}tom_match16_1_end1=tom_get_tail_OptionList(tom_match16_1_end1);} }}}} }}}
+		 { OptionList tom_match16_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match16_1) ||  false ) { { OptionList tom_match16_1_list1=tom_match16_1; { OptionList tom_match16_1_begin1=tom_match16_1_list1; { OptionList tom_match16_1_end1=tom_match16_1_list1; while (!(tom_is_empty_OptionList(tom_match16_1_end1))) {tom_match16_1_list1=tom_match16_1_end1;{ { Option tom_match16_1_2=tom_get_head_OptionList(tom_match16_1_list1);tom_match16_1_list1=tom_get_tail_OptionList(tom_match16_1_list1); if(tom_is_fun_sym_DeclarationToOption(tom_match16_1_2) ||  false ) { { Declaration tom_match16_1_2_1=tom_get_slot_DeclarationToOption_astDeclaration(tom_match16_1_2); if(tom_is_fun_sym_IsFsymDecl(tom_match16_1_2_1) ||  false ) { { Declaration decl=tom_match16_1_2_1;
+  return decl ; } }} }}tom_match16_1_end1=tom_get_tail_OptionList(tom_match16_1_end1);} }}}} }}}
  
 		return null;
 	}
 
 	protected String getDebug(OptionList optionList) {
-		 { OptionList tom_match17_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match17_1) ||  false ) { { OptionList tom_match17_1_list1=tom_match17_1; { OptionList tom_match17_1_begin1=tom_match17_1_list1; { OptionList tom_match17_1_end1=tom_match17_1_list1; while (!(tom_is_empty_OptionList(tom_match17_1_end1))) {tom_match17_1_list1=tom_match17_1_end1;{ { Option tom_match17_1_2=tom_get_head_OptionList(tom_match17_1_list1); if(tom_is_fun_sym_Debug(tom_match17_1_2) ||  false ) { { TomName tom_match17_1_2_1=tom_get_slot_Debug_astName(tom_match17_1_2); if(tom_is_fun_sym_Name(tom_match17_1_2_1) ||  false ) {
-  return tom_get_slot_Name_string(tom_match17_1_2_1) ;  }} }}tom_match17_1_end1=tom_get_tail_OptionList(tom_match17_1_end1);} }}}} }}}
+		 { OptionList tom_match17_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match17_1) ||  false ) { { OptionList tom_match17_1_list1=tom_match17_1; { OptionList tom_match17_1_begin1=tom_match17_1_list1; { OptionList tom_match17_1_end1=tom_match17_1_list1; while (!(tom_is_empty_OptionList(tom_match17_1_end1))) {tom_match17_1_list1=tom_match17_1_end1;{ { Option tom_match17_1_2=tom_get_head_OptionList(tom_match17_1_list1);tom_match17_1_list1=tom_get_tail_OptionList(tom_match17_1_list1); if(tom_is_fun_sym_Debug(tom_match17_1_2) ||  false ) { { TomName tom_match17_1_2_1=tom_get_slot_Debug_astName(tom_match17_1_2); if(tom_is_fun_sym_Name(tom_match17_1_2_1) ||  false ) { { String  tom_match17_1_2_1_1=tom_get_slot_Name_string(tom_match17_1_2_1); { String  str=tom_match17_1_2_1_1;
+  return str ; }} }} }}tom_match17_1_end1=tom_get_tail_OptionList(tom_match17_1_end1);} }}}} }}}
  
 
 		return null;
 	}
 
 	protected boolean hasConstructor(OptionList optionList) {
-		 { OptionList tom_match18_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match18_1) ||  false ) { { OptionList tom_match18_1_list1=tom_match18_1; { OptionList tom_match18_1_begin1=tom_match18_1_list1; { OptionList tom_match18_1_end1=tom_match18_1_list1; while (!(tom_is_empty_OptionList(tom_match18_1_end1))) {tom_match18_1_list1=tom_match18_1_end1;{ { Option tom_match18_1_2=tom_get_head_OptionList(tom_match18_1_list1); if(tom_is_fun_sym_Constructor(tom_match18_1_2) ||  false ) {
+		 { OptionList tom_match18_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match18_1) ||  false ) { { OptionList tom_match18_1_list1=tom_match18_1; { OptionList tom_match18_1_begin1=tom_match18_1_list1; { OptionList tom_match18_1_end1=tom_match18_1_list1; while (!(tom_is_empty_OptionList(tom_match18_1_end1))) {tom_match18_1_list1=tom_match18_1_end1;{ { Option tom_match18_1_2=tom_get_head_OptionList(tom_match18_1_list1);tom_match18_1_list1=tom_get_tail_OptionList(tom_match18_1_list1); if(tom_is_fun_sym_Constructor(tom_match18_1_2) ||  false ) {
   return true;  }}tom_match18_1_end1=tom_get_tail_OptionList(tom_match18_1_end1);} }}}} }}}
  
 		return false;
 	}
 
 	protected boolean hasGeneratedMatch(OptionList optionList) {
-		 { OptionList tom_match19_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match19_1) ||  false ) { { OptionList tom_match19_1_list1=tom_match19_1; { OptionList tom_match19_1_begin1=tom_match19_1_list1; { OptionList tom_match19_1_end1=tom_match19_1_list1; while (!(tom_is_empty_OptionList(tom_match19_1_end1))) {tom_match19_1_list1=tom_match19_1_end1;{ { Option tom_match19_1_2=tom_get_head_OptionList(tom_match19_1_list1); if(tom_is_fun_sym_GeneratedMatch(tom_match19_1_2) ||  false ) {
+		 { OptionList tom_match19_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match19_1) ||  false ) { { OptionList tom_match19_1_list1=tom_match19_1; { OptionList tom_match19_1_begin1=tom_match19_1_list1; { OptionList tom_match19_1_end1=tom_match19_1_list1; while (!(tom_is_empty_OptionList(tom_match19_1_end1))) {tom_match19_1_list1=tom_match19_1_end1;{ { Option tom_match19_1_2=tom_get_head_OptionList(tom_match19_1_list1);tom_match19_1_list1=tom_get_tail_OptionList(tom_match19_1_list1); if(tom_is_fun_sym_GeneratedMatch(tom_match19_1_2) ||  false ) {
   return true;  }}tom_match19_1_end1=tom_get_tail_OptionList(tom_match19_1_end1);} }}}} }}}
  
 		return false;
 	}
 
 	protected boolean hasDefaultCase(OptionList optionList) {
-		 { OptionList tom_match20_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match20_1) ||  false ) { { OptionList tom_match20_1_list1=tom_match20_1; { OptionList tom_match20_1_begin1=tom_match20_1_list1; { OptionList tom_match20_1_end1=tom_match20_1_list1; while (!(tom_is_empty_OptionList(tom_match20_1_end1))) {tom_match20_1_list1=tom_match20_1_end1;{ { Option tom_match20_1_2=tom_get_head_OptionList(tom_match20_1_list1); if(tom_is_fun_sym_DefaultCase(tom_match20_1_2) ||  false ) {
+		 { OptionList tom_match20_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match20_1) ||  false ) { { OptionList tom_match20_1_list1=tom_match20_1; { OptionList tom_match20_1_begin1=tom_match20_1_list1; { OptionList tom_match20_1_end1=tom_match20_1_list1; while (!(tom_is_empty_OptionList(tom_match20_1_end1))) {tom_match20_1_list1=tom_match20_1_end1;{ { Option tom_match20_1_2=tom_get_head_OptionList(tom_match20_1_list1);tom_match20_1_list1=tom_get_tail_OptionList(tom_match20_1_list1); if(tom_is_fun_sym_DefaultCase(tom_match20_1_2) ||  false ) {
   return true;  }}tom_match20_1_end1=tom_get_tail_OptionList(tom_match20_1_end1);} }}}} }}}
  
 		return false;
 	}
 
 	protected boolean hasDefinedSymbol(OptionList optionList) {
-		 { OptionList tom_match21_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match21_1) ||  false ) { { OptionList tom_match21_1_list1=tom_match21_1; { OptionList tom_match21_1_begin1=tom_match21_1_list1; { OptionList tom_match21_1_end1=tom_match21_1_list1; while (!(tom_is_empty_OptionList(tom_match21_1_end1))) {tom_match21_1_list1=tom_match21_1_end1;{ { Option tom_match21_1_2=tom_get_head_OptionList(tom_match21_1_list1); if(tom_is_fun_sym_DefinedSymbol(tom_match21_1_2) ||  false ) {
+		 { OptionList tom_match21_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match21_1) ||  false ) { { OptionList tom_match21_1_list1=tom_match21_1; { OptionList tom_match21_1_begin1=tom_match21_1_list1; { OptionList tom_match21_1_end1=tom_match21_1_list1; while (!(tom_is_empty_OptionList(tom_match21_1_end1))) {tom_match21_1_list1=tom_match21_1_end1;{ { Option tom_match21_1_2=tom_get_head_OptionList(tom_match21_1_list1);tom_match21_1_list1=tom_get_tail_OptionList(tom_match21_1_list1); if(tom_is_fun_sym_DefinedSymbol(tom_match21_1_2) ||  false ) {
   return true;  }}tom_match21_1_end1=tom_get_tail_OptionList(tom_match21_1_end1);} }}}} }}}
  
 		return false;
 	}
 
 	protected boolean hasImplicitXMLAttribut(OptionList optionList) {
-		 { OptionList tom_match22_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match22_1) ||  false ) { { OptionList tom_match22_1_list1=tom_match22_1; { OptionList tom_match22_1_begin1=tom_match22_1_list1; { OptionList tom_match22_1_end1=tom_match22_1_list1; while (!(tom_is_empty_OptionList(tom_match22_1_end1))) {tom_match22_1_list1=tom_match22_1_end1;{ { Option tom_match22_1_2=tom_get_head_OptionList(tom_match22_1_list1); if(tom_is_fun_sym_ImplicitXMLAttribut(tom_match22_1_2) ||  false ) {
+		 { OptionList tom_match22_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match22_1) ||  false ) { { OptionList tom_match22_1_list1=tom_match22_1; { OptionList tom_match22_1_begin1=tom_match22_1_list1; { OptionList tom_match22_1_end1=tom_match22_1_list1; while (!(tom_is_empty_OptionList(tom_match22_1_end1))) {tom_match22_1_list1=tom_match22_1_end1;{ { Option tom_match22_1_2=tom_get_head_OptionList(tom_match22_1_list1);tom_match22_1_list1=tom_get_tail_OptionList(tom_match22_1_list1); if(tom_is_fun_sym_ImplicitXMLAttribut(tom_match22_1_2) ||  false ) {
   return true;  }}tom_match22_1_end1=tom_get_tail_OptionList(tom_match22_1_end1);} }}}} }}}
  
 		return false;
 	}
 
 	protected boolean hasImplicitXMLChild(OptionList optionList) {
-		 { OptionList tom_match23_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match23_1) ||  false ) { { OptionList tom_match23_1_list1=tom_match23_1; { OptionList tom_match23_1_begin1=tom_match23_1_list1; { OptionList tom_match23_1_end1=tom_match23_1_list1; while (!(tom_is_empty_OptionList(tom_match23_1_end1))) {tom_match23_1_list1=tom_match23_1_end1;{ { Option tom_match23_1_2=tom_get_head_OptionList(tom_match23_1_list1); if(tom_is_fun_sym_ImplicitXMLChild(tom_match23_1_2) ||  false ) {
+		 { OptionList tom_match23_1=(( OptionList)optionList);{ if(tom_is_fun_sym_concOption(tom_match23_1) ||  false ) { { OptionList tom_match23_1_list1=tom_match23_1; { OptionList tom_match23_1_begin1=tom_match23_1_list1; { OptionList tom_match23_1_end1=tom_match23_1_list1; while (!(tom_is_empty_OptionList(tom_match23_1_end1))) {tom_match23_1_list1=tom_match23_1_end1;{ { Option tom_match23_1_2=tom_get_head_OptionList(tom_match23_1_list1);tom_match23_1_list1=tom_get_tail_OptionList(tom_match23_1_list1); if(tom_is_fun_sym_ImplicitXMLChild(tom_match23_1_2) ||  false ) {
   return true;  }}tom_match23_1_end1=tom_get_tail_OptionList(tom_match23_1_end1);} }}}} }}}
  
 		return false;
@@ -561,8 +561,8 @@ public class TomBase {
 		}
 
 		Declaration decl = slotList.getHead().getSlotDecl();
-		 { Declaration tom_match24_1=(( Declaration)decl);{ if(tom_is_fun_sym_GetSlotDecl(tom_match24_1) ||  false ) {
-  return tom_get_slot_GetSlotDecl_slotName(tom_match24_1) ;  }}}
+		 { Declaration tom_match24_1=(( Declaration)decl);{ if(tom_is_fun_sym_GetSlotDecl(tom_match24_1) ||  false ) { { TomName tom_match24_1_2=tom_get_slot_GetSlotDecl_slotName(tom_match24_1); { TomName name=tom_match24_1_2;
+  return name ; }} }}}
  
 		return null;
 	}
@@ -586,10 +586,10 @@ public class TomBase {
 			System.out.println("isDefinedSymbol: subject == null");
 			return false;
 		}
-		 { TomSymbol tom_match25_1=(( TomSymbol)subject);{ if(tom_is_fun_sym_Symbol(tom_match25_1) ||  false ) {
+		 { TomSymbol tom_match25_1=(( TomSymbol)subject);{ if(tom_is_fun_sym_Symbol(tom_match25_1) ||  false ) { { OptionList tom_match25_1_4=tom_get_slot_Symbol_option(tom_match25_1); { OptionList optionList=tom_match25_1_4;
  
-				return hasDefinedSymbol(tom_get_slot_Symbol_option(tom_match25_1) );
-			 }}}
+				return hasDefinedSymbol(optionList );
+			}} }}}
  
 		return false;
 	}
@@ -601,10 +601,10 @@ public class TomBase {
 		}
 		while(!optionList.isEmpty()) {
 			Option subject = optionList.getHead();
-			 { Option tom_match26_1=(( Option)subject);{ if(tom_is_fun_sym_OriginTracking(tom_match26_1) ||  false ) {
+			 { Option tom_match26_1=(( Option)subject);{ if(tom_is_fun_sym_OriginTracking(tom_match26_1) ||  false ) { { Option orgTrack=tom_match26_1;
  
-					return tom_match26_1 ;
-				 }}}
+					return orgTrack ;
+				} }}}
  
 			optionList = optionList.getTail();
 		}

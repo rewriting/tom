@@ -27,11 +27,12 @@
 package jtom.checker;
 
 import jtom.TomEnvironment;
+import jtom.tools.TomTaskInput;
 
 public class TomTypeChecker extends TomChecker {
 
-  public TomTypeChecker(TomEnvironment env) {
-  	super("Tom TypeChecker", env);	
+  public TomTypeChecker(TomEnvironment env, TomTaskInput taskInput) {
+  	super("Tom TypeChecker", env, taskInput);	
   }
 	
   public void process() {
@@ -45,7 +46,7 @@ public class TomTypeChecker extends TomChecker {
 	    	System.out.println("TOM type Checking phase (" + (System.currentTimeMillis()-startChrono)+ " ms)");
 	  	}
     } catch (Exception e) {
-			addError("Exception occurs in TomTypeChecker: "+e.getMessage(), getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+			addError("Exception occurs in TomTypeChecker: "+e.getMessage(), getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
 			e.printStackTrace();
 			return;
     }

@@ -33,8 +33,7 @@ import java.io.Writer;
 import java.io.IOException;
 
 import jtom.checker.TomCheckerMessage;
-import jtom.tools.TomTask;
-import jtom.tools.OutputCode;
+import jtom.tools.*;
 import jtom.TomEnvironment;
 
 public class TomBackend extends TomTask {
@@ -42,17 +41,18 @@ public class TomBackend extends TomTask {
   private final static int defaultDeep = 2;
   private TomAbstractGenerator generator;
   private Writer writer;
-  public TomBackend(TomEnvironment environment) {
-    super("Tom Generator", environment);
+  public TomBackend(TomEnvironment environment, TomTaskInput taskInput) {
+    super("Tom Generator", environment, taskInput);
   }
 
   public void initProcess() {
     try {
       boolean pretty = getInput().isPretty();
         // initialize outputCode
+      getInput().getOutputFile().getParentFile().mkdirs();
       writer = new BufferedWriter(
         new OutputStreamWriter(
-          new FileOutputStream(getInput().getOutputFileName())
+          new FileOutputStream(getInput().getOutputFile())
           ));
       OutputCode output = new OutputCode(writer, 
                                          getInput().isCCode(), 
@@ -60,15 +60,15 @@ public class TomBackend extends TomTask {
                                          defaultDeep);
         // give the "good" generator
       if (getInput().isCCode()) {
-        generator = new TomCGenerator (environment(), output, getInput());
+        generator = new TomCGenerator (environment(),  getInput(), output);
       } else if (getInput().isJCode()) {
-        generator = new TomJavaGenerator (environment(), output, getInput());
+        generator = new TomJavaGenerator (environment(), getInput(), output);
       } else if (getInput().isCamlCode()) {
-        generator = new TomCamlGenerator (environment(), output, getInput());
+        generator = new TomCamlGenerator (environment(), getInput(), output);
       }
     } catch (Exception e) {
       addError("Exception occurs in TomBackend Init: "+e.getMessage(), 
-               getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+               getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
     }
   }
@@ -86,7 +86,7 @@ public class TomBackend extends TomTask {
       }
     } catch (Exception e) {
       addError("Exception occurs in TomGenerator: "+e.getMessage(), 
-               getInput().getInputFileName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
+               getInput().getInputFile().getName(), TomCheckerMessage.DEFAULT_ERROR_LINE_NUMBER, TomCheckerMessage.TOM_ERROR);
       e.printStackTrace();
       return;
     }

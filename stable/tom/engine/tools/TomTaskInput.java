@@ -27,6 +27,7 @@ package jtom.tools;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.*;
 
 import jtom.adt.tomsignature.types.*;
 
@@ -34,13 +35,48 @@ public class TomTaskInput {
   private TomTerm term;
   private TomErrorList errors;
   private List importList;
-  private String inputFileName = "",
-    baseInputFileName = "",
-    outputFileName = "",
-    outputSuffix    = ".java",
-    resourceParentPathLocation = ".",
-		inputSuffix = ".t",
-		rawFileName = "";
+
+    /* 
+     * destDir 
+     * absolute path where file are generated  
+     */ 
+  private File destDir;
+ 
+    /*
+     * inputFile
+     * absolute name of the input file (with extension) 
+     */
+  private File inputFile;
+
+    /*
+     * outputFile
+     * absolute name of the output file (with extension) 
+     */
+  private File outputFile;
+
+    /*
+     * userOutputFile
+     * absolute name of the output file given by the user (if any)
+     * substitute outputFile when defined
+     */
+  private File userOutputFile;
+
+    /*
+     * packagePath
+     * relative path which corresponds to the package defined in the input file (empty by default) 
+     */
+  private String packagePath = ""; 
+
+    /*
+     * tomHome
+     * absolute path where Tom is installed (empty by default) 
+     */
+  private File tomHome = null;
+
+  private String inputSuffix = ".t";
+  private String outputSuffix = ".java";
+  private String resourceParentPathLocation = ".";
+
   public final static String 
   parsedSuffix    = ".tfix.parsed",
     expandedSuffix  = ".tfix.expanded",
@@ -52,9 +88,7 @@ public class TomTaskInput {
     debugTableSuffix = ".tfix.debug.table";
   
   public TomTaskInput(TomErrorList list) {
-    this.importList = new  ArrayList();
     this.errors = list;
-       
   }
   
   private boolean needDebugExpansion = false, 
@@ -84,6 +118,12 @@ public class TomTaskInput {
     doVerify = false, // Compilation correctness verification
     help = false, // usage called
     version = false; //version called
+
+  private final static int JAVA   = 1;
+  private final static int C      = 2;
+  private final static int CAML   = 3;
+  private final static int EIFFEL = 4;
+  int language = JAVA;
   
   public void setTerm(TomTerm term) {
     this.term = term;
@@ -100,14 +140,6 @@ public class TomTaskInput {
     needDebugExpansion = need;
   }
    
-  public String getOutputFileName() {
-    return outputFileName;
-  }
-  
-  public void setOutputFileName(String string) {
-    outputFileName = string;
-  }
-
   public boolean isVerbose() {
     return verbose;
   }
@@ -145,31 +177,31 @@ public class TomTaskInput {
   }
 
   public boolean isCCode() {
-    return cCode;
+    return language == C;
   }
-  public void setCCode(boolean b) {
-    cCode = b;
+  public void setCCode() {
+    language = C;
   }
 
   public boolean isCamlCode() {
-    return camlCode;
+    return language == CAML;
   }
-  public void setCamlCode(boolean b) {
-    camlCode = b;
+  public void setCamlCode() {
+    language = CAML;
   }
   
   public boolean isECode() {
-    return eCode;
+    return language == EIFFEL;
   }
-  public void setECode(boolean b) {
-    eCode = b;
+  public void setECode() {
+    language = EIFFEL;
   }
   
   public boolean isJCode() {
-    return jCode;
+    return language == JAVA;
   }
-  public void setJCode(boolean b) {
-    jCode = b;
+  public void setJCode() {
+    language = JAVA;
   }
 
   public boolean isDoCheck() {
@@ -291,13 +323,33 @@ public class TomTaskInput {
     eclipseMode = b;
   }
 
-  public List getImportList() {
-    return importList;
-  }
+
   public void setImportList(List list) {
     importList = list;
   }
 
+    /*
+     * dynamically compute the list of imported files:
+     *  - user defined imports
+     *  - destDir/packagePath
+     *  - inputFile.getParent
+     *  - TOM_HOME/share/jtom
+     */
+  public List getImportList() {
+    List newImportList = importList;
+    newImportList.add(new File(getDestDir(),getPackagePath()).getAbsoluteFile());
+    newImportList.add(getInputFile().getParentFile().getAbsoluteFile());
+
+    String tom_home = System.getProperty("tom.home");
+    if(tom_home != null) {
+      File file = new File(new File(tom_home,"jtom"),"share");
+      newImportList.add(file.getAbsoluteFile());
+        //System.out.println(" extend import list with: " + file.getPath());
+    }
+      //System.out.println("newImportList = " + newImportList);
+    return newImportList;
+  }
+ 
   public boolean isVersion() {
     return version;
   }
@@ -310,21 +362,6 @@ public class TomTaskInput {
   }
   public void setHelp(boolean b) {
     help = b;
-  }
-
-  public String getBaseInputFileName() {
-    return baseInputFileName;
-  }
-  public String getInputFileName() {
-    return inputFileName;
-  }
-
-  public void setBaseInputFileName(String string) {
-    baseInputFileName = string;
-  }
-
-  public void setInputFileName(String string) {
-    inputFileName = string;
   }
 
   public String getResourceParentPathLocation() {
@@ -343,12 +380,88 @@ public class TomTaskInput {
 		this.inputSuffix = inputSuffix;
 	}
 
-	public void setRawFileName(String rawFileName) {
-		this.rawFileName = rawFileName;
+	public void setPackagePath(String packagePath) {
+		this.packagePath = packagePath.replace('.',File.separatorChar);
 	}
 	
-	public String getRawFileName() {
-		return rawFileName;
+	public String getPackagePath() {
+    //System.out.println("getPackagePath = " + packagePath);
+		return packagePath;
+	}
+
+	public void setDestDir(String destDir) {
+    try {
+      this.destDir = new File(destDir).getCanonicalFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + destDir + "`");
+      e.printStackTrace();
+    }
 	}
 	
+	public File getDestDir() {
+    //System.out.println("getDestDir = " + destDir);
+		return destDir;
+	}
+
+  public void setInputFile(String sInputFile) {
+    try {
+      this.inputFile = new File(sInputFile).getCanonicalFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + sInputFile + "`");
+      e.printStackTrace();
+    }
+
+	}
+	
+	public File getInputFile() {
+    //System.out.println("getInputFile = " + inputFile);
+		return inputFile;
+	}
+
+	public String getInputFileNameWithoutSuffix() {
+    String inputFileName = getInputFile().getPath();
+    String res = inputFileName.substring(0, inputFileName.length() - getInputSuffix().length());
+    //System.out.println("getInputFileNameWithoutSuffix = " + res);
+    return res;
+	}
+
+  public void setOutputFile(String sOutputFile) {
+    try {
+      this.outputFile = new File(sOutputFile).getCanonicalFile();
+      //System.out.println("setOutputFile = " + this.outputFile);
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + sOutputFile + "`");
+      e.printStackTrace();
+    }
+	}
+	
+	public File getOutputFile() {
+    //System.out.println("getOutputFile = " + outputFile);
+		return outputFile;
+	}
+
+    /*
+     * update the outputFile by inserting the packagePath
+     * between the destDir and the fileName
+     */
+  public void updateOutputFile() {
+    if(getUserOutputFile() == null || getUserOutputFile().getPath().length() == 0) {
+      File out = new File(getOutputFile().getParentFile(),getPackagePath());
+      setOutputFile(new File(out, getOutputFile().getName()).getPath());
+    }
+  }
+  
+  public void setUserOutputFile(String sUserOutputFile) {
+    try {
+      this.userOutputFile = new File(sUserOutputFile).getCanonicalFile();
+    } catch (IOException e) {
+      System.out.println("IO Exception using file `" + sUserOutputFile + "`");
+      e.printStackTrace();
+    }
+	}
+	
+	public File getUserOutputFile() {
+		return userOutputFile;
+	}
+  
 } // class TomTaskInput

@@ -39,9 +39,10 @@ public abstract class TomTask extends TomBase {
 	
   public TomTask() {
   }
-  public TomTask(String name, TomEnvironment tomEnvironment) {
+  public TomTask(String name, TomEnvironment tomEnvironment,TomTaskInput input) {
     super(tomEnvironment);
     this.name = name;
+    this.input = input;
   }
 	
   public void addTask(TomTask task){
@@ -49,8 +50,7 @@ public abstract class TomTask extends TomBase {
     this.nextTask = task;
   }
 	
-  public void startProcess(TomTaskInput input) {
-    this.input = input;
+  public void startProcess() {
     initProcess();
     process();
     closeProcess();
@@ -109,7 +109,7 @@ public abstract class TomTask extends TomBase {
       if(!input.isEclipseMode()) {
         input.setErrors(tsf().makeTomErrorList()); // but remove all warning also so possible and usefull only in command line
       } 
-      nextTask.startProcess(input);
+      nextTask.startProcess();
     } /*else { System.out.println("No more tasks"); }*/
   }
 	

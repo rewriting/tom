@@ -39,8 +39,8 @@ public abstract class TomGenericGenerator extends TomAbstractGenerator {
   protected HashMap getFunSymMap = new HashMap();
   protected HashMap isFsymMap = new HashMap();
   
-  public TomGenericGenerator(TomEnvironment environment, OutputCode output, TomTaskInput input) {
-    super(environment,output,input);
+  public TomGenericGenerator(TomEnvironment environment, TomTaskInput taskInput, OutputCode output) {
+    super(environment,taskInput,output);
   }
 
 // ------------------------------------------------------------
@@ -521,8 +521,8 @@ TomType tlType2, TomType fullEltType, TomType fullArrayType, TargetLanguage tlCo
     TomTerm term;
     while(!declList.isEmpty()) {
       term = declList.getHead();
-       { TomTerm tom_match1_1=(( TomTerm)term);{ if(tom_is_fun_sym_DeclarationToTomTerm(tom_match1_1) ||  false ) {
- generateDeclaration(deep, tom_get_slot_DeclarationToTomTerm_astDeclaration(tom_match1_1) ); }}}
+       { TomTerm tom_match1_1=(( TomTerm)term);{ if(tom_is_fun_sym_DeclarationToTomTerm(tom_match1_1) ||  false ) { { Declaration tom_match1_1_1=tom_get_slot_DeclarationToTomTerm_astDeclaration(tom_match1_1); { Declaration declaration=tom_match1_1_1;
+ generateDeclaration(deep, declaration );}} }}}
  
       declList = declList.getTail();
     }
