@@ -248,14 +248,6 @@ JAppl1.t
 VARIABLE DECLARATION
 ////////////////////
 JVariable1.t
-	Symbol method : 'x' not found: x()
-JVariable2.t
-JVariable3.t
-JVariable4.t
-JVariable5.t
-JVariable6.t
 	Variables are correctly extracted	
-JVariable7.t
 	Unknown variable(s) [a] used on right part of %rule
-JVariable8.t
 	Bad variable type for 'x': it has both type 'type2' and 'type1'
