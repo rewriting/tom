@@ -111,7 +111,7 @@ public class OutputCode {
     if(lineCounter > line && !Flags.pretty) {
       if(Flags.cCode)
       {
-        String s1 = "\n#line "+(line+1)+"\n";
+        String s1 = "\n#line "+line+"\n";
           // writeln(deep,s);
         s = s1+s;
       }

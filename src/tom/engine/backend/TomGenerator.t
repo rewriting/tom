@@ -1322,7 +1322,7 @@ public class TomGenerator extends TomBase {
         TomTerm arg = argList.getHead();
         matchBlock: {
           %match(TomTerm arg) {
-            Variable(option,Name(name), Type(TomType(type),tlType@TLType[])) -> {
+            Variable[astName=Name(name)] -> {
               s += name;
               break matchBlock;
             }

@@ -55,7 +55,7 @@ public class TomParser implements TomParserConstants {
     this.symbolTable = environment.getSymbolTable();
     this.environment = environment;
     this.importList = importList;
-    this.includeOffSet = includeOffSet-1;
+    this.includeOffSet = includeOffSet;
     this.orgTrack = makePosition(1,1);
   }
 
