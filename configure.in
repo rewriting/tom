@@ -1,4 +1,4 @@
-# $Id: configure.in,v 1.41 2003/12/02 08:01:45 moreau Exp $
+# $Id: configure.in,v 1.42 2003/12/03 11:35:47 moreau Exp $
 
 AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(jtom,1.5gamma)
@@ -7,7 +7,7 @@ AC_PREREQ(2.13)
 dnl Let aclocal use macros in ./config directory
 ACLOCAL="${ACLOCAL} -I ./config"
 
-AC_REVISION($Id: configure.in,v 1.41 2003/12/02 08:01:45 moreau Exp $)
+AC_REVISION($Id: configure.in,v 1.42 2003/12/03 11:35:47 moreau Exp $)
 
 AC_SUBST(JAVA_SUBDIRS)
 
@@ -39,10 +39,18 @@ AC_SUBST(JAVA_ATERM)
 dnl Require apigen
 AC_PACKAGE_REQUIRE(apigen, adt-to-java,
    [  --with-apigen=DIR   apigen in DIR])
+
 ADTTOJAVA=${APIGEN}/bin/adt-to-java
 ADTTOTOM=${APIGEN}/bin/adt-to-tom
 AC_SUBST(ADTTOJAVA)
 AC_SUBST(ADTTOTOM)
+
+TOMSIGNATURE=${PWD}/src/adt/TomSignature-${VERSION}.jar:${prefix}/share/TomSignature-${VERSION}.jar
+SETADT=${PWD}/src/adt/set-${VERSION}.jar:${prefix}/share/set-${VERSION}.jar
+TNODEADT=${PWD}/src/adt/TNode-${VERSION}.jar:${prefix}/share/TNode-${VERSION}.jar
+AC_SUBST(TOMSIGNATURE)
+AC_SUBST(SETADT)
+AC_SUBST(TNODEADT)
 
 AC_OUTPUT( \
 	Makefile \
@@ -53,6 +61,7 @@ AC_OUTPUT( \
 	test/Makefile \
 	doc/Makefile \
 	src/Makefile \
+	src/adt/Makefile \
 	src/jtom/Makefile \
 	src/jtom/checker/Makefile \
 	src/jtom/tools/Makefile \
